@@ -169,7 +169,7 @@ module.exports = [
             new CopyWebpackPlugin({
                 patterns: [
                     {
-                        from: 'node_modules/scratch-blocks/media',
+                        from: '../block/media',
                         to: 'static/blocks-media'
                     }
                 ]
@@ -187,7 +187,7 @@ module.exports = [
                 patterns: [
                     {
                         from: 'extension-worker.{js,js.map}',
-                        context: 'node_modules/scratch-vm/dist/web'
+                        context: '../vm/dist/web'
                     }
                 ]
             })

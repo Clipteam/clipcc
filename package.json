@@ -1,0 +1,30 @@
+{
+  "name": "monorepo",
+  "description": "ClipCC's Workspace",
+  "private": true,
+  "engines": {
+    "node": ">=16"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "nohoist": [
+      "**/google-closure-library",
+      "**/google-closure-compiler",
+      "**/google-closure-cmd"
+    ]
+  },
+  "scripts": {
+    "start": "yarn workspace scratch-gui start",
+    "build:dist": "NODE_ENV=production yarn build:full",
+    "build:full": "yarn block:build && yarn vm:build && yarn gui:build",
+    "build": "yarn block:build && yarn gui:build",
+    "vm:build": "yarn workspace scratch-vm build",
+    "gui:build": "yarn workspace scratch-gui build",
+    "test:unit": "yarn workspace scratch-gui test:unit && yarn workspace scratch-vm tap:unit",
+    "vm:start": "yarn workspace scratch-vm start",
+    "vm:docs": "yarn workspace scratch-vm docs",
+    "block:build": "yarn workspace scratch-blocks build"
+  }
+}

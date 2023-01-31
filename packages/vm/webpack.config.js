@@ -50,14 +50,6 @@ module.exports = [
         output: {
             libraryTarget: 'umd',
             path: path.resolve('dist', 'web')
-        },
-        module: {
-            rules: base.module.rules.concat([
-                {
-                    test: require.resolve('./src/index.js'),
-                    loader: 'expose-loader?VirtualMachine'
-                }
-            ])
         }
     }),
     // Node-compatible
@@ -96,32 +88,8 @@ module.exports = [
         module: {
             rules: base.module.rules.concat([
                 {
-                    test: require.resolve('./src/index.js'),
-                    loader: 'expose-loader?VirtualMachine'
-                },
-                {
-                    test: require.resolve('./src/extensions/scratch3_video_sensing/debug.js'),
-                    loader: 'expose-loader?Scratch3VideoSensingDebug'
-                },
-                {
                     test: require.resolve('stats.js/build/stats.min.js'),
                     loader: 'script-loader'
-                },
-                {
-                    test: require.resolve('scratch-blocks/dist/vertical.js'),
-                    loader: 'expose-loader?Blockly'
-                },
-                {
-                    test: require.resolve('scratch-audio/src/index.js'),
-                    loader: 'expose-loader?AudioEngine'
-                },
-                {
-                    test: require.resolve('scratch-storage/src/index.js'),
-                    loader: 'expose-loader?ScratchStorage'
-                },
-                {
-                    test: require.resolve('scratch-render/src/index.js'),
-                    loader: 'expose-loader?ScratchRender'
                 }
             ])
         },
@@ -130,14 +98,14 @@ module.exports = [
         },
         plugins: base.plugins.concat([
             new CopyWebpackPlugin([{
-                from: 'node_modules/scratch-blocks/media',
+                from: '../block/media',
                 to: 'media'
             }, {
-                from: 'node_modules/scratch-storage/dist/web'
+                from: '../../node_modules/scratch-storage/dist/web'
             }, {
-                from: 'node_modules/scratch-render/dist/web'
+                from: '../../node_modules/scratch-render/dist/web'
             }, {
-                from: 'node_modules/scratch-svg-renderer/dist/web'
+                from: '../../node_modules/scratch-svg-renderer/dist/web'
             }, {
                 from: 'src/playground'
             }])
