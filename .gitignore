@@ -4,3 +4,8 @@
 node_modules
 npm-*
 yarn-error.log
+
+
+# Dist
+dist
+build

@@ -18,10 +18,11 @@
   "scripts": {
     "start": "yarn workspace scratch-gui start",
     "build:dist": "NODE_ENV=production yarn build:full",
-    "build:full": "yarn block:build && yarn vm:build && yarn gui:build",
+    "build:full": "yarn l10n:build && yarn block:build && yarn vm:build && yarn gui:build",
     "build": "yarn block:build && yarn gui:build",
     "vm:build": "yarn workspace scratch-vm build",
     "gui:build": "yarn workspace scratch-gui build",
+    "l10n:build": "yarn workspace scratch-l10n build",
     "test:unit": "yarn workspace scratch-gui test:unit && yarn workspace scratch-vm tap:unit",
     "vm:start": "yarn workspace scratch-vm start",
     "vm:docs": "yarn workspace scratch-vm docs",
