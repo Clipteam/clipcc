@@ -1,4 +1,4 @@
-#!/usr/bin/python2.7
+#!/usr/bin/python3
 # Compresses the core Blockly files into a single JavaScript file.
 #
 # Copyright 2012 Google Inc.
@@ -35,11 +35,13 @@
 #   msg/js/<LANG>.js for every language <LANG> defined in msg/js/<LANG>.json.
 
 import sys
-if sys.version_info[0] != 2:
-  raise Exception("Blockly build only compatible with Python 2.x.\n"
+from functools import reduce
+import importlib
+if sys.version_info[0] != 3:
+  raise Exception("clipcc-block build only compatible with Python 3.x.\n"
                   "You are using: " + sys.version)
 
-import errno, glob, httplib, json, os, re, subprocess, threading, urllib
+import errno, glob, http.client, json, os, re, subprocess, threading, urllib.request, urllib.parse, urllib.error
 
 REMOTE_COMPILER = "remote"
 
@@ -67,7 +69,7 @@ def import_path(fullpath):
   filename, ext = os.path.splitext(filename)
   sys.path.append(path)
   module = __import__(filename)
-  reload(module)  # Might be out of date.
+  importlib.reload(module)  # Might be out of date.
   del sys.path[-1]
   return module
 
@@ -192,7 +194,7 @@ if (isNodeJS) {
     replacing known keys.
     """
 
-    key_whitelist = self.closure_env.keys()
+    key_whitelist = list(self.closure_env.keys())
 
     keys_pipe_separated = reduce(lambda accum, key: accum + "|" + key, key_whitelist)
     begin_brace = re.compile(r"\{(?!%s)" % (keys_pipe_separated,))
@@ -326,9 +328,9 @@ class Gen_compressed(threading.Thread):
       # dash_args and dropping any falsy members
       args = []
       for group in [[CLOSURE_COMPILER_NPM], dash_args]:
-        args.extend(filter(lambda item: item, group))
+        args.extend([item for item in group if item])
 
-      proc = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+      proc = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
       (stdout, stderr) = proc.communicate()
 
       # Build the JSON response.
@@ -372,8 +374,8 @@ class Gen_compressed(threading.Thread):
             remoteParams.append((arg, value))
 
       headers = {"Content-type": "application/x-www-form-urlencoded"}
-      conn = httplib.HTTPSConnection("closure-compiler.appspot.com")
-      conn.request("POST", "/compile", urllib.urlencode(remoteParams), headers)
+      conn = http.client.HTTPSConnection("closure-compiler.appspot.com")
+      conn.request("POST", "/compile", urllib.parse.urlencode(remoteParams), headers)
       response = conn.getresponse()
       json_str = response.read()
       conn.close()
@@ -388,31 +390,31 @@ class Gen_compressed(threading.Thread):
       n = int(name[6:]) - 1
       return filenames[n]
 
-    if json_data.has_key("serverErrors"):
+    if "serverErrors" in json_data:
       errors = json_data["serverErrors"]
       for error in errors:
         print("SERVER ERROR: %s" % target_filename)
         print(error["error"])
-    elif json_data.has_key("errors"):
+    elif "errors" in json_data:
       errors = json_data["errors"]
       for error in errors:
         print("FATAL ERROR")
         print(error["error"])
         if error["file"]:
-          print("%s at line %d:" % (
-              file_lookup(error["file"]), error["lineno"]))
+          print(("%s at line %d:" % (
+              file_lookup(error["file"]), error["lineno"])))
           print(error["line"])
           print((" " * error["charno"]) + "^")
         sys.exit(1)
     else:
-      if json_data.has_key("warnings"):
+      if "warnings" in json_data:
         warnings = json_data["warnings"]
         for warning in warnings:
           print("WARNING")
           print(warning["warning"])
           if warning["file"]:
-            print("%s at line %d:" % (
-                file_lookup(warning["file"]), warning["lineno"]))
+            print(("%s at line %d:" % (
+                file_lookup(warning["file"]), warning["lineno"])))
             print(warning["line"])
             print((" " * warning["charno"]) + "^")
         print()
@@ -422,7 +424,7 @@ class Gen_compressed(threading.Thread):
     return False
 
   def write_output(self, target_filename, remove, json_data):
-      if not json_data.has_key("compiledCode"):
+      if "compiledCode" not in json_data:
         print("FATAL ERROR: Compiler did not return compiledCode.")
         sys.exit(1)
 
@@ -469,8 +471,8 @@ class Gen_compressed(threading.Thread):
         compressed_kb = int(compressed_b / 1024 + 0.5)
         ratio = int(float(compressed_b) / float(original_b) * 100 + 0.5)
         print("SUCCESS: " + target_filename)
-        print("Size changed from %d KB to %d KB (%d%%)." % (
-            original_kb, compressed_kb, ratio))
+        print(("Size changed from %d KB to %d KB (%d%%)." % (
+            original_kb, compressed_kb, ratio)))
       else:
         print("UNKNOWN ERROR")
 
@@ -571,9 +573,15 @@ if __name__ == "__main__":
 
     # Sanity check the local compiler
     test_args = [closure_compiler, os.path.join("build", "test_input.js")]
-    test_proc = subprocess.Popen(test_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    test_proc = subprocess.Popen(test_args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
     (stdout, _) = test_proc.communicate()
     assert stdout == read(os.path.join("build", "test_expect.js"))
+
+    # Create link to shorten command line on Windows (fix/nt)
+    if os.name == 'nt':
+      subprocess.check_call(['mklink', '/J', 'gcl', os.path.join(closure_root, closure_library)], shell=True)
+      closure_root = ''
+      closure_library = 'gcl'
 
     print("Using local compiler: %s ...\n" % CLOSURE_COMPILER_NPM)
   except (ImportError, AssertionError):
@@ -602,11 +610,11 @@ if __name__ == "__main__":
   developers.google.com/blockly/guides/modify/web/closure""")
       sys.exit(1)
 
-  search_paths = calcdeps.ExpandDirectories(
-      ["core", os.path.join(closure_root, closure_library)])
+  search_paths = list(calcdeps.ExpandDirectories(
+      ["core", os.path.join(closure_root, closure_library)]))
 
-  search_paths_horizontal = filter(exclude_vertical, search_paths)
-  search_paths_vertical = filter(exclude_horizontal, search_paths)
+  search_paths_horizontal = list(filter(exclude_vertical, search_paths))
+  search_paths_vertical = list(filter(exclude_horizontal, search_paths))
 
   closure_env = {
     "closure_dir": closure_dir,
@@ -618,13 +626,22 @@ if __name__ == "__main__":
   # Run all tasks in parallel threads.
   # Uncompressed is limited by processor speed.
   # Compressed is limited by network and server speed.
-  # Vertical:
-  Gen_uncompressed(search_paths_vertical, True, closure_env).start()
-  # Horizontal:
-  Gen_uncompressed(search_paths_horizontal, False, closure_env).start()
+  thread_list = [
+    # Vertical:
+    Gen_uncompressed(search_paths_vertical, True, closure_env),
+    # Horizontal:
+    Gen_uncompressed(search_paths_horizontal, False, closure_env),
 
-  # Compressed forms of vertical and horizontal.
-  Gen_compressed(search_paths_vertical, search_paths_horizontal, closure_env).start()
+    # Compressed forms of vertical and horizontal.
+    Gen_compressed(search_paths_vertical, search_paths_horizontal, closure_env)
+  ]
+
+  for thread in thread_list: thread.start()
+  for thread in thread_list: thread.join()
 
   # This is run locally in a separate thread.
   # Gen_langfiles().start()
+
+  # Delete link created on Windows (fix/nt)
+  if os.name == 'nt':
+    subprocess.check_call(['rmdir', 'gcl'], shell=True)

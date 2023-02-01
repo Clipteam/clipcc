@@ -44,3 +44,6 @@ python_compressed.js
 /*compiler*.jar
 /local_blockly_compressed_vertical.js
 /chromedriver
+
+# Closure (fix/nt)
+gcl

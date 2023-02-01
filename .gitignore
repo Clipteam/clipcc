@@ -1,28 +1,6 @@
 # General
 .DS_Store
 .vscode
-**/node_modules
-**/yarn-error.log
-**/dist
-**/build
-
-# blocks
-packages/blocks/dart_compressed.js
-packages/blocks/javascript_compressed.js
-packages/blocks/lua_compressed.js
-packages/blocks/php_compressed.js
-packages/blocks/python_compressed.js
-packages/blocks/accessible/*
-packages/blocks/msg/js/*
-!packages/blocks/msg/js/en.js
-packages/blocks/msg/json/*
-!packages/blocks/msg/json/en.json
-packages/blocks/*compiler*.jar
-packages/blocks/chromedriver
-packages/blocks/blockly_*.js
-packages/blocks/blocks_*.js
-
-# vm
-packages/vm/playground
-packages/vm/benchmark
-packages/vm/translations
+node_modules
+npm-*
+yarn-error.log
