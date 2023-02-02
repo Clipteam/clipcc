@@ -1,0 +1,25 @@
+[main]
+host = https://www.transifex.com
+lang_map = zh_Hans:zh-cn, zh_Hant:zh-tw, pt_BR:pt-br, es_419:es-419, aa_DJ:aa-dj
+
+[o:clipteam:p:clipcc-editor:r:interface]
+resource_name = interface
+file_filter = packages/gui/translations/<lang>.json
+source_file = packages/gui/translations/en.json
+source_lang = en
+type = CHROME
+
+[o:clipteam:p:clipcc-editor:r:blocks]
+resource_name = blocks
+file_filter = packages/block/msg/json/<lang>.json
+source_file = packages/block/msg/json/en.json
+source_lang = en
+type = KEYVALUEJSON
+
+[o:clipteam:p:clipcc-editor:r:extensions]
+resource_name = extensions
+file_filter = packages/vm/translations/core/<lang>.json
+source_file = packages/vm/translations/core/en.json
+source_lang = en
+type = CHROME
+

@@ -28,7 +28,7 @@ const {txPull} = require('scratch-l10n/lib/transifex.js');
 
 // Globals
 const PATH_OUTPUT = path.resolve(__dirname, '../msg');
-const PROJECT = 'scratch-editor'
+const PROJECT = 'clipcc-editor'
 const RESOURCE = 'blocks';
 const MODE = 'reviewed';
 
@@ -81,8 +81,8 @@ let localeMap = {
   'aa-dj': 'aa_DJ',
   'es-419': 'es_419',
   'pt-br': 'pt_BR',
-  'zh-cn': 'zh_CN',
-  'zh-tw': 'zh_TW'
+  'zh-cn': 'zh-Hans',
+  'zh-tw': 'zh-Hant'
 };
 
 const getLocaleData = async function (locale) {

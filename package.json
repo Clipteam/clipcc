@@ -16,16 +16,23 @@
     ]
   },
   "scripts": {
-    "start": "yarn workspace scratch-gui start",
+    "start": "yarn gui:start",
     "build:dist": "NODE_ENV=production yarn build:full",
     "build:full": "yarn l10n:build && yarn block:build && yarn vm:build && yarn gui:build",
     "build": "yarn block:build && yarn gui:build",
-    "vm:build": "yarn workspace scratch-vm build",
-    "gui:build": "yarn workspace scratch-gui build",
-    "l10n:build": "yarn workspace scratch-l10n build",
     "test:unit": "yarn workspace scratch-gui test:unit && yarn workspace scratch-vm tap:unit",
-    "vm:start": "yarn workspace scratch-vm start",
+    "translation:build": "yarn gui:translation && yarn vm:translation && yarn block:translation",
+    "translation:push": "tx push",
+    "translation:pull": "yarn workspace scratch-blocks translate:sync:translations && yarn workspace scratch-l10n pull:editor",
+    "block:build": "yarn workspace scratch-blocks build",
+    "block:translation": "yarn workspace scratch-blocks translate",
+    "l10n:build": "yarn workspace scratch-l10n build",
+    "gui:start": "yarn workspace scratch-gui start",
+    "gui:build": "yarn workspace scratch-gui build",
+    "gui:translation": "yarn workspace scratch-gui i18n:src",
+    "vm:build": "yarn workspace scratch-vm build",
     "vm:docs": "yarn workspace scratch-vm docs",
-    "block:build": "yarn workspace scratch-blocks build"
+    "vm:translation": "yarn workspace scratch-vm i18n:src",
+    "vm:start": "yarn workspace scratch-vm start"
   }
 }

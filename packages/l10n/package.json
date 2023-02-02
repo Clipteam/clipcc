@@ -6,11 +6,16 @@
     "browser": "./src/index.js",
     "scripts": {
         "build:data": "babel-node scripts/build-data",
-        "build": "npm run clean && npm run build:data && webpack --progress --colors --bail",
+        "build": "yarn clean && yarn build:data && webpack --progress --colors --bail",
         "clean": "rimraf ./dist ./locales && mkdirp dist locales",
         "lint:js": "eslint . --ext .js",
         "lint:json": "jshint -e .json www editor/blocks editor/extensions editor/interface editor/paint-editor",
-        "lint": "npm run lint:js && npm run lint:json"
+        "lint": "yarn lint:js && yarn lint:json",
+        "pull:interface": "babel-node scripts/tx-pull-editor clipcc-editor interface ./editor/interface/",
+        "pull:paint": "babel-node scripts/tx-pull-editor clipcc-editor paint-editor ./editor/paint-editor/",
+        "pull:extensions": "babel-node scripts/tx-pull-editor clipcc-editor extensions ./editor/extensions/",
+        "pull:blocks": "babel-node scripts/tx-pull-editor clipcc-editor blocks ./editor/blocks/",
+        "pull:editor": "yarn pull:blocks && yarn pull:extensions && yarn pull:interface"
     },
     "repository": {
         "type": "git",
@@ -25,7 +30,9 @@
     "dependencies": {
         "@babel/cli": "^7.1.2",
         "@babel/core": "^7.1.2",
-        "babel-plugin-react-intl": "^3.0.1"
+        "babel-plugin-react-intl": "^3.0.1",
+        "@transifex/api": "4.2.5",
+        "download": "^8.0.0"
     },
     "devDependencies": {
         "@babel/eslint-parser": "7.18.2",
