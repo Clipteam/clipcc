@@ -326,9 +326,11 @@ class Gen_compressed(threading.Thread):
 
       # Build the final args array by prepending CLOSURE_COMPILER_NPM to
       # dash_args and dropping any falsy members
+      # At the same time, shorten the path to run on Windows (fix/nt)
       args = []
+      library_path = os.path.join(self.closure_env["closure_root"], self.closure_env["closure_library"])
       for group in [[CLOSURE_COMPILER_NPM], dash_args]:
-        args.extend([item for item in group if item])
+        args.extend([item.replace(old_path, self.closure_env["closure_library_path"]) for item in group if item])
 
       proc = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
       (stdout, stderr) = proc.communicate()
@@ -566,6 +568,7 @@ if __name__ == "__main__":
     closure_root = CLOSURE_ROOT_NPM
     closure_library = CLOSURE_LIBRARY_NPM
     closure_compiler = CLOSURE_COMPILER_NPM
+    closure_library_path = os.path.join(closure_root, closure_library)
 
     # Load calcdeps from the local library
     calcdeps = import_path(os.path.join(
@@ -580,8 +583,7 @@ if __name__ == "__main__":
     # Create link to shorten command line on Windows (fix/nt)
     if os.name == 'nt':
       subprocess.check_call(['mklink', '/J', 'gcl', os.path.join(closure_root, closure_library)], shell=True)
-      closure_root = ''
-      closure_library = 'gcl'
+      closure_library_path = 'gcl'
 
     print("Using local compiler: %s ...\n" % CLOSURE_COMPILER_NPM)
   except (ImportError, AssertionError):
@@ -592,6 +594,7 @@ if __name__ == "__main__":
       closure_root = CLOSURE_ROOT
       closure_library = CLOSURE_LIBRARY
       closure_compiler = CLOSURE_COMPILER
+      closure_library_path = os.path.join(closure_root, closure_library)
 
       calcdeps = import_path(os.path.join(
           closure_root, closure_library, "closure", "bin", "calcdeps.py"))
@@ -621,6 +624,7 @@ if __name__ == "__main__":
     "closure_root": closure_root,
     "closure_library": closure_library,
     "closure_compiler": closure_compiler,
+    "closure_library_path": closure_library_path
   }
 
   # Run all tasks in parallel threads.
