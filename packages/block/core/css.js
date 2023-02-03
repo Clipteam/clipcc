@@ -1034,9 +1034,9 @@ Blockly.Css.CONTENT = [
 
   '.blocklyWidgetDiv .goog-menu {',
     'background: #fff;',
-    'border-color: #ccc #666 #666 #ccc;',
-    'border-style: solid;',
-    'border-width: 1px;',
+    // 'border-color: #ccc #666 #666 #ccc;',
+    // 'border-style: solid;',
+    // 'border-width: 1px;',
     'cursor: default;',
     'font: normal 13px "Helvetica Neue", Helvetica, sans-serif;',
     'margin: 0;',
@@ -1045,6 +1045,8 @@ Blockly.Css.CONTENT = [
     'position: absolute;',
     'overflow-y: auto;',
     'overflow-x: hidden;',
+    'box-shadow: 0 8px 8px 0 hsla(0, 0%, 0%, 0.15);', // cc - prettier menu
+    'transition: 0.25s ease-out;', // cc - prettier menu
     'z-index: 20000;',  /* Arbitrary, but some apps depend on it... */
   '}',
 
@@ -1092,6 +1094,7 @@ Blockly.Css.CONTENT = [
      /* 28px on the left for icon or checkbox; 7em on the right for shortcut. */
     'padding: 4px 7em 4px 28px;',
     'white-space: nowrap;',
+    'transition: 0.25s ease-out;',
   '}',
 
   '.blocklyDropDownDiv .goog-menuitem {',
@@ -1104,6 +1107,7 @@ Blockly.Css.CONTENT = [
      /* 28px on the left for icon or checkbox; 7em on the right for shortcut. */
     'padding: 4px 7em 4px 28px;',
     'white-space: nowrap;',
+    'transition: 0.25s ease-out;',
   '}',
 
   /* BiDi override for the resting state. */
@@ -1159,11 +1163,11 @@ Blockly.Css.CONTENT = [
     'background-color: #d6e9f8;',
      /* Use an explicit top and bottom border so that the selection is visible',
       * in high contrast mode. */
-    'border-color: #d6e9f8;',
-    'border-style: dotted;',
-    'border-width: 1px 0;',
-    'padding-bottom: 3px;',
-    'padding-top: 3px;',
+    // 'border-color: #d6e9f8;',
+    // 'border-style: dotted;',
+    // 'border-width: 1px 0;',
+    // 'padding-bottom: 3px;',
+    // 'padding-top: 3px;',
   '}',
 
   '.blocklyDropDownDiv .goog-menuitem-highlight,',
