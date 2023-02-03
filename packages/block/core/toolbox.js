@@ -86,10 +86,10 @@ Blockly.Toolbox = function(workspace) {
 
 /**
  * Width of the toolbox, which changes only in vertical layout.
- * This is the sum of the width of the flyout (250) and the category menu (60).
+ * This is the sum of the width of the flyout (250) and the category menu (85).
  * @type {number}
  */
-Blockly.Toolbox.prototype.width = 310;
+Blockly.Toolbox.prototype.width = 250 + 85;
 
 /**
  * Height of the toolbox, which changes only in horizontal layout.
@@ -714,17 +714,13 @@ Blockly.Toolbox.Category.prototype.createDom = function() {
   this.label_ = goog.dom.createDom('div',
       {'class': 'scratchCategoryMenuItemLabel'},
       Blockly.utils.replaceMessageReferences(this.name_));
-  if (this.iconURI_) {
-    this.bubble_ = goog.dom.createDom('div',
-        {'class': 'scratchCategoryItemIcon'});
-    this.bubble_.style.backgroundImage = 'url(' + this.iconURI_ + ')';
-  } else {
-    this.bubble_ = goog.dom.createDom('div',
-        {'class': 'scratchCategoryItemBubble'});
-    this.bubble_.style.backgroundColor = this.colour_;
-    this.bubble_.style.borderColor = this.secondaryColour_;
-  }
-  this.item_.appendChild(this.bubble_);
+  // cc beg - new category style
+  this.colorBar_ = goog.dom.createDom('div',
+  {'class': 'scratchCategoryItemColorBar'});
+  this.colorBar_.style.backgroundColor = this.colour_;
+  this.colorBar_.style.borderColor = this.secondaryColour_;
+  this.item_.appendChild(this.colorBar_);
+  // cc end - new category style
   this.item_.appendChild(this.label_);
   this.parentHtml_.appendChild(this.item_);
   Blockly.bindEvent_(
