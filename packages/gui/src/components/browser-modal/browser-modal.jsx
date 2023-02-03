@@ -43,11 +43,11 @@ const BrowserModal = ({intl, ...props}) => {
                         { /* eslint-disable max-len */ }
                         {
                             props.error ? <FormattedMessage
-                                defaultMessage="We are very sorry, but it looks like you are using a browser version that Scratch does not support. We recommend updating to the latest version of a supported browser such as Google Chrome, Mozilla Firefox, Microsoft Edge, or Apple Safari. "
+                                defaultMessage="We are very sorry, but it looks like you are using a browser version that ClipCC does not support. We recommend updating to the latest version of a supported browser such as Google Chrome, Mozilla Firefox, Microsoft Edge, or Apple Safari. "
                                 description="Error message when the browser does not meet our minimum requirements"
                                 id="gui.unsupportedBrowser.notRecommended"
                             /> : <FormattedMessage
-                                defaultMessage="We are very sorry, but Scratch does not support this browser. We recommend updating to the latest version of a supported browser such as Google Chrome, Mozilla Firefox, Microsoft Edge, or Apple Safari."
+                                defaultMessage="We are very sorry, but ClipCC does not support this browser. We recommend updating to the latest version of a supported browser such as Google Chrome, Mozilla Firefox, Microsoft Edge, or Apple Safari."
                                 description="Error message when the browser does not work at all (IE)"
                                 id="gui.unsupportedBrowser.description"
                             />
