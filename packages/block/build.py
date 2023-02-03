@@ -330,7 +330,7 @@ class Gen_compressed(threading.Thread):
       args = []
       library_path = os.path.join(self.closure_env["closure_root"], self.closure_env["closure_library"])
       for group in [[CLOSURE_COMPILER_NPM], dash_args]:
-        args.extend([item.replace(old_path, self.closure_env["closure_library_path"]) for item in group if item])
+        args.extend([item.replace(library_path, self.closure_env["closure_library_path"]) for item in group if item])
 
       proc = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
       (stdout, stderr) = proc.communicate()
