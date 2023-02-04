@@ -85,11 +85,17 @@ Blockly.Toolbox = function(workspace) {
 };
 
 /**
+ * Width of the category menu.
+ * @type {number}
+ */
+Blockly.Toolbox.prototype.categoryWidth = 85;
+
+/**
  * Width of the toolbox, which changes only in vertical layout.
  * This is the sum of the width of the flyout (250) and the category menu (85).
  * @type {number}
  */
-Blockly.Toolbox.prototype.width = 250 + 85;
+Blockly.Toolbox.prototype.width = 250 + Blockly.Toolbox.prototype.categoryWidth;
 
 /**
  * Height of the toolbox, which changes only in horizontal layout.
@@ -214,6 +220,14 @@ Blockly.Toolbox.prototype.showAll_ = function() {
 };
 
 /**
+ * Get the width of the category menu.
+ * @return {number} The width of the toolbox.
+ */
+Blockly.Toolbox.prototype.getCategoryWidth = function() {
+  return this.categoryWidth;
+};
+
+/**
  * Get the width of the toolbox.
  * @return {number} The width of the toolbox.
  */
@@ -324,6 +338,14 @@ Blockly.Toolbox.prototype.getClientRect = function() {
   } else {  // Bottom
     return new goog.math.Rect(0, y, 2 * BIG_NUM, BIG_NUM);
   }
+};
+
+/**
+ * Is the delete area enabled?
+ * @return {boolean} True if delete area is enabled.
+ */
+Blockly.Toolbox.prototype.hasDeleteArea = function() {
+  return this.flyout_.hasDeleteArea();
 };
 
 /**
@@ -446,6 +468,12 @@ Blockly.Toolbox.prototype.setSelectedItem = function(item, opt_shouldScroll) {
     // They selected a different category but one was already open.  Close it.
     this.selectedItem_.setSelected(false);
   }
+  if (this.selectedItem_ == item) {
+    // Select the category that is already open. Hide the toolbox.
+    this.selectedItem_ = null;
+    this.flyout_.setVisible(false);
+    return;
+  }
   this.selectedItem_ = item;
   if (this.selectedItem_ != null) {
     this.selectedItem_.setSelected(true);
@@ -485,8 +513,12 @@ Blockly.Toolbox.prototype.scrollToCategoryByName = function(name) {
   var scrollPositions = this.flyout_.categoryScrollPositions;
   for (var i = 0; i < scrollPositions.length; i++) {
     if (name === scrollPositions[i].categoryName) {
-      this.flyout_.setVisible(true);
-      this.flyout_.scrollTo(scrollPositions[i].position);
+      if (this.flyout_.isVisible()) {
+        this.flyout_.scrollTo(scrollPositions[i].position);
+      } else {
+        this.flyout_.setVisible(true);
+        this.flyout_.moveTo(scrollPositions[i].position);
+      }
       return;
     }
   }
@@ -501,8 +533,12 @@ Blockly.Toolbox.prototype.scrollToCategoryById = function(id) {
   var scrollPositions = this.flyout_.categoryScrollPositions;
   for (var i = 0; i < scrollPositions.length; i++) {
     if (id === scrollPositions[i].categoryId) {
-      this.flyout_.setVisible(true);
-      this.flyout_.scrollTo(scrollPositions[i].position);
+      if (this.flyout_.isVisible()) {
+        this.flyout_.scrollTo(scrollPositions[i].position);
+      } else {
+        this.flyout_.setVisible(true);
+        this.flyout_.moveTo(scrollPositions[i].position);
+      }
       return;
     }
   }

@@ -1198,10 +1198,13 @@ Blockly.WorkspaceSvg.prototype.recordDeleteAreas_ = function() {
   }
   if (this.flyout_) {
     this.deleteAreaToolbox_ = this.flyout_.getClientRect();
+    this.deleteAreaParent_ = this.flyout_;
   } else if (this.toolbox_) {
     this.deleteAreaToolbox_ = this.toolbox_.getClientRect();
+    this.deleteAreaParent_ = this.toolbox_;
   } else {
     this.deleteAreaToolbox_ = null;
+    this.deleteAreaParent_ = null;
   }
 };
 
@@ -1230,7 +1233,7 @@ Blockly.WorkspaceSvg.prototype.isDeleteArea = function(e) {
   if (this.deleteAreaTrash_ && this.deleteAreaTrash_.contains(xy)) {
     return Blockly.DELETE_AREA_TRASH;
   }
-  if (this.deleteAreaToolbox_ && this.deleteAreaToolbox_.contains(xy)) {
+  if (this.deleteAreaToolbox_ && this.deleteAreaParent_.hasDeleteArea() && this.deleteAreaToolbox_.contains(xy)) {
     return Blockly.DELETE_AREA_TOOLBOX;
   }
   return Blockly.DELETE_AREA_NONE;
@@ -1993,7 +1996,7 @@ Blockly.WorkspaceSvg.getTopLevelWorkspaceMetrics_ = function() {
       svgSize.height -= toolboxDimensions.height;
     } else if (this.toolboxPosition == Blockly.TOOLBOX_AT_LEFT ||
         this.toolboxPosition == Blockly.TOOLBOX_AT_RIGHT) {
-      svgSize.width -= toolboxDimensions.width;
+      svgSize.width -= this.toolbox_.getCategoryWidth();
     }
   }
 
@@ -2004,7 +2007,7 @@ Blockly.WorkspaceSvg.getTopLevelWorkspaceMetrics_ = function() {
 
   var absoluteLeft = 0;
   if (this.toolbox_ && this.toolboxPosition == Blockly.TOOLBOX_AT_LEFT) {
-    absoluteLeft = toolboxDimensions.width;
+    absoluteLeft = this.toolbox_.getCategoryWidth();
   }
   var absoluteTop = 0;
   if (this.toolbox_ && this.toolboxPosition == Blockly.TOOLBOX_AT_TOP) {

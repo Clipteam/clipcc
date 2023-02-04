@@ -389,6 +389,14 @@ Blockly.Flyout.prototype.getWorkspace = function() {
 };
 
 /**
+ * Is the delete area enabled?
+ * @return {boolean} True if delete area is enabled.
+ */
+Blockly.Flyout.prototype.hasDeleteArea = function() {
+  return this.isVisible_;
+};
+
+/**
  * Is the flyout visible?
  * @return {boolean} True if visible.
  */

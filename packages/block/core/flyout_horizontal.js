@@ -243,6 +243,15 @@ Blockly.HorizontalFlyout.prototype.setBackgroundPath_ = function(width, height) 
 };
 
 /**
+ * Move the flyout to a position.
+ * @param {number} pos The targeted move position in workspace coordinates.
+ * @package
+ */
+Blockly.HorizontalFlyout.prototype.moveTo = function(pos) {
+  this.scrollbar_.set(pos * this.workspace_.scale);
+};
+
+/**
  * Scroll the flyout to the top.
  */
 Blockly.HorizontalFlyout.prototype.scrollToStart = function() {
