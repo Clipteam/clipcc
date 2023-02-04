@@ -752,7 +752,7 @@ Blockly.Toolbox.Category.prototype.createDom = function() {
       Blockly.utils.replaceMessageReferences(this.name_));
   // cc beg - new category style
   this.colorBar_ = goog.dom.createDom('div',
-  {'class': 'scratchCategoryItemColorBar'});
+      {'class': 'scratchCategoryItemColorBar'});
   this.colorBar_.style.backgroundColor = this.colour_;
   this.colorBar_.style.borderColor = this.secondaryColour_;
   this.item_.appendChild(this.colorBar_);
