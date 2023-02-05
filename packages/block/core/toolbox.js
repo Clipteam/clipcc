@@ -197,7 +197,7 @@ Blockly.Toolbox.prototype.createFlyout_ = function() {
 Blockly.Toolbox.prototype.populate_ = function(newTree) {
   this.categoryMenu_.populate(newTree);
   this.showAll_();
-  if (!this.isCollapsed_) {
+  if (!this.selectedItem_) {
     this.setSelectedItem(this.categoryMenu_.categories_[0], false);
   }
 };
@@ -490,16 +490,16 @@ Blockly.Toolbox.prototype.setSelectedItem = function(item, opt_shouldScroll) {
   if (typeof opt_shouldScroll === 'undefined') {
     opt_shouldScroll = true;
   }
-  if (this.selectedItem_) {
-    // They selected a different category but one was already open.  Close it.
-    this.selectedItem_.setSelected(false);
-  }
   if (this.selectedItem_ == item) {
     // Select the category that is already open. Collapse the toolbox.
     this.selectedItem_.setSelected(false);
     this.selectedItem_ = null;
     this.setCollapsed(true);
     return;
+  }
+  if (this.selectedItem_) {
+    // They selected a different category but one was already open.  Close it.
+    this.selectedItem_.setSelected(false);
   }
   this.selectedItem_ = item;
   if (this.selectedItem_ != null) {
