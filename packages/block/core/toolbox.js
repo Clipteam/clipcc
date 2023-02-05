@@ -197,7 +197,7 @@ Blockly.Toolbox.prototype.createFlyout_ = function() {
 Blockly.Toolbox.prototype.populate_ = function(newTree) {
   this.categoryMenu_.populate(newTree);
   this.showAll_();
-  if (!this.selectedItem_) {
+  if (!this.isCollapsed && !this.selectedItem_) {
     this.setSelectedItem(this.categoryMenu_.categories_[0], false);
   }
 };
