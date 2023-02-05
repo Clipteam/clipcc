@@ -82,6 +82,12 @@ Blockly.Toolbox = function(workspace) {
    */
   this.toolboxPosition = workspace.options.toolboxPosition;
 
+  /**
+   * Whether the toolbox is collapsed.
+   * @type {boolean}
+   * @private
+   */
+  this.isCollapsed_ = false;
 };
 
 /**
@@ -191,7 +197,9 @@ Blockly.Toolbox.prototype.createFlyout_ = function() {
 Blockly.Toolbox.prototype.populate_ = function(newTree) {
   this.categoryMenu_.populate(newTree);
   this.showAll_();
-  this.setSelectedItem(this.categoryMenu_.categories_[0], false);
+  if (!this.isCollapsed_) {
+    this.setSelectedItem(this.categoryMenu_.categories_[0], false);
+  }
 };
 
 /**
@@ -216,7 +224,7 @@ Blockly.Toolbox.prototype.showAll_ = function() {
 
     allContents = allContents.concat(category.getContents());
   }
-  this.flyout_.show(allContents);
+  this.flyout_.show(allContents, !this.isCollapsed_);
 };
 
 /**
@@ -341,11 +349,29 @@ Blockly.Toolbox.prototype.getClientRect = function() {
 };
 
 /**
- * Is the delete area enabled?
- * @return {boolean} True if delete area is enabled.
+ * Is the toolbox collapsed?
+ * @returns {boolean} True if the toolbox is collapsed.
  */
-Blockly.Toolbox.prototype.hasDeleteArea = function() {
-  return this.flyout_.hasDeleteArea();
+Blockly.Toolbox.prototype.isCollapsed = function() {
+  return this.isCollapsed_;
+};
+
+/**
+ * Set whether the toolbox collapsed.
+ * @param {boolean} collapsed Whether the toolbox collapsed.
+ */
+Blockly.Toolbox.prototype.setCollapsed = function(collapsed) {
+  if (this.isCollapsed_ == collapsed) {
+    return;
+  }
+  this.isCollapsed_ = collapsed;
+  this.flyout_.scrollTarget = null;
+  this.flyout_.setVisible(!collapsed);
+  if (!collapsed) {
+    // Correctly position the flyout's scrollbar when it opens.
+    this.flyout_.position();
+  }
+  this.workspace_.recordDeleteAreas_();
 };
 
 /**
@@ -469,9 +495,10 @@ Blockly.Toolbox.prototype.setSelectedItem = function(item, opt_shouldScroll) {
     this.selectedItem_.setSelected(false);
   }
   if (this.selectedItem_ == item) {
-    // Select the category that is already open. Hide the toolbox.
+    // Select the category that is already open. Collapse the toolbox.
+    this.selectedItem_.setSelected(false);
     this.selectedItem_ = null;
-    this.flyout_.setVisible(false);
+    this.setCollapsed(true);
     return;
   }
   this.selectedItem_ = item;
@@ -479,7 +506,13 @@ Blockly.Toolbox.prototype.setSelectedItem = function(item, opt_shouldScroll) {
     this.selectedItem_.setSelected(true);
     // Scroll flyout to the top of the selected category
     var categoryId = item.id_;
-    if (opt_shouldScroll) {
+    if (this.isCollapsed_) {
+      this.setCollapsed(false);
+      if (opt_shouldScroll) {
+        this.scrollToCategoryById(categoryId, true);
+      }
+    }
+    else if (opt_shouldScroll) {
       this.scrollToCategoryById(categoryId);
     }
   }
@@ -513,11 +546,12 @@ Blockly.Toolbox.prototype.scrollToCategoryByName = function(name) {
   var scrollPositions = this.flyout_.categoryScrollPositions;
   for (var i = 0; i < scrollPositions.length; i++) {
     if (name === scrollPositions[i].categoryName) {
-      if (this.flyout_.isVisible()) {
-        this.flyout_.scrollTo(scrollPositions[i].position);
-      } else {
-        this.flyout_.setVisible(true);
+      this.flyout_.setVisible(true);
+      if (opt_immediately) {
         this.flyout_.moveTo(scrollPositions[i].position);
+      }
+      else {
+        this.flyout_.scrollTo(scrollPositions[i].position);
       }
       return;
     }
@@ -527,17 +561,19 @@ Blockly.Toolbox.prototype.scrollToCategoryByName = function(name) {
 /**
  * Scroll to a category by id.
  * @param {string} id The id of the category to scroll to.
+ * @param {boolean=} opt_immediately True to call moveTo instead of scrollTo. Defaults to false.
  * @public
  */
-Blockly.Toolbox.prototype.scrollToCategoryById = function(id) {
+Blockly.Toolbox.prototype.scrollToCategoryById = function(id, opt_immediately) {
   var scrollPositions = this.flyout_.categoryScrollPositions;
   for (var i = 0; i < scrollPositions.length; i++) {
     if (id === scrollPositions[i].categoryId) {
-      if (this.flyout_.isVisible()) {
-        this.flyout_.scrollTo(scrollPositions[i].position);
-      } else {
-        this.flyout_.setVisible(true);
+      this.flyout_.setVisible(true);
+      if (opt_immediately) {
         this.flyout_.moveTo(scrollPositions[i].position);
+      }
+      else {
+        this.flyout_.scrollTo(scrollPositions[i].position);
       }
       return;
     }

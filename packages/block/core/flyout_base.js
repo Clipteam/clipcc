@@ -389,14 +389,6 @@ Blockly.Flyout.prototype.getWorkspace = function() {
 };
 
 /**
- * Is the delete area enabled?
- * @return {boolean} True if delete area is enabled.
- */
-Blockly.Flyout.prototype.hasDeleteArea = function() {
-  return this.isVisible_;
-};
-
-/**
  * Is the flyout visible?
  * @return {boolean} True if visible.
  */
@@ -473,12 +465,18 @@ Blockly.Flyout.prototype.hide = function() {
  * Show and populate the flyout.
  * @param {!Array|string} xmlList List of blocks to show.
  *     Variables and procedures have a custom set of blocks.
+ * @param {boolean=} opt_visible Whether visible after show. Defaults to true.
  */
-Blockly.Flyout.prototype.show = function(xmlList) {
+Blockly.Flyout.prototype.show = function(xmlList, opt_visible) {
+  if (typeof opt_visible === 'undefined') {
+    opt_visible = true;
+  }
+
   this.workspace_.setResizesEnabled(false);
   this.hide();
   this.clearOldBlocks_();
 
+  // Set visible to true to create blocks properly.
   this.setVisible(true);
   // Create the blocks to be shown in this flyout.
   var contents = [];
@@ -561,6 +559,8 @@ Blockly.Flyout.prototype.show = function(xmlList) {
       }
     }
   }
+
+  this.setVisible(opt_visible);
 
   this.emptyRecycleBlocks_();
 

@@ -1198,13 +1198,10 @@ Blockly.WorkspaceSvg.prototype.recordDeleteAreas_ = function() {
   }
   if (this.flyout_) {
     this.deleteAreaToolbox_ = this.flyout_.getClientRect();
-    this.deleteAreaParent_ = this.flyout_;
   } else if (this.toolbox_) {
     this.deleteAreaToolbox_ = this.toolbox_.getClientRect();
-    this.deleteAreaParent_ = this.toolbox_;
   } else {
     this.deleteAreaToolbox_ = null;
-    this.deleteAreaParent_ = null;
   }
 };
 
@@ -1233,7 +1230,7 @@ Blockly.WorkspaceSvg.prototype.isDeleteArea = function(e) {
   if (this.deleteAreaTrash_ && this.deleteAreaTrash_.contains(xy)) {
     return Blockly.DELETE_AREA_TRASH;
   }
-  if (this.deleteAreaToolbox_ && this.deleteAreaParent_.hasDeleteArea() && this.deleteAreaToolbox_.contains(xy)) {
+  if (this.deleteAreaToolbox_ && this.deleteAreaToolbox_.contains(xy)) {
     return Blockly.DELETE_AREA_TOOLBOX;
   }
   return Blockly.DELETE_AREA_NONE;
