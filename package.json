@@ -17,6 +17,7 @@
   },
   "scripts": {
     "start": "yarn gui:start",
+    "prepare": "husky install",
     "build:dist": "NODE_ENV=production yarn build:full",
     "build:full": "yarn l10n:build && yarn block:build && yarn vm:build && yarn gui:build",
     "build": "yarn block:build && yarn gui:build",
@@ -34,5 +35,10 @@
     "vm:docs": "yarn workspace scratch-vm docs",
     "vm:translation": "yarn workspace scratch-vm i18n:src",
     "vm:start": "yarn workspace scratch-vm start"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.4.2",
+    "commitlint-config-gitmoji": "^2.2.10",
+    "husky": "^8.0.3"
   }
 }
