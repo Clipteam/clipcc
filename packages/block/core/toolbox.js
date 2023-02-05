@@ -540,9 +540,10 @@ Blockly.Toolbox.prototype.setSelectedCategoryById = function(id) {
 /**
  * Scroll to a category by name.
  * @param {string} name The name of the category to scroll to.
+ * @param {boolean=} opt_immediately True to call moveTo instead of scrollTo. Defaults to false.
  * @package
  */
-Blockly.Toolbox.prototype.scrollToCategoryByName = function(name) {
+Blockly.Toolbox.prototype.scrollToCategoryByName = function(name, opt_immediately) {
   var scrollPositions = this.flyout_.categoryScrollPositions;
   for (var i = 0; i < scrollPositions.length; i++) {
     if (name === scrollPositions[i].categoryName) {
