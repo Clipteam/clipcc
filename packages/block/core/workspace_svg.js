@@ -47,7 +47,6 @@ goog.require('Blockly.WorkspaceAudio');
 goog.require('Blockly.WorkspaceComment');
 goog.require('Blockly.WorkspaceCommentSvg');
 goog.require('Blockly.WorkspaceCommentSvg.render');
-goog.require('Blockly.WorkspaceDragSurfaceSvg');
 goog.require('Blockly.Xml');
 goog.require('Blockly.ZoomControls');
 
@@ -63,12 +62,10 @@ goog.require('goog.math.Rect');
  * @param {!Blockly.Options} options Dictionary of options.
  * @param {Blockly.BlockDragSurfaceSvg=} opt_blockDragSurface Drag surface for
  *     blocks.
- * @param {Blockly.WorkspaceDragSurfaceSvg=} opt_wsDragSurface Drag surface for
- *     the workspace.
  * @extends {Blockly.Workspace}
  * @constructor
  */
-Blockly.WorkspaceSvg = function(options, opt_blockDragSurface, opt_wsDragSurface) {
+Blockly.WorkspaceSvg = function(options, opt_blockDragSurface) {
   Blockly.WorkspaceSvg.superClass_.constructor.call(this, options);
   this.getMetrics =
       options.getMetrics || Blockly.WorkspaceSvg.getTopLevelWorkspaceMetrics_;
@@ -80,13 +77,6 @@ Blockly.WorkspaceSvg = function(options, opt_blockDragSurface, opt_wsDragSurface
   if (opt_blockDragSurface) {
     this.blockDragSurface_ = opt_blockDragSurface;
   }
-
-  if (opt_wsDragSurface) {
-    this.workspaceDragSurface_ = opt_wsDragSurface;
-  }
-
-  this.useWorkspaceDragSurface_ =
-      this.workspaceDragSurface_ && Blockly.utils.is3dSupported();
 
   /**
    * List of currently highlighted blocks.  Block highlighting is often used to
@@ -232,31 +222,6 @@ Blockly.WorkspaceSvg.prototype.currentGesture_ = null;
  * @private
  */
 Blockly.WorkspaceSvg.prototype.blockDragSurface_ = null;
-
-/**
- * This workspace's drag surface, if it exists.
- * @type {Blockly.WorkspaceDragSurfaceSvg}
- * @private
- */
-Blockly.WorkspaceSvg.prototype.workspaceDragSurface_ = null;
-
-/**
-  * Whether to move workspace to the drag surface when it is dragged.
-  * True if it should move, false if it should be translated directly.
-  * @type {boolean}
-  * @private
-  */
-Blockly.WorkspaceSvg.prototype.useWorkspaceDragSurface_ = false;
-
-/**
- * Whether the drag surface is actively in use. When true, calls to
- * translate will translate the drag surface instead of the translating the
- * workspace directly.
- * This is set to true in setupDragSurface and to false in resetDragSurface.
- * @type {boolean}
- * @private
- */
-Blockly.WorkspaceSvg.prototype.isDragSurfaceActive_ = false;
 
 /**
  * The first parent div with 'injectionDiv' in the name, or null if not set.
@@ -760,74 +725,14 @@ Blockly.WorkspaceSvg.prototype.getParentSvg = function() {
  * @param {number} y Vertical translation.
  */
 Blockly.WorkspaceSvg.prototype.translate = function(x, y) {
-  if (this.useWorkspaceDragSurface_ && this.isDragSurfaceActive_) {
-    this.workspaceDragSurface_.translateSurface(x,y);
-  } else {
-    var translation = 'translate(' + x + ',' + y + ') ' +
-        'scale(' + this.scale + ')';
-    this.svgBlockCanvas_.setAttribute('transform', translation);
-    this.svgBubbleCanvas_.setAttribute('transform', translation);
-  }
+  var translation = 'translate(' + x + ',' + y + ') ' +
+      'scale(' + this.scale + ')';
+  this.svgBlockCanvas_.setAttribute('transform', translation);
+  this.svgBubbleCanvas_.setAttribute('transform', translation);
   // Now update the block drag surface if we're using one.
   if (this.blockDragSurface_) {
     this.blockDragSurface_.translateAndScaleGroup(x, y, this.scale);
   }
-};
-
-/**
- * Called at the end of a workspace drag to take the contents
- * out of the drag surface and put them back into the workspace SVG.
- * Does nothing if the workspace drag surface is not enabled.
- * @package
- */
-Blockly.WorkspaceSvg.prototype.resetDragSurface = function() {
-  // Don't do anything if we aren't using a drag surface.
-  if (!this.useWorkspaceDragSurface_) {
-    return;
-  }
-
-  this.isDragSurfaceActive_ = false;
-
-  var trans = this.workspaceDragSurface_.getSurfaceTranslation();
-  this.workspaceDragSurface_.clearAndHide(this.svgGroup_);
-  var translation = 'translate(' + trans.x + ',' + trans.y + ') ' +
-      'scale(' + this.scale + ')';
-  this.svgBlockCanvas_.setAttribute('transform', translation);
-  this.svgBubbleCanvas_.setAttribute('transform', translation);
-};
-
-/**
- * Called at the beginning of a workspace drag to move contents of
- * the workspace to the drag surface.
- * Does nothing if the drag surface is not enabled.
- * @package
- */
-Blockly.WorkspaceSvg.prototype.setupDragSurface = function() {
-  // Don't do anything if we aren't using a drag surface.
-  if (!this.useWorkspaceDragSurface_) {
-    return;
-  }
-
-  // This can happen if the user starts a drag, mouses up outside of the
-  // document where the mouseup listener is registered (e.g. outside of an
-  // iframe) and then moves the mouse back in the workspace.  On mobile and ff,
-  // we get the mouseup outside the frame. On chrome and safari desktop we do
-  // not.
-  if (this.isDragSurfaceActive_) {
-    return;
-  }
-
-  this.isDragSurfaceActive_ = true;
-
-  // Figure out where we want to put the canvas back.  The order
-  // in the is important because things are layered.
-  var previousElement = this.svgBlockCanvas_.previousSibling;
-  var width = parseInt(this.getParentSvg().getAttribute('width'), 10);
-  var height = parseInt(this.getParentSvg().getAttribute('height'), 10);
-  var coord = Blockly.utils.getRelativeXY(this.svgBlockCanvas_);
-  this.workspaceDragSurface_.setContentsAndShow(this.svgBlockCanvas_,
-      this.svgBubbleCanvas_, previousElement, width, height, this.scale);
-  this.workspaceDragSurface_.translateSurface(coord.x, coord.y);
 };
 
 /**
