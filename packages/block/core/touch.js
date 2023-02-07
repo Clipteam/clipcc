@@ -152,7 +152,7 @@ Blockly.Touch.getTouchIdentifierFromEvent = function(e) {
  *     saved identifier.
  */
 Blockly.Touch.checkTouchIdentifier = function(e) {
-  var identifier = Blockly.Touch.getTouchIdentifierFromEvent(e);
+  const identifier = Blockly.Touch.getTouchIdentifierFromEvent(e);
 
   // if (Blockly.touchIdentifier_ )is insufficient because Android touch
   // identifiers may be zero.
@@ -180,12 +180,13 @@ Blockly.Touch.checkTouchIdentifier = function(e) {
  * @param {!Event} e A touch event.
  */
 Blockly.Touch.setClientFromTouch = function(e) {
-  if (Blockly.utils.startsWith(e.type, 'touch')) {
-    // Map the touch event's properties to the event.
-    var touchPoint = e.changedTouches[0];
-    e.clientX = touchPoint.clientX;
-    e.clientY = touchPoint.clientY;
+  if (!Blockly.utils.startsWith(e.type, 'touch')) {
+    return;
   }
+  // Map the touch event's properties to the event.
+  const touchPoint = e.changedTouches[0];
+  e.clientX = touchPoint.clientX;
+  e.clientY = touchPoint.clientY;
 };
 
 /**
@@ -207,10 +208,10 @@ Blockly.Touch.isMouseOrTouchEvent = function(e) {
  *     event will have exactly one changed touch.
  */
 Blockly.Touch.splitEventByTouches = function(e) {
-  var events = [];
+  const events = [];
   if (e.changedTouches) {
-    for (var i = 0; i < e.changedTouches.length; i++) {
-      var newEvent = {
+    for (let i = 0; i < e.changedTouches.length; i++) {
+      const newEvent = {
         type: e.type,
         changedTouches: [e.changedTouches[i]],
         target: e.target,

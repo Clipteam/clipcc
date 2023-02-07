@@ -60,7 +60,7 @@ goog.inherits(Blockly.Events.VarBase, Blockly.Events.Abstract);
  * @return {!Object} JSON representation.
  */
 Blockly.Events.VarBase.prototype.toJson = function() {
-  var json = Blockly.Events.VarBase.superClass_.toJson.call(this);
+  const json = Blockly.Events.VarBase.superClass_.toJson.call(this);
   json['varId'] = this.varId;
   return json;
 };
@@ -104,7 +104,7 @@ Blockly.Events.VarCreate.prototype.type = Blockly.Events.VAR_CREATE;
  * @return {!Object} JSON representation.
  */
 Blockly.Events.VarCreate.prototype.toJson = function() {
-  var json = Blockly.Events.VarCreate.superClass_.toJson.call(this);
+  const json = Blockly.Events.VarCreate.superClass_.toJson.call(this);
   json['varType'] = this.varType;
   json['varName'] = this.varName;
   json['isLocal'] = this.isLocal;
@@ -129,7 +129,7 @@ Blockly.Events.VarCreate.prototype.fromJson = function(json) {
  * @param {boolean} forward True if run forward, false if run backward (undo).
  */
 Blockly.Events.VarCreate.prototype.run = function(forward) {
-  var workspace = this.getEventWorkspace_();
+  const workspace = this.getEventWorkspace_();
   if (forward) {
     workspace.createVariable(this.varName, this.varType, this.varId, this.isLocal, this.isCloud);
   } else {
@@ -167,7 +167,7 @@ Blockly.Events.VarDelete.prototype.type = Blockly.Events.VAR_DELETE;
  * @return {!Object} JSON representation.
  */
 Blockly.Events.VarDelete.prototype.toJson = function() {
-  var json = Blockly.Events.VarDelete.superClass_.toJson.call(this);
+  const json = Blockly.Events.VarDelete.superClass_.toJson.call(this);
   json['varType'] = this.varType;
   json['varName'] = this.varName;
   json['isLocal'] = this.isLocal;
@@ -192,7 +192,7 @@ Blockly.Events.VarDelete.prototype.fromJson = function(json) {
  * @param {boolean} forward True if run forward, false if run backward (undo).
  */
 Blockly.Events.VarDelete.prototype.run = function(forward) {
-  var workspace = this.getEventWorkspace_();
+  const workspace = this.getEventWorkspace_();
   if (forward) {
     workspace.deleteVariableById(this.varId);
   } else {
@@ -229,7 +229,7 @@ Blockly.Events.VarRename.prototype.type = Blockly.Events.VAR_RENAME;
  * @return {!Object} JSON representation.
  */
 Blockly.Events.VarRename.prototype.toJson = function() {
-  var json = Blockly.Events.VarRename.superClass_.toJson.call(this);
+  const json = Blockly.Events.VarRename.superClass_.toJson.call(this);
   json['oldName'] = this.oldName;
   json['newName'] = this.newName;
   return json;
@@ -250,7 +250,7 @@ Blockly.Events.VarRename.prototype.fromJson = function(json) {
  * @param {boolean} forward True if run forward, false if run backward (undo).
  */
 Blockly.Events.VarRename.prototype.run = function(forward) {
-  var workspace = this.getEventWorkspace_();
+  const workspace = this.getEventWorkspace_();
   if (forward) {
     workspace.renameVariableById(this.varId, this.newName);
   } else {

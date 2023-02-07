@@ -58,7 +58,7 @@ Blockly.ScratchMsgs.setLocale = function(locale) {
     Blockly.Msg = Object.assign({}, Blockly.Msg, Blockly.ScratchMsgs.locales[locale]);
   } else {
     // keep current locale
-    console.warn('Ignoring unrecognized locale: ' + locale);
+    console.warn(`Ignoring unrecognized locale: ${locale}`);
   }
 };
 
@@ -73,10 +73,10 @@ Blockly.ScratchMsgs.setLocale = function(locale) {
  * @package
  */
 Blockly.ScratchMsgs.translate = function(msgId, defaultMsg, useLocale) {
-  var locale = useLocale || Blockly.ScratchMsgs.currentLocale_;
+  const locale = useLocale || Blockly.ScratchMsgs.currentLocale_;
 
   if (Object.keys(Blockly.ScratchMsgs.locales).includes(locale)) {
-    var messages = Blockly.ScratchMsgs.locales[locale];
+    const messages = Blockly.ScratchMsgs.locales[locale];
     if (Object.keys(messages).includes(msgId)) {
       return messages[msgId];
     }

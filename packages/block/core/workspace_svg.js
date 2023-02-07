@@ -279,7 +279,7 @@ Blockly.WorkspaceSvg.prototype.getInverseScreenCTM = function() {
   // Defer getting the screen CTM until we actually need it, this should
   // avoid forced reflows from any calls to updateInverseScreenCTM.
   if (this.inverseScreenCTMDirty_) {
-    var ctm = this.getParentSvg().getScreenCTM();
+    const ctm = this.getParentSvg().getScreenCTM();
     if (ctm) {
       this.inverseScreenCTM_ = ctm.inverse();
       this.inverseScreenCTMDirty_ = false;
@@ -314,9 +314,9 @@ Blockly.WorkspaceSvg.prototype.updateInverseScreenCTM = function() {
  * @private
  */
 Blockly.WorkspaceSvg.prototype.getSvgXY = function(element) {
-  var x = 0;
-  var y = 0;
-  var scale = 1;
+  let x = 0;
+  let y = 0;
+  let scale = 1;
   if (goog.dom.contains(this.getCanvas(), element) ||
       goog.dom.contains(this.getBubbleCanvas(), element)) {
     // Before the SVG canvas, scale the coordinates.
@@ -324,7 +324,7 @@ Blockly.WorkspaceSvg.prototype.getSvgXY = function(element) {
   }
   do {
     // Loop through this block and every parent.
-    var xy = Blockly.utils.getRelativeXY(element);
+    const xy = Blockly.utils.getRelativeXY(element);
     if (element == this.getCanvas() ||
         element == this.getBubbleCanvas()) {
       // After the SVG canvas, don't scale the coordinates.
@@ -359,10 +359,10 @@ Blockly.WorkspaceSvg.prototype.getInjectionDiv = function() {
   // NB: it would be better to pass this in at createDom, but is more likely to
   // break existing uses of Blockly.
   if (!this.injectionDiv_) {
-    var element = this.svgGroup_;
+    let element = this.svgGroup_;
     while (element) {
-      var classes = element.getAttribute('class') || '';
-      if ((' ' + classes + ' ').indexOf(' injectionDiv ') != -1) {
+      const classes = element.getAttribute('class') || '';
+      if ((` ${classes} `).indexOf(' injectionDiv ') != -1) {
         this.injectionDiv_ = element;
         break;
       }
@@ -410,7 +410,7 @@ Blockly.WorkspaceSvg.prototype.createDom = function(opt_backgroundClass) {
 
     if (opt_backgroundClass == 'blocklyMainBackground' && this.grid_) {
       this.svgBackground_.style.fill =
-          'url(#' + this.grid_.getPatternId() + ')';
+          `url(#${this.grid_.getPatternId()})`;
     }
   }
   /** @type {SVGElement} */
@@ -419,7 +419,7 @@ Blockly.WorkspaceSvg.prototype.createDom = function(opt_backgroundClass) {
   /** @type {SVGElement} */
   this.svgBubbleCanvas_ = Blockly.utils.createSvgElement('g',
       {'class': 'blocklyBubbleCanvas'}, this.svgGroup_, this);
-  var bottom = Blockly.Scrollbar.scrollbarThickness;
+  let bottom = Blockly.Scrollbar.scrollbarThickness;
   if (this.options.hasTrashcan) {
     bottom = this.addTrashcan_(bottom);
   }
@@ -539,7 +539,7 @@ Blockly.WorkspaceSvg.prototype.newBlock = function(prototypeName, opt_id) {
 Blockly.WorkspaceSvg.prototype.addTrashcan_ = function(bottom) {
   /** @type {Blockly.Trashcan} */
   this.trashcan = new Blockly.Trashcan(this);
-  var svgTrashcan = this.trashcan.createDom();
+  const svgTrashcan = this.trashcan.createDom();
   this.svgGroup_.insertBefore(svgTrashcan, this.svgBlockCanvas_);
   return this.trashcan.init(bottom);
 };
@@ -553,7 +553,7 @@ Blockly.WorkspaceSvg.prototype.addTrashcan_ = function(bottom) {
 Blockly.WorkspaceSvg.prototype.addZoomControls_ = function(bottom) {
   /** @type {Blockly.ZoomControls} */
   this.zoomControls_ = new Blockly.ZoomControls(this);
-  var svgZoomControls = this.zoomControls_.createDom();
+  const svgZoomControls = this.zoomControls_.createDom();
   this.svgGroup_.appendChild(svgZoomControls);
   return this.zoomControls_.init(bottom);
 };
@@ -565,7 +565,7 @@ Blockly.WorkspaceSvg.prototype.addZoomControls_ = function(bottom) {
  * @private
  */
 Blockly.WorkspaceSvg.prototype.addFlyout_ = function(tagName) {
-  var workspaceOptions = {
+  const workspaceOptions = {
     disabledPatternId: this.options.disabledPatternId,
     parentWorkspace: this,
     RTL: this.RTL,
@@ -676,7 +676,7 @@ Blockly.WorkspaceSvg.prototype.resize = function() {
 Blockly.WorkspaceSvg.prototype.updateScreenCalculationsIfScrolled
     = function() {
   /* eslint-disable indent */
-  var currScroll = goog.dom.getDocumentScroll();
+      const currScroll = goog.dom.getDocumentScroll();
   if (!goog.math.Coordinate.equals(this.lastRecordedPageScroll_,
      currScroll)) {
     this.lastRecordedPageScroll_ = currScroll;
@@ -708,7 +708,7 @@ Blockly.WorkspaceSvg.prototype.getParentSvg = function() {
   if (this.cachedParentSvg_) {
     return this.cachedParentSvg_;
   }
-  var element = this.svgGroup_;
+  let element = this.svgGroup_;
   while (element) {
     if (element.tagName == 'svg') {
       this.cachedParentSvg_ = element;
@@ -725,8 +725,8 @@ Blockly.WorkspaceSvg.prototype.getParentSvg = function() {
  * @param {number} y Vertical translation.
  */
 Blockly.WorkspaceSvg.prototype.translate = function(x, y) {
-  var translation = 'translate(' + x + ',' + y + ') ' +
-      'scale(' + this.scale + ')';
+  const translation = `translate(${x},${y}) ` +
+  'scale(' + this.scale + ')';
   this.svgBlockCanvas_.setAttribute('transform', translation);
   this.svgBubbleCanvas_.setAttribute('transform', translation);
   // Now update the block drag surface if we're using one.
@@ -750,7 +750,7 @@ Blockly.WorkspaceSvg.prototype.getBlockDragSurface = function() {
  * @return {number} Width.
  */
 Blockly.WorkspaceSvg.prototype.getWidth = function() {
-  var metrics = this.getMetrics();
+  const metrics = this.getMetrics();
   return metrics ? metrics.viewWidth / this.scale : 0;
 };
 
@@ -795,9 +795,9 @@ Blockly.WorkspaceSvg.prototype.setVisible = function(isVisible) {
  */
 Blockly.WorkspaceSvg.prototype.render = function() {
   // Generate list of all blocks.
-  var blocks = this.getAllBlocks();
+  const blocks = this.getAllBlocks();
   // Render each block.
-  for (var i = blocks.length - 1; i >= 0; i--) {
+  for (let i = blocks.length - 1; i >= 0; i--) {
     blocks[i].render(false);
   }
 };
@@ -824,23 +824,24 @@ Blockly.WorkspaceSvg.prototype.traceOn = function() {
 Blockly.WorkspaceSvg.prototype.highlightBlock = function(id, opt_state) {
   if (opt_state === undefined) {
     // Unhighlight all blocks.
-    for (var i = 0, block; block = this.highlightedBlocks_[i]; i++) {
+    for (let i = 0, block; block = this.highlightedBlocks_[i]; i++) {
       block.setHighlighted(false);
     }
     this.highlightedBlocks_.length = 0;
   }
   // Highlight/unhighlight the specified block.
-  var block = id ? this.getBlockById(id) : null;
-  if (block) {
-    var state = (opt_state === undefined) || opt_state;
-    // Using Set here would be great, but at the cost of IE10 support.
-    if (!state) {
-      goog.array.remove(this.highlightedBlocks_, block);
-    } else if (this.highlightedBlocks_.indexOf(block) == -1) {
-      this.highlightedBlocks_.push(block);
-    }
-    block.setHighlighted(state);
+  const block = id ? this.getBlockById(id) : null;
+  if (!block) {
+    return;
   }
+  const state = (opt_state === undefined) || opt_state;
+  // Using Set here would be great, but at the cost of IE10 support.
+  if (!state) {
+    goog.array.remove(this.highlightedBlocks_, block);
+  } else if (this.highlightedBlocks_.indexOf(block) == -1) {
+    this.highlightedBlocks_.push(block);
+  }
+  block.setHighlighted(state);
 };
 
 /**
@@ -849,7 +850,7 @@ Blockly.WorkspaceSvg.prototype.highlightBlock = function(id, opt_state) {
  * @param {boolean} isGlowingBlock Whether to glow the block.
  */
 Blockly.WorkspaceSvg.prototype.glowBlock = function(id, isGlowingBlock) {
-  var block = null;
+  let block = null;
   if (id) {
     block = this.getBlockById(id);
     if (!block) {
@@ -865,7 +866,7 @@ Blockly.WorkspaceSvg.prototype.glowBlock = function(id, isGlowingBlock) {
  * @param {boolean} isGlowingStack Whether to glow the stack.
  */
 Blockly.WorkspaceSvg.prototype.glowStack = function(id, isGlowingStack) {
-  var block = null;
+  let block = null;
   if (id) {
     block = this.getBlockById(id);
     if (!block) {
@@ -882,14 +883,14 @@ Blockly.WorkspaceSvg.prototype.glowStack = function(id, isGlowingStack) {
  * @param {?string} value String value to visually report.
  */
 Blockly.WorkspaceSvg.prototype.reportValue = function(id, value) {
-  var block = this.getBlockById(id);
+  const block = this.getBlockById(id);
   if (!block) {
     throw 'Tried to report value on block that does not exist.';
   }
   Blockly.DropDownDiv.hideWithoutAnimation();
   Blockly.DropDownDiv.clearContent();
-  var contentDiv = Blockly.DropDownDiv.getContentDiv();
-  var valueReportBox = goog.dom.createElement('div');
+  const contentDiv = Blockly.DropDownDiv.getContentDiv();
+  const valueReportBox = goog.dom.createElement('div');
   valueReportBox.setAttribute('class', 'valueReportBox');
   valueReportBox.innerHTML = Blockly.scratchBlocksUtils.encodeEntities(value);
   contentDiv.appendChild(valueReportBox);
@@ -929,8 +930,8 @@ Blockly.WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
     // Scratch-specific: Give shadow dom new IDs to prevent duplicating on paste
     Blockly.scratchBlocksUtils.changeObscuredShadowIds(block);
     // Move the duplicate to original position.
-    var blockX = parseInt(xmlBlock.getAttribute('x'), 10);
-    var blockY = parseInt(xmlBlock.getAttribute('y'), 10);
+    let blockX = parseInt(xmlBlock.getAttribute('x'), 10);
+    let blockY = parseInt(xmlBlock.getAttribute('y'), 10);
     if (!isNaN(blockX) && !isNaN(blockY)) {
       if (this.RTL) {
         blockX = -blockX;
@@ -939,9 +940,9 @@ Blockly.WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
       // distance with neighbouring blocks.
       do {
         var collide = false;
-        var allBlocks = this.getAllBlocks();
-        for (var i = 0, otherBlock; otherBlock = allBlocks[i]; i++) {
-          var otherXY = otherBlock.getRelativeToSurfaceXY();
+        const allBlocks = this.getAllBlocks();
+        for (let i = 0, otherBlock; otherBlock = allBlocks[i]; i++) {
+          const otherXY = otherBlock.getRelativeToSurfaceXY();
           if (Math.abs(blockX - otherXY.x) <= 1 &&
               Math.abs(blockY - otherXY.y) <= 1) {
             collide = true;
@@ -951,8 +952,8 @@ Blockly.WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
         if (!collide) {
           // Check for blocks in snap range to any of its connections.
           var connections = block.getConnections_(false);
-          for (var i = 0, connection; connection = connections[i]; i++) {
-            var neighbour = connection.closest(Blockly.SNAP_RADIUS,
+          for (let i = 0, connection; connection = connections[i]; i++) {
+            const neighbour = connection.closest(Blockly.SNAP_RADIUS,
                 new goog.math.Coordinate(blockX, blockY));
             if (neighbour.connection) {
               collide = true;
@@ -990,8 +991,8 @@ Blockly.WorkspaceSvg.prototype.pasteWorkspaceComment_ = function(xmlComment) {
   try {
     var comment = Blockly.WorkspaceCommentSvg.fromXml(xmlComment, this);
     // Move the duplicate to original position.
-    var commentX = parseInt(xmlComment.getAttribute('x'), 10);
-    var commentY = parseInt(xmlComment.getAttribute('y'), 10);
+    let commentX = parseInt(xmlComment.getAttribute('x'), 10);
+    let commentY = parseInt(xmlComment.getAttribute('y'), 10);
     if (!isNaN(commentX) && !isNaN(commentY)) {
       if (this.RTL) {
         commentX = -commentX;
@@ -1025,7 +1026,7 @@ Blockly.WorkspaceSvg.prototype.refreshToolboxSelection_ = function() {
       this.toolbox_.refreshSelection();
     }
   } else {
-    var thisTarget = this.targetWorkspace;
+    const thisTarget = this.targetWorkspace;
     if (thisTarget && thisTarget.toolbox_ && thisTarget.toolbox_.flyout_ &&
       !thisTarget.currentGesture_ && thisTarget.toolboxRefreshEnabled_) {
       thisTarget.toolbox_.refreshSelection();
@@ -1072,8 +1073,8 @@ Blockly.WorkspaceSvg.prototype.deleteVariableById = function(id) {
  */
 Blockly.WorkspaceSvg.prototype.createVariable = function(name, opt_type, opt_id,
     opt_isLocal, opt_isCloud) {
-  var variableInMap = (this.getVariable(name, opt_type) != null);
-  var newVar = Blockly.WorkspaceSvg.superClass_.createVariable.call(
+  const variableInMap = (this.getVariable(name, opt_type) != null);
+  const newVar = Blockly.WorkspaceSvg.superClass_.createVariable.call(
       this, name, opt_type, opt_id, opt_isLocal, opt_isCloud);
   // For performance reasons, only refresh the the toolbox for new variables.
   // Variables that already exist should already be there.
@@ -1115,13 +1116,13 @@ Blockly.WorkspaceSvg.prototype.recordDeleteAreas_ = function() {
  * @private
  */
 Blockly.WorkspaceSvg.prototype.recordBlocksArea_ = function() {
-  var parentSvg = this.getParentSvg();
+  const parentSvg = this.getParentSvg();
   if (parentSvg) {
-    var bounds = parentSvg.getBoundingClientRect();
+    const bounds = parentSvg.getBoundingClientRect();
     this.blocksArea_ = new goog.math.Rect(bounds.left, bounds.top, bounds.width, bounds.height);
-  } else {
-    this.blocksArea_ = null;
+    return;
   }
+  this.blocksArea_ = null;
 };
 
 /**
@@ -1131,7 +1132,7 @@ Blockly.WorkspaceSvg.prototype.recordBlocksArea_ = function() {
  *     which delete area the event is over.
  */
 Blockly.WorkspaceSvg.prototype.isDeleteArea = function(e) {
-  var xy = new goog.math.Coordinate(e.clientX, e.clientY);
+  const xy = new goog.math.Coordinate(e.clientX, e.clientY);
   if (this.deleteAreaTrash_ && this.deleteAreaTrash_.contains(xy)) {
     return Blockly.DELETE_AREA_TRASH;
   }
@@ -1147,7 +1148,7 @@ Blockly.WorkspaceSvg.prototype.isDeleteArea = function(e) {
  * @return {boolean} True if event is within the bounds of the blocks UI or delete area
  */
 Blockly.WorkspaceSvg.prototype.isInsideBlocksArea = function(e) {
-  var xy = new goog.math.Coordinate(e.clientX, e.clientY);
+  const xy = new goog.math.Coordinate(e.clientX, e.clientY);
   if (this.isDeleteArea(e) || (this.blocksArea_ && this.blocksArea_.contains(xy))) {
     return true;
   }
@@ -1160,7 +1161,7 @@ Blockly.WorkspaceSvg.prototype.isInsideBlocksArea = function(e) {
  * @private
  */
 Blockly.WorkspaceSvg.prototype.onMouseDown_ = function(e) {
-  var gesture = this.getGesture(e);
+  const gesture = this.getGesture(e);
   if (gesture) {
     gesture.handleWsStart(e, this);
   }
@@ -1173,7 +1174,7 @@ Blockly.WorkspaceSvg.prototype.onMouseDown_ = function(e) {
  */
 Blockly.WorkspaceSvg.prototype.startDrag = function(e, xy) {
   // Record the starting offset between the bubble's location and the mouse.
-  var point = Blockly.utils.mouseToSvg(e, this.getParentSvg(),
+  const point = Blockly.utils.mouseToSvg(e, this.getParentSvg(),
       this.getInverseScreenCTM());
   // Fix scale of mouse event.
   point.x /= this.scale;
@@ -1187,7 +1188,7 @@ Blockly.WorkspaceSvg.prototype.startDrag = function(e, xy) {
  * @return {!goog.math.Coordinate} New location of object.
  */
 Blockly.WorkspaceSvg.prototype.moveDrag = function(e) {
-  var point = Blockly.utils.mouseToSvg(e, this.getParentSvg(),
+  const point = Blockly.utils.mouseToSvg(e, this.getParentSvg(),
       this.getInverseScreenCTM());
   // Fix scale of mouse event.
   point.x /= this.scale;
@@ -1225,13 +1226,13 @@ Blockly.WorkspaceSvg.prototype.onMouseWheel_ = function(e) {
 
   // Multiplier variable, so that non-pixel-deltaModes are supported.
   // See LLK/scratch-blocks#1190.
-  var multiplier = e.deltaMode === 0x1 ? Blockly.LINE_SCROLL_MULTIPLIER : 1;
+  const multiplier = e.deltaMode === 0x1 ? Blockly.LINE_SCROLL_MULTIPLIER : 1;
 
   if (e.ctrlKey) {
     // The vertical scroll distance that corresponds to a click of a zoom button.
-    var PIXELS_PER_ZOOM_STEP = 50;
-    var delta = -e.deltaY / PIXELS_PER_ZOOM_STEP * multiplier;
-    var position = Blockly.utils.mouseToSvg(e, this.getParentSvg(),
+    const PIXELS_PER_ZOOM_STEP = 50;
+    const delta = -e.deltaY / PIXELS_PER_ZOOM_STEP * multiplier;
+    const position = Blockly.utils.mouseToSvg(e, this.getParentSvg(),
         this.getInverseScreenCTM());
     this.zoom(position.x, position.y, delta);
   } else {
@@ -1241,8 +1242,8 @@ Blockly.WorkspaceSvg.prototype.onMouseWheel_ = function(e) {
     Blockly.WidgetDiv.hide(true);
     Blockly.DropDownDiv.hideWithoutAnimation();
 
-    var x = this.scrollX - e.deltaX * multiplier;
-    var y = this.scrollY - e.deltaY * multiplier;
+    let x = this.scrollX - e.deltaX * multiplier;
+    let y = this.scrollY - e.deltaY * multiplier;
 
     if (e.shiftKey && e.deltaX === 0) {
       // Scroll horizontally (based on vertical scroll delta)
@@ -1266,20 +1267,20 @@ Blockly.WorkspaceSvg.prototype.onMouseWheel_ = function(e) {
  *   containing the blocks on the workspace.
  */
 Blockly.WorkspaceSvg.prototype.getBlocksBoundingBox = function() {
-  var topBlocks = this.getTopBlocks(false);
-  var topComments = this.getTopComments(false);
-  var topElements = topBlocks.concat(topComments);
+  const topBlocks = this.getTopBlocks(false);
+  const topComments = this.getTopComments(false);
+  const topElements = topBlocks.concat(topComments);
   // There are no blocks, return empty rectangle.
   if (!topElements.length) {
     return {x: 0, y: 0, width: 0, height: 0};
   }
 
   // Initialize boundary using the first block.
-  var boundary = topElements[0].getBoundingRectangle();
+  const boundary = topElements[0].getBoundingRectangle();
 
   // Start at 1 since the 0th block was used for initialization
-  for (var i = 1; i < topElements.length; i++) {
-    var blockBoundary = topElements[i].getBoundingRectangle();
+  for (let i = 1; i < topElements.length; i++) {
+    const blockBoundary = topElements[i].getBoundingRectangle();
     if (blockBoundary.topLeft.x < boundary.topLeft.x) {
       boundary.topLeft.x = blockBoundary.topLeft.x;
     }
@@ -1307,10 +1308,10 @@ Blockly.WorkspaceSvg.prototype.getBlocksBoundingBox = function() {
 Blockly.WorkspaceSvg.prototype.cleanUp = function() {
   this.setResizesEnabled(false);
   Blockly.Events.setGroup(true);
-  var topBlocks = this.getTopBlocks(true);
-  var cursorY = 0;
-  for (var i = 0, block; block = topBlocks[i]; i++) {
-    var xy = block.getRelativeToSurfaceXY();
+  const topBlocks = this.getTopBlocks(true);
+  let cursorY = 0;
+  for (let i = 0, block; block = topBlocks[i]; i++) {
+    const xy = block.getRelativeToSurfaceXY();
     block.moveBy(-xy.x, cursorY - xy.y);
     block.snapToGrid();
     cursorY = block.getRelativeToSurfaceXY().y +
@@ -1329,10 +1330,10 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
   if (this.options.readOnly || this.isFlyout) {
     return;
   }
-  var menuOptions = [];
-  var topBlocks = this.getTopBlocks(true);
-  var eventGroup = Blockly.utils.genUid();
-  var ws = this;
+  const menuOptions = [];
+  const topBlocks = this.getTopBlocks(true);
+  const eventGroup = Blockly.utils.genUid();
+  const ws = this;
 
   // Options to undo/redo previous action.
   menuOptions.push(Blockly.ContextMenu.wsUndoOption(this));
@@ -1345,10 +1346,10 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
   }
 
   if (this.options.collapse) {
-    var hasCollapsedBlocks = false;
-    var hasExpandedBlocks = false;
+    let hasCollapsedBlocks = false;
+    let hasExpandedBlocks = false;
     for (var i = 0; i < topBlocks.length; i++) {
-      var block = topBlocks[i];
+      let block = topBlocks[i];
       while (block) {
         if (block.isCollapsed()) {
           hasCollapsedBlocks = true;
@@ -1373,19 +1374,19 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
 
   // Option to delete all blocks.
   // Count the number of blocks that are deletable.
-  var deleteList = Blockly.WorkspaceSvg.buildDeleteList_(topBlocks);
+  const deleteList = Blockly.WorkspaceSvg.buildDeleteList_(topBlocks);
   // Scratch-specific: don't count shadow blocks in delete count
-  var deleteCount = 0;
+  let deleteCount = 0;
   for (var i = 0; i < deleteList.length; i++) {
     if (!deleteList[i].isShadow()) {
       deleteCount++;
     }
   }
 
-  var DELAY = 10;
+  const DELAY = 10;
   function deleteNext() {
     Blockly.Events.setGroup(eventGroup);
-    var block = deleteList.shift();
+    const block = deleteList.shift();
     if (block) {
       if (block.workspace) {
         block.dispose(false, true);
@@ -1397,7 +1398,7 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
     Blockly.Events.setGroup(false);
   }
 
-  var deleteOption = {
+  const deleteOption = {
     text: deleteCount == 1 ? Blockly.Msg.DELETE_BLOCK :
         Blockly.Msg.DELETE_X_BLOCKS.replace('%1', String(deleteCount)),
     enabled: deleteCount > 0,
@@ -1433,18 +1434,18 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
  * @private
  */
 Blockly.WorkspaceSvg.buildDeleteList_ = function(topBlocks) {
-  var deleteList = [];
+  let deleteList = [];
   function addDeletableBlocks(block) {
     if (block.isDeletable()) {
       deleteList = deleteList.concat(block.getDescendants(false));
     } else {
-      var children = block.getChildren();
-      for (var i = 0; i < children.length; i++) {
+      const children = block.getChildren();
+      for (let i = 0; i < children.length; i++) {
         addDeletableBlocks(children[i]);
       }
     }
   }
-  for (var i = 0; i < topBlocks.length; i++) {
+  for (let i = 0; i < topBlocks.length; i++) {
     addDeletableBlocks(topBlocks[i]);
   }
   return deleteList;
@@ -1472,13 +1473,13 @@ Blockly.WorkspaceSvg.prototype.updateToolbox = function(tree) {
     this.options.languageTree = tree;
     this.toolbox_.populate_(tree);
     this.toolbox_.position();
-  } else {
-    if (!this.flyout_) {
-      throw 'Existing toolbox has categories.  Can\'t change mode.';
-    }
-    this.options.languageTree = tree;
-    this.flyout_.show(tree.childNodes);
+    return;
   }
+  if (!this.flyout_) {
+    throw 'Existing toolbox has categories.  Can\'t change mode.';
+  }
+  this.options.languageTree = tree;
+  this.flyout_.show(tree.childNodes);
 };
 
 /**
@@ -1533,19 +1534,19 @@ Blockly.WorkspaceSvg.prototype.setBrowserFocus = function() {
  *                        (negative zooms out and positive zooms in).
  */
 Blockly.WorkspaceSvg.prototype.zoom = function(x, y, amount) {
-  var speed = this.options.zoomOptions.scaleSpeed;
-  var metrics = this.getMetrics();
-  var center = this.getParentSvg().createSVGPoint();
+  const speed = this.options.zoomOptions.scaleSpeed;
+  const metrics = this.getMetrics();
+  let center = this.getParentSvg().createSVGPoint();
   center.x = x;
   center.y = y;
   center = center.matrixTransform(this.getCanvas().getCTM().inverse());
   x = center.x;
   y = center.y;
-  var canvas = this.getCanvas();
+  const canvas = this.getCanvas();
   // Scale factor.
-  var scaleChange = Math.pow(speed, amount);
+  let scaleChange = Math.pow(speed, amount);
   // Clamp scale within valid range.
-  var newScale = this.scale * scaleChange;
+  const newScale = this.scale * scaleChange;
   if (newScale > this.options.zoomOptions.maxScale) {
     scaleChange = this.options.zoomOptions.maxScale / this.scale;
   } else if (newScale < this.options.zoomOptions.minScale) {
@@ -1555,7 +1556,7 @@ Blockly.WorkspaceSvg.prototype.zoom = function(x, y, amount) {
     return;  // No change in zoom.
   }
   if (this.scrollbar) {
-    var matrix = canvas.getCTM()
+    const matrix = canvas.getCTM()
         .translate(x * (1 - scaleChange), y * (1 - scaleChange))
         .scale(scaleChange);
     // newScale and matrix.a should be identical (within a rounding error).
@@ -1574,9 +1575,9 @@ Blockly.WorkspaceSvg.prototype.zoom = function(x, y, amount) {
  * @param {number} type Type of zooming (-1 zooming out and 1 zooming in).
  */
 Blockly.WorkspaceSvg.prototype.zoomCenter = function(type) {
-  var metrics = this.getMetrics();
-  var x = metrics.viewWidth / 2;
-  var y = metrics.viewHeight / 2;
+  const metrics = this.getMetrics();
+  const x = metrics.viewWidth / 2;
+  const y = metrics.viewHeight / 2;
   this.zoom(x, y, type);
 };
 
@@ -1584,15 +1585,15 @@ Blockly.WorkspaceSvg.prototype.zoomCenter = function(type) {
  * Zoom the blocks to fit in the workspace if possible.
  */
 Blockly.WorkspaceSvg.prototype.zoomToFit = function() {
-  var metrics = this.getMetrics();
-  var blocksBox = this.getBlocksBoundingBox();
-  var blocksWidth = blocksBox.width;
-  var blocksHeight = blocksBox.height;
+  const metrics = this.getMetrics();
+  const blocksBox = this.getBlocksBoundingBox();
+  let blocksWidth = blocksBox.width;
+  let blocksHeight = blocksBox.height;
   if (!blocksWidth) {
     return;  // Prevents zooming to infinity.
   }
-  var workspaceWidth = metrics.viewWidth;
-  var workspaceHeight = metrics.viewHeight;
+  let workspaceWidth = metrics.viewWidth;
+  const workspaceHeight = metrics.viewHeight;
   if (this.flyout_) {
     workspaceWidth -= this.flyout_.width_;
   }
@@ -1601,8 +1602,8 @@ Blockly.WorkspaceSvg.prototype.zoomToFit = function() {
     blocksWidth += metrics.contentLeft;
     blocksHeight += metrics.contentTop;
   }
-  var ratioX = workspaceWidth / blocksWidth;
-  var ratioY = workspaceHeight / blocksHeight;
+  const ratioX = workspaceWidth / blocksWidth;
+  const ratioY = workspaceHeight / blocksHeight;
   this.setScale(Math.min(ratioX, ratioY));
   this.scrollCenter();
 };
@@ -1620,12 +1621,12 @@ Blockly.WorkspaceSvg.prototype.scrollCenter = function() {
   Blockly.WidgetDiv.hide(true);
   Blockly.DropDownDiv.hideWithoutAnimation();
   Blockly.hideChaff(false);
-  var metrics = this.getMetrics();
-  var x = (metrics.contentWidth - metrics.viewWidth) / 2;
+  const metrics = this.getMetrics();
+  let x = (metrics.contentWidth - metrics.viewWidth) / 2;
   if (this.flyout_) {
     x -= this.flyout_.width_ / 2;
   }
-  var y = (metrics.contentHeight - metrics.viewHeight) / 2;
+  const y = (metrics.contentHeight - metrics.viewHeight) / 2;
   this.scrollbar.set(x, y);
 };
 
@@ -1640,45 +1641,45 @@ Blockly.WorkspaceSvg.prototype.centerOnBlock = function(id) {
     return;
   }
 
-  var block = this.getBlockById(id);
+  const block = this.getBlockById(id);
   if (!block) {
     return;
   }
 
   // XY is in workspace coordinates.
-  var xy = block.getRelativeToSurfaceXY();
+  const xy = block.getRelativeToSurfaceXY();
   // Height/width is in workspace units.
-  var heightWidth = block.getHeightWidth();
+  const heightWidth = block.getHeightWidth();
 
   // Find the enter of the block in workspace units.
-  var blockCenterY = xy.y + heightWidth.height / 2;
+  const blockCenterY = xy.y + heightWidth.height / 2;
 
   // In RTL the block's position is the top right of the block, not top left.
-  var multiplier = this.RTL ? -1 : 1;
-  var blockCenterX = xy.x + (multiplier * heightWidth.width / 2);
+  const multiplier = this.RTL ? -1 : 1;
+  const blockCenterX = xy.x + (multiplier * heightWidth.width / 2);
 
   // Workspace scale, used to convert from workspace coordinates to pixels.
-  var scale = this.scale;
+  const scale = this.scale;
 
   // Center in pixels.  0, 0 is at the workspace origin.  These numbers may
   // be negative.
-  var pixelX = blockCenterX * scale;
-  var pixelY = blockCenterY * scale;
+  const pixelX = blockCenterX * scale;
+  const pixelY = blockCenterY * scale;
 
-  var metrics = this.getMetrics();
+  const metrics = this.getMetrics();
 
   // Scrolling to here would put the block in the top-left corner of the
   // visible workspace.
-  var scrollToBlockX = pixelX - metrics.contentLeft;
-  var scrollToBlockY = pixelY - metrics.contentTop;
+  const scrollToBlockX = pixelX - metrics.contentLeft;
+  const scrollToBlockY = pixelY - metrics.contentTop;
 
   // viewHeight and viewWidth are in pixels.
-  var halfViewWidth = metrics.viewWidth / 2;
-  var halfViewHeight = metrics.viewHeight / 2;
+  const halfViewWidth = metrics.viewWidth / 2;
+  const halfViewHeight = metrics.viewHeight / 2;
 
   // Put the block in the center of the visible workspace instead.
-  var scrollToCenterX = scrollToBlockX - halfViewWidth;
-  var scrollToCenterY = scrollToBlockY - halfViewHeight;
+  const scrollToCenterX = scrollToBlockX - halfViewWidth;
+  const scrollToCenterY = scrollToBlockY - halfViewHeight;
 
   Blockly.hideChaff();
   this.scrollbar.set(scrollToCenterX, scrollToCenterY);
@@ -1719,7 +1720,7 @@ Blockly.WorkspaceSvg.prototype.setScale = function(newScale) {
  * @param {number} y Target Y to scroll to
  */
 Blockly.WorkspaceSvg.prototype.scroll = function(x, y) {
-  var metrics = this.startDragMetrics; // Cached values
+  const metrics = this.startDragMetrics; // Cached values
   x = Math.min(x, -metrics.contentLeft);
   y = Math.min(y, -metrics.contentTop);
   x = Math.max(x, metrics.viewWidth - metrics.contentLeft -
@@ -1756,8 +1757,8 @@ Blockly.WorkspaceSvg.prototype.updateStackGlowScale_ = function() {
  * @private
  */
 Blockly.WorkspaceSvg.getDimensionsPx_ = function(elem) {
-  var width = 0;
-  var height = 0;
+  let width = 0;
+  let height = 0;
   if (elem) {
     width = elem.getWidth();
     height = elem.getHeight();
@@ -1800,14 +1801,14 @@ Blockly.WorkspaceSvg.getContentDimensions_ = function(ws, svgSize) {
  */
 Blockly.WorkspaceSvg.getContentDimensionsExact_ = function(ws) {
   // Block bounding box is in workspace coordinates.
-  var blockBox = ws.getBlocksBoundingBox();
-  var scale = ws.scale;
+  const blockBox = ws.getBlocksBoundingBox();
+  const scale = ws.scale;
 
   // Convert to pixels.
-  var width = blockBox.width * scale;
-  var height = blockBox.height * scale;
-  var left = blockBox.x * scale;
-  var top = blockBox.y * scale;
+  const width = blockBox.width * scale;
+  const height = blockBox.height * scale;
+  const left = blockBox.x * scale;
+  const top = blockBox.y * scale;
 
   return {
     left: left,
@@ -1833,23 +1834,23 @@ Blockly.WorkspaceSvg.getContentDimensionsExact_ = function(ws) {
  * @private
  */
 Blockly.WorkspaceSvg.getContentDimensionsBounded_ = function(ws, svgSize) {
-  var content = Blockly.WorkspaceSvg.getContentDimensionsExact_(ws);
+  const content = Blockly.WorkspaceSvg.getContentDimensionsExact_(ws);
 
   // View height and width are both in pixels, and are the same as the SVG size.
-  var viewWidth = svgSize.width;
-  var viewHeight = svgSize.height;
-  var halfWidth = viewWidth / 2;
-  var halfHeight = viewHeight / 2;
+  const viewWidth = svgSize.width;
+  const viewHeight = svgSize.height;
+  const halfWidth = viewWidth / 2;
+  const halfHeight = viewHeight / 2;
 
   // Add a border around the content that is at least half a screenful wide.
   // Ensure border is wide enough that blocks can scroll over entire screen.
-  var left = Math.min(content.left - halfWidth, content.right - viewWidth);
-  var right = Math.max(content.right + halfWidth, content.left + viewWidth);
+  const left = Math.min(content.left - halfWidth, content.right - viewWidth);
+  const right = Math.max(content.right + halfWidth, content.left + viewWidth);
 
-  var top = Math.min(content.top - halfHeight, content.bottom - viewHeight);
-  var bottom = Math.max(content.bottom + halfHeight, content.top + viewHeight);
+  const top = Math.min(content.top - halfHeight, content.bottom - viewHeight);
+  const bottom = Math.max(content.bottom + halfHeight, content.top + viewHeight);
 
-  var dimensions = {
+  const dimensions = {
     left: left,
     top: top,
     height: bottom - top,
@@ -1884,14 +1885,14 @@ Blockly.WorkspaceSvg.getContentDimensionsBounded_ = function(ws, svgSize) {
  */
 Blockly.WorkspaceSvg.getTopLevelWorkspaceMetrics_ = function() {
 
-  var toolboxDimensions =
-      Blockly.WorkspaceSvg.getDimensionsPx_(this.toolbox_);
-  var flyoutDimensions =
-      Blockly.WorkspaceSvg.getDimensionsPx_(this.flyout_);
+  const toolboxDimensions =
+  Blockly.WorkspaceSvg.getDimensionsPx_(this.toolbox_);
+  const flyoutDimensions =
+  Blockly.WorkspaceSvg.getDimensionsPx_(this.flyout_);
 
   // Contains height and width in CSS pixels.
   // svgSize is equivalent to the size of the injectionDiv at this point.
-  var svgSize = Blockly.svgSize(this.getParentSvg());
+  const svgSize = Blockly.svgSize(this.getParentSvg());
   if (this.toolbox_) {
     if (this.toolboxPosition == Blockly.TOOLBOX_AT_TOP ||
         this.toolboxPosition == Blockly.TOOLBOX_AT_BOTTOM) {
@@ -1904,19 +1905,19 @@ Blockly.WorkspaceSvg.getTopLevelWorkspaceMetrics_ = function() {
 
   // svgSize is now the space taken up by the Blockly workspace, not including
   // the toolbox.
-  var contentDimensions =
-      Blockly.WorkspaceSvg.getContentDimensions_(this, svgSize);
+  const contentDimensions =
+  Blockly.WorkspaceSvg.getContentDimensions_(this, svgSize);
 
-  var absoluteLeft = 0;
+  let absoluteLeft = 0;
   if (this.toolbox_ && this.toolboxPosition == Blockly.TOOLBOX_AT_LEFT) {
     absoluteLeft = this.toolbox_.getCategoryWidth();
   }
-  var absoluteTop = 0;
+  let absoluteTop = 0;
   if (this.toolbox_ && this.toolboxPosition == Blockly.TOOLBOX_AT_TOP) {
     absoluteTop = toolboxDimensions.height;
   }
 
-  var metrics = {
+  const metrics = {
     contentHeight: contentDimensions.height,
     contentWidth: contentDimensions.width,
     contentTop: contentDimensions.top,
@@ -1952,15 +1953,15 @@ Blockly.WorkspaceSvg.setTopLevelWorkspaceMetrics_ = function(xyRatio) {
   if (!this.scrollbar) {
     throw 'Attempt to set top level workspace scroll without scrollbars.';
   }
-  var metrics = this.getMetrics();
+  const metrics = this.getMetrics();
   if (goog.isNumber(xyRatio.x)) {
     this.scrollX = -metrics.contentWidth * xyRatio.x - metrics.contentLeft;
   }
   if (goog.isNumber(xyRatio.y)) {
     this.scrollY = -metrics.contentHeight * xyRatio.y - metrics.contentTop;
   }
-  var x = this.scrollX + metrics.absoluteLeft;
-  var y = this.scrollY + metrics.absoluteTop;
+  const x = this.scrollX + metrics.absoluteLeft;
+  const y = this.scrollY + metrics.absoluteTop;
   this.translate(x, y);
   if (this.grid_) {
     this.grid_.moveTo(x, y);
@@ -1975,7 +1976,7 @@ Blockly.WorkspaceSvg.setTopLevelWorkspaceMetrics_ = function(xyRatio) {
  * @param {boolean} enabled Whether resizes should be enabled.
  */
 Blockly.WorkspaceSvg.prototype.setResizesEnabled = function(enabled) {
-  var reenabled = (!this.resizesEnabled_ && enabled);
+  const reenabled = (!this.resizesEnabled_ && enabled);
   this.resizesEnabled_ = enabled;
   if (reenabled) {
     // Newly enabled.  Trigger a resize.
@@ -1991,7 +1992,7 @@ Blockly.WorkspaceSvg.prototype.setResizesEnabled = function(enabled) {
  * @param {boolean} enabled Whether refreshes should be enabled.
  */
 Blockly.WorkspaceSvg.prototype.setToolboxRefreshEnabled = function(enabled) {
-  var reenabled = (!this.toolboxRefreshEnabled_ && enabled);
+  const reenabled = (!this.toolboxRefreshEnabled_ && enabled);
   this.toolboxRefreshEnabled_ = enabled;
   if (reenabled) {
     // Newly enabled.  Trigger a refresh.
@@ -2034,7 +2035,7 @@ Blockly.WorkspaceSvg.prototype.registerButtonCallback = function(key, func) {
  *     given key for this workspace; null if no callback is registered.
  */
 Blockly.WorkspaceSvg.prototype.getButtonCallback = function(key) {
-  var result = this.flyoutButtonCallbacks_[key];
+  const result = this.flyoutButtonCallbacks_[key];
   return result ? result : null;
 };
 
@@ -2070,7 +2071,7 @@ Blockly.WorkspaceSvg.prototype.registerToolboxCategoryCallback = function(key,
  *     is registered.
  */
 Blockly.WorkspaceSvg.prototype.getToolboxCategoryCallback = function(key) {
-  var result = this.toolboxCategoryCallbacks_[key];
+  const result = this.toolboxCategoryCallbacks_[key];
   return result ? result : null;
 };
 
@@ -2091,9 +2092,9 @@ Blockly.WorkspaceSvg.prototype.removeToolboxCategoryCallback = function(key) {
  * @package
  */
 Blockly.WorkspaceSvg.prototype.getGesture = function(e) {
-  var isStart = (e.type == 'mousedown' || e.type == 'touchstart');
+  const isStart = (e.type == 'mousedown' || e.type == 'touchstart');
 
-  var gesture = this.currentGesture_;
+  const gesture = this.currentGesture_;
   if (gesture) {
     if (isStart && gesture.hasStarted()) {
       // That's funny.  We must have missed a mouse up.
@@ -2146,7 +2147,7 @@ Blockly.WorkspaceSvg.prototype.startDragWithFakeEvent = function(fakeEvent,
     block) {
   Blockly.Touch.clearTouchIdentifier();
   Blockly.Touch.checkTouchIdentifier(fakeEvent);
-  var gesture = block.workspace.getGesture(fakeEvent);
+  const gesture = block.workspace.getGesture(fakeEvent);
   gesture.forceStartBlockDrag(fakeEvent, block);
 };
 

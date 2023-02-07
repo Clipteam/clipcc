@@ -65,12 +65,12 @@ goog.inherits(Blockly.FieldImage, Blockly.Field);
  * @nocollapse
  */
 Blockly.FieldImage.fromJson = function(options) {
-  var src = Blockly.utils.replaceMessageReferences(options['src']);
-  var width = Number(Blockly.utils.replaceMessageReferences(options['width']));
-  var height =
-      Number(Blockly.utils.replaceMessageReferences(options['height']));
-  var alt = Blockly.utils.replaceMessageReferences(options['alt']);
-  var flip_rtl = !!options['flip_rtl'] || !!options['flipRtl'];
+  const src = Blockly.utils.replaceMessageReferences(options['src']);
+  const width = Number(Blockly.utils.replaceMessageReferences(options['width']));
+  const height =
+  Number(Blockly.utils.replaceMessageReferences(options['height']));
+  const alt = Blockly.utils.replaceMessageReferences(options['alt']);
+  const flip_rtl = !!options['flip_rtl'] || !!options['flipRtl'];
   return new Blockly.FieldImage(src, width, height, alt, flip_rtl);
 };
 
@@ -97,8 +97,8 @@ Blockly.FieldImage.prototype.init = function() {
   this.imageElement_ = Blockly.utils.createSvgElement(
       'image',
       {
-        'height': this.height_ + 'px',
-        'width': this.width_ + 'px'
+        'height': `${this.height_}px`,
+        'width': `${this.width_}px`
       },
       this.fieldGroup_);
   this.setValue(this.src_);

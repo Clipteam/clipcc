@@ -43,7 +43,7 @@ Blockly.FieldIconMenu = function(icons) {
   // Example:
   // [{src: '...', width: 20, height: 20, alt: '...', value: 'machine_value'}, ...]
   // First icon provides the default values.
-  var defaultValue = icons[0].value;
+  const defaultValue = icons[0].value;
   Blockly.FieldIconMenu.superClass_.constructor.call(this, defaultValue);
   this.addArgType('iconmenu');
 };
@@ -85,7 +85,7 @@ Blockly.FieldIconMenu.prototype.init = function(block) {
   }
   // Render the arrow icon
   // Fixed sizes in px. Saved for creating the flip transform of the menu renders above the button.
-  var arrowSize = 12;
+  const arrowSize = 12;
   /** @type {Number} */
   this.arrowX_ = 18;
   /** @type {Number} */
@@ -96,12 +96,12 @@ Blockly.FieldIconMenu.prototype.init = function(block) {
   }
   /** @type {Element} */
   this.arrowIcon_ = Blockly.utils.createSvgElement('image', {
-    'height': arrowSize + 'px',
-    'width': arrowSize + 'px',
-    'transform': 'translate(' + this.arrowX_ + ',' + this.arrowY_ + ')'
+    'height': `${arrowSize}px`,
+    'width': `${arrowSize}px`,
+    'transform': `translate(${this.arrowX_},${this.arrowY_})`
   });
   this.arrowIcon_.setAttributeNS('http://www.w3.org/1999/xlink',
-      'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'dropdown-arrow.svg');
+      'xlink:href', `${Blockly.mainWorkspace.options.pathToMedia}dropdown-arrow.svg`);
   block.getSvgRoot().appendChild(this.arrowIcon_);
   Blockly.FieldIconMenu.superClass_.init.call(this, block);
 };
@@ -140,10 +140,10 @@ Blockly.FieldIconMenu.prototype.setParentFieldImage = function(src) {
   // It's possible that this function could be called before
   // a parent block is set; in that case, fail silently.
   if (this.sourceBlock_ && this.sourceBlock_.parentBlock_) {
-    var parentBlock = this.sourceBlock_.parentBlock_;
+    const parentBlock = this.sourceBlock_.parentBlock_;
     // Loop through all inputs' fields to find the first FieldImage
-    for (var i = 0, input; input = parentBlock.inputList[i]; i++) {
-      for (var j = 0, field; field = input.fieldRow[j]; j++) {
+    for (let i = 0, input; input = parentBlock.inputList[i]; i++) {
+      for (let j = 0, field; field = input.fieldRow[j]; j++) {
         if (field instanceof Blockly.FieldImage) {
           // Src for a FieldImage is stored in its value.
           field.setValue(src);
@@ -168,7 +168,7 @@ Blockly.FieldIconMenu.prototype.getValue = function() {
  * @return {string} Src to image representing value
  */
 Blockly.FieldIconMenu.prototype.getSrcForValue = function(value) {
-  for (var i = 0, icon; icon = this.icons_[i]; i++) {
+  for (let i = 0, icon; icon = this.icons_[i]; i++) {
     if (icon.value === value) {
       return icon.src;
     }
@@ -188,28 +188,28 @@ Blockly.FieldIconMenu.prototype.showEditor_ = function() {
   Blockly.DropDownDiv.hideWithoutAnimation();
   Blockly.DropDownDiv.clearContent();
   // Populate the drop-down with the icons for this field.
-  var contentDiv = Blockly.DropDownDiv.getContentDiv();
+  const contentDiv = Blockly.DropDownDiv.getContentDiv();
   // Accessibility properties
   contentDiv.setAttribute('role', 'menu');
   contentDiv.setAttribute('aria-haspopup', 'true');
-  for (var i = 0, icon; icon = this.icons_[i]; i++) {
+  for (let i = 0, icon; icon = this.icons_[i]; i++) {
     // Icons with the type property placeholder take up space but don't have any functionality
     // Use for special-case layouts
     if (icon.type == 'placeholder') {
       var placeholder = document.createElement('span');
       placeholder.setAttribute('class', 'blocklyDropDownPlaceholder');
-      placeholder.style.width = icon.width + 'px';
-      placeholder.style.height = icon.height + 'px';
+      placeholder.style.width = `${icon.width}px`;
+      placeholder.style.height = `${icon.height}px`;
       contentDiv.appendChild(placeholder);
       continue;
     }
-    var button = document.createElement('button');
-    button.setAttribute('id', ':' + i); // For aria-activedescendant
+    const button = document.createElement('button');
+    button.setAttribute('id', `:${i}`); // For aria-activedescendant
     button.setAttribute('role', 'menuitem');
     button.setAttribute('class', 'blocklyDropDownButton');
     button.title = icon.alt;
-    button.style.width = icon.width + 'px';
-    button.style.height = icon.height + 'px';
+    button.style.width = `${icon.width}px`;
+    button.style.height = `${icon.height}px`;
     var backgroundColor = this.sourceBlock_.getColour();
     if (icon.value == this.getValue()) {
       // This icon is selected, show it in a different colour
@@ -235,7 +235,7 @@ Blockly.FieldIconMenu.prototype.showEditor_ = function() {
       this.setAttribute('class', 'blocklyDropDownButton');
       contentDiv.removeAttribute('aria-activedescendant');
     });
-    var buttonImg = document.createElement('img');
+    const buttonImg = document.createElement('img');
     buttonImg.src = icon.src;
     //buttonImg.alt = icon.alt;
     // Upon click/touch, we will be able to get the clicked element as e.target
@@ -245,7 +245,7 @@ Blockly.FieldIconMenu.prototype.showEditor_ = function() {
     button.appendChild(buttonImg);
     contentDiv.appendChild(button);
   }
-  contentDiv.style.width = Blockly.FieldIconMenu.DROPDOWN_WIDTH + 'px';
+  contentDiv.style.width = `${Blockly.FieldIconMenu.DROPDOWN_WIDTH}px`;
 
   Blockly.DropDownDiv.setColour(this.sourceBlock_.getColour(), this.sourceBlock_.getColourTertiary());
   Blockly.DropDownDiv.setCategory(this.sourceBlock_.parentBlock_.getCategory());
@@ -256,20 +256,22 @@ Blockly.FieldIconMenu.prototype.showEditor_ = function() {
       this.sourceBlock_.getColourSecondary(),
       this.sourceBlock_.getColourTertiary());
 
-  var scale = this.sourceBlock_.workspace.scale;
+  const scale = this.sourceBlock_.workspace.scale;
   // Offset for icon-type horizontal blocks.
-  var secondaryYOffset = (
+  const secondaryYOffset = (
     -(Blockly.BlockSvg.MIN_BLOCK_Y * scale) - (Blockly.BlockSvg.FIELD_Y_OFFSET * scale)
   );
-  var renderedPrimary = Blockly.DropDownDiv.showPositionedByBlock(
-      this, this.sourceBlock_, this.onHide_.bind(this), secondaryYOffset);
-  if (!renderedPrimary) {
-    // Adjust for rotation
-    var arrowX = this.arrowX_ + Blockly.DropDownDiv.ARROW_SIZE / 1.5 + 1;
-    var arrowY = this.arrowY_ + Blockly.DropDownDiv.ARROW_SIZE / 1.5;
-    // Flip the arrow on the button
-    this.arrowIcon_.setAttribute('transform',
-        'translate(' + arrowX + ',' + arrowY + ') rotate(180)');}
+  const renderedPrimary = Blockly.DropDownDiv.showPositionedByBlock(
+  this, this.sourceBlock_, this.onHide_.bind(this), secondaryYOffset);
+  if (renderedPrimary) {
+    return;
+  }
+  // Adjust for rotation
+  const arrowX = this.arrowX_ + Blockly.DropDownDiv.ARROW_SIZE / 1.5 + 1;
+  const arrowY = this.arrowY_ + Blockly.DropDownDiv.ARROW_SIZE / 1.5;
+  // Flip the arrow on the button
+  this.arrowIcon_.setAttribute('transform',
+  `translate(${arrowX},${arrowY}) rotate(180)`);
 };
 
 /**
@@ -279,7 +281,7 @@ Blockly.FieldIconMenu.prototype.showEditor_ = function() {
  * @private
  */
 Blockly.FieldIconMenu.prototype.buttonClick_ = function(e) {
-  var value = e.target.getAttribute('data-value');
+  const value = e.target.getAttribute('data-value');
   this.setValue(value);
   Blockly.DropDownDiv.hide();
 };
@@ -301,7 +303,7 @@ Blockly.FieldIconMenu.prototype.onHide_ = function() {
   Blockly.DropDownDiv.content_.removeAttribute('aria-haspopup');
   Blockly.DropDownDiv.content_.removeAttribute('aria-activedescendant');
   // Unflip the arrow if appropriate
-  this.arrowIcon_.setAttribute('transform', 'translate(' + this.arrowX_ + ',' + this.arrowY_ + ')');
+  this.arrowIcon_.setAttribute('transform', `translate(${this.arrowX_},${this.arrowY_})`);
 };
 
 Blockly.Field.register('field_iconmenu', Blockly.FieldIconMenu);

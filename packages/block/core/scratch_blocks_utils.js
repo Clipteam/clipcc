@@ -43,9 +43,9 @@ goog.provide('Blockly.scratchBlocksUtils');
  */
 Blockly.scratchBlocksUtils.measureText = function(fontSize, fontFamily,
     fontWeight, text) {
-  var canvas = document.createElement('canvas');
-  var context = canvas.getContext('2d');
-  context.font = fontWeight + ' ' + fontSize + ' ' + fontFamily;
+  const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+  context.font = `${fontWeight} ${fontSize} ${fontFamily}`;
   return context.measureText(text).width;
 };
 
@@ -60,7 +60,7 @@ Blockly.scratchBlocksUtils.measureText = function(fontSize, fontFamily,
 Blockly.scratchBlocksUtils.encodeEntities = function(rawStr) {
   // CC-BY-SA https://stackoverflow.com/questions/18749591/encode-html-entities-in-javascript
   return rawStr.replace(/[\u00A0-\u9999<>&]/gim, function(i) {
-    return '&#' + i.charCodeAt(0) + ';';
+    return `&#${i.charCodeAt(0)};`;
   });
 };
 
@@ -71,11 +71,11 @@ Blockly.scratchBlocksUtils.encodeEntities = function(rawStr) {
  * @package
  */
 Blockly.scratchBlocksUtils.changeObscuredShadowIds = function(block) {
-  var blocks = block.getDescendants(false);
-  for (var i = blocks.length - 1; i >= 0; i--) {
-    var descendant = blocks[i];
-    for (var j = 0; j < descendant.inputList.length; j++) {
-      var connection = descendant.inputList[j].connection;
+  const blocks = block.getDescendants(false);
+  for (let i = blocks.length - 1; i >= 0; i--) {
+    const descendant = blocks[i];
+    for (let j = 0; j < descendant.inputList.length; j++) {
+      const connection = descendant.inputList[j].connection;
       if (connection) {
         var shadowDom = connection.getShadowDom();
         if (shadowDom) {
@@ -128,10 +128,10 @@ Blockly.scratchBlocksUtils.blockIsRecyclable = function(block) {
     return false;
   }
 
-  for (var i = 0; i < block.inputList.length; i++) {
-    var input = block.inputList[i];
-    for (var j = 0; j < input.fieldRow.length; j++) {
-      var field = input.fieldRow[j];
+  for (let i = 0; i < block.inputList.length; i++) {
+    const input = block.inputList[i];
+    for (let j = 0; j < input.fieldRow.length; j++) {
+      const field = input.fieldRow[j];
       // No variables.
       if (field instanceof Blockly.FieldVariable ||
           field instanceof Blockly.FieldVariableGetter) {
@@ -169,18 +169,18 @@ Blockly.scratchBlocksUtils.blockIsRecyclable = function(block) {
  * @package
  */
 Blockly.scratchBlocksUtils.duplicateAndDragCallback = function(oldBlock, event) {
-  var isMouseEvent = Blockly.Touch.getTouchIdentifierFromEvent(event) === 'mouse';
+  const isMouseEvent = Blockly.Touch.getTouchIdentifierFromEvent(event) === 'mouse';
   return function(e) {
     // Give the context menu a chance to close.
     setTimeout(function() {
-      var ws = oldBlock.workspace;
-      var svgRootOld = oldBlock.getSvgRoot();
+      const ws = oldBlock.workspace;
+      const svgRootOld = oldBlock.getSvgRoot();
       if (!svgRootOld) {
         throw new Error('oldBlock is not rendered.');
       }
 
       // Create the new block by cloning the block in the flyout (via XML).
-      var xml = Blockly.Xml.blockToDom(oldBlock);
+      const xml = Blockly.Xml.blockToDom(oldBlock);
       // The target workspace would normally resize during domToBlock, which
       // will lead to weird jumps.
       // Resizing will be enabled when the drag ends.
@@ -197,21 +197,21 @@ Blockly.scratchBlocksUtils.duplicateAndDragCallback = function(oldBlock, event) 
         // Scratch-specific: Give shadow dom new IDs to prevent duplicating on paste
         Blockly.scratchBlocksUtils.changeObscuredShadowIds(newBlock);
 
-        var svgRootNew = newBlock.getSvgRoot();
+        const svgRootNew = newBlock.getSvgRoot();
         if (!svgRootNew) {
           throw new Error('newBlock is not rendered.');
         }
 
         // The position of the old block in workspace coordinates.
-        var oldBlockPosWs = oldBlock.getRelativeToSurfaceXY();
+        const oldBlockPosWs = oldBlock.getRelativeToSurfaceXY();
 
         // Place the new block as the same position as the old block.
         // TODO: Offset by the difference between the mouse position and the upper
         // left corner of the block.
         newBlock.moveBy(oldBlockPosWs.x, oldBlockPosWs.y);
         if (!isMouseEvent) {
-          var offsetX = ws.RTL ? -100 : 100;
-          var offsetY = 100;
+          const offsetX = ws.RTL ? -100 : 100;
+          const offsetY = 100;
           newBlock.moveBy(offsetX, offsetY); // Just offset the block for touch.
         }
       } finally {
@@ -225,7 +225,7 @@ Blockly.scratchBlocksUtils.duplicateAndDragCallback = function(oldBlock, event) 
         // e is not a real mouseEvent/touchEvent/pointerEvent.  It's an event
         // created by the context menu and has the coordinates of the mouse
         // click that opened the context menu.
-        var fakeEvent = {
+        const fakeEvent = {
           clientX: event.clientX,
           clientY: event.clientY,
           type: 'mousedown',

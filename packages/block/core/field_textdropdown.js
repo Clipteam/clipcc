@@ -64,8 +64,8 @@ goog.inherits(Blockly.FieldTextDropdown, Blockly.FieldTextInput);
  * @nocollapse
  */
 Blockly.FieldTextDropdown.fromJson = function(element) {
-  var field =
-      new Blockly.FieldTextDropdown(element['text'], element['options']);
+  const field =
+  new Blockly.FieldTextDropdown(element['text'], element['options']);
   if (typeof element['spellcheck'] == 'boolean') {
     field.setSpellcheck(element['spellcheck']);
   }
@@ -92,11 +92,11 @@ Blockly.FieldTextDropdown.prototype.init = function() {
     this.arrowY_ = 11;
     this.arrow_ = Blockly.utils.createSvgElement('image',
         {
-          'height': this.arrowSize_ + 'px',
-          'width': this.arrowSize_ + 'px'
+          'height': `${this.arrowSize_}px`,
+          'width': `${this.arrowSize_}px`
         });
     this.arrow_.setAttributeNS('http://www.w3.org/1999/xlink',
-        'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'dropdown-arrow-dark.svg');
+        'xlink:href', `${Blockly.mainWorkspace.options.pathToMedia}dropdown-arrow-dark.svg`);
     this.arrow_.style.cursor = 'pointer';
     this.fieldGroup_.appendChild(this.arrow_);
     this.mouseUpWrapper_ =

@@ -58,8 +58,8 @@ Blockly.ScratchBlockComment = function(block, text, id, x, y, minimized) {
    */
   this.text_ = text;
 
-  var xIsValidNumber = typeof x == 'number' && !isNaN(x);
-  var yIsValidNumber = typeof y == 'number' && !isNaN(y);
+  const xIsValidNumber = typeof x == 'number' && !isNaN(x);
+  const yIsValidNumber = typeof y == 'number' && !isNaN(y);
 
   /**
    * Whether this comment needs to be auto-positioned (based on provided values
@@ -190,12 +190,12 @@ Blockly.ScratchBlockComment.prototype.renderIcon = function(cursorX, topMargin) 
   }
   this.iconGroup_.setAttribute('display', 'block');
 
-  var width = this.SIZE;
+  const width = this.SIZE;
   if (this.block_.RTL) {
     cursorX -= width;
   }
   this.iconGroup_.setAttribute('transform',
-      'translate(' + cursorX + ',' + topMargin + ')');
+      `translate(${cursorX},${topMargin})`);
   this.computeIconLocation();
   if (this.block_.RTL) {
     cursorX -= Blockly.BlockSvg.SEP_SPACE_X;
@@ -220,17 +220,17 @@ Blockly.ScratchBlockComment.prototype.createEditor_ = function() {
         'class': 'scratchCommentForeignObject'
       },
       null);
-  var body = document.createElementNS(Blockly.HTML_NS, 'body');
+  const body = document.createElementNS(Blockly.HTML_NS, 'body');
   body.setAttribute('xmlns', Blockly.HTML_NS);
   body.className = 'blocklyMinimalBody scratchCommentBody';
-  var textarea = document.createElementNS(Blockly.HTML_NS, 'textarea');
+  const textarea = document.createElementNS(Blockly.HTML_NS, 'textarea');
   textarea.className = 'scratchCommentTextarea scratchCommentText';
   textarea.setAttribute('dir', this.block_.RTL ? 'RTL' : 'LTR');
   textarea.setAttribute('maxlength', Blockly.ScratchBlockComment.COMMENT_TEXT_LIMIT);
   textarea.setAttribute('placeholder', Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT);
   body.appendChild(textarea);
   this.textarea_ = textarea;
-  this.textarea_.style.margin = (Blockly.ScratchBlockComment.TEXTAREA_OFFSET) + 'px';
+  this.textarea_.style.margin = `${Blockly.ScratchBlockComment.TEXTAREA_OFFSET}px`;
   this.foreignObject_.appendChild(body);
   Blockly.bindEventWithChecks_(textarea, 'mousedown', this,
       this.textareaFocus_, true, true); // noCapture and do not prevent default
@@ -273,20 +273,21 @@ Blockly.ScratchBlockComment.prototype.textareaFocus_ = function(e) {
  * @private
  */
 Blockly.ScratchBlockComment.prototype.resizeBubble_ = function() {
-  if (this.isVisible() && !this.isMinimized_) {
-    var size = this.bubble_.getBubbleSize();
-    var doubleBorderWidth = 2 * Blockly.ScratchBubble.BORDER_WIDTH;
-    var textOffset = Blockly.ScratchBlockComment.TEXTAREA_OFFSET * 2;
-    this.foreignObject_.setAttribute('width', size.width - doubleBorderWidth);
-    this.foreignObject_.setAttribute('height', size.height - doubleBorderWidth - Blockly.ScratchBubble.TOP_BAR_HEIGHT);
-    this.textarea_.style.width = (size.width - textOffset) + 'px';
-    this.textarea_.style.height = (size.height - doubleBorderWidth -
-       Blockly.ScratchBubble.TOP_BAR_HEIGHT - textOffset) + 'px';
-
-    // Actually set the size!
-    this.width_ = size.width;
-    this.height_ = size.height;
+  if (!(this.isVisible() && !this.isMinimized_)) {
+    return;
   }
+  const size = this.bubble_.getBubbleSize();
+  const doubleBorderWidth = 2 * Blockly.ScratchBubble.BORDER_WIDTH;
+  const textOffset = Blockly.ScratchBlockComment.TEXTAREA_OFFSET * 2;
+  this.foreignObject_.setAttribute('width', size.width - doubleBorderWidth);
+  this.foreignObject_.setAttribute('height', size.height - doubleBorderWidth - Blockly.ScratchBubble.TOP_BAR_HEIGHT);
+  this.textarea_.style.width = `${size.width - textOffset}px`;
+  this.textarea_.style.height = (size.height - doubleBorderWidth -
+   Blockly.ScratchBubble.TOP_BAR_HEIGHT - textOffset) + 'px';
+
+  // Actually set the size!
+  this.width_ = size.width;
+  this.height_ = size.height;
 };
 
 /**
@@ -307,25 +308,25 @@ Blockly.ScratchBlockComment.prototype.updateColour = function() {
 Blockly.ScratchBlockComment.prototype.autoPosition_ = function() {
   if (!this.needsAutoPositioning_) return;
   if (this.isMinimized_) {
-    var minimizedOffset = 4 * Blockly.BlockSvg.GRID_UNIT;
+    const minimizedOffset = 4 * Blockly.BlockSvg.GRID_UNIT;
     this.x_ = this.block_.RTL ?
         this.iconXY_.x - this.getBubbleSize().width - minimizedOffset :
         this.iconXY_.x + minimizedOffset;
     this.y_ = this.iconXY_.y - (Blockly.ScratchBubble.TOP_BAR_HEIGHT / 2);
-  } else {
-    // Position comment so that the expanded bubble does not overlap
+    return;
+  }
+  // Position comment so that the expanded bubble does not overlap
     // blocks below it in the stack that are wider than this block
     // Overhang is the difference between this blocks trailing edge and
     // the largest block below (zero if this block is the widest)
-    var thisBlockWidth = Math.floor(this.block_.svgPath_.getBBox().width);
-    var fullStackWidth = Math.floor(this.block_.getHeightWidth().width);
-    var overhang = fullStackWidth - thisBlockWidth;
-    var offset = 8 * Blockly.BlockSvg.GRID_UNIT;
-    this.x_ = this.block_.RTL ?
-        this.iconXY_.x - this.width_ - overhang - offset :
-        this.iconXY_.x + overhang + offset;
-    this.y_ = this.iconXY_.y - (Blockly.ScratchBubble.TOP_BAR_HEIGHT / 2);
-  }
+  const thisBlockWidth = Math.floor(this.block_.svgPath_.getBBox().width);
+  const fullStackWidth = Math.floor(this.block_.getHeightWidth().width);
+  const overhang = fullStackWidth - thisBlockWidth;
+  const offset = 8 * Blockly.BlockSvg.GRID_UNIT;
+  this.x_ = this.block_.RTL ?
+  this.iconXY_.x - this.width_ - overhang - offset :
+  this.iconXY_.x + overhang + offset;
+  this.y_ = this.iconXY_.y - (Blockly.ScratchBubble.TOP_BAR_HEIGHT / 2);
 };
 
 /**
@@ -347,8 +348,8 @@ Blockly.ScratchBlockComment.prototype.setVisible = function(visible) {
     return;
   }
   // Save the bubble stats before the visibility switch.
-  var text = this.getText();
-  var size = this.getBubbleSize();
+  const text = this.getText();
+  const size = this.getBubbleSize();
   if (visible) {
     // Auto position this comment, if necessary.
     if (this.needsAutoPositioning_) {
@@ -443,8 +444,8 @@ Blockly.ScratchBlockComment.prototype.setBubbleSize = function(width, height) {
  * @package
  */
 Blockly.ScratchBlockComment.prototype.setSize = function(width, height) {
-  var oldWidth = this.width_;
-  var oldHeight = this.height_;
+  const oldWidth = this.width_;
+  const oldHeight = this.height_;
 
   if (!this.isMinimized_) {
     this.setBubbleSize(width, height);
@@ -470,9 +471,9 @@ Blockly.ScratchBlockComment.prototype.setSize = function(width, height) {
 Blockly.ScratchBlockComment.prototype.getLabelText = function() {
   if (this.text_.length > Blockly.ScratchBlockComment.MAX_LABEL_LENGTH) {
     if (this.block_.RTL) {
-      return '\u2026' + this.text_.slice(0, Blockly.ScratchBlockComment.MAX_LABEL_LENGTH);
+      return `\u2026${this.text_.slice(0, Blockly.ScratchBlockComment.MAX_LABEL_LENGTH)}`;
     }
-    return this.text_.slice(0, Blockly.ScratchBlockComment.MAX_LABEL_LENGTH) + '\u2026';
+    return `${this.text_.slice(0, Blockly.ScratchBlockComment.MAX_LABEL_LENGTH)}\u2026`;
   } else {
     return this.text_;
   }
@@ -501,7 +502,7 @@ Blockly.ScratchBlockComment.prototype.setText = function(text) {
  * @package
  */
 Blockly.ScratchBlockComment.prototype.moveTo = function(x, y) {
-  var event = new Blockly.Events.CommentMove(this);
+  const event = new Blockly.Events.CommentMove(this);
   if (this.bubble_) {
     this.bubble_.moveTo(x, y);
   }
@@ -553,10 +554,10 @@ Blockly.ScratchBlockComment.prototype.getHeightWidth = function() {
  * @package
  */
 Blockly.ScratchBlockComment.prototype.getBoundingRectangle = function() {
-  var commentXY = this.getXY();
-  var commentBounds = this.getBubbleSize();
-  var topLeft;
-  var bottomRight;
+  const commentXY = this.getXY();
+  const commentBounds = this.getBubbleSize();
+  let topLeft;
+  let bottomRight;
   if (this.workspace.RTL) {
     // TODO (#1562) for some reason this doesn't work with workspace scroll in RTL
     topLeft = new goog.math.Coordinate(commentXY.x - commentBounds.width,
@@ -586,7 +587,7 @@ Blockly.ScratchBlockComment.prototype.isMinimized = function() {
  * @private
  */
 Blockly.ScratchBlockComment.prototype.showContextMenu_ = function(e) {
-  var menuOptions = [];
+  const menuOptions = [];
   menuOptions.push(Blockly.ContextMenu.commentDeleteOption(this, Blockly.Msg.DELETE));
   Blockly.ContextMenu.show(e, menuOptions, this.block_.RTL);
 };
@@ -598,7 +599,7 @@ Blockly.ScratchBlockComment.prototype.showContextMenu_ = function(e) {
  * @package
  */
 Blockly.ScratchBlockComment.prototype.toXmlWithXY = function() {
-  var element = goog.dom.createDom('comment');
+  const element = goog.dom.createDom('comment');
   element.setAttribute('id', this.id);
   element.textContent = this.text_;
   element.setAttribute('x', Math.round(
@@ -615,17 +616,18 @@ Blockly.ScratchBlockComment.prototype.toXmlWithXY = function() {
  * @package
  */
 Blockly.ScratchBlockComment.fireCreateEvent = function(comment) {
-  if (Blockly.Events.isEnabled()) {
-    var existingGroup = Blockly.Events.getGroup();
+  if (!Blockly.Events.isEnabled()) {
+    return;
+  }
+  const existingGroup = Blockly.Events.getGroup();
+  if (!existingGroup) {
+    Blockly.Events.setGroup(true);
+  }
+  try {
+    Blockly.Events.fire(new Blockly.Events.CommentCreate(comment));
+  } finally {
     if (!existingGroup) {
-      Blockly.Events.setGroup(true);
-    }
-    try {
-      Blockly.Events.fire(new Blockly.Events.CommentCreate(comment));
-    } finally {
-      if (!existingGroup) {
-        Blockly.Events.setGroup(false);
-      }
+      Blockly.Events.setGroup(false);
     }
   }
 };

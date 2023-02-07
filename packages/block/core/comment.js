@@ -114,10 +114,10 @@ Blockly.Comment.prototype.createEditor_ = function() {
   this.foreignObject_ = Blockly.utils.createSvgElement('foreignObject',
       {'x': Blockly.Bubble.BORDER_WIDTH, 'y': Blockly.Bubble.BORDER_WIDTH},
       null);
-  var body = document.createElementNS(Blockly.HTML_NS, 'body');
+  const body = document.createElementNS(Blockly.HTML_NS, 'body');
   body.setAttribute('xmlns', Blockly.HTML_NS);
   body.className = 'blocklyMinimalBody';
-  var textarea = document.createElementNS(Blockly.HTML_NS, 'textarea');
+  const textarea = document.createElementNS(Blockly.HTML_NS, 'textarea');
   textarea.className = 'blocklyCommentTextarea';
   textarea.setAttribute('dir', this.block_.RTL ? 'RTL' : 'LTR');
   body.appendChild(textarea);
@@ -161,14 +161,15 @@ Blockly.Comment.prototype.updateEditable = function() {
  * @private
  */
 Blockly.Comment.prototype.resizeBubble_ = function() {
-  if (this.isVisible()) {
-    var size = this.bubble_.getBubbleSize();
-    var doubleBorderWidth = 2 * Blockly.Bubble.BORDER_WIDTH;
-    this.foreignObject_.setAttribute('width', size.width - doubleBorderWidth);
-    this.foreignObject_.setAttribute('height', size.height - doubleBorderWidth);
-    this.textarea_.style.width = (size.width - doubleBorderWidth - 4) + 'px';
-    this.textarea_.style.height = (size.height - doubleBorderWidth - 4) + 'px';
+  if (!this.isVisible()) {
+    return;
   }
+  const size = this.bubble_.getBubbleSize();
+  const doubleBorderWidth = 2 * Blockly.Bubble.BORDER_WIDTH;
+  this.foreignObject_.setAttribute('width', size.width - doubleBorderWidth);
+  this.foreignObject_.setAttribute('height', size.height - doubleBorderWidth);
+  this.textarea_.style.width = `${size.width - doubleBorderWidth - 4}px`;
+  this.textarea_.style.height = `${size.height - doubleBorderWidth - 4}px`;
 };
 
 /**
@@ -191,8 +192,8 @@ Blockly.Comment.prototype.setVisible = function(visible) {
     return;
   }
   // Save the bubble stats before the visibility switch.
-  var text = this.getText();
-  var size = this.getBubbleSize();
+  const text = this.getText();
+  const size = this.getBubbleSize();
   if (visible) {
     // Create the bubble.
     this.bubble_ = new Blockly.Bubble(

@@ -36,7 +36,7 @@ goog.require('Blockly.Colours');
  * @constructor
  */
 Blockly.Options = function(options) {
-  var readOnly = !!options['readOnly'];
+  const readOnly = !!options['readOnly'];
   if (readOnly) {
     var languageTree = null;
     var hasCategories = false;
@@ -47,8 +47,8 @@ Blockly.Options = function(options) {
     var hasSounds = false;
   } else {
     if (!options['toolbox'] && Blockly.Blocks.defaultToolbox) {
-      var oParser = new DOMParser();
-      var dom = oParser.parseFromString(Blockly.Blocks.defaultToolbox, 'text/xml');
+      const oParser = new DOMParser();
+      const dom = oParser.parseFromString(Blockly.Blocks.defaultToolbox, 'text/xml');
       options['toolbox'] = dom.documentElement;
     }
     var languageTree = Blockly.Options.parseToolboxTree(options['toolbox']);
@@ -75,12 +75,12 @@ Blockly.Options = function(options) {
       hasSounds = true;
     }
   }
-  var rtl = !!options['rtl'];
-  var horizontalLayout = options['horizontalLayout'];
+  const rtl = !!options['rtl'];
+  let horizontalLayout = options['horizontalLayout'];
   if (horizontalLayout === undefined) {
     horizontalLayout = false;
   }
-  var toolboxAtStart = options['toolboxPosition'];
+  let toolboxAtStart = options['toolboxPosition'];
   if (toolboxAtStart === 'end') {
     toolboxAtStart = false;
   } else {
@@ -95,20 +95,20 @@ Blockly.Options = function(options) {
         Blockly.TOOLBOX_AT_RIGHT : Blockly.TOOLBOX_AT_LEFT;
   }
 
-  var hasScrollbars = options['scrollbars'];
+  let hasScrollbars = options['scrollbars'];
   if (hasScrollbars === undefined) {
     hasScrollbars = hasCategories;
   }
-  var hasCss = options['css'];
+  let hasCss = options['css'];
   if (hasCss === undefined) {
     hasCss = true;
   }
-  var pathToMedia = 'https://blockly-demo.appspot.com/static/media/';
+  let pathToMedia = 'https://blockly-demo.appspot.com/static/media/';
   if (options['media']) {
     pathToMedia = options['media'];
   } else if (options['path']) {
     // 'path' is a deprecated option which has been replaced by 'media'.
-    pathToMedia = options['path'] + 'media/';
+    pathToMedia = `${options['path']}media/`;
   }
   if (options['oneBasedIndex'] === undefined) {
     var oneBasedIndex = true;
@@ -163,8 +163,8 @@ Blockly.Options.prototype.getMetrics = null;
  * @private
  */
 Blockly.Options.parseZoomOptions_ = function(options) {
-  var zoom = options['zoom'] || {};
-  var zoomOptions = {};
+  const zoom = options['zoom'] || {};
+  const zoomOptions = {};
   if (zoom['controls'] === undefined) {
     zoomOptions.controls = false;
   } else {
@@ -207,8 +207,8 @@ Blockly.Options.parseZoomOptions_ = function(options) {
  * @private
  */
 Blockly.Options.parseGridOptions_ = function(options) {
-  var grid = options['grid'] || {};
-  var gridOptions = {};
+  const grid = options['grid'] || {};
+  const gridOptions = {};
   gridOptions.spacing = parseFloat(grid['spacing']) || 0;
   gridOptions.colour = grid['colour'] || '#888';
   gridOptions.length = parseFloat(grid['length']) || 1;

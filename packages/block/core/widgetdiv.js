@@ -116,8 +116,8 @@ Blockly.WidgetDiv.show = function(newOwner, rtl, opt_dispose,
   Blockly.WidgetDiv.disposeAnimationTimerLength_ = opt_disposeAnimationTimerLength;
   // Temporarily move the widget to the top of the screen so that it does not
   // cause a scrollbar jump in Firefox when displayed.
-  var xy = goog.style.getViewportPageOffset(document);
-  Blockly.WidgetDiv.DIV.style.top = xy.y + 'px';
+  const xy = goog.style.getViewportPageOffset(document);
+  Blockly.WidgetDiv.DIV.style.top = `${xy.y}px`;
   Blockly.WidgetDiv.DIV.style.direction = rtl ? 'rtl' : 'ltr';
   Blockly.WidgetDiv.DIV.style.display = 'block';
 };
@@ -134,13 +134,13 @@ Blockly.WidgetDiv.repositionForWindowResize = function() {
   if (Blockly.WidgetDiv.owner_
       && Blockly.WidgetDiv.owner_.getScaledBBox_
       && Blockly.WidgetDiv.owner_.getSize) {
-    var widgetScaledBBox = Blockly.WidgetDiv.owner_.getScaledBBox_();
-    var widgetSize = Blockly.WidgetDiv.owner_.getSize();
+    const widgetScaledBBox = Blockly.WidgetDiv.owner_.getScaledBBox_();
+    const widgetSize = Blockly.WidgetDiv.owner_.getSize();
     Blockly.WidgetDiv.positionInternal_(widgetScaledBBox.left, widgetScaledBBox.top,
         widgetSize.height);
-  } else {
-    Blockly.WidgetDiv.hide();
+    return;
   }
+  Blockly.WidgetDiv.hide();
 };
 
 /**
@@ -159,24 +159,27 @@ Blockly.WidgetDiv.hide = function(opt_noAnimate) {
     Blockly.WidgetDiv.disposeAnimationTimer_ = null;
     Blockly.WidgetDiv.owner_ = null;
     Blockly.WidgetDiv.hideAndClearDom_();
-  } else if (Blockly.WidgetDiv.isVisible()) {
-    // No animation timer set, but the widget is visible
-    // Start animation out (or immediately hide)
-    Blockly.WidgetDiv.dispose_ && Blockly.WidgetDiv.dispose_();
-    Blockly.WidgetDiv.dispose_ = null;
-    // If we want to animate out, set the appropriate timer for final dispose.
-    if (Blockly.WidgetDiv.disposeAnimationFinished_ && !opt_noAnimate) {
-      Blockly.WidgetDiv.disposeAnimationTimer_ = window.setTimeout(
-          Blockly.WidgetDiv.hide, // Come back to hide and take the first branch.
-          Blockly.WidgetDiv.disposeAnimationTimerLength_ * 1000
-      );
-    } else {
-      // No timer provided (or no animation desired) - auto-hide the DOM now.
-      Blockly.WidgetDiv.disposeAnimationFinished_ && Blockly.WidgetDiv.disposeAnimationFinished_();
-      Blockly.WidgetDiv.disposeAnimationFinished_ = null;
-      Blockly.WidgetDiv.owner_ = null;
-      Blockly.WidgetDiv.hideAndClearDom_();
-    }
+    return;
+  }
+  if (!Blockly.WidgetDiv.isVisible()) {
+    return;
+  }
+  // No animation timer set, but the widget is visible
+  // Start animation out (or immediately hide)
+  Blockly.WidgetDiv.dispose_ && Blockly.WidgetDiv.dispose_();
+  Blockly.WidgetDiv.dispose_ = null;
+  // If we want to animate out, set the appropriate timer for final dispose.
+  if (Blockly.WidgetDiv.disposeAnimationFinished_ && !opt_noAnimate) {
+    Blockly.WidgetDiv.disposeAnimationTimer_ = window.setTimeout(
+        Blockly.WidgetDiv.hide, // Come back to hide and take the first branch.
+        Blockly.WidgetDiv.disposeAnimationTimerLength_ * 1000
+    );
+  } else {
+    // No timer provided (or no animation desired) - auto-hide the DOM now.
+    Blockly.WidgetDiv.disposeAnimationFinished_ && Blockly.WidgetDiv.disposeAnimationFinished_();
+    Blockly.WidgetDiv.disposeAnimationFinished_ = null;
+    Blockly.WidgetDiv.owner_ = null;
+    Blockly.WidgetDiv.hideAndClearDom_();
   }
 };
 
@@ -249,9 +252,9 @@ Blockly.WidgetDiv.position = function(anchorX, anchorY, windowSize,
  * @private
  */
 Blockly.WidgetDiv.positionInternal_ = function(x, y, height) {
-  Blockly.WidgetDiv.DIV.style.left = x + 'px';
-  Blockly.WidgetDiv.DIV.style.top = y + 'px';
-  Blockly.WidgetDiv.DIV.style.height = height + 'px';
+  Blockly.WidgetDiv.DIV.style.left = `${x}px`;
+  Blockly.WidgetDiv.DIV.style.top = `${y}px`;
+  Blockly.WidgetDiv.DIV.style.height = `${height}px`;
 };
 
 /**
@@ -271,10 +274,10 @@ Blockly.WidgetDiv.positionInternal_ = function(x, y, height) {
  */
 Blockly.WidgetDiv.positionWithAnchor = function(viewportBBox, anchorBBox,
     widgetSize, rtl) {
-  var y = Blockly.WidgetDiv.calculateY_(viewportBBox, anchorBBox, widgetSize);
-  var x = Blockly.WidgetDiv.calculateX_(viewportBBox, anchorBBox, widgetSize,
+  const y = Blockly.WidgetDiv.calculateY_(viewportBBox, anchorBBox, widgetSize);
+  const x = Blockly.WidgetDiv.calculateX_(viewportBBox, anchorBBox, widgetSize,
       rtl);
-  
+
   if (y < 0) {
     Blockly.WidgetDiv.positionInternal_(x, 0, widgetSize.height + y);
   }
@@ -301,7 +304,7 @@ Blockly.WidgetDiv.calculateX_ = function(viewportBBox, anchorBBox, widgetSize,
     rtl) {
   if (rtl) {
     // Try to align the right side of the field and the right side of the widget.
-    var widgetLeft = anchorBBox.right - widgetSize.width;
+    const widgetLeft = anchorBBox.right - widgetSize.width;
     // Don't go offscreen left.
     var x = Math.max(widgetLeft, viewportBBox.left);
     // But really don't go offscreen right:

@@ -115,7 +115,7 @@ Blockly.WorkspaceCommentSvg.prototype.render = function() {
     return;
   }
 
-  var size = this.getHeightWidth();
+  const size = this.getHeightWidth();
 
   // Add text area
   this.commentEditor_ = this.createEditor_();
@@ -139,12 +139,12 @@ Blockly.WorkspaceCommentSvg.prototype.render = function() {
   // Show / hide relevant things based on minimized state
   if (this.isMinimized()) {
     this.minimizeArrow_.setAttributeNS('http://www.w3.org/1999/xlink',
-        'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'comment-arrow-up.svg');
+        'xlink:href', `${Blockly.mainWorkspace.options.pathToMedia}comment-arrow-up.svg`);
     this.commentEditor_.setAttribute('display', 'none');
     this.resizeGroup_.setAttribute('display', 'none');
   } else {
     this.minimizeArrow_.setAttributeNS('http://www.w3.org/1999/xlink',
-        'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'comment-arrow-down.svg');
+        'xlink:href', `${Blockly.mainWorkspace.options.pathToMedia}comment-arrow-down.svg`);
     this.topBarLabel_.setAttribute('display', 'none');
   }
 
@@ -190,17 +190,17 @@ Blockly.WorkspaceCommentSvg.prototype.createEditor_ = function() {
         'class': 'scratchCommentForeignObject'
       },
       null);
-  var body = document.createElementNS(Blockly.HTML_NS, 'body');
+  const body = document.createElementNS(Blockly.HTML_NS, 'body');
   body.setAttribute('xmlns', Blockly.HTML_NS);
   body.className = 'blocklyMinimalBody scratchCommentBody';
-  var textarea = document.createElementNS(Blockly.HTML_NS, 'textarea');
+  const textarea = document.createElementNS(Blockly.HTML_NS, 'textarea');
   textarea.className = 'scratchCommentTextarea scratchCommentText';
   textarea.setAttribute('dir', this.RTL ? 'RTL' : 'LTR');
   textarea.setAttribute('maxlength', Blockly.WorkspaceComment.COMMENT_TEXT_LIMIT);
   textarea.setAttribute('placeholder', Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT);
   body.appendChild(textarea);
   this.textarea_ = textarea;
-  this.textarea_.style.margin = (Blockly.WorkspaceCommentSvg.TEXTAREA_OFFSET) + 'px';
+  this.textarea_.style.margin = `${Blockly.WorkspaceCommentSvg.TEXTAREA_OFFSET}px`;
   this.foreignObject_.appendChild(body);
   Blockly.bindEventWithChecks_(textarea, 'mousedown', this, function(e) {
     e.stopPropagation(); // Propagation causes preventDefault from workspace handler
@@ -231,9 +231,9 @@ Blockly.WorkspaceCommentSvg.prototype.addResizeDom_ = function() {
         'class': this.RTL ? 'scratchCommentResizeSW' : 'scratchCommentResizeSE'
       },
       this.svgGroup_);
-  var resizeSize = Blockly.WorkspaceCommentSvg.RESIZE_SIZE;
-  var outerPad = Blockly.ScratchBubble.RESIZE_OUTER_PAD;
-  var cornerPad = Blockly.ScratchBubble.RESIZE_CORNER_PAD;
+  const resizeSize = Blockly.WorkspaceCommentSvg.RESIZE_SIZE;
+  const outerPad = Blockly.ScratchBubble.RESIZE_OUTER_PAD;
+  const cornerPad = Blockly.ScratchBubble.RESIZE_CORNER_PAD;
   // Build an (invisible) triangle that will catch resizes. It is padded on the
   // top/left by outerPad, and padded down/right by cornerPad.
   Blockly.utils.createSvgElement('polygon',
@@ -293,7 +293,7 @@ Blockly.WorkspaceCommentSvg.prototype.createTopBarLabel_ = function() {
         'dominant-baseline': 'middle'
       }, this.svgGroup_);
 
-  var labelTextNode = document.createTextNode(this.labelText_);
+  const labelTextNode = document.createTextNode(this.labelText_);
   this.topBarLabel_.appendChild(labelTextNode);
 };
 
@@ -302,11 +302,11 @@ Blockly.WorkspaceCommentSvg.prototype.createTopBarLabel_ = function() {
  * @private
  */
 Blockly.WorkspaceCommentSvg.prototype.createTopBarIcons_ = function() {
-  var topBarMiddleY = (Blockly.WorkspaceCommentSvg.TOP_BAR_HEIGHT / 2) +
-      Blockly.WorkspaceCommentSvg.BORDER_WIDTH;
+  const topBarMiddleY = (Blockly.WorkspaceCommentSvg.TOP_BAR_HEIGHT / 2) +
+  Blockly.WorkspaceCommentSvg.BORDER_WIDTH;
 
   // Minimize Toggle Icon in Comment Top Bar
-  var xInset = Blockly.WorkspaceCommentSvg.TOP_BAR_ICON_INSET;
+  const xInset = Blockly.WorkspaceCommentSvg.TOP_BAR_ICON_INSET;
   this.minimizeArrow_ = Blockly.utils.createSvgElement('image',
       {
         'x': xInset,
@@ -324,7 +324,7 @@ Blockly.WorkspaceCommentSvg.prototype.createTopBarIcons_ = function() {
         'height': Blockly.WorkspaceCommentSvg.DELETE_ICON_SIZE
       }, this.svgGroup_);
   this.deleteIcon_.setAttributeNS('http://www.w3.org/1999/xlink',
-      'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'delete-x.svg');
+      'xlink:href', `${Blockly.mainWorkspace.options.pathToMedia}delete-x.svg`);
 };
 
 /**
@@ -446,7 +446,7 @@ Blockly.WorkspaceCommentSvg.prototype.setRenderedMinimizeState_ = function(minim
   if (minimize) {
     // Change minimize icon
     this.minimizeArrow_.setAttributeNS('http://www.w3.org/1999/xlink',
-        'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'comment-arrow-up.svg');
+        'xlink:href', `${Blockly.mainWorkspace.options.pathToMedia}comment-arrow-up.svg`);
     // Hide text area
     this.commentEditor_.setAttribute('display', 'none');
     // Hide resize handle if it exists
@@ -459,18 +459,18 @@ Blockly.WorkspaceCommentSvg.prototype.setRenderedMinimizeState_ = function(minim
       this.topBarLabel_.textContent = labelText;
     }
     Blockly.utils.removeAttribute(this.topBarLabel_, 'display');
-  } else {
-    // Change minimize icon
-    this.minimizeArrow_.setAttributeNS('http://www.w3.org/1999/xlink',
-        'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'comment-arrow-down.svg');
-    // Hide label
-    this.topBarLabel_.setAttribute('display', 'none');
-    // Show text area
-    Blockly.utils.removeAttribute(this.commentEditor_, 'display');
-    // Display resize handle if it exists
-    if (this.resizeGroup_) {
-      Blockly.utils.removeAttribute(this.resizeGroup_, 'display');
-    }
+    return;
+  }
+  // Change minimize icon
+  this.minimizeArrow_.setAttributeNS('http://www.w3.org/1999/xlink',
+      'xlink:href', `${Blockly.mainWorkspace.options.pathToMedia}comment-arrow-down.svg`);
+  // Hide label
+  this.topBarLabel_.setAttribute('display', 'none');
+  // Show text area
+  Blockly.utils.removeAttribute(this.commentEditor_, 'display');
+  // Display resize handle if it exists
+  if (this.resizeGroup_) {
+    Blockly.utils.removeAttribute(this.resizeGroup_, 'display');
   }
 };
 
@@ -497,7 +497,7 @@ Blockly.WorkspaceCommentSvg.prototype.unbindDragEvents_ = function() {
 Blockly.WorkspaceCommentSvg.prototype.resizeMouseUp_ = function(/*e*/) {
   Blockly.Touch.clearTouchIdentifier();
   this.unbindDragEvents_();
-  var oldHW = this.resizeStartSize_;
+  const oldHW = this.resizeStartSize_;
   this.resizeStartSize_ = null;
   if (this.width_ == oldHW.width && this.height_ == oldHW.height) {
     return;
@@ -518,13 +518,13 @@ Blockly.WorkspaceCommentSvg.prototype.resizeMouseUp_ = function(/*e*/) {
  */
 Blockly.WorkspaceCommentSvg.prototype.resizeMouseMove_ = function(e) {
   this.autoLayout_ = false;
-  var newXY = this.workspace.moveDrag(e);
+  const newXY = this.workspace.moveDrag(e);
   // The call to setSize below emits a CommentChange event,
   // but we don't want multiple CommentChange events to be
   // emitted while the user is still in the process of resizing
   // the comment, so disable events here. The event is emitted in
   // resizeMouseUp_.
-  var disabled = false;
+  let disabled = false;
   if (Blockly.Events.isEnabled()) {
     Blockly.Events.disable();
     disabled = true;
@@ -541,9 +541,9 @@ Blockly.WorkspaceCommentSvg.prototype.resizeMouseMove_ = function(e) {
  * @private
  */
 Blockly.WorkspaceCommentSvg.prototype.resizeComment_ = function() {
-  var doubleBorderWidth = 2 * Blockly.WorkspaceCommentSvg.BORDER_WIDTH;
-  var topOffset = Blockly.WorkspaceCommentSvg.TOP_BAR_HEIGHT;
-  var textOffset = Blockly.WorkspaceCommentSvg.TEXTAREA_OFFSET * 2;
+  const doubleBorderWidth = 2 * Blockly.WorkspaceCommentSvg.BORDER_WIDTH;
+  const topOffset = Blockly.WorkspaceCommentSvg.TOP_BAR_HEIGHT;
+  const textOffset = Blockly.WorkspaceCommentSvg.TEXTAREA_OFFSET * 2;
 
   this.foreignObject_.setAttribute('width',
       this.width_ - doubleBorderWidth);
@@ -554,9 +554,9 @@ Blockly.WorkspaceCommentSvg.prototype.resizeComment_ = function() {
         -this.width_);
   }
   this.textarea_.style.width =
-      (this.width_ - textOffset) + 'px';
+      `${this.width_ - textOffset}px`;
   this.textarea_.style.height =
-      (this.height_ - doubleBorderWidth - textOffset - topOffset) + 'px';
+      `${this.height_ - doubleBorderWidth - textOffset - topOffset}px`;
 };
 
 /**
@@ -566,10 +566,10 @@ Blockly.WorkspaceCommentSvg.prototype.resizeComment_ = function() {
  * @package
  */
 Blockly.WorkspaceCommentSvg.prototype.setSize = function(width, height) {
-  var oldWidth = this.width_;
-  var oldHeight = this.height_;
+  const oldWidth = this.width_;
+  const oldHeight = this.height_;
 
-  var doubleBorderWidth = 2 * Blockly.WorkspaceCommentSvg.BORDER_WIDTH;
+  const doubleBorderWidth = 2 * Blockly.WorkspaceCommentSvg.BORDER_WIDTH;
 
   if (this.isMinimized_) {
     width = Blockly.WorkspaceCommentSvg.MINIMIZE_WIDTH;
@@ -602,18 +602,18 @@ Blockly.WorkspaceCommentSvg.prototype.setSize = function(width, height) {
         Blockly.WorkspaceCommentSvg.TOP_BAR_ICON_INSET));
     this.svgRect_.setAttribute('transform', 'scale(-1 1)');
     this.svgHandleTarget_.setAttribute('transform', 'scale(-1 1)');
-    this.svgHandleTarget_.setAttribute('transform', 'translate(' + -width + ', 1)');
-    this.minimizeArrow_.setAttribute('transform', 'translate(' + -width + ', 1)');
-    this.deleteIcon_.setAttribute('tranform', 'translate(' + -width + ', 1)');
-    this.svgRectTarget_.setAttribute('transform', 'translate(' + -width + ', 1)');
-    this.topBarLabel_.setAttribute('transform', 'translate(' + -width + ', 1)');
+    this.svgHandleTarget_.setAttribute('transform', `translate(${-width}, 1)`);
+    this.minimizeArrow_.setAttribute('transform', `translate(${-width}, 1)`);
+    this.deleteIcon_.setAttribute('tranform', `translate(${-width}, 1)`);
+    this.svgRectTarget_.setAttribute('transform', `translate(${-width}, 1)`);
+    this.topBarLabel_.setAttribute('transform', `translate(${-width}, 1)`);
   } else {
     this.deleteIcon_.setAttribute('x', width -
         Blockly.WorkspaceCommentSvg.DELETE_ICON_SIZE -
         Blockly.WorkspaceCommentSvg.TOP_BAR_ICON_INSET);
   }
 
-  var resizeSize = Blockly.WorkspaceCommentSvg.RESIZE_SIZE;
+  const resizeSize = Blockly.WorkspaceCommentSvg.RESIZE_SIZE;
   if (this.resizeGroup_) {
     if (this.RTL) {
       // Mirror the resize group.
@@ -689,7 +689,7 @@ Blockly.WorkspaceCommentSvg.prototype.disposeInternal_ = function() {
  * @package
  */
 Blockly.WorkspaceCommentSvg.prototype.setFocus = function() {
-  var comment = this;
+  const comment = this;
   this.focused_ = true;
   comment.textarea_.focus();
   // Defer CSS changes.
@@ -707,17 +707,18 @@ Blockly.WorkspaceCommentSvg.prototype.setFocus = function() {
  * @package
  */
 Blockly.WorkspaceCommentSvg.prototype.blurFocus = function() {
-  var comment = this;
+  const comment = this;
   this.focused_ = false;
   comment.textarea_.blur();
   // Defer CSS changes.
   setTimeout(function() {
-    if (comment.svgGroup_) { // Could have been deleted in the meantime
-      comment.removeFocus();
-      Blockly.utils.removeClass(
-          comment.svgRectTarget_, 'scratchCommentTargetFocused');
-      Blockly.utils.removeClass(
-          comment.svgHandleTarget_, 'scratchCommentHandleTargetFocused');
+    if (!comment.svgGroup_) {
+      return;
     }
+    comment.removeFocus();
+    Blockly.utils.removeClass(
+        comment.svgRectTarget_, 'scratchCommentTargetFocused');
+    Blockly.utils.removeClass(
+        comment.svgHandleTarget_, 'scratchCommentHandleTargetFocused');
   }, 0);
 };

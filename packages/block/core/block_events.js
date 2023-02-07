@@ -64,7 +64,7 @@ goog.inherits(Blockly.Events.BlockBase, Blockly.Events.Abstract);
  * @return {!Object} JSON representation.
  */
 Blockly.Events.BlockBase.prototype.toJson = function() {
-  var json = Blockly.Events.BlockBase.superClass_.toJson.call(this);
+  const json = Blockly.Events.BlockBase.superClass_.toJson.call(this);
   json['blockId'] = this.blockId;
   return json;
 };
@@ -123,7 +123,7 @@ Blockly.Events.Change.prototype.type = Blockly.Events.CHANGE;
  * @return {!Object} JSON representation.
  */
 Blockly.Events.Change.prototype.toJson = function() {
-  var json = Blockly.Events.Change.superClass_.toJson.call(this);
+  const json = Blockly.Events.Change.superClass_.toJson.call(this);
   json['element'] = this.element;
   if (this.name) {
     json['name'] = this.name;
@@ -156,27 +156,27 @@ Blockly.Events.Change.prototype.isNull = function() {
  * @param {boolean} forward True if run forward, false if run backward (undo).
  */
 Blockly.Events.Change.prototype.run = function(forward) {
-  var workspace = this.getEventWorkspace_();
-  var block = workspace.getBlockById(this.blockId);
+  const workspace = this.getEventWorkspace_();
+  const block = workspace.getBlockById(this.blockId);
   if (!block) {
-    console.warn("Can't change non-existent block: " + this.blockId);
+    console.warn(`Can't change non-existent block: ${this.blockId}`);
     return;
   }
   if (block.mutator) {
     // Close the mutator (if open) since we don't want to update it.
     block.mutator.setVisible(false);
   }
-  var value = forward ? this.newValue : this.oldValue;
+  let value = forward ? this.newValue : this.oldValue;
   switch (this.element) {
     case 'field':
-      var field = block.getField(this.name);
+      const field = block.getField(this.name);
       if (field) {
         // Run the validator for any side-effects it may have.
         // The validator's opinion on validity is ignored.
         field.callValidator(value);
         field.setValue(value);
       } else {
-        console.warn("Can't set non-existent field: " + this.name);
+        console.warn(`Can't set non-existent field: ${this.name}`);
       }
       break;
     case 'comment':
@@ -192,21 +192,21 @@ Blockly.Events.Change.prototype.run = function(forward) {
       block.setInputsInline(value);
       break;
     case 'mutation':
-      var oldMutation = '';
+      let oldMutation = '';
       if (block.mutationToDom) {
-        var oldMutationDom = block.mutationToDom();
+        const oldMutationDom = block.mutationToDom();
         oldMutation = oldMutationDom && Blockly.Xml.domToText(oldMutationDom);
       }
       if (block.domToMutation) {
         value = value || '<mutation></mutation>';
-        var dom = Blockly.Xml.textToDom('<xml>' + value + '</xml>');
+        const dom = Blockly.Xml.textToDom(`<xml>${value}</xml>`);
         block.domToMutation(dom.firstChild);
       }
       Blockly.Events.fire(new Blockly.Events.Change(
           block, 'mutation', null, oldMutation, value));
       break;
     default:
-      console.warn('Unknown change type: ' + this.element);
+      console.warn(`Unknown change type: ${this.element}`);
   }
 };
 
@@ -250,7 +250,7 @@ Blockly.Events.Create.prototype.type = Blockly.Events.CREATE;
  * @return {!Object} JSON representation.
  */
 Blockly.Events.Create.prototype.toJson = function() {
-  var json = Blockly.Events.Create.superClass_.toJson.call(this);
+  const json = Blockly.Events.Create.superClass_.toJson.call(this);
   json['xml'] = Blockly.Xml.domToText(this.xml);
   json['ids'] = this.ids;
   return json;
@@ -262,7 +262,7 @@ Blockly.Events.Create.prototype.toJson = function() {
  */
 Blockly.Events.Create.prototype.fromJson = function(json) {
   Blockly.Events.Create.superClass_.fromJson.call(this, json);
-  this.xml = Blockly.Xml.textToDom('<xml>' + json['xml'] + '</xml>').firstChild;
+  this.xml = Blockly.Xml.textToDom(`<xml>${json['xml']}</xml>`).firstChild;
   this.ids = json['ids'];
 };
 
@@ -271,20 +271,20 @@ Blockly.Events.Create.prototype.fromJson = function(json) {
  * @param {boolean} forward True if run forward, false if run backward (undo).
  */
 Blockly.Events.Create.prototype.run = function(forward) {
-  var workspace = this.getEventWorkspace_();
+  const workspace = this.getEventWorkspace_();
   if (forward) {
-    var xml = goog.dom.createDom('xml');
+    const xml = goog.dom.createDom('xml');
     xml.appendChild(this.xml);
     Blockly.Xml.domToWorkspace(xml, workspace);
-  } else {
-    for (var i = 0, id; id = this.ids[i]; i++) {
-      var block = workspace.getBlockById(id);
-      if (block) {
-        block.dispose(false, false);
-      } else if (id == this.blockId) {
-        // Only complain about root-level block.
-        console.warn("Can't uncreate non-existent block: " + id);
-      }
+    return;
+  }
+  for (let i = 0, id; id = this.ids[i]; i++) {
+    const block = workspace.getBlockById(id);
+    if (block) {
+      block.dispose(false, false);
+    } else if (id == this.blockId) {
+      // Only complain about root-level block.
+      console.warn(`Can't uncreate non-existent block: ${id}`);
     }
   }
 };
@@ -332,7 +332,7 @@ Blockly.Events.Delete.prototype.type = Blockly.Events.DELETE;
  * @return {!Object} JSON representation.
  */
 Blockly.Events.Delete.prototype.toJson = function() {
-  var json = Blockly.Events.Delete.superClass_.toJson.call(this);
+  const json = Blockly.Events.Delete.superClass_.toJson.call(this);
   json['ids'] = this.ids;
   return json;
 };
@@ -351,19 +351,19 @@ Blockly.Events.Delete.prototype.fromJson = function(json) {
  * @param {boolean} forward True if run forward, false if run backward (undo).
  */
 Blockly.Events.Delete.prototype.run = function(forward) {
-  var workspace = this.getEventWorkspace_();
+  const workspace = this.getEventWorkspace_();
   if (forward) {
-    for (var i = 0, id; id = this.ids[i]; i++) {
-      var block = workspace.getBlockById(id);
+    for (let i = 0, id; id = this.ids[i]; i++) {
+      const block = workspace.getBlockById(id);
       if (block) {
         block.dispose(false, false);
       } else if (id == this.blockId) {
         // Only complain about root-level block.
-        console.warn("Can't delete non-existent block: " + id);
+        console.warn(`Can't delete non-existent block: ${id}`);
       }
     }
   } else {
-    var xml = goog.dom.createDom('xml');
+    const xml = goog.dom.createDom('xml');
     xml.appendChild(this.oldXml);
     Blockly.Xml.domToWorkspace(xml, workspace);
   }
@@ -380,7 +380,7 @@ Blockly.Events.Move = function(block) {
     return;  // Blank event to be populated by fromJson.
   }
   Blockly.Events.Move.superClass_.constructor.call(this, block);
-  var location = this.currentLocation_();
+  const location = this.currentLocation_();
   this.oldParentId = location.parentId;
   this.oldInputName = location.inputName;
   this.oldCoordinate = location.coordinate;
@@ -406,7 +406,7 @@ Blockly.Events.Move.prototype.type = Blockly.Events.MOVE;
  * @return {!Object} JSON representation.
  */
 Blockly.Events.Move.prototype.toJson = function() {
-  var json = Blockly.Events.Move.superClass_.toJson.call(this);
+  const json = Blockly.Events.Move.superClass_.toJson.call(this);
   if (this.newParentId) {
     json['newParentId'] = this.newParentId;
   }
@@ -414,7 +414,7 @@ Blockly.Events.Move.prototype.toJson = function() {
     json['newInputName'] = this.newInputName;
   }
   if (this.newCoordinate) {
-    json['newCoordinate'] = Math.round(this.newCoordinate.x) + ',' +
+    json['newCoordinate'] = `${Math.round(this.newCoordinate.x)},` +
         Math.round(this.newCoordinate.y);
   }
   return json;
@@ -429,7 +429,7 @@ Blockly.Events.Move.prototype.fromJson = function(json) {
   this.newParentId = json['newParentId'];
   this.newInputName = json['newInputName'];
   if (json['newCoordinate']) {
-    var xy = json['newCoordinate'].split(',');
+    const xy = json['newCoordinate'].split(',');
     this.newCoordinate =
         new goog.math.Coordinate(parseFloat(xy[0]), parseFloat(xy[1]));
   }
@@ -439,7 +439,7 @@ Blockly.Events.Move.prototype.fromJson = function(json) {
  * Record the block's new location.  Called after the move.
  */
 Blockly.Events.Move.prototype.recordNew = function() {
-  var location = this.currentLocation_();
+  const location = this.currentLocation_();
   this.newParentId = location.parentId;
   this.newInputName = location.inputName;
   this.newCoordinate = location.coordinate;
@@ -452,21 +452,21 @@ Blockly.Events.Move.prototype.recordNew = function() {
  * @private
  */
 Blockly.Events.Move.prototype.currentLocation_ = function() {
-  var workspace = Blockly.Workspace.getById(this.workspaceId);
-  var block = workspace.getBlockById(this.blockId);
-  var location = {};
-  var parent = block.getParent();
+  const workspace = Blockly.Workspace.getById(this.workspaceId);
+  const block = workspace.getBlockById(this.blockId);
+  const location = {};
+  const parent = block.getParent();
   if (parent) {
     location.parentId = parent.id;
-    var input = parent.getInputWithBlock(block);
+    const input = parent.getInputWithBlock(block);
     if (input) {
       location.inputName = input.name;
     }
   } else {
-    var blockXY = block.getRelativeToSurfaceXY();
+    const blockXY = block.getRelativeToSurfaceXY();
     // The X position in the block move event should be the language agnostic
     // position of the block. I.e. it should not be different in LTR vs. RTL.
-    var rtlAwareX = workspace.RTL ? workspace.getWidth() - blockXY.x : blockXY.x;
+    const rtlAwareX = workspace.RTL ? workspace.getWidth() - blockXY.x : blockXY.x;
     location.coordinate = new goog.math.Coordinate(rtlAwareX, blockXY.y);
   }
   return location;
@@ -487,20 +487,20 @@ Blockly.Events.Move.prototype.isNull = function() {
  * @param {boolean} forward True if run forward, false if run backward (undo).
  */
 Blockly.Events.Move.prototype.run = function(forward) {
-  var workspace = this.getEventWorkspace_();
-  var block = workspace.getBlockById(this.blockId);
+  const workspace = this.getEventWorkspace_();
+  const block = workspace.getBlockById(this.blockId);
   if (!block) {
-    console.warn("Can't move non-existent block: " + this.blockId);
+    console.warn(`Can't move non-existent block: ${this.blockId}`);
     return;
   }
-  var parentId = forward ? this.newParentId : this.oldParentId;
-  var inputName = forward ? this.newInputName : this.oldInputName;
-  var coordinate = forward ? this.newCoordinate : this.oldCoordinate;
-  var parentBlock = null;
+  const parentId = forward ? this.newParentId : this.oldParentId;
+  const inputName = forward ? this.newInputName : this.oldInputName;
+  const coordinate = forward ? this.newCoordinate : this.oldCoordinate;
+  let parentBlock = null;
   if (parentId) {
     parentBlock = workspace.getBlockById(parentId);
     if (!parentBlock) {
-      console.warn("Can't connect to non-existent block: " + parentId);
+      console.warn(`Can't connect to non-existent block: ${parentId}`);
       return;
     }
   }
@@ -508,24 +508,24 @@ Blockly.Events.Move.prototype.run = function(forward) {
     block.unplug();
   }
   if (coordinate) {
-    var xy = block.getRelativeToSurfaceXY();
-    var rtlAwareX = workspace.RTL ? workspace.getWidth() - coordinate.x : coordinate.x;
+    const xy = block.getRelativeToSurfaceXY();
+    const rtlAwareX = workspace.RTL ? workspace.getWidth() - coordinate.x : coordinate.x;
     block.moveBy(rtlAwareX - xy.x, coordinate.y - xy.y);
+    return;
+  }
+  const blockConnection = block.outputConnection || block.previousConnection;
+  let parentConnection;
+  if (inputName) {
+    const input = parentBlock.getInput(inputName);
+    if (input) {
+      parentConnection = input.connection;
+    }
+  } else if (blockConnection.type == Blockly.PREVIOUS_STATEMENT) {
+    parentConnection = parentBlock.nextConnection;
+  }
+  if (parentConnection) {
+    blockConnection.connect(parentConnection);
   } else {
-    var blockConnection = block.outputConnection || block.previousConnection;
-    var parentConnection;
-    if (inputName) {
-      var input = parentBlock.getInput(inputName);
-      if (input) {
-        parentConnection = input.connection;
-      }
-    } else if (blockConnection.type == Blockly.PREVIOUS_STATEMENT) {
-      parentConnection = parentBlock.nextConnection;
-    }
-    if (parentConnection) {
-      blockConnection.connect(parentConnection);
-    } else {
-      console.warn("Can't connect to non-existent input: " + inputName);
-    }
+    console.warn(`Can't connect to non-existent input: ${inputName}`);
   }
 };

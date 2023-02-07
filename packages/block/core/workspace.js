@@ -189,15 +189,15 @@ Blockly.Workspace.prototype.removeTopBlock = function(block) {
  */
 Blockly.Workspace.prototype.getTopBlocks = function(ordered) {
   // Copy the topBlocks_ list.
-  var blocks = [].concat(this.topBlocks_);
+  const blocks = [].concat(this.topBlocks_);
   if (ordered && blocks.length > 1) {
-    var offset = Math.sin(goog.math.toRadians(Blockly.Workspace.SCAN_ANGLE));
+    let offset = Math.sin(goog.math.toRadians(Blockly.Workspace.SCAN_ANGLE));
     if (this.RTL) {
       offset *= -1;
     }
     blocks.sort(function(a, b) {
-      var aXY = a.getRelativeToSurfaceXY();
-      var bXY = b.getRelativeToSurfaceXY();
+      const aXY = a.getRelativeToSurfaceXY();
+      const bXY = b.getRelativeToSurfaceXY();
       return (aXY.y + offset * aXY.x) - (bXY.y + offset * bXY.x);
     });
   }
@@ -244,15 +244,15 @@ Blockly.Workspace.prototype.removeTopComment = function(comment) {
  */
 Blockly.Workspace.prototype.getTopComments = function(ordered) {
   // Copy the topComments_ list.
-  var comments = [].concat(this.topComments_);
+  const comments = [].concat(this.topComments_);
   if (ordered && comments.length > 1) {
-    var offset = Math.sin(goog.math.toRadians(Blockly.Workspace.SCAN_ANGLE));
+    let offset = Math.sin(goog.math.toRadians(Blockly.Workspace.SCAN_ANGLE));
     if (this.RTL) {
       offset *= -1;
     }
     comments.sort(function(a, b) {
-      var aXY = a instanceof Blockly.ScratchBlockComment ? a.getXY() : a.getRelativeToSurfaceXY();
-      var bXY = b instanceof Blockly.ScratchBlockComment ? b.getXY() : b.getRelativeToSurfaceXY();
+      const aXY = a instanceof Blockly.ScratchBlockComment ? a.getXY() : a.getRelativeToSurfaceXY();
+      const bXY = b instanceof Blockly.ScratchBlockComment ? b.getXY() : b.getRelativeToSurfaceXY();
       return (aXY.y + offset * aXY.x) - (bXY.y + offset * bXY.x);
     });
   }
@@ -271,7 +271,7 @@ Blockly.Workspace.prototype.getAllBlocks = function(ordered) {
     // This gets all levels of descendants because getDescendants
     // is called recuusively.  They are added to a new list, not the
     // list that it's iterating over.
-    var topBlocks = this.getTopBlocks(true);
+    const topBlocks = this.getTopBlocks(true);
     var blocks = [];
     for (var i = 0; i < topBlocks.length; i++) {
       blocks.push.apply(blocks, topBlocks[i].getDescendants(true));
@@ -293,7 +293,7 @@ Blockly.Workspace.prototype.getAllBlocks = function(ordered) {
  */
 Blockly.Workspace.prototype.clear = function() {
   this.isClearing = true;
-  var existingGroup = Blockly.Events.getGroup();
+  const existingGroup = Blockly.Events.getGroup();
   if (!existingGroup) {
     Blockly.Events.setGroup(true);
   }
@@ -473,13 +473,13 @@ Blockly.Workspace.prototype.newBlock = function(prototypeName, opt_id) {
  * @param {boolean} redo False if undo, true if redo.
  */
 Blockly.Workspace.prototype.undo = function(redo) {
-  var inputStack = redo ? this.redoStack_ : this.undoStack_;
-  var outputStack = redo ? this.undoStack_ : this.redoStack_;
-  var inputEvent = inputStack.pop();
+  const inputStack = redo ? this.redoStack_ : this.undoStack_;
+  const outputStack = redo ? this.undoStack_ : this.redoStack_;
+  const inputEvent = inputStack.pop();
   if (!inputEvent) {
     return;
   }
-  var events = [inputEvent];
+  let events = [inputEvent];
   // Do another undo/redo if the next one is of the same group.
   while (inputStack.length && inputEvent.group &&
       inputEvent.group == inputStack[inputStack.length - 1].group) {
@@ -565,8 +565,8 @@ Blockly.Workspace.prototype.fireChangeListener = function(event) {
     }
   }
   // Copy listeners in case a listener attaches/detaches itself.
-  var currentListeners = this.listeners_.slice();
-  for (var i = 0, func; func = currentListeners[i]; i++) {
+  const currentListeners = this.listeners_.slice();
+  for (let i = 0, func; func = currentListeners[i]; i++) {
     func(event);
   }
 };
@@ -577,7 +577,7 @@ Blockly.Workspace.prototype.fireChangeListener = function(event) {
  * @return {Blockly.Block} The sought after block or null if not found.
  */
 Blockly.Workspace.prototype.getBlockById = function(id) {
-  var block = this.blockDB_[id];
+  let block = this.blockDB_[id];
   if (!block && this.getFlyout() && this.getFlyout().getWorkspace()) {
     block = this.getFlyout().getWorkspace().blockDB_[id];
   }
@@ -612,8 +612,8 @@ Blockly.Workspace.prototype.getFlyout = function() {
  * @return {boolean} True if all inputs are filled, false otherwise.
  */
 Blockly.Workspace.prototype.allInputsFilled = function(opt_shadowBlocksAreFilled) {
-  var blocks = this.getTopBlocks(false);
-  for (var i = 0, block; block = blocks[i]; i++) {
+  const blocks = this.getTopBlocks(false);
+  for (let i = 0, block; block = blocks[i]; i++) {
     if (!block.allInputsFilled(opt_shadowBlocksAreFilled)) {
       return false;
     }

@@ -42,9 +42,9 @@ goog.require('Blockly.constants');
  *     category.
  */
 Blockly.ScratchBlocks.VerticalExtensions.colourHelper = function(category) {
-  var colours = Blockly.Colours[category];
+  const colours = Blockly.Colours[category];
   if (!(colours && colours.primary && colours.secondary && colours.tertiary)) {
-    throw new Error('Could not find colours for category "' + category + '"');
+    throw new Error(`Could not find colours for category "${category}"`);
   }
   /**
    * Set the primary, secondary, and tertiary colours on this block for the
@@ -220,13 +220,13 @@ Blockly.ScratchBlocks.VerticalExtensions.SCRATCH_EXTENSION = function() {
  * @package
  */
 Blockly.ScratchBlocks.VerticalExtensions.registerAll = function() {
-  var categoryNames =
-      ['control', 'data', 'data_lists', 'sounds', 'motion', 'looks', 'event',
-        'sensing', 'pen', 'operators', 'more'];
+  const categoryNames =
+  ['control', 'data', 'data_lists', 'sounds', 'motion', 'looks', 'event',
+    'sensing', 'pen', 'operators', 'more'];
   // Register functions for all category colours.
-  for (var i = 0; i < categoryNames.length; i++) {
-    var name = categoryNames[i];
-    Blockly.Extensions.register('colours_' + name,
+  for (let i = 0; i < categoryNames.length; i++) {
+    const name = categoryNames[i];
+    Blockly.Extensions.register(`colours_${name}`,
         Blockly.ScratchBlocks.VerticalExtensions.colourHelper(name));
   }
 

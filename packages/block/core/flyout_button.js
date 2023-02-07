@@ -51,12 +51,12 @@ Blockly.FlyoutButton = function(workspace, targetWorkspace, xml, isLabel) {
    */
   this.callback_ = null;
 
-  var callbackKey = xml.getAttribute('callbackKey');
+  const callbackKey = xml.getAttribute('callbackKey');
   if (this.isLabel_ && callbackKey) {
-    console.warn('Labels should not have callbacks. Label text: ' + this.text_);
+    console.warn(`Labels should not have callbacks. Label text: ${this.text_}`);
   } else if (!this.isLabel_ &&
       !(callbackKey && targetWorkspace.getButtonCallback(callbackKey))) {
-    console.warn('Buttons should have callbacks. Button text: ' + this.text_);
+    console.warn(`Buttons should have callbacks. Button text: ${this.text_}`);
   } else {
     this.callback_ = targetWorkspace.getButtonCallback(callbackKey);
   }
@@ -149,9 +149,9 @@ Blockly.FlyoutButton.prototype.init = function(
  * @return {!Element} The button's SVG group.
  */
 Blockly.FlyoutButton.prototype.createDom = function() {
-  var cssClass = this.isLabel_ ? 'blocklyFlyoutLabel' : 'blocklyFlyoutButton';
+  let cssClass = this.isLabel_ ? 'blocklyFlyoutLabel' : 'blocklyFlyoutButton';
   if (this.cssClass_) {
-    cssClass += ' ' + this.cssClass_;
+    cssClass += ` ${this.cssClass_}`;
   }
 
   this.svgGroup_ = Blockly.utils.createSvgElement('g', {'class': cssClass},
@@ -183,22 +183,22 @@ Blockly.FlyoutButton.prototype.addTextSvg = function(isLabel) {
         this.svgGroup_);
   }
   // Background rectangle.
-  var rect = Blockly.utils.createSvgElement('rect',
-      {
-        'class': isLabel ?
-            'blocklyFlyoutLabelBackground' : 'blocklyFlyoutButtonBackground',
-        'rx': 4, 'ry': 4
-      },
-      this.svgGroup_);
+  const rect = Blockly.utils.createSvgElement('rect',
+  {
+    'class': isLabel ?
+        'blocklyFlyoutLabelBackground' : 'blocklyFlyoutButtonBackground',
+    'rx': 4, 'ry': 4
+  },
+  this.svgGroup_);
 
-  var svgText = Blockly.utils.createSvgElement('text',
-      {
-        'class': isLabel ? 'blocklyFlyoutLabelText' : 'blocklyText',
-        'x': 0,
-        'y': 0,
-        'text-anchor': 'middle'
-      },
-      this.svgGroup_);
+  const svgText = Blockly.utils.createSvgElement('text',
+  {
+    'class': isLabel ? 'blocklyFlyoutLabelText' : 'blocklyText',
+    'x': 0,
+    'y': 0,
+    'text-anchor': 'middle'
+  },
+  this.svgGroup_);
   svgText.textContent = Blockly.utils.replaceMessageReferences(this.text_);
 
   this.width = Blockly.Field.getCachedWidth(svgText);
@@ -234,7 +234,7 @@ Blockly.FlyoutButton.prototype.show = function() {
  */
 Blockly.FlyoutButton.prototype.updateTransform_ = function() {
   this.svgGroup_.setAttribute('transform',
-      'translate(' + this.position_.x + ',' + this.position_.y + ')');
+      `translate(${this.position_.x},${this.position_.y})`);
 };
 
 /**
@@ -305,7 +305,7 @@ Blockly.FlyoutButton.prototype.dispose = function() {
  * @private
  */
 Blockly.FlyoutButton.prototype.onMouseUp_ = function(e) {
-  var gesture = this.targetWorkspace_.getGesture(e);
+  const gesture = this.targetWorkspace_.getGesture(e);
   if (gesture) {
     // If we're in the middle of dragging something (blocks, workspace, etc.) ignore the button.
     // Otherwise, cancel the gesture.

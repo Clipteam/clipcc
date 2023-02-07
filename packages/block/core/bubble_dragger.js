@@ -120,10 +120,10 @@ Blockly.BubbleDragger.prototype.startBubbleDrag = function() {
 
   this.draggingBubble_.setDragging && this.draggingBubble_.setDragging(true);
 
-  var toolbox = this.workspace_.getToolbox();
+  const toolbox = this.workspace_.getToolbox();
   if (toolbox) {
-    var style = this.draggingBubble_.isDeletable() ? 'blocklyToolboxDelete' :
-        'blocklyToolboxGrab';
+    const style = this.draggingBubble_.isDeletable() ? 'blocklyToolboxDelete' :
+    'blocklyToolboxGrab';
     toolbox.addStyle(style);
   }
 };
@@ -137,8 +137,8 @@ Blockly.BubbleDragger.prototype.startBubbleDrag = function() {
  * @package
  */
 Blockly.BubbleDragger.prototype.dragBubble = function(e, currentDragDeltaXY) {
-  var delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
-  var newLoc = goog.math.Coordinate.sum(this.startXY_, delta);
+  const delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
+  const newLoc = goog.math.Coordinate.sum(this.startXY_, delta);
 
   this.draggingBubble_.moveDuringDrag(this.dragSurface_, newLoc);
 
@@ -155,7 +155,7 @@ Blockly.BubbleDragger.prototype.dragBubble = function(e, currentDragDeltaXY) {
  * @private
  */
 Blockly.BubbleDragger.prototype.maybeDeleteBubble_ = function() {
-  var trashcan = this.workspace_.trashcan;
+  const trashcan = this.workspace_.trashcan;
 
   if (this.wouldDeleteBubble_) {
     if (trashcan) {
@@ -178,7 +178,7 @@ Blockly.BubbleDragger.prototype.maybeDeleteBubble_ = function() {
  */
 Blockly.BubbleDragger.prototype.updateCursorDuringBubbleDrag_ = function() {
   this.wouldDeleteBubble_ = this.deleteArea_ != Blockly.DELETE_AREA_NONE;
-  var trashcan = this.workspace_.trashcan;
+  const trashcan = this.workspace_.trashcan;
   if (this.wouldDeleteBubble_) {
     this.draggingBubble_.setDeleteStyle(true);
     if (this.deleteArea_ == Blockly.DELETE_AREA_TRASH && trashcan) {
@@ -204,12 +204,12 @@ Blockly.BubbleDragger.prototype.endBubbleDrag = function(
   // Make sure internal state is fresh.
   this.dragBubble(e, currentDragDeltaXY);
 
-  var delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
-  var newLoc = goog.math.Coordinate.sum(this.startXY_, delta);
+  const delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
+  const newLoc = goog.math.Coordinate.sum(this.startXY_, delta);
 
   // Move the bubble to its final location.
   this.draggingBubble_.moveTo(newLoc.x, newLoc.y);
-  var deleted = this.maybeDeleteBubble_();
+  const deleted = this.maybeDeleteBubble_();
 
   if (!deleted) {
     // Put everything back onto the bubble canvas.
@@ -223,8 +223,8 @@ Blockly.BubbleDragger.prototype.endBubbleDrag = function(
   this.workspace_.setResizesEnabled(true);
 
   if (this.workspace_.toolbox_) {
-    var style = this.draggingBubble_.isDeletable() ? 'blocklyToolboxDelete' :
-        'blocklyToolboxGrab';
+    const style = this.draggingBubble_.isDeletable() ? 'blocklyToolboxDelete' :
+    'blocklyToolboxGrab';
     this.workspace_.toolbox_.removeStyle(style);
   }
   Blockly.Events.setGroup(false);
@@ -235,7 +235,7 @@ Blockly.BubbleDragger.prototype.endBubbleDrag = function(
  * @private
  */
 Blockly.BubbleDragger.prototype.fireMoveEvent_ = function() {
-  var event = null;
+  let event = null;
   if (this.draggingBubble_.isComment) {
     event = new Blockly.Events.CommentMove(this.draggingBubble_);
   } else if (this.draggingBubble_ instanceof Blockly.ScratchBubble) {
@@ -260,14 +260,14 @@ Blockly.BubbleDragger.prototype.fireMoveEvent_ = function() {
  * @private
  */
 Blockly.BubbleDragger.prototype.pixelsToWorkspaceUnits_ = function(pixelCoord) {
-  var result = new goog.math.Coordinate(pixelCoord.x / this.workspace_.scale,
+  let result = new goog.math.Coordinate(pixelCoord.x / this.workspace_.scale,
       pixelCoord.y / this.workspace_.scale);
   if (this.workspace_.isMutator) {
     // If we're in a mutator, its scale is always 1, purely because of some
     // oddities in our rendering optimizations.  The actual scale is the same as
     // the scale on the parent workspace.
     // Fix that for dragging.
-    var mainScale = this.workspace_.options.parentWorkspace.scale;
+    const mainScale = this.workspace_.options.parentWorkspace.scale;
     result = result.scale(1 / mainScale);
   }
   return result;

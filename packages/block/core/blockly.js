@@ -68,7 +68,7 @@ goog.require('goog.color');
 
 // Turn off debugging when compiled.
 /* eslint-disable no-unused-vars */
-var CLOSURE_DEFINES = {'goog.DEBUG': false};
+let CLOSURE_DEFINES = {'goog.DEBUG': false};
 /* eslint-enable no-unused-vars */
 
 /**
@@ -152,24 +152,24 @@ Blockly.resizeSvgContents = function(workspace) {
  * @param {!Blockly.WorkspaceSvg} workspace Any workspace in the SVG.
  */
 Blockly.svgResize = function(workspace) {
-  var mainWorkspace = workspace;
+  let mainWorkspace = workspace;
   while (mainWorkspace.options.parentWorkspace) {
     mainWorkspace = mainWorkspace.options.parentWorkspace;
   }
-  var svg = mainWorkspace.getParentSvg();
-  var div = svg.parentNode;
+  const svg = mainWorkspace.getParentSvg();
+  const div = svg.parentNode;
   if (!div) {
     // Workspace deleted, or something.
     return;
   }
-  var width = div.offsetWidth;
-  var height = div.offsetHeight;
+  const width = div.offsetWidth;
+  const height = div.offsetHeight;
   if (svg.cachedWidth_ != width) {
-    svg.setAttribute('width', width + 'px');
+    svg.setAttribute('width', `${width}px`);
     svg.cachedWidth_ = width;
   }
   if (svg.cachedHeight_ != height) {
-    svg.setAttribute('height', height + 'px');
+    svg.setAttribute('height', `${height}px`);
     svg.cachedHeight_ = height;
   }
   mainWorkspace.resize();
@@ -191,7 +191,7 @@ Blockly.onKeyDown_ = function(e) {
     // hidden.
     return;
   }
-  var deleteBlock = false;
+  let deleteBlock = false;
   if (e.keyCode == 27) {
     // Pressing esc closes the context menu and any drop-down
     Blockly.hideChaff();
@@ -236,7 +236,7 @@ Blockly.onKeyDown_ = function(e) {
         Blockly.Events.setGroup(true);
         // Pasting always pastes to the main workspace, even if the copy started
         // in a flyout workspace.
-        var workspace = Blockly.clipboardSource_;
+        let workspace = Blockly.clipboardSource_;
         if (workspace.isFlyout) {
           workspace = workspace.targetWorkspace;
         }
@@ -251,12 +251,13 @@ Blockly.onKeyDown_ = function(e) {
   }
   // Common code for delete and cut.
   // Don't delete in the flyout.
-  if (deleteBlock && !Blockly.selected.workspace.isFlyout) {
-    Blockly.Events.setGroup(true);
-    Blockly.hideChaff();
-    Blockly.selected.dispose(/* heal */ true, true);
-    Blockly.Events.setGroup(false);
+  if (!(deleteBlock && !Blockly.selected.workspace.isFlyout)) {
+    return;
   }
+  Blockly.Events.setGroup(true);
+  Blockly.hideChaff();
+  Blockly.selected.dispose(/* heal */ true, true);
+  Blockly.Events.setGroup(false);
 };
 
 /**
@@ -271,7 +272,7 @@ Blockly.copy_ = function(toCopy) {
   } else {
     var xml = Blockly.Xml.blockToDom(toCopy);
     // Encode start position in XML.
-    var xy = toCopy.getRelativeToSurfaceXY();
+    const xy = toCopy.getRelativeToSurfaceXY();
     xml.setAttribute('x', toCopy.RTL ? -xy.x : xy.x);
     xml.setAttribute('y', xy.y);
   }
@@ -287,8 +288,8 @@ Blockly.copy_ = function(toCopy) {
  */
 Blockly.duplicate_ = function(toDuplicate) {
   // Save the clipboard.
-  var clipboardXml = Blockly.clipboardXml_;
-  var clipboardSource = Blockly.clipboardSource_;
+  const clipboardXml = Blockly.clipboardXml_;
+  const clipboardSource = Blockly.clipboardSource_;
 
   // Create a duplicate via a copy/paste operation.
   Blockly.copy_(toDuplicate);
@@ -341,7 +342,7 @@ Blockly.hideChaffInternal_ = function(opt_allowToolbox) {
   Blockly.Tooltip.hide();
   Blockly.DropDownDiv.hideWithoutAnimation();
   if (!opt_allowToolbox) {
-    var workspace = Blockly.getMainWorkspace();
+    const workspace = Blockly.getMainWorkspace();
     if (workspace.toolbox_ &&
         workspace.toolbox_.flyout_ &&
         workspace.toolbox_.flyout_.autoClose) {
@@ -408,7 +409,7 @@ Blockly.prompt = function(message, defaultValue, callback, _opt_title,
  * @param {string} id An identifier.
  */
 Blockly.statusButtonCallback = function(id) {
-  window.alert('status button was pressed for ' + id);
+  window.alert(`status button was pressed for ${id}`);
 };
 
 /**
@@ -416,8 +417,8 @@ Blockly.statusButtonCallback = function(id) {
  * @param {Blockly.Workspace} workspace A workspace.
  */
 Blockly.refreshStatusButtons = function(workspace) {
-  var buttons = workspace.getFlyout().buttons_;
-  for (var i = 0; i < buttons.length; i++) {
+  const buttons = workspace.getFlyout().buttons_;
+  for (let i = 0; i < buttons.length; i++) {
     if (buttons[i] instanceof Blockly.FlyoutExtensionCategoryHeader) {
       buttons[i].refreshStatus();
     }
@@ -444,28 +445,28 @@ Blockly.jsonInitFactory_ = function(jsonDef) {
  * @param {!Array.<!Object>} jsonArray An array of JSON block definitions.
  */
 Blockly.defineBlocksWithJsonArray = function(jsonArray) {
-  for (var i = 0; i < jsonArray.length; i++) {
-    var elem = jsonArray[i];
-    if (!elem) {
-      console.warn(
-          'Block definition #' + i + ' in JSON array is ' + elem + '. ' +
-          'Skipping.');
-    } else {
+  for (let i = 0; i < jsonArray.length; i++) {
+    const elem = jsonArray[i];
+    if (elem) {
       var typename = elem.type;
       if (typename == null || typename === '') {
         console.warn(
-            'Block definition #' + i +
+            `Block definition #${i}` +
             ' in JSON array is missing a type attribute. Skipping.');
       } else {
         if (Blockly.Blocks[typename]) {
           console.warn(
-              'Block definition #' + i + ' in JSON array' +
+              `Block definition #${i} in JSON array` +
               ' overwrites prior definition of "' + typename + '".');
         }
         Blockly.Blocks[typename] = {
           init: Blockly.jsonInitFactory_(elem)
         };
       }
+    } else {
+      console.warn(
+          `Block definition #${i} in JSON array is ${elem}. ` +
+          'Skipping.');
     }
   }
 };
@@ -489,41 +490,41 @@ Blockly.defineBlocksWithJsonArray = function(jsonArray) {
  */
 Blockly.bindEventWithChecks_ = function(node, name, thisObject, func,
     opt_noCaptureIdentifier, opt_noPreventDefault) {
-  var handled = false;
-  var wrapFunc = function(e) {
-    var captureIdentifier = !opt_noCaptureIdentifier;
-    // Handle each touch point separately.  If the event was a mouse event, this
-    // will hand back an array with one element, which we're fine handling.
-    var events = Blockly.Touch.splitEventByTouches(e);
-    for (var i = 0, event; event = events[i]; i++) {
-      if (captureIdentifier && !Blockly.Touch.shouldHandleEvent(event)) {
-        continue;
-      }
-      Blockly.Touch.setClientFromTouch(event);
-      if (thisObject) {
-        func.call(thisObject, event);
-      } else {
-        func(event);
-      }
-      handled = true;
-    }
-  };
+  let handled = false;
+      const wrapFunc = function(e) {
+        const captureIdentifier = !opt_noCaptureIdentifier;
+        // Handle each touch point separately.  If the event was a mouse event, this
+        // will hand back an array with one element, which we're fine handling.
+        const events = Blockly.Touch.splitEventByTouches(e);
+        for (let i = 0, event; event = events[i]; i++) {
+          if (captureIdentifier && !Blockly.Touch.shouldHandleEvent(event)) {
+            continue;
+          }
+          Blockly.Touch.setClientFromTouch(event);
+          if (thisObject) {
+            func.call(thisObject, event);
+          } else {
+            func(event);
+          }
+          handled = true;
+        }
+      };
 
   node.addEventListener(name, wrapFunc, false);
-  var bindData = [[node, name, wrapFunc]];
+      const bindData = [[node, name, wrapFunc]];
 
   // Add equivalent touch event.
   if (name in Blockly.Touch.TOUCH_MAP) {
-    var touchWrapFunc = function(e) {
+    const touchWrapFunc = function(e) {
       wrapFunc(e);
       // Calling preventDefault stops the browser from scrolling/zooming the
       // page.
-      var preventDef = !opt_noPreventDefault;
+      const preventDef = !opt_noPreventDefault;
       if (handled && preventDef) {
         e.preventDefault();
       }
     };
-    for (var i = 0, type; type = Blockly.Touch.TOUCH_MAP[name][i]; i++) {
+    for (let i = 0, type; type = Blockly.Touch.TOUCH_MAP[name][i]; i++) {
       node.addEventListener(type, touchWrapFunc, false);
       bindData.push([node, type, touchWrapFunc]);
     }
@@ -546,7 +547,7 @@ Blockly.bindEventWithChecks_ = function(node, name, thisObject, func,
  * @private
  */
 Blockly.bindEvent_ = function(node, name, thisObject, func) {
-  var wrapFunc = function(e) {
+  const wrapFunc = function(e) {
     if (thisObject) {
       func.call(thisObject, e);
     } else {
@@ -555,15 +556,15 @@ Blockly.bindEvent_ = function(node, name, thisObject, func) {
   };
 
   node.addEventListener(name, wrapFunc, false);
-  var bindData = [[node, name, wrapFunc]];
+  const bindData = [[node, name, wrapFunc]];
 
   // Add equivalent touch event.
   if (name in Blockly.Touch.TOUCH_MAP) {
-    var touchWrapFunc = function(e) {
+    const touchWrapFunc = function(e) {
       // Punt on multitouch events.
       if (e.changedTouches.length == 1) {
         // Map the touch event's properties to the event.
-        var touchPoint = e.changedTouches[0];
+        const touchPoint = e.changedTouches[0];
         e.clientX = touchPoint.clientX;
         e.clientY = touchPoint.clientY;
       }
@@ -572,7 +573,7 @@ Blockly.bindEvent_ = function(node, name, thisObject, func) {
       // Stop the browser from scrolling/zooming the page.
       e.preventDefault();
     };
-    for (var i = 0, type; type = Blockly.Touch.TOUCH_MAP[name][i]; i++) {
+    for (let i = 0, type; type = Blockly.Touch.TOUCH_MAP[name][i]; i++) {
       node.addEventListener(type, touchWrapFunc, false);
       bindData.push([node, type, touchWrapFunc]);
     }
@@ -589,9 +590,9 @@ Blockly.bindEvent_ = function(node, name, thisObject, func) {
  */
 Blockly.unbindEvent_ = function(bindData) {
   while (bindData.length) {
-    var bindDatum = bindData.pop();
-    var node = bindDatum[0];
-    var name = bindDatum[1];
+    const bindDatum = bindData.pop();
+    const node = bindDatum[0];
+    const name = bindDatum[1];
     var func = bindDatum[2];
     node.removeEventListener(name, func, false);
   }

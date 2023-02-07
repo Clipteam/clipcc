@@ -141,22 +141,23 @@ Blockly.DraggedConnectionManager.prototype.wouldConnectBlock = function() {
  * @package
  */
 Blockly.DraggedConnectionManager.prototype.applyConnections = function() {
-  if (this.closestConnection_) {
-    // Connect two blocks together.
-    this.localConnection_.connect(this.closestConnection_);
-    if (this.topBlock_.rendered) {
-      // Trigger a connection animation.
-      // Determine which connection is inferior (lower in the source stack).
-      var inferiorConnection = this.localConnection_.isSuperior() ?
-          this.closestConnection_ : this.localConnection_;
-      Blockly.BlockAnimations.connectionUiEffect(
-          inferiorConnection.getSourceBlock());
-      // Bring the just-edited stack to the front.
-      var rootBlock = this.topBlock_.getRootBlock();
-      rootBlock.bringToFront();
-    }
-    this.removeHighlighting_();
+  if (!this.closestConnection_) {
+    return;
   }
+  // Connect two blocks together.
+  this.localConnection_.connect(this.closestConnection_);
+  if (this.topBlock_.rendered) {
+    // Trigger a connection animation.
+    // Determine which connection is inferior (lower in the source stack).
+    const inferiorConnection = this.localConnection_.isSuperior() ?
+    this.closestConnection_ : this.localConnection_;
+    Blockly.BlockAnimations.connectionUiEffect(
+        inferiorConnection.getSourceBlock());
+    // Bring the just-edited stack to the front.
+    const rootBlock = this.topBlock_.getRootBlock();
+    rootBlock.bringToFront();
+  }
+  this.removeHighlighting_();
 };
 
 /**
@@ -169,8 +170,8 @@ Blockly.DraggedConnectionManager.prototype.applyConnections = function() {
  * @package
  */
 Blockly.DraggedConnectionManager.prototype.update = function(dxy, deleteArea, isOutside) {
-  var oldClosestConnection;
-  var closestConnectionChanged;
+  let oldClosestConnection;
+  let closestConnectionChanged;
   // If dragged outside, don't connect, since the connections aren't visible.
   if (!isOutside) {
     oldClosestConnection = this.closestConnection_;
@@ -185,10 +186,10 @@ Blockly.DraggedConnectionManager.prototype.update = function(dxy, deleteArea, is
 
   // Prefer connecting over dropping into the trash can, but prefer dragging to
   // the toolbox over connecting to other blocks.
-  var wouldConnect = !!this.closestConnection_ &&
-      deleteArea != Blockly.DELETE_AREA_TOOLBOX;
-  var wouldDelete = !!deleteArea && !this.topBlock_.getParent() &&
-      this.topBlock_.isDeletable();
+  const wouldConnect = !!this.closestConnection_ &&
+  deleteArea != Blockly.DELETE_AREA_TOOLBOX;
+  const wouldDelete = !!deleteArea && !this.topBlock_.getParent() &&
+  this.topBlock_.isDeletable();
   this.wouldDeleteBlock_ = wouldDelete && !wouldConnect;
 
   if (!this.wouldDeleteBlock_ && closestConnectionChanged &&
@@ -225,9 +226,9 @@ Blockly.DraggedConnectionManager.prototype.addHighlighting_ = function() {
  * @private
  */
 Blockly.DraggedConnectionManager.prototype.initAvailableConnections_ = function() {
-  var available = this.topBlock_.getConnections_(false);
+  const available = this.topBlock_.getConnections_(false);
   // Also check the last connection on this stack
-  var lastOnStack = this.topBlock_.lastConnectionInStack();
+  const lastOnStack = this.topBlock_.lastConnectionInStack();
   if (lastOnStack && lastOnStack != this.topBlock_.nextConnection) {
     available.push(lastOnStack);
   }
@@ -242,14 +243,14 @@ Blockly.DraggedConnectionManager.prototype.initAvailableConnections_ = function(
  * @private
  */
 Blockly.DraggedConnectionManager.prototype.updateClosest_ = function(dxy) {
-  var oldClosestConnection = this.closestConnection_;
+  const oldClosestConnection = this.closestConnection_;
 
   this.closestConnection_ = null;
   this.localConnection_ = null;
   this.radiusConnection_ = Blockly.SNAP_RADIUS;
-  for (var i = 0; i < this.availableConnections_.length; i++) {
-    var myConnection = this.availableConnections_[i];
-    var neighbour = myConnection.closest(this.radiusConnection_, dxy);
+  for (let i = 0; i < this.availableConnections_.length; i++) {
+    const myConnection = this.availableConnections_[i];
+    const neighbour = myConnection.closest(this.radiusConnection_, dxy);
     if (neighbour.connection) {
       this.closestConnection_ = neighbour.connection;
       this.localConnection_ = myConnection;

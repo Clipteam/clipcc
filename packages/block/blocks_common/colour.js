@@ -35,8 +35,8 @@ goog.require('Blockly.constants');
  * @return {string} #RRGGBB for random colour.
  */
 function randomColour() {
-  var num = Math.floor(Math.random() * Math.pow(2, 24));
-  return '#' + ('00000' + num.toString(16)).substr(-6);
+  const num = Math.floor(Math.random() * Math.pow(2, 24));
+  return `#${(`00000${num.toString(16)}`).substr(-6)}`;
 }
 
 Blockly.Blocks['colour_picker'] = {

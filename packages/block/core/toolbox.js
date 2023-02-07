@@ -115,8 +115,8 @@ Blockly.Toolbox.prototype.selectedItem_ = null;
  * Initializes the toolbox.
  */
 Blockly.Toolbox.prototype.init = function() {
-  var workspace = this.workspace_;
-  var svg = this.workspace_.getParentSvg();
+  const workspace = this.workspace_;
+  const svg = this.workspace_.getParentSvg();
 
   /**
    * HTML container for the Toolbox menu.
@@ -165,9 +165,9 @@ Blockly.Toolbox.prototype.dispose = function() {
  * @private
  */
 Blockly.Toolbox.prototype.createFlyout_ = function() {
-  var workspace = this.workspace_;
+  const workspace = this.workspace_;
 
-  var options = {
+  const options = {
     disabledPatternId: workspace.options.disabledPatternId,
     parentWorkspace: workspace,
     RTL: workspace.RTL,
@@ -207,18 +207,18 @@ Blockly.Toolbox.prototype.populate_ = function(newTree) {
  * @private
  */
 Blockly.Toolbox.prototype.showAll_ = function() {
-  var allContents = [];
-  for (var i = 0; i < this.categoryMenu_.categories_.length; i++) {
-    var category = this.categoryMenu_.categories_[i];
+  let allContents = [];
+  for (let i = 0; i < this.categoryMenu_.categories_.length; i++) {
+    const category = this.categoryMenu_.categories_[i];
 
     // create a label node to go at the top of the category
-    var labelString = '<xml><label text="' + category.name_ + '"' +
+    const labelString = '<xml><label text="' + category.name_ + '"' +
       ' id="' + category.id_ + '"' +
       ' category-label="true"' +
       ' showStatusButton="' + category.showStatusButton_ + '"' +
       ' web-class="categoryLabel">' +
       '</label></xml>';
-    var labelXML = Blockly.Xml.textToDom(labelString);
+    const labelXML = Blockly.Xml.textToDom(labelString);
 
     allContents.push(labelXML.firstChild);
 
@@ -255,17 +255,17 @@ Blockly.Toolbox.prototype.getHeight = function() {
  * Move the toolbox to the edge.
  */
 Blockly.Toolbox.prototype.position = function() {
-  var treeDiv = this.HtmlDiv;
+  const treeDiv = this.HtmlDiv;
   if (!treeDiv) {
     // Not initialized yet.
     return;
   }
-  var svg = this.workspace_.getParentSvg();
-  var svgSize = Blockly.svgSize(svg);
+  const svg = this.workspace_.getParentSvg();
+  const svgSize = Blockly.svgSize(svg);
   if (this.horizontalLayout_) {
     treeDiv.style.left = '0';
     treeDiv.style.height = 'auto';
-    treeDiv.style.width = svgSize.width + 'px';
+    treeDiv.style.width = `${svgSize.width}px`;
     this.height = treeDiv.offsetHeight;
     if (this.toolboxPosition == Blockly.TOOLBOX_AT_TOP) {  // Top
       treeDiv.style.top = '0';
@@ -325,13 +325,13 @@ Blockly.Toolbox.prototype.getClientRect = function() {
   // BIG_NUM is offscreen padding so that blocks dragged beyond the toolbox
   // area are still deleted.  Must be smaller than Infinity, but larger than
   // the largest screen size.
-  var BIG_NUM = 10000000;
-  var toolboxRect = this.HtmlDiv.getBoundingClientRect();
+  const BIG_NUM = 10000000;
+  const toolboxRect = this.HtmlDiv.getBoundingClientRect();
 
-  var x = toolboxRect.left;
-  var y = toolboxRect.top;
-  var width = toolboxRect.width;
-  var height = toolboxRect.height;
+  const x = toolboxRect.left;
+  const y = toolboxRect.top;
+  const width = toolboxRect.width;
+  const height = toolboxRect.height;
 
   // Assumes that the toolbox is on the SVG edge.  If this changes
   // (e.g. toolboxes in mutators) then this code will need to be more complex.
@@ -410,7 +410,7 @@ Blockly.Toolbox.prototype.getSelectedCategoryId = function() {
  * selected category.
  */
 Blockly.Toolbox.prototype.getCategoryScrollOffset = function() {
-  var categoryPos = this.getCategoryPositionById(this.getSelectedCategoryId());
+  const categoryPos = this.getCategoryPositionById(this.getSelectedCategoryId());
   return this.flyout_.getScrollPos() - categoryPos;
 };
 
@@ -420,8 +420,8 @@ Blockly.Toolbox.prototype.getCategoryScrollOffset = function() {
  * @return {number} The position of the category.
  */
 Blockly.Toolbox.prototype.getCategoryPositionByName = function(name) {
-  var scrollPositions = this.flyout_.categoryScrollPositions;
-  for (var i = 0; i < scrollPositions.length; i++) {
+  const scrollPositions = this.flyout_.categoryScrollPositions;
+  for (let i = 0; i < scrollPositions.length; i++) {
     if (name === scrollPositions[i].categoryName) {
       return scrollPositions[i].position;
     }
@@ -435,8 +435,8 @@ Blockly.Toolbox.prototype.getCategoryPositionByName = function(name) {
  * @public
  */
 Blockly.Toolbox.prototype.getCategoryPositionById = function(id) {
-  var scrollPositions = this.flyout_.categoryScrollPositions;
-  for (var i = 0; i < scrollPositions.length; i++) {
+  const scrollPositions = this.flyout_.categoryScrollPositions;
+  for (let i = 0; i < scrollPositions.length; i++) {
     if (id === scrollPositions[i].categoryId) {
       return scrollPositions[i].position;
     }
@@ -449,8 +449,8 @@ Blockly.Toolbox.prototype.getCategoryPositionById = function(id) {
  * @return {number} The length of the category.
  */
 Blockly.Toolbox.prototype.getCategoryLengthByName = function(name) {
-  var scrollPositions = this.flyout_.categoryScrollPositions;
-  for (var i = 0; i < scrollPositions.length; i++) {
+  const scrollPositions = this.flyout_.categoryScrollPositions;
+  for (let i = 0; i < scrollPositions.length; i++) {
     if (name === scrollPositions[i].categoryName) {
       return scrollPositions[i].length;
     }
@@ -464,8 +464,8 @@ Blockly.Toolbox.prototype.getCategoryLengthByName = function(name) {
  * @public
  */
 Blockly.Toolbox.prototype.getCategoryLengthById = function(id) {
-  var scrollPositions = this.flyout_.categoryScrollPositions;
-  for (var i = 0; i < scrollPositions.length; i++) {
+  const scrollPositions = this.flyout_.categoryScrollPositions;
+  for (let i = 0; i < scrollPositions.length; i++) {
     if (id === scrollPositions[i].categoryId) {
       return scrollPositions[i].length;
     }
@@ -505,7 +505,7 @@ Blockly.Toolbox.prototype.setSelectedItem = function(item, opt_shouldScroll) {
   if (this.selectedItem_ != null) {
     this.selectedItem_.setSelected(true);
     // Scroll flyout to the top of the selected category
-    var categoryId = item.id_;
+    const categoryId = item.id_;
     if (this.isCollapsed_) {
       this.setCollapsed(false);
       if (opt_shouldScroll) {
@@ -544,8 +544,8 @@ Blockly.Toolbox.prototype.setSelectedCategoryById = function(id) {
  * @package
  */
 Blockly.Toolbox.prototype.scrollToCategoryByName = function(name, opt_immediately) {
-  var scrollPositions = this.flyout_.categoryScrollPositions;
-  for (var i = 0; i < scrollPositions.length; i++) {
+  const scrollPositions = this.flyout_.categoryScrollPositions;
+  for (let i = 0; i < scrollPositions.length; i++) {
     if (name === scrollPositions[i].categoryName) {
       this.flyout_.setVisible(true);
       if (opt_immediately) {
@@ -566,8 +566,8 @@ Blockly.Toolbox.prototype.scrollToCategoryByName = function(name, opt_immediatel
  * @public
  */
 Blockly.Toolbox.prototype.scrollToCategoryById = function(id, opt_immediately) {
-  var scrollPositions = this.flyout_.categoryScrollPositions;
-  for (var i = 0; i < scrollPositions.length; i++) {
+  const scrollPositions = this.flyout_.categoryScrollPositions;
+  for (let i = 0; i < scrollPositions.length; i++) {
     if (id === scrollPositions[i].categoryId) {
       this.flyout_.setVisible(true);
       if (opt_immediately) {
@@ -598,8 +598,8 @@ Blockly.Toolbox.prototype.getCategoryByIndex = function(index) {
  * @package
  */
 Blockly.Toolbox.prototype.selectCategoryByName = function(name) {
-  for (var i = 0; i < this.categoryMenu_.categories_.length; i++) {
-    var category = this.categoryMenu_.categories_[i];
+  for (let i = 0; i < this.categoryMenu_.categories_.length; i++) {
+    const category = this.categoryMenu_.categories_[i];
     if (name === category.name_) {
       this.selectedItem_.setSelected(false);
       this.selectedItem_ = category;
@@ -614,8 +614,8 @@ Blockly.Toolbox.prototype.selectCategoryByName = function(name) {
  * @package
  */
 Blockly.Toolbox.prototype.selectCategoryById = function(id) {
-  for (var i = 0; i < this.categoryMenu_.categories_.length; i++) {
-    var category = this.categoryMenu_.categories_[i];
+  for (let i = 0; i < this.categoryMenu_.categories_.length; i++) {
+    const category = this.categoryMenu_.categories_[i];
     if (id === category.id_) {
       this.selectedItem_.setSelected(false);
       this.selectedItem_ = category;
@@ -630,7 +630,7 @@ Blockly.Toolbox.prototype.selectCategoryById = function(id) {
  * @return {function} A function that can be passed to bindEvent.
  */
 Blockly.Toolbox.prototype.setSelectedItemFactory = function(item) {
-  var selectedItem = item;
+  const selectedItem = item;
   return function() {
     if (!this.workspace_.isDragging()) {
       this.setSelectedItem(selectedItem);
@@ -684,9 +684,9 @@ Blockly.Toolbox.CategoryMenu.prototype.populate = function(domTree) {
   // Remove old categories
   this.dispose();
   this.createDom();
-  var categories = [];
+  const categories = [];
   // Find actual categories from the DOM tree.
-  for (var i = 0, child; child = domTree.childNodes[i]; i++) {
+  for (let i = 0, child; child = domTree.childNodes[i]; i++) {
     if (!child.tagName || child.tagName.toUpperCase() != 'CATEGORY') {
       continue;
     }
@@ -694,9 +694,9 @@ Blockly.Toolbox.CategoryMenu.prototype.populate = function(domTree) {
   }
 
   // Create a single column of categories
-  for (var i = 0; i < categories.length; i++) {
-    var child = categories[i];
-    var row = goog.dom.createDom('div', 'scratchCategoryMenuRow');
+  for (let i = 0; i < categories.length; i++) {
+    const child = categories[i];
+    const row = goog.dom.createDom('div', 'scratchCategoryMenuRow');
     this.table.appendChild(row);
     if (child) {
       this.categories_.push(new Blockly.Toolbox.Category(this, row,
@@ -710,7 +710,7 @@ Blockly.Toolbox.CategoryMenu.prototype.populate = function(domTree) {
  * Dispose of this Category Menu and all of its children.
  */
 Blockly.Toolbox.CategoryMenu.prototype.dispose = function() {
-  for (var i = 0, category; category = this.categories_[i]; i++) {
+  for (let i = 0, category; category = this.categories_[i]; i++) {
     category.dispose();
   }
   this.categories_ = [];
@@ -767,9 +767,9 @@ Blockly.Toolbox.Category.prototype.dispose = function() {
  * @return {string} The css class names to be applied, space-separated.
  */
 Blockly.Toolbox.Category.prototype.getMenuItemClassName_ = function(selected) {
-  var classNames = [
+  const classNames = [
     'scratchCategoryMenuItem',
-    'scratchCategoryId-' + this.id_,
+    `scratchCategoryId-${this.id_}`,
   ];
   if (selected) {
     classNames.push('categorySelected');
@@ -781,7 +781,7 @@ Blockly.Toolbox.Category.prototype.getMenuItemClassName_ = function(selected) {
  * Create the DOM for a category in the toolbox.
  */
 Blockly.Toolbox.Category.prototype.createDom = function() {
-  var toolbox = this.parent_.parent_;
+  const toolbox = this.parent_.parent_;
   this.item_ = goog.dom.createDom('div',
       {'class': this.getMenuItemClassName_()});
   this.label_ = goog.dom.createDom('div',
@@ -814,7 +814,7 @@ Blockly.Toolbox.Category.prototype.setSelected = function(selected) {
  * @constructor
  */
 Blockly.Toolbox.Category.prototype.parseContents_ = function(domTree) {
-  for (var i = 0, child; child = domTree.childNodes[i]; i++) {
+  for (let i = 0, child; child = domTree.childNodes[i]; i++) {
     if (!child.tagName) {
       // Skip
       continue;
@@ -849,8 +849,8 @@ Blockly.Toolbox.Category.prototype.getContents = function() {
  *     Colours are a hex string or hue on a colour wheel (0-360).
  */
 Blockly.Toolbox.Category.prototype.setColour = function(node) {
-  var colour = node.getAttribute('colour');
-  var secondaryColour = node.getAttribute('secondaryColour');
+  const colour = node.getAttribute('colour');
+  const secondaryColour = node.getAttribute('secondaryColour');
   if (goog.isString(colour)) {
     if (colour.match(/^#[0-9a-fA-F]{6}$/)) {
       this.colour_ = colour;
@@ -863,8 +863,8 @@ Blockly.Toolbox.Category.prototype.setColour = function(node) {
       this.secondaryColour_ = Blockly.hueToRgb(secondaryColour);
     }
     this.hasColours_ = true;
-  } else {
-    this.colour_ = '#000000';
-    this.secondaryColour_ = '#000000';
+    return;
   }
+  this.colour_ = '#000000';
+  this.secondaryColour_ = '#000000';
 };

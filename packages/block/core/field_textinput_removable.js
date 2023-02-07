@@ -60,12 +60,12 @@ goog.inherits(Blockly.FieldTextInputRemovable, Blockly.FieldTextInput);
 Blockly.FieldTextInputRemovable.prototype.showEditor_ = function() {
   Blockly.FieldTextInputRemovable.superClass_.showEditor_.call(this);
 
-  var div = Blockly.WidgetDiv.DIV;
+  const div = Blockly.WidgetDiv.DIV;
   div.className += ' removableTextInput';
-  var removeButton =
-      goog.dom.createDom(goog.dom.TagName.IMG, 'blocklyTextRemoveIcon');
+  const removeButton =
+  goog.dom.createDom(goog.dom.TagName.IMG, 'blocklyTextRemoveIcon');
   removeButton.setAttribute('src',
-      Blockly.mainWorkspace.options.pathToMedia + 'icons/remove.svg');
+      `${Blockly.mainWorkspace.options.pathToMedia}icons/remove.svg`);
   this.removeButtonMouseWrapper_ = Blockly.bindEvent_(removeButton,
       'mousedown', this, this.removeCallback_);
   div.appendChild(removeButton);
@@ -93,8 +93,8 @@ Blockly.FieldTextInputRemovable.prototype.removeCallback_ = function() {
  * @public
  */
 Blockly.FieldTextInputRemovable.fromJson = function(options) {
-  var text = Blockly.utils.replaceMessageReferences(options['text']);
-  var field = new Blockly.FieldTextInputRemovable(text, options['class']);
+  const text = Blockly.utils.replaceMessageReferences(options['text']);
+  const field = new Blockly.FieldTextInputRemovable(text, options['class']);
   if (typeof options['spellcheck'] == 'boolean') {
     field.setSpellcheck(options['spellcheck']);
   }

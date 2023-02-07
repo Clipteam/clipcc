@@ -39,8 +39,8 @@ Blockly.Names = function(reservedWords, opt_variablePrefix) {
   this.variablePrefix_ = opt_variablePrefix || '';
   this.reservedDict_ = Object.create(null);
   if (reservedWords) {
-    var splitWords = reservedWords.split(',');
-    for (var i = 0; i < splitWords.length; i++) {
+    const splitWords = reservedWords.split(',');
+    for (let i = 0; i < splitWords.length; i++) {
       this.reservedDict_[splitWords[i]] = true;
     }
   }
@@ -100,7 +100,7 @@ Blockly.Names.prototype.getNameForUserVariable_ = function(id) {
         'workspace.getVariableMap());');
     return null;
   }
-  var variable = this.variableMap_.getVariableById(id);
+  const variable = this.variableMap_.getVariableById(id);
   if (variable) {
     return variable.name;
   } else {
@@ -117,21 +117,21 @@ Blockly.Names.prototype.getNameForUserVariable_ = function(id) {
  */
 Blockly.Names.prototype.getName = function(name, type) {
   if (type == Blockly.Variables.NAME_TYPE) {
-    var varName = this.getNameForUserVariable_(name);
+    const varName = this.getNameForUserVariable_(name);
     if (varName) {
       name = varName;
     }
   }
-  var normalized = name.toLowerCase() + '_' + type;
+  const normalized = `${name.toLowerCase()}_${type}`;
 
-  var isVarType = type == Blockly.Variables.NAME_TYPE ||
-      type == Blockly.Names.DEVELOPER_VARIABLE_TYPE;
+  const isVarType = type == Blockly.Variables.NAME_TYPE ||
+  type == Blockly.Names.DEVELOPER_VARIABLE_TYPE;
 
-  var prefix = isVarType ? this.variablePrefix_ : '';
+  const prefix = isVarType ? this.variablePrefix_ : '';
   if (normalized in this.db_) {
     return prefix + this.db_[normalized];
   }
-  var safeName = this.getDistinctName(name, type);
+  const safeName = this.getDistinctName(name, type);
   this.db_[normalized] = safeName.substr(prefix.length);
   return safeName;
 };
@@ -147,8 +147,8 @@ Blockly.Names.prototype.getName = function(name, type) {
  * @return {string} An entity name that is legal in the exported language.
  */
 Blockly.Names.prototype.getDistinctName = function(name, type) {
-  var safeName = this.safeName_(name);
-  var i = '';
+  let safeName = this.safeName_(name);
+  let i = '';
   while (this.dbReverse_[safeName + i] ||
          (safeName + i) in this.reservedDict_) {
     // Collision with existing name.  Create a unique name.
@@ -156,9 +156,9 @@ Blockly.Names.prototype.getDistinctName = function(name, type) {
   }
   safeName += i;
   this.dbReverse_[safeName] = true;
-  var isVarType = type == Blockly.Variables.NAME_TYPE ||
-      type == Blockly.Names.DEVELOPER_VARIABLE_TYPE;
-  var prefix = isVarType ? this.variablePrefix_ : '';
+  const isVarType = type == Blockly.Variables.NAME_TYPE ||
+  type == Blockly.Names.DEVELOPER_VARIABLE_TYPE;
+  const prefix = isVarType ? this.variablePrefix_ : '';
   return prefix + safeName;
 };
 
@@ -171,17 +171,17 @@ Blockly.Names.prototype.getDistinctName = function(name, type) {
  * @private
  */
 Blockly.Names.prototype.safeName_ = function(name) {
-  if (!name) {
-    name = 'unnamed';
-  } else {
+  if (name) {
     // Unfortunately names in non-latin characters will look like
     // _E9_9F_B3_E4_B9_90 which is pretty meaningless.
     // https://github.com/google/blockly/issues/1654
     name = encodeURI(name.replace(/ /g, '_')).replace(/[^\w]/g, '_');
     // Most languages don't allow names with leading numbers.
     if ('0123456789'.indexOf(name[0]) != -1) {
-      name = 'my_' + name;
+      name = `my_${name}`;
     }
+  } else {
+    name = 'unnamed';
   }
   return name;
 };

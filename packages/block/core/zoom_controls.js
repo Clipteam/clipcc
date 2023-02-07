@@ -155,7 +155,7 @@ Blockly.ZoomControls.prototype.dispose = function() {
  * Move the zoom controls to the bottom-right corner.
  */
 Blockly.ZoomControls.prototype.position = function() {
-  var metrics = this.workspace_.getMetrics();
+  const metrics = this.workspace_.getMetrics();
   if (!metrics) {
     // There are no metrics available (workspace is probably not visible).
     return;
@@ -182,7 +182,7 @@ Blockly.ZoomControls.prototype.position = function() {
     this.top_ -= metrics.flyoutHeight;
   }
   this.svgGroup_.setAttribute('transform',
-      'translate(' + this.left_ + ',' + this.top_ + ')');
+      `translate(${this.left_},${this.top_})`);
 };
 
 /**
@@ -196,12 +196,12 @@ Blockly.ZoomControls.prototype.createZoomOutSvg_ = function() {
     <image width="36" height="36" y="44" xlink:href="../media/zoom-out.svg">
     </image>
   */
-  var ws = this.workspace_;
+  const ws = this.workspace_;
   /**
    * Zoom out control.
    * @type {SVGElement}
    */
-  var zoomoutSvg = Blockly.utils.createSvgElement(
+  const zoomoutSvg = Blockly.utils.createSvgElement(
       'image',
       {
         'width': this.WIDTH_,
@@ -233,12 +233,12 @@ Blockly.ZoomControls.prototype.createZoomInSvg_ = function() {
     <image width="36" height="36" y="0" xlink:href="../media/zoom-in.svg">
     </image>
   */
-  var ws = this.workspace_;
+  const ws = this.workspace_;
   /**
    * Zoom in control.
    * @type {SVGElement}
    */
-  var zoominSvg = Blockly.utils.createSvgElement(
+  const zoominSvg = Blockly.utils.createSvgElement(
       'image',
       {
         'width': this.WIDTH_,
@@ -271,13 +271,13 @@ Blockly.ZoomControls.prototype.createZoomResetSvg_ = function() {
     <image width="36" height="36" y="88" xlink:href="../media/zoom-reset.svg">
     </image>
   */
-  var ws = this.workspace_;
+  const ws = this.workspace_;
 
   /**
    * Zoom reset control.
    * @type {SVGElement}
    */
-  var zoomresetSvg = Blockly.utils.createSvgElement(
+  const zoomresetSvg = Blockly.utils.createSvgElement(
       'image',
       {
         'width': this.WIDTH_,

@@ -152,13 +152,13 @@ Blockly.Icon.prototype.renderIcon = function(cursorX) {
   }
   this.iconGroup_.setAttribute('display', 'block');
 
-  var TOP_MARGIN = 5;
-  var width = this.SIZE;
+  const TOP_MARGIN = 5;
+  const width = this.SIZE;
   if (this.block_.RTL) {
     cursorX -= width;
   }
   this.iconGroup_.setAttribute('transform',
-      'translate(' + cursorX + ',' + TOP_MARGIN + ')');
+      `translate(${cursorX},${TOP_MARGIN})`);
   this.computeIconLocation();
   if (this.block_.RTL) {
     cursorX -= Blockly.BlockSvg.SEP_SPACE_X;
@@ -185,9 +185,9 @@ Blockly.Icon.prototype.setIconLocation = function(xy) {
  */
 Blockly.Icon.prototype.computeIconLocation = function() {
   // Find coordinates for the centre of the icon and update the arrow.
-  var blockXY = this.block_.getRelativeToSurfaceXY();
-  var iconXY = Blockly.utils.getRelativeXY(this.iconGroup_);
-  var newXY = new goog.math.Coordinate(
+  const blockXY = this.block_.getRelativeToSurfaceXY();
+  const iconXY = Blockly.utils.getRelativeXY(this.iconGroup_);
+  const newXY = new goog.math.Coordinate(
       blockXY.x + iconXY.x + this.SIZE / 2,
       blockXY.y + iconXY.y + this.SIZE / 2);
   if (!goog.math.Coordinate.equals(this.getIconLocation(), newXY)) {

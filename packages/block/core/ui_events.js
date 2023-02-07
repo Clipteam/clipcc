@@ -68,7 +68,7 @@ Blockly.Events.Ui.prototype.type = Blockly.Events.UI;
  * @return {!Object} JSON representation.
  */
 Blockly.Events.Ui.prototype.toJson = function() {
-  var json = Blockly.Events.Ui.superClass_.toJson.call(this);
+  const json = Blockly.Events.Ui.superClass_.toJson.call(this);
   json['element'] = this.element;
   if (this.newValue !== undefined) {
     json['newValue'] = this.newValue;
