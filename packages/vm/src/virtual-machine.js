@@ -214,6 +214,14 @@ class VirtualMachine extends EventEmitter {
     }
 
     /**
+     * Set the framerate (also called TPS in VM).
+     * @param {boolean} framerate Frames per seconde
+     */
+    setFramerate (framerate) {
+        this.runtime.setFramerate(framerate);
+    }
+
+    /**
      * Stop all threads and running activities.
      */
     stopAll () {

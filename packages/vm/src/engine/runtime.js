@@ -299,6 +299,7 @@ class Runtime extends EventEmitter {
         /**
          * Whether the project is in "compatibility mode" (30 TPS).
          * @type {Boolean}
+         * @deprecated Use framerate instead.
          */
         this.compatibilityMode = false;
 
@@ -308,9 +309,14 @@ class Runtime extends EventEmitter {
          * @type {!number}
          */
         this._steppingInterval = null;
+        
+        /**
+         * Configured framerate.
+         */
+        this.framerate = 60;
 
         /**
-         * Current length of a step.
+         * Current length of a step. Equals to 1000 / this.framerate.
          * Changes as mode switches, and used by the sequencer to calculate
          * WORK_TIME.
          * @type {!number}
@@ -2171,9 +2177,20 @@ class Runtime extends EventEmitter {
     /**
      * Set whether we are in 30 TPS compatibility mode.
      * @param {boolean} compatibilityModeOn True iff in compatibility mode.
+     * @deprecated Use setFramerate(30) (compatibility mode) or setFramerate(60) instead.
+     * @see {@link setFramerate}
      */
     setCompatibilityMode (compatibilityModeOn) {
         this.compatibilityMode = compatibilityModeOn;
+        this.setFramerate(compatibilityModeOn ? 30 : 60);
+    }
+    
+    /**
+     * Set the framerate (also called TPS in VM).
+     * @param {boolean} framerate Frames per seconde
+     */
+    setFramerate (framerate) {
+        this.framerate = framerate;
         if (this._steppingInterval) {
             clearInterval(this._steppingInterval);
             this._steppingInterval = null;
@@ -2603,14 +2620,10 @@ class Runtime extends EventEmitter {
         // Do not start if we are already running
         if (this._steppingInterval) return;
 
-        let interval = Runtime.THREAD_STEP_INTERVAL;
-        if (this.compatibilityMode) {
-            interval = Runtime.THREAD_STEP_INTERVAL_COMPATIBILITY;
-        }
-        this.currentStepTime = interval;
+        this.currentStepTime = 1000 / this.framerate;
         this._steppingInterval = setInterval(() => {
             this._step();
-        }, interval);
+        }, this.currentStepTime);
         this.emit(Runtime.RUNTIME_STARTED);
     }
 

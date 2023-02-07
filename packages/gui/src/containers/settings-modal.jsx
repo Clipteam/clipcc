@@ -39,6 +39,7 @@ class SettingsModal extends React.Component {
         value = Math.round(value);
         if (value >= 10 && value <= 240) {
             this.props.updateSettings({framerate: value});
+            this.props.vm.setFramerate(value);
         }
     }
     render () {
