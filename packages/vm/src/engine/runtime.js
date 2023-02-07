@@ -312,6 +312,7 @@ class Runtime extends EventEmitter {
         
         /**
          * Configured framerate.
+         * @type {!number}
          */
         this.framerate = 60;
 
