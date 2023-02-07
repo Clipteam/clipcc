@@ -14,7 +14,6 @@ const QueryParserHOC = function (WrappedComponent) {
         }
         render () {
             const {
-                onOpenTipsLibrary, // eslint-disable-line no-unused-vars
                 onUpdateReduxDeck, // eslint-disable-line no-unused-vars
                 ...componentProps
             } = this.props;
@@ -26,7 +25,6 @@ const QueryParserHOC = function (WrappedComponent) {
         }
     }
     QueryParserComponent.propTypes = {
-        onOpenTipsLibrary: PropTypes.func,
         onUpdateReduxDeck: PropTypes.func
     };
     const mapDispatchToProps = dispatch => ({

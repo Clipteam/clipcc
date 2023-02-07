@@ -106,9 +106,6 @@ const closeSoundLibrary = function () {
 const closeSoundRecorder = function () {
     return closeModal(MODAL_SOUND_RECORDER);
 };
-const closeTipsLibrary = function () {
-    return closeModal(MODAL_TIPS_LIBRARY);
-};
 const closeConnectionModal = function () {
     return closeModal(MODAL_CONNECTION);
 };
@@ -136,7 +133,6 @@ export {
     closeSoundLibrary,
     closeSoundRecorder,
     closeTelemetryModal,
-    closeTipsLibrary,
     closeConnectionModal,
     closeSettingsModal
 };
