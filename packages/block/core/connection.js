@@ -593,7 +593,7 @@ Blockly.Connection.prototype.disconnectInternal_ = function(parentBlock,
   if (Blockly.Events.isEnabled()) {
     event = new Blockly.Events.BlockMove(childBlock);
   }
-      const otherConnection = this.targetConnection;
+  const otherConnection = this.targetConnection;
   otherConnection.targetConnection = null;
   this.targetConnection = null;
   childBlock.setParent(null);

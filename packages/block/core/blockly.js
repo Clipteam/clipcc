@@ -450,23 +450,17 @@ Blockly.defineBlocksWithJsonArray = function(jsonArray) {
     if (elem) {
       var typename = elem.type;
       if (typename == null || typename === '') {
-        console.warn(
-            `Block definition #${i}` +
-            ' in JSON array is missing a type attribute. Skipping.');
+        console.warn(`Block definition #${i} in JSON array is missing a type attribute. Skipping.`);
       } else {
         if (Blockly.Blocks[typename]) {
-          console.warn(
-              `Block definition #${i} in JSON array` +
-              ' overwrites prior definition of "' + typename + '".');
+          console.warn(`Block definition #${i} in JSON array overwrites prior definition of "${typename}".`);
         }
         Blockly.Blocks[typename] = {
           init: Blockly.jsonInitFactory_(elem)
         };
       }
     } else {
-      console.warn(
-          `Block definition #${i} in JSON array is ${elem}. ` +
-          'Skipping.');
+      console.warn(`Block definition #${i} in JSON array is ${elem}. Skipping.`);
     }
   }
 };
@@ -491,27 +485,27 @@ Blockly.defineBlocksWithJsonArray = function(jsonArray) {
 Blockly.bindEventWithChecks_ = function(node, name, thisObject, func,
     opt_noCaptureIdentifier, opt_noPreventDefault) {
   let handled = false;
-      const wrapFunc = function(e) {
-        const captureIdentifier = !opt_noCaptureIdentifier;
-        // Handle each touch point separately.  If the event was a mouse event, this
-        // will hand back an array with one element, which we're fine handling.
-        const events = Blockly.Touch.splitEventByTouches(e);
-        for (let i = 0, event; event = events[i]; i++) {
-          if (captureIdentifier && !Blockly.Touch.shouldHandleEvent(event)) {
-            continue;
-          }
-          Blockly.Touch.setClientFromTouch(event);
-          if (thisObject) {
-            func.call(thisObject, event);
-          } else {
-            func(event);
-          }
-          handled = true;
-        }
-      };
+  const wrapFunc = function(e) {
+    const captureIdentifier = !opt_noCaptureIdentifier;
+    // Handle each touch point separately.  If the event was a mouse event, this
+    // will hand back an array with one element, which we're fine handling.
+    const events = Blockly.Touch.splitEventByTouches(e);
+    for (let i = 0, event; event = events[i]; i++) {
+      if (captureIdentifier && !Blockly.Touch.shouldHandleEvent(event)) {
+        continue;
+      }
+      Blockly.Touch.setClientFromTouch(event);
+      if (thisObject) {
+        func.call(thisObject, event);
+      } else {
+        func(event);
+      }
+      handled = true;
+    }
+  };
 
   node.addEventListener(name, wrapFunc, false);
-      const bindData = [[node, name, wrapFunc]];
+  const bindData = [[node, name, wrapFunc]];
 
   // Add equivalent touch event.
   if (name in Blockly.Touch.TOUCH_MAP) {

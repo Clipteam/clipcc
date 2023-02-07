@@ -184,21 +184,21 @@ Blockly.FlyoutButton.prototype.addTextSvg = function(isLabel) {
   }
   // Background rectangle.
   const rect = Blockly.utils.createSvgElement('rect',
-  {
-    'class': isLabel ?
+      {
+        'class': isLabel ?
         'blocklyFlyoutLabelBackground' : 'blocklyFlyoutButtonBackground',
-    'rx': 4, 'ry': 4
-  },
-  this.svgGroup_);
+        'rx': 4, 'ry': 4
+      },
+      this.svgGroup_);
 
   const svgText = Blockly.utils.createSvgElement('text',
-  {
-    'class': isLabel ? 'blocklyFlyoutLabelText' : 'blocklyText',
-    'x': 0,
-    'y': 0,
-    'text-anchor': 'middle'
-  },
-  this.svgGroup_);
+      {
+        'class': isLabel ? 'blocklyFlyoutLabelText' : 'blocklyText',
+        'x': 0,
+        'y': 0,
+        'text-anchor': 'middle'
+      },
+      this.svgGroup_);
   svgText.textContent = Blockly.utils.replaceMessageReferences(this.text_);
 
   this.width = Blockly.Field.getCachedWidth(svgText);

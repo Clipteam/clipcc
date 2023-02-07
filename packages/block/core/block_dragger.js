@@ -394,7 +394,7 @@ Blockly.BlockDragger.prototype.updateCursorDuringBlockDrag_ = function(isOutside
  */
 Blockly.BlockDragger.prototype.pixelsToWorkspaceUnits_ = function(pixelCoord) {
   let result = new goog.math.Coordinate(pixelCoord.x / this.workspace_.scale,
-  pixelCoord.y / this.workspace_.scale);
+      pixelCoord.y / this.workspace_.scale);
   if (this.workspace_.isMutator) {
     // If we're in a mutator, its scale is always 1, purely because of some
     // oddities in our rendering optimizations.  The actual scale is the same as

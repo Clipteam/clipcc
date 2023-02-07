@@ -217,11 +217,11 @@ Blockly.InsertionMarkerManager.prototype.applyConnections = function() {
     return;
   }
   // Trigger a connection animation.
-    // Determine which connection is inferior (lower in the source stack).
+  // Determine which connection is inferior (lower in the source stack).
   const inferiorConnection = this.localConnection_.isSuperior() ?
   this.closestConnection_ : this.localConnection_;
   Blockly.BlockAnimations.connectionUiEffect(
-  inferiorConnection.getSourceBlock());
+      inferiorConnection.getSourceBlock());
   // Bring the just-edited stack to the front.
   const rootBlock = this.topBlock_.getRootBlock();
   rootBlock.bringToFront();
@@ -320,8 +320,8 @@ Blockly.InsertionMarkerManager.prototype.initAvailableConnections_ = function() 
 Blockly.InsertionMarkerManager.prototype.shouldUpdatePreviews_ = function(
     candidate, dxy) {
   const candidateLocal = candidate.local;
-      const candidateClosest = candidate.closest;
-      const radius = candidate.radius;
+  const candidateClosest = candidate.closest;
+  const radius = candidate.radius;
 
   // Found a connection!
   if (candidateLocal && candidateClosest) {
@@ -454,10 +454,10 @@ Blockly.InsertionMarkerManager.prototype.shouldReplace_ = function() {
 Blockly.InsertionMarkerManager.prototype.shouldDelete_ = function(candidate,
     deleteArea) {
   // Prefer connecting over dropping into the trash can, but prefer dragging to
-      // the toolbox over connecting to other blocks.
-      const wouldConnect = candidate && !!candidate.closest &&
+  // the toolbox over connecting to other blocks.
+  const wouldConnect = candidate && !!candidate.closest &&
       deleteArea != Blockly.DELETE_AREA_TOOLBOX;
-      const wouldDelete = !!deleteArea && !this.topBlock_.getParent() &&
+  const wouldDelete = !!deleteArea && !this.topBlock_.getParent() &&
       this.topBlock_.isDeletable();
 
   return wouldDelete && !wouldConnect;

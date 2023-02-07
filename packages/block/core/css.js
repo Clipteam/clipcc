@@ -97,7 +97,7 @@ Blockly.Css.inject = function(hasCss, pathToMedia) {
     if (Blockly.Colours.hasOwnProperty(colourProperty)) {
       // Replace all
       text = text.replace(
-          new RegExp(`\\$colour\\_${colourProperty}`, 'g'),
+          new RegExp('\\$colour\\_' + colourProperty, 'g'),
           Blockly.Colours[colourProperty]
       );
     }
@@ -243,7 +243,7 @@ Blockly.Css.CONTENT = [
   'display: none;',
   'border: 1px solid;',
   'border-radius: 4px;',
-  `box-shadow: 0px 0px 8px 1px ${Blockly.Colours.dropDownShadow};`,
+  'box-shadow: 0px 0px 8px 1px ' + Blockly.Colours.dropDownShadow + ';',
   'padding: 4px;',
   '-webkit-user-select: none;',
   'min-height: 15px',
@@ -278,11 +278,11 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyDropDownButtonHover {',
-  `box-shadow: 0px 0px 0px 4px ${Blockly.Colours.fieldShadow};`,
+  'box-shadow: 0px 0px 0px 4px ' + Blockly.Colours.fieldShadow + ';',
   '}',
 
   '.blocklyDropDownButton:active {',
-  `box-shadow: 0px 0px 0px 6px ${Blockly.Colours.fieldShadow};`,
+  'box-shadow: 0px 0px 0px 6px ' + Blockly.Colours.fieldShadow + ';',
   '}',
 
   '.blocklyDropDownButton > img {',
@@ -786,9 +786,9 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyAngleCircle {',
-  `stroke: ${Blockly.Colours.motion.tertiary};`,
+  'stroke: ' + Blockly.Colours.motion.tertiary + ';',
   'stroke-width: 1;',
-  `fill: ${Blockly.Colours.motion.secondary};`,
+  'fill: ' + Blockly.Colours.motion.secondary + ';',
   '}',
 
   '.blocklyAngleCenterPoint {',
@@ -1034,9 +1034,9 @@ Blockly.Css.CONTENT = [
 
   '.blocklyWidgetDiv .goog-menu {',
   'background: #fff;',
-  // 'border-color: #ccc #666 #666 #ccc;',
-  // 'border-style: solid;',
-  // 'border-width: 1px;',
+  'border-color: #ccc #666 #666 #ccc;',
+  'border-style: solid;',
+  'border-width: 1px;',
   'cursor: default;',
   'font: normal 13px "Helvetica Neue", Helvetica, sans-serif;',
   'margin: 0;',
@@ -1045,8 +1045,6 @@ Blockly.Css.CONTENT = [
   'position: absolute;',
   'overflow-y: auto;',
   'overflow-x: hidden;',
-  'box-shadow: 0 8px 8px 0 hsla(0, 0%, 0%, 0.15);', // cc - prettier menu
-  'transition: 0.25s ease-out;', // cc - prettier menu
   'z-index: 20000;',  /* Arbitrary, but some apps depend on it... */
   '}',
 
@@ -1094,7 +1092,6 @@ Blockly.Css.CONTENT = [
   /* 28px on the left for icon or checkbox; 7em on the right for shortcut. */
   'padding: 4px 7em 4px 28px;',
   'white-space: nowrap;',
-  'transition: 0.25s ease-out;',
   '}',
 
   '.blocklyDropDownDiv .goog-menuitem {',
@@ -1107,7 +1104,6 @@ Blockly.Css.CONTENT = [
   /* 28px on the left for icon or checkbox; 7em on the right for shortcut. */
   'padding: 4px 7em 4px 28px;',
   'white-space: nowrap;',
-  'transition: 0.25s ease-out;',
   '}',
 
   /* BiDi override for the resting state. */
@@ -1163,11 +1159,11 @@ Blockly.Css.CONTENT = [
   'background-color: #d6e9f8;',
   /* Use an explicit top and bottom border so that the selection is visible',
       * in high contrast mode. */
-  // 'border-color: #d6e9f8;',
-  // 'border-style: dotted;',
-  // 'border-width: 1px 0;',
-  // 'padding-bottom: 3px;',
-  // 'padding-top: 3px;',
+  'border-color: #d6e9f8;',
+  'border-style: dotted;',
+  'border-width: 1px 0;',
+  'padding-bottom: 3px;',
+  'padding-top: 3px;',
   '}',
 
   '.blocklyDropDownDiv .goog-menuitem-highlight,',
@@ -1275,8 +1271,8 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.checked > .blocklyFlyoutCheckbox {',
-  `fill: ${Blockly.Colours.motion.primary};`,
-  `stroke: ${Blockly.Colours.motion.tertiary};`,
+  'fill: ' + Blockly.Colours.motion.primary + ';',
+  'stroke: ' + Blockly.Colours.motion.tertiary + ';',
   '}',
 
   '.blocklyFlyoutCheckboxPath {',
@@ -1288,7 +1284,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.scratchCategoryMenu {',
-  'width: 85px;',
+  'width: 60px;',
   'background: $colour_toolbox;',
   'color: $colour_toolboxText;',
   'font-size: .7rem;',
@@ -1319,11 +1315,9 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.scratchCategoryMenuItem {',
+  'padding: 0.375rem 0px;',
   'cursor: pointer;',
   'text-align: center;',
-  'display: flex;',
-  'align-items: center;',
-  'height: 2rem;',
   '}',
 
   '.scratchCategoryMenuHorizontal .scratchCategoryMenuItem {',
@@ -1331,33 +1325,22 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.scratchCategoryMenuItem.categorySelected {',
-  //  'background: $colour_toolboxSelected;',
+  'background: $colour_toolboxSelected;',
   '}',
 
-  '.scratchCategoryItemColorBar {',
-  'width: 0.3rem;',
-  'height: 1.8rem;',
-  'margin: 0.1rem;',
-  'display: inline-block;',
-  'border-radius: 0.3rem 0rem 0rem 0.3rem;',
-  'position: absolute;',
-  'transition: 0.25s ease-out;',
+  '.scratchCategoryItemBubble {',
+  'width: 1.25rem;',
+  'height: 1.25rem;',
+  'border: 1px solid;',
+  'border-radius: 100%;',
+  'margin: 0 auto 0.125rem;',
   '}',
 
-  '.scratchCategoryMenuItem.categorySelected > .scratchCategoryItemColorBar {',
-  'width: calc(85px - 0.2rem);',
-  'border-radius: 0.3rem;',
-  '}',
-
-  '.scratchCategoryMenuItemLabel {',
-  'position: relative;',
-  'display: inline-block;',
-  'margin-left: 0.7rem;',
-  '}',
-
-  '.scratchCategoryMenuItem.categorySelected > .scratchCategoryMenuItemLabel {',
-  'color: white;',
-  'font-weight: bold;',
+  '.scratchCategoryItemIcon {',
+  'width: 1.25rem;',
+  'height: 1.25rem;',
+  'margin: 0 auto 0.125rem;',
+  'background-size: 100%;',
   '}',
 
   '.scratchCategoryMenuItem:hover {',

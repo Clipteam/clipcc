@@ -262,7 +262,7 @@ Blockly.FieldIconMenu.prototype.showEditor_ = function() {
     -(Blockly.BlockSvg.MIN_BLOCK_Y * scale) - (Blockly.BlockSvg.FIELD_Y_OFFSET * scale)
   );
   const renderedPrimary = Blockly.DropDownDiv.showPositionedByBlock(
-  this, this.sourceBlock_, this.onHide_.bind(this), secondaryYOffset);
+      this, this.sourceBlock_, this.onHide_.bind(this), secondaryYOffset);
   if (renderedPrimary) {
     return;
   }
@@ -271,7 +271,7 @@ Blockly.FieldIconMenu.prototype.showEditor_ = function() {
   const arrowY = this.arrowY_ + Blockly.DropDownDiv.ARROW_SIZE / 1.5;
   // Flip the arrow on the button
   this.arrowIcon_.setAttribute('transform',
-  `translate(${arrowX},${arrowY}) rotate(180)`);
+      `translate(${arrowX},${arrowY}) rotate(180)`);
 };
 
 /**

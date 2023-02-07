@@ -127,14 +127,14 @@ Blockly.createDom_ = function(container, options) {
   // Using a dilate distorts the block shape.
   // Instead use a gaussian blur, and then set all alpha to 1 with a transfer.
   const stackGlowFilter = Blockly.utils.createSvgElement('filter',
-  {
-    'id': `blocklyStackGlowFilter${rnd}`,
-    'height': '160%',
-    'width': '180%',
-    y: '-30%',
-    x: '-40%'
-  },
-  defs);
+      {
+        'id': `blocklyStackGlowFilter${rnd}`,
+        'height': '160%',
+        'width': '180%',
+        y: '-30%',
+        x: '-40%'
+      },
+      defs);
   options.stackGlowBlur = Blockly.utils.createSvgElement('feGaussianBlur',
       {
         'in': 'SourceGraphic',
@@ -175,14 +175,14 @@ Blockly.createDom_ = function(container, options) {
 
   // Filter for replacement marker
   const replacementGlowFilter = Blockly.utils.createSvgElement('filter',
-  {
-    'id': `blocklyReplacementGlowFilter${rnd}`,
-    'height': '160%',
-    'width': '180%',
-    y: '-30%',
-    x: '-40%'
-  },
-  defs);
+      {
+        'id': `blocklyReplacementGlowFilter${rnd}`,
+        'height': '160%',
+        'width': '180%',
+        y: '-30%',
+        x: '-40%'
+      },
+      defs);
   Blockly.utils.createSvgElement('feGaussianBlur',
       {
         'in': 'SourceGraphic',
@@ -229,13 +229,13 @@ Blockly.createDom_ = function(container, options) {
     </pattern>
   */
   const disabledPattern = Blockly.utils.createSvgElement('pattern',
-  {
-    'id': `blocklyDisabledPattern${rnd}`,
-    'patternUnits': 'userSpaceOnUse',
-    'width': 10,
-    'height': 10
-  },
-  defs);
+      {
+        'id': `blocklyDisabledPattern${rnd}`,
+        'patternUnits': 'userSpaceOnUse',
+        'width': 10,
+        'height': 10
+      },
+      defs);
   Blockly.utils.createSvgElement('rect',
       {
         'width': 10,
@@ -358,11 +358,11 @@ Blockly.init_ = function(mainWorkspace) {
       });
 
   const workspaceResizeHandler = Blockly.bindEventWithChecks_(window, 'resize',
-  null,
-  function() {
-    Blockly.hideChaffOnResize(true);
-    Blockly.svgResize(mainWorkspace);
-  });
+      null,
+      function() {
+        Blockly.hideChaffOnResize(true);
+        Blockly.svgResize(mainWorkspace);
+      });
   mainWorkspace.setResizeHandlerWrapper(workspaceResizeHandler);
 
   Blockly.inject.bindDocumentEvents_();

@@ -316,9 +316,9 @@ Blockly.ScratchBlockComment.prototype.autoPosition_ = function() {
     return;
   }
   // Position comment so that the expanded bubble does not overlap
-    // blocks below it in the stack that are wider than this block
-    // Overhang is the difference between this blocks trailing edge and
-    // the largest block below (zero if this block is the widest)
+  // blocks below it in the stack that are wider than this block
+  // Overhang is the difference between this blocks trailing edge and
+  // the largest block below (zero if this block is the widest)
   const thisBlockWidth = Math.floor(this.block_.svgPath_.getBBox().width);
   const fullStackWidth = Math.floor(this.block_.getHeightWidth().width);
   const overhang = fullStackWidth - thisBlockWidth;

@@ -469,8 +469,8 @@ Blockly.ContextMenu.workspaceCommentOption = function(ws, e) {
       disabled = true;
     }
     const comment = new Blockly.WorkspaceCommentSvg(
-    ws, '', Blockly.WorkspaceCommentSvg.DEFAULT_SIZE,
-    Blockly.WorkspaceCommentSvg.DEFAULT_SIZE, false);
+        ws, '', Blockly.WorkspaceCommentSvg.DEFAULT_SIZE,
+        Blockly.WorkspaceCommentSvg.DEFAULT_SIZE, false);
 
     const injectionDiv = ws.getInjectionDiv();
     // Bounding rect coordinates are in client coordinates, meaning that they
@@ -480,7 +480,7 @@ Blockly.ContextMenu.workspaceCommentOption = function(ws, e) {
 
     // The client coordinates offset by the injection div's upper left corner.
     const clientOffsetPixels = new goog.math.Coordinate(
-    e.clientX - boundingRect.left, e.clientY - boundingRect.top);
+        e.clientX - boundingRect.left, e.clientY - boundingRect.top);
 
     // The offset in pixels between the main workspace's origin and the upper
     // left corner of the injection div.
@@ -489,7 +489,7 @@ Blockly.ContextMenu.workspaceCommentOption = function(ws, e) {
     // The position of the new comment in pixels relative to the origin of the
     // main workspace.
     const finalOffsetPixels = goog.math.Coordinate.difference(clientOffsetPixels,
-    mainOffsetPixels);
+        mainOffsetPixels);
 
     // The position of the new comment in main workspace coordinates.
     const finalOffsetMainWs = finalOffsetPixels.scale(1 / ws.scale);

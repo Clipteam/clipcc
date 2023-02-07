@@ -101,7 +101,7 @@ Blockly.FieldVariableGetter.prototype.init = function() {
   }
   this.workspace_ = this.sourceBlock_.workspace;
   const variable = Blockly.Variables.getOrCreateVariablePackage(
-  this.workspace_, null, this.text_, this.variableType_);
+      this.workspace_, null, this.text_, this.variableType_);
   this.setValue(variable.getId());
 };
 

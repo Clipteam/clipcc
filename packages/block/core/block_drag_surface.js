@@ -138,14 +138,14 @@ Blockly.BlockDragSurfaceSvg.prototype.createDropShadowDom_ = function(defs) {
   const rnd = String(Math.random()).substring(2);
   // Adjust these width/height, x/y properties to stop the shadow from clipping
   const dragShadowFilter = Blockly.utils.createSvgElement('filter',
-  {
-    'id': `blocklyDragShadowFilter${rnd}`,
-    'height': '140%',
-    'width': '140%',
-    'y': '-20%',
-    'x': '-20%'
-  },
-  defs);
+      {
+        'id': `blocklyDragShadowFilter${rnd}`,
+        'height': '140%',
+        'width': '140%',
+        'y': '-20%',
+        'x': '-20%'
+      },
+      defs);
   Blockly.utils.createSvgElement('feGaussianBlur',
       {
         'in': 'SourceAlpha',
@@ -153,7 +153,7 @@ Blockly.BlockDragSurfaceSvg.prototype.createDropShadowDom_ = function(defs) {
       },
       dragShadowFilter);
   const componentTransfer = Blockly.utils.createSvgElement(
-  'feComponentTransfer', {'result': 'offsetBlur'}, dragShadowFilter);
+      'feComponentTransfer', {'result': 'offsetBlur'}, dragShadowFilter);
   // Shadow opacity is specified in the adjustable colour library,
   // since the darkness of the shadow largely depends on the workspace colour.
   Blockly.utils.createSvgElement('feFuncA',

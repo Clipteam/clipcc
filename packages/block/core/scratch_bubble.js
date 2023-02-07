@@ -68,7 +68,7 @@ Blockly.ScratchBubble = function(comment, workspace, content, anchorXY,
   this.x = bubbleX;
   this.y = bubbleY;
   this.isMinimized_ = minimized || false;
-      const canvas = workspace.getBubbleCanvas();
+  const canvas = workspace.getBubbleCanvas();
   canvas.appendChild(this.createDom_(content, !!(bubbleWidth && bubbleHeight),
       this.isMinimized_));
 
@@ -489,7 +489,7 @@ Blockly.ScratchBubble.prototype.setMinimized = function(minimize, labelText) {
   this.isMinimized_ = false;
   // Change minimize icon
   this.minimizeArrow_.setAttributeNS('http://www.w3.org/1999/xlink',
-  'xlink:href', `${Blockly.mainWorkspace.options.pathToMedia}comment-arrow-down.svg`);
+      'xlink:href', `${Blockly.mainWorkspace.options.pathToMedia}comment-arrow-down.svg`);
   // Hide label
   this.topBarLabel_.setAttribute('display', 'none');
   // Show text area
