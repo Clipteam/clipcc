@@ -1,0 +1,105 @@
+@import "../../css/colors.css";
+@import "../../css/units.css";
+@import "../../css/scrollbar.css";
+
+.modal-content {
+    width: 900px;
+    margin-top: 5vh; /* reduce top margin */
+}
+
+.tag {
+    margin: 0 0.5rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 80%;
+    background-color: $ui-primary;
+    border: 1px solid $ui-secondary;
+    color: white;
+}
+
+.body {
+    background: $ui-white;
+    max-height: 80vh;
+    display: flex;
+}
+
+.menu, .content {
+    padding: 1.5rem 2.25rem;
+    overflow-y: auto;
+}
+
+.menu {
+    flex: 1;
+    border-right: solid 1px $ui-black-transparent;
+}
+
+.menu > p {
+    margin: 0.5em 0em;
+    cursor: pointer;
+}
+
+.content {
+    flex: 5;
+}
+
+.category {
+    font-weight: bold;
+    font-size: 1.15em;
+    margin: 0;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    padding-left: 1em;
+    padding-right: 1em;
+    transition-duration: .2s;
+    min-height: 4em;
+}
+
+.item:hover {
+    background-color: hsl(0, 0%, 94%);
+}
+
+.item > :last-child {
+    margin-left: 1em;
+    flex-shrink: 0;
+}
+
+.label {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-right: auto;
+}
+
+.label > :first-child {
+    font-weight: bold;
+}
+
+.label > :last-child {
+    display: block;
+    margin-top: 0.2em;
+    font-size: 0.9em;
+}
+
+.disabled {
+    color: hsl(0, 0%, 75%);
+}
+
+.input {
+    width: 5rem;
+}
+
+.input::-webkit-outer-spin-button, .input::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+}
+
+.select-small {
+    width: 10rem;
+}
+
+.select-big {
+    width: 15rem;
+}

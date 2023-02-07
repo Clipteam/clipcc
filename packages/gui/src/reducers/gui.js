@@ -18,6 +18,7 @@ import projectStateReducer, {projectStateInitialState} from './project-state';
 import projectTitleReducer, {projectTitleInitialState} from './project-title';
 import fontsLoadedReducer, {fontsLoadedInitialState} from './fonts-loaded';
 import restoreDeletionReducer, {restoreDeletionInitialState} from './restore-deletion';
+import settingsReducer, {settingsInitialState} from './settings';
 import stageSizeReducer, {stageSizeInitialState} from './stage-size';
 import targetReducer, {targetsInitialState} from './targets';
 import timeoutReducer, {timeoutInitialState} from './timeout';
@@ -40,6 +41,7 @@ const guiInitialState = {
     editorTab: editorTabInitialState,
     mode: modeInitialState,
     hoveredTarget: hoveredTargetInitialState,
+    settings: settingsInitialState,
     stageSize: stageSizeInitialState,
     menus: menuInitialState,
     micIndicator: micIndicatorInitialState,
@@ -120,6 +122,7 @@ const guiReducer = combineReducers({
     editorTab: editorTabReducer,
     mode: modeReducer,
     hoveredTarget: hoveredTargetReducer,
+    settings: settingsReducer,
     stageSize: stageSizeReducer,
     menus: menuReducer,
     micIndicator: micIndicatorReducer,

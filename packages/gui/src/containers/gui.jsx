@@ -21,6 +21,7 @@ import {
 import {
     closeCostumeLibrary,
     closeBackdropLibrary,
+    closeSettingsModal,
     closeTelemetryModal,
     openExtensionLibrary
 } from '../reducers/modals';
@@ -142,6 +143,7 @@ const mapStateToProps = state => {
         isShowingProject: getIsShowingProject(loadingState),
         loadingStateVisible: state.scratchGui.modals.loadingProject,
         projectId: state.scratchGui.projectState.projectId,
+        settingsModalVisible: state.scratchGui.modals.settingsModal,
         soundsTabVisible: state.scratchGui.editorTab.activeTabIndex === SOUNDS_TAB_INDEX,
         targetIsStage: (
             state.scratchGui.targets.stage &&
@@ -160,6 +162,7 @@ const mapDispatchToProps = dispatch => ({
     onActivateSoundsTab: () => dispatch(activateTab(SOUNDS_TAB_INDEX)),
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
     onRequestCloseCostumeLibrary: () => dispatch(closeCostumeLibrary()),
+    onRequestCloseSettingsModal: () => dispatch(closeSettingsModal()),
     onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal())
 });
 
