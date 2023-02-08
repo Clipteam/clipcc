@@ -197,7 +197,8 @@ Blockly.Toolbox.prototype.createFlyout_ = function() {
 Blockly.Toolbox.prototype.populate_ = function(newTree) {
   this.categoryMenu_.populate(newTree);
   this.showAll_();
-  if (!this.isCollapsed && !this.selectedItem_) {
+  this.selectedItem_ = null; // All categories has been disposed, so clear selected item.
+  if (!this.isCollapsed_) {
     this.setSelectedItem(this.categoryMenu_.categories_[0], false);
   }
 };
@@ -752,7 +753,7 @@ Blockly.Toolbox.Category = function(parent, parentHtml, domTree) {
 Blockly.Toolbox.Category.prototype.dispose = function() {
   if (this.item_) {
     goog.dom.removeNode(this.item_);
-    this.item = null;
+    this.item_ = null;
   }
   this.parent_ = null;
   this.parentHtml_ = null;
