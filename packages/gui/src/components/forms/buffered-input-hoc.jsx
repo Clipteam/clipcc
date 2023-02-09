@@ -22,7 +22,7 @@ export default function (Input) {
         }
         handleKeyPress (e) {
             if (e.key === 'Enter') {
-                this.handleFlush();
+                // handleFlush will be called when blur
                 e.target.blur();
             }
         }
