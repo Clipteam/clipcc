@@ -196,8 +196,8 @@ Blockly.Toolbox.prototype.createFlyout_ = function() {
  */
 Blockly.Toolbox.prototype.populate_ = function(newTree) {
   this.categoryMenu_.populate(newTree);
-  this.showAll_();
   this.selectedItem_ = null; // All categories has been disposed, so clear selected item.
+  this.showAll_();
   if (!this.isCollapsed_) {
     this.setSelectedItem(this.categoryMenu_.categories_[0], false);
   }
@@ -486,19 +486,20 @@ Blockly.Toolbox.prototype.setFlyoutScrollPos = function(pos) {
  * Set the currently selected category.
  * @param {Blockly.Toolbox.Category} item The category to select.
  * @param {boolean=} opt_shouldScroll Whether to scroll to the selected category. Defaults to true.
+ * @param {boolean=} opt_shouldCollapse Whether to be collapsed. Defaults to false.
  */
-Blockly.Toolbox.prototype.setSelectedItem = function(item, opt_shouldScroll) {
+Blockly.Toolbox.prototype.setSelectedItem = function(item, opt_shouldScroll, opt_shouldCollapse) {
   if (typeof opt_shouldScroll === 'undefined') {
     opt_shouldScroll = true;
   }
-  if (this.selectedItem_ == item) {
+  if (opt_shouldCollapse && this.selectedItem_ == item) {
     // Select the category that is already open. Collapse the toolbox.
     this.selectedItem_.setSelected(false);
     this.selectedItem_ = null;
     this.setCollapsed(true);
     return;
   }
-  if (this.selectedItem_) {
+  if (this.selectedItem_ && this.selectedItem_ != item) {
     // They selected a different category but one was already open.  Close it.
     this.selectedItem_.setSelected(false);
   }
@@ -602,7 +603,9 @@ Blockly.Toolbox.prototype.selectCategoryByName = function(name) {
   for (var i = 0; i < this.categoryMenu_.categories_.length; i++) {
     var category = this.categoryMenu_.categories_[i];
     if (name === category.name_) {
-      this.selectedItem_.setSelected(false);
+      if (this.selectedItem_) {
+        this.selectedItem_.setSelected(false);
+      }
       this.selectedItem_ = category;
       this.selectedItem_.setSelected(true);
     }
@@ -618,7 +621,9 @@ Blockly.Toolbox.prototype.selectCategoryById = function(id) {
   for (var i = 0; i < this.categoryMenu_.categories_.length; i++) {
     var category = this.categoryMenu_.categories_[i];
     if (id === category.id_) {
-      this.selectedItem_.setSelected(false);
+      if (this.selectedItem_) {
+        this.selectedItem_.setSelected(false);
+      }
       this.selectedItem_ = category;
       this.selectedItem_.setSelected(true);
     }
@@ -634,7 +639,7 @@ Blockly.Toolbox.prototype.setSelectedItemFactory = function(item) {
   var selectedItem = item;
   return function() {
     if (!this.workspace_.isDragging()) {
-      this.setSelectedItem(selectedItem);
+      this.setSelectedItem(selectedItem, true, true);
       Blockly.Touch.clearTouchIdentifier();
     }
   };
