@@ -674,12 +674,14 @@ Blockly.BlockSvg.prototype.showContextMenu_ = function(e) {
   var block = this;
   var menuOptions = [];
   if (this.isDeletable() && this.isMovable() && !block.isInFlyout) {
-    menuOptions.push(
-        Blockly.ContextMenu.blockDuplicateOption(block, e));
+    menuOptions.push(Blockly.ContextMenu.blockDuplicateOption(block, e));
     if (this.isEditable() && this.workspace.options.comments) {
       menuOptions.push(Blockly.ContextMenu.blockCommentOption(block));
     }
     menuOptions.push(Blockly.ContextMenu.blockDeleteOption(block));
+    if (this.workspace.options.clipboard) {
+      menuOptions.push(Blockly.ContextMenu.blockCopyOption(block));
+    }
   } else if (this.parentBlock_ && this.isShadow_) {
     this.parentBlock_.showContextMenu_(e);
     return;

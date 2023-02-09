@@ -1420,6 +1420,10 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
   };
   menuOptions.push(deleteOption);
 
+  if (this.options.clipboard) {
+    menuOptions.push(Blockly.ContextMenu.wsPasteOption(this, e));
+  }
+
   Blockly.ContextMenu.show(e, menuOptions, this.RTL);
 };
 

@@ -242,3 +242,54 @@ Blockly.scratchBlocksUtils.duplicateAndDragCallback = function(oldBlock, event) 
     }, 0);
   };
 };
+
+/**
+ * Creates a callback function for a click on the "copy" context menu option.
+ * @param {!Blockly.BlockSvg} block The block that will be copied.
+ * @return {Function} A callback function that copy the block.
+ * @package
+ */
+Blockly.scratchBlocksUtils.copyCallback = function(block) {
+  return function() {
+    /** @type {Clipboard} */
+    var clipboard = goog.global.navigator.clipboard;
+
+    var xml = goog.dom.createDom('xml');
+    xml.appendChild(Blockly.Xml.blockToDom(block, true));
+    clipboard.writeText(Blockly.Xml.domToText(xml));
+  };
+};
+
+/**
+ * Creates a callback function for a click on the "paste" context menu option.
+ * @param {!Blockly.WorkspaceSvg} ws The workspace that the block will paste on.
+ * @param {!MouseEvent} event Mouse Event.
+ * @return {Function} A callback function that paste the block.
+ * @package
+ */
+Blockly.scratchBlocksUtils.pasteCallback = function(ws, event) {
+  return function() {
+    /** @type {Clipboard} */
+    var clipboard = goog.global.navigator.clipboard;
+
+    clipboard.readText().then(data => {
+      Blockly.Events.disable();
+      try {
+        var xml = Blockly.Xml.textToDom(data);
+        var newBlock = Blockly.Xml.domToBlock(xml.firstChild, ws);
+
+        var point = Blockly.utils.mouseToSvg(event, ws.getParentSvg(),  ws.getInverseScreenCTM());
+        var rel = ws.getOriginOffsetInPixels();
+        var x = (point.x - rel.x) / ws.scale;
+        var y = (point.y - rel.y) / ws.scale;
+
+        newBlock.moveBy(ws.RTL ? -x : x, y);
+      } finally {
+        Blockly.Events.enable();
+        if (Blockly.Events.isEnabled() && newBlock) {
+          Blockly.Events.fire(new Blockly.Events.BlockCreate(newBlock));
+        }
+      }
+    });
+  };
+};

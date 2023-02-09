@@ -45,6 +45,7 @@ Blockly.Options = function(options) {
     var hasComments = false;
     var hasDisable = false;
     var hasSounds = false;
+    var hasClipboard = false;
   } else {
     if (!options['toolbox'] && Blockly.Blocks.defaultToolbox) {
       var oParser = new DOMParser();
@@ -73,6 +74,10 @@ Blockly.Options = function(options) {
     var hasSounds = options['sounds'];
     if (hasSounds === undefined) {
       hasSounds = true;
+    }
+    var hasClipboard = options['clipboard'];
+    if (hasClipboard === undefined) {
+      hasClipboard = goog.global.navigator && goog.global.navigator.clipboard;
     }
   }
   var rtl = !!options['rtl'];
@@ -123,6 +128,7 @@ Blockly.Options = function(options) {
   this.collapse = hasCollapse;
   this.comments = hasComments;
   this.disable = hasDisable;
+  this.clipboard = hasClipboard;
   this.readOnly = readOnly;
   this.pathToMedia = pathToMedia;
   this.hasCategories = hasCategories;

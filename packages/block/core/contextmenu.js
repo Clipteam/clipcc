@@ -300,6 +300,34 @@ Blockly.ContextMenu.blockCommentOption = function(block) {
 };
 
 /**
+ * Make a context menu option for copying the current block.
+ * @param {!Blockly.BlockSvg} block The block where the right-click originated.
+ * @return {!Object} A menu option, containing text, enabled, and a callback.
+ */
+Blockly.ContextMenu.blockCopyOption = function(block) {
+  return {
+    text: Blockly.Msg.COPY,
+    enabled: true,
+    callback: Blockly.scratchBlocksUtils.copyCallback(block)
+  }
+};
+
+/**
+ * Make a context menu option for pasting blocks on the workspace.
+ * @param {!Blockly.WorkspaceSvg} ws The workspace where the right-click
+ *     originated.
+ * @param {!Event} e Mouse event.
+ * @return {!Object} A menu option, containing text, enabled, and a callback.
+ */
+Blockly.ContextMenu.wsPasteOption = function(ws, e) {
+  return {
+    text: Blockly.Msg.PASTE,
+    enabled: true,
+    callback: Blockly.scratchBlocksUtils.pasteCallback(ws, e)
+  }
+};
+
+/**
  * Make a context menu option for undoing the most recent action on the
  * workspace.
  * @param {!Blockly.WorkspaceSvg} ws The workspace where the right-click

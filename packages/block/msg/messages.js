@@ -305,6 +305,8 @@ Blockly.Msg.REDO = 'Redo';
 Blockly.Msg.EDIT_PROCEDURE = 'Edit';
 Blockly.Msg.SHOW_PROCEDURE_DEFINITION = 'Go to definition';
 Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT = 'Say something...';
+Blockly.Msg.COPY = 'Copy to Clipboard';
+Blockly.Msg.PASTE = 'Paste';
 
 // Color
 Blockly.Msg.COLOUR_HUE_LABEL = 'Color';
