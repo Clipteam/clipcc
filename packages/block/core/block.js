@@ -1127,6 +1127,14 @@ Blockly.Block.prototype.getInputsInline = function() {
 };
 
 /**
+ * Get whether the block is disabled or not.
+ * @returns {boolean} True if disabled.
+ */
+Blockly.Block.prototype.isDisabled = function() {
+  return this.disabled;
+};
+
+/**
  * Set whether the block is disabled or not.
  * @param {boolean} disabled True if disabled.
  */
