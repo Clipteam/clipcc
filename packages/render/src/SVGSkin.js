@@ -41,7 +41,7 @@ class SVGSkin extends Skin {
         this._canvas = document.createElement('canvas');
 
         /** @type {CanvasRenderingContext2D} */
-        this._context = this._canvas.getContext('2d');
+        this._context = this._canvas.getContext('2d', {willReadFrequently: true});
 
         /** @type {Array<WebGLTexture>} */
         this._scaledMIPs = [];
