@@ -14,13 +14,15 @@ class CustomProcedures extends React.Component {
             'handleAddBoolean',
             'handleAddTextNumber',
             'handleToggleWarp',
+            'handleToggleReturn',
             'handleCancel',
             'handleOk',
             'setBlocks'
         ]);
         this.state = {
             rtlOffset: 0,
-            warp: false
+            warp: false,
+            return: false
         };
     }
     componentWillUnmount () {
@@ -131,6 +133,13 @@ class CustomProcedures extends React.Component {
             this.mutationRoot.addStringNumberExternal();
         }
     }
+    handleToggleReturn () {
+        if (this.mutationRoot) {
+            const newReturn = !this.mutationRoot.getReturn();
+            this.mutationRoot.setReturn(newReturn);
+            this.setState({return: newReturn});
+        }
+    }
     handleToggleWarp () {
         if (this.mutationRoot) {
             const newWarp = !this.mutationRoot.getWarp();
@@ -142,12 +151,14 @@ class CustomProcedures extends React.Component {
         return (
             <CustomProceduresComponent
                 componentRef={this.setBlocks}
+                return={this.state.return}
                 warp={this.state.warp}
                 onAddBoolean={this.handleAddBoolean}
                 onAddLabel={this.handleAddLabel}
                 onAddTextNumber={this.handleAddTextNumber}
                 onCancel={this.handleCancel}
                 onOk={this.handleOk}
+                onToggleReturn={this.handleToggleReturn}
                 onToggleWarp={this.handleToggleWarp}
             />
         );
