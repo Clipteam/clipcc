@@ -237,6 +237,11 @@ Blockly.TOOLBOX_AT_LEFT = 2;
 Blockly.TOOLBOX_AT_RIGHT = 3;
 
 /**
+ * ENUM for output shape: normal (command block).
+ */
+Blockly.OUTPUT_SHAPE_NORMAL = null;
+
+/**
  * ENUM for output shape: hexagonal (booleans/predicates).
  * @const
  */
@@ -370,6 +375,12 @@ Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE = 'procedures_definition';
  * @const {string}
  */
 Blockly.PROCEDURES_PROTOTYPE_BLOCK_TYPE = 'procedures_prototype';
+
+/**
+ * The type of all procedure declaration blocks.
+ * @const {string}
+ */
+Blockly.PROCEDURES_DECLARATION_BLOCK_TYPE = 'procedures_declaration';
 
 /**
  * The type of all procedure call blocks.

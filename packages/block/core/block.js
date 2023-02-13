@@ -1667,7 +1667,7 @@ Blockly.Block.prototype.setCommentText = function(text) {
 
 /**
  * Set this block's output shape.
- * e.g., null, OUTPUT_SHAPE_HEXAGONAL, OUTPUT_SHAPE_ROUND, OUTPUT_SHAPE_SQUARE.
+ * e.g., OUTPUT_SHAPE_NORMAL(null), OUTPUT_SHAPE_HEXAGONAL, OUTPUT_SHAPE_ROUND, OUTPUT_SHAPE_SQUARE.
  * @param {?number} outputShape Value representing output shape
  *     (see constants.js).
  */

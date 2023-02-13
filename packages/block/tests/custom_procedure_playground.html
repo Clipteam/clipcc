@@ -47,6 +47,7 @@
         <button id="text_number" onclick="addTextNumber()">Add text/number input</button>
         <button id="boolean" onclick="addBoolean()">Add boolean input</button>
         <button id="label" onclick="addLabel()">Add label</button>
+        <button id="changeShape" onclick="changeShape()">Change Shape</button>
         <button id="cancelButton" onclick="cancel()">cancel</button>
         <button id="okButton" onclick="applyMutation()">ok</button>
         <button id="rndButton" onclick="removeRandomInput()">remove random input</button>
@@ -202,6 +203,11 @@
 
     function addTextNumber() {
       mutationRoot.addStringNumberExternal();
+    }
+
+    function changeShape() {
+      mutationRoot.return_ = !mutationRoot.return_;
+      mutationRoot.updateDisplay_();
     }
 
     function removeRandomInput() {

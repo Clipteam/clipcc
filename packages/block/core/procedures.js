@@ -222,6 +222,16 @@ Blockly.Procedures.flyoutCategory = function(workspace) {
   var xmlList = [];
 
   Blockly.Procedures.addCreateButton_(workspace, xmlList);
+  
+  // append procedures_return block
+  xmlList.push(Blockly.Xml.textToDom(
+      '<xml><block type="procedures_return" gap="16">' +
+      '<value name="VALUE">' +
+      '<shadow type="text">' +
+      '<field name="TEXT">0</field>' +
+      '</shadow>' +
+      '</value>' +
+      '</block></xml>').firstChild);
 
   // Create call blocks for each procedure defined in the workspace
   var mutations = Blockly.Procedures.allProcedureMutations(workspace);
@@ -379,6 +389,7 @@ Blockly.Procedures.newProcedureMutation = function() {
       ' argumentnames="[]"' +
       ' argumentdefaults="[]"' +
       ' warp="false">' +
+      ' return="false">' +
       '</mutation>' +
       '</xml>';
   return Blockly.Xml.textToDom(mutationText).firstChild;
