@@ -15,6 +15,7 @@ class Scratch3ProcedureBlocks {
         return {
             procedures_definition: this.definition,
             procedures_call: this.call,
+            procedures_return: this.return,
             argument_reporter_string_number: this.argumentReporterStringNumber,
             argument_reporter_boolean: this.argumentReporterBoolean
         };
@@ -53,6 +54,11 @@ class Scratch3ProcedureBlocks {
             util.stackFrame.executed = true;
             util.startProcedure(procedureCode);
         }
+    }
+
+    return (args, util) {
+        util.thread.pushReportedValue(args.VALUE);
+        util.stopThisScript();
     }
 
     argumentReporterStringNumber (args, util) {

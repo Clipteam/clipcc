@@ -232,7 +232,9 @@ class Sequencer {
                 return;
             }
             // If no control flow has happened, switch to next block.
-            if (thread.peekStack() === currentBlockId) {
+            if (thread.controlFlowed) {
+                thread.controlFlowed = false;
+            } else if (thread.peekStack() === currentBlockId) {
                 thread.goToNextBlock();
             }
             // If no next block has been found at this point, look on the stack.
@@ -267,7 +269,8 @@ class Sequencer {
                     // This level of the stack was waiting for a value.
                     // This means a reporter has just returned - so don't go
                     // to the next block for this level of the stack.
-                    return;
+                    // cc - modify return to continue
+                    continue;
                 }
                 // Get next block of existing block on the stack.
                 thread.goToNextBlock();

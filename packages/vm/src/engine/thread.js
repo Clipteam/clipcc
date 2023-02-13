@@ -45,10 +45,10 @@ class _StackFrame {
         this.reported = null;
 
         /**
-         * Name of waiting reporter.
-         * @type {string}
+         * Whether is waiting a custom reporter.
+         * @type {boolean}
          */
-        this.waitingReporter = null;
+        this.waitingReporter = false;
 
         /**
          * Procedure parameters.
@@ -187,6 +187,12 @@ class Thread {
         this.warpTimer = null;
 
         this.justReported = null;
+
+        /**
+         * An option to forcely mention that a control flow has happened.
+         * @type {boolean}
+         */
+        this.controlFlowed = false;
     }
 
     /**
@@ -274,12 +280,19 @@ class Thread {
         let blockID = this.peekStack();
         while (blockID !== null) {
             const block = this.target.blocks.getBlock(blockID);
-            if (typeof block !== 'undefined' && block.opcode === 'procedures_call') {
+            if (this.peekStackFrame().waitingReporter) {
+                // cc - check if a reporter procedure is on the stack
+                break;
+            } else if (typeof block !== 'undefined' && block.opcode === 'procedures_call') {
+                // cc - prevent call command procedure repeatedly
+                this.goToNextBlock();
                 break;
             }
             this.popStack();
             blockID = this.peekStack();
         }
+        
+        this.controlFlowed = true;
 
         if (this.stack.length === 0) {
             // Clean up!
@@ -348,7 +361,8 @@ class Thread {
      * @return {*} value Value for parameter.
      */
     getParam (paramName) {
-        for (let i = this.stackFrames.length - 1; i >= 0; i--) {
+        // cc - ignore the top stack's param, it's not used by current stack
+        for (let i = this.stackFrames.length - 2; i >= 0; i--) {
             const frame = this.stackFrames[i];
             if (frame.params === null) {
                 continue;
@@ -389,8 +403,18 @@ class Thread {
     isRecursiveCall (procedureCode) {
         let callCount = 5; // Max number of enclosing procedure calls to examine.
         const sp = this.stack.length - 1;
+        let flag = false;
         for (let i = sp - 1; i >= 0; i--) {
-            const block = this.target.blocks.getBlock(this.stack[i]);
+            let blockId = this.stack[i];
+            // cc - that the flag is set means the stack has been checked, otherwise it should be checked first.
+            if (!flag && this.stackFrames[i].waitingReporter) {
+                blockId = this.stackFrames[i].reporting;
+                flag = true;
+                ++i;
+            } else {
+                flag = false;
+            }
+            const block = this.target.blocks.getBlock(blockId);
             if (block.opcode === 'procedures_call' &&
                 block.mutation.proccode === procedureCode) {
                 return true;
