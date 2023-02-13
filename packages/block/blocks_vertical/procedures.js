@@ -29,7 +29,6 @@ goog.require('Blockly.Blocks');
 goog.require('Blockly.Colours');
 goog.require('Blockly.constants');
 goog.require('Blockly.ScratchBlocks.VerticalExtensions');
-goog.require('Blockly.Events');
 
 // Serialization and deserialization.
 
@@ -689,6 +688,7 @@ Blockly.ScratchBlocks.ProcedureUtils.getReturn = function() {
  */
 Blockly.ScratchBlocks.ProcedureUtils.setReturn = function(ret) {
   this.return_ = ret;
+  this.updateDisplay_();
 };
 
 /**
