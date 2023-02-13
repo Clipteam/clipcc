@@ -997,7 +997,7 @@ Blockly.Blocks['procedures_return'] = {
       // Makes it so the move and the disable event get undone together.
       Blockly.Events.setGroup(event.group);
       var root = this.getRootBlock();
-      this.setDisabled(root.type != Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE || !root.return_);
+      this.setDisabled(root.type != Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE || !root.getInputTargetBlock('custom_block').return_);
       Blockly.Events.setGroup(group);
     }
   }
