@@ -276,6 +276,10 @@ Blockly.scratchBlocksUtils.pasteCallback = function(ws, event) {
       Blockly.Events.disable();
       try {
         var xml = Blockly.Xml.textToDom(data);
+        if (!xml) {
+          throw 'Invalid XML';
+        }
+
         var newBlock = Blockly.Xml.domToBlock(xml.firstChild, ws);
 
         var point = Blockly.utils.mouseToSvg(event, ws.getParentSvg(),  ws.getInverseScreenCTM());
