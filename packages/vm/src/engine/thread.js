@@ -74,7 +74,7 @@ class _StackFrame {
         this.warpMode = false;
         this.justReported = null;
         this.reported = null;
-        this.waitingReporter = null;
+        this.waitingReporter = false;
         this.params = null;
         this.executionContext = null;
 
