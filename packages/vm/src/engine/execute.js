@@ -37,6 +37,19 @@ const isPromise = function (value) {
 };
 
 /**
+ * Utility function to determine if a block is a procedure caller with return value.
+ * @param {BlockCached} cached Cached block to check.
+ * @return {boolean} True if the block is a procedure caller with return value.
+ */
+const isProcedureReturnCaller = function (cached) {
+    return (
+        cached.opcode === 'procedures_call' &&
+        (typeof cached.mutation.return === 'boolean' ?
+            cached.mutation.return : JSON.parse(cached.mutation.return))
+    );
+};
+
+/**
  * Handle any reported value from the primitive, either directly returned
  * or after a promise resolves.
  * @param {*} resolvedValue Value eventually returned from the primitive.
@@ -525,7 +538,7 @@ const execute = function (sequencer, thread) {
         // If it's a promise, wait until promise resolves.
         // cc - if it's procedure_call_return, treat it as a promise.
         const isValuePromise = isPromise(primitiveReportedValue);
-        const isReturnCaller = opCached.opcode === 'procedures_call' && opCached.mutation.return;
+        const isReturnCaller = isProcedureReturnCaller(opCached);
         if (isValuePromise || isReturnCaller) {
             if (isValuePromise) {
                 handlePromise(primitiveReportedValue, sequencer, thread, opCached, lastOperation);
