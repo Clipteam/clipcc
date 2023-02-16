@@ -415,7 +415,8 @@ class Thread {
                 flag = false;
             }
             const block = this.target.blocks.getBlock(blockId);
-            if (block.opcode === 'procedures_call' &&
+            // cc - block maybe not exists when triggered in toolbox.
+            if (block && block.opcode === 'procedures_call' &&
                 block.mutation.proccode === procedureCode) {
                 return true;
             }
