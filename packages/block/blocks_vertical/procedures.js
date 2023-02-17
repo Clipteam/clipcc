@@ -112,6 +112,32 @@ Blockly.ScratchBlocks.ProcedureUtils.definitionDomToMutation = function(xmlEleme
   }
 };
 
+/**
+ * Parse XML to restore the return status of a procedures_definition block.
+ * @param {!Element} xmlElement XML storage element.
+ * @this Blockly.Block
+ */
+Blockly.ScratchBlocks.ProcedureUtils.definitionBlockDomToMutation = function(xmlElement) {
+  const oldReturn = this.return_;
+  this.return_ = JSON.parse(xmlElement.getAttribute('return'));
+
+  if (this.return_ !== oldReturn) {
+    // Change the shape of custom_block input to match new return status.
+    const input = this.getInput('custom_block');
+    if (this.return_) {
+      input.connection.type = Blockly.INPUT_VALUE;
+    } else {
+      input.connection.type = Blockly.NEXT_STATEMENT;
+    }
+  }
+
+  // Update the block's apperance to match the mutation.
+  if (this.rendered && !this.isInsertionMarker()) {
+    this.initSvg();
+    this.render();
+  }
+};
+
 // End of serialization and deserialization.
 
 // Shared by all three procedure blocks (procedures_declaration,
@@ -794,11 +820,39 @@ Blockly.ScratchBlocks.ProcedureUtils.updateArgumentReporterNames_ = function(pre
 };
 
 /**
- * Update the block's shape to meet its return type.
+ * Update the prototype and definition's shape to meet its return type.
  * @this Blockly.Block
  */
 Blockly.ScratchBlocks.ProcedureUtils.updatePrototypeShape_ = function() {
-  
+  const isReturn = this.getOutputShape() != Blockly.OUTPUT_SHAPE_NORMAL;
+  if (isReturn != this.return_) {
+    const parent = this.getParent();
+    if (this.return_) {
+      this.setOutputShape(Blockly.OUTPUT_SHAPE_ROUND);
+      if (this.previousConnection && this.previousConnection.isConnected()) {
+        this.previousConnection.disconnect(true);
+      }
+      this.setPreviousStatement(false);
+      this.setNextStatement(false);
+      this.setOutput(true);
+      if (parent) {
+        parent.updateReturn(this.return_);
+        this.outputConnection.connect(parent.getInput('custom_block').connection);
+      }
+    } else {
+      this.setOutputShape(Blockly.OUTPUT_SHAPE_NORMAL);
+      if (this.outputConnection && this.outputConnection.isConnected()) {
+        this.outputConnection.disconnect(true);
+      }
+      this.setOutput(false);
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      if (parent) {
+        parent.updateReturn(this.return_);
+        this.previousConnection.connect(parent.getInput('custom_block').connection);
+      }
+    }
+  }
 };
 
 /**
@@ -823,6 +877,40 @@ Blockly.ScratchBlocks.ProcedureUtils.updateProcedureShape_ = function() {
   }
 };
 
+/**
+ * Update return status to match the prototype block.
+ * @param {boolean} newReturn New return status.
+ * @this Blockly.Block
+ */
+Blockly.ScratchBlocks.ProcedureUtils.updateDefinitionReturn_ = function(newReturn) {
+  if (this.return_ !== newReturn) {
+    this.return_ = newReturn;
+
+    // Change the shape of custom_block input to match new return status.
+    const input = this.getInput('custom_block');
+    if (this.return_) {
+      input.type = input.connection.type = Blockly.INPUT_VALUE;
+    } else {
+      input.type = input.connection.type = Blockly.NEXT_STATEMENT;
+    }
+
+    // Update the block's apperance to match the mutation.
+    if (this.rendered && !this.isInsertionMarker()) {
+      this.initSvg();
+      this.render();
+    }
+  }
+};
+
+/**
+ * The event to change the input shape to match muation of child block.
+ * @param {Blockly.Block} childBlock The child block that will be connected to this block.
+ * @this Blockly.Block
+ */
+Blockly.ScratchBlocks.ProcedureUtils.definitionChildWillConnect_ = function(childBlock) {
+  this.updateReturn(childBlock.return_);
+};
+
 Blockly.Blocks['procedures_definition'] = {
   /**
    * Block for defining a procedure.
@@ -839,7 +927,12 @@ Blockly.Blocks['procedures_definition'] = {
       ],
       "extensions": ["colours_more", "shape_hat", "procedure_def_contextmenu"]
     });
-  }
+    this.return_ = false;
+  },
+  // procedures_definition doesn't store mutation data, it gets mutation from procedures_prototype.
+  updateReturn: Blockly.ScratchBlocks.ProcedureUtils.updateDefinitionReturn_,
+  // Only exists on definition block to change it shape to fit prototype block.
+  childWillConnect: Blockly.ScratchBlocks.ProcedureUtils.definitionChildWillConnect_
 };
 
 Blockly.Blocks['procedures_call'] = {

@@ -900,6 +900,10 @@ Blockly.BlockSvg.prototype.renderCompute_ = function(iconWidth) {
         fieldValueWidth = Math.max(fieldValueWidth, input.fieldWidth);
       }
     }
+    if (this.type == Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE) {
+      // fieldStatementWidth is needed for rendering procedures_definition.
+      fieldStatementWidth = Math.max(fieldStatementWidth, input.fieldWidth);
+    }
     previousRow = row;
   }
   // Compute padding for output blocks.
@@ -964,7 +968,8 @@ Blockly.BlockSvg.prototype.computeInputHeight_ = function(input, row,
     previousRow) {
   if (this.inputList.length === 1 && this.outputConnection &&
       (this.isShadow() &&
-      !Blockly.scratchBlocksUtils.isShadowArgumentReporter(this))) {
+      !Blockly.scratchBlocksUtils.isShadowArgumentReporter(this) &&
+      this.type !== Blockly.PROCEDURES_PROTOTYPE_BLOCK_TYPE)) {
     // "Lone" field blocks are smaller.
     return Blockly.BlockSvg.MIN_BLOCK_Y_SINGLE_FIELD_OUTPUT;
   } else if (this.outputConnection) {
@@ -1024,7 +1029,8 @@ Blockly.BlockSvg.prototype.computeRightEdge_ = function(curEdge, hasStatement) {
     edge = Math.max(edge, Blockly.BlockSvg.MIN_BLOCK_X);
   } else if (this.outputConnection) {
     if (this.isShadow() &&
-        !Blockly.scratchBlocksUtils.isShadowArgumentReporter(this)) {
+        !Blockly.scratchBlocksUtils.isShadowArgumentReporter(this) &&
+        this.type !== Blockly.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
       // Single-fields
       edge = Math.max(edge, Blockly.BlockSvg.MIN_BLOCK_X_SHADOW_OUTPUT);
     } else {
@@ -1055,7 +1061,8 @@ Blockly.BlockSvg.prototype.computeOutputPadding_ = function(inputRows) {
   // Only apply to blocks with outputs and not single fields (shadows).
   if (!this.getOutputShape() || !this.outputConnection ||
       (this.isShadow() &&
-      !Blockly.scratchBlocksUtils.isShadowArgumentReporter(this))) {
+      !Blockly.scratchBlocksUtils.isShadowArgumentReporter(this) &&
+      this.type !== Blockly.PROCEDURES_PROTOTYPE_BLOCK_TYPE)) {
     return;
   }
   // Blocks with outputs must have single row to be padded.
@@ -1328,18 +1335,22 @@ Blockly.BlockSvg.prototype.renderDrawRight_ = function(steps,
       // Move to the right edge
       cursorX = Math.max(cursorX, inputRows.rightEdge);
       this.width = Math.max(this.width, cursorX);
-      if (!this.edgeShape_) {
-        // Include corner radius in drawing the horizontal line.
-        steps.push('H', cursorX - Blockly.BlockSvg.CORNER_RADIUS - this.edgeShapeWidth_);
-        steps.push(Blockly.BlockSvg.TOP_RIGHT_CORNER);
+      if (this.type == Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE) {
+        this.renderDefineBlock_(steps, inputRows, row[0], row, cursorY);
       } else {
-        // Don't include corner radius - no corner (edge shape drawn).
-        steps.push('H', cursorX - this.edgeShapeWidth_);
-      }
-      // Subtract CORNER_RADIUS * 2 to account for the top right corner
-      // and also the bottom right corner. Only move vertically the non-corner length.
-      if (!this.edgeShape_) {
-        steps.push('v', row.height - Blockly.BlockSvg.CORNER_RADIUS * 2);
+        if (!this.edgeShape_) {
+          // Include corner radius in drawing the horizontal line.
+          steps.push('H', cursorX - Blockly.BlockSvg.CORNER_RADIUS - this.edgeShapeWidth_);
+          steps.push(Blockly.BlockSvg.TOP_RIGHT_CORNER);
+        } else {
+          // Don't include corner radius - no corner (edge shape drawn).
+          steps.push('H', cursorX - this.edgeShapeWidth_);
+        }
+        // Subtract CORNER_RADIUS * 2 to account for the top right corner
+        // and also the bottom right corner. Only move vertically the non-corner length.
+        if (!this.edgeShape_) {
+          steps.push('v', row.height - Blockly.BlockSvg.CORNER_RADIUS * 2);
+        }
       }
     } else if (row.type == Blockly.NEXT_STATEMENT) {
       // Nested statement.

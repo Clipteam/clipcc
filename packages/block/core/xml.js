@@ -757,6 +757,12 @@ Blockly.Xml.domToBlockHeadless_ = function(xmlBlock, workspace) {
         if (childBlockElement) {
           blockChild = Blockly.Xml.domToBlockHeadless_(childBlockElement,
               workspace);
+          if (block.childWillConnect) {
+            // This event was newly added to Blockly by ClipCC. It will be triggered when a
+            // child block was completely created and will be connected to its parent. So the
+            // parent block can change its connection type based on its child's data.
+            block.childWillConnect(blockChild);
+          }    
           if (blockChild.outputConnection) {
             input.connection.connect(blockChild.outputConnection);
           } else if (blockChild.previousConnection) {

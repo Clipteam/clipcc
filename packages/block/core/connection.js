@@ -553,8 +553,9 @@ Blockly.Connection.singleConnection_ = function(block, orphanBlock) {
 
 /**
  * Disconnect this connection.
+ * @param {boolean=} opt_noRespawnShadow True if don't respawn shadow block. Defaults to false.
  */
-Blockly.Connection.prototype.disconnect = function() {
+Blockly.Connection.prototype.disconnect = function(opt_noRespawnShadow) {
   var otherConnection = this.targetConnection;
   goog.asserts.assert(otherConnection, 'Source connection not connected.');
   goog.asserts.assert(otherConnection.targetConnection == this,
@@ -573,7 +574,9 @@ Blockly.Connection.prototype.disconnect = function() {
     parentConnection = otherConnection;
   }
   this.disconnectInternal_(parentBlock, childBlock);
-  parentConnection.respawnShadow_();
+  if (!opt_noRespawnShadow) {
+    parentConnection.respawnShadow_();
+  }
 };
 
 /**
