@@ -43,6 +43,7 @@ const PromptComponent = props => (
     <Modal
         className={styles.modalContent}
         contentLabel={props.title}
+        id="prompt"
         onRequestClose={props.onCancel}
     >
         <Box className={styles.body}>

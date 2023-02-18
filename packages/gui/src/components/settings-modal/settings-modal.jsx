@@ -59,6 +59,7 @@ class SettingsModal extends React.Component {
             <Modal
                 className={styles.modalContent}
                 contentLabel={this.props.intl.formatMessage(messages.title)}
+                id="settingsModal"
                 onRequestClose={this.props.onClose}
             >
                 <Box className={styles.body}>

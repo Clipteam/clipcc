@@ -19,6 +19,7 @@ const RecordModal = props => (
     <Modal
         className={styles.modalContent}
         contentLabel={props.intl.formatMessage(messages.title)}
+        id="recordModal"
         onRequestClose={props.onCancel}
     >
         <Box className={styles.body}>
