@@ -45,5 +45,5 @@ python_compressed.js
 /local_blockly_compressed_vertical.js
 /chromedriver
 
-# Closure (fix/nt)
-gcl
+# Closure Flags
+/closureflags

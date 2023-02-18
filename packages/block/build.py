@@ -49,11 +49,13 @@ CLOSURE_DIR = os.path.pardir
 CLOSURE_ROOT = os.path.pardir
 CLOSURE_LIBRARY = "closure-library"
 CLOSURE_COMPILER = REMOTE_COMPILER
+CLOSURE_FLAGFILE = "closureflags"
 
 CLOSURE_DIR_NPM = "node_modules"
 CLOSURE_ROOT_NPM = os.path.join("node_modules")
 CLOSURE_LIBRARY_NPM = "google-closure-library"
 CLOSURE_COMPILER_NPM = ("google-closure-compiler.cmd" if os.name == "nt" else "google-closure-compiler")
+CLOSURE_FLAGFILE_NPM = "closureflags"
 
 def import_path(fullpath):
   """Import a file with full path specification.
@@ -318,21 +320,19 @@ class Gen_compressed(threading.Thread):
       for (arg, value) in params:
         dash_params.append((value,) if arg == "js_file" else ("--" + arg, value))
 
-      # Flatten dash_params into dash_args if their keys are not in filter_keys
-      dash_args = []
+      # Flatten dash_params into args if their keys are not in filter_keys
+      args = []
       for pair in dash_params:
         if pair[0][2:] not in filter_keys:
-          dash_args.extend(pair)
+          args.append(" ".join(pair))
 
-      # Build the final args array by prepending CLOSURE_COMPILER_NPM to
-      # dash_args and dropping any falsy members
-      # At the same time, shorten the path to run on Windows (fix/nt)
-      args = []
-      library_path = os.path.join(self.closure_env["closure_root"], self.closure_env["closure_library"])
-      for group in [[CLOSURE_COMPILER_NPM], dash_args]:
-        args.extend([item.replace(library_path, self.closure_env["closure_library_path"]) for item in group if item])
+      f = open(CLOSURE_FLAGFILE_NPM, "w")
+      f.write("\n".join(args))
+      f.close()
 
-      proc = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+      proc = subprocess.Popen(
+        [CLOSURE_COMPILER_NPM, "--flagfile", CLOSURE_FLAGFILE_NPM],
+        stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
       (stdout, stderr) = proc.communicate()
 
       # Build the JSON response.
@@ -568,7 +568,6 @@ if __name__ == "__main__":
     closure_root = CLOSURE_ROOT_NPM
     closure_library = CLOSURE_LIBRARY_NPM
     closure_compiler = CLOSURE_COMPILER_NPM
-    closure_library_path = os.path.join(closure_root, closure_library)
 
     # Load calcdeps from the local library
     calcdeps = import_path(os.path.join(
@@ -580,11 +579,6 @@ if __name__ == "__main__":
     (stdout, _) = test_proc.communicate()
     assert stdout == read(os.path.join("build", "test_expect.js"))
 
-    # Create link to shorten command line on Windows (fix/nt)
-    if os.name == 'nt':
-      subprocess.check_call(['mklink', '/J', 'gcl', os.path.join(closure_root, closure_library)], shell=True)
-      closure_library_path = 'gcl'
-
     print("Using local compiler: %s ...\n" % CLOSURE_COMPILER_NPM)
   except (ImportError, AssertionError):
     print("Using remote compiler: closure-compiler.appspot.com ...\n")
@@ -594,7 +588,6 @@ if __name__ == "__main__":
       closure_root = CLOSURE_ROOT
       closure_library = CLOSURE_LIBRARY
       closure_compiler = CLOSURE_COMPILER
-      closure_library_path = os.path.join(closure_root, closure_library)
 
       calcdeps = import_path(os.path.join(
           closure_root, closure_library, "closure", "bin", "calcdeps.py"))
@@ -623,8 +616,7 @@ if __name__ == "__main__":
     "closure_dir": closure_dir,
     "closure_root": closure_root,
     "closure_library": closure_library,
-    "closure_compiler": closure_compiler,
-    "closure_library_path": closure_library_path
+    "closure_compiler": closure_compiler
   }
 
   # Run all tasks in parallel threads.
@@ -645,7 +637,3 @@ if __name__ == "__main__":
 
   # This is run locally in a separate thread.
   # Gen_langfiles().start()
-
-  # Delete link created on Windows (fix/nt)
-  if os.name == 'nt':
-    subprocess.check_call(['rmdir', 'gcl'], shell=True)
