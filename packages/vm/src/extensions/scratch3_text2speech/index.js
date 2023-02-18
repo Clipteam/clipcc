@@ -30,6 +30,14 @@ const blockIconURI = 'data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNv
 const SERVER_HOST = 'https://synthesis-service.scratch.mit.edu';
 
 /**
+ * Whether supports Web Speech API.
+ * Since original Web Speech API is unavailable im Mainland China,
+ * We decided to fallback to the local Web Speech API when the remote service is unavailable.
+ * @type {boolean}
+ */
+const IS_SUPPORTED_WEBSPEECH_API = typeof speechSynthesis !== 'undefined';
+
+/**
  * How long to wait in ms before timing out requests to synthesis server.
  * @type {int}
  */
@@ -760,6 +768,25 @@ class Scratch3Text2SpeechBlocks {
             })
             .catch(err => {
                 log.warn(err);
+                // cc: fallback to web speech
+                if (IS_SUPPORTED_WEBSPEECH_API) {
+                    const utter = new SpeechSynthesisUtterance(words);
+                    utter.lang = locale;
+                    utter.volume = SPEECH_VOLUME;
+                    utter.rate = playbackRate;
+                    if (gender === TENOR_ID) {
+                        utter.pitch = 1;
+                    }
+                    if (state.voiceId === GIANT_ID) {
+                        utter.pitch = 2;
+                    }
+
+                    return new Promise(resolve => {
+                        speechSynthesis.speak(utter);
+                        utter.onend = () => resolve();
+                        this.runtime.on('PROJECT_STOP_ALL', () => speechSynthesis.cancel());
+                    });
+                }
             });
     }
 }
