@@ -403,7 +403,8 @@ Blockly.Procedures.newProcedureMutation = function() {
 Blockly.Procedures.createProcedureDefCallback_ = function(workspace) {
   Blockly.Procedures.externalProcedureDefCallback(
       Blockly.Procedures.newProcedureMutation(),
-      Blockly.Procedures.createProcedureCallbackFactory_(workspace)
+      Blockly.Procedures.createProcedureCallbackFactory_(workspace),
+      true
   );
 };
 
@@ -481,7 +482,8 @@ Blockly.Procedures.editProcedureCallback_ = function(block) {
   // Block now refers to the procedure prototype block, it is safe to proceed.
   Blockly.Procedures.externalProcedureDefCallback(
       block.mutationToDom(),
-      Blockly.Procedures.editProcedureCallbackFactory_(block)
+      Blockly.Procedures.editProcedureCallbackFactory_(block),
+      false
   );
 };
 
@@ -504,7 +506,7 @@ Blockly.Procedures.editProcedureCallbackFactory_ = function(block) {
  * Callback to create a new procedure custom command block.
  * @public
  */
-Blockly.Procedures.externalProcedureDefCallback = function(/** mutator, callback */) {
+Blockly.Procedures.externalProcedureDefCallback = function(/** mutator, callback, isNew */) {
   alert('External procedure editor must be override Blockly.Procedures.externalProcedureDefCallback');
 };
 

@@ -154,6 +154,7 @@ class CustomProcedures extends React.Component {
         return (
             <CustomProceduresComponent
                 componentRef={this.setBlocks}
+                new={this.props.new}
                 return={this.state.return}
                 warp={this.state.warp}
                 onAddBoolean={this.handleAddBoolean}
@@ -171,6 +172,7 @@ class CustomProcedures extends React.Component {
 CustomProcedures.propTypes = {
     isRtl: PropTypes.bool,
     mutator: PropTypes.instanceOf(Element),
+    new: PropTypes.bool,
     onRequestClose: PropTypes.func.isRequired,
     options: PropTypes.shape({
         media: PropTypes.string,
@@ -201,7 +203,8 @@ CustomProcedures.defaultProps = {
 
 const mapStateToProps = state => ({
     isRtl: state.locales.isRtl,
-    mutator: state.scratchGui.customProcedures.mutator
+    mutator: state.scratchGui.customProcedures.mutator,
+    new: state.scratchGui.customProcedures.new
 });
 
 export default connect(

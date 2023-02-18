@@ -119,6 +119,7 @@ const CustomProcedures = props => (
                         checked={props.return}
                         type="checkbox"
                         onChange={props.onToggleReturn}
+                        disabled={!props.new}
                     />
                     <FormattedMessage
                         defaultMessage="Has return value"
@@ -163,6 +164,7 @@ CustomProcedures.propTypes = {
     onOk: PropTypes.func.isRequired,
     onToggleReturn: PropTypes.func.isRequired,
     onToggleWarp: PropTypes.func.isRequired,
+    new: PropTypes.bool.isRequired,
     return: PropTypes.bool.isRequired,
     warp: PropTypes.bool.isRequired
 };
