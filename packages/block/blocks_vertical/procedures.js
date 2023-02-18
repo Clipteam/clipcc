@@ -1096,6 +1096,25 @@ Blockly.Blocks['procedures_return'] = {
   }
 };
 
+Blockly.Blocks['procedures_discard'] = {
+  /**
+   * Block for calling and discarding the return value of a procedure.
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": " %1",
+      "args0": [
+        {
+          "type": "input_value",
+          "name": "VALUE"
+        }
+      ],
+      "extensions": ["colours_more", "shape_statement"]
+    });
+  }
+};
+
 Blockly.Blocks['argument_reporter_boolean'] = {
   init: function() {
     this.jsonInit({ "message0": " %1",

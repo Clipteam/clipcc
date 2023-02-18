@@ -13,15 +13,16 @@ class Scratch3ProcedureBlocks {
      */
     getPrimitives () {
         return {
-            procedures_definition: this.definition,
+            procedures_definition: this.noOp,
             procedures_call: this.call,
             procedures_return: this.return,
+            procedures_discard: this.noOp,
             argument_reporter_string_number: this.argumentReporterStringNumber,
             argument_reporter_boolean: this.argumentReporterBoolean
         };
     }
 
-    definition () {
+    noOp () {
         // No-op: execute the blocks.
     }
 
