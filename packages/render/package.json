@@ -12,7 +12,7 @@
   "main": "./dist/node/scratch-render.js",
   "browser": "./src/index.js",
   "scripts": {
-    "build": "webpack --progress --colors",
+    "build": "webpack --progress --color",
     "docs": "jsdoc -c .jsdoc.json",
     "lint": "eslint .",
     "prepublish": "npm run build",
@@ -21,7 +21,7 @@
     "tap": "tap test/unit test/integration",
     "test": "npm run lint && npm run docs && npm run build && npm run tap",
     "version": "json -f package.json -I -e \"this.repository.sha = '$(git log -n1 --pretty=format:%H)'\"",
-    "watch": "webpack --progress --colors --watch --watch-poll"
+    "watch": "webpack --progress --color --watch --watch-poll"
   },
   "devDependencies": {
     "babel-core": "6.26.3",

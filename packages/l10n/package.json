@@ -6,7 +6,7 @@
     "browser": "./src/index.js",
     "scripts": {
         "build:data": "babel-node scripts/build-data",
-        "build": "yarn clean && yarn build:data && webpack --progress --colors --bail",
+        "build": "yarn clean && yarn build:data && webpack --progress --color --bail",
         "clean": "rimraf ./dist ./locales && mkdirp dist locales",
         "lint:js": "eslint . --ext .js",
         "lint:json": "jshint -e .json www editor/blocks editor/extensions editor/interface editor/paint-editor",
@@ -60,7 +60,7 @@
         "p-limit": "2.1.0",
         "p-queue": "3.0.0",
         "rimraf": "^2.6.2",
-        "webpack": "^4.6.0",
-        "webpack-cli": "^3.1.2"
+        "webpack": "4.46.0",
+        "webpack-cli": "3.3.12"
     }
 }
