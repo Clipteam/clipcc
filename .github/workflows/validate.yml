@@ -18,6 +18,6 @@ jobs:
       - name: Install dependencies
         run: sudo apt-get update && sudo apt install python3
       - name: Install and build
-        run: yarn install --frozen-lockfile && yarn run build:dist
+        run: yarn install --frozen-lockfile && yarn run build:full
       - name: Test
         run: yarn test
