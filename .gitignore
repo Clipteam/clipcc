@@ -1,5 +1,6 @@
 # General
 .DS_Store
+.nyc-output
 .vscode
 node_modules
 npm-*

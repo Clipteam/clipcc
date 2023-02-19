@@ -12523,6 +12523,11 @@ lru-cache@^7.4.4, lru-cache@^7.5.1, lru-cache@^7.7.1:
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.14.1.tgz#8da8d2f5f59827edb388e63e459ac23d6d408fea"
   integrity sha512-ysxwsnTKdAx96aTRdhDOCQfDgbHnt8SK0KY8SEjO0wHinhWOFTESbjVCMPbU1uGXg/ch4lifqx0wfjOawU2+WA==
 
+lumen5-web-audio-test-api@0.5.2:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/lumen5-web-audio-test-api/-/lumen5-web-audio-test-api-0.5.2.tgz#9299ac89320cd220b031c04fe537bd6c4f82695b"
+  integrity sha512-j8V02Rqfqz0yD3bE511U0oqIDNc5n7suDwY+0Ga4NIP4ZzLswl3i1gb2qO//Agdm6XhJ/zPSw30mVF/opyQ6IA==
+
 magic-string@^0.22.4:
   version "0.22.5"
   resolved "https://registry.yarnpkg.com/magic-string/-/magic-string-0.22.5.tgz#8e9cf5afddf44385c1da5bc2a6a0dbd10b03657e"
@@ -19044,11 +19049,6 @@ weak-map@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/weak-map/-/weak-map-1.0.0.tgz#b66e56a9df0bd25a76bbf1b514db129080614a37"
   integrity sha512-Vb13TbgdvUEmzBA5mpsMqtPqcZGJPE2gj+b8wzxsevC7WkmL3c7YZg9H0pV1Jo8C1Sa1ykk3DU08hFRGLNWvLQ==
-
-web-audio-test-api@0.5.2:
-  version "0.5.2"
-  resolved "https://registry.yarnpkg.com/web-audio-test-api/-/web-audio-test-api-0.5.2.tgz#c1e24d21ced0603f1a495272a1eb669db28873fa"
-  integrity sha512-RevLfVjp+wwe/dBPe361IpmNpeXXW6JVmlp8dk0YIxLwAh7evn6JpEQQalVgX4PH/jA8tpLpjD/8tFNUYTf88w==
 
 webidl-conversions@^3.0.0:
   version "3.0.1"

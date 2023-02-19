@@ -21,7 +21,7 @@
     "build:dist": "NODE_ENV=production yarn build:full",
     "build:full": "yarn l10n:build && yarn render:build && yarn block:build && yarn vm:build && yarn gui:build",
     "build": "yarn block:build && yarn gui:build",
-    "test:unit": "yarn workspace scratch-gui test:unit && yarn workspace scratch-vm tap:unit",
+    "test": "yarn workspace scratch-gui test:unit && yarn workspace scratch-vm tap",
     "translation:build": "yarn gui:translation && yarn vm:translation && yarn block:translation",
     "translation:push": "tx push",
     "translation:pull": "yarn workspace scratch-blocks translate:sync:translations && yarn workspace scratch-l10n pull:editor",
