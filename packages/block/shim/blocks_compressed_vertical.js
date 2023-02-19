@@ -1,1 +1,1 @@
-module.exports = require('imports-loader?type=commonjs&imports[]=single|./shim/blockly_compressed_vertical.goog|goog&imports[]=single|./shim/blockly_compressed_vertical-blocks_compressed|Blockly!exports-loader?type=commonjs&exports=Blockly!../blocks_compressed_vertical');
+module.exports = require('imports-loader?type=commonjs&imports=single|./shim/blockly_compressed_vertical.goog|goog,single|./shim/blockly_compressed_vertical-blocks_compressed|Blockly!exports-loader?type=commonjs&exports=Blockly!../blocks_compressed_vertical');

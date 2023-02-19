@@ -15,12 +15,17 @@ const base = {
         library: 'VirtualMachine',
         filename: '[name].js'
     },
+    resolve: {
+        fallback: {
+            stream: require.resolve('stream-browserify')
+        }
+    },
     module: {
         rules: [{
             test: /\.js$/,
             loader: 'babel-loader',
             include: path.resolve(__dirname, 'src'),
-            query: {
+            options: {
                 presets: [['@babel/preset-env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}]]
             }
         },

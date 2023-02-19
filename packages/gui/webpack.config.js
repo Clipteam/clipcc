@@ -23,7 +23,10 @@ const base = {
         chunkFilename: 'chunks/[name].js'
     },
     resolve: {
-        symlinks: false
+        symlinks: false,
+        fallback: {
+            stream: require.resolve('stream-browserify')
+        }
     },
     module: {
         rules: [{
@@ -95,10 +98,22 @@ module.exports = [
     defaultsDeep({}, base, {
         entry: {
             'lib.min': ['react', 'react-dom'],
-            'gui': './src/playground/index.jsx',
-            'blocksonly': './src/playground/blocks-only.jsx',
-            'compatibilitytesting': './src/playground/compatibility-testing.jsx',
-            'player': './src/playground/player.jsx'
+            'gui': {
+                import: './src/playground/index.jsx',
+                dependOn: 'lib.min'
+            },
+            'blocksonly': {
+                import: './src/playground/blocks-only.jsx',
+                dependOn: 'lib.min'
+            },
+            'compatibilitytesting': {
+                import: './src/playground/compatibility-testing.jsx',
+                dependOn: 'lib.min'
+            },
+            'player': {
+                import: './src/playground/player.jsx',
+                dependOn: 'lib.min'
+            }
         },
         output: {
             path: path.resolve(__dirname, 'build'),
@@ -118,9 +133,6 @@ module.exports = [
         optimization: {
             splitChunks: {
                 chunks: 'all',
-                name: 'lib.min'
-            },
-            runtimeChunk: {
                 name: 'lib.min'
             }
         },
