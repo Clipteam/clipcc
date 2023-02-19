@@ -5,11 +5,6 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-// PostCss
-const autoprefixer = require('autoprefixer');
-const postcssVars = require('postcss-simple-vars');
-const postcssImport = require('postcss-import');
-
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devtool: 'cheap-module-source-map',
@@ -20,7 +15,7 @@ const base = {
             include: path.resolve(__dirname, 'src'),
             options: {
                 plugins: ['transform-object-rest-spread'],
-                presets: [['env', {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}], 'react']
+                presets: [['@babel/preset-env', {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}], 'react']
             }
         },
         {
@@ -31,21 +26,20 @@ const base = {
                 loader: 'css-loader',
                 options: {
                     modules: {
-                        localIdentName: '[name]_[local]_[hash:base64:5]'
+                        localIdentName: '[name]_[local]_[hash:base64:5]',
+                        exportLocalsConvention: 'camelCase'
                     },
-                    importLoaders: 1,
-                    localsConvention: 'camelCase'
+                    importLoaders: 1
                 }
             }, {
                 loader: 'postcss-loader',
                 options: {
-                    ident: 'postcss',
-                    plugins: function () {
-                        return [
-                            postcssImport,
-                            postcssVars,
-                            autoprefixer()
-                        ];
+                    postcssOptions: {
+                        plugins: [
+                            'postcss-import',
+                            'postcss-simple-vars',
+                            'autoprefixer'
+                        ]
                     }
                 }
             }]

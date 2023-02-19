@@ -7,11 +7,6 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-// PostCss
-var autoprefixer = require('autoprefixer');
-var postcssVars = require('postcss-simple-vars');
-var postcssImport = require('postcss-import');
-
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
 
 const base = {
@@ -61,21 +56,21 @@ const base = {
             }, {
                 loader: 'css-loader',
                 options: {
-                    modules: true,
-                    importLoaders: 1,
-                    localIdentName: '[name]_[local]_[hash:base64:5]',
-                    camelCase: true
+                    modules: {
+                        localIdentName: '[name]_[local]_[hash:base64:5]',
+                        exportLocalsConvention: 'camelCase'
+                    },
+                    importLoaders: 1
                 }
             }, {
                 loader: 'postcss-loader',
                 options: {
-                    ident: 'postcss',
-                    plugins: function () {
-                        return [
-                            postcssImport,
-                            postcssVars,
-                            autoprefixer
-                        ];
+                    postcssOptions: {
+                        plugins: [
+                            'postcss-import',
+                            'postcss-simple-vars',
+                            'autoprefixer'
+                        ]
                     }
                 }
             }]
