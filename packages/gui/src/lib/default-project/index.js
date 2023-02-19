@@ -11,7 +11,7 @@ import backdrop from '!raw-loader!./cd21514d0531fdffb22204e0ec5ed84a.svg';
 const defaultProject = translator => {
     let _TextEncoder;
     if (typeof TextEncoder === 'undefined') {
-        _TextEncoder = require('text-encoding').TextEncoder;
+        _TextEncoder = require('fastestsmallesttextencoderdecoder').TextEncoder;
     } else {
         /* global TextEncoder */
         _TextEncoder = TextEncoder;
