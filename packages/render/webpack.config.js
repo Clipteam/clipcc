@@ -48,12 +48,12 @@ module.exports = [
             filename: '[name].js'
         },
         plugins: base.plugins.concat([
-            new CopyWebpackPlugin([
-                {
+            new CopyWebpackPlugin({
+                patterns: [{
                     context: 'src/playground',
                     from: '*.+(html|css)'
-                }
-            ])
+                }]
+            })
         ])
     }),
     // Web-compatible

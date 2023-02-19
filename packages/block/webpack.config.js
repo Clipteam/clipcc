@@ -62,7 +62,8 @@ module.exports = [{
     hints: false
   },
   plugins: [
-      new CopyWebpackPlugin([{
+    new CopyWebpackPlugin({
+      patterns: [{
         from: 'node_modules/google-closure-library',
         to: 'closure-library'
       }, {
@@ -88,8 +89,11 @@ module.exports = [{
         to: 'playgrounds/tests'
       }, {
         from: '*.js',
-        ignore: 'webpack.config.js',
-        to: 'playgrounds'
-      }])
+        to: 'playgrounds',
+        globOptions: {
+          ignore: 'webpack.config.js'
+        }
+      }]
+    })
   ]
 }];

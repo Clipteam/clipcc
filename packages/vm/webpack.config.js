@@ -97,18 +97,20 @@ module.exports = [
             hints: false
         },
         plugins: base.plugins.concat([
-            new CopyWebpackPlugin([{
-                from: '../block/media',
-                to: 'media'
-            }, {
-                from: '../../node_modules/scratch-storage/dist/web'
-            }, {
-                from: '../../node_modules/scratch-render/dist/web'
-            }, {
-                from: '../../node_modules/scratch-svg-renderer/dist/web'
-            }, {
-                from: 'src/playground'
-            }])
+            new CopyWebpackPlugin({
+                patterns: [{
+                    from: '../block/media',
+                    to: 'media'
+                }, {
+                    from: '../../node_modules/scratch-storage/dist/web'
+                }, {
+                    from: '../../node_modules/scratch-render/dist/web'
+                }, {
+                    from: '../../node_modules/scratch-svg-renderer/dist/web'
+                }, {
+                    from: 'src/playground'
+                }]
+            })
         ])
     })
 ];
