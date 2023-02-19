@@ -1080,7 +1080,7 @@ Blockly.BlockSvg.prototype.computeOutputPadding_ = function(inputRows) {
   var otherShape;
   // In checking the left/start side, a field takes precedence over any input.
   // That's because a field will be rendered before any value input.
-  if (firstField) {
+  if (firstField || !firstInput.connection) {
     otherShape = 0; // Field comes first in the row.
   } else {
     // Value input comes first in the row.

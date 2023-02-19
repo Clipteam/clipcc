@@ -242,7 +242,9 @@ Blockly.ScratchBlocks.ProcedureUtils.createAllInputs_ = function(connectionMap) 
   });
   // Create arguments and labels as appropriate.
   var argumentCount = 0;
-  for (var i = 0, component; component = procComponents[i]; i++) {
+  for (var i = 0; i < procComponents.length; i++) {
+    // The first component should always be created even if the value is ''.
+    var component = procComponents[i];
     var labelText;
     if (component.substring(0, 1) == '%') {
       var argumentType = component.substring(1, 2);
@@ -714,7 +716,7 @@ Blockly.ScratchBlocks.ProcedureUtils.getReturn = function() {
  */
 Blockly.ScratchBlocks.ProcedureUtils.setReturn = function(ret) {
   this.return_ = ret;
-  this.updateDisplay_();
+  this.updateShape_();
 };
 
 /**
