@@ -560,11 +560,11 @@ Blockly.Flyout.prototype.show = function(xmlList, opt_visible) {
     }
   }
 
-  this.setVisible(opt_visible);
-
   this.emptyRecycleBlocks_();
 
   this.layout_(contents, gaps);
+
+  this.setVisible(opt_visible);
 
   // IE 11 is an incompetent browser that fails to fire mouseout events.
   // When the mouse is over the background, deselect all blocks.

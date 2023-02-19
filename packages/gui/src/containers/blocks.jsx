@@ -475,9 +475,11 @@ class Blocks extends React.Component {
             this.handleConnectionModalStart(categoryId);
         }
 
-        this.withToolboxUpdates(() => {
-            this.workspace.toolbox_.setSelectedCategoryById(categoryId);
-        });
+        if (!this.workspace.toolbox_.isCollapsed()) {
+            this.withToolboxUpdates(() => {
+                this.workspace.toolbox_.setSelectedCategoryById(categoryId);
+            });
+        }
     }
     setBlocks (blocks) {
         this.blocks = blocks;
