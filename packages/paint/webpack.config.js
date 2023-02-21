@@ -67,7 +67,7 @@ module.exports = [
     // For the playground
     defaultsDeep({}, base, {
         devServer: {
-            contentBase: path.resolve(__dirname, 'playground'),
+            static: path.resolve(__dirname, 'playground'),
             host: '0.0.0.0',
             port: process.env.PORT || 8078
         },

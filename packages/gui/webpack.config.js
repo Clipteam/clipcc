@@ -6,6 +6,7 @@ var webpack = require('webpack');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+var NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
 
@@ -13,7 +14,7 @@ const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devtool: 'cheap-module-source-map',
     devServer: {
-        contentBase: path.resolve(__dirname, 'build'),
+        static: path.resolve(__dirname, 'build'),
         host: '0.0.0.0',
         port: process.env.PORT || 8601
     },
@@ -23,10 +24,7 @@ const base = {
         chunkFilename: 'chunks/[name].js'
     },
     resolve: {
-        symlinks: false,
-        fallback: {
-            stream: require.resolve('stream-browserify')
-        }
+        symlinks: false
     },
     module: {
         rules: [{
@@ -77,6 +75,9 @@ const base = {
                     }
                 }
             }]
+        }, {
+            resourceQuery: /raw/,
+            type: 'asset/source'
         }]
     },
     optimization: {
@@ -86,7 +87,9 @@ const base = {
             })
         ]
     },
-    plugins: []
+    plugins: [
+        new NodePolyfillPlugin()
+    ]
 };
 
 if (!process.env.CI) {
@@ -123,8 +126,8 @@ module.exports = [
             rules: base.module.rules.concat([
                 {
                     test: /\.(svg|png|wav|gif|jpg)$/,
-                    loader: 'file-loader',
-                    options: {
+                    type: 'asset/resource',
+                    generator: {
                         outputPath: 'static/assets/'
                     }
                 }

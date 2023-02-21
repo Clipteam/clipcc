@@ -2,11 +2,12 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const defaultsDeep = require('lodash.defaultsdeep');
 const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devServer: {
-        contentBase: false,
+        static: false,
         host: '0.0.0.0',
         port: process.env.PORT || 8073
     },
@@ -14,11 +15,6 @@ const base = {
     output: {
         library: 'VirtualMachine',
         filename: '[name].js'
-    },
-    resolve: {
-        fallback: {
-            stream: require.resolve('stream-browserify')
-        }
     },
     module: {
         rules: [{
@@ -41,7 +37,9 @@ const base = {
             })
         ]
     },
-    plugins: []
+    plugins: [
+        new NodePolyfillPlugin()
+    ]
 };
 
 module.exports = [

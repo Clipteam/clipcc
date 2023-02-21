@@ -5,7 +5,7 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devServer: {
-        contentBase: false,
+        static: false,
         host: '0.0.0.0',
         port: process.env.PORT || 8361
     },
@@ -21,6 +21,10 @@ const base = {
                 options: {
                     presets: [['@babel/preset-env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}]]
                 }
+            },
+            {
+                resourceQuery: /raw/,
+                type: 'asset/source',
             }
         ]
     },
