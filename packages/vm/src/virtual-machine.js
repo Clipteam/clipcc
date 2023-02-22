@@ -39,13 +39,20 @@ const CORE_EXTENSIONS = [
     // 'myBlocks'
 ];
 
+const defaultVmConfig = {
+    appVersion: 'UNKNOWN'
+};
+
 /**
  * Handles connections between blocks, stage, and extensions.
  * @constructor
  */
 class VirtualMachine extends EventEmitter {
-    constructor () {
+    constructor (vmConfig = defaultVmConfig) {
         super();
+        if (vmConfig !== defaultVmConfig) {
+            vmConfig = Object.assign({}, defaultVmConfig, vmConfig);
+        }
 
         /**
          * VM runtime, to store blocks, I/O devices, sprites/targets, etc.
@@ -55,6 +62,13 @@ class VirtualMachine extends EventEmitter {
         centralDispatch.setService('runtime', this.runtime).catch(e => {
             log.error(`Failed to register runtime service: ${JSON.stringify(e)}`);
         });
+
+
+        /**
+         * Version of editor.
+         * @type {string}
+         */
+         this.version = vmConfig.appVersion;
 
         /**
          * The "currently editing"/selected target ID for the VM.

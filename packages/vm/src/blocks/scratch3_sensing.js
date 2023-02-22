@@ -1,4 +1,5 @@
 const Cast = require('../util/cast');
+const Color = require('../util/color');
 const Timer = require('../util/timer');
 const getMonitorIdForBlockWithArgs = require('../util/get-monitor-id');
 
@@ -62,6 +63,9 @@ class Scratch3SensingBlocks {
             sensing_of: this.getAttributeOf,
             sensing_mousex: this.getMouseX,
             sensing_mousey: this.getMouseY,
+            sensing_joystickx: this.getJoystickX,
+            sensing_joysticky: this.getJoystickY,
+            sensing_joystick_distance: this.getJoystickDistance,
             sensing_setdragmode: this.setDragMode,
             sensing_mousedown: this.getMouseDown,
             sensing_keypressed: this.getKeyPressed,
@@ -72,7 +76,19 @@ class Scratch3SensingBlocks {
             sensing_askandwait: this.askAndWait,
             sensing_answer: this.getAnswer,
             sensing_username: this.getUsername,
-            sensing_userid: () => {} // legacy no-op block
+            sensing_userid: () => {}, // legacy no-op block,
+            sensing_operatingsystem: this.getOS,
+            sensing_clipcc_version: () => this.runtime.vm.version,
+            sensing_turnonturbomode: (args) => {
+                this.setTurboMode(true);
+            },
+            sensing_turnoffturbomode: (args) => {
+                this.setTurboMode(false);
+            },
+            sensing_isturbomode: () => this.runtime.turboMode,
+            sensing_distancebetweenposition: this.distanceBetweenPosition,
+            sensing_directionbetweenposition: this.directionBetweenPosition,
+            sensing_colorat: this.colorAt
         };
     }
 
@@ -206,6 +222,32 @@ class Scratch3SensingBlocks {
         return Math.sqrt((dx * dx) + (dy * dy));
     }
 
+    distanceBetweenPosition (args, util) {
+        const dx = args.X1 - args.X2;
+        const dy = args.Y1 - args.Y2;
+        return Math.sqrt((dx * dx) + (dy * dy));
+    }
+
+    directionBetweenPosition (args, util) {
+        const dx = args.X2 - args.X1;
+        const dy = args.Y2 - args.Y1;
+        let d = MathUtil.radToDeg(Math.atan(dx / dy));
+        if (dy < 0) {
+            if (d > 0) d = d - 180;
+            else d = d + 180;
+        }
+        return d;
+    }
+
+    setTurboMode (turboModeOn) {
+        this.runtime.turboMode = !!turboModeOn;
+        if (this.runtime.turboMode) {
+            this.runtime.emit('TURBO_MODE_ON');
+        } else {
+            this.runtime.emit('TURBO_MODE_OFF');
+        }
+    }
+
     setDragMode (args, util) {
         util.target.setDraggable(args.DRAG_MODE === 'draggable');
     }
@@ -228,6 +270,18 @@ class Scratch3SensingBlocks {
 
     getMouseDown (args, util) {
         return util.ioQuery('mouse', 'getIsDown');
+    }
+
+    getJoystickX (args, util) {
+        return util.ioQuery('joystick', 'getX');
+    }
+
+    getJoystickY (args, util) {
+        return util.ioQuery('joystick', 'getY');
+    }
+
+    getJoystickDistance (args, util) {
+        return util.ioQuery('joystick', 'getDistance');
     }
 
     current (args) {
@@ -330,6 +384,42 @@ class Scratch3SensingBlocks {
 
     getUsername (args, util) {
         return util.ioQuery('userData', 'getUsername');
+    }
+
+    getOS () {
+        const userAgent = navigator.userAgent;
+        const isWin = (navigator.platform == 'Win32') || (navigator.platform == 'Windows');
+        const isMac = (navigator.platform == 'Mac68K') || (navigator.platform == 'MacPPC') || (navigator.platform == 'Macintosh') || (navigator.platform == 'MacIntel');
+        if (isMac) return 'Mac';
+        const isUnix = (navigator.platform == 'X11') && !isWin && !isMac;
+        if (isUnix) return 'Unix';
+        const isLinux = (String(navigator.platform).indexOf('Linux') > -1);
+        if (isLinux) return 'Linux';
+        if (isWin) {
+            const isWin2K = userAgent.indexOf('Windows NT 5.0') > -1 || userAgent.indexOf('Windows 2000') > -1;
+            if (isWin2K) return 'Win2000';
+            const isWinXP = userAgent.indexOf('Windows NT 5.1') > -1 || userAgent.indexOf('Windows XP') > -1;
+            if (isWinXP) return 'WinXP';
+            const isWin2003 = userAgent.indexOf('Windows NT 5.2') > -1 || userAgent.indexOf('Windows 2003') > -1;
+            if (isWin2003) return 'Win2003';
+            const isWinVista = userAgent.indexOf('Windows NT 6.0') > -1 || userAgent.indexOf('Windows Vista') > -1;
+            if (isWinVista) return 'WinVista';
+            const isWin7 = userAgent.indexOf('Windows NT 6.1') > -1 || userAgent.indexOf('Windows 7') > -1;
+            if (isWin7) return 'Win7';
+            const isWin10 = userAgent.indexOf('Windows NT 10') > -1 || userAgent.indexOf('Windows 10') > -1;
+            if (isWin10) return 'Win10';
+        }
+        return 'Other';
+    }
+
+    colorAt (args) {
+        const renderer = this.runtime.renderer;
+        if (!renderer) return -1;
+        const x = Cast.toNumber(args.X);
+        const y = Cast.toNumber(args.Y);
+        const ctx = renderer.canvas.getContext('2d');
+        const [r, g, b] = ctx.getImageData(x, y, 1, 1);
+        return Color.rgbToDecimal({r, g, b});
     }
 }
 
