@@ -157,6 +157,70 @@ Blockly.Blocks['sensing_distancetomenu'] = {
   }
 };
 
+Blockly.Blocks['sensing_distancebetweenposition'] = {
+  /**
+   * Distance between two position.
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.SENSING_DISTANCEBETWEENPOSITION,
+      "args0": [
+        {
+          "type": "input_value",
+          "name": "X1",
+        },
+        {
+          "type": "input_value",
+          "name": "Y1",
+        },
+        {
+          "type": "input_value",
+          "name": "X2",
+        },
+        {
+          "type": "input_value",
+          "name": "Y2",
+        }
+      ],
+      "category": Blockly.Categories.sensing,
+      "extensions": ["colours_sensing", "output_number"]
+    });
+  }
+};
+
+Blockly.Blocks['sensing_directionbetweenposition'] = {
+  /**
+   * Direction between two position.
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.SENSING_DIRECTIONBETWEENPOSITION,
+      "args0": [
+        {
+          "type": "input_value",
+          "name": "X1",
+        },
+        {
+          "type": "input_value",
+          "name": "Y1",
+        },
+        {
+          "type": "input_value",
+          "name": "X2",
+        },
+        {
+          "type": "input_value",
+          "name": "Y2",
+        }
+      ],
+      "category": Blockly.Categories.sensing,
+      "extensions": ["colours_sensing", "output_number"]
+    });
+  }
+};
+
 Blockly.Blocks['sensing_askandwait'] = {
   /**
    * Block to ask a question and wait
@@ -285,6 +349,50 @@ Blockly.Blocks['sensing_mousedown'] = {
       "message0": Blockly.Msg.SENSING_MOUSEDOWN,
       "category": Blockly.Categories.sensing,
       "extensions": ["colours_sensing", "output_boolean"]
+    });
+  }
+};
+
+Blockly.Blocks['sensing_mousepressed'] = {
+  /**
+   * Block to get if the mouse is down.
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.SENSING_MOUSEPRESSED,
+      "args0": [
+        {
+          "type": "input_value",
+          "name": "MOUSE_OPTION"
+        }
+      ],
+      "category": Blockly.Categories.sensing,
+      "extensions": ["colours_sensing", "output_boolean"]
+    });
+  }
+};
+
+Blockly.Blocks['sensing_mouseoptions'] = {
+  /**
+   * Options for Keys
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": "%1",
+      "args0": [
+        {
+          "type": "field_dropdown",
+          "name": "MOUSE_OPTION",
+          "options": [
+            [Blockly.Msg.SENSING_MOUSEPRESSED_LEFT, '0'],
+            [Blockly.Msg.SENSING_MOUSEPRESSED_MIDDLE, '1'],
+            [Blockly.Msg.SENSING_MOUSEPRESSED_RIGHT, '2']
+          ]
+        }
+      ],
+      "extensions": ["colours_sensing", "output_string"]
     });
   }
 };
@@ -534,6 +642,142 @@ Blockly.Blocks['sensing_userid'] = {
       "message0": Blockly.Msg.SENSING_USERID,
       "category": Blockly.Categories.sensing,
       "extensions": ["colours_sensing", "output_number"]
+    });
+  }
+};
+
+Blockly.Blocks['sensing_operatingsystem'] = {
+  /**
+   * Block to report user's operating system
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.SENSING_OPERATINGSYSTEM,
+      "category": Blockly.Categories.sensing,
+      "extensions": ["colours_sensing", "output_number"]
+    });
+  }
+};
+
+Blockly.Blocks['sensing_clipcc_version'] = {
+  /**
+   * Block to return clipcc version
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.SENSING_CLIPCC_VERSION,
+      "category": Blockly.Categories.sensing,
+      "extensions": ["colours_sensing", "output_number"]
+    });
+  }
+};
+
+Blockly.Blocks['sensing_joystickx'] = {
+  /**
+   * Block to report joystick's x position
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.SENSING_JOYSTICKX,
+      "category": Blockly.Categories.sensing,
+      "extensions": ["colours_sensing", "output_number"]
+    });
+  }
+};
+
+Blockly.Blocks['sensing_joysticky'] = {
+  /**
+   * Block to report joystick's y position
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.SENSING_JOYSTICKY,
+      "category": Blockly.Categories.sensing,
+      "extensions": ["colours_sensing", "output_number"]
+    });
+  }
+};
+
+Blockly.Blocks['sensing_joystick_distance'] = {
+  /**
+   * Block to report joystick's distance
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.SENSING_JOYSTICK_DISTANCE,
+      "category": Blockly.Categories.sensing,
+      "extensions": ["colours_sensing", "output_number"]
+    });
+  }
+};
+
+Blockly.Blocks['sensing_colorat'] = {
+  /**
+   * Color at specific position.
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.SENSING_COLORAT,
+      "args0": [
+        {
+          "type": "input_value",
+          "name": "X",
+        },
+        {
+          "type": "input_value",
+          "name": "Y",
+        }
+      ],
+      "category": Blockly.Categories.sensing,
+      "extensions": ["colours_sensing", "output_number"]
+    });
+  }
+};
+
+Blockly.Blocks['sensing_isturbomode'] = {
+  /**
+   * Block to report whether it is in turbo mode
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.SENSING_ISTURBOMODE,
+      "category": Blockly.Categories.sensing,
+      "extensions": ["colours_sensing", "output_boolean"]
+    });
+  }
+};
+
+Blockly.Blocks['sensing_turnonturbomode'] = {
+  /**
+   * Block to turn on turbo mode
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.SENSING_TURNONTURBOMODE,
+      "category": Blockly.Categories.sensing,
+      "extensions": ["colours_sensing", "shape_statement"]
+    });
+  }
+};
+
+Blockly.Blocks['sensing_turnoffturbomode'] = {
+  /**
+   * Block to turn off turbo mode
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.SENSING_TURNOFFTURBOMODE,
+      "category": Blockly.Categories.sensing,
+      "extensions": ["colours_sensing", "shape_statement"]
     });
   }
 };
