@@ -1,6 +1,7 @@
 const UPDATE = 'scratch-gui/settings/UPDATE';
 
 const initialState = {
+    hideNonVanillaBlocks: false,
     autoSave: false,
     autoSaveInterval: 120,
     compression: 6,

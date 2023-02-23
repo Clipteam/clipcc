@@ -146,6 +146,7 @@ class Blocks extends React.Component {
             this.props.customProceduresVisible !== nextProps.customProceduresVisible ||
             this.props.locale !== nextProps.locale ||
             this.props.anyModalVisible !== nextProps.anyModalVisible ||
+            this.props.hideNonVanillaBlocks !== nextProps.hideNonVanillaBlocks ||
             this.props.stageSize !== nextProps.stageSize
         );
     }
@@ -160,6 +161,12 @@ class Blocks extends React.Component {
         // Do not check against prevProps.toolboxXML because that may not have been rendered.
         if (this.props.isVisible && this.props.toolboxXML !== this._renderedToolboxXML) {
             this.requestToolboxUpdate();
+        }
+        if (this.props.hideNonVanillaBlocks !== prevProps.hideNonVanillaBlocks) {
+            const toolboxXML = this.getToolboxXML();
+            if (toolboxXML) {
+                this.props.updateToolboxState(toolboxXML);
+            }
         }
 
         if (this.props.isVisible === prevProps.isVisible) {
@@ -354,7 +361,8 @@ class Blocks extends React.Component {
             return makeToolboxXML(false, target.isStage, target.id, dynamicBlocksXML,
                 targetCostumes[targetCostumes.length - 1].name,
                 stageCostumes[stageCostumes.length - 1].name,
-                targetSounds.length > 0 ? targetSounds[targetSounds.length - 1].name : ''
+                targetSounds.length > 0 ? targetSounds[targetSounds.length - 1].name : '',
+                this.props.hideNonVanillaBlocks
             );
         } catch {
             return null;
@@ -539,6 +547,7 @@ class Blocks extends React.Component {
         /* eslint-disable no-unused-vars */
         const {
             anyModalVisible,
+            hideNonVanillaBlocks,
             canUseCloud,
             customProceduresVisible,
             extensionLibraryVisible,
@@ -603,6 +612,7 @@ class Blocks extends React.Component {
 
 Blocks.propTypes = {
     anyModalVisible: PropTypes.bool,
+    hideNonVanillaBlocks: PropTypes.bool.isRequired,
     canUseCloud: PropTypes.bool,
     customProceduresVisible: PropTypes.bool,
     extensionLibraryVisible: PropTypes.bool,
@@ -686,6 +696,7 @@ const mapStateToProps = state => ({
         Object.keys(state.scratchGui.modals).some(key => state.scratchGui.modals[key]) ||
         state.scratchGui.mode.isFullScreen
     ),
+    hideNonVanillaBlocks: state.scratchGui.settings.hideNonVanillaBlocks,
     extensionLibraryVisible: state.scratchGui.modals.extensionLibrary,
     isRtl: state.locales.isRtl,
     locale: state.locales.locale,

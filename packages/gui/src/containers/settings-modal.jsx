@@ -20,7 +20,8 @@ class SettingsModal extends React.Component {
             'handleClose',
             'handleChangeAutoSave',
             'handleChangeAutoSaveInterval',
-            'handleChangeFramerate'
+            'handleChangeFramerate',
+            'handleChangeHideNonVanillaBlocks'
         ]);
     }
     handleClose () {
@@ -42,9 +43,13 @@ class SettingsModal extends React.Component {
             this.props.vm.setFramerate(value);
         }
     }
+    handleChangeHideNonVanillaBlocks (value) {
+        this.props.updateSettings({hideNonVanillaBlocks: value});
+    }
     render () {
         return (
             <SettingsModalComponent
+                hideNonVanillaBlocks={this.props.hideNonVanillaBlocks}
                 autoSave={this.props.autoSave}
                 autoSaveInterval={this.props.autoSaveInterval}
                 framerate={this.props.framerate}
@@ -52,12 +57,14 @@ class SettingsModal extends React.Component {
                 onChangeAutoSave={this.handleChangeAutoSave}
                 onChangeAutoSaveInterval={this.handleChangeAutoSaveInterval}
                 onChangeFramerate={this.handleChangeFramerate}
+                onChangeHideNonVanillaBlocks={this.handleChangeHideNonVanillaBlocks}
             />
         );
     }
 }
 
 SettingsModal.propTypes = {
+    hideNonVanillaBlocks: PropTypes.bool.isRequired,
     autoSave: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
@@ -67,6 +74,7 @@ SettingsModal.propTypes = {
 };
 
 const mapStateToProps = state => ({
+    handleChangeHideNonVanillaBlocks: state.scratchGui.settings.hideNonVanillaBlocks,
     autoSave: state.scratchGui.settings.autoSave,
     autoSaveInterval: state.scratchGui.settings.autoSaveInterval,
     framerate: state.scratchGui.settings.framerate,
