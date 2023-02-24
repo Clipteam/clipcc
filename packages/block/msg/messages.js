@@ -283,10 +283,14 @@ Blockly.Msg.SENSING_DAYSSINCE2000 = 'days since 2000';
 Blockly.Msg.SENSING_USERNAME = 'username';
 Blockly.Msg.SENSING_USERID = 'user id';
 Blockly.Msg.SENSING_COLORAT = 'get the color at (x: %1, y: %2)';
+Blockly.Msg.SENSING_OPERATINGSYSTEM = 'operating system';
 Blockly.Msg.SENSING_CLIPCC_VERSION = 'ClipCC version';
 Blockly.Msg.SENSING_JOYSTICKX = 'joystick x axis';
 Blockly.Msg.SENSING_JOYSTICKY = 'joystick y axis';
 Blockly.Msg.SENSING_JOYSTICK_DISTANCE = 'joystick distance';
+Blockly.Msg.SENSING_TURNONTURBOMODE = 'turn on turbo mode';
+Blockly.Msg.SENSING_TURNOFFTURBOMODE = 'turn off turbo mode';
+Blockly.Msg.SENSING_ISTURBOMODE = 'turbo mode?';
 
 // Sound blocks
 Blockly.Msg.SOUND_PLAY = 'start sound %1';
