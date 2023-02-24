@@ -437,56 +437,56 @@ const sensing = function (isInitialSetup, isStage, targetId, hideNonVanillaBlock
             <block type="sensing_distancebetweenposition">
                 <value name="X1">
                     <shadow type="math_number">
-                        <field name="NUM"/>
+                        <field name="NUM">0</field>
                     </shadow>
                 </value>
                 <value name="Y1">
                     <shadow type="math_number">
-                        <field name="NUM"/>
+                        <field name="NUM">0</field>
                     </shadow>
                 </value>
                 <value name="X2">
                     <shadow type="math_number">
-                        <field name="NUM"/>
+                        <field name="NUM">1</field>
                     </shadow>
                 </value>
                 <value name="Y2">
                     <shadow type="math_number">
-                        <field name="NUM"/>
+                        <field name="NUM">1</field>
                     </shadow>
                 </value>
             </block>
             <block type="sensing_directionbetweenposition">
                 <value name="X1">
                     <shadow type="math_number">
-                        <field name="NUM"/>
+                        <field name="NUM">0</field>
                     </shadow>
                 </value>
                 <value name="Y1">
                     <shadow type="math_number">
-                        <field name="NUM"/>
+                        <field name="NUM">0</field>
                     </shadow>
                 </value>
                 <value name="X2">
                     <shadow type="math_number">
-                        <field name="NUM"/>
+                        <field name="NUM">1</field>
                     </shadow>
                 </value>
                 <value name="Y2">
                     <shadow type="math_number">
-                        <field name="NUM"/>
+                        <field name="NUM">1</field>
                     </shadow>
                 </value>
             </block>
             <block type="sensing_colorat">
                 <value name="X">
                     <shadow type="math_number">
-                        <field name="NUM"/>
+                        <field name="NUM">0</field>
                     </shadow>
                 </value>
                 <value name="Y">
                     <shadow type="math_number">
-                        <field name="NUM"/>
+                        <field name="NUM">0</field>
                     </shadow>
                 </value>
             </block>

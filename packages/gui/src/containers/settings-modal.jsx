@@ -74,7 +74,7 @@ SettingsModal.propTypes = {
 };
 
 const mapStateToProps = state => ({
-    handleChangeHideNonVanillaBlocks: state.scratchGui.settings.hideNonVanillaBlocks,
+    hideNonVanillaBlocks: state.scratchGui.settings.hideNonVanillaBlocks,
     autoSave: state.scratchGui.settings.autoSave,
     autoSaveInterval: state.scratchGui.settings.autoSaveInterval,
     framerate: state.scratchGui.settings.framerate,
