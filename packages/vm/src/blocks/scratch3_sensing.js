@@ -1,5 +1,6 @@
 const Cast = require('../util/cast');
 const Color = require('../util/color');
+const MathUtil = require('../util/math-util');
 const Timer = require('../util/timer');
 const getMonitorIdForBlockWithArgs = require('../util/get-monitor-id');
 
@@ -78,7 +79,7 @@ class Scratch3SensingBlocks {
             sensing_username: this.getUsername,
             sensing_userid: () => {}, // legacy no-op block,
             sensing_operatingsystem: this.getOS,
-            sensing_clipcc_version: () => this.runtime.vm.version,
+            sensing_clipcc_version: () => this.runtime.version,
             sensing_turnonturbomode: (args) => {
                 this.setTurboMode(true);
             },
@@ -414,12 +415,10 @@ class Scratch3SensingBlocks {
 
     colorAt (args) {
         const renderer = this.runtime.renderer;
-        if (!renderer) return -1;
-        const x = Cast.toNumber(args.X);
-        const y = Cast.toNumber(args.Y);
-        const ctx = renderer.canvas.getContext('2d');
-        const [r, g, b] = ctx.getImageData(x, y, 1, 1);
-        return Color.rgbToDecimal({r, g, b});
+        const x = Math.round(Number(args.X));
+        const y = Math.round(Number(args.Y));
+        const {color} = renderer.extractColor(x, y, 1, true);
+        return Color.rgbToDecimal(color);
     }
 }
 

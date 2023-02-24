@@ -1265,13 +1265,14 @@ class RenderWebGL extends EventEmitter {
      * @param {int} x The client x coordinate of the picking location.
      * @param {int} y The client y coordinate of the picking location.
      * @param {int} radius The client radius to extract pixels with.
+     * @param {boolean} isScratchCoordinate Whether uses scratch coordinates.
      * @return {?ColorExtraction} Data about the picked color
      */
-    extractColor (x, y, radius) {
+    extractColor (x, y, radius, isScratchCoordinate) {
         this._doExitDrawRegion();
 
-        const scratchX = Math.round(this._nativeSize[0] * ((x / this._gl.canvas.clientWidth) - 0.5));
-        const scratchY = Math.round(-this._nativeSize[1] * ((y / this._gl.canvas.clientHeight) - 0.5));
+        const scratchX = isScratchCoordinate ? x : Math.round(this._nativeSize[0] * ((x / this._gl.canvas.clientWidth) - 0.5));
+        const scratchY = isScratchCoordinate ? y : Math.round(-this._nativeSize[1] * ((y / this._gl.canvas.clientHeight) - 0.5));
 
         const gl = this._gl;
         twgl.bindFramebufferInfo(gl, this._queryBufferInfo);
