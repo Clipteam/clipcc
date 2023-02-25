@@ -795,6 +795,8 @@ Blockly.Flyout.prototype.onMouseDown_ = function(e) {
   if (gesture) {
     gesture.handleFlyoutStart(e, this);
   }
+  // Interrupt scroll animation
+  this.scrollTarget = null;
 };
 
 /**
