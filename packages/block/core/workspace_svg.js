@@ -49,7 +49,7 @@ goog.require('Blockly.WorkspaceCommentSvg');
 goog.require('Blockly.WorkspaceCommentSvg.render');
 goog.require('Blockly.Xml');
 goog.require('Blockly.ZoomControls');
-goog.require('Blockly.IntersectionObserver');
+goog.require('Blockly.VirtualizedManager');
 
 goog.require('goog.array');
 goog.require('goog.dom');
@@ -438,21 +438,8 @@ Blockly.WorkspaceSvg.prototype.createDom = function(opt_backgroundClass) {
     }
   }
 
-  // Use IntersectionObserver to observe blocks.
-  this.intersectionObserver = new Blockly.IntersectionObserver(function (entries) {
-    for (var i = 0; i < entries.length; i++) {
-        const entry = entries[i];
-        var block = entry.target.block;
-      // If block is invisible, hide it.
-      if (entry.intersectionRatio <= 0) {
-        block.setVisible(false);
-      } else {
-        block.setVisible(true);
-      }
-    }
-  }, {
-    root: this.getParentSvg()
-  });
+  // Use virtualizedManager to observe blocks.
+  this.virtualizedManager = new Blockly.VirtualizedManager(this);
 
   // Determine if there needs to be a category tree, or a simple list of
   // blocks.  This cannot be changed later, since the UI is very different.
@@ -533,8 +520,8 @@ Blockly.WorkspaceSvg.prototype.dispose = function() {
     Blockly.unbindEvent_(this.resizeHandlerWrapper_);
     this.resizeHandlerWrapper_ = null;
   }
-  if (this.intersectionObserver) {
-    this.intersectionObserver.disconnect();
+  if (this.virtualizedManager) {
+    this.virtualizedManager.dispose();
   }
 };
 
@@ -686,7 +673,7 @@ Blockly.WorkspaceSvg.prototype.resize = function() {
     this.scrollbar.resize();
   }
   this.updateScreenCalculations_();
-  this.intersectionObserver._checkForIntersections();
+  this.virtualizedManager.check();
 };
 
 /**
@@ -754,7 +741,7 @@ Blockly.WorkspaceSvg.prototype.translate = function(x, y) {
   if (this.blockDragSurface_) {
     this.blockDragSurface_.translateAndScaleGroup(x, y, this.scale);
   }
-  this.intersectionObserver._checkForIntersections();
+  this.virtualizedManager.check();
 };
 
 /**
@@ -1736,7 +1723,7 @@ Blockly.WorkspaceSvg.prototype.setScale = function(newScale) {
     // No toolbox, resize flyout.
     this.flyout_.reflow();
   }
-  this.intersectionObserver._checkForIntersections();
+  this.virtualizedManager.check();
 };
 
 /**

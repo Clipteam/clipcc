@@ -868,7 +868,7 @@ Blockly.BlockSvg.prototype.dispose = function(healStack, animate) {
   }
   Blockly.BlockSvg.superClass_.dispose.call(this, healStack);
   
-  blockWorkspace.intersectionObserver.unobserve(this);
+  blockWorkspace.virtualizedManager.unobserve(this);
 
   goog.dom.removeNode(this.svgGroup_);
   blockWorkspace.resizeContents();
@@ -1076,7 +1076,6 @@ Blockly.BlockSvg.prototype.setVisible = function(visible) {
     if (visible === this.visible_) {
       return;
     }
-    console.log('updateVisible', visible, this.type, this.id);
     this.visible_ = visible;
     const svgRoot = this.getSvgRoot();
     if (!svgRoot) {
@@ -1351,10 +1350,13 @@ Blockly.BlockSvg.prototype.scheduleSnapAndBump = function() {
  * @package
  */
 Blockly.BlockSvg.prototype.updateObserve = function() {
-    if (!this.workspace.intersectionObserver) return;
+    if (!this.workspace.virtualizedManager) return;
     if (this.getParent()) {
-      this.workspace.intersectionObserver.unobserve(this.getSvgRoot());
+      this.workspace.virtualizedManager.unobserve(this);
+      if (!this.visible_) {
+        this.setVisible(true);
+      }
     } else {
-      this.workspace.intersectionObserver.observe(this.getSvgRoot());
+      this.workspace.virtualizedManager.observe(this);
     }
 };
