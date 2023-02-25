@@ -441,6 +441,8 @@ Blockly.Bubble.prototype.layoutBubble_ = function() {
   }
   this.relativeLeft_ = relativeLeft;
   this.relativeTop_ = relativeTop;
+  
+  this.updateObserve();
 };
 
 /**
@@ -605,6 +607,7 @@ Blockly.Bubble.prototype.setColour = function(hexColour) {
 Blockly.Bubble.prototype.dispose = function() {
   Blockly.Bubble.unbindDragEvents_();
   // Dispose of and unlink the bubble.
+  this.workspace_.virtualizedManager.unobserve(this);
   goog.dom.removeNode(this.bubbleGroup_);
   this.bubbleGroup_ = null;
   this.bubbleArrow_ = null;
@@ -649,6 +652,15 @@ Blockly.Bubble.prototype.getRelativeToSurfaceXY = function() {
   return new goog.math.Coordinate(
       this.workspace_.RTL ? this.anchorXY_.x - this.relativeLeft_ : this.anchorXY_.x + this.relativeLeft_,
       this.anchorXY_.y + this.relativeTop_);
+};
+
+/**
+ * Update bubble observe status.
+ * @package
+ */
+Blockly.Bubble.prototype.updateObserve = function() {
+    if (!this.workspace_.virtualizedManager) return;
+    this.workspace_.virtualizedManager.observe(this);
 };
 
 /**
