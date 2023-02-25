@@ -30,6 +30,11 @@ export default function (Input) {
             this.setState({value: null});
         }
         handleChange (e) {
+            if (this.props.type === 'string') {
+                this.props.onSubmit(e.target.value);
+                this.setState({value: e.target.value});
+                return;
+            }
             const isNumeric = typeof this.props.value === 'number';
             const validatesNumeric = isNumeric ? !isNaN(e.target.value) : true;
             if (e.target.value !== null && validatesNumeric) {
