@@ -68,6 +68,7 @@ Blockly.BlockSvg = function(workspace, prototypeName, opt_id) {
       {'class': 'blocklyPath blocklyBlockBackground'},
       this.svgGroup_);
   this.svgPath_.tooltip = this;
+  this.svgGroup_.block = this;
 
   /** @type {boolean} */
   this.rendered = false;
@@ -96,6 +97,12 @@ goog.inherits(Blockly.BlockSvg, Blockly.Block);
  * Height is in workspace units.
  */
 Blockly.BlockSvg.prototype.height = 0;
+
+/**
+ * Whether block is visible.
+ * @type {boolean}
+ */
+Blockly.BlockSvg.prototype.visible_ = true;
 
 /**
  * Width of this block, including any connected value blocks.
@@ -300,6 +307,10 @@ Blockly.BlockSvg.prototype.setParent = function(newParent) {
     return;
   }
 
+  // This function can potentially change the position of the blocks
+  // , so we need to update observe here
+  this.updateObserve();
+  
   var oldXY = this.getRelativeToSurfaceXY();
   if (newParent) {
     newParent.getSvgRoot().appendChild(svgRoot);
@@ -856,6 +867,8 @@ Blockly.BlockSvg.prototype.dispose = function(healStack, animate) {
     Blockly.Events.enable();
   }
   Blockly.BlockSvg.superClass_.dispose.call(this, healStack);
+  
+  blockWorkspace.intersectionObserver.unobserve(this);
 
   goog.dom.removeNode(this.svgGroup_);
   blockWorkspace.resizeContents();
@@ -1054,6 +1067,24 @@ Blockly.BlockSvg.prototype.setDeleteStyle = function(enable) {
 
 // Overrides of functions on Blockly.Block that take into account whether the
 // block has been rendered.
+
+/**
+ * Change the visibility of a block.
+ * @param {boolean} visible Whether block is visible
+ */
+Blockly.BlockSvg.prototype.setVisible = function(visible) {
+    if (visible === this.visible_) {
+      return;
+    }
+    console.log('updateVisible', visible, this.type, this.id);
+    this.visible_ = visible;
+    const svgRoot = this.getSvgRoot();
+    if (!svgRoot) {
+      return;
+    }
+    if (visible) svgRoot.style.display = '';
+    else svgRoot.style.display = 'none';
+}
 
 /**
  * Change the colour of a block.
@@ -1313,4 +1344,17 @@ Blockly.BlockSvg.prototype.scheduleSnapAndBump = function() {
     block.bumpNeighbours_();
     Blockly.Events.setGroup(false);
   }, Blockly.BUMP_DELAY);
+};
+
+/**
+ * Update block observe status.
+ * @package
+ */
+Blockly.BlockSvg.prototype.updateObserve = function() {
+    if (!this.workspace.intersectionObserver) return;
+    if (this.getParent()) {
+      this.workspace.intersectionObserver.unobserve(this.getSvgRoot());
+    } else {
+      this.workspace.intersectionObserver.observe(this.getSvgRoot());
+    }
 };
