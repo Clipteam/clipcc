@@ -22,7 +22,7 @@ jobs:
         uses: github-actions-x/commit@v2.9
         with:
           github-token: ${{ secrets.GH_TOKEN }}
-          commit-message: ':wrench: chore(l10n): pull translation from remote'
+          commit-message: ':globe_with_meridians: chore(l10n): pull translation from remote'
           files: packages/l10n/locales/ packages/block/msg/scratch_msgs.js
           name: clipbot
           email: cuizhihui030925@gmail.com
