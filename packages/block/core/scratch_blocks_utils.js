@@ -128,10 +128,8 @@ Blockly.scratchBlocksUtils.blockIsRecyclable = function(block) {
     return false;
   }
 
-  for (let i = 0; i < block.inputList.length; i++) {
-    const input = block.inputList[i];
-    for (let j = 0; j < input.fieldRow.length; j++) {
-      const field = input.fieldRow[j];
+  for (const input of block.inputList) {
+    for (const field of input.fieldRow) {
       // No variables.
       if (field instanceof Blockly.FieldVariable ||
           field instanceof Blockly.FieldVariableGetter) {
@@ -145,6 +143,7 @@ Blockly.scratchBlocksUtils.blockIsRecyclable = function(block) {
         }
       }
     }
+
     // Check children.
     if (input.connection) {
       var child = input.connection.targetBlock();
@@ -153,6 +152,7 @@ Blockly.scratchBlocksUtils.blockIsRecyclable = function(block) {
       }
     }
   }
+
   return true;
 };
 

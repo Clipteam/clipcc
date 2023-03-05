@@ -279,8 +279,8 @@ Blockly.BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
     var ws = this.workspace_;
     setTimeout(function() {
       const allBlocks = ws.getAllBlocks();
-      for (let i = 0; i < allBlocks.length; i++) {
-        const block = allBlocks[i];
+
+      for (const block of allBlocks) {
         if (block.type == Blockly.PROCEDURES_CALL_BLOCK_TYPE) {
           var procCode = block.getProcCode();
           // Check for call blocks with no associated define block.
@@ -291,6 +291,7 @@ Blockly.BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
           }
         }
       }
+
       // The proc deletion was valid, update the toolbox.
       ws.refreshToolboxSelection_();
     });
@@ -414,8 +415,7 @@ Blockly.BlockDragger.prototype.pixelsToWorkspaceUnits_ = function(pixelCoord) {
  */
 Blockly.BlockDragger.prototype.dragIcons_ = function(dxy) {
   // Moving icons moves their associated bubbles.
-  for (let i = 0; i < this.dragIconData_.length; i++) {
-    const data = this.dragIconData_[i];
+  for (const data of this.dragIconData_) {
     data.icon.setIconLocation(goog.math.Coordinate.sum(data.location, dxy));
   }
 };

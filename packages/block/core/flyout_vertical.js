@@ -192,8 +192,7 @@ Blockly.VerticalFlyout.prototype.getContentBoundingBox_ = function() {
   };
 
   // Check if any of the buttons/labels are outside the blocks bounding box.
-  for (let i = 0; i < this.buttons_.length; i ++) {
-    const button = this.buttons_[i];
+  for (const button of this.buttons_) {
     const buttonPosition = button.getPosition();
     if (buttonPosition.x  < bounds.xMin) {
       bounds.xMin = buttonPosition.x;

@@ -730,11 +730,12 @@ Blockly.Flyout.prototype.clearOldBlocks_ = function() {
       }
     }
   }
+
   // Delete any background buttons from a previous showing.
-  for (let j = 0; j < this.backgroundButtons_.length; j++) {
-    const rect = this.backgroundButtons_[j];
+  for (const rect of this.backgroundButtons_) {
     if (rect) goog.dom.removeNode(rect);
   }
+
   this.backgroundButtons_.length = 0;
 
   for (let i = 0, button; button = this.buttons_[i]; i++) {
@@ -824,9 +825,9 @@ Blockly.Flyout.prototype.createBlock = function(originalBlock) {
   if (Blockly.Events.isEnabled()) {
     Blockly.Events.setGroup(true);
     Blockly.Events.fire(new Blockly.Events.Create(newBlock));
+
     // Fire a VarCreate event for each (if any) new variable created.
-    for (let i = 0; i < newVariables.length; i++) {
-      const thisVariable = newVariables[i];
+    for (const thisVariable of newVariables) {
       Blockly.Events.fire(new Blockly.Events.VarCreate(thisVariable));
     }
   }

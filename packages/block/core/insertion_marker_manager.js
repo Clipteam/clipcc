@@ -370,8 +370,7 @@ Blockly.InsertionMarkerManager.prototype.getCandidate_ = function(dxy) {
   let candidateClosest = null;
   let candidateLocal = null;
 
-  for (let i = 0; i < this.availableConnections_.length; i++) {
-    const myConnection = this.availableConnections_[i];
+  for (const myConnection of this.availableConnections_) {
     const neighbour = myConnection.closest(radius, dxy);
     if (neighbour.connection) {
       candidateClosest = neighbour.connection;
@@ -379,6 +378,7 @@ Blockly.InsertionMarkerManager.prototype.getCandidate_ = function(dxy) {
       radius = neighbour.radius;
     }
   }
+
   return {
     closest: candidateClosest,
     local: candidateLocal,

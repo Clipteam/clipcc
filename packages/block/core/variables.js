@@ -79,8 +79,7 @@ Blockly.Variables.allUsedVariables = function(root) {
   for (let x = 0; x < blocks.length; x++) {
     const blockVariables = blocks[x].getVarModels();
     if (blockVariables) {
-      for (let y = 0; y < blockVariables.length; y++) {
-        const variable = blockVariables[y];
+      for (const variable of blockVariables) {
         // Variable ID may be null if the block is only half-built.
         if (variable.getId() && variable.name.toLowerCase() != ignorableName) {
           variableHash[variable.name.toLowerCase()] = variable.name;
@@ -127,8 +126,8 @@ Blockly.Variables.allVariables = function(root) {
 Blockly.Variables.allDeveloperVariables = function(workspace) {
   const blocks = workspace.getAllBlocks();
   const hash = {};
-  for (let i = 0; i < blocks.length; i++) {
-    const block = blocks[i];
+
+  for (const block of blocks) {
     if (block.getDeveloperVars) {
       var devVars = block.getDeveloperVars();
       for (let j = 0; j < devVars.length; j++) {
@@ -663,8 +662,7 @@ Blockly.Variables.getAddedVariables = function(workspace, originalVariables) {
   const allCurrentVariables = workspace.getAllVariables();
   const addedVariables = [];
   if (originalVariables.length != allCurrentVariables.length) {
-    for (let i = 0; i < allCurrentVariables.length; i++) {
-      const variable = allCurrentVariables[i];
+    for (const variable of allCurrentVariables) {
       // For any variable that is present in allCurrentVariables but not
       // present in originalVariables, add the variable to addedVariables.
       if (!originalVariables.includes(variable)) {

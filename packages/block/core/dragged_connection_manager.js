@@ -248,8 +248,8 @@ Blockly.DraggedConnectionManager.prototype.updateClosest_ = function(dxy) {
   this.closestConnection_ = null;
   this.localConnection_ = null;
   this.radiusConnection_ = Blockly.SNAP_RADIUS;
-  for (let i = 0; i < this.availableConnections_.length; i++) {
-    const myConnection = this.availableConnections_[i];
+
+  for (const myConnection of this.availableConnections_) {
     const neighbour = myConnection.closest(this.radiusConnection_, dxy);
     if (neighbour.connection) {
       this.closestConnection_ = neighbour.connection;
@@ -257,5 +257,6 @@ Blockly.DraggedConnectionManager.prototype.updateClosest_ = function(dxy) {
       this.radiusConnection_ = neighbour.radius;
     }
   }
+
   return oldClosestConnection != this.closestConnection_;
 };

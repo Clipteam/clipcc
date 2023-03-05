@@ -226,8 +226,8 @@ Blockly.Procedures.flyoutCategory = function(workspace) {
   // Create call blocks for each procedure defined in the workspace
   let mutations = Blockly.Procedures.allProcedureMutations(workspace);
   mutations = Blockly.Procedures.sortProcedureMutations_(mutations);
-  for (let i = 0; i < mutations.length; i++) {
-    const mutation = mutations[i];
+
+  for (const mutation of mutations) {
     // <block type="procedures_call">
     //   <mutation ...></mutation>
     // </block>
@@ -237,6 +237,7 @@ Blockly.Procedures.flyoutCategory = function(workspace) {
     block.appendChild(mutation);
     xmlList.push(block);
   }
+
   return xmlList;
 };
 

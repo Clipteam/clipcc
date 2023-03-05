@@ -361,8 +361,8 @@ Blockly.ContextMenu.toggleCollapseFn_ = function(topBlocks, shouldCollapse) {
   // Add a little animation to collapsing and expanding.
   const DELAY = 10;
   let ms = 0;
-  for (let i = 0; i < topBlocks.length; i++) {
-    let block = topBlocks[i];
+
+  for (let block of topBlocks) {
     while (block) {
       setTimeout(block.setCollapsed.bind(block, shouldCollapse), ms);
       block = block.getNextBlock();

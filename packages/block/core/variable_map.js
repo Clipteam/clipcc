@@ -333,14 +333,15 @@ Blockly.VariableMap.prototype.getVariable = function(name, opt_type) {
  */
 Blockly.VariableMap.prototype.getVariableById = function(id) {
   const keys = Object.keys(this.variableMap_);
-  for (let i = 0; i < keys.length; i++ ) {
-    const key = keys[i];
+
+  for (const key of keys) {
     for (let j = 0, variable; variable = this.variableMap_[key][j]; j++) {
       if (variable.getId() == id) {
         return variable;
       }
     }
   }
+
   return null;
 };
 

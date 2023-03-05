@@ -90,8 +90,8 @@ Blockly.WorkspaceAudio.prototype.load = function(filenames, name) {
     return;
   }
   let sound;
-  for (let i = 0; i < filenames.length; i++) {
-    const filename = filenames[i];
+
+  for (const filename of filenames) {
     const ext = filename.match(/\.(\w+)$/);
     if (ext && audioTest.canPlayType(`audio/${ext[1]}`)) {
       // Found an audio format we can play.
@@ -99,6 +99,7 @@ Blockly.WorkspaceAudio.prototype.load = function(filenames, name) {
       break;
     }
   }
+
   if (sound && sound.play) {
     this.SOUNDS_[name] = sound;
   }

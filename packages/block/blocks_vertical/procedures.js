@@ -680,8 +680,8 @@ Blockly.ScratchBlocks.ProcedureUtils.removeFieldCallback = function(field) {
     return;
   }
   let inputNameToRemove = null;
-  for (let n = 0; n < this.inputList.length; n++) {
-    const input = this.inputList[n];
+
+  for (const input of this.inputList) {
     if (input.connection) {
       var target = input.connection.targetBlock();
       if (target.getField(field.name) == field) {
@@ -695,6 +695,7 @@ Blockly.ScratchBlocks.ProcedureUtils.removeFieldCallback = function(field) {
       }
     }
   }
+
   if (!inputNameToRemove) {
     return;
   }
@@ -737,8 +738,8 @@ Blockly.ScratchBlocks.ProcedureUtils.updateArgumentReporterNames_ = function(pre
 
   // Create a list of argument reporters that are descendants of the definition stack (see above comment)
   const allBlocks = definitionBlock.getDescendants(false);
-  for (let i = 0; i < allBlocks.length; i++) {
-    const block = allBlocks[i];
+
+  for (const block of allBlocks) {
     if ((block.type === 'argument_reporter_string_number' ||
         block.type === 'argument_reporter_boolean') &&
         !block.isShadow()) { // Exclude arg reporters in the prototype block, which are shadows.

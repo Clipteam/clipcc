@@ -208,9 +208,8 @@ Blockly.Toolbox.prototype.populate_ = function(newTree) {
  */
 Blockly.Toolbox.prototype.showAll_ = function() {
   let allContents = [];
-  for (let i = 0; i < this.categoryMenu_.categories_.length; i++) {
-    const category = this.categoryMenu_.categories_[i];
 
+  for (const category of this.categoryMenu_.categories_) {
     // create a label node to go at the top of the category
     const labelString = '<xml><label text="' + category.name_ + '"' +
       ' id="' + category.id_ + '"' +
@@ -224,6 +223,7 @@ Blockly.Toolbox.prototype.showAll_ = function() {
 
     allContents = allContents.concat(category.getContents());
   }
+
   this.flyout_.show(allContents, !this.isCollapsed_);
 };
 
@@ -598,8 +598,7 @@ Blockly.Toolbox.prototype.getCategoryByIndex = function(index) {
  * @package
  */
 Blockly.Toolbox.prototype.selectCategoryByName = function(name) {
-  for (let i = 0; i < this.categoryMenu_.categories_.length; i++) {
-    const category = this.categoryMenu_.categories_[i];
+  for (const category of this.categoryMenu_.categories_) {
     if (name === category.name_) {
       this.selectedItem_.setSelected(false);
       this.selectedItem_ = category;
@@ -614,8 +613,7 @@ Blockly.Toolbox.prototype.selectCategoryByName = function(name) {
  * @package
  */
 Blockly.Toolbox.prototype.selectCategoryById = function(id) {
-  for (let i = 0; i < this.categoryMenu_.categories_.length; i++) {
-    const category = this.categoryMenu_.categories_[i];
+  for (const category of this.categoryMenu_.categories_) {
     if (id === category.id_) {
       this.selectedItem_.setSelected(false);
       this.selectedItem_ = category;
@@ -694,8 +692,7 @@ Blockly.Toolbox.CategoryMenu.prototype.populate = function(domTree) {
   }
 
   // Create a single column of categories
-  for (let i = 0; i < categories.length; i++) {
-    const child = categories[i];
+  for (const child of categories) {
     const row = goog.dom.createDom('div', 'scratchCategoryMenuRow');
     this.table.appendChild(row);
     if (child) {
@@ -703,6 +700,7 @@ Blockly.Toolbox.CategoryMenu.prototype.populate = function(domTree) {
           child));
     }
   }
+
   this.height_ = this.table.offsetHeight;
 };
 
