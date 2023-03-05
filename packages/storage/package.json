@@ -1,0 +1,64 @@
+{
+  "name": "scratch-storage",
+  "version": "2.0.2",
+  "description": "Load and store project and asset files for Scratch 3.0",
+  "license": "BSD-3-Clause",
+  "homepage": "https://github.com/LLK/scratch-storage#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LLK/scratch-storage.git"
+  },
+  "main": "./dist/node/scratch-storage.js",
+  "browser": "./src/index.js",
+  "scripts": {
+    "build": "webpack --progress --colors --bail",
+    "coverage": "tap ./test/{unit,integration}/*.js --coverage --coverage-report=lcov",
+    "lint": "eslint .",
+    "tap-integration": "tap ./test/integration/*.js",
+    "tap-unit": "tap ./test/unit/*.js",
+    "tap": "yarn run tap-unit && yarn run tap-integration",
+    "test": "yarn run tap",
+    "version": "json -f package.json -I -e \"this.repository.sha = '$(git log -n1 --pretty=format:%H)'\"",
+    "watch": "webpack --progress --colors --watch",
+    "semantic-release": "semantic-release"
+  },
+  "dependencies": {
+    "arraybuffer-loader": "^1.0.3",
+    "base64-js": "1.3.0",
+    "fastestsmallesttextencoderdecoder": "^1.0.7",
+    "js-md5": "0.7.3",
+    "minilog": "3.1.0",
+    "worker-loader": "^2.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "7.14.8",
+    "@babel/polyfill": "7.12.1",
+    "@babel/preset-env": "7.14.8",
+    "@commitlint/cli": "8.2.0",
+    "@commitlint/config-conventional": "8.2.0",
+    "@commitlint/travis-cli": "8.2.0",
+    "babel-eslint": "10.1.0",
+    "babel-loader": "8.0.6",
+    "cz-conventional-changelog": "3.3.0",
+    "eslint": "7.27.0",
+    "eslint-config-scratch": "6.0.0",
+    "eslint-plugin-react": "7.24.0",
+    "file-loader": "4.1.0",
+    "husky": "1.3.1",
+    "json": "^9.0.4",
+    "node-fetch": "2.6.1",
+    "semantic-release": "^15.10.5",
+    "tap": "12.1.1",
+    "uglifyjs-webpack-plugin": "2.2.0",
+    "webpack": "4.46.0",
+    "webpack-cli": "3.1.2"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "release": {
+    "branch": "develop"
+  }
+}
