@@ -1,0 +1,9 @@
+--compilation_level SIMPLE
+build/gen_blocks.js
+blocks_common/colour.js
+blocks_common/math.js
+blocks_common/matrix.js
+blocks_common/note.js
+blocks_common/text.js
+core/colours.js
+core/constants.js
