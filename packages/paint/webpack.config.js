@@ -26,7 +26,7 @@ const base = {
                 loader: 'css-loader',
                 options: {
                     modules: {
-                        localIdentName: '[name]_[local]_[hash:base64:5]',
+                        localIdentName: '[name]_[local]_[fullhash:base64:5]',
                         exportLocalsConvention: 'camelCase'
                     },
                     importLoaders: 1
@@ -46,11 +46,11 @@ const base = {
         },
         {
             test: /\.png$/i,
-            loader: 'url-loader'
+            type: 'asset/inline'
         },
         {
             test: /\.svg$/,
-            loader: 'svg-url-loader?noquotes'
+            loader: 'svg-url-loader'
         }]
     },
     optimization: {

@@ -100,23 +100,10 @@ module.exports = [
     // to run editor examples
     defaultsDeep({}, base, {
         entry: {
-            'lib.min': ['react', 'react-dom'],
-            'gui': {
-                import: './src/playground/index.jsx',
-                dependOn: 'lib.min'
-            },
-            'blocksonly': {
-                import: './src/playground/blocks-only.jsx',
-                dependOn: 'lib.min'
-            },
-            'compatibilitytesting': {
-                import: './src/playground/compatibility-testing.jsx',
-                dependOn: 'lib.min'
-            },
-            'player': {
-                import: './src/playground/player.jsx',
-                dependOn: 'lib.min'
-            }
+            'gui': './src/playground/index.jsx',
+            'blocksonly': './src/playground/blocks-only.jsx',
+            'compatibilitytesting': './src/playground/compatibility-testing.jsx',
+            'player': './src/playground/player.jsx'
         },
         output: {
             path: path.resolve(__dirname, 'build'),
@@ -126,9 +113,11 @@ module.exports = [
             rules: base.module.rules.concat([
                 {
                     test: /\.(svg|png|wav|gif|jpg)$/,
+                    resourceQuery: { not: [/raw/] },
                     type: 'asset/resource',
                     generator: {
-                        outputPath: 'static/assets/'
+                        outputPath: 'static/assets/',
+                        publicPath: 'static/assets/',
                     }
                 }
             ])
@@ -141,7 +130,6 @@ module.exports = [
         },
         plugins: base.plugins.concat([
             new webpack.DefinePlugin({
-                'process.env.NODE_ENV': '"' + process.env.NODE_ENV + '"',
                 'process.env.DEBUG': Boolean(process.env.DEBUG),
                 'process.env.GA_ID': '"' + (process.env.GA_ID || 'UA-000000-01') + '"'
             }),
@@ -224,8 +212,9 @@ module.exports = [
                 rules: base.module.rules.concat([
                     {
                         test: /\.(svg|png|wav|gif|jpg)$/,
-                        loader: 'file-loader',
-                        options: {
+                        resourceQuery: { not: [/raw/] },
+                        type: 'asset/resource',
+                        generator: {
                             outputPath: 'static/assets/',
                             publicPath: `${STATIC_PATH}/assets/`
                         }

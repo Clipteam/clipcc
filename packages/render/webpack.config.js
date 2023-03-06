@@ -24,7 +24,7 @@ const base = {
             },
             {
                 resourceQuery: /raw/,
-                type: 'asset/source',
+                type: 'asset/source'
             }
         ]
     },

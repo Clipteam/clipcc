@@ -27,7 +27,11 @@ const base = {
         },
         {
             test: /\.mp3$/,
-            loader: 'file-loader'
+            type: 'asset/resource'
+        },
+        {
+            resourceQuery: /raw/,
+            type: 'asset/source'
         }]
     },
     optimization: {
