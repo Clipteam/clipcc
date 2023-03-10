@@ -26,6 +26,11 @@ const base = {
     resolve: {
         symlinks: false
     },
+    snapshot: {
+        managedPaths: [
+            /^.+?[\\/]node_modules[\\/](?!scratch-(blocks|l10n|paint|render|storage|vm))[\\/]/,
+        ],
+    },
     module: {
         rules: [{
             test: /\.jsx?$/,
