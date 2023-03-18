@@ -16,37 +16,37 @@ $ui-gray: hsla(0, 0%, 95%, 1);
     right: 0;
     bottom: 0;
     z-index: $z-index-modal;
-    background-color: $ui-modal-overlay;
+    background-color: var(--clipcc-ui-modal-overlay);
 }
 
 .modal-content {
     margin: 100px auto;
     outline: none;
-    border: .25rem solid $ui-white-transparent;
+    border: .25rem solid var(--clipcc-ui-white)-transparent;
     padding: 0;
-    border-radius: $space;
+    border-radius: var(--clipcc-space);
     user-select: none;
     width: 640px;
 
-    color: $text-primary;
+    color: var(--clipcc-text-primary);
     overflow: hidden;
 }
 
 .illustration {
     width: 100%;
     height: 123px;
-    background-color: $motion-primary;
+    background-color: var(--clipcc-motion-primary);
     background-image: url('./telemetry-modal-header.png');
     background-size: cover;
 }
 
 .body {
-    background: $ui-white;
+    background: var(--clipcc-ui-white);
     padding: 1.5rem 2.25rem;
 }
 
 .privacy-policy-link {
-    color: $motion-primary;
+    color: var(--clipcc-motion-primary);
     text-decoration: none;
 }
 
@@ -79,7 +79,7 @@ $ui-gray: hsla(0, 0%, 95%, 1);
     width: 1rem;
     height: 1rem;
     appearance: none;
-    background-color: $ui-white;
+    background-color: var(--clipcc-ui-white);
     vertical-align: middle;
 }
 
@@ -91,15 +91,15 @@ $ui-gray: hsla(0, 0%, 95%, 1);
 
 .radio-buttons input[type="radio"]:checked {
     transition: all .25s ease;
-    background-color: $ui-white;
-    border: 1px solid $motion-primary;
+    background-color: var(--clipcc-ui-white);
+    border: 1px solid var(--clipcc-motion-primary);
 }
 
 .radio-buttons input[type="radio"]:checked::after {
     display: block;
     margin: 0.125rem;
     border-radius: 50%;
-    background-color: $motion-primary;
+    background-color: var(--clipcc-motion-primary);
     width: .625rem;
     height: .625rem;
     content: "";
@@ -123,28 +123,28 @@ $ui-gray: hsla(0, 0%, 95%, 1);
 
 .setting-was-updated {
     animation: fade-out 3s ease-out;
-    color: $extensions-primary;
+    color: var(--clipcc-extensions-primary);
 }
 
 .button-row button {
-    border: 1px solid $motion-primary;
+    border: 1px solid var(--clipcc-motion-primary);
     border-radius: 0.25rem;
     padding: 0.5rem 1.5rem;
     color: white;
-    background: $motion-primary;
+    background: var(--clipcc-motion-primary);
     font-weight: bold;
     font-size: .875rem;
     cursor: pointer;
 }
 
 .button-row button:hover {
-    background: $extensions-primary;
-    box-shadow: 0 0 0 6px $motion-transparent;
+    background: var(--clipcc-extensions-primary);
+    box-shadow: 0 0 0 6px var(--clipcc-motion-transparent);
 }
 
 .button-row button:disabled {
-    background: $text-primary;
-    border-color: $ui-black-transparent;
+    background: var(--clipcc-text-primary);
+    border-color: var(--clipcc-ui-black-transparent);
     box-shadow: none;
     opacity: 0.25;
 }

@@ -8,10 +8,10 @@
     margin: 2px 0 0; /* To keep the menu below the cursor comfortably */
     font-size: 0.85rem;
     text-align: left;
-    background-color: $ui-white;
-    border: 1px solid $ui-black-transparent;
-    border-radius: calc($space / 2);
-    box-shadow: 0px 0px 5px 1px $ui-black-transparent;
+    background-color: var(--clipcc-ui-white);
+    border: 1px solid var(--clipcc-ui-black-transparent);
+    border-radius: calc(var(--clipcc-space) / 2);
+    box-shadow: 0px 0px 5px 1px var(--clipcc-ui-black-transparent);
     pointer-events: none;
     transition: opacity 0.2s ease;
     z-index: $z-index-context-menu;
@@ -25,14 +25,14 @@
 }
 
 .menu-item:hover {
-    background: $motion-primary;
+    background: var(--clipcc-motion-primary);
     color: white;
 }
 
 .menu-item-bordered {
-    border-top: 1px solid $ui-black-transparent;
+    border-top: 1px solid var(--clipcc-ui-black-transparent);
 }
 
 .menu-item-danger:hover {
-    background: $error-primary;
+    background: var(--clipcc-error-primary);
 }

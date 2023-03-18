@@ -18,10 +18,10 @@
     right: 0;
     bottom: 0;
     z-index: $z-index-stage-wrapper-overlay;
-    background-color: $ui-white;
+    background-color: var(--clipcc-ui-white);
     /* spacing between stage and control bar (on the top), or between
     stage and window edges (on left/right/bottom) */
-    padding: $stage-full-screen-stage-padding;
+    padding: var(--clipcc-stage-full-screen-stage-padding);
 
     /* this centers the stage */
     display: flex;

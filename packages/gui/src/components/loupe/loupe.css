@@ -3,5 +3,5 @@
 .color-picker {
     position: absolute;
     border-radius: 100%;
-    border: 4px solid $ui-black-transparent;
+    border: 4px solid var(--clipcc-ui-black-transparent);
 }

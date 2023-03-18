@@ -10,15 +10,15 @@
     position: relative;
     height: 160px;
     max-width: 160px;
-    margin: $space;
+    margin: var(--clipcc-space);
     padding: 1rem 1rem 0 1rem;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: $text-primary;
+    color: var(--clipcc-text-primary);
     background: white;
     border-width: 2px;
     border-style: solid;
-    border-color: $ui-black-transparent;
-    border-radius: $space;
+    border-color: var(--clipcc-ui-black-transparent);
+    border-radius: var(--clipcc-space);
     text-align: center;
     cursor: pointer;
 }
@@ -29,7 +29,7 @@
 
 .library-item:hover {
     border-width: 2px;
-    border-color: $motion-primary;
+    border-color: var(--clipcc-motion-primary);
 }
 
 .hidden {
@@ -42,7 +42,7 @@
 }
 
 .disabled:hover {
-    border-color: $ui-black-transparent;
+    border-color: var(--clipcc-ui-black-transparent);
 }
 
 .library-item-image-container-wrapper {
@@ -64,11 +64,11 @@
     justify-content: center;
     margin-top: -2.5rem;
     align-self: flex-start;
-    background-color: $pen-primary;
+    background-color: var(--clipcc-pen-primary);
     width: 3.5rem;
     height: 3.5rem;
     border-radius: 0.5rem;
-    border: 0.25rem solid $ui-white;
+    border: 0.25rem solid var(--clipcc-ui-white);
 }
 
 [dir="ltr"] .library-item-inset-image-container {
@@ -151,7 +151,7 @@
     flex-direction: row;
     align-items: flex-start;
     font-size: 12px;
-    color: $text-primary;
+    color: var(--clipcc-text-primary);
     opacity: 0.75;
 }
 
@@ -187,19 +187,19 @@
 
 .coming-soon-text {
     position: absolute;
-    background-color: $data-primary;
+    background-color: var(--clipcc-data-primary);
     border-radius: 1rem;
     box-shadow: 0 0 .5rem hsla(0, 0%, 0%, .25);
     padding: .5rem 1rem;
     font-size: .875rem;
     font-weight: bold;
-    color: $ui-white;
+    color: var(--clipcc-ui-white);
 }
 
 [dir="ltr"] .coming-soon-text {
-    transform: translate(calc(2 * $space), calc(2 * $space));
+    transform: translate(calc(2 * var(--clipcc-space)), calc(2 * var(--clipcc-space)));
 }
 
 [dir="rtl"] .coming-soon-text {
-    transform: translate(calc(-2 * $space), calc(2 * $space));
+    transform: translate(calc(-2 * var(--clipcc-space)), calc(2 * var(--clipcc-space)));
 }

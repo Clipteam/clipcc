@@ -22,8 +22,8 @@
     flex-shrink: 0;
     align-items: center;
     height: $stage-menu-height;
-    padding-top: $space;
-    padding-bottom: $space;
+    padding-top: var(--clipcc-space);
+    padding-bottom: var(--clipcc-space);
 }
 
 .embed-scratch-logo img {
@@ -50,11 +50,11 @@
 
 .stage-button {
     display: block;
-    border: 1px solid $ui-black-transparent;
-    border-radius: $form-radius;
+    border: 1px solid var(--clipcc-ui-black-transparent);
+    border-radius: var(--clipcc-form-radius);
     width: calc(2rem + 2px);
     height: calc(2rem + 2px);
-    background: $ui-white;
+    background: var(--clipcc-ui-white);
     padding: 0.375rem;
     user-select: none;
     cursor: pointer;

@@ -28,20 +28,20 @@ $hover-scale: 1.25;
 }
 
 .trim-background-mask {
-    border: 1px solid $red-tertiary;
+    border: 1px solid var(--clipcc-red-tertiary);
     opacity: 0.5;
 
     background: repeating-linear-gradient(
         45deg,
-        $red-primary,
-        $red-primary $stripe-size,
-        $red-tertiary $stripe-size,
-        $red-tertiary calc(2 * $stripe-size)
+        var(--clipcc-red-primary),
+        var(--clipcc-red-primary) $stripe-size,
+        var(--clipcc-red-tertiary) $stripe-size,
+        var(--clipcc-red-tertiary) calc(2 * $stripe-size)
     );
 }
 
 .selection-background {
-    background: $motion-primary;
+    background: var(--clipcc-motion-primary);
     opacity: 0.5;
 }
 
@@ -60,11 +60,11 @@ $hover-scale: 1.25;
     top: 0;
     width: 0px;
     height: 100%;
-    border: 1px solid $red-tertiary;
+    border: 1px solid var(--clipcc-red-tertiary);
 }
 
 .selector .trim-line {
-    border: 1px solid $motion-tertiary;
+    border: 1px solid var(--clipcc-motion-tertiary);
 }
 
 .playhead-container {
@@ -83,7 +83,7 @@ $hover-scale: 1.25;
     */
     width: 100%;
     height: 100%;
-    border-left: 1px solid $motion-primary;
+    border-left: 1px solid var(--clipcc-motion-primary);
     border-top: none;
     border-bottom: none;
     border-right: none;

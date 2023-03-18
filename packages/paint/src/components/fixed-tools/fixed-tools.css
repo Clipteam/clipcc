@@ -13,12 +13,12 @@
 
 [dir="ltr"] .mod-dashed-border {
     border-right: 1px dashed $ui-pane-border;
-    padding-right: calc(2 * $grid-unit);
+    padding-right: calc(2 * var(--clipcc-grid-unit));
 }
 
 [dir="rtl"] .mod-dashed-border {
     border-left: 1px dashed $ui-pane-border;
-    padding-left: calc(2 * $grid-unit);
+    padding-left: calc(2 * var(--clipcc-grid-unit));
 }
 
 .mod-unselect {
@@ -101,9 +101,9 @@ $border-radius: 0.25rem;
 
 .mod-menu-item {
     display: flex;
-    margin: 0 -$grid-unit;
+    margin: 0 -var(--clipcc-grid-unit);
     min-width: 6.25rem;
-    padding: calc(3 * $grid-unit);
+    padding: calc(3 * var(--clipcc-grid-unit));
     white-space: nowrap;
     cursor: pointer;
     transition: 0.1s ease;
@@ -116,7 +116,7 @@ $border-radius: 0.25rem;
 }
 
 .mod-menu-item:hover {
-    background: $motion-transparent;
+    background: var(--clipcc-motion-transparent);
 }
 
 .mod-disabled:hover {
@@ -124,10 +124,10 @@ $border-radius: 0.25rem;
 }
 
 .menu-item-icon {
-    margin-right: calc(2 * $grid-unit);
+    margin-right: calc(2 * var(--clipcc-grid-unit));
 }
 
 [dir="rtl"] .menu-item-icon {
     margin-right: 0;
-    margin-left: calc(2 * $grid-unit);
+    margin-left: calc(2 * var(--clipcc-grid-unit));
 }

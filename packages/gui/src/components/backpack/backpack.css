@@ -8,23 +8,23 @@
 
 .backpack-header {
     margin-top: 0.5rem;
-    border: 1px solid $ui-black-transparent;
-    background: $ui-white;
+    border: 1px solid var(--clipcc-ui-black-transparent);
+    background: var(--clipcc-ui-white);
     padding: 0.25rem;
     text-align: center;
     font-size: 0.85rem;
-    color: $text-primary;
+    color: var(--clipcc-text-primary);
     transition: 0.2s;
     cursor: pointer;
     user-select: none;
 }
 
 [dir="ltr"] .backpack-header {
-    border-top-right-radius: $space;
+    border-top-right-radius: var(--clipcc-space);
 }
 
 [dir="rtl"] .backpack-header {
-    border-top-left-radius: $space;
+    border-top-left-radius: var(--clipcc-space);
 }
 
 .backpack-list {
@@ -32,7 +32,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    border-right: 1px solid $ui-black-transparent;
+    border-right: 1px solid var(--clipcc-ui-black-transparent);
     min-height: 5.5rem;
 }
 
@@ -57,7 +57,7 @@
     width: 100%;
     height: 100%;
     opacity: 0.75;
-    background-color: $drop-highlight;
+    background-color: var(--clipcc-drop-highlight);
     transition: all 0.25s ease;
 }
 
@@ -65,7 +65,7 @@
     width: 100%;
     text-align: center;
     font-size: 0.85rem;
-    color: $text-primary;
+    color: var(--clipcc-text-primary);
 }
 
 .backpack-item {
@@ -80,7 +80,7 @@
 
 .backpack-item > div {
     /* Need to set the background to get blend-mode below to work */
-    background: $ui-primary;
+    background: var(--clipcc-ui-primary);
 }
 
 .backpack-item img {
@@ -88,8 +88,8 @@
 }
 
 .more {
-    background: $motion-primary;
-    color: $ui-white;
+    background: var(--clipcc-motion-primary);
+    color: var(--clipcc-ui-white);
     border: none;
     outline: none;
     font-weight: bold;

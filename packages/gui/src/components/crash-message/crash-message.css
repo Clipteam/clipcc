@@ -3,7 +3,7 @@
 @import "../../css/typography.css";
 
 .crash-wrapper {
-    background-color: $motion-primary;
+    background-color: var(--clipcc-motion-primary);
     width: 100%;
     height: 100%;
     display: flex;
@@ -17,11 +17,11 @@
 }
 
 .reloadButton {
-    border: 1px solid $motion-primary;
+    border: 1px solid var(--clipcc-motion-primary);
     border-radius: 0.25rem;
     padding: 0.5rem 2rem;
     background: white;
-    color: $motion-primary;
+    color: var(--clipcc-motion-primary);
     font-weight: bold;
     font-size: 0.875rem;
     cursor: pointer;

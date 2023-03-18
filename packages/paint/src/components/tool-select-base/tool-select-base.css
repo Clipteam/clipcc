@@ -5,18 +5,18 @@ $border-radius: .25rem;
 
 .mod-tool-select {
     display: inline-block;
-    margin: $grid-unit;
+    margin: var(--clipcc-grid-unit);
     border: none;
     border-radius: $border-radius;
     outline: none;
     background: none;
-    padding: $grid-unit;
+    padding: var(--clipcc-grid-unit);
     font-size: 0.85rem;
     transition: 0.2s;
 }
 
 .mod-tool-select.is-selected {
-    background-color: $motion-primary;
+    background-color: var(--clipcc-motion-primary);
 }
 
 .mod-tool-select:focus {

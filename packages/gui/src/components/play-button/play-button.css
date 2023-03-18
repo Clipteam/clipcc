@@ -10,8 +10,8 @@
     overflow: hidden;  /* Mask the icon animation */
     width: 2.5rem;
     height: 2.5rem;
-    background-color: $sound-primary;
-    color: $ui-white;
+    background-color: var(--clipcc-sound-primary);
+    color: var(--clipcc-ui-white);
     border-radius: 50%;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     user-select: none;

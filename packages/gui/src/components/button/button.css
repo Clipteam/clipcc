@@ -2,7 +2,7 @@
 
 .outlined-button {
     cursor: pointer;
-    border-radius: $form-radius;
+    border-radius: var(--clipcc-form-radius);
     font-weight: bold;
     display: flex;
     flex-direction: row;

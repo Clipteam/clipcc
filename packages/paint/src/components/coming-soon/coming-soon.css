@@ -11,7 +11,7 @@ See #13 */
 @import "../../css/colors.css";
 
 .coming-soon {
-    background-color: $data-primary !important;
+    background-color: var(--clipcc-data-primary) !important;
     border: 1px solid hsla(0, 0%, 0%, .1) !important;
     border-radius: .25rem !important;
     box-shadow: 0 0 .5rem hsla(0, 0%, 0%, .25) !important;
@@ -29,7 +29,7 @@ See #13 */
     border-bottom: 0 !important;
     border-right: 1px solid hsla(0, 0%, 0%, .1) !important;
     border-radius: .25rem;
-    background-color: $data-primary !important;
+    background-color: var(--clipcc-data-primary) !important;
     height: 1rem !important;
     width: 1rem !important;
 }

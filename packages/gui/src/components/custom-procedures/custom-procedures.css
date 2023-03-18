@@ -7,7 +7,7 @@
 }
 
 .body {
-    background: $ui-white;
+    background: var(--clipcc-ui-white);
     padding: 1.5rem 2.25rem;
 }
 
@@ -31,7 +31,7 @@
 }
 
 .workspace :global(.blocklySvg) {
-    background-color: $ui-primary;
+    background-color: var(--clipcc-ui-primary);
 }
 
 /* Row of "card" buttons for modifying custom procedures */
@@ -42,9 +42,9 @@
 
 .option-card {
     background: white;
-    border: 2px solid $ui-black-transparent;
-    border-radius: $space;
-    padding: calc($space * 2);
+    border: 2px solid var(--clipcc-ui-black-transparent);
+    border-radius: var(--clipcc-space);
+    padding: calc(var(--clipcc-space) * 2);
     text-align: center;
     flex-grow: 1;
     cursor: pointer;
@@ -53,8 +53,8 @@
 }
 
 .option-card:hover {
-    border: 2px solid $motion-primary;
-    box-shadow: 0px 0px 0px 4px $motion-transparent;
+    border: 2px solid var(--clipcc-motion-primary);
+    box-shadow: 0px 0px 0px 4px var(--clipcc-motion-transparent);
 }
 
 .option-card + .option-card {
@@ -83,7 +83,7 @@
 }
 
 .button-row button {
-    border: 1px solid $ui-black-transparent;
+    border: 1px solid var(--clipcc-ui-black-transparent);
     border-radius: 0.25rem;
     padding: 0.75rem 1rem;
     background: white;
@@ -92,8 +92,8 @@
 }
 
 .button-row button.ok-button {
-    background: $motion-primary;
-    border: $motion-primary;
+    background: var(--clipcc-motion-primary);
+    border: var(--clipcc-motion-primary);
     color: white;
 }
 

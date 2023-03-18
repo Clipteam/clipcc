@@ -10,7 +10,7 @@
 }
 
 .stop-all:hover {
-    background-color: $motion-light-transparent;
+    background-color: var(--clipcc-motion-light-transparent);
 }
 
 .stop-all {

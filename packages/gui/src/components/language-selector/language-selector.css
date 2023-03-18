@@ -4,14 +4,14 @@
 /* Position the language select over the language icon, and make it transparent */
 .language-select {
     position: absolute;
-    width: $language-selector-width;
-    height: $menu-bar-height;
+    width: var(--clipcc-language-selector-width);
+    height: var(--clipcc-menu-bar-height);
     opacity: 0;
     user-select: none;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: .875rem;
-    color: $text-primary;
-    background: $ui-white;
+    color: var(--clipcc-text-primary);
+    background: var(--clipcc-ui-white);
 }
 
 [dir="ltr"] .language-select {

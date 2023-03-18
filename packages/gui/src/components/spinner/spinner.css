@@ -8,7 +8,7 @@
     border-radius: 50%;
     border-width: .1875rem;
     border-style: solid;
-    border-color: $ui-white-transparent;
+    border-color: var(--clipcc-ui-white)-transparent;
     box-sizing: content-box;
 }
 
@@ -25,7 +25,7 @@
     top: -.1875rem;
     left: -.1875rem;
     border: .1875rem solid transparent;
-    border-top-color: $ui-white;
+    border-top-color: var(--clipcc-ui-white);
     animation: spin 1.5s cubic-bezier(0.4, 0.1, 0.4, 1) infinite;
 }
 
@@ -60,31 +60,31 @@
 }
 
 .spinner.success {
-    border-color: $extensions-transparent;
+    border-color: var(--clipcc-extensions-transparent);
 }
 
 .spinner.success::after {
-    border-top-color: $extensions-primary;
+    border-top-color: var(--clipcc-extensions-primary);
 }
 
 .spinner.warn {
-    border-color: $error-transparent;
+    border-color: var(--clipcc-error-transparent);
 }
 
 .spinner.warn::after {
-    border-top-color: $error-primary;
+    border-top-color: var(--clipcc-error-primary);
 }
 
 .spinner.info {
-    border-color: $ui-white-transparent;
+    border-color: var(--clipcc-ui-white)-transparent;
 }
 .spinner.info::after {
-    border-top-color: $ui-white;
+    border-top-color: var(--clipcc-ui-white);
 }
 
 .spinner.primary {
-    border-color: $motion-transparent;
+    border-color: var(--clipcc-motion-transparent);
 }
 .spinner.primary::after {
-    border-top-color: $motion-primary;
+    border-top-color: var(--clipcc-motion-primary);
 }

@@ -8,19 +8,19 @@
 }
 
 .mode-tools-icon {
-    margin-right: calc(2 * $grid-unit);
+    margin-right: calc(2 * var(--clipcc-grid-unit));
     width: 2rem;
     height: 2rem;
 }
 
 [dir="ltr"] .mod-dashed-border {
     border-right: 1px dashed $ui-pane-border;
-    padding-right: calc(3 * $grid-unit);
+    padding-right: calc(3 * var(--clipcc-grid-unit));
 }
 
 [dir="rtl"] .mod-dashed-border {
     border-left: 1px dashed $ui-pane-border;
-    padding-left: calc(3 * $grid-unit);
+    padding-left: calc(3 * var(--clipcc-grid-unit));
 }
 
 .mod-labeled-icon-height {

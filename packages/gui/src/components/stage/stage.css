@@ -9,8 +9,8 @@
     */
     display: block;
 
-    border-radius: $space;
-    border: $stage-standard-border-width solid $ui-black-transparent;
+    border-radius: var(--clipcc-space);
+    border: var(--clipcc-stage-standard-border-width) solid var(--clipcc-ui-black-transparent);
     overflow: hidden;
 
     /* @todo: This is for overriding the value being set somewhere. Where is it being set? */
@@ -27,7 +27,7 @@
 }
 
 .stage.full-screen {
-    border: $stage-full-screen-border-width solid rgb(126, 133, 151);
+    border: var(--clipcc-stage-full-screen-border-width) solid rgb(126, 133, 151);
 }
 
 .with-color-picker {
@@ -55,16 +55,16 @@ because we want their overflow to be visible, and the bordered element must have
 stage doesn't "spill" out from under its rounded corners. instead, shift these over by the border width. */
 .stage-overlays {
     position: absolute;
-    top: $stage-standard-border-width;
-    left: $stage-standard-border-width;
+    top: var(--clipcc-stage-standard-border-width);
+    left: var(--clipcc-stage-standard-border-width);
 
     /* the overlay itself should not capture pointer events; only its child elements can do that */
     pointer-events: none;
 }
 
 .stage-overlays.full-screen {
-    top: $stage-full-screen-border-width;
-    left: $stage-full-screen-border-width;
+    top: var(--clipcc-stage-full-screen-border-width);
+    left: var(--clipcc-stage-full-screen-border-width);
 }
 
 .monitor-wrapper,
@@ -81,7 +81,7 @@ stage doesn't "spill" out from under its rounded corners. instead, shift these o
     top: 0;
     left: 0;
     z-index: $z-index-dragging-sprite;
-    filter: drop-shadow(5px 5px 5px $ui-black-transparent);
+    filter: drop-shadow(5px 5px 5px var(--clipcc-ui-black-transparent));
 }
 
 .stage-bottom-wrapper {
@@ -108,8 +108,8 @@ stage doesn't "spill" out from under its rounded corners. instead, shift these o
 }
 
 .frame {
-    background: $motion-transparent;
-    border: 2px solid $motion-primary;
+    background: var(--clipcc-motion-transparent);
+    border: 2px solid var(--clipcc-motion-primary);
     border-radius: 0.5rem;
     animation-name: flash;
     animation-duration: 0.75s;
@@ -132,7 +132,7 @@ stage doesn't "spill" out from under its rounded corners. instead, shift these o
     padding: 1rem;
     border-radius: 100%;
     background: rgba(255,255,255,0.75);
-    border: 3px solid $ui-white;
+    border: 3px solid var(--clipcc-ui-white);
     display: flex;
     justify-content: center;
     align-items: center;

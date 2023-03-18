@@ -6,11 +6,11 @@
     flex-grow: 1;
     position: relative;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    margin-right: calc($space / 2);
-    background-color: $ui-secondary;
-    border-top-right-radius: $space;
-    border-top-left-radius: $space;
-    border-color: $ui-black-transparent;
+    margin-right: calc(var(--clipcc-space) / 2);
+    background-color: var(--clipcc-ui-secondary);
+    border-top-right-radius: var(--clipcc-space);
+    border-top-left-radius: var(--clipcc-space);
+    border-color: var(--clipcc-ui-black-transparent);
     border-width: 1px;
     border-style: solid;
     border-bottom: 0;
@@ -30,11 +30,11 @@
         @todo: make room for the scrollbar
     */
     box-sizing: border-box;
-    width: calc((100% / $sprites-per-row ) - $space);
+    width: calc((100% / var(--clipcc-sprites-per-row) ) - var(--clipcc-space));
     max-width: 6rem;
     min-width: 4rem;
     min-height: 4rem; /* @todo: calc height same as width */
-    margin: calc($space / 2);
+    margin: calc(var(--clipcc-space) / 2);
 }
 
 .sprite {
@@ -51,12 +51,12 @@
               also introduces a new bug in Chrome when vertically resizing window down,
               then back up, introduces white space in the outside the page container.
     */
-    height: calc(100% - $sprite-info-height);
+    height: calc(100% - var(--clipcc-sprite-info-height));
     overflow-y: auto;
 }
 
 .scroll-wrapper-dragging {
-    background-color: $drop-highlight;
+    background-color: var(--clipcc-drop-highlight);
 }
 
 .items-wrapper {
@@ -64,10 +64,10 @@
     flex-wrap: wrap;
     flex-direction: row;
 
-    padding-top: calc($space / 2);
-    padding-left: calc($space / 2);
-    padding-right: calc($space / 2);
-    padding-bottom: $space;
+    padding-top: calc(var(--clipcc-space) / 2);
+    padding-left: calc(var(--clipcc-space) / 2);
+    padding-right: calc(var(--clipcc-space) / 2);
+    padding-bottom: var(--clipcc-space);
 
     overflow-x: hidden;
 }
@@ -86,12 +86,12 @@
 }
 
 .raised {
-    background-color: $drop-highlight;
+    background-color: var(--clipcc-drop-highlight);
     transition: all 0.25s ease;
 }
 
 .raised:hover {
-    background-color: $drop-highlight;
+    background-color: var(--clipcc-drop-highlight);
     transform: scale(1.05);
 }
 
@@ -100,7 +100,7 @@
     animation-duration: 500ms;
     animation-iteration-count: 1;
     animation-timing-function: ease-in-out;
-    background-color: $drop-highlight;
+    background-color: var(--clipcc-drop-highlight);
 }
 
 @keyframes wiggle {

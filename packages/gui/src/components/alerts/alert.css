@@ -8,7 +8,7 @@
     flex-direction: row;
     overflow: hidden;
     justify-content: flex-start;
-    border-radius: $space;
+    border-radius: var(--clipcc-space);
     padding-top: .875rem;
     padding-bottom: .875rem;
     padding-left: 1rem;
@@ -25,9 +25,9 @@
 }
 
 .alert.success {
-    background: $extensions-light;
-    border: 1px solid $extensions-tertiary;
-    box-shadow: 0px 0px 0px 2px $extensions-light;
+    background: var(--clipcc-extensions-light);
+    border: 1px solid var(--clipcc-extensions-tertiary);
+    box-shadow: 0px 0px 0px 2px var(--clipcc-extensions-light);
 }
 
 .alert-spinner {
