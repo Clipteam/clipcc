@@ -39,7 +39,10 @@ import vmManagerHOC from '../lib/vm-manager-hoc.jsx';
 import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 
 import GUIComponent from '../components/gui/gui.jsx';
+import ThemeProvider from '../components/theme-provider/theme-provider.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
+
+import presetCss from '../css/preset';
 
 class GUI extends React.Component {
     componentDidMount () {
@@ -84,12 +87,14 @@ class GUI extends React.Component {
             ...componentProps
         } = this.props;
         return (
-            <GUIComponent
-                loading={fetchingProject || isLoading || loadingStateVisible}
-                {...componentProps}
-            >
-                {children}
-            </GUIComponent>
+            <ThemeProvider theme={presetCss}>
+                <GUIComponent
+                    loading={fetchingProject || isLoading || loadingStateVisible}
+                    {...componentProps}
+                >
+                    {children}
+                </GUIComponent>
+            </ThemeProvider>
         );
     }
 }
