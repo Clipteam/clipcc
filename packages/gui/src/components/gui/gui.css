@@ -235,7 +235,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: $z-index-extension-button;
+    z-index: var(--clipcc-z-index-extension-button);
     background: var(--clipcc-motion-primary);
 
     border: 1px solid var(--clipcc-motion-primary);
@@ -296,7 +296,7 @@ $fade-out-distance: 15px;
 
 .menu-bar-position {
     position: relative;
-    z-index: $z-index-menu-bar;
+    z-index: var(--clipcc-z-index-menu-bar);
 }
 /* Alerts */
 
@@ -304,7 +304,7 @@ $fade-out-distance: 15px;
     display: flex;
     justify-content: center;
     width: 100%;
-    z-index: $z-index-alerts;
+    z-index: var(--clipcc-z-index-alerts);
     position: absolute;
     margin-top: 53px;
     pointer-events: none;

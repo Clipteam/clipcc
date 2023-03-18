@@ -5,7 +5,7 @@
 .monitor-container {
     position: absolute;
     background: var(--clipcc-ui-primary);
-    z-index: $z-index-monitor;
+    z-index: var(--clipcc-z-index-monitor);
     border: 1px solid var(--clipcc-ui-black-transparent);
     border-radius: calc(var(--clipcc-space) / 2);
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -20,7 +20,7 @@
 }
 
 .dragging {
-    z-index: $z-index-monitor-dragging;
+    z-index: var(--clipcc-z-index-monitor)-dragging;
     box-shadow: 3px 3px 5px #888888;
 }
 

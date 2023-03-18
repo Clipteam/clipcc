@@ -46,7 +46,7 @@ button::-moz-focus-inner {
     width: $main-button-size;
     height: $main-button-size;
     box-shadow: 0 0 0 4px var(--clipcc-motion-transparent);
-    z-index: $z-index-add-button;
+    z-index: var(--clipcc-z-index-add-button);
     transition: transform, box-shadow 0.5s;
 }
 
@@ -157,7 +157,7 @@ button::-moz-focus-inner {
     border-radius: var(--clipcc-form-radius) !important;
     box-shadow: 0 0 .5rem hsla(0, 0%, 0%, .25) !important;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-    z-index: $z-index-tooltip !important;
+    z-index: var(--clipcc-z-index-tooltip) !important;
 }
 
 $arrow-size: 0.5rem;

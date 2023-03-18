@@ -15,7 +15,7 @@ $ui-gray: hsla(0, 0%, 95%, 1);
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: $z-index-modal;
+    z-index: var(--clipcc-z-index-modal);
     background-color: var(--clipcc-ui-modal-overlay);
 }
 

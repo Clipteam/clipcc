@@ -14,7 +14,7 @@
     box-shadow: 0px 0px 5px 1px var(--clipcc-ui-black-transparent);
     pointer-events: none;
     transition: opacity 0.2s ease;
-    z-index: $z-index-context-menu;
+    z-index: var(--clipcc-z-index-context-menu);
 }
 
 .menu-item {

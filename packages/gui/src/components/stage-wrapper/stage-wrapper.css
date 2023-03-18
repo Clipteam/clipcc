@@ -17,7 +17,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: $z-index-stage-wrapper-overlay;
+    z-index: var(--clipcc-z-index-stage-wrapper-overlay);
     background-color: var(--clipcc-ui-white);
     /* spacing between stage and control bar (on the top), or between
     stage and window edges (on left/right/bottom) */

@@ -7,7 +7,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: $z-index-loader;
+    z-index: var(--clipcc-z-index-loader);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -21,7 +21,7 @@
     /* Break out of the layout using position: fixed to cover the whole screen */
     position: fixed;
     /* Use the fullscreen stage z-index to allow covering full-screen mode */
-    z-index: $z-index-stage-wrapper-overlay;
+    z-index: var(--clipcc-z-index-stage-wrapper-overlay);
 }
 
 .block-animation {

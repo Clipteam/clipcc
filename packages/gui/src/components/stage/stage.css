@@ -32,7 +32,7 @@
 
 .with-color-picker {
     cursor: none;
-    z-index: $z-index-stage-with-color-picker;
+    z-index: var(--clipcc-z-index-stage-with-color-picker);
 }
 
 .color-picker-background {
@@ -41,7 +41,7 @@
     height: 100%;
     background-color: rgba(0, 0, 0, 0.55);
     display: block;
-    z-index: $z-index-stage-color-picker-background;
+    z-index: var(--clipcc-z-index-stage-color-picker-background);
     top: 0;
     left: 0;
 }
@@ -80,7 +80,7 @@ stage doesn't "spill" out from under its rounded corners. instead, shift these o
     position: absolute;
     top: 0;
     left: 0;
-    z-index: $z-index-dragging-sprite;
+    z-index: var(--clipcc-z-index-dragging-sprite);
     filter: drop-shadow(5px 5px 5px var(--clipcc-ui-black-transparent));
 }
 
@@ -97,13 +97,13 @@ stage doesn't "spill" out from under its rounded corners. instead, shift these o
 
 .mic-indicator {
     transform-origin: bottom right;
-    z-index: $z-index-stage-indicator;
+    z-index: var(--clipcc-z-index-stage-indicator);
     pointer-events: none;
     align-self: flex-end;
 }
 
 .question-wrapper {
-    z-index: $z-index-stage-question;
+    z-index: var(--clipcc-z-index-stage-question);
     pointer-events: auto;
 }
 

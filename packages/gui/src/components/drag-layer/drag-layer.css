@@ -5,7 +5,7 @@
 .drag-layer {
     position: fixed;
     pointer-events: none;
-    z-index: $z-index-drag-layer;
+    z-index: var(--clipcc-z-index-drag-layer);
     left: 0;
     top: 0;
     width: 100%;
