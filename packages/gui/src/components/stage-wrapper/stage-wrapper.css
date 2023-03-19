@@ -1,7 +1,3 @@
-@import "../../css/units.css";
-@import "../../css/colors.css";
-@import "../../css/z-index.css";
-
 .stage-wrapper * {
     box-sizing: border-box;
 }
@@ -13,7 +9,7 @@
 
 .stage-wrapper.full-screen {
     position: fixed;
-    top: $stage-menu-height;
+    top: var(--clipcc-stage-menu-height);
     left: 0;
     right: 0;
     bottom: 0;

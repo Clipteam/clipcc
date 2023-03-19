@@ -1,6 +1,3 @@
-@import "../../css/units.css";
-@import "../../css/colors.css";
-
 .filter {
     display: flex;
     flex-direction: row;

@@ -1,6 +1,3 @@
-@import "../../css/colors.css";
-@import "../../css/units.css";
-
 /* Position the language select over the language icon, and make it transparent */
 .language-select {
     position: absolute;

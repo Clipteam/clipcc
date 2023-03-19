@@ -1,7 +1,4 @@
-@import "../../css/units.css";
-@import "../../css/colors.css";
-
-$header-height: calc($stage-menu-height - 2px);
+$header-height: calc(var(--clipcc-stage-menu-height) - 2px);
 
 .stage-selector {
     background-clip: padding-box;

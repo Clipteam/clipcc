@@ -1,7 +1,3 @@
-@import "../../css/colors.css";
-@import "../../css/units.css";
-@import "../../css/z-index.css";
-
 .context-menu {
     min-width: 130px;
     padding: 5px 0; /* The white strip at the top and bottom of the menu */

@@ -1,5 +1,3 @@
-@import "../../css/units.css";
-
 .outlined-button {
     cursor: pointer;
     border-radius: var(--clipcc-form-radius);

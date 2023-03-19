@@ -1,7 +1,3 @@
-@import "../../css/colors.css";
-@import "../../css/units.css";
-@import "../../css/z-index.css";
-
 .sprite-selector {
     flex-grow: 1;
     position: relative;

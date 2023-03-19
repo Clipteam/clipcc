@@ -1,6 +1,3 @@
-@import "../../css/colors.css";
-@import "../../css/units.css";
-
 .user-info {
     display: inline-flex;
     flex-wrap: nowrap;

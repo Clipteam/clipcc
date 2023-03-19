@@ -1,6 +1,3 @@
-@import "../../css/colors.css";
-@import "../../css/units.css";
-
 .tag-button {
     padding: .625rem 1rem;
     background: var(--clipcc-motion-primary);

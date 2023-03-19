@@ -1,6 +1,3 @@
-@import "../../css/colors.css";
-@import "../../css/units.css";
-
 /* wrapper to allow for touch slop if we decide to add it */
 .delete-button {
     display: flex;

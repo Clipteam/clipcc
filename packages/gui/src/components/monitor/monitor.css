@@ -1,7 +1,3 @@
-@import "../../css/units.css";
-@import "../../css/colors.css";
-@import "../../css/z-index.css";
-
 .monitor-container {
     position: absolute;
     background: var(--clipcc-ui-primary);

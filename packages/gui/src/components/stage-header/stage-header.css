@@ -1,7 +1,3 @@
-@import "../../css/units.css";
-@import "../../css/colors.css";
-@import "../../css/z-index.css";
-
 .stage-header-wrapper {
     position: relative;
 }
@@ -21,7 +17,7 @@
     justify-content: space-between;
     flex-shrink: 0;
     align-items: center;
-    height: $stage-menu-height;
+    height: var(--stage-menu-height);
     padding-top: var(--clipcc-space);
     padding-bottom: var(--clipcc-space);
 }

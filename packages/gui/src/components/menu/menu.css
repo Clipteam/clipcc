@@ -1,5 +1,3 @@
-@import "../../css/colors.css";
-
 .menu {
     position: absolute;
     border: 1px solid var(--clipcc-ui-black-transparent);
