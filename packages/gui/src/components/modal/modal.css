@@ -15,7 +15,7 @@
 .modal-content {
     margin: 100px auto;
     outline: none;
-    border: 4px solid var(--clipcc-ui-white)-transparent;
+    border: 4px solid var(--clipcc-ui-white-transparent);
     padding: 0;
     border-radius: var(--clipcc-space);
     user-select: none;
