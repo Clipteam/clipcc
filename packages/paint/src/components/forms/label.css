@@ -2,8 +2,6 @@
 @todo This file is copied from GUI and should be pulled out into a shared library.
 See https://github.com/LLK/scratch-paint/issues/13 */
 
-@import "../../css/units.css";
-@import "../../css/colors.css";
 @import "../input-group/input-group.css";
 
 .input-label, .input-label-secondary {
@@ -24,7 +22,7 @@ See https://github.com/LLK/scratch-paint/issues/13 */
     font-weight: bold;
 }
 
-@media only screen and (max-width: $full-size-paint) {
+@media only screen and (max-width: var(--clipcc-full-size-paint)) {
     .input-group {
         display: flex;
         flex-direction: column;

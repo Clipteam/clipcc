@@ -1,6 +1,3 @@
-@import '../../css/colors.css';
-@import "../../css/units.css";
-
 $border-radius: .25rem;
 
 .mod-tool-select {
@@ -35,7 +32,7 @@ img.tool-select-icon {
     filter: brightness(0) invert(1);
 }
 
-@media only screen and (max-width: $full-size-paint) {
+@media only screen and (max-width: var(--clipcc-full-size-paint)) {
     .mod-tool-select {
         margin: 0;
     }

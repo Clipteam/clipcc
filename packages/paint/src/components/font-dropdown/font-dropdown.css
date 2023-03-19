@@ -1,6 +1,3 @@
-@import "../../css/colors.css";
-@import "../../css/units.css";
-
 .mod-menu-item {
     display: flex;
     margin: 0 -var(--clipcc-grid-unit);

@@ -81,7 +81,7 @@
     font-size: 0.75rem;
 
     background-color: var(--clipcc-ui-tertiary);
-    color: var(--clipcc-text-transparent);
+    color: var(--clipcc-text-primary);
 
     display: flex;
     justify-content: center;

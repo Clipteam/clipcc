@@ -1,5 +1,3 @@
-@import "../../css/units";
-
 /* Popover styles */
 :global(.Popover-body) {
     background: white;

@@ -6,9 +6,6 @@ See https://github.com/LLK/scratch-paint/issues/13 */
 Edited to add input-range-small
 */
 
-@import "../../css/units.css";
-@import "../../css/colors.css";
-
 .input-form {
     height: 2rem;
     padding: 0 0.75rem;

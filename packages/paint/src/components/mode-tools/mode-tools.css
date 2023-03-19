@@ -1,6 +1,3 @@
-@import "../../css/colors.css";
-@import "../../css/units.css";
-
 .mode-tools {
     display: flex;
     min-height: 3rem;
@@ -14,12 +11,12 @@
 }
 
 [dir="ltr"] .mod-dashed-border {
-    border-right: 1px dashed $ui-pane-border;
+    border-right: 1px dashed var(--clipcc-ui-pane-border);
     padding-right: calc(3 * var(--clipcc-grid-unit));
 }
 
 [dir="rtl"] .mod-dashed-border {
-    border-left: 1px dashed $ui-pane-border;
+    border-left: 1px dashed var(--clipcc-ui-pane-border);
     padding-left: calc(3 * var(--clipcc-grid-unit));
 }
 
