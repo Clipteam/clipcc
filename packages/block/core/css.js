@@ -474,7 +474,7 @@ Blockly.Css.CONTENT = [
   '}',
   '.blocklyNonEditableText>text,',
   '.blocklyEditableText>text {',
-    'fill: $colour_text;',
+    'fill: var(--clipcc-text-primary, $colour_text);',
   '}',
 
   '.blocklyEditableText>.blocklyEditableLabel {',
@@ -486,7 +486,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyBubbleText {',
-    'fill: $colour_text;',
+    'fill: var(--clipcc-text-primary, $colour_text);',
   '}',
   '.blocklyFlyout {',
     'position: absolute;',
@@ -502,7 +502,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyFlyoutButton .blocklyText {',
-    'fill: $colour_text;',
+    'fill: var(--clipcc-text-primary, $colour_text);',
   '}',
 
   '.blocklyFlyoutButtonShadow {',
@@ -720,7 +720,7 @@ Blockly.Css.CONTENT = [
     'box-sizing: border-box;',
     'width: 100%;',
     'text-align: center;',
-    'color: $colour_text;',
+    'color: var(--clipcc-text-primary, $colour_text);',
     'font-weight: 500;',
   '}',
 
@@ -848,8 +848,8 @@ Blockly.Css.CONTENT = [
 
   /* Category tree in Toolbox. */
   '.blocklyToolboxDiv {',
-    'background-color: $colour_toolbox;',
-    'color: $colour_toolboxText;',
+    'background-color: var(--clipcc-ui-white, $colour_toolbox);',
+    'color: var(--clipcc-text-primary, $colour_toolboxText);',
     'overflow-x: visible;',
     'overflow-y: auto;',
     'position: absolute;',
@@ -993,7 +993,7 @@ Blockly.Css.CONTENT = [
   '.scratchColourPickerLabel {',
     'font-family: "Helvetica Neue", Helvetica, sans-serif;',
     'font-size: 0.65rem;',
-    'color: $colour_toolboxText;',
+    'color: var(--clipcc-text-primary, $colour_toolboxText);',
     'margin: 8px;',
   '}',
 
@@ -1014,7 +1014,7 @@ Blockly.Css.CONTENT = [
   '.scratchNotePickerKeyLabel {',
     'font-family: "Helvetica Neue", Helvetica, sans-serif;',
     'font-size: 0.75rem;',
-    'fill: $colour_text;',
+    'fill: var(--clipcc-text-primary, $colour_text);',
     'pointer-events: none;',
   '}',
 
@@ -1275,8 +1275,8 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.checked > .blocklyFlyoutCheckbox {',
-    'fill: ' + Blockly.Colours.motion.primary + ';',
-    'stroke: ' + Blockly.Colours.motion.tertiary + ';',
+    'fill: var(--clipcc-motion-primary, ' + Blockly.Colours.motion.primary + ');',
+    'stroke: var(--clipcc-motion-tertiary, ' + Blockly.Colours.motion.tertiary + ');',
   '}',
 
   '.blocklyFlyoutCheckboxPath {',
@@ -1289,8 +1289,8 @@ Blockly.Css.CONTENT = [
 
   '.scratchCategoryMenu {',
     'width: 85px;',
-    'background: $colour_toolbox;',
-    'color: $colour_toolboxText;',
+    'background: var(--clipcc-ui-white, $colour_toolbox);',
+    'color: var(--clipcc-text-primary, $colour_toolboxText);',
     'font-size: .7rem;',
     'user-select: none;',
     '-webkit-user-select: none;',
@@ -1301,8 +1301,8 @@ Blockly.Css.CONTENT = [
   '.scratchCategoryMenuHorizontal {',
     'width: 100%;',
     'height: 50px;',
-    'background: $colour_toolbox;',
-    'color: $colour_toolboxText;',
+    'background: var(--clipcc-ui-white, $colour_toolbox);',
+    'color: var(--clipcc-text-primary, $colour_toolboxText);',
     'font-size: .7em;',
     'user-select: none;',
     '-webkit-user-select: none;',
