@@ -29,4 +29,11 @@ e.g. STAGE_DIMENSION_DEFAULTS in lib/screen-utils.js */
     --clipcc-menu-bar-button-size: 2rem;
 
     --clipcc-menu-bar-item-max-width: 12rem;
+
+    /* scroll bar units */
+    --clipcc-scrollbar-thickness: 11px;
+    --clipcc-scrollbar-radius: 6px;
+    --clipcc-scrollbar-padding: 2.5px;
+    --clipcc-scrollbar-color: #bbb;
+    --clipcc-scrollbar-color-hover: #aaa;
 }
