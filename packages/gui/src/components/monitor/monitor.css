@@ -16,7 +16,7 @@
 }
 
 .dragging {
-    z-index: var(--clipcc-z-index-monitor)-dragging;
+    z-index: var(--clipcc-z-index-monitor-dragging);
     box-shadow: 3px 3px 5px #888888;
 }
 

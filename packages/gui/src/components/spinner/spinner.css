@@ -74,7 +74,7 @@
 }
 
 .spinner.info {
-    border-color: var(--clipcc-ui-white)-transparent;
+    border-color: var(--clipcc-ui-white-transparent);
 }
 .spinner.info::after {
     border-top-color: var(--clipcc-ui-white);

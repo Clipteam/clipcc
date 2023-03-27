@@ -94,7 +94,7 @@ $border-radius: 0.25rem;
     outline: none;
     background: var(--clipcc-motion-primary);
     border-radius: 100%;
-    border: 4px solid var(--clipcc-ui-white)-dim;
+    border: 4px solid var(--clipcc-ui-white-dim);
     cursor: pointer;
     padding: 0.75rem;
     user-select: none;

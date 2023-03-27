@@ -19,7 +19,7 @@ $ui-gray: hsla(0, 0%, 95%, 1);
 .modal-content {
     margin: 100px auto;
     outline: none;
-    border: .25rem solid var(--clipcc-ui-white)-transparent;
+    border: .25rem solid var(--clipcc-ui-white-transparent);
     padding: 0;
     border-radius: var(--clipcc-space);
     user-select: none;

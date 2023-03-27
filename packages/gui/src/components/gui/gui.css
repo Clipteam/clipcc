@@ -247,7 +247,7 @@ $fade-out-distance: 15px;
 .extension-button-container:before {
     content: "";
     position: absolute;
-    top: calc(calc(-1 * $fade-out-distance - 1px));
+    top: calc(calc(-1 * $fade-out-distance) - 1px);
     left: -1px;
     background: linear-gradient(rgba(0, 0, 0, 0),rgba(0, 0, 0, 0.15));
     height: $fade-out-distance;
