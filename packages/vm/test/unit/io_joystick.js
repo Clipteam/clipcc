@@ -6,7 +6,7 @@ test('spec', t => {
     const rt = new Runtime();
     const j = new Joystick(rt);
 
-    t.type(m, 'object');
+    t.type(j, 'object');
     t.type(j.postData, 'function');
     t.type(j.getX, 'function');
     t.type(j.getY, 'function');
