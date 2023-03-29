@@ -1265,7 +1265,6 @@ class RenderWebGL extends EventEmitter {
      * @param {int} x The client x coordinate of the picking location.
      * @param {int} y The client y coordinate of the picking location.
      * @param {int} radius The client radius to extract pixels with.
-     * @param {boolean} isScratchCoordinate Whether uses scratch coordinates.
      * @return {?ColorExtraction} Data about the picked color
      */
     extractColor (x, y, radius) {
