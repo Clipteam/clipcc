@@ -417,7 +417,7 @@ class Scratch3SensingBlocks {
         const renderer = this.runtime.renderer;
         const x = Math.round(Number(args.X));
         const y = Math.round(Number(args.Y));
-        const {color} = renderer.extractColor(x, y, 1, true);
+        const {color} = renderer.extractColorInScratchCoordinate(x, y);
         return Color.rgbToDecimal(color);
     }
 }

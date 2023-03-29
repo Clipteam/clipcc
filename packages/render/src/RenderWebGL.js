@@ -1268,17 +1268,75 @@ class RenderWebGL extends EventEmitter {
      * @param {boolean} isScratchCoordinate Whether uses scratch coordinates.
      * @return {?ColorExtraction} Data about the picked color
      */
-    extractColor (x, y, radius, isScratchCoordinate) {
+    extractColor (x, y, radius) {
         this._doExitDrawRegion();
 
-        const scratchX = isScratchCoordinate ? x : Math.round(this._nativeSize[0] * ((x / this._gl.canvas.clientWidth) - 0.5));
-        const scratchY = isScratchCoordinate ? y : Math.round(-this._nativeSize[1] * ((y / this._gl.canvas.clientHeight) - 0.5));
+        const scratchX = Math.round(this._nativeSize[0] * ((x / this._gl.canvas.clientWidth) - 0.5));
+        const scratchY = Math.round(-this._nativeSize[1] * ((y / this._gl.canvas.clientHeight) - 0.5));
 
         const gl = this._gl;
         twgl.bindFramebufferInfo(gl, this._queryBufferInfo);
 
         const bounds = new Rectangle();
         bounds.initFromBounds(scratchX - radius, scratchX + radius, scratchY - radius, scratchY + radius);
+
+        const pickX = scratchX - bounds.left;
+        const pickY = bounds.top - scratchY;
+
+        gl.viewport(0, 0, bounds.width, bounds.height);
+        const projection = twgl.m4.ortho(bounds.left, bounds.right, bounds.top, bounds.bottom, -1, 1);
+
+        gl.clearColor(...this._backgroundColor4f);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        this._drawThese(this._drawList, ShaderManager.DRAW_MODE.default, projection);
+
+        const data = new Uint8Array(Math.floor(bounds.width * bounds.height * 4));
+        gl.readPixels(0, 0, bounds.width, bounds.height, gl.RGBA, gl.UNSIGNED_BYTE, data);
+
+        const pixelBase = Math.floor(4 * ((pickY * bounds.width) + pickX));
+        const color = {
+            r: data[pixelBase],
+            g: data[pixelBase + 1],
+            b: data[pixelBase + 2],
+            a: data[pixelBase + 3]
+        };
+
+        if (this._debugCanvas) {
+            this._debugCanvas.width = bounds.width;
+            this._debugCanvas.height = bounds.height;
+            const ctx = this._debugCanvas.getContext('2d');
+            const imageData = ctx.createImageData(bounds.width, bounds.height);
+            imageData.data.set(data);
+            ctx.putImageData(imageData, 0, 0);
+            ctx.strokeStyle = 'black';
+            ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+            ctx.rect(pickX - 4, pickY - 4, 8, 8);
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        return {
+            data: data,
+            width: bounds.width,
+            height: bounds.height,
+            color: color
+        };
+    }
+
+    /**
+     * Return drawable pixel data and color at a given scratch position
+     * @param {int} scratchX The scratch x coordinate of the picking location.
+     * @param {int} scratchY The scratch y coordinate of the picking location.
+     * @return {?ColorExtraction} Data about the picked color
+     */
+    extractColorInScratchCoordinate (scratchX, scratchY) {
+        this._doExitDrawRegion();
+
+        const gl = this._gl;
+        twgl.bindFramebufferInfo(gl, this._queryBufferInfo);
+
+        const bounds = new Rectangle();
+        bounds.initFromBounds(scratchX - 1, scratchX + 1, scratchY - 1, scratchY + 1);
 
         const pickX = scratchX - bounds.left;
         const pickY = bounds.top - scratchY;
