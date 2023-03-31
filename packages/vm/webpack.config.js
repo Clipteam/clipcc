@@ -40,8 +40,8 @@ const base = {
     },
     plugins: [
         new webpack.DefinePlugin({
-            'clipcc.version': version,
-            'clipcc.buildTime': Date.now()
+            'clipcc.VERSION': version,
+            'clipcc.BUILD_TIME': Date.now()
         })
     ]
 };

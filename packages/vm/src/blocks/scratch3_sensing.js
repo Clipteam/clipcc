@@ -79,7 +79,7 @@ class Scratch3SensingBlocks {
             sensing_username: this.getUsername,
             sensing_userid: () => {}, // legacy no-op block,
             sensing_operatingsystem: this.getOS,
-            sensing_clipcc_version: () => clipcc.version || 'unknown', // defined by WebpackDefinePlugin
+            sensing_clipcc_version: () => clipcc.VERSION || 'unknown', // defined by WebpackDefinePlugin
             sensing_turnonturbomode: (args) => {
                 this.setTurboMode(true);
             },
