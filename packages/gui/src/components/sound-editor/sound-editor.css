@@ -65,14 +65,12 @@
     margin-bottom: 20px;
 }
 
-$border-radius: 0.25rem;
-
 .button {
     height: 2rem;
     padding: 0.35rem;
     outline: none;
     background: white;
-    border-radius: $border-radius;
+    border-radius: 0.25rem;
     border: 1px solid var(--clipcc-ui-black-transparent);
     cursor: pointer;
     font-size: 0.85rem;
@@ -196,25 +194,25 @@ $border-radius: 0.25rem;
 }
 
 [dir="ltr"] .button-group .button:last-of-type {
-    border-top-right-radius: $border-radius;
-    border-bottom-right-radius: $border-radius;
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
 }
 
 [dir="ltr"] .button-group .button:first-of-type {
     border-left: 1px solid var(--clipcc-ui-black-transparent);
-    border-top-left-radius: $border-radius;
-    border-bottom-left-radius: $border-radius;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
 }
 
 [dir="rtl"] .button-group .button:last-of-type {
-    border-top-left-radius: $border-radius;
-    border-bottom-left-radius: $border-radius;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
 }
 
 [dir="rtl"] .button-group .button:first-of-type {
     border-right: 1px solid var(--clipcc-ui-black-transparent);
-    border-top-right-radius: $border-radius;
-    border-bottom-right-radius: $border-radius;
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
 }
 
 .button:disabled > img {
