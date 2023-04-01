@@ -3,7 +3,7 @@
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/clipcc-logo-white.svg">
   <source media="(prefers-color-scheme: light)" srcset="./assets/clipcc-logo.svg">
-  <img alt="logo" src="./assets/clipcc-logo.svg">
+  <img alt="logo" src="./assets/clipcc-logo.svg" width="250px">
 </picture>
 
 (Thanks to [SoilZhu](https://github.com/SoilZhu) for drawing this icon!)
