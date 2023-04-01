@@ -6,7 +6,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: calc(3 * $grid-unit);
+    padding: calc(3 * var(--clipcc-grid-unit));
 }
 
 .row {
@@ -16,30 +16,30 @@
 }
 
 .editor-container-top {
-    border-bottom: 1px dashed $ui-pane-border;
-    padding-bottom: calc(2 * $grid-unit);
+    border-bottom: 1px dashed var(-clipcc-ui-pane-border);
+    padding-bottom: calc(2 * var(--clipcc-grid-unit));
 }
 
 .top-align-row {
     display: flex;
     flex-direction: row;
     height: 100%;
-    padding-top: calc(5 * $grid-unit);
+    padding-top: calc(5 * var(--clipcc-grid-unit));
     min-width: 524px;
 }
 
 .row + .row {
-    margin-top: calc(2 * $grid-unit);
+    margin-top: calc(2 * var(--clipcc-grid-unit));
 }
 
 [dir="ltr"] .mod-dashed-border {
-    border-right: 1px dashed $ui-pane-border;
-    padding-right: calc(2 * $grid-unit);
+    border-right: 1px dashed var(--clipcc-ui-pane-border);
+    padding-right: calc(2 * var(--clipcc-grid-unit));
 }
 
 [dir="rtl"] .mod-dashed-border {
-    border-left: 1px dashed $ui-pane-border;
-    padding-left: calc(2 * $grid-unit);
+    border-left: 1px dashed var(--clipcc-ui-pane-border);
+    padding-left: calc(2 * var(--clipcc-grid-unit));
 }
 .mod-labeled-icon-height {
     height: 2.85rem; /* for the second row so the dashed borders are equal in size */
@@ -49,7 +49,7 @@ $border-radius: 0.25rem;
 
 .button-group-button {
     display: inline-block;
-    border: 1px solid $ui-pane-border;
+    border: 1px solid var(--clipcc-ui-pane-border);
     border-radius: 0;
     padding: .35rem;
 }
@@ -68,7 +68,7 @@ $border-radius: 0.25rem;
 }
 
 [dir="ltr"] .button-group-button:first-of-type {
-    border-left: 1px solid $ui-pane-border;
+    border-left: 1px solid var(--clipcc-ui-pane-border);
     border-top-left-radius: $border-radius;
     border-bottom-left-radius: $border-radius;
 }
@@ -79,17 +79,17 @@ $border-radius: 0.25rem;
 }
 
 [dir="rtl"] .button-group-button:first-of-type {
-    border-right: 1px solid $ui-pane-border;
+    border-right: 1px solid var(--clipcc-ui-pane-border);
     border-top-right-radius: $border-radius;
     border-bottom-right-radius: $border-radius;
 }
 
 [dir="ltr"] .button-group-button.mod-start-border {
-    border-left: 1px solid $ui-pane-border;
+    border-left: 1px solid var(--clipcc-ui-pane-border);
 }
 
 [dir="rtl"] .button-group-button.mod-start-border {
-    border-right: 1px solid $ui-pane-border;
+    border-right: 1px solid var(--clipcc-ui-pane-border);
 }
 
 [dir="ltr"].button-group-button.mod-no-end-border {
@@ -107,15 +107,15 @@ $border-radius: 0.25rem;
 }
 
 .mod-mode-tools {
-    margin-left: calc(2 * $grid-unit);
+    margin-left: calc(2 * var(--clipcc-grid-unit));
 }
 
 [dir="ltr"] .mod-margin-after {
-    margin-right: calc(2 * $grid-unit);
+    margin-right: calc(2 * var(--clipcc-grid-unit));
 }
 
 [dir="rtl"] .mod-margin-after {
-    margin-left: calc(2 * $grid-unit);
+    margin-left: calc(2 * var(--clipcc-grid-unit));
 }
 
 .controls-container {
@@ -123,8 +123,8 @@ $border-radius: 0.25rem;
     display: flex;
     flex-flow: column;
     flex-grow: 1;
-    margin-left: calc(2 * $grid-unit);
-    margin-right: calc(2 * $grid-unit);
+    margin-left: calc(2 * var(--clipcc-grid-unit));
+    margin-right: calc(2 * var(--clipcc-grid-unit));
 }
 
 .canvas-container {
@@ -165,33 +165,33 @@ $border-radius: 0.25rem;
 .canvas-controls {
     display: flex;
     height: 36px;
-    margin-top: $grid-unit;
+    margin-top: var(--clipcc-grid-unit);
     justify-content: space-between;
 }
 
 .bitmap-button {
     display: flex;
     border-radius: 5px;
-    background-color: $motion-primary;
-    padding: calc(2 * $grid-unit);
+    background-color: var(--clipcc-motion-primary);
+    padding: calc(2 * var(--clipcc-grid-unit));
     line-height: 1.5rem;
-    font-size: calc(3 * $grid-unit);
+    font-size: calc(3 * var(--clipcc-grid-unit));
     font-weight: bold;
     color: white;
     justify-content: center;
 }
 
 [dir="ltr"] .bitmap-button-icon {
-    margin-right: calc(2 * $grid-unit);
+    margin-right: calc(2 * var(--clipcc-grid-unit));
 }
 
 [dir="rtl"] .bitmap-button-icon {
-    margin-left: calc(2 * $grid-unit);
+    margin-left: calc(2 * var(--clipcc-grid-unit));
 }
 
-@media only screen and (max-width: $full-size-paint) {
+@media only screen and (max-width: var(--clipcc-full-size-paint)) {
     .editor-container {
-        padding: calc(3 * $grid-unit) $grid-unit;
+        padding: calc(3 * var(--clipcc-grid-unit)) var(--clipcc-grid-unit);
     }
 
     .mode-selector {
@@ -200,8 +200,8 @@ $border-radius: 0.25rem;
     }
 
     .controls-container {
-        margin-right: $grid-unit;
-        margin-left: $grid-unit;
+        margin-right: var(--clipcc-grid-unit);
+        margin-left: var(--clipcc-grid-unit);
     }
 }
 

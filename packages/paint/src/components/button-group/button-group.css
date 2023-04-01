@@ -1,7 +1,5 @@
-@import "../../css/units";
-
 .button-group {
     display: inline-flex;
     flex-direction: row;
-    padding: 0 $grid-unit;
+    padding: 0 var(--clipcc-grid-unit);
 }

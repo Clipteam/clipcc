@@ -1,13 +1,10 @@
-@import "../../css/colors.css";
-@import "../../css/units.css";
-
 .mod-menu-item {
     display: flex;
-    margin: 0 -$grid-unit;
+    margin: 0 -var(--clipcc-grid-unit);
     min-width: 6.25rem;
-    padding: calc(2 * $grid-unit);
-    padding-left: calc(3 * $grid-unit);
-    padding-right: calc(3 * $grid-unit);
+    padding: calc(2 * var(--clipcc-grid-unit));
+    padding-left: calc(3 * var(--clipcc-grid-unit));
+    padding-right: calc(3 * var(--clipcc-grid-unit));
     white-space: nowrap;
     width: 8.5rem;
     cursor: pointer;
@@ -16,7 +13,7 @@
 }
 
 .mod-menu-item:hover {
-    background: $motion-primary;
+    background: var(--clipcc-motion-primary);
     color: white;
 }
 
@@ -35,7 +32,7 @@
 
 .font-dropdown {
     align-items: center;
-    color: $text-primary;
+    color: var(--clipcc-text-primary);
     display: flex;
     font-size: 1rem;
     justify-content: space-between;

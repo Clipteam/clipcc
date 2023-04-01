@@ -1,5 +1,3 @@
-@import "../../css/colors.css";
-
 .stop-all {
     width: 2rem;
     height: 2rem;
@@ -10,7 +8,7 @@
 }
 
 .stop-all:hover {
-    background-color: $motion-light-transparent;
+    background-color: var(--clipcc-motion-light-transparent);
 }
 
 .stop-all {

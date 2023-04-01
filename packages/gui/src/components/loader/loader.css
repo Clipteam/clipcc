@@ -1,17 +1,14 @@
-@import "../../css/colors.css";
-@import "../../css/z-index.css";
-
 .background {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: $z-index-loader;
+    z-index: var(--clipcc-z-index-loader);
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: $motion-primary;
+    background-color: var(--clipcc-motion-primary);
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     text-align: center;
     color: white;
@@ -21,7 +18,7 @@
     /* Break out of the layout using position: fixed to cover the whole screen */
     position: fixed;
     /* Use the fullscreen stage z-index to allow covering full-screen mode */
-    z-index: $z-index-stage-wrapper-overlay;
+    z-index: var(--clipcc-z-index-stage-wrapper-overlay);
 }
 
 .block-animation {

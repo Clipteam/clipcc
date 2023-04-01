@@ -7,20 +7,21 @@ THIS WAS CHANGED ON 10/25/2017 BY @mewtaylor TO ADD A VARIABLE FOR THE SMALLEST
 GRID UNITS.
 
 ALSO EDITED ON 11/13/2017 TO ADD IN CONTANTS FOR LAYOUT FROM `layout-contents.js`*/
+:root {
+    --clipcc-space: 0.5rem;
+    --clipcc-grid-unit: .25rem;
 
-$space: 0.5rem;
-$grid-unit: .25rem;
+    --clipcc-sprites-per-row: 5;
 
-$sprites-per-row: 5;
+    --clipcc-menu-bar-height: 3rem;
+    --clipcc-sprite-info-height: 6rem;
+    --clipcc-stage-menu-height: 2.75rem;
 
-$menu-bar-height: 3rem;
-$sprite-info-height: 6rem;
-$stage-menu-height: 2.75rem;
+    --clipcc-library-header-height: 4.375rem;
 
-$library-header-height: 4.375rem;
+    --clipcc-form-radius: calc(var(--clipcc-space) / 2);
 
-$form-radius: calc($space / 2);
-
-/* layout contants from `layout-constants.js`, minus 1px */
-$full-size: 1095px;
-$full-size-paint: 1256px;
+    /* layout contants from `layout-constants.js`, minus 1px */
+    --clipcc-full-size: 1095px;
+    --clipcc-full-size-paint: 1256px;
+}

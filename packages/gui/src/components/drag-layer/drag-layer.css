@@ -1,11 +1,7 @@
-@import "../../css/units.css";
-@import "../../css/colors.css";
-@import "../../css/z-index.css";
-
 .drag-layer {
     position: fixed;
     pointer-events: none;
-    z-index: $z-index-drag-layer;
+    z-index: var(--clipcc-z-index-drag-layer);
     left: 0;
     top: 0;
     width: 100%;
@@ -29,10 +25,10 @@
     margin-top: -50%;
 
     padding: 0.25rem;
-    border: 2px solid $motion-primary;
-    background: $ui-white;
+    border: 2px solid var(--clipcc-motion-primary);
+    background: var(--clipcc-ui-white);
     border-radius: 0.5rem;
 
     /* Use the same drop shadow as stage dragging */
-    box-shadow: 5px 5px 5px $ui-black-transparent;
+    box-shadow: 5px 5px 5px var(--clipcc-ui-black-transparent);
 }

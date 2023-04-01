@@ -1,5 +1,3 @@
-@import "../../css/colors.css";
-
 .container {
     width: 100%;
 }
@@ -9,8 +7,8 @@
         cannot use alpha because of overlapping elements.
     */
     fill: hsl(300, 54%, 72%);
-    stroke: $sound-tertiary;
+    stroke: var(--clipcc-sound-tertiary);
 }
 .baseline {
-    stroke: $sound-tertiary;
+    stroke: var(--clipcc-sound-tertiary);
 }

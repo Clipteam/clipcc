@@ -1,7 +1,3 @@
-@import "../../css/colors.css";
-@import "../../css/units.css";
-@import "../../css/z-index.css";
-
 $main-button-size: 2.75rem;
 $more-button-size: 2.25rem;
 
@@ -19,7 +15,7 @@ $more-button-size: 2.25rem;
     justify-content: center;
     cursor: pointer;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background: $motion-primary;
+    background: var(--clipcc-motion-primary);
     outline: none;
     border: none;
     transition: background-color 0.2s;
@@ -30,7 +26,7 @@ button::-moz-focus-inner {
 }
 
 .button:hover {
-    background: $extensions-primary;
+    background: var(--clipcc-extensions-primary);
 }
 
 .button:active {
@@ -38,21 +34,21 @@ button::-moz-focus-inner {
 }
 
 .button.coming-soon:hover {
-    background: $data-primary;
+    background: var(--clipcc-data-primary);
 }
 
 .main-button {
     border-radius: 100%;
     width: $main-button-size;
     height: $main-button-size;
-    box-shadow: 0 0 0 4px $motion-transparent;
-    z-index: $z-index-add-button;
+    box-shadow: 0 0 0 4px var(--clipcc-motion-transparent);
+    z-index: var(--clipcc-z-index-add-button);
     transition: transform, box-shadow 0.5s;
 }
 
 .main-button:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 0 6px $motion-transparent;
+  box-shadow: 0 0 0 6px var(--clipcc-motion-transparent);
 }
 
 .main-icon {
@@ -72,7 +68,7 @@ button::-moz-focus-inner {
     */
     overflow-y: hidden;
 
-    background: $motion-tertiary;
+    background: var(--clipcc-motion-tertiary);
     border-top-left-radius: $more-button-size;
     border-top-right-radius: $more-button-size;
     width: $more-button-size;
@@ -115,7 +111,7 @@ button::-moz-focus-inner {
 .more-button {
     width: $more-button-size;
     height: $more-button-size;
-    background: $motion-tertiary;
+    background: var(--clipcc-motion-tertiary);
 }
 
 .more-icon {
@@ -133,7 +129,7 @@ button::-moz-focus-inner {
     is not very easy to style.
 */
 .tooltip {
-    background-color: $extensions-primary !important;
+    background-color: var(--clipcc-extensions-primary) !important;
     opacity: 1 !important;
     border: 1px solid hsla(0, 0%, 0%, .1) !important;
     box-shadow: 0 0 .5rem hsla(0, 0%, 0%, .25) !important;
@@ -141,23 +137,23 @@ button::-moz-focus-inner {
 }
 
 .tooltip:after {
-    background-color: $extensions-primary;
+    background-color: var(--clipcc-extensions-primary);
 }
 
 .coming-soon-tooltip {
-    background-color: $data-primary !important;
+    background-color: var(--clipcc-data-primary) !important;
 }
 
 .coming-soon-tooltip:after {
-    background-color: $data-primary !important;
+    background-color: var(--clipcc-data-primary) !important;
 }
 
 .tooltip {
     border: 1px solid hsla(0, 0%, 0%, .1) !important;
-    border-radius: $form-radius !important;
+    border-radius: var(--clipcc-form-radius) !important;
     box-shadow: 0 0 .5rem hsla(0, 0%, 0%, .25) !important;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
-    z-index: $z-index-tooltip !important;
+    z-index: var(--clipcc-z-index-tooltip) !important;
 }
 
 $arrow-size: 0.5rem;

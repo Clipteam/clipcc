@@ -1,5 +1,3 @@
-@import "../../css/colors.css";
-
 .container {
     display: flex;
     flex-direction: column;
@@ -7,7 +5,7 @@
     cursor: pointer;
     font-size: 0.75rem;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: $motion-primary;
+    color: var(--clipcc-motion-primary);
     border-radius: 0.5rem;
 }
 
@@ -26,5 +24,5 @@
 }
 
 .container:active {
-    background-color: $motion-light-transparent;
+    background-color: var(--clipcc-motion-light-transparent);
 }

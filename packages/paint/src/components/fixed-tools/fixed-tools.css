@@ -1,6 +1,3 @@
-@import "../../css/colors.css";
-@import "../../css/units.css";
-
 .row {
     display: flex;
     flex-direction: row;
@@ -12,13 +9,13 @@
 }
 
 [dir="ltr"] .mod-dashed-border {
-    border-right: 1px dashed $ui-pane-border;
-    padding-right: calc(2 * $grid-unit);
+    border-right: 1px dashed var(--clipcc-ui-pane-border);
+    padding-right: calc(2 * var(--clipcc-grid-unit));
 }
 
 [dir="rtl"] .mod-dashed-border {
-    border-left: 1px dashed $ui-pane-border;
-    padding-left: calc(2 * $grid-unit);
+    border-left: 1px dashed var(--clipcc-ui-pane-border);
+    padding-left: calc(2 * var(--clipcc-grid-unit));
 }
 
 .mod-unselect {
@@ -29,7 +26,7 @@ $border-radius: 0.25rem;
 
 .button-group-button {
     display: inline-block;
-    border: 1px solid $ui-pane-border;
+    border: 1px solid var(--clipcc-ui-pane-border);
     border-radius: 0;
     padding: .35rem;
 }
@@ -48,7 +45,7 @@ $border-radius: 0.25rem;
 }
 
 [dir="ltr"] .button-group-button:first-of-type {
-    border-left: 1px solid $ui-pane-border;
+    border-left: 1px solid var(--clipcc-ui-pane-border);
     border-top-left-radius: $border-radius;
     border-bottom-left-radius: $border-radius;
 }
@@ -59,17 +56,17 @@ $border-radius: 0.25rem;
 }
 
 [dir="rtl"] .button-group-button:first-of-type {
-    border-right: 1px solid $ui-pane-border;
+    border-right: 1px solid var(--clipcc-ui-pane-border);
     border-top-right-radius: $border-radius;
     border-bottom-right-radius: $border-radius;
 }
 
 [dir="ltr"] .button-group-button.mod-start-border {
-    border-left: 1px solid $ui-pane-border;
+    border-left: 1px solid var(--clipcc-ui-pane-border);
 }
 
 [dir="rtl"] .button-group-button.mod-start-border {
-    border-right: 1px solid $ui-pane-border;
+    border-right: 1px solid var(--clipcc-ui-pane-border);
 }
 
 [dir="ltr"] .button-group-button.mod-no-end-border {
@@ -96,14 +93,14 @@ $border-radius: 0.25rem;
 }
 
 .mod-top-divider {
-    border-top: 1px solid $ui-pane-border;
+    border-top: 1px solid var(--clipcc-ui-pane-border);
 }
 
 .mod-menu-item {
     display: flex;
-    margin: 0 -$grid-unit;
+    margin: 0 -var(--clipcc-grid-unit);
     min-width: 6.25rem;
-    padding: calc(3 * $grid-unit);
+    padding: calc(3 * var(--clipcc-grid-unit));
     white-space: nowrap;
     cursor: pointer;
     transition: 0.1s ease;
@@ -116,7 +113,7 @@ $border-radius: 0.25rem;
 }
 
 .mod-menu-item:hover {
-    background: $motion-transparent;
+    background: var(--clipcc-motion-transparent);
 }
 
 .mod-disabled:hover {
@@ -124,10 +121,10 @@ $border-radius: 0.25rem;
 }
 
 .menu-item-icon {
-    margin-right: calc(2 * $grid-unit);
+    margin-right: calc(2 * var(--clipcc-grid-unit));
 }
 
 [dir="rtl"] .menu-item-icon {
     margin-right: 0;
-    margin-left: calc(2 * $grid-unit);
+    margin-left: calc(2 * var(--clipcc-grid-unit));
 }
