@@ -1,10 +1,3 @@
-$border-radius: 4px;
-$trim-handle-width: 30px;
-$trim-handle-height: 30px;
-$trim-handle-border: 3px;
-$stripe-size: 10px;
-$hover-scale: 1.25;
-
 .absolute {
     position: absolute;
     top: 0;
@@ -32,9 +25,9 @@ $hover-scale: 1.25;
     background: repeating-linear-gradient(
         45deg,
         var(--clipcc-red-primary),
-        var(--clipcc-red-primary) $stripe-size,
-        var(--clipcc-red-tertiary) $stripe-size,
-        var(--clipcc-red-tertiary) calc(2 * $stripe-size)
+        var(--clipcc-red-primary) 10px,
+        var(--clipcc-red-tertiary) 10px,
+        var(--clipcc-red-tertiary) calc(2 * 10px)
     );
 }
 
@@ -44,13 +37,13 @@ $hover-scale: 1.25;
 }
 
 .start-trim-background .trim-background-mask {
-    border-top-left-radius: $border-radius;
-    border-bottom-left-radius: $border-radius;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
 }
 
 .end-trim-background .trim-background-mask {
-    border-top-right-radius: $border-radius;
-    border-bottom-right-radius: $border-radius;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
 }
 
 .trim-line {
@@ -109,8 +102,8 @@ $hover-scale: 1.25;
 
 .trim-handle {
     position: absolute;
-    width: $trim-handle-width;
-    height: $trim-handle-height;
+    width: 30px;
+    height: 30px;
     right: 0;
     user-select: none;
 }
@@ -121,9 +114,9 @@ $hover-scale: 1.25;
 
 .trim-handle img {
     position: absolute;
-    width: $trim-handle-width;
-    height: $trim-handle-height;
-    left: calc($trim-handle-border * 1.5);
+    width: 30px;
+    height: 30px;
+    left: calc(3px * 1.5);
 
     /* Make sure image dragging isn't triggered */
     user-select: none;
@@ -134,11 +127,11 @@ $hover-scale: 1.25;
 }
 
 .top-trim-handle {
-    top: calc(-$trim-handle-height + $trim-handle-border);
+    top: calc(-30px + 3px);
 }
 
 .bottom-trim-handle {
-    bottom: calc(-$trim-handle-height + $trim-handle-border);
+    bottom: calc(-30px + 3px);
 }
 
 .top-trim-handle img {

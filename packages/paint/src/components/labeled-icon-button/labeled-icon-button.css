@@ -1,12 +1,10 @@
-$border-radius: 0.25rem;
-
 .mod-edit-field {
     background: none;
     border: none;
     display: inline-block;
     padding: .25rem .325rem;
     outline: none;
-    border-radius: $border-radius;
+    border-radius: 0.25rem;
     min-width: 3rem;
     font-size: 0.85rem;
     text-align: center;

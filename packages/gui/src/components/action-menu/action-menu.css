@@ -1,6 +1,3 @@
-$main-button-size: 2.75rem;
-$more-button-size: 2.25rem;
-
 .menu-container {
     display: flex;
     flex-direction: column-reverse;
@@ -39,8 +36,8 @@ button::-moz-focus-inner {
 
 .main-button {
     border-radius: 100%;
-    width: $main-button-size;
-    height: $main-button-size;
+    width: 2.75rem;
+    height: 2.75rem;
     box-shadow: 0 0 0 4px var(--clipcc-motion-transparent);
     z-index: var(--clipcc-z-index-add-button);
     transition: transform, box-shadow 0.5s;
@@ -52,8 +49,8 @@ button::-moz-focus-inner {
 }
 
 .main-icon {
-    width: calc($main-button-size - 1rem);
-    height: calc($main-button-size - 1rem);
+    width: calc(2.75rem - 1rem);
+    height: calc(2.75rem - 1rem);
 }
 
 [dir="rtl"] .main-icon {
@@ -69,17 +66,17 @@ button::-moz-focus-inner {
     overflow-y: hidden;
 
     background: var(--clipcc-motion-tertiary);
-    border-top-left-radius: $more-button-size;
-    border-top-right-radius: $more-button-size;
-    width: $more-button-size;
-    margin-left: calc(($main-button-size - $more-button-size) / 2);
-    margin-right: calc(($main-button-size - $more-button-size) / 2);
+    border-top-left-radius: 2.25rem;
+    border-top-right-radius: 2.25rem;
+    width: 2.25rem;
+    margin-left: calc((2.75rem - 2.25rem) / 2);
+    margin-right: calc((2.75rem - 2.25rem) / 2);
 
     position: absolute;
-    bottom: calc($main-button-size);
+    bottom: calc(2.75rem);
 
-    margin-bottom: calc($main-button-size / -2);
-    padding-bottom: calc($main-button-size / 2);
+    margin-bottom: calc(2.75rem / -2);
+    padding-bottom: calc(2.75rem / 2);
 }
 
 .more-buttons {
@@ -104,19 +101,19 @@ button::-moz-focus-inner {
 }
 
 .more-buttons:first-child { /* Round off top button */
-    border-top-right-radius: $more-button-size;
-    border-top-left-radius: $more-button-size;
+    border-top-right-radius: 2.25rem;
+    border-top-left-radius: 2.25rem;
 }
 
 .more-button {
-    width: $more-button-size;
-    height: $more-button-size;
+    width: 2.25rem;
+    height: 2.25rem;
     background: var(--clipcc-motion-tertiary);
 }
 
 .more-icon {
-    width: calc($more-button-size - 1rem);
-    height: calc($more-button-size - 1rem);
+    width: calc(2.25rem - 1rem);
+    height: calc(2.25rem - 1rem);
 }
 
 .coming-soon .more-icon {

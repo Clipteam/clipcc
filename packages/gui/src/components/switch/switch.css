@@ -1,16 +1,8 @@
-$disabled-color: rgb(125, 125, 125);
-$border-width: 1px;
-$width: 3rem;
-$height: 1.5rem;
-
-$slider-width: calc($height - 4 * $border-width);
-$slider-height: $slider-width;
-
 .switch {
-    width: $width;
-    height: $height;
-    border-radius: $height;
-    border: solid var(--clipcc-ui-black-transparent) $border-width;
+    width: 3rem;
+    height: 1.5rem;
+    border-radius: 1.5rem;
+    border: solid var(--clipcc-ui-black-transparent) 1px;
     display: inline-block;
     transition: background-color 0.3s;
     cursor: pointer;
@@ -29,17 +21,17 @@ $slider-height: $slider-width;
 }
 
 .slider {
-    width: $slider-width;
-    min-height: $slider-height;
-    border-radius: $slider-height;
-    margin: calc(($height - $slider-height) / 2 - $border-width);
+    width: calc(1.5rem - 4 * 1px);
+    min-height: calc(1.5rem - 4 * 1px);
+    border-radius: calc(1.5rem - 4 * 1px);
+    margin: calc((1.5rem - calc(1.5rem - 4 * 1px)) / 2 - 1px);
     transition: all 0.3s;
-    border: solid var(--clipcc-ui-black-transparent) $border-width;
+    border: solid var(--clipcc-ui-black-transparent) 1px;
     background-color: var(--clipcc-ui-white);
 }
 
 .slider.true {
-    transform: translateX(calc($width - $height));
+    transform: translateX(calc(3rem - 1.5rem));
 }
 
 .slider.false {

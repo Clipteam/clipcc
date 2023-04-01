@@ -24,4 +24,11 @@ ALSO EDITED ON 11/13/2017 TO ADD IN CONTANTS FOR LAYOUT FROM `layout-contents.js
     /* layout contants from `layout-constants.js`, minus 1px */
     --clipcc-full-size: 1095px;
     --clipcc-full-size-paint: 1256px;
+
+    /* scroll bar units */
+    --clipcc-scrollbar-thickness: 9px;
+    --clipcc-scrollbar-radius: 6px;
+    --clipcc-scrollbar-padding: 2.5px;
+    --clipcc-scrollbar-color: #bbb;
+    --clipcc-scrollbar-color-hover: #aaa;
 }

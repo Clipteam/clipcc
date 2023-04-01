@@ -22,8 +22,6 @@
     user-select: none;
 }
 
-$border-radius: 0.25rem;
-
 .button-group-button {
     display: inline-block;
     border: 1px solid var(--clipcc-ui-pane-border);
@@ -40,25 +38,25 @@ $border-radius: 0.25rem;
 }
 
 [dir="ltr"] .button-group-button:last-of-type {
-    border-top-right-radius: $border-radius;
-    border-bottom-right-radius: $border-radius;
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
 }
 
 [dir="ltr"] .button-group-button:first-of-type {
     border-left: 1px solid var(--clipcc-ui-pane-border);
-    border-top-left-radius: $border-radius;
-    border-bottom-left-radius: $border-radius;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
 }
 
 [dir="rtl"] .button-group-button:last-of-type {
-    border-top-left-radius: $border-radius;
-    border-bottom-left-radius: $border-radius;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
 }
 
 [dir="rtl"] .button-group-button:first-of-type {
     border-right: 1px solid var(--clipcc-ui-pane-border);
-    border-top-right-radius: $border-radius;
-    border-bottom-right-radius: $border-radius;
+    border-top-right-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
 }
 
 [dir="ltr"] .button-group-button.mod-start-border {

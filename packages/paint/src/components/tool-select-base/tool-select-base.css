@@ -1,10 +1,8 @@
-$border-radius: .25rem;
-
 .mod-tool-select {
     display: inline-block;
     margin: var(--clipcc-grid-unit);
     border: none;
-    border-radius: $border-radius;
+    border-radius: .25rem;
     outline: none;
     background: none;
     padding: var(--clipcc-grid-unit);

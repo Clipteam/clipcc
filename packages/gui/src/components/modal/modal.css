@@ -52,7 +52,6 @@
     Use the same width for both side item containers,
     so that title remains centered
 */
-$sides: 20rem;
 
 .header {
     display: flex;
@@ -89,7 +88,7 @@ $sides: 20rem;
 
 .header-item-filter {
     display: flex;
-    flex-basis: $sides;
+    flex-basis: 20rem;
     justify-content: flex-start;
 }
 
@@ -103,23 +102,23 @@ $sides: 20rem;
 }
 
 [dir="ltr"] .header-item-title {
-    margin: 0 -$sides 0 0;
+    margin: 0 -20rem 0 0;
 }
 
 [dir="rtl"] .header-item-title {
-    margin: 0 0 0 -$sides;
+    margin: 0 0 0 -20rem;
 }
 
 .full-screen [dir="ltr"] .header-item-title {
-    margin: 0 0 0 -$sides;
+    margin: 0 0 0 -20rem;
 }
 
 .full-screen [dir="rtl"] .header-item-title {
-    margin: 0 -$sides 0 0;
+    margin: 0 -20rem 0 0;
 }
 
 .header-item-close {
-    flex-basis: $sides;
+    flex-basis: 20rem;
     justify-content: flex-end;
     z-index: 1;
 }
