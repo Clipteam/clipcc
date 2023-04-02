@@ -6,7 +6,7 @@ const initialState = {
     edgelessStage: false,
     unlimitedListLength: false,
     unlimitedPenSize: false,
-    unlimitedSoundEffects: false,
+    unlimitedSoundStuffs: false,
     accurateMouseCoordinates: false,
     autoSaveInterval: 120,
     compression: 6,

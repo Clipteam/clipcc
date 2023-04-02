@@ -41,7 +41,7 @@ const vmManagerHOC = function (WrappedComponent) {
                     edgelessStage: this.props.edgelessStage,
                     unlimitedListLength: this.props.unlimitedListLength,
                     unlimitedPenSize: this.props.unlimitedPenSize,
-                    unlimitedSoundEffects: this.props.unlimitedSoundEffects,
+                    unlimitedSoundStuffs: this.props.unlimitedSoundStuffs,
                     accurateMouseCoordinates: this.props.accurateMouseCoordinates
                 });
             }
@@ -84,9 +84,9 @@ const vmManagerHOC = function (WrappedComponent) {
                     unlimitedPenSize: this.props.unlimitedPenSize
                 });
             }
-            if (this.props.unlimitedSoundEffects !== prevProps.unlimitedSoundEffects) {
+            if (this.props.unlimitedSoundStuffs !== prevProps.unlimitedSoundStuffs) {
                 this.props.vm.setLimitOptions({
-                    unlimitedSoundEffects: this.props.unlimitedSoundEffects
+                    unlimitedSoundStuffs: this.props.unlimitedSoundStuffs
                 });
             }
             if (this.props.accurateMouseCoordinates !== prevProps.accurateMouseCoordinates) {
@@ -166,7 +166,7 @@ const vmManagerHOC = function (WrappedComponent) {
         edgelessStage: PropTypes.bool.isRequired,
         unlimitedListLength: PropTypes.bool.isRequired,
         unlimitedPenSize: PropTypes.bool.isRequired,
-        unlimitedSoundEffects: PropTypes.bool.isRequired,
+        unlimitedSoundStuffs: PropTypes.bool.isRequired,
         accurateMouseCoordinates: PropTypes.bool.isRequired,
         vm: PropTypes.instanceOf(VM).isRequired
     };
@@ -188,7 +188,7 @@ const vmManagerHOC = function (WrappedComponent) {
             edgelessStage: state.scratchGui.settings.edgelessStage,
             unlimitedListLength: state.scratchGui.settings.unlimitedListLength,
             unlimitedPenSize: state.scratchGui.settings.unlimitedPenSize,
-            unlimitedSoundEffects: state.scratchGui.settings.unlimitedSoundEffects,
+            unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,
             accurateMouseCoordinates: state.scratchGui.settings.accurateMouseCoordinates
         };
     };

@@ -25,7 +25,7 @@ class SettingsModal extends React.Component {
             'handleChangeEdgelessStage',
             'handleChangeUnlimitedListLength',
             'handleChangeUnlimitedPenSize',
-            'handleChangeUnlimitedSoundEffects',
+            'handleChangeUnlimitedSoundStuffs',
             'handleChangeAccurateMouseCoordinates'
         ]);
     }
@@ -59,8 +59,8 @@ class SettingsModal extends React.Component {
     handleChangeUnlimitedPenSize (value) {
         this.props.updateSettings({unlimitedPenSize: value});
     }
-    handleChangeUnlimitedSoundEffects (value) {
-        this.props.updateSettings({unlimitedSoundEffects: value});
+    handleChangeUnlimitedSoundStuffs (value) {
+        this.props.updateSettings({unlimitedSoundStuffs: value});
     }
     handleChangeAccurateMouseCoordinates (value) {
         this.props.updateSettings({accurateMouseCoordinates: value});
@@ -75,7 +75,7 @@ class SettingsModal extends React.Component {
                 edgelessStage={this.props.edgelessStage}
                 unlimitedListLength={this.props.unlimitedListLength}
                 unlimitedPenSize={this.props.unlimitedPenSize}
-                unlimitedSoundEffects={this.props.unlimitedSoundEffects}
+                unlimitedSoundStuffs={this.props.unlimitedSoundStuffs}
                 accurateMouseCoordinates={this.props.accurateMouseCoordinates}
                 onClose={this.handleClose}
                 onChangeAutoSave={this.handleChangeAutoSave}
@@ -85,7 +85,7 @@ class SettingsModal extends React.Component {
                 onChangeEdgelessStage={this.handleChangeEdgelessStage}
                 onChangeUnlimitedListLength={this.handleChangeUnlimitedListLength}
                 onChangeUnlimitedPenSize={this.handleChangeUnlimitedPenSize}
-                onChangeUnlimitedSoundEffects={this.handleChangeUnlimitedSoundEffects}
+                onChangeUnlimitedSoundStuffs={this.handleChangeUnlimitedSoundStuffs}
                 onChangeAccurateMouseCoordinates={this.handleChangeAccurateMouseCoordinates}
             />
         );
@@ -98,7 +98,7 @@ SettingsModal.propTypes = {
     edgelessStage: PropTypes.bool.isRequired,
     unlimitedListLength: PropTypes.bool.isRequired,
     unlimitedPenSize: PropTypes.bool.isRequired,
-    unlimitedSoundEffects: PropTypes.bool.isRequired,
+    unlimitedSoundStuffs: PropTypes.bool.isRequired,
     accurateMouseCoordinates: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
@@ -113,7 +113,7 @@ const mapStateToProps = state => ({
     edgelessStage: state.scratchGui.settings.edgelessStage,
     unlimitedListLength: state.scratchGui.settings.unlimitedListLength,
     unlimitedPenSize: state.scratchGui.settings.unlimitedPenSize,
-    unlimitedSoundEffects: state.scratchGui.settings.unlimitedSoundEffects,
+    unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,
     accurateMouseCoordinates: state.scratchGui.settings.accurateMouseCoordinates,
     autoSaveInterval: state.scratchGui.settings.autoSaveInterval,
     framerate: state.scratchGui.settings.framerate,

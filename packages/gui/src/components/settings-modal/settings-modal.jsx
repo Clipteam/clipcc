@@ -194,19 +194,19 @@ class SettingsModal extends React.Component {
                         <div className={styles.item}>
                             <div className={styles.label}>
                                 <FormattedMessage
-                                    defaultMessage="Unlimited Sound Effects"
-                                    description="Label of Unlimited Sound Effects"
-                                    id="gui.settingsModal.unlimitedSoundEffects"
+                                    defaultMessage="Unlimited Sound Stuffs"
+                                    description="Label of Unlimited Sound Stuffs"
+                                    id="gui.settingsModal.unlimitedSoundStuffs"
                                 />
                                 <FormattedMessage
-                                    defaultMessage="Allow change sound effects freely."
-                                    description="Description of unlimited sound effects"
-                                    id="gui.settingsModal.unlimitedSoundEffectsDescription"
+                                    defaultMessage="Allow change sound stuffs (Eg: effects, note, tempo) freely."
+                                    description="Description of unlimited sound stuffs"
+                                    id="gui.settingsModal.unlimitedSoundStuffsDescription"
                                 />
                             </div>
                             <Switch
-                                value={this.props.unlimitedSoundEffects}
-                                onChange={this.props.onChangeUnlimitedSoundEffects}
+                                value={this.props.unlimitedSoundStuffs}
+                                onChange={this.props.onChangeUnlimitedSoundStuffs}
                             />
                         </div>
                         <div className={styles.item}>
@@ -291,7 +291,7 @@ SettingsModal.propTypes = {
     edgelessStage: PropTypes.bool.isRequired,
     unlimitedListLength: PropTypes.bool.isRequired,
     unlimitedPenSize: PropTypes.bool.isRequired,
-    unlimitedSoundEffects: PropTypes.bool.isRequired,
+    unlimitedSoundStuffs: PropTypes.bool.isRequired,
     accurateMouseCoordinates: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
@@ -302,7 +302,7 @@ SettingsModal.propTypes = {
     onChangeEdgelessStage: PropTypes.func.isRequired,
     onChangeUnlimitedListLength: PropTypes.func.isRequired,
     onChangeUnlimitedPenSize: PropTypes.func.isRequired,
-    onChangeUnlimitedSoundEffects: PropTypes.func.isRequired,
+    onChangeUnlimitedSoundStuffs: PropTypes.func.isRequired,
     onChangeAccurateMouseCoordinates: PropTypes.func.isRequired,
     onChangeAutoSaveInterval: PropTypes.func.isRequired,
     onChangeFramerate: PropTypes.func.isRequired

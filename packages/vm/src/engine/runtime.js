@@ -312,7 +312,8 @@ class Runtime extends EventEmitter {
             edgelessStage: false,
             unlimitedListLength: false,
             unlimitedPenSize: false,
-            accurateMouseCoordinates: false
+            accurateMouseCoordinates: false,
+            unlimitedSoundStuffs: false
         };
 
         /**
