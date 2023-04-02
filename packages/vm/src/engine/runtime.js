@@ -304,6 +304,18 @@ class Runtime extends EventEmitter {
         this.compatibilityMode = false;
 
         /**
+         * The limit options.
+         * @type {object}
+         */
+        this.limitOptions = {
+            infiniteCloning: false,
+            edgelessStage: false,
+            unlimitedListLength: false,
+            unlimitedPenSize: false,
+            accurateMouseCoordinates: false
+        };
+
+        /**
          * A reference to the current runtime stepping interval, set
          * by a `setInterval`.
          * @type {!number}

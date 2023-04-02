@@ -222,6 +222,14 @@ class VirtualMachine extends EventEmitter {
     }
 
     /**
+     * Set the limit options.
+     * @param {object} options Limit options
+     */
+    setLimitOptions (options) {
+        this.runtime.limitOptions = Object.assign({}, this.runtime.limitOptions, options);
+    }
+
+    /**
      * Stop all threads and running activities.
      */
     stopAll () {
