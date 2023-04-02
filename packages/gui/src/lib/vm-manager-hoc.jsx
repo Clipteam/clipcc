@@ -36,6 +36,14 @@ const vmManagerHOC = function (WrappedComponent) {
                 this.props.vm.setLocale(this.props.locale, this.props.messages);
                 // Apply settings
                 this.props.vm.setFramerate(this.props.framerate);
+                this.props.vm.setLimitOptions({
+                    infiniteCloning: this.props.infiniteCloning,
+                    edgelessStage: this.props.edgelessStage,
+                    unlimitedListLength: this.props.unlimitedListLength,
+                    unlimitedPenSize: this.props.unlimitedPenSize,
+                    unlimitedSoundEffects: this.props.unlimitedSoundEffects,
+                    accurateMouseCoordinates: this.props.accurateMouseCoordinates
+                });
             }
             if (!this.props.isPlayerOnly && !this.props.isStarted) {
                 this.props.vm.start();
@@ -55,6 +63,31 @@ const vmManagerHOC = function (WrappedComponent) {
             // Sync settings
             if (this.props.framerate !== prevProps.framerate) {
                 this.props.vm.setFramerate(this.props.framerate);
+            }
+            if (this.props.infiniteCloning !== prevProps.infiniteCloning) {
+                this.props.vm.setLimitOptions({
+                    infiniteCloning: this.props.infiniteCloning
+                });
+            }
+            if (this.props.edgelessStage !== prevProps.edgelessStage) {
+                this.props.vm.setLimitOptions({
+                    edgelessStage: this.props.edgelessStage
+                });
+            }
+            if (this.props.unlimitedListLength !== prevProps.unlimitedListLength) {
+                this.props.vm.setLimitOptions({
+                    unlimitedListLength: this.props.unlimitedListLength
+                });
+            }
+            if (this.props.unlimitedPenSize !== prevProps.unlimitedPenSize) {
+                this.props.vm.setLimitOptions({
+                    unlimitedPenSize: this.props.unlimitedPenSize
+                });
+            }
+            if (this.props.unlimitedSoundEffects !== prevProps.unlimitedSoundEffects) {
+                this.props.vm.setLimitOptions({
+                    unlimitedSoundEffects: this.props.unlimitedSoundEffects
+                });
             }
         }
         loadProject () {
@@ -124,6 +157,12 @@ const vmManagerHOC = function (WrappedComponent) {
         projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         username: PropTypes.string,
         framerate: PropTypes.number.isRequired,
+        infiniteCloning: PropTypes.bool.isRequired,
+        edgelessStage: PropTypes.bool.isRequired,
+        unlimitedListLength: PropTypes.bool.isRequired,
+        unlimitedPenSize: PropTypes.bool.isRequired,
+        unlimitedSoundEffects: PropTypes.bool.isRequired,
+        accurateMouseCoordinates: PropTypes.bool.isRequired,
         vm: PropTypes.instanceOf(VM).isRequired
     };
 
@@ -139,7 +178,13 @@ const vmManagerHOC = function (WrappedComponent) {
             loadingState: loadingState,
             isPlayerOnly: state.scratchGui.mode.isPlayerOnly,
             isStarted: state.scratchGui.vmStatus.started,
-            framerate: state.scratchGui.settings.framerate
+            framerate: state.scratchGui.settings.framerate,
+            infiniteCloning: state.scratchGui.settings.infiniteCloning,
+            edgelessStage: state.scratchGui.settings.edgelessStage,
+            unlimitedListLength: state.scratchGui.settings.unlimitedListLength,
+            unlimitedPenSize: state.scratchGui.settings.unlimitedPenSize,
+            unlimitedSoundEffects: state.scratchGui.settings.unlimitedSoundEffects,
+            accurateMouseCoordinates: state.scratchGui.settings.accurateMouseCoordinates
         };
     };
 

@@ -49,31 +49,21 @@ class SettingsModal extends React.Component {
     }
     handleChangeInfiniteCloning (value) {
         this.props.updateSettings({infiniteCloning: value});
-        this.props.vm.setLimitOptions({
-            infiniteCloning: !!value
-        });
     }
     handleChangeEdgelessStage (value) {
         this.props.updateSettings({edgelessStage: value});
-        // @todo
     }
     handleChangeUnlimitedListLength (value) {
         this.props.updateSettings({unlimitedListLength: value});
-        this.props.vm.setLimitOptions({
-            unlimitedListLength: !!value
-        });
     }
     handleChangeUnlimitedPenSize (value) {
         this.props.updateSettings({unlimitedPenSize: value});
-        // @todo
     }
     handleChangeUnlimitedSoundEffects (value) {
         this.props.updateSettings({unlimitedSoundEffects: value});
-        // @todo
     }
     handleChangeAccurateMouseCoordinates (value) {
         this.props.updateSettings({accurateMouseCoordinates: value});
-        // @todo
     }
     render () {
         return (
