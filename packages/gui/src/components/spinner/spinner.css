@@ -6,7 +6,7 @@
     border-radius: 50%;
     border-width: .1875rem;
     border-style: solid;
-    border-color: var(--clipcc-ui-white)-transparent;
+    border-color: var(--clipcc-ui-white-transparent);
     box-sizing: content-box;
 }
 

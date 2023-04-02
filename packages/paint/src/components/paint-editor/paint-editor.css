@@ -16,7 +16,7 @@
 }
 
 .editor-container-top {
-    border-bottom: 1px dashed var(-clipcc-ui-pane-border);
+    border-bottom: 1px dashed var(--clipcc-ui-pane-border);
     padding-bottom: calc(2 * var(--clipcc-grid-unit));
 }
 

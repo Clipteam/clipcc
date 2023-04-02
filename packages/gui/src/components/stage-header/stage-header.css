@@ -17,7 +17,7 @@
     justify-content: space-between;
     flex-shrink: 0;
     align-items: center;
-    height: var(--stage-menu-height);
+    height: var(--clipcc-stage-menu-height);
     padding-top: var(--clipcc-space);
     padding-bottom: var(--clipcc-space);
 }
