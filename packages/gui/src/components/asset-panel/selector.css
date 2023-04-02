@@ -22,8 +22,6 @@
     background: none;
 }
 
-$fade-out-distance: 100px;
-
 .new-buttons:before {
     content: "";
     position: absolute;
@@ -31,7 +29,7 @@ $fade-out-distance: 100px;
     left: 0;
     right:0;
     background: linear-gradient(rgba(232,237,241, 0),rgba(232,237,241, 1));
-    height: $fade-out-distance;
+    height: 100px;
     width: 100%;
     pointer-events: none;
 }
