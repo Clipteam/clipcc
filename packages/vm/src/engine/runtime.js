@@ -742,8 +742,8 @@ class Runtime extends EventEmitter {
      * How many clones can be created at a time.
      * @const {number}
      */
-    static get MAX_CLONES () {
-        return 300;
+    get MAX_CLONES () {
+        return this.limitOptions.infiniteCloning ? Infinity : 300;
     }
 
     // -----------------------------------------------------------------------------
@@ -2484,7 +2484,7 @@ class Runtime extends EventEmitter {
      * @return {boolean} True until the number of clones hits Runtime.MAX_CLONES.
      */
     clonesAvailable () {
-        return this._cloneCounter < Runtime.MAX_CLONES;
+        return this._cloneCounter < this.MAX_CLONES;
     }
 
     /**

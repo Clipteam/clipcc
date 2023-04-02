@@ -50,7 +50,9 @@ class SettingsModal extends React.Component {
     }
     handleChangeInfiniteCloning (value) {
         this.props.updateSettings({infiniteCloning: value});
-        // @todo
+        this.props.vm.setLimitOptions({
+            infiniteCloning: !!value
+        });
     }
     handleChangeEdgelessStage (value) {
         this.props.updateSettings({edgelessStage: value});
