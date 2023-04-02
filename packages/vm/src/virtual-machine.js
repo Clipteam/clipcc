@@ -227,6 +227,9 @@ class VirtualMachine extends EventEmitter {
      */
     setLimitOptions (options) {
         this.runtime.limitOptions = Object.assign({}, this.runtime.limitOptions, options);
+        if (options.hasOwnProperty('edgelessStage') && this.runtime.renderer) {
+            this.runtime.renderer.setEdgelessStage(options.edgelessStage);
+        }
     }
 
     /**

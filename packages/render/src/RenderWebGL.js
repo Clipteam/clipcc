@@ -147,6 +147,9 @@ class RenderWebGL extends EventEmitter {
         /** @type {RenderWebGL.UseGpuModes} */
         this._useGpuMode = RenderWebGL.UseGpuModes.Automatic;
 
+        /** @type {boolean} */
+        this.edgelessStage = false;
+
         /** @type {Drawable[]} */
         this._allDrawables = [];
 
@@ -236,6 +239,14 @@ class RenderWebGL extends EventEmitter {
      */
     get canvas () {
         return this._gl && this._gl.canvas;
+    }
+
+    /**
+     * Set whether the stage is edgeless.
+     * @param {boolean} value Whether the stage is edgeless
+     */
+    setEdgelessStage (value) {
+        this.edgelessStage = value;
     }
 
     /**
@@ -1336,7 +1347,9 @@ class RenderWebGL extends EventEmitter {
         const bounds = drawable.getFastBounds();
 
         // Limit queries to the stage size.
-        bounds.clamp(this._xLeft, this._xRight, this._yBottom, this._yTop);
+        if (!this.edgelessStage) {
+            bounds.clamp(this._xLeft, this._xRight, this._yBottom, this._yTop);
+        }
 
         // Use integer coordinates for queries - weird things happen
         // when you provide float width/heights to gl.viewport and projection.
