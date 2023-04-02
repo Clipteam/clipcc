@@ -59,19 +59,19 @@ class Mouse {
     postData (data) {
         if (data.x) {
             this._clientX = data.x;
-            this._scratchX = Math.round(MathUtil.clamp(
+            this._scratchX = MathUtil.clamp(
                 480 * ((data.x / data.canvasWidth) - 0.5),
                 -240,
                 240
-            ));
+            );
         }
         if (data.y) {
             this._clientY = data.y;
-            this._scratchY = Math.round(MathUtil.clamp(
+            this._scratchY = MathUtil.clamp(
                 -360 * ((data.y / data.canvasHeight) - 0.5),
                 -180,
                 180
-            ));
+            );
         }
         if (typeof data.isDown !== 'undefined') {
             const previousDownState = this._isDown;
@@ -122,7 +122,8 @@ class Mouse {
      * @return {number} Clamped and integer rounded X position of the mouse cursor.
      */
     getScratchX () {
-        return this._scratchX;
+        return this.runtime.limitOptions.accurateMouseCoordinates
+            ? this._scratchX : Math.round(this._scratchX);
     }
 
     /**
@@ -130,7 +131,8 @@ class Mouse {
      * @return {number} Clamped and integer rounded Y position of the mouse cursor.
      */
     getScratchY () {
-        return this._scratchY;
+        return this.runtime.limitOptions.accurateMouseCoordinates
+            ? this._scratchY : Math.round(this._scratchY);
     }
 
     /**

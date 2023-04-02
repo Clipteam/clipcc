@@ -89,6 +89,11 @@ const vmManagerHOC = function (WrappedComponent) {
                     unlimitedSoundEffects: this.props.unlimitedSoundEffects
                 });
             }
+            if (this.props.accurateMouseCoordinates !== prevProps.accurateMouseCoordinates) {
+                this.props.vm.setLimitOptions({
+                    accurateMouseCoordinates: this.props.accurateMouseCoordinates
+                });
+            }
         }
         loadProject () {
             return this.props.vm.loadProject(this.props.projectData)
