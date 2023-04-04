@@ -122,7 +122,7 @@ class Mouse {
      * @return {number} Clamped and integer rounded X position of the mouse cursor.
      */
     getScratchX () {
-        return this.runtime.limitOptions.accurateMouseCoordinates
+        return this.runtime.limitOptions.accurateCoordinates
             ? this._scratchX : Math.round(this._scratchX);
     }
 
@@ -131,7 +131,7 @@ class Mouse {
      * @return {number} Clamped and integer rounded Y position of the mouse cursor.
      */
     getScratchY () {
-        return this.runtime.limitOptions.accurateMouseCoordinates
+        return this.runtime.limitOptions.accurateCoordinates
             ? this._scratchY : Math.round(this._scratchY);
     }
 

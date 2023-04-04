@@ -7,7 +7,7 @@ const initialState = {
     unlimitedListLength: false,
     unlimitedPenSize: false,
     unlimitedSoundStuffs: false,
-    accurateMouseCoordinates: false,
+    accurateCoordinates: false,
     autoSaveInterval: 120,
     compression: 6,
     framerate: 30

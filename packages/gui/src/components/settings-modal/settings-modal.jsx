@@ -212,19 +212,19 @@ class SettingsModal extends React.Component {
                         <div className={styles.item}>
                             <div className={styles.label}>
                                 <FormattedMessage
-                                    defaultMessage="Accurate mouse coordinates"
-                                    description="Label of accurate mouse coordinates"
-                                    id="gui.settingsModal.accurateMouseCoordinates"
+                                    defaultMessage="Accurate Coordinates"
+                                    description="Label of accurate coordinates"
+                                    id="gui.settingsModal.accurateCoordinates"
                                 />
                                 <FormattedMessage
-                                    defaultMessage="Don't round mouse coordinates for accurate sensing."
-                                    description="Description of accurate mouse coordinates"
-                                    id="gui.settingsModal.accurateMouseCoordinatesDescription"
+                                    defaultMessage="Don't round coordinates."
+                                    description="Description of accurate coordinates"
+                                    id="gui.settingsModal.accurateCoordinatesDescription"
                                 />
                             </div>
                             <Switch
-                                value={this.props.accurateMouseCoordinates}
-                                onChange={this.props.onChangeAccurateMouseCoordinates}
+                                value={this.props.accurateCoordinates}
+                                onChange={this.props.onChangeAccurateCoordinates}
                             />
                         </div>
                         <p
@@ -292,7 +292,7 @@ SettingsModal.propTypes = {
     unlimitedListLength: PropTypes.bool.isRequired,
     unlimitedPenSize: PropTypes.bool.isRequired,
     unlimitedSoundStuffs: PropTypes.bool.isRequired,
-    accurateMouseCoordinates: PropTypes.bool.isRequired,
+    accurateCoordinates: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
     intl: intlShape.isRequired,
@@ -303,7 +303,7 @@ SettingsModal.propTypes = {
     onChangeUnlimitedListLength: PropTypes.func.isRequired,
     onChangeUnlimitedPenSize: PropTypes.func.isRequired,
     onChangeUnlimitedSoundStuffs: PropTypes.func.isRequired,
-    onChangeAccurateMouseCoordinates: PropTypes.func.isRequired,
+    onChangeAccurateCoordinates: PropTypes.func.isRequired,
     onChangeAutoSaveInterval: PropTypes.func.isRequired,
     onChangeFramerate: PropTypes.func.isRequired
 };

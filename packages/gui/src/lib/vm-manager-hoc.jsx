@@ -42,7 +42,7 @@ const vmManagerHOC = function (WrappedComponent) {
                     unlimitedListLength: this.props.unlimitedListLength,
                     unlimitedPenSize: this.props.unlimitedPenSize,
                     unlimitedSoundStuffs: this.props.unlimitedSoundStuffs,
-                    accurateMouseCoordinates: this.props.accurateMouseCoordinates
+                    accurateCoordinates: this.props.accurateCoordinates
                 });
             }
             if (!this.props.isPlayerOnly && !this.props.isStarted) {
@@ -89,9 +89,9 @@ const vmManagerHOC = function (WrappedComponent) {
                     unlimitedSoundStuffs: this.props.unlimitedSoundStuffs
                 });
             }
-            if (this.props.accurateMouseCoordinates !== prevProps.accurateMouseCoordinates) {
+            if (this.props.accurateCoordinates !== prevProps.accurateCoordinates) {
                 this.props.vm.setLimitOptions({
-                    accurateMouseCoordinates: this.props.accurateMouseCoordinates
+                    accurateCoordinates: this.props.accurateCoordinates
                 });
             }
         }
@@ -167,7 +167,7 @@ const vmManagerHOC = function (WrappedComponent) {
         unlimitedListLength: PropTypes.bool.isRequired,
         unlimitedPenSize: PropTypes.bool.isRequired,
         unlimitedSoundStuffs: PropTypes.bool.isRequired,
-        accurateMouseCoordinates: PropTypes.bool.isRequired,
+        accurateCoordinates: PropTypes.bool.isRequired,
         vm: PropTypes.instanceOf(VM).isRequired
     };
 
@@ -189,7 +189,7 @@ const vmManagerHOC = function (WrappedComponent) {
             unlimitedListLength: state.scratchGui.settings.unlimitedListLength,
             unlimitedPenSize: state.scratchGui.settings.unlimitedPenSize,
             unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,
-            accurateMouseCoordinates: state.scratchGui.settings.accurateMouseCoordinates
+            accurateCoordinates: state.scratchGui.settings.accurateCoordinates
         };
     };
 

@@ -26,7 +26,7 @@ class SettingsModal extends React.Component {
             'handleChangeUnlimitedListLength',
             'handleChangeUnlimitedPenSize',
             'handleChangeUnlimitedSoundStuffs',
-            'handleChangeAccurateMouseCoordinates'
+            'handleChangeAccurateCoordinates'
         ]);
     }
     handleClose () {
@@ -62,8 +62,8 @@ class SettingsModal extends React.Component {
     handleChangeUnlimitedSoundStuffs (value) {
         this.props.updateSettings({unlimitedSoundStuffs: value});
     }
-    handleChangeAccurateMouseCoordinates (value) {
-        this.props.updateSettings({accurateMouseCoordinates: value});
+    handleChangeAccurateCoordinates (value) {
+        this.props.updateSettings({accurateCoordinates: value});
     }
     render () {
         return (
@@ -76,7 +76,7 @@ class SettingsModal extends React.Component {
                 unlimitedListLength={this.props.unlimitedListLength}
                 unlimitedPenSize={this.props.unlimitedPenSize}
                 unlimitedSoundStuffs={this.props.unlimitedSoundStuffs}
-                accurateMouseCoordinates={this.props.accurateMouseCoordinates}
+                accurateCoordinates={this.props.accurateCoordinates}
                 onClose={this.handleClose}
                 onChangeAutoSave={this.handleChangeAutoSave}
                 onChangeAutoSaveInterval={this.handleChangeAutoSaveInterval}
@@ -86,7 +86,7 @@ class SettingsModal extends React.Component {
                 onChangeUnlimitedListLength={this.handleChangeUnlimitedListLength}
                 onChangeUnlimitedPenSize={this.handleChangeUnlimitedPenSize}
                 onChangeUnlimitedSoundStuffs={this.handleChangeUnlimitedSoundStuffs}
-                onChangeAccurateMouseCoordinates={this.handleChangeAccurateMouseCoordinates}
+                onChangeAccurateCoordinates={this.handleChangeAccurateCoordinates}
             />
         );
     }
@@ -99,7 +99,7 @@ SettingsModal.propTypes = {
     unlimitedListLength: PropTypes.bool.isRequired,
     unlimitedPenSize: PropTypes.bool.isRequired,
     unlimitedSoundStuffs: PropTypes.bool.isRequired,
-    accurateMouseCoordinates: PropTypes.bool.isRequired,
+    accurateCoordinates: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -114,7 +114,7 @@ const mapStateToProps = state => ({
     unlimitedListLength: state.scratchGui.settings.unlimitedListLength,
     unlimitedPenSize: state.scratchGui.settings.unlimitedPenSize,
     unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,
-    accurateMouseCoordinates: state.scratchGui.settings.accurateMouseCoordinates,
+    accurateCoordinates: state.scratchGui.settings.accurateCoordinates,
     autoSaveInterval: state.scratchGui.settings.autoSaveInterval,
     framerate: state.scratchGui.settings.framerate,
     vm: state.scratchGui.vm
