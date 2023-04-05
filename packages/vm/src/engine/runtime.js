@@ -1627,6 +1627,7 @@ class Runtime extends EventEmitter {
     attachRenderer (renderer) {
         this.renderer = renderer;
         this.renderer.setEdgelessStage(this.limitOptions.edgelessStage);
+        this.renderer.setAccurateCoordinates(this.limitOptions.accurateCoordinates);
         this.renderer.setLayerGroupOrdering(StageLayering.LAYER_GROUPS);
     }
 

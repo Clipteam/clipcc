@@ -230,6 +230,9 @@ class VirtualMachine extends EventEmitter {
         if (options.hasOwnProperty('edgelessStage') && this.runtime.renderer) {
             this.runtime.renderer.setEdgelessStage(options.edgelessStage);
         }
+        if (options.hasOwnProperty('accurateCoordinates') && this.runtime.renderer) {
+            this.runtime.renderer.setAccurateCoordinates(options.accurateCoordinates);
+        }
     }
 
     /**
