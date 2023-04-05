@@ -6,6 +6,7 @@ import {defineMessages, injectIntl, intlShape, FormattedMessage} from 'react-int
 import Box from '../box/box.jsx';
 import Modal from '../../containers/modal.jsx';
 import Input from '../forms/input.jsx';
+import Select from '../select/select.jsx';
 import BufferedInputHOC from '../forms/buffered-input-hoc.jsx';
 import Switch from '../switch/switch.jsx';
 import styles from './settings-modal.css';
@@ -30,6 +31,21 @@ const messages = defineMessages({
         defaultMessage: 'Project',
         description: 'Label of project',
         id: 'gui.settingsModal.project'
+    },
+    system: {
+        defaultMessage: 'Follow System',
+        description: 'Label of follow system',
+        id: 'gui.settingsModal.theme.followSystem'
+    },
+    dark: {
+        defaultMessage: 'Dark',
+        description: 'Label of dark',
+        id: 'gui.settingsModal.theme.dark'
+    },
+    light: {
+        defaultMessage: 'Light',
+        description: 'Label of light',
+        id: 'gui.settingsModal.theme.light'
     }
 });
 
@@ -87,6 +103,35 @@ class SettingsModal extends React.Component {
                         >
                             {this.props.intl.formatMessage(messages.appearance)}
                         </p>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Theme"
+                                    description="Label of theme"
+                                    id="gui.settingsModal.theme"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Switch between dark and light, or follow system."
+                                    description="Description of theme"
+                                    id="gui.settingsModal.themeDescription"
+                                />
+                            </div>
+                            <Select
+                                value={this.props.theme}
+                                onChange={this.props.onChangeTheme}
+                                className={styles.selectSmall}
+                                options={[{
+                                    id: 'system',
+                                    text: this.props.intl.formatMessage(messages.system)
+                                }, {
+                                    id: 'dark',
+                                    text: this.props.intl.formatMessage(messages.dark)
+                                }, {
+                                    id: 'light',
+                                    text: this.props.intl.formatMessage(messages.light)
+                                }]}
+                            />
+                        </div>
                         <p
                             className={styles.category}
                             ref={ref => this.categoryRef.player = ref}
@@ -181,11 +226,13 @@ SettingsModal.propTypes = {
     autoSave: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
+    theme: PropTypes.string.isRequired,
     intl: intlShape.isRequired,
     onClose: PropTypes.func.isRequired,
     onChangeAutoSave: PropTypes.func.isRequired,
     onChangeAutoSaveInterval: PropTypes.func.isRequired,
-    onChangeFramerate: PropTypes.func.isRequired
+    onChangeFramerate: PropTypes.func.isRequired,
+    onChangeTheme: PropTypes.func.isRequired
 };
 
 export default injectIntl(SettingsModal);

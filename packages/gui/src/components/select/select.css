@@ -38,10 +38,6 @@
     transition-duration: 0.3s;
 }
 
-[theme='dark'] .image {
-    filter: invert(1);
-}
-
 .image-rotate {
     transform: rotate(180deg);
 }
@@ -57,10 +53,6 @@
     z-index: 1; /* what the fuck. why translateX modifies z-index?! */
 }
 
-[theme='dark'] .menu {
-    background-color: var(--clipcc-ui-tertiary-dark);
-}
-
 .option {
     height: 2rem;
     line-height: 2rem;
@@ -72,16 +64,8 @@
     font-weight: bold;
 }
 
-[theme='dark'] .option-select {
-    color: var(--clipcc-text-primary-dark);
-}
-
 .option-focus {
     background-color: #deebff;
-}
-
-[theme='dark'] .option-focus {
-    background-color: var(--clipcc-motion-primary);
 }
 
 .dummy-input {

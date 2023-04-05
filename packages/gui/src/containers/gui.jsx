@@ -62,6 +62,7 @@ class GUI extends React.Component {
             throw new Error(
                 `Error in Scratch GUI [location=${window.location}]: ${this.props.error}`);
         }
+        document.documentElement.setAttribute('theme', this.props.theme);
         const {
             /* eslint-disable no-unused-vars */
             assetHost,
@@ -95,6 +96,7 @@ class GUI extends React.Component {
 }
 
 GUI.propTypes = {
+    theme: PropTypes.string,
     assetHost: PropTypes.string,
     children: PropTypes.node,
     cloudHost: PropTypes.string,
@@ -127,7 +129,16 @@ GUI.defaultProps = {
 
 const mapStateToProps = state => {
     const loadingState = state.scratchGui.projectState.loadingState;
+    let theme = state.scratchGui.settings.theme;
+    if (state.scratchGui.settings.theme === 'system') {
+        if (matchMedia('(prefers-color-scheme: dark)').matches) {
+            theme = 'dark';
+        } else {
+            theme = 'light';
+        }
+    }
     return {
+        theme: theme,
         activeTabIndex: state.scratchGui.editorTab.activeTabIndex,
         alertsVisible: state.scratchGui.alerts.visible,
         backdropLibraryVisible: state.scratchGui.modals.backdropLibrary,

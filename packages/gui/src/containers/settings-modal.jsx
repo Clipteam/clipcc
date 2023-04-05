@@ -19,7 +19,8 @@ class SettingsModal extends React.Component {
             'handleClose',
             'handleChangeAutoSave',
             'handleChangeAutoSaveInterval',
-            'handleChangeFramerate'
+            'handleChangeFramerate',
+            'handleChangeTheme'
         ]);
     }
     handleClose () {
@@ -40,16 +41,21 @@ class SettingsModal extends React.Component {
             this.props.updateSettings({framerate: value});
         }
     }
+    handleChangeTheme (value) {
+        this.props.updateSettings({theme: value});
+    }
     render () {
         return (
             <SettingsModalComponent
                 autoSave={this.props.autoSave}
                 autoSaveInterval={this.props.autoSaveInterval}
                 framerate={this.props.framerate}
+                theme={this.props.theme}
                 onClose={this.handleClose}
                 onChangeAutoSave={this.handleChangeAutoSave}
                 onChangeAutoSaveInterval={this.handleChangeAutoSaveInterval}
                 onChangeFramerate={this.handleChangeFramerate}
+                onChangeTheme={this.handleChangeTheme}
             />
         );
     }
@@ -59,6 +65,7 @@ SettingsModal.propTypes = {
     autoSave: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
+    theme: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
     updateSettings: PropTypes.func.isRequired
 };
@@ -66,7 +73,8 @@ SettingsModal.propTypes = {
 const mapStateToProps = state => ({
     autoSave: state.scratchGui.settings.autoSave,
     autoSaveInterval: state.scratchGui.settings.autoSaveInterval,
-    framerate: state.scratchGui.settings.framerate
+    framerate: state.scratchGui.settings.framerate,
+    theme: state.scratchGui.settings.theme
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -41,7 +41,7 @@ class Select extends React.Component {
             return;
         }
         if (!this.state.showMenu) {
-            this.inputRef.current.focus();
+            this.inputRef.focus();
         }
         this.setState({showMenu: !this.state.showMenu});
         event.stopPropagation();
@@ -170,7 +170,7 @@ class Select extends React.Component {
                     </div>
                     <input
                         className={styles.dummyInput}
-                        ref={ref => this.inputRef}
+                        ref={ref => this.inputRef = ref}
                         onBlur={this.handleInputBlur}
                         onFocus={this.handleInputFocus}
                         inputMode="none"

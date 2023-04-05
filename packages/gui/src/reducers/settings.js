@@ -4,7 +4,8 @@ const defaultState = {
     autoSave: false,
     autoSaveInterval: 120,
     compression: 6,
-    framerate: 30
+    framerate: 30,
+    theme: 'system'
 };
 
 const initialState = JSON.parse(localStorage.getItem('settings')) || {};
