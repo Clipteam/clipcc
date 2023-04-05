@@ -27,4 +27,5 @@ See https://github.com/LLK/scratch-paint/issues/13 */
 
 :root[theme='dark'] {
     --clipcc-form-border: hsla(0, 1000%, 100%, 0.15);
+    --clipcc-ui-pane-border: var(--clipcc-form-border);
 }

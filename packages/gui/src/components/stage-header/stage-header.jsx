@@ -86,7 +86,7 @@ const StageHeaderComponent = function (props) {
             >
                 <img
                     alt={props.intl.formatMessage(messages.unFullStageSizeMessage)}
-                    className={styles.stageButtonIcon}
+                    className={classNames(styles.stageButtonIcon, styles.fullscreenButtonIcon)}
                     draggable={false}
                     src={unFullScreenIcon}
                     title={props.intl.formatMessage(messages.fullscreenControl)}
@@ -159,7 +159,7 @@ const StageHeaderComponent = function (props) {
                             >
                                 <img
                                     alt={props.intl.formatMessage(messages.fullStageSizeMessage)}
-                                    className={styles.stageButtonIcon}
+                                    className={classNames(styles.stageButtonIcon, styles.fullscreenButtonIcon)}
                                     draggable={false}
                                     src={fullScreenIcon}
                                     title={props.intl.formatMessage(messages.fullscreenControl)}

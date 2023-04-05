@@ -70,7 +70,7 @@
     --clipcc-motion-primary: hsla(215, 100%, 65%, 1); /* #4C97FF */
     --clipcc-on-motion-primary: hsla(0, 100%, 100%, 1);
     --clipcc-motion-tertiary: hsla(215, 60%, 50%, 1); /* #3373CC */
-    --clipcc-motion-transparent: hsla(215, 100%, 65%, 0.35); /* 35% transparent version of motion-primary */
+    --clipcc-motion-transparent: hsla(215, 60%, 50%, 0.35); /* 35% transparent version of motion-primary */
     --clipcc-motion-light-transparent: hsla(215, 100%, 65%, 0.15); /* 15% transparent version of motion-primary */
 
     --clipcc-red-primary: hsla(20, 100%, 55%, 1); /* #FF661A */

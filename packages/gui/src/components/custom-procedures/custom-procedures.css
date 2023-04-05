@@ -38,7 +38,7 @@
 }
 
 .option-card {
-    background: white;
+    background: var(--clipcc-ui-white);
     border: 2px solid var(--clipcc-ui-black-transparent);
     border-radius: var(--clipcc-space);
     padding: calc(var(--clipcc-space) * 2);

@@ -38,8 +38,8 @@
     transition-duration: 0.3s;
 }
 
-.image path {
-    stroke: var(--clipcc-on-motion-primary);
+[theme='dark'] .image {
+    filter: brightness(0) invert(1);
 }
 
 .image-rotate {
@@ -69,7 +69,7 @@
 }
 
 .option-focus {
-    background-color: #deebff;
+    background-color: var(--clipcc-ui-tertiary);
 }
 
 .dummy-input {
