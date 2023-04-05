@@ -1902,6 +1902,10 @@ class Runtime extends EventEmitter {
         this._monitorState = OrderedMap({});
         this.emit(Runtime.RUNTIME_DISPOSED);
         this.ioDevices.clock.resetProjectTimer();
+
+        this.renderer._allSkins.forEach(skin => {
+            this.renderer.destroySkin(skin._id);
+        });
         // @todo clear out extensions? turboMode? etc.
 
         // *********** Cloud *******************
