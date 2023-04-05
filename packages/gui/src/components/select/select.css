@@ -38,6 +38,10 @@
     transition-duration: 0.3s;
 }
 
+.image path {
+    stroke: var(--clipcc-on-motion-primary);
+}
+
 .image-rotate {
     transform: rotate(180deg);
 }
