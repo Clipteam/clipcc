@@ -24,3 +24,7 @@ See https://github.com/LLK/scratch-paint/issues/13 */
     --clipcc-data-primary: #FF8C1A;
     --clipcc-form-border: #E9EEF2;
 }
+
+:root[theme='dark'] {
+    --clipcc-form-border: hsla(0, 1000%, 100%, 0.15);
+}

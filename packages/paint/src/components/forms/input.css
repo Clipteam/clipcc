@@ -13,6 +13,7 @@ Edited to add input-range-small
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.75rem;
     font-weight: bold;
+    background-color: var(--clipcc-ui-white);
     color: var(--clipcc-text-primary);
 
     border-width: 1px;

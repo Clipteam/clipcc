@@ -62,7 +62,7 @@
     --clipcc-ui-white-transparent: hsla(217, 16%, 15%, 0.25); /* 25% transparent version of ui-white */
     --clipcc-ui-transparent: hsla(0, 100%, 100%, 0); /* 25% transparent version of ui-white */
 
-    --clipcc-ui-black-transparent: hsla(0, 0%, 0%, 0.15); /* 15% transparent version of black */
+    --clipcc-ui-black-transparent: hsla(0, 1000%, 100%, 0.15); /* 15% transparent version of black */
 
     --clipcc-text-primary: hsla(218, 11%, 85%, 1); /* #D5D8DD */
     --clipcc-text-primary-transparent: hsla(0, 100%, 100%, 0.75);
