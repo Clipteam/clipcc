@@ -127,8 +127,17 @@ Blockly.Css.setCursor = function(cursor) {
  * Array making up the CSS content for Blockly.
  */
 Blockly.Css.CONTENT = [
+  /* manage them via css variables to change colours dynamically. */
+  ':root {',
+    '--clipcc-workspace-background: $colour_workspace;',
+    '--clipcc-flyout-background: $colour_flyout;',
+    '--clipcc-main-background-dot: #888;',
+  '}',
+  '[id ^= "blocklyGridPattern"] line {',
+    'stroke: var(--clipcc-main-background-dot);',
+  '}',
   '.blocklySvg {',
-    'background-color: $colour_workspace;',
+    'background-color: var(--clipcc-workspace-background);',
     'outline: none;',
     'overflow: hidden;',  /* IE overflows by default. */
     'position: absolute;',
@@ -474,7 +483,7 @@ Blockly.Css.CONTENT = [
   '}',
   '.blocklyNonEditableText>text,',
   '.blocklyEditableText>text {',
-    'fill: var(--clipcc-text-primary, $colour_text);',
+    'fill: $colour_text;',
   '}',
 
   '.blocklyEditableText>.blocklyEditableLabel {',
@@ -486,7 +495,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyBubbleText {',
-    'fill: var(--clipcc-text-primary, $colour_text);',
+    'fill: $colour_text;',
   '}',
   '.blocklyFlyout {',
     'position: absolute;',
@@ -530,7 +539,7 @@ Blockly.Css.CONTENT = [
   '.blocklyFlyoutLabelText {',
     'font-family: "Helvetica Neue", Helvetica, sans-serif;',
     'font-size: 14pt;',
-    'fill: #575E75;',
+    'fill: var(--clipcc-text-primary, #575E75);',
     'font-weight: bold;',
   '}',
 
@@ -720,7 +729,7 @@ Blockly.Css.CONTENT = [
     'box-sizing: border-box;',
     'width: 100%;',
     'text-align: center;',
-    'color: var(--clipcc-text-primary, $colour_text);',
+    'color: $colour_text;',
     'font-weight: 500;',
   '}',
 
@@ -736,7 +745,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyFlyoutBackground {',
-    'fill: $colour_flyout;',
+    'fill: var(--clipcc-flyout-background);',
     'fill-opacity: .8;',
   '}',
 
@@ -993,7 +1002,7 @@ Blockly.Css.CONTENT = [
   '.scratchColourPickerLabel {',
     'font-family: "Helvetica Neue", Helvetica, sans-serif;',
     'font-size: 0.65rem;',
-    'color: var(--clipcc-text-primary, $colour_toolboxText);',
+    'color: $colour_toolboxText;',
     'margin: 8px;',
   '}',
 
@@ -1014,7 +1023,7 @@ Blockly.Css.CONTENT = [
   '.scratchNotePickerKeyLabel {',
     'font-family: "Helvetica Neue", Helvetica, sans-serif;',
     'font-size: 0.75rem;',
-    'fill: var(--clipcc-text-primary, $colour_text);',
+    'fill: $colour_text;',
     'pointer-events: none;',
   '}',
 
@@ -1033,7 +1042,7 @@ Blockly.Css.CONTENT = [
    */
 
   '.blocklyWidgetDiv .goog-menu {',
-    'background: #fff;',
+    'background: var(--clipcc-ui-white, #fff);',
     // 'border-color: #ccc #666 #666 #ccc;',
     // 'border-style: solid;',
     // 'border-width: 1px;',
@@ -1087,7 +1096,7 @@ Blockly.Css.CONTENT = [
    * #noflip to .goog-menuitem.
    */
   '.blocklyWidgetDiv .goog-menuitem {',
-    'color: #000;',
+    'color: var(--clipcc-text-primary, #000);',
     'font: normal 13px "Helvetica Neue", Helvetica, sans-serif;',
     'list-style: none;',
     'margin: 0;',
@@ -1098,7 +1107,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyDropDownDiv .goog-menuitem {',
-    'color: #fff;',
+    'color: var(--clipcc-on-motion-primary, #fff);',
     'font: normal 13px "Helvetica Neue", Helvetica, sans-serif;',
     'font-weight: bold;',
     'list-style: none;',
@@ -1160,7 +1169,8 @@ Blockly.Css.CONTENT = [
   /* State: hover. */
   '.blocklyWidgetDiv .goog-menuitem-highlight,',
   '.blocklyWidgetDiv .goog-menuitem-hover {',
-    'background-color: #d6e9f8;',
+    'background-color: var(--clipcc-motion-primary, #d6e9f8);',
+    'color: var(--clipcc-on-motion-primary) !important;',
      /* Use an explicit top and bottom border so that the selection is visible',
       * in high contrast mode. */
     // 'border-color: #d6e9f8;',
