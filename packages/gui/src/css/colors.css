@@ -3,6 +3,8 @@
     --clipcc-ui-secondary: hsla(215, 75%, 95%, 1); /* #E9F1FC */
     --clipcc-ui-tertiary: hsla(215, 50%, 90%, 1); /* #D9E3F2 */
 
+    --clipcc-menu-bar-background: hsla(215, 100%, 65%, 1); /* #4C97FF */
+
     --clipcc-ui-modal-overlay: hsla(215, 100%, 65%, 0.9); /* 90% transparent version of motion-primary */
 
     --clipcc-ui-white: hsla(0, 100%, 100%, 1); /* #FFFFFF */
@@ -51,13 +53,13 @@
     --clipcc-ui-secondary: hsla(214, 13%, 20%, 1); /* #2D333B */
     --clipcc-ui-tertiary: hsla(214, 13%, 25%, 1); /* #373E47 */
 
-    --clipcc-menu-bar-background: hsla(214, 13%, 20%, 1); /* #2D333B */
+    --clipcc-menu-bar-background: hsla(212, 12%, 30%, 1); /* #434C56 */
 
     --clipcc-ui-modal-overlay: hsla(0, 0%, 1%, 0.5); /* 50% transparent version of black */
 
-    --clipcc-ui-white: hsla(215, 15%, 16%, 1); /* #22272E */
-    --clipcc-ui-white-dim: hsla(0, 100%, 100%, 0.75); /* 25% transparent version of ui-white */
-    --clipcc-ui-white-transparent: hsla(0, 100%, 100%, 0.25); /* 25% transparent version of ui-white */
+    --clipcc-ui-white: hsla(217, 16%, 15%, 1); /* #21262E */
+    --clipcc-ui-white-dim: hsla(217, 16%, 15%, 0.75); /* 25% transparent version of ui-white */
+    --clipcc-ui-white-transparent: hsla(217, 16%, 15%, 0.25); /* 25% transparent version of ui-white */
     --clipcc-ui-transparent: hsla(0, 100%, 100%, 0); /* 25% transparent version of ui-white */
 
     --clipcc-ui-black-transparent: hsla(0, 0%, 0%, 0.15); /* 15% transparent version of black */
