@@ -1903,9 +1903,11 @@ class Runtime extends EventEmitter {
         this.emit(Runtime.RUNTIME_DISPOSED);
         this.ioDevices.clock.resetProjectTimer();
 
-        this.renderer._allSkins.forEach(skin => {
-            this.renderer.destroySkin(skin._id);
-        });
+        if (this.renderer && '_allSkins' in this.renderer) {
+            this.renderer._allSkins.forEach(skin => {
+                this.renderer.destroySkin(skin._id);
+            });
+        }
         // @todo clear out extensions? turboMode? etc.
 
         // *********** Cloud *******************
