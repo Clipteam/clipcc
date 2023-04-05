@@ -13,6 +13,7 @@ import styles from '../components/font-dropdown/font-dropdown.css';
 class FontDropdown extends React.Component {
     constructor (props) {
         super(props);
+        this.isCustomFont = false;
         bindAll(this, [
             'getFontStyle',
             'getFontName',
@@ -25,6 +26,7 @@ class FontDropdown extends React.Component {
             'handleChangeFontChinese',
             'handleChangeFontJapanese',
             'handleChangeFontKorean',
+            'handleChangeFontCustom',
             'handleOpenDropdown',
             'handleClickOutsideDropdown',
             'setDropdown',
@@ -114,8 +116,17 @@ class FontDropdown extends React.Component {
             this.props.changeFont(Fonts.KOREAN);
         }
     }
+    handleChangeFontCustom () {
+        if (this.dropDown.isOpen()) {
+            this.isCustomFont = true;
+        }
+    }
     handleChoose () {
         if (this.dropDown.isOpen()) {
+            if (this.isCustomFont) {
+                this.props.changeFont(prompt('Font name'));
+                this.isCustomFont = false;
+            }
             this.dropDown.handleClosePopover();
             this.props.onUpdateImage();
         }
@@ -160,6 +171,7 @@ class FontDropdown extends React.Component {
                 onHoverPixel={this.handleChangeFontPixel}
                 onHoverSansSerif={this.handleChangeFontSansSerif}
                 onHoverSerif={this.handleChangeFontSerif}
+                onHoverCustomFont={this.handleChangeFontCustom}
                 onOpenDropdown={this.handleOpenDropdown}
             />
         );
