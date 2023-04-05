@@ -30,6 +30,7 @@
     font-weight: bold;
     text-align: center;
     margin: 0 5px;
+    color: var(--clipcc-text-primary);
 }
 
 .value {
