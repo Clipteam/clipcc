@@ -69,7 +69,7 @@
     height: 2rem;
     padding: 0.35rem;
     outline: none;
-    background: white;
+    background: var(--clipcc-ui-white);
     border-radius: 0.25rem;
     border: 1px solid var(--clipcc-ui-black-transparent);
     cursor: pointer;

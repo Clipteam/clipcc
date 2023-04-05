@@ -519,7 +519,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyFlyoutButton:hover {',
-    'fill: white;',
+    'fill: var(--clipcc-ui-white, white);',
     'cursor: pointer;',
   '}',
 

@@ -83,7 +83,8 @@
     border: 1px solid var(--clipcc-ui-black-transparent);
     border-radius: 0.25rem;
     padding: 0.75rem 1rem;
-    background: white;
+    background: var(--clipcc-ui-white);
+    color: var(--clipcc-text-primary);
     font-weight: bold;
     font-size: 0.85rem;
 }
@@ -91,7 +92,7 @@
 .button-row button.ok-button {
     background: var(--clipcc-motion-primary);
     border: var(--clipcc-motion-primary);
-    color: white;
+    color: var(--clipcc-on-motion-primary);
 }
 
 [dir="ltr"] .button-row button + button {
