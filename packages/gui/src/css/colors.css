@@ -98,7 +98,8 @@
     --clipcc-drop-highlight: hsla(220, 16%, 22%, 1); /* lighter than motion-primary */
 
     /* block-related stuffs */
-    --clipcc-workspace-background: var(--clipcc-ui-secondary);
-    --clipcc-flyout-background: var(--clipcc-ui-white);
-    --clipcc-main-background-dot: var(--clipcc-ui-tertiary);
+    --clipcc-block-workspace-background: var(--clipcc-ui-secondary);
+    --clipcc-block-flyout-background: var(--clipcc-ui-white);
+    --clipcc-block-main-background-dot: var(--clipcc-ui-tertiary);
+    --clipcc-block-scrollbar-color: var(--clipcc-ui-tertiary);
 }

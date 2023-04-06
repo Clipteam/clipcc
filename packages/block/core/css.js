@@ -129,15 +129,16 @@ Blockly.Css.setCursor = function(cursor) {
 Blockly.Css.CONTENT = [
   /* manage them via css variables to change colours dynamically. */
   ':root {',
-    '--clipcc-workspace-background: $colour_workspace;',
-    '--clipcc-flyout-background: $colour_flyout;',
-    '--clipcc-main-background-dot: #888;',
+    '--clipcc-block-workspace-background: $colour_workspace;',
+    '--clipcc-block-flyout-background: $colour_flyout;',
+    '--clipcc-block-main-background-dot: #888;',
+    '--clipcc-block-scrollbar-color: $colour_scrollbar;',
   '}',
   '[id ^= "blocklyGridPattern"] line {',
-    'stroke: var(--clipcc-main-background-dot);',
+    'stroke: var(--clipcc-block-main-background-dot);',
   '}',
   '.blocklySvg {',
-    'background-color: var(--clipcc-workspace-background);',
+    'background-color: var(--clipcc-block-workspace-background);',
     'outline: none;',
     'overflow: hidden;',  /* IE overflows by default. */
     'position: absolute;',
@@ -745,7 +746,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyFlyoutBackground {',
-    'fill: var(--clipcc-flyout-background);',
+    'fill: var(--clipcc-block-flyout-background);',
     'fill-opacity: .8;',
   '}',
 
@@ -767,7 +768,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyScrollbarHandle {',
-    'fill: $colour_scrollbar;',
+    'fill: var(--clipcc-block-scrollbar-color);',
   '}',
 
   '.blocklyScrollbarBackground:hover+.blocklyScrollbarHandle,',
