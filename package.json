@@ -31,7 +31,8 @@
     "l10n": "yarn workspace scratch-l10n",
     "render": "yarn workspace scratch-render",
     "storage": "yarn workspace scratch-storage",
-    "paint": "yarn workspace scratch-paint"
+    "paint": "yarn workspace scratch-paint",
+    "parser": "yarn workspace scratch-parser"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",
