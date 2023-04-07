@@ -1,15 +1,11 @@
-@import "../../css/colors.css";
-@import "../../css/units.css";
-@import "../../css/z-index.css";
-
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: $z-index-modal;
-    background-color: $ui-modal-overlay;
+    z-index: var(--clipcc-z-index-modal);
+    background-color: var(--clipcc-ui-modal-overlay);
 }
 
 .modal-content * {
@@ -19,13 +15,13 @@
 .modal-content {
     margin: 100px auto;
     outline: none;
-    border: 4px solid $ui-white-transparent;
+    border: 4px solid var(--clipcc-ui-white-transparent);
     padding: 0;
-    border-radius: $space;
+    border-radius: var(--clipcc-space);
     user-select: none;
 
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    color: $text-primary;
+    color: var(--clipcc-text-primary);
     overflow: hidden;
 }
 
@@ -40,7 +36,7 @@
     -webkit-overflow-scrolling: 'touch';
     user-select: none;
 
-    background-color: $ui-secondary;
+    background-color: var(--clipcc-ui-secondary);
 
     /* Default modal resets */
     margin: 0;
@@ -56,18 +52,17 @@
     Use the same width for both side item containers,
     so that title remains centered
 */
-$sides: 20rem;
 
 .header {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: flex-start;
-    height: $library-header-height;
+    height: var(--clipcc-library-header-height);
 
     box-sizing: border-box;
     width: 100%;
-    background-color: $motion-primary;
+    background-color: var(--clipcc-motion-primary);
 
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 1rem;
@@ -79,7 +74,7 @@ $sides: 20rem;
     align-items: center;
     padding: 1rem;
     text-decoration: none;
-    color: $ui-white;
+    color: var(--clipcc-ui-white);
     user-select: none;
 }
 
@@ -93,7 +88,7 @@ $sides: 20rem;
 
 .header-item-filter {
     display: flex;
-    flex-basis: $sides;
+    flex-basis: 20rem;
     justify-content: flex-start;
 }
 
@@ -107,23 +102,23 @@ $sides: 20rem;
 }
 
 [dir="ltr"] .header-item-title {
-    margin: 0 -$sides 0 0;
+    margin: 0 -20rem 0 0;
 }
 
 [dir="rtl"] .header-item-title {
-    margin: 0 0 0 -$sides;
+    margin: 0 0 0 -20rem;
 }
 
 .full-screen [dir="ltr"] .header-item-title {
-    margin: 0 0 0 -$sides;
+    margin: 0 0 0 -20rem;
 }
 
 .full-screen [dir="rtl"] .header-item-title {
-    margin: 0 -$sides 0 0;
+    margin: 0 -20rem 0 0;
 }
 
 .header-item-close {
-    flex-basis: $sides;
+    flex-basis: 20rem;
     justify-content: flex-end;
     z-index: 1;
 }

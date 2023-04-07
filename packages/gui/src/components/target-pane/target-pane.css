@@ -1,5 +1,3 @@
-@import "../../css/units.css";
-
 .target-pane {
     /* Makes columns for the sprite library selector + and the stage selector */
     display: flex;
@@ -14,9 +12,9 @@
 }
 
 [dir="ltr"] .stage-selector-wrapper {
-    margin-left: calc($space / 2);
+    margin-left: calc(var(--clipcc-space) / 2);
 }
 
 [dir="rtl"] .stage-selector-wrapper {
-    margin-right: calc($space / 2);
+    margin-right: calc(var(--clipcc-space) / 2);
 }

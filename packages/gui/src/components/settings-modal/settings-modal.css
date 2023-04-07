@@ -1,5 +1,3 @@
-@import "../../css/colors.css";
-@import "../../css/units.css";
 @import "../../css/scrollbar.css";
 
 .modal-content {
@@ -12,13 +10,13 @@
     padding: 0.2rem 0.5rem;
     border-radius: 1rem;
     font-size: 80%;
-    background-color: $ui-primary;
-    border: 1px solid $ui-secondary;
+    background-color: var(--clipcc-ui-primary);
+    border: 1px solid var(--clipcc-ui-secondary);
     color: white;
 }
 
 .body {
-    background: $ui-white;
+    background: var(--clipcc-ui-white);
     max-height: 80vh;
     display: flex;
 }
@@ -30,7 +28,7 @@
 
 .menu {
     flex: 1;
-    border-right: solid 1px $ui-black-transparent;
+    border-right: solid 1px var(--clipcc-ui-black-transparent);
 }
 
 .menu > p {

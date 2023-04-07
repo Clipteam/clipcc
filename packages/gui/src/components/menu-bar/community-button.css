@@ -1,7 +1,5 @@
-@import "../../css/colors.css";
-
 .community-button {
-    box-shadow: 0 0 0 1px $ui-black-transparent;
+    box-shadow: 0 0 0 1px var(--clipcc-ui-black-transparent);
 }
 
 .community-button-icon {

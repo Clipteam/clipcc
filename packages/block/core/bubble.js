@@ -84,6 +84,12 @@ Blockly.Bubble = function(workspace, content, shape, anchorXY,
 };
 
 /**
+ * Whether bubble is visible.
+ * @type {boolean}
+ */
+Blockly.Bubble.prototype.visible_ = true;
+
+/**
  * Width of the border around the bubble.
  */
 Blockly.Bubble.BORDER_WIDTH = 6;
@@ -441,6 +447,8 @@ Blockly.Bubble.prototype.layoutBubble_ = function() {
   }
   this.relativeLeft_ = relativeLeft;
   this.relativeTop_ = relativeTop;
+  
+  this.updateObserve();
 };
 
 /**
@@ -605,6 +613,7 @@ Blockly.Bubble.prototype.setColour = function(hexColour) {
 Blockly.Bubble.prototype.dispose = function() {
   Blockly.Bubble.unbindDragEvents_();
   // Dispose of and unlink the bubble.
+  this.workspace_.virtualizedManager.unobserve(this);
   goog.dom.removeNode(this.bubbleGroup_);
   this.bubbleGroup_ = null;
   this.bubbleArrow_ = null;
@@ -650,6 +659,32 @@ Blockly.Bubble.prototype.getRelativeToSurfaceXY = function() {
       this.workspace_.RTL ? this.anchorXY_.x - this.relativeLeft_ : this.anchorXY_.x + this.relativeLeft_,
       this.anchorXY_.y + this.relativeTop_);
 };
+
+/**
+ * Update bubble observe status.
+ * @package
+ */
+Blockly.Bubble.prototype.updateObserve = function() {
+    if (!this.workspace_.virtualizedManager) return;
+    this.workspace_.virtualizedManager.observe(this);
+};
+
+/**
+ * Change the visibility of a bubble.
+ * @param {boolean} visible Whether bubble is visible
+ */
+Blockly.Bubble.prototype.setVisible = function(visible) {
+    if (visible === this.visible_) {
+      return;
+    }
+    this.visible_ = visible;
+    const svgRoot = this.getSvgRoot();
+    if (!svgRoot) {
+      return;
+    }
+    if (visible) svgRoot.style.display = '';
+    else svgRoot.style.display = 'none';
+}
 
 /**
  * Set whether auto-layout of this bubble is enabled.  The first time a bubble

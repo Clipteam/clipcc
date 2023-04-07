@@ -1,26 +1,23 @@
-$scrollbar-size: 8px;
-$scrollbar-padding: 4px;
-
 .vertical-scrollbar, .horizontal-scrollbar {
     background: rgba(190, 190, 190, 0.8);
-    border-radius: calc($scrollbar-size / 2);
+    border-radius: calc(var(--clipcc-scrollbar-thickness) / 2);
     width: 100%;
     height: 100%;
 }
 .vertical-scrollbar-wrapper {
     position: absolute;
-    width: calc($scrollbar-size + $scrollbar-padding);
+    width: calc(var(--clipcc-scrollbar-thickness) + var(--clipcc-scrollbar-padding));
     right: 0;
-    top: $scrollbar-padding;
-    height: calc(100% - $scrollbar-size - 2 * $scrollbar-padding);
+    top: var(--clipcc-scrollbar-padding);
+    height: calc(100% - var(--clipcc-scrollbar-thickness) - 2 * var(--clipcc-scrollbar-padding));
 }
 
 .horizontal-scrollbar-wrapper {
     position: absolute;
-    height: calc($scrollbar-size + $scrollbar-padding);
-    left: $scrollbar-padding;
+    height: calc(var(--clipcc-scrollbar-thickness) + var(--clipcc-scrollbar-padding));
+    left: var(--clipcc-scrollbar-padding);
     bottom: 0;
-    width: calc(100% - $scrollbar-size - 2 * $scrollbar-padding);
+    width: calc(100% - var(--clipcc-scrollbar-thickness) - 2 * var(--clipcc-scrollbar-padding));
 }
 
 .vertical-scrollbar-hitbox, .horizontal-scrollbar-hitbox {
@@ -30,11 +27,11 @@ $scrollbar-padding: 4px;
 }
 
 .vertical-scrollbar-hitbox {
-    width: calc($scrollbar-size + $scrollbar-padding);
-    padding-right: $scrollbar-padding;
+    width: calc(var(--clipcc-scrollbar-thickness) + var(--clipcc-scrollbar-padding));
+    padding-right: var(--clipcc-scrollbar-padding);
 }
 
 .horizontal-scrollbar-hitbox {
-    height: calc($scrollbar-size + $scrollbar-padding);
-    padding-bottom: $scrollbar-padding;
+    height: calc(var(--clipcc-scrollbar-thickness) + var(--clipcc-scrollbar-padding));
+    padding-bottom: var(--clipcc-scrollbar-padding);
 }

@@ -1,5 +1,3 @@
-@import "../../css/colors.css";
-
 .green-flag {
     width: 2rem;
     height: 2rem;
@@ -11,9 +9,9 @@
 }
 
 .green-flag:hover {
-    background-color: $motion-light-transparent;
+    background-color: var(--clipcc-motion-light-transparent);
 }
 
 .green-flag.is-active {
-    background-color: $motion-transparent;
+    background-color: var(--clipcc-motion-transparent);
 }

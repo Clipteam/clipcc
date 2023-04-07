@@ -7,7 +7,6 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 // PostCss
 const autoprefixer = require('autoprefixer');
-const postcssVars = require('postcss-simple-vars');
 const postcssImport = require('postcss-import');
 
 const base = {
@@ -43,7 +42,6 @@ const base = {
                     plugins: function () {
                         return [
                             postcssImport,
-                            postcssVars,
                             autoprefixer()
                         ];
                     }

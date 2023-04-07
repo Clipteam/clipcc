@@ -1,5 +1,3 @@
-@import "../../css/colors.css";
-
 .container {
     padding: 1rem;
     display: flex;
@@ -23,19 +21,17 @@
     width: 100%;
 }
 
-$dial-size: 40px;
-
 .dial-handle {
     cursor: pointer;
-    width: $dial-size;
-    height: $dial-size;
+    width: 40px;
+    height: 40px;
     /* Use margin to make positioning via top/left easier */
-    margin-left: calc($dial-size / -2);
-    margin-top: calc($dial-size / -2);
+    margin-left: calc(40px / -2);
+    margin-top: calc(40px / -2);
 }
 
 .gauge-path {
-    fill: $motion-transparent;
-    stroke: $motion-primary;
+    fill: var(--clipcc-motion-transparent);
+    stroke: var(--clipcc-motion-primary);
     stroke-width: 1px;
 }

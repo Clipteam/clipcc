@@ -9,6 +9,8 @@ import Slider, {CONTAINER_WIDTH, HANDLE_WIDTH} from '../forms/slider.jsx';
 import LabeledIconButton from '../labeled-icon-button/labeled-icon-button.jsx';
 import styles from './color-picker.css';
 import GradientTypes from '../../lib/gradient-types';
+import LiveInputHoc from '../forms/live-input-hoc.jsx';
+import Input from '../forms/input.jsx';
 import {MIXED} from '../../helper/style-path';
 
 import eyeDropperIcon from './icons/eye-dropper.svg';
@@ -20,6 +22,8 @@ import fillSolidIcon from './icons/fill-solid-enabled.svg';
 import fillVertGradientIcon from './icons/fill-vert-gradient-enabled.svg';
 import swapIcon from './icons/swap.svg';
 import Modes from '../../lib/modes';
+
+const LiveInput = LiveInputHoc(Input);
 
 const hsvToHex = (h, s, v) =>
     // Scale hue back up to [0, 360] from [0, 100]
@@ -293,6 +297,26 @@ class ColorPickerComponent extends React.Component {
                         </div>
                     </div>
                 </div>
+                <div className={styles.row}>
+                    <div className={styles.rowHeader}>
+                        <span className={styles.labelName}>
+                            <FormattedMessage
+                                defaultMessage="Hex"
+                                description="Label for the hex component in the color picker"
+                                id="paint.paintEditor.hex"
+                            />
+                        </span>
+                        <span className={styles.labelReadout}>
+                            <LiveInput
+                                className={styles.liveInput}
+                                small
+                                type="string"
+                                value={this.props.hex}
+                                onSubmit={this.props.onHexChange}
+                            />
+                        </span>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -304,6 +328,7 @@ ColorPickerComponent.propTypes = {
     color2: PropTypes.string,
     colorIndex: PropTypes.number.isRequired,
     gradientType: PropTypes.oneOf(Object.keys(GradientTypes)).isRequired,
+    hex: PropTypes.string.isRequired,
     hue: PropTypes.number.isRequired,
     intl: intlShape.isRequired,
     isEyeDropping: PropTypes.bool.isRequired,
@@ -315,6 +340,7 @@ ColorPickerComponent.propTypes = {
     onChangeGradientTypeSolid: PropTypes.func.isRequired,
     onChangeGradientTypeVertical: PropTypes.func.isRequired,
     onHueChange: PropTypes.func.isRequired,
+    onHexChange: PropTypes.func.isRequired,
     onSaturationChange: PropTypes.func.isRequired,
     onSelectColor: PropTypes.func.isRequired,
     onSelectColor2: PropTypes.func.isRequired,

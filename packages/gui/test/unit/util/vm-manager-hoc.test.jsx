@@ -22,7 +22,8 @@ describe('VMManagerHOC', () => {
             scratchGui: {
                 projectState: {},
                 mode: {},
-                vmStatus: {}
+                vmStatus: {},
+                settings: {}
             },
             locales: {
                 locale: '',

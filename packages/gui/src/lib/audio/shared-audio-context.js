@@ -11,13 +11,16 @@ if (!bowser.msie) {
         typeof document.ontouchstart === 'undefined' ?
             'mousedown' :
             'touchstart';
+    const keyEvent = 'keydown';
     const initAudioContext = () => {
         document.removeEventListener(event, initAudioContext);
         AUDIO_CONTEXT = new (window.AudioContext ||
             window.webkitAudioContext)();
+        document.removeEventListener(keyEvent, initAudioContext);
         StartAudioContext(AUDIO_CONTEXT);
     };
     document.addEventListener(event, initAudioContext);
+    document.addEventListener(keyEvent, initAudioContext);
 }
 
 /**

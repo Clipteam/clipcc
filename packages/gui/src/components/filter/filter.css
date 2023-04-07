@@ -1,16 +1,13 @@
-@import "../../css/units.css";
-@import "../../css/colors.css";
-
 .filter {
     display: flex;
     flex-direction: row;
     align-items: center;
     flex-grow: 1;
 
-    background: $ui-white;
+    background: var(--clipcc-ui-white);
     border-radius: 10rem;
     user-select: none;
-    height: $library-filter-bar-height;
+    height: var(--clipcc-library-filter-bar-height);
 
     position: relative;
 }
@@ -35,7 +32,7 @@
 }
 
 .filter:focus-within {
-    box-shadow: 0 0 0 .25rem $motion-transparent;
+    box-shadow: 0 0 0 .25rem var(--clipcc-motion-transparent);
 }
 
 /*
@@ -103,12 +100,12 @@
 
 .filter-input {
     flex-grow: 1;
-    height: $library-filter-bar-height;
+    height: var(--clipcc-library-filter-bar-height);
     background-color: transparent;
     -webkit-appearance: none;
     outline: none;
     border: 0;
-    color: $text-primary;
+    color: var(--clipcc-text-primary);
     font-size: 0.75rem;
     letter-spacing: 0.15px;
     cursor: text;
@@ -124,7 +121,7 @@
 
 .filter-input::placeholder {
     opacity: .5;
-    color: $text-primary;
+    color: var(--clipcc-text-primary);
     font-size: 0.875rem;
     letter-spacing: 0.15px;
 }

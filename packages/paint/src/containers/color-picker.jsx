@@ -46,6 +46,7 @@ class ColorPicker extends React.Component {
             'handleHueChange',
             'handleSaturationChange',
             'handleBrightnessChange',
+            'handleHexChange',
             'handleTransparent',
             'handleActivateEyeDropper'
         ]);
@@ -55,7 +56,8 @@ class ColorPicker extends React.Component {
         this.state = {
             hue: hsv[0],
             saturation: hsv[1],
-            brightness: hsv[2]
+            brightness: hsv[2],
+            hex: color
         };
     }
     componentWillReceiveProps (newProps) {
@@ -67,7 +69,8 @@ class ColorPicker extends React.Component {
             this.setState({
                 hue: hsv[0],
                 saturation: hsv[1],
-                brightness: hsv[2]
+                brightness: hsv[2],
+                hex: newColor
             });
         }
     }
@@ -78,25 +81,65 @@ class ColorPicker extends React.Component {
             [50, 100, 100] : colorStringToHsv(color);
     }
     handleHueChange (hue) {
-        this.setState({hue: hue}, () => {
+        const newHex = hsvToHex(
+            hue,
+            this.state.saturation,
+            this.state.brightness
+        );
+        this.setState({
+            hue: hue,
+            hex: newHex
+        }, () => {
             this.handleColorChange();
         });
     }
     handleSaturationChange (saturation) {
-        this.setState({saturation: saturation}, () => {
+        const newHex = hsvToHex(
+            this.state.hue,
+            saturation,
+            this.state.brightness
+        );
+        this.setState({
+            saturation: saturation,
+            hex: newHex
+        }, () => {
             this.handleColorChange();
         });
     }
     handleBrightnessChange (brightness) {
-        this.setState({brightness: brightness}, () => {
+        const newHex = hsvToHex(
+            this.state.hue,
+            this.state.saturation,
+            brightness
+        );
+        this.setState({
+            brightness: brightness,
+            hex: newHex
+        }, () => {
             this.handleColorChange();
         });
+    }
+    handleHexChange (hex) {
+        if (hex !== this.state.hex) {
+            const newHsv = this.getHsv(hex);
+            this.setState({
+                hue: newHsv[0],
+                saturation: newHsv[1],
+                brightness: newHsv[2],
+                hex: hex
+            }, () => {
+                this.handleColorChange();
+            });
+        } else if (hex === '') {
+            this.setState({hex: hex});
+        }
     }
     handleColorChange () {
         this.props.onChangeColor(hsvToHex(
             this.state.hue,
             this.state.saturation,
-            this.state.brightness
+            this.state.brightness,
+            this.state.hex
         ));
     }
     handleTransparent () {
@@ -124,6 +167,7 @@ class ColorPicker extends React.Component {
         return (
             <ColorPickerComponent
                 brightness={this.state.brightness}
+                hex={this.state.hex}
                 color={this.props.color}
                 color2={this.props.color2}
                 colorIndex={this.props.colorIndex}
@@ -142,6 +186,7 @@ class ColorPicker extends React.Component {
                 onChangeGradientTypeVertical={this.handleChangeGradientTypeVertical}
                 onHueChange={this.handleHueChange}
                 onSaturationChange={this.handleSaturationChange}
+                onHexChange={this.handleHexChange}
                 onSelectColor={this.props.onSelectColor}
                 onSelectColor2={this.props.onSelectColor2}
                 onSwap={this.props.onSwap}

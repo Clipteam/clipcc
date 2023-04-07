@@ -4,30 +4,26 @@
  * library being used, `react-tooltip`
  */
 
-@import "../../css/colors.css";
-@import "../../css/units.css";
-@import "../../css/z-index.css";
-
 .coming-soon {
-    background-color: $data-primary !important;
-    border: 1px solid $ui-black-transparent !important;
-    border-radius: $form-radius !important;
-    box-shadow: 0 0 .5rem $ui-black-transparent !important;
+    background-color: var(--clipcc-data-primary) !important;
+    border: 1px solid var(--clipcc-ui-black-transparent) !important;
+    border-radius: var(--clipcc-form-radius) !important;
+    box-shadow: 0 0 .5rem var(--clipcc-ui-black-transparent) !important;
     padding: .75rem 1rem !important;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
     font-size: 1rem !important;
     line-height: 1.25rem !important;
-    z-index: $z-index-tooltip !important;
+    z-index: var(--clipcc-z-index-tooltip) !important;
 }
 
 .coming-soon:after {
     content: "";
-    border-top: 1px solid $ui-black-transparent !important;
+    border-top: 1px solid var(--clipcc-ui-black-transparent) !important;
     border-left: 0 !important;
     border-bottom: 0 !important;
-    border-right: 1px solid $ui-black-transparent !important;
-    border-radius: $form-radius;
-    background-color: $data-primary !important;
+    border-right: 1px solid var(--clipcc-ui-black-transparent) !important;
+    border-radius: var(--clipcc-form-radius);
+    background-color: var(--clipcc-data-primary) !important;
     height: 1rem !important;
     width: 1rem !important;
 }
