@@ -20,7 +20,7 @@
     "start": "yarn gui start",
     "prepare": "husky install",
     "build:dist": "NODE_ENV=production yarn build:full",
-    "build:full": "yarn l10n build && yarn storage build && yarn render build && yarn block build && yarn vm build && yarn paint build && yarn gui build",
+    "build:full": "yarn l10n build && yarn audio build && yarn storage build && yarn render build && yarn block build && yarn vm build && yarn paint build && yarn gui build",
     "build": "yarn block build && yarn gui build",
     "test": "yarn gui test:unit && yarn vm tap",
     "translation:build": "yarn gui i18n:src && yarn vm i18n:src && yarn block translate",
@@ -33,7 +33,8 @@
     "render": "yarn workspace scratch-render",
     "storage": "yarn workspace scratch-storage",
     "paint": "yarn workspace scratch-paint",
-    "parser": "yarn workspace scratch-parser"
+    "parser": "yarn workspace scratch-parser",
+    "audio": "yarn workspace scratch-audio"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",
