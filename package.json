@@ -16,7 +16,7 @@
     ]
   },
   "scripts": {
-    "start": "yarn gui:start",
+    "start": "yarn gui start",
     "prepare": "husky install",
     "build:dist": "NODE_ENV=production yarn build:full",
     "build:full": "yarn l10n:build && yarn storage:build && yarn render:build && yarn block:build && yarn vm:build && yarn gui:build",

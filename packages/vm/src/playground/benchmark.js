@@ -59,11 +59,21 @@ const PROJECT_SERVER = 'https://cdn.projects.scratch.mit.edu/';
 const SLOW = .1;
 
 const projectInput = document.querySelector('input');
+let projectData = null;
+
+projectInput.addEventListener('change', (event) => {
+    const [data] = event.target.files;
+    const reader = new FileReader();
+    reader.addEventListener('loadend', () => {
+        projectData = reader.result;
+    })
+    reader.readAsArrayBuffer(data);
+});
 
 document.querySelector('.run')
     .addEventListener('click', () => {
-        window.location.hash = projectInput.value;
-        location.reload();
+        if (!projectData) return alert('empty project');
+        Scratch.vm.loadProject(projectData);
     }, false);
 
 const setShareLink = function (json) {

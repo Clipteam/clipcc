@@ -34,6 +34,8 @@ const vmManagerHOC = function (WrappedComponent) {
                 this.props.vm.setCompatibilityMode(true);
                 this.props.vm.initialized = true;
                 this.props.vm.setLocale(this.props.locale, this.props.messages);
+                // Apply settings
+                this.props.vm.setFramerate(this.props.framerate);
             }
             if (!this.props.isPlayerOnly && !this.props.isStarted) {
                 this.props.vm.start();
@@ -49,6 +51,10 @@ const vmManagerHOC = function (WrappedComponent) {
             // Start the VM if entering editor mode with an unstarted vm
             if (!this.props.isPlayerOnly && !this.props.isStarted) {
                 this.props.vm.start();
+            }
+            // Sync settings
+            if (this.props.framerate !== prevProps.framerate) {
+                this.props.vm.setFramerate(this.props.framerate);
             }
         }
         loadProject () {
@@ -117,6 +123,7 @@ const vmManagerHOC = function (WrappedComponent) {
         projectData: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
         projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         username: PropTypes.string,
+        framerate: PropTypes.number.isRequired,
         vm: PropTypes.instanceOf(VM).isRequired
     };
 
@@ -131,7 +138,8 @@ const vmManagerHOC = function (WrappedComponent) {
             projectId: state.scratchGui.projectState.projectId,
             loadingState: loadingState,
             isPlayerOnly: state.scratchGui.mode.isPlayerOnly,
-            isStarted: state.scratchGui.vmStatus.started
+            isStarted: state.scratchGui.vmStatus.started,
+            framerate: state.scratchGui.settings.framerate
         };
     };
 

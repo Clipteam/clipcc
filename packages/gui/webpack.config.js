@@ -6,7 +6,7 @@ var webpack = require('webpack');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var TerserPlugin = require('terser-webpack-plugin');
-var NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
+var NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
 
@@ -74,7 +74,6 @@ const base = {
                     postcssOptions: {
                         plugins: [
                             'postcss-import',
-                            'postcss-simple-vars',
                             'autoprefixer'
                         ]
                     }

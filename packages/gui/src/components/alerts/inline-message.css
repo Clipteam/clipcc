@@ -1,8 +1,5 @@
-@import "../../css/colors.css";
-@import "../../css/units.css";
-
 .inline-message {
-    color: $ui-white;
+    color: var(--clipcc-ui-white);
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     display: flex;
     justify-content: flex-end;
@@ -11,17 +8,17 @@
 }
 
 .success {
-    color: $ui-white-dim;
+    color: var(--clipcc-ui-white-dim);
 }
 
 .info {
-    color: $ui-white;
+    color: var(--clipcc-ui-white);
 }
 
 .warn {
-    color: $error-light;
+    color: var(--clipcc-error-light);
 }
 
 .spinner {
-    margin-right: $space;
+    margin-right: var(--clipcc-space);
 }

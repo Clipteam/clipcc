@@ -1,16 +1,13 @@
-@import "../../css/colors.css";
-@import "../../css/units.css";
-
 .modal-content {
     width: 480px;
 }
 
 .header {
-    background-color: $pen-primary;
+    background-color: var(--clipcc-pen-primary);
 }
 
 .body {
-    background: $ui-white;
+    background: var(--clipcc-ui-white);
 }
 
 .label {
@@ -37,7 +34,7 @@
     justify-content: space-between;
     align-items: center;
 
-    background-color: $ui-white;
+    background-color: var(--clipcc-ui-white);
     border-radius: 0.25rem;
     padding: 10px;
     width: 100%;
@@ -80,8 +77,8 @@
     border-radius: 0.25rem;
     font-weight: 600;
     font-size: 0.85rem;
-    background: $motion-primary;
-    border: $motion-primary;
+    background: var(--clipcc-motion-primary);
+    border: var(--clipcc-motion-primary);
     color: white;
     cursor: pointer;
 }
@@ -114,7 +111,7 @@
 .signal-bar:nth-of-type(4) { height: 100%; }
 
 .green-bar {
-    background-color: $pen-primary;
+    background-color: var(--clipcc-pen-primary);
 }
 
 .radar-small {
@@ -172,9 +169,9 @@
     right: -15px;
     left: -15px;
     padding: 5px 5px;
-    background-color: $motion-primary;
+    background-color: var(--clipcc-motion-primary);
     border-radius: 100%;
-    box-shadow: 0px 0px 0px 4px $motion-transparent;
+    box-shadow: 0px 0px 0px 4px var(--clipcc-motion-transparent);
     /* animation: pulse-blue-ring 1s infinite ease-in-out alternate; */
     animation: wiggle 0.5s infinite ease-in-out alternate;
 
@@ -182,7 +179,7 @@
 
 @keyframes pulse-blue-ring {
     100% {
-        box-shadow: 0px 0px 0px 8px $motion-light-transparent;
+        box-shadow: 0px 0px 0px 8px var(--clipcc-motion-light-transparent);
     }
 }
 
@@ -192,9 +189,9 @@
     right: -15px;
     left: -15px;
     padding: 5px 5px;
-    background-color: $pen-primary;
+    background-color: var(--clipcc-pen-primary);
     border-radius: 100%;
-    box-shadow: 0px 0px 0px 4px $pen-transparent;
+    box-shadow: 0px 0px 0px 4px var(--clipcc-pen-transparent);
 }
 
 @keyframes wiggle {
@@ -208,9 +205,9 @@
 .bluetooth-centered-icon {
     position: absolute;
     padding: 5px 5px;
-    background-color: $motion-primary;
+    background-color: var(--clipcc-motion-primary);
     border-radius: 100%;
-    box-shadow: 0px 0px 0px 2px $motion-transparent;
+    box-shadow: 0px 0px 0px 2px var(--clipcc-motion-transparent);
 }
 
 .peripheral-tile-widgets {
@@ -220,7 +217,7 @@
 
 .activityArea {
     height: 165px;
-    background-color: $motion-light-transparent;
+    background-color: var(--clipcc-motion-light-transparent);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -264,12 +261,12 @@
 }
 
 .help-step-number {
-    background: $pen-primary;
+    background: var(--clipcc-pen-primary);
     border-radius: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: $ui-white;
+    color: var(--clipcc-ui-white);
     font-weight: bold;
     min-width: 2rem;
     height: 2rem;
@@ -297,7 +294,7 @@
 .connection-button {
     padding: 0.6rem 0.75rem;
     border-radius: 0.5rem;
-    background: $motion-primary;
+    background: var(--clipcc-motion-primary);
     color: white;
     font-weight: 600;
     font-size: 0.85rem;
@@ -309,7 +306,7 @@
 }
 
 .connection-button:disabled {
-    background: $motion-transparent;
+    background: var(--clipcc-motion-transparent);
 }
 
 .segmented-button {
@@ -349,7 +346,7 @@
 }
 
 .red-button {
-    background: $red-primary;
+    background: var(--clipcc-red-primary);
 }
 
 .corner-buttons {
@@ -360,7 +357,7 @@
 }
 
 .bottom-area {
-    background-color: $ui-white;
+    background-color: var(--clipcc-ui-white);
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -390,15 +387,15 @@
     display: flex;
     padding: 0.25rem 0.1rem;
     border-radius: 1rem;
-    background: $motion-light-transparent;
+    background: var(--clipcc-motion-light-transparent);
 }
 
 .dots-holder-success {
-    background: $pen-transparent;
+    background: var(--clipcc-pen-transparent);
 }
 
 .dots-holder-error {
-    background: $error-transparent;
+    background: var(--clipcc-error-transparent);
 }
 
 .dot {
@@ -409,17 +406,17 @@
 }
 
 .inactive-step-dot {
-    background: $motion-transparent;
+    background: var(--clipcc-motion-transparent);
 }
 
 .active-step-dot {
-    background: $motion-primary;
+    background: var(--clipcc-motion-primary);
 }
 
 .success-dot {
-    background: $pen-primary;
+    background: var(--clipcc-pen-primary);
 }
 
 .error-dot {
-    background: $error-primary;
+    background: var(--clipcc-error-primary);
 }

@@ -1,4 +1,4 @@
-import 'web-audio-test-api';
+import 'lumen5-web-audio-test-api';
 
 import React from 'react';
 import configureStore from 'redux-mock-store';

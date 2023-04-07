@@ -1,7 +1,6 @@
 import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
-import VM from 'scratch-vm';
 import {connect} from 'react-redux';
 
 import SettingsModalComponent from '../components/settings-modal/settings-modal.jsx';
@@ -39,7 +38,6 @@ class SettingsModal extends React.Component {
         value = Math.round(value);
         if (value >= 10 && value <= 240) {
             this.props.updateSettings({framerate: value});
-            this.props.vm.setFramerate(value);
         }
     }
     render () {
@@ -62,15 +60,13 @@ SettingsModal.propTypes = {
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
     onClose: PropTypes.func.isRequired,
-    updateSettings: PropTypes.func.isRequired,
-    vm: PropTypes.instanceOf(VM).isRequired
+    updateSettings: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
     autoSave: state.scratchGui.settings.autoSave,
     autoSaveInterval: state.scratchGui.settings.autoSaveInterval,
-    framerate: state.scratchGui.settings.framerate,
-    vm: state.scratchGui.vm
+    framerate: state.scratchGui.settings.framerate
 });
 
 const mapDispatchToProps = dispatch => ({

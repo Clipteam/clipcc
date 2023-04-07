@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
+import {FormattedMessage, injectIntl} from 'react-intl';
 
 import Button from '../button/button.jsx';
 import Dropdown from '../dropdown/dropdown.jsx';
@@ -95,6 +96,19 @@ const ModeToolsComponent = props => (
                         {props.getFontName(Fonts.KOREAN)}
                     </span>
                 </Button>
+                <Button
+                    className={classNames(styles.modMenuItem)}
+                    onClick={props.onChoose}
+                    onMouseOver={props.onHoverCustomFont}
+                >
+                    <span className={styles.custom}>
+                        <FormattedMessage
+                            defaultMessage="Custom font..."
+                            description="Label for the custom font option in the font dropdown"
+                            id="paint.fontDropdown.customFont"
+                        />
+                    </span>
+                </Button>
             </InputGroup>
         }
         ref={props.componentRef}
@@ -124,6 +138,7 @@ ModeToolsComponent.propTypes = {
     onHoverPixel: PropTypes.func,
     onHoverSansSerif: PropTypes.func,
     onHoverSerif: PropTypes.func,
+    onHoverCustomFont: PropTypes.func,
     onOpenDropdown: PropTypes.func
 };
-export default ModeToolsComponent;
+export default injectIntl(ModeToolsComponent);

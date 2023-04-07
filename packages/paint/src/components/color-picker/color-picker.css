@@ -1,5 +1,3 @@
-@import "../../css/units";
-
 /* Popover styles */
 :global(.Popover-body) {
     background: white;
@@ -92,6 +90,10 @@
     filter: saturate(0%);
 }
 
+.live-input {
+    width: 6rem !important;
+}
+
 .gradient-picker-row {
     align-items: center;
     display: flex;
@@ -102,11 +104,11 @@
 }
 
 [dir="ltr"] .gradient-picker-row > img + img {
-    margin-left: calc(2 * $grid-unit);
+    margin-left: calc(2 * var(--clipcc-grid-unit));
 }
 
 [dir="rtl"] .gradient-picker-row > img + img {
-    margin-right: calc(2 * $grid-unit);
+    margin-right: calc(2 * var(--clipcc-grid-unit));
 }
 
 [dir="rtl"] .gradient-swatches-row {

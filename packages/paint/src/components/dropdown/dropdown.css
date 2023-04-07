@@ -1,18 +1,14 @@
-@import '../../css/colors.css';
-
-$arrow-border-width: 14px;
-
 .dropdown {
-    border: 1px solid $form-border;
+    border: 1px solid var(--clipcc-form-border);
     border-radius: 5px;
     overflow: visible;
     min-width: 3.5rem;
-    color: $motion-primary;
+    color: var(--clipcc-motion-primary);
     padding: .5rem;
 }
 
 .mod-open {
-    background-color: $form-border;
+    background-color: var(--clipcc-form-border);
 }
 
 .dropdown-icon {

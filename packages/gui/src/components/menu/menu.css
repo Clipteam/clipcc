@@ -1,17 +1,15 @@
-@import "../../css/colors.css";
-
 .menu {
     position: absolute;
-    border: 1px solid $ui-black-transparent;
+    border: 1px solid var(--clipcc-ui-black-transparent);
     border-radius: 0 0 8px 8px;
-    background-color: $motion-primary;
+    background-color: var(--clipcc-motion-primary);
     padding: 0;
     margin: 0;
     min-width: 186px;
     max-width: 260px;
     overflow: visible;
-    color: $ui-white;
-    box-shadow: 0 8px 8px 0 $ui-black-transparent;
+    color: var(--clipcc-ui-white);
+    box-shadow: 0 8px 8px 0 var(--clipcc-ui-black-transparent);
 }
 
 .menu.left {
@@ -34,7 +32,7 @@
 
 .menu-item.active,
 .menu-item:hover {
-    background-color: $ui-black-transparent;
+    background-color: var(--clipcc-ui-black-transparent);
 }
 
 .menu-item.hoverable {
@@ -42,5 +40,5 @@
 }
 
 .menu-section {
-    border-top: 1px solid $ui-black-transparent;
+    border-top: 1px solid var(--clipcc-ui-black-transparent);
 }

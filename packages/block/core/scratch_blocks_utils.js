@@ -288,6 +288,8 @@ Blockly.scratchBlocksUtils.pasteCallback = function(ws, event) {
         var y = (point.y - rel.y) / ws.scale;
 
         newBlock.moveBy(ws.RTL ? -x : x, y);
+        // Refresh toolbox to adapting new blocks
+        ws.refreshToolboxSelection_();
       } finally {
         Blockly.Events.enable();
         if (Blockly.Events.isEnabled() && newBlock) {
