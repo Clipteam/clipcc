@@ -1,6 +1,7 @@
 const defaultsDeep = require('lodash.defaultsdeep');
 var path = require('path');
 var webpack = require('webpack');
+const { version } = require('../../package.json');
 
 // Plugins
 var CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -131,7 +132,9 @@ module.exports = [
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': '"' + process.env.NODE_ENV + '"',
                 'process.env.DEBUG': Boolean(process.env.DEBUG),
-                'process.env.GA_ID': '"' + (process.env.GA_ID || 'UA-000000-01') + '"'
+                'process.env.GA_ID': '"' + (process.env.GA_ID || 'UA-000000-01') + '"',
+                'clipcc.VERSION': version,
+                'clipcc.BUILD_TIME': Date.now()
             }),
             new HtmlWebpackPlugin({
                 chunks: ['lib.min', 'gui'],

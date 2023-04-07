@@ -1,6 +1,7 @@
 {
   "name": "monorepo",
   "description": "ClipCC's Workspace",
+  "version": "3.2",
   "private": true,
   "engines": {
     "node": ">=16"

@@ -429,10 +429,68 @@ const control = function (isInitialSetup, isStage) {
     `;
 };
 
-const sensing = function (isInitialSetup, isStage) {
+const sensing = function (isInitialSetup, isStage, targetId, hideNonVanillaBlocks) {
     const name = ScratchBlocks.ScratchMsgs.translate('SENSING_ASK_TEXT', 'What\'s your name?');
     return `
     <category name="%{BKY_CATEGORY_SENSING}" id="sensing" colour="#4CBFE6" secondaryColour="#2E8EB8">
+        ${hideNonVanillaBlocks ? '' : `
+            <block type="sensing_distancebetweenposition">
+                <value name="X1">
+                    <shadow type="math_number">
+                        <field name="NUM">0</field>
+                    </shadow>
+                </value>
+                <value name="Y1">
+                    <shadow type="math_number">
+                        <field name="NUM">0</field>
+                    </shadow>
+                </value>
+                <value name="X2">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+                <value name="Y2">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="sensing_directionbetweenposition">
+                <value name="X1">
+                    <shadow type="math_number">
+                        <field name="NUM">0</field>
+                    </shadow>
+                </value>
+                <value name="Y1">
+                    <shadow type="math_number">
+                        <field name="NUM">0</field>
+                    </shadow>
+                </value>
+                <value name="X2">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+                <value name="Y2">
+                    <shadow type="math_number">
+                        <field name="NUM">1</field>
+                    </shadow>
+                </value>
+            </block>
+            <block type="sensing_colorat">
+                <value name="X">
+                    <shadow type="math_number">
+                        <field name="NUM">0</field>
+                    </shadow>
+                </value>
+                <value name="Y">
+                    <shadow type="math_number">
+                        <field name="NUM">0</field>
+                    </shadow>
+                </value>
+            </block>
+        `}
         ${isStage ? '' : `
             <block type="sensing_touchingobject">
                 <value name="TOUCHINGOBJECTMENU">
@@ -476,8 +534,20 @@ const sensing = function (isInitialSetup, isStage) {
             </value>
         </block>
         <block type="sensing_mousedown"/>
+        ${hideNonVanillaBlocks ? '' : `
+            <block type="sensing_mousepressed">
+                <value name="MOUSE_OPTION">
+                    <shadow type="sensing_mouseoptions"/>
+                </value>
+            </block>
+        `}
         <block type="sensing_mousex"/>
         <block type="sensing_mousey"/>
+        ${hideNonVanillaBlocks ? '' : `
+            <block type="sensing_joystick_distance"/>
+            <block type="sensing_joystickx"/>
+            <block type="sensing_joysticky"/>
+        `}
         ${isStage ? '' : `
             ${blockSeparator}
             '<block type="sensing_setdragmode" id="sensing_setdragmode"></block>'+
@@ -485,6 +555,11 @@ const sensing = function (isInitialSetup, isStage) {
         `}
         ${blockSeparator}
         <block id="loudness" type="sensing_loudness"/>
+        ${hideNonVanillaBlocks ? '' : `
+            <block type="sensing_isturbomode"/>
+            <block type="sensing_turnonturbomode"/>
+            <block type="sensing_turnoffturbomode"/>
+        `}
         ${blockSeparator}
         <block id="timer" type="sensing_timer"/>
         <block type="sensing_resettimer"/>
@@ -499,12 +574,16 @@ const sensing = function (isInitialSetup, isStage) {
         <block type="sensing_dayssince2000"/>
         ${blockSeparator}
         <block type="sensing_username"/>
+        ${hideNonVanillaBlocks ? '' : `
+            <block type="sensing_operatingsystem"/>
+            <block type="sensing_clipcc_version"/>
+        `}
         ${categorySeparator}
     </category>
     `;
 };
 
-const operators = function (isInitialSetup) {
+const operators = function (isInitialSetup, isStage, targetId, hideNonVanillaBlocks) {
     const apple = ScratchBlocks.ScratchMsgs.translate('OPERATORS_JOIN_APPLE', 'apple');
     const banana = ScratchBlocks.ScratchMsgs.translate('OPERATORS_JOIN_BANANA', 'banana');
     const letter = ScratchBlocks.ScratchMsgs.translate('OPERATORS_LETTEROF_APPLE', 'a');
@@ -558,6 +637,99 @@ const operators = function (isInitialSetup) {
                 </shadow>
             </value>
         </block>
+        ${hideNonVanillaBlocks ? '' : `
+            <block type="operator_power">
+                <value name="NUM1">
+                    <shadow type="math_number">
+                        <field name="NUM"/>
+                    </shadow>
+                </value>
+                <value name="NUM2">
+                    <shadow type="math_number">
+                        <field name="NUM"/>
+                    </shadow>
+                </value>
+            </block>
+            <block type="operator_bitand">
+                <value name="NUM1">
+                    <shadow type="math_number">
+                        <field name="NUM"/>
+                    </shadow>
+                </value>
+                <value name="NUM2">
+                    <shadow type="math_number">
+                        <field name="NUM"/>
+                    </shadow>
+                </value>
+            </block>
+            <block type="operator_bitor">
+                <value name="NUM1">
+                    <shadow type="math_number">
+                        <field name="NUM"/>
+                    </shadow>
+                </value>
+                <value name="NUM2">
+                    <shadow type="math_number">
+                        <field name="NUM"/>
+                    </shadow>
+                </value>
+            </block>
+            <block type="operator_bitxor">
+                <value name="NUM1">
+                    <shadow type="math_number">
+                        <field name="NUM"/>
+                    </shadow>
+                </value>
+                <value name="NUM2">
+                    <shadow type="math_number">
+                        <field name="NUM"/>
+                    </shadow>
+                </value>
+            </block>
+            <block type="operator_bitnot">
+                <value name="NUM1">
+                    <shadow type="math_number">
+                        <field name="NUM"/>
+                    </shadow>
+                </value>
+            </block>
+            <block type="operator_bitlsh">
+                <value name="NUM1">
+                    <shadow type="math_number">
+                        <field name="NUM"/>
+                    </shadow>
+                </value>
+                <value name="NUM2">
+                    <shadow type="math_number">
+                        <field name="NUM"/>
+                    </shadow>
+                </value>
+            </block>
+            <block type="operator_bitrsh">
+                <value name="NUM1">
+                    <shadow type="math_number">
+                        <field name="NUM"/>
+                    </shadow>
+                </value>
+                <value name="NUM2">
+                    <shadow type="math_number">
+                        <field name="NUM"/>
+                    </shadow>
+                </value>
+            </block>
+            <block type="operator_bitursh">
+                <value name="NUM1">
+                    <shadow type="math_number">
+                        <field name="NUM"/>
+                    </shadow>
+                </value>
+                <value name="NUM2">
+                    <shadow type="math_number">
+                        <field name="NUM"/>
+                    </shadow>
+                </value>
+            </block>
+        `}
         ${blockSeparator}
         <block type="operator_random">
             <value name="FROM">
@@ -584,6 +756,20 @@ const operators = function (isInitialSetup) {
                 </shadow>
             </value>
         </block>
+        ${hideNonVanillaBlocks ? '' : `
+            <block type="operator_ge">
+                <value name="OPERAND1">
+                    <shadow type="text">
+                        <field name="TEXT"/>
+                    </shadow>
+                </value>
+                <value name="OPERAND2">
+                    <shadow type="text">
+                        <field name="TEXT">50</field>
+                    </shadow>
+                </value>
+            </block>
+        `}
         <block type="operator_lt">
             <value name="OPERAND1">
                 <shadow type="text">
@@ -596,6 +782,20 @@ const operators = function (isInitialSetup) {
                 </shadow>
             </value>
         </block>
+        ${hideNonVanillaBlocks ? '' : `
+            <block type="operator_le">
+                <value name="OPERAND1">
+                    <shadow type="text">
+                        <field name="TEXT"/>
+                    </shadow>
+                </value>
+                <value name="OPERAND2">
+                    <shadow type="text">
+                        <field name="TEXT">50</field>
+                    </shadow>
+                </value>
+            </block>
+        `}
         <block type="operator_equals">
             <value name="OPERAND1">
                 <shadow type="text">
@@ -608,12 +808,45 @@ const operators = function (isInitialSetup) {
                 </shadow>
             </value>
         </block>
+        ${hideNonVanillaBlocks ? '' : `
+            <block type="operator_nequals">
+                <value name="OPERAND1">
+                    <shadow type="text">
+                        <field name="TEXT"/>
+                    </shadow>
+                </value>
+                <value name="OPERAND2">
+                    <shadow type="text">
+                        <field name="TEXT">50</field>
+                    </shadow>
+                </value>
+            </block>
+        `}
         ${blockSeparator}
         <block type="operator_and"/>
         <block type="operator_or"/>
         <block type="operator_not"/>
         ${blockSeparator}
         ${isInitialSetup ? '' : `
+            ${hideNonVanillaBlocks ? '' : `
+                <block type="operator_indexof">
+                    <value name="POS">
+                        <shadow type="math_whole_number">
+                            <field name="NUM">1</field>
+                        </shadow>
+                    </value>
+                    <value name="STRING">
+                        <shadow type="text">
+                            <field name="TEXT">${apple} ${banana}</field>
+                        </shadow>
+                    </value>
+                    <value name="SUBSTRING">
+                        <shadow type="text">
+                            <field name="TEXT">${banana}</field>
+                        </shadow>
+                    </value>
+                </block>
+            `}
             <block type="operator_join">
                 <value name="STRING1">
                     <shadow type="text">
@@ -732,10 +965,11 @@ const xmlClose = '</xml>';
  * @param {?string} costumeName - The name of the default selected costume dropdown.
  * @param {?string} backdropName - The name of the default selected backdrop dropdown.
  * @param {?string} soundName -  The name of the default selected sound dropdown.
+ * @param {?boolean} hideNonVanillaBlocks - hide non-vanilla blocks.
  * @returns {string} - a ScratchBlocks-style XML document for the contents of the toolbox.
  */
 const makeToolboxXML = function (isInitialSetup, isStage = true, targetId, categoriesXML = [],
-    costumeName = '', backdropName = '', soundName = '') {
+    costumeName = '', backdropName = '', soundName = '', hideNonVanillaBlocks = false) {
     isStage = isInitialSetup || isStage;
     const gap = [categorySeparator];
 
@@ -758,8 +992,8 @@ const makeToolboxXML = function (isInitialSetup, isStage = true, targetId, categ
     const soundXML = moveCategory('sound') || sound(isInitialSetup, isStage, targetId, soundName);
     const eventsXML = moveCategory('event') || events(isInitialSetup, isStage, targetId);
     const controlXML = moveCategory('control') || control(isInitialSetup, isStage, targetId);
-    const sensingXML = moveCategory('sensing') || sensing(isInitialSetup, isStage, targetId);
-    const operatorsXML = moveCategory('operators') || operators(isInitialSetup, isStage, targetId);
+    const sensingXML = moveCategory('sensing') || sensing(isInitialSetup, isStage, targetId, hideNonVanillaBlocks);
+    const operatorsXML = moveCategory('operators') || operators(isInitialSetup, isStage, targetId, hideNonVanillaBlocks);
     const variablesXML = moveCategory('data') || variables(isInitialSetup, isStage, targetId);
     const myBlocksXML = moveCategory('procedures') || myBlocks(isInitialSetup, isStage, targetId);
 
