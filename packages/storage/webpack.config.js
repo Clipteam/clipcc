@@ -25,7 +25,9 @@ const base = {
         minimizer: [
             new TerserPlugin({
                 include: /\.min\.js$/,
-                sourceMap: true
+                terserOptions: {
+                    sourceMap: true
+                }
             })
         ]
     },
