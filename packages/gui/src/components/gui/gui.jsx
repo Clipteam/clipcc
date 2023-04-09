@@ -180,7 +180,7 @@ const GUIComponent = props => {
                     <WebGlModal isRtl={isRtl} />
                 )}
                 {settingsModalVisible ? (
-                    <SettingsModal />
+                    <SettingsModal enableCommunity={enableCommunity} />
                 ) : null}
                 {alertsVisible ? (
                     <Alerts className={styles.alertsContainer} />

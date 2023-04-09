@@ -146,6 +146,25 @@ class SettingsModal extends React.Component {
                         <div className={styles.item}>
                             <div className={styles.label}>
                                 <FormattedMessage
+                                    defaultMessage="Save via File System Access API"
+                                    description="Label of save via File System Access API"
+                                    id="gui.settingsModal.saveViaFsa"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Save your project directly via File System Access API."
+                                    description="Description of save via File System Access API"
+                                    id="gui.settingsModal.saveViaFsaDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.saveViaFsa}
+                                onChange={this.props.onChangeSaveViaFsa}
+                                disabled={this.props.enableCommunity}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
                                     defaultMessage="Auto Save"
                                     description="Label of auto save"
                                     id="gui.settingsModal.autoSave"
@@ -196,7 +215,9 @@ class SettingsModal extends React.Component {
 }
 
 SettingsModal.propTypes = {
+    enableCommunity: PropTypes.bool.isRequired,
     hideNonVanillaBlocks: PropTypes.bool.isRequired,
+    saveViaFsa: PropTypes.bool.isRequired,
     autoSave: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,

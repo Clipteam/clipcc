@@ -2,7 +2,7 @@ import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
-
+import {defineMessages, injectIntl, intlShape} from 'react-intl';
 import SettingsModalComponent from '../components/settings-modal/settings-modal.jsx';
 
 import {
@@ -12,6 +12,14 @@ import {
     updateSettings
 } from '../reducers/settings';
 
+const messages = defineMessages({
+    unsupported: {
+        defaultMessage: 'This feature is unsupported in your device',
+        description: 'Label of unsupported notification',
+        id: 'gui.settingsModal.unsupported'
+    }
+});
+
 class SettingsModal extends React.Component {
     constructor (props) {
         super(props);
@@ -20,7 +28,8 @@ class SettingsModal extends React.Component {
             'handleChangeAutoSave',
             'handleChangeAutoSaveInterval',
             'handleChangeFramerate',
-            'handleChangeHideNonVanillaBlocks'
+            'handleChangeHideNonVanillaBlocks',
+            'handleChangeSaveViaFsa'
         ]);
     }
     handleClose () {
@@ -44,10 +53,19 @@ class SettingsModal extends React.Component {
     handleChangeHideNonVanillaBlocks (value) {
         this.props.updateSettings({hideNonVanillaBlocks: value});
     }
+    handleChangeSaveViaFsa (value) {
+        if (!window.showOpenFilePicker) {
+            alert(this.props.intl.formatMessage(messages.unsupported));
+            return;
+        }
+        this.props.updateSettings({saveViaFsa: value});
+    }
     render () {
         return (
             <SettingsModalComponent
+                enableCommunity={this.props.enableCommunity}
                 hideNonVanillaBlocks={this.props.hideNonVanillaBlocks}
+                saveViaFsa={this.props.saveViaFsa}
                 autoSave={this.props.autoSave}
                 autoSaveInterval={this.props.autoSaveInterval}
                 framerate={this.props.framerate}
@@ -56,22 +74,27 @@ class SettingsModal extends React.Component {
                 onChangeAutoSaveInterval={this.handleChangeAutoSaveInterval}
                 onChangeFramerate={this.handleChangeFramerate}
                 onChangeHideNonVanillaBlocks={this.handleChangeHideNonVanillaBlocks}
+                onChangeSaveViaFsa={this.handleChangeSaveViaFsa}
             />
         );
     }
 }
 
 SettingsModal.propTypes = {
+    enableCommunity: PropTypes.bool.isRequired,
     hideNonVanillaBlocks: PropTypes.bool.isRequired,
+    saveViaFsa: PropTypes.bool.isRequired,
     autoSave: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
+    intl: intlShape.isRequired,
     onClose: PropTypes.func.isRequired,
     updateSettings: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
     hideNonVanillaBlocks: state.scratchGui.settings.hideNonVanillaBlocks,
+    saveViaFsa:state.scratchGui.settings.saveViaFsa,
     autoSave: state.scratchGui.settings.autoSave,
     autoSaveInterval: state.scratchGui.settings.autoSaveInterval,
     framerate: state.scratchGui.settings.framerate
@@ -85,4 +108,4 @@ const mapDispatchToProps = dispatch => ({
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(SettingsModal);
+)(injectIntl(SettingsModal));
