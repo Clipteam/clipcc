@@ -11,7 +11,7 @@
   "main": "./dist/node/scratch-storage.js",
   "browser": "./src/index.js",
   "scripts": {
-    "build": "webpack --progress --colors --bail",
+    "build": "webpack --progress --color --bail",
     "coverage": "tap ./test/{unit,integration}/*.js --coverage --coverage-report=lcov",
     "lint": "eslint .",
     "tap-integration": "tap ./test/integration/*.js",
