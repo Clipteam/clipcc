@@ -186,3 +186,44 @@ test('mathop', t => {
     t.strictEqual(blocks.mathop({OPERATOR: 'undefined', NUM: 1}), 0);
     t.end();
 });
+
+test('power', t => {
+    t.strictEqual(blocks.power({NUM1: 2, NUM2: 0}), 1);
+    t.strictEqual(blocks.power({NUM1: 5, NUM2: -1}), 0.2);
+    t.strictEqual(blocks.power({NUM1: 4, NUM2: 0.5}), 2);
+    t.end();
+});
+
+// @todo bit operation blocks
+
+test('le', t => {
+    t.strictEqual(blocks.le({OPERAND1: '1', OPERAND2: '2'}), true);
+    t.strictEqual(blocks.le({OPERAND1: '2', OPERAND2: '1'}), false);
+    t.strictEqual(blocks.le({OPERAND1: '1', OPERAND2: '1'}), true);
+    t.strictEqual(blocks.le({OPERAND1: '10', OPERAND2: '2'}), false);
+    t.strictEqual(blocks.le({OPERAND1: 'a', OPERAND2: 'z'}), true);
+    t.end();
+});
+
+test('nequals', t => {
+    t.strictEqual(blocks.nequals({OPERAND1: '1', OPERAND2: '2'}), true);
+    t.strictEqual(blocks.nequals({OPERAND1: '2', OPERAND2: '1'}), true);
+    t.strictEqual(blocks.nequals({OPERAND1: '1', OPERAND2: '1'}), false);
+    t.strictEqual(blocks.nequals({OPERAND1: 'あ', OPERAND2: 'ア'}), true);
+    t.end();
+});
+
+test('ge', t => {
+    t.strictEqual(blocks.ge({OPERAND1: '1', OPERAND2: '2'}), false);
+    t.strictEqual(blocks.ge({OPERAND1: '2', OPERAND2: '1'}), true);
+    t.strictEqual(blocks.ge({OPERAND1: '1', OPERAND2: '1'}), true);
+    t.end();
+});
+
+test('indexof', t => {
+    t.strictEqual(blocks.indexOf({POS: '1', STRING: 'kamiyama shiki kawaii!!', SUBSTRING: 'shiki'}), 10);
+    t.strictEqual(blocks.indexOf({POS: 1, STRING: 'dosukoi!!', SUBSTRING: 'Suk'}), -1);
+    t.strictEqual(blocks.indexOf({POS: 2, STRING: '测试测试测试测试', SUBSTRING: '测试'}), 3);
+    t.strictEqual(blocks.indexOf({POS: 3, STRING: '😭😭😭😭😭😭😭😭', SUBSTRING: '🍡'}), -1);
+    t.end();
+});

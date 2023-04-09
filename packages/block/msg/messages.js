@@ -95,6 +95,7 @@ Blockly.Msg.EVENT_WHENKEYPRESSED_RIGHT = 'right arrow';
 Blockly.Msg.EVENT_WHENKEYPRESSED_DOWN = 'down arrow';
 Blockly.Msg.EVENT_WHENKEYPRESSED_UP = 'up arrow';
 Blockly.Msg.EVENT_WHENKEYPRESSED_ANY = 'any';
+Blockly.Msg.EVENT_WHENKEYPRESSED_ENTER = 'enter';
 
 // Looks blocks
 Blockly.Msg.LOOKS_SAYFORSECS = 'say %1 for %2 seconds';
@@ -216,6 +217,18 @@ Blockly.Msg.OPERATORS_MATHOP_LN = 'ln';
 Blockly.Msg.OPERATORS_MATHOP_LOG = 'log';
 Blockly.Msg.OPERATORS_MATHOP_EEXP = 'e ^';
 Blockly.Msg.OPERATORS_MATHOP_10EXP = '10 ^';
+Blockly.Msg.OPERATORS_POWER = '%1 ^ %2';
+Blockly.Msg.OPERATORS_BITAND = '%1 & %2';
+Blockly.Msg.OPERATORS_BITOR = '%1 | %2';
+Blockly.Msg.OPERATORS_BITXOR = '%1 xor %2';
+Blockly.Msg.OPERATORS_BITNOT = '~ %1';
+Blockly.Msg.OPERATORS_BITLSH = '%1 << %2';
+Blockly.Msg.OPERATORS_BITRSH = '%1 >> %2';
+Blockly.Msg.OPERATORS_BITURSH = '%1 >>> %2';
+Blockly.Msg.OPERATORS_GE = '%1 ≥ %2';
+Blockly.Msg.OPERATORS_LE = '%1 ≤ %2';
+Blockly.Msg.OPERATORS_NEQUALS = '%1 ≠ %2';
+Blockly.Msg.OPERATORS_INDEXOF = 'position %1 of %2 contain %3';
 
 // Procedures blocks
 Blockly.Msg.PROCEDURES_DEFINITION = 'define %1';
@@ -228,11 +241,17 @@ Blockly.Msg.SENSING_TOUCHINGCOLOR = 'touching color %1?';
 Blockly.Msg.SENSING_COLORISTOUCHINGCOLOR = 'color %1 is touching %2?';
 Blockly.Msg.SENSING_DISTANCETO = 'distance to %1';
 Blockly.Msg.SENSING_DISTANCETO_POINTER = 'mouse-pointer';
+Blockly.Msg.SENSING_DISTANCEBETWEENPOSITION = 'distance from (x: %1, y: %2 ) to (x: %3 , y: %4 )';
+Blockly.Msg.SENSING_DIRECTIONBETWEENPOSITION = 'direction from (x: %1, y: %2 ) to (x: %3 , y: %4 )';
 Blockly.Msg.SENSING_ASKANDWAIT = 'ask %1 and wait';
 Blockly.Msg.SENSING_ASK_TEXT = 'What\'s your name?';
 Blockly.Msg.SENSING_ANSWER = 'answer';
 Blockly.Msg.SENSING_KEYPRESSED = 'key %1 pressed?';
 Blockly.Msg.SENSING_MOUSEDOWN = 'mouse down?';
+Blockly.Msg.SENSING_MOUSEPRESSED = 'mouse %1 pressed?';
+Blockly.Msg.SENSING_MOUSEPRESSED_LEFT = 'left';
+Blockly.Msg.SENSING_MOUSEPRESSED_MIDDLE = 'middle';
+Blockly.Msg.SENSING_MOUSEPRESSED_RIGHT = 'right';
 Blockly.Msg.SENSING_MOUSEX = 'mouse x';
 Blockly.Msg.SENSING_MOUSEY = 'mouse y';
 Blockly.Msg.SENSING_SETDRAGMODE = 'set drag mode %1';
@@ -264,6 +283,15 @@ Blockly.Msg.SENSING_CURRENT_SECOND = 'second';
 Blockly.Msg.SENSING_DAYSSINCE2000 = 'days since 2000';
 Blockly.Msg.SENSING_USERNAME = 'username';
 Blockly.Msg.SENSING_USERID = 'user id';
+Blockly.Msg.SENSING_COLORAT = 'get the color at (x: %1, y: %2)';
+Blockly.Msg.SENSING_OPERATINGSYSTEM = 'operating system';
+Blockly.Msg.SENSING_CLIPCC_VERSION = 'ClipCC version';
+Blockly.Msg.SENSING_JOYSTICKX = 'joystick x axis';
+Blockly.Msg.SENSING_JOYSTICKY = 'joystick y axis';
+Blockly.Msg.SENSING_JOYSTICK_DISTANCE = 'joystick distance';
+Blockly.Msg.SENSING_TURNONTURBOMODE = 'turn on turbo mode';
+Blockly.Msg.SENSING_TURNOFFTURBOMODE = 'turn off turbo mode';
+Blockly.Msg.SENSING_ISTURBOMODE = 'turbo mode?';
 
 // Sound blocks
 Blockly.Msg.SOUND_PLAY = 'start sound %1';

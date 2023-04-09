@@ -28,12 +28,24 @@ class Scratch3OperatorsBlocks {
             operator_not: this.not,
             operator_random: this.random,
             operator_join: this.join,
+            operator_indexof: this.indexOf,
             operator_letter_of: this.letterOf,
             operator_length: this.length,
             operator_contains: this.contains,
             operator_mod: this.mod,
             operator_round: this.round,
-            operator_mathop: this.mathop
+            operator_mathop: this.mathop,
+            operator_power: this.power,
+            operator_bitand: this.bitand,
+            operator_bitor: this.bitor,
+            operator_bitxor: this.bitxor,
+            operator_bitnot: this.bitnot,
+            operator_bitlsh: this.bitlsh,
+            operator_bitrsh: this.bitrsh,
+            operator_bitursh: this.bitursh,
+            operator_le: this.le,
+            operator_ge: this.ge,
+            operator_nequals: this.nequals
         };
     }
 
@@ -148,6 +160,61 @@ class Scratch3OperatorsBlocks {
         case '10 ^': return Math.pow(10, n);
         }
         return 0;
+    }
+
+    power (args) {
+        return Math.pow(Cast.toNumber(args.NUM1), Cast.toNumber(args.NUM2));
+    }
+
+    bitand (args) {
+        return Cast.toNumber(args.NUM1) & Cast.toNumber(args.NUM2);
+    }
+
+    bitor (args) {
+        return Cast.toNumber(args.NUM1) | Cast.toNumber(args.NUM2);
+    }
+
+    bitxor (args) {
+        return Cast.toNumber(args.NUM1) ^ Cast.toNumber(args.NUM2);
+    }
+
+    bitlsh (args) {
+        return Cast.toNumber(args.NUM1) << Cast.toNumber(args.NUM2);
+    }
+
+    bitrsh (args) {
+        return Cast.toNumber(args.NUM1) >> Cast.toNumber(args.NUM2);
+    }
+
+    bitursh (args) {
+        return Cast.toNumber(args.NUM1) >>> Cast.toNumber(args.NUM2);
+    }
+
+    bitnot (args) {
+        return ~Cast.toNumber(args.NUM1);
+    }
+
+    ge (args) {
+        return Cast.compare(args.OPERAND1, args.OPERAND2) >= 0;
+    }
+
+    le (args) {
+        return Cast.compare(args.OPERAND1, args.OPERAND2) <= 0;
+    }
+
+    nequals (args) {
+        return Cast.compare(args.OPERAND1, args.OPERAND2) !== 0;
+    }
+    
+    indexOf (args) {
+        const {STRING, SUBSTRING, POS} = args;
+        let index = Cast.toString(STRING).indexOf(Cast.toString(SUBSTRING));
+        if (index === -1) return -1;
+        for (let i = 0; i < Cast.toNumber(POS) - 1; i++) {
+            index = Cast.toString(STRING).indexOf(Cast.toString(SUBSTRING), index + 1);
+            if (index === -1) return -1;
+        }
+        return index + 1;
     }
 }
 
