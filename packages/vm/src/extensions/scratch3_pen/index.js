@@ -68,7 +68,7 @@ class Scratch3PenBlocks {
         this._onTargetMoved = this._onTargetMoved.bind(this);
 
         runtime.on('targetWasCreated', this._onTargetCreated);
-        runtime.on('RUNTIME_DISPOSED', this.clear.bind(this));
+        runtime.on('RUNTIME_DISPOSED', this._dispose.bind(this));
     }
 
     /**
@@ -765,6 +765,16 @@ class Scratch3PenBlocks {
         penState.brightness = 100 * hsv.v;
 
         this._updatePenColor(penState);
+    }
+
+    /**
+     * When runtime is disposed, dispose pen extension.
+     * @private
+     */
+    _dispose () {
+        this.clear();
+        this._penSkinId = -1;
+        this._penDrawableId = -1;
     }
 }
 

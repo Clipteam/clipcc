@@ -28,7 +28,7 @@
     border-radius: 5px;
     padding: 0 1rem;
     height: 3rem;
-    color: var(--clipcc-text-primary)-transparent;
+    color: var(--clipcc-text-primary-transparent);
     font-size: .875rem;
 }
 

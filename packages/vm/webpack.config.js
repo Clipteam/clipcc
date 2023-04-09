@@ -1,7 +1,9 @@
+const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const defaultsDeep = require('lodash.defaultsdeep');
 const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const { version } = require('../../package.json');
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -36,7 +38,12 @@ const base = {
             })
         ]
     },
-    plugins: []
+    plugins: [
+        new webpack.DefinePlugin({
+            'clipcc.VERSION': version,
+            'clipcc.BUILD_TIME': Date.now()
+        })
+    ]
 };
 
 module.exports = [

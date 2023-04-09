@@ -90,6 +90,10 @@
     filter: saturate(0%);
 }
 
+.live-input {
+    width: 6rem !important;
+}
+
 .gradient-picker-row {
     align-items: center;
     display: flex;

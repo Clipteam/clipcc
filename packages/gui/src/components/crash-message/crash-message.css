@@ -18,7 +18,7 @@
     border: 1px solid var(--clipcc-motion-primary);
     border-radius: 0.25rem;
     padding: 0.5rem 2rem;
-    background: white;
+    background: var(--clipcc-on-motion-primary);
     color: var(--clipcc-motion-primary);
     font-weight: bold;
     font-size: 0.875rem;

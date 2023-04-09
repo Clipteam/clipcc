@@ -26,7 +26,7 @@
         @todo: make room for the scrollbar
     */
     box-sizing: border-box;
-    width: calc((100% / var(--clipcc-sprites-per-row) ) - var(--clipcc-space));
+    width: calc((100% / var(--clipcc-sprites-per-row)) - var(--clipcc-space));
     max-width: 6rem;
     min-width: 4rem;
     min-height: 4rem; /* @todo: calc height same as width */

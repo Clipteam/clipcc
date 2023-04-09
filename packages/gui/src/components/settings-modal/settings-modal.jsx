@@ -87,6 +87,24 @@ class SettingsModal extends React.Component {
                         >
                             {this.props.intl.formatMessage(messages.appearance)}
                         </p>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Hide Non-vanilla blocks"
+                                    description="Label of hide non-vanilla blocks"
+                                    id="gui.settingsModal.hideNonVanillaBlocks"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Hide clipcc-specific blocks in toolbox."
+                                    description="Description of hide non-vanilla blocks"
+                                    id="gui.settingsModal.hideNonVanillaBlocksDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.hideNonVanillaBlocks}
+                                onChange={this.props.onChangeHideNonVanillaBlocks}
+                            />
+                        </div>
                         <p
                             className={styles.category}
                             ref={ref => this.categoryRef.player = ref}
@@ -286,6 +304,7 @@ class SettingsModal extends React.Component {
 }
 
 SettingsModal.propTypes = {
+    hideNonVanillaBlocks: PropTypes.bool.isRequired,
     autoSave: PropTypes.bool.isRequired,
     infiniteCloning: PropTypes.bool.isRequired,
     edgelessStage: PropTypes.bool.isRequired,
@@ -305,7 +324,8 @@ SettingsModal.propTypes = {
     onChangeUnlimitedSoundStuffs: PropTypes.func.isRequired,
     onChangeAccurateCoordinates: PropTypes.func.isRequired,
     onChangeAutoSaveInterval: PropTypes.func.isRequired,
-    onChangeFramerate: PropTypes.func.isRequired
+    onChangeFramerate: PropTypes.func.isRequired,
+    onChangeHideNonVanillaBlocks: PropTypes.func.isRequired
 };
 
 export default injectIntl(SettingsModal);

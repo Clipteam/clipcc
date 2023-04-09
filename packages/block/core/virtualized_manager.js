@@ -31,76 +31,76 @@ goog.provide('Blockly.VirtualizedManager');
  * @param {Blockly.WorkspaceSvg} workspace
  */
 Blockly.VirtualizedManager = function(workspace) {
-    this.workspace = workspace;
-    this._observedBlocks = [];
-    this.observe = this.observe.bind(this);
-    this.unobserve = this.unobserve.bind(this);
-    this.check = this.check.bind(this);
-    this.dispose = this.dispose.bind(this);
-}
+  this.workspace = workspace;
+  this._observedBlocks = [];
+  this.observe = this.observe.bind(this);
+  this.unobserve = this.unobserve.bind(this);
+  this.check = this.check.bind(this);
+  this.dispose = this.dispose.bind(this);
+};
 
 /**
  * Observe a block.
- * @param {Blockly.BlockSvg} block 
+ * @param {Blockly.BlockSvg} block
  */
 Blockly.VirtualizedManager.prototype.observe = function(block) {
-    if (!this._observedBlocks.includes(block)) {
-        this._observedBlocks.push(block);
-    }
-}
+  if (!this._observedBlocks.includes(block)) {
+    this._observedBlocks.push(block);
+  }
+};
 
 /**
  * Unobserve a block.
- * @param {Blockly.BlockSvg} block 
+ * @param {Blockly.BlockSvg} block
  */
 Blockly.VirtualizedManager.prototype.unobserve = function(block) {
-    if (this._observedBlocks.includes(block)) {
-        this._observedBlocks = this._observedBlocks.filter(function(i) {
-          return i !== block;
-        });
-    }
-}
+  if (this._observedBlocks.includes(block)) {
+    this._observedBlocks = this._observedBlocks.filter(function(i) {
+      return i !== block;
+    });
+  }
+};
 
 /**
  * Dispose VirtualizedManager.
  */
 Blockly.VirtualizedManager.prototype.dispose = function() {
-    this._observedBlocks = [];
-}
+  this._observedBlocks = [];
+};
 
 /**
  * Check if block need to be show or hide.
  */
 Blockly.VirtualizedManager.prototype.check = function() {
-    var workspace = this.workspace;
-    var workspaceHeight = workspace.getParentSvg().height.baseVal.value;
-    var workspaceWidth = workspace.getParentSvg().width.baseVal.value;
-    var canvasPos = Blockly.utils.getRelativeXY(workspace.getCanvas());
-    for (var i = 0; i < this._observedBlocks.length; i++) {
-        var block = this._observedBlocks[i];
-        var blockPos = block.getRelativeToSurfaceXY();
-        blockPos.x *= workspace.scale;
-        blockPos.y *= workspace.scale;
+  var workspace = this.workspace;
+  var workspaceHeight = workspace.getParentSvg().height.baseVal.value;
+  var workspaceWidth = workspace.getParentSvg().width.baseVal.value;
+  var canvasPos = Blockly.utils.getRelativeXY(workspace.getCanvas());
+  for (var i = 0; i < this._observedBlocks.length; i++) {
+    var block = this._observedBlocks[i];
+    var blockPos = block.getRelativeToSurfaceXY();
+    blockPos.x *= workspace.scale;
+    blockPos.y *= workspace.scale;
         
-        var visible = true;
+    var visible = true;
         
-        // bottom-right check
-        if (canvasPos.y + blockPos.y > workspaceHeight) {
-            visible = false;
-        } else if (canvasPos.x + blockPos.x > workspaceWidth) {
-            visible = false;
-        } else {
-            // top-left check
-            var blockSize = block.getHeightWidth();
-            blockSize.width *= workspace.scale;
-            blockSize.height *= workspace.scale;
-            if (canvasPos.x + blockPos.x + blockSize.width < 0) {
-                visible = false;
-            } else if (canvasPos.y + blockPos.y + blockSize.height < 0) {
-                visible = false;
-            }
-        }
-        
-        block.setVisible(visible);
+    // bottom-right check
+    if (canvasPos.y + blockPos.y > workspaceHeight) {
+      visible = false;
+    } else if (canvasPos.x + blockPos.x > workspaceWidth) {
+      visible = false;
+    } else {
+      // top-left check
+      var blockSize = block.getHeightWidth();
+      blockSize.width *= workspace.scale;
+      blockSize.height *= workspace.scale;
+      if (canvasPos.x + blockPos.x + blockSize.width < 0) {
+        visible = false;
+      } else if (canvasPos.y + blockPos.y + blockSize.height < 0) {
+        visible = false;
+      }
     }
-}
+        
+    block.setVisible(visible);
+  }
+};

@@ -1,6 +1,7 @@
 const UPDATE = 'scratch-gui/settings/UPDATE';
 
-const initialState = {
+const defaultState = {
+    hideNonVanillaBlocks: false,
     autoSave: false,
     infiniteCloning: false,
     edgelessStage: false,
@@ -13,11 +14,25 @@ const initialState = {
     framerate: 30
 };
 
+const initialState = JSON.parse(localStorage.getItem('settings')) || {};
+let needUpdate = false;
+for (const key in defaultState) {
+    if (!initialState.hasOwnProperty(key)) {
+        initialState[key] = defaultState[key];
+        needUpdate = true;
+    }
+}
+if (needUpdate) localStorage.setItem('settings', JSON.stringify(initialState));
+
+
 const reducer = function (state, action) {
     if (typeof state === 'undefined') state = initialState;
     switch (action.type) {
-    case UPDATE:
-        return Object.assign({}, state, action.settings);
+    case UPDATE: {
+        const newSettings = Object.assign({}, state, action.settings);
+        localStorage.setItem('settings', JSON.stringify(newSettings));
+        return newSettings;
+    }
     default:
         return state;
     }

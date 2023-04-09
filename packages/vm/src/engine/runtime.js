@@ -26,6 +26,7 @@ const Mouse = require('../io/mouse');
 const MouseWheel = require('../io/mouseWheel');
 const UserData = require('../io/userData');
 const Video = require('../io/video');
+const Joystick = require('../io/joystick');
 
 const StringUtil = require('../util/string-util');
 const uid = require('../util/uid');
@@ -360,6 +361,7 @@ class Runtime extends EventEmitter {
             cloud: new Cloud(this),
             keyboard: new Keyboard(this),
             mouse: new Mouse(this),
+            joystick: new Joystick(this),
             mouseWheel: new MouseWheel(this),
             userData: new UserData(),
             video: new Video(this)
@@ -1917,6 +1919,12 @@ class Runtime extends EventEmitter {
         this._monitorState = OrderedMap({});
         this.emit(Runtime.RUNTIME_DISPOSED);
         this.ioDevices.clock.resetProjectTimer();
+
+        if (this.renderer && '_allSkins' in this.renderer) {
+            this.renderer._allSkins.forEach(skin => {
+                this.renderer.destroySkin(skin._id);
+            });
+        }
         // @todo clear out extensions? turboMode? etc.
 
         // *********** Cloud *******************

@@ -323,9 +323,65 @@ Blockly.Blocks.defaultToolbox = '<xml id="toolbox-categories" style="display: no
         '<shadow type="colour_picker"></shadow>' +
       '</value>' +
     '</block>' +
+    '<block type="sensing_colorat" id="sensing_colorat">' +
+      '<value name="X">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"/>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="Y">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"/>' +
+        '</shadow>' +
+      '</value>' +
+    '</block>' +
     '<block type="sensing_distanceto" id="sensing_distanceto">' +
       '<value name="DISTANCETOMENU">' +
         '<shadow type="sensing_distancetomenu"></shadow>' +
+      '</value>' +
+    '</block>' +
+    '<block type="sensing_distancebetweenposition" id="sensing_distancebetweenposition">' +
+      '<value name="X1">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"/>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="Y1">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"/>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="X2">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"/>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="Y2">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"/>' +
+        '</shadow>' +
+      '</value>' +
+    '</block>' +
+    '<block type="sensing_directionbetweenposition" id="sensing_directionbetweenposition">' +
+      '<value name="X1">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"/>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="Y1">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"/>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="X2">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"/>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="Y2">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"/>' +
+        '</shadow>' +
       '</value>' +
     '</block>' +
     '<block type="sensing_keypressed" id="sensing_keypressed">' +
@@ -334,6 +390,11 @@ Blockly.Blocks.defaultToolbox = '<xml id="toolbox-categories" style="display: no
         '</value>' +
     '</block>' +
     '<block type="sensing_mousedown" id="sensing_mousedown"></block>' +
+    '<block type="sensing_mousepressed" id="sensing_mousepressed">' +
+        '<value name="MOUSE_OPTION">' +
+          '<shadow type="sensing_mouseoptions"></shadow>' +
+        '</value>' +
+    '</block>' +
     '<block type="sensing_mousex" id="sensing_mousex"></block>' +
     '<block type="sensing_mousey" id="sensing_mousey"></block>' +
     '<block type="sensing_setdragmode" id="sensing_setdragmode"></block>' +
@@ -347,6 +408,8 @@ Blockly.Blocks.defaultToolbox = '<xml id="toolbox-categories" style="display: no
     '</block>' +
     '<block type="sensing_current" id="sensing_current"></block>' +
     '<block type="sensing_dayssince2000" id="sensing_dayssince2000"></block>' +
+    '<block type="sensing_operatingsystem" id="sensing_operatingsystem"></block>' +
+    '<block type="sensing_clipcc_version" id="sensing_clipcc_version"></block>' +
   '</category>' +
   '<category name="%{BKY_CATEGORY_OPERATORS}" id="operators" colour="#40BF4A" secondaryColour="#389438">' +
     '<block type="operator_add" id="operator_add">' +
@@ -386,6 +449,78 @@ Blockly.Blocks.defaultToolbox = '<xml id="toolbox-categories" style="display: no
       '</value>' +
     '</block>' +
     '<block type="operator_divide" id="operator_divide">' +
+      '<value name="NUM1">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"></field>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="NUM2">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"></field>' +
+        '</shadow>' +
+      '</value>' +
+    '</block>' +
+    '<block type="operator_power" id="operator_power">' +
+      '<value name="NUM1">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"></field>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="NUM2">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"></field>' +
+        '</shadow>' +
+      '</value>' +
+    '</block>' +
+    '<block type="operator_bitand" id="operator_bitand">' +
+      '<value name="NUM1">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"></field>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="NUM2">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"></field>' +
+        '</shadow>' +
+      '</value>' +
+    '</block>' +
+    '<block type="operator_bitor" id="operator_bitor">' +
+      '<value name="NUM1">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"></field>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="NUM2">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"></field>' +
+        '</shadow>' +
+      '</value>' +
+    '</block>' +
+    '<block type="operator_bitlsh" id="operator_bitlsh">' +
+      '<value name="NUM1">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"></field>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="NUM2">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"></field>' +
+        '</shadow>' +
+      '</value>' +
+    '</block>' +
+    '<block type="operator_bitrsh" id="operator_bitrsh">' +
+      '<value name="NUM1">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"></field>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="NUM2">' +
+        '<shadow type="math_number">' +
+          '<field name="NUM"></field>' +
+        '</shadow>' +
+      '</value>' +
+    '</block>' +
+    '<block type="operator_bitursh" id="operator_bitursh">' +
       '<value name="NUM1">' +
         '<shadow type="math_number">' +
           '<field name="NUM"></field>' +
@@ -467,6 +602,23 @@ Blockly.Blocks.defaultToolbox = '<xml id="toolbox-categories" style="display: no
         '</shadow>' +
       '</value>' +
       '<value name="STRING">' +
+        '<shadow type="text">' +
+          '<field name="TEXT">world</field>' +
+        '</shadow>' +
+      '</value>' +
+    '</block>' +
+    '<block type="operator_index_of" id="operator_index_of">' +
+      '<value name="POS">' +
+        '<shadow type="math_whole_number">' +
+          '<field name="NUM">1</field>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="STRING">' +
+        '<shadow type="text">' +
+          '<field name="TEXT">hello world</field>' +
+        '</shadow>' +
+      '</value>' +
+      '<value name="SUBSTRING">' +
         '<shadow type="text">' +
           '<field name="TEXT">world</field>' +
         '</shadow>' +
