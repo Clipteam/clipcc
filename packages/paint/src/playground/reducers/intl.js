@@ -2,7 +2,7 @@ import {addLocaleData} from 'react-intl';
 import {updateIntl as superUpdateIntl} from 'react-intl-redux';
 import {IntlProvider, intlReducer} from 'react-intl-redux';
 
-import localeData from 'scratch-l10n';
+import localeData from 'clipcc-l10n';
 import paintMessages from 'scratch-l10n/locales/paint-editor-msgs';
 
 Object.keys(localeData).forEach(locale => {

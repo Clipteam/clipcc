@@ -1,22 +1,21 @@
 {
-  "name": "scratch-parser",
+  "name": "clipcc-parser",
   "description": "Parser for Scratch projects",
   "author": "MIT Media Lab",
   "license": "BSD-3-Clause",
-  "homepage": "https://github.com/LLK/scratch-parser#readme",
+  "homepage": "https://github.com/Clipteam/clipcc#readme",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LLK/scratch-parser.git"
+    "url": "https://github.com/Clipteam/clipcc.git"
   },
   "scripts": {
-    "commitmsg": "commitlint -e $GIT_PARAMS",
     "test:lint": "eslint . --ext=js",
     "test:unit": "tap test/unit/*.js",
     "test:integration": "tap test/integration/*.js",
     "test:coverage": "tap test/{unit,integration}/*.js --coverage --coverage-report=lcov",
     "test:benchmark": "node test/benchmark/performance.js",
-    "test": "npm run test:lint && npm run test:unit && npm run test:integration",
+    "test": "yarn run test:lint && yarn run test:unit && yarn run test:integration",
     "semantic-release": "semantic-release"
   },
   "dependencies": {

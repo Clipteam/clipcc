@@ -43,12 +43,12 @@ const importLoadSound = require('../import/load-sound');
 const soundMiddleware = new LoadingMiddleware();
 importLoadSound.loadSound = soundMiddleware.install(importLoadSound, importLoadSound.loadSound);
 
-const ScratchStorage = require('scratch-storage');
+const ScratchStorage = require('clipcc-storage');
 const VirtualMachine = require('..');
 const Runtime = require('../engine/runtime');
 
-const ScratchRender = require('scratch-render');
-const AudioEngine = require('scratch-audio');
+const ScratchRender = require('clipcc-render');
+const AudioEngine = require('clipcc-audio');
 const ScratchSVGRenderer = require('scratch-svg-renderer');
 
 const Scratch = window.Scratch = window.Scratch || {};
