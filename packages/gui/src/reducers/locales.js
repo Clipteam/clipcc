@@ -1,7 +1,7 @@
 import {addLocaleData} from 'react-intl';
 
 import {localeData, isRtl} from 'clipcc-l10n';
-import editorMessages from 'scratch-l10n/locales/editor-msgs';
+import editorMessages from 'clipcc-l10n/locales/editor-msgs';
 
 addLocaleData(localeData);
 
