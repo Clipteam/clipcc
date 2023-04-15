@@ -27,6 +27,7 @@
     "translation:push": "tx push",
     "translation:pull": "yarn block translate:sync:translations && yarn l10n pull:editor",
     "bump": "yarn changeset version",
+    "release-all": "yarn changeset publish",
     "gui": "yarn workspace clipcc-gui",
     "vm": "yarn workspace clipcc-vm",
     "block": "yarn workspace clipcc-block",
@@ -38,6 +39,7 @@
     "audio": "yarn workspace clipcc-audio"
   },
   "devDependencies": {
+    "@changesets/changelog-git": "^0.1.14",
     "@changesets/cli": "^2.26.1",
     "@commitlint/cli": "^17.4.2",
     "commitlint-config-gitmoji": "^2.2.10",
