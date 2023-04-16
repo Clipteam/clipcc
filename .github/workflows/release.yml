@@ -23,7 +23,7 @@ jobs:
       - name: create versions or publish to npm registry
         uses: changesets/action@v1
         with:
-          publish: yarn release
+          publish: yarn release-all
           commit: ':bookmark: ci: release clipcc'
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
