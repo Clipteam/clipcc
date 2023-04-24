@@ -75,9 +75,15 @@ Blockly.VirtualizedManager.prototype.check = function() {
   var workspace = this.workspace;
   var workspaceHeight = workspace.getParentSvg().height.baseVal.value;
   var workspaceWidth = workspace.getParentSvg().width.baseVal.value;
-  var canvasPos = Blockly.utils.getRelativeXY(workspace.getCanvas());
+  var workspaceCanvas = workspace.getCanvas();
+  var canvasPos = Blockly.utils.getRelativeXY(workspaceCanvas);
   for (var i = 0; i < this._observedBlocks.length; i++) {
     var block = this._observedBlocks[i];
+    // block may not have been rendered, so we skip checking for it.
+    // see Clipteam/clipcc#10
+    if (!block.rendered) {
+      continue;
+    };
     var blockPos = block.getRelativeToSurfaceXY();
     blockPos.x *= workspace.scale;
     blockPos.y *= workspace.scale;
