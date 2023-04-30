@@ -1,6 +1,6 @@
 {
-    "name": "scratch-l10n",
-    "version": "3.15.0",
+    "name": "clipcc-l10n",
+    "version": "3.2.0",
     "description": "Localization for the Scratch 3.0 components",
     "main": "./dist/l10n.js",
     "browser": "./src/index.js",
@@ -19,14 +19,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/LLK/scratch-l10n.git"
+        "url": "https://github.com/Clipteam/clipcc.git"
     },
     "author": "Massachusetts Institute of Technology",
     "license": "BSD-3-Clause",
     "bugs": {
-        "url": "https://github.com/LLK/scratch-l10n/issues"
+        "url": "https://github.com/Clipteam/clipcc/issues"
     },
-    "homepage": "https://github.com/LLK/scratch-l10n#readme",
+    "homepage": "https://github.com/Clipteam/clipcc#readme",
     "dependencies": {
         "@babel/cli": "^7.1.2",
         "@babel/core": "^7.1.2",

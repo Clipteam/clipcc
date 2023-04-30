@@ -1,11 +1,11 @@
 {
-  "name": "scratch-audio",
-  "version": "0.1.0",
+  "name": "clipcc-audio",
+  "version": "3.2.0",
   "description": "audio engine for scratch 3.0",
   "main": "dist.js",
   "browser": "./src/index.js",
   "scripts": {
-    "test": "npm run lint && npm run tap && npm run build",
+    "test": "yarn run lint && yarn run tap && yarn run build",
     "build": "webpack --bail",
     "watch": "webpack --watch",
     "lint": "eslint .",
@@ -13,14 +13,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LLK/scratch-audio.git"
+    "url": "https://github.com/Clipteam/clipcc.git"
   },
   "author": "Massachusetts Institute of Technology",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/LLK/scratch-audio/issues"
+    "url": "https://github.com/Clipteam/clipcc/issues"
   },
-  "homepage": "https://github.com/LLK/scratch-audio#readme",
+  "homepage": "https://github.com/Clipteam/clipcc#readme",
   "dependencies": {
     "audio-context": "1.0.1",
     "minilog": "^3.0.1",

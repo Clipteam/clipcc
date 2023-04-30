@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 
-import VM from 'scratch-vm';
-import AudioEngine from 'scratch-audio';
+import VM from 'clipcc-vm';
+import AudioEngine from 'clipcc-audio';
 
 import {setProjectUnchanged} from '../reducers/project-changed';
 import {

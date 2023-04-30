@@ -1,6 +1,6 @@
 {
-  "name": "scratch-paint",
-  "version": "1.1.31",
+  "name": "clipcc-paint",
+  "version": "3.2.0",
   "description": "Graphical User Interface for the Scratch 3.0 paint editor, which is used to make and edit sprites for use in projects.",
   "main": "./dist/scratch-paint.js",
   "browser": "./src/index.js",
@@ -19,10 +19,10 @@
   },
   "author": "Massachusetts Institute of Technology",
   "license": "BSD-3-Clause",
-  "homepage": "https://github.com/LLK/scratch-paint#readme",
+  "homepage": "https://github.com/Clipteam/clipcc#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/LLK/scratch-paint.git"
+    "url": "https://github.com/Clipteam/clipcc.git"
   },
   "dependencies": {
     "@scratch/paper": "0.11.20200728195508",
@@ -94,7 +94,7 @@
     "redux-throttle": "0.1.1",
     "regenerator-runtime": "0.13.9",
     "rimraf": "2.7.1",
-    "scratch-l10n": "3.15.0",
+    "clipcc-l10n": "3.2.0",
     "scratch-render-fonts": "1.0.0-prerelease.20221024190656",
     "scratch-semantic-release-config": "1.0.5",
     "semantic-release": "19.0.5",

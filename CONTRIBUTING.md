@@ -24,12 +24,15 @@ You can run several commands:
 -   `yarn run translation:pull` Pull translation from remote.
 
 # Commit Rules
-We have set up pre-commit hook. For the use of gitmoji, please refer to [here](https://github.com/carloscuesta/gitmoji/blob/master/packages/gitmojis/src/gitmojis.json).
-In order to comply with the CLA, you need to sign-off every commit.
+1. Before committing, you need use ``yarn changeset add`` to add changesets for the packages involved in the commit changes. Please strictly follow the regulations in https://semver.org/.
+2. We have set up pre-commit hook. For the use of gitmoji, please refer to [here](https://github.com/carloscuesta/gitmoji/blob/master/packages/gitmojis/src/gitmojis.json).
+3. In order to comply with the CLA, you need to sign-off every commit.
 
 # Branch Rules
-The current development branch is named using ``dev/[version number]``. Beyond that, any branch should start with ``feat/``.
-The ``master`` branch contains the contents of the latest stable release. **Commits should never be pushed directly to the master branch except for handling merge conflicts!**
+The current development branch is named using ``dev/[version number]``. Beyond that, any branch should start with ``feat/``.   
+The ``master`` branch contains the contents of the latest stable release. **Commits should never be pushed directly to the master branch except for handling merge conflicts!**   
+When we create the next major version of the development branch (Eg: dev/3.2) we need to use ``yarn changeset pre enter next`` to enter prerelease mode.   
+Similarly, when the development branch is merged to master, we need to use ``yarn changeset pre exit`` before releasing the package.
 
 # Pull-Request Rules
 

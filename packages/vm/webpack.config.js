@@ -76,7 +76,7 @@ module.exports = [
             'immutable': true,
             'jszip': true,
             'minilog': true,
-            'scratch-parser': true,
+            'clipcc-parser': true,
             'socket.io-client': true
         }
     }),
@@ -107,9 +107,9 @@ module.exports = [
                 from: '../block/media',
                 to: 'media'
             }, {
-                from: '../../node_modules/scratch-storage/dist/web'
+                from: '../../node_modules/clipcc-storage/dist/web'
             }, {
-                from: '../../node_modules/scratch-render/dist/web'
+                from: '../../node_modules/clipcc-render/dist/web'
             }, {
                 from: '../../node_modules/scratch-svg-renderer/dist/web'
             }, {
