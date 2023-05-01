@@ -1,5 +1,3 @@
-const test = require('tap').test;
-
 const ArgumentType = require('../../src/extension-support/argument-type');
 const BlockType = require('../../src/extension-support/block-type');
 const Runtime = require('../../src/engine/runtime');
@@ -124,30 +122,30 @@ const extensionInfoWithCustomFieldTypes = {
 };
 
 const testCategoryInfo = function (t, block) {
-    t.equal(block.json.category, 'fake test extension');
-    t.equal(block.json.colour, '#111111');
-    t.equal(block.json.colourSecondary, '#222222');
-    t.equal(block.json.colourTertiary, '#333333');
-    t.equal(block.json.inputsInline, true);
+    expect(block.json.category).toBe('fake test extension');
+    expect(block.json.colour).toBe('#111111');
+    expect(block.json.colourSecondary).toBe('#222222');
+    expect(block.json.colourTertiary).toBe('#333333');
+    expect(block.json.inputsInline).toBe(true);
 };
 
 const testButton = function (t, button) {
-    t.same(button.json, null); // should be null or undefined
-    t.equal(button.xml, '<button text="this is a button" callbackKey="MAKE_A_VARIABLE"></button>');
+    expect(button.json).toEqual(null); // should be null or undefined
+    expect(button.xml).toBe('<button text="this is a button" callbackKey="MAKE_A_VARIABLE"></button>');
 };
 
 const testReporter = function (t, reporter) {
-    t.equal(reporter.json.type, 'test_reporter');
+    expect(reporter.json.type).toBe('test_reporter');
     testCategoryInfo(t, reporter);
-    t.equal(reporter.json.checkboxInFlyout, true);
-    t.equal(reporter.json.outputShape, ScratchBlocksConstants.OUTPUT_SHAPE_ROUND);
-    t.equal(reporter.json.output, 'String');
-    t.notOk(reporter.json.hasOwnProperty('previousStatement'));
-    t.notOk(reporter.json.hasOwnProperty('nextStatement'));
-    t.same(reporter.json.extensions, ['scratch_extension']);
-    t.equal(reporter.json.message0, '%1 %2simple text'); // "%1 %2" from the block icon
-    t.notOk(reporter.json.hasOwnProperty('message1'));
-    t.same(reporter.json.args0, [
+    expect(reporter.json.checkboxInFlyout).toBe(true);
+    expect(reporter.json.outputShape).toBe(ScratchBlocksConstants.OUTPUT_SHAPE_ROUND);
+    expect(reporter.json.output).toBe('String');
+    expect(reporter.json.hasOwnProperty('previousStatement')).toBeFalsy();
+    expect(reporter.json.hasOwnProperty('nextStatement')).toBeFalsy();
+    expect(reporter.json.extensions).toEqual(['scratch_extension']);
+    expect(reporter.json.message0).toBe('%1 %2simple text'); // "%1 %2" from the block icon
+    expect(reporter.json.hasOwnProperty('message1')).toBeFalsy();
+    expect(reporter.json.args0).toEqual([
         // %1 in message0: the block icon
         {
             type: 'field_image',
@@ -160,22 +158,22 @@ const testReporter = function (t, reporter) {
             type: 'field_vertical_separator'
         }
     ]);
-    t.notOk(reporter.json.hasOwnProperty('args1'));
-    t.equal(reporter.xml, '<block type="test_reporter"></block>');
+    expect(reporter.json.hasOwnProperty('args1')).toBeFalsy();
+    expect(reporter.xml).toBe('<block type="test_reporter"></block>');
 };
 
 const testInlineImage = function (t, inlineImage) {
-    t.equal(inlineImage.json.type, 'test_inlineImage');
+    expect(inlineImage.json.type).toBe('test_inlineImage');
     testCategoryInfo(t, inlineImage);
-    t.equal(inlineImage.json.checkboxInFlyout, true);
-    t.equal(inlineImage.json.outputShape, ScratchBlocksConstants.OUTPUT_SHAPE_ROUND);
-    t.equal(inlineImage.json.output, 'String');
-    t.notOk(inlineImage.json.hasOwnProperty('previousStatement'));
-    t.notOk(inlineImage.json.hasOwnProperty('nextStatement'));
-    t.notOk(inlineImage.json.extensions && inlineImage.json.extensions.length); // OK if it's absent or empty
-    t.equal(inlineImage.json.message0, 'text and %1'); // block text followed by inline image
-    t.notOk(inlineImage.json.hasOwnProperty('message1'));
-    t.same(inlineImage.json.args0, [
+    expect(inlineImage.json.checkboxInFlyout).toBe(true);
+    expect(inlineImage.json.outputShape).toBe(ScratchBlocksConstants.OUTPUT_SHAPE_ROUND);
+    expect(inlineImage.json.output).toBe('String');
+    expect(inlineImage.json.hasOwnProperty('previousStatement')).toBeFalsy();
+    expect(inlineImage.json.hasOwnProperty('nextStatement')).toBeFalsy();
+    expect(inlineImage.json.extensions && inlineImage.json.extensions.length).toBeFalsy(); // OK if it's absent or empty
+    expect(inlineImage.json.message0).toBe('text and %1'); // block text followed by inline image
+    expect(inlineImage.json.hasOwnProperty('message1')).toBeFalsy();
+    expect(inlineImage.json.args0).toEqual([
         // %1 in message0: the block icon
         {
             type: 'field_image',
@@ -185,47 +183,48 @@ const testInlineImage = function (t, inlineImage) {
             flip_rtl: false // False by default
         }
     ]);
-    t.notOk(inlineImage.json.hasOwnProperty('args1'));
-    t.equal(inlineImage.xml, '<block type="test_inlineImage"></block>');
+    expect(inlineImage.json.hasOwnProperty('args1')).toBeFalsy();
+    expect(inlineImage.xml).toBe('<block type="test_inlineImage"></block>');
 };
 
 const testSeparator = function (t, separator) {
-    t.same(separator.json, null); // should be null or undefined
-    t.equal(separator.xml, '<sep gap="36"/>');
+    expect(separator.json).toEqual(null); // should be null or undefined
+    expect(separator.xml).toBe('<sep gap="36"/>');
 };
 
 const testCommand = function (t, command) {
-    t.equal(command.json.type, 'test_command');
+    expect(command.json.type).toBe('test_command');
     testCategoryInfo(t, command);
-    t.equal(command.json.outputShape, ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE);
-    t.assert(command.json.hasOwnProperty('previousStatement'));
-    t.assert(command.json.hasOwnProperty('nextStatement'));
-    t.notOk(command.json.extensions && command.json.extensions.length); // OK if it's absent or empty
-    t.equal(command.json.message0, 'text with %1 %2');
-    t.notOk(command.json.hasOwnProperty('message1'));
+    expect(command.json.outputShape).toBe(ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE);
+    expect(command.json.hasOwnProperty('previousStatement')).toBeTruthy();
+    expect(command.json.hasOwnProperty('nextStatement')).toBeTruthy();
+    expect(command.json.extensions && command.json.extensions.length).toBeFalsy(); // OK if it's absent or empty
+    expect(command.json.message0).toBe('text with %1 %2');
+    expect(command.json.hasOwnProperty('message1')).toBeFalsy();
     t.strictSame(command.json.args0[0], {
         type: 'input_value',
         name: 'ARG'
     });
-    t.notOk(command.json.hasOwnProperty('args1'));
-    t.equal(command.xml,
+    expect(command.json.hasOwnProperty('args1')).toBeFalsy();
+    expect(command.xml).toBe(
         '<block type="test_command"><value name="ARG"><shadow type="text"></shadow></value>' +
         '<value name="ARG_WITH_DEFAULT"><shadow type="text"><field name="TEXT">' +
-        'default text</field></shadow></value></block>');
+        'default text</field></shadow></value></block>'
+    );
 };
 
 const testConditional = function (t, conditional) {
-    t.equal(conditional.json.type, 'test_ifElse');
+    expect(conditional.json.type).toBe('test_ifElse');
     testCategoryInfo(t, conditional);
-    t.equal(conditional.json.outputShape, ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE);
-    t.ok(conditional.json.hasOwnProperty('previousStatement'));
-    t.ok(conditional.json.hasOwnProperty('nextStatement'));
-    t.notOk(conditional.json.extensions && conditional.json.extensions.length); // OK if it's absent or empty
-    t.equal(conditional.json.message0, 'test if %1 is spiffy and if so then');
-    t.equal(conditional.json.message1, '%1'); // placeholder for substack #1
-    t.equal(conditional.json.message2, 'or elsewise');
-    t.equal(conditional.json.message3, '%1'); // placeholder for substack #2
-    t.notOk(conditional.json.hasOwnProperty('message4'));
+    expect(conditional.json.outputShape).toBe(ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE);
+    expect(conditional.json.hasOwnProperty('previousStatement')).toBeTruthy();
+    expect(conditional.json.hasOwnProperty('nextStatement')).toBeTruthy();
+    expect(conditional.json.extensions && conditional.json.extensions.length).toBeFalsy(); // OK if it's absent or empty
+    expect(conditional.json.message0).toBe('test if %1 is spiffy and if so then');
+    expect(conditional.json.message1).toBe('%1'); // placeholder for substack #1
+    expect(conditional.json.message2).toBe('or elsewise');
+    expect(conditional.json.message3).toBe('%1'); // placeholder for substack #2
+    expect(conditional.json.hasOwnProperty('message4')).toBeFalsy();
     t.strictSame(conditional.json.args0[0], {
         type: 'input_value',
         name: 'THING',
@@ -235,26 +234,26 @@ const testConditional = function (t, conditional) {
         type: 'input_statement',
         name: 'SUBSTACK'
     });
-    t.notOk(conditional.json.hasOwnProperty(conditional.json.args2));
+    expect(conditional.json.hasOwnProperty(conditional.json.args2)).toBeFalsy();
     t.strictSame(conditional.json.args3[0], {
         type: 'input_statement',
         name: 'SUBSTACK2'
     });
-    t.notOk(conditional.json.hasOwnProperty('args4'));
-    t.equal(conditional.xml, '<block type="test_ifElse"><value name="THING"></value></block>');
+    expect(conditional.json.hasOwnProperty('args4')).toBeFalsy();
+    expect(conditional.xml).toBe('<block type="test_ifElse"><value name="THING"></value></block>');
 };
 
 const testLoop = function (t, loop) {
-    t.equal(loop.json.type, 'test_loop');
+    expect(loop.json.type).toBe('test_loop');
     testCategoryInfo(t, loop);
-    t.equal(loop.json.outputShape, ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE);
-    t.ok(loop.json.hasOwnProperty('previousStatement'));
-    t.notOk(loop.json.hasOwnProperty('nextStatement')); // isTerminal is set on this block
-    t.notOk(loop.json.extensions && loop.json.extensions.length); // OK if it's absent or empty
-    t.equal(loop.json.message0, 'loopty %1 loops');
-    t.equal(loop.json.message1, '%1'); // placeholder for substack
-    t.equal(loop.json.message2, '%1'); // placeholder for loop arrow
-    t.notOk(loop.json.hasOwnProperty('message3'));
+    expect(loop.json.outputShape).toBe(ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE);
+    expect(loop.json.hasOwnProperty('previousStatement')).toBeTruthy();
+    expect(loop.json.hasOwnProperty('nextStatement')).toBeFalsy(); // isTerminal is set on this block
+    expect(loop.json.extensions && loop.json.extensions.length).toBeFalsy(); // OK if it's absent or empty
+    expect(loop.json.message0).toBe('loopty %1 loops');
+    expect(loop.json.message1).toBe('%1'); // placeholder for substack
+    expect(loop.json.message2).toBe('%1'); // placeholder for loop arrow
+    expect(loop.json.hasOwnProperty('message3')).toBeFalsy();
     t.strictSame(loop.json.args0[0], {
         type: 'input_value',
         name: 'MANY'
@@ -263,24 +262,25 @@ const testLoop = function (t, loop) {
         type: 'input_statement',
         name: 'SUBSTACK'
     });
-    t.equal(loop.json.lastDummyAlign2, 'RIGHT'); // move loop arrow to right side
-    t.equal(loop.json.args2[0].type, 'field_image');
-    t.equal(loop.json.args2[0].flip_rtl, true);
-    t.notOk(loop.json.hasOwnProperty('args3'));
-    t.equal(loop.xml,
-        '<block type="test_loop"><value name="MANY"><shadow type="math_number"></shadow></value></block>');
+    expect(loop.json.lastDummyAlign2).toBe('RIGHT'); // move loop arrow to right side
+    expect(loop.json.args2[0].type).toBe('field_image');
+    expect(loop.json.args2[0].flip_rtl).toBe(true);
+    expect(loop.json.hasOwnProperty('args3')).toBeFalsy();
+    expect(loop.xml).toBe(
+        '<block type="test_loop"><value name="MANY"><shadow type="math_number"></shadow></value></block>'
+    );
 };
 
-test('registerExtensionPrimitives', t => {
+test('registerExtensionPrimitives', done => {
     const runtime = new Runtime();
 
     runtime.on(Runtime.EXTENSION_ADDED, categoryInfo => {
         const blocksInfo = categoryInfo.blocks;
-        t.equal(blocksInfo.length, testExtensionInfo.blocks.length);
+        expect(blocksInfo.length).toBe(testExtensionInfo.blocks.length);
 
         blocksInfo.forEach(blockInfo => {
             // `true` here means "either an object or a non-empty string but definitely not null or undefined"
-            t.true(blockInfo.info, 'Every block and pseudo-block must have a non-empty "info" field');
+            expect(blockInfo.info).toBeTruthy();
         });
 
         // Note that this also implicitly tests that block order is preserved
@@ -294,13 +294,13 @@ test('registerExtensionPrimitives', t => {
         testConditional(t, conditional);
         testLoop(t, loop);
 
-        t.end();
+        done();
     });
 
     runtime._registerExtensionPrimitives(testExtensionInfo);
 });
 
-test('custom field types should be added to block and EXTENSION_FIELD_ADDED callback triggered', t => {
+test('custom field types should be added to block and EXTENSION_FIELD_ADDED callback triggered', () => {
     const runtime = new Runtime();
 
     runtime.on(Runtime.EXTENSION_ADDED, categoryInfo => {
@@ -309,7 +309,7 @@ test('custom field types should be added to block and EXTENSION_FIELD_ADDED call
         // We expect that for each argument there's a corresponding <field>-tag in the block XML
         Object.values(blockInfo.info.arguments).forEach(argument => {
             const regex = new RegExp(`<field name="field_${categoryInfo.id}_${argument.type}">`);
-            t.true(regex.test(blockInfo.xml));
+            expect(regex.test(blockInfo.xml)).toBeTruthy();
         });
 
     });
@@ -322,6 +322,5 @@ test('custom field types should be added to block and EXTENSION_FIELD_ADDED call
     runtime._registerExtensionPrimitives(extensionInfoWithCustomFieldTypes);
 
     // Extension includes two custom field types
-    t.equal(fieldAddedCallbacks, 2);
-    t.end();
+    expect(fieldAddedCallbacks).toBe(2);
 });

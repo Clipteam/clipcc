@@ -1,4 +1,3 @@
-const tap = require('tap');
 const VirtualMachine = require('../../src/virtual-machine');
 const Sprite = require('../../src/sprites/sprite');
 const Variable = require('../../src/engine/variable');
@@ -7,8 +6,6 @@ const events = require('../fixtures/events.json');
 const Renderer = require('../fixtures/fake-renderer');
 const Runtime = require('../../src/engine/runtime');
 const RenderedTarget = require('../../src/sprites/rendered-target');
-
-const test = tap.test;
 
 test('deleteSound returns function after deleting or null if nothing was deleted', t => {
     const vm = new VirtualMachine();
@@ -19,16 +16,16 @@ test('deleteSound returns function after deleting or null if nothing was deleted
     vm.editingTarget = target;
 
     const addFun = vm.deleteSound(1);
-    t.equal(sprite.sounds.length, 2);
-    t.equal(sprite.sounds[0].id, 1);
-    t.equal(sprite.sounds[1].id, 3);
-    t.type(addFun, 'function');
+    expect(sprite.sounds.length).toBe(2);
+    expect(sprite.sounds[0].id).toBe(1);
+    expect(sprite.sounds[1].id).toBe(3);
+    expect(typeof addFun).toBe('function');
 
     const noAddFun = vm.deleteSound(2);
-    t.equal(sprite.sounds.length, 2);
-    t.equal(sprite.sounds[0].id, 1);
-    t.equal(sprite.sounds[1].id, 3);
-    t.equal(noAddFun, null);
+    expect(sprite.sounds.length).toBe(2);
+    expect(sprite.sounds[0].id).toBe(1);
+    expect(sprite.sounds[1].id).toBe(3);
+    expect(noAddFun).toBe(null);
 
     t.end();
 });
@@ -43,16 +40,16 @@ test('deleteCostume returns function after deleting or null if nothing was delet
     vm.editingTarget = target;
 
     const addFun = vm.deleteCostume(1);
-    t.equal(sprite.costumes.length, 2);
-    t.equal(sprite.costumes[0].id, 1);
-    t.equal(sprite.costumes[1].id, 3);
-    t.type(addFun, 'function');
+    expect(sprite.costumes.length).toBe(2);
+    expect(sprite.costumes[0].id).toBe(1);
+    expect(sprite.costumes[1].id).toBe(3);
+    expect(typeof addFun).toBe('function');
 
     const noAddFun = vm.deleteCostume(2);
-    t.equal(sprite.costumes.length, 2);
-    t.equal(sprite.costumes[0].id, 1);
-    t.equal(sprite.costumes[1].id, 3);
-    t.equal(noAddFun, null);
+    expect(sprite.costumes.length).toBe(2);
+    expect(sprite.costumes[0].id).toBe(1);
+    expect(sprite.costumes[1].id).toBe(3);
+    expect(noAddFun).toBe(null);
 
     t.end();
 });
@@ -62,7 +59,7 @@ test('addSprite throws on invalid string', t => {
     const vm = new VirtualMachine();
     vm.addSprite('this is not a sprite')
         .catch(e => {
-            t.equal(e.startsWith('Sprite Upload Error:'), true);
+            expect(e.startsWith('Sprite Upload Error:')).toBe(true);
             t.end();
         });
 });
@@ -70,10 +67,7 @@ test('addSprite throws on invalid string', t => {
 test('renameSprite throws when there is no sprite with that id', t => {
     const vm = new VirtualMachine();
     vm.runtime.getTargetById = () => null;
-    t.throws(
-        (() => vm.renameSprite('id', 'name')),
-        new Error('No target with the provided id.')
-    );
+    expect((() => vm.renameSprite('id', 'name'))).toThrowError(new Error('No target with the provided id.'));
     t.end();
 });
 
@@ -83,10 +77,7 @@ test('renameSprite throws when used on a non-sprite target', t => {
         isSprite: () => false
     };
     vm.runtime.getTargetById = () => (fakeTarget);
-    t.throws(
-        (() => vm.renameSprite('id', 'name')),
-        new Error('Cannot rename non-sprite targets.')
-    );
+    expect((() => vm.renameSprite('id', 'name'))).toThrowError(new Error('Cannot rename non-sprite targets.'));
     t.end();
 });
 
@@ -97,10 +88,7 @@ test('renameSprite throws when there is no sprite for given target', t => {
         isSprite: () => true
     };
     vm.runtime.getTargetById = () => (fakeTarget);
-    t.throws(
-        (() => vm.renameSprite('id', 'name')),
-        new Error('No sprite associated with this target.')
-    );
+    expect((() => vm.renameSprite('id', 'name'))).toThrowError(new Error('No sprite associated with this target.'));
     t.end();
 });
 
@@ -112,7 +100,7 @@ test('renameSprite sets the sprite name', t => {
     };
     vm.runtime.getTargetById = () => (fakeTarget);
     vm.renameSprite('id', 'not-original');
-    t.equal(fakeTarget.sprite.name, 'not-original');
+    expect(fakeTarget.sprite.name).toBe('not-original');
     t.end();
 });
 
@@ -124,7 +112,7 @@ test('renameSprite does not set sprite names to an empty string', t => {
     };
     vm.runtime.getTargetById = () => (fakeTarget);
     vm.renameSprite('id', '');
-    t.equal(fakeTarget.sprite.name, 'original');
+    expect(fakeTarget.sprite.name).toBe('original');
     t.end();
 });
 
@@ -136,7 +124,7 @@ test('renameSprite does not set sprite names to reserved names', t => {
     };
     vm.runtime.getTargetById = () => (fakeTarget);
     vm.renameSprite('id', '_mouse_');
-    t.equal(fakeTarget.sprite.name, 'original');
+    expect(fakeTarget.sprite.name).toBe('original');
     t.end();
 });
 
@@ -151,9 +139,9 @@ test('renameSprite increments from existing sprite names', t => {
 
     vm.runtime.targets = [target1, target2];
     vm.renameSprite(target1.id, 'foo');
-    t.equal(vm.runtime.targets[0].sprite.name, 'foo');
+    expect(vm.runtime.targets[0].sprite.name).toBe('foo');
     vm.renameSprite(target2.id, 'foo');
-    t.equal(vm.runtime.targets[1].sprite.name, 'foo2');
+    expect(vm.runtime.targets[1].sprite.name).toBe('foo2');
     t.end();
 });
 
@@ -167,9 +155,9 @@ test('renameSprite does not increment when renaming to the same name', t => {
 
     vm.runtime.targets = [target];
 
-    t.equal(vm.runtime.targets[0].sprite.name, 'foo');
+    expect(vm.runtime.targets[0].sprite.name).toBe('foo');
     vm.renameSprite(target.id, 'foo');
-    t.equal(vm.runtime.targets[0].sprite.name, 'foo');
+    expect(vm.runtime.targets[0].sprite.name).toBe('foo');
 
     t.end();
 });
@@ -180,10 +168,7 @@ test('deleteSprite throws when used on a non-sprite target', t => {
         id: 'id',
         isSprite: () => false
     }];
-    t.throws(
-        (() => vm.deleteSprite('id')),
-        new Error('Cannot delete non-sprite targets.')
-    );
+    expect((() => vm.deleteSprite('id'))).toThrowError(new Error('Cannot delete non-sprite targets.'));
     t.end();
 });
 
@@ -194,10 +179,7 @@ test('deleteSprite throws when there is no sprite for the given target', t => {
         isSprite: () => true,
         sprite: null
     }];
-    t.throws(
-        (() => vm.deleteSprite('id')),
-        new Error('No sprite associated with this target.')
-    );
+    expect((() => vm.deleteSprite('id'))).toThrowError(new Error('No sprite associated with this target.'));
     t.end();
 });
 
@@ -210,10 +192,7 @@ test('deleteSprite throws when there is no target with given id', t => {
             name: 'this name'
         }
     }];
-    t.throws(
-        (() => vm.deleteSprite('id1')),
-        new Error('No target with the provided id.')
-    );
+    expect((() => vm.deleteSprite('id1'))).toThrowError(new Error('No target with the provided id.'));
     t.end();
 });
 
@@ -224,9 +203,9 @@ test('deleteSprite deletes a sprite when given id is associated with a known spr
 
     vm.runtime.targets = [currTarget];
 
-    t.equal(currTarget.sprite.clones.length, 1);
+    expect(currTarget.sprite.clones.length).toBe(1);
     vm.deleteSprite(currTarget.id);
-    t.equal(currTarget.sprite.clones.length, 0);
+    expect(currTarget.sprite.clones.length).toBe(0);
     t.end();
 });
 
@@ -241,8 +220,8 @@ test('deleteSprite sets editing target as null when given sprite is current edit
 
     vm.deleteSprite(currTarget.id);
 
-    t.equal(vm.runtime.targets.length, 0);
-    t.equal(vm.editingTarget, null);
+    expect(vm.runtime.targets.length).toBe(0);
+    expect(vm.editingTarget).toBe(null);
     t.end();
 });
 
@@ -259,10 +238,10 @@ test('deleteSprite updates editingTarget when sprite being deleted is current ed
     vm.runtime.targets = [currTarget, otherTarget];
     vm.editingTarget = currTarget;
 
-    t.equal(vm.runtime.targets.length, 2);
+    expect(vm.runtime.targets.length).toBe(2);
     vm.deleteSprite(currTarget.id);
-    t.equal(vm.runtime.targets.length, 1);
-    t.equal(vm.editingTarget.id, otherTarget.id);
+    expect(vm.runtime.targets.length).toBe(1);
+    expect(vm.editingTarget.id).toBe(otherTarget.id);
 
     // now let's try them in the other order in the runtime.targets list
 
@@ -273,10 +252,10 @@ test('deleteSprite updates editingTarget when sprite being deleted is current ed
     vm.runtime.targets = [otherTarget2, currTarget2];
     vm.editingTarget = currTarget2;
 
-    t.equal(vm.runtime.targets.length, 2);
+    expect(vm.runtime.targets.length).toBe(2);
     vm.deleteSprite(currTarget2.id);
-    t.equal(vm.editingTarget.id, otherTarget2.id);
-    t.equal(vm.runtime.targets.length, 1);
+    expect(vm.editingTarget.id).toBe(otherTarget2.id);
+    expect(vm.runtime.targets.length).toBe(1);
 
     t.end();
 });
@@ -290,10 +269,7 @@ test('duplicateSprite throws when there is no target with given id', t => {
             name: 'this name'
         }
     }];
-    t.throws(
-        (() => vm.duplicateSprite('id1')),
-        new Error('No target with the provided id')
-    );
+    expect((() => vm.duplicateSprite('id1'))).toThrowError(new Error('No target with the provided id'));
     t.end();
 });
 
@@ -303,10 +279,7 @@ test('duplicateSprite throws when used on a non-sprite target', t => {
         id: 'id',
         isSprite: () => false
     }];
-    t.throws(
-        (() => vm.duplicateSprite('id')),
-        new Error('Cannot duplicate non-sprite targets.')
-    );
+    expect((() => vm.duplicateSprite('id'))).toThrowError(new Error('Cannot duplicate non-sprite targets.'));
     t.end();
 });
 
@@ -317,10 +290,7 @@ test('duplicateSprite throws when there is no sprite for the given target', t =>
         isSprite: () => true,
         sprite: null
     }];
-    t.throws(
-        (() => vm.duplicateSprite('id')),
-        new Error('No sprite associated with this target.')
-    );
+    expect((() => vm.duplicateSprite('id'))).toThrowError(new Error('No sprite associated with this target.'));
     t.end();
 });
 
@@ -333,9 +303,9 @@ test('duplicateSprite duplicates a sprite when given id is associated with known
     vm.emitWorkspaceUpdate = () => null;
 
     vm.runtime.targets = [currTarget];
-    t.equal(vm.runtime.targets.length, 1);
+    expect(vm.runtime.targets.length).toBe(1);
     vm.duplicateSprite(currTarget.id).then(() => {
-        t.equal(vm.runtime.targets.length, 2);
+        expect(vm.runtime.targets.length).toBe(2);
         t.end();
     });
 
@@ -351,11 +321,11 @@ test('duplicateSprite assigns duplicated sprite a fresh name', t => {
     vm.emitWorkspaceUpdate = () => null;
 
     vm.runtime.targets = [currTarget];
-    t.equal(vm.runtime.targets.length, 1);
+    expect(vm.runtime.targets.length).toBe(1);
     vm.duplicateSprite(currTarget.id).then(() => {
-        t.equal(vm.runtime.targets.length, 2);
-        t.equal(vm.runtime.targets[0].sprite.name, 'sprite1');
-        t.equal(vm.runtime.targets[1].sprite.name, 'sprite2');
+        expect(vm.runtime.targets.length).toBe(2);
+        expect(vm.runtime.targets[0].sprite.name).toBe('sprite1');
+        expect(vm.runtime.targets[1].sprite.name).toBe('sprite2');
         t.end();
     });
 
@@ -381,13 +351,13 @@ test('reorderCostume', t => {
 
     vm.runtime.targets = [target];
 
-    t.equal(vm.reorderCostume('not-a-target', 0, 3), false);
-    t.equal(costumeIndex, null);
-    t.equal(newIndex, null);
+    expect(vm.reorderCostume('not-a-target', 0, 3)).toBe(false);
+    expect(costumeIndex).toBe(null);
+    expect(newIndex).toBe(null);
 
-    t.equal(vm.reorderCostume(target.id, 0, 3), true);
-    t.equal(costumeIndex, 0);
-    t.equal(newIndex, 3);
+    expect(vm.reorderCostume(target.id, 0, 3)).toBe(true);
+    expect(costumeIndex).toBe(0);
+    expect(newIndex).toBe(3);
 
     t.end();
 });
@@ -412,13 +382,13 @@ test('reorderSound', t => {
 
     vm.runtime.targets = [target];
 
-    t.equal(vm.reorderSound('not-a-target', 0, 3), false);
-    t.equal(soundIndex, null); // Make sure reorder function was not called somehow.
-    t.equal(newIndex, null);
+    expect(vm.reorderSound('not-a-target', 0, 3)).toBe(false);
+    expect(soundIndex).toBe(null); // Make sure reorder function was not called somehow.
+    expect(newIndex).toBe(null);
 
-    t.equal(vm.reorderSound(target.id, 0, 3), true);
-    t.equal(soundIndex, 0); // Make sure reorder function was called correctly.
-    t.equal(newIndex, 3);
+    expect(vm.reorderSound(target.id, 0, 3)).toBe(true);
+    expect(soundIndex).toBe(0); // Make sure reorder function was called correctly.
+    expect(newIndex).toBe(3);
 
     t.end();
 });
@@ -442,8 +412,8 @@ test('shareCostumeToTarget', t => {
     vm.emitWorkspaceUpdate = () => null;
 
     vm.shareCostumeToTarget(0, target2.id).then(() => {
-        t.equal(target2.currentCostume, 1);
-        t.equal(target2.getCostumes()[1].name, 'costume1');
+        expect(target2.currentCostume).toBe(1);
+        expect(target2.getCostumes()[1].name).toBe('costume1');
         t.end();
     });
 });
@@ -467,7 +437,7 @@ test('shareSoundToTarget', t => {
     vm.emitWorkspaceUpdate = () => null;
 
     vm.shareSoundToTarget(0, target2.id).then(() => {
-        t.equal(target2.getSounds()[1].name, 'sound1');
+        expect(target2.getSounds()[1].name).toBe('sound1');
         t.end();
     });
 });
@@ -478,20 +448,20 @@ test('reorderTarget', t => {
 
     vm.runtime.targets = ['a', 'b', 'c', 'd'];
 
-    t.equal(vm.reorderTarget(2, 2), false);
-    t.deepEqual(vm.runtime.targets, ['a', 'b', 'c', 'd']);
+    expect(vm.reorderTarget(2, 2)).toBe(false);
+    expect(vm.runtime.targets).toEqual(['a', 'b', 'c', 'd']);
 
     // Make sure clamping works
-    t.equal(vm.reorderTarget(-100, -5), false);
-    t.deepEqual(vm.runtime.targets, ['a', 'b', 'c', 'd']);
+    expect(vm.reorderTarget(-100, -5)).toBe(false);
+    expect(vm.runtime.targets).toEqual(['a', 'b', 'c', 'd']);
 
     // Reorder upwards
-    t.equal(vm.reorderTarget(0, 2), true);
-    t.deepEqual(vm.runtime.targets, ['b', 'c', 'a', 'd']);
+    expect(vm.reorderTarget(0, 2)).toBe(true);
+    expect(vm.runtime.targets).toEqual(['b', 'c', 'a', 'd']);
 
     // Reorder downwards
-    t.equal(vm.reorderTarget(3, 1), true);
-    t.deepEqual(vm.runtime.targets, ['b', 'd', 'c', 'a']);
+    expect(vm.reorderTarget(3, 1)).toBe(true);
+    expect(vm.runtime.targets).toEqual(['b', 'd', 'c', 'a']);
 
     t.end();
 });
@@ -567,14 +537,14 @@ test('emitWorkspaceUpdate', t => {
     let xml = null;
     vm.emit = (event, data) => (xml = data.xml);
     vm.emitWorkspaceUpdate();
-    t.notEqual(xml.indexOf('global'), -1);
-    t.notEqual(xml.indexOf('local'), -1);
-    t.equal(xml.indexOf('unused'), -1);
-    t.notEqual(xml.indexOf('blocks'), -1);
-    t.equal(xml.indexOf('aStageComment'), -1);
-    t.equal(xml.indexOf('someBlockComment'), -1);
-    t.notEqual(xml.indexOf('someOtherComment'), -1);
-    t.notEqual(xml.indexOf('A Block Comment: aBlockComment'), -1);
+    expect(xml.indexOf('global')).not.toBe(-1);
+    expect(xml.indexOf('local')).not.toBe(-1);
+    expect(xml.indexOf('unused')).toBe(-1);
+    expect(xml.indexOf('blocks')).not.toBe(-1);
+    expect(xml.indexOf('aStageComment')).toBe(-1);
+    expect(xml.indexOf('someBlockComment')).toBe(-1);
+    expect(xml.indexOf('someOtherComment')).not.toBe(-1);
+    expect(xml.indexOf('A Block Comment: aBlockComment')).not.toBe(-1);
     t.end();
 });
 
@@ -600,20 +570,20 @@ test('drag IO redirect', t => {
 
     // postSpriteInfo should go to the editing target by default``
     vm.postSpriteInfo('sprite1 info');
-    t.equal(sprite1Info[0], 'sprite1 info');
+    expect(sprite1Info[0]).toBe('sprite1 info');
 
     // postSprite info goes to the drag target if it exists
     vm.startDrag('sprite2');
     vm.postSpriteInfo('sprite2 info');
-    t.equal(sprite2Info[0], 'sprite2 info');
+    expect(sprite2Info[0]).toBe('sprite2 info');
 
     // stop drag should set the editing target
     vm.stopDrag('sprite2');
-    t.equal(vm.editingTarget.id, 'sprite2');
+    expect(vm.editingTarget.id).toBe('sprite2');
 
     // Then postSpriteInfo should continue posting to the new editing target
     vm.postSpriteInfo('sprite2 info 2');
-    t.equal(sprite2Info[1], 'sprite2 info 2');
+    expect(sprite2Info[1]).toBe('sprite2 info 2');
     t.end();
 });
 
@@ -636,11 +606,11 @@ test('select original after dragging clone', t => {
 
     // Stop drag on a bare target selects that target
     vm.stopDrag('sprite2');
-    t.equal(newEditingTargetId, 'sprite2');
+    expect(newEditingTargetId).toBe('sprite2');
 
     // Stop drag on target with parent sprite selects the 0th clone of that sprite
     vm.stopDrag('sprite1_clone');
-    t.equal(newEditingTargetId, 'sprite1_original');
+    expect(newEditingTargetId).toBe('sprite1_original');
     t.end();
 });
 
@@ -653,14 +623,14 @@ test('setVariableValue', t => {
     vm.runtime.targets = [target];
 
     // Returns false if there is no variable to set
-    t.equal(vm.setVariableValue(target.id, 'not-a-variable', 100), false);
+    expect(vm.setVariableValue(target.id, 'not-a-variable', 100)).toBe(false);
 
     // Returns false if there is no target with that id
-    t.equal(vm.setVariableValue('not-a-target', 'a-variable', 100), false);
+    expect(vm.setVariableValue('not-a-target', 'a-variable', 100)).toBe(false);
 
     // Returns true and updates the value if variable is present
-    t.equal(vm.setVariableValue(target.id, 'a-variable', 100), true);
-    t.equal(target.lookupVariableById('a-variable').value, 100);
+    expect(vm.setVariableValue(target.id, 'a-variable', 100)).toBe(true);
+    expect(target.lookupVariableById('a-variable').value).toBe(100);
 
     t.end();
 });
@@ -685,12 +655,12 @@ test('setVariableValue requests update for cloud variable', t => {
     };
 
     vm.setVariableValue(target.id, 'not-a-variable', 100);
-    t.equal(requestUpdateVarWasCalled, false);
+    expect(requestUpdateVarWasCalled).toBe(false);
 
     vm.setVariableValue(target.id, 'a-variable', 100);
-    t.equal(requestUpdateVarWasCalled, true);
-    t.equal(varName, 'a-name');
-    t.equal(varValue, 100);
+    expect(requestUpdateVarWasCalled).toBe(true);
+    expect(varName).toBe('a-name');
+    expect(varValue).toBe(100);
 
     t.end();
 });
@@ -704,15 +674,15 @@ test('getVariableValue', t => {
     vm.runtime.targets = [target];
 
     // Returns null if there is no variable with that id
-    t.equal(vm.getVariableValue(target.id, 'not-a-variable'), null);
+    expect(vm.getVariableValue(target.id, 'not-a-variable')).toBe(null);
 
     // Returns null if there is no target with that id
-    t.equal(vm.getVariableValue('not-a-target', 'a-variable'), null);
+    expect(vm.getVariableValue('not-a-target', 'a-variable')).toBe(null);
 
     // Returns true and updates the value if variable is present
-    t.equal(vm.getVariableValue(target.id, 'a-variable'), 0);
+    expect(vm.getVariableValue(target.id, 'a-variable')).toBe(0);
     vm.setVariableValue(target.id, 'a-variable', 'string');
-    t.equal(vm.getVariableValue(target.id, 'a-variable'), 'string');
+    expect(vm.getVariableValue(target.id, 'a-variable')).toBe('string');
 
     t.end();
 });
@@ -730,13 +700,13 @@ test('comment_create event updates comment with null position', t => {
     vm.runtime.setEditingTarget(target);
 
     const comment = target.comments['a comment'];
-    t.equal(comment.x, null);
-    t.equal(comment.y, null);
+    expect(comment.x).toBe(null);
+    expect(comment.y).toBe(null);
 
     vm.blockListener(events.createcommentUpdatePosition);
 
-    t.equal(comment.x, 10);
-    t.equal(comment.y, 20);
+    expect(comment.x).toBe(10);
+    expect(comment.y).toBe(20);
 
     t.end();
 });
@@ -756,50 +726,50 @@ test('shareBlocksToTarget shares global variables without any name changes', t =
     vm.runtime.setEditingTarget(target);
 
     stage.createVariable('mock var id', 'a mock variable', Variable.SCALAR_TYPE);
-    t.equal(Object.keys(target.variables).length, 0);
-    t.equal(Object.keys(stage.variables).length, 1);
-    t.equal(stage.variables['mock var id'].name, 'a mock variable');
+    expect(Object.keys(target.variables).length).toBe(0);
+    expect(Object.keys(stage.variables).length).toBe(1);
+    expect(stage.variables['mock var id'].name).toBe('a mock variable');
 
 
     vm.setVariableValue(stage.id, 'mock var id', 10);
-    t.equal(vm.getVariableValue(stage.id, 'mock var id'), 10);
+    expect(vm.getVariableValue(stage.id, 'mock var id')).toBe(10);
 
     target.blocks.createBlock(adapter(events.mockVariableBlock)[0]);
 
     // Verify the block exists on the target, and that it references the global variable
-    t.type(target.blocks.getBlock('a block'), 'object');
-    t.type(target.blocks.getBlock('a block').fields, 'object');
-    t.type(target.blocks.getBlock('a block').fields.VARIABLE, 'object');
-    t.equal(target.blocks.getBlock('a block').fields.VARIABLE.id, 'mock var id');
+    expect(typeof target.blocks.getBlock('a block')).toBe('object');
+    expect(typeof target.blocks.getBlock('a block').fields).toBe('object');
+    expect(typeof target.blocks.getBlock('a block').fields.VARIABLE).toBe('object');
+    expect(target.blocks.getBlock('a block').fields.VARIABLE.id).toBe('mock var id');
 
     // Verify that the block does not exist on the stage
-    t.type(stage.blocks.getBlock('a block'), 'undefined');
+    expect(typeof stage.blocks.getBlock('a block')).toBe('undefined');
 
     // Share the block to the stage
     vm.shareBlocksToTarget([target.blocks.getBlock('a block')], stage.id, target.id).then(() => {
 
         // Verify that the block now exists on the target as well as the stage
-        t.type(target.blocks.getBlock('a block'), 'object');
-        t.type(target.blocks.getBlock('a block').fields, 'object');
-        t.type(target.blocks.getBlock('a block').fields.VARIABLE, 'object');
-        t.equal(target.blocks.getBlock('a block').fields.VARIABLE.id, 'mock var id');
+        expect(typeof target.blocks.getBlock('a block')).toBe('object');
+        expect(typeof target.blocks.getBlock('a block').fields).toBe('object');
+        expect(typeof target.blocks.getBlock('a block').fields.VARIABLE).toBe('object');
+        expect(target.blocks.getBlock('a block').fields.VARIABLE.id).toBe('mock var id');
 
         const newBlockId = Object.keys(stage.blocks._blocks)[0];
-        t.type(stage.blocks.getBlock(newBlockId), 'object');
-        t.type(stage.blocks.getBlock(newBlockId).fields, 'object');
-        t.type(stage.blocks.getBlock(newBlockId).fields.VARIABLE, 'object');
-        t.equal(stage.blocks.getBlock(newBlockId).fields.VARIABLE.id, 'mock var id');
+        expect(typeof stage.blocks.getBlock(newBlockId)).toBe('object');
+        expect(typeof stage.blocks.getBlock(newBlockId).fields).toBe('object');
+        expect(typeof stage.blocks.getBlock(newBlockId).fields.VARIABLE).toBe('object');
+        expect(stage.blocks.getBlock(newBlockId).fields.VARIABLE.id).toBe('mock var id');
 
         // Verify the shared block id is different
-        t.notEqual(newBlockId, 'a block');
+        expect(newBlockId).not.toBe('a block');
 
         // Verify that the variables haven't changed, the variable still exists on the
         // stage, it should still have the same name and value, and there should be
         // no variables on the target.
-        t.equal(Object.keys(target.variables).length, 0);
-        t.equal(Object.keys(stage.variables).length, 1);
-        t.equal(stage.variables['mock var id'].name, 'a mock variable');
-        t.equal(vm.getVariableValue(stage.id, 'mock var id'), 10);
+        expect(Object.keys(target.variables).length).toBe(0);
+        expect(Object.keys(stage.variables).length).toBe(1);
+        expect(stage.variables['mock var id'].name).toBe('a mock variable');
+        expect(vm.getVariableValue(stage.id, 'mock var id')).toBe(10);
 
         t.end();
     });
@@ -820,54 +790,54 @@ test('shareBlocksToTarget shares a local variable to the stage, creating a globa
     vm.runtime.setEditingTarget(target);
 
     target.createVariable('mock var id', 'a mock variable', Variable.SCALAR_TYPE);
-    t.equal(Object.keys(stage.variables).length, 0);
-    t.equal(Object.keys(target.variables).length, 1);
-    t.equal(target.variables['mock var id'].name, 'a mock variable');
+    expect(Object.keys(stage.variables).length).toBe(0);
+    expect(Object.keys(target.variables).length).toBe(1);
+    expect(target.variables['mock var id'].name).toBe('a mock variable');
 
 
     vm.setVariableValue(target.id, 'mock var id', 10);
-    t.equal(vm.getVariableValue(target.id, 'mock var id'), 10);
+    expect(vm.getVariableValue(target.id, 'mock var id')).toBe(10);
 
     target.blocks.createBlock(adapter(events.mockVariableBlock)[0]);
 
     // Verify the block exists on the target, and that it references the global variable
-    t.type(target.blocks.getBlock('a block'), 'object');
-    t.type(target.blocks.getBlock('a block').fields, 'object');
-    t.type(target.blocks.getBlock('a block').fields.VARIABLE, 'object');
-    t.equal(target.blocks.getBlock('a block').fields.VARIABLE.id, 'mock var id');
+    expect(typeof target.blocks.getBlock('a block')).toBe('object');
+    expect(typeof target.blocks.getBlock('a block').fields).toBe('object');
+    expect(typeof target.blocks.getBlock('a block').fields.VARIABLE).toBe('object');
+    expect(target.blocks.getBlock('a block').fields.VARIABLE.id).toBe('mock var id');
 
     // Verify that the block does not exist on the stage
-    t.type(stage.blocks.getBlock('a block'), 'undefined');
+    expect(typeof stage.blocks.getBlock('a block')).toBe('undefined');
 
     // Share the block to the stage
     vm.shareBlocksToTarget([target.blocks.getBlock('a block')], stage.id, target.id).then(() => {
         // Verify that the block still exists on the target and remains unchanged
-        t.type(target.blocks.getBlock('a block'), 'object');
-        t.type(target.blocks.getBlock('a block').fields, 'object');
-        t.type(target.blocks.getBlock('a block').fields.VARIABLE, 'object');
-        t.equal(target.blocks.getBlock('a block').fields.VARIABLE.id, 'mock var id');
+        expect(typeof target.blocks.getBlock('a block')).toBe('object');
+        expect(typeof target.blocks.getBlock('a block').fields).toBe('object');
+        expect(typeof target.blocks.getBlock('a block').fields.VARIABLE).toBe('object');
+        expect(target.blocks.getBlock('a block').fields.VARIABLE.id).toBe('mock var id');
 
         const newBlockId = Object.keys(stage.blocks._blocks)[0];
-        t.type(stage.blocks.getBlock(newBlockId), 'object');
-        t.type(stage.blocks.getBlock(newBlockId).fields, 'object');
-        t.type(stage.blocks.getBlock(newBlockId).fields.VARIABLE, 'object');
-        t.equal(stage.blocks.getBlock(newBlockId).fields.VARIABLE.id, 'StageVarFromLocal_mock var id');
+        expect(typeof stage.blocks.getBlock(newBlockId)).toBe('object');
+        expect(typeof stage.blocks.getBlock(newBlockId).fields).toBe('object');
+        expect(typeof stage.blocks.getBlock(newBlockId).fields.VARIABLE).toBe('object');
+        expect(stage.blocks.getBlock(newBlockId).fields.VARIABLE.id).toBe('StageVarFromLocal_mock var id');
 
         // Verify that a new global variable was created, the old one still exists on
         // the target and still has the same name and value, and the new one has
         // a new name and value 0.
-        t.equal(Object.keys(target.variables).length, 1);
-        t.equal(target.variables['mock var id'].name, 'a mock variable');
-        t.equal(vm.getVariableValue(target.id, 'mock var id'), 10);
+        expect(Object.keys(target.variables).length).toBe(1);
+        expect(target.variables['mock var id'].name).toBe('a mock variable');
+        expect(vm.getVariableValue(target.id, 'mock var id')).toBe(10);
 
         // Verify that a new variable was created on the stage, with a new name and new id
-        t.equal(Object.keys(stage.variables).length, 1);
-        t.type(stage.variables['mock var id'], 'undefined');
+        expect(Object.keys(stage.variables).length).toBe(1);
+        expect(typeof stage.variables['mock var id']).toBe('undefined');
         const newGlobalVar = Object.values(stage.variables)[0];
-        t.equal(newGlobalVar.name, 'Stage: a mock variable');
+        expect(newGlobalVar.name).toBe('Stage: a mock variable');
         const newId = newGlobalVar.id;
-        t.notEqual(newId, 'mock var id');
-        t.equals(vm.getVariableValue(stage.id, newId), 0);
+        expect(newId).not.toBe('mock var id');
+        expect(vm.getVariableValue(stage.id, newId)).toBe(0);
 
         t.end();
     });
@@ -891,24 +861,24 @@ test('shareBlocksToTarget chooses a fresh name for a new global variable checkin
     vm.runtime.setEditingTarget(target);
 
     target.createVariable('mock var id', 'a mock variable', Variable.SCALAR_TYPE);
-    t.equal(Object.keys(stage.variables).length, 0);
-    t.equal(Object.keys(target.variables).length, 1);
-    t.equal(target.variables['mock var id'].name, 'a mock variable');
+    expect(Object.keys(stage.variables).length).toBe(0);
+    expect(Object.keys(target.variables).length).toBe(1);
+    expect(target.variables['mock var id'].name).toBe('a mock variable');
 
 
     vm.setVariableValue(target.id, 'mock var id', 10);
-    t.equal(vm.getVariableValue(target.id, 'mock var id'), 10);
+    expect(vm.getVariableValue(target.id, 'mock var id')).toBe(10);
 
     target.blocks.createBlock(adapter(events.mockVariableBlock)[0]);
 
     // Verify the block exists on the target, and that it references the global variable
-    t.type(target.blocks.getBlock('a block'), 'object');
-    t.type(target.blocks.getBlock('a block').fields, 'object');
-    t.type(target.blocks.getBlock('a block').fields.VARIABLE, 'object');
-    t.equal(target.blocks.getBlock('a block').fields.VARIABLE.id, 'mock var id');
+    expect(typeof target.blocks.getBlock('a block')).toBe('object');
+    expect(typeof target.blocks.getBlock('a block').fields).toBe('object');
+    expect(typeof target.blocks.getBlock('a block').fields.VARIABLE).toBe('object');
+    expect(target.blocks.getBlock('a block').fields.VARIABLE.id).toBe('mock var id');
 
     // Verify that the block does not exist on the stage
-    t.type(stage.blocks.getBlock('a block'), 'undefined');
+    expect(typeof stage.blocks.getBlock('a block')).toBe('undefined');
 
     // Create a variable that conflicts with what will be the new name for the
     // new global variable to ensure a fresh name is chosen
@@ -917,32 +887,32 @@ test('shareBlocksToTarget chooses a fresh name for a new global variable checkin
     // Share the block to the stage
     vm.shareBlocksToTarget([target.blocks.getBlock('a block')], stage.id, target.id).then(() => {
         // Verify that the block still exists on the target and remains unchanged
-        t.type(target.blocks.getBlock('a block'), 'object');
-        t.type(target.blocks.getBlock('a block').fields, 'object');
-        t.type(target.blocks.getBlock('a block').fields.VARIABLE, 'object');
-        t.equal(target.blocks.getBlock('a block').fields.VARIABLE.id, 'mock var id');
+        expect(typeof target.blocks.getBlock('a block')).toBe('object');
+        expect(typeof target.blocks.getBlock('a block').fields).toBe('object');
+        expect(typeof target.blocks.getBlock('a block').fields.VARIABLE).toBe('object');
+        expect(target.blocks.getBlock('a block').fields.VARIABLE.id).toBe('mock var id');
 
         const newBlockId = Object.keys(stage.blocks._blocks)[0];
-        t.type(stage.blocks.getBlock(newBlockId), 'object');
-        t.type(stage.blocks.getBlock(newBlockId).fields, 'object');
-        t.type(stage.blocks.getBlock(newBlockId).fields.VARIABLE, 'object');
-        t.equal(stage.blocks.getBlock(newBlockId).fields.VARIABLE.id, 'StageVarFromLocal_mock var id');
+        expect(typeof stage.blocks.getBlock(newBlockId)).toBe('object');
+        expect(typeof stage.blocks.getBlock(newBlockId).fields).toBe('object');
+        expect(typeof stage.blocks.getBlock(newBlockId).fields.VARIABLE).toBe('object');
+        expect(stage.blocks.getBlock(newBlockId).fields.VARIABLE.id).toBe('StageVarFromLocal_mock var id');
 
         // Verify that a new global variable was created, the old one still exists on
         // the target and still has the same name and value, and the new one has
         // a new name and value 0.
-        t.equal(Object.keys(target.variables).length, 1);
-        t.equal(target.variables['mock var id'].name, 'a mock variable');
-        t.equal(vm.getVariableValue(target.id, 'mock var id'), 10);
+        expect(Object.keys(target.variables).length).toBe(1);
+        expect(target.variables['mock var id'].name).toBe('a mock variable');
+        expect(vm.getVariableValue(target.id, 'mock var id')).toBe(10);
 
         // Verify that a new variable was created on the stage, with a new name and new id
-        t.equal(Object.keys(stage.variables).length, 1);
-        t.type(stage.variables['mock var id'], 'undefined');
+        expect(Object.keys(stage.variables).length).toBe(1);
+        expect(typeof stage.variables['mock var id']).toBe('undefined');
         const newGlobalVar = Object.values(stage.variables)[0];
-        t.equal(newGlobalVar.name, 'Stage: a mock variable2');
+        expect(newGlobalVar.name).toBe('Stage: a mock variable2');
         const newId = newGlobalVar.id;
-        t.notEqual(newId, 'mock var id');
-        t.equals(vm.getVariableValue(stage.id, newId), 0);
+        expect(newId).not.toBe('mock var id');
+        expect(vm.getVariableValue(stage.id, newId)).toBe(0);
 
         t.end();
     });
@@ -972,7 +942,7 @@ test('shareBlocksToTarget loads extensions that have not yet been loaded', t => 
 
     vm.shareBlocksToTarget(fakeBlocks, stage.id).then(() => {
         // Verify that only the not-loaded extension gets loaded
-        t.deepEqual(loadedIds, ['notloaded']);
+        expect(loadedIds).toEqual(['notloaded']);
         t.end();
     });
 });
@@ -990,10 +960,10 @@ test('Setting turbo mode emits events', t => {
     });
 
     vm.setTurboMode(true);
-    t.equal(turboMode, true);
+    expect(turboMode).toBe(true);
 
     vm.setTurboMode(false);
-    t.equal(turboMode, false);
+    expect(turboMode).toBe(false);
 
     t.end();
 });
@@ -1002,7 +972,7 @@ test('Getting the renderer returns the renderer', t => {
     const renderer = new Renderer();
     const vm = new VirtualMachine();
     vm.attachRenderer(renderer);
-    t.equal(vm.renderer, renderer);
+    expect(vm.renderer).toBe(renderer);
     t.end();
 });
 
@@ -1013,7 +983,7 @@ test('Starting the VM emits an event', t => {
         started = true;
     });
     vm.start();
-    t.equal(started, true);
+    expect(started).toBe(true);
     vm.quit();
     t.end();
 });
@@ -1025,7 +995,7 @@ test('vm.greenFlag() emits a PROJECT_START event', t => {
         greenFlagged = true;
     });
     vm.greenFlag();
-    t.equal(greenFlagged, true);
+    expect(greenFlagged).toBe(true);
     t.end();
 });
 
@@ -1047,11 +1017,11 @@ test('toJSON encodes Infinity/NaN as 0, not null', t => {
     runtime.targets = [stage];
 
     const json = JSON.parse(vm.toJSON());
-    t.equal(json.targets[0].volume, 0);
-    t.equal(json.targets[0].tempo, 0);
-    t.equal(json.targets[0].variables.id1[1], 0);
-    t.equal(json.targets[0].variables.id2[1], 0);
-    t.equal(json.targets[0].variables.id3[1], 0);
+    expect(json.targets[0].volume).toBe(0);
+    expect(json.targets[0].tempo).toBe(0);
+    expect(json.targets[0].variables.id1[1]).toBe(0);
+    expect(json.targets[0].variables.id2[1]).toBe(0);
+    expect(json.targets[0].variables.id3[1]).toBe(0);
 
     t.end();
 });
@@ -1061,10 +1031,10 @@ test('clearFlyoutBlocks removes all of the flyout blocks', t => {
     const flyoutBlocks = vm.runtime.flyoutBlocks;
 
     flyoutBlocks.createBlock(adapter(events.mockVariableBlock)[0]);
-    t.equal(Object.keys(flyoutBlocks._blocks).length, 1);
+    expect(Object.keys(flyoutBlocks._blocks).length).toBe(1);
 
     vm.clearFlyoutBlocks();
-    t.equal(Object.keys(flyoutBlocks._blocks).length, 0);
+    expect(Object.keys(flyoutBlocks._blocks).length).toBe(0);
 
     t.end();
 });

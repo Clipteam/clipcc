@@ -1,55 +1,48 @@
-const test = require('tap').test;
 const math = require('../../src/util/math-util');
 
-test('degToRad', t => {
-    t.strictEqual(math.degToRad(0), 0);
-    t.strictEqual(math.degToRad(1), 0.017453292519943295);
-    t.strictEqual(math.degToRad(180), Math.PI);
-    t.strictEqual(math.degToRad(360), 2 * Math.PI);
-    t.strictEqual(math.degToRad(720), 4 * Math.PI);
-    t.end();
+test('degToRad', () => {
+    expect(math.degToRad(0)).toBe(0);
+    expect(math.degToRad(1)).toBe(0.017453292519943295);
+    expect(math.degToRad(180)).toBe(Math.PI);
+    expect(math.degToRad(360)).toBe(2 * Math.PI);
+    expect(math.degToRad(720)).toBe(4 * Math.PI);
 });
 
-test('radToDeg', t => {
-    t.strictEqual(math.radToDeg(0), 0);
-    t.strictEqual(math.radToDeg(1), 57.29577951308232);
-    t.strictEqual(math.radToDeg(180), 10313.240312354817);
-    t.strictEqual(math.radToDeg(360), 20626.480624709635);
-    t.strictEqual(math.radToDeg(720), 41252.96124941927);
-    t.end();
+test('radToDeg', () => {
+    expect(math.radToDeg(0)).toBe(0);
+    expect(math.radToDeg(1)).toBe(57.29577951308232);
+    expect(math.radToDeg(180)).toBe(10313.240312354817);
+    expect(math.radToDeg(360)).toBe(20626.480624709635);
+    expect(math.radToDeg(720)).toBe(41252.96124941927);
 });
 
-test('clamp', t => {
-    t.strictEqual(math.clamp(0, 0, 10), 0);
-    t.strictEqual(math.clamp(1, 0, 10), 1);
-    t.strictEqual(math.clamp(-10, 0, 10), 0);
-    t.strictEqual(math.clamp(100, 0, 10), 10);
-    t.end();
+test('clamp', () => {
+    expect(math.clamp(0, 0, 10)).toBe(0);
+    expect(math.clamp(1, 0, 10)).toBe(1);
+    expect(math.clamp(-10, 0, 10)).toBe(0);
+    expect(math.clamp(100, 0, 10)).toBe(10);
 });
 
-test('wrapClamp', t => {
-    t.strictEqual(math.wrapClamp(0, 0, 10), 0);
-    t.strictEqual(math.wrapClamp(1, 0, 10), 1);
-    t.strictEqual(math.wrapClamp(-10, 0, 10), 1);
-    t.strictEqual(math.wrapClamp(100, 0, 10), 1);
-    t.end();
+test('wrapClamp', () => {
+    expect(math.wrapClamp(0, 0, 10)).toBe(0);
+    expect(math.wrapClamp(1, 0, 10)).toBe(1);
+    expect(math.wrapClamp(-10, 0, 10)).toBe(1);
+    expect(math.wrapClamp(100, 0, 10)).toBe(1);
 });
 
-test('tan', t => {
-    t.strictEqual(math.tan(90), Infinity);
-    t.strictEqual(math.tan(180), 0);
-    t.strictEqual(math.tan(-90), -Infinity);
-    t.strictEqual(math.tan(33), 0.6494075932);
-    t.end();
+test('tan', () => {
+    expect(math.tan(90)).toBe(Infinity);
+    expect(math.tan(180)).toBe(0);
+    expect(math.tan(-90)).toBe(-Infinity);
+    expect(math.tan(33)).toBe(0.6494075932);
 });
 
-test('reducedSortOrdering', t => {
-    t.deepEqual(math.reducedSortOrdering([5, 18, 6, 3]), [1, 3, 2, 0]);
-    t.deepEqual(math.reducedSortOrdering([5, 1, 56, 19]), [1, 0, 3, 2]);
-    t.end();
+test('reducedSortOrdering', () => {
+    expect(math.reducedSortOrdering([5, 18, 6, 3])).toEqual([1, 3, 2, 0]);
+    expect(math.reducedSortOrdering([5, 1, 56, 19])).toEqual([1, 0, 3, 2]);
 });
 
-test('inclusiveRandIntWithout', t => {
+test('inclusiveRandIntWithout', () => {
     const withRandomValue = function (randValue, ...args) {
         const oldMathRandom = Math.random;
         Object.assign(global.Math, {random: () => randValue});
@@ -58,13 +51,11 @@ test('inclusiveRandIntWithout', t => {
         return result;
     };
 
-    t.strictEqual(withRandomValue(3 / 6, 0, 6, 2), 4);
-    t.strictEqual(withRandomValue(2 / 6, 0, 6, 2), 3);
-    t.strictEqual(withRandomValue(1 / 6, 0, 6, 2), 1);
-    t.strictEqual(withRandomValue(1.9 / 6, 0, 6, 2), 1);
+    expect(withRandomValue(3 / 6, 0, 6, 2)).toBe(4);
+    expect(withRandomValue(2 / 6, 0, 6, 2)).toBe(3);
+    expect(withRandomValue(1 / 6, 0, 6, 2)).toBe(1);
+    expect(withRandomValue(1.9 / 6, 0, 6, 2)).toBe(1);
 
-    t.strictEqual(withRandomValue(3 / 4, 10, 14, 10), 14);
-    t.strictEqual(withRandomValue(0 / 4, 10, 14, 10), 11);
-
-    t.end();
+    expect(withRandomValue(3 / 4, 10, 14, 10)).toBe(14);
+    expect(withRandomValue(0 / 4, 10, 14, 10)).toBe(11);
 });

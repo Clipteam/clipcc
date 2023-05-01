@@ -1,22 +1,20 @@
-const test = require('tap').test;
 const Mouse = require('../../src/io/mouse');
 const Runtime = require('../../src/engine/runtime');
 
-test('spec', t => {
+test('spec', () => {
     const rt = new Runtime();
     const m = new Mouse(rt);
 
-    t.type(m, 'object');
-    t.type(m.postData, 'function');
-    t.type(m.getClientX, 'function');
-    t.type(m.getClientY, 'function');
-    t.type(m.getScratchX, 'function');
-    t.type(m.getScratchY, 'function');
-    t.type(m.getIsDown, 'function');
-    t.end();
+    expect(typeof m).toBe('object');
+    expect(typeof m.postData).toBe('function');
+    expect(typeof m.getClientX).toBe('function');
+    expect(typeof m.getClientY).toBe('function');
+    expect(typeof m.getScratchX).toBe('function');
+    expect(typeof m.getScratchY).toBe('function');
+    expect(typeof m.getIsDown).toBe('function');
 });
 
-test('mouseUp', t => {
+test('mouseUp', () => {
     const rt = new Runtime();
     const m = new Mouse(rt);
 
@@ -28,15 +26,14 @@ test('mouseUp', t => {
         canvasWidth: 480,
         canvasHeight: 360
     });
-    t.strictEquals(m.getClientX(), -20);
-    t.strictEquals(m.getClientY(), 10);
-    t.strictEquals(m.getScratchX(), -240);
-    t.strictEquals(m.getScratchY(), 170);
-    t.strictEquals(m.getIsDown(), false);
-    t.end();
+    expect(m.getClientX()).toBe(-20);
+    expect(m.getClientY()).toBe(10);
+    expect(m.getScratchX()).toBe(-240);
+    expect(m.getScratchY()).toBe(170);
+    expect(m.getIsDown()).toBe(false);
 });
 
-test('mouseDown', t => {
+test('mouseDown', () => {
     const rt = new Runtime();
     const m = new Mouse(rt);
 
@@ -48,15 +45,14 @@ test('mouseDown', t => {
         canvasWidth: 480,
         canvasHeight: 360
     });
-    t.strictEquals(m.getClientX(), 9.9);
-    t.strictEquals(m.getClientY(), 400.1);
-    t.strictEquals(m.getScratchX(), -230);
-    t.strictEquals(m.getScratchY(), -180);
-    t.strictEquals(m.getIsDown(), true);
-    t.end();
+    expect(m.getClientX()).toBe(9.9);
+    expect(m.getClientY()).toBe(400.1);
+    expect(m.getScratchX()).toBe(-230);
+    expect(m.getScratchY()).toBe(-180);
+    expect(m.getIsDown()).toBe(true);
 });
 
-test('at zoomed scale', t => {
+test('at zoomed scale', () => {
     const rt = new Runtime();
     const m = new Mouse(rt);
 
@@ -67,14 +63,13 @@ test('at zoomed scale', t => {
         canvasWidth: 960,
         canvasHeight: 720
     });
-    t.strictEquals(m.getClientX(), 240);
-    t.strictEquals(m.getClientY(), 540);
-    t.strictEquals(m.getScratchX(), -120);
-    t.strictEquals(m.getScratchY(), -90);
-    t.end();
+    expect(m.getClientX()).toBe(240);
+    expect(m.getClientY()).toBe(540);
+    expect(m.getScratchX()).toBe(-120);
+    expect(m.getScratchY()).toBe(-90);
 });
 
-test('mousedown activating click hats', t => {
+test('mousedown activating click hats', () => {
     const rt = new Runtime();
     const m = new Mouse(rt);
 
@@ -109,23 +104,23 @@ test('mousedown activating click hats', t => {
 
     // Mouse move without mousedown
     m.postData(mouseMoveEvent);
-    t.strictEquals(ranClickHats, false);
+    expect(ranClickHats).toBe(false);
 
     // Mouse down event triggers the hats if target is not draggable
     dummyTarget.draggable = false;
     m.postData(mouseDownEvent);
-    t.strictEquals(ranClickHats, true);
+    expect(ranClickHats).toBe(true);
 
     // But another mouse move while down doesn't trigger
     ranClickHats = false;
     m.postData(mouseDownEvent);
-    t.strictEquals(ranClickHats, false);
+    expect(ranClickHats).toBe(false);
 
     // And it does trigger on mouse up if target is draggable
     ranClickHats = false;
     dummyTarget.draggable = true;
     m.postData(mouseUpEvent);
-    t.strictEquals(ranClickHats, true);
+    expect(ranClickHats).toBe(true);
 
     // And hats don't trigger if mouse down is outside canvas
     ranClickHats = false;
@@ -133,7 +128,5 @@ test('mousedown activating click hats', t => {
         x: 50000,
         y: 50
     }));
-    t.strictEquals(ranClickHats, false);
-
-    t.end();
+    expect(ranClickHats).toBe(false);
 });

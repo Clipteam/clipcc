@@ -1,4 +1,3 @@
-const test = require('tap').test;
 const Data = require('../../src/blocks/scratch3_data');
 
 const blocks = new Data();
@@ -15,100 +14,96 @@ const util = {
     }
 };
 
-test('List with postive infinity primitive contains postive infinity', t => {
+test('List with postive infinity primitive contains postive infinity', () => {
     lists.list = {value: [Infinity]};
     let args = {ITEM: Infinity, LIST: {name: 'list'}};
     let contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '[Infinity] contains Infinity');
+    expect(contains).toBe(true);
 
     lists.list = {value: [Infinity]};
     args = {ITEM: 'Infinity', LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '[Infinity] contains "Infinity"');
+    expect(contains).toBe(true);
 
     lists.list = {value: [Infinity]};
     args = {ITEM: 'INFINITY', LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '[Infinity] contains "INFINITY"');
+    expect(contains).toBe(true);
 
     lists.list = {value: ['Infinity']};
     args = {ITEM: Infinity, LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '["Infinity"] contains Infinity');
+    expect(contains).toBe(true);
 
     lists.list = {value: ['Infinity']};
     args = {ITEM: 'Infinity', LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '["Infinity"] contains "Infinity"');
+    expect(contains).toBe(true);
 
     lists.list = {value: ['Infinity']};
     args = {ITEM: 'INFINITY', LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '["Infinity"] contains "INFINITY"');
+    expect(contains).toBe(true);
 
     lists.list = {value: ['INFINITY']};
     args = {ITEM: Infinity, LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '["INFINITY"] contains Infinity');
+    expect(contains).toBe(true);
 
     lists.list = {value: ['INFINITY']};
     args = {ITEM: 'Infinity', LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '["INFINITY"] contains "Infinity"');
+    expect(contains).toBe(true);
 
     lists.list = {value: ['INFINITY']};
     args = {ITEM: 'INFINITY', LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '["INFINITY"] contains "INFINITY"');
-
-    t.end();
+    expect(contains).toBe(true);
 });
 
-test('List with negative infinity primitive contains negative infinity', t => {
+test('List with negative infinity primitive contains negative infinity', () => {
     lists.list = {value: [-Infinity]};
     let args = {ITEM: -Infinity, LIST: {name: 'list'}};
     let contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '[-Infinity] contains -Infinity');
+    expect(contains).toBe(true);
 
     lists.list = {value: [-Infinity]};
     args = {ITEM: '-Infinity', LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '[-Infinity] contains "-Infinity"');
+    expect(contains).toBe(true);
 
     lists.list = {value: [-Infinity]};
     args = {ITEM: '-INFINITY', LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '[-Infinity] contains "-INFINITY"');
+    expect(contains).toBe(true);
 
     lists.list = {value: ['-Infinity']};
     args = {ITEM: -Infinity, LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '["-Infinity"] contains -Infinity');
+    expect(contains).toBe(true);
 
     lists.list = {value: ['-Infinity']};
     args = {ITEM: '-Infinity', LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '["-Infinity"] contains "-Infinity"');
+    expect(contains).toBe(true);
 
     lists.list = {value: ['-Infinity']};
     args = {ITEM: '-INFINITY', LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '["-Infinity"] contains "-INFINITY"');
+    expect(contains).toBe(true);
 
     lists.list = {value: ['-INFINITY']};
     args = {ITEM: -Infinity, LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '["-INFINITY"] contains -Infinity');
+    expect(contains).toBe(true);
 
     lists.list = {value: ['-INFINITY']};
     args = {ITEM: '-Infinity', LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '["-INFINITY"] contains "-Infinity"');
+    expect(contains).toBe(true);
 
     lists.list = {value: ['-INFINITY']};
     args = {ITEM: '-INFINITY', LIST: {name: 'list'}};
     contains = blocks.listContainsItem(args, util);
-    t.strictEqual(contains, true, '["-INFINITY"] contains "-INFINITY"');
-
-    t.end();
+    expect(contains).toBe(true);
 });

@@ -1,70 +1,49 @@
-const test = require('tap').test;
 const StringUtil = require('../../src/util/string-util');
 
-test('splitFirst', t => {
-    t.deepEqual(StringUtil.splitFirst('asdf.1234', '.'), ['asdf', '1234']);
-    t.deepEqual(StringUtil.splitFirst('asdf.', '.'), ['asdf', '']);
-    t.deepEqual(StringUtil.splitFirst('.1234', '.'), ['', '1234']);
-    t.deepEqual(StringUtil.splitFirst('foo', '.'), ['foo', null]);
-    t.end();
+test('splitFirst', () => {
+    expect(StringUtil.splitFirst('asdf.1234', '.')).toEqual(['asdf', '1234']);
+    expect(StringUtil.splitFirst('asdf.', '.')).toEqual(['asdf', '']);
+    expect(StringUtil.splitFirst('.1234', '.')).toEqual(['', '1234']);
+    expect(StringUtil.splitFirst('foo', '.')).toEqual(['foo', null]);
 });
 
-test('withoutTrailingDigits', t => {
-    t.strictEqual(StringUtil.withoutTrailingDigits('boeing747'), 'boeing');
-    t.strictEqual(StringUtil.withoutTrailingDigits('boeing747 '), 'boeing747 ');
-    t.strictEqual(StringUtil.withoutTrailingDigits('boeing𝟨'), 'boeing𝟨');
-    t.strictEqual(StringUtil.withoutTrailingDigits('boeing 747'), 'boeing ');
-    t.strictEqual(StringUtil.withoutTrailingDigits('747'), '');
-    t.end();
+test('withoutTrailingDigits', () => {
+    expect(StringUtil.withoutTrailingDigits('boeing747')).toBe('boeing');
+    expect(StringUtil.withoutTrailingDigits('boeing747 ')).toBe('boeing747 ');
+    expect(StringUtil.withoutTrailingDigits('boeing𝟨')).toBe('boeing𝟨');
+    expect(StringUtil.withoutTrailingDigits('boeing 747')).toBe('boeing ');
+    expect(StringUtil.withoutTrailingDigits('747')).toBe('');
 });
 
-test('unusedName', t => {
-    t.strictEqual(
-        StringUtil.unusedName(
-            'name',
-            ['not the same name']
-        ),
-        'name'
-    );
-    t.strictEqual(
-        StringUtil.unusedName(
-            'name',
-            ['name']
-        ),
-        'name2'
-    );
-    t.strictEqual(
-        StringUtil.unusedName(
-            'name',
-            ['name30']
-        ),
-        'name'
-    );
-    t.strictEqual(
-        StringUtil.unusedName(
-            'name',
-            ['name', 'name2']
-        ),
-        'name3'
-    );
-    t.strictEqual(
-        StringUtil.unusedName(
-            'name',
-            ['name', 'name3']
-        ),
-        'name2'
-    );
-    t.strictEqual(
-        StringUtil.unusedName(
-            'boeing747',
-            ['boeing747']
-        ),
-        'boeing2' // Yup, this matches scratch-flash...
-    );
-    t.end();
+test('unusedName', () => {
+    expect(StringUtil.unusedName(
+        'name',
+        ['not the same name']
+    )).toBe('name');
+    expect(StringUtil.unusedName(
+        'name',
+        ['name']
+    )).toBe('name2');
+    expect(StringUtil.unusedName(
+        'name',
+        ['name30']
+    )).toBe('name');
+    expect(StringUtil.unusedName(
+        'name',
+        ['name', 'name2']
+    )).toBe('name3');
+    expect(StringUtil.unusedName(
+        'name',
+        ['name', 'name3']
+    )).toBe('name2');
+    expect(StringUtil.unusedName(
+        'boeing747',
+        ['boeing747']
+    )).toBe(// Yup, this matches scratch-flash...
+    'boeing2');
 });
 
-test('stringify', t => {
+test('stringify', () => {
     const obj = {
         a: Infinity,
         b: NaN,
@@ -76,54 +55,49 @@ test('stringify', t => {
         }
     };
     const parsed = JSON.parse(StringUtil.stringify(obj));
-    t.equal(parsed.a, 0);
-    t.equal(parsed.b, 0);
-    t.equal(parsed.c, 0);
-    t.equal(parsed.d, 23);
-    t.equal(parsed.e, 'str');
-    t.equal(parsed.f.nested, 0);
-    t.end();
+    expect(parsed.a).toBe(0);
+    expect(parsed.b).toBe(0);
+    expect(parsed.c).toBe(0);
+    expect(parsed.d).toBe(23);
+    expect(parsed.e).toBe('str');
+    expect(parsed.f.nested).toBe(0);
 });
 
-test('replaceUnsafeChars', t => {
+test('replaceUnsafeChars', () => {
     const empty = '';
-    t.equal(StringUtil.replaceUnsafeChars(empty), empty);
+    expect(StringUtil.replaceUnsafeChars(empty)).toBe(empty);
 
     const safe = 'hello';
-    t.equal(StringUtil.replaceUnsafeChars(safe), safe);
+    expect(StringUtil.replaceUnsafeChars(safe)).toBe(safe);
 
     const unsafe = '< > & \' "';
-    t.equal(StringUtil.replaceUnsafeChars(unsafe), 'lt gt amp apos quot');
+    expect(StringUtil.replaceUnsafeChars(unsafe)).toBe('lt gt amp apos quot');
 
     const single = '&';
-    t.equal(StringUtil.replaceUnsafeChars(single), 'amp');
+    expect(StringUtil.replaceUnsafeChars(single)).toBe('amp');
 
     const mix = '<a>b& c\'def_-"';
-    t.equal(StringUtil.replaceUnsafeChars(mix), 'ltagtbamp caposdef_-quot');
+    expect(StringUtil.replaceUnsafeChars(mix)).toBe('ltagtbamp caposdef_-quot');
 
     const dupes = '<<&_"_"_&>>';
-    t.equal(StringUtil.replaceUnsafeChars(dupes), 'ltltamp_quot_quot_ampgtgt');
+    expect(StringUtil.replaceUnsafeChars(dupes)).toBe('ltltamp_quot_quot_ampgtgt');
 
     const emoji = '(>^_^)>';
-    t.equal(StringUtil.replaceUnsafeChars(emoji), '(gt^_^)gt');
-
-    t.end();
+    expect(StringUtil.replaceUnsafeChars(emoji)).toBe('(gt^_^)gt');
 });
 
-test('replaceUnsafeChars should handle non strings', t => {
+test('replaceUnsafeChars should handle non strings', () => {
     const array = ['hello', 'world'];
-    t.equal(StringUtil.replaceUnsafeChars(array), String(array));
+    expect(StringUtil.replaceUnsafeChars(array)).toBe(String(array));
 
     const arrayWithSpecialChar = ['hello', '<world>'];
-    t.equal(StringUtil.replaceUnsafeChars(arrayWithSpecialChar), 'hello,ltworldgt');
+    expect(StringUtil.replaceUnsafeChars(arrayWithSpecialChar)).toBe('hello,ltworldgt');
 
     const arrayWithNumbers = [1, 2, 3];
-    t.equal(StringUtil.replaceUnsafeChars(arrayWithNumbers), '1,2,3');
+    expect(StringUtil.replaceUnsafeChars(arrayWithNumbers)).toBe('1,2,3');
 
     // Objects shouldn't get provided to replaceUnsafeChars, but in the event
     // they do, it should just return the object (and log an error)
     const object = {hello: 'world'};
-    t.equal(StringUtil.replaceUnsafeChars(object), object);
-
-    t.end();
+    expect(StringUtil.replaceUnsafeChars(object)).toBe(object);
 });

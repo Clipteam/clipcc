@@ -1,4 +1,3 @@
-const test = require('tap').test;
 const TextToSpeech = require('../../src/extensions/scratch3_text2speech/index.js');
 
 const fakeStage = {
@@ -12,33 +11,28 @@ const fakeRuntime = {
 
 const ext = new TextToSpeech(fakeRuntime);
 
-test('if no language is saved in the project, use default', t => {
-    t.strictEqual(ext.getCurrentLanguage(), 'en');
-    t.end();
+test('if no language is saved in the project, use default', () => {
+    expect(ext.getCurrentLanguage()).toBe('en');
 });
 
-test('if an unsupported language is dropped onto the set language block, use default', t => {
+test('if an unsupported language is dropped onto the set language block, use default', () => {
     ext.setLanguage({LANGUAGE: 'nope'});
-    t.strictEqual(ext.getCurrentLanguage(), 'en');
-    t.end();
+    expect(ext.getCurrentLanguage()).toBe('en');
 });
 
-test('if a supported language name is dropped onto the set language block, use it', t => {
+test('if a supported language name is dropped onto the set language block, use it', () => {
     ext.setLanguage({LANGUAGE: 'español'});
-    t.strictEqual(ext.getCurrentLanguage(), 'es');
-    t.end();
+    expect(ext.getCurrentLanguage()).toBe('es');
 });
 
-test('get the extension locale for a supported locale that differs', t => {
+test('get the extension locale for a supported locale that differs', () => {
     ext.setLanguage({LANGUAGE: 'ja-hira'});
-    t.strictEqual(ext.getCurrentLanguage(), 'ja');
-    t.end();
+    expect(ext.getCurrentLanguage()).toBe('ja');
 });
 
-test('use localized spoken language name in place of localized written language name', t => {
+test('use localized spoken language name in place of localized written language name', () => {
     ext.getEditorLanguage = () => 'es';
     const languageMenu = ext.getLanguageMenu();
     const localizedNameForChineseInSpanish = languageMenu.find(el => el.value === 'zh-cn').text;
-    t.strictEqual(localizedNameForChineseInSpanish, 'Chino (Mandarín)'); // i.e. should not be 'Chino (simplificado)'
-    t.end();
+    expect(localizedNameForChineseInSpanish).toBe('Chino (Mandarín)'); // i.e. should not be 'Chino (simplificado)'
 });

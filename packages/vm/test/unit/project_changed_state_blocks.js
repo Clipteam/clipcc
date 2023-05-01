@@ -1,4 +1,3 @@
-const tap = require('tap');
 const path = require('path');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const makeTestStorage = require('../fixtures/make-test-storage');
@@ -62,14 +61,14 @@ test('Creating a block should emit a project changed event', t => {
         topLevel: true
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
 test('Deleting a block should emit a project changed event', t => {
     blockContainer.deleteBlock('a new block');
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
@@ -81,7 +80,7 @@ test('Changing a block should emit a project changed event', t => {
         value: 300
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     projectChanged = false;
 
     blockContainer.changeBlock({
@@ -90,7 +89,7 @@ test('Changing a block should emit a project changed event', t => {
         value: true
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     projectChanged = false;
 
     blockContainer.changeBlock({
@@ -99,7 +98,7 @@ test('Changing a block should emit a project changed event', t => {
         value: '<mutation></mutation>'
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
 
     t.end();
 });
@@ -113,7 +112,7 @@ test('Moving a block to a new position should emit a project changed event', t =
         }
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
@@ -130,7 +129,7 @@ test('Connecting a block to a new parent should emit a project changed event', t
         newParent: 'another block'
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
@@ -140,7 +139,7 @@ test('Disconnecting a block from another should emit a project changed event', t
         oldParent: 'a parent block'
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
@@ -154,7 +153,7 @@ test('Creating a local variable should emit a project changed event', t => {
         isCloud: false
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
 
     projectChanged = false;
 
@@ -168,7 +167,7 @@ test('Creating a local variable should emit a project changed event', t => {
         isCloud: false
     });
 
-    t.equal(projectChanged, false);
+    expect(projectChanged).toBe(false);
 
     t.end();
 });
@@ -183,7 +182,7 @@ test('Creating a global variable should emit a project changed event', t => {
         isCloud: false
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
 
     projectChanged = false;
 
@@ -197,7 +196,7 @@ test('Creating a global variable should emit a project changed event', t => {
         isCloud: false
     });
 
-    t.equal(projectChanged, false);
+    expect(projectChanged).toBe(false);
 
     t.end();
 });
@@ -221,7 +220,7 @@ test('Renaming a variable should emit a project changed event', t => {
         newName: 'bar'
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
@@ -246,7 +245,7 @@ test('Deleting a variable should emit a project changed event', t => {
         isCloud: false
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
@@ -265,7 +264,7 @@ test('Creating a block comment should emit a project changed event', t => {
         text: 'comment'
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
@@ -284,7 +283,7 @@ test('Creating a workspace comment should emit a project changed event', t => {
         text: 'comment'
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
@@ -317,7 +316,7 @@ test('Changing a comment should emit a project changed event', t => {
         }
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
@@ -334,7 +333,7 @@ test('Attempting to change a comment that does not exist should not emit a proje
         }
     });
 
-    t.equal(projectChanged, false);
+    expect(projectChanged).toBe(false);
     t.end();
 });
 
@@ -369,7 +368,7 @@ test('Deleting a block comment should emit a project changed event', t => {
         text: 'comment'
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
@@ -404,7 +403,7 @@ test('Deleting a workspace comment should emit a project changed event', t => {
         text: 'comment'
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
@@ -423,7 +422,7 @@ test('Deleting a comment that does not exist should not emit a project changed e
         text: 'comment'
     });
 
-    t.equal(projectChanged, false);
+    expect(projectChanged).toBe(false);
     t.end();
 });
 
@@ -458,6 +457,6 @@ test('Moving a comment should emit a project changed event', t => {
         }
     });
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });

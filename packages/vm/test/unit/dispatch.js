@@ -3,7 +3,6 @@ const Worker = require('tiny-worker');
 
 const dispatch = require('../../src/dispatch/central-dispatch');
 const path = require('path');
-const test = require('tap').test;
 
 
 // By default Central Dispatch works with the Worker class built into the browser. Tell it to use TinyWorker instead.
@@ -14,19 +13,19 @@ const runServiceTest = function (serviceName, t) {
 
     promises.push(dispatch.call(serviceName, 'returnFortyTwo')
         .then(
-            x => t.equal(x, 42),
+            x => expect(x).toBe(42),
             e => t.fail(e)
         ));
 
     promises.push(dispatch.call(serviceName, 'doubleArgument', 9)
         .then(
-            x => t.equal(x, 18),
+            x => expect(x).toBe(18),
             e => t.fail(e)
         ));
 
     promises.push(dispatch.call(serviceName, 'doubleArgument', 123)
         .then(
-            x => t.equal(x, 246),
+            x => expect(x).toBe(246),
             e => t.fail(e)
         ));
 
@@ -40,14 +39,14 @@ const runServiceTest = function (serviceName, t) {
     return Promise.all(promises);
 };
 
-test('local', t => {
+test('local', done => {
     dispatch.setService('LocalDispatchTest', new DispatchTestService())
-        .catch(e => t.fail(e));
+        .catch(e => done.fail(e));
 
     return runServiceTest('LocalDispatchTest', t);
 });
 
-test('remote', t => {
+test('remote', done => {
     const fixturesDir = path.resolve(__dirname, '../fixtures');
     const shimPath = path.resolve(fixturesDir, 'dispatch-test-worker-shim.js');
     const worker = new Worker(shimPath, null, {cwd: fixturesDir});
@@ -55,28 +54,25 @@ test('remote', t => {
 
     const waitForWorker = new Promise(resolve => {
         dispatch.setService('test', {onWorkerReady: resolve})
-            .catch(e => t.fail(e));
+            .catch(e => done.fail(e));
     });
 
     return waitForWorker
-        .then(() => runServiceTest('RemoteDispatchTest', t), e => t.fail(e))
-        .then(() => dispatch._remoteCall(worker, 'dispatch', 'terminate'), e => t.fail(e));
+        .then(() => runServiceTest('RemoteDispatchTest', t), e => done.fail(e))
+        .then(() => dispatch._remoteCall(worker, 'dispatch', 'terminate'), e => done.fail(e));
 });
 
-test('local, sync', t => {
+test('local, sync', () => {
     dispatch.setServiceSync('SyncDispatchTest', new DispatchTestService());
 
     const a = dispatch.callSync('SyncDispatchTest', 'returnFortyTwo');
-    t.equal(a, 42);
+    expect(a).toBe(42);
 
     const b = dispatch.callSync('SyncDispatchTest', 'doubleArgument', 9);
-    t.equal(b, 18);
+    expect(b).toBe(18);
 
     const c = dispatch.callSync('SyncDispatchTest', 'doubleArgument', 123);
-    t.equal(c, 246);
+    expect(c).toBe(246);
 
-    t.throws(() => dispatch.callSync('SyncDispatchTest', 'throwException'),
-        new Error('This is a test exception thrown by DispatchTest'));
-
-    t.end();
+    expect(() => dispatch.callSync('SyncDispatchTest', 'throwException')).toThrowError(new Error('This is a test exception thrown by DispatchTest'));
 });

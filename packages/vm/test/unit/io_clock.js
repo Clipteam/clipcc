@@ -1,37 +1,35 @@
-const test = require('tap').test;
 const Clock = require('../../src/io/clock');
 const Runtime = require('../../src/engine/runtime');
 
-test('spec', t => {
+test('spec', () => {
     const rt = new Runtime();
     const c = new Clock(rt);
 
-    t.type(Clock, 'function');
-    t.type(c, 'object');
-    t.type(c.projectTimer, 'function');
-    t.type(c.pause, 'function');
-    t.type(c.resume, 'function');
-    t.type(c.resetProjectTimer, 'function');
-    t.end();
+    expect(typeof Clock).toBe('function');
+    expect(typeof c).toBe('object');
+    expect(typeof c.projectTimer).toBe('function');
+    expect(typeof c.pause).toBe('function');
+    expect(typeof c.resume).toBe('function');
+    expect(typeof c.resetProjectTimer).toBe('function');
 });
 
-test('cycle', t => {
+test('cycle', done => {
     const rt = new Runtime();
     const c = new Clock(rt);
 
-    t.ok(c.projectTimer() <= 0.1);
+    expect(c.projectTimer() <= 0.1).toBeTruthy();
     setTimeout(() => {
         c.resetProjectTimer();
         setTimeout(() => {
             // The timer shouldn't advance until all threads have been stepped
-            t.ok(c.projectTimer() === 0);
+            expect(c.projectTimer() === 0).toBeTruthy();
             c.pause();
-            t.ok(c.projectTimer() === 0);
+            expect(c.projectTimer() === 0).toBeTruthy();
             c.resume();
-            t.ok(c.projectTimer() === 0);
-            t.end();
+            expect(c.projectTimer() === 0).toBeTruthy();
+            done();
         }, 100);
     }, 100);
     rt._step();
-    t.ok(c.projectTimer() > 0);
+    expect(c.projectTimer() > 0).toBeTruthy();
 });

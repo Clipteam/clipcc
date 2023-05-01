@@ -1,4 +1,3 @@
-const tap = require('tap');
 const path = require('path');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const makeTestStorage = require('../fixtures/make-test-storage');
@@ -34,7 +33,7 @@ test('Adding a sprite (from sprite2) should emit a project changed event', t => 
     const sprite2 = readFileToBuffer(sprite2Uri);
 
     vm.addSprite(sprite2).then(() => {
-        t.equal(projectChanged, true);
+        expect(projectChanged).toBe(true);
         t.end();
     });
 });
@@ -44,7 +43,7 @@ test('Adding a sprite (from sprite3) should emit a project changed event', t => 
     const sprite3 = readFileToBuffer(sprite3Uri);
 
     vm.addSprite(sprite3).then(() => {
-        t.equal(projectChanged, true);
+        expect(projectChanged).toBe(true);
         t.end();
     });
 });
@@ -60,7 +59,7 @@ test('Adding a costume should emit a project changed event', t => {
     };
 
     vm.addCostume('f9a1c175dbe2e5dee472858dd30d16bb.svg', newCostume).then(() => {
-        t.equal(projectChanged, true);
+        expect(projectChanged).toBe(true);
         t.end();
     });
 });
@@ -76,7 +75,7 @@ test('Adding a costume from library should emit a project changed event', t => {
     };
 
     vm.addCostumeFromLibrary('f9a1c175dbe2e5dee472858dd30d16bb.svg', newCostume).then(() => {
-        t.equal(projectChanged, true);
+        expect(projectChanged).toBe(true);
         t.end();
     });
 });
@@ -92,7 +91,7 @@ test('Adding a backdrop should emit a project changed event', t => {
     };
 
     vm.addBackdrop('f9a1c175dbe2e5dee472858dd30d16bb.svg', newCostume).then(() => {
-        t.equal(projectChanged, true);
+        expect(projectChanged).toBe(true);
         t.end();
     });
 });
@@ -107,7 +106,7 @@ test('Adding a sound should emit a project changed event', t => {
     };
 
     vm.addSound(newSound).then(() => {
-        t.equal(projectChanged, true);
+        expect(projectChanged).toBe(true);
         t.end();
     });
 });
@@ -116,21 +115,21 @@ test('Deleting a sprite should emit a project changed event', t => {
     const spriteId = vm.editingTarget.id;
 
     vm.deleteSprite(spriteId);
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
 test('Deleting a costume should emit a project changed event', t => {
     vm.deleteCostume(0);
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
 test('Deleting a sound should emit a project changed event', t => {
     vm.deleteSound(0);
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
@@ -142,19 +141,19 @@ test('Reordering a sprite should emit a project changed event', t => {
     vm.addSprite(sprite3).then(() => {
         // Reset the project changed flag to ignore change from adding new sprite
         projectChanged = false;
-        t.equal(vm.runtime.targets.filter(target => !target.isStage).length, 2);
+        expect(vm.runtime.targets.filter(target => !target.isStage).length).toBe(2);
         vm.reorderTarget(2, 1);
-        t.equal(projectChanged, true);
+        expect(projectChanged).toBe(true);
         t.end();
     });
 });
 
 test('Reordering a costume should emit a project changed event', t => {
-    t.equal(vm.editingTarget.sprite.costumes.length, 2);
+    expect(vm.editingTarget.sprite.costumes.length).toBe(2);
     const spriteId = vm.editingTarget.id;
     const reordered = vm.reorderCostume(spriteId, 1, 0);
-    t.equal(reordered, true);
-    t.equal(projectChanged, true);
+    expect(reordered).toBe(true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
@@ -170,10 +169,10 @@ test('Reordering a sound should emit a project changed event', t => {
     vm.addSound(newSound).then(() => {
         // Reset the project changed flag to ignore change from adding new sound
         projectChanged = false;
-        t.equal(vm.editingTarget.sprite.sounds.length, 2);
+        expect(vm.editingTarget.sprite.sounds.length).toBe(2);
         const reordered = vm.reorderSound(spriteId, 1, 0);
-        t.equal(reordered, true);
-        t.equal(projectChanged, true);
+        expect(reordered).toBe(true);
+        expect(projectChanged).toBe(true);
         t.end();
     });
 });
@@ -181,20 +180,20 @@ test('Reordering a sound should emit a project changed event', t => {
 test('Renaming a sprite should emit a project changed event', t => {
     const spriteId = vm.editingTarget.id;
     vm.renameSprite(spriteId, 'My Sprite');
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
 test('Renaming a costume should emit a project changed event', t => {
     vm.renameCostume(0, 'My Costume');
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
 test('Renaming a sound should emit a project changed event', t => {
     vm.renameSound(0, 'My Sound');
 
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
@@ -205,7 +204,7 @@ test('Changing sprite info should emit a project changed event', t => {
     };
 
     vm.postSpriteInfo(newSpritePosition);
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     projectChanged = false;
 
     const newSpriteDirection = {
@@ -213,7 +212,7 @@ test('Changing sprite info should emit a project changed event', t => {
     };
 
     vm.postSpriteInfo(newSpriteDirection);
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     projectChanged = false;
 
     t.end();
@@ -226,7 +225,7 @@ test('Editing a vector costume should emit a project changed event', t => {
     const mockRotationY = 25;
 
     vm.updateSvg(0, mockSvg, mockRotationX, mockRotationY);
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });
 
@@ -235,6 +234,6 @@ test('Editing a sound should emit a project changed event', t => {
     const mockSoundEncoding = [];
 
     vm.updateSoundBuffer(0, mockSoundBuffer, mockSoundEncoding);
-    t.equal(projectChanged, true);
+    expect(projectChanged).toBe(true);
     t.end();
 });

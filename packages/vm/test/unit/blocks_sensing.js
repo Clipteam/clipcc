@@ -1,18 +1,16 @@
-const test = require('tap').test;
 const Sensing = require('../../src/blocks/scratch3_sensing');
 const Runtime = require('../../src/engine/runtime');
 const Sprite = require('../../src/sprites/sprite');
 const RenderedTarget = require('../../src/sprites/rendered-target');
 const BlockUtility = require('../../src/engine/block-utility');
 
-test('getPrimitives', t => {
+test('getPrimitives', () => {
     const rt = new Runtime();
     const s = new Sensing(rt);
-    t.type(s.getPrimitives(), 'object');
-    t.end();
+    expect(typeof s.getPrimitives()).toBe('object');
 });
 
-test('ask and answer with a hidden target', t => {
+test('ask and answer with a hidden target', done => {
     const rt = new Runtime();
     const s = new Sensing(rt);
     const util = {target: {visible: false}};
@@ -23,7 +21,7 @@ test('ask and answer with a hidden target', t => {
     // Test is written out of order because of promises, follow the (#) comments.
     rt.addListener('QUESTION', question => {
         // (2) Assert the question is correct, then emit the answer
-        t.strictEqual(question, expectedQuestion);
+        expect(question).toBe(expectedQuestion);
         rt.emit('ANSWER', expectedAnswer);
     });
 
@@ -32,12 +30,12 @@ test('ask and answer with a hidden target', t => {
 
     // (3) Ask block resolves after the answer is emitted.
     promise.then(() => {
-        t.strictEqual(s.getAnswer(), expectedAnswer);
-        t.end();
+        expect(s.getAnswer()).toBe(expectedAnswer);
+        done();
     });
 });
 
-test('ask and stop all dismisses question', t => {
+test('ask and stop all dismisses question', done => {
     const rt = new Runtime();
     const s = new Sensing(rt);
     const util = {target: {visible: false}};
@@ -49,11 +47,11 @@ test('ask and stop all dismisses question', t => {
     rt.addListener('QUESTION', question => {
         if (call === 0) {
             // (2) Assert the question was passed.
-            t.strictEqual(question, expectedQuestion);
+            expect(question).toBe(expectedQuestion);
         } else if (call === 1) {
             // (4) Assert the question was dismissed.
-            t.strictEqual(question, null);
-            t.end();
+            expect(question).toBe(null);
+            done();
         }
         call += 1;
     });
@@ -64,7 +62,7 @@ test('ask and stop all dismisses question', t => {
     rt.stopAll();
 });
 
-test('ask and stop other scripts dismisses if it is the last question', t => {
+test('ask and stop other scripts dismisses if it is the last question', done => {
     const rt = new Runtime();
     const s = new Sensing(rt);
     const util = {target: {visible: false, sprite: {}, getCustomState: () => ({})}, thread: {}};
@@ -76,11 +74,11 @@ test('ask and stop other scripts dismisses if it is the last question', t => {
     rt.addListener('QUESTION', question => {
         if (call === 0) {
             // (2) Assert the question was passed.
-            t.strictEqual(question, expectedQuestion);
+            expect(question).toBe(expectedQuestion);
         } else if (call === 1) {
             // (4) Assert the question was dismissed.
-            t.strictEqual(question, null);
-            t.end();
+            expect(question).toBe(null);
+            done();
         }
         call += 1;
     });
@@ -91,7 +89,7 @@ test('ask and stop other scripts dismisses if it is the last question', t => {
     rt.stopForTarget(util.target, util.thread);
 });
 
-test('ask and stop other scripts asks next question', t => {
+test('ask and stop other scripts asks next question', done => {
     const rt = new Runtime();
     const s = new Sensing(rt);
     const util = {target: {visible: false, sprite: {}, getCustomState: () => ({})}, thread: {}};
@@ -105,11 +103,11 @@ test('ask and stop other scripts asks next question', t => {
     rt.addListener('QUESTION', question => {
         if (call === 0) {
             // (2) Assert the question was passed.
-            t.strictEqual(question, expectedQuestion);
+            expect(question).toBe(expectedQuestion);
         } else if (call === 1) {
             // (4) Assert the next question was passed.
-            t.strictEqual(question, nextQuestion);
-            t.end();
+            expect(question).toBe(nextQuestion);
+            done();
         }
         call += 1;
     });
@@ -121,7 +119,7 @@ test('ask and stop other scripts asks next question', t => {
     rt.stopForTarget(util.target, util.thread);
 });
 
-test('ask and answer with a visible target', t => {
+test('ask and answer with a visible target', done => {
     const rt = new Runtime();
     const s = new Sensing(rt);
     const util = {target: {visible: true}};
@@ -133,19 +131,19 @@ test('ask and answer with a visible target', t => {
 
     rt.addListener('SAY', (target, type, question) => {
         // Should emit SAY with the question
-        t.strictEqual(question, expectedQuestion);
+        expect(question).toBe(expectedQuestion);
     });
 
     rt.addListener('QUESTION', question => {
         // Question should be blank for a visible target
-        t.strictEqual(question, '');
+        expect(question).toBe('');
 
         // Remove the say listener and add a new one to assert bubble is cleared
         // by setting say to empty string after answer is received.
         rt.removeAllListeners('SAY');
         rt.addListener('SAY', (target, type, text) => {
-            t.strictEqual(text, '');
-            t.end();
+            expect(text).toBe('');
+            done();
         });
         rt.emit('ANSWER', expectedAnswer);
     });
@@ -153,7 +151,7 @@ test('ask and answer with a visible target', t => {
     s.askAndWait({QUESTION: expectedQuestion}, util);
 });
 
-test('answer gets reset when runtime is disposed', t => {
+test('answer gets reset when runtime is disposed', done => {
     const rt = new Runtime();
     const s = new Sensing(rt);
     const util = {target: {visible: false}};
@@ -162,15 +160,15 @@ test('answer gets reset when runtime is disposed', t => {
     rt.addListener('QUESTION', () => rt.emit('ANSWER', expectedAnswer));
     const promise = s.askAndWait({QUESTION: ''}, util);
 
-    promise.then(() => t.strictEqual(s.getAnswer(), expectedAnswer))
+    promise.then(() => expect(s.getAnswer()).toBe(expectedAnswer))
         .then(() => rt.dispose())
         .then(() => {
-            t.strictEqual(s.getAnswer(), '');
-            t.end();
+            expect(s.getAnswer()).toBe('');
+            done();
         });
 });
 
-test('set drag mode', t => {
+test('set drag mode', () => {
     const runtime = new Runtime();
     runtime.requestTargetsUpdate = () => {}; // noop for testing
     const sensing = new Sensing(runtime);
@@ -178,20 +176,18 @@ test('set drag mode', t => {
     const rt = new RenderedTarget(s, runtime);
 
     sensing.setDragMode({DRAG_MODE: 'not draggable'}, {target: rt});
-    t.strictEqual(rt.draggable, false);
+    expect(rt.draggable).toBe(false);
 
     sensing.setDragMode({DRAG_MODE: 'draggable'}, {target: rt});
-    t.strictEqual(rt.draggable, true);
-
-    t.end();
+    expect(rt.draggable).toBe(true);
 });
 
-test('get loudness with caching', t => {
+test('get loudness with caching', () => {
     const rt = new Runtime();
     const sensing = new Sensing(rt);
 
     // It should report -1 when audio engine is not available.
-    t.strictEqual(sensing.getLoudness(), -1);
+    expect(sensing.getLoudness()).toBe(-1);
 
     // Stub the audio engine with its getLoudness function, and set up different
     // values to simulate it changing over time.
@@ -201,13 +197,13 @@ test('get loudness with caching', t => {
     rt.audioEngine = {getLoudness: () => simulatedLoudness};
 
     // It should report -1 when current step time is null.
-    t.strictEqual(sensing.getLoudness(), -1);
+    expect(sensing.getLoudness()).toBe(-1);
 
     // Stub the current step time.
     rt.currentStepTime = 1000 / 30;
 
     // The first time it works, it should report the result from the stubbed audio engine.
-    t.strictEqual(sensing.getLoudness(), firstLoudness);
+    expect(sensing.getLoudness()).toBe(firstLoudness);
 
     // Update the simulated loudness to a new value.
     simulatedLoudness = secondLoudness;
@@ -216,17 +212,15 @@ test('get loudness with caching', t => {
     // After less than a step, it should still report cached loudness.
     let simulatedTime = Date.now() + (rt.currentStepTime / 2);
     sensing._timer = {time: () => simulatedTime};
-    t.strictEqual(sensing.getLoudness(), firstLoudness);
+    expect(sensing.getLoudness()).toBe(firstLoudness);
 
     // Simulate more than a step passing. It should now request the value
     // from the audio engine again.
     simulatedTime += rt.currentStepTime;
-    t.strictEqual(sensing.getLoudness(), secondLoudness);
-
-    t.end();
+    expect(sensing.getLoudness()).toBe(secondLoudness);
 });
 
-test('loud? boolean', t => {
+test('loud? boolean', () => {
     const rt = new Runtime();
     const sensing = new Sensing(rt);
 
@@ -234,19 +228,17 @@ test('loud? boolean', t => {
     // method, which isLoud uses.
     let simulatedLoudness = 0;
     sensing.getLoudness = () => simulatedLoudness;
-    t.false(sensing.isLoud());
+    expect(sensing.isLoud()).toBeFalsy();
 
     // Check for GREATER than 10, not equal.
     simulatedLoudness = 10;
-    t.false(sensing.isLoud());
+    expect(sensing.isLoud()).toBeFalsy();
 
     simulatedLoudness = 11;
-    t.true(sensing.isLoud());
-
-    t.end();
+    expect(sensing.isLoud()).toBeTruthy();
 });
 
-test('get attribute of sprite variable', t => {
+test('get attribute of sprite variable', () => {
     const rt = new Runtime();
     const sensing = new Sensing(rt);
     const s = new Sprite(null, rt);
@@ -259,26 +251,21 @@ test('get attribute of sprite variable', t => {
     // Add variable to set the map (it should be empty before this).
     target.variables.anId = variable;
     rt.getSpriteTargetByName = () => target;
-    t.equal(sensing.getAttributeOf({PROPERTY: 'cars'}), 'trucks');
-
-    t.end();
+    expect(sensing.getAttributeOf({PROPERTY: 'cars'})).toBe('trucks');
 });
-test('get attribute of variable that does not exist', t => {
+test('get attribute of variable that does not exist', () => {
     const rt = new Runtime();
     const sensing = new Sensing(rt);
     const s = new Sprite(null, rt);
     const target = new RenderedTarget(s, rt);
     rt.getTargetForStage = () => target;
-    t.equal(sensing.getAttributeOf({PROPERTY: 'variableThatDoesNotExist'}), 0);
-
-    t.end();
+    expect(sensing.getAttributeOf({PROPERTY: 'variableThatDoesNotExist'})).toBe(0);
 });
 
-test('username block', t => {
+test('username block', () => {
     const rt = new Runtime();
     const sensing = new Sensing(rt);
     const util = new BlockUtility(rt.sequencer);
 
-    t.equal(sensing.getUsername({}, util), '');
-    t.end();
+    expect(sensing.getUsername({}, util)).toBe('');
 });

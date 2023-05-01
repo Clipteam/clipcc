@@ -1,10 +1,9 @@
-const test = require('tap').test;
 const Variable = require('../../src/engine/variable');
 const htmlparser = require('htmlparser2');
 
-test('spec', t => {
-    t.type(typeof Variable.SCALAR_TYPE, typeof Variable.LIST_TYPE);
-    t.type(typeof Variable.SCALAR_TYPE, typeof Variable.BROADCAST_MESSAGE_TYPE);
+test('spec', () => {
+    expect(typeof Variable.SCALAR_TYPE).toBe(typeof Variable.LIST_TYPE);
+    expect(typeof Variable.SCALAR_TYPE).toBe(typeof Variable.BROADCAST_MESSAGE_TYPE);
 
     const varId = 'varId';
     const varName = 'varName';
@@ -16,17 +15,17 @@ test('spec', t => {
         varIsCloud
     );
 
-    t.type(Variable, 'function');
-    t.type(v, 'object');
-    t.ok(v instanceof Variable);
+    expect(typeof Variable).toBe('function');
+    expect(typeof v).toBe('object');
+    expect(v instanceof Variable).toBeTruthy();
 
-    t.equal(v.id, varId);
-    t.equal(v.name, varName);
-    t.equal(v.type, Variable.SCALAR_TYPE);
-    t.type(v.value, 'number');
-    t.equal(v.isCloud, varIsCloud);
+    expect(v.id).toBe(varId);
+    expect(v.name).toBe(varName);
+    expect(v.type).toBe(Variable.SCALAR_TYPE);
+    expect(typeof v.value).toBe('number');
+    expect(v.isCloud).toBe(varIsCloud);
 
-    t.type(v.toXML, 'function');
+    expect(typeof v.toXML).toBe('function');
 
     v = new Variable(
         varId,
@@ -34,7 +33,7 @@ test('spec', t => {
         Variable.LIST_TYPE,
         varIsCloud
     );
-    t.ok(Array.isArray(v.value));
+    expect(Array.isArray(v.value)).toBeTruthy();
 
     v = new Variable(
         varId,
@@ -42,12 +41,10 @@ test('spec', t => {
         Variable.BROADCAST_MESSAGE_TYPE,
         varIsCloud
     );
-    t.equal(v.value, 'varName');
-
-    t.end();
+    expect(v.value).toBe('varName');
 });
 
-test('toXML', t => {
+test('toXML', () => {
     const varId = 'varId';
     const varName = 'varName';
     const varIsCloud = false;
@@ -62,23 +59,21 @@ test('toXML', t => {
     const parser = new htmlparser.Parser({
         onopentag: function (name, attribs){
             if (name === 'variable'){
-                t.equal(attribs.type, Variable.SCALAR_TYPE);
-                t.equal(attribs.id, varId);
-                t.equal(attribs.iscloud, varIsCloud.toString());
-                t.equal(attribs.islocal, varIsLocal.toString());
+                expect(attribs.type).toBe(Variable.SCALAR_TYPE);
+                expect(attribs.id).toBe(varId);
+                expect(attribs.iscloud).toBe(varIsCloud.toString());
+                expect(attribs.islocal).toBe(varIsLocal.toString());
             }
         },
         ontext: function (text){
-            t.equal(text, varName);
+            expect(text).toBe(varName);
         }
     }, {decodeEntities: false});
     parser.write(v.toXML(false));
     parser.end();
-
-    t.end();
 });
 
-test('escape variable name for XML', t => {
+test('escape variable name for XML', () => {
     const varId = 'varId';
     const varName = '<>&\'"';
     const varIsCloud = false;
@@ -93,18 +88,16 @@ test('escape variable name for XML', t => {
     const parser = new htmlparser.Parser({
         onopentag: function (name, attribs){
             if (name === 'variable'){
-                t.equal(attribs.type, Variable.SCALAR_TYPE);
-                t.equal(attribs.id, varId);
-                t.equal(attribs.iscloud, varIsCloud.toString());
-                t.equal(attribs.islocal, varIsLocal.toString());
+                expect(attribs.type).toBe(Variable.SCALAR_TYPE);
+                expect(attribs.id).toBe(varId);
+                expect(attribs.iscloud).toBe(varIsCloud.toString());
+                expect(attribs.islocal).toBe(varIsLocal.toString());
             }
         },
         ontext: function (text){
-            t.equal(text, '&lt;&gt;&amp;&apos;&quot;');
+            expect(text).toBe('&lt;&gt;&amp;&apos;&quot;');
         }
     }, {decodeEntities: false});
     parser.write(v.toXML(false));
     parser.end();
-
-    t.end();
 });

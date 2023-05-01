@@ -1,17 +1,15 @@
-const test = require('tap').test;
 const MouseWheel = require('../../src/io/mouseWheel');
 const Runtime = require('../../src/engine/runtime');
 
-test('spec', t => {
+test('spec', () => {
     const rt = new Runtime();
     const mw = new MouseWheel(rt);
 
-    t.type(mw, 'object');
-    t.type(mw.postData, 'function');
-    t.end();
+    expect(typeof mw).toBe('object');
+    expect(typeof mw.postData).toBe('function');
 });
 
-test('blocks activated by scrolling', t => {
+test('blocks activated by scrolling', () => {
     let _startHatsArgs;
     const rt = {
         startHats: (...args) => {
@@ -24,21 +22,19 @@ test('blocks activated by scrolling', t => {
     mw.postData({
         deltaY: -1
     });
-    t.strictEquals(_startHatsArgs[0], 'event_whenkeypressed');
-    t.strictEquals(_startHatsArgs[1].KEY_OPTION, 'up arrow');
+    expect(_startHatsArgs[0]).toBe('event_whenkeypressed');
+    expect(_startHatsArgs[1].KEY_OPTION).toBe('up arrow');
 
     _startHatsArgs = null;
     mw.postData({
         deltaY: +1
     });
-    t.strictEquals(_startHatsArgs[0], 'event_whenkeypressed');
-    t.strictEquals(_startHatsArgs[1].KEY_OPTION, 'down arrow');
+    expect(_startHatsArgs[0]).toBe('event_whenkeypressed');
+    expect(_startHatsArgs[1].KEY_OPTION).toBe('down arrow');
 
     _startHatsArgs = null;
     mw.postData({
         deltaY: 0
     });
-    t.strictEquals(_startHatsArgs, null);
-
-    t.end();
+    expect(_startHatsArgs).toBe(null);
 });

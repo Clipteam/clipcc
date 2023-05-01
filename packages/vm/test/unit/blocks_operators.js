@@ -1,229 +1,202 @@
-const test = require('tap').test;
 const Operators = require('../../src/blocks/scratch3_operators');
 
 const blocks = new Operators(null);
 
-test('getPrimitives', t => {
-    t.type(blocks.getPrimitives(), 'object');
-    t.end();
+test('getPrimitives', () => {
+    expect(typeof blocks.getPrimitives()).toBe('object');
 });
 
-test('add', t => {
-    t.strictEqual(blocks.add({NUM1: '1', NUM2: '1'}), 2);
-    t.strictEqual(blocks.add({NUM1: 'foo', NUM2: 'bar'}), 0);
-    t.end();
+test('add', () => {
+    expect(blocks.add({NUM1: '1', NUM2: '1'})).toBe(2);
+    expect(blocks.add({NUM1: 'foo', NUM2: 'bar'})).toBe(0);
 });
 
-test('subtract', t => {
-    t.strictEqual(blocks.subtract({NUM1: '1', NUM2: '1'}), 0);
-    t.strictEqual(blocks.subtract({NUM1: 'foo', NUM2: 'bar'}), 0);
-    t.end();
+test('subtract', () => {
+    expect(blocks.subtract({NUM1: '1', NUM2: '1'})).toBe(0);
+    expect(blocks.subtract({NUM1: 'foo', NUM2: 'bar'})).toBe(0);
 });
 
-test('multiply', t => {
-    t.strictEqual(blocks.multiply({NUM1: '2', NUM2: '2'}), 4);
-    t.strictEqual(blocks.multiply({NUM1: 'foo', NUM2: 'bar'}), 0);
-    t.end();
+test('multiply', () => {
+    expect(blocks.multiply({NUM1: '2', NUM2: '2'})).toBe(4);
+    expect(blocks.multiply({NUM1: 'foo', NUM2: 'bar'})).toBe(0);
 });
 
-test('divide', t => {
-    t.strictEqual(blocks.divide({NUM1: '2', NUM2: '2'}), 1);
-    t.ok(isNaN(blocks.divide({NUM1: 'foo', NUM2: 'bar'}))); // @todo
-    t.end();
+test('divide', () => {
+    expect(blocks.divide({NUM1: '2', NUM2: '2'})).toBe(1);
+    expect(isNaN(blocks.divide({NUM1: 'foo', NUM2: 'bar'}))).toBeTruthy(); // @todo
 });
 
-test('lt', t => {
-    t.strictEqual(blocks.lt({OPERAND1: '1', OPERAND2: '2'}), true);
-    t.strictEqual(blocks.lt({OPERAND1: '2', OPERAND2: '1'}), false);
-    t.strictEqual(blocks.lt({OPERAND1: '1', OPERAND2: '1'}), false);
-    t.strictEqual(blocks.lt({OPERAND1: '10', OPERAND2: '2'}), false);
-    t.strictEqual(blocks.lt({OPERAND1: 'a', OPERAND2: 'z'}), true);
-    t.end();
+test('lt', () => {
+    expect(blocks.lt({OPERAND1: '1', OPERAND2: '2'})).toBe(true);
+    expect(blocks.lt({OPERAND1: '2', OPERAND2: '1'})).toBe(false);
+    expect(blocks.lt({OPERAND1: '1', OPERAND2: '1'})).toBe(false);
+    expect(blocks.lt({OPERAND1: '10', OPERAND2: '2'})).toBe(false);
+    expect(blocks.lt({OPERAND1: 'a', OPERAND2: 'z'})).toBe(true);
 });
 
-test('equals', t => {
-    t.strictEqual(blocks.equals({OPERAND1: '1', OPERAND2: '2'}), false);
-    t.strictEqual(blocks.equals({OPERAND1: '2', OPERAND2: '1'}), false);
-    t.strictEqual(blocks.equals({OPERAND1: '1', OPERAND2: '1'}), true);
-    t.strictEqual(blocks.equals({OPERAND1: 'あ', OPERAND2: 'ア'}), false);
-    t.end();
+test('equals', () => {
+    expect(blocks.equals({OPERAND1: '1', OPERAND2: '2'})).toBe(false);
+    expect(blocks.equals({OPERAND1: '2', OPERAND2: '1'})).toBe(false);
+    expect(blocks.equals({OPERAND1: '1', OPERAND2: '1'})).toBe(true);
+    expect(blocks.equals({OPERAND1: 'あ', OPERAND2: 'ア'})).toBe(false);
 });
 
-test('gt', t => {
-    t.strictEqual(blocks.gt({OPERAND1: '1', OPERAND2: '2'}), false);
-    t.strictEqual(blocks.gt({OPERAND1: '2', OPERAND2: '1'}), true);
-    t.strictEqual(blocks.gt({OPERAND1: '1', OPERAND2: '1'}), false);
-    t.end();
+test('gt', () => {
+    expect(blocks.gt({OPERAND1: '1', OPERAND2: '2'})).toBe(false);
+    expect(blocks.gt({OPERAND1: '2', OPERAND2: '1'})).toBe(true);
+    expect(blocks.gt({OPERAND1: '1', OPERAND2: '1'})).toBe(false);
 });
 
-test('and', t => {
-    t.strictEqual(blocks.and({OPERAND1: true, OPERAND2: true}), true);
-    t.strictEqual(blocks.and({OPERAND1: true, OPERAND2: false}), false);
-    t.strictEqual(blocks.and({OPERAND1: false, OPERAND2: false}), false);
-    t.end();
+test('and', () => {
+    expect(blocks.and({OPERAND1: true, OPERAND2: true})).toBe(true);
+    expect(blocks.and({OPERAND1: true, OPERAND2: false})).toBe(false);
+    expect(blocks.and({OPERAND1: false, OPERAND2: false})).toBe(false);
 });
 
-test('or', t => {
-    t.strictEqual(blocks.or({OPERAND1: true, OPERAND2: true}), true);
-    t.strictEqual(blocks.or({OPERAND1: true, OPERAND2: false}), true);
-    t.strictEqual(blocks.or({OPERAND1: false, OPERAND2: false}), false);
-    t.end();
+test('or', () => {
+    expect(blocks.or({OPERAND1: true, OPERAND2: true})).toBe(true);
+    expect(blocks.or({OPERAND1: true, OPERAND2: false})).toBe(true);
+    expect(blocks.or({OPERAND1: false, OPERAND2: false})).toBe(false);
 });
 
-test('not', t => {
-    t.strictEqual(blocks.not({OPERAND: true}), false);
-    t.strictEqual(blocks.not({OPERAND: false}), true);
-    t.end();
+test('not', () => {
+    expect(blocks.not({OPERAND: true})).toBe(false);
+    expect(blocks.not({OPERAND: false})).toBe(true);
 });
 
-test('random', t => {
+test('random', () => {
     const min = 0;
     const max = 100;
     const result = blocks.random({FROM: min, TO: max});
-    t.ok(result >= min);
-    t.ok(result <= max);
-    t.end();
+    expect(result >= min).toBeTruthy();
+    expect(result <= max).toBeTruthy();
 });
 
-test('random - equal', t => {
+test('random - equal', () => {
     const min = 1;
     const max = 1;
-    t.strictEqual(blocks.random({FROM: min, TO: max}), min);
-    t.end();
+    expect(blocks.random({FROM: min, TO: max})).toBe(min);
 });
 
-test('random - decimal', t => {
+test('random - decimal', () => {
     const min = 0.1;
     const max = 10;
     const result = blocks.random({FROM: min, TO: max});
-    t.ok(result >= min);
-    t.ok(result <= max);
-    t.end();
+    expect(result >= min).toBeTruthy();
+    expect(result <= max).toBeTruthy();
 });
 
-test('random - int', t => {
+test('random - int', () => {
     const min = 0;
     const max = 10;
     const result = blocks.random({FROM: min, TO: max});
-    t.ok(result >= min);
-    t.ok(result <= max);
-    t.end();
+    expect(result >= min).toBeTruthy();
+    expect(result <= max).toBeTruthy();
 });
 
-test('random - reverse', t => {
+test('random - reverse', () => {
     const min = 0;
     const max = 10;
     const result = blocks.random({FROM: max, TO: min});
-    t.ok(result >= min);
-    t.ok(result <= max);
-    t.end();
+    expect(result >= min).toBeTruthy();
+    expect(result <= max).toBeTruthy();
 });
 
-test('join', t => {
-    t.strictEqual(blocks.join({STRING1: 'foo', STRING2: 'bar'}), 'foobar');
-    t.strictEqual(blocks.join({STRING1: '1', STRING2: '2'}), '12');
-    t.end();
+test('join', () => {
+    expect(blocks.join({STRING1: 'foo', STRING2: 'bar'})).toBe('foobar');
+    expect(blocks.join({STRING1: '1', STRING2: '2'})).toBe('12');
 });
 
-test('letterOf', t => {
-    t.strictEqual(blocks.letterOf({STRING: 'foo', LETTER: 0}), '');
-    t.strictEqual(blocks.letterOf({STRING: 'foo', LETTER: 1}), 'f');
-    t.strictEqual(blocks.letterOf({STRING: 'foo', LETTER: 2}), 'o');
-    t.strictEqual(blocks.letterOf({STRING: 'foo', LETTER: 3}), 'o');
-    t.strictEqual(blocks.letterOf({STRING: 'foo', LETTER: 4}), '');
-    t.strictEqual(blocks.letterOf({STRING: 'foo', LETTER: 'bar'}), '');
-    t.end();
+test('letterOf', () => {
+    expect(blocks.letterOf({STRING: 'foo', LETTER: 0})).toBe('');
+    expect(blocks.letterOf({STRING: 'foo', LETTER: 1})).toBe('f');
+    expect(blocks.letterOf({STRING: 'foo', LETTER: 2})).toBe('o');
+    expect(blocks.letterOf({STRING: 'foo', LETTER: 3})).toBe('o');
+    expect(blocks.letterOf({STRING: 'foo', LETTER: 4})).toBe('');
+    expect(blocks.letterOf({STRING: 'foo', LETTER: 'bar'})).toBe('');
 });
 
-test('length', t => {
-    t.strictEqual(blocks.length({STRING: ''}), 0);
-    t.strictEqual(blocks.length({STRING: 'foo'}), 3);
-    t.strictEqual(blocks.length({STRING: '1'}), 1);
-    t.strictEqual(blocks.length({STRING: '100'}), 3);
-    t.end();
+test('length', () => {
+    expect(blocks.length({STRING: ''})).toBe(0);
+    expect(blocks.length({STRING: 'foo'})).toBe(3);
+    expect(blocks.length({STRING: '1'})).toBe(1);
+    expect(blocks.length({STRING: '100'})).toBe(3);
 });
 
-test('contains', t => {
-    t.strictEqual(blocks.contains({STRING1: 'hello world', STRING2: 'hello'}), true);
-    t.strictEqual(blocks.contains({STRING1: 'foo', STRING2: 'bar'}), false);
-    t.strictEqual(blocks.contains({STRING1: 'HeLLo world', STRING2: 'hello'}), true);
-    t.end();
+test('contains', () => {
+    expect(blocks.contains({STRING1: 'hello world', STRING2: 'hello'})).toBe(true);
+    expect(blocks.contains({STRING1: 'foo', STRING2: 'bar'})).toBe(false);
+    expect(blocks.contains({STRING1: 'HeLLo world', STRING2: 'hello'})).toBe(true);
 });
 
-test('mod', t => {
-    t.strictEqual(blocks.mod({NUM1: 1, NUM2: 1}), 0);
-    t.strictEqual(blocks.mod({NUM1: 3, NUM2: 6}), 3);
-    t.strictEqual(blocks.mod({NUM1: -3, NUM2: 6}), 3);
-    t.end();
+test('mod', () => {
+    expect(blocks.mod({NUM1: 1, NUM2: 1})).toBe(0);
+    expect(blocks.mod({NUM1: 3, NUM2: 6})).toBe(3);
+    expect(blocks.mod({NUM1: -3, NUM2: 6})).toBe(3);
 });
 
-test('round', t => {
-    t.strictEqual(blocks.round({NUM: 1}), 1);
-    t.strictEqual(blocks.round({NUM: 1.1}), 1);
-    t.strictEqual(blocks.round({NUM: 1.5}), 2);
-    t.end();
+test('round', () => {
+    expect(blocks.round({NUM: 1})).toBe(1);
+    expect(blocks.round({NUM: 1.1})).toBe(1);
+    expect(blocks.round({NUM: 1.5})).toBe(2);
 });
 
-test('mathop', t => {
-    t.strictEqual(blocks.mathop({OPERATOR: 'abs', NUM: -1}), 1);
-    t.strictEqual(blocks.mathop({OPERATOR: 'floor', NUM: 1.5}), 1);
-    t.strictEqual(blocks.mathop({OPERATOR: 'ceiling', NUM: 0.1}), 1);
-    t.strictEqual(blocks.mathop({OPERATOR: 'sqrt', NUM: 1}), 1);
-    t.strictEqual(blocks.mathop({OPERATOR: 'sin', NUM: 1}), 0.0174524064);
-    t.strictEqual(blocks.mathop({OPERATOR: 'sin', NUM: 90}), 1);
-    t.strictEqual(blocks.mathop({OPERATOR: 'cos', NUM: 1}), 0.9998476952);
-    t.strictEqual(blocks.mathop({OPERATOR: 'cos', NUM: 180}), -1);
-    t.strictEqual(blocks.mathop({OPERATOR: 'tan', NUM: 1}), 0.0174550649);
-    t.strictEqual(blocks.mathop({OPERATOR: 'tan', NUM: 90}), Infinity);
-    t.strictEqual(blocks.mathop({OPERATOR: 'tan', NUM: 180}), 0);
-    t.strictEqual(blocks.mathop({OPERATOR: 'asin', NUM: 1}), 90);
-    t.strictEqual(blocks.mathop({OPERATOR: 'acos', NUM: 1}), 0);
-    t.strictEqual(blocks.mathop({OPERATOR: 'atan', NUM: 1}), 45);
-    t.strictEqual(blocks.mathop({OPERATOR: 'ln', NUM: 1}), 0);
-    t.strictEqual(blocks.mathop({OPERATOR: 'log', NUM: 1}), 0);
-    t.strictEqual(blocks.mathop({OPERATOR: 'e ^', NUM: 1}), 2.718281828459045);
-    t.strictEqual(blocks.mathop({OPERATOR: '10 ^', NUM: 1}), 10);
-    t.strictEqual(blocks.mathop({OPERATOR: 'undefined', NUM: 1}), 0);
-    t.end();
+test('mathop', () => {
+    expect(blocks.mathop({OPERATOR: 'abs', NUM: -1})).toBe(1);
+    expect(blocks.mathop({OPERATOR: 'floor', NUM: 1.5})).toBe(1);
+    expect(blocks.mathop({OPERATOR: 'ceiling', NUM: 0.1})).toBe(1);
+    expect(blocks.mathop({OPERATOR: 'sqrt', NUM: 1})).toBe(1);
+    expect(blocks.mathop({OPERATOR: 'sin', NUM: 1})).toBe(0.0174524064);
+    expect(blocks.mathop({OPERATOR: 'sin', NUM: 90})).toBe(1);
+    expect(blocks.mathop({OPERATOR: 'cos', NUM: 1})).toBe(0.9998476952);
+    expect(blocks.mathop({OPERATOR: 'cos', NUM: 180})).toBe(-1);
+    expect(blocks.mathop({OPERATOR: 'tan', NUM: 1})).toBe(0.0174550649);
+    expect(blocks.mathop({OPERATOR: 'tan', NUM: 90})).toBe(Infinity);
+    expect(blocks.mathop({OPERATOR: 'tan', NUM: 180})).toBe(0);
+    expect(blocks.mathop({OPERATOR: 'asin', NUM: 1})).toBe(90);
+    expect(blocks.mathop({OPERATOR: 'acos', NUM: 1})).toBe(0);
+    expect(blocks.mathop({OPERATOR: 'atan', NUM: 1})).toBe(45);
+    expect(blocks.mathop({OPERATOR: 'ln', NUM: 1})).toBe(0);
+    expect(blocks.mathop({OPERATOR: 'log', NUM: 1})).toBe(0);
+    expect(blocks.mathop({OPERATOR: 'e ^', NUM: 1})).toBe(2.718281828459045);
+    expect(blocks.mathop({OPERATOR: '10 ^', NUM: 1})).toBe(10);
+    expect(blocks.mathop({OPERATOR: 'undefined', NUM: 1})).toBe(0);
 });
 
-test('power', t => {
-    t.strictEqual(blocks.power({NUM1: 2, NUM2: 0}), 1);
-    t.strictEqual(blocks.power({NUM1: 5, NUM2: -1}), 0.2);
-    t.strictEqual(blocks.power({NUM1: 4, NUM2: 0.5}), 2);
-    t.end();
+test('power', () => {
+    expect(blocks.power({NUM1: 2, NUM2: 0})).toBe(1);
+    expect(blocks.power({NUM1: 5, NUM2: -1})).toBe(0.2);
+    expect(blocks.power({NUM1: 4, NUM2: 0.5})).toBe(2);
 });
 
 // @todo bit operation blocks
 
-test('le', t => {
-    t.strictEqual(blocks.le({OPERAND1: '1', OPERAND2: '2'}), true);
-    t.strictEqual(blocks.le({OPERAND1: '2', OPERAND2: '1'}), false);
-    t.strictEqual(blocks.le({OPERAND1: '1', OPERAND2: '1'}), true);
-    t.strictEqual(blocks.le({OPERAND1: '10', OPERAND2: '2'}), false);
-    t.strictEqual(blocks.le({OPERAND1: 'a', OPERAND2: 'z'}), true);
-    t.end();
+test('le', () => {
+    expect(blocks.le({OPERAND1: '1', OPERAND2: '2'})).toBe(true);
+    expect(blocks.le({OPERAND1: '2', OPERAND2: '1'})).toBe(false);
+    expect(blocks.le({OPERAND1: '1', OPERAND2: '1'})).toBe(true);
+    expect(blocks.le({OPERAND1: '10', OPERAND2: '2'})).toBe(false);
+    expect(blocks.le({OPERAND1: 'a', OPERAND2: 'z'})).toBe(true);
 });
 
-test('nequals', t => {
-    t.strictEqual(blocks.nequals({OPERAND1: '1', OPERAND2: '2'}), true);
-    t.strictEqual(blocks.nequals({OPERAND1: '2', OPERAND2: '1'}), true);
-    t.strictEqual(blocks.nequals({OPERAND1: '1', OPERAND2: '1'}), false);
-    t.strictEqual(blocks.nequals({OPERAND1: 'あ', OPERAND2: 'ア'}), true);
-    t.end();
+test('nequals', () => {
+    expect(blocks.nequals({OPERAND1: '1', OPERAND2: '2'})).toBe(true);
+    expect(blocks.nequals({OPERAND1: '2', OPERAND2: '1'})).toBe(true);
+    expect(blocks.nequals({OPERAND1: '1', OPERAND2: '1'})).toBe(false);
+    expect(blocks.nequals({OPERAND1: 'あ', OPERAND2: 'ア'})).toBe(true);
 });
 
-test('ge', t => {
-    t.strictEqual(blocks.ge({OPERAND1: '1', OPERAND2: '2'}), false);
-    t.strictEqual(blocks.ge({OPERAND1: '2', OPERAND2: '1'}), true);
-    t.strictEqual(blocks.ge({OPERAND1: '1', OPERAND2: '1'}), true);
-    t.end();
+test('ge', () => {
+    expect(blocks.ge({OPERAND1: '1', OPERAND2: '2'})).toBe(false);
+    expect(blocks.ge({OPERAND1: '2', OPERAND2: '1'})).toBe(true);
+    expect(blocks.ge({OPERAND1: '1', OPERAND2: '1'})).toBe(true);
 });
 
-test('indexof', t => {
-    t.strictEqual(blocks.indexOf({POS: '1', STRING: 'kamiyama shiki kawaii!!', SUBSTRING: 'shiki'}), 10);
-    t.strictEqual(blocks.indexOf({POS: 1, STRING: 'dosukoi!!', SUBSTRING: 'Suk'}), -1);
-    t.strictEqual(blocks.indexOf({POS: 2, STRING: '测试测试测试测试', SUBSTRING: '测试'}), 3);
-    t.strictEqual(blocks.indexOf({POS: 3, STRING: '😭😭😭😭😭😭😭😭', SUBSTRING: '🍡'}), -1);
-    t.end();
+test('indexof', () => {
+    expect(
+        blocks.indexOf({POS: '1', STRING: 'kamiyama shiki kawaii!!', SUBSTRING: 'shiki'})
+    ).toBe(10);
+    expect(blocks.indexOf({POS: 1, STRING: 'dosukoi!!', SUBSTRING: 'Suk'})).toBe(-1);
+    expect(blocks.indexOf({POS: 2, STRING: '测试测试测试测试', SUBSTRING: '测试'})).toBe(3);
+    expect(blocks.indexOf({POS: 3, STRING: '😭😭😭😭😭😭😭😭', SUBSTRING: '🍡'})).toBe(-1);
 });

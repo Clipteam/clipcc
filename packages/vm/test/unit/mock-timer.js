@@ -1,29 +1,26 @@
-const test = require('tap').test;
 const MockTimer = require('../fixtures/mock-timer');
 
-test('spec', t => {
+test('spec', () => {
     const timer = new MockTimer();
 
-    t.type(MockTimer, 'function');
-    t.type(timer, 'object');
+    expect(typeof MockTimer).toBe('function');
+    expect(typeof timer).toBe('object');
 
     // Most members of MockTimer mimic members of Timer.
-    t.type(timer.startTime, 'number');
-    t.type(timer.time, 'function');
-    t.type(timer.start, 'function');
-    t.type(timer.timeElapsed, 'function');
-    t.type(timer.setTimeout, 'function');
-    t.type(timer.clearTimeout, 'function');
+    expect(typeof timer.startTime).toBe('number');
+    expect(typeof timer.time).toBe('function');
+    expect(typeof timer.start).toBe('function');
+    expect(typeof timer.timeElapsed).toBe('function');
+    expect(typeof timer.setTimeout).toBe('function');
+    expect(typeof timer.clearTimeout).toBe('function');
 
     // A few members of MockTimer have no Timer equivalent and should only be used in tests.
-    t.type(timer.advanceMockTime, 'function');
-    t.type(timer.advanceMockTimeAsync, 'function');
-    t.type(timer.hasTimeouts, 'function');
-
-    t.end();
+    expect(typeof timer.advanceMockTime, 'function');
+    expect(typeof timer.advanceMockTimeAsync, 'function');
+    expect(typeof timer.hasTimeouts, 'function');
 });
 
-test('time', t => {
+test('time', () => {
     const timer = new MockTimer();
     const delta = 1;
 
@@ -32,12 +29,11 @@ test('time', t => {
     timer.advanceMockTime(delta);
     const time3 = timer.time();
 
-    t.equal(time1, time2);
-    t.equal(time2 + delta, time3);
-    t.end();
+    expect(time1).toBe(time2);
+    expect(time2 + delta).toBe(time3);
 });
 
-test('start / timeElapsed', t => new Promise(resolve => {
+test('start / timeElapsed', done => new Promise(resolve => {
     const timer = new MockTimer();
     const halfDelay = 1;
     const fullDelay = halfDelay + halfDelay;
@@ -48,12 +44,12 @@ test('start / timeElapsed', t => new Promise(resolve => {
 
     // Wait and measure timer
     timer.setTimeout(() => {
-        t.equal(timeoutCalled, 0);
+        expect(timeoutCalled).toBe(0);
         ++timeoutCalled;
 
         const timeElapsed = timer.timeElapsed();
-        t.equal(timeElapsed, fullDelay);
-        t.end();
+        expect(timeElapsed).toBe(fullDelay);
+        done();
 
         resolve();
     }, fullDelay);
@@ -64,14 +60,14 @@ test('start / timeElapsed', t => new Promise(resolve => {
     // give the mock timer a chance to run tasks
     global.setTimeout(() => {
         // we've only mock-waited for half the delay so it should not have run yet
-        t.equal(timeoutCalled, 0);
+        expect(timeoutCalled).toBe(0);
 
         // this should trigger the callback
         timer.advanceMockTime(halfDelay);
     }, 0);
 }));
 
-test('clearTimeout / hasTimeouts', t => new Promise((resolve, reject) => {
+test('clearTimeout / hasTimeouts', done => new Promise((resolve, reject) => {
     const timer = new MockTimer();
 
     const timeoutId = timer.setTimeout(() => {
@@ -80,7 +76,7 @@ test('clearTimeout / hasTimeouts', t => new Promise((resolve, reject) => {
 
     timer.setTimeout(() => {
         resolve('Non-canceled task ran');
-        t.end();
+        done();
     }, 2);
 
     timer.clearTimeout(timeoutId);

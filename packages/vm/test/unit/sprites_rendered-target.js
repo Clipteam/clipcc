@@ -1,33 +1,30 @@
-const test = require('tap').test;
 const RenderedTarget = require('../../src/sprites/rendered-target');
 const Sprite = require('../../src/sprites/sprite');
 const Runtime = require('../../src/engine/runtime');
 const FakeRenderer = require('../fixtures/fake-renderer');
 
-test('clone effects', t => {
+test('clone effects', () => {
     // Create two clones and ensure they have different graphic effect objects.
     // Regression test for Github issue #224
     const r = new Runtime();
     const spr = new Sprite(null, r);
     const a = new RenderedTarget(spr, r);
     const b = new RenderedTarget(spr, r);
-    t.ok(a.effects !== b.effects);
-    t.end();
+    expect(a.effects !== b.effects).toBeTruthy();
 });
 
-test('setxy', t => {
+test('setxy', () => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const a = new RenderedTarget(s, r);
     const renderer = new FakeRenderer();
     a.renderer = renderer;
     a.setXY(123, 321, true);
-    t.equals(a.x, 123);
-    t.equals(a.y, 321);
-    t.end();
+    expect(a.x).toBe(123);
+    expect(a.y).toBe(321);
 });
 
-test('blocks get new id on duplicate', t => {
+test('blocks get new id on duplicate', done => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const rt = new RenderedTarget(s, r);
@@ -40,44 +37,41 @@ test('blocks get new id on duplicate', t => {
     rt.blocks.createBlock(block);
 
     return rt.duplicate().then(duplicate => {
-        t.notOk(duplicate.blocks._blocks.hasOwnProperty(block.id));
-        t.end();
+        expect(duplicate.blocks._blocks.hasOwnProperty(block.id)).toBeFalsy();
+        done();
     });
 });
 
-test('direction', t => {
+test('direction', () => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const a = new RenderedTarget(s, r);
     const renderer = new FakeRenderer();
     a.renderer = renderer;
     a.setDirection(123);
-    t.equals(a._getRenderedDirectionAndScale().direction, 123);
-    t.end();
+    expect(a._getRenderedDirectionAndScale().direction).toBe(123);
 });
 
-test('setVisible', t => {
+test('setVisible', () => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const a = new RenderedTarget(s, r);
     const renderer = new FakeRenderer();
     a.renderer = renderer;
     a.setVisible(true);
-    t.end();
 });
 
-test('setSize', t => {
+test('setSize', () => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const a = new RenderedTarget(s, r);
     const renderer = new FakeRenderer();
     a.renderer = renderer;
     a.setSize(123);
-    t.equals(a._getRenderedDirectionAndScale().scale[0], 123);
-    t.end();
+    expect(a._getRenderedDirectionAndScale().scale[0]).toBe(123);
 });
 
-test('set and clear effects', t => {
+test('set and clear effects', () => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const a = new RenderedTarget(s, r);
@@ -85,16 +79,15 @@ test('set and clear effects', t => {
     a.renderer = renderer;
     for (const effect in a.effects) {
         a.setEffect(effect, 1);
-        t.equals(a.effects[effect], 1);
+        expect(a.effects[effect]).toBe(1);
     }
     a.clearEffects();
     for (const effect in a.effects) {
-        t.equals(a.effects[effect], 0);
+        expect(a.effects[effect]).toBe(0);
     }
-    t.end();
 });
 
-test('setCostume', t => {
+test('setCostume', () => {
     const o = new Object();
     const r = new Runtime();
     const s = new Sprite(null, r);
@@ -103,10 +96,9 @@ test('setCostume', t => {
     const renderer = new FakeRenderer();
     a.renderer = renderer;
     a.setCostume(0);
-    t.end();
 });
 
-test('deleteCostume', t => {
+test('deleteCostume', () => {
     const o1 = {id: 1};
     const o2 = {id: 2};
     const o3 = {id: 3};
@@ -125,11 +117,11 @@ test('deleteCostume', t => {
     //    Costume 3
     a.setCostume(0);
     const deletedCostume = a.deleteCostume(0);
-    t.equals(a.sprite.costumes.length, 2);
-    t.equals(a.sprite.costumes[0].id, 2);
-    t.equals(a.sprite.costumes[1].id, 3);
-    t.equals(a.currentCostume, 0);
-    t.deepEqual(deletedCostume, o1);
+    expect(a.sprite.costumes.length).toBe(2);
+    expect(a.sprite.costumes[0].id).toBe(2);
+    expect(a.sprite.costumes[1].id).toBe(3);
+    expect(a.currentCostume).toBe(0);
+    expect(deletedCostume).toEqual(o1);
 
     //    Costume 1          Costume 1
     // x* Costume 2   =>   * Costume 3
@@ -137,11 +129,11 @@ test('deleteCostume', t => {
     a.sprite.costumes = [o1, o2, o3];
     a.setCostume(1);
     const deletedCostume2 = a.deleteCostume(1);
-    t.equals(a.sprite.costumes.length, 2);
-    t.equals(a.sprite.costumes[0].id, 1);
-    t.equals(a.sprite.costumes[1].id, 3);
-    t.equals(a.currentCostume, 1);
-    t.deepEqual(deletedCostume2, o2);
+    expect(a.sprite.costumes.length).toBe(2);
+    expect(a.sprite.costumes[0].id).toBe(1);
+    expect(a.sprite.costumes[1].id).toBe(3);
+    expect(a.currentCostume).toBe(1);
+    expect(deletedCostume2).toEqual(o2);
 
     //    Costume 1          Costume 1
     //    Costume 2   =>   * Costume 2
@@ -149,20 +141,20 @@ test('deleteCostume', t => {
     a.sprite.costumes = [o1, o2, o3];
     a.setCostume(2);
     const deletedCostume3 = a.deleteCostume(2);
-    t.equals(a.sprite.costumes.length, 2);
-    t.equals(a.sprite.costumes[0].id, 1);
-    t.equals(a.sprite.costumes[1].id, 2);
-    t.equals(a.currentCostume, 1);
-    t.deepEqual(deletedCostume3, o3);
+    expect(a.sprite.costumes.length).toBe(2);
+    expect(a.sprite.costumes[0].id).toBe(1);
+    expect(a.sprite.costumes[1].id).toBe(2);
+    expect(a.currentCostume).toBe(1);
+    expect(deletedCostume3).toEqual(o3);
 
     // Refuses to delete only costume
     a.sprite.costumes = [o1];
     a.setCostume(0);
     const noDeletedCostume = a.deleteCostume(0);
-    t.equals(a.sprite.costumes.length, 1);
-    t.equals(a.sprite.costumes[0].id, 1);
-    t.equals(a.currentCostume, 0);
-    t.equal(noDeletedCostume, null);
+    expect(a.sprite.costumes.length).toBe(1);
+    expect(a.sprite.costumes[0].id).toBe(1);
+    expect(a.currentCostume).toBe(0);
+    expect(noDeletedCostume).toBe(null);
 
     //   Costume 1          Costume 1
     // x Costume 2          Costume 3
@@ -172,12 +164,12 @@ test('deleteCostume', t => {
     a.sprite.costumes = [o1, o2, o3, o4, o5];
     a.setCostume(3);
     a.deleteCostume(1);
-    t.equals(a.sprite.costumes.length, 4);
-    t.equals(a.sprite.costumes[0].id, 1);
-    t.equals(a.sprite.costumes[1].id, 3);
-    t.equals(a.sprite.costumes[2].id, 4);
-    t.equals(a.sprite.costumes[3].id, 5);
-    t.equals(a.currentCostume, 2);
+    expect(a.sprite.costumes.length).toBe(4);
+    expect(a.sprite.costumes[0].id).toBe(1);
+    expect(a.sprite.costumes[1].id).toBe(3);
+    expect(a.sprite.costumes[2].id).toBe(4);
+    expect(a.sprite.costumes[3].id).toBe(5);
+    expect(a.currentCostume).toBe(2);
 
     //   Costume 1          Costume 1
     // * Costume 2        * Costume 2
@@ -187,12 +179,12 @@ test('deleteCostume', t => {
     a.sprite.costumes = [o1, o2, o3, o4, o5];
     a.setCostume(1);
     a.deleteCostume(3);
-    t.equals(a.sprite.costumes.length, 4);
-    t.equals(a.sprite.costumes[0].id, 1);
-    t.equals(a.sprite.costumes[1].id, 2);
-    t.equals(a.sprite.costumes[2].id, 3);
-    t.equals(a.sprite.costumes[3].id, 5);
-    t.equals(a.currentCostume, 1);
+    expect(a.sprite.costumes.length).toBe(4);
+    expect(a.sprite.costumes[0].id).toBe(1);
+    expect(a.sprite.costumes[1].id).toBe(2);
+    expect(a.sprite.costumes[2].id).toBe(3);
+    expect(a.sprite.costumes[3].id).toBe(5);
+    expect(a.currentCostume).toBe(1);
 
     //   Costume 1          Costume 1
     // * Costume 2        * Costume 2
@@ -202,16 +194,15 @@ test('deleteCostume', t => {
     a.sprite.costumes = [o1, o2, o3, o4, o5];
     a.setCostume(1);
     a.deleteCostume(4);
-    t.equals(a.sprite.costumes.length, 4);
-    t.equals(a.sprite.costumes[0].id, 1);
-    t.equals(a.sprite.costumes[1].id, 2);
-    t.equals(a.sprite.costumes[2].id, 3);
-    t.equals(a.sprite.costumes[3].id, 4);
-    t.equals(a.currentCostume, 1);
-    t.end();
+    expect(a.sprite.costumes.length).toBe(4);
+    expect(a.sprite.costumes[0].id).toBe(1);
+    expect(a.sprite.costumes[1].id).toBe(2);
+    expect(a.sprite.costumes[2].id).toBe(3);
+    expect(a.sprite.costumes[3].id).toBe(4);
+    expect(a.currentCostume).toBe(1);
 });
 
-test('deleteSound', t => {
+test('deleteSound', () => {
     const o1 = {id: 1};
     const o2 = {id: 2};
     const o3 = {id: 3};
@@ -224,98 +215,90 @@ test('deleteSound', t => {
     a.renderer = renderer;
 
     const firstDeleted = a.deleteSound(0);
-    t.deepEqual(a.sprite.sounds, [o2, o3]);
-    t.deepEqual(firstDeleted, o1);
+    expect(a.sprite.sounds).toEqual([o2, o3]);
+    expect(firstDeleted).toEqual(o1);
 
     // Allows deleting the only sound
     a.sprite.sounds = [o1];
     a.deleteSound(0);
-    t.deepEqual(a.sprite.sounds, []);
-
-    t.end();
+    expect(a.sprite.sounds).toEqual([]);
 });
 
-test('setRotationStyle', t => {
+test('setRotationStyle', () => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const a = new RenderedTarget(s, r);
     const renderer = new FakeRenderer();
     a.renderer = renderer;
     a.setRotationStyle(RenderedTarget.ROTATION_STYLE_NONE);
-    t.end();
 });
 
-test('getBounds', t => {
+test('getBounds', () => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const renderer = new FakeRenderer();
     r.attachRenderer(renderer);
     const a = new RenderedTarget(s, r);
     a.renderer = renderer;
-    t.equals(a.getBounds().top, 0);
+    expect(a.getBounds().top).toBe(0);
     a.setXY(241, 241);
-    t.equals(a.getBounds().top, 241);
-    t.end();
+    expect(a.getBounds().top).toBe(241);
 });
 
-test('isTouchingPoint', t => {
+test('isTouchingPoint', () => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const renderer = new FakeRenderer();
     r.attachRenderer(renderer);
     const a = new RenderedTarget(s, r);
     a.renderer = renderer;
-    t.equals(a.isTouchingPoint(), true);
-    t.end();
+    expect(a.isTouchingPoint()).toBe(true);
 });
 
-test('isTouchingEdge', t => {
+test('isTouchingEdge', () => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const renderer = new FakeRenderer();
     r.attachRenderer(renderer);
     const a = new RenderedTarget(s, r);
     a.renderer = renderer;
-    t.equals(a.isTouchingEdge(), false);
+    expect(a.isTouchingEdge()).toBe(false);
     a.setXY(1000, 1000);
-    t.equals(a.isTouchingEdge(), true);
-    t.end();
+    expect(a.isTouchingEdge()).toBe(true);
 });
 
-test('isTouchingSprite', t => {
+test('isTouchingSprite', () => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const renderer = new FakeRenderer();
     r.attachRenderer(renderer);
     const a = new RenderedTarget(s, r);
     a.renderer = renderer;
-    t.equals(a.isTouchingSprite('fake'), false);
-    t.end();
+    expect(a.isTouchingSprite('fake')).toBe(false);
 });
 
-test('isTouchingColor', t => {
+test('isTouchingColor', () => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const renderer = new FakeRenderer();
     r.attachRenderer(renderer);
     const a = new RenderedTarget(s, r);
     a.renderer = renderer;
-    t.equals(a.isTouchingColor(), false);
-    t.end();
+    expect(a.isTouchingColor()).toBe(false);
 });
 
-test('colorIsTouchingColor', t => {
+test('colorIsTouchingColor', () => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const renderer = new FakeRenderer();
     r.attachRenderer(renderer);
     const a = new RenderedTarget(s, r);
     a.renderer = renderer;
-    t.equals(a.colorIsTouchingColor(), false);
-    t.end();
+    expect(a.colorIsTouchingColor()).toBe(false);
 });
 
-test('layers', t => { // TODO this tests fake functionality. Move layering tests into Render.
+test('layers', () => {
+    // TODO this tests fake functionality. Move layering tests into Render.
     const r = new Runtime();
     const s = new Sprite(null, r);
     const renderer = new FakeRenderer();
@@ -324,148 +307,136 @@ test('layers', t => { // TODO this tests fake functionality. Move layering tests
     const a = new RenderedTarget(s, r);
     a.renderer = renderer;
     a.goToFront();
-    t.equals(a.renderer.order, 5);
+    expect(a.renderer.order).toBe(5);
     a.goBackwardLayers(2);
-    t.equals(a.renderer.order, 3);
+    expect(a.renderer.order).toBe(3);
     a.goToBack();
     // Note, there are only sprites in this test, no stage, and the addition
     // of layer groups, goToBack no longer specifies a minimum order number
-    t.equals(a.renderer.order, 0);
+    expect(a.renderer.order).toBe(0);
     a.goForwardLayers(1);
-    t.equals(a.renderer.order, 1);
+    expect(a.renderer.order).toBe(1);
     o.drawableID = 999;
     a.goBehindOther(o);
-    t.equals(a.renderer.order, 1);
-    t.end();
+    expect(a.renderer.order).toBe(1);
 });
 
-test('getLayerOrder returns result of renderer getDrawableOrder or null if renderer is not attached', t => {
+test('getLayerOrder returns result of renderer getDrawableOrder or null if renderer is not attached', () => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const a = new RenderedTarget(s, r);
 
     // getLayerOrder should return null if there is no renderer attached to the runtime
-    t.equal(a.getLayerOrder(), null);
+    expect(a.getLayerOrder()).toBe(null);
 
     const renderer = new FakeRenderer();
     r.attachRenderer(renderer);
     const b = new RenderedTarget(s, r);
 
-    t.equal(b.getLayerOrder(), 'stub');
-
-    t.end();
+    expect(b.getLayerOrder()).toBe('stub');
 });
 
-test('keepInFence', t => {
+test('keepInFence', () => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const renderer = new FakeRenderer();
     r.attachRenderer(renderer);
     const a = new RenderedTarget(s, r);
     a.renderer = renderer;
-    t.equals(a.keepInFence(1000, 1000)[0], 240);
-    t.equals(a.keepInFence(-1000, 1000)[0], -240);
-    t.equals(a.keepInFence(1000, 1000)[1], 180);
-    t.equals(a.keepInFence(1000, -1000)[1], -180);
-    t.end();
+    expect(a.keepInFence(1000, 1000)[0]).toBe(240);
+    expect(a.keepInFence(-1000, 1000)[0]).toBe(-240);
+    expect(a.keepInFence(1000, 1000)[1]).toBe(180);
+    expect(a.keepInFence(1000, -1000)[1]).toBe(-180);
 });
 
-test('#stopAll clears graphics effects', t => {
+test('#stopAll clears graphics effects', () => {
     const r = new Runtime();
     const s = new Sprite(null, r);
     const a = new RenderedTarget(s, r);
     const effectName = 'brightness';
     a.setEffect(effectName, 100);
     a.onStopAll();
-    t.equals(a.effects[effectName], 0);
-    t.end();
+    expect(a.effects[effectName]).toBe(0);
 });
 
-test('#getCostumes returns the costumes', t => {
+test('#getCostumes returns the costumes', () => {
     const r = new Runtime();
     const spr = new Sprite(null, r);
     const a = new RenderedTarget(spr, r);
     a.sprite.costumes = [{id: 1}, {id: 2}, {id: 3}];
-    t.equals(a.getCostumes().length, 3);
-    t.equals(a.getCostumes()[0].id, 1);
-    t.equals(a.getCostumes()[1].id, 2);
-    t.equals(a.getCostumes()[2].id, 3);
-    t.end();
+    expect(a.getCostumes().length).toBe(3);
+    expect(a.getCostumes()[0].id).toBe(1);
+    expect(a.getCostumes()[1].id).toBe(2);
+    expect(a.getCostumes()[2].id).toBe(3);
 });
 
-test('#getSounds returns the sounds', t => {
+test('#getSounds returns the sounds', () => {
     const r = new Runtime();
     const spr = new Sprite(null, r);
     const a = new RenderedTarget(spr, r);
     const sounds = [1, 2, 3];
     a.sprite.sounds = sounds;
-    t.equals(a.getSounds(), sounds);
-    t.end();
+    expect(a.getSounds()).toBe(sounds);
 });
 
-test('#toJSON returns the sounds and costumes', t => {
+test('#toJSON returns the sounds and costumes', () => {
     const r = new Runtime();
     const spr = new Sprite(null, r);
     const a = new RenderedTarget(spr, r);
     const sounds = [1, 2, 3];
     a.sprite.sounds = sounds;
     a.sprite.costumes = [{id: 1}, {id: 2}, {id: 3}];
-    t.same(a.toJSON().sounds, sounds);
-    t.same(a.toJSON().costumes, a.sprite.costumes);
-    t.end();
+    expect(a.toJSON().sounds).toEqual(sounds);
+    expect(a.toJSON().costumes).toEqual(a.sprite.costumes);
 });
 
-test('#addSound does not duplicate names', t => {
+test('#addSound does not duplicate names', () => {
     const r = new Runtime();
     const spr = new Sprite(null, r);
     const a = new RenderedTarget(spr, r);
     a.sprite.sounds = [{name: 'first'}];
     a.addSound({name: 'first'});
-    t.deepEqual(a.sprite.sounds, [{name: 'first'}, {name: 'first2'}]);
-    t.end();
+    expect(a.sprite.sounds).toEqual([{name: 'first'}, {name: 'first2'}]);
 });
 
-test('#addCostume does not duplicate names', t => {
+test('#addCostume does not duplicate names', () => {
     const r = new Runtime();
     const spr = new Sprite(null, r);
     const a = new RenderedTarget(spr, r);
     a.addCostume({name: 'first'});
     a.addCostume({name: 'first'});
-    t.equal(a.sprite.costumes.length, 2);
-    t.equal(a.sprite.costumes[0].name, 'first');
-    t.equal(a.sprite.costumes[1].name, 'first2');
-    t.end();
+    expect(a.sprite.costumes.length).toBe(2);
+    expect(a.sprite.costumes[0].name).toBe('first');
+    expect(a.sprite.costumes[1].name).toBe('first2');
 });
 
-test('#renameSound does not duplicate names', t => {
+test('#renameSound does not duplicate names', () => {
     const r = new Runtime();
     const spr = new Sprite(null, r);
     const a = new RenderedTarget(spr, r);
     a.sprite.sounds = [{name: 'first'}, {name: 'second'}];
     a.renameSound(0, 'first'); // Shouldn't increment the name, noop
-    t.deepEqual(a.sprite.sounds, [{name: 'first'}, {name: 'second'}]);
+    expect(a.sprite.sounds).toEqual([{name: 'first'}, {name: 'second'}]);
     a.renameSound(1, 'first');
-    t.deepEqual(a.sprite.sounds, [{name: 'first'}, {name: 'first2'}]);
-    t.end();
+    expect(a.sprite.sounds).toEqual([{name: 'first'}, {name: 'first2'}]);
 });
 
-test('#renameCostume does not duplicate names', t => {
+test('#renameCostume does not duplicate names', () => {
     const r = new Runtime();
     const spr = new Sprite(null, r);
     const a = new RenderedTarget(spr, r);
     a.sprite.costumes = [{name: 'first'}, {name: 'second'}];
     a.renameCostume(0, 'first'); // Shouldn't increment the name, noop
-    t.equal(a.sprite.costumes.length, 2);
-    t.equal(a.sprite.costumes[0].name, 'first');
-    t.equal(a.sprite.costumes[1].name, 'second');
+    expect(a.sprite.costumes.length).toBe(2);
+    expect(a.sprite.costumes[0].name).toBe('first');
+    expect(a.sprite.costumes[1].name).toBe('second');
     a.renameCostume(1, 'first');
-    t.equal(a.sprite.costumes.length, 2);
-    t.equal(a.sprite.costumes[0].name, 'first');
-    t.equal(a.sprite.costumes[1].name, 'first2');
-    t.end();
+    expect(a.sprite.costumes.length).toBe(2);
+    expect(a.sprite.costumes[0].name).toBe('first');
+    expect(a.sprite.costumes[1].name).toBe('first2');
 });
 
-test('#reorderCostume', t => {
+test('#reorderCostume', () => {
     const o1 = {id: 0};
     const o2 = {id: 1};
     const o3 = {id: 2};
@@ -485,41 +456,39 @@ test('#reorderCostume', t => {
     const costumeIds = () => a.sprite.costumes.map(c => c.id);
 
     resetCostumes();
-    t.deepEquals(costumeIds(), [0, 1, 2, 3, 4]);
-    t.equals(a.currentCostume, 0);
+    expect(costumeIds()).toEqual([0, 1, 2, 3, 4]);
+    expect(a.currentCostume).toBe(0);
 
     // Returns false if the costumes are the same and no change occurred
-    t.equal(a.reorderCostume(3, 3), false);
-    t.equal(a.reorderCostume(999, 5000), false); // Clamped to the same values.
-    t.equal(a.reorderCostume(-999, -5000), false);
+    expect(a.reorderCostume(3, 3)).toBe(false);
+    expect(a.reorderCostume(999, 5000)).toBe(false); // Clamped to the same values.
+    expect(a.reorderCostume(-999, -5000)).toBe(false);
 
     // Make sure reordering up and down works and current costume follows
     resetCostumes();
-    t.equal(a.reorderCostume(0, 3), true);
-    t.deepEquals(costumeIds(), [1, 2, 3, 0, 4]);
-    t.equals(a.currentCostume, 3); // Index of id=0
+    expect(a.reorderCostume(0, 3)).toBe(true);
+    expect(costumeIds()).toEqual([1, 2, 3, 0, 4]);
+    expect(a.currentCostume).toBe(3); // Index of id=0
 
     resetCostumes();
     a.setCostume(1);
-    t.equal(a.reorderCostume(3, 1), true);
-    t.deepEquals(costumeIds(), [0, 3, 1, 2, 4]);
-    t.equals(a.currentCostume, 2); // Index of id=1
+    expect(a.reorderCostume(3, 1)).toBe(true);
+    expect(costumeIds()).toEqual([0, 3, 1, 2, 4]);
+    expect(a.currentCostume).toBe(2); // Index of id=1
 
     // Out of bounds indices get clamped
     resetCostumes();
-    t.equal(a.reorderCostume(10, 0), true);
-    t.deepEquals(costumeIds(), [4, 0, 1, 2, 3]);
-    t.equals(a.currentCostume, 1); // Index of id=0
+    expect(a.reorderCostume(10, 0)).toBe(true);
+    expect(costumeIds()).toEqual([4, 0, 1, 2, 3]);
+    expect(a.currentCostume).toBe(1); // Index of id=0
 
     resetCostumes();
-    t.equal(a.reorderCostume(2, -1000), true);
-    t.deepEquals(costumeIds(), [2, 0, 1, 3, 4]);
-    t.equals(a.currentCostume, 1); // Index of id=0
-
-    t.end();
+    expect(a.reorderCostume(2, -1000)).toBe(true);
+    expect(costumeIds()).toEqual([2, 0, 1, 3, 4]);
+    expect(a.currentCostume).toBe(1); // Index of id=0
 });
 
-test('#reorderSound', t => {
+test('#reorderSound', () => {
     const o1 = {id: 0, name: 'name0'};
     const o2 = {id: 1, name: 'name1'};
     const o3 = {id: 2, name: 'name2'};
@@ -538,30 +507,28 @@ test('#reorderSound', t => {
     const soundIds = () => a.sprite.sounds.map(c => c.id);
 
     resetSounds();
-    t.deepEquals(soundIds(), [0, 1, 2, 3, 4]);
+    expect(soundIds()).toEqual([0, 1, 2, 3, 4]);
 
     // Return false if indices are the same and no change occurred.
-    t.equal(a.reorderSound(3, 3), false);
-    t.equal(a.reorderSound(100000, 99999), false); // Clamped to the same values
-    t.equal(a.reorderSound(-100000, -99999), false);
+    expect(a.reorderSound(3, 3)).toBe(false);
+    expect(a.reorderSound(100000, 99999)).toBe(false); // Clamped to the same values
+    expect(a.reorderSound(-100000, -99999)).toBe(false);
 
     // Make sure reordering up and down works and current sound follows
     resetSounds();
-    t.equal(a.reorderSound(0, 3), true);
-    t.deepEquals(soundIds(), [1, 2, 3, 0, 4]);
+    expect(a.reorderSound(0, 3)).toBe(true);
+    expect(soundIds()).toEqual([1, 2, 3, 0, 4]);
 
     resetSounds();
-    t.equal(a.reorderSound(3, 1), true);
-    t.deepEquals(soundIds(), [0, 3, 1, 2, 4]);
+    expect(a.reorderSound(3, 1)).toBe(true);
+    expect(soundIds()).toEqual([0, 3, 1, 2, 4]);
 
     // Out of bounds indices get clamped
     resetSounds();
-    t.equal(a.reorderSound(10, 0), true);
-    t.deepEquals(soundIds(), [4, 0, 1, 2, 3]);
+    expect(a.reorderSound(10, 0)).toBe(true);
+    expect(soundIds()).toEqual([4, 0, 1, 2, 3]);
 
     resetSounds();
-    t.equal(a.reorderSound(2, -1000), true);
-    t.deepEquals(soundIds(), [2, 0, 1, 3, 4]);
-
-    t.end();
+    expect(a.reorderSound(2, -1000)).toBe(true);
+    expect(soundIds()).toEqual([2, 0, 1, 3, 4]);
 });

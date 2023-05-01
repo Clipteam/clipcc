@@ -1,125 +1,104 @@
-const test = require('tap').test;
 const Thread = require('../../src/engine/thread');
 const RenderedTarget = require('../../src/sprites/rendered-target');
 const Sprite = require('../../src/sprites/sprite');
 const Runtime = require('../../src/engine/runtime');
 
-test('spec', t => {
-    t.type(Thread, 'function');
+test('spec', () => {
+    expect(typeof Thread).toBe('function');
 
     const th = new Thread('arbitraryString');
-    t.type(th, 'object');
-    t.ok(th instanceof Thread);
-    t.type(th.pushStack, 'function');
-    t.type(th.reuseStackForNextBlock, 'function');
-    t.type(th.popStack, 'function');
-    t.type(th.stopThisScript, 'function');
-    t.type(th.peekStack, 'function');
-    t.type(th.peekStackFrame, 'function');
-    t.type(th.peekParentStackFrame, 'function');
-    t.type(th.pushReportedValue, 'function');
-    t.type(th.initParams, 'function');
-    t.type(th.pushParam, 'function');
-    t.type(th.peekStack, 'function');
-    t.type(th.getParam, 'function');
-    t.type(th.atStackTop, 'function');
-    t.type(th.goToNextBlock, 'function');
-    t.type(th.isRecursiveCall, 'function');
-
-    t.end();
+    expect(typeof th).toBe('object');
+    expect(th instanceof Thread).toBeTruthy();
+    expect(typeof th.pushStack).toBe('function');
+    expect(typeof th.reuseStackForNextBlock).toBe('function');
+    expect(typeof th.popStack).toBe('function');
+    expect(typeof th.stopThisScript).toBe('function');
+    expect(typeof th.peekStack).toBe('function');
+    expect(typeof th.peekStackFrame).toBe('function');
+    expect(typeof th.peekParentStackFrame).toBe('function');
+    expect(typeof th.pushReportedValue).toBe('function');
+    expect(typeof th.initParams).toBe('function');
+    expect(typeof th.pushParam).toBe('function');
+    expect(typeof th.peekStack).toBe('function');
+    expect(typeof th.getParam).toBe('function');
+    expect(typeof th.atStackTop).toBe('function');
+    expect(typeof th.goToNextBlock).toBe('function');
+    expect(typeof th.isRecursiveCall).toBe('function');
 });
 
-test('pushStack', t => {
+test('pushStack', () => {
     const th = new Thread('arbitraryString');
     th.pushStack('arbitraryString');
-
-    t.end();
 });
 
-test('popStack', t => {
+test('popStack', () => {
     const th = new Thread('arbitraryString');
     th.pushStack('arbitraryString');
-    t.strictEquals(th.popStack(), 'arbitraryString');
-    t.strictEquals(th.popStack(), undefined);
-
-    t.end();
+    expect(th.popStack()).toBe('arbitraryString');
+    expect(th.popStack()).toBe(undefined);
 });
 
-test('atStackTop', t => {
+test('atStackTop', () => {
     const th = new Thread('arbitraryString');
     th.pushStack('arbitraryString');
     th.pushStack('secondString');
-    t.strictEquals(th.atStackTop(), false);
+    expect(th.atStackTop()).toBe(false);
     th.popStack();
-    t.strictEquals(th.atStackTop(), true);
-
-    t.end();
+    expect(th.atStackTop()).toBe(true);
 });
 
-test('reuseStackForNextBlock', t => {
+test('reuseStackForNextBlock', () => {
     const th = new Thread('arbitraryString');
     th.pushStack('arbitraryString');
     th.reuseStackForNextBlock('secondString');
-    t.strictEquals(th.popStack(), 'secondString');
-
-    t.end();
+    expect(th.popStack()).toBe('secondString');
 });
 
-test('peekStackFrame', t => {
+test('peekStackFrame', () => {
     const th = new Thread('arbitraryString');
     th.pushStack('arbitraryString');
-    t.strictEquals(th.peekStackFrame().warpMode, false);
+    expect(th.peekStackFrame().warpMode).toBe(false);
     th.popStack();
-    t.strictEquals(th.peekStackFrame(), null);
-
-    t.end();
+    expect(th.peekStackFrame()).toBe(null);
 });
 
-test('peekParentStackFrame', t => {
+test('peekParentStackFrame', () => {
     const th = new Thread('arbitraryString');
     th.pushStack('arbitraryString');
     th.peekStackFrame().warpMode = true;
-    t.strictEquals(th.peekParentStackFrame(), null);
+    expect(th.peekParentStackFrame()).toBe(null);
     th.pushStack('secondString');
-    t.strictEquals(th.peekParentStackFrame().warpMode, true);
-
-    t.end();
+    expect(th.peekParentStackFrame().warpMode).toBe(true);
 });
 
-test('pushReportedValue', t => {
+test('pushReportedValue', () => {
     const th = new Thread('arbitraryString');
     th.pushStack('arbitraryString');
     th.pushStack('secondString');
     th.pushReportedValue('value');
-    t.strictEquals(th.justReported, 'value');
-
-    t.end();
+    expect(th.justReported).toBe('value');
 });
 
-test('peekStack', t => {
+test('peekStack', () => {
     const th = new Thread('arbitraryString');
     th.pushStack('arbitraryString');
-    t.strictEquals(th.peekStack(), 'arbitraryString');
+    expect(th.peekStack()).toBe('arbitraryString');
     th.popStack();
-    t.strictEquals(th.peekStack(), null);
-
-    t.end();
+    expect(th.peekStack()).toBe(null);
 });
 
-test('PushGetParam', t => {
+test('PushGetParam', () => {
     const th = new Thread('arbitraryString');
     th.pushStack('arbitraryString');
     th.initParams();
     th.pushParam('testParam', 'testValue');
-    t.strictEquals(th.peekStackFrame().params.testParam, 'testValue');
-    t.strictEquals(th.getParam('testParam'), 'testValue');
+    expect(th.peekStackFrame().params.testParam).toBe('testValue');
+    expect(th.getParam('testParam')).toBe('testValue');
     // Params outside of define stack always evaluate to null
-    t.strictEquals(th.getParam('nonExistentParam'), null);
-
-    t.end();
+    expect(th.getParam('nonExistentParam')).toBe(null);
 });
 
-test('goToNextBlock', t => {
+test('goToNextBlock', () => {
     const th = new Thread('arbitraryString');
     const r = new Runtime();
     const s = new Sprite(null, r);
@@ -159,23 +138,21 @@ test('goToNextBlock', t => {
     rt.blocks.createBlock(block2);
     th.target = rt;
 
-    t.strictEquals(th.peekStack(), null);
+    expect(th.peekStack()).toBe(null);
     th.pushStack('secondString');
-    t.strictEquals(th.peekStack(), 'secondString');
+    expect(th.peekStack()).toBe('secondString');
     th.goToNextBlock();
-    t.strictEquals(th.peekStack(), null);
+    expect(th.peekStack()).toBe(null);
     th.pushStack('secondString');
     th.pushStack('arbitraryString');
-    t.strictEquals(th.peekStack(), 'arbitraryString');
+    expect(th.peekStack()).toBe('arbitraryString');
     th.goToNextBlock();
-    t.strictEquals(th.peekStack(), 'secondString');
+    expect(th.peekStack()).toBe('secondString');
     th.goToNextBlock();
-    t.strictEquals(th.peekStack(), null);
-
-    t.end();
+    expect(th.peekStack()).toBe(null);
 });
 
-test('stopThisScript', t => {
+test('stopThisScript', () => {
     const th = new Thread('arbitraryString');
     const r = new Runtime();
     const s = new Sprite(null, r);
@@ -215,20 +192,18 @@ test('stopThisScript', t => {
     th.target = rt;
 
     th.stopThisScript();
-    t.strictEquals(th.peekStack(), null);
+    expect(th.peekStack()).toBe(null);
     th.pushStack('arbitraryString');
-    t.strictEquals(th.peekStack(), 'arbitraryString');
+    expect(th.peekStack()).toBe('arbitraryString');
     th.stopThisScript();
-    t.strictEquals(th.peekStack(), null);
+    expect(th.peekStack()).toBe(null);
     th.pushStack('arbitraryString');
     th.pushStack('secondString');
     th.stopThisScript();
-    t.strictEquals(th.peekStack(), 'secondString');
-
-    t.end();
+    expect(th.peekStack()).toBe('secondString');
 });
 
-test('isRecursiveCall', t => {
+test('isRecursiveCall', () => {
     const th = new Thread('arbitraryString');
     const r = new Runtime();
     const s = new Sprite(null, r);
@@ -267,19 +242,17 @@ test('isRecursiveCall', t => {
     rt.blocks.createBlock(block2);
     th.target = rt;
 
-    t.strictEquals(th.isRecursiveCall('fakeCode'), false);
+    expect(th.isRecursiveCall('fakeCode')).toBe(false);
     th.pushStack('secondString');
-    t.strictEquals(th.isRecursiveCall('fakeCode'), false);
+    expect(th.isRecursiveCall('fakeCode')).toBe(false);
     th.pushStack('arbitraryString');
-    t.strictEquals(th.isRecursiveCall('fakeCode'), true);
+    expect(th.isRecursiveCall('fakeCode')).toBe(true);
     th.pushStack('arbitraryString');
-    t.strictEquals(th.isRecursiveCall('fakeCode'), true);
+    expect(th.isRecursiveCall('fakeCode')).toBe(true);
     th.popStack();
-    t.strictEquals(th.isRecursiveCall('fakeCode'), true);
+    expect(th.isRecursiveCall('fakeCode')).toBe(true);
     th.popStack();
-    t.strictEquals(th.isRecursiveCall('fakeCode'), false);
+    expect(th.isRecursiveCall('fakeCode')).toBe(false);
     th.popStack();
-    t.strictEquals(th.isRecursiveCall('fakeCode'), false);
-
-    t.end();
+    expect(th.isRecursiveCall('fakeCode')).toBe(false);
 });

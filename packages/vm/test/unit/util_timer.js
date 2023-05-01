@@ -1,4 +1,3 @@
-const test = require('tap').test;
 const Timer = require('../../src/util/timer');
 
 // Stubbed current time
@@ -11,31 +10,28 @@ const testNow = {
     }
 };
 
-test('spec', t => {
+test('spec', () => {
     const timer = new Timer(testNow);
 
-    t.type(Timer, 'function');
-    t.type(timer, 'object');
+    expect(typeof Timer).toBe('function');
+    expect(typeof timer).toBe('object');
 
-    t.type(timer.startTime, 'number');
-    t.type(timer.time, 'function');
-    t.type(timer.start, 'function');
-    t.type(timer.timeElapsed, 'function');
-    t.type(timer.setTimeout, 'function');
-    t.type(timer.clearTimeout, 'function');
-
-    t.end();
+    expect(typeof timer.startTime).toBe('number');
+    expect(typeof timer.time).toBe('function');
+    expect(typeof timer.start).toBe('function');
+    expect(typeof timer.timeElapsed).toBe('function');
+    expect(typeof timer.setTimeout).toBe('function');
+    expect(typeof timer.clearTimeout).toBe('function');
 });
 
-test('time', t => {
+test('time', () => {
     const timer = new Timer(testNow);
     const time = timer.time();
 
-    t.ok(testNow.now() >= time);
-    t.end();
+    expect(testNow.now() >= time).toBeTruthy();
 });
 
-test('start / timeElapsed', t => {
+test('start / timeElapsed', () => {
     const timer = new Timer(testNow);
     const delay = 100;
     const threshold = 1000 / 60; // 60 hz
@@ -45,20 +41,19 @@ test('start / timeElapsed', t => {
 
     // Measure timer
     const timeElapsed = timer.timeElapsed();
-    t.ok(timeElapsed >= 0);
-    t.ok(timeElapsed >= (delay - threshold) &&
-         timeElapsed <= (delay + threshold));
-    t.end();
+    expect(timeElapsed >= 0).toBeTruthy();
+    expect(timeElapsed >= (delay - threshold) &&
+         timeElapsed <= (delay + threshold)).toBeTruthy();
 });
 
-test('setTimeout / clearTimeout', t => new Promise((resolve, reject) => {
+test('setTimeout / clearTimeout', done => new Promise((resolve, reject) => {
     const timer = new Timer(testNow);
     const cancelId = timer.setTimeout(() => {
         reject(new Error('Canceled task ran'));
     }, 1);
     timer.setTimeout(() => {
         resolve('Non-canceled task ran');
-        t.end();
+        done();
     }, 2);
     timer.clearTimeout(cancelId);
 }));

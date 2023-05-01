@@ -1,4 +1,3 @@
-const tap = require('tap');
 const path = require('path');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const makeTestStorage = require('../fixtures/make-test-storage');
@@ -22,7 +21,7 @@ test('Loading a project should not emit a project changed event', t => {
 
     vm.attachStorage(makeTestStorage());
     return vm.loadProject(project).then(() => {
-        t.equal(projectChanged, false);
+        expect(projectChanged).toBe(false);
         t.end();
     });
 });

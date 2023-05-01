@@ -1,20 +1,18 @@
-const test = require('tap').test;
 const Joystick = require('../../src/io/joystick');
 const Runtime = require('../../src/engine/runtime');
 
-test('spec', t => {
+test('spec', () => {
     const rt = new Runtime();
     const j = new Joystick(rt);
 
-    t.type(j, 'object');
-    t.type(j.postData, 'function');
-    t.type(j.getX, 'function');
-    t.type(j.getY, 'function');
-    t.type(j.getDistance, 'function');
-    t.end();
+    expect(typeof j).toBe('object');
+    expect(typeof j.postData).toBe('function');
+    expect(typeof j.getX).toBe('function');
+    expect(typeof j.getY).toBe('function');
+    expect(typeof j.getDistance).toBe('function');
 });
 
-test('zeroJoystickTest', t => {
+test('zeroJoystickTest', () => {
     const rt = new Runtime();
     const j = new Joystick(rt);
 
@@ -28,8 +26,7 @@ test('zeroJoystickTest', t => {
         y: 0,
         distance: 0
     });
-    t.strictEquals(j.getX(), 0);
-    t.strictEquals(j.getY(), 0);
-    t.strictEquals(j.getDistance(), 0);
-    t.end();
+    expect(j.getX()).toBe(0);
+    expect(j.getY()).toBe(0);
+    expect(j.getDistance()).toBe(0);
 });

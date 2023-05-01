@@ -1,78 +1,71 @@
-const test = require('tap').test;
 const adapter = require('../../src/engine/adapter');
 const events = require('../fixtures/events.json');
 
-test('spec', t => {
-    t.type(adapter, 'function');
-    t.end();
+test('spec', () => {
+    expect(typeof adapter).toBe('function');
 });
 
-test('invalid inputs', t => {
+test('invalid inputs', () => {
     let nothing = adapter('not an object');
-    t.type(nothing, 'undefined');
+    expect(typeof nothing).toBe('undefined');
     nothing = adapter({noxmlproperty: true});
-    t.type(nothing, 'undefined');
-    t.end();
+    expect(typeof nothing).toBe('undefined');
 });
 
-test('create event', t => {
+test('create event', () => {
     const result = adapter(events.create);
 
-    t.ok(Array.isArray(result));
-    t.equal(result.length, 2);
+    expect(Array.isArray(result)).toBeTruthy();
+    expect(result.length).toBe(2);
 
     // Outer block
-    t.type(result[0].id, 'string');
-    t.type(result[0].opcode, 'string');
-    t.type(result[0].comment, 'undefined');
-    t.type(result[0].fields, 'object');
-    t.type(result[0].inputs, 'object');
-    t.type(result[0].inputs.DURATION, 'object');
-    t.type(result[0].topLevel, 'boolean');
-    t.equal(result[0].topLevel, true);
+    expect(typeof result[0].id).toBe('string');
+    expect(typeof result[0].opcode).toBe('string');
+    expect(typeof result[0].comment).toBe('undefined');
+    expect(typeof result[0].fields).toBe('object');
+    expect(typeof result[0].inputs).toBe('object');
+    expect(typeof result[0].inputs.DURATION).toBe('object');
+    expect(typeof result[0].topLevel).toBe('boolean');
+    expect(result[0].topLevel).toBe(true);
 
     // Enclosed shadow block
-    t.type(result[1].id, 'string');
-    t.type(result[1].opcode, 'string');
-    t.type(result[1].fields, 'object');
-    t.type(result[1].inputs, 'object');
-    t.type(result[1].fields.NUM, 'object');
-    t.type(result[1].fields.NUM.value, '10');
-    t.type(result[1].topLevel, 'boolean');
-    t.equal(result[1].topLevel, false);
-
-    t.end();
+    expect(typeof result[1].id).toBe('string');
+    expect(typeof result[1].opcode).toBe('string');
+    expect(typeof result[1].fields).toBe('object');
+    expect(typeof result[1].inputs).toBe('object');
+    expect(typeof result[1].fields.NUM).toBe('object');
+    expect(Number(result[1].fields.NUM.value)).toBe(10);
+    expect(typeof result[1].topLevel).toBe('boolean');
+    expect(result[1].topLevel).toBe(false);
 });
 
-test('create with comment', t => {
+test('create with comment', () => {
     const result = adapter(events.createComment);
 
     // This test should be the same as above except that it also has a comment.
 
-    t.ok(Array.isArray(result));
-    t.equal(result.length, 2);
+    expect(Array.isArray(result)).toBeTruthy();
+    expect(result.length).toBe(2);
 
-    t.type(result[0].comment, 'string');
-    t.equal(result[0].comment, 'aCommentId');
-
-    t.end();
+    expect(typeof result[0].comment).toBe('string');
+    expect(result[0].comment).toBe('aCommentId');
 });
 
-test('create with branch', t => {
+test('create with branch', () => {
     const result = adapter(events.createbranch);
     // Outer block
-    t.type(result[0].id, 'string');
-    t.type(result[0].opcode, 'string');
-    t.type(result[0].fields, 'object');
-    t.type(result[0].inputs, 'object');
-    t.type(result[0].inputs.SUBSTACK, 'object');
-    t.type(result[0].topLevel, 'boolean');
-    t.equal(result[0].topLevel, true);
+    expect(typeof result[0].id).toBe('string');
+    expect(typeof result[0].opcode).toBe('string');
+    expect(typeof result[0].fields).toBe('object');
+    expect(typeof result[0].inputs).toBe('object');
+    expect(typeof result[0].inputs.SUBSTACK).toBe('object');
+    expect(typeof result[0].topLevel).toBe('boolean');
+    expect(result[0].topLevel).toBe(true);
     // In branch
     const branchBlockId = result[0].inputs.SUBSTACK.block;
     const branchShadowId = result[0].inputs.SUBSTACK.shadow;
-    t.type(branchBlockId, 'string');
-    t.equal(branchShadowId, null);
+    expect(typeof branchBlockId, 'string');
+    expect(branchShadowId).toBe(null);
     // Find actual branch block
     let branchBlock = null;
     for (let i = 0; i < result.length; i++) {
@@ -80,30 +73,29 @@ test('create with branch', t => {
             branchBlock = result[i];
         }
     }
-    t.type(branchBlock, 'object');
-    t.end();
+    expect(typeof branchBlock).toBe('object');
 });
 
-test('create with two branches', t => {
+test('create with two branches', () => {
     const result = adapter(events.createtwobranches);
     // Outer block
-    t.type(result[0].id, 'string');
-    t.type(result[0].opcode, 'string');
-    t.type(result[0].fields, 'object');
-    t.type(result[0].inputs, 'object');
-    t.type(result[0].inputs.SUBSTACK, 'object');
-    t.type(result[0].inputs.SUBSTACK2, 'object');
-    t.type(result[0].topLevel, 'boolean');
-    t.equal(result[0].topLevel, true);
+    expect(typeof result[0].id).toBe('string');
+    expect(typeof result[0].opcode).toBe('string');
+    expect(typeof result[0].fields).toBe('object');
+    expect(typeof result[0].inputs).toBe('object');
+    expect(typeof result[0].inputs.SUBSTACK).toBe('object');
+    expect(typeof result[0].inputs.SUBSTACK2).toBe('object');
+    expect(typeof result[0].topLevel).toBe('boolean');
+    expect(result[0].topLevel).toBe(true);
     // In branchs
     const firstBranchBlockId = result[0].inputs.SUBSTACK.block;
     const secondBranchBlockId = result[0].inputs.SUBSTACK2.block;
-    t.type(firstBranchBlockId, 'string');
-    t.type(secondBranchBlockId, 'string');
+    expect(typeof firstBranchBlockId).toBe('string');
+    expect(typeof secondBranchBlockId).toBe('string');
     const firstBranchShadowBlockId = result[0].inputs.SUBSTACK.shadow;
     const secondBranchShadowBlockId = result[0].inputs.SUBSTACK2.shadow;
-    t.equal(firstBranchShadowBlockId, null);
-    t.equal(secondBranchShadowBlockId, null);
+    expect(firstBranchShadowBlockId).toBe(null);
+    expect(secondBranchShadowBlockId).toBe(null);
     // Find actual branch blocks
     let firstBranchBlock = null;
     let secondBranchBlock = null;
@@ -115,106 +107,96 @@ test('create with two branches', t => {
             secondBranchBlock = result[i];
         }
     }
-    t.type(firstBranchBlock, 'object');
-    t.type(secondBranchBlock, 'object');
-    t.end();
+    expect(typeof firstBranchBlock).toBe('object');
+    expect(typeof secondBranchBlock).toBe('object');
 });
 
-test('create with top-level shadow', t => {
+test('create with top-level shadow', () => {
     const result = adapter(events.createtoplevelshadow);
-    t.ok(Array.isArray(result));
-    t.equal(result.length, 1);
+    expect(Array.isArray(result)).toBeTruthy();
+    expect(result.length).toBe(1);
 
     // Outer block
-    t.type(result[0].id, 'string');
-    t.type(result[0].opcode, 'string');
-    t.type(result[0].fields, 'object');
-    t.type(result[0].inputs, 'object');
-    t.type(result[0].topLevel, 'boolean');
-    t.equal(result[0].topLevel, true);
-    t.end();
+    expect(typeof result[0].id).toBe('string');
+    expect(typeof result[0].opcode).toBe('string');
+    expect(typeof result[0].fields).toBe('object');
+    expect(typeof result[0].inputs).toBe('object');
+    expect(typeof result[0].topLevel).toBe('boolean');
+    expect(result[0].topLevel).toBe(true);
 });
 
-test('create with next connection', t => {
+test('create with next connection', () => {
     const result = adapter(events.createwithnext);
 
-    t.ok(Array.isArray(result));
-    t.equal(result.length, 2);
+    expect(Array.isArray(result)).toBeTruthy();
+    expect(result.length).toBe(2);
 
     // First block
-    t.type(result[0].id, 'string');
-    t.type(result[0].opcode, 'string');
-    t.type(result[0].fields, 'object');
-    t.type(result[0].inputs, 'object');
-    t.type(result[0].topLevel, 'boolean');
-    t.equal(result[0].topLevel, true);
-    t.type(result[0].next, 'string');
-    t.equal(result[0].next, result[1].id);
+    expect(typeof result[0].id).toBe('string');
+    expect(typeof result[0].opcode).toBe('string');
+    expect(typeof result[0].fields).toBe('object');
+    expect(typeof result[0].inputs).toBe('object');
+    expect(typeof result[0].topLevel).toBe('boolean');
+    expect(result[0].topLevel).toBe(true);
+    expect(typeof result[0].next).toBe('string');
+    expect(result[0].next).toBe(result[1].id);
 
     // Second block
-    t.type(result[1].id, 'string');
-    t.type(result[1].opcode, 'string');
-    t.type(result[1].fields, 'object');
-    t.type(result[1].inputs, 'object');
-    t.type(result[1].topLevel, 'boolean');
-    t.equal(result[1].topLevel, false);
-    t.equal(result[1].next, null);
-
-    t.end();
+    expect(typeof result[1].id).toBe('string');
+    expect(typeof result[1].opcode).toBe('string');
+    expect(typeof result[1].fields).toBe('object');
+    expect(typeof result[1].inputs).toBe('object');
+    expect(typeof result[1].topLevel).toBe('boolean');
+    expect(result[1].topLevel).toBe(false);
+    expect(result[1].next).toBe(null);
 });
 
-test('create with obscured shadow', t => {
+test('create with obscured shadow', () => {
     const result = adapter(events.createobscuredshadow);
-    t.ok(Array.isArray(result));
-    t.equal(result.length, 4);
-    t.end();
+    expect(Array.isArray(result)).toBeTruthy();
+    expect(result.length).toBe(4);
 });
 
-test('create variable with entity in name', t => {
+test('create variable with entity in name', () => {
     const result = adapter(events.createvariablewithentity);
 
-    t.ok(Array.isArray(result));
-    t.equal(result.length, 1);
+    expect(Array.isArray(result)).toBeTruthy();
+    expect(result.length).toBe(1);
 
-    t.type(result[0].id, 'string');
-    t.type(result[0].opcode, 'string');
-    t.type(result[0].fields, 'object');
-    t.type(result[0].fields.VARIABLE, 'object');
-    t.type(result[0].fields.VARIABLE.value, 'string');
-    t.equal(result[0].fields.VARIABLE.value, 'this & that');
-    t.type(result[0].inputs, 'object');
-    t.type(result[0].topLevel, 'boolean');
-    t.equal(result[0].topLevel, true);
-    t.end();
+    expect(typeof result[0].id).toBe('string');
+    expect(typeof result[0].opcode).toBe('string');
+    expect(typeof result[0].fields).toBe('object');
+    expect(typeof result[0].fields.VARIABLE).toBe('object');
+    expect(typeof result[0].fields.VARIABLE.value).toBe('string');
+    expect(result[0].fields.VARIABLE.value).toBe('this & that');
+    expect(typeof result[0].inputs).toBe('object');
+    expect(typeof result[0].topLevel).toBe('boolean');
+    expect(result[0].topLevel).toBe(true);
 });
 
-test('create with invalid block xml', t => {
+test('create with invalid block xml', () => {
     // Entirely invalid block XML
     const result = adapter(events.createinvalid);
-    t.ok(Array.isArray(result));
-    t.equal(result.length, 0);
+    expect(Array.isArray(result)).toBeTruthy();
+    expect(result.length).toBe(0);
 
     // Invalid grandchild tag
     const result2 = adapter(events.createinvalidgrandchild);
-    t.ok(Array.isArray(result2));
-    t.equal(result2.length, 1);
-    t.type(result2[0].id, 'string');
-    t.equal(Object.keys(result2[0].inputs).length, 0);
-    t.equal(Object.keys(result2[0].fields).length, 0);
-
-    t.end();
+    expect(Array.isArray(result2)).toBeTruthy();
+    expect(result2.length).toBe(1);
+    expect(typeof result2[0].id, 'string');
+    expect(Object.keys(result2[0].inputs).length).toBe(0);
+    expect(Object.keys(result2[0].fields).length).toBe(0);
 });
 
-test('create with invalid xml', t => {
+test('create with invalid xml', () => {
     const result = adapter(events.createbadxml);
-    t.ok(Array.isArray(result));
-    t.equal(result.length, 0);
-    t.end();
+    expect(Array.isArray(result)).toBeTruthy();
+    expect(result.length).toBe(0);
 });
 
-test('create with empty field', t => {
+test('create with empty field', () => {
     const result = adapter(events.createemptyfield);
-    t.ok(Array.isArray(result));
-    t.equal(result.length, 3);
-    t.end();
+    expect(Array.isArray(result)).toBeTruthy();
+    expect(result.length).toBe(3);
 });

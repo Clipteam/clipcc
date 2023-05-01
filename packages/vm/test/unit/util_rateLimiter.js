@@ -1,7 +1,6 @@
-const test = require('tap').test;
 const RateLimiter = require('../../src/util/rateLimiter.js');
 
-test('rate limiter', t => {
+test('rate limiter', () => {
     // Create a rate limiter with maximum of 20 sends per second
     const rate = 20;
     const limiter = new RateLimiter(rate);
@@ -11,22 +10,20 @@ test('rate limiter', t => {
     limiter._timer = {timeElapsed: () => simulatedTime};
 
     // The rate limiter starts with a number of tokens equal to the max rate
-    t.equal(limiter._count, rate);
+    expect(limiter._count).toBe(rate);
 
     // Running okayToSend a number of times equal to the max rate
     // uses up all of the tokens
     for (let i = 0; i < rate; i++) {
-        t.true(limiter.okayToSend());
+        expect(limiter.okayToSend()).toBeTruthy();
         // Tokens are counting down
-        t.equal(limiter._count, rate - (i + 1));
+        expect(limiter._count).toBe(rate - (i + 1));
     }
-    t.false(limiter.okayToSend());
+    expect(limiter.okayToSend()).toBeFalsy();
 
     // Advance the timer enough so we get exactly one more token
     // One extra millisecond is required to get over the threshold
     simulatedTime += (1000 / rate) + 1;
-    t.true(limiter.okayToSend());
-    t.false(limiter.okayToSend());
-
-    t.end();
+    expect(limiter.okayToSend()).toBeTruthy();
+    expect(limiter.okayToSend()).toBeFalsy();
 });

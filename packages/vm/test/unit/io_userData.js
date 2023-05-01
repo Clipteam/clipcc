@@ -1,25 +1,21 @@
-const test = require('tap').test;
 const UserData = require('../../src/io/userData');
 
-test('spec', t => {
+test('spec', () => {
     const userData = new UserData();
 
-    t.type(userData, 'object');
-    t.type(userData.postData, 'function');
-    t.type(userData.getUsername, 'function');
-    t.end();
+    expect(typeof userData).toBe('object');
+    expect(typeof userData.postData).toBe('function');
+    expect(typeof userData.getUsername).toBe('function');
 });
 
-test('getUsername returns empty string initially', t => {
+test('getUsername returns empty string initially', () => {
     const userData = new UserData();
 
-    t.strictEquals(userData.getUsername(), '');
-    t.end();
+    expect(userData.getUsername()).toBe('');
 });
 
-test('postData sets the username', t => {
+test('postData sets the username', () => {
     const userData = new UserData();
     userData.postData({username: 'TEST'});
-    t.strictEquals(userData.getUsername(), 'TEST');
-    t.end();
+    expect(userData.getUsername()).toBe('TEST');
 });

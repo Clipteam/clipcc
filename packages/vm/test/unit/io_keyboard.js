@@ -1,18 +1,16 @@
-const test = require('tap').test;
 const Keyboard = require('../../src/io/keyboard');
 const Runtime = require('../../src/engine/runtime');
 
-test('spec', t => {
+test('spec', () => {
     const rt = new Runtime();
     const k = new Keyboard(rt);
 
-    t.type(k, 'object');
-    t.type(k.postData, 'function');
-    t.type(k.getKeyIsDown, 'function');
-    t.end();
+    expect(typeof k).toBe('object');
+    expect(typeof k.postData).toBe('function');
+    expect(typeof k.getKeyIsDown).toBe('function');
 });
 
-test('space key', t => {
+test('space key', () => {
     const rt = new Runtime();
     const k = new Keyboard(rt);
 
@@ -21,12 +19,11 @@ test('space key', t => {
         isDown: true
     });
     t.strictDeepEquals(k._keysPressed, ['space']);
-    t.strictEquals(k.getKeyIsDown('space'), true);
-    t.strictEquals(k.getKeyIsDown('any'), true);
-    t.end();
+    expect(k.getKeyIsDown('space')).toBe(true);
+    expect(k.getKeyIsDown('any')).toBe(true);
 });
 
-test('letter key', t => {
+test('letter key', () => {
     const rt = new Runtime();
     const k = new Keyboard(rt);
 
@@ -35,14 +32,13 @@ test('letter key', t => {
         isDown: true
     });
     t.strictDeepEquals(k._keysPressed, ['A']);
-    t.strictEquals(k.getKeyIsDown(65), true);
-    t.strictEquals(k.getKeyIsDown('a'), true);
-    t.strictEquals(k.getKeyIsDown('A'), true);
-    t.strictEquals(k.getKeyIsDown('any'), true);
-    t.end();
+    expect(k.getKeyIsDown(65)).toBe(true);
+    expect(k.getKeyIsDown('a')).toBe(true);
+    expect(k.getKeyIsDown('A')).toBe(true);
+    expect(k.getKeyIsDown('any')).toBe(true);
 });
 
-test('number key', t => {
+test('number key', () => {
     const rt = new Runtime();
     const k = new Keyboard(rt);
 
@@ -51,13 +47,12 @@ test('number key', t => {
         isDown: true
     });
     t.strictDeepEquals(k._keysPressed, ['1']);
-    t.strictEquals(k.getKeyIsDown(49), true);
-    t.strictEquals(k.getKeyIsDown('1'), true);
-    t.strictEquals(k.getKeyIsDown('any'), true);
-    t.end();
+    expect(k.getKeyIsDown(49)).toBe(true);
+    expect(k.getKeyIsDown('1')).toBe(true);
+    expect(k.getKeyIsDown('any')).toBe(true);
 });
 
-test('non-english key', t => {
+test('non-english key', () => {
     const rt = new Runtime();
     const k = new Keyboard(rt);
 
@@ -66,12 +61,11 @@ test('non-english key', t => {
         isDown: true
     });
     t.strictDeepEquals(k._keysPressed, ['日']);
-    t.strictEquals(k.getKeyIsDown('日'), true);
-    t.strictEquals(k.getKeyIsDown('any'), true);
-    t.end();
+    expect(k.getKeyIsDown('日')).toBe(true);
+    expect(k.getKeyIsDown('any')).toBe(true);
 });
 
-test('ignore modifier key', t => {
+test('ignore modifier key', () => {
     const rt = new Runtime();
     const k = new Keyboard(rt);
 
@@ -80,11 +74,10 @@ test('ignore modifier key', t => {
         isDown: true
     });
     t.strictDeepEquals(k._keysPressed, []);
-    t.strictEquals(k.getKeyIsDown('any'), false);
-    t.end();
+    expect(k.getKeyIsDown('any')).toBe(false);
 });
 
-test('keyup', t => {
+test('keyup', () => {
     const rt = new Runtime();
     const k = new Keyboard(rt);
 
@@ -97,7 +90,6 @@ test('keyup', t => {
         isDown: false
     });
     t.strictDeepEquals(k._keysPressed, []);
-    t.strictEquals(k.getKeyIsDown('left arrow'), false);
-    t.strictEquals(k.getKeyIsDown('any'), false);
-    t.end();
+    expect(k.getKeyIsDown('left arrow')).toBe(false);
+    expect(k.getKeyIsDown('any')).toBe(false);
 });

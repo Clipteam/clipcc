@@ -1,4 +1,3 @@
-const test = require('tap').test;
 const color = require('../../src/util/color');
 
 /**
@@ -37,67 +36,60 @@ const rgbSimilar = function (t, actual, expected) {
     }
 };
 
-test('decimalToHex', t => {
-    t.strictEqual(color.decimalToHex(0), '#000000');
-    t.strictEqual(color.decimalToHex(1), '#000001');
-    t.strictEqual(color.decimalToHex(16777215), '#ffffff');
-    t.strictEqual(color.decimalToHex(-16777215), '#000001');
-    t.strictEqual(color.decimalToHex(99999999), '#5f5e0ff');
-    t.end();
+test('decimalToHex', () => {
+    expect(color.decimalToHex(0)).toBe('#000000');
+    expect(color.decimalToHex(1)).toBe('#000001');
+    expect(color.decimalToHex(16777215)).toBe('#ffffff');
+    expect(color.decimalToHex(-16777215)).toBe('#000001');
+    expect(color.decimalToHex(99999999)).toBe('#5f5e0ff');
 });
 
-test('decimalToRgb', t => {
-    t.deepEqual(color.decimalToRgb(0), {a: 255, r: 0, g: 0, b: 0});
-    t.deepEqual(color.decimalToRgb(1), {a: 255, r: 0, g: 0, b: 1});
-    t.deepEqual(color.decimalToRgb(16777215), {a: 255, r: 255, g: 255, b: 255});
-    t.deepEqual(color.decimalToRgb(-16777215), {a: 255, r: 0, g: 0, b: 1});
-    t.deepEqual(color.decimalToRgb(99999999), {a: 5, r: 245, g: 224, b: 255});
-    t.end();
+test('decimalToRgb', () => {
+    expect(color.decimalToRgb(0)).toEqual({a: 255, r: 0, g: 0, b: 0});
+    expect(color.decimalToRgb(1)).toEqual({a: 255, r: 0, g: 0, b: 1});
+    expect(color.decimalToRgb(16777215)).toEqual({a: 255, r: 255, g: 255, b: 255});
+    expect(color.decimalToRgb(-16777215)).toEqual({a: 255, r: 0, g: 0, b: 1});
+    expect(color.decimalToRgb(99999999)).toEqual({a: 5, r: 245, g: 224, b: 255});
 });
 
-test('hexToRgb', t => {
-    t.deepEqual(color.hexToRgb('#000'), {r: 0, g: 0, b: 0});
-    t.deepEqual(color.hexToRgb('#000000'), {r: 0, g: 0, b: 0});
-    t.deepEqual(color.hexToRgb('#fff'), {r: 255, g: 255, b: 255});
-    t.deepEqual(color.hexToRgb('#ffffff'), {r: 255, g: 255, b: 255});
-    t.deepEqual(color.hexToRgb('#0fa'), {r: 0, g: 255, b: 170});
-    t.deepEqual(color.hexToRgb('#00ffaa'), {r: 0, g: 255, b: 170});
+test('hexToRgb', () => {
+    expect(color.hexToRgb('#000')).toEqual({r: 0, g: 0, b: 0});
+    expect(color.hexToRgb('#000000')).toEqual({r: 0, g: 0, b: 0});
+    expect(color.hexToRgb('#fff')).toEqual({r: 255, g: 255, b: 255});
+    expect(color.hexToRgb('#ffffff')).toEqual({r: 255, g: 255, b: 255});
+    expect(color.hexToRgb('#0fa')).toEqual({r: 0, g: 255, b: 170});
+    expect(color.hexToRgb('#00ffaa')).toEqual({r: 0, g: 255, b: 170});
 
-    t.deepEqual(color.hexToRgb('000'), {r: 0, g: 0, b: 0});
-    t.deepEqual(color.hexToRgb('fff'), {r: 255, g: 255, b: 255});
-    t.deepEqual(color.hexToRgb('00ffaa'), {r: 0, g: 255, b: 170});
+    expect(color.hexToRgb('000')).toEqual({r: 0, g: 0, b: 0});
+    expect(color.hexToRgb('fff')).toEqual({r: 255, g: 255, b: 255});
+    expect(color.hexToRgb('00ffaa')).toEqual({r: 0, g: 255, b: 170});
 
-    t.deepEqual(color.hexToRgb('0'), null);
-    t.deepEqual(color.hexToRgb('hello world'), null);
-
-    t.end();
+    expect(color.hexToRgb('0')).toEqual(null);
+    expect(color.hexToRgb('hello world')).toEqual(null);
 });
 
-test('rgbToHex', t => {
-    t.strictEqual(color.rgbToHex({r: 0, g: 0, b: 0}), '#000000');
-    t.strictEqual(color.rgbToHex({r: 255, g: 255, b: 255}), '#ffffff');
-    t.strictEqual(color.rgbToHex({r: 0, g: 255, b: 170}), '#00ffaa');
-    t.end();
+test('rgbToHex', () => {
+    expect(color.rgbToHex({r: 0, g: 0, b: 0})).toBe('#000000');
+    expect(color.rgbToHex({r: 255, g: 255, b: 255})).toBe('#ffffff');
+    expect(color.rgbToHex({r: 0, g: 255, b: 170})).toBe('#00ffaa');
 });
 
-test('rgbToDecimal', t => {
-    t.strictEqual(color.rgbToDecimal({r: 0, g: 0, b: 0}), 0);
-    t.strictEqual(color.rgbToDecimal({r: 255, g: 255, b: 255}), 16777215);
-    t.strictEqual(color.rgbToDecimal({r: 0, g: 255, b: 170}), 65450);
-    t.end();
+test('rgbToDecimal', () => {
+    expect(color.rgbToDecimal({r: 0, g: 0, b: 0})).toBe(0);
+    expect(color.rgbToDecimal({r: 255, g: 255, b: 255})).toBe(16777215);
+    expect(color.rgbToDecimal({r: 0, g: 255, b: 170})).toBe(65450);
 });
 
-test('hexToDecimal', t => {
-    t.strictEqual(color.hexToDecimal('#000'), 0);
-    t.strictEqual(color.hexToDecimal('#000000'), 0);
-    t.strictEqual(color.hexToDecimal('#fff'), 16777215);
-    t.strictEqual(color.hexToDecimal('#ffffff'), 16777215);
-    t.strictEqual(color.hexToDecimal('#0fa'), 65450);
-    t.strictEqual(color.hexToDecimal('#00ffaa'), 65450);
-    t.end();
+test('hexToDecimal', () => {
+    expect(color.hexToDecimal('#000')).toBe(0);
+    expect(color.hexToDecimal('#000000')).toBe(0);
+    expect(color.hexToDecimal('#fff')).toBe(16777215);
+    expect(color.hexToDecimal('#ffffff')).toBe(16777215);
+    expect(color.hexToDecimal('#0fa')).toBe(65450);
+    expect(color.hexToDecimal('#00ffaa')).toBe(65450);
 });
 
-test('hsvToRgb', t => {
+test('hsvToRgb', () => {
     rgbSimilar(t, color.hsvToRgb({h: 0, s: 0, v: 0}), {r: 0, g: 0, b: 0});
     rgbSimilar(t, color.hsvToRgb({h: 123, s: 0.1234, v: 0}), {r: 0, g: 0, b: 0});
     rgbSimilar(t, color.hsvToRgb({h: 0, s: 0, v: 1}), {r: 255, g: 255, b: 255});
@@ -105,10 +97,9 @@ test('hsvToRgb', t => {
     rgbSimilar(t, color.hsvToRgb({h: 0, s: 1, v: 1}), {r: 255, g: 0, b: 0});
     rgbSimilar(t, color.hsvToRgb({h: 120, s: 1, v: 1}), {r: 0, g: 255, b: 0});
     rgbSimilar(t, color.hsvToRgb({h: 240, s: 1, v: 1}), {r: 0, g: 0, b: 255});
-    t.end();
 });
 
-test('rgbToHsv', t => {
+test('rgbToHsv', () => {
     hsvSimilar(t, color.rgbToHsv({r: 0, g: 0, b: 0}), {h: 0, s: 0, v: 0});
     hsvSimilar(t, color.rgbToHsv({r: 64, g: 64, b: 64}), {h: 0, s: 0, v: 0.25});
     hsvSimilar(t, color.rgbToHsv({r: 128, g: 128, b: 128}), {h: 0, s: 0, v: 0.5});
@@ -117,10 +108,9 @@ test('rgbToHsv', t => {
     hsvSimilar(t, color.rgbToHsv({r: 255, g: 0, b: 0}), {h: 0, s: 1, v: 1});
     hsvSimilar(t, color.rgbToHsv({r: 0, g: 255, b: 0}), {h: 120, s: 1, v: 1});
     hsvSimilar(t, color.rgbToHsv({r: 0, g: 0, b: 255}), {h: 240, s: 1, v: 1});
-    t.end();
 });
 
-test('mixRgb', t => {
+test('mixRgb', () => {
     rgbSimilar(t, color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, -1), {r: 10, g: 20, b: 30});
     rgbSimilar(t, color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 0), {r: 10, g: 20, b: 30});
     rgbSimilar(t, color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 0.25), {r: 15, g: 25, b: 35});
@@ -128,5 +118,4 @@ test('mixRgb', t => {
     rgbSimilar(t, color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 0.75), {r: 25, g: 35, b: 45});
     rgbSimilar(t, color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 1), {r: 30, g: 40, b: 50});
     rgbSimilar(t, color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 2), {r: 30, g: 40, b: 50});
-    t.end();
 });

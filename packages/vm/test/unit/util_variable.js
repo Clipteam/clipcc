@@ -1,4 +1,3 @@
-const tap = require('tap');
 const Target = require('../../src/engine/target');
 const Runtime = require('../../src/engine/runtime');
 const VariableUtil = require('../../src/util/variable-util');
@@ -54,10 +53,10 @@ const test = tap.test;
 
 test('get all var refs', t => {
     const allVarRefs = VariableUtil.getAllVarRefsForTargets([target1, target2]);
-    t.equal(Object.keys(allVarRefs).length, 2);
-    t.equal(allVarRefs.id1.length, 2);
-    t.equal(allVarRefs.id2.length, 1);
-    t.equal(allVarRefs['not a variable'], undefined);
+    expect(Object.keys(allVarRefs).length).toBe(2);
+    expect(allVarRefs.id1.length).toBe(2);
+    expect(allVarRefs.id2.length).toBe(1);
+    expect(allVarRefs['not a variable']).toBe(undefined);
 
     t.end();
 });
@@ -66,8 +65,8 @@ test('merge variable ids', t => {
     // Redo the id for the variable with 'id1'
     VariableUtil.updateVariableIdentifiers(target1.blocks.getAllVariableAndListReferences().id1, 'renamed id');
     const varField = target1.blocks.getBlock('a block').fields.VARIABLE;
-    t.equals(varField.id, 'renamed id');
-    t.equals(varField.value, 'foo');
+    expect(varField.id).toBe('renamed id');
+    expect(varField.value).toBe('foo');
 
     t.end();
 });
@@ -76,8 +75,8 @@ test('merge variable ids but with new name too', t => {
     // Redo the id for the variable with 'id1'
     VariableUtil.updateVariableIdentifiers(target1.blocks.getAllVariableAndListReferences().id1, 'renamed id', 'baz');
     const varField = target1.blocks.getBlock('a block').fields.VARIABLE;
-    t.equals(varField.id, 'renamed id');
-    t.equals(varField.value, 'baz');
+    expect(varField.id).toBe('renamed id');
+    expect(varField.value).toBe('baz');
 
     t.end();
 });

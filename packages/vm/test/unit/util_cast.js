@@ -1,201 +1,192 @@
-const test = require('tap').test;
 const cast = require('../../src/util/cast');
 
-test('toNumber', t => {
+test('toNumber', () => {
     // Numeric
-    t.strictEqual(cast.toNumber(0), 0);
-    t.strictEqual(cast.toNumber(1), 1);
-    t.strictEqual(cast.toNumber(3.14), 3.14);
+    expect(cast.toNumber(0)).toBe(0);
+    expect(cast.toNumber(1)).toBe(1);
+    expect(cast.toNumber(3.14)).toBe(3.14);
 
     // String
-    t.strictEqual(cast.toNumber('0'), 0);
-    t.strictEqual(cast.toNumber('1'), 1);
-    t.strictEqual(cast.toNumber('3.14'), 3.14);
-    t.strictEqual(cast.toNumber('0.1e10'), 1000000000);
-    t.strictEqual(cast.toNumber('foobar'), 0);
+    expect(cast.toNumber('0')).toBe(0);
+    expect(cast.toNumber('1')).toBe(1);
+    expect(cast.toNumber('3.14')).toBe(3.14);
+    expect(cast.toNumber('0.1e10')).toBe(1000000000);
+    expect(cast.toNumber('foobar')).toBe(0);
 
     // Boolean
-    t.strictEqual(cast.toNumber(true), 1);
-    t.strictEqual(cast.toNumber(false), 0);
-    t.strictEqual(cast.toNumber('true'), 0);
-    t.strictEqual(cast.toNumber('false'), 0);
+    expect(cast.toNumber(true)).toBe(1);
+    expect(cast.toNumber(false)).toBe(0);
+    expect(cast.toNumber('true')).toBe(0);
+    expect(cast.toNumber('false')).toBe(0);
 
     // Undefined & object
-    t.strictEqual(cast.toNumber(undefined), 0);
-    t.strictEqual(cast.toNumber({}), 0);
-    t.strictEqual(cast.toNumber(NaN), 0);
-    t.end();
+    expect(cast.toNumber(undefined)).toBe(0);
+    expect(cast.toNumber({})).toBe(0);
+    expect(cast.toNumber(NaN)).toBe(0);
 });
 
-test('toBoolean', t => {
+test('toBoolean', () => {
     // Numeric
-    t.strictEqual(cast.toBoolean(0), false);
-    t.strictEqual(cast.toBoolean(1), true);
-    t.strictEqual(cast.toBoolean(3.14), true);
+    expect(cast.toBoolean(0)).toBe(false);
+    expect(cast.toBoolean(1)).toBe(true);
+    expect(cast.toBoolean(3.14)).toBe(true);
 
     // String
-    t.strictEqual(cast.toBoolean('0'), false);
-    t.strictEqual(cast.toBoolean('1'), true);
-    t.strictEqual(cast.toBoolean('3.14'), true);
-    t.strictEqual(cast.toBoolean('0.1e10'), true);
-    t.strictEqual(cast.toBoolean('foobar'), true);
+    expect(cast.toBoolean('0')).toBe(false);
+    expect(cast.toBoolean('1')).toBe(true);
+    expect(cast.toBoolean('3.14')).toBe(true);
+    expect(cast.toBoolean('0.1e10')).toBe(true);
+    expect(cast.toBoolean('foobar')).toBe(true);
 
     // Boolean
-    t.strictEqual(cast.toBoolean(true), true);
-    t.strictEqual(cast.toBoolean(false), false);
+    expect(cast.toBoolean(true)).toBe(true);
+    expect(cast.toBoolean(false)).toBe(false);
 
     // Undefined & object
-    t.strictEqual(cast.toBoolean(undefined), false);
-    t.strictEqual(cast.toBoolean({}), true);
-    t.end();
+    expect(cast.toBoolean(undefined)).toBe(false);
+    expect(cast.toBoolean({})).toBe(true);
 });
 
-test('toString', t => {
+test('toString', () => {
     // Numeric
-    t.strictEqual(cast.toString(0), '0');
-    t.strictEqual(cast.toString(1), '1');
-    t.strictEqual(cast.toString(3.14), '3.14');
+    expect(cast.toString(0)).toBe('0');
+    expect(cast.toString(1)).toBe('1');
+    expect(cast.toString(3.14)).toBe('3.14');
 
     // String
-    t.strictEqual(cast.toString('0'), '0');
-    t.strictEqual(cast.toString('1'), '1');
-    t.strictEqual(cast.toString('3.14'), '3.14');
-    t.strictEqual(cast.toString('0.1e10'), '0.1e10');
-    t.strictEqual(cast.toString('foobar'), 'foobar');
+    expect(cast.toString('0')).toBe('0');
+    expect(cast.toString('1')).toBe('1');
+    expect(cast.toString('3.14')).toBe('3.14');
+    expect(cast.toString('0.1e10')).toBe('0.1e10');
+    expect(cast.toString('foobar')).toBe('foobar');
 
     // Boolean
-    t.strictEqual(cast.toString(true), 'true');
-    t.strictEqual(cast.toString(false), 'false');
+    expect(cast.toString(true)).toBe('true');
+    expect(cast.toString(false)).toBe('false');
 
     // Undefined & object
-    t.strictEqual(cast.toString(undefined), 'undefined');
-    t.strictEqual(cast.toString({}), '[object Object]');
-    t.end();
+    expect(cast.toString(undefined)).toBe('undefined');
+    expect(cast.toString({})).toBe('[object Object]');
 });
 
-test('toRgbColorList', t => {
+test('toRgbColorList', () => {
     // Hex (minimal, see "color" util tests)
-    t.deepEqual(cast.toRgbColorList('#000'), [0, 0, 0]);
-    t.deepEqual(cast.toRgbColorList('#000000'), [0, 0, 0]);
-    t.deepEqual(cast.toRgbColorList('#fff'), [255, 255, 255]);
-    t.deepEqual(cast.toRgbColorList('#ffffff'), [255, 255, 255]);
+    expect(cast.toRgbColorList('#000')).toEqual([0, 0, 0]);
+    expect(cast.toRgbColorList('#000000')).toEqual([0, 0, 0]);
+    expect(cast.toRgbColorList('#fff')).toEqual([255, 255, 255]);
+    expect(cast.toRgbColorList('#ffffff')).toEqual([255, 255, 255]);
 
     // Decimal (minimal, see "color" util tests)
-    t.deepEqual(cast.toRgbColorList(0), [0, 0, 0]);
-    t.deepEqual(cast.toRgbColorList(1), [0, 0, 1]);
-    t.deepEqual(cast.toRgbColorList(16777215), [255, 255, 255]);
+    expect(cast.toRgbColorList(0)).toEqual([0, 0, 0]);
+    expect(cast.toRgbColorList(1)).toEqual([0, 0, 1]);
+    expect(cast.toRgbColorList(16777215)).toEqual([255, 255, 255]);
 
     // Malformed
-    t.deepEqual(cast.toRgbColorList('ffffff'), [0, 0, 0]);
-    t.deepEqual(cast.toRgbColorList('foobar'), [0, 0, 0]);
-    t.deepEqual(cast.toRgbColorList('#nothex'), [0, 0, 0]);
-    t.end();
+    expect(cast.toRgbColorList('ffffff')).toEqual([0, 0, 0]);
+    expect(cast.toRgbColorList('foobar')).toEqual([0, 0, 0]);
+    expect(cast.toRgbColorList('#nothex')).toEqual([0, 0, 0]);
 });
 
-test('toRgbColorObject', t => {
+test('toRgbColorObject', () => {
     // Hex (minimal, see "color" util tests)
-    t.deepEqual(cast.toRgbColorObject('#000'), {r: 0, g: 0, b: 0});
-    t.deepEqual(cast.toRgbColorObject('#000000'), {r: 0, g: 0, b: 0});
-    t.deepEqual(cast.toRgbColorObject('#fff'), {r: 255, g: 255, b: 255});
-    t.deepEqual(cast.toRgbColorObject('#ffffff'), {r: 255, g: 255, b: 255});
+    expect(cast.toRgbColorObject('#000')).toEqual({r: 0, g: 0, b: 0});
+    expect(cast.toRgbColorObject('#000000')).toEqual({r: 0, g: 0, b: 0});
+    expect(cast.toRgbColorObject('#fff')).toEqual({r: 255, g: 255, b: 255});
+    expect(cast.toRgbColorObject('#ffffff')).toEqual({r: 255, g: 255, b: 255});
 
     // Decimal (minimal, see "color" util tests)
-    t.deepEqual(cast.toRgbColorObject(0), {a: 255, r: 0, g: 0, b: 0});
-    t.deepEqual(cast.toRgbColorObject(1), {a: 255, r: 0, g: 0, b: 1});
-    t.deepEqual(cast.toRgbColorObject(16777215), {a: 255, r: 255, g: 255, b: 255});
-    t.deepEqual(cast.toRgbColorObject('0x80010203'), {a: 128, r: 1, g: 2, b: 3});
+    expect(cast.toRgbColorObject(0)).toEqual({a: 255, r: 0, g: 0, b: 0});
+    expect(cast.toRgbColorObject(1)).toEqual({a: 255, r: 0, g: 0, b: 1});
+    expect(cast.toRgbColorObject(16777215)).toEqual({a: 255, r: 255, g: 255, b: 255});
+    expect(cast.toRgbColorObject('0x80010203')).toEqual({a: 128, r: 1, g: 2, b: 3});
 
     // Malformed
-    t.deepEqual(cast.toRgbColorObject('ffffff'), {a: 255, r: 0, g: 0, b: 0});
-    t.deepEqual(cast.toRgbColorObject('foobar'), {a: 255, r: 0, g: 0, b: 0});
-    t.deepEqual(cast.toRgbColorObject('#nothex'), {a: 255, r: 0, g: 0, b: 0});
-    t.end();
+    expect(cast.toRgbColorObject('ffffff')).toEqual({a: 255, r: 0, g: 0, b: 0});
+    expect(cast.toRgbColorObject('foobar')).toEqual({a: 255, r: 0, g: 0, b: 0});
+    expect(cast.toRgbColorObject('#nothex')).toEqual({a: 255, r: 0, g: 0, b: 0});
 });
 
-test('compare', t => {
+test('compare', () => {
     // Numeric
-    t.strictEqual(cast.compare(0, 0), 0);
-    t.strictEqual(cast.compare(1, 0), 1);
-    t.strictEqual(cast.compare(0, 1), -1);
-    t.strictEqual(cast.compare(1, 1), 0);
+    expect(cast.compare(0, 0)).toBe(0);
+    expect(cast.compare(1, 0)).toBe(1);
+    expect(cast.compare(0, 1)).toBe(-1);
+    expect(cast.compare(1, 1)).toBe(0);
 
     // String
-    t.strictEqual(cast.compare('0', '0'), 0);
-    t.strictEqual(cast.compare('0.1e10', '1000000000'), 0);
-    t.strictEqual(cast.compare('foobar', 'FOOBAR'), 0);
-    t.ok(cast.compare('dog', 'cat') > 0);
+    expect(cast.compare('0', '0')).toBe(0);
+    expect(cast.compare('0.1e10', '1000000000')).toBe(0);
+    expect(cast.compare('foobar', 'FOOBAR')).toBe(0);
+    expect(cast.compare('dog', 'cat') > 0).toBeTruthy();
 
     // Boolean
-    t.strictEqual(cast.compare(true, true), 0);
-    t.strictEqual(cast.compare(true, false), 1);
-    t.strictEqual(cast.compare(false, true), -1);
-    t.strictEqual(cast.compare(true, true), 0);
+    expect(cast.compare(true, true)).toBe(0);
+    expect(cast.compare(true, false)).toBe(1);
+    expect(cast.compare(false, true)).toBe(-1);
+    expect(cast.compare(true, true)).toBe(0);
 
     // Undefined & object
-    t.strictEqual(cast.compare(undefined, undefined), 0);
-    t.strictEqual(cast.compare(undefined, 'undefined'), 0);
-    t.strictEqual(cast.compare({}, {}), 0);
-    t.strictEqual(cast.compare({}, '[object Object]'), 0);
-    t.end();
+    expect(cast.compare(undefined, undefined)).toBe(0);
+    expect(cast.compare(undefined, 'undefined')).toBe(0);
+    expect(cast.compare({}, {})).toBe(0);
+    expect(cast.compare({}, '[object Object]')).toBe(0);
 });
 
-test('isInt', t => {
+test('isInt', () => {
     // Numeric
-    t.strictEqual(cast.isInt(0), true);
-    t.strictEqual(cast.isInt(1), true);
-    t.strictEqual(cast.isInt(0.0), true);
-    t.strictEqual(cast.isInt(3.14), false);
-    t.strictEqual(cast.isInt(NaN), true);
+    expect(cast.isInt(0)).toBe(true);
+    expect(cast.isInt(1)).toBe(true);
+    expect(cast.isInt(0.0)).toBe(true);
+    expect(cast.isInt(3.14)).toBe(false);
+    expect(cast.isInt(NaN)).toBe(true);
 
     // String
-    t.strictEqual(cast.isInt('0'), true);
-    t.strictEqual(cast.isInt('1'), true);
-    t.strictEqual(cast.isInt('0.0'), false);
-    t.strictEqual(cast.isInt('0.1e10'), false);
-    t.strictEqual(cast.isInt('3.14'), false);
+    expect(cast.isInt('0')).toBe(true);
+    expect(cast.isInt('1')).toBe(true);
+    expect(cast.isInt('0.0')).toBe(false);
+    expect(cast.isInt('0.1e10')).toBe(false);
+    expect(cast.isInt('3.14')).toBe(false);
 
     // Boolean
-    t.strictEqual(cast.isInt(true), true);
-    t.strictEqual(cast.isInt(false), true);
+    expect(cast.isInt(true)).toBe(true);
+    expect(cast.isInt(false)).toBe(true);
 
     // Undefined & object
-    t.strictEqual(cast.isInt(undefined), false);
-    t.strictEqual(cast.isInt({}), false);
-    t.end();
+    expect(cast.isInt(undefined)).toBe(false);
+    expect(cast.isInt({})).toBe(false);
 });
 
-test('toListIndex', t => {
+test('toListIndex', () => {
     const list = [0, 1, 2, 3, 4, 5];
     const empty = [];
 
     // Valid
-    t.strictEqual(cast.toListIndex(1, list.length, false), 1);
-    t.strictEqual(cast.toListIndex(6, list.length, false), 6);
+    expect(cast.toListIndex(1, list.length, false)).toBe(1);
+    expect(cast.toListIndex(6, list.length, false)).toBe(6);
 
     // Invalid
-    t.strictEqual(cast.toListIndex(-1, list.length, false), cast.LIST_INVALID);
-    t.strictEqual(cast.toListIndex(0.1, list.length, false), cast.LIST_INVALID);
-    t.strictEqual(cast.toListIndex(0, list.length, false), cast.LIST_INVALID);
-    t.strictEqual(cast.toListIndex(7, list.length, false), cast.LIST_INVALID);
+    expect(cast.toListIndex(-1, list.length, false)).toBe(cast.LIST_INVALID);
+    expect(cast.toListIndex(0.1, list.length, false)).toBe(cast.LIST_INVALID);
+    expect(cast.toListIndex(0, list.length, false)).toBe(cast.LIST_INVALID);
+    expect(cast.toListIndex(7, list.length, false)).toBe(cast.LIST_INVALID);
 
     // "all"
-    t.strictEqual(cast.toListIndex('all', list.length, true), cast.LIST_ALL);
-    t.strictEqual(cast.toListIndex('all', list.length, false), cast.LIST_INVALID);
+    expect(cast.toListIndex('all', list.length, true)).toBe(cast.LIST_ALL);
+    expect(cast.toListIndex('all', list.length, false)).toBe(cast.LIST_INVALID);
 
     // "last"
-    t.strictEqual(cast.toListIndex('last', list.length, false), list.length);
-    t.strictEqual(cast.toListIndex('last', empty.length, false), cast.LIST_INVALID);
+    expect(cast.toListIndex('last', list.length, false)).toBe(list.length);
+    expect(cast.toListIndex('last', empty.length, false)).toBe(cast.LIST_INVALID);
 
     // "random"
     const random = cast.toListIndex('random', list.length, false);
-    t.ok(random <= list.length);
-    t.ok(random > 0);
-    t.strictEqual(cast.toListIndex('random', empty.length, false), cast.LIST_INVALID);
+    expect(random <= list.length).toBeTruthy();
+    expect(random > 0).toBeTruthy();
+    expect(cast.toListIndex('random', empty.length, false)).toBe(cast.LIST_INVALID);
 
     // "any" (alias for "random")
     const any = cast.toListIndex('any', list.length, false);
-    t.ok(any <= list.length);
-    t.ok(any > 0);
-    t.strictEqual(cast.toListIndex('any', empty.length, false), cast.LIST_INVALID);
-    t.end();
+    expect(any <= list.length).toBeTruthy();
+    expect(any > 0).toBeTruthy();
+    expect(cast.toListIndex('any', empty.length, false)).toBe(cast.LIST_INVALID);
 });

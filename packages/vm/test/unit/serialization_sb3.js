@@ -1,4 +1,3 @@
-const test = require('tap').test;
 const path = require('path');
 const VirtualMachine = require('../../src/index');
 const Runtime = require('../../src/engine/runtime');
@@ -15,142 +14,142 @@ const originSB3ProjectPath = path.resolve(__dirname, '../fixtures/origin.sb3');
 const originAbsentSB3ProjectPath = path.resolve(__dirname, '../fixtures/origin-absent.sb3');
 const FakeRenderer = require('../fixtures/fake-renderer');
 
-test('serialize', t => {
+test('serialize', done => {
     const vm = new VirtualMachine();
     vm.loadProject(readFileToBuffer(exampleProjectPath))
         .then(() => {
             const result = sb3.serialize(vm.runtime);
             // @todo Analyze
-            t.type(JSON.stringify(result), 'string');
-            t.end();
+            expect(typeof JSON.stringify(result)).toBe('string');
+            done();
         });
 });
 
-test('deserialize', t => {
+test('deserialize', done => {
     const vm = new VirtualMachine();
     sb3.deserialize('', vm.runtime).then(({targets}) => {
         // @todo Analyze
-        t.type(targets, 'object');
-        t.end();
+        expect(typeof targets).toBe('object');
+        done();
     });
 });
 
 
-test('serialize sb2 project with comments as sb3', t => {
+test('serialize sb2 project with comments as sb3', done => {
     const vm = new VirtualMachine();
     vm.loadProject(readFileToBuffer(commentsSB2ProjectPath))
         .then(() => {
             const result = sb3.serialize(vm.runtime);
 
-            t.type(JSON.stringify(result), 'string');
-            t.type(result.targets, 'object');
-            t.equal(Array.isArray(result.targets), true);
-            t.equal(result.targets.length, 2);
+            expect(typeof JSON.stringify(result)).toBe('string');
+            expect(typeof result.targets).toBe('object');
+            expect(Array.isArray(result.targets)).toBe(true);
+            expect(result.targets.length).toBe(2);
 
             const stage = result.targets[0];
-            t.equal(stage.isStage, true);
+            expect(stage.isStage).toBe(true);
             // The stage has 0 blocks, and 1 workspace comment
-            t.type(stage.blocks, 'object');
-            t.equal(Object.keys(stage.blocks).length, 0);
-            t.type(stage.comments, 'object');
-            t.equal(Object.keys(stage.comments).length, 1);
+            expect(typeof stage.blocks).toBe('object');
+            expect(Object.keys(stage.blocks).length).toBe(0);
+            expect(typeof stage.comments).toBe('object');
+            expect(Object.keys(stage.comments).length).toBe(1);
             const stageBlockComments = Object.values(stage.comments).filter(comment => !!comment.blockId);
             const stageWorkspaceComments = Object.values(stage.comments).filter(comment => comment.blockId === null);
-            t.equal(stageBlockComments.length, 0);
-            t.equal(stageWorkspaceComments.length, 1);
+            expect(stageBlockComments.length).toBe(0);
+            expect(stageWorkspaceComments.length).toBe(1);
 
             const sprite = result.targets[1];
-            t.equal(sprite.isStage, false);
-            t.type(sprite.blocks, 'object');
+            expect(sprite.isStage).toBe(false);
+            expect(typeof sprite.blocks).toBe('object');
             // Sprite 1 has 6 blocks, 5 block comments, and 1 workspace comment
-            t.equal(Object.keys(sprite.blocks).length, 6);
-            t.type(sprite.comments, 'object');
-            t.equal(Object.keys(sprite.comments).length, 6);
+            expect(Object.keys(sprite.blocks).length).toBe(6);
+            expect(typeof sprite.comments).toBe('object');
+            expect(Object.keys(sprite.comments).length).toBe(6);
 
             const spriteBlockComments = Object.values(sprite.comments).filter(comment => !!comment.blockId);
             const spriteWorkspaceComments = Object.values(sprite.comments).filter(comment => comment.blockId === null);
-            t.equal(spriteBlockComments.length, 5);
-            t.equal(spriteWorkspaceComments.length, 1);
+            expect(spriteBlockComments.length).toBe(5);
+            expect(spriteWorkspaceComments.length).toBe(1);
 
-            t.end();
+            done();
         });
 });
 
-test('deserialize sb3 project with comments', t => {
+test('deserialize sb3 project with comments', done => {
     const vm = new VirtualMachine();
     vm.loadProject(readFileToBuffer(commentsSB3ProjectPath))
         .then(() => {
             const runtime = vm.runtime;
 
-            t.type(runtime.targets, 'object');
-            t.equal(Array.isArray(runtime.targets), true);
-            t.equal(runtime.targets.length, 2);
+            expect(typeof runtime.targets).toBe('object');
+            expect(Array.isArray(runtime.targets)).toBe(true);
+            expect(runtime.targets.length).toBe(2);
 
             const stage = runtime.targets[0];
-            t.equal(stage.isStage, true);
+            expect(stage.isStage).toBe(true);
             // The stage has 0 blocks, and 1 workspace comment
-            t.type(stage.blocks, 'object');
-            t.equal(Object.keys(stage.blocks._blocks).length, 0);
-            t.type(stage.comments, 'object');
-            t.equal(Object.keys(stage.comments).length, 1);
+            expect(typeof stage.blocks).toBe('object');
+            expect(Object.keys(stage.blocks._blocks).length).toBe(0);
+            expect(typeof stage.comments).toBe('object');
+            expect(Object.keys(stage.comments).length).toBe(1);
             const stageBlockComments = Object.values(stage.comments).filter(comment => !!comment.blockId);
             const stageWorkspaceComments = Object.values(stage.comments).filter(comment => comment.blockId === null);
-            t.equal(stageBlockComments.length, 0);
-            t.equal(stageWorkspaceComments.length, 1);
+            expect(stageBlockComments.length).toBe(0);
+            expect(stageWorkspaceComments.length).toBe(1);
 
             const sprite = runtime.targets[1];
-            t.equal(sprite.isStage, false);
-            t.type(sprite.blocks, 'object');
+            expect(sprite.isStage).toBe(false);
+            expect(typeof sprite.blocks).toBe('object');
             // Sprite 1 has 6 blocks, 5 block comments, and 1 workspace comment
-            t.equal(Object.values(sprite.blocks._blocks).filter(block => !block.shadow).length, 6);
-            t.type(sprite.comments, 'object');
-            t.equal(Object.keys(sprite.comments).length, 6);
+            expect(Object.values(sprite.blocks._blocks).filter(block => !block.shadow).length).toBe(6);
+            expect(typeof sprite.comments).toBe('object');
+            expect(Object.keys(sprite.comments).length).toBe(6);
 
             const spriteBlockComments = Object.values(sprite.comments).filter(comment => !!comment.blockId);
             const spriteWorkspaceComments = Object.values(sprite.comments).filter(comment => comment.blockId === null);
-            t.equal(spriteBlockComments.length, 5);
-            t.equal(spriteWorkspaceComments.length, 1);
+            expect(spriteBlockComments.length).toBe(5);
+            expect(spriteWorkspaceComments.length).toBe(1);
 
-            t.end();
+            done();
         });
 });
 
-test('deserialize sb3 project with comments - no duplicate id serialization', t => {
+test('deserialize sb3 project with comments - no duplicate id serialization', done => {
     const vm = new VirtualMachine();
     vm.loadProject(readFileToBuffer(commentsSB3NoDupeIds))
         .then(() => {
             const runtime = vm.runtime;
 
-            t.type(runtime.targets, 'object');
-            t.equal(Array.isArray(runtime.targets), true);
-            t.equal(runtime.targets.length, 2);
+            expect(typeof runtime.targets).toBe('object');
+            expect(Array.isArray(runtime.targets)).toBe(true);
+            expect(runtime.targets.length).toBe(2);
 
             const stage = runtime.targets[0];
-            t.equal(stage.isStage, true);
+            expect(stage.isStage).toBe(true);
             // The stage has 0 blocks, and 0 workspace comment
-            t.type(stage.blocks, 'object');
-            t.equal(Object.keys(stage.blocks._blocks).length, 0);
-            t.type(stage.comments, 'object');
-            t.equal(Object.keys(stage.comments).length, 0);
+            expect(typeof stage.blocks).toBe('object');
+            expect(Object.keys(stage.blocks._blocks).length).toBe(0);
+            expect(typeof stage.comments).toBe('object');
+            expect(Object.keys(stage.comments).length).toBe(0);
 
             const sprite = runtime.targets[1];
-            t.equal(sprite.isStage, false);
-            t.type(sprite.blocks, 'object');
+            expect(sprite.isStage).toBe(false);
+            expect(typeof sprite.blocks).toBe('object');
             // Sprite1 has 1 blocks, 1 block comment, and 1 workspace comment
-            t.equal(Object.values(sprite.blocks._blocks).filter(block => !block.shadow).length, 1);
-            t.type(sprite.comments, 'object');
-            t.equal(Object.keys(sprite.comments).length, 2);
+            expect(Object.values(sprite.blocks._blocks).filter(block => !block.shadow).length).toBe(1);
+            expect(typeof sprite.comments).toBe('object');
+            expect(Object.keys(sprite.comments).length).toBe(2);
 
             const spriteBlockComments = Object.values(sprite.comments).filter(comment => !!comment.blockId);
             const spriteWorkspaceComments = Object.values(sprite.comments).filter(comment => comment.blockId === null);
-            t.equal(spriteBlockComments.length, 1);
-            t.equal(spriteWorkspaceComments.length, 1);
+            expect(spriteBlockComments.length).toBe(1);
+            expect(spriteWorkspaceComments.length).toBe(1);
 
-            t.end();
+            done();
         });
 });
 
-test('serializing and deserializing sb3 preserves sprite layer order', t => {
+test('serializing and deserializing sb3 preserves sprite layer order', done => {
     const vm = new VirtualMachine();
     vm.attachRenderer(new FakeRenderer());
     return vm.loadProject(readFileToBuffer(path.resolve(__dirname, '../fixtures/ordering.sb2')))
@@ -166,24 +165,24 @@ test('serializing and deserializing sb3 preserves sprite layer order', t => {
 
             const result = sb3.serialize(vm.runtime);
 
-            t.type(JSON.stringify(result), 'string');
-            t.type(result.targets, 'object');
-            t.equal(Array.isArray(result.targets), true);
-            t.equal(result.targets.length, 4);
+            expect(typeof JSON.stringify(result)).toBe('string');
+            expect(typeof result.targets).toBe('object');
+            expect(Array.isArray(result.targets)).toBe(true);
+            expect(result.targets.length).toBe(4);
 
             // First check that the sprites are ordered correctly (as they would
             // appear in the target pane)
-            t.equal(result.targets[0].name, 'Stage');
-            t.equal(result.targets[1].name, 'First');
-            t.equal(result.targets[2].name, 'Second');
-            t.equal(result.targets[3].name, 'Third');
+            expect(result.targets[0].name).toBe('Stage');
+            expect(result.targets[1].name).toBe('First');
+            expect(result.targets[2].name).toBe('Second');
+            expect(result.targets[3].name).toBe('Third');
 
             // Check that they are in the correct layer order (as they would render
             // back to front on the stage)
-            t.equal(result.targets[0].layerOrder, 0);
-            t.equal(result.targets[1].layerOrder, 2);
-            t.equal(result.targets[2].layerOrder, 1);
-            t.equal(result.targets[3].layerOrder, 3);
+            expect(result.targets[0].layerOrder).toBe(0);
+            expect(result.targets[1].layerOrder).toBe(2);
+            expect(result.targets[2].layerOrder).toBe(1);
+            expect(result.targets[3].layerOrder).toBe(3);
 
             return result;
         })
@@ -193,46 +192,46 @@ test('serializing and deserializing sb3 preserves sprite layer order', t => {
                 .then(({targets}) => {
                     // First check that the sprites are ordered correctly (as they would
                     // appear in the target pane)
-                    t.equal(targets[0].sprite.name, 'Stage');
-                    t.equal(targets[1].sprite.name, 'First');
-                    t.equal(targets[2].sprite.name, 'Second');
-                    t.equal(targets[3].sprite.name, 'Third');
+                    expect(targets[0].sprite.name).toBe('Stage');
+                    expect(targets[1].sprite.name).toBe('First');
+                    expect(targets[2].sprite.name).toBe('Second');
+                    expect(targets[3].sprite.name).toBe('Third');
 
                     // Check that they are in the correct layer order (as they would render
                     // back to front on the stage)
-                    t.equal(targets[0].layerOrder, 0);
-                    t.equal(targets[1].layerOrder, 2);
-                    t.equal(targets[2].layerOrder, 1);
-                    t.equal(targets[3].layerOrder, 3);
+                    expect(targets[0].layerOrder).toBe(0);
+                    expect(targets[1].layerOrder).toBe(2);
+                    expect(targets[2].layerOrder).toBe(1);
+                    expect(targets[3].layerOrder).toBe(3);
 
-                    t.end();
+                    done();
                 }));
 });
 
-test('serializeBlocks', t => {
+test('serializeBlocks', done => {
     const vm = new VirtualMachine();
     vm.loadProject(readFileToBuffer(commentsSB3ProjectPath))
         .then(() => {
             const blocks = vm.runtime.targets[1].blocks._blocks;
             const result = sb3.serializeBlocks(blocks);
             // @todo Analyze
-            t.type(result[0], 'object');
-            t.ok(Object.keys(result[0]).length < Object.keys(blocks).length, 'less blocks in serialized format');
-            t.ok(Array.isArray(result[1]));
-            t.end();
+            expect(typeof result[0]).toBe('object');
+            expect(Object.keys(result[0]).length < Object.keys(blocks).length).toBeTruthy();
+            expect(Array.isArray(result[1])).toBeTruthy();
+            done();
         });
 });
 
-test('serializeBlocks serializes x and y for topLevel blocks with x,y of 0,0', t => {
+test('serializeBlocks serializes x and y for topLevel blocks with x,y of 0,0', done => {
     const vm = new VirtualMachine();
     vm.loadProject(readFileToBuffer(topLevelReportersProjectPath))
         .then(() => {
             // Verify that there are 2 blocks and they are both top level
             const blocks = vm.runtime.targets[1].blocks._blocks;
             const blockIds = Object.keys(blocks);
-            t.equal(blockIds.length, 2);
+            expect(blockIds.length).toBe(2);
             const blocksArray = blockIds.map(key => blocks[key]);
-            t.equal(blocksArray.every(b => b.topLevel), true);
+            expect(blocksArray.every(b => b.topLevel)).toBe(true);
             // Simulate cleaning up the blocks by resetting x and y positions to 0
             blockIds.forEach(blockId => {
                 blocks[blockId].x = 0;
@@ -241,33 +240,33 @@ test('serializeBlocks serializes x and y for topLevel blocks with x,y of 0,0', t
             const result = sb3.serializeBlocks(blocks);
             const serializedBlocks = result[0];
 
-            t.type(serializedBlocks, 'object');
+            expect(typeof serializedBlocks).toBe('object');
             const serializedBlockIds = Object.keys(serializedBlocks);
-            t.equal(serializedBlockIds.length, 2);
+            expect(serializedBlockIds.length).toBe(2);
             const firstBlock = serializedBlocks[serializedBlockIds[0]];
             const secondBlock = serializedBlocks[serializedBlockIds[1]];
-            t.equal(firstBlock.x, 0);
-            t.equal(firstBlock.y, 0);
-            t.equal(secondBlock.x, 0);
-            t.equal(secondBlock.y, 0);
+            expect(firstBlock.x).toBe(0);
+            expect(firstBlock.y).toBe(0);
+            expect(secondBlock.x).toBe(0);
+            expect(secondBlock.y).toBe(0);
 
-            t.end();
+            done();
         });
 });
 
-test('deserializeBlocks', t => {
+test('deserializeBlocks', done => {
     const vm = new VirtualMachine();
     vm.loadProject(readFileToBuffer(commentsSB3ProjectPath))
         .then(() => {
             const blocks = vm.runtime.targets[1].blocks._blocks;
             const serialized = sb3.serializeBlocks(blocks)[0];
             const deserialized = sb3.deserializeBlocks(serialized);
-            t.equal(Object.keys(deserialized).length, Object.keys(blocks).length, 'same number of blocks');
-            t.end();
+            expect(Object.keys(deserialized).length).toBe(Object.keys(blocks).length);
+            done();
         });
 });
 
-test('deserializeBlocks on already deserialized input', t => {
+test('deserializeBlocks on already deserialized input', done => {
     const vm = new VirtualMachine();
     vm.loadProject(readFileToBuffer(commentsSB3ProjectPath))
         .then(() => {
@@ -275,89 +274,87 @@ test('deserializeBlocks on already deserialized input', t => {
             const serialized = sb3.serializeBlocks(blocks)[0];
             const deserialized = sb3.deserializeBlocks(serialized);
             const deserializedAgain = sb3.deserializeBlocks(deserialized);
-            t.deepEqual(deserialized, deserializedAgain, 'no change from second pass of deserialize');
-            t.end();
+            expect(deserialized).toEqual(deserializedAgain);
+            done();
         });
 });
 
-test('getExtensionIdForOpcode', t => {
-    t.equal(sb3.getExtensionIdForOpcode('wedo_loopy'), 'wedo');
+test('getExtensionIdForOpcode', () => {
+    expect(sb3.getExtensionIdForOpcode('wedo_loopy')).toBe('wedo');
 
     // does not consider CORE to be extensions
-    t.false(sb3.getExtensionIdForOpcode('control_loopy'));
+    expect(sb3.getExtensionIdForOpcode('control_loopy')).toBeFalsy();
 
     // only considers things before the first underscore
-    t.equal(sb3.getExtensionIdForOpcode('hello_there_loopy'), 'hello');
+    expect(sb3.getExtensionIdForOpcode('hello_there_loopy')).toBe('hello');
 
     // does not return anything for opcodes with no extension
-    t.false(sb3.getExtensionIdForOpcode('hello'));
+    expect(sb3.getExtensionIdForOpcode('hello')).toBeFalsy();
 
     // forbidden characters must be replaced with '-'
-    t.equal(sb3.getExtensionIdForOpcode('hi:there/happy_people'), 'hi-there-happy');
-
-    t.end();
+    expect(sb3.getExtensionIdForOpcode('hi:there/happy_people')).toBe('hi-there-happy');
 });
 
-test('(#1608) serializeBlocks maintains top level variable reporters', t => {
+test('(#1608) serializeBlocks maintains top level variable reporters', done => {
     const vm = new VirtualMachine();
     vm.loadProject(readFileToBuffer(variableReporterSB2ProjectPath))
         .then(() => {
             const blocks = vm.runtime.targets[0].blocks._blocks;
             const result = sb3.serialize(vm.runtime);
             // Project should have 1 block, a top-level variable reporter
-            t.equal(Object.keys(blocks).length, 1);
-            t.equal(Object.keys(result.targets[0].blocks).length, 1);
+            expect(Object.keys(blocks).length).toBe(1);
+            expect(Object.keys(result.targets[0].blocks).length).toBe(1);
 
             // Make sure deserializing these blocks works
-            t.doesNotThrow(() => {
+            expect(() => {
                 sb3.deserialize(JSON.parse(JSON.stringify(result)), vm.runtime);
-            });
-            t.end();
+            }).not.toThrow();
+            done();
         });
 });
 
-test('(#1850) sprite draggability state read when loading SB3 file', t => {
+test('(#1850) sprite draggability state read when loading SB3 file', done => {
     const vm = new VirtualMachine();
     vm.loadProject(readFileToBuffer(draggableSB3ProjectPath))
         .then(() => {
             const sprite1Obj = vm.runtime.targets.find(target => target.sprite.name === 'Sprite1');
             // Sprite1 in project should have draggable set to true
-            t.equal(sprite1Obj.draggable, true);
-            t.end();
+            expect(sprite1Obj.draggable).toBe(true);
+            done();
         });
 });
 
-test('load origin value from SB3 file json metadata', t => {
+test('load origin value from SB3 file json metadata', done => {
     const vm = new VirtualMachine();
     vm.loadProject(readFileToBuffer(originSB3ProjectPath))
         .then(() => {
-            t.type(vm.runtime.origin, 'string');
+            expect(typeof vm.runtime.origin).toBe('string');
         })
         .then(() => vm.loadProject(readFileToBuffer(originAbsentSB3ProjectPath)))
         .then(() => {
             // After loading a project with an origin, then loading one without an origin,
             // origin value should no longer be set.
-            t.equal(vm.runtime.origin, null);
-            t.end();
+            expect(vm.runtime.origin).toBe(null);
+            done();
         });
 });
 
-test('serialize origin value if it is present', t => {
+test('serialize origin value if it is present', done => {
     const vm = new VirtualMachine();
     vm.loadProject(readFileToBuffer(originSB3ProjectPath))
         .then(() => {
             const result = sb3.serialize(vm.runtime);
-            t.type(result.meta.origin, 'string');
-            t.end();
+            expect(typeof result.meta.origin).toBe('string');
+            done();
         });
 });
 
-test('do not serialize origin value if it is not present', t => {
+test('do not serialize origin value if it is not present', done => {
     const vm = new VirtualMachine();
     vm.loadProject(readFileToBuffer(originAbsentSB3ProjectPath))
         .then(() => {
             const result = sb3.serialize(vm.runtime);
-            t.equal(result.meta.origin, undefined);
-            t.end();
+            expect(result.meta.origin).toBe(undefined);
+            done();
         });
 });

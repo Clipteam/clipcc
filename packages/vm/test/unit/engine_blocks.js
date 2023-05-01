@@ -1,38 +1,35 @@
-const test = require('tap').test;
 const Blocks = require('../../src/engine/blocks');
 const Variable = require('../../src/engine/variable');
 const adapter = require('../../src/engine/adapter');
 const events = require('../fixtures/events.json');
 const Runtime = require('../../src/engine/runtime');
 
-test('spec', t => {
+test('spec', () => {
     const b = new Blocks(new Runtime());
 
-    t.type(Blocks, 'function');
-    t.type(b, 'object');
-    t.ok(b instanceof Blocks);
+    expect(typeof Blocks).toBe('function');
+    expect(typeof b).toBe('object');
+    expect(b instanceof Blocks).toBeTruthy();
 
-    t.type(b._blocks, 'object');
-    t.type(b._scripts, 'object');
-    t.ok(Array.isArray(b._scripts));
+    expect(typeof b._blocks).toBe('object');
+    expect(typeof b._scripts).toBe('object');
+    expect(Array.isArray(b._scripts)).toBeTruthy();
 
-    t.type(b.createBlock, 'function');
-    t.type(b.moveBlock, 'function');
-    t.type(b.changeBlock, 'function');
-    t.type(b.deleteBlock, 'function');
-    t.type(b.getBlock, 'function');
-    t.type(b.getScripts, 'function');
-    t.type(b.getNextBlock, 'function');
-    t.type(b.getBranch, 'function');
-    t.type(b.getOpcode, 'function');
-    t.type(b.mutationToXML, 'function');
-    t.type(b.updateSensingOfReference, 'function');
-
-    t.end();
+    expect(typeof b.createBlock).toBe('function');
+    expect(typeof b.moveBlock).toBe('function');
+    expect(typeof b.changeBlock).toBe('function');
+    expect(typeof b.deleteBlock).toBe('function');
+    expect(typeof b.getBlock).toBe('function');
+    expect(typeof b.getScripts).toBe('function');
+    expect(typeof b.getNextBlock).toBe('function');
+    expect(typeof b.getBranch).toBe('function');
+    expect(typeof b.getOpcode).toBe('function');
+    expect(typeof b.mutationToXML).toBe('function');
+    expect(typeof b.updateSensingOfReference).toBe('function');
 });
 
 // Getter tests
-test('getBlock', t => {
+test('getBlock', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'foo',
@@ -43,17 +40,16 @@ test('getBlock', t => {
         topLevel: true
     });
     const block = b.getBlock('foo');
-    t.type(block, 'object');
+    expect(typeof block).toBe('object');
     const notBlock = b.getBlock('?');
-    t.type(notBlock, 'undefined');
-    t.end();
+    expect(typeof notBlock).toBe('undefined');
 });
 
-test('getScripts', t => {
+test('getScripts', () => {
     const b = new Blocks(new Runtime());
     let scripts = b.getScripts();
-    t.type(scripts, 'object');
-    t.equals(scripts.length, 0);
+    expect(typeof scripts).toBe('object');
+    expect(scripts.length).toBe(0);
     // Create two top-level blocks and one not.
     b.createBlock({
         id: 'foo',
@@ -81,16 +77,14 @@ test('getScripts', t => {
     });
 
     scripts = b.getScripts();
-    t.type(scripts, 'object');
-    t.equals(scripts.length, 2);
-    t.ok(scripts.indexOf('foo') > -1);
-    t.ok(scripts.indexOf('foo2') > -1);
-    t.equals(scripts.indexOf('foo3'), -1);
-    t.end();
-
+    expect(typeof scripts).toBe('object');
+    expect(scripts.length).toBe(2);
+    expect(scripts.indexOf('foo') > -1).toBeTruthy();
+    expect(scripts.indexOf('foo2') > -1).toBeTruthy();
+    expect(scripts.indexOf('foo3')).toBe(-1);
 });
 
-test('getNextBlock', t => {
+test('getNextBlock', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'foo',
@@ -102,7 +96,7 @@ test('getNextBlock', t => {
     });
 
     let next = b.getNextBlock('foo');
-    t.equals(next, null);
+    expect(next).toBe(null);
 
     // Add a block with "foo" as its next.
     b.createBlock({
@@ -115,16 +109,14 @@ test('getNextBlock', t => {
     });
 
     next = b.getNextBlock('foo2');
-    t.equals(next, 'foo');
+    expect(next).toBe('foo');
 
     // Block that doesn't exist.
     const noBlock = b.getNextBlock('?');
-    t.equals(noBlock, null);
-
-    t.end();
+    expect(noBlock).toBe(null);
 });
 
-test('getBranch', t => {
+test('getBranch', () => {
     const b = new Blocks(new Runtime());
     // Single branch
     b.createBlock({
@@ -151,15 +143,13 @@ test('getBranch', t => {
     });
 
     const branch = b.getBranch('foo');
-    t.equals(branch, 'foo2');
+    expect(branch).toBe('foo2');
 
     const notBranch = b.getBranch('?');
-    t.equals(notBranch, null);
-
-    t.end();
+    expect(notBranch).toBe(null);
 });
 
-test('getBranch2', t => {
+test('getBranch2', () => {
     const b = new Blocks(new Runtime());
     // Second branch
     b.createBlock({
@@ -200,13 +190,11 @@ test('getBranch2', t => {
 
     const branch1 = b.getBranch('foo', 1);
     const branch2 = b.getBranch('foo', 2);
-    t.equals(branch1, 'foo2');
-    t.equals(branch2, 'foo3');
-
-    t.end();
+    expect(branch1).toBe('foo2');
+    expect(branch2).toBe('foo3');
 });
 
-test('getBranch with none', t => {
+test('getBranch with none', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'foo',
@@ -217,11 +205,10 @@ test('getBranch with none', t => {
         topLevel: true
     });
     const noBranch = b.getBranch('foo');
-    t.equals(noBranch, null);
-    t.end();
+    expect(noBranch).toBe(null);
 });
 
-test('getOpcode', t => {
+test('getOpcode', () => {
     const b = new Blocks(new Runtime());
     const block = {
         id: 'foo',
@@ -233,14 +220,13 @@ test('getOpcode', t => {
     };
     b.createBlock(block);
     const opcode = b.getOpcode(block);
-    t.equals(opcode, 'TEST_BLOCK');
+    expect(opcode).toBe('TEST_BLOCK');
     const undefinedBlock = b.getBlock('?');
     const undefinedOpcode = b.getOpcode(undefinedBlock);
-    t.equals(undefinedOpcode, null);
-    t.end();
+    expect(undefinedOpcode).toBe(null);
 });
 
-test('mutationToXML', t => {
+test('mutationToXML', () => {
     const b = new Blocks(new Runtime());
     const testStringRaw = '"arbitrary" & \'complicated\' test string';
     const testStringEscaped = '\\&quot;arbitrary\\&quot; &amp; &apos;complicated&apos; test string';
@@ -252,15 +238,13 @@ test('mutationToXML', t => {
         }
     };
     const xml = b.mutationToXML(mutation);
-    t.equals(
-        xml,
+    expect(xml).toBe(
         `<mutation blockInfo="{&quot;text&quot;:&quot;${testStringEscaped}&quot;}"></mutation>`
     );
-    t.end();
 });
 
 // Block events tests
-test('create', t => {
+test('create', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'foo',
@@ -271,13 +255,12 @@ test('create', t => {
         topLevel: true
     });
 
-    t.type(b._blocks.foo, 'object');
-    t.equal(b._blocks.foo.opcode, 'TEST_BLOCK');
-    t.notEqual(b._scripts.indexOf('foo'), -1);
-    t.end();
+    expect(typeof b._blocks.foo).toBe('object');
+    expect(b._blocks.foo.opcode).toBe('TEST_BLOCK');
+    expect(b._scripts.indexOf('foo')).not.toBe(-1);
 });
 
-test('move', t => {
+test('move', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'foo',
@@ -301,23 +284,21 @@ test('move', t => {
         id: 'bar',
         newParent: 'foo'
     });
-    t.equal(b._scripts.length, 1);
-    t.equal(Object.keys(b._blocks).length, 2);
-    t.equal(b._blocks.foo.next, 'bar');
+    expect(b._scripts.length).toBe(1);
+    expect(Object.keys(b._blocks).length).toBe(2);
+    expect(b._blocks.foo.next).toBe('bar');
 
     // Detach 'bar' from 'foo'
     b.moveBlock({
         id: 'bar',
         oldParent: 'foo'
     });
-    t.equal(b._scripts.length, 2);
-    t.equal(Object.keys(b._blocks).length, 2);
-    t.equal(b._blocks.foo.next, null);
-
-    t.end();
+    expect(b._scripts.length).toBe(2);
+    expect(Object.keys(b._blocks).length).toBe(2);
+    expect(b._blocks.foo.next).toBe(null);
 });
 
-test('move into empty', t => {
+test('move into empty', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'foo',
@@ -340,11 +321,10 @@ test('move into empty', t => {
         newInput: 'fooInput',
         newParent: 'foo'
     });
-    t.equal(b._blocks.foo.inputs.fooInput.block, 'bar');
-    t.end();
+    expect(b._blocks.foo.inputs.fooInput.block).toBe('bar');
 });
 
-test('move no obscure shadow', t => {
+test('move no obscure shadow', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'foo',
@@ -373,12 +353,11 @@ test('move no obscure shadow', t => {
         newInput: 'fooInput',
         newParent: 'foo'
     });
-    t.equal(b._blocks.foo.inputs.fooInput.block, 'bar');
-    t.equal(b._blocks.foo.inputs.fooInput.shadow, 'y');
-    t.end();
+    expect(b._blocks.foo.inputs.fooInput.block).toBe('bar');
+    expect(b._blocks.foo.inputs.fooInput.shadow).toBe('y');
 });
 
-test('move - attaching new shadow', t => {
+test('move - attaching new shadow', () => {
     const b = new Blocks(new Runtime());
     // Block/shadow are null to mimic state right after a procedure_call block
     // is mutated by adding an input. The "move" will attach the new shadow.
@@ -410,12 +389,11 @@ test('move - attaching new shadow', t => {
         newInput: 'fooInput',
         newParent: 'foo'
     });
-    t.equal(b._blocks.foo.inputs.fooInput.block, 'bar');
-    t.equal(b._blocks.foo.inputs.fooInput.shadow, 'bar');
-    t.end();
+    expect(b._blocks.foo.inputs.fooInput.block).toBe('bar');
+    expect(b._blocks.foo.inputs.fooInput.shadow).toBe('bar');
 });
 
-test('change', t => {
+test('change', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'foo',
@@ -432,7 +410,7 @@ test('change', t => {
     });
 
     // Test that the field is updated
-    t.equal(b._blocks.foo.fields.someField.value, 'initial-value');
+    expect(b._blocks.foo.fields.someField.value).toBe('initial-value');
 
     b.changeBlock({
         element: 'field',
@@ -441,7 +419,7 @@ test('change', t => {
         value: 'final-value'
     });
 
-    t.equal(b._blocks.foo.fields.someField.value, 'final-value');
+    expect(b._blocks.foo.fields.someField.value).toBe('final-value');
 
     // Invalid cases
     // No `element`
@@ -450,7 +428,7 @@ test('change', t => {
         name: 'someField',
         value: 'invalid-value'
     });
-    t.equal(b._blocks.foo.fields.someField.value, 'final-value');
+    expect(b._blocks.foo.fields.someField.value).toBe('final-value');
 
     // No block ID
     b.changeBlock({
@@ -458,7 +436,7 @@ test('change', t => {
         name: 'someField',
         value: 'invalid-value'
     });
-    t.equal(b._blocks.foo.fields.someField.value, 'final-value');
+    expect(b._blocks.foo.fields.someField.value).toBe('final-value');
 
     // No such field
     b.changeBlock({
@@ -467,12 +445,10 @@ test('change', t => {
         name: 'someWrongField',
         value: 'final-value'
     });
-    t.equal(b._blocks.foo.fields.someField.value, 'final-value');
-
-    t.end();
+    expect(b._blocks.foo.fields.someField.value).toBe('final-value');
 });
 
-test('delete', t => {
+test('delete', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'foo',
@@ -484,12 +460,11 @@ test('delete', t => {
     });
     b.deleteBlock('foo');
 
-    t.type(b._blocks.foo, 'undefined');
-    t.equal(b._scripts.indexOf('foo'), -1);
-    t.end();
+    expect(typeof b._blocks.foo).toBe('undefined');
+    expect(b._scripts.indexOf('foo')).toBe(-1);
 });
 
-test('delete chain', t => {
+test('delete chain', () => {
     // Create a chain of connected blocks and delete the top one.
     // All of them should be deleted.
     const b = new Blocks(new Runtime());
@@ -518,16 +493,15 @@ test('delete chain', t => {
         topLevel: false
     });
     b.deleteBlock('foo');
-    t.type(b._blocks.foo, 'undefined');
-    t.type(b._blocks.foo2, 'undefined');
-    t.type(b._blocks.foo3, 'undefined');
-    t.equal(b._scripts.indexOf('foo'), -1);
-    t.equal(Object.keys(b._blocks).length, 0);
-    t.equal(b._scripts.length, 0);
-    t.end();
+    expect(typeof b._blocks.foo).toBe('undefined');
+    expect(typeof b._blocks.foo2).toBe('undefined');
+    expect(typeof b._blocks.foo3).toBe('undefined');
+    expect(b._scripts.indexOf('foo')).toBe(-1);
+    expect(Object.keys(b._blocks).length).toBe(0);
+    expect(b._scripts.length).toBe(0);
 });
 
-test('delete inputs', t => {
+test('delete inputs', () => {
     // Create a block with two inputs, one of which has its own input.
     // Delete the block - all of them should be deleted.
     const b = new Blocks(new Runtime());
@@ -589,18 +563,17 @@ test('delete inputs', t => {
         topLevel: false
     });
     b.deleteBlock('foo');
-    t.type(b._blocks.foo, 'undefined');
-    t.type(b._blocks.foo2, 'undefined');
-    t.type(b._blocks.foo3, 'undefined');
-    t.type(b._blocks.foo4, 'undefined');
-    t.type(b._blocks.foo5, 'undefined');
-    t.equal(b._scripts.indexOf('foo'), -1);
-    t.equal(Object.keys(b._blocks).length, 0);
-    t.equal(b._scripts.length, 0);
-    t.end();
+    expect(typeof b._blocks.foo).toBe('undefined');
+    expect(typeof b._blocks.foo2).toBe('undefined');
+    expect(typeof b._blocks.foo3).toBe('undefined');
+    expect(typeof b._blocks.foo4).toBe('undefined');
+    expect(typeof b._blocks.foo5).toBe('undefined');
+    expect(b._scripts.indexOf('foo')).toBe(-1);
+    expect(Object.keys(b._blocks).length).toBe(0);
+    expect(b._scripts.length).toBe(0);
 });
 
-test('updateAssetName function updates name in sound field', t => {
+test('updateAssetName function updates name in sound field', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'foo',
@@ -611,13 +584,12 @@ test('updateAssetName function updates name in sound field', t => {
             }
         }
     });
-    t.equals(b.getBlock('foo').fields.SOUND_MENU.value, 'name1');
+    expect(b.getBlock('foo').fields.SOUND_MENU.value).toBe('name1');
     b.updateAssetName('name1', 'name2', 'sound');
-    t.equals(b.getBlock('foo').fields.SOUND_MENU.value, 'name2');
-    t.end();
+    expect(b.getBlock('foo').fields.SOUND_MENU.value).toBe('name2');
 });
 
-test('updateAssetName function updates name in costume field', t => {
+test('updateAssetName function updates name in costume field', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'foo',
@@ -628,13 +600,12 @@ test('updateAssetName function updates name in costume field', t => {
             }
         }
     });
-    t.equals(b.getBlock('foo').fields.COSTUME.value, 'name1');
+    expect(b.getBlock('foo').fields.COSTUME.value).toBe('name1');
     b.updateAssetName('name1', 'name2', 'costume');
-    t.equals(b.getBlock('foo').fields.COSTUME.value, 'name2');
-    t.end();
+    expect(b.getBlock('foo').fields.COSTUME.value).toBe('name2');
 });
 
-test('updateAssetName function updates name in backdrop field', t => {
+test('updateAssetName function updates name in backdrop field', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'foo',
@@ -645,13 +616,12 @@ test('updateAssetName function updates name in backdrop field', t => {
             }
         }
     });
-    t.equals(b.getBlock('foo').fields.BACKDROP.value, 'name1');
+    expect(b.getBlock('foo').fields.BACKDROP.value).toBe('name1');
     b.updateAssetName('name1', 'name2', 'backdrop');
-    t.equals(b.getBlock('foo').fields.BACKDROP.value, 'name2');
-    t.end();
+    expect(b.getBlock('foo').fields.BACKDROP.value).toBe('name2');
 });
 
-test('updateAssetName function updates name in all sprite fields', t => {
+test('updateAssetName function updates name in all sprite fields', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'id1',
@@ -716,25 +686,24 @@ test('updateAssetName function updates name in all sprite fields', t => {
             }
         }
     });
-    t.equals(b.getBlock('id1').fields.TOWARDS.value, 'name1');
-    t.equals(b.getBlock('id2').fields.TO.value, 'name1');
-    t.equals(b.getBlock('id3').fields.OBJECT.value, 'name1');
-    t.equals(b.getBlock('id4').fields.VIDEOONMENU2.value, 'name1');
-    t.equals(b.getBlock('id5').fields.DISTANCETOMENU.value, 'name1');
-    t.equals(b.getBlock('id6').fields.TOUCHINGOBJECTMENU.value, 'name1');
-    t.equals(b.getBlock('id7').fields.CLONE_OPTION.value, 'name1');
+    expect(b.getBlock('id1').fields.TOWARDS.value).toBe('name1');
+    expect(b.getBlock('id2').fields.TO.value).toBe('name1');
+    expect(b.getBlock('id3').fields.OBJECT.value).toBe('name1');
+    expect(b.getBlock('id4').fields.VIDEOONMENU2.value).toBe('name1');
+    expect(b.getBlock('id5').fields.DISTANCETOMENU.value).toBe('name1');
+    expect(b.getBlock('id6').fields.TOUCHINGOBJECTMENU.value).toBe('name1');
+    expect(b.getBlock('id7').fields.CLONE_OPTION.value).toBe('name1');
     b.updateAssetName('name1', 'name2', 'sprite');
-    t.equals(b.getBlock('id1').fields.TOWARDS.value, 'name2');
-    t.equals(b.getBlock('id2').fields.TO.value, 'name2');
-    t.equals(b.getBlock('id3').fields.OBJECT.value, 'name2');
-    t.equals(b.getBlock('id4').fields.VIDEOONMENU2.value, 'name2');
-    t.equals(b.getBlock('id5').fields.DISTANCETOMENU.value, 'name2');
-    t.equals(b.getBlock('id6').fields.TOUCHINGOBJECTMENU.value, 'name2');
-    t.equals(b.getBlock('id7').fields.CLONE_OPTION.value, 'name2');
-    t.end();
+    expect(b.getBlock('id1').fields.TOWARDS.value).toBe('name2');
+    expect(b.getBlock('id2').fields.TO.value).toBe('name2');
+    expect(b.getBlock('id3').fields.OBJECT.value).toBe('name2');
+    expect(b.getBlock('id4').fields.VIDEOONMENU2.value).toBe('name2');
+    expect(b.getBlock('id5').fields.DISTANCETOMENU.value).toBe('name2');
+    expect(b.getBlock('id6').fields.TOUCHINGOBJECTMENU.value).toBe('name2');
+    expect(b.getBlock('id7').fields.CLONE_OPTION.value).toBe('name2');
 });
 
-test('updateAssetName function updates name according to asset type', t => {
+test('updateAssetName function updates name according to asset type', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'id1',
@@ -754,16 +723,15 @@ test('updateAssetName function updates name according to asset type', t => {
             }
         }
     });
-    t.equals(b.getBlock('id1').fields.SOUND_MENU.value, 'name1');
-    t.equals(b.getBlock('id2').fields.COSTUME.value, 'name1');
+    expect(b.getBlock('id1').fields.SOUND_MENU.value).toBe('name1');
+    expect(b.getBlock('id2').fields.COSTUME.value).toBe('name1');
     b.updateAssetName('name1', 'name2', 'sound');
     // only sound should get renamed
-    t.equals(b.getBlock('id1').fields.SOUND_MENU.value, 'name2');
-    t.equals(b.getBlock('id2').fields.COSTUME.value, 'name1');
-    t.end();
+    expect(b.getBlock('id1').fields.SOUND_MENU.value).toBe('name2');
+    expect(b.getBlock('id2').fields.COSTUME.value).toBe('name1');
 });
 
-test('updateAssetName only updates given name', t => {
+test('updateAssetName only updates given name', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'id1',
@@ -783,15 +751,14 @@ test('updateAssetName only updates given name', t => {
             }
         }
     });
-    t.equals(b.getBlock('id1').fields.COSTUME.value, 'name1');
-    t.equals(b.getBlock('id2').fields.COSTUME.value, 'foo');
+    expect(b.getBlock('id1').fields.COSTUME.value).toBe('name1');
+    expect(b.getBlock('id2').fields.COSTUME.value).toBe('foo');
     b.updateAssetName('name1', 'name2', 'costume');
-    t.equals(b.getBlock('id1').fields.COSTUME.value, 'name2');
-    t.equals(b.getBlock('id2').fields.COSTUME.value, 'foo');
-    t.end();
+    expect(b.getBlock('id1').fields.COSTUME.value).toBe('name2');
+    expect(b.getBlock('id2').fields.COSTUME.value).toBe('foo');
 });
 
-test('updateAssetName doesn\'t update name if name isn\'t being used', t => {
+test('updateAssetName doesn\'t update name if name isn\'t being used', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'id1',
@@ -802,13 +769,12 @@ test('updateAssetName doesn\'t update name if name isn\'t being used', t => {
             }
         }
     });
-    t.equals(b.getBlock('id1').fields.BACKDROP.value, 'foo');
+    expect(b.getBlock('id1').fields.BACKDROP.value).toBe('foo');
     b.updateAssetName('name1', 'name2', 'backdrop');
-    t.equals(b.getBlock('id1').fields.BACKDROP.value, 'foo');
-    t.end();
+    expect(b.getBlock('id1').fields.BACKDROP.value).toBe('foo');
 });
 
-test('updateSensingOfReference renames variables in sensing_of block', t => {
+test('updateSensingOfReference renames variables in sensing_of block', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'id1',
@@ -836,13 +802,12 @@ test('updateSensingOfReference renames variables in sensing_of block', t => {
             }
         }
     });
-    t.equals(b.getBlock('id1').fields.PROPERTY.value, 'foo');
+    expect(b.getBlock('id1').fields.PROPERTY.value).toBe('foo');
     b.updateSensingOfReference('foo', 'bar', '_stage_');
-    t.equals(b.getBlock('id1').fields.PROPERTY.value, 'bar');
-    t.end();
+    expect(b.getBlock('id1').fields.PROPERTY.value).toBe('bar');
 });
 
-test('updateSensingOfReference doesn\'t rename if block is inserted', t => {
+test('updateSensingOfReference doesn\'t rename if block is inserted', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'id1',
@@ -874,13 +839,12 @@ test('updateSensingOfReference doesn\'t rename if block is inserted', t => {
         id: 'id3',
         opcode: 'answer'
     });
-    t.equals(b.getBlock('id1').fields.PROPERTY.value, 'foo');
+    expect(b.getBlock('id1').fields.PROPERTY.value).toBe('foo');
     b.updateSensingOfReference('foo', 'bar', '_stage_');
-    t.equals(b.getBlock('id1').fields.PROPERTY.value, 'foo');
-    t.end();
+    expect(b.getBlock('id1').fields.PROPERTY.value).toBe('foo');
 });
 
-test('updateSensingOfReference doesn\'t rename if name is not being used', t => {
+test('updateSensingOfReference doesn\'t rename if name is not being used', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'id1',
@@ -908,13 +872,12 @@ test('updateSensingOfReference doesn\'t rename if name is not being used', t => 
             }
         }
     });
-    t.equals(b.getBlock('id1').fields.PROPERTY.value, 'foo');
+    expect(b.getBlock('id1').fields.PROPERTY.value).toBe('foo');
     b.updateSensingOfReference('meow', 'meow2', '_stage_');
-    t.equals(b.getBlock('id1').fields.PROPERTY.value, 'foo');
-    t.end();
+    expect(b.getBlock('id1').fields.PROPERTY.value).toBe('foo');
 });
 
-test('updateSensingOfReference doesn\'t rename other targets\' variables', t => {
+test('updateSensingOfReference doesn\'t rename other targets\' variables', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'id1',
@@ -942,13 +905,12 @@ test('updateSensingOfReference doesn\'t rename other targets\' variables', t => 
             }
         }
     });
-    t.equals(b.getBlock('id1').fields.PROPERTY.value, 'foo');
+    expect(b.getBlock('id1').fields.PROPERTY.value).toBe('foo');
     b.updateSensingOfReference('foo', 'bar', 'Cat');
-    t.equals(b.getBlock('id1').fields.PROPERTY.value, 'foo');
-    t.end();
+    expect(b.getBlock('id1').fields.PROPERTY.value).toBe('foo');
 });
 
-test('updateTargetSpecificBlocks changes sprite clicked hat to stage clicked for stage', t => {
+test('updateTargetSpecificBlocks changes sprite clicked hat to stage clicked for stage', () => {
     const b = new Blocks(new Runtime());
     b.createBlock({
         id: 'originallySpriteClicked',
@@ -961,62 +923,56 @@ test('updateTargetSpecificBlocks changes sprite clicked hat to stage clicked for
 
     // originallySpriteClicked does not update when on a non-stage target
     b.updateTargetSpecificBlocks(false /* isStage */);
-    t.equals(b.getBlock('originallySpriteClicked').opcode, 'event_whenthisspriteclicked');
+    expect(b.getBlock('originallySpriteClicked').opcode).toBe('event_whenthisspriteclicked');
 
     // originallySpriteClicked does update when on a stage target
     b.updateTargetSpecificBlocks(true /* isStage */);
-    t.equals(b.getBlock('originallySpriteClicked').opcode, 'event_whenstageclicked');
+    expect(b.getBlock('originallySpriteClicked').opcode).toBe('event_whenstageclicked');
 
     // originallyStageClicked does not update when on a stage target
     b.updateTargetSpecificBlocks(true /* isStage */);
-    t.equals(b.getBlock('originallyStageClicked').opcode, 'event_whenstageclicked');
+    expect(b.getBlock('originallyStageClicked').opcode).toBe('event_whenstageclicked');
 
     // originallyStageClicked does update when on a non-stage target
     b.updateTargetSpecificBlocks(false/* isStage */);
-    t.equals(b.getBlock('originallyStageClicked').opcode, 'event_whenthisspriteclicked');
-
-    t.end();
+    expect(b.getBlock('originallyStageClicked').opcode).toBe('event_whenthisspriteclicked');
 });
 
-test('getAllVariableAndListReferences returns an empty map references when variable blocks do not exist', t => {
+test('getAllVariableAndListReferences returns an empty map references when variable blocks do not exist', () => {
     const b = new Blocks(new Runtime());
-    t.equal(Object.keys(b.getAllVariableAndListReferences()).length, 0);
-    t.end();
+    expect(Object.keys(b.getAllVariableAndListReferences()).length).toBe(0);
 });
 
-test('getAllVariableAndListReferences returns references when variable blocks exist', t => {
+test('getAllVariableAndListReferences returns references when variable blocks exist', () => {
     const b = new Blocks(new Runtime());
 
     let varListRefs = b.getAllVariableAndListReferences();
-    t.equal(Object.keys(varListRefs).length, 0);
+    expect(Object.keys(varListRefs).length).toBe(0);
 
     b.createBlock(adapter(events.mockVariableBlock)[0]);
     b.createBlock(adapter(events.mockListBlock)[0]);
 
     varListRefs = b.getAllVariableAndListReferences();
-    t.equal(Object.keys(varListRefs).length, 2);
-    t.equal(Array.isArray(varListRefs['mock var id']), true);
-    t.equal(varListRefs['mock var id'].length, 1);
-    t.equal(varListRefs['mock var id'][0].type, Variable.SCALAR_TYPE);
-    t.equal(varListRefs['mock var id'][0].referencingField.value, 'a mock variable');
-    t.equal(Array.isArray(varListRefs['mock list id']), true);
-    t.equal(varListRefs['mock list id'].length, 1);
-    t.equal(varListRefs['mock list id'][0].type, Variable.LIST_TYPE);
-    t.equal(varListRefs['mock list id'][0].referencingField.value, 'a mock list');
-
-    t.end();
+    expect(Object.keys(varListRefs).length).toBe(2);
+    expect(Array.isArray(varListRefs['mock var id'])).toBe(true);
+    expect(varListRefs['mock var id'].length).toBe(1);
+    expect(varListRefs['mock var id'][0].type).toBe(Variable.SCALAR_TYPE);
+    expect(varListRefs['mock var id'][0].referencingField.value).toBe('a mock variable');
+    expect(Array.isArray(varListRefs['mock list id'])).toBe(true);
+    expect(varListRefs['mock list id'].length).toBe(1);
+    expect(varListRefs['mock list id'][0].type).toBe(Variable.LIST_TYPE);
+    expect(varListRefs['mock list id'][0].referencingField.value).toBe('a mock list');
 });
 
-test('getAllVariableAndListReferences does not return broadcast blocks if the flag is left out', t => {
+test('getAllVariableAndListReferences does not return broadcast blocks if the flag is left out', () => {
     const b = new Blocks(new Runtime());
     b.createBlock(adapter(events.mockBroadcastBlock)[0]);
     b.createBlock(adapter(events.mockBroadcastBlock)[1]);
 
-    t.equal(Object.keys(b.getAllVariableAndListReferences()).length, 0);
-    t.end();
+    expect(Object.keys(b.getAllVariableAndListReferences()).length).toBe(0);
 });
 
-test('getAllVariableAndListReferences returns broadcast when we tell it to', t => {
+test('getAllVariableAndListReferences returns broadcast when we tell it to', () => {
     const b = new Blocks(new Runtime());
 
     b.createBlock(adapter(events.mockVariableBlock)[0]);
@@ -1026,15 +982,13 @@ test('getAllVariableAndListReferences returns broadcast when we tell it to', t =
 
     const varListRefs = b.getAllVariableAndListReferences(null, true);
 
-    t.equal(Object.keys(varListRefs).length, 2);
-    t.equal(Array.isArray(varListRefs['mock var id']), true);
-    t.equal(varListRefs['mock var id'].length, 1);
-    t.equal(varListRefs['mock var id'][0].type, Variable.SCALAR_TYPE);
-    t.equal(varListRefs['mock var id'][0].referencingField.value, 'a mock variable');
-    t.equal(Array.isArray(varListRefs['mock broadcast message id']), true);
-    t.equal(varListRefs['mock broadcast message id'].length, 1);
-    t.equal(varListRefs['mock broadcast message id'][0].type, Variable.BROADCAST_MESSAGE_TYPE);
-    t.equal(varListRefs['mock broadcast message id'][0].referencingField.value, 'my message');
-
-    t.end();
+    expect(Object.keys(varListRefs).length).toBe(2);
+    expect(Array.isArray(varListRefs['mock var id'])).toBe(true);
+    expect(varListRefs['mock var id'].length).toBe(1);
+    expect(varListRefs['mock var id'][0].type).toBe(Variable.SCALAR_TYPE);
+    expect(varListRefs['mock var id'][0].referencingField.value).toBe('a mock variable');
+    expect(Array.isArray(varListRefs['mock broadcast message id'])).toBe(true);
+    expect(varListRefs['mock broadcast message id'].length).toBe(1);
+    expect(varListRefs['mock broadcast message id'][0].type).toBe(Variable.BROADCAST_MESSAGE_TYPE);
+    expect(varListRefs['mock broadcast message id'][0].referencingField.value).toBe('my message');
 });

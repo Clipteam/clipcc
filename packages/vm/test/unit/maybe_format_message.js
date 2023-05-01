@@ -1,4 +1,3 @@
-const test = require('tap').test;
 const maybeFormatMessage = require('../../src/util/maybe-format-message');
 
 const nonMessages = [
@@ -45,33 +44,29 @@ const complexMessage = {
 const quickExpectedResult = 'The quick brown fox jumped over the lazy dog.';
 const otherExpectedResult = 'Too slow, Gobo!';
 
-test('preserve non-messages', t => {
-    t.plan(nonMessages.length);
+test('preserve non-messages', () => {
+    expect.assertions(nonMessages.length);
 
     for (const x of nonMessages) {
         const result = maybeFormatMessage(x);
         t.strictSame(x, result);
     }
-
-    t.end();
 });
 
-test('format messages', t => {
+test('format messages', () => {
     const quickResult1 = maybeFormatMessage(simpleMessage);
     t.strictNotSame(quickResult1, simpleMessage);
-    t.same(quickResult1, quickExpectedResult);
+    expect(quickResult1).toEqual(quickExpectedResult);
 
     const quickResult2 = maybeFormatMessage(complexMessage, argsQuick);
     t.strictNotSame(quickResult2, complexMessage);
-    t.same(quickResult2, quickExpectedResult);
+    expect(quickResult2).toEqual(quickExpectedResult);
 
     const otherResult1 = maybeFormatMessage(complexMessage, argsOther);
     t.strictNotSame(otherResult1, complexMessage);
-    t.same(otherResult1, otherExpectedResult);
+    expect(otherResult1).toEqual(otherExpectedResult);
 
     const otherResult2 = maybeFormatMessage(complexMessage, argsEmpty);
     t.strictNotSame(otherResult2, complexMessage);
-    t.same(otherResult2, otherExpectedResult);
-
-    t.end();
+    expect(otherResult2).toEqual(otherExpectedResult);
 });
