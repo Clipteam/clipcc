@@ -102,6 +102,7 @@ module.exports = [
             'lib.min': ['react', 'react-dom'],
             'gui': './src/playground/index.jsx',
             'blocksonly': './src/playground/blocks-only.jsx',
+            'lifecycle': './src/playground/lifecycle-test.jsx',
             'compatibilitytesting': './src/playground/compatibility-testing.jsx',
             'player': './src/playground/player.jsx'
         },
@@ -159,6 +160,12 @@ module.exports = [
                 template: 'src/playground/index.ejs',
                 filename: 'player.html',
                 title: 'ClipCC GUI: Player Example'
+            }),
+            new HtmlWebpackPlugin({
+                chunks: ['lib.min', 'lifecycle'],
+                template: 'src/playground/index.ejs',
+                filename: 'lifecycle.html',
+                title: 'ClipCC GUI: Lifecycle Test'
             }),
             new CopyWebpackPlugin({
                 patterns: [
