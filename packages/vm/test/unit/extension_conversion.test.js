@@ -201,7 +201,7 @@ const testCommand = function (t, command) {
     expect(command.json.extensions && command.json.extensions.length).toBeFalsy(); // OK if it's absent or empty
     expect(command.json.message0).toBe('text with %1 %2');
     expect(command.json.hasOwnProperty('message1')).toBeFalsy();
-    t.strictSame(command.json.args0[0], {
+    expect(command.json.args0[0]).toEqual({
         type: 'input_value',
         name: 'ARG'
     });
@@ -225,17 +225,17 @@ const testConditional = function (t, conditional) {
     expect(conditional.json.message2).toBe('or elsewise');
     expect(conditional.json.message3).toBe('%1'); // placeholder for substack #2
     expect(conditional.json.hasOwnProperty('message4')).toBeFalsy();
-    t.strictSame(conditional.json.args0[0], {
+    expect(conditional.json.args0[0]).toEqual({
         type: 'input_value',
         name: 'THING',
         check: 'Boolean'
     });
-    t.strictSame(conditional.json.args1[0], {
+    expect(conditional.json.args1[0]).toEqual({
         type: 'input_statement',
         name: 'SUBSTACK'
     });
     expect(conditional.json.hasOwnProperty(conditional.json.args2)).toBeFalsy();
-    t.strictSame(conditional.json.args3[0], {
+    expect(conditional.json.args3[0]).toEqual({
         type: 'input_statement',
         name: 'SUBSTACK2'
     });
@@ -254,11 +254,11 @@ const testLoop = function (t, loop) {
     expect(loop.json.message1).toBe('%1'); // placeholder for substack
     expect(loop.json.message2).toBe('%1'); // placeholder for loop arrow
     expect(loop.json.hasOwnProperty('message3')).toBeFalsy();
-    t.strictSame(loop.json.args0[0], {
+    expect(loop.json.args0[0]).toEqual({
         type: 'input_value',
         name: 'MANY'
     });
-    t.strictSame(loop.json.args1[0], {
+    expect(loop.json.args1[0]).toEqual({
         type: 'input_statement',
         name: 'SUBSTACK'
     });

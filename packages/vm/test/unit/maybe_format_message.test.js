@@ -49,7 +49,7 @@ test('preserve non-messages', () => {
 
     for (const x of nonMessages) {
         const result = maybeFormatMessage(x);
-        t.strictSame(x, result);
+        expect(x).toEqual(result);
     }
 });
 

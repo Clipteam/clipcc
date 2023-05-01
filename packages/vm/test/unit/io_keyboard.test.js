@@ -18,7 +18,8 @@ test('space key', () => {
         key: ' ',
         isDown: true
     });
-    t.strictDeepEquals(k._keysPressed, ['space']);
+    expect(k._keysPressed.length).toBe(1);
+    expect(k._keysPressed[0]).toBe('space');
     expect(k.getKeyIsDown('space')).toBe(true);
     expect(k.getKeyIsDown('any')).toBe(true);
 });
@@ -31,7 +32,8 @@ test('letter key', () => {
         key: 'a',
         isDown: true
     });
-    t.strictDeepEquals(k._keysPressed, ['A']);
+    expect(k._keysPressed.length).toBe(1);
+    expect(k._keysPressed[0]).toBe('A');
     expect(k.getKeyIsDown(65)).toBe(true);
     expect(k.getKeyIsDown('a')).toBe(true);
     expect(k.getKeyIsDown('A')).toBe(true);
@@ -46,7 +48,8 @@ test('number key', () => {
         key: '1',
         isDown: true
     });
-    t.strictDeepEquals(k._keysPressed, ['1']);
+    expect(k._keysPressed.length).toBe(1);
+    expect(k._keysPressed[0]).toBe('1');
     expect(k.getKeyIsDown(49)).toBe(true);
     expect(k.getKeyIsDown('1')).toBe(true);
     expect(k.getKeyIsDown('any')).toBe(true);
@@ -60,7 +63,8 @@ test('non-english key', () => {
         key: '日',
         isDown: true
     });
-    t.strictDeepEquals(k._keysPressed, ['日']);
+    expect(k._keysPressed.length).toBe(1);
+    expect(k._keysPressed[0]).toBe('日');
     expect(k.getKeyIsDown('日')).toBe(true);
     expect(k.getKeyIsDown('any')).toBe(true);
 });
@@ -73,7 +77,7 @@ test('ignore modifier key', () => {
         key: 'Shift',
         isDown: true
     });
-    t.strictDeepEquals(k._keysPressed, []);
+    expect(k._keysPressed.length).toBe(0);
     expect(k.getKeyIsDown('any')).toBe(false);
 });
 
@@ -89,7 +93,7 @@ test('keyup', () => {
         key: 'ArrowLeft',
         isDown: false
     });
-    t.strictDeepEquals(k._keysPressed, []);
+    expect(k._keysPressed.length).toBe(0);
     expect(k.getKeyIsDown('left arrow')).toBe(false);
     expect(k.getKeyIsDown('any')).toBe(false);
 });
