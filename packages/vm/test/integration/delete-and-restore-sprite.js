@@ -1,5 +1,4 @@
 const path = require('path');
-const test = require('tap').test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 
@@ -11,12 +10,11 @@ const project = readFileToBuffer(projectUri);
 
 const vm = new VirtualMachine();
 
-test('spec', t => {
-    t.type(vm.deleteSprite, 'function');
-    t.end();
+test('spec', () => {
+    expect(typeof vm.deleteSprite).toBe('function');
 });
 
-test('default cat', t => {
+test('default cat', done => {
     // Get default cat from .sprite2
     // const uri = path.resolve(__dirname, '../fixtures/example_sprite.sprite2');
     // const sprite = readFileToBuffer(uri);
@@ -26,32 +24,32 @@ test('default cat', t => {
     // Evaluate playground data and exit
     vm.on('playgroundData', e => {
         const threads = JSON.parse(e.threads);
-        t.ok(threads.length === 0);
+        expect(threads.length === 0).toBeTruthy();
         vm.quit();
-        t.end();
+        done();
     });
 
     vm.start();
     vm.clear();
     vm.setCompatibilityMode(false);
     vm.setTurboMode(false);
-    t.doesNotThrow(() => {
+    expect(() => {
         vm.loadProject(project).then(() => {
 
-            t.equal(vm.runtime.targets.length, 2); // stage and default sprite
+            expect(vm.runtime.targets.length).toBe(2); // stage and default sprite
 
             const defaultSprite = vm.runtime.targets[1];
 
             // Delete the sprite
             const addSpriteBack = vm.deleteSprite(vm.runtime.targets[1].id);
 
-            t.equal(vm.runtime.targets.length, 1);
+            expect(vm.runtime.targets.length).toBe(1);
 
-            t.type(addSpriteBack, 'function');
+            expect(typeof addSpriteBack).toBe('function');
 
             addSpriteBack().then(() => {
-                t.equal(vm.runtime.targets.length, 2);
-                t.equal(vm.runtime.targets[1].getName(), defaultSprite.getName());
+                expect(vm.runtime.targets.length).toBe(2);
+                expect(vm.runtime.targets[1].getName()).toBe(defaultSprite.getName());
 
                 vm.greenFlag();
 
@@ -61,5 +59,5 @@ test('default cat', t => {
                 }, 1000);
             });
         });
-    });
+    }).not.toThrow();
 });

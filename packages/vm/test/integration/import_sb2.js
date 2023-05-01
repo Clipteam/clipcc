@@ -1,5 +1,4 @@
 const path = require('path');
-const test = require('tap').test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const extractProjectJson = require('../fixtures/readProjectFile').extractProjectJson;
 
@@ -7,12 +6,11 @@ const renderedTarget = require('../../src/sprites/rendered-target');
 const runtime = require('../../src/engine/runtime');
 const sb2 = require('../../src/serialization/sb2');
 
-test('spec', t => {
-    t.type(sb2.deserialize, 'function');
-    t.end();
+test('spec', () => {
+    expect(typeof sb2.deserialize).toBe('function');
 });
 
-test('default', t => {
+test('default', done => {
     // Get SB2 JSON (string)
     const uri = path.resolve(__dirname, '../fixtures/default.sb2');
     const json = extractProjectJson(uri);
@@ -22,31 +20,31 @@ test('default', t => {
     rt.attachStorage(makeTestStorage());
     sb2.deserialize(json, rt).then(({targets}) => {
         // Test
-        t.type(json, 'object');
-        t.type(rt, 'object');
-        t.type(targets, 'object');
+        expect(typeof json).toBe('object');
+        expect(typeof rt).toBe('object');
+        expect(typeof targets).toBe('object');
 
-        t.ok(targets[0] instanceof renderedTarget);
-        t.type(targets[0].id, 'string');
-        t.type(targets[0].blocks, 'object');
-        t.type(targets[0].variables, 'object');
-        t.type(targets[0].comments, 'object');
+        expect(targets[0] instanceof renderedTarget).toBeTruthy();
+        expect(typeof targets[0].id).toBe('string');
+        expect(typeof targets[0].blocks).toBe('object');
+        expect(typeof targets[0].variables).toBe('object');
+        expect(typeof targets[0].comments).toBe('object');
 
-        t.equal(targets[0].isOriginal, true);
-        t.equal(targets[0].currentCostume, 0);
-        t.equal(targets[0].isOriginal, true);
-        t.equal(targets[0].isStage, true);
+        expect(targets[0].isOriginal).toBe(true);
+        expect(targets[0].currentCostume).toBe(0);
+        expect(targets[0].isOriginal).toBe(true);
+        expect(targets[0].isStage).toBe(true);
 
-        t.ok(targets[1] instanceof renderedTarget);
-        t.type(targets[1].id, 'string');
-        t.type(targets[1].blocks, 'object');
-        t.type(targets[1].variables, 'object');
-        t.type(targets[1].comments, 'object');
+        expect(targets[1] instanceof renderedTarget).toBeTruthy();
+        expect(typeof targets[1].id).toBe('string');
+        expect(typeof targets[1].blocks).toBe('object');
+        expect(typeof targets[1].variables).toBe('object');
+        expect(typeof targets[1].comments).toBe('object');
 
-        t.equal(targets[1].isOriginal, true);
-        t.equal(targets[1].currentCostume, 0);
-        t.equal(targets[1].isOriginal, true);
-        t.equal(targets[1].isStage, false);
-        t.end();
+        expect(targets[1].isOriginal).toBe(true);
+        expect(targets[1].currentCostume).toBe(0);
+        expect(targets[1].isOriginal).toBe(true);
+        expect(targets[1].isStage).toBe(false);
+        done();
     });
 });

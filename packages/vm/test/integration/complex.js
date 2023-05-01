@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const test = require('tap').test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/index');
@@ -11,16 +10,16 @@ const project = readFileToBuffer(projectUri);
 const spriteUri = path.resolve(__dirname, '../fixtures/sprite.json');
 const sprite = fs.readFileSync(spriteUri, 'utf8');
 
-test('complex', t => {
+test('complex', done => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
 
     // Evaluate playground data and exit
     vm.on('playgroundData', e => {
         const threads = JSON.parse(e.threads);
-        t.ok(threads.length === 0);
+        expect(threads.length === 0).toBeTruthy();
         vm.quit();
-        t.end();
+        done();
     });
 
     // Manipulate each target
@@ -55,7 +54,7 @@ test('complex', t => {
     });
 
     // Start VM, load project, and run
-    t.doesNotThrow(() => {
+    expect(() => {
         vm.start();
         vm.clear();
         vm.setCompatibilityMode(false);
@@ -94,6 +93,6 @@ test('complex', t => {
                 vm.stopAll();
             }, 2000);
         });
-    });
+    }).not.toThrow();
 
 });

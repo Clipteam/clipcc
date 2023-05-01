@@ -1,6 +1,5 @@
 const Worker = require('tiny-worker');
 const path = require('path');
-const test = require('tap').test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/index');
@@ -12,12 +11,12 @@ const project = readFileToBuffer(uri);
 // By default Central Dispatch works with the Worker class built into the browser. Tell it to use TinyWorker instead.
 dispatch.workerClass = Worker;
 
-test('say/think and wait', t => {
+test('say/think and wait', done => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
 
     // Start VM, load project, and run
-    t.doesNotThrow(() => {
+    expect(() => {
         vm.start();
         vm.clear();
         vm.setCompatibilityMode(false);
@@ -30,8 +29,8 @@ test('say/think and wait', t => {
             setTimeout(() => {
                 vm.stopAll();
                 vm.quit();
-                t.end();
+                done();
             }, 2000);
         });
-    });
+    }).not.toThrow();
 });

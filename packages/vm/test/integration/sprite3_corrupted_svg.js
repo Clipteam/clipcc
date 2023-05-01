@@ -8,7 +8,6 @@
  * to load the costume if the saved project is re-loaded.
  */
 const path = require('path');
-const tap = require('tap');
 const md5 = require('js-md5');
 const makeTestStorage = require('../fixtures/make-test-storage');
 const FakeRenderer = require('../fixtures/fake-renderer');
@@ -56,24 +55,24 @@ tap.beforeEach(() => {
 const test = tap.test;
 
 test('load sprite3 with corrupted vector costume file', t => {
-    t.equal(vm.runtime.targets.length, 3);
+    expect(vm.runtime.targets.length).toBe(3);
 
     const stage = vm.runtime.targets[0];
-    t.ok(stage.isStage);
+    expect(stage.isStage).toBeTruthy();
 
     const blueGuySprite = vm.runtime.targets[2];
-    t.equal(blueGuySprite.getName(), 'Blue Square Guy');
-    t.equal(blueGuySprite.getCostumes().length, 1);
+    expect(blueGuySprite.getName()).toBe('Blue Square Guy');
+    expect(blueGuySprite.getCostumes().length).toBe(1);
 
     const corruptedCostume = blueGuySprite.getCostumes()[0];
-    t.equal(corruptedCostume.name, 'costume1');
-    t.equal(corruptedCostume.assetId, defaultVectorAssetId);
-    t.equal(corruptedCostume.dataFormat, 'svg');
+    expect(corruptedCostume.name).toBe('costume1');
+    expect(corruptedCostume.assetId).toBe(defaultVectorAssetId);
+    expect(corruptedCostume.dataFormat).toBe('svg');
     // Runtime should have info about broken asset
-    t.ok(corruptedCostume.broken);
-    t.equal(corruptedCostume.broken.assetId, brokenCostumeMd5);
+    expect(corruptedCostume.broken).toBeTruthy();
+    expect(corruptedCostume.broken.assetId).toBe(brokenCostumeMd5);
     // Verify that we saved the original asset data
-    t.equal(md5(corruptedCostume.broken.asset.data), brokenCostumeMd5);
+    expect(md5(corruptedCostume.broken.asset.data)).toBe(brokenCostumeMd5);
 
     t.end();
 });
@@ -81,25 +80,25 @@ test('load sprite3 with corrupted vector costume file', t => {
 test('load and then save sprite with corrupted costume file', t => {
     const resavedSprite = JSON.parse(vm.toJSON(vm.runtime.targets[2].id));
 
-    t.equal(resavedSprite.name, 'Blue Square Guy');
-    t.equal(resavedSprite.costumes.length, 1);
+    expect(resavedSprite.name).toBe('Blue Square Guy');
+    expect(resavedSprite.costumes.length).toBe(1);
 
     const corruptedCostume = resavedSprite.costumes[0];
-    t.equal(corruptedCostume.name, 'costume1');
+    expect(corruptedCostume.name).toBe('costume1');
     // Resaved project costume should have the metadata that corresponds to the original broken costume
-    t.equal(corruptedCostume.assetId, brokenCostumeMd5);
-    t.equal(corruptedCostume.dataFormat, 'svg');
+    expect(corruptedCostume.assetId).toBe(brokenCostumeMd5);
+    expect(corruptedCostume.dataFormat).toBe('svg');
     // Test that we didn't save any data about the costume being broken
-    t.notOk(corruptedCostume.broken);
+    expect(corruptedCostume.broken).toBeFalsy();
 
     t.end();
 });
 
 test('serializeCostume saves orignal broken costume', t => {
     const costumeDescs = serializeCostumes(vm.runtime, vm.runtime.targets[2].id);
-    t.equal(costumeDescs.length, 1);
+    expect(costumeDescs.length).toBe(1);
     const costume = costumeDescs[0];
-    t.equal(costume.fileName, `${brokenCostumeMd5}.svg`);
-    t.equal(md5(costume.fileContent), brokenCostumeMd5);
+    expect(costume.fileName).toBe(`${brokenCostumeMd5}.svg`);
+    expect(md5(costume.fileContent)).toBe(brokenCostumeMd5);
     t.end();
 });

@@ -1,5 +1,4 @@
 const path = require('path');
-const tap = require('tap');
 const {test} = tap;
 const fs = require('fs');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
@@ -66,15 +65,15 @@ test('Load video sensing extension and video properties', async t => {
 
         const stage = vm.runtime.getTargetForStage();
 
-        t.ok(vm.extensionManager.isExtensionLoaded('videoSensing'));
+        expect(vm.extensionManager.isExtensionLoaded('videoSensing')).toBeTruthy();
 
         // Check that the stage target has the video state values we expect
         // based on the test project files, then check that the video io device
         // has the expected state as well
-        t.equal(stage.videoState, project.videoState);
-        t.equal(vm.runtime.ioDevices.video.mirror, project.mirror);
-        t.equal(stage.videoTransparency, project.videoTransparency);
-        t.equal(vm.runtime.ioDevices.video._ghost, project.videoTransparency);
+        expect(stage.videoState).toBe(project.videoState);
+        expect(vm.runtime.ioDevices.video.mirror).toBe(project.mirror);
+        expect(stage.videoTransparency).toBe(project.videoTransparency);
+        expect(vm.runtime.ioDevices.video._ghost).toBe(project.videoTransparency);
     }
 
     stopVideoLoop(vm);

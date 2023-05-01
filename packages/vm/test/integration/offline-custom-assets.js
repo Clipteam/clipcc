@@ -6,7 +6,6 @@
  */
 const path = require('path');
 const fs = require('fs');
-const test = require('tap').test;
 const AdmZip = require('adm-zip');
 const ScratchStorage = require('clipcc-storage');
 const VirtualMachine = require('../../src/index');
@@ -23,7 +22,7 @@ const costumeData = new Uint8Array(costume);
 const sound = projectZip.readFile('0.wav');
 const soundData = new Uint8Array(sound);
 
-test('offline-custom-assets', t => {
+test('offline-custom-assets', done => {
     const vm = new VirtualMachine();
     // Use a test storage here that does not have any web sources added to it.
     const testStorage = new ScratchStorage();
@@ -32,13 +31,13 @@ test('offline-custom-assets', t => {
     // Evaluate playground data and exit
     vm.on('playgroundData', e => {
         const threads = JSON.parse(e.threads);
-        t.ok(threads.length === 0);
+        expect(threads.length === 0).toBeTruthy();
         vm.quit();
-        t.end();
+        done();
     });
 
     // Start VM, load project, and run
-    t.doesNotThrow(() => {
+    expect(() => {
         vm.start();
         vm.clear();
         vm.setCompatibilityMode(false);
@@ -46,23 +45,23 @@ test('offline-custom-assets', t => {
         vm.loadProject(project).then(() => {
 
             // Verify initial state
-            t.equals(vm.runtime.targets.length, 2);
+            expect(vm.runtime.targets.length).toBe(2);
             const costumes = vm.runtime.targets[1].getCostumes();
-            t.equals(costumes.length, 1);
+            expect(costumes.length).toBe(1);
             const customCostume = costumes[0];
-            t.equals(customCostume.name, 'A_Test_Costume');
+            expect(customCostume.name).toBe('A_Test_Costume');
 
             const storedCostume = customCostume.asset;
-            t.type(storedCostume, 'object');
-            t.deepEquals(storedCostume.data, costumeData);
+            expect(typeof storedCostume).toBe('object');
+            expect(storedCostume.data).toEqual(costumeData);
 
             const sounds = vm.runtime.targets[1].sprite.sounds;
-            t.equals(sounds.length, 1);
+            expect(sounds.length).toBe(1);
             const customSound = sounds[0];
-            t.equals(customSound.name, 'A_Test_Recording');
+            expect(customSound.name).toBe('A_Test_Recording');
             const storedSound = customSound.asset;
-            t.type(storedSound, 'object');
-            t.deepEquals(storedSound.data, soundData);
+            expect(typeof storedSound).toBe('object');
+            expect(storedSound.data).toEqual(soundData);
 
             vm.greenFlag();
 
@@ -72,6 +71,6 @@ test('offline-custom-assets', t => {
                 vm.stopAll();
             }, 2000);
         });
-    });
+    }).not.toThrow();
 
 });

@@ -1,5 +1,3 @@
-const test = require('tap').test;
-
 const Blocks = require('../../src/engine/blocks');
 const Clone = require('../../src/util/clone');
 const {loadCostume} = require('../../src/import/load-costume');
@@ -18,7 +16,7 @@ const defaultCostumeInfo = {
 const defaultSoundInfo = {
 };
 
-test('sb3-roundtrip', t => {
+test('sb3-roundtrip', () => {
     const runtime1 = new Runtime();
     runtime1.attachStorage(makeTestStorage());
 
@@ -26,42 +24,42 @@ test('sb3-roundtrip', t => {
     runtime2.attachStorage(makeTestStorage());
 
     const testRuntimeState = (label, runtime) => {
-        t.strictEqual(runtime.targets.length, 2, `${label}: target count`);
+        expect(runtime.targets.length).toBe(2);
         const [stageClone, spriteClone] = runtime.targets;
 
-        t.strictEqual(stageClone.isOriginal, true);
-        t.strictEqual(stageClone.isStage, true);
+        expect(stageClone.isOriginal).toBe(true);
+        expect(stageClone.isStage).toBe(true);
 
         const stage = stageClone.sprite;
-        t.strictEqual(stage.name, 'Stage');
-        t.strictEqual(stage.clones.length, 1);
-        t.strictEqual(stage.clones[0], stageClone);
+        expect(stage.name).toBe('Stage');
+        expect(stage.clones.length).toBe(1);
+        expect(stage.clones[0]).toBe(stageClone);
 
-        t.strictEqual(stage.costumes.length, 1);
+        expect(stage.costumes.length).toBe(1);
         const [building] = stage.costumes;
-        t.strictEqual(building.assetId, 'fe5e3566965f9de793beeffce377d054');
-        t.strictEqual(building.dataFormat, 'jpg');
+        expect(building.assetId).toBe('fe5e3566965f9de793beeffce377d054');
+        expect(building.dataFormat).toBe('jpg');
 
-        t.strictEqual(stage.sounds.length, 0);
+        expect(stage.sounds.length).toBe(0);
 
-        t.strictEqual(spriteClone.isOriginal, true);
-        t.strictEqual(spriteClone.isStage, false);
+        expect(spriteClone.isOriginal).toBe(true);
+        expect(spriteClone.isStage).toBe(false);
 
         const sprite = spriteClone.sprite;
-        t.strictEqual(sprite.name, 'Sprite');
-        t.strictEqual(sprite.clones.length, 1);
-        t.strictEqual(sprite.clones[0], spriteClone);
+        expect(sprite.name).toBe('Sprite');
+        expect(sprite.clones.length).toBe(1);
+        expect(sprite.clones[0]).toBe(spriteClone);
 
-        t.strictEqual(sprite.costumes.length, 2);
+        expect(sprite.costumes.length).toBe(2);
         const [cat, squirrel] = sprite.costumes;
-        t.strictEqual(cat.assetId, 'f88bf1935daea28f8ca098462a31dbb0');
-        t.strictEqual(cat.dataFormat, 'svg');
-        t.strictEqual(squirrel.assetId, '7e24c99c1b853e52f8e7f9004416fa34');
-        t.strictEqual(squirrel.dataFormat, 'png');
+        expect(cat.assetId).toBe('f88bf1935daea28f8ca098462a31dbb0');
+        expect(cat.dataFormat).toBe('svg');
+        expect(squirrel.assetId).toBe('7e24c99c1b853e52f8e7f9004416fa34');
+        expect(squirrel.dataFormat).toBe('png');
 
-        t.strictEqual(sprite.sounds.length, 1);
+        expect(sprite.sounds.length).toBe(1);
         const [meow] = sprite.sounds;
-        t.strictEqual(meow.md5, '83c36d806dc92327b9e7049a565c6bff.wav');
+        expect(meow.md5).toBe('83c36d806dc92327b9e7049a565c6bff.wav');
     };
 
     const loadThings = Promise.all([

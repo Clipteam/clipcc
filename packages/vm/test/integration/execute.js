@@ -1,8 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const test = require('tap').test;
-
 const log = require('../../src/util/log');
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
@@ -50,7 +48,7 @@ const whenThreadsComplete = (t, vm, uri, timeLimit = 5000) =>
 
         // Clear the interval to allow the process to exit
         // naturally.
-        t.tearDown(() => {
+        afterAll(() => {
             clearInterval(intervalId);
             clearTimeout(timeoutId);
         });
@@ -61,10 +59,10 @@ const executeDir = path.resolve(__dirname, '../fixtures/execute');
 fs.readdirSync(executeDir)
     .filter(uri => uri.endsWith('.sb2') || uri.endsWith('.sb3'))
     .forEach(uri => {
-        test(uri, t => {
+        test(uri, done => {
             // Disable logging during this test.
             log.suggest.deny('vm', 'error');
-            t.tearDown(() => log.suggest.clear());
+            afterAll(() => log.suggest.clear());
 
             const vm = new VirtualMachine();
 
@@ -74,22 +72,20 @@ fs.readdirSync(executeDir)
             let didEnd;
             const reporters = {
                 comment (message) {
-                    t.comment(message);
+                    console.log(message);
                 },
-                pass (reason) {
-                    t.pass(reason);
-                },
+                pass (reason) {},
                 fail (reason) {
-                    t.fail(reason);
+                    done.fail(reason);
                 },
                 plan (count) {
                     didPlan = true;
-                    t.plan(Number(count));
+                    expect.assertions(Number(count));
                 },
                 end () {
                     didEnd = true;
                     vm.quit();
-                    t.end();
+                    done();
                 }
             };
             const reportVmResult = text => {
@@ -114,7 +110,7 @@ fs.readdirSync(executeDir)
 
             // Stop the runtime interval once the test is complete so the test
             // process may naturally exit.
-            t.tearDown(() => {
+            afterAll(() => {
                 clearInterval(vm.runtime._steppingInterval);
             });
 
@@ -131,7 +127,7 @@ fs.readdirSync(executeDir)
                 .then(() => {
                     // Setting a plan is not required but is a good idea.
                     if (!didPlan) {
-                        t.comment('did not say "plan NUMBER_OF_TESTS"');
+                        console.log('did not say "plan NUMBER_OF_TESTS"');
                     }
 
                     // End must be called so that tap knows the test is done. If
@@ -139,9 +135,9 @@ fs.readdirSync(executeDir)
                     // execute, this explicit failure will raise that issue so
                     // it can be resolved.
                     if (!didEnd) {
-                        t.fail('did not say "end"');
+                        done.fail('did not say "end"');
                         vm.quit();
-                        t.end();
+                        done();
                     }
                 });
         });

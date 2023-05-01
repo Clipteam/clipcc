@@ -7,7 +7,6 @@
  * to load the sound if the saved project is re-loaded.
  */
 const path = require('path');
-const tap = require('tap');
 const md5 = require('js-md5');
 const makeTestStorage = require('../fixtures/make-test-storage');
 const {extractAsset, readFileToBuffer} = require('../fixtures/readProjectFile');
@@ -64,24 +63,24 @@ tap.beforeEach(() => {
 const test = tap.test;
 
 test('load sb3 project with corrupted sound file', t => {
-    t.equal(vm.runtime.targets.length, 2);
+    expect(vm.runtime.targets.length).toBe(2);
 
     const stage = vm.runtime.targets[0];
-    t.ok(stage.isStage);
+    expect(stage.isStage).toBeTruthy();
 
     const catSprite = vm.runtime.targets[1];
-    t.equal(catSprite.getName(), 'Sprite1');
-    t.equal(catSprite.getSounds().length, 1);
+    expect(catSprite.getName()).toBe('Sprite1');
+    expect(catSprite.getSounds().length).toBe(1);
 
     const corruptedSound = catSprite.getSounds()[0];
-    t.equal(corruptedSound.name, 'Boop Sound Recording');
-    t.equal(corruptedSound.assetId, defaultSoundAssetId);
-    t.equal(corruptedSound.dataFormat, 'wav');
+    expect(corruptedSound.name).toBe('Boop Sound Recording');
+    expect(corruptedSound.assetId).toBe(defaultSoundAssetId);
+    expect(corruptedSound.dataFormat).toBe('wav');
     // Runtime should have info about broken asset
-    t.ok(corruptedSound.broken);
-    t.equal(corruptedSound.broken.assetId, brokenSoundMd5);
+    expect(corruptedSound.broken).toBeTruthy();
+    expect(corruptedSound.broken.assetId).toBe(brokenSoundMd5);
     // Verify that we saved the original asset data
-    t.equal(md5(corruptedSound.broken.asset.data), brokenSoundMd5);
+    expect(md5(corruptedSound.broken.asset.data)).toBe(brokenSoundMd5);
 
     t.end();
 });
@@ -89,31 +88,31 @@ test('load sb3 project with corrupted sound file', t => {
 test('load and then save project with corrupted sound file', t => {
     const resavedProject = JSON.parse(vm.toJSON());
 
-    t.equal(resavedProject.targets.length, 2);
+    expect(resavedProject.targets.length).toBe(2);
 
     const stage = resavedProject.targets[0];
-    t.ok(stage.isStage);
+    expect(stage.isStage).toBeTruthy();
 
     const catSprite = resavedProject.targets[1];
-    t.equal(catSprite.name, 'Sprite1');
-    t.equal(catSprite.sounds.length, 1);
+    expect(catSprite.name).toBe('Sprite1');
+    expect(catSprite.sounds.length).toBe(1);
 
     const corruptedSound = catSprite.sounds[0];
-    t.equal(corruptedSound.name, 'Boop Sound Recording');
+    expect(corruptedSound.name).toBe('Boop Sound Recording');
     // Resaved project costume should have the metadata that corresponds to the original broken costume
-    t.equal(corruptedSound.assetId, brokenSoundMd5);
-    t.equal(corruptedSound.dataFormat, 'wav');
+    expect(corruptedSound.assetId).toBe(brokenSoundMd5);
+    expect(corruptedSound.dataFormat).toBe('wav');
     // Test that we didn't save any data about the costume being broken
-    t.notOk(corruptedSound.broken);
+    expect(corruptedSound.broken).toBeFalsy();
 
     t.end();
 });
 
 test('serializeSounds saves orignal broken sound', t => {
     const soundDescs = serializeSounds(vm.runtime, vm.runtime.targets[1].id);
-    t.equal(soundDescs.length, 1);
+    expect(soundDescs.length).toBe(1);
     const sound = soundDescs[0];
-    t.equal(sound.fileName, `${brokenSoundMd5}.wav`);
-    t.equal(md5(sound.fileContent), brokenSoundMd5);
+    expect(sound.fileName).toBe(`${brokenSoundMd5}.wav`);
+    expect(md5(sound.fileContent)).toBe(brokenSoundMd5);
     t.end();
 });

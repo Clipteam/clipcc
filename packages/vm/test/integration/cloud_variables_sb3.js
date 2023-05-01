@@ -1,5 +1,4 @@
 const path = require('path');
-const test = require('tap').test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/index');
@@ -14,7 +13,7 @@ const cloudVarLimit = readFileToBuffer(cloudVarLimitUri);
 const cloudVarExceededLimit = readFileToBuffer(cloudVarExceededLimitUri);
 const cloudVarLocal = readFileToBuffer(cloudVarLocalUri);
 
-test('importing an sb3 project with cloud variables', t => {
+test('importing an sb3 project with cloud variables', done => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
 
@@ -24,23 +23,23 @@ test('importing an sb3 project with cloud variables', t => {
     vm.setCompatibilityMode(false);
     vm.setTurboMode(false);
     vm.loadProject(cloudVarSimple).then(() => {
-        t.equal(vm.runtime.hasCloudData(), true);
+        expect(vm.runtime.hasCloudData()).toBe(true);
 
         const stage = vm.runtime.targets[0];
         const stageVars = Object.values(stage.variables);
-        t.equal(stageVars.length, 1);
+        expect(stageVars.length).toBe(1);
 
         const variable = stageVars[0];
-        t.equal(variable.name, '☁ firstCloud');
-        t.equal(Number(variable.value), 100);
-        t.equal(variable.isCloud, true);
+        expect(variable.name).toBe('☁ firstCloud');
+        expect(Number(variable.value)).toBe(100);
+        expect(variable.isCloud).toBe(true);
 
         vm.quit();
-        t.end();
+        done();
     });
 });
 
-test('importing an sb3 project with cloud variables at the limit for a project', t => {
+test('importing an sb3 project with cloud variables at the limit for a project', done => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
 
@@ -50,21 +49,21 @@ test('importing an sb3 project with cloud variables at the limit for a project',
     vm.setCompatibilityMode(false);
     vm.setTurboMode(false);
     vm.loadProject(cloudVarLimit).then(() => {
-        t.equal(vm.runtime.hasCloudData(), true);
+        expect(vm.runtime.hasCloudData()).toBe(true);
 
         const stage = vm.runtime.targets[0];
         const stageVars = Object.values(stage.variables);
 
-        t.equal(stageVars.length, 10);
+        expect(stageVars.length).toBe(10);
         // All of the 10 stage variables should be cloud variables
-        t.equal(stageVars.filter(v => v.isCloud).length, 10);
+        expect(stageVars.filter(v => v.isCloud).length).toBe(10);
 
         vm.quit();
-        t.end();
+        done();
     });
 });
 
-test('importing an sb3 project with cloud variables exceeding the limit for a project', t => {
+test('importing an sb3 project with cloud variables exceeding the limit for a project', done => {
     // This tests a hacked project where additional cloud variables exceeding
     // the project limit have been added.
     const vm = new VirtualMachine();
@@ -76,21 +75,21 @@ test('importing an sb3 project with cloud variables exceeding the limit for a pr
     vm.setCompatibilityMode(false);
     vm.setTurboMode(false);
     vm.loadProject(cloudVarExceededLimit).then(() => {
-        t.equal(vm.runtime.hasCloudData(), true);
+        expect(vm.runtime.hasCloudData()).toBe(true);
 
         const stage = vm.runtime.targets[0];
         const stageVars = Object.values(stage.variables);
 
-        t.equal(stageVars.length, 15);
+        expect(stageVars.length).toBe(15);
         // Only 8 of the variables should have the isCloud flag set to true
-        t.equal(stageVars.filter(v => v.isCloud).length, 10);
+        expect(stageVars.filter(v => v.isCloud).length).toBe(10);
 
         vm.quit();
-        t.end();
+        done();
     });
 });
 
-test('importing one project after the other resets cloud variable limit', t => {
+test('importing one project after the other resets cloud variable limit', done => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
 
@@ -100,27 +99,27 @@ test('importing one project after the other resets cloud variable limit', t => {
     vm.setCompatibilityMode(false);
     vm.setTurboMode(false);
     vm.loadProject(cloudVarExceededLimit).then(() => {
-        t.equal(vm.runtime.canAddCloudVariable(), false);
+        expect(vm.runtime.canAddCloudVariable()).toBe(false);
 
         vm.loadProject(cloudVarSimple).then(() => {
             const stage = vm.runtime.targets[0];
             const stageVars = Object.values(stage.variables);
-            t.equal(stageVars.length, 1);
+            expect(stageVars.length).toBe(1);
 
             const variable = stageVars[0];
-            t.equal(variable.name, '☁ firstCloud');
-            t.equal(Number(variable.value), 100);
-            t.equal(variable.isCloud, true);
+            expect(variable.name).toBe('☁ firstCloud');
+            expect(Number(variable.value)).toBe(100);
+            expect(variable.isCloud).toBe(true);
 
-            t.equal(vm.runtime.canAddCloudVariable(), true);
+            expect(vm.runtime.canAddCloudVariable()).toBe(true);
 
             vm.quit();
-            t.end();
+            done();
         });
     });
 });
 
-test('local cloud variables get imported as regular variables', t => {
+test('local cloud variables get imported as regular variables', done => {
     // This tests a hacked project where a sprite-local variable is
     // has the cloud variable flag set.
     const vm = new VirtualMachine();
@@ -132,20 +131,20 @@ test('local cloud variables get imported as regular variables', t => {
     vm.setCompatibilityMode(false);
     vm.setTurboMode(false);
     vm.loadProject(cloudVarLocal).then(() => {
-        t.equal(vm.runtime.hasCloudData(), false);
+        expect(vm.runtime.hasCloudData()).toBe(false);
 
         const stage = vm.runtime.targets[0];
         const stageVars = Object.values(stage.variables);
 
-        t.equal(stageVars.length, 0);
+        expect(stageVars.length).toBe(0);
 
         const sprite = vm.runtime.targets[1];
         const spriteVars = Object.values(sprite.variables);
 
-        t.equal(spriteVars.length, 1);
-        t.equal(spriteVars[0].isCloud, false);
+        expect(spriteVars.length).toBe(1);
+        expect(spriteVars[0].isCloud).toBe(false);
 
         vm.quit();
-        t.end();
+        done();
     });
 });

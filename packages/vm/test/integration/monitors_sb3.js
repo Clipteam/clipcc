@@ -1,5 +1,4 @@
 const path = require('path');
-const test = require('tap').test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/index');
@@ -8,7 +7,7 @@ const Variable = require('../../src/engine/variable');
 const projectUri = path.resolve(__dirname, '../fixtures/monitors.sb3');
 const project = readFileToBuffer(projectUri);
 
-test('importing sb3 project with monitors', t => {
+test('importing sb3 project with monitors', done => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
 
@@ -17,16 +16,16 @@ test('importing sb3 project with monitors', t => {
         const threads = JSON.parse(e.threads);
         // All monitors should create threads that finish during the step and
         // are revoved from runtime.threads.
-        t.equal(threads.length, 0);
+        expect(threads.length).toBe(0);
 
         // we care that the last step updated the right number of monitors
         // we don't care whether the last step ran other threads or not
         const lastStepUpdatedMonitorThreads = vm.runtime._lastStepDoneThreads.filter(thread => thread.updateMonitor);
-        t.equal(lastStepUpdatedMonitorThreads.length, 17);
+        expect(lastStepUpdatedMonitorThreads.length).toBe(17);
 
         // There should be one additional hidden monitor that is in the monitorState but
         // does not start a thread.
-        t.equal(vm.runtime._monitorState.size, 18);
+        expect(vm.runtime._monitorState.size).toBe(18);
 
         const stage = vm.runtime.targets[0];
         const shirtSprite = vm.runtime.targets[1];
@@ -36,94 +35,94 @@ test('importing sb3 project with monitors', t => {
         let variableId = Object.keys(stage.variables).filter(k => stage.variables[k].name === 'my variable')[0];
         let monitorRecord = vm.runtime._monitorState.get(variableId);
         let monitorBlock = vm.runtime.monitorBlocks.getBlock(variableId);
-        t.equal(monitorRecord.opcode, 'data_variable');
-        t.equal(monitorRecord.mode, 'default');
+        expect(monitorRecord.opcode).toBe('data_variable');
+        expect(monitorRecord.mode).toBe('default');
         // The following few properties are imported for all monitors, just check once.
-        t.equal(monitorRecord.sliderMin, 0);
-        t.equal(monitorRecord.sliderMax, 100);
-        t.equal(monitorRecord.isDiscrete, true); // The default if not present
-        t.equal(monitorRecord.x, 10);
-        t.equal(monitorRecord.y, 62);
+        expect(monitorRecord.sliderMin).toBe(0);
+        expect(monitorRecord.sliderMax).toBe(100);
+        expect(monitorRecord.isDiscrete).toBe(true); // The default if not present
+        expect(monitorRecord.x).toBe(10);
+        expect(monitorRecord.y).toBe(62);
         // Height and width are only used for list monitors and should default to 0
         // for all other monitors
-        t.equal(monitorRecord.width, 0);
-        t.equal(monitorRecord.height, 0);
-        t.equal(monitorRecord.visible, true);
-        t.type(monitorRecord.params, 'object');
+        expect(monitorRecord.width).toBe(0);
+        expect(monitorRecord.height).toBe(0);
+        expect(monitorRecord.visible).toBe(true);
+        expect(typeof monitorRecord.params).toBe('object');
         // The variable name should be stored in the monitor params
-        t.equal(monitorRecord.params.VARIABLE, 'my variable');
+        expect(monitorRecord.params.VARIABLE).toBe('my variable');
         // Test that the monitor block and its fields were constructed correctly
-        t.equal(monitorBlock.fields.VARIABLE.value, 'my variable');
-        t.equal(monitorBlock.fields.VARIABLE.name, 'VARIABLE');
-        t.equal(monitorBlock.fields.VARIABLE.id, variableId);
-        t.equal(monitorBlock.fields.VARIABLE.variableType, Variable.SCALAR_TYPE);
+        expect(monitorBlock.fields.VARIABLE.value).toBe('my variable');
+        expect(monitorBlock.fields.VARIABLE.name).toBe('VARIABLE');
+        expect(monitorBlock.fields.VARIABLE.id).toBe(variableId);
+        expect(monitorBlock.fields.VARIABLE.variableType).toBe(Variable.SCALAR_TYPE);
 
         // There is a global variable named 'secret_slide' which has a hidden monitor
         variableId = Object.keys(stage.variables).filter(k => stage.variables[k].name === 'secret_slide')[0];
         monitorRecord = vm.runtime._monitorState.get(variableId);
         monitorBlock = vm.runtime.monitorBlocks.getBlock(variableId);
-        t.equal(monitorRecord.opcode, 'data_variable');
-        t.equal(monitorRecord.mode, 'slider');
-        t.equal(monitorRecord.visible, false);
-        t.equal(monitorRecord.sliderMin, 0);
-        t.equal(monitorRecord.sliderMax, 100);
-        t.type(monitorRecord.params, 'object');
-        t.equal(monitorRecord.params.VARIABLE, 'secret_slide');
+        expect(monitorRecord.opcode).toBe('data_variable');
+        expect(monitorRecord.mode).toBe('slider');
+        expect(monitorRecord.visible).toBe(false);
+        expect(monitorRecord.sliderMin).toBe(0);
+        expect(monitorRecord.sliderMax).toBe(100);
+        expect(typeof monitorRecord.params).toBe('object');
+        expect(monitorRecord.params.VARIABLE).toBe('secret_slide');
         // Test that the monitor block and its fields were constructed correctly
-        t.equal(monitorBlock.fields.VARIABLE.value, 'secret_slide');
-        t.equal(monitorBlock.fields.VARIABLE.name, 'VARIABLE');
-        t.equal(monitorBlock.fields.VARIABLE.id, variableId);
-        t.equal(monitorBlock.fields.VARIABLE.variableType, Variable.SCALAR_TYPE);
+        expect(monitorBlock.fields.VARIABLE.value).toBe('secret_slide');
+        expect(monitorBlock.fields.VARIABLE.name).toBe('VARIABLE');
+        expect(monitorBlock.fields.VARIABLE.id).toBe(variableId);
+        expect(monitorBlock.fields.VARIABLE.variableType).toBe(Variable.SCALAR_TYPE);
 
 
         // Shirt sprite has a local list named "fashion"
         variableId = Object.keys(shirtSprite.variables).filter(k => shirtSprite.variables[k].name === 'fashion')[0];
         monitorRecord = vm.runtime._monitorState.get(variableId);
         monitorBlock = vm.runtime.monitorBlocks.getBlock(variableId);
-        t.equal(monitorRecord.opcode, 'data_listcontents');
-        t.equal(monitorRecord.mode, 'list');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.height, 122);
-        t.equal(monitorRecord.width, 104);
-        t.type(monitorRecord.params, 'object');
-        t.equal(monitorRecord.params.LIST, 'fashion'); // The list name should be stored in the monitor params
+        expect(monitorRecord.opcode).toBe('data_listcontents');
+        expect(monitorRecord.mode).toBe('list');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.height).toBe(122);
+        expect(monitorRecord.width).toBe(104);
+        expect(typeof monitorRecord.params).toBe('object');
+        expect(monitorRecord.params.LIST).toBe('fashion'); // The list name should be stored in the monitor params
         // Test that the monitor block and its fields were constructed correctly
-        t.equal(monitorBlock.fields.LIST.value, 'fashion');
-        t.equal(monitorBlock.fields.LIST.name, 'LIST');
-        t.equal(monitorBlock.fields.LIST.id, variableId);
-        t.equal(monitorBlock.fields.LIST.variableType, Variable.LIST_TYPE);
+        expect(monitorBlock.fields.LIST.value).toBe('fashion');
+        expect(monitorBlock.fields.LIST.name).toBe('LIST');
+        expect(monitorBlock.fields.LIST.id).toBe(variableId);
+        expect(monitorBlock.fields.LIST.variableType).toBe(Variable.LIST_TYPE);
 
         // Shirt sprite has a local variable named "tee"
         variableId = Object.keys(shirtSprite.variables).filter(k => shirtSprite.variables[k].name === 'tee')[0];
         monitorRecord = vm.runtime._monitorState.get(variableId);
         monitorBlock = vm.runtime.monitorBlocks.getBlock(variableId);
-        t.equal(monitorRecord.opcode, 'data_variable');
-        t.equal(monitorRecord.mode, 'slider');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.sliderMin, 0);
-        t.equal(monitorRecord.sliderMax, 100);
-        t.type(monitorRecord.params, 'object');
-        t.equal(monitorRecord.params.VARIABLE, 'tee');
+        expect(monitorRecord.opcode).toBe('data_variable');
+        expect(monitorRecord.mode).toBe('slider');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.sliderMin).toBe(0);
+        expect(monitorRecord.sliderMax).toBe(100);
+        expect(typeof monitorRecord.params).toBe('object');
+        expect(monitorRecord.params.VARIABLE).toBe('tee');
         // Test that the monitor block and its fields were constructed correctly
-        t.equal(monitorBlock.fields.VARIABLE.value, 'tee');
-        t.equal(monitorBlock.fields.VARIABLE.name, 'VARIABLE');
-        t.equal(monitorBlock.fields.VARIABLE.id, variableId);
-        t.equal(monitorBlock.fields.VARIABLE.variableType, Variable.SCALAR_TYPE);
+        expect(monitorBlock.fields.VARIABLE.value).toBe('tee');
+        expect(monitorBlock.fields.VARIABLE.name).toBe('VARIABLE');
+        expect(monitorBlock.fields.VARIABLE.id).toBe(variableId);
+        expect(monitorBlock.fields.VARIABLE.variableType).toBe(Variable.SCALAR_TYPE);
 
         // Heart sprite has a local list named "hearty"
         variableId = Object.keys(heartSprite.variables).filter(k => heartSprite.variables[k].name === 'hearty')[0];
         monitorRecord = vm.runtime._monitorState.get(variableId);
         monitorBlock = vm.runtime.monitorBlocks.getBlock(variableId);
-        t.equal(monitorRecord.opcode, 'data_variable');
-        t.equal(monitorRecord.mode, 'default');
-        t.equal(monitorRecord.visible, true);
-        t.type(monitorRecord.params, 'object');
-        t.equal(monitorRecord.params.VARIABLE, 'hearty'); // The variable name should be stored in the monitor params
+        expect(monitorRecord.opcode).toBe('data_variable');
+        expect(monitorRecord.mode).toBe('default');
+        expect(monitorRecord.visible).toBe(true);
+        expect(typeof monitorRecord.params).toBe('object');
+        expect(monitorRecord.params.VARIABLE).toBe('hearty'); // The variable name should be stored in the monitor params
         // Test that the monitor block and its fields were constructed correctly
-        t.equal(monitorBlock.fields.VARIABLE.value, 'hearty');
-        t.equal(monitorBlock.fields.VARIABLE.name, 'VARIABLE');
-        t.equal(monitorBlock.fields.VARIABLE.id, variableId);
-        t.equal(monitorBlock.fields.VARIABLE.variableType, Variable.SCALAR_TYPE);
+        expect(monitorBlock.fields.VARIABLE.value).toBe('hearty');
+        expect(monitorBlock.fields.VARIABLE.name).toBe('VARIABLE');
+        expect(monitorBlock.fields.VARIABLE.id).toBe(variableId);
+        expect(monitorBlock.fields.VARIABLE.variableType).toBe(Variable.SCALAR_TYPE);
 
         // Backdrop name monitor is visible, not sprite specific
         // should get imported with id that references the name parameter
@@ -131,13 +130,13 @@ test('importing sb3 project with monitors', t => {
         let monitorId = 'backdropnumbername_name';
         monitorRecord = vm.runtime._monitorState.get(monitorId);
         monitorBlock = vm.runtime.monitorBlocks.getBlock(monitorId);
-        t.equal(monitorRecord.opcode, 'looks_backdropnumbername');
-        t.equal(monitorRecord.mode, 'default');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, null);
-        t.equal(monitorRecord.targetId, null);
+        expect(monitorRecord.opcode).toBe('looks_backdropnumbername');
+        expect(monitorRecord.mode).toBe('default');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe(null);
+        expect(monitorRecord.targetId).toBe(null);
         // Test that the monitor block and its fields were constructed correctly
-        t.equal(monitorBlock.fields.NUMBER_NAME.value, 'name');
+        expect(monitorBlock.fields.NUMBER_NAME.value).toBe('name');
 
         // Backdrop name monitor is visible, not sprite specific
         // should get imported with id that references the name parameter
@@ -145,52 +144,52 @@ test('importing sb3 project with monitors', t => {
         monitorId = 'backdropnumbername_number';
         monitorRecord = vm.runtime._monitorState.get(monitorId);
         monitorBlock = vm.runtime.monitorBlocks.getBlock(monitorId);
-        t.equal(monitorRecord.opcode, 'looks_backdropnumbername');
-        t.equal(monitorRecord.mode, 'default');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, null);
-        t.equal(monitorRecord.targetId, null);
+        expect(monitorRecord.opcode).toBe('looks_backdropnumbername');
+        expect(monitorRecord.mode).toBe('default');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe(null);
+        expect(monitorRecord.targetId).toBe(null);
         // Test that the monitor block and its fields were constructed correctly
-        t.equal(monitorBlock.fields.NUMBER_NAME.value, 'number');
+        expect(monitorBlock.fields.NUMBER_NAME.value).toBe('number');
 
         // x position monitor is in large mode, specific to shirt sprite
         monitorId = `${shirtSprite.id}_xposition`;
         monitorRecord = vm.runtime._monitorState.get(monitorId);
         monitorBlock = vm.runtime.monitorBlocks.getBlock(monitorId);
-        t.equal(monitorRecord.opcode, 'motion_xposition');
-        t.equal(monitorRecord.mode, 'large');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, 'Shirt-T');
-        t.equal(monitorRecord.targetId, shirtSprite.id);
+        expect(monitorRecord.opcode).toBe('motion_xposition');
+        expect(monitorRecord.mode).toBe('large');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe('Shirt-T');
+        expect(monitorRecord.targetId).toBe(shirtSprite.id);
 
         // y position monitor is in large mode, specific to shirt sprite
         monitorId = `${shirtSprite.id}_yposition`;
         monitorRecord = vm.runtime._monitorState.get(monitorId);
         monitorBlock = vm.runtime.monitorBlocks.getBlock(monitorId);
-        t.equal(monitorRecord.opcode, 'motion_yposition');
-        t.equal(monitorRecord.mode, 'large');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, 'Shirt-T');
-        t.equal(monitorRecord.targetId, shirtSprite.id);
+        expect(monitorRecord.opcode).toBe('motion_yposition');
+        expect(monitorRecord.mode).toBe('large');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe('Shirt-T');
+        expect(monitorRecord.targetId).toBe(shirtSprite.id);
 
         // direction monitor is in large mode, specific to shirt sprite
         monitorId = `${shirtSprite.id}_direction`;
         monitorRecord = vm.runtime._monitorState.get(monitorId);
         monitorBlock = vm.runtime.monitorBlocks.getBlock(monitorId);
-        t.equal(monitorRecord.opcode, 'motion_direction');
-        t.equal(monitorRecord.mode, 'large');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, 'Shirt-T');
-        t.equal(monitorRecord.targetId, shirtSprite.id);
+        expect(monitorRecord.opcode).toBe('motion_direction');
+        expect(monitorRecord.mode).toBe('large');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe('Shirt-T');
+        expect(monitorRecord.targetId).toBe(shirtSprite.id);
 
         monitorId = `${shirtSprite.id}_size`;
         monitorRecord = vm.runtime._monitorState.get(monitorId);
         monitorBlock = vm.runtime.monitorBlocks.getBlock(monitorId);
-        t.equal(monitorRecord.opcode, 'looks_size');
-        t.equal(monitorRecord.mode, 'large');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, 'Shirt-T');
-        t.equal(monitorRecord.targetId, shirtSprite.id);
+        expect(monitorRecord.opcode).toBe('looks_size');
+        expect(monitorRecord.mode).toBe('large');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe('Shirt-T');
+        expect(monitorRecord.targetId).toBe(shirtSprite.id);
 
         // The monitor IDs for the sensing_current block should be unique
         // to the parameter that is selected on the block being monitored.
@@ -198,61 +197,61 @@ test('importing sb3 project with monitors', t => {
         // though the field value on the block is uppercase.
         monitorId = 'current_date';
         monitorRecord = vm.runtime._monitorState.get(monitorId);
-        t.equal(monitorRecord.opcode, 'sensing_current');
+        expect(monitorRecord.opcode).toBe('sensing_current');
         monitorBlock = vm.runtime.monitorBlocks.getBlock(monitorId);
-        t.equal(monitorBlock.fields.CURRENTMENU.value, 'DATE');
-        t.equal(monitorRecord.mode, 'default');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, null);
-        t.equal(monitorRecord.targetId, null);
+        expect(monitorBlock.fields.CURRENTMENU.value).toBe('DATE');
+        expect(monitorRecord.mode).toBe('default');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe(null);
+        expect(monitorRecord.targetId).toBe(null);
 
         monitorId = 'current_year';
         monitorRecord = vm.runtime._monitorState.get(monitorId);
-        t.equal(monitorRecord.opcode, 'sensing_current');
+        expect(monitorRecord.opcode).toBe('sensing_current');
         monitorBlock = vm.runtime.monitorBlocks.getBlock(monitorId);
-        t.equal(monitorBlock.fields.CURRENTMENU.value, 'YEAR');
-        t.equal(monitorRecord.mode, 'default');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, null);
-        t.equal(monitorRecord.targetId, null);
+        expect(monitorBlock.fields.CURRENTMENU.value).toBe('YEAR');
+        expect(monitorRecord.mode).toBe('default');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe(null);
+        expect(monitorRecord.targetId).toBe(null);
 
         monitorId = 'current_month';
         monitorRecord = vm.runtime._monitorState.get(monitorId);
-        t.equal(monitorRecord.opcode, 'sensing_current');
+        expect(monitorRecord.opcode).toBe('sensing_current');
         monitorBlock = vm.runtime.monitorBlocks.getBlock(monitorId);
-        t.equal(monitorBlock.fields.CURRENTMENU.value, 'MONTH');
-        t.equal(monitorRecord.mode, 'default');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, null);
-        t.equal(monitorRecord.targetId, null);
+        expect(monitorBlock.fields.CURRENTMENU.value).toBe('MONTH');
+        expect(monitorRecord.mode).toBe('default');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe(null);
+        expect(monitorRecord.targetId).toBe(null);
 
         // Extension Monitors
         monitorId = 'music_getTempo';
         monitorRecord = vm.runtime._monitorState.get(monitorId);
-        t.equal(monitorRecord.opcode, 'music_getTempo');
+        expect(monitorRecord.opcode).toBe('music_getTempo');
         monitorBlock = vm.runtime.monitorBlocks.getBlock(monitorId);
-        t.equal(monitorRecord.mode, 'default');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, null);
-        t.equal(monitorRecord.targetId, null);
-        t.equal(vm.extensionManager.isExtensionLoaded('music'), true);
+        expect(monitorRecord.mode).toBe('default');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe(null);
+        expect(monitorRecord.targetId).toBe(null);
+        expect(vm.extensionManager.isExtensionLoaded('music')).toBe(true);
 
         monitorId = 'ev3_getDistance';
         monitorRecord = vm.runtime._monitorState.get(monitorId);
-        t.equal(monitorRecord.opcode, 'ev3_getDistance');
+        expect(monitorRecord.opcode).toBe('ev3_getDistance');
         monitorBlock = vm.runtime.monitorBlocks.getBlock(monitorId);
-        t.equal(monitorRecord.mode, 'default');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, null);
-        t.equal(monitorRecord.targetId, null);
-        t.equal(vm.extensionManager.isExtensionLoaded('ev3'), true);
+        expect(monitorRecord.mode).toBe('default');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe(null);
+        expect(monitorRecord.targetId).toBe(null);
+        expect(vm.extensionManager.isExtensionLoaded('ev3')).toBe(true);
 
         vm.quit();
-        t.end();
+        done();
     });
 
     // Start VM, load project, and run
-    t.doesNotThrow(() => {
+    expect(() => {
         vm.start();
         vm.clear();
         vm.setCompatibilityMode(false);
@@ -264,5 +263,5 @@ test('importing sb3 project with monitors', t => {
                 vm.stopAll();
             }, 100);
         });
-    });
+    }).not.toThrow();
 });

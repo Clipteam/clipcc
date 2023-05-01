@@ -1,5 +1,4 @@
 const path = require('path');
-const test = require('tap').test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/index');
@@ -7,7 +6,7 @@ const VirtualMachine = require('../../src/index');
 const projectUri = path.resolve(__dirname, '../fixtures/clone-cleanup.sb2');
 const project = readFileToBuffer(projectUri);
 
-test('clone-cleanup', t => {
+test('clone-cleanup', done => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
 
@@ -19,20 +18,16 @@ test('clone-cleanup', t => {
 
     const verifyCounts = (expectedClones, extraThreads) => {
         // stage plus one sprite, plus clones
-        t.strictEqual(vm.runtime.targets.length, 2 + expectedClones,
-            `target count at step ${testStep}`);
+        expect(vm.runtime.targets.length).toBe(2 + expectedClones);
 
         // the stage should never have any clones
-        t.strictEqual(vm.runtime.targets[0].sprite.clones.length, 1,
-            `stage clone count at step ${testStep}`);
+        expect(vm.runtime.targets[0].sprite.clones.length).toBe(1);
 
         // check sprite clone count (+1 for original)
-        t.strictEqual(vm.runtime.targets[1].sprite.clones.length, 1 + expectedClones,
-            `sprite clone count at step ${testStep}`);
+        expect(vm.runtime.targets[1].sprite.clones.length).toBe(1 + expectedClones);
 
         // thread count isn't directly tied to clone count since threads can end
-        t.strictEqual(vm.runtime.threads.length, extraThreads + (2 * expectedClones),
-            `thread count at step ${testStep}`);
+        expect(vm.runtime.threads.length).toBe(extraThreads + (2 * expectedClones));
     };
 
     const testNextStep = () => {
@@ -66,13 +61,13 @@ test('clone-cleanup', t => {
             verifyCounts(0, 0);
 
             vm.quit();
-            t.end();
+            done();
             break;
         }
     };
 
     // Start VM, load project, and run
-    t.doesNotThrow(() => {
+    expect(() => {
         vm.start();
         vm.clear();
         vm.setCompatibilityMode(false);
@@ -87,6 +82,6 @@ test('clone-cleanup', t => {
             // Let the project control the pace of the tests
             vm.runtime.on('SAY', () => testNextStep());
         });
-    });
+    }).not.toThrow();
 
 });

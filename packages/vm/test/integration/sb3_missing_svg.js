@@ -7,7 +7,6 @@
  * to load the costume if the saved project is re-loaded.
  */
 const path = require('path');
-const tap = require('tap');
 const makeTestStorage = require('../fixtures/make-test-storage');
 const FakeRenderer = require('../fixtures/fake-renderer');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
@@ -34,24 +33,24 @@ tap.beforeEach(() => {
 const test = tap.test;
 
 test('loading sb3 project with missing vector costume file', t => {
-    t.equal(vm.runtime.targets.length, 2);
+    expect(vm.runtime.targets.length).toBe(2);
 
     const stage = vm.runtime.targets[0];
-    t.ok(stage.isStage);
+    expect(stage.isStage).toBeTruthy();
 
     const blueGuySprite = vm.runtime.targets[1];
-    t.equal(blueGuySprite.getName(), 'Blue Square Guy');
-    t.equal(blueGuySprite.getCostumes().length, 1);
+    expect(blueGuySprite.getName()).toBe('Blue Square Guy');
+    expect(blueGuySprite.getCostumes().length).toBe(1);
 
     const missingCostume = blueGuySprite.getCostumes()[0];
-    t.equal(missingCostume.name, 'costume1');
+    expect(missingCostume.name).toBe('costume1');
     // Costume should have both default cosutme (e.g. Gray Question Mark) data and original data
     const defaultVectorAssetId = vm.runtime.storage.defaultAssetId.ImageVector;
-    t.equal(missingCostume.assetId, defaultVectorAssetId);
-    t.equal(missingCostume.dataFormat, 'svg');
+    expect(missingCostume.assetId).toBe(defaultVectorAssetId);
+    expect(missingCostume.dataFormat).toBe('svg');
     // Runtime should have info about broken asset
-    t.ok(missingCostume.broken);
-    t.equal(missingCostume.broken.assetId, missingCostumeAssetId);
+    expect(missingCostume.broken).toBeTruthy();
+    expect(missingCostume.broken.assetId).toBe(missingCostumeAssetId);
 
     t.end();
 });
@@ -59,22 +58,22 @@ test('loading sb3 project with missing vector costume file', t => {
 test('load and then save sb3 project with missing costume file', t => {
     const resavedProject = JSON.parse(vm.toJSON());
 
-    t.equal(resavedProject.targets.length, 2);
+    expect(resavedProject.targets.length).toBe(2);
 
     const stage = resavedProject.targets[0];
-    t.ok(stage.isStage);
+    expect(stage.isStage).toBeTruthy();
 
     const blueGuySprite = resavedProject.targets[1];
-    t.equal(blueGuySprite.name, 'Blue Square Guy');
-    t.equal(blueGuySprite.costumes.length, 1);
+    expect(blueGuySprite.name).toBe('Blue Square Guy');
+    expect(blueGuySprite.costumes.length).toBe(1);
 
     const missingCostume = blueGuySprite.costumes[0];
-    t.equal(missingCostume.name, 'costume1');
+    expect(missingCostume.name).toBe('costume1');
     // Costume should have both default cosutme (e.g. Gray Question Mark) data and original data
-    t.equal(missingCostume.assetId, missingCostumeAssetId);
-    t.equal(missingCostume.dataFormat, 'svg');
+    expect(missingCostume.assetId).toBe(missingCostumeAssetId);
+    expect(missingCostume.dataFormat).toBe('svg');
     // Test that we didn't save any data about the costume being broken
-    t.notOk(missingCostume.broken);
+    expect(missingCostume.broken).toBeFalsy();
 
     t.end();
 });
@@ -82,8 +81,8 @@ test('load and then save sb3 project with missing costume file', t => {
 test('serializeCostume does not save data for missing costume', t => {
     const costumeDescs = serializeCostumes(vm.runtime);
 
-    t.equal(costumeDescs.length, 1); // Should only have one costume, the backdrop
-    t.not(costumeDescs[0].fileName, `${missingCostumeAssetId}.svg`);
+    expect(costumeDescs.length).toBe(1); // Should only have one costume, the backdrop
+    expect(costumeDescs[0].fileName).not.toBe(`${missingCostumeAssetId}.svg`);
 
     t.end();
 });

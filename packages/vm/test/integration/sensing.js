@@ -1,5 +1,4 @@
 const path = require('path');
-const test = require('tap').test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/index');
@@ -7,20 +6,20 @@ const VirtualMachine = require('../../src/index');
 const uri = path.resolve(__dirname, '../fixtures/sensing.sb2');
 const project = readFileToBuffer(uri);
 
-test('sensing', t => {
+test('sensing', done => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
 
     // Evaluate playground data and exit
     vm.on('playgroundData', e => {
         const threads = JSON.parse(e.threads);
-        t.ok(threads.length > 0);
+        expect(threads.length > 0).toBeTruthy();
         vm.quit();
-        t.end();
+        done();
     });
 
     // Start VM, load project, and run
-    t.doesNotThrow(() => {
+    expect(() => {
         vm.start();
         vm.clear();
         vm.setCompatibilityMode(false);
@@ -34,5 +33,5 @@ test('sensing', t => {
                 vm.stopAll();
             }, 2000);
         });
-    });
+    }).not.toThrow();
 });

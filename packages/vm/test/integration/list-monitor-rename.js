@@ -1,5 +1,4 @@
 const path = require('path');
-const test = require('tap').test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/index');
@@ -7,7 +6,7 @@ const VirtualMachine = require('../../src/index');
 const projectUri = path.resolve(__dirname, '../fixtures/list-monitor-rename.sb3');
 const project = readFileToBuffer(projectUri);
 
-test('importing sb3 project with incorrect list monitor name', t => {
+test('importing sb3 project with incorrect list monitor name', done => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
 
@@ -24,19 +23,19 @@ test('importing sb3 project with incorrect list monitor name', t => {
 
             const monitorRecord = vm.runtime._monitorState.get(listId);
             const monitorBlock = vm.runtime.monitorBlocks.getBlock(listId);
-            t.equal(monitorRecord.opcode, 'data_listcontents');
+            expect(monitorRecord.opcode).toBe('data_listcontents');
 
             // The list name should be properly renamed
-            t.equal(monitorRecord.params.LIST, renamedListName);
-            t.equal(monitorBlock.fields.LIST.value, renamedListName);
+            expect(monitorRecord.params.LIST).toBe(renamedListName);
+            expect(monitorBlock.fields.LIST.value).toBe(renamedListName);
         }
 
         vm.quit();
-        t.end();
+        done();
     });
 
     // Start VM, load project, and run
-    t.doesNotThrow(() => {
+    expect(() => {
         vm.start();
         vm.clear();
         vm.setCompatibilityMode(false);
@@ -48,5 +47,5 @@ test('importing sb3 project with incorrect list monitor name', t => {
                 vm.stopAll();
             }, 100);
         });
-    });
+    }).not.toThrow();
 });

@@ -1,5 +1,4 @@
 const path = require('path');
-const test = require('tap').test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/index');
@@ -7,7 +6,7 @@ const VirtualMachine = require('../../src/index');
 const projectUri = path.resolve(__dirname, '../fixtures/monitors.sb2');
 const project = readFileToBuffer(projectUri);
 
-test('importing sb2 project with monitors', t => {
+test('importing sb2 project with monitors', done => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
 
@@ -16,16 +15,16 @@ test('importing sb2 project with monitors', t => {
         const threads = JSON.parse(e.threads);
         // All monitors should create threads that finish during the step and
         // are revoved from runtime.threads.
-        t.equal(threads.length, 0);
+        expect(threads.length).toBe(0);
 
         // we care that the last step updated the right number of monitors
         // we don't care whether the last step ran other threads or not
         const lastStepUpdatedMonitorThreads = vm.runtime._lastStepDoneThreads.filter(thread => thread.updateMonitor);
-        t.equal(lastStepUpdatedMonitorThreads.length, 8);
+        expect(lastStepUpdatedMonitorThreads.length).toBe(8);
 
         // There should be one additional hidden monitor that is in the monitorState but
         // does not start a thread.
-        t.equal(vm.runtime._monitorState.size, 9);
+        expect(vm.runtime._monitorState.size).toBe(9);
 
         const stage = vm.runtime.targets[0];
         const target = vm.runtime.targets[1];
@@ -33,55 +32,55 @@ test('importing sb2 project with monitors', t => {
         // Global variable named "global" is a slider
         let variableId = Object.keys(stage.variables).filter(k => stage.variables[k].name === 'global')[0];
         let monitorRecord = vm.runtime._monitorState.get(variableId);
-        t.equal(monitorRecord.opcode, 'data_variable');
-        t.equal(monitorRecord.mode, 'slider');
-        t.equal(monitorRecord.sliderMin, -200); // Make sure these are imported for sliders.
-        t.equal(monitorRecord.sliderMax, 30);
-        t.equal(monitorRecord.isDiscrete, false);
-        t.equal(monitorRecord.x, 5); // These are imported for all monitors, just check once.
-        t.equal(monitorRecord.y, 59);
-        t.equal(monitorRecord.visible, true);
+        expect(monitorRecord.opcode).toBe('data_variable');
+        expect(monitorRecord.mode).toBe('slider');
+        expect(monitorRecord.sliderMin).toBe(-200); // Make sure these are imported for sliders.
+        expect(monitorRecord.sliderMax).toBe(30);
+        expect(monitorRecord.isDiscrete).toBe(false);
+        expect(monitorRecord.x).toBe(5); // These are imported for all monitors, just check once.
+        expect(monitorRecord.y).toBe(59);
+        expect(monitorRecord.visible).toBe(true);
 
         // Global variable named "global list" is a list
         variableId = Object.keys(stage.variables).filter(k => stage.variables[k].name === 'global list')[0];
         monitorRecord = vm.runtime._monitorState.get(variableId);
-        t.equal(monitorRecord.opcode, 'data_listcontents');
-        t.equal(monitorRecord.mode, 'list');
-        t.equal(monitorRecord.visible, true);
+        expect(monitorRecord.opcode).toBe('data_listcontents');
+        expect(monitorRecord.mode).toBe('list');
+        expect(monitorRecord.visible).toBe(true);
 
         // Local variable named "local" is hidden
         variableId = Object.keys(target.variables).filter(k => target.variables[k].name === 'local')[0];
         monitorRecord = vm.runtime._monitorState.get(variableId);
-        t.equal(monitorRecord.opcode, 'data_variable');
-        t.equal(monitorRecord.mode, 'default');
-        t.equal(monitorRecord.visible, false);
+        expect(monitorRecord.opcode).toBe('data_variable');
+        expect(monitorRecord.mode).toBe('default');
+        expect(monitorRecord.visible).toBe(false);
 
         // Local list named "local list" is visible
         variableId = Object.keys(target.variables).filter(k => target.variables[k].name === 'local list')[0];
         monitorRecord = vm.runtime._monitorState.get(variableId);
-        t.equal(monitorRecord.opcode, 'data_listcontents');
-        t.equal(monitorRecord.mode, 'list');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.width, 106); // Make sure these are imported from lists.
-        t.equal(monitorRecord.height, 206);
+        expect(monitorRecord.opcode).toBe('data_listcontents');
+        expect(monitorRecord.mode).toBe('list');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.width).toBe(106); // Make sure these are imported from lists.
+        expect(monitorRecord.height).toBe(206);
 
         // Backdrop name monitor is visible, not sprite specific
         // should get imported with id that references the name parameter
         // via '_name' at the end since the 3.0 block has a dropdown.
         monitorRecord = vm.runtime._monitorState.get('backdropnumbername_name');
-        t.equal(monitorRecord.opcode, 'looks_backdropnumbername');
-        t.equal(monitorRecord.mode, 'default');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, null);
-        t.equal(monitorRecord.targetId, null);
+        expect(monitorRecord.opcode).toBe('looks_backdropnumbername');
+        expect(monitorRecord.mode).toBe('default');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe(null);
+        expect(monitorRecord.targetId).toBe(null);
 
         // x position monitor is in large mode, specific to sprite 1
         monitorRecord = vm.runtime._monitorState.get(`${target.id}_xposition`);
-        t.equal(monitorRecord.opcode, 'motion_xposition');
-        t.equal(monitorRecord.mode, 'large');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, 'Sprite1');
-        t.equal(monitorRecord.targetId, target.id);
+        expect(monitorRecord.opcode).toBe('motion_xposition');
+        expect(monitorRecord.mode).toBe('large');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe('Sprite1');
+        expect(monitorRecord.targetId).toBe(target.id);
 
 
         let monitorId;
@@ -94,40 +93,40 @@ test('importing sb2 project with monitors', t => {
 
         monitorId = 'current_date';
         monitorRecord = vm.runtime._monitorState.get(monitorId);
-        t.equal(monitorRecord.opcode, 'sensing_current');
+        expect(monitorRecord.opcode).toBe('sensing_current');
         monitorBlock = vm.runtime.monitorBlocks.getBlock(monitorId);
-        t.equal(monitorBlock.fields.CURRENTMENU.value, 'DATE');
-        t.equal(monitorRecord.mode, 'default');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, null);
-        t.equal(monitorRecord.targetId, null);
+        expect(monitorBlock.fields.CURRENTMENU.value).toBe('DATE');
+        expect(monitorRecord.mode).toBe('default');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe(null);
+        expect(monitorRecord.targetId).toBe(null);
 
         monitorId = 'current_minute';
         monitorRecord = vm.runtime._monitorState.get(monitorId);
-        t.equal(monitorRecord.opcode, 'sensing_current');
+        expect(monitorRecord.opcode).toBe('sensing_current');
         monitorBlock = vm.runtime.monitorBlocks.getBlock(monitorId);
-        t.equal(monitorBlock.fields.CURRENTMENU.value, 'MINUTE');
-        t.equal(monitorRecord.mode, 'default');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, null);
-        t.equal(monitorRecord.targetId, null);
+        expect(monitorBlock.fields.CURRENTMENU.value).toBe('MINUTE');
+        expect(monitorRecord.mode).toBe('default');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe(null);
+        expect(monitorRecord.targetId).toBe(null);
 
         monitorId = 'current_dayofweek';
         monitorRecord = vm.runtime._monitorState.get(monitorId);
-        t.equal(monitorRecord.opcode, 'sensing_current');
+        expect(monitorRecord.opcode).toBe('sensing_current');
         monitorBlock = vm.runtime.monitorBlocks.getBlock(monitorId);
-        t.equal(monitorBlock.fields.CURRENTMENU.value, 'DAYOFWEEK');
-        t.equal(monitorRecord.mode, 'default');
-        t.equal(monitorRecord.visible, true);
-        t.equal(monitorRecord.spriteName, null);
-        t.equal(monitorRecord.targetId, null);
+        expect(monitorBlock.fields.CURRENTMENU.value).toBe('DAYOFWEEK');
+        expect(monitorRecord.mode).toBe('default');
+        expect(monitorRecord.visible).toBe(true);
+        expect(monitorRecord.spriteName).toBe(null);
+        expect(monitorRecord.targetId).toBe(null);
 
         vm.quit();
-        t.end();
+        done();
     });
 
     // Start VM, load project, and run
-    t.doesNotThrow(() => {
+    expect(() => {
         vm.start();
         vm.clear();
         vm.setCompatibilityMode(false);
@@ -139,5 +138,5 @@ test('importing sb2 project with monitors', t => {
                 vm.stopAll();
             }, 100);
         });
-    });
+    }).not.toThrow();
 });

@@ -1,5 +1,4 @@
 const path = require('path');
-const test = require('tap').test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/index');
@@ -14,20 +13,20 @@ const project = readFileToBuffer(projectUri);
  * The intention is to make sure that the stack can be activated by a stack click
  * even when the hat predicate is false.
  */
-test('stack click activates the stack', t => {
+test('stack click activates the stack', done => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
 
     // Evaluate playground data and exit
     vm.on('playgroundData', () => {
         // The sprite should have moved 100 to the right
-        t.equal(vm.editingTarget.x, 100);
+        expect(vm.editingTarget.x).toBe(100);
         vm.quit();
-        t.end();
+        done();
     });
 
     // Start VM, load project, and run
-    t.doesNotThrow(() => {
+    expect(() => {
         vm.start();
         vm.clear();
         vm.setCompatibilityMode(false);
@@ -37,7 +36,7 @@ test('stack click activates the stack', t => {
             const allBlocks = blockContainer._blocks;
 
             // Confirm the editing target is initially at 0
-            t.equal(vm.editingTarget.x, 0);
+            expect(vm.editingTarget.x).toBe(0);
 
             // Find hat for greater than and click it
             for (const blockId in allBlocks) {
@@ -55,5 +54,5 @@ test('stack click activates the stack', t => {
                 vm.stopAll();
             }, 2000);
         });
-    });
+    }).not.toThrow();
 });
