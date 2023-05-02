@@ -7,7 +7,7 @@ let vm;
 let projectChanged;
 let blockContainer;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const projectUri = path.resolve(__dirname, '../fixtures/default.sb2');
     const project = readFileToBuffer(projectUri);
 
@@ -52,9 +52,7 @@ tap.beforeEach(() => {
     });
 });
 
-const test = tap.test;
-
-test('Creating a block should emit a project changed event', t => {
+test('Creating a block should emit a project changed event', done => {
     blockContainer.createBlock({
         id: 'another block',
         opcode: 'my_testBlock',
@@ -62,17 +60,17 @@ test('Creating a block should emit a project changed event', t => {
     });
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Deleting a block should emit a project changed event', t => {
+test('Deleting a block should emit a project changed event', done => {
     blockContainer.deleteBlock('a new block');
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Changing a block should emit a project changed event', t => {
+test('Changing a block should emit a project changed event', done => {
     blockContainer.changeBlock({
         element: 'field',
         id: 'a new block',
@@ -100,10 +98,10 @@ test('Changing a block should emit a project changed event', t => {
 
     expect(projectChanged).toBe(true);
 
-    t.end();
+    done();
 });
 
-test('Moving a block to a new position should emit a project changed event', t => {
+test('Moving a block to a new position should emit a project changed event', done => {
     blockContainer.moveBlock({
         id: 'a new block',
         newCoordinate: {
@@ -113,10 +111,10 @@ test('Moving a block to a new position should emit a project changed event', t =
     });
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Connecting a block to a new parent should emit a project changed event', t => {
+test('Connecting a block to a new parent should emit a project changed event', done => {
     blockContainer.createBlock({
         id: 'another block',
         opcode: 'my_testBlock'
@@ -130,20 +128,20 @@ test('Connecting a block to a new parent should emit a project changed event', t
     });
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Disconnecting a block from another should emit a project changed event', t => {
+test('Disconnecting a block from another should emit a project changed event', done => {
     blockContainer.moveBlock({
         id: 'a new block',
         oldParent: 'a parent block'
     });
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Creating a local variable should emit a project changed event', t => {
+test('Creating a local variable should emit a project changed event', done => {
     blockContainer.blocklyListen({
         type: 'var_create',
         varId: 'a new variable',
@@ -169,10 +167,10 @@ test('Creating a local variable should emit a project changed event', t => {
 
     expect(projectChanged).toBe(false);
 
-    t.end();
+    done();
 });
 
-test('Creating a global variable should emit a project changed event', t => {
+test('Creating a global variable should emit a project changed event', done => {
     blockContainer.blocklyListen({
         type: 'var_create',
         varId: 'a new variable',
@@ -198,10 +196,10 @@ test('Creating a global variable should emit a project changed event', t => {
 
     expect(projectChanged).toBe(false);
 
-    t.end();
+    done();
 });
 
-test('Renaming a variable should emit a project changed event', t => {
+test('Renaming a variable should emit a project changed event', done => {
     blockContainer.blocklyListen({
         type: 'var_create',
         varId: 'a new variable',
@@ -221,10 +219,10 @@ test('Renaming a variable should emit a project changed event', t => {
     });
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Deleting a variable should emit a project changed event', t => {
+test('Deleting a variable should emit a project changed event', done => {
     blockContainer.blocklyListen({
         type: 'var_create',
         varId: 'a new variable',
@@ -246,10 +244,10 @@ test('Deleting a variable should emit a project changed event', t => {
     });
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Creating a block comment should emit a project changed event', t => {
+test('Creating a block comment should emit a project changed event', done => {
     blockContainer.blocklyListen({
         type: 'comment_create',
         blockId: 'a new block',
@@ -265,10 +263,10 @@ test('Creating a block comment should emit a project changed event', t => {
     });
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Creating a workspace comment should emit a project changed event', t => {
+test('Creating a workspace comment should emit a project changed event', done => {
     blockContainer.blocklyListen({
         type: 'comment_create',
         blockId: null,
@@ -284,10 +282,10 @@ test('Creating a workspace comment should emit a project changed event', t => {
     });
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Changing a comment should emit a project changed event', t => {
+test('Changing a comment should emit a project changed event', done => {
     blockContainer.blocklyListen({
         type: 'comment_create',
         blockId: null,
@@ -317,10 +315,10 @@ test('Changing a comment should emit a project changed event', t => {
     });
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Attempting to change a comment that does not exist should not emit a project changed event', t => {
+test('Attempting to change a comment that does not exist should not emit a project changed event', done => {
     blockContainer.blocklyListen({
         type: 'comment_change',
         blockId: null,
@@ -334,10 +332,10 @@ test('Attempting to change a comment that does not exist should not emit a proje
     });
 
     expect(projectChanged).toBe(false);
-    t.end();
+    done();
 });
 
-test('Deleting a block comment should emit a project changed event', t => {
+test('Deleting a block comment should emit a project changed event', done => {
     blockContainer.blocklyListen({
         type: 'comment_create',
         blockId: 'a new block',
@@ -369,10 +367,10 @@ test('Deleting a block comment should emit a project changed event', t => {
     });
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Deleting a workspace comment should emit a project changed event', t => {
+test('Deleting a workspace comment should emit a project changed event', done => {
     blockContainer.blocklyListen({
         type: 'comment_create',
         blockId: null,
@@ -404,10 +402,10 @@ test('Deleting a workspace comment should emit a project changed event', t => {
     });
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Deleting a comment that does not exist should not emit a project changed event', t => {
+test('Deleting a comment that does not exist should not emit a project changed event', done => {
     blockContainer.blocklyListen({
         type: 'comment_delete',
         blockId: null,
@@ -423,10 +421,10 @@ test('Deleting a comment that does not exist should not emit a project changed e
     });
 
     expect(projectChanged).toBe(false);
-    t.end();
+    done();
 });
 
-test('Moving a comment should emit a project changed event', t => {
+test('Moving a comment should emit a project changed event', done => {
     blockContainer.blocklyListen({
         type: 'comment_create',
         blockId: null,
@@ -458,5 +456,5 @@ test('Moving a comment should emit a project changed event', t => {
     });
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });

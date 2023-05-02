@@ -6,7 +6,7 @@ const VirtualMachine = require('../../src/virtual-machine');
 let vm;
 let projectChanged;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const projectUri = path.resolve(__dirname, '../fixtures/default.sb2');
     const project = readFileToBuffer(projectUri);
 
@@ -26,29 +26,27 @@ tap.beforeEach(() => {
     });
 });
 
-const test = tap.test;
-
-test('Adding a sprite (from sprite2) should emit a project changed event', t => {
+test('Adding a sprite (from sprite2) should emit a project changed event', done => {
     const sprite2Uri = path.resolve(__dirname, '../fixtures/cat.sprite2');
     const sprite2 = readFileToBuffer(sprite2Uri);
 
     vm.addSprite(sprite2).then(() => {
         expect(projectChanged).toBe(true);
-        t.end();
+        done();
     });
 });
 
-test('Adding a sprite (from sprite3) should emit a project changed event', t => {
+test('Adding a sprite (from sprite3) should emit a project changed event', done => {
     const sprite3Uri = path.resolve(__dirname, '../fixtures/cat.sprite3');
     const sprite3 = readFileToBuffer(sprite3Uri);
 
     vm.addSprite(sprite3).then(() => {
         expect(projectChanged).toBe(true);
-        t.end();
+        done();
     });
 });
 
-test('Adding a costume should emit a project changed event', t => {
+test('Adding a costume should emit a project changed event', done => {
     const newCostume = {
         name: 'costume1',
         baseLayerID: 0,
@@ -60,11 +58,11 @@ test('Adding a costume should emit a project changed event', t => {
 
     vm.addCostume('f9a1c175dbe2e5dee472858dd30d16bb.svg', newCostume).then(() => {
         expect(projectChanged).toBe(true);
-        t.end();
+        done();
     });
 });
 
-test('Adding a costume from library should emit a project changed event', t => {
+test('Adding a costume from library should emit a project changed event', done => {
     const newCostume = {
         name: 'costume1',
         baseLayerID: 0,
@@ -76,11 +74,11 @@ test('Adding a costume from library should emit a project changed event', t => {
 
     vm.addCostumeFromLibrary('f9a1c175dbe2e5dee472858dd30d16bb.svg', newCostume).then(() => {
         expect(projectChanged).toBe(true);
-        t.end();
+        done();
     });
 });
 
-test('Adding a backdrop should emit a project changed event', t => {
+test('Adding a backdrop should emit a project changed event', done => {
     const newCostume = {
         name: 'costume1',
         baseLayerID: 0,
@@ -92,11 +90,11 @@ test('Adding a backdrop should emit a project changed event', t => {
 
     vm.addBackdrop('f9a1c175dbe2e5dee472858dd30d16bb.svg', newCostume).then(() => {
         expect(projectChanged).toBe(true);
-        t.end();
+        done();
     });
 });
 
-test('Adding a sound should emit a project changed event', t => {
+test('Adding a sound should emit a project changed event', done => {
     const newSound = {
         soundName: 'meow',
         soundID: 0,
@@ -107,33 +105,33 @@ test('Adding a sound should emit a project changed event', t => {
 
     vm.addSound(newSound).then(() => {
         expect(projectChanged).toBe(true);
-        t.end();
+        done();
     });
 });
 
-test('Deleting a sprite should emit a project changed event', t => {
+test('Deleting a sprite should emit a project changed event', done => {
     const spriteId = vm.editingTarget.id;
 
     vm.deleteSprite(spriteId);
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Deleting a costume should emit a project changed event', t => {
+test('Deleting a costume should emit a project changed event', done => {
     vm.deleteCostume(0);
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Deleting a sound should emit a project changed event', t => {
+test('Deleting a sound should emit a project changed event', done => {
     vm.deleteSound(0);
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Reordering a sprite should emit a project changed event', t => {
+test('Reordering a sprite should emit a project changed event', done => {
     const sprite3Uri = path.resolve(__dirname, '../fixtures/cat.sprite3');
     const sprite3 = readFileToBuffer(sprite3Uri);
 
@@ -144,20 +142,20 @@ test('Reordering a sprite should emit a project changed event', t => {
         expect(vm.runtime.targets.filter(target => !target.isStage).length).toBe(2);
         vm.reorderTarget(2, 1);
         expect(projectChanged).toBe(true);
-        t.end();
+        done();
     });
 });
 
-test('Reordering a costume should emit a project changed event', t => {
+test('Reordering a costume should emit a project changed event', done => {
     expect(vm.editingTarget.sprite.costumes.length).toBe(2);
     const spriteId = vm.editingTarget.id;
     const reordered = vm.reorderCostume(spriteId, 1, 0);
     expect(reordered).toBe(true);
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Reordering a sound should emit a project changed event', t => {
+test('Reordering a sound should emit a project changed event', done => {
     const spriteId = vm.editingTarget.id;
     const newSound = {
         soundName: 'meow',
@@ -173,31 +171,31 @@ test('Reordering a sound should emit a project changed event', t => {
         const reordered = vm.reorderSound(spriteId, 1, 0);
         expect(reordered).toBe(true);
         expect(projectChanged).toBe(true);
-        t.end();
+        done();
     });
 });
 
-test('Renaming a sprite should emit a project changed event', t => {
+test('Renaming a sprite should emit a project changed event', done => {
     const spriteId = vm.editingTarget.id;
     vm.renameSprite(spriteId, 'My Sprite');
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Renaming a costume should emit a project changed event', t => {
+test('Renaming a costume should emit a project changed event', done => {
     vm.renameCostume(0, 'My Costume');
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Renaming a sound should emit a project changed event', t => {
+test('Renaming a sound should emit a project changed event', done => {
     vm.renameSound(0, 'My Sound');
 
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Changing sprite info should emit a project changed event', t => {
+test('Changing sprite info should emit a project changed event', done => {
     const newSpritePosition = {
         x: 10,
         y: 100
@@ -215,25 +213,25 @@ test('Changing sprite info should emit a project changed event', t => {
     expect(projectChanged).toBe(true);
     projectChanged = false;
 
-    t.end();
+    done();
 
 });
 
-test('Editing a vector costume should emit a project changed event', t => {
+test('Editing a vector costume should emit a project changed event', done => {
     const mockSvg = 'svg';
     const mockRotationX = -13;
     const mockRotationY = 25;
 
     vm.updateSvg(0, mockSvg, mockRotationX, mockRotationY);
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });
 
-test('Editing a sound should emit a project changed event', t => {
+test('Editing a sound should emit a project changed event', done => {
     const mockSoundBuffer = [];
     const mockSoundEncoding = [];
 
     vm.updateSoundBuffer(0, mockSoundBuffer, mockSoundEncoding);
     expect(projectChanged).toBe(true);
-    t.end();
+    done();
 });

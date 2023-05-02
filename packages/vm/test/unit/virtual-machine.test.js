@@ -7,7 +7,7 @@ const Renderer = require('../fixtures/fake-renderer');
 const Runtime = require('../../src/engine/runtime');
 const RenderedTarget = require('../../src/sprites/rendered-target');
 
-test('deleteSound returns function after deleting or null if nothing was deleted', t => {
+test('deleteSound returns function after deleting or null if nothing was deleted', done => {
     const vm = new VirtualMachine();
     const rt = new Runtime();
     const sprite = new Sprite(null, rt);
@@ -27,10 +27,10 @@ test('deleteSound returns function after deleting or null if nothing was deleted
     expect(sprite.sounds[1].id).toBe(3);
     expect(noAddFun).toBe(null);
 
-    t.end();
+    done();
 });
 
-test('deleteCostume returns function after deleting or null if nothing was deleted', t => {
+test('deleteCostume returns function after deleting or null if nothing was deleted', done => {
     const vm = new VirtualMachine();
     const rt = new Runtime();
     const sprite = new Sprite(null, rt);
@@ -51,48 +51,48 @@ test('deleteCostume returns function after deleting or null if nothing was delet
     expect(sprite.costumes[1].id).toBe(3);
     expect(noAddFun).toBe(null);
 
-    t.end();
+    done();
 });
 
 
-test('addSprite throws on invalid string', t => {
+test('addSprite throws on invalid string', done => {
     const vm = new VirtualMachine();
     vm.addSprite('this is not a sprite')
         .catch(e => {
             expect(e.startsWith('Sprite Upload Error:')).toBe(true);
-            t.end();
+            done();
         });
 });
 
-test('renameSprite throws when there is no sprite with that id', t => {
+test('renameSprite throws when there is no sprite with that id', done => {
     const vm = new VirtualMachine();
     vm.runtime.getTargetById = () => null;
-    expect((() => vm.renameSprite('id', 'name'))).toThrowError(new Error('No target with the provided id.'));
-    t.end();
+    expect((() => vm.renameSprite('id', 'name'))).toThrowError('No target with the provided id.');
+    done();
 });
 
-test('renameSprite throws when used on a non-sprite target', t => {
+test('renameSprite throws when used on a non-sprite target', done => {
     const vm = new VirtualMachine();
     const fakeTarget = {
         isSprite: () => false
     };
     vm.runtime.getTargetById = () => (fakeTarget);
-    expect((() => vm.renameSprite('id', 'name'))).toThrowError(new Error('Cannot rename non-sprite targets.'));
-    t.end();
+    expect((() => vm.renameSprite('id', 'name'))).toThrowError('Cannot rename non-sprite targets.');
+    done();
 });
 
-test('renameSprite throws when there is no sprite for given target', t => {
+test('renameSprite throws when there is no sprite for given target', done => {
     const vm = new VirtualMachine();
     const fakeTarget = {
         sprite: null,
         isSprite: () => true
     };
     vm.runtime.getTargetById = () => (fakeTarget);
-    expect((() => vm.renameSprite('id', 'name'))).toThrowError(new Error('No sprite associated with this target.'));
-    t.end();
+    expect((() => vm.renameSprite('id', 'name'))).toThrowError('No sprite associated with this target.');
+    done();
 });
 
-test('renameSprite sets the sprite name', t => {
+test('renameSprite sets the sprite name', done => {
     const vm = new VirtualMachine();
     const fakeTarget = {
         sprite: {name: 'original'},
@@ -101,10 +101,10 @@ test('renameSprite sets the sprite name', t => {
     vm.runtime.getTargetById = () => (fakeTarget);
     vm.renameSprite('id', 'not-original');
     expect(fakeTarget.sprite.name).toBe('not-original');
-    t.end();
+    done();
 });
 
-test('renameSprite does not set sprite names to an empty string', t => {
+test('renameSprite does not set sprite names to an empty string', done => {
     const vm = new VirtualMachine();
     const fakeTarget = {
         sprite: {name: 'original'},
@@ -113,10 +113,10 @@ test('renameSprite does not set sprite names to an empty string', t => {
     vm.runtime.getTargetById = () => (fakeTarget);
     vm.renameSprite('id', '');
     expect(fakeTarget.sprite.name).toBe('original');
-    t.end();
+    done();
 });
 
-test('renameSprite does not set sprite names to reserved names', t => {
+test('renameSprite does not set sprite names to reserved names', done => {
     const vm = new VirtualMachine();
     const fakeTarget = {
         sprite: {name: 'original'},
@@ -125,10 +125,10 @@ test('renameSprite does not set sprite names to reserved names', t => {
     vm.runtime.getTargetById = () => (fakeTarget);
     vm.renameSprite('id', '_mouse_');
     expect(fakeTarget.sprite.name).toBe('original');
-    t.end();
+    done();
 });
 
-test('renameSprite increments from existing sprite names', t => {
+test('renameSprite increments from existing sprite names', done => {
     const vm = new VirtualMachine();
     vm.emitTargetsUpdate = () => {};
 
@@ -142,10 +142,10 @@ test('renameSprite increments from existing sprite names', t => {
     expect(vm.runtime.targets[0].sprite.name).toBe('foo');
     vm.renameSprite(target2.id, 'foo');
     expect(vm.runtime.targets[1].sprite.name).toBe('foo2');
-    t.end();
+    done();
 });
 
-test('renameSprite does not increment when renaming to the same name', t => {
+test('renameSprite does not increment when renaming to the same name', done => {
     const vm = new VirtualMachine();
     vm.emitTargetsUpdate = () => {};
 
@@ -159,31 +159,31 @@ test('renameSprite does not increment when renaming to the same name', t => {
     vm.renameSprite(target.id, 'foo');
     expect(vm.runtime.targets[0].sprite.name).toBe('foo');
 
-    t.end();
+    done();
 });
 
-test('deleteSprite throws when used on a non-sprite target', t => {
+test('deleteSprite throws when used on a non-sprite target', done => {
     const vm = new VirtualMachine();
     vm.runtime.targets = [{
         id: 'id',
         isSprite: () => false
     }];
-    expect((() => vm.deleteSprite('id'))).toThrowError(new Error('Cannot delete non-sprite targets.'));
-    t.end();
+    expect((() => vm.deleteSprite('id'))).toThrowError('Cannot delete non-sprite targets.');
+    done();
 });
 
-test('deleteSprite throws when there is no sprite for the given target', t => {
+test('deleteSprite throws when there is no sprite for the given target', done => {
     const vm = new VirtualMachine();
     vm.runtime.targets = [{
         id: 'id',
         isSprite: () => true,
         sprite: null
     }];
-    expect((() => vm.deleteSprite('id'))).toThrowError(new Error('No sprite associated with this target.'));
-    t.end();
+    expect((() => vm.deleteSprite('id'))).toThrowError('No sprite associated with this target.');
+    done();
 });
 
-test('deleteSprite throws when there is no target with given id', t => {
+test('deleteSprite throws when there is no target with given id', done => {
     const vm = new VirtualMachine();
     vm.runtime.targets = [{
         id: 'id',
@@ -192,11 +192,11 @@ test('deleteSprite throws when there is no target with given id', t => {
             name: 'this name'
         }
     }];
-    expect((() => vm.deleteSprite('id1'))).toThrowError(new Error('No target with the provided id.'));
-    t.end();
+    expect((() => vm.deleteSprite('id1'))).toThrowError('No target with the provided id.');
+    done();
 });
 
-test('deleteSprite deletes a sprite when given id is associated with a known sprite', t => {
+test('deleteSprite deletes a sprite when given id is associated with a known sprite', done => {
     const vm = new VirtualMachine();
     const spr = new Sprite(null, vm.runtime);
     const currTarget = spr.createClone();
@@ -206,11 +206,11 @@ test('deleteSprite deletes a sprite when given id is associated with a known spr
     expect(currTarget.sprite.clones.length).toBe(1);
     vm.deleteSprite(currTarget.id);
     expect(currTarget.sprite.clones.length).toBe(0);
-    t.end();
+    done();
 });
 
 // eslint-disable-next-line max-len
-test('deleteSprite sets editing target as null when given sprite is current editing target, and the only target in the runtime', t => {
+test('deleteSprite sets editing target as null when given sprite is current editing target, and the only target in the runtime', done => {
     const vm = new VirtualMachine();
     const spr = new Sprite(null, vm.runtime);
     const currTarget = spr.createClone();
@@ -222,11 +222,11 @@ test('deleteSprite sets editing target as null when given sprite is current edit
 
     expect(vm.runtime.targets.length).toBe(0);
     expect(vm.editingTarget).toBe(null);
-    t.end();
+    done();
 });
 
 // eslint-disable-next-line max-len
-test('deleteSprite updates editingTarget when sprite being deleted is current editing target, and there is another target in the runtime', t => {
+test('deleteSprite updates editingTarget when sprite being deleted is current editing target, and there is another target in the runtime', done => {
     const vm = new VirtualMachine();
     const spr1 = new Sprite(null, vm.runtime);
     const spr2 = new Sprite(null, vm.runtime);
@@ -257,10 +257,10 @@ test('deleteSprite updates editingTarget when sprite being deleted is current ed
     expect(vm.editingTarget.id).toBe(otherTarget2.id);
     expect(vm.runtime.targets.length).toBe(1);
 
-    t.end();
+    done();
 });
 
-test('duplicateSprite throws when there is no target with given id', t => {
+test('duplicateSprite throws when there is no target with given id', done => {
     const vm = new VirtualMachine();
     vm.runtime.targets = [{
         id: 'id',
@@ -269,32 +269,32 @@ test('duplicateSprite throws when there is no target with given id', t => {
             name: 'this name'
         }
     }];
-    expect((() => vm.duplicateSprite('id1'))).toThrowError(new Error('No target with the provided id'));
-    t.end();
+    expect((() => vm.duplicateSprite('id1'))).toThrowError('No target with the provided id');
+    done();
 });
 
-test('duplicateSprite throws when used on a non-sprite target', t => {
+test('duplicateSprite throws when used on a non-sprite target', done => {
     const vm = new VirtualMachine();
     vm.runtime.targets = [{
         id: 'id',
         isSprite: () => false
     }];
-    expect((() => vm.duplicateSprite('id'))).toThrowError(new Error('Cannot duplicate non-sprite targets.'));
-    t.end();
+    expect((() => vm.duplicateSprite('id'))).toThrowError('Cannot duplicate non-sprite targets.');
+    done();
 });
 
-test('duplicateSprite throws when there is no sprite for the given target', t => {
+test('duplicateSprite throws when there is no sprite for the given target', done => {
     const vm = new VirtualMachine();
     vm.runtime.targets = [{
         id: 'id',
         isSprite: () => true,
         sprite: null
     }];
-    expect((() => vm.duplicateSprite('id'))).toThrowError(new Error('No sprite associated with this target.'));
-    t.end();
+    expect((() => vm.duplicateSprite('id'))).toThrowError('No sprite associated with this target.');
+    done();
 });
 
-test('duplicateSprite duplicates a sprite when given id is associated with known sprite', t => {
+test('duplicateSprite duplicates a sprite when given id is associated with known sprite', done => {
     const vm = new VirtualMachine();
     const spr = new Sprite(null, vm.runtime);
     const currTarget = spr.createClone();
@@ -306,12 +306,12 @@ test('duplicateSprite duplicates a sprite when given id is associated with known
     expect(vm.runtime.targets.length).toBe(1);
     vm.duplicateSprite(currTarget.id).then(() => {
         expect(vm.runtime.targets.length).toBe(2);
-        t.end();
+        done();
     });
 
 });
 
-test('duplicateSprite assigns duplicated sprite a fresh name', t => {
+test('duplicateSprite assigns duplicated sprite a fresh name', done => {
     const vm = new VirtualMachine();
     const spr = new Sprite(null, vm.runtime);
     spr.name = 'sprite1';
@@ -326,12 +326,12 @@ test('duplicateSprite assigns duplicated sprite a fresh name', t => {
         expect(vm.runtime.targets.length).toBe(2);
         expect(vm.runtime.targets[0].sprite.name).toBe('sprite1');
         expect(vm.runtime.targets[1].sprite.name).toBe('sprite2');
-        t.end();
+        done();
     });
 
 });
 
-test('reorderCostume', t => {
+test('reorderCostume', done => {
     const vm = new VirtualMachine();
     vm.emitTargetsUpdate = () => {};
 
@@ -359,10 +359,10 @@ test('reorderCostume', t => {
     expect(costumeIndex).toBe(0);
     expect(newIndex).toBe(3);
 
-    t.end();
+    done();
 });
 
-test('reorderSound', t => {
+test('reorderSound', done => {
     const vm = new VirtualMachine();
     vm.emitTargetsUpdate = () => {};
 
@@ -390,10 +390,10 @@ test('reorderSound', t => {
     expect(soundIndex).toBe(0); // Make sure reorder function was called correctly.
     expect(newIndex).toBe(3);
 
-    t.end();
+    done();
 });
 
-test('shareCostumeToTarget', t => {
+test('shareCostumeToTarget', done => {
     const vm = new VirtualMachine();
     const spr1 = new Sprite(null, vm.runtime);
     spr1.name = 'foo';
@@ -414,11 +414,11 @@ test('shareCostumeToTarget', t => {
     vm.shareCostumeToTarget(0, target2.id).then(() => {
         expect(target2.currentCostume).toBe(1);
         expect(target2.getCostumes()[1].name).toBe('costume1');
-        t.end();
+        done();
     });
 });
 
-test('shareSoundToTarget', t => {
+test('shareSoundToTarget', done => {
     const vm = new VirtualMachine();
     const spr1 = new Sprite(null, vm.runtime);
     spr1.name = 'foo';
@@ -438,11 +438,11 @@ test('shareSoundToTarget', t => {
 
     vm.shareSoundToTarget(0, target2.id).then(() => {
         expect(target2.getSounds()[1].name).toBe('sound1');
-        t.end();
+        done();
     });
 });
 
-test('reorderTarget', t => {
+test('reorderTarget', done => {
     const vm = new VirtualMachine();
     vm.emitTargetsUpdate = () => {};
 
@@ -463,10 +463,10 @@ test('reorderTarget', t => {
     expect(vm.reorderTarget(3, 1)).toBe(true);
     expect(vm.runtime.targets).toEqual(['b', 'd', 'c', 'a']);
 
-    t.end();
+    done();
 });
 
-test('emitWorkspaceUpdate', t => {
+test('emitWorkspaceUpdate', done => {
     const vm = new VirtualMachine();
     const blocksToXML = comments => {
         let blockString = 'blocks\n';
@@ -545,10 +545,10 @@ test('emitWorkspaceUpdate', t => {
     expect(xml.indexOf('someBlockComment')).toBe(-1);
     expect(xml.indexOf('someOtherComment')).not.toBe(-1);
     expect(xml.indexOf('A Block Comment: aBlockComment')).not.toBe(-1);
-    t.end();
+    done();
 });
 
-test('drag IO redirect', t => {
+test('drag IO redirect', done => {
     const vm = new VirtualMachine();
     const sprite1Info = [];
     const sprite2Info = [];
@@ -584,10 +584,10 @@ test('drag IO redirect', t => {
     // Then postSpriteInfo should continue posting to the new editing target
     vm.postSpriteInfo('sprite2 info 2');
     expect(sprite2Info[1]).toBe('sprite2 info 2');
-    t.end();
+    done();
 });
 
-test('select original after dragging clone', t => {
+test('select original after dragging clone', done => {
     const vm = new VirtualMachine();
     let newEditingTargetId = null;
     vm.setEditingTarget = id => {
@@ -611,10 +611,10 @@ test('select original after dragging clone', t => {
     // Stop drag on target with parent sprite selects the 0th clone of that sprite
     vm.stopDrag('sprite1_clone');
     expect(newEditingTargetId).toBe('sprite1_original');
-    t.end();
+    done();
 });
 
-test('setVariableValue', t => {
+test('setVariableValue', done => {
     const vm = new VirtualMachine();
     const spr = new Sprite(null, vm.runtime);
     const target = spr.createClone();
@@ -632,10 +632,10 @@ test('setVariableValue', t => {
     expect(vm.setVariableValue(target.id, 'a-variable', 100)).toBe(true);
     expect(target.lookupVariableById('a-variable').value).toBe(100);
 
-    t.end();
+    done();
 });
 
-test('setVariableValue requests update for cloud variable', t => {
+test('setVariableValue requests update for cloud variable', done => {
     const vm = new VirtualMachine();
     const spr = new Sprite(null, vm.runtime);
     const target = spr.createClone();
@@ -662,10 +662,10 @@ test('setVariableValue requests update for cloud variable', t => {
     expect(varName).toBe('a-name');
     expect(varValue).toBe(100);
 
-    t.end();
+    done();
 });
 
-test('getVariableValue', t => {
+test('getVariableValue', done => {
     const vm = new VirtualMachine();
     const spr = new Sprite(null, vm.runtime);
     const target = spr.createClone();
@@ -684,11 +684,11 @@ test('getVariableValue', t => {
     vm.setVariableValue(target.id, 'a-variable', 'string');
     expect(vm.getVariableValue(target.id, 'a-variable')).toBe('string');
 
-    t.end();
+    done();
 });
 
 // Block Listener tests for comment
-test('comment_create event updates comment with null position', t => {
+test('comment_create event updates comment with null position', done => {
     const vm = new VirtualMachine();
     const spr = new Sprite(null, vm.runtime);
     const target = spr.createClone();
@@ -708,10 +708,10 @@ test('comment_create event updates comment with null position', t => {
     expect(comment.x).toBe(10);
     expect(comment.y).toBe(20);
 
-    t.end();
+    done();
 });
 
-test('shareBlocksToTarget shares global variables without any name changes', t => {
+test('shareBlocksToTarget shares global variables without any name changes', done => {
     const vm = new VirtualMachine();
     const runtime = vm.runtime;
     const spr1 = new Sprite(null, runtime);
@@ -771,11 +771,11 @@ test('shareBlocksToTarget shares global variables without any name changes', t =
         expect(stage.variables['mock var id'].name).toBe('a mock variable');
         expect(vm.getVariableValue(stage.id, 'mock var id')).toBe(10);
 
-        t.end();
+        done();
     });
 });
 
-test('shareBlocksToTarget shares a local variable to the stage, creating a global variable with a new name', t => {
+test('shareBlocksToTarget shares a local variable to the stage, creating a global variable with a new name', done => {
     const vm = new VirtualMachine();
     const runtime = vm.runtime;
     const spr1 = new Sprite(null, runtime);
@@ -839,11 +839,11 @@ test('shareBlocksToTarget shares a local variable to the stage, creating a globa
         expect(newId).not.toBe('mock var id');
         expect(vm.getVariableValue(stage.id, newId)).toBe(0);
 
-        t.end();
+        done();
     });
 });
 
-test('shareBlocksToTarget chooses a fresh name for a new global variable checking for conflicts on all sprites', t => {
+test('shareBlocksToTarget chooses a fresh name for a new global variable checking for conflicts on all sprites', done => {
     const vm = new VirtualMachine();
     const runtime = vm.runtime;
     const spr1 = new Sprite(null, runtime);
@@ -914,11 +914,11 @@ test('shareBlocksToTarget chooses a fresh name for a new global variable checkin
         expect(newId).not.toBe('mock var id');
         expect(vm.getVariableValue(stage.id, newId)).toBe(0);
 
-        t.end();
+        done();
     });
 });
 
-test('shareBlocksToTarget loads extensions that have not yet been loaded', t => {
+test('shareBlocksToTarget loads extensions that have not yet been loaded', done => {
     const vm = new VirtualMachine();
     const runtime = vm.runtime;
     const spr1 = new Sprite(null, runtime);
@@ -943,11 +943,11 @@ test('shareBlocksToTarget loads extensions that have not yet been loaded', t => 
     vm.shareBlocksToTarget(fakeBlocks, stage.id).then(() => {
         // Verify that only the not-loaded extension gets loaded
         expect(loadedIds).toEqual(['notloaded']);
-        t.end();
+        done();
     });
 });
 
-test('Setting turbo mode emits events', t => {
+test('Setting turbo mode emits events', done => {
     let turboMode = null;
 
     const vm = new VirtualMachine();
@@ -965,18 +965,18 @@ test('Setting turbo mode emits events', t => {
     vm.setTurboMode(false);
     expect(turboMode).toBe(false);
 
-    t.end();
+    done();
 });
 
-test('Getting the renderer returns the renderer', t => {
+test('Getting the renderer returns the renderer', done => {
     const renderer = new Renderer();
     const vm = new VirtualMachine();
     vm.attachRenderer(renderer);
     expect(vm.renderer).toBe(renderer);
-    t.end();
+    done();
 });
 
-test('Starting the VM emits an event', t => {
+test('Starting the VM emits an event', done => {
     let started = false;
     const vm = new VirtualMachine();
     vm.addListener('RUNTIME_STARTED', () => {
@@ -985,10 +985,10 @@ test('Starting the VM emits an event', t => {
     vm.start();
     expect(started).toBe(true);
     vm.quit();
-    t.end();
+    done();
 });
 
-test('vm.greenFlag() emits a PROJECT_START event', t => {
+test('vm.greenFlag() emits a PROJECT_START event', done => {
     let greenFlagged = false;
     const vm = new VirtualMachine();
     vm.addListener('PROJECT_START', () => {
@@ -996,10 +996,10 @@ test('vm.greenFlag() emits a PROJECT_START event', t => {
     });
     vm.greenFlag();
     expect(greenFlagged).toBe(true);
-    t.end();
+    done();
 });
 
-test('toJSON encodes Infinity/NaN as 0, not null', t => {
+test('toJSON encodes Infinity/NaN as 0, not null', done => {
     const vm = new VirtualMachine();
     const runtime = vm.runtime;
     const spr1 = new Sprite(null, runtime);
@@ -1023,10 +1023,10 @@ test('toJSON encodes Infinity/NaN as 0, not null', t => {
     expect(json.targets[0].variables.id2[1]).toBe(0);
     expect(json.targets[0].variables.id3[1]).toBe(0);
 
-    t.end();
+    done();
 });
 
-test('clearFlyoutBlocks removes all of the flyout blocks', t => {
+test('clearFlyoutBlocks removes all of the flyout blocks', done => {
     const vm = new VirtualMachine();
     const flyoutBlocks = vm.runtime.flyoutBlocks;
 
@@ -1036,5 +1036,5 @@ test('clearFlyoutBlocks removes all of the flyout blocks', t => {
     vm.clearFlyoutBlocks();
     expect(Object.keys(flyoutBlocks._blocks).length).toBe(0);
 
-    t.end();
+    done();
 });

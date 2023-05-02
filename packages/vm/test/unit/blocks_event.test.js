@@ -6,7 +6,7 @@ const Target = require('../../src/engine/target');
 const Thread = require('../../src/engine/thread');
 const Variable = require('../../src/engine/variable');
 
-test('#760 - broadcastAndWait', () => {
+test('#760 - broadcastAndWait', done => {
     const broadcastAndWaitBlock = {
         id: 'broadcastAndWaitBlock',
         fields: {
@@ -55,7 +55,7 @@ test('#760 - broadcastAndWait', () => {
 
     rt.addTarget(tgt);
 
-    let th = rt._pushThread('broadcastAndWaitBlock', t);
+    let th = rt._pushThread('broadcastAndWaitBlock', tgt);
     const util = new BlockUtility();
     util.sequencer = rt.sequencer;
     util.thread = th;
@@ -94,6 +94,7 @@ test('#760 - broadcastAndWait', () => {
     rt.threads.splice(2, 1);
     e.broadcastAndWait({BROADCAST_OPTION: {id: 'testBroadcastID', name: 'message'}}, util);
     expect(th.status).toBe(Thread.STATUS_RUNNING);
+    done();
 });
 
 test('When > hat - loudness', () => {

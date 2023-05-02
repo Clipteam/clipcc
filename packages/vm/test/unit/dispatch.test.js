@@ -8,42 +8,39 @@ const path = require('path');
 // By default Central Dispatch works with the Worker class built into the browser. Tell it to use TinyWorker instead.
 dispatch.workerClass = Worker;
 
-const runServiceTest = function (serviceName, t) {
+const runServiceTest = function (serviceName) {
     const promises = [];
 
-    promises.push(dispatch.call(serviceName, 'returnFortyTwo')
-        .then(
-            x => expect(x).toBe(42),
-            e => t.fail(e)
-        ));
+    promises.push(
+        expect(dispatch.call(serviceName, 'returnFortyTwo'))
+            .resolves.toBe(42)
+    );
 
-    promises.push(dispatch.call(serviceName, 'doubleArgument', 9)
-        .then(
-            x => expect(x).toBe(18),
-            e => t.fail(e)
-        ));
+    promises.push(
+        expect(dispatch.call(serviceName, 'doubleArgument', 9))
+            .resolves.toBe(18)
+    );
 
-    promises.push(dispatch.call(serviceName, 'doubleArgument', 123)
-        .then(
-            x => expect(x).toBe(246),
-            e => t.fail(e)
-        ));
+    promises.push(
+        expect(dispatch.call(serviceName, 'doubleArgument', 123))
+            .resolves.toBe(246)
+    );
 
     // I tried using `t.rejects` here but ran into https://github.com/tapjs/node-tap/issues/384
-    promises.push(dispatch.call(serviceName, 'throwException')
-        .then(
-            () => t.fail('exception was not propagated as expected'),
-            () => t.pass('exception was propagated as expected')
-        ));
+    promises.push(
+        expect(dispatch.call(serviceName, 'throwException'))
+        .rejects.not.toBeUndefined()
+    );
 
     return Promise.all(promises);
 };
 
 test('local', done => {
     dispatch.setService('LocalDispatchTest', new DispatchTestService())
+        .then(() => done())
         .catch(e => done.fail(e));
 
-    return runServiceTest('LocalDispatchTest', t);
+    return runServiceTest('LocalDispatchTest');
 });
 
 test('remote', done => {
@@ -54,11 +51,12 @@ test('remote', done => {
 
     const waitForWorker = new Promise(resolve => {
         dispatch.setService('test', {onWorkerReady: resolve})
+            .then(() => done())
             .catch(e => done.fail(e));
     });
 
     return waitForWorker
-        .then(() => runServiceTest('RemoteDispatchTest', t), e => done.fail(e))
+        .then(() => runServiceTest('RemoteDispatchTest'), e => done.fail(e))
         .then(() => dispatch._remoteCall(worker, 'dispatch', 'terminate'), e => done.fail(e));
 });
 

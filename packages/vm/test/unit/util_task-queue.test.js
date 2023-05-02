@@ -48,15 +48,15 @@ test('run tasks', async done => {
     const promises = [
         bukkit.do(() => {
             taskResults.push('a');
-            testCompare(t, bukkit._timer.timeElapsed(), '>=', 50, 'Costly task must wait');
+            testCompare(bukkit._timer.timeElapsed(), '>=', 50, 'Costly task must wait');
         }, 50),
         bukkit.do(() => {
             taskResults.push('b');
-            testCompare(t, bukkit._timer.timeElapsed(), '>=', 60, 'Tasks must run in serial');
+            testCompare(bukkit._timer.timeElapsed(), '>=', 60, 'Tasks must run in serial');
         }, 10),
         bukkit.do(() => {
             taskResults.push('c');
-            testCompare(t, bukkit._timer.timeElapsed(), '<=', 70, 'Cheap task should run soon');
+            testCompare(bukkit._timer.timeElapsed(), '<=', 70, 'Cheap task should run soon');
         }, 1)
     ];
 
@@ -92,7 +92,7 @@ test('cancel', async done => {
     const keepTaskPromise = bukkit.do(
         () => {
             taskResults.push(afterCancelMessage);
-            testCompare(t, bukkit._timer.timeElapsed(), '<', 10, 'Canceled task must not delay other tasks');
+            testCompare(bukkit._timer.timeElapsed(), '<', 10, 'Canceled task must not delay other tasks');
         }, 5);
 
     // give the bucket a chance to make a mistake
@@ -172,7 +172,9 @@ test('max total cost', async done => {
             () => {
                 done.fail('Full queue did not reject task');
             },
-            () => {}
+            () => {
+                done();
+            }
         );
 
     while (bukkit.length > 0) {

@@ -2,19 +2,15 @@ const color = require('../../src/util/color');
 
 /**
  * Assert that two HSV colors are similar to each other, within a tolerance.
- * @param {Test} t - the Tap test object.
  * @param {HSVObject} actual - the first HSV color to compare.
  * @param {HSVObject} expected - the other HSV color to compare.
  */
-const hsvSimilar = function (t, actual, expected) {
+const hsvSimilar = function (actual, expected) {
     if ((Math.abs(actual.h - expected.h) >= 1) ||
         (Math.abs(actual.s - expected.s) >= 0.01) ||
         (Math.abs(actual.v - expected.v) >= 0.01)
     ) {
-        t.fail('HSV colors not similar enough', {
-            actual: actual,
-            expected: expected
-        });
+        expect(false, 'HSV colors not similar enough').toBeTruthy();
     }
 };
 
@@ -24,15 +20,12 @@ const hsvSimilar = function (t, actual, expected) {
  * @param {RGBObject} actual - the first RGB color to compare.
  * @param {RGBObject} expected - the other RGB color to compare.
  */
-const rgbSimilar = function (t, actual, expected) {
+const rgbSimilar = function (actual, expected) {
     if ((Math.abs(actual.r - expected.r) >= 1) ||
         (Math.abs(actual.g - expected.g) >= 1) ||
         (Math.abs(actual.b - expected.b) >= 1)
     ) {
-        t.fail('RGB colors not similar enough', {
-            actual: actual,
-            expected: expected
-        });
+        expect(false, 'RGB colors not similar enough').toBeTruthy();
     }
 };
 
@@ -90,32 +83,32 @@ test('hexToDecimal', () => {
 });
 
 test('hsvToRgb', () => {
-    rgbSimilar(t, color.hsvToRgb({h: 0, s: 0, v: 0}), {r: 0, g: 0, b: 0});
-    rgbSimilar(t, color.hsvToRgb({h: 123, s: 0.1234, v: 0}), {r: 0, g: 0, b: 0});
-    rgbSimilar(t, color.hsvToRgb({h: 0, s: 0, v: 1}), {r: 255, g: 255, b: 255});
-    rgbSimilar(t, color.hsvToRgb({h: 321, s: 0, v: 1}), {r: 255, g: 255, b: 255});
-    rgbSimilar(t, color.hsvToRgb({h: 0, s: 1, v: 1}), {r: 255, g: 0, b: 0});
-    rgbSimilar(t, color.hsvToRgb({h: 120, s: 1, v: 1}), {r: 0, g: 255, b: 0});
-    rgbSimilar(t, color.hsvToRgb({h: 240, s: 1, v: 1}), {r: 0, g: 0, b: 255});
+    rgbSimilar(color.hsvToRgb({h: 0, s: 0, v: 0}), {r: 0, g: 0, b: 0});
+    rgbSimilar(color.hsvToRgb({h: 123, s: 0.1234, v: 0}), {r: 0, g: 0, b: 0});
+    rgbSimilar(color.hsvToRgb({h: 0, s: 0, v: 1}), {r: 255, g: 255, b: 255});
+    rgbSimilar(color.hsvToRgb({h: 321, s: 0, v: 1}), {r: 255, g: 255, b: 255});
+    rgbSimilar(color.hsvToRgb({h: 0, s: 1, v: 1}), {r: 255, g: 0, b: 0});
+    rgbSimilar(color.hsvToRgb({h: 120, s: 1, v: 1}), {r: 0, g: 255, b: 0});
+    rgbSimilar(color.hsvToRgb({h: 240, s: 1, v: 1}), {r: 0, g: 0, b: 255});
 });
 
 test('rgbToHsv', () => {
-    hsvSimilar(t, color.rgbToHsv({r: 0, g: 0, b: 0}), {h: 0, s: 0, v: 0});
-    hsvSimilar(t, color.rgbToHsv({r: 64, g: 64, b: 64}), {h: 0, s: 0, v: 0.25});
-    hsvSimilar(t, color.rgbToHsv({r: 128, g: 128, b: 128}), {h: 0, s: 0, v: 0.5});
-    hsvSimilar(t, color.rgbToHsv({r: 192, g: 192, b: 192}), {h: 0, s: 0, v: 0.75});
-    hsvSimilar(t, color.rgbToHsv({r: 255, g: 255, b: 255}), {h: 0, s: 0, v: 1});
-    hsvSimilar(t, color.rgbToHsv({r: 255, g: 0, b: 0}), {h: 0, s: 1, v: 1});
-    hsvSimilar(t, color.rgbToHsv({r: 0, g: 255, b: 0}), {h: 120, s: 1, v: 1});
-    hsvSimilar(t, color.rgbToHsv({r: 0, g: 0, b: 255}), {h: 240, s: 1, v: 1});
+    hsvSimilar(color.rgbToHsv({r: 0, g: 0, b: 0}), {h: 0, s: 0, v: 0});
+    hsvSimilar(color.rgbToHsv({r: 64, g: 64, b: 64}), {h: 0, s: 0, v: 0.25});
+    hsvSimilar(color.rgbToHsv({r: 128, g: 128, b: 128}), {h: 0, s: 0, v: 0.5});
+    hsvSimilar(color.rgbToHsv({r: 192, g: 192, b: 192}), {h: 0, s: 0, v: 0.75});
+    hsvSimilar(color.rgbToHsv({r: 255, g: 255, b: 255}), {h: 0, s: 0, v: 1});
+    hsvSimilar(color.rgbToHsv({r: 255, g: 0, b: 0}), {h: 0, s: 1, v: 1});
+    hsvSimilar(color.rgbToHsv({r: 0, g: 255, b: 0}), {h: 120, s: 1, v: 1});
+    hsvSimilar(color.rgbToHsv({r: 0, g: 0, b: 255}), {h: 240, s: 1, v: 1});
 });
 
 test('mixRgb', () => {
-    rgbSimilar(t, color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, -1), {r: 10, g: 20, b: 30});
-    rgbSimilar(t, color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 0), {r: 10, g: 20, b: 30});
-    rgbSimilar(t, color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 0.25), {r: 15, g: 25, b: 35});
-    rgbSimilar(t, color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 0.5), {r: 20, g: 30, b: 40});
-    rgbSimilar(t, color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 0.75), {r: 25, g: 35, b: 45});
-    rgbSimilar(t, color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 1), {r: 30, g: 40, b: 50});
-    rgbSimilar(t, color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 2), {r: 30, g: 40, b: 50});
+    rgbSimilar(color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, -1), {r: 10, g: 20, b: 30});
+    rgbSimilar(color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 0), {r: 10, g: 20, b: 30});
+    rgbSimilar(color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 0.25), {r: 15, g: 25, b: 35});
+    rgbSimilar(color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 0.5), {r: 20, g: 30, b: 40});
+    rgbSimilar(color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 0.75), {r: 25, g: 35, b: 45});
+    rgbSimilar(color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 1), {r: 30, g: 40, b: 50});
+    rgbSimilar(color.mixRgb({r: 10, g: 20, b: 30}, {r: 30, g: 40, b: 50}, 2), {r: 30, g: 40, b: 50});
 });

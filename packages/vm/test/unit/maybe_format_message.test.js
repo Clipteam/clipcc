@@ -55,18 +55,18 @@ test('preserve non-messages', () => {
 
 test('format messages', () => {
     const quickResult1 = maybeFormatMessage(simpleMessage);
-    t.strictNotSame(quickResult1, simpleMessage);
+    expect(quickResult1).not.toEqual(simpleMessage);
     expect(quickResult1).toEqual(quickExpectedResult);
 
     const quickResult2 = maybeFormatMessage(complexMessage, argsQuick);
-    t.strictNotSame(quickResult2, complexMessage);
+    expect(quickResult2).not.toEqual(complexMessage);
     expect(quickResult2).toEqual(quickExpectedResult);
 
     const otherResult1 = maybeFormatMessage(complexMessage, argsOther);
-    t.strictNotSame(otherResult1, complexMessage);
+    expect(otherResult1).not.toEqual(complexMessage);
     expect(otherResult1).toEqual(otherExpectedResult);
 
     const otherResult2 = maybeFormatMessage(complexMessage, argsEmpty);
-    t.strictNotSame(otherResult2, complexMessage);
+    expect(otherResult2).not.toEqual(complexMessage);
     expect(otherResult2).toEqual(otherExpectedResult);
 });

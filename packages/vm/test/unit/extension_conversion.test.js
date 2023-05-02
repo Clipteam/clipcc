@@ -121,7 +121,7 @@ const extensionInfoWithCustomFieldTypes = {
     }
 };
 
-const testCategoryInfo = function (t, block) {
+const testCategoryInfo = function (block) {
     expect(block.json.category).toBe('fake test extension');
     expect(block.json.colour).toBe('#111111');
     expect(block.json.colourSecondary).toBe('#222222');
@@ -129,14 +129,14 @@ const testCategoryInfo = function (t, block) {
     expect(block.json.inputsInline).toBe(true);
 };
 
-const testButton = function (t, button) {
-    expect(button.json).toEqual(null); // should be null or undefined
+const testButton = function (button) {
+    expect(button.json).toBeFalsy(); // should be null or undefined
     expect(button.xml).toBe('<button text="this is a button" callbackKey="MAKE_A_VARIABLE"></button>');
 };
 
-const testReporter = function (t, reporter) {
+const testReporter = function (reporter) {
     expect(reporter.json.type).toBe('test_reporter');
-    testCategoryInfo(t, reporter);
+    testCategoryInfo(reporter);
     expect(reporter.json.checkboxInFlyout).toBe(true);
     expect(reporter.json.outputShape).toBe(ScratchBlocksConstants.OUTPUT_SHAPE_ROUND);
     expect(reporter.json.output).toBe('String');
@@ -162,9 +162,9 @@ const testReporter = function (t, reporter) {
     expect(reporter.xml).toBe('<block type="test_reporter"></block>');
 };
 
-const testInlineImage = function (t, inlineImage) {
+const testInlineImage = function (inlineImage) {
     expect(inlineImage.json.type).toBe('test_inlineImage');
-    testCategoryInfo(t, inlineImage);
+    testCategoryInfo(inlineImage);
     expect(inlineImage.json.checkboxInFlyout).toBe(true);
     expect(inlineImage.json.outputShape).toBe(ScratchBlocksConstants.OUTPUT_SHAPE_ROUND);
     expect(inlineImage.json.output).toBe('String');
@@ -187,14 +187,14 @@ const testInlineImage = function (t, inlineImage) {
     expect(inlineImage.xml).toBe('<block type="test_inlineImage"></block>');
 };
 
-const testSeparator = function (t, separator) {
-    expect(separator.json).toEqual(null); // should be null or undefined
+const testSeparator = function (separator) {
+    expect(separator.json).toBeFalsy(); // should be null or undefined
     expect(separator.xml).toBe('<sep gap="36"/>');
 };
 
-const testCommand = function (t, command) {
+const testCommand = function (command) {
     expect(command.json.type).toBe('test_command');
-    testCategoryInfo(t, command);
+    testCategoryInfo(command);
     expect(command.json.outputShape).toBe(ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE);
     expect(command.json.hasOwnProperty('previousStatement')).toBeTruthy();
     expect(command.json.hasOwnProperty('nextStatement')).toBeTruthy();
@@ -213,9 +213,9 @@ const testCommand = function (t, command) {
     );
 };
 
-const testConditional = function (t, conditional) {
+const testConditional = function (conditional) {
     expect(conditional.json.type).toBe('test_ifElse');
-    testCategoryInfo(t, conditional);
+    testCategoryInfo(conditional);
     expect(conditional.json.outputShape).toBe(ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE);
     expect(conditional.json.hasOwnProperty('previousStatement')).toBeTruthy();
     expect(conditional.json.hasOwnProperty('nextStatement')).toBeTruthy();
@@ -243,9 +243,9 @@ const testConditional = function (t, conditional) {
     expect(conditional.xml).toBe('<block type="test_ifElse"><value name="THING"></value></block>');
 };
 
-const testLoop = function (t, loop) {
+const testLoop = function (loop) {
     expect(loop.json.type).toBe('test_loop');
-    testCategoryInfo(t, loop);
+    testCategoryInfo(loop);
     expect(loop.json.outputShape).toBe(ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE);
     expect(loop.json.hasOwnProperty('previousStatement')).toBeTruthy();
     expect(loop.json.hasOwnProperty('nextStatement')).toBeFalsy(); // isTerminal is set on this block
@@ -286,13 +286,13 @@ test('registerExtensionPrimitives', done => {
         // Note that this also implicitly tests that block order is preserved
         const [button, reporter, inlineImage, separator, command, conditional, loop] = blocksInfo;
 
-        testButton(t, button);
-        testReporter(t, reporter);
-        testInlineImage(t, inlineImage);
-        testSeparator(t, separator);
-        testCommand(t, command);
-        testConditional(t, conditional);
-        testLoop(t, loop);
+        testButton(button);
+        testReporter(reporter);
+        testInlineImage(inlineImage);
+        testSeparator(separator);
+        testCommand(command);
+        testConditional(conditional);
+        testLoop(loop);
 
         done();
     });

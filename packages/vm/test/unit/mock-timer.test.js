@@ -15,9 +15,9 @@ test('spec', () => {
     expect(typeof timer.clearTimeout).toBe('function');
 
     // A few members of MockTimer have no Timer equivalent and should only be used in tests.
-    expect(typeof timer.advanceMockTime, 'function');
-    expect(typeof timer.advanceMockTimeAsync, 'function');
-    expect(typeof timer.hasTimeouts, 'function');
+    expect(typeof timer.advanceMockTime).toBe('function');
+    expect(typeof timer.advanceMockTimeAsync).toBe('function');
+    expect(typeof timer.hasTimeouts).toBe('function');
 });
 
 test('time', () => {

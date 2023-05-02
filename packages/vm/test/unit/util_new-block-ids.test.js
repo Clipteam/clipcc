@@ -1,11 +1,10 @@
 const newBlockIds = require('../../src/util/new-block-ids');
 const simpleStack = require('../fixtures/simple-stack');
-const test = tap.test;
 
 let originals;
 let newBlocks;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     originals = simpleStack;
     // Will be mutated so make a copy first
     newBlocks = JSON.parse(JSON.stringify(simpleStack));
@@ -24,39 +23,32 @@ tap.beforeEach(() => {
  * Inspect fixtures/simple-stack for the full object.
  */
 
-test('top-level block IDs have all changed', t => {
+test('top-level block IDs have all changed', () => {
     newBlocks.forEach((block, i) => {
         expect(block.id).not.toBe(originals[i].id);
     });
-    t.end();
 });
 
-test('input reference is maintained on parent for attached block', t => {
+test('input reference is maintained on parent for attached block', () => {
     expect(newBlocks[0].inputs.TO.block).toBe(newBlocks[1].id);
-    t.end();
 });
 
-test('input reference is maintained on parent for obscured shadow', t => {
+test('input reference is maintained on parent for obscured shadow', () => {
     expect(newBlocks[0].inputs.TO.shadow).toBe(newBlocks[2].id);
-    t.end();
 });
 
-test('parent reference is maintained for attached input', t => {
+test('parent reference is maintained for attached input', () => {
     expect(newBlocks[1].parent).toBe(newBlocks[0].id);
-    t.end();
 });
 
-test('parent reference is maintained for obscured shadow', t => {
+test('parent reference is maintained for obscured shadow', () => {
     expect(newBlocks[2].parent).toBe(newBlocks[0].id);
-    t.end();
 });
 
-test('parent reference is maintained for next block', t => {
+test('parent reference is maintained for next block', () => {
     expect(newBlocks[3].parent).toBe(newBlocks[0].id);
-    t.end();
 });
 
-test('next reference is maintained for previous block', t => {
+test('next reference is maintained for previous block', () => {
     expect(newBlocks[0].next).toBe(newBlocks[3].id);
-    t.end();
 });

@@ -64,7 +64,7 @@ test('create with branch', () => {
     // In branch
     const branchBlockId = result[0].inputs.SUBSTACK.block;
     const branchShadowId = result[0].inputs.SUBSTACK.shadow;
-    expect(typeof branchBlockId, 'string');
+    expect(typeof branchBlockId).toBe('string');
     expect(branchShadowId).toBe(null);
     // Find actual branch block
     let branchBlock = null;
@@ -184,7 +184,7 @@ test('create with invalid block xml', () => {
     const result2 = adapter(events.createinvalidgrandchild);
     expect(Array.isArray(result2)).toBeTruthy();
     expect(result2.length).toBe(1);
-    expect(typeof result2[0].id, 'string');
+    expect(typeof result2[0].id).toBe('string');
     expect(Object.keys(result2[0].inputs).length).toBe(0);
     expect(Object.keys(result2[0].fields).length).toBe(0);
 });

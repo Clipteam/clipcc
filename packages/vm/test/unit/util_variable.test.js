@@ -5,7 +5,7 @@ const VariableUtil = require('../../src/util/variable-util');
 let target1;
 let target2;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const runtime = new Runtime();
     target1 = new Target(runtime);
     target1.blocks.createBlock({
@@ -49,34 +49,29 @@ tap.beforeEach(() => {
     return Promise.resolve(null);
 });
 
-const test = tap.test;
-
-test('get all var refs', t => {
+test('get all var refs', done => {
     const allVarRefs = VariableUtil.getAllVarRefsForTargets([target1, target2]);
     expect(Object.keys(allVarRefs).length).toBe(2);
     expect(allVarRefs.id1.length).toBe(2);
     expect(allVarRefs.id2.length).toBe(1);
     expect(allVarRefs['not a variable']).toBe(undefined);
-
-    t.end();
+    done();
 });
 
-test('merge variable ids', t => {
+test('merge variable ids', done => {
     // Redo the id for the variable with 'id1'
     VariableUtil.updateVariableIdentifiers(target1.blocks.getAllVariableAndListReferences().id1, 'renamed id');
     const varField = target1.blocks.getBlock('a block').fields.VARIABLE;
     expect(varField.id).toBe('renamed id');
     expect(varField.value).toBe('foo');
-
-    t.end();
+    done();
 });
 
-test('merge variable ids but with new name too', t => {
+test('merge variable ids but with new name too', done => {
     // Redo the id for the variable with 'id1'
     VariableUtil.updateVariableIdentifiers(target1.blocks.getAllVariableAndListReferences().id1, 'renamed id', 'baz');
     const varField = target1.blocks.getBlock('a block').fields.VARIABLE;
     expect(varField.id).toBe('renamed id');
     expect(varField.value).toBe('baz');
-
-    t.end();
+    done();
 });

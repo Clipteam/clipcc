@@ -5,9 +5,7 @@ const Runtime = require('../../src/engine/runtime');
 const MonitorRecord = require('../../src/engine/monitor-record');
 const {Map} = require('immutable');
 
-const test = tap.test;
-
-test('spec', t => {
+test('spec', done => {
     const r = new Runtime();
 
     expect(typeof Runtime).toBe('function');
@@ -21,10 +19,10 @@ test('spec', t => {
 
     expect(r instanceof Runtime).toBeTruthy();
 
-    t.end();
+    done();
 });
 
-test('monitorStateEquals', t => {
+test('monitorStateEquals', done => {
     const r = new Runtime();
     const id = 'xklj4#!';
     const prevMonitorState = MonitorRecord({
@@ -41,10 +39,10 @@ test('monitorStateEquals', t => {
 
     expect(true).toBe(prevMonitorState === r._monitorState.get(id));
     expect(String(25)).toBe(r._monitorState.get(id).get('value'));
-    t.end();
+    done();
 });
 
-test('monitorStateDoesNotEqual', t => {
+test('monitorStateDoesNotEqual', done => {
     const r = new Runtime();
     const id = 'xklj4#!';
     const params = {seven: 7};
@@ -76,10 +74,10 @@ test('monitorStateDoesNotEqual', t => {
     expect(String(24)).toBe(r._monitorState.get(id).value);
     expect(params).toBe(r._monitorState.get(id).params);
 
-    t.end();
+    done();
 });
 
-test('getLabelForOpcode', t => {
+test('getLabelForOpcode', done => {
     const r = new Runtime();
 
     const fakeExtension = {
@@ -117,10 +115,10 @@ test('getLabelForOpcode', t => {
     expect(typeof result2.label).toBe('string');
     expect(result2.label).toBe('Fake Extension: Foo 2');
 
-    t.end();
+    done();
 });
 
-test('Project loaded emits runtime event', t => {
+test('Project loaded emits runtime event', done => {
     const vm = new VirtualMachine();
     const projectUri = path.resolve(__dirname, '../fixtures/default.sb2');
     const project = readFileToBuffer(projectUri);
@@ -132,11 +130,11 @@ test('Project loaded emits runtime event', t => {
 
     vm.loadProject(project).then(() => {
         expect(projectLoaded).toBe(true);
-        t.end();
+        done();
     });
 });
 
-test('Cloud variable limit allows only 10 cloud variables', t => {
+test('Cloud variable limit allows only 10 cloud variables', done => {
     // This is a test of just the cloud variable limit mechanism
     // The functions being tested below need to be used when
     // creating and deleting cloud variables in the runtime.
@@ -178,11 +176,11 @@ test('Cloud variable limit allows only 10 cloud variables', t => {
     // We should be at the cloud variable limit now
     expect(rt.canAddCloudVariable()).toBe(false);
 
-    t.end();
+    done();
 
 });
 
-test('Starting the runtime emits an event', t => {
+test('Starting the runtime emits an event', done => {
     let started = false;
     const rt = new Runtime();
     rt.addListener('RUNTIME_STARTED', () => {
@@ -191,10 +189,10 @@ test('Starting the runtime emits an event', t => {
     rt.start();
     expect(started).toBe(true);
     rt.quit();
-    t.end();
+    done();
 });
 
-test('Runtime cannot be started while already running', t => {
+test('Runtime cannot be started while already running', done => {
     const rt = new Runtime();
     rt.start(); // Start the first time
 
@@ -208,10 +206,10 @@ test('Runtime cannot be started while already running', t => {
     rt.start();
     expect(started).toBe(false);
     rt.quit();
-    t.end();
+    done();
 });
 
-test('setCompatibilityMode restarts if it was already running', t => {
+test('setCompatibilityMode restarts if it was already running', done => {
     const rt = new Runtime();
     rt.start(); // Start the first time
 
@@ -224,10 +222,10 @@ test('setCompatibilityMode restarts if it was already running', t => {
     rt.setCompatibilityMode(true);
     expect(started).toBe(true);
     rt.quit();
-    t.end();
+    done();
 });
 
-test('setCompatibilityMode does not restart if it was not running', t => {
+test('setCompatibilityMode does not restart if it was not running', done => {
     const rt = new Runtime();
 
     let started = false;
@@ -237,10 +235,10 @@ test('setCompatibilityMode does not restart if it was not running', t => {
 
     rt.setCompatibilityMode(true);
     expect(started).toBe(false);
-    t.end();
+    done();
 });
 
-test('Disposing the runtime emits an event', t => {
+test('Disposing the runtime emits an event', done => {
     let disposed = false;
     const rt = new Runtime();
     rt.addListener('RUNTIME_DISPOSED', () => {
@@ -248,10 +246,10 @@ test('Disposing the runtime emits an event', t => {
     });
     rt.dispose();
     expect(disposed).toBe(true);
-    t.end();
+    done();
 });
 
-test('Clock is reset on runtime dispose', t => {
+test('Clock is reset on runtime dispose', done => {
     const rt = new Runtime();
     const c = rt.ioDevices.clock;
     let simulatedTime = 0;
@@ -269,5 +267,5 @@ test('Clock is reset on runtime dispose', t => {
     rt.dispose();
     // When the runtime is disposed, the clock should be reset
     expect(c.projectTimer() === 0).toBeTruthy();
-    t.end();
+    done();
 });

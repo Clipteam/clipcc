@@ -1,7 +1,12 @@
 const Music = require('../../src/extensions/scratch3_music/index.js');
 
+const fakeAudioEngine = {
+    decodeSoundPlayer: () => Promise.resolve()
+};
+
 const fakeRuntime = {
     getTargetForStage: () => ({tempo: 60}),
+    audioEngine: fakeAudioEngine,
     on: () => {} // Stub out listener methods used in constructor.
 };
 
