@@ -157,7 +157,7 @@ class ExtensionManager {
 
         return new Promise((resolve, reject) => {
             const ExtensionWorker = new Worker(
-                /* webpackChunkName: "extension-worker.js" */
+                /* webpackChunkName: "extension-worker" */
                 new URL('./extension-worker', import.meta.url)
             );
 
