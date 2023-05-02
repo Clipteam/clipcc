@@ -18,7 +18,7 @@ const missingSoundAssetId = '78618aadd225b1db7bf837fa17dc0568';
 
 let vm;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const storage = makeTestStorage();
 
     vm = new VirtualMachine();
@@ -27,9 +27,9 @@ tap.beforeEach(() => {
     return vm.loadProject(project);
 });
 
-const test = tap.test;
 
-test('loading sb3 project with missing sound file', t => {
+
+test('loading sb3 project with missing sound file', done => {
     expect(vm.runtime.targets.length).toBe(2);
 
     const stage = vm.runtime.targets[0];
@@ -49,10 +49,10 @@ test('loading sb3 project with missing sound file', t => {
     expect(missingSound.broken).toBeTruthy();
     expect(missingSound.broken.assetId).toBe(missingSoundAssetId);
 
-    t.end();
+    done();
 });
 
-test('load and then save sb3 project with missing sound file', t => {
+test('load and then save sb3 project with missing sound file', done => {
     const resavedProject = JSON.parse(vm.toJSON());
 
     expect(resavedProject.targets.length).toBe(2);
@@ -72,14 +72,14 @@ test('load and then save sb3 project with missing sound file', t => {
     // Test that we didn't save any data about the costume being broken
     expect(missingSound.broken).toBeFalsy();
 
-    t.end();
+    done();
 });
 
-test('serializeCostume does not save data for missing costume', t => {
+test('serializeCostume does not save data for missing costume', done => {
     const soundDescs = serializeSounds(vm.runtime);
 
     expect(soundDescs.length).toBe(1); // Should only have one sound, the pop sound for the stage
     expect(soundDescs[0].fileName).not.toBe(`${missingSoundAssetId}.wav`);
 
-    t.end();
+    done();
 });

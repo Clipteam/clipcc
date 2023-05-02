@@ -58,7 +58,7 @@ global.document = {
 let vm;
 let defaultBitmapAssetId;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const storage = makeTestStorage();
 
     vm = new VirtualMachine();
@@ -71,9 +71,9 @@ tap.beforeEach(() => {
     return vm.loadProject(project).then(() => vm.addSprite(sprite));
 });
 
-const test = tap.test;
 
-test('load sprite3 with corrupted bitmap costume file', t => {
+
+test('load sprite3 with corrupted bitmap costume file', done => {
     expect(vm.runtime.targets.length).toBe(3);
 
     const stage = vm.runtime.targets[0];
@@ -93,10 +93,10 @@ test('load sprite3 with corrupted bitmap costume file', t => {
     // Verify that we saved the original asset data
     expect(md5(corruptedCostume.broken.asset.data)).toBe(brokenCostumeMd5);
 
-    t.end();
+    done();
 });
 
-test('load and then save sprite with corrupted costume file', t => {
+test('load and then save sprite with corrupted costume file', done => {
     const resavedSprite = JSON.parse(vm.toJSON(vm.runtime.targets[2].id));
 
     expect(resavedSprite.name).toBe('Green Guy');
@@ -110,14 +110,14 @@ test('load and then save sprite with corrupted costume file', t => {
     // Test that we didn't save any data about the costume being broken
     expect(corruptedCostume.broken).toBeFalsy();
 
-    t.end();
+    done();
 });
 
-test('serializeCostume saves orignal broken costume', t => {
+test('serializeCostume saves orignal broken costume', done => {
     const costumeDescs = serializeCostumes(vm.runtime, vm.runtime.targets[2].id);
     expect(costumeDescs.length).toBe(1);
     const costume = costumeDescs[0];
     expect(costume.fileName).toBe(`${brokenCostumeMd5}.png`);
     expect(md5(costume.fileContent)).toBe(brokenCostumeMd5);
-    t.end();
+    done();
 });

@@ -5,7 +5,7 @@ const VirtualMachine = require('../../src/index');
 
 let vm;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const projectUri = path.resolve(__dirname, '../fixtures/monitors.sb2');
     const project = readFileToBuffer(projectUri);
 
@@ -20,9 +20,9 @@ tap.beforeEach(() => {
 
     return vm.loadProject(project);
 });
-const test = tap.test;
 
-test('saving and loading sb2 project with monitors preserves sliderMin and sliderMax', t => {
+
+test('saving and loading sb2 project with monitors preserves sliderMin and sliderMax', done => {
 
     vm.on('playgroundData', e /* eslint-disable-line no-unused-vars */ => {
         // TODO related to above TODO, comment these back in when we figure out
@@ -138,7 +138,7 @@ test('saving and loading sb2 project with monitors preserves sliderMin and slide
         expect(monitorRecord.spriteName).toBe(null);
         expect(monitorRecord.targetId).toBe(null);
 
-        t.end();
+        done();
     });
 
     // Start VM, load project, and run

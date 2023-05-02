@@ -25,7 +25,7 @@ const VirtualMachine = require('../../src/index');
  * been reached.
  */
 
-const whenThreadsComplete = (t, vm, uri, timeLimit = 5000) =>
+const whenThreadsComplete = (done, vm, uri, timeLimit = 5000) =>
     // When the number of threads reaches 0 the test is expected to be complete.
     new Promise((resolve, reject) => {
         const intervalId = setInterval(() => {
@@ -42,7 +42,7 @@ const whenThreadsComplete = (t, vm, uri, timeLimit = 5000) =>
         }, 50);
 
         const timeoutId = setTimeout(() => {
-            t.fail(`Timeout waiting for threads to complete: ${uri}`);
+            done.fail(`Timeout waiting for threads to complete: ${uri}`);
             reject(new Error('time limit reached'));
         }, timeLimit);
 
@@ -123,7 +123,7 @@ fs.readdirSync(executeDir)
             // the scratch project sent us a "end" message.
             return vm.loadProject(project)
                 .then(() => vm.greenFlag())
-                .then(() => whenThreadsComplete(t, vm, uri))
+                .then(() => whenThreadsComplete(done, vm, uri))
                 .then(() => {
                     // Setting a plan is not required but is a good idea.
                     if (!didPlan) {

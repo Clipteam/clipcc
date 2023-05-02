@@ -24,7 +24,7 @@ const missingCostumeAssetId = 'a267f8b97ee9cf8aa9832aa0b4cfd9eb';
 
 let vm;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const storage = makeTestStorage();
 
     vm = new VirtualMachine();
@@ -34,9 +34,9 @@ tap.beforeEach(() => {
     return vm.loadProject(project).then(() => vm.addSprite(sprite));
 });
 
-const test = tap.test;
 
-test('loading sprite3 with missing vector costume file', t => {
+
+test('loading sprite3 with missing vector costume file', done => {
     expect(vm.runtime.targets.length).toBe(3);
 
     const stage = vm.runtime.targets[0];
@@ -56,10 +56,10 @@ test('loading sprite3 with missing vector costume file', t => {
     expect(missingCostume.broken).toBeTruthy();
     expect(missingCostume.broken.assetId).toBe(missingCostumeAssetId);
 
-    t.end();
+    done();
 });
 
-test('load and then save sprite3 with missing vector costume file', t => {
+test('load and then save sprite3 with missing vector costume file', done => {
     const resavedSprite = JSON.parse(vm.toJSON(vm.runtime.targets[2].id));
 
     expect(resavedSprite.name).toBe('Blue Square Guy');
@@ -73,13 +73,13 @@ test('load and then save sprite3 with missing vector costume file', t => {
     // Test that we didn't save any data about the costume being broken
     expect(missingCostume.broken).toBeFalsy();
 
-    t.end();
+    done();
 });
 
-test('serializeCostume does not save data for missing costume', t => {
+test('serializeCostume does not save data for missing costume', done => {
     const costumeDescs = serializeCostumes(vm.runtime, vm.runtime.targets[2].id);
 
     expect(costumeDescs.length).toBe(0);
 
-    t.end();
+    done();
 });

@@ -1,5 +1,4 @@
 const path = require('path');
-const {test} = tap;
 const fs = require('fs');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const dispatch = require('../../src/dispatch/central-dispatch');
@@ -16,7 +15,7 @@ const stopVideoLoop = vm => {
     dispatch.call(serviceName, '_stopLoop');
 };
 
-test('Load external extensions', async t => {
+test('Load external extensions', async done => {
     const vm = new VirtualMachine();
     const testFiles = fs.readdirSync('./test/fixtures/load-extensions/confirm-load/');
 
@@ -26,21 +25,19 @@ test('Load external extensions', async t => {
         const uri = path.resolve(__dirname, `../fixtures/load-extensions/confirm-load/${file}`);
         const project = readFileToBuffer(uri);
 
-        await t.test('Confirm expected extension is installed in example sb2 and sb3 projects', extTest => {
-            vm.loadProject(project)
-                .then(() => {
-                    extTest.ok(vm.extensionManager.isExtensionLoaded(ext));
-                    extTest.end();
-                });
-        });
+        vm.loadProject(project)
+            .then(() => {
+                expect(vm.extensionManager.isExtensionLoaded(ext)).toBeTruthy();
+                done();
+            });
     }
 
     stopVideoLoop(vm);
     vm.quit();
-    t.end();
+    done();
 });
 
-test('Load video sensing extension and video properties', async t => {
+test('Load video sensing extension and video properties', async done => {
     const vm = new VirtualMachine();
     // An array of test projects and their expected video state values
     const testProjects = [
@@ -78,5 +75,5 @@ test('Load video sensing extension and video properties', async t => {
 
     stopVideoLoop(vm);
     vm.quit();
-    t.end();
+    done();
 });

@@ -20,7 +20,7 @@ const missingCostumeAssetId = 'a267f8b97ee9cf8aa9832aa0b4cfd9eb';
 
 let vm;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const storage = makeTestStorage();
 
     vm = new VirtualMachine();
@@ -30,9 +30,9 @@ tap.beforeEach(() => {
     return vm.loadProject(project);
 });
 
-const test = tap.test;
 
-test('loading sb3 project with missing vector costume file', t => {
+
+test('loading sb3 project with missing vector costume file', done => {
     expect(vm.runtime.targets.length).toBe(2);
 
     const stage = vm.runtime.targets[0];
@@ -52,10 +52,10 @@ test('loading sb3 project with missing vector costume file', t => {
     expect(missingCostume.broken).toBeTruthy();
     expect(missingCostume.broken.assetId).toBe(missingCostumeAssetId);
 
-    t.end();
+    done();
 });
 
-test('load and then save sb3 project with missing costume file', t => {
+test('load and then save sb3 project with missing costume file', done => {
     const resavedProject = JSON.parse(vm.toJSON());
 
     expect(resavedProject.targets.length).toBe(2);
@@ -75,14 +75,14 @@ test('load and then save sb3 project with missing costume file', t => {
     // Test that we didn't save any data about the costume being broken
     expect(missingCostume.broken).toBeFalsy();
 
-    t.end();
+    done();
 });
 
-test('serializeCostume does not save data for missing costume', t => {
+test('serializeCostume does not save data for missing costume', done => {
     const costumeDescs = serializeCostumes(vm.runtime);
 
     expect(costumeDescs.length).toBe(1); // Should only have one costume, the backdrop
     expect(costumeDescs[0].fileName).not.toBe(`${missingCostumeAssetId}.svg`);
 
-    t.end();
+    done();
 });

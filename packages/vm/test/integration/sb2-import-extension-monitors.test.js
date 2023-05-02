@@ -1,5 +1,5 @@
 const path = require('path');
-const test = tap.test;
+
 const makeTestStorage = require('../fixtures/make-test-storage');
 const {readFileToBuffer, extractProjectJson} = require('../fixtures/readProjectFile');
 const VirtualMachine = require('../../src/index');
@@ -24,7 +24,7 @@ const visibleTempoMonitorProjectUri = path.resolve(
     __dirname, '../fixtures/visible-tempo-monitor-no-other-music-blocks.sb2');
 const visibleTempoMonitorProject = readFileToBuffer(visibleTempoMonitorProjectUri);
 
-test('loading sb2 project with invisible video monitor should not load monitor or extension', t => {
+test('loading sb2 project with invisible video monitor should not load monitor or extension', done => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
 
@@ -37,11 +37,11 @@ test('loading sb2 project with invisible video monitor should not load monitor o
         expect(vm.extensionManager.isExtensionLoaded('videoSensing')).toBe(false);
         expect(vm.runtime._monitorState.size).toBe(0);
         vm.quit();
-        t.end();
+        done();
     });
 });
 
-test('loading sb2 project with visible video monitor should not load extension', t => {
+test('loading sb2 project with visible video monitor should not load extension', done => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
 
@@ -54,14 +54,14 @@ test('loading sb2 project with visible video monitor should not load extension',
         expect(vm.extensionManager.isExtensionLoaded('videoSensing')).toBe(false);
         expect(vm.runtime._monitorState.size).toBe(0);
         vm.quit();
-        t.end();
+        done();
     });
 });
 
 // This test looks a little different than the rest because loading a project with
 // the video sensing block requires a mock renderer and other setup, so instead
 // we are just using deserialize to test what we need instead
-test('sb2 project with video sensing blocks and monitor should load extension but not monitor', t => {
+test('sb2 project with video sensing blocks and monitor should load extension but not monitor', done => {
     const vm = new VirtualMachine();
 
     sb2.deserialize(visibleVideoMonitorAndBlocksProject, vm.runtime).then(project => {
@@ -69,11 +69,11 @@ test('sb2 project with video sensing blocks and monitor should load extension bu
         project.extensions.extensionIDs.has('videoSensing');
         // Non-core extension monitors haven't been added to the runtime
         expect(vm.runtime._monitorState.size).toBe(0);
-        t.end();
+        done();
     });
 });
 
-test('sb2 project with invisible music monitor should not load monitor or extension', t => {
+test('sb2 project with invisible music monitor should not load monitor or extension', done => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
 
@@ -86,11 +86,11 @@ test('sb2 project with invisible music monitor should not load monitor or extens
         expect(vm.extensionManager.isExtensionLoaded('music')).toBe(false);
         expect(vm.runtime._monitorState.size).toBe(0);
         vm.quit();
-        t.end();
+        done();
     });
 });
 
-test('sb2 project with visible music monitor should load monitor and extension', t => {
+test('sb2 project with visible music monitor should load monitor and extension', done => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
 
@@ -105,6 +105,6 @@ test('sb2 project with visible music monitor should load monitor and extension',
         expect(vm.runtime._monitorState.has('music_getTempo')).toBe(true);
         expect(vm.runtime._monitorState.get('music_getTempo').visible).toBe(true);
         vm.quit();
-        t.end();
+        done();
     });
 });

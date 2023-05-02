@@ -48,7 +48,7 @@ const FakeAudioEngine = function () {
 let vm;
 let defaultSoundAssetId;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const storage = makeTestStorage();
 
     vm = new VirtualMachine();
@@ -60,9 +60,9 @@ tap.beforeEach(() => {
     return vm.loadProject(project);
 });
 
-const test = tap.test;
 
-test('load sb3 project with corrupted sound file', t => {
+
+test('load sb3 project with corrupted sound file', done => {
     expect(vm.runtime.targets.length).toBe(2);
 
     const stage = vm.runtime.targets[0];
@@ -82,10 +82,10 @@ test('load sb3 project with corrupted sound file', t => {
     // Verify that we saved the original asset data
     expect(md5(corruptedSound.broken.asset.data)).toBe(brokenSoundMd5);
 
-    t.end();
+    done();
 });
 
-test('load and then save project with corrupted sound file', t => {
+test('load and then save project with corrupted sound file', done => {
     const resavedProject = JSON.parse(vm.toJSON());
 
     expect(resavedProject.targets.length).toBe(2);
@@ -105,14 +105,14 @@ test('load and then save project with corrupted sound file', t => {
     // Test that we didn't save any data about the costume being broken
     expect(corruptedSound.broken).toBeFalsy();
 
-    t.end();
+    done();
 });
 
-test('serializeSounds saves orignal broken sound', t => {
+test('serializeSounds saves orignal broken sound', done => {
     const soundDescs = serializeSounds(vm.runtime, vm.runtime.targets[1].id);
     expect(soundDescs.length).toBe(1);
     const sound = soundDescs[0];
     expect(sound.fileName).toBe(`${brokenSoundMd5}.wav`);
     expect(md5(sound.fileContent)).toBe(brokenSoundMd5);
-    t.end();
+    done();
 });
