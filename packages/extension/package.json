@@ -4,7 +4,8 @@
   "description": "ClipCC extension manager",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --color --progress"
+    "build": "webpack --color --progress",
+    "typecheck": "tsc --watch --noEmit"
   },
   "repository": "https://github.com/Clipteam/clipcc.git",
   "author": "Clipteam",
