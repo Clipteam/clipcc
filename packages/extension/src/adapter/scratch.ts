@@ -37,7 +37,15 @@ class ScratchAdapter {
 
         // It's running in sandbox because it's a url.
         if (typeof ext === 'string') {
-            // @todo
+            return new Promise((resolve, reject) => {
+                // If we `require` this at the global level it breaks non-webpack targets, including tests
+                const ExtensionWorker = new Worker(
+                    /* webpackChunkName: "scratch-extension-worker.js" */
+                    new URL('./scratch.worker.ts', import.meta)
+                );
+                this.pendingExtensions.push({extensionURL, resolve, reject});
+                dispatch.addWorker(ExtensionWorker);
+            });
         } else {
             // @ts-expect-error
             const extensionObject = new ext(this.vm.runtime);
@@ -102,10 +110,8 @@ class ScratchAdapter {
                 }
                 results.push(result);
             } catch (e) {
-                /*
-                 * TODO: more meaningful error reporting
-                 * @ts-expect-error
-                 */
+                // TODO: more meaningful error reporting
+                // @ts-expect-error
                 console.error(`Error processing block: ${e.message}, Block:\n${JSON.stringify(blockInfo)}`);
             }
             return results;
@@ -146,10 +152,8 @@ class ScratchAdapter {
              */
             if (typeof menuInfo.items === 'string') {
                 const menuItemFunctionName = menuInfo.items;
-                /*
-                 * Bind the function here so we can pass a simple item generation function to Scratch Blocks later.
-                 * @ts-expect-error
-                 */
+                // Bind the function here so we can pass a simple item generation function to Scratch Blocks later
+                // @ts-expect-error
                 menuInfo.items = this._getExtensionMenuItems.bind(this, extensionObject, menuItemFunctionName, serviceName);
             }
         }

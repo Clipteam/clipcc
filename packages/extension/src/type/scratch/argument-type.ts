@@ -12,10 +12,6 @@ enum ArgumentType {
      */
     BOOLEAN = 'Boolean',
     /**
-     * Lambda value with square placeholder
-     */
-    LAMBDA = 'Lambda',
-    /**
      * Numeric value with color picker
      */
     COLOR = 'color',
