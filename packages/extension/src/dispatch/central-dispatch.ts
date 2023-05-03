@@ -1,4 +1,4 @@
-import SharedDispatch, { DispatchCallMessage } from './shared-dispatch';
+import { SharedDispatch, DispatchCallMessage } from './shared-dispatch';
 /**
  * This class serves as the central broker for message dispatch. It expects to operate on the main thread / Window and
  * it must be informed of any Worker threads which will participate in the messaging system. From any context in the
@@ -6,7 +6,7 @@ import SharedDispatch, { DispatchCallMessage } from './shared-dispatch';
  * context. The dispatch system will forward function arguments and return values across worker boundaries as needed.
  * @see {WorkerDispatch}
  */
-class CentralDispatch extends SharedDispatch {
+class _CentralDispatch extends SharedDispatch {
     services: Record<string, any>;
     /**
      * The constructor we will use to recognize workers.
@@ -130,4 +130,5 @@ class CentralDispatch extends SharedDispatch {
         return promise;
     }
 }
-export default new CentralDispatch();
+
+export const CentralDispatch = new _CentralDispatch();

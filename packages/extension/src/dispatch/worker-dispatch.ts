@@ -1,4 +1,7 @@
-import SharedDispatch, {DispatchCallMessage} from './shared-dispatch';
+import {
+    DispatchCallMessage,
+    SharedDispatch
+} from './shared-dispatch';
 
 /**
  * This class provides a Worker with the means to participate in the message dispatch system managed by CentralDispatch.
@@ -7,7 +10,7 @@ import SharedDispatch, {DispatchCallMessage} from './shared-dispatch';
  * worker boundaries as needed.
  * @see {CentralDispatch}
  */
-class WorkerDispatch extends SharedDispatch {
+class _WorkerDispatch extends SharedDispatch {
     /**
      * Map of service name to local service provider.
      * If a service is not listed here, it is assumed to be provided by another context (another Worker or the main
@@ -75,7 +78,7 @@ class WorkerDispatch extends SharedDispatch {
      * @protected
      */
     _getServiceProvider (service: string) {
-        // if we don't have a local service by this name, contact central dispatch by calling `postMessage` on self
+        // If we don't have a local service by this name, contact central dispatch by calling `postMessage` on self
         const provider = this.services[service];
         return {
             provider: provider || self,
@@ -109,4 +112,4 @@ class WorkerDispatch extends SharedDispatch {
     }
 }
 
-export default new WorkerDispatch();
+export const WorkerDispatch = new _WorkerDispatch();

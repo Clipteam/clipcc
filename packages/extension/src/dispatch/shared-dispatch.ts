@@ -1,39 +1,39 @@
 /**
-  * a message to the dispatch system representing a service method call
-  */
+ * A message to the dispatch system representing a service method call
+ */
 export interface DispatchCallMessage {
     /**
-     * send a response message with this response ID. See {@link DispatchResponseMessage}
+     * Send a response message with this response ID. See {@link DispatchResponseMessage}
      */
     responseId: number;
     /**
-     * the name of the service to be called
+     * The name of the service to be called
      */
     service: string;
     /**
-     * the name of the method to be called
+     * The name of the method to be called
      */
     method: string;
     /**
-     * the arguments to be passed to the method
+     * The arguments to be passed to the method
      */
     args?: unknown[];
 }
 
 /**
- * a message to the dispatch system representing the results of a call
+ * A message to the dispatch system representing the results of a call
  */
 export interface DispatchResponseMessage {
     /**
-     * a copy of the response ID from the call which generated this response
+     * A copy of the response ID from the call which generated this response
      */
     responseId: number;
     /**
-     * if this is truthy, then it contains results from a failed call (such as an exception)
+     * If this is truthy, then it contains results from a failed call (such as an exception)
      */
     error?: unknown;
     /**
-     * if error is not truthy, then this contains the return value of the call (if any)
+     * If error is not truthy, then this contains the return value of the call (if any)
      */
     result?: unknown;
 }
@@ -239,8 +239,10 @@ class SharedDispatch {
      * @returns {object} - purified object.
      */
     _purifyObject (obj: unknown, visited = new Set(), depth = 1): unknown {
-        // Unlimited depth recursion is very expensive to execute
-        // So we should limit the maximum recursion depth.
+        /*
+         * Unlimited depth recursion is very expensive to execute
+         * So we should limit the maximum recursion depth.
+         */
         if (depth > 5) return undefined;
 
         if (typeof obj === "function" || typeof obj === "symbol") {
@@ -253,18 +255,20 @@ class SharedDispatch {
 
             if (Array.isArray(obj)) {
                 return obj.map((item) => this._purifyObject(item, visited, depth + 1));
-            } else {
-                const result: Record<string, unknown> = {};
-                for (const key in obj) {
-                    // @ts-expect-error
-                    const value = obj[key];
-                    result[key] = this._purifyObject(value, visited, depth + 1);
-                }
-                return result;
+            } 
+            const result: Record<string, unknown> = {};
+            for (const key in obj) {
+                // @ts-expect-error
+                const value = obj[key];
+                result[key] = this._purifyObject(value, visited, depth + 1);
             }
+            return result;
+            
         }
         return obj;
     }
 }
 
-export default SharedDispatch;
+export {
+    SharedDispatch
+};
