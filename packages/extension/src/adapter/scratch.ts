@@ -12,6 +12,12 @@ import {
 } from '../util';
 import { CentralDispatch as dispatch } from '../dispatch/central-dispatch';
 
+interface PendingExtensionWorker {
+    extensionURL: string,
+    resolve: (value: unknown) => void;
+    reject: (value: unknown) => void;
+}
+
 class ScratchAdapter {
     /**
      * Editor's Virtual Machine instance.
@@ -19,6 +25,32 @@ class ScratchAdapter {
      * @todo add more strict type check when VM adds TS support.
      */
     vm?: Record<string, unknown>;
+
+    /**
+     * The ID number to provide to the next extension worker.
+     * @type {int}
+     */
+    private nextExtensionWorker = 0;
+
+    /**
+     * FIFO queue of extensions which have been requested but not yet loaded in a worker,
+     * along with promise resolution functions to call once the worker is ready or failed.
+     *
+     * @type {Array.<PendingExtensionWorker>}
+     */
+    pendingExtensions: PendingExtensionWorker[] = [];
+
+    /**
+     * Map of worker ID to workers which have been allocated but have not yet finished initialization.
+     * @type {Array.<PendingExtensionWorker>}
+     */
+    pendingWorkers: PendingExtensionWorker[] = [];
+
+    constructor () {
+        dispatch.setService('extensions', this).catch((e: Error) => {
+            console.error(`ExtensionManager was unable to register extension service: ${JSON.stringify(e)}`);
+        });
+    }
 
     /**
      * Set the VM for the extension manager.
@@ -40,19 +72,23 @@ class ScratchAdapter {
             return new Promise((resolve, reject) => {
                 // If we `require` this at the global level it breaks non-webpack targets, including tests
                 const ExtensionWorker = new Worker(
-                    /* webpackChunkName: "scratch-extension-worker.js" */
-                    new URL('./scratch.worker.ts', import.meta)
+                    /* WebpackChunkName: "scratch-extension-worker.js" */
+                    new URL('./scratch.worker.ts', import.meta.url)
                 );
-                this.pendingExtensions.push({extensionURL, resolve, reject});
+                this.pendingExtensions.push({
+                    extensionURL: ext,
+                    resolve,
+                    reject
+                });
                 dispatch.addWorker(ExtensionWorker);
             });
-        } else {
-            // @ts-expect-error
-            const extensionObject = new ext(this.vm.runtime);
-            const extensionInfo = extensionObject.getInfo();
-            this._registerExtensionInfo(extensionObject, extensionInfo);
-            return extensionInfo.id;
-        }
+        } 
+        // @ts-expect-error
+        const extensionObject = new ext(this.vm.runtime);
+        const extensionInfo = extensionObject.getInfo();
+        this._registerExtensionInfo(extensionObject, extensionInfo);
+        return extensionInfo.id;
+        
     }
 
     /**
@@ -62,7 +98,7 @@ class ScratchAdapter {
      * @param {string} serviceName - the name of the service hosting the extension
      * @private
      */
-    _registerExtensionInfo (extensionObject: ExtensionClass, extensionInfo: ExtensionMetadata, serviceName?: string) {
+    private _registerExtensionInfo (extensionObject: ExtensionClass, extensionInfo: ExtensionMetadata, serviceName?: string) {
         extensionInfo = this._prepareExtensionInfo(extensionObject, extensionInfo, serviceName);
         if (!this.vm) throw new Error(`VM hadn't been attached`);
 
@@ -76,7 +112,7 @@ class ScratchAdapter {
      * @returns {string} - the sanitized text
      * @private
      */
-    _sanitizeID (text: string) {
+    private _sanitizeID (text: string) {
         return text.toString().replace(/[<"&]/, '_');
     }
 
@@ -89,7 +125,7 @@ class ScratchAdapter {
      * @returns {ExtensionInfo} - a new extension info object with cleaned-up values
      * @private
      */
-    _prepareExtensionInfo (extensionObject: ExtensionClass, extensionInfo: ExtensionMetadata, serviceName?: string) {
+    private _prepareExtensionInfo (extensionObject: ExtensionClass, extensionInfo: ExtensionMetadata, serviceName?: string) {
         extensionInfo = Object.assign({}, extensionInfo);
         if (!/^[a-z0-9]+$/i.test(extensionInfo.id)) {
             throw new Error('Invalid extension id');
@@ -129,7 +165,7 @@ class ScratchAdapter {
      * @returns {Array.<MenuInfo>} - a menuInfo object with all preprocessing done.
      * @private
      */
-    _prepareMenuInfo (extensionObject: ExtensionClass, menus: Record<string, ExtensionMenu>, serviceName?: string) {
+    private _prepareMenuInfo (extensionObject: ExtensionClass, menus: Record<string, ExtensionMenu>, serviceName?: string) {
         const menuNames = Object.getOwnPropertyNames(menus);
         for (let i = 0; i < menuNames.length; i++) {
             const menuName = menuNames[i];
@@ -168,7 +204,7 @@ class ScratchAdapter {
      * @returns {Array} menu items ready for scratch-blocks.
      * @private
      */
-    _getExtensionMenuItems (extensionObject: ExtensionClass, menuItemFunctionName: string, serviceName?: string) {
+    private _getExtensionMenuItems (extensionObject: ExtensionClass, menuItemFunctionName: string, serviceName?: string) {
         /*
          * Fetch the items appropriate for the target currently being edited. This assumes that menus only
          * collect items when opened by the user while editing a particular target.
@@ -213,7 +249,7 @@ class ScratchAdapter {
      * @returns {ExtensionBlockMetadata} - a new block info object which has values for all relevant optional fields.
      * @private
      */
-    _prepareBlockInfo (extensionObject: ExtensionClass, blockInfo: ExtensionBlockMetadata, serviceName?: string) {
+    private _prepareBlockInfo (extensionObject: ExtensionClass, blockInfo: ExtensionBlockMetadata, serviceName?: string) {
         blockInfo = Object.assign({}, {
             blockType: BlockType.COMMAND,
             terminal: false,
@@ -270,6 +306,32 @@ class ScratchAdapter {
         }
 
         return blockInfo;
+    }
+
+    allocateWorker () {
+        const workerInfo = this.pendingExtensions.shift();
+        if (!workerInfo) {
+            console.warn('pending extension queue is empty');
+            return;
+        }
+        const id = this.nextExtensionWorker++;
+        this.pendingWorkers[id] = workerInfo;
+        return [id, workerInfo.extensionURL];
+    }
+
+    /**
+     * Called by an extension worker to indicate that the worker has finished initialization.
+     * @param {int} id - the worker ID.
+     * @param {*?} e - the error encountered during initialization, if any.
+     */
+    onWorkerInit (id: number, e?: Error) {
+        const workerInfo = this.pendingWorkers[id];
+        delete this.pendingWorkers[id];
+        if (e) {
+            workerInfo.reject(e);
+        } else {
+            workerInfo.resolve(id);
+        }
     }
 }
 

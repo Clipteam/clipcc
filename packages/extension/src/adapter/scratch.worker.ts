@@ -6,12 +6,23 @@ import {
 } from '../type/scratch';
 import { WorkerDispatch as dispatch } from '../dispatch/worker-dispatch';
 
+declare global {
+  var Scratch: {
+      ArgumentType: typeof ArgumentType,
+      BlockType: typeof BlockType,
+      TargetType: typeof TargetType,
+      extensions: {
+          register: (extensionObject: unknown) => Promise<unknown>
+      }
+  };
+}
+
 class ExtensionWorker {
+    nextExtensionId = 0;
+    initialRegistrations: Promise<unknown>[] = [];
+    extensions: unknown[] = [];
+    workerId?: number;
     constructor () {
-        this.nextExtensionId = 0;
-
-        this.initialRegistrations = [];
-
         dispatch.waitForConnection.then(() => {
             dispatch.call('extensions', 'allocateWorker').then(x => {
                 const [id, extension] = x;
@@ -21,7 +32,7 @@ class ExtensionWorker {
                     importScripts(extension);
 
                     const initialRegistrations = this.initialRegistrations;
-                    this.initialRegistrations = null;
+                    this.initialRegistrations = [];
 
                     Promise.all(initialRegistrations).then(() => dispatch.call('extensions', 'onWorkerInit', id));
                 } catch (e) {
@@ -33,7 +44,7 @@ class ExtensionWorker {
         this.extensions = [];
     }
 
-    register (extensionObject) {
+    register (extensionObject: unknown) {
         const extensionId = this.nextExtensionId++;
         this.extensions.push(extensionObject);
         const serviceName = `extension.${this.workerId}.${extensionId}`;

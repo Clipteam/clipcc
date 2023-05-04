@@ -53,7 +53,7 @@ class SharedDispatch {
      * Calls to local services don't enter this list.
      * @type {Array.<Function[]>}
      */
-    callbacks: [Function, Function][] = [];
+    callbacks: [(value: unknown) => void, (value: unknown) => void][] = [];
     /**
      * The next response ID to be used.
      * @type {int}
@@ -157,7 +157,7 @@ class SharedDispatch {
      * @returns {*} - a unique response ID for this set of callbacks. See {@link _deliverResponse}.
      * @protected
      */
-    _storeCallbacks (resolve: Function, reject: Function) {
+    _storeCallbacks (resolve: (value: unknown) => void, reject: (value: unknown) => void) {
         const responseId = this.nextResponseId++;
         this.callbacks[responseId] = [resolve, reject];
         return responseId;
