@@ -4,6 +4,7 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import ReactModal from 'react-modal';
 import VM from 'clipcc-vm';
+import ExtensionManager from 'clipcc-extension';
 import {injectIntl, intlShape} from 'react-intl';
 
 import ErrorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
@@ -36,6 +37,7 @@ import QueryParserHOC from '../lib/query-parser-hoc.jsx';
 import storage from '../lib/storage';
 import vmListenerHOC from '../lib/vm-listener-hoc.jsx';
 import vmManagerHOC from '../lib/vm-manager-hoc.jsx';
+import extensionManagerHOC from '../lib/extension-manager-hoc.jsx';
 import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 
 import GUIComponent from '../components/gui/gui.jsx';
@@ -46,6 +48,7 @@ class GUI extends React.Component {
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.props.onStorageInit(storage);
         this.props.onVmInit(this.props.vm);
+        this.props.onExtensionManagerInit(this.props.extensionManager);
     }
     componentDidUpdate (prevProps) {
         if (this.props.projectId !== prevProps.projectId && this.props.projectId !== null) {
@@ -99,6 +102,7 @@ GUI.propTypes = {
     children: PropTypes.node,
     cloudHost: PropTypes.string,
     error: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
+    extensionManager: PropTypes.instanceOf(ExtensionManager).isRequired,
     fetchingProject: PropTypes.bool,
     intl: intlShape,
     isError: PropTypes.bool,
@@ -136,6 +140,7 @@ const mapStateToProps = state => {
         costumeLibraryVisible: state.scratchGui.modals.costumeLibrary,
         costumesTabVisible: state.scratchGui.editorTab.activeTabIndex === COSTUMES_TAB_INDEX,
         error: state.scratchGui.projectState.error,
+        extensionManager: state.scratchGui.extensionManager,
         isError: getIsError(loadingState),
         isFullScreen: state.scratchGui.mode.isFullScreen,
         isPlayerOnly: state.scratchGui.mode.isPlayerOnly,
@@ -181,6 +186,7 @@ const WrappedGui = compose(
     ProjectFetcherHOC,
     TitledHOC,
     ProjectSaverHOC,
+    extensionManagerHOC,
     vmListenerHOC,
     vmManagerHOC,
     SBFileUploaderHOC,

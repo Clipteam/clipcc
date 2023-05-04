@@ -79,7 +79,7 @@ class ExtensionManager {
     /**
      * Load an extension by URL or internal extension ID
      * @param {string} extensionURL - the URL for the extension to load OR the ID of an internal extension
-     * @returns {Promise} resolved once the extension is loaded and initialized or rejected on failure
+     * @returns {Promise<string>} resolved with extensionId once the extension is loaded and initialized or rejected on failure
      */
     async loadExtensionURL (
         extensionURL: string,
@@ -94,7 +94,7 @@ class ExtensionManager {
             });
             const internalExtensionGetter = this.internalExtensions.get(extensionURL) as () => ExtensionClass;
             await this.scratchAdapter.load(internalExtensionGetter());
-            return;
+            return extensionURL;
         }
 
         if (
@@ -103,7 +103,6 @@ class ExtensionManager {
             !extensionURL.startsWith('http')
         ) {
             throw new Error(`Invalid url ${extensionURL}`);
-            return;
         }
 
         switch (env) {
@@ -126,7 +125,7 @@ class ExtensionManager {
                 env: env,
                 url: extensionURL
             });
-            break;
+            return extensionId;
         }
         default:
             throw new Error(`Invaild extension type`);

@@ -4,6 +4,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import VM from 'clipcc-vm';
+import ExtensionManager from 'clipcc-extension';
 import AudioEngine from 'clipcc-audio';
 
 import {setProjectUnchanged} from '../reducers/project-changed';
@@ -30,6 +31,7 @@ const vmManagerHOC = function (WrappedComponent) {
         componentDidMount () {
             if (!this.props.vm.initialized) {
                 this.audioEngine = new AudioEngine();
+                this.props.vm.attachExtensionManager(this.props.extensionManager);
                 this.props.vm.attachAudioEngine(this.audioEngine);
                 this.props.vm.setCompatibilityMode(true);
                 this.props.vm.initialized = true;
@@ -110,6 +112,7 @@ const vmManagerHOC = function (WrappedComponent) {
     VMManager.propTypes = {
         canSave: PropTypes.bool,
         cloudHost: PropTypes.string,
+        extensionManager: PropTypes.instanceOf(ExtensionManager).isRequired,
         fontsLoaded: PropTypes.bool,
         isLoadingWithId: PropTypes.bool,
         isPlayerOnly: PropTypes.bool,

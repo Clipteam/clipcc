@@ -72,8 +72,8 @@ class ScratchAdapter {
             return new Promise((resolve, reject) => {
                 // If we `require` this at the global level it breaks non-webpack targets, including tests
                 const ExtensionWorker = new Worker(
-                    /* WebpackChunkName: "scratch-extension-worker.js" */
-                    new URL('./scratch.worker.ts', import.meta.url)
+                    /* WebpackChunkName: "scratch-extension-worker" */
+                    new URL('./scratch.worker', import.meta.url)
                 );
                 this.pendingExtensions.push({
                     extensionURL: ext,
@@ -306,6 +306,18 @@ class ScratchAdapter {
         }
 
         return blockInfo;
+    }
+
+    /**
+     * Regenerate blockinfo for any loaded extensions
+     * @returns {Promise} resolved once all the extensions have been reinitialized
+     */
+    refreshBlocks () {
+        /**
+         * @todo
+         * Here we need to refresh according to whether the extension is in the
+         * sandbox, so we need to refactor the original logic.
+         */
     }
 
     allocateWorker () {

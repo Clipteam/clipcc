@@ -10,7 +10,6 @@ const JSZip = require('jszip');
 
 const Buffer = require('buffer').Buffer;
 const centralDispatch = require('./dispatch/central-dispatch');
-const ExtensionManager = require('./extension-support/extension-manager');
 const log = require('./util/log');
 const MathUtil = require('./util/math-util');
 const Runtime = require('./engine/runtime');
@@ -26,18 +25,6 @@ const {serializeSounds, serializeCostumes} = require('./serialization/serialize-
 require('canvas-toBlob');
 
 const RESERVED_NAMES = ['_mouse_', '_stage_', '_edge_', '_myself_', '_random_'];
-
-const CORE_EXTENSIONS = [
-    // 'motion',
-    // 'looks',
-    // 'sound',
-    // 'events',
-    // 'control',
-    // 'sensing',
-    // 'operators',
-    // 'variables',
-    // 'myBlocks'
-];
 
 /**
  * Handles connections between blocks, stage, and extensions.
@@ -68,6 +55,8 @@ class VirtualMachine extends EventEmitter {
          * @type {Target}
          */
         this._dragTarget = null;
+
+        this.extensionManager = null;
 
         // Runtime emits are passed along as VM emits.
         this.runtime.on(Runtime.SCRIPT_GLOW_ON, glowData => {
@@ -122,7 +111,7 @@ class VirtualMachine extends EventEmitter {
             this.emitWorkspaceUpdate();
         });
         this.runtime.on(Runtime.TOOLBOX_EXTENSIONS_NEED_UPDATE, () => {
-            this.extensionManager.refreshBlocks();
+            this.extensionManager.scratchAdapter.refreshBlocks();
         });
         this.runtime.on(Runtime.PERIPHERAL_LIST_UPDATE, info => {
             this.emit(Runtime.PERIPHERAL_LIST_UPDATE, info);
@@ -154,13 +143,6 @@ class VirtualMachine extends EventEmitter {
         this.runtime.on(Runtime.HAS_CLOUD_DATA_UPDATE, hasCloudData => {
             this.emit(Runtime.HAS_CLOUD_DATA_UPDATE, hasCloudData);
         });
-
-        this.extensionManager = new ExtensionManager(this.runtime);
-
-        // Load core extensions
-        for (const id of CORE_EXTENSIONS) {
-            this.extensionManager.loadExtensionIdSync(id);
-        }
 
         this.blockListener = this.blockListener.bind(this);
         this.flyoutBlockListener = this.flyoutBlockListener.bind(this);
@@ -1096,6 +1078,14 @@ class VirtualMachine extends EventEmitter {
             newTarget.goBehindOther(target);
             this.setEditingTarget(newTarget.id);
         });
+    }
+
+    /**
+     * Set the extension manager for the VM/runtime
+     * @param {!ExtensionManager} extensionManager The extension manager to attach
+     */
+    attachExtensionManager (manager) {
+        this.extensionManager = manager;
     }
 
     /**

@@ -1,0 +1,54 @@
+import bindAll from 'lodash.bindall';
+import PropTypes from 'prop-types';
+import React from 'react';
+import {connect} from 'react-redux';
+
+import VM from 'clipcc-vm';
+import ExtensionManager from 'clipcc-extension';
+
+/*
+ * Higher Order Component to manage extension manager.
+ * @param {React.Component} WrappedComponent component to manage extensiom manager events for
+ * @returns {React.Component} connected component with extension manager events bound to redux
+ */
+const extensionManagerHOC = function (WrappedComponent) {
+    class ExtensionManager extends React.Component {
+        constructor (props) {
+            super(props);
+            bindAll(this, [
+                'loadExtensionByURL'
+            ]);
+        }
+        componentDidMount () {
+            if (!this.props.extensionManager.vm) {
+                this.props.extensionManager.attachVM(this.props.VM);
+            }
+        }
+        loadExtensionByURL (url) {
+            return this.props.extensionManager.loadExtensionURL(url)
+                .then((id) => {
+                    return id;
+                })
+                .catch(e => {
+                    this.props.onError(e);
+                });
+        }
+        render () {
+            return (
+                <WrappedComponent
+                    extensionManager={this.props.extensionManager}
+                    {...componentProps}
+                />
+            );
+        }
+    }
+
+    ExtensionManager.propTypes = {
+        vm: PropTypes.instanceOf(VM).isRequired,
+        extensionManager: PropTypes.instanceOf(ExtensionManager).isRequired
+    };
+
+    return ExtensionManager;
+};
+
+export default extensionManagerHOC;
