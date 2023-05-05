@@ -14,7 +14,9 @@ const SliderMonitor = ({categoryColor, isDiscrete, label, min, max, value, onSli
                 className={styles.value}
                 style={{background: categoryColor}}
             >
-                {value}
+                {(typeof value === 'string' && value.startsWith('data:image/')) ? (
+                    <img className={styles.image} src={value} alt={`${label} image preview`} />
+                ) : value}
             </div>
         </div>
         <div className={styles.row}>

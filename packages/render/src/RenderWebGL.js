@@ -114,9 +114,9 @@ class RenderWebGL extends EventEmitter {
         const contextAttribs = {alpha: false, stencil: true, antialias: false};
         // getWebGLContext = try WebGL 1.0 only
         // getContext = try WebGL 2.0 and if that doesn't work, try WebGL 1.0
-        // getWebGLContext || getContext = try WebGL 1.0 and if that doesn't work, try WebGL 2.0
-        return twgl.getWebGLContext(canvas, contextAttribs) ||
-            twgl.getContext(canvas, contextAttribs);
+        // getContext || getWebGLContext  = try WebGL 2.0 and if that doesn't work, try WebGL 1.0
+        return twgl.getContext(canvas, contextAttribs) ||
+            twgl.getWebGLContext(canvas, contextAttribs);
     }
 
     /**
@@ -1278,6 +1278,64 @@ class RenderWebGL extends EventEmitter {
 
         const bounds = new Rectangle();
         bounds.initFromBounds(scratchX - radius, scratchX + radius, scratchY - radius, scratchY + radius);
+
+        const pickX = scratchX - bounds.left;
+        const pickY = bounds.top - scratchY;
+
+        gl.viewport(0, 0, bounds.width, bounds.height);
+        const projection = twgl.m4.ortho(bounds.left, bounds.right, bounds.top, bounds.bottom, -1, 1);
+
+        gl.clearColor(...this._backgroundColor4f);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        this._drawThese(this._drawList, ShaderManager.DRAW_MODE.default, projection);
+
+        const data = new Uint8Array(Math.floor(bounds.width * bounds.height * 4));
+        gl.readPixels(0, 0, bounds.width, bounds.height, gl.RGBA, gl.UNSIGNED_BYTE, data);
+
+        const pixelBase = Math.floor(4 * ((pickY * bounds.width) + pickX));
+        const color = {
+            r: data[pixelBase],
+            g: data[pixelBase + 1],
+            b: data[pixelBase + 2],
+            a: data[pixelBase + 3]
+        };
+
+        if (this._debugCanvas) {
+            this._debugCanvas.width = bounds.width;
+            this._debugCanvas.height = bounds.height;
+            const ctx = this._debugCanvas.getContext('2d');
+            const imageData = ctx.createImageData(bounds.width, bounds.height);
+            imageData.data.set(data);
+            ctx.putImageData(imageData, 0, 0);
+            ctx.strokeStyle = 'black';
+            ctx.fillStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+            ctx.rect(pickX - 4, pickY - 4, 8, 8);
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        return {
+            data: data,
+            width: bounds.width,
+            height: bounds.height,
+            color: color
+        };
+    }
+
+    /**
+     * Return drawable pixel data and color at a given scratch position
+     * @param {int} scratchX The scratch x coordinate of the picking location.
+     * @param {int} scratchY The scratch y coordinate of the picking location.
+     * @return {?ColorExtraction} Data about the picked color
+     */
+    extractColorInScratchCoordinate (scratchX, scratchY) {
+        this._doExitDrawRegion();
+
+        const gl = this._gl;
+        twgl.bindFramebufferInfo(gl, this._queryBufferInfo);
+
+        const bounds = new Rectangle();
+        bounds.initFromBounds(scratchX - 1, scratchX + 1, scratchY - 1, scratchY + 1);
 
         const pickX = scratchX - bounds.left;
         const pickY = bounds.top - scratchY;

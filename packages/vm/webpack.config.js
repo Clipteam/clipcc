@@ -1,8 +1,10 @@
+const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const defaultsDeep = require('lodash.defaultsdeep');
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const { version } = require('../../package.json');
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -42,7 +44,11 @@ const base = {
         ]
     },
     plugins: [
-        new NodePolyfillPlugin()
+        new NodePolyfillPlugin(),
+        new webpack.DefinePlugin({
+            'clipcc.VERSION': version,
+            'clipcc.BUILD_TIME': Date.now()
+        })
     ]
 };
 
@@ -76,7 +82,7 @@ module.exports = [
             'immutable': true,
             'jszip': true,
             'minilog': true,
-            'scratch-parser': true,
+            'clipcc-parser': true,
             'socket.io-client': true
         }
     }),
@@ -108,9 +114,9 @@ module.exports = [
                     from: '../block/media',
                     to: 'media'
                 }, {
-                    from: '../../node_modules/scratch-storage/dist/web'
+                    from: '../../node_modules/clipcc-storage/dist/web'
                 }, {
-                    from: '../../node_modules/scratch-render/dist/web'
+                    from: '../../node_modules/clipcc-render/dist/web'
                 }, {
                     from: '../../node_modules/scratch-svg-renderer/dist/web'
                 }, {

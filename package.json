@@ -1,6 +1,7 @@
 {
   "name": "monorepo",
   "description": "ClipCC's Workspace",
+  "version": "3.2",
   "private": true,
   "engines": {
     "node": ">=16"
@@ -19,22 +20,28 @@
     "start": "yarn gui start",
     "prepare": "husky install",
     "build:dist": "NODE_ENV=production yarn build:full",
-    "build:full": "yarn l10n build && yarn storage build && yarn render build && yarn block build && yarn vm build && yarn paint build && yarn gui build",
+    "build:full": "yarn l10n build && yarn audio build && yarn storage build && yarn render build && yarn block build && yarn vm build && yarn paint build && yarn gui build",
     "build": "yarn block build && yarn gui build",
     "test": "yarn gui test:unit && yarn vm tap",
+    "performance": "yarn vm performance",
     "translation:build": "yarn gui i18n:src && yarn vm i18n:src && yarn block translate",
     "translation:push": "tx push",
     "translation:pull": "yarn block translate:sync:translations && yarn l10n pull:editor",
-    "gui": "yarn workspace scratch-gui",
-    "vm": "yarn workspace scratch-vm",
-    "block": "yarn workspace scratch-blocks",
-    "l10n": "yarn workspace scratch-l10n",
-    "render": "yarn workspace scratch-render",
-    "storage": "yarn workspace scratch-storage",
-    "paint": "yarn workspace scratch-paint",
-    "parser": "yarn workspace scratch-parser"
+    "bump": "yarn changeset version",
+    "release-all": "yarn changeset publish",
+    "gui": "yarn workspace clipcc-gui",
+    "vm": "yarn workspace clipcc-vm",
+    "block": "yarn workspace clipcc-block",
+    "l10n": "yarn workspace clipcc-l10n",
+    "render": "yarn workspace clipcc-render",
+    "storage": "yarn workspace clipcc-storage",
+    "paint": "yarn workspace clipcc-paint",
+    "parser": "yarn workspace clipcc-parser",
+    "audio": "yarn workspace clipcc-audio"
   },
   "devDependencies": {
+    "@changesets/changelog-git": "^0.1.14",
+    "@changesets/cli": "^2.26.1",
     "@commitlint/cli": "^17.4.2",
     "commitlint-config-gitmoji": "^2.2.10",
     "husky": "^8.0.3"

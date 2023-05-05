@@ -5,7 +5,7 @@ import makeToolboxXML from '../lib/make-toolbox-xml';
 import PropTypes from 'prop-types';
 import React from 'react';
 import VMScratchBlocks from '../lib/blocks';
-import VM from 'scratch-vm';
+import VM from 'clipcc-vm';
 
 import log from '../lib/log.js';
 import Prompt from './prompt.jsx';
@@ -146,6 +146,7 @@ class Blocks extends React.Component {
             this.props.customProceduresVisible !== nextProps.customProceduresVisible ||
             this.props.locale !== nextProps.locale ||
             this.props.anyModalVisible !== nextProps.anyModalVisible ||
+            this.props.hideNonVanillaBlocks !== nextProps.hideNonVanillaBlocks ||
             this.props.stageSize !== nextProps.stageSize
         );
     }
@@ -160,6 +161,12 @@ class Blocks extends React.Component {
         // Do not check against prevProps.toolboxXML because that may not have been rendered.
         if (this.props.isVisible && this.props.toolboxXML !== this._renderedToolboxXML) {
             this.requestToolboxUpdate();
+        }
+        if (this.props.hideNonVanillaBlocks !== prevProps.hideNonVanillaBlocks) {
+            const toolboxXML = this.getToolboxXML();
+            if (toolboxXML) {
+                this.props.updateToolboxState(toolboxXML);
+            }
         }
 
         if (this.props.isVisible === prevProps.isVisible) {
@@ -259,32 +266,38 @@ class Blocks extends React.Component {
             .getWorkspace();
         this.flyoutWorkspace.addChangeListener(this.props.vm.flyoutBlockListener);
         this.flyoutWorkspace.addChangeListener(this.props.vm.monitorBlockListener);
-        this.props.vm.addListener('SCRIPT_GLOW_ON', this.onScriptGlowOn);
-        this.props.vm.addListener('SCRIPT_GLOW_OFF', this.onScriptGlowOff);
-        this.props.vm.addListener('BLOCK_GLOW_ON', this.onBlockGlowOn);
-        this.props.vm.addListener('BLOCK_GLOW_OFF', this.onBlockGlowOff);
-        this.props.vm.addListener('VISUAL_REPORT', this.onVisualReport);
-        this.props.vm.addListener('workspaceUpdate', this.onWorkspaceUpdate);
-        this.props.vm.addListener('targetsUpdate', this.onTargetsUpdate);
-        this.props.vm.addListener('MONITORS_UPDATE', this.handleMonitorsUpdate);
-        this.props.vm.addListener('EXTENSION_ADDED', this.handleExtensionAdded);
-        this.props.vm.addListener('BLOCKSINFO_UPDATE', this.handleBlocksInfoUpdate);
-        this.props.vm.addListener('PERIPHERAL_CONNECTED', this.handleStatusButtonUpdate);
-        this.props.vm.addListener('PERIPHERAL_DISCONNECTED', this.handleStatusButtonUpdate);
+        this.props.vm.on('SCRIPT_GLOW_ON', this.onScriptGlowOn);
+        this.props.vm.on('SCRIPT_GLOW_OFF', this.onScriptGlowOff);
+        this.props.vm.on('BLOCK_GLOW_ON', this.onBlockGlowOn);
+        this.props.vm.on('BLOCK_GLOW_OFF', this.onBlockGlowOff);
+        this.props.vm.on('VISUAL_REPORT', this.onVisualReport);
+        this.props.vm.on('workspaceUpdate', this.onWorkspaceUpdate);
+        this.props.vm.on('targetsUpdate', this.onTargetsUpdate);
+        this.props.vm.on('MONITORS_UPDATE', this.handleMonitorsUpdate);
+        this.props.vm.on('EXTENSION_ADDED', this.handleExtensionAdded);
+        this.props.vm.on('BLOCKSINFO_UPDATE', this.handleBlocksInfoUpdate);
+        this.props.vm.on('PERIPHERAL_CONNECTED', this.handleStatusButtonUpdate);
+        this.props.vm.on('PERIPHERAL_DISCONNECTED', this.handleStatusButtonUpdate);
     }
     detachVM () {
-        this.props.vm.removeListener('SCRIPT_GLOW_ON', this.onScriptGlowOn);
-        this.props.vm.removeListener('SCRIPT_GLOW_OFF', this.onScriptGlowOff);
-        this.props.vm.removeListener('BLOCK_GLOW_ON', this.onBlockGlowOn);
-        this.props.vm.removeListener('BLOCK_GLOW_OFF', this.onBlockGlowOff);
-        this.props.vm.removeListener('VISUAL_REPORT', this.onVisualReport);
-        this.props.vm.removeListener('workspaceUpdate', this.onWorkspaceUpdate);
-        this.props.vm.removeListener('targetsUpdate', this.onTargetsUpdate);
-        this.props.vm.removeListener('MONITORS_UPDATE', this.handleMonitorsUpdate);
-        this.props.vm.removeListener('EXTENSION_ADDED', this.handleExtensionAdded);
-        this.props.vm.removeListener('BLOCKSINFO_UPDATE', this.handleBlocksInfoUpdate);
-        this.props.vm.removeListener('PERIPHERAL_CONNECTED', this.handleStatusButtonUpdate);
-        this.props.vm.removeListener('PERIPHERAL_DISCONNECTED', this.handleStatusButtonUpdate);
+        this.workspace.removeChangeListener(this.props.vm.blockListener);
+        this.flyoutWorkspace = this.workspace
+            .getFlyout()
+            .getWorkspace();
+        this.flyoutWorkspace.removeChangeListener(this.props.vm.flyoutBlockListener);
+        this.flyoutWorkspace.removeChangeListener(this.props.vm.monitorBlockListener);
+        this.props.vm.off('SCRIPT_GLOW_ON', this.onScriptGlowOn);
+        this.props.vm.off('SCRIPT_GLOW_OFF', this.onScriptGlowOff);
+        this.props.vm.off('BLOCK_GLOW_ON', this.onBlockGlowOn);
+        this.props.vm.off('BLOCK_GLOW_OFF', this.onBlockGlowOff);
+        this.props.vm.off('VISUAL_REPORT', this.onVisualReport);
+        this.props.vm.off('workspaceUpdate', this.onWorkspaceUpdate);
+        this.props.vm.off('targetsUpdate', this.onTargetsUpdate);
+        this.props.vm.off('MONITORS_UPDATE', this.handleMonitorsUpdate);
+        this.props.vm.off('EXTENSION_ADDED', this.handleExtensionAdded);
+        this.props.vm.off('BLOCKSINFO_UPDATE', this.handleBlocksInfoUpdate);
+        this.props.vm.off('PERIPHERAL_CONNECTED', this.handleStatusButtonUpdate);
+        this.props.vm.off('PERIPHERAL_DISCONNECTED', this.handleStatusButtonUpdate);
     }
 
     updateToolboxBlockValue (id, value) {
@@ -354,7 +367,8 @@ class Blocks extends React.Component {
             return makeToolboxXML(false, target.isStage, target.id, dynamicBlocksXML,
                 targetCostumes[targetCostumes.length - 1].name,
                 stageCostumes[stageCostumes.length - 1].name,
-                targetSounds.length > 0 ? targetSounds[targetSounds.length - 1].name : ''
+                targetSounds.length > 0 ? targetSounds[targetSounds.length - 1].name : '',
+                this.props.hideNonVanillaBlocks
             );
         } catch {
             return null;
@@ -541,6 +555,7 @@ class Blocks extends React.Component {
         /* eslint-disable no-unused-vars */
         const {
             anyModalVisible,
+            hideNonVanillaBlocks,
             canUseCloud,
             customProceduresVisible,
             extensionLibraryVisible,
@@ -605,6 +620,7 @@ class Blocks extends React.Component {
 
 Blocks.propTypes = {
     anyModalVisible: PropTypes.bool,
+    hideNonVanillaBlocks: PropTypes.bool.isRequired,
     canUseCloud: PropTypes.bool,
     customProceduresVisible: PropTypes.bool,
     extensionLibraryVisible: PropTypes.bool,
@@ -688,6 +704,7 @@ const mapStateToProps = state => ({
         Object.keys(state.scratchGui.modals).some(key => state.scratchGui.modals[key]) ||
         state.scratchGui.mode.isFullScreen
     ),
+    hideNonVanillaBlocks: state.scratchGui.settings.hideNonVanillaBlocks,
     extensionLibraryVisible: state.scratchGui.modals.extensionLibrary,
     isRtl: state.locales.isRtl,
     locale: state.locales.locale,

@@ -1,6 +1,7 @@
 const defaultsDeep = require('lodash.defaultsdeep');
 var path = require('path');
 var webpack = require('webpack');
+const { version } = require('../../package.json');
 
 // Plugins
 var CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -38,6 +39,7 @@ const base = {
             include: [
                 path.resolve(__dirname, 'src'),
                 /node_modules[\\/]scratch-[^\\/]+[\\/]src/,
+                /node_modules[\\/]clipcc-[^\\/]+[\\/]src/,
                 /node_modules[\\/]pify/,
                 /node_modules[\\/]@vernier[\\/]godirect/
             ],
@@ -106,6 +108,7 @@ module.exports = [
         entry: {
             'gui': './src/playground/index.jsx',
             'blocksonly': './src/playground/blocks-only.jsx',
+            'lifecycle': './src/playground/lifecycle-test.jsx',
             'compatibilitytesting': './src/playground/compatibility-testing.jsx',
             'player': './src/playground/player.jsx'
         },
@@ -135,7 +138,9 @@ module.exports = [
         plugins: base.plugins.concat([
             new webpack.DefinePlugin({
                 'process.env.DEBUG': Boolean(process.env.DEBUG),
-                'process.env.GA_ID': '"' + (process.env.GA_ID || 'UA-000000-01') + '"'
+                'process.env.GA_ID': '"' + (process.env.GA_ID || 'UA-000000-01') + '"',
+                'clipcc.VERSION': version,
+                'clipcc.BUILD_TIME': Date.now()
             }),
             new HtmlWebpackPlugin({
                 chunks: ['lib.min', 'gui'],
@@ -159,6 +164,12 @@ module.exports = [
                 template: 'src/playground/index.ejs',
                 filename: 'player.html',
                 title: 'ClipCC GUI: Player Example'
+            }),
+            new HtmlWebpackPlugin({
+                chunks: ['lib.min', 'lifecycle'],
+                template: 'src/playground/index.ejs',
+                filename: 'lifecycle.html',
+                title: 'ClipCC GUI: Lifecycle Test'
             }),
             new CopyWebpackPlugin({
                 patterns: [

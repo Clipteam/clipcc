@@ -3,7 +3,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
 
-import VM from 'scratch-vm';
+import VM from 'clipcc-vm';
 import CloudProvider from '../lib/cloud-provider';
 
 import {
@@ -51,6 +51,8 @@ const cloudManagerHOC = function (WrappedComponent) {
             }
         }
         componentWillUnmount () {
+            this.props.vm.off('HAS_CLOUD_DATA_UPDATE', this.handleCloudDataUpdate);
+            this.props.vm.off('EXTENSION_ADDED', this.handleExtensionAdded);
             this.disconnectFromCloud();
         }
         canUseCloud (props) {

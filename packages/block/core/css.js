@@ -353,6 +353,12 @@ Blockly.Css.CONTENT = [
     'font-size: .8em;',
   '}',
 
+'.valueReportBox img {',
+    'min-width: 50px;',
+    'max-width: 300px;',
+    'max-height: 200px;',
+  '}',
+
   '.blocklyResizeSE {',
     'cursor: se-resize;',
     'fill: #aaa;',

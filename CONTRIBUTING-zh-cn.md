@@ -24,12 +24,15 @@
 -   `yarn run translation:pull` 从远程拉取翻译。
 
 # 提交规则
-我们已经设置了 pre-commit 钩子。有关 Gitmoji 的使用，请参见[这里](https://github.com/carloscuesta/gitmoji/blob/master/packages/gitmojis/src/gitmojis.json).
-为了遵守开发者贡献协议(CLA)， 你需要签出(sign-off)你的每一个 commit。
+1. 在提交之前，您需要使用 ``yarn changeset add`` 为提交更改涉及的包添加变更集。请严格遵守 https://semver.org/ 中的规定。
+2. 我们已经设置了 pre-commit 钩子。有关 Gitmoji 的使用，请参见[这里](https://github.com/carloscuesta/gitmoji/blob/master/packages/gitmojis/src/gitmojis.json).
+3. 为了遵守开发者贡献协议(CLA)， 你需要签出(sign-off)你的每一个 commit。
 
 # 分支规则
-当前开发分支以 ``dev/[version number]`` 的方式进行命名。除此之外，任何分支都应该以 ``feat/`` 作为命名开头。
-``master``分支包含最新稳定版本的内容。 **除了处理合并冲突以外，任何时候都不应该直接将 commit 推送到该分支！**
+当前开发分支以 ``dev/[版本号]`` 的方式进行命名。除此之外，任何分支都应该以 ``feat/`` 作为命名开头。   
+``master``分支包含最新稳定版本的内容。 **除了处理合并冲突以外，任何时候都不应该直接将 commit 推送到该分支！**   
+我们在创建下一个主要版本的开发分支时（Eg: dev/3.2）需要使用``yarn changeset pre enter next``来进入 prerelease 模式。   
+同样，当开发分支合并到 master 后，我们需要使用``yarn changeset pre exit``后再进行包的发布。
 
 # Pull-Request 规则
 
