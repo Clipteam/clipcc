@@ -11,6 +11,7 @@ import {
     maybeFormatMessage
 } from '../util';
 import { CentralDispatch as dispatch } from '../dispatch/central-dispatch';
+import ExtensionSandbox from './scratch.worker';
 
 interface PendingExtensionWorker {
     extensionURL: string,
@@ -71,10 +72,7 @@ class ScratchAdapter {
         if (typeof ext === 'string') {
             return new Promise((resolve, reject) => {
                 // If we `require` this at the global level it breaks non-webpack targets, including tests
-                const ExtensionWorker = new Worker(
-                    /* WebpackChunkName: "scratch-extension-worker" */
-                    new URL('./scratch.worker', import.meta.url)
-                );
+                const ExtensionWorker = new ExtensionSandbox();
                 this.pendingExtensions.push({
                     extensionURL: ext,
                     resolve,

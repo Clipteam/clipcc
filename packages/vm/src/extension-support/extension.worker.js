@@ -1,28 +1,16 @@
 /* eslint-env worker */
-import {
-    BlockType,
-    TargetType,
-    ArgumentType
-} from '../type/scratch';
-import { WorkerDispatch as dispatch } from '../dispatch/worker-dispatch';
 
-declare global {
-  var Scratch: {
-      ArgumentType: typeof ArgumentType,
-      BlockType: typeof BlockType,
-      TargetType: typeof TargetType,
-      extensions: {
-          register: (extensionObject: unknown) => Promise<unknown>
-      }
-  };
-}
+const ArgumentType = require('../extension-support/argument-type');
+const BlockType = require('../extension-support/block-type');
+const dispatch = require('../dispatch/worker-dispatch');
+const TargetType = require('../extension-support/target-type');
 
 class ExtensionWorker {
-    nextExtensionId = 0;
-    initialRegistrations: Promise<unknown>[] = [];
-    extensions: unknown[] = [];
-    workerId?: number;
     constructor () {
+        this.nextExtensionId = 0;
+
+        this.initialRegistrations = [];
+
         dispatch.waitForConnection.then(() => {
             dispatch.call('extensions', 'allocateWorker').then(x => {
                 const [id, extension] = x;
@@ -32,7 +20,7 @@ class ExtensionWorker {
                     importScripts(extension);
 
                     const initialRegistrations = this.initialRegistrations;
-                    this.initialRegistrations = [];
+                    this.initialRegistrations = null;
 
                     Promise.all(initialRegistrations).then(() => dispatch.call('extensions', 'onWorkerInit', id));
                 } catch (e) {
@@ -44,7 +32,7 @@ class ExtensionWorker {
         this.extensions = [];
     }
 
-    register (extensionObject: unknown) {
+    register (extensionObject) {
         const extensionId = this.nextExtensionId++;
         this.extensions.push(extensionObject);
         const serviceName = `extension.${this.workerId}.${extensionId}`;
@@ -69,5 +57,3 @@ const extensionWorker = new ExtensionWorker();
 global.Scratch.extensions = {
     register: extensionWorker.register.bind(extensionWorker)
 };
-
-export default null as any;

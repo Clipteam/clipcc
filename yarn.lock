@@ -6633,6 +6633,14 @@ code-point-at@^1.0.0:
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha512-RpAVKQA5T63xEj6/giIbUEtZwJ4UFIc3ZtvEkiaUERylqe8xb5IvqcgOurZLahv93CLKfxcw5YI+DZcUBRyLXA==
 
+codingclip-worker-loader@^3.0.9:
+  version "3.0.9"
+  resolved "https://registry.yarnpkg.com/codingclip-worker-loader/-/codingclip-worker-loader-3.0.9.tgz#5335d43792fc173e9e8a3ced25ed0adc3d9fb4ce"
+  integrity sha512-4c4NGWHyWq+lRBKRK3+tJShRPf0A2te4T/i224L2HB2qeOdp35MQS9gOydxCFcxsj79N402JD9rMA5qoM3Vj8w==
+  dependencies:
+    loader-utils "^2.0.0"
+    schema-utils "^3.1.0"
+
 collection-visit@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/collection-visit/-/collection-visit-1.0.0.tgz#4bc0373c164bc3291b4d368c829cf1a80a59dca0"
@@ -19822,7 +19830,7 @@ schema-utils@^3.0.0:
     ajv "^6.12.5"
     ajv-keywords "^3.5.2"
 
-schema-utils@^3.1.1, schema-utils@^3.1.2:
+schema-utils@^3.1.0, schema-utils@^3.1.1, schema-utils@^3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/schema-utils/-/schema-utils-3.1.2.tgz#36c10abca6f7577aeae136c804b0c741edeadc99"
   integrity sha512-pvjEHOgWc9OWA/f/DE3ohBWTD6EleVLf7iFUkoSwAxttdBhB9QUebQgxER2kWueOvRJXPHNnyrvvh9eZINB8Eg==

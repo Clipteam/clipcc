@@ -6,9 +6,10 @@ module.exports = {
     entry: {
         'clipcc-extension': './src/index.ts'
     },
-    devtool: 'inline-source-map',
+    devtool: 'cheap-module-source-map',
     output: {
         library: 'ClipCCExtension',
+        libraryTarget: 'umd',
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].js'
     },
@@ -17,6 +18,16 @@ module.exports = {
     },
     module: {
         rules: [
+            {
+                test: /\.worker\.ts$/,
+                use: {
+                    loader: 'codingclip-worker-loader',
+                    options: {
+                        filename: '[name].js',
+                        inline: process.env.NODE_ENV === 'production' ? 'no-fallback' : 'fallback',
+                    }
+                }
+            },
             {
                 test: /\.ts$/,
                 use: 'ts-loader',

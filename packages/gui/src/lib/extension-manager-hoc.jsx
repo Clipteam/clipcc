@@ -37,7 +37,7 @@ const extensionManagerHOC = function (WrappedComponent) {
             return (
                 <WrappedComponent
                     extensionManager={this.props.extensionManager}
-                    {...componentProps}
+                    {...this.props}
                 />
             );
         }

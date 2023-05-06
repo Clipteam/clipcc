@@ -1,2 +1,2 @@
-export * from './dispatch';
 export * from './manager';
+export * from './type/scratch';

@@ -3,6 +3,7 @@
   "version": "0.3.0",
   "description": "ClipCC extension manager",
   "main": "./dist/clipcc-extension.js",
+  "broswer": "./dist/clipcc-extension.js",
   "scripts": {
     "build": "webpack --color --progress",
     "lint": "eslint ./src/ --ext .js,.ts",
@@ -14,6 +15,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.59.2",
     "@typescript-eslint/parser": "^5.59.2",
+    "codingclip-worker-loader": "^3.0.9",
     "eslint": "^8.39.0",
     "terser-webpack-plugin": "^5.3.7",
     "ts-loader": "^9.4.2",
