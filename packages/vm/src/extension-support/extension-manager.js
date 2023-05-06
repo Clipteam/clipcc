@@ -156,13 +156,15 @@ class ExtensionManager {
         }
 
         return new Promise((resolve, reject) => {
-            const ExtensionWorker = new Worker(
-                /* webpackChunkName: "extension-worker" */
-                new URL('./extension-worker', import.meta.url)
-            );
+            /**
+            * If we `require` this at the global level it breaks non-webpack targets, including tests
+            * Also, webpack 5's implementation will break non-webpack targets since VM is not a ESModule.
+            * Before VM migration to ESM, we still need to use worker-loader to solve this problem.
+            */
+            const ExtensionWorker = require('codingclip-worker-loader?filename=extension-worker.js!./extension-worker');
 
             this.pendingExtensions.push({extensionURL, resolve, reject});
-            dispatch.addWorker(ExtensionWorker);
+            dispatch.addWorker(new ExtensionWorker());
         });
     }
 
