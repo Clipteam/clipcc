@@ -54,11 +54,9 @@ class TestInternalExtension {
 test('internal extension', t => {
     const vm = new VirtualMachine();
 
-    const extension = new TestInternalExtension();
-    t.ok(extension.status.constructorCalled);
-
-    t.notOk(extension.status.getInfoCalled);
-    vm.extensionManager.registerInternalExtension(extension);
+    vm.extensionManager.registerInternalExtension('testInternalExtension', () => TestInternalExtension);
+    vm.extensionManager.loadExtensionURL('testInternalExtension');
+    const extension = vm.extensionManager.scratchAdapter.loadedScratchExtension.get('testInternalExtension');
     t.ok(extension.status.getInfoCalled);
 
     const func = vm.runtime.getOpcodeFunction('testInternalExtension_go');

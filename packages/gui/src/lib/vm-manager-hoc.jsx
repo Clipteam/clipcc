@@ -31,7 +31,9 @@ const vmManagerHOC = function (WrappedComponent) {
         componentDidMount () {
             if (!this.props.vm.initialized) {
                 this.audioEngine = new AudioEngine();
-                this.props.vm.attachExtensionManager(this.props.extensionManager);
+                if (this.props.extensionManager) {
+                    this.props.vm.attachExtensionManager(this.props.extensionManager);
+                }
                 this.props.vm.attachAudioEngine(this.audioEngine);
                 this.props.vm.setCompatibilityMode(true);
                 this.props.vm.initialized = true;

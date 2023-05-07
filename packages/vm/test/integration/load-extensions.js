@@ -3,7 +3,6 @@ const tap = require('tap');
 const {test} = tap;
 const fs = require('fs');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-const dispatch = require('../../src/dispatch/central-dispatch');
 const VirtualMachine = require('../fixtures/make-extensionify-vm');
 
 /**
@@ -13,8 +12,8 @@ const VirtualMachine = require('../fixtures/make-extensionify-vm');
 const stopVideoLoop = vm => {
     // TODO: provide a general way to tell extensions to shut down
     // Ideally we'd just dispose of the extension's Worker...
-    const serviceName = vm.extensionManager.loadedScratchExtension.get('videoSensing');
-    dispatch.call(serviceName, '_stopLoop');
+    const serviceName = vm.extensionManager.scratchAdapter.loadedScratchExtension.get('videoSensing');
+    serviceName._stopLoop();
 };
 
 test('Load external extensions', async t => {
