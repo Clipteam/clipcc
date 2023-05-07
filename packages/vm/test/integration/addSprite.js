@@ -3,7 +3,7 @@ const test = require('tap').test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 
-const VirtualMachine = require('../../src/virtual-machine');
+const VirtualMachine = require('../fixtures/make-extensionify-vm');
 const RenderedTarget = require('../../src/sprites/rendered-target');
 
 const projectUri = path.resolve(__dirname, '../fixtures/default.sb2');

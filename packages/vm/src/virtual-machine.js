@@ -27,7 +27,7 @@ require('canvas-toBlob');
 const builtinExtensions = {
     // This is an example that isn't loaded with the other core blocks,
     // but serves as a reference for loading core blocks as extensions.
-    // coreExample: () => require('./blocks/scratch3_core_example'),
+    coreExample: () => require('./blocks/scratch3_core_example'),
     // These are the non-core built-in extensions.
     pen: () => require('./extensions/scratch3_pen'),
     wedo2: () => require('./extensions/scratch3_wedo2'),
@@ -129,7 +129,7 @@ class VirtualMachine extends EventEmitter {
             this.emitWorkspaceUpdate();
         });
         this.runtime.on(Runtime.TOOLBOX_EXTENSIONS_NEED_UPDATE, () => {
-            this.extensionManager.scratchAdapter.refreshBlocks();
+            this.extensionManager.scratchAdapter.reloadAll();
         });
         this.runtime.on(Runtime.PERIPHERAL_LIST_UPDATE, info => {
             this.emit(Runtime.PERIPHERAL_LIST_UPDATE, info);

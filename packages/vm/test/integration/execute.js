@@ -6,7 +6,7 @@ const test = require('tap').test;
 const log = require('../../src/util/log');
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-const VirtualMachine = require('../../src/index');
+const VirtualMachine = require('../fixtures/make-extensionify-vm');
 
 /**
  * @fileoverview Transform each sb2 in fixtures/execute into a test.

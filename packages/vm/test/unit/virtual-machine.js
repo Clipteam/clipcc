@@ -1,5 +1,5 @@
 const tap = require('tap');
-const VirtualMachine = require('../../src/virtual-machine');
+const VirtualMachine = require('../fixtures/make-extensionify-vm');
 const Sprite = require('../../src/sprites/sprite');
 const Variable = require('../../src/engine/variable');
 const adapter = require('../../src/engine/adapter');

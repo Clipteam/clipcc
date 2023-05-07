@@ -9,7 +9,7 @@ const fs = require('fs');
 const test = require('tap').test;
 const AdmZip = require('adm-zip');
 const ScratchStorage = require('clipcc-storage');
-const VirtualMachine = require('../../src/index');
+const VirtualMachine = require('../fixtures/make-extensionify-vm');
 
 const projectUri = path.resolve(__dirname, '../fixtures/offline-custom-assets.sb2');
 const projectZip = AdmZip(projectUri);

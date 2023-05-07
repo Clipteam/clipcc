@@ -4,7 +4,7 @@ const Worker = require('tiny-worker');
 const BlockType = require('../../src/extension-support/block-type');
 
 const dispatch = require('../../src/dispatch/central-dispatch');
-const VirtualMachine = require('../../src/virtual-machine');
+const VirtualMachine = require('../fixtures/make-extensionify-vm');
 
 const Sprite = require('../../src/sprites/sprite');
 const RenderedTarget = require('../../src/sprites/rendered-target');
@@ -58,7 +58,7 @@ test('internal extension', t => {
     t.ok(extension.status.constructorCalled);
 
     t.notOk(extension.status.getInfoCalled);
-    vm.extensionManager._registerInternalExtension(extension);
+    vm.extensionManager.registerInternalExtension(extension);
     t.ok(extension.status.getInfoCalled);
 
     const func = vm.runtime.getOpcodeFunction('testInternalExtension_go');
@@ -95,7 +95,7 @@ test('internal extension', t => {
 
 test('load sync', t => {
     const vm = new VirtualMachine();
-    vm.extensionManager.loadExtensionIdSync('coreExample');
+    vm.extensionManager.loadExtensionURL('coreExample');
     t.ok(vm.extensionManager.isExtensionLoaded('coreExample'));
 
     t.equal(vm.runtime._blockInfo.length, 1);

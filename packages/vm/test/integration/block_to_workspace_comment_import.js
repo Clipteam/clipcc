@@ -2,7 +2,7 @@ const path = require('path');
 const test = require('tap').test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-const VirtualMachine = require('../../src/index');
+const VirtualMachine = require('../fixtures/make-extensionify-vm');
 
 const projectUri = path.resolve(__dirname, '../fixtures/block-to-workspace-comments.sb2');
 const project = readFileToBuffer(projectUri);

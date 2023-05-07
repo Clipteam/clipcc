@@ -3,7 +3,7 @@ const tap = require('tap');
 const test = tap.test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const {readFileToBuffer, extractProjectJson} = require('../fixtures/readProjectFile');
-const VirtualMachine = require('../../src/index');
+const VirtualMachine = require('../fixtures/make-extensionify-vm');
 const sb2 = require('../../src/serialization/sb2');
 
 const invisibleVideoMonitorProjectUri = path.resolve(__dirname, '../fixtures/invisible-video-monitor.sb2');

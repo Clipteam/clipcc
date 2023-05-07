@@ -1,5 +1,5 @@
 const test = require('tap').test;
-const VirtualMachine = require('../../src/index');
+const VirtualMachine = require('../fixtures/make-extensionify-vm');
 
 test('interface', t => {
     const vm = new VirtualMachine();

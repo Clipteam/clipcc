@@ -2,8 +2,8 @@
   "name": "clipcc-extension",
   "version": "0.3.0",
   "description": "ClipCC extension manager",
-  "main": "./dist/clipcc-extension.js",
-  "broswer": "./dist/clipcc-extension.js",
+  "main": "./dist/node/clipcc-extension.js",
+  "broswer": "./dist/web/clipcc-extension.min.js",
   "scripts": {
     "build": "webpack --color --progress",
     "lint": "eslint ./src/ --ext .js,.ts",

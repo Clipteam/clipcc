@@ -1,16 +1,15 @@
+const defaultsDeep = require('lodash.defaultsdeep');
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 
-module.exports = {
+const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-    entry: {
-        'clipcc-extension': './src/index.ts'
-    },
     devtool: 'cheap-module-source-map',
     output: {
-        library: 'ClipCCExtension',
-        libraryTarget: 'umd',
-        path: path.resolve(__dirname, 'dist'),
+        library: {
+            name: 'ClipCCExtension',
+            type: 'umd'
+        },
         filename: '[name].js'
     },
     resolve: {
@@ -34,5 +33,36 @@ module.exports = {
                 exclude: '/node-modules/'
             }
         ]
+    },
+    optimization: {
+        minimizer: [
+            new TerserPlugin({
+                include: /\.min\.js$/
+            })
+        ]
     }
-}
+};
+
+module.exports = [
+    // Web-compatible
+    defaultsDeep({}, base, {
+        target: 'web',
+        entry: {
+            'clipcc-extension': './src/index.ts',
+            'clipcc-extension.min': './src/index.ts'
+        },
+        output: {
+            path: path.resolve(__dirname, 'dist', 'web')
+        }
+    }),
+    // Node-compatible
+    defaultsDeep({}, base, {
+        target: 'node',
+        entry: {
+            'clipcc-extension': './src/index.ts'
+        },
+        output: {
+            path: path.resolve(__dirname, 'dist', 'node')
+        }
+    })
+];

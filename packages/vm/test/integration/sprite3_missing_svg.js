@@ -11,7 +11,7 @@ const tap = require('tap');
 const makeTestStorage = require('../fixtures/make-test-storage');
 const FakeRenderer = require('../fixtures/fake-renderer');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-const VirtualMachine = require('../../src/index');
+const VirtualMachine = require('../fixtures/make-extensionify-vm');
 const {serializeCostumes} = require('../../src/serialization/serialize-assets');
 
 // The particular project that we're loading doesn't matter for this test

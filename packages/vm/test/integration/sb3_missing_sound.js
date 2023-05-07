@@ -9,7 +9,7 @@ const path = require('path');
 const tap = require('tap');
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-const VirtualMachine = require('../../src/index');
+const VirtualMachine = require('../fixtures/make-extensionify-vm');
 const {serializeSounds} = require('../../src/serialization/serialize-assets');
 
 const projectUri = path.resolve(__dirname, '../fixtures/missing_sound.sb3');

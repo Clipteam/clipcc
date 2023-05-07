@@ -196,7 +196,7 @@ module.exports = [
                 patterns: [
                     {
                         from: 'scratch.worker.{js,js.map}',
-                        context: '../extension/dist/'
+                        context: '../extension/dist/web/'
                     }
                 ]
             })

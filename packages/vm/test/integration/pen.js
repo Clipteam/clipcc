@@ -3,7 +3,7 @@ const path = require('path');
 const test = require('tap').test;
 
 const Scratch3PenBlocks = require('../../src/extensions/scratch3_pen/index.js');
-const VirtualMachine = require('../../src/index');
+const VirtualMachine = require('../fixtures/make-extensionify-vm');
 const dispatch = require('../../src/dispatch/central-dispatch');
 
 const makeTestStorage = require('../fixtures/make-test-storage');

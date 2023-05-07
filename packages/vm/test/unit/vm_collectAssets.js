@@ -2,7 +2,7 @@ const test = require('tap').test;
 
 const RenderedTarget = require('../../src/sprites/rendered-target');
 const Sprite = require('../../src/sprites/sprite');
-const VirtualMachine = require('../../src/virtual-machine');
+const VirtualMachine = require('../fixtures/make-extensionify-vm');
 
 test('collectAssets', t => {
     const vm = new VirtualMachine();

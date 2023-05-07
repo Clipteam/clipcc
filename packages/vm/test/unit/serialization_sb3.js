@@ -1,6 +1,6 @@
 const test = require('tap').test;
 const path = require('path');
-const VirtualMachine = require('../../src/index');
+const VirtualMachine = require('../fixtures/make-extensionify-vm');
 const Runtime = require('../../src/engine/runtime');
 const sb3 = require('../../src/serialization/sb3');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;

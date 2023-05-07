@@ -2,7 +2,7 @@ const tap = require('tap');
 const path = require('path');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const makeTestStorage = require('../fixtures/make-test-storage');
-const VirtualMachine = require('../../src/virtual-machine');
+const VirtualMachine = require('../fixtures/make-extensionify-vm');
 
 const test = tap.test;
 
