@@ -15,6 +15,7 @@ class CustomProcedures extends React.Component {
             'handleAddTextNumber',
             'handleToggleWarp',
             'handleToggleReturn',
+            'handleToggleGlobal',
             'handleCancel',
             'handleOk',
             'setBlocks'
@@ -22,7 +23,8 @@ class CustomProcedures extends React.Component {
         this.state = {
             rtlOffset: 0,
             warp: false,
-            return: false
+            return: false,
+            global: false
         };
     }
     componentWillUnmount () {
@@ -107,7 +109,8 @@ class CustomProcedures extends React.Component {
         this.mutationRoot.render();
         this.setState({
             warp: this.mutationRoot.getWarp(),
-            return: this.mutationRoot.getReturn()
+            return: this.mutationRoot.getReturn(),
+            global: this.mutationRoot.getGlobal()
         });
         // Allow the initial events to run to position this block, then focus.
         setTimeout(() => {
@@ -136,6 +139,13 @@ class CustomProcedures extends React.Component {
             this.mutationRoot.addStringNumberExternal();
         }
     }
+    handleToggleGlobal () {
+        if (this.mutationRoot) {
+            const newGlobal = !this.mutationRoot.getGlobal();
+            this.mutationRoot.setGlobal(newGlobal);
+            this.setState({global: newGlobal});
+        }
+    }
     handleToggleReturn () {
         if (this.mutationRoot) {
             const newReturn = !this.mutationRoot.getReturn();
@@ -155,6 +165,7 @@ class CustomProcedures extends React.Component {
             <CustomProceduresComponent
                 componentRef={this.setBlocks}
                 new={this.props.new}
+                global={this.state.global}
                 return={this.state.return}
                 warp={this.state.warp}
                 onAddBoolean={this.handleAddBoolean}
@@ -162,6 +173,7 @@ class CustomProcedures extends React.Component {
                 onAddTextNumber={this.handleAddTextNumber}
                 onCancel={this.handleCancel}
                 onOk={this.handleOk}
+                onToggleGlobal={this.handleToggleGlobal}
                 onToggleReturn={this.handleToggleReturn}
                 onToggleWarp={this.handleToggleWarp}
             />
