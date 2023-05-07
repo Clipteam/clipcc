@@ -388,8 +388,9 @@ Blockly.Procedures.newProcedureMutation = function() {
       ' argumentids="[]"' +
       ' argumentnames="[]"' +
       ' argumentdefaults="[]"' +
-      ' warp="false">' +
-      ' return="false">' +
+      ' warp="false"' +
+      ' return="false"' +
+      ' global="false">' +
       '</mutation>' +
       '</xml>';
   return Blockly.Xml.textToDom(mutationText).firstChild;

@@ -44,6 +44,7 @@ Blockly.ScratchBlocks.ProcedureUtils.callerMutationToDom = function() {
   container.setAttribute('argumentids', JSON.stringify(this.argumentIds_));
   container.setAttribute('warp', JSON.stringify(this.warp_));
   container.setAttribute('return', JSON.stringify(this.return_));
+  container.setAttribute('global', JSON.stringify(this.global_));
   return container;
 };
 
@@ -60,6 +61,7 @@ Blockly.ScratchBlocks.ProcedureUtils.callerDomToMutation = function(xmlElement) 
   this.argumentIds_ = JSON.parse(xmlElement.getAttribute('argumentids'));
   this.warp_ = JSON.parse(xmlElement.getAttribute('warp'));
   this.return_ = JSON.parse(xmlElement.getAttribute('return'));
+  this.global_ = JSON.parse(xmlElement.getAttribute('global'));
   this.updateDisplay_();
 };
 
@@ -85,6 +87,7 @@ Blockly.ScratchBlocks.ProcedureUtils.definitionMutationToDom = function(
       JSON.stringify(this.argumentDefaults_));
   container.setAttribute('warp', JSON.stringify(this.warp_));
   container.setAttribute('return', JSON.stringify(this.return_));
+  container.setAttribute('global', JSON.stringify(this.global_));
   return container;
 };
 
@@ -98,6 +101,7 @@ Blockly.ScratchBlocks.ProcedureUtils.definitionDomToMutation = function(xmlEleme
   this.procCode_ = xmlElement.getAttribute('proccode');
   this.warp_ = JSON.parse(xmlElement.getAttribute('warp'));
   this.return_ = JSON.parse(xmlElement.getAttribute('return'));
+  this.global_ = JSON.parse(xmlElement.getAttribute('global'));
 
   var prevArgIds = this.argumentIds_;
   var prevDisplayNames = this.displayNames_;
@@ -720,6 +724,25 @@ Blockly.ScratchBlocks.ProcedureUtils.setReturn = function(ret) {
 };
 
 /**
+ * Externally-visible function to get the global on procedure declaration.
+ * @returns {boolean} The value of the global_ property.
+ * @public
+ */
+Blockly.ScratchBlocks.ProcedureUtils.getGlobal = function() {
+  return this.global_;
+};
+
+/**
+ * Externally-visible function to set the global on procedure declaration.
+ * @returns {boolean} The value of the global_ property.
+ * @public
+ */
+Blockly.ScratchBlocks.ProcedureUtils.setGlobal = function(global) {
+  this.global_ = global;
+  this.updateShape_();
+};
+
+/**
  * Callback to remove a field, only for the declaration block.
  * @param {Blockly.Field} field The field being removed.
  * @public
@@ -950,6 +973,7 @@ Blockly.Blocks['procedures_call'] = {
     this.argumentIds_ = [];
     this.warp_ = false;
     this.return_ = false;
+    this.global_ = false;
   },
   // Shared.
   getProcCode: Blockly.ScratchBlocks.ProcedureUtils.getProcCode,
@@ -989,6 +1013,7 @@ Blockly.Blocks['procedures_prototype'] = {
     this.argumentDefaults_ = [];
     this.warp_ = false;
     this.return_ = false;
+    this.global_ = false;
   },
   // Shared.
   getProcCode: Blockly.ScratchBlocks.ProcedureUtils.getProcCode,
@@ -1026,6 +1051,7 @@ Blockly.Blocks['procedures_declaration'] = {
     this.argumentDefaults_ = [];
     this.warp_ = false;
     this.return_ = false;
+    this.global_ = false;
   },
   // Shared.
   getProcCode: Blockly.ScratchBlocks.ProcedureUtils.getProcCode,
@@ -1052,6 +1078,8 @@ Blockly.Blocks['procedures_declaration'] = {
   setWarp: Blockly.ScratchBlocks.ProcedureUtils.setWarp,
   getReturn: Blockly.ScratchBlocks.ProcedureUtils.getReturn,
   setReturn: Blockly.ScratchBlocks.ProcedureUtils.setReturn,
+  getGlobal: Blockly.ScratchBlocks.ProcedureUtils.getGlobal,
+  setGlobal: Blockly.ScratchBlocks.ProcedureUtils.setGlobal,
   addLabelExternal: Blockly.ScratchBlocks.ProcedureUtils.addLabelExternal,
   addBooleanExternal: Blockly.ScratchBlocks.ProcedureUtils.addBooleanExternal,
   addStringNumberExternal: Blockly.ScratchBlocks.ProcedureUtils.addStringNumberExternal,
