@@ -1,10 +1,9 @@
 import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {connect} from 'react-redux';
 
 import VM from 'clipcc-vm';
-import ExtensionManager from 'clipcc-extension';
+import ClipCCExtensionManager from 'clipcc-extension';
 
 /*
  * Higher Order Component to manage extension manager.
@@ -21,14 +20,12 @@ const extensionManagerHOC = function (WrappedComponent) {
         }
         componentDidMount () {
             if (!this.props.extensionManager.vm) {
-                this.props.extensionManager.attachVM(this.props.VM);
+                this.props.extensionManager.attachVM(this.props.vm);
             }
         }
         loadExtensionByURL (url) {
             return this.props.extensionManager.loadExtensionURL(url)
-                .then((id) => {
-                    return id;
-                })
+                .then(id => id)
                 .catch(e => {
                     this.props.onError(e);
                 });
@@ -45,7 +42,7 @@ const extensionManagerHOC = function (WrappedComponent) {
 
     ExtensionManager.propTypes = {
         vm: PropTypes.instanceOf(VM).isRequired,
-        extensionManager: PropTypes.instanceOf(ExtensionManager).isRequired
+        extensionManager: PropTypes.instanceOf(ClipCCExtensionManager).isRequired
     };
 
     return ExtensionManager;

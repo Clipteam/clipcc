@@ -273,33 +273,33 @@ class ScratchAdapter {
                 throw new Error('Missing opcode for block');
             }
 
-            /*
-             *Const funcName = blockInfo.func ? this._sanitizeID(blockInfo.func) : blockInfo.opcode;
-             *
-             *const getBlockInfo = blockInfo.isDynamic ?
-             *    (args: BlockArgs) => args && args.mutation && args.mutation.blockInfo :
-             *    () => blockInfo;
-             *const callBlockFunc = (() => {
-             *    if (serviceName && dispatch._isRemoteService(serviceName)) {
-             *        return (args: BlockArgs, util: unknown, realBlockInfo: unknown) =>
-             *            dispatch.call(serviceName, funcName, args, util, realBlockInfo);
-             *    }
-             *
-             *    if (!extensionObject[funcName]) {
-             *        // The function might show up later as a dynamic property of the service object
-             *        console.warn(`Could not find extension block function called ${funcName}`);
-             *    }
-             *    return (args: BlockArgs, util: unknown, realBlockInfo: unknown) =>
-             *        extensionObject[funcName](args, util, realBlockInfo);
-             *})();
-             *
-             *blockInfo.func = (args: BlockArgs, util: unknown) => {
-             *    const realBlockInfo = getBlockInfo(args);
-             *    // TODO: filter args using the keys of realBlockInfo.arguments? maybe only if sandboxed?
-             *    return callBlockFunc(args, util, realBlockInfo);
-             *};
-             *break;
-             */
+            const funcName = blockInfo.func ? this._sanitizeID(blockInfo.func) : blockInfo.opcode;
+             
+            const getBlockInfo = blockInfo.isDynamic ?
+                (args: BlockArgs) => args && args.mutation && args.mutation.blockInfo :
+                () => blockInfo;
+            const callBlockFunc = (() => {
+                if (serviceName && dispatch._isRemoteService(serviceName)) {
+                    return (args: BlockArgs, util: unknown, realBlockInfo: unknown) =>
+                        dispatch.call(serviceName, funcName, args, util, realBlockInfo);
+                }
+             
+                if (!extensionObject[funcName]) {
+                    // The function might show up later as a dynamic property of the service object
+                    console.warn(`Could not find extension block function called ${funcName}`);
+                }
+                return (args: BlockArgs, util: unknown, realBlockInfo: unknown) =>
+                    // @ts-expect-error
+                    extensionObject[funcName](args, util, realBlockInfo);
+            })();
+
+            // @ts-expect-error
+            blockInfo.func = (args: BlockArgs, util: unknown) => {
+                const realBlockInfo = getBlockInfo(args);
+                // TODO: filter args using the keys of realBlockInfo.arguments? maybe only if sandboxed?
+                return callBlockFunc(args, util, realBlockInfo);
+            };
+            break;
         }
         }
 

@@ -24,6 +24,24 @@ const {loadSound} = require('./import/load-sound.js');
 const {serializeSounds, serializeCostumes} = require('./serialization/serialize-assets');
 require('canvas-toBlob');
 
+const builtinExtensions = {
+    // This is an example that isn't loaded with the other core blocks,
+    // but serves as a reference for loading core blocks as extensions.
+    // coreExample: () => require('./blocks/scratch3_core_example'),
+    // These are the non-core built-in extensions.
+    pen: () => require('./extensions/scratch3_pen'),
+    wedo2: () => require('./extensions/scratch3_wedo2'),
+    music: () => require('./extensions/scratch3_music'),
+    microbit: () => require('./extensions/scratch3_microbit'),
+    text2speech: () => require('./extensions/scratch3_text2speech'),
+    translate: () => require('./extensions/scratch3_translate'),
+    videoSensing: () => require('./extensions/scratch3_video_sensing'),
+    ev3: () => require('./extensions/scratch3_ev3'),
+    makeymakey: () => require('./extensions/scratch3_makeymakey'),
+    boost: () => require('./extensions/scratch3_boost'),
+    gdxfor: () => require('./extensions/scratch3_gdx_for')
+};
+
 const RESERVED_NAMES = ['_mouse_', '_stage_', '_edge_', '_myself_', '_random_'];
 
 /**
@@ -1086,6 +1104,10 @@ class VirtualMachine extends EventEmitter {
      */
     attachExtensionManager (manager) {
         this.extensionManager = manager;
+        for (const extId in builtinExtensions) {
+            const getter = builtinExtensions[extId];
+            this.extensionManager.registerInternalExtension(extId, getter);
+        }
     }
 
     /**
@@ -1143,7 +1165,10 @@ class VirtualMachine extends EventEmitter {
         if (locale !== formatMessage.setup().locale) {
             formatMessage.setup({locale: locale, translations: {[locale]: messages}});
         }
-        return this.extensionManager.refreshBlocks();
+        if (this.extensionManager) {
+            return this.extensionManager.scratchAdapter.refreshBlocks();
+        }
+        return Promise.resolve();
     }
 
     /**

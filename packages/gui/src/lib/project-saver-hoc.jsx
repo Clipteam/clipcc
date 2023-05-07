@@ -33,6 +33,7 @@ import {
     getIsUpdating,
     projectError
 } from '../reducers/project-state';
+import {ExtensionManager} from 'clipcc-extension';
 
 /**
  * Higher Order Component to provide behavior for saving projects.
@@ -359,6 +360,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
         autoSaveTimeoutId: PropTypes.number,
         canCreateNew: PropTypes.bool,
         canSave: PropTypes.bool,
+        extensionManager: PropTypes.instanceOf(ExtensionManager).isRequired,
         isAnyCreatingNewState: PropTypes.bool,
         isCreatingCopy: PropTypes.bool,
         isCreatingNew: PropTypes.bool,
@@ -409,6 +411,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
         const isShowingWithId = getIsShowingWithId(loadingState);
         return {
             autoSaveTimeoutId: state.scratchGui.timeout.autoSaveTimeoutId,
+            extensionManager: state.scratchGui.extensionManager,
             isAnyCreatingNewState: getIsAnyCreatingNewState(loadingState),
             isLoading: getIsLoading(loadingState),
             isCreatingCopy: getIsCreatingCopy(loadingState),

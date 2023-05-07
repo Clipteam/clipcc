@@ -195,7 +195,7 @@ module.exports = [
             new CopyWebpackPlugin({
                 patterns: [
                     {
-                        from: 'src_adapter_scratch_worker_ts.{js,js.map}',
+                        from: 'scratch.worker.{js,js.map}',
                         context: '../extension/dist/'
                     }
                 ]
