@@ -6502,6 +6502,11 @@ cli@~1.0.0:
     exit "0.1.2"
     glob "^7.1.1"
 
+clipcc-extension@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/clipcc-extension/-/clipcc-extension-0.2.0.tgz#30b792fb90863fd8df4631f73f49f6f67d3ee5a8"
+  integrity sha512-Oqu26y37Ncavogm9DR42nm7tXT3GZj4UJFVHM39GZ31agiTCyjZdRckXlfT/Dg6hohotiyTz5MxoL2OKa+Sxeg==
+
 cliui@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/cliui/-/cliui-3.2.0.tgz#120601537a916d29940f934da3b48d585a39213d"
