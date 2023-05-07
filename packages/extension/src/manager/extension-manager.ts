@@ -99,8 +99,8 @@ class ExtensionManager {
 
         if (
             typeof extensionURL !== 'string' ||
-            !extensionURL.startsWith('data:') ||
-            !extensionURL.startsWith('http')
+            (!extensionURL.startsWith('data:') &&
+            !extensionURL.startsWith('http'))
         ) {
             throw new Error(`Invalid url ${extensionURL}`);
         }
