@@ -31,6 +31,7 @@ import {
     activateTab,
     SOUNDS_TAB_INDEX
 } from '../reducers/editor-tab';
+import {ExtensionManager} from 'clipcc-extension';
 
 const addFunctionListener = (object, property, callback) => {
     const oldFn = object[property];
@@ -210,15 +211,15 @@ class Blocks extends React.Component {
     }
     setLocale () {
         this.ScratchBlocks.ScratchMsgs.setLocale(this.props.locale);
-        this.props.vm.setLocale(this.props.locale, this.props.messages)
-            .then(() => {
-                this.workspace.getFlyout().setRecyclingEnabled(false);
-                this.props.vm.refreshWorkspace();
-                this.requestToolboxUpdate();
-                this.withToolboxUpdates(() => {
-                    this.workspace.getFlyout().setRecyclingEnabled(true);
-                });
+        this.props.vm.setLocale(this.props.locale, this.props.messages);
+        this.props.extensionManager.scratchAdapter.reloadAll().then(() => {
+            this.workspace.getFlyout().setRecyclingEnabled(false);
+            this.props.vm.refreshWorkspace();
+            this.requestToolboxUpdate();
+            this.withToolboxUpdates(() => {
+                this.workspace.getFlyout().setRecyclingEnabled(true);
             });
+        });
     }
 
     updateToolbox () {
@@ -624,6 +625,7 @@ Blocks.propTypes = {
     canUseCloud: PropTypes.bool,
     customProceduresVisible: PropTypes.bool,
     extensionLibraryVisible: PropTypes.bool,
+    extensionManager: PropTypes.instanceOf(ExtensionManager).isRequired,
     isRtl: PropTypes.bool,
     isVisible: PropTypes.bool,
     locale: PropTypes.string.isRequired,
@@ -706,6 +708,7 @@ const mapStateToProps = state => ({
     ),
     hideNonVanillaBlocks: state.scratchGui.settings.hideNonVanillaBlocks,
     extensionLibraryVisible: state.scratchGui.modals.extensionLibrary,
+    extensionManager: state.scratchGui.extensionManager,
     isRtl: state.locales.isRtl,
     locale: state.locales.locale,
     messages: state.locales.messages,

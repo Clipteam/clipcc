@@ -19,7 +19,7 @@ class ExtensionManager {
      * Map of internal extensions.
      * The key name as the extension's id.
      */
-    internalExtensions = new Map<string, () => ExtensionClass>();
+    internalExtensions = new Map<string,() => ExtensionClass>();
 
     /**
      * Editor's Virtual Machine instance.
@@ -126,6 +126,36 @@ class ExtensionManager {
                 url: extensionURL
             });
             return extensionId;
+        }
+        default:
+            throw new Error(`Invaild extension type`);
+        }
+    }
+
+    /**
+     * Reload all extensions. It's useful while setting locales.
+     */
+    async reloadAllExtensions () {
+        const reloadPromises: Promise<unknown>[] = [];
+        for (const [extensionId] of this.loadedExtensions.entries()) {
+            reloadPromises.push(this.reloadExtension(extensionId));
+        }
+        return Promise.all(reloadPromises);
+    }
+
+    /**
+     * Reload extension by Id.
+     * @param {string} extensionId - Extension's ID
+     */
+    reloadExtension (extensionId: string) {
+        const extension = this.loadedExtensions.get(extensionId);
+        if (!extension) {
+            throw new Error(`Cannot locate extension ${extensionId}.`);
+        }
+
+        switch (extension.type) {
+        case 'scratch': {
+            return this.scratchAdapter.reload(extensionId);
         }
         default:
             throw new Error(`Invaild extension type`);

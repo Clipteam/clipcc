@@ -39,13 +39,19 @@ class ScratchAdapter {
      *
      * @type {Array.<PendingExtensionWorker>}
      */
-    pendingExtensions: PendingExtensionWorker[] = [];
+    private pendingExtensions: PendingExtensionWorker[] = [];
 
     /**
      * Map of worker ID to workers which have been allocated but have not yet finished initialization.
      * @type {Array.<PendingExtensionWorker>}
      */
-    pendingWorkers: PendingExtensionWorker[] = [];
+    private pendingWorkers: PendingExtensionWorker[] = [];
+
+    /**
+     * Loaded scratch extensions
+     * @type {Map<string, ExtensionClass>}
+     */
+    private loadedScratchExtension = new Map<string, ExtensionClass | string>();
 
     constructor () {
         dispatch.setService('extensions', this).catch((e: Error) => {
@@ -86,17 +92,62 @@ class ScratchAdapter {
         const extensionInfo = extensionObject.getInfo();
         this._registerExtensionInfo(extensionObject, extensionInfo);
         return extensionInfo.id;
-        
+    }
+
+    /**
+     * Reload a scratch-standard extension.
+     * @param {string} extensionId - Extension's ID
+    */
+    reload (extensionId: string) {
+        const targetExt = this.loadedScratchExtension.get(extensionId);
+        if (!targetExt) {
+            throw new Error(`Cannot locate extension ${extensionId}.`);
+        }
+        // It's running in worker
+        if (typeof targetExt === 'string') {
+            return dispatch.call(targetExt, 'getInfo').then((info: ExtensionMetadata) => {
+                // @ts-expect-error
+                this.vm.runtime._refreshExtensionPrimitives(info);
+                return info;
+            }).catch(e => {
+                console.error(`Failed to refresh extension primitives: ${JSON.stringify(e)}`);
+            });
+        } 
+        const info = targetExt.getInfo();
+        // @ts-expect-error
+        this.vm.runtime._refreshExtensionPrimitives(info);
+        return Promise.resolve(info);
+    }
+
+    /**
+     * Reload all scratch-standard extensions.
+     * This method is only a replacement of refreshBlocks in
+     *  original extension manager to reload locales. It should
+     * be replaced when there's a better solution.
+    */
+    reloadAll () {
+        const allPromises: Promise<ExtensionMetadata | void>[] = [];
+        for (const [extId] of this.loadedScratchExtension.entries()) {
+            allPromises.push(this.reload(extId));
+        }
+        return Promise.all(allPromises);
     }
 
     /**
      * Sanitize extension info then register its primitives with the VM.
-     * @param {ExtensionClass} extensionObject - the extension object providing the menu.
+     * @param {ExtensionClass | null} extensionObject - the extension object providing the menu.
      * @param {ExtensionInfo} extensionInfo - the extension's metadata
      * @param {string} serviceName - the name of the service hosting the extension
      * @private
      */
-    private _registerExtensionInfo (extensionObject: ExtensionClass, extensionInfo: ExtensionMetadata, serviceName?: string) {
+    private _registerExtensionInfo (extensionObject: ExtensionClass | null, extensionInfo: ExtensionMetadata, serviceName?: string) {
+        if (!this.loadedScratchExtension.has(extensionInfo.id)) {
+            if (!extensionObject && !serviceName) {
+                console.warn(`cannnot mark ${extensionInfo.id} as loaded.`);
+            } else {
+                this.loadedScratchExtension.set(extensionInfo.id, (extensionObject ?? serviceName) as ExtensionClass | string);
+            }
+        }
         extensionInfo = this._prepareExtensionInfo(extensionObject, extensionInfo, serviceName);
         if (!this.vm) throw new Error(`VM hadn't been attached`);
 
@@ -117,13 +168,13 @@ class ScratchAdapter {
     /**
      * Apply minor cleanup and defaults for optional extension fields.
      * TODO: make the ID unique in cases where two copies of the same extension are loaded.
-     * @param {ExtensionClass} extensionObject - the extension object providing the menu.
+     * @param {ExtensionClass | null} extensionObject - the extension object providing the menu.
      * @param {ExtensionInfo} extensionInfo - the extension info to be sanitized
      * @param {string} serviceName - the name of the service hosting this extension block
      * @returns {ExtensionInfo} - a new extension info object with cleaned-up values
      * @private
      */
-    private _prepareExtensionInfo (extensionObject: ExtensionClass, extensionInfo: ExtensionMetadata, serviceName?: string) {
+    private _prepareExtensionInfo (extensionObject: ExtensionClass | null, extensionInfo: ExtensionMetadata, serviceName?: string) {
         extensionInfo = Object.assign({}, extensionInfo);
         if (!/^[a-z0-9]+$/i.test(extensionInfo.id)) {
             throw new Error('Invalid extension id');
@@ -163,7 +214,7 @@ class ScratchAdapter {
      * @returns {Array.<MenuInfo>} - a menuInfo object with all preprocessing done.
      * @private
      */
-    private _prepareMenuInfo (extensionObject: ExtensionClass, menus: Record<string, ExtensionMenu>, serviceName?: string) {
+    private _prepareMenuInfo (extensionObject: ExtensionClass | null, menus: Record<string, ExtensionMenu>, serviceName?: string) {
         const menuNames = Object.getOwnPropertyNames(menus);
         for (let i = 0; i < menuNames.length; i++) {
             const menuName = menuNames[i];
@@ -247,7 +298,7 @@ class ScratchAdapter {
      * @returns {ExtensionBlockMetadata} - a new block info object which has values for all relevant optional fields.
      * @private
      */
-    private _prepareBlockInfo (extensionObject: ExtensionClass, blockInfo: ExtensionBlockMetadata, serviceName?: string) {
+    private _prepareBlockInfo (extensionObject: ExtensionClass | null, blockInfo: ExtensionBlockMetadata, serviceName?: string) {
         blockInfo = Object.assign({}, {
             blockType: BlockType.COMMAND,
             terminal: false,
@@ -279,9 +330,15 @@ class ScratchAdapter {
                 (args: BlockArgs) => args && args.mutation && args.mutation.blockInfo :
                 () => blockInfo;
             const callBlockFunc = (() => {
-                if (serviceName && dispatch._isRemoteService(serviceName)) {
-                    return (args: BlockArgs, util: unknown, realBlockInfo: unknown) =>
-                        dispatch.call(serviceName, funcName, args, util, realBlockInfo);
+                // Maybe there's a worker
+                if (extensionObject === null) {
+                    if (serviceName && dispatch._isRemoteService(serviceName)) {
+                        return (args: BlockArgs, util: unknown, realBlockInfo: unknown) =>
+                            dispatch.call(serviceName, funcName, args, util, realBlockInfo);
+                    } 
+                    console.warn(`Could not find extension block function called ${funcName}`);
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                    return () => {};
                 }
              
                 if (!extensionObject[funcName]) {
@@ -327,6 +384,16 @@ class ScratchAdapter {
         const id = this.nextExtensionWorker++;
         this.pendingWorkers[id] = workerInfo;
         return [id, workerInfo.extensionURL];
+    }
+
+    /**
+     * Collect extension metadata from the specified service and begin the extension registration process.
+     * @param {string} serviceName - the name of the service hosting the extension.
+     */
+    registerExtensionService (serviceName: string) {
+        dispatch.call(serviceName, 'getInfo').then(info => {
+            this._registerExtensionInfo(null, info, serviceName);
+        });
     }
 
     /**
