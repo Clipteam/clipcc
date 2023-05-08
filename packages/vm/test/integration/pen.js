@@ -4,16 +4,12 @@ const test = require('tap').test;
 
 const Scratch3PenBlocks = require('../../src/extensions/scratch3_pen/index.js');
 const VirtualMachine = require('../fixtures/make-extensionify-vm');
-const dispatch = require('../../src/dispatch/central-dispatch');
 
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 
 const uri = path.resolve(__dirname, '../fixtures/pen.sb2');
 const project = readFileToBuffer(uri);
-
-// By default Central Dispatch works with the Worker class built into the browser. Tell it to use TinyWorker instead.
-dispatch.workerClass = Worker;
 
 test('pen', t => {
     const vm = new VirtualMachine();
@@ -32,7 +28,6 @@ test('pen', t => {
 
         /** @type {PenState} */
         const clonePenState = cloneCat.getCustomState(Scratch3PenBlocks.STATE_KEY);
-
         t.notStrictEqual(originalPenState, clonePenState);
         t.equal(originalPenState.penAttributes.diameter, 51);
         t.equal(clonePenState.penAttributes.diameter, 42);
