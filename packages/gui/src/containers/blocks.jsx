@@ -601,7 +601,7 @@ class Blocks extends React.Component {
                 ) : null}
                 {extensionLibraryVisible ? (
                     <ExtensionLibrary
-                        vm={vm}
+                        extensionManager={this.props.extensionManager}
                         onCategorySelected={this.handleCategorySelected}
                         onRequestClose={onRequestCloseExtensionLibrary}
                     />

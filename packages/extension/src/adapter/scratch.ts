@@ -106,15 +106,17 @@ class ScratchAdapter {
         // It's running in worker
         if (typeof targetExt === 'string') {
             return dispatch.call(targetExt, 'getInfo').then((info: ExtensionMetadata) => {
-                // @ts-expect-error
-                this.vm.runtime._refreshExtensionPrimitives(info);
-                return info;
+                const processedInfo = this._prepareExtensionInfo(null, info, targetExt);
+                // @ts-expect-error pending VM's TS support
+                this.vm.runtime._refreshExtensionPrimitives(processedInfo);
+                return processedInfo;
             }).catch(e => {
                 console.error(`Failed to refresh extension primitives: ${JSON.stringify(e)}`);
             });
         } 
-        const info = targetExt.getInfo();
-        // @ts-expect-error
+        let info = targetExt.getInfo();
+        info = this._prepareExtensionInfo(targetExt, info);
+        // @ts-expect-error pending VM's TS support
         this.vm.runtime._refreshExtensionPrimitives(info);
         return Promise.resolve(info);
     }
@@ -142,7 +144,7 @@ class ScratchAdapter {
      */
     private _registerExtensionInfo (extensionObject: ExtensionClass | null, extensionInfo: ExtensionMetadata, serviceName?: string) {
         if (!this.loadedScratchExtension.has(extensionInfo.id)) {
-            if (!extensionObject && !serviceName) {
+            if (!extensionObject || serviceName) {
                 console.warn(`cannnot mark ${extensionInfo.id} as loaded.`);
             } else {
                 this.loadedScratchExtension.set(extensionInfo.id, (extensionObject ?? serviceName) as ExtensionClass | string);
