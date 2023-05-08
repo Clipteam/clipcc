@@ -144,7 +144,7 @@ class ScratchAdapter {
      */
     private _registerExtensionInfo (extensionObject: ExtensionClass | null, extensionInfo: ExtensionMetadata, serviceName?: string) {
         if (!this.loadedScratchExtension.has(extensionInfo.id)) {
-            if (!extensionObject || serviceName) {
+            if (!extensionObject && !serviceName) {
                 console.warn(`cannnot mark ${extensionInfo.id} as loaded.`);
             } else {
                 this.loadedScratchExtension.set(extensionInfo.id, (extensionObject ?? serviceName) as ExtensionClass | string);
