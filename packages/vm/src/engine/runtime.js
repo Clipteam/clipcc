@@ -2581,6 +2581,18 @@ class Runtime extends EventEmitter {
         stage.variables[variable.id] = variable;
         return variable;
     }
+    
+    /**
+     * Get all mutations of global procedures.
+     * @return {?Array.<string>} List of all mutations' XML string.
+     */
+    getAllGlobalProcedures () {
+        const procedures = [];
+        for (const target of this.targets) {
+            procedures.push(...target.getAllGlobalProcedures());
+        }
+        return procedures;
+    }
 
     /**
      * Tell the runtime to request a redraw.

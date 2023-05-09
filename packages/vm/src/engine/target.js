@@ -794,6 +794,29 @@ class Target extends EventEmitter {
         }
     }
 
+    /**
+     * Get all global procedure definitions.
+     * @return {?Array.<String>} Mutations of procedures.
+     */
+    getAllGlobalProcedures () {
+        const procedures = [];
+
+        for (const id in this.blocks._blocks) {
+            if (!this.blocks._blocks.hasOwnProperty(id)) continue;
+            const block = this.blocks._blocks[id];
+            if (block.opcode === 'procedures_definition') {
+                const internal = this.blocks._getCustomBlockInternal(block);
+                if (internal && internal.mutation.global === 'true') { // TODO: don't use boolean in string
+                    this.blocks._cache.procedureDefinitions[internal.mutation.proccode] = id; // The outer define block id
+                    procedures.push(this.blocks.mutationToXML(Object.assign({
+                        target: this.id
+                    }, internal.mutation)));
+                }
+            }
+        }
+
+        return procedures;
+    }
 }
 
 module.exports = Target;
