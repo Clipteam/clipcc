@@ -125,7 +125,7 @@ class VirtualMachine extends EventEmitter {
             this.emitWorkspaceUpdate();
         });
         this.runtime.on(Runtime.TOOLBOX_EXTENSIONS_NEED_UPDATE, () => {
-            this.extensionManager.scratchAdapter.reloadAll();
+            if (this.extensionManager) this.extensionManager.scratchAdapter.reloadAll();
         });
         this.runtime.on(Runtime.PERIPHERAL_LIST_UPDATE, info => {
             this.emit(Runtime.PERIPHERAL_LIST_UPDATE, info);
