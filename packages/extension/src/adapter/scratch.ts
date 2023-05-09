@@ -7,6 +7,7 @@ import {
     MenuItems,
     BlockArgs
 } from '../type/scratch';
+import { VM } from '../type/virtual-machine';
 import {
     maybeFormatMessage
 } from '../util';
@@ -25,7 +26,7 @@ class ScratchAdapter {
      * Should be set by `attachVM` while initializing.
      * @todo add more strict type check when VM adds TS support.
      */
-    vm?: Record<string, unknown>;
+    vm?: VM;
 
     /**
      * The ID number to provide to the next extension worker.
@@ -63,7 +64,7 @@ class ScratchAdapter {
      * Set the VM for the extension manager.
      * @param {VirtualMachine} vm - the VM instance.
      */
-    attachVM (vm: Record<string, unknown>) {
+    attachVM (vm: VM) {
         this.vm = vm;
     }
 
@@ -99,16 +100,19 @@ class ScratchAdapter {
      * @param {string} extensionId - Extension's ID
     */
     reload (extensionId: string) {
+        if (!this.vm) {
+            return Promise.reject(`VM hadn't been attached`);
+        }
+
         const targetExt = this.loadedScratchExtension.get(extensionId);
         if (!targetExt) {
-            throw new Error(`Cannot locate extension ${extensionId}.`);
+            return Promise.reject(`Cannot locate extension ${extensionId}.`);
         }
         // It's running in worker
         if (typeof targetExt === 'string') {
             return dispatch.call(targetExt, 'getInfo').then((info: ExtensionMetadata) => {
                 const processedInfo = this._prepareExtensionInfo(null, info, targetExt);
-                // @ts-expect-error pending VM's TS support
-                this.vm.runtime._refreshExtensionPrimitives(processedInfo);
+                this.vm!.runtime._refreshExtensionPrimitives(processedInfo);
                 return processedInfo;
             }).catch(e => {
                 console.error(`Failed to refresh extension primitives: ${JSON.stringify(e)}`);
@@ -116,7 +120,6 @@ class ScratchAdapter {
         } 
         let info = targetExt.getInfo();
         info = this._prepareExtensionInfo(targetExt, info);
-        // @ts-expect-error pending VM's TS support
         this.vm.runtime._refreshExtensionPrimitives(info);
         return Promise.resolve(info);
     }
@@ -153,7 +156,6 @@ class ScratchAdapter {
         extensionInfo = this._prepareExtensionInfo(extensionObject, extensionInfo, serviceName);
         if (!this.vm) throw new Error(`VM hadn't been attached`);
 
-        // @ts-expect-error pending VM's TS support
         this.vm.runtime._registerExtensionPrimitives(extensionInfo);
     }
 
@@ -196,10 +198,9 @@ class ScratchAdapter {
                     break;
                 }
                 results.push(result);
-            } catch (e) {
+            } catch (e: unknown) {
                 // TODO: more meaningful error reporting
-                // @ts-expect-error
-                console.error(`Error processing block: ${e.message}, Block:\n${JSON.stringify(blockInfo)}`);
+                console.error(`Error processing block: ${(e as Error).message}, Block:\n${JSON.stringify(blockInfo)}`);
             }
             return results;
         }, []);
@@ -262,10 +263,8 @@ class ScratchAdapter {
          */
         if (!this.vm) throw new Error(`VM hadn't been attached`);
 
-        // @ts-expect-error
         const editingTarget = this.vm.runtime.getEditingTarget() || this.vm.runtime.getTargetForStage();
         const editingTargetID = editingTarget ? editingTarget.id : null;
-        // @ts-expect-error
         const extensionMessageContext = this.vm.runtime.makeMessageContextForTarget(editingTarget);
 
         // TODO: Fix this to use dispatch.call when extensions are running in workers.

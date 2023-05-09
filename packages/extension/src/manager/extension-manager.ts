@@ -2,6 +2,7 @@ import { ScratchAdapter } from '../adapter';
 import {
     StandardScratchExtensionClass as ExtensionClass
 } from '../type/scratch';
+import { VM } from '../type/virtual-machine';
 interface Extension {
     type: 'scratch';
     env: 'unsandboxed' | 'sandboxed';
@@ -26,7 +27,7 @@ class ExtensionManager {
      * Should be set by `attachVM` while initializing.
      * @todo add more strict type check when VM adds TS support.
      */
-    vm?: Record<string, unknown>;
+    vm?: VM;
 
     /**
      * Editor's Blockly instance.
@@ -166,7 +167,7 @@ class ExtensionManager {
      * Set the VM for the extension manager.
      * @param {VirtualMachine} vm - the VM instance.
      */
-    attachVM (vm: Record<string, unknown>) {
+    attachVM (vm: VM) {
         this.vm = vm;
         this.scratchAdapter.attachVM(vm);
     }
