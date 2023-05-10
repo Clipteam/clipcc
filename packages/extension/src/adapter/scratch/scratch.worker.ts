@@ -8,7 +8,7 @@ import { makeCtx, Ctx } from './make-ctx';
 import { WorkerDispatch as dispatch } from '../../dispatch/worker-dispatch';
 
 declare global {
-  var Scratch: Ctx
+  var Scratch: Ctx;
 }
 
 class ExtensionWorker {

@@ -99,7 +99,7 @@ class SharedDispatch {
                 if (isRemote) {
                     return this._remoteTransferCall(provider, service, method, transfer, ...args);
                 }
-                const result = provider[method].apply(provider, args);
+                const result = provider[method](...args);
                 return Promise.resolve(result);
             }
             return Promise.reject(new Error(`Service not found: ${service}`));

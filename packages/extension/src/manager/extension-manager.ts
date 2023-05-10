@@ -20,7 +20,7 @@ class ExtensionManager {
      * Map of internal extensions.
      * The key name as the extension's id.
      */
-    internalExtensions = new Map<string,() => ExtensionClass>();
+    internalExtensions = new Map<string, () => ExtensionClass>();
 
     /**
      * Editor's Virtual Machine instance.
