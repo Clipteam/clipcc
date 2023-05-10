@@ -4,6 +4,7 @@ import React from 'react';
 import configureStore from 'redux-mock-store';
 import {mount} from 'enzyme';
 import VM from 'clipcc-vm';
+import {ExtensionManager} from 'clipcc-extension';
 import {LoadingState} from '../../../src/reducers/project-state';
 
 import vmManagerHOC from '../../../src/lib/vm-manager-hoc.jsx';
@@ -16,6 +17,7 @@ describe('VMManagerHOC', () => {
     const mockStore = configureStore();
     let store;
     let vm;
+    let extensionManager;
 
     beforeEach(() => {
         store = mockStore({
@@ -31,6 +33,8 @@ describe('VMManagerHOC', () => {
             }
         });
         vm = new VM();
+        extensionManager = new ExtensionManager();
+        extensionManager.attachVM(vm);
         vm.attachAudioEngine = jest.fn();
         vm.setCompatibilityMode = jest.fn();
         vm.setLocale = jest.fn();
@@ -41,6 +45,7 @@ describe('VMManagerHOC', () => {
         const WrappedComponent = vmManagerHOC(Component);
         mount(
             <WrappedComponent
+                extensionManager={extensionManager}
                 isPlayerOnly
                 isStarted={false}
                 store={store}
@@ -60,6 +65,7 @@ describe('VMManagerHOC', () => {
         const WrappedComponent = vmManagerHOC(Component);
         mount(
             <WrappedComponent
+                extensionManager={extensionManager}
                 isPlayerOnly={false}
                 isStarted={false}
                 store={store}
@@ -79,6 +85,7 @@ describe('VMManagerHOC', () => {
         vm.initialized = true;
         mount(
             <WrappedComponent
+                extensionManager={extensionManager}
                 isPlayerOnly={false}
                 isStarted={false}
                 store={store}
@@ -93,12 +100,29 @@ describe('VMManagerHOC', () => {
         expect(vm.start).toHaveBeenCalled();
     });
 
+    test('if it mounts with an extension-managerify vm, it does not reattach the manager', () => {
+        const Component = () => <div />;
+        const WrappedComponent = vmManagerHOC(Component);
+        vm.extensionManager = true;
+        mount(
+            <WrappedComponent
+                extensionManager={extensionManager}
+                isPlayerOnly={false}
+                isStarted={false}
+                store={store}
+                vm={vm}
+            />
+        );
+        expect(vm.extensionManager).toBe(true);
+    });
+
     test('if it mounts without starting the VM, it can be started by switching to editor mode', () => {
         const Component = () => <div />;
         const WrappedComponent = vmManagerHOC(Component);
         vm.initialized = true;
         const mounted = mount(
             <WrappedComponent
+                extensionManager={extensionManager}
                 isPlayerOnly
                 isStarted={false}
                 store={store}
@@ -117,6 +141,7 @@ describe('VMManagerHOC', () => {
         vm.initialized = true;
         const mounted = mount(
             <WrappedComponent
+                extensionManager={extensionManager}
                 isPlayerOnly
                 isStarted
                 store={store}
@@ -136,6 +161,7 @@ describe('VMManagerHOC', () => {
         const WrappedComponent = vmManagerHOC(Component);
         const mounted = mount(
             <WrappedComponent
+                extensionManager={extensionManager}
                 fontsLoaded
                 isLoadingWithId={false}
                 store={store}
@@ -162,6 +188,7 @@ describe('VMManagerHOC', () => {
         const WrappedComponent = vmManagerHOC(Component);
         const mounted = mount(
             <WrappedComponent
+                extensionManager={extensionManager}
                 isLoadingWithId
                 store={store}
                 vm={vm}
@@ -187,6 +214,7 @@ describe('VMManagerHOC', () => {
         const WrappedComponent = vmManagerHOC(Component);
         const mounted = mount(
             <WrappedComponent
+                extensionManager={extensionManager}
                 isLoadingWithId
                 store={store}
                 vm={vm}
