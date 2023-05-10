@@ -6,12 +6,13 @@ import {
     BlockType,
     MenuItems,
     BlockArgs
-} from '../type/scratch';
-import { VM } from '../type/virtual-machine';
+} from '../../type/scratch';
+import { VM } from '../../type/virtual-machine';
 import {
     maybeFormatMessage
-} from '../util';
-import { CentralDispatch as dispatch } from '../dispatch/central-dispatch';
+} from '../../util';
+import { CentralDispatch as dispatch } from '../../dispatch/central-dispatch';
+import { makeCtx } from './make-ctx';
 import ExtensionSandbox from './scratch.worker';
 
 interface PendingExtensionWorker {
@@ -72,22 +73,46 @@ class ScratchAdapter {
      * Load a scratch-standard extension.
      * @param {ExtensionClass | string} ext - Extension's data.
      */
-    async load (ext: string | ExtensionClass) {
+    async load (ext: string | ExtensionClass, env: 'sandboxed' | 'unsandboxed' = 'sandboxed') {
         if (!this.vm) throw new Error(`VM hadn't been attached`);
 
-        // It's running in sandbox because it's a url.
         if (typeof ext === 'string') {
-            return new Promise((resolve, reject) => {
-                // If we `require` this at the global level it breaks non-webpack targets, including tests
-                const ExtensionWorker = new ExtensionSandbox();
-                this.pendingExtensions.push({
-                    extensionURL: ext,
-                    resolve,
-                    reject
+            switch (env) {
+            case 'sandboxed':
+                return new Promise((resolve, reject) => {
+                    // If we `require` this at the global level it breaks non-webpack targets, including tests
+                    const ExtensionWorker = new ExtensionSandbox();
+                    this.pendingExtensions.push({
+                        extensionURL: ext,
+                        resolve,
+                        reject
+                    });
+                    dispatch.addWorker(ExtensionWorker);
                 });
-                dispatch.addWorker(ExtensionWorker);
-            });
-        } 
+            case 'unsandboxed': {
+                // @todo DataURL support
+                const response = await fetch(ext);
+                const originalScript = await response.text();
+                const closureFunc = eval(`(function(Scratch){${originalScript}})`);
+                let extensionObject = null as unknown as ExtensionClass;
+                const ctx = makeCtx();
+                ctx.vm = this.vm;
+                ctx.extensions.register = (extensionObj: ExtensionClass) => {
+                    extensionObject = extensionObj;
+                    ctx.extensions.register = () => {
+                        throw new Error('already registered');
+                    };
+                };
+                closureFunc(ctx);
+                const extensionInfo = extensionObject.getInfo();
+                this._registerExtensionInfo(extensionObject, extensionInfo);
+                return extensionInfo.id;
+            }
+            default:
+                throw new Error('unexpected env');
+            }
+        }
+
         // @ts-expect-error
         const extensionObject = new ext(this.vm.runtime);
         const extensionInfo = extensionObject.getInfo();

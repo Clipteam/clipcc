@@ -3,18 +3,12 @@ import {
     BlockType,
     TargetType,
     ArgumentType
-} from '../type/scratch';
-import { WorkerDispatch as dispatch } from '../dispatch/worker-dispatch';
+} from '../../type/scratch';
+import { makeCtx, Ctx } from './make-ctx';
+import { WorkerDispatch as dispatch } from '../../dispatch/worker-dispatch';
 
 declare global {
-  var Scratch: {
-      ArgumentType: typeof ArgumentType,
-      BlockType: typeof BlockType,
-      TargetType: typeof TargetType,
-      extensions: {
-          register: (extensionObject: unknown) => Promise<unknown>
-      }
-  };
+  var Scratch: Ctx
 }
 
 class ExtensionWorker {
@@ -57,17 +51,12 @@ class ExtensionWorker {
     }
 }
 
-globalThis.Scratch = globalThis.Scratch || {};
-globalThis.Scratch.ArgumentType = ArgumentType;
-globalThis.Scratch.BlockType = BlockType;
-globalThis.Scratch.TargetType = TargetType;
+globalThis.Scratch = makeCtx(true);
 
 /**
  * Expose only specific parts of the worker to extensions.
  */
 const extensionWorker = new ExtensionWorker();
-globalThis.Scratch.extensions = {
-    register: extensionWorker.register.bind(extensionWorker)
-};
+globalThis.Scratch.extensions.register = extensionWorker.register.bind(extensionWorker);
 
 export default null as any;

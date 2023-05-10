@@ -98,29 +98,13 @@ class ExtensionManager {
             return extensionURL;
         }
 
-        if (
-            typeof extensionURL !== 'string' ||
-            (!extensionURL.startsWith('data:') &&
-            !extensionURL.startsWith('http'))
-        ) {
+        if (typeof extensionURL !== 'string' || !extensionURL.startsWith('http')) {
             throw new Error(`Invalid url ${extensionURL}`);
-        }
-
-        switch (env) {
-        case 'unsandboxed': {
-            // @todo fetch extension
-            break;
-        }
-        case 'sandboxed': {
-            break;
-        }
-        default:
-            throw new Error(`Invaild running environment`);
         }
 
         switch (type) {
         case 'scratch': {
-            const extensionId = await this.scratchAdapter.load(extensionURL);
+            const extensionId = await this.scratchAdapter.load(extensionURL, env);
             this.loadedExtensions.set(extensionId, {
                 type: 'scratch',
                 env: env,

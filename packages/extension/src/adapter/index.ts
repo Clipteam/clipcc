@@ -1,1 +1,1 @@
-export * from './scratch';
+export * from './scratch/scratch';
