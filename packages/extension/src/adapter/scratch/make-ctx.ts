@@ -6,17 +6,19 @@ import {
     StandardScratchExtensionClass as ExtensionClass
 } from '../../type/scratch';
 import { VM } from '../../type/virtual-machine';
+import { Cast } from '../../util';
 
 export interface Ctx {
-    ArgumentType: typeof ArgumentType,
-    BlockType: typeof BlockType,
-    TargetType: typeof TargetType,
-    ReporterScope: typeof ReporterScope,
+    ArgumentType: typeof ArgumentType
+    BlockType: typeof BlockType
+    TargetType: typeof TargetType
+    ReporterScope: typeof ReporterScope
+    Cast: Cast
     extensions: {
         register: (extensionObj: ExtensionClass) => void,
-        sandboxed: boolean
-    },
-    vm?: VM;
+        unsandboxed: boolean
+    }
+    vm?: VM
 }
 
 export function makeCtx (sandboxed = false) {
@@ -25,11 +27,12 @@ export function makeCtx (sandboxed = false) {
         BlockType: BlockType,
         TargetType: TargetType,
         ReporterScope: ReporterScope,
+        Cast: Cast,
         extensions: {
             register: () => {
                 throw new Error('not implemented');
             },
-            sandboxed: sandboxed
+            unsandboxed: !sandboxed
         }
     };
     if (!sandboxed) {
