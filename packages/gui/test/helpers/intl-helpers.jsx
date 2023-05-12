@@ -4,7 +4,8 @@
  */
 import React from 'react';
 import renderer from 'react-test-renderer';
-import {IntlProvider, intlShape} from 'react-intl';
+import {IntlProvider} from 'react-intl';
+import intlShape from '../../lib/intl-shape.js';
 import {mount, shallow} from 'enzyme';
 
 const intlProvider = new IntlProvider({locale: 'en'}, {});
