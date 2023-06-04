@@ -1,3 +1,4 @@
+import { Emitter } from 'strict-event-emitter';
 import { ScratchAdapter } from '../adapter';
 import {
     StandardScratchExtensionClass as ExtensionClass
@@ -9,7 +10,14 @@ interface Extension {
     url: string;
 }
 
-class ExtensionManager {
+export interface Events {
+    EXTENSION_LOADING: [extensionURL: string];
+    EXTENSION_LOADED: [extensionURL: string, extensionId: string];
+    EXTENSION_LOAD_ERROR: [extensionURL: string, reason: unknown];
+    [eventName: string]: [...params: any[]]
+}
+
+class ExtensionManager extends Emitter<Events> {
     /**
      * Map of loaded extensions.
      * The key name as the extension's id.
@@ -87,33 +95,41 @@ class ExtensionManager {
         type: 'scratch' = 'scratch',
         env: 'sandboxed' | 'unsandboxed' = 'sandboxed'
     ) {
-        if (this.internalExtensions.has(extensionURL)) {
-            this.loadedExtensions.set(extensionURL, {
-                type: 'scratch',
-                env: 'unsandboxed',
-                url: extensionURL
-            });
-            const internalExtensionGetter = this.internalExtensions.get(extensionURL) as () => ExtensionClass;
-            await this.scratchAdapter.load(internalExtensionGetter());
-            return extensionURL;
-        }
+        this.emit('EXTENSION_LOADING', extensionURL);
+        try {
+            if (this.internalExtensions.has(extensionURL)) {
+                this.loadedExtensions.set(extensionURL, {
+                    type: 'scratch',
+                    env: 'unsandboxed',
+                    url: extensionURL
+                });
+                const internalExtensionGetter = this.internalExtensions.get(extensionURL) as () => ExtensionClass;
+                await this.scratchAdapter.load(internalExtensionGetter());
+                this.emit('EXTENSION_LOADED', extensionURL, extensionURL);
+                return extensionURL;
+            }
 
-        if (typeof extensionURL !== 'string' || !extensionURL.startsWith('http')) {
-            throw new Error(`Invalid url ${extensionURL}`);
-        }
+            if (typeof extensionURL !== 'string' || !extensionURL.startsWith('http')) {
+                throw new Error(`Invalid url ${extensionURL}`);
+            }
 
-        switch (type) {
-        case 'scratch': {
-            const extensionId = await this.scratchAdapter.load(extensionURL, env);
-            this.loadedExtensions.set(extensionId, {
-                type: 'scratch',
-                env: env,
-                url: extensionURL
-            });
-            return extensionId;
-        }
-        default:
-            throw new Error(`Invaild extension type`);
+            switch (type) {
+            case 'scratch': {
+                const extensionId = await this.scratchAdapter.load(extensionURL, env);
+                this.loadedExtensions.set(extensionId, {
+                    type: 'scratch',
+                    env: env,
+                    url: extensionURL
+                });
+                this.emit('EXTENSION_LOADED', extensionURL, extensionId);
+                return extensionId;
+            }
+            default:
+                throw new Error(`Invaild extension type`);
+            }
+        } catch (e: unknown) {
+            this.emit('EXTENSION_LOAD_ERROR', extensionURL, e);
+            throw e;
         }
     }
 

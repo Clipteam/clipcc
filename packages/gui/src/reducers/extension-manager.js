@@ -1,6 +1,6 @@
 import {ExtensionManager} from 'clipcc-extension';
 
-const SET_EXTENSION_MANAGER = 'scratch-gui/vm/SET_EXTENSION_MANAGER';
+const SET_EXTENSION_MANAGER = 'scratch-gui/extension-manager/SET_EXTENSION_MANAGER';
 const defaultManager = new ExtensionManager();
 const initialState = defaultManager;
 

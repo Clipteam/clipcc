@@ -24,6 +24,7 @@
     "webpack-cli": "^5.0.2"
   },
   "dependencies": {
-    "format-message": "^6.2.4"
+    "format-message": "^6.2.4",
+    "strict-event-emitter": "^0.5.0"
   }
 }

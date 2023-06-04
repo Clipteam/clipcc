@@ -1,9 +1,10 @@
-import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
+import {connect} from 'react-redux';
 
 import VM from 'clipcc-vm';
 import ClipCCExtensionManager from 'clipcc-extension';
+import {showStandardAlert, closeAlertWithId} from '../reducers/alerts';
 
 /*
  * Higher Order Component to manage extension manager.
@@ -14,21 +15,19 @@ const extensionManagerHOC = function (WrappedComponent) {
     class ExtensionManager extends React.Component {
         constructor (props) {
             super(props);
-            bindAll(this, [
-                'loadExtensionByURL'
-            ]);
         }
         componentDidMount () {
             if (!this.props.extensionManager.vm) {
                 this.props.extensionManager.attachVM(this.props.vm);
             }
+            this.props.extensionManager.on('EXTENSION_LOADING', this.props.onShowLoading);
+            this.props.extensionManager.on('EXTENSION_LOADED', this.props.onCloseLoading);
+            this.props.extensionManager.on('EXTENSION_LOAD_ERROR', this.props.onCloseLoading);
         }
-        loadExtensionByURL (url) {
-            return this.props.extensionManager.loadExtensionURL(url)
-                .then(id => id)
-                .catch(e => {
-                    this.props.onError(e);
-                });
+        componentWillUnmount () {
+            this.props.extensionManager.off('EXTENSION_LOADING', this.props.onShowLoading);
+            this.props.extensionManager.off('EXTENSION_LOADED', this.props.onCloseLoading);
+            this.props.extensionManager.off('EXTENSION_LOAD_ERROR', this.props.onCloseLoading);
         }
         render () {
             return (
@@ -41,11 +40,21 @@ const extensionManagerHOC = function (WrappedComponent) {
     }
 
     ExtensionManager.propTypes = {
+        onCloseLoading: PropTypes.func.isRequired,
+        onShowLoading: PropTypes.func.isRequired,
         vm: PropTypes.instanceOf(VM).isRequired,
         extensionManager: PropTypes.instanceOf(ClipCCExtensionManager).isRequired
     };
 
-    return ExtensionManager;
+    const mapDispatchToProps = dispatch => ({
+        onCloseLoading: () => dispatch(closeAlertWithId('loadingExtension')),
+        onShowLoading: () => dispatch(showStandardAlert('loadingExtension'))
+    });
+
+    return connect(
+        undefined,
+        mapDispatchToProps
+    )(ExtensionManager);
 };
 
 export default extensionManagerHOC;
