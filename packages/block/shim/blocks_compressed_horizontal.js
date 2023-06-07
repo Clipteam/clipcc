@@ -1,1 +1,1 @@
-module.exports = require('imports-loader?Blockly=./shim/blockly_compressed_horizontal-blocks_compressed!exports-loader?Blockly!../blocks_compressed_horizontal');
+module.exports = require('imports-loader?type=commonjs&imports=single|./shim/blockly_compressed_horizontal-blocks_compressed|Blockly!exports-loader?type=commonjs&exports=single|Blockly!../blocks_compressed_horizontal');

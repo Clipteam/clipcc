@@ -3,11 +3,7 @@ const path = require('path');
 
 // Plugins
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-
-// PostCss
-const autoprefixer = require('autoprefixer');
-const postcssImport = require('postcss-import');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -18,8 +14,8 @@ const base = {
             loader: 'babel-loader',
             include: path.resolve(__dirname, 'src'),
             options: {
-                plugins: ['transform-object-rest-spread'],
-                presets: [['env', {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}], 'react']
+                plugins: ['@babel/plugin-proposal-object-rest-spread'],
+                presets: ['@babel/preset-env', '@babel/preset-react']
             }
         },
         {
@@ -30,36 +26,35 @@ const base = {
                 loader: 'css-loader',
                 options: {
                     modules: {
-                        localIdentName: '[name]_[local]_[hash:base64:5]'
+                        localIdentName: '[name]_[local]_[fullhash:base64:5]',
+                        exportLocalsConvention: 'camelCase'
                     },
-                    importLoaders: 1,
-                    localsConvention: 'camelCase'
+                    importLoaders: 1
                 }
             }, {
                 loader: 'postcss-loader',
                 options: {
-                    ident: 'postcss',
-                    plugins: function () {
-                        return [
-                            postcssImport,
-                            autoprefixer()
-                        ];
+                    postcssOptions: {
+                        plugins: [
+                            'postcss-import',
+                            'autoprefixer'
+                        ]
                     }
                 }
             }]
         },
         {
             test: /\.png$/i,
-            loader: 'url-loader'
+            type: 'asset/inline'
         },
         {
             test: /\.svg$/,
-            loader: 'svg-url-loader?noquotes'
+            loader: 'svg-url-loader'
         }]
     },
     optimization: {
         minimizer: [
-            new UglifyJsPlugin({
+            new TerserPlugin({
                 include: /\.min\.js$/
             })
         ]
@@ -71,7 +66,7 @@ module.exports = [
     // For the playground
     defaultsDeep({}, base, {
         devServer: {
-            contentBase: path.resolve(__dirname, 'playground'),
+            static: path.resolve(__dirname, 'playground'),
             host: '0.0.0.0',
             port: process.env.PORT || 8078
         },

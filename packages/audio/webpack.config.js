@@ -9,7 +9,7 @@ module.exports = {
     output: {
         path: __dirname,
         library: 'AudioEngine',
-        libraryTarget: 'commonjs2',
+        libraryTarget: 'umd',
         filename: '[name].js'
     },
     module: {
@@ -18,7 +18,7 @@ module.exports = {
             include: path.resolve(__dirname, 'src'),
             loader: 'babel-loader',
             options: {
-                presets: [['env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}]]
+                presets: [['@babel/preset-env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}]]
             }
         }]
     },

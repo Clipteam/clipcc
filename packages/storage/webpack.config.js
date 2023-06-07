@@ -1,6 +1,6 @@
 const path = require('path');
 const {ProvidePlugin} = require('webpack');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -23,9 +23,11 @@ const base = {
     },
     optimization: {
         minimizer: [
-            new UglifyJsPlugin({
+            new TerserPlugin({
                 include: /\.min\.js$/,
-                sourceMap: true
+                terserOptions: {
+                    sourceMap: true
+                }
             })
         ]
     },
@@ -56,7 +58,7 @@ module.exports = [
         },
         output: {
             library: 'ScratchStorage',
-            libraryTarget: 'commonjs2',
+            libraryTarget: 'umd',
             path: path.resolve('dist', 'node'),
             filename: '[name].js'
         },

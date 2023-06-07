@@ -31,10 +31,11 @@ class PrivateFetchWorkerTool {
 
         try {
             if (this.isGetSupported) {
-                // eslint-disable-next-line global-require
-                const FetchWorker = require('worker-loader?{"inline":true,"fallback":true}!./FetchWorkerTool.worker');
+                const FetchWorker = new Worker(
+                    new URL('./FetchWorkerTool.worker', import.meta.url)
+                );
 
-                this.worker = new FetchWorker();
+                this.worker = FetchWorker;
 
                 this.worker.addEventListener('message', ({data}) => {
                     if (data.support) {

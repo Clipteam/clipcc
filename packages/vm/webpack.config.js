@@ -2,19 +2,21 @@ const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const defaultsDeep = require('lodash.defaultsdeep');
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const { version } = require('../../package.json');
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devServer: {
-        contentBase: false,
+        static: false,
         host: '0.0.0.0',
         port: process.env.PORT || 8073
     },
     devtool: 'cheap-module-source-map',
     output: {
         library: 'VirtualMachine',
+        libraryTarget: 'umd',
         filename: '[name].js'
     },
     module: {
@@ -22,23 +24,28 @@ const base = {
             test: /\.js$/,
             loader: 'babel-loader',
             include: path.resolve(__dirname, 'src'),
-            query: {
+            options: {
                 presets: [['@babel/preset-env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}]]
             }
         },
         {
             test: /\.mp3$/,
-            loader: 'file-loader'
+            type: 'asset/resource'
+        },
+        {
+            resourceQuery: /raw/,
+            type: 'asset/source'
         }]
     },
     optimization: {
         minimizer: [
-            new UglifyJsPlugin({
+            new TerserPlugin({
                 include: /\.min\.js$/
             })
         ]
     },
     plugins: [
+        new NodePolyfillPlugin(),
         new webpack.DefinePlugin({
             'clipcc.VERSION': version,
             'clipcc.BUILD_TIME': Date.now()
@@ -55,7 +62,6 @@ module.exports = [
             'scratch-vm.min': './src/index.js'
         },
         output: {
-            libraryTarget: 'umd',
             path: path.resolve('dist', 'web')
         }
     }),
@@ -66,7 +72,6 @@ module.exports = [
             'scratch-vm': './src/index.js'
         },
         output: {
-            libraryTarget: 'commonjs2',
             path: path.resolve('dist', 'node')
         },
         externals: {
@@ -103,18 +108,20 @@ module.exports = [
             hints: false
         },
         plugins: base.plugins.concat([
-            new CopyWebpackPlugin([{
-                from: '../block/media',
-                to: 'media'
-            }, {
-                from: '../../node_modules/clipcc-storage/dist/web'
-            }, {
-                from: '../../node_modules/clipcc-render/dist/web'
-            }, {
-                from: '../../node_modules/scratch-svg-renderer/dist/web'
-            }, {
-                from: 'src/playground'
-            }])
+            new CopyWebpackPlugin({
+                patterns: [{
+                    from: '../block/media',
+                    to: 'media'
+                }, {
+                    from: '../../node_modules/clipcc-storage/dist/web'
+                }, {
+                    from: '../../node_modules/clipcc-render/dist/web'
+                }, {
+                    from: '../../node_modules/scratch-svg-renderer/dist/web'
+                }, {
+                    from: 'src/playground'
+                }]
+            })
         ])
     })
 ];
