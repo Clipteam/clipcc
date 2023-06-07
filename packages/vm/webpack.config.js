@@ -16,6 +16,7 @@ const base = {
     devtool: 'cheap-module-source-map',
     output: {
         library: 'VirtualMachine',
+        libraryTarget: 'umd',
         filename: '[name].js'
     },
     module: {
@@ -61,7 +62,6 @@ module.exports = [
             'scratch-vm.min': './src/index.js'
         },
         output: {
-            libraryTarget: 'umd',
             path: path.resolve('dist', 'web')
         }
     }),
@@ -72,7 +72,6 @@ module.exports = [
             'scratch-vm': './src/index.js'
         },
         output: {
-            libraryTarget: 'commonjs2',
             path: path.resolve('dist', 'node')
         },
         externals: {

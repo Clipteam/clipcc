@@ -58,7 +58,7 @@ module.exports = [
         },
         output: {
             library: 'ScratchStorage',
-            libraryTarget: 'commonjs2',
+            libraryTarget: 'umd',
             path: path.resolve('dist', 'node'),
             filename: '[name].js'
         },

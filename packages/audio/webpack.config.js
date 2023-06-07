@@ -9,7 +9,7 @@ module.exports = {
     output: {
         path: __dirname,
         library: 'AudioEngine',
-        libraryTarget: 'commonjs2',
+        libraryTarget: 'umd',
         filename: '[name].js'
     },
     module: {
