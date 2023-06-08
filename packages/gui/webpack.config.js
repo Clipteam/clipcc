@@ -6,11 +6,8 @@ const { version } = require('../../package.json');
 // Plugins
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-
-// PostCss
-var autoprefixer = require('autoprefixer');
-var postcssImport = require('postcss-import');
+var TerserPlugin = require('terser-webpack-plugin');
+var NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
 
@@ -18,7 +15,7 @@ const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devtool: 'cheap-module-source-map',
     devServer: {
-        contentBase: path.resolve(__dirname, 'build'),
+        static: path.resolve(__dirname, 'build'),
         host: '0.0.0.0',
         port: process.env.PORT || 8601
     },
@@ -29,6 +26,11 @@ const base = {
     },
     resolve: {
         symlinks: false
+    },
+    snapshot: {
+        managedPaths: [
+            /^.+?[\\/]node_modules[\\/](?!scratch-(blocks|l10n|paint|render|storage|vm))[\\/]/,
+        ],
     },
     module: {
         rules: [{
@@ -62,33 +64,38 @@ const base = {
             }, {
                 loader: 'css-loader',
                 options: {
-                    modules: true,
-                    importLoaders: 1,
-                    localIdentName: '[name]_[local]_[hash:base64:5]',
-                    camelCase: true
+                    modules: {
+                        localIdentName: '[name]_[local]_[hash:base64:5]',
+                        exportLocalsConvention: 'camelCase'
+                    },
+                    importLoaders: 1
                 }
             }, {
                 loader: 'postcss-loader',
                 options: {
-                    ident: 'postcss',
-                    plugins: function () {
-                        return [
-                            postcssImport,
-                            autoprefixer
-                        ];
+                    postcssOptions: {
+                        plugins: [
+                            'postcss-import',
+                            'autoprefixer'
+                        ]
                     }
                 }
             }]
+        }, {
+            resourceQuery: /raw/,
+            type: 'asset/source'
         }]
     },
     optimization: {
         minimizer: [
-            new UglifyJsPlugin({
+            new TerserPlugin({
                 include: /\.min\.js$/
             })
         ]
     },
-    plugins: []
+    plugins: [
+        new NodePolyfillPlugin()
+    ]
 };
 
 if (!process.env.CI) {
@@ -99,7 +106,6 @@ module.exports = [
     // to run editor examples
     defaultsDeep({}, base, {
         entry: {
-            'lib.min': ['react', 'react-dom'],
             'gui': './src/playground/index.jsx',
             'blocksonly': './src/playground/blocks-only.jsx',
             'lifecycle': './src/playground/lifecycle-test.jsx',
@@ -114,9 +120,11 @@ module.exports = [
             rules: base.module.rules.concat([
                 {
                     test: /\.(svg|png|wav|gif|jpg)$/,
-                    loader: 'file-loader',
-                    options: {
-                        outputPath: 'static/assets/'
+                    resourceQuery: { not: [/raw/] },
+                    type: 'asset/resource',
+                    generator: {
+                        outputPath: 'static/assets/',
+                        publicPath: 'static/assets/',
                     }
                 }
             ])
@@ -125,14 +133,10 @@ module.exports = [
             splitChunks: {
                 chunks: 'all',
                 name: 'lib.min'
-            },
-            runtimeChunk: {
-                name: 'lib.min'
             }
         },
         plugins: base.plugins.concat([
             new webpack.DefinePlugin({
-                'process.env.NODE_ENV': '"' + process.env.NODE_ENV + '"',
                 'process.env.DEBUG': Boolean(process.env.DEBUG),
                 'process.env.GA_ID': '"' + (process.env.GA_ID || 'UA-000000-01') + '"',
                 'clipcc.VERSION': version,
@@ -223,8 +227,9 @@ module.exports = [
                 rules: base.module.rules.concat([
                     {
                         test: /\.(svg|png|wav|gif|jpg)$/,
-                        loader: 'file-loader',
-                        options: {
+                        resourceQuery: { not: [/raw/] },
+                        type: 'asset/resource',
+                        generator: {
                             outputPath: 'static/assets/',
                             publicPath: `${STATIC_PATH}/assets/`
                         }
