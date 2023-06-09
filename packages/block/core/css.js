@@ -1294,7 +1294,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.scratchCategoryMenu {',
-    'width: 85px;',
+    'width: var(--clipcc-category-width, 85px);',
     'background: var(--clipcc-ui-white, $colour_toolbox);',
     'color: var(--clipcc-text-primary, $colour_toolboxText);',
     'font-size: .7rem;',
@@ -1351,7 +1351,7 @@ Blockly.Css.CONTENT = [
   '}',
   
   '.scratchCategoryMenuItem.categorySelected > .scratchCategoryItemColorBar {',
-    'width: calc(85px - 0.2rem);',
+    'width: calc(var(--clipcc-category-width, 85px) - 0.2rem);',
     'border-radius: 0.3rem;',
   '}',
 
