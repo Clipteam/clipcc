@@ -41,6 +41,7 @@ describe('SBFileUploaderHOC', () => {
             />
         );
         return wrapper
+            .dive() // unwrap proprocessed intl
             .dive() // unwrap intl
             .dive() // unwrap redux Connect(SBFileUploaderComponent)
             .instance(); // SBFileUploaderComponent

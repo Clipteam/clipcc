@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 
 export default PropTypes.shape({
     formatDate: PropTypes.func,
@@ -16,4 +16,4 @@ export default PropTypes.shape({
     defaultLocale: PropTypes.string,
     defaultFormats: PropTypes.object,
     onError: PropTypes.func
-})
+});

@@ -5,28 +5,29 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 import {IntlProvider} from 'react-intl';
-import intlShape from '../../lib/intl-shape.js';
+import intlShape from '../../src/lib/intl-shape.js';
 import {mount, shallow} from 'enzyme';
 
-const intlProvider = new IntlProvider({locale: 'en'}, {});
-const {intl} = intlProvider.getChildContext();
+function mountWithIntl (node, {context, childContextTypes} = {}) {
+  return mount(node, {
+    wrappingComponent: IntlProvider,
+    wrappingComponentProps: {
+        locale: 'en'
+    },
+    context: Object.assign({}, context),
+    childContextTypes: Object.assign({}, {intl: intlShape}, childContextTypes)
+  });
+}
 
-const nodeWithIntlProp = node => React.cloneElement(node, {intl});
-
-const shallowWithIntl = (node, {context} = {}) => shallow(
-    nodeWithIntlProp(node),
-    {
-        context: Object.assign({}, context, {intl})
-    }
-);
-
-const mountWithIntl = (node, {context, childContextTypes} = {}) => mount(
-    nodeWithIntlProp(node),
-    {
-        context: Object.assign({}, context, {intl}),
-        childContextTypes: Object.assign({}, {intl: intlShape}, childContextTypes)
-    }
-);
+function shallowWithIntl (node, {context} = {}) {
+  return shallow(node, {
+    wrappingComponent: IntlProvider,
+    wrappingComponentProps: {
+        locale: 'en'
+    },
+    context: Object.assign({}, context)
+  });
+}
 
 // react-test-renderer component for use with snapshot testing
 const componentWithIntl = (children, props = {locale: 'en'}) => renderer.create(

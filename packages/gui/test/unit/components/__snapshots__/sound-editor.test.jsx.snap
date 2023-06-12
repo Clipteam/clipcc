@@ -371,9 +371,7 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        <span>
-          Faster
-        </span>
+        Faster
       </div>
     </div>
     <div
@@ -389,9 +387,7 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        <span>
-          Slower
-        </span>
+        Slower
       </div>
     </div>
     <div
@@ -407,9 +403,7 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        <span>
-          Louder
-        </span>
+        Louder
       </div>
     </div>
     <div
@@ -425,9 +419,7 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        <span>
-          Softer
-        </span>
+        Softer
       </div>
     </div>
     <div
@@ -443,9 +435,7 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        <span>
-          Mute
-        </span>
+        Mute
       </div>
     </div>
     <div
@@ -461,9 +451,7 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        <span>
-          Fade in
-        </span>
+        Fade in
       </div>
     </div>
     <div
@@ -479,9 +467,7 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        <span>
-          Fade out
-        </span>
+        Fade out
       </div>
     </div>
     <div
@@ -497,9 +483,7 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        <span>
-          Reverse
-        </span>
+        Reverse
       </div>
     </div>
     <div
@@ -515,9 +499,7 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        <span>
-          Robot
-        </span>
+        Robot
       </div>
     </div>
   </div>
