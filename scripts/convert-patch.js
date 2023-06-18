@@ -49,10 +49,9 @@ function processPatch () {
             }
             if (diffMeta[j].startsWith('+++') || diffMeta[j].startsWith('---')) {
                 const prefix = diffMeta[j].slice(0, 5);
-                const originalPath = diffMeta[j].substring(6);
                 // it'a new file
-                if (originalPath === '/dev/null') continue;
-                diffMeta[j] = `${prefix}/packages/${packageName}/${originalPath}`;
+                if (diffMeta[j].substring(4) === '/dev/null') continue;
+                diffMeta[j] = `${prefix}/packages/${packageName}/${diffMeta[j].substring(6)}`;
             }
         }
         diffMeta = diffMeta.join('\n');
