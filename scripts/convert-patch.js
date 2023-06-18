@@ -53,7 +53,7 @@ function processPatch () {
             }
         }
         diffMeta = diffMeta.join('\n');
-        diffs[i] = `diff --git ${diffMeta}\n@@${diffs[i].substring(endIndex + 1)}`;
+        diffs[i] = `diff --git ${diffMeta}\n@@${diffs[i].substring(endIndex + 2)}`;
     }
     currentFileCtx = `${header}${diffs.join('')}`;
 }
