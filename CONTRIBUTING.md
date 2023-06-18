@@ -45,6 +45,24 @@ Before you create a pull request, please check the following todo:
 -   If there's a bug-fix pull request, add unit test for it.
 -   Make sure you have reviewed.
 
+# Sync upstream
+
+Since this project uses monorepo for code management, the only way to manually sync changes from upstream is through patching. Here is the basic procedure for syncing upstream changes:
+## 1. generate patch
+You need to manually generate a patch for a scratch repository, e.g. for ``scratch-gui``, I want to merge all changes from the ``allow-ts`` branch.   
+To ensure that the original commit message is not lost, use ``git format-patch`` to generate the patch ([usage](https://git-scm.com/docs/git-format-patch)).   
+We know from the commit history that the changes to this branch started with ``3a94170a``. So we use ``git format-patch 3a94170a`` to generate the patch.
+
+## 2. Copy the patch to a separate directory and use the script to convert it
+ClipCC comes with a basic patch conversion script. You can use this script to do the most basic processing of the patch file path and other information before you start.   
+You can use ``yarn patch:convert [FOLDER_PATH] [PACKAGE_NAME]`` to convert all patch files in specific directory.   
+Note that [PACKAGE_NAME] is the name of a subdirectory in the ``packages/`` directory, not the npm package name.   
+
+## 3. Handle conflicts, then commit
+In most cases, patches cannot be applied directly, and you will need to edit the patch to resolve conflicts.   
+If you're not sure if the patch can be applied, you can use ``git apply --check [PATCH_PATH]`` to check.   
+After all conflicts are resolved, you can use ``git am`` or ``git apply`` to apply the patch to the current branch.
+
 # License
 
 By contributing to ClipCC, you agree that your contributions will be licensed under its AGPL-3.0 license and CLA.
