@@ -229,6 +229,13 @@ class Runtime extends EventEmitter {
         this._primitives = {};
 
         /**
+         * Map to look up a block generators's implementation function by its opcode.
+         * This is a two-step lookup: package name first, then generator name.
+         * @type {Object.<string, Function>}
+         */
+        this._generators = {};
+
+        /**
          * Map to look up all block information by extended opcode.
          * @type {Array.<CategoryInfo>}
          * @private
@@ -779,6 +786,16 @@ class Runtime extends EventEmitter {
                         if (packagePrimitives.hasOwnProperty(op)) {
                             this._primitives[op] =
                                 packagePrimitives[op].bind(packageObject);
+                        }
+                    }
+                }
+                // Collect block code generators from package.
+                if (packageObject.getGenerators) {
+                    const packageGenerators = packageObject.getGenerators();
+                    for (const op in packageGenerators) {
+                        if (packageGenerators.hasOwnProperty(op)) {
+                            this._generators[op] =
+                                packageGenerators[op].bind(packageObject);
                         }
                     }
                 }
