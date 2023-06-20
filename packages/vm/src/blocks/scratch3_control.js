@@ -42,6 +42,12 @@ class Scratch3ControlBlocks {
         };
     }
 
+    getGenerators () {
+        return {
+            control_repeat: this.grepeat,
+        };
+    }
+
     getHats () {
         return {
             control_start_as_clone: {
@@ -65,6 +71,18 @@ class Scratch3ControlBlocks {
         if (util.stackFrame.loopCounter >= 0) {
             util.startBranch(1, true);
         }
+    }
+
+    grepeat (args, ctx) {
+        ctx.code += `for (let i = 0; i < ${args.TIMES.asNumber()}; i++) {`;
+        if ('SUBSTACK' in args.substacks) {
+            ctx.generateStack(args.substacks.SUBSTACK, true);
+        }
+        if (!ctx.currentScope.warpMode) {
+            ctx.enableYield();
+            ctx.code += 'yield;\n'
+        }
+        ctx.code += '}\n';
     }
 
     repeatUntil (args, util) {

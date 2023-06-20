@@ -44,6 +44,13 @@ class Scratch3MotionBlocks {
         };
     }
 
+    getGenerators () {
+        return {
+            motion_turnright: this.gturnRight,
+            motion_turnleft: this.gturnLeft
+        };
+    }
+
     getMonitored () {
         return {
             motion_xposition: {
@@ -108,9 +115,17 @@ class Scratch3MotionBlocks {
         util.target.setDirection(util.target.direction + degrees);
     }
 
+    gturnRight (args, ctx) {
+        ctx.code += `target.setDirection(target.direction + ${args.DEGREES.asNumber()});\n`;
+    }
+
     turnLeft (args, util) {
         const degrees = Cast.toNumber(args.DEGREES);
         util.target.setDirection(util.target.direction - degrees);
+    }
+
+    gturnLeft (args, ctx) {
+        ctx.code += `target.setDirection(target.direction - ${args.DEGREES.asNumber()});\n`;
     }
 
     pointInDirection (args, util) {

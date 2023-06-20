@@ -12,7 +12,11 @@ test('spec', t => {
     t.type(c, 'object');
     t.ok(s instanceof Compiler);
     
-    t.type(s.compileThread, 'function');
+    t.type(c.compileThread, 'function');
 
     t.end();
-});
+})
+const randomString = function () {
+    const top = Math.random().toString(36);
+    return top.substring(7);
+};

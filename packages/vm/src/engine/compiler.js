@@ -1,5 +1,22 @@
 const Cast = require('../util/cast');
 
+/**
+ * It's possible to compile the blocks in a thread
+ * into code and convert them into function.
+ */
+class Compiler {
+    constructor (runtime) {
+        this.runtime = runtime;
+        this.generators = runtime._generators;
+    }
+
+    compileThread (thread) {
+        const compilation = new Compilation(this.runtime, thread);
+        compilation.generateStack(thread.topBlock);
+        return compilation;
+    }
+}
+
 const ParamType = {
     NUMBER: 1,
     NUMBER_NAN: 2,
@@ -8,15 +25,28 @@ const ParamType = {
     UNKNOWN: 99
 }
 
+/**
+ * Make a JavaScript string purified.
+ * @param {string} string of unknown format
+ * @returns {string} sanitized string
+ */
 const sanitize = string => JSON.stringify(String(string)).slice(1, -1);
 
-class Domain {
-    constructor (isLoop) {
+/**
+ * Current block's scope.
+ */
+class Scope {
+    constructor (isLoop, warpMode) {
+        this.warpMode = warpMode;
         this.isLoop = isLoop;
         this.isBottom = false;
     }
 }
 
+/**
+ * Package a block parameter and provide type
+ * conversion support.
+ */
 class BlockParam {
     constructor ({constant, type, result}) {
         this.constant = constant;
@@ -84,39 +114,45 @@ class BlockParam {
     }
 }
 
-class Compiler {
-    constructor (runtime) {
-        this.runtime = runtime;
-        this.generators = runtime._generators;
-    }
-
-    compileThread (thread) {
-        
-    }
-}
-
+/**
+ * A compilation transaction, which generates the
+ * corresponding code and runtime environment info
+ * from a thread.
+ */
 class Compilation {
     constructor (runtime, thread) {
         this.thread = thread;
         this.runtime = runtime;
         this.flyoutBlocks = runtime.flyoutBlocks;
         this.code = '';
-        this.domains = [];
+        this.scopes = [];
+        /**
+         * Whether the code contains a yield statement.
+         * Compiler needs to determine if the final
+         * function is a generator.
+         */
         this.yield = false;
-        this.warp = false;
         this.currentBlockId = null;
     }
 
-    get currentDomain () {
-        return this.domains[this.domains.length - 1];
+    get currentScope () {
+        return this.scopes[this.scopes.length - 1];
     }
 
-    enterDomain (isLoop) {
-        this.domains.push(new Domain(isLoop));
+    enterScope (isLoop, warpMode = this.currentScope.warpMode) {
+        this.scopes.push(new Scope(isLoop, warpMode));
     }
 
-    exitDomain () {
-        this.domains.pop();
+    exitScope () {
+        this.scopes.pop();
+    }
+
+    enableYield () {
+        if (!this.yield) this.yield = true;
+    }
+
+    enableWarp () {
+        if (!this.warp) this.warp = true;
     }
 
     getBlock (blockId) {
@@ -124,9 +160,10 @@ class Compilation {
             || this.flyoutBlocks.getBlock(blockId);
     }
 
-    generateStack (blockId) {
+    generateStack (blockId, isLoop, warpMode) {
         this.currentBlockId = blockId;
         let stackLength = 0;
+        // analyze stack length
         while (this.currentBlockId !== null) {
             const currentBlock = this.getBlock(this.currentBlockId);
             if (!currentBlock) break;
@@ -134,18 +171,21 @@ class Compilation {
             this.currentBlockId = currentBlock.next;
         }
 
+        // really start generating
+        this.enterScope(isLoop, warpMode);
         this.currentBlockId = blockId;
         for (let i = 1; i <= stackLength; i++) {
-            if (i === stackLength) this.currentDomain.isBottom = true;
-            else this.currentDomain.isBottom = false;
+            if (i === stackLength) this.currentScope.isBottom = true;
 
             const currentBlock = this.getBlock(this.currentBlockId);
             this.generateBlock(currentBlock);
             this.currentBlockId = currentBlock.next;
         }
+        this.exitScope();
     }
 
     generateBlock (block) {
+        // skip hat block.
         if (runtime.getIsHat(block.opcode)) return;
 
         const blockArgs = this.processArgs(block);
@@ -167,29 +207,59 @@ class Compilation {
             fieldKeys.length === 1 &&
             Object.keys(block.inputs).length === 0
         );
-        if (isShadowBlock) {
+        if (isShadowBlock) return generateShadow(block);
+
+        const blockArgs = this.processArgs(block);
+        // generate input by it's generator if possible
+        if (this.runtime.generators.hasOwnProperty(block.opcode)) {
+            return this.runtime.generators[block.opcode](blockArgs, this);
+        }
+
+        return {
+            constant: false,
+            type: ParamType.UNKNOWN,
+            result: this.generateCompatBlock(block, blockArgs);
+        };
+    }
+
+    generateShadow (block) {
+        const fieldKeys = Object.keys(block.fields);
+        switch (block.opcode) {
+        case 'math_angle':
+        case 'math_integer':
+        case 'math_number':
+        case 'math_positive_number':
+        case 'math_whole_number':
+            return {
+                constant: true,
+                type: ParamType.NUMBER,
+                result: block.fields.NUM.value
+            };
+        case 'text':
+            return {
+                constant: true,
+                type: ParamType.STRING,
+                result: block.fields.TEXT.value
+            };
+        case 'colour_picker':
+            return {
+                constant: true,
+                type: ParamType.STRING,
+                result: block.fields.COLOUR.value
+            };
+        default:
             return {
                 constant: true,
                 type: ParamType.UNKNOWN,
                 result: block.fields[fieldKeys[0]].value
             };
         }
-
-        const blockArgs = this.processArgs(block);
-        // generate input by it's generator if possible
-        if (this.runtime.generators.hasOwnProperty(block.opcode)) {
-            return this.runtime.generators[block.opcode](blockArgs, this);
-        } else {
-            return {
-                constant: false,
-                type: ParamType.UNKNOWN,
-                result: this.generateCompatBlock(block, blockArgs);
-            };
-        }
     }
 
     processArgs (block) {
         const blockArgs = {};
+        blockArgs.substacks = {};
+
         // store the static fields onto blockArgs.
         // @todo map internal field's type
         for (const fieldName in block.fields) {
@@ -214,16 +284,20 @@ class Compilation {
                 });
             }
         }
-        // store dynamic inputs
+        // store dynamic inputs (or substacks)
         for (const inputName in block.inputs) {
             const inputBlockId = block.inputs[inputName].block;
-            blockArgs[inputName] = new BlockParam(this.generateInput(inputBlockId));
+            if (inputName.startsWith('SUBSTACK')) {
+                blockArgs.substacks[inputName] = inputBlockId;
+            } else {
+                blockArgs[inputName] = new BlockParam(this.generateInput(inputBlockId));
+            }
         }
         return blockArgs;
     }
 
     generateCompatBlock (block, args) {
-        if (!this.yield) this.yield = true;
+        if (!this.yield) this.enableYield();
         let call = `yield* compatCall(${block.opcode}, {`;
         const params = [];
         for (const argName in args) {
