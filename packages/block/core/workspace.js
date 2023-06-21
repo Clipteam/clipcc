@@ -27,6 +27,7 @@
 goog.provide('Blockly.Workspace');
 
 goog.require('Blockly.VariableMap');
+goog.require('Blockly.ProcedureMap');
 goog.require('Blockly.WorkspaceComment');
 goog.require('goog.array');
 goog.require('goog.math');
@@ -101,6 +102,13 @@ Blockly.Workspace = function(opt_options) {
    * @private
    */
   this.variableMap_ = new Blockly.VariableMap(this);
+
+  /**
+   * @type {!Blockly.ProcedureMap}
+   * A map from procedure proccode to mutation of procedures.
+   * @private
+   */
+  this.procedureMap_ = new Blockly.ProcedureMap(this);
 
   /**
    * Blocks in the flyout can refer to variables that don't exist in the main
@@ -307,6 +315,7 @@ Blockly.Workspace.prototype.clear = function() {
     Blockly.Events.setGroup(false);
   }
   this.variableMap_.clear();
+  this.procedureMap_.clear();
   // Any block with a drop-down or WidgetDiv was disposed.
   if (Blockly.DropDownDiv) {
     Blockly.DropDownDiv.hideWithoutAnimation();
@@ -646,6 +655,15 @@ Blockly.Workspace.prototype.createPotentialVariableMap = function() {
  */
 Blockly.Workspace.prototype.getVariableMap = function() {
   return this.variableMap_;
+};
+
+/**
+ * Create a procedure with a given mutation.
+ * @param {Element} mutation The mutation of the procedure.
+ * @returns {Element} The newly created procedure.
+ */
+Blockly.Workspace.prototype.createProcedureFromMutation = function(mutation) {
+  return this.procedureMap_.createProcedureFromMutation(mutation);
 };
 
 /**

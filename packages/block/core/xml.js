@@ -492,6 +492,9 @@ Blockly.Xml.domToWorkspace = function(xml, workspace) {
         }
         variablesFirst = false;
       }
+      else if (name == 'procedures') {
+        Blockly.Xml.domToProcedures(xmlChild, workspace);
+      }
     }
   } finally {
     if (!existingGroup) {
@@ -646,6 +649,18 @@ Blockly.Xml.domToVariables = function(xmlVariables, workspace) {
       throw Error('Variable with id, ' + id + ' is without a type');
     }
     workspace.createVariable(name, type, id, isLocal, isCloud);
+  }
+};
+
+/**
+ * Decode an XML list of procedures and add the procedures to the workspace.
+ * @param {!Element} xmlProcedures List of XML procedures elements.
+ * @param {!Blockly.Workspace} workspace The workspace to which the procedures
+ *     should be added.
+ */
+Blockly.Xml.domToProcedures = function(xmlProcedures, workspace) {
+  for (var i = 0, xmlChild; xmlChild = xmlProcedures.children[i]; i++) {
+    workspace.createProcedureFromMutation(xmlChild);
   }
 };
 

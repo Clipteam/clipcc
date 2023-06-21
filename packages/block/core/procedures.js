@@ -86,7 +86,7 @@ Blockly.Procedures.allProcedureMutations = function(root) {
   for (var i = 0; i < blocks.length; i++) {
     if (blocks[i].type == Blockly.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
       var mutation = blocks[i].mutationToDom(/* opt_generateShadows */ true);
-      if (mutation) {
+      if (mutation && mutation.getAttribute('global') != 'true') {
         mutations.push(mutation);
       }
     }
@@ -222,20 +222,26 @@ Blockly.Procedures.flyoutCategory = function(workspace) {
   var xmlList = [];
 
   Blockly.Procedures.addCreateButton_(workspace, xmlList);
+
+  // Create call blocks for each procedure
+  var globalMutations = workspace.procedureMap_.allGlobalProcedureMutations();
+  globalMutations = Blockly.Procedures.sortProcedureMutations_(globalMutations);
+  var localMutations = Blockly.Procedures.allProcedureMutations(workspace);
+  localMutations = Blockly.Procedures.sortProcedureMutations_(localMutations);
+  var mutations = globalMutations.concat(localMutations);
   
   // append procedures_return block
   xmlList.push(Blockly.Xml.textToDom(
-      '<xml><block type="procedures_return" gap="16">' +
+      '<xml><block type="procedures_return" gap="' +
+      (mutations.length > 0 ? '36' : '16') +
+      '">' +
       '<value name="VALUE">' +
       '<shadow type="text">' +
       '<field name="TEXT">0</field>' +
       '</shadow>' +
       '</value>' +
       '</block></xml>').firstChild);
-
-  // Create call blocks for each procedure defined in the workspace
-  var mutations = Blockly.Procedures.allProcedureMutations(workspace);
-  mutations = Blockly.Procedures.sortProcedureMutations_(mutations);
+  
   for (var i = 0; i < mutations.length; i++) {
     var mutation = mutations[i];
     // <block type="procedures_call">
@@ -243,10 +249,11 @@ Blockly.Procedures.flyoutCategory = function(workspace) {
     // </block>
     var block = goog.dom.createDom('block');
     block.setAttribute('type', 'procedures_call');
-    block.setAttribute('gap', 16);
+    block.setAttribute('gap', i == globalMutations.length - 1 ? 36 : 16);
     block.appendChild(mutation);
     xmlList.push(block);
   }
+
   return xmlList;
 };
 
@@ -442,6 +449,8 @@ Blockly.Procedures.createProcedureCallbackFactory_ = function(workspace) {
       block.moveBy(posX / scale, (-workspace.scrollY + 30) / scale);
       block.scheduleSnapAndBump();
       Blockly.Events.setGroup(false);
+      // Add to procedure map of the workspace
+      workspace.procedureMap_.createProcedureFromMutation(mutation);
     }
   };
 };
@@ -577,6 +586,8 @@ Blockly.Procedures.deleteProcedureDefCallback = function(procCode,
   }
 
   var workspace = definitionRoot.workspace;
+
+  workspace.procedureMap_.removeProcedure(definitionRoot);
 
   // Delete the whole stack.
   Blockly.Events.setGroup(true);
