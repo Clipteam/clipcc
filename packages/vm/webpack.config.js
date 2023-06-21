@@ -8,11 +8,6 @@ const { version } = require('../../package.json');
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-    devServer: {
-        static: false,
-        host: '0.0.0.0',
-        port: process.env.PORT || 8073
-    },
     devtool: 'cheap-module-source-map',
     output: {
         library: 'VirtualMachine',
@@ -91,6 +86,11 @@ module.exports = [
         entry: {
             'benchmark': './src/playground/benchmark',
             'video-sensing-extension-debug': './src/extensions/scratch3_video_sensing/debug'
+        },
+        devServer: {
+            static: false,
+            host: '0.0.0.0',
+            port: process.env.PORT || 8073
         },
         output: {
             path: path.resolve(__dirname, 'playground'),
