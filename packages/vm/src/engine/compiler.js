@@ -28,16 +28,15 @@ const isPromise = value => (
 
 // @todo WORK_TIME support
 function* compatCall (blockFunc, args, isWarp) {
+    thread.stackFrames[thread.stackFrames.length - 1].reuse(isWarp);
     do {
         if (thread.status === Thread.STATUS_YIELD) {
             thread.status = Thread.STATUS_RUNNING;
             if (!isWarp) yield;
         } else yield;
 
-        thread.stackFrames[thread.stackFrames.length - 1].reuse(isWarp);
-
-        const util = new CompiledBlockUtility({runtime}, thread);
-        let reportedValue = blockFunc(args, util);
+        const util = new CompiledBlockUtility(runtime.sequencer, thread);
+        reportedValue = blockFunc(args, util);
         if (isPromise(reportedValue)) {
             reportedValue.then(value => {
                 reportedValue = value;
@@ -49,9 +48,10 @@ function* compatCall (blockFunc, args, isWarp) {
             });
 
             thread.status = Thread.STATUS_PROMISE_WAIT;
-            while (thread.status === Thread.STATUS_RUNNING) yield;
+            while (thread.status === Thread.STATUS_PROMISE_WAIT) yield;
         }
     } while (thread.status === Thread.STATUS_YIELD || thread.status === Thread.STATUS_YIELD_TICK);
+    return reportedValue;
 }
 `;
 
@@ -72,7 +72,13 @@ class Compiler {
         finalCode += 'const { target } = thread;\n';
         finalCode += 'const { runtime } = target;\n';
         finalCode += compatCall;
-        finalCode += compilation.code;
+        const canSafelyAssigned = compilation.code.trim().split('\n').length <= 1;
+        if (thread.stackClick && canSafelyAssigned) {
+            finalCode += `const result = ${compilation.code.trim()};\n`;
+            finalCode += `if (result !== undefined) runtime.visualReport("${sanitize(thread.topBlock)}", result);\n`;
+        } else {
+            finalCode += compilation.code;
+        }
         finalCode += '};';
         const funcFactory = new Function('Cast, CompiledBlockUtility', 'Thread', finalCode);
         thread.isCompiled = true;
