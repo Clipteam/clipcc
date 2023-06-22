@@ -74,7 +74,7 @@ class Scratch3ControlBlocks {
     }
 
     grepeat (args, ctx) {
-        ctx.code += `for (let i = 0; i < ${args.TIMES.asNumber()}; i++) {`;
+        ctx.code += `for (let i = 0; i < ${args.TIMES.asNumber()}; i++) {\n`;
         if ('SUBSTACK' in args.substacks) {
             ctx.generateStack(args.substacks.SUBSTACK, true);
         }

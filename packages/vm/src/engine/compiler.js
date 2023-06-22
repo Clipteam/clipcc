@@ -7,7 +7,7 @@ const Cast = require('../util/cast');
 class Compiler {
     constructor (runtime) {
         this.runtime = runtime;
-        this.generators = runtime._generators;
+        this._generators = runtime._generators;
     }
 
     compileThread (thread) {
@@ -22,6 +22,7 @@ const ParamType = {
     NUMBER_NAN: 2,
     STRING: 3,
     BOOLEAN: 4,
+    OBJECT: 5,
     UNKNOWN: 99
 }
 
@@ -36,7 +37,7 @@ const sanitize = string => JSON.stringify(String(string)).slice(1, -1);
  * Current block's scope.
  */
 class Scope {
-    constructor (isLoop, warpMode) {
+    constructor (isLoop, warpMode = false) {
         this.warpMode = warpMode;
         this.isLoop = isLoop;
         this.isBottom = false;
@@ -101,7 +102,7 @@ class BlockParam {
 
     asUnknown () {
         if (this.constant) {
-            if (typeof this.source === 'number') {
+            if (typeof this.source === 'number' || this.type === ParamType.OBJECT) {
                 return this.source;
             }
             const number = +this.source;
@@ -139,7 +140,11 @@ class Compilation {
         return this.scopes[this.scopes.length - 1];
     }
 
-    enterScope (isLoop, warpMode = this.currentScope.warpMode) {
+    enterScope (isLoop, warpMode) {
+        if (warpMode === undefined && this.currentScope) {
+            warpMode = this.currentScope.warpMode;
+        }
+
         this.scopes.push(new Scope(isLoop, warpMode));
     }
 
@@ -186,15 +191,15 @@ class Compilation {
 
     generateBlock (block) {
         // skip hat block.
-        if (runtime.getIsHat(block.opcode)) return;
+        if (this.runtime.getIsHat(block.opcode)) return;
 
         const blockArgs = this.processArgs(block);
 
         // generate input by it's generator if possible
-        if (this.runtime.generators.hasOwnProperty(block.opcode)) {
-            this.runtime.generators[block.opcode](blockArgs, this);
+        if (this.runtime._generators.hasOwnProperty(block.opcode)) {
+            this.runtime._generators[block.opcode](blockArgs, this);
         } else {
-            this.code += `${this.generateCompatBlock(block, blockArgs)}\n`;
+            this.code += `${this.generateCompatBlock(block, blockArgs)};\n`;
         }
     }
 
@@ -207,18 +212,18 @@ class Compilation {
             fieldKeys.length === 1 &&
             Object.keys(block.inputs).length === 0
         );
-        if (isShadowBlock) return generateShadow(block);
+        if (isShadowBlock) return this.generateShadow(block);
 
         const blockArgs = this.processArgs(block);
         // generate input by it's generator if possible
-        if (this.runtime.generators.hasOwnProperty(block.opcode)) {
-            return this.runtime.generators[block.opcode](blockArgs, this);
+        if (this.runtime._generators.hasOwnProperty(block.opcode)) {
+            return this.runtime._generators[block.opcode](blockArgs, this);
         }
 
         return {
             constant: false,
             type: ParamType.UNKNOWN,
-            result: this.generateCompatBlock(block, blockArgs);
+            result: `(${this.generateCompatBlock(block, blockArgs)})`
         };
     }
 
@@ -270,11 +275,11 @@ class Compilation {
             ) {
                 blockArgs[fieldName] = new BlockParam({
                     constant: true,
-                    type: ParamType.UNKNOWN,
-                    result: JSON.stringify{
+                    type: ParamType.OBJECT,
+                    result: JSON.stringify({
                         id: block.fields[fieldName].id,
                         name: block.fields[fieldName].value
-                    }
+                    })
                 });
             } else {
                 blockArgs[fieldName] = new BlockParam({
@@ -297,13 +302,19 @@ class Compilation {
     }
 
     generateCompatBlock (block, args) {
+        if ('SUBSTACK' in args.substacks) {
+            throw 'Cannot generate compatCall for branch block'
+        }
+
         if (!this.yield) this.enableYield();
-        let call = `yield* compatCall(${block.opcode}, {`;
+        let call = `yield* compatCall("${block.opcode}", {`;
         const params = [];
         for (const argName in args) {
+            // ignore substack entrys
+            if (argName === 'substacks') continue;
             params.push(`${argName}: ${args[argName].asUnknown()}`);
         }
-        call += `${params.join(', ')}}, ${this.warp})`;
+        call += `${params.join(', ')}}, ${this.currentScope.warpMode})`;
         return call;
     }
 }
