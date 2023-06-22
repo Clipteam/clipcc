@@ -150,6 +150,25 @@ class Thread {
         this.status = 0; /* Thread.STATUS_RUNNING */
 
         /**
+         * Whether the thread is compiled.
+         * @type {boolean}
+         */
+        this.isCompiled = false;
+
+
+        /**
+         * The compiled function's variant.
+         * @type {'generator'|'function'|null}
+         */
+        this.compiledVariant = null;
+
+        /**
+         * The compiled block's function
+         * @type {Function|GeneratorFunction}
+         */
+        this.compiledFunc = null;
+
+        /**
          * Whether the thread is killed in the middle of execution.
          * @type {boolean}
          */

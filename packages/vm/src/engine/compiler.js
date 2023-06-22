@@ -1,4 +1,59 @@
 const Cast = require('../util/cast');
+const BlockUtility = require('./block-utility');
+const Thread = require('./thread');
+
+class CompiledBlockUtility extends BlockUtility {
+    constructor (...args) {
+        super(...args);
+    }
+    get runtime () {
+        return this.target.runtime;
+    }
+
+    startBranch (branchNum, isLoop) {
+        throw 'not available in compiled environment';
+    }
+
+    startProcedure (procedureCode) {
+        throw 'not available in compiled environment';
+    }
+}
+
+let compatCall = `
+const isPromise = value => (
+    value !== null &&
+    typeof value === 'object' &&
+    typeof value.then === 'function'
+);
+
+// @todo WORK_TIME support
+function* compatCall (blockFunc, args, isWarp) {
+    do {
+        if (thread.status === Thread.STATUS_YIELD) {
+            thread.status = Thread.STATUS_RUNNING;
+            if (!isWarp) yield;
+        } else yield;
+
+        thread.stackFrames[thread.stackFrames.length - 1].reuse(isWarp);
+
+        const util = new CompiledBlockUtility({runtime}, thread);
+        let reportedValue = blockFunc(args, util);
+        if (isPromise(reportedValue)) {
+            reportedValue.then(value => {
+                reportedValue = value;
+            })
+            .catch(error => {
+                console.warn('Promise rejected:', error);
+            }).finally(() => {
+                thread.status = Thread.STATUS_RUNNING;
+            });
+
+            thread.status = Thread.STATUS_PROMISE_WAIT;
+            while (thread.status === Thread.STATUS_RUNNING) yield;
+        }
+    } while (thread.status === Thread.STATUS_YIELD || thread.status === Thread.STATUS_YIELD_TICK);
+}
+`;
 
 /**
  * It's possible to compile the blocks in a thread
@@ -13,6 +68,16 @@ class Compiler {
     compileThread (thread) {
         const compilation = new Compilation(this.runtime, thread);
         compilation.generateStack(thread.topBlock);
+        let finalCode = `return function${compilation.yield ? '*' : ''} script (thread) {\n`;
+        finalCode += 'const { target } = thread;\n';
+        finalCode += 'const { runtime } = target;\n';
+        finalCode += compatCall;
+        finalCode += compilation.code;
+        finalCode += '};';
+        const funcFactory = new Function('Cast, CompiledBlockUtility', 'Thread', finalCode);
+        thread.isCompiled = true;
+        thread.compiledVariant = compilation.yield ? 'generator' : 'function';
+        thread.compiledFunc = funcFactory(Cast, CompiledBlockUtility, Thread);
         return compilation;
     }
 }
@@ -302,12 +367,16 @@ class Compilation {
     }
 
     generateCompatBlock (block, args) {
+        if (!this.runtime.getOpcodeFunction(block.opcode)) {
+            return 'undefined';
+        }
+
         if ('SUBSTACK' in args.substacks) {
             throw 'Cannot generate compatCall for branch block'
         }
 
         if (!this.yield) this.enableYield();
-        let call = `yield* compatCall("${block.opcode}", {`;
+        let call = `yield* compatCall(runtime.getOpcodeFunction("${block.opcode}"), {`;
         const params = [];
         for (const argName in args) {
             // ignore substack entrys

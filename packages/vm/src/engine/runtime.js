@@ -7,6 +7,7 @@ const BlocksRuntimeCache = require('./blocks-runtime-cache');
 const BlockType = require('../extension-support/block-type');
 const Profiler = require('./profiler');
 const Sequencer = require('./sequencer');
+const Compiler = require('./compiler');
 const execute = require('./execute.js');
 const ScratchBlocksConstants = require('./scratch-blocks-constants');
 const TargetType = require('../extension-support/target-type');
@@ -198,6 +199,9 @@ class Runtime extends EventEmitter {
          */
         this.threads = [];
 
+        /** @type {!Compiler} */
+        this.compiler = new Compiler(this);
+
         /** @type {!Sequencer} */
         this.sequencer = new Sequencer(this);
 
@@ -220,6 +224,13 @@ class Runtime extends EventEmitter {
          * @type {?Target}
          */
         this._editingTarget = null;
+
+        /**
+         * Map to store internal package objects,
+         * In order to simplify compiled block's wrapping.
+         * @type {Object.<string, object>}
+         */
+        this._packageObjects = {};
 
         /**
          * Map to look up a block primitive's implementation function by its opcode.
@@ -779,6 +790,7 @@ class Runtime extends EventEmitter {
             if (defaultBlockPackages.hasOwnProperty(packageName)) {
                 // @todo pass a different runtime depending on package privilege?
                 const packageObject = new (defaultBlockPackages[packageName])(this);
+                this._packageObjects[packageName] = packageObject;
                 // Collect primitives from package.
                 if (packageObject.getPrimitives) {
                     const packagePrimitives = packageObject.getPrimitives();
@@ -1675,6 +1687,9 @@ class Runtime extends EventEmitter {
 
         thread.pushStack(id);
         this.threads.push(thread);
+        if (!thread.updateMonitor) {
+            this.compiler.compileThread(thread);
+        }
         return thread;
     }
 
@@ -1709,6 +1724,7 @@ class Runtime extends EventEmitter {
             return newThread;
         }
         this.threads.push(thread);
+        this.compiler.compileThread(thread);
         return thread;
     }
 

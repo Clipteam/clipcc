@@ -1,4 +1,4 @@
-const test = require('tap');
+const {test} = require('tap');
 
 const Compiler = require('../../src/engine/compiler');
 const Runtime = require('../../src/engine/runtime');
@@ -15,8 +15,4 @@ test('spec', t => {
     t.type(c.compileThread, 'function');
 
     t.end();
-})
-const randomString = function () {
-    const top = Math.random().toString(36);
-    return top.substring(7);
-};
+});

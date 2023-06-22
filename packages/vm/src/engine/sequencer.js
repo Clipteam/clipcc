@@ -177,6 +177,20 @@ class Sequencer {
      * @param {!Thread} thread Thread object to step.
      */
     stepThread (thread) {
+        if (thread.isCompiled) {
+            if (thread.compiledVariant === 'generator') {
+                if (typeof thread.compiledFunc === 'function') {
+                    thread.compiledFunc = thread.compiledFunc(thread);
+                }
+                const {done} = thread.compiledFunc.next();
+                if (done) this.retireThread(thread);
+            } else {
+                thread.compiledFunc(thread);
+                this.retireThread(thread);
+            }
+            return;
+        }
+
         let currentBlockId = thread.peekStack();
         if (!currentBlockId) {
             // A "null block" - empty branch.
