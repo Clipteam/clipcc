@@ -1,3 +1,4 @@
+const md5 = require('md5');
 const Cast = require('../util/cast');
 const BlockUtility = require('./block-utility');
 const Thread = require('./thread');
@@ -63,11 +64,11 @@ function* compatCall (blockFunc, args, isWarp) {
 class Compiler {
     constructor (runtime) {
         this.runtime = runtime;
-        this._generators = runtime._generators;
     }
 
     compileThread (thread) {
         const cache = thread.blockContainer._cache._compiledBlockCached;
+        const procCache = thread.blockContainer._cache._compiledProceduresCached;
         if (!cache.hasOwnProperty(thread.topBlock)) {
             try {
                 const compilation = new Compilation(this.runtime, thread);
@@ -76,6 +77,12 @@ class Compiler {
                 finalCode += 'const { target } = thread;\n';
                 finalCode += 'const { runtime } = target;\n';
                 finalCode += compatCall;
+
+                // insert depended procedures
+                for (const procCode of compilation.procDependencies) {
+                    finalCode += procCache[procCode].code;
+                }
+
                 const canSafelyAssigned = compilation.code.trim().split('\n').length <= 1;
                 if (thread.stackClick && canSafelyAssigned) {
                     finalCode += `const result = ${compilation.code.trim()};\n`;
@@ -84,6 +91,7 @@ class Compiler {
                     finalCode += compilation.code;
                 }
                 finalCode += '};';
+                console.log(finalCode)
                 const funcFactory = new Function('Cast, CompiledBlockUtility', 'Thread', finalCode);
                 cache[thread.topBlock] = {
                     status: 'success',
@@ -96,6 +104,7 @@ class Compiler {
                     status: 'failed',
                     error: e
                 };
+                console.error(e);
             }
         }
 
@@ -124,6 +133,22 @@ const ParamType = {
  */
 const sanitize = string => JSON.stringify(String(string)).slice(1, -1);
 
+class Counter {
+    constructor (prefix) {
+        this.prefix = prefix;
+        this.current = 0;
+    }
+
+    next () {
+        this.current++;
+        return this.get();
+    }
+
+    get () {
+        return `${this.prefix}${this.current}`;
+    }
+}
+
 /**
  * Current block's scope.
  */
@@ -132,6 +157,7 @@ class Scope {
         this.warpMode = warpMode;
         this.isLoop = isLoop;
         this.isBottom = false;
+        this.counter = new Counter('scope');
     }
 }
 
@@ -218,6 +244,7 @@ class Compilation {
         this.flyoutBlocks = runtime.flyoutBlocks;
         this.code = '';
         this.scopes = [];
+        this.arguments = [];
         /**
          * Whether the code contains a yield statement.
          * Compiler needs to determine if the final
@@ -225,6 +252,7 @@ class Compilation {
          */
         this.yield = false;
         this.currentBlockId = null;
+        this.procDependencies = new Set();
     }
 
     get currentScope () {
@@ -267,6 +295,8 @@ class Compilation {
             this.currentBlockId = currentBlock.next;
         }
 
+        // it's empty
+        if (stackLength < 1) return;
         // really start generating
         this.enterScope(isLoop, warpMode);
         this.currentBlockId = blockId;
@@ -278,6 +308,44 @@ class Compilation {
             this.currentBlockId = currentBlock.next;
         }
         this.exitScope();
+    }
+
+    generateProcedure (procCode) {
+        const procCache = this.thread.blockContainer._cache._compiledProceduresCached;
+        if (!procCache.hasOwnProperty(procCode)) {
+            const subCompilation = new Compilation(this.runtime, this.thread);
+            if (isWarp) subCompilation.enableWarp();
+            const definitionBlockId = subCompilation.thread.blockContainer.getProcedureDefinition(procCode);
+            const definitionBlock = this.getBlock(definitionBlockId);
+            const innerDefinition = this.getBlock(definitionBlock.inputs.custom_block.block);
+            const isWarp = JSON.parse(innerDefinition.mutation.warp);
+            const paramNamesIdsAndDefaults = subCompilation.thread.blockContainer.getProcedureParamNamesIdsAndDefaults(procCode);
+            subCompilation.arguments = paramNamesIdsAndDefaults[0];
+            if (isWarp) subCompilation.enableWarp();
+            try {
+                subCompilation.generateStack(definitionBlockId);
+                let procedureScript = `function ${subCompilation.yield ? '*' : ''} proc_${md5(procCode)} (...args) {\n`;
+                procedureScript += subCompilation.code;
+                procedureScript += '}\n';
+                procCache[procCode] = {
+                    status: 'success',
+                    compilation: subCompilation,
+                    code: procedureScript
+                };
+            } catch (e) {
+                procCache[procCode] = {
+                    status: 'failed',
+                    error: e
+                };
+                throw `failed to generate procedure ${procCode}: ${e.message}`;
+            }
+        }
+        if (procCache[procCode].status === 'success') {
+            this.procDependencies.add(procCode);
+            return procCache[procCode].compilation;
+        } else {
+            throw `failed to generate procedure ${procCode}`;
+        }
     }
 
     generateBlock (block) {
@@ -389,6 +457,8 @@ class Compilation {
                 blockArgs[inputName] = new BlockParam(this.generateInput(inputBlockId));
             }
         }
+
+        blockArgs.mutation = block.mutation;
         return blockArgs;
     }
 
@@ -407,6 +477,13 @@ class Compilation {
         for (const argName in args) {
             // ignore substack entrys
             if (argName === 'substacks') continue;
+            if (argName === 'mutation') {
+                args[argName] = new BlockParam({
+                    constant: true,
+                    type: ParamType.OBJECT,
+                    result: JSON.stringify(args[argName])
+                });
+            }
             params.push(`${argName}: ${args[argName].asUnknown()}`);
         }
         call += `${params.join(', ')}}, ${this.currentScope.warpMode})`;
@@ -414,4 +491,8 @@ class Compilation {
     }
 }
 
-module.exports = Compiler;
+module.exports = {
+    Compiler,
+    BlockParam,
+    ParamType
+};

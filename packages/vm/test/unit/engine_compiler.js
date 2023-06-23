@@ -1,6 +1,6 @@
 const {test} = require('tap');
 
-const Compiler = require('../../src/engine/compiler');
+const {Compiler} = require('../../src/engine/compiler');
 const Runtime = require('../../src/engine/runtime');
 
 test('spec', t => {

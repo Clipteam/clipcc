@@ -1,3 +1,6 @@
+const md5 = require('md5');
+const {BlockParam} = require('../engine/compiler');
+
 class Scratch3ProcedureBlocks {
     constructor (runtime) {
         /**
@@ -20,8 +23,21 @@ class Scratch3ProcedureBlocks {
         };
     }
 
+    getGenerators () {
+        return {
+            procedures_definition: this.gdefinition,
+            procedures_call: this.gcall,
+            argument_reporter_string_number: this.gargumentReporterStringNumber,
+            argument_reporter_boolean: this.gargumentReporterBoolean
+        };
+    }
+
     definition () {
         // No-op: execute the blocks.
+    }
+
+    gdefinition () {
+        // No-op: unnecessary
     }
 
     call (args, util) {
@@ -55,6 +71,40 @@ class Scratch3ProcedureBlocks {
         }
     }
 
+    gcall (args, ctx) {
+        const procCode = args.mutation.proccode;
+        const paramNamesIdsAndDefaults = ctx.thread.blockContainer.getProcedureParamNamesIdsAndDefaults(procCode);
+
+        // If null, procedure could not be found, which can happen if custom
+        // block is dragged between sprites without the definition.
+        // Match Scratch 2.0 behavior and noop.
+        if (paramNamesIdsAndDefaults === null) {
+            return;
+        }
+
+        const defCtx = ctx.generateProcedure(procCode);
+        if (defCtx.yield) ctx.code += 'yield* ';
+        ctx.code += `proc_${md5(procCode)}(`;
+        const [paramNames, paramIds, paramDefaults] = paramNamesIdsAndDefaults;
+        ctx.arguments = paramNames;
+        const params = [];
+        const block = ctx.getBlock(ctx.currentBlockId);
+        for (let i = 0; i < paramIds.length; i++) {
+            if (block.inputs[paramIds[i]] && block.inputs[paramIds[i]].block) {
+                const param = new BlockParam(ctx.generateInput(block.inputs[paramIds[i]].block));
+                params.push(param.asUnknown());
+            } else {
+                const param = new BlockParam({
+                    constant: true,
+                    type: 99 /* UNKNOWN */,
+                    result: paramDefaults[i]
+                });
+                params.push(param.asUnknown());
+            }
+        }
+        ctx.code += `${params.join(', ')});\n`;
+    }
+
     argumentReporterStringNumber (args, util) {
         const value = util.getParam(args.VALUE);
         if (value === null) {
@@ -65,6 +115,22 @@ class Scratch3ProcedureBlocks {
         return value;
     }
 
+    gargumentReporterStringNumber (args, ctx) {
+        const index = ctx.arguments.lastIndexOf(args.VALUE.source);
+        if (index === -1) {
+            return {
+                constant: true,
+                type: 1 /* NUMBER */,
+                result: 0
+            };
+        }
+        return {
+            constant: false,
+            type: 99 /* UNKNOWN */,
+            result: `(args[${index}] || 0)`
+        };
+    }
+
     argumentReporterBoolean (args, util) {
         const value = util.getParam(args.VALUE);
         if (value === null) {
@@ -73,6 +139,22 @@ class Scratch3ProcedureBlocks {
             return 0;
         }
         return value;
+    }
+
+    gargumentReporterBoolean (args, ctx) {
+        const index = ctx.arguments.lastIndexOf(args.VALUE.source);
+        if (index === -1) {
+            return {
+                constant: true,
+                type: 1 /* NUMBER */,
+                result: 0
+            };
+        }
+        return {
+            constant: false,
+            type: 4 /* BOOLEAN */,
+            result: `Cast.toBoolean(args[${index}])`
+        };
     }
 }
 

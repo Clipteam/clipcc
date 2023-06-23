@@ -42,7 +42,6 @@
   },
   "dependencies": {
     "@vernier/godirect": "1.5.0",
-    "arraybuffer-loader": "1.0.8",
     "atob": "2.1.2",
     "btoa": "1.2.1",
     "canvas-toBlob": "1.0.0",
@@ -54,6 +53,7 @@
     "htmlparser2": "7.2.0",
     "immutable": "3.8.1",
     "jszip": "^3.1.5",
+    "md5": "^2.3.0",
     "minilog": "3.1.0",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "scratch-sb1-converter": "0.2.7",

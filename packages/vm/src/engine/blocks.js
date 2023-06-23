@@ -72,9 +72,15 @@ class Blocks {
 
             /**
              * A cache for compiled blocks.
-             * @type {Record<string, Function | GeneratorFunction>}
+             * @type {Record<string, object>}
              */
             _compiledBlockCached: {},
+
+            /**
+             * A cache for compiled procedure blocks.
+             * @type {Record<string, object>}
+             */
+            _compiledProceduresCached: {},
 
             /**
              * A cache of block IDs and targets to start threads on as they are
@@ -522,6 +528,7 @@ class Blocks {
         this._cache.procedureDefinitions = {};
         this._cache._executeCached = {};
         this._cache._compiledBlockCached = {};
+        this._cache._compiledProceduresCached = {};
         this._cache._monitored = null;
         this._cache.scripts = {};
     }

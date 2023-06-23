@@ -1,5 +1,5 @@
 const VirtualMachine = require('..');
-const Compiler = require('../engine/compiler');
+const {Compiler} = require('../engine/compiler');
 const Thread = require('../engine/thread');
 const RenderWebGL = require('clipcc-render');
 const AudioEngine = require('clipcc-audio');
