@@ -37,7 +37,6 @@ function* compatCall (blockFunc, args, isWarp) {
             if (!isWarp) yield;
         } else yield;
 
-        const util = new CompiledBlockUtility(runtime.sequencer, thread);
         reportedValue = blockFunc(args, util);
         if (isPromise(reportedValue)) {
             reportedValue.then(value => {
@@ -76,6 +75,7 @@ class Compiler {
                 let finalCode = `return function${compilation.yield ? '*' : ''} script (thread) {\n`;
                 finalCode += 'const { target } = thread;\n';
                 finalCode += 'const { runtime } = target;\n';
+                finalCode += `const util = new CompiledBlockUtility(runtime.sequencer, thread);\n`;
                 finalCode += compatCall;
 
                 // insert depended procedures

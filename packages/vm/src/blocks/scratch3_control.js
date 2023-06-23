@@ -47,11 +47,19 @@ class Scratch3ControlBlocks {
             control_repeat: this.grepeat,
             control_repeat_until: this.grepeatUntil,
             control_while: this.grepeatWhile,
+            control_for_each: this.gforEach,
             control_forever: this.gforever,
+            control_wait: this.gwait,
             control_wait_until: this.gwaitUntil,
             control_if: this.gif,
             control_if_else: this.gifElse,
             control_stop: this.gstop,
+            control_create_clone_of: this.gcreateClone,
+            control_delete_this_clone: this.gdeleteClone,
+            control_get_counter: this.ggetCounter,
+            control_incr_counter: this.gincrCounter,
+            control_clear_counter: this.gclearCounter,
+            control_all_at_once: this.gallAtOnce
         };
     }
 
@@ -147,6 +155,20 @@ class Scratch3ControlBlocks {
         }
     }
 
+    gforEach (args, ctx) {
+        const {id, name} = JSON.parse(args.VARIABLE.source);
+        ctx.code += `for (let i = 1; i <= ${args.TIMES.asNumber()}; i++) {\n`;
+        ctx.code += `target.lookupOrCreateVariable(${id}, ${name}).value = i;\n`;
+        if ('SUBSTACK' in args.substacks) {
+            ctx.generateStack(args.substacks.SUBSTACK, true);
+        }
+        if (!ctx.currentScope.warpMode) {
+            ctx.enableYield();
+            ctx.code += 'yield;\n'
+        }
+        ctx.code += '}\n';
+    }
+
     waitUntil (args, util) {
         const condition = Cast.toBoolean(args.CONDITION);
         if (!condition) {
@@ -192,6 +214,17 @@ class Scratch3ControlBlocks {
         }
     }
 
+    gwait (args, ctx) {
+        const duration = ctx.currentScope.counter.next();
+        ctx.code += `const ${duration} = Math.max(0, 1000 * ${args.DURATION.asNumber()});\n`;
+        ctx.code += `util.startStackTimer(${duration});\n`;
+        ctx.code += `runtime.requestRedraw();\n`;
+        ctx.enableYield();
+        ctx.code += `do {\n`;
+        ctx.code += `yield;\n`;
+        ctx.code += `} while (!util.stackTimerFinished());\n`;
+    }
+
     if (args, util) {
         const condition = Cast.toBoolean(args.CONDITION);
         if (condition) {
@@ -200,7 +233,7 @@ class Scratch3ControlBlocks {
     }
 
     gif (args, ctx) {
-        ctx.code += `if (${args.CONDITION.asBoolean()}) {`;
+        ctx.code += `if (${args.CONDITION.asBoolean()}) {\n`;
         if ('SUBSTACK' in args.substacks) {
             ctx.generateStack(args.substacks.SUBSTACK);
         }
@@ -217,7 +250,7 @@ class Scratch3ControlBlocks {
     }
 
     gifElse (args, ctx) {
-        ctx.code += `if (${args.CONDITION.asBoolean()}) {`;
+        ctx.code += `if (${args.CONDITION.asBoolean()}) {\n`;
         if ('SUBSTACK' in args.substacks) {
             ctx.generateStack(args.substacks.SUBSTACK);
         }
@@ -256,16 +289,13 @@ class Scratch3ControlBlocks {
         }
     }
 
-    createClone (args, util) {
-        // Cast argument to string
-        args.CLONE_OPTION = Cast.toString(args.CLONE_OPTION);
-
+    createClone (option, target) {
         // Set clone target
         let cloneTarget;
-        if (args.CLONE_OPTION === '_myself_') {
+        if (option === '_myself_') {
             cloneTarget = util.target;
         } else {
-            cloneTarget = this.runtime.getSpriteTargetByName(args.CLONE_OPTION);
+            cloneTarget = this.runtime.getSpriteTargetByName(option);
         }
 
         // If clone target is not found, return
@@ -281,22 +311,50 @@ class Scratch3ControlBlocks {
         }
     }
 
+    createClone (args, util) {
+        this._createClone(Cast.toString(args.CLONE_OPTION), util.target);
+    }
+
+    gcreateClone (args, ctx) {
+        ctx.code += `runtime._packageObjects['scratch3_control']._createClone(${args.CLONE_OPTION.asString()}, target);\n`;
+    }
+
     deleteClone (args, util) {
         if (util.target.isOriginal) return;
         this.runtime.disposeTarget(util.target);
         this.runtime.stopForTarget(util.target);
     }
 
+    gdeleteClone (args, ctx) {
+        ctx.code += `runtime._packageObjects['scratch3_control'].deleteClone(null, util);\n`;
+    }
+
     getCounter () {
         return this._counter;
+    }
+
+    ggetCounter () {
+        return {
+            constant: false,
+            type: 1, /* NUMBER */
+            result: `runtime._packageObjects['scratch3_control'].getCounter()`
+        };
     }
 
     clearCounter () {
         this._counter = 0;
     }
 
+    gclearCounter (args, ctx) {
+        ctx.code += `runtime._packageObjects['scratch3_control'].clearCounter();\n`;
+    }
+
     incrCounter () {
         this._counter++;
+    }
+
+    gincrCounter (args, ctx) {
+        ctx.code += `runtime._packageObjects['scratch3_control'].incrCounter();\n`;
     }
 
     allAtOnce (args, util) {
@@ -307,6 +365,14 @@ class Scratch3ControlBlocks {
         // "run without screen refresh" custom blocks do now, but this was
         // removed before the release of 2.0.)
         util.startBranch(1, false);
+    }
+
+    gallAtOnce (args, ctx) {
+        ctx.code += `if (true) {\n`;
+        if ('SUBSTACK' in args.substacks) {
+            ctx.generateStack(args.substacks.SUBSTACK);
+        }
+        ctx.code += '}\n';
     }
 }
 
