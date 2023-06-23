@@ -28,6 +28,7 @@ const isPromise = value => (
 
 // @todo WORK_TIME support
 function* compatCall (blockFunc, args, isWarp) {
+    let reportedValue;
     thread.stackFrames[thread.stackFrames.length - 1].reuse(isWarp);
     do {
         if (thread.status === Thread.STATUS_YIELD) {
@@ -66,25 +67,44 @@ class Compiler {
     }
 
     compileThread (thread) {
-        const compilation = new Compilation(this.runtime, thread);
-        compilation.generateStack(thread.topBlock);
-        let finalCode = `return function${compilation.yield ? '*' : ''} script (thread) {\n`;
-        finalCode += 'const { target } = thread;\n';
-        finalCode += 'const { runtime } = target;\n';
-        finalCode += compatCall;
-        const canSafelyAssigned = compilation.code.trim().split('\n').length <= 1;
-        if (thread.stackClick && canSafelyAssigned) {
-            finalCode += `const result = ${compilation.code.trim()};\n`;
-            finalCode += `if (result !== undefined) runtime.visualReport("${sanitize(thread.topBlock)}", result);\n`;
-        } else {
-            finalCode += compilation.code;
+        const cache = thread.blockContainer._cache._compiledBlockCached;
+        if (!cache.hasOwnProperty(thread.topBlock)) {
+            try {
+                const compilation = new Compilation(this.runtime, thread);
+                compilation.generateStack(thread.topBlock);
+                let finalCode = `return function${compilation.yield ? '*' : ''} script (thread) {\n`;
+                finalCode += 'const { target } = thread;\n';
+                finalCode += 'const { runtime } = target;\n';
+                finalCode += compatCall;
+                const canSafelyAssigned = compilation.code.trim().split('\n').length <= 1;
+                if (thread.stackClick && canSafelyAssigned) {
+                    finalCode += `const result = ${compilation.code.trim()};\n`;
+                    finalCode += `if (result !== undefined) runtime.visualReport("${sanitize(thread.topBlock)}", result);\n`;
+                } else {
+                    finalCode += compilation.code;
+                }
+                finalCode += '};';
+                const funcFactory = new Function('Cast, CompiledBlockUtility', 'Thread', finalCode);
+                cache[thread.topBlock] = {
+                    status: 'success',
+                    variant: compilation.yield ? 'generator' : 'function',
+                    func: funcFactory(Cast, CompiledBlockUtility, Thread),
+                    code: finalCode
+                };
+            } catch (e) {
+                cache[thread.topBlock] = {
+                    status: 'failed',
+                    error: e
+                };
+            }
         }
-        finalCode += '};';
-        const funcFactory = new Function('Cast, CompiledBlockUtility', 'Thread', finalCode);
-        thread.isCompiled = true;
-        thread.compiledVariant = compilation.yield ? 'generator' : 'function';
-        thread.compiledFunc = funcFactory(Cast, CompiledBlockUtility, Thread);
-        return compilation;
+
+        if (cache[thread.topBlock].status === 'success') {
+            thread.isCompiled = true;
+            thread.compiledVariant = cache[thread.topBlock].variant;
+            thread.compiledFunc = cache[thread.topBlock].func;
+        }
+        return cache[thread.topBlock];
     }
 }
 
@@ -309,7 +329,7 @@ class Compilation {
             return {
                 constant: true,
                 type: ParamType.NUMBER,
-                result: block.fields.NUM.value
+                result: +block.fields.NUM.value
             };
         case 'text':
             return {

@@ -45,6 +45,13 @@ class Scratch3ControlBlocks {
     getGenerators () {
         return {
             control_repeat: this.grepeat,
+            control_repeat_until: this.grepeatUntil,
+            control_while: this.grepeatWhile,
+            control_forever: this.gforever,
+            control_wait_until: this.gwaitUntil,
+            control_if: this.gif,
+            control_if_else: this.gifElse,
+            control_stop: this.gstop,
         };
     }
 
@@ -93,12 +100,36 @@ class Scratch3ControlBlocks {
         }
     }
 
+    grepeatUntil (args, ctx) {
+        ctx.code += `while (${args.CONDITION.asBoolean()}) {\n`;
+        if ('SUBSTACK' in args.substacks) {
+            ctx.generateStack(args.substacks.SUBSTACK, true);
+        }
+        if (!ctx.currentScope.warpMode) {
+            ctx.enableYield();
+            ctx.code += 'yield;\n'
+        }
+        ctx.code += '}\n';
+    }
+
     repeatWhile (args, util) {
         const condition = Cast.toBoolean(args.CONDITION);
         // If the condition is true (repeat WHILE), start the branch.
         if (condition) {
             util.startBranch(1, true);
         }
+    }
+
+    grepeatWhile (args, ctx) {
+        ctx.code += `while !((${args.CONDITION.asBoolean()})) {\n`;
+        if ('SUBSTACK' in args.substacks) {
+            ctx.generateStack(args.substacks.SUBSTACK, true);
+        }
+        if (!ctx.currentScope.warpMode) {
+            ctx.enableYield();
+            ctx.code += 'yield;\n'
+        }
+        ctx.code += '}\n';
     }
 
     forEach (args, util) {
@@ -123,8 +154,30 @@ class Scratch3ControlBlocks {
         }
     }
 
+    gwaitUntil (args, ctx) {
+        ctx.enableYield();
+        ctx.code += `while (!(${args.CONDITION.asBoolean()})) {\n`;
+        if (!ctx.currentScope.warpMode) {
+            ctx.enableYield();
+            ctx.code += 'yield;\n'
+        }
+        ctx.code += '}\n';
+    }
+
     forever (args, util) {
         util.startBranch(1, true);
+    }
+
+    gforever (args, ctx) {
+        ctx.code += `while (true) {\n`;
+        if ('SUBSTACK' in args.substacks) {
+            ctx.generateStack(args.substacks.SUBSTACK, true);
+        }
+        if (!ctx.currentScope.warpMode) {
+            ctx.enableYield();
+            ctx.code += 'yield;\n'
+        }
+        ctx.code += '}\n';
     }
 
     wait (args, util) {
@@ -146,6 +199,14 @@ class Scratch3ControlBlocks {
         }
     }
 
+    gif (args, ctx) {
+        ctx.code += `if (${args.CONDITION.asBoolean()}) {`;
+        if ('SUBSTACK' in args.substacks) {
+            ctx.generateStack(args.substacks.SUBSTACK);
+        }
+        ctx.code += '}\n';
+    }
+
     ifElse (args, util) {
         const condition = Cast.toBoolean(args.CONDITION);
         if (condition) {
@@ -153,6 +214,18 @@ class Scratch3ControlBlocks {
         } else {
             util.startBranch(2, false);
         }
+    }
+
+    gifElse (args, ctx) {
+        ctx.code += `if (${args.CONDITION.asBoolean()}) {`;
+        if ('SUBSTACK' in args.substacks) {
+            ctx.generateStack(args.substacks.SUBSTACK);
+        }
+        ctx.code += '} else {\n';
+        if ('SUBSTACK2' in args.substacks) {
+            ctx.generateStack(args.substacks.SUBSTACK2);
+        }
+        ctx.code += '}\n';
     }
 
     stop (args, util) {
@@ -164,6 +237,22 @@ class Scratch3ControlBlocks {
             util.stopOtherTargetThreads();
         } else if (option === 'this script') {
             util.stopThisScript();
+        }
+    }
+
+    gstop (args, ctx) {
+        // always constant
+        const option = args.STOP_OPTION.source;
+        switch (option) {
+        case 'all':
+            ctx.code += `runtime.stopAll();\n`;
+            break;
+        case 'other scripts in stage':
+            ctx.code += `runtime.stopForTarget(target, thread);\n`;
+            break;
+        case 'this script':
+            ctx.code += 'return;\n';
+            break;
         }
     }
 

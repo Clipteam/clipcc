@@ -91,6 +91,9 @@ module.exports = [
         devServer: {
             static: false,
             host: '0.0.0.0',
+            client: {
+                overlay: false,
+            },
             port: process.env.PORT || 8073
         },
         output: {

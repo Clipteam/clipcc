@@ -71,6 +71,12 @@ class Blocks {
             _executeCached: {},
 
             /**
+             * A cache for compiled blocks.
+             * @type {Record<string, Function | GeneratorFunction>}
+             */
+            _compiledBlockCached: {},
+
+            /**
              * A cache of block IDs and targets to start threads on as they are
              * actively monitored.
              * @type {Array<{blockId: string, target: Target}>}
@@ -515,6 +521,7 @@ class Blocks {
         this._cache.procedureParamNames = {};
         this._cache.procedureDefinitions = {};
         this._cache._executeCached = {};
+        this._cache._compiledBlockCached = {};
         this._cache._monitored = null;
         this._cache.scripts = {};
     }

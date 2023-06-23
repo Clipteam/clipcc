@@ -116,7 +116,6 @@ window.onload = function () {
 
     const compiler = new Compiler(vm.runtime);
     Scratch.compiler = compiler;
-    const originFunc = vm.runtime._pushThread;
     vm.runtime._pushThread = function (id, target, opts) {
         const thread = new Thread(id);
         thread.target = target;
@@ -130,17 +129,18 @@ window.onload = function () {
         const result = compiler.compileThread(thread);
         const codeElem = document.getElementById('code');
         codeElem.value = result.code;
-        originFunc.apply(vm.runtime, id, target, opts);
     }
 
     // Loading projects from the server.
     loadProject();
 
     // Instantiate the renderer and connect it to the VM.
+    /*
     const canvas = document.getElementById('scratch-stage');
     const renderer = new RenderWebGL(canvas);
     Scratch.renderer = renderer;
     vm.attachRenderer(renderer);
+    */
     const audioEngine = new AudioEngine();
     vm.attachAudioEngine(audioEngine);
 
@@ -257,87 +257,6 @@ window.onload = function () {
         workspace.reportValue(data.id, data.value);
     });
 
-    vm.on('SPRITE_INFO_REPORT', data => {
-        if (data.id !== selectedTarget.value) return; // Not the editingTarget
-        document.getElementById('sinfo-x').value = data.x;
-        document.getElementById('sinfo-y').value = data.y;
-        document.getElementById('sinfo-size').value = data.size;
-        document.getElementById('sinfo-direction').value = data.direction;
-        document.getElementById('sinfo-rotationstyle').value = data.rotationStyle;
-        document.getElementById('sinfo-visible').value = data.visible;
-    });
-
-    document.getElementById('sinfo-post').addEventListener('click', () => {
-        const data = {};
-        data.x = document.getElementById('sinfo-x').value;
-        data.y = document.getElementById('sinfo-y').value;
-        data.direction = document.getElementById('sinfo-direction').value;
-        data.rotationStyle = document.getElementById('sinfo-rotationstyle').value;
-        data.visible = document.getElementById('sinfo-visible').value === 'true';
-        vm.postSpriteInfo(data);
-    });
-
-    // Feed mouse events as VM I/O events.
-    document.addEventListener('mousemove', e => {
-        const rect = canvas.getBoundingClientRect();
-        const coordinates = {
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
-            canvasWidth: rect.width,
-            canvasHeight: rect.height
-        };
-        Scratch.vm.postIOData('mouse', coordinates);
-    });
-    canvas.addEventListener('mousedown', e => {
-        const rect = canvas.getBoundingClientRect();
-        const data = {
-            isDown: true,
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
-            canvasWidth: rect.width,
-            canvasHeight: rect.height
-        };
-        Scratch.vm.postIOData('mouse', data);
-        e.preventDefault();
-    });
-    canvas.addEventListener('mouseup', e => {
-        const rect = canvas.getBoundingClientRect();
-        const data = {
-            isDown: false,
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
-            canvasWidth: rect.width,
-            canvasHeight: rect.height
-        };
-        Scratch.vm.postIOData('mouse', data);
-        e.preventDefault();
-    });
-
-    // Feed keyboard events as VM I/O events.
-    document.addEventListener('keydown', e => {
-        // Don't capture keys intended for Blockly inputs.
-        if (e.target !== document && e.target !== document.body) {
-            return;
-        }
-        Scratch.vm.postIOData('keyboard', {
-            keyCode: e.keyCode,
-            isDown: true
-        });
-        e.preventDefault();
-    });
-    document.addEventListener('keyup', e => {
-        // Always capture up events,
-        // even those that have switched to other targets.
-        Scratch.vm.postIOData('keyboard', {
-            keyCode: e.keyCode,
-            isDown: false
-        });
-        // E.g., prevent scroll.
-        if (e.target !== document && e.target !== document.body) {
-            e.preventDefault();
-        }
-    });
-
     // Run threads
     vm.start();
 
@@ -359,21 +278,5 @@ window.onload = function () {
         () => {
             const compatibilityMode = document.getElementById('compatmode').checked;
             vm.setCompatibilityMode(compatibilityMode);
-        });
-    const tabRenderExplorer = document.getElementById('tab-renderexplorer');
-    const tabImportExport = document.getElementById('tab-importexport');
-
-    // Handlers to show different explorers.
-    document.getElementById('renderexplorer-link').addEventListener('click',
-        () => {
-            Scratch.exploreTabOpen = false;
-            tabRenderExplorer.style.display = 'block';
-            tabImportExport.style.display = 'none';
-        });
-    document.getElementById('importexport-link').addEventListener('click',
-        () => {
-            Scratch.exploreTabOpen = false;
-            tabRenderExplorer.style.display = 'none';
-            tabImportExport.style.display = 'block';
         });
 };

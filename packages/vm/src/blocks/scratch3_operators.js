@@ -49,44 +49,209 @@ class Scratch3OperatorsBlocks {
         };
     }
 
+    getGenerators () {
+        return {
+            operator_add: this.gadd,
+            operator_subtract: this.gsubtract,
+            operator_multiply: this.gmultiply,
+            operator_divide: this.gdivide,
+            operator_lt: this.glt,
+            operator_equals: this.gequals,
+            operator_gt: this.ggt,
+            operator_and: this.gand,
+            operator_or: this.gor,
+            operator_not: this.gnot
+        };
+    }
+
     add (args) {
         return Cast.toNumber(args.NUM1) + Cast.toNumber(args.NUM2);
+    }
+
+    gadd (args) {
+        if (args.NUM1.constant && args.NUM2.constant) {
+            return {
+                constant: true,
+                type: 2 /** NUMBER_NAN **/,
+                result: args.NUM1.source + args.NUM2.source
+            };
+        }
+        return {
+            constant: false,
+            type: 2 /** NUMBER_NAN **/,
+            result: `${args.NUM1.asNumber()} + ${args.NUM2.asNumber()}`
+        };
     }
 
     subtract (args) {
         return Cast.toNumber(args.NUM1) - Cast.toNumber(args.NUM2);
     }
 
+    gsubtract (args) {
+        if (args.NUM1.constant && args.NUM2.constant) {
+            return {
+                constant: true,
+                type: 2 /** NUMBER_NAN **/,
+                result: args.NUM1.source - args.NUM2.source
+            };
+        }
+        return {
+            constant: false,
+            type: 2 /** NUMBER_NAN **/,
+            result: `${args.NUM1.asNumber()} - ${args.NUM2.asNumber()}`
+        };
+    }
+
     multiply (args) {
         return Cast.toNumber(args.NUM1) * Cast.toNumber(args.NUM2);
+    }
+
+    gmultiply (args) {
+        if (args.NUM1.constant && args.NUM2.constant) {
+            return {
+                constant: true,
+                type: 2 /** NUMBER_NAN **/,
+                result: args.NUM1.source * args.NUM2.source
+            };
+        }
+        return {
+            constant: false,
+            type: 2 /** NUMBER_NAN **/,
+            result: `${args.NUM1.asNumber()} * ${args.NUM2.asNumber()}`
+        };
     }
 
     divide (args) {
         return Cast.toNumber(args.NUM1) / Cast.toNumber(args.NUM2);
     }
 
+    gdivide (args) {
+        if (args.NUM1.constant && args.NUM2.constant) {
+            return {
+                constant: true,
+                type: 2 /** NUMBER_NAN **/,
+                result: args.NUM1.source / args.NUM2.source
+            };
+        }
+        return {
+            constant: false,
+            type: 2 /** NUMBER_NAN **/,
+            result: `${args.NUM1.asNumber()} / ${args.NUM2.asNumber()}`
+        };
+    }
+
     lt (args) {
         return Cast.compare(args.OPERAND1, args.OPERAND2) < 0;
+    }
+
+    glt (args) {
+        if (args.OPERAND1.constant && args.OPERAND2.constant) {
+            return {
+                constant: true,
+                type: 4 /** BOOLEAN **/,
+                result: Cast.compare(args.OPERAND1.source, args.OPERAND2.source) < 0
+            };
+        }
+        return {
+            constant: false,
+            type: 4 /** BOOLEAN **/,
+            result: `Cast.compare(${args.OPERAND1.asUnknown()}, ${args.OPERAND2.asUnknown()}) < 0`
+        };
     }
 
     equals (args) {
         return Cast.compare(args.OPERAND1, args.OPERAND2) === 0;
     }
 
+    gequals (args) {
+        if (args.OPERAND1.constant && args.OPERAND2.constant) {
+            return {
+                constant: true,
+                type: 4 /** BOOLEAN **/,
+                result: Cast.compare(args.OPERAND1.source, args.OPERAND2.source) === 0
+            };
+        }
+        return {
+            constant: false,
+            type: 4 /** BOOLEAN **/,
+            result: `Cast.compare(${args.OPERAND1.asUnknown()}, ${args.OPERAND2.asUnknown()}) === 0`
+        };
+    }
+
     gt (args) {
         return Cast.compare(args.OPERAND1, args.OPERAND2) > 0;
+    }
+
+    ggt (args) {
+        if (args.OPERAND1.constant && args.OPERAND2.constant) {
+            return {
+                constant: true,
+                type: 4 /** BOOLEAN **/,
+                result: Cast.compare(args.OPERAND1.source, args.OPERAND2.source) > 0
+            };
+        }
+        return {
+            constant: false,
+            type: 4 /** BOOLEAN **/,
+            result: `Cast.compare(${args.OPERAND1.asUnknown()}, ${args.OPERAND2.asUnknown()}) > 0`
+        };
     }
 
     and (args) {
         return Cast.toBoolean(args.OPERAND1) && Cast.toBoolean(args.OPERAND2);
     }
 
+    gand (args) {
+        if (args.OPERAND1.constant && args.OPERAND2.constant) {
+            return {
+                constant: true,
+                type: 4 /** BOOLEAN **/,
+                result: args.OPERAND1.source && args.OPERAND2.source
+            };
+        }
+        return {
+            constant: false,
+            type: 4 /** BOOLEAN **/,
+            result: `(${args.OPERAND1.asUnknown()} && ${args.OPERAND2.asUnknown()})`
+        };
+    }
+
     or (args) {
         return Cast.toBoolean(args.OPERAND1) || Cast.toBoolean(args.OPERAND2);
     }
 
+    gor (args) {
+        if (args.OPERAND1.constant && args.OPERAND2.constant) {
+            return {
+                constant: true,
+                type: 4 /** BOOLEAN **/,
+                result: args.OPERAND1.source || args.OPERAND2.source
+            };
+        }
+        return {
+            constant: false,
+            type: 4 /** BOOLEAN **/,
+            result: `(${args.OPERAND1.asUnknown()} || ${args.OPERAND2.asUnknown()})`
+        };
+    }
+
     not (args) {
         return !Cast.toBoolean(args.OPERAND);
+    }
+
+    gnot (args) {
+        if (args.OPERAND.constant) {
+            return {
+                constant: true,
+                type: 4 /** BOOLEAN **/,
+                result: !Cast.toBoolean(args.OPERAND1.source)
+            };
+        }
+        return {
+            constant: false,
+            type: 4 /** BOOLEAN **/,
+            result: `!(${args.OPERAND.asBoolean()})`
+        };
     }
 
     random (args) {
