@@ -69,19 +69,15 @@ class Compiler {
         const cache = thread.blockContainer._cache._compiledBlockCached;
         const procCache = thread.blockContainer._cache._compiledProceduresCached;
         if (!cache.hasOwnProperty(thread.topBlock)) {
+            let finalCode = '';
             try {
                 const compilation = new Compilation(this.runtime, thread);
                 compilation.generateStack(thread.topBlock);
-                let finalCode = `return function${compilation.yield ? '*' : ''} script (thread) {\n`;
+                finalCode = `return function${compilation.yield ? '*' : ''} script (thread) {\n`;
                 finalCode += 'const { target } = thread;\n';
                 finalCode += 'const { runtime } = target;\n';
                 finalCode += `const util = new CompiledBlockUtility(runtime.sequencer, thread);\n`;
                 finalCode += compatCall;
-
-                // insert depended procedures
-                for (const procCode of compilation.procDependencies) {
-                    finalCode += procCache[procCode].code;
-                }
 
                 // insert data references
                 for (const id in compilation.variables) {
@@ -94,6 +90,11 @@ class Compiler {
                     finalCode += `let list_${md5(name)} = target.lookupOrCreateList("${id}", "${name}");\n`;
                 }
 
+                // insert depended procedures
+                for (const procCode of compilation.procDependencies) {
+                    finalCode += procCache[procCode].code;
+                }
+
                 const canSafelyAssigned = compilation.code.trim().split('\n').length <= 1;
                 if (thread.stackClick && canSafelyAssigned) {
                     finalCode += `const result = ${compilation.code.trim()};\n`;
@@ -103,7 +104,7 @@ class Compiler {
                 }
                 finalCode += '};';
                 // debug
-                console.log(finalCode);
+                console.log(compilation.code, procCache);
                 const funcFactory = new Function('Cast, CompiledBlockUtility', 'Thread', finalCode);
                 cache[thread.topBlock] = {
                     status: 'success',
@@ -116,7 +117,7 @@ class Compiler {
                     status: 'failed',
                     error: e
                 };
-                console.error(e);
+                console.error(`${e.message}, \nfinalCode:\n${finalCode}`);
             }
         }
 
@@ -403,14 +404,21 @@ class Compilation {
                     status: 'failed',
                     error: e
                 };
-                throw new Error(`failed to generate procedure ${procCode}: ${e.message}`);
+                throw new Error(`failed to generate procedure ${procCode}: ${e.message}`, {cause: e});
             }
         }
         if (procCache[procCode].status === 'success') {
+            for (const subprocCode of procCache[procCode].compilation.procDependencies) {
+                this.procDependencies.add(subprocCode);
+            }
+            for (const id in procCache[procCode].compilation.variables) {
+                this.variables[id] = procCache[procCode].compilation.variables[id];
+            }
+            for (const id in procCache[procCode].compilation.lists) {
+                this.lists[id] = procCache[procCode].compilation.lists[id];
+            }
             this.procDependencies.add(procCode);
             return procCache[procCode].compilation;
-        } else if (procCache[procCode].status === 'failed') {
-            throw new Error(`failed to generate procedure ${procCode}: ${procCache[procCode].error.message}`);
         }
     }
 

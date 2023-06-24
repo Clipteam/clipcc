@@ -129,7 +129,7 @@ class Scratch3ControlBlocks {
     }
 
     grepeatWhile (args, ctx) {
-        ctx.code += `while !((${args.CONDITION.asBoolean()})) {\n`;
+        ctx.code += `while (!(${args.CONDITION.asBoolean()})) {\n`;
         if ('SUBSTACK' in args.substacks) {
             ctx.generateStack(args.substacks.SUBSTACK, true);
         }

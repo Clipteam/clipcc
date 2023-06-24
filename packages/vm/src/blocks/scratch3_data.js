@@ -299,7 +299,7 @@ class Scratch3DataBlocks {
         const index = ctx.currentScope.counter.next();
         ctx.code += `const ${index} = Cast.toListIndex(${args.INDEX.asNumber()}, ${ctx.getList(id, name)}.value.length, true);\n`;
         ctx.code += `if (${index} === Cast.LIST_INVALID) return;\n`;
-        ctx.code += `${ctx.getList(id, name)}.value.[${index} - 1] = ${args.ITEM.asUnknown()};\n`;
+        ctx.code += `${ctx.getList(id, name)}.value[${index} - 1] = ${args.ITEM.asUnknown()};\n`;
         ctx.code += `${ctx.getList(id, name)}._monitorUpToDate = false;\n`;
     }
 
