@@ -60,7 +60,15 @@ class Scratch3OperatorsBlocks {
             operator_gt: this.ggt,
             operator_and: this.gand,
             operator_or: this.gor,
-            operator_not: this.gnot
+            operator_not: this.gnot,
+            operator_random: this.grandom,
+            operator_join: this.gjoin,
+            operator_letter_of: this.gletterOf,
+            operator_length: this.glength,
+            operator_contains: this.gcontains,
+            operator_mod: this.gmod,
+            operator_round: this.ground,
+            operator_mathop: this.gmathop
         };
     }
 
@@ -254,26 +262,51 @@ class Scratch3OperatorsBlocks {
         };
     }
 
-    random (args) {
-        const nFrom = Cast.toNumber(args.FROM);
-        const nTo = Cast.toNumber(args.TO);
+    _random (nFrom, nTo) {
         const low = nFrom <= nTo ? nFrom : nTo;
         const high = nFrom <= nTo ? nTo : nFrom;
         if (low === high) return low;
         // If both arguments are ints, truncate the result to an int.
-        if (Cast.isInt(args.FROM) && Cast.isInt(args.TO)) {
+        if (Cast.isInt(nFrom) && Cast.isInt(nTo)) {
             return low + Math.floor(Math.random() * ((high + 1) - low));
         }
         return (Math.random() * (high - low)) + low;
+    }
+
+    random (args) {
+        const from = Cast.toNumber(args.FROM);
+        const to = Cast.toNumber(args.TO);
+        return this._random(from, to);
+    }
+
+    grandom (args, ctx) {
+        return {
+            constant: false,
+            type: 2 /** NUMBER_NAN **/,
+            result: `runtime._packageObjects['scratch3_operators']._random(${args.FROM.asNumber()}, ${args.TO.asNumber()})`
+        };
     }
 
     join (args) {
         return Cast.toString(args.STRING1) + Cast.toString(args.STRING2);
     }
 
-    letterOf (args) {
-        const index = Cast.toNumber(args.LETTER) - 1;
-        const str = Cast.toString(args.STRING);
+    gjoin (args, ctx) {
+        if (args.STRING1.constant && args.STRING2.constant) {
+            return {
+                constant: true,
+                type: 3 /* STRING */,
+                result: Cast.toString(args.STRING1.source) + Cast.toString(args.STRING2.source)
+            };
+        }
+        return {
+            constant: false,
+            type: 3 /* STRING */,
+            result: `${args.STRING1.asString()} + ${args.STRING2.asString()}`
+        };
+    }
+
+    _letterOf (str, index) {
         // Out of bounds?
         if (index < 0 || index >= str.length) {
             return '';
@@ -281,28 +314,119 @@ class Scratch3OperatorsBlocks {
         return str.charAt(index);
     }
 
+    letterOf (args) {
+        const index = Cast.toNumber(args.LETTER) - 1;
+        const str = Cast.toString(args.STRING);
+        this._letterOf(str, index);
+    }
+
+    gletterOf (args) {
+        if (args.LETTER.constant && args.STRING.constant) {
+            return {
+                constant: true,
+                type: 3 /* STRING */,
+                result: this._letterOf(Cast.toString(args.STRING), Cast.toNumber(args.LETTER.source) - 1)
+            };
+        }
+        return {
+            constant: false,
+            type: 3 /* STRING */,
+            result: `runtime._packageObjects['scratch3_operators']._letterof(${args.STRING.asString()}, ${args.LETTER.asNumber()} - 1)`
+        };
+    }
+
     length (args) {
         return Cast.toString(args.STRING).length;
     }
 
-    contains (args) {
+    glength (args) {
+        if (args.STRING.constant) {
+            return {
+                constant: true,
+                type: 1 /* NUMBER */,
+                result: Cast.toString(args.STRING.source).length
+            };
+        }
+        return {
+            constant: false,
+            type: 1 /* NUMBER */,
+            result: `${args.STRING.asString()}.length`
+        };
+    }
+
+    _contains (string1, string2) {
         const format = function (string) {
             return Cast.toString(string).toLowerCase();
         };
-        return format(args.STRING1).includes(format(args.STRING2));
+        return format(string1).includes(format(string2));
     }
 
-    mod (args) {
-        const n = Cast.toNumber(args.NUM1);
-        const modulus = Cast.toNumber(args.NUM2);
+    contains (args) {
+        return this._contains(args.STRING1, args.STRING2);
+    }
+
+    gcontains (args) {
+        if (args.STRING1.constant && args.STRING2.constant) {
+            return {
+                constant: true,
+                type: 4 /* BOOLEAN */,
+                result: this._contains(args.STRING1.source, args.STRING2.source)
+            };
+        }
+        return {
+            constant: false,
+            type: 4 /* BOOLEAN */,
+            result: `runtime._packageObjects['scratch3_operators']._contains(${args.STRING1.asUnknown()}, ${args.STRING2.asUnknown()})`
+        };
+    }
+
+    _mod (n, modulus) {
         let result = n % modulus;
         // Scratch mod uses floored division instead of truncated division.
         if (result / modulus < 0) result += modulus;
         return result;
     }
 
+    mod (args) {
+        const n = Cast.toNumber(args.NUM1);
+        const modulus = Cast.toNumber(args.NUM2);
+        return this._mod(n, modulus);
+    }
+
+    gmod (args) {
+        if (args.NUM1.constant && args.NUM2.constant) {
+            const n = Cast.toNumber(args.NUM1.source);
+            const modulus = Cast.toNumber(args.NUM2.source);
+            return {
+                constant: true,
+                type: 2 /** NUMBER_NAN **/,
+                result: this._mod(n, modulus)
+            };
+        }
+        return {
+            constant: false,
+            type: 2 /** NUMBER_NAN **/,
+            result: `runtime._packageObjects['scratch3_operators']._mod(${args.NUM1.asNumber()}, ${args.NUM2.asNumber()})`
+        };
+    }
+
     round (args) {
         return Math.round(Cast.toNumber(args.NUM));
+    }
+
+    ground (args) {
+        if (args.NUM.constant) {
+            return {
+                constant: true,
+                type: 2 /** NUMBER_NAN **/,
+                result: Math.round(Cast.toNumber(args.NUM.source))
+            };
+        }
+        return {
+            constant: false,
+            type: 2 /** NUMBER_NAN **/,
+            result: `Math.round(${args.NUM.asNumber()})`
+        };
     }
 
     mathop (args) {
@@ -325,6 +449,191 @@ class Scratch3OperatorsBlocks {
         case '10 ^': return Math.pow(10, n);
         }
         return 0;
+    }
+
+    gmathop (args) {
+        // always constant
+        const operator = Cast.toString(args.OPERATOR.source).toLowerCase();
+        if (args.NUM.constant) {
+            switch (operator) {
+            case 'abs':
+                return {
+                    constant: true,
+                    type: 2 /* NUMBER_NAN */,
+                    result: Math.abs(args.NUM.source)
+                };
+            case 'floor':
+                return {
+                    constant: true,
+                    type: 2 /* NUMBER_NAN */,
+                    result: Math.floor(args.NUM.source)
+                };
+            case 'ceiling':
+                return {
+                    constant: true,
+                    type: 2 /* NUMBER_NAN */,
+                    result: Math.ceil(args.NUM.source)
+                };
+            case 'sqrt':
+                return {
+                    constant: true,
+                    type: 2 /* NUMBER_NAN */,
+                    result: Math.sqrt(args.NUM.source)
+                };
+            case 'sin':
+                return {
+                    constant: true,
+                    type: 2 /* NUMBER_NAN */,
+                    result: parseFloat(Math.sin((Math.PI * args.NUM.source) / 180).toFixed(10))
+                };
+            case 'cos':
+                return {
+                    constant: true,
+                    type: 2 /* NUMBER_NAN */,
+                    result: parseFloat(Math.cos((Math.PI * args.NUM.source) / 180).toFixed(10))
+                };
+            case 'tan':
+                return {
+                    constant: true,
+                    type: 2 /* NUMBER_NAN */,
+                    result: MathUtil.tan(args.NUM.source)
+                };
+            case 'asin':
+                return {
+                    constant: true,
+                    type: 2 /* NUMBER_NAN */,
+                    result: (Math.asin(args.NUM.source) * 180) / Math.PI
+                };
+            case 'acos':
+                return {
+                    constant: true,
+                    type: 2 /* NUMBER_NAN */,
+                    result: (Math.acos(args.NUM.source) * 180) / Math.PI
+                };
+            case 'atan':
+                return {
+                    constant: true,
+                    type: 2 /* NUMBER_NAN */,
+                    result: (Math.atan(args.NUM.source) * 180) / Math.PI
+                };
+            case 'ln':
+                return {
+                    constant: true,
+                    type: 2 /* NUMBER_NAN */,
+                    result: Math.log(args.NUM.source)
+                }
+            case 'log':
+                return {
+                    constant: true,
+                    type: 2 /* NUMBER_NAN */,
+                    result: Math.log(args.NUM.source) / Math.LN10
+                };
+            case 'e ^':
+                return {
+                    constant: true,
+                    type: 1 /* NUMBER */,
+                    result: Math.exp(args.NUM.source)
+                };
+            case '10 ^':
+                return {
+                    constant: true,
+                    type: 2 /* NUMBER_NAN */,
+                    result: Math.pow(10, args.NUM.source)
+                }
+        }
+
+        switch (operator) {
+        case 'abs':
+            return {
+                constant: false,
+                type: 2 /* NUMBER_NAN */,
+                result: `Math.abs(${args.NUM.asNumber()})`
+            };
+        case 'floor':
+            return {
+                constant: false,
+                type: 2 /* NUMBER_NAN */,
+                result: `Math.floor(${args.NUM.asNumber()})`
+            };
+        case 'ceiling':
+            return {
+                constant: false,
+                type: 2 /* NUMBER_NAN */,
+                result: `Math.ceil(${args.NUM.asNumber()})`
+            };
+        case 'sqrt':
+            return {
+                constant: false,
+                type: 2 /* NUMBER_NAN */,
+                result: `Math.sqrt(${args.NUM.asNumber()})`
+            };
+        case 'sin':
+            return {
+                constant: false,
+                type: 2 /* NUMBER_NAN */,
+                result: `parseFloat(Math.sin((Math.PI * ${args.NUM.asNumber()}) / 180).toFixed(10))`
+            };
+        case 'cos':
+            return {
+                constant: false,
+                type: 2 /* NUMBER_NAN */,
+                result: `parseFloat(Math.cos((Math.PI * ${args.NUM.asNumber()}) / 180).toFixed(10))`
+            };
+        case 'tan':
+            return {
+                constant: false,
+                type: 2 /* NUMBER_NAN */,
+                result: `MathUtil.tan(${args.NUM.asNumber()})`
+            };
+        case 'asin':
+            return {
+                constant: false,
+                type: 2 /* NUMBER_NAN */,
+                result: `(Math.asin(${args.NUM.asNumber()}) * 180) / Math.PI`
+            };
+        case 'acos':
+            return {
+                constant: false,
+                type: 2 /* NUMBER_NAN */,
+                result: `(Math.acos(${args.NUM.asNumber()}) * 180) / Math.PI`
+            };
+        case 'atan':
+            return {
+                constant: false,
+                type: 2 /* NUMBER_NAN */,
+                result: `(Math.atan(${args.NUM.asNumber()}) * 180) / Math.PI`
+            };
+        case 'ln':
+            return {
+                constant: false,
+                type: 2 /* NUMBER_NAN */,
+                result: `Math.log(${args.NUM.asNumber()})`
+            };
+        case 'log':
+            return {
+                constant: false,
+                type: 2 /* NUMBER_NAN */,
+                result: `Math.log(${args.NUM.asNumber()}) / Math.LN10`
+            };
+        case 'e ^':
+            return {
+                constant: false,
+                type: 1 /* NUMBER */,
+                result: `Math.exp(${args.NUM.asNumber()})`
+            };
+        case '10 ^':
+            return {
+                constant: false,
+                type: 1 /* NUMBER */,
+                result: `Math.pow(10, ${args.NUM.asNumber()})`
+            };
+        }
+        }
+        return {
+            constant: true,
+            type: 1 /* NUMBER */,
+            result: 0
+        };
     }
 
     power (args) {

@@ -294,15 +294,17 @@ class Scratch3PenBlocks {
                 {
                     opcode: 'clear',
                     blockType: BlockType.COMMAND,
+                    generator: this.gclear,
                     text: formatMessage({
                         id: 'pen.clear',
                         default: 'erase all',
                         description: 'erase all pen trails and stamps'
-                    })
+                    }),
                 },
                 {
                     opcode: 'stamp',
                     blockType: BlockType.COMMAND,
+                    generator: this.gstamp,
                     text: formatMessage({
                         id: 'pen.stamp',
                         default: 'stamp',
@@ -313,6 +315,7 @@ class Scratch3PenBlocks {
                 {
                     opcode: 'penDown',
                     blockType: BlockType.COMMAND,
+                    generator: this.gpenDown,
                     text: formatMessage({
                         id: 'pen.penDown',
                         default: 'pen down',
@@ -323,6 +326,7 @@ class Scratch3PenBlocks {
                 {
                     opcode: 'penUp',
                     blockType: BlockType.COMMAND,
+                    generator: this.gpenUp,
                     text: formatMessage({
                         id: 'pen.penUp',
                         default: 'pen up',
@@ -505,6 +509,10 @@ class Scratch3PenBlocks {
         }
     }
 
+    gclear (args, ctx) {
+        ctx.code += `runtime._packageObjects.pen.clear();\n`;
+    }
+
     /**
      * The pen "stamp" block stamps the current drawable's image onto the pen layer.
      * @param {object} args - the block arguments.
@@ -517,6 +525,10 @@ class Scratch3PenBlocks {
             this.runtime.renderer.penStamp(penSkinId, target.drawableID);
             this.runtime.requestRedraw();
         }
+    }
+
+    gstamp (args, ctx) {
+        ctx.code += `runtime._packageObjects.pen.stamp(undefined, util);\n`;
     }
 
     /**
@@ -540,6 +552,10 @@ class Scratch3PenBlocks {
         }
     }
 
+    gpenDown (args, ctx) {
+        ctx.code += `runtime._packageObjects.pen.penDown(undefined, util);\n`;
+    }
+
     /**
      * The pen "pen up" block stops the target from leaving pen trails.
      * @param {object} args - the block arguments.
@@ -553,6 +569,10 @@ class Scratch3PenBlocks {
             penState.penDown = false;
             target.removeListener(RenderedTarget.EVENT_TARGET_MOVED, this._onTargetMoved);
         }
+    }
+
+    gpenDown (args, ctx) {
+        ctx.code += `runtime._packageObjects.pen.penUp(undefined, util);\n`;
     }
 
     /**

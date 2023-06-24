@@ -1,5 +1,6 @@
 const md5 = require('md5');
 const Cast = require('../util/cast');
+const MathUtil = require('../util/math-util');
 const BlockUtility = require('./block-utility');
 const Thread = require('./thread');
 
@@ -105,11 +106,11 @@ class Compiler {
                 finalCode += '};';
                 // debug
                 console.log(compilation.code, procCache);
-                const funcFactory = new Function('Cast, CompiledBlockUtility', 'Thread', finalCode);
+                const funcFactory = new Function('Cast, CompiledBlockUtility', 'Thread', 'MathUtil', finalCode);
                 cache[thread.topBlock] = {
                     status: 'success',
                     variant: compilation.yield ? 'generator' : 'function',
-                    func: funcFactory(Cast, CompiledBlockUtility, Thread),
+                    func: funcFactory(Cast, CompiledBlockUtility, Thread, MathUtil),
                     code: finalCode
                 };
             } catch (e) {
