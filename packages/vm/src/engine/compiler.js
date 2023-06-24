@@ -83,6 +83,17 @@ class Compiler {
                     finalCode += procCache[procCode].code;
                 }
 
+                // insert data references
+                for (const id in compilation.variables) {
+                    const name = compilation.variables[id];
+                    finalCode += `let var_${md5(name)} = target.lookupOrCreateVariable("${id}", "${name}");\n`;
+                }
+
+                for (const id in compilation.lists) {
+                    const name = compilation.lists[id];
+                    finalCode += `let list_${md5(name)} = target.lookupOrCreateList("${id}", "${name}");\n`;
+                }
+
                 const canSafelyAssigned = compilation.code.trim().split('\n').length <= 1;
                 if (thread.stackClick && canSafelyAssigned) {
                     finalCode += `const result = ${compilation.code.trim()};\n`;
@@ -245,6 +256,8 @@ class Compilation {
         this.code = '';
         this.scopes = [];
         this.arguments = [];
+        this.variables = {};
+        this.lists = {};
         /**
          * Whether the code contains a yield statement.
          * Compiler needs to determine if the final
@@ -277,6 +290,20 @@ class Compilation {
 
     enableWarp () {
         if (!this.warp) this.warp = true;
+    }
+
+    getVariable (id, name) {
+        if (!this.variables.hasOwnProperty(id)) {
+            this.variables[id] = name;
+        }
+        return `var_${md5(name)}`;
+    }
+
+    getList (id, name) {
+        if (!this.lists.hasOwnProperty(id)) {
+            this.lists[id] = name;
+        }
+        return `list_${md5(name)}`;
     }
 
     getBlock (blockId) {
@@ -356,7 +383,9 @@ class Compilation {
 
         // generate input by it's generator if possible
         if (this.runtime._generators.hasOwnProperty(block.opcode)) {
-            this.runtime._generators[block.opcode](blockArgs, this);
+            const result = this.runtime._generators[block.opcode](blockArgs, this);
+            // it's a reporter, make it command-ify for visual report.
+            if (result && result.result) this.code += new BlockParam(result).asUnknown();
         } else {
             this.code += `${this.generateCompatBlock(block, blockArgs)};\n`;
         }
@@ -480,7 +509,7 @@ class Compilation {
             if (argName === 'mutation') {
                 args[argName] = new BlockParam({
                     constant: true,
-                    type: ParamType.OBJECT,
+                    type: args[argName] ? ParamType.OBJECT : ParamType.UNKNOWN,
                     result: JSON.stringify(args[argName])
                 });
             }

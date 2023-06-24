@@ -158,7 +158,7 @@ class Scratch3ControlBlocks {
     gforEach (args, ctx) {
         const {id, name} = JSON.parse(args.VARIABLE.source);
         ctx.code += `for (let i = 1; i <= ${args.TIMES.asNumber()}; i++) {\n`;
-        ctx.code += `target.lookupOrCreateVariable(${id}, ${name}).value = i;\n`;
+        ctx.code += `${ctx.getVariable(id, name)}.value = i;\n`;
         if ('SUBSTACK' in args.substacks) {
             ctx.generateStack(args.substacks.SUBSTACK, true);
         }

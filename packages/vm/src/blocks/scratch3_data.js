@@ -35,10 +35,41 @@ class Scratch3DataBlocks {
         };
     }
 
+    getGenerators () {
+        return {
+            data_variable: this.ggetVariable,
+            data_setvariableto: this.gsetVariableTo,
+            data_changevariableby: this.gchangeVariableBy,
+            data_hidevariable: this.ghideVariable,
+            data_showvariable: this.gshowVariable,
+            data_listcontents: this.ggetListContents,
+            data_addtolist: this.gaddToList,
+            data_deleteoflist: this.gdeleteOfList,
+            data_deletealloflist: this.gdeleteAllOfList,
+            data_insertatlist: this.ginsertAtList,
+            data_replaceitemoflist: this.greplaceItemOfList,
+            data_itemoflist: this.ggetItemOfList,
+            data_itemnumoflist: this.ggetItemNumOfList,
+            data_lengthoflist: this.glengthOfList,
+            data_listcontainsitem: this.glistContainsItem,
+            data_hidelist: this.ghideList,
+            data_showlist: this.gshowList
+        };
+    }
+
     getVariable (args, util) {
         const variable = util.target.lookupOrCreateVariable(
             args.VARIABLE.id, args.VARIABLE.name);
         return variable.value;
+    }
+
+    ggetVariable (args, ctx) {
+        const {id, name} = JSON.parse(args.VARIABLE.source);
+        return {
+            constant: false,
+            type: 99 /* UNKNOWN */,
+            result: `${ctx.getVariable(id, name)}.value`
+        };
     }
 
     setVariableTo (args, util) {
@@ -49,6 +80,14 @@ class Scratch3DataBlocks {
         if (variable.isCloud) {
             util.ioQuery('cloud', 'requestUpdateVariable', [variable.name, args.VALUE]);
         }
+    }
+
+    gsetVariableTo (args, ctx) {
+        const {id, name} = JSON.parse(args.VARIABLE.source);
+        ctx.code += `${ctx.getVariable(id, name)}.value = ${args.VALUE.asUnknown()};\n`;
+        ctx.code += `if (${ctx.getVariable(id, name)}.isCloud) {\n`;
+        ctx.code += `util.ioQuery('cloud', 'requestUpdateVariable', ['${name}', ${args.VALUE.asUnknown()}]);\n`;
+        ctx.code += `}\n`;
     }
 
     changeVariableBy (args, util) {
@@ -62,6 +101,14 @@ class Scratch3DataBlocks {
         if (variable.isCloud) {
             util.ioQuery('cloud', 'requestUpdateVariable', [variable.name, newValue]);
         }
+    }
+
+    gchangeVariableBy (args, ctx) {
+        const {id, name} = JSON.parse(args.VARIABLE.source);
+        ctx.code += `${ctx.getVariable(id, name)}.value = Cast.toNumber(${ctx.getVariable(id, name)}.value) + ${args.VALUE.asNumber()};\n`;
+        ctx.code += `if (${ctx.getVariable(id, name)}.isCloud) {\n`;
+        ctx.code += `util.ioQuery('cloud', 'requestUpdateVariable', ['${name}', ${args.VALUE.asUnknown()}]);\n`;
+        ctx.code += `}\n`;
     }
 
     changeMonitorVisibility (id, visible) {
@@ -78,22 +125,39 @@ class Scratch3DataBlocks {
         this.changeMonitorVisibility(args.VARIABLE.id, true);
     }
 
+    gshowVariable (args, ctx) {
+        const {id} = JSON.parse(args.VARIABLE.source);
+        ctx.code += `runtime._packageObjects['scratch3_data'].changeMonitorVisibility("${id}", true);\n`;
+    }
+
     hideVariable (args) {
         this.changeMonitorVisibility(args.VARIABLE.id, false);
+    }
+
+    ghideVariable (args, ctx) {
+        const {id} = JSON.parse(args.VARIABLE.source);
+        ctx.code += `runtime._packageObjects['scratch3_data'].changeMonitorVisibility("${id}", false);\n`;
     }
 
     showList (args) {
         this.changeMonitorVisibility(args.LIST.id, true);
     }
 
+    gshowList (args, ctx) {
+        const {id} = JSON.parse(args.LIST.source);
+        ctx.code += `runtime._packageObjects['scratch3_data'].changeMonitorVisibility("${id}", true);\n`;
+    }
+
     hideList (args) {
         this.changeMonitorVisibility(args.LIST.id, false);
     }
 
-    getListContents (args, util) {
-        const list = util.target.lookupOrCreateList(
-            args.LIST.id, args.LIST.name);
+    ghideList (args, ctx) {
+        const {id} = JSON.parse(args.LIST.source);
+        ctx.code += `runtime._packageObjects['scratch3_data'].changeMonitorVisibility("${id}", false);\n`;
+    }
 
+    _getListContents (list, util) {
         // If block is running for monitors, return copy of list as an array if changed.
         if (util.thread.updateMonitor) {
             // Return original list value if up-to-date, which doesn't trigger monitor update.
@@ -120,16 +184,37 @@ class Scratch3DataBlocks {
             return list.value.join('');
         }
         return list.value.join(' ');
+    }
 
+    getListContents (args, util) {
+        const list = util.target.lookupOrCreateList(args.LIST.id, args.LIST.name);
+        return this._getListContents(list, util);
+    }
+
+    ggetListContents (args, ctx) {
+        const {id, name} = JSON.parse(args.LIST.source);
+        return {
+            constant: false,
+            type: 3 /** STRING **/,
+            result: `runtime._packageObjects['scratch3_data']._getListContents(${ctx.getList(id, name)}, util)`
+        };
+    }
+
+    _addToList (list, item, target) {
+        if (list.value.length < Scratch3DataBlocks.LIST_ITEM_LIMIT) {
+            list.value.push(item);
+            list._monitorUpToDate = false;
+        }
     }
 
     addToList (args, util) {
-        const list = util.target.lookupOrCreateList(
-            args.LIST.id, args.LIST.name);
-        if (list.value.length < Scratch3DataBlocks.LIST_ITEM_LIMIT) {
-            list.value.push(args.ITEM);
-            list._monitorUpToDate = false;
-        }
+        const list = util.target.lookupOrCreateList(args.LIST.id, args.LIST.name);
+        this._addToList(list, args.ITEM, util.target);
+    }
+
+    gaddToList (args, ctx) {
+        const {id, name} = JSON.parse(args.LIST.source);
+        ctx.code += `runtime._packageObjects['scratch3_data']._addToList(${ctx.getList(id, name)}, ${args.ITEM.asUnknown()}, target);\n`;
     }
 
     deleteOfList (args, util) {
@@ -146,6 +231,19 @@ class Scratch3DataBlocks {
         list._monitorUpToDate = false;
     }
 
+    gdeleteOfList (args, ctx) {
+        const index = ctx.currentScope.counter.next();
+        const {id, name} = JSON.parse(args.LIST.source);
+        ctx.code += `const ${index} = Cast.toListIndex(${args.INDEX.asNumber()}, ${ctx.getList(id, name)}.value.length, true);\n`;
+        ctx.code += `if (${index} === Cast.LIST_INVALID) return;\n`;
+        ctx.code += `else if (${index} === Cast.LIST_ALL) {\n`;
+        ctx.code += `${ctx.getList(id, name)}.value = [];\n`;
+        ctx.code += `return;\n`;
+        ctx.code += `}\n`;
+        ctx.code += `${ctx.getList(id, name)}.value.splice(${index} - 1, 1);\n`;
+        ctx.code += `${ctx.getList(id, name)}._monitorUpToDate = false;\n`;
+    }
+
     deleteAllOfList (args, util) {
         const list = util.target.lookupOrCreateList(
             args.LIST.id, args.LIST.name);
@@ -153,11 +251,13 @@ class Scratch3DataBlocks {
         return;
     }
 
-    insertAtList (args, util) {
-        const item = args.ITEM;
-        const list = util.target.lookupOrCreateList(
-            args.LIST.id, args.LIST.name);
-        const index = Cast.toListIndex(args.INDEX, list.value.length + 1, false);
+    gdeleteAllOfList (args, ctx) {
+        const {id, name} = JSON.parse(args.LIST.source);
+        ctx.code += `${ctx.getList(id, name)}.value = [];\n`;
+    }
+
+    _insertAtList (list, index, item) {
+        index = Cast.toListIndex(index, list.value.length + 1, false);
         if (index === Cast.LIST_INVALID) {
             return;
         }
@@ -172,6 +272,16 @@ class Scratch3DataBlocks {
         list._monitorUpToDate = false;
     }
 
+    insertAtList (args, util) {
+        const list = util.target.lookupOrCreateList(args.LIST.id, args.LIST.name);
+        this._insertAtList(list, args.INDEX, args.ITEM, util.target);
+    }
+
+    ginsertAtList (args, ctx) {
+        const {id, name} = JSON.parse(args.LIST.source);
+        ctx.code += `runtime._packageObjects['scratch3_data']._insertAtList(${ctx.getList(id, name)}, ${args.INDEX.asNumber()}, ${args.ITEM.asUnknown()}, target);\n`;
+    }
+
     replaceItemOfList (args, util) {
         const item = args.ITEM;
         const list = util.target.lookupOrCreateList(
@@ -184,21 +294,38 @@ class Scratch3DataBlocks {
         list._monitorUpToDate = false;
     }
 
-    getItemOfList (args, util) {
-        const list = util.target.lookupOrCreateList(
-            args.LIST.id, args.LIST.name);
-        const index = Cast.toListIndex(args.INDEX, list.value.length, false);
+    greplaceItemOfList (args, ctx) {
+        const {id, name} = JSON.parse(args.LIST.source);
+        const index = ctx.currentScope.counter.next();
+        ctx.code += `const ${index} = Cast.toListIndex(${args.INDEX.asNumber()}, ${ctx.getList(id, name)}.value.length, true);\n`;
+        ctx.code += `if (${index} === Cast.LIST_INVALID) return;\n`;
+        ctx.code += `${ctx.getList(id, name)}.value.[${index} - 1] = ${args.ITEM.asUnknown()};\n`;
+        ctx.code += `${ctx.getList(id, name)}._monitorUpToDate = false;\n`;
+    }
+
+    _getItemOfList (list, index) {
+        index = Cast.toListIndex(index, list.value.length, false);
         if (index === Cast.LIST_INVALID) {
             return '';
         }
         return list.value[index - 1];
     }
 
-    getItemNumOfList (args, util) {
-        const item = args.ITEM;
-        const list = util.target.lookupOrCreateList(
-            args.LIST.id, args.LIST.name);
+    getItemOfList (args, util) {
+        const list = util.target.lookupOrCreateList(args.LIST.id, args.LIST.name);
+        return this._getItemOfList(list, args.INDEX, util.target);
+    }
 
+    ggetItemOfList (args, ctx) {
+        const {id, name} = JSON.parse(args.LIST.source);
+        return {
+            constant: false,
+            type: 99 /* UNKNOWN */,
+            result: `runtime._packageObjects['scratch3_data']._getItemOfList(${ctx.getList(id, name)}, ${args.INDEX.asNumber()}, target)`
+        }
+    }
+
+    _getItemNumOfList (list, item) {
         // Go through the list items one-by-one using Cast.compare. This is for
         // cases like checking if 123 is contained in a list [4, 7, '123'] --
         // Scratch considers 123 and '123' to be equal.
@@ -222,16 +349,36 @@ class Scratch3DataBlocks {
         return 0;
     }
 
+    getItemNumOfList (args, util) {
+        const list = util.target.lookupOrCreateList(args.LIST.id, args.LIST.name);
+        return this._getItemNumOfList(list, args.ITEM, util.target);
+    }
+
+    ggetItemNumOfList (args, util) {
+        const {id, name} = JSON.parse(args.LIST.source);
+        return {
+            constant: false,
+            type: 1 /* NUMBER */,
+            result: `runtime._packageObjects['scratch3_data']._getItemOfList(${ctx.getList(id, name)}, ${args.ITEM.asUnknown()})`
+        };
+    }
+
     lengthOfList (args, util) {
         const list = util.target.lookupOrCreateList(
             args.LIST.id, args.LIST.name);
         return list.value.length;
     }
 
-    listContainsItem (args, util) {
-        const item = args.ITEM;
-        const list = util.target.lookupOrCreateList(
-            args.LIST.id, args.LIST.name);
+    glengthOfList (args, ctx) {
+        const {id, name} = JSON.parse(args.LIST.source);
+        return {
+            constant: false,
+            type: 1 /* NUMBER */,
+            result: `${ctx.getList(id, name)}.value.length`
+        };
+    }
+
+    _listContainsItem (list, item) {
         if (list.value.indexOf(item) >= 0) {
             return true;
         }
@@ -243,6 +390,20 @@ class Scratch3DataBlocks {
             }
         }
         return false;
+    }
+
+    listContainsItem (args, util) {
+        const list = util.target.lookupOrCreateList(args.LIST.id, args.LIST.name);
+        return this._listContainsItem(list, args.ITEM);
+    }
+
+    glistContainsItem (args, ctx) {
+        const {id, name} = JSON.parse(args.LIST.source);
+        return {
+            constant: false,
+            type: 4 /* BOOLEAN */,
+            result: `runtime._packageObjects['scratch3_data']._listContainsItem(${ctx.getList(id, name)}, ${args.ITEM.asUnknown()})`
+        };
     }
 
     /**
