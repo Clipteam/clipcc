@@ -31,6 +31,13 @@ class Scratch3EventBlocks {
         };
     }
 
+    getGenerators () {
+        return {
+            event_broadcast: this.gbroadcast,
+            event_broadcastandwait: this.gbroadcastAndWait
+        };
+    }
+
     getHats () {
         return {
             event_whenflagclicked: {
@@ -89,6 +96,14 @@ class Scratch3EventBlocks {
         }
     }
 
+    gbroadcast (args, ctx) {
+        const broadcastVar = ctx.currentScope.counter.next();
+        const {id, value} = JSON.parse(args.BROADCAST_INPUT.source);
+        ctx.code += `const ${broadcastVar} = runtime.getTargetForStage()`;
+        ctx.code += `.lookupBroadcastMsg("${id}", "${value}");\n`;
+        ctx.code += `if (${broadcastVar}) util.startHats('event_whenbroadcastreceived', {BROADCAST_OPTION: ${broadcastVar}.name});`;
+    }
+
     broadcastAndWait (args, util) {
         if (!util.stackFrame.broadcastVar) {
             util.stackFrame.broadcastVar = util.runtime.getTargetForStage().lookupBroadcastMsg(
@@ -131,6 +146,25 @@ class Scratch3EventBlocks {
                 }
             }
         }
+    }
+
+    gbroadcastAndWait (args, ctx) {
+        const broadcastVar = ctx.currentScope.counter.next();
+        const threads = ctx.currentScope.counter.next();
+        const {id, value} = JSON.parse(args.BROADCAST_INPUT.source);
+        ctx.enableYield();
+        ctx.code += `const ${broadcastVar} = runtime.getTargetForStage()`;
+        ctx.code += `.lookupBroadcastMsg("${id}", "${value}");\n`;
+        ctx.code += `if (!${broadcastVar}) return;\n`;
+        ctx.code += `let ${threads} = util.startHats('event_whenbroadcastreceived', {BROADCAST_OPTION: ${broadcastVar}.name});\n`;
+        ctx.code += `while (true) {\n`;
+        ctx.code += `const waiting = ${threads}.some(thread => runtime.threads.indexOf(thread) !== -1);\n`;
+        ctx.code += `if (!waiting) return;\n`;
+        ctx.code += `if (${threads}.every(thread => runtime.isWaitingThread(thread))) {\n`;
+        ctx.code += `thread.status = Thread.STATUS_YIELD_TICK;\n`;
+        ctx.code += `}\n`;
+        ctx.code += `yield;\n`;
+        ctx.code += `}\n`;
     }
 }
 

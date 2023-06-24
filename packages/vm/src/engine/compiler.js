@@ -419,6 +419,8 @@ class Compilation {
             }
             this.procDependencies.add(procCode);
             return procCache[procCode].compilation;
+        } else if (procCache[procCode].status === 'failed') {
+            throw procCache[procCode].error;
         }
     }
 
@@ -487,6 +489,17 @@ class Compilation {
                 type: ParamType.STRING,
                 result: block.fields.COLOUR.value
             };
+        case 'event_broadcast_menu':
+            return {
+                constant: true,
+                type: ParamType.OBJECT,
+                result: JSON.stringify({
+                    id: block.fields.BROADCAST_OPTION.id,
+                    name: block.fields.BROADCAST_OPTION.name,
+                    value: block.fields.BROADCAST_OPTION.value,
+                    variableType: block.fields.BROADCAST_OPTION.variableType
+                })
+            };
         default:
             return {
                 constant: true,
@@ -499,14 +512,12 @@ class Compilation {
     processArgs (block) {
         const blockArgs = {};
         blockArgs.substacks = {};
-
         // store the static fields onto blockArgs.
         // @todo map internal field's type
         for (const fieldName in block.fields) {
             if (
                 fieldName === 'VARIABLE' ||
-                fieldName === 'LIST' ||
-                fieldName === 'BROADCAST_OPTION'
+                fieldName === 'LIST'
             ) {
                 blockArgs[fieldName] = new BlockParam({
                     constant: true,
@@ -556,7 +567,7 @@ class Compilation {
             if (argName === 'mutation') {
                 args[argName] = new BlockParam({
                     constant: true,
-                    type: args[argName] ? ParamType.OBJECT : ParamType.UNKNOWN,
+                    type: ParamType.OBJECT,
                     result: JSON.stringify(args[argName])
                 });
             }

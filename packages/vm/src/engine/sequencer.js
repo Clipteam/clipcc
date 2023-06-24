@@ -178,15 +178,29 @@ class Sequencer {
      */
     stepThread (thread) {
         if (thread.isCompiled) {
-            if (thread.compiledVariant === 'generator') {
-                if (typeof thread.compiledFunc === 'function') {
-                    thread.compiledFunc = thread.compiledFunc(thread);
+            if (!thread.blockContainer.forceNoGlow) {
+                thread.blockGlowInFrame = thread.topBlock;
+                thread.requestScriptGlowInFrame = true;
+            }
+            try {
+                if (thread.compiledVariant === 'generator') {
+                    if (typeof thread.compiledFunc === 'function') {
+                        thread.compiledFunc = thread.compiledFunc(thread);
+                    }
+                    const {done} = thread.compiledFunc.next();
+                    if (done) this.retireThread(thread);
+                } else {
+                    thread.compiledFunc(thread);
+                    this.retireThread(thread);
                 }
-                const {done} = thread.compiledFunc.next();
-                if (done) this.retireThread(thread);
-            } else {
-                thread.compiledFunc(thread);
-                this.retireThread(thread);
+            } catch (e) {
+                thread.isCompiled = false;
+                const cache = thread.blockContainer._cache._compiledBlockCached;
+                cache[thread.topBlock] = {
+                    status: 'failed',
+                    error: e
+                };
+                console.error(`Error occurred while running compiled blocks`, e, `Now fallback to sequencer.`);
             }
             return;
         }
