@@ -12,11 +12,11 @@ class CompiledBlockUtility extends BlockUtility {
     }
 
     startBranch (branchNum, isLoop) {
-        throw 'not available in compiled environment';
+        throw new Error('not available in compiled environment');
     }
 
     startProcedure (procedureCode) {
-        throw 'not available in compiled environment';
+        throw new Error('not available in compiled environment');
     }
 }
 
@@ -102,7 +102,8 @@ class Compiler {
                     finalCode += compilation.code;
                 }
                 finalCode += '};';
-                console.log(finalCode)
+                // debug
+                console.log(finalCode);
                 const funcFactory = new Function('Cast, CompiledBlockUtility', 'Thread', finalCode);
                 cache[thread.topBlock] = {
                     status: 'success',
@@ -311,6 +312,38 @@ class Compilation {
             || this.flyoutBlocks.getBlock(blockId);
     }
 
+    eagerAnalyze (blockId, warpMode) {
+        this.currentBlockId = blockId;
+        let stackLength = 0;
+        // analyze stack length
+        while (this.currentBlockId !== null) {
+            const currentBlock = this.getBlock(this.currentBlockId);
+            if (!currentBlock) break;
+            stackLength++;
+            this.currentBlockId = currentBlock.next;
+        }
+
+        // it's empty
+        if (stackLength < 1) return;
+
+        // analyze whether this compilation has yield statement
+        // necessary for generating recursive procedures.
+        this.enterScope(false, warpMode);
+        this.currentBlockId = blockId;
+        for (let i = 1; i <= stackLength; i++) {
+            if (i === stackLength) this.currentScope.isBottom = true;
+
+            const currentBlock = this.getBlock(this.currentBlockId);
+            this.generateBlock(currentBlock);
+            if (this.yield) {
+                break;
+            }
+            this.currentBlockId = currentBlock.next;
+        }
+        this.code = '';
+        this.exitScope();
+    }
+
     generateStack (blockId, isLoop, warpMode) {
         this.currentBlockId = blockId;
         let stackLength = 0;
@@ -324,6 +357,7 @@ class Compilation {
 
         // it's empty
         if (stackLength < 1) return;
+
         // really start generating
         this.enterScope(isLoop, warpMode);
         this.currentBlockId = blockId;
@@ -340,8 +374,10 @@ class Compilation {
     generateProcedure (procCode) {
         const procCache = this.thread.blockContainer._cache._compiledProceduresCached;
         if (!procCache.hasOwnProperty(procCode)) {
+            procCache[procCode] = {
+                status: 'generating'
+            };
             const subCompilation = new Compilation(this.runtime, this.thread);
-            if (isWarp) subCompilation.enableWarp();
             const definitionBlockId = subCompilation.thread.blockContainer.getProcedureDefinition(procCode);
             const definitionBlock = this.getBlock(definitionBlockId);
             const innerDefinition = this.getBlock(definitionBlock.inputs.custom_block.block);
@@ -349,8 +385,11 @@ class Compilation {
             const paramNamesIdsAndDefaults = subCompilation.thread.blockContainer.getProcedureParamNamesIdsAndDefaults(procCode);
             subCompilation.arguments = paramNamesIdsAndDefaults[0];
             if (isWarp) subCompilation.enableWarp();
+            // eagerly analyze whether has yield statement
+            // necessary for generating recursive procedures
             try {
-                subCompilation.generateStack(definitionBlockId);
+                subCompilation.eagerAnalyze(definitionBlockId, isWarp);
+                subCompilation.generateStack(definitionBlockId, false, isWarp);
                 let procedureScript = `function ${subCompilation.yield ? '*' : ''} proc_${md5(procCode)} (...args) {\n`;
                 procedureScript += subCompilation.code;
                 procedureScript += '}\n';
@@ -364,14 +403,14 @@ class Compilation {
                     status: 'failed',
                     error: e
                 };
-                throw `failed to generate procedure ${procCode}: ${e.message}`;
+                throw new Error(`failed to generate procedure ${procCode}: ${e.message}`);
             }
         }
         if (procCache[procCode].status === 'success') {
             this.procDependencies.add(procCode);
             return procCache[procCode].compilation;
-        } else {
-            throw `failed to generate procedure ${procCode}`;
+        } else if (procCache[procCode].status === 'failed') {
+            throw new Error(`failed to generate procedure ${procCode}: ${procCache[procCode].error.message}`);
         }
     }
 
@@ -497,7 +536,7 @@ class Compilation {
         }
 
         if ('SUBSTACK' in args.substacks) {
-            throw 'Cannot generate compatCall for branch block'
+            throw new Error('Cannot generate compatCall for branch block');
         }
 
         if (!this.yield) this.enableYield();

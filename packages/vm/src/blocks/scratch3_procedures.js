@@ -82,8 +82,19 @@ class Scratch3ProcedureBlocks {
             return;
         }
 
-        const defCtx = ctx.generateProcedure(procCode);
-        if (defCtx.yield) ctx.code += 'yield* ';
+        let defCtx = ctx.generateProcedure(procCode);
+        // it's in recursive call, force using generator.
+        // @todo should be judged via final compilation, but
+        // there's no way to access it now.
+        if (!defCtx) {
+            defCtx = {
+                yield: ctx.yield
+            };
+        }
+        if (defCtx.yield) {
+            ctx.enableYield();
+            ctx.code += 'yield* ';
+        }
         ctx.code += `proc_${md5(procCode)}(`;
         const [paramNames, paramIds, paramDefaults] = paramNamesIdsAndDefaults;
         ctx.arguments = paramNames;
