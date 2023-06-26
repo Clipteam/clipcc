@@ -240,6 +240,24 @@ Blockly.BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
   var isDeletingProcDef = this.wouldDeleteBlock_ &&
       (this.draggingBlock_.type == Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE);
 
+  var canDeleteProcDef = true;
+  if (isDeletingProcDef) {
+    var allBlocks = this.workspace_.getAllBlocks();
+    var deletingProcCode = this.draggingBlock_.getChildren()[0].getProcCode();
+    for (var i = 0; i < allBlocks.length; i++) {
+      var block = allBlocks[i];
+      if (block.type == Blockly.PROCEDURES_CALL_BLOCK_TYPE) {
+        var procCode = block.getProcCode();
+        if (procCode == deletingProcCode) {
+          canDeleteProcDef = false;
+        }
+      }
+    }
+    if (canDeleteProcDef) {
+      this.workspace_.procedureMap_.removeProcedure(this.draggingBlock_);
+    }
+  }
+
   var deleted = this.maybeDeleteBlock_();
   if (!deleted) {
     // These are expensive and don't need to be done if we're deleting.
@@ -278,18 +296,10 @@ Blockly.BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
   if (isDeletingProcDef) {
     var ws = this.workspace_;
     setTimeout(function() {
-      var allBlocks = ws.getAllBlocks();
-      for (var i = 0; i < allBlocks.length; i++) {
-        var block = allBlocks[i];
-        if (block.type == Blockly.PROCEDURES_CALL_BLOCK_TYPE) {
-          var procCode = block.getProcCode();
-          // Check for call blocks with no associated define block.
-          if (!Blockly.Procedures.getDefineBlock(procCode, ws)) {
-            alert(Blockly.Msg.PROCEDURE_USED);
-            ws.undo();
-            return; // There can only be one define deletion at a time.
-          }
-        }
+      if (!canDeleteProcDef) {
+        alert(Blockly.Msg.PROCEDURE_USED);
+        ws.undo();
+        return;
       }
       // The proc deletion was valid, update the toolbox.
       ws.refreshToolboxSelection_();
