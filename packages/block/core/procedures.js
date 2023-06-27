@@ -250,6 +250,9 @@ Blockly.Procedures.flyoutCategory = function(workspace) {
     var block = goog.dom.createDom('block');
     block.setAttribute('type', 'procedures_call');
     block.setAttribute('gap', i == globalMutations.length - 1 ? 36 : 16);
+    if (i < globalMutations.length) {
+      mutation.setAttribute('generateshadows', true);
+    }
     block.appendChild(mutation);
     xmlList.push(block);
   }
