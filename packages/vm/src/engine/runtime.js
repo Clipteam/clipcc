@@ -2595,6 +2595,45 @@ class Runtime extends EventEmitter {
     }
 
     /**
+     * Get names and ids of parameters for the given procedure.
+     * @param {string} procedureCode Procedure code for procedure to query.
+     * @return {Array.<string>} List of param names for a procedure.
+     */
+    getProcedureParamNamesAndIds (procedureCode) {
+        return this.getProcedureParamNamesIdsAndDefaults(name).slice(0, 2);
+    }
+
+    /**
+     * Get names, ids, and defaults of parameters for the given procedure.
+     * @param {?string} name Name of procedure to query.
+     * @return {?Array.<string>} List of param names for a procedure.
+     */
+    getProcedureParamNamesIdsAndDefaults (name) {
+        for (const target of this.targets) {
+            const result = target.blocks.getProcedureParamNamesIdsAndDefaults(name);
+            if (result) {
+                return result;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the procedure definition for a given name.
+     * @param {?string} name Name of procedure to query.
+     * @return {[?Target, ?string]} ID of procedure definition.
+     */
+    getProcedureDefinition (name) {
+        for (const target of this.targets) {
+            const definition = target.blocks.getProcedureDefinition(name);
+            if (definition) {
+                return [target, definition];
+            }
+        }
+        return [null, null];
+    }
+
+    /**
      * Tell the runtime to request a redraw.
      * Use after a clone/sprite has completed some visible operation on the stage.
      */

@@ -61,6 +61,12 @@ class _StackFrame {
          * @type {Object}
          */
         this.executionContext = null;
+
+        /**
+         * The target of blocks that this thread will execute.
+         * @type {?Target}
+         */
+        this.target = null;
     }
 
     /**
@@ -243,14 +249,26 @@ class Thread {
     /**
      * Push stack and update stack frames appropriately.
      * @param {string} blockId Block ID to push to stack.
+     * @param {?Target} target New target context.
      */
-    pushStack (blockId) {
+    pushStack (blockId, target) {
         this.stack.push(blockId);
         // Push an empty stack frame, if we need one.
         // Might not, if we just popped the stack.
         if (this.stack.length > this.stackFrames.length) {
             const parent = this.stackFrames[this.stackFrames.length - 1];
-            this.stackFrames.push(_StackFrame.create(typeof parent !== 'undefined' && parent.warpMode));
+            const stackFrame = _StackFrame.create(typeof parent !== 'undefined' && parent.warpMode);
+            if (target) {
+                stackFrame.target = target;
+            }
+            else if (parent) {
+                stackFrame.target = parent.target;
+            }
+            else {
+                stackFrame.target = this.target;
+            }
+            this.blockContainer = stackFrame.target.blocks;
+            this.stackFrames.push(stackFrame);
         }
     }
 
@@ -270,6 +288,10 @@ class Thread {
      */
     popStack () {
         _StackFrame.release(this.stackFrames.pop());
+        const stackFrame = this.peekStackFrame();
+        if (stackFrame) {
+            this.blockContainer = stackFrame.target.blocks;
+        }
         return this.stack.pop();
     }
 
@@ -279,7 +301,7 @@ class Thread {
     stopThisScript () {
         let blockID = this.peekStack();
         while (blockID !== null) {
-            const block = this.target.blocks.getBlock(blockID);
+            const block = this.blockContainer.getBlock(blockID);
             if (this.peekStackFrame().waitingReporter) {
                 // cc - check if a reporter procedure is on the stack
                 break;
@@ -390,7 +412,7 @@ class Thread {
      * where execution proceeds from one block to the next.
      */
     goToNextBlock () {
-        const nextBlockId = this.target.blocks.getNextBlock(this.peekStack());
+        const nextBlockId = this.blockContainer.getNextBlock(this.peekStack());
         this.reuseStackForNextBlock(nextBlockId);
     }
 
@@ -414,7 +436,7 @@ class Thread {
             } else {
                 flag = false;
             }
-            const block = this.target.blocks.getBlock(blockId);
+            const block = this.stackFrames[i].target.getBlock(blockId);
             // cc - block maybe not exists when triggered in toolbox.
             if (block && block.opcode === 'procedures_call' &&
                 block.mutation.proccode === procedureCode) {
