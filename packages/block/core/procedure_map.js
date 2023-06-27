@@ -62,17 +62,17 @@ Blockly.ProcedureMap.prototype.clear = function() {
 };
 
 /**
- * Get the variable by the given proccode.
+ * Get the variable by the given proccode. Local procedures are checked first.
  * Return null if it is not found.
- * @param {string} proccode The proccode to check for.
+ * @param {string} procCode The proccode to check for.
  * @return {Element} The mutation with the given name, or null if not found.
  */
-Blockly.ProcedureMap.prototype.getProcedure = function(proccode) {
-  if (this.globalProcedureMap_.hasOwnProperty(proccode)) {
-    return this.globalProcedureMap_[proccode];
+Blockly.ProcedureMap.prototype.getProcedure = function(procCode) {
+  if (this.localProcedureMap_.hasOwnProperty(procCode)) {
+    return this.localProcedureMap_[procCode];
   }
-  if (this.localProcedureMap_.hasOwnProperty(proccode)) {
-    return this.localProcedureMap_[proccode];
+  if (this.globalProcedureMap_.hasOwnProperty(procCode)) {
+    return this.globalProcedureMap_[procCode];
   }
   return null;
 };
@@ -101,18 +101,21 @@ Blockly.ProcedureMap.prototype.allLocalProcedureMutations = function() {
  * @returns {Element} The newly created procedure.
  */
 Blockly.ProcedureMap.prototype.createProcedureFromMutation = function(mutation) {
-  var procedure = this.getProcedure(mutation.getAttribute('proccode'));
-  if (procedure) {
-    console.warn('Procedure "' + mutation.getAttribute('proccode') + '" is already in use.');
-    return procedure;
-  }
+  var procCode = mutation.getAttribute('proccode');
   if (mutation.getAttribute('global') == 'true') {
-    procedure = this.globalProcedureMap_[mutation.getAttribute('proccode')] = mutation;
+    if (this.globalProcedureMap_.hasOwnProperty(procCode)) {
+      console.warn('Procedure "' + procCode + '" is already in use.');
+      return this.globalProcedureMap_[procCode];
+    }
+    return this.globalProcedureMap_[procCode] = mutation;
   }
   else {
-    procedure = this.localProcedureMap_[mutation.getAttribute('proccode')] = mutation;
+    if (this.localProcedureMap_.hasOwnProperty(procCode)) {
+      console.warn('Procedure "' + procCode + '" is already in use.');
+      return this.localProcedureMap_[procCode];
+    }
+    return this.localProcedureMap_[procCode] = mutation;
   }
-  return procedure;
 };
 
 /**
