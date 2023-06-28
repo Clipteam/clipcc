@@ -12,8 +12,8 @@ import styles from './custom-procedures.css';
 
 const messages = defineMessages({
     myblockModalTitle: {
-        defaultMessage: 'Make a Block',
-        description: 'Title for the modal where you create a custom block.',
+        defaultMessage: 'Make a Function',
+        description: 'Title for the modal where you create a custom function.',
         id: 'gui.customProcedures.myblockModalTitle'
     }
 });

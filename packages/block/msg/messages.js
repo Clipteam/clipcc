@@ -289,7 +289,7 @@ Blockly.Msg.CATEGORY_CONTROL = 'Control';
 Blockly.Msg.CATEGORY_SENSING = 'Sensing';
 Blockly.Msg.CATEGORY_OPERATORS = 'Operators';
 Blockly.Msg.CATEGORY_VARIABLES = 'Variables';
-Blockly.Msg.CATEGORY_MYBLOCKS = 'My Blocks';
+Blockly.Msg.CATEGORY_MYBLOCKS = 'Functions';
 
 // Context menus
 Blockly.Msg.DUPLICATE = 'Duplicate';
@@ -329,12 +329,12 @@ Blockly.Msg.DELETE_VARIABLE_CONFIRMATION = 'Delete %1 uses of the "%2" variable?
 Blockly.Msg.CANNOT_DELETE_VARIABLE_PROCEDURE = 'Can\'t delete the variable "%1" because it\'s part of the definition of the function "%2"';
 Blockly.Msg.DELETE_VARIABLE = 'Delete the "%1" variable';
 
-// Custom Procedures
+// Custom Procedures (Functions)
 // @todo Remove these once fully managed by Scratch VM / Scratch GUI
-Blockly.Msg.NEW_PROCEDURE = 'Make a Block';
-Blockly.Msg.PROCEDURE_ALREADY_EXISTS = 'A procedure named "%1" already exists.';
-Blockly.Msg.PROCEDURE_DEFAULT_NAME = 'block name';
-Blockly.Msg.PROCEDURE_USED = 'To delete a block definition, first remove all uses of the block';
+Blockly.Msg.NEW_PROCEDURE = 'Make a Function';
+Blockly.Msg.PROCEDURE_ALREADY_EXISTS = 'A function named "%1" already exists.';
+Blockly.Msg.PROCEDURE_DEFAULT_NAME = 'function name';
+Blockly.Msg.PROCEDURE_USED = 'To delete a function definition, first remove all uses of the function';
 
 // Lists
 // @todo Remove these once fully managed by Scratch VM / Scratch GUI
