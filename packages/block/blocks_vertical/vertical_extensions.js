@@ -208,6 +208,7 @@ Blockly.ScratchBlocks.VerticalExtensions.PROCEDURE_CALL_CONTEXTMENU = {
    */
   customContextMenu: function(menuOptions) {
     menuOptions.push(Blockly.Procedures.makeEditOption(this));
+    menuOptions.push(Blockly.Procedures.makeShowDefinitionOption(this));
   }
 };
 

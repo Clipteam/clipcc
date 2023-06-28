@@ -550,8 +550,12 @@ Blockly.Procedures.makeEditOption = function(block) {
  * @private
  */
 Blockly.Procedures.showProcedureDefCallback_ = function(block) {
-  alert('TODO(#1136): implement showing procedure definition (procCode was "' +
-      block.procCode_ + '")');
+  var workspace = block.workspace.isFlyout ? block.workspace.targetWorkspace : block.workspace;
+  var block = Blockly.Procedures.getDefineBlock(block.getProcCode(), workspace);
+  if (block) {
+    workspace.centerOnBlock(block.id);
+    block.select();
+  }
 };
 
 /**
