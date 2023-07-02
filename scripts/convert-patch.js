@@ -37,7 +37,12 @@ function processPatch () {
     for (let i = 0; i < diffs.length; i++) {
         // each unit ends with this
         const endIndex = diffs[i].indexOf('@@');
-        let diffMeta = diffs[i].substring(0, endIndex - 1).split('\n');
+        let diffMeta;
+        if (endIndex !== -1) {
+            diffMeta = diffs[i].substring(0, endIndex - 1).split('\n');
+        } else {
+            diffMeta = diffs[i].split('\n');
+        }
         for (let j = 0; j < diffMeta.length; j++) {
             // process file path
             if (j === 0) {
