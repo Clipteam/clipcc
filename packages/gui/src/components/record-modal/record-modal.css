@@ -103,7 +103,8 @@
     text-align: center;
 }
 
-.record-button {
+/* Increase specificity to make sure this wins out over normalize.css */
+svg.record-button {
     overflow: visible;
 }
 
