@@ -6,10 +6,7 @@ const LargeMonitor = ({categoryColor, value}) => (
     <div className={styles.largeMonitor}>
         <div
             className={styles.largeValue}
-            style={{
-                background: categoryColor.background,
-                color: categoryColor.text
-            }}
+            style={{background: categoryColor}}
         >
             {(typeof value === 'string' && value.startsWith('data:image/')) ? (
                 <img className={styles.image} src={value} alt={`image preview`} />
@@ -19,10 +16,7 @@ const LargeMonitor = ({categoryColor, value}) => (
 );
 
 LargeMonitor.propTypes = {
-    categoryColor: PropTypes.shape({
-        background: PropTypes.string.isRequired,
-        text: PropTypes.string.isRequired
-    }).isRequired,
+    categoryColor: PropTypes.string,
     value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number

@@ -12,10 +12,7 @@ const SliderMonitor = ({categoryColor, isDiscrete, label, min, max, value, onSli
             </div>
             <div
                 className={styles.value}
-                style={{
-                    background: categoryColor.background,
-                    color: categoryColor.text
-                }}
+                style={{background: categoryColor}}
             >
                 {(typeof value === 'string' && value.startsWith('data:image/')) ? (
                     <img className={styles.image} src={value} alt={`${label} image preview`} />
@@ -38,10 +35,7 @@ const SliderMonitor = ({categoryColor, isDiscrete, label, min, max, value, onSli
 );
 
 SliderMonitor.propTypes = {
-    categoryColor: PropTypes.shape({
-        background: PropTypes.string.isRequired,
-        text: PropTypes.string.isRequired
-    }).isRequired,
+    categoryColor: PropTypes.string.isRequired,
     isDiscrete: PropTypes.bool,
     label: PropTypes.string.isRequired,
     max: PropTypes.number,

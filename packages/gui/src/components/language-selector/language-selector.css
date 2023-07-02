@@ -1,7 +1,7 @@
 /* Position the language select over the language icon, and make it transparent */
 .language-select {
     position: absolute;
-    width: 100%;
+    width: var(--clipcc-language-selector-width);
     height: var(--clipcc-menu-bar-height);
     opacity: 0;
     user-select: none;

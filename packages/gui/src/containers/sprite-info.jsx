@@ -9,7 +9,9 @@ class SpriteInfo extends React.Component {
         super(props);
         bindAll(this, [
             'handleClickVisible',
-            'handleClickNotVisible'
+            'handleClickNotVisible',
+            'handlePressVisible',
+            'handlePressNotVisible'
         ]);
     }
     handleClickVisible (e) {
@@ -20,12 +22,26 @@ class SpriteInfo extends React.Component {
         e.preventDefault();
         this.props.onChangeVisibility(false);
     }
+    handlePressVisible (e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this.props.onChangeVisibility(true);
+        }
+    }
+    handlePressNotVisible (e) {
+        if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            this.props.onChangeVisibility(false);
+        }
+    }
     render () {
         return (
             <SpriteInfoComponent
                 {...this.props}
                 onClickNotVisible={this.handleClickNotVisible}
                 onClickVisible={this.handleClickVisible}
+                onPressNotVisible={this.handlePressNotVisible}
+                onPressVisible={this.handlePressVisible}
             />
         );
     }
