@@ -23,8 +23,7 @@
     "test:lint": "eslint . --ext .js,.jsx",
     "test:unit": "jest test[\\\\/]unit",
     "test:smoke": "jest --runInBand test[\\\\/]smoke",
-    "watch": "webpack --color --watch",
-    "prepublish": "node scripts/prepublish.mjs"
+    "watch": "webpack --color --watch"
   },
   "config": {
     "commitizen": {

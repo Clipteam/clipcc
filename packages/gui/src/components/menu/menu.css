@@ -53,6 +53,7 @@
     height: max-content;
     overflow: hidden;
     border-radius: 8px;
+    box-shadow: 0 8px 8px 0 var(--clipcc-ui-black-transparent);
 }
 
 .submenu.right {

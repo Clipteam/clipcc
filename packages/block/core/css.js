@@ -489,7 +489,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyDropdownText {',
-    'fill: var(--clipcc-text-primary, $colour_text) !important;',
+    'fill: var(--clipcc-block-text, $colour_text) !important;',
   '}',
 
   '.blocklyBubbleText {',
@@ -856,7 +856,7 @@ Blockly.Css.CONTENT = [
   /* Category tree in Toolbox. */
   '.blocklyToolboxDiv {',
     'background-color: var(--clipcc-ui-white, $colour_toolbox);',
-    'color: var(--clipcc-text-primary, $colour_toolboxText);',
+    'color: var(--clipcc-block-text, $colour_toolboxText);',
     'overflow-x: visible;',
     'overflow-y: auto;',
     'position: absolute;',
@@ -1000,7 +1000,7 @@ Blockly.Css.CONTENT = [
   '.scratchColourPickerLabel {',
     'font-family: "Helvetica Neue", Helvetica, sans-serif;',
     'font-size: 0.65rem;',
-    'color: var(--clipcc-text-primary, $colour_toolboxText);',
+    'color: var(--clipcc-block-text, $colour_toolboxText);',
     'margin: 8px;',
   '}',
 
@@ -1297,7 +1297,7 @@ Blockly.Css.CONTENT = [
   '.scratchCategoryMenu {',
     'width: var(--clipcc-category-width, 85px);',
     'background: var(--clipcc-ui-white, $colour_toolbox);',
-    'color: var(--clipcc-text-primary, $colour_toolboxText);',
+    'color: var(--clipcc-block-text, $colour_toolboxText);',
     'font-size: .7rem;',
     'user-select: none;',
     '-webkit-user-select: none;',
@@ -1309,7 +1309,7 @@ Blockly.Css.CONTENT = [
     'width: 100%;',
     'height: 50px;',
     'background: var(--clipcc-ui-white, $colour_toolbox);',
-    'color: var(--clipcc-text-primary, $colour_toolboxText);',
+    'color: var(--clipcc-block-text, $colour_toolboxText);',
     'font-size: .7em;',
     'user-select: none;',
     '-webkit-user-select: none;',

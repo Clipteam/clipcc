@@ -10,6 +10,7 @@ const MENU_LOGIN = 'loginMenu';
 const MENU_MODE = 'modeMenu';
 const MENU_SETTINGS = 'settingsMenu';
 const MENU_THEME = 'themeMenu';
+const MENU_FPS = 'fpsMenu';
 
 class Menu {
     constructor (id) {
@@ -51,6 +52,7 @@ const rootMenu = new Menu('root')
     .addChild(
         new Menu(MENU_SETTINGS)
             .addChild(new Menu(MENU_LANGUAGE))
+            .addChild(new Menu(MENU_FPS))
             .addChild(new Menu(MENU_THEME))
     )
     .addChild(new Menu(MENU_FILE))
@@ -59,7 +61,7 @@ const rootMenu = new Menu('root')
     .addChild(new Menu(MENU_SETTINGS))
     .addChild(new Menu(MENU_LOGIN))
     .addChild(new Menu(MENU_ACCOUNT))
-    .addChild(new Menu(MENU_ABOUT));
+    .addChild(new Menu(MENU_ABOUT))
 
 const initialState = {
     [MENU_ABOUT]: false,
@@ -70,7 +72,8 @@ const initialState = {
     [MENU_LOGIN]: false,
     [MENU_MODE]: false,
     [MENU_SETTINGS]: false,
-    [MENU_THEME]: false
+    [MENU_THEME]: false,
+    [MENU_FPS]: false
 };
 
 const reducer = function (state, action) {
@@ -130,6 +133,10 @@ const openLanguageMenu = () => openMenu(MENU_LANGUAGE);
 const closeLanguageMenu = () => closeMenu(MENU_LANGUAGE);
 const languageMenuOpen = state => state.scratchGui.menus[MENU_LANGUAGE];
 
+const openFpsMenu = () => openMenu(MENU_FPS);
+const closeFpsMenu = () => closeMenu(MENU_FPS);
+const fpsMenuOpen = state => state.scratchGui.menus[MENU_FPS];
+
 const openLoginMenu = () => openMenu(MENU_LOGIN);
 const closeLoginMenu = () => closeMenu(MENU_LOGIN);
 const loginMenuOpen = state => state.scratchGui.menus[MENU_LOGIN];
@@ -164,6 +171,9 @@ export {
     openLanguageMenu,
     closeLanguageMenu,
     languageMenuOpen,
+    openFpsMenu,
+    closeFpsMenu,
+    fpsMenuOpen,
     openLoginMenu,
     closeLoginMenu,
     loginMenuOpen,

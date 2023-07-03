@@ -5,6 +5,7 @@ import {FormattedMessage} from 'react-intl';
 
 import LanguageMenu from './language-menu.jsx';
 import MenuBarMenu from './menu-bar-menu.jsx';
+import FPSMenu from './fps-menu.jsx';
 import ThemeMenu from './theme-menu.jsx';
 import {MenuSection, MenuItem} from '../menu/menu.jsx';
 
@@ -49,9 +50,10 @@ const SettingsMenu = ({
             <MenuSection>
                 {canChangeLanguage && <LanguageMenu onRequestCloseSettings={onRequestClose} />}
                 {canChangeTheme && <ThemeMenu onRequestCloseSettings={onRequestClose} />}
+                <FPSMenu onRequestCloseSettings={onRequestClose} />
                 <MenuItem onClick={onClickMore}>
                     <FormattedMessage
-                        defaultMessage="More Settings"
+                        defaultMessage="More"
                         description="Text for more settings"
                         id="gui.menuBar.settingsMenu.more"
                     />
