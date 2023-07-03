@@ -7,7 +7,6 @@ e.g. STAGE_DIMENSION_DEFAULTS in lib/screen-utils.js */
     --clipcc-sprites-per-row: 5;
 
     --clipcc-menu-bar-height: 3rem;
-    --clipcc-language-selector-width: 3rem;
     --clipcc-sprite-info-height: 6rem;
     --clipcc-stage-menu-height: 2.75rem;
 
