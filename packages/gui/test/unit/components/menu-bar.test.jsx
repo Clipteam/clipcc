@@ -1,3 +1,4 @@
+import "jest-localstorage-mock";
 import React from 'react';
 import {mountWithIntl} from '../../helpers/intl-helpers';
 import MenuBar from '../../../src/components/menu-bar/menu-bar';
