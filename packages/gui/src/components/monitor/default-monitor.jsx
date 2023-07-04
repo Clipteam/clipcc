@@ -10,18 +10,22 @@ const DefaultMonitor = ({categoryColor, label, value}) => (
             </div>
             <div
                 className={styles.value}
-                style={{background: categoryColor}}
+                style={{
+                    background: categoryColor.background,
+                    color: categoryColor.text
+                }}
             >
-                {(typeof value === 'string' && value.startsWith('data:image/')) ? (
-                    <img className={styles.image} src={value} alt={`${label} image preview`} />
-                ) : value}
+                {value}
             </div>
         </div>
     </div>
 );
 
 DefaultMonitor.propTypes = {
-    categoryColor: PropTypes.string.isRequired,
+    categoryColor: PropTypes.shape({
+        background: PropTypes.string.isRequired,
+        text: PropTypes.string.isRequired
+    }).isRequired,
     label: PropTypes.string.isRequired,
     value: PropTypes.oneOfType([
         PropTypes.string,

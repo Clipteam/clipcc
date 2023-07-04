@@ -37,6 +37,7 @@ import storage from '../lib/storage';
 import vmListenerHOC from '../lib/vm-listener-hoc.jsx';
 import vmManagerHOC from '../lib/vm-manager-hoc.jsx';
 import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
+import themeManagerHOC from '../lib/theme-manager-hoc.jsx';
 
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
@@ -62,7 +63,6 @@ class GUI extends React.Component {
             throw new Error(
                 `Error in Scratch GUI [location=${window.location}]: ${this.props.error}`);
         }
-        document.documentElement.setAttribute('theme', this.props.theme);
         const {
             /* eslint-disable no-unused-vars */
             assetHost,
@@ -129,16 +129,7 @@ GUI.defaultProps = {
 
 const mapStateToProps = state => {
     const loadingState = state.scratchGui.projectState.loadingState;
-    let theme = state.scratchGui.settings.theme;
-    if (state.scratchGui.settings.theme === 'system') {
-        if (matchMedia('(prefers-color-scheme: dark)').matches) {
-            theme = 'dark';
-        } else {
-            theme = 'light';
-        }
-    }
     return {
-        theme: theme,
         activeTabIndex: state.scratchGui.editorTab.activeTabIndex,
         alertsVisible: state.scratchGui.alerts.visible,
         backdropLibraryVisible: state.scratchGui.modals.backdropLibrary,
@@ -195,7 +186,8 @@ const WrappedGui = compose(
     vmListenerHOC,
     vmManagerHOC,
     SBFileUploaderHOC,
-    cloudManagerHOC
+    cloudManagerHOC,
+    themeManagerHOC
 )(ConnectedGUI);
 
 WrappedGui.setAppElement = ReactModal.setAppElement;

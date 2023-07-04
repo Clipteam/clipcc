@@ -42,11 +42,16 @@ const messages = defineMessages({
         description: 'Label of dark',
         id: 'gui.settingsModal.theme.dark'
     },
-    light: {
-        defaultMessage: 'Light',
-        description: 'Label of light',
-        id: 'gui.settingsModal.theme.light'
-    }
+    default: {
+        defaultMessage: 'Default',
+        description: 'Label of default',
+        id: 'gui.settingsModal.theme.default'
+    },
+    highContrast: {
+        defaultMessage: 'High Contrast',
+        description: 'Label of high contrast',
+        id: 'gui.settingsModal.theme.highContrast'
+    },
 });
 
 const BufferedInput = BufferedInputHOC(Input);
@@ -124,11 +129,14 @@ class SettingsModal extends React.Component {
                                     id: 'system',
                                     text: this.props.intl.formatMessage(messages.system)
                                 }, {
+                                    id: 'default',
+                                    text: this.props.intl.formatMessage(messages.default)
+                                }, {
                                     id: 'dark',
                                     text: this.props.intl.formatMessage(messages.dark)
                                 }, {
-                                    id: 'light',
-                                    text: this.props.intl.formatMessage(messages.light)
+                                    id: 'high-contrast',
+                                    text: this.props.intl.formatMessage(messages.highContrast)
                                 }]}
                             />
                         </div>
