@@ -33,6 +33,10 @@
     color: var(--clipcc-text-primary);
 }
 
+.image {
+    margin: 5px;
+}
+
 .value {
     display: flex;
     justify-content: center;

@@ -1,6 +1,7 @@
 const path = require('path');
 const {ProvidePlugin} = require('webpack');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -23,13 +24,17 @@ const base = {
     },
     optimization: {
         minimizer: [
-            new UglifyJsPlugin({
+            new TerserPlugin({
                 include: /\.min\.js$/,
-                sourceMap: true
+                terserOptions: {
+                    sourceMap: true
+                }
             })
         ]
     },
-    plugins: []
+    plugins: [
+        new NodePolyfillPlugin()
+    ]
 };
 
 module.exports = [
@@ -56,7 +61,7 @@ module.exports = [
         },
         output: {
             library: 'ScratchStorage',
-            libraryTarget: 'commonjs2',
+            libraryTarget: 'umd',
             path: path.resolve('dist', 'node'),
             filename: '[name].js'
         },
@@ -66,10 +71,10 @@ module.exports = [
             'localforage': true,
             'text-encoding': true
         },
-        plugins: [
+        plugins: base.plugins.concat([
             new ProvidePlugin({
                 fetch: ['node-fetch', 'default']
             })
-        ]
+        ])
     })
 ];

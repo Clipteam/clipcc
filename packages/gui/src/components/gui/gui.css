@@ -229,7 +229,7 @@
 }
 
 .extension-button-container {
-    width: 3.75rem;
+    width: var(--clipcc-category-width);
     height: 3.25rem;
     position: absolute;
     bottom: 0;

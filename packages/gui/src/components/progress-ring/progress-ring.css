@@ -1,0 +1,16 @@
+.progress-ring {
+    margin: 0.5rem;
+}
+
+.progress-ring-svg {
+    fill: transparent;
+}
+
+.progress-ring .progress-ring-ring {
+    stroke: var(--clipcc-motion-light-transparent);
+}
+
+.progress-ring .progress-ring-value {
+    stroke: var(--clipcc-motion-primary);
+    stroke-linecap: round;
+}

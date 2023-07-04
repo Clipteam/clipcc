@@ -1,11 +1,11 @@
 {
-  "name": "scratch-audio",
-  "version": "0.1.0",
+  "name": "clipcc-audio",
+  "version": "3.2.0",
   "description": "audio engine for scratch 3.0",
   "main": "dist.js",
   "browser": "./src/index.js",
   "scripts": {
-    "test": "npm run lint && npm run tap && npm run build",
+    "test": "yarn run lint && yarn run tap && yarn run build",
     "build": "webpack --bail",
     "watch": "webpack --watch",
     "lint": "eslint .",
@@ -13,30 +13,29 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LLK/scratch-audio.git"
+    "url": "https://github.com/Clipteam/clipcc.git"
   },
   "author": "Massachusetts Institute of Technology",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/LLK/scratch-audio/issues"
+    "url": "https://github.com/Clipteam/clipcc/issues"
   },
-  "homepage": "https://github.com/LLK/scratch-audio#readme",
+  "homepage": "https://github.com/Clipteam/clipcc#readme",
   "dependencies": {
     "audio-context": "1.0.1",
     "minilog": "^3.0.1",
     "startaudiocontext": "1.2.1"
   },
   "devDependencies": {
-    "babel-core": "6.26.3",
-    "babel-eslint": "7.2.3",
-    "babel-loader": "7.1.5",
-    "babel-preset-env": "1.7.0",
+    "@babel/core": "7.14.8",
+    "@babel/preset-env": "7.14.8",
+    "babel-eslint": "10.0.3",
     "eslint": "3.19.0",
     "eslint-config-scratch": "3.1.0",
     "json": "9.0.6",
     "tap": "12.7.0",
     "web-audio-test-api": "0.5.2",
-    "webpack": "4.46.0",
-    "webpack-cli": "3.3.12"
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
   }
 }

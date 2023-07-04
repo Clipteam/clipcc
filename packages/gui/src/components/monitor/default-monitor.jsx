@@ -12,7 +12,9 @@ const DefaultMonitor = ({categoryColor, label, value}) => (
                 className={styles.value}
                 style={{background: categoryColor}}
             >
-                {value}
+                {(typeof value === 'string' && value.startsWith('data:image/')) ? (
+                    <img className={styles.image} src={value} alt={`${label} image preview`} />
+                ) : value}
             </div>
         </div>
     </div>

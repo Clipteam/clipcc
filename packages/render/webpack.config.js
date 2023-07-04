@@ -1,11 +1,12 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devServer: {
-        contentBase: false,
+        static: false,
         host: '0.0.0.0',
         port: process.env.PORT || 8361
     },
@@ -19,19 +20,25 @@ const base = {
                 test: /\.js$/,
                 loader: 'babel-loader',
                 options: {
-                    presets: [['env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}]]
+                    presets: [['@babel/preset-env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}]]
                 }
+            },
+            {
+                resourceQuery: /raw/,
+                type: 'asset/source'
             }
         ]
     },
     optimization: {
         minimizer: [
-            new UglifyJsPlugin({
+            new TerserPlugin({
                 include: /\.min\.js$/
             })
         ]
     },
-    plugins: []
+    plugins: [
+        new NodePolyfillPlugin()
+    ]
 };
 
 module.exports = [
@@ -48,12 +55,12 @@ module.exports = [
             filename: '[name].js'
         },
         plugins: base.plugins.concat([
-            new CopyWebpackPlugin([
-                {
+            new CopyWebpackPlugin({
+                patterns: [{
                     context: 'src/playground',
                     from: '*.+(html|css)'
-                }
-            ])
+                }]
+            })
         ])
     }),
     // Web-compatible

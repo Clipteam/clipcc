@@ -1,4 +1,4 @@
-Copyright (C) 2022 Yingyingying (Shanghai) Network Technology Co., Ltd. and its contributors
+Copyright (C) 2023 Shanghai Wuwuwu Network Technology Co., Ltd. and its contributors
 
 Everyone is permitted to copy and distribute verbatim copies of this license document, but changing it is not allowed.
 
@@ -12,4 +12,4 @@ By making a contribution to this project, I certify that:
 
 (d) I understand and agree that this project and the contributions are public and that a record of the contribution (including all personal information I submit with it, including my sign-off) is maintained indefinitely and may be redistributed consistent with this project or the open source license(s) involved.
 
-(e) I understand and agree that this project and contributions can be used by Yingyingying (Shanghai) Network Technology Co., Ltd. without restriction.
+(e) I understand and agree that this project and contributions can be used by Shanghai Wuwuwu Network Technology Co., Ltd. without restriction.

@@ -8,7 +8,9 @@ const LargeMonitor = ({categoryColor, value}) => (
             className={styles.largeValue}
             style={{background: categoryColor}}
         >
-            {value}
+            {(typeof value === 'string' && value.startsWith('data:image/')) ? (
+                <img className={styles.image} src={value} alt={`image preview`} />
+            ) : value}
         </div>
     </div>
 );

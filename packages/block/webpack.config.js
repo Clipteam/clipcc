@@ -5,7 +5,7 @@ gracefulFs.gracefulify(realFs);
 
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var path = require('path');
-var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+var TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = [{
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -39,8 +39,8 @@ module.exports = [{
   },
   optimization: {
     minimizer: [
-      new UglifyJsPlugin({
-        uglifyOptions: {
+      new TerserPlugin({
+        terserOptions: {
           mangle: false
         }
       })
@@ -62,7 +62,8 @@ module.exports = [{
     hints: false
   },
   plugins: [
-      new CopyWebpackPlugin([{
+    new CopyWebpackPlugin({
+      patterns: [{
         from: 'node_modules/google-closure-library',
         to: 'closure-library'
       }, {
@@ -88,8 +89,11 @@ module.exports = [{
         to: 'playgrounds/tests'
       }, {
         from: '*.js',
-        ignore: 'webpack.config.js',
-        to: 'playgrounds'
-      }])
+        to: 'playgrounds',
+        globOptions: {
+          ignore: 'webpack.config.js'
+        }
+      }]
+    })
   ]
 }];

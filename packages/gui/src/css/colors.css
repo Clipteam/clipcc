@@ -102,4 +102,5 @@
     --clipcc-block-flyout-background: var(--clipcc-ui-white);
     --clipcc-block-main-background-dot: var(--clipcc-ui-tertiary);
     --clipcc-block-scrollbar-color: var(--clipcc-ui-tertiary);
+    --clipcc-toolbox-text: var(--clipcc-on-motion-primary);
 }

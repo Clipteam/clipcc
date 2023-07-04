@@ -64,8 +64,8 @@ class ShaderManager {
         const definesText = `${defines.join('\n')}\n`;
 
         /* eslint-disable global-require */
-        const vsFullText = definesText + require('raw-loader!./shaders/sprite.vert');
-        const fsFullText = definesText + require('raw-loader!./shaders/sprite.frag');
+        const vsFullText = definesText + require('./shaders/sprite.vert?raw');
+        const fsFullText = definesText + require('./shaders/sprite.frag?raw');
         /* eslint-enable global-require */
 
         return twgl.createProgramInfo(this._gl, [vsFullText, fsFullText]);

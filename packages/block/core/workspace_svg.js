@@ -900,7 +900,14 @@ Blockly.WorkspaceSvg.prototype.reportValue = function(id, value) {
   var contentDiv = Blockly.DropDownDiv.getContentDiv();
   var valueReportBox = goog.dom.createElement('div');
   valueReportBox.setAttribute('class', 'valueReportBox');
-  valueReportBox.innerHTML = Blockly.scratchBlocksUtils.encodeEntities(value);
+  if (value.startsWith('data:image/')) {
+    var img = goog.dom.createElement('img');
+    img.src = value;
+    valueReportBox.appendChild(img);
+  } else {
+    var encodedStr = Blockly.scratchBlocksUtils.encodeEntities(value);
+    valueReportBox.innerHTML = encodedStr;
+  }
   contentDiv.appendChild(valueReportBox);
   Blockly.DropDownDiv.setColour(
       Blockly.Colours.valueReportBackground,
