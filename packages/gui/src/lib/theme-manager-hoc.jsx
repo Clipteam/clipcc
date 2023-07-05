@@ -16,6 +16,7 @@ const themeManagerHOC = function (WrappedComponent) {
             this.onMediaQueryChange();
         }
         componentDidMount () {
+            if (!window.matchMedia) return;
             this.highContrastMatchMedia = window.matchMedia(prefersHighContrastQuery);
             this.darkModeMatchMedia = window.matchMedia(prefersDarkQuery);
             if (this.darkModeMatchMedia.addEventListener) {
@@ -35,6 +36,7 @@ const themeManagerHOC = function (WrappedComponent) {
             }
         }
         componentWillUnmount () {
+            if (!window.matchMedia) return;
             if (this.darkModeMatchMedia.removeEventListener) {
                 this.highContrastMatchMedia.removeEventListener('change', this.onMediaQueryChange);
                 this.darkModeMatchMedia.removeEventListener('change', this.onMediaQueryChange);
