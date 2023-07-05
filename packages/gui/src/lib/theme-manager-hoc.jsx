@@ -18,8 +18,13 @@ const themeManagerHOC = function (WrappedComponent) {
         componentDidMount () {
             this.highContrastMatchMedia = window.matchMedia(prefersHighContrastQuery);
             this.darkModeMatchMedia = window.matchMedia(prefersDarkQuery);
-            this.highContrastMatchMedia.addEventListener('change', this.onMediaQueryChange);
-            this.darkModeMatchMedia.addEventListener('change', this.onMediaQueryChange);
+            if (this.darkModeMatchMedia.addEventListener) {
+                this.darkModeMatchMedia.addEventListener('change', this.onMediaQueryChange);
+                this.highContrastMatchMedia.addEventListener('change', this.onMediaQueryChange);
+            } else {
+                this.darkModeMatchMedia.addListener('change', this.onMediaQueryChange);
+                this.highContrastMatchMedia.addListener('change', this.onMediaQueryChange);
+            }
         }
         componentDidUpdate (prevProps) {
             if (this.props.userTheme !== prevProps.userTheme) {
@@ -30,8 +35,13 @@ const themeManagerHOC = function (WrappedComponent) {
             }
         }
         componentWillUnmount () {
-            this.highContrastMatchMedia.removeEventListener('change', this.onMediaQueryChange);
-            this.darkModeMatchMedia.removeEventListener('change', this.onMediaQueryChange);
+            if (this.darkModeMatchMedia.removeEventListener) {
+                this.highContrastMatchMedia.removeEventListener('change', this.onMediaQueryChange);
+                this.darkModeMatchMedia.removeEventListener('change', this.onMediaQueryChange);
+            } else {
+                this.highContrastMatchMedia.removeListener('change', this.onMediaQueryChange);
+                this.darkModeMatchMedia.removeListener('change', this.onMediaQueryChange);
+            }
         }
         onMediaQueryChange (event) {
             switch (this.props.userTheme) {
