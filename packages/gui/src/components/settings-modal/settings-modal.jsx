@@ -190,6 +190,114 @@ class SettingsModal extends React.Component {
                                 placeholder="30"
                             />
                         </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Infinite Cloning"
+                                    description="Label of infinite cloning"
+                                    id="gui.settingsModal.infiniteCloning"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Remove the limit of up to 300 clones for Scratch."
+                                    description="Description of infinite cloning"
+                                    id="gui.settingsModal.infiniteCloningDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.infiniteCloning}
+                                onChange={this.props.onChangeInfiniteCloning}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Edgeless Stage"
+                                    description="Label of edgeless stage"
+                                    id="gui.settingsModal.edgelessStage"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Allow sprites to move out of the stage area and change size freely."
+                                    description="Description of edgeless stage"
+                                    id="gui.settingsModal.edgelessStageDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.edgelessStage}
+                                onChange={this.props.onChangeEdgelessStage}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Unlimited List Length"
+                                    description="Label of unlimited list length"
+                                    id="gui.settingsModal.unlimitedListLength"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Remove the maximum list length limit."
+                                    description="Description of unlimited list length"
+                                    id="gui.settingsModal.unlimitedListLengthDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.unlimitedListLength}
+                                onChange={this.props.onChangeUnlimitedListLength}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Unlimited Pen Size"
+                                    description="Label of unlimited pen size"
+                                    id="gui.settingsModal.unlimitedPenSize"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Allow change pen size freely."
+                                    description="Description of unlimited pen size"
+                                    id="gui.settingsModal.unlimitedPenSizeDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.unlimitedPenSize}
+                                onChange={this.props.onChangeUnlimitedPenSize}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Unlimited Sound Stuffs"
+                                    description="Label of Unlimited Sound Stuffs"
+                                    id="gui.settingsModal.unlimitedSoundStuffs"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Allow change sound stuffs (Eg: effects, note, tempo) freely."
+                                    description="Description of unlimited sound stuffs"
+                                    id="gui.settingsModal.unlimitedSoundStuffsDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.unlimitedSoundStuffs}
+                                onChange={this.props.onChangeUnlimitedSoundStuffs}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Accurate Coordinates"
+                                    description="Label of accurate coordinates"
+                                    id="gui.settingsModal.accurateCoordinates"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Don't round coordinates."
+                                    description="Description of accurate coordinates"
+                                    id="gui.settingsModal.accurateCoordinatesDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.accurateCoordinates}
+                                onChange={this.props.onChangeAccurateCoordinates}
+                            />
+                        </div>
                         <p
                             className={styles.category}
                             ref={ref => this.categoryRef.project = ref}
@@ -251,12 +359,24 @@ class SettingsModal extends React.Component {
 SettingsModal.propTypes = {
     hideNonVanillaBlocks: PropTypes.bool.isRequired,
     autoSave: PropTypes.bool.isRequired,
+    infiniteCloning: PropTypes.bool.isRequired,
+    edgelessStage: PropTypes.bool.isRequired,
+    unlimitedListLength: PropTypes.bool.isRequired,
+    unlimitedPenSize: PropTypes.bool.isRequired,
+    unlimitedSoundStuffs: PropTypes.bool.isRequired,
+    accurateCoordinates: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
     theme: PropTypes.string.isRequired,
     intl: intlShape.isRequired,
     onClose: PropTypes.func.isRequired,
     onChangeAutoSave: PropTypes.func.isRequired,
+    onChangeInfiniteCloning: PropTypes.func.isRequired,
+    onChangeEdgelessStage: PropTypes.func.isRequired,
+    onChangeUnlimitedListLength: PropTypes.func.isRequired,
+    onChangeUnlimitedPenSize: PropTypes.func.isRequired,
+    onChangeUnlimitedSoundStuffs: PropTypes.func.isRequired,
+    onChangeAccurateCoordinates: PropTypes.func.isRequired,
     onChangeAutoSaveInterval: PropTypes.func.isRequired,
     onChangeFramerate: PropTypes.func.isRequired,
     onChangeTheme: PropTypes.func.isRequired,

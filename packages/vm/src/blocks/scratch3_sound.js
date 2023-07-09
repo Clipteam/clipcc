@@ -83,7 +83,13 @@ class Scratch3SoundBlocks {
     /** The minimum and maximum values for each sound effect.
      * @type {{effect:{min: number, max: number}}}
      */
-    static get EFFECT_RANGE () {
+    get EFFECT_RANGE () {
+        if (this.runtime.limitOptions.unlimitedSoundStuffs) {
+            return {
+                pitch: {min: -Infinity, max: Infinity}, // Unlimited
+                pan: {min: -100, max: 100} // 100% left to 100% right
+            };
+        }
         return {
             pitch: {min: -360, max: 360}, // -3 to 3 octaves
             pan: {min: -100, max: 100} // 100% left to 100% right
@@ -275,7 +281,7 @@ class Scratch3SoundBlocks {
             soundState.effects[effect] = value;
         }
 
-        const {min, max} = Scratch3SoundBlocks.EFFECT_RANGE[effect];
+        const {min, max} = this.EFFECT_RANGE[effect];
         soundState.effects[effect] = MathUtil.clamp(soundState.effects[effect], min, max);
 
         this._syncEffectsForTarget(util.target);

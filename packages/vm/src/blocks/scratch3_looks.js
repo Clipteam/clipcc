@@ -588,7 +588,7 @@ class Scratch3LooksBlocks {
     }
 
     getSize (args, util) {
-        return Math.round(util.target.size);
+        return util.target.size;
     }
 
     getBackdropNumberName (args) {

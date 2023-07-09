@@ -3,6 +3,12 @@ const UPDATE = 'scratch-gui/settings/UPDATE';
 const defaultState = {
     hideNonVanillaBlocks: false,
     autoSave: false,
+    infiniteCloning: false,
+    edgelessStage: false,
+    unlimitedListLength: false,
+    unlimitedPenSize: false,
+    unlimitedSoundStuffs: false,
+    accurateCoordinates: false,
     autoSaveInterval: 120,
     compression: 6,
     framerate: 30,

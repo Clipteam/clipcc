@@ -21,6 +21,12 @@ class SettingsModal extends React.Component {
             'handleChangeAutoSaveInterval',
             'handleChangeFramerate',
             'handleChangeTheme',
+            'handleChangeInfiniteCloning',
+            'handleChangeEdgelessStage',
+            'handleChangeUnlimitedListLength',
+            'handleChangeUnlimitedPenSize',
+            'handleChangeUnlimitedSoundStuffs',
+            'handleChangeAccurateCoordinates',
             'handleChangeHideNonVanillaBlocks'
         ]);
     }
@@ -45,6 +51,24 @@ class SettingsModal extends React.Component {
     handleChangeTheme (value) {
         this.props.updateSettings({theme: value});
     }
+    handleChangeInfiniteCloning (value) {
+        this.props.updateSettings({infiniteCloning: value});
+    }
+    handleChangeEdgelessStage (value) {
+        this.props.updateSettings({edgelessStage: value});
+    }
+    handleChangeUnlimitedListLength (value) {
+        this.props.updateSettings({unlimitedListLength: value});
+    }
+    handleChangeUnlimitedPenSize (value) {
+        this.props.updateSettings({unlimitedPenSize: value});
+    }
+    handleChangeUnlimitedSoundStuffs (value) {
+        this.props.updateSettings({unlimitedSoundStuffs: value});
+    }
+    handleChangeAccurateCoordinates (value) {
+        this.props.updateSettings({accurateCoordinates: value});
+    }
     handleChangeHideNonVanillaBlocks (value) {
         this.props.updateSettings({hideNonVanillaBlocks: value});
     }
@@ -56,11 +80,23 @@ class SettingsModal extends React.Component {
                 autoSaveInterval={this.props.autoSaveInterval}
                 framerate={this.props.framerate}
                 theme={this.props.theme}
+                infiniteCloning={this.props.infiniteCloning}
+                edgelessStage={this.props.edgelessStage}
+                unlimitedListLength={this.props.unlimitedListLength}
+                unlimitedPenSize={this.props.unlimitedPenSize}
+                unlimitedSoundStuffs={this.props.unlimitedSoundStuffs}
+                accurateCoordinates={this.props.accurateCoordinates}
                 onClose={this.handleClose}
                 onChangeAutoSave={this.handleChangeAutoSave}
                 onChangeAutoSaveInterval={this.handleChangeAutoSaveInterval}
                 onChangeFramerate={this.handleChangeFramerate}
                 onChangeTheme={this.handleChangeTheme}
+                onChangeInfiniteCloning={this.handleChangeInfiniteCloning}
+                onChangeEdgelessStage={this.handleChangeEdgelessStage}
+                onChangeUnlimitedListLength={this.handleChangeUnlimitedListLength}
+                onChangeUnlimitedPenSize={this.handleChangeUnlimitedPenSize}
+                onChangeUnlimitedSoundStuffs={this.handleChangeUnlimitedSoundStuffs}
+                onChangeAccurateCoordinates={this.handleChangeAccurateCoordinates}
                 onChangeHideNonVanillaBlocks={this.handleChangeHideNonVanillaBlocks}
             />
         );
@@ -70,6 +106,12 @@ class SettingsModal extends React.Component {
 SettingsModal.propTypes = {
     hideNonVanillaBlocks: PropTypes.bool.isRequired,
     autoSave: PropTypes.bool.isRequired,
+    infiniteCloning: PropTypes.bool.isRequired,
+    edgelessStage: PropTypes.bool.isRequired,
+    unlimitedListLength: PropTypes.bool.isRequired,
+    unlimitedPenSize: PropTypes.bool.isRequired,
+    unlimitedSoundStuffs: PropTypes.bool.isRequired,
+    accurateCoordinates: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
     theme: PropTypes.string.isRequired,
@@ -80,6 +122,12 @@ SettingsModal.propTypes = {
 const mapStateToProps = state => ({
     hideNonVanillaBlocks: state.scratchGui.settings.hideNonVanillaBlocks,
     autoSave: state.scratchGui.settings.autoSave,
+    infiniteCloning: state.scratchGui.settings.infiniteCloning,
+    edgelessStage: state.scratchGui.settings.edgelessStage,
+    unlimitedListLength: state.scratchGui.settings.unlimitedListLength,
+    unlimitedPenSize: state.scratchGui.settings.unlimitedPenSize,
+    unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,
+    accurateCoordinates: state.scratchGui.settings.accurateCoordinates,
     autoSaveInterval: state.scratchGui.settings.autoSaveInterval,
     framerate: state.scratchGui.settings.framerate,
     theme: state.scratchGui.settings.theme
