@@ -84,8 +84,12 @@ class Scratch3MotionBlocks {
         } else if (targetName === '_random_') {
             const stageWidth = this.runtime.constructor.STAGE_WIDTH;
             const stageHeight = this.runtime.constructor.STAGE_HEIGHT;
-            targetX = Math.round(stageWidth * (Math.random() - 0.5));
-            targetY = Math.round(stageHeight * (Math.random() - 0.5));
+            targetX = stageWidth * (Math.random() - 0.5);
+            targetY = stageHeight * (Math.random() - 0.5);
+            if (!this.runtime.limitOptions.accurateCoordinates) {
+                targetX = Math.round(targetX);
+                targetY = Math.round(targetY);
+            }
         } else {
             targetName = Cast.toString(targetName);
             const goToTarget = this.runtime.getSpriteTargetByName(targetName);
@@ -125,7 +129,12 @@ class Scratch3MotionBlocks {
             targetX = util.ioQuery('mouse', 'getScratchX');
             targetY = util.ioQuery('mouse', 'getScratchY');
         } else if (args.TOWARDS === '_random_') {
-            util.target.setDirection(Math.round(Math.random() * 360) - 180);
+            const randomDeg = Math.random() * 360;
+            util.target.setDirection(
+                this.runtime.limitOptions.accurateCoordinates
+                    ? randomDeg - 180
+                    : Math.round(randomDeg) - 180
+            );
             return;
         } else {
             args.TOWARDS = Cast.toString(args.TOWARDS);

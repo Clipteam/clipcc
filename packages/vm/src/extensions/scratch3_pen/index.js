@@ -116,11 +116,12 @@ class Scratch3PenBlocks {
      * @private
      */
     _clampPenSize (requestedSize) {
-        return MathUtil.clamp(
-            requestedSize,
-            Scratch3PenBlocks.PEN_SIZE_RANGE.min,
-            Scratch3PenBlocks.PEN_SIZE_RANGE.max
-        );
+        return this.runtime.limitOptions.unlimitedPenSize
+            ? requestedSize : MathUtil.clamp(
+                requestedSize,
+                Scratch3PenBlocks.PEN_SIZE_RANGE.min,
+                Scratch3PenBlocks.PEN_SIZE_RANGE.max
+            );
     }
 
     /**
