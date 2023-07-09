@@ -1,6 +1,7 @@
 const path = require('path');
 const {ProvidePlugin} = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -31,7 +32,9 @@ const base = {
             })
         ]
     },
-    plugins: []
+    plugins: [
+        new NodePolyfillPlugin()
+    ]
 };
 
 module.exports = [
@@ -68,10 +71,10 @@ module.exports = [
             'localforage': true,
             'text-encoding': true
         },
-        plugins: [
+        plugins: base.plugins.concat([
             new ProvidePlugin({
                 fetch: ['node-fetch', 'default']
             })
-        ]
+        ])
     })
 ];

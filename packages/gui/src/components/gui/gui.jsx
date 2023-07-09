@@ -300,7 +300,7 @@ const GUIComponent = props => {
                                             grow={1}
                                             isVisible={blocksTabVisible}
                                             options={{
-                                                media: `${basePath}static/blocks-media/`
+                                                media: `${basePath}static/blocks-media/default/`
                                             }}
                                             stageSize={stageSize}
                                             vm={vm}

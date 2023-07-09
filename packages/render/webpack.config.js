@@ -1,6 +1,7 @@
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -35,7 +36,9 @@ const base = {
             })
         ]
     },
-    plugins: []
+    plugins: [
+        new NodePolyfillPlugin()
+    ]
 };
 
 module.exports = [

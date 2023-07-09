@@ -218,6 +218,20 @@ class VirtualMachine extends EventEmitter {
     }
 
     /**
+     * Set the limit options.
+     * @param {object} options Limit options
+     */
+    setLimitOptions (options) {
+        this.runtime.limitOptions = Object.assign({}, this.runtime.limitOptions, options);
+        if (options.hasOwnProperty('edgelessStage') && this.runtime.renderer) {
+            this.runtime.renderer.setEdgelessStage(options.edgelessStage);
+        }
+        if (options.hasOwnProperty('accurateCoordinates') && this.runtime.renderer) {
+            this.runtime.renderer.setAccurateCoordinates(options.accurateCoordinates);
+        }
+    }
+
+    /**
      * Stop all threads and running activities.
      */
     stopAll () {
