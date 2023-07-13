@@ -436,7 +436,7 @@ class Thread {
             } else {
                 flag = false;
             }
-            const block = this.stackFrames[i].target.getBlock(blockId);
+            const block = this.stackFrames[i].target.blocks.getBlock(blockId);
             // cc - block maybe not exists when triggered in toolbox.
             if (block && block.opcode === 'procedures_call' &&
                 block.mutation.proccode === procedureCode) {
