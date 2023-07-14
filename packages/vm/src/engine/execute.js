@@ -42,11 +42,12 @@ const isPromise = function (value) {
  * @return {boolean} True if the block is a procedure caller with return value.
  */
 const isProcedureReturnCaller = function (cached) {
-    return (
-        cached.opcode === 'procedures_call' &&
-        (typeof cached.mutation.return === 'boolean' ?
-            cached.mutation.return : JSON.parse(cached.mutation.return))
-    );
+    if (cached.opcode === 'procedures_call') {
+        if (cached.mutation.return === undefined) return false;
+        return typeof cached.mutation.return === 'boolean' ?
+            cached.mutation.return : JSON.parse(cached.mutation.return);
+    }
+    return false;
 };
 
 /**

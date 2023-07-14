@@ -518,7 +518,8 @@ test('emitWorkspaceUpdate', t => {
                 }
             },
             blocks: {
-                toXML: blocksToXML
+                toXML: blocksToXML,
+                getAllGlobalProcedures: () => []
             },
             comments: {
                 aStageComment: {
@@ -533,7 +534,8 @@ test('emitWorkspaceUpdate', t => {
                 }
             },
             blocks: {
-                toXML: blocksToXML
+                toXML: blocksToXML,
+                getAllGlobalProcedures: () => []
             },
             comments: {
                 someBlockComment: {
@@ -548,7 +550,8 @@ test('emitWorkspaceUpdate', t => {
                 }
             },
             blocks: {
-                toXML: blocksToXML
+                toXML: blocksToXML,
+                getAllGlobalProcedures: () => []
             },
             comments: {
                 someOtherComment: {

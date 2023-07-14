@@ -2612,7 +2612,7 @@ class Runtime extends EventEmitter {
     getAllGlobalProcedures () {
         const procedures = [];
         for (const target of this.targets) {
-            procedures.push(...target.getAllGlobalProcedures());
+            procedures.push(...target.blocks.getAllGlobalProcedures());
         }
         return procedures;
     }
