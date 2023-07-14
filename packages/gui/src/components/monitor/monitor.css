@@ -1,13 +1,9 @@
-@import "../../css/units.css";
-@import "../../css/colors.css";
-@import "../../css/z-index.css";
-
 .monitor-container {
     position: absolute;
-    background: $ui-primary;
-    z-index: $z-index-monitor;
-    border: 1px solid $ui-black-transparent;
-    border-radius: calc($space / 2);
+    background: var(--clipcc-ui-primary);
+    z-index: var(--clipcc-z-index-monitor);
+    border: 1px solid var(--clipcc-ui-black-transparent);
+    border-radius: calc(var(--clipcc-space) / 2);
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.75rem;
     transition: box-shadow 0.2s;
@@ -20,7 +16,7 @@
 }
 
 .dragging {
-    z-index: $z-index-monitor-dragging;
+    z-index: var(--clipcc-z-index-monitor-dragging);
     box-shadow: 3px 3px 5px #888888;
 }
 
@@ -36,6 +32,10 @@
     margin: 0 5px;
 }
 
+.image {
+    margin: 5px;
+}
+
 .value {
     display: flex;
     justify-content: center;
@@ -44,7 +44,7 @@
     text-align: center;
     color: white;
     margin: 0 5px;
-    border-radius: calc($space / 2);
+    border-radius: calc(var(--clipcc-space) / 2);
     padding: 0 2px;
     white-space: pre-wrap;
     transform: translateZ(0); /* Fixes flickering in Safari */
@@ -77,18 +77,18 @@
 }
 
 .list-header {
-    background: $ui-white;
-    border-bottom: 1px solid $ui-black-transparent;
+    background: var(--clipcc-ui-white);
+    border-bottom: 1px solid var(--clipcc-ui-black-transparent);
     text-align: center;
     padding: 3px;
     font-size: 0.75rem;
     font-weight: bold;
-    color: $text-primary;
+    color: var(--clipcc-text-primary);
     width: 100%;
 }
 
 .list-body {
-    background: $ui-primary;
+    background: var(--clipcc-ui-primary);
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -108,7 +108,7 @@
 
 .list-index {
     font-weight: bold;
-    color: $text-primary;
+    color: var(--clipcc-text-primary);
     margin: 0 3px;
 }
 
@@ -117,21 +117,21 @@
     text-align: left;
     color: white;
     margin: 0 3px;
-    border-radius: calc($space / 2);
-    border: 1px solid $ui-black-transparent;
+    border-radius: calc(var(--clipcc-space) / 2);
+    border: 1px solid var(--clipcc-ui-black-transparent);
     flex-grow: 1;
     height: 22px;
 }
 
 .list-footer {
-    background: $ui-white;
+    background: var(--clipcc-ui-white);
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     padding: 3px;
     font-size: 0.75rem;
     font-weight: bold;
-    color: $text-primary;
+    color: var(--clipcc-text-primary);
 }
 
 .list-empty {
@@ -161,7 +161,7 @@
     padding: 3px 5px;
     border: 0;
     background: none;
-    color: $ui-white;
+    color: var(--clipcc-ui-white);
     outline: none;
     font-size: 0.75rem;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -174,7 +174,7 @@
     padding: 0;
     padding-right: 5px;
     cursor: pointer;
-    color: $ui-white;
+    color: var(--clipcc-ui-white);
 }
 
 .add-button {

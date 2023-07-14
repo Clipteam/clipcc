@@ -1,8 +1,8 @@
 import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
-import Renderer from 'scratch-render';
-import VM from 'scratch-vm';
+import Renderer from 'clipcc-render';
+import VM from 'clipcc-vm';
 import {connect} from 'react-redux';
 
 import {STAGE_DISPLAY_SIZES} from '../lib/layout-constants';
@@ -222,6 +222,7 @@ class Stage extends React.Component {
             mouseDownPosition: null
         });
         const data = {
+            button: e.button ?? 0,
             isDown: false,
             x: x - this.rect.left,
             y: y - this.rect.top,
@@ -272,6 +273,7 @@ class Stage extends React.Component {
                 });
             }
             const data = {
+                button: e.button ?? 0,
                 isDown: true,
                 x: mousePosition[0],
                 y: mousePosition[1],

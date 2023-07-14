@@ -43,12 +43,12 @@ const importLoadSound = require('../import/load-sound');
 const soundMiddleware = new LoadingMiddleware();
 importLoadSound.loadSound = soundMiddleware.install(importLoadSound, importLoadSound.loadSound);
 
-const ScratchStorage = require('scratch-storage');
+const ScratchStorage = require('clipcc-storage');
 const VirtualMachine = require('..');
 const Runtime = require('../engine/runtime');
 
-const ScratchRender = require('scratch-render');
-const AudioEngine = require('scratch-audio');
+const ScratchRender = require('clipcc-render');
+const AudioEngine = require('clipcc-audio');
 const ScratchSVGRenderer = require('scratch-svg-renderer');
 
 const Scratch = window.Scratch = window.Scratch || {};
@@ -59,11 +59,21 @@ const PROJECT_SERVER = 'https://cdn.projects.scratch.mit.edu/';
 const SLOW = .1;
 
 const projectInput = document.querySelector('input');
+let projectData = null;
+
+projectInput.addEventListener('change', (event) => {
+    const [data] = event.target.files;
+    const reader = new FileReader();
+    reader.addEventListener('loadend', () => {
+        projectData = reader.result;
+    })
+    reader.readAsArrayBuffer(data);
+});
 
 document.querySelector('.run')
     .addEventListener('click', () => {
-        window.location.hash = projectInput.value;
-        location.reload();
+        if (!projectData) return alert('empty project');
+        Scratch.vm.loadProject(projectData);
     }, false);
 
 const setShareLink = function (json) {
@@ -666,6 +676,7 @@ const runBenchmark = function () {
     canvas.addEventListener('mousedown', e => {
         const rect = canvas.getBoundingClientRect();
         const data = {
+            button: e.button ?? 0,
             isDown: true,
             x: e.clientX - rect.left,
             y: e.clientY - rect.top,
@@ -678,6 +689,7 @@ const runBenchmark = function () {
     canvas.addEventListener('mouseup', e => {
         const rect = canvas.getBoundingClientRect();
         const data = {
+            button: e.button ?? 0,
             isDown: false,
             x: e.clientX - rect.left,
             y: e.clientY - rect.top,

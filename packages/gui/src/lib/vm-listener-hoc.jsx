@@ -1,7 +1,7 @@
 import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
-import VM from 'scratch-vm';
+import VM from 'clipcc-vm';
 
 import {connect} from 'react-redux';
 
@@ -67,7 +67,18 @@ const vmListenerHOC = function (WrappedComponent) {
             }
         }
         componentWillUnmount () {
-            this.props.vm.removeListener('PERIPHERAL_CONNECTION_LOST_ERROR', this.props.onShowExtensionAlert);
+            this.props.vm.off('targetsUpdate', this.handleTargetsUpdate);
+            this.props.vm.off('MONITORS_UPDATE', this.props.onMonitorsUpdate);
+            this.props.vm.off('BLOCK_DRAG_UPDATE', this.props.onBlockDragUpdate);
+            this.props.vm.off('TURBO_MODE_ON', this.props.onTurboModeOn);
+            this.props.vm.off('TURBO_MODE_OFF', this.props.onTurboModeOff);
+            this.props.vm.off('PROJECT_RUN_START', this.props.onProjectRunStart);
+            this.props.vm.off('PROJECT_RUN_STOP', this.props.onProjectRunStop);
+            this.props.vm.off('PROJECT_CHANGED', this.handleProjectChanged);
+            this.props.vm.off('RUNTIME_STARTED', this.props.onRuntimeStarted);
+            this.props.vm.off('PROJECT_START', this.props.onGreenFlag);
+            this.props.vm.off('PERIPHERAL_CONNECTION_LOST_ERROR', this.props.onShowExtensionAlert);
+            this.props.vm.off('MIC_LISTENING', this.props.onMicListeningUpdate);
             if (this.props.attachKeyboardEvents) {
                 document.removeEventListener('keydown', this.handleKeyDown);
                 document.removeEventListener('keyup', this.handleKeyUp);

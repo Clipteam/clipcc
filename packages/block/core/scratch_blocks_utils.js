@@ -276,6 +276,10 @@ Blockly.scratchBlocksUtils.pasteCallback = function(ws, event) {
       Blockly.Events.disable();
       try {
         var xml = Blockly.Xml.textToDom(data);
+        if (!xml) {
+          throw 'Invalid XML';
+        }
+
         var newBlock = Blockly.Xml.domToBlock(xml.firstChild, ws);
 
         var point = Blockly.utils.mouseToSvg(event, ws.getParentSvg(),  ws.getInverseScreenCTM());
@@ -284,6 +288,8 @@ Blockly.scratchBlocksUtils.pasteCallback = function(ws, event) {
         var y = (point.y - rel.y) / ws.scale;
 
         newBlock.moveBy(ws.RTL ? -x : x, y);
+        // Refresh toolbox to adapting new blocks
+        ws.refreshToolboxSelection_();
       } finally {
         Blockly.Events.enable();
         if (Blockly.Events.isEnabled() && newBlock) {

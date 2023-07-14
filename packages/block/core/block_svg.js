@@ -68,6 +68,7 @@ Blockly.BlockSvg = function(workspace, prototypeName, opt_id) {
       {'class': 'blocklyPath blocklyBlockBackground'},
       this.svgGroup_);
   this.svgPath_.tooltip = this;
+  this.svgGroup_.block = this;
 
   /** @type {boolean} */
   this.rendered = false;
@@ -96,6 +97,12 @@ goog.inherits(Blockly.BlockSvg, Blockly.Block);
  * Height is in workspace units.
  */
 Blockly.BlockSvg.prototype.height = 0;
+
+/**
+ * Whether block is visible.
+ * @type {boolean}
+ */
+Blockly.BlockSvg.prototype.visible_ = true;
 
 /**
  * Width of this block, including any connected value blocks.
@@ -300,6 +307,10 @@ Blockly.BlockSvg.prototype.setParent = function(newParent) {
     return;
   }
 
+  // This function can potentially change the position of the blocks
+  // , so we need to update observe here
+  this.updateObserve();
+  
   var oldXY = this.getRelativeToSurfaceXY();
   if (newParent) {
     newParent.getSvgRoot().appendChild(svgRoot);
@@ -309,7 +320,7 @@ Blockly.BlockSvg.prototype.setParent = function(newParent) {
     // If we are a shadow block, inherit tertiary colour.
     if (this.isShadow()) {
       this.setColour(this.getColour(), this.getColourSecondary(),
-          newParent.getColourTertiary());
+          newParent.getColourTertiary(), this.getColourQuaternary());
     }
   }
   // If we are losing a parent, we want to move our DOM element to the
@@ -856,6 +867,8 @@ Blockly.BlockSvg.prototype.dispose = function(healStack, animate) {
     Blockly.Events.enable();
   }
   Blockly.BlockSvg.superClass_.dispose.call(this, healStack);
+  
+  blockWorkspace.virtualizedManager.unobserve(this);
 
   goog.dom.removeNode(this.svgGroup_);
   blockWorkspace.resizeContents();
@@ -1079,17 +1092,36 @@ Blockly.BlockSvg.prototype.setDeleteStyle = function(enable) {
 // block has been rendered.
 
 /**
+ * Change the visibility of a block.
+ * @param {boolean} visible Whether block is visible
+ */
+Blockly.BlockSvg.prototype.setVisible = function(visible) {
+    if (visible === this.visible_) {
+      return;
+    }
+    this.visible_ = visible;
+    const svgRoot = this.getSvgRoot();
+    if (!svgRoot) {
+      return;
+    }
+    if (visible) svgRoot.style.display = '';
+    else svgRoot.style.display = 'none';
+}
+
+/**
  * Change the colour of a block.
  * @param {number|string} colour HSV hue value, or #RRGGBB string.
  * @param {number|string} colourSecondary Secondary HSV hue value, or #RRGGBB
  *    string.
  * @param {number|string} colourTertiary Tertiary HSV hue value, or #RRGGBB
  *    string.
+ * @param {number|string} colourQuaternary Quaternary HSV hue value, or #RRGGBB
+ *    string.
  */
 Blockly.BlockSvg.prototype.setColour = function(colour, colourSecondary,
-    colourTertiary) {
+    colourTertiary, colourQuaternary) {
   Blockly.BlockSvg.superClass_.setColour.call(this, colour, colourSecondary,
-      colourTertiary);
+      colourTertiary, colourQuaternary);
 
   if (this.rendered) {
     this.updateColour();
@@ -1336,4 +1368,20 @@ Blockly.BlockSvg.prototype.scheduleSnapAndBump = function() {
     block.bumpNeighbours_();
     Blockly.Events.setGroup(false);
   }, Blockly.BUMP_DELAY);
+};
+
+/**
+ * Update block observe status.
+ * @package
+ */
+Blockly.BlockSvg.prototype.updateObserve = function() {
+    if (!this.workspace.virtualizedManager) return;
+    if (this.getParent()) {
+      this.workspace.virtualizedManager.unobserve(this);
+      if (!this.visible_) {
+        this.setVisible(true);
+      }
+    } else {
+      this.workspace.virtualizedManager.observe(this);
+    }
 };

@@ -1,12 +1,12 @@
 {
-    "name": "scratch-l10n",
-    "version": "3.15.0",
+    "name": "clipcc-l10n",
+    "version": "3.2.0",
     "description": "Localization for the Scratch 3.0 components",
     "main": "./dist/l10n.js",
     "browser": "./src/index.js",
     "scripts": {
         "build:data": "babel-node scripts/build-data",
-        "build": "yarn clean && yarn build:data && webpack --progress --colors --bail",
+        "build": "yarn clean && yarn build:data && webpack --progress --color --bail",
         "clean": "rimraf ./dist ./locales && mkdirp dist locales",
         "lint:js": "eslint . --ext .js",
         "lint:json": "jshint -e .json www editor/blocks editor/extensions editor/interface editor/paint-editor",
@@ -19,14 +19,14 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/LLK/scratch-l10n.git"
+        "url": "https://github.com/Clipteam/clipcc.git"
     },
     "author": "Massachusetts Institute of Technology",
     "license": "BSD-3-Clause",
     "bugs": {
-        "url": "https://github.com/LLK/scratch-l10n/issues"
+        "url": "https://github.com/Clipteam/clipcc/issues"
     },
-    "homepage": "https://github.com/LLK/scratch-l10n#readme",
+    "homepage": "https://github.com/Clipteam/clipcc#readme",
     "dependencies": {
         "@babel/cli": "^7.1.2",
         "@babel/core": "^7.1.2",
@@ -44,7 +44,7 @@
         "@babel/preset-react": "^7.0.0",
         "async": "3.2.3",
         "babel-eslint": "^10.0.1",
-        "babel-loader": "8.0.5",
+        "babel-loader": "^9.1.2",
         "eslint": "8.17.0",
         "eslint-config-scratch": "8.0.0",
         "eslint-plugin-import": "2.26.0",
@@ -60,7 +60,7 @@
         "p-limit": "2.1.0",
         "p-queue": "3.0.0",
         "rimraf": "^2.6.2",
-        "webpack": "^4.6.0",
-        "webpack-cli": "^3.1.2"
+        "webpack": "^5.75.0",
+        "webpack-cli": "^5.0.1"
     }
 }

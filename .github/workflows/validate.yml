@@ -1,0 +1,26 @@
+name: Validate
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  validate:
+    name: Validating Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+          cache: 'yarn'
+      - name: Setup python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      - name: Install and build
+        run: yarn install --frozen-lockfile && yarn run build:full
+      - name: Test
+        run: yarn test

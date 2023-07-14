@@ -1,6 +1,3 @@
-@import "../../css/units.css";
-@import "../../css/colors.css";
-
 .input-group {
     display: inline-flex;
     flex-direction: row;

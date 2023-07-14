@@ -216,6 +216,7 @@ Blockly.Blocks['event_broadcast_menu'] = {
       "colour": Blockly.Colours.event.secondary,
       "colourSecondary": Blockly.Colours.event.secondary,
       "colourTertiary": Blockly.Colours.event.tertiary,
+      "colourQuaternary": Blockly.Colours.event.quaternary,
       "extensions": ["output_string"]
     });
   }
@@ -282,6 +283,7 @@ Blockly.Blocks['event_whenkeypressed'] = {
             [Blockly.Msg.EVENT_WHENKEYPRESSED_RIGHT, 'right arrow'],
             [Blockly.Msg.EVENT_WHENKEYPRESSED_LEFT, 'left arrow'],
             [Blockly.Msg.EVENT_WHENKEYPRESSED_ANY, 'any'],
+            [Blockly.Msg.EVENT_WHENKEYPRESSED_ENTER, "enter"],
             ['a', 'a'],
             ['b', 'b'],
             ['c', 'c'],
@@ -317,7 +319,18 @@ Blockly.Blocks['event_whenkeypressed'] = {
             ['6', '6'],
             ['7', '7'],
             ['8', '8'],
-            ['9', '9']
+            ['9', '9'],
+            ["-", "-"],
+            [",", ","],
+            [".", "."],
+            ["`", "`"],
+            ["=", "="],
+            ["[", "["],
+            ["]", "]"],
+            ["\\", "\\"],
+            [";", ";"],
+            ["'", "'"],
+            ["/", "/"]
           ]
         }
       ],

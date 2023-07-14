@@ -76,9 +76,9 @@ Blockly.Css.mediaPath_ = '';
  * @param {string} pathToMedia Path from page to the Blockly media directory.
  */
 Blockly.Css.inject = function(hasCss, pathToMedia) {
-  // Only inject the CSS once.
+  // Clear the CSS if it has already been injected.
   if (Blockly.Css.styleSheet_) {
-    return;
+    document.head.removeChild(Blockly.Css.styleSheet_.ownerNode);
   }
   // Placeholder for cursor rule.  Must be first rule (index 0).
   var text = '.blocklyDraggable {}\n';
@@ -93,14 +93,15 @@ Blockly.Css.inject = function(hasCss, pathToMedia) {
   text = text.replace(/<<<PATH>>>/g, Blockly.Css.mediaPath_);
   // Dynamically replace colours in the CSS text, in case they have
   // been set at run-time injection.
-  for (var colourProperty in Blockly.Colours) {
-    if (Blockly.Colours.hasOwnProperty(colourProperty)) {
-      // Replace all
-      text = text.replace(
-        new RegExp('\\$colour\\_' + colourProperty, 'g'),
-        Blockly.Colours[colourProperty]
-      );
-    }
+  // Process longer colour properties first to handle common prefixes.
+  var compareByLength = function(a, b) { return b.length - a.length; };
+  var colourProperties = Object.keys(Blockly.Colours).sort(compareByLength);
+  for (var i = 0, colourProperty; colourProperty = colourProperties[i]; i++) {
+    // Replace all
+    text = text.replace(
+      new RegExp('\\$colour\\_' + colourProperty, 'g'),
+      Blockly.Colours[colourProperty]
+    );
   }
 
   // Inject CSS tag at start of head.
@@ -353,6 +354,12 @@ Blockly.Css.CONTENT = [
     'font-size: .8em;',
   '}',
 
+'.valueReportBox img {',
+    'min-width: 50px;',
+    'max-width: 300px;',
+    'max-height: 200px;',
+  '}',
+
   '.blocklyResizeSE {',
     'cursor: se-resize;',
     'fill: #aaa;',
@@ -459,7 +466,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyText {',
-    'fill: #fff;',
+    'fill: $colour_text;',
     'font-family: "Helvetica Neue", Helvetica, sans-serif;',
     'font-size: 12pt;',
     'font-weight: 500;',
@@ -474,7 +481,7 @@ Blockly.Css.CONTENT = [
   '}',
   '.blocklyNonEditableText>text,',
   '.blocklyEditableText>text {',
-    'fill: $colour_text;',
+    'fill: var(--clipcc-field-text, $colour_textFieldText);',
   '}',
 
   '.blocklyEditableText>.blocklyEditableLabel {',
@@ -482,11 +489,11 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyDropdownText {',
-    'fill: #fff !important;',
+    'fill: var(--clipcc-block-text, $colour_text) !important;',
   '}',
 
   '.blocklyBubbleText {',
-    'fill: $colour_text;',
+    'fill: var(--clipcc-field-text, $colour_textFieldText);',
   '}',
   '.blocklyFlyout {',
     'position: absolute;',
@@ -502,7 +509,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyFlyoutButton .blocklyText {',
-    'fill: $colour_text;',
+    'fill: var(--clipcc-field-text, $colour_textFieldText);',
   '}',
 
   '.blocklyFlyoutButtonShadow {',
@@ -720,7 +727,7 @@ Blockly.Css.CONTENT = [
     'box-sizing: border-box;',
     'width: 100%;',
     'text-align: center;',
-    'color: $colour_text;',
+    'color: var(--clipcc-field-text, $colour_textFieldText);',
     'font-weight: 500;',
   '}',
 
@@ -848,8 +855,8 @@ Blockly.Css.CONTENT = [
 
   /* Category tree in Toolbox. */
   '.blocklyToolboxDiv {',
-    'background-color: $colour_toolbox;',
-    'color: $colour_toolboxText;',
+    'background-color: var(--clipcc-ui-white, $colour_toolbox);',
+    'color: var(--clipcc-block-text, $colour_toolboxText);',
     'overflow-x: visible;',
     'overflow-y: auto;',
     'position: absolute;',
@@ -993,7 +1000,7 @@ Blockly.Css.CONTENT = [
   '.scratchColourPickerLabel {',
     'font-family: "Helvetica Neue", Helvetica, sans-serif;',
     'font-size: 0.65rem;',
-    'color: $colour_toolboxText;',
+    'color: var(--clipcc-block-text, $colour_toolboxText);',
     'margin: 8px;',
   '}',
 
@@ -1014,7 +1021,7 @@ Blockly.Css.CONTENT = [
   '.scratchNotePickerKeyLabel {',
     'font-family: "Helvetica Neue", Helvetica, sans-serif;',
     'font-size: 0.75rem;',
-    'fill: $colour_text;',
+    'fill: var(--clipcc-field-text, $colour_textFieldText);',
     'pointer-events: none;',
   '}',
 
@@ -1098,7 +1105,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyDropDownDiv .goog-menuitem {',
-    'color: #fff;',
+    'color: $colour_text;',
     'font: normal 13px "Helvetica Neue", Helvetica, sans-serif;',
     'font-weight: bold;',
     'list-style: none;',
@@ -1172,7 +1179,7 @@ Blockly.Css.CONTENT = [
 
   '.blocklyDropDownDiv .goog-menuitem-highlight,',
   '.blocklyDropDownDiv .goog-menuitem-hover {',
-    'background-color: rgba(0, 0, 0, 0.2);',
+    'background-color: $colour_menuHover;',
   '}',
 
   /* State: selected/checked. */
@@ -1275,8 +1282,8 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.checked > .blocklyFlyoutCheckbox {',
-    'fill: ' + Blockly.Colours.motion.primary + ';',
-    'stroke: ' + Blockly.Colours.motion.tertiary + ';',
+    'fill: var(--clipcc-motion-primary, ' + Blockly.Colours.motion.primary + ');',
+    'stroke: var(--clipcc-motion-tertiary, ' + Blockly.Colours.motion.tertiary + ');',
   '}',
 
   '.blocklyFlyoutCheckboxPath {',
@@ -1288,9 +1295,9 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.scratchCategoryMenu {',
-    'width: 85px;',
-    'background: $colour_toolbox;',
-    'color: $colour_toolboxText;',
+    'width: var(--clipcc-category-width, 85px);',
+    'background: var(--clipcc-ui-white, $colour_toolbox);',
+    'color: var(--clipcc-block-text, $colour_toolboxText);',
     'font-size: .7rem;',
     'user-select: none;',
     '-webkit-user-select: none;',
@@ -1301,8 +1308,8 @@ Blockly.Css.CONTENT = [
   '.scratchCategoryMenuHorizontal {',
     'width: 100%;',
     'height: 50px;',
-    'background: $colour_toolbox;',
-    'color: $colour_toolboxText;',
+    'background: var(--clipcc-ui-white, $colour_toolbox);',
+    'color: var(--clipcc-block-text, $colour_toolboxText);',
     'font-size: .7em;',
     'user-select: none;',
     '-webkit-user-select: none;',
@@ -1345,7 +1352,7 @@ Blockly.Css.CONTENT = [
   '}',
   
   '.scratchCategoryMenuItem.categorySelected > .scratchCategoryItemColorBar {',
-    'width: calc(85px - 0.2rem);',
+    'width: calc(var(--clipcc-category-width, 85px) - 0.2rem);',
     'border-radius: 0.3rem;',
   '}',
 

@@ -1,17 +1,15 @@
-@import "../../css/colors.css";
-
 .menu {
     position: absolute;
-    border: 1px solid $ui-black-transparent;
+    border: 1px solid var(--clipcc-ui-black-transparent);
     border-radius: 0 0 8px 8px;
-    background-color: $motion-primary;
+    background-color: var(--clipcc-motion-primary);
     padding: 0;
     margin: 0;
     min-width: 186px;
     max-width: 260px;
     overflow: visible;
-    color: $ui-white;
-    box-shadow: 0 8px 8px 0 $ui-black-transparent;
+    color: var(--clipcc-ui-white);
+    box-shadow: 0 8px 8px 0 var(--clipcc-ui-black-transparent);
 }
 
 .menu.left {
@@ -33,8 +31,9 @@
 }
 
 .menu-item.active,
-.menu-item:hover {
-    background-color: $ui-black-transparent;
+.menu-item:hover,
+.menu-item.expanded {
+    background-color: var(--clipcc-ui-black-transparent);
 }
 
 .menu-item.hoverable {
@@ -42,5 +41,57 @@
 }
 
 .menu-section {
-    border-top: 1px solid $ui-black-transparent;
+    border-top: 1px solid var(--clipcc-ui-black-transparent);
+}
+
+.submenu {
+    display: none;
+    position: absolute;
+    top: -1px;
+    min-width: 186px;
+    max-width: 260px;
+    height: max-content;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 8px 8px 0 var(--clipcc-ui-black-transparent);
+}
+
+.submenu.right {
+    left: 100%;
+}
+
+.submenu.left {
+    right: 100%;
+}
+
+.submenu > .menu {
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-color: var(--clipcc-ui-black-transparent) var(--clipcc-motion-primary);
+    border-radius: 8px;
+}
+
+.menu-item.expanded > .submenu {
+    display: block;
+}
+
+:not(:has(> .menu-item.expanded)) > .menu-item:hover > .submenu {
+    display: block;
+}
+
+/* Fallback styling for webkit browsers that don't support scrollbar-color */
+
+.submenu > .menu::-webkit-scrollbar {
+    width: 12px;
+}
+
+.submenu > .menu::-webkit-scrollbar-track {
+    background: var(--clipcc-motion-primary);
+}
+
+.submenu > .menu::-webkit-scrollbar-thumb {
+    background-color: var(--clipcc-ui-black-transparent);
+    border-radius: 12px;
+    border: 3px solid var(--clipcc-motion-primary);
 }

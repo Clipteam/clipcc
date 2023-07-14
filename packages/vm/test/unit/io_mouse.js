@@ -21,6 +21,7 @@ test('mouseUp', t => {
     const m = new Mouse(rt);
 
     m.postData({
+        button: 0,
         x: -20,
         y: 10,
         isDown: false,
@@ -40,6 +41,7 @@ test('mouseDown', t => {
     const m = new Mouse(rt);
 
     m.postData({
+        button: 0,
         x: 9.9,
         y: 400.1,
         isDown: true,
@@ -59,6 +61,7 @@ test('at zoomed scale', t => {
     const m = new Mouse(rt);
 
     m.postData({
+        button: 0,
         x: 240,
         y: 540,
         canvasWidth: 960,
@@ -76,6 +79,7 @@ test('mousedown activating click hats', t => {
     const m = new Mouse(rt);
 
     const mouseMoveEvent = {
+        button: 0,
         x: 10,
         y: 100,
         canvasWidth: 480,
@@ -87,10 +91,12 @@ test('mousedown activating click hats', t => {
     };
 
     const mouseDownEvent = Object.assign({}, mouseMoveEvent, {
+        button: 0,
         isDown: true
     });
 
     const mouseUpEvent = Object.assign({}, mouseMoveEvent, {
+        button: 0,
         isDown: false
     });
 

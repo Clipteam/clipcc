@@ -394,6 +394,7 @@ Blockly.Xml.textToDom = function(text) {
       dom.firstChild !== dom.lastChild) {
     // Whatever we got back from the parser is not XML.
     goog.asserts.fail('Blockly.Xml.textToDom did not obtain a valid XML tree.');
+    return null;
   }
   return dom.firstChild;
 };

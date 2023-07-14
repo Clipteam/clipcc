@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import ToggleButtons from '../toggle-buttons/toggle-buttons.jsx';
 import Box from '../box/box.jsx';
 import Label from '../forms/label.jsx';
 import Input from '../forms/input.jsx';
@@ -27,6 +28,16 @@ const messages = defineMessages({
         id: 'gui.SpriteInfo.spritePlaceholder',
         defaultMessage: 'Name',
         description: 'Placeholder text for sprite name'
+    },
+    showSpriteAction: {
+        id: 'gui.SpriteInfo.showSpriteAction',
+        defaultMessage: 'Show sprite',
+        description: 'Tooltip for show sprite button'
+    },
+    hideSpriteAction: {
+        id: 'gui.SpriteInfo.hideSpriteAction',
+        defaultMessage: 'Hide sprite',
+        description: 'Tooltip for hide sprite button'
     }
 });
 
@@ -185,46 +196,23 @@ class SpriteInfo extends React.Component {
                                 /> :
                                 null
                         }
-                        <div className={styles.radioWrapper}>
-                            <div
-                                className={classNames(
-                                    styles.radio,
-                                    styles.radioFirst,
-                                    styles.iconWrapper,
-                                    {
-                                        [styles.isActive]: this.props.visible && !this.props.disabled,
-                                        [styles.isDisabled]: this.props.disabled
-                                    }
-                                )}
-                                tabIndex="0"
-                                onClick={this.props.onClickVisible}
-                                onKeyPress={this.props.onPressVisible}
-                            >
-                                <img
-                                    className={styles.icon}
-                                    src={showIcon}
-                                />
-                            </div>
-                            <div
-                                className={classNames(
-                                    styles.radio,
-                                    styles.radioLast,
-                                    styles.iconWrapper,
-                                    {
-                                        [styles.isActive]: !this.props.visible && !this.props.disabled,
-                                        [styles.isDisabled]: this.props.disabled
-                                    }
-                                )}
-                                tabIndex="0"
-                                onClick={this.props.onClickNotVisible}
-                                onKeyPress={this.props.onPressNotVisible}
-                            >
-                                <img
-                                    className={styles.icon}
-                                    src={hideIcon}
-                                />
-                            </div>
-                        </div>
+                                                <ToggleButtons
+                            buttons={[
+                                {
+                                    handleClick: this.props.onClickVisible,
+                                    icon: showIcon,
+                                    isSelected: this.props.visible && !this.props.disabled,
+                                    title: this.props.intl.formatMessage(messages.showSpriteAction)
+                                },
+                                {
+                                    handleClick: this.props.onClickNotVisible,
+                                    icon: hideIcon,
+                                    isSelected: !this.props.visible && !this.props.disabled,
+                                    title: this.props.intl.formatMessage(messages.hideSpriteAction)
+                                }
+                            ]}
+                            disabled={this.props.disabled}
+                        />
                     </div>
                     <div className={classNames(styles.group, styles.largerInput)}>
                         <Label
@@ -275,8 +263,6 @@ SpriteInfo.propTypes = {
     onChangeY: PropTypes.func,
     onClickNotVisible: PropTypes.func,
     onClickVisible: PropTypes.func,
-    onPressNotVisible: PropTypes.func,
-    onPressVisible: PropTypes.func,
     rotationStyle: PropTypes.string,
     size: PropTypes.oneOfType([
         PropTypes.string,

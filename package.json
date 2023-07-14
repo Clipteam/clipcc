@@ -1,6 +1,7 @@
 {
   "name": "monorepo",
   "description": "ClipCC's Workspace",
+  "version": "3.2",
   "private": true,
   "engines": {
     "node": ">=16"
@@ -16,27 +17,32 @@
     ]
   },
   "scripts": {
-    "start": "yarn gui:start",
+    "start": "yarn gui start",
     "prepare": "husky install",
     "build:dist": "NODE_ENV=production yarn build:full",
-    "build:full": "yarn l10n:build && yarn block:build && yarn vm:build && yarn gui:build",
-    "build": "yarn block:build && yarn gui:build",
-    "test:unit": "yarn workspace scratch-gui test:unit && yarn workspace scratch-vm tap:unit",
-    "translation:build": "yarn gui:translation && yarn vm:translation && yarn block:translation",
+    "build:full": "yarn l10n build && yarn audio build && yarn storage build && yarn render build && yarn block build && yarn vm build && yarn paint build && node packages/gui/scripts/prepublish.mjs && yarn gui build",
+    "build": "yarn block build && yarn gui build",
+    "test": "yarn gui test:unit && yarn vm tap",
+    "performance": "yarn vm performance",
+    "translation:build": "yarn gui i18n:src && yarn vm i18n:src && yarn block translate",
     "translation:push": "tx push",
-    "translation:pull": "yarn workspace scratch-blocks translate:sync:translations && yarn workspace scratch-l10n pull:editor",
-    "block:build": "yarn workspace scratch-blocks build",
-    "block:translation": "yarn workspace scratch-blocks translate",
-    "l10n:build": "yarn workspace scratch-l10n build",
-    "gui:start": "yarn workspace scratch-gui start",
-    "gui:build": "yarn workspace scratch-gui build",
-    "gui:translation": "yarn workspace scratch-gui i18n:src",
-    "vm:build": "yarn workspace scratch-vm build",
-    "vm:docs": "yarn workspace scratch-vm docs",
-    "vm:translation": "yarn workspace scratch-vm i18n:src",
-    "vm:start": "yarn workspace scratch-vm start"
+    "translation:pull": "yarn block translate:sync:translations && yarn l10n pull:editor",
+    "bump": "yarn changeset version",
+    "release-all": "yarn changeset publish",
+    "patch:convert": "node ./scripts/convert-patch.js",
+    "gui": "yarn workspace clipcc-gui",
+    "vm": "yarn workspace clipcc-vm",
+    "block": "yarn workspace clipcc-block",
+    "l10n": "yarn workspace clipcc-l10n",
+    "render": "yarn workspace clipcc-render",
+    "storage": "yarn workspace clipcc-storage",
+    "paint": "yarn workspace clipcc-paint",
+    "parser": "yarn workspace clipcc-parser",
+    "audio": "yarn workspace clipcc-audio"
   },
   "devDependencies": {
+    "@changesets/changelog-git": "^0.1.14",
+    "@changesets/cli": "^2.26.1",
     "@commitlint/cli": "^17.4.2",
     "commitlint-config-gitmoji": "^2.2.10",
     "husky": "^8.0.3"

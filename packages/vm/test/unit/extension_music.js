@@ -3,6 +3,7 @@ const Music = require('../../src/extensions/scratch3_music/index.js');
 
 const fakeRuntime = {
     getTargetForStage: () => ({tempo: 60}),
+    limitOptions: {},
     on: () => {} // Stub out listener methods used in constructor.
 };
 

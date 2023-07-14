@@ -1,7 +1,6 @@
 import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
-import VM from 'scratch-vm';
 import {connect} from 'react-redux';
 
 import SettingsModalComponent from '../components/settings-modal/settings-modal.jsx';
@@ -20,7 +19,14 @@ class SettingsModal extends React.Component {
             'handleClose',
             'handleChangeAutoSave',
             'handleChangeAutoSaveInterval',
-            'handleChangeFramerate'
+            'handleChangeFramerate',
+            'handleChangeInfiniteCloning',
+            'handleChangeEdgelessStage',
+            'handleChangeUnlimitedListLength',
+            'handleChangeUnlimitedPenSize',
+            'handleChangeUnlimitedSoundStuffs',
+            'handleChangeAccurateCoordinates',
+            'handleChangeHideNonVanillaBlocks'
         ]);
     }
     handleClose () {
@@ -39,38 +45,84 @@ class SettingsModal extends React.Component {
         value = Math.round(value);
         if (value >= 10 && value <= 240) {
             this.props.updateSettings({framerate: value});
-            this.props.vm.setFramerate(value);
         }
+    }
+    handleChangeInfiniteCloning (value) {
+        this.props.updateSettings({infiniteCloning: value});
+    }
+    handleChangeEdgelessStage (value) {
+        this.props.updateSettings({edgelessStage: value});
+    }
+    handleChangeUnlimitedListLength (value) {
+        this.props.updateSettings({unlimitedListLength: value});
+    }
+    handleChangeUnlimitedPenSize (value) {
+        this.props.updateSettings({unlimitedPenSize: value});
+    }
+    handleChangeUnlimitedSoundStuffs (value) {
+        this.props.updateSettings({unlimitedSoundStuffs: value});
+    }
+    handleChangeAccurateCoordinates (value) {
+        this.props.updateSettings({accurateCoordinates: value});
+    }
+    handleChangeHideNonVanillaBlocks (value) {
+        this.props.updateSettings({hideNonVanillaBlocks: value});
     }
     render () {
         return (
             <SettingsModalComponent
+                hideNonVanillaBlocks={this.props.hideNonVanillaBlocks}
                 autoSave={this.props.autoSave}
                 autoSaveInterval={this.props.autoSaveInterval}
                 framerate={this.props.framerate}
+                infiniteCloning={this.props.infiniteCloning}
+                edgelessStage={this.props.edgelessStage}
+                unlimitedListLength={this.props.unlimitedListLength}
+                unlimitedPenSize={this.props.unlimitedPenSize}
+                unlimitedSoundStuffs={this.props.unlimitedSoundStuffs}
+                accurateCoordinates={this.props.accurateCoordinates}
                 onClose={this.handleClose}
                 onChangeAutoSave={this.handleChangeAutoSave}
                 onChangeAutoSaveInterval={this.handleChangeAutoSaveInterval}
                 onChangeFramerate={this.handleChangeFramerate}
+                onChangeInfiniteCloning={this.handleChangeInfiniteCloning}
+                onChangeEdgelessStage={this.handleChangeEdgelessStage}
+                onChangeUnlimitedListLength={this.handleChangeUnlimitedListLength}
+                onChangeUnlimitedPenSize={this.handleChangeUnlimitedPenSize}
+                onChangeUnlimitedSoundStuffs={this.handleChangeUnlimitedSoundStuffs}
+                onChangeAccurateCoordinates={this.handleChangeAccurateCoordinates}
+                onChangeHideNonVanillaBlocks={this.handleChangeHideNonVanillaBlocks}
             />
         );
     }
 }
 
 SettingsModal.propTypes = {
+    hideNonVanillaBlocks: PropTypes.bool.isRequired,
     autoSave: PropTypes.bool.isRequired,
+    infiniteCloning: PropTypes.bool.isRequired,
+    edgelessStage: PropTypes.bool.isRequired,
+    unlimitedListLength: PropTypes.bool.isRequired,
+    unlimitedPenSize: PropTypes.bool.isRequired,
+    unlimitedSoundStuffs: PropTypes.bool.isRequired,
+    accurateCoordinates: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
     onClose: PropTypes.func.isRequired,
-    updateSettings: PropTypes.func.isRequired,
-    vm: PropTypes.instanceOf(VM).isRequired
+    updateSettings: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
+    hideNonVanillaBlocks: state.scratchGui.settings.hideNonVanillaBlocks,
     autoSave: state.scratchGui.settings.autoSave,
+    infiniteCloning: state.scratchGui.settings.infiniteCloning,
+    edgelessStage: state.scratchGui.settings.edgelessStage,
+    unlimitedListLength: state.scratchGui.settings.unlimitedListLength,
+    unlimitedPenSize: state.scratchGui.settings.unlimitedPenSize,
+    unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,
+    accurateCoordinates: state.scratchGui.settings.accurateCoordinates,
     autoSaveInterval: state.scratchGui.settings.autoSaveInterval,
-    framerate: state.scratchGui.settings.framerate,
-    vm: state.scratchGui.vm
+    framerate: state.scratchGui.settings.framerate
 });
 
 const mapDispatchToProps = dispatch => ({

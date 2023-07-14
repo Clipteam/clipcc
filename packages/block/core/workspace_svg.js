@@ -49,6 +49,7 @@ goog.require('Blockly.WorkspaceCommentSvg');
 goog.require('Blockly.WorkspaceCommentSvg.render');
 goog.require('Blockly.Xml');
 goog.require('Blockly.ZoomControls');
+goog.require('Blockly.VirtualizedManager');
 
 goog.require('goog.array');
 goog.require('goog.dom');
@@ -437,6 +438,9 @@ Blockly.WorkspaceSvg.prototype.createDom = function(opt_backgroundClass) {
     }
   }
 
+  // Use virtualizedManager to observe blocks.
+  this.virtualizedManager = new Blockly.VirtualizedManager(this);
+
   // Determine if there needs to be a category tree, or a simple list of
   // blocks.  This cannot be changed later, since the UI is very different.
   if (this.options.hasCategories) {
@@ -515,6 +519,9 @@ Blockly.WorkspaceSvg.prototype.dispose = function() {
   if (this.resizeHandlerWrapper_) {
     Blockly.unbindEvent_(this.resizeHandlerWrapper_);
     this.resizeHandlerWrapper_ = null;
+  }
+  if (this.virtualizedManager) {
+    this.virtualizedManager.dispose();
   }
 };
 
@@ -666,6 +673,7 @@ Blockly.WorkspaceSvg.prototype.resize = function() {
     this.scrollbar.resize();
   }
   this.updateScreenCalculations_();
+  this.virtualizedManager.check();
 };
 
 /**
@@ -733,6 +741,7 @@ Blockly.WorkspaceSvg.prototype.translate = function(x, y) {
   if (this.blockDragSurface_) {
     this.blockDragSurface_.translateAndScaleGroup(x, y, this.scale);
   }
+  this.virtualizedManager.check();
 };
 
 /**
@@ -891,7 +900,14 @@ Blockly.WorkspaceSvg.prototype.reportValue = function(id, value) {
   var contentDiv = Blockly.DropDownDiv.getContentDiv();
   var valueReportBox = goog.dom.createElement('div');
   valueReportBox.setAttribute('class', 'valueReportBox');
-  valueReportBox.innerHTML = Blockly.scratchBlocksUtils.encodeEntities(value);
+  if (value.startsWith('data:image/')) {
+    var img = goog.dom.createElement('img');
+    img.src = value;
+    valueReportBox.appendChild(img);
+  } else {
+    var encodedStr = Blockly.scratchBlocksUtils.encodeEntities(value);
+    valueReportBox.innerHTML = encodedStr;
+  }
   contentDiv.appendChild(valueReportBox);
   Blockly.DropDownDiv.setColour(
       Blockly.Colours.valueReportBackground,
@@ -1714,6 +1730,7 @@ Blockly.WorkspaceSvg.prototype.setScale = function(newScale) {
     // No toolbox, resize flyout.
     this.flyout_.reflow();
   }
+  this.virtualizedManager.check();
 };
 
 /**

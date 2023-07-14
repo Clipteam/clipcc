@@ -26,6 +26,7 @@ const Mouse = require('../io/mouse');
 const MouseWheel = require('../io/mouseWheel');
 const UserData = require('../io/userData');
 const Video = require('../io/video');
+const Joystick = require('../io/joystick');
 
 const StringUtil = require('../util/string-util');
 const uid = require('../util/uid');
@@ -304,6 +305,19 @@ class Runtime extends EventEmitter {
         this.compatibilityMode = false;
 
         /**
+         * The limit options.
+         * @type {object}
+         */
+        this.limitOptions = {
+            infiniteCloning: false,
+            edgelessStage: false,
+            unlimitedListLength: false,
+            unlimitedPenSize: false,
+            accurateCoordinates: false,
+            unlimitedSoundStuffs: false
+        };
+
+        /**
          * A reference to the current runtime stepping interval, set
          * by a `setInterval`.
          * @type {!number}
@@ -347,6 +361,7 @@ class Runtime extends EventEmitter {
             cloud: new Cloud(this),
             keyboard: new Keyboard(this),
             mouse: new Mouse(this),
+            joystick: new Joystick(this),
             mouseWheel: new MouseWheel(this),
             userData: new UserData(),
             video: new Video(this)
@@ -730,8 +745,8 @@ class Runtime extends EventEmitter {
      * How many clones can be created at a time.
      * @const {number}
      */
-    static get MAX_CLONES () {
-        return 300;
+    get MAX_CLONES () {
+        return this.limitOptions.infiniteCloning ? Infinity : 300;
     }
 
     // -----------------------------------------------------------------------------
@@ -1613,6 +1628,8 @@ class Runtime extends EventEmitter {
      */
     attachRenderer (renderer) {
         this.renderer = renderer;
+        this.renderer.setEdgelessStage(this.limitOptions.edgelessStage);
+        this.renderer.setAccurateCoordinates(this.limitOptions.accurateCoordinates);
         this.renderer.setLayerGroupOrdering(StageLayering.LAYER_GROUPS);
     }
 
@@ -1902,6 +1919,12 @@ class Runtime extends EventEmitter {
         this._monitorState = OrderedMap({});
         this.emit(Runtime.RUNTIME_DISPOSED);
         this.ioDevices.clock.resetProjectTimer();
+
+        if (this.renderer && '_allSkins' in this.renderer) {
+            this.renderer._allSkins.forEach(skin => {
+                this.renderer.destroySkin(skin._id);
+            });
+        }
         // @todo clear out extensions? turboMode? etc.
 
         // *********** Cloud *******************
@@ -2472,7 +2495,7 @@ class Runtime extends EventEmitter {
      * @return {boolean} True until the number of clones hits Runtime.MAX_CLONES.
      */
     clonesAvailable () {
-        return this._cloneCounter < Runtime.MAX_CLONES;
+        return this._cloneCounter < this.MAX_CLONES;
     }
 
     /**

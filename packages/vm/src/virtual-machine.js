@@ -1,6 +1,6 @@
 let _TextEncoder;
 if (typeof TextEncoder === 'undefined') {
-    _TextEncoder = require('text-encoding').TextEncoder;
+    _TextEncoder = require('fastestsmallesttextencoderdecoder').TextEncoder;
 } else {
     /* global TextEncoder */
     _TextEncoder = TextEncoder;
@@ -222,6 +222,20 @@ class VirtualMachine extends EventEmitter {
     }
 
     /**
+     * Set the limit options.
+     * @param {object} options Limit options
+     */
+    setLimitOptions (options) {
+        this.runtime.limitOptions = Object.assign({}, this.runtime.limitOptions, options);
+        if (options.hasOwnProperty('edgelessStage') && this.runtime.renderer) {
+            this.runtime.renderer.setEdgelessStage(options.edgelessStage);
+        }
+        if (options.hasOwnProperty('accurateCoordinates') && this.runtime.renderer) {
+            this.runtime.renderer.setAccurateCoordinates(options.accurateCoordinates);
+        }
+    }
+
+    /**
      * Stop all threads and running activities.
      */
     stopAll () {
@@ -326,7 +340,7 @@ class VirtualMachine extends EventEmitter {
         }
 
         const validationPromise = new Promise((resolve, reject) => {
-            const validate = require('scratch-parser');
+            const validate = require('clipcc-parser');
             // The second argument of false below indicates to the validator that the
             // input should be parsed/validated as an entire project (and not a single sprite)
             validate(input, false, (error, res) => {
@@ -596,7 +610,7 @@ class VirtualMachine extends EventEmitter {
         }
 
         const validationPromise = new Promise((resolve, reject) => {
-            const validate = require('scratch-parser');
+            const validate = require('clipcc-parser');
             // The second argument of true below indicates to the parser/validator
             // that the given input should be treated as a single sprite and not
             // an entire project

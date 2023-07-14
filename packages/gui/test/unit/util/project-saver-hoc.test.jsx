@@ -1,10 +1,10 @@
-import 'web-audio-test-api';
+import 'lumen5-web-audio-test-api';
 
 import React from 'react';
 import configureStore from 'redux-mock-store';
 import {mount} from 'enzyme';
 import {LoadingState} from '../../../src/reducers/project-state';
-import VM from 'scratch-vm';
+import VM from 'clipcc-vm';
 
 import projectSaverHOC from '../../../src/lib/project-saver-hoc.jsx';
 

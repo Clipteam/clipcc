@@ -1,5 +1,5 @@
 /* global WebAudioTestAPI */
-import 'web-audio-test-api';
+import 'lumen5-web-audio-test-api';
 WebAudioTestAPI.setState({
     'OfflineAudioContext#startRendering': 'promise'
 });

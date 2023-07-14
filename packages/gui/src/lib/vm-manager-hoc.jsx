@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 
-import VM from 'scratch-vm';
-import AudioEngine from 'scratch-audio';
+import VM from 'clipcc-vm';
+import AudioEngine from 'clipcc-audio';
 
 import {setProjectUnchanged} from '../reducers/project-changed';
 import {
@@ -34,6 +34,16 @@ const vmManagerHOC = function (WrappedComponent) {
                 this.props.vm.setCompatibilityMode(true);
                 this.props.vm.initialized = true;
                 this.props.vm.setLocale(this.props.locale, this.props.messages);
+                // Apply settings
+                this.props.vm.setFramerate(this.props.framerate);
+                this.props.vm.setLimitOptions({
+                    infiniteCloning: this.props.infiniteCloning,
+                    edgelessStage: this.props.edgelessStage,
+                    unlimitedListLength: this.props.unlimitedListLength,
+                    unlimitedPenSize: this.props.unlimitedPenSize,
+                    unlimitedSoundStuffs: this.props.unlimitedSoundStuffs,
+                    accurateCoordinates: this.props.accurateCoordinates
+                });
             }
             if (!this.props.isPlayerOnly && !this.props.isStarted) {
                 this.props.vm.start();
@@ -49,6 +59,40 @@ const vmManagerHOC = function (WrappedComponent) {
             // Start the VM if entering editor mode with an unstarted vm
             if (!this.props.isPlayerOnly && !this.props.isStarted) {
                 this.props.vm.start();
+            }
+            // Sync settings
+            if (this.props.framerate !== prevProps.framerate) {
+                this.props.vm.setFramerate(this.props.framerate);
+            }
+            if (this.props.infiniteCloning !== prevProps.infiniteCloning) {
+                this.props.vm.setLimitOptions({
+                    infiniteCloning: this.props.infiniteCloning
+                });
+            }
+            if (this.props.edgelessStage !== prevProps.edgelessStage) {
+                this.props.vm.setLimitOptions({
+                    edgelessStage: this.props.edgelessStage
+                });
+            }
+            if (this.props.unlimitedListLength !== prevProps.unlimitedListLength) {
+                this.props.vm.setLimitOptions({
+                    unlimitedListLength: this.props.unlimitedListLength
+                });
+            }
+            if (this.props.unlimitedPenSize !== prevProps.unlimitedPenSize) {
+                this.props.vm.setLimitOptions({
+                    unlimitedPenSize: this.props.unlimitedPenSize
+                });
+            }
+            if (this.props.unlimitedSoundStuffs !== prevProps.unlimitedSoundStuffs) {
+                this.props.vm.setLimitOptions({
+                    unlimitedSoundStuffs: this.props.unlimitedSoundStuffs
+                });
+            }
+            if (this.props.accurateCoordinates !== prevProps.accurateCoordinates) {
+                this.props.vm.setLimitOptions({
+                    accurateCoordinates: this.props.accurateCoordinates
+                });
             }
         }
         loadProject () {
@@ -117,6 +161,13 @@ const vmManagerHOC = function (WrappedComponent) {
         projectData: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
         projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         username: PropTypes.string,
+        framerate: PropTypes.number.isRequired,
+        infiniteCloning: PropTypes.bool.isRequired,
+        edgelessStage: PropTypes.bool.isRequired,
+        unlimitedListLength: PropTypes.bool.isRequired,
+        unlimitedPenSize: PropTypes.bool.isRequired,
+        unlimitedSoundStuffs: PropTypes.bool.isRequired,
+        accurateCoordinates: PropTypes.bool.isRequired,
         vm: PropTypes.instanceOf(VM).isRequired
     };
 
@@ -131,7 +182,14 @@ const vmManagerHOC = function (WrappedComponent) {
             projectId: state.scratchGui.projectState.projectId,
             loadingState: loadingState,
             isPlayerOnly: state.scratchGui.mode.isPlayerOnly,
-            isStarted: state.scratchGui.vmStatus.started
+            isStarted: state.scratchGui.vmStatus.started,
+            framerate: state.scratchGui.settings.framerate,
+            infiniteCloning: state.scratchGui.settings.infiniteCloning,
+            edgelessStage: state.scratchGui.settings.edgelessStage,
+            unlimitedListLength: state.scratchGui.settings.unlimitedListLength,
+            unlimitedPenSize: state.scratchGui.settings.unlimitedPenSize,
+            unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,
+            accurateCoordinates: state.scratchGui.settings.accurateCoordinates
         };
     };
 

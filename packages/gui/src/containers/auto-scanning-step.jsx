@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import bindAll from 'lodash.bindall';
 import ScanningStepComponent, {PHASES} from '../components/connection-modal/auto-scanning-step.jsx';
-import VM from 'scratch-vm';
+import VM from 'clipcc-vm';
 
 class AutoScanningStep extends React.Component {
     constructor (props) {
@@ -72,6 +72,7 @@ class AutoScanningStep extends React.Component {
                 title={this.props.extensionId}
                 onRefresh={this.handleRefresh}
                 onStartScan={this.handleStartScan}
+                onUpdatePeripheral={this.props.onUpdatePeripheral}
             />
         );
     }
@@ -81,6 +82,7 @@ AutoScanningStep.propTypes = {
     connectionTipIconURL: PropTypes.string,
     extensionId: PropTypes.string.isRequired,
     onConnecting: PropTypes.func.isRequired,
+    onUpdatePeripheral: PropTypes.func,
     vm: PropTypes.instanceOf(VM).isRequired
 };
 
