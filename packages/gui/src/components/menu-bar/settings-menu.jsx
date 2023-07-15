@@ -14,6 +14,7 @@ import styles from './settings-menu.css';
 
 import dropdownCaret from './dropdown-caret.svg';
 import settingsIcon from './icon--settings.svg';
+import moreIcon from './icon--more.svg';
 
 const SettingsMenu = ({
     canChangeLanguage,
@@ -52,11 +53,17 @@ const SettingsMenu = ({
                 {canChangeTheme && <ThemeMenu onRequestCloseSettings={onRequestClose} />}
                 <FPSMenu onRequestCloseSettings={onRequestClose} />
                 <MenuItem onClick={onClickMore}>
-                    <FormattedMessage
-                        defaultMessage="More"
-                        description="Text for more settings"
-                        id="gui.menuBar.settingsMenu.more"
-                    />
+                    <div className={styles.option}>
+                        <img
+                            src={moreIcon}
+                            style={{width: 24}}
+                        />
+                        <FormattedMessage
+                            defaultMessage="More"
+                            description="Text for more settings"
+                            id="gui.menuBar.settingsMenu.more"
+                        />
+                    </div>
                 </MenuItem>
             </MenuSection>
         </MenuBarMenu>
