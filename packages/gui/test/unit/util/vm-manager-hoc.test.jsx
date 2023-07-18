@@ -8,7 +8,7 @@ import {LoadingState} from '../../../src/reducers/project-state';
 
 import vmManagerHOC from '../../../src/lib/vm-manager-hoc.jsx';
 
-WebAudioTestAPI.setState({
+-WebAudioTestAPI.setState({
     'AudioContext#resume': 'enabled'
 });
 

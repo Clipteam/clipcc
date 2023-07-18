@@ -104,6 +104,10 @@
     vertical-align: middle;
 }
 
+[theme='dark'] .button-group-button-icon {
+    filter: brightness(0) invert(0.8);
+}
+
 .mod-mode-tools {
     margin-left: calc(2 * var(--clipcc-grid-unit));
 }

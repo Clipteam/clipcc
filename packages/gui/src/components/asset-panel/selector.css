@@ -28,7 +28,7 @@
     bottom: 0;
     left: 0;
     right:0;
-    background: linear-gradient(rgba(232,237,241, 0),rgba(232,237,241, 1));
+    background: linear-gradient(rgba(232,237,241, 0), var(--ui-white));
     height: 100px;
     width: 100%;
     pointer-events: none;
@@ -75,6 +75,6 @@
 
 
 .list-item.placeholder {
-    background: white;
+    background: var(--ui-white);
     filter: opacity(15%) brightness(0%);
 }

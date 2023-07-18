@@ -18,11 +18,12 @@
     white-space: nowrap;
     cursor: pointer;
     transition: 0.1s ease;
+    color: var(--clipcc-text-primary);
 }
 
 .menu-item:hover {
     background: var(--clipcc-motion-primary);
-    color: white;
+    color: var(--clipcc-on-motion-primary);
 }
 
 .menu-item-bordered {

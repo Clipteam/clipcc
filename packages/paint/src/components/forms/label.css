@@ -19,6 +19,7 @@ See https://github.com/LLK/scratch-paint/issues/13 */
 }
 
 .input-label {
+    color: var(--clipcc-text-primary);
     font-weight: bold;
 }
 

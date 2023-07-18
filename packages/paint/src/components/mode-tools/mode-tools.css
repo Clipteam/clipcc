@@ -10,6 +10,10 @@
     height: 2rem;
 }
 
+[theme='dark'] .mode-tools-icon {
+    filter: brightness(0) invert(0.8);
+}
+
 [dir="ltr"] .mod-dashed-border {
     border-right: 1px dashed var(--clipcc-ui-pane-border);
     padding-right: calc(3 * var(--clipcc-grid-unit));

@@ -31,5 +31,6 @@
 }
 
 .input-label {
+    color: var(--clipcc-text-primary);
     font-weight: bold;
 }

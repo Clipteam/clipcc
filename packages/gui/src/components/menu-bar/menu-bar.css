@@ -23,8 +23,8 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: var(--clipcc-menu-bar-standard-font-size);
     font-weight: bold;
-    background-color: var(--clipcc-motion-primary);
-    color: var(--clipcc-ui-white);
+    background-color: var(--clipcc-menu-bar-background);
+    color: var(--clipcc-on-motion-primary);
 }
 
 .main-menu {
@@ -49,7 +49,7 @@
     display: flex;
     padding: 0 0.25rem;
     text-decoration: none;
-    color: var(--clipcc-ui-white);
+    color: var(--clipcc-on-motion-primary);
     user-select: none;
     align-self: center;
     position: relative;
