@@ -448,6 +448,8 @@ const mapStateToProps = state => ({
     isFullScreen: state.scratchGui.mode.isFullScreen,
     isStarted: state.scratchGui.vmStatus.started,
     micIndicator: state.scratchGui.micIndicator,
+    stageHeight: state.scratchGui.settings.stageHeight,
+    stageWidth: state.scratchGui.settings.stageWidth,
     // Do not use editor drag style in fullscreen or player mode.
     useEditorDragStyle: !(state.scratchGui.mode.isFullScreen || state.scratchGui.mode.isPlayerOnly)
 });

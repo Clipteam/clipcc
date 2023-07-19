@@ -12,7 +12,9 @@ const defaultState = {
     autoSaveInterval: 120,
     compression: 6,
     framerate: 30,
-    theme: 'system'
+    theme: 'system',
+    stageWidth: 480,
+    stageHeight: 360,
 };
 
 const initialState = JSON.parse(localStorage.getItem('settings')) || {};

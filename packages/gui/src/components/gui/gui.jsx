@@ -121,6 +121,8 @@ const GUIComponent = props => {
         telemetryModalVisible,
         theme,
         vm,
+        stageWidth,
+        stageHeight,
         ...componentProps
     } = omit(props, 'dispatch');
     if (children) {
@@ -151,6 +153,8 @@ const GUIComponent = props => {
                 loading={loading}
                 stageSize={STAGE_SIZE_MODES.large}
                 vm={vm}
+                stageWidth={stageWidth}
+                stageHeight={stageHeight}
             >
                 {alertsVisible ? (
                     <Alerts className={styles.alertsContainer} />
@@ -348,6 +352,8 @@ const GUIComponent = props => {
                                 isRtl={isRtl}
                                 stageSize={stageSize}
                                 vm={vm}
+                                stageWidth={stageWidth}
+                                stageHeight={stageHeight}
                             />
                             <Box className={styles.targetWrapper}>
                                 <TargetPane
@@ -454,7 +460,9 @@ GUIComponent.defaultProps = {
 const mapStateToProps = state => ({
     // This is the button's mode, as opposed to the actual current state
     theme: state.scratchGui.theme.theme,
-    stageSizeMode: state.scratchGui.stageSize.stageSize
+    stageSizeMode: state.scratchGui.stageSize.stageSize,
+    stageWidth: state.scratchGui.settings.stageWidth,
+    stageHeight: state.scratchGui.settings.stageHeight,
 });
 
 export default injectIntl(connect(

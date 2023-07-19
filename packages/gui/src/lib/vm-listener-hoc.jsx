@@ -12,6 +12,7 @@ import {setProjectChanged, setProjectUnchanged} from '../reducers/project-change
 import {setRunningState, setTurboState, setStartedState} from '../reducers/vm-status';
 import {showExtensionAlert} from '../reducers/alerts';
 import {updateMicIndicator} from '../reducers/mic-indicator';
+import {updateSettings} from '../reducers/settings';
 
 /*
  * Higher Order Component to manage events emitted by the VM
@@ -46,6 +47,7 @@ const vmListenerHOC = function (WrappedComponent) {
             this.props.vm.on('PROJECT_START', this.props.onGreenFlag);
             this.props.vm.on('PERIPHERAL_CONNECTION_LOST_ERROR', this.props.onShowExtensionAlert);
             this.props.vm.on('MIC_LISTENING', this.props.onMicListeningUpdate);
+            this.props.vm.on('STAGE_SIZE_UPDATE', this.props.onStageSizeUpdate);
 
         }
         componentDidMount () {
@@ -79,6 +81,7 @@ const vmListenerHOC = function (WrappedComponent) {
             this.props.vm.off('PROJECT_START', this.props.onGreenFlag);
             this.props.vm.off('PERIPHERAL_CONNECTION_LOST_ERROR', this.props.onShowExtensionAlert);
             this.props.vm.off('MIC_LISTENING', this.props.onMicListeningUpdate);
+            this.props.vm.off('STAGE_SIZE_UPDATE', this.props.onStageSizeUpdate);
             if (this.props.attachKeyboardEvents) {
                 document.removeEventListener('keydown', this.handleKeyDown);
                 document.removeEventListener('keyup', this.handleKeyUp);
@@ -169,6 +172,7 @@ const vmListenerHOC = function (WrappedComponent) {
         onTargetsUpdate: PropTypes.func.isRequired,
         onTurboModeOff: PropTypes.func.isRequired,
         onTurboModeOn: PropTypes.func.isRequired,
+        onStageSizeUpdate: PropTypes.func.isRequired,
         projectChanged: PropTypes.bool,
         shouldUpdateTargets: PropTypes.bool,
         shouldUpdateProjectChanged: PropTypes.bool,
@@ -213,6 +217,13 @@ const vmListenerHOC = function (WrappedComponent) {
         },
         onMicListeningUpdate: listening => {
             dispatch(updateMicIndicator(listening));
+        },
+        onStageSizeUpdate: (width, height) => {
+            dispatch(updateSettings({
+                stageWidth: width,
+                stageHeight: height
+            }));
+
         }
     });
     return connect(

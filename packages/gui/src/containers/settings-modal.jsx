@@ -27,7 +27,9 @@ class SettingsModal extends React.Component {
             'handleChangeUnlimitedPenSize',
             'handleChangeUnlimitedSoundStuffs',
             'handleChangeAccurateCoordinates',
-            'handleChangeHideNonVanillaBlocks'
+            'handleChangeHideNonVanillaBlocks',
+            'handleChangeStageWidth',
+            'handleChangeStageHeight',
         ]);
     }
     handleClose () {
@@ -72,6 +74,12 @@ class SettingsModal extends React.Component {
     handleChangeHideNonVanillaBlocks (value) {
         this.props.updateSettings({hideNonVanillaBlocks: value});
     }
+    handleChangeStageWidth (width) {
+        this.props.updateSettings({stageWidth: width});
+    }
+    handleChangeStageHeight (height) {
+        this.props.updateSettings({stageHeight: height});
+    }
     render () {
         return (
             <SettingsModalComponent
@@ -86,6 +94,8 @@ class SettingsModal extends React.Component {
                 unlimitedPenSize={this.props.unlimitedPenSize}
                 unlimitedSoundStuffs={this.props.unlimitedSoundStuffs}
                 accurateCoordinates={this.props.accurateCoordinates}
+                stageHeight={this.props.stageHeight}
+                stageWidth={this.props.stageWidth}
                 onClose={this.handleClose}
                 onChangeAutoSave={this.handleChangeAutoSave}
                 onChangeAutoSaveInterval={this.handleChangeAutoSaveInterval}
@@ -98,6 +108,8 @@ class SettingsModal extends React.Component {
                 onChangeUnlimitedSoundStuffs={this.handleChangeUnlimitedSoundStuffs}
                 onChangeAccurateCoordinates={this.handleChangeAccurateCoordinates}
                 onChangeHideNonVanillaBlocks={this.handleChangeHideNonVanillaBlocks}
+                onChangeStageWidth={this.handleChangeStageWidth}
+                onChangeStageHeight={this.handleChangeStageHeight}
             />
         );
     }
@@ -116,7 +128,9 @@ SettingsModal.propTypes = {
     framerate: PropTypes.number.isRequired,
     theme: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
-    updateSettings: PropTypes.func.isRequired
+    updateSettings: PropTypes.func.isRequired,
+    stageHeight: PropTypes.number.isRequired,
+    stageWidth: PropTypes.number.isRequired,
 };
 
 const mapStateToProps = state => ({
@@ -130,7 +144,9 @@ const mapStateToProps = state => ({
     accurateCoordinates: state.scratchGui.settings.accurateCoordinates,
     autoSaveInterval: state.scratchGui.settings.autoSaveInterval,
     framerate: state.scratchGui.settings.framerate,
-    theme: state.scratchGui.settings.theme
+    theme: state.scratchGui.settings.theme,
+    stageHeight: state.scratchGui.settings.stageHeight,
+    stageWidth: state.scratchGui.settings.stageWidth,
 });
 
 const mapDispatchToProps = dispatch => ({
