@@ -40,4 +40,4 @@ test('Costumed stage has correct size', t => {
     t.equals(motion.getX({}, util), 640);
     t.equals(motion.getY({}, util), 640);
     t.end();
-})
+});
