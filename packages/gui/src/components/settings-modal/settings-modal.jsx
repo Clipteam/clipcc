@@ -51,12 +51,7 @@ const messages = defineMessages({
         defaultMessage: 'High Contrast',
         description: 'Label of high contrast',
         id: 'gui.settingsModal.theme.highContrast'
-    },
-    resolution: {
-        defaultMessage: 'Stage size',
-        description: 'Label of Stage size',
-        id: 'gui.settingsModal.resolution.label'
-    },
+    }
 });
 
 const BufferedInput = BufferedInputHOC(Input);
@@ -304,9 +299,18 @@ class SettingsModal extends React.Component {
                             />
                         </div>
                         <div className={styles.item}>
-                            <p className={styles.label}>
-                                {this.props.intl.formatMessage(messages.resolution)}
-                            </p>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Stage size"
+                                    description="Label of stage size"
+                                    id="gui.settingsModal.resolution"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Custom stage size."
+                                    description="Description of stage size"
+                                    id="gui.settingsModal.resolutionDescription"
+                                />
+                            </div>
                             <div className={styles.group}>
                                 <BufferedInput
                                     small
