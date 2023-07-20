@@ -13,3 +13,7 @@ body,
 
 /* @todo: move globally? Safe / side FX, for blocks particularly? */
 * { box-sizing: border-box; }
+
+[theme='dark'] body {
+    background-color: var(--clipcc-ui-white);
+}

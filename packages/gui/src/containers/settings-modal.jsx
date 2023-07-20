@@ -20,6 +20,7 @@ class SettingsModal extends React.Component {
             'handleChangeAutoSave',
             'handleChangeAutoSaveInterval',
             'handleChangeFramerate',
+            'handleChangeTheme',
             'handleChangeInfiniteCloning',
             'handleChangeEdgelessStage',
             'handleChangeUnlimitedListLength',
@@ -46,6 +47,9 @@ class SettingsModal extends React.Component {
         if (value >= 10 && value <= 240) {
             this.props.updateSettings({framerate: value});
         }
+    }
+    handleChangeTheme (value) {
+        this.props.updateSettings({theme: value});
     }
     handleChangeInfiniteCloning (value) {
         this.props.updateSettings({infiniteCloning: value});
@@ -75,6 +79,7 @@ class SettingsModal extends React.Component {
                 autoSave={this.props.autoSave}
                 autoSaveInterval={this.props.autoSaveInterval}
                 framerate={this.props.framerate}
+                theme={this.props.theme}
                 infiniteCloning={this.props.infiniteCloning}
                 edgelessStage={this.props.edgelessStage}
                 unlimitedListLength={this.props.unlimitedListLength}
@@ -85,6 +90,7 @@ class SettingsModal extends React.Component {
                 onChangeAutoSave={this.handleChangeAutoSave}
                 onChangeAutoSaveInterval={this.handleChangeAutoSaveInterval}
                 onChangeFramerate={this.handleChangeFramerate}
+                onChangeTheme={this.handleChangeTheme}
                 onChangeInfiniteCloning={this.handleChangeInfiniteCloning}
                 onChangeEdgelessStage={this.handleChangeEdgelessStage}
                 onChangeUnlimitedListLength={this.handleChangeUnlimitedListLength}
@@ -108,6 +114,7 @@ SettingsModal.propTypes = {
     accurateCoordinates: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
+    theme: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
     updateSettings: PropTypes.func.isRequired
 };
@@ -122,7 +129,8 @@ const mapStateToProps = state => ({
     unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,
     accurateCoordinates: state.scratchGui.settings.accurateCoordinates,
     autoSaveInterval: state.scratchGui.settings.autoSaveInterval,
-    framerate: state.scratchGui.settings.framerate
+    framerate: state.scratchGui.settings.framerate,
+    theme: state.scratchGui.settings.theme
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -86,7 +86,7 @@
 
 .is-selected .sprite-info {
     background: var(--clipcc-motion-primary);
-    color: var(--clipcc-ui-white);
+    color: var(--clipcc-on-motion-primary);
 }
 
 .delete-button {

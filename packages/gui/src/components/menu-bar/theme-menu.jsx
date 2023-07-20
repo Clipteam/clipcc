@@ -6,6 +6,10 @@ import {connect} from 'react-redux';
 
 import check from './check.svg';
 import {MenuItem, Submenu} from '../menu/menu.jsx';
+import {DEFAULT_THEME, HIGH_CONTRAST_THEME, DARK_THEME, themeMap} from '../../lib/themes';
+import {openThemeMenu, themeMenuOpen} from '../../reducers/menus.js';
+import {updateSettings} from '../../reducers/settings.js';
+
 import styles from './settings-menu.css';
 
 import dropdownCaret from './dropdown-caret.svg';
@@ -42,7 +46,9 @@ const ThemeMenu = ({
     onRequestOpen,
     theme
 }) => {
-    const enabledThemes = [];
+    const enabledThemes = [DEFAULT_THEME, HIGH_CONTRAST_THEME, DARK_THEME];
+    const themeInfo = themeMap[theme];
+
     return (
         <MenuItem expanded={menuOpen}>
             <div
@@ -55,9 +61,9 @@ const ThemeMenu = ({
                 />
                 <span className={styles.submenuLabel}>
                     <FormattedMessage
-                        defaultMessage="Color Mode"
-                        description="Color mode sub-menu"
-                        id="gui.menuBar.colorMode"
+                        defaultMessage="Theme"
+                        description="Theme sub-menu"
+                        id="gui.menuBar.theme"
                     />
                 </span>
                 <img
@@ -83,17 +89,21 @@ const ThemeMenu = ({
 ThemeMenu.propTypes = {
     isRtl: PropTypes.bool,
     menuOpen: PropTypes.bool,
+    onChangeTheme: PropTypes.func,
     // eslint-disable-next-line react/no-unused-prop-types
     onRequestCloseSettings: PropTypes.func,
-    onRequestOpen: PropTypes.func
+    onRequestOpen: PropTypes.func,
+    theme: PropTypes.string
 };
 
 const mapStateToProps = state => ({
     isRtl: state.locales.isRtl,
-    menuOpen: themeMenuOpen(state)
+    menuOpen: themeMenuOpen(state),
+    theme: state.scratchGui.theme.theme
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
+    onChangeTheme: theme => dispatch(updateSettings({theme})),
     onRequestOpen: () => dispatch(openThemeMenu())
 });
 

@@ -35,7 +35,7 @@
     align-items: center;
     justify-content: center;
     height: calc(var(--clipcc-stage-menu-height) - 2px);
-    background-color: white;
+    background-color: var(--clipcc-ui-white);
     color: var(--clipcc-text-primary);
     border-top-left-radius: var(--clipcc-space);
     border-top-right-radius: var(--clipcc-space);
@@ -59,7 +59,7 @@
 }
 
 .stage-selector.is-selected .header-title {
-    color: var(--clipcc-ui-white);
+    color: var(--clipcc-on-motion-primary);
 }
 
 .count {
