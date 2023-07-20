@@ -1,0 +1,47 @@
+<xml xmlns="http://www.w3.org/1999/xhtml">
+  <variables>
+    <variable type="broadcast_msg" id="H=`iC0GbYldxBZQF=vFc" islocal="false" iscloud="false">message1</variable>
+    <variable type="" id="ey}nUGLcViWxZ0n7I!V3" islocal="false" iscloud="false">a</variable>
+  </variables>
+  <block type="event_whenbroadcastreceived" id="U9n)-y$66DZ}GX3e%oRQ" x="107" y="155">
+    <field name="BROADCAST_OPTION" id="H=`iC0GbYldxBZQF=vFc" variabletype="broadcast_msg">message1</field>
+    <next>
+      <block type="control_wait" id="~*q*5:2!]BVS3RZNZIMM">
+        <value name="DURATION">
+          <shadow type="math_positive_number" id="7RmO@zhED6Et/60VHuQD">
+            <field name="NUM">1</field>
+          </shadow>
+        </value>
+        <next>
+          <block type="motion_movesteps" id="ETU@roz%#1sFmRr_{p2,">
+            <value name="STEPS">
+              <shadow type="math_number" id="r^)TxH[3wAakPp%|of0@">
+                <field name="NUM">10</field>
+              </shadow>
+            </value>
+          </block>
+        </next>
+      </block>
+    </next>
+  </block>
+  <block type="event_whenflagclicked" id="zmI2f1_.c[R_=kinsYvv" x="113" y="392">
+    <next>
+      <block type="event_broadcastandwait" id="?;lJvlfKd3!wyH=tOJ|a">
+        <value name="BROADCAST_INPUT">
+          <shadow type="event_broadcast_menu" id="12~25KbXb]FZiF*Mo..?">
+            <field name="BROADCAST_OPTION" id="H=`iC0GbYldxBZQF=vFc" variabletype="broadcast_msg">message1</field>
+          </shadow>
+        </value>
+        <next>
+          <block type="event_broadcast" id="@Pm],|{utQ|p3#F`QlAN">
+            <value name="BROADCAST_INPUT">
+              <shadow type="event_broadcast_menu" id="U1ek[/8G/__?,KIEcli.">
+                <field name="BROADCAST_OPTION" id="H=`iC0GbYldxBZQF=vFc" variabletype="broadcast_msg">message1</field>
+              </shadow>
+            </value>
+          </block>
+        </next>
+      </block>
+    </next>
+  </block>
+</xml>
