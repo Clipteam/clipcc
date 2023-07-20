@@ -43,8 +43,8 @@ const resolveStageSize = (stageSizeMode, isFullSize) => {
  */
 const getStageDimensions = (stageSize, isFullScreen, resolutionX, resolutionY) => {
     const stageDimensions = {
-        heightDefault: resolutionY ? resolutionY : layout.standardStageHeight,
-        widthDefault: resolutionX ? resolutionX : layout.standardStageWidth,
+        heightDefault: resolutionY || layout.standardStageHeight,
+        widthDefault: resolutionX || layout.standardStageWidth,
         height: 0,
         width: 0,
         scale: 0
