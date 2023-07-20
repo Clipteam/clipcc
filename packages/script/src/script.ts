@@ -1,4 +1,4 @@
-import XML from 'fast-xml-parser';
+import { XMLParser, XMLBuilder } from 'fast-xml-parser';
 import Block from './block';
 import { BlockType } from './block_prototype';
 import BlockSet from './block_set';
@@ -39,7 +39,8 @@ class Script {
     }
 
     public loadFromXML(xmlString: string): void {
-        const xml = XML.parse(xmlString, { ignoreAttributes: false });
+        const parser = new XMLParser({ ignoreAttributes: false });
+        const xml = parser.parse(xmlString);
 
         this.clear();
 
@@ -159,9 +160,9 @@ class Script {
             xml.block.push(blockSet.exportXML());
         }
 
-        const parser = new XML.j2xParser({ ignoreAttributes: false });
+        const parser = new XMLBuilder({ ignoreAttributes: false });
         
-        return parser.parse({ xml: xml });
+        return parser.build({ xml: xml });
     }
 
     public loadFromCode(code: string): void {
