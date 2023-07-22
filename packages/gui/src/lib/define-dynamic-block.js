@@ -70,7 +70,7 @@ const defineDynamicBlock = (ScratchBlocks, categoryInfo, staticBlockInfo, extend
             break;
         case BlockType.BOOLEAN:
             this.setOutput(true);
-            this.setOutputShape(ScratchBlocks.OUTPUT_SHAPE_HEXAGONAL);
+            this.setOutputShape(ScratchBlocks.OUTPUT_SHAPE_HEXAGONAL, 'Boolean');
             break;
         case BlockType.HAT:
         case BlockType.EVENT:
@@ -92,6 +92,10 @@ const defineDynamicBlock = (ScratchBlocks, categoryInfo, staticBlockInfo, extend
         const scratchBlocksStyleText = blockText.replace(/\[(.+?)]/g, (match, argName) => {
             const arg = blockInfo.arguments[argName];
             switch (arg.type) {
+            case ArgumentType.NUMBER:
+            case ArgumentType.NOTE:
+            case ArgumentType.COLOR:
+            case ArgumentType.MATRIX:
             case ArgumentType.STRING:
                 args.push({type: 'input_value', name: argName});
                 break;
