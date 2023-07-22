@@ -124,7 +124,7 @@ class ScratchAdapter {
      * Reload a scratch-standard extension.
      * @param {string} extensionId - Extension's ID
     */
-    reload (extensionId: string) {
+    async reload (extensionId: string) {
         if (!this.vm) {
             return Promise.reject(`VM hadn't been attached`);
         }
@@ -135,13 +135,14 @@ class ScratchAdapter {
         }
         // It's running in worker
         if (typeof targetExt === 'string') {
-            return dispatch.call(targetExt, 'getInfo').then((info: ExtensionMetadata) => {
+            try {
+                const info = await dispatch.call(targetExt, 'getInfo');
                 const processedInfo = this._prepareExtensionInfo(null, info, targetExt);
                 this.vm!.runtime._refreshExtensionPrimitives(processedInfo);
                 return processedInfo;
-            }).catch(e => {
+            } catch (e) {
                 console.error(`Failed to refresh extension primitives: ${JSON.stringify(e)}`);
-            });
+            }
         } 
         let info = targetExt.getInfo();
         info = this._prepareExtensionInfo(targetExt, info);
@@ -281,7 +282,7 @@ class ScratchAdapter {
      * @returns {Array} menu items ready for scratch-blocks.
      * @private
      */
-    private _getExtensionMenuItems (extensionObject: ExtensionClass, menuItemFunctionName: string, serviceName?: string) {
+    private _getExtensionMenuItems (extensionObject: ExtensionClass, menuItemFunctionName: string, serviceName?: string): any[] {
         /*
          * Fetch the items appropriate for the target currently being edited. This assumes that menus only
          * collect items when opened by the user while editing a particular target.

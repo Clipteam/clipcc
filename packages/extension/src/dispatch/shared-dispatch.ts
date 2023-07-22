@@ -91,7 +91,7 @@ class SharedDispatch {
      * @param {*} [args] - the arguments to be copied to the method, if any.
      * @returns {Promise} - a promise for the return value of the service method.
      */
-    transferCall (service: string, method: string, transfer: any, ...args: unknown[]) {
+    transferCall (service: string, method: string, transfer: unknown, ...args: unknown[]) {
         try {
             // @ts-expect-error TS(2339): It's not implemented.
             const {provider, isRemote} = this._getServiceProvider(service);
@@ -113,7 +113,7 @@ class SharedDispatch {
      * @returns {boolean} - true if the service is remote (calls must cross a Worker boundary), false otherwise.
      * @private
      */
-    _isRemoteService (service: string) {
+    _isRemoteService (service: string): boolean {
         // @ts-expect-error TS(2339): It's not implemented.
         return this._getServiceProvider(service).isRemote;
     }
@@ -125,7 +125,7 @@ class SharedDispatch {
      * @param {*} [args] - the arguments to be copied to the method, if any.
      * @returns {Promise} - a promise for the return value of the service method.
      */
-    _remoteCall (provider: any, service: string, method: string, ...args: unknown[]) {
+    _remoteCall (provider: Worker, service: string, method: string, ...args: unknown[]): Promise<unknown> {
         return this._remoteTransferCall(provider, service, method, null, ...args);
     }
     /**
@@ -191,7 +191,7 @@ class SharedDispatch {
         /** @type {DispatchMessage} */
         const message = event.data;
         message.args = message.args || [];
-        let promise: Promise<unknown> | void;
+        let promise: Promise<unknown> | void = undefined;
         if (message.service) {
             if (message.service === 'dispatch') {
                 promise = this._onDispatchMessage(worker, message);
