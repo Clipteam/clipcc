@@ -156,7 +156,7 @@ class VirtualMachine extends EventEmitter {
         });
         this.runtime.on(Runtime.STAGE_SIZE_UPDATE, (width, height) => {
             this.emit(Runtime.STAGE_SIZE_UPDATE, width, height);
-        })
+        });
         this.extensionManager = new ExtensionManager(this.runtime);
 
         // Load core extensions
