@@ -135,14 +135,10 @@ class ScratchAdapter {
         }
         // It's running in worker
         if (typeof targetExt === 'string') {
-            try {
-                const info = await dispatch.call(targetExt, 'getInfo');
-                const processedInfo = this._prepareExtensionInfo(null, info, targetExt);
+            const info = await dispatch.call(targetExt, 'getInfo');
+            const processedInfo = this._prepareExtensionInfo(null, info, targetExt);
                 this.vm!.runtime._refreshExtensionPrimitives(processedInfo);
                 return processedInfo;
-            } catch (e) {
-                console.error(`Failed to refresh extension primitives: ${JSON.stringify(e)}`);
-            }
         } 
         let info = targetExt.getInfo();
         info = this._prepareExtensionInfo(targetExt, info);

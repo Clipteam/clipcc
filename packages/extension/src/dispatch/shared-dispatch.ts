@@ -125,7 +125,7 @@ class SharedDispatch {
      * @param {*} [args] - the arguments to be copied to the method, if any.
      * @returns {Promise} - a promise for the return value of the service method.
      */
-    _remoteCall (provider: Worker, service: string, method: string, ...args: unknown[]): Promise<unknown> {
+    _remoteCall (provider: any, service: string, method: string, ...args: unknown[]): Promise<unknown> {
         return this._remoteTransferCall(provider, service, method, null, ...args);
     }
     /**
