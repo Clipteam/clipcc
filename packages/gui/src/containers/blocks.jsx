@@ -10,7 +10,7 @@ import VM from 'clipcc-vm';
 import log from '../lib/log.js';
 import Prompt from './prompt.jsx';
 import BlocksComponent from '../components/blocks/blocks.jsx';
-import ExtensionLibrary from './extension-library.jsx';
+import ExtensionModal from './extension-modal.jsx';
 import extensionData from '../lib/libraries/extensions/index.jsx';
 import CustomProcedures from './custom-procedures.jsx';
 import errorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
@@ -24,7 +24,7 @@ import {injectExtensionBlockTheme, injectExtensionCategoryTheme} from '../lib/th
 import {connect} from 'react-redux';
 import {updateToolbox} from '../reducers/toolbox';
 import {activateColorPicker} from '../reducers/color-picker';
-import {closeExtensionLibrary, openSoundRecorder, openConnectionModal} from '../reducers/modals';
+import {closeExtensionModal, openSoundRecorder, openConnectionModal} from '../reducers/modals';
 import {activateCustomProcedures, deactivateCustomProcedures} from '../reducers/custom-procedures';
 import {setConnectionModalExtensionId} from '../reducers/connection-modal';
 import {updateMetrics} from '../reducers/workspace-metrics';
@@ -145,7 +145,7 @@ class Blocks extends React.Component {
             this.state.prompt !== nextState.prompt ||
             this.props.isVisible !== nextProps.isVisible ||
             this._renderedToolboxXML !== nextProps.toolboxXML ||
-            this.props.extensionLibraryVisible !== nextProps.extensionLibraryVisible ||
+            this.props.extensionModalVisible !== nextProps.extensionModalVisible ||
             this.props.customProceduresVisible !== nextProps.customProceduresVisible ||
             this.props.locale !== nextProps.locale ||
             this.props.anyModalVisible !== nextProps.anyModalVisible ||
@@ -491,7 +491,7 @@ class Blocks extends React.Component {
         this.handleExtensionAdded(categoryInfo);
     }
     handleCategorySelected (categoryId) {
-        const extension = extensionData.find(ext => ext.extensionId === categoryId);
+        const extension = extensionData.find(ext => ext.url === categoryId);
         if (extension && extension.launchPeripheralConnectionFlow) {
             this.handleConnectionModalStart(categoryId);
         }
@@ -565,7 +565,7 @@ class Blocks extends React.Component {
             hideNonVanillaBlocks,
             canUseCloud,
             customProceduresVisible,
-            extensionLibraryVisible,
+            extensionModalVisible,
             options,
             stageSize,
             vm,
@@ -576,7 +576,7 @@ class Blocks extends React.Component {
             onOpenSoundRecorder,
             updateToolboxState,
             onActivateCustomProcedures,
-            onRequestCloseExtensionLibrary,
+            onRequestCloseExtensionModal,
             onRequestCloseCustomProcedures,
             toolboxXML,
             updateMetrics: updateMetricsProp,
@@ -605,11 +605,11 @@ class Blocks extends React.Component {
                         onOk={this.handlePromptCallback}
                     />
                 ) : null}
-                {extensionLibraryVisible ? (
-                    <ExtensionLibrary
+                {extensionModalVisible ? (
+                    <ExtensionModal
                         extensionManager={this.props.extensionManager}
                         onCategorySelected={this.handleCategorySelected}
-                        onRequestClose={onRequestCloseExtensionLibrary}
+                        onRequestClose={onRequestCloseExtensionModal}
                     />
                 ) : null}
                 {customProceduresVisible ? (
@@ -630,7 +630,7 @@ Blocks.propTypes = {
     hideNonVanillaBlocks: PropTypes.bool.isRequired,
     canUseCloud: PropTypes.bool,
     customProceduresVisible: PropTypes.bool,
-    extensionLibraryVisible: PropTypes.bool,
+    extensionModalVisible: PropTypes.bool,
     extensionManager: PropTypes.instanceOf(ExtensionManager).isRequired,
     isRtl: PropTypes.bool,
     isVisible: PropTypes.bool,
@@ -641,7 +641,7 @@ Blocks.propTypes = {
     onOpenConnectionModal: PropTypes.func,
     onOpenSoundRecorder: PropTypes.func,
     onRequestCloseCustomProcedures: PropTypes.func,
-    onRequestCloseExtensionLibrary: PropTypes.func,
+    onRequestCloseExtensionModal: PropTypes.func,
     options: PropTypes.shape({
         media: PropTypes.string,
         zoom: PropTypes.shape({
@@ -691,7 +691,7 @@ const mapStateToProps = state => ({
         state.scratchGui.mode.isFullScreen
     ),
     hideNonVanillaBlocks: state.scratchGui.settings.hideNonVanillaBlocks,
-    extensionLibraryVisible: state.scratchGui.modals.extensionLibrary,
+    extensionModalVisible: state.scratchGui.modals.extensionModal,
     extensionManager: state.scratchGui.extensionManager,
     isRtl: state.locales.isRtl,
     locale: state.locales.locale,
@@ -712,8 +712,8 @@ const mapDispatchToProps = dispatch => ({
         dispatch(activateTab(SOUNDS_TAB_INDEX));
         dispatch(openSoundRecorder());
     },
-    onRequestCloseExtensionLibrary: () => {
-        dispatch(closeExtensionLibrary());
+    onRequestCloseExtensionModal: () => {
+        dispatch(closeExtensionModal());
     },
     onRequestCloseCustomProcedures: data => {
         dispatch(deactivateCustomProcedures(data));

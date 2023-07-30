@@ -24,7 +24,7 @@ import {
     closeBackdropLibrary,
     closeSettingsModal,
     closeTelemetryModal,
-    openExtensionLibrary
+    openExtensionModal
 } from '../reducers/modals';
 
 import FontLoaderHOC from '../lib/font-loader-hoc.jsx';
@@ -161,7 +161,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => ({
-    onExtensionButtonClick: () => dispatch(openExtensionLibrary()),
+    onExtensionButtonClick: () => dispatch(openExtensionModal()),
     onActivateTab: tab => dispatch(activateTab(tab)),
     onActivateCostumesTab: () => dispatch(activateTab(COSTUMES_TAB_INDEX)),
     onActivateSoundsTab: () => dispatch(activateTab(SOUNDS_TAB_INDEX)),

@@ -1,0 +1,141 @@
+.filter-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    height: calc(var(--clipcc-library-filter-bar-height) + 2rem); /* padding */
+    background-color: var(--clipcc-motion-transparent);
+    padding: 0 1rem;
+    font-size: .875rem;
+}
+
+.filter-bar-item {
+    margin-right: .75rem;
+}
+
+.filter {
+    flex-grow: 0;
+}
+
+.filter-input {
+    width: 11.5rem;
+    transition: .2s;
+}
+
+.filter-input:focus,
+.filter-input:not([value=""]) {
+    width: 18.75rem;
+}
+
+.divider {
+    transform: scaleY(1.39);
+    height: var(--clipcc-library-filter-bar-height);
+}
+
+.tag-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: var(--clipcc-library-filter-bar-height);
+    overflow: hidden;
+}
+
+.spinner-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.extension-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    height: 80px;
+
+    margin: var(--clipcc-space);
+    padding: 1rem;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: var(--clipcc-text-primary);
+    background: var(--clipcc-ui-white);
+    border-width: 2px;
+    border-style: solid;
+    border-color: var(--clipcc-ui-black-transparent);
+    border-radius: var(--clipcc-space);
+    transition: all 0.3s;
+}
+
+.extension-card:hover {
+    border-width: 2px;
+    border-color: var(--clipcc-motion-primary);
+}
+
+.expand {
+    height: auto;
+}
+
+.inset-icon {
+    max-height: 3rem;
+    margin-right: 1rem;
+}
+
+.header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.info .name,.description {
+    /*
+        For truncating overflowing text gracefully
+        Min-width is for a bug: https://css-tricks.com/flexbox-truncated-text
+    */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+}
+
+.info .name {
+    font-weight: bold;
+}
+
+.description {
+    color: var(--clipcc-text-primary);
+}
+
+.row-divider {
+    border-top: 1px dashed var(--clipcc-ui-black-transparent);
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.featured-extension-metadata-detail {
+    margin-right: 0.5rem;
+    font-weight: bold;
+}
+
+.featured-extension-metadata-detail img {
+    margin-right: 0.25rem;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    margin: 0.5rem 0;
+    color: var(--clipcc-text-primary);
+}
+
+.option .label {
+    font-weight: bold;
+    flex-grow: 1;
+}

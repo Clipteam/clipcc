@@ -10,6 +10,7 @@ const FilterComponent = props => {
     const {
         className,
         onChange,
+        onEnter,
         onClear,
         placeholderText,
         filterQuery,
@@ -31,6 +32,11 @@ const FilterComponent = props => {
                 type="text"
                 value={filterQuery}
                 onChange={onChange}
+                onkeydown={(e) => {
+                    if (e.keyCode === 13) {
+                        this.props.onEnter(e);
+                    }
+                }}
             />
             <div
                 className={styles.xIconWrapper}
@@ -50,6 +56,7 @@ FilterComponent.propTypes = {
     filterQuery: PropTypes.string,
     inputClassName: PropTypes.string,
     onChange: PropTypes.func,
+    onEnter: PropTypes.func,
     onClear: PropTypes.func,
     placeholderText: PropTypes.string
 };

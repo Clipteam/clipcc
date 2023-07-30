@@ -55,7 +55,7 @@ export default [
                 id="gui.extension.music.name"
             />
         ),
-        extensionId: 'music',
+        url: 'music',
         iconURL: musicIconURL,
         insetIconURL: musicInsetIconURL,
         description: (
@@ -75,7 +75,7 @@ export default [
                 id="gui.extension.pen.name"
             />
         ),
-        extensionId: 'pen',
+        url: 'pen',
         iconURL: penIconURL,
         insetIconURL: penInsetIconURL,
         description: (
@@ -95,7 +95,7 @@ export default [
                 id="gui.extension.videosensing.name"
             />
         ),
-        extensionId: 'videoSensing',
+        url: 'videoSensing',
         iconURL: videoSensingIconURL,
         insetIconURL: videoSensingInsetIconURL,
         description: (
@@ -115,7 +115,7 @@ export default [
                 id="gui.extension.text2speech.name"
             />
         ),
-        extensionId: 'text2speech',
+        url: 'text2speech',
         collaborator: 'Amazon Web Services',
         iconURL: text2speechIconURL,
         insetIconURL: text2speechInsetIconURL,
@@ -137,7 +137,7 @@ export default [
                 id="gui.extension.translate.name"
             />
         ),
-        extensionId: 'translate',
+        url: 'translate',
         collaborator: 'Google',
         iconURL: translateIconURL,
         insetIconURL: translateInsetIconURL,
@@ -153,7 +153,7 @@ export default [
     },
     {
         name: 'Makey Makey',
-        extensionId: 'makeymakey',
+        url: 'makeymakey',
         collaborator: 'JoyLabz',
         iconURL: makeymakeyIconURL,
         insetIconURL: makeymakeyInsetIconURL,
@@ -168,7 +168,7 @@ export default [
     },
     {
         name: 'micro:bit',
-        extensionId: 'microbit',
+        url: 'microbit',
         collaborator: 'micro:bit',
         iconURL: microbitIconURL,
         insetIconURL: microbitInsetIconURL,
@@ -198,7 +198,7 @@ export default [
     },
     {
         name: 'LEGO MINDSTORMS EV3',
-        extensionId: 'ev3',
+        url: 'ev3',
         collaborator: 'LEGO',
         iconURL: ev3IconURL,
         insetIconURL: ev3InsetIconURL,
@@ -228,7 +228,7 @@ export default [
     },
     {
         name: 'LEGO BOOST',
-        extensionId: 'boost',
+        url: 'boost',
         collaborator: 'LEGO',
         iconURL: boostIconURL,
         insetIconURL: boostInsetIconURL,
@@ -259,7 +259,7 @@ export default [
     },
     {
         name: 'LEGO Education WeDo 2.0',
-        extensionId: 'wedo2',
+        url: 'wedo2',
         collaborator: 'LEGO',
         iconURL: wedo2IconURL,
         insetIconURL: wedo2InsetIconURL,
@@ -290,7 +290,7 @@ export default [
     },
     {
         name: 'Go Direct Force & Acceleration',
-        extensionId: 'gdxfor',
+        url: 'gdxfor',
         collaborator: 'Vernier',
         iconURL: gdxforIconURL,
         insetIconURL: gdxforInsetIconURL,

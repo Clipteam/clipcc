@@ -7,9 +7,6 @@ import PlayButton from '../../containers/play-button.jsx';
 import styles from './library-item.css';
 import classNames from 'classnames';
 
-import bluetoothIconURL from './bluetooth.svg';
-import internetConnectionIconURL from './internet-connection.svg';
-
 /* eslint-disable react/prefer-stateless-function */
 class LibraryItemComponent extends React.PureComponent {
     render () {
@@ -69,16 +66,6 @@ class LibraryItemComponent extends React.PureComponent {
                                             description="Label for extension hardware requirements"
                                             id="gui.extensionLibrary.requires"
                                         />
-                                    </div>
-                                    <div
-                                        className={styles.featuredExtensionMetadataDetail}
-                                    >
-                                        {this.props.bluetoothRequired ? (
-                                            <img src={bluetoothIconURL} />
-                                        ) : null}
-                                        {this.props.internetConnectionRequired ? (
-                                            <img src={internetConnectionIconURL} />
-                                        ) : null}
                                     </div>
                                 </div>
                             ) : null}

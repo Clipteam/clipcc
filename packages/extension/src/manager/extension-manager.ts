@@ -95,6 +95,9 @@ class ExtensionManager extends Emitter<Events> {
         type: 'scratch' = 'scratch',
         env: 'sandboxed' | 'unsandboxed' = 'sandboxed'
     ) {
+        if (this.loadedExtensions.has(extensionURL)) {
+            throw new Error(`Cannot load extension (${extensionURL}) twice`);
+        }
         this.emit('EXTENSION_LOADING', extensionURL);
         try {
             if (this.internalExtensions.has(extensionURL)) {
