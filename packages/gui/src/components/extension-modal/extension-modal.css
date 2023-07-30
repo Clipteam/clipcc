@@ -38,6 +38,7 @@
     flex-wrap: wrap;
     height: var(--clipcc-library-filter-bar-height);
     overflow: hidden;
+    flex-grow: 1;
 }
 
 .spinner-wrapper {
@@ -138,4 +139,13 @@
 .option .label {
     font-weight: bold;
     flex-grow: 1;
+}
+
+.load-button {
+    padding: .625rem 1rem;
+    margin-right: 1rem;
+    background: var(--clipcc-motion-primary);
+    border-radius: 1.375rem;
+    color: var(--clipcc-on-motion-primary);
+    height: var(--clipcc-library-filter-bar-height);
 }

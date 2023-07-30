@@ -9,6 +9,19 @@ import extensionLibraryContent from '../lib/libraries/extensions/index.jsx';
 import ExtensionModalComponent from '../components/extension-modal/extension-modal.jsx';
 import extensionIcon from '../components/action-menu/icon--sprite.svg';
 
+const messages = defineMessages({
+    loadFromURL: {
+        id: 'gui.extensionModal.enterURL',
+        defaultMessage: 'Enter your extension\'s URL',
+        description: 'Prompt of enter extension url',
+    },
+    runInSandbox: {
+        id: 'gui.extensionModal.runInSandbox',
+        defaultMessage: 'Is it running in sandbox?',
+        description: 'Prompt of run in sandbox',
+    }
+});
+
 class ExtensionModal extends React.PureComponent {
     constructor (props) {
         super(props);
@@ -33,7 +46,9 @@ class ExtensionModal extends React.PureComponent {
             'handleExtensionStatusChanged',
             'handleFilterChange',
             'handleFilterClear',
-            'handleTagClick'
+            'handleTagClick',
+            'loadFromURL',
+            'upload'
         ]);
     }
     async handleExtensionStatusChanged (url, status) {
@@ -53,6 +68,30 @@ class ExtensionModal extends React.PureComponent {
     }
     handleFilterClear () {
         this.setState({filterQuery: ''});
+    }
+    async loadFromURL () {
+        const url = prompt(this.props.intl.formatMessage(messages.loadFromURL));
+        if (!url.trim()) return;
+        const isSandbox = confirm(this.props.intl.formatMessage(messages.runInSandbox));
+        await this.props.extensionManager.loadExtensionURL(url, 'scratch', isSandbox ? 'sandboxed' : 'unsandboxed');
+    }
+    upload () {
+        const input = document.createElement('input');
+        input.setAttribute('type', 'file');
+        input.setAttribute('accept', '.js,.ccx');
+        input.setAttribute('multiple', true);
+        input.onchange = async (event) => {
+            const files = event.target.files;
+            for (const file of files) {
+                const fileName = file.name;
+                const fileExt = fileName.substring(fileName.lastIndexOf('.') + 1);
+
+                const url = URL.createObjectURL(file);
+                const isSandbox = confirm(fileName + this.props.intl.formatMessage(messages.runInSandbox));
+                await this.props.extensionManager.loadExtensionURL(url, 'scratch', isSandbox ? 'sandboxed' : 'unsandboxed');
+            }
+        };
+        input.click();
     }
     handleTagClick (tag) {
         this.setState({
@@ -78,6 +117,8 @@ class ExtensionModal extends React.PureComponent {
                 onFilterClear={this.handleFilterClear}
                 onRequestClose={this.props.onRequestClose}
                 loaded={this.state.selectedTag === 'offline' || this.state.contentLoaded}
+                onLoadFromURL={this.loadFromURL}
+                onUpload={this.upload}
             />
         );
     }

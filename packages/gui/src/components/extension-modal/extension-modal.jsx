@@ -8,6 +8,7 @@ import Modal from '../../containers/modal.jsx';
 import Divider from '../divider/divider.jsx';
 import Filter from '../filter/filter.jsx';
 import Switch from '../switch/switch.jsx';
+import Button from '../button/button.jsx';
 import TagButton from '../../containers/tag-button.jsx';
 import Spinner from '../spinner/spinner.jsx';
 
@@ -68,7 +69,7 @@ class ExtensionCard extends React.Component {
         this.props.onExtensionStatusChanged(this.props.data.url, value);
     }
     render () {
-        const { data, key } = this.props;
+        const {data, key} = this.props;
         return (
             <div
                 className={classNames(styles.extensionCard, {
@@ -232,6 +233,26 @@ class ExtensionModalComponent extends React.Component {
                                 />
                             ))}
                     </div>
+                    <Button
+                        className={styles.loadButton}
+                        onClick={this.props.onUpload}
+                    >
+                        <FormattedMessage
+                            defaultMessage="Upload"
+                            description="Label of upload extension"
+                            id="gui.extensionModal.upload"
+                        />
+                    </Button>
+                    <Button
+                        className={styles.loadButton}
+                        onClick={this.props.onLoadFromURL}
+                    >
+                        <FormattedMessage
+                            defaultMessage="Load from URL"
+                            description="Label of load extension from URL"
+                            id="gui.extensionModal.loadFromURL"
+                        />
+                    </Button>
                 </div>
                 <div
                     className={classNames(
@@ -290,7 +311,9 @@ ExtensionModalComponent.propTypes = {
     onFilterClear: PropTypes.func,
     onExtensionStatusChanged: PropTypes.func,
     onRequestClose: PropTypes.func,
-    onTagClick: PropTypes.func
+    onTagClick: PropTypes.func,
+    onLoadFromURL: PropTypes.func,
+    onUpload: PropTypes.func
 };
 
 export default injectIntl(ExtensionModalComponent);
