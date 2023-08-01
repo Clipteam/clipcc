@@ -145,6 +145,39 @@ class ExtensionCard extends React.Component {
                                 />
                             )}</span>
                         </div>
+                        {data.blocks && (
+                            <div className={styles.option}>
+                                <span className={styles.label}>
+                                    <FormattedMessage
+                                        defaultMessage="Total blocks"
+                                        description="Label of total blocks"
+                                        id="gui.extensionModal.totalBlocks"
+                                    />
+                                </span>
+                                <span>{data.blocks.length}</span>
+                            </div>
+                        )}
+                        {data.docsURI && (
+                            <div className={styles.option}>
+                                <span className={styles.label}>
+                                    <FormattedMessage
+                                        defaultMessage="Documentation"
+                                        description="Label of documentation"
+                                        id="gui.extensionModal.documentation"
+                                    />
+                                </span>
+                                <a
+                                    href={data.docsURI}
+                                    className={styles.link}
+                                >
+                                    <FormattedMessage
+                                        defaultMessage="Open"
+                                        description="Label of open documentation"
+                                        id="gui.extensionModal.openDocumentation"
+                                    />
+                                </a>
+                            </div>
+                        )}
                         <div className={styles.option}>
                             <span className={styles.label}>
                                 <FormattedMessage
@@ -180,6 +213,8 @@ ExtensionCard.propTypes = {
         name: PropTypes.string,
         collaborator: PropTypes.string,
         color1: PropTypes.string,
+        blocks: PropTypes.array,
+        docsURI: PropTypes.string,
         insetIconURL: PropTypes.string,
         version: PropTypes.string,
         enabled: PropTypes.boolean,
@@ -213,11 +248,24 @@ class ExtensionModalComponent extends React.Component {
             this.scrollToTop();
         }
     }
+
     scrollToTop () {
         this.filteredDataRef.scrollTop = 0;
     }
     setFilteredDataRef (ref) {
         this.filteredDataRef = ref;
+    }
+    getFilteredItem (data) {
+        if (this.props.filter.trim() === '') return data;
+        return data.filter(item => {
+            const name = item.name ? (typeof item.name === 'string' ?
+                // Use the name if it is a string, else use formatMessage to get the translated name
+                item.name : this.props.intl.formatMessage(item.name.props)
+            ) : null;
+            if (name.includes(this.props.filter)) return item;
+            if (item.id && item.id.includes(this.props.filter)) return item;
+            if (item.collaborator && item.collaborator.includes(this.props.filter)) return item;
+        });
     }
     render () {
         return (
@@ -294,7 +342,7 @@ class ExtensionModalComponent extends React.Component {
                     ref={this.setFilteredDataRef}
                 >
                     {this.props.loaded ? (
-                        this.props.data.map((dataItem, index) => (
+                        this.getFilteredItem(this.props.data).map((dataItem, index) => (
                             <ExtensionCard
                                 key={index}
                                 data={dataItem}
@@ -317,6 +365,7 @@ class ExtensionModalComponent extends React.Component {
 
 ExtensionModalComponent.propTypes = {
     filterQuery: PropTypes.string,
+    filter: PropTypes.string,
     selectedTag: PropTypes.string,
     data: PropTypes.arrayOf(
         PropTypes.shape({
@@ -344,6 +393,7 @@ ExtensionModalComponent.propTypes = {
     loaded: PropTypes.bool.isRequired,
     intl: intlShape.isRequired,
     onFilterChange: PropTypes.func,
+    onFilterEnter: PropTypes.func,
     onFilterClear: PropTypes.func,
     onExtensionStatusChanged: PropTypes.func,
     onRequestClose: PropTypes.func,

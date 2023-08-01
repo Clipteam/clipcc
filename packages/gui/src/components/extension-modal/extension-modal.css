@@ -139,6 +139,10 @@
     color: var(--clipcc-text-primary);
 }
 
+.option .link {
+    color: var(--clipcc-motion-primary)
+}
+
 .option .label {
     font-weight: bold;
     flex-grow: 1;

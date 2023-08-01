@@ -26,7 +26,7 @@ class ExtensionModal extends React.PureComponent {
     constructor (props) {
         super(props);
         this.extensions = {};
-        // Add offline extensions first
+        // Add builtin extensions first
         for (const offlineExt of extensionLibraryContent) {
             this.extensions[offlineExt.url] = {
                 id: offlineExt.url,
@@ -60,6 +60,7 @@ class ExtensionModal extends React.PureComponent {
         this.props.extensionManager.on('EXTENSION_LOADED', this.handleExtensionAdded.bind(this));
         this.state = {
             filterQuery: '',
+            filter: '',
             selectedTag: 'offline',
             contentLoaded: false,
             extensions: Object.values(this.extensions),
@@ -68,6 +69,7 @@ class ExtensionModal extends React.PureComponent {
         bindAll(this, [
             'handleExtensionStatusChanged',
             'handleFilterChange',
+            'handleFilterEnter',
             'handleFilterClear',
             'handleTagClick',
             'handleLoadFromURL',
@@ -111,8 +113,16 @@ class ExtensionModal extends React.PureComponent {
             filterQuery: e.target.value
         });
     }
+    handleFilterEnter () {
+        this.setState({
+            filter: this.state.filterQuery
+        });
+    }
     handleFilterClear () {
-        this.setState({filterQuery: ''});
+        this.setState({
+            filterQuery: '',
+            filter: ''
+        });
     }
     async handleLoadFromURL () {
         const url = prompt(this.props.intl.formatMessage(messages.loadFromURL));
@@ -129,7 +139,6 @@ class ExtensionModal extends React.PureComponent {
             const files = event.target.files;
             for (const file of files) {
                 const fileName = file.name;
-                const fileExt = fileName.substring(fileName.lastIndexOf('.') + 1);
 
                 const url = URL.createObjectURL(file);
                 const isSandbox = confirm(fileName + this.props.intl.formatMessage(messages.runInSandbox));
@@ -155,11 +164,13 @@ class ExtensionModal extends React.PureComponent {
             <ExtensionModalComponent
                 data={this.state.selectedTag === 'offline' ? this.state.extensions : this.state.onlineExtensions}
                 filterQuery={this.state.filterQuery}
+                filter={this.state.filter}
                 selectedTag={this.state.selectedTag}
                 onExtensionStatusChanged={this.handleExtensionStatusChanged}
                 onTagClick={this.handleTagClick}
                 onFilterChange={this.handleFilterChange}
                 onFilterClear={this.handleFilterClear}
+                onFilterEnter={this.handleFilterEnter}
                 onRequestClose={this.props.onRequestClose}
                 loaded={this.state.selectedTag === 'offline' || this.state.contentLoaded}
                 onLoadFromURL={this.handleLoadFromURL}

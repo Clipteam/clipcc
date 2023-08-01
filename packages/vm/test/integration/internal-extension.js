@@ -56,7 +56,7 @@ test('internal extension', t => {
 
     vm.extensionManager.registerInternalExtension('testInternalExtension', () => TestInternalExtension);
     vm.extensionManager.loadExtensionURL('testInternalExtension');
-    const extension = vm.extensionManager.scratchAdapter.loadedScratchExtension.get('testInternalExtension');
+    const extension = vm.extensionManager.loadedExtensions.get('testInternalExtension').class;
     t.ok(extension.status.getInfoCalled);
 
     const func = vm.runtime.getOpcodeFunction('testInternalExtension_go');

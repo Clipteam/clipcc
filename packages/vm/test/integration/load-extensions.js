@@ -12,7 +12,7 @@ const VirtualMachine = require('../fixtures/make-extensionify-vm');
 const stopVideoLoop = vm => {
     // TODO: provide a general way to tell extensions to shut down
     // Ideally we'd just dispose of the extension's Worker...
-    const serviceName = vm.extensionManager.scratchAdapter.loadedScratchExtension.get('videoSensing');
+    const serviceName = vm.extensionManager.loadedExtensions.get('videoSensing').class;
     serviceName._stopLoop();
 };
 

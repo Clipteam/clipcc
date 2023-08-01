@@ -32,9 +32,10 @@ const FilterComponent = props => {
                 type="text"
                 value={filterQuery}
                 onChange={onChange}
-                onkeydown={(e) => {
-                    if (e.keyCode === 13) {
-                        this.props.onEnter(e);
+                // eslint-disable-next-line react/jsx-no-bind
+                onKeyDown={e => {
+                    if (e.key === 'Enter') {
+                        onEnter(e);
                     }
                 }}
             />

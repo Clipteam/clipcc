@@ -14,10 +14,10 @@
     --clipcc-z-index-stage-question: 49; /* "ask" block text input goes above monitors */
 
     --clipcc-z-index-card: 480;
-    --clipcc-z-index-alerts: 490;
     --clipcc-z-index-menu-bar: 491; /* menu-bar should go over monitors, alerts and tutorials */
     --clipcc-z-index-loader: 500;
     --clipcc-z-index-modal: 510;
+    --clipcc-z-index-alerts: 520;
 
     --clipcc-z-index-drag-layer: 1000;
     /* Block drag z-index: 1000; default 50 is overriden in blocks.css */
