@@ -16,14 +16,16 @@ class ExtensionWorker {
     initialRegistrations: Promise<unknown>[] = [];
     extensions: unknown[] = [];
     workerId?: number;
+    extensionURL = '';
     constructor () {
         dispatch.waitForConnection.then(() => {
             dispatch.call('extensions', 'allocateWorker').then(x => {
-                const [id, extension] = x;
+                const [id, url] = x;
                 this.workerId = id;
+                this.extensionURL = url;
 
                 try {
-                    importScripts(extension);
+                    importScripts(url);
 
                     const initialRegistrations = this.initialRegistrations;
                     this.initialRegistrations = [];
@@ -43,7 +45,7 @@ class ExtensionWorker {
         this.extensions.push(extensionObject);
         const serviceName = `extension.${this.workerId}.${extensionId}`;
         const promise = dispatch.setService(serviceName, extensionObject)
-            .then(() => dispatch.call('extensions', 'registerExtensionService', serviceName));
+            .then(() => dispatch.call('extensions', 'registerExtensionService', this.extensionURL, serviceName));
         if (this.initialRegistrations) {
             this.initialRegistrations.push(promise);
         }

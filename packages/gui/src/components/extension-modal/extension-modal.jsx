@@ -1,3 +1,4 @@
+/* eslint-disable react/no-multi-comp */
 import classNames from 'classnames';
 import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
@@ -21,28 +22,28 @@ const messages = defineMessages({
     title: {
         id: 'gui.extensionModal.title',
         defaultMessage: 'Extension Management',
-        description: 'Title of extension modal',
+        description: 'Title of extension modal'
     },
     filterPlaceholder: {
         id: 'gui.extensionModal.filterPlaceholder',
         defaultMessage: 'Search',
-        description: 'Placeholder text for extension modal search field',
+        description: 'Placeholder text for extension modal search field'
     },
     offlineTag: {
         id: 'gui.extensionModal.offlineTag',
         defaultMessage: 'Offline',
-        description: 'Label for extension modal tag to revert to offline extensions after filtering by tag.',
+        description: 'Label for extension modal tag to revert to offline extensions after filtering by tag.'
     },
     onlineTag: {
         id: 'gui.extensionModal.onlineTag',
         defaultMessage: 'Online',
-        description: 'Label for extension modal tag to revert to online extensions after filtering by tag.',
-    },
+        description: 'Label for extension modal tag to revert to online extensions after filtering by tag.'
+    }
 });
 
 const tagListPrefix = [
-    { tag: 'offline', intlLabel: messages.offlineTag },
-    { tag: 'online', intlLabel: messages.onlineTag },
+    {tag: 'offline', intlLabel: messages.offlineTag},
+    {tag: 'online', intlLabel: messages.onlineTag}
 ];
 
 class ExtensionCard extends React.Component {
@@ -83,6 +84,9 @@ class ExtensionCard extends React.Component {
                         alt={data.name}
                         src={data.insetIconURL}
                         className={styles.insetIcon}
+                        style={{
+                            backgroundColor: data.color1 ? `${data.color1}` : 'var(--clipcc-pen-primary)'
+                        }}
                     />
                     <div className={styles.info}>
                         <span className={styles.name}>{this.handleExtensionName(data)}</span>
@@ -101,7 +105,7 @@ class ExtensionCard extends React.Component {
                     {data.isOnline ? <></> : (
                         <Switch
                             value={data.enabled}
-                            disabled={data.unavailable}
+                            disabled={data.unavailable || (data.enabled && !data.hotReload)}
                             onChange={this.handleSwitch}
                         />
                     )}
@@ -159,17 +163,44 @@ class ExtensionCard extends React.Component {
                                     id="gui.extensionModal.runningInSandbox"
                                 />
                             </span>
-                            <Switch disabled={data.isoffline} />
+                            <Switch
+                                disabled={data.isBuiltin}
+                                value={data.sandboxed}
+                            />
                         </div>
                     </>
                 )}
             </div>
-        )
+        );
     }
 }
 
+ExtensionCard.propTypes = {
+    data: PropTypes.shape({
+        name: PropTypes.string,
+        collaborator: PropTypes.string,
+        color1: PropTypes.string,
+        insetIconURL: PropTypes.string,
+        version: PropTypes.string,
+        enabled: PropTypes.boolean,
+        internetConnectionRequired: PropTypes.bool,
+        bluetoothRequired: PropTypes.bool,
+        launchPeripheralConnectionFlow: PropTypes.boolean,
+        hotReload: PropTypes.boolean,
+        unavailable: PropTypes.boolean,
+        sandboxed: PropTypes.boolean,
+        isOnline: PropTypes.boolean,
+        isBuiltin: PropTypes.boolean,
+        warning: PropTypes.arrayOf(PropTypes.string),
+        url: PropTypes.string,
+        id: PropTypes.string,
+        description: PropTypes.node,
+        type: PropTypes.oneOf(['scratch', 'ccx'])
+    })
+};
+
 class ExtensionModalComponent extends React.Component {
-    constructor(props) {
+    constructor (props) {
         super(props);
         bindAll(this, [
             'scrollToTop',
@@ -188,12 +219,12 @@ class ExtensionModalComponent extends React.Component {
     setFilteredDataRef (ref) {
         this.filteredDataRef = ref;
     }
-    render() {
+    render () {
         return (
             <Modal
                 fullScreen
                 contentLabel={this.props.intl.formatMessage(messages.title)}
-                id='extensionModal'
+                id="extensionModal"
                 onRequestClose={this.props.onRequestClose}
             >
                 <div className={styles.filterBar}>
@@ -217,21 +248,21 @@ class ExtensionModalComponent extends React.Component {
                     />
                     <div className={styles.tagWrapper}>
                         {tagListPrefix.map((tagProps, id) => (
-                                <TagButton
-                                    active={
-                                        this.props.selectedTag ===
+                            <TagButton
+                                active={
+                                    this.props.selectedTag ===
                                         tagProps.tag.toLowerCase()
-                                    }
-                                    className={classNames(
-                                        styles.filterBarItem,
-                                        styles.tagButton,
-                                        tagProps.className
-                                    )}
-                                    key={`tag-button-${id}`}
-                                    onClick={this.props.onTagClick}
-                                    {...tagProps}
-                                />
-                            ))}
+                                }
+                                className={classNames(
+                                    styles.filterBarItem,
+                                    styles.tagButton,
+                                    tagProps.className
+                                )}
+                                key={`tag-button-${id}`}
+                                onClick={this.props.onTagClick}
+                                {...tagProps}
+                            />
+                        ))}
                     </div>
                     <Button
                         className={styles.loadButton}
@@ -271,7 +302,10 @@ class ExtensionModalComponent extends React.Component {
                         ))
                     ) : (
                         <div className={styles.spinnerWrapper}>
-                            <Spinner large level='primary' />
+                            <Spinner
+                                large
+                                level="primary"
+                            />
                         </div>
                     )}
                 </div>
@@ -297,7 +331,7 @@ ExtensionModalComponent.propTypes = {
             unavailable: PropTypes.boolean,
             sandboxed: PropTypes.boolean,
             isOnline: PropTypes.boolean,
-            isoffline: PropTypes.boolean,
+            isBuiltin: PropTypes.boolean,
             warning: PropTypes.arrayOf(PropTypes.string),
             url: PropTypes.string,
             id: PropTypes.string,
@@ -306,6 +340,7 @@ ExtensionModalComponent.propTypes = {
         })
         /* eslint-enable react/no-unused-prop-types, lines-around-comment */
     ),
+    loaded: PropTypes.bool.isRequired,
     intl: intlShape.isRequired,
     onFilterChange: PropTypes.func,
     onFilterClear: PropTypes.func,

@@ -1,3 +1,4 @@
+import { Emitter } from 'strict-event-emitter';
 import {
     StandardScratchExtensionClass as ExtensionClass,
     ExtensionMetadata,
@@ -13,6 +14,7 @@ import {
 } from '../../util';
 import { CentralDispatch as dispatch } from '../../dispatch/central-dispatch';
 import { makeCtx } from './make-ctx';
+import { Extension } from '../../manager';
 import ExtensionSandbox from './scratch.worker';
 
 interface PendingExtensionWorker {
@@ -21,7 +23,18 @@ interface PendingExtensionWorker {
     reject: (value: unknown) => void;
 }
 
-class ScratchAdapter {
+export interface ScratchExtension extends Extension {
+    type: 'scratch'
+    info: ExtensionMetadata,
+    class: string | ExtensionClass; // The serviceName or extensionClass.
+}
+
+export interface Events {
+    LOADED: [url: string, extension: ScratchExtension];
+    [eventName: string]: [...params: any[]]
+}
+
+class ScratchAdapter extends Emitter<Events> {
     /**
      * Editor's Virtual Machine instance.
      * Should be set by `attachVM` while initializing.
@@ -50,12 +63,13 @@ class ScratchAdapter {
     private pendingWorkers: PendingExtensionWorker[] = [];
 
     /**
-     * Loaded scratch extensions
+     * Loaded scratch extensions, URL with extension info.
      * @type {Map<string, ExtensionClass>}
      */
-    private loadedScratchExtension = new Map<string, ExtensionClass | string>();
+    private loadedScratchExtension = new Map<string, ScratchExtension>();
 
     constructor () {
+        super();
         dispatch.setService('extensions', this).catch((e: Error) => {
             console.error(`ExtensionManager was unable to register extension service: ${JSON.stringify(e)}`);
         });
@@ -105,7 +119,8 @@ class ScratchAdapter {
                 };
                 closureFunc(ctx);
                 const extensionInfo = extensionObject.getInfo();
-                this._registerExtensionInfo(extensionObject, extensionInfo);
+                this._registerExtensionInfo(extensionObject, extensionInfo, ext);
+                this.emit('LOADED', ext, this.loadedScratchExtension.get(ext) as ScratchExtension);
                 return extensionInfo.id;
             }
             default:
@@ -113,11 +128,13 @@ class ScratchAdapter {
             }
         }
 
+        // Load as builtin extension.
         // @ts-expect-error
         const extensionObject = new ext(this.vm.runtime);
-        const extensionInfo = extensionObject.getInfo();
-        this._registerExtensionInfo(extensionObject, extensionInfo);
-        return extensionInfo.id;
+        const extensionInfo = extensionObject.getInfo() as ExtensionMetadata;
+        this._registerExtensionInfo(extensionObject, extensionInfo, extensionInfo.id);
+        this.emit('LOADED', extensionInfo.id, this.loadedScratchExtension.get(extensionInfo.id) as ScratchExtension);
+        return extensionInfo;
     }
 
     /**
@@ -134,14 +151,14 @@ class ScratchAdapter {
             return Promise.reject(`Cannot locate extension ${extensionId}.`);
         }
         // It's running in worker
-        if (typeof targetExt === 'string') {
-            const info = await dispatch.call(targetExt, 'getInfo');
-            const processedInfo = this._prepareExtensionInfo(null, info, targetExt);
+        if (typeof targetExt.class === 'string') {
+            const info = await dispatch.call(targetExt.class, 'getInfo');
+            const processedInfo = this._prepareExtensionInfo(null, info, targetExt.class);
                 this.vm!.runtime._refreshExtensionPrimitives(processedInfo);
                 return processedInfo;
         } 
-        let info = targetExt.getInfo();
-        info = this._prepareExtensionInfo(targetExt, info);
+        let info = targetExt.class.getInfo();
+        info = this._prepareExtensionInfo(targetExt.class, info);
         this.vm.runtime._refreshExtensionPrimitives(info);
         return Promise.resolve(info);
     }
@@ -167,12 +184,17 @@ class ScratchAdapter {
      * @param {string} serviceName - the name of the service hosting the extension
      * @private
      */
-    private _registerExtensionInfo (extensionObject: ExtensionClass | null, extensionInfo: ExtensionMetadata, serviceName?: string) {
+    private _registerExtensionInfo (extensionObject: ExtensionClass | null, extensionInfo: ExtensionMetadata, extensionURL: string, serviceName?: string) {
         if (!this.loadedScratchExtension.has(extensionInfo.id)) {
             if (!extensionObject && !serviceName) {
                 console.warn(`cannnot mark ${extensionInfo.id} as loaded.`);
             } else {
-                this.loadedScratchExtension.set(extensionInfo.id, (extensionObject ?? serviceName) as ExtensionClass | string);
+                this.loadedScratchExtension.set(extensionURL, {
+                    type: 'scratch',
+                    info: extensionInfo,
+                    class: (extensionObject ?? serviceName) as ExtensionClass | string,
+                    env: serviceName ? 'sandboxed' : 'unsandboxed'
+                } as ScratchExtension);
             }
         }
         extensionInfo = this._prepareExtensionInfo(extensionObject, extensionInfo, serviceName);
@@ -413,9 +435,10 @@ class ScratchAdapter {
      * Collect extension metadata from the specified service and begin the extension registration process.
      * @param {string} serviceName - the name of the service hosting the extension.
      */
-    registerExtensionService (serviceName: string) {
+    registerExtensionService (extensionURL: string, serviceName: string) {
         dispatch.call(serviceName, 'getInfo').then(info => {
-            this._registerExtensionInfo(null, info, serviceName);
+            this._registerExtensionInfo(null, info, extensionURL, serviceName);
+            this.emit('LOADED', extensionURL, this.loadedScratchExtension.get(extensionURL) as ScratchExtension);     
         });
     }
 

@@ -80,6 +80,9 @@
 .inset-icon {
     max-height: 3rem;
     margin-right: 1rem;
+    border-radius: 0.5rem;
+    border: 0.25rem solid var(--clipcc-ui-white);
+    padding: 0.4rem;
 }
 
 .header {

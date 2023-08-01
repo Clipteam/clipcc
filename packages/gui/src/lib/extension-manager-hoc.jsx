@@ -13,9 +13,6 @@ import {showStandardAlert, closeAlertWithId} from '../reducers/alerts';
  */
 const extensionManagerHOC = function (WrappedComponent) {
     class ExtensionManager extends React.Component {
-        constructor (props) {
-            super(props);
-        }
         componentDidMount () {
             if (!this.props.extensionManager.vm) {
                 this.props.extensionManager.attachVM(this.props.vm);

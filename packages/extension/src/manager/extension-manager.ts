@@ -1,10 +1,10 @@
 import { Emitter } from 'strict-event-emitter';
-import { ScratchAdapter } from '../adapter';
+import { ScratchAdapter, ScratchExtension } from '../adapter';
 import {
     StandardScratchExtensionClass as ExtensionClass
 } from '../type/scratch';
 import { VM } from '../type/virtual-machine';
-interface Extension {
+export interface Extension {
     type: 'scratch';
     env: 'unsandboxed' | 'sandboxed';
     url: string;
@@ -12,7 +12,7 @@ interface Extension {
 
 export interface Events {
     EXTENSION_LOADING: [extensionURL: string];
-    EXTENSION_LOADED: [extensionURL: string, extensionId: string];
+    EXTENSION_LOADED: [extensionURL: string, extension: Extension];
     EXTENSION_LOAD_ERROR: [extensionURL: string, reason: unknown];
     [eventName: string]: [...params: any[]]
 }
@@ -49,6 +49,10 @@ class ExtensionManager extends Emitter<Events> {
      */
     scratchAdapter = new ScratchAdapter();
 
+    constructor () {
+        super();
+        this.scratchAdapter.on('LOADED', this.handleScratchExtensionLoaded.bind(this));
+    }
     /**
      * Check whether an extension is registered or is in the process of loading. This is intended to control loading or
      * adding extensions so it may return `true` before the extension is ready to be used. Use the promise returned by
@@ -58,6 +62,14 @@ class ExtensionManager extends Emitter<Events> {
      */
     isExtensionLoaded (extensionId: string) {
         return this.loadedExtensions.has(extensionId);
+    }
+
+    /**
+     * Get all loaded extensions.
+     * @returns {Extension[]} all extensions.
+     */
+    getLoadedExtensions () {
+        return Object.fromEntries(this.loadedExtensions.entries())
     }
 
     /**
@@ -101,14 +113,8 @@ class ExtensionManager extends Emitter<Events> {
         this.emit('EXTENSION_LOADING', extensionURL);
         try {
             if (this.internalExtensions.has(extensionURL)) {
-                this.loadedExtensions.set(extensionURL, {
-                    type: 'scratch',
-                    env: 'unsandboxed',
-                    url: extensionURL
-                });
                 const internalExtensionGetter = this.internalExtensions.get(extensionURL) as () => ExtensionClass;
                 await this.scratchAdapter.load(internalExtensionGetter());
-                this.emit('EXTENSION_LOADED', extensionURL, extensionURL);
                 return extensionURL;
             }
 
@@ -119,12 +125,6 @@ class ExtensionManager extends Emitter<Events> {
             switch (type) {
             case 'scratch': {
                 const extensionId = await this.scratchAdapter.load(extensionURL, env);
-                this.loadedExtensions.set(extensionId, {
-                    type: 'scratch',
-                    env: env,
-                    url: extensionURL
-                });
-                this.emit('EXTENSION_LOADED', extensionURL, extensionId);
                 return extensionId;
             }
             default:
@@ -181,6 +181,11 @@ class ExtensionManager extends Emitter<Events> {
      */
     attachBlock (block: Record<string, unknown>) {
         this.block = block;
+    }
+
+    handleScratchExtensionLoaded (url: string, extension: ScratchExtension) {
+        this.loadedExtensions.set(url, extension);
+        this.emit('EXTENSION_LOADED', url, extension);
     }
 }
 

@@ -13,12 +13,12 @@ const messages = defineMessages({
     loadFromURL: {
         id: 'gui.extensionModal.enterURL',
         defaultMessage: 'Enter your extension\'s URL',
-        description: 'Prompt of enter extension url',
+        description: 'Prompt of enter extension url'
     },
     runInSandbox: {
         id: 'gui.extensionModal.runInSandbox',
         defaultMessage: 'Is it running in sandbox?',
-        description: 'Prompt of run in sandbox',
+        description: 'Prompt of run in sandbox'
     }
 });
 
@@ -30,11 +30,34 @@ class ExtensionModal extends React.PureComponent {
         for (const offlineExt of extensionLibraryContent) {
             this.extensions[offlineExt.url] = {
                 id: offlineExt.url,
-                isoffline: true,
+                isBuiltin: true,
                 type: 'scratch',
                 ...offlineExt
             };
         }
+        // Add loaded extensions
+        const loadedExtensions = this.props.extensionManager.getLoadedExtensions();
+        for (const extUrl in loadedExtensions) {
+            const ext = loadedExtensions[extUrl];
+            // Don't use extension info for built-in extensions;
+            if (this.extensions.hasOwnProperty(extUrl) && this.extensions[extUrl].isBuiltin) {
+                ext.info = this.extensions[extUrl];
+            } else {
+                ext.info.type = ext.type;
+                // unnecessary for extension modal
+                delete ext.class;
+            }
+
+            if (ext.type === 'scratch') {
+                ext.info.sandboxed = ext.env === 'sandboxed';
+                // scratch extension always enabled.
+                ext.info.enabled = true;
+                // placeholder
+                if (!ext.info.insetIconURL) ext.info.insetIconURL = ext.info.blockIconURI;
+            }
+            this.extensions[extUrl] = ext.info;
+        }
+        this.props.extensionManager.on('EXTENSION_LOADED', this.handleExtensionAdded.bind(this));
         this.state = {
             filterQuery: '',
             selectedTag: 'offline',
@@ -47,19 +70,41 @@ class ExtensionModal extends React.PureComponent {
             'handleFilterChange',
             'handleFilterClear',
             'handleTagClick',
-            'loadFromURL',
-            'upload'
+            'handleLoadFromURL',
+            'handleUpload',
+            'handleExtensionAdded'
         ]);
+    }
+    componentWillUnmount () {
+        this.props.extensionManager.off('EXTENSION_LOADED', this.handleExtensionAdded);
+    }
+    handleExtensionAdded (url, extension) {
+        // Don't use extension info for built-in extensions;
+        if (this.extensions.hasOwnProperty(url) && this.extensions[url].isBuiltin) {
+            extension.info = this.extensions[url];
+        } else {
+            extension.info.type = extension.type;
+            // unnecessary for extension modal
+            delete extension.class;
+        }
+
+        if (extension.type === 'scratch') {
+            extension.info.sandboxed = extension.env === 'sandboxed';
+            // scratch extension always enabled.
+            extension.info.enabled = true;
+            // placeholder
+            if (!extension.info.insetIconURL) extension.info.insetIconURL = extension.info.blockIconURI;
+        }
+        this.extensions[url] = extension.info;
+        this.setState({extensions: Object.values(this.extensions)});
     }
     async handleExtensionStatusChanged (url, status) {
         if (status) {
             await this.props.extensionManager.loadExtensionURL(url);
             this.props.onCategorySelected(url);
-            this.extensions[url].enabled = true;
         } else {
             // todo
         }
-        this.setState({extensions: Object.values(this.extensions)});
     }
     handleFilterChange (e) {
         this.setState({
@@ -69,18 +114,18 @@ class ExtensionModal extends React.PureComponent {
     handleFilterClear () {
         this.setState({filterQuery: ''});
     }
-    async loadFromURL () {
+    async handleLoadFromURL () {
         const url = prompt(this.props.intl.formatMessage(messages.loadFromURL));
         if (!url.trim()) return;
         const isSandbox = confirm(this.props.intl.formatMessage(messages.runInSandbox));
         await this.props.extensionManager.loadExtensionURL(url, 'scratch', isSandbox ? 'sandboxed' : 'unsandboxed');
     }
-    upload () {
+    handleUpload () {
         const input = document.createElement('input');
         input.setAttribute('type', 'file');
         input.setAttribute('accept', '.js,.ccx');
         input.setAttribute('multiple', true);
-        input.onchange = async (event) => {
+        input.onchange = async event => {
             const files = event.target.files;
             for (const file of files) {
                 const fileName = file.name;
@@ -117,8 +162,8 @@ class ExtensionModal extends React.PureComponent {
                 onFilterClear={this.handleFilterClear}
                 onRequestClose={this.props.onRequestClose}
                 loaded={this.state.selectedTag === 'offline' || this.state.contentLoaded}
-                onLoadFromURL={this.loadFromURL}
-                onUpload={this.upload}
+                onLoadFromURL={this.handleLoadFromURL}
+                onUpload={this.handleUpload}
             />
         );
     }
