@@ -53,6 +53,11 @@ class ExtensionModal extends React.PureComponent {
                 ext.info.enabled = true;
                 // placeholder
                 if (!ext.info.insetIconURL) ext.info.insetIconURL = ext.info.blockIconURI;
+            } else if (ext.type === 'ccx') {
+                ext.info.enabled = ext.enabled;
+                ext.info.collaborator = ext.info.author;
+                ext.info.name = this.props.intl.formatMessage({id: `${ext.info.id}.name`});
+                ext.info.description = this.props.intl.formatMessage({id: `${ext.info.id}.description`});
             }
             this.extensions[extUrl] = ext.info;
         }
@@ -98,6 +103,9 @@ class ExtensionModal extends React.PureComponent {
         } else if (extension.type === 'ccx') {
             extension.info.enabled = extension.enabled;
             extension.info.collaborator = extension.info.author;
+            extension.info.name = this.props.intl.formatMessage({id: `${extension.info.id}.name`});
+            extension.info.description = this.props.intl.formatMessage({id: `${extension.info.id}.description`});
+            extension.info.insetIconURL = extension.info.inset_icon;
         }
         this.extensions[url] = extension.info;
         this.setState({extensions: Object.values(this.extensions)});

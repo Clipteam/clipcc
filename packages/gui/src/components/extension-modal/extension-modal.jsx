@@ -12,12 +12,17 @@ import Switch from '../switch/switch.jsx';
 import Button from '../button/button.jsx';
 import TagButton from '../../containers/tag-button.jsx';
 import Spinner from '../spinner/spinner.jsx';
+import Select from '../select/select.jsx';
+import Input from '../forms/input.jsx';
+import BufferedInputHOC from '../forms/buffered-input-hoc.jsx';
 
 import styles from './extension-modal.css';
 
 import bluetoothIconURL from './bluetooth.svg';
 import internetConnectionIconURL from './internet-connection.svg';
 import extensionIconURL from './inset-icon.svg';
+
+const BufferedInput = BufferedInputHOC(Input);
 
 const messages = defineMessages({
     title: {
@@ -56,7 +61,9 @@ class ExtensionCard extends React.Component {
         bindAll(this, [
             'switchExpand',
             'handleExtensionName',
-            'handleSwitch'
+            'handleSwitch',
+            'handleChangeSettingsItem',
+            'renderExtensionSettings'
         ]);
     }
     switchExpand () {
@@ -70,6 +77,67 @@ class ExtensionCard extends React.Component {
     handleSwitch (value) {
         this.props.onExtensionStatusChanged(this.props.data.url, value);
     }
+    handleChangeSettingsItem (id) {
+        return value => {
+            // todo
+        };
+    }
+    renderExtensionSettings () {
+        const settings = this.props.data.settings;
+        const content = [];
+        for (const setting of settings) {
+            let element = null;
+            switch (setting.type) {
+            case 'boolean': {
+                element = (<Switch
+                    key={setting.id}
+                    onChange={this.handleChangeSettingsItem(setting.id)}
+                    value={setting.default}
+                />);
+                break;
+            }
+            case 'number': {
+                element = (<BufferedInput
+                    key={setting.id}
+                    small
+                    tabIndex="0"
+                    type="number"
+                    min={setting.min}
+                    max={setting.max}
+                    precision={setting.precision}
+                    placeholder="6"
+                    value={setting.default}
+                    onSubmit={this.handleChangeSettingsItem(setting.id)}
+                    className={classNames(styles.input)}
+                />);
+                break;
+            }
+            case 'selector': {
+                const options = setting.options.map(v => ({
+                    id: v.id,
+                    text: this.props.intl.formatMessage({id: v.message})
+                }));
+                element = (<Select
+                    options={options}
+                    onChange={this.handleChangeSettingsItem(setting.id)}
+                    value={setting.default}
+                />);
+                break;
+            }
+            default:
+                element = (<p>{'Error Type'}</p>);
+            }
+            content.push(
+                <div className={styles.option}>
+                    <span className={styles.label}>
+                        {this.props.intl.formatMessage({id: `${this.props.data.id}.settings.${setting.id}`})}
+                    </span>
+                    {element}
+                </div>
+            );
+        }
+        return content;
+    }
     render () {
         const {data, key} = this.props;
         return (
@@ -77,10 +145,12 @@ class ExtensionCard extends React.Component {
                 className={classNames(styles.extensionCard, {
                     [styles.expand]: this.state.expand
                 })}
-                onClick={this.switchExpand}
                 key={key}
             >
-                <div className={styles.header}>
+                <div
+                    className={styles.header}
+                    onClick={this.switchExpand}
+                >
                     <img
                         alt={data.name}
                         src={data.insetIconURL || extensionIconURL}
@@ -202,6 +272,7 @@ class ExtensionCard extends React.Component {
                                 value={data.sandboxed}
                             />
                         </div>
+                        {data.settings && this.renderExtensionSettings()}
                     </>
                 )}
             </div>
@@ -230,9 +301,14 @@ ExtensionCard.propTypes = {
         warning: PropTypes.arrayOf(PropTypes.string),
         url: PropTypes.string,
         id: PropTypes.string,
+        key: PropTypes.string,
         description: PropTypes.node,
+        settings: PropTypes.array,
         type: PropTypes.oneOf(['scratch', 'ccx'])
-    })
+    }),
+    intl: intlShape.isRequired,
+    key: PropTypes.string,
+    onExtensionStatusChanged: PropTypes.func
 };
 
 class ExtensionModalComponent extends React.Component {
@@ -347,6 +423,7 @@ class ExtensionModalComponent extends React.Component {
                             <ExtensionCard
                                 key={index}
                                 data={dataItem}
+                                intl={this.props.intl}
                                 onExtensionStatusChanged={this.props.onExtensionStatusChanged}
                             />
                         ))
