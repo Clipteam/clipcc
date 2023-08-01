@@ -274,6 +274,7 @@ class ExtensionModalComponent extends React.Component {
                             id="gui.extensionModal.upload"
                         />
                     </Button>
+                    <div className={styles.spacer} />
                     <Button
                         className={styles.loadButton}
                         onClick={this.props.onLoadFromURL}

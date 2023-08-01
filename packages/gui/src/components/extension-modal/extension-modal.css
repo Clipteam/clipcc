@@ -144,9 +144,12 @@
     flex-grow: 1;
 }
 
+.spacer {
+    margin-right: 1rem;
+}
+
 .load-button {
     padding: .625rem 1rem;
-    margin-right: 1rem;
     background: var(--clipcc-motion-primary);
     border-radius: 1.375rem;
     color: var(--clipcc-on-motion-primary);
