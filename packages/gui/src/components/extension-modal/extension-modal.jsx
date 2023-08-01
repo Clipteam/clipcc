@@ -17,6 +17,7 @@ import styles from './extension-modal.css';
 
 import bluetoothIconURL from './bluetooth.svg';
 import internetConnectionIconURL from './internet-connection.svg';
+import extensionIconURL from './inset-icon.svg';
 
 const messages = defineMessages({
     title: {
@@ -82,7 +83,7 @@ class ExtensionCard extends React.Component {
                 <div className={styles.header}>
                     <img
                         alt={data.name}
-                        src={data.insetIconURL}
+                        src={data.insetIconURL || extensionIconURL}
                         className={styles.insetIcon}
                         style={{
                             backgroundColor: data.color1 ? `${data.color1}` : 'var(--clipcc-pen-primary)'

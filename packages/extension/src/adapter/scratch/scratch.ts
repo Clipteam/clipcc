@@ -29,12 +29,12 @@ export interface ScratchExtension extends Extension {
     class: string | ExtensionClass; // The serviceName or extensionClass.
 }
 
-export interface Events {
+export interface ScratchAdapterEvents {
     LOADED: [url: string, extension: ScratchExtension];
     [eventName: string]: [...params: any[]]
 }
 
-class ScratchAdapter extends Emitter<Events> {
+class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
     /**
      * Editor's Virtual Machine instance.
      * Should be set by `attachVM` while initializing.
@@ -70,8 +70,8 @@ class ScratchAdapter extends Emitter<Events> {
 
     constructor () {
         super();
-        dispatch.setService('extensions', this).catch((e: Error) => {
-            console.error(`ExtensionManager was unable to register extension service: ${JSON.stringify(e)}`);
+        dispatch.setService('scratchAdapter', this).catch((e: Error) => {
+            console.error(`ScratchAdapter was unable to register extension service: ${JSON.stringify(e)}`);
         });
     }
 
@@ -86,6 +86,7 @@ class ScratchAdapter extends Emitter<Events> {
     /**
      * Load a scratch-standard extension.
      * @param {ExtensionClass | string} ext - Extension's data.
+     * @param {'sandboxed' | 'unsandboxed'} env - Extension's running environment.
      */
     async load (ext: string | ExtensionClass, env: 'sandboxed' | 'unsandboxed' = 'sandboxed') {
         if (!this.vm) throw new Error(`VM hadn't been attached`);
@@ -104,7 +105,7 @@ class ScratchAdapter extends Emitter<Events> {
                     dispatch.addWorker(ExtensionWorker);
                 });
             case 'unsandboxed': {
-                // @todo DataURL support
+                // @todo DataURL/ObjectURL support
                 const response = await fetch(ext);
                 const originalScript = await response.text();
                 const closureFunc = eval(`(function(Scratch){${originalScript}})`);
@@ -139,16 +140,16 @@ class ScratchAdapter extends Emitter<Events> {
 
     /**
      * Reload a scratch-standard extension.
-     * @param {string} extensionId - Extension's ID
+     * @param {string} extensionURL - Extension's URL
     */
-    async reload (extensionId: string) {
+    async reload (extensionURL: string) {
         if (!this.vm) {
             return Promise.reject(`VM hadn't been attached`);
         }
 
-        const targetExt = this.loadedScratchExtension.get(extensionId);
+        const targetExt = this.loadedScratchExtension.get(extensionURL);
         if (!targetExt) {
-            return Promise.reject(`Cannot locate extension ${extensionId}.`);
+            return Promise.reject(`Cannot locate extension ${extensionURL}.`);
         }
         // It's running in worker
         if (typeof targetExt.class === 'string') {

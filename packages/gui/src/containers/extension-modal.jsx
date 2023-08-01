@@ -7,7 +7,6 @@ import {defineMessages, injectIntl, intlShape} from 'react-intl';
 import extensionLibraryContent from '../lib/libraries/extensions/index.jsx';
 
 import ExtensionModalComponent from '../components/extension-modal/extension-modal.jsx';
-import extensionIcon from '../components/action-menu/icon--sprite.svg';
 
 const messages = defineMessages({
     loadFromURL: {
@@ -96,6 +95,9 @@ class ExtensionModal extends React.PureComponent {
             extension.info.enabled = true;
             // placeholder
             if (!extension.info.insetIconURL) extension.info.insetIconURL = extension.info.blockIconURI;
+        } else if (extension.type === 'ccx') {
+            extension.info.enabled = extension.enabled;
+            extension.info.collaborator = extension.info.author;
         }
         this.extensions[url] = extension.info;
         this.setState({extensions: Object.values(this.extensions)});
@@ -142,7 +144,11 @@ class ExtensionModal extends React.PureComponent {
 
                 const url = URL.createObjectURL(file);
                 const isSandbox = confirm(fileName + this.props.intl.formatMessage(messages.runInSandbox));
-                await this.props.extensionManager.loadExtensionURL(url, 'scratch', isSandbox ? 'sandboxed' : 'unsandboxed');
+                await this.props.extensionManager.loadExtensionURL(
+                    url,
+                    fileName.endsWith('.ccx') ? 'ccx' : 'scratch',
+                    isSandbox ? 'sandboxed' : 'unsandboxed'
+                );
             }
         };
         input.click();

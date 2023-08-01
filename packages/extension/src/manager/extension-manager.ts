@@ -1,11 +1,11 @@
 import { Emitter } from 'strict-event-emitter';
-import { ScratchAdapter, ScratchExtension } from '../adapter';
+import { ScratchAdapter, CCXAdapter, ScratchExtension } from '../adapter';
 import {
     StandardScratchExtensionClass as ExtensionClass
 } from '../type/scratch';
 import { VM } from '../type/virtual-machine';
 export interface Extension {
-    type: 'scratch';
+    type: 'scratch' | 'ccx';
     env: 'unsandboxed' | 'sandboxed';
     url: string;
 }
@@ -49,9 +49,15 @@ class ExtensionManager extends Emitter<Events> {
      */
     scratchAdapter = new ScratchAdapter();
 
+    /**
+     * Adapter instance to load CCX extensions.
+     */
+    ccxAdapter = new CCXAdapter();
+
     constructor () {
         super();
-        this.scratchAdapter.on('LOADED', this.handleScratchExtensionLoaded.bind(this));
+        this.scratchAdapter.on('LOADED', this.handleExtensionLoaded.bind(this));
+        this.ccxAdapter.on('LOADED', this.handleExtensionLoaded.bind(this));
     }
     /**
      * Check whether an extension is registered or is in the process of loading. This is intended to control loading or
@@ -104,7 +110,7 @@ class ExtensionManager extends Emitter<Events> {
      */
     async loadExtensionURL (
         extensionURL: string,
-        type: 'scratch' = 'scratch',
+        type: 'scratch' | 'ccx' = 'scratch',
         env: 'sandboxed' | 'unsandboxed' = 'sandboxed'
     ) {
         if (this.loadedExtensions.has(extensionURL)) {
@@ -118,15 +124,14 @@ class ExtensionManager extends Emitter<Events> {
                 return extensionURL;
             }
 
-            if (typeof extensionURL !== 'string' || !extensionURL.startsWith('http')) {
-                throw new Error(`Invalid url ${extensionURL}`);
-            }
-
             switch (type) {
             case 'scratch': {
                 const extensionId = await this.scratchAdapter.load(extensionURL, env);
                 return extensionId;
             }
+            case 'ccx':
+                const extensionId = await this.ccxAdapter.load(extensionURL, env);
+                return extensionId;
             default:
                 throw new Error(`Invaild extension type`);
             }
@@ -173,6 +178,7 @@ class ExtensionManager extends Emitter<Events> {
     attachVM (vm: VM) {
         this.vm = vm;
         this.scratchAdapter.attachVM(vm);
+        this.ccxAdapter.attachVM(vm);
     }
 
     /**
@@ -183,7 +189,7 @@ class ExtensionManager extends Emitter<Events> {
         this.block = block;
     }
 
-    handleScratchExtensionLoaded (url: string, extension: ScratchExtension) {
+    handleExtensionLoaded (url: string, extension: Extension) {
         this.loadedExtensions.set(url, extension);
         this.emit('EXTENSION_LOADED', url, extension);
     }

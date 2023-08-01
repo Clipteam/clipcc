@@ -19,7 +19,7 @@ class ExtensionWorker {
     extensionURL = '';
     constructor () {
         dispatch.waitForConnection.then(() => {
-            dispatch.call('extensions', 'allocateWorker').then(x => {
+            dispatch.call('scratchAdapter', 'allocateWorker').then(x => {
                 const [id, url] = x;
                 this.workerId = id;
                 this.extensionURL = url;
@@ -30,9 +30,9 @@ class ExtensionWorker {
                     const initialRegistrations = this.initialRegistrations;
                     this.initialRegistrations = [];
 
-                    Promise.all(initialRegistrations).then(() => dispatch.call('extensions', 'onWorkerInit', id));
+                    Promise.all(initialRegistrations).then(() => dispatch.call('scratchAdapter', 'onWorkerInit', id));
                 } catch (e) {
-                    dispatch.call('extensions', 'onWorkerInit', id, e);
+                    dispatch.call('scratchAdapter', 'onWorkerInit', id, e);
                 }
             });
         });
@@ -45,7 +45,7 @@ class ExtensionWorker {
         this.extensions.push(extensionObject);
         const serviceName = `extension.${this.workerId}.${extensionId}`;
         const promise = dispatch.setService(serviceName, extensionObject)
-            .then(() => dispatch.call('extensions', 'registerExtensionService', this.extensionURL, serviceName));
+            .then(() => dispatch.call('scratchAdapter', 'registerExtensionService', this.extensionURL, serviceName));
         if (this.initialRegistrations) {
             this.initialRegistrations.push(promise);
         }
