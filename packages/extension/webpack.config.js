@@ -57,6 +57,10 @@ module.exports = [
         },
         output: {
             path: path.resolve(__dirname, 'dist', 'web')
+        },
+        externals: {
+            'format-message': true,
+            'jszip': true
         }
     }),
     // Node-compatible

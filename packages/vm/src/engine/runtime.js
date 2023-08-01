@@ -608,11 +608,11 @@ class Runtime extends EventEmitter {
     }
 
     /**
-     * Event name for reporting that an extension was added.
+     * Event name for reporting that an category was added.
      * @const {string}
      */
-    static get EXTENSION_ADDED () {
-        return 'EXTENSION_ADDED';
+    static get CATEGORY_ADDED () {
+        return 'CATEGORY_ADDED';
     }
 
     /**
@@ -880,7 +880,7 @@ class Runtime extends EventEmitter {
             }
         }
 
-        this.emit(Runtime.EXTENSION_ADDED, categoryInfo);
+        this.emit(Runtime.CATEGORY_ADDED, categoryInfo);
     }
 
     /**

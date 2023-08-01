@@ -26,10 +26,12 @@ export interface CCXExtension extends Extension {
     locales: Record<string, Record<string, string>>;
     enabled: boolean;
     class: string | ExtensionClass; // The serviceName or extensionClass.
+    warnings?: string[];
 }
 
 export interface CCXAdapterEvents {
     LOADED: [url: string, extension: CCXExtension];
+    ADD_CATEGORY: [categoryInfo: unknown[]];
     [eventName: string]: [...params: any[]];
 }
 
@@ -40,6 +42,11 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      * @todo add more strict type check when VM adds TS support.
      */
     vm?: VM;
+    /**
+     * CCXAdapter's context.
+     * @type {Ctx}
+     */
+    ctx = makeCtx(this);
 
     /**
     * Loaded scratch extensions, URL with extension info.
@@ -60,6 +67,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      */
     attachVM (vm: VM) {
         this.vm = vm;
+        this.ctx.api.attachVM(vm);
     }
 
     /**
@@ -121,10 +129,9 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                 try {
                     const originalScript = await zipData.files['main.js'].async('text');
                     const closureFunc = eval(`(function(module){${originalScript}})`);
-                    const ctx = makeCtx();
                     // "__webpack_require__" can load modules from global env.
                     // so we exposure ctx globally until extension is loaded.
-                    window.ClipCCExtension = ctx;
+                    window.ClipCCExtension = this.ctx;
                     // rewrite "module.exports" to get extension class.
                     closureFunc(new Proxy({}, {
                         set(target: Record<string, unknown>, prop: string, value: unknown) {
@@ -135,7 +142,8 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                             return true;
                         }
                     }));
-                    // init extension
+                    // @ts-expect-error
+                    extensionObject = new extensionObject();
                     if (extensionObject.onInit) extensionObject.onInit();
                     this.loadedScratchExtension.set(url, {
                         type: 'ccx',

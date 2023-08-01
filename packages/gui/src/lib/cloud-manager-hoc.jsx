@@ -30,7 +30,7 @@ const cloudManagerHOC = function (WrappedComponent) {
             ]);
 
             this.props.vm.on('HAS_CLOUD_DATA_UPDATE', this.handleCloudDataUpdate);
-            this.props.vm.on('EXTENSION_ADDED', this.handleExtensionAdded);
+            this.props.vm.on('CATEGORY_ADDED', this.handleExtensionAdded);
         }
         componentDidMount () {
             if (this.shouldConnect(this.props)) {
@@ -52,7 +52,7 @@ const cloudManagerHOC = function (WrappedComponent) {
         }
         componentWillUnmount () {
             this.props.vm.off('HAS_CLOUD_DATA_UPDATE', this.handleCloudDataUpdate);
-            this.props.vm.off('EXTENSION_ADDED', this.handleExtensionAdded);
+            this.props.vm.off('CATEGORY_ADDED', this.handleExtensionAdded);
             this.disconnectFromCloud();
         }
         canUseCloud (props) {

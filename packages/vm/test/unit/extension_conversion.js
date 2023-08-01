@@ -274,7 +274,7 @@ const testLoop = function (t, loop) {
 test('registerExtensionPrimitives', t => {
     const runtime = new Runtime();
 
-    runtime.on(Runtime.EXTENSION_ADDED, categoryInfo => {
+    runtime.on(Runtime.CATEGORY_ADDED, categoryInfo => {
         const blocksInfo = categoryInfo.blocks;
         t.equal(blocksInfo.length, testExtensionInfo.blocks.length);
 
@@ -303,7 +303,7 @@ test('registerExtensionPrimitives', t => {
 test('custom field types should be added to block and EXTENSION_FIELD_ADDED callback triggered', t => {
     const runtime = new Runtime();
 
-    runtime.on(Runtime.EXTENSION_ADDED, categoryInfo => {
+    runtime.on(Runtime.CATEGORY_ADDED, categoryInfo => {
         const blockInfo = categoryInfo.blocks[0];
 
         // We expect that for each argument there's a corresponding <field>-tag in the block XML

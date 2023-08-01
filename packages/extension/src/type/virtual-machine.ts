@@ -10,6 +10,7 @@ interface Runtime {
     getEditingTarget: () => Target;
     getTargetForStage: () => Target;
     makeMessageContextForTarget: (target: Target) => void;
+    _blockInfo: unknown[];
 }
 
 export interface VM {

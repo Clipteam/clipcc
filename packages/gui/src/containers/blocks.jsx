@@ -70,7 +70,8 @@ class Blocks extends React.Component {
             'onBlockGlowOn',
             'onBlockGlowOff',
             'handleMonitorsUpdate',
-            'handleExtensionAdded',
+            'handleCategoryAdded',
+            'handleAddCategory',
             'handleBlocksInfoUpdate',
             'onTargetsUpdate',
             'onVisualReport',
@@ -134,6 +135,8 @@ class Blocks extends React.Component {
         addFunctionListener(this.workspace, 'zoom', this.onWorkspaceMetricsChange);
 
         this.attachVM();
+
+        this.props.extensionManager.ccxAdapter.on('ADD_CATEGORY', this.handleAddCategory);
         // Only update blocks/vm locale when visible to avoid sizing issues
         // If locale changes while not visible it will get handled in didUpdate
         if (this.props.isVisible) {
@@ -199,6 +202,7 @@ class Blocks extends React.Component {
     }
     componentWillUnmount () {
         this.detachVM();
+        this.props.extensionManager.ccxAdapter.off('ADD_CATEGORY', this.handleAddCategory);
         this.workspace.dispose();
         clearTimeout(this.toolboxUpdateTimeout);
 
@@ -277,7 +281,7 @@ class Blocks extends React.Component {
         this.props.vm.on('workspaceUpdate', this.onWorkspaceUpdate);
         this.props.vm.on('targetsUpdate', this.onTargetsUpdate);
         this.props.vm.on('MONITORS_UPDATE', this.handleMonitorsUpdate);
-        this.props.vm.on('EXTENSION_ADDED', this.handleExtensionAdded);
+        this.props.vm.on('CATEGORY_ADDED', this.handleCategoryAdded);
         this.props.vm.on('BLOCKSINFO_UPDATE', this.handleBlocksInfoUpdate);
         this.props.vm.on('PERIPHERAL_CONNECTED', this.handleStatusButtonUpdate);
         this.props.vm.on('PERIPHERAL_DISCONNECTED', this.handleStatusButtonUpdate);
@@ -297,7 +301,7 @@ class Blocks extends React.Component {
         this.props.vm.off('workspaceUpdate', this.onWorkspaceUpdate);
         this.props.vm.off('targetsUpdate', this.onTargetsUpdate);
         this.props.vm.off('MONITORS_UPDATE', this.handleMonitorsUpdate);
-        this.props.vm.off('EXTENSION_ADDED', this.handleExtensionAdded);
+        this.props.vm.off('CATEGORY_ADDED', this.handleCategoryAdded);
         this.props.vm.off('BLOCKSINFO_UPDATE', this.handleBlocksInfoUpdate);
         this.props.vm.off('PERIPHERAL_CONNECTED', this.handleStatusButtonUpdate);
         this.props.vm.off('PERIPHERAL_DISCONNECTED', this.handleStatusButtonUpdate);
@@ -445,7 +449,14 @@ class Blocks extends React.Component {
             }
         }
     }
-    handleExtensionAdded (categoryInfo) {
+    handleAddCategory (categories) {
+        // Update the toolbox with new blocks if possible
+        const toolboxXML = this.getToolboxXML();
+        if (toolboxXML) {
+            this.props.updateToolboxState(toolboxXML);
+        }
+    }
+    handleCategoryAdded (categoryInfo) {
         const defineBlocks = blockInfoArray => {
             if (blockInfoArray && blockInfoArray.length > 0) {
                 const staticBlocksJson = [];
