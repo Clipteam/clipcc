@@ -101,6 +101,5 @@ export interface CategoryPrototype {
 
 export type VmInstance = unknown;
 export type BlockInstance = unknown;
-export type GuiInstance = unknown;
 export type Project = unknown;
 

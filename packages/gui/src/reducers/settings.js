@@ -1,4 +1,6 @@
 const UPDATE = 'scratch-gui/settings/UPDATE';
+const NEW_ITEM = 'scratch-gui/settings/NEW_ITEM';
+const RESET_DEFAULT = 'scratch-gui/settings/RESET_DEFAULT';
 
 const defaultState = {
     hideNonVanillaBlocks: false,
@@ -34,6 +36,20 @@ const reducer = function (state, action) {
         localStorage.setItem('settings', JSON.stringify(newSettings));
         return newSettings;
     }
+    case NEW_ITEM: {
+        if (state.hasOwnProperty(action.key)) {
+            // if the setting item already exists
+            return state;
+        }
+        const newSettings = Object.assign({}, state, {
+            [action.key]: action.defaultValue
+        });
+        localStorage.setItem('settings', JSON.stringify(newSettings));
+        return newSettings;
+    }
+    case RESET_DEFAULT:
+        localStorage.setItem('settings', JSON.stringify(defaultState));
+        return defaultValue;
     default:
         return state;
     }
@@ -46,8 +62,20 @@ const updateSettings = function (settings) {
     };
 };
 
+const addNewSetting = (key, defaultValue) => ({
+    type: NEW_ITEM,
+    key,
+    defaultValue
+});
+
+const resetSettingsToDefault = () => ({
+    type: RESET_DEFAULT
+});
+
 export {
     reducer as default,
     initialState as settingsInitialState,
-    updateSettings
+    updateSettings,
+    addNewSetting,
+    resetSettingsToDefault
 };

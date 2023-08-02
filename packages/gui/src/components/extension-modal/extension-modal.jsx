@@ -79,7 +79,7 @@ class ExtensionCard extends React.Component {
     }
     handleChangeSettingsItem (id) {
         return value => {
-            // todo
+            this.props.onChangeSettingsItem(id, value);
         };
     }
     renderExtensionSettings () {
@@ -90,15 +90,15 @@ class ExtensionCard extends React.Component {
             switch (setting.type) {
             case 'boolean': {
                 element = (<Switch
-                    key={setting.id}
-                    onChange={this.handleChangeSettingsItem(setting.id)}
-                    value={setting.default}
+                    key={`${this.props.data.id}.settings.${setting.id}`}
+                    onChange={this.handleChangeSettingsItem(`${this.props.data.id}.settings.${setting.id}`)}
+                    value={this.props.settings[`${this.props.data.id}.settings.${setting.id}`] ?? setting.default}
                 />);
                 break;
             }
             case 'number': {
                 element = (<BufferedInput
-                    key={setting.id}
+                    key={`${this.props.data.id}.settings.${setting.id}`}
                     small
                     tabIndex="0"
                     type="number"
@@ -106,8 +106,8 @@ class ExtensionCard extends React.Component {
                     max={setting.max}
                     precision={setting.precision}
                     placeholder="6"
-                    value={setting.default}
-                    onSubmit={this.handleChangeSettingsItem(setting.id)}
+                    value={this.props.settings[`${this.props.data.id}.settings.${setting.id}`] ?? setting.default}
+                    onSubmit={this.handleChangeSettingsItem(`${this.props.data.id}.settings.${setting.id}`)}
                     className={classNames(styles.input)}
                 />);
                 break;
@@ -119,8 +119,8 @@ class ExtensionCard extends React.Component {
                 }));
                 element = (<Select
                     options={options}
-                    onChange={this.handleChangeSettingsItem(setting.id)}
-                    value={setting.default}
+                    onChange={this.handleChangeSettingsItem(`${this.props.data.id}.settings.${setting.id}`)}
+                    value={this.props.settings[`${this.props.data.id}.settings.${setting.id}`] ?? setting.default}
                 />);
                 break;
             }
@@ -308,7 +308,9 @@ ExtensionCard.propTypes = {
     }),
     intl: intlShape.isRequired,
     key: PropTypes.string,
-    onExtensionStatusChanged: PropTypes.func
+    settings: PropTypes.object,
+    onExtensionStatusChanged: PropTypes.func,
+    onChangeSettingsItem: PropTypes.func
 };
 
 class ExtensionModalComponent extends React.Component {
@@ -325,7 +327,6 @@ class ExtensionModalComponent extends React.Component {
             this.scrollToTop();
         }
     }
-
     scrollToTop () {
         this.filteredDataRef.scrollTop = 0;
     }
@@ -424,7 +425,9 @@ class ExtensionModalComponent extends React.Component {
                                 key={index}
                                 data={dataItem}
                                 intl={this.props.intl}
+                                settings={this.props.settings}
                                 onExtensionStatusChanged={this.props.onExtensionStatusChanged}
+                                onChangeSettingsItem={this.props.onChangeSettingsItem}
                             />
                         ))
                     ) : (
@@ -476,7 +479,9 @@ ExtensionModalComponent.propTypes = {
     onExtensionStatusChanged: PropTypes.func,
     onRequestClose: PropTypes.func,
     onTagClick: PropTypes.func,
+    settings: PropTypes.object,
     onLoadFromURL: PropTypes.func,
+    onChangeSettingsItem: PropTypes.func,
     onUpload: PropTypes.func
 };
 

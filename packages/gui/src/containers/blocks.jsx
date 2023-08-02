@@ -84,6 +84,8 @@ class Blocks extends React.Component {
         this.ScratchBlocks.prompt = this.handlePromptStart;
         this.ScratchBlocks.statusButtonCallback = this.handleConnectionModalStart;
         this.ScratchBlocks.recordSoundCallback = this.handleOpenSoundRecorder;
+        
+        props.extensionManager.attachBlock(this.ScratchBlocks);
 
         this.state = {
             prompt: null

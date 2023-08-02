@@ -1,8 +1,10 @@
 import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
+import {connect} from 'react-redux';
 import ExtensionManager from 'clipcc-extension';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
+import {updateSettings} from '../reducers/settings';
 
 import extensionLibraryContent from '../lib/libraries/extensions/index.jsx';
 
@@ -78,7 +80,8 @@ class ExtensionModal extends React.PureComponent {
             'handleTagClick',
             'handleLoadFromURL',
             'handleUpload',
-            'handleExtensionAdded'
+            'handleExtensionAdded',
+            'handleChangeSettingsItem'
         ]);
     }
     componentWillUnmount () {
@@ -173,10 +176,14 @@ class ExtensionModal extends React.PureComponent {
             this.setState({loaded: false});
         }
     }
+    handleChangeSettingsItem (id, value) {
+        this.props.updateSettings({[id]: value});
+    }
     render () {
         return (
             <ExtensionModalComponent
                 data={this.state.selectedTag === 'offline' ? this.state.extensions : this.state.onlineExtensions}
+                settings={this.props.settings}
                 filterQuery={this.state.filterQuery}
                 filter={this.state.filter}
                 selectedTag={this.state.selectedTag}
@@ -184,6 +191,7 @@ class ExtensionModal extends React.PureComponent {
                 onTagClick={this.handleTagClick}
                 onFilterChange={this.handleFilterChange}
                 onFilterClear={this.handleFilterClear}
+                onChangeSettingsItem={this.handleChangeSettingsItem}
                 onFilterEnter={this.handleFilterEnter}
                 onRequestClose={this.props.onRequestClose}
                 loaded={this.state.selectedTag === 'offline' || this.state.contentLoaded}
@@ -194,12 +202,24 @@ class ExtensionModal extends React.PureComponent {
     }
 }
 
+const mapStateToProps = state => ({
+    settings: state.scratchGui.settings
+});
+
+const mapDispatchToProps = dispatch => ({
+    updateSettings: (settings) => dispatch(updateSettings(settings))
+});
 
 ExtensionModal.propTypes = {
     intl: intlShape.isRequired,
+    settings: PropTypes.object,
     onCategorySelected: PropTypes.func,
     onRequestClose: PropTypes.func,
+    updateSettings: PropTypes.func,
     extensionManager: PropTypes.instanceOf(ExtensionManager).isRequired // eslint-disable-line react/no-unused-prop-types
 };
 
-export default injectIntl(ExtensionModal);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(injectIntl(ExtensionModal));

@@ -2,7 +2,6 @@ import {
     CategoryPrototype,
     BlockPrototype,
     VmInstance,
-    GuiInstance,
     BlockInstance
 } from './type';
 
@@ -15,15 +14,12 @@ export interface API {
     removeBlocks(opcodes: string[]): void;
 
     getVmInstance(): VmInstance;
-    getGuiInstance(): GuiInstance;
     getBlockInstance(): BlockInstance;
-    getStageCanvas(): HTMLCanvasElement;
+    getStageCanvas(): HTMLCanvasElement | undefined;
 
     getSettings(id: string): any;
 
     registerGlobalFunction(name: string, func: Function): void;
     unregisterGlobalFunction(name: string): void;
     callGlobalFunction(name: string, ...args: any[]): any;
-
-    migrateChangeBlock(targets: Object, srcBlockId: string, dstBlockId: string): void;
 }

@@ -1,9 +1,16 @@
 import formatMessage from "format-message";
 import { Emitter } from 'strict-event-emitter';
-import { ScratchAdapter, CCXAdapter, ScratchExtension } from '../adapter';
+import {
+    ScratchAdapter,
+    CCXAdapter,
+    ScratchExtension
+} from '../adapter';
 import {
     StandardScratchExtensionClass as ExtensionClass
 } from '../type/scratch';
+import {
+    SettingsItem
+} from '../type/ccx';
 import { VM } from '../type/virtual-machine';
 export interface Extension {
     type: 'scratch' | 'ccx';
@@ -13,6 +20,8 @@ export interface Extension {
 
 export interface Events {
     EXTENSION_LOADING: [extensionURL: string];
+    LOCALE_ADDED: [locales: Record<string, unknown>];
+    SETTINGS_ADDED: [id: string, settings: SettingsItem[]];
     EXTENSION_LOADED: [extensionURL: string, extension: Extension];
     EXTENSION_LOAD_ERROR: [extensionURL: string, reason: unknown];
     [eventName: string]: [...params: any[]]
@@ -40,7 +49,7 @@ class ExtensionManager extends Emitter<Events> {
 
     /**
      * Editor's Blockly instance.
-     * Should be set by `attachBlockly` while initializing.
+     * Should be set by `attachBlock` while initializing.
      * @todo add more strict type check when Blockly adds TS support.
      */
     block?: Record<string, unknown>;
@@ -219,15 +228,20 @@ class ExtensionManager extends Emitter<Events> {
      */
     attachBlock (block: Record<string, unknown>) {
         this.block = block;
+        this.ccxAdapter.attachBlock(block);
     }
 
-    handleExtensionLoaded (url: string, extension: Extension) {
+    private handleExtensionLoaded (url: string, extension: Extension) {
         this.loadedExtensions.set(url, extension);
         this.emit('EXTENSION_LOADED', url, extension);
     }
 
-    handleAddLocale (locales: Record<string, unknown>) {
+    private handleAddLocale (locales: Record<string, unknown>) {
         this.emit('LOCALE_ADDED', locales);
+    }
+
+    private handleAddSettings (id: string, settings: SettingsItem[]) {
+        this.emit('SETTINGS_ADDED', id, settings);
     }
 }
 

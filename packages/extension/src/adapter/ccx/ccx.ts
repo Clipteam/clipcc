@@ -1,7 +1,8 @@
 import { Emitter } from 'strict-event-emitter';
 import {
     CCXExtensionClass as ExtensionClass,
-    ExtensionInfo
+    ExtensionInfo,
+    SettingsItem
 } from '../../type/ccx';
 import { VM } from '../../type/virtual-machine';
 import { CentralDispatch as dispatch } from '../../dispatch/central-dispatch';
@@ -34,6 +35,7 @@ export interface CCXAdapterEvents {
     REFRESH_TOOLBOX: [];
     REGISTER_BLOCK: [blocks: BlockJSON[]];
     LOCALE_ADDED: [Record<string, unknown>];
+    SETTINGS_ADDED: [id: string, settings: SettingsItem[]];
     [eventName: string]: [...params: any[]];
 }
 
@@ -56,6 +58,12 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
     */
     private loadedScratchExtension = new Map<string, CCXExtension>();
 
+    /**
+     * GUI's settings.
+     * @type {Record<string, unknown>}
+     */
+    guiSettings: Record<string, unknown> = {};
+
     constructor () {
         super();
         dispatch.setService('ccxAdapter', this).catch((e: Error) => {
@@ -70,6 +78,14 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
     attachVM (vm: VM) {
         this.vm = vm;
         this.ctx.api.attachVM(vm);
+    }
+
+    /**
+     * Set the Block for the extension manager.
+     * @param {Blockly} block - the Blockly instance.
+     */
+    attachBlock (block: Record<string, unknown>) {
+        this.ctx.api.attachBlock(block);
     }
 
     /**
@@ -108,6 +124,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
             const content = await zipData.files['settings.json'].async('text');
             info.settings = JSON.parse(content);
         }
+        this.emit('SETTINGS_ADDED', info.id, info.settings);
 
         const locales: Record<string, Record<string, string>> = {};
         // Load locales
@@ -146,8 +163,10 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                         }
                     }));
                     // @ts-expect-error
-                    extensionObject = new extensionObject();
-                    if (extensionObject.onInit) extensionObject.onInit();
+                    extensionObject = (new extensionObject()) as ExtensionClass;
+                    if (extensionObject.onInit) {
+                        extensionObject.onInit();
+                    }
                     this.loadedScratchExtension.set(url, {
                         type: 'ccx',
                         info: info,

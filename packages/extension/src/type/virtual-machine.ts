@@ -17,4 +17,7 @@ interface Runtime {
 
 export interface VM {
     runtime: Runtime;
+    renderer?: {
+        canvas: HTMLCanvasElement
+    }
 }

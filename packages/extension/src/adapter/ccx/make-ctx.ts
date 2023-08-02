@@ -131,6 +131,13 @@ class ExtensionAPI implements API {
     private vm?: VM;
 
     /**
+     * Editor's Blockly instance.
+     * Should be set by `attachBlockly` while initializing.
+     * @todo add more strict type check when Blockly adds TS support.
+     */
+    private block?: Record<string, unknown>;
+
+    /**
      * All blocks which need to be added to Blockly.
      */
     private blocksToBeRegistered: BlockJSON[] = [];
@@ -141,15 +148,29 @@ class ExtensionAPI implements API {
      */
     private adapter: CCXAdapter;
 
+    /**
+     * Global functions
+     * @type {Record<string, Function>}
+     */
+    private globalFuncion: Record<string, Function> = {};
+
     constructor (adapter: CCXAdapter) {
         this.adapter = adapter;
     }
     /**
-     * Set the VM for the extension manager.
+     * Set the VM for the api.
      * @param {VirtualMachine} vm - the VM instance.
      */
     attachVM (vm: VM) {
         this.vm = vm;
+    }
+
+    /**
+     * Set the Block for the api.
+     * @param {Blockly} block - the Blockly instance.
+     */
+    attachBlock (block: Record<string, unknown>) {
+        this.block = block;
     }
 
     private requestRegisterBlock () {
@@ -345,12 +366,12 @@ class ExtensionAPI implements API {
         }
     }
 
-    getBlocksXML() {
+    getBlocksXML () {
         const processedXML = [];
         for (const categoryId in this.blockInfo) {
             const category = this.blockInfo[categoryId];
             let toolboxXML =
-                `<category
+            `<category
                 name="${formatMessage({ id: category.messageId, default: category.messageId })}"
                 id="${category.categoryId}"
                 colour="${category.color}"
@@ -405,23 +426,42 @@ class ExtensionAPI implements API {
         return processedXML;
     }
 
-    getVmInstance() {
+    getVmInstance () {
         return this.vm;
     }
 
-    getGuiInstance() {}
-    getBlockInstance() {}
-    getStageCanvas() {
-        return document.createElement('canvas');
+    getBlockInstance () {
+        return this.block;
     }
 
-    getSettings(id: string) {}
+    getStageCanvas () {
+        return this.vm?.renderer?.canvas;
+    }
 
-    registerGlobalFunction (name: string, func: Function) {}
-    unregisterGlobalFunction (name: string) {}
-    callGlobalFunction(name: string, ...args: any[]) {}
+    getSettings (id: string) {
+        return this.adapter.guiSettings[id];
+    }
 
-    migrateChangeBlock (targets: Object, srcBlockId: string, dstBlockId: string) {}
+    registerGlobalFunction (name: string, func: Function) {
+        if (this.globalFuncion.hasOwnProperty(name)) {
+            throw 'Register an existed global function.';
+        }
+        this.globalFuncion[name] = func;
+    }
+
+    unregisterGlobalFunction (name: string) {
+        if (!this.globalFuncion.hasOwnProperty(name)) {
+            throw 'Try to unregister an unexisted global function.';
+        }
+        delete this.globalFuncion[name];
+    }
+
+    callGlobalFunction (name: string, ...args: any[]) {
+        if (!this.globalFuncion.hasOwnProperty(name)) {
+            throw 'Call an unexisted global function.';
+        }
+        return this.globalFuncion[name](...args);
+    }
 }
 
 class Extension {}
