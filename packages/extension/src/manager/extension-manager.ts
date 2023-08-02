@@ -59,6 +59,7 @@ class ExtensionManager extends Emitter<Events> {
         super();
         formatMessage.setup({locale: 'uninit', translations: {}});
         this.scratchAdapter.on('LOADED', this.handleExtensionLoaded.bind(this));
+        this.ccxAdapter.on('LOCALE_ADDED', this.handleAddLocale.bind(this));
         this.ccxAdapter.on('LOADED', this.handleExtensionLoaded.bind(this));
     }
     /**
@@ -223,6 +224,10 @@ class ExtensionManager extends Emitter<Events> {
     handleExtensionLoaded (url: string, extension: Extension) {
         this.loadedExtensions.set(url, extension);
         this.emit('EXTENSION_LOADED', url, extension);
+    }
+
+    handleAddLocale (locales: Record<string, unknown>) {
+        this.emit('LOCALE_ADDED', locales);
     }
 }
 

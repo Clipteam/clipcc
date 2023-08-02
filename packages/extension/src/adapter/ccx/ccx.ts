@@ -33,6 +33,7 @@ export interface CCXAdapterEvents {
     LOADED: [url: string, extension: CCXExtension];
     REFRESH_TOOLBOX: [];
     REGISTER_BLOCK: [blocks: BlockJSON[]];
+    LOCALE_ADDED: [Record<string, unknown>];
     [eventName: string]: [...params: any[]];
 }
 
@@ -121,6 +122,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
         } else {
             locales.default = locales.en;
         }
+        this.emit('LOCALE_ADDED', locales);
 
         // Load main.js
         switch (env) {

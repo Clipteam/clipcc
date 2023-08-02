@@ -17,7 +17,7 @@ const extensionManagerHOC = function (WrappedComponent) {
     class ExtensionManager extends React.Component {
         constructor (props) {
             super(props);
-            bindAll(this, ['handleLoaded']);
+            bindAll(this, ['handleAddLocale']);
         }
         componentDidMount () {
             if (!this.props.extensionManager.vm) {
@@ -25,7 +25,8 @@ const extensionManagerHOC = function (WrappedComponent) {
             }
             this.props.extensionManager.setLocale(this.props.locale, this.props.messages);
             this.props.extensionManager.on('EXTENSION_LOADING', this.props.onShowLoading);
-            this.props.extensionManager.on('EXTENSION_LOADED', this.handleLoaded);
+            this.props.extensionManager.on('LOCALE_ADDED', this.handleAddLocale);
+            this.props.extensionManager.on('EXTENSION_LOADED', this.props.onCloseLoading);
             this.props.extensionManager.on('EXTENSION_LOAD_ERROR', this.props.onCloseLoading);
         }
         componentDidUpdate () {
@@ -33,15 +34,12 @@ const extensionManagerHOC = function (WrappedComponent) {
         }
         componentWillUnmount () {
             this.props.extensionManager.off('EXTENSION_LOADING', this.props.onShowLoading);
-            this.props.extensionManager.off('EXTENSION_LOADED', this.handleLoaded);
+            this.props.extensionManager.on('LOCALE_ADDED', this.handleAddLocale);
+            this.props.extensionManager.off('EXTENSION_LOADED', this.props.onCloseLoading);
             this.props.extensionManager.off('EXTENSION_LOAD_ERROR', this.props.onCloseLoading);
         }
-        handleLoaded (url, extension) {
-            // add locales
-            if (extension.type === 'ccx') {
-                this.props.addLocale(extension.locales);
-            }
-            this.props.onCloseLoading();
+        handleAddLocale (locales) {
+            this.props.addLocale(locales);
         }
         render () {
             return (
@@ -65,7 +63,7 @@ const extensionManagerHOC = function (WrappedComponent) {
 
     const mapStateToProps = state => ({
         locale: state.locales.locale,
-        messages: state.locales.messages,
+        messages: state.locales.messages
     });
 
     const mapDispatchToProps = dispatch => ({

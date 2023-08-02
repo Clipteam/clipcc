@@ -43,7 +43,7 @@ const reducer = function (state, action) {
             state.messagesByLocale[state.locale]
         );
         return state;
-    case ADD_LOCALE:
+    case ADD_LOCALE: {
         const newState = Object.assign({}, state);
         for (const locale in action.messagesByLocale) {
             newState.messagesByLocale[locale] = Object.assign({},
@@ -52,6 +52,7 @@ const reducer = function (state, action) {
             );
         }
         return newState;
+    }
     default:
         return state;
     }

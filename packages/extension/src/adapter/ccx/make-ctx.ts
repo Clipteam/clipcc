@@ -10,9 +10,6 @@ import {
 import { VM } from "../../type/virtual-machine";
 import { ScratchBlocksConstants } from '../../util';
 import type { CCXAdapter } from "./ccx";
-import { MenuItems } from "../../type/scratch";
-
-
 interface BlockInfo {
     categoryId: string;
     messageId: string;
@@ -198,14 +195,15 @@ class ExtensionAPI implements API {
         if (!this.vm) throw new Error(`VM hadn't been attached`);
 
         const category = this.blockInfo[block.categoryId];
+        if (!category) throw new Error('category not found');
         category.blocks[block.opcode] = block;
         const blockJSON: Partial<BlockJSON> = {
             type: block.opcode,
             inputsInline: true,
             category: block.categoryId,
             colour: category.color,
-            colourSecondary: category.color,
-            colourTertiary: category.color
+            colourSecondary: undefined,
+            colourTertiary: undefined
         };
 
         // Set block type
@@ -356,7 +354,7 @@ class ExtensionAPI implements API {
                 name="${formatMessage({ id: category.messageId, default: category.messageId })}"
                 id="${category.categoryId}"
                 colour="${category.color}"
-                secondaryColour="${category.color}"
+                secondaryColour="undefined"
             >`;
             // Add blocks
             for (const opcode in category.blocks) {
@@ -367,33 +365,35 @@ class ExtensionAPI implements API {
                     default: block.messageId
                 });
                 const re = /\[(.+?)]/g;
-                const searchResult = re.exec(text);
-                if (searchResult) {
-                    const placeholder = searchResult[1].replace(/[<"&]/, '_');
-                    let fieldName;
-                    const param = block.param ? block.param[placeholder] : null;
-                    const argTypeInfo = ParameterTypeMap[block.type] || {};
-                    let shadowType = param ? param[placeholder as keyof ParameterPrototype].menuId : null;
-                    if ((param?.menu && param?.field) || param?.menuId) {
-                        fieldName = placeholder;
-                    } else {
-                        shadowType = (argTypeInfo.shadow && argTypeInfo.shadow.type) || null;
-                        fieldName = (argTypeInfo.shadow && argTypeInfo.shadow.fieldName) || null;
-                    }
+                let searchResult = null;
+                while ((searchResult = re.exec(text)) !== null) {
+                    if (searchResult) {
+                        const placeholder = searchResult[1].replace(/[<"&]/, '_');
+                        let fieldName;
+                        const param = block.param ? block.param[placeholder] : null;
+                        const argTypeInfo = ParameterTypeMap[block.type] || {};
+                        let shadowType = param ? param[placeholder as keyof ParameterPrototype]?.menuId : null;
+                        if ((param?.menu && param?.field) || param?.menuId) {
+                            fieldName = placeholder;
+                        } else {
+                            shadowType = (argTypeInfo.shadow && argTypeInfo.shadow.type) || null;
+                            fieldName = (argTypeInfo.shadow && argTypeInfo.shadow.fieldName) || null;
+                        }
 
-                    toolboxXML += `<value name="${placeholder}">`;
-                    // The <shadow> is a placeholder for a reporter and is visible when there's no reporter in this input.
-                    // Boolean inputs don't need to specify a shadow in the XML.
-                    if (shadowType) toolboxXML += `<shadow type="${shadowType}">`;
+                        toolboxXML += `<value name="${placeholder}">`;
+                        // The <shadow> is a placeholder for a reporter and is visible when there's no reporter in this input.
+                        // Boolean inputs don't need to specify a shadow in the XML.
+                        if (shadowType) toolboxXML += `<shadow type="${shadowType}">`;
 
-                    // A <field> displays a dynamic value: a user-editable text field, a drop-down menu, etc.
-                    // Leave out the field if defaultValue or fieldName are not specified
-                    if (param?.default && fieldName) {
-                        toolboxXML += `<field name="${fieldName}">${param?.default}</field>`;
+                        // A <field> displays a dynamic value: a user-editable text field, a drop-down menu, etc.
+                        // Leave out the field if defaultValue or fieldName are not specified
+                        if (param?.default && fieldName) {
+                            toolboxXML += `<field name="${fieldName}">${param?.default}</field>`;
+                        }
+                        if (shadowType) toolboxXML += '</shadow>';
+                        toolboxXML += `</value>`;
                     }
-                    if (shadowType) toolboxXML += '</shadow>';
-                    toolboxXML += `</value>`;
-                };
+                }
                 toolboxXML += `</block>`;
             }
             toolboxXML += `</category>`;
