@@ -96,7 +96,7 @@ export interface ShadowPrototype {
 export interface CategoryPrototype {
     categoryId: string;
     messageId: string;
-    color: string;
+    color: `#${string}`;
 }
 
 export type VmInstance = unknown;

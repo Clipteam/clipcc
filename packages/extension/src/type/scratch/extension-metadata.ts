@@ -71,15 +71,15 @@ export interface ExtensionMetadata {
     /**
      * Should be a hex color code.
      */
-    color1?: string;
+    color1?: `#${string}`;
     /**
      * Should be a hex color code.
      */
-    color2?: string;
+    color2?: `#${string}`;
     /**
      * Should be a hex color code.
      */
-    color3?: string;
+    color3?: `#${string}`;
     /**
      * The blocks provided by this extension, plus separators
      */

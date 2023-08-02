@@ -71,7 +71,7 @@ class Blocks extends React.Component {
             'onBlockGlowOff',
             'handleMonitorsUpdate',
             'handleCategoryAdded',
-            'handleAddCategory',
+            'refreshToolbox',
             'handleBlocksInfoUpdate',
             'onTargetsUpdate',
             'onVisualReport',
@@ -136,7 +136,7 @@ class Blocks extends React.Component {
 
         this.attachVM();
 
-        this.props.extensionManager.ccxAdapter.on('ADD_CATEGORY', this.handleAddCategory);
+        this.props.extensionManager.ccxAdapter.on('REFRESH_TOOLBOX', this.refreshToolbox);
         // Only update blocks/vm locale when visible to avoid sizing issues
         // If locale changes while not visible it will get handled in didUpdate
         if (this.props.isVisible) {
@@ -202,7 +202,7 @@ class Blocks extends React.Component {
     }
     componentWillUnmount () {
         this.detachVM();
-        this.props.extensionManager.ccxAdapter.off('ADD_CATEGORY', this.handleAddCategory);
+        this.props.extensionManager.ccxAdapter.off('REFRESH_TOOLBOX', this.refreshToolbox);
         this.workspace.dispose();
         clearTimeout(this.toolboxUpdateTimeout);
 
@@ -370,8 +370,12 @@ class Blocks extends React.Component {
             const stageCostumes = stage.getCostumes();
             const targetCostumes = target.getCostumes();
             const targetSounds = target.getSounds();
+            const allXML = [
+                ...this.props.extensionManager.ccxAdapter.getBlocksXML(),
+                ...this.props.vm.runtime.getBlocksXML(target)
+            ];
             const dynamicBlocksXML = injectExtensionCategoryTheme(
-                this.props.vm.runtime.getBlocksXML(target),
+                allXML,
                 this.props.theme
             );
             return makeToolboxXML(false, target.isStage, target.id, dynamicBlocksXML,
@@ -449,7 +453,7 @@ class Blocks extends React.Component {
             }
         }
     }
-    handleAddCategory (categories) {
+    refreshToolbox () {
         // Update the toolbox with new blocks if possible
         const toolboxXML = this.getToolboxXML();
         if (toolboxXML) {

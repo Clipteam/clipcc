@@ -31,7 +31,7 @@ export interface CCXExtension extends Extension {
 
 export interface CCXAdapterEvents {
     LOADED: [url: string, extension: CCXExtension];
-    ADD_CATEGORY: [categoryInfo: unknown[]];
+    REFRESH_TOOLBOX: [];
     [eventName: string]: [...params: any[]];
 }
 
@@ -184,6 +184,10 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      * Reload all ccx extensions.
     */
     reloadAll() {}
+
+    getBlocksXML () {
+        return this.ctx.api.getBlocksXML();
+    }
 }
 
 export {

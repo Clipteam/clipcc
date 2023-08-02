@@ -9,6 +9,13 @@ import {
 import { VM } from "../../type/virtual-machine";
 import type { CCXAdapter } from "./ccx";
 
+
+interface BlockInfo {
+    categoryId: string;
+    messageId: string;
+    blocks: [];
+    color: `#${string}`;
+}
 class ExtensionAPI implements API {
     /**
      * Whether toolbox's update request is queued.
@@ -22,22 +29,16 @@ class ExtensionAPI implements API {
      */
     private blockRefreshQueued = false;
     /**
+     * Store all blocks added by CCX extension.
+     * @type {Record<string, CategoryInfo>}
+     */
+    private blockInfo: Record<string, BlockInfo> = {};
+    /**
      * Editor's Virtual Machine instance.
      * Should be set by `attachVM` while initializing.
      * @todo add more strict type check when VM adds TS support.
      */
     private vm?: VM;
-    /**
-     * All cateogires which needs to be refresh at next event loop.
-     * @type {Record<string, CategoryPrototype>}
-     */
-    private categoriesToProcess: Record<string, CategoryPrototype> = {};
-
-    /**
-     * Process category's id.
-     * @type {Set<string>}
-     */
-    private processedCategories = new Set<string>();
 
     /**
      * CCX Adapter.
@@ -62,43 +63,52 @@ class ExtensionAPI implements API {
             queueMicrotask(() => {
                 if (!this.vm) throw new Error(`VM hadn't been attached`);
                 this.toolboxRefreshQueued = false;
-                const processedCategoryInfo = this.processCategory();
-                this.vm.runtime._blockInfo.push(...processedCategoryInfo);
-                this.adapter.emit('ADD_CATEGORY', processedCategoryInfo);
+                this.adapter.emit('REFRESH_TOOLBOX');
             });
         }
     }
 
     addCategory (category: CategoryPrototype) {
-        this.categoriesToProcess[category.categoryId] = category;
+        if (category.categoryId in this.blockInfo) {
+            throw new Error('Cannot add a category twice');
+        }
+
+        this.blockInfo[category.categoryId] = {
+            categoryId: category.categoryId,
+            messageId: category.messageId,
+            blocks: [],
+            color: category.color
+        };
         this.requestUpdateToolbox();
     }
 
-    private processCategory () {
-        const processCategories = [];
-        for (const categoryId in this.categoriesToProcess) {
-            // Don't process a same cateogory twice.
-            if (this.processedCategories.has(categoryId)) continue;
-            const category = this.categoriesToProcess[categoryId];
-            processCategories.push({
-                id: categoryId,
-                messageId: category.messageId,
-                name: formatMessage({
-                    id: category.messageId,
-                    default: category.messageId
-                }),
-                color1: category.color || '#0FBD8C',
-                blocks: [],
-                customFieldTypes: {},
-                menus: [],
-                menuInfo: {}
+    getBlocksXML () {
+        const processedXML = [];
+        for (const categoryId in this.blockInfo) {
+            const category = this.blockInfo[categoryId];
+            let toolboxXML = 
+            `<category
+                name="${formatMessage({id: category.messageId, default: category.messageId})}"
+                id="${category.categoryId}"
+                colour="${category.color}"
+                secondaryColour="${category.color}"
+            >`;
+            // Add blocks
+            for (const block of category.blocks) {}
+            toolboxXML += `</category>`;
+            processedXML.push({
+                id: category.categoryId,
+                xml: toolboxXML
             });
-            this.processedCategories.add(categoryId);
         }
-        return processCategories;
+        return processedXML;
     }
 
-    removeCategory (categoryId: string) {}
+    removeCategory (categoryId: string) {
+        delete this.blockInfo[categoryId];
+        this.requestUpdateToolbox();
+        
+    }
     addBlock (block: BlockPrototype) {}
     addBlocks (blocks: BlockPrototype[]) {}
     removeBlock (opcode: string) {}
