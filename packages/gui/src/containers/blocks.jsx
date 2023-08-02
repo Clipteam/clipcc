@@ -72,6 +72,7 @@ class Blocks extends React.Component {
             'handleMonitorsUpdate',
             'handleCategoryAdded',
             'refreshToolbox',
+            'addBlock',
             'handleBlocksInfoUpdate',
             'onTargetsUpdate',
             'onVisualReport',
@@ -137,6 +138,7 @@ class Blocks extends React.Component {
         this.attachVM();
 
         this.props.extensionManager.ccxAdapter.on('REFRESH_TOOLBOX', this.refreshToolbox);
+        this.props.extensionManager.ccxAdapter.on('REGISTER_BLOCK', this.addBlock);
         // Only update blocks/vm locale when visible to avoid sizing issues
         // If locale changes while not visible it will get handled in didUpdate
         if (this.props.isVisible) {
@@ -203,6 +205,7 @@ class Blocks extends React.Component {
     componentWillUnmount () {
         this.detachVM();
         this.props.extensionManager.ccxAdapter.off('REFRESH_TOOLBOX', this.refreshToolbox);
+        this.props.extensionManager.ccxAdapter.off('REGISTER_BLOCK', this.addBlock);
         this.workspace.dispose();
         clearTimeout(this.toolboxUpdateTimeout);
 
@@ -452,6 +455,15 @@ class Blocks extends React.Component {
                 block.isMonitored = isVisible;
             }
         }
+    }
+    addBlock (blocks) {
+        const staticBlocksJson = [];
+        blocks.forEach(blockJSON => {
+            // inject theme
+            staticBlocksJson.push(injectExtensionBlockTheme(blockJSON, this.props.theme));
+        });
+
+        this.ScratchBlocks.defineBlocksWithJsonArray(staticBlocksJson);
     }
     refreshToolbox () {
         // Update the toolbox with new blocks if possible

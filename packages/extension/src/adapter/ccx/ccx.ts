@@ -8,7 +8,7 @@ import { CentralDispatch as dispatch } from '../../dispatch/central-dispatch';
 import { Extension } from '../../manager';
 import * as JSZip from 'jszip';
 import mime from 'mime-types';
-import { makeCtx, Ctx } from './make-ctx';
+import { makeCtx, Ctx, BlockJSON } from './make-ctx';
 
 declare global {
     var ClipCCExtension: Ctx | undefined;
@@ -32,6 +32,7 @@ export interface CCXExtension extends Extension {
 export interface CCXAdapterEvents {
     LOADED: [url: string, extension: CCXExtension];
     REFRESH_TOOLBOX: [];
+    REGISTER_BLOCK: [blocks: BlockJSON[]];
     [eventName: string]: [...params: any[]];
 }
 

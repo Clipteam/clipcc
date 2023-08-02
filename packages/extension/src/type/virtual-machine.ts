@@ -11,6 +11,8 @@ interface Runtime {
     getTargetForStage: () => Target;
     makeMessageContextForTarget: (target: Target) => void;
     _blockInfo: unknown[];
+    _hats: Record<string, unknown>;
+    _primitives: Record<string, Function>;
 }
 
 export interface VM {
