@@ -1,3 +1,4 @@
+import formatMessage from "format-message";
 import { Emitter } from 'strict-event-emitter';
 import { ScratchAdapter, CCXAdapter, ScratchExtension } from '../adapter';
 import {
@@ -56,6 +57,7 @@ class ExtensionManager extends Emitter<Events> {
 
     constructor () {
         super();
+        formatMessage.setup({locale: 'uninit', translations: {}});
         this.scratchAdapter.on('LOADED', this.handleExtensionLoaded.bind(this));
         this.ccxAdapter.on('LOADED', this.handleExtensionLoaded.bind(this));
     }
@@ -146,29 +148,58 @@ class ExtensionManager extends Emitter<Events> {
      */
     async reloadAllExtensions () {
         const reloadPromises: Promise<unknown>[] = [];
-        for (const [extensionId] of this.loadedExtensions.entries()) {
-            reloadPromises.push(this.reloadExtension(extensionId));
+        for (const [extensionURL] of this.loadedExtensions.entries()) {
+            reloadPromises.push(this.reloadExtension(extensionURL));
         }
         return Promise.all(reloadPromises);
     }
 
     /**
-     * Reload extension by Id.
-     * @param {string} extensionId - Extension's ID
+     * Reload extension by URL.
+     * @param {string} extensionURL - Extension's URL
      */
-    reloadExtension (extensionId: string) {
-        const extension = this.loadedExtensions.get(extensionId);
+    reloadExtension (extensionURL: string) {
+        const extension = this.loadedExtensions.get(extensionURL);
         if (!extension) {
-            throw new Error(`Cannot locate extension ${extensionId}.`);
+            throw new Error(`Cannot locate extension ${extensionURL}.`);
         }
 
         switch (extension.type) {
-        case 'scratch': {
-            return this.scratchAdapter.reload(extensionId);
-        }
+        case 'scratch':
+            return this.scratchAdapter.reload(extensionURL);
+        case 'ccx':
+            return this.ccxAdapter.reload(extensionURL);
         default:
             throw new Error(`Invaild extension type`);
         }
+    }
+
+    /**
+     * Update all extension's locales
+     */
+    updateExtensionLocales () {
+        const promises: Promise<unknown>[] = [];
+        this.ccxAdapter.updateLocales();
+        for (const [extensionURL, extension] of this.loadedExtensions.entries()) {
+            if (extension.type === 'scratch') promises.push(this.scratchAdapter.reload(extensionURL));
+        }
+        return Promise.all(promises);
+    }
+
+
+    /**
+     * set the current locale and builtin messages for the Extension Manager
+     * @param {!string} locale       current locale
+     * @param {!object} messages     builtin messages map for current locale
+     * @returns {Promise} Promise that resolves when all the blocks have been
+     *     updated for a new locale (or empty if locale hasn't changed.)
+     */
+    async setLocale (locale: string, messages: any) {
+        if (locale !== formatMessage.setup().locale) {
+            formatMessage.setup({locale: locale, translations: {[locale]: messages}});
+        }
+
+        await this.updateExtensionLocales();
     }
 
     /**

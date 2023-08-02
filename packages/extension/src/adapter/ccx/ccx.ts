@@ -132,7 +132,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                     const closureFunc = eval(`(function(module){${originalScript}})`);
                     // "__webpack_require__" can load modules from global env.
                     // so we exposure ctx globally until extension is loaded.
-                    window.ClipCCExtension = this.ctx;
+                    global.ClipCCExtension = this.ctx;
                     // rewrite "module.exports" to get extension class.
                     closureFunc(new Proxy({}, {
                         set(target: Record<string, unknown>, prop: string, value: unknown) {
@@ -167,7 +167,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                     throw e;
                 } finally {
                     // revoke temporary ctx
-                    delete window.ClipCCExtension;
+                    delete global.ClipCCExtension;
                 }
                 break;
         default:
@@ -179,12 +179,21 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      * Reload a scratch-standard extension.
      * @param {string} extensionURL - Extension's URL
     */
-    async reload(extensionURL: string) {}
+    async reload (extensionURL: string) {
+        // @todo
+    }
 
     /**
      * Reload all ccx extensions.
     */
-    reloadAll() {}
+    reloadAll () {}
+
+    /**
+     * Update locales.
+    */
+    updateLocales () {
+        this.ctx.api.updateLocales();
+    }
 
     getBlocksXML () {
         return this.ctx.api.getBlocksXML();

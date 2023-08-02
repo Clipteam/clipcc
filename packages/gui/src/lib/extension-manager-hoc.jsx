@@ -23,9 +23,13 @@ const extensionManagerHOC = function (WrappedComponent) {
             if (!this.props.extensionManager.vm) {
                 this.props.extensionManager.attachVM(this.props.vm);
             }
+            this.props.extensionManager.setLocale(this.props.locale, this.props.messages);
             this.props.extensionManager.on('EXTENSION_LOADING', this.props.onShowLoading);
             this.props.extensionManager.on('EXTENSION_LOADED', this.handleLoaded);
             this.props.extensionManager.on('EXTENSION_LOAD_ERROR', this.props.onCloseLoading);
+        }
+        componentDidUpdate () {
+            this.props.extensionManager.setLocale(this.props.locale, this.props.messages);
         }
         componentWillUnmount () {
             this.props.extensionManager.off('EXTENSION_LOADING', this.props.onShowLoading);
@@ -50,12 +54,19 @@ const extensionManagerHOC = function (WrappedComponent) {
     }
 
     ExtensionManager.propTypes = {
+        locale: PropTypes.string,
+        messages: PropTypes.objectOf(PropTypes.string),
         addLocale: PropTypes.func.isRequired,
         onCloseLoading: PropTypes.func.isRequired,
         onShowLoading: PropTypes.func.isRequired,
         vm: PropTypes.instanceOf(VM).isRequired,
         extensionManager: PropTypes.instanceOf(ClipCCExtensionManager).isRequired
     };
+
+    const mapStateToProps = state => ({
+        locale: state.locales.locale,
+        messages: state.locales.messages,
+    });
 
     const mapDispatchToProps = dispatch => ({
         addLocale: locale => {
@@ -68,7 +79,7 @@ const extensionManagerHOC = function (WrappedComponent) {
 
     return connect(
         // eslint-disable-next-line no-undefined
-        undefined,
+        mapStateToProps,
         mapDispatchToProps
     )(ExtensionManager);
 };

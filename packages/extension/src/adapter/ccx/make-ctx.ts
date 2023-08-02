@@ -335,8 +335,17 @@ class ExtensionAPI implements API {
             this.addBlock(block);
         }
     }
+
     removeBlock (opcode: string) {}
     removeBlocks (opcodes: string[]) {}
+
+
+    updateLocales () {
+        for (const categoryId in this.blockInfo) {
+            const category = this.blockInfo[categoryId];
+            this.addBlocks(Object.values(category.blocks));
+        }
+    }
 
     getBlocksXML() {
         const processedXML = [];
