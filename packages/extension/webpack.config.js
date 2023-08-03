@@ -43,7 +43,9 @@ const base = {
         ]
     },
     plugins: [
-        new NodePolyfillPlugin()
+        new NodePolyfillPlugin({
+            includeAliases: ['path']
+        })
     ]
 };
 

@@ -211,6 +211,14 @@ module.exports = [
                         context: '../extension/dist/web/'
                     }
                 ]
+            }),
+            new CopyWebpackPlugin({
+                patterns: [
+                    {
+                        from: 'ccx.worker.{js,js.map}',
+                        context: '../extension/dist/web/'
+                    }
+                ]
             })
         ])
     })
