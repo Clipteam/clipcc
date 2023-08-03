@@ -5,16 +5,18 @@ import {
     BlockType,
     CategoryPrototype,
     ParameterPrototype,
-    ParameterType
+    ParameterType,
+    CCXExtensionClass as ExtensionClass
 } from "../../type/ccx";
 import { VM } from "../../type/virtual-machine";
 import { ScratchBlocksConstants } from '../../util';
 import type { CCXAdapter } from "./ccx";
-import { WorkerDispatch } from '../../dispatch/worker-dispatch';
+import type { WorkerDispatch } from '../../dispatch/worker-dispatch';
+import type { CentralDispatch } from '../../dispatch/central-dispatch';
 interface BlockInfo {
     categoryId: string;
     messageId: string;
-    blocks: Record<string, BlockPrototype>;
+    blocks: Record<string, BlockPrototype | WorkerBlockPrototype>;
     color: `#${string}`;
 }
 
@@ -155,8 +157,15 @@ class ExtensionAPI implements API {
      */
     private globalFuncion: Record<string, Function> = {};
 
-    constructor (adapter: CCXAdapter) {
+    /**
+     * Central Dispatcher.
+     * @type {CentralDispatch}
+     */
+    private dispatch: CentralDispatch;
+
+    constructor (adapter: CCXAdapter, dispatch: CentralDispatch) {
         this.adapter = adapter;
+        this.dispatch = dispatch;
     }
     /**
      * Set the VM for the api.
@@ -213,7 +222,7 @@ class ExtensionAPI implements API {
         this.requestUpdateToolbox();
         
     }
-    addBlock (block: BlockPrototype) {
+    addBlock (block: BlockPrototype | WorkerBlockPrototype) {
         if (!this.vm) throw new Error(`VM hadn't been attached`);
 
         const category = this.blockInfo[block.categoryId];
@@ -343,14 +352,20 @@ class ExtensionAPI implements API {
             blockJSON.checkboxInFlyout = true;
         }
 
-        this.vm.runtime._primitives[block.opcode] = block.function;
+        if (typeof block.function === 'string') {
+            this.vm.runtime._primitives[block.opcode] = (args: unknown, util: unknown) => {
+                return this.dispatch.call(block.function as string, block.opcode, args, util);
+            };
+        } else {
+            this.vm.runtime._primitives[block.opcode] = block.function;
+        }
 
         this.blocksToBeRegistered.push(blockJSON as BlockJSON);
         this.requestRegisterBlock();
         this.requestUpdateToolbox();
     }
 
-    addBlocks (blocks: BlockPrototype[]) {
+    addBlocks (blocks: (BlockPrototype | WorkerBlockPrototype)[]) {
         for (const block of blocks) {
             this.addBlock(block);
         }
@@ -465,15 +480,32 @@ class ExtensionAPI implements API {
     }
 }
 
+interface WorkerBlockPrototype extends Omit<BlockPrototype, 'function'> {
+    // service's name
+    function: string;
+}
+
 class ExtensionWorkerAPI implements API {
+    /**
+     * Service's name.
+     * @type {string}
+     */
+    private serviceName: string;
+    /**
+     * Block's function. A pair of opcode + function.
+     * @type {Record<string, Function>}
+     */
+    private blockPrimitives: Record<string, Function> = {};
     // Make it private to prevent security issues.
     #dispatch: WorkerDispatch;
 
-    constructor (dispatch: WorkerDispatch) {
+    constructor (dispatch: WorkerDispatch, serviceName: string) {
+        dispatch.setService(`${serviceName}.primitives`, this.blockPrimitives);
         this.#dispatch = dispatch;
+        this.serviceName = serviceName;
     }
 
-    async addCategory (category: CategoryPrototype) {
+    addCategory (category: CategoryPrototype) {
         // It can be tranferred safely.
         return this.#dispatch.call('ccxAPI', 'addCategory', category);
     }
@@ -483,13 +515,24 @@ class ExtensionWorkerAPI implements API {
         return this.#dispatch.call('ccxAPI', 'removeCategory', categoryId);
     }
 
+    private purifyBlockPrototype (block: BlockPrototype) {
+        const purified = block as unknown as WorkerBlockPrototype;
+        this.blockPrimitives[block.opcode] = block.function;
+        purified.function = `${this.serviceName}.primitives`;
+        return purified;
+    }
+
     addBlock (block: BlockPrototype) {
-        // debug
-        console.log(block);
+        const purified = this.purifyBlockPrototype(block);
+        return this.#dispatch.call('ccxAPI', 'addBlock', purified);
     }
 
     addBlocks (blocks: BlockPrototype[]) {
-        // todo
+        const purified = [];
+        for (const block of blocks) {
+            purified.push(this.purifyBlockPrototype(block));
+        }
+        return this.#dispatch.call('ccxAPI', 'addBlocks', purified);
     }
 
     removeBlock (opcode: string) {
@@ -554,9 +597,9 @@ export interface WorkerCtx {
     Extension: typeof Extension
 }
 
-export function makeCtx (adapter: CCXAdapter) : Ctx {
+export function makeCtx (adapter: CCXAdapter, dispatch: CentralDispatch) : Ctx {
     return {
-        api: new ExtensionAPI(adapter),
+        api: new ExtensionAPI(adapter, dispatch),
         type: {
             BlockType,
             ParameterType 
@@ -566,9 +609,9 @@ export function makeCtx (adapter: CCXAdapter) : Ctx {
     };
 }
 
-export function makeCtxForWorker (dispatch: WorkerDispatch) {
+export function makeCtxForWorker (dispatch: WorkerDispatch, serviceName: string) {
     return {
-        api: new ExtensionWorkerAPI(dispatch),
+        api: new ExtensionWorkerAPI(dispatch, serviceName),
         type: {
             BlockType,
             ParameterType

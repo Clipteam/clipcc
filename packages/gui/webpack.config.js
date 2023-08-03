@@ -253,14 +253,6 @@ module.exports = [
                 ])
             },
             plugins: base.plugins.concat([
-                new CopyWebpackPlugin({
-                    patterns: [
-                        {
-                            from: 'extension-worker.{js,js.map}',
-                            context: '../vm/dist/web'
-                        }
-                    ]
-                }),
                 // Include library JSON files for scratch-desktop to use for downloading
                 new CopyWebpackPlugin({
                     patterns: [

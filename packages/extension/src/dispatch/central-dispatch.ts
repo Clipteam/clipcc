@@ -131,4 +131,6 @@ class _CentralDispatch extends SharedDispatch {
     }
 }
 
+export type CentralDispatch = _CentralDispatch;
+
 export const CentralDispatch = new _CentralDispatch();

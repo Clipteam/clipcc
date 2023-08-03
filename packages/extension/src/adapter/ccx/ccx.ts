@@ -17,7 +17,8 @@ declare global {
 }
 
 interface PendingExtensionWorker {
-    extensionURL: string,
+    extensionURL: string;
+    mainScript: string;
     resolve: (value: unknown) => void;
     reject: (value: unknown) => void;
 }
@@ -51,7 +52,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      * CCXAdapter's context.
      * @type {Ctx}
      */
-    ctx = makeCtx(this);
+    ctx = makeCtx(this, dispatch);
 
     /**
      * The ID number to provide to the next extension worker.
@@ -170,16 +171,18 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
         // Load main.js
         switch (env) {
         case 'sandboxed':
-                return new Promise((resolve, reject) => {
-                    // If we `require` this at the global level it breaks non-webpack targets, including tests
-                    const ExtensionWorker = new ExtensionSandbox();
-                    this.pendingExtensions.push({
-                        extensionURL: url,
-                        resolve,
-                        reject
-                    });
-                    dispatch.addWorker(ExtensionWorker);
+            const originalScript = await zipData.files['main.js'].async('text');
+            return new Promise((resolve, reject) => {
+                // If we `require` this at the global level it breaks non-webpack targets, including tests
+                const ExtensionWorker = new ExtensionSandbox();
+                this.pendingExtensions.push({
+                    extensionURL: url,
+                    mainScript: URL.createObjectURL(new Blob([originalScript], { type: "text/javascript" })),
+                    resolve,
+                    reject
                 });
+                dispatch.addWorker(ExtensionWorker);
+            });
             break;
         case 'unsandboxed':
                 let extensionObject = null as unknown as ExtensionClass;
@@ -265,7 +268,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
         }
         const id = this.nextExtensionWorker++;
         this.pendingWorkers[id] = workerInfo;
-        return [id, workerInfo.extensionURL];
+        return [id, workerInfo.extensionURL, workerInfo.mainScript];
     }
 
     /**
@@ -283,6 +286,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      */
     onWorkerInit (id: number, e?: Error) {
         const workerInfo = this.pendingWorkers[id];
+        URL.revokeObjectURL(workerInfo.mainScript);
         delete this.pendingWorkers[id];
         if (e) {
             workerInfo.reject(e);

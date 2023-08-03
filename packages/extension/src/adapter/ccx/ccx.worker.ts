@@ -8,23 +8,21 @@ declare global {
     var ClipCCExtension: Ctx | WorkerCtx | undefined;
 }
 
-let initialRegistrations: Promise <unknown> [] =[];
+let initialRegistrations: Promise<unknown> [] =[];
 let workerId: number;
 let extensionURL = '';
 
 dispatch.waitForConnection.then(() => {
     dispatch.call('ccxAdapter', 'allocateWorker').then(x => {
-        const [id, url] = x;
+        const [id, url, mainScript] = x;
         workerId = id;
         extensionURL = url;
 
+        self.ClipCCExtension = makeCtxForWorker(dispatch, `ccxSandbox.${workerId}`);
+
         try {
-            importScripts(url);
-
-            const cachedInitialRegistrations = initialRegistrations;
-            initialRegistrations = [];
-
-            Promise.all(cachedInitialRegistrations).then(() => dispatch.call('ccxAdapter', 'onWorkerInit', id));
+            importScripts(mainScript);
+            dispatch.call('ccxAdapter', 'onWorkerInit', id);
         } catch (e) {
             dispatch.call('ccxAdapter', 'onWorkerInit', id, e);
         }
@@ -36,17 +34,17 @@ self.module = new Proxy({}, {
     set (target: Record<string, unknown>, prop: string, value: any) {
         if (prop === 'exports') {
             const extensionObject = new value() as ExtensionClass;
-            if (extensionObject.onInit) {
-                extensionObject.onInit();
-            }
             const serviceName = `ccxSandbox.${workerId}`;
+            dispatch.setService(serviceName, extensionObject).then(() => {
+                if (extensionObject.onInit) {
+                    extensionObject.onInit();
+                }
+            });
             dispatch.call('ccxAdapter', 'registerExtensionService', extensionURL, serviceName);
         }
         target[prop] = value;
         return true;
     }
 });
-
-self.ClipCCExtension = makeCtxForWorker(dispatch);
 
 export default null as any;
