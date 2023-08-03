@@ -1,13 +1,9 @@
 /* eslint-env worker */
-import {
-    BlockType,
-    TargetType,
-    ArgumentType
-} from '../../type/scratch';
 import { makeCtx, Ctx } from './make-ctx';
 import { WorkerDispatch as dispatch } from '../../dispatch/worker-dispatch';
 
 declare global {
+  // eslint-disable-next-line no-var
   var Scratch: Ctx;
 }
 

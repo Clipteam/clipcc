@@ -10,6 +10,7 @@ import {
 import { VM } from "../../type/virtual-machine";
 import { ScratchBlocksConstants } from '../../util';
 import type { CCXAdapter } from "./ccx";
+import { WorkerDispatch } from '../../dispatch/worker-dispatch';
 interface BlockInfo {
     categoryId: string;
     messageId: string;
@@ -464,6 +465,74 @@ class ExtensionAPI implements API {
     }
 }
 
+class ExtensionWorkerAPI implements API {
+    // Make it private to prevent security issues.
+    #dispatch: WorkerDispatch;
+
+    constructor (dispatch: WorkerDispatch) {
+        this.#dispatch = dispatch;
+    }
+
+    async addCategory (category: CategoryPrototype) {
+        // It can be tranferred safely.
+        return this.#dispatch.call('ccxAPI', 'addCategory', category);
+    }
+
+    removeCategory (categoryId: string) {
+        // It can be tranferred safely.
+        return this.#dispatch.call('ccxAPI', 'removeCategory', categoryId);
+    }
+
+    addBlock (block: BlockPrototype) {
+        // debug
+        console.log(block);
+    }
+
+    addBlocks (blocks: BlockPrototype[]) {
+        // todo
+    }
+
+    removeBlock (opcode: string) {
+        // It can be tranferred safely.
+        return this.#dispatch.call('ccxAPI', 'removeBlock', opcode);
+    }
+
+    removeBlocks (opcodes: string[]) {
+        // It can be tranferred safely.
+        return this.#dispatch.call('ccxAPI', 'removeBlocks', opcodes);
+    }
+
+    getVmInstance () {
+        throw new Error('getVmInstance is not avaiable in sandboxed environment');
+    }
+
+    getBlockInstance() {
+        throw new Error('getBlockInstance is not avaiable in sandboxed environment');
+    }
+
+    // @ts-expect-error
+    getStageCanvas () {
+        throw new Error('getStageCanvas is not avaiable in sandboxed environment');
+    }
+
+    getSettings (id: string) {
+        // It can be tranferred safely.
+        return this.#dispatch.call('ccxAPI', 'getSettings', id);
+    }
+
+    registerGlobalFunction (name: string, func: Function) {
+        throw new Error('registerGlobalFunction is not avaiable in sandboxed environment');
+    }
+
+    unregisterGlobalFunction (name: string) {
+        throw new Error('unregisterGlobalFunction is not avaiable in sandboxed environment');
+    }
+
+    callGlobalFunction (name: string, ...args: any[]) {
+        throw new Error('callGlobalFunction is not avaiable in sandboxed environment');
+    };
+}
+
 class Extension {}
 
 export interface Ctx {
@@ -476,6 +545,15 @@ export interface Ctx {
     ExtensionManager: CCXAdapter
 }
 
+export interface WorkerCtx {
+    api: ExtensionWorkerAPI,
+    type: {
+        BlockType: typeof BlockType,
+        ParameterType: typeof ParameterType
+    },
+    Extension: typeof Extension
+}
+
 export function makeCtx (adapter: CCXAdapter) : Ctx {
     return {
         api: new ExtensionAPI(adapter),
@@ -484,6 +562,17 @@ export function makeCtx (adapter: CCXAdapter) : Ctx {
             ParameterType 
         },
         ExtensionManager: adapter,
+        Extension: Extension
+    };
+}
+
+export function makeCtxForWorker (dispatch: WorkerDispatch) {
+    return {
+        api: new ExtensionWorkerAPI(dispatch),
+        type: {
+            BlockType,
+            ParameterType
+        },
         Extension: Extension
     };
 }

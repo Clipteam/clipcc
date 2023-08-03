@@ -112,4 +112,6 @@ class _WorkerDispatch extends SharedDispatch {
     }
 }
 
+export type WorkerDispatch = _WorkerDispatch;
+
 export const WorkerDispatch = new _WorkerDispatch();

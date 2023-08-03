@@ -9,10 +9,11 @@ import { CentralDispatch as dispatch } from '../../dispatch/central-dispatch';
 import { Extension } from '../../manager';
 import * as JSZip from 'jszip';
 import mime from 'mime-types';
-import { makeCtx, Ctx, BlockJSON } from './make-ctx';
+import { makeCtx, Ctx, WorkerCtx, BlockJSON } from './make-ctx';
+import ExtensionSandbox from './ccx.worker';
 
 declare global {
-    var ClipCCExtension: Ctx | undefined;
+    var ClipCCExtension: Ctx | WorkerCtx | undefined;
 }
 
 interface PendingExtensionWorker {
@@ -53,10 +54,30 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
     ctx = makeCtx(this);
 
     /**
+     * The ID number to provide to the next extension worker.
+     * @type {int}
+     */
+    private nextExtensionWorker = 0;
+
+    /**
+     * FIFO queue of extensions which have been requested but not yet loaded in a worker,
+     * along with promise resolution functions to call once the worker is ready or failed.
+     *
+     * @type {Array.<PendingExtensionWorker>}
+     */
+    private pendingExtensions: PendingExtensionWorker[] = [];
+
+    /**
+     * Map of worker ID to workers which have been allocated but have not yet finished initialization.
+     * @type {Array.<PendingExtensionWorker>}
+     */
+    private pendingWorkers: PendingExtensionWorker[] = [];
+
+    /**
     * Loaded scratch extensions, URL with extension info.
     * @type {Map<string, ExtensionClass>}
     */
-    private loadedScratchExtension = new Map<string, CCXExtension>();
+    private loadedCCXExtension = new Map<string, CCXExtension>();
 
     /**
      * GUI's settings.
@@ -67,7 +88,10 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
     constructor () {
         super();
         dispatch.setService('ccxAdapter', this).catch((e: Error) => {
-            console.error(`CCXAdapter was unable to register extension service: ${JSON.stringify(e)}`);
+            console.error(`ccxAdapter was unable to register extension service: ${JSON.stringify(e)}`);
+        });
+        dispatch.setService('ccxAPI', this.ctx.api).catch((e: Error) => {
+            console.error(`ccxAPI was unable to register extension service: ${JSON.stringify(e)}`);
         });
     }
 
@@ -93,7 +117,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      * @param {string} url - Extension's URL.
      * @param {'sandboxed' | 'unsandboxed'} env - Extension's running environment.
      */
-    async load (url: string, env: 'sandboxed' | 'unsandboxed' = 'unsandboxed') {
+    async load (url: string, env?: 'sandboxed' | 'unsandboxed') {
         const response = await fetch(url);
         const buffer = response.arrayBuffer();
         const zipData = await JSZip.loadAsync(buffer);
@@ -105,6 +129,8 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
         // Load info.json
         const infoContent = await zipData.files['info.json'].async('text');
         const info = JSON.parse(infoContent);
+
+        env = env ?? (info.sandboxed ? 'sandboxed' : 'unsandboxed');
 
         if (info.icon) {
             const data = await zipData.files[info.icon].async('arraybuffer');
@@ -144,6 +170,17 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
         // Load main.js
         switch (env) {
         case 'sandboxed':
+                return new Promise((resolve, reject) => {
+                    // If we `require` this at the global level it breaks non-webpack targets, including tests
+                    const ExtensionWorker = new ExtensionSandbox();
+                    this.pendingExtensions.push({
+                        extensionURL: url,
+                        resolve,
+                        reject
+                    });
+                    dispatch.addWorker(ExtensionWorker);
+                });
+            break;
         case 'unsandboxed':
                 let extensionObject = null as unknown as ExtensionClass;
                 try {
@@ -167,7 +204,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                     if (extensionObject.onInit) {
                         extensionObject.onInit();
                     }
-                    this.loadedScratchExtension.set(url, {
+                    this.loadedCCXExtension.set(url, {
                         type: 'ccx',
                         info: info,
                         locales,
@@ -218,6 +255,40 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
 
     getBlocksXML () {
         return this.ctx.api.getBlocksXML();
+    }
+
+    allocateWorker () {
+        const workerInfo = this.pendingExtensions.shift();
+        if (!workerInfo) {
+            console.warn('pending extension queue is empty');
+            return;
+        }
+        const id = this.nextExtensionWorker++;
+        this.pendingWorkers[id] = workerInfo;
+        return [id, workerInfo.extensionURL];
+    }
+
+    /**
+     * Collect extension metadata from the specified service and begin the extension registration process.
+     * @param {string} serviceName - the name of the service hosting the extension.
+     */
+    registerExtensionService (extensionURL: string, serviceName: string) {
+        this.emit('LOADED', extensionURL, this.loadedCCXExtension.get(extensionURL)!);
+    }
+
+    /**
+     * Called by an extension worker to indicate that the worker has finished initialization.
+     * @param {int} id - the worker ID.
+     * @param {*?} e - the error encountered during initialization, if any.
+     */
+    onWorkerInit (id: number, e?: Error) {
+        const workerInfo = this.pendingWorkers[id];
+        delete this.pendingWorkers[id];
+        if (e) {
+            workerInfo.reject(e);
+        } else {
+            workerInfo.resolve(id);
+        }
     }
 }
 

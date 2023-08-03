@@ -32,6 +32,8 @@ export interface ExtensionInfo {
     inset_icon: string;
     api: number;
     optional?: boolean;
+    hot_reload?: boolean;
+    sandboxed?: boolean;
     dependency: { [key: string]: string };
 }
 export interface SettingsItemBoolean {
