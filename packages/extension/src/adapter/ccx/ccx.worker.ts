@@ -32,7 +32,7 @@ dispatch.waitForConnection.then(() => {
 });
 
 // @ts-expect-error make extension export correctly
-global.module = new Proxy({}, {
+self.module = new Proxy({}, {
     set (target: Record<string, unknown>, prop: string, value: any) {
         if (prop === 'exports') {
             const extensionObject = new value() as ExtensionClass;
@@ -47,6 +47,6 @@ global.module = new Proxy({}, {
     }
 });
 
-global.ClipCCExtension = window.ClipCCExtension = makeCtxForWorker(dispatch);
+self.ClipCCExtension = makeCtxForWorker(dispatch);
 
 export default null as any;
