@@ -9,7 +9,7 @@ import {
     MenuItemPrototype
 } from "../../type/ccx";
 import { VM } from "../../type/virtual-machine";
-import { ScratchBlocksConstants } from '../../util';
+import { ScratchBlocksConstants, Cast } from '../../util';
 import type { CCXAdapter } from "./ccx";
 import type { WorkerDispatch } from '../../dispatch/worker-dispatch';
 import type { CentralDispatch } from '../../dispatch/central-dispatch';
@@ -625,6 +625,7 @@ export interface Ctx {
         ParameterType: typeof ParameterType
     },
     Extension: typeof Extension,
+    Cast: typeof Cast,
     ExtensionManager: CCXAdapter
 }
 
@@ -634,7 +635,8 @@ export interface WorkerCtx {
         BlockType: typeof BlockType,
         ParameterType: typeof ParameterType
     },
-    Extension: typeof Extension
+    Extension: typeof Extension,
+    Cast: typeof Cast
 }
 
 export function makeCtx (adapter: CCXAdapter, dispatch: CentralDispatch) : Ctx {
@@ -645,6 +647,7 @@ export function makeCtx (adapter: CCXAdapter, dispatch: CentralDispatch) : Ctx {
             ParameterType 
         },
         ExtensionManager: adapter,
+        Cast: Cast,
         Extension: Extension
     };
 }
@@ -656,6 +659,7 @@ export function makeCtxForWorker (dispatch: WorkerDispatch, serviceName: string)
             BlockType,
             ParameterType
         },
+        Cast: Cast,
         Extension: Extension
     };
 }
