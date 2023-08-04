@@ -268,7 +268,7 @@ class ExtensionCard extends React.Component {
                                 />
                             </span>
                             <Switch
-                                disabled={data.isBuiltin}
+                                disabled={data.isBuiltin || !data.hotReload}
                                 value={data.sandboxed}
                             />
                         </div>

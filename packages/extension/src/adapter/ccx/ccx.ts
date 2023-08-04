@@ -171,6 +171,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
         } else {
             locales.default = locales.en;
         }
+        // Load locales before ``main.js`` executed to prevent block locale issues.
         this.emit('LOCALE_ADDED', locales);
 
         // Load main.js
@@ -268,6 +269,10 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
         this.ctx.api.updateLocales();
     }
 
+    /**
+     * Generate toolbox items by blocks added by CCX.
+     * @param target VM's target.
+     */
     getBlocksXML (target: Target) {
         return this.ctx.api.getBlocksXML(target);
     }

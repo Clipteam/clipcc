@@ -8,7 +8,6 @@ declare global {
     var ClipCCExtension: Ctx | WorkerCtx | undefined;
 }
 
-let initialRegistrations: Promise<unknown> [] =[];
 let workerId: number;
 let extensionURL = '';
 
