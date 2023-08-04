@@ -1,6 +1,7 @@
 import {
     CategoryPrototype,
     BlockPrototype,
+    ButtonPrototype,
     VmInstance,
     BlockInstance
 } from './type';
@@ -23,6 +24,16 @@ export interface API {
      * @param block Block's prototype
      */
     addBlock(block: BlockPrototype): void;
+    /**
+     * Add a button to the category.
+     @param button Button's prototype
+     */
+    addButton(button: ButtonPrototype): void;
+    /**
+     * Remove a button from the category.
+     @ param buttonId Button's id
+     */
+    removeButton(buttonId: string): void;
     /**
      * Add blocks to the category. All blocks added to the editor
      * CANNOT be removed.

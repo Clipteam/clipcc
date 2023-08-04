@@ -204,6 +204,12 @@ export interface CategoryPrototype {
     color: `#${string}`;
 }
 
+export interface ButtonPrototype {
+    categoryId: string;
+    messageId: string;
+    callback: Function;
+}
+
 export type VmInstance = unknown;
 export type BlockInstance = unknown;
 export type Project = unknown;

@@ -73,6 +73,7 @@ class Blocks extends React.Component {
             'handleCategoryAdded',
             'refreshToolbox',
             'addBlock',
+            'addButton',
             'handleBlocksInfoUpdate',
             'onTargetsUpdate',
             'onVisualReport',
@@ -141,6 +142,7 @@ class Blocks extends React.Component {
 
         this.props.extensionManager.ccxAdapter.on('REFRESH_TOOLBOX', this.refreshToolbox);
         this.props.extensionManager.ccxAdapter.on('REGISTER_BLOCK', this.addBlock);
+        this.props.extensionManager.ccxAdapter.on('REGISTER_BUTTON', this.addButton);
         // Only update blocks/vm locale when visible to avoid sizing issues
         // If locale changes while not visible it will get handled in didUpdate
         if (this.props.isVisible) {
@@ -208,6 +210,7 @@ class Blocks extends React.Component {
         this.detachVM();
         this.props.extensionManager.ccxAdapter.off('REFRESH_TOOLBOX', this.refreshToolbox);
         this.props.extensionManager.ccxAdapter.off('REGISTER_BLOCK', this.addBlock);
+        this.props.extensionManager.ccxAdapter.off('REGISTER_BUTTON', this.addButton);
         this.workspace.dispose();
         clearTimeout(this.toolboxUpdateTimeout);
 
@@ -466,6 +469,10 @@ class Blocks extends React.Component {
         });
 
         this.ScratchBlocks.defineBlocksWithJsonArray(staticBlocksJson);
+    }
+    addButton (id, func) {
+        const toolboxWorkspace = this.workspace.getFlyout().getWorkspace();
+        toolboxWorkspace.registerButtonCallback(id, func);
     }
     refreshToolbox () {
         // Update the toolbox with new blocks if possible

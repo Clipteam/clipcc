@@ -41,6 +41,7 @@ export interface CCXAdapterEvents {
     LOADED: [url: string, extension: CCXExtension];
     REFRESH_TOOLBOX: [];
     REGISTER_BLOCK: [blocks: BlockJSON[]];
+    REGISTER_BUTTON: [id: string, func: Function];
     LOCALE_ADDED: [Record<string, unknown>];
     SETTINGS_ADDED: [id: string, settings: SettingsItem[]];
     [eventName: string]: [...params: any[]];

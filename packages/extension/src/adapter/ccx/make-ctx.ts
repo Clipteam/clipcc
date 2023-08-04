@@ -4,6 +4,7 @@ import {
     BlockPrototype,
     BlockType,
     CategoryPrototype,
+    ButtonPrototype,
     ParameterPrototype,
     ParameterType,
     MenuItemPrototype
@@ -14,10 +15,11 @@ import type { CCXAdapter } from "./ccx";
 import type { WorkerDispatch } from '../../dispatch/worker-dispatch';
 import type { CentralDispatch } from '../../dispatch/central-dispatch';
 import { TargetType } from "../../type/scratch";
+
 interface BlockInfo {
     categoryId: string;
     messageId: string;
-    blocks: Record<string, BlockPrototype | WorkerBlockPrototype>;
+    blocks: Record<string, BlockPrototype | WorkerBlockPrototype | ButtonPrototype | WorkerButtonPrototype>;
     color: `#${string}`;
 }
 
@@ -198,6 +200,10 @@ class ExtensionAPI implements API {
         }
     }
 
+    private requestRegisterButton (id: string, func: Function) {
+        this.adapter.emit('REGISTER_BUTTON', id, func);
+    }
+
     private requestUpdateToolbox () {
         if (!this.toolboxRefreshQueued) {
             this.toolboxRefreshQueued = true;
@@ -228,6 +234,8 @@ class ExtensionAPI implements API {
         
     }
     addBlock (block: BlockPrototype | WorkerBlockPrototype) {
+        // skip process button as a block while updating locales.
+        if ('callback' in block) return;
         if (!this.vm) throw new Error(`VM hadn't been attached`);
 
         const category = this.blockInfo[block.categoryId];
@@ -380,6 +388,24 @@ class ExtensionAPI implements API {
         }
     }
 
+    addButton (button: ButtonPrototype | WorkerButtonPrototype) {
+        const category = this.blockInfo[button.categoryId];
+        if (!category) throw new Error('category not found');
+        category.blocks[button.messageId] = button;
+        if (typeof button.callback === 'string') {
+            this.requestRegisterButton(button.messageId, () => {
+                return this.dispatch.call(button.callback as string, button.messageId);
+            });
+        } else {
+            this.requestRegisterButton(button.messageId, button.callback);
+        }
+        this.requestUpdateToolbox();
+    }
+
+    removeButton (buttonId: string) {
+        this.removeBlock(buttonId);
+    }
+
     removeBlock (targetOpcode: string) {
         let flag = false;
         for (const categotyId in this.blockInfo) {
@@ -407,6 +433,7 @@ class ExtensionAPI implements API {
     updateLocales () {
         for (const categoryId in this.blockInfo) {
             const category = this.blockInfo[categoryId];
+            // @ts-expect-error (TS2345) We skip process button in addBlock.
             this.addBlocks(Object.values(category.blocks));
         }
     }
@@ -425,6 +452,17 @@ class ExtensionAPI implements API {
             // Add blocks
             for (const opcode in category.blocks) {
                 const block = category.blocks[opcode];
+                // It's a button
+                if ('callback' in block) {
+                    toolboxXML += `
+                    <button
+                        text="${formatMessage({ id: block.messageId, default: block.messageId })}"
+                        callbackKey="${block.messageId}">
+                    </button>`;
+                    continue;
+                }
+
+                // Skip show if necessary
                 if (Array.isArray(block.option?.filter)) {
                     // Hide from palette
                     if ((block.option?.filter as TargetType[]).length < 1) continue;
@@ -433,8 +471,8 @@ class ExtensionAPI implements API {
                     )) {
                         continue;
                     }
-                    
                 }
+
                 toolboxXML += `<block type="${block.opcode}" >`;
                 const text = formatMessage({
                     id: block.messageId,
@@ -525,6 +563,11 @@ interface WorkerBlockPrototype extends Omit<BlockPrototype, 'function'> {
     function: string;
 }
 
+interface WorkerButtonPrototype extends Omit<ButtonPrototype, 'callback'> {
+    // service's name
+    callback: string;
+}
+
 class ExtensionWorkerAPI implements API {
     /**
      * Service's name.
@@ -573,6 +616,17 @@ class ExtensionWorkerAPI implements API {
             purified.push(this.purifyBlockPrototype(block));
         }
         return this.#dispatch.call('ccxAPI', 'addBlocks', purified);
+    }
+
+    addButton (button: ButtonPrototype) {
+        const purified = button as unknown as WorkerButtonPrototype;
+        this.blockPrimitives[button.messageId] = button.callback;
+        purified.callback = `${this.serviceName}.primitives`;
+        return this.#dispatch.call('ccxAPI', 'addButton', purified);
+    }
+
+    removeButton (buttonId: string) {
+        return this.#dispatch.call('ccxAPI', 'removeButton', buttonId);
     }
 
     removeBlock (opcode: string) {
