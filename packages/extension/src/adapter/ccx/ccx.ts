@@ -202,7 +202,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                 let extensionObject = null as unknown as ExtensionClass;
                 try {
                     const originalScript = await zipData.files['main.js'].async('text');
-                    const closureFunc = eval(`(function(module){${originalScript}})`);
+                    const closureFunc = new Function('module', originalScript);
                     // "__webpack_require__" can load modules from global env.
                     // so we exposure ctx globally until extension is loaded.
                     global.ClipCCExtension = this.ctx;

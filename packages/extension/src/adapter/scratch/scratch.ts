@@ -108,7 +108,7 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
                 // @todo DataURL/ObjectURL support
                 const response = await fetch(ext);
                 const originalScript = await response.text();
-                const closureFunc = eval(`(function(Scratch){${originalScript}})`);
+                const closureFunc = new Function('Scratch', originalScript);
                 let extensionObject = null as unknown as ExtensionClass;
                 const ctx = makeCtx();
                 ctx.vm = this.vm;
