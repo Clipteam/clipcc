@@ -175,6 +175,13 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
             return new Promise((resolve, reject) => {
                 // If we `require` this at the global level it breaks non-webpack targets, including tests
                 const ExtensionWorker = new ExtensionSandbox();
+                this.loadedCCXExtension.set(url, {
+                        type: 'ccx',
+                        info: info,
+                        locales,
+                        enabled: true,
+                        env: 'sandboxed'
+                    } as CCXExtension);
                 this.pendingExtensions.push({
                     extensionURL: url,
                     mainScript: URL.createObjectURL(new Blob([originalScript], { type: "text/javascript" })),
@@ -276,7 +283,10 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      * @param {string} serviceName - the name of the service hosting the extension.
      */
     registerExtensionService (extensionURL: string, serviceName: string) {
-        this.emit('LOADED', extensionURL, this.loadedCCXExtension.get(extensionURL)!);
+        const extensionInfo = this.loadedCCXExtension.get(extensionURL)!;
+        extensionInfo.class = serviceName;
+        this.loadedCCXExtension.set(extensionURL, extensionInfo);
+        this.emit('LOADED', extensionURL, extensionInfo);
     }
 
     /**

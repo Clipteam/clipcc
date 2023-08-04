@@ -16,10 +16,10 @@ const messages = defineMessages({
         defaultMessage: 'Enter your extension\'s URL',
         description: 'Prompt of enter extension url'
     },
-    runInSandbox: {
-        id: 'gui.extensionModal.runInSandbox',
-        defaultMessage: 'Is it running in sandbox?',
-        description: 'Prompt of run in sandbox'
+    runInUnsandboxedMode: {
+        id: 'gui.extensionModal.runInUnsandboxedMode',
+        defaultMessage: 'Is it running in unsandboxed mode?',
+        description: 'Prompt of run in unsandboxed mode'
     }
 });
 
@@ -93,12 +93,12 @@ class ExtensionModal extends React.PureComponent {
             extension.info = this.extensions[url];
         } else {
             extension.info.type = extension.type;
+            extension.info.sandboxed = extension.env === 'sandboxed';
             // unnecessary for extension modal
             delete extension.class;
         }
 
         if (extension.type === 'scratch') {
-            extension.info.sandboxed = extension.env === 'sandboxed';
             // scratch extension always enabled.
             extension.info.enabled = true;
             // placeholder
@@ -140,7 +140,7 @@ class ExtensionModal extends React.PureComponent {
     async handleLoadFromURL () {
         const url = prompt(this.props.intl.formatMessage(messages.loadFromURL));
         if (!url.trim()) return;
-        const isSandbox = confirm(this.props.intl.formatMessage(messages.runInSandbox));
+        const isSandbox = confirm(this.props.intl.formatMessage(messages.runInUnsandboxedMode));
         await this.props.extensionManager.loadExtensionURL(url, 'scratch', isSandbox ? 'sandboxed' : 'unsandboxed');
     }
     handleUpload () {
@@ -154,11 +154,13 @@ class ExtensionModal extends React.PureComponent {
                 const fileName = file.name;
 
                 const url = URL.createObjectURL(file);
-                const isSandbox = confirm(fileName + this.props.intl.formatMessage(messages.runInSandbox));
+                const formatted = this.props.intl.formatMessage(messages.runInUnsandboxedMode);
+                const isSandbox = confirm(formatted) ? 'unsandboxed' : undefined;
+
                 await this.props.extensionManager.loadExtensionURL(
                     url,
                     fileName.endsWith('.ccx') ? 'ccx' : 'scratch',
-                    isSandbox ? 'sandboxed' : 'unsandboxed'
+                    isSandbox
                 );
             }
         };
