@@ -1,7 +1,7 @@
 const defaultsDeep = require('lodash.defaultsdeep');
 const path = require('path');
 const webpack = require('webpack');
-const { version } = require('../../package.json');
+const {version} = require('../../package.json');
 
 // Plugins
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -29,8 +29,8 @@ const base = {
     },
     snapshot: {
         managedPaths: [
-            /^.+?[\\/]node_modules[\\/](?!scratch-(blocks|l10n|paint|render|storage|vm))[\\/]/,
-        ],
+            /^.+?[\\/]node_modules[\\/](?!scratch-(blocks|l10n|paint|render|storage|vm))[\\/]/
+        ]
     },
     module: {
         rules: [{
@@ -85,13 +85,16 @@ const base = {
             test: /\.hex$/,
             type: 'asset/inline',
             generator: {
-                dataUrl: (content) => {
-                return `data:text/plain;base64,${content.toString('base64')}`
-            },
-  },
+                dataUrl: content => `data:text/plain;base64,${content.toString('base64')}`
+            }
         }, {
             resourceQuery: /raw/,
             type: 'asset/source'
+        }, {
+            test: /\.js$/,
+            enforce: 'pre',
+            include: /node_modules[\\/]clipcc-[^\\/]+[\\/]dist/,
+            use: ['source-map-loader']
         }]
     },
     optimization: {
@@ -126,11 +129,11 @@ module.exports = [
     // to run editor examples
     defaultsDeep({}, base, {
         entry: {
-            'gui': './src/playground/index.jsx',
-            'blocksonly': './src/playground/blocks-only.jsx',
-            'lifecycle': './src/playground/lifecycle-test.jsx',
-            'compatibilitytesting': './src/playground/compatibility-testing.jsx',
-            'player': './src/playground/player.jsx'
+            gui: './src/playground/index.jsx',
+            blocksonly: './src/playground/blocks-only.jsx',
+            lifecycle: './src/playground/lifecycle-test.jsx',
+            compatibilitytesting: './src/playground/compatibility-testing.jsx',
+            player: './src/playground/player.jsx'
         },
         output: {
             path: path.resolve(__dirname, 'build'),
@@ -140,7 +143,7 @@ module.exports = [
             rules: base.module.rules.concat([
                 {
                     test: /\.(svg|png|wav|gif|jpg)$/,
-                    resourceQuery: { not: [/raw/] },
+                    resourceQuery: {not: [/raw/]},
                     type: 'asset/inline'
                 }
             ])
@@ -243,7 +246,7 @@ module.exports = [
                 rules: base.module.rules.concat([
                     {
                         test: /\.(svg|png|wav|gif|jpg)$/,
-                        resourceQuery: { not: [/raw/] },
+                        resourceQuery: {not: [/raw/]},
                         type: 'asset/inline',
                         generator: {
                             outputPath: 'static/assets/',
