@@ -379,8 +379,8 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
                 // Maybe there's a worker
                 if (extensionObject === null) {
                     if (serviceName && dispatch._isRemoteService(serviceName)) {
-                        return (args: BlockArgs, util: unknown, realBlockInfo: unknown) =>
-                            dispatch.call(serviceName, funcName, args, util, realBlockInfo);
+                        return (args: BlockArgs, _util: unknown, realBlockInfo: unknown) =>
+                            dispatch.call(serviceName, funcName, args, undefined, realBlockInfo);
                     } 
                     console.warn(`Could not find extension block function called ${funcName}`);
                     // eslint-disable-next-line @typescript-eslint/no-empty-function

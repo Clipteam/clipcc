@@ -6,13 +6,14 @@ import {
     CategoryPrototype,
     ParameterPrototype,
     ParameterType,
-    CCXExtensionClass as ExtensionClass
+    MenuItemPrototype
 } from "../../type/ccx";
 import { VM } from "../../type/virtual-machine";
 import { ScratchBlocksConstants } from '../../util';
 import type { CCXAdapter } from "./ccx";
 import type { WorkerDispatch } from '../../dispatch/worker-dispatch';
 import type { CentralDispatch } from '../../dispatch/central-dispatch';
+import { TargetType } from "../../type/scratch";
 interface BlockInfo {
     categoryId: string;
     messageId: string;
@@ -101,13 +102,17 @@ interface BlocklyArg {
     type: string;
     name: string;
     check?: string;
-    options?: FieldMenuItems;
+    options?: FieldMenuItems | (() => MenuItemPrototype[]);
 }
 
 type FieldMenuItems = {
     text: string;
     value: string;
 }[];
+
+interface Target {
+    isStage: boolean;
+}
 
 class ExtensionAPI implements API {
     /**
@@ -324,13 +329,17 @@ class ExtensionAPI implements API {
 
                 if (param.menu && param.field) {
                     argJSON.type = 'field_dropdown';
-                    argJSON.options = param.menu.map(item => ([
-                        formatMessage({
-                            id: item.messageId,
-                            default: item.messageId
-                        }),
-                        item.value
-                    ])) as unknown as FieldMenuItems;
+                    if (typeof param.menu === 'function') {
+                        argJSON.options = param.menu;
+                    } else {
+                        argJSON.options = param.menu.map(item => ([
+                            formatMessage({
+                                id: item.messageId,
+                                default: item.messageId
+                            }),
+                            item.value
+                        ])) as unknown as FieldMenuItems;
+                    }
                 }
 
             blockJSON[`args${outLineNum}`] = blockJSON[`args${outLineNum}`] || []
@@ -353,8 +362,8 @@ class ExtensionAPI implements API {
         }
 
         if (typeof block.function === 'string') {
-            this.vm.runtime._primitives[block.opcode] = (args: unknown, util: unknown) => {
-                return this.dispatch.call(block.function as string, block.opcode, args, util);
+            this.vm.runtime._primitives[block.opcode] = (args: unknown, _util: unknown) => {
+                return this.dispatch.call(block.function as string, block.opcode, args);
             };
         } else {
             this.vm.runtime._primitives[block.opcode] = block.function;
@@ -371,8 +380,28 @@ class ExtensionAPI implements API {
         }
     }
 
-    removeBlock (opcode: string) {}
-    removeBlocks (opcodes: string[]) {}
+    removeBlock (targetOpcode: string) {
+        let flag = false;
+        for (const categotyId in this.blockInfo) {
+            const category = this.blockInfo[categotyId];
+            if (targetOpcode in category.blocks) {
+                delete category.blocks[targetOpcode]
+                flag = true;
+                break;
+            }
+        }
+        if (flag) {
+            this.requestUpdateToolbox();
+        } else {
+            throw new Error('Cannot find block');
+        }
+    }
+
+    removeBlocks (opcodes: string[]) {
+        for (const opcode in opcodes) {
+            this.removeBlock(opcode);
+        }
+    }
 
 
     updateLocales () {
@@ -382,7 +411,7 @@ class ExtensionAPI implements API {
         }
     }
 
-    getBlocksXML () {
+    getBlocksXML (target: Target) {
         const processedXML = [];
         for (const categoryId in this.blockInfo) {
             const category = this.blockInfo[categoryId];
@@ -396,6 +425,16 @@ class ExtensionAPI implements API {
             // Add blocks
             for (const opcode in category.blocks) {
                 const block = category.blocks[opcode];
+                if (Array.isArray(block.option?.filter)) {
+                    // Hide from palette
+                    if ((block.option?.filter as TargetType[]).length < 1) continue;
+                    if (!block.option?.filter.includes(
+                        target.isStage ? TargetType.STAGE : TargetType.SPRITE
+                    )) {
+                        continue;
+                    }
+                    
+                }
                 toolboxXML += `<block type="${block.opcode}" >`;
                 const text = formatMessage({
                     id: block.messageId,

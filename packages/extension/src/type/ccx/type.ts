@@ -74,12 +74,20 @@ export interface BlockPrototype {
 export interface BlockOption {
     terminal?: boolean;
     monitor?: boolean;
+    filter?: typeof FilterType[keyof typeof FilterType];
 }
+
+export const FilterType = {
+    SPRITE: ['sprite'],
+    STAGE: ['stage'],
+    ALL: ['sprite', 'stage'],
+    HIDE: []
+} as const;
 
 export interface ParameterPrototype {
     type: ParameterType;
     default?: any;
-    menu?: MenuItemPrototype[];
+    menu?: MenuItemPrototype[] | (() => MenuItemPrototype[]);
     menuId?: string;
     field?: boolean;
     shadow?: ShadowPrototype;

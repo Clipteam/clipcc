@@ -239,12 +239,6 @@ class SharedDispatch {
      * @returns {object} - purified object.
      */
     _purifyObject (obj: unknown, visited = new Set(), depth = 1): unknown {
-        /*
-         * Unlimited depth recursion is very expensive to execute
-         * So we should limit the maximum recursion depth.
-         */
-        if (depth > 5) return undefined;
-
         if (typeof obj === "function" || typeof obj === "symbol") {
             return undefined;
         }

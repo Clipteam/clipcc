@@ -16,6 +16,11 @@ declare global {
     var ClipCCExtension: Ctx | WorkerCtx | undefined;
 }
 
+
+interface Target {
+    isStage: boolean;
+}
+
 interface PendingExtensionWorker {
     extensionURL: string;
     mainScript: string;
@@ -263,8 +268,8 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
         this.ctx.api.updateLocales();
     }
 
-    getBlocksXML () {
-        return this.ctx.api.getBlocksXML();
+    getBlocksXML (target: Target) {
+        return this.ctx.api.getBlocksXML(target);
     }
 
     allocateWorker () {
