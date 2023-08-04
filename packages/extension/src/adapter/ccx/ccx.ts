@@ -156,8 +156,8 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
         if ('settings.json' in zipData.files) {
             const content = await zipData.files['settings.json'].async('text');
             info.settings = JSON.parse(content);
+            this.emit('SETTINGS_ADDED', info.id, info.settings);
         }
-        this.emit('SETTINGS_ADDED', info.id, info.settings);
 
         const locales: Record<string, Record<string, string>> = {};
         // Load locales
