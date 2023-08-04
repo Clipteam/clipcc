@@ -313,7 +313,7 @@ class ExtensionAPI implements API {
             // create param lazily in order to avoid errors caused by BRANCH
             const param = block.param ? block.param[placeholder] as Partial<ParameterPrototype> : {};
 
-            let argTypeInfo = ParameterTypeMap[block.type] || {};
+            const argTypeInfo = param ? (ParameterTypeMap[param.type!] || {}) : {};
             // Layout a block argument (e.g. an input slot on the block)
             let argJSON: Partial<BlocklyArg> = {
                 type: 'input_value',
@@ -445,9 +445,10 @@ class ExtensionAPI implements API {
                 while ((searchResult = re.exec(text)) !== null) {
                     if (searchResult) {
                         const placeholder = searchResult[1].replace(/[<"&]/, '_');
+                        if (placeholder.startsWith('SUBSTACK')) continue;
                         let fieldName;
                         const param = block.param ? block.param[placeholder] : null;
-                        const argTypeInfo = ParameterTypeMap[block.type] || {};
+                        const argTypeInfo = param ? (ParameterTypeMap[param.type] || {}) : {};
                         let shadowType = param ? param[placeholder as keyof ParameterPrototype]?.menuId : null;
                         if ((param?.menu && param?.field) || param?.menuId) {
                             fieldName = placeholder;
