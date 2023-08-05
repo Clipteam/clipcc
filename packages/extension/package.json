@@ -4,6 +4,7 @@
   "description": "ClipCC extension manager",
   "main": "./dist/node/clipcc-extension.js",
   "broswer": "./dist/web/clipcc-extension.min.js",
+  "types": "./dist/web/index.d.ts",
   "scripts": {
     "build": "webpack --color --progress",
     "lint": "eslint ./src/ --ext .js,.ts",

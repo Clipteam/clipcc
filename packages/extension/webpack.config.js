@@ -55,7 +55,8 @@ module.exports = [
         target: 'web',
         entry: {
             'clipcc-extension': './src/index.ts',
-            'clipcc-extension.min': './src/index.ts'
+            'clipcc-extension.min': './src/index.ts',
+            'development': './src/development.ts',
         },
         output: {
             path: path.resolve(__dirname, 'dist', 'web')
