@@ -87,12 +87,12 @@ const ParameterTypeMap = (() => {
 export interface BlockJSON {
     type: string;
     inputsInline: boolean;
-    category: string;
+    category?: string;
     colour: `#${string}`;
-    colourSecondary: `#${string}`;
-    colourTertiary: `#${string}`;
-    previousStatement: null | undefined;
-    nextStatement: null | undefined;
+    colourSecondary?: `#${string}`;
+    colourTertiary?: `#${string}`;
+    previousStatement?: null | undefined;
+    nextStatement?: null | undefined;
     outputShape: ScratchBlocksConstants;
     output: string;
     [prop: `args${number}`]: BlocklyArg[];
@@ -104,7 +104,7 @@ interface BlocklyArg {
     type: string;
     name: string;
     check?: string;
-    options?: FieldMenuItems | (() => MenuItemPrototype[]);
+    options?: [string, string][] | FieldMenuItems | (() => MenuItemPrototype[]);
 }
 
 type FieldMenuItems = {
@@ -196,6 +196,7 @@ class ExtensionAPI implements API {
             queueMicrotask(() => {
                 this.blockRefreshQueued = false;
                 this.adapter.emit('REGISTER_BLOCK', this.blocksToBeRegistered);
+                this.blocksToBeRegistered = [];
             });
         }
     }
@@ -236,6 +237,7 @@ class ExtensionAPI implements API {
     addBlock (block: BlockPrototype | WorkerBlockPrototype) {
         // skip process button as a block while updating locales.
         if ('callback' in block) return;
+
         if (!this.vm) throw new Error(`VM hadn't been attached`);
 
         const category = this.blockInfo[block.categoryId];
@@ -249,6 +251,49 @@ class ExtensionAPI implements API {
             colourSecondary: undefined,
             colourTertiary: undefined
         };
+
+        // Process input menus
+        for (const paramId in block.param) {
+            // if the param doesn't have menu or it's an field
+            if (!block.param[paramId].menu || block.param[paramId].field) continue;
+            // check whether the menu specified an id
+            if (!block.param[paramId].menuId) {
+                // automatically generate an id
+                block.param[paramId].menuId = `${block.opcode}.menu.${paramId}`;
+            }
+
+            let menuItems: [string, string][] | (() => MenuItemPrototype[]);
+            if (typeof block.param[paramId].menu === 'function') {
+                menuItems = block.param[paramId].menu as (() => MenuItemPrototype[]);
+            } else {
+                menuItems = [];
+                for (const item of (block.param[paramId].menu as MenuItemPrototype[])) {
+                    menuItems.push([
+                        formatMessage({
+                            id: item.messageId,
+                            default: item.messageId
+                        }),
+                        item.value
+                    ]);
+                }
+            }
+
+            this.blocksToBeRegistered.push({
+                message0: '%1',
+                type: block.param[paramId].menuId!,
+                inputsInline: true,
+                output: 'String',
+                colour: category.color,
+                colourSecondary: undefined,
+                colourTertiary: undefined,
+                outputShape: ScratchBlocksConstants.OUTPUT_SHAPE_ROUND,
+                args0: [{
+                    type: 'field_dropdown',
+                    name: paramId,
+                    options: menuItems
+                }]
+            });
+        }
 
         // Set block type
         switch (block.type) {
@@ -328,27 +373,27 @@ class ExtensionAPI implements API {
                 name: placeholder
             };
 
-                if (argTypeInfo.check) {
-                    // Right now the only type of 'check' we have specifies that the
-                    // input slot on the block accepts Boolean reporters, so it should be
-                    // shaped like a hexagon
-                    argJSON.check = argTypeInfo.check;
-                }
+            if (argTypeInfo.check) {
+                // Right now the only type of 'check' we have specifies that the
+                // input slot on the block accepts Boolean reporters, so it should be
+                // shaped like a hexagon
+                argJSON.check = argTypeInfo.check;
+            }
 
-                if (param.menu && param.field) {
-                    argJSON.type = 'field_dropdown';
-                    if (typeof param.menu === 'function') {
-                        argJSON.options = param.menu;
-                    } else {
-                        argJSON.options = param.menu.map(item => ([
-                            formatMessage({
-                                id: item.messageId,
-                                default: item.messageId
-                            }),
-                            item.value
-                        ])) as unknown as FieldMenuItems;
-                    }
+            if (param.menu && param.field) {
+                argJSON.type = 'field_dropdown';
+                if (typeof param.menu === 'function') {
+                    argJSON.options = param.menu;
+                } else {
+                    argJSON.options = param.menu.map(item => ([
+                        formatMessage({
+                            id: item.messageId,
+                            default: item.messageId
+                        }),
+                        item.value
+                    ])) as unknown as FieldMenuItems;
                 }
+            }
 
             blockJSON[`args${outLineNum}`] = blockJSON[`args${outLineNum}`] || []
             const blockArgs = blockJSON[`args${outLineNum}`];
@@ -487,7 +532,7 @@ class ExtensionAPI implements API {
                         let fieldName;
                         const param = block.param ? block.param[placeholder] : null;
                         const argTypeInfo = param ? (ParameterTypeMap[param.type] || {}) : {};
-                        let shadowType = param ? param[placeholder as keyof ParameterPrototype]?.menuId : null;
+                        let shadowType = param ? param.menuId : null;
                         if ((param?.menu && param?.field) || param?.menuId) {
                             fieldName = placeholder;
                         } else {
