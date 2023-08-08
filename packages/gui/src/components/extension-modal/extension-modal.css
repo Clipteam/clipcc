@@ -54,7 +54,7 @@
     flex-direction: column;
     justify-content: center;
     position: relative;
-    height: 80px;
+    max-height: 5.25rem;
 
     margin: var(--clipcc-space);
     padding: 1rem;
@@ -74,7 +74,7 @@
 }
 
 .expand {
-    height: auto;
+    max-height: inherit;
 }
 
 .inset-icon {
