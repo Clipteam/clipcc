@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import React from 'react';
 
+import {changeRadius} from '../../reducers/radius';
 import {changeBrushSize} from '../../reducers/brush-mode';
 import {changeBrushSize as changeEraserSize} from '../../reducers/eraser-mode';
 import {changeBitBrushSize} from '../../reducers/bit-brush-size';
@@ -83,6 +84,11 @@ const ModeToolsComponent = props => {
             defaultMessage: 'Thickness',
             description: 'Label for the number input to choose the line thickness',
             id: 'paint.modeTools.thickness'
+        },
+        radius: {
+            defaultMessage: 'Radius',
+            description: 'Label for the number input to choose the rect radius',
+            id: 'paint.modeTools.radius'
         },
         flipHorizontal: {
             defaultMessage: 'Flip Horizontal',
@@ -198,6 +204,23 @@ const ModeToolsComponent = props => {
                 </InputGroup>
             </div>
         );
+    case Modes.RECT:
+        return (
+            <div className={classNames(props.className, styles.modeTools)}>
+                <InputGroup>
+                    <Label text={props.intl.formatMessage(messages.radius)}>
+                        <LiveInput
+                            range
+                            small
+                            min="0"
+                            type="number"
+                            value={props.radius}
+                            onSubmit={props.onRadiusChange}
+                        />
+                        </Label>
+                </InputGroup>
+            </div>
+        );
     case Modes.BIT_SELECT:
         /* falls through */
     case Modes.SELECT:
@@ -293,6 +316,18 @@ const ModeToolsComponent = props => {
                         </Label>
                     </InputGroup>)
                 }
+                <InputGroup>
+                    <Label text={props.intl.formatMessage(messages.radius)}>
+                        <LiveInput
+                            range
+                            small
+                            min="0"
+                            type="number"
+                            value={props.radius}
+                            onSubmit={props.onRadiusChange}
+                        />
+                        </Label>
+                </InputGroup>
             </div>
         );
     }
@@ -308,6 +343,7 @@ ModeToolsComponent.propTypes = {
     bitBrushSize: PropTypes.number,
     bitEraserSize: PropTypes.number,
     brushValue: PropTypes.number,
+    radius: PropTypes.number,
     className: PropTypes.string,
     clipboardItems: PropTypes.arrayOf(PropTypes.array),
     eraserValue: PropTypes.number,
@@ -320,6 +356,7 @@ ModeToolsComponent.propTypes = {
     onBitBrushSliderChange: PropTypes.func.isRequired,
     onBitEraserSliderChange: PropTypes.func.isRequired,
     onBrushSliderChange: PropTypes.func.isRequired,
+    onRadiusChange: PropTypes.func.isRequired,
     onCopyToClipboard: PropTypes.func.isRequired,
     onCurvePoints: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
@@ -337,6 +374,7 @@ const mapStateToProps = state => ({
     mode: state.scratchPaint.mode,
     format: state.scratchPaint.format,
     fillBitmapShapes: state.scratchPaint.fillBitmapShapes,
+    radius: state.scratchPaint.radius,
     bitBrushSize: state.scratchPaint.bitBrushSize,
     bitEraserSize: state.scratchPaint.bitEraserSize,
     brushValue: state.scratchPaint.brushMode.brushSize,
@@ -349,6 +387,9 @@ const mapDispatchToProps = dispatch => ({
     },
     onBitBrushSliderChange: bitBrushSize => {
         dispatch(changeBitBrushSize(bitBrushSize));
+    },
+    onRadiusChange: radius => {
+        dispatch(changeRadius(radius));
     },
     onBitEraserSliderChange: eraserSize => {
         dispatch(changeBitEraserSize(eraserSize));
