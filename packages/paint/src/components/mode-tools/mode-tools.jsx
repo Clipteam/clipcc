@@ -316,18 +316,6 @@ const ModeToolsComponent = props => {
                         </Label>
                     </InputGroup>)
                 }
-                <InputGroup>
-                    <Label text={props.intl.formatMessage(messages.radius)}>
-                        <LiveInput
-                            range
-                            small
-                            min="0"
-                            type="number"
-                            value={props.radius}
-                            onSubmit={props.onRadiusChange}
-                        />
-                        </Label>
-                </InputGroup>
             </div>
         );
     }
