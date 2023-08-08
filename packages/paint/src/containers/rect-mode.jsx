@@ -68,6 +68,7 @@ class RectMode extends React.Component {
             this.props.onUpdateImage
         );
         this.tool.setColorState(this.props.colorState);
+        this.tool.setRadius(nextProps.radius);
         this.tool.activate();
     }
     validateColorState () { // TODO move to shared class
