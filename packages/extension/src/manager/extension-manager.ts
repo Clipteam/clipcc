@@ -13,6 +13,7 @@ import {
 } from '../type/ccx';
 import { VM } from '../type/virtual-machine';
 export interface Extension {
+    id: string;
     type: 'scratch' | 'ccx';
     env: 'unsandboxed' | 'sandboxed';
     url: string;
@@ -88,7 +89,7 @@ class ExtensionManager extends Emitter<Events> {
      * @returns {Extension[]} all extensions.
      */
     getLoadedExtensions () {
-        return Object.fromEntries(this.loadedExtensions.entries())
+        return Object.fromEntries(this.loadedExtensions.entries());
     }
 
     /**
@@ -232,9 +233,9 @@ class ExtensionManager extends Emitter<Events> {
         this.ccxAdapter.attachBlock(block);
     }
 
-    private handleExtensionLoaded (url: string, extension: Extension) {
-        this.loadedExtensions.set(url, extension);
-        this.emit('EXTENSION_LOADED', url, extension);
+    private handleExtensionLoaded (id: string, extension: Extension) {
+        this.loadedExtensions.set(id, extension);
+        this.emit('EXTENSION_LOADED', id, extension);
     }
 
     private handleAddLocale (locales: Record<string, unknown>) {

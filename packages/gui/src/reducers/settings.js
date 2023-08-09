@@ -11,6 +11,7 @@ const defaultState = {
     unlimitedPenSize: false,
     unlimitedSoundStuffs: false,
     accurateCoordinates: false,
+    saveExtensionsInProject: false,
     autoSaveInterval: 120,
     compression: 6,
     framerate: 30,

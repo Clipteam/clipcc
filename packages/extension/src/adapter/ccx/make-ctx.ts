@@ -174,6 +174,7 @@ class ExtensionAPI implements API {
         this.adapter = adapter;
         this.dispatch = dispatch;
     }
+
     /**
      * Set the VM for the api.
      * @param {VirtualMachine} vm - the VM instance.
@@ -473,7 +474,6 @@ class ExtensionAPI implements API {
             this.removeBlock(opcode);
         }
     }
-
 
     updateLocales () {
         for (const categoryId in this.blockInfo) {

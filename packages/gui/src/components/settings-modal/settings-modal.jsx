@@ -349,6 +349,24 @@ class SettingsModal extends React.Component {
                                 placeholder="300"
                             />
                         </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Save Extensions In Project"
+                                    description="Label of save extensions in project"
+                                    id="gui.settingsModal.saveExtensionsInProject"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Save loaded extensions in your project. If disabled, editor will load them by url if possible."
+                                    description="Description of save extensions in project"
+                                    id="gui.settingsModal.saveExtensionsInProjectDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.saveExtensionsInProject}
+                                onChange={this.props.onChangeSaveExtensionsInProject}
+                            />
+                        </div>
                     </Box>
                 </Box>
             </Modal>
@@ -359,6 +377,7 @@ class SettingsModal extends React.Component {
 SettingsModal.propTypes = {
     hideNonVanillaBlocks: PropTypes.bool.isRequired,
     autoSave: PropTypes.bool.isRequired,
+    saveExtensionsInProject: PropTypes.bool.isRequired,
     infiniteCloning: PropTypes.bool.isRequired,
     edgelessStage: PropTypes.bool.isRequired,
     unlimitedListLength: PropTypes.bool.isRequired,
@@ -375,6 +394,7 @@ SettingsModal.propTypes = {
     onChangeEdgelessStage: PropTypes.func.isRequired,
     onChangeUnlimitedListLength: PropTypes.func.isRequired,
     onChangeUnlimitedPenSize: PropTypes.func.isRequired,
+    onChangeSaveExtensionsInProject:PropTypes.func.isRequired,
     onChangeUnlimitedSoundStuffs: PropTypes.func.isRequired,
     onChangeAccurateCoordinates: PropTypes.func.isRequired,
     onChangeAutoSaveInterval: PropTypes.func.isRequired,

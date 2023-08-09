@@ -33,6 +33,7 @@ export interface CCXExtension extends Extension {
     info: ExtensionInfo;
     locales: Record<string, Record<string, string>>;
     enabled: boolean;
+    fileContent: ArrayBufferLike;
     class: string | ExtensionClass; // The serviceName or extensionClass.
     warnings?: string[];
 }
@@ -126,7 +127,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      */
     async load (url: string, env?: 'sandboxed' | 'unsandboxed') {
         const response = await fetch(url);
-        const buffer = response.arrayBuffer();
+        const buffer = await response.arrayBuffer();
         const zipData = await JSZip.loadAsync(buffer);
 
         // Validate
@@ -184,10 +185,13 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                 const ExtensionWorker = new ExtensionSandbox();
                 this.loadedCCXExtension.set(url, {
                         type: 'ccx',
+                        id: info.id,
                         info: info,
                         locales,
+                        url,
                         enabled: true,
-                        env: 'sandboxed'
+                        env: 'sandboxed',
+                        fileContent: buffer
                     } as CCXExtension);
                 this.pendingExtensions.push({
                     extensionURL: url,
@@ -223,20 +227,25 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                     }
                     this.loadedCCXExtension.set(url, {
                         type: 'ccx',
-                        info: info,
-                        locales,
-                        class: extensionObject,
-                        enabled: true,
-                        env: 'unsandboxed'
-                    } as CCXExtension);
-                    this.emit('LOADED', url, {
-                        type: 'ccx',
+                        id: info.id,
                         info: info,
                         locales,
                         url,
                         class: extensionObject,
                         enabled: true,
-                        env: 'unsandboxed'
+                        env: 'unsandboxed',
+                        fileContent: buffer
+                    } as CCXExtension);
+                    this.emit('LOADED', info.id, {
+                        type: 'ccx',
+                        id: info.id,
+                        info: info,
+                        locales,
+                        url,
+                        class: extensionObject,
+                        enabled: true,
+                        env: 'unsandboxed',
+                        fileContent: buffer
                     });
                 } catch (e) {
                     throw e;
@@ -297,7 +306,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
         const extensionInfo = this.loadedCCXExtension.get(extensionURL)!;
         extensionInfo.class = serviceName;
         this.loadedCCXExtension.set(extensionURL, extensionInfo);
-        this.emit('LOADED', extensionURL, extensionInfo);
+        this.emit('LOADED', extensionInfo.id, extensionInfo);
     }
 
     /**

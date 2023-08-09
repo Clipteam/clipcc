@@ -54,7 +54,32 @@ const serializeCostumes = function (runtime, optTargetId) {
     return serializeAssets(runtime, 'costumes', optTargetId);
 };
 
+/**
+ * Serialize all loaded extensions into an array of file
+ * descriptors. A file descriptor is an object containing the name of the file
+ * to be written and the contents of the file, the serialized costume.
+ * @param {ExtensionManager} extensionManager The extension manager instance
+ * @returns {Array<object>} An array of file descriptors for each extensions
+ */
+const serializeExtensions = function (extensionManager) {
+    const extensionDescs = [];
+    const extensions = extensionManager.getLoadedExtensions();
+    for (const id in extensions) {
+        const extension = extensions[id];
+        if (!extension.fileContent) {
+            continue;
+        }
+        // @todo more format?
+        extensionDescs.push({
+            fileName: `${id}.ccx`,
+            fileContent: extension.fileContent
+        });
+    }
+    return extensionDescs;
+}
+
 module.exports = {
     serializeSounds,
-    serializeCostumes
+    serializeCostumes,
+    serializeExtensions
 };

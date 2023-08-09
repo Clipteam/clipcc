@@ -24,7 +24,8 @@ interface PendingExtensionWorker {
 }
 
 export interface ScratchExtension extends Extension {
-    type: 'scratch'
+    type: 'scratch',
+    id: string,
     info: ExtensionMetadata,
     class: string | ExtensionClass; // The serviceName or extensionClass.
 }
@@ -68,6 +69,11 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
      */
     private loadedScratchExtension = new Map<string, ScratchExtension>();
 
+    /**
+     * Mapping of opcode and extension's id.
+     */
+    opcodeMapping: Record<string, string> | null = null;
+
     constructor () {
         super();
         dispatch.setService('scratchAdapter', this).catch((e: Error) => {
@@ -105,7 +111,6 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
                     dispatch.addWorker(ExtensionWorker);
                 });
             case 'unsandboxed': {
-                // @todo DataURL/ObjectURL support
                 const response = await fetch(ext);
                 const originalScript = await response.text();
                 const closureFunc = new Function('Scratch', originalScript);
@@ -121,7 +126,7 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
                 closureFunc(ctx);
                 const extensionInfo = extensionObject.getInfo();
                 this._registerExtensionInfo(extensionObject, extensionInfo, ext);
-                this.emit('LOADED', ext, this.loadedScratchExtension.get(ext) as ScratchExtension);
+                this.emit('LOADED', extensionInfo.id, this.loadedScratchExtension.get(ext) as ScratchExtension);
                 return extensionInfo.id;
             }
             default:
@@ -192,6 +197,7 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
             } else {
                 this.loadedScratchExtension.set(extensionURL, {
                     type: 'scratch',
+                    id: extensionInfo.id,
                     info: extensionInfo,
                     class: (extensionObject ?? serviceName) as ExtensionClass | string,
                     env: serviceName ? 'sandboxed' : 'unsandboxed'
@@ -439,7 +445,7 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
     registerExtensionService (extensionURL: string, serviceName: string) {
         dispatch.call(serviceName, 'getInfo').then(info => {
             this._registerExtensionInfo(null, info, extensionURL, serviceName);
-            this.emit('LOADED', extensionURL, this.loadedScratchExtension.get(extensionURL) as ScratchExtension);     
+            this.emit('LOADED', info.id, this.loadedScratchExtension.get(extensionURL) as ScratchExtension);
         });
     }
 

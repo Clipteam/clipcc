@@ -20,7 +20,7 @@ const newBlockIds = require('./util/new-block-ids');
 
 const {loadCostume} = require('./import/load-costume.js');
 const {loadSound} = require('./import/load-sound.js');
-const {serializeSounds, serializeCostumes} = require('./serialization/serialize-assets');
+const {serializeSounds, serializeCostumes, serializeExtensions} = require('./serialization/serialize-assets');
 require('canvas-toBlob');
 
 const builtinExtensions = {
@@ -401,9 +401,10 @@ class VirtualMachine extends EventEmitter {
     }
 
     /**
+     * @param {boolean} saveExtensionsInProject Whether save extensions in sb3.
      * @returns {string} Project in a Scratch 3.0 JSON representation.
      */
-    saveProjectSb3 () {
+    saveProjectSb3 (saveExtensionsInProject) {
         const soundDescs = serializeSounds(this.runtime);
         const costumeDescs = serializeCostumes(this.runtime);
         const projectJson = this.toJSON();
@@ -415,6 +416,10 @@ class VirtualMachine extends EventEmitter {
         // Put everything in a zip file
         zip.file('project.json', projectJson);
         this._addFileDescsToZip(soundDescs.concat(costumeDescs), zip);
+        if (this.extensionManager && saveExtensionsInProject) {
+            const extensionDescs = serializeExtensions(this.extensionManager);
+            this._addFileDescsToZip(extensionDescs, zip);
+        }
 
         return zip.generateAsync({
             type: 'blob',
@@ -482,7 +487,7 @@ class VirtualMachine extends EventEmitter {
      */
     toJSON (optTargetId) {
         const sb3 = require('./serialization/sb3');
-        return StringUtil.stringify(sb3.serialize(this.runtime, optTargetId));
+        return StringUtil.stringify(sb3.serialize(this.runtime, optTargetId, this.extensionManager));
     }
 
     // TODO do we still need this function? Keeping it here so as not to introduce
@@ -493,7 +498,7 @@ class VirtualMachine extends EventEmitter {
      * @returns {Promise} Promise that resolves after the project has loaded
      */
     fromJSON (json) {
-        log.warning('fromJSON is now just a wrapper around loadProject, please use that function instead.');
+        log.warn('fromJSON is now just a wrapper around loadProject, please use that function instead.');
         return this.loadProject(json);
     }
 
@@ -530,7 +535,7 @@ class VirtualMachine extends EventEmitter {
                     performance.measure('scratch-vm-deserialize',
                         'scratch-vm-deserialize-start', 'scratch-vm-deserialize-end');
                 }
-                return this.installTargets(targets, extensions, true);
+                return this.installTargets(targets, extensions, true, zip);
             });
     }
 
@@ -539,17 +544,29 @@ class VirtualMachine extends EventEmitter {
      * @param {Array.<Target>} targets - the targets to be installed
      * @param {ImportedExtensionsInfo} extensions - metadata about extensions used by these targets
      * @param {boolean} wholeProject - set to true if installing a whole project, as opposed to a single sprite.
+     * @param {?JSZip} zip Optional zipped project containing assets to be loaded.
      * @returns {Promise} resolved once targets have been installed
      */
-    installTargets (targets, extensions, wholeProject) {
+    async installTargets (targets, extensions, wholeProject, zip) {
         const extensionPromises = [];
 
-        extensions.extensionIDs.forEach(extensionID => {
+        for (const extensionID of extensions.extensionIDs) {
             if (!this.extensionManager.isExtensionLoaded(extensionID)) {
-                const extensionURL = extensions.extensionURLs.get(extensionID) || extensionID;
-                extensionPromises.push(this.extensionManager.loadExtensionURL(extensionURL));
+                const urlInfo = extensions.extensionURLs.get(extensionID);
+                let extensionURL = urlInfo.url || extensionID;
+                // try load extension from file first
+                if (`${extensionID}.ccx` in zip.files) {
+                    const data = await zip.files[`${extensionID}.ccx`].async('arraybuffer');
+                    extensionURL = URL.createObjectURL(new Blob(
+                        [data], {type: 'application/zip'}
+                    ));
+                } else if (extensionURL === 'file') {
+                    return Promise.reject('cannot locate extension file in project');
+                }
+
+                extensionPromises.push(this.extensionManager.loadExtensionURL(extensionURL, urlInfo.type, urlInfo.env));
             }
-        });
+        }
 
         targets = targets.filter(target => !!target);
 

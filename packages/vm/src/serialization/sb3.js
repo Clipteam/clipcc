@@ -449,19 +449,17 @@ const serializeComments = function (comments) {
  * Serialize the given target. Only serialize properties that are necessary
  * for saving and loading this target.
  * @param {object} target The target to be serialized.
- * @param {Set} extensions A set of extensions to add extension IDs to
  * @return {object} A serialized representation of the given target.
  */
-const serializeTarget = function (target, extensions) {
+const serializeTarget = function (target) {
     const obj = Object.create(null);
-    let targetExtensions = [];
     obj.isStage = target.isStage;
     obj.name = obj.isStage ? 'Stage' : target.name;
     const vars = serializeVariables(target.variables);
     obj.variables = vars.variables;
     obj.lists = vars.lists;
     obj.broadcasts = vars.broadcasts;
-    [obj.blocks, targetExtensions] = serializeBlocks(target.blocks);
+    [obj.blocks] = serializeBlocks(target.blocks);
     obj.comments = serializeComments(target.comments);
 
     // TODO remove this check/patch when (#1901) is fixed
@@ -489,11 +487,6 @@ const serializeTarget = function (target, extensions) {
         obj.draggable = target.draggable;
         obj.rotationStyle = target.rotationStyle;
     }
-
-    // Add found extensions to the extensions object
-    targetExtensions.forEach(extensionId => {
-        extensions.add(extensionId);
-    });
     return obj;
 };
 
@@ -526,17 +519,35 @@ const serializeMonitors = function (monitors) {
     });
 };
 
+const serializeExtension = function (extensionManager, extensions, extensionsMap) {
+    const list = extensionManager.getLoadedExtensions();
+    for (const id in list) {
+        const extension = list[id];
+        const realURL = extension.url.startsWith('blob:') ? 'file' : extension.url;
+        extensions.add(extension.id);
+        extensionsMap.set(extension.id, {
+            url: realURL,
+            env: extension.env,
+            type: extension.type
+        });
+    }
+}
+
 /**
  * Serializes the specified VM runtime.
  * @param {!Runtime} runtime VM runtime instance to be serialized.
  * @param {string=} targetId Optional target id if serializing only a single target
+ * * @param {ExtensionManager} extensionManager The extension manager instance
  * @return {object} Serialized runtime instance.
  */
-const serialize = function (runtime, targetId) {
+const serialize = function (runtime, targetId, extensionManager) {
     // Fetch targets
     const obj = Object.create(null);
     // Create extension set to hold extension ids found while serializing targets
     const extensions = new Set();
+    const extensionsMap = new Map();
+
+    serializeExtension(extensionManager, extensions, extensionsMap);
 
     const originalTargetsToSerialize = targetId ?
         [runtime.getTargetById(targetId)] :
@@ -554,7 +565,7 @@ const serialize = function (runtime, targetId) {
         });
     }
 
-    const serializedTargets = flattenedOriginalTargets.map(t => serializeTarget(t, extensions));
+    const serializedTargets = flattenedOriginalTargets.map(t => serializeTarget(t));
 
     if (targetId) {
         return serializedTargets[0];
@@ -566,6 +577,8 @@ const serialize = function (runtime, targetId) {
 
     // Assemble extension list
     obj.extensions = Array.from(extensions);
+    // Assemble extension map
+    obj.extensionsMap = Object.fromEntries(extensionsMap.entries());
 
     // Assemble metadata
     const meta = Object.create(null);
@@ -959,11 +972,13 @@ const parseScratchObject = function (object, runtime, extensions, zip, assets) {
             const blockJSON = object.blocks[blockId];
             blocks.createBlock(blockJSON);
 
+            /*
             // If the block is from an extension, record it.
             const extensionID = getExtensionIdForOpcode(blockJSON.opcode);
             if (extensionID) {
                 extensions.extensionIDs.add(extensionID);
             }
+            */
         }
     }
     // Costumes from JSON.
@@ -1195,11 +1210,13 @@ const deserializeMonitor = function (monitorData, runtime, targets, extensions) 
 
         runtime.monitorBlocks.createBlock(monitorBlock);
 
+        /*
         // If the block is from an extension, record it.
         const extensionID = getExtensionIdForOpcode(monitorBlock.opcode);
         if (extensionID) {
             extensions.extensionIDs.add(extensionID);
         }
+        */
     }
 
     runtime.requestAddMonitor(MonitorRecord(monitorData));
@@ -1244,8 +1261,12 @@ const replaceUnsafeCharsInVariableIds = function (targets) {
  */
 const deserialize = function (json, runtime, zip, isSingleSprite) {
     const extensions = {
-        extensionIDs: new Set(),
-        extensionURLs: new Map()
+        extensionIDs: json.extensions || new Set(),
+        extensionURLs: new Map(
+            typeof json.extensionsMap === 'object' ?
+            Object.entries(json.extensionsMap) :
+            undefined
+        )
     };
 
     // Store the origin field (e.g. project originated at CSFirst) so that we can save it again.

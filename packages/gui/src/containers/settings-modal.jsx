@@ -27,7 +27,8 @@ class SettingsModal extends React.Component {
             'handleChangeUnlimitedPenSize',
             'handleChangeUnlimitedSoundStuffs',
             'handleChangeAccurateCoordinates',
-            'handleChangeHideNonVanillaBlocks'
+            'handleChangeHideNonVanillaBlocks',
+            'handleChangeSaveExtensionsInProject'
         ]);
     }
     handleClose () {
@@ -35,6 +36,9 @@ class SettingsModal extends React.Component {
     }
     handleChangeAutoSave (value) {
         this.props.updateSettings({autoSave: value});
+    }
+    handleChangeSaveExtensionsInProject (value) {
+        this.props.updateSettings({saveExtensionsInProject: value});
     }
     handleChangeAutoSaveInterval (value) {
         value = Math.round(value);
@@ -77,6 +81,7 @@ class SettingsModal extends React.Component {
             <SettingsModalComponent
                 hideNonVanillaBlocks={this.props.hideNonVanillaBlocks}
                 autoSave={this.props.autoSave}
+                saveExtensionsInProject={this.props.saveExtensionsInProject}
                 autoSaveInterval={this.props.autoSaveInterval}
                 framerate={this.props.framerate}
                 theme={this.props.theme}
@@ -98,6 +103,7 @@ class SettingsModal extends React.Component {
                 onChangeUnlimitedSoundStuffs={this.handleChangeUnlimitedSoundStuffs}
                 onChangeAccurateCoordinates={this.handleChangeAccurateCoordinates}
                 onChangeHideNonVanillaBlocks={this.handleChangeHideNonVanillaBlocks}
+                onChangeSaveExtensionsInProject={this.handleChangeSaveExtensionsInProject}
             />
         );
     }
@@ -105,6 +111,7 @@ class SettingsModal extends React.Component {
 
 SettingsModal.propTypes = {
     hideNonVanillaBlocks: PropTypes.bool.isRequired,
+    saveExtensionsInProject: PropTypes.bool.isRequired,
     autoSave: PropTypes.bool.isRequired,
     infiniteCloning: PropTypes.bool.isRequired,
     edgelessStage: PropTypes.bool.isRequired,
@@ -120,6 +127,7 @@ SettingsModal.propTypes = {
 };
 
 const mapStateToProps = state => ({
+    saveExtensionsInProject: state.scratchGui.settings.saveExtensionsInProject,
     hideNonVanillaBlocks: state.scratchGui.settings.hideNonVanillaBlocks,
     autoSave: state.scratchGui.settings.autoSave,
     infiniteCloning: state.scratchGui.settings.infiniteCloning,
