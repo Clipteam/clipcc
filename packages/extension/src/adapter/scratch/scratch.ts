@@ -69,11 +69,6 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
      */
     private loadedScratchExtension = new Map<string, ScratchExtension>();
 
-    /**
-     * Mapping of opcode and extension's id.
-     */
-    opcodeMapping: Record<string, string> | null = null;
-
     constructor () {
         super();
         dispatch.setService('scratchAdapter', this).catch((e: Error) => {

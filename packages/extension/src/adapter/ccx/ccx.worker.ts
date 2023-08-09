@@ -21,7 +21,6 @@ dispatch.waitForConnection.then(() => {
 
         try {
             importScripts(mainScript);
-            dispatch.call('ccxAdapter', 'onWorkerInit', id);
         } catch (e) {
             dispatch.call('ccxAdapter', 'onWorkerInit', id, e);
         }
@@ -38,8 +37,9 @@ self.module = new Proxy({}, {
                 if (extensionObject.onInit) {
                     extensionObject.onInit();
                 }
+                dispatch.call('ccxAdapter', 'registerExtensionService', extensionURL, serviceName);
+                dispatch.call('ccxAdapter', 'onWorkerInit', workerId);
             });
-            dispatch.call('ccxAdapter', 'registerExtensionService', extensionURL, serviceName);
         }
         target[prop] = value;
         return true;
