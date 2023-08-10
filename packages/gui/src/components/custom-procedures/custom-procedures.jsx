@@ -85,6 +85,31 @@ const CustomProcedures = props => (
                     className={styles.optionCard}
                     role="button"
                     tabIndex="0"
+                    onClick={props.onAddBranch}
+                >
+                    <img
+                        className={styles.optionIcon}
+                        src={textInputIcon}
+                    />
+                    <div className={styles.optionTitle}>
+                        <FormattedMessage
+                            defaultMessage="Add an branch"
+                            description="Label for button to add a branch input"
+                            id="gui.customProcedures.addAnInputBranch"
+                        />
+                    </div>
+                    <div className={styles.optionDescription}>
+                        <FormattedMessage
+                            defaultMessage="branch"
+                            description="Description of the branch input type"
+                            id="gui.customProcedures.branchType"
+                        />
+                    </div>
+                </div>
+                <div
+                    className={styles.optionCard}
+                    role="button"
+                    tabIndex="0"
                     onClick={props.onAddLabel}
                 >
                     <img
@@ -174,6 +199,7 @@ CustomProcedures.propTypes = {
     componentRef: PropTypes.func.isRequired,
     intl: intlShape,
     onAddBoolean: PropTypes.func.isRequired,
+    onAddBranch: PropTypes.func.isRequired,
     onAddLabel: PropTypes.func.isRequired,
     onAddTextNumber: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,

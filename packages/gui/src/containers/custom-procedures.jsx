@@ -12,6 +12,7 @@ class CustomProcedures extends React.Component {
         bindAll(this, [
             'handleAddLabel',
             'handleAddBoolean',
+            'handleAddBranch',
             'handleAddTextNumber',
             'handleToggleWarp',
             'handleToggleReturn',
@@ -134,6 +135,11 @@ class CustomProcedures extends React.Component {
             this.mutationRoot.addBooleanExternal();
         }
     }
+    handleAddBranch () {
+        if (this.mutationRoot) {
+            this.mutationRoot.addBranchExternal();
+        }
+    }
     handleAddTextNumber () {
         if (this.mutationRoot) {
             this.mutationRoot.addStringNumberExternal();
@@ -169,6 +175,7 @@ class CustomProcedures extends React.Component {
                 return={this.state.return}
                 warp={this.state.warp}
                 onAddBoolean={this.handleAddBoolean}
+                onAddBranch={this.handleAddBranch}
                 onAddLabel={this.handleAddLabel}
                 onAddTextNumber={this.handleAddTextNumber}
                 onCancel={this.handleCancel}
