@@ -144,7 +144,7 @@ class Blocks {
         if (!branchId) branchId = 1;
 
         let inputName = typeof branchId === 'string' ? branchId : Blocks.BRANCH_INPUT_PREFIX;
-        if (branchId !== 1) {
+        if (typeof branchId === 'number' && branchId > 1) {
             inputName += branchId;
         }
 

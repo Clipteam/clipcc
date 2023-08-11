@@ -18,7 +18,8 @@ class Scratch3ProcedureBlocks {
             procedures_return: this.return,
             procedures_discard: this.noOp,
             argument_reporter_string_number: this.argumentReporterStringNumber,
-            argument_reporter_boolean: this.argumentReporterBoolean
+            argument_reporter_boolean: this.argumentReporterBoolean,
+            argument_command: this.argumentCommand
         };
     }
 
@@ -46,8 +47,14 @@ class Scratch3ProcedureBlocks {
         for (let i = 0; i < paramIds.length; i++) {
             if (args.hasOwnProperty(paramIds[i])) {
                 util.pushParam(paramNames[i], args[paramIds[i]]);
-            } else {
+            } else if (paramDefaults[i]) {
                 util.pushParam(paramNames[i], paramDefaults[i]);
+            } else {
+                // It's a substack entry
+                util.pushParam(paramNames[i], {
+                    entry: paramIds[i],
+                    callerId: util.thread.peekStack()
+                });
             }
         }
 
@@ -78,6 +85,21 @@ class Scratch3ProcedureBlocks {
             return 0;
         }
         return value;
+    }
+
+    argumentCommand (args, util) {
+        const {entry, callerId} = util.getParam(args.VALUE);
+        if (entry === null) return;
+        const branchId = util.thread.blockContainer.getBranch(
+            callerId,
+            entry
+        );
+        if (branchId) {
+            // Push branch ID to the thread's stack.
+            util.thread.pushStack(branchId);
+        } else {
+            util.thread.pushStack(null);
+        }
     }
 }
 

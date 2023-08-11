@@ -713,7 +713,7 @@ Blockly.ScratchBlocks.ProcedureUtils.addCommandExternal = function() {
   Blockly.WidgetDiv.hide(true);
   this.procCode_ = this.procCode_ + ' %c';
   this.displayNames_.push('branch');
-  this.argumentIds_.push(Blockly.utils.genUid());
+  this.argumentIds_.push('SUBSTACK' + Blockly.utils.genUid());
   this.argumentDefaults_.push('');
   this.updateDisplay_();
   this.focusLastEditor_();
