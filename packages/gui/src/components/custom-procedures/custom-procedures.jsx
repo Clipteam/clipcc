@@ -145,7 +145,7 @@ const CustomProcedures = props => (
                         checked={props.return}
                         type="checkbox"
                         onChange={props.onToggleReturn}
-                        disabled={!props.new}
+                        disabled={!props.new || props.disableReturn}
                     />
                     <FormattedMessage
                         defaultMessage="Has return value"
@@ -210,7 +210,8 @@ CustomProcedures.propTypes = {
     new: PropTypes.bool.isRequired,
     global: PropTypes.bool.isRequired,
     return: PropTypes.bool.isRequired,
-    warp: PropTypes.bool.isRequired
+    warp: PropTypes.bool.isRequired,
+    disableReturn: PropTypes.bool.isRequired
 };
 
 export default injectIntl(CustomProcedures);

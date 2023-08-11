@@ -414,7 +414,7 @@ Blockly.ScratchBlocks.ProcedureUtils.createArgumentReporter_ = function(
   Blockly.Events.disable();
   try {
     var newBlock = this.workspace.newBlock(blockType);
-    if (argumentType != 'c') newBlock.setShadow(true);
+    newBlock.setShadow(true);
     newBlock.setFieldValue(displayName, 'VALUE');
     if (!this.isInsertionMarker()) {
       newBlock.initSvg();
@@ -606,7 +606,7 @@ Blockly.ScratchBlocks.ProcedureUtils.createArgumentEditor_ = function(
       var newBlock = this.workspace.newBlock('argument_editor_boolean');
     }
     newBlock.setFieldValue(displayName, 'TEXT');
-    if (argumentType != 'c') newBlock.setShadow(true);
+    newBlock.setShadow(true);
     if (!this.isInsertionMarker()) {
       newBlock.initSvg();
       newBlock.render(false);

@@ -25,6 +25,7 @@ class CustomProcedures extends React.Component {
             rtlOffset: 0,
             warp: false,
             return: false,
+            disableReturn: false,
             global: false
         };
     }
@@ -138,6 +139,16 @@ class CustomProcedures extends React.Component {
     handleAddBranch () {
         if (this.mutationRoot) {
             this.mutationRoot.addBranchExternal();
+            if (this.state.return) {
+                const hasReturn = this.mutationRoot.getReturn();
+                if (hasReturn) this.mutationRoot.setReturn(false);
+                this.setState({
+                    return: false,
+                    disableReturn: true
+                });
+            } else if (!this.state.disableReturn) {
+                this.setState({disableReturn: true});
+            }
         }
     }
     handleAddTextNumber () {
@@ -174,6 +185,7 @@ class CustomProcedures extends React.Component {
                 global={this.state.global}
                 return={this.state.return}
                 warp={this.state.warp}
+                disableReturn={this.state.disableReturn}
                 onAddBoolean={this.handleAddBoolean}
                 onAddBranch={this.handleAddBranch}
                 onAddLabel={this.handleAddLabel}

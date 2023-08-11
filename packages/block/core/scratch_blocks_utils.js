@@ -98,8 +98,10 @@ Blockly.scratchBlocksUtils.changeObscuredShadowIds = function(block) {
  * @package
  */
 Blockly.scratchBlocksUtils.isShadowArgumentReporter = function(block) {
-  return (block.isShadow() && (block.type == 'argument_reporter_boolean' ||
-      block.type == 'argument_reporter_string_number'));
+  if (block.isShadow() && (block.type == 'argument_command' || block.type == 'argument_reporter_boolean' || block.type == 'argument_reporter_string_number')) {
+    return true;
+  }
+  return false;
 };
 
 /**
