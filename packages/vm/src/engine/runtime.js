@@ -2642,6 +2642,22 @@ class Runtime extends EventEmitter {
     }
 
     /**
+     * Get the branch for a particular C-shaped block, and it's target.
+     * @param {?string} id ID for block to get the branch for.
+     * @param {?string} branchId Which branch to select (e.g. for if-else).
+     * @return {?string} ID of block in the branch.
+     */
+    getBranchAndTarget (id, branchId) {
+        for (const target of this.targets) {
+            const result = target.blocks.getBranch(id, branchId);
+            if (result) {
+                return [result, target];
+            }
+        }
+        return null;
+    }
+
+    /**
      * Get the procedure definition for a given name.
      * @param {?string} name Name of procedure to query.
      * @return {[?Target, ?string]} ID of procedure definition.

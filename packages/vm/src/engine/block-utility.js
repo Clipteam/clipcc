@@ -125,6 +125,20 @@ class BlockUtility {
     }
 
     /**
+     * Get the branch for a particular C-shaped block, and it's target.
+     * @param {?string} id ID for block to get the branch for.
+     * @param {?string} branchId Which branch to select (e.g. for if-else).
+     * @return {?string} ID of block in the branch.
+     */
+    getBranchAndTarget (id, branchId) {
+        const result = this.thread.blockContainer.getBranch(id, branchId);
+        if (result) {
+            return [result, this.thread.target];
+        }
+        return this.sequencer.runtime.getBranchAndTarget(id, branchId);
+    }
+
+    /**
      * Stop all threads.
      */
     stopAll () {

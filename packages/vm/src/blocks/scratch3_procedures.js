@@ -88,15 +88,15 @@ class Scratch3ProcedureBlocks {
     }
 
     argumentCommand (args, util) {
-        const target = util.getParam(args.VALUE) || {};
-        if (target.entry === null) return;
-        const branchId = util.thread.blockContainer.getBranch(
-            target.callerId,
-            target.entry
-        );
+        const branchInfo = util.getParam(args.VALUE) || {};
+        if (branchInfo.entry === null) return;
+        const [branchId, target] = util.getBranchAndTarget(
+            branchInfo.callerId,
+            branchInfo.entry
+        ) || [];
         if (branchId) {
             // Push branch ID to the thread's stack.
-            util.thread.pushStack(branchId);
+            util.thread.pushStack(branchId, target);
         } else {
             util.thread.pushStack(null);
         }
