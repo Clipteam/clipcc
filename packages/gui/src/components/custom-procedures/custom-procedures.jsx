@@ -5,6 +5,7 @@ import Box from '../box/box.jsx';
 import {defineMessages, injectIntl, intlShape, FormattedMessage} from 'react-intl';
 
 import booleanInputIcon from './icon--boolean-input.svg';
+import branchIcon from './icon--branch.svg';
 import textInputIcon from './icon--text-input.svg';
 import labelIcon from './icon--label.svg';
 
@@ -89,11 +90,11 @@ const CustomProcedures = props => (
                 >
                     <img
                         className={styles.optionIcon}
-                        src={textInputIcon}
+                        src={branchIcon}
                     />
                     <div className={styles.optionTitle}>
                         <FormattedMessage
-                            defaultMessage="Add an branch"
+                            defaultMessage="Add a branch"
                             description="Label for button to add a branch input"
                             id="gui.customProcedures.addAnInputBranch"
                         />
