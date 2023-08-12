@@ -455,7 +455,11 @@ Blockly.ScratchBlocks.ProcedureUtils.populateArgumentOnCaller_ = function(type,
   if (connectionMap && oldBlock) {
     // Reattach the old block and shadow DOM.
     connectionMap[input.name] = null;
-    if (type != 'c') oldBlock.outputConnection.connect(input.connection);
+    if (type == 'c') {
+      oldBlock.previousConnection.connect(input.connection);
+    } else {
+      oldBlock.outputConnection.connect(input.connection);
+    }
     if (type != 'b' && type != 'c' && this.generateShadows_) {
       var shadowDom = oldShadow || this.buildShadowDom_(type);
       console.log("setting shadow dom: " + shadowDom);
