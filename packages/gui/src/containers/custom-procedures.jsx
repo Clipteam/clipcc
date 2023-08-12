@@ -23,9 +23,9 @@ class CustomProcedures extends React.Component {
         ]);
         this.state = {
             rtlOffset: 0,
+            procCode: '',
             warp: false,
             return: false,
-            disableReturn: false,
             global: false
         };
     }
@@ -105,11 +105,13 @@ class CustomProcedures extends React.Component {
                 }
             }
             this.mutationRoot.moveBy(dx, dy);
+            this.setState({procCode: this.mutationRoot.procCode_});
         });
         this.mutationRoot.domToMutation(this.props.mutator);
         this.mutationRoot.initSvg();
         this.mutationRoot.render();
         this.setState({
+            procCode: this.mutationRoot.procCode_,
             warp: this.mutationRoot.getWarp(),
             return: this.mutationRoot.getReturn(),
             global: this.mutationRoot.getGlobal()
@@ -143,11 +145,8 @@ class CustomProcedures extends React.Component {
                 const hasReturn = this.mutationRoot.getReturn();
                 if (hasReturn) this.mutationRoot.setReturn(false);
                 this.setState({
-                    return: false,
-                    disableReturn: true
+                    return: false
                 });
-            } else if (!this.state.disableReturn) {
-                this.setState({disableReturn: true});
             }
         }
     }
@@ -185,7 +184,7 @@ class CustomProcedures extends React.Component {
                 global={this.state.global}
                 return={this.state.return}
                 warp={this.state.warp}
-                disableReturn={this.state.disableReturn}
+                disableReturn={this.state.procCode.includes('%c')}
                 onAddBoolean={this.handleAddBoolean}
                 onAddBranch={this.handleAddBranch}
                 onAddLabel={this.handleAddLabel}

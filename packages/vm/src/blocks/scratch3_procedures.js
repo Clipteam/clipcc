@@ -49,7 +49,7 @@ class Scratch3ProcedureBlocks {
                 util.pushParam(paramNames[i], args[paramIds[i]]);
             } else if (paramDefaults[i]) {
                 util.pushParam(paramNames[i], paramDefaults[i]);
-            } else {
+            } else if (paramIds[i].startsWith('SUBSTACK')) {
                 // It's a substack entry
                 util.pushParam(paramNames[i], {
                     entry: paramIds[i],
@@ -88,11 +88,11 @@ class Scratch3ProcedureBlocks {
     }
 
     argumentCommand (args, util) {
-        const {entry, callerId} = util.getParam(args.VALUE);
-        if (entry === null) return;
+        const target = util.getParam(args.VALUE) || {};
+        if (target.entry === null) return;
         const branchId = util.thread.blockContainer.getBranch(
-            callerId,
-            entry
+            target.callerId,
+            target.entry
         );
         if (branchId) {
             // Push branch ID to the thread's stack.
