@@ -317,7 +317,12 @@ Blockly.Connection.prototype.canConnectWithReason_ = function(target) {
       superiorConn == blockA.getInput('custom_block').connection) ||
       (blockB.type == Blockly.PROCEDURES_PROTOTYPE_BLOCK_TYPE &&
       blockA.type != Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE) || 
-      (blockA.type != Blockly.PROCEDURES_PROTOTYPE_BLOCK_TYPE && Blockly.scratchBlocksUtils.isShadowArgumentReporter(blockB))) {
+      (blockA.type != Blockly.PROCEDURES_PROTOTYPE_BLOCK_TYPE &&
+      Blockly.scratchBlocksUtils.isShadowArgumentReporter(blockB))) {
+    // cc: At present, the argument reporter should not appear in places other
+    // than prototype. This may prevent parameter passing blocks from working
+    // properly in the future. Maybe we need a more elegant solution?
+
     // Hack to fix #1127: Fail attempts to connect to the custom_block input
     // on a defnoreturn block, unless the connecting block is a specific type.
     // And hack to fix #1534: Fail attempts to connect anything but a
