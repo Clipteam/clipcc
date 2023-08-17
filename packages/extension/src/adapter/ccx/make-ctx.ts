@@ -124,11 +124,6 @@ class ExtensionAPI implements API {
     private toolboxRefreshQueued = false;
 
     /**
-     * Whether block's update request is queued.
-     * @type {boolean}
-     */
-    private blockRefreshQueued = false;
-    /**
      * Store all blocks added by CCX extension.
      * @type {Record<string, CategoryInfo>}
      */
@@ -192,14 +187,8 @@ class ExtensionAPI implements API {
     }
 
     private requestRegisterBlock () {
-        if (!this.blockRefreshQueued) {
-            this.blockRefreshQueued = true;
-            queueMicrotask(() => {
-                this.blockRefreshQueued = false;
-                this.adapter.emit('REGISTER_BLOCK', this.blocksToBeRegistered);
-                this.blocksToBeRegistered = [];
-            });
-        }
+        this.adapter.emit('REGISTER_BLOCK', this.blocksToBeRegistered);
+        this.blocksToBeRegistered = [];
     }
 
     private requestRegisterButton (id: string, func: Function) {
@@ -235,7 +224,7 @@ class ExtensionAPI implements API {
         this.requestUpdateToolbox();
         
     }
-    addBlock (block: BlockPrototype | WorkerBlockPrototype) {
+    private _addBlock (block: BlockPrototype | WorkerBlockPrototype) {
         // skip process button as a block while updating locales.
         if ('callback' in block) return;
 
@@ -424,14 +413,20 @@ class ExtensionAPI implements API {
         }
 
         this.blocksToBeRegistered.push(blockJSON as BlockJSON);
+    }
+
+    addBlock (block: BlockPrototype | WorkerBlockPrototype) {
+        this._addBlock(block);
         this.requestRegisterBlock();
         this.requestUpdateToolbox();
     }
 
     addBlocks (blocks: (BlockPrototype | WorkerBlockPrototype)[]) {
         for (const block of blocks) {
-            this.addBlock(block);
+            this._addBlock(block);
         }
+        this.requestRegisterBlock();
+        this.requestUpdateToolbox();
     }
 
     addButton (button: ButtonPrototype | WorkerButtonPrototype) {
