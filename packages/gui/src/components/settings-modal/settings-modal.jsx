@@ -306,7 +306,7 @@ class SettingsModal extends React.Component {
                                     id="gui.settingsModal.resolution"
                                 />
                                 <FormattedMessage
-                                    defaultMessage="Change stage size, width must not be less than 480."
+                                    defaultMessage="Change stage size, width must not be greater than 480."
                                     description="Description of stage size"
                                     id="gui.settingsModal.resolutionDescription"
                                 />
