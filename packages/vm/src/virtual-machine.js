@@ -417,7 +417,7 @@ class VirtualMachine extends EventEmitter {
         zip.file('project.json', projectJson);
         this._addFileDescsToZip(soundDescs.concat(costumeDescs), zip);
         if (this.extensionManager && saveExtensionsInProject) {
-            const extensionDescs = serializeExtensions(this.extensionManager);
+            const extensionDescs = serializeExtensions(this.extensionManager, JSON.parse(projectJson).extensions);
             this._addFileDescsToZip(extensionDescs, zip);
         }
 

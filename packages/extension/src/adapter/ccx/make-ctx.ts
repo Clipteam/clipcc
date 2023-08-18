@@ -116,7 +116,7 @@ interface Target {
     isStage: boolean;
 }
 
-class ExtensionAPI implements API {
+export class ExtensionCentralAPI implements API {
     /**
      * Whether toolbox's update request is queued.
      * @type {boolean}
@@ -143,6 +143,12 @@ class ExtensionAPI implements API {
     private block?: Record<string, unknown>;
 
     /**
+     * A mapping table from opcode to extensionId to handle non-standard id blocks
+     * for original Scratch.
+     */
+    private opcodeMap: Record<string, string> = {};
+
+    /**
      * All blocks which need to be added to Blockly.
      */
     private blocksToBeRegistered: BlockJSON[] = [];
@@ -151,7 +157,7 @@ class ExtensionAPI implements API {
      * CCX Adapter.
      * @type {CCXAdapter}
      */
-    private adapter: CCXAdapter;
+    adapter: CCXAdapter;
 
     /**
      * Global functions
@@ -224,7 +230,7 @@ class ExtensionAPI implements API {
         this.requestUpdateToolbox();
         
     }
-    private _addBlock (block: BlockPrototype | WorkerBlockPrototype) {
+    private _addBlock (block: BlockPrototype | WorkerBlockPrototype, id?: string) {
         // skip process button as a block while updating locales.
         if ('callback' in block) return;
 
@@ -413,17 +419,18 @@ class ExtensionAPI implements API {
         }
 
         this.blocksToBeRegistered.push(blockJSON as BlockJSON);
+        if (id) this.opcodeMap[block.opcode] = id;
     }
 
-    addBlock (block: BlockPrototype | WorkerBlockPrototype) {
-        this._addBlock(block);
+    addBlock (block: BlockPrototype | WorkerBlockPrototype, id?: string) {
+        this._addBlock(block, id);
         this.requestRegisterBlock();
         this.requestUpdateToolbox();
     }
 
-    addBlocks (blocks: (BlockPrototype | WorkerBlockPrototype)[]) {
+    addBlocks (blocks: (BlockPrototype | WorkerBlockPrototype)[], id?: string) {
         for (const block of blocks) {
-            this._addBlock(block);
+            this._addBlock(block, id);
         }
         this.requestRegisterBlock();
         this.requestUpdateToolbox();
@@ -615,6 +622,11 @@ class ExtensionWorkerAPI implements API {
      */
     private serviceName: string;
     /**
+     * Extension's ID.
+     * @type {string}
+     */
+    id: string;
+    /**
      * Block's function. A pair of opcode + function.
      * @type {Record<string, Function>}
      */
@@ -622,10 +634,11 @@ class ExtensionWorkerAPI implements API {
     // Make it private to prevent security issues.
     #dispatch: WorkerDispatch;
 
-    constructor (dispatch: WorkerDispatch, serviceName: string) {
+    constructor (dispatch: WorkerDispatch, serviceName: string, extensionId: string) {
         dispatch.setService(`${serviceName}.primitives`, this.blockPrimitives);
         this.#dispatch = dispatch;
         this.serviceName = serviceName;
+        this.id = extensionId;
     }
 
     addCategory (category: CategoryPrototype) {
@@ -647,7 +660,7 @@ class ExtensionWorkerAPI implements API {
 
     addBlock (block: BlockPrototype) {
         const purified = this.purifyBlockPrototype(block);
-        return this.#dispatch.call('ccxAPI', 'addBlock', purified);
+        return this.#dispatch.call('ccxAPI', 'addBlock', purified, this.id);
     }
 
     addBlocks (blocks: BlockPrototype[]) {
@@ -655,7 +668,7 @@ class ExtensionWorkerAPI implements API {
         for (const block of blocks) {
             purified.push(this.purifyBlockPrototype(block));
         }
-        return this.#dispatch.call('ccxAPI', 'addBlocks', purified);
+        return this.#dispatch.call('ccxAPI', 'addBlocks', purified, this.id);
     }
 
     addButton (button: ButtonPrototype) {
@@ -710,10 +723,83 @@ class ExtensionWorkerAPI implements API {
     };
 }
 
+class ExtensionUnsandboxedAPI implements API {
+    private centralAPI: ExtensionCentralAPI;
+    /**
+     * Extension's ID
+     */
+    id: string;
+
+    constructor (api: ExtensionCentralAPI, id: string) {
+        this.centralAPI = api;
+        this.id = id;
+    }
+
+    addCategory (category: CategoryPrototype) {
+        return this.centralAPI.addCategory(category);
+    }
+
+    removeCategory (categoryId: string) {
+        return this.centralAPI.removeCategory(categoryId);
+    }
+
+    addBlock (block: BlockPrototype) {
+        return this.centralAPI.addBlock(block, this.id);
+    }
+
+    addBlocks (blocks: BlockPrototype[]) {
+        return this.centralAPI.addBlocks(blocks, this.id);
+    }
+
+    addButton (button: ButtonPrototype) {
+        return this.centralAPI.addButton(button);
+    }
+
+    removeButton (buttonId: string) {
+        return this.centralAPI.removeButton(buttonId);
+    }
+
+    removeBlock (opcode: string) {
+        return this.centralAPI.removeBlock(opcode);
+    }
+
+    removeBlocks (opcodes: string[]) {
+        return this.centralAPI.removeBlocks(opcodes);
+    }
+
+    getVmInstance () {
+        throw this.centralAPI.getVmInstance();
+    }
+
+    getBlockInstance () {
+        return this.centralAPI.getBlockInstance();
+    }
+
+    getStageCanvas () {
+        return this.centralAPI.getStageCanvas();
+    }
+
+    getSettings (id: string) {
+        return this.centralAPI.getSettings(id);
+    }
+
+    registerGlobalFunction (name: string, func: Function) {
+        return this.centralAPI.registerGlobalFunction(name, func);
+    }
+
+    unregisterGlobalFunction (name: string) {
+        return this.centralAPI.unregisterGlobalFunction(name);
+    }
+
+    callGlobalFunction (name: string, ...args: any[]) {
+        return this.centralAPI.callGlobalFunction(name, ...args);
+    };
+}
+
 class Extension {}
 
 export interface Ctx {
-    api: ExtensionAPI,
+    api: ExtensionUnsandboxedAPI,
     type: {
         BlockType: typeof BlockType,
         ParameterType: typeof ParameterType
@@ -733,22 +819,22 @@ export interface WorkerCtx {
     Cast: typeof Cast
 }
 
-export function makeCtx (adapter: CCXAdapter, dispatch: CentralDispatch) : Ctx {
+export function makeUnsandboxedCtx (api: ExtensionCentralAPI, id: string) : Ctx {
     return {
-        api: new ExtensionAPI(adapter, dispatch),
+        api: new ExtensionUnsandboxedAPI(api, id),
         type: {
             BlockType,
             ParameterType 
         },
-        ExtensionManager: adapter,
+        ExtensionManager: api.adapter,
         Cast: Cast,
         Extension: Extension
     };
 }
 
-export function makeCtxForWorker (dispatch: WorkerDispatch, serviceName: string) {
+export function makeCtxForWorker (dispatch: WorkerDispatch, serviceName: string, extensionId: string) {
     return {
-        api: new ExtensionWorkerAPI(dispatch, serviceName),
+        api: new ExtensionWorkerAPI(dispatch, serviceName, extensionId),
         type: {
             BlockType,
             ParameterType

@@ -95,6 +95,10 @@ const primitiveOpcodeInfoMap = {
     data_listcontents: [LIST_PRIMITIVE, 'LIST']
 };
 
+let opcodeMap = {};
+
+const validateStandardOpcode = (id) => /^[a-z0-9_]+$/i.test(id);
+
 /**
  * Serializes primitives described above into a more compact format
  * @param {object} block the block to serialize
@@ -280,6 +284,8 @@ const compressInputTree = function (block, blocks) {
  * @return {?string} The extension ID, if it exists and is not a core extension.
  */
 const getExtensionIdForOpcode = function (opcode) {
+    // lookup map first.
+    if (opcodeMap.hasOwnProperty(opcode)) return opcodeMap[opcode];
     // Allowed ID characters are those matching the regular expression [\w-]: A-Z, a-z, 0-9, and hyphen ("-").
     const index = opcode.indexOf('_');
     const forbiddenSymbols = /[^\w-]/g;
@@ -449,17 +455,19 @@ const serializeComments = function (comments) {
  * Serialize the given target. Only serialize properties that are necessary
  * for saving and loading this target.
  * @param {object} target The target to be serialized.
+ * @param {Set} extensions A set of extensions to add.
  * @return {object} A serialized representation of the given target.
  */
-const serializeTarget = function (target) {
+const serializeTarget = function (target, extensions) {
     const obj = Object.create(null);
+    let targetExtensions = [];
     obj.isStage = target.isStage;
     obj.name = obj.isStage ? 'Stage' : target.name;
     const vars = serializeVariables(target.variables);
     obj.variables = vars.variables;
     obj.lists = vars.lists;
     obj.broadcasts = vars.broadcasts;
-    [obj.blocks] = serializeBlocks(target.blocks);
+    [obj.blocks, targetExtensions] = serializeBlocks(target.blocks);
     obj.comments = serializeComments(target.comments);
 
     // TODO remove this check/patch when (#1901) is fixed
@@ -487,6 +495,11 @@ const serializeTarget = function (target) {
         obj.draggable = target.draggable;
         obj.rotationStyle = target.rotationStyle;
     }
+
+    // Add found extensions to extension object
+    targetExtensions.forEach(extensionId => {
+        extensions.add(extensionId);
+    });
     return obj;
 };
 
@@ -520,12 +533,20 @@ const serializeMonitors = function (monitors) {
 };
 
 const serializeExtension = function (extensionManager, extensions, extensionsMap) {
-    const list = extensionManager.getLoadedExtensions();
-    for (const id in list) {
-        const extension = list[id];
+    console.log(extensions)
+    for (const id of extensions) {
+        const extension = extensionManager.loadedExtensions.get(id);
+        if (!extension) {
+            // treat it as internal extension
+            extensionsMap.set(id, {
+                url: id,
+                env: 'unsandboxed',
+                type: 'scratch'
+            });
+            continue;
+        }
         const realURL = extension.url.startsWith('blob:') ? 'file' : extension.url;
-        extensions.add(extension.id);
-        extensionsMap.set(extension.id, {
+        extensionsMap.set(id, {
             url: realURL,
             env: extension.env,
             type: extension.type
@@ -546,8 +567,7 @@ const serialize = function (runtime, targetId, extensionManager) {
     // Create extension set to hold extension ids found while serializing targets
     const extensions = new Set();
     const extensionsMap = new Map();
-
-    serializeExtension(extensionManager, extensions, extensionsMap);
+    opcodeMap = extensionManager.ccxAdapter.api.opcodeMap;
 
     const originalTargetsToSerialize = targetId ?
         [runtime.getTargetById(targetId)] :
@@ -565,7 +585,7 @@ const serialize = function (runtime, targetId, extensionManager) {
         });
     }
 
-    const serializedTargets = flattenedOriginalTargets.map(t => serializeTarget(t));
+    const serializedTargets = flattenedOriginalTargets.map(t => serializeTarget(t, extensions));
 
     if (targetId) {
         return serializedTargets[0];
@@ -575,6 +595,8 @@ const serialize = function (runtime, targetId, extensionManager) {
 
     obj.monitors = serializeMonitors(runtime.getMonitorState());
 
+    // Add extension info
+    serializeExtension(extensionManager, extensions, extensionsMap);
     // Assemble extension list
     obj.extensions = Array.from(extensions);
     // Assemble extension map
@@ -972,13 +994,12 @@ const parseScratchObject = function (object, runtime, extensions, zip, assets) {
             const blockJSON = object.blocks[blockId];
             blocks.createBlock(blockJSON);
 
-            /*
+            if (!validateStandardOpcode(blockJSON.opcode)) continue;
             // If the block is from an extension, record it.
             const extensionID = getExtensionIdForOpcode(blockJSON.opcode);
             if (extensionID) {
                 extensions.extensionIDs.add(extensionID);
             }
-            */
         }
     }
     // Costumes from JSON.
@@ -1210,13 +1231,13 @@ const deserializeMonitor = function (monitorData, runtime, targets, extensions) 
 
         runtime.monitorBlocks.createBlock(monitorBlock);
 
-        /*
         // If the block is from an extension, record it.
-        const extensionID = getExtensionIdForOpcode(monitorBlock.opcode);
-        if (extensionID) {
-            extensions.extensionIDs.add(extensionID);
+        if (validateStandardOpcode(monitorBlock.opcode)) {
+            const extensionID = getExtensionIdForOpcode(monitorBlock.opcode);
+            if (extensionID) {
+                extensions.extensionIDs.add(extensionID);
+            }
         }
-        */
     }
 
     runtime.requestAddMonitor(MonitorRecord(monitorData));

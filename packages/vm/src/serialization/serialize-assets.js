@@ -59,13 +59,13 @@ const serializeCostumes = function (runtime, optTargetId) {
  * descriptors. A file descriptor is an object containing the name of the file
  * to be written and the contents of the file, the serialized costume.
  * @param {ExtensionManager} extensionManager The extension manager instance
+ * @param {string[]} extensions The extension list
  * @returns {Array<object>} An array of file descriptors for each extensions
  */
-const serializeExtensions = function (extensionManager) {
+const serializeExtensions = function (extensionManager, extensions) {
     const extensionDescs = [];
-    const extensions = extensionManager.getLoadedExtensions();
-    for (const id in extensions) {
-        const extension = extensions[id];
+    for (const id of extensions) {
+        const extension = extensionManager.loadedExtensions.get(id);
         if (!extension.fileContent) {
             continue;
         }

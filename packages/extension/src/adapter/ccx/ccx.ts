@@ -9,7 +9,13 @@ import { CentralDispatch as dispatch } from '../../dispatch/central-dispatch';
 import { Extension } from '../../manager';
 import * as JSZip from 'jszip';
 import mime from 'mime-types';
-import { makeCtx, Ctx, WorkerCtx, BlockJSON } from './make-ctx';
+import {
+    makeUnsandboxedCtx,
+    ExtensionCentralAPI,
+    Ctx,
+    WorkerCtx,
+    BlockJSON
+} from './make-ctx';
 import ExtensionSandbox from './ccx.worker';
 
 declare global {
@@ -22,7 +28,7 @@ interface Target {
 }
 
 interface PendingExtensionWorker {
-    extensionURL: string;
+    extensionId: string;
     mainScript: string;
     resolve: (value: unknown) => void;
     reject: (value: unknown) => void;
@@ -56,10 +62,10 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      */
     vm?: VM;
     /**
-     * CCXAdapter's context.
-     * @type {Ctx}
+     * CCXAdapter's central api.
+     * @type {ExtensionCentralAPI}
      */
-    ctx = makeCtx(this, dispatch);
+    api = new ExtensionCentralAPI(this, dispatch);
 
     /**
      * The ID number to provide to the next extension worker.
@@ -82,7 +88,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
     private pendingWorkers: PendingExtensionWorker[] = [];
 
     /**
-    * Loaded scratch extensions, URL with extension info.
+    * Loaded scratch extensions, ID with extension info.
     * @type {Map<string, ExtensionClass>}
     */
     private loadedCCXExtension = new Map<string, CCXExtension>();
@@ -98,7 +104,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
         dispatch.setService('ccxAdapter', this).catch((e: Error) => {
             console.error(`ccxAdapter was unable to register extension service: ${JSON.stringify(e)}`);
         });
-        dispatch.setService('ccxAPI', this.ctx.api).catch((e: Error) => {
+        dispatch.setService('ccxAPI', this.api).catch((e: Error) => {
             console.error(`ccxAPI was unable to register extension service: ${JSON.stringify(e)}`);
         });
     }
@@ -109,7 +115,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      */
     attachVM (vm: VM) {
         this.vm = vm;
-        this.ctx.api.attachVM(vm);
+        this.api.attachVM(vm);
     }
 
     /**
@@ -117,7 +123,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      * @param {Blockly} block - the Blockly instance.
      */
     attachBlock (block: Record<string, unknown>) {
-        this.ctx.api.attachBlock(block);
+        this.api.attachBlock(block);
     }
 
     /**
@@ -183,7 +189,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
             return new Promise((resolve, reject) => {
                 // If we `require` this at the global level it breaks non-webpack targets, including tests
                 const ExtensionWorker = new ExtensionSandbox();
-                this.loadedCCXExtension.set(url, {
+                this.loadedCCXExtension.set(info.id, {
                         type: 'ccx',
                         id: info.id,
                         info: info,
@@ -194,7 +200,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                         fileContent: buffer
                     } as CCXExtension);
                 this.pendingExtensions.push({
-                    extensionURL: url,
+                    extensionId: info.id,
                     mainScript: URL.createObjectURL(new Blob([originalScript], { type: "text/javascript" })),
                     resolve,
                     reject
@@ -209,7 +215,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                     const closureFunc = new Function('module', originalScript);
                     // "__webpack_require__" can load modules from global env.
                     // so we exposure ctx globally until extension is loaded.
-                    global.ClipCCExtension = this.ctx;
+                    global.ClipCCExtension = makeUnsandboxedCtx(this.api, info.id);
                     // rewrite "module.exports" to get extension class.
                     closureFunc(new Proxy({}, {
                         set(target: Record<string, unknown>, prop: string, value: unknown) {
@@ -225,7 +231,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                     if (extensionObject.onInit) {
                         extensionObject.onInit();
                     }
-                    this.loadedCCXExtension.set(url, {
+                    this.loadedCCXExtension.set(info.id, {
                         type: 'ccx',
                         id: info.id,
                         info: info,
@@ -260,10 +266,10 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
     }
 
     /**
-     * Reload a scratch-standard extension.
-     * @param {string} extensionURL - Extension's URL
+     * Reload a ccx extension.
+     * @param {string} extensionID - Extension's ID
     */
-    async reload (extensionURL: string) {
+    async reload (extensionID: string) {
         // @todo
     }
 
@@ -276,7 +282,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      * Update locales.
     */
     updateLocales () {
-        this.ctx.api.updateLocales();
+        this.api.updateLocales();
     }
 
     /**
@@ -284,7 +290,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      * @param target VM's target.
      */
     getBlocksXML (target: Target) {
-        return this.ctx.api.getBlocksXML(target);
+        return this.api.getBlocksXML(target);
     }
 
     allocateWorker () {
@@ -295,17 +301,17 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
         }
         const id = this.nextExtensionWorker++;
         this.pendingWorkers[id] = workerInfo;
-        return [id, workerInfo.extensionURL, workerInfo.mainScript];
+        return [id, workerInfo.extensionId, workerInfo.mainScript];
     }
 
     /**
      * Collect extension metadata from the specified service and begin the extension registration process.
      * @param {string} serviceName - the name of the service hosting the extension.
      */
-    registerExtensionService (extensionURL: string, serviceName: string) {
-        const extensionInfo = this.loadedCCXExtension.get(extensionURL)!;
+    registerExtensionService (extensionId: string, serviceName: string) {
+        const extensionInfo = this.loadedCCXExtension.get(extensionId)!;
         extensionInfo.class = serviceName;
-        this.loadedCCXExtension.set(extensionURL, extensionInfo);
+        this.loadedCCXExtension.set(extensionId, extensionInfo);
         this.emit('LOADED', extensionInfo.id, extensionInfo);
     }
 

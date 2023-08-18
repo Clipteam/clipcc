@@ -9,15 +9,15 @@ declare global {
 }
 
 let workerId: number;
-let extensionURL = '';
+let extensionId = '';
 
 dispatch.waitForConnection.then(() => {
     dispatch.call('ccxAdapter', 'allocateWorker').then(x => {
-        const [id, url, mainScript] = x;
+        const [id, extId, mainScript] = x;
         workerId = id;
-        extensionURL = url;
+        extensionId = extId;
 
-        self.ClipCCExtension = makeCtxForWorker(dispatch, `ccxSandbox.${workerId}`);
+        self.ClipCCExtension = makeCtxForWorker(dispatch, `ccxSandbox.${workerId}`, extId);
 
         try {
             importScripts(mainScript);
@@ -37,7 +37,7 @@ self.module = new Proxy({}, {
                 if (extensionObject.onInit) {
                     extensionObject.onInit();
                 }
-                dispatch.call('ccxAdapter', 'registerExtensionService', extensionURL, serviceName);
+                dispatch.call('ccxAdapter', 'registerExtensionService', extensionId, serviceName);
                 dispatch.call('ccxAdapter', 'onWorkerInit', workerId);
             });
         }
