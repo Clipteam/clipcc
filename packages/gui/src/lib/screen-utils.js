@@ -39,6 +39,8 @@ const resolveStageSize = (stageSizeMode, isFullSize) => {
  * Retrieve info used to determine the actual stage size based on the current GUI and browser state.
  * @param {STAGE_DISPLAY_SIZES} stageSize - the current fully-resolved stage size.
  * @param {boolean} isFullScreen - true if full-screen mode is enabled.
+ * @param {number} resolutionX - custom stage width.
+ * @param {number} resolutionY - custom stage height.
  * @return {StageDimensions} - an object describing the dimensions of the stage.
  */
 const getStageDimensions = (stageSize, isFullScreen, resolutionX, resolutionY) => {
