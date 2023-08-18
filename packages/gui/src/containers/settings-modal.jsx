@@ -75,7 +75,9 @@ class SettingsModal extends React.Component {
         this.props.updateSettings({hideNonVanillaBlocks: value});
     }
     handleChangeStageWidth (width) {
-        this.props.updateSettings({stageWidth: width});
+        if (width >= 480) {
+            this.props.updateSettings({stageWidth: width});
+        }
     }
     handleChangeStageHeight (height) {
         this.props.updateSettings({stageHeight: height});
