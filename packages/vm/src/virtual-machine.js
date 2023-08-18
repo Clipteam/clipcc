@@ -553,18 +553,24 @@ class VirtualMachine extends EventEmitter {
         for (const extensionID of extensions.extensionIDs) {
             if (!this.extensionManager.isExtensionLoaded(extensionID)) {
                 const urlInfo = extensions.extensionURLs.get(extensionID);
-                let extensionURL = urlInfo.url || extensionID;
+                if (!urlInfo) {
+                    extensionPromises.push(
+                        this.extensionManager.loadExtensionURL(extensionID)
+                    );
+                    continue;
+                }
+
                 // try load extension from file first
                 if (`${extensionID}.ccx` in zip.files) {
                     const data = await zip.files[`${extensionID}.ccx`].async('arraybuffer');
-                    extensionURL = URL.createObjectURL(new Blob(
+                    urlInfo.url = URL.createObjectURL(new Blob(
                         [data], {type: 'application/zip'}
                     ));
-                } else if (extensionURL === 'file') {
+                } else if (urlInfo.url === 'file') {
                     return Promise.reject('cannot locate extension file in project');
                 }
 
-                extensionPromises.push(this.extensionManager.loadExtensionURL(extensionURL, urlInfo.type, urlInfo.env));
+                extensionPromises.push(this.extensionManager.loadExtensionURL(urlInfo.url, urlInfo.type, urlInfo.env));
             }
         }
 

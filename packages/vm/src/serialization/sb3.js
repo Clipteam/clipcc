@@ -97,7 +97,7 @@ const primitiveOpcodeInfoMap = {
 
 let opcodeMap = {};
 
-const validateStandardOpcode = (id) => /^[a-z0-9_]+$/i.test(id);
+const validateStandardOpcode = (id) => !(id.includes('.'));
 
 /**
  * Serializes primitives described above into a more compact format
@@ -533,7 +533,6 @@ const serializeMonitors = function (monitors) {
 };
 
 const serializeExtension = function (extensionManager, extensions, extensionsMap) {
-    console.log(extensions)
     for (const id of extensions) {
         const extension = extensionManager.loadedExtensions.get(id);
         if (!extension) {
@@ -567,7 +566,7 @@ const serialize = function (runtime, targetId, extensionManager) {
     // Create extension set to hold extension ids found while serializing targets
     const extensions = new Set();
     const extensionsMap = new Map();
-    opcodeMap = extensionManager.ccxAdapter.api.opcodeMap;
+    if (extensionManager) opcodeMap = extensionManager.ccxAdapter.api.opcodeMap;
 
     const originalTargetsToSerialize = targetId ?
         [runtime.getTargetById(targetId)] :
@@ -1282,7 +1281,7 @@ const replaceUnsafeCharsInVariableIds = function (targets) {
  */
 const deserialize = function (json, runtime, zip, isSingleSprite) {
     const extensions = {
-        extensionIDs: json.extensions || new Set(),
+        extensionIDs: new Set(json.extensions),
         extensionURLs: new Map(
             typeof json.extensionsMap === 'object' ?
             Object.entries(json.extensionsMap) :
