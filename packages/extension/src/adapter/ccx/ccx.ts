@@ -65,7 +65,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      * CCXAdapter's central api.
      * @type {ExtensionCentralAPI}
      */
-    api = new ExtensionCentralAPI(this, dispatch);
+    api = new ExtensionCentralAPI(this);
 
     /**
      * The ID number to provide to the next extension worker.

@@ -13,7 +13,7 @@ import { VM } from "../../type/virtual-machine";
 import { ScratchBlocksConstants, Cast } from '../../util';
 import type { CCXAdapter } from "./ccx";
 import type { WorkerDispatch } from '../../dispatch/worker-dispatch';
-import type { CentralDispatch } from '../../dispatch/central-dispatch';
+import { CentralDispatch as centralDispatch } from '../../dispatch/central-dispatch';
 import { TargetType } from "../../type/scratch";
 
 interface BlockInfo {
@@ -121,37 +121,37 @@ export class ExtensionCentralAPI implements API {
      * Whether toolbox's update request is queued.
      * @type {boolean}
      */
-    private toolboxRefreshQueued = false;
+    toolboxRefreshQueued = false;
 
     /**
      * Store all blocks added by CCX extension.
      * @type {Record<string, CategoryInfo>}
      */
-    private blockInfo: Record<string, BlockInfo> = {};
+    blockInfo: Record<string, BlockInfo> = {};
     /**
      * Editor's Virtual Machine instance.
      * Should be set by `attachVM` while initializing.
      * @todo add more strict type check when VM adds TS support.
      */
-    private vm?: VM;
+    vm?: VM;
 
     /**
      * Editor's Blockly instance.
      * Should be set by `attachBlockly` while initializing.
      * @todo add more strict type check when Blockly adds TS support.
      */
-    private block?: Record<string, unknown>;
+    block?: Record<string, unknown>;
 
     /**
      * A mapping table from opcode to extensionId to handle non-standard id blocks
      * for original Scratch.
      */
-    private opcodeMap: Record<string, string> = {};
+    opcodeMap: Record<string, string> = {};
 
     /**
      * All blocks which need to be added to Blockly.
      */
-    private blocksToBeRegistered: BlockJSON[] = [];
+    blocksToBeRegistered: BlockJSON[] = [];
 
     /**
      * CCX Adapter.
@@ -163,17 +163,16 @@ export class ExtensionCentralAPI implements API {
      * Global functions
      * @type {Record<string, Function>}
      */
-    private globalFuncion: Record<string, Function> = {};
+    globalFuncion: Record<string, Function> = {};
 
     /**
      * Central Dispatcher.
      * @type {CentralDispatch}
      */
-    private dispatch: CentralDispatch;
+    dispatch = centralDispatch;
 
-    constructor (adapter: CCXAdapter, dispatch: CentralDispatch) {
+    constructor (adapter: CCXAdapter) {
         this.adapter = adapter;
-        this.dispatch = dispatch;
     }
 
     /**
@@ -213,7 +212,7 @@ export class ExtensionCentralAPI implements API {
 
     addCategory (category: CategoryPrototype) {
         if (category.categoryId in this.blockInfo) {
-            throw new Error('Cannot add a category twice');
+            throw new Error('cannot add a category twice');
         }
 
         this.blockInfo[category.categoryId] = {
@@ -233,8 +232,6 @@ export class ExtensionCentralAPI implements API {
     private _addBlock (block: BlockPrototype | WorkerBlockPrototype, id?: string) {
         // skip process button as a block while updating locales.
         if ('callback' in block) return;
-
-        if (!this.vm) throw new Error(`VM hadn't been attached`);
 
         const category = this.blockInfo[block.categoryId];
         if (!category) throw new Error('category not found');
@@ -309,6 +306,7 @@ export class ExtensionCentralAPI implements API {
             blockJSON.outputShape = ScratchBlocksConstants.OUTPUT_SHAPE_HEXAGONAL;
             break;
         case BlockType.HAT:
+                if (!this.vm) throw new Error(`VM hadn't been attached`);
                 this.vm.runtime._hats[block.opcode] = {
                     edgeActivated: true // CCX doesn't support spicify this
                 };
@@ -410,12 +408,16 @@ export class ExtensionCentralAPI implements API {
             blockJSON.checkboxInFlyout = true;
         }
 
-        if (typeof block.function === 'string') {
-            this.vm.runtime._primitives[block.opcode] = (args: unknown, _util: unknown) => {
-                return this.dispatch.call(block.function as string, block.opcode, args);
-            };
+        if (this.vm) {
+            if (typeof block.function === 'string') {
+                this.vm.runtime._primitives[block.opcode] = (args: unknown, _util: unknown) => {
+                    return this.dispatch.call(block.function as string, block.opcode, args);
+                };
+            } else {
+                this.vm.runtime._primitives[block.opcode] = block.function;
+            }
         } else {
-            this.vm.runtime._primitives[block.opcode] = block.function;
+            console.warn(`VM hadn't be attached, skip register primitives`);
         }
 
         this.blocksToBeRegistered.push(blockJSON as BlockJSON);
@@ -467,12 +469,12 @@ export class ExtensionCentralAPI implements API {
         if (flag) {
             this.requestUpdateToolbox();
         } else {
-            throw new Error('Cannot find block');
+            throw new Error('cannot find block');
         }
     }
 
     removeBlocks (opcodes: string[]) {
-        for (const opcode in opcodes) {
+        for (const opcode of opcodes) {
             this.removeBlock(opcode);
         }
     }
@@ -485,7 +487,7 @@ export class ExtensionCentralAPI implements API {
         }
     }
 
-    getBlocksXML (target: Target) {
+    getBlocksXML (target?: Target) {
         const processedXML = [];
         for (const categoryId in this.blockInfo) {
             const category = this.blockInfo[categoryId];
@@ -510,7 +512,7 @@ export class ExtensionCentralAPI implements API {
                 }
 
                 // Skip show if necessary
-                if (Array.isArray(block.option?.filter)) {
+                if (target && Array.isArray(block.option?.filter)) {
                     // Hide from palette
                     if ((block.option?.filter as TargetType[]).length < 1) continue;
                     if (!block.option?.filter.includes(
