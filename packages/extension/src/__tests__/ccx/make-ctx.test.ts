@@ -132,6 +132,7 @@ describe('block', () => {
             }
         ]);
         const xml1 = api.getBlocksXML()[0].xml;
+        /* eslint-disable indent */
         expect(xml1).toBe(`<category
                 name="fake.category"
                 id="fake.category"
@@ -139,15 +140,17 @@ describe('block', () => {
                 secondaryColour="undefined"
             ><block type="fake.block1" ></block><block type="fake.block2" ></block></category>`
         );
+        /* eslint-enable indent */
     });
 
     test('remove blocks', () => {
         expect(() => {
-            api.removeBlock('fake.test')
+            api.removeBlock('fake.test');
         }).toThrow(new Error('cannot find block'));
         api.removeBlocks(['fake.block1', 'fake.block2']);
         // hide from toolbox
         const xml2 = api.getBlocksXML()[0].xml;
+        /* eslint-disable indent */
         expect(xml2).toBe(`<category
                 name="fake.category"
                 id="fake.category"
@@ -155,5 +158,6 @@ describe('block', () => {
                 secondaryColour="undefined"
             ></category>`
         );
+        /* eslint-enable indent */
     });
 });

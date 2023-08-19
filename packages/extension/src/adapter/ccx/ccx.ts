@@ -190,15 +190,15 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                 // If we `require` this at the global level it breaks non-webpack targets, including tests
                 const ExtensionWorker = new ExtensionSandbox();
                 this.loadedCCXExtension.set(info.id, {
-                        type: 'ccx',
-                        id: info.id,
-                        info: info,
-                        locales,
-                        url,
-                        enabled: true,
-                        env: 'sandboxed',
-                        fileContent: buffer
-                    } as CCXExtension);
+                    type: 'ccx',
+                    id: info.id,
+                    info: info,
+                    locales,
+                    url,
+                    enabled: true,
+                    env: 'sandboxed',
+                    fileContent: buffer
+                } as CCXExtension);
                 this.pendingExtensions.push({
                     extensionId: info.id,
                     mainScript: URL.createObjectURL(new Blob([originalScript], { type: "text/javascript" })),
@@ -209,57 +209,57 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
             });
             break;
         case 'unsandboxed':
-                let extensionObject = null as unknown as ExtensionClass;
-                try {
-                    const originalScript = await zipData.files['main.js'].async('text');
-                    const closureFunc = new Function('module', originalScript);
-                    // "__webpack_require__" can load modules from global env.
-                    // so we exposure ctx globally until extension is loaded.
-                    global.ClipCCExtension = makeUnsandboxedCtx(this.api, info.id);
-                    // rewrite "module.exports" to get extension class.
-                    closureFunc(new Proxy({}, {
-                        set(target: Record<string, unknown>, prop: string, value: unknown) {
-                            if (prop === 'exports') {
-                                extensionObject = value as ExtensionClass;
-                            }
-                            target[prop] = value;
-                            return true;
+            let extensionObject = null as unknown as ExtensionClass;
+            try {
+                const originalScript = await zipData.files['main.js'].async('text');
+                const closureFunc = new Function('module', originalScript);
+                // "__webpack_require__" can load modules from global env.
+                // so we exposure ctx globally until extension is loaded.
+                global.ClipCCExtension = makeUnsandboxedCtx(this.api, info.id);
+                // rewrite "module.exports" to get extension class.
+                closureFunc(new Proxy({}, {
+                    set (target: Record<string, unknown>, prop: string, value: unknown) {
+                        if (prop === 'exports') {
+                            extensionObject = value as ExtensionClass;
                         }
-                    }));
-                    // @ts-expect-error
-                    extensionObject = (new extensionObject()) as ExtensionClass;
-                    if (extensionObject.onInit) {
-                        extensionObject.onInit();
+                        target[prop] = value;
+                        return true;
                     }
-                    this.loadedCCXExtension.set(info.id, {
-                        type: 'ccx',
-                        id: info.id,
-                        info: info,
-                        locales,
-                        url,
-                        class: extensionObject,
-                        enabled: true,
-                        env: 'unsandboxed',
-                        fileContent: buffer
-                    } as CCXExtension);
-                    this.emit('LOADED', info.id, {
-                        type: 'ccx',
-                        id: info.id,
-                        info: info,
-                        locales,
-                        url,
-                        class: extensionObject,
-                        enabled: true,
-                        env: 'unsandboxed',
-                        fileContent: buffer
-                    });
-                } catch (e) {
-                    throw e;
-                } finally {
-                    // revoke temporary ctx
-                    delete global.ClipCCExtension;
+                }));
+                // @ts-expect-error
+                extensionObject = (new extensionObject()) as ExtensionClass;
+                if (extensionObject.onInit) {
+                    extensionObject.onInit();
                 }
-                break;
+                this.loadedCCXExtension.set(info.id, {
+                    type: 'ccx',
+                    id: info.id,
+                    info: info,
+                    locales,
+                    url,
+                    class: extensionObject,
+                    enabled: true,
+                    env: 'unsandboxed',
+                    fileContent: buffer
+                } as CCXExtension);
+                this.emit('LOADED', info.id, {
+                    type: 'ccx',
+                    id: info.id,
+                    info: info,
+                    locales,
+                    url,
+                    class: extensionObject,
+                    enabled: true,
+                    env: 'unsandboxed',
+                    fileContent: buffer
+                });
+            } catch (e) {
+                throw e;
+            } finally {
+                // revoke temporary ctx
+                delete global.ClipCCExtension;
+            }
+            break;
         default:
             throw new Error('unexpected env');
         }

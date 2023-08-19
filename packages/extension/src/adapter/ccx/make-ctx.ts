@@ -307,13 +307,13 @@ export class ExtensionCentralAPI implements API {
             blockJSON.outputShape = ScratchBlocksConstants.OUTPUT_SHAPE_HEXAGONAL;
             break;
         case BlockType.HAT:
-                if (!this.vm) throw new Error(`VM hadn't been attached`);
-                this.vm.runtime._hats[block.opcode] = {
-                    edgeActivated: true // CCX doesn't support spicify this
-                };
-                blockJSON.outputShape = ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE;
-                blockJSON.nextStatement = null; // null = available connection; undefined = terminal
-                break;
+            if (!this.vm) throw new Error(`VM hadn't been attached`);
+            this.vm.runtime._hats[block.opcode] = {
+                edgeActivated: true // CCX doesn't support spicify this
+            };
+            blockJSON.outputShape = ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE;
+            blockJSON.nextStatement = null; // null = available connection; undefined = terminal
+            break;
         default:
             throw new Error('unknown block type');
         }
@@ -363,7 +363,7 @@ export class ExtensionCentralAPI implements API {
 
             const argTypeInfo = param ? (ParameterTypeMap[param.type!] || {}) : {};
             // Layout a block argument (e.g. an input slot on the block)
-            let argJSON: Partial<BlocklyArg> = {
+            const argJSON: Partial<BlocklyArg> = {
                 type: 'input_value',
                 name: placeholder
             };
@@ -390,7 +390,7 @@ export class ExtensionCentralAPI implements API {
                 }
             }
 
-            blockJSON[`args${outLineNum}`] = blockJSON[`args${outLineNum}`] || []
+            blockJSON[`args${outLineNum}`] = blockJSON[`args${outLineNum}`] || [];
             const blockArgs = blockJSON[`args${outLineNum}`];
             if (argJSON) blockArgs!.push(argJSON as BlocklyArg);
             const argNum = blockArgs!.length;
@@ -462,7 +462,7 @@ export class ExtensionCentralAPI implements API {
         for (const categotyId in this.blockInfo) {
             const category = this.blockInfo[categotyId];
             if (targetOpcode in category.blocks) {
-                delete category.blocks[targetOpcode]
+                delete category.blocks[targetOpcode];
                 flag = true;
                 break;
             }
@@ -699,7 +699,7 @@ class ExtensionWorkerAPI implements API {
         throw new Error('getVmInstance is not avaiable in sandboxed environment');
     }
 
-    getBlockInstance() {
+    getBlockInstance () {
         throw new Error('getBlockInstance is not avaiable in sandboxed environment');
     }
 
@@ -723,7 +723,7 @@ class ExtensionWorkerAPI implements API {
 
     callGlobalFunction (name: string, ...args: any[]) {
         throw new Error('callGlobalFunction is not avaiable in sandboxed environment');
-    };
+    }
 }
 
 class ExtensionUnsandboxedAPI implements API {
@@ -796,7 +796,7 @@ class ExtensionUnsandboxedAPI implements API {
 
     callGlobalFunction (name: string, ...args: any[]) {
         return this.centralAPI.callGlobalFunction(name, ...args);
-    };
+    }
 }
 
 class Extension {}
