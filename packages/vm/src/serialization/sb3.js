@@ -95,7 +95,7 @@ const primitiveOpcodeInfoMap = {
     data_listcontents: [LIST_PRIMITIVE, 'LIST']
 };
 
-let opcodeMap = {};
+let opcodeExtMap = {};
 
 const validateStandardOpcode = (id) => !(id.includes('.'));
 
@@ -285,7 +285,7 @@ const compressInputTree = function (block, blocks) {
  */
 const getExtensionIdForOpcode = function (opcode) {
     // lookup map first.
-    if (opcodeMap.hasOwnProperty(opcode)) return opcodeMap[opcode];
+    if (opcodeExtMap.hasOwnProperty(opcode)) return opcodeExtMap[opcode];
     // Allowed ID characters are those matching the regular expression [\w-]: A-Z, a-z, 0-9, and hyphen ("-").
     const index = opcode.indexOf('_');
     const forbiddenSymbols = /[^\w-]/g;
@@ -566,7 +566,7 @@ const serialize = function (runtime, targetId, extensionManager) {
     // Create extension set to hold extension ids found while serializing targets
     const extensions = new Set();
     const extensionsMap = new Map();
-    if (extensionManager) opcodeMap = extensionManager.ccxAdapter.api.opcodeMap;
+    if (extensionManager) opcodeExtMap = extensionManager.ccxAdapter.api.opcodeMap;
 
     const originalTargetsToSerialize = targetId ?
         [runtime.getTargetById(targetId)] :
