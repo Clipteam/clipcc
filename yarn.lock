@@ -3707,6 +3707,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/xml-escape@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@types/xml-escape/-/xml-escape-1.1.1.tgz#d9ab3a17abd88e475a6f1c63ccb23ea15e56c30e"
+  integrity sha512-cXK3IFR5ogqgKFM8dfcSj18UXHCjZjnxRqndrRN4Tpq9GKus3mKY8CD+UJIJgGIkuIYg2wMlmXrxG4CoA7JQlQ==
+
 "@types/yargs-parser@*":
   version "21.0.0"
   resolved "https://registry.yarnpkg.com/@types/yargs-parser/-/yargs-parser-21.0.0.tgz#0c60e537fa790f5f9472ed2776c2b71ec117351b"
@@ -24064,6 +24069,11 @@ xhr@2.5.0:
     is-function "^1.0.1"
     parse-headers "^2.0.0"
     xtend "^4.0.0"
+
+xml-escape@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/xml-escape/-/xml-escape-1.1.0.tgz#3904c143fa8eb3a0030ec646d2902a2f1b706c44"
+  integrity sha512-B/T4sDK8Z6aUh/qNr7mjKAwwncIljFuUP+DO/D5hloYFj+90O88z8Wf7oSucZTHxBAsC1/CTP4rtx/x1Uf72Mg==
 
 xml-name-validator@^2.0.1:
   version "2.0.1"

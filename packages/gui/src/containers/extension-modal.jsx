@@ -184,6 +184,7 @@ class ExtensionModal extends React.PureComponent {
     render () {
         return (
             <ExtensionModalComponent
+                allowExtDev={this.props.allowExtDev}
                 data={this.state.selectedTag === 'offline' ? this.state.extensions : this.state.onlineExtensions}
                 settings={this.props.settings}
                 filterQuery={this.state.filterQuery}

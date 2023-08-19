@@ -1,4 +1,5 @@
 import formatMessage from "format-message";
+import xmlEscape from 'xml-escape';
 import {
     API,
     BlockPrototype,
@@ -552,7 +553,7 @@ export class ExtensionCentralAPI implements API {
                         // A <field> displays a dynamic value: a user-editable text field, a drop-down menu, etc.
                         // Leave out the field if defaultValue or fieldName are not specified
                         if (param?.default && fieldName) {
-                            toolboxXML += `<field name="${fieldName}">${param?.default}</field>`;
+                            toolboxXML += `<field name="${fieldName}">${xmlEscape(param?.default ?? '')}</field>`;
                         }
                         if (shadowType) toolboxXML += '</shadow>';
                         toolboxXML += `</value>`;

@@ -16,6 +16,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/jest": "^29.5.3",
+    "@types/xml-escape": "^1.1.1",
     "@typescript-eslint/eslint-plugin": "^5.59.2",
     "@typescript-eslint/parser": "^5.59.2",
     "codingclip-worker-loader": "^3.0.9",
@@ -35,6 +36,7 @@
     "format-message": "^6.2.4",
     "jszip": "^3.10.1",
     "mime-types": "^2.1.35",
-    "strict-event-emitter": "^0.5.0"
+    "strict-event-emitter": "^0.5.0",
+    "xml-escape": "^1.1.0"
   }
 }
