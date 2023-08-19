@@ -1306,7 +1306,7 @@ class VirtualMachine extends EventEmitter {
 
         // Create a unique set of extensionIds that are not yet loaded
         const extensionIDs = new Set(copiedBlocks
-            .map(b => sb3.getExtensionIdForOpcode(b.opcode, extensionManager && extensionManager.ccxAdapter.api.opcodeMap))
+            .map(b => sb3.getExtensionIdForOpcode(b.opcode, this.extensionManager && this.extensionManager.ccxAdapter.api.opcodeMap))
             .filter(id => !!id) // Remove ids that do not exist
             .filter(id => !this.extensionManager.isExtensionLoaded(id)) // and remove loaded extensions
         );
