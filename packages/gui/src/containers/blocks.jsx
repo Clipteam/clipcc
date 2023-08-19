@@ -597,10 +597,12 @@ class Blocks extends React.Component {
     render () {
         /* eslint-disable no-unused-vars */
         const {
+            allowExtDev,
             anyModalVisible,
             hideNonVanillaBlocks,
             canUseCloud,
             customProceduresVisible,
+            extensionManager,
             extensionModalVisible,
             options,
             stageSize,
@@ -643,7 +645,8 @@ class Blocks extends React.Component {
                 ) : null}
                 {extensionModalVisible ? (
                     <ExtensionModal
-                        extensionManager={this.props.extensionManager}
+                        extensionManager={extensionManager}
+                        allowExtDev={allowExtDev}
                         onCategorySelected={this.handleCategorySelected}
                         onRequestClose={onRequestCloseExtensionModal}
                     />
@@ -662,6 +665,7 @@ class Blocks extends React.Component {
 }
 
 Blocks.propTypes = {
+    allowExtDev: PropTypes.bool,
     anyModalVisible: PropTypes.bool,
     hideNonVanillaBlocks: PropTypes.bool.isRequired,
     canUseCloud: PropTypes.bool,

@@ -57,6 +57,7 @@ const GUIComponent = props => {
         accountNavOpen,
         activeTabIndex,
         alertsVisible,
+        allowExtDev,
         authorId,
         authorThumbnailUrl,
         authorUsername,
@@ -304,6 +305,7 @@ const GUIComponent = props => {
                                             canUseCloud={canUseCloud}
                                             grow={1}
                                             isVisible={blocksTabVisible}
+                                            allowExtDev={allowExtDev}
                                             options={{
                                                 media: `${basePath}static/${themeMap[theme].blocksMediaFolder}/`
                                             }}
@@ -365,6 +367,7 @@ const GUIComponent = props => {
 };
 
 GUIComponent.propTypes = {
+    allowExtDev: PropTypes.bool,
     accountNavOpen: PropTypes.bool,
     activeTabIndex: PropTypes.number,
     authorId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]), // can be false
@@ -430,6 +433,7 @@ GUIComponent.propTypes = {
     vm: PropTypes.instanceOf(VM).isRequired
 };
 GUIComponent.defaultProps = {
+    allowExtDev: true,
     backpackHost: null,
     backpackVisible: false,
     basePath: './',

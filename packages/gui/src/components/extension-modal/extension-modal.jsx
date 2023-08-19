@@ -390,27 +390,31 @@ class ExtensionModalComponent extends React.Component {
                             />
                         ))}
                     </div>
-                    <Button
-                        className={styles.loadButton}
-                        onClick={this.props.onUpload}
-                    >
-                        <FormattedMessage
-                            defaultMessage="Upload"
-                            description="Label of upload extension"
-                            id="gui.extensionModal.upload"
-                        />
-                    </Button>
-                    <div className={styles.spacer} />
-                    <Button
-                        className={styles.loadButton}
-                        onClick={this.props.onLoadFromURL}
-                    >
-                        <FormattedMessage
-                            defaultMessage="Load from URL"
-                            description="Label of load extension from URL"
-                            id="gui.extensionModal.loadFromURL"
-                        />
-                    </Button>
+                    {this.props.allowExtDev && (
+                        <>
+                            <Button
+                                className={styles.loadButton}
+                                onClick={this.props.onUpload}
+                            >
+                                <FormattedMessage
+                                    defaultMessage="Upload"
+                                    description="Label of upload extension"
+                                    id="gui.extensionModal.upload"
+                                />
+                            </Button>
+                            <div className={styles.spacer} />
+                            <Button
+                                className={styles.loadButton}
+                                onClick={this.props.onLoadFromURL}
+                            >
+                                <FormattedMessage
+                                    defaultMessage="Load from URL"
+                                    description="Label of load extension from URL"
+                                    id="gui.extensionModal.loadFromURL"
+                                />
+                            </Button>
+                        </>
+                    )}
                 </div>
                 <div
                     className={classNames(
@@ -445,6 +449,7 @@ class ExtensionModalComponent extends React.Component {
 }
 
 ExtensionModalComponent.propTypes = {
+    allowExtDev: PropTypes.bool,
     filterQuery: PropTypes.string,
     filter: PropTypes.string,
     selectedTag: PropTypes.string,
