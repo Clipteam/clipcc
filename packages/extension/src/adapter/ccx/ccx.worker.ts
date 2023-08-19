@@ -33,12 +33,12 @@ self.module = new Proxy({}, {
         if (prop === 'exports') {
             const extensionObject = new value() as ExtensionClass;
             const serviceName = `ccxSandbox.${workerId}`;
-            dispatch.setService(serviceName, extensionObject).then(() => {
+            dispatch.setService(serviceName, extensionObject).then(async () => {
                 if (extensionObject.onInit) {
-                    extensionObject.onInit();
+                    await extensionObject.onInit();
                 }
-                dispatch.call('ccxAdapter', 'registerExtensionService', extensionId, serviceName);
-                dispatch.call('ccxAdapter', 'onWorkerInit', workerId);
+                await dispatch.call('ccxAdapter', 'registerExtensionService', extensionId, serviceName);
+                await dispatch.call('ccxAdapter', 'onWorkerInit', workerId);
             });
         }
         target[prop] = value;

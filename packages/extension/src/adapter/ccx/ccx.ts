@@ -30,8 +30,8 @@ interface Target {
 interface PendingExtensionWorker {
     extensionId: string;
     mainScript: string;
-    resolve: (value: unknown) => void;
-    reject: (value: unknown) => void;
+    resolve: (id: number) => void;
+    reject: (e: unknown) => void;
 }
 
 export interface CCXExtension extends Extension {
