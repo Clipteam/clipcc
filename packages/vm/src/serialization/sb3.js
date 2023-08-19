@@ -95,8 +95,6 @@ const primitiveOpcodeInfoMap = {
     data_listcontents: [LIST_PRIMITIVE, 'LIST']
 };
 
-let opcodeExtMap = {};
-
 const validateStandardOpcode = (id) => !(id.includes('.'));
 
 /**
@@ -281,11 +279,12 @@ const compressInputTree = function (block, blocks) {
  * Note that this should never return a URL. If in the future the SB3 loader supports loading extensions by URL, this
  * ID should be used to (for example) look up the extension's full URL from a table in the SB3's JSON.
  * @param {!string} opcode The opcode to examine for extension.
+ * @param {Record<string, string>} opcodeExtMap The extension id mapping corresponding to the block opcode.
  * @return {?string} The extension ID, if it exists and is not a core extension.
  */
-const getExtensionIdForOpcode = function (opcode) {
+const getExtensionIdForOpcode = function (opcode, opcodeExtMap) {
     // lookup map first.
-    if (opcodeExtMap.hasOwnProperty(opcode)) return opcodeExtMap[opcode];
+    if (opcodeExtMap && opcodeExtMap.hasOwnProperty(opcode)) return opcodeExtMap[opcode];
     // Allowed ID characters are those matching the regular expression [\w-]: A-Z, a-z, 0-9, and hyphen ("-").
     const index = opcode.indexOf('_');
     const forbiddenSymbols = /[^\w-]/g;
@@ -303,13 +302,13 @@ const getExtensionIdForOpcode = function (opcode) {
  * compressed primitives and the list of all extension IDs present
  * in the serialized blocks.
  */
-const serializeBlocks = function (blocks) {
+const serializeBlocks = function (blocks, opcodeExtMap) {
     const obj = Object.create(null);
     const extensionIDs = new Set();
     for (const blockID in blocks) {
         if (!blocks.hasOwnProperty(blockID)) continue;
         obj[blockID] = serializeBlock(blocks[blockID], blocks);
-        const extensionID = getExtensionIdForOpcode(blocks[blockID].opcode);
+        const extensionID = getExtensionIdForOpcode(blocks[blockID].opcode, opcodeExtMap);
         if (extensionID) {
             extensionIDs.add(extensionID);
         }
@@ -458,7 +457,7 @@ const serializeComments = function (comments) {
  * @param {Set} extensions A set of extensions to add.
  * @return {object} A serialized representation of the given target.
  */
-const serializeTarget = function (target, extensions) {
+const serializeTarget = function (target, extensions, opcodeExtMap) {
     const obj = Object.create(null);
     let targetExtensions = [];
     obj.isStage = target.isStage;
@@ -467,7 +466,7 @@ const serializeTarget = function (target, extensions) {
     obj.variables = vars.variables;
     obj.lists = vars.lists;
     obj.broadcasts = vars.broadcasts;
-    [obj.blocks, targetExtensions] = serializeBlocks(target.blocks);
+    [obj.blocks, targetExtensions] = serializeBlocks(target.blocks, opcodeExtMap);
     obj.comments = serializeComments(target.comments);
 
     // TODO remove this check/patch when (#1901) is fixed
@@ -566,7 +565,6 @@ const serialize = function (runtime, targetId, extensionManager) {
     // Create extension set to hold extension ids found while serializing targets
     const extensions = new Set();
     const extensionsMap = new Map();
-    if (extensionManager) opcodeExtMap = extensionManager.ccxAdapter.api.opcodeMap;
 
     const originalTargetsToSerialize = targetId ?
         [runtime.getTargetById(targetId)] :
@@ -584,7 +582,7 @@ const serialize = function (runtime, targetId, extensionManager) {
         });
     }
 
-    const serializedTargets = flattenedOriginalTargets.map(t => serializeTarget(t, extensions));
+    const serializedTargets = flattenedOriginalTargets.map(t => serializeTarget(t, extensions, extensionManager && extensionManager.ccxAdapter.api.opcodeMap));
 
     if (targetId) {
         return serializedTargets[0];
