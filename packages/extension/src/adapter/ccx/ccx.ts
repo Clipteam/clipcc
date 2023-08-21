@@ -40,7 +40,7 @@ export interface CCXExtension extends Extension {
     locales: Record<string, Record<string, string>>;
     enabled: boolean;
     fileContent: ArrayBufferLike;
-    class: string | ExtensionClass; // The serviceName or extensionClass.
+    instance: string | ExtensionClass; // The serviceName or extensionClass.
     warnings?: string[];
 }
 
@@ -237,7 +237,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                     info: info,
                     locales,
                     url,
-                    class: extensionObject,
+                    instance: extensionObject,
                     enabled: true,
                     env: 'unsandboxed',
                     fileContent: buffer
@@ -248,7 +248,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                     info: info,
                     locales,
                     url,
-                    class: extensionObject,
+                    instance: extensionObject,
                     enabled: true,
                     env: 'unsandboxed',
                     fileContent: buffer
@@ -310,7 +310,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      */
     registerExtensionService (extensionId: string, serviceName: string) {
         const extensionInfo = this.loadedCCXExtension.get(extensionId)!;
-        extensionInfo.class = serviceName;
+        extensionInfo.instance = serviceName;
         this.loadedCCXExtension.set(extensionId, extensionInfo);
         this.emit('LOADED', extensionInfo.id, extensionInfo);
     }

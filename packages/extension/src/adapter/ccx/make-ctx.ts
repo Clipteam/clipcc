@@ -119,12 +119,6 @@ interface Target {
 
 export class ExtensionCentralAPI implements API {
     /**
-     * Whether toolbox's update request is queued.
-     * @type {boolean}
-     */
-    toolboxRefreshQueued = false;
-
-    /**
      * Store all blocks added by CCX extension.
      * @type {Record<string, CategoryInfo>}
      */
@@ -202,13 +196,7 @@ export class ExtensionCentralAPI implements API {
     }
 
     private requestUpdateToolbox () {
-        if (!this.toolboxRefreshQueued) {
-            this.toolboxRefreshQueued = true;
-            queueMicrotask(() => {
-                this.toolboxRefreshQueued = false;
-                this.adapter.emit('REFRESH_TOOLBOX');
-            });
-        }
+        this.adapter.emit('REFRESH_TOOLBOX');
     }
 
     addCategory (category: CategoryPrototype) {

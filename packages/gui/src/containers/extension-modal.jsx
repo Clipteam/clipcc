@@ -26,6 +26,18 @@ const messages = defineMessages({
 class ExtensionModal extends React.PureComponent {
     constructor (props) {
         super(props);
+        bindAll(this, [
+            'addExtension',
+            'handleExtensionStatusChanged',
+            'handleFilterChange',
+            'handleFilterEnter',
+            'handleFilterClear',
+            'handleTagClick',
+            'handleLoadFromURL',
+            'handleUpload',
+            'handleExtensionAdded',
+            'handleChangeSettingsItem'
+        ]);
         this.extensions = {};
         // Add builtin extensions first
         for (const offlineExt of extensionLibraryContent) {
@@ -38,30 +50,9 @@ class ExtensionModal extends React.PureComponent {
         }
         // Add loaded extensions
         const loadedExtensions = this.props.extensionManager.getLoadedExtensions();
-        for (const extUrl in loadedExtensions) {
-            const ext = loadedExtensions[extUrl];
-            // Don't use extension info for built-in extensions;
-            if (this.extensions.hasOwnProperty(extUrl) && this.extensions[extUrl].isBuiltin) {
-                ext.info = this.extensions[extUrl];
-            } else {
-                ext.info.type = ext.type;
-                // unnecessary for extension modal
-                delete ext.class;
-            }
-
-            if (ext.type === 'scratch') {
-                ext.info.sandboxed = ext.env === 'sandboxed';
-                // scratch extension always enabled.
-                ext.info.enabled = true;
-                // placeholder
-                if (!ext.info.insetIconURL) ext.info.insetIconURL = ext.info.blockIconURI;
-            } else if (ext.type === 'ccx') {
-                ext.info.enabled = ext.enabled;
-                ext.info.collaborator = ext.info.author;
-                ext.info.name = this.props.intl.formatMessage({id: `${ext.info.id}.name`});
-                ext.info.description = this.props.intl.formatMessage({id: `${ext.info.id}.description`});
-            }
-            this.extensions[extUrl] = ext.info;
+        for (const id in loadedExtensions) {
+            const ext = Object.assign({}, loadedExtensions[id]);
+            this.addExtension(id, ext);
         }
         this.props.extensionManager.on('EXTENSION_LOADED', this.handleExtensionAdded.bind(this));
         this.state = {
@@ -72,30 +63,19 @@ class ExtensionModal extends React.PureComponent {
             extensions: Object.values(this.extensions),
             onlineExtensions: []
         };
-        bindAll(this, [
-            'handleExtensionStatusChanged',
-            'handleFilterChange',
-            'handleFilterEnter',
-            'handleFilterClear',
-            'handleTagClick',
-            'handleLoadFromURL',
-            'handleUpload',
-            'handleExtensionAdded',
-            'handleChangeSettingsItem'
-        ]);
     }
     componentWillUnmount () {
         this.props.extensionManager.off('EXTENSION_LOADED', this.handleExtensionAdded);
     }
-    handleExtensionAdded (url, extension) {
+    addExtension (id, extension) {
         // Don't use extension info for built-in extensions;
-        if (this.extensions.hasOwnProperty(url) && this.extensions[url].isBuiltin) {
-            extension.info = this.extensions[url];
+        if (this.extensions.hasOwnProperty(id) && this.extensions[id].isBuiltin) {
+            extension.info = this.extensions[id];
         } else {
             extension.info.type = extension.type;
             extension.info.sandboxed = extension.env === 'sandboxed';
             // unnecessary for extension modal
-            delete extension.class;
+            delete extension.instance;
         }
 
         if (extension.type === 'scratch') {
@@ -110,12 +90,15 @@ class ExtensionModal extends React.PureComponent {
             extension.info.description = this.props.intl.formatMessage({id: `${extension.info.id}.description`});
             extension.info.insetIconURL = extension.info.inset_icon;
         }
-        this.extensions[url] = extension.info;
+        this.extensions[id] = extension.info;
+    }
+    handleExtensionAdded (id, extension) {
+        this.addExtension(id, Object.assign({}, extension));
         this.setState({extensions: Object.values(this.extensions)});
     }
     async handleExtensionStatusChanged (url, status) {
         if (status) {
-            await this.props.extensionManager.loadExtensionURL(url);
+            await this.props.extensionManager.loadExtensionURL(id);
             this.props.onCategorySelected(url);
         } else {
             // todo
@@ -140,8 +123,8 @@ class ExtensionModal extends React.PureComponent {
     async handleLoadFromURL () {
         const url = prompt(this.props.intl.formatMessage(messages.loadFromURL));
         if (!url.trim()) return;
-        const isSandbox = confirm(this.props.intl.formatMessage(messages.runInUnsandboxedMode));
-        await this.props.extensionManager.loadExtensionURL(url, 'scratch', isSandbox ? 'sandboxed' : 'unsandboxed');
+        const isUnsandbox = confirm(this.props.intl.formatMessage(messages.runInUnsandboxedMode));
+        await this.props.extensionManager.loadExtensionURL(url, 'scratch', isUnsandbox ? 'unsandboxed' : 'sandboxed');
     }
     handleUpload () {
         const input = document.createElement('input');

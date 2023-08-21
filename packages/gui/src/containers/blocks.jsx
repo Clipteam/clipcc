@@ -524,7 +524,7 @@ class Blocks extends React.Component {
     }
     handleBlocksInfoUpdate (categoryInfo) {
         // @todo Later we should replace this to avoid all the warnings from redefining blocks.
-        this.handleExtensionAdded(categoryInfo);
+        this.handleCategoryAdded(categoryInfo);
     }
     handleCategorySelected (categoryId) {
         const extension = extensionData.find(ext => ext.url === categoryId);

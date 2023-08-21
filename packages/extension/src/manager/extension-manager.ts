@@ -189,13 +189,9 @@ class ExtensionManager extends Emitter<Events> {
     /**
      * Update all extension's locales
      */
-    updateExtensionLocales () {
-        const promises: Promise<unknown>[] = [];
-        this.ccxAdapter.updateLocales();
-        for (const [extensionURL, extension] of this.loadedExtensions.entries()) {
-            if (extension.type === 'scratch') promises.push(this.scratchAdapter.reload(extensionURL));
-        }
-        return Promise.all(promises);
+    async updateExtensionLocales () {
+        await this.ccxAdapter.updateLocales();
+        await this.scratchAdapter.updateLocales();
     }
 
 
