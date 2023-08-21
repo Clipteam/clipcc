@@ -226,6 +226,20 @@ const alerts = [
         ),
         iconSpinner: true,
         level: AlertLevels.SUCCESS
+    },
+    {
+        alertId: 'loadExtensionError',
+        alertType: AlertTypes.STANDARD,
+        clearList: [],
+        content: (
+            <FormattedMessage
+                defaultMessage="Error occurred while loading extension (See console for more info)"
+                description="Message indicating that error occurred while loading extension "
+                id="gui.alerts.loadExtensionError"
+            />
+        ),
+        closeButton: true,
+        level: AlertLevels.WARN
     }
 ];
 

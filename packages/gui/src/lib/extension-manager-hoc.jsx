@@ -30,7 +30,7 @@ const extensionManagerHOC = function (WrappedComponent) {
             this.props.extensionManager.on('SETTINGS_ADDED', this.handleAddSettings);
             this.props.extensionManager.on('LOCALE_ADDED', this.handleAddLocale);
             this.props.extensionManager.on('EXTENSION_LOADED', this.props.onCloseLoading);
-            this.props.extensionManager.on('EXTENSION_LOAD_ERROR', this.props.onCloseLoading);
+            this.props.extensionManager.on('EXTENSION_LOAD_ERROR', this.props.onLoadError);
         }
         componentDidUpdate () {
             this.props.extensionManager.setLocale(this.props.locale, this.props.messages);
@@ -41,7 +41,7 @@ const extensionManagerHOC = function (WrappedComponent) {
             this.props.extensionManager.off('SETTINGS_ADDED', this.handleAddSettings);
             this.props.extensionManager.off('LOCALE_ADDED', this.handleAddLocale);
             this.props.extensionManager.off('EXTENSION_LOADED', this.props.onCloseLoading);
-            this.props.extensionManager.off('EXTENSION_LOAD_ERROR', this.props.onCloseLoading);
+            this.props.extensionManager.off('EXTENSION_LOAD_ERROR', this.props.onLoadError);
         }
         handleAddLocale (locales) {
             this.props.addLocale(locales);
@@ -94,6 +94,10 @@ const extensionManagerHOC = function (WrappedComponent) {
             dispatch(updateLocale());
         },
         onCloseLoading: () => dispatch(closeAlertWithId('loadingExtension')),
+        onLoadError: () => {
+            dispatch(closeAlertWithId('loadingExtension'));
+            dispatch(showStandardAlert('loadExtensionError'));
+        },
         onShowLoading: () => dispatch(showStandardAlert('loadingExtension'))
     });
 
