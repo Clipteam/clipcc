@@ -45,7 +45,7 @@ describe('category', () => {
 
 describe('block', () => {
     const api = new ExtensionCentralAPI(fakeAdapter);
-    test('add block to non-existed category', (done) => {
+    test('add block to non-existed category', () => {
         expect(() => {
             api.addBlock({
                 categoryId: 'fake.category',
@@ -67,7 +67,7 @@ describe('block', () => {
             type: 1,
             function: 'testServiceName'
         });
-        expect(api.adapter.emit).nthCalledWith(1, 'REGISTER_BLOCK', [
+        expect(api.adapter.emit).nthCalledWith(2, 'REGISTER_BLOCK', [
             {
                 args0: [],
                 category: 'fake.category',
@@ -82,11 +82,7 @@ describe('block', () => {
                 type: 'fake.block1'
             }
         ]);
-        // Refresh toolbox will be triggered in next event loop
-        queueMicrotask(() => {
-            expect(api.adapter.emit).lastCalledWith('REFRESH_TOOLBOX');
-            done();
-        });
+        expect(api.adapter.emit).nthCalledWith(3, 'REFRESH_TOOLBOX');
     });
 
     // adding blocks twice does not throw an error,
@@ -141,6 +137,7 @@ describe('block', () => {
             ><block type="fake.block1" ></block><block type="fake.block2" ></block></category>`
         );
         /* eslint-enable indent */
+        expect(api.adapter.emit).nthCalledWith(2, 'REFRESH_TOOLBOX');
     });
 
     test('remove blocks', () => {
@@ -148,6 +145,7 @@ describe('block', () => {
             api.removeBlock('fake.test');
         }).toThrow(new Error('cannot find block'));
         api.removeBlocks(['fake.block1', 'fake.block2']);
+        expect(api.adapter.emit).nthCalledWith(1, 'REFRESH_TOOLBOX');
         // hide from toolbox
         const xml2 = api.getBlocksXML()[0].xml;
         /* eslint-disable indent */
