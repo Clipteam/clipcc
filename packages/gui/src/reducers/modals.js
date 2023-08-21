@@ -109,7 +109,7 @@ const closeSoundRecorder = function () {
 const closeConnectionModal = function () {
     return closeModal(MODAL_CONNECTION);
 };
-const closeSettingsModal = function() {
+const closeSettingsModal = function () {
     return closeModal(MODAL_SETTINGS);
 };
 export {

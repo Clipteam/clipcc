@@ -152,5 +152,5 @@ export {
     initEmbedded,
     initFullScreen,
     initPlayer,
-    initTelemetryModal,
+    initTelemetryModal
 };
