@@ -1269,6 +1269,17 @@ Blockly.Block.prototype.appendDummyInput = function(opt_name) {
 };
 
 /**
+ * Shortcut for inserting a value input row.
+ * @param {number} index The index to insert the input.
+ * @param {string} name Language-neutral identifier which may used to find this
+ *     input again.  Should be unique to this block.
+ * @return {!Blockly.Input} The input object created.
+ */
+Blockly.Block.prototype.insertValueInput = function(index, name) {
+  return this.insertInput_(index, Blockly.INPUT_VALUE, name);
+};
+
+/**
  * Initialize this block using a cross-platform, internationalization-friendly
  * JSON description.
  * @param {!Object} json Structured data describing the block.
@@ -1548,6 +1559,30 @@ Blockly.Block.prototype.appendInput_ = function(type, name) {
   var input = new Blockly.Input(type, name, this, connection);
   // Append input to list.
   this.inputList.push(input);
+  return input;
+};
+
+/**
+ * Insert a value input, statement input or local variable to this block.
+ * @param {number} index The index to insert the input.
+ * @param {number} type Either Blockly.INPUT_VALUE or Blockly.NEXT_STATEMENT or
+ *     Blockly.DUMMY_INPUT.
+ * @param {string} name Language-neutral identifier which may used to find this
+ *     input again.  Should be unique to this block.
+ * @return {!Blockly.Input} The input object created.
+ * @protected
+ */
+Blockly.Block.prototype.insertInput_ = function(index, type, name) {
+  // Validate argument.
+  goog.asserts.assert(index <= this.inputList.length,
+      'Input index ' + index + ' out of bounds.');
+  var connection = null;
+  if (type == Blockly.INPUT_VALUE || type == Blockly.NEXT_STATEMENT) {
+    connection = this.makeConnection_(type);
+  }
+  var input = new Blockly.Input(type, name, this, connection);
+  // Insert input to list.
+  this.inputList.splice(index, 0, input);
   return input;
 };
 

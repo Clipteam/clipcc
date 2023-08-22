@@ -675,9 +675,10 @@ Blockly.BlockSvg.prototype.showHelp_ = function() {
 /**
  * Show the context menu for this block.
  * @param {!Event} e Mouse event.
+ * @param {?Blockly.BlockSvg} triggeredBlock Original shadow block.
  * @private
  */
-Blockly.BlockSvg.prototype.showContextMenu_ = function(e) {
+Blockly.BlockSvg.prototype.showContextMenu_ = function(e, triggeredBlock) {
   if (this.workspace.options.readOnly || !this.contextMenu) {
     return;
   }
@@ -694,13 +695,13 @@ Blockly.BlockSvg.prototype.showContextMenu_ = function(e) {
       menuOptions.push(Blockly.ContextMenu.blockCopyOption(block));
     }
   } else if (this.parentBlock_ && this.isShadow_) {
-    this.parentBlock_.showContextMenu_(e);
+    this.parentBlock_.showContextMenu_(e, triggeredBlock);
     return;
   }
 
   // Allow the block to add or modify menuOptions.
   if (this.customContextMenu) {
-    this.customContextMenu(menuOptions);
+    this.customContextMenu(menuOptions, triggeredBlock);
   }
   Blockly.ContextMenu.show(e, menuOptions, this.RTL);
   Blockly.ContextMenu.currentBlock = this;
