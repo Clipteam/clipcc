@@ -199,7 +199,7 @@ const vmManagerHOC = function (WrappedComponent) {
             unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,
             accurateCoordinates: state.scratchGui.settings.accurateCoordinates,
             stageWidth: state.scratchGui.settings.stageWidth,
-            stageHeight: state.scratchGui.settings.stageHeight,
+            stageHeight: state.scratchGui.settings.stageHeight
         };
     };
 

@@ -29,7 +29,7 @@ class SettingsModal extends React.Component {
             'handleChangeAccurateCoordinates',
             'handleChangeHideNonVanillaBlocks',
             'handleChangeStageWidth',
-            'handleChangeStageHeight',
+            'handleChangeStageHeight'
         ]);
     }
     handleClose () {
@@ -132,7 +132,7 @@ SettingsModal.propTypes = {
     onClose: PropTypes.func.isRequired,
     updateSettings: PropTypes.func.isRequired,
     stageHeight: PropTypes.number.isRequired,
-    stageWidth: PropTypes.number.isRequired,
+    stageWidth: PropTypes.number.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -148,7 +148,7 @@ const mapStateToProps = state => ({
     framerate: state.scratchGui.settings.framerate,
     theme: state.scratchGui.settings.theme,
     stageHeight: state.scratchGui.settings.stageHeight,
-    stageWidth: state.scratchGui.settings.stageWidth,
+    stageWidth: state.scratchGui.settings.stageWidth
 });
 
 const mapDispatchToProps = dispatch => ({

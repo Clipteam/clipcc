@@ -157,6 +157,7 @@ class VirtualMachine extends EventEmitter {
         this.runtime.on(Runtime.STAGE_SIZE_UPDATE, (width, height) => {
             this.emit(Runtime.STAGE_SIZE_UPDATE, width, height);
         });
+
         this.extensionManager = new ExtensionManager(this.runtime);
 
         // Load core extensions
@@ -236,6 +237,7 @@ class VirtualMachine extends EventEmitter {
             this.runtime.renderer.setAccurateCoordinates(options.accurateCoordinates);
         }
     }
+
     /**
      * Set stage size.
      * @param {number} width Width of the stage in pixels.
@@ -284,6 +286,7 @@ class VirtualMachine extends EventEmitter {
     setStageHeight (height) {
         this.setStageSize(this.runtime.stageWidth, height);
     }
+
     /**
      * Stop all threads and running activities.
      */

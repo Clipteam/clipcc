@@ -223,7 +223,6 @@ const vmListenerHOC = function (WrappedComponent) {
                 stageWidth: width,
                 stageHeight: height
             }));
-
         }
     });
     return connect(

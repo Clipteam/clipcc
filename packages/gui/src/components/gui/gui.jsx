@@ -462,7 +462,7 @@ const mapStateToProps = state => ({
     theme: state.scratchGui.theme.theme,
     stageSizeMode: state.scratchGui.stageSize.stageSize,
     stageWidth: state.scratchGui.settings.stageWidth,
-    stageHeight: state.scratchGui.settings.stageHeight,
+    stageHeight: state.scratchGui.settings.stageHeight
 });
 
 export default injectIntl(connect(

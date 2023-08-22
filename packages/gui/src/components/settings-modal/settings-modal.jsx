@@ -301,7 +301,7 @@ class SettingsModal extends React.Component {
                         <div className={styles.item}>
                             <div className={styles.label}>
                                 <FormattedMessage
-                                    defaultMessage="Stage size"
+                                    defaultMessage="Stage Size"
                                     description="Label of stage size"
                                     id="gui.settingsModal.resolution"
                                 />
