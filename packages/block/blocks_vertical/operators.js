@@ -393,8 +393,9 @@ Blockly.Blocks['operator_join_advanced'] = {
    * @this Blockly.Block
    */
   findBlockIndex_: function(block) {
-    for (var i = 0; i < this.childBlocks_.length; ++i) {
-      if (this.childBlocks_[i] === block) {
+    var childBlocks = this.getChildren(true);
+    for (var i = 0; i < childBlocks.length; ++i) {
+      if (childBlocks[i] === block) {
         return i;
       }
     }
