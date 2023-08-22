@@ -76,11 +76,11 @@ class SettingsModal extends React.Component {
     }
     handleChangeStageWidth (width) {
         if (width >= 480) {
-            this.props.updateSettings({stageWidth: width});
+            this.props.updateSettings({stageWidth: Math.round(width)});
         }
     }
     handleChangeStageHeight (height) {
-        this.props.updateSettings({stageHeight: height});
+        this.props.updateSettings({stageHeight: Math.round(height)});
     }
     render () {
         return (
