@@ -372,7 +372,6 @@ Blockly.Blocks['operator_join_advanced'] = {
   customContextMenu: function(menuOptions, triggeredBlock) {
     if (triggeredBlock) {
       var index = this.findBlockIndex_(triggeredBlock) + 1;
-      console.log(index, triggeredBlock);
       menuOptions.push({
         enabled: true,
         text: Blockly.Msg.INSERT_INPUT,
