@@ -1,0 +1,219 @@
+/**
+ * @license
+ * Copyright 2023 Clip Team
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+/**
+ * @fileoverview Gulp script to build Blockly.
+ */
+
+const gulp = require('gulp');
+gulp.replace = require('gulp-replace');
+gulp.rename = require('gulp-rename');
+const glob = require('glob');
+const fs = require('fs');
+const closureCompiler = require('google-closure-compiler').gulp();
+const closureDeps = require('google-closure-deps');
+
+const LICENSE_REGEX = new RegExp(`/\\*
+
+ [\\w ]+
+
+ Copyright \\d+ (Google Inc.|Massachusetts Institute of Technology)
+ (https://developers.google.com/blockly/|All rights reserved.)
+
+ Licensed under the Apache License, Version 2.0 \\(the "License"\\);
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+\\*/`, 'g');
+
+/**
+ * Helper for trimming down Apache License. (only Google's and MIT's)
+ */
+function trimLicense() {
+    return gulp.replace(LICENSE_REGEX, '');
+}
+
+/**
+ * Helper for remove Blockly.Blocks to be compatible with Blockly.
+ */
+function removeBlocklyBlocks() {
+    return gulp.replace('var Blockly={Blocks:{}};', '');
+}
+
+/**
+ * Helper for calling closure compiler.
+ * @param {Object=} compilerOptions Additional options for closure compiler.
+ */
+function compile(compilerOptions) {
+    const options = {
+        compilation_level: 'SIMPLE',
+        language_in: 'ECMASCRIPT_2017',
+        language_out: 'ECMASCRIPT5_STRICT',
+        hide_warnings_for: 'node_modules',
+    };
+
+    return closureCompiler({...options, ...compilerOptions});
+}
+
+/**
+ * Task for building blockly_compressed_vertical.js.
+ */
+function buildCompressedBlockly() {
+    return gulp.src([
+        './core/**/**/*.js',
+        '!./core/block_render_svg_horizontal.js',
+        './node_modules/google-closure-library/closure/goog/**/**/*.js'
+    ], {base: './'})
+        .pipe(compile({
+            dependency_mode: 'STRICT',
+            entry_point: './core/blockly.js',
+            rewrite_polyfills: false,
+            define: 'goog.DEBUG=false'
+        }))
+        .pipe(trimLicense())
+        .pipe(gulp.rename('blockly_compressed_vertical.js'))
+        .pipe(gulp.dest('./'));
+}
+
+/**
+ * Task for building blocks_compressed_vertical.js.
+ */
+function buildCompressedBlock() {
+    return gulp.src([
+        './blocks_vertical/*.js',
+        './build/gen_blocks.js',
+        './core/colours.js',
+        './core/constants.js'
+    ], {base: './'})
+        .pipe(compile())
+        .pipe(trimLicense())
+        .pipe(removeBlocklyBlocks())
+        .pipe(gulp.rename('blocks_compressed_vertical.js'))
+        .pipe(gulp.dest('./'));
+}
+
+/**
+ * Task for building blocks_compressed.js
+ */
+function buildCompressedCommonBlock() {
+    return gulp.src([
+        './blocks_common/*.js',
+        './build/gen_blocks.js',
+        './core/colours.js',
+        './core/constants.js'
+    ], {base: './'})
+        .pipe(compile())
+        .pipe(trimLicense())
+        .pipe(removeBlocklyBlocks())
+        .pipe(gulp.rename('blocks_compressed.js'))
+        .pipe(gulp.dest('./'));
+}
+
+const CLOSURE_LIBRARY = 'node_modules/google-closure-library/closure/goog';
+const UNCOMPRESSED_HEADER = `'use strict';
+
+var isNodeJS = !!(typeof module !== 'undefined' && module.exports &&
+                  typeof window === 'undefined');
+
+if (isNodeJS) {
+  var window = {};
+  require('google-closure-library');
+}
+
+window.BLOCKLY_DIR = (function() {
+  if (!isNodeJS) {
+    // Find name of current directory.
+    var scripts = document.getElementsByTagName('script');
+    var re = new RegExp('(.+)[\/]blockly_uncompressed(_vertical|_horizontal|)\.js$');
+    for (var i = 0, script; script = scripts[i]; i++) {
+      var match = re.exec(script.src);
+      if (match) {
+        return match[1];
+      }
+    }
+    alert('Could not detect Blockly\\'s directory name.');
+  }
+  return '';
+})();
+
+window.BLOCKLY_BOOT = function() {
+  var dir = '';
+  if (isNodeJS) {
+    require('google-closure-library');
+    dir = 'blockly';
+  } else {
+    // Execute after Closure has loaded.
+    if (!window.goog) {
+      alert('Error: Closure not found.  Read this:\\n' +
+            'developers.google.com/blockly/guides/modify/web/closure');
+    }
+    if (window.BLOCKLY_DIR.search(/node_modules/)) {
+      dir = '..';
+    } else {
+      dir = window.BLOCKLY_DIR.match(/[^\\/]+$/)[0];
+    }
+  }
+`;
+const UNCOMPRESSED_FOOTER = `
+delete this.BLOCKLY_DIR;
+delete this.BLOCKLY_BOOT;
+};
+
+if (isNodeJS) {
+  window.BLOCKLY_BOOT();
+  module.exports = Blockly;
+} else {
+  // Delete any existing Closure (e.g. Soy's nogoog_shim).
+  document.write('<script>var goog = undefined;</script>');
+  // Load fresh Closure Library.
+  document.write('<script src="' + window.BLOCKLY_DIR +
+      '/${CLOSURE_LIBRARY}/base.js"></script>');
+  document.write('<script>window.BLOCKLY_BOOT();</script>');
+}
+`;
+
+/**
+ * Task for building blockly_uncompressed_vertical.js.
+ */
+function buildUncompressed(callback) {
+    const files = glob.globSync([
+        './core/**/**/*.js',
+        './node_modules/google-closure-library/closure/goog/**/**/*.js'
+    ], {
+        ignore: '**/block_render_svg_horizontal.js'
+    });
+    const dependencies = [];
+    const provides = [];
+    for (const file of files) {
+        const result = closureDeps.parser.parseFile(file);
+        dependencies.push(result.dependency);
+        if (!file.startsWith('node_modules')) {
+            provides.push(...result.dependency.closureSymbols);
+        }
+    }
+    const addDependencyCode = closureDeps.depFile.getDepFileText(CLOSURE_LIBRARY, dependencies).replace(/\\/g, '/');
+    const requiresCode = '\n// Load Blockly.\n' + provides.sort().map(provide => `goog.require('${provide}');`).join('\n');
+    fs.writeFileSync('blockly_uncompressed_vertical.js', UNCOMPRESSED_HEADER + addDependencyCode + requiresCode + UNCOMPRESSED_FOOTER);
+    callback();
+}
+
+const build = gulp.parallel(
+    buildUncompressed,
+    buildCompressedBlockly,
+    buildCompressedBlock,
+    buildCompressedCommonBlock
+);
+
+module.exports = {
+    build
+};
