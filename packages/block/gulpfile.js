@@ -176,6 +176,8 @@ if (isNodeJS) {
 } else {
   // Delete any existing Closure (e.g. Soy's nogoog_shim).
   document.write('<script>var goog = undefined;</script>');
+  // Set defines.
+  document.write('<script>window.CLOSURE_UNCOMPILED_DEFINES = { \\'goog.ENABLE_DEBUG_LOADER\\': true };</script>');
   // Load fresh Closure Library.
   document.write('<script src="' + window.BLOCKLY_DIR +
       '/${CLOSURE_LIBRARY}/base.js"></script>');

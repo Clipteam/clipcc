@@ -12,6 +12,7 @@
   "main": "./dist/vertical.js",
   "browser": "./shim/vertical.js",
   "scripts": {
+    "start": "http-server ./ -s -p 0 -o /tests/vertical_playground.html -c-1",
     "deploy": "rimraf gh-pages/closure-library/scripts/ci/CloseAdobeDialog.exe && gh-pages -t -d gh-pages -m \"Build for $(git log --pretty=format:%H -n1) [skip ci]\"",
     "build": "gulp build && webpack",
     "test:unit": "node tests/jsunit/test_runner.js",
@@ -27,7 +28,7 @@
   "dependencies": {
     "clipcc-l10n": "3.2.0",
     "exports-loader": "^4.0.0",
-    "google-closure-library": "20190301.0.0",
+    "google-closure-library": "20230802.0.0",
     "imports-loader": "^4.0.1"
   },
   "devDependencies": {
@@ -44,6 +45,7 @@
     "gulp": "^4.0.2",
     "gulp-rename": "^2.0.0",
     "gulp-replace": "^1.1.4",
+    "http-server": "^14.1.1",
     "json": "9.0.6",
     "rimraf": "2.7.1",
     "selenium-webdriver": "4.8.0",
