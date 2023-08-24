@@ -198,9 +198,19 @@ function buildUncompressed(callback) {
     const provides = [];
     for (const file of files) {
         const result = closureDeps.parser.parseFile(file);
-        dependencies.push(result.dependency);
+        for (const dependency of result.dependencies) {
+            // dependencies parsed from goog.addDependency should be ignored
+            if (!dependency.isParsedFromDepsFile()) {
+                dependency.setClosurePath(CLOSURE_LIBRARY);
+                dependencies.push(dependency);
+            }
+        }
         if (!file.startsWith('node_modules')) {
-            provides.push(...result.dependency.closureSymbols);
+            for (const dependency of result.dependencies) {
+                if (!dependency.isParsedFromDepsFile()) {
+                    provides.push(...dependency.closureSymbols);
+                }
+            }
         }
     }
     const addDependencyCode = closureDeps.depFile.getDepFileText(CLOSURE_LIBRARY, dependencies).replace(/\\/g, '/');
