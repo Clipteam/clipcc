@@ -81,10 +81,10 @@ Blockly.Field.TYPE_MAP_ = {};
  *     object containing a fromJson function.
  */
 Blockly.Field.register = function(type, fieldClass) {
-  if (!goog.isString(type) || goog.string.isEmptyOrWhitespace(type)) {
+  if (typeof type !== 'string' || goog.string.isEmptyOrWhitespace(type)) {
     throw new Error('Invalid field type "' + type + '"');
   }
-  if (!goog.isObject(fieldClass) || !goog.isFunction(fieldClass.fromJson)) {
+  if (!goog.isObject(fieldClass) || typeof fieldClass.fromJson !== 'function') {
     throw new Error('Field "' + fieldClass +
         '" must have a fromJson function');
   }

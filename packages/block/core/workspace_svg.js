@@ -1974,10 +1974,10 @@ Blockly.WorkspaceSvg.setTopLevelWorkspaceMetrics_ = function(xyRatio) {
     throw 'Attempt to set top level workspace scroll without scrollbars.';
   }
   var metrics = this.getMetrics();
-  if (goog.isNumber(xyRatio.x)) {
+  if (typeof xyRatio.x === 'number') {
     this.scrollX = -metrics.contentWidth * xyRatio.x - metrics.contentLeft;
   }
-  if (goog.isNumber(xyRatio.y)) {
+  if (typeof xyRatio.y === 'number') {
     this.scrollY = -metrics.contentHeight * xyRatio.y - metrics.contentTop;
   }
   var x = this.scrollX + metrics.absoluteLeft;
@@ -2042,7 +2042,7 @@ Blockly.WorkspaceSvg.prototype.clear = function() {
  *     given button is clicked.
  */
 Blockly.WorkspaceSvg.prototype.registerButtonCallback = function(key, func) {
-  goog.asserts.assert(goog.isFunction(func),
+  goog.asserts.assert(typeof func === 'function',
       'Button callbacks must be functions.');
   this.flyoutButtonCallbacks_[key] = func;
 };
@@ -2077,7 +2077,7 @@ Blockly.WorkspaceSvg.prototype.removeButtonCallback = function(key) {
  */
 Blockly.WorkspaceSvg.prototype.registerToolboxCategoryCallback = function(key,
     func) {
-  goog.asserts.assert(goog.isFunction(func),
+  goog.asserts.assert(typeof func === 'function',
       'Toolbox category callbacks must be functions.');
   this.toolboxCategoryCallbacks_[key] = func;
 };
