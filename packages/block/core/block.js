@@ -176,7 +176,7 @@ Blockly.Block = function(workspace, prototypeName, opt_id) {
     var prototype = Blockly.Blocks[prototypeName];
     goog.asserts.assertObject(prototype,
         'Error: Unknown block type "%s".', prototypeName);
-    goog.mixin(this, prototype);
+    Object.assign(this, prototype);
   }
 
   workspace.addTopBlock(this);
@@ -1375,7 +1375,7 @@ Blockly.Block.prototype.mixin = function(mixinObj, opt_disableCheck) {
         JSON.stringify(overwrites));
     }
   }
-  goog.mixin(this, mixinObj);
+  Object.assign(this, mixinObj);
 };
 
 /**
