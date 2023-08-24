@@ -76,7 +76,7 @@ function buildCompressedBlockly() {
         './node_modules/google-closure-library/third_party/closure/goog/**/**/*.js'
     ], {base: './'})
         .pipe(compile({
-            dependency_mode: 'STRICT',
+            dependency_mode: 'PRUNE',
             entry_point: './core/blockly.js',
             rewrite_polyfills: false,
             define: 'goog.DEBUG=false'
