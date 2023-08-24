@@ -72,7 +72,8 @@ function buildCompressedBlockly() {
     return gulp.src([
         './core/**/**/*.js',
         '!./core/block_render_svg_horizontal.js',
-        './node_modules/google-closure-library/closure/goog/**/**/*.js'
+        './node_modules/google-closure-library/closure/goog/**/**/*.js',
+        './node_modules/google-closure-library/third_party/closure/goog/**/**/*.js'
     ], {base: './'})
         .pipe(compile({
             dependency_mode: 'STRICT',
@@ -188,7 +189,8 @@ if (isNodeJS) {
 function buildUncompressed(callback) {
     const files = glob.globSync([
         './core/**/**/*.js',
-        './node_modules/google-closure-library/closure/goog/**/**/*.js'
+        './node_modules/google-closure-library/closure/goog/**/**/*.js',
+        './node_modules/google-closure-library/third_party/closure/goog/**/**/*.js'
     ], {
         ignore: '**/block_render_svg_horizontal.js'
     });
