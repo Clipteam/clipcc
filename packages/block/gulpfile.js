@@ -13,6 +13,7 @@ gulp.replace = require('gulp-replace');
 gulp.rename = require('gulp-rename');
 const glob = require('glob');
 const fs = require('fs');
+const argv = require('yargs').argv;
 const closureCompiler = require('google-closure-compiler').gulp();
 const closureDeps = require('google-closure-deps');
 
@@ -51,16 +52,108 @@ function removeBlocklyBlocks() {
 }
 
 /**
+ * Closure Compiler diagnostic groups we want to be treated as errors.
+ * These are effected when the --debug or --strict flags are passed.
+ * For a full list of Closure Compiler groups, look in the source here:
+ * https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/DiagnosticGroups.java#L117
+ */
+const JSCOMP_ERROR = [
+    'checkDebuggerStatement',
+    'checkPrototypalTypes',
+    'checkRegExp',
+    // 'checkTypes', // Disabled
+    // 'checkVars', // Warning, needs to be fixed
+    'conformanceViolations',
+    'const',
+    'constantProperty',
+    'deprecated',
+    'deprecatedAnnotations',
+    'duplicateMessage',
+    'es5Strict',
+    'externsValidation',
+    // 'extraRequire', // Warning
+    'functionParams',
+    'globalThis',
+    'invalidCasts',
+    'misplacedTypeAnnotation',
+    'missingOverride',
+    'missingPolyfill',
+    'missingProperties',
+    'missingProvide',
+    // 'missingRequire', // Warning, needs to be fixed
+    'missingReturn',
+    // 'missingSourcesWarnings', // Warning
+    'moduleLoad',
+    'moduleImport',
+    'msgDescriptions',
+    // 'nonStandardJsDocs', // Warning
+    'partialAlias',
+    // 'reportUnknownTypes', // Disabled
+    // 'strictCheckTypes', // --strict
+    // 'strictMissingProperties', // --strict
+    'strictModuleChecks',
+    'strictModuleDepCheck',
+    // 'strictPrimitiveOperators', // --strict
+    'suspiciousCode',
+    'typeInvalidation',
+    'undefinedVars',
+    'underscore',
+    'unknownDefines',
+    'unusedLocalVariables',
+    'unusedPrivateMembers',
+    'uselessCode',
+    'untranspilableFeatures',
+    'visibility'
+];
+
+/**
+ * Closure Compiler diagnostic groups we want to be treated as warnings.
+ * These are effected when the --debug or --strict flags are passed.
+ */
+const JSCOMP_WARNING = [
+    'checkVars',
+    'extraRequire',
+    'missingRequire',
+    'missingSourcesWarnings',
+    'nonStandardJsDocs'
+];
+
+/**
+ * Closure Compiler diagnostic groups we want to be ignored. These
+ * suppressions are always effected by default.
+ */
+const JSCOMP_OFF = [
+    'checkTypes',
+    'reportUnknownTypes'
+];
+
+/**
  * Helper for calling closure compiler.
  * @param {Object=} compilerOptions Additional options for closure compiler.
+ * @param {boolean=} debug Whether compile in debug mode.
+ * @param {boolean=} strict Whether compile in strict mode.
  */
-function compile(compilerOptions) {
+function compile(compilerOptions, debug, strict) {
     const options = {
         compilation_level: 'SIMPLE',
+        warning_level: (debug || strict) ? 'VERBOSE' : 'DEFAULT',
         language_in: 'ECMASCRIPT_2017',
         language_out: 'ECMASCRIPT5_STRICT',
         hide_warnings_for: 'node_modules',
+        jscomp_off: [...JSCOMP_OFF]
     };
+
+    if (debug || strict) {
+        options.jscomp_error = [...JSCOMP_ERROR];
+        options.jscomp_warning = [...JSCOMP_WARNING];
+        if (strict) {
+            options.jscomp_error.push(
+                'strictCheckTypes',
+                'strictMissingProperties',
+                'strictPrimitiveOperators'
+            );
+        }
+    }
 
     return closureCompiler({...options, ...compilerOptions});
 }
@@ -80,7 +173,7 @@ function buildCompressedBlockly() {
             entry_point: './core/blockly.js',
             rewrite_polyfills: false,
             define: 'goog.DEBUG=false'
-        }))
+        }, argv.debug, argv.strict))
         .pipe(trimLicense())
         .pipe(gulp.rename('blockly_compressed_vertical.js'))
         .pipe(gulp.dest('./'));
@@ -96,7 +189,7 @@ function buildCompressedBlock() {
         './core/colours.js',
         './core/constants.js'
     ], {base: './'})
-        .pipe(compile())
+        .pipe(compile({}, argv.debug, argv.strict))
         .pipe(trimLicense())
         .pipe(removeBlocklyBlocks())
         .pipe(gulp.rename('blocks_compressed_vertical.js'))
@@ -113,7 +206,7 @@ function buildCompressedCommonBlock() {
         './core/colours.js',
         './core/constants.js'
     ], {base: './'})
-        .pipe(compile())
+        .pipe(compile({}, argv.debug, argv.strict))
         .pipe(trimLicense())
         .pipe(removeBlocklyBlocks())
         .pipe(gulp.rename('blocks_compressed.js'))
