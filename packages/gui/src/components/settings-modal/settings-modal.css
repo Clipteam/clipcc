@@ -5,6 +5,11 @@
     margin-top: 5vh; /* reduce top margin */
 }
 
+.group {
+    display: flex;
+    align-items: center;
+}
+
 .tag {
     margin: 0 0.5rem;
     padding: 0.2rem 0.5rem;

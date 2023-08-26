@@ -154,6 +154,9 @@ class VirtualMachine extends EventEmitter {
         this.runtime.on(Runtime.HAS_CLOUD_DATA_UPDATE, hasCloudData => {
             this.emit(Runtime.HAS_CLOUD_DATA_UPDATE, hasCloudData);
         });
+        this.runtime.on(Runtime.STAGE_SIZE_UPDATE, (width, height) => {
+            this.emit(Runtime.STAGE_SIZE_UPDATE, width, height);
+        });
 
         this.extensionManager = new ExtensionManager(this.runtime);
 
@@ -233,6 +236,55 @@ class VirtualMachine extends EventEmitter {
         if (options.hasOwnProperty('accurateCoordinates') && this.runtime.renderer) {
             this.runtime.renderer.setAccurateCoordinates(options.accurateCoordinates);
         }
+    }
+
+    /**
+     * Set stage size.
+     * @param {number} width Width of the stage in pixels.
+     * @param {number} height Height of the stage in pixels.
+     */
+    setStageSize (width, height) {
+        const deltaX = width - this.runtime.stageWidth;
+        const deltaY = width - this.runtime.stageHeight;
+        if (this.runtime._monitorState.size > 0) {
+            const offsetX = deltaX / 2;
+            const offsetY = deltaY / 2;
+            for (const monitor of this.runtime._monitorState.valueSeq()) {
+                const newMonitor = monitor
+                    .set('x', monitor.get('x') + offsetX)
+                    .set('y', monitor.get('y') + offsetY);
+                this.runtime.requestUpdateMonitor(newMonitor);
+            }
+            this.runtime.emit(Runtime.MONITORS_UPDATE, this._monitorState);
+        }
+        this.runtime.stageWidth = width;
+        this.runtime.stageHeight = height;
+        
+        if (this.runtime.renderer) {
+            this.runtime.renderer.setStageSize(
+                -width / 2,
+                width / 2,
+                -height / 2,
+                height / 2
+            );
+        }
+        this.emit(Runtime.STAGE_SIZE_UPDATE, width, height);
+    }
+
+    /**
+     * Set stage width.
+     * @param {number} width Width of the stage in pixels.
+     */
+    setStageWidth (width) {
+        this.setStageSize(width, this.runtime.stageHeight);
+    }
+
+    /**
+     * Set stage height.
+     * @param {number} height Height of the stage in pixels.
+    */
+    setStageHeight (height) {
+        this.setStageSize(this.runtime.stageWidth, height);
     }
 
     /**
