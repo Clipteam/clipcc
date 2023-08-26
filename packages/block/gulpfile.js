@@ -17,7 +17,7 @@ const argv = require('yargs').argv;
 const closureCompiler = require('google-closure-compiler').gulp();
 const closureDeps = require('google-closure-deps');
 
-const LICENSE_REGEX = new RegExp(`/\\*
+const LICENSE_REGEX = new RegExp(`(/\\*
 
  [\\w ]+
 
@@ -35,7 +35,12 @@ const LICENSE_REGEX = new RegExp(`/\\*
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
-\\*/`, 'g');
+\\*/)|(\\/\\*\\*
+\\* @license
+\\* (Copyright \\d+ (Google LLC|Massachusetts Institute of Technology))
+( \\* All rights reserved.
+)? \\* SPDX-License-Identifier: Apache-2.0
+\\*\\/)`, 'g');
 
 /**
  * Helper for trimming down Apache License. (only Google's and MIT's)
