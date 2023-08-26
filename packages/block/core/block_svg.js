@@ -664,7 +664,7 @@ Blockly.BlockSvg.prototype.onMouseDown_ = function(e) {
  * @private
  */
 Blockly.BlockSvg.prototype.showHelp_ = function() {
-  var url = goog.isFunction(this.helpUrl) ? this.helpUrl() : this.helpUrl;
+  var url = typeof this.helpUrl === 'function' ? this.helpUrl() : this.helpUrl;
   if (url) {
     // @todo rewrite
     alert(url);
@@ -909,7 +909,7 @@ Blockly.BlockSvg.prototype.getCommentText = function() {
 Blockly.BlockSvg.prototype.setCommentText = function(text, commentId,
     commentX, commentY, minimized) {
   var changedState = false;
-  if (goog.isString(text)) {
+  if (typeof text === 'string') {
     if (!this.comment) {
       this.comment = new Blockly.ScratchBlockComment(this, text, commentId,
           commentX, commentY, minimized);
@@ -925,7 +925,7 @@ Blockly.BlockSvg.prototype.setCommentText = function(text, commentId,
   }
   if (changedState && this.rendered) {
     this.render();
-    if (goog.isString(text)) {
+    if (typeof text === 'string') {
       this.comment.setVisible(true);
     }
     // Adding or removing a comment icon will cause the block to change shape.
@@ -974,7 +974,7 @@ Blockly.BlockSvg.prototype.setWarningText = function(text, opt_id) {
   }
 
   var changedState = false;
-  if (goog.isString(text)) {
+  if (typeof text === 'string') {
     if (!this.warning) {
       this.warning = new Blockly.Warning(this);
       changedState = true;

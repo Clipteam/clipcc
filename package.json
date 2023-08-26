@@ -13,6 +13,7 @@
     "nohoist": [
       "**/google-closure-library",
       "**/google-closure-compiler",
+      "**/google-closure-deps",
       "**/google-closure-cmd"
     ]
   },
