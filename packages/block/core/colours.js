@@ -136,8 +136,8 @@ Blockly.Colours.overrideColours = function(colours) {
   // Colour overrides provided by the injection
   if (colours) {
     for (var colourProperty in colours) {
-      if (colours.hasOwnProperty(colourProperty) &&
-          Blockly.Colours.hasOwnProperty(colourProperty)) {
+      if (Object.prototype.hasOwnProperty.call(colours, colourProperty) &&
+          Object.prototype.hasOwnProperty.call(Blockly.Colours, colourProperty)) {
         // If a property is in both colours option and Blockly.Colours,
         // set the Blockly.Colours value to the override.
         // Override Blockly category color object properties with those
@@ -145,8 +145,8 @@ Blockly.Colours.overrideColours = function(colours) {
         var colourPropertyValue = colours[colourProperty];
         if (goog.isObject(colourPropertyValue)) {
           for (var colourSequence in colourPropertyValue) {
-            if (colourPropertyValue.hasOwnProperty(colourSequence) &&
-              Blockly.Colours[colourProperty].hasOwnProperty(colourSequence)) {
+            if (Object.prototype.hasOwnProperty.call(colourPropertyValue, colourSequence) &&
+                Object.prototype.hasOwnProperty.call(Blockly.Colours[colourProperty], colourSequence)) {
               Blockly.Colours[colourProperty][colourSequence] =
                   colourPropertyValue[colourSequence];
             }

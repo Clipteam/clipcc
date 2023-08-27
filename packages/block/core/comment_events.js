@@ -190,13 +190,14 @@ Blockly.Events.CommentChange.prototype.run = function(forward) {
   }
   var contents = forward ? this.newContents_ : this.oldContents_;
 
-  if (contents.hasOwnProperty('minimized')) {
+  if (Object.prototype.hasOwnProperty.call(contents, 'minimized')) {
     comment.setMinimized(contents.minimized);
   }
-  if (contents.hasOwnProperty('width') && contents.hasOwnProperty('height')) {
+  if (Object.prototype.hasOwnProperty.call(contents, 'width') &&
+      Object.prototype.hasOwnProperty.call(contents, 'height')) {
     comment.setSize(contents.width, contents.height);
   }
-  if (contents.hasOwnProperty('text')) {
+  if (Object.prototype.hasOwnProperty.call(contents, 'text')) {
     comment.setText(contents.text);
   }
 };
