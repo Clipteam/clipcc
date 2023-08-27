@@ -68,7 +68,7 @@ goog.inherits(Blockly.FlyoutExtensionCategoryHeader, Blockly.FlyoutButton);
  * @return {!Element} The SVG group.
  */
 Blockly.FlyoutExtensionCategoryHeader.prototype.createDom = function() {
-  var cssClass = 'blocklyFlyoutLabel';
+  const cssClass = 'blocklyFlyoutLabel';
 
   this.svgGroup_ = Blockly.utils.createSvgElement('g', {'class': cssClass},
       this.workspace_.getCanvas());
@@ -77,12 +77,12 @@ Blockly.FlyoutExtensionCategoryHeader.prototype.createDom = function() {
 
   this.refreshStatus();
 
-  var statusButtonWidth = 30;
-  var marginX = 20;
-  var marginY = 5;
-  var touchPadding = 16;
+  const statusButtonWidth = 30;
+  const marginX = 20;
+  const marginY = 5;
+  const touchPadding = 16;
 
-  var statusButtonX = this.workspace_.RTL ? (marginX - this.flyoutWidth_ + statusButtonWidth) :
+  const statusButtonX = this.workspace_.RTL ? (marginX - this.flyoutWidth_ + statusButtonWidth) :
       (this.flyoutWidth_ - statusButtonWidth - marginX) / this.workspace_.scale;
 
   if (this.imageSrc_) {
@@ -121,8 +121,8 @@ Blockly.FlyoutExtensionCategoryHeader.prototype.createDom = function() {
  * Set the image on the status button using a status string.
  */
 Blockly.FlyoutExtensionCategoryHeader.prototype.refreshStatus = function() {
-  var status = Blockly.FlyoutExtensionCategoryHeader.getExtensionState(this.extensionId);
-  var basePath = Blockly.mainWorkspace.options.pathToMedia;
+  const status = Blockly.FlyoutExtensionCategoryHeader.getExtensionState(this.extensionId);
+  const basePath = Blockly.mainWorkspace.options.pathToMedia;
   if (status == Blockly.StatusButtonState.READY) {
     this.setImageSrc(basePath + 'status-ready.svg');
   }

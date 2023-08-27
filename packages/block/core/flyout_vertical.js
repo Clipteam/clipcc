@@ -159,7 +159,7 @@ Blockly.VerticalFlyout.prototype.createDom = function(tagName) {
     </defs>
   */
   this.defs_ = Blockly.utils.createSvgElement('defs', {}, this.svgGroup_);
-  var clipPath = Blockly.utils.createSvgElement('clipPath',
+  const clipPath = Blockly.utils.createSvgElement('clipPath',
       {'id':'blocklyBlockMenuClipPath'}, this.defs_);
   this.clipRect_ = Blockly.utils.createSvgElement('rect',
       {
@@ -183,8 +183,8 @@ Blockly.VerticalFlyout.prototype.createDom = function(tagName) {
  * box containing the elements (blocks, buttons, labels) in the flyout.
  */
 Blockly.VerticalFlyout.prototype.getContentBoundingBox_ = function() {
-  var contentBounds = this.workspace_.getBlocksBoundingBox();
-  var bounds = {
+  const contentBounds = this.workspace_.getBlocksBoundingBox();
+  const bounds = {
     xMin: contentBounds.x,
     yMin: contentBounds.y,
     xMax: contentBounds.x + contentBounds.width,
@@ -192,9 +192,9 @@ Blockly.VerticalFlyout.prototype.getContentBoundingBox_ = function() {
   };
 
   // Check if any of the buttons/labels are outside the blocks bounding box.
-  for (var i = 0; i < this.buttons_.length; i ++) {
-    var button = this.buttons_[i];
-    var buttonPosition = button.getPosition();
+  for (let i = 0; i < this.buttons_.length; i ++) {
+    const button = this.buttons_[i];
+    const buttonPosition = button.getPosition();
     if (buttonPosition.x  < bounds.xMin) {
       bounds.xMin = buttonPosition.x;
     }
@@ -242,31 +242,31 @@ Blockly.VerticalFlyout.prototype.getMetrics_ = function() {
     return null;
   }
 
-  var optionBox = this.getContentBoundingBox_();
+  const optionBox = this.getContentBoundingBox_();
 
   // Padding for the end of the scrollbar.
-  var absoluteTop = this.SCROLLBAR_PADDING;
-  var absoluteLeft = 0;
+  const absoluteTop = this.SCROLLBAR_PADDING;
+  const absoluteLeft = 0;
 
-  var viewHeight = this.height_ - 2 * this.SCROLLBAR_PADDING;
-  var viewWidth = this.getWidth() - this.SCROLLBAR_PADDING;
+  const viewHeight = this.height_ - 2 * this.SCROLLBAR_PADDING;
+  const viewWidth = this.getWidth() - this.SCROLLBAR_PADDING;
 
   // Add padding to the bottom of the flyout, so we can scroll to the top of
   // the last category.
-  var contentHeight = optionBox.height * this.workspace_.scale;
+  const contentHeight = optionBox.height * this.workspace_.scale;
   this.recordCategoryScrollPositions_();
-  var bottomPadding = this.MARGIN;
+  let bottomPadding = this.MARGIN;
   if (this.categoryScrollPositions.length > 0) {
-    var lastLabel = this.categoryScrollPositions[
+    const lastLabel = this.categoryScrollPositions[
         this.categoryScrollPositions.length - 1];
-    var lastPos = lastLabel.position * this.workspace_.scale;
-    var lastCategoryHeight = contentHeight - lastPos;
+    const lastPos = lastLabel.position * this.workspace_.scale;
+    const lastCategoryHeight = contentHeight - lastPos;
     if (lastCategoryHeight < viewHeight) {
       bottomPadding = viewHeight - lastCategoryHeight;
     }
   }
 
-  var metrics = {
+  const metrics = {
     viewHeight: viewHeight,
     viewWidth: viewWidth,
     contentHeight: contentHeight + bottomPadding,
@@ -289,7 +289,7 @@ Blockly.VerticalFlyout.prototype.getMetrics_ = function() {
  * @private
  */
 Blockly.VerticalFlyout.prototype.setMetrics_ = function(xyRatio) {
-  var metrics = this.getMetrics_();
+  const metrics = this.getMetrics_();
   // This is a fix to an apparent race condition.
   if (!metrics) {
     return;
@@ -315,7 +315,7 @@ Blockly.VerticalFlyout.prototype.position = function() {
   if (!this.isVisible()) {
     return;
   }
-  var targetWorkspaceMetrics = this.targetWorkspace_.getMetrics();
+  const targetWorkspaceMetrics = this.targetWorkspace_.getMetrics();
   if (!targetWorkspaceMetrics) {
     // Hidden components will return null.
     return;
@@ -326,8 +326,8 @@ Blockly.VerticalFlyout.prototype.position = function() {
   this.width_ = this.getWidth();
 
   if (this.parentToolbox_) {
-    var toolboxWidth = this.parentToolbox_.getWidth();
-    var categoryWidth = toolboxWidth - this.width_;
+    const toolboxWidth = this.parentToolbox_.getWidth();
+    const categoryWidth = toolboxWidth - this.width_;
     var x = this.toolboxPosition_ == Blockly.TOOLBOX_AT_RIGHT ?
         targetWorkspaceMetrics.viewWidth : categoryWidth;
     var y = 0;
@@ -344,7 +344,7 @@ Blockly.VerticalFlyout.prototype.position = function() {
 
   this.svgGroup_.setAttribute("width", this.width_);
   this.svgGroup_.setAttribute("height", this.height_);
-  var transform = 'translate(' + x + 'px,' + y + 'px)';
+  const transform = 'translate(' + x + 'px,' + y + 'px)';
   Blockly.utils.setCssTransform(this.svgGroup_, transform);
 
   // Update the scrollbar (if one exists).
@@ -368,9 +368,9 @@ Blockly.VerticalFlyout.prototype.position = function() {
  * @private
  */
 Blockly.VerticalFlyout.prototype.setBackgroundPath_ = function(width, height) {
-  var atRight = this.toolboxPosition_ == Blockly.TOOLBOX_AT_RIGHT;
+  const atRight = this.toolboxPosition_ == Blockly.TOOLBOX_AT_RIGHT;
   // Decide whether to start on the left or right.
-  var path = ['M ' + 0 + ',0'];
+  const path = ['M ' + 0 + ',0'];
   // Top.
   path.push('h', width);
   // Rounded corner.
@@ -417,9 +417,9 @@ Blockly.VerticalFlyout.prototype.scrollTo = function(pos) {
 
   // Make sure not to set the scroll target below the lowest point we can
   // scroll to, i.e. the content height minus the view height
-  var metrics = this.workspace_.getMetrics();
-  var contentHeight = metrics.contentHeight;
-  var viewHeight = metrics.viewHeight;
+  const metrics = this.workspace_.getMetrics();
+  const contentHeight = metrics.contentHeight;
+  const viewHeight = metrics.viewHeight;
   this.scrollTarget = Math.min(this.scrollTarget, contentHeight - viewHeight);
 
   this.stepScrollAnimation();
@@ -434,7 +434,7 @@ Blockly.VerticalFlyout.prototype.wheel_ = function(e) {
   // remove scrollTarget to stop auto scrolling in stepScrollAnimation
   this.scrollTarget = null;
 
-  var delta = e.deltaY;
+  let delta = e.deltaY;
 
   if (delta) {
     // Firefox's mouse wheel deltas are a tenth that of Chrome/Safari.
@@ -442,9 +442,9 @@ Blockly.VerticalFlyout.prototype.wheel_ = function(e) {
     if (goog.userAgent.GECKO && (e.deltaMode === 1)) {
       delta *= 10;
     }
-    var metrics = this.getMetrics_();
-    var pos = (metrics.viewTop - metrics.contentTop) + delta;
-    var limit = metrics.contentHeight - metrics.viewHeight;
+    const metrics = this.getMetrics_();
+    let pos = (metrics.viewTop - metrics.contentTop) + delta;
+    const limit = metrics.contentHeight - metrics.viewHeight;
     pos = Math.min(pos, limit);
     pos = Math.max(pos, 0);
     this.scrollbar_.set(pos);
@@ -467,11 +467,11 @@ Blockly.VerticalFlyout.prototype.clearOldBlocks_ = function() {
   Blockly.VerticalFlyout.superClass_.clearOldBlocks_.call(this);
 
   // Do the same for checkboxes.
-  for (var checkboxId in this.checkboxes_) {
+  for (const checkboxId in this.checkboxes_) {
     if (!Object.prototype.hasOwnProperty.call(this.checkboxes_, checkboxId)) {
       continue;
     }
-    var checkbox = this.checkboxes_[checkboxId];
+    const checkbox = this.checkboxes_[checkboxId];
     checkbox.block.flyoutCheckbox = null;
     goog.dom.removeNode(checkbox.svgRoot);
   }
@@ -503,30 +503,30 @@ Blockly.VerticalFlyout.prototype.addBlockListeners_ = function(root, block,
  * @private
  */
 Blockly.VerticalFlyout.prototype.layout_ = function(contents, gaps) {
-  var margin = this.MARGIN;
-  var flyoutWidth = this.getWidth() / this.workspace_.scale;
-  var cursorX = margin;
-  var cursorY = margin;
+  const margin = this.MARGIN;
+  const flyoutWidth = this.getWidth() / this.workspace_.scale;
+  const cursorX = margin;
+  let cursorY = margin;
 
   for (var i = 0, item; item = contents[i]; i++) {
     if (item.type == 'block') {
-      var block = item.block;
-      var allBlocks = block.getDescendants(false);
+      const block = item.block;
+      const allBlocks = block.getDescendants(false);
       for (var j = 0, child; child = allBlocks[j]; j++) {
         // Mark blocks as being inside a flyout.  This is used to detect and
         // prevent the closure of the flyout if the user right-clicks on such a
         // block.
         child.isInFlyout = true;
       }
-      var root = block.getSvgRoot();
-      var blockHW = block.getHeightWidth();
+      const root = block.getSvgRoot();
+      const blockHW = block.getHeightWidth();
 
       // Figure out where the block goes, taking into account its size, whether
       // we're in RTL mode, and whether it has a checkbox.
-      var oldX = block.getRelativeToSurfaceXY().x;
-      var newX = flyoutWidth - this.MARGIN;
+      const oldX = block.getRelativeToSurfaceXY().x;
+      const newX = flyoutWidth - this.MARGIN;
 
-      var moveX = this.RTL ? newX - oldX : margin;
+      let moveX = this.RTL ? newX - oldX : margin;
       if (block.hasCheckboxInFlyout()) {
         this.createCheckbox_(block, cursorX, cursorY, blockHW);
         if (this.RTL) {
@@ -541,14 +541,14 @@ Blockly.VerticalFlyout.prototype.layout_ = function(contents, gaps) {
       block.moveBy(moveX,
           cursorY + (block.startHat_ ? Blockly.BlockSvg.START_HAT_HEIGHT : 0));
 
-      var rect = this.createRect_(block, this.RTL ? moveX - blockHW.width : moveX, cursorY, blockHW, i);
+      const rect = this.createRect_(block, this.RTL ? moveX - blockHW.width : moveX, cursorY, blockHW, i);
 
       this.addBlockListeners_(root, block, rect);
 
       cursorY += blockHW.height + gaps[i] + (block.startHat_ ? Blockly.BlockSvg.START_HAT_HEIGHT : 0);
     } else if (item.type == 'button') {
-      var button = item.button;
-      var buttonSvg = button.createDom();
+      const button = item.button;
+      const buttonSvg = button.createDom();
       if (this.RTL) {
         button.moveTo(flyoutWidth - this.MARGIN - button.width, cursorY);
       } else {
@@ -583,7 +583,7 @@ Blockly.VerticalFlyout.prototype.createRect_ = function(block, x, y,
     blockHW, index) {
   // Create an invisible rectangle under the block to act as a button.  Just
   // using the block as a button is poor, since blocks have holes in them.
-  var rect = Blockly.utils.createSvgElement('rect',
+  const rect = Blockly.utils.createSvgElement('rect',
       {
         'fill-opacity': 0,
         'x': x,
@@ -612,13 +612,13 @@ Blockly.VerticalFlyout.prototype.createRect_ = function(block, x, y,
  */
 Blockly.VerticalFlyout.prototype.createCheckbox_ = function(block, cursorX,
     cursorY, blockHW) {
-  var checkboxState = Blockly.VerticalFlyout.getCheckboxState(block.id);
-  var svgRoot = block.getSvgRoot();
-  var extraSpace = this.CHECKBOX_SIZE + this.CHECKBOX_MARGIN;
-  var width = this.RTL ? this.getWidth() / this.workspace_.scale - extraSpace : cursorX;
-  var height = cursorY + blockHW.height / 2 - this.CHECKBOX_SIZE / 2;
-  var touchMargin = this.CHECKBOX_TOUCH_PADDING;
-  var checkboxGroup = Blockly.utils.createSvgElement('g',
+  const checkboxState = Blockly.VerticalFlyout.getCheckboxState(block.id);
+  const svgRoot = block.getSvgRoot();
+  const extraSpace = this.CHECKBOX_SIZE + this.CHECKBOX_MARGIN;
+  const width = this.RTL ? this.getWidth() / this.workspace_.scale - extraSpace : cursorX;
+  const height = cursorY + blockHW.height / 2 - this.CHECKBOX_SIZE / 2;
+  const touchMargin = this.CHECKBOX_TOUCH_PADDING;
+  const checkboxGroup = Blockly.utils.createSvgElement('g',
       {
         'transform': 'translate(' + width + ', ' + height + ')'
       }, null);
@@ -643,7 +643,7 @@ Blockly.VerticalFlyout.prototype.createCheckbox_ = function(block, cursorX,
         'height': this.CHECKBOX_SIZE + 2 * touchMargin,
         'width': this.CHECKBOX_SIZE + 2 * touchMargin,
       }, checkboxGroup);
-  var checkboxObj = {svgRoot: checkboxGroup, clicked: checkboxState, block: block};
+  const checkboxObj = {svgRoot: checkboxGroup, clicked: checkboxState, block: block};
 
   if (checkboxState) {
     Blockly.utils.addClass((checkboxObj.svgRoot), 'checked');
@@ -678,12 +678,12 @@ Blockly.VerticalFlyout.prototype.checkboxClicked_ = function(checkboxObj) {
  * @public
  */
 Blockly.VerticalFlyout.prototype.setCheckboxState = function(blockId, value) {
-  var checkboxObj = this.checkboxes_[blockId];
+  const checkboxObj = this.checkboxes_[blockId];
   if (!checkboxObj || checkboxObj.clicked === value) {
     return;
   }
 
-  var oldValue = checkboxObj.clicked;
+  const oldValue = checkboxObj.clicked;
   checkboxObj.clicked = value;
 
   if (checkboxObj.clicked) {
@@ -706,13 +706,13 @@ Blockly.VerticalFlyout.prototype.setCheckboxState = function(blockId, value) {
  * @package
  */
 Blockly.VerticalFlyout.prototype.isDragTowardWorkspace = function(currentDragDeltaXY) {
-  var dx = currentDragDeltaXY.x;
-  var dy = currentDragDeltaXY.y;
+  const dx = currentDragDeltaXY.x;
+  const dy = currentDragDeltaXY.y;
   // Direction goes from -180 to 180, with 0 toward the right and 90 on top.
-  var dragDirection = Math.atan2(dy, dx) / Math.PI * 180;
+  const dragDirection = Math.atan2(dy, dx) / Math.PI * 180;
 
-  var draggingTowardWorkspace = false;
-  var range = this.dragAngleRange_;
+  let draggingTowardWorkspace = false;
+  const range = this.dragAngleRange_;
   if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_LEFT) {
     // Vertical at left.
     if (dragDirection < range && dragDirection > -range) {
@@ -741,15 +741,15 @@ Blockly.VerticalFlyout.prototype.getClientRect = function() {
     return null;
   }
 
-  var flyoutRect = this.svgGroup_.getBoundingClientRect();
+  const flyoutRect = this.svgGroup_.getBoundingClientRect();
   // BIG_NUM is offscreen padding so that blocks dragged beyond the shown flyout
   // area are still deleted.  Must be larger than the largest screen size,
   // but be smaller than half Number.MAX_SAFE_INTEGER (not available on IE).
-  var BIG_NUM = 1000000000;
-  var x = flyoutRect.left;
-  var y = flyoutRect.top;
-  var width = flyoutRect.width;
-  var height = flyoutRect.height;
+  const BIG_NUM = 1000000000;
+  const x = flyoutRect.left;
+  const y = flyoutRect.top;
+  const width = flyoutRect.width;
+  const height = flyoutRect.height;
 
   if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_LEFT) {
     return new goog.math.Rect(x - BIG_NUM, y, BIG_NUM + width, height);

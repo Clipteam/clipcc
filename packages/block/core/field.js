@@ -102,7 +102,7 @@ Blockly.Field.register = function(type, fieldClass) {
  * @package
  */
 Blockly.Field.fromJson = function(options) {
-  var fieldClass = Blockly.Field.TYPE_MAP_[options['type']];
+  const fieldClass = Blockly.Field.TYPE_MAP_[options['type']];
   if (fieldClass) {
     return fieldClass.fromJson(options);
   }
@@ -241,8 +241,8 @@ Blockly.Field.prototype.init = function() {
     }
   }
   // Adjust X to be flipped for RTL. Position is relative to horizontal start of source block.
-  var size = this.getSize();
-  var fieldX = (this.sourceBlock_.RTL) ? -size.width / 2 : size.width / 2;
+  const size = this.getSize();
+  const fieldX = (this.sourceBlock_.RTL) ? -size.width / 2 : size.width / 2;
   /** @type {!Element} */
   this.textElement_ = Blockly.utils.createSvgElement('text',
       {
@@ -289,7 +289,7 @@ Blockly.Field.prototype.dispose = function() {
  * Add or remove the UI indicating if this field is editable or not.
  */
 Blockly.Field.prototype.updateEditable = function() {
-  var group = this.fieldGroup_;
+  const group = this.fieldGroup_;
   if (!this.EDITABLE || !group) {
     return;
   }
@@ -332,7 +332,7 @@ Blockly.Field.prototype.setVisible = function(visible) {
     return;
   }
   this.visible_ = visible;
-  var root = this.getSvgRoot();
+  const root = this.getSvgRoot();
   if (root) {
     root.style.display = visible ? 'block' : 'none';
     this.render_();
@@ -394,16 +394,16 @@ Blockly.Field.prototype.classValidator = function(text) {
  * @return {?string} Revised text, or null if invalid.
  */
 Blockly.Field.prototype.callValidator = function(text) {
-  var classResult = this.classValidator(text);
+  const classResult = this.classValidator(text);
   if (classResult === null) {
     // Class validator rejects value.  Game over.
     return null;
   } else if (classResult !== undefined) {
     text = classResult;
   }
-  var userValidator = this.getValidator();
+  const userValidator = this.getValidator();
   if (userValidator) {
-    var userResult = userValidator.call(this, text);
+    const userResult = userValidator.call(this, text);
     if (userResult === null) {
       // User validator rejects value.  Game over.
       return null;
@@ -435,7 +435,7 @@ Blockly.Field.prototype.render_ = function() {
     this.updateWidth();
 
     // Update text centering, based on newly calculated width.
-    var centerTextX = (this.size_.width - this.arrowWidth_) / 2;
+    let centerTextX = (this.size_.width - this.arrowWidth_) / 2;
     if (this.sourceBlock_.RTL) {
       centerTextX += this.arrowWidth_;
     }
@@ -445,12 +445,12 @@ Blockly.Field.prototype.render_ = function() {
     // visible field (FIELD_WIDTH), center it there instead,
     // unless there is a drop-down arrow.
     if (this.sourceBlock_.isShadow() && !this.positionArrow) {
-      var minOffset = Blockly.BlockSvg.FIELD_WIDTH / 2;
+      const minOffset = Blockly.BlockSvg.FIELD_WIDTH / 2;
       if (this.sourceBlock_.RTL) {
         // X position starts at the left edge of the block, in both RTL and LTR.
         // First offset by the width of the block to move to the right edge,
         // and then subtract to move to the same position as LTR.
-        var minCenter = this.size_.width - minOffset;
+        const minCenter = this.size_.width - minOffset;
         centerTextX = Math.min(minCenter, centerTextX);
       } else {
         // (width / 2) should exceed Blockly.BlockSvg.FIELD_WIDTH / 2
@@ -477,7 +477,7 @@ Blockly.Field.prototype.render_ = function() {
  **/
 Blockly.Field.prototype.updateWidth = function() {
   // Calculate width of field
-  var width = Blockly.Field.getCachedWidth(this.textElement_);
+  let width = Blockly.Field.getCachedWidth(this.textElement_);
 
   // Add padding to left and right of text.
   if (this.EDITABLE) {
@@ -506,8 +506,8 @@ Blockly.Field.prototype.updateWidth = function() {
  * @return {number} Width of element.
  */
 Blockly.Field.getCachedWidth = function(textElement) {
-  var key = textElement.textContent + '\n' + textElement.className.baseVal;
-  var width;
+  const key = textElement.textContent + '\n' + textElement.className.baseVal;
+  let width;
 
   // Return the cached width if it exists.
   if (Blockly.Field.cacheWidths_) {
@@ -580,10 +580,10 @@ Blockly.Field.prototype.getSize = function() {
  * @private
  */
 Blockly.Field.prototype.getScaledBBox_ = function() {
-  var size = this.getSize();
-  var scaledHeight = size.height * this.sourceBlock_.workspace.scale;
-  var scaledWidth = size.width * this.sourceBlock_.workspace.scale;
-  var xy = this.getAbsoluteXY_();
+  const size = this.getSize();
+  const scaledHeight = size.height * this.sourceBlock_.workspace.scale;
+  const scaledWidth = size.width * this.sourceBlock_.workspace.scale;
+  const xy = this.getAbsoluteXY_();
   return {
     top: xy.y,
     bottom: xy.y + scaledHeight,
@@ -599,7 +599,7 @@ Blockly.Field.prototype.getScaledBBox_ = function() {
  * @private
  */
 Blockly.Field.prototype.getDisplayText_ = function() {
-  var text = this.text_;
+  let text = this.text_;
   if (!text) {
     // Prevent the field from disappearing if empty.
     return Blockly.Field.NBSP;
@@ -673,7 +673,7 @@ Blockly.Field.prototype.updateTextNode_ = function() {
     // Not rendered yet.
     return;
   }
-  var text = this.text_;
+  let text = this.text_;
   if (text.length > this.maxDisplayLength) {
     // Truncate displayed string and add an ellipsis ('...').
     text = text.substring(0, this.maxDisplayLength - 2) + '\u2026';
@@ -698,7 +698,7 @@ Blockly.Field.prototype.updateTextNode_ = function() {
     // Prevent the field from disappearing if empty.
     text = Blockly.Field.NBSP;
   }
-  var textNode = document.createTextNode(text);
+  const textNode = document.createTextNode(text);
   this.textElement_.appendChild(textNode);
 
   // Cached width is obsolete.  Clear it.
@@ -724,7 +724,7 @@ Blockly.Field.prototype.setValue = function(newValue) {
     // No change if null.
     return;
   }
-  var oldValue = this.getValue();
+  const oldValue = this.getValue();
   if (oldValue == newValue) {
     return;
   }
@@ -744,7 +744,7 @@ Blockly.Field.prototype.onMouseDown_ = function(e) {
   if (!this.sourceBlock_ || !this.sourceBlock_.workspace) {
     return;
   }
-  var gesture = this.sourceBlock_.workspace.getGesture(e);
+  const gesture = this.sourceBlock_.workspace.getGesture(e);
   if (gesture) {
     gesture.setStartField(this);
   }
@@ -773,7 +773,7 @@ Blockly.Field.prototype.setTooltip = function(_newTip) {
  * @private
  */
 Blockly.Field.prototype.getClickTarget_ = function() {
-  var nFields = 0;
+  let nFields = 0;
 
   for (var i = 0, input; input = this.sourceBlock_.inputList[i]; i++) {
     nFields += input.fieldRow.length;

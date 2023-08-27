@@ -91,7 +91,7 @@ Blockly.Warning.prototype.drawIcon_ = function(group) {
  * @private
  */
 Blockly.Warning.textToDom_ = function(text) {
-  var paragraph = /** @type {!SVGTextElement} */
+  const paragraph = /** @type {!SVGTextElement} */
       (Blockly.utils.createSvgElement(
           'text',
           {
@@ -100,11 +100,11 @@ Blockly.Warning.textToDom_ = function(text) {
           },
           null)
       );
-  var lines = text.split('\n');
-  for (var i = 0; i < lines.length; i++) {
-    var tspanElement = Blockly.utils.createSvgElement('tspan',
+  const lines = text.split('\n');
+  for (let i = 0; i < lines.length; i++) {
+    const tspanElement = Blockly.utils.createSvgElement('tspan',
         {'dy': '1em', 'x': Blockly.Bubble.BORDER_WIDTH}, paragraph);
-    var textNode = document.createTextNode(lines[i]);
+    const textNode = document.createTextNode(lines[i]);
     tspanElement.appendChild(textNode);
   }
   return paragraph;
@@ -123,14 +123,14 @@ Blockly.Warning.prototype.setVisible = function(visible) {
       new Blockly.Events.Ui(this.block_, 'warningOpen', !visible, visible));
   if (visible) {
     // Create the bubble to display all warnings.
-    var paragraph = Blockly.Warning.textToDom_(this.getText());
+    const paragraph = Blockly.Warning.textToDom_(this.getText());
     this.bubble_ = new Blockly.Bubble(
         /** @type {!Blockly.WorkspaceSvg} */ (this.block_.workspace),
         paragraph, this.block_.svgPath_, this.iconXY_, null, null);
     if (this.block_.RTL) {
       // Right-align the paragraph.
       // This cannot be done until the bubble is rendered on screen.
-      var maxWidth = paragraph.getBBox().width;
+      const maxWidth = paragraph.getBBox().width;
       for (var i = 0, textElement; textElement = paragraph.childNodes[i]; i++) {
         textElement.setAttribute('text-anchor', 'end');
         textElement.setAttribute('x', maxWidth + Blockly.Bubble.BORDER_WIDTH);
@@ -138,7 +138,7 @@ Blockly.Warning.prototype.setVisible = function(visible) {
     }
     this.updateColour();
     // Bump the warning into the right location.
-    var size = this.bubble_.getBubbleSize();
+    const size = this.bubble_.getBubbleSize();
     this.bubble_.setBubbleSize(size.width, size.height);
   } else {
     // Dispose of the bubble.
@@ -183,8 +183,8 @@ Blockly.Warning.prototype.setText = function(text, id) {
  * @return {string} All texts concatenated into one string.
  */
 Blockly.Warning.prototype.getText = function() {
-  var allWarnings = [];
-  for (var id in this.text_) {
+  const allWarnings = [];
+  for (const id in this.text_) {
     allWarnings.push(this.text_[id]);
   }
   return allWarnings.join('\n');

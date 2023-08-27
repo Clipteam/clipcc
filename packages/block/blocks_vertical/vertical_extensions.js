@@ -42,7 +42,7 @@ goog.require('Blockly.constants');
  *     category.
  */
 Blockly.ScratchBlocks.VerticalExtensions.colourHelper = function(category) {
-  var colours = Blockly.Colours[category];
+  const colours = Blockly.Colours[category];
   if (!(colours && colours.primary && colours.secondary && colours.tertiary &&
     colours.quaternary)) {
     throw new Error('Could not find colours for category "' + category + '"');
@@ -161,7 +161,7 @@ Blockly.ScratchBlocks.VerticalExtensions.PROCEDURE_DEF_CONTEXTMENU = {
     // functions.
     for (var i = 0, option; option = menuOptions[i]; i++) {
       if (option.text == Blockly.Msg.DELETE_BLOCK) {
-        var input = this.getInput('custom_block');
+        const input = this.getInput('custom_block');
         // this is the root block, not the shadow block.
         if (input && input.connection && input.connection.targetBlock()) {
           var procCode = input.connection.targetBlock().getProcCode();
@@ -170,7 +170,7 @@ Blockly.ScratchBlocks.VerticalExtensions.PROCEDURE_DEF_CONTEXTMENU = {
         }
         var rootBlock = this;
         option.callback = function() {
-          var didDelete = Blockly.Procedures.deleteProcedureDefCallback(
+          const didDelete = Blockly.Procedures.deleteProcedureDefCallback(
               procCode, rootBlock);
           if (!didDelete) {
             alert(Blockly.Msg.PROCEDURE_USED);
@@ -217,12 +217,12 @@ Blockly.ScratchBlocks.VerticalExtensions.SCRATCH_EXTENSION = function() {
  * @package
  */
 Blockly.ScratchBlocks.VerticalExtensions.registerAll = function() {
-  var categoryNames =
+  const categoryNames =
       ['control', 'data', 'data_lists', 'sounds', 'motion', 'looks', 'event',
         'sensing', 'pen', 'operators', 'more'];
   // Register functions for all category colours.
-  for (var i = 0; i < categoryNames.length; i++) {
-    var name = categoryNames[i];
+  for (let i = 0; i < categoryNames.length; i++) {
+    const name = categoryNames[i];
     Blockly.Extensions.register('colours_' + name,
         Blockly.ScratchBlocks.VerticalExtensions.colourHelper(name));
   }

@@ -134,12 +134,12 @@ Blockly.BlockDragger.prototype.dispose = function() {
  */
 Blockly.BlockDragger.initIconData_ = function(block) {
   // Build a list of icons that need to be moved and where they started.
-  var dragIconData = [];
-  var descendants = block.getDescendants(false);
+  const dragIconData = [];
+  const descendants = block.getDescendants(false);
   for (var i = 0, descendant; descendant = descendants[i]; i++) {
-    var icons = descendant.getIcons();
-    for (var j = 0; j < icons.length; j++) {
-      var data = {
+    const icons = descendant.getIcons();
+    for (let j = 0; j < icons.length; j++) {
+      const data = {
         // goog.math.Coordinate with x and y properties (workspace coordinates).
         location: icons[j].getIconLocation(),
         // Blockly.Icon
@@ -167,8 +167,8 @@ Blockly.BlockDragger.prototype.startBlockDrag = function(currentDragDeltaXY) {
 
   if (this.draggingBlock_.getParent()) {
     this.draggingBlock_.unplug();
-    var delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
-    var newLoc = goog.math.Coordinate.sum(this.startXY_, delta);
+    const delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
+    const newLoc = goog.math.Coordinate.sum(this.startXY_, delta);
 
     this.draggingBlock_.translate(newLoc.x, newLoc.y);
     Blockly.BlockAnimations.disconnectUiEffect(this.draggingBlock_);
@@ -179,9 +179,9 @@ Blockly.BlockDragger.prototype.startBlockDrag = function(currentDragDeltaXY) {
   // surface.
   this.draggingBlock_.moveToDragSurface_();
 
-  var toolbox = this.workspace_.getToolbox();
+  const toolbox = this.workspace_.getToolbox();
   if (toolbox) {
-    var style = this.draggingBlock_.isDeletable() ? 'blocklyToolboxDelete' :
+    const style = this.draggingBlock_.isDeletable() ? 'blocklyToolboxDelete' :
         'blocklyToolboxGrab';
     toolbox.addStyle(style);
   }
@@ -197,14 +197,14 @@ Blockly.BlockDragger.prototype.startBlockDrag = function(currentDragDeltaXY) {
  * @return {boolean} True if the event should be propagated, false if not.
  */
 Blockly.BlockDragger.prototype.dragBlock = function(e, currentDragDeltaXY) {
-  var delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
-  var newLoc = goog.math.Coordinate.sum(this.startXY_, delta);
+  const delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
+  const newLoc = goog.math.Coordinate.sum(this.startXY_, delta);
 
   this.draggingBlock_.moveDuringDrag(newLoc);
   this.dragIcons_(delta);
 
   this.deleteArea_ = this.workspace_.isDeleteArea(e);
-  var isOutside = !this.workspace_.isInsideBlocksArea(e);
+  const isOutside = !this.workspace_.isInsideBlocksArea(e);
   this.draggedConnectionManager_.update(delta, this.deleteArea_, isOutside);
   if (isOutside !== this.wasOutside_) {
     this.fireDragOutsideEvent_(isOutside);
@@ -226,21 +226,21 @@ Blockly.BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
   // Make sure internal state is fresh.
   this.dragBlock(e, currentDragDeltaXY);
   this.dragIconData_ = [];
-  var isOutside = this.wasOutside_;
+  const isOutside = this.wasOutside_;
   this.fireEndDragEvent_(isOutside);
   this.draggingBlock_.setMouseThroughStyle(false);
 
   Blockly.BlockAnimations.disconnectUiStop();
 
-  var delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
-  var newLoc = goog.math.Coordinate.sum(this.startXY_, delta);
+  const delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
+  const newLoc = goog.math.Coordinate.sum(this.startXY_, delta);
   this.draggingBlock_.moveOffDragSurface_(newLoc);
 
   // Scratch-specific: note possible illegal definition deletion for rollback below.
-  var isDeletingProcDef = this.wouldDeleteBlock_ &&
+  const isDeletingProcDef = this.wouldDeleteBlock_ &&
       (this.draggingBlock_.type == Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE);
 
-  var deleted = this.maybeDeleteBlock_();
+  const deleted = this.maybeDeleteBlock_();
   if (!deleted) {
     // These are expensive and don't need to be done if we're deleting.
     this.draggingBlock_.moveConnections_(delta.x, delta.y);
@@ -256,9 +256,9 @@ Blockly.BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
   }
   this.workspace_.setResizesEnabled(true);
 
-  var toolbox = this.workspace_.getToolbox();
+  const toolbox = this.workspace_.getToolbox();
   if (toolbox) {
-    var style = this.draggingBlock_.isDeletable() ? 'blocklyToolboxDelete' :
+    const style = this.draggingBlock_.isDeletable() ? 'blocklyToolboxDelete' :
         'blocklyToolboxGrab';
     toolbox.removeStyle(style);
   }
@@ -278,11 +278,11 @@ Blockly.BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
   if (isDeletingProcDef) {
     var ws = this.workspace_;
     setTimeout(function() {
-      var allBlocks = ws.getAllBlocks();
-      for (var i = 0; i < allBlocks.length; i++) {
-        var block = allBlocks[i];
+      const allBlocks = ws.getAllBlocks();
+      for (let i = 0; i < allBlocks.length; i++) {
+        const block = allBlocks[i];
         if (block.type == Blockly.PROCEDURES_CALL_BLOCK_TYPE) {
-          var procCode = block.getProcCode();
+          const procCode = block.getProcCode();
           // Check for call blocks with no associated define block.
           if (!Blockly.Procedures.getDefineBlock(procCode, ws)) {
             alert(Blockly.Msg.PROCEDURE_USED);
@@ -303,7 +303,7 @@ Blockly.BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
  * @private
  */
 Blockly.BlockDragger.prototype.fireDragOutsideEvent_ = function(isOutside) {
-  var event = new Blockly.Events.DragBlockOutside(this.draggingBlock_);
+  const event = new Blockly.Events.DragBlockOutside(this.draggingBlock_);
   event.isOutside = isOutside;
   Blockly.Events.fire(event);
 };
@@ -314,7 +314,7 @@ Blockly.BlockDragger.prototype.fireDragOutsideEvent_ = function(isOutside) {
  * @private
  */
 Blockly.BlockDragger.prototype.fireEndDragEvent_ = function(isOutside) {
-  var event = new Blockly.Events.EndBlockDrag(this.draggingBlock_, isOutside);
+  const event = new Blockly.Events.EndBlockDrag(this.draggingBlock_, isOutside);
   Blockly.Events.fire(event);
 };
 
@@ -323,7 +323,7 @@ Blockly.BlockDragger.prototype.fireEndDragEvent_ = function(isOutside) {
  * @private
  */
 Blockly.BlockDragger.prototype.fireMoveEvent_ = function() {
-  var event = new Blockly.Events.BlockMove(this.draggingBlock_);
+  const event = new Blockly.Events.BlockMove(this.draggingBlock_);
   event.oldCoordinate = this.startXY_;
   event.recordNew();
   Blockly.Events.fire(event);
@@ -336,7 +336,7 @@ Blockly.BlockDragger.prototype.fireMoveEvent_ = function() {
  * @private
  */
 Blockly.BlockDragger.prototype.maybeDeleteBlock_ = function() {
-  var trashcan = this.workspace_.trashcan;
+  const trashcan = this.workspace_.trashcan;
 
   if (this.wouldDeleteBlock_) {
     if (trashcan) {
@@ -360,7 +360,7 @@ Blockly.BlockDragger.prototype.maybeDeleteBlock_ = function() {
  */
 Blockly.BlockDragger.prototype.updateCursorDuringBlockDrag_ = function(isOutside) {
   this.wouldDeleteBlock_ = this.draggedConnectionManager_.wouldDeleteBlock();
-  var trashcan = this.workspace_.trashcan;
+  const trashcan = this.workspace_.trashcan;
   if (this.wouldDeleteBlock_) {
     this.draggingBlock_.setDeleteStyle(true);
     if (this.deleteArea_ == Blockly.DELETE_AREA_TRASH && trashcan) {
@@ -393,14 +393,14 @@ Blockly.BlockDragger.prototype.updateCursorDuringBlockDrag_ = function(isOutside
  * @private
  */
 Blockly.BlockDragger.prototype.pixelsToWorkspaceUnits_ = function(pixelCoord) {
-  var result = new goog.math.Coordinate(pixelCoord.x / this.workspace_.scale,
+  let result = new goog.math.Coordinate(pixelCoord.x / this.workspace_.scale,
       pixelCoord.y / this.workspace_.scale);
   if (this.workspace_.isMutator) {
     // If we're in a mutator, its scale is always 1, purely because of some
     // oddities in our rendering optimizations.  The actual scale is the same as
     // the scale on the parent workspace.
     // Fix that for dragging.
-    var mainScale = this.workspace_.options.parentWorkspace.scale;
+    const mainScale = this.workspace_.options.parentWorkspace.scale;
     result = result.scale(1 / mainScale);
   }
   return result;
@@ -414,8 +414,8 @@ Blockly.BlockDragger.prototype.pixelsToWorkspaceUnits_ = function(pixelCoord) {
  */
 Blockly.BlockDragger.prototype.dragIcons_ = function(dxy) {
   // Moving icons moves their associated bubbles.
-  for (var i = 0; i < this.dragIconData_.length; i++) {
-    var data = this.dragIconData_[i];
+  for (let i = 0; i < this.dragIconData_.length; i++) {
+    const data = this.dragIconData_[i];
     data.icon.setIconLocation(goog.math.Coordinate.sum(data.location, dxy));
   }
 };

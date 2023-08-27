@@ -175,10 +175,10 @@ Blockly.Blocks['control_stop'] = {
    * @this Blockly.Block
    */
   init: function() {
-    var ALL_SCRIPTS = 'all';
-    var THIS_SCRIPT = 'this script';
-    var OTHER_SCRIPTS = 'other scripts in sprite';
-    var stopDropdown = new Blockly.FieldDropdown(function() {
+    const ALL_SCRIPTS = 'all';
+    const THIS_SCRIPT = 'this script';
+    const OTHER_SCRIPTS = 'other scripts in sprite';
+    const stopDropdown = new Blockly.FieldDropdown(function() {
       if (this.sourceBlock_ &&
           this.sourceBlock_.nextConnection &&
           this.sourceBlock_.nextConnection.isConnected()) {
@@ -194,9 +194,9 @@ Blockly.Blocks['control_stop'] = {
       // Create an event group to keep field value and mutator in sync
       // Return null at the end because setValue is called here already.
       Blockly.Events.setGroup(true);
-      var oldMutation = Blockly.Xml.domToText(this.sourceBlock_.mutationToDom());
+      const oldMutation = Blockly.Xml.domToText(this.sourceBlock_.mutationToDom());
       this.sourceBlock_.setNextStatement(option == OTHER_SCRIPTS);
-      var newMutation = Blockly.Xml.domToText(this.sourceBlock_.mutationToDom());
+      const newMutation = Blockly.Xml.domToText(this.sourceBlock_.mutationToDom());
       Blockly.Events.fire(new Blockly.Events.BlockChange(this.sourceBlock_,
           'mutation', null, oldMutation, newMutation));
       this.setValue(option);
@@ -215,12 +215,12 @@ Blockly.Blocks['control_stop'] = {
     this.setPreviousStatement(true);
   },
   mutationToDom: function() {
-    var container = document.createElement('mutation');
+    const container = document.createElement('mutation');
     container.setAttribute('hasnext', this.nextConnection != null);
     return container;
   },
   domToMutation: function(xmlElement) {
-    var hasNext = (xmlElement.getAttribute('hasnext') == 'true');
+    const hasNext = (xmlElement.getAttribute('hasnext') == 'true');
     this.setNextStatement(hasNext);
   }
 };

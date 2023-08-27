@@ -39,7 +39,7 @@ goog.require('Blockly.ScratchBlocks.VerticalExtensions');
  * @this Blockly.Block
  */
 Blockly.ScratchBlocks.ProcedureUtils.callerMutationToDom = function() {
-  var container = document.createElement('mutation');
+  const container = document.createElement('mutation');
   container.setAttribute('proccode', this.procCode_);
   container.setAttribute('argumentids', JSON.stringify(this.argumentIds_));
   container.setAttribute('warp', JSON.stringify(this.warp_));
@@ -71,7 +71,7 @@ Blockly.ScratchBlocks.ProcedureUtils.callerDomToMutation = function(xmlElement) 
  */
 Blockly.ScratchBlocks.ProcedureUtils.definitionMutationToDom = function(
     opt_generateShadows) {
-  var container = document.createElement('mutation');
+  const container = document.createElement('mutation');
 
   if (opt_generateShadows) {
     container.setAttribute('generateshadows', true);
@@ -95,8 +95,8 @@ Blockly.ScratchBlocks.ProcedureUtils.definitionDomToMutation = function(xmlEleme
   this.procCode_ = xmlElement.getAttribute('proccode');
   this.warp_ = JSON.parse(xmlElement.getAttribute('warp'));
 
-  var prevArgIds = this.argumentIds_;
-  var prevDisplayNames = this.displayNames_;
+  const prevArgIds = this.argumentIds_;
+  const prevDisplayNames = this.displayNames_;
 
   this.argumentIds_ = JSON.parse(xmlElement.getAttribute('argumentids'));
   this.displayNames_ = JSON.parse(xmlElement.getAttribute('argumentnames'));
@@ -129,10 +129,10 @@ Blockly.ScratchBlocks.ProcedureUtils.getProcCode = function() {
  * @this Blockly.Block
  */
 Blockly.ScratchBlocks.ProcedureUtils.updateDisplay_ = function() {
-  var wasRendered = this.rendered;
+  const wasRendered = this.rendered;
   this.rendered = false;
 
-  var connectionMap = this.disconnectOldBlocks_();
+  const connectionMap = this.disconnectOldBlocks_();
   this.removeAllInputs_();
 
   this.createAllInputs_(connectionMap);
@@ -157,11 +157,11 @@ Blockly.ScratchBlocks.ProcedureUtils.updateDisplay_ = function() {
  */
 Blockly.ScratchBlocks.ProcedureUtils.disconnectOldBlocks_ = function() {
   // Remove old stuff
-  var connectionMap = {};
+  const connectionMap = {};
   for (var i = 0, input; input = this.inputList[i]; i++) {
     if (input.connection) {
-      var target = input.connection.targetBlock();
-      var saveInfo = {
+      const target = input.connection.targetBlock();
+      const saveInfo = {
         shadow: input.connection.getShadowDom(),
         block: target
       };
@@ -204,25 +204,25 @@ Blockly.ScratchBlocks.ProcedureUtils.removeAllInputs_ = function() {
  */
 Blockly.ScratchBlocks.ProcedureUtils.createAllInputs_ = function(connectionMap) {
   // Split the proc into components, by %n, %b, and %s (ignoring escaped).
-  var procComponents = this.procCode_.split(/(?=[^\\]%[nbs])/);
+  let procComponents = this.procCode_.split(/(?=[^\\]%[nbs])/);
   procComponents = procComponents.map(function(c) {
     return c.trim(); // Strip whitespace.
   });
   // Create arguments and labels as appropriate.
-  var argumentCount = 0;
+  let argumentCount = 0;
   for (var i = 0, component; component = procComponents[i]; i++) {
     var labelText;
     if (component.substring(0, 1) == '%') {
-      var argumentType = component.substring(1, 2);
+      const argumentType = component.substring(1, 2);
       if (!(argumentType == 'n' || argumentType == 'b' || argumentType == 's')) {
         throw new Error(
             'Found an custom procedure with an invalid type: ' + argumentType);
       }
       labelText = component.substring(2).trim();
 
-      var id = this.argumentIds_[argumentCount];
+      const id = this.argumentIds_[argumentCount];
 
-      var input = this.appendValueInput(id);
+      const input = this.appendValueInput(id);
       if (argumentType == 'b') {
         input.setCheck('Boolean');
       }
@@ -247,10 +247,10 @@ Blockly.ScratchBlocks.ProcedureUtils.createAllInputs_ = function(connectionMap) 
 Blockly.ScratchBlocks.ProcedureUtils.deleteShadows_ = function(connectionMap) {
   // Get rid of all of the old shadow blocks if they aren't connected.
   if (connectionMap) {
-    for (var id in connectionMap) {
-      var saveInfo = connectionMap[id];
+    for (const id in connectionMap) {
+      const saveInfo = connectionMap[id];
       if (saveInfo) {
-        var block = saveInfo['block'];
+        const block = saveInfo['block'];
         if (block && block.isShadow()) {
           block.dispose();
           connectionMap[id] = null;
@@ -295,7 +295,7 @@ Blockly.ScratchBlocks.ProcedureUtils.addLabelEditor_ = function(text) {
  * @this Blockly.Block
  */
 Blockly.ScratchBlocks.ProcedureUtils.buildShadowDom_ = function(type) {
-  var shadowDom = goog.dom.createDom('shadow');
+  const shadowDom = goog.dom.createDom('shadow');
   if (type == 'n') {
     var shadowType = 'math_number';
     var fieldName = 'NUM';
@@ -306,7 +306,7 @@ Blockly.ScratchBlocks.ProcedureUtils.buildShadowDom_ = function(type) {
     var fieldValue = '';
   }
   shadowDom.setAttribute('type', shadowType);
-  var fieldDom = goog.dom.createDom('field', null, fieldValue);
+  const fieldDom = goog.dom.createDom('field', null, fieldValue);
   fieldDom.setAttribute('name', fieldName);
   shadowDom.appendChild(fieldDom);
   return shadowDom;
@@ -323,7 +323,7 @@ Blockly.ScratchBlocks.ProcedureUtils.buildShadowDom_ = function(type) {
 Blockly.ScratchBlocks.ProcedureUtils.attachShadow_ = function(input,
     argumentType) {
   if (argumentType == 'n' || argumentType == 's') {
-    var blockType = argumentType == 'n' ? 'math_number' : 'text';
+    const blockType = argumentType == 'n' ? 'math_number' : 'text';
     Blockly.Events.disable();
     try {
       var newBlock = this.workspace.newBlock(blockType);
@@ -396,10 +396,10 @@ Blockly.ScratchBlocks.ProcedureUtils.createArgumentReporter_ = function(
  */
 Blockly.ScratchBlocks.ProcedureUtils.populateArgumentOnCaller_ = function(type,
     index, connectionMap, id, input) {
-  var oldBlock = null;
-  var oldShadow = null;
+  let oldBlock = null;
+  let oldShadow = null;
   if (connectionMap && (id in connectionMap)) {
-    var saveInfo = connectionMap[id];
+    const saveInfo = connectionMap[id];
     oldBlock = saveInfo['block'];
     oldShadow = saveInfo['shadow'];
   }
@@ -409,7 +409,7 @@ Blockly.ScratchBlocks.ProcedureUtils.populateArgumentOnCaller_ = function(type,
     connectionMap[input.name] = null;
     oldBlock.outputConnection.connect(input.connection);
     if (type != 'b' && this.generateShadows_) {
-      var shadowDom = oldShadow || this.buildShadowDom_(type);
+      const shadowDom = oldShadow || this.buildShadowDom_(type);
       console.log("setting shadow dom: " + shadowDom);
       input.connection.setShadowDom(shadowDom);
     }
@@ -433,15 +433,15 @@ Blockly.ScratchBlocks.ProcedureUtils.populateArgumentOnCaller_ = function(type,
  */
 Blockly.ScratchBlocks.ProcedureUtils.populateArgumentOnPrototype_ = function(
     type, index, connectionMap, id, input) {
-  var oldBlock = null;
+  let oldBlock = null;
   if (connectionMap && (id in connectionMap)) {
-    var saveInfo = connectionMap[id];
+    const saveInfo = connectionMap[id];
     oldBlock = saveInfo['block'];
   }
 
-  var oldTypeMatches =
+  const oldTypeMatches =
     Blockly.ScratchBlocks.ProcedureUtils.checkOldTypeMatches_(oldBlock, type);
-  var displayName = this.displayNames_[index];
+  const displayName = this.displayNames_[index];
 
   // Decide which block to attach.
   if (connectionMap && oldBlock && oldTypeMatches) {
@@ -474,18 +474,18 @@ Blockly.ScratchBlocks.ProcedureUtils.populateArgumentOnPrototype_ = function(
 Blockly.ScratchBlocks.ProcedureUtils.populateArgumentOnDeclaration_ = function(
     type, index, connectionMap, id, input) {
 
-  var oldBlock = null;
+  let oldBlock = null;
   if (connectionMap && (id in connectionMap)) {
-    var saveInfo = connectionMap[id];
+    const saveInfo = connectionMap[id];
     oldBlock = saveInfo['block'];
   }
 
   // TODO: This always returns false, because it checks for argument reporter
   // blocks instead of argument editor blocks.  Create a new version for argument
   // editors.
-  var oldTypeMatches =
+  const oldTypeMatches =
     Blockly.ScratchBlocks.ProcedureUtils.checkOldTypeMatches_(oldBlock, type);
-  var displayName = this.displayNames_[index];
+  const displayName = this.displayNames_[index];
 
   // Decide which block to attach.
   if (oldBlock && oldTypeMatches) {
@@ -566,16 +566,16 @@ Blockly.ScratchBlocks.ProcedureUtils.updateDeclarationProcCode_ = function() {
   this.procCode_ = '';
   this.displayNames_ = [];
   this.argumentIds_ = [];
-  for (var i = 0; i < this.inputList.length; i++) {
+  for (let i = 0; i < this.inputList.length; i++) {
     if (i != 0) {
       this.procCode_ += ' ';
     }
-    var input = this.inputList[i];
+    const input = this.inputList[i];
     if (input.type == Blockly.DUMMY_INPUT) {
       this.procCode_ += input.fieldRow[0].getValue();
     } else if (input.type == Blockly.INPUT_VALUE) {
       // Inspect the argument editor.
-      var target = input.connection.targetBlock();
+      const target = input.connection.targetBlock();
       this.displayNames_.push(target.getFieldValue('TEXT'));
       this.argumentIds_.push(input.name);
       if (target.type == 'argument_editor_boolean') {
@@ -596,12 +596,12 @@ Blockly.ScratchBlocks.ProcedureUtils.updateDeclarationProcCode_ = function() {
  */
 Blockly.ScratchBlocks.ProcedureUtils.focusLastEditor_ = function() {
   if (this.inputList.length > 0) {
-    var newInput = this.inputList[this.inputList.length - 1];
+    const newInput = this.inputList[this.inputList.length - 1];
     if (newInput.type == Blockly.DUMMY_INPUT) {
       newInput.fieldRow[0].showEditor_();
     } else if (newInput.type == Blockly.INPUT_VALUE) {
       // Inspect the argument editor.
-      var target = newInput.connection.targetBlock();
+      const target = newInput.connection.targetBlock();
       target.getField('TEXT').showEditor_();
     }
   }
@@ -676,16 +676,16 @@ Blockly.ScratchBlocks.ProcedureUtils.removeFieldCallback = function(field) {
   if (this.inputList.length === 1) {
     return;
   }
-  var inputNameToRemove = null;
-  for (var n = 0; n < this.inputList.length; n++) {
-    var input = this.inputList[n];
+  let inputNameToRemove = null;
+  for (let n = 0; n < this.inputList.length; n++) {
+    const input = this.inputList[n];
     if (input.connection) {
-      var target = input.connection.targetBlock();
+      const target = input.connection.targetBlock();
       if (target.getField(field.name) == field) {
         inputNameToRemove = input.name;
       }
     } else {
-      for (var j = 0; j < input.fieldRow.length; j++) {
+      for (let j = 0; j < input.fieldRow.length; j++) {
         if (input.fieldRow[j] == field) {
           inputNameToRemove = input.name;
         }
@@ -726,13 +726,13 @@ Blockly.ScratchBlocks.ProcedureUtils.removeArgumentCallback_ = function(
  * @this Blockly.Block
  */
 Blockly.ScratchBlocks.ProcedureUtils.updateArgumentReporterNames_ = function(prevArgIds, prevDisplayNames) {
-  var nameChanges = [];
-  var argReporters = [];
-  var definitionBlock = this.getParent();
+  const nameChanges = [];
+  const argReporters = [];
+  const definitionBlock = this.getParent();
   if (!definitionBlock) return;
 
   // Create a list of argument reporters that are descendants of the definition stack (see above comment)
-  var allBlocks = definitionBlock.getDescendants(false);
+  const allBlocks = definitionBlock.getDescendants(false);
   for (var i = 0; i < allBlocks.length; i++) {
     var block = allBlocks[i];
     if ((block.type === 'argument_reporter_string_number' ||
@@ -746,7 +746,7 @@ Blockly.ScratchBlocks.ProcedureUtils.updateArgumentReporterNames_ = function(pre
   // Only search over the current set of argument ids, ignore args that have been removed
   for (var i = 0, id; id = this.argumentIds_[i]; i++) {
     // Find the previous index of this argument id. Could be -1 if it is newly added.
-    var prevIndex = prevArgIds.indexOf(id);
+    const prevIndex = prevArgIds.indexOf(id);
     if (prevIndex == -1) continue; // Newly added argument, no corresponding previous argument to update.
     var prevName = prevDisplayNames[prevIndex];
     if (prevName != this.displayNames_[i]) {

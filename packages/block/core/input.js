@@ -176,13 +176,13 @@ Blockly.Input.prototype.isVisible = function() {
  * @return {!Array.<!Blockly.Block>} List of blocks to render.
  */
 Blockly.Input.prototype.setVisible = function(visible) {
-  var renderList = [];
+  let renderList = [];
   if (this.visible_ == visible) {
     return renderList;
   }
   this.visible_ = visible;
 
-  var display = visible ? 'block' : 'none';
+  const display = visible ? 'block' : 'none';
   for (var y = 0, field; field = this.fieldRow[y]; y++) {
     field.setVisible(visible);
   }
@@ -193,7 +193,7 @@ Blockly.Input.prototype.setVisible = function(visible) {
     } else {
       this.connection.hideAll();
     }
-    var child = this.connection.targetBlock();
+    const child = this.connection.targetBlock();
     if (child) {
       child.getSvgRoot().style.display = display;
       if (!visible) {
@@ -239,7 +239,7 @@ Blockly.Input.prototype.init = function() {
   if (!this.sourceBlock_.workspace.rendered) {
     return;  // Headless blocks don't need fields initialized.
   }
-  for (var i = 0; i < this.fieldRow.length; i++) {
+  for (let i = 0; i < this.fieldRow.length; i++) {
     this.fieldRow[i].init(this.sourceBlock_);
   }
 };

@@ -66,7 +66,7 @@ goog.inherits(Blockly.FieldVariableGetter, Blockly.Field);
  * @nocollapse
  */
 Blockly.FieldVariableGetter.fromJson = function(options) {
-  var varname = Blockly.utils.replaceMessageReferences(options['text']);
+  const varname = Blockly.utils.replaceMessageReferences(options['text']);
   return new Blockly.FieldVariableGetter(varname, options['name'],
       options['class'], options['variableType']);
 };
@@ -100,7 +100,7 @@ Blockly.FieldVariableGetter.prototype.init = function() {
     return; // Initialization already happened.
   }
   this.workspace_ = this.sourceBlock_.workspace;
-  var variable = Blockly.Variables.getOrCreateVariablePackage(
+  const variable = Blockly.Variables.getOrCreateVariablePackage(
       this.workspace_, null, this.text_, this.variableType_);
   this.setValue(variable.getId());
 };
@@ -136,8 +136,8 @@ Blockly.FieldVariableGetter.prototype.getVariable = function() {
 Blockly.FieldVariableGetter.prototype.setValue = function(id) {
   // What do I do when id is null?  That happens when undoing a change event
   // for the first time the value was set.
-  var workspace = this.sourceBlock_.workspace;
-  var variable = Blockly.Variables.getVariable(workspace, id);
+  const workspace = this.sourceBlock_.workspace;
+  const variable = Blockly.Variables.getVariable(workspace, id);
 
   if (!variable) {
     throw new Error('Variable id doesn\'t point to a real variable!  ID was ' +
@@ -145,7 +145,7 @@ Blockly.FieldVariableGetter.prototype.setValue = function(id) {
   }
 
   if (this.sourceBlock_ && Blockly.Events.isEnabled()) {
-    var oldValue = this.variable_ ? this.variable_.getId() : null;
+    const oldValue = this.variable_ ? this.variable_.getId() : null;
     Blockly.Events.fire(new Blockly.Events.BlockChange(
         this.sourceBlock_, 'field', this.name, oldValue, variable.getId()));
   }

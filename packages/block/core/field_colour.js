@@ -134,9 +134,9 @@ Blockly.FieldColour.prototype.setValue = function(colour) {
  * @return {string} Current text.
  */
 Blockly.FieldColour.prototype.getText = function() {
-  var colour = this.colour_;
+  let colour = this.colour_;
   // Try to use #rgb format if possible, rather than #rrggbb.
-  var m = colour.match(/^#(.)\1(.)\2(.)\3$/);
+  const m = colour.match(/^#(.)\1(.)\2(.)\3$/);
   if (m) {
     colour = '#' + m[1] + m[2] + m[3];
   }
@@ -195,23 +195,23 @@ Blockly.FieldColour.prototype.showEditor_ = function() {
       Blockly.FieldColour.widgetDispose_);
 
   // Record viewport dimensions before adding the widget.
-  var viewportBBox = Blockly.utils.getViewportBBox();
-  var anchorBBox = this.getScaledBBox_();
+  const viewportBBox = Blockly.utils.getViewportBBox();
+  const anchorBBox = this.getScaledBBox_();
 
   // Create and add the colour picker, then record the size.
-  var picker = this.createWidget_();
-  var paletteSize = goog.style.getSize(picker.getElement());
+  const picker = this.createWidget_();
+  const paletteSize = goog.style.getSize(picker.getElement());
 
   // Position the picker to line up with the field.
   Blockly.WidgetDiv.positionWithAnchor(viewportBBox, anchorBBox, paletteSize,
       this.sourceBlock_.RTL);
 
   // Configure event handler.
-  var thisField = this;
+  const thisField = this;
   Blockly.FieldColour.changeEventKey_ = goog.events.listen(picker,
       goog.ui.ColorPicker.EventType.CHANGE,
       function(event) {
-        var colour = event.target.getSelectedColor() || '#000000';
+        let colour = event.target.getSelectedColor() || '#000000';
         Blockly.WidgetDiv.hide();
         if (thisField.sourceBlock_) {
           // Call any validation function, and allow it to override.
@@ -230,10 +230,10 @@ Blockly.FieldColour.prototype.showEditor_ = function() {
  */
 Blockly.FieldColour.prototype.createWidget_ = function() {
   // Create the palette using Closure.
-  var picker = new goog.ui.ColorPicker();
+  const picker = new goog.ui.ColorPicker();
   picker.setSize(this.columns_ || Blockly.FieldColour.COLUMNS);
   picker.setColors(this.colours_ || Blockly.FieldColour.COLOURS);
-  var div = Blockly.WidgetDiv.DIV;
+  const div = Blockly.WidgetDiv.DIV;
   picker.render(div);
   picker.setSelectedColor(this.getValue());
   return picker;

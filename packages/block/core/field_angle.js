@@ -48,7 +48,7 @@ Blockly.FieldAngle = function(opt_value, opt_validator) {
   this.symbol_ = Blockly.utils.createSvgElement('tspan', {}, null);
   this.symbol_.appendChild(document.createTextNode('\u00B0'));
   
-  var numRestrictor = new RegExp("[\\d]|[\\.]|[-]|[eE]");
+  const numRestrictor = new RegExp("[\\d]|[\\.]|[-]|[eE]");
 
   opt_value = (opt_value && !isNaN(opt_value)) ? String(opt_value) : '0';
   Blockly.FieldAngle.superClass_.constructor.call(
@@ -147,7 +147,7 @@ Blockly.FieldAngle.ARROW_SVG_PATH = 'icons/arrow.svg';
  * @private
  */
 Blockly.FieldAngle.prototype.dispose_ = function() {
-  var thisField = this;
+  const thisField = this;
   return function() {
     Blockly.FieldAngle.superClass_.dispose_.call(thisField)();
     thisField.gauge_ = null;
@@ -173,9 +173,9 @@ Blockly.FieldAngle.prototype.showEditor_ = function() {
   // If there is an existing drop-down someone else owns, hide it immediately and clear it.
   Blockly.DropDownDiv.hideWithoutAnimation();
   Blockly.DropDownDiv.clearContent();
-  var div = Blockly.DropDownDiv.getContentDiv();
+  const div = Blockly.DropDownDiv.getContentDiv();
   // Build the SVG DOM.
-  var svg = Blockly.utils.createSvgElement('svg', {
+  const svg = Blockly.utils.createSvgElement('svg', {
     'xmlns': 'http://www.w3.org/2000/svg',
     'xmlns:html': 'http://www.w3.org/1999/xhtml',
     'xmlns:xlink': 'http://www.w3.org/1999/xlink',
@@ -197,7 +197,7 @@ Blockly.FieldAngle.prototype.showEditor_ = function() {
     'class': 'blocklyAngleLine'
   }, svg);
   // The fixed vertical line at the offset
-  var offsetRadians = Math.PI * Blockly.FieldAngle.OFFSET / 180;
+  const offsetRadians = Math.PI * Blockly.FieldAngle.OFFSET / 180;
   Blockly.utils.createSvgElement('line', {
     'x1': Blockly.FieldAngle.HALF,
     'y1': Blockly.FieldAngle.HALF,
@@ -206,7 +206,7 @@ Blockly.FieldAngle.prototype.showEditor_ = function() {
     'class': 'blocklyAngleLine'
   }, svg);
   // Draw markers around the edge.
-  for (var angle = 0; angle < 360; angle += 15) {
+  for (let angle = 0; angle < 360; angle += 15) {
     Blockly.utils.createSvgElement('line', {
       'x1': Blockly.FieldAngle.HALF + Blockly.FieldAngle.RADIUS - 13,
       'y1': Blockly.FieldAngle.HALF,
@@ -280,10 +280,10 @@ Blockly.FieldAngle.prototype.onMouseUp = function() {
  */
 Blockly.FieldAngle.prototype.onMouseMove = function(e) {
   e.preventDefault();
-  var bBox = this.gauge_.ownerSVGElement.getBoundingClientRect();
-  var dx = e.clientX - bBox.left - Blockly.FieldAngle.HALF;
-  var dy = e.clientY - bBox.top - Blockly.FieldAngle.HALF;
-  var angle = Math.atan(-dy / dx);
+  const bBox = this.gauge_.ownerSVGElement.getBoundingClientRect();
+  const dx = e.clientX - bBox.left - Blockly.FieldAngle.HALF;
+  const dy = e.clientY - bBox.top - Blockly.FieldAngle.HALF;
+  let angle = Math.atan(-dy / dx);
   if (isNaN(angle)) {
     // This shouldn't happen, but let's not let this error propagate further.
     return;
@@ -334,23 +334,23 @@ Blockly.FieldAngle.prototype.updateGraph_ = function() {
   if (!this.gauge_) {
     return;
   }
-  var angleDegrees = Number(this.getText()) % 360 + Blockly.FieldAngle.OFFSET;
-  var angleRadians = goog.math.toRadians(angleDegrees);
-  var path = ['M ', Blockly.FieldAngle.HALF, ',', Blockly.FieldAngle.HALF];
-  var x2 = Blockly.FieldAngle.HALF;
-  var y2 = Blockly.FieldAngle.HALF;
+  const angleDegrees = Number(this.getText()) % 360 + Blockly.FieldAngle.OFFSET;
+  let angleRadians = goog.math.toRadians(angleDegrees);
+  const path = ['M ', Blockly.FieldAngle.HALF, ',', Blockly.FieldAngle.HALF];
+  let x2 = Blockly.FieldAngle.HALF;
+  let y2 = Blockly.FieldAngle.HALF;
   if (!isNaN(angleRadians)) {
-    var angle1 = goog.math.toRadians(Blockly.FieldAngle.OFFSET);
-    var x1 = Math.cos(angle1) * Blockly.FieldAngle.RADIUS;
-    var y1 = Math.sin(angle1) * -Blockly.FieldAngle.RADIUS;
+    const angle1 = goog.math.toRadians(Blockly.FieldAngle.OFFSET);
+    const x1 = Math.cos(angle1) * Blockly.FieldAngle.RADIUS;
+    const y1 = Math.sin(angle1) * -Blockly.FieldAngle.RADIUS;
     if (Blockly.FieldAngle.CLOCKWISE) {
       angleRadians = 2 * angle1 - angleRadians;
     }
     x2 += Math.cos(angleRadians) * Blockly.FieldAngle.RADIUS;
     y2 -= Math.sin(angleRadians) * Blockly.FieldAngle.RADIUS;
     // Use large arc only if input value is greater than wrap
-    var largeFlag = Math.abs(angleDegrees - Blockly.FieldAngle.OFFSET) > 180 ? 1 : 0;
-    var sweepFlag = Number(Blockly.FieldAngle.CLOCKWISE);
+    const largeFlag = Math.abs(angleDegrees - Blockly.FieldAngle.OFFSET) > 180 ? 1 : 0;
+    let sweepFlag = Number(Blockly.FieldAngle.CLOCKWISE);
     if (angleDegrees < Blockly.FieldAngle.OFFSET) {
       sweepFlag = 1 - sweepFlag; // Sweep opposite direction if less than the offset
     }
@@ -381,7 +381,7 @@ Blockly.FieldAngle.prototype.classValidator = function(text) {
   if (text === null) {
     return null;
   }
-  var n = parseFloat(text || 0);
+  let n = parseFloat(text || 0);
   if (isNaN(n)) {
     return null;
   }
