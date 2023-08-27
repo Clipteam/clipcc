@@ -561,10 +561,11 @@ Blockly.WorkspaceCommentSvg.prototype.setAutoLayout = function() {
 Blockly.WorkspaceCommentSvg.fromXml = function(xmlComment, workspace,
     opt_wsWidth) {
   Blockly.Events.disable();
+  let comment;
   try {
     const info = Blockly.WorkspaceComment.parseAttributes(xmlComment);
 
-    var comment = new Blockly.WorkspaceCommentSvg(workspace,
+    comment = new Blockly.WorkspaceCommentSvg(workspace,
         info.content, info.h, info.w, info.minimized, info.id);
     if (workspace.rendered) {
       comment.initSvg();

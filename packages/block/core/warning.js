@@ -131,7 +131,7 @@ Blockly.Warning.prototype.setVisible = function(visible) {
       // Right-align the paragraph.
       // This cannot be done until the bubble is rendered on screen.
       const maxWidth = paragraph.getBBox().width;
-      for (var i = 0, textElement; textElement = paragraph.childNodes[i]; i++) {
+      for (let i = 0, textElement; textElement = paragraph.childNodes[i]; i++) {
         textElement.setAttribute('text-anchor', 'end');
         textElement.setAttribute('x', maxWidth + Blockly.Bubble.BORDER_WIDTH);
       }

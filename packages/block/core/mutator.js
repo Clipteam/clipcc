@@ -128,13 +128,12 @@ Blockly.Mutator.prototype.createEditor_ = function() {
       {'x': Blockly.Bubble.BORDER_WIDTH, 'y': Blockly.Bubble.BORDER_WIDTH},
       null);
   // Convert the list of names into a list of XML objects for the flyout.
+  let quarkXml = null;
   if (this.quarkNames_.length) {
-    var quarkXml = goog.dom.createDom('xml');
-    for (var i = 0, quarkName; quarkName = this.quarkNames_[i]; i++) {
+    quarkXml = goog.dom.createDom('xml');
+    for (let i = 0, quarkName; quarkName = this.quarkNames_[i]; i++) {
       quarkXml.appendChild(goog.dom.createDom('block', {'type': quarkName}));
     }
-  } else {
-    var quarkXml = null;
   }
   const workspaceOptions = {
     languageTree: quarkXml,
@@ -256,19 +255,14 @@ Blockly.Mutator.prototype.setVisible = function(visible) {
 
     this.rootBlock_ = this.block_.decompose(this.workspace_);
     const blocks = this.rootBlock_.getDescendants(false);
-    for (var i = 0, child; child = blocks[i]; i++) {
+    for (let i = 0, child; child = blocks[i]; i++) {
       child.render();
     }
     // The root block should not be dragable or deletable.
     this.rootBlock_.setMovable(false);
     this.rootBlock_.setDeletable(false);
-    if (this.workspace_.flyout_) {
-      var margin = this.workspace_.flyout_.CORNER_RADIUS * 2;
-      var x = this.workspace_.flyout_.width_ + margin;
-    } else {
-      var margin = 16;
-      var x = margin;
-    }
+    const margin = this.workspace_.flyout_ ? this.workspace_.flyout_.CORNER_RADIUS * 2 : 16;
+    let x = this.workspace_.flyout_ ? this.workspace_.flyout_.width_ + margin : margin;
     if (this.block_.RTL) {
       x = -x;
     }
@@ -313,7 +307,7 @@ Blockly.Mutator.prototype.workspaceChanged_ = function() {
   if (!this.workspace_.isDragging()) {
     const blocks = this.workspace_.getTopBlocks(false);
     const MARGIN = 20;
-    for (var b = 0, block; block = blocks[b]; b++) {
+    for (let b = 0, block; block = blocks[b]; b++) {
       const blockXY = block.getRelativeToSurfaceXY();
       const blockHW = block.getHeightWidth();
       if (blockXY.y + blockHW.height < MARGIN) {
@@ -326,7 +320,7 @@ Blockly.Mutator.prototype.workspaceChanged_ = function() {
   // When the mutator's workspace changes, update the source block.
   if (this.rootBlock_.workspace == this.workspace_) {
     Blockly.Events.setGroup(true);
-    var block = this.block_;
+    const block = this.block_;
     const oldMutationDom = block.mutationToDom();
     const oldMutation = oldMutationDom && Blockly.Xml.domToText(oldMutationDom);
     // Switch off rendering while the source block is rebuilt.

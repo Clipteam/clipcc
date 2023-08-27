@@ -170,18 +170,16 @@ Blockly.FlyoutButton.prototype.createDom = function() {
  * @package
  */
 Blockly.FlyoutButton.prototype.addTextSvg = function(isLabel) {
-  if (!isLabel) {
-    // Shadow rectangle (light source does not mirror in RTL).
-    var shadow = Blockly.utils.createSvgElement('rect',
-        {
-          'class': 'blocklyFlyoutButtonShadow',
-          'rx': 4,
-          'ry': 4,
-          'x': 1,
-          'y': 1
-        },
-        this.svgGroup_);
-  }
+  // Shadow rectangle (light source does not mirror in RTL).
+  const shadow = isLabel ? undefined : Blockly.utils.createSvgElement('rect',
+      {
+        'class': 'blocklyFlyoutButtonShadow',
+        'rx': 4,
+        'ry': 4,
+        'x': 1,
+        'y': 1
+      },
+      this.svgGroup_);
   // Background rectangle.
   const rect = Blockly.utils.createSvgElement('rect',
       {

@@ -142,8 +142,8 @@ Blockly.FieldIconMenu.prototype.setParentFieldImage = function(src) {
   if (this.sourceBlock_ && this.sourceBlock_.parentBlock_) {
     const parentBlock = this.sourceBlock_.parentBlock_;
     // Loop through all inputs' fields to find the first FieldImage
-    for (var i = 0, input; input = parentBlock.inputList[i]; i++) {
-      for (var j = 0, field; field = input.fieldRow[j]; j++) {
+    for (let i = 0, input; input = parentBlock.inputList[i]; i++) {
+      for (let j = 0, field; field = input.fieldRow[j]; j++) {
         if (field instanceof Blockly.FieldImage) {
           // Src for a FieldImage is stored in its value.
           field.setValue(src);
@@ -168,7 +168,7 @@ Blockly.FieldIconMenu.prototype.getValue = function() {
  * @return {string} Src to image representing value
  */
 Blockly.FieldIconMenu.prototype.getSrcForValue = function(value) {
-  for (var i = 0, icon; icon = this.icons_[i]; i++) {
+  for (let i = 0, icon; icon = this.icons_[i]; i++) {
     if (icon.value === value) {
       return icon.src;
     }
@@ -192,7 +192,7 @@ Blockly.FieldIconMenu.prototype.showEditor_ = function() {
   // Accessibility properties
   contentDiv.setAttribute('role', 'menu');
   contentDiv.setAttribute('aria-haspopup', 'true');
-  for (var i = 0, icon; icon = this.icons_[i]; i++) {
+  for (let i = 0, icon; icon = this.icons_[i]; i++) {
     // Icons with the type property placeholder take up space but don't have any functionality
     // Use for special-case layouts
     if (icon.type == 'placeholder') {

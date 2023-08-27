@@ -159,12 +159,12 @@ Blockly.BlockSvg.prototype.initSvg = function() {
   goog.asserts.assert(this.workspace.rendered, 'Workspace is headless.');
   if (!this.isInsertionMarker()) { // Insertion markers not allowed to have inputs or icons
     // Input shapes are empty holes drawn when a value input is not connected.
-    for (var i = 0, input; input = this.inputList[i]; i++) {
+    for (let i = 0, input; input = this.inputList[i]; i++) {
       input.init();
       input.initOutlinePath(this.svgGroup_);
     }
     const icons = this.getIcons();
-    for (i = 0; i < icons.length; i++) {
+    for (let i = 0; i < icons.length; i++) {
       icons[i].createIcon();
     }
   }
@@ -380,9 +380,7 @@ Blockly.BlockSvg.prototype.getRelativeToSurfaceXY = function() {
 Blockly.BlockSvg.prototype.moveBy = function(dx, dy) {
   goog.asserts.assert(!this.parentBlock_, 'Block has parent.');
   const eventsEnabled = Blockly.Events.isEnabled();
-  if (eventsEnabled) {
-    var event = new Blockly.Events.BlockMove(this);
-  }
+  const event = eventsEnabled ? new Blockly.Events.BlockMove(this) : undefined;
   const xy = this.getRelativeToSurfaceXY();
   this.translate(xy.x + dx, xy.y + dy);
   this.moveConnections_(dx, dy);
@@ -556,14 +554,14 @@ Blockly.BlockSvg.prototype.setCollapsed = function(collapsed) {
   }
   const renderList = [];
   // Show/hide the inputs.
-  for (var i = 0, input; input = this.inputList[i]; i++) {
+  for (let i = 0, input; input = this.inputList[i]; i++) {
     renderList.push.apply(renderList, input.setVisible(!collapsed));
   }
 
   const COLLAPSED_INPUT_NAME = '_TEMP_COLLAPSED_INPUT';
   if (collapsed) {
     const icons = this.getIcons();
-    for (var i = 0; i < icons.length; i++) {
+    for (let i = 0; i < icons.length; i++) {
       icons[i].setVisible(false);
     }
     const text = this.toString(Blockly.COLLAPSE_CHARS);
@@ -580,7 +578,7 @@ Blockly.BlockSvg.prototype.setCollapsed = function(collapsed) {
     renderList[0] = this;
   }
   if (this.rendered) {
-    for (var i = 0, block; block = renderList[i]; i++) {
+    for (let i = 0, block; block = renderList[i]; i++) {
       block.render();
     }
     // Don't bump neighbours.
@@ -630,8 +628,8 @@ Blockly.BlockSvg.prototype.tab = function(start, forward) {
 Blockly.BlockSvg.prototype.createTabList_ = function() {
   // This function need not be efficient since it runs once on a keypress.
   const list = [];
-  for (var i = 0, input; input = this.inputList[i]; i++) {
-    for (var j = 0, field; field = input.fieldRow[j]; j++) {
+  for (let i = 0, input; input = this.inputList[i]; i++) {
+    for (let j = 0, field; field = input.fieldRow[j]; j++) {
       if (field instanceof Blockly.FieldTextInput) {
         // TODO(# 1276): Also support dropdown fields.
         list.push(field);
@@ -722,16 +720,16 @@ Blockly.BlockSvg.prototype.moveConnections_ = function(dx, dy) {
     return;
   }
   const myConnections = this.getConnections_(false);
-  for (var i = 0; i < myConnections.length; i++) {
+  for (let i = 0; i < myConnections.length; i++) {
     myConnections[i].moveBy(dx, dy);
   }
   const icons = this.getIcons();
-  for (i = 0; i < icons.length; i++) {
+  for (let i = 0; i < icons.length; i++) {
     icons[i].computeIconLocation();
   }
 
   // Recurse through all blocks attached under this one.
-  for (i = 0; i < this.childBlocks_.length; i++) {
+  for (let i = 0; i < this.childBlocks_.length; i++) {
     this.childBlocks_[i].moveConnections_(dx, dy);
   }
 };
@@ -1258,7 +1256,7 @@ Blockly.BlockSvg.prototype.getConnections_ = function(all) {
       myConnections.push(this.nextConnection);
     }
     if (all || !this.collapsed_) {
-      for (var i = 0, input; input = this.inputList[i]; i++) {
+      for (let i = 0, input; input = this.inputList[i]; i++) {
         if (input.connection) {
           myConnections.push(input.connection);
         }
@@ -1296,7 +1294,7 @@ Blockly.BlockSvg.prototype.bumpNeighbours_ = function() {
   }
   // Loop through every connection on this block.
   const myConnections = this.getConnections_(false);
-  for (var i = 0, connection; connection = myConnections[i]; i++) {
+  for (let i = 0, connection; connection = myConnections[i]; i++) {
 
     // Spider down from this block bumping all sub-blocks.
     if (connection.isConnected() && connection.isSuperior()) {
@@ -1304,7 +1302,7 @@ Blockly.BlockSvg.prototype.bumpNeighbours_ = function() {
     }
 
     const neighbours = connection.neighbours_(Blockly.SNAP_RADIUS);
-    for (var j = 0, otherConnection; otherConnection = neighbours[j]; j++) {
+    for (let j = 0, otherConnection; otherConnection = neighbours[j]; j++) {
 
       // If both connections are connected, that's probably fine.  But if
       // either one of them is unconnected, then there could be confusion.

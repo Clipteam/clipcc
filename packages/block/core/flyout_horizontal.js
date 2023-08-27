@@ -81,11 +81,12 @@ Blockly.HorizontalFlyout.prototype.getMetrics_ = function() {
     return null;
   }
 
+  let optionBox;
   try {
-    var optionBox = this.workspace_.getCanvas().getBBox();
+    optionBox = this.workspace_.getCanvas().getBBox();
   } catch (e) {
     // Firefox has trouble with hidden elements (Bug 528969).
-    var optionBox = {height: 0, y: 0, width: 0, x: 0};
+    optionBox = {height: 0, y: 0, width: 0, x: 0};
   }
 
   let absoluteTop = this.SCROLLBAR_PADDING;
@@ -334,11 +335,11 @@ Blockly.HorizontalFlyout.prototype.layout_ = function(contents, gaps) {
     contents = contents.reverse();
   }
 
-  for (var i = 0, item; item = contents[i]; i++) {
+  for (let i = 0, item; item = contents[i]; i++) {
     if (item.type == 'block') {
       const block = item.block;
       const allBlocks = block.getDescendants(false);
-      for (var j = 0, child; child = allBlocks[j]; j++) {
+      for (let j = 0, child; child = allBlocks[j]; j++) {
         // Mark blocks as being inside a flyout.  This is used to detect and
         // prevent the closure of the flyout if the user right-clicks on such a
         // block.
@@ -448,14 +449,14 @@ Blockly.HorizontalFlyout.prototype.getClientRect = function() {
 Blockly.HorizontalFlyout.prototype.reflowInternal_ = function(blocks) {
   this.workspace_.scale = this.targetWorkspace_.scale;
   let flyoutHeight = 0;
-  for (var i = 0, block; block = blocks[i]; i++) {
+  for (let i = 0, block; block = blocks[i]; i++) {
     flyoutHeight = Math.max(flyoutHeight, block.getHeightWidth().height);
   }
   flyoutHeight += this.MARGIN * 1.5;
   flyoutHeight *= this.workspace_.scale;
   flyoutHeight += Blockly.Scrollbar.scrollbarThickness;
   if (this.height_ != flyoutHeight) {
-    for (var i = 0, block; block = blocks[i]; i++) {
+    for (let i = 0, block; block = blocks[i]; i++) {
       const blockHW = block.getHeightWidth();
       if (block.flyoutRect_) {
         block.flyoutRect_.setAttribute('width', blockHW.width);

@@ -266,22 +266,22 @@ Blockly.Workspace.prototype.getTopComments = function(ordered) {
  * @return {!Array.<!Blockly.Block>} Array of blocks.
  */
 Blockly.Workspace.prototype.getAllBlocks = function(ordered) {
+  let blocks = [];
   if (ordered) {
     // Slow, but ordered.
     // This gets all levels of descendants because getDescendants
     // is called recuusively.  They are added to a new list, not the
     // list that it's iterating over.
     const topBlocks = this.getTopBlocks(true);
-    var blocks = [];
-    for (var i = 0; i < topBlocks.length; i++) {
+    for (let i = 0; i < topBlocks.length; i++) {
       blocks.push.apply(blocks, topBlocks[i].getDescendants(true));
     }
   } else {
     // Fast, but in no particular order.
     // This gets all of levels of descendants by always adding to the
     // list that it's iterating over.
-    var blocks = this.getTopBlocks(false);
-    for (var i = 0; i < blocks.length; i++) {
+    blocks = this.getTopBlocks(false);
+    for (let i = 0; i < blocks.length; i++) {
       blocks.push.apply(blocks, blocks[i].getChildren(false));
     }
   }
@@ -486,7 +486,7 @@ Blockly.Workspace.prototype.undo = function(redo) {
     events.push(inputStack.pop());
   }
   // Push these popped events on the opposite stack.
-  for (var i = 0, event; event = events[i]; i++) {
+  for (let i = 0, event; event = events[i]; i++) {
     outputStack.push(event);
   }
   events = Blockly.Events.filter(events, redo);
@@ -500,7 +500,7 @@ Blockly.Workspace.prototype.undo = function(redo) {
     }
   }
   try {
-    for (var i = 0, event; event = events[i]; i++) {
+    for (let i = 0, event; event = events[i]; i++) {
       event.run(redo);
     }
   } finally {
@@ -566,7 +566,7 @@ Blockly.Workspace.prototype.fireChangeListener = function(event) {
   }
   // Copy listeners in case a listener attaches/detaches itself.
   const currentListeners = this.listeners_.slice();
-  for (var i = 0, func; func = currentListeners[i]; i++) {
+  for (let i = 0, func; func = currentListeners[i]; i++) {
     func(event);
   }
 };
@@ -613,7 +613,7 @@ Blockly.Workspace.prototype.getFlyout = function() {
  */
 Blockly.Workspace.prototype.allInputsFilled = function(opt_shadowBlocksAreFilled) {
   const blocks = this.getTopBlocks(false);
-  for (var i = 0, block; block = blocks[i]; i++) {
+  for (let i = 0, block; block = blocks[i]; i++) {
     if (!block.allInputsFilled(opt_shadowBlocksAreFilled)) {
       return false;
     }

@@ -142,13 +142,14 @@ Blockly.createDom_ = function(container, options) {
       },
       stackGlowFilter);
   // Set all gaussian blur pixels to 1 opacity before applying flood
-  var componentTransfer = Blockly.utils.createSvgElement('feComponentTransfer', {'result': 'outBlur'}, stackGlowFilter);
+  const stackComponentTransfer = Blockly.utils.createSvgElement('feComponentTransfer',
+      {'result': 'outBlur'}, stackGlowFilter);
   Blockly.utils.createSvgElement('feFuncA',
       {
         'type': 'table',
         'tableValues': '0' + goog.string.repeat(' 1', 16)
       },
-      componentTransfer);
+      stackComponentTransfer);
   // Color the highlight
   Blockly.utils.createSvgElement('feFlood',
       {
@@ -190,14 +191,14 @@ Blockly.createDom_ = function(container, options) {
       },
       replacementGlowFilter);
   // Set all gaussian blur pixels to 1 opacity before applying flood
-  var componentTransfer = Blockly.utils.createSvgElement('feComponentTransfer',
+  const replacementComponentTransfer = Blockly.utils.createSvgElement('feComponentTransfer',
       {'result': 'outBlur'}, replacementGlowFilter);
   Blockly.utils.createSvgElement('feFuncA',
       {
         'type': 'table',
         'tableValues': '0' + goog.string.repeat(' 1', 16)
       },
-      componentTransfer);
+      replacementComponentTransfer);
   // Color the highlight
   Blockly.utils.createSvgElement('feFlood',
       {
@@ -298,7 +299,7 @@ Blockly.createMainWorkspace_ = function(svg, options, blockDragSurface) {
           // One or more blocks may be out of bounds.  Bump them back in.
           const MARGIN = 25;
           const blocks = mainWorkspace.getTopBlocks(false);
-          for (var b = 0, block; block = blocks[b]; b++) {
+          for (let b = 0, block; block = blocks[b]; b++) {
             const blockXY = block.getRelativeToSurfaceXY();
             const blockHW = block.getHeightWidth();
             // Bump any block that's above the top back inside.

@@ -307,22 +307,21 @@ Blockly.BlockSvg.prototype.connectionUiEffect = function() {
  * Change the colour of a block.
  */
 Blockly.BlockSvg.prototype.updateColour = function() {
-  var fillColour = (this.isGlowing_) ? this.getColourSecondary() : this.getColour();
   const strokeColour = this.getColourTertiary();
 
   // Render block stroke
   this.svgPath_.setAttribute('stroke', strokeColour);
 
   // Render block fill
-  var fillColour = (this.isGlowingBlock_) ? this.getColourSecondary() : this.getColour();
+  const fillColour = (this.isGlowingBlock_) ? this.getColourSecondary() : this.getColour();
   this.svgPath_.setAttribute('fill', fillColour);
 
   // Render opacity
   this.svgPath_.setAttribute('fill-opacity', this.getOpacity());
 
   // Bump every dropdown to change its colour.
-  for (var x = 0, input; input = this.inputList[x]; x++) {
-    for (var y = 0, field; field = input.fieldRow[y]; y++) {
+  for (let x = 0, input; input = this.inputList[x]; x++) {
+    for (let y = 0, field; field = input.fieldRow[y]; y++) {
       field.setText(null);
     }
   }
@@ -441,20 +440,19 @@ Blockly.BlockSvg.prototype.renderCompute_ = function() {
   };
 
   // Does block have a statement?
-  for (var i = 0, input; input = this.inputList[i]; i++) {
+  for (let i = 0, input; input = this.inputList[i]; i++) {
     if (input.type == Blockly.NEXT_STATEMENT) {
       metrics.statement = input;
       // Compute minimum input size.
       metrics.bayHeight = Blockly.BlockSvg.MIN_BLOCK_Y;
       metrics.bayWidth = Blockly.BlockSvg.MIN_BLOCK_X;
       // Expand input size if there is a connection.
+      const linkedBlock = input.connection.targetBlock();
       if (input.connection && input.connection.targetConnection) {
-        var linkedBlock = input.connection.targetBlock();
         const bBox = linkedBlock.getHeightWidth(true);
         metrics.bayHeight = Math.max(metrics.bayHeight, bBox.height);
         metrics.bayWidth = Math.max(metrics.bayWidth, bBox.width);
       }
-      var linkedBlock = input.connection.targetBlock();
       if (linkedBlock && !linkedBlock.lastConnectionInStack()) {
         metrics.bayNotchAtRight = false;
       } else {
@@ -463,7 +461,7 @@ Blockly.BlockSvg.prototype.renderCompute_ = function() {
     }
 
     // Find image field, input fields
-    for (var j = 0, field; field = input.fieldRow[j]; j++) {
+    for (let j = 0, field; field = input.fieldRow[j]; j++) {
       if (field instanceof Blockly.FieldImage) {
         metrics.imageField = field;
       }
@@ -849,7 +847,7 @@ Blockly.BlockSvg.prototype.renderDrawTop_ = function(steps, connectionsXY, metri
  * @private
  */
 Blockly.BlockSvg.prototype.getFieldShadowBlock_ = function() {
-  for (var i = 0, child; child = this.childBlocks_[i]; i++) {
+  for (let i = 0, child; child = this.childBlocks_[i]; i++) {
     if (child.isShadow()) {
       return child;
     }

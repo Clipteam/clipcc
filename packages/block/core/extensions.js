@@ -144,17 +144,14 @@ Blockly.Extensions.apply = function(name, block, isMutator) {
   if (isMutator) {
     // Fail early if the block already has mutation properties.
     Blockly.Extensions.checkNoMutatorProperties_(name, block);
-  } else {
-    // Record the old properties so we can make sure they don't change after
-    // applying the extension.
-    var mutatorProperties = Blockly.Extensions.getMutatorProperties_(block);
-  }
-  extensionFn.apply(block);
-
-  if (isMutator) {
+    extensionFn.apply(block);
     const errorPrefix = 'Error after applying mutator "' + name + '": ';
     Blockly.Extensions.checkBlockHasMutatorProperties_(errorPrefix, block);
   } else {
+    // Record the old properties so we can make sure they don't change after
+    // applying the extension.
+    const mutatorProperties = Blockly.Extensions.getMutatorProperties_(block);
+    extensionFn.apply(block);
     if (!Blockly.Extensions.mutatorPropertiesMatch_(mutatorProperties, block)) {
       throw new Error('Error when applying extension "' + name + '": ' +
           'mutation properties changed when applying a non-mutator extension.');

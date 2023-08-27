@@ -449,7 +449,7 @@ Blockly.Flyout.prototype.hide = function() {
   }
   this.setVisible(false);
   // Delete all the event listeners.
-  for (var x = 0, listen; listen = this.listeners_[x]; x++) {
+  for (let x = 0, listen; listen = this.listeners_[x]; x++) {
     Blockly.unbindEvent_(listen);
   }
   this.listeners_.length = 0;
@@ -482,7 +482,7 @@ Blockly.Flyout.prototype.show = function(xmlList, opt_visible) {
   const contents = [];
   const gaps = [];
   this.permanentlyDisabled_.length = 0;
-  for (var i = 0, xml; xml = xmlList[i]; i++) {
+  for (let i = 0, xml; xml = xmlList[i]; i++) {
     // Handle dynamic categories, represented by a name instead of a list of XML.
     // Look up the correct category generation function and call that to get a
     // valid XML list.
@@ -507,7 +507,7 @@ Blockly.Flyout.prototype.show = function(xmlList, opt_visible) {
 
         // Look for a block that matches the id or type, our createBlock will assign
         // id = type if none existed.
-        var id = xml.getAttribute('id') || xml.getAttribute('type');
+        const id = xml.getAttribute('id') || xml.getAttribute('type');
         const recycled = this.recycleBlocks_.findIndex(function(block) {
           return block.id === id;
         });
@@ -515,7 +515,7 @@ Blockly.Flyout.prototype.show = function(xmlList, opt_visible) {
 
         // If we found a recycled item, reuse the BlockSVG from last time.
         // Otherwise, convert the XML block to a BlockSVG.
-        var curBlock;
+        let curBlock;
         if (recycled > -1) {
           curBlock = this.recycleBlocks_.splice(recycled, 1)[0];
         } else {
@@ -545,14 +545,14 @@ Blockly.Flyout.prototype.show = function(xmlList, opt_visible) {
           gaps.push(default_gap);
         }
       } else if ((tagName == 'LABEL') && (xml.getAttribute('showStatusButton') == 'true')) {
-        var curButton = new Blockly.FlyoutExtensionCategoryHeader(this.workspace_,
+        const curButton = new Blockly.FlyoutExtensionCategoryHeader(this.workspace_,
             this.targetWorkspace_, xml);
         contents.push({type: 'button', button: curButton});
         gaps.push(default_gap);
       } else if (tagName == 'BUTTON' || tagName == 'LABEL') {
         // Labels behave the same as buttons, but are styled differently.
         const isLabel = tagName == 'LABEL';
-        var curButton = new Blockly.FlyoutButton(this.workspace_,
+        const curButton = new Blockly.FlyoutButton(this.workspace_,
             this.targetWorkspace_, xml, isLabel);
         contents.push({type: 'button', button: curButton});
         gaps.push(default_gap);
@@ -570,7 +570,7 @@ Blockly.Flyout.prototype.show = function(xmlList, opt_visible) {
   // When the mouse is over the background, deselect all blocks.
   const deselectAll = function() {
     const topBlocks = this.workspace_.getTopBlocks(false);
-    for (var i = 0, block; block = topBlocks[i]; i++) {
+    for (let i = 0, block; block = topBlocks[i]; i++) {
       block.removeSelect();
     }
   };
@@ -611,7 +611,7 @@ Blockly.Flyout.prototype.emptyRecycleBlocks_ = function() {
 Blockly.Flyout.prototype.recordCategoryScrollPositions_ = function() {
   this.categoryScrollPositions = [];
   // Record category names and positions using the text label at the top of each one.
-  for (var i = 0; i < this.buttons_.length; i++) {
+  for (let i = 0; i < this.buttons_.length; i++) {
     if (this.buttons_[i].getIsCategoryLabel()) {
       const categoryLabel = this.buttons_[i];
       this.categoryScrollPositions.push({
@@ -624,7 +624,7 @@ Blockly.Flyout.prototype.recordCategoryScrollPositions_ = function() {
   // Record the length of each category, setting the final one to 0.
   const numCategories = this.categoryScrollPositions.length;
   if (numCategories > 0) {
-    for (var i = 0; i < numCategories - 1; i++) {
+    for (let i = 0; i < numCategories - 1; i++) {
       const currentPos = this.categoryScrollPositions[i].position;
       const nextPos = this.categoryScrollPositions[i + 1].position;
       const length = nextPos - currentPos;
@@ -632,7 +632,7 @@ Blockly.Flyout.prototype.recordCategoryScrollPositions_ = function() {
     }
     this.categoryScrollPositions[numCategories - 1].length = 0;
     // Record the id of each category.
-    for (var i = 0; i < numCategories; i++) {
+    for (let i = 0; i < numCategories; i++) {
       const category = this.parentToolbox_.getCategoryByIndex(i);
       if (category && category.id_) {
         this.categoryScrollPositions[i].categoryId = category.id_;
@@ -719,7 +719,7 @@ Blockly.Flyout.prototype.setRecyclingEnabled = function(recycle) {
 Blockly.Flyout.prototype.clearOldBlocks_ = function() {
   // Delete any blocks from a previous showing.
   const oldBlocks = this.workspace_.getTopBlocks(false);
-  for (var i = 0, block; block = oldBlocks[i]; i++) {
+  for (let i = 0, block; block = oldBlocks[i]; i++) {
     if (block.workspace == this.workspace_) {
       if (this.recyclingEnabled_ &&
           Blockly.scratchBlocksUtils.blockIsRecyclable(block)) {
@@ -736,7 +736,7 @@ Blockly.Flyout.prototype.clearOldBlocks_ = function() {
   }
   this.backgroundButtons_.length = 0;
 
-  for (var i = 0, button; button = this.buttons_[i]; i++) {
+  for (let i = 0, button; button = this.buttons_[i]; i++) {
     button.dispose();
   }
   this.buttons_.length = 0;

@@ -355,9 +355,10 @@ Blockly.utils.commonWordPrefix = function(array, opt_shortest) {
   }
   let wordPrefix = 0;
   const max = opt_shortest || Blockly.utils.shortestStringLength(array);
-  for (var len = 0; len < max; len++) {
-    var letter = array[0][len];
-    for (var i = 1; i < array.length; i++) {
+  let len;
+  for (len = 0; len < max; len++) {
+    const letter = array[0][len];
+    for (let i = 1; i < array.length; i++) {
       if (letter != array[i][len]) {
         return wordPrefix;
       }
@@ -366,8 +367,8 @@ Blockly.utils.commonWordPrefix = function(array, opt_shortest) {
       wordPrefix = len + 1;
     }
   }
-  for (var i = 1; i < array.length; i++) {
-    var letter = array[i][len];
+  for (let i = 1; i < array.length; i++) {
+    const letter = array[i][len];
     if (letter && letter != ' ') {
       return wordPrefix;
     }
@@ -390,9 +391,10 @@ Blockly.utils.commonWordSuffix = function(array, opt_shortest) {
   }
   let wordPrefix = 0;
   const max = opt_shortest || Blockly.utils.shortestStringLength(array);
-  for (var len = 0; len < max; len++) {
-    var letter = array[0].substr(-len - 1, 1);
-    for (var i = 1; i < array.length; i++) {
+  let len;
+  for (len = 0; len < max; len++) {
+    const letter = array[0].substr(-len - 1, 1);
+    for (let i = 1; i < array.length; i++) {
       if (letter != array[i].substr(-len - 1, 1)) {
         return wordPrefix;
       }
@@ -401,8 +403,8 @@ Blockly.utils.commonWordSuffix = function(array, opt_shortest) {
       wordPrefix = len + 1;
     }
   }
-  for (var i = 1; i < array.length; i++) {
-    var letter = array[i].charAt(array[i].length - len - 1);
+  for (let i = 1; i < array.length; i++) {
+    const letter = array[i].charAt(array[i].length - len - 1);
     if (letter && letter != ' ') {
       return wordPrefix;
     }
@@ -492,11 +494,11 @@ Blockly.utils.tokenizeInterpolation_ = function(message,
   let state = 0;
   const buffer = [];
   let number = null;
-  for (var i = 0; i < chars.length; i++) {
+  for (let i = 0; i < chars.length; i++) {
     const c = chars[i];
     if (state == 0) {
       if (c == '%') {
-        var text = buffer.join('');
+        const text = buffer.join('');
         if (text) {
           tokens.push(text);
         }
@@ -512,7 +514,7 @@ Blockly.utils.tokenizeInterpolation_ = function(message,
       } else if (parseInterpolationTokens && '0' <= c && c <= '9') {
         state = 2;
         number = c;
-        var text = buffer.join('');
+        const text = buffer.join('');
         if (text) {
           tokens.push(text);
         }
@@ -578,7 +580,7 @@ Blockly.utils.tokenizeInterpolation_ = function(message,
       }
     }
   }
-  var text = buffer.join('');
+  let text = buffer.join('');
   if (text) {
     tokens.push(text);
   }
@@ -586,7 +588,7 @@ Blockly.utils.tokenizeInterpolation_ = function(message,
   // Merge adjacent text tokens into a single string.
   const mergedTokens = [];
   buffer.length = 0;
-  for (var i = 0; i < tokens.length; ++i) {
+  for (let i = 0; i < tokens.length; ++i) {
     if (typeof tokens[i] == 'string') {
       buffer.push(tokens[i]);
     } else {
@@ -661,7 +663,7 @@ Blockly.utils.wrapLine_ = function(text, limit) {
   // Split the text into words.
   const words = text.trim().split(/\s+/);
   // Set limit to be the length of the largest word.
-  for (var i = 0; i < words.length; i++) {
+  for (let i = 0; i < words.length; i++) {
     if (words[i].length > limit) {
       limit = words[i].length;
     }
@@ -680,7 +682,7 @@ Blockly.utils.wrapLine_ = function(text, limit) {
     // Seed the list with evenly spaced linebreaks.
     const steps = words.length / lineCount;
     let insertedBreaks = 1;
-    for (var i = 0; i < words.length - 1; i++) {
+    for (let i = 0; i < words.length - 1; i++) {
       if (insertedBreaks < (i + 1.5) / steps) {
         insertedBreaks++;
         wordBreaks[i] = true;
@@ -709,7 +711,7 @@ Blockly.utils.wrapScore_ = function(words, wordBreaks, limit) {
   // Compute the length of each line.
   const lineLengths = [0];
   const linePunctuation = [];
-  for (var i = 0; i < words.length; i++) {
+  for (let i = 0; i < words.length; i++) {
     lineLengths[lineLengths.length - 1] += words[i].length;
     if (wordBreaks[i] === true) {
       lineLengths.push(0);
@@ -721,7 +723,7 @@ Blockly.utils.wrapScore_ = function(words, wordBreaks, limit) {
   const maxLength = Math.max.apply(Math, lineLengths);
 
   let score = 0;
-  for (var i = 0; i < lineLengths.length; i++) {
+  for (let i = 0; i < lineLengths.length; i++) {
     // Optimize for width.
     // -2 points per char over limit (scaled to the power of 1.5).
     score -= Math.pow(Math.abs(limit - lineLengths[i]), 1.5) * 2;
@@ -883,7 +885,7 @@ Blockly.utils.runAfterPageLoad = function(fn) {
     fn();  // Page has already loaded. Call immediately.
   } else {
     // Poll readyState.
-    var readyStateCheckInterval = setInterval(function() {
+    const readyStateCheckInterval = setInterval(function() {
       if (document.readyState === 'complete') {
         clearInterval(readyStateCheckInterval);
         fn();

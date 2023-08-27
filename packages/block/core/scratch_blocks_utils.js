@@ -189,10 +189,11 @@ Blockly.scratchBlocksUtils.duplicateAndDragCallback = function(oldBlock, event) 
       // Disable events and manually emit events after the block has been
       // positioned and has had its shadow IDs fixed (Scratch-specific).
       Blockly.Events.disable();
+      let newBlock;
       try {
         // Using domToBlock instead of domToWorkspace means that the new block
         // will be placed at position (0, 0) in main workspace units.
-        var newBlock = Blockly.Xml.domToBlock(xml, ws);
+        newBlock = Blockly.Xml.domToBlock(xml, ws);
 
         // Scratch-specific: Give shadow dom new IDs to prevent duplicating on paste
         Blockly.scratchBlocksUtils.changeObscuredShadowIds(newBlock);
@@ -274,13 +275,14 @@ Blockly.scratchBlocksUtils.pasteCallback = function(ws, event) {
 
     clipboard.readText().then(function(data) {
       Blockly.Events.disable();
+      let newBlock;
       try {
         const xml = Blockly.Xml.textToDom(data);
         if (!xml) {
           throw 'Invalid XML';
         }
 
-        var newBlock = Blockly.Xml.domToBlock(xml.firstChild, ws);
+        newBlock = Blockly.Xml.domToBlock(xml.firstChild, ws);
 
         const point = Blockly.utils.mouseToSvg(event, ws.getParentSvg(),  ws.getInverseScreenCTM());
         const rel = ws.getOriginOffsetInPixels();

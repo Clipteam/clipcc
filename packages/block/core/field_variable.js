@@ -107,9 +107,9 @@ Blockly.FieldVariable.prototype.initModel = function() {
   }
   this.workspace_ = this.sourceBlock_.workspace;
   // Initialize this field if it's in a broadcast block in the flyout
-  var variable = this.initFlyoutBroadcast_(this.workspace_);
+  let variable = this.initFlyoutBroadcast_(this.workspace_);
   if (!variable) {
-    var variable = Blockly.Variables.getOrCreateVariablePackage(
+    variable = Blockly.Variables.getOrCreateVariablePackage(
         this.workspace_, null, this.defaultVariableName, this.defaultType_);
   }
   // Don't fire a change event for this setValue.  It would have null as the
@@ -279,7 +279,7 @@ Blockly.FieldVariable.dropdownCreate = function() {
     throw new Error('Tried to call dropdownCreate on a variable field with no' +
         ' variable selected.');
   }
-  var variableModelList = [];
+  let variableModelList = [];
   const name = this.getText();
   let workspace = null;
   if (this.sourceBlock_) {
@@ -287,10 +287,9 @@ Blockly.FieldVariable.dropdownCreate = function() {
   }
   if (workspace) {
     const variableTypes = this.getVariableTypes_();
-    var variableModelList = [];
     // Get a copy of the list, so that adding rename and new variable options
     // doesn't modify the workspace's list.
-    for (var i = 0; i < variableTypes.length; i++) {
+    for (let i = 0; i < variableTypes.length; i++) {
       const variableType = variableTypes[i];
       const variables = workspace.getVariablesOfType(variableType);
       variableModelList = variableModelList.concat(variables);
@@ -305,7 +304,7 @@ Blockly.FieldVariable.dropdownCreate = function() {
   variableModelList.sort(Blockly.VariableModel.compareByName);
 
   const options = [];
-  for (var i = 0; i < variableModelList.length; i++) {
+  for (let i = 0; i < variableModelList.length; i++) {
     // Set the uuid as the internal representation of the variable.
     options[i] = [variableModelList[i].name, variableModelList[i].getId()];
   }
@@ -315,12 +314,14 @@ Blockly.FieldVariable.dropdownCreate = function() {
   } else {
     // Scalar variables and lists have the same backing action, but the option
     // text is different.
+    let renameText;
+    let deleteText;
     if (this.defaultType_ == Blockly.LIST_VARIABLE_TYPE) {
-      var renameText = Blockly.Msg.RENAME_LIST;
-      var deleteText = Blockly.Msg.DELETE_LIST;
+      renameText = Blockly.Msg.RENAME_LIST;
+      deleteText = Blockly.Msg.DELETE_LIST;
     } else {
-      var renameText = Blockly.Msg.RENAME_VARIABLE;
-      var deleteText = Blockly.Msg.DELETE_VARIABLE;
+      renameText = Blockly.Msg.RENAME_VARIABLE;
+      deleteText = Blockly.Msg.DELETE_VARIABLE;
     }
     options.push([renameText, Blockly.RENAME_VARIABLE_ID]);
     if (deleteText) {

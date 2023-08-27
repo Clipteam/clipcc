@@ -692,7 +692,7 @@ Blockly.Toolbox.CategoryMenu.prototype.populate = function(domTree) {
   this.createDom();
   const categories = [];
   // Find actual categories from the DOM tree.
-  for (var i = 0, child; child = domTree.childNodes[i]; i++) {
+  for (let i = 0, child; child = domTree.childNodes[i]; i++) {
     if (!child.tagName || child.tagName.toUpperCase() != 'CATEGORY') {
       continue;
     }
@@ -700,8 +700,8 @@ Blockly.Toolbox.CategoryMenu.prototype.populate = function(domTree) {
   }
 
   // Create a single column of categories
-  for (var i = 0; i < categories.length; i++) {
-    var child = categories[i];
+  for (let i = 0; i < categories.length; i++) {
+    const child = categories[i];
     const row = goog.dom.createDom('div', 'scratchCategoryMenuRow');
     this.table.appendChild(row);
     if (child) {
@@ -716,7 +716,7 @@ Blockly.Toolbox.CategoryMenu.prototype.populate = function(domTree) {
  * Dispose of this Category Menu and all of its children.
  */
 Blockly.Toolbox.CategoryMenu.prototype.dispose = function() {
-  for (var i = 0, category; category = this.categories_[i]; i++) {
+  for (let i = 0, category; category = this.categories_[i]; i++) {
     category.dispose();
   }
   this.categories_ = [];
@@ -820,7 +820,7 @@ Blockly.Toolbox.Category.prototype.setSelected = function(selected) {
  * @constructor
  */
 Blockly.Toolbox.Category.prototype.parseContents_ = function(domTree) {
-  for (var i = 0, child; child = domTree.childNodes[i]; i++) {
+  for (let i = 0, child; child = domTree.childNodes[i]; i++) {
     if (!child.tagName) {
       // Skip
       continue;

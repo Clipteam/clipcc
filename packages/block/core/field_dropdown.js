@@ -308,7 +308,7 @@ Blockly.FieldDropdown.prototype.trimOptions_ = function() {
   let hasImages = false;
 
   // Localize label text and image alt text.
-  for (var i = 0; i < options.length; i++) {
+  for (let i = 0; i < options.length; i++) {
     const label = options[i][0];
     if (typeof label == 'string') {
       options[i][0] = Blockly.utils.replaceMessageReferences(label);
@@ -323,7 +323,7 @@ Blockly.FieldDropdown.prototype.trimOptions_ = function() {
     return;  // Do nothing if too few items or at least one label is an image.
   }
   const strings = [];
-  for (var i = 0; i < options.length; i++) {
+  for (let i = 0; i < options.length; i++) {
     strings.push(options[i][0]);
   }
   const shortest = Blockly.utils.shortestStringLength(strings);
@@ -344,7 +344,7 @@ Blockly.FieldDropdown.prototype.trimOptions_ = function() {
   }
   // Remove the prefix and suffix from the options.
   const newOptions = [];
-  for (var i = 0; i < options.length; i++) {
+  for (let i = 0; i < options.length; i++) {
     let text = options[i][0];
     const value = options[i][1];
     text = text.substring(prefixLength, text.length - suffixLength);

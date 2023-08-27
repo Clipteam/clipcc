@@ -82,8 +82,9 @@ Blockly.WorkspaceAudio.prototype.load = function(filenames, name) {
   if (!filenames.length) {
     return;
   }
+  let audioTest;
   try {
-    var audioTest = new window['Audio']();
+    audioTest = new window['Audio']();
   } catch (e) {
     // No browser support for Audio.
     // IE can throw an error even if the Audio object exists.

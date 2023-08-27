@@ -833,13 +833,13 @@ Blockly.WorkspaceSvg.prototype.traceOn = function() {
 Blockly.WorkspaceSvg.prototype.highlightBlock = function(id, opt_state) {
   if (opt_state === undefined) {
     // Unhighlight all blocks.
-    for (var i = 0, block; block = this.highlightedBlocks_[i]; i++) {
+    for (let i = 0, block; block = this.highlightedBlocks_[i]; i++) {
       block.setHighlighted(false);
     }
     this.highlightedBlocks_.length = 0;
   }
   // Highlight/unhighlight the specified block.
-  var block = id ? this.getBlockById(id) : null;
+  const block = id ? this.getBlockById(id) : null;
   if (block) {
     const state = (opt_state === undefined) || opt_state;
     // Using Set here would be great, but at the cost of IE10 support.
@@ -940,8 +940,9 @@ Blockly.WorkspaceSvg.prototype.paste = function(xmlBlock) {
  */
 Blockly.WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
   Blockly.Events.disable();
+  let block;
   try {
-    var block = Blockly.Xml.domToBlock(xmlBlock, this);
+    block = Blockly.Xml.domToBlock(xmlBlock, this);
     // Scratch-specific: Give shadow dom new IDs to prevent duplicating on paste
     Blockly.scratchBlocksUtils.changeObscuredShadowIds(block);
     // Move the duplicate to original position.
@@ -953,10 +954,11 @@ Blockly.WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
       }
       // Offset block until not clobbering another block and not in connection
       // distance with neighbouring blocks.
+      let collide;
       do {
-        var collide = false;
+        collide = false;
         const allBlocks = this.getAllBlocks();
-        for (var i = 0, otherBlock; otherBlock = allBlocks[i]; i++) {
+        for (let i = 0, otherBlock; otherBlock = allBlocks[i]; i++) {
           const otherXY = otherBlock.getRelativeToSurfaceXY();
           if (Math.abs(blockX - otherXY.x) <= 1 &&
               Math.abs(blockY - otherXY.y) <= 1) {
@@ -967,7 +969,7 @@ Blockly.WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
         if (!collide) {
           // Check for blocks in snap range to any of its connections.
           const connections = block.getConnections_(false);
-          for (var i = 0, connection; connection = connections[i]; i++) {
+          for (let i = 0, connection; connection = connections[i]; i++) {
             const neighbour = connection.closest(Blockly.SNAP_RADIUS,
                 new goog.math.Coordinate(blockX, blockY));
             if (neighbour.connection) {
@@ -1003,8 +1005,9 @@ Blockly.WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
  */
 Blockly.WorkspaceSvg.prototype.pasteWorkspaceComment_ = function(xmlComment) {
   Blockly.Events.disable();
+  let comment;
   try {
-    var comment = Blockly.WorkspaceCommentSvg.fromXml(xmlComment, this);
+    comment = Blockly.WorkspaceCommentSvg.fromXml(xmlComment, this);
     // Move the duplicate to original position.
     let commentX = parseInt(xmlComment.getAttribute('x'), 10);
     let commentY = parseInt(xmlComment.getAttribute('y'), 10);
@@ -1325,7 +1328,7 @@ Blockly.WorkspaceSvg.prototype.cleanUp = function() {
   Blockly.Events.setGroup(true);
   const topBlocks = this.getTopBlocks(true);
   let cursorY = 0;
-  for (var i = 0, block; block = topBlocks[i]; i++) {
+  for (let i = 0, block; block = topBlocks[i]; i++) {
     const xy = block.getRelativeToSurfaceXY();
     block.moveBy(-xy.x, cursorY - xy.y);
     block.snapToGrid();
@@ -1363,7 +1366,7 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
   if (this.options.collapse) {
     let hasCollapsedBlocks = false;
     let hasExpandedBlocks = false;
-    for (var i = 0; i < topBlocks.length; i++) {
+    for (let i = 0; i < topBlocks.length; i++) {
       let block = topBlocks[i];
       while (block) {
         if (block.isCollapsed()) {
@@ -1392,7 +1395,7 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
   const deleteList = Blockly.WorkspaceSvg.buildDeleteList_(topBlocks);
   // Scratch-specific: don't count shadow blocks in delete count
   let deleteCount = 0;
-  for (var i = 0; i < deleteList.length; i++) {
+  for (let i = 0; i < deleteList.length; i++) {
     if (!deleteList[i].isShadow()) {
       deleteCount++;
     }

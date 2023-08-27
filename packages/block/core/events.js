@@ -191,7 +191,7 @@ Blockly.Events.fire = function(event) {
 Blockly.Events.fireNow_ = function() {
   const queue = Blockly.Events.filter(Blockly.Events.FIRE_QUEUE_, true);
   Blockly.Events.FIRE_QUEUE_.length = 0;
-  for (var i = 0, event; event = queue[i]; i++) {
+  for (let i = 0, event; event = queue[i]; i++) {
     const workspace = Blockly.Workspace.getById(event.workspaceId);
     if (workspace) {
       workspace.fireChangeListener(event);
@@ -214,7 +214,7 @@ Blockly.Events.filter = function(queueIn, forward) {
   const mergedQueue = [];
   const hash = Object.create(null);
   // Merge duplicates.
-  for (var i = 0, event; event = queue[i]; i++) {
+  for (let i = 0, event; event = queue[i]; i++) {
     if (!event.isNull()) {
       const key = [event.type, event.blockId, event.workspaceId].join(' ');
 
@@ -260,7 +260,7 @@ Blockly.Events.filter = function(queueIn, forward) {
   }
   // Move mutation events to the top of the queue.
   // Intentionally skip first event.
-  for (var i = 1, event; event = queue[i]; i++) {
+  for (let i = 1, event; event = queue[i]; i++) {
     if (event.type == Blockly.Events.CHANGE &&
         event.element == 'mutation') {
       queue.unshift(queue.splice(i, 1)[0]);
@@ -274,7 +274,7 @@ Blockly.Events.filter = function(queueIn, forward) {
  * in the undo stack.  Called by Blockly.Workspace.clearUndo.
  */
 Blockly.Events.clearPendingUndo = function() {
-  for (var i = 0, event; event = Blockly.Events.FIRE_QUEUE_[i]; i++) {
+  for (let i = 0, event; event = Blockly.Events.FIRE_QUEUE_[i]; i++) {
     event.recordUndo = false;
   }
 };
@@ -332,7 +332,7 @@ Blockly.Events.setGroup = function(state) {
 Blockly.Events.getDescendantIds_ = function(block) {
   const ids = [];
   const descendants = block.getDescendants(false);
-  for (var i = 0, descendant; descendant = descendants[i]; i++) {
+  for (let i = 0, descendant; descendant = descendants[i]; i++) {
     ids[i] = descendant.id;
   }
   return ids;
@@ -413,7 +413,7 @@ Blockly.Events.disableOrphans = function(event) {
     if (block) {
       if (block.getParent() && !block.getParent().disabled) {
         const children = block.getDescendants(false);
-        for (var i = 0, child; child = children[i]; i++) {
+        for (let i = 0, child; child = children[i]; i++) {
           child.setDisabled(false);
         }
       } else if ((block.outputConnection || block.previousConnection) &&

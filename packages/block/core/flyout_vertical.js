@@ -325,16 +325,18 @@ Blockly.VerticalFlyout.prototype.position = function() {
   // Instead it matches the width of its parent or uses a default value.
   this.width_ = this.getWidth();
 
+  let x;
+  let y;
   if (this.parentToolbox_) {
     const toolboxWidth = this.parentToolbox_.getWidth();
     const categoryWidth = toolboxWidth - this.width_;
-    var x = this.toolboxPosition_ == Blockly.TOOLBOX_AT_RIGHT ?
+    x = this.toolboxPosition_ == Blockly.TOOLBOX_AT_RIGHT ?
         targetWorkspaceMetrics.viewWidth : categoryWidth;
-    var y = 0;
+    y = 0;
   } else {
-    var x = this.toolboxPosition_ == Blockly.TOOLBOX_AT_RIGHT ?
+    x = this.toolboxPosition_ == Blockly.TOOLBOX_AT_RIGHT ?
         targetWorkspaceMetrics.viewWidth - this.width_ : 0;
-    var y = 0;
+    y = 0;
   }
 
   // Record the height for Blockly.Flyout.getMetrics_
@@ -508,11 +510,11 @@ Blockly.VerticalFlyout.prototype.layout_ = function(contents, gaps) {
   const cursorX = margin;
   let cursorY = margin;
 
-  for (var i = 0, item; item = contents[i]; i++) {
+  for (let i = 0, item; item = contents[i]; i++) {
     if (item.type == 'block') {
       const block = item.block;
       const allBlocks = block.getDescendants(false);
-      for (var j = 0, child; child = allBlocks[j]; j++) {
+      for (let j = 0, child; child = allBlocks[j]; j++) {
         // Mark blocks as being inside a flyout.  This is used to detect and
         // prevent the closure of the flyout if the user right-clicks on such a
         // block.

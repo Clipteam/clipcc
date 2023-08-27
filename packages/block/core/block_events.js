@@ -168,8 +168,8 @@ Blockly.Events.Change.prototype.run = function(forward) {
   }
   let value = forward ? this.newValue : this.oldValue;
   switch (this.element) {
-    case 'field':
-      var field = block.getField(this.name);
+    case 'field': {
+      const field = block.getField(this.name);
       if (field) {
         // Run the validator for any side-effects it may have.
         // The validator's opinion on validity is ignored.
@@ -179,6 +179,7 @@ Blockly.Events.Change.prototype.run = function(forward) {
         console.warn("Can't set non-existent field: " + this.name);
       }
       break;
+    }
     case 'comment':
       block.setCommentText(value || null);
       break;
@@ -191,8 +192,8 @@ Blockly.Events.Change.prototype.run = function(forward) {
     case 'inline':
       block.setInputsInline(value);
       break;
-    case 'mutation':
-      var oldMutation = '';
+    case 'mutation': {
+      let oldMutation = '';
       if (block.mutationToDom) {
         const oldMutationDom = block.mutationToDom();
         oldMutation = oldMutationDom && Blockly.Xml.domToText(oldMutationDom);
@@ -205,6 +206,7 @@ Blockly.Events.Change.prototype.run = function(forward) {
       Blockly.Events.fire(new Blockly.Events.Change(
           block, 'mutation', null, oldMutation, value));
       break;
+    }
     default:
       console.warn('Unknown change type: ' + this.element);
   }
@@ -277,7 +279,7 @@ Blockly.Events.Create.prototype.run = function(forward) {
     xml.appendChild(this.xml);
     Blockly.Xml.domToWorkspace(xml, workspace);
   } else {
-    for (var i = 0, id; id = this.ids[i]; i++) {
+    for (let i = 0, id; id = this.ids[i]; i++) {
       const block = workspace.getBlockById(id);
       if (block) {
         block.dispose(false, false);
@@ -353,7 +355,7 @@ Blockly.Events.Delete.prototype.fromJson = function(json) {
 Blockly.Events.Delete.prototype.run = function(forward) {
   const workspace = this.getEventWorkspace_();
   if (forward) {
-    for (var i = 0, id; id = this.ids[i]; i++) {
+    for (let i = 0, id; id = this.ids[i]; i++) {
       const block = workspace.getBlockById(id);
       if (block) {
         block.dispose(false, false);

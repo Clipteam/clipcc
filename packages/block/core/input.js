@@ -146,7 +146,7 @@ Blockly.Input.prototype.insertFieldAt = function(index, field, opt_name) {
  * @throws {goog.asserts.AssertionError} if the field is not present.
  */
 Blockly.Input.prototype.removeField = function(name) {
-  for (var i = 0, field; field = this.fieldRow[i]; i++) {
+  for (let i = 0, field; field = this.fieldRow[i]; i++) {
     if (field.name === name) {
       field.dispose();
       this.fieldRow.splice(i, 1);
@@ -183,7 +183,7 @@ Blockly.Input.prototype.setVisible = function(visible) {
   this.visible_ = visible;
 
   const display = visible ? 'block' : 'none';
-  for (var y = 0, field; field = this.fieldRow[y]; y++) {
+  for (let y = 0, field; field = this.fieldRow[y]; y++) {
     field.setVisible(visible);
   }
   if (this.connection) {
@@ -251,7 +251,7 @@ Blockly.Input.prototype.dispose = function() {
   if (this.outlinePath) {
     goog.dom.removeNode(this.outlinePath);
   }
-  for (var i = 0, field; field = this.fieldRow[i]; i++) {
+  for (let i = 0, field; field = this.fieldRow[i]; i++) {
     field.dispose();
   }
   if (this.connection) {

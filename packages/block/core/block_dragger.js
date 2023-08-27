@@ -136,7 +136,7 @@ Blockly.BlockDragger.initIconData_ = function(block) {
   // Build a list of icons that need to be moved and where they started.
   const dragIconData = [];
   const descendants = block.getDescendants(false);
-  for (var i = 0, descendant; descendant = descendants[i]; i++) {
+  for (let i = 0, descendant; descendant = descendants[i]; i++) {
     const icons = descendant.getIcons();
     for (let j = 0; j < icons.length; j++) {
       const data = {
@@ -265,7 +265,7 @@ Blockly.BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
   Blockly.Events.setGroup(false);
 
   if (isOutside) {
-    var ws = this.workspace_;
+    const ws = this.workspace_;
     // Reset a drag to outside of scratch-blocks
     setTimeout(function() {
       ws.undo();
@@ -276,7 +276,7 @@ Blockly.BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
   // Have to wait for connections to be re-established, so put in setTimeout.
   // Only do this if we deleted a proc def.
   if (isDeletingProcDef) {
-    var ws = this.workspace_;
+    const ws = this.workspace_;
     setTimeout(function() {
       const allBlocks = ws.getAllBlocks();
       for (let i = 0; i < allBlocks.length; i++) {

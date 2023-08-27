@@ -95,7 +95,7 @@ Blockly.ContextMenu.populate_ = function(options, rtl) {
   */
   const menu = new goog.ui.Menu();
   menu.setRightToLeft(rtl);
-  for (var i = 0, option; option = options[i]; i++) {
+  for (let i = 0, option; option = options[i]; i++) {
     const menuItem = new goog.ui.MenuItem(option.text);
     menuItem.setRightToLeft(rtl);
     menu.addChild(menuItem, true);
@@ -184,8 +184,9 @@ Blockly.ContextMenu.hide = function() {
 Blockly.ContextMenu.callbackFactory = function(block, xml) {
   return function() {
     Blockly.Events.disable();
+    let newBlock;
     try {
-      var newBlock = Blockly.Xml.domToBlock(xml, block.workspace);
+      newBlock = Blockly.Xml.domToBlock(xml, block.workspace);
       // Move the new block next to the old block.
       const xy = block.getRelativeToSurfaceXY();
       if (block.RTL) {

@@ -97,7 +97,7 @@ Blockly.Generator.prototype.workspaceToCode = function(workspace) {
   let code = [];
   this.init(workspace);
   const blocks = workspace.getTopBlocks(true);
-  for (var x = 0, block; block = blocks[x]; x++) {
+  for (let x = 0, block; block = blocks[x]; x++) {
     let line = this.blockToCode(block);
     if (Array.isArray(line)) {
       // Value blocks return tuples of code and operator order.

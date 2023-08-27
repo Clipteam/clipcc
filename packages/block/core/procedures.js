@@ -277,8 +277,8 @@ Blockly.Procedures.getCallers = function(name, ws, definitionRoot,
   const topBlocks = ws.getTopBlocks();
 
   // Start by deciding which stacks to investigate.
-  for (var i = 0; i < topBlocks.length; i++) {
-    var block = topBlocks[i];
+  for (let i = 0; i < topBlocks.length; i++) {
+    const block = topBlocks[i];
     if (block.id == definitionRoot.id && !allowRecursive) {
       continue;
     }
@@ -286,8 +286,8 @@ Blockly.Procedures.getCallers = function(name, ws, definitionRoot,
   }
 
   const callers = [];
-  for (var i = 0; i < allBlocks.length; i++) {
-    var block = allBlocks[i];
+  for (let i = 0; i < allBlocks.length; i++) {
+    const block = allBlocks[i];
     if (block.type == Blockly.PROCEDURES_CALL_BLOCK_TYPE ) {
       const procCode = block.getProcCode();
       if (procCode && procCode == name) {
@@ -313,7 +313,7 @@ Blockly.Procedures.mutateCallersAndPrototype = function(name, ws, mutation) {
         defineBlock.workspace, defineBlock, true /* allowRecursive */);
     callers.push(prototypeBlock);
     Blockly.Events.setGroup(true);
-    for (var i = 0, caller; caller = callers[i]; i++) {
+    for (let i = 0, caller; caller = callers[i]; i++) {
       const oldMutationDom = caller.mutationToDom();
       const oldMutation = oldMutationDom && Blockly.Xml.domToText(oldMutationDom);
       caller.domToMutation(mutation);

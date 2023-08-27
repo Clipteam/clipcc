@@ -142,6 +142,7 @@ Blockly.Connection.prototype.connect_ = function(childConnection) {
   const parentBlock = parentConnection.getSourceBlock();
   const childBlock = childConnection.getSourceBlock();
   let isSurroundingC = false;
+  let previousParentConnection;
   if (parentConnection == parentBlock.getFirstStatementConnection()) {
     isSurroundingC = true;
   }
@@ -151,7 +152,7 @@ Blockly.Connection.prototype.connect_ = function(childConnection) {
     // If we're using a c-shaped block to surround a stack, remember where the
     // stack used to be connected.
     if (isSurroundingC) {
-      var previousParentConnection = childConnection.targetConnection;
+      previousParentConnection = childConnection.targetConnection;
     }
     childConnection.disconnect();
   }
@@ -293,14 +294,17 @@ Blockly.Connection.prototype.canConnectWithReason_ = function(target) {
   if (!target) {
     return Blockly.Connection.REASON_TARGET_NULL;
   }
+  let blockA;
+  let blockB;
+  let superiorConn;
   if (this.isSuperior()) {
-    var blockA = this.sourceBlock_;
-    var blockB = target.getSourceBlock();
-    var superiorConn = this;
+    blockA = this.sourceBlock_;
+    blockB = target.getSourceBlock();
+    superiorConn = this;
   } else {
-    var blockB = this.sourceBlock_;
-    var blockA = target.getSourceBlock();
-    var superiorConn = target;
+    blockB = this.sourceBlock_;
+    blockA = target.getSourceBlock();
+    superiorConn = target;
   }
   if (blockA && blockA == blockB) {
     return Blockly.Connection.REASON_SELF_CONNECTION;
@@ -347,9 +351,7 @@ Blockly.Connection.prototype.checkConnection_ = function(target) {
     case Blockly.Connection.REASON_TARGET_NULL:
       throw 'Target connection is null.';
     case Blockly.Connection.REASON_CHECKS_FAILED:
-      var msg = 'Connection checks failed. ';
-      msg += this + ' expected '  + this.check_ + ', found ' + target.check_;
-      throw msg;
+      throw 'Connection checks failed. ' + this + ' expected '  + this.check_ + ', found ' + target.check_;
     case Blockly.Connection.REASON_SHADOW_PARENT:
       throw 'Connecting non-shadow to shadow block.';
     case Blockly.Connection.REASON_CUSTOM_PROCEDURE:

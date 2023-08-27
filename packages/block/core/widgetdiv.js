@@ -303,13 +303,13 @@ Blockly.WidgetDiv.calculateX_ = function(viewportBBox, anchorBBox, widgetSize,
     // Try to align the right side of the field and the right side of the widget.
     const widgetLeft = anchorBBox.right - widgetSize.width;
     // Don't go offscreen left.
-    var x = Math.max(widgetLeft, viewportBBox.left);
+    const x = Math.max(widgetLeft, viewportBBox.left);
     // But really don't go offscreen right:
     return Math.min(x, viewportBBox.right - widgetSize.width);
   } else {
     // Try to align the left side of the field and the left side of the widget.
     // Don't go offscreen right.
-    var x = Math.min(anchorBBox.left,
+    const x = Math.min(anchorBBox.left,
         viewportBBox.right - widgetSize.width);
     // But left is more important, because that's where the text is.
     return Math.max(x, viewportBBox.left);

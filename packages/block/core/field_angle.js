@@ -359,11 +359,7 @@ Blockly.FieldAngle.prototype.updateGraph_ = function() {
         ' 0 ', largeFlag, ' ', sweepFlag, ' ', x2, ',', y2, ' z');
 
     // Image rotation needs to be set in degrees
-    if (Blockly.FieldAngle.CLOCKWISE) {
-      var imageRotation = angleDegrees + 2 * Blockly.FieldAngle.OFFSET;
-    } else {
-      var imageRotation = -angleDegrees;
-    }
+    const imageRotation = Blockly.FieldAngle.CLOCKWISE ? angleDegrees + 2 * Blockly.FieldAngle.OFFSET : -angleDegrees;
     this.arrowSvg_.setAttribute('transform', 'rotate(' + (imageRotation) + ')');
   }
   this.gauge_.setAttribute('d', path.join(''));

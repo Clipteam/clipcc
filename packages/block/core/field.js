@@ -775,7 +775,7 @@ Blockly.Field.prototype.setTooltip = function(_newTip) {
 Blockly.Field.prototype.getClickTarget_ = function() {
   let nFields = 0;
 
-  for (var i = 0, input; input = this.sourceBlock_.inputList[i]; i++) {
+  for (let i = 0, input; input = this.sourceBlock_.inputList[i]; i++) {
     nFields += input.fieldRow.length;
   }
   if (nFields <= 1 && this.sourceBlock_.outputConnection) {

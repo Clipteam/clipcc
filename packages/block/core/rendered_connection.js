@@ -194,8 +194,7 @@ Blockly.RenderedConnection.prototype.closest = function(maxLimit, dxy) {
  * Add highlighting around this connection.
  */
 Blockly.RenderedConnection.prototype.highlight = function() {
-  let steps;
-  steps = 'm -20,0 h 5 ' + Blockly.BlockSvg.NOTCH_PATH_LEFT + ' h 5';
+  const steps = 'm -20,0 h 5 ' + Blockly.BlockSvg.NOTCH_PATH_LEFT + ' h 5';
   const xy = this.sourceBlock_.getRelativeToSurfaceXY();
   const x = this.x_ - xy.x;
   const y = this.y_ - xy.y;
@@ -285,12 +284,12 @@ Blockly.RenderedConnection.prototype.hideAll = function() {
       const block = blocks[i];
       // Hide all connections of all children.
       const connections = block.getConnections_(true);
-      for (var j = 0; j < connections.length; j++) {
+      for (let j = 0; j < connections.length; j++) {
         connections[j].setHidden(true);
       }
       // Close all bubbles of all children.
       const icons = block.getIcons();
-      for (var j = 0; j < icons.length; j++) {
+      for (let j = 0; j < icons.length; j++) {
         icons[j].setVisible(false);
       }
     }
