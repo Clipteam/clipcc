@@ -370,7 +370,7 @@ Blockly.Blocks['operator_join_advanced'] = {
    * @this Blockly.Block
    */
   customContextMenu: function(menuOptions, triggeredBlock) {
-    if (triggeredBlock) {
+    if (triggeredBlock && triggeredBlock.isShadow()) {
       var index = this.findBlockIndex_(triggeredBlock) + 1;
       menuOptions.push({
         enabled: true,
