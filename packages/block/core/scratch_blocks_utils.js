@@ -272,7 +272,7 @@ Blockly.scratchBlocksUtils.pasteCallback = function(ws, event) {
     /** @type {Clipboard} */
     var clipboard = goog.global.navigator.clipboard;
 
-    clipboard.readText().then(data => {
+    clipboard.readText().then(function(data) {
       Blockly.Events.disable();
       try {
         var xml = Blockly.Xml.textToDom(data);

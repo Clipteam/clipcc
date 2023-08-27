@@ -1073,17 +1073,17 @@ Blockly.BlockSvg.prototype.setDeleteStyle = function(enable) {
  * @param {boolean} visible Whether block is visible
  */
 Blockly.BlockSvg.prototype.setVisible = function(visible) {
-    if (visible === this.visible_) {
-      return;
-    }
-    this.visible_ = visible;
-    const svgRoot = this.getSvgRoot();
-    if (!svgRoot) {
-      return;
-    }
-    if (visible) svgRoot.style.display = '';
-    else svgRoot.style.display = 'none';
-}
+  if (visible === this.visible_) {
+    return;
+  }
+  this.visible_ = visible;
+  var svgRoot = this.getSvgRoot();
+  if (!svgRoot) {
+    return;
+  }
+  if (visible) svgRoot.style.display = '';
+  else svgRoot.style.display = 'none';
+};
 
 /**
  * Change the colour of a block.
@@ -1352,13 +1352,13 @@ Blockly.BlockSvg.prototype.scheduleSnapAndBump = function() {
  * @package
  */
 Blockly.BlockSvg.prototype.updateObserve = function() {
-    if (!this.workspace.virtualizedManager) return;
-    if (this.getParent()) {
-      this.workspace.virtualizedManager.unobserve(this);
-      if (!this.visible_) {
-        this.setVisible(true);
-      }
-    } else {
-      this.workspace.virtualizedManager.observe(this);
+  if (!this.workspace.virtualizedManager) return;
+  if (this.getParent()) {
+    this.workspace.virtualizedManager.unobserve(this);
+    if (!this.visible_) {
+      this.setVisible(true);
     }
+  } else {
+    this.workspace.virtualizedManager.observe(this);
+  }
 };

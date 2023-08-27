@@ -643,7 +643,7 @@ Blockly.Xml.domToVariables = function(xmlVariables, workspace) {
     var isCloud = xmlChild.getAttribute('iscloud') == 'true';
     var name = xmlChild.textContent;
 
-    if (typeof(type) === undefined || type === null) {
+    if (type === null) {
       throw Error('Variable with id, ' + id + ' is without a type');
     }
     workspace.createVariable(name, type, id, isLocal, isCloud);

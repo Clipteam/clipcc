@@ -665,8 +665,8 @@ Blockly.Bubble.prototype.getRelativeToSurfaceXY = function() {
  * @package
  */
 Blockly.Bubble.prototype.updateObserve = function() {
-    if (!this.workspace_.virtualizedManager) return;
-    this.workspace_.virtualizedManager.observe(this);
+  if (!this.workspace_.virtualizedManager) return;
+  this.workspace_.virtualizedManager.observe(this);
 };
 
 /**
@@ -674,17 +674,17 @@ Blockly.Bubble.prototype.updateObserve = function() {
  * @param {boolean} visible Whether bubble is visible
  */
 Blockly.Bubble.prototype.setVisible = function(visible) {
-    if (visible === this.visible_) {
-      return;
-    }
-    this.visible_ = visible;
-    const svgRoot = this.getSvgRoot();
-    if (!svgRoot) {
-      return;
-    }
-    if (visible) svgRoot.style.display = '';
-    else svgRoot.style.display = 'none';
-}
+  if (visible === this.visible_) {
+    return;
+  }
+  this.visible_ = visible;
+  var svgRoot = this.getSvgRoot();
+  if (!svgRoot) {
+    return;
+  }
+  if (visible) svgRoot.style.display = '';
+  else svgRoot.style.display = 'none';
+};
 
 /**
  * Set whether auto-layout of this bubble is enabled.  The first time a bubble

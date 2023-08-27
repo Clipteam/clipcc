@@ -83,7 +83,7 @@ Blockly.VirtualizedManager.prototype.check = function() {
     // see Clipteam/clipcc#10
     if (!block.rendered) {
       continue;
-    };
+    }
     var blockPos = block.getRelativeToSurfaceXY();
     blockPos.x *= workspace.scale;
     blockPos.y *= workspace.scale;

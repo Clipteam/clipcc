@@ -309,7 +309,7 @@ Blockly.ContextMenu.blockCopyOption = function(block) {
     text: Blockly.Msg.COPY,
     enabled: true,
     callback: Blockly.scratchBlocksUtils.copyCallback(block)
-  }
+  };
 };
 
 /**
@@ -324,7 +324,7 @@ Blockly.ContextMenu.wsPasteOption = function(ws, e) {
     text: Blockly.Msg.PASTE,
     enabled: true,
     callback: Blockly.scratchBlocksUtils.pasteCallback(ws, e)
-  }
+  };
 };
 
 /**
