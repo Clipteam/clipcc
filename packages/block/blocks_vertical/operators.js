@@ -734,7 +734,7 @@ Blockly.Blocks['operator_indexof'] = {
    * Block for get the index of substring.
    * @this Blockly.Block
    */
-  init: function () {
+  init: function() {
     this.jsonInit({
       "message0": Blockly.Msg.OPERATORS_INDEXOF,
       "args0": [
