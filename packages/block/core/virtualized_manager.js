@@ -28,7 +28,7 @@ goog.provide('Blockly.VirtualizedManager');
 
 /**
  * Class for virtualized manager.
- * @param {Blockly.WorkspaceSvg} workspace
+ * @param {Blockly.WorkspaceSvg} workspace The workspace.
  */
 Blockly.VirtualizedManager = function(workspace) {
   this.workspace = workspace;
@@ -41,7 +41,7 @@ Blockly.VirtualizedManager = function(workspace) {
 
 /**
  * Observe a block.
- * @param {Blockly.BlockSvg} block
+ * @param {Blockly.BlockSvg} block The block to observe.
  */
 Blockly.VirtualizedManager.prototype.observe = function(block) {
   if (!this._observedBlocks.includes(block)) {
@@ -51,7 +51,7 @@ Blockly.VirtualizedManager.prototype.observe = function(block) {
 
 /**
  * Unobserve a block.
- * @param {Blockly.BlockSvg} block
+ * @param {Blockly.BlockSvg} block The block to unobserve.
  */
 Blockly.VirtualizedManager.prototype.unobserve = function(block) {
   if (this._observedBlocks.includes(block)) {
