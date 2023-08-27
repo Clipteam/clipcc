@@ -54,8 +54,8 @@
         "browser": true
     },
     "globals": {
-        "Blockly": true, # Blockly global
-        "goog": true, # goog closure libraries/includes
+        "Blockly": true, // Blockly global
+        "goog": true // goog closure libraries/includes
     },
     "extends": "eslint:recommended"
 }
