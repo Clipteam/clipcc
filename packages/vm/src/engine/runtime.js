@@ -350,6 +350,12 @@ class Runtime extends EventEmitter {
          */
         this.redrawRequested = false;
 
+        /**
+         * ClipCC's version.
+         * @type {string}
+         */
+        this.version = clipcc.VERSION;
+
         // Register all given block packages.
         this._registerBlockPackages();
 

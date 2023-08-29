@@ -23,8 +23,10 @@ export interface Events {
     EXTENSION_LOADING: [extensionURL: string];
     LOCALE_ADDED: [locales: Record<string, unknown>];
     SETTINGS_ADDED: [id: string, settings: SettingsItem[]];
-    EXTENSION_LOADED: [extensionURL: string, extension: Extension];
-    EXTENSION_LOAD_ERROR: [extensionURL: string, reason: unknown];
+    EXTENSION_LOADED: [extensionID: string, extension: Extension];
+    EXTENSION_LOAD_ERROR: [extensionID: string, reason: unknown];
+    EXTENSION_ENABLED: [extensionID: string, extension: Extension],
+    EXTENSION_DISABLED: [extensionID: string, extension: Extension],
     [eventName: string]: [...params: any[]]
 }
 
@@ -72,6 +74,8 @@ class ExtensionManager extends Emitter<Events> {
         this.ccxAdapter.on('SETTINGS_ADDED', this.handleAddSettings.bind(this));
         this.ccxAdapter.on('LOCALE_ADDED', this.handleAddLocale.bind(this));
         this.ccxAdapter.on('LOADED', this.handleExtensionLoaded.bind(this));
+        this.ccxAdapter.on('ENABLED', this.handleExtensionEnabled.bind(this));
+        this.ccxAdapter.on('DISABLED', this.handleExtensionDisabled.bind(this));
     }
     /**
      * Check whether an extension is registered or is in the process of loading. This is intended to control loading or
@@ -232,6 +236,16 @@ class ExtensionManager extends Emitter<Events> {
     private handleExtensionLoaded (id: string, extension: Extension) {
         this.loadedExtensions.set(id, extension);
         this.emit('EXTENSION_LOADED', id, extension);
+    }
+
+    private handleExtensionDisabled (id: string, extension: Extension) {
+        this.loadedExtensions.set(id, extension);
+        this.emit('EXTENSION_DISABLED', id, extension);
+    }
+
+    private handleExtensionEnabled (id: string, extension: Extension) {
+        this.loadedExtensions.set(id, extension);
+        this.emit('EXTENSION_ENABLED', id, extension);
     }
 
     private handleAddLocale (locales: Record<string, unknown>) {

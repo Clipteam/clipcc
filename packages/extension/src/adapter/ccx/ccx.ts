@@ -45,7 +45,9 @@ export interface CCXExtension extends Extension {
 }
 
 export interface CCXAdapterEvents {
-    LOADED: [url: string, extension: CCXExtension];
+    LOADED: [id: string, extension: CCXExtension];
+    ENABLED: [id: string, extension: CCXExtension];
+    DISABLED: [id: string, extension: CCXExtension];
     REFRESH_TOOLBOX: [];
     REGISTER_BLOCK: [blocks: BlockJSON[]];
     REGISTER_BUTTON: [id: string, func: Function];
@@ -228,8 +230,8 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                 }));
                 // @ts-expect-error
                 extensionObject = (new extensionObject()) as ExtensionClass;
-                if (extensionObject.onInit) {
-                    extensionObject.onInit();
+                if (typeof extensionObject.onInit === 'function') {
+                    await extensionObject.onInit();
                 }
                 this.loadedCCXExtension.set(info.id, {
                     type: 'ccx',
@@ -266,17 +268,71 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
     }
 
     /**
-     * Reload a ccx extension.
-     * @param {string} extensionID - Extension's ID
+     * Switch a ccx extension's status.
+     * @param {string} extensionId - Extension's ID
     */
-    async reload (extensionID: string) {
-        // @todo
+    async switchStatus (extensionId: string, status: boolean) {
+        const targetExt = this.loadedCCXExtension.get(extensionId);
+        if (!targetExt) {
+            throw new Error(`Cannot locate extension ${extensionId}.`);
+        }
+
+        if (targetExt.enabled === status) {
+            return;
+        }
+
+        // It's running in worker
+        if (typeof targetExt.instance === 'string') {
+            try {
+                if (status) {
+                    await dispatch.call(targetExt.instance, 'onInit');
+                } else {
+                    await dispatch.call(targetExt.instance, 'onUninit');
+                }
+            } catch (e: unknown) {
+                // We can't know if the function exists, just ignore it.
+                console.error(e);
+            }
+        } else {
+            if (status) {
+                if (typeof targetExt.instance.onInit === 'function') {
+                    await targetExt.instance.onInit();
+                }
+            } else {
+                if (typeof targetExt.instance.onUninit === 'function') {
+                    await targetExt.instance.onUninit();
+                }
+            }
+        }
+
+        targetExt.enabled = status;
+        if (status) {
+            this.emit('ENABLED', extensionId, targetExt);
+        } else {
+            this.emit('DISABLED', extensionId, targetExt);
+        }
+    }
+
+    /**
+     * Reload a ccx extension.
+     * @param {string} extensionId - Extension's ID
+    */
+    async reload (extensionId: string) {
+        const targetExt = this.loadedCCXExtension.get(extensionId);
+        await this.switchStatus(extensionId, !targetExt?.enabled);
+        await this.switchStatus(extensionId, !targetExt?.enabled);
     }
 
     /**
      * Reload all ccx extensions.
     */
-    reloadAll () {}
+    reloadAll () {
+        const allPromises: Promise<void>[] = [];
+        for (const [extId] of this.loadedCCXExtension.entries()) {
+            allPromises.push(this.reload(extId));
+        }
+        return Promise.all(allPromises);
+    }
 
     /**
      * Update locales.

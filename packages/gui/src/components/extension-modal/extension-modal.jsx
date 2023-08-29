@@ -52,6 +52,11 @@ const tagListPrefix = [
     {tag: 'online', intlLabel: messages.onlineTag}
 ];
 
+const getIsUnswitched = (data) => {
+    if (data.unavailable) return false;
+    return data.enabled && !data.hotReload;
+};
+
 class ExtensionCard extends React.Component {
     constructor (props) {
         super(props);
@@ -75,7 +80,7 @@ class ExtensionCard extends React.Component {
             dataItem.name;
     }
     handleSwitch (value) {
-        this.props.onExtensionStatusChanged(this.props.data.url, value);
+        this.props.onExtensionStatusChanged(this.props.data.id, value);
     }
     handleChangeSettingsItem (id) {
         return value => {
@@ -176,7 +181,7 @@ class ExtensionCard extends React.Component {
                     {data.isOnline ? <></> : (
                         <Switch
                             value={data.enabled}
-                            disabled={data.unavailable || (data.enabled && !data.hotReload)}
+                            disabled={getIsUnswitched(data)}
                             onChange={this.handleSwitch}
                         />
                     )}

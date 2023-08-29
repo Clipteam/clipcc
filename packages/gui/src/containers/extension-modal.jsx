@@ -35,7 +35,7 @@ class ExtensionModal extends React.PureComponent {
             'handleTagClick',
             'handleLoadFromURL',
             'handleUpload',
-            'handleExtensionAdded',
+            'handleExtensionUpdated',
             'handleChangeSettingsItem'
         ]);
         this.extensions = {};
@@ -54,7 +54,9 @@ class ExtensionModal extends React.PureComponent {
             const ext = Object.assign({}, loadedExtensions[id]);
             this.addExtension(id, ext);
         }
-        this.props.extensionManager.on('EXTENSION_LOADED', this.handleExtensionAdded.bind(this));
+        this.props.extensionManager.on('EXTENSION_LOADED', this.handleExtensionUpdated);
+        this.props.extensionManager.on('EXTENSION_ENABLED', this.handleExtensionUpdated);
+        this.props.extensionManager.on('EXTENSION_DISABLED', this.handleExtensionUpdated);
         this.state = {
             filterQuery: '',
             filter: '',
@@ -65,7 +67,9 @@ class ExtensionModal extends React.PureComponent {
         };
     }
     componentWillUnmount () {
-        this.props.extensionManager.off('EXTENSION_LOADED', this.handleExtensionAdded);
+        this.props.extensionManager.off('EXTENSION_LOADED', this.handleExtensionUpdated);
+        this.props.extensionManager.off('EXTENSION_ENABLED', this.handleExtensionUpdated);
+        this.props.extensionManager.off('EXTENSION_DISABLED', this.handleExtensionUpdated);
     }
     addExtension (id, extension) {
         // Don't use extension info for built-in extensions;
@@ -92,16 +96,17 @@ class ExtensionModal extends React.PureComponent {
         }
         this.extensions[id] = extension.info;
     }
-    handleExtensionAdded (id, extension) {
+    handleExtensionUpdated (id, extension) {
         this.addExtension(id, Object.assign({}, extension));
         this.setState({extensions: Object.values(this.extensions)});
     }
-    async handleExtensionStatusChanged (url, status) {
-        if (status) {
-            await this.props.extensionManager.loadExtensionURL(id);
-            this.props.onCategorySelected(url);
+    async handleExtensionStatusChanged (id, status) {
+        const manager = this.props.extensionManager;
+        if (!manager.isExtensionLoaded(id)) {
+            await manager.loadExtensionURL(id);
+            this.props.onCategorySelected(id);
         } else {
-            // todo
+            manager.ccxAdapter.switchStatus(id, status);
         }
     }
     handleFilterChange (e) {
