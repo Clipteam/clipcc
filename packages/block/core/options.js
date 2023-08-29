@@ -91,9 +91,12 @@ Blockly.Options = function(options) {
     toolboxAtStart = true;
   }
 
-  const toolboxPosition = horizontalLayout ?
-      (toolboxAtStart ? Blockly.TOOLBOX_AT_TOP : Blockly.TOOLBOX_AT_BOTTOM) :
-      (toolboxAtStart === rtl ? Blockly.TOOLBOX_AT_RIGHT : Blockly.TOOLBOX_AT_LEFT);
+  let toolboxPosition;
+  if (horizontalLayout) {
+    toolboxPosition = toolboxAtStart ? Blockly.TOOLBOX_AT_TOP : Blockly.TOOLBOX_AT_BOTTOM;
+  } else {
+    toolboxPosition = (toolboxAtStart == rtl) ? Blockly.TOOLBOX_AT_RIGHT : Blockly.TOOLBOX_AT_LEFT;
+  }
 
   let hasScrollbars = options['scrollbars'];
   if (hasScrollbars === undefined) {
