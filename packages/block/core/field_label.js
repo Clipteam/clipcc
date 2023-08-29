@@ -56,7 +56,7 @@ goog.inherits(Blockly.FieldLabel, Blockly.Field);
  * @nocollapse
  */
 Blockly.FieldLabel.fromJson = function(options) {
-  var text = Blockly.utils.replaceMessageReferences(options['text']);
+  const text = Blockly.utils.replaceMessageReferences(options['text']);
   return new Blockly.FieldLabel(text, options['class']);
 };
 

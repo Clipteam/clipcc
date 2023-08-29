@@ -217,7 +217,7 @@ Blockly.WorkspaceComment.prototype.getXY = function() {
  * @package
  */
 Blockly.WorkspaceComment.prototype.moveBy = function(dx, dy) {
-  var event = new Blockly.Events.CommentMove(this);
+  const event = new Blockly.Events.CommentMove(this);
   this.xy_.translate(dx, dy);
   event.recordNew();
   Blockly.Events.fire(event);
@@ -299,7 +299,7 @@ Blockly.WorkspaceComment.prototype.isMinimized = function() {
  * @package
  */
 Blockly.WorkspaceComment.prototype.toXmlWithXY = function(opt_noId) {
-  var element = this.toXml(opt_noId);
+  const element = this.toXml(opt_noId);
   element.setAttribute('x', Math.round(this.xy_.x));
   element.setAttribute('y', Math.round(this.xy_.y));
   element.setAttribute('h', this.height_);
@@ -332,7 +332,7 @@ Blockly.WorkspaceComment.prototype.getLabelText = function() {
  * @package
  */
 Blockly.WorkspaceComment.prototype.toXml = function(opt_noId) {
-  var commentElement = goog.dom.createDom('comment');
+  const commentElement = goog.dom.createDom('comment');
   if (!opt_noId) {
     commentElement.setAttribute('id', this.id);
   }
@@ -350,7 +350,7 @@ Blockly.WorkspaceComment.prototype.toXml = function(opt_noId) {
  */
 Blockly.WorkspaceComment.fireCreateEvent = function(comment) {
   if (Blockly.Events.isEnabled()) {
-    var existingGroup = Blockly.Events.getGroup();
+    const existingGroup = Blockly.Events.getGroup();
     if (!existingGroup) {
       Blockly.Events.setGroup(true);
     }
@@ -372,9 +372,9 @@ Blockly.WorkspaceComment.fireCreateEvent = function(comment) {
  * @package
  */
 Blockly.WorkspaceComment.fromXml = function(xmlComment, workspace) {
-  var info = Blockly.WorkspaceComment.parseAttributes(xmlComment);
+  const info = Blockly.WorkspaceComment.parseAttributes(xmlComment);
 
-  var comment = new Blockly.WorkspaceComment(
+  const comment = new Blockly.WorkspaceComment(
       workspace, info.content, info.h, info.w, info.minimized, info.id);
 
   if (!isNaN(info.x) && !isNaN(info.y)) {
@@ -392,8 +392,8 @@ Blockly.WorkspaceComment.fromXml = function(xmlComment, workspace) {
  * @package
  */
 Blockly.WorkspaceComment.parseAttributes = function(xml) {
-  var xmlH = xml.getAttribute('h');
-  var xmlW = xml.getAttribute('w');
+  const xmlH = xml.getAttribute('h');
+  const xmlW = xml.getAttribute('w');
 
   return {
     /* @type {string} */

@@ -47,7 +47,7 @@ goog.getMsgOrig = goog.getMsg;
  * @suppress {duplicate}
  */
 goog.getMsg = function(str, opt_values) {
-  var key = goog.getMsg.blocklyMsgMap[str];
+  const key = goog.getMsg.blocklyMsgMap[str];
   if (key) {
     str = Blockly.Msg[key];
   }

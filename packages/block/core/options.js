@@ -36,90 +36,84 @@ goog.require('Blockly.Colours');
  * @constructor
  */
 Blockly.Options = function(options) {
-  var readOnly = !!options['readOnly'];
-  if (readOnly) {
-    var languageTree = null;
-    var hasCategories = false;
-    var hasTrashcan = false;
-    var hasCollapse = false;
-    var hasComments = false;
-    var hasDisable = false;
-    var hasSounds = false;
-    var hasClipboard = false;
-  } else {
+  const readOnly = !!options['readOnly'];
+  let languageTree = null;
+  let hasCategories = false;
+  let hasTrashcan = false;
+  let hasCollapse = false;
+  let hasComments = false;
+  let hasDisable = false;
+  let hasSounds = false;
+  let hasClipboard = false;
+  if (!readOnly) {
     if (!options['toolbox'] && Blockly.Blocks.defaultToolbox) {
-      var oParser = new DOMParser();
-      var dom = oParser.parseFromString(Blockly.Blocks.defaultToolbox, 'text/xml');
+      const oParser = new DOMParser();
+      const dom = oParser.parseFromString(Blockly.Blocks.defaultToolbox, 'text/xml');
       options['toolbox'] = dom.documentElement;
     }
-    var languageTree = Blockly.Options.parseToolboxTree(options['toolbox']);
-    var hasCategories = Boolean(languageTree &&
+    languageTree = Blockly.Options.parseToolboxTree(options['toolbox']);
+    hasCategories = Boolean(languageTree &&
         languageTree.getElementsByTagName('category').length);
-    var hasTrashcan = options['trashcan'];
+    hasTrashcan = options['trashcan'];
     if (hasTrashcan === undefined) {
       hasTrashcan = false;
     }
-    var hasCollapse = options['collapse'];
+    hasCollapse = options['collapse'];
     if (hasCollapse === undefined) {
       hasCollapse = hasCategories;
     }
-    var hasComments = options['comments'];
+    hasComments = options['comments'];
     if (hasComments === undefined) {
       hasComments = hasCategories;
     }
-    var hasDisable = options['disable'];
+    hasDisable = options['disable'];
     if (hasDisable === undefined) {
       hasDisable = hasCategories;
     }
-    var hasSounds = options['sounds'];
+    hasSounds = options['sounds'];
     if (hasSounds === undefined) {
       hasSounds = true;
     }
-    var hasClipboard = options['clipboard'];
+    hasClipboard = options['clipboard'];
     if (hasClipboard === undefined) {
       hasClipboard = goog.global.navigator && goog.global.navigator.clipboard;
     }
   }
-  var rtl = !!options['rtl'];
-  var horizontalLayout = options['horizontalLayout'];
+  const rtl = !!options['rtl'];
+  let horizontalLayout = options['horizontalLayout'];
   if (horizontalLayout === undefined) {
     horizontalLayout = false;
   }
-  var toolboxAtStart = options['toolboxPosition'];
+  let toolboxAtStart = options['toolboxPosition'];
   if (toolboxAtStart === 'end') {
     toolboxAtStart = false;
   } else {
     toolboxAtStart = true;
   }
 
+  let toolboxPosition;
   if (horizontalLayout) {
-    var toolboxPosition = toolboxAtStart ?
-        Blockly.TOOLBOX_AT_TOP : Blockly.TOOLBOX_AT_BOTTOM;
+    toolboxPosition = toolboxAtStart ? Blockly.TOOLBOX_AT_TOP : Blockly.TOOLBOX_AT_BOTTOM;
   } else {
-    var toolboxPosition = (toolboxAtStart == rtl) ?
-        Blockly.TOOLBOX_AT_RIGHT : Blockly.TOOLBOX_AT_LEFT;
+    toolboxPosition = (toolboxAtStart == rtl) ? Blockly.TOOLBOX_AT_RIGHT : Blockly.TOOLBOX_AT_LEFT;
   }
 
-  var hasScrollbars = options['scrollbars'];
+  let hasScrollbars = options['scrollbars'];
   if (hasScrollbars === undefined) {
     hasScrollbars = hasCategories;
   }
-  var hasCss = options['css'];
+  let hasCss = options['css'];
   if (hasCss === undefined) {
     hasCss = true;
   }
-  var pathToMedia = 'https://blockly-demo.appspot.com/static/media/';
+  let pathToMedia = 'https://blockly-demo.appspot.com/static/media/';
   if (options['media']) {
     pathToMedia = options['media'];
   } else if (options['path']) {
     // 'path' is a deprecated option which has been replaced by 'media'.
     pathToMedia = options['path'] + 'media/';
   }
-  if (options['oneBasedIndex'] === undefined) {
-    var oneBasedIndex = true;
-  } else {
-    var oneBasedIndex = !!options['oneBasedIndex'];
-  }
+  const oneBasedIndex = options['oneBasedIndex'] === undefined ? true : !!options['oneBasedIndex'];
 
   Blockly.Colours.overrideColours(options['colours']);
 
@@ -169,8 +163,8 @@ Blockly.Options.prototype.getMetrics = null;
  * @private
  */
 Blockly.Options.parseZoomOptions_ = function(options) {
-  var zoom = options['zoom'] || {};
-  var zoomOptions = {};
+  const zoom = options['zoom'] || {};
+  const zoomOptions = {};
   if (zoom['controls'] === undefined) {
     zoomOptions.controls = false;
   } else {
@@ -213,8 +207,8 @@ Blockly.Options.parseZoomOptions_ = function(options) {
  * @private
  */
 Blockly.Options.parseGridOptions_ = function(options) {
-  var grid = options['grid'] || {};
-  var gridOptions = {};
+  const grid = options['grid'] || {};
+  const gridOptions = {};
   gridOptions.spacing = parseFloat(grid['spacing']) || 0;
   gridOptions.colour = grid['colour'] || '#888';
   gridOptions.length = parseFloat(grid['length']) || 1;

@@ -142,7 +142,7 @@ function compile(compilerOptions, debug, strict) {
     const options = {
         compilation_level: 'SIMPLE',
         warning_level: (debug || strict) ? 'VERBOSE' : 'DEFAULT',
-        language_in: 'ECMASCRIPT_2017',
+        language_in: 'ECMASCRIPT_2020',
         language_out: 'ECMASCRIPT5_STRICT',
         hide_warnings_for: 'node_modules',
         jscomp_off: [...JSCOMP_OFF]

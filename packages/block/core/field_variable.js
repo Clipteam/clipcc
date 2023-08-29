@@ -55,7 +55,7 @@ Blockly.FieldVariable = function(varname, opt_validator, opt_variableTypes) {
   // TODO (blockly #1499): Add opt_default_type to match default value.
   // If not set, ''.
   this.defaultVariableName = (varname || '');
-  var hasSingleVarType = opt_variableTypes && (opt_variableTypes.length == 1);
+  const hasSingleVarType = opt_variableTypes && (opt_variableTypes.length == 1);
   this.defaultType_ = hasSingleVarType ? opt_variableTypes[0] : '';
   this.variableTypes = opt_variableTypes;
   this.addArgType('variable');
@@ -74,8 +74,8 @@ goog.inherits(Blockly.FieldVariable, Blockly.FieldDropdown);
  * @nocollapse
  */
 Blockly.FieldVariable.fromJson = function(options) {
-  var varname = Blockly.utils.replaceMessageReferences(options['variable']);
-  var variableTypes = options['variableTypes'];
+  const varname = Blockly.utils.replaceMessageReferences(options['variable']);
+  const variableTypes = options['variableTypes'];
   return new Blockly.FieldVariable(varname, null, variableTypes);
 };
 
@@ -107,9 +107,9 @@ Blockly.FieldVariable.prototype.initModel = function() {
   }
   this.workspace_ = this.sourceBlock_.workspace;
   // Initialize this field if it's in a broadcast block in the flyout
-  var variable = this.initFlyoutBroadcast_(this.workspace_);
+  let variable = this.initFlyoutBroadcast_(this.workspace_);
   if (!variable) {
-    var variable = Blockly.Variables.getOrCreateVariablePackage(
+    variable = Blockly.Variables.getOrCreateVariablePackage(
         this.workspace_, null, this.defaultVariableName, this.defaultType_);
   }
   // Don't fire a change event for this setValue.  It would have null as the
@@ -136,8 +136,8 @@ Blockly.FieldVariable.prototype.initModel = function() {
  */
 Blockly.FieldVariable.prototype.initFlyoutBroadcast_ = function(workspace) {
   // Using shorter name for this constant
-  var broadcastMsgType = Blockly.BROADCAST_MESSAGE_VARIABLE_TYPE;
-  var broadcastVars = workspace.getVariablesOfType(broadcastMsgType);
+  const broadcastMsgType = Blockly.BROADCAST_MESSAGE_VARIABLE_TYPE;
+  const broadcastVars = workspace.getVariablesOfType(broadcastMsgType);
   if(workspace.isFlyout && this.defaultType_ == broadcastMsgType &&
       broadcastVars.length != 0) {
     broadcastVars.sort(Blockly.VariableModel.compareByName);
@@ -200,21 +200,21 @@ Blockly.FieldVariable.prototype.getVariable = function() {
  *     variable.
  */
 Blockly.FieldVariable.prototype.setValue = function(id) {
-  var workspace = this.sourceBlock_.workspace;
-  var variable = Blockly.Variables.getVariable(workspace, id);
+  const workspace = this.sourceBlock_.workspace;
+  const variable = Blockly.Variables.getVariable(workspace, id);
 
   if (!variable) {
     throw new Error('Variable id doesn\'t point to a real variable!  ID was ' +
         id);
   }
   // Type checks!
-  var type = variable.type;
+  const type = variable.type;
   if (!this.typeIsAllowed_(type)) {
     throw new Error('Variable type doesn\'t match this field!  Type was ' +
         type);
   }
   if (this.sourceBlock_ && Blockly.Events.isEnabled()) {
-    var oldValue = this.variable_ ? this.variable_.getId() : null;
+    const oldValue = this.variable_ ? this.variable_.getId() : null;
     Blockly.Events.fire(new Blockly.Events.BlockChange(
         this.sourceBlock_, 'field', this.name, oldValue, id));
   }
@@ -230,11 +230,11 @@ Blockly.FieldVariable.prototype.setValue = function(id) {
  * @private
  */
 Blockly.FieldVariable.prototype.typeIsAllowed_ = function(type) {
-  var typeList = this.getVariableTypes_();
+  const typeList = this.getVariableTypes_();
   if (!typeList) {
     return true; // If it's null, all types are valid.
   }
-  for (var i = 0; i < typeList.length; i++) {
+  for (let i = 0; i < typeList.length; i++) {
     if (type == typeList[i]) {
       return true;
     }
@@ -250,18 +250,18 @@ Blockly.FieldVariable.prototype.typeIsAllowed_ = function(type) {
  */
 Blockly.FieldVariable.prototype.getVariableTypes_ = function() {
   // TODO (#1513): Try to avoid calling this every time the field is edited.
-  var variableTypes = this.variableTypes;
+  let variableTypes = this.variableTypes;
   if (variableTypes === null) {
     // If variableTypes is null, return all variable types.
     if (this.sourceBlock_) {
-      var workspace = this.sourceBlock_.workspace;
+      const workspace = this.sourceBlock_.workspace;
       return workspace.getVariableTypes();
     }
   }
   variableTypes = variableTypes || [''];
   if (variableTypes.length == 0) {
     // Throw an error if variableTypes is an empty list.
-    var name = this.getText();
+    const name = this.getText();
     throw new Error('\'variableTypes\' of field variable ' +
       name + ' was an empty list');
   }
@@ -279,33 +279,32 @@ Blockly.FieldVariable.dropdownCreate = function() {
     throw new Error('Tried to call dropdownCreate on a variable field with no' +
         ' variable selected.');
   }
-  var variableModelList = [];
-  var name = this.getText();
-  var workspace = null;
+  let variableModelList = [];
+  const name = this.getText();
+  let workspace = null;
   if (this.sourceBlock_) {
     workspace = this.sourceBlock_.workspace;
   }
   if (workspace) {
-    var variableTypes = this.getVariableTypes_();
-    var variableModelList = [];
+    const variableTypes = this.getVariableTypes_();
     // Get a copy of the list, so that adding rename and new variable options
     // doesn't modify the workspace's list.
-    for (var i = 0; i < variableTypes.length; i++) {
-      var variableType = variableTypes[i];
-      var variables = workspace.getVariablesOfType(variableType);
+    for (let i = 0; i < variableTypes.length; i++) {
+      const variableType = variableTypes[i];
+      const variables = workspace.getVariablesOfType(variableType);
       variableModelList = variableModelList.concat(variables);
 
-      var potentialVarMap = workspace.getPotentialVariableMap();
+      const potentialVarMap = workspace.getPotentialVariableMap();
       if (potentialVarMap) {
-        var potentialVars = potentialVarMap.getVariablesOfType(variableType);
+        const potentialVars = potentialVarMap.getVariablesOfType(variableType);
         variableModelList = variableModelList.concat(potentialVars);
       }
     }
   }
   variableModelList.sort(Blockly.VariableModel.compareByName);
 
-  var options = [];
-  for (var i = 0; i < variableModelList.length; i++) {
+  const options = [];
+  for (let i = 0; i < variableModelList.length; i++) {
     // Set the uuid as the internal representation of the variable.
     options[i] = [variableModelList[i].name, variableModelList[i].getId()];
   }
@@ -315,12 +314,14 @@ Blockly.FieldVariable.dropdownCreate = function() {
   } else {
     // Scalar variables and lists have the same backing action, but the option
     // text is different.
+    let renameText;
+    let deleteText;
     if (this.defaultType_ == Blockly.LIST_VARIABLE_TYPE) {
-      var renameText = Blockly.Msg.RENAME_LIST;
-      var deleteText = Blockly.Msg.DELETE_LIST;
+      renameText = Blockly.Msg.RENAME_LIST;
+      deleteText = Blockly.Msg.DELETE_LIST;
     } else {
-      var renameText = Blockly.Msg.RENAME_VARIABLE;
-      var deleteText = Blockly.Msg.DELETE_VARIABLE;
+      renameText = Blockly.Msg.RENAME_VARIABLE;
+      deleteText = Blockly.Msg.DELETE_VARIABLE;
     }
     options.push([renameText, Blockly.RENAME_VARIABLE_ID]);
     if (deleteText) {
@@ -344,9 +345,9 @@ Blockly.FieldVariable.dropdownCreate = function() {
  * @param {!goog.ui.MenuItem} menuItem The MenuItem selected within menu.
  */
 Blockly.FieldVariable.prototype.onItemSelected = function(menu, menuItem) {
-  var id = menuItem.getValue();
+  const id = menuItem.getValue();
   if (this.sourceBlock_ && this.sourceBlock_.workspace) {
-    var workspace = this.sourceBlock_.workspace;
+    const workspace = this.sourceBlock_.workspace;
     if (id == Blockly.RENAME_VARIABLE_ID) {
       // Rename variable.
       Blockly.Variables.renameVariable(workspace, this.variable_);
@@ -356,8 +357,8 @@ Blockly.FieldVariable.prototype.onItemSelected = function(menu, menuItem) {
       workspace.deleteVariableById(this.variable_.getId());
       return;
     } else if (id == Blockly.NEW_BROADCAST_MESSAGE_ID) {
-      var thisField = this;
-      var updateField = function(varId) {
+      const thisField = this;
+      const updateField = function(varId) {
         if (varId) {
           thisField.setValue(varId);
         }

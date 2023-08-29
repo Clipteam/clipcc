@@ -81,7 +81,7 @@ Blockly.Css.inject = function(hasCss, pathToMedia) {
     document.head.removeChild(Blockly.Css.styleSheet_.ownerNode);
   }
   // Placeholder for cursor rule.  Must be first rule (index 0).
-  var text = '.blocklyDraggable {}\n';
+  let text = '.blocklyDraggable {}\n';
   if (hasCss) {
     text += Blockly.Css.CONTENT.join('\n');
     if (Blockly.FieldDate) {
@@ -94,9 +94,9 @@ Blockly.Css.inject = function(hasCss, pathToMedia) {
   // Dynamically replace colours in the CSS text, in case they have
   // been set at run-time injection.
   // Process longer colour properties first to handle common prefixes.
-  var compareByLength = function(a, b) { return b.length - a.length; };
-  var colourProperties = Object.keys(Blockly.Colours).sort(compareByLength);
-  for (var i = 0, colourProperty; colourProperty = colourProperties[i]; i++) {
+  const compareByLength = function(a, b) { return b.length - a.length; };
+  const colourProperties = Object.keys(Blockly.Colours).sort(compareByLength);
+  for (let i = 0, colourProperty; colourProperty = colourProperties[i]; i++) {
     // Replace all
     text = text.replace(
       new RegExp('\\$colour\\_' + colourProperty, 'g'),
@@ -105,10 +105,10 @@ Blockly.Css.inject = function(hasCss, pathToMedia) {
   }
 
   // Inject CSS tag at start of head.
-  var cssNode = document.createElement('style');
+  const cssNode = document.createElement('style');
   document.head.insertBefore(cssNode, document.head.firstChild);
 
-  var cssTextNode = document.createTextNode(text);
+  const cssTextNode = document.createTextNode(text);
   cssNode.appendChild(cssTextNode);
   Blockly.Css.styleSheet_ = cssNode.sheet;
 };

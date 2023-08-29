@@ -185,17 +185,17 @@ Blockly.DropDownDiv.setCategory = function(category) {
  */
 Blockly.DropDownDiv.showPositionedByBlock = function(owner, block,
     opt_onHide, opt_secondaryYOffset) {
-  var scale = block.workspace.scale;
-  var bBox = {width: block.width, height: block.height};
+  const scale = block.workspace.scale;
+  const bBox = {width: block.width, height: block.height};
   bBox.width *= scale;
   bBox.height *= scale;
-  var position = block.getSvgRoot().getBoundingClientRect();
+  const position = block.getSvgRoot().getBoundingClientRect();
   // If we can fit it, render below the block.
-  var primaryX = position.left + bBox.width / 2;
-  var primaryY = position.top + bBox.height;
+  const primaryX = position.left + bBox.width / 2;
+  const primaryY = position.top + bBox.height;
   // If we can't fit it, render above the entire parent block.
-  var secondaryX = primaryX;
-  var secondaryY = position.top;
+  const secondaryX = primaryX;
+  let secondaryY = position.top;
   if (opt_secondaryYOffset) {
     secondaryY += opt_secondaryYOffset;
   }
@@ -223,8 +223,8 @@ Blockly.DropDownDiv.showPositionedByBlock = function(owner, block,
 Blockly.DropDownDiv.show = function(owner, primaryX, primaryY, secondaryX, secondaryY, opt_onHide) {
   Blockly.DropDownDiv.owner_ = owner;
   Blockly.DropDownDiv.onHide_ = opt_onHide;
-  var div = Blockly.DropDownDiv.DIV_;
-  var metrics = Blockly.DropDownDiv.getPositionMetrics(primaryX, primaryY, secondaryX, secondaryY);
+  const div = Blockly.DropDownDiv.DIV_;
+  const metrics = Blockly.DropDownDiv.getPositionMetrics(primaryX, primaryY, secondaryX, secondaryY);
   // Update arrow CSS
   Blockly.DropDownDiv.arrow_.style.transform = 'translate(' +
     metrics.arrowX + 'px,' + metrics.arrowY + 'px) rotate(45deg)';
@@ -251,8 +251,8 @@ Blockly.DropDownDiv.show = function(owner, primaryX, primaryY, secondaryX, secon
   // Add final translate, animated through `transition`.
   // Coordinates are relative to (initialX, initialY),
   // where the drop-down is absolutely positioned.
-  var dx = (metrics.finalX - metrics.initialX);
-  var dy = (metrics.finalY - metrics.initialY);
+  const dx = (metrics.finalX - metrics.initialX);
+  const dy = (metrics.finalY - metrics.initialY);
   div.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
   return metrics.arrowAtTop;
 };
@@ -267,16 +267,16 @@ Blockly.DropDownDiv.show = function(owner, primaryX, primaryY, secondaryX, secon
  * @returns {Object} Various final metrics, including rendered positions for drop-down and arrow.
  */
 Blockly.DropDownDiv.getPositionMetrics = function(primaryX, primaryY, secondaryX, secondaryY) {
-  var div = Blockly.DropDownDiv.DIV_;
-  var boundPosition = Blockly.DropDownDiv.boundsElement_.getBoundingClientRect();
+  const div = Blockly.DropDownDiv.DIV_;
+  const boundPosition = Blockly.DropDownDiv.boundsElement_.getBoundingClientRect();
 
-  var boundSize = goog.style.getSize(Blockly.DropDownDiv.boundsElement_);
-  var divSize = goog.style.getSize(div);
+  const boundSize = goog.style.getSize(Blockly.DropDownDiv.boundsElement_);
+  const divSize = goog.style.getSize(div);
 
   // First decide if we will render at primary or secondary position
   // i.e., above or below
   // renderX, renderY will eventually be the final rendered position of the box.
-  var renderX, renderY, renderedSecondary;
+  let renderX, renderY, renderedSecondary;
   // Can the div fit inside the bounds if we render below the primary point?
   if (primaryY + divSize.height > boundPosition.top + boundSize.height) {
     // We can't fit below in terms of y. Can we fit above?
@@ -300,12 +300,12 @@ Blockly.DropDownDiv.getPositionMetrics = function(primaryX, primaryY, secondaryX
   // First calculate the absolute arrow X
   // This needs to be done before positioning the div, since the arrow
   // wants to be as close to the origin point as possible.
-  var arrowX = renderX - Blockly.DropDownDiv.ARROW_SIZE / 2;
+  let arrowX = renderX - Blockly.DropDownDiv.ARROW_SIZE / 2;
   // Keep in overall bounds
   arrowX = Math.max(boundPosition.left, Math.min(arrowX, boundPosition.left + boundSize.width));
 
   // Adjust the x-position of the drop-down so that the div is centered and within bounds.
-  var centerX = divSize.width / 2;
+  const centerX = divSize.width / 2;
   renderX -= centerX;
   // Fit horizontally in the bounds.
   renderX = Math.max(
@@ -323,12 +323,12 @@ Blockly.DropDownDiv.getPositionMetrics = function(primaryX, primaryY, secondaryX
 
   // Calculate arrow Y. If we rendered secondary, add on bottom.
   // Extra pixels are added so that it covers the border of the div.
-  var arrowY = (renderedSecondary) ? divSize.height - Blockly.DropDownDiv.BORDER_SIZE : 0;
+  let arrowY = (renderedSecondary) ? divSize.height - Blockly.DropDownDiv.BORDER_SIZE : 0;
   arrowY -= (Blockly.DropDownDiv.ARROW_SIZE / 2) + Blockly.DropDownDiv.BORDER_SIZE;
 
   // Initial position calculated without any padding to provide an animation point.
-  var initialX = renderX; // X position remains constant during animation.
-  var initialY;
+  const initialX = renderX; // X position remains constant during animation.
+  let initialY;
   if (renderedSecondary) {
     initialY = secondaryY - divSize.height; // No padding on Y
   } else {
@@ -372,7 +372,7 @@ Blockly.DropDownDiv.hideIfOwner = function(owner) {
  */
 Blockly.DropDownDiv.hide = function() {
   // Start the animation by setting the translation and fading out.
-  var div = Blockly.DropDownDiv.DIV_;
+  const div = Blockly.DropDownDiv.DIV_;
   // Reset to (initialX, initialY) - i.e., no translation.
   div.style.transform = 'translate(0px, 0px)';
   div.style.opacity = 0;
@@ -393,7 +393,7 @@ Blockly.DropDownDiv.hideWithoutAnimation = function() {
   if (!Blockly.DropDownDiv.isVisible()) {
     return;
   }
-  var div = Blockly.DropDownDiv.DIV_;
+  const div = Blockly.DropDownDiv.DIV_;
   Blockly.DropDownDiv.animateOutTimer_ && window.clearTimeout(Blockly.DropDownDiv.animateOutTimer_);
   div.style.transform = '';
   div.style.top = '';

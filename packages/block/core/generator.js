@@ -94,11 +94,11 @@ Blockly.Generator.prototype.workspaceToCode = function(workspace) {
     console.warn('No workspace specified in workspaceToCode call.  Guessing.');
     workspace = Blockly.getMainWorkspace();
   }
-  var code = [];
+  let code = [];
   this.init(workspace);
-  var blocks = workspace.getTopBlocks(true);
-  for (var x = 0, block; block = blocks[x]; x++) {
-    var line = this.blockToCode(block);
+  const blocks = workspace.getTopBlocks(true);
+  for (let x = 0, block; block = blocks[x]; x++) {
+    let line = this.blockToCode(block);
     if (Array.isArray(line)) {
       // Value blocks return tuples of code and operator order.
       // Top-level blocks don't care about operator order.
@@ -141,10 +141,10 @@ Blockly.Generator.prototype.prefixLines = function(text, prefix) {
  * @return {string} Concatenated list of comments.
  */
 Blockly.Generator.prototype.allNestedComments = function(block) {
-  var comments = [];
-  var blocks = block.getDescendants(true);
-  for (var i = 0; i < blocks.length; i++) {
-    var comment = blocks[i].getCommentText();
+  const comments = [];
+  const blocks = block.getDescendants(true);
+  for (let i = 0; i < blocks.length; i++) {
+    const comment = blocks[i].getCommentText();
     if (comment) {
       comments.push(comment);
     }
@@ -172,7 +172,7 @@ Blockly.Generator.prototype.blockToCode = function(block) {
     return this.blockToCode(block.getNextBlock());
   }
 
-  var func = this[block.type];
+  const func = this[block.type];
   goog.asserts.assertFunction(func,
       'Language "%s" does not know how to generate code for block type "%s".',
       this.name_, block.type);
@@ -180,14 +180,14 @@ Blockly.Generator.prototype.blockToCode = function(block) {
   // Prior to 24 September 2013 'this' was the only way to access the block.
   // The current prefered method of accessing the block is through the second
   // argument to func.call, which becomes the first parameter to the generator.
-  var code = func.call(block, block);
+  let code = func.call(block, block);
   if (Array.isArray(code)) {
     // Value blocks return tuples of code and operator order.
     goog.asserts.assert(block.outputConnection,
         'Expecting string from statement block "%s".', block.type);
     return [this.scrub_(block, code[0]), code[1]];
   } else if (typeof code === 'string') {
-    var id = block.id.replace(/\$/g, '$$$$');  // Issue 251.
+    const id = block.id.replace(/\$/g, '$$$$');  // Issue 251.
     if (this.STATEMENT_PREFIX) {
       code = this.STATEMENT_PREFIX.replace(/%1/g, '\'' + id + '\'') +
           code;
@@ -214,11 +214,11 @@ Blockly.Generator.prototype.valueToCode = function(block, name, outerOrder) {
   if (isNaN(outerOrder)) {
     goog.asserts.fail('Expecting valid order from block "%s".', block.type);
   }
-  var targetBlock = block.getInputTargetBlock(name);
+  const targetBlock = block.getInputTargetBlock(name);
   if (!targetBlock) {
     return '';
   }
-  var tuple = this.blockToCode(targetBlock);
+  const tuple = this.blockToCode(targetBlock);
   if (tuple === '') {
     // Disabled block.
     return '';
@@ -227,8 +227,8 @@ Blockly.Generator.prototype.valueToCode = function(block, name, outerOrder) {
   // Statement blocks must only return code.
   goog.asserts.assertArray(tuple, 'Expecting tuple from value block "%s".',
       targetBlock.type);
-  var code = tuple[0];
-  var innerOrder = tuple[1];
+  let code = tuple[0];
+  const innerOrder = tuple[1];
   if (isNaN(innerOrder)) {
     goog.asserts.fail('Expecting valid order from value block "%s".',
         targetBlock.type);
@@ -238,9 +238,9 @@ Blockly.Generator.prototype.valueToCode = function(block, name, outerOrder) {
   }
 
   // Add parentheses if needed.
-  var parensNeeded = false;
-  var outerOrderClass = Math.floor(outerOrder);
-  var innerOrderClass = Math.floor(innerOrder);
+  let parensNeeded = false;
+  const outerOrderClass = Math.floor(outerOrder);
+  const innerOrderClass = Math.floor(innerOrder);
   if (outerOrderClass <= innerOrderClass) {
     if (outerOrderClass == innerOrderClass &&
         (outerOrderClass == 0 || outerOrderClass == 99)) {
@@ -254,7 +254,7 @@ Blockly.Generator.prototype.valueToCode = function(block, name, outerOrder) {
       // wrap the code in parentheses.
       parensNeeded = true;
       // Check for special exceptions.
-      for (var i = 0; i < this.ORDER_OVERRIDES.length; i++) {
+      for (let i = 0; i < this.ORDER_OVERRIDES.length; i++) {
         if (this.ORDER_OVERRIDES[i][0] == outerOrder &&
             this.ORDER_OVERRIDES[i][1] == innerOrder) {
           parensNeeded = false;
@@ -278,8 +278,8 @@ Blockly.Generator.prototype.valueToCode = function(block, name, outerOrder) {
  * @return {string} Generated code or '' if no blocks are connected.
  */
 Blockly.Generator.prototype.statementToCode = function(block, name) {
-  var targetBlock = block.getInputTargetBlock(name);
-  var code = this.blockToCode(targetBlock);
+  const targetBlock = block.getInputTargetBlock(name);
+  let code = this.blockToCode(targetBlock);
   // Value blocks must return code and order of operations info.
   // Statement blocks must only return code.
   goog.asserts.assertString(code, 'Expecting code from statement block "%s".',
@@ -354,16 +354,16 @@ Blockly.Generator.prototype.FUNCTION_NAME_PLACEHOLDER_ = '{leCUI8hutHZI4480Dc}';
  */
 Blockly.Generator.prototype.provideFunction_ = function(desiredName, code) {
   if (!this.definitions_[desiredName]) {
-    var functionName = this.variableDB_.getDistinctName(desiredName,
+    const functionName = this.variableDB_.getDistinctName(desiredName,
         Blockly.Procedures.NAME_TYPE);
     this.functionNames_[desiredName] = functionName;
-    var codeText = code.join('\n').replace(
+    let codeText = code.join('\n').replace(
         this.FUNCTION_NAME_PLACEHOLDER_REGEXP_, functionName);
     // Change all '  ' indents into the desired indent.
     // To avoid an infinite loop of replacements, change all indents to '\0'
     // character first, then replace them all with the indent.
     // We are assuming that no provided functions contain a literal null char.
-    var oldCodeText;
+    let oldCodeText;
     while (oldCodeText != codeText) {
       oldCodeText = codeText;
       codeText = codeText.replace(/^(( {2})*) {2}/gm, '$1\0');

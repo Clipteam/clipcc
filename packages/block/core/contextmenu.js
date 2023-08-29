@@ -68,7 +68,7 @@ Blockly.ContextMenu.show = function(e, options, rtl) {
     Blockly.ContextMenu.hide();
     return;
   }
-  var menu = Blockly.ContextMenu.populate_(options, rtl);
+  const menu = Blockly.ContextMenu.populate_(options, rtl);
 
   goog.events.listen(
       menu, goog.ui.Component.EventType.ACTION, Blockly.ContextMenu.hide);
@@ -93,10 +93,10 @@ Blockly.ContextMenu.populate_ = function(options, rtl) {
      enabled: true,
      callback: Blockly.MakeItSo}
   */
-  var menu = new goog.ui.Menu();
+  const menu = new goog.ui.Menu();
   menu.setRightToLeft(rtl);
-  for (var i = 0, option; option = options[i]; i++) {
-    var menuItem = new goog.ui.MenuItem(option.text);
+  for (let i = 0, option; option = options[i]; i++) {
+    const menuItem = new goog.ui.MenuItem(option.text);
     menuItem.setRightToLeft(rtl);
     menu.addChild(menuItem, true);
     menuItem.setEnabled(option.enabled);
@@ -122,10 +122,10 @@ Blockly.ContextMenu.populate_ = function(options, rtl) {
  */
 Blockly.ContextMenu.position_ = function(menu, e, rtl) {
   // Record windowSize and scrollOffset before adding menu.
-  var viewportBBox = Blockly.utils.getViewportBBox();
+  const viewportBBox = Blockly.utils.getViewportBBox();
   // This one is just a point, but we'll pretend that it's a rect so we can use
   // some helper functions.
-  var anchorBBox = {
+  const anchorBBox = {
     top: e.clientY + viewportBBox.top,
     bottom: e.clientY + viewportBBox.top,
     left: e.clientX + viewportBBox.left,
@@ -133,7 +133,7 @@ Blockly.ContextMenu.position_ = function(menu, e, rtl) {
   };
 
   Blockly.ContextMenu.createWidget_(menu);
-  var menuSize = Blockly.utils.uiMenu.getSize(menu);
+  const menuSize = Blockly.utils.uiMenu.getSize(menu);
 
   if (rtl) {
     Blockly.utils.uiMenu.adjustBBoxesForRTL(viewportBBox, anchorBBox, menuSize);
@@ -152,9 +152,9 @@ Blockly.ContextMenu.position_ = function(menu, e, rtl) {
  * @private
  */
 Blockly.ContextMenu.createWidget_ = function(menu) {
-  var div = Blockly.WidgetDiv.DIV;
+  const div = Blockly.WidgetDiv.DIV;
   menu.render(div);
-  var menuDom = menu.getElement();
+  const menuDom = menu.getElement();
   Blockly.utils.addClass(menuDom, 'blocklyContextMenu');
   // Prevent system context menu when right-clicking a Blockly context menu.
   Blockly.bindEventWithChecks_(
@@ -184,10 +184,11 @@ Blockly.ContextMenu.hide = function() {
 Blockly.ContextMenu.callbackFactory = function(block, xml) {
   return function() {
     Blockly.Events.disable();
+    let newBlock;
     try {
-      var newBlock = Blockly.Xml.domToBlock(xml, block.workspace);
+      newBlock = Blockly.Xml.domToBlock(xml, block.workspace);
       // Move the new block next to the old block.
-      var xy = block.getRelativeToSurfaceXY();
+      const xy = block.getRelativeToSurfaceXY();
       if (block.RTL) {
         xy.x -= Blockly.SNAP_RADIUS;
       } else {
@@ -217,13 +218,13 @@ Blockly.ContextMenu.blockDeleteOption = function(block) {
   // Option to delete this block but not blocks lower in the stack.
   // Count the number of blocks that are nested in this block,
   // ignoring shadows and without ordering.
-  var descendantCount = block.getDescendants(false, true).length;
-  var nextBlock = block.getNextBlock();
+  let descendantCount = block.getDescendants(false, true).length;
+  const nextBlock = block.getNextBlock();
   if (nextBlock) {
     // Blocks in the current stack would survive this block's deletion.
     descendantCount -= nextBlock.getDescendants(false, true).length;
   }
-  var deleteOption = {
+  const deleteOption = {
     text: descendantCount == 1 ? Blockly.Msg.DELETE_BLOCK :
         Blockly.Msg.DELETE_X_BLOCKS.replace('%1', String(descendantCount)),
     enabled: true,
@@ -243,8 +244,8 @@ Blockly.ContextMenu.blockDeleteOption = function(block) {
  * @package
  */
 Blockly.ContextMenu.blockHelpOption = function(block) {
-  var url = typeof block.helpUrl === 'function' ? block.helpUrl() : block.helpUrl;
-  var helpOption = {
+  const url = typeof block.helpUrl === 'function' ? block.helpUrl() : block.helpUrl;
+  const helpOption = {
     enabled: !!url,
     text: Blockly.Msg.HELP,
     callback: function() {
@@ -262,7 +263,7 @@ Blockly.ContextMenu.blockHelpOption = function(block) {
  * @package
  */
 Blockly.ContextMenu.blockDuplicateOption = function(block, event) {
-  var duplicateOption = {
+  const duplicateOption = {
     text: Blockly.Msg.DUPLICATE,
     enabled: true,
     callback:
@@ -279,7 +280,7 @@ Blockly.ContextMenu.blockDuplicateOption = function(block, event) {
  * @package
  */
 Blockly.ContextMenu.blockCommentOption = function(block) {
-  var commentOption = {
+  const commentOption = {
     enabled: !goog.userAgent.IE
   };
   // If there's already a comment, add an option to delete it.
@@ -387,10 +388,10 @@ Blockly.ContextMenu.wsCleanupOption = function(ws, numTopBlocks) {
  */
 Blockly.ContextMenu.toggleCollapseFn_ = function(topBlocks, shouldCollapse) {
   // Add a little animation to collapsing and expanding.
-  var DELAY = 10;
-  var ms = 0;
-  for (var i = 0; i < topBlocks.length; i++) {
-    var block = topBlocks[i];
+  const DELAY = 10;
+  let ms = 0;
+  for (let i = 0; i < topBlocks.length; i++) {
+    let block = topBlocks[i];
     while (block) {
       setTimeout(block.setCollapsed.bind(block, shouldCollapse), ms);
       block = block.getNextBlock();
@@ -445,7 +446,7 @@ Blockly.ContextMenu.wsExpandOption = function(hasCollapsedBlocks, topBlocks) {
  * @package
  */
 Blockly.ContextMenu.commentDeleteOption = function(comment) {
-  var deleteOption = {
+  const deleteOption = {
     text: Blockly.Msg.DELETE,
     enabled: true,
     callback: function() {
@@ -465,7 +466,7 @@ Blockly.ContextMenu.commentDeleteOption = function(comment) {
  * @package
  */
 Blockly.ContextMenu.commentDuplicateOption = function(comment) {
-  var duplicateOption = {
+  const duplicateOption = {
     text: Blockly.Msg.DUPLICATE,
     enabled: true,
     callback: function() {
@@ -486,44 +487,44 @@ Blockly.ContextMenu.commentDuplicateOption = function(comment) {
 Blockly.ContextMenu.workspaceCommentOption = function(ws, e) {
   // Helper function to create and position a comment correctly based on the
   // location of the mouse event.
-  var addWsComment = function() {
+  const addWsComment = function() {
     // Disable events while this comment is getting created
     // so that we can fire a single create event for this comment
     // at the end (instead of CommentCreate followed by CommentMove,
     // which results in unexpected undo behavior).
-    var disabled = false;
+    let disabled = false;
     if (Blockly.Events.isEnabled()) {
       Blockly.Events.disable();
       disabled = true;
     }
-    var comment = new Blockly.WorkspaceCommentSvg(
+    const comment = new Blockly.WorkspaceCommentSvg(
         ws, '', Blockly.WorkspaceCommentSvg.DEFAULT_SIZE,
         Blockly.WorkspaceCommentSvg.DEFAULT_SIZE, false);
 
-    var injectionDiv = ws.getInjectionDiv();
+    const injectionDiv = ws.getInjectionDiv();
     // Bounding rect coordinates are in client coordinates, meaning that they
     // are in pixels relative to the upper left corner of the visible browser
     // window.  These coordinates change when you scroll the browser window.
-    var boundingRect = injectionDiv.getBoundingClientRect();
+    const boundingRect = injectionDiv.getBoundingClientRect();
 
     // The client coordinates offset by the injection div's upper left corner.
-    var clientOffsetPixels = new goog.math.Coordinate(
+    const clientOffsetPixels = new goog.math.Coordinate(
         e.clientX - boundingRect.left, e.clientY - boundingRect.top);
 
     // The offset in pixels between the main workspace's origin and the upper
     // left corner of the injection div.
-    var mainOffsetPixels = ws.getOriginOffsetInPixels();
+    const mainOffsetPixels = ws.getOriginOffsetInPixels();
 
     // The position of the new comment in pixels relative to the origin of the
     // main workspace.
-    var finalOffsetPixels = goog.math.Coordinate.difference(clientOffsetPixels,
+    const finalOffsetPixels = goog.math.Coordinate.difference(clientOffsetPixels,
         mainOffsetPixels);
 
     // The position of the new comment in main workspace coordinates.
-    var finalOffsetMainWs = finalOffsetPixels.scale(1 / ws.scale);
+    const finalOffsetMainWs = finalOffsetPixels.scale(1 / ws.scale);
 
-    var commentX = finalOffsetMainWs.x;
-    var commentY = finalOffsetMainWs.y;
+    const commentX = finalOffsetMainWs.x;
+    const commentY = finalOffsetMainWs.y;
     comment.moveBy(commentX, commentY);
     if (ws.rendered) {
       comment.initSvg();
@@ -536,7 +537,7 @@ Blockly.ContextMenu.workspaceCommentOption = function(ws, e) {
     Blockly.WorkspaceComment.fireCreateEvent(comment);
   };
 
-  var wsCommentOption = {enabled: true};
+  const wsCommentOption = {enabled: true};
   wsCommentOption.text = Blockly.Msg.ADD_COMMENT;
   wsCommentOption.callback = function() {
     addWsComment();

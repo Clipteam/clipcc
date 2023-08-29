@@ -41,19 +41,19 @@ goog.require('Blockly.Workspace');
  * @return {!Array.<!Element>} Array of XML block elements.
  */
 Blockly.DataCategory = function(workspace) {
-  var variableModelList = workspace.getVariablesOfType('');
+  let variableModelList = workspace.getVariablesOfType('');
   variableModelList.sort(Blockly.VariableModel.compareByName);
-  var xmlList = [];
+  const xmlList = [];
 
   Blockly.DataCategory.addCreateButton(xmlList, workspace, 'VARIABLE');
 
-  for (var i = 0; i < variableModelList.length; i++) {
+  for (let i = 0; i < variableModelList.length; i++) {
     Blockly.DataCategory.addDataVariable(xmlList, variableModelList[i]);
   }
 
   if (variableModelList.length > 0) {
     xmlList[xmlList.length - 1].setAttribute('gap', 24);
-    var firstVariable = variableModelList[0];
+    const firstVariable = variableModelList[0];
 
     Blockly.DataCategory.addSetVariableTo(xmlList, firstVariable);
     Blockly.DataCategory.addChangeVariableBy(xmlList, firstVariable);
@@ -65,13 +65,13 @@ Blockly.DataCategory = function(workspace) {
   Blockly.DataCategory.addCreateButton(xmlList, workspace, 'LIST');
   variableModelList = workspace.getVariablesOfType(Blockly.LIST_VARIABLE_TYPE);
   variableModelList.sort(Blockly.VariableModel.compareByName);
-  for (var i = 0; i < variableModelList.length; i++) {
+  for (let i = 0; i < variableModelList.length; i++) {
     Blockly.DataCategory.addDataList(xmlList, variableModelList[i]);
   }
 
   if (variableModelList.length > 0) {
     xmlList[xmlList.length - 1].setAttribute('gap', 24);
-    var firstVariable = variableModelList[0];
+    const firstVariable = variableModelList[0];
 
     Blockly.DataCategory.addAddToList(xmlList, firstVariable);
     Blockly.DataCategory.addSep(xmlList);
@@ -382,11 +382,11 @@ Blockly.DataCategory.addHideList = function(xmlList, variable) {
  *     'VARIABLE'.
  */
 Blockly.DataCategory.addCreateButton = function(xmlList, workspace, type) {
-  var button = goog.dom.createDom('button');
+  const button = goog.dom.createDom('button');
   // Set default msg, callbackKey, and callback values for type 'VARIABLE'
-  var msg = Blockly.Msg.NEW_VARIABLE;
-  var callbackKey = 'CREATE_VARIABLE';
-  var callback = function(button) {
+  let msg = Blockly.Msg.NEW_VARIABLE;
+  let callbackKey = 'CREATE_VARIABLE';
+  let callback = function(button) {
     Blockly.Variables.createVariable(button.getTargetWorkspace(), null, '');};
 
   if (type === 'LIST') {
@@ -419,8 +419,8 @@ Blockly.DataCategory.addCreateButton = function(xmlList, workspace, type) {
 Blockly.DataCategory.addBlock = function(xmlList, variable, blockType,
     fieldName, opt_value, opt_secondValue) {
   if (Blockly.Blocks[blockType]) {
-    var firstValueField;
-    var secondValueField;
+    let firstValueField;
+    let secondValueField;
     if (opt_value) {
       firstValueField = Blockly.DataCategory.createValue(opt_value[0],
           opt_value[1], opt_value[2]);
@@ -430,14 +430,14 @@ Blockly.DataCategory.addBlock = function(xmlList, variable, blockType,
           opt_secondValue[1], opt_secondValue[2]);
     }
 
-    var gap = 8;
-    var blockText = '<xml>' +
+    const gap = 8;
+    const blockText = '<xml>' +
         '<block type="' + blockType + '" gap="' + gap + '">' +
         Blockly.Variables.generateVariableFieldXml_(variable, fieldName) +
         firstValueField + secondValueField +
         '</block>' +
         '</xml>';
-    var block = Blockly.Xml.textToDom(blockText).firstChild;
+    const block = Blockly.Xml.textToDom(blockText).firstChild;
     xmlList.push(block);
   }
 };
@@ -451,7 +451,7 @@ Blockly.DataCategory.addBlock = function(xmlList, variable, blockType,
  * @return {string} The generated dom element in text.
  */
 Blockly.DataCategory.createValue = function(valueName, type, value) {
-  var fieldName;
+  let fieldName;
   switch (valueName) {
     case 'ITEM':
       fieldName = 'TEXT';
@@ -467,7 +467,7 @@ Blockly.DataCategory.createValue = function(valueName, type, value) {
       }
       break;
   }
-  var valueField =
+  const valueField =
       '<value name="' + valueName + '">' +
       '<shadow type="' + type + '">' +
       '<field name="' + fieldName + '">' + value + '</field>' +
@@ -481,10 +481,10 @@ Blockly.DataCategory.createValue = function(valueName, type, value) {
  * @param {!Array.<!Element>} xmlList Array of XML block elements.
  */
 Blockly.DataCategory.addSep = function(xmlList) {
-  var gap = 36;
-  var sepText = '<xml>' +
+  const gap = 36;
+  const sepText = '<xml>' +
       '<sep gap="' + gap + '"/>' +
       '</xml>';
-  var sep = Blockly.Xml.textToDom(sepText).firstChild;
+  const sep = Blockly.Xml.textToDom(sepText).firstChild;
   xmlList.push(sep);
 };
