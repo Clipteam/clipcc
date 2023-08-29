@@ -190,10 +190,10 @@ Blockly.WorkspaceCommentSvg.prototype.createEditor_ = function() {
         'class': 'scratchCommentForeignObject'
       },
       null);
-  const body = document.createElementNS(Blockly.HTML_NS, 'body');
-  body.setAttribute('xmlns', Blockly.HTML_NS);
+  const body = document.createElementNS(Blockly.constants.HTML_NS, 'body');
+  body.setAttribute('xmlns', Blockly.constants.HTML_NS);
   body.className = 'blocklyMinimalBody scratchCommentBody';
-  const textarea = document.createElementNS(Blockly.HTML_NS, 'textarea');
+  const textarea = document.createElementNS(Blockly.constants.HTML_NS, 'textarea');
   textarea.className = 'scratchCommentTextarea scratchCommentText';
   textarea.setAttribute('dir', this.RTL ? 'RTL' : 'LTR');
   textarea.setAttribute('maxlength', Blockly.WorkspaceComment.COMMENT_TEXT_LIMIT);

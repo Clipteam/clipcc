@@ -190,11 +190,11 @@ Blockly.ContextMenu.callbackFactory = function(block, xml) {
       // Move the new block next to the old block.
       const xy = block.getRelativeToSurfaceXY();
       if (block.RTL) {
-        xy.x -= Blockly.SNAP_RADIUS;
+        xy.x -= Blockly.constants.SNAP_RADIUS;
       } else {
-        xy.x += Blockly.SNAP_RADIUS;
+        xy.x += Blockly.constants.SNAP_RADIUS;
       }
-      xy.y += Blockly.SNAP_RADIUS * 2;
+      xy.y += Blockly.constants.SNAP_RADIUS * 2;
       newBlock.moveBy(xy.x, xy.y);
     } finally {
       Blockly.Events.enable();

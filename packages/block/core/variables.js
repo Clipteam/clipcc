@@ -40,9 +40,9 @@ goog.require('goog.string');
 /**
  * Constant to separate variable names from procedures and generated functions
  * when running generators.
- * @deprecated Use Blockly.VARIABLE_CATEGORY_NAME
+ * @deprecated Use Blockly.constants.VARIABLE_CATEGORY_NAME
  */
-Blockly.Variables.NAME_TYPE = Blockly.VARIABLE_CATEGORY_NAME;
+Blockly.Variables.NAME_TYPE = Blockly.constants.VARIABLE_CATEGORY_NAME;
 
 /**
  * Constant prefix to differentiate cloud variable names from other types
@@ -278,7 +278,7 @@ Blockly.Variables.createVariable = function(workspace, opt_callback, opt_type) {
   // Decide on a modal message based on the opt_type. If opt_type was not
   // provided, default to the original message for scalar variables.
   let newMsg, modalTitle;
-  if (opt_type == Blockly.BROADCAST_MESSAGE_VARIABLE_TYPE) {
+  if (opt_type == Blockly.constants.BROADCAST_MESSAGE_VARIABLE_TYPE) {
     newMsg = Blockly.Msg.NEW_BROADCAST_MESSAGE_TITLE;
     modalTitle = Blockly.Msg.BROADCAST_MODAL_TITLE;
   } else if (opt_type == Blockly.LIST_VARIABLE_TYPE) {
@@ -378,7 +378,7 @@ Blockly.Variables.nameValidator_ = function(type, text, workspace, additionalVar
   // to know which type of variable to check for and needs a type-specific error message
   // that is displayed when a variable of the given name and type already exists.
 
-  if (type == Blockly.BROADCAST_MESSAGE_VARIABLE_TYPE) {
+  if (type == Blockly.constants.BROADCAST_MESSAGE_VARIABLE_TYPE) {
     return Blockly.Variables.validateBroadcastMessageName_(text, workspace, opt_callback);
   } else if (type == Blockly.LIST_VARIABLE_TYPE) {
     return Blockly.Variables.validateScalarVarOrListName_(text, workspace, additionalVars, false, type,
@@ -404,7 +404,7 @@ Blockly.Variables.validateBroadcastMessageName_ = function(name, workspace, opt_
   if (!name) { // no name was provided or the user cancelled the prompt
     return null;
   }
-  const variable = workspace.getVariable(name, Blockly.BROADCAST_MESSAGE_VARIABLE_TYPE);
+  const variable = workspace.getVariable(name, Blockly.constants.BROADCAST_MESSAGE_VARIABLE_TYPE);
   if (variable) {
     // If the user provided a name for a broadcast message that already exists,
     // use the provided callback function to update the selected option in
@@ -433,7 +433,7 @@ Blockly.Variables.validateBroadcastMessageName_ = function(name, workspace, opt_
  *     for conflicts against.
  * @param {boolean} isCloud Whether the variable is a cloud variable.
  * @param {string} type The type to validate the variable as. This should be one of
- *     Blockly.SCALAR_VARIABLE_TYPE or Blockly.LIST_VARIABLE_TYPE.
+ *     Blockly.constants.SCALAR_VARIABLE_TYPE or Blockly.LIST_VARIABLE_TYPE.
  * @param {string} errorMsg The type-specific error message the user should see
  *     if a variable of the validated, given name and type already exists.
  * @return {string} The validated name, or null if invalid.
@@ -472,7 +472,7 @@ Blockly.Variables.renameVariable = function(workspace, variable,
   // Validation and modal message/title depends on the variable type
   let promptMsg, modalTitle;
   const varType = variable.type;
-  if (varType == Blockly.BROADCAST_MESSAGE_VARIABLE_TYPE) {
+  if (varType == Blockly.constants.BROADCAST_MESSAGE_VARIABLE_TYPE) {
     console.warn('Unexpected attempt to rename a broadcast message with ' +
         'id: ' + variable.getId() + ' and name: ' + variable.name);
     return;

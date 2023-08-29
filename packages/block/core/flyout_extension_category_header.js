@@ -123,10 +123,10 @@ Blockly.FlyoutExtensionCategoryHeader.prototype.createDom = function() {
 Blockly.FlyoutExtensionCategoryHeader.prototype.refreshStatus = function() {
   const status = Blockly.FlyoutExtensionCategoryHeader.getExtensionState(this.extensionId);
   const basePath = Blockly.mainWorkspace.options.pathToMedia;
-  if (status == Blockly.StatusButtonState.READY) {
+  if (status == Blockly.constants.StatusButtonState.READY) {
     this.setImageSrc(basePath + 'status-ready.svg');
   }
-  if (status == Blockly.StatusButtonState.NOT_READY) {
+  if (status == Blockly.constants.StatusButtonState.NOT_READY) {
     this.setImageSrc(basePath + 'status-not-ready.svg');
   }
 };
@@ -151,9 +151,9 @@ Blockly.FlyoutExtensionCategoryHeader.prototype.setImageSrc = function(src) {
 /**
  * Gets the extension state. Overridden externally.
  * @param {string} extensionId The ID of the extension in question.
- * @return {Blockly.StatusButtonState} The state of the extension.
+ * @return {Blockly.constants.StatusButtonState} The state of the extension.
  * @public
  */
 Blockly.FlyoutExtensionCategoryHeader.getExtensionState = function(/* extensionId */) {
-  return Blockly.StatusButtonState.NOT_READY;
+  return Blockly.constants.StatusButtonState.NOT_READY;
 };

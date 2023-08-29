@@ -140,8 +140,8 @@ Blockly.Mutator.prototype.createEditor_ = function() {
     parentWorkspace: this.block_.workspace,
     pathToMedia: this.block_.workspace.options.pathToMedia,
     RTL: this.block_.RTL,
-    toolboxPosition: this.block_.RTL ? Blockly.TOOLBOX_AT_RIGHT :
-        Blockly.TOOLBOX_AT_LEFT,
+    toolboxPosition: this.block_.RTL ? Blockly.constants.TOOLBOX_AT_RIGHT :
+        Blockly.constants.TOOLBOX_AT_LEFT,
     horizontalLayout: false,
     getMetrics: this.getFlyoutMetrics_.bind(this),
     setMetrics: null
@@ -343,7 +343,7 @@ Blockly.Mutator.prototype.workspaceChanged_ = function() {
         Blockly.Events.setGroup(group);
         block.bumpNeighbours_();
         Blockly.Events.setGroup(false);
-      }, Blockly.BUMP_DELAY);
+      }, Blockly.constants.BUMP_DELAY);
     }
     if (block.rendered) {
       block.render();

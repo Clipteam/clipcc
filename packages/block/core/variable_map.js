@@ -244,7 +244,7 @@ Blockly.VariableMap.prototype.deleteVariableById = function(id) {
     const variableName = variable.name;
     const uses = this.getVariableUsesById(id);
     for (let i = 0, block; block = uses[i]; i++) {
-      if (block.type == Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE ||
+      if (block.type == Blockly.constants.PROCEDURES_DEFINITION_BLOCK_TYPE ||
         block.type == 'procedures_defreturn') {
         const procedureName = block.getFieldValue('NAME');
         const deleteText = Blockly.Msg.CANNOT_DELETE_VARIABLE_PROCEDURE.

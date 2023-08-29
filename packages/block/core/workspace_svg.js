@@ -102,9 +102,9 @@ Blockly.WorkspaceSvg = function(options, opt_blockDragSurface) {
   this.grid_ = this.options.gridPattern ?
       new Blockly.Grid(options.gridPattern, options.gridOptions) : null;
 
-  this.registerToolboxCategoryCallback(Blockly.VARIABLE_CATEGORY_NAME,
+  this.registerToolboxCategoryCallback(Blockly.constants.VARIABLE_CATEGORY_NAME,
       Blockly.DataCategory);
-  this.registerToolboxCategoryCallback(Blockly.PROCEDURE_CATEGORY_NAME,
+  this.registerToolboxCategoryCallback(Blockly.constants.PROCEDURE_CATEGORY_NAME,
       Blockly.Procedures.flyoutCategory);
 };
 goog.inherits(Blockly.WorkspaceSvg, Blockly.Workspace);
@@ -970,7 +970,7 @@ Blockly.WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
           // Check for blocks in snap range to any of its connections.
           const connections = block.getConnections_(false);
           for (let i = 0, connection; connection = connections[i]; i++) {
-            const neighbour = connection.closest(Blockly.SNAP_RADIUS,
+            const neighbour = connection.closest(Blockly.constants.SNAP_RADIUS,
                 new goog.math.Coordinate(blockX, blockY));
             if (neighbour.connection) {
               collide = true;
@@ -980,11 +980,11 @@ Blockly.WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
         }
         if (collide) {
           if (this.RTL) {
-            blockX -= Blockly.SNAP_RADIUS;
+            blockX -= Blockly.constants.SNAP_RADIUS;
           } else {
-            blockX += Blockly.SNAP_RADIUS;
+            blockX += Blockly.constants.SNAP_RADIUS;
           }
-          blockY += Blockly.SNAP_RADIUS * 2;
+          blockY += Blockly.constants.SNAP_RADIUS * 2;
         }
       } while (collide);
       block.moveBy(blockX, blockY);
@@ -1096,7 +1096,7 @@ Blockly.WorkspaceSvg.prototype.createVariable = function(name, opt_type, opt_id,
       this, name, opt_type, opt_id, opt_isLocal, opt_isCloud);
   // For performance reasons, only refresh the the toolbox for new variables.
   // Variables that already exist should already be there.
-  if (!variableInMap && (opt_type != Blockly.BROADCAST_MESSAGE_VARIABLE_TYPE)) {
+  if (!variableInMap && (opt_type != Blockly.constants.BROADCAST_MESSAGE_VARIABLE_TYPE)) {
     this.refreshToolboxSelection_();
   }
   return newVar;
@@ -1152,12 +1152,12 @@ Blockly.WorkspaceSvg.prototype.recordBlocksArea_ = function() {
 Blockly.WorkspaceSvg.prototype.isDeleteArea = function(e) {
   const xy = new goog.math.Coordinate(e.clientX, e.clientY);
   if (this.deleteAreaTrash_ && this.deleteAreaTrash_.contains(xy)) {
-    return Blockly.DELETE_AREA_TRASH;
+    return Blockly.constants.DELETE_AREA_TRASH;
   }
   if (this.deleteAreaToolbox_ && this.deleteAreaToolbox_.contains(xy)) {
-    return Blockly.DELETE_AREA_TOOLBOX;
+    return Blockly.constants.DELETE_AREA_TOOLBOX;
   }
-  return Blockly.DELETE_AREA_NONE;
+  return Blockly.constants.DELETE_AREA_NONE;
 };
 
 /**
@@ -1244,7 +1244,7 @@ Blockly.WorkspaceSvg.prototype.onMouseWheel_ = function(e) {
 
   // Multiplier variable, so that non-pixel-deltaModes are supported.
   // See LLK/scratch-blocks#1190.
-  const multiplier = e.deltaMode === 0x1 ? Blockly.LINE_SCROLL_MULTIPLIER : 1;
+  const multiplier = e.deltaMode === 0x1 ? Blockly.constants.LINE_SCROLL_MULTIPLIER : 1;
 
   if (e.ctrlKey) {
     // The vertical scroll distance that corresponds to a click of a zoom button.
@@ -1917,11 +1917,11 @@ Blockly.WorkspaceSvg.getTopLevelWorkspaceMetrics_ = function() {
   // svgSize is equivalent to the size of the injectionDiv at this point.
   const svgSize = Blockly.svgSize(this.getParentSvg());
   if (this.toolbox_) {
-    if (this.toolboxPosition == Blockly.TOOLBOX_AT_TOP ||
-        this.toolboxPosition == Blockly.TOOLBOX_AT_BOTTOM) {
+    if (this.toolboxPosition == Blockly.constants.TOOLBOX_AT_TOP ||
+        this.toolboxPosition == Blockly.constants.TOOLBOX_AT_BOTTOM) {
       svgSize.height -= toolboxDimensions.height;
-    } else if (this.toolboxPosition == Blockly.TOOLBOX_AT_LEFT ||
-        this.toolboxPosition == Blockly.TOOLBOX_AT_RIGHT) {
+    } else if (this.toolboxPosition == Blockly.constants.TOOLBOX_AT_LEFT ||
+        this.toolboxPosition == Blockly.constants.TOOLBOX_AT_RIGHT) {
       svgSize.width -= this.toolbox_.getCategoryWidth();
     }
   }
@@ -1932,11 +1932,11 @@ Blockly.WorkspaceSvg.getTopLevelWorkspaceMetrics_ = function() {
       Blockly.WorkspaceSvg.getContentDimensions_(this, svgSize);
 
   let absoluteLeft = 0;
-  if (this.toolbox_ && this.toolboxPosition == Blockly.TOOLBOX_AT_LEFT) {
+  if (this.toolbox_ && this.toolboxPosition == Blockly.constants.TOOLBOX_AT_LEFT) {
     absoluteLeft = this.toolbox_.getCategoryWidth();
   }
   let absoluteTop = 0;
-  if (this.toolbox_ && this.toolboxPosition == Blockly.TOOLBOX_AT_TOP) {
+  if (this.toolbox_ && this.toolboxPosition == Blockly.constants.TOOLBOX_AT_TOP) {
     absoluteTop = toolboxDimensions.height;
   }
 

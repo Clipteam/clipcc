@@ -45,7 +45,7 @@ Blockly.Blocks['extension_pen_down'] = {
           "type": "field_vertical_separator"
         }
       ],
-      "category": Blockly.Categories.more,
+      "category": Blockly.constants.Categories.more,
       "extensions": ["colours_more", "shape_statement", "scratch_extension"]
     });
   }
@@ -73,7 +73,7 @@ Blockly.Blocks['extension_music_drum'] = {
           "name": "NUMBER"
         }
       ],
-      "category": Blockly.Categories.more,
+      "category": Blockly.constants.Categories.more,
       "extensions": ["colours_more", "shape_statement", "scratch_extension"]
     });
   }
@@ -103,7 +103,7 @@ Blockly.Blocks['extension_wedo_motor'] = {
           "height": 24
         }
       ],
-      "category": Blockly.Categories.more,
+      "category": Blockly.constants.Categories.more,
       "extensions": ["colours_more", "shape_statement", "scratch_extension"]
     });
   }
@@ -127,7 +127,7 @@ Blockly.Blocks['extension_wedo_hat'] = {
           "type": "field_vertical_separator"
         }
       ],
-      "category": Blockly.Categories.more,
+      "category": Blockly.constants.Categories.more,
       "extensions": ["colours_more", "shape_hat", "scratch_extension"]
     });
   }
@@ -151,7 +151,7 @@ Blockly.Blocks['extension_wedo_boolean'] = {
           "type": "field_vertical_separator"
         }
       ],
-      "category": Blockly.Categories.more,
+      "category": Blockly.constants.Categories.more,
       "extensions": ["colours_more", "output_boolean", "scratch_extension"]
     });
   }
@@ -179,7 +179,7 @@ Blockly.Blocks['extension_wedo_tilt_reporter'] = {
           "name": "TILT"
         }
       ],
-      "category": Blockly.Categories.more,
+      "category": Blockly.constants.Categories.more,
       "extensions": ["colours_more", "output_number", "scratch_extension"]
     });
   }
@@ -227,7 +227,7 @@ Blockly.Blocks['extension_music_reporter'] = {
           "type": "field_vertical_separator"
         }
       ],
-      "category": Blockly.Categories.more,
+      "category": Blockly.constants.Categories.more,
       "extensions": ["colours_more", "output_number", "scratch_extension"]
     });
   }
@@ -255,7 +255,7 @@ Blockly.Blocks['extension_microbit_display'] = {
           "name": "MATRIX"
         },
       ],
-      "category": Blockly.Categories.pen,
+      "category": Blockly.constants.Categories.pen,
       "extensions": ["colours_pen", "shape_statement", "scratch_extension"]
     });
   }
@@ -287,7 +287,7 @@ Blockly.Blocks['extension_music_play_note'] = {
           "name": "BEATS"
         }
       ],
-      "category": Blockly.Categories.pen,
+      "category": Blockly.constants.Categories.pen,
       "extensions": ["colours_pen", "shape_statement", "scratch_extension"]
     });
   }

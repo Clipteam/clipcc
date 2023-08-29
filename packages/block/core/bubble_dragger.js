@@ -60,8 +60,8 @@ Blockly.BubbleDragger = function(bubble, workspace) {
 
   /**
    * Which delete area the mouse pointer is over, if any.
-   * One of {@link Blockly.DELETE_AREA_TRASH},
-   * {@link Blockly.DELETE_AREA_TOOLBOX}, or {@link Blockly.DELETE_AREA_NONE}.
+   * One of {@link Blockly.constants.DELETE_AREA_TRASH},
+   * {@link Blockly.constants.DELETE_AREA_TOOLBOX}, or {@link Blockly.constants.DELETE_AREA_NONE}.
    * @type {?number}
    * @private
    */
@@ -177,11 +177,11 @@ Blockly.BubbleDragger.prototype.maybeDeleteBubble_ = function() {
  * @private
  */
 Blockly.BubbleDragger.prototype.updateCursorDuringBubbleDrag_ = function() {
-  this.wouldDeleteBubble_ = this.deleteArea_ != Blockly.DELETE_AREA_NONE;
+  this.wouldDeleteBubble_ = this.deleteArea_ != Blockly.constants.DELETE_AREA_NONE;
   const trashcan = this.workspace_.trashcan;
   if (this.wouldDeleteBubble_) {
     this.draggingBubble_.setDeleteStyle(true);
-    if (this.deleteArea_ == Blockly.DELETE_AREA_TRASH && trashcan) {
+    if (this.deleteArea_ == Blockly.constants.DELETE_AREA_TRASH && trashcan) {
       trashcan.setOpen_(true);
     }
   } else {

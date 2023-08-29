@@ -26,7 +26,7 @@
 function test_appendField_simple() {
   var ws = new Blockly.Workspace();
   var block = new Blockly.Block(ws);
-  var input = new Blockly.Input(Blockly.DUMMY_INPUT, 'INPUT', block);
+  var input = new Blockly.Input(Blockly.constants.DUMMY_INPUT, 'INPUT', block);
   var field1 = new Blockly.FieldLabel('#1');
   var field2 = new Blockly.FieldLabel('#2');
 
@@ -50,7 +50,7 @@ function test_appendField_simple() {
 function test_appendField_string() {
   var ws = new Blockly.Workspace();
   var block = new Blockly.Block(ws);
-  var input = new Blockly.Input(Blockly.DUMMY_INPUT, 'INPUT', block);
+  var input = new Blockly.Input(Blockly.constants.DUMMY_INPUT, 'INPUT', block);
   var labelText = 'label';
 
   // Preconditions
@@ -67,7 +67,7 @@ function test_appendField_string() {
 function test_appendField_prefix() {
   var ws = new Blockly.Workspace();
   var block = new Blockly.Block(ws);
-  var input = new Blockly.Input(Blockly.DUMMY_INPUT, 'INPUT', block);
+  var input = new Blockly.Input(Blockly.constants.DUMMY_INPUT, 'INPUT', block);
   var prefix = new Blockly.FieldLabel('prefix');
   var field = new Blockly.FieldLabel('field');
   field.prefixField = prefix;
@@ -85,7 +85,7 @@ function test_appendField_prefix() {
 function test_appendField_suffix() {
   var ws = new Blockly.Workspace();
   var block = new Blockly.Block(ws);
-  var input = new Blockly.Input(Blockly.DUMMY_INPUT, 'INPUT', block);
+  var input = new Blockly.Input(Blockly.constants.DUMMY_INPUT, 'INPUT', block);
   var suffix = new Blockly.FieldLabel('suffix');
   var field = new Blockly.FieldLabel('field');
   field.suffixField = suffix;
@@ -103,7 +103,7 @@ function test_appendField_suffix() {
 function test_insertFieldAt_simple() {
   var ws = new Blockly.Workspace();
   var block = new Blockly.Block(ws);
-  var input = new Blockly.Input(Blockly.DUMMY_INPUT, 'INPUT', block);
+  var input = new Blockly.Input(Blockly.constants.DUMMY_INPUT, 'INPUT', block);
   var before = new Blockly.FieldLabel('before');
   var after = new Blockly.FieldLabel('after');
   var between = new Blockly.FieldLabel('between');
@@ -127,7 +127,7 @@ function test_insertFieldAt_simple() {
 function test_insertFieldAt_string() {
   var ws = new Blockly.Workspace();
   var block = new Blockly.Block(ws);
-  var input = new Blockly.Input(Blockly.DUMMY_INPUT, 'INPUT', block);
+  var input = new Blockly.Input(Blockly.constants.DUMMY_INPUT, 'INPUT', block);
   var before = new Blockly.FieldLabel('before');
   var after = new Blockly.FieldLabel('after');
   var labelText = 'label';
@@ -152,7 +152,7 @@ function test_insertFieldAt_string() {
 function test_insertFieldAt_prefix() {
   var ws = new Blockly.Workspace();
   var block = new Blockly.Block(ws);
-  var input = new Blockly.Input(Blockly.DUMMY_INPUT, 'INPUT', block);
+  var input = new Blockly.Input(Blockly.constants.DUMMY_INPUT, 'INPUT', block);
   var before = new Blockly.FieldLabel('before');
   var after = new Blockly.FieldLabel('after');
   var prefix = new Blockly.FieldLabel('prefix');
@@ -178,7 +178,7 @@ function test_insertFieldAt_prefix() {
 function test_insertFieldAt_prefix() {
   var ws = new Blockly.Workspace();
   var block = new Blockly.Block(ws);
-  var input = new Blockly.Input(Blockly.DUMMY_INPUT, 'INPUT', block);
+  var input = new Blockly.Input(Blockly.constants.DUMMY_INPUT, 'INPUT', block);
   var before = new Blockly.FieldLabel('before');
   var after = new Blockly.FieldLabel('after');
   var suffix = new Blockly.FieldLabel('suffix');

@@ -68,8 +68,8 @@ Blockly.BlockDragger = function(block, workspace) {
 
   /**
    * Which delete area the mouse pointer is over, if any.
-   * One of {@link Blockly.DELETE_AREA_TRASH},
-   * {@link Blockly.DELETE_AREA_TOOLBOX}, or {@link Blockly.DELETE_AREA_NONE}.
+   * One of {@link Blockly.constants.DELETE_AREA_TRASH},
+   * {@link Blockly.constants.DELETE_AREA_TOOLBOX}, or {@link Blockly.constants.DELETE_AREA_NONE}.
    * @type {?number}
    * @private
    */
@@ -238,7 +238,7 @@ Blockly.BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
 
   // Scratch-specific: note possible illegal definition deletion for rollback below.
   const isDeletingProcDef = this.wouldDeleteBlock_ &&
-      (this.draggingBlock_.type == Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE);
+      (this.draggingBlock_.type == Blockly.constants.PROCEDURES_DEFINITION_BLOCK_TYPE);
 
   const deleted = this.maybeDeleteBlock_();
   if (!deleted) {
@@ -281,7 +281,7 @@ Blockly.BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
       const allBlocks = ws.getAllBlocks();
       for (let i = 0; i < allBlocks.length; i++) {
         const block = allBlocks[i];
-        if (block.type == Blockly.PROCEDURES_CALL_BLOCK_TYPE) {
+        if (block.type == Blockly.constants.PROCEDURES_CALL_BLOCK_TYPE) {
           const procCode = block.getProcCode();
           // Check for call blocks with no associated define block.
           if (!Blockly.Procedures.getDefineBlock(procCode, ws)) {
@@ -363,7 +363,7 @@ Blockly.BlockDragger.prototype.updateCursorDuringBlockDrag_ = function(isOutside
   const trashcan = this.workspace_.trashcan;
   if (this.wouldDeleteBlock_) {
     this.draggingBlock_.setDeleteStyle(true);
-    if (this.deleteArea_ == Blockly.DELETE_AREA_TRASH && trashcan) {
+    if (this.deleteArea_ == Blockly.constants.DELETE_AREA_TRASH && trashcan) {
       trashcan.setOpen_(true);
     }
   } else {

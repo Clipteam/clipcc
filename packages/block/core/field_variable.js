@@ -136,7 +136,7 @@ Blockly.FieldVariable.prototype.initModel = function() {
  */
 Blockly.FieldVariable.prototype.initFlyoutBroadcast_ = function(workspace) {
   // Using shorter name for this constant
-  const broadcastMsgType = Blockly.BROADCAST_MESSAGE_VARIABLE_TYPE;
+  const broadcastMsgType = Blockly.constants.BROADCAST_MESSAGE_VARIABLE_TYPE;
   const broadcastVars = workspace.getVariablesOfType(broadcastMsgType);
   if(workspace.isFlyout && this.defaultType_ == broadcastMsgType &&
       broadcastVars.length != 0) {
@@ -308,9 +308,9 @@ Blockly.FieldVariable.dropdownCreate = function() {
     // Set the uuid as the internal representation of the variable.
     options[i] = [variableModelList[i].name, variableModelList[i].getId()];
   }
-  if (this.defaultType_ == Blockly.BROADCAST_MESSAGE_VARIABLE_TYPE) {
+  if (this.defaultType_ == Blockly.constants.BROADCAST_MESSAGE_VARIABLE_TYPE) {
     options.unshift(
-        [Blockly.Msg.NEW_BROADCAST_MESSAGE, Blockly.NEW_BROADCAST_MESSAGE_ID]);
+        [Blockly.Msg.NEW_BROADCAST_MESSAGE, Blockly.constants.NEW_BROADCAST_MESSAGE_ID]);
   } else {
     // Scalar variables and lists have the same backing action, but the option
     // text is different.
@@ -323,12 +323,12 @@ Blockly.FieldVariable.dropdownCreate = function() {
       renameText = Blockly.Msg.RENAME_VARIABLE;
       deleteText = Blockly.Msg.DELETE_VARIABLE;
     }
-    options.push([renameText, Blockly.RENAME_VARIABLE_ID]);
+    options.push([renameText, Blockly.constants.RENAME_VARIABLE_ID]);
     if (deleteText) {
       options.push(
           [
             deleteText.replace('%1', name),
-            Blockly.DELETE_VARIABLE_ID
+            Blockly.constants.DELETE_VARIABLE_ID
           ]);
     }
   }
@@ -348,15 +348,15 @@ Blockly.FieldVariable.prototype.onItemSelected = function(menu, menuItem) {
   const id = menuItem.getValue();
   if (this.sourceBlock_ && this.sourceBlock_.workspace) {
     const workspace = this.sourceBlock_.workspace;
-    if (id == Blockly.RENAME_VARIABLE_ID) {
+    if (id == Blockly.constants.RENAME_VARIABLE_ID) {
       // Rename variable.
       Blockly.Variables.renameVariable(workspace, this.variable_);
       return;
-    } else if (id == Blockly.DELETE_VARIABLE_ID) {
+    } else if (id == Blockly.constants.DELETE_VARIABLE_ID) {
       // Delete variable.
       workspace.deleteVariableById(this.variable_.getId());
       return;
-    } else if (id == Blockly.NEW_BROADCAST_MESSAGE_ID) {
+    } else if (id == Blockly.constants.NEW_BROADCAST_MESSAGE_ID) {
       const thisField = this;
       const updateField = function(varId) {
         if (varId) {
@@ -364,7 +364,7 @@ Blockly.FieldVariable.prototype.onItemSelected = function(menu, menuItem) {
         }
       };
       Blockly.Variables.createVariable(workspace, updateField,
-          Blockly.BROADCAST_MESSAGE_VARIABLE_TYPE);
+          Blockly.constants.BROADCAST_MESSAGE_VARIABLE_TYPE);
       return;
     }
 

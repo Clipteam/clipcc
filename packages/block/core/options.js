@@ -93,9 +93,9 @@ Blockly.Options = function(options) {
 
   let toolboxPosition;
   if (horizontalLayout) {
-    toolboxPosition = toolboxAtStart ? Blockly.TOOLBOX_AT_TOP : Blockly.TOOLBOX_AT_BOTTOM;
+    toolboxPosition = toolboxAtStart ? Blockly.constants.TOOLBOX_AT_TOP : Blockly.constants.TOOLBOX_AT_BOTTOM;
   } else {
-    toolboxPosition = (toolboxAtStart == rtl) ? Blockly.TOOLBOX_AT_RIGHT : Blockly.TOOLBOX_AT_LEFT;
+    toolboxPosition = (toolboxAtStart == rtl) ? Blockly.constants.TOOLBOX_AT_RIGHT : Blockly.constants.TOOLBOX_AT_LEFT;
   }
 
   let hasScrollbars = options['scrollbars'];

@@ -146,7 +146,7 @@ Blockly.BlockSvg.prototype.isGlowingStack_ = false;
 
 /**
  * Constant for identifying rows that are to be rendered inline.
- * Don't collide with Blockly.INPUT_VALUE and friends.
+ * Don't collide with Blockly.constants.INPUT_VALUE and friends.
  * @const
  */
 Blockly.BlockSvg.INLINE = -1;
@@ -564,7 +564,7 @@ Blockly.BlockSvg.prototype.setCollapsed = function(collapsed) {
     for (let i = 0; i < icons.length; i++) {
       icons[i].setVisible(false);
     }
-    const text = this.toString(Blockly.COLLAPSE_CHARS);
+    const text = this.toString(Blockly.constants.COLLAPSE_CHARS);
     this.appendDummyInput(COLLAPSED_INPUT_NAME).appendField(text).init();
   } else {
     this.removeInput(COLLAPSED_INPUT_NAME);
@@ -1217,8 +1217,8 @@ Blockly.BlockSvg.prototype.moveNumberedInputBefore = function(
 
 /**
  * Add a value input, statement input or local variable to this block.
- * @param {number} type Either Blockly.INPUT_VALUE or Blockly.NEXT_STATEMENT or
- *     Blockly.DUMMY_INPUT.
+ * @param {number} type Either Blockly.constants.INPUT_VALUE or Blockly.constants.NEXT_STATEMENT or
+ *     Blockly.constants.DUMMY_INPUT.
  * @param {string} name Language-neutral identifier which may used to find this
  *     input again.  Should be unique to this block.
  * @return {!Blockly.Input} The input object created.
@@ -1301,7 +1301,7 @@ Blockly.BlockSvg.prototype.bumpNeighbours_ = function() {
       connection.targetBlock().bumpNeighbours_();
     }
 
-    const neighbours = connection.neighbours_(Blockly.SNAP_RADIUS);
+    const neighbours = connection.neighbours_(Blockly.constants.SNAP_RADIUS);
     for (let j = 0, otherConnection; otherConnection = neighbours[j]; j++) {
 
       // If both connections are connected, that's probably fine.  But if
@@ -1336,13 +1336,13 @@ Blockly.BlockSvg.prototype.scheduleSnapAndBump = function() {
     Blockly.Events.setGroup(group);
     block.snapToGrid();
     Blockly.Events.setGroup(false);
-  }, Blockly.BUMP_DELAY / 2);
+  }, Blockly.constants.BUMP_DELAY / 2);
 
   setTimeout(function() {
     Blockly.Events.setGroup(group);
     block.bumpNeighbours_();
     Blockly.Events.setGroup(false);
-  }, Blockly.BUMP_DELAY);
+  }, Blockly.constants.BUMP_DELAY);
 };
 
 /**

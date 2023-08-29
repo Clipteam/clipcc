@@ -94,8 +94,8 @@ Blockly.RenderedConnection.prototype.bumpAwayFrom_ = function(staticConnection) 
   // Raise it to the top for extra visibility.
   const selected = Blockly.selected == rootBlock;
   selected || rootBlock.addSelect();
-  let dx = (staticConnection.x_ + Blockly.SNAP_RADIUS) - this.x_;
-  let dy = (staticConnection.y_ + Blockly.SNAP_RADIUS) - this.y_;
+  let dx = (staticConnection.x_ + Blockly.constants.SNAP_RADIUS) - this.x_;
+  let dy = (staticConnection.y_ + Blockly.constants.SNAP_RADIUS) - this.y_;
   if (reverse) {
     // When reversing a bump due to an uneditable block, bump up.
     dy = -dy;
@@ -222,7 +222,7 @@ Blockly.RenderedConnection.prototype.unhideAll = function() {
   // Also, since rendering a block renders all its parents, we only need to
   // render the leaf nodes.
   const renderList = [];
-  if (this.type != Blockly.INPUT_VALUE && this.type != Blockly.NEXT_STATEMENT) {
+  if (this.type != Blockly.constants.INPUT_VALUE && this.type != Blockly.constants.NEXT_STATEMENT) {
     // Only spider down.
     return renderList;
   }
@@ -388,8 +388,8 @@ Blockly.RenderedConnection.prototype.connect_ = function(childConnection) {
     childBlock.updateDisabled();
   }
   if (parentBlock.rendered && childBlock.rendered) {
-    if (parentConnection.type == Blockly.NEXT_STATEMENT ||
-        parentConnection.type == Blockly.PREVIOUS_STATEMENT) {
+    if (parentConnection.type == Blockly.constants.NEXT_STATEMENT ||
+        parentConnection.type == Blockly.constants.PREVIOUS_STATEMENT) {
       // Child block may need to square off its corners if it is in a stack.
       // Rendering a child will render its parent.
       childBlock.render();

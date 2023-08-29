@@ -203,13 +203,13 @@ Blockly.Xml.blockToDom = function(block, opt_noId) {
   for (let i = 0, input; input = block.inputList[i]; i++) {
     let container;
     let empty = true;
-    if (input.type == Blockly.DUMMY_INPUT) {
+    if (input.type == Blockly.constants.DUMMY_INPUT) {
       continue;
     } else {
       const childBlock = input.connection.targetBlock();
-      if (input.type == Blockly.INPUT_VALUE) {
+      if (input.type == Blockly.constants.INPUT_VALUE) {
         container = goog.dom.createDom('value');
-      } else if (input.type == Blockly.NEXT_STATEMENT) {
+      } else if (input.type == Blockly.constants.NEXT_STATEMENT) {
         container = goog.dom.createDom('statement');
       }
       const shadow = input.connection.getShadowDom();

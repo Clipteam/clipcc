@@ -178,15 +178,15 @@ Blockly.Trashcan.prototype.createDom = function() {
       clip);
   const body = Blockly.utils.createSvgElement('image',
       {
-        'width': Blockly.SPRITE.width,
+        'width': Blockly.constants.SPRITE.width,
         'x': -this.SPRITE_LEFT_,
-        'height': Blockly.SPRITE.height,
+        'height': Blockly.constants.SPRITE.height,
         'y': -this.SPRITE_TOP_,
         'clip-path': 'url(#blocklyTrashBodyClipPath' + rnd + ')'
       },
       this.svgGroup_);
   body.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href',
-      this.workspace_.options.pathToMedia + Blockly.SPRITE.url);
+      this.workspace_.options.pathToMedia + Blockly.constants.SPRITE.url);
 
   clip = Blockly.utils.createSvgElement('clipPath',
       {'id': 'blocklyTrashLidClipPath' + rnd},
@@ -195,15 +195,15 @@ Blockly.Trashcan.prototype.createDom = function() {
       {'width': this.WIDTH_, 'height': this.LID_HEIGHT_}, clip);
   this.svgLid_ = Blockly.utils.createSvgElement('image',
       {
-        'width': Blockly.SPRITE.width,
+        'width': Blockly.constants.SPRITE.width,
         'x': -this.SPRITE_LEFT_,
-        'height': Blockly.SPRITE.height,
+        'height': Blockly.constants.SPRITE.height,
         'y': -this.SPRITE_TOP_,
         'clip-path': 'url(#blocklyTrashLidClipPath' + rnd + ')'
       },
       this.svgGroup_);
   this.svgLid_.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href',
-      this.workspace_.options.pathToMedia + Blockly.SPRITE.url);
+      this.workspace_.options.pathToMedia + Blockly.constants.SPRITE.url);
 
   Blockly.bindEventWithChecks_(this.svgGroup_, 'mouseup', this, this.click);
   this.animateLid_();
@@ -246,7 +246,7 @@ Blockly.Trashcan.prototype.position = function() {
   }
   if (this.workspace_.RTL) {
     this.left_ = this.MARGIN_SIDE_ + Blockly.Scrollbar.scrollbarThickness;
-    if (metrics.toolboxPosition == Blockly.TOOLBOX_AT_LEFT) {
+    if (metrics.toolboxPosition == Blockly.constants.TOOLBOX_AT_LEFT) {
       this.left_ += metrics.flyoutWidth;
       if (this.workspace_.toolbox_) {
         this.left_ += metrics.absoluteLeft;
@@ -256,14 +256,14 @@ Blockly.Trashcan.prototype.position = function() {
     this.left_ = metrics.viewWidth + metrics.absoluteLeft -
         this.WIDTH_ - this.MARGIN_SIDE_ - Blockly.Scrollbar.scrollbarThickness;
 
-    if (metrics.toolboxPosition == Blockly.TOOLBOX_AT_RIGHT) {
+    if (metrics.toolboxPosition == Blockly.constants.TOOLBOX_AT_RIGHT) {
       this.left_ -= metrics.flyoutWidth;
     }
   }
   this.top_ = metrics.viewHeight + metrics.absoluteTop -
       (this.BODY_HEIGHT_ + this.LID_HEIGHT_) - this.bottom_;
 
-  if (metrics.toolboxPosition == Blockly.TOOLBOX_AT_BOTTOM) {
+  if (metrics.toolboxPosition == Blockly.constants.TOOLBOX_AT_BOTTOM) {
     this.top_ -= metrics.flyoutHeight;
   }
   this.svgGroup_.setAttribute('transform',
@@ -336,7 +336,7 @@ Blockly.Trashcan.prototype.close = function() {
 Blockly.Trashcan.prototype.click = function() {
   const dx = this.workspace_.startScrollX - this.workspace_.scrollX;
   const dy = this.workspace_.startScrollY - this.workspace_.scrollY;
-  if (Math.sqrt(dx * dx + dy * dy) > Blockly.DRAG_RADIUS) {
+  if (Math.sqrt(dx * dx + dy * dy) > Blockly.constants.DRAG_RADIUS) {
     return;
   }
   console.log('TODO: Inspect trash.');

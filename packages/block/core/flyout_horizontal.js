@@ -91,11 +91,11 @@ Blockly.HorizontalFlyout.prototype.getMetrics_ = function() {
 
   let absoluteTop = this.SCROLLBAR_PADDING;
   const absoluteLeft = this.SCROLLBAR_PADDING;
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_BOTTOM) {
+  if (this.toolboxPosition_ == Blockly.constants.TOOLBOX_AT_BOTTOM) {
     absoluteTop = 0;
   }
   let viewHeight = this.height_;
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_TOP) {
+  if (this.toolboxPosition_ == Blockly.constants.TOOLBOX_AT_TOP) {
     viewHeight += this.MARGIN;
   }
   const viewWidth = this.width_ - 2 * this.SCROLLBAR_PADDING;
@@ -164,13 +164,13 @@ Blockly.HorizontalFlyout.prototype.position = function() {
   this.setBackgroundPath_(edgeWidth, edgeHeight);
 
   let x = targetWorkspaceMetrics.absoluteLeft;
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_RIGHT) {
+  if (this.toolboxPosition_ == Blockly.constants.TOOLBOX_AT_RIGHT) {
     x += targetWorkspaceMetrics.viewWidth;
     x -= this.width_;
   }
 
   let y = targetWorkspaceMetrics.absoluteTop;
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_BOTTOM) {
+  if (this.toolboxPosition_ == Blockly.constants.TOOLBOX_AT_BOTTOM) {
     y += targetWorkspaceMetrics.viewHeight;
     y -= this.height_;
   }
@@ -209,7 +209,7 @@ Blockly.HorizontalFlyout.prototype.position = function() {
  * @private
  */
 Blockly.HorizontalFlyout.prototype.setBackgroundPath_ = function(width, height) {
-  const atTop = this.toolboxPosition_ == Blockly.TOOLBOX_AT_TOP;
+  const atTop = this.toolboxPosition_ == Blockly.constants.TOOLBOX_AT_TOP;
   // Start at top left.
   const path = ['M 0,' + (atTop ? 0 : this.CORNER_RADIUS)];
 
@@ -401,7 +401,7 @@ Blockly.HorizontalFlyout.prototype.isDragTowardWorkspace = function(currentDragD
 
   let draggingTowardWorkspace = false;
   const range = this.dragAngleRange_;
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_TOP) {
+  if (this.toolboxPosition_ == Blockly.constants.TOOLBOX_AT_TOP) {
     // Horizontal at top.
     if (dragDirection < 90 + range && dragDirection > 90 - range) {
       draggingTowardWorkspace = true;
@@ -432,10 +432,10 @@ Blockly.HorizontalFlyout.prototype.getClientRect = function() {
   const y = flyoutRect.top;
   const height = flyoutRect.height;
 
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_TOP) {
+  if (this.toolboxPosition_ == Blockly.constants.TOOLBOX_AT_TOP) {
     return new goog.math.Rect(-BIG_NUM, y - BIG_NUM, BIG_NUM * 2,
         BIG_NUM + height);
-  } else if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_BOTTOM) {
+  } else if (this.toolboxPosition_ == Blockly.constants.TOOLBOX_AT_BOTTOM) {
     return new goog.math.Rect(-BIG_NUM, y, BIG_NUM * 2,
         BIG_NUM + height);
   }

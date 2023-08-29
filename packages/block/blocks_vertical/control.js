@@ -56,7 +56,7 @@ Blockly.Blocks['control_forever'] = {
           "flip_rtl": true
         }
       ],
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "shape_end"]
     });
   }
@@ -97,7 +97,7 @@ Blockly.Blocks['control_repeat'] = {
           "flip_rtl": true
         }
       ],
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "shape_statement"]
     });
   }
@@ -126,7 +126,7 @@ Blockly.Blocks['control_if'] = {
           "name": "SUBSTACK"
         }
       ],
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "shape_statement"]
     });
   }
@@ -163,7 +163,7 @@ Blockly.Blocks['control_if_else'] = {
           "name": "SUBSTACK2"
         }
       ],
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "shape_statement"]
     });
   }
@@ -206,7 +206,7 @@ Blockly.Blocks['control_stop'] = {
     this.appendDummyInput()
         .appendField(Blockly.Msg.CONTROL_STOP)
         .appendField(stopDropdown, 'STOP_OPTION');
-    this.setCategory(Blockly.Categories.control);
+    this.setCategory(Blockly.constants.Categories.control);
     this.setColour(Blockly.Colours.control.primary,
         Blockly.Colours.control.secondary,
         Blockly.Colours.control.tertiary,
@@ -240,7 +240,7 @@ Blockly.Blocks['control_wait'] = {
           "name": "DURATION"
         }
       ],
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "shape_statement"]
     });
   }
@@ -261,7 +261,7 @@ Blockly.Blocks['control_wait_until'] = {
           "check": "Boolean"
         }
       ],
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "shape_statement"]
     });
   }
@@ -301,7 +301,7 @@ Blockly.Blocks['control_repeat_until'] = {
           "flip_rtl": true
         }
       ],
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "shape_statement"]
     });
   }
@@ -341,7 +341,7 @@ Blockly.Blocks['control_while'] = {
           "flip_rtl": true
         }
       ],
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "shape_statement"]
     });
   }
@@ -374,7 +374,7 @@ Blockly.Blocks['control_for_each'] = {
           "name": "SUBSTACK"
         }
       ],
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "shape_statement"]
     });
   }
@@ -391,7 +391,7 @@ Blockly.Blocks['control_start_as_clone'] = {
       "message0": Blockly.Msg.CONTROL_STARTASCLONE,
       "args0": [
       ],
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "shape_hat"]
     });
   }
@@ -434,7 +434,7 @@ Blockly.Blocks['control_create_clone_of'] = {
           "name": "CLONE_OPTION"
         }
       ],
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "shape_statement"]
     });
   }
@@ -450,7 +450,7 @@ Blockly.Blocks['control_delete_this_clone'] = {
       "message0": Blockly.Msg.CONTROL_DELETETHISCLONE,
       "args0": [
       ],
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "shape_end"]
     });
   }
@@ -465,7 +465,7 @@ Blockly.Blocks['control_get_counter'] = {
   init: function() {
     this.jsonInit({
       "message0": Blockly.Msg.CONTROL_COUNTER,
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "output_number"]
     });
   }
@@ -480,7 +480,7 @@ Blockly.Blocks['control_incr_counter'] = {
   init: function() {
     this.jsonInit({
       "message0": Blockly.Msg.CONTROL_INCRCOUNTER,
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "shape_statement"]
     });
   }
@@ -495,7 +495,7 @@ Blockly.Blocks['control_clear_counter'] = {
   init: function() {
     this.jsonInit({
       "message0": Blockly.Msg.CONTROL_CLEARCOUNTER,
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "shape_statement"]
     });
   }
@@ -525,7 +525,7 @@ Blockly.Blocks['control_all_at_once'] = {
           "name": "SUBSTACK"
         }
       ],
-      "category": Blockly.Categories.control,
+      "category": Blockly.constants.Categories.control,
       "extensions": ["colours_control", "shape_statement"]
     });
   }

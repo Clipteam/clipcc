@@ -277,7 +277,7 @@ Blockly.utils.getRelativeXY.XY_STYLE_REGEX_ =
  */
 Blockly.utils.createSvgElement = function(name, attrs, parent /*, opt_workspace */) {
   const e = /** @type {!SVGElement} */
-      (document.createElementNS(Blockly.SVG_NS, name));
+      (document.createElementNS(Blockly.constants.SVG_NS, name));
   for (const key in attrs) {
     e.setAttribute(key, attrs[key]);
   }

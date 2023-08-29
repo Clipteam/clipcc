@@ -521,7 +521,7 @@ Blockly.Events.Move.prototype.run = function(forward) {
       if (input) {
         parentConnection = input.connection;
       }
-    } else if (blockConnection.type == Blockly.PREVIOUS_STATEMENT) {
+    } else if (blockConnection.type == Blockly.constants.PREVIOUS_STATEMENT) {
       parentConnection = parentBlock.nextConnection;
     }
     if (parentConnection) {

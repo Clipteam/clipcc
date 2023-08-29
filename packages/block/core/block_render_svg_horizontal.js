@@ -441,7 +441,7 @@ Blockly.BlockSvg.prototype.renderCompute_ = function() {
 
   // Does block have a statement?
   for (let i = 0, input; input = this.inputList[i]; i++) {
-    if (input.type == Blockly.NEXT_STATEMENT) {
+    if (input.type == Blockly.constants.NEXT_STATEMENT) {
       metrics.statement = input;
       // Compute minimum input size.
       metrics.bayHeight = Blockly.BlockSvg.MIN_BLOCK_Y;
@@ -871,7 +871,7 @@ Blockly.BlockSvg.prototype.getFieldShadowBlock_ = function() {
 Blockly.BlockSvg.prototype.positionNewBlock = function(newBlock, newConnection, existingConnection) {
   // We only need to position the new block if it's before the existing one,
   // otherwise its position is set by the previous block.
-  if (newConnection.type == Blockly.NEXT_STATEMENT) {
+  if (newConnection.type == Blockly.constants.NEXT_STATEMENT) {
     const dx = existingConnection.x_ - newConnection.x_;
     let dy = existingConnection.y_ - newConnection.y_;
 

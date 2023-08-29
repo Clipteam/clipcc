@@ -114,10 +114,10 @@ Blockly.Comment.prototype.createEditor_ = function() {
   this.foreignObject_ = Blockly.utils.createSvgElement('foreignObject',
       {'x': Blockly.Bubble.BORDER_WIDTH, 'y': Blockly.Bubble.BORDER_WIDTH},
       null);
-  const body = document.createElementNS(Blockly.HTML_NS, 'body');
-  body.setAttribute('xmlns', Blockly.HTML_NS);
+  const body = document.createElementNS(Blockly.constants.HTML_NS, 'body');
+  body.setAttribute('xmlns', Blockly.constants.HTML_NS);
   body.className = 'blocklyMinimalBody';
-  const textarea = document.createElementNS(Blockly.HTML_NS, 'textarea');
+  const textarea = document.createElementNS(Blockly.constants.HTML_NS, 'textarea');
   textarea.className = 'blocklyCommentTextarea';
   textarea.setAttribute('dir', this.block_.RTL ? 'RTL' : 'LTR');
   body.appendChild(textarea);

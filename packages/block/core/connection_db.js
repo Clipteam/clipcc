@@ -292,9 +292,9 @@ Blockly.ConnectionDB.prototype.searchForClosest = function(conn, maxRadius,
 Blockly.ConnectionDB.init = function(workspace) {
   // Create four databases, one for each connection type.
   const dbList = [];
-  dbList[Blockly.INPUT_VALUE] = new Blockly.ConnectionDB();
-  dbList[Blockly.OUTPUT_VALUE] = new Blockly.ConnectionDB();
-  dbList[Blockly.NEXT_STATEMENT] = new Blockly.ConnectionDB();
-  dbList[Blockly.PREVIOUS_STATEMENT] = new Blockly.ConnectionDB();
+  dbList[Blockly.constants.INPUT_VALUE] = new Blockly.ConnectionDB();
+  dbList[Blockly.constants.OUTPUT_VALUE] = new Blockly.ConnectionDB();
+  dbList[Blockly.constants.NEXT_STATEMENT] = new Blockly.ConnectionDB();
+  dbList[Blockly.constants.PREVIOUS_STATEMENT] = new Blockly.ConnectionDB();
   workspace.connectionDBList = dbList;
 };

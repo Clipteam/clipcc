@@ -114,8 +114,8 @@ Blockly.BlockDragSurfaceSvg.prototype.createDom = function() {
   }
   this.SVG_ = Blockly.utils.createSvgElement('svg',
       {
-        'xmlns': Blockly.SVG_NS,
-        'xmlns:html': Blockly.HTML_NS,
+        'xmlns': Blockly.constants.SVG_NS,
+        'xmlns:html': Blockly.constants.HTML_NS,
         'xmlns:xlink': 'http://www.w3.org/1999/xlink',
         'version': '1.1',
         'class': 'blocklyBlockDragSurface'

@@ -50,7 +50,7 @@ Blockly.Connection = function(source, type) {
   if (source.workspace.connectionDBList) {
     this.db_ = source.workspace.connectionDBList[type];
     this.dbOpposite_ =
-        source.workspace.connectionDBList[Blockly.OPPOSITE_TYPE[type]];
+        source.workspace.connectionDBList[Blockly.constants.OPPOSITE_TYPE[type]];
     this.hidden_ = !this.db_;
   }
 };
@@ -169,7 +169,7 @@ Blockly.Connection.prototype.connect_ = function(childConnection) {
       shadowDom = Blockly.Xml.blockToDom(orphanBlock);
       orphanBlock.dispose();
       orphanBlock = null;
-    } else if (parentConnection.type == Blockly.NEXT_STATEMENT) {
+    } else if (parentConnection.type == Blockly.constants.NEXT_STATEMENT) {
       // Statement connections.
       // Statement blocks may be inserted into the middle of a stack.
       // Split the stack.
@@ -210,7 +210,7 @@ Blockly.Connection.prototype.connect_ = function(childConnection) {
             }
             Blockly.Events.setGroup(false);
           }
-        }, Blockly.BUMP_DELAY);
+        }, Blockly.constants.BUMP_DELAY);
       }
     }
     // Restore the shadow DOM.
@@ -270,8 +270,8 @@ Blockly.Connection.prototype.getSourceBlock = function() {
  * @return {boolean} True if connection faces down or right.
  */
 Blockly.Connection.prototype.isSuperior = function() {
-  return this.type == Blockly.INPUT_VALUE ||
-      this.type == Blockly.NEXT_STATEMENT;
+  return this.type == Blockly.constants.INPUT_VALUE ||
+      this.type == Blockly.constants.NEXT_STATEMENT;
 };
 
 /**
@@ -308,7 +308,7 @@ Blockly.Connection.prototype.canConnectWithReason_ = function(target) {
   }
   if (blockA && blockA == blockB) {
     return Blockly.Connection.REASON_SELF_CONNECTION;
-  } else if (target.type != Blockly.OPPOSITE_TYPE[this.type]) {
+  } else if (target.type != Blockly.constants.OPPOSITE_TYPE[this.type]) {
     return Blockly.Connection.REASON_WRONG_TYPE;
   } else if (blockA && blockB && blockA.workspace !== blockB.workspace) {
     return Blockly.Connection.REASON_DIFFERENT_WORKSPACES;
@@ -316,11 +316,11 @@ Blockly.Connection.prototype.canConnectWithReason_ = function(target) {
     return Blockly.Connection.REASON_CHECKS_FAILED;
   } else if (blockA.isShadow() && !blockB.isShadow()) {
     return Blockly.Connection.REASON_SHADOW_PARENT;
-  } else if ((blockA.type == Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE &&
-      blockB.type != Blockly.PROCEDURES_PROTOTYPE_BLOCK_TYPE &&
+  } else if ((blockA.type == Blockly.constants.PROCEDURES_DEFINITION_BLOCK_TYPE &&
+      blockB.type != Blockly.constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE &&
       superiorConn == blockA.getInput('custom_block').connection) ||
-      (blockB.type == Blockly.PROCEDURES_PROTOTYPE_BLOCK_TYPE &&
-      blockA.type != Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE)) {
+      (blockB.type == Blockly.constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE &&
+      blockA.type != Blockly.constants.PROCEDURES_DEFINITION_BLOCK_TYPE)) {
     // Hack to fix #1127: Fail attempts to connect to the custom_block input
     // on a defnoreturn block, unless the connecting block is a specific type.
     // And hack to fix #1534: Fail attempts to connect anything but a
@@ -445,13 +445,13 @@ Blockly.Connection.prototype.isConnectionAllowed = function(candidate) {
   const firstStatementConnection =
       this.sourceBlock_.getFirstStatementConnection();
   switch (candidate.type) {
-    case Blockly.PREVIOUS_STATEMENT:
+    case Blockly.constants.PREVIOUS_STATEMENT:
       return this.canConnectToPrevious_(candidate);
-    case Blockly.OUTPUT_VALUE: {
+    case Blockly.constants.OUTPUT_VALUE: {
       // Can't drag an input to an output--you have to move the inferior block.
       return false;
     }
-    case Blockly.INPUT_VALUE: {
+    case Blockly.constants.INPUT_VALUE: {
       // Offering to connect the left (male) of a value block to an already
       // connected value pair is ok, we'll splice it in.
       // However, don't offer to splice into an unmovable block.
@@ -462,7 +462,7 @@ Blockly.Connection.prototype.isConnectionAllowed = function(candidate) {
       }
       break;
     }
-    case Blockly.NEXT_STATEMENT: {
+    case Blockly.constants.NEXT_STATEMENT: {
       // Scratch-specific behaviour:
       // If this is a c-block, we can't connect this block's
       // previous connection unless we're connecting to the end of the last
@@ -542,7 +542,7 @@ Blockly.Connection.singleConnection_ = function(block, orphanBlock) {
   let connection = false;
   for (let i = 0; i < block.inputList.length; i++) {
     const thisConnection = block.inputList[i].connection;
-    if (thisConnection && thisConnection.type == Blockly.INPUT_VALUE &&
+    if (thisConnection && thisConnection.type == Blockly.constants.INPUT_VALUE &&
         orphanBlock.outputConnection.checkType_(thisConnection)) {
       if (connection) {
         return null;  // More than one connection.
@@ -692,17 +692,17 @@ Blockly.Connection.prototype.setCheck = function(check) {
  * @return {number} Enum representing shape.
  */
 Blockly.Connection.prototype.getOutputShape = function() {
-  if (!this.check_) return Blockly.OUTPUT_SHAPE_ROUND;
+  if (!this.check_) return Blockly.constants.OUTPUT_SHAPE_ROUND;
   if (this.check_.indexOf('Boolean') !== -1) {
-    return Blockly.OUTPUT_SHAPE_HEXAGONAL;
+    return Blockly.constants.OUTPUT_SHAPE_HEXAGONAL;
   }
   if (this.check_.indexOf('Number') !== -1) {
-    return Blockly.OUTPUT_SHAPE_ROUND;
+    return Blockly.constants.OUTPUT_SHAPE_ROUND;
   }
   if (this.check_.indexOf('String') !== -1) {
-    return Blockly.OUTPUT_SHAPE_SQUARE;
+    return Blockly.constants.OUTPUT_SHAPE_SQUARE;
   }
-  return Blockly.OUTPUT_SHAPE_ROUND;
+  return Blockly.constants.OUTPUT_SHAPE_ROUND;
 };
 
 /**

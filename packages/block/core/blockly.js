@@ -113,8 +113,8 @@ Blockly.cache3dSupported_ = null;
  * @return {string} RGB code, e.g. '#5ba65b'.
  */
 Blockly.hueToRgb = function(hue) {
-  return goog.color.hsvToHex(hue, Blockly.HSV_SATURATION,
-      Blockly.HSV_VALUE * 255);
+  return goog.color.hsvToHex(hue, Blockly.constants.HSV_SATURATION,
+      Blockly.constants.HSV_VALUE * 255);
 };
 
 /**

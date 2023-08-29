@@ -41,7 +41,7 @@ Blockly.Blocks['event_whentouchingobject'] = {
           "name": "TOUCHINGOBJECTMENU"
         }
       ],
-      "category": Blockly.Categories.event,
+      "category": Blockly.constants.Categories.event,
       "extensions": ["colours_event", "shape_hat"]
     });
   }
@@ -88,7 +88,7 @@ Blockly.Blocks['event_whenflagclicked'] = {
           "alt": "flag"
         }
       ],
-      "category": Blockly.Categories.event,
+      "category": Blockly.constants.Categories.event,
       "extensions": ["colours_event", "shape_hat"]
     });
   }
@@ -102,7 +102,7 @@ Blockly.Blocks['event_whenthisspriteclicked'] = {
   init: function() {
     this.jsonInit({
       "message0": Blockly.Msg.EVENT_WHENTHISSPRITECLICKED,
-      "category": Blockly.Categories.event,
+      "category": Blockly.constants.Categories.event,
       "extensions": ["colours_event", "shape_hat"]
     });
   }
@@ -117,7 +117,7 @@ Blockly.Blocks['event_whenstageclicked'] = {
   init: function() {
     this.jsonInit({
       "message0": Blockly.Msg.EVENT_WHENSTAGECLICKED,
-      "category": Blockly.Categories.event,
+      "category": Blockly.constants.Categories.event,
       "extensions": ["colours_event", "shape_hat"]
     });
   }
@@ -136,11 +136,11 @@ Blockly.Blocks['event_whenbroadcastreceived'] = {
         {
           "type": "field_variable",
           "name": "BROADCAST_OPTION",
-          "variableTypes": [Blockly.BROADCAST_MESSAGE_VARIABLE_TYPE],
+          "variableTypes": [Blockly.constants.BROADCAST_MESSAGE_VARIABLE_TYPE],
           "variable": Blockly.Msg.DEFAULT_BROADCAST_MESSAGE_NAME
         }
       ],
-      "category": Blockly.Categories.event,
+      "category": Blockly.constants.Categories.event,
       "extensions": ["colours_event", "shape_hat"]
     });
   }
@@ -163,7 +163,7 @@ Blockly.Blocks['event_whenbackdropswitchesto'] = {
           ]
         }
       ],
-      "category": Blockly.Categories.event,
+      "category": Blockly.constants.Categories.event,
       "extensions": ["colours_event", "shape_hat"]
     });
   }
@@ -191,7 +191,7 @@ Blockly.Blocks['event_whengreaterthan'] = {
           "name": "VALUE"
         }
       ],
-      "category": Blockly.Categories.event,
+      "category": Blockly.constants.Categories.event,
       "extensions": ["colours_event", "shape_hat"]
     });
   }
@@ -209,7 +209,7 @@ Blockly.Blocks['event_broadcast_menu'] = {
         {
           "type": "field_variable",
           "name": "BROADCAST_OPTION",
-          "variableTypes":[Blockly.BROADCAST_MESSAGE_VARIABLE_TYPE],
+          "variableTypes":[Blockly.constants.BROADCAST_MESSAGE_VARIABLE_TYPE],
           "variable": Blockly.Msg.DEFAULT_BROADCAST_MESSAGE_NAME
         }
       ],
@@ -237,7 +237,7 @@ Blockly.Blocks['event_broadcast'] = {
           "name": "BROADCAST_INPUT"
         }
       ],
-      "category": Blockly.Categories.event,
+      "category": Blockly.constants.Categories.event,
       "extensions": ["colours_event", "shape_statement"]
     });
   }
@@ -257,7 +257,7 @@ Blockly.Blocks['event_broadcastandwait'] = {
           "name":"BROADCAST_INPUT"
         }
       ],
-      "category": Blockly.Categories.event,
+      "category": Blockly.constants.Categories.event,
       "extensions": ["colours_event", "shape_statement"]
     });
   }
@@ -334,7 +334,7 @@ Blockly.Blocks['event_whenkeypressed'] = {
           ]
         }
       ],
-      "category": Blockly.Categories.event,
+      "category": Blockly.constants.Categories.event,
       "extensions": ["colours_event", "shape_hat"]
     });
   }

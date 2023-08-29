@@ -41,9 +41,9 @@ goog.require('Blockly.Workspace');
 /**
  * Constant to separate procedure names from variables and generated functions
  * when running generators.
- * @deprecated Use Blockly.PROCEDURE_CATEGORY_NAME
+ * @deprecated Use Blockly.constants.PROCEDURE_CATEGORY_NAME
  */
-Blockly.Procedures.NAME_TYPE = Blockly.PROCEDURE_CATEGORY_NAME;
+Blockly.Procedures.NAME_TYPE = Blockly.constants.PROCEDURE_CATEGORY_NAME;
 
 /**
  * Find all user-created procedure definitions in a workspace.
@@ -84,7 +84,7 @@ Blockly.Procedures.allProcedureMutations = function(root) {
   const blocks = root.getAllBlocks();
   const mutations = [];
   for (let i = 0; i < blocks.length; i++) {
-    if (blocks[i].type == Blockly.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
+    if (blocks[i].type == Blockly.constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
       const mutation = blocks[i].mutationToDom(/* opt_generateShadows */ true);
       if (mutation) {
         mutations.push(mutation);
@@ -288,7 +288,7 @@ Blockly.Procedures.getCallers = function(name, ws, definitionRoot,
   const callers = [];
   for (let i = 0; i < allBlocks.length; i++) {
     const block = allBlocks[i];
-    if (block.type == Blockly.PROCEDURES_CALL_BLOCK_TYPE ) {
+    if (block.type == Blockly.constants.PROCEDURES_CALL_BLOCK_TYPE ) {
       const procCode = block.getProcCode();
       if (procCode && procCode == name) {
         callers.push(block);
@@ -341,7 +341,7 @@ Blockly.Procedures.getDefineBlock = function(procCode, workspace) {
   // Assume that a procedure definition is a top block.
   const blocks = workspace.getTopBlocks(false);
   for (let i = 0; i < blocks.length; i++) {
-    if (blocks[i].type == Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE) {
+    if (blocks[i].type == Blockly.constants.PROCEDURES_DEFINITION_BLOCK_TYPE) {
       const prototypeBlock = blocks[i].getInput('custom_block').connection.targetBlock();
       if (prototypeBlock.getProcCode && prototypeBlock.getProcCode() == procCode) {
         return blocks[i];
@@ -441,7 +441,7 @@ Blockly.Procedures.createProcedureCallbackFactory_ = function(workspace) {
 Blockly.Procedures.editProcedureCallback_ = function(block) {
   // Edit can come from one of three block types (call, define, prototype)
   // Normalize by setting the block to the prototype block for the procedure.
-  if (block.type == Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE) {
+  if (block.type == Blockly.constants.PROCEDURES_DEFINITION_BLOCK_TYPE) {
     const input = block.getInput('custom_block');
     if (!input) {
       alert('Bad input'); // TODO: Decide what to do about this.
@@ -454,12 +454,12 @@ Blockly.Procedures.editProcedureCallback_ = function(block) {
     }
     const innerBlock = conn.targetBlock();
     if (!innerBlock ||
-        !innerBlock.type == Blockly.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
+        !innerBlock.type == Blockly.constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
       alert('Bad inner block'); // TODO: Decide what to do about this.
       return;
     }
     block = innerBlock;
-  } else if (block.type == Blockly.PROCEDURES_CALL_BLOCK_TYPE) {
+  } else if (block.type == Blockly.constants.PROCEDURES_CALL_BLOCK_TYPE) {
     // This is a call block, find the prototype corresponding to the procCode.
     // Make sure to search the correct workspace, call block can be in flyout.
     const workspaceToSearch = block.workspace.isFlyout ?

@@ -330,11 +330,11 @@ Blockly.VerticalFlyout.prototype.position = function() {
   if (this.parentToolbox_) {
     const toolboxWidth = this.parentToolbox_.getWidth();
     const categoryWidth = toolboxWidth - this.width_;
-    x = this.toolboxPosition_ == Blockly.TOOLBOX_AT_RIGHT ?
+    x = this.toolboxPosition_ == Blockly.constants.TOOLBOX_AT_RIGHT ?
         targetWorkspaceMetrics.viewWidth : categoryWidth;
     y = 0;
   } else {
-    x = this.toolboxPosition_ == Blockly.TOOLBOX_AT_RIGHT ?
+    x = this.toolboxPosition_ == Blockly.constants.TOOLBOX_AT_RIGHT ?
         targetWorkspaceMetrics.viewWidth - this.width_ : 0;
     y = 0;
   }
@@ -370,7 +370,7 @@ Blockly.VerticalFlyout.prototype.position = function() {
  * @private
  */
 Blockly.VerticalFlyout.prototype.setBackgroundPath_ = function(width, height) {
-  const atRight = this.toolboxPosition_ == Blockly.TOOLBOX_AT_RIGHT;
+  const atRight = this.toolboxPosition_ == Blockly.constants.TOOLBOX_AT_RIGHT;
   // Decide whether to start on the left or right.
   const path = ['M ' + 0 + ',0'];
   // Top.
@@ -715,7 +715,7 @@ Blockly.VerticalFlyout.prototype.isDragTowardWorkspace = function(currentDragDel
 
   let draggingTowardWorkspace = false;
   const range = this.dragAngleRange_;
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_LEFT) {
+  if (this.toolboxPosition_ == Blockly.constants.TOOLBOX_AT_LEFT) {
     // Vertical at left.
     if (dragDirection < range && dragDirection > -range) {
       draggingTowardWorkspace = true;
@@ -753,7 +753,7 @@ Blockly.VerticalFlyout.prototype.getClientRect = function() {
   const width = flyoutRect.width;
   const height = flyoutRect.height;
 
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_LEFT) {
+  if (this.toolboxPosition_ == Blockly.constants.TOOLBOX_AT_LEFT) {
     return new goog.math.Rect(x - BIG_NUM, y, BIG_NUM + width, height);
   } else {  // Right
     return new goog.math.Rect(x, y, BIG_NUM + width, height);

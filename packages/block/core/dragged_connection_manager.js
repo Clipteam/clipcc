@@ -163,8 +163,8 @@ Blockly.DraggedConnectionManager.prototype.applyConnections = function() {
  * Update highlighted connections based on the most recent move location.
  * @param {!goog.math.Coordinate} dxy Position relative to drag start,
  *     in workspace units.
- * @param {?number} deleteArea One of {@link Blockly.DELETE_AREA_TRASH},
- *     {@link Blockly.DELETE_AREA_TOOLBOX}, or {@link Blockly.DELETE_AREA_NONE}.
+ * @param {?number} deleteArea One of {@link Blockly.constants.DELETE_AREA_TRASH},
+ *     {@link Blockly.constants.DELETE_AREA_TOOLBOX}, or {@link Blockly.constants.DELETE_AREA_NONE}.
  * @param {?boolean} isOutside True if the drag is going outside the blocks workspace
  * @package
  */
@@ -186,7 +186,7 @@ Blockly.DraggedConnectionManager.prototype.update = function(dxy, deleteArea, is
   // Prefer connecting over dropping into the trash can, but prefer dragging to
   // the toolbox over connecting to other blocks.
   const wouldConnect = !!this.closestConnection_ &&
-      deleteArea != Blockly.DELETE_AREA_TOOLBOX;
+      deleteArea != Blockly.constants.DELETE_AREA_TOOLBOX;
   const wouldDelete = !!deleteArea && !this.topBlock_.getParent() &&
       this.topBlock_.isDeletable();
   this.wouldDeleteBlock_ = wouldDelete && !wouldConnect;
@@ -246,7 +246,7 @@ Blockly.DraggedConnectionManager.prototype.updateClosest_ = function(dxy) {
 
   this.closestConnection_ = null;
   this.localConnection_ = null;
-  this.radiusConnection_ = Blockly.SNAP_RADIUS;
+  this.radiusConnection_ = Blockly.constants.SNAP_RADIUS;
   for (let i = 0; i < this.availableConnections_.length; i++) {
     const myConnection = this.availableConnections_[i];
     const neighbour = myConnection.closest(this.radiusConnection_, dxy);

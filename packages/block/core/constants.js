@@ -30,47 +30,47 @@ goog.provide('Blockly.constants');
 /**
  * Number of pixels the mouse must move before a drag starts.
  */
-Blockly.DRAG_RADIUS = 3;
+Blockly.constants.DRAG_RADIUS = 3;
 
 /**
  * Number of pixels the mouse must move before a drag/scroll starts from the
  * flyout.  Because the drag-intention is determined when this is reached, it is
- * larger than Blockly.DRAG_RADIUS so that the drag-direction is clearer.
+ * larger than Blockly.constants.DRAG_RADIUS so that the drag-direction is clearer.
  */
-Blockly.FLYOUT_DRAG_RADIUS = 10;
+Blockly.constants.FLYOUT_DRAG_RADIUS = 10;
 
 /**
  * Maximum misalignment between connections for them to snap together.
  */
-Blockly.SNAP_RADIUS = 48;
+Blockly.constants.SNAP_RADIUS = 48;
 
 /**
  * Maximum misalignment between connections for them to snap together,
  * when a connection is already highlighted.
  */
-Blockly.CONNECTING_SNAP_RADIUS = 68;
+Blockly.constants.CONNECTING_SNAP_RADIUS = 68;
 
 /**
  * How much to prefer staying connected to the current connection over moving to
  * a new connection.  The current previewed connection is considered to be this
  * much closer to the matching connection on the block than it actually is.
  */
-Blockly.CURRENT_CONNECTION_PREFERENCE = 20;
+Blockly.constants.CURRENT_CONNECTION_PREFERENCE = 20;
 
 /**
  * Delay in ms between trigger and bumping unconnected block out of alignment.
  */
-Blockly.BUMP_DELAY = 0;
+Blockly.constants.BUMP_DELAY = 0;
 
 /**
  * Number of characters to truncate a collapsed block to.
  */
-Blockly.COLLAPSE_CHARS = 30;
+Blockly.constants.COLLAPSE_CHARS = 30;
 
 /**
  * Length in ms for a touch to become a long press.
  */
-Blockly.LONGPRESS = 750;
+Blockly.constants.LONGPRESS = 750;
 
 /**
  * Distance to scroll when a mouse wheel event is received and its delta mode
@@ -80,36 +80,36 @@ Blockly.LONGPRESS = 750;
  * @const
  * @package
  */
-Blockly.LINE_SCROLL_MULTIPLIER = 15;
+Blockly.constants.LINE_SCROLL_MULTIPLIER = 15;
 
 /**
  * Prevent a sound from playing if another sound preceded it within this many
  * milliseconds.
  */
-Blockly.SOUND_LIMIT = 100;
+Blockly.constants.SOUND_LIMIT = 100;
 
 /**
  * When dragging a block out of a stack, split the stack in two (true), or drag
  * out the block healing the stack (false).
  */
-Blockly.DRAG_STACK = true;
+Blockly.constants.DRAG_STACK = true;
 
 /**
  * The richness of block colours, regardless of the hue.
  * Must be in the range of 0 (inclusive) to 1 (exclusive).
  */
-Blockly.HSV_SATURATION = 0.45;
+Blockly.constants.HSV_SATURATION = 0.45;
 
 /**
  * The intensity of block colours, regardless of the hue.
  * Must be in the range of 0 (inclusive) to 1 (exclusive).
  */
-Blockly.HSV_VALUE = 0.65;
+Blockly.constants.HSV_VALUE = 0.65;
 
 /**
  * Sprited icons and images.
  */
-Blockly.SPRITE = {
+Blockly.constants.SPRITE = {
   width: 96,
   height: 124,
   url: 'sprites.png'
@@ -121,144 +121,144 @@ Blockly.SPRITE = {
  * Required name space for SVG elements.
  * @const
  */
-Blockly.SVG_NS = 'http://www.w3.org/2000/svg';
+Blockly.constants.SVG_NS = 'http://www.w3.org/2000/svg';
 
 /**
  * Required name space for HTML elements.
  * @const
  */
-Blockly.HTML_NS = 'http://www.w3.org/1999/xhtml';
+Blockly.constants.HTML_NS = 'http://www.w3.org/1999/xhtml';
 
 /**
  * ENUM for a right-facing value input.  E.g. 'set item to' or 'return'.
  * @const
  */
-Blockly.INPUT_VALUE = 1;
+Blockly.constants.INPUT_VALUE = 1;
 
 /**
  * ENUM for a left-facing value output.  E.g. 'random fraction'.
  * @const
  */
-Blockly.OUTPUT_VALUE = 2;
+Blockly.constants.OUTPUT_VALUE = 2;
 
 /**
  * ENUM for a down-facing block stack.  E.g. 'if-do' or 'else'.
  * @const
  */
-Blockly.NEXT_STATEMENT = 3;
+Blockly.constants.NEXT_STATEMENT = 3;
 
 /**
  * ENUM for an up-facing block stack.  E.g. 'break out of loop'.
  * @const
  */
-Blockly.PREVIOUS_STATEMENT = 4;
+Blockly.constants.PREVIOUS_STATEMENT = 4;
 
 /**
  * ENUM for an dummy input.  Used to add field(s) with no input.
  * @const
  */
-Blockly.DUMMY_INPUT = 5;
+Blockly.constants.DUMMY_INPUT = 5;
 
 /**
  * ENUM for left alignment.
  * @const
  */
-Blockly.ALIGN_LEFT = -1;
+Blockly.constants.ALIGN_LEFT = -1;
 
 /**
  * ENUM for centre alignment.
  * @const
  */
-Blockly.ALIGN_CENTRE = 0;
+Blockly.constants.ALIGN_CENTRE = 0;
 
 /**
  * ENUM for right alignment.
  * @const
  */
-Blockly.ALIGN_RIGHT = 1;
+Blockly.constants.ALIGN_RIGHT = 1;
 
 /**
  * ENUM for no drag operation.
  * @const
  */
-Blockly.DRAG_NONE = 0;
+Blockly.constants.DRAG_NONE = 0;
 
 /**
  * ENUM for inside the sticky DRAG_RADIUS.
  * @const
  */
-Blockly.DRAG_STICKY = 1;
+Blockly.constants.DRAG_STICKY = 1;
 
 /**
  * ENUM for inside the non-sticky DRAG_RADIUS, for differentiating between
  * clicks and drags.
  * @const
  */
-Blockly.DRAG_BEGIN = 1;
+Blockly.constants.DRAG_BEGIN = 1;
 
 /**
  * ENUM for freely draggable (outside the DRAG_RADIUS, if one applies).
  * @const
  */
-Blockly.DRAG_FREE = 2;
+Blockly.constants.DRAG_FREE = 2;
 
 /**
  * Lookup table for determining the opposite type of a connection.
  * @const
  */
-Blockly.OPPOSITE_TYPE = [];
-Blockly.OPPOSITE_TYPE[Blockly.INPUT_VALUE] = Blockly.OUTPUT_VALUE;
-Blockly.OPPOSITE_TYPE[Blockly.OUTPUT_VALUE] = Blockly.INPUT_VALUE;
-Blockly.OPPOSITE_TYPE[Blockly.NEXT_STATEMENT] = Blockly.PREVIOUS_STATEMENT;
-Blockly.OPPOSITE_TYPE[Blockly.PREVIOUS_STATEMENT] = Blockly.NEXT_STATEMENT;
+Blockly.constants.OPPOSITE_TYPE = [];
+Blockly.constants.OPPOSITE_TYPE[Blockly.constants.INPUT_VALUE] = Blockly.constants.OUTPUT_VALUE;
+Blockly.constants.OPPOSITE_TYPE[Blockly.constants.OUTPUT_VALUE] = Blockly.constants.INPUT_VALUE;
+Blockly.constants.OPPOSITE_TYPE[Blockly.constants.NEXT_STATEMENT] = Blockly.constants.PREVIOUS_STATEMENT;
+Blockly.constants.OPPOSITE_TYPE[Blockly.constants.PREVIOUS_STATEMENT] = Blockly.constants.NEXT_STATEMENT;
 
 /**
  * ENUM for toolbox and flyout at top of screen.
  * @const
  */
-Blockly.TOOLBOX_AT_TOP = 0;
+Blockly.constants.TOOLBOX_AT_TOP = 0;
 
 /**
  * ENUM for toolbox and flyout at bottom of screen.
  * @const
  */
-Blockly.TOOLBOX_AT_BOTTOM = 1;
+Blockly.constants.TOOLBOX_AT_BOTTOM = 1;
 
 /**
  * ENUM for toolbox and flyout at left of screen.
  * @const
  */
-Blockly.TOOLBOX_AT_LEFT = 2;
+Blockly.constants.TOOLBOX_AT_LEFT = 2;
 
 /**
  * ENUM for toolbox and flyout at right of screen.
  * @const
  */
-Blockly.TOOLBOX_AT_RIGHT = 3;
+Blockly.constants.TOOLBOX_AT_RIGHT = 3;
 
 /**
  * ENUM for output shape: hexagonal (booleans/predicates).
  * @const
  */
-Blockly.OUTPUT_SHAPE_HEXAGONAL = 1;
+Blockly.constants.OUTPUT_SHAPE_HEXAGONAL = 1;
 
 /**
  * ENUM for output shape: rounded (numbers).
  * @const
  */
-Blockly.OUTPUT_SHAPE_ROUND = 2;
+Blockly.constants.OUTPUT_SHAPE_ROUND = 2;
 
 /**
  * ENUM for output shape: squared (any/all values; strings).
  * @const
  */
-Blockly.OUTPUT_SHAPE_SQUARE = 3;
+Blockly.constants.OUTPUT_SHAPE_SQUARE = 3;
 
 /**
  * ENUM for categories.
  * @const
  */
-Blockly.Categories = {
+Blockly.constants.Categories = {
   "motion": "motion",
   "looks": "looks",
   "sound": "sounds",
@@ -277,20 +277,20 @@ Blockly.Categories = {
  * Null for backwards compatibility reasons.
  * @const
  */
-Blockly.DELETE_AREA_NONE = null;
+Blockly.constants.DELETE_AREA_NONE = null;
 
 /**
  * ENUM representing that an event is in the delete area of the trash can.
  * @const
  */
-Blockly.DELETE_AREA_TRASH = 1;
+Blockly.constants.DELETE_AREA_TRASH = 1;
 
 /**
  * ENUM representing that an event is in the delete area of the toolbox or
  * flyout.
  * @const
  */
-Blockly.DELETE_AREA_TOOLBOX = 2;
+Blockly.constants.DELETE_AREA_TOOLBOX = 2;
 
 /**
  * String for use in the "custom" attribute of a category in toolbox xml.
@@ -298,7 +298,7 @@ Blockly.DELETE_AREA_TOOLBOX = 2;
  * variable blocks.
  * @const {string}
  */
-Blockly.VARIABLE_CATEGORY_NAME = 'VARIABLE';
+Blockly.constants.VARIABLE_CATEGORY_NAME = 'VARIABLE';
 
 /**
  * String for use in the "custom" attribute of a category in toolbox xml.
@@ -306,7 +306,7 @@ Blockly.VARIABLE_CATEGORY_NAME = 'VARIABLE';
  * procedure blocks.
  * @const {string}
  */
-Blockly.PROCEDURE_CATEGORY_NAME = 'PROCEDURE';
+Blockly.constants.PROCEDURE_CATEGORY_NAME = 'PROCEDURE';
 
 /**
  * String for use in the dropdown created in field_variable.
@@ -314,7 +314,7 @@ Blockly.PROCEDURE_CATEGORY_NAME = 'PROCEDURE';
  * variable...' and if selected, should trigger the prompt to rename a variable.
  * @const {string}
  */
-Blockly.RENAME_VARIABLE_ID = 'RENAME_VARIABLE_ID';
+Blockly.constants.RENAME_VARIABLE_ID = 'RENAME_VARIABLE_ID';
 
 /**
  * String for use in the dropdown created in field_variable.
@@ -322,7 +322,7 @@ Blockly.RENAME_VARIABLE_ID = 'RENAME_VARIABLE_ID';
  * variable' and if selected, should trigger the prompt to delete a variable.
  * @const {string}
  */
-Blockly.DELETE_VARIABLE_ID = 'DELETE_VARIABLE_ID';
+Blockly.constants.DELETE_VARIABLE_ID = 'DELETE_VARIABLE_ID';
 
 /**
  * String for use in the dropdown created in field_variable,
@@ -331,7 +331,7 @@ Blockly.DELETE_VARIABLE_ID = 'DELETE_VARIABLE_ID';
  * and if selected, should trigger the prompt to create a new message.
  * @const {string}
  */
-Blockly.NEW_BROADCAST_MESSAGE_ID = 'NEW_BROADCAST_MESSAGE_ID';
+Blockly.constants.NEW_BROADCAST_MESSAGE_ID = 'NEW_BROADCAST_MESSAGE_ID';
 
 /**
  * String representing the variable type of broadcast message blocks.
@@ -339,7 +339,7 @@ Blockly.NEW_BROADCAST_MESSAGE_ID = 'NEW_BROADCAST_MESSAGE_ID';
  * indicates that the current variable is a broadcast message.
  * @const {string}
  */
-Blockly.BROADCAST_MESSAGE_VARIABLE_TYPE = 'broadcast_msg';
+Blockly.constants.BROADCAST_MESSAGE_VARIABLE_TYPE = 'broadcast_msg';
 
 /**
  * String representing the variable type of list blocks.
@@ -357,31 +357,31 @@ Blockly.LIST_VARIABLE_TYPE = 'list';
  * indicates that the current variable is a scalar variable.
  * @const {string}
  */
-Blockly.SCALAR_VARIABLE_TYPE = '';
+Blockly.constants.SCALAR_VARIABLE_TYPE = '';
 
 /**
  * The type of all procedure definition blocks.
  * @const {string}
  */
-Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE = 'procedures_definition';
+Blockly.constants.PROCEDURES_DEFINITION_BLOCK_TYPE = 'procedures_definition';
 
 /**
  * The type of all procedure prototype blocks.
  * @const {string}
  */
-Blockly.PROCEDURES_PROTOTYPE_BLOCK_TYPE = 'procedures_prototype';
+Blockly.constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE = 'procedures_prototype';
 
 /**
  * The type of all procedure call blocks.
  * @const {string}
  */
-Blockly.PROCEDURES_CALL_BLOCK_TYPE = 'procedures_call';
+Blockly.constants.PROCEDURES_CALL_BLOCK_TYPE = 'procedures_call';
 
 /**
  * ENUM for flyout status button states.
  * @const
  */
-Blockly.StatusButtonState = {
+Blockly.constants.StatusButtonState = {
   "READY": "ready",
   "NOT_READY": "not ready",
 };

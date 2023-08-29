@@ -503,7 +503,7 @@ Blockly.Block.prototype.getPreviousBlock = function() {
  */
 Blockly.Block.prototype.getFirstStatementConnection = function() {
   for (let i = 0, input; input = this.inputList[i]; i++) {
-    if (input.connection && input.connection.type == Blockly.NEXT_STATEMENT) {
+    if (input.connection && input.connection.type == Blockly.constants.NEXT_STATEMENT) {
       return input.connection;
     }
   }
@@ -1044,7 +1044,7 @@ Blockly.Block.prototype.setPreviousStatement = function(newBoolean, opt_check) {
       goog.asserts.assert(!this.outputConnection,
           'Remove output connection prior to adding previous connection.');
       this.previousConnection =
-          this.makeConnection_(Blockly.PREVIOUS_STATEMENT);
+          this.makeConnection_(Blockly.constants.PREVIOUS_STATEMENT);
     }
     this.previousConnection.setCheck(opt_check);
   } else {
@@ -1069,7 +1069,7 @@ Blockly.Block.prototype.setNextStatement = function(newBoolean, opt_check) {
       opt_check = null;
     }
     if (!this.nextConnection) {
-      this.nextConnection = this.makeConnection_(Blockly.NEXT_STATEMENT);
+      this.nextConnection = this.makeConnection_(Blockly.constants.NEXT_STATEMENT);
     }
     this.nextConnection.setCheck(opt_check);
   } else {
@@ -1097,7 +1097,7 @@ Blockly.Block.prototype.setOutput = function(newBoolean, opt_check) {
     if (!this.outputConnection) {
       goog.asserts.assert(!this.previousConnection,
           'Remove previous connection prior to adding output connection.');
-      this.outputConnection = this.makeConnection_(Blockly.OUTPUT_VALUE);
+      this.outputConnection = this.makeConnection_(Blockly.constants.OUTPUT_VALUE);
     }
     this.outputConnection.setCheck(opt_check);
   } else {
@@ -1133,15 +1133,15 @@ Blockly.Block.prototype.getInputsInline = function() {
   }
   // Not defined explicitly.  Figure out what would look best.
   for (let i = 1; i < this.inputList.length; i++) {
-    if (this.inputList[i - 1].type == Blockly.DUMMY_INPUT &&
-        this.inputList[i].type == Blockly.DUMMY_INPUT) {
+    if (this.inputList[i - 1].type == Blockly.constants.DUMMY_INPUT &&
+        this.inputList[i].type == Blockly.constants.DUMMY_INPUT) {
       // Two dummy inputs in a row.  Don't inline them.
       return false;
     }
   }
   for (let i = 1; i < this.inputList.length; i++) {
-    if (this.inputList[i - 1].type == Blockly.INPUT_VALUE &&
-        this.inputList[i].type == Blockly.DUMMY_INPUT) {
+    if (this.inputList[i - 1].type == Blockly.constants.INPUT_VALUE &&
+        this.inputList[i].type == Blockly.constants.DUMMY_INPUT) {
       // Dummy input after a value input.  Inline them.
       return true;
     }
@@ -1246,7 +1246,7 @@ Blockly.Block.prototype.toString = function(opt_maxLength, opt_emptyToken) {
  * @return {!Blockly.Input} The input object created.
  */
 Blockly.Block.prototype.appendValueInput = function(name) {
-  return this.appendInput_(Blockly.INPUT_VALUE, name);
+  return this.appendInput_(Blockly.constants.INPUT_VALUE, name);
 };
 
 /**
@@ -1256,7 +1256,7 @@ Blockly.Block.prototype.appendValueInput = function(name) {
  * @return {!Blockly.Input} The input object created.
  */
 Blockly.Block.prototype.appendStatementInput = function(name) {
-  return this.appendInput_(Blockly.NEXT_STATEMENT, name);
+  return this.appendInput_(Blockly.constants.NEXT_STATEMENT, name);
 };
 
 /**
@@ -1266,7 +1266,7 @@ Blockly.Block.prototype.appendStatementInput = function(name) {
  * @return {!Blockly.Input} The input object created.
  */
 Blockly.Block.prototype.appendDummyInput = function(opt_name) {
-  return this.appendInput_(Blockly.DUMMY_INPUT, opt_name || '');
+  return this.appendInput_(Blockly.constants.DUMMY_INPUT, opt_name || '');
 };
 
 /**
@@ -1468,9 +1468,9 @@ Blockly.Block.prototype.interpolate_ = function(message, args, lastDummyAlign) {
   }
   // Lookup of alignment constants.
   const alignmentLookup = {
-    'LEFT': Blockly.ALIGN_LEFT,
-    'RIGHT': Blockly.ALIGN_RIGHT,
-    'CENTRE': Blockly.ALIGN_CENTRE
+    'LEFT': Blockly.constants.ALIGN_LEFT,
+    'RIGHT': Blockly.constants.ALIGN_RIGHT,
+    'CENTRE': Blockly.constants.ALIGN_CENTRE
   };
   // Populate block with inputs and fields.
   const fieldStack = [];
@@ -1535,8 +1535,8 @@ Blockly.Block.prototype.interpolate_ = function(message, args, lastDummyAlign) {
 
 /**
  * Add a value input, statement input or local variable to this block.
- * @param {number} type Either Blockly.INPUT_VALUE or Blockly.NEXT_STATEMENT or
- *     Blockly.DUMMY_INPUT.
+ * @param {number} type Either Blockly.constants.INPUT_VALUE or Blockly.constants.NEXT_STATEMENT or
+ *     Blockly.constants.DUMMY_INPUT.
  * @param {string} name Language-neutral identifier which may used to find this
  *     input again.  Should be unique to this block.
  * @return {!Blockly.Input} The input object created.
@@ -1544,7 +1544,7 @@ Blockly.Block.prototype.interpolate_ = function(message, args, lastDummyAlign) {
  */
 Blockly.Block.prototype.appendInput_ = function(type, name) {
   let connection = null;
-  if (type == Blockly.INPUT_VALUE || type == Blockly.NEXT_STATEMENT) {
+  if (type == Blockly.constants.INPUT_VALUE || type == Blockly.constants.NEXT_STATEMENT) {
     connection = this.makeConnection_(type);
   }
   const input = new Blockly.Input(type, name, this, connection);
