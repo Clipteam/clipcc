@@ -267,7 +267,7 @@ Blockly.FieldMatrix.prototype.setValue = function(matrix) {
     return;  // No change
   }
   if (this.sourceBlock_ && Blockly.Events.isEnabled()) {
-    Blockly.Events.fire(new Blockly.Events.Change(
+    Blockly.Events.fire(new Blockly.Events.BlockChange(
         this.sourceBlock_, 'field', this.name, this.matrix_, matrix));
   }
   matrix = matrix + Blockly.FieldMatrix.ZEROS.substr(0, 25 - matrix.length);

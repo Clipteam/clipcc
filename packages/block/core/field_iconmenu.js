@@ -122,7 +122,7 @@ Blockly.FieldIconMenu.prototype.setValue = function(newValue) {
     return;  // No change
   }
   if (this.sourceBlock_ && Blockly.Events.isEnabled()) {
-    Blockly.Events.fire(new Blockly.Events.Change(
+    Blockly.Events.fire(new Blockly.Events.BlockChange(
         this.sourceBlock_, 'field', this.name, this.value_, newValue));
   }
   this.value_ = newValue;

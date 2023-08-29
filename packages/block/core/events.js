@@ -348,16 +348,16 @@ Blockly.Events.fromJson = function(json, workspace) {
   let event;
   switch (json.type) {
     case Blockly.Events.CREATE:
-      event = new Blockly.Events.Create(null);
+      event = new Blockly.Events.BlockCreate(null);
       break;
     case Blockly.Events.DELETE:
-      event = new Blockly.Events.Delete(null);
+      event = new Blockly.Events.BlockDelete(null);
       break;
     case Blockly.Events.CHANGE:
-      event = new Blockly.Events.Change(null);
+      event = new Blockly.Events.BlockChange(null);
       break;
     case Blockly.Events.MOVE:
-      event = new Blockly.Events.Move(null);
+      event = new Blockly.Events.BlockMove(null);
       break;
     case Blockly.Events.VAR_CREATE:
       event = new Blockly.Events.VarCreate(null);

@@ -694,7 +694,7 @@ Blockly.VerticalFlyout.prototype.setCheckboxState = function(blockId, value) {
     Blockly.utils.removeClass(checkboxObj.svgRoot, 'checked');
   }
 
-  Blockly.Events.fire(new Blockly.Events.Change(
+  Blockly.Events.fire(new Blockly.Events.BlockChange(
       checkboxObj.block, 'checkbox', null, oldValue, value));
 };
 
