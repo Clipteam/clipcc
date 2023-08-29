@@ -354,7 +354,7 @@ class Runtime extends EventEmitter {
          * ClipCC's version.
          * @type {string}
          */
-        this.version = clipcc.VERSION;
+        this.version = typeof clipcc === 'undefined' ? 'unknown' : clipcc.VERSION;
 
         // Register all given block packages.
         this._registerBlockPackages();
