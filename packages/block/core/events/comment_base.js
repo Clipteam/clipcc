@@ -18,29 +18,40 @@
  * limitations under the License.
  */
 
-/**
- * @fileoverview Abstract class for events fired as a result of actions in
- *     Blockly's editor.
- * @author fraser@google.com (Neil Fraser)
- */
 'use strict';
 
-goog.provide('Blockly.Events.Abstract');
+goog.provide('Blockly.Events.CommentBase');
 
 goog.require('Blockly.Events');
-goog.require('goog.array');
-goog.require('goog.math.Coordinate');
+goog.require('Blockly.Events.Abstract');
+
 
 /**
- * Abstract class for an event.
+ * Abstract class for a comment event.
+ * @param {Blockly.WorkspaceComment | Blockly.ScratchBlockComment} comment
+ *    The comment this event corresponds to.
+ * @extends {Blockly.Events.Abstract}
  * @constructor
  */
-Blockly.Events.Abstract = function() {
+Blockly.Events.CommentBase = function(comment) {
+  /**
+   * The ID of the comment this event pertains to.
+   * @type {string}
+   */
+  this.commentId = comment.id;
+
   /**
    * The workspace identifier for this event.
-   * @type {string|undefined}
+   * @type {string}
    */
-  this.workspaceId = undefined;
+  this.workspaceId = comment.workspace.id;
+
+  /**
+   * The ID of the block this comment belongs to or null if it is not a block
+   * comment.
+   * @type {string}
+   */
+  this.blockId = comment.blockId || null;
 
   /**
    * The event group id for the group this event belongs to. Groups define
@@ -56,17 +67,24 @@ Blockly.Events.Abstract = function() {
    */
   this.recordUndo = Blockly.Events.recordUndo;
 };
+goog.inherits(Blockly.Events.CommentBase, Blockly.Events.Abstract);
 
 /**
  * Encode the event as JSON.
  * @return {!Object} JSON representation.
  */
-Blockly.Events.Abstract.prototype.toJson = function() {
+Blockly.Events.CommentBase.prototype.toJson = function() {
   const json = {
     'type': this.type
   };
   if (this.group) {
     json['group'] = this.group;
+  }
+  if (this.commentId) {
+    json['commentId'] = this.commentId;
+  }
+  if (this.blockId) {
+    json['blockId'] = this.blockId;
   }
   return json;
 };
@@ -75,39 +93,19 @@ Blockly.Events.Abstract.prototype.toJson = function() {
  * Decode the JSON event.
  * @param {!Object} json JSON representation.
  */
-Blockly.Events.Abstract.prototype.fromJson = function(json) {
+Blockly.Events.CommentBase.prototype.fromJson = function(json) {
+  this.commentId = json['commentId'];
   this.group = json['group'];
+  this.blockId = json['blockId'];
 };
 
 /**
- * Does this event record any change of state?
- * By default we assume events are non-null.  Subclasses may override to
- * indicate that they do not change state.
- * @return {boolean} False if something changed.
+ * Helper function for finding the comment this event pertains to.
+ * @return {?(Blockly.WorkspaceComment | Blockly.ScratchBlockComment)}
+ *     The comment this event pertains to, or null if it no longer exists.
+ * @private
  */
-Blockly.Events.Abstract.prototype.isNull = function() {
-  return false;
-};
-
-/**
- * Run an event.
- * @param {boolean} _forward True if run forward, false if run backward (undo).
- */
-Blockly.Events.Abstract.prototype.run = function(_forward) {
-  // Defined by subclasses.
-};
-
-/**
- * Get workspace the event belongs to.
- * @return {Blockly.Workspace} The workspace the event belongs to.
- * @throws {Error} if workspace is null.
- * @protected
- */
-Blockly.Events.Abstract.prototype.getEventWorkspace_ = function() {
-  const workspace = Blockly.Workspace.getById(this.workspaceId);
-  if (!workspace) {
-    throw Error('Workspace is null. Event must have been generated from real' +
-      ' Blockly events.');
-  }
-  return workspace;
+Blockly.Events.CommentBase.prototype.getComment_ = function() {
+  const workspace = this.getEventWorkspace_();
+  return workspace.getCommentById(this.commentId);
 };
