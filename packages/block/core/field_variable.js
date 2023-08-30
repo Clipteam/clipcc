@@ -316,7 +316,7 @@ Blockly.FieldVariable.dropdownCreate = function() {
     // text is different.
     let renameText;
     let deleteText;
-    if (this.defaultType_ == Blockly.LIST_VARIABLE_TYPE) {
+    if (this.defaultType_ == Blockly.constants.LIST_VARIABLE_TYPE) {
       renameText = Blockly.Msg.RENAME_LIST;
       deleteText = Blockly.Msg.DELETE_LIST;
     } else {

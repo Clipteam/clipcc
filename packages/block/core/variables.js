@@ -281,7 +281,7 @@ Blockly.Variables.createVariable = function(workspace, opt_callback, opt_type) {
   if (opt_type == Blockly.constants.BROADCAST_MESSAGE_VARIABLE_TYPE) {
     newMsg = Blockly.Msg.NEW_BROADCAST_MESSAGE_TITLE;
     modalTitle = Blockly.Msg.BROADCAST_MODAL_TITLE;
-  } else if (opt_type == Blockly.LIST_VARIABLE_TYPE) {
+  } else if (opt_type == Blockly.constants.LIST_VARIABLE_TYPE) {
     newMsg = Blockly.Msg.NEW_LIST_TITLE;
     modalTitle = Blockly.Msg.LIST_MODAL_TITLE;
   } else {
@@ -380,7 +380,7 @@ Blockly.Variables.nameValidator_ = function(type, text, workspace, additionalVar
 
   if (type == Blockly.constants.BROADCAST_MESSAGE_VARIABLE_TYPE) {
     return Blockly.Variables.validateBroadcastMessageName_(text, workspace, opt_callback);
-  } else if (type == Blockly.LIST_VARIABLE_TYPE) {
+  } else if (type == Blockly.constants.LIST_VARIABLE_TYPE) {
     return Blockly.Variables.validateScalarVarOrListName_(text, workspace, additionalVars, false, type,
         Blockly.Msg.LIST_ALREADY_EXISTS);
   } else {
@@ -433,7 +433,7 @@ Blockly.Variables.validateBroadcastMessageName_ = function(name, workspace, opt_
  *     for conflicts against.
  * @param {boolean} isCloud Whether the variable is a cloud variable.
  * @param {string} type The type to validate the variable as. This should be one of
- *     Blockly.constants.SCALAR_VARIABLE_TYPE or Blockly.LIST_VARIABLE_TYPE.
+ *     Blockly.constants.SCALAR_VARIABLE_TYPE or Blockly.constants.LIST_VARIABLE_TYPE.
  * @param {string} errorMsg The type-specific error message the user should see
  *     if a variable of the validated, given name and type already exists.
  * @return {string} The validated name, or null if invalid.
@@ -477,7 +477,7 @@ Blockly.Variables.renameVariable = function(workspace, variable,
         'id: ' + variable.getId() + ' and name: ' + variable.name);
     return;
   }
-  if (varType == Blockly.LIST_VARIABLE_TYPE) {
+  if (varType == Blockly.constants.LIST_VARIABLE_TYPE) {
     promptMsg = Blockly.Msg.RENAME_LIST_TITLE;
     modalTitle = Blockly.Msg.RENAME_LIST_MODAL_TITLE;
   } else {

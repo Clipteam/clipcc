@@ -347,7 +347,7 @@ Blockly.constants.BROADCAST_MESSAGE_VARIABLE_TYPE = 'broadcast_msg';
  * indicates that the current variable is a list.
  * @const {string}
  */
-Blockly.LIST_VARIABLE_TYPE = 'list';
+Blockly.constants.LIST_VARIABLE_TYPE = 'list';
 
 // TODO (#1251) Replace '' below with 'scalar', and start using this constant
 // everywhere.
