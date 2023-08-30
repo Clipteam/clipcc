@@ -579,7 +579,7 @@ Blockly.FieldNote.prototype.addOctaveButton_ = function(x, flipped, svg) {
   arrow.setAttributeNS(
       'http://www.w3.org/1999/xlink',
       'xlink:href',
-      Blockly.mainWorkspace.options.pathToMedia + Blockly.FieldNote.ARROW_SVG_PATH
+      Blockly.common.getMainWorkspace().options.pathToMedia + Blockly.FieldNote.ARROW_SVG_PATH
   );
   Blockly.utils.createSvgElement('line',
       {

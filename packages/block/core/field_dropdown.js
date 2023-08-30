@@ -132,7 +132,7 @@ Blockly.FieldDropdown.prototype.init = function() {
     'width': this.arrowSize_ + 'px'
   });
   this.arrow_.setAttributeNS('http://www.w3.org/1999/xlink',
-      'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'dropdown-arrow.svg');
+      'xlink:href', Blockly.common.getMainWorkspace().options.pathToMedia + 'dropdown-arrow.svg');
   this.className_ += ' blocklyDropdownText';
 
   Blockly.FieldDropdown.superClass_.init.call(this);

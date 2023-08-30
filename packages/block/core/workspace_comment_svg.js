@@ -107,7 +107,7 @@ Blockly.WorkspaceCommentSvg.prototype.dispose = function() {
     return;
   }
   // If this comment is being deleted, unlink the mouse events.
-  if (Blockly.selected == this) {
+  if (Blockly.common.getSelected() == this) {
     this.unselect();
     this.workspace.cancelCurrentGesture();
   }
@@ -187,16 +187,16 @@ Blockly.WorkspaceCommentSvg.prototype.showContextMenu_ = function(e) {
  * @package
  */
 Blockly.WorkspaceCommentSvg.prototype.select = function() {
-  if (Blockly.selected == this) {
+  if (Blockly.common.getSelected() == this) {
     return;
   }
   let oldId = null;
-  if (Blockly.selected) {
-    oldId = Blockly.selected.id;
+  if (Blockly.common.getSelected()) {
+    oldId = Blockly.common.getSelected().id;
     // Unselect any previously selected block or comment.
     Blockly.Events.disable();
     try {
-      Blockly.selected.unselect();
+      Blockly.common.getSelected().unselect();
     } finally {
       Blockly.Events.enable();
     }
@@ -204,7 +204,7 @@ Blockly.WorkspaceCommentSvg.prototype.select = function() {
   const event = new Blockly.Events.Ui(null, 'selected', oldId, this.id);
   event.workspaceId = this.workspace.id;
   Blockly.Events.fire(event);
-  Blockly.selected = this;
+  Blockly.common.setSelected(this);
   this.addSelect();
 };
 
@@ -213,13 +213,13 @@ Blockly.WorkspaceCommentSvg.prototype.select = function() {
  * @package
  */
 Blockly.WorkspaceCommentSvg.prototype.unselect = function() {
-  if (Blockly.selected != this) {
+  if (Blockly.common.getSelected() != this) {
     return;
   }
   const event = new Blockly.Events.Ui(null, 'selected', this.id, null);
   event.workspaceId = this.workspace.id;
   Blockly.Events.fire(event);
-  Blockly.selected = null;
+  Blockly.common.setSelected(null);
   this.removeSelect();
 };
 

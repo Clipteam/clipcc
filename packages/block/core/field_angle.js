@@ -243,7 +243,7 @@ Blockly.FieldAngle.prototype.showEditor_ = function() {
   this.arrowSvg_.setAttributeNS(
       'http://www.w3.org/1999/xlink',
       'xlink:href',
-      Blockly.mainWorkspace.options.pathToMedia + Blockly.FieldAngle.ARROW_SVG_PATH
+      Blockly.common.getMainWorkspace().options.pathToMedia + Blockly.FieldAngle.ARROW_SVG_PATH
   );
 
   Blockly.DropDownDiv.setColour(this.sourceBlock_.parentBlock_.getColour(),

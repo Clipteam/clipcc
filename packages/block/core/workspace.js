@@ -491,10 +491,10 @@ Blockly.Workspace.prototype.undo = function(redo) {
   }
   events = Blockly.Events.filter(events, redo);
   Blockly.Events.recordUndo = false;
-  if (Blockly.selected) {
+  if (Blockly.common.getSelected()) {
     Blockly.Events.disable();
     try {
-      Blockly.selected.unselect();
+      Blockly.common.getSelected().unselect();
     } finally {
       Blockly.Events.enable();
     }

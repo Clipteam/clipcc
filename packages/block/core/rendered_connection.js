@@ -92,7 +92,7 @@ Blockly.RenderedConnection.prototype.bumpAwayFrom_ = function(staticConnection) 
     reverse = true;
   }
   // Raise it to the top for extra visibility.
-  const selected = Blockly.selected == rootBlock;
+  const selected = Blockly.common.getSelected() == rootBlock;
   selected || rootBlock.addSelect();
   let dx = (staticConnection.x_ + Blockly.constants.SNAP_RADIUS) - this.x_;
   let dy = (staticConnection.y_ + Blockly.constants.SNAP_RADIUS) - this.y_;

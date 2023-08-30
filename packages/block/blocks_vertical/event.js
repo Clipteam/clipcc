@@ -82,7 +82,7 @@ Blockly.Blocks['event_whenflagclicked'] = {
       "args0": [
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "green-flag.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "green-flag.svg",
           "width": 24,
           "height": 24,
           "alt": "flag"

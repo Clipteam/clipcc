@@ -59,7 +59,7 @@ Blockly.Blocks['motion_turnright'] = {
       "args0": [
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "rotate-right.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "rotate-right.svg",
           "width": 24,
           "height": 24
         },
@@ -85,7 +85,7 @@ Blockly.Blocks['motion_turnleft'] = {
       "args0": [
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "rotate-left.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "rotate-left.svg",
           "width": 24,
           "height": 24
         },

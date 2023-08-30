@@ -47,7 +47,7 @@ Blockly.Blocks['control_repeat'] = {
         },
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "icons/control_repeat.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "icons/control_repeat.svg",
           "width": 40,
           "height": 40,
           "alt": "*",
@@ -88,7 +88,7 @@ Blockly.Blocks['control_forever'] = {
         },
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "icons/control_forever.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "icons/control_forever.svg",
           "width": 40,
           "height": 40,
           "alt": "*",
@@ -123,7 +123,7 @@ Blockly.Blocks['control_repeat'] = {
         },
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "icons/control_repeat.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "icons/control_repeat.svg",
           "width": 40,
           "height": 40,
           "alt": "*",
@@ -159,7 +159,7 @@ Blockly.Blocks['control_stop'] = {
       "args0": [
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "icons/control_stop.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "icons/control_stop.svg",
           "width": 40,
           "height": 40,
           "alt": "Stop"
@@ -188,7 +188,7 @@ Blockly.Blocks['control_wait'] = {
       "args0": [
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "icons/control_wait.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "icons/control_wait.svg",
           "width": 40,
           "height": 40,
           "alt": "Wait"

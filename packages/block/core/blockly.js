@@ -30,6 +30,7 @@
  **/
 goog.provide('Blockly');
 
+goog.require('Blockly.common');
 goog.require('Blockly.BlockSvg.render');
 goog.require('Blockly.DropDownDiv');
 goog.require('Blockly.Events');
@@ -65,26 +66,6 @@ goog.require('Blockly.inject');
 goog.require('Blockly.utils');
 goog.require('goog.color');
 
-
-/**
- * The main workspace most recently used.
- * Set by Blockly.WorkspaceSvg.prototype.markFocused
- * @type {Blockly.Workspace}
- */
-Blockly.mainWorkspace = null;
-
-/**
- * Currently selected block.
- * @type {Blockly.Block}
- */
-Blockly.selected = null;
-
-/**
- * All of the connections on blocks that are currently being dragged.
- * @type {!Array.<!Blockly.Connection>}
- * @private
- */
-Blockly.draggingConnections_ = [];
 
 /**
  * Contents of the local clipboard.
@@ -178,8 +159,8 @@ Blockly.svgResize = function(workspace) {
 // TODO (https://github.com/google/blockly/issues/1998) handle cases where there are multiple workspaces
 // and non-main workspaces are able to accept input.
 Blockly.onKeyDown_ = function(e) {
-  if (Blockly.mainWorkspace.options.readOnly || Blockly.utils.isTargetInput(e)
-      || (Blockly.mainWorkspace.rendered && !Blockly.mainWorkspace.isVisible())) {
+  if (Blockly.common.getMainWorkspace().options.readOnly || Blockly.utils.isTargetInput(e)
+      || (Blockly.common.getMainWorkspace().rendered && !Blockly.common.getMainWorkspace().isVisible())) {
     // No key actions on readonly workspaces.
     // When focused on an HTML text input widget, don't trap any keys.
     // Ignore keypresses on rendered workspaces that have been explicitly
@@ -198,30 +179,30 @@ Blockly.onKeyDown_ = function(e) {
     // data loss.
     e.preventDefault();
     // Don't delete while dragging.  Jeez.
-    if (Blockly.mainWorkspace.isDragging()) {
+    if (Blockly.common.getMainWorkspace().isDragging()) {
       return;
     }
-    if (Blockly.selected && Blockly.selected.isDeletable()) {
+    if (Blockly.common.getSelected() && Blockly.common.getSelected().isDeletable()) {
       deleteBlock = true;
     }
   } else if (e.altKey || e.ctrlKey || e.metaKey) {
     // Don't use meta keys during drags.
-    if (Blockly.mainWorkspace.isDragging()) {
+    if (Blockly.common.getMainWorkspace().isDragging()) {
       return;
     }
-    if (Blockly.selected &&
-        Blockly.selected.isDeletable() && Blockly.selected.isMovable()) {
+    if (Blockly.common.getSelected() &&
+        Blockly.common.getSelected().isDeletable() && Blockly.common.getSelected().isMovable()) {
       // Don't allow copying immovable or undeletable blocks. The next step
       // would be to paste, which would create additional undeletable/immovable
       // blocks on the workspace.
       if (e.keyCode == 67) {
         // 'c' for copy.
         Blockly.hideChaff();
-        Blockly.copy_(Blockly.selected);
-      } else if (e.keyCode == 88 && !Blockly.selected.workspace.isFlyout) {
+        Blockly.copy_(Blockly.common.getSelected());
+      } else if (e.keyCode == 88 && !Blockly.common.getSelected().workspace.isFlyout) {
         // 'x' for cut, but not in a flyout.
         // Don't even copy the selected item in the flyout.
-        Blockly.copy_(Blockly.selected);
+        Blockly.copy_(Blockly.common.getSelected());
         deleteBlock = true;
       }
     }
@@ -241,15 +222,15 @@ Blockly.onKeyDown_ = function(e) {
     } else if (e.keyCode == 90) {
       // 'z' for undo 'Z' is for redo.
       Blockly.hideChaff();
-      Blockly.mainWorkspace.undo(e.shiftKey);
+      Blockly.common.getMainWorkspace().undo(e.shiftKey);
     }
   }
   // Common code for delete and cut.
   // Don't delete in the flyout.
-  if (deleteBlock && !Blockly.selected.workspace.isFlyout) {
+  if (deleteBlock && !Blockly.common.getSelected().workspace.isFlyout) {
     Blockly.Events.setGroup(true);
     Blockly.hideChaff();
-    Blockly.selected.dispose(/* heal */ true, true);
+    Blockly.common.getSelected().dispose(/* heal */ true, true);
     Blockly.Events.setGroup(false);
   }
 };
@@ -353,7 +334,7 @@ Blockly.hideChaffInternal_ = function(opt_allowToolbox) {
  * @return {!Blockly.Workspace} The main workspace.
  */
 Blockly.getMainWorkspace = function() {
-  return Blockly.mainWorkspace;
+  return Blockly.common.getMainWorkspace();
 };
 
 /**

@@ -122,7 +122,7 @@ Blockly.FlyoutExtensionCategoryHeader.prototype.createDom = function() {
  */
 Blockly.FlyoutExtensionCategoryHeader.prototype.refreshStatus = function() {
   const status = Blockly.FlyoutExtensionCategoryHeader.getExtensionState(this.extensionId);
-  const basePath = Blockly.mainWorkspace.options.pathToMedia;
+  const basePath = Blockly.common.getMainWorkspace().options.pathToMedia;
   if (status == Blockly.constants.StatusButtonState.READY) {
     this.setImageSrc(basePath + 'status-ready.svg');
   }

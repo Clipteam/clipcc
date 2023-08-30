@@ -213,12 +213,12 @@ Blockly.ScratchBubble.prototype.createDom_ = function(content, hasResize, minimi
   // Show / hide relevant things based on minimized state
   if (minimized) {
     this.minimizeArrow_.setAttributeNS('http://www.w3.org/1999/xlink',
-        'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'comment-arrow-up.svg');
+        'xlink:href', Blockly.common.getMainWorkspace().options.pathToMedia + 'comment-arrow-up.svg');
     this.commentEditor_.setAttribute('display', 'none');
     this.resizeGroup_.setAttribute('display', 'none');
   } else {
     this.minimizeArrow_.setAttributeNS('http://www.w3.org/1999/xlink',
-        'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'comment-arrow-down.svg');
+        'xlink:href', Blockly.common.getMainWorkspace().options.pathToMedia + 'comment-arrow-down.svg');
     this.topBarLabel_.setAttribute('display', 'none');
   }
 
@@ -269,7 +269,7 @@ Blockly.ScratchBubble.prototype.createTopBarIcons_ = function() {
         'height': Blockly.ScratchBubble.DELETE_ICON_SIZE
       }, this.bubbleGroup_);
   this.deleteIcon_.setAttributeNS('http://www.w3.org/1999/xlink',
-      'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'delete-x.svg');
+      'xlink:href', Blockly.common.getMainWorkspace().options.pathToMedia + 'delete-x.svg');
 };
 
 /**
@@ -472,7 +472,7 @@ Blockly.ScratchBubble.prototype.setMinimized = function(minimize, labelText) {
     this.isMinimized_ = true;
     // Change minimize icon
     this.minimizeArrow_.setAttributeNS('http://www.w3.org/1999/xlink',
-        'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'comment-arrow-up.svg');
+        'xlink:href', Blockly.common.getMainWorkspace().options.pathToMedia + 'comment-arrow-up.svg');
     // Hide text area
     this.commentEditor_.setAttribute('display', 'none');
     // Hide resize handle if it exists
@@ -488,7 +488,7 @@ Blockly.ScratchBubble.prototype.setMinimized = function(minimize, labelText) {
     this.isMinimized_ = false;
     // Change minimize icon
     this.minimizeArrow_.setAttributeNS('http://www.w3.org/1999/xlink',
-        'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'comment-arrow-down.svg');
+        'xlink:href', Blockly.common.getMainWorkspace().options.pathToMedia + 'comment-arrow-down.svg');
     // Hide label
     this.topBarLabel_.setAttribute('display', 'none');
     // Show text area

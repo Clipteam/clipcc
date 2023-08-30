@@ -770,8 +770,8 @@ Blockly.Gesture.prototype.doBlockClick_ = function() {
  * @private
  */
 Blockly.Gesture.prototype.doWorkspaceClick_ = function() {
-  if (Blockly.selected) {
-    Blockly.selected.unselect();
+  if (Blockly.common.getSelected()) {
+    Blockly.common.getSelected().unselect();
   }
 };
 

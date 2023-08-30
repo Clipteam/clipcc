@@ -96,7 +96,7 @@ Blockly.FieldTextDropdown.prototype.init = function() {
           'width': this.arrowSize_ + 'px'
         });
     this.arrow_.setAttributeNS('http://www.w3.org/1999/xlink',
-        'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'dropdown-arrow-dark.svg');
+        'xlink:href', Blockly.common.getMainWorkspace().options.pathToMedia + 'dropdown-arrow-dark.svg');
     this.arrow_.style.cursor = 'pointer';
     this.fieldGroup_.appendChild(this.arrow_);
     this.mouseUpWrapper_ =

@@ -49,7 +49,7 @@ Blockly.Blocks['control_forever'] = {
       "args2": [
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "repeat.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "repeat.svg",
           "width": 24,
           "height": 24,
           "alt": "*",
@@ -90,7 +90,7 @@ Blockly.Blocks['control_repeat'] = {
       "args2": [
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "repeat.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "repeat.svg",
           "width": 24,
           "height": 24,
           "alt": "*",
@@ -294,7 +294,7 @@ Blockly.Blocks['control_repeat_until'] = {
       "args2": [
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "repeat.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "repeat.svg",
           "width": 24,
           "height": 24,
           "alt": "*",
@@ -334,7 +334,7 @@ Blockly.Blocks['control_while'] = {
       "args2": [
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "repeat.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "repeat.svg",
           "width": 24,
           "height": 24,
           "alt": "*",

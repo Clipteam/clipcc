@@ -39,23 +39,23 @@ Blockly.Blocks['dropdown_wedo_setcolor'] = {
     this.appendDummyInput()
         .appendField(new Blockly.FieldIconMenu(
             [
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/set-led_mystery.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/set-led_mystery.svg',
                 value: 'mystery', width: 48, height: 48, alt: 'Mystery'},
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/set-led_yellow.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/set-led_yellow.svg',
                 value: 'yellow', width: 48, height: 48, alt: 'Yellow'},
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/set-led_orange.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/set-led_orange.svg',
                 value: 'orange', width: 48, height: 48, alt: 'Orange'},
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/set-led_coral.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/set-led_coral.svg',
                 value: 'coral', width: 48, height: 48, alt: 'Coral'},
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/set-led_magenta.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/set-led_magenta.svg',
                 value: 'magenta', width: 48, height: 48, alt: 'Magenta'},
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/set-led_purple.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/set-led_purple.svg',
                 value: 'purple', width: 48, height: 48, alt: 'Purple'},
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/set-led_blue.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/set-led_blue.svg',
                 value: 'blue', width: 48, height: 48, alt: 'Blue'},
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/set-led_green.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/set-led_green.svg',
                 value: 'green', width: 48, height: 48, alt: 'Green'},
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/set-led_white.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/set-led_white.svg',
                 value: 'white', width: 48, height: 48, alt: 'White'}
             ]), 'CHOICE');
     this.setOutput(true);
@@ -79,7 +79,7 @@ Blockly.Blocks['wedo_setcolor'] = {
       "args0": [
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "icons/set-led_blue.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "icons/set-led_blue.svg",
           "width": 40,
           "height": 40,
           "alt": "Set LED Color"
@@ -113,7 +113,7 @@ Blockly.Blocks['wedo_motorclockwise'] = {
       "args0": [
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "icons/wedo_motor-clockwise.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "icons/wedo_motor-clockwise.svg",
           "width": 40,
           "height": 40,
           "alt": "Turn motor clockwise"
@@ -148,7 +148,7 @@ Blockly.Blocks['wedo_motorcounterclockwise'] = {
       "args0": [
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "icons/wedo_motor-counterclockwise.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "icons/wedo_motor-counterclockwise.svg",
           "width": 40,
           "height": 40,
           "alt": "Turn motor counter-clockwise"
@@ -180,11 +180,11 @@ Blockly.Blocks['dropdown_wedo_motorspeed'] = {
     this.appendDummyInput()
         .appendField(new Blockly.FieldIconMenu(
             [
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/wedo_motor-speed_slow.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/wedo_motor-speed_slow.svg',
                 value: 'slow', width: 48, height: 48, alt: 'Slow'},
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/wedo_motor-speed_med.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/wedo_motor-speed_med.svg',
                 value: 'medium', width: 48, height: 48, alt: 'Medium'},
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/wedo_motor-speed_fast.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/wedo_motor-speed_fast.svg',
                 value: 'fast', width: 48, height: 48, alt: 'Fast'}
             ]), 'CHOICE');
     this.setOutput(true);
@@ -208,7 +208,7 @@ Blockly.Blocks['wedo_motorspeed'] = {
       "args0": [
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "icons/wedo_motor-speed_fast.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "icons/wedo_motor-speed_fast.svg",
           "width": 40,
           "height": 40,
           "alt": "Motor Speed"
@@ -240,17 +240,17 @@ Blockly.Blocks['dropdown_wedo_whentilt'] = {
         .appendField(new Blockly.FieldIconMenu(
             [
               {type: 'placeholder', width: 48, height: 48},
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/wedo_when-tilt-forward.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/wedo_when-tilt-forward.svg',
                 value: 'forward', width: 48, height: 48, alt: 'Tilt forward'},
               {type: 'placeholder', width: 48, height: 48},
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/wedo_when-tilt-left.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/wedo_when-tilt-left.svg',
                 value: 'left', width: 48, height: 48, alt: 'Tilt left'},
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/wedo_when-tilt.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/wedo_when-tilt.svg',
                 value: 'any', width: 48, height: 48, alt: 'Tilt any'},
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/wedo_when-tilt-right.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/wedo_when-tilt-right.svg',
                 value: 'right', width: 48, height: 48, alt: 'Tilt right'},
               {type: 'placeholder', width: 48, height: 48},
-              {src: Blockly.mainWorkspace.options.pathToMedia + 'icons/wedo_when-tilt-backward.svg',
+              {src: Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/wedo_when-tilt-backward.svg',
                 value: 'backward', width: 48, height: 48, alt: 'Tilt backward'}
             ]), 'CHOICE');
     this.setOutput(true);
@@ -274,7 +274,7 @@ Blockly.Blocks['wedo_whentilt'] = {
       "args0": [
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "icons/wedo_when-tilt.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "icons/wedo_when-tilt.svg",
           "width": 40,
           "height": 40,
           "alt": "When tilted"
@@ -307,7 +307,7 @@ Blockly.Blocks['wedo_whendistanceclose'] = {
       "args0": [
         {
           "type": "field_image",
-          "src": Blockly.mainWorkspace.options.pathToMedia + "icons/wedo_when-distance_close.svg",
+          "src": Blockly.common.getMainWorkspace().options.pathToMedia + "icons/wedo_when-distance_close.svg",
           "width": 40,
           "height": 40,
           "alt": "When distance close"

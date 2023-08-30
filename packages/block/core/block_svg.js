@@ -28,6 +28,7 @@ goog.provide('Blockly.BlockSvg');
 
 goog.require('Blockly.Block');
 goog.require('Blockly.BlockAnimations');
+goog.require('Blockly.common');
 goog.require('Blockly.ContextMenu');
 goog.require('Blockly.Events.Ui');
 goog.require('Blockly.Events.BlockMove');
@@ -190,16 +191,16 @@ Blockly.BlockSvg.prototype.select = function() {
     this.getParent().select();
     return;
   }
-  if (Blockly.selected == this) {
+  if (Blockly.common.getSelected() == this) {
     return;
   }
   let oldId = null;
-  if (Blockly.selected) {
-    oldId = Blockly.selected.id;
+  if (Blockly.common.getSelected()) {
+    oldId = Blockly.common.getSelected().id;
     // Unselect any previously selected block.
     Blockly.Events.disable();
     try {
-      Blockly.selected.unselect();
+      Blockly.common.getSelected().unselect();
     } finally {
       Blockly.Events.enable();
     }
@@ -207,7 +208,7 @@ Blockly.BlockSvg.prototype.select = function() {
   const event = new Blockly.Events.Ui(null, 'selected', oldId, this.id);
   event.workspaceId = this.workspace.id;
   Blockly.Events.fire(event);
-  Blockly.selected = this;
+  Blockly.common.setSelected(this);
   this.addSelect();
 };
 
@@ -215,13 +216,13 @@ Blockly.BlockSvg.prototype.select = function() {
  * Unselect this block.  Remove its highlighting.
  */
 Blockly.BlockSvg.prototype.unselect = function() {
-  if (Blockly.selected != this) {
+  if (Blockly.common.getSelected() != this) {
     return;
   }
   const event = new Blockly.Events.Ui(null, 'selected', this.id, null);
   event.workspaceId = this.workspace.id;
   Blockly.Events.fire(event);
-  Blockly.selected = null;
+  Blockly.common.setSelected(null);
   this.removeSelect();
 };
 
@@ -744,12 +745,11 @@ Blockly.BlockSvg.prototype.setDragging = function(adding) {
     const group = this.getSvgRoot();
     group.translate_ = '';
     group.skew_ = '';
-    Blockly.draggingConnections_ =
-        Blockly.draggingConnections_.concat(this.getConnections_(true));
+    Blockly.common.draggingConnections.push(...this.getConnections_(true));
     Blockly.utils.addClass(
         /** @type {!Element} */ (this.svgGroup_), 'blocklyDragging');
   } else {
-    Blockly.draggingConnections_ = [];
+    Blockly.common.draggingConnections.length = 0;
     Blockly.utils.removeClass(
         /** @type {!Element} */ (this.svgGroup_), 'blocklyDragging');
   }
@@ -839,7 +839,7 @@ Blockly.BlockSvg.prototype.dispose = function(healStack, animate) {
   // contents once the block is disposed.
   const blockWorkspace = this.workspace;
   // If this block is being dragged, unlink the mouse events.
-  if (Blockly.selected == this) {
+  if (Blockly.common.getSelected() == this) {
     this.unselect();
     this.workspace.cancelCurrentGesture();
   }

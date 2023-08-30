@@ -101,7 +101,7 @@ Blockly.FieldIconMenu.prototype.init = function(block) {
     'transform': 'translate(' + this.arrowX_ + ',' + this.arrowY_ + ')'
   });
   this.arrowIcon_.setAttributeNS('http://www.w3.org/1999/xlink',
-      'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'dropdown-arrow.svg');
+      'xlink:href', Blockly.common.getMainWorkspace().options.pathToMedia + 'dropdown-arrow.svg');
   block.getSvgRoot().appendChild(this.arrowIcon_);
   Blockly.FieldIconMenu.superClass_.init.call(this, block);
 };

@@ -68,7 +68,7 @@ Blockly.inject = function(container, opt_options) {
 
   const workspace = Blockly.createMainWorkspace_(svg, options, blockDragSurface);
   Blockly.init_(workspace);
-  Blockly.mainWorkspace = workspace;
+  Blockly.common.setMainWorkspace(workspace);
 
   Blockly.svgResize(workspace);
   return workspace;
@@ -281,7 +281,7 @@ Blockly.createMainWorkspace_ = function(svg, options, blockDragSurface) {
 
   // A null translation will also apply the correct initial scale.
   mainWorkspace.translate(0, 0);
-  Blockly.mainWorkspace = mainWorkspace;
+  Blockly.common.setMainWorkspace(mainWorkspace);
 
   if (!options.readOnly && !options.hasScrollbars) {
     const workspaceChanged = function() {
