@@ -120,38 +120,6 @@ Blockly.resizeSvgContents = function(workspace) {
 };
 
 /**
- * Size the SVG image to completely fill its container. Call this when the view
- * actually changes sizes (e.g. on a window resize/device orientation change).
- * See Blockly.resizeSvgContents to resize the workspace when the contents
- * change (e.g. when a block is added or removed).
- * Record the height/width of the SVG image.
- * @param {!Blockly.WorkspaceSvg} workspace Any workspace in the SVG.
- */
-Blockly.svgResize = function(workspace) {
-  let mainWorkspace = workspace;
-  while (mainWorkspace.options.parentWorkspace) {
-    mainWorkspace = mainWorkspace.options.parentWorkspace;
-  }
-  const svg = mainWorkspace.getParentSvg();
-  const div = svg.parentNode;
-  if (!div) {
-    // Workspace deleted, or something.
-    return;
-  }
-  const width = div.offsetWidth;
-  const height = div.offsetHeight;
-  if (svg.cachedWidth_ != width) {
-    svg.setAttribute('width', width + 'px');
-    svg.cachedWidth_ = width;
-  }
-  if (svg.cachedHeight_ != height) {
-    svg.setAttribute('height', height + 'px');
-    svg.cachedHeight_ = height;
-  }
-  mainWorkspace.resize();
-};
-
-/**
  * Handle a key-down on SVG drawing surface. Does nothing if the main workspace is not visible.
  * @param {!Event} e Key down event.
  * @private

@@ -28,6 +28,7 @@ goog.provide('Blockly.inject');
 
 goog.require('Blockly.BlockDragSurfaceSvg');
 goog.require('Blockly.Css');
+goog.require('Blockly.common');
 goog.require('Blockly.constants');
 goog.require('Blockly.DropDownDiv');
 goog.require('Blockly.Grid');
@@ -70,7 +71,7 @@ Blockly.inject = function(container, opt_options) {
   Blockly.init_(workspace);
   Blockly.common.setMainWorkspace(workspace);
 
-  Blockly.svgResize(workspace);
+  Blockly.common.svgResize(workspace);
   return workspace;
 };
 
@@ -332,7 +333,7 @@ Blockly.createMainWorkspace_ = function(svg, options, blockDragSurface) {
     mainWorkspace.addChangeListener(workspaceChanged);
   }
   // The SVG is now fully assembled.
-  Blockly.svgResize(mainWorkspace);
+  Blockly.common.svgResize(mainWorkspace);
   Blockly.WidgetDiv.createDom();
   Blockly.DropDownDiv.createDom();
   Blockly.Tooltip.createDom();
@@ -360,7 +361,7 @@ Blockly.init_ = function(mainWorkspace) {
       null,
       function() {
         Blockly.hideChaffOnResize(true);
-        Blockly.svgResize(mainWorkspace);
+        Blockly.common.svgResize(mainWorkspace);
       });
   mainWorkspace.setResizeHandlerWrapper(workspaceResizeHandler);
 
@@ -424,7 +425,7 @@ Blockly.inject.bindDocumentEvents_ = function() {
       Blockly.bindEventWithChecks_(window, 'orientationchange', document,
           function() {
             // TODO(#397): Fix for multiple blockly workspaces.
-            Blockly.svgResize(Blockly.getMainWorkspace());
+            Blockly.common.svgResize(Blockly.getMainWorkspace());
           });
     }
   }
