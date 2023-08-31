@@ -45,7 +45,7 @@ goog.require('goog.userAgent');
  * @param {Object=} opt_options Optional dictionary of options.
  * @return {!Blockly.Workspace} Newly created main workspace.
  */
-Blockly.inject = function(container, opt_options) {
+Blockly.inject.inject = function(container, opt_options) {
   if (typeof container === 'string') {
     container = document.getElementById(container) ||
         document.querySelector(container);

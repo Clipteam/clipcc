@@ -151,7 +151,7 @@
     var callback = null;
     var mutationRoot = null;
 
-    var declarationWorkspace = Blockly.inject('primaryDiv',
+    var declarationWorkspace = Blockly.inject.inject('primaryDiv',
         {media: '../media/'});
 
     declarationWorkspace.addChangeListener(function() {
@@ -160,7 +160,7 @@
       }
     });
 
-    var definitionWorkspace = Blockly.inject('secondaryDiv', {
+    var definitionWorkspace = Blockly.inject.inject('secondaryDiv', {
       media: '../media/',
       toolbox: document.getElementById('toolbox'),
       zoom: {
