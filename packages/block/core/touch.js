@@ -60,7 +60,7 @@ if (goog.events.BrowserFeature.TOUCH_ENABLED) {
  * PID of queued long-press task.
  * @private
  */
-Blockly.longPid_ = 0;
+Blockly.Touch.longPid_ = 0;
 
 /**
  * Context menus on touch devices are activated using a long-press.
@@ -72,13 +72,13 @@ Blockly.longPid_ = 0;
  * @param {Blockly.Gesture} gesture The gesture that triggered this longStart.
  * @private
  */
-Blockly.longStart_ = function(e, gesture) {
-  Blockly.longStop_();
+Blockly.Touch.longStart_ = function(e, gesture) {
+  Blockly.Touch.longStop_();
   // Punt on multitouch events.
   if (e.changedTouches.length != 1) {
     return;
   }
-  Blockly.longPid_ = setTimeout(function() {
+  Blockly.Touch.longPid_ = setTimeout(function() {
     e.button = 2;  // Simulate a right button click.
     // e was a touch event.  It needs to pretend to be a mouse event.
     e.clientX = e.changedTouches[0].clientX;
@@ -96,10 +96,10 @@ Blockly.longStart_ = function(e, gesture) {
  * or a drag hath begun.  Kill the queued long-press task.
  * @private
  */
-Blockly.longStop_ = function() {
-  if (Blockly.longPid_) {
-    clearTimeout(Blockly.longPid_);
-    Blockly.longPid_ = 0;
+Blockly.Touch.longStop_ = function() {
+  if (Blockly.Touch.longPid_) {
+    clearTimeout(Blockly.Touch.longPid_);
+    Blockly.Touch.longPid_ = 0;
   }
 };
 
