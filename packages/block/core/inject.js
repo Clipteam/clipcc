@@ -403,6 +403,12 @@ Blockly.inject.init_ = function(mainWorkspace) {
 };
 
 /**
+* Whether event handlers have been bound. Document event handlers will only
+* be bound once, even if Blockly is destroyed and reinjected.
+*/
+Blockly.inject.documentEventsBound_ = false;
+
+/**
  * Bind document events, but only once.  Destroying and reinjecting Blockly
  * should not bind again.
  * Bind events for scrolling the workspace.
@@ -414,7 +420,7 @@ Blockly.inject.init_ = function(mainWorkspace) {
  * @private
  */
 Blockly.inject.bindDocumentEvents_ = function() {
-  if (!Blockly.documentEventsBound_) {
+  if (!Blockly.inject.documentEventsBound_) {
     Blockly.bindEventWithChecks_(document, 'keydown', null, Blockly.onKeyDown_);
     // longStop needs to run to stop the context menu from showing up.  It
     // should run regardless of what other touch event handlers have run.
@@ -429,7 +435,7 @@ Blockly.inject.bindDocumentEvents_ = function() {
           });
     }
   }
-  Blockly.documentEventsBound_ = true;
+  Blockly.inject.documentEventsBound_ = true;
 };
 
 /**
