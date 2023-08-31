@@ -138,7 +138,7 @@ Blockly.onKeyDown_ = function(e) {
   let deleteBlock = false;
   if (e.keyCode == 27) {
     // Pressing esc closes the context menu and any drop-down
-    Blockly.hideChaff();
+    Blockly.common.getMainWorkspace().hideChaff();
     Blockly.DropDownDiv.hide();
   } else if (e.keyCode == 8 || e.keyCode == 46) {
     // Delete or backspace.
@@ -165,7 +165,7 @@ Blockly.onKeyDown_ = function(e) {
       // blocks on the workspace.
       if (e.keyCode == 67) {
         // 'c' for copy.
-        Blockly.hideChaff();
+        Blockly.common.getMainWorkspace().hideChaff();
         Blockly.copy_(Blockly.common.getSelected());
       } else if (e.keyCode == 88 && !Blockly.common.getSelected().workspace.isFlyout) {
         // 'x' for cut, but not in a flyout.
@@ -189,7 +189,7 @@ Blockly.onKeyDown_ = function(e) {
       }
     } else if (e.keyCode == 90) {
       // 'z' for undo 'Z' is for redo.
-      Blockly.hideChaff();
+      Blockly.common.getMainWorkspace().hideChaff();
       Blockly.common.getMainWorkspace().undo(e.shiftKey);
     }
   }
@@ -197,7 +197,7 @@ Blockly.onKeyDown_ = function(e) {
   // Don't delete in the flyout.
   if (deleteBlock && !Blockly.common.getSelected().workspace.isFlyout) {
     Blockly.Events.setGroup(true);
-    Blockly.hideChaff();
+    Blockly.common.getMainWorkspace().hideChaff();
     Blockly.common.getSelected().dispose(/* heal */ true, true);
     Blockly.Events.setGroup(false);
   }
@@ -259,10 +259,10 @@ Blockly.onContextMenu_ = function(e) {
 /**
  * Close tooltips, context menus, dropdown selections, etc.
  * @param {boolean=} opt_allowToolbox If true, don't close the toolbox.
+ * @deprecated Use Blockly.common.getMainWorkspace().hideChaff(opt_allowToolbox)
  */
 Blockly.hideChaff = function(opt_allowToolbox) {
-  Blockly.hideChaffInternal_(opt_allowToolbox);
-  Blockly.WidgetDiv.hide(true);
+  Blockly.common.getMainWorkspace().hideChaff(opt_allowToolbox);
 };
 
 /**
@@ -270,29 +270,10 @@ Blockly.hideChaff = function(opt_allowToolbox) {
  * For some elements (e.g. field text inputs), rather than hiding, it will
  * move them.
  * @param {boolean=} opt_allowToolbox If true, don't close the toolbox.
+ * @deprecated Use Blockly.common.getMainWorkspace().hideChaffInternal_(opt_allowToolbox)
  */
 Blockly.hideChaffOnResize = function(opt_allowToolbox) {
-  Blockly.hideChaffInternal_(opt_allowToolbox);
-  Blockly.WidgetDiv.repositionForWindowResize();
-};
-
-/**
- * Does a majority of the work for hideChaff including tooltips, dropdowns,
- * toolbox, etc. It does not deal with the WidgetDiv.
- * @param {boolean=} opt_allowToolbox If true, don't close the toolbox.
- * @private
- */
-Blockly.hideChaffInternal_ = function(opt_allowToolbox) {
-  Blockly.Tooltip.hide();
-  Blockly.DropDownDiv.hideWithoutAnimation();
-  if (!opt_allowToolbox) {
-    const workspace = Blockly.getMainWorkspace();
-    if (workspace.toolbox_ &&
-        workspace.toolbox_.flyout_ &&
-        workspace.toolbox_.flyout_.autoClose) {
-      workspace.toolbox_.clearSelection();
-    }
-  }
+  Blockly.common.getMainWorkspace().hideChaffInternal_(opt_allowToolbox);
 };
 
 /**

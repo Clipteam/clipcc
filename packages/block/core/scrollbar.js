@@ -635,7 +635,7 @@ Blockly.Scrollbar.prototype.onMouseUpHandle_ = function() {
  * @private
  */
 Blockly.Scrollbar.prototype.cleanUp_ = function() {
-  Blockly.hideChaff(true);
+  this.workspace_.hideChaff(true);
   if (Blockly.Scrollbar.onMouseUpWrapper_) {
     Blockly.unbindEvent_(Blockly.Scrollbar.onMouseUpWrapper_);
     Blockly.Scrollbar.onMouseUpWrapper_ = null;

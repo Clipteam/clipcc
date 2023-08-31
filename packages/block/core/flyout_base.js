@@ -814,7 +814,7 @@ Blockly.Flyout.prototype.createBlock = function(originalBlock) {
   try {
     newBlock = this.placeNewBlock_(originalBlock);
     // Close the flyout.
-    Blockly.hideChaff();
+    this.targetWorkspace_.hideChaff();
   } finally {
     Blockly.Events.enable();
   }

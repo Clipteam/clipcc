@@ -134,10 +134,10 @@ Blockly.Toolbox.prototype.init = function() {
         this.workspace_.cancelCurrentGesture();
         if (Blockly.utils.isRightButton(e) || e.target == this.HtmlDiv) {
           // Close flyout.
-          Blockly.hideChaff(false);
+          this.workspace_.hideChaff(false);
         } else {
           // Just close popups.
-          Blockly.hideChaff(true);
+          this.workspace_.hideChaff(true);
         }
         Blockly.Touch.clearTouchIdentifier();  // Don't block future drags.
       }, /*opt_noCaptureIdentifier*/ false, /*opt_noPreventDefault*/ true);

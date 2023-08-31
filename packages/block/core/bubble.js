@@ -349,7 +349,7 @@ Blockly.Bubble.prototype.resizeMouseDown_ = function(e) {
       'mouseup', this, Blockly.Bubble.bubbleMouseUp_);
   Blockly.Bubble.onMouseMoveWrapper_ = Blockly.bindEventWithChecks_(document,
       'mousemove', this, this.resizeMouseMove_);
-  Blockly.hideChaff();
+  this.workspace_.hideChaff();
   // This event has been handled.  No need to bubble up to the document.
   e.stopPropagation();
 };

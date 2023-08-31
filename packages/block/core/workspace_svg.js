@@ -793,7 +793,7 @@ Blockly.WorkspaceSvg.prototype.setVisible = function(isVisible) {
     // Resize recalculates scrollbar position, delete areas, etc.
     this.resize();
   } else {
-    Blockly.hideChaff(true);
+    this.hideChaff(true);
     Blockly.DropDownDiv.hideWithoutAnimation();
   }
   this.isVisible_ = isVisible;
@@ -1642,7 +1642,7 @@ Blockly.WorkspaceSvg.prototype.scrollCenter = function() {
   // Hide the WidgetDiv without animation (zoom makes field out of place with div)
   Blockly.WidgetDiv.hide(true);
   Blockly.DropDownDiv.hideWithoutAnimation();
-  Blockly.hideChaff(false);
+  this.hideChaff(false);
   const metrics = this.getMetrics();
   let x = (metrics.contentWidth - metrics.viewWidth) / 2;
   if (this.flyout_) {
@@ -1703,7 +1703,7 @@ Blockly.WorkspaceSvg.prototype.centerOnBlock = function(id) {
   const scrollToCenterX = scrollToBlockX - halfViewWidth;
   const scrollToCenterY = scrollToBlockY - halfViewHeight;
 
-  Blockly.hideChaff();
+  this.hideChaff();
   this.scrollbar.set(scrollToCenterX, scrollToCenterY);
 };
 
@@ -1728,7 +1728,7 @@ Blockly.WorkspaceSvg.prototype.setScale = function(newScale) {
   } else {
     this.translate(this.scrollX, this.scrollY);
   }
-  Blockly.hideChaff(false);
+  this.hideChaff(false);
   if (this.flyout_) {
     // No toolbox, resize flyout.
     this.flyout_.reflow();
@@ -2189,6 +2189,44 @@ Blockly.WorkspaceSvg.prototype.getAudioManager = function() {
  */
 Blockly.WorkspaceSvg.prototype.getGrid = function() {
   return this.grid_;
+};
+
+/**
+ * Close tooltips, context menus, dropdown selections, etc.
+ * @param {boolean=} opt_allowToolbox If true, don't close the toolbox.
+ */
+Blockly.WorkspaceSvg.prototype.hideChaff = function(opt_allowToolbox) {
+  this.hideChaffInternal_(opt_allowToolbox);
+  Blockly.WidgetDiv.hide(true);
+};
+
+/**
+ * Close tooltips, context menus, dropdown selections, etc.
+ * For some elements (e.g. field text inputs), rather than hiding, it will
+ * move them.
+ * @param {boolean=} opt_allowToolbox If true, don't close the toolbox.
+ */
+Blockly.WorkspaceSvg.prototype.hideChaffOnResize = function(opt_allowToolbox) {
+  this.hideChaffInternal_(opt_allowToolbox);
+  Blockly.WidgetDiv.repositionForWindowResize();
+};
+
+/**
+ * Does a majority of the work for hideChaff including tooltips, dropdowns,
+ * toolbox, etc. It does not deal with the WidgetDiv.
+ * @param {boolean=} opt_allowToolbox If true, don't close the toolbox.
+ * @private
+ */
+Blockly.WorkspaceSvg.prototype.hideChaffInternal_ = function(opt_allowToolbox) {
+  Blockly.Tooltip.hide();
+  Blockly.DropDownDiv.hideWithoutAnimation();
+  if (!opt_allowToolbox) {
+    if (this.toolbox_ &&
+        this.toolbox_.flyout_ &&
+        this.toolbox_.flyout_.autoClose) {
+      this.toolbox_.clearSelection();
+    }
+  }
 };
 
 // Export symbols that would otherwise be renamed by Closure compiler.
