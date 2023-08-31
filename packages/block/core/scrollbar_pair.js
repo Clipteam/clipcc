@@ -26,7 +26,7 @@
 
 goog.provide('Blockly.ScrollbarPair');
 
-goog.require('Blockly.Scrollbar')
+goog.require('Blockly.Scrollbar');
 
 goog.require('goog.dom');
 goog.require('goog.events');
