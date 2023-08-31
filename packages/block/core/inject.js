@@ -62,13 +62,13 @@ Blockly.inject = function(container, opt_options) {
   // https://github.com/LLK/scratch-blocks/issues/1004
   Blockly.Field.startCache();
 
-  const svg = Blockly.createDom_(subContainer, options);
+  const svg = Blockly.inject.createDom_(subContainer, options);
 
   // Create block surface for dragging things.
   const blockDragSurface = new Blockly.BlockDragSurfaceSvg(subContainer);
 
-  const workspace = Blockly.createMainWorkspace_(svg, options, blockDragSurface);
-  Blockly.init_(workspace);
+  const workspace = Blockly.inject.createMainWorkspace_(svg, options, blockDragSurface);
+  Blockly.inject.init_(workspace);
   Blockly.common.setMainWorkspace(workspace);
 
   Blockly.common.svgResize(workspace);
@@ -82,7 +82,7 @@ Blockly.inject = function(container, opt_options) {
  * @return {!Element} Newly created SVG image.
  * @private
  */
-Blockly.createDom_ = function(container, options) {
+Blockly.inject.createDom_ = function(container, options) {
   // Sadly browsers (Chrome vs Firefox) are currently inconsistent in laying
   // out content in RTL mode.  Therefore Blockly forces the use of LTR,
   // then manually positions content in RTL as needed.
@@ -268,7 +268,7 @@ Blockly.createDom_ = function(container, options) {
  * @return {!Blockly.Workspace} Newly created main workspace.
  * @private
  */
-Blockly.createMainWorkspace_ = function(svg, options, blockDragSurface) {
+Blockly.inject.createMainWorkspace_ = function(svg, options, blockDragSurface) {
   options.parentWorkspace = null;
   const mainWorkspace = new Blockly.WorkspaceSvg(options, blockDragSurface);
   mainWorkspace.scale = options.zoomOptions.startScale;
@@ -345,7 +345,7 @@ Blockly.createMainWorkspace_ = function(svg, options, blockDragSurface) {
  * @param {!Blockly.Workspace} mainWorkspace Newly created main workspace.
  * @private
  */
-Blockly.init_ = function(mainWorkspace) {
+Blockly.inject.init_ = function(mainWorkspace) {
   const options = mainWorkspace.options;
   const svg = mainWorkspace.getParentSvg();
 
