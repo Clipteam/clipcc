@@ -28,6 +28,7 @@ goog.provide('Blockly.inject');
 
 goog.require('Blockly.browserEvents');
 goog.require('Blockly.BlockDragSurfaceSvg');
+goog.require('Blockly.clipboard');
 goog.require('Blockly.Css');
 goog.require('Blockly.common');
 goog.require('Blockly.constants');
@@ -451,27 +452,17 @@ Blockly.inject.onKeyDown_ = function(e) {
       if (e.keyCode == 67) {
         // 'c' for copy.
         mainWorkspace.hideChaff();
-        Blockly.copy_(selected);
+        Blockly.clipboard.copy(selected);
       } else if (e.keyCode == 88 && !selected.workspace.isFlyout) {
         // 'x' for cut, but not in a flyout.
         // Don't even copy the selected item in the flyout.
-        Blockly.copy_(selected);
+        Blockly.clipboard.copy(selected);
         deleteBlock = true;
       }
     }
     if (e.keyCode == 86) {
       // 'v' for paste.
-      if (Blockly.clipboardXml_) {
-        Blockly.Events.setGroup(true);
-        // Pasting always pastes to the main workspace, even if the copy started
-        // in a flyout workspace.
-        let workspace = Blockly.clipboardSource_;
-        if (workspace.isFlyout) {
-          workspace = workspace.targetWorkspace;
-        }
-        workspace.paste(Blockly.clipboardXml_);
-        Blockly.Events.setGroup(false);
-      }
+      Blockly.clipboard.paste();
     } else if (e.keyCode == 90) {
       // 'z' for undo 'Z' is for redo.
       mainWorkspace.hideChaff();

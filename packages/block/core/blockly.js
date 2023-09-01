@@ -68,20 +68,6 @@ goog.require('goog.color');
 
 
 /**
- * Contents of the local clipboard.
- * @type {Element}
- * @private
- */
-Blockly.clipboardXml_ = null;
-
-/**
- * Source of the local clipboard.
- * @type {Blockly.WorkspaceSvg}
- * @private
- */
-Blockly.clipboardSource_ = null;
-
-/**
  * Cached value for whether 3D is supported.
  * @type {!boolean}
  * @private
@@ -117,47 +103,6 @@ Blockly.svgSize = function(svg) {
  */
 Blockly.resizeSvgContents = function(workspace) {
   workspace.resizeContents();
-};
-
-/**
- * Copy a block or workspace comment onto the local clipboard.
- * @param {!Blockly.Block | !Blockly.WorkspaceComment} toCopy Block or Workspace Comment
- *    to be copied.
- * @private
- */
-Blockly.copy_ = function(toCopy) {
-  let xml;
-  if (toCopy.isComment) {
-    xml = toCopy.toXmlWithXY();
-  } else {
-    xml = Blockly.Xml.blockToDom(toCopy);
-    // Encode start position in XML.
-    const xy = toCopy.getRelativeToSurfaceXY();
-    xml.setAttribute('x', toCopy.RTL ? -xy.x : xy.x);
-    xml.setAttribute('y', xy.y);
-  }
-  Blockly.clipboardXml_ = xml;
-  Blockly.clipboardSource_ = toCopy.workspace;
-};
-
-/**
- * Duplicate this block and its children, or a workspace comment.
- * @param {!Blockly.Block | !Blockly.WorkspaceComment} toDuplicate Block or
- *     Workspace Comment to be copied.
- * @private
- */
-Blockly.duplicate_ = function(toDuplicate) {
-  // Save the clipboard.
-  const clipboardXml = Blockly.clipboardXml_;
-  const clipboardSource = Blockly.clipboardSource_;
-
-  // Create a duplicate via a copy/paste operation.
-  Blockly.copy_(toDuplicate);
-  toDuplicate.workspace.paste(Blockly.clipboardXml_);
-
-  // Restore the clipboard.
-  Blockly.clipboardXml_ = clipboardXml;
-  Blockly.clipboardSource_ = clipboardSource;
 };
 
 /**

@@ -471,7 +471,7 @@ Blockly.ContextMenu.commentDuplicateOption = function(comment) {
     text: Blockly.Msg.DUPLICATE,
     enabled: true,
     callback: function() {
-      Blockly.duplicate_(comment);
+      Blockly.clipboard.duplicate(comment);
     }
   };
   return duplicateOption;
