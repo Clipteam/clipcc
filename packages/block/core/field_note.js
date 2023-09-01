@@ -758,7 +758,7 @@ Blockly.FieldNote.prototype.stepOctaveAnimation_ = function() {
 Blockly.FieldNote.prototype.setNoteNum_ = function(noteNum) {
   noteNum = this.callValidator(noteNum);
   this.setValue(noteNum);
-  Blockly.FieldTextInput.htmlInput_.value = noteNum;
+  Blockly.FieldTextInput.getHtmlInput().value = noteNum;
 };
 
 /**

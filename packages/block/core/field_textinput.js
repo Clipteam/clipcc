@@ -673,4 +673,12 @@ Blockly.FieldTextInput.nonnegativeIntegerValidator = function(text) {
   return n;
 };
 
+/**
+ * Get Blockly.FieldTextInput.htmlInput_
+ * @return {!HTMLInputElement} HTML input.
+ */
+Blockly.FieldTextInput.getHtmlInput = function() {
+  return Blockly.FieldTextInput.htmlInput_;
+};
+
 Blockly.Field.register('field_input', Blockly.FieldTextInput);

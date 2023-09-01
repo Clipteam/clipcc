@@ -287,10 +287,10 @@ Blockly.FieldNumber.numPadButtonTouch = function(e) {
   // String of the button (e.g., '7')
   const spliceValue = this.innerHTML;
   // Old value of the text field
-  const oldValue = Blockly.FieldTextInput.htmlInput_.value;
+  const oldValue = Blockly.FieldTextInput.getHtmlInput().value;
   // Determine the selected portion of the text field
-  const selectionStart = Blockly.FieldTextInput.htmlInput_.selectionStart;
-  const selectionEnd = Blockly.FieldTextInput.htmlInput_.selectionEnd;
+  const selectionStart = Blockly.FieldTextInput.getHtmlInput().selectionStart;
+  const selectionEnd = Blockly.FieldTextInput.getHtmlInput().selectionEnd;
 
   // Splice in the new value
   const newValue = oldValue.slice(0, selectionStart) + spliceValue +
@@ -313,10 +313,10 @@ Blockly.FieldNumber.numPadButtonTouch = function(e) {
  */
 Blockly.FieldNumber.numPadEraseButtonTouch = function(e) {
   // Old value of the text field
-  const oldValue = Blockly.FieldTextInput.htmlInput_.value;
+  const oldValue = Blockly.FieldTextInput.getHtmlInput().value;
   // Determine what is selected to erase (if anything)
-  let selectionStart = Blockly.FieldTextInput.htmlInput_.selectionStart;
-  const selectionEnd = Blockly.FieldTextInput.htmlInput_.selectionEnd;
+  let selectionStart = Blockly.FieldTextInput.getHtmlInput().selectionStart;
+  const selectionEnd = Blockly.FieldTextInput.getHtmlInput().selectionEnd;
 
   // If selection is zero-length, shift start to the left 1 character
   if (selectionStart == selectionEnd) {
@@ -343,7 +343,7 @@ Blockly.FieldNumber.numPadEraseButtonTouch = function(e) {
  * @private.
  */
 Blockly.FieldNumber.updateDisplay_ = function(newValue, newSelection) {
-  const htmlInput = Blockly.FieldTextInput.htmlInput_;
+  const htmlInput = Blockly.FieldTextInput.getHtmlInput();
   // Updates the display. The actual setValue occurs when editing ends.
   htmlInput.value = newValue;
   // Resize and scroll the text field appropriately
