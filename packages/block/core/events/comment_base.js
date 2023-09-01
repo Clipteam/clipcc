@@ -65,7 +65,7 @@ Blockly.Events.CommentBase = function(comment) {
    * Sets whether the event should be added to the undo stack.
    * @type {boolean}
    */
-  this.recordUndo = Blockly.Events.recordUndo;
+  this.recordUndo = Blockly.Events.getRecordUndo();
 };
 goog.inherits(Blockly.Events.CommentBase, Blockly.Events.Abstract);
 

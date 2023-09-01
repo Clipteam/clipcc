@@ -456,7 +456,7 @@ Blockly.Xml.domToWorkspace = function(xml, workspace) {
       const xmlChild = xml.childNodes[i];
       const name = xmlChild.nodeName.toLowerCase();
       if (name == 'block' ||
-          (name == 'shadow' && !Blockly.Events.recordUndo)) {
+          (name == 'shadow' && !Blockly.Events.getRecordUndo())) {
         // Allow top-level shadow blocks if recordUndo is disabled since
         // that means an undo is in progress.  Such a block is expected
         // to be moved to a nested destination in the next operation.

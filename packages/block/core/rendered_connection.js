@@ -342,7 +342,7 @@ Blockly.RenderedConnection.prototype.respawnShadow_ = function() {
   const parentBlock = this.getSourceBlock();
   // Respawn the shadow block if there is one.
   const shadow = this.getShadowDom();
-  if (parentBlock.workspace && shadow && Blockly.Events.recordUndo) {
+  if (parentBlock.workspace && shadow && Blockly.Events.getRecordUndo()) {
     Blockly.RenderedConnection.superClass_.respawnShadow_.call(this);
     const blockShadow = this.targetBlock();
     if (!blockShadow) {

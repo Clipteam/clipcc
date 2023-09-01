@@ -44,8 +44,9 @@ Blockly.Events.group_ = '';
 /**
  * Sets whether events should be added to the undo stack.
  * @type {boolean}
+ * @private
  */
-Blockly.Events.recordUndo = true;
+Blockly.Events.recordUndo_ = true;
 
 /**
  * Allow change events to be created and fired.
@@ -425,4 +426,20 @@ Blockly.Events.disableOrphans = function(event) {
     }
     Blockly.Events.enable();
   }
+};
+
+/**
+ * Sets whether events should be added to the undo stack.
+ * @param {boolean} newValue True if events should be added to the undo stack.
+ */
+Blockly.Events.setRecordUndo = function(newValue) {
+  Blockly.Events.recordUndo_ = newValue;
+}
+
+/**
+ * Returns whether or not events will be added to the undo stack.
+ * @return {boolean} True if events will be added to the undo stack.
+ */
+Blockly.Events.getRecordUndo = function() {
+  return Blockly.Events.recordUndo_;
 };

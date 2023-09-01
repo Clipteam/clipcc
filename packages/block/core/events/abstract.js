@@ -53,7 +53,7 @@ Blockly.Events.Abstract = function() {
    * Sets whether the event should be added to the undo stack.
    * @type {boolean}
    */
-  this.recordUndo = Blockly.Events.recordUndo;
+  this.recordUndo = Blockly.Events.getRecordUndo();
 };
 
 /**

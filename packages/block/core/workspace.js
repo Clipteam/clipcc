@@ -490,7 +490,7 @@ Blockly.Workspace.prototype.undo = function(redo) {
     outputStack.push(event);
   }
   events = Blockly.Events.filter(events, redo);
-  Blockly.Events.recordUndo = false;
+  Blockly.Events.setRecordUndo(false);
   if (Blockly.common.getSelected()) {
     Blockly.Events.disable();
     try {
@@ -504,7 +504,7 @@ Blockly.Workspace.prototype.undo = function(redo) {
       event.run(redo);
     }
   } finally {
-    Blockly.Events.recordUndo = true;
+    Blockly.Events.setRecordUndo(true);
   }
 };
 
