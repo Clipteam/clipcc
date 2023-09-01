@@ -404,6 +404,91 @@ Blockly.inject.init_ = function(mainWorkspace) {
 };
 
 /**
+ * Handle a key-down on SVG drawing surface. Does nothing if the main workspace is not visible.
+ * @param {!Event} e Key down event.
+ * @private
+ */
+// TODO (https://github.com/google/blockly/issues/1998) handle cases where there are multiple workspaces
+// and non-main workspaces are able to accept input.
+Blockly.inject.onKeyDown_ = function(e) {
+  const mainWorkspace = Blockly.common.getMainWorkspace();
+  if (mainWorkspace.options.readOnly || Blockly.utils.isTargetInput(e)
+      || (mainWorkspace.rendered && !mainWorkspace.isVisible())) {
+    // No key actions on readonly workspaces.
+    // When focused on an HTML text input widget, don't trap any keys.
+    // Ignore keypresses on rendered workspaces that have been explicitly
+    // hidden.
+    return;
+  }
+  const selected = Blockly.common.getSelected();
+  let deleteBlock = false;
+  if (e.keyCode == 27) {
+    // Pressing esc closes the context menu and any drop-down
+    mainWorkspace.hideChaff();
+    Blockly.DropDownDiv.hide();
+  } else if (e.keyCode == 8 || e.keyCode == 46) {
+    // Delete or backspace.
+    // Stop the browser from going back to the previous page.
+    // Do this first to prevent an error in the delete code from resulting in
+    // data loss.
+    e.preventDefault();
+    // Don't delete while dragging.  Jeez.
+    if (mainWorkspace.isDragging()) {
+      return;
+    }
+    if (selected && selected.isDeletable()) {
+      deleteBlock = true;
+    }
+  } else if (e.altKey || e.ctrlKey || e.metaKey) {
+    // Don't use meta keys during drags.
+    if (mainWorkspace.isDragging()) {
+      return;
+    }
+    if (selected && selected.isDeletable() && selected.isMovable()) {
+      // Don't allow copying immovable or undeletable blocks. The next step
+      // would be to paste, which would create additional undeletable/immovable
+      // blocks on the workspace.
+      if (e.keyCode == 67) {
+        // 'c' for copy.
+        mainWorkspace.hideChaff();
+        Blockly.copy_(selected);
+      } else if (e.keyCode == 88 && !selected.workspace.isFlyout) {
+        // 'x' for cut, but not in a flyout.
+        // Don't even copy the selected item in the flyout.
+        Blockly.copy_(selected);
+        deleteBlock = true;
+      }
+    }
+    if (e.keyCode == 86) {
+      // 'v' for paste.
+      if (Blockly.clipboardXml_) {
+        Blockly.Events.setGroup(true);
+        // Pasting always pastes to the main workspace, even if the copy started
+        // in a flyout workspace.
+        let workspace = Blockly.clipboardSource_;
+        if (workspace.isFlyout) {
+          workspace = workspace.targetWorkspace;
+        }
+        workspace.paste(Blockly.clipboardXml_);
+        Blockly.Events.setGroup(false);
+      }
+    } else if (e.keyCode == 90) {
+      // 'z' for undo 'Z' is for redo.
+      mainWorkspace.hideChaff();
+      mainWorkspace.undo(e.shiftKey);
+    }
+  }
+  // Common code for delete and cut.
+  // Don't delete in the flyout.
+  if (deleteBlock && !selected.workspace.isFlyout) {
+    Blockly.Events.setGroup(true);
+    mainWorkspace.hideChaff();
+    selected.dispose(/* heal */ true, true);
+    Blockly.Events.setGroup(false);
+  }
+};
+
+/**
 * Whether event handlers have been bound. Document event handlers will only
 * be bound once, even if Blockly is destroyed and reinjected.
 */
@@ -422,7 +507,7 @@ Blockly.inject.documentEventsBound_ = false;
  */
 Blockly.inject.bindDocumentEvents_ = function() {
   if (!Blockly.inject.documentEventsBound_) {
-    Blockly.browserEvents.conditionalBind(document, 'keydown', null, Blockly.onKeyDown_);
+    Blockly.browserEvents.conditionalBind(document, 'keydown', null, Blockly.inject.onKeyDown_);
     // longStop needs to run to stop the context menu from showing up.  It
     // should run regardless of what other touch event handlers have run.
     Blockly.browserEvents.bind(document, 'touchend', null, Blockly.Touch.longStop_);
