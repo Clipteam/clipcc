@@ -539,9 +539,8 @@ Blockly.Variables.trimName_ = function(name) {
  * @param {?string} opt_name The optional name of the field, such as "VARIABLE"
  *     or "LIST". Defaults to "VARIABLE".
  * @return {string} The generated XML.
- * @private
  */
-Blockly.Variables.generateVariableFieldXml_ = function(variableModel, opt_name) {
+Blockly.Variables.generateVariableFieldXml = function(variableModel, opt_name) {
   // The variable name may be user input, so it may contain characters that need
   // to be escaped to create valid XML.
   let typeString = variableModel.type;
