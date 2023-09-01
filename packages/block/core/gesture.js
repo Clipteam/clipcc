@@ -288,7 +288,7 @@ Blockly.Gesture.prototype.updateFromEvent_ = function(e) {
   // Exceeded the drag radius for the first time.
   if (changed) {
     this.updateIsDragging_();
-    Blockly.Touch.longStop_();
+    Blockly.Touch.longStop();
   }
   this.mostRecentEvent_ = e;
 };
@@ -512,7 +512,7 @@ Blockly.Gesture.prototype.doStart = function(e) {
   }
 
   if (goog.string.caseInsensitiveEquals(e.type, 'touchstart')) {
-    Blockly.Touch.longStart_(e, this);
+    Blockly.Touch.longStart(e, this);
   }
 
   this.mouseDownXY_ = new goog.math.Coordinate(e.clientX, e.clientY);
@@ -569,7 +569,7 @@ Blockly.Gesture.prototype.handleMove = function(e) {
  */
 Blockly.Gesture.prototype.handleUp = function(e) {
   this.updateFromEvent_(e);
-  Blockly.Touch.longStop_();
+  Blockly.Touch.longStop();
 
   if (this.isEnding_) {
     return;
@@ -616,7 +616,7 @@ Blockly.Gesture.prototype.cancel = function() {
     return;
   }
   this.isEnding_ = true;
-  Blockly.Touch.longStop_();
+  Blockly.Touch.longStop();
   if (this.isDraggingBubble_) {
     this.bubbleDragger_.endBubbleDrag(this.mostRecentEvent_,
         this.currentDragDeltaXY_);

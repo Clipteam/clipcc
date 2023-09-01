@@ -70,10 +70,9 @@ Blockly.Touch.longPid_ = 0;
  * if the touch event terminates early.
  * @param {!Event} e Touch start event.
  * @param {Blockly.Gesture} gesture The gesture that triggered this longStart.
- * @private
  */
-Blockly.Touch.longStart_ = function(e, gesture) {
-  Blockly.Touch.longStop_();
+Blockly.Touch.longStart = function(e, gesture) {
+  Blockly.Touch.longStop();
   // Punt on multitouch events.
   if (e.changedTouches.length != 1) {
     return;
@@ -94,9 +93,8 @@ Blockly.Touch.longStart_ = function(e, gesture) {
 /**
  * Nope, that's not a long-press.  Either touchend or touchcancel was fired,
  * or a drag hath begun.  Kill the queued long-press task.
- * @private
  */
-Blockly.Touch.longStop_ = function() {
+Blockly.Touch.longStop = function() {
   if (Blockly.Touch.longPid_) {
     clearTimeout(Blockly.Touch.longPid_);
     Blockly.Touch.longPid_ = 0;
