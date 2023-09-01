@@ -201,7 +201,7 @@ Blockly.utils.getRelativeXY = function(element) {
  *     undefined.
  * @return {!goog.math.Coordinate} Object with .x and .y properties.
  */
-Blockly.utils.getInjectionDivXY_ = function(element) {
+Blockly.utils.getInjectionDivXY = function(element) {
   let x = 0;
   let y = 0;
   while (element) {

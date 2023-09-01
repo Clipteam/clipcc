@@ -348,7 +348,7 @@ Blockly.WorkspaceSvg.prototype.getSvgXY = function(element) {
  * @package
  */
 Blockly.WorkspaceSvg.prototype.getOriginOffsetInPixels = function() {
-  return Blockly.utils.getInjectionDivXY_(this.svgBlockCanvas_);
+  return Blockly.utils.getInjectionDivXY(this.svgBlockCanvas_);
 };
 
 /**
