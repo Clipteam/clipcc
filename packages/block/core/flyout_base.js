@@ -26,6 +26,7 @@
 
 goog.provide('Blockly.Flyout');
 
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.Block');
 goog.require('Blockly.Comment');
 goog.require('Blockly.Events');
@@ -88,7 +89,7 @@ Blockly.Flyout = function(workspaceOptions) {
   this.toolboxPosition_ = workspaceOptions.toolboxPosition;
 
   /**
-   * Opaque data that can be passed to Blockly.unbindEvent_.
+   * Opaque data that can be passed to Blockly.browserEvents.unbind.
    * @type {!Array.<!Array>}
    * @private
    */
@@ -314,10 +315,10 @@ Blockly.Flyout.prototype.init = function(targetWorkspace) {
   this.position();
 
   Array.prototype.push.apply(this.eventWrappers_,
-      Blockly.bindEventWithChecks_(this.svgGroup_, 'wheel', this, this.wheel_));
+      Blockly.browserEvents.conditionalBind(this.svgGroup_, 'wheel', this, this.wheel_));
   // Dragging the flyout up and down (or left and right).
   Array.prototype.push.apply(this.eventWrappers_,
-      Blockly.bindEventWithChecks_(
+      Blockly.browserEvents.conditionalBind(
           this.svgGroup_, 'mousedown', this, this.onMouseDown_));
 
   // A flyout connected to a workspace doesn't have its own current gesture.
@@ -336,7 +337,7 @@ Blockly.Flyout.prototype.init = function(targetWorkspace) {
  */
 Blockly.Flyout.prototype.dispose = function() {
   this.hide();
-  Blockly.unbindEvent_(this.eventWrappers_);
+  Blockly.browserEvents.unbind(this.eventWrappers_);
   if (this.scrollbar_) {
     this.scrollbar_.dispose();
     this.scrollbar_ = null;
@@ -450,7 +451,7 @@ Blockly.Flyout.prototype.hide = function() {
   this.setVisible(false);
   // Delete all the event listeners.
   for (let x = 0, listen; listen = this.listeners_[x]; x++) {
-    Blockly.unbindEvent_(listen);
+    Blockly.browserEvents.unbind(listen);
   }
   this.listeners_.length = 0;
   if (this.reflowWrapper_) {
@@ -575,7 +576,7 @@ Blockly.Flyout.prototype.show = function(xmlList, opt_visible) {
     }
   };
 
-  this.listeners_.push(Blockly.bindEvent_(this.svgBackground_, 'mouseover',
+  this.listeners_.push(Blockly.browserEvents.bind(this.svgBackground_, 'mouseover',
       this, deselectAll));
 
   this.workspace_.setResizesEnabled(true);
@@ -754,17 +755,17 @@ Blockly.Flyout.prototype.clearOldBlocks_ = function() {
  * @private
  */
 Blockly.Flyout.prototype.addBlockListeners_ = function(root, block, rect) {
-  this.listeners_.push(Blockly.bindEventWithChecks_(root, 'mousedown', null,
+  this.listeners_.push(Blockly.browserEvents.conditionalBind(root, 'mousedown', null,
       this.blockMouseDown_(block)));
-  this.listeners_.push(Blockly.bindEventWithChecks_(rect, 'mousedown', null,
+  this.listeners_.push(Blockly.browserEvents.conditionalBind(rect, 'mousedown', null,
       this.blockMouseDown_(block)));
-  this.listeners_.push(Blockly.bindEvent_(root, 'mouseover', block,
+  this.listeners_.push(Blockly.browserEvents.bind(root, 'mouseover', block,
       block.addSelect));
-  this.listeners_.push(Blockly.bindEvent_(root, 'mouseout', block,
+  this.listeners_.push(Blockly.browserEvents.bind(root, 'mouseout', block,
       block.removeSelect));
-  this.listeners_.push(Blockly.bindEvent_(rect, 'mouseover', block,
+  this.listeners_.push(Blockly.browserEvents.bind(rect, 'mouseover', block,
       block.addSelect));
-  this.listeners_.push(Blockly.bindEvent_(rect, 'mouseout', block,
+  this.listeners_.push(Blockly.browserEvents.bind(rect, 'mouseout', block,
       block.removeSelect));
 };
 

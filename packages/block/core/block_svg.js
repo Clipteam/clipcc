@@ -28,6 +28,7 @@ goog.provide('Blockly.BlockSvg');
 
 goog.require('Blockly.Block');
 goog.require('Blockly.BlockAnimations');
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.common');
 goog.require('Blockly.ContextMenu');
 goog.require('Blockly.Events.Ui');
@@ -172,7 +173,7 @@ Blockly.BlockSvg.prototype.initSvg = function() {
   this.updateColour();
   this.updateMovable();
   if (!this.workspace.options.readOnly && !this.eventsInit_) {
-    Blockly.bindEventWithChecks_(
+    Blockly.browserEvents.conditionalBind(
         this.getSvgRoot(), 'mousedown', this, this.onMouseDown_);
   }
   this.eventsInit_ = true;

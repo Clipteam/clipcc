@@ -26,6 +26,7 @@
 
 goog.provide('Blockly.Icon');
 
+goog.require('Blockly.browserEvents');
 goog.require('goog.dom');
 goog.require('goog.math.Coordinate');
 
@@ -85,7 +86,7 @@ Blockly.Icon.prototype.createIcon = function() {
   this.drawIcon_(this.iconGroup_);
 
   this.block_.getSvgRoot().appendChild(this.iconGroup_);
-  Blockly.bindEventWithChecks_(
+  Blockly.browserEvents.conditionalBind(
       this.iconGroup_, 'mouseup', this, this.iconClick_);
   this.updateEditable();
 };

@@ -66,7 +66,7 @@ Blockly.FieldTextInputRemovable.prototype.showEditor_ = function() {
       goog.dom.createDom(goog.dom.TagName.IMG, 'blocklyTextRemoveIcon');
   removeButton.setAttribute('src',
       Blockly.common.getMainWorkspace().options.pathToMedia + 'icons/remove.svg');
-  this.removeButtonMouseWrapper_ = Blockly.bindEvent_(removeButton,
+  this.removeButtonMouseWrapper_ = Blockly.browserEvents.bind(removeButton,
       'mousedown', this, this.removeCallback_);
   div.appendChild(removeButton);
 };

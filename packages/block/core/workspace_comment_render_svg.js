@@ -26,6 +26,7 @@
 
 goog.provide('Blockly.WorkspaceCommentSvg.render');
 
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.WorkspaceCommentSvg');
 
 /**
@@ -156,23 +157,23 @@ Blockly.WorkspaceCommentSvg.prototype.render = function() {
   this.rendered_ = true;
 
   if (this.resizeGroup_) {
-    Blockly.bindEventWithChecks_(
+    Blockly.browserEvents.conditionalBind(
         this.resizeGroup_, 'mousedown', this, this.resizeMouseDown_);
-    Blockly.bindEventWithChecks_(
+    Blockly.browserEvents.conditionalBind(
         this.resizeGroup_, 'mouseup', this, this.resizeMouseUp_);
   }
 
-  Blockly.bindEventWithChecks_(
+  Blockly.browserEvents.conditionalBind(
       this.minimizeArrow_, 'mousedown', this, this.minimizeArrowMouseDown_, true);
-  Blockly.bindEventWithChecks_(
+  Blockly.browserEvents.conditionalBind(
       this.minimizeArrow_, 'mouseout', this, this.minimizeArrowMouseOut_, true);
-  Blockly.bindEventWithChecks_(
+  Blockly.browserEvents.conditionalBind(
       this.minimizeArrow_, 'mouseup', this, this.minimizeArrowMouseUp_, true);
-  Blockly.bindEventWithChecks_(
+  Blockly.browserEvents.conditionalBind(
       this.deleteIcon_, 'mousedown', this, this.deleteMouseDown_, true);
-  Blockly.bindEventWithChecks_(
+  Blockly.browserEvents.conditionalBind(
       this.deleteIcon_, 'mouseout', this, this.deleteMouseOut_, true);
-  Blockly.bindEventWithChecks_(
+  Blockly.browserEvents.conditionalBind(
       this.deleteIcon_, 'mouseup', this, this.deleteMouseUp_, true);
 };
 
@@ -202,14 +203,14 @@ Blockly.WorkspaceCommentSvg.prototype.createEditor_ = function() {
   this.textarea_ = textarea;
   this.textarea_.style.margin = (Blockly.WorkspaceCommentSvg.TEXTAREA_OFFSET) + 'px';
   this.foreignObject_.appendChild(body);
-  Blockly.bindEventWithChecks_(textarea, 'mousedown', this, function(e) {
+  Blockly.browserEvents.conditionalBind(textarea, 'mousedown', this, function(e) {
     e.stopPropagation(); // Propagation causes preventDefault from workspace handler
   }, true, true);
   // Don't zoom with mousewheel.
-  Blockly.bindEventWithChecks_(textarea, 'wheel', this, function(e) {
+  Blockly.browserEvents.conditionalBind(textarea, 'wheel', this, function(e) {
     e.stopPropagation();
   });
-  Blockly.bindEventWithChecks_(textarea, 'change', this, function(_e) {
+  Blockly.browserEvents.conditionalBind(textarea, 'change', this, function(_e) {
     if (this.text_ != textarea.value) {
       this.setText(textarea.value);
     }
@@ -421,9 +422,9 @@ Blockly.WorkspaceCommentSvg.prototype.resizeMouseDown_ = function(e) {
   this.workspace.startDrag(e, new goog.math.Coordinate(
     this.workspace.RTL ? -this.width_ : this.width_, this.height_));
 
-  this.onMouseUpWrapper_ = Blockly.bindEventWithChecks_(
+  this.onMouseUpWrapper_ = Blockly.browserEvents.conditionalBind(
       document, 'mouseup', this, this.resizeMouseUp_);
-  this.onMouseMoveWrapper_ = Blockly.bindEventWithChecks_(
+  this.onMouseMoveWrapper_ = Blockly.browserEvents.conditionalBind(
       document, 'mousemove', this, this.resizeMouseMove_);
   this.workspace.hideChaff();
   // This event has been handled.  No need to bubble up to the document.
@@ -480,11 +481,11 @@ Blockly.WorkspaceCommentSvg.prototype.setRenderedMinimizeState_ = function(minim
  */
 Blockly.WorkspaceCommentSvg.prototype.unbindDragEvents_ = function() {
   if (this.onMouseUpWrapper_) {
-    Blockly.unbindEvent_(this.onMouseUpWrapper_);
+    Blockly.browserEvents.unbind(this.onMouseUpWrapper_);
     this.onMouseUpWrapper_ = null;
   }
   if (this.onMouseMoveWrapper_) {
-    Blockly.unbindEvent_(this.onMouseMoveWrapper_);
+    Blockly.browserEvents.unbind(this.onMouseMoveWrapper_);
     this.onMouseMoveWrapper_ = null;
   }
 };

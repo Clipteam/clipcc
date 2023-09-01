@@ -26,6 +26,7 @@
 
 goog.provide('Blockly.ZoomControls');
 
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.Touch');
 goog.require('goog.dom');
 
@@ -213,7 +214,7 @@ Blockly.ZoomControls.prototype.createZoomOutSvg_ = function() {
   zoomoutSvg.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href',
       ws.options.pathToMedia + this.ZOOM_OUT_PATH_);
   // Attach listener.
-  Blockly.bindEventWithChecks_(zoomoutSvg, 'mousedown', null, function(e) {
+  Blockly.browserEvents.conditionalBind(zoomoutSvg, 'mousedown', null, function(e) {
     ws.markFocused();
     ws.zoomCenter(-1);
     Blockly.Touch.clearTouchIdentifier();  // Don't block future drags.
@@ -251,7 +252,7 @@ Blockly.ZoomControls.prototype.createZoomInSvg_ = function() {
       ws.options.pathToMedia + this.ZOOM_IN_PATH_);
 
   // Attach listener.
-  Blockly.bindEventWithChecks_(zoominSvg, 'mousedown', null, function(e) {
+  Blockly.browserEvents.conditionalBind(zoominSvg, 'mousedown', null, function(e) {
     ws.markFocused();
     ws.zoomCenter(1);
     Blockly.Touch.clearTouchIdentifier();  // Don't block future drags.
@@ -290,7 +291,7 @@ Blockly.ZoomControls.prototype.createZoomResetSvg_ = function() {
       ws.options.pathToMedia + this.ZOOM_RESET_PATH_);
 
   // Attach event listeners.
-  Blockly.bindEventWithChecks_(zoomresetSvg, 'mousedown', null, function(e) {
+  Blockly.browserEvents.conditionalBind(zoomresetSvg, 'mousedown', null, function(e) {
     ws.markFocused();
     ws.setScale(ws.options.zoomOptions.startScale);
     ws.scrollCenter();

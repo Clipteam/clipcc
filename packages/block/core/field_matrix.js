@@ -27,6 +27,7 @@
 
 goog.provide('Blockly.FieldMatrix');
 
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.DropDownDiv');
 
 /**
@@ -253,7 +254,7 @@ Blockly.FieldMatrix.prototype.init = function() {
     this.arrow_.style.cursor = 'default';
   }
 
-  this.mouseDownWrapper_ = Blockly.bindEventWithChecks_(
+  this.mouseDownWrapper_ = Blockly.browserEvents.conditionalBind(
       this.getClickTarget_(), 'mousedown', this, this.onMouseDown_);
 };
 
@@ -346,11 +347,11 @@ Blockly.FieldMatrix.prototype.showEditor_ = function() {
   Blockly.DropDownDiv.showPositionedByBlock(this, this.sourceBlock_);
 
   this.matrixTouchWrapper_ =
-      Blockly.bindEvent_(this.matrixStage_, 'mousedown', this, this.onMouseDown);
+      Blockly.browserEvents.bind(this.matrixStage_, 'mousedown', this, this.onMouseDown);
   this.clearButtonWrapper_ =
-      Blockly.bindEvent_(clearButton, 'click', this, this.clearMatrix_);
+      Blockly.browserEvents.bind(clearButton, 'click', this, this.clearMatrix_);
   this.fillButtonWrapper_ =
-    Blockly.bindEvent_(fillButton, 'click', this, this.fillMatrix_);
+    Blockly.browserEvents.bind(fillButton, 'click', this, this.fillMatrix_);
 
   // Update the matrix for the current value
   this.updateMatrix_();
@@ -467,9 +468,9 @@ Blockly.FieldMatrix.prototype.toggleLEDNode_ = function(led) {
  */
 Blockly.FieldMatrix.prototype.onMouseDown = function(e) {
   this.matrixMoveWrapper_ =
-    Blockly.bindEvent_(document.body, 'mousemove', this, this.onMouseMove);
+    Blockly.browserEvents.bind(document.body, 'mousemove', this, this.onMouseMove);
   this.matrixReleaseWrapper_ =
-    Blockly.bindEvent_(document.body, 'mouseup', this, this.onMouseUp);
+    Blockly.browserEvents.bind(document.body, 'mouseup', this, this.onMouseUp);
   const ledHit = this.checkForLED_(e);
   if (ledHit > -1) {
     if (this.matrix_.charAt(ledHit) === '0') {
@@ -489,8 +490,8 @@ Blockly.FieldMatrix.prototype.onMouseDown = function(e) {
  * @param {!Event} e Mouse move event.
  */
 Blockly.FieldMatrix.prototype.onMouseUp = function() {
-  Blockly.unbindEvent_(this.matrixMoveWrapper_);
-  Blockly.unbindEvent_(this.matrixReleaseWrapper_);
+  Blockly.browserEvents.unbind(this.matrixMoveWrapper_);
+  Blockly.browserEvents.unbind(this.matrixReleaseWrapper_);
   this.paintStyle_ = null;
 };
 
@@ -543,22 +544,22 @@ Blockly.FieldMatrix.prototype.dispose_ = function() {
     Blockly.FieldMatrix.superClass_.dispose_.call(thisField)();
     thisField.matrixStage_ = null;
     if (thisField.mouseDownWrapper_) {
-      Blockly.unbindEvent_(thisField.mouseDownWrapper_);
+      Blockly.browserEvents.unbind(thisField.mouseDownWrapper_);
     }
     if (thisField.matrixTouchWrapper_) {
-      Blockly.unbindEvent_(thisField.matrixTouchWrapper_);
+      Blockly.browserEvents.unbind(thisField.matrixTouchWrapper_);
     }
     if (thisField.matrixReleaseWrapper_) {
-      Blockly.unbindEvent_(thisField.matrixReleaseWrapper_);
+      Blockly.browserEvents.unbind(thisField.matrixReleaseWrapper_);
     }
     if (thisField.matrixMoveWrapper_) {
-      Blockly.unbindEvent_(thisField.matrixMoveWrapper_);
+      Blockly.browserEvents.unbind(thisField.matrixMoveWrapper_);
     }
     if (thisField.clearButtonWrapper_) {
-      Blockly.unbindEvent_(thisField.clearButtonWrapper_);
+      Blockly.browserEvents.unbind(thisField.clearButtonWrapper_);
     }
     if (thisField.fillButtonWrapper_) {
-      Blockly.unbindEvent_(thisField.fillButtonWrapper_);
+      Blockly.browserEvents.unbind(thisField.fillButtonWrapper_);
     }
   };
 };

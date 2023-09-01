@@ -354,19 +354,19 @@ Blockly.FieldNote.prototype.dispose_ = function() {
   return function() {
     Blockly.FieldNote.superClass_.dispose_.call(thisField)();
     thisField.mouseDownWrappers_.forEach(function(wrapper) {
-      Blockly.unbindEvent_(wrapper);
+      Blockly.browserEvents.unbind(wrapper);
     });
     thisField.mouseEnterWrappers_.forEach(function(wrapper) {
-      Blockly.unbindEvent_(wrapper);
+      Blockly.browserEvents.unbind(wrapper);
     });
     if (thisField.mouseUpWrapper_) {
-      Blockly.unbindEvent_(thisField.mouseUpWrapper_);
+      Blockly.browserEvents.unbind(thisField.mouseUpWrapper_);
     }
     if (thisField.octaveDownMouseDownWrapper_) {
-      Blockly.unbindEvent_(thisField.octaveDownMouseDownWrapper_);
+      Blockly.browserEvents.unbind(thisField.octaveDownMouseDownWrapper_);
     }
     if (thisField.octaveUpMouseDownWrapper_) {
-      Blockly.unbindEvent_(thisField.octaveUpMouseDownWrapper_);
+      Blockly.browserEvents.unbind(thisField.octaveUpMouseDownWrapper_);
     }
     this.pianoSVG_ = null;
     this.keySVGs_.length = 0;
@@ -467,11 +467,11 @@ Blockly.FieldNote.prototype.showEditor_ = function() {
       Blockly.FieldNote.OCTAVE_BUTTON_SIZE, false, svg);
 
   this.octaveDownMouseDownWrapper_ =
-    Blockly.bindEvent_(this.octaveDownButton, 'mousedown', this, function() {
+    Blockly.browserEvents.bind(this.octaveDownButton, 'mousedown', this, function() {
       this.changeOctaveBy_(-1);
     });
   this.octaveUpMouseDownWrapper_ =
-      Blockly.bindEvent_(this.octaveUpButton, 'mousedown', this,function() {
+      Blockly.browserEvents.bind(this.octaveUpButton, 'mousedown', this,function() {
         this.changeOctaveBy_(1);
       });
   Blockly.DropDownDiv.setColour(this.sourceBlock_.parentBlock_.getColour(),
@@ -529,9 +529,9 @@ Blockly.FieldNote.prototype.addPianoOctave_ = function(x, whiteKeyGroup, blackKe
       keySVG.setAttribute('data-isBlack', Blockly.FieldNote.KEY_INFO[i].isBlack);
 
       this.mouseDownWrappers_[i] =
-          Blockly.bindEvent_(keySVG, 'mousedown', this, this.onMouseDownOnKey_);
+          Blockly.browserEvents.bind(keySVG, 'mousedown', this, this.onMouseDownOnKey_);
       this.mouseEnterWrappers_[i] =
-          Blockly.bindEvent_(keySVG, 'mouseenter', this, this.onMouseEnter_);
+          Blockly.browserEvents.bind(keySVG, 'mouseenter', this, this.onMouseEnter_);
     }
   }
 };
@@ -647,7 +647,7 @@ Blockly.FieldNote.prototype.fadeSvgToOpacity_ = function(svg, opacity) {
  */
 Blockly.FieldNote.prototype.onMouseDownOnKey_ = function(e) {
   this.mouseIsDown_ = true;
-  this.mouseUpWrapper_ = Blockly.bindEvent_(document.body, 'mouseup', this, this.onMouseUp_);
+  this.mouseUpWrapper_ = Blockly.browserEvents.bind(document.body, 'mouseup', this, this.onMouseUp_);
   this.selectNoteWithMouseEvent_(e);
 };
 
@@ -657,7 +657,7 @@ Blockly.FieldNote.prototype.onMouseDownOnKey_ = function(e) {
  */
 Blockly.FieldNote.prototype.onMouseUp_ = function() {
   this.mouseIsDown_ = false;
-  Blockly.unbindEvent_(this.mouseUpWrapper_);
+  Blockly.browserEvents.unbind(this.mouseUpWrapper_);
 };
 
 /**

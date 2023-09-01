@@ -26,6 +26,7 @@
 
 goog.provide('Blockly.ScratchBlockComment');
 
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.Comment');
 goog.require('Blockly.Events.BlockChange');
 goog.require('Blockly.Events.Ui');
@@ -232,13 +233,13 @@ Blockly.ScratchBlockComment.prototype.createEditor_ = function() {
   this.textarea_ = textarea;
   this.textarea_.style.margin = (Blockly.ScratchBlockComment.TEXTAREA_OFFSET) + 'px';
   this.foreignObject_.appendChild(body);
-  Blockly.bindEventWithChecks_(textarea, 'mousedown', this,
+  Blockly.browserEvents.conditionalBind(textarea, 'mousedown', this,
       this.textareaFocus_, true, true); // noCapture and do not prevent default
   // Don't zoom with mousewheel.
-  Blockly.bindEventWithChecks_(textarea, 'wheel', this, function(e) {
+  Blockly.browserEvents.conditionalBind(textarea, 'wheel', this, function(e) {
     e.stopPropagation();
   });
-  Blockly.bindEventWithChecks_(textarea, 'change', this, function(_e) {
+  Blockly.browserEvents.conditionalBind(textarea, 'change', this, function(_e) {
     if (this.text_ != textarea.value) {
       Blockly.Events.fire(new Blockly.Events.CommentChange(
           this, {text: this.text_}, {text: textarea.value}));

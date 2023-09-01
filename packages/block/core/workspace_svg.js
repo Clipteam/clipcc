@@ -28,6 +28,7 @@ goog.provide('Blockly.WorkspaceSvg');
 
 // TODO(scr): Fix circular dependencies
 //goog.require('Blockly.BlockSvg');
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.Colours');
 goog.require('Blockly.ConnectionDB');
 goog.require('Blockly.constants');
@@ -111,7 +112,7 @@ goog.inherits(Blockly.WorkspaceSvg, Blockly.Workspace);
 
 /**
  * A wrapper function called when a resize event occurs.
- * You can pass the result to `unbindEvent_`.
+ * You can pass the result to `browserEvents.unbind`.
  * @type {Array.<!Array>}
  */
 Blockly.WorkspaceSvg.prototype.resizeHandlerWrapper_ = null;
@@ -375,7 +376,7 @@ Blockly.WorkspaceSvg.prototype.getInjectionDiv = function() {
 
 /**
  * Save resize handler data so we can delete it later in dispose.
- * @param {!Array.<!Array>} handler Data that can be passed to unbindEvent_.
+ * @param {!Array.<!Array>} handler Data that can be passed to browserEvents.unbind.
  */
 Blockly.WorkspaceSvg.prototype.setResizeHandlerWrapper = function(handler) {
   this.resizeHandlerWrapper_ = handler;
@@ -429,11 +430,11 @@ Blockly.WorkspaceSvg.prototype.createDom = function(opt_backgroundClass) {
   }
 
   if (!this.isFlyout) {
-    Blockly.bindEventWithChecks_(this.svgGroup_, 'mousedown', this,
+    Blockly.browserEvents.conditionalBind(this.svgGroup_, 'mousedown', this,
         this.onMouseDown_);
     if (this.options.zoomOptions && this.options.zoomOptions.wheel) {
       // Mouse-wheel.
-      Blockly.bindEventWithChecks_(this.svgGroup_, 'wheel', this,
+      Blockly.browserEvents.conditionalBind(this.svgGroup_, 'wheel', this,
           this.onMouseWheel_);
     }
   }
@@ -517,7 +518,7 @@ Blockly.WorkspaceSvg.prototype.dispose = function() {
     goog.dom.removeNode(this.getParentSvg().parentNode);
   }
   if (this.resizeHandlerWrapper_) {
-    Blockly.unbindEvent_(this.resizeHandlerWrapper_);
+    Blockly.browserEvents.unbind(this.resizeHandlerWrapper_);
     this.resizeHandlerWrapper_ = null;
   }
   if (this.virtualizedManager) {

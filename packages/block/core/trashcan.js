@@ -26,6 +26,7 @@
 
 goog.provide('Blockly.Trashcan');
 
+goog.require('Blockly.browserEvents');
 goog.require('goog.dom');
 goog.require('goog.math.Rect');
 
@@ -205,7 +206,7 @@ Blockly.Trashcan.prototype.createDom = function() {
   this.svgLid_.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href',
       this.workspace_.options.pathToMedia + Blockly.constants.SPRITE.url);
 
-  Blockly.bindEventWithChecks_(this.svgGroup_, 'mouseup', this, this.click);
+  Blockly.browserEvents.conditionalBind(this.svgGroup_, 'mouseup', this, this.click);
   this.animateLid_();
   return this.svgGroup_;
 };

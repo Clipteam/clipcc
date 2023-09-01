@@ -28,6 +28,7 @@
 
 goog.provide('Blockly.Field');
 
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.Events.BlockChange');
 goog.require('Blockly.Gesture');
 
@@ -259,7 +260,7 @@ Blockly.Field.prototype.init = function() {
   // Force a render.
   this.render_();
   this.size_.width = 0;
-  this.mouseDownWrapper_ = Blockly.bindEventWithChecks_(
+  this.mouseDownWrapper_ = Blockly.browserEvents.conditionalBind(
       this.getClickTarget_(), 'mousedown', this, this.onMouseDown_);
 };
 
@@ -275,7 +276,7 @@ Blockly.Field.prototype.initModel = function() {
  */
 Blockly.Field.prototype.dispose = function() {
   if (this.mouseDownWrapper_) {
-    Blockly.unbindEvent_(this.mouseDownWrapper_);
+    Blockly.browserEvents.unbind(this.mouseDownWrapper_);
     this.mouseDownWrapper_ = null;
   }
   this.sourceBlock_ = null;

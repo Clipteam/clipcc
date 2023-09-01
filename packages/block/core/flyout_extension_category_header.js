@@ -27,6 +27,7 @@
 
 goog.provide('Blockly.FlyoutExtensionCategoryHeader');
 
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.FlyoutButton');
 
 /**
@@ -112,7 +113,7 @@ Blockly.FlyoutExtensionCategoryHeader.prototype.createDom = function() {
 
   this.callback_ = Blockly.statusButtonCallback.bind(this, this.extensionId);
 
-  this.mouseUpWrapper_ = Blockly.bindEventWithChecks_(this.imageElementBackground_, 'mouseup',
+  this.mouseUpWrapper_ = Blockly.browserEvents.conditionalBind(this.imageElementBackground_, 'mouseup',
       this, this.onMouseUp_);
   return this.svgGroup_;
 };

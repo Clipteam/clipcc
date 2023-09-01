@@ -26,6 +26,7 @@
 
 goog.provide('Blockly.FieldTextInput');
 
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.BlockSvg.render');
 goog.require('Blockly.Colours');
 goog.require('Blockly.Field');
@@ -261,7 +262,7 @@ Blockly.FieldTextInput.prototype.showEditor_ = function(
       dropDownArrow.style.right = dropdownArrowMagic;
     }
     if (opt_arrowCallback) {
-      htmlInput.dropDownArrowMouseWrapper_ = Blockly.bindEvent_(dropDownArrow,
+      htmlInput.dropDownArrowMouseWrapper_ = Blockly.browserEvents.bind(dropDownArrow,
           'mousedown', this, opt_arrowCallback);
     }
     div.appendChild(dropDownArrow);
@@ -307,28 +308,28 @@ Blockly.FieldTextInput.prototype.bindEvents_ = function(
     htmlInput, bindGlobalKeypress) {
   // Bind to keydown -- trap Enter without IME and Esc to hide.
   htmlInput.onKeyDownWrapper_ =
-      Blockly.bindEventWithChecks_(htmlInput, 'keydown', this,
+      Blockly.browserEvents.conditionalBind(htmlInput, 'keydown', this,
           this.onHtmlInputKeyDown_);
   // Bind to keyup -- trap Enter; resize after every keystroke.
   htmlInput.onKeyUpWrapper_ =
-      Blockly.bindEventWithChecks_(htmlInput, 'keyup', this,
+      Blockly.browserEvents.conditionalBind(htmlInput, 'keyup', this,
           this.onHtmlInputChange_);
   // Bind to keyPress -- repeatedly resize when holding down a key.
   htmlInput.onKeyPressWrapper_ =
-      Blockly.bindEventWithChecks_(htmlInput, 'keypress', this,
+      Blockly.browserEvents.conditionalBind(htmlInput, 'keypress', this,
           this.onHtmlInputChange_);
   // For modern browsers (IE 9+, Chrome, Firefox, etc.) that support the
   // DOM input event, also trigger onHtmlInputChange_ then. The input event
   // is triggered on keypress but after the value of the text input
   // has updated, allowing us to resize the block at that time.
   htmlInput.onInputWrapper_ =
-      Blockly.bindEvent_(htmlInput, 'input', this, this.onHtmlInputChange_);
+      Blockly.browserEvents.bind(htmlInput, 'input', this, this.onHtmlInputChange_);
   htmlInput.onWorkspaceChangeWrapper_ = this.resizeEditor_.bind(this);
   this.workspace_.addChangeListener(htmlInput.onWorkspaceChangeWrapper_);
 
   if (bindGlobalKeypress) {
     htmlInput.onDocumentKeyDownWrapper_ =
-      Blockly.bindEventWithChecks_(document, 'keydown', this,
+      Blockly.browserEvents.conditionalBind(document, 'keydown', this,
           this.onDocumentKeyDown_);
   }
 };
@@ -339,16 +340,16 @@ Blockly.FieldTextInput.prototype.bindEvents_ = function(
  * @private
  */
 Blockly.FieldTextInput.prototype.unbindEvents_ = function(htmlInput) {
-  Blockly.unbindEvent_(htmlInput.onKeyDownWrapper_);
-  Blockly.unbindEvent_(htmlInput.onKeyUpWrapper_);
-  Blockly.unbindEvent_(htmlInput.onKeyPressWrapper_);
-  Blockly.unbindEvent_(htmlInput.onInputWrapper_);
+  Blockly.browserEvents.unbind(htmlInput.onKeyDownWrapper_);
+  Blockly.browserEvents.unbind(htmlInput.onKeyUpWrapper_);
+  Blockly.browserEvents.unbind(htmlInput.onKeyPressWrapper_);
+  Blockly.browserEvents.unbind(htmlInput.onInputWrapper_);
   this.workspace_.removeChangeListener(
       htmlInput.onWorkspaceChangeWrapper_);
 
   // Remove document handler only if it was added (e.g. in quiet mode)
   if (htmlInput.onDocumentKeyDownWrapper_) {
-    Blockly.unbindEvent_(htmlInput.onDocumentKeyDownWrapper_);
+    Blockly.browserEvents.unbind(htmlInput.onDocumentKeyDownWrapper_);
   }
 };
 
@@ -383,7 +384,7 @@ Blockly.FieldTextInput.prototype.onDocumentKeyDown_ = function(e) {
     htmlInput.removeAttribute('readonly');
     htmlInput.value = ''; // Reset the input, new value is picked up by input keypress
     htmlInput.focus();
-    Blockly.unbindEvent_(htmlInput.onDocumentKeyDownWrapper_);
+    Blockly.browserEvents.unbind(htmlInput.onDocumentKeyDownWrapper_);
     htmlInput.onDocumentKeyDownWrapper_ = null;
   }
 };
@@ -574,7 +575,7 @@ Blockly.FieldTextInput.prototype.widgetDispose_ = function() {
 
     thisField.unbindEvents_(htmlInput);
     if (htmlInput.dropDownArrowMouseWrapper_) {
-      Blockly.unbindEvent_(htmlInput.dropDownArrowMouseWrapper_);
+      Blockly.browserEvents.unbind(htmlInput.dropDownArrowMouseWrapper_);
     }
     Blockly.Events.setGroup(false);
 

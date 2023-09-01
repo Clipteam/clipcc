@@ -26,6 +26,7 @@
 
 goog.provide('Blockly.Toolbox');
 
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.Events.Ui');
 goog.require('Blockly.HorizontalFlyout');
 goog.require('Blockly.Touch');
@@ -128,7 +129,7 @@ Blockly.Toolbox.prototype.init = function() {
   svg.parentNode.insertBefore(this.HtmlDiv, svg);
 
   // Clicking on toolbox closes popups.
-  Blockly.bindEventWithChecks_(this.HtmlDiv, 'mousedown', this,
+  Blockly.browserEvents.conditionalBind(this.HtmlDiv, 'mousedown', this,
       function(e) {
         // Cancel any gestures in progress.
         this.workspace_.cancelCurrentGesture();
@@ -802,7 +803,7 @@ Blockly.Toolbox.Category.prototype.createDom = function() {
   // cc end - new category style
   this.item_.appendChild(this.label_);
   this.parentHtml_.appendChild(this.item_);
-  Blockly.bindEvent_(
+  Blockly.browserEvents.bind(
       this.item_, 'mouseup', toolbox, toolbox.setSelectedItemFactory(this));
 };
 

@@ -27,6 +27,7 @@
 goog.provide('Blockly.HorizontalFlyout');
 
 goog.require('Blockly.Block');
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.Comment');
 goog.require('Blockly.Events');
 goog.require('Blockly.FlyoutButton');
@@ -374,7 +375,7 @@ Blockly.HorizontalFlyout.prototype.layout_ = function(contents, gaps) {
       button.show();
       // Clicking on a flyout button or label is a lot like clicking on the
       // flyout background.
-      this.listeners_.push(Blockly.bindEventWithChecks_(buttonSvg, 'mousedown',
+      this.listeners_.push(Blockly.browserEvents.conditionalBind(buttonSvg, 'mousedown',
           this, this.onMouseDown_));
 
 

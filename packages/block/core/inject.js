@@ -26,6 +26,7 @@
 
 goog.provide('Blockly.inject');
 
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.BlockDragSurfaceSvg');
 goog.require('Blockly.Css');
 goog.require('Blockly.common');
@@ -350,14 +351,14 @@ Blockly.inject.init_ = function(mainWorkspace) {
   const svg = mainWorkspace.getParentSvg();
 
   // Suppress the browser's context menu.
-  Blockly.bindEventWithChecks_(svg.parentNode, 'contextmenu', null,
+  Blockly.browserEvents.conditionalBind(svg.parentNode, 'contextmenu', null,
       function(e) {
         if (!Blockly.utils.isTargetInput(e)) {
           e.preventDefault();
         }
       });
 
-  const workspaceResizeHandler = Blockly.bindEventWithChecks_(window, 'resize',
+  const workspaceResizeHandler = Blockly.browserEvents.conditionalBind(window, 'resize',
       null,
       function() {
         Blockly.hideChaffOnResize(true);
@@ -421,14 +422,14 @@ Blockly.inject.documentEventsBound_ = false;
  */
 Blockly.inject.bindDocumentEvents_ = function() {
   if (!Blockly.inject.documentEventsBound_) {
-    Blockly.bindEventWithChecks_(document, 'keydown', null, Blockly.onKeyDown_);
+    Blockly.browserEvents.conditionalBind(document, 'keydown', null, Blockly.onKeyDown_);
     // longStop needs to run to stop the context menu from showing up.  It
     // should run regardless of what other touch event handlers have run.
-    Blockly.bindEvent_(document, 'touchend', null, Blockly.Touch.longStop_);
-    Blockly.bindEvent_(document, 'touchcancel', null, Blockly.Touch.longStop_);
+    Blockly.browserEvents.bind(document, 'touchend', null, Blockly.Touch.longStop_);
+    Blockly.browserEvents.bind(document, 'touchcancel', null, Blockly.Touch.longStop_);
     // Some iPad versions don't fire resize after portrait to landscape change.
     if (goog.userAgent.IPAD) {
-      Blockly.bindEventWithChecks_(window, 'orientationchange', document,
+      Blockly.browserEvents.conditionalBind(window, 'orientationchange', document,
           function() {
             // TODO(#397): Fix for multiple blockly workspaces.
             Blockly.common.svgResize(Blockly.getMainWorkspace());
@@ -465,7 +466,7 @@ Blockly.inject.loadSounds_ = function(pathToMedia, workspace) {
   const soundBinds = [];
   const unbindSounds = function() {
     while (soundBinds.length) {
-      Blockly.unbindEvent_(soundBinds.pop());
+      Blockly.browserEvents.unbind(soundBinds.pop());
     }
     audioMgr.preload();
   };
@@ -474,9 +475,9 @@ Blockly.inject.loadSounds_ = function(pathToMedia, workspace) {
   // click, not a drag.
   // Android ignores any sound not loaded as a result of a user action.
   soundBinds.push(
-      Blockly.bindEventWithChecks_(document, 'mousemove', null, unbindSounds,
+      Blockly.browserEvents.conditionalBind(document, 'mousemove', null, unbindSounds,
           /* opt_noCaptureIdentifier */ true));
   soundBinds.push(
-      Blockly.bindEventWithChecks_(document, 'touchstart', null, unbindSounds,
+      Blockly.browserEvents.conditionalBind(document, 'touchstart', null, unbindSounds,
           /* opt_noCaptureIdentifier */ true));
 };

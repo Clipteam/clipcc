@@ -26,6 +26,7 @@
 
 goog.provide('Blockly.ScratchBubble');
 
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.Touch');
 goog.require('Blockly.Workspace');
 goog.require('goog.dom');
@@ -86,26 +87,26 @@ Blockly.ScratchBubble = function(comment, workspace, content, anchorXY,
   this.rendered_ = true;
 
   if (!workspace.options.readOnly) {
-    Blockly.bindEventWithChecks_(
+    Blockly.browserEvents.conditionalBind(
         this.minimizeArrow_, 'mousedown', this, this.minimizeArrowMouseDown_, true);
-    Blockly.bindEventWithChecks_(
+    Blockly.browserEvents.conditionalBind(
         this.minimizeArrow_, 'mouseout', this, this.minimizeArrowMouseOut_, true);
-    Blockly.bindEventWithChecks_(
+    Blockly.browserEvents.conditionalBind(
         this.minimizeArrow_, 'mouseup', this, this.minimizeArrowMouseUp_, true);
-    Blockly.bindEventWithChecks_(
+    Blockly.browserEvents.conditionalBind(
         this.deleteIcon_, 'mousedown', this, this.deleteMouseDown_, true);
-    Blockly.bindEventWithChecks_(
+    Blockly.browserEvents.conditionalBind(
         this.deleteIcon_, 'mouseout', this, this.deleteMouseOut_, true);
-    Blockly.bindEventWithChecks_(
+    Blockly.browserEvents.conditionalBind(
         this.deleteIcon_, 'mouseup', this, this.deleteMouseUp_, true);
-    Blockly.bindEventWithChecks_(
+    Blockly.browserEvents.conditionalBind(
         this.commentTopBar_, 'mousedown', this, this.bubbleMouseDown_);
-    Blockly.bindEventWithChecks_(
+    Blockly.browserEvents.conditionalBind(
         this.bubbleBack_, 'mousedown', this, this.bubbleMouseDown_);
     if (this.resizeGroup_) {
-      Blockly.bindEventWithChecks_(
+      Blockly.browserEvents.conditionalBind(
           this.resizeGroup_, 'mousedown', this, this.resizeMouseDown_);
-      Blockly.bindEventWithChecks_(
+      Blockly.browserEvents.conditionalBind(
           this.resizeGroup_, 'mouseup', this, this.resizeMouseUp_);
     }
   }

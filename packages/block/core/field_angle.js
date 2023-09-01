@@ -152,13 +152,13 @@ Blockly.FieldAngle.prototype.dispose_ = function() {
     Blockly.FieldAngle.superClass_.dispose_.call(thisField)();
     thisField.gauge_ = null;
     if (thisField.mouseDownWrapper_) {
-      Blockly.unbindEvent_(thisField.mouseDownWrapper_);
+      Blockly.browserEvents.unbind(thisField.mouseDownWrapper_);
     }
     if (thisField.mouseUpWrapper_) {
-      Blockly.unbindEvent_(thisField.mouseUpWrapper_);
+      Blockly.browserEvents.unbind(thisField.mouseUpWrapper_);
     }
     if (thisField.mouseMoveWrapper_) {
-      Blockly.unbindEvent_(thisField.mouseMoveWrapper_);
+      Blockly.browserEvents.unbind(thisField.mouseMoveWrapper_);
     }
   };
 };
@@ -252,7 +252,7 @@ Blockly.FieldAngle.prototype.showEditor_ = function() {
   Blockly.DropDownDiv.showPositionedByBlock(this, this.sourceBlock_);
 
   this.mouseDownWrapper_ =
-      Blockly.bindEvent_(this.handle_, 'mousedown', this, this.onMouseDown);
+      Blockly.browserEvents.bind(this.handle_, 'mousedown', this, this.onMouseDown);
 
   this.updateGraph_();
 };
@@ -261,8 +261,8 @@ Blockly.FieldAngle.prototype.showEditor_ = function() {
  * @param {!Event} e Mouse move event.
  */
 Blockly.FieldAngle.prototype.onMouseDown = function() {
-  this.mouseMoveWrapper_ = Blockly.bindEvent_(document.body, 'mousemove', this, this.onMouseMove);
-  this.mouseUpWrapper_ = Blockly.bindEvent_(document.body, 'mouseup', this, this.onMouseUp);
+  this.mouseMoveWrapper_ = Blockly.browserEvents.bind(document.body, 'mousemove', this, this.onMouseMove);
+  this.mouseUpWrapper_ = Blockly.browserEvents.bind(document.body, 'mouseup', this, this.onMouseUp);
 };
 
 /**
@@ -270,8 +270,8 @@ Blockly.FieldAngle.prototype.onMouseDown = function() {
  * @param {!Event} e Mouse move event.
  */
 Blockly.FieldAngle.prototype.onMouseUp = function() {
-  Blockly.unbindEvent_(this.mouseMoveWrapper_);
-  Blockly.unbindEvent_(this.mouseUpWrapper_);
+  Blockly.browserEvents.unbind(this.mouseMoveWrapper_);
+  Blockly.browserEvents.unbind(this.mouseUpWrapper_);
 };
 
 /**

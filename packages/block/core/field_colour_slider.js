@@ -26,6 +26,7 @@
 
 goog.provide('Blockly.FieldColourSlider');
 
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.Field');
 goog.require('Blockly.DropDownDiv');
 goog.require('goog.dom');
@@ -341,7 +342,7 @@ Blockly.FieldColourSlider.prototype.showEditor_ = function() {
     button.appendChild(image);
     div.appendChild(button);
     Blockly.FieldColourSlider.eyedropperEventData_ =
-        Blockly.bindEventWithChecks_(button, 'click', this,
+        Blockly.browserEvents.conditionalBind(button, 'click', this,
             this.activateEyedropperInternal_);
   }
 
@@ -378,7 +379,7 @@ Blockly.FieldColourSlider.prototype.dispose = function() {
     goog.events.unlistenByKey(Blockly.FieldColourSlider.brightnessChangeEventKey_);
   }
   if (Blockly.FieldColourSlider.eyedropperEventData_) {
-    Blockly.unbindEvent_(Blockly.FieldColourSlider.eyedropperEventData_);
+    Blockly.browserEvents.unbind(Blockly.FieldColourSlider.eyedropperEventData_);
   }
   Blockly.Events.setGroup(false);
   Blockly.FieldColourSlider.superClass_.dispose.call(this);

@@ -26,6 +26,7 @@
 
 goog.provide('Blockly.FlyoutButton');
 
+goog.require('Blockly.browserEvents');
 goog.require('goog.dom');
 goog.require('goog.math.Coordinate');
 
@@ -80,7 +81,7 @@ Blockly.FlyoutButton.prototype.width = 0;
 Blockly.FlyoutButton.prototype.height = 40; // Can't be computed like the width
 
 /**
- * Opaque data that can be passed to Blockly.unbindEvent_.
+ * Opaque data that can be passed to Blockly.browserEvents.unbind.
  * @type {Array.<!Array>}
  * @private
  */
@@ -159,7 +160,7 @@ Blockly.FlyoutButton.prototype.createDom = function() {
 
   this.addTextSvg(this.isLabel_);
 
-  this.mouseUpWrapper_ = Blockly.bindEventWithChecks_(this.svgGroup_, 'mouseup',
+  this.mouseUpWrapper_ = Blockly.browserEvents.conditionalBind(this.svgGroup_, 'mouseup',
       this, this.onMouseUp_);
   return this.svgGroup_;
 };
@@ -287,7 +288,7 @@ Blockly.FlyoutButton.prototype.getPosition = function() {
  */
 Blockly.FlyoutButton.prototype.dispose = function() {
   if (this.onMouseUpWrapper_) {
-    Blockly.unbindEvent_(this.onMouseUpWrapper_);
+    Blockly.browserEvents.unbind(this.onMouseUpWrapper_);
   }
   if (this.svgGroup_) {
     goog.dom.removeNode(this.svgGroup_);

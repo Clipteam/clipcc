@@ -30,6 +30,7 @@
  */
 goog.provide('Blockly.ContextMenu');
 
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.Events.BlockCreate');
 goog.require('Blockly.scratchBlocksUtils');
 goog.require('Blockly.utils');
@@ -50,7 +51,7 @@ goog.require('goog.userAgent');
 Blockly.ContextMenu.currentBlock = null;
 
 /**
- * Opaque data that can be passed to unbindEvent_.
+ * Opaque data that can be passed to browserEvents.unbind.
  * @type {Array.<!Array>}
  * @private
  */
@@ -157,7 +158,7 @@ Blockly.ContextMenu.createWidget_ = function(menu) {
   const menuDom = menu.getElement();
   Blockly.utils.addClass(menuDom, 'blocklyContextMenu');
   // Prevent system context menu when right-clicking a Blockly context menu.
-  Blockly.bindEventWithChecks_(
+  Blockly.browserEvents.conditionalBind(
       menuDom, 'contextmenu', null, Blockly.utils.noEvent);
   // Enable autofocus after the initial render to avoid issue #1329.
   menu.setAllowAutoFocus(true);
@@ -170,7 +171,7 @@ Blockly.ContextMenu.hide = function() {
   Blockly.WidgetDiv.hideIfOwner(Blockly.ContextMenu);
   Blockly.ContextMenu.currentBlock = null;
   if (Blockly.ContextMenu.eventWrapper_) {
-    Blockly.unbindEvent_(Blockly.ContextMenu.eventWrapper_);
+    Blockly.browserEvents.unbind(Blockly.ContextMenu.eventWrapper_);
   }
 };
 

@@ -26,6 +26,7 @@
 
 goog.provide('Blockly.Bubble');
 
+goog.require('Blockly.browserEvents');
 goog.require('Blockly.Touch');
 goog.require('Blockly.Workspace');
 goog.require('goog.dom');
@@ -74,10 +75,10 @@ Blockly.Bubble = function(workspace, content, shape, anchorXY,
   this.rendered_ = true;
 
   if (!workspace.options.readOnly) {
-    Blockly.bindEventWithChecks_(
+    Blockly.browserEvents.conditionalBind(
         this.bubbleBack_, 'mousedown', this, this.bubbleMouseDown_);
     if (this.resizeGroup_) {
-      Blockly.bindEventWithChecks_(
+      Blockly.browserEvents.conditionalBind(
           this.resizeGroup_, 'mousedown', this, this.resizeMouseDown_);
     }
   }
@@ -141,11 +142,11 @@ Blockly.Bubble.prototype.resizeCallback_ = null;
  */
 Blockly.Bubble.unbindDragEvents_ = function() {
   if (Blockly.Bubble.onMouseUpWrapper_) {
-    Blockly.unbindEvent_(Blockly.Bubble.onMouseUpWrapper_);
+    Blockly.browserEvents.unbind(Blockly.Bubble.onMouseUpWrapper_);
     Blockly.Bubble.onMouseUpWrapper_ = null;
   }
   if (Blockly.Bubble.onMouseMoveWrapper_) {
-    Blockly.unbindEvent_(Blockly.Bubble.onMouseMoveWrapper_);
+    Blockly.browserEvents.unbind(Blockly.Bubble.onMouseMoveWrapper_);
     Blockly.Bubble.onMouseMoveWrapper_ = null;
   }
 };
@@ -345,9 +346,9 @@ Blockly.Bubble.prototype.resizeMouseDown_ = function(e) {
   this.workspace_.startDrag(e, new goog.math.Coordinate(
       this.workspace_.RTL ? -this.width_ : this.width_, this.height_));
 
-  Blockly.Bubble.onMouseUpWrapper_ = Blockly.bindEventWithChecks_(document,
+  Blockly.Bubble.onMouseUpWrapper_ = Blockly.browserEvents.conditionalBind(document,
       'mouseup', this, Blockly.Bubble.bubbleMouseUp_);
-  Blockly.Bubble.onMouseMoveWrapper_ = Blockly.bindEventWithChecks_(document,
+  Blockly.Bubble.onMouseMoveWrapper_ = Blockly.browserEvents.conditionalBind(document,
       'mousemove', this, this.resizeMouseMove_);
   this.workspace_.hideChaff();
   // This event has been handled.  No need to bubble up to the document.

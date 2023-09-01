@@ -26,6 +26,7 @@
 
 goog.provide('Blockly.Scrollbar');
 
+goog.require('Blockly.browserEvents');
 goog.require('goog.dom');
 goog.require('goog.events');
 
@@ -82,9 +83,9 @@ Blockly.Scrollbar = function(workspace, horizontal, opt_pair, opt_class) {
     this.positionAttribute_ = 'y';
   }
   const scrollbar = this;
-  this.onMouseDownBarWrapper_ = Blockly.bindEventWithChecks_(
+  this.onMouseDownBarWrapper_ = Blockly.browserEvents.conditionalBind(
       this.svgBackground_, 'mousedown', scrollbar, scrollbar.onMouseDownBar_);
-  this.onMouseDownHandleWrapper_ = Blockly.bindEventWithChecks_(this.svgHandle_,
+  this.onMouseDownHandleWrapper_ = Blockly.browserEvents.conditionalBind(this.svgHandle_,
       'mousedown', scrollbar, scrollbar.onMouseDownHandle_);
 };
 
@@ -186,9 +187,9 @@ Blockly.Scrollbar.metricsAreEquivalent_ = function(first, second) {
  */
 Blockly.Scrollbar.prototype.dispose = function() {
   this.cleanUp_();
-  Blockly.unbindEvent_(this.onMouseDownBarWrapper_);
+  Blockly.browserEvents.unbind(this.onMouseDownBarWrapper_);
   this.onMouseDownBarWrapper_ = null;
-  Blockly.unbindEvent_(this.onMouseDownHandleWrapper_);
+  Blockly.browserEvents.unbind(this.onMouseDownHandleWrapper_);
   this.onMouseDownHandleWrapper_ = null;
 
   goog.dom.removeNode(this.outerSvg_);
@@ -593,9 +594,9 @@ Blockly.Scrollbar.prototype.onMouseDownHandle_ = function(e) {
 
   // Record the current mouse position.
   this.startDragMouse_ = this.horizontal_ ? e.clientX : e.clientY;
-  Blockly.Scrollbar.onMouseUpWrapper_ = Blockly.bindEventWithChecks_(document,
+  Blockly.Scrollbar.onMouseUpWrapper_ = Blockly.browserEvents.conditionalBind(document,
       'mouseup', this, this.onMouseUpHandle_);
-  Blockly.Scrollbar.onMouseMoveWrapper_ = Blockly.bindEventWithChecks_(document,
+  Blockly.Scrollbar.onMouseMoveWrapper_ = Blockly.browserEvents.conditionalBind(document,
       'mousemove', this, this.onMouseMoveHandle_);
   // When the scrollbars are clicked, hide the WidgetDiv/DropDownDiv without
   // animation in anticipation of a workspace move.
@@ -637,11 +638,11 @@ Blockly.Scrollbar.prototype.onMouseUpHandle_ = function() {
 Blockly.Scrollbar.prototype.cleanUp_ = function() {
   this.workspace_.hideChaff(true);
   if (Blockly.Scrollbar.onMouseUpWrapper_) {
-    Blockly.unbindEvent_(Blockly.Scrollbar.onMouseUpWrapper_);
+    Blockly.browserEvents.unbind(Blockly.Scrollbar.onMouseUpWrapper_);
     Blockly.Scrollbar.onMouseUpWrapper_ = null;
   }
   if (Blockly.Scrollbar.onMouseMoveWrapper_) {
-    Blockly.unbindEvent_(Blockly.Scrollbar.onMouseMoveWrapper_);
+    Blockly.browserEvents.unbind(Blockly.Scrollbar.onMouseMoveWrapper_);
     Blockly.Scrollbar.onMouseMoveWrapper_ = null;
   }
 };
