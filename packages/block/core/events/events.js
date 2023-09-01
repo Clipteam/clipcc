@@ -327,9 +327,8 @@ Blockly.Events.setGroup = function(state) {
  * Compute a list of the IDs of the specified block and all its descendants.
  * @param {!Blockly.Block} block The root block.
  * @return {!Array.<string>} List of block IDs.
- * @private
  */
-Blockly.Events.getDescendantIds_ = function(block) {
+Blockly.Events.getDescendantIds = function(block) {
   const ids = [];
   const descendants = block.getDescendants(false);
   for (let i = 0, descendant; descendant = descendants[i]; i++) {

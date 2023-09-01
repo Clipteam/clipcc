@@ -48,7 +48,7 @@ Blockly.Events.BlockDelete = function(block) {
   } else {
     this.oldXml = Blockly.Xml.blockToDom(block);
   }
-  this.ids = Blockly.Events.getDescendantIds_(block);
+  this.ids = Blockly.Events.getDescendantIds(block);
 };
 goog.inherits(Blockly.Events.BlockDelete, Blockly.Events.BlockBase);
 

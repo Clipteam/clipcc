@@ -45,7 +45,7 @@ Blockly.Events.BlockCreate = function(block) {
   } else {
     this.xml = Blockly.Xml.blockToDom(block);
   }
-  this.ids = Blockly.Events.getDescendantIds_(block);
+  this.ids = Blockly.Events.getDescendantIds(block);
 };
 goog.inherits(Blockly.Events.BlockCreate, Blockly.Events.BlockBase);
 
