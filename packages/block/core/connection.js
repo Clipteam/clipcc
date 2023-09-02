@@ -196,7 +196,7 @@ Blockly.Connection.prototype.connect_ = function(childConnection) {
     if (orphanBlock) {
       // Unable to reattach orphan.
       parentConnection.disconnect();
-      if (Blockly.Events.recordUndo) {
+      if (Blockly.Events.getRecordUndo()) {
         // Bump it off to the side after a moment.
         const group = Blockly.Events.getGroup();
         setTimeout(function() {
@@ -607,7 +607,7 @@ Blockly.Connection.prototype.disconnectInternal_ = function(parentBlock,
 Blockly.Connection.prototype.respawnShadow_ = function() {
   const parentBlock = this.getSourceBlock();
   const shadow = this.getShadowDom();
-  if (parentBlock.workspace && shadow && Blockly.Events.recordUndo) {
+  if (parentBlock.workspace && shadow && Blockly.Events.getRecordUndo()) {
     const blockShadow =
         Blockly.Xml.domToBlock(shadow, parentBlock.workspace);
     if (blockShadow.outputConnection) {
