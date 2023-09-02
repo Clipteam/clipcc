@@ -56,21 +56,11 @@ Blockly.Variables.CLOUD_PREFIX = '☁ ';
 /**
  * Find all user-created variables that are in use in the workspace.
  * For use by generators.
- * @param {!Blockly.Block|!Blockly.Workspace} root Root block or workspace.
+ * @param {!Blockly.Workspace} root Root workspace.
  * @return {!Array.<string>} Array of variable names.
  */
 Blockly.Variables.allUsedVariables = function(root) {
-  let blocks;
-  if (root instanceof Blockly.Block) {
-    // Root is Block.
-    blocks = root.getDescendants(false);
-  } else if (root instanceof Blockly.Workspace ||
-      root instanceof Blockly.WorkspaceSvg) {
-    // Root is Workspace.
-    blocks = root.getAllBlocks();
-  } else {
-    throw 'Not Block or Workspace: ' + root;
-  }
+  const blocks = root.getAllBlocks();
 
   const ignorableName = Blockly.Variables.noVariableText();
 
@@ -103,13 +93,6 @@ Blockly.Variables.allUsedVariables = function(root) {
  * @return {!Array.<Blockly.VariableModel>} Array of variable models.
  */
 Blockly.Variables.allVariables = function(root) {
-  if (root instanceof Blockly.Block) {
-    // Root is Block.
-    console.warn('Deprecated call to Blockly.Variables.allVariables ' +
-                 'with a block instead of a workspace.  You may want ' +
-                 'Blockly.Variables.allUsedVariables');
-    return {};
-  }
   return root.getAllVariables();
 };
 
