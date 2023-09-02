@@ -75,37 +75,6 @@ goog.require('goog.color');
 Blockly.cache3dSupported_ = null;
 
 /**
- * Convert a hue (HSV model) into an RGB hex triplet.
- * @param {number} hue Hue on a colour wheel (0-360).
- * @return {string} RGB code, e.g. '#5ba65b'.
- */
-Blockly.hueToRgb = function(hue) {
-  return goog.color.hsvToHex(hue, Blockly.constants.HSV_SATURATION,
-      Blockly.constants.HSV_VALUE * 255);
-};
-
-/**
- * Returns the dimensions of the specified SVG image.
- * @param {!Element} svg SVG image.
- * @return {!Object} Contains width and height properties.
- */
-Blockly.svgSize = function(svg) {
-  return {
-    width: svg.cachedWidth_,
-    height: svg.cachedHeight_
-  };
-};
-
-/**
- * Size the workspace when the contents change.  This also updates
- * scrollbars accordingly.
- * @param {!Blockly.WorkspaceSvg} workspace The workspace to resize.
- */
-Blockly.resizeSvgContents = function(workspace) {
-  workspace.resizeContents();
-};
-
-/**
  * Cancel the native context menu, unless the focus is on an HTML input widget.
  * @param {!Event} e Mouse down event.
  * @private

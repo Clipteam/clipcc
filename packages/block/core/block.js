@@ -852,7 +852,7 @@ Blockly.Block.prototype.clearShadowColour = function() {
 Blockly.Block.prototype.makeColour_ = function(colour) {
   const hue = Number(colour);
   if (!isNaN(hue)) {
-    return Blockly.hueToRgb(hue);
+    return Blockly.common.hueToRgb(hue);
   } else if (typeof colour === 'string' && colour.match(/^#[0-9a-fA-F]{6}$/)) {
     return colour;
   } else {

@@ -1916,7 +1916,7 @@ Blockly.WorkspaceSvg.getTopLevelWorkspaceMetrics_ = function() {
 
   // Contains height and width in CSS pixels.
   // svgSize is equivalent to the size of the injectionDiv at this point.
-  const svgSize = Blockly.svgSize(this.getParentSvg());
+  const svgSize = Blockly.common.svgSize(this.getParentSvg());
   if (this.toolbox_) {
     if (this.toolboxPosition == Blockly.constants.TOOLBOX_AT_TOP ||
         this.toolboxPosition == Blockly.constants.TOOLBOX_AT_BOTTOM) {

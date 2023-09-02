@@ -100,9 +100,40 @@ Blockly.common.setSelected = function(newSelection) {
 Blockly.common.draggingConnections = [];
 
 /**
+ * Convert a hue (HSV model) into an RGB hex triplet.
+ * @param {number} hue Hue on a colour wheel (0-360).
+ * @return {string} RGB code, e.g. '#5ba65b'.
+ */
+Blockly.common.hueToRgb = function(hue) {
+  return goog.color.hsvToHex(hue, Blockly.constants.HSV_SATURATION,
+      Blockly.constants.HSV_VALUE * 255);
+};
+
+/**
+ * Returns the dimensions of the specified SVG image.
+ * @param {!Element} svg SVG image.
+ * @return {!Object} Contains width and height properties.
+ */
+Blockly.common.svgSize = function(svg) {
+  return {
+    width: svg.cachedWidth_,
+    height: svg.cachedHeight_
+  };
+};
+
+/**
+ * Size the workspace when the contents change.  This also updates
+ * scrollbars accordingly.
+ * @param {!Blockly.WorkspaceSvg} workspace The workspace to resize.
+ */
+Blockly.common.resizeSvgContents = function(workspace) {
+  workspace.resizeContents();
+};
+
+/**
  * Size the SVG image to completely fill its container. Call this when the view
  * actually changes sizes (e.g. on a window resize/device orientation change).
- * See Blockly.resizeSvgContents to resize the workspace when the contents
+ * See Blockly.common.resizeSvgContents to resize the workspace when the contents
  * change (e.g. when a block is added or removed).
  * Record the height/width of the SVG image.
  * @param {!Blockly.WorkspaceSvg} workspace Any workspace in the SVG.

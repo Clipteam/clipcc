@@ -263,7 +263,7 @@ Blockly.Toolbox.prototype.position = function() {
     return;
   }
   const svg = this.workspace_.getParentSvg();
-  const svgSize = Blockly.svgSize(svg);
+  const svgSize = Blockly.common.svgSize(svg);
   if (this.horizontalLayout_) {
     treeDiv.style.left = '0';
     treeDiv.style.height = 'auto';
@@ -862,12 +862,12 @@ Blockly.Toolbox.Category.prototype.setColour = function(node) {
     if (colour.match(/^#[0-9a-fA-F]{6}$/)) {
       this.colour_ = colour;
     } else {
-      this.colour_ = Blockly.hueToRgb(colour);
+      this.colour_ = Blockly.common.hueToRgb(colour);
     }
     if (secondaryColour.match(/^#[0-9a-fA-F]{6}$/)) {
       this.secondaryColour_ = secondaryColour;
     } else {
-      this.secondaryColour_ = Blockly.hueToRgb(secondaryColour);
+      this.secondaryColour_ = Blockly.common.hueToRgb(secondaryColour);
     }
     this.hasColours_ = true;
   } else {
