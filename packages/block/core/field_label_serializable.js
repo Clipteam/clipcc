@@ -83,7 +83,7 @@ Blockly.FieldLabelSerializable.prototype.SERIALIZABLE = true;
 Blockly.FieldLabelSerializable.prototype.updateWidth = function() {
   // Set width of the field.
   // Unlike the base Field class, this doesn't add space to editable fields.
-  this.size_.width = Blockly.Field.getCachedWidth(this.textElement_);
+  this.size_.width = Blockly.utils.getTextWidth(this.textElement_);
 };
 
 /**

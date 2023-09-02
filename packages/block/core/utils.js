@@ -948,3 +948,78 @@ Blockly.utils.startsWith = function(str, prefix) {
 Blockly.utils.toRadians = function(angleDegrees) {
   return angleDegrees * Math.PI / 180;
 };
+
+/**
+ * Temporary cache of text widths.
+ * @type {Object}
+ * @private
+ */
+Blockly.utils.cacheWidths_ = null;
+
+/**
+ * Number of current references to cache.
+ * @type {number}
+ * @private
+ */
+Blockly.utils.cacheReference_ = 0;
+
+/**
+ * Gets the width of a text element, caching it in the process.
+ * @param {!Element} textElement An SVG 'text' element.
+ * @return {number} Width of element.
+ */
+Blockly.utils.getTextWidth = function(textElement) {
+  const key = textElement.textContent + '\n' + textElement.className.baseVal;
+  let width;
+
+  // Return the cached width if it exists.
+  if (Blockly.utils.cacheWidths_) {
+    width = Blockly.utils.cacheWidths_[key];
+    if (width) {
+      return width;
+    }
+  }
+
+  // Attempt to compute fetch the width of the SVG text element.
+  try {
+    if (goog.userAgent.IE || goog.userAgent.EDGE) {
+      width = textElement.getBBox().width;
+    } else {
+      width = textElement.getComputedTextLength();
+    }
+  } catch (e) {
+    // In other cases where we fail to geth the computed text. Instead, use an
+    // approximation and do not cache the result. At some later point in time
+    // when the block is inserted into the visible DOM, this method will be
+    // called again and, at that point in time, will not throw an exception.
+    return textElement.textContent.length * 8;
+  }
+
+  // Cache the computed width and return.
+  if (Blockly.utils.cacheWidths_) {
+    Blockly.utils.cacheWidths_[key] = width;
+  }
+  return width;
+};
+
+/**
+ * Start caching field widths.  Every call to this function MUST also call
+ * stopCache.  Caches must not survive between execution threads.
+ */
+Blockly.utils.startTextWidthCache = function() {
+  Blockly.utils.cacheReference_++;
+  if (!Blockly.utils.cacheWidths_) {
+    Blockly.utils.cacheWidths_ = {};
+  }
+};
+
+/**
+ * Stop caching field widths.  Unless caching was already on when the
+ * corresponding call to startCache was made.
+ */
+Blockly.utils.stopTextWidthCache = function() {
+  Blockly.utils.cacheReference_--;
+  if (!Blockly.utils.cacheReference_) {
+    Blockly.utils.cacheWidths_ = null;
+  }
+};

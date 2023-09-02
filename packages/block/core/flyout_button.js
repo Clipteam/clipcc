@@ -200,7 +200,7 @@ Blockly.FlyoutButton.prototype.addTextSvg = function(isLabel) {
       this.svgGroup_);
   svgText.textContent = Blockly.utils.replaceMessageReferences(this.text_);
 
-  this.width = Blockly.Field.getCachedWidth(svgText);
+  this.width = Blockly.utils.getTextWidth(svgText);
 
   if (!isLabel) {
     this.width += 2 * Blockly.FlyoutButton.MARGIN;

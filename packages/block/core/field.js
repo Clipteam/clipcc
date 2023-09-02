@@ -110,20 +110,6 @@ Blockly.Field.fromJson = function(options) {
   return null;
 };
 
-/**
- * Temporary cache of text widths.
- * @type {Object}
- * @private
- */
-Blockly.Field.cacheWidths_ = null;
-
-/**
- * Number of current references to cache.
- * @type {number}
- * @private
- */
-Blockly.Field.cacheReference_ = 0;
-
 
 /**
  * Name of field.  Unique within each block.
@@ -478,7 +464,7 @@ Blockly.Field.prototype.render_ = function() {
  **/
 Blockly.Field.prototype.updateWidth = function() {
   // Calculate width of field
-  let width = Blockly.Field.getCachedWidth(this.textElement_);
+  let width = Blockly.utils.getTextWidth(this.textElement_);
 
   // Add padding to left and right of text.
   if (this.EDITABLE) {
@@ -499,67 +485,6 @@ Blockly.Field.prototype.updateWidth = function() {
 
   // Set width of the field.
   this.size_.width = width;
-};
-
-/**
- * Gets the width of a text element, caching it in the process.
- * @param {!Element} textElement An SVG 'text' element.
- * @return {number} Width of element.
- */
-Blockly.Field.getCachedWidth = function(textElement) {
-  const key = textElement.textContent + '\n' + textElement.className.baseVal;
-  let width;
-
-  // Return the cached width if it exists.
-  if (Blockly.Field.cacheWidths_) {
-    width = Blockly.Field.cacheWidths_[key];
-    if (width) {
-      return width;
-    }
-  }
-
-  // Attempt to compute fetch the width of the SVG text element.
-  try {
-    if (goog.userAgent.IE || goog.userAgent.EDGE) {
-      width = textElement.getBBox().width;
-    } else {
-      width = textElement.getComputedTextLength();
-    }
-  } catch (e) {
-    // In other cases where we fail to geth the computed text. Instead, use an
-    // approximation and do not cache the result. At some later point in time
-    // when the block is inserted into the visible DOM, this method will be
-    // called again and, at that point in time, will not throw an exception.
-    return textElement.textContent.length * 8;
-  }
-
-  // Cache the computed width and return.
-  if (Blockly.Field.cacheWidths_) {
-    Blockly.Field.cacheWidths_[key] = width;
-  }
-  return width;
-};
-
-/**
- * Start caching field widths.  Every call to this function MUST also call
- * stopCache.  Caches must not survive between execution threads.
- */
-Blockly.Field.startCache = function() {
-  Blockly.Field.cacheReference_++;
-  if (!Blockly.Field.cacheWidths_) {
-    Blockly.Field.cacheWidths_ = {};
-  }
-};
-
-/**
- * Stop caching field widths.  Unless caching was already on when the
- * corresponding call to startCache was made.
- */
-Blockly.Field.stopCache = function() {
-  Blockly.Field.cacheReference_--;
-  if (!Blockly.Field.cacheReference_) {
-    Blockly.Field.cacheWidths_ = null;
-  }
 };
 
 /**

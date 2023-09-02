@@ -379,7 +379,7 @@ Blockly.BlockSvg.prototype.getHeightWidth = function(opt_ignoreFields) {
  *   If true, also render block's parent, grandparent, etc.  Defaults to true.
  */
 Blockly.BlockSvg.prototype.render = function(opt_bubble) {
-  Blockly.Field.startCache();
+  Blockly.utils.startTextWidthCache();
   this.rendered = true;
 
   const oldMetrics = this.renderingMetrics_;
@@ -415,7 +415,7 @@ Blockly.BlockSvg.prototype.render = function(opt_bubble) {
       Blockly.common.resizeSvgContents(this.workspace);
     }
   }
-  Blockly.Field.stopCache();
+  Blockly.utils.stopTextWidthCache();
 };
 
 /**

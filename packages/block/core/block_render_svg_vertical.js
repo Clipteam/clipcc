@@ -166,7 +166,7 @@ Blockly.BlockSvg.prototype.getHeightWidth = function() {
  *   If true, also render block's parent, grandparent, etc.  Defaults to true.
  */
 Blockly.BlockSvg.prototype.render = function(opt_bubble) {
-  Blockly.Field.startCache();
+  Blockly.utils.startTextWidthCache();
   this.rendered = true;
 
   let cursorX = Blockly.renderer.constants.SEP_SPACE_X;
@@ -219,7 +219,7 @@ Blockly.BlockSvg.prototype.render = function(opt_bubble) {
       Blockly.common.resizeSvgContents(this.workspace);
     }
   }
-  Blockly.Field.stopCache();
+  Blockly.utils.stopTextWidthCache();
   this.updateObserve();
 };
 

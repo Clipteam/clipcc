@@ -62,7 +62,7 @@ Blockly.inject.inject = function(container, opt_options) {
 
   // Open the Field text cache and leave it open. See this issue for more information
   // https://github.com/LLK/scratch-blocks/issues/1004
-  Blockly.Field.startCache();
+  Blockly.utils.startTextWidthCache();
 
   const svg = Blockly.inject.createDom_(subContainer, options);
 

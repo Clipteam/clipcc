@@ -297,9 +297,9 @@ Blockly.BlockSvg.prototype.setParent = function(newParent) {
   if (newParent == oldParent) {
     return;
   }
-  Blockly.Field.startCache();
+  Blockly.utils.startTextWidthCache();
   Blockly.BlockSvg.superClass_.setParent.call(this, newParent);
-  Blockly.Field.stopCache();
+  Blockly.utils.stopTextWidthCache();
 
   const svgRoot = this.getSvgRoot();
 
@@ -835,7 +835,7 @@ Blockly.BlockSvg.prototype.dispose = function(healStack, animate) {
     return;
   }
   Blockly.Tooltip.hide();
-  Blockly.Field.startCache();
+  Blockly.utils.startTextWidthCache();
   // Save the block's workspace temporarily so we can resize the
   // contents once the block is disposed.
   const blockWorkspace = this.workspace;
@@ -874,7 +874,7 @@ Blockly.BlockSvg.prototype.dispose = function(healStack, animate) {
   // Sever JavaScript to DOM connections.
   this.svgGroup_ = null;
   this.svgPath_ = null;
-  Blockly.Field.stopCache();
+  Blockly.utils.stopTextWidthCache();
 };
 
 /**
