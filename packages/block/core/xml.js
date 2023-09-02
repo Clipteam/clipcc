@@ -424,13 +424,6 @@ Blockly.Xml.clearWorkspaceAndLoadFromXml = function(xml, workspace) {
  * @return {Array.<string>} An array containing new block IDs.
  */
 Blockly.Xml.domToWorkspace = function(xml, workspace) {
-  if (xml instanceof Blockly.Workspace) {
-    const swap = xml;
-    xml = workspace;
-    workspace = swap;
-    console.warn('Deprecated call to Blockly.Xml.domToWorkspace, ' +
-                 'swap the arguments.');
-  }
   let width;  // Not used in LTR.
   if (workspace.RTL) {
     width = workspace.getWidth();
@@ -570,13 +563,6 @@ Blockly.Xml.appendDomToWorkspace = function(xml, workspace) {
  * @return {!Blockly.Block} The root block created.
  */
 Blockly.Xml.domToBlock = function(xmlBlock, workspace) {
-  if (xmlBlock instanceof Blockly.Workspace) {
-    const swap = xmlBlock;
-    xmlBlock = workspace;
-    workspace = swap;
-    console.warn('Deprecated call to Blockly.Xml.domToBlock, ' +
-                 'swap the arguments.');
-  }
   // Create top-level block.
   Blockly.Events.disable();
   const variablesBeforeCreation = workspace.getAllVariables();
