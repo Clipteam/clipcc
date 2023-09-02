@@ -27,11 +27,10 @@
 goog.provide('Blockly.BlockSvg.render');
 
 goog.require('Blockly.BlockSvg');
+goog.require('Blockly.renderer.constants');
 goog.require('Blockly.scratchBlocksUtils');
 goog.require('Blockly.utils');
 
-
-// UI constants for rendering blocks.
 
 /**
  * Change the colour of a block.
