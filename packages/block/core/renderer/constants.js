@@ -66,6 +66,12 @@ Blockly.renderer.constants.MIN_BLOCK_X_SHADOW_OUTPUT = 10 * Blockly.renderer.con
 Blockly.renderer.constants.MIN_BLOCK_Y = 12 * Blockly.renderer.constants.GRID_UNIT;
 
 /**
+ * Width of horizontal puzzle tab.
+ * @const
+ */
+Blockly.renderer.constants.TAB_WIDTH = 2 * Blockly.renderer.constants.GRID_UNIT;
+
+/**
  * Height of extra row after a statement input.
  * @const
  */
