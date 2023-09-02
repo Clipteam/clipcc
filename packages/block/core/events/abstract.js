@@ -103,7 +103,7 @@ Blockly.Events.Abstract.prototype.run = function(_forward) {
  * @protected
  */
 Blockly.Events.Abstract.prototype.getEventWorkspace_ = function() {
-  const workspace = Blockly.Workspace.getById(this.workspaceId);
+  const workspace = Blockly.common.getWorkspaceById(this.workspaceId);
   if (!workspace) {
     throw Error('Workspace is null. Event must have been generated from real' +
       ' Blockly events.');

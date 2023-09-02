@@ -14,6 +14,37 @@ goog.provide('Blockly.common');
 
 
 /**
+ * Database of all workspaces.
+ * @private
+ */
+Blockly.common.WorkspaceDB_ = Object.create(null);
+
+/**
+ * Find the workspace with the specified ID.
+ * @param {string} id ID of workspace to find.
+ * @return {Blockly.Workspace} The sought after workspace or null if not found.
+ */
+Blockly.common.getWorkspaceById = function(id) {
+  return Blockly.common.WorkspaceDB_[id] || null;
+};
+
+/**
+ * Register a workspace in the workspace db.
+ * @param {Blockly.Workspace} workspace The workspace to register.
+ */
+Blockly.common.registerWorkspace = function(workspace) {
+  Blockly.common.WorkspaceDB_[workspace.id] = workspace;
+}
+
+/**
+ * Unregister a workspace from the workspace db.
+ * @param {Blockly.Workspace} workspace The workspace to delete.
+ */
+Blockly.common.unregisterWorkpace = function(workspace) {
+  delete Blockly.common.WorkspaceDB_[workspace.id];
+};
+
+/**
  * The main workspace most recently used.
  * Set by Blockly.WorkspaceSvg.prototype.markFocused
  * @type {Blockly.Workspace}

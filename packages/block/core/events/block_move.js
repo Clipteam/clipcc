@@ -104,7 +104,7 @@ Blockly.Events.BlockMove.prototype.recordNew = function() {
  * @private
  */
 Blockly.Events.BlockMove.prototype.currentLocation_ = function() {
-  const workspace = Blockly.Workspace.getById(this.workspaceId);
+  const workspace = Blockly.common.getWorkspaceById(this.workspaceId);
   const block = workspace.getBlockById(this.blockId);
   const location = {};
   const parent = block.getParent();
