@@ -99,3 +99,5 @@ Blockly.Events.BlockDelete.prototype.run = function(forward) {
     Blockly.Xml.domToWorkspace(xml, workspace);
   }
 };
+
+Blockly.Events.register(Blockly.Events.BLOCK_DELETE, Blockly.Events.BlockDelete);

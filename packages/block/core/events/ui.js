@@ -89,3 +89,5 @@ Blockly.Events.Ui.prototype.fromJson = function(json) {
   this.newValue = json['newValue'];
   this.blockId = json['blockId'];
 };
+
+Blockly.Events.register(Blockly.Events.UI, Blockly.Events.Ui);

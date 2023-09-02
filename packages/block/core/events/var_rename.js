@@ -83,3 +83,5 @@ Blockly.Events.VarRename.prototype.run = function(forward) {
     workspace.renameVariableById(this.varId, this.oldName);
   }
 };
+
+Blockly.Events.register(Blockly.Events.VAR_RENAME, Blockly.Events.VarRename);

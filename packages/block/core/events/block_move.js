@@ -181,3 +181,5 @@ Blockly.Events.BlockMove.prototype.run = function(forward) {
     }
   }
 };
+
+Blockly.Events.register(Blockly.Events.BLOCK_MOVE, Blockly.Events.BlockMove);

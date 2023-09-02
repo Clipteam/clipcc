@@ -134,3 +134,5 @@ Blockly.Events.CommentCreate.prototype.run = function(forward) {
     }
   }
 };
+
+Blockly.Events.register(Blockly.Events.COMMENT_CREATE, Blockly.Events.CommentCreate);

@@ -68,3 +68,5 @@ Blockly.Events.DragBlockOutside.prototype.fromJson = function(json) {
   Blockly.Events.DragBlockOutside.superClass_.fromJson.call(this, json);
   this.isOutside = json['isOutside'];
 };
+
+Blockly.Events.register(Blockly.Events.DRAG_OUTSIDE, Blockly.Events.DragBlockOutside);

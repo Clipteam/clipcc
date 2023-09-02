@@ -102,3 +102,5 @@ Blockly.Events.CommentDelete.prototype.run = function(forward) {
     }
   }
 };
+
+Blockly.Events.register(Blockly.Events.COMMENT_DELETE, Blockly.Events.CommentDelete);

@@ -339,62 +339,48 @@ Blockly.Events.getDescendantIds = function(block) {
 };
 
 /**
+ * The set of all registered events, keyed by field type.
+ * @type {!Object<string, !{fromJson: Function}>}
+ * @private
+ */
+Blockly.Events.TYPE_MAP_ = {};
+
+/**
+ * Registers a event type. May also override an existing event type.
+ * Blockly.Events.fromJson uses this registry to find the appropriate field.
+ * @param {!string} type The event type name as used in the JSON definition.
+ * @param {!{fromJson: Function}} eventClass The event class containing a
+ *     fromJson function that can construct an instance of the event.
+ * @throws {Error} if the type name is empty, or the eventClass is not an
+ *     object containing a fromJson function.
+ */
+Blockly.Events.register = function(type, eventClass) {
+  if (typeof type !== 'string' || goog.string.isEmptyOrWhitespace(type)) {
+    throw new Error('Invalid event type "' + type + '"');
+  }
+  if (!goog.isObject(eventClass) || typeof eventClass.prototype.fromJson !== 'function') {
+    throw new Error('Event "' + eventClass +
+        '" must have a fromJson function');
+  }
+  Blockly.Events.TYPE_MAP_[type] = eventClass;
+};
+
+/**
  * Decode the JSON into an event.
  * @param {!Object} json JSON representation.
  * @param {!Blockly.Workspace} workspace Target workspace for event.
  * @return {!Blockly.Events.Abstract} The event represented by the JSON.
  */
 Blockly.Events.fromJson = function(json, workspace) {
-  let event;
-  switch (json.type) {
-    case Blockly.Events.CREATE:
-      event = new Blockly.Events.BlockCreate(null);
-      break;
-    case Blockly.Events.DELETE:
-      event = new Blockly.Events.BlockDelete(null);
-      break;
-    case Blockly.Events.CHANGE:
-      event = new Blockly.Events.BlockChange(null);
-      break;
-    case Blockly.Events.MOVE:
-      event = new Blockly.Events.BlockMove(null);
-      break;
-    case Blockly.Events.VAR_CREATE:
-      event = new Blockly.Events.VarCreate(null);
-      break;
-    case Blockly.Events.VAR_DELETE:
-      event = new Blockly.Events.VarDelete(null);
-      break;
-    case Blockly.Events.VAR_RENAME:
-      event = new Blockly.Events.VarRename(null);
-      break;
-    case Blockly.Events.COMMENT_CREATE:
-      event = new Blockly.Events.CommentCreate(null);
-      break;
-    case Blockly.Events.COMMENT_CHANGE:
-      event = new Blockly.Events.CommentChange(null);
-      break;
-    case Blockly.Events.COMMENT_MOVE:
-      event = new Blockly.Events.CommentMove(null);
-      break;
-    case Blockly.Events.COMMENT_DELETE:
-      event = new Blockly.Events.CommentDelete(null);
-      break;
-    case Blockly.Events.UI:
-      event = new Blockly.Events.Ui(null);
-      break;
-    case Blockly.Events.DRAG_OUTSIDE:
-      event = new Blockly.Events.DragBlockOutside(null);
-      break;
-    case Blockly.Events.END_DRAG:
-      event = new Blockly.Events.EndBlockDrag(null, false);
-      break;
-    default:
-      throw 'Unknown event type.';
+  const eventClass = Blockly.Events.TYPE_MAP_[json.type];
+  if (eventClass) {
+    const event = new eventClass(null);
+    event.fromJson(json);
+    event.workspaceId = workspace.id;
+    return event;
+  } else {
+    throw 'Unknown event type.';
   }
-  event.fromJson(json);
-  event.workspaceId = workspace.id;
-  return event;
 };
 
 /**

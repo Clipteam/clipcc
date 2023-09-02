@@ -107,3 +107,5 @@ Blockly.Events.CommentChange.prototype.run = function(forward) {
     comment.setText(contents.text);
   }
 };
+
+Blockly.Events.register(Blockly.Events.COMMENT_CHANGE, Blockly.Events.CommentChange);

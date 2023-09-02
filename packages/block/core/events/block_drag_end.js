@@ -79,3 +79,5 @@ Blockly.Events.EndBlockDrag.prototype.fromJson = function(json) {
   this.isOutside = json['isOutside'];
   this.xml = json['xml'];
 };
+
+Blockly.Events.register(Blockly.Events.END_DRAG, Blockly.Events.EndBlockDrag);

@@ -98,3 +98,5 @@ Blockly.Events.BlockCreate.prototype.run = function(forward) {
     }
   }
 };
+
+Blockly.Events.register(Blockly.Events.BLOCK_CREATE, Blockly.Events.BlockCreate);

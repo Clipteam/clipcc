@@ -147,3 +147,5 @@ Blockly.Events.BlockChange.prototype.run = function(forward) {
       console.warn('Unknown change type: ' + this.element);
   }
 };
+
+Blockly.Events.register(Blockly.Events.BLOCK_CHANGE, Blockly.Events.BlockChange);

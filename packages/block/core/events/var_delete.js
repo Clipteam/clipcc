@@ -88,3 +88,5 @@ Blockly.Events.VarDelete.prototype.run = function(forward) {
     workspace.createVariable(this.varName, this.varType, this.varId, this.isLocal, this.isCloud);
   }
 };
+
+Blockly.Events.register(Blockly.Events.VAR_DELETE, Blockly.Events.VarDelete);
