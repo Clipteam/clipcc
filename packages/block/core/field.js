@@ -50,8 +50,8 @@ goog.require('goog.userAgent');
  */
 Blockly.Field = function(text, opt_validator) {
   this.size_ = new goog.math.Size(
-      Blockly.BlockSvg.FIELD_WIDTH,
-      Blockly.BlockSvg.FIELD_HEIGHT);
+      Blockly.renderer.constants.FIELD_WIDTH,
+      Blockly.renderer.constants.FIELD_HEIGHT);
   this.setValue(text);
   this.setValidator(opt_validator);
 
@@ -60,7 +60,7 @@ Blockly.Field = function(text, opt_validator) {
    * Same for strings and numbers.
    * @type {number}
    */
-  this.maxDisplayLength = Blockly.BlockSvg.MAX_DISPLAY_LENGTH;
+  this.maxDisplayLength = Blockly.renderer.constants.MAX_DISPLAY_LENGTH;
 };
 
 
@@ -249,7 +249,7 @@ Blockly.Field.prototype.init = function() {
       {
         'class': this.className_,
         'x': fieldX,
-        'y': size.height / 2 + Blockly.BlockSvg.FIELD_TOP_PADDING,
+        'y': size.height / 2 + Blockly.renderer.constants.FIELD_TOP_PADDING,
         'dominant-baseline': 'middle',
         'dy': goog.userAgent.EDGE_OR_IE ? Blockly.Field.IE_TEXT_OFFSET : '0',
         'text-anchor': 'middle'
@@ -446,7 +446,7 @@ Blockly.Field.prototype.render_ = function() {
     // visible field (FIELD_WIDTH), center it there instead,
     // unless there is a drop-down arrow.
     if (this.sourceBlock_.isShadow() && !this.positionArrow) {
-      const minOffset = Blockly.BlockSvg.FIELD_WIDTH / 2;
+      const minOffset = Blockly.renderer.constants.FIELD_WIDTH / 2;
       if (this.sourceBlock_.RTL) {
         // X position starts at the left edge of the block, in both RTL and LTR.
         // First offset by the width of the block to move to the right edge,
@@ -454,7 +454,7 @@ Blockly.Field.prototype.render_ = function() {
         const minCenter = this.size_.width - minOffset;
         centerTextX = Math.min(minCenter, centerTextX);
       } else {
-        // (width / 2) should exceed Blockly.BlockSvg.FIELD_WIDTH / 2
+        // (width / 2) should exceed Blockly.renderer.constants.FIELD_WIDTH / 2
         // if the text is longer.
         centerTextX = Math.max(minOffset, centerTextX);
       }
@@ -482,7 +482,7 @@ Blockly.Field.prototype.updateWidth = function() {
 
   // Add padding to left and right of text.
   if (this.EDITABLE) {
-    width += Blockly.BlockSvg.EDITABLE_FIELD_PADDING;
+    width += Blockly.renderer.constants.EDITABLE_FIELD_PADDING;
   }
 
   // Adjust width for drop-down arrows.
@@ -494,7 +494,7 @@ Blockly.Field.prototype.updateWidth = function() {
 
   // Add padding to any drawn box.
   if (this.box_) {
-    width += 2 * Blockly.BlockSvg.BOX_FIELD_PADDING;
+    width += 2 * Blockly.renderer.constants.BOX_FIELD_PADDING;
   }
 
   // Set width of the field.

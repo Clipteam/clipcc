@@ -40,8 +40,8 @@ goog.require('Blockly.Field');
  *
  */
 Blockly.FieldVariableGetter = function(text, name, opt_varType) {
-  this.size_ = new goog.math.Size(Blockly.BlockSvg.FIELD_WIDTH,
-      Blockly.BlockSvg.FIELD_HEIGHT);
+  this.size_ = new goog.math.Size(Blockly.renderer.constants.FIELD_WIDTH,
+      Blockly.renderer.constants.FIELD_HEIGHT);
   this.text_ = text;
 
   /**
@@ -49,7 +49,7 @@ Blockly.FieldVariableGetter = function(text, name, opt_varType) {
    * Same for strings and numbers.
    * @type {number}
    */
-  this.maxDisplayLength = Blockly.BlockSvg.MAX_DISPLAY_LENGTH;
+  this.maxDisplayLength = Blockly.renderer.constants.MAX_DISPLAY_LENGTH;
 
   this.name_ = name;
   this.variableType_ = opt_varType ? opt_varType : '';

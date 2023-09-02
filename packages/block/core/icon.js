@@ -162,9 +162,9 @@ Blockly.Icon.prototype.renderIcon = function(cursorX) {
       'translate(' + cursorX + ',' + TOP_MARGIN + ')');
   this.computeIconLocation();
   if (this.block_.RTL) {
-    cursorX -= Blockly.BlockSvg.SEP_SPACE_X;
+    cursorX -= Blockly.renderer.constants.SEP_SPACE_X;
   } else {
-    cursorX += width + Blockly.BlockSvg.SEP_SPACE_X;
+    cursorX += width + Blockly.renderer.constants.SEP_SPACE_X;
   }
   return cursorX;
 };

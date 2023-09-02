@@ -411,7 +411,7 @@ Blockly.Bubble.prototype.setAnchorLocation = function(xy) {
 Blockly.Bubble.prototype.layoutBubble_ = function() {
   // Compute the preferred bubble location.
   let relativeLeft = -this.width_ / 4;
-  let relativeTop = -this.height_ - Blockly.BlockSvg.MIN_BLOCK_Y;
+  let relativeTop = -this.height_ - Blockly.renderer.constants.MIN_BLOCK_Y;
   // Prevent the bubble from being off-screen.
   const metrics = this.workspace_.getMetrics();
   metrics.viewWidth /= this.workspace_.scale;
@@ -434,7 +434,7 @@ Blockly.Bubble.prototype.layoutBubble_ = function() {
       relativeLeft = metrics.viewLeft - anchorX;
     } else if (metrics.viewLeft + metrics.viewWidth <
         anchorX + relativeLeft + this.width_ +
-        Blockly.BlockSvg.SEP_SPACE_X +
+        Blockly.renderer.constants.SEP_SPACE_X +
         Blockly.Scrollbar.scrollbarThickness) {
       // Slide the bubble left until it is onscreen.
       relativeLeft = metrics.viewLeft + metrics.viewWidth - anchorX -

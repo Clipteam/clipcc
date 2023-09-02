@@ -199,9 +199,9 @@ Blockly.ScratchBlockComment.prototype.renderIcon = function(cursorX, topMargin) 
       'translate(' + cursorX + ',' + topMargin + ')');
   this.computeIconLocation();
   if (this.block_.RTL) {
-    cursorX -= Blockly.BlockSvg.SEP_SPACE_X;
+    cursorX -= Blockly.renderer.constants.SEP_SPACE_X;
   } else {
-    cursorX += width + Blockly.BlockSvg.SEP_SPACE_X;
+    cursorX += width + Blockly.renderer.constants.SEP_SPACE_X;
   }
   return cursorX;
 };
@@ -308,7 +308,7 @@ Blockly.ScratchBlockComment.prototype.updateColour = function() {
 Blockly.ScratchBlockComment.prototype.autoPosition_ = function() {
   if (!this.needsAutoPositioning_) return;
   if (this.isMinimized_) {
-    const minimizedOffset = 4 * Blockly.BlockSvg.GRID_UNIT;
+    const minimizedOffset = 4 * Blockly.renderer.constants.GRID_UNIT;
     this.x_ = this.block_.RTL ?
         this.iconXY_.x - this.getBubbleSize().width - minimizedOffset :
         this.iconXY_.x + minimizedOffset;
@@ -321,7 +321,7 @@ Blockly.ScratchBlockComment.prototype.autoPosition_ = function() {
     const thisBlockWidth = Math.floor(this.block_.svgPath_.getBBox().width);
     const fullStackWidth = Math.floor(this.block_.getHeightWidth().width);
     const overhang = fullStackWidth - thisBlockWidth;
-    const offset = 8 * Blockly.BlockSvg.GRID_UNIT;
+    const offset = 8 * Blockly.renderer.constants.GRID_UNIT;
     this.x_ = this.block_.RTL ?
         this.iconXY_.x - this.width_ - overhang - offset :
         this.iconXY_.x + overhang + offset;

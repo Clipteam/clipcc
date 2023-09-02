@@ -542,13 +542,13 @@ Blockly.VerticalFlyout.prototype.layout_ = function(contents, gaps) {
       // The block moves a bit extra for the hat, but the block's rectangle
       // doesn't.  That's because the hat actually extends up from 0.
       block.moveBy(moveX,
-          cursorY + (block.startHat_ ? Blockly.BlockSvg.START_HAT_HEIGHT : 0));
+          cursorY + (block.startHat_ ? Blockly.renderer.constants.START_HAT_HEIGHT : 0));
 
       const rect = this.createRect_(block, this.RTL ? moveX - blockHW.width : moveX, cursorY, blockHW, i);
 
       this.addBlockListeners_(root, block, rect);
 
-      cursorY += blockHW.height + gaps[i] + (block.startHat_ ? Blockly.BlockSvg.START_HAT_HEIGHT : 0);
+      cursorY += blockHW.height + gaps[i] + (block.startHat_ ? Blockly.renderer.constants.START_HAT_HEIGHT : 0);
     } else if (item.type == 'button') {
       const button = item.button;
       const buttonSvg = button.createDom();

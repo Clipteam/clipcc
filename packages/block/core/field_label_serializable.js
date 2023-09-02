@@ -104,7 +104,7 @@ Blockly.FieldLabelSerializable.prototype.render_ = function() {
 
     // If half the text length is not at least center of
     // visible field (FIELD_WIDTH), center it there instead.
-    const minOffset = Blockly.BlockSvg.FIELD_WIDTH / 2;
+    const minOffset = Blockly.renderer.constants.FIELD_WIDTH / 2;
     if (this.sourceBlock_.RTL) {
       // X position starts at the left edge of the block, in both RTL and LTR.
       // First offset by the width of the block to move to the right edge,
@@ -112,7 +112,7 @@ Blockly.FieldLabelSerializable.prototype.render_ = function() {
       const minCenter = this.size_.width - minOffset;
       centerTextX = Math.min(minCenter, centerTextX);
     } else {
-      // (width / 2) should exceed Blockly.BlockSvg.FIELD_WIDTH / 2
+      // (width / 2) should exceed Blockly.renderer.constants.FIELD_WIDTH / 2
       // if the text is longer.
       centerTextX = Math.max(minOffset, centerTextX);
     }

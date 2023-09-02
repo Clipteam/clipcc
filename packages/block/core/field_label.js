@@ -87,7 +87,7 @@ Blockly.FieldLabel.prototype.init = function() {
   this.textElement_ = Blockly.utils.createSvgElement('text',
       {
         'class': 'blocklyText',
-        'y': Blockly.BlockSvg.FIELD_TOP_PADDING,
+        'y': Blockly.renderer.constants.FIELD_TOP_PADDING,
         'text-anchor': 'middle',
         'dominant-baseline': 'middle',
         'dy': goog.userAgent.EDGE_OR_IE ? Blockly.Field.IE_TEXT_OFFSET : '0'

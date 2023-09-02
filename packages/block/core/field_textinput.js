@@ -241,9 +241,9 @@ Blockly.FieldTextInput.prototype.showEditor_ = function(
   if (opt_withArrow) {
     // Move text in input to account for displayed drop-down arrow.
     if (this.sourceBlock_.RTL) {
-      htmlInput.style.paddingLeft = (this.arrowSize_ + Blockly.BlockSvg.DROPDOWN_ARROW_PADDING) + 'px';
+      htmlInput.style.paddingLeft = (this.arrowSize_ + Blockly.renderer.constants.DROPDOWN_ARROW_PADDING) + 'px';
     } else {
-      htmlInput.style.paddingRight = (this.arrowSize_ + Blockly.BlockSvg.DROPDOWN_ARROW_PADDING) + 'px';
+      htmlInput.style.paddingRight = (this.arrowSize_ + Blockly.renderer.constants.DROPDOWN_ARROW_PADDING) + 'px';
     }
     // Create the arrow.
     const dropDownArrow =
@@ -283,7 +283,7 @@ Blockly.FieldTextInput.prototype.showEditor_ = function(
 
   // Add animation transition properties
   const transitionProperties = 'box-shadow ' + Blockly.FieldTextInput.ANIMATION_TIME + 's';
-  if (Blockly.BlockSvg.FIELD_TEXTINPUT_ANIMATE_POSITIONING) {
+  if (Blockly.renderer.constants.FIELD_TEXTINPUT_ANIMATE_POSITIONING) {
     div.style.transition += ',padding ' + Blockly.FieldTextInput.ANIMATION_TIME + 's,' +
       'width ' + Blockly.FieldTextInput.ANIMATION_TIME + 's,' +
       'height ' + Blockly.FieldTextInput.ANIMATION_TIME + 's,' +
@@ -292,7 +292,7 @@ Blockly.FieldTextInput.prototype.showEditor_ = function(
   div.style.transition = transitionProperties;
   htmlInput.style.transition = 'font-size ' + Blockly.FieldTextInput.ANIMATION_TIME + 's';
   // The animated properties themselves
-  htmlInput.style.fontSize = Blockly.BlockSvg.FIELD_TEXTINPUT_FONTSIZE_FINAL + 'pt';
+  htmlInput.style.fontSize = Blockly.renderer.constants.FIELD_TEXTINPUT_FONTSIZE_FINAL + 'pt';
   div.style.boxShadow = '0px 0px 0px 4px ' + Blockly.Colours.fieldShadow;
 };
 
@@ -485,7 +485,7 @@ Blockly.FieldTextInput.prototype.resizeEditor_ = function() {
   }
 
   let width;
-  if (Blockly.BlockSvg.FIELD_TEXTINPUT_EXPAND_PAST_TRUNCATION) {
+  if (Blockly.renderer.constants.FIELD_TEXTINPUT_EXPAND_PAST_TRUNCATION) {
     // Resize the box based on the measured width of the text, pre-truncation
     let textWidth = Blockly.scratchBlocksUtils.measureText(
         Blockly.FieldTextInput.htmlInput_.style.fontSize,
@@ -502,11 +502,11 @@ Blockly.FieldTextInput.prototype.resizeEditor_ = function() {
     width = initialWidth;
   }
   // The width must be at least FIELD_WIDTH and at most FIELD_WIDTH_MAX_EDIT
-  width = Math.max(width, Blockly.BlockSvg.FIELD_WIDTH_MIN_EDIT * scale);
-  width = Math.min(width, Blockly.BlockSvg.FIELD_WIDTH_MAX_EDIT * scale);
+  width = Math.max(width, Blockly.renderer.constants.FIELD_WIDTH_MIN_EDIT * scale);
+  width = Math.min(width, Blockly.renderer.constants.FIELD_WIDTH_MAX_EDIT * scale);
   // Add 1px to width and height to account for border (pre-scale)
   div.style.width = (width / scale + 1) + 'px';
-  div.style.height = (Blockly.BlockSvg.FIELD_HEIGHT_MAX_EDIT + 1) + 'px';
+  div.style.height = (Blockly.renderer.constants.FIELD_HEIGHT_MAX_EDIT + 1) + 'px';
   div.style.transform = 'scale(' + scale + ')';
 
   // Use margin-left to animate repositioning of the box (value is unscaled).
@@ -555,9 +555,9 @@ Blockly.FieldTextInput.prototype.resizeEditor_ = function() {
 */
 Blockly.FieldTextInput.prototype.getBorderRadius = function() {
   if (this.sourceBlock_.getOutputShape() == Blockly.constants.OUTPUT_SHAPE_ROUND) {
-    return Blockly.BlockSvg.NUMBER_FIELD_CORNER_RADIUS;
+    return Blockly.renderer.constants.NUMBER_FIELD_CORNER_RADIUS;
   }
-  return Blockly.BlockSvg.TEXT_FIELD_CORNER_RADIUS;
+  return Blockly.renderer.constants.TEXT_FIELD_CORNER_RADIUS;
 };
 
 /**
@@ -580,7 +580,7 @@ Blockly.FieldTextInput.prototype.widgetDispose_ = function() {
     Blockly.Events.setGroup(false);
 
     // Animation of disposal
-    htmlInput.style.fontSize = Blockly.BlockSvg.FIELD_TEXTINPUT_FONTSIZE_INITIAL + 'pt';
+    htmlInput.style.fontSize = Blockly.renderer.constants.FIELD_TEXTINPUT_FONTSIZE_INITIAL + 'pt';
     div.style.boxShadow = '';
     // Resize to actual size of final source block.
     if (thisField.sourceBlock_) {
@@ -590,7 +590,7 @@ Blockly.FieldTextInput.prototype.widgetDispose_ = function() {
         div.style.height = (size.height + 1) + 'px';
       } else {
         div.style.width = (thisField.size_.width + 1) + 'px';
-        div.style.height = (Blockly.BlockSvg.FIELD_HEIGHT_MAX_EDIT + 1) + 'px';
+        div.style.height = (Blockly.renderer.constants.FIELD_HEIGHT_MAX_EDIT + 1) + 'px';
       }
     }
     div.style.marginLeft = 0;

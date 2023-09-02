@@ -39,7 +39,7 @@ goog.require('goog.math.Size');
 Blockly.FieldVerticalSeparator = function() {
   this.sourceBlock_ = null;
   this.width_ = 1;
-  this.height_ = Blockly.BlockSvg.ICON_SEPARATOR_HEIGHT;
+  this.height_ = Blockly.renderer.constants.ICON_SEPARATOR_HEIGHT;
   this.size_ = new goog.math.Size(this.width_, this.height_);
 };
 goog.inherits(Blockly.FieldVerticalSeparator, Blockly.Field);

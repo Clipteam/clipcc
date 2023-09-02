@@ -210,11 +210,11 @@ Blockly.FieldMatrix.prototype.init = function() {
   // Build the DOM.
   this.fieldGroup_ = Blockly.utils.createSvgElement('g', {}, null);
   this.size_.width = Blockly.FieldMatrix.THUMBNAIL_SIZE +
-    Blockly.FieldMatrix.ARROW_SIZE + (Blockly.BlockSvg.DROPDOWN_ARROW_PADDING * 1.5);
+    Blockly.FieldMatrix.ARROW_SIZE + (Blockly.renderer.constants.DROPDOWN_ARROW_PADDING * 1.5);
 
   this.sourceBlock_.getSvgRoot().appendChild(this.fieldGroup_);
 
-  const thumbX = Blockly.BlockSvg.DROPDOWN_ARROW_PADDING / 2;
+  const thumbX = Blockly.renderer.constants.DROPDOWN_ARROW_PADDING / 2;
   const thumbY = (this.size_.height - Blockly.FieldMatrix.THUMBNAIL_SIZE) / 2;
   const thumbnail = Blockly.utils.createSvgElement('g', {
     'transform': 'translate(' + thumbX + ', ' + thumbY + ')',
@@ -241,7 +241,7 @@ Blockly.FieldMatrix.prototype.init = function() {
 
   if (!this.arrow_) {
     const arrowX = Blockly.FieldMatrix.THUMBNAIL_SIZE +
-      Blockly.BlockSvg.DROPDOWN_ARROW_PADDING * 1.5;
+      Blockly.renderer.constants.DROPDOWN_ARROW_PADDING * 1.5;
     const arrowY = (this.size_.height - Blockly.FieldMatrix.ARROW_SIZE) / 2;
     this.arrow_ = Blockly.utils.createSvgElement('image', {
       'height': Blockly.FieldMatrix.ARROW_SIZE + 'px',

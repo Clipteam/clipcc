@@ -148,7 +148,7 @@ Blockly.FieldColour.prototype.getText = function() {
  * @return {!goog.math.Size} Height and width.
  */
 Blockly.FieldColour.prototype.getSize = function() {
-  return new goog.math.Size(Blockly.BlockSvg.FIELD_WIDTH, Blockly.BlockSvg.FIELD_HEIGHT);
+  return new goog.math.Size(Blockly.renderer.constants.FIELD_WIDTH, Blockly.renderer.constants.FIELD_HEIGHT);
 };
 
 /**

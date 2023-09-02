@@ -139,8 +139,8 @@ Blockly.FieldDropdown.prototype.init = function() {
   // If not in a shadow block, draw a box.
   if (!this.sourceBlock_.isShadow()) {
     this.box_ = Blockly.utils.createSvgElement('rect', {
-      'rx': Blockly.BlockSvg.CORNER_RADIUS,
-      'ry': Blockly.BlockSvg.CORNER_RADIUS,
+      'rx': Blockly.renderer.constants.CORNER_RADIUS,
+      'ry': Blockly.renderer.constants.CORNER_RADIUS,
       'x': 0,
       'y': 0,
       'width': this.size_.width,
@@ -456,15 +456,15 @@ Blockly.FieldDropdown.prototype.positionArrow = function(x) {
 
   let addedWidth = 0;
   if (this.sourceBlock_.RTL) {
-    this.arrowX_ = this.arrowSize_ - Blockly.BlockSvg.DROPDOWN_ARROW_PADDING;
-    addedWidth = this.arrowSize_ + Blockly.BlockSvg.DROPDOWN_ARROW_PADDING;
+    this.arrowX_ = this.arrowSize_ - Blockly.renderer.constants.DROPDOWN_ARROW_PADDING;
+    addedWidth = this.arrowSize_ + Blockly.renderer.constants.DROPDOWN_ARROW_PADDING;
   } else {
-    this.arrowX_ = x + Blockly.BlockSvg.DROPDOWN_ARROW_PADDING / 2;
-    addedWidth = this.arrowSize_ + Blockly.BlockSvg.DROPDOWN_ARROW_PADDING;
+    this.arrowX_ = x + Blockly.renderer.constants.DROPDOWN_ARROW_PADDING / 2;
+    addedWidth = this.arrowSize_ + Blockly.renderer.constants.DROPDOWN_ARROW_PADDING;
   }
   if (this.box_) {
     // Bump positioning to the right for a box-type drop-down.
-    this.arrowX_ += Blockly.BlockSvg.BOX_FIELD_PADDING;
+    this.arrowX_ += Blockly.renderer.constants.BOX_FIELD_PADDING;
   }
   this.arrow_.setAttribute('transform',
       'translate(' + this.arrowX_ + ',' + this.arrowY_ + ')');

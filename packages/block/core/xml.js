@@ -547,7 +547,7 @@ Blockly.Xml.appendDomToWorkspace = function(xml, workspace) {
         newX = blockXY.x;
       }
     }
-    offsetY = farY - newY + Blockly.BlockSvg.SEP_SPACE_Y;
+    offsetY = farY - newY + Blockly.renderer.constants.SEP_SPACE_Y;
     offsetX = topX - newX;
     // move the new blocks to append them at the bottom
     let width;  // Not used in LTR.

@@ -260,7 +260,7 @@ Blockly.FieldIconMenu.prototype.showEditor_ = function() {
   const scale = this.sourceBlock_.workspace.scale;
   // Offset for icon-type horizontal blocks.
   const secondaryYOffset = (
-    -(Blockly.BlockSvg.MIN_BLOCK_Y * scale) - (Blockly.BlockSvg.FIELD_Y_OFFSET * scale)
+    -(Blockly.renderer.constants.MIN_BLOCK_Y * scale) - (Blockly.BlockSvg.FIELD_Y_OFFSET * scale)
   );
   const renderedPrimary = Blockly.DropDownDiv.showPositionedByBlock(
       this, this.sourceBlock_, this.onHide_.bind(this), secondaryYOffset);
