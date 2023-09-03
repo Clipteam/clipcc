@@ -603,11 +603,11 @@ Blockly.Xml.domToBlock = function(xmlBlock, workspace) {
     // Fire a VarCreate event for each (if any) new variable created.
     for (let i = 0; i < newVariables.length; i++) {
       const thisVariable = newVariables[i];
-      Blockly.Events.fire(new Blockly.Events.VarCreate(thisVariable));
+      Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.VAR_CREATE))(thisVariable));
     }
     // Block events come after var events, in case they refer to newly created
     // variables.
-    Blockly.Events.fire(new Blockly.Events.BlockCreate(topBlock));
+    Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.BLOCK_CREATE))(topBlock));
   }
   return topBlock;
 };

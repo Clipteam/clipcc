@@ -366,6 +366,19 @@ Blockly.Events.register = function(type, eventClass) {
 };
 
 /**
+ * Gets the class for a specific event type from the registry.
+ * @param type The type of the event to get.
+ * @return {!Blockly.Events.Abstract} The event class with the given type.
+ */
+Blockly.Events.get = function(type) {
+  const event = Blockly.Events.TYPE_MAP_[type];
+  if (!event) {
+    throw new Error(`Event type ${type} not found in registry.`);
+  }
+  return event;
+};
+
+/**
  * Decode the JSON into an event.
  * @param {!Object} json JSON representation.
  * @param {!Blockly.Workspace} workspace Target workspace for event.
