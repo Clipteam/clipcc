@@ -144,7 +144,7 @@ Blockly.WorkspaceComment.prototype.dispose = function() {
   }
 
   if (Blockly.Events.isEnabled()) {
-    Blockly.Events.fire(new Blockly.Events.CommentDelete(this));
+    Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.COMMENT_DELETE))(this));
   }
 
   // Remove from the list of top comments and the comment database.
@@ -217,7 +217,7 @@ Blockly.WorkspaceComment.prototype.getXY = function() {
  * @package
  */
 Blockly.WorkspaceComment.prototype.moveBy = function(dx, dy) {
-  const event = new Blockly.Events.CommentMove(this);
+  const event = new (Blockly.Events.get(Blockly.Events.COMMENT_MOVE))(this);
   this.xy_.translate(dx, dy);
   event.recordNew();
   Blockly.Events.fire(event);
@@ -277,7 +277,7 @@ Blockly.WorkspaceComment.prototype.getText = function() {
  */
 Blockly.WorkspaceComment.prototype.setText = function(text) {
   if (this.content_ != text) {
-    Blockly.Events.fire(new Blockly.Events.CommentChange(
+    Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.COMMENT_CHANGE))(
         this, {text: this.content_}, {text: text}));
     this.content_ = text;
   }
@@ -355,7 +355,7 @@ Blockly.WorkspaceComment.fireCreateEvent = function(comment) {
       Blockly.Events.setGroup(true);
     }
     try {
-      Blockly.Events.fire(new Blockly.Events.CommentCreate(comment));
+      Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.COMMENT_CREATE))(comment));
     } finally {
       if (!existingGroup) {
         Blockly.Events.setGroup(false);
