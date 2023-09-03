@@ -281,7 +281,7 @@
       }
 
       function fakeDrag(id, dx, dy, opt_workspace) {
-        var ws = opt_workspace || Blockly.getMainWorkspace();
+        var ws = opt_workspace || Blockly.common.getMainWorkspace();
         var blockToDrag = ws.getBlockById(id);
 
         if (!blockToDrag) {

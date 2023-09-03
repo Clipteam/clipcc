@@ -508,7 +508,7 @@ Blockly.inject.bindDocumentEvents_ = function() {
       Blockly.browserEvents.conditionalBind(window, 'orientationchange', document,
           function() {
             // TODO(#397): Fix for multiple blockly workspaces.
-            Blockly.common.svgResize(Blockly.getMainWorkspace());
+            Blockly.common.svgResize(Blockly.common.getMainWorkspace());
           });
     }
   }

@@ -118,7 +118,7 @@ Blockly.Gesture = function(e, creatorWorkspace) {
   this.startWorkspace_ = null;
 
   /**
-   * The workspace that created this gesture.  This workspace keeps a reference
+   * Blockly.common.getMainWorkspace(d this gesture.  This workspace keeps a reference
    * to the gesture, which will need to be cleared at deletion.
    * This may be different from the start workspace.  For instance, a flyout is
    * a workspace, but its parent workspace manages gestures for it.

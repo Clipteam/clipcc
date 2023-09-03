@@ -92,7 +92,7 @@ Blockly.Generator.prototype.workspaceToCode = function(workspace) {
   if (!workspace) {
     // Backwards compatibility from before there could be multiple workspaces.
     console.warn('No workspace specified in workspaceToCode call.  Guessing.');
-    workspace = Blockly.getMainWorkspace();
+    workspace = Blockly.common.getMainWorkspace();
   }
   let code = [];
   this.init(workspace);

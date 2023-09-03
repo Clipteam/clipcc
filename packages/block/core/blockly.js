@@ -111,6 +111,7 @@ Blockly.hideChaffOnResize = function(opt_allowToolbox) {
  * focus).  Try not to use this function, particularly if there are multiple
  * Blockly instances on a page.
  * @return {!Blockly.Workspace} The main workspace.
+ * @deprecated Use Blockly.common.getMainWorkspace()
  */
 Blockly.getMainWorkspace = function() {
   return Blockly.common.getMainWorkspace();
@@ -271,4 +272,4 @@ if (!goog.global['console']) {
 if (!goog.global['Blockly']) {
   goog.global['Blockly'] = {};
 }
-goog.global['Blockly']['getMainWorkspace'] = Blockly.getMainWorkspace;
+goog.global['Blockly']['getMainWorkspace'] = Blockly.common.getMainWorkspace;
