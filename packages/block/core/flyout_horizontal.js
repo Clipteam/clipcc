@@ -32,6 +32,7 @@ goog.require('Blockly.Comment');
 goog.require('Blockly.Events');
 goog.require('Blockly.FlyoutButton');
 goog.require('Blockly.Flyout');
+goog.require('Blockly.registry');
 goog.require('Blockly.WorkspaceSvg');
 goog.require('goog.dom');
 goog.require('goog.dom.animationFrame.polyfill');
@@ -484,3 +485,7 @@ Blockly.HorizontalFlyout.prototype.reflowInternal_ = function(blocks) {
     this.targetWorkspace_.resize();
   }
 };
+
+Blockly.registry.register(
+    Blockly.registry.Type.FLYOUTS_HORIZONTAL_TOOLBOX, Blockly.registry.DEFAULT,
+    Blockly.HorizontalFlyout);

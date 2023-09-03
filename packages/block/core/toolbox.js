@@ -29,6 +29,7 @@ goog.provide('Blockly.Toolbox');
 goog.require('Blockly.browserEvents');
 goog.require('Blockly.Events.Ui');
 goog.require('Blockly.HorizontalFlyout');
+goog.require('Blockly.registry');
 goog.require('Blockly.Touch');
 goog.require('Blockly.VerticalFlyout');
 goog.require('goog.dom');
@@ -179,9 +180,11 @@ Blockly.Toolbox.prototype.createFlyout_ = function() {
   };
 
   if (workspace.horizontalLayout) {
-    this.flyout_ = new Blockly.HorizontalFlyout(options);
+    this.flyout_ = new (Blockly.registry.getClass(
+        Blockly.registry.Type.FLYOUTS_HORIZONTAL_TOOLBOX, Blockly.registry.DEFAULT, true))(options);
   } else {
-    this.flyout_ = new Blockly.VerticalFlyout(options);
+    this.flyout_ = new (Blockly.registry.getClass(
+        Blockly.registry.Type.FLYOUTS_VERTICAL_TOOLBOX, Blockly.registry.DEFAULT, true))(options);
   }
   this.flyout_.setParentToolbox(this);
 

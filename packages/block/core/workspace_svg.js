@@ -38,11 +38,11 @@ goog.require('Blockly.Events.BlockCreate');
 goog.require('Blockly.Gesture');
 goog.require('Blockly.Grid');
 goog.require('Blockly.Options');
+goog.require('Blockly.registry');
 goog.require('Blockly.scratchBlocksUtils');
 goog.require('Blockly.ScrollbarPair');
 goog.require('Blockly.Touch');
 goog.require('Blockly.Trashcan');
-//goog.require('Blockly.VerticalFlyout');
 goog.require('Blockly.Workspace');
 goog.require('Blockly.WorkspaceAudio');
 goog.require('Blockly.WorkspaceComment');
@@ -583,9 +583,11 @@ Blockly.WorkspaceSvg.prototype.addFlyout_ = function(tagName) {
     stackGlowFilterId: this.options.stackGlowFilterId
   };
   if (this.horizontalLayout) {
-    this.flyout_ = new Blockly.HorizontalFlyout(workspaceOptions);
+    this.flyout_ = new (Blockly.registry.getClass(
+        Blockly.registry.Type.FLYOUTS_HORIZONTAL_TOOLBOX, Blockly.registry.DEFAULT, true))(workspaceOptions);
   } else {
-    this.flyout_ = new Blockly.VerticalFlyout(workspaceOptions);
+    this.flyout_ = new (Blockly.registry.getClass(
+        Blockly.registry.Type.FLYOUTS_VERTICAL_TOOLBOX, Blockly.registry.DEFAULT, true))(workspaceOptions);
   }
   this.flyout_.autoClose = false;
 

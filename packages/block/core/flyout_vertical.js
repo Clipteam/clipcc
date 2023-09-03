@@ -32,6 +32,7 @@ goog.require('Blockly.Comment');
 goog.require('Blockly.Events');
 goog.require('Blockly.Flyout');
 goog.require('Blockly.FlyoutButton');
+goog.require('Blockly.registry');
 goog.require('Blockly.utils');
 goog.require('Blockly.WorkspaceSvg');
 goog.require('goog.dom');
@@ -780,3 +781,7 @@ Blockly.VerticalFlyout.prototype.reflowInternal_ = function(/* blocks */) {
 Blockly.VerticalFlyout.getCheckboxState = function(/* blockId */) {
   return false;
 };
+
+Blockly.registry.register(
+    Blockly.registry.Type.FLYOUTS_VERTICAL_TOOLBOX, Blockly.registry.DEFAULT,
+    Blockly.VerticalFlyout);
