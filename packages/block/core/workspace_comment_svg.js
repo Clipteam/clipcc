@@ -168,19 +168,9 @@ Blockly.WorkspaceCommentSvg.prototype.pathMouseDown_ = function(e) {
  * @private
  */
 Blockly.WorkspaceCommentSvg.prototype.showContextMenu_ = function(e) {
-  if (this.workspace.options.readOnly) {
-    return;
-  }
-  // Save the current workspace comment in a variable for use in closures.
-  const comment = this;
-  const menuOptions = [];
-
-  if (this.isDeletable() && this.isMovable()) {
-    menuOptions.push(Blockly.ContextMenu.commentDuplicateOption(comment));
-    menuOptions.push(Blockly.ContextMenu.commentDeleteOption(comment));
-  }
-
-  Blockly.ContextMenu.show(e, menuOptions, this.RTL);
+  throw new Error(
+      'The implementation of showContextMenu should be ' +
+      'monkey-patched in by blockly.js');
 };
 
 /**

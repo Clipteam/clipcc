@@ -235,6 +235,30 @@ Blockly.isNumber = function(str) {
   return !!str.match(/^\s*-?\d+(\.\d+)?\s*$/);
 };
 
+// monkey-patched code
+
+/**
+ * Show the context menu for this workspace comment.
+ * @param {!Event} e Mouse event.
+ * @private
+ */
+Blockly.WorkspaceCommentSvg.prototype.showContextMenu_ = function(e) {
+  if (this.workspace.options.readOnly) {
+    return;
+  }
+  // Save the current workspace comment in a variable for use in closures.
+  const comment = this;
+  const menuOptions = [];
+
+  if (this.isDeletable() && this.isMovable()) {
+    menuOptions.push(Blockly.ContextMenu.commentDuplicateOption(comment));
+    menuOptions.push(Blockly.ContextMenu.commentDeleteOption(comment));
+  }
+
+  Blockly.ContextMenu.show(e, menuOptions, this.RTL);
+};
+
+
 // IE9 does not have a console.  Create a stub to stop errors.
 if (!goog.global['console']) {
   goog.global['console'] = {
