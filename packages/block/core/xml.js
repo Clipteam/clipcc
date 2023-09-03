@@ -281,12 +281,7 @@ Blockly.Xml.scratchCommentToDom_ = function(block, element) {
     if (typeof block.comment == 'object') {
       commentElement.setAttribute('id', block.comment.id);
       commentElement.setAttribute('pinned', block.comment.isVisible());
-      let hw;
-      if (block.comment instanceof Blockly.ScratchBlockComment) {
-        hw = block.comment.getHeightWidth();
-      } else {
-        hw = block.comment.getBubbleSize();
-      }
+      const hw = block.comment.getHeightWidth();
       commentElement.setAttribute('h', hw.height);
       commentElement.setAttribute('w', hw.width);
       const xy = block.comment.getXY();
@@ -715,11 +710,7 @@ Blockly.Xml.domToBlockHeadless_ = function(xmlBlock, workspace) {
         const bubbleH = parseInt(xmlChild.getAttribute('h'), 10);
         if (!isNaN(bubbleW) && !isNaN(bubbleH) &&
             block.comment && block.comment.setVisible) {
-          if (block.comment instanceof Blockly.ScratchBlockComment) {
-            block.comment.setSize(bubbleW, bubbleH);
-          } else {
-            block.comment.setBubbleSize(bubbleW, bubbleH);
-          }
+          block.comment.setSize(bubbleW, bubbleH);
         }
         break;
       }

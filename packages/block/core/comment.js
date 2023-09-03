@@ -246,6 +246,11 @@ Blockly.Comment.prototype.getBubbleSize = function() {
 };
 
 /**
+ * Alias of getBubbleSize.
+ */
+Blockly.Comment.prototype.getHeightWidth = Blockly.Comment.prototype.getBubbleSize;
+
+/**
  * Size this comment's bubble.
  * @param {number} width Width of the bubble.
  * @param {number} height Height of the bubble.
@@ -258,6 +263,11 @@ Blockly.Comment.prototype.setBubbleSize = function(width, height) {
     this.height_ = height;
   }
 };
+
+/**
+ * Alias of setBubbleSize.
+ */
+Blockly.Comment.prototype.setSize = Blockly.Comment.setBubbleSize;
 
 /**
  * Returns this comment's text.
