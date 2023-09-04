@@ -362,7 +362,7 @@ Blockly.inject.init_ = function(mainWorkspace) {
   const workspaceResizeHandler = Blockly.browserEvents.conditionalBind(window, 'resize',
       null,
       function() {
-        Blockly.hideChaffOnResize(true);
+        mainWorkspace.hideChaffOnResize(true);
         Blockly.common.svgResize(mainWorkspace);
       });
   mainWorkspace.setResizeHandlerWrapper(workspaceResizeHandler);

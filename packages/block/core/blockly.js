@@ -100,10 +100,10 @@ Blockly.hideChaff = function(opt_allowToolbox) {
  * For some elements (e.g. field text inputs), rather than hiding, it will
  * move them.
  * @param {boolean=} opt_allowToolbox If true, don't close the toolbox.
- * @deprecated Use Blockly.common.getMainWorkspace().hideChaffInternal_(opt_allowToolbox)
+ * @deprecated Use Blockly.common.getMainWorkspace().hideChaffOnResize(opt_allowToolbox)
  */
 Blockly.hideChaffOnResize = function(opt_allowToolbox) {
-  Blockly.common.getMainWorkspace().hideChaffInternal_(opt_allowToolbox);
+  Blockly.common.getMainWorkspace().hideChaffOnResize(opt_allowToolbox);
 };
 
 /**
