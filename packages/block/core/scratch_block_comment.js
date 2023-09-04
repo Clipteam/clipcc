@@ -241,7 +241,7 @@ Blockly.ScratchBlockComment.prototype.createEditor_ = function() {
   });
   Blockly.browserEvents.conditionalBind(textarea, 'change', this, function(_e) {
     if (this.text_ != textarea.value) {
-      Blockly.Events.fire(new Blockly.Events.CommentChange(
+      Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.COMMENT_CHANGE))(
           this, {text: this.text_}, {text: textarea.value}));
       this.text_ = textarea.value;
     }
@@ -402,7 +402,7 @@ Blockly.ScratchBlockComment.prototype.setMinimized = function(minimize) {
   if (this.isMinimized_ == minimize) {
     return;
   }
-  Blockly.Events.fire(new Blockly.Events.CommentChange(this,
+  Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.COMMENT_CHANGE))(this,
       {minimized: this.isMinimized_}, {minimized: minimize}));
   this.isMinimized_ = minimize;
   if (minimize) {
@@ -455,7 +455,7 @@ Blockly.ScratchBlockComment.prototype.setSize = function(width, height) {
   this.width_ = width;
 
   if (oldWidth != this.width_ || oldHeight != this.height_) {
-    Blockly.Events.fire(new Blockly.Events.CommentChange(
+    Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.COMMENT_CHANGE))(
         this,
         {width: oldWidth, height: oldHeight},
         {width: this.width_, height: this.height_}));
@@ -486,7 +486,7 @@ Blockly.ScratchBlockComment.prototype.getLabelText = function() {
  */
 Blockly.ScratchBlockComment.prototype.setText = function(text) {
   if (this.text_ != text) {
-    Blockly.Events.fire(new Blockly.Events.CommentChange(
+    Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.COMMENT_CHANGE))(
         this, {text: this.text_}, {text: text}));
     this.text_ = text;
   }
@@ -502,7 +502,7 @@ Blockly.ScratchBlockComment.prototype.setText = function(text) {
  * @package
  */
 Blockly.ScratchBlockComment.prototype.moveTo = function(x, y) {
-  const event = new Blockly.Events.CommentMove(this);
+  const event = new (Blockly.Events.get(Blockly.Events.COMMENT_MOVE))(this);
   if (this.bubble_) {
     this.bubble_.moveTo(x, y);
   }
@@ -622,7 +622,7 @@ Blockly.ScratchBlockComment.fireCreateEvent = function(comment) {
       Blockly.Events.setGroup(true);
     }
     try {
-      Blockly.Events.fire(new Blockly.Events.CommentCreate(comment));
+      Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.COMMENT_CREATE))(comment));
     } finally {
       if (!existingGroup) {
         Blockly.Events.setGroup(false);
@@ -639,7 +639,7 @@ Blockly.ScratchBlockComment.prototype.dispose = function() {
     // Emit delete event before disposal begins so that the
     // event's reference to this comment contains all the relevant
     // information (for undoing this event)
-    Blockly.Events.fire(new Blockly.Events.CommentDelete(this));
+    Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.COMMENT_DELETE))(this));
   }
   this.block_.comment = null;
   this.workspace.removeTopComment(this);
