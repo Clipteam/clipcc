@@ -30,6 +30,8 @@
  **/
 goog.provide('Blockly.scratchBlocksUtils');
 
+goog.require('Blockly.registry');
+
 
 /**
  * Measure some text using a canvas in-memory.
@@ -133,13 +135,13 @@ Blockly.scratchBlocksUtils.blockIsRecyclable = function(block) {
     for (let j = 0; j < input.fieldRow.length; j++) {
       const field = input.fieldRow[j];
       // No variables.
-      if (field instanceof Blockly.FieldVariable ||
-          field instanceof Blockly.FieldVariableGetter) {
+      if (field instanceof Blockly.registry.getClass(Blockly.registry.Type.FIELD, 'field_variable') ||
+          field instanceof Blockly.registry.getClass(Blockly.registry.Type.FIELD, 'field_variable_getter')) {
         return false;
       }
-      if (field instanceof Blockly.FieldDropdown ||
-          field instanceof Blockly.FieldNumberDropdown ||
-          field instanceof Blockly.FieldTextDropdown) {
+      if (field instanceof Blockly.registry.getClass(Blockly.registry.Type.FIELD, 'field_dropdown') ||
+          field instanceof Blockly.registry.getClass(Blockly.registry.Type.FIELD, 'field_numberdropdown') ||
+          field instanceof Blockly.registry.getClass(Blockly.registry.Type.FIELD, 'field_textdropdown')) {
         if (field.isOptionListDynamic()) {
           return false;
         }
