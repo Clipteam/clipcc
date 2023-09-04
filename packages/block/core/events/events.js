@@ -30,6 +30,8 @@
  */
 goog.provide('Blockly.Events');
 
+goog.require('Blockly.registry');
+
 goog.require('goog.array');
 goog.require('goog.math.Coordinate');
 
@@ -339,13 +341,6 @@ Blockly.Events.getDescendantIds = function(block) {
 };
 
 /**
- * The set of all registered events, keyed by field type.
- * @type {!Object<string, !{fromJson: Function}>}
- * @private
- */
-Blockly.Events.TYPE_MAP_ = {};
-
-/**
  * Registers a event type. May also override an existing event type.
  * Blockly.Events.fromJson uses this registry to find the appropriate field.
  * @param {!string} type The event type name as used in the JSON definition.
@@ -355,14 +350,7 @@ Blockly.Events.TYPE_MAP_ = {};
  *     object containing a fromJson function.
  */
 Blockly.Events.register = function(type, eventClass) {
-  if (typeof type !== 'string' || goog.string.isEmptyOrWhitespace(type)) {
-    throw new Error('Invalid event type "' + type + '"');
-  }
-  if (!goog.isObject(eventClass) || typeof eventClass.prototype.fromJson !== 'function') {
-    throw new Error('Event "' + eventClass +
-        '" must have a fromJson function');
-  }
-  Blockly.Events.TYPE_MAP_[type] = eventClass;
+  Blockly.registry.register(Blockly.registry.Type.EVENT, type, eventClass);
 };
 
 /**
@@ -371,11 +359,7 @@ Blockly.Events.register = function(type, eventClass) {
  * @return {!Blockly.Events.Abstract} The event class with the given type.
  */
 Blockly.Events.get = function(type) {
-  const event = Blockly.Events.TYPE_MAP_[type];
-  if (!event) {
-    throw new Error(`Event type ${type} not found in registry.`);
-  }
-  return event;
+  return Blockly.registry.getClass(Blockly.registry.Type.EVENT, type, true);
 };
 
 /**
@@ -385,7 +369,7 @@ Blockly.Events.get = function(type) {
  * @return {!Blockly.Events.Abstract} The event represented by the JSON.
  */
 Blockly.Events.fromJson = function(json, workspace) {
-  const eventClass = Blockly.Events.TYPE_MAP_[json.type];
+  const eventClass = Blockly.Events.get(json.type);
   if (eventClass) {
     const event = new eventClass(null);
     event.fromJson(json);

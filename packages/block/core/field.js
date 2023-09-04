@@ -31,6 +31,7 @@ goog.provide('Blockly.Field');
 goog.require('Blockly.browserEvents');
 goog.require('Blockly.Events.BlockChange');
 goog.require('Blockly.Gesture');
+goog.require('Blockly.registry');
 
 goog.require('goog.asserts');
 goog.require('goog.dom');
@@ -63,15 +64,6 @@ Blockly.Field = function(text, opt_validator) {
   this.maxDisplayLength = Blockly.renderer.constants.MAX_DISPLAY_LENGTH;
 };
 
-
-/**
- * The set of all registered fields, keyed by field type as used in the JSON
- * definition of a block.
- * @type {!Object<string, !{fromJson: Function}>}
- * @private
- */
-Blockly.Field.TYPE_MAP_ = {};
-
 /**
  * Registers a field type. May also override an existing field type.
  * Blockly.Field.fromJson uses this registry to find the appropriate field.
@@ -82,14 +74,17 @@ Blockly.Field.TYPE_MAP_ = {};
  *     object containing a fromJson function.
  */
 Blockly.Field.register = function(type, fieldClass) {
-  if (typeof type !== 'string' || goog.string.isEmptyOrWhitespace(type)) {
-    throw new Error('Invalid field type "' + type + '"');
-  }
-  if (!goog.isObject(fieldClass) || typeof fieldClass.fromJson !== 'function') {
-    throw new Error('Field "' + fieldClass +
-        '" must have a fromJson function');
-  }
-  Blockly.Field.TYPE_MAP_[type] = fieldClass;
+  Blockly.registry.register(Blockly.registry.Type.FIELD, type, fieldClass);
+};
+
+/**
+ * Get a field type.
+ * @param {string} type The field type name as used in the JSON definition.
+ * @return {?Blockly.Field} The field class.
+ * @throws {Error} if the field class is not found.
+ */
+Blockly.Field.get = function(type) {
+  return Blockly.registry.getClass(Blockly.registry.Type.FIELD, type, true);
 };
 
 /**
@@ -103,7 +98,7 @@ Blockly.Field.register = function(type, fieldClass) {
  * @package
  */
 Blockly.Field.fromJson = function(options) {
-  const fieldClass = Blockly.Field.TYPE_MAP_[options['type']];
+  const fieldClass = Blockly.Field.get(options['type']);
   if (fieldClass) {
     return fieldClass.fromJson(options);
   }
