@@ -1432,7 +1432,7 @@ Blockly.WorkspaceSvg.prototype.showContextMenu_ = function(e) {
       if (deleteCount < 2 ) {
         deleteNext();
       } else {
-        Blockly.confirm(
+        Blockly.dialog.confirm(
             Blockly.Msg.DELETE_ALL_BLOCKS.replace('%1', String(deleteCount)),
             function(ok) {
               if (ok) {

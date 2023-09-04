@@ -280,7 +280,7 @@ Blockly.Variables.createVariable = function(workspace, opt_callback, opt_type) {
   const validate = Blockly.Variables.nameValidator_.bind(null, opt_type);
 
   // Prompt the user to enter a name for the variable
-  Blockly.prompt(newMsg, '',
+  Blockly.dialog.prompt(newMsg, '',
       function(text, additionalVars, variableOptions) {
         variableOptions = variableOptions || {};
         const scope = variableOptions.scope;
@@ -434,7 +434,7 @@ Blockly.Variables.validateScalarVarOrListName_ = function(name, workspace, addit
   }
   if (workspace.getVariable(name, type) || additionalVars.indexOf(name) >= 0) {
     // error
-    Blockly.alert(errorMsg.replace('%1', name));
+    Blockly.dialog.alert(errorMsg.replace('%1', name));
     return null;
   } else { // trimmed name is valid
     return name;
@@ -476,7 +476,7 @@ Blockly.Variables.renameVariable = function(workspace, variable,
     promptDefaultText = promptDefaultText.substring(Blockly.Variables.CLOUD_PREFIX.length);
   }
 
-  Blockly.prompt(promptText, promptDefaultText,
+  Blockly.dialog.prompt(promptText, promptDefaultText,
       function(newName, additionalVars) {
         if (variable.isCloud &&
             newName.length > 0 && newName.indexOf(Blockly.Variables.CLOUD_PREFIX) == 0) {

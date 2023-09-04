@@ -250,7 +250,7 @@ Blockly.VariableMap.prototype.deleteVariableById = function(id) {
         const deleteText = Blockly.Msg.CANNOT_DELETE_VARIABLE_PROCEDURE.
             replace('%1', variableName).
             replace('%2', procedureName);
-        Blockly.alert(deleteText);
+        Blockly.dialog.alert(deleteText);
         return;
       }
     }
@@ -261,7 +261,7 @@ Blockly.VariableMap.prototype.deleteVariableById = function(id) {
       const confirmText = Blockly.Msg.DELETE_VARIABLE_CONFIRMATION.
           replace('%1', String(uses.length)).
           replace('%2', variableName);
-      Blockly.confirm(confirmText,
+      Blockly.dialog.confirm(confirmText,
           function(ok) {
             if (ok) {
               map.deleteVariableInternal_(variable, uses);
