@@ -265,6 +265,18 @@ Blockly.WorkspaceCommentSvg.prototype.showContextMenu_ = function(e) {
  *     type-specific functions for this block.
  * @param {string=} opt_id Optional ID.  Use this ID if provided, otherwise
  *     create a new ID.
+ * @return {!Blockly.Block} The created block.
+ */
+Blockly.Workspace.prototype.newBlock = function(prototypeName, opt_id) {
+  return new Blockly.Block(this, prototypeName, opt_id);
+};
+
+/**
+ * Obtain a newly created block.
+ * @param {?string} prototypeName Name of the language object containing
+ *     type-specific functions for this block.
+ * @param {string=} opt_id Optional ID.  Use this ID if provided, otherwise
+ *     create a new ID.
  * @return {!Blockly.BlockSvg} The created block.
  */
 Blockly.WorkspaceSvg.prototype.newBlock = function(prototypeName, opt_id) {
