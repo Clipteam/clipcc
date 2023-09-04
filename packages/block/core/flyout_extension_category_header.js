@@ -111,7 +111,7 @@ Blockly.FlyoutExtensionCategoryHeader.prototype.createDom = function() {
     this.setImageSrc(this.imageSrc_);
   }
 
-  this.callback_ = Blockly.statusButtonCallback.bind(this, this.extensionId);
+  this.callback_ = Blockly.common.statusButtonCallback.bind(this, this.extensionId);
 
   this.mouseUpWrapper_ = Blockly.browserEvents.conditionalBind(this.imageElementBackground_, 'mouseup',
       this, this.onMouseUp_);

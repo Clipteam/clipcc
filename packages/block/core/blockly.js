@@ -118,15 +118,6 @@ Blockly.getMainWorkspace = function() {
 };
 
 /**
- * A callback for status buttons. The window.alert is here for testing and
- * should be overridden.
- * @param {string} id An identifier.
- */
-Blockly.statusButtonCallback = function(id) {
-  window.alert('status button was pressed for ' + id);
-};
-
-/**
  * Refresh the visual state of a status button in all extension category headers.
  * @param {Blockly.Workspace} workspace A workspace.
  */

@@ -161,3 +161,24 @@ Blockly.common.svgResize = function(workspace) {
   }
   mainWorkspace.resize();
 };
+
+Blockly.common.statusButtonCallbackImplementation_ = function(id) {
+  window.alert('status button was pressed for ' + id);
+};
+
+/**
+ * Wrapper to a callback for status buttons.
+ * @param {string} id An identifier.
+ */
+Blockly.common.statusButtonCallback = function(id) {
+  Blockly.common.statusButtonCallbackImplementation_(id);
+};
+
+/**
+ * Sets the function to be run when Blockly.common.statusButtonCallback() is called.
+ * @param {!function(string)} callback The function to be run.
+ * @see Blockly.common.statusButtonCallback
+ */
+Blockly.common.setStatusButtonCallback = function(callback) {
+  Blockly.common.statusButtonCallbackImplementation_ = callback;
+};
