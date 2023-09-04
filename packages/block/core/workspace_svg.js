@@ -535,7 +535,9 @@ Blockly.WorkspaceSvg.prototype.dispose = function() {
  * @return {!Blockly.BlockSvg} The created block.
  */
 Blockly.WorkspaceSvg.prototype.newBlock = function(prototypeName, opt_id) {
-  return new Blockly.BlockSvg(this, prototypeName, opt_id);
+  throw new Error(
+      'The implementation of newBlock should be ' +
+      'monkey-patched in by blockly.js');
 };
 
 /**

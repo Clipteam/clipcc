@@ -259,6 +259,18 @@ Blockly.WorkspaceCommentSvg.prototype.showContextMenu_ = function(e) {
   Blockly.ContextMenu.show(e, menuOptions, this.RTL);
 };
 
+/**
+ * Obtain a newly created block.
+ * @param {?string} prototypeName Name of the language object containing
+ *     type-specific functions for this block.
+ * @param {string=} opt_id Optional ID.  Use this ID if provided, otherwise
+ *     create a new ID.
+ * @return {!Blockly.BlockSvg} The created block.
+ */
+Blockly.WorkspaceSvg.prototype.newBlock = function(prototypeName, opt_id) {
+  return new Blockly.BlockSvg(this, prototypeName, opt_id);
+};
+
 
 // IE9 does not have a console.  Create a stub to stop errors.
 if (!goog.global['console']) {
