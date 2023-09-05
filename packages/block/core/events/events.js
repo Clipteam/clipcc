@@ -28,12 +28,14 @@
  * Events fired as a result of actions in Blockly's editor.
  * @namespace Blockly.Events
  */
-goog.provide('Blockly.Events');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Events');
 
-goog.require('Blockly.registry');
+import * as common from '../common';
+import * as registry from '../registry';
+import * as utils from '../utils';
 
-goog.require('goog.array');
-goog.require('goog.math.Coordinate');
+const array = goog.require('goog.array');
 
 
 /**
@@ -41,161 +43,161 @@ goog.require('goog.math.Coordinate');
  * @type {string}
  * @private
  */
-Blockly.Events.group_ = '';
+let group = '';
 
 /**
  * Sets whether events should be added to the undo stack.
  * @type {boolean}
  * @private
  */
-Blockly.Events.recordUndo_ = true;
+let recordUndo = true;
 
 /**
  * Allow change events to be created and fired.
  * @type {number}
  * @private
  */
-Blockly.Events.disabled_ = 0;
+let disabled = 0;
 
 /**
  * Name of event that creates a block. Will be deprecated for BLOCK_CREATE.
  * @const
  */
-Blockly.Events.CREATE = 'create';
+export const CREATE = 'create';
 
 /**
  * Name of event that creates a block.
  * @const
  */
-Blockly.Events.BLOCK_CREATE = Blockly.Events.CREATE;
+export const BLOCK_CREATE = CREATE;
 
 /**
  * Name of event that deletes a block. Will be deprecated for BLOCK_DELETE.
  * @const
  */
-Blockly.Events.DELETE = 'delete';
+export const DELETE = 'delete';
 
 /**
  * Name of event that deletes a block.
  * @const
  */
-Blockly.Events.BLOCK_DELETE = Blockly.Events.DELETE;
+export const BLOCK_DELETE = DELETE;
 
 /**
  * Name of event that changes a block. Will be deprecated for BLOCK_CHANGE.
  * @const
  */
-Blockly.Events.CHANGE = 'change';
+export const CHANGE = 'change';
 
 /**
  * Name of event that changes a block.
  * @const
  */
-Blockly.Events.BLOCK_CHANGE = Blockly.Events.CHANGE;
+export const BLOCK_CHANGE = CHANGE;
 
 /**
  * Name of event that moves a block. Will be deprecated for BLOCK_MOVE.
  * @const
  */
-Blockly.Events.MOVE = 'move';
+export const MOVE = 'move';
 
 /**
  * Name of event that drags a block outside of or into the blocks workspace
  * @const
  */
-Blockly.Events.DRAG_OUTSIDE = 'dragOutside';
+export const DRAG_OUTSIDE = 'dragOutside';
 
 /**
  * Name of event that ends a block drag
  * @const
  */
-Blockly.Events.END_DRAG = 'endDrag';
+export const END_DRAG = 'endDrag';
 
 /**
  * Name of event that moves a block.
  * @const
  */
-Blockly.Events.BLOCK_MOVE = Blockly.Events.MOVE;
+export const BLOCK_MOVE = MOVE;
 
 /**
  * Name of event that creates a variable.
  * @const
  */
-Blockly.Events.VAR_CREATE = 'var_create';
+export const VAR_CREATE = 'var_create';
 
 /**
  * Name of event that deletes a variable.
  * @const
  */
-Blockly.Events.VAR_DELETE = 'var_delete';
+export const VAR_DELETE = 'var_delete';
 
 /**
  * Name of event that renames a variable.
  * @const
  */
-Blockly.Events.VAR_RENAME = 'var_rename';
+export const VAR_RENAME = 'var_rename';
 
 /**
  * Name of event that creates a comment.
  * @const
  */
-Blockly.Events.COMMENT_CREATE = 'comment_create';
+export const COMMENT_CREATE = 'comment_create';
 
 /**
  * Name of event that moves a comment.
  * @const
  */
-Blockly.Events.COMMENT_MOVE = 'comment_move';
+export const COMMENT_MOVE = 'comment_move';
 
 /**
  * Name of event that changes a comment's property
  * (text content, size, or minimized state).
  * @const
  */
-Blockly.Events.COMMENT_CHANGE = 'comment_change';
+export const COMMENT_CHANGE = 'comment_change';
 
 /**
  * Name of event that deletes a comment.
  * @const
  */
-Blockly.Events.COMMENT_DELETE = 'comment_delete';
+export const COMMENT_DELETE = 'comment_delete';
 
 /**
  * Name of event that records a UI change.
  * @const
  */
-Blockly.Events.UI = 'ui';
+export const UI = 'ui';
 
 /**
  * List of events queued for firing.
  * @private
  */
-Blockly.Events.FIRE_QUEUE_ = [];
+const FIRE_QUEUE = [];
 
 /**
  * Create a custom event and fire it.
  * @param {!Blockly.Events.Abstract} event Custom data for event.
  */
-Blockly.Events.fire = function(event) {
-  if (!Blockly.Events.isEnabled()) {
+export const fire = function(event) {
+  if (!isEnabled()) {
     return;
   }
-  if (!Blockly.Events.FIRE_QUEUE_.length) {
+  if (!FIRE_QUEUE.length) {
     // First event added; schedule a firing of the event queue.
-    setTimeout(Blockly.Events.fireNow_, 0);
+    setTimeout(fireNow, 0);
   }
-  Blockly.Events.FIRE_QUEUE_.push(event);
+  FIRE_QUEUE.push(event);
 };
 
 /**
  * Fire all queued events.
  * @private
  */
-Blockly.Events.fireNow_ = function() {
-  const queue = Blockly.Events.filter(Blockly.Events.FIRE_QUEUE_, true);
-  Blockly.Events.FIRE_QUEUE_.length = 0;
+const fireNow = function() {
+  const queue = filter(FIRE_QUEUE, true);
+  FIRE_QUEUE.length = 0;
   for (let i = 0, event; event = queue[i]; i++) {
-    const workspace = Blockly.common.getWorkspaceById(event.workspaceId);
+    const workspace = common.getWorkspaceById(event.workspaceId);
     if (workspace) {
       workspace.fireChangeListener(event);
     }
@@ -208,8 +210,8 @@ Blockly.Events.fireNow_ = function() {
  * @param {boolean} forward True if forward (redo), false if backward (undo).
  * @return {!Array.<!Blockly.Events.Abstract>} Array of filtered events.
  */
-Blockly.Events.filter = function(queueIn, forward) {
-  let queue = goog.array.clone(queueIn);
+export const filter = function(queueIn, forward) {
+  let queue = array.clone(queueIn);
   if (!forward) {
     // Undo is merged in reverse order.
     queue.reverse();
@@ -229,19 +231,19 @@ Blockly.Events.filter = function(queueIn, forward) {
         // move events.
         hash[key] = {event: event, index: i};
         mergedQueue.push(event);
-      } else if (event.type == Blockly.Events.MOVE &&
+      } else if (event.type == MOVE &&
           lastEntry.index == i - 1) {
         // Merge move events.
         lastEvent.newParentId = event.newParentId;
         lastEvent.newInputName = event.newInputName;
         lastEvent.newCoordinate = event.newCoordinate;
         lastEntry.index = i;
-      } else if (event.type == Blockly.Events.CHANGE &&
+      } else if (event.type == CHANGE &&
           event.element == lastEvent.element &&
           event.name == lastEvent.name) {
         // Merge change events.
         lastEvent.newValue = event.newValue;
-      } else if (event.type == Blockly.Events.UI &&
+      } else if (event.type == UI &&
           event.element == 'click' &&
           (lastEvent.element == 'commentOpen' ||
            lastEvent.element == 'mutatorOpen' ||
@@ -264,7 +266,7 @@ Blockly.Events.filter = function(queueIn, forward) {
   // Move mutation events to the top of the queue.
   // Intentionally skip first event.
   for (let i = 1, event; event = queue[i]; i++) {
-    if (event.type == Blockly.Events.CHANGE &&
+    if (event.type == CHANGE &&
         event.element == 'mutation') {
       queue.unshift(queue.splice(i, 1)[0]);
     }
@@ -276,8 +278,8 @@ Blockly.Events.filter = function(queueIn, forward) {
  * Modify pending undo events so that when they are fired they don't land
  * in the undo stack.  Called by Blockly.Workspace.clearUndo.
  */
-Blockly.Events.clearPendingUndo = function() {
-  for (let i = 0, event; event = Blockly.Events.FIRE_QUEUE_[i]; i++) {
+export const clearPendingUndo = function() {
+  for (let i = 0, event; event = FIRE_QUEUE[i]; i++) {
     event.recordUndo = false;
   }
 };
@@ -285,32 +287,32 @@ Blockly.Events.clearPendingUndo = function() {
 /**
  * Stop sending events.  Every call to this function MUST also call enable.
  */
-Blockly.Events.disable = function() {
-  Blockly.Events.disabled_++;
+export const disable = function() {
+  disabled++;
 };
 
 /**
  * Start sending events.  Unless events were already disabled when the
  * corresponding call to disable was made.
  */
-Blockly.Events.enable = function() {
-  Blockly.Events.disabled_--;
+export const enable = function() {
+  disabled--;
 };
 
 /**
  * Returns whether events may be fired or not.
  * @return {boolean} True if enabled.
  */
-Blockly.Events.isEnabled = function() {
-  return Blockly.Events.disabled_ == 0;
+export const isEnabled = function() {
+  return disabled == 0;
 };
 
 /**
  * Current group.
  * @return {string} ID string.
  */
-Blockly.Events.getGroup = function() {
-  return Blockly.Events.group_;
+export const getGroup = function() {
+  return group;
 };
 
 /**
@@ -318,11 +320,11 @@ Blockly.Events.getGroup = function() {
  * @param {boolean|string} state True to start new group, false to end group.
  *   String to set group explicitly.
  */
-Blockly.Events.setGroup = function(state) {
+export const setGroup = function(state) {
   if (typeof state == 'boolean') {
-    Blockly.Events.group_ = state ? Blockly.utils.genUid() : '';
+    group = state ? utils.genUid() : '';
   } else {
-    Blockly.Events.group_ = state;
+    group = state;
   }
 };
 
@@ -331,7 +333,7 @@ Blockly.Events.setGroup = function(state) {
  * @param {!Blockly.Block} block The root block.
  * @return {!Array.<string>} List of block IDs.
  */
-Blockly.Events.getDescendantIds = function(block) {
+export const getDescendantIds = function(block) {
   const ids = [];
   const descendants = block.getDescendants(false);
   for (let i = 0, descendant; descendant = descendants[i]; i++) {
@@ -342,15 +344,15 @@ Blockly.Events.getDescendantIds = function(block) {
 
 /**
  * Registers a event type. May also override an existing event type.
- * Blockly.Events.fromJson uses this registry to find the appropriate field.
+ * fromJson uses this registry to find the appropriate field.
  * @param {!string} type The event type name as used in the JSON definition.
  * @param {!{fromJson: Function}} eventClass The event class containing a
  *     fromJson function that can construct an instance of the event.
  * @throws {Error} if the type name is empty, or the eventClass is not an
  *     object containing a fromJson function.
  */
-Blockly.Events.register = function(type, eventClass) {
-  Blockly.registry.register(Blockly.registry.Type.EVENT, type, eventClass);
+export const register = function(type, eventClass) {
+  registry.register(registry.Type.EVENT, type, eventClass);
 };
 
 /**
@@ -358,8 +360,8 @@ Blockly.Events.register = function(type, eventClass) {
  * @param type The type of the event to get.
  * @return {!Blockly.Events.Abstract} The event class with the given type.
  */
-Blockly.Events.get = function(type) {
-  return Blockly.registry.getClass(Blockly.registry.Type.EVENT, type, true);
+export const get = function(type) {
+  return registry.getClass(registry.Type.EVENT, type, true);
 };
 
 /**
@@ -368,8 +370,8 @@ Blockly.Events.get = function(type) {
  * @param {!Blockly.Workspace} workspace Target workspace for event.
  * @return {!Blockly.Events.Abstract} The event represented by the JSON.
  */
-Blockly.Events.fromJson = function(json, workspace) {
-  const eventClass = Blockly.Events.get(json.type);
+export const fromJson = function(json, workspace) {
+  const eventClass = get(json.type);
   if (eventClass) {
     const event = new eventClass(null);
     event.fromJson(json);
@@ -387,11 +389,11 @@ Blockly.Events.fromJson = function(json, workspace) {
  * users don't try to reenable disabled orphan blocks.
  * @param {!Blockly.Events.Abstract} event Custom data for event.
  */
-Blockly.Events.disableOrphans = function(event) {
-  if (event.type == Blockly.Events.MOVE ||
-      event.type == Blockly.Events.CREATE) {
-    Blockly.Events.disable();
-    const workspace = Blockly.common.getWorkspaceById(event.workspaceId);
+export const disableOrphans = function(event) {
+  if (event.type == MOVE ||
+      event.type == CREATE) {
+    disable();
+    const workspace = common.getWorkspaceById(event.workspaceId);
     let block = workspace.getBlockById(event.blockId);
     if (block) {
       if (block.getParent() && !block.getParent().disabled) {
@@ -407,7 +409,7 @@ Blockly.Events.disableOrphans = function(event) {
         } while (block);
       }
     }
-    Blockly.Events.enable();
+    enable();
   }
 };
 
@@ -415,14 +417,14 @@ Blockly.Events.disableOrphans = function(event) {
  * Sets whether events should be added to the undo stack.
  * @param {boolean} newValue True if events should be added to the undo stack.
  */
-Blockly.Events.setRecordUndo = function(newValue) {
-  Blockly.Events.recordUndo_ = newValue;
-}
+export const setRecordUndo = function(newValue) {
+  recordUndo = newValue;
+};
 
 /**
  * Returns whether or not events will be added to the undo stack.
  * @return {boolean} True if events will be added to the undo stack.
  */
-Blockly.Events.getRecordUndo = function() {
-  return Blockly.Events.recordUndo_;
+export const getRecordUndo = function() {
+  return recordUndo;
 };

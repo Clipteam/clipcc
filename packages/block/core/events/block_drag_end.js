@@ -20,11 +20,12 @@
 
 'use strict';
 
-goog.provide('Blockly.Events.EndBlockDrag');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Events.EndBlockDrag');
 
-goog.require('Blockly.Events');
-goog.require('Blockly.Events.BlockBase');
-goog.require('Blockly.Xml');
+import * as Events from './events';
+import {BlockBase} from './block_base';
+import * as Xml from '../xml';
 
 
 /**
@@ -32,35 +33,35 @@ goog.require('Blockly.Xml');
  * @param {Blockly.Block} block The moved block.  Null for a blank event.
  * @param {boolean} isOutside True if the moved block is outside of the
  *     blocks workspace.
- * @extends {Blockly.Events.BlockBase}
+ * @extends {BlockBase}
  * @constructor
  */
-Blockly.Events.EndBlockDrag = function(block, isOutside) {
+export const EndBlockDrag = function(block, isOutside) {
   if (!block) {
     return;  // Blank event to be populated by fromJson.
   }
-  Blockly.Events.EndBlockDrag.superClass_.constructor.call(this, block);
+  EndBlockDrag.superClass_.constructor.call(this, block);
   this.isOutside = isOutside;
   // If drag ends outside the blocks workspace, send the block XML
   if (isOutside) {
-    this.xml = Blockly.Xml.blockToDom(block, true /* opt_noId */);
+    this.xml = Xml.blockToDom(block, true /* opt_noId */);
   }
   this.recordUndo = false;
 };
-goog.inherits(Blockly.Events.EndBlockDrag, Blockly.Events.BlockBase);
+goog.inherits(EndBlockDrag, BlockBase);
 
 /**
  * Type of this event.
  * @type {string}
  */
-Blockly.Events.EndBlockDrag.prototype.type = Blockly.Events.END_DRAG;
+EndBlockDrag.prototype.type = Events.END_DRAG;
 
 /**
  * Encode the event as JSON.
  * @return {!Object} JSON representation.
  */
-Blockly.Events.EndBlockDrag.prototype.toJson = function() {
-  const json = Blockly.Events.EndBlockDrag.superClass_.toJson.call(this);
+EndBlockDrag.prototype.toJson = function() {
+  const json = EndBlockDrag.superClass_.toJson.call(this);
   if (this.isOutside) {
     json['isOutside'] = this.isOutside;
   }
@@ -74,10 +75,10 @@ Blockly.Events.EndBlockDrag.prototype.toJson = function() {
  * Decode the JSON event.
  * @param {!Object} json JSON representation.
  */
-Blockly.Events.EndBlockDrag.prototype.fromJson = function(json) {
-  Blockly.Events.EndBlockDrag.superClass_.fromJson.call(this, json);
+EndBlockDrag.prototype.fromJson = function(json) {
+  EndBlockDrag.superClass_.fromJson.call(this, json);
   this.isOutside = json['isOutside'];
   this.xml = json['xml'];
 };
 
-Blockly.Events.register(Blockly.Events.END_DRAG, Blockly.Events.EndBlockDrag);
+Events.register(Events.END_DRAG, EndBlockDrag);

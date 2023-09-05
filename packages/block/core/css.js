@@ -28,17 +28,17 @@
  * @name Blockly.Css
  * @namespace
  */
-goog.provide('Blockly.Css');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Css');
 
-goog.require('Blockly.Colours');
+import {Colours} from './colours';
 
-goog.require('goog.userAgent');
 
 /**
  * List of cursors.
  * @enum {string}
  */
-Blockly.Css.Cursor = {
+export const Cursor = {
   OPEN: 'handopen',
   CLOSED: 'handclosed',
   DELETE: 'handdelete'
@@ -49,21 +49,21 @@ Blockly.Css.Cursor = {
  * @type {string}
  * @private
  */
-Blockly.Css.currentCursor_ = '';
+let currentCursor = '';
 
 /**
- * Large stylesheet added by Blockly.Css.inject.
+ * Large stylesheet added by inject.
  * @type {Element}
  * @private
  */
-Blockly.Css.styleSheet_ = null;
+let styleSheet = null;
 
 /**
  * Path to media directory, with any trailing slash removed.
  * @type {string}
  * @private
  */
-Blockly.Css.mediaPath_ = '';
+let mediaPath = '';
 
 /**
  * Inject the CSS into the DOM.  This is preferable over using a regular CSS
@@ -75,29 +75,29 @@ Blockly.Css.mediaPath_ = '';
  *     (providing CSS becomes the document's responsibility).
  * @param {string} pathToMedia Path from page to the Blockly media directory.
  */
-Blockly.Css.inject = function(hasCss, pathToMedia) {
+export const inject = function(hasCss, pathToMedia) {
   // Clear the CSS if it has already been injected.
-  if (Blockly.Css.styleSheet_) {
-    document.head.removeChild(Blockly.Css.styleSheet_.ownerNode);
+  if (styleSheet) {
+    document.head.removeChild(styleSheet.ownerNode);
   }
   // Placeholder for cursor rule.  Must be first rule (index 0).
   let text = '.blocklyDraggable {}\n';
   if (hasCss) {
-    text += Blockly.Css.CONTENT.join('\n');
+    text += CONTENT.join('\n');
   }
   // Strip off any trailing slash (either Unix or Windows).
-  Blockly.Css.mediaPath_ = pathToMedia.replace(/[\\\/]$/, '');
-  text = text.replace(/<<<PATH>>>/g, Blockly.Css.mediaPath_);
+  mediaPath = pathToMedia.replace(/[\\\/]$/, '');
+  text = text.replace(/<<<PATH>>>/g, mediaPath);
   // Dynamically replace colours in the CSS text, in case they have
   // been set at run-time injection.
   // Process longer colour properties first to handle common prefixes.
   const compareByLength = function(a, b) { return b.length - a.length; };
-  const colourProperties = Object.keys(Blockly.Colours).sort(compareByLength);
+  const colourProperties = Object.keys(Colours).sort(compareByLength);
   for (let i = 0, colourProperty; colourProperty = colourProperties[i]; i++) {
     // Replace all
     text = text.replace(
       new RegExp('\\$colour\\_' + colourProperty, 'g'),
-      Blockly.Colours[colourProperty]
+      Colours[colourProperty]
     );
   }
 
@@ -107,24 +107,24 @@ Blockly.Css.inject = function(hasCss, pathToMedia) {
 
   const cssTextNode = document.createTextNode(text);
   cssNode.appendChild(cssTextNode);
-  Blockly.Css.styleSheet_ = cssNode.sheet;
+  styleSheet = cssNode.sheet;
 };
 
 /**
  * Set the cursor to be displayed when over something draggable.
  * See See https://github.com/google/blockly/issues/981 for context.
- * @param {Blockly.Css.Cursor} cursor Enum.
+ * @param {Cursor} cursor Enum.
  * @deprecated April 2017.
  */
-Blockly.Css.setCursor = function(cursor) {
-  console.warn('Deprecated call to Blockly.Css.setCursor.' +
+export const setCursor = function(cursor) {
+  console.warn('Deprecated call to setCursor.' +
     'See https://github.com/google/blockly/issues/981 for context');
 };
 
 /**
  * Array making up the CSS content for Blockly.
  */
-Blockly.Css.CONTENT = [
+export const CONTENT = [
   /* manage them via css variables to change colours dynamically. */
   ':root {',
     '--clipcc-block-workspace-background: $colour_workspace;',
@@ -251,7 +251,7 @@ Blockly.Css.CONTENT = [
     'display: none;',
     'border: 1px solid;',
     'border-radius: 4px;',
-    'box-shadow: 0px 0px 8px 1px ' + Blockly.Colours.dropDownShadow + ';',
+    'box-shadow: 0px 0px 8px 1px ' + Colours.dropDownShadow + ';',
     'padding: 4px;',
     '-webkit-user-select: none;',
     'min-height: 15px',
@@ -286,11 +286,11 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyDropDownButtonHover {',
-    'box-shadow: 0px 0px 0px 4px ' + Blockly.Colours.fieldShadow + ';',
+    'box-shadow: 0px 0px 0px 4px ' + Colours.fieldShadow + ';',
   '}',
 
   '.blocklyDropDownButton:active {',
-    'box-shadow: 0px 0px 0px 6px ' + Blockly.Colours.fieldShadow + ';',
+    'box-shadow: 0px 0px 0px 6px ' + Colours.fieldShadow + ';',
   '}',
 
   '.blocklyDropDownButton > img {',
@@ -800,9 +800,9 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyAngleCircle {',
-    'stroke: ' + Blockly.Colours.motion.tertiary + ';',
+    'stroke: ' + Colours.motion.tertiary + ';',
     'stroke-width: 1;',
-    'fill: ' + Blockly.Colours.motion.secondary + ';',
+    'fill: ' + Colours.motion.secondary + ';',
   '}',
 
   '.blocklyAngleCenterPoint {',
@@ -1290,8 +1290,8 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.checked > .blocklyFlyoutCheckbox {',
-    'fill: var(--clipcc-motion-primary, ' + Blockly.Colours.motion.primary + ');',
-    'stroke: var(--clipcc-motion-tertiary, ' + Blockly.Colours.motion.tertiary + ');',
+    'fill: var(--clipcc-motion-primary, ' + Colours.motion.primary + ');',
+    'stroke: var(--clipcc-motion-tertiary, ' + Colours.motion.tertiary + ');',
   '}',
 
   '.blocklyFlyoutCheckboxPath {',

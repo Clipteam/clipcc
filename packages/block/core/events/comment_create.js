@@ -20,13 +20,14 @@
 
 'use strict';
 
-goog.provide('Blockly.Events.CommentCreate');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Events.CommentCreate');
 
-goog.require('Blockly.Events');
-goog.require('Blockly.Events.CommentBase');
+import * as Events from './events';
+import {CommentBase} from './comment_base';
+import * as Xml from '../xml';
 
-goog.require('goog.dom');
-goog.require('goog.math.Coordinate');
+const dom = goog.require('goog.dom');
 
 
 /**
@@ -35,14 +36,14 @@ goog.require('goog.math.Coordinate');
  *     The created comment. Null for a blank event.
  * @param {string=} opt_blockId Optional id for the block this comment belongs
  *     to, if it is a block comment.
- * @extends {Blockly.Events.CommentBase}
+ * @extends {CommentBase}
  * @constructor
  */
-Blockly.Events.CommentCreate = function(comment) {
+export const CommentCreate = function(comment) {
   if (!comment) {
     return;  // Blank event to be populated by fromJson.
   }
-  Blockly.Events.CommentCreate.superClass_.constructor.call(this, comment);
+  CommentCreate.superClass_.constructor.call(this, comment);
 
   /**
    * The text content of this comment.
@@ -78,13 +79,13 @@ Blockly.Events.CommentCreate = function(comment) {
 
   this.xml = comment.toXmlWithXY();
 };
-goog.inherits(Blockly.Events.CommentCreate, Blockly.Events.CommentBase);
+goog.inherits(CommentCreate, CommentBase);
 
 /**
  * Type of this event.
  * @type {string}
  */
-Blockly.Events.CommentCreate.prototype.type = Blockly.Events.COMMENT_CREATE;
+CommentCreate.prototype.type = Events.COMMENT_CREATE;
 
 /**
  * Encode the event as JSON.
@@ -92,9 +93,9 @@ Blockly.Events.CommentCreate.prototype.type = Blockly.Events.COMMENT_CREATE;
  * serialization.
  * @return {!Object} JSON representation.
  */
-Blockly.Events.CommentCreate.prototype.toJson = function() {
-  const json = Blockly.Events.CommentCreate.superClass_.toJson.call(this);
-  json['xml'] = Blockly.Xml.domToText(this.xml);
+CommentCreate.prototype.toJson = function() {
+  const json = CommentCreate.superClass_.toJson.call(this);
+  json['xml'] = Xml.domToText(this.xml);
   return json;
 };
 
@@ -102,16 +103,16 @@ Blockly.Events.CommentCreate.prototype.toJson = function() {
  * Decode the JSON event.
  * @param {!Object} json JSON representation.
  */
-Blockly.Events.CommentCreate.prototype.fromJson = function(json) {
-  Blockly.Events.CommentCreate.superClass_.fromJson.call(this, json);
-  this.xml = Blockly.Xml.textToDom('<xml>' + json['xml'] + '</xml>').firstChild;
+CommentCreate.prototype.fromJson = function(json) {
+  CommentCreate.superClass_.fromJson.call(this, json);
+  this.xml = Xml.textToDom('<xml>' + json['xml'] + '</xml>').firstChild;
 };
 
 /**
  * Run a creation event.
  * @param {boolean} forward True if run forward, false if run backward (undo).
  */
-Blockly.Events.CommentCreate.prototype.run = function(forward) {
+CommentCreate.prototype.run = function(forward) {
   if (forward) {
     const workspace = this.getEventWorkspace_();
     if (this.blockId) {
@@ -120,9 +121,9 @@ Blockly.Events.CommentCreate.prototype.run = function(forward) {
         block.setCommentText('', this.commentId, this.xy.x, this.xy.y, this.minimized);
       }
     } else {
-      const xml = goog.dom.createDom('xml');
+      const xml = dom.createDom('xml');
       xml.appendChild(this.xml);
-      Blockly.Xml.domToWorkspace(xml, workspace);
+      Xml.domToWorkspace(xml, workspace);
     }
   } else {
     const comment = this.getComment_();
@@ -135,4 +136,4 @@ Blockly.Events.CommentCreate.prototype.run = function(forward) {
   }
 };
 
-Blockly.Events.register(Blockly.Events.COMMENT_CREATE, Blockly.Events.CommentCreate);
+Events.register(Events.COMMENT_CREATE, CommentCreate);

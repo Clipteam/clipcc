@@ -20,76 +20,78 @@
 
 'use strict';
 
-goog.provide('Blockly.Events.CommentMove');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Events.CommentMove');
 
-goog.require('Blockly.Events');
-goog.require('Blockly.Events.CommentBase');
+import * as Events from './events';
+import {CommentBase} from './comment_base';
+import {ScratchBlockComment} from '../scratch_block_comment';
 
-goog.require('goog.math.Coordinate');
+const Coordinate = goog.require('goog.math.Coordinate');
 
 
 /**
  * Class for a comment move event.  Created before the move.
- * @param {Blockly.WorkspaceComment | Blockly.ScratchBlockComment} comment
+ * @param {Blockly.WorkspaceComment | ScratchBlockComment} comment
  *     The comment that is being moved. Null for a blank event.
- * @extends {Blockly.Events.CommentBase}
+ * @extends {CommentBase}
  * @constructor
  */
-Blockly.Events.CommentMove = function(comment) {
+export const CommentMove = function(comment) {
   if (!comment) {
     return;  // Blank event to be populated by fromJson.
   }
-  Blockly.Events.CommentMove.superClass_.constructor.call(this, comment);
+  CommentMove.superClass_.constructor.call(this, comment);
 
   /**
    * The comment that is being moved.  Will be cleared after recording the new
    * location.
-   * @type {?Blockly.WorkspaceComment | Blockly.ScratchBlockComment}
+   * @type {?Blockly.WorkspaceComment | ScratchBlockComment}
    */
   this.comment_ = comment;
 
   this.workspaceWidth_ = comment.workspace.getWidth();
   /**
    * The location before the move, in workspace coordinates.
-   * @type {!goog.math.Coordinate}
+   * @type {!Coordinate}
    */
   this.oldCoordinate_ = this.currentLocation_();
 
   /**
    * The location after the move, in workspace coordinates.
-   * @type {!goog.math.Coordinate}
+   * @type {!Coordinate}
    */
   this.newCoordinate_ = null;
 };
-goog.inherits(Blockly.Events.CommentMove, Blockly.Events.CommentBase);
+goog.inherits(CommentMove, CommentBase);
 
 /**
  * Calculate the current, language agnostic location of the comment.
  * This value should not report different numbers in LTR vs. RTL.
- * @return {goog.math.Coordinate} The location of the comment.
+ * @return {Coordinate} The location of the comment.
  * @private
  */
-Blockly.Events.CommentMove.prototype.currentLocation_ = function() {
+CommentMove.prototype.currentLocation_ = function() {
   const xy = this.comment_.getXY();
   if (!this.comment_.workspace.RTL) {
     return xy;
   }
 
   let rtlAwareX;
-  if (this.comment_ instanceof Blockly.ScratchBlockComment) {
+  if (this.comment_ instanceof ScratchBlockComment) {
     const commentWidth = this.comment_.getBubbleSize().width;
     rtlAwareX = this.workspaceWidth_ - xy.x - commentWidth;
   } else {
     rtlAwareX = this.workspaceWidth_ - xy.x;
   }
-  return new goog.math.Coordinate(rtlAwareX, xy.y);
+  return new Coordinate(rtlAwareX, xy.y);
 };
 
 /**
  * Record the comment's new location.  Called after the move.  Can only be
  * called once.
  */
-Blockly.Events.CommentMove.prototype.recordNew = function() {
+CommentMove.prototype.recordNew = function() {
   if (!this.comment_) {
     throw new Error('Tried to record the new position of a comment on the ' +
         'same event twice.');
@@ -102,16 +104,16 @@ Blockly.Events.CommentMove.prototype.recordNew = function() {
  * Type of this event.
  * @type {string}
  */
-Blockly.Events.CommentMove.prototype.type = Blockly.Events.COMMENT_MOVE;
+CommentMove.prototype.type = Events.COMMENT_MOVE;
 
 /**
  * Override the location before the move.  Use this if you don't create the
  * event until the end of the move, but you know the original location.
- * @param {!goog.math.Coordinate} xy The location before the move, in workspace
+ * @param {!Coordinate} xy The location before the move, in workspace
  *     coordinates.
  */
-Blockly.Events.CommentMove.prototype.setOldCoordinate = function(xy) {
-  this.oldCoordinate_ = new goog.math.Coordinate(this.comment_.workspace.RTL ?
+CommentMove.prototype.setOldCoordinate = function(xy) {
+  this.oldCoordinate_ = new Coordinate(this.comment_.workspace.RTL ?
       this.workspaceWidth_ - xy.x : xy.x, xy.y);
 };
 
@@ -121,8 +123,8 @@ Blockly.Events.CommentMove.prototype.setOldCoordinate = function(xy) {
  * serialization.
  * @return {!Object} JSON representation.
  */
-Blockly.Events.CommentMove.prototype.toJson = function() {
-  const json = Blockly.Events.CommentMove.superClass_.toJson.call(this);
+CommentMove.prototype.toJson = function() {
+  const json = CommentMove.superClass_.toJson.call(this);
   if (this.newCoordinate_) {
     json['newCoordinate'] = Math.round(this.newCoordinate_.x) + ',' +
         Math.round(this.newCoordinate_.y);
@@ -134,13 +136,13 @@ Blockly.Events.CommentMove.prototype.toJson = function() {
  * Decode the JSON event.
  * @param {!Object} json JSON representation.
  */
-Blockly.Events.CommentMove.prototype.fromJson = function(json) {
-  Blockly.Events.CommentMove.superClass_.fromJson.call(this, json);
+CommentMove.prototype.fromJson = function(json) {
+  CommentMove.superClass_.fromJson.call(this, json);
 
   if (json['newCoordinate']) {
     const xy = json['newCoordinate'].split(',');
     this.newCoordinate_ =
-        new goog.math.Coordinate(parseFloat(xy[0]), parseFloat(xy[1]));
+        new Coordinate(parseFloat(xy[0]), parseFloat(xy[1]));
   }
 };
 
@@ -148,15 +150,15 @@ Blockly.Events.CommentMove.prototype.fromJson = function(json) {
  * Does this event record any change of state?
  * @return {boolean} False if something changed.
  */
-Blockly.Events.CommentMove.prototype.isNull = function() {
-  return goog.math.Coordinate.equals(this.oldCoordinate_, this.newCoordinate_);
+CommentMove.prototype.isNull = function() {
+  return Coordinate.equals(this.oldCoordinate_, this.newCoordinate_);
 };
 
 /**
  * Run a move event.
  * @param {boolean} forward True if run forward, false if run backward (undo).
  */
-Blockly.Events.CommentMove.prototype.run = function(forward) {
+CommentMove.prototype.run = function(forward) {
   const comment = this.getComment_();
   if (!comment) {
     console.warn('Can\'t move non-existent comment: ' + this.commentId);
@@ -165,7 +167,7 @@ Blockly.Events.CommentMove.prototype.run = function(forward) {
 
   const target = forward ? this.newCoordinate_ : this.oldCoordinate_;
 
-  if (comment instanceof Blockly.ScratchBlockComment) {
+  if (comment instanceof ScratchBlockComment) {
     if (comment.workspace.RTL) {
       comment.moveTo(this.workspaceWidth_ - target.x, target.y);
     } else {
@@ -184,4 +186,4 @@ Blockly.Events.CommentMove.prototype.run = function(forward) {
   }
 };
 
-Blockly.Events.register(Blockly.Events.COMMENT_MOVE, Blockly.Events.CommentMove);
+Events.register(Events.COMMENT_MOVE, CommentMove);

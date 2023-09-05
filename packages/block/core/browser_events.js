@@ -24,9 +24,10 @@
  */
 'use strict';
 
-goog.provide('Blockly.browserEvents');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.browserEvents');
 
-goog.require('Blockly.Touch');
+import * as Touch from './touch';
 
 
 /**
@@ -49,7 +50,7 @@ goog.require('Blockly.Touch');
  *     browserEvents.unbind.
  * @public
  */
-Blockly.browserEvents.conditionalBind = function(
+export const conditionalBind = function(
     node, name, thisObject, func, opt_noCaptureIdentifier,
     opt_noPreventDefault) {
   let handled = false;
@@ -57,12 +58,12 @@ Blockly.browserEvents.conditionalBind = function(
     const captureIdentifier = !opt_noCaptureIdentifier;
     // Handle each touch point separately.  If the event was a mouse event, this
     // will hand back an array with one element, which we're fine handling.
-    const events = Blockly.Touch.splitEventByTouches(e);
+    const events = Touch.splitEventByTouches(e);
     for (let i = 0, event; event = events[i]; i++) {
-      if (captureIdentifier && !Blockly.Touch.shouldHandleEvent(event)) {
+      if (captureIdentifier && !Touch.shouldHandleEvent(event)) {
         continue;
       }
-      Blockly.Touch.setClientFromTouch(event);
+      Touch.setClientFromTouch(event);
       if (thisObject) {
         func.call(thisObject, event);
       } else {
@@ -76,7 +77,7 @@ Blockly.browserEvents.conditionalBind = function(
   const bindData = [[node, name, wrapFunc]];
 
   // Add equivalent touch event.
-  if (name in Blockly.Touch.TOUCH_MAP) {
+  if (name in Touch.TOUCH_MAP) {
     const touchWrapFunc = function(e) {
       wrapFunc(e);
       // Calling preventDefault stops the browser from scrolling/zooming the
@@ -86,7 +87,7 @@ Blockly.browserEvents.conditionalBind = function(
         e.preventDefault();
       }
     };
-    for (let i = 0, type; type = Blockly.Touch.TOUCH_MAP[name][i]; i++) {
+    for (let i = 0, type; type = Touch.TOUCH_MAP[name][i]; i++) {
       node.addEventListener(type, touchWrapFunc, false);
       bindData.push([node, type, touchWrapFunc]);
     }
@@ -108,7 +109,7 @@ Blockly.browserEvents.conditionalBind = function(
  *     browserEvents.unbind.
  * @public
  */
-Blockly.browserEvents.bind = function(node, name, thisObject, func) {
+export const bind = function(node, name, thisObject, func) {
   const wrapFunc = function(e) {
     if (thisObject) {
       func.call(thisObject, e);
@@ -121,7 +122,7 @@ Blockly.browserEvents.bind = function(node, name, thisObject, func) {
   const bindData = [[node, name, wrapFunc]];
 
   // Add equivalent touch event.
-  if (name in Blockly.Touch.TOUCH_MAP) {
+  if (name in Touch.TOUCH_MAP) {
     const touchWrapFunc = function(e) {
       // Punt on multitouch events.
       if (e.changedTouches.length == 1) {
@@ -135,7 +136,7 @@ Blockly.browserEvents.bind = function(node, name, thisObject, func) {
       // Stop the browser from scrolling/zooming the page.
       e.preventDefault();
     };
-    for (let i = 0, type; type = Blockly.Touch.TOUCH_MAP[name][i]; i++) {
+    for (let i = 0, type; type = Touch.TOUCH_MAP[name][i]; i++) {
       node.addEventListener(type, touchWrapFunc, false);
       bindData.push([node, type, touchWrapFunc]);
     }
@@ -150,7 +151,7 @@ Blockly.browserEvents.bind = function(node, name, thisObject, func) {
  * @return {!Function} The function call.
  * @public
  */
-Blockly.browserEvents.unbind = function(bindData) {
+export const unbind = function(bindData) {
   let func;
   while (bindData.length) {
     const bindDatum = bindData.pop();

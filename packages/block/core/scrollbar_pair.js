@@ -24,12 +24,13 @@
  */
 'use strict';
 
-goog.provide('Blockly.ScrollbarPair');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.ScrollbarPair');
 
-goog.require('Blockly.Scrollbar');
+import {Scrollbar} from './scrollbar';
+import * as utils from './utils';
 
-goog.require('goog.dom');
-goog.require('goog.events');
+const dom = goog.require('goog.dom');
 
 
 /**
@@ -42,21 +43,21 @@ goog.require('goog.events');
  * @param {!Blockly.Workspace} workspace Workspace to bind the scrollbars to.
  * @constructor
  */
-Blockly.ScrollbarPair = function(workspace) {
+export const ScrollbarPair = function(workspace) {
   this.workspace_ = workspace;
-  this.hScroll = new Blockly.Scrollbar(
+  this.hScroll = new Scrollbar(
       workspace, true, true, 'blocklyMainWorkspaceScrollbar');
-  this.vScroll = new Blockly.Scrollbar(
+  this.vScroll = new Scrollbar(
       workspace, false, true, 'blocklyMainWorkspaceScrollbar');
-  this.corner_ = Blockly.utils.createSvgElement(
+  this.corner_ = utils.createSvgElement(
       'rect',
       {
-        'height': Blockly.Scrollbar.scrollbarThickness,
-        'width': Blockly.Scrollbar.scrollbarThickness,
+        'height': Scrollbar.scrollbarThickness,
+        'width': Scrollbar.scrollbarThickness,
         'class': 'blocklyScrollbarBackground'
       },
       null);
-  Blockly.utils.insertAfter(this.corner_, workspace.getBubbleCanvas());
+  utils.insertAfter(this.corner_, workspace.getBubbleCanvas());
 };
 
 /**
@@ -64,14 +65,14 @@ Blockly.ScrollbarPair = function(workspace) {
  * @type {Object}
  * @private
  */
-Blockly.ScrollbarPair.prototype.oldHostMetrics_ = null;
+ScrollbarPair.prototype.oldHostMetrics_ = null;
 
 /**
  * Dispose of this pair of scrollbars.
  * Unlink from all DOM elements to prevent memory leaks.
  */
-Blockly.ScrollbarPair.prototype.dispose = function() {
-  goog.dom.removeNode(this.corner_);
+ScrollbarPair.prototype.dispose = function() {
+  dom.removeNode(this.corner_);
   this.corner_ = null;
   this.workspace_ = null;
   this.oldHostMetrics_ = null;
@@ -85,7 +86,7 @@ Blockly.ScrollbarPair.prototype.dispose = function() {
  * Recalculate both of the scrollbars' locations and lengths.
  * Also reposition the corner rectangle.
  */
-Blockly.ScrollbarPair.prototype.resize = function() {
+ScrollbarPair.prototype.resize = function() {
   // Look up the host metrics once, and use for both scrollbars.
   const hostMetrics = this.workspace_.getMetrics();
   if (!hostMetrics) {
@@ -148,7 +149,7 @@ Blockly.ScrollbarPair.prototype.resize = function() {
  * @param {number} x Horizontal scroll value.
  * @param {number} y Vertical scroll value.
  */
-Blockly.ScrollbarPair.prototype.set = function(x, y) {
+ScrollbarPair.prototype.set = function(x, y) {
   // This function is equivalent to:
   //   this.hScroll.set(x);
   //   this.vScroll.set(y);
@@ -178,7 +179,7 @@ Blockly.ScrollbarPair.prototype.set = function(x, y) {
  * @return {number} Ratio.
  * @private
  */
-Blockly.ScrollbarPair.prototype.getRatio_ = function(handlePosition, viewSize) {
+ScrollbarPair.prototype.getRatio_ = function(handlePosition, viewSize) {
   const ratio = handlePosition / viewSize;
   if (isNaN(ratio)) {
     return 0;
@@ -190,7 +191,7 @@ Blockly.ScrollbarPair.prototype.getRatio_ = function(handlePosition, viewSize) {
  * Set whether this scrollbar's container is visible.
  * @param {boolean} visible Whether the container is visible.
  */
-Blockly.ScrollbarPair.prototype.setContainerVisible = function(visible) {
+ScrollbarPair.prototype.setContainerVisible = function(visible) {
   this.hScroll.setContainerVisible(visible);
   this.vScroll.setContainerVisible(visible);
 };

@@ -28,9 +28,17 @@
  * @name Blockly.scratchBlocksUtils
  * @namespace
  **/
-goog.provide('Blockly.scratchBlocksUtils');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.scratchBlocksUtils');
 
-goog.require('Blockly.registry');
+import * as Events from './events/events';
+import {BlockCreate} from './events/block_create';
+import * as registry from './registry';
+import * as Touch from './touch';
+import * as utils from './utils';
+import * as Xml from './xml';
+
+const dom = goog.require('goog.dom');
 
 
 /**
@@ -43,7 +51,7 @@ goog.require('Blockly.registry');
  * @return {number} Width of the text in px.
  * @package
  */
-Blockly.scratchBlocksUtils.measureText = function(fontSize, fontFamily,
+export const measureText = function(fontSize, fontFamily,
     fontWeight, text) {
   const canvas = document.createElement('canvas');
   const context = canvas.getContext('2d');
@@ -59,7 +67,7 @@ Blockly.scratchBlocksUtils.measureText = function(fontSize, fontFamily,
  * @return {string} String with HTML entities encoded.
  * @package
  */
-Blockly.scratchBlocksUtils.encodeEntities = function(rawStr) {
+export const encodeEntities = function(rawStr) {
   // CC-BY-SA https://stackoverflow.com/questions/18749591/encode-html-entities-in-javascript
   return rawStr.replace(/[\u00A0-\u9999<>&]/gim, function(i) {
     return '&#' + i.charCodeAt(0) + ';';
@@ -72,7 +80,7 @@ Blockly.scratchBlocksUtils.encodeEntities = function(rawStr) {
  * @param {Blockly.Block} block the root block to be processed.
  * @package
  */
-Blockly.scratchBlocksUtils.changeObscuredShadowIds = function(block) {
+export const changeObscuredShadowIds = function(block) {
   const blocks = block.getDescendants(false);
   for (let i = blocks.length - 1; i >= 0; i--) {
     const descendant = blocks[i];
@@ -81,7 +89,7 @@ Blockly.scratchBlocksUtils.changeObscuredShadowIds = function(block) {
       if (connection) {
         const shadowDom = connection.getShadowDom();
         if (shadowDom) {
-          shadowDom.setAttribute('id', Blockly.utils.genUid());
+          shadowDom.setAttribute('id', utils.genUid());
           connection.setShadowDom(shadowDom);
         }
       }
@@ -99,7 +107,7 @@ Blockly.scratchBlocksUtils.changeObscuredShadowIds = function(block) {
  * @return {boolean} True if the block should be duplicated on drag.
  * @package
  */
-Blockly.scratchBlocksUtils.isShadowArgumentReporter = function(block) {
+export const isShadowArgumentReporter = function(block) {
   return (block.isShadow() && (block.type == 'argument_reporter_boolean' ||
       block.type == 'argument_reporter_string_number'));
 };
@@ -110,7 +118,7 @@ Blockly.scratchBlocksUtils.isShadowArgumentReporter = function(block) {
  * @param {string} str2 Second input.
  * @return {number} -1, 0, or 1 to signify greater than, equality, or less than.
  */
-Blockly.scratchBlocksUtils.compareStrings = function(str1, str2) {
+export const compareStrings = function(str1, str2) {
   return str1.localeCompare(str2, [], {
     sensitivity: 'base',
     numeric: true
@@ -124,7 +132,7 @@ Blockly.scratchBlocksUtils.compareStrings = function(str1, str2) {
  * @return {boolean} True if the block can be recycled.
  * @package
  */
-Blockly.scratchBlocksUtils.blockIsRecyclable = function(block) {
+export const blockIsRecyclable = function(block) {
   // If the block needs to parse mutations, never recycle.
   if (block.mutationToDom && block.domToMutation) {
     return false;
@@ -135,13 +143,13 @@ Blockly.scratchBlocksUtils.blockIsRecyclable = function(block) {
     for (let j = 0; j < input.fieldRow.length; j++) {
       const field = input.fieldRow[j];
       // No variables.
-      if (field instanceof Blockly.registry.getClass(Blockly.registry.Type.FIELD, 'field_variable') ||
-          field instanceof Blockly.registry.getClass(Blockly.registry.Type.FIELD, 'field_variable_getter')) {
+      if (field instanceof registry.getClass(registry.Type.FIELD, 'field_variable') ||
+          field instanceof registry.getClass(registry.Type.FIELD, 'field_variable_getter')) {
         return false;
       }
-      if (field instanceof Blockly.registry.getClass(Blockly.registry.Type.FIELD, 'field_dropdown') ||
-          field instanceof Blockly.registry.getClass(Blockly.registry.Type.FIELD, 'field_numberdropdown') ||
-          field instanceof Blockly.registry.getClass(Blockly.registry.Type.FIELD, 'field_textdropdown')) {
+      if (field instanceof registry.getClass(registry.Type.FIELD, 'field_dropdown') ||
+          field instanceof registry.getClass(registry.Type.FIELD, 'field_numberdropdown') ||
+          field instanceof registry.getClass(registry.Type.FIELD, 'field_textdropdown')) {
         if (field.isOptionListDynamic()) {
           return false;
         }
@@ -150,7 +158,7 @@ Blockly.scratchBlocksUtils.blockIsRecyclable = function(block) {
     // Check children.
     if (input.connection) {
       const child = input.connection.targetBlock();
-      if (child && !Blockly.scratchBlocksUtils.blockIsRecyclable(child)) {
+      if (child && !blockIsRecyclable(child)) {
         return false;
       }
     }
@@ -170,8 +178,8 @@ Blockly.scratchBlocksUtils.blockIsRecyclable = function(block) {
  *     drag.
  * @package
  */
-Blockly.scratchBlocksUtils.duplicateAndDragCallback = function(oldBlock, event) {
-  const isMouseEvent = Blockly.Touch.getTouchIdentifierFromEvent(event) === 'mouse';
+export const duplicateAndDragCallback = function(oldBlock, event) {
+  const isMouseEvent = Touch.getTouchIdentifierFromEvent(event) === 'mouse';
   return function(e) {
     // Give the context menu a chance to close.
     setTimeout(function() {
@@ -182,7 +190,7 @@ Blockly.scratchBlocksUtils.duplicateAndDragCallback = function(oldBlock, event) 
       }
 
       // Create the new block by cloning the block in the flyout (via XML).
-      const xml = Blockly.Xml.blockToDom(oldBlock);
+      const xml = Xml.blockToDom(oldBlock);
       // The target workspace would normally resize during domToBlock, which
       // will lead to weird jumps.
       // Resizing will be enabled when the drag ends.
@@ -190,15 +198,15 @@ Blockly.scratchBlocksUtils.duplicateAndDragCallback = function(oldBlock, event) 
 
       // Disable events and manually emit events after the block has been
       // positioned and has had its shadow IDs fixed (Scratch-specific).
-      Blockly.Events.disable();
+      Events.disable();
       let newBlock;
       try {
         // Using domToBlock instead of domToWorkspace means that the new block
         // will be placed at position (0, 0) in main workspace units.
-        newBlock = Blockly.Xml.domToBlock(xml, ws);
+        newBlock = Xml.domToBlock(xml, ws);
 
         // Scratch-specific: Give shadow dom new IDs to prevent duplicating on paste
-        Blockly.scratchBlocksUtils.changeObscuredShadowIds(newBlock);
+        changeObscuredShadowIds(newBlock);
 
         const svgRootNew = newBlock.getSvgRoot();
         if (!svgRootNew) {
@@ -218,10 +226,10 @@ Blockly.scratchBlocksUtils.duplicateAndDragCallback = function(oldBlock, event) 
           newBlock.moveBy(offsetX, offsetY); // Just offset the block for touch.
         }
       } finally {
-        Blockly.Events.enable();
+        Events.enable();
       }
-      if (Blockly.Events.isEnabled()) {
-        Blockly.Events.fire(new Blockly.Events.BlockCreate(newBlock));
+      if (Events.isEnabled()) {
+        Events.fire(new BlockCreate(newBlock));
       }
 
       if (isMouseEvent) {
@@ -252,14 +260,14 @@ Blockly.scratchBlocksUtils.duplicateAndDragCallback = function(oldBlock, event) 
  * @return {Function} A callback function that copy the block.
  * @package
  */
-Blockly.scratchBlocksUtils.copyCallback = function(block) {
+export const copyCallback = function(block) {
   return function() {
     /** @type {Clipboard} */
     const clipboard = goog.global.navigator.clipboard;
 
-    const xml = goog.dom.createDom('xml');
-    xml.appendChild(Blockly.Xml.blockToDom(block, true));
-    clipboard.writeText(Blockly.Xml.domToText(xml));
+    const xml = dom.createDom('xml');
+    xml.appendChild(Xml.blockToDom(block, true));
+    clipboard.writeText(Xml.domToText(xml));
   };
 };
 
@@ -270,23 +278,23 @@ Blockly.scratchBlocksUtils.copyCallback = function(block) {
  * @return {Function} A callback function that paste the block.
  * @package
  */
-Blockly.scratchBlocksUtils.pasteCallback = function(ws, event) {
+export const pasteCallback = function(ws, event) {
   return function() {
     /** @type {Clipboard} */
     const clipboard = goog.global.navigator.clipboard;
 
     clipboard.readText().then(function(data) {
-      Blockly.Events.disable();
+      Events.disable();
       let newBlock;
       try {
-        const xml = Blockly.Xml.textToDom(data);
+        const xml = Xml.textToDom(data);
         if (!xml) {
           throw 'Invalid XML';
         }
 
-        newBlock = Blockly.Xml.domToBlock(xml.firstChild, ws);
+        newBlock = Xml.domToBlock(xml.firstChild, ws);
 
-        const point = Blockly.utils.mouseToSvg(event, ws.getParentSvg(),  ws.getInverseScreenCTM());
+        const point = utils.mouseToSvg(event, ws.getParentSvg(),  ws.getInverseScreenCTM());
         const rel = ws.getOriginOffsetInPixels();
         const x = (point.x - rel.x) / ws.scale;
         const y = (point.y - rel.y) / ws.scale;
@@ -295,9 +303,9 @@ Blockly.scratchBlocksUtils.pasteCallback = function(ws, event) {
         // Refresh toolbox to adapting new blocks
         ws.refreshToolboxSelection_();
       } finally {
-        Blockly.Events.enable();
-        if (Blockly.Events.isEnabled() && newBlock) {
-          Blockly.Events.fire(new Blockly.Events.BlockCreate(newBlock));
+        Events.enable();
+        if (Events.isEnabled() && newBlock) {
+          Events.fire(new BlockCreate(newBlock));
         }
       }
     });

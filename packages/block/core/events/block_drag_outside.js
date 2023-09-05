@@ -20,40 +20,41 @@
 
 'use strict';
 
-goog.provide('Blockly.Events.DragBlockOutside');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Events.DragBlockOutside');
 
-goog.require('Blockly.Events');
-goog.require('Blockly.Events.BlockBase');
+import * as Events from './events';
+import {BlockBase} from './block_base';
 
 
 /**
  * Class for a block drag event. Fired when block dragged into or out of
  * the blocks UI.
  * @param {Blockly.Block} block The moved block.  Null for a blank event.
- * @extends {Blockly.Events.BlockBase}
+ * @extends {BlockBase}
  * @constructor
  */
-Blockly.Events.DragBlockOutside = function(block) {
+export const DragBlockOutside = function(block) {
   if (!block) {
     return;  // Blank event to be populated by fromJson.
   }
-  Blockly.Events.DragBlockOutside.superClass_.constructor.call(this, block);
+  DragBlockOutside.superClass_.constructor.call(this, block);
   this.recordUndo = false;
 };
-goog.inherits(Blockly.Events.DragBlockOutside, Blockly.Events.BlockBase);
+goog.inherits(DragBlockOutside, BlockBase);
 
 /**
  * Type of this event.
  * @type {string}
  */
-Blockly.Events.DragBlockOutside.prototype.type = Blockly.Events.DRAG_OUTSIDE;
+DragBlockOutside.prototype.type = Events.DRAG_OUTSIDE;
 
 /**
  * Encode the event as JSON.
  * @return {!Object} JSON representation.
  */
-Blockly.Events.DragBlockOutside.prototype.toJson = function() {
-  const json = Blockly.Events.DragBlockOutside.superClass_.toJson.call(this);
+DragBlockOutside.prototype.toJson = function() {
+  const json = DragBlockOutside.superClass_.toJson.call(this);
   if (this.isOutside) {
     json['isOutside'] = this.isOutside;
   }
@@ -64,9 +65,9 @@ Blockly.Events.DragBlockOutside.prototype.toJson = function() {
  * Decode the JSON event.
  * @param {!Object} json JSON representation.
  */
-Blockly.Events.DragBlockOutside.prototype.fromJson = function(json) {
-  Blockly.Events.DragBlockOutside.superClass_.fromJson.call(this, json);
+DragBlockOutside.prototype.fromJson = function(json) {
+  DragBlockOutside.superClass_.fromJson.call(this, json);
   this.isOutside = json['isOutside'];
 };
 
-Blockly.Events.register(Blockly.Events.DRAG_OUTSIDE, Blockly.Events.DragBlockOutside);
+Events.register(Events.DRAG_OUTSIDE, DragBlockOutside);

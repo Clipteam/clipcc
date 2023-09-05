@@ -24,40 +24,43 @@
  */
 'use strict';
 
-goog.provide('Blockly.Warning');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Warning');
 
-goog.require('Blockly.Bubble');
-goog.require('Blockly.Events.Ui');
-goog.require('Blockly.Icon');
+import {Bubble} from './bubble';
+import * as Events from './events/events';
+import {Ui} from './events/ui';
+import {Icon} from './icon';
+import * as utils from './utils';
 
 
 /**
  * Class for a warning.
  * @param {!Blockly.Block} block The block associated with this warning.
- * @extends {Blockly.Icon}
+ * @extends {Icon}
  * @constructor
  */
-Blockly.Warning = function(block) {
-  Blockly.Warning.superClass_.constructor.call(this, block);
+export const Warning = function(block) {
+  Warning.superClass_.constructor.call(this, block);
   this.createIcon();
   // The text_ object can contain multiple warnings.
   this.text_ = {};
 };
-goog.inherits(Blockly.Warning, Blockly.Icon);
+goog.inherits(Warning, Icon);
 
 /**
  * Does this icon get hidden when the block is collapsed.
  */
-Blockly.Warning.prototype.collapseHidden = false;
+Warning.prototype.collapseHidden = false;
 
 /**
  * Draw the warning icon.
  * @param {!Element} group The icon group.
  * @private
  */
-Blockly.Warning.prototype.drawIcon_ = function(group) {
+Warning.prototype.drawIcon_ = function(group) {
   // Triangle with rounded corners.
-  Blockly.utils.createSvgElement('path',
+  utils.createSvgElement('path',
       {
         'class': 'blocklyIconShape',
         'd': 'M2,15Q-1,15 0.5,12L6.5,1.7Q8,-1 9.5,1.7L15.5,12Q17,15 14,15z'
@@ -66,14 +69,14 @@ Blockly.Warning.prototype.drawIcon_ = function(group) {
   // Can't use a real '!' text character since different browsers and operating
   // systems render it differently.
   // Body of exclamation point.
-  Blockly.utils.createSvgElement('path',
+  utils.createSvgElement('path',
       {
         'class': 'blocklyIconSymbol',
         'd': 'm7,4.8v3.16l0.27,2.27h1.46l0.27,-2.27v-3.16z'
       },
       group);
   // Dot of exclamation point.
-  Blockly.utils.createSvgElement('rect',
+  utils.createSvgElement('rect',
       {
         'class': 'blocklyIconSymbol',
         'x': '7',
@@ -90,20 +93,20 @@ Blockly.Warning.prototype.drawIcon_ = function(group) {
  * @return {!SVGTextElement} The top-level node of the text.
  * @private
  */
-Blockly.Warning.textToDom_ = function(text) {
+Warning.textToDom_ = function(text) {
   const paragraph = /** @type {!SVGTextElement} */
-      (Blockly.utils.createSvgElement(
+      (utils.createSvgElement(
           'text',
           {
             'class': 'blocklyText blocklyBubbleText',
-            'y': Blockly.Bubble.BORDER_WIDTH
+            'y': Bubble.BORDER_WIDTH
           },
           null)
       );
   const lines = text.split('\n');
   for (let i = 0; i < lines.length; i++) {
-    const tspanElement = Blockly.utils.createSvgElement('tspan',
-        {'dy': '1em', 'x': Blockly.Bubble.BORDER_WIDTH}, paragraph);
+    const tspanElement = utils.createSvgElement('tspan',
+        {'dy': '1em', 'x': Bubble.BORDER_WIDTH}, paragraph);
     const textNode = document.createTextNode(lines[i]);
     tspanElement.appendChild(textNode);
   }
@@ -114,17 +117,17 @@ Blockly.Warning.textToDom_ = function(text) {
  * Show or hide the warning bubble.
  * @param {boolean} visible True if the bubble should be visible.
  */
-Blockly.Warning.prototype.setVisible = function(visible) {
+Warning.prototype.setVisible = function(visible) {
   if (visible == this.isVisible()) {
     // No change.
     return;
   }
-  Blockly.Events.fire(
-      new Blockly.Events.Ui(this.block_, 'warningOpen', !visible, visible));
+  Events.fire(
+      new Ui(this.block_, 'warningOpen', !visible, visible));
   if (visible) {
     // Create the bubble to display all warnings.
-    const paragraph = Blockly.Warning.textToDom_(this.getText());
-    this.bubble_ = new Blockly.Bubble(
+    const paragraph = Warning.textToDom_(this.getText());
+    this.bubble_ = new Bubble(
         /** @type {!Blockly.WorkspaceSvg} */ (this.block_.workspace),
         paragraph, this.block_.svgPath_, this.iconXY_, null, null);
     if (this.block_.RTL) {
@@ -133,7 +136,7 @@ Blockly.Warning.prototype.setVisible = function(visible) {
       const maxWidth = paragraph.getBBox().width;
       for (let i = 0, textElement; textElement = paragraph.childNodes[i]; i++) {
         textElement.setAttribute('text-anchor', 'end');
-        textElement.setAttribute('x', maxWidth + Blockly.Bubble.BORDER_WIDTH);
+        textElement.setAttribute('x', maxWidth + Bubble.BORDER_WIDTH);
       }
     }
     this.updateColour();
@@ -153,7 +156,7 @@ Blockly.Warning.prototype.setVisible = function(visible) {
  * @param {!Event} _e Mouse up event.
  * @private
  */
-Blockly.Warning.prototype.bodyFocus_ = function(_e) {
+Warning.prototype.bodyFocus_ = function(_e) {
   this.bubble_.promote_();
 };
 
@@ -163,7 +166,7 @@ Blockly.Warning.prototype.bodyFocus_ = function(_e) {
  * @param {string} id An ID for this text entry to be able to maintain
  *     multiple warnings.
  */
-Blockly.Warning.prototype.setText = function(text, id) {
+Warning.prototype.setText = function(text, id) {
   if (this.text_[id] == text) {
     return;
   }
@@ -182,7 +185,7 @@ Blockly.Warning.prototype.setText = function(text, id) {
  * Get this warning's texts.
  * @return {string} All texts concatenated into one string.
  */
-Blockly.Warning.prototype.getText = function() {
+Warning.prototype.getText = function() {
   const allWarnings = [];
   for (const id in this.text_) {
     allWarnings.push(this.text_[id]);
@@ -193,7 +196,7 @@ Blockly.Warning.prototype.getText = function() {
 /**
  * Dispose of this warning.
  */
-Blockly.Warning.prototype.dispose = function() {
+Warning.prototype.dispose = function() {
   this.block_.warning = null;
-  Blockly.Icon.prototype.dispose.call(this);
+  Icon.prototype.dispose.call(this);
 };

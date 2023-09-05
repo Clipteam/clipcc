@@ -28,9 +28,10 @@
  * Name space for the Msg singleton.
  * Msg gets populated in the message files.
  */
-goog.provide('Blockly.Msg');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Msg');
 
 /**
  * A dictionary of localised messages.
  */
-Blockly.Msg = Object.create(null);
+export const Msg = Object.create(null);

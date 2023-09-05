@@ -24,10 +24,12 @@
  */
 'use strict';
 
-goog.provide('Blockly.WorkspaceDragger');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.WorkspaceDragger');
 
-goog.require('goog.math.Coordinate');
-goog.require('goog.asserts');
+import * as common from './common';
+
+const Coordinate = goog.require('goog.math.Coordinate');
 
 
 /**
@@ -39,7 +41,7 @@ goog.require('goog.asserts');
  * @param {!Blockly.WorkspaceSvg} workspace The workspace to drag.
  * @constructor
  */
-Blockly.WorkspaceDragger = function(workspace) {
+export const WorkspaceDragger = function(workspace) {
   /**
    * @type {!Blockly.WorkspaceSvg}
    * @private
@@ -58,10 +60,10 @@ Blockly.WorkspaceDragger = function(workspace) {
   /**
    * The scroll position of the workspace at the beginning of the drag.
    * Coordinate system: pixel coordinates.
-   * @type {!goog.math.Coordinate}
+   * @type {!Coordinate}
    * @private
    */
-  this.startScrollXY_ = new goog.math.Coordinate(
+  this.startScrollXY_ = new Coordinate(
       workspace.scrollX, workspace.scrollY);
 };
 
@@ -69,7 +71,7 @@ Blockly.WorkspaceDragger = function(workspace) {
  * Sever all links from this object.
  * @package
  */
-Blockly.WorkspaceDragger.prototype.dispose = function() {
+WorkspaceDragger.prototype.dispose = function() {
   this.workspace_ = null;
 };
 
@@ -77,32 +79,32 @@ Blockly.WorkspaceDragger.prototype.dispose = function() {
  * Start dragging the workspace.
  * @package
  */
-Blockly.WorkspaceDragger.prototype.startDrag = function() {
-  if (Blockly.common.getSelected()) {
-    Blockly.common.getSelected().unselect();
+WorkspaceDragger.prototype.startDrag = function() {
+  if (common.getSelected()) {
+    common.getSelected().unselect();
   }
 };
 
 /**
  * Finish dragging the workspace and put everything back where it belongs.
- * @param {!goog.math.Coordinate} currentDragDeltaXY How far the pointer has
+ * @param {!Coordinate} currentDragDeltaXY How far the pointer has
  *     moved from the position at the start of the drag, in pixel coordinates.
  * @package
  */
-Blockly.WorkspaceDragger.prototype.endDrag = function(currentDragDeltaXY) {
+WorkspaceDragger.prototype.endDrag = function(currentDragDeltaXY) {
   // Make sure everything is up to date.
   this.drag(currentDragDeltaXY);
 };
 
 /**
  * Move the workspace based on the most recent mouse movements.
- * @param {!goog.math.Coordinate} currentDragDeltaXY How far the pointer has
+ * @param {!Coordinate} currentDragDeltaXY How far the pointer has
  *     moved from the position at the start of the drag, in pixel coordinates.
  * @package
  */
-Blockly.WorkspaceDragger.prototype.drag = function(currentDragDeltaXY) {
+WorkspaceDragger.prototype.drag = function(currentDragDeltaXY) {
   const metrics = this.startDragMetrics_;
-  const newXY = goog.math.Coordinate.sum(this.startScrollXY_, currentDragDeltaXY);
+  const newXY = Coordinate.sum(this.startScrollXY_, currentDragDeltaXY);
 
   // Bound the new XY based on workspace bounds.
   let x = Math.min(newXY.x, -metrics.contentLeft);
@@ -125,6 +127,6 @@ Blockly.WorkspaceDragger.prototype.drag = function(currentDragDeltaXY) {
  * @param {number} y The new y position to move the scrollbar to.
  * @private
  */
-Blockly.WorkspaceDragger.prototype.updateScroll_ = function(x, y) {
+WorkspaceDragger.prototype.updateScroll_ = function(x, y) {
   this.workspace_.scrollbar.set(x, y);
 };

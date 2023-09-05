@@ -20,43 +20,44 @@
 
 'use strict';
 
-goog.provide('Blockly.Events.VarCreate');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Events.VarCreate');
 
-goog.require('Blockly.Events');
-goog.require('Blockly.Events.VarBase');
+import * as Events from './events';
+import {VarBase} from './var_base';
 
 
 /**
  * Class for a variable creation event.
  * @param {Blockly.VariableModel} variable The created variable.
  *     Null for a blank event.
- * @extends {Blockly.Events.VarBase}
+ * @extends {VarBase}
  * @constructor
  */
-Blockly.Events.VarCreate = function(variable) {
+export const VarCreate = function(variable) {
   if (!variable) {
     return;  // Blank event to be populated by fromJson.
   }
-  Blockly.Events.VarCreate.superClass_.constructor.call(this, variable);
+  VarCreate.superClass_.constructor.call(this, variable);
   this.varType = variable.type;
   this.varName = variable.name;
   this.isLocal = variable.isLocal;
   this.isCloud = variable.isCloud;
 };
-goog.inherits(Blockly.Events.VarCreate, Blockly.Events.VarBase);
+goog.inherits(VarCreate, VarBase);
 
 /**
  * Type of this event.
  * @type {string}
  */
-Blockly.Events.VarCreate.prototype.type = Blockly.Events.VAR_CREATE;
+VarCreate.prototype.type = Events.VAR_CREATE;
 
 /**
  * Encode the event as JSON.
  * @return {!Object} JSON representation.
  */
-Blockly.Events.VarCreate.prototype.toJson = function() {
-  const json = Blockly.Events.VarCreate.superClass_.toJson.call(this);
+VarCreate.prototype.toJson = function() {
+  const json = VarCreate.superClass_.toJson.call(this);
   json['varType'] = this.varType;
   json['varName'] = this.varName;
   json['isLocal'] = this.isLocal;
@@ -68,8 +69,8 @@ Blockly.Events.VarCreate.prototype.toJson = function() {
  * Decode the JSON event.
  * @param {!Object} json JSON representation.
  */
-Blockly.Events.VarCreate.prototype.fromJson = function(json) {
-  Blockly.Events.VarCreate.superClass_.fromJson.call(this, json);
+VarCreate.prototype.fromJson = function(json) {
+  VarCreate.superClass_.fromJson.call(this, json);
   this.varType = json['varType'];
   this.varName = json['varName'];
   this.isLocal = json['isLocal'];
@@ -80,7 +81,7 @@ Blockly.Events.VarCreate.prototype.fromJson = function(json) {
  * Run a variable creation event.
  * @param {boolean} forward True if run forward, false if run backward (undo).
  */
-Blockly.Events.VarCreate.prototype.run = function(forward) {
+VarCreate.prototype.run = function(forward) {
   const workspace = this.getEventWorkspace_();
   if (forward) {
     workspace.createVariable(this.varName, this.varType, this.varId, this.isLocal, this.isCloud);
@@ -89,4 +90,4 @@ Blockly.Events.VarCreate.prototype.run = function(forward) {
   }
 };
 
-Blockly.Events.register(Blockly.Events.VAR_CREATE, Blockly.Events.VarCreate);
+Events.register(Events.VAR_CREATE, VarCreate);

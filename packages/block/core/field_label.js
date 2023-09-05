@@ -24,40 +24,44 @@
  */
 'use strict';
 
-goog.provide('Blockly.FieldLabel');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.FieldLabel');
 
-goog.require('Blockly.Field');
-goog.require('Blockly.Tooltip');
-goog.require('goog.dom');
-goog.require('goog.math.Size');
-goog.require('goog.userAgent');
+import {Field} from './field';
+import * as rendererConstants from './renderer/constants';
+import {Tooltip} from './tooltip';
+import * as utils from './utils';
+
+const dom = goog.require('goog.dom');
+const Size = goog.require('goog.math.Size');
+const userAgent = goog.require('goog.userAgent');
 
 
 /**
  * Class for a non-editable field.
  * @param {string} text The initial content of the field.
  * @param {string=} opt_class Optional CSS class for the field's text.
- * @extends {Blockly.Field}
+ * @extends {Field}
  * @constructor
  */
-Blockly.FieldLabel = function(text, opt_class) {
-  this.size_ = new goog.math.Size(0, 0);
+export const FieldLabel = function(text, opt_class) {
+  this.size_ = new Size(0, 0);
   this.class_ = opt_class;
   this.setValue(text);
 };
-goog.inherits(Blockly.FieldLabel, Blockly.Field);
+goog.inherits(FieldLabel, Field);
 
 /**
  * Construct a FieldLabel from a JSON arg object,
  * dereferencing any string table references.
  * @param {!Object} options A JSON object with options (text, and class).
- * @returns {!Blockly.FieldLabel} The new field instance.
+ * @returns {!FieldLabel} The new field instance.
  * @package
  * @nocollapse
  */
-Blockly.FieldLabel.fromJson = function(options) {
-  const text = Blockly.utils.replaceMessageReferences(options['text']);
-  return new Blockly.FieldLabel(text, options['class']);
+FieldLabel.fromJson = function(options) {
+  const text = utils.replaceMessageReferences(options['text']);
+  return new FieldLabel(text, options['class']);
 };
 
 /**
@@ -65,7 +69,7 @@ Blockly.FieldLabel.fromJson = function(options) {
  * @type {boolean}
  * @public
  */
-Blockly.FieldLabel.prototype.EDITABLE = false;
+FieldLabel.prototype.EDITABLE = false;
 
 /**
  * Serializable fields are saved by the XML renderer, non-serializable fields
@@ -73,27 +77,27 @@ Blockly.FieldLabel.prototype.EDITABLE = false;
  * @type {boolean}
  * @public
  */
-Blockly.FieldLabel.prototype.SERIALIZABLE = false;
+FieldLabel.prototype.SERIALIZABLE = false;
 
 /**
  * Install this text on a block.
  */
-Blockly.FieldLabel.prototype.init = function() {
+FieldLabel.prototype.init = function() {
   if (this.textElement_) {
     // Text has already been initialized once.
     return;
   }
   // Build the DOM.
-  this.textElement_ = Blockly.utils.createSvgElement('text',
+  this.textElement_ = utils.createSvgElement('text',
       {
         'class': 'blocklyText',
-        'y': Blockly.renderer.constants.FIELD_TOP_PADDING,
+        'y': rendererConstants.FIELD_TOP_PADDING,
         'text-anchor': 'middle',
         'dominant-baseline': 'middle',
-        'dy': goog.userAgent.EDGE_OR_IE ? Blockly.Field.IE_TEXT_OFFSET : '0'
+        'dy': userAgent.EDGE_OR_IE ? Field.IE_TEXT_OFFSET : '0'
       }, null);
   if (this.class_) {
-    Blockly.utils.addClass(this.textElement_, this.class_);
+    utils.addClass(this.textElement_, this.class_);
   }
   if (!this.visible_) {
     this.textElement_.style.display = 'none';
@@ -102,7 +106,7 @@ Blockly.FieldLabel.prototype.init = function() {
 
   // Configure the field to be transparent with respect to tooltips.
   this.textElement_.tooltip = this.sourceBlock_;
-  Blockly.Tooltip.bindMouseEvents(this.textElement_);
+  Tooltip.bindMouseEvents(this.textElement_);
   // Force a render.
   this.render_();
 };
@@ -110,8 +114,8 @@ Blockly.FieldLabel.prototype.init = function() {
 /**
  * Dispose of all DOM objects belonging to this text.
  */
-Blockly.FieldLabel.prototype.dispose = function() {
-  goog.dom.removeNode(this.textElement_);
+FieldLabel.prototype.dispose = function() {
+  dom.removeNode(this.textElement_);
   this.textElement_ = null;
 };
 
@@ -120,7 +124,7 @@ Blockly.FieldLabel.prototype.dispose = function() {
  * Used for measuring the size and for positioning.
  * @return {!Element} The group element.
  */
-Blockly.FieldLabel.prototype.getSvgRoot = function() {
+FieldLabel.prototype.getSvgRoot = function() {
   return /** @type {!Element} */ (this.textElement_);
 };
 
@@ -129,8 +133,8 @@ Blockly.FieldLabel.prototype.getSvgRoot = function() {
  * @param {string|!Element} newTip Text for tooltip or a parent element to
  *     link to for its tooltip.
  */
-Blockly.FieldLabel.prototype.setTooltip = function(newTip) {
+FieldLabel.prototype.setTooltip = function(newTip) {
   this.textElement_.tooltip = newTip;
 };
 
-Blockly.Field.register('field_label', Blockly.FieldLabel);
+Field.register('field_label', FieldLabel);

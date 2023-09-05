@@ -24,9 +24,11 @@
  */
 'use strict';
 
-goog.provide('Blockly.clipboard');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.clipboard');
 
-goog.require('Blockly.Events');
+import * as Events from './events/events';
+import * as Xml from './xml';
 
 
 /**
@@ -34,33 +36,33 @@ goog.require('Blockly.Events');
  * @type {Element}
  * @private
  */
-Blockly.clipboard.clipboardXml_ = null;
+let clipboardXml = null;
 
 /**
  * Source of the local clipboard.
  * @type {Blockly.WorkspaceSvg}
  * @private
  */
-Blockly.clipboard.clipboardSource_ = null;
+let clipboardSource = null;
 
 /**
  * Copy a block or workspace comment onto the local clipboard.
  * @param {!Blockly.Block | !Blockly.WorkspaceComment} toCopy Block or Workspace Comment
  *    to be copied.
  */
-Blockly.clipboard.copy = function(toCopy) {
+export const copy = function(toCopy) {
   let xml;
   if (toCopy.isComment) {
     xml = toCopy.toXmlWithXY();
   } else {
-    xml = Blockly.Xml.blockToDom(toCopy);
+    xml = Xml.blockToDom(toCopy);
     // Encode start position in XML.
     const xy = toCopy.getRelativeToSurfaceXY();
     xml.setAttribute('x', toCopy.RTL ? -xy.x : xy.x);
     xml.setAttribute('y', xy.y);
   }
-  Blockly.clipboard.clipboardXml_ = xml;
-  Blockly.clipboard.clipboardSource_ = toCopy.workspace;
+  clipboardXml = xml;
+  clipboardSource = toCopy.workspace;
 };
 
 /**
@@ -68,35 +70,35 @@ Blockly.clipboard.copy = function(toCopy) {
  * @param {!Blockly.Block | !Blockly.WorkspaceComment} toDuplicate Block or
  *     Workspace Comment to be copied.
  */
-Blockly.clipboard.duplicate = function(toDuplicate) {
+export const duplicate = function(toDuplicate) {
   // Save the clipboard.
-  const clipboardXml = Blockly.clipboard.clipboardXml_;
-  const clipboardSource = Blockly.clipboard.clipboardSource_;
+  const clipboardXmlOld = clipboardXml;
+  const clipboardSourceOld = clipboardSource;
 
   // Create a duplicate via a copy/paste operation.
-  Blockly.clipboard.copy(toDuplicate);
-  toDuplicate.workspace.paste(Blockly.clipboard.clipboardXml_);
+  copy(toDuplicate);
+  toDuplicate.workspace.paste(clipboardXml);
 
   // Restore the clipboard.
-  Blockly.clipboard.clipboardXml_ = clipboardXml;
-  Blockly.clipboard.clipboardSource_ = clipboardSource;
+  clipboardXml = clipboardXmlOld;
+  clipboardSource = clipboardSourceOld;
 };
 
 /**
  * Paste a block or workspace comment on to the main workspace.
  * @return {boolean} True if the paste was successful, false otherwise.
  */
-Blockly.clipboard.paste = function() {
-  if (Blockly.clipboard.clipboardXml_) {
-    Blockly.Events.setGroup(true);
+export const paste = function() {
+  if (clipboardXml) {
+    Events.setGroup(true);
     // Pasting always pastes to the main workspace, even if the copy started
     // in a flyout workspace.
-    let workspace = Blockly.clipboard.clipboardSource_;
+    let workspace = clipboardSource;
     if (workspace.isFlyout) {
       workspace = workspace.targetWorkspace;
     }
-    workspace.paste(Blockly.clipboard.clipboardXml_);
-    Blockly.Events.setGroup(false);
+    workspace.paste(clipboardXml);
+    Events.setGroup(false);
     return true;
   }
   return false;

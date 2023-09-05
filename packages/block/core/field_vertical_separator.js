@@ -24,60 +24,64 @@
  */
 'use strict';
 
-goog.provide('Blockly.FieldVerticalSeparator');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.FieldVerticalSeparator');
 
-goog.require('Blockly.Field');
-goog.require('goog.dom');
-goog.require('goog.math.Size');
+import {Field} from './field';
+import * as rendererConstants from './renderer/constants';
+import * as utils from './utils';
+
+const dom = goog.require('goog.dom');
+const Size = goog.require('goog.math.Size');
 
 
 /**
  * Class for a vertical separator line.
- * @extends {Blockly.Field}
+ * @extends {Field}
  * @constructor
  */
-Blockly.FieldVerticalSeparator = function() {
+export const FieldVerticalSeparator = function() {
   this.sourceBlock_ = null;
   this.width_ = 1;
-  this.height_ = Blockly.renderer.constants.ICON_SEPARATOR_HEIGHT;
-  this.size_ = new goog.math.Size(this.width_, this.height_);
+  this.height_ = rendererConstants.ICON_SEPARATOR_HEIGHT;
+  this.size_ = new Size(this.width_, this.height_);
 };
-goog.inherits(Blockly.FieldVerticalSeparator, Blockly.Field);
+goog.inherits(FieldVerticalSeparator, Field);
 
 /**
  * Construct a FieldVerticalSeparator from a JSON arg object.
  * @param {!Object} _element A JSON object with options (unused, but passed in
  *     by Field.fromJson).
- * @returns {!Blockly.FieldVerticalSeparator} The new field instance.
+ * @returns {!FieldVerticalSeparator} The new field instance.
  * @package
  * @nocollapse
  */
-Blockly.FieldVerticalSeparator.fromJson = function(
+FieldVerticalSeparator.fromJson = function(
     /* eslint-disable no-unused-vars */ _element
     /* eslint-enable no-unused-vars */) {
-  return new Blockly.FieldVerticalSeparator();
+  return new FieldVerticalSeparator();
 };
 /**
  * Editable fields are saved by the XML renderer, non-editable fields are not.
  */
-Blockly.FieldVerticalSeparator.prototype.EDITABLE = false;
+FieldVerticalSeparator.prototype.EDITABLE = false;
 
 /**
  * Install this field on a block.
  */
-Blockly.FieldVerticalSeparator.prototype.init = function() {
+FieldVerticalSeparator.prototype.init = function() {
   if (this.fieldGroup_) {
     // Image has already been initialized once.
     return;
   }
   // Build the DOM.
   /** @type {SVGElement} */
-  this.fieldGroup_ = Blockly.utils.createSvgElement('g', {}, null);
+  this.fieldGroup_ = utils.createSvgElement('g', {}, null);
   if (!this.visible_) {
     this.fieldGroup_.style.display = 'none';
   }
   /** @type {SVGElement} */
-  this.lineElement_ = Blockly.utils.createSvgElement('line',
+  this.lineElement_ = utils.createSvgElement('line',
       {
         'stroke': this.sourceBlock_.getColourSecondary(),
         'stroke-linecap': 'round',
@@ -97,15 +101,15 @@ Blockly.FieldVerticalSeparator.prototype.init = function() {
  * @param {number} newHeight the new height for the line.
  * @package
  */
-Blockly.FieldVerticalSeparator.prototype.setLineHeight = function(newHeight) {
+FieldVerticalSeparator.prototype.setLineHeight = function(newHeight) {
   this.lineElement_.setAttribute('y2', newHeight);
 };
 
 /**
  * Dispose of all DOM objects belonging to this text.
  */
-Blockly.FieldVerticalSeparator.prototype.dispose = function() {
-  goog.dom.removeNode(this.fieldGroup_);
+FieldVerticalSeparator.prototype.dispose = function() {
+  dom.removeNode(this.fieldGroup_);
   this.fieldGroup_ = null;
   this.lineElement_ = null;
 };
@@ -115,7 +119,7 @@ Blockly.FieldVerticalSeparator.prototype.dispose = function() {
  * @return {string} null.
  * @override
  */
-Blockly.FieldVerticalSeparator.prototype.getValue = function() {
+FieldVerticalSeparator.prototype.getValue = function() {
   return null;
 };
 
@@ -124,7 +128,7 @@ Blockly.FieldVerticalSeparator.prototype.getValue = function() {
  * @param {?string} src New value.
  * @override
  */
-Blockly.FieldVerticalSeparator.prototype.setValue = function(
+FieldVerticalSeparator.prototype.setValue = function(
     /* eslint-disable no-unused-vars */ src
     /* eslint-enable no-unused-vars */) {
   return;
@@ -135,7 +139,7 @@ Blockly.FieldVerticalSeparator.prototype.setValue = function(
  * @param {?string} alt New text.
  * @override
  */
-Blockly.FieldVerticalSeparator.prototype.setText = function(
+FieldVerticalSeparator.prototype.setText = function(
     /* eslint-disable no-unused-vars */ alt
     /* eslint-enable no-unused-vars */) {
   return;
@@ -145,7 +149,7 @@ Blockly.FieldVerticalSeparator.prototype.setText = function(
  * Separator lines are fixed width, no need to render.
  * @private
  */
-Blockly.FieldVerticalSeparator.prototype.render_ = function() {
+FieldVerticalSeparator.prototype.render_ = function() {
   // NOP
 };
 
@@ -153,9 +157,9 @@ Blockly.FieldVerticalSeparator.prototype.render_ = function() {
  * Separator lines are fixed width, no need to update.
  * @private
  */
-Blockly.FieldVerticalSeparator.prototype.updateWidth = function() {
+FieldVerticalSeparator.prototype.updateWidth = function() {
   // NOP
 };
 
-Blockly.Field.register(
-    'field_vertical_separator', Blockly.FieldVerticalSeparator);
+Field.register(
+    'field_vertical_separator', FieldVerticalSeparator);

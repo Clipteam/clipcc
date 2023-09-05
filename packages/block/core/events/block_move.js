@@ -20,45 +20,47 @@
 
 'use strict';
 
-goog.provide('Blockly.Events.BlockMove');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Events.BlockMove');
 
-goog.require('Blockly.constants');
-goog.require('Blockly.Events');
-goog.require('Blockly.Events.BlockBase');
+import * as common from '../common';
+import * as constants from '../constants';
+import * as Events from './events';
+import {BlockBase} from './block_base';
 
-goog.require('goog.math.Coordinate');
+const Coordinate = goog.require('goog.math.Coordinate');
 
 
 /**
  * Class for a block move event.  Created before the move.
  * @param {Blockly.Block} block The moved block.  Null for a blank event.
- * @extends {Blockly.Events.BlockBase}
+ * @extends {BlockBase}
  * @constructor
  */
-Blockly.Events.BlockMove = function(block) {
+export const BlockMove = function(block) {
   if (!block) {
     return;  // Blank event to be populated by fromJson.
   }
-  Blockly.Events.BlockMove.superClass_.constructor.call(this, block);
+  BlockMove.superClass_.constructor.call(this, block);
   const location = this.currentLocation_();
   this.oldParentId = location.parentId;
   this.oldInputName = location.inputName;
   this.oldCoordinate = location.coordinate;
 };
-goog.inherits(Blockly.Events.BlockMove, Blockly.Events.BlockBase);
+goog.inherits(BlockMove, BlockBase);
 
 /**
  * Type of this event.
  * @type {string}
  */
-Blockly.Events.BlockMove.prototype.type = Blockly.Events.MOVE;
+BlockMove.prototype.type = Events.MOVE;
 
 /**
  * Encode the event as JSON.
  * @return {!Object} JSON representation.
  */
-Blockly.Events.BlockMove.prototype.toJson = function() {
-  const json = Blockly.Events.BlockMove.superClass_.toJson.call(this);
+BlockMove.prototype.toJson = function() {
+  const json = BlockMove.superClass_.toJson.call(this);
   if (this.newParentId) {
     json['newParentId'] = this.newParentId;
   }
@@ -76,21 +78,21 @@ Blockly.Events.BlockMove.prototype.toJson = function() {
  * Decode the JSON event.
  * @param {!Object} json JSON representation.
  */
-Blockly.Events.BlockMove.prototype.fromJson = function(json) {
-  Blockly.Events.BlockMove.superClass_.fromJson.call(this, json);
+BlockMove.prototype.fromJson = function(json) {
+  BlockMove.superClass_.fromJson.call(this, json);
   this.newParentId = json['newParentId'];
   this.newInputName = json['newInputName'];
   if (json['newCoordinate']) {
     const xy = json['newCoordinate'].split(',');
     this.newCoordinate =
-        new goog.math.Coordinate(parseFloat(xy[0]), parseFloat(xy[1]));
+        new Coordinate(parseFloat(xy[0]), parseFloat(xy[1]));
   }
 };
 
 /**
  * Record the block's new location.  Called after the move.
  */
-Blockly.Events.BlockMove.prototype.recordNew = function() {
+BlockMove.prototype.recordNew = function() {
   const location = this.currentLocation_();
   this.newParentId = location.parentId;
   this.newInputName = location.inputName;
@@ -103,8 +105,8 @@ Blockly.Events.BlockMove.prototype.recordNew = function() {
  * @return {!Object} Collection of location info.
  * @private
  */
-Blockly.Events.BlockMove.prototype.currentLocation_ = function() {
-  const workspace = Blockly.common.getWorkspaceById(this.workspaceId);
+BlockMove.prototype.currentLocation_ = function() {
+  const workspace = common.getWorkspaceById(this.workspaceId);
   const block = workspace.getBlockById(this.blockId);
   const location = {};
   const parent = block.getParent();
@@ -119,7 +121,7 @@ Blockly.Events.BlockMove.prototype.currentLocation_ = function() {
     // The X position in the block move event should be the language agnostic
     // position of the block. I.e. it should not be different in LTR vs. RTL.
     const rtlAwareX = workspace.RTL ? workspace.getWidth() - blockXY.x : blockXY.x;
-    location.coordinate = new goog.math.Coordinate(rtlAwareX, blockXY.y);
+    location.coordinate = new Coordinate(rtlAwareX, blockXY.y);
   }
   return location;
 };
@@ -128,17 +130,17 @@ Blockly.Events.BlockMove.prototype.currentLocation_ = function() {
  * Does this event record any change of state?
  * @return {boolean} False if something changed.
  */
-Blockly.Events.BlockMove.prototype.isNull = function() {
+BlockMove.prototype.isNull = function() {
   return this.oldParentId == this.newParentId &&
       this.oldInputName == this.newInputName &&
-      goog.math.Coordinate.equals(this.oldCoordinate, this.newCoordinate);
+      Coordinate.equals(this.oldCoordinate, this.newCoordinate);
 };
 
 /**
  * Run a move event.
  * @param {boolean} forward True if run forward, false if run backward (undo).
  */
-Blockly.Events.BlockMove.prototype.run = function(forward) {
+BlockMove.prototype.run = function(forward) {
   const workspace = this.getEventWorkspace_();
   const block = workspace.getBlockById(this.blockId);
   if (!block) {
@@ -171,7 +173,7 @@ Blockly.Events.BlockMove.prototype.run = function(forward) {
       if (input) {
         parentConnection = input.connection;
       }
-    } else if (blockConnection.type == Blockly.constants.PREVIOUS_STATEMENT) {
+    } else if (blockConnection.type == constants.PREVIOUS_STATEMENT) {
       parentConnection = parentBlock.nextConnection;
     }
     if (parentConnection) {
@@ -182,4 +184,4 @@ Blockly.Events.BlockMove.prototype.run = function(forward) {
   }
 };
 
-Blockly.Events.register(Blockly.Events.BLOCK_MOVE, Blockly.Events.BlockMove);
+Events.register(Events.BLOCK_MOVE, BlockMove);

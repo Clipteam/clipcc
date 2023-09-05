@@ -20,10 +20,11 @@
 
 'use strict';
 
-goog.provide('Blockly.Events.VarRename');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Events.VarRename');
 
-goog.require('Blockly.Events');
-goog.require('Blockly.Events.VarBase');
+import * as Events from './events';
+import {VarBase} from './var_base';
 
 
 /**
@@ -31,31 +32,31 @@ goog.require('Blockly.Events.VarBase');
  * @param {Blockly.VariableModel} variable The renamed variable.
  *     Null for a blank event.
  * @param {string} newName The new name the variable will be changed to.
- * @extends {Blockly.Events.VarBase}
+ * @extends {VarBase}
  * @constructor
  */
-Blockly.Events.VarRename = function(variable, newName) {
+export const VarRename = function(variable, newName) {
   if (!variable) {
     return;  // Blank event to be populated by fromJson.
   }
-  Blockly.Events.VarRename.superClass_.constructor.call(this, variable);
+  VarRename.superClass_.constructor.call(this, variable);
   this.oldName = variable.name;
   this.newName = newName;
 };
-goog.inherits(Blockly.Events.VarRename, Blockly.Events.VarBase);
+goog.inherits(VarRename, VarBase);
 
 /**
  * Type of this event.
  * @type {string}
  */
-Blockly.Events.VarRename.prototype.type = Blockly.Events.VAR_RENAME;
+VarRename.prototype.type = Events.VAR_RENAME;
 
 /**
  * Encode the event as JSON.
  * @return {!Object} JSON representation.
  */
-Blockly.Events.VarRename.prototype.toJson = function() {
-  const json = Blockly.Events.VarRename.superClass_.toJson.call(this);
+VarRename.prototype.toJson = function() {
+  const json = VarRename.superClass_.toJson.call(this);
   json['oldName'] = this.oldName;
   json['newName'] = this.newName;
   return json;
@@ -65,8 +66,8 @@ Blockly.Events.VarRename.prototype.toJson = function() {
  * Decode the JSON event.
  * @param {!Object} json JSON representation.
  */
-Blockly.Events.VarRename.prototype.fromJson = function(json) {
-  Blockly.Events.VarRename.superClass_.fromJson.call(this, json);
+VarRename.prototype.fromJson = function(json) {
+  VarRename.superClass_.fromJson.call(this, json);
   this.oldName = json['oldName'];
   this.newName = json['newName'];
 };
@@ -75,7 +76,7 @@ Blockly.Events.VarRename.prototype.fromJson = function(json) {
  * Run a variable rename event.
  * @param {boolean} forward True if run forward, false if run backward (undo).
  */
-Blockly.Events.VarRename.prototype.run = function(forward) {
+VarRename.prototype.run = function(forward) {
   const workspace = this.getEventWorkspace_();
   if (forward) {
     workspace.renameVariableById(this.varId, this.newName);
@@ -84,4 +85,4 @@ Blockly.Events.VarRename.prototype.run = function(forward) {
   }
 };
 
-Blockly.Events.register(Blockly.Events.VAR_RENAME, Blockly.Events.VarRename);
+Events.register(Events.VAR_RENAME, VarRename);

@@ -20,20 +20,21 @@
 
 'use strict';
 
-goog.provide('Blockly.Events.CommentBase');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Events.CommentBase');
 
-goog.require('Blockly.Events');
-goog.require('Blockly.Events.Abstract');
+import * as Events from './events';
+import {Abstract} from './abstract';
 
 
 /**
  * Abstract class for a comment event.
  * @param {Blockly.WorkspaceComment | Blockly.ScratchBlockComment} comment
  *    The comment this event corresponds to.
- * @extends {Blockly.Events.Abstract}
+ * @extends {Abstract}
  * @constructor
  */
-Blockly.Events.CommentBase = function(comment) {
+export const CommentBase = function(comment) {
   /**
    * The ID of the comment this event pertains to.
    * @type {string}
@@ -59,21 +60,21 @@ Blockly.Events.CommentBase = function(comment) {
    * perspective, and should be undone together.
    * @type {string}
    */
-  this.group = Blockly.Events.getGroup();
+  this.group = Events.getGroup();
 
   /**
    * Sets whether the event should be added to the undo stack.
    * @type {boolean}
    */
-  this.recordUndo = Blockly.Events.getRecordUndo();
+  this.recordUndo = Events.getRecordUndo();
 };
-goog.inherits(Blockly.Events.CommentBase, Blockly.Events.Abstract);
+goog.inherits(CommentBase, Abstract);
 
 /**
  * Encode the event as JSON.
  * @return {!Object} JSON representation.
  */
-Blockly.Events.CommentBase.prototype.toJson = function() {
+CommentBase.prototype.toJson = function() {
   const json = {
     'type': this.type
   };
@@ -93,7 +94,7 @@ Blockly.Events.CommentBase.prototype.toJson = function() {
  * Decode the JSON event.
  * @param {!Object} json JSON representation.
  */
-Blockly.Events.CommentBase.prototype.fromJson = function(json) {
+CommentBase.prototype.fromJson = function(json) {
   this.commentId = json['commentId'];
   this.group = json['group'];
   this.blockId = json['blockId'];
@@ -105,7 +106,7 @@ Blockly.Events.CommentBase.prototype.fromJson = function(json) {
  *     The comment this event pertains to, or null if it no longer exists.
  * @private
  */
-Blockly.Events.CommentBase.prototype.getComment_ = function() {
+CommentBase.prototype.getComment_ = function() {
   const workspace = this.getEventWorkspace_();
   return workspace.getCommentById(this.commentId);
 };

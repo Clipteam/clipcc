@@ -20,10 +20,12 @@
 
 'use strict';
 
-goog.provide('Blockly.Events.BlockChange');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Events.BlockChange');
 
-goog.require('Blockly.Events');
-goog.require('Blockly.Events.BlockBase');
+import * as Events from './events';
+import {BlockBase} from './block_base';
+import * as Xml from '../xml';
 
 
 /**
@@ -33,33 +35,33 @@ goog.require('Blockly.Events.BlockBase');
  * @param {?string} name Name of input or field affected, or null.
  * @param {*} oldValue Previous value of element.
  * @param {*} newValue New value of element.
- * @extends {Blockly.Events.BlockBase}
+ * @extends {BlockBase}
  * @constructor
  */
-Blockly.Events.BlockChange = function(block, element, name, oldValue, newValue) {
+export const BlockChange = function(block, element, name, oldValue, newValue) {
   if (!block) {
     return;  // Blank event to be populated by fromJson.
   }
-  Blockly.Events.BlockChange.superClass_.constructor.call(this, block);
+  BlockChange.superClass_.constructor.call(this, block);
   this.element = element;
   this.name = name;
   this.oldValue = oldValue;
   this.newValue = newValue;
 };
-goog.inherits(Blockly.Events.BlockChange, Blockly.Events.BlockBase);
+goog.inherits(BlockChange, BlockBase);
 
 /**
  * Type of this event.
  * @type {string}
  */
-Blockly.Events.BlockChange.prototype.type = Blockly.Events.CHANGE;
+BlockChange.prototype.type = Events.CHANGE;
 
 /**
  * Encode the event as JSON.
  * @return {!Object} JSON representation.
  */
-Blockly.Events.BlockChange.prototype.toJson = function() {
-  const json = Blockly.Events.BlockChange.superClass_.toJson.call(this);
+BlockChange.prototype.toJson = function() {
+  const json = BlockChange.superClass_.toJson.call(this);
   json['element'] = this.element;
   if (this.name) {
     json['name'] = this.name;
@@ -72,8 +74,8 @@ Blockly.Events.BlockChange.prototype.toJson = function() {
  * Decode the JSON event.
  * @param {!Object} json JSON representation.
  */
-Blockly.Events.BlockChange.prototype.fromJson = function(json) {
-  Blockly.Events.BlockChange.superClass_.fromJson.call(this, json);
+BlockChange.prototype.fromJson = function(json) {
+  BlockChange.superClass_.fromJson.call(this, json);
   this.element = json['element'];
   this.name = json['name'];
   this.newValue = json['newValue'];
@@ -83,7 +85,7 @@ Blockly.Events.BlockChange.prototype.fromJson = function(json) {
  * Does this event record any change of state?
  * @return {boolean} False if something changed.
  */
-Blockly.Events.BlockChange.prototype.isNull = function() {
+BlockChange.prototype.isNull = function() {
   return this.oldValue == this.newValue;
 };
 
@@ -91,7 +93,7 @@ Blockly.Events.BlockChange.prototype.isNull = function() {
  * Run a change event.
  * @param {boolean} forward True if run forward, false if run backward (undo).
  */
-Blockly.Events.BlockChange.prototype.run = function(forward) {
+BlockChange.prototype.run = function(forward) {
   const workspace = this.getEventWorkspace_();
   const block = workspace.getBlockById(this.blockId);
   if (!block) {
@@ -132,14 +134,14 @@ Blockly.Events.BlockChange.prototype.run = function(forward) {
       let oldMutation = '';
       if (block.mutationToDom) {
         const oldMutationDom = block.mutationToDom();
-        oldMutation = oldMutationDom && Blockly.Xml.domToText(oldMutationDom);
+        oldMutation = oldMutationDom && Xml.domToText(oldMutationDom);
       }
       if (block.domToMutation) {
         value = value || '<mutation></mutation>';
-        const dom = Blockly.Xml.textToDom('<xml>' + value + '</xml>');
+        const dom = Xml.textToDom('<xml>' + value + '</xml>');
         block.domToMutation(dom.firstChild);
       }
-      Blockly.Events.fire(new Blockly.Events.BlockChange(
+      Events.fire(new BlockChange(
           block, 'mutation', null, oldMutation, value));
       break;
     }
@@ -148,4 +150,4 @@ Blockly.Events.BlockChange.prototype.run = function(forward) {
   }
 };
 
-Blockly.Events.register(Blockly.Events.BLOCK_CHANGE, Blockly.Events.BlockChange);
+Events.register(Events.BLOCK_CHANGE, BlockChange);

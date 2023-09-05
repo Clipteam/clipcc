@@ -20,21 +20,22 @@
 
 'use strict';
 
-goog.provide('Blockly.dialog');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.dialog');
 
 
-Blockly.dialog.alertImplementation_ = function(message, opt_callback) {
+let alertImplementation = function(message, opt_callback) {
   window.alert(message);
   if (opt_callback) {
     opt_callback();
   }
 };
 
-Blockly.dialog.confirmImplementation_ = function(message, callback) {
+let confirmImplementation = function(message, callback) {
   callback(window.confirm(message));
 };
 
-Blockly.dialog.promptImplementation_ = function(message, defaultValue, callback) {
+let promptImplementation = function(message, defaultValue, callback) {
   callback(window.prompt(message, defaultValue));
 };
 
@@ -44,17 +45,17 @@ Blockly.dialog.promptImplementation_ = function(message, defaultValue, callback)
  * @param {string} message The message to display to the user.
  * @param {function()=} opt_callback The callback when the alert is dismissed.
  */
-Blockly.dialog.alert = function(message, opt_callback) {
-  Blockly.dialog.alertImplementation_(message, opt_callback);
+export const alert = function(message, opt_callback) {
+  alertImplementation(message, opt_callback);
 };
 
 /**
- * Sets the function to be run when Blockly.dialog.alert() is called.
+ * Sets the function to be run when alert() is called.
  * @param {!function(string, function()=)} alertFunction The function to be run.
- * @see Blockly.dialog.alert
+ * @see alert
  */
-Blockly.dialog.setAlert = function(alertFunction) {
-  Blockly.dialog.alertImplementation_ = alertFunction;
+export const setAlert = function(alertFunction) {
+  alertImplementation = alertFunction;
 };
 
 /**
@@ -63,18 +64,18 @@ Blockly.dialog.setAlert = function(alertFunction) {
  * @param {string} message The message to display to the user.
  * @param {!function(boolean)} callback The callback for handling user response.
  */
-Blockly.dialog.confirm = function(message, callback) {
-  Blockly.dialog.confirmImplementation_(message, callback);
+export const confirm = function(message, callback) {
+  confirmImplementation(message, callback);
 };
 
 /**
- * Sets the function to be run when Blockly.dialog.confirm() is called.
+ * Sets the function to be run when confirm() is called.
  * @param {!function(string, !function(boolean))} confirmFunction The function
  *    to be run.
- * @see Blockly.dialog.confirm
+ * @see confirm
  */
-Blockly.dialog.setConfirm = function(confirmFunction) {
-  Blockly.dialog.confirmImplementation_ = confirmFunction;
+export const setConfirm = function(confirmFunction) {
+  confirmImplementation = confirmFunction;
 };
 
 /**
@@ -89,19 +90,19 @@ Blockly.dialog.setConfirm = function(confirmFunction) {
  * @param {?string} _opt_varType An optional variable type for variable specific
  *     prompt behavior.
  */
-Blockly.dialog.prompt = function(message, defaultValue, callback, _opt_title,
+export const prompt = function(message, defaultValue, callback, _opt_title,
     _opt_varType) {
   // opt_title and opt_varType are unused because we only need them to pass
   // information to the scratch-gui, which overwrites this function
-  Blockly.dialog.promptImplementation_(message, defaultValue, callback);
+  promptImplementation(message, defaultValue, callback);
 };
 
 /**
- * Sets the function to be run when Blockly.dialog.prompt() is called.
+ * Sets the function to be run when prompt() is called.
  * @param {!function(string, string, !function(?string))} promptFunction The
  *    function to be run.
- * @see Blockly.dialog.prompt
+ * @see prompt
  */
-Blockly.dialog.setPrompt = function(promptFunction) {
-  Blockly.dialog.promptImplementation_ = promptFunction;
+export const setPrompt = function(promptFunction) {
+  promptImplementation = promptFunction;
 };

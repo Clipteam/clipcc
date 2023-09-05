@@ -25,9 +25,17 @@
  */
 'use strict';
 
-goog.provide('Blockly.FieldVariableGetter');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.FieldVariableGetter');
 
-goog.require('Blockly.Field');
+import * as Events from './events/events';
+import {BlockChange} from './events/block_change';
+import {Field} from './field';
+import * as rendererConstants from './renderer/constants';
+import * as utils from './utils';
+import * as Variables from './variables';
+
+const Size = goog.require('goog.math.Size');
 
 
 /**
@@ -39,9 +47,9 @@ goog.require('Blockly.Field');
  * @constructor
  *
  */
-Blockly.FieldVariableGetter = function(text, name, opt_varType) {
-  this.size_ = new goog.math.Size(Blockly.renderer.constants.FIELD_WIDTH,
-      Blockly.renderer.constants.FIELD_HEIGHT);
+export const FieldVariableGetter = function(text, name, opt_varType) {
+  this.size_ = new Size(rendererConstants.FIELD_WIDTH,
+      rendererConstants.FIELD_HEIGHT);
   this.text_ = text;
 
   /**
@@ -49,25 +57,25 @@ Blockly.FieldVariableGetter = function(text, name, opt_varType) {
    * Same for strings and numbers.
    * @type {number}
    */
-  this.maxDisplayLength = Blockly.renderer.constants.MAX_DISPLAY_LENGTH;
+  this.maxDisplayLength = rendererConstants.MAX_DISPLAY_LENGTH;
 
   this.name_ = name;
   this.variableType_ = opt_varType ? opt_varType : '';
 };
-goog.inherits(Blockly.FieldVariableGetter, Blockly.Field);
+goog.inherits(FieldVariableGetter, Field);
 
 /**
  * Construct a FieldVariableGetter from a JSON arg object,
  * dereferencing any string table references.
  * @param {!Object} options A JSON object with options (variable,
  *                          variableTypes, and defaultType).
- * @returns {!Blockly.FieldVariableGetter} The new field instance.
+ * @returns {!FieldVariableGetter} The new field instance.
  * @package
  * @nocollapse
  */
-Blockly.FieldVariableGetter.fromJson = function(options) {
-  const varname = Blockly.utils.replaceMessageReferences(options['text']);
-  return new Blockly.FieldVariableGetter(varname, options['name'],
+FieldVariableGetter.fromJson = function(options) {
+  const varname = utils.replaceMessageReferences(options['text']);
+  return new FieldVariableGetter(varname, options['name'],
       options['class'], options['variableType']);
 };
 
@@ -77,7 +85,7 @@ Blockly.FieldVariableGetter.fromJson = function(options) {
  * @type {boolean}
  * @public
  */
-Blockly.FieldVariableGetter.prototype.EDITABLE = false;
+FieldVariableGetter.prototype.EDITABLE = false;
 
 /**
  * Serializable fields are saved by the XML renderer, non-serializable fields
@@ -85,22 +93,22 @@ Blockly.FieldVariableGetter.prototype.EDITABLE = false;
  * @type {boolean}
  * @public
  */
-Blockly.FieldVariableGetter.prototype.SERIALIZABLE = true;
+FieldVariableGetter.prototype.SERIALIZABLE = true;
 
 /**
  * Install this field on a block.
  */
-Blockly.FieldVariableGetter.prototype.init = function() {
+FieldVariableGetter.prototype.init = function() {
   if (this.fieldGroup_) {
     // Field has already been initialized once.
     return;
   }
-  Blockly.FieldVariableGetter.superClass_.init.call(this);
+  FieldVariableGetter.superClass_.init.call(this);
   if (this.variable_) {
     return; // Initialization already happened.
   }
   this.workspace_ = this.sourceBlock_.workspace;
-  const variable = Blockly.Variables.getOrCreateVariablePackage(
+  const variable = Variables.getOrCreateVariablePackage(
       this.workspace_, null, this.text_, this.variableType_);
   this.setValue(variable.getId());
 };
@@ -109,7 +117,7 @@ Blockly.FieldVariableGetter.prototype.init = function() {
  * Get the variable's ID.
  * @return {string} Current variable's ID.
  */
-Blockly.FieldVariableGetter.prototype.getValue = function() {
+FieldVariableGetter.prototype.getValue = function() {
   return this.variable_ ? this.variable_.getId() : '';
 };
 
@@ -117,7 +125,7 @@ Blockly.FieldVariableGetter.prototype.getValue = function() {
  * Get the text from this field.
  * @return {string} Current text.
  */
-Blockly.FieldVariableGetter.prototype.getText = function() {
+FieldVariableGetter.prototype.getText = function() {
   return this.variable_ ? this.variable_.name : '';
 };
 
@@ -129,24 +137,24 @@ Blockly.FieldVariableGetter.prototype.getText = function() {
  *     selected.
  * @package
  */
-Blockly.FieldVariableGetter.prototype.getVariable = function() {
+FieldVariableGetter.prototype.getVariable = function() {
   return this.variable_;
 };
 
-Blockly.FieldVariableGetter.prototype.setValue = function(id) {
+FieldVariableGetter.prototype.setValue = function(id) {
   // What do I do when id is null?  That happens when undoing a change event
   // for the first time the value was set.
   const workspace = this.sourceBlock_.workspace;
-  const variable = Blockly.Variables.getVariable(workspace, id);
+  const variable = Variables.getVariable(workspace, id);
 
   if (!variable) {
     throw new Error('Variable id doesn\'t point to a real variable!  ID was ' +
         id);
   }
 
-  if (this.sourceBlock_ && Blockly.Events.isEnabled()) {
+  if (this.sourceBlock_ && Events.isEnabled()) {
     const oldValue = this.variable_ ? this.variable_.getId() : null;
-    Blockly.Events.fire(new Blockly.Events.BlockChange(
+    Events.fire(new BlockChange(
         this.sourceBlock_, 'field', this.name, oldValue, variable.getId()));
   }
   this.variable_ = variable;
@@ -158,7 +166,7 @@ Blockly.FieldVariableGetter.prototype.setValue = function(id) {
  * This field is editable, but only through the right-click menu.
  * @private
  */
-Blockly.FieldVariableGetter.prototype.showEditor_ = function() {
+FieldVariableGetter.prototype.showEditor_ = function() {
   // nop.
 };
 
@@ -167,7 +175,7 @@ Blockly.FieldVariableGetter.prototype.showEditor_ = function() {
  * This field is editable, but only through the right-click menu.
  * Suppress default editable behaviour.
  */
-Blockly.FieldVariableGetter.prototype.updateEditable = function() {
+FieldVariableGetter.prototype.updateEditable = function() {
   // nop.
 };
 
@@ -178,8 +186,8 @@ Blockly.FieldVariableGetter.prototype.updateEditable = function() {
  * @return {boolean} True if this field has any variable references.
  * @package
  */
-Blockly.FieldVariableGetter.prototype.referencesVariables = function() {
+FieldVariableGetter.prototype.referencesVariables = function() {
   return true;
 };
 
-Blockly.Field.register('field_variable_getter', Blockly.FieldVariableGetter);
+Field.register('field_variable_getter', FieldVariableGetter);

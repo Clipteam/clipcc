@@ -20,48 +20,50 @@
 
 'use strict';
 
-goog.provide('Blockly.Events.BlockCreate');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Events.BlockCreate');
 
-goog.require('Blockly.Events');
-goog.require('Blockly.Events.BlockBase');
+import * as Events from './events';
+import {BlockBase} from './block_base';
+import * as Xml from '../xml';
 
-goog.require('goog.dom');
+const dom = goog.require('goog.dom');
 
 
 /**
  * Class for a block creation event.
  * @param {Blockly.Block} block The created block.  Null for a blank event.
- * @extends {Blockly.Events.BlockBase}
+ * @extends {BlockBase}
  * @constructor
  */
-Blockly.Events.BlockCreate = function(block) {
+export const BlockCreate = function(block) {
   if (!block) {
     return;  // Blank event to be populated by fromJson.
   }
-  Blockly.Events.BlockCreate.superClass_.constructor.call(this, block);
+  BlockCreate.superClass_.constructor.call(this, block);
 
   if (block.workspace.rendered) {
-    this.xml = Blockly.Xml.blockToDomWithXY(block);
+    this.xml = Xml.blockToDomWithXY(block);
   } else {
-    this.xml = Blockly.Xml.blockToDom(block);
+    this.xml = Xml.blockToDom(block);
   }
-  this.ids = Blockly.Events.getDescendantIds(block);
+  this.ids = Events.getDescendantIds(block);
 };
-goog.inherits(Blockly.Events.BlockCreate, Blockly.Events.BlockBase);
+goog.inherits(BlockCreate, BlockBase);
 
 /**
  * Type of this event.
  * @type {string}
  */
-Blockly.Events.BlockCreate.prototype.type = Blockly.Events.CREATE;
+BlockCreate.prototype.type = Events.CREATE;
 
 /**
  * Encode the event as JSON.
  * @return {!Object} JSON representation.
  */
-Blockly.Events.BlockCreate.prototype.toJson = function() {
-  const json = Blockly.Events.BlockCreate.superClass_.toJson.call(this);
-  json['xml'] = Blockly.Xml.domToText(this.xml);
+BlockCreate.prototype.toJson = function() {
+  const json = BlockCreate.superClass_.toJson.call(this);
+  json['xml'] = Xml.domToText(this.xml);
   json['ids'] = this.ids;
   return json;
 };
@@ -70,9 +72,9 @@ Blockly.Events.BlockCreate.prototype.toJson = function() {
  * Decode the JSON event.
  * @param {!Object} json JSON representation.
  */
-Blockly.Events.BlockCreate.prototype.fromJson = function(json) {
-  Blockly.Events.BlockCreate.superClass_.fromJson.call(this, json);
-  this.xml = Blockly.Xml.textToDom('<xml>' + json['xml'] + '</xml>').firstChild;
+BlockCreate.prototype.fromJson = function(json) {
+  BlockCreate.superClass_.fromJson.call(this, json);
+  this.xml = Xml.textToDom('<xml>' + json['xml'] + '</xml>').firstChild;
   this.ids = json['ids'];
 };
 
@@ -80,12 +82,12 @@ Blockly.Events.BlockCreate.prototype.fromJson = function(json) {
  * Run a creation event.
  * @param {boolean} forward True if run forward, false if run backward (undo).
  */
-Blockly.Events.BlockCreate.prototype.run = function(forward) {
+BlockCreate.prototype.run = function(forward) {
   const workspace = this.getEventWorkspace_();
   if (forward) {
-    const xml = goog.dom.createDom('xml');
+    const xml = dom.createDom('xml');
     xml.appendChild(this.xml);
-    Blockly.Xml.domToWorkspace(xml, workspace);
+    Xml.domToWorkspace(xml, workspace);
   } else {
     for (let i = 0, id; id = this.ids[i]; i++) {
       const block = workspace.getBlockById(id);
@@ -99,4 +101,4 @@ Blockly.Events.BlockCreate.prototype.run = function(forward) {
   }
 };
 
-Blockly.Events.register(Blockly.Events.BLOCK_CREATE, Blockly.Events.BlockCreate);
+Events.register(Events.BLOCK_CREATE, BlockCreate);

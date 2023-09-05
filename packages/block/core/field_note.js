@@ -24,12 +24,16 @@
  */
 'use strict';
 
-goog.provide('Blockly.FieldNote');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.FieldNote');
 
-goog.require('Blockly.DropDownDiv');
-goog.require('Blockly.FieldTextInput');
-goog.require('goog.math');
-goog.require('goog.userAgent');
+import * as browserEvents from './browser_events';
+import * as common from './common';
+import {DropDownDiv} from './dropdowndiv';
+import {Field} from './field';
+import {FieldTextInput} from './field_textinput';
+import * as utils from './utils';
+
 
 /**
  * Class for a note input field, for selecting a musical note on a piano.
@@ -39,12 +43,12 @@ goog.require('goog.userAgent');
  *     to validate any constraints on what the user entered.  Takes the new
  *     text as an argument and returns the accepted text or null to abort
  *     the change.
- * @extends {Blockly.FieldTextInput}
+ * @extends {FieldTextInput}
  * @constructor
  */
-Blockly.FieldNote = function(opt_value, opt_validator) {
+export const FieldNote = function(opt_value, opt_validator) {
   opt_value = (opt_value && !isNaN(opt_value)) ? String(opt_value) : '0';
-  Blockly.FieldNote.superClass_.constructor.call(
+  FieldNote.superClass_.constructor.call(
       this, opt_value, opt_validator);
   this.addArgType('note');
 
@@ -162,133 +166,133 @@ Blockly.FieldNote = function(opt_value, opt_validator) {
    */
   this.octaveUpMouseDownWrapper_ = null;
 };
-goog.inherits(Blockly.FieldNote, Blockly.FieldTextInput);
+goog.inherits(FieldNote, FieldTextInput);
 
 /**
  * Inset in pixels of content displayed in the field, caused by parent properties.
  * The inset is actually determined by the CSS property blocklyDropDownDiv- it is
  * the sum of the padding and border thickness.
  */
-Blockly.FieldNote.INSET = 5;
+FieldNote.INSET = 5;
 
 /**
  * Height of the top area of the field, in px.
  * @type {number}
  * @const
  */
-Blockly.FieldNote.TOP_MENU_HEIGHT = 32 - Blockly.FieldNote.INSET;
+FieldNote.TOP_MENU_HEIGHT = 32 - FieldNote.INSET;
 
 /**
  * Padding on the top and sides of the field, in px.
  * @type {number}
  * @const
  */
-Blockly.FieldNote.EDGE_PADDING = 1;
+FieldNote.EDGE_PADDING = 1;
 
 /**
  * Height of the drop shadow on the piano, in px.
  * @type {number}
  * @const
  */
-Blockly.FieldNote.SHADOW_HEIGHT = 4;
+FieldNote.SHADOW_HEIGHT = 4;
 
 /**
  * Color for the shadow on the piano.
  * @type {string}
  * @const
  */
-Blockly.FieldNote.SHADOW_COLOR = '#000';
+FieldNote.SHADOW_COLOR = '#000';
 
 /**
  * Opacity for the shadow on the piano.
  * @type {string}
  * @const
  */
-Blockly.FieldNote.SHADOW_OPACITY = .2;
+FieldNote.SHADOW_OPACITY = .2;
 
 /**
  * A color for the white piano keys.
  * @type {string}
  * @const
  */
-Blockly.FieldNote.WHITE_KEY_COLOR = '#FFFFFF';
+FieldNote.WHITE_KEY_COLOR = '#FFFFFF';
 
 /**
  * A color for the black piano keys.
  * @type {string}
  * @const
  */
-Blockly.FieldNote.BLACK_KEY_COLOR = '#323133';
+FieldNote.BLACK_KEY_COLOR = '#323133';
 
 /**
  * A color for stroke around black piano keys.
  * @type {string}
  * @const
  */
-Blockly.FieldNote.BLACK_KEY_STROKE = '#555555';
+FieldNote.BLACK_KEY_STROKE = '#555555';
 
 /**
  * A color for the selected state of a piano key.
  * @type {string}
  * @const
  */
-Blockly.FieldNote.KEY_SELECTED_COLOR = '#b0d6ff';
+FieldNote.KEY_SELECTED_COLOR = '#b0d6ff';
 
 /**
  * The number of white keys in one octave on the piano.
  * @type {number}
  * @const
  */
-Blockly.FieldNote.NUM_WHITE_KEYS = 8;
+FieldNote.NUM_WHITE_KEYS = 8;
 
 /**
  * Height of a white piano key, in px.
  * @type {string}
  * @const
  */
-Blockly.FieldNote.WHITE_KEY_HEIGHT = 72;
+FieldNote.WHITE_KEY_HEIGHT = 72;
 
 /**
  * Width of a white piano key, in px.
  * @type {string}
  * @const
  */
-Blockly.FieldNote.WHITE_KEY_WIDTH = 40;
+FieldNote.WHITE_KEY_WIDTH = 40;
 
 /**
  * Height of a black piano key, in px.
  * @type {string}
  * @const
  */
-Blockly.FieldNote.BLACK_KEY_HEIGHT = 40;
+FieldNote.BLACK_KEY_HEIGHT = 40;
 
 /**
  * Width of a black piano key, in px.
  * @type {string}
  * @const
  */
-Blockly.FieldNote.BLACK_KEY_WIDTH = 32;
+FieldNote.BLACK_KEY_WIDTH = 32;
 
 /**
  * Radius of the curved bottom corner of a piano key, in px.
  * @type {string}
  * @const
  */
-Blockly.FieldNote.KEY_RADIUS = 6;
+FieldNote.KEY_RADIUS = 6;
 
 /**
  * Bottom padding for the labels on C keys.
  * @type {string}
  * @const
  */
-Blockly.FieldNote.KEY_LABEL_PADDING = 8;
+FieldNote.KEY_LABEL_PADDING = 8;
 
 /**
  * An array of objects with data describing the keys on the piano.
  * @type {Array.<{name: String, pitch: Number, isBlack: boolean}>}
  * @const
  */
-Blockly.FieldNote.KEY_INFO = [
+FieldNote.KEY_INFO = [
   {name: 'C', pitch: 0},
   {name: 'C♯', pitch: 1, isBlack: true},
   {name: 'D', pitch: 2},
@@ -309,7 +313,7 @@ Blockly.FieldNote.KEY_INFO = [
  * @type {number}
  * @const
  */
-Blockly.FieldNote.MAX_NOTE = 130;
+FieldNote.MAX_NOTE = 130;
 
 /**
  * The fraction of the distance to the target location to move the piano at each
@@ -317,31 +321,31 @@ Blockly.FieldNote.MAX_NOTE = 130;
  * @type {number}
  * @const
  */
-Blockly.FieldNote.ANIMATION_FRACTION = 0.2;
+FieldNote.ANIMATION_FRACTION = 0.2;
 
 /**
  * Path to the arrow svg icon, used on the octave buttons.
  * @type {string}
  * @const
  */
-Blockly.FieldNote.ARROW_SVG_PATH = 'icons/arrow_button.svg';
+FieldNote.ARROW_SVG_PATH = 'icons/arrow_button.svg';
 
 /**
  * The size of the square octave buttons.
  * @type {number}
  * @const
  */
-Blockly.FieldNote.OCTAVE_BUTTON_SIZE = 32;
+FieldNote.OCTAVE_BUTTON_SIZE = 32;
 
 /**
  * Construct a FieldNote from a JSON arg object.
  * @param {!Object} options A JSON object with options.
- * @returns {!Blockly.FieldNote} The new field instance.
+ * @returns {!FieldNote} The new field instance.
  * @package
  * @nocollapse
  */
-Blockly.FieldNote.fromJson = function(options) {
-  return new Blockly.FieldNote(options['note']);
+FieldNote.fromJson = function(options) {
+  return new FieldNote(options['note']);
 };
 
 /**
@@ -349,24 +353,24 @@ Blockly.FieldNote.fromJson = function(options) {
  * @return {!Function} Closure to call on destruction of the WidgetDiv.
  * @private
  */
-Blockly.FieldNote.prototype.dispose_ = function() {
+FieldNote.prototype.dispose_ = function() {
   const thisField = this;
   return function() {
-    Blockly.FieldNote.superClass_.dispose_.call(thisField)();
+    FieldNote.superClass_.dispose_.call(thisField)();
     thisField.mouseDownWrappers_.forEach(function(wrapper) {
-      Blockly.browserEvents.unbind(wrapper);
+      browserEvents.unbind(wrapper);
     });
     thisField.mouseEnterWrappers_.forEach(function(wrapper) {
-      Blockly.browserEvents.unbind(wrapper);
+      browserEvents.unbind(wrapper);
     });
     if (thisField.mouseUpWrapper_) {
-      Blockly.browserEvents.unbind(thisField.mouseUpWrapper_);
+      browserEvents.unbind(thisField.mouseUpWrapper_);
     }
     if (thisField.octaveDownMouseDownWrapper_) {
-      Blockly.browserEvents.unbind(thisField.octaveDownMouseDownWrapper_);
+      browserEvents.unbind(thisField.octaveDownMouseDownWrapper_);
     }
     if (thisField.octaveUpMouseDownWrapper_) {
-      Blockly.browserEvents.unbind(thisField.octaveUpMouseDownWrapper_);
+      browserEvents.unbind(thisField.octaveUpMouseDownWrapper_);
     }
     this.pianoSVG_ = null;
     this.keySVGs_.length = 0;
@@ -380,24 +384,24 @@ Blockly.FieldNote.prototype.dispose_ = function() {
  * Show a field with piano keys.
  * @private
  */
-Blockly.FieldNote.prototype.showEditor_ = function() {
+FieldNote.prototype.showEditor_ = function() {
   // Mobile browsers have issues with in-line textareas (focus & keyboards).
-  Blockly.FieldNote.superClass_.showEditor_.call(this, this.useTouchInteraction_);
+  FieldNote.superClass_.showEditor_.call(this, this.useTouchInteraction_);
 
   // If there is an existing drop-down someone else owns, hide it immediately and clear it.
-  Blockly.DropDownDiv.hideWithoutAnimation();
-  Blockly.DropDownDiv.clearContent();
+  DropDownDiv.hideWithoutAnimation();
+  DropDownDiv.clearContent();
 
   // Build the SVG DOM.
-  const div = Blockly.DropDownDiv.getContentDiv();
+  const div = DropDownDiv.getContentDiv();
 
-  this.fieldEditorWidth_ = Blockly.FieldNote.NUM_WHITE_KEYS * Blockly.FieldNote.WHITE_KEY_WIDTH +
-    Blockly.FieldNote.EDGE_PADDING;
-  this.fieldEditorHeight_ = Blockly.FieldNote.TOP_MENU_HEIGHT +
-    Blockly.FieldNote.WHITE_KEY_HEIGHT +
-    Blockly.FieldNote.EDGE_PADDING;
+  this.fieldEditorWidth_ = FieldNote.NUM_WHITE_KEYS * FieldNote.WHITE_KEY_WIDTH +
+    FieldNote.EDGE_PADDING;
+  this.fieldEditorHeight_ = FieldNote.TOP_MENU_HEIGHT +
+    FieldNote.WHITE_KEY_HEIGHT +
+    FieldNote.EDGE_PADDING;
 
-  const svg = Blockly.utils.createSvgElement('svg', {
+  const svg = utils.createSvgElement('svg', {
     'xmlns': 'http://www.w3.org/2000/svg',
     'xmlns:html': 'http://www.w3.org/1999/xhtml',
     'xmlns:xlink': 'http://www.w3.org/1999/xlink',
@@ -409,75 +413,75 @@ Blockly.FieldNote.prototype.showEditor_ = function() {
   // Add the white and black keys
   // Since we are adding the keys from left to right in order, they need
   // to be in two groups in order to layer correctly.
-  this.pianoSVG_ = Blockly.utils.createSvgElement('g', {}, svg);
-  const whiteKeyGroup = Blockly.utils.createSvgElement('g', {}, this.pianoSVG_);
-  const blackKeyGroup = Blockly.utils.createSvgElement('g', {}, this.pianoSVG_);
+  this.pianoSVG_ = utils.createSvgElement('g', {}, svg);
+  const whiteKeyGroup = utils.createSvgElement('g', {}, this.pianoSVG_);
+  const blackKeyGroup = utils.createSvgElement('g', {}, this.pianoSVG_);
 
   // Add three piano octaves, so we can animate moving up or down an octave.
   // Only the middle octave gets bound to events.
   this.keySVGs_ = [];
-  this.addPianoOctave_(-this.fieldEditorWidth_ + Blockly.FieldNote.EDGE_PADDING,
+  this.addPianoOctave_(-this.fieldEditorWidth_ + FieldNote.EDGE_PADDING,
       whiteKeyGroup, blackKeyGroup, null);
   this.addPianoOctave_(0, whiteKeyGroup, blackKeyGroup, this.keySVGs_);
-  this.addPianoOctave_(this.fieldEditorWidth_ - Blockly.FieldNote.EDGE_PADDING,
+  this.addPianoOctave_(this.fieldEditorWidth_ - FieldNote.EDGE_PADDING,
       whiteKeyGroup, blackKeyGroup, null);
 
   // Note name indicator at the top of the field
-  this.noteNameText_ = Blockly.utils.createSvgElement('text',
+  this.noteNameText_ = utils.createSvgElement('text',
       {
         'x': this.fieldEditorWidth_ / 2,
-        'y': Blockly.FieldNote.TOP_MENU_HEIGHT / 2,
+        'y': FieldNote.TOP_MENU_HEIGHT / 2,
         'class': 'blocklyText',
         'text-anchor': 'middle',
         'dominant-baseline': 'middle',
       }, svg);
 
   // Note names on the low and high C keys
-  const lowCX = Blockly.FieldNote.WHITE_KEY_WIDTH / 2;
+  const lowCX = FieldNote.WHITE_KEY_WIDTH / 2;
   this.lowCText_ = this.addCKeyLabel_(lowCX, svg);
-  const highCX = lowCX + (Blockly.FieldNote.WHITE_KEY_WIDTH *
-    (Blockly.FieldNote.NUM_WHITE_KEYS - 1));
+  const highCX = lowCX + (FieldNote.WHITE_KEY_WIDTH *
+    (FieldNote.NUM_WHITE_KEYS - 1));
   this.highCText_ = this.addCKeyLabel_(highCX, svg);
 
   // Horizontal line at the top of the keys
-  Blockly.utils.createSvgElement('line',
+  utils.createSvgElement('line',
       {
         'stroke': this.sourceBlock_.getColourTertiary(),
         'x1': 0,
-        'y1': Blockly.FieldNote.TOP_MENU_HEIGHT,
+        'y1': FieldNote.TOP_MENU_HEIGHT,
         'x2': this.fieldEditorWidth_,
-        'y2': Blockly.FieldNote.TOP_MENU_HEIGHT
+        'y2': FieldNote.TOP_MENU_HEIGHT
       }, svg);
 
   // Drop shadow at the top of the keys
-  Blockly.utils.createSvgElement('rect',
+  utils.createSvgElement('rect',
       {
         'x': 0,
-        'y': Blockly.FieldNote.TOP_MENU_HEIGHT,
+        'y': FieldNote.TOP_MENU_HEIGHT,
         'width': this.fieldEditorWidth_,
-        'height': Blockly.FieldNote.SHADOW_HEIGHT,
-        'fill': Blockly.FieldNote.SHADOW_COLOR,
-        'fill-opacity': Blockly.FieldNote.SHADOW_OPACITY
+        'height': FieldNote.SHADOW_HEIGHT,
+        'fill': FieldNote.SHADOW_COLOR,
+        'fill-opacity': FieldNote.SHADOW_OPACITY
       }, svg);
 
   // Octave buttons
   this.octaveDownButton = this.addOctaveButton_(0, true, svg);
   this.octaveUpButton = this.addOctaveButton_(
-      (this.fieldEditorWidth_ + Blockly.FieldNote.INSET * 2) -
-      Blockly.FieldNote.OCTAVE_BUTTON_SIZE, false, svg);
+      (this.fieldEditorWidth_ + FieldNote.INSET * 2) -
+      FieldNote.OCTAVE_BUTTON_SIZE, false, svg);
 
   this.octaveDownMouseDownWrapper_ =
-    Blockly.browserEvents.bind(this.octaveDownButton, 'mousedown', this, function() {
+    browserEvents.bind(this.octaveDownButton, 'mousedown', this, function() {
       this.changeOctaveBy_(-1);
     });
   this.octaveUpMouseDownWrapper_ =
-      Blockly.browserEvents.bind(this.octaveUpButton, 'mousedown', this,function() {
+      browserEvents.bind(this.octaveUpButton, 'mousedown', this,function() {
         this.changeOctaveBy_(1);
       });
-  Blockly.DropDownDiv.setColour(this.sourceBlock_.parentBlock_.getColour(),
+  DropDownDiv.setColour(this.sourceBlock_.parentBlock_.getColour(),
       this.sourceBlock_.getColourTertiary());
-  Blockly.DropDownDiv.setCategory(this.sourceBlock_.parentBlock_.getCategory());
-  Blockly.DropDownDiv.showPositionedByBlock(this, this.sourceBlock_);
+  DropDownDiv.setCategory(this.sourceBlock_.parentBlock_.getCategory());
+  DropDownDiv.showPositionedByBlock(this, this.sourceBlock_);
 
   this.updateSelection_();
 };
@@ -490,26 +494,26 @@ Blockly.FieldNote.prototype.showEditor_ = function() {
  * @param {!Array.<SvgElement>} keySVGarray An array containing all the key SVGs.
  * @private
  */
-Blockly.FieldNote.prototype.addPianoOctave_ = function(x, whiteKeyGroup, blackKeyGroup, keySVGarray) {
+FieldNote.prototype.addPianoOctave_ = function(x, whiteKeyGroup, blackKeyGroup, keySVGarray) {
   let xIncrement, width, height, fill, stroke, group;
-  x += Blockly.FieldNote.EDGE_PADDING / 2;
-  const y = Blockly.FieldNote.TOP_MENU_HEIGHT;
-  for (let i = 0; i < Blockly.FieldNote.KEY_INFO.length; i++) {
+  x += FieldNote.EDGE_PADDING / 2;
+  const y = FieldNote.TOP_MENU_HEIGHT;
+  for (let i = 0; i < FieldNote.KEY_INFO.length; i++) {
     // Draw a black or white key
-    if (Blockly.FieldNote.KEY_INFO[i].isBlack) {
+    if (FieldNote.KEY_INFO[i].isBlack) {
       // Black keys are shifted back half a key
-      x -= Blockly.FieldNote.BLACK_KEY_WIDTH / 2;
-      xIncrement = Blockly.FieldNote.BLACK_KEY_WIDTH / 2;
-      width = Blockly.FieldNote.BLACK_KEY_WIDTH;
-      height = Blockly.FieldNote.BLACK_KEY_HEIGHT;
-      fill = Blockly.FieldNote.BLACK_KEY_COLOR;
-      stroke = Blockly.FieldNote.BLACK_KEY_STROKE;
+      x -= FieldNote.BLACK_KEY_WIDTH / 2;
+      xIncrement = FieldNote.BLACK_KEY_WIDTH / 2;
+      width = FieldNote.BLACK_KEY_WIDTH;
+      height = FieldNote.BLACK_KEY_HEIGHT;
+      fill = FieldNote.BLACK_KEY_COLOR;
+      stroke = FieldNote.BLACK_KEY_STROKE;
       group = blackKeyGroup;
     } else {
-      xIncrement = Blockly.FieldNote.WHITE_KEY_WIDTH;
-      width = Blockly.FieldNote.WHITE_KEY_WIDTH;
-      height = Blockly.FieldNote.WHITE_KEY_HEIGHT;
-      fill = Blockly.FieldNote.WHITE_KEY_COLOR;
+      xIncrement = FieldNote.WHITE_KEY_WIDTH;
+      width = FieldNote.WHITE_KEY_WIDTH;
+      height = FieldNote.WHITE_KEY_HEIGHT;
+      fill = FieldNote.WHITE_KEY_COLOR;
       stroke = this.sourceBlock_.getColourTertiary();
       group = whiteKeyGroup;
     }
@@ -520,18 +524,18 @@ Blockly.FieldNote.prototype.addPianoOctave_ = function(x, whiteKeyGroup, blackKe
     };
     x += xIncrement;
 
-    const keySVG = Blockly.utils.createSvgElement('path', attr, group);
+    const keySVG = utils.createSvgElement('path', attr, group);
 
     if (keySVGarray) {
       keySVGarray[i] = keySVG;
-      keySVG.setAttribute('data-pitch', Blockly.FieldNote.KEY_INFO[i].pitch);
-      keySVG.setAttribute('data-name', Blockly.FieldNote.KEY_INFO[i].name);
-      keySVG.setAttribute('data-isBlack', Blockly.FieldNote.KEY_INFO[i].isBlack);
+      keySVG.setAttribute('data-pitch', FieldNote.KEY_INFO[i].pitch);
+      keySVG.setAttribute('data-name', FieldNote.KEY_INFO[i].name);
+      keySVG.setAttribute('data-isBlack', FieldNote.KEY_INFO[i].isBlack);
 
       this.mouseDownWrappers_[i] =
-          Blockly.browserEvents.bind(keySVG, 'mousedown', this, this.onMouseDownOnKey_);
+          browserEvents.bind(keySVG, 'mousedown', this, this.onMouseDownOnKey_);
       this.mouseEnterWrappers_[i] =
-          Blockly.browserEvents.bind(keySVG, 'mouseenter', this, this.onMouseEnter_);
+          browserEvents.bind(keySVG, 'mouseenter', this, this.onMouseEnter_);
     }
   }
 };
@@ -546,14 +550,14 @@ Blockly.FieldNote.prototype.addPianoOctave_ = function(x, whiteKeyGroup, blackKe
  * @returns {string} the SVG path as a string.
  * @private
  */
-Blockly.FieldNote.prototype.getPianoKeyPath_ = function(x, y, width, height) {
+FieldNote.prototype.getPianoKeyPath_ = function(x, y, width, height) {
   return  'M' + x + ' ' + y + ' ' +
-    'L' + x + ' ' + (y + height -  Blockly.FieldNote.KEY_RADIUS) + ' ' +
+    'L' + x + ' ' + (y + height -  FieldNote.KEY_RADIUS) + ' ' +
     'Q' + x + ' ' + (y + height) + ' ' +
-    (x + Blockly.FieldNote.KEY_RADIUS) + ' ' + (y + height) + ' ' +
-    'L' + (x + width - Blockly.FieldNote.KEY_RADIUS) + ' ' + (y + height) + ' ' +
+    (x + FieldNote.KEY_RADIUS) + ' ' + (y + height) + ' ' +
+    'L' + (x + width - FieldNote.KEY_RADIUS) + ' ' + (y + height) + ' ' +
     'Q' + (x + width) + ' ' + (y + height) + ' ' +
-    (x + width) + ' ' + (y + height - Blockly.FieldNote.KEY_RADIUS) + ' ' +
+    (x + width) + ' ' + (y + height - FieldNote.KEY_RADIUS) + ' ' +
     'L' + (x + width) + ' ' + y + ' ' +
     'L' + x +  ' ' + y;
 };
@@ -566,31 +570,31 @@ Blockly.FieldNote.prototype.getPianoKeyPath_ = function(x, y, width, height) {
  * @returns {SvgElement} A group containing the button SVG elements.
  * @private
  */
-Blockly.FieldNote.prototype.addOctaveButton_ = function(x, flipped, svg) {
-  const group = Blockly.utils.createSvgElement('g', {}, svg);
-  const imageSize = Blockly.FieldNote.OCTAVE_BUTTON_SIZE;
-  const arrow = Blockly.utils.createSvgElement('image',
+FieldNote.prototype.addOctaveButton_ = function(x, flipped, svg) {
+  const group = utils.createSvgElement('g', {}, svg);
+  const imageSize = FieldNote.OCTAVE_BUTTON_SIZE;
+  const arrow = utils.createSvgElement('image',
       {
         'width': imageSize,
         'height': imageSize,
-        'x': x - Blockly.FieldNote.INSET,
-        'y': -1 * Blockly.FieldNote.INSET
+        'x': x - FieldNote.INSET,
+        'y': -1 * FieldNote.INSET
       }, group);
   arrow.setAttributeNS(
       'http://www.w3.org/1999/xlink',
       'xlink:href',
-      Blockly.common.getMainWorkspace().options.pathToMedia + Blockly.FieldNote.ARROW_SVG_PATH
+      common.getMainWorkspace().options.pathToMedia + FieldNote.ARROW_SVG_PATH
   );
-  Blockly.utils.createSvgElement('line',
+  utils.createSvgElement('line',
       {
         'stroke': this.sourceBlock_.getColourTertiary(),
-        'x1': x - Blockly.FieldNote.INSET,
+        'x1': x - FieldNote.INSET,
         'y1': 0,
-        'x2': x - Blockly.FieldNote.INSET,
-        'y2': Blockly.FieldNote.TOP_MENU_HEIGHT - Blockly.FieldNote.INSET
+        'x2': x - FieldNote.INSET,
+        'y2': FieldNote.TOP_MENU_HEIGHT - FieldNote.INSET
       }, group);
   if (flipped) {
-    const translateX = -1 * Blockly.FieldNote.OCTAVE_BUTTON_SIZE + (Blockly.FieldNote.INSET * 2);
+    const translateX = -1 * FieldNote.OCTAVE_BUTTON_SIZE + (FieldNote.INSET * 2);
     group.setAttribute('transform', 'scale(-1, 1) ' +
       'translate(' + translateX + ', 0)');
   }
@@ -604,12 +608,12 @@ Blockly.FieldNote.prototype.addOctaveButton_ = function(x, flipped, svg) {
  * @returns {SvgElement} The SVG element containing the label.
  * @private
  */
-Blockly.FieldNote.prototype.addCKeyLabel_ = function(x, svg) {
-  return Blockly.utils.createSvgElement('text',
+FieldNote.prototype.addCKeyLabel_ = function(x, svg) {
+  return utils.createSvgElement('text',
       {
         'x': x,
-        'y': Blockly.FieldNote.TOP_MENU_HEIGHT + Blockly.FieldNote.WHITE_KEY_HEIGHT -
-          Blockly.FieldNote.KEY_LABEL_PADDING,
+        'y': FieldNote.TOP_MENU_HEIGHT + FieldNote.WHITE_KEY_HEIGHT -
+          FieldNote.KEY_LABEL_PADDING,
         'class': 'scratchNotePickerKeyLabel',
         'text-anchor': 'middle'
       }, svg);
@@ -620,7 +624,7 @@ Blockly.FieldNote.prototype.addCKeyLabel_ = function(x, svg) {
  * @param {boolean} visible If true, set labels to be visible.
  * @private
  */
-Blockly.FieldNote.prototype.setCKeyLabelsVisible_ = function(visible) {
+FieldNote.prototype.setCKeyLabelsVisible_ = function(visible) {
   if (visible) {
     this.fadeSvgToOpacity_(this.lowCText_, 1);
     this.fadeSvgToOpacity_(this.highCText_, 1);
@@ -636,7 +640,7 @@ Blockly.FieldNote.prototype.setCKeyLabelsVisible_ = function(visible) {
  * @param {number} opacity The target opacity.
  * @private
  */
-Blockly.FieldNote.prototype.fadeSvgToOpacity_ = function(svg, opacity) {
+FieldNote.prototype.fadeSvgToOpacity_ = function(svg, opacity) {
   svg.setAttribute('style', 'opacity: ' + opacity + '; transition: opacity 0.1s;');
 };
 
@@ -645,9 +649,9 @@ Blockly.FieldNote.prototype.fadeSvgToOpacity_ = function(svg, opacity) {
  * @param {!Event} e Mouse down event.
  * @private
  */
-Blockly.FieldNote.prototype.onMouseDownOnKey_ = function(e) {
+FieldNote.prototype.onMouseDownOnKey_ = function(e) {
   this.mouseIsDown_ = true;
-  this.mouseUpWrapper_ = Blockly.browserEvents.bind(document.body, 'mouseup', this, this.onMouseUp_);
+  this.mouseUpWrapper_ = browserEvents.bind(document.body, 'mouseup', this, this.onMouseUp_);
   this.selectNoteWithMouseEvent_(e);
 };
 
@@ -655,9 +659,9 @@ Blockly.FieldNote.prototype.onMouseDownOnKey_ = function(e) {
  * Handle the mouse up event following a mouse down on a piano key.
  * @private
  */
-Blockly.FieldNote.prototype.onMouseUp_ = function() {
+FieldNote.prototype.onMouseUp_ = function() {
   this.mouseIsDown_ = false;
-  Blockly.browserEvents.unbind(this.mouseUpWrapper_);
+  browserEvents.unbind(this.mouseUpWrapper_);
 };
 
 /**
@@ -665,7 +669,7 @@ Blockly.FieldNote.prototype.onMouseUp_ = function() {
  * @param {!Event} e Mouse enter event.
  * @private
  */
-Blockly.FieldNote.prototype.onMouseEnter_ = function(e) {
+FieldNote.prototype.onMouseEnter_ = function(e) {
   if (this.mouseIsDown_) {
     this.selectNoteWithMouseEvent_(e);
   }
@@ -676,7 +680,7 @@ Blockly.FieldNote.prototype.onMouseEnter_ = function(e) {
  * @param {!Event} e Mouse event.
  * @private
  */
-Blockly.FieldNote.prototype.selectNoteWithMouseEvent_ = function(e) {
+FieldNote.prototype.selectNoteWithMouseEvent_ = function(e) {
   const newNoteNum = Number(e.target.getAttribute('data-pitch')) + this.displayedOctave_ * 12;
   this.setNoteNum_(newNoteNum);
   this.playNoteInternal_();
@@ -686,9 +690,9 @@ Blockly.FieldNote.prototype.selectNoteWithMouseEvent_ = function(e) {
  * Play a note, by calling the externally overriden play note function.
  * @private
  */
-Blockly.FieldNote.prototype.playNoteInternal_ = function() {
-  if (Blockly.FieldNote.playNote_) {
-    Blockly.FieldNote.playNote_(
+FieldNote.prototype.playNoteInternal_ = function() {
+  if (FieldNote.playNote_) {
+    FieldNote.playNote_(
         this.getValue(),
         this.sourceBlock_.parentBlock_.getCategory()
     );
@@ -702,7 +706,7 @@ Blockly.FieldNote.prototype.playNoteInternal_ = function() {
  * @param {string} id An id to select a scratch extension to play the note.
  * @private
  */
-Blockly.FieldNote.playNote_ = function(/* noteNum, id*/) {
+FieldNote.playNote_ = function(/* noteNum, id*/) {
   return;
 };
 
@@ -711,13 +715,13 @@ Blockly.FieldNote.playNote_ = function(/* noteNum, id*/) {
  * @param {number} octaves The number of octaves to change by.
  * @private
  */
-Blockly.FieldNote.prototype.changeOctaveBy_ = function(octaves) {
+FieldNote.prototype.changeOctaveBy_ = function(octaves) {
   this.displayedOctave_ += octaves;
   if (this.displayedOctave_ < 0) {
     this.displayedOctave_ = 0;
     return;
   }
-  const maxOctave = Math.floor(Blockly.FieldNote.MAX_NOTE / 12);
+  const maxOctave = Math.floor(FieldNote.MAX_NOTE / 12);
   if (this.displayedOctave_ > maxOctave) {
     this.displayedOctave_ = maxOctave;
     return;
@@ -736,7 +740,7 @@ Blockly.FieldNote.prototype.changeOctaveBy_ = function(octaves) {
  * Animate the piano up or down an octave by sliding it to the left or right.
  * @private
  */
-Blockly.FieldNote.prototype.stepOctaveAnimation_ = function() {
+FieldNote.prototype.stepOctaveAnimation_ = function() {
   const absDiff = Math.abs(this.animationPos_ - this.animationTarget_);
   if (absDiff < 1) {
     this.pianoSVG_.setAttribute('transform', 'translate(0, 0)');
@@ -745,7 +749,7 @@ Blockly.FieldNote.prototype.stepOctaveAnimation_ = function() {
     return;
   }
   this.animationPos_ += (this.animationTarget_ - this.animationPos_) *
-    Blockly.FieldNote.ANIMATION_FRACTION;
+    FieldNote.ANIMATION_FRACTION;
   this.pianoSVG_.setAttribute('transform', 'translate(' + this.animationPos_ + ',0)');
   requestAnimationFrame(this.stepOctaveAnimation_.bind(this));
 };
@@ -755,10 +759,10 @@ Blockly.FieldNote.prototype.stepOctaveAnimation_ = function() {
  * @param {number} noteNum The MIDI note number to select.
  * @private
  */
-Blockly.FieldNote.prototype.setNoteNum_ = function(noteNum) {
+FieldNote.prototype.setNoteNum_ = function(noteNum) {
   noteNum = this.callValidator(noteNum);
   this.setValue(noteNum);
-  Blockly.FieldTextInput.getHtmlInput().value = noteNum;
+  FieldTextInput.getHtmlInput().value = noteNum;
 };
 
 /**
@@ -766,8 +770,8 @@ Blockly.FieldNote.prototype.setNoteNum_ = function(noteNum) {
  * updates the selection on the field.
  * @param {?string} text New text.
  */
-Blockly.FieldNote.prototype.setText = function(text) {
-  Blockly.FieldNote.superClass_.setText.call(this, text);
+FieldNote.prototype.setText = function(text) {
+  FieldNote.superClass_.setText.call(this, text);
   if (!this.textElement_) {
     // Not rendered yet.
     return;
@@ -783,7 +787,7 @@ Blockly.FieldNote.prototype.setText = function(text) {
  * @returns {number} The index of the piano key.
  * @private
  */
-Blockly.FieldNote.prototype.noteNumToKeyIndex_ = function(noteNum) {
+FieldNote.prototype.noteNumToKeyIndex_ = function(noteNum) {
   return Math.floor(noteNum) - (this.displayedOctave_ * 12);
 };
 
@@ -791,7 +795,7 @@ Blockly.FieldNote.prototype.noteNumToKeyIndex_ = function(noteNum) {
  * Update the selected note and labels on the field.
  * @private
  */
-Blockly.FieldNote.prototype.updateSelection_ = function() {
+FieldNote.prototype.updateSelection_ = function() {
   const noteNum = Number(this.getText());
 
   // If the note is outside the currently displayed octave, update it
@@ -807,16 +811,16 @@ Blockly.FieldNote.prototype.updateSelection_ = function() {
   this.keySVGs_.forEach(function(svg) {
     const isBlack = svg.getAttribute('data-isBlack');
     if (isBlack === 'true') {
-      svg.setAttribute('fill', Blockly.FieldNote.BLACK_KEY_COLOR);
+      svg.setAttribute('fill', FieldNote.BLACK_KEY_COLOR);
     } else {
-      svg.setAttribute('fill', Blockly.FieldNote.WHITE_KEY_COLOR);
+      svg.setAttribute('fill', FieldNote.WHITE_KEY_COLOR);
     }
   });
   // Set the highlight on the selected key
   if (this.keySVGs_[index]) {
-    this.keySVGs_[index].setAttribute('fill', Blockly.FieldNote.KEY_SELECTED_COLOR);
+    this.keySVGs_[index].setAttribute('fill', FieldNote.KEY_SELECTED_COLOR);
     // Update the note name text
-    const noteName =  Blockly.FieldNote.KEY_INFO[index].name;
+    const noteName =  FieldNote.KEY_INFO[index].name;
     this.noteNameText_.textContent = noteName + ' (' + Math.floor(noteNum) + ')';
     // Update the low and high C note names
     const lowCNum = this.displayedOctave_ * 12;
@@ -830,7 +834,7 @@ Blockly.FieldNote.prototype.updateSelection_ = function() {
  * @param {string} text The user's text.
  * @return {?string} A string representing a valid note number, or null if invalid.
  */
-Blockly.FieldNote.prototype.classValidator = function(text) {
+FieldNote.prototype.classValidator = function(text) {
   if (text === null) {
     return null;
   }
@@ -841,10 +845,10 @@ Blockly.FieldNote.prototype.classValidator = function(text) {
   if (n < 0) {
     n = 0;
   }
-  if (n > Blockly.FieldNote.MAX_NOTE) {
-    n = Blockly.FieldNote.MAX_NOTE;
+  if (n > FieldNote.MAX_NOTE) {
+    n = FieldNote.MAX_NOTE;
   }
   return String(n);
 };
 
-Blockly.Field.register('field_note', Blockly.FieldNote);
+Field.register('field_note', FieldNote);

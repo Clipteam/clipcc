@@ -10,38 +10,43 @@
  */
 'use strict';
 
-goog.provide('Blockly.common');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.common');
+
+import * as constants from './constants';
+
+const color = goog.require('goog.color');
 
 
 /**
  * Database of all workspaces.
  * @private
  */
-Blockly.common.WorkspaceDB_ = Object.create(null);
+const WorkspaceDB = Object.create(null);
 
 /**
  * Find the workspace with the specified ID.
  * @param {string} id ID of workspace to find.
  * @return {Blockly.Workspace} The sought after workspace or null if not found.
  */
-Blockly.common.getWorkspaceById = function(id) {
-  return Blockly.common.WorkspaceDB_[id] || null;
+export const getWorkspaceById = function(id) {
+  return WorkspaceDB[id] || null;
 };
 
 /**
  * Register a workspace in the workspace db.
  * @param {Blockly.Workspace} workspace The workspace to register.
  */
-Blockly.common.registerWorkspace = function(workspace) {
-  Blockly.common.WorkspaceDB_[workspace.id] = workspace;
-}
+export const registerWorkspace = function(workspace) {
+  WorkspaceDB[workspace.id] = workspace;
+};
 
 /**
  * Unregister a workspace from the workspace db.
  * @param {Blockly.Workspace} workspace The workspace to delete.
  */
-Blockly.common.unregisterWorkpace = function(workspace) {
-  delete Blockly.common.WorkspaceDB_[workspace.id];
+export const unregisterWorkpace = function(workspace) {
+  delete WorkspaceDB[workspace.id];
 };
 
 /**
@@ -49,7 +54,7 @@ Blockly.common.unregisterWorkpace = function(workspace) {
  * Set by Blockly.WorkspaceSvg.prototype.markFocused
  * @type {Blockly.Workspace}
  */
-Blockly.common.mainWorkspace_ = null;
+let mainWorkspace = null;
 
 /**
  * Returns the last used top level workspace (based on focus).  Try not to use
@@ -57,30 +62,30 @@ Blockly.common.mainWorkspace_ = null;
  * page.
  * @return {!Blockly.Workspace} The main workspace.
  */
-Blockly.common.getMainWorkspace = function() {
-  return Blockly.common.mainWorkspace_;
+export const getMainWorkspace = function() {
+  return mainWorkspace;
 };
 
 /**
  * Sets last used main workspace.
  * @param {!Blockly.Workspace} workspace The most recently used top level workspace.
  */
-Blockly.common.setMainWorkspace = function(workspace) {
-  Blockly.common.mainWorkspace_ = workspace;
+export const setMainWorkspace = function(workspace) {
+  mainWorkspace = workspace;
 };
 
 /**
  * Currently selected block.
  * @type {Blockly.Block}
  */
-Blockly.common.selected_ = null;
+let selected = null;
 
 /**
  * Returns the currently selected block.
  * @return {Blockly.Block} The currently selected block.
  */
-Blockly.common.getSelected = function() {
-  return Blockly.common.selected_;
+export const getSelected = function() {
+  return selected;
 };
 
 /**
@@ -89,24 +94,24 @@ Blockly.common.getSelected = function() {
  * programmatically select a block, use `BlockSvg#select`.
  * @param {?Blockly.Block} newSelection The newly selected block.
  */
-Blockly.common.setSelected = function(newSelection) {
-  Blockly.common.selected_ = newSelection;
+export const setSelected = function(newSelection) {
+  selected = newSelection;
 };
 
 /**
  * All of the connections on blocks that are currently being dragged.
  * @type {!Array.<!Blockly.Connection>}
  */
-Blockly.common.draggingConnections = [];
+export const draggingConnections = [];
 
 /**
  * Convert a hue (HSV model) into an RGB hex triplet.
  * @param {number} hue Hue on a colour wheel (0-360).
  * @return {string} RGB code, e.g. '#5ba65b'.
  */
-Blockly.common.hueToRgb = function(hue) {
-  return goog.color.hsvToHex(hue, Blockly.constants.HSV_SATURATION,
-      Blockly.constants.HSV_VALUE * 255);
+export const hueToRgb = function(hue) {
+  return color.hsvToHex(hue, constants.HSV_SATURATION,
+      constants.HSV_VALUE * 255);
 };
 
 /**
@@ -114,7 +119,7 @@ Blockly.common.hueToRgb = function(hue) {
  * @param {!Element} svg SVG image.
  * @return {!Object} Contains width and height properties.
  */
-Blockly.common.svgSize = function(svg) {
+export const svgSize = function(svg) {
   return {
     width: svg.cachedWidth_,
     height: svg.cachedHeight_
@@ -126,19 +131,19 @@ Blockly.common.svgSize = function(svg) {
  * scrollbars accordingly.
  * @param {!Blockly.WorkspaceSvg} workspace The workspace to resize.
  */
-Blockly.common.resizeSvgContents = function(workspace) {
+export const resizeSvgContents = function(workspace) {
   workspace.resizeContents();
 };
 
 /**
  * Size the SVG image to completely fill its container. Call this when the view
  * actually changes sizes (e.g. on a window resize/device orientation change).
- * See Blockly.common.resizeSvgContents to resize the workspace when the contents
+ * See resizeSvgContents to resize the workspace when the contents
  * change (e.g. when a block is added or removed).
  * Record the height/width of the SVG image.
  * @param {!Blockly.WorkspaceSvg} workspace Any workspace in the SVG.
  */
-Blockly.common.svgResize = function(workspace) {
+export const svgResize = function(workspace) {
   let mainWorkspace = workspace;
   while (mainWorkspace.options.parentWorkspace) {
     mainWorkspace = mainWorkspace.options.parentWorkspace;
@@ -162,7 +167,7 @@ Blockly.common.svgResize = function(workspace) {
   mainWorkspace.resize();
 };
 
-Blockly.common.statusButtonCallbackImplementation_ = function(id) {
+let statusButtonCallbackImplementation = function(id) {
   window.alert('status button was pressed for ' + id);
 };
 
@@ -170,15 +175,15 @@ Blockly.common.statusButtonCallbackImplementation_ = function(id) {
  * Wrapper to a callback for status buttons.
  * @param {string} id An identifier.
  */
-Blockly.common.statusButtonCallback = function(id) {
-  Blockly.common.statusButtonCallbackImplementation_(id);
+export const statusButtonCallback = function(id) {
+  statusButtonCallbackImplementation(id);
 };
 
 /**
- * Sets the function to be run when Blockly.common.statusButtonCallback() is called.
+ * Sets the function to be run when statusButtonCallback() is called.
  * @param {!function(string)} callback The function to be run.
- * @see Blockly.common.statusButtonCallback
+ * @see statusButtonCallback
  */
-Blockly.common.setStatusButtonCallback = function(callback) {
-  Blockly.common.statusButtonCallbackImplementation_ = callback;
+export const setStatusButtonCallback = function(callback) {
+  statusButtonCallbackImplementation = callback;
 };

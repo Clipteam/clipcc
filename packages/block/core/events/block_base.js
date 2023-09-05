@@ -20,19 +20,20 @@
 
 'use strict';
 
-goog.provide('Blockly.Events.BlockBase');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Events.BlockBase');
 
-goog.require('Blockly.Events.Abstract');
+import {Abstract} from './abstract';
 
 
 /**
  * Abstract class for a block event.
  * @param {Blockly.Block} block The block this event corresponds to.
- * @extends {Blockly.Events.Abstract}
+ * @extends {Abstract}
  * @constructor
  */
-Blockly.Events.BlockBase = function(block) {
-  Blockly.Events.BlockBase.superClass_.constructor.call(this);
+export const BlockBase = function(block) {
+  BlockBase.superClass_.constructor.call(this);
 
   /**
    * The block id for the block this event pertains to
@@ -41,14 +42,14 @@ Blockly.Events.BlockBase = function(block) {
   this.blockId = block.id;
   this.workspaceId = block.workspace.id;
 };
-goog.inherits(Blockly.Events.BlockBase, Blockly.Events.Abstract);
+goog.inherits(BlockBase, Abstract);
 
 /**
  * Encode the event as JSON.
  * @return {!Object} JSON representation.
  */
-Blockly.Events.BlockBase.prototype.toJson = function() {
-  const json = Blockly.Events.BlockBase.superClass_.toJson.call(this);
+BlockBase.prototype.toJson = function() {
+  const json = BlockBase.superClass_.toJson.call(this);
   json['blockId'] = this.blockId;
   return json;
 };
@@ -57,7 +58,7 @@ Blockly.Events.BlockBase.prototype.toJson = function() {
  * Decode the JSON event.
  * @param {!Object} json JSON representation.
  */
-Blockly.Events.BlockBase.prototype.fromJson = function(json) {
-  Blockly.Events.BlockBase.superClass_.toJson.call(this);
+BlockBase.prototype.fromJson = function(json) {
+  BlockBase.superClass_.toJson.call(this);
   this.blockId = json['blockId'];
 };

@@ -20,26 +20,28 @@
 
 'use strict';
 
-goog.provide('Blockly.Events.CommentDelete');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Events.CommentDelete');
 
-goog.require('Blockly.Events');
-goog.require('Blockly.Events.CommentBase');
+import * as Events from './events';
+import {CommentBase} from './comment_base';
+import * as Xml from '../xml';
 
-goog.require('goog.dom');
+const dom = goog.require('goog.dom');
 
 
 /**
  * Class for a comment deletion event.
  * @param {Blockly.WorkspaceComment | Blockly.ScratchBlockComment} comment
  *     The deleted comment. Null for a blank event.
- * @extends {Blockly.Events.CommentBase}
+ * @extends {CommentBase}
  * @constructor
  */
-Blockly.Events.CommentDelete = function(comment) {
+export const CommentDelete = function(comment) {
   if (!comment) {
     return;  // Blank event to be populated by fromJson.
   }
-  Blockly.Events.CommentDelete.superClass_.constructor.call(this, comment);
+  CommentDelete.superClass_.constructor.call(this, comment);
   this.xy = comment.getXY();
   this.minimized = comment.isMinimized() || false;
   this.text = comment.getText();
@@ -49,13 +51,13 @@ Blockly.Events.CommentDelete = function(comment) {
 
   this.xml = comment.toXmlWithXY();
 };
-goog.inherits(Blockly.Events.CommentDelete, Blockly.Events.CommentBase);
+goog.inherits(CommentDelete, CommentBase);
 
 /**
  * Type of this event.
  * @type {string}
  */
-Blockly.Events.CommentDelete.prototype.type = Blockly.Events.COMMENT_DELETE;
+CommentDelete.prototype.type = Events.COMMENT_DELETE;
 
 /**
  * Encode the event as JSON.
@@ -63,8 +65,8 @@ Blockly.Events.CommentDelete.prototype.type = Blockly.Events.COMMENT_DELETE;
  * serialization.
  * @return {!Object} JSON representation.
  */
-Blockly.Events.CommentDelete.prototype.toJson = function() {
-  const json = Blockly.Events.CommentDelete.superClass_.toJson.call(this);
+CommentDelete.prototype.toJson = function() {
+  const json = CommentDelete.superClass_.toJson.call(this);
   return json;
 };
 
@@ -72,15 +74,15 @@ Blockly.Events.CommentDelete.prototype.toJson = function() {
  * Decode the JSON event.
  * @param {!Object} json JSON representation.
  */
-Blockly.Events.CommentDelete.prototype.fromJson = function(json) {
-  Blockly.Events.CommentDelete.superClass_.fromJson.call(this, json);
+CommentDelete.prototype.fromJson = function(json) {
+  CommentDelete.superClass_.fromJson.call(this, json);
 };
 
 /**
  * Run a creation event.
  * @param {boolean} forward True if run forward, false if run backward (undo).
  */
-Blockly.Events.CommentDelete.prototype.run = function(forward) {
+CommentDelete.prototype.run = function(forward) {
   if (forward) {
     const comment = this.getComment_();
     if (comment) {
@@ -96,11 +98,11 @@ Blockly.Events.CommentDelete.prototype.run = function(forward) {
       block.setCommentText(this.text, this.commentId, this.xy.x, this.xy.y, this.minimized);
       block.comment.setSize(this.width, this.height);
     } else {
-      const xml = goog.dom.createDom('xml');
+      const xml = dom.createDom('xml');
       xml.appendChild(this.xml);
-      Blockly.Xml.domToWorkspace(xml, workspace);
+      Xml.domToWorkspace(xml, workspace);
     }
   }
 };
 
-Blockly.Events.register(Blockly.Events.COMMENT_DELETE, Blockly.Events.CommentDelete);
+Events.register(Events.COMMENT_DELETE, CommentDelete);
