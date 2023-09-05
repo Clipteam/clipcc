@@ -508,13 +508,7 @@ Blockly.Xml.appendDomToWorkspace = function(xml, workspace) {
   // First check if we have a workspaceSvg, otherwise the blocks have no shape
   // and the position does not matter.
   if (Object.prototype.hasOwnProperty.call(workspace, 'scale')) {
-    const savetab = Blockly.renderer.constants.TAB_WIDTH;
-    try {
-      Blockly.renderer.constants.TAB_WIDTH = 0;
-      bbox = workspace.getBlocksBoundingBox();
-    } finally {
-      Blockly.renderer.constants.TAB_WIDTH = savetab;
-    }
+    bbox = workspace.getBlocksBoundingBox();
   }
   // Load the new blocks into the workspace and get the IDs of the new blocks.
   const newBlockIds = Blockly.Xml.domToWorkspace(xml,workspace);
