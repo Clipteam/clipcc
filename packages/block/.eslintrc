@@ -60,5 +60,11 @@
         "Blockly": true, // Blockly global
         "goog": true // goog closure libraries/includes
     },
-    "extends": "eslint:recommended"
+    "extends": "eslint:recommended",
+    "overrides": [{
+        "files": ["core/**/**/*.js"],
+        "parserOptions": {
+            "sourceType": "module"
+        }
+    }]
 }

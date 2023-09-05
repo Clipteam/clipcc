@@ -177,7 +177,9 @@ function buildCompressedBlockly() {
             dependency_mode: 'PRUNE',
             entry_point: './core/blockly.js',
             rewrite_polyfills: false,
-            define: 'goog.DEBUG=false'
+            define: 'goog.DEBUG=false',
+            module_resolution: 'NODE',
+            output_wrapper: '%output%\nvar Blockly=module$core$blockly;\n'
         }, argv.debug, argv.strict))
         .pipe(trimLicense())
         .pipe(gulp.rename('blockly_compressed_vertical.js'))
