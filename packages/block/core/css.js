@@ -84,9 +84,6 @@ Blockly.Css.inject = function(hasCss, pathToMedia) {
   let text = '.blocklyDraggable {}\n';
   if (hasCss) {
     text += Blockly.Css.CONTENT.join('\n');
-    if (Blockly.FieldDate) {
-      text += Blockly.FieldDate.CSS.join('\n');
-    }
   }
   // Strip off any trailing slash (either Unix or Windows).
   Blockly.Css.mediaPath_ = pathToMedia.replace(/[\\\/]$/, '');
