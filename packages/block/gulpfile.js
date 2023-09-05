@@ -53,7 +53,7 @@ function trimLicense() {
  * Helper for remove Blockly.Blocks to be compatible with Blockly.
  */
 function removeBlocklyBlocks() {
-    return gulp.replace('var Blockly={Blocks:{}};', '');
+    return gulp.replace('var Blockly={Blocks:{},Colours:{},constants:{}};', '');
 }
 
 /**
@@ -192,9 +192,7 @@ function buildCompressedBlockly() {
 function buildCompressedBlock() {
     return gulp.src([
         './blocks_vertical/*.js',
-        './build/gen_blocks.js',
-        './core/colours.js',
-        './core/constants.js'
+        './build/gen_blocks.js'
     ], {base: './'})
         .pipe(compile({}, argv.debug, argv.strict))
         .pipe(trimLicense())
@@ -209,9 +207,7 @@ function buildCompressedBlock() {
 function buildCompressedCommonBlock() {
     return gulp.src([
         './blocks_common/*.js',
-        './build/gen_blocks.js',
-        './core/colours.js',
-        './core/constants.js'
+        './build/gen_blocks.js'
     ], {base: './'})
         .pipe(compile({}, argv.debug, argv.strict))
         .pipe(trimLicense())
