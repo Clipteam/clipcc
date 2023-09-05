@@ -358,10 +358,6 @@ Blockly.FieldMatrix.prototype.showEditor_ = function() {
 
 };
 
-this.nodeCallback_ = function(e, num) {
-  console.log(num);
-};
-
 /**
  * Make an svg object that resembles a 3x3 matrix to be used as a button.
  * @param {string} fill The color to fill the matrix nodes.
