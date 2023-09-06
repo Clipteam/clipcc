@@ -57,24 +57,24 @@ const defineDynamicBlock = (ScratchBlocks, categoryInfo, staticBlockInfo, extend
         case BlockType.COMMAND:
         case BlockType.CONDITIONAL:
         case BlockType.LOOP:
-            this.setOutputShape(ScratchBlocks.OUTPUT_SHAPE_SQUARE);
+            this.setOutputShape(ScratchBlocks.constants.OUTPUT_SHAPE_SQUARE);
             this.setPreviousStatement(true);
             this.setNextStatement(!blockInfo.isTerminal);
             break;
         case BlockType.REPORTER:
             this.setOutput(true);
-            this.setOutputShape(ScratchBlocks.OUTPUT_SHAPE_ROUND);
+            this.setOutputShape(ScratchBlocks.constants.OUTPUT_SHAPE_ROUND);
             if (!blockInfo.disableMonitor) {
                 this.setCheckboxInFlyout(true);
             }
             break;
         case BlockType.BOOLEAN:
             this.setOutput(true);
-            this.setOutputShape(ScratchBlocks.OUTPUT_SHAPE_HEXAGONAL);
+            this.setOutputShape(ScratchBlocks.constants.OUTPUT_SHAPE_HEXAGONAL);
             break;
         case BlockType.HAT:
         case BlockType.EVENT:
-            this.setOutputShape(ScratchBlocks.OUTPUT_SHAPE_SQUARE);
+            this.setOutputShape(ScratchBlocks.constants.OUTPUT_SHAPE_SQUARE);
             this.setNextStatement(true);
             break;
         }

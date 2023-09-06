@@ -8,7 +8,7 @@ import ScratchBlocks from 'clipcc-block';
  */
 export default function (blockId) {
     // Not sure any better way to access the scratch-blocks workspace than this...
-    const block = ScratchBlocks.getMainWorkspace().getBlockById(blockId);
+    const block = ScratchBlocks.common.getMainWorkspace().getBlockById(blockId);
     const blockSvg = block.getSvgRoot().cloneNode(true /* deep */);
 
     // Once we have the cloned SVG, do the rest in a setTimeout to prevent

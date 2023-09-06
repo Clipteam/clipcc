@@ -25,7 +25,7 @@ export default function (vm) {
             colourSecondary: colors.secondary,
             colourTertiary: colors.tertiary,
             colourQuaternary: colors.quaternary,
-            outputShape: ScratchBlocks.OUTPUT_SHAPE_ROUND
+            outputShape: ScratchBlocks.constants.OUTPUT_SHAPE_ROUND
         };
     };
 
@@ -72,7 +72,7 @@ export default function (vm) {
             colourSecondary: ScratchBlocks.Colours.sensing.secondary,
             colourTertiary: ScratchBlocks.Colours.sensing.tertiary,
             colourQuaternary: ScratchBlocks.Colours.sensing.quaternary,
-            outputShape: ScratchBlocks.OUTPUT_SHAPE_ROUND
+            outputShape: ScratchBlocks.constants.OUTPUT_SHAPE_ROUND
         };
     };
 
