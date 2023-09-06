@@ -495,10 +495,19 @@ const editProcedureCallbackFactory = function(block) {
 
 /**
  * Callback to create a new procedure custom command block.
+ * @private
+ */
+let externalProcedureDefCallback = function(/** mutator, callback */) {
+  alert('External procedure editor must be override Blockly.Procedures.externalProcedureDefCallback');
+};
+
+/**
+ * Set the callback to create a new procedure.
+ * @param {function} func The callback to create a new procedure.
  * @public
  */
-export const externalProcedureDefCallback = function(/** mutator, callback */) {
-  alert('External procedure editor must be override Blockly.Procedures.externalProcedureDefCallback');
+export const setExternalProcedureDefCallback = function(func) {
+  externalProcedureDefCallback = func;
 };
 
 /**
