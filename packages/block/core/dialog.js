@@ -86,15 +86,15 @@ export const setConfirm = function(confirmFunction) {
  * @param {string} message The message to display to the user.
  * @param {string} defaultValue The value to initialize the prompt with.
  * @param {!function(?string)} callback The callback for handling user response.
- * @param {?string} _opt_title An optional title for the prompt.
- * @param {?string} _opt_varType An optional variable type for variable specific
+ * @param {?string} opt_title An optional title for the prompt.
+ * @param {?string} opt_varType An optional variable type for variable specific
  *     prompt behavior.
  */
-export const prompt = function(message, defaultValue, callback, _opt_title,
-    _opt_varType) {
+export const prompt = function(message, defaultValue, callback, opt_title,
+    opt_varType) {
   // opt_title and opt_varType are unused because we only need them to pass
   // information to the scratch-gui, which overwrites this function
-  promptImplementation(message, defaultValue, callback);
+  promptImplementation(message, defaultValue, callback, opt_title, opt_varType);
 };
 
 /**
