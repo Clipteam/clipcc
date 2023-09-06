@@ -24,7 +24,7 @@ goog.require('goog.testing.MockControl');
 
 function helper_createWorkspaceWithToolbox() {
   var toolbox = document.getElementById('toolbox-categories');
-  return Blockly.inject.inject('blocklyDiv', {toolbox: toolbox});
+  return Blockly.inject('blocklyDiv', {toolbox: toolbox});
 }
 
 function test_createWorkspace() {

@@ -22,7 +22,7 @@
 var svgTest_workspace;
 
 function svgTest_setUp() {
-  svgTest_workspace = Blockly.inject.inject('blocklyDiv',
+  svgTest_workspace = Blockly.inject('blocklyDiv',
       {toolbox: document.getElementById('toolbox')});
 }
 

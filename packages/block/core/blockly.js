@@ -87,7 +87,7 @@ import {Generator} from './generator';
 import {Gesture} from './gesture';
 import {Grid} from './grid';
 import {Icon} from './icon';
-import * as inject from './inject';
+import {inject} from './inject';
 import {Input} from './input';
 import {InsertionMarkerManager} from './insertion_marker_manager';
 import {Msg} from './msg';
