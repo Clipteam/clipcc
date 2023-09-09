@@ -35,7 +35,7 @@ import * as utils from './utils';
 import {VariableMap} from './variable_map';
 import {WidgetDiv} from './widgetdiv';
 
-const array = goog.require('goog.array');
+const arrayUtils = goog.require('goog.array');
 const math = goog.require('goog.math');
 
 
@@ -183,7 +183,7 @@ Workspace.prototype.addTopBlock = function(block) {
  * @param {!Blockly.Block} block Block to remove.
  */
 Workspace.prototype.removeTopBlock = function(block) {
-  if (!array.remove(this.topBlocks_, block)) {
+  if (!arrayUtils.remove(this.topBlocks_, block)) {
     throw 'Block not present in workspace\'s list of top-most blocks.';
   }
 };
@@ -234,7 +234,7 @@ Workspace.prototype.addTopComment = function(comment) {
  * @package
  */
 Workspace.prototype.removeTopComment = function(comment) {
-  if (!array.remove(this.topComments_, comment)) {
+  if (!arrayUtils.remove(this.topComments_, comment)) {
     throw 'Comment not present in workspace\'s list of top-most comments.';
   }
   // Note: If the comment database starts to hold block comments, this may need
@@ -558,7 +558,7 @@ Workspace.prototype.addChangeListener = function(func) {
  * @param {Function} func Function to stop calling.
  */
 Workspace.prototype.removeChangeListener = function(func) {
-  array.remove(this.listeners_, func);
+  arrayUtils.remove(this.listeners_, func);
 };
 
 /**

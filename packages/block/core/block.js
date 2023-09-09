@@ -44,7 +44,7 @@ import {FieldLabel} from './field_label';
 import {Input} from './input';
 import * as utils from './utils';
 
-const array = goog.require('goog.array');
+const arrayUtils = goog.require('goog.array');
 const asserts = goog.require('goog.asserts');
 const color = goog.require('goog.color');
 const Coordinate = goog.require('goog.math.Coordinate');
@@ -565,7 +565,7 @@ Block.prototype.setParent = function(newParent) {
   }
   if (this.parentBlock_) {
     // Remove this block from the old parent's child list.
-    array.remove(this.parentBlock_.childBlocks_, this);
+    arrayUtils.remove(this.parentBlock_.childBlocks_, this);
 
     // Disconnect from superior blocks.
     if (this.previousConnection && this.previousConnection.isConnected()) {

@@ -35,7 +35,7 @@ import * as common from '../common';
 import * as registry from '../registry';
 import * as utils from '../utils';
 
-const array = goog.require('goog.array');
+const arrayUtils = goog.require('goog.array');
 
 
 /**
@@ -211,7 +211,7 @@ const fireNow = function() {
  * @return {!Array.<!Blockly.Events.Abstract>} Array of filtered events.
  */
 export const filter = function(queueIn, forward) {
-  let queue = array.clone(queueIn);
+  let queue = arrayUtils.clone(queueIn);
   if (!forward) {
     // Undo is merged in reverse order.
     queue.reverse();

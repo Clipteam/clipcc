@@ -33,7 +33,7 @@ import * as Events from './events/events';
 import {BlockMove} from './events/block_move';
 import * as Xml from './xml';
 
-const array = goog.require('goog.array');
+const arrayUtils = goog.require('goog.array');
 const asserts = goog.require('goog.asserts');
 
 
@@ -759,7 +759,7 @@ Connection.prototype.toString = function() {
   } else if (block.nextConnection == this) {
     msg = 'Next Connection of ';
   } else {
-    const parentInput = array.find(block.inputList, function(input) {
+    const parentInput = arrayUtils.find(block.inputList, function(input) {
       return input.connection == this;
     }, this);
     if (parentInput) {

@@ -61,7 +61,7 @@ import {WorkspaceCommentSvg} from './workspace_comment_svg';
 import * as Xml from './xml';
 import {ZoomControls} from './zoom_controls';
 
-const array = goog.require('goog.array');
+const arrayUtils = goog.require('goog.array');
 const asserts = goog.require('goog.asserts');
 const dom = goog.require('goog.dom');
 const Coordinate = goog.require('goog.math.Coordinate');
@@ -859,7 +859,7 @@ WorkspaceSvg.prototype.highlightBlock = function(id, opt_state) {
     const state = (opt_state === undefined) || opt_state;
     // Using Set here would be great, but at the cost of IE10 support.
     if (!state) {
-      array.remove(this.highlightedBlocks_, block);
+      arrayUtils.remove(this.highlightedBlocks_, block);
     } else if (this.highlightedBlocks_.indexOf(block) == -1) {
       this.highlightedBlocks_.push(block);
     }
