@@ -326,9 +326,9 @@ export default function (vm) {
 
     ScratchBlocks.FlyoutExtensionCategoryHeader.getExtensionState = function (extensionId) {
         if (vm.getPeripheralIsConnected(extensionId)) {
-            return ScratchBlocks.StatusButtonState.READY;
+            return ScratchBlocks.constants.StatusButtonState.READY;
         }
-        return ScratchBlocks.StatusButtonState.NOT_READY;
+        return ScratchBlocks.constants.StatusButtonState.NOT_READY;
     };
 
     ScratchBlocks.FieldNote.playNote_ = function (noteNum, extensionId) {
