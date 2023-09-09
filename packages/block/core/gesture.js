@@ -49,7 +49,7 @@ import * as Xml from './xml';
 
 const asserts = goog.require('goog.asserts');
 const Coordinate = goog.require('goog.math.Coordinate');
-const string = goog.require('goog.string');
+const stringUtils = goog.require('goog.string');
 
 
 /*
@@ -520,7 +520,7 @@ Gesture.prototype.doStart = function(e) {
     return;
   }
 
-  if (string.caseInsensitiveEquals(e.type, 'touchstart')) {
+  if (stringUtils.caseInsensitiveEquals(e.type, 'touchstart')) {
     Touch.longStart(e, this);
   }
 

@@ -37,7 +37,7 @@ goog.declareModuleId('Blockly.Extensions');
 import {Mutator} from './mutator';
 import * as utils from './utils';
 
-const string = goog.require('goog.string');
+const stringUtils = goog.require('goog.string');
 
 
 /**
@@ -57,7 +57,7 @@ const ALL = {};
  *     registered, or extensionFn is not a function.
  */
 export const register = function(name, initFn) {
-  if (typeof name !== 'string' || string.isEmptyOrWhitespace(name)) {
+  if (typeof name !== 'string' || stringUtils.isEmptyOrWhitespace(name)) {
     throw new Error('Error: Invalid extension name "' + name + '"');
   }
   if (ALL[name]) {

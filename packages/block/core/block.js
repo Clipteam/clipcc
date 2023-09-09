@@ -48,7 +48,7 @@ const arrayUtils = goog.require('goog.array');
 const asserts = goog.require('goog.asserts');
 const color = goog.require('goog.color');
 const Coordinate = goog.require('goog.math.Coordinate');
-const string = goog.require('goog.string');
+const stringUtils = goog.require('goog.string');
 
 
 /**
@@ -1231,12 +1231,12 @@ Block.prototype.toString = function(opt_maxLength, opt_emptyToken) {
       }
     }
   }
-  text = string.trim(text.join(' ')) || '???';
+  text = stringUtils.trim(text.join(' ')) || '???';
   if (opt_maxLength) {
     // TODO: Improve truncation so that text from this block is given priority.
     // E.g. "1+2+3+4+5+6+7+8+9=0" should be "...6+7+8+9=0", not "1+2+3+4+5...".
     // E.g. "1+2+3+4+5=6+7+8+9+0" should be "...4+5=6+7...".
-    text = string.truncate(text, opt_maxLength);
+    text = stringUtils.truncate(text, opt_maxLength);
   }
   return text;
 };
@@ -1460,7 +1460,7 @@ Block.prototype.interpolate_ = function(message, args, lastDummyAlign) {
   }
   // Add last dummy input if needed.
   if (elements.length && (typeof elements[elements.length - 1] == 'string' ||
-      string.startsWith(
+      stringUtils.startsWith(
           elements[elements.length - 1]['type'], 'field_'))) {
     const dummyInput = {type: 'input_dummy'};
     if (lastDummyAlign) {

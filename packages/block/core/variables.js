@@ -35,7 +35,7 @@ import * as constants from './constants';
 import * as dialog from './dialog';
 import {Msg} from './msg';
 
-const string = goog.require('goog.string');
+const stringUtils = goog.require('goog.string');
 
 
 /**
@@ -509,7 +509,7 @@ export const renameVariable = function(workspace, variable,
  */
 const trimName = function(name) {
   if (name) {
-    return string.trim(name);
+    return stringUtils.trim(name);
   } else {
     // Return whatever was provided
     return name;
@@ -533,8 +533,8 @@ export const generateVariableFieldXml = function(variableModel, opt_name) {
   }
   const fieldName = opt_name || 'VARIABLE';
   const text = '<field name="' + fieldName + '" id="' + variableModel.getId() +
-    '" variabletype="' + string.htmlEscape(typeString) +
-    '">' + string.htmlEscape(variableModel.name) + '</field>';
+    '" variabletype="' + stringUtils.htmlEscape(typeString) +
+    '">' + stringUtils.htmlEscape(variableModel.name) + '</field>';
   return text;
 };
 

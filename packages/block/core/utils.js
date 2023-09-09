@@ -38,7 +38,7 @@ import {Msg} from './msg';
 
 const dom = goog.require('goog.dom');
 const Coordinate = goog.require('goog.math.Coordinate');
-const string = goog.require('goog.string');
+const stringUtils = goog.require('goog.string');
 const style = goog.require('goog.style');
 const userAgent = goog.require('goog.userAgent');
 
@@ -554,7 +554,7 @@ const tokenizeInterpolationInternal = function(message,
           // BKY_ is the prefix used to namespace the strings used in Blockly
           // core files and the predefined blocks in ../blocks/. These strings
           // are defined in ../msgs/ files.
-          const bklyKey = string.startsWith(keyUpper, 'BKY_') ?
+          const bklyKey = stringUtils.startsWith(keyUpper, 'BKY_') ?
               keyUpper.substring(4) : null;
           if (bklyKey && bklyKey in Msg) {
             const rawValue = Msg[bklyKey];

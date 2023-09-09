@@ -46,7 +46,7 @@ import {WidgetDiv} from './widgetdiv';
 import {WorkspaceSvg} from './workspace_svg';
 
 const dom = goog.require('goog.dom');
-const string = goog.require('goog.string');
+const stringUtils = goog.require('goog.string');
 const Component = goog.require('goog.ui.Component');
 const userAgent = goog.require('goog.userAgent');
 
@@ -161,7 +161,7 @@ const createDom = function(container, options) {
   utils.createSvgElement('feFuncA',
       {
         'type': 'table',
-        'tableValues': '0' + string.repeat(' 1', 16)
+        'tableValues': '0' + stringUtils.repeat(' 1', 16)
       },
       stackComponentTransfer);
   // Color the highlight
@@ -210,7 +210,7 @@ const createDom = function(container, options) {
   utils.createSvgElement('feFuncA',
       {
         'type': 'table',
-        'tableValues': '0' + string.repeat(' 1', 16)
+        'tableValues': '0' + stringUtils.repeat(' 1', 16)
       },
       replacementComponentTransfer);
   // Color the highlight
