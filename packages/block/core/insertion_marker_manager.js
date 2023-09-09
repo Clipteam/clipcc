@@ -30,7 +30,7 @@ goog.declareModuleId('Blockly.InsertionMarkerManager');
 import * as BlockAnimations from './block_animations';
 import * as common from './common';
 import * as constants from './constants';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 
 const asserts = goog.require('goog.asserts');
 
@@ -162,7 +162,7 @@ InsertionMarkerManager.prototype.dispose = function() {
   this.closestConnection_ = null;
   this.localConnection_ = null;
 
-  Events.disable();
+  eventUtils.disable();
   try {
     if (this.firstMarker_) {
       this.firstMarker_.dispose();
@@ -173,7 +173,7 @@ InsertionMarkerManager.prototype.dispose = function() {
       this.lastMarker_ = null;
     }
   } finally {
-    Events.enable();
+    eventUtils.enable();
   }
 
   this.highlightedBlock_ = null;
@@ -208,9 +208,9 @@ InsertionMarkerManager.prototype.wouldConnectBlock = function() {
 InsertionMarkerManager.prototype.applyConnections = function() {
   if (this.closestConnection_) {
     // Don't fire events for insertion markers.
-    Events.disable();
+    eventUtils.disable();
     this.hidePreview_();
-    Events.enable();
+    eventUtils.enable();
     // Connect two blocks together.
     this.localConnection_.connect(this.closestConnection_);
     if (this.topBlock_.rendered) {
@@ -244,10 +244,10 @@ InsertionMarkerManager.prototype.update = function(dxy, deleteArea) {
 
   if (shouldUpdate) {
     // Don't fire events for insertion marker creation or movement.
-    Events.disable();
+    eventUtils.disable();
     this.maybeHidePreview_(candidate);
     this.maybeShowPreview_(candidate);
-    Events.enable();
+    eventUtils.enable();
   }
 };
 
@@ -264,7 +264,7 @@ InsertionMarkerManager.prototype.update = function(dxy, deleteArea) {
 InsertionMarkerManager.prototype.createMarkerBlock_ = function(sourceBlock) {
   const imType = sourceBlock.type;
 
-  Events.disable();
+  eventUtils.disable();
   let result;
   try {
     result = this.workspace_.newBlock(imType);
@@ -277,7 +277,7 @@ InsertionMarkerManager.prototype.createMarkerBlock_ = function(sourceBlock) {
     }
     result.initSvg();
   } finally {
-    Events.enable();
+    eventUtils.enable();
   }
 
   return result;

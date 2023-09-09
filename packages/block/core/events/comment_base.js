@@ -23,7 +23,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.CommentBase');
 
-import * as Events from './events';
+import * as eventUtils from './utils';
 import {Abstract} from './abstract';
 
 
@@ -60,13 +60,13 @@ export const CommentBase = function(comment) {
    * perspective, and should be undone together.
    * @type {string}
    */
-  this.group = Events.getGroup();
+  this.group = eventUtils.getGroup();
 
   /**
    * Sets whether the event should be added to the undo stack.
    * @type {boolean}
    */
-  this.recordUndo = Events.getRecordUndo();
+  this.recordUndo = eventUtils.getRecordUndo();
 };
 goog.inherits(CommentBase, Abstract);
 

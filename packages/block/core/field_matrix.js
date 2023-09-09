@@ -31,7 +31,7 @@ goog.declareModuleId('Blockly.FieldMatrix');
 import * as browserEvents from './browser_events';
 import * as common from './common';
 import {DropDownDiv} from './dropdowndiv';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Field} from './field';
 import * as rendererConstants from './renderer/constants';
@@ -275,8 +275,8 @@ FieldMatrix.prototype.setValue = function(matrix) {
   if (!matrix || matrix === this.matrix_) {
     return;  // No change
   }
-  if (this.sourceBlock_ && Events.isEnabled()) {
-    Events.fire(new BlockChange(
+  if (this.sourceBlock_ && eventUtils.isEnabled()) {
+    eventUtils.fire(new BlockChange(
         this.sourceBlock_, 'field', this.name, this.matrix_, matrix));
   }
   matrix = matrix + FieldMatrix.ZEROS.substr(0, 25 - matrix.length);

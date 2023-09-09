@@ -30,7 +30,7 @@ goog.declareModuleId('Blockly.ScratchBubble');
 import * as browserEvents from './browser_events';
 import {Bubble} from './bubble';
 import * as common from './common';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {CommentChange} from './events/comment_change';
 import * as utils from './utils';
 
@@ -451,7 +451,7 @@ ScratchBubble.prototype.resizeMouseUp_ = function(_e) {
   }
   // Fire a change event for the new width/height after
   // resize mouse up
-  Events.fire(new CommentChange(
+  eventUtils.fire(new CommentChange(
       this.comment, {width: oldHW.width , height: oldHW.height},
       {width: this.width_, height: this.height_}));
 

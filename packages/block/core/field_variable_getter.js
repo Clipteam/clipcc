@@ -28,7 +28,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.FieldVariableGetter');
 
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Field} from './field';
 import * as rendererConstants from './renderer/constants';
@@ -152,9 +152,9 @@ FieldVariableGetter.prototype.setValue = function(id) {
         id);
   }
 
-  if (this.sourceBlock_ && Events.isEnabled()) {
+  if (this.sourceBlock_ && eventUtils.isEnabled()) {
     const oldValue = this.variable_ ? this.variable_.getId() : null;
-    Events.fire(new BlockChange(
+    eventUtils.fire(new BlockChange(
         this.sourceBlock_, 'field', this.name, oldValue, variable.getId()));
   }
   this.variable_ = variable;

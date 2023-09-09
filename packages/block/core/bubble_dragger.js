@@ -28,7 +28,7 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.BubbleDragger');
 
 import * as constants from './constants';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {CommentMove} from './events/comment_move';
 import {ScratchBubble} from './scratch_bubble';
 import * as utils from './utils';
@@ -110,8 +110,8 @@ BubbleDragger.prototype.dispose = function() {
  * @package
  */
 BubbleDragger.prototype.startBubbleDrag = function() {
-  if (!Events.getGroup()) {
-    Events.setGroup(true);
+  if (!eventUtils.getGroup()) {
+    eventUtils.setGroup(true);
   }
 
   this.workspace_.setResizesEnabled(false);
@@ -229,7 +229,7 @@ BubbleDragger.prototype.endBubbleDrag = function(
         'blocklyToolboxGrab';
     this.workspace_.toolbox_.removeStyle(style);
   }
-  Events.setGroup(false);
+  eventUtils.setGroup(false);
 };
 
 /**
@@ -247,7 +247,7 @@ BubbleDragger.prototype.fireMoveEvent_ = function() {
   }
   event.setOldCoordinate(this.startXY_);
   event.recordNew();
-  Events.fire(event);
+  eventUtils.fire(event);
 };
 
 /**

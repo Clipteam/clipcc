@@ -32,7 +32,7 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Xml');
 
 import * as constants from './constants';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import * as rendererConstants from './renderer/constants';
 import * as utils from './utils';
 import * as Variables from './variables';
@@ -435,9 +435,9 @@ export const domToWorkspace = function(xml, workspace) {
   // children beyond the lists' length.  Trust the length, do not use the
   // looping pattern of checking the index for an object.
   const childCount = xml.childNodes.length;
-  const existingGroup = Events.getGroup();
+  const existingGroup = eventUtils.getGroup();
   if (!existingGroup) {
-    Events.setGroup(true);
+    eventUtils.setGroup(true);
   }
 
   // Disable workspace resizes as an optimization.
@@ -450,7 +450,7 @@ export const domToWorkspace = function(xml, workspace) {
       const xmlChild = xml.childNodes[i];
       const name = xmlChild.nodeName.toLowerCase();
       if (name == 'block' ||
-          (name == 'shadow' && !Events.getRecordUndo())) {
+          (name == 'shadow' && !eventUtils.getRecordUndo())) {
         // Allow top-level shadow blocks if recordUndo is disabled since
         // that means an undo is in progress.  Such a block is expected
         // to be moved to a nested destination in the next operation.
@@ -491,7 +491,7 @@ export const domToWorkspace = function(xml, workspace) {
     }
   } finally {
     if (!existingGroup) {
-      Events.setGroup(false);
+      eventUtils.setGroup(false);
     }
     utils.stopTextWidthCache();
   }
@@ -559,7 +559,7 @@ export const appendDomToWorkspace = function(xml, workspace) {
  */
 export const domToBlock = function(xmlBlock, workspace) {
   // Create top-level block.
-  Events.disable();
+  eventUtils.disable();
   const variablesBeforeCreation = workspace.getAllVariables();
   let topBlock;
   try {
@@ -595,19 +595,19 @@ export const domToBlock = function(xmlBlock, workspace) {
       }
     }
   } finally {
-    Events.enable();
+    eventUtils.enable();
   }
-  if (Events.isEnabled()) {
+  if (eventUtils.isEnabled()) {
     const newVariables = Variables.getAddedVariables(workspace,
         variablesBeforeCreation);
     // Fire a VarCreate event for each (if any) new variable created.
     for (let i = 0; i < newVariables.length; i++) {
       const thisVariable = newVariables[i];
-      Events.fire(new (Events.get(Events.VAR_CREATE))(thisVariable));
+      eventUtils.fire(new (eventUtils.get(eventUtils.VAR_CREATE))(thisVariable));
     }
     // Block events come after var events, in case they refer to newly created
     // variables.
-    Events.fire(new (Events.get(Events.BLOCK_CREATE))(topBlock));
+    eventUtils.fire(new (eventUtils.get(eventUtils.BLOCK_CREATE))(topBlock));
   }
   return topBlock;
 };

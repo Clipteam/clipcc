@@ -23,7 +23,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.CommentCreate');
 
-import * as Events from './events';
+import * as eventUtils from './utils';
 import {CommentBase} from './comment_base';
 import * as Xml from '../xml';
 
@@ -85,7 +85,7 @@ goog.inherits(CommentCreate, CommentBase);
  * Type of this event.
  * @type {string}
  */
-CommentCreate.prototype.type = Events.COMMENT_CREATE;
+CommentCreate.prototype.type = eventUtils.COMMENT_CREATE;
 
 /**
  * Encode the event as JSON.
@@ -136,4 +136,4 @@ CommentCreate.prototype.run = function(forward) {
   }
 };
 
-Events.register(Events.COMMENT_CREATE, CommentCreate);
+eventUtils.register(eventUtils.COMMENT_CREATE, CommentCreate);

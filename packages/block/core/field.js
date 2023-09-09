@@ -30,7 +30,7 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Field');
 
 import * as browserEvents from './browser_events';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import * as registry from './registry';
 import * as rendererConstants from './renderer/constants';
@@ -653,8 +653,8 @@ Field.prototype.setValue = function(newValue) {
   if (oldValue == newValue) {
     return;
   }
-  if (this.sourceBlock_ && Events.isEnabled()) {
-    Events.fire(new BlockChange(
+  if (this.sourceBlock_ && eventUtils.isEnabled()) {
+    eventUtils.fire(new BlockChange(
         this.sourceBlock_, 'field', this.name, oldValue, newValue));
   }
   this.setText(newValue);

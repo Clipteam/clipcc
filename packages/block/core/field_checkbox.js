@@ -27,7 +27,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.FieldCheckbox');
 
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Field} from './field';
 import * as utils from './utils';
@@ -108,8 +108,8 @@ FieldCheckbox.prototype.setValue = function(newBool) {
   const newState = (typeof newBool == 'string') ?
       (newBool.toUpperCase() == 'TRUE') : !!newBool;
   if (this.state_ !== newState) {
-    if (this.sourceBlock_ && Events.isEnabled()) {
-      Events.fire(new BlockChange(
+    if (this.sourceBlock_ && eventUtils.isEnabled()) {
+      eventUtils.fire(new BlockChange(
           this.sourceBlock_, 'field', this.name, this.state_, newState));
     }
     this.state_ = newState;

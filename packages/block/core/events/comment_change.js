@@ -23,7 +23,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.CommentChange');
 
-import * as Events from './events';
+import * as eventUtils from './utils';
 import {CommentBase} from './comment_base';
 
 
@@ -56,7 +56,7 @@ goog.inherits(CommentChange, CommentBase);
  * Type of this event.
  * @type {string}
  */
-CommentChange.prototype.type = Events.COMMENT_CHANGE;
+CommentChange.prototype.type = eventUtils.COMMENT_CHANGE;
 
 /**
  * Encode the event as JSON.
@@ -109,4 +109,4 @@ CommentChange.prototype.run = function(forward) {
   }
 };
 
-Events.register(Events.COMMENT_CHANGE, CommentChange);
+eventUtils.register(eventUtils.COMMENT_CHANGE, CommentChange);

@@ -27,7 +27,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.Ui');
 
-import * as Events from './events';
+import * as eventUtils from './utils';
 import {Abstract} from './abstract';
 
 
@@ -60,7 +60,7 @@ goog.inherits(Ui, Abstract);
  * Type of this event.
  * @type {string}
  */
-Ui.prototype.type = Events.UI;
+Ui.prototype.type = eventUtils.UI;
 
 /**
  * Encode the event as JSON.
@@ -89,4 +89,4 @@ Ui.prototype.fromJson = function(json) {
   this.blockId = json['blockId'];
 };
 
-Events.register(Events.UI, Ui);
+eventUtils.register(eventUtils.UI, Ui);

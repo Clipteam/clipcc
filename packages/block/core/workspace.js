@@ -29,7 +29,7 @@ goog.declareModuleId('Blockly.Workspace');
 
 import * as common from './common';
 import {DropDownDiv} from './dropdowndiv';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {ScratchBlockComment} from './scratch_block_comment';
 import * as utils from './utils';
 import {VariableMap} from './variable_map';
@@ -300,9 +300,9 @@ Workspace.prototype.getAllBlocks = function(ordered) {
  */
 Workspace.prototype.clear = function() {
   this.isClearing = true;
-  const existingGroup = Events.getGroup();
+  const existingGroup = eventUtils.getGroup();
   if (!existingGroup) {
-    Events.setGroup(true);
+    eventUtils.setGroup(true);
   }
   while (this.topBlocks_.length) {
     this.topBlocks_[0].dispose();
@@ -311,7 +311,7 @@ Workspace.prototype.clear = function() {
     this.topComments_[this.topComments_.length - 1].dispose();
   }
   if (!existingGroup) {
-    Events.setGroup(false);
+    eventUtils.setGroup(false);
   }
   this.variableMap_.clear();
   // Any block with a drop-down or WidgetDiv was disposed.
@@ -498,14 +498,14 @@ Workspace.prototype.undo = function(redo) {
   for (let i = 0, event; event = events[i]; i++) {
     outputStack.push(event);
   }
-  events = Events.filter(events, redo);
-  Events.setRecordUndo(false);
+  events = eventUtils.filter(events, redo);
+  eventUtils.setRecordUndo(false);
   if (common.getSelected()) {
-    Events.disable();
+    eventUtils.disable();
     try {
       common.getSelected().unselect();
     } finally {
-      Events.enable();
+      eventUtils.enable();
     }
   }
   try {
@@ -513,7 +513,7 @@ Workspace.prototype.undo = function(redo) {
       event.run(redo);
     }
   } finally {
-    Events.setRecordUndo(true);
+    eventUtils.setRecordUndo(true);
   }
 };
 
@@ -524,7 +524,7 @@ Workspace.prototype.clearUndo = function() {
   this.undoStack_.length = 0;
   this.redoStack_.length = 0;
   // Stop any events already in the firing queue from being undoable.
-  Events.clearPendingUndo();
+  eventUtils.clearPendingUndo();
 };
 
 /**

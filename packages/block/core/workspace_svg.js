@@ -36,7 +36,7 @@ import {ContextMenu} from './contextmenu';
 import {DataCategory} from './data_category';
 import * as dialog from './dialog';
 import {DropDownDiv} from './dropdowndiv';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockCreate} from './events/block_create';
 import {Gesture} from './gesture';
 import {Grid} from './grid';
@@ -954,7 +954,7 @@ WorkspaceSvg.prototype.paste = function(xmlBlock) {
  * @param {!Element} xmlBlock XML block element.
  */
 WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
-  Events.disable();
+  eventUtils.disable();
   let block;
   try {
     block = Xml.domToBlock(xmlBlock, this);
@@ -1005,10 +1005,10 @@ WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
       block.moveBy(blockX, blockY);
     }
   } finally {
-    Events.enable();
+    eventUtils.enable();
   }
-  if (Events.isEnabled() && !block.isShadow()) {
-    Events.fire(new BlockCreate(block));
+  if (eventUtils.isEnabled() && !block.isShadow()) {
+    eventUtils.fire(new BlockCreate(block));
   }
   block.select();
 };
@@ -1019,7 +1019,7 @@ WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
  * @private
  */
 WorkspaceSvg.prototype.pasteWorkspaceComment_ = function(xmlComment) {
-  Events.disable();
+  eventUtils.disable();
   let comment;
   try {
     comment = WorkspaceCommentSvg.fromXml(xmlComment, this);
@@ -1038,9 +1038,9 @@ WorkspaceSvg.prototype.pasteWorkspaceComment_ = function(xmlComment) {
       comment.moveBy(commentX, commentY);
     }
   } finally {
-    Events.enable();
+    eventUtils.enable();
   }
-  if (Events.isEnabled()) {
+  if (eventUtils.isEnabled()) {
     WorkspaceComment.fireCreateEvent(comment);
   }
   comment.select();
@@ -1340,7 +1340,7 @@ WorkspaceSvg.prototype.getBlocksBoundingBox = function() {
  */
 WorkspaceSvg.prototype.cleanUp = function() {
   this.setResizesEnabled(false);
-  Events.setGroup(true);
+  eventUtils.setGroup(true);
   const topBlocks = this.getTopBlocks(true);
   let cursorY = 0;
   for (let i = 0, block; block = topBlocks[i]; i++) {
@@ -1350,7 +1350,7 @@ WorkspaceSvg.prototype.cleanUp = function() {
     cursorY = block.getRelativeToSurfaceXY().y +
         block.getHeightWidth().height + rendererConstants.MIN_BLOCK_Y;
   }
-  Events.setGroup(false);
+  eventUtils.setGroup(false);
   this.setResizesEnabled(true);
 };
 
@@ -1418,7 +1418,7 @@ WorkspaceSvg.prototype.showContextMenu_ = function(e) {
 
   const DELAY = 10;
   function deleteNext() {
-    Events.setGroup(eventGroup);
+    eventUtils.setGroup(eventGroup);
     const block = deleteList.shift();
     if (block) {
       if (block.workspace) {
@@ -1428,7 +1428,7 @@ WorkspaceSvg.prototype.showContextMenu_ = function(e) {
         deleteNext();
       }
     }
-    Events.setGroup(false);
+    eventUtils.setGroup(false);
   }
 
   const deleteOption = {

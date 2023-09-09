@@ -28,7 +28,7 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.FieldVariable');
 
 import * as constants from './constants';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Field} from './field';
 import {FieldDropdown} from './field_dropdown';
@@ -122,11 +122,11 @@ FieldVariable.prototype.initModel = function() {
   }
   // Don't fire a change event for this setValue.  It would have null as the
   // old value, which is not valid.
-  Events.disable();
+  eventUtils.disable();
   try {
     this.setValue(variable.getId());
   } finally {
-    Events.enable();
+    eventUtils.enable();
   }
 };
 
@@ -221,9 +221,9 @@ FieldVariable.prototype.setValue = function(id) {
     throw new Error('Variable type doesn\'t match this field!  Type was ' +
         type);
   }
-  if (this.sourceBlock_ && Events.isEnabled()) {
+  if (this.sourceBlock_ && eventUtils.isEnabled()) {
     const oldValue = this.variable_ ? this.variable_.getId() : null;
-    Events.fire(new BlockChange(
+    eventUtils.fire(new BlockChange(
         this.sourceBlock_, 'field', this.name, oldValue, id));
   }
   this.variable_ = variable;

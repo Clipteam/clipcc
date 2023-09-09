@@ -32,7 +32,7 @@ import {Colours} from './colours';
 import * as common from './common';
 import {Connection} from './connection';
 import * as constants from './constants';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {BlockCreate} from './events/block_create';
 import {BlockDelete} from './events/block_delete';
@@ -192,16 +192,16 @@ export const Block = function(workspace, prototypeName, opt_id) {
   this.inputsInlineDefault = this.inputsInline;
 
   // Fire a create event.
-  if (Events.isEnabled()) {
-    const existingGroup = Events.getGroup();
+  if (eventUtils.isEnabled()) {
+    const existingGroup = eventUtils.getGroup();
     if (!existingGroup) {
-      Events.setGroup(true);
+      eventUtils.setGroup(true);
     }
     try {
-      Events.fire(new BlockCreate(this));
+      eventUtils.fire(new BlockCreate(this));
     } finally {
       if (!existingGroup) {
-        Events.setGroup(false);
+        eventUtils.setGroup(false);
       }
     }
 
@@ -270,10 +270,10 @@ Block.prototype.dispose = function(healStack) {
     this.workspace.removeChangeListener(this.onchangeWrapper_);
   }
   this.unplug(healStack);
-  if (Events.isEnabled()) {
-    Events.fire(new BlockDelete(this));
+  if (eventUtils.isEnabled()) {
+    eventUtils.fire(new BlockDelete(this));
   }
-  Events.disable();
+  eventUtils.disable();
 
   try {
     // This block is now at the top of the workspace.
@@ -313,7 +313,7 @@ Block.prototype.dispose = function(healStack) {
       connections[i].dispose();
     }
   } finally {
-    Events.enable();
+    eventUtils.enable();
   }
 };
 
@@ -1118,7 +1118,7 @@ Block.prototype.setOutput = function(newBoolean, opt_check) {
  */
 Block.prototype.setInputsInline = function(newBoolean) {
   if (this.inputsInline != newBoolean) {
-    Events.fire(new BlockChange(
+    eventUtils.fire(new BlockChange(
         this, 'inline', null, this.inputsInline, newBoolean));
     this.inputsInline = newBoolean;
   }
@@ -1157,7 +1157,7 @@ Block.prototype.getInputsInline = function() {
  */
 Block.prototype.setDisabled = function(disabled) {
   if (this.disabled != disabled) {
-    Events.fire(new BlockChange(
+    eventUtils.fire(new BlockChange(
         this, 'disabled', null, this.disabled, disabled));
     this.disabled = disabled;
   }
@@ -1194,7 +1194,7 @@ Block.prototype.isCollapsed = function() {
  */
 Block.prototype.setCollapsed = function(collapsed) {
   if (this.collapsed_ != collapsed) {
-    Events.fire(new BlockChange(
+    eventUtils.fire(new BlockChange(
         this, 'collapsed', null, this.collapsed_, collapsed));
     this.collapsed_ = collapsed;
   }
@@ -1681,7 +1681,7 @@ Block.prototype.getCommentText = function() {
  */
 Block.prototype.setCommentText = function(text) {
   if (this.comment != text) {
-    Events.fire(new BlockChange(
+    eventUtils.fire(new BlockChange(
         this, 'comment', null, this.comment, text || ''));
     this.comment = text;
   }
@@ -1774,7 +1774,7 @@ Block.prototype.moveBy = function(dx, dy) {
   const event = new BlockMove(this);
   this.xy_.translate(dx, dy);
   event.recordNew();
-  Events.fire(event);
+  eventUtils.fire(event);
 };
 
 /**

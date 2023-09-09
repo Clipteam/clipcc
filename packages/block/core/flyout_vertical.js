@@ -30,7 +30,7 @@ goog.declareModuleId('Blockly.VerticalFlyout');
 import * as browserEvents from './browser_events';
 import * as constants from './constants';
 import {DropDownDiv} from './dropdowndiv';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Flyout} from './flyout_base';
 import * as registry from './registry';
@@ -698,7 +698,7 @@ VerticalFlyout.prototype.setCheckboxState = function(blockId, value) {
     utils.removeClass(checkboxObj.svgRoot, 'checked');
   }
 
-  Events.fire(new BlockChange(
+  eventUtils.fire(new BlockChange(
       checkboxObj.block, 'checkbox', null, oldValue, value));
 };
 

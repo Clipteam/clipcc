@@ -23,7 +23,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.VarDelete');
 
-import * as Events from './events';
+import * as eventUtils from './utils';
 import {VarBase} from './var_base';
 
 
@@ -50,7 +50,7 @@ goog.inherits(VarDelete, VarBase);
  * Type of this event.
  * @type {string}
  */
-VarDelete.prototype.type = Events.VAR_DELETE;
+VarDelete.prototype.type = eventUtils.VAR_DELETE;
 
 /**
  * Encode the event as JSON.
@@ -90,4 +90,4 @@ VarDelete.prototype.run = function(forward) {
   }
 };
 
-Events.register(Events.VAR_DELETE, VarDelete);
+eventUtils.register(eventUtils.VAR_DELETE, VarDelete);

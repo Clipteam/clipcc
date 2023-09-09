@@ -30,7 +30,7 @@ goog.declareModuleId('Blockly.Comment');
 import * as browserEvents from './browser_events';
 import {Bubble} from './bubble';
 import * as constants from './constants';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Ui} from './events/ui';
 import {Icon} from './icon';
@@ -137,7 +137,7 @@ Comment.prototype.createEditor_ = function() {
   });
   browserEvents.conditionalBind(textarea, 'change', this, function(_e) {
     if (this.text_ != textarea.value) {
-      Events.fire(new BlockChange(
+      eventUtils.fire(new BlockChange(
           this.block_, 'comment', null, this.text_, textarea.value));
       this.text_ = textarea.value;
     }
@@ -187,7 +187,7 @@ Comment.prototype.setVisible = function(visible) {
     // No change.
     return;
   }
-  Events.fire(
+  eventUtils.fire(
       new Ui(this.block_, 'commentOpen', !visible, visible));
   if ((!this.block_.isEditable() && !this.textarea_) || userAgent.IE) {
     // Steal the code from warnings to make an uneditable text bubble.
@@ -289,7 +289,7 @@ Comment.prototype.getText = function() {
  */
 Comment.prototype.setText = function(text) {
   if (this.text_ != text) {
-    Events.fire(new BlockChange(
+    eventUtils.fire(new BlockChange(
         this.block_, 'comment', null, this.text_, text));
     this.text_ = text;
   }
@@ -302,7 +302,7 @@ Comment.prototype.setText = function(text) {
  * Dispose of this comment.
  */
 Comment.prototype.dispose = function() {
-  if (Events.isEnabled()) {
+  if (eventUtils.isEnabled()) {
     this.setText('');  // Fire event to delete comment.
   }
   this.block_.comment = null;

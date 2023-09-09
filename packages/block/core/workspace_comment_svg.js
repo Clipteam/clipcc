@@ -29,7 +29,7 @@ goog.declareModuleId('Blockly.WorkspaceCommentSvg');
 
 import * as browserEvents from './browser_events';
 import * as common from './common';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {Ui} from './events/ui';
 import * as utils from './utils';
 import {WorkspaceComment} from './workspace_comment';
@@ -119,8 +119,8 @@ WorkspaceCommentSvg.prototype.dispose = function() {
     this.workspace.cancelCurrentGesture();
   }
 
-  if (Events.isEnabled()) {
-    Events.fire(new (Events.get(Events.COMMENT_DELETE))(this));
+  if (eventUtils.isEnabled()) {
+    eventUtils.fire(new (eventUtils.get(eventUtils.COMMENT_DELETE))(this));
   }
 
   dom.removeNode(this.svgGroup_);
@@ -130,9 +130,9 @@ WorkspaceCommentSvg.prototype.dispose = function() {
   // Dispose of any rendered components
   this.disposeInternal_();
 
-  Events.disable();
+  eventUtils.disable();
   WorkspaceCommentSvg.superClass_.dispose.call(this);
-  Events.enable();
+  eventUtils.enable();
 };
 
 /**
@@ -191,16 +191,16 @@ WorkspaceCommentSvg.prototype.select = function() {
   if (common.getSelected()) {
     oldId = common.getSelected().id;
     // Unselect any previously selected block or comment.
-    Events.disable();
+    eventUtils.disable();
     try {
       common.getSelected().unselect();
     } finally {
-      Events.enable();
+      eventUtils.enable();
     }
   }
   const event = new Ui(null, 'selected', oldId, this.id);
   event.workspaceId = this.workspace.id;
-  Events.fire(event);
+  eventUtils.fire(event);
   common.setSelected(this);
   this.addSelect();
 };
@@ -215,7 +215,7 @@ WorkspaceCommentSvg.prototype.unselect = function() {
   }
   const event = new Ui(null, 'selected', this.id, null);
   event.workspaceId = this.workspace.id;
-  Events.fire(event);
+  eventUtils.fire(event);
   common.setSelected(null);
   this.removeSelect();
 };
@@ -306,12 +306,12 @@ WorkspaceCommentSvg.prototype.getRelativeToSurfaceXY = function() {
  * @package
  */
 WorkspaceCommentSvg.prototype.moveBy = function(dx, dy) {
-  const event = new (Events.get(Events.COMMENT_MOVE))(this);
+  const event = new (eventUtils.get(eventUtils.COMMENT_MOVE))(this);
   // TODO: Do I need to look up the relative to surface XY position here?
   const xy = this.getRelativeToSurfaceXY();
   this.translate(xy.x + dx, xy.y + dy);
   event.recordNew();
-  Events.fire(event);
+  eventUtils.fire(event);
   this.workspace.resizeContents();
 };
 
@@ -557,7 +557,7 @@ WorkspaceCommentSvg.prototype.setAutoLayout = function() {
  */
 WorkspaceCommentSvg.fromXml = function(xmlComment, workspace,
     opt_wsWidth) {
-  Events.disable();
+  eventUtils.disable();
   let comment;
   try {
     const info = WorkspaceComment.parseAttributes(xmlComment);
@@ -579,7 +579,7 @@ WorkspaceCommentSvg.fromXml = function(xmlComment, workspace,
       }
     }
   } finally {
-    Events.enable();
+    eventUtils.enable();
   }
   WorkspaceComment.fireCreateEvent(comment);
 

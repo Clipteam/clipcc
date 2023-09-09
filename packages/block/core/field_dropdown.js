@@ -31,7 +31,7 @@ goog.declareModuleId('Blockly.FieldDropdown');
 
 import * as common from './common';
 import {DropDownDiv} from './dropdowndiv';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Field} from './field';
 import * as rendererConstants from './renderer/constants';
@@ -189,7 +189,7 @@ FieldDropdown.prototype.showEditor_ = function() {
       thisField.onItemSelected(menu, menuItem);
     }
     DropDownDiv.hide();
-    Events.setGroup(false);
+    eventUtils.setGroup(false);
   }
 
   const menu = new Menu();
@@ -396,8 +396,8 @@ FieldDropdown.prototype.setValue = function(newValue) {
   if (newValue === null || newValue === this.value_) {
     return;  // No change if null.
   }
-  if (this.sourceBlock_ && Events.isEnabled()) {
-    Events.fire(new BlockChange(
+  if (this.sourceBlock_ && eventUtils.isEnabled()) {
+    eventUtils.fire(new BlockChange(
         this.sourceBlock_, 'field', this.name, this.value_, newValue));
   }
   // Clear menu item for old value.

@@ -30,7 +30,7 @@ goog.declareModuleId('Blockly.RenderedConnection');
 import * as common from './common';
 import {Connection} from './connection';
 import * as constants from './constants';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import * as rendererConstants from './renderer/constants';
 import * as utils from './utils';
 
@@ -351,7 +351,7 @@ RenderedConnection.prototype.respawnShadow_ = function() {
   const parentBlock = this.getSourceBlock();
   // Respawn the shadow block if there is one.
   const shadow = this.getShadowDom();
-  if (parentBlock.workspace && shadow && Events.getRecordUndo()) {
+  if (parentBlock.workspace && shadow && eventUtils.getRecordUndo()) {
     RenderedConnection.superClass_.respawnShadow_.call(this);
     const blockShadow = this.targetBlock();
     if (!blockShadow) {

@@ -32,7 +32,7 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Procedures');
 
 import * as constants from './constants';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Msg} from './msg';
 import {Names} from './names';
@@ -316,7 +316,7 @@ export const mutateCallersAndPrototype = function(name, ws, mutation) {
     const callers = getCallers(name,
         defineBlock.workspace, defineBlock, true /* allowRecursive */);
     callers.push(prototypeBlock);
-    Events.setGroup(true);
+    eventUtils.setGroup(true);
     for (let i = 0, caller; caller = callers[i]; i++) {
       const oldMutationDom = caller.mutationToDom();
       const oldMutation = oldMutationDom && Xml.domToText(oldMutationDom);
@@ -324,11 +324,11 @@ export const mutateCallersAndPrototype = function(name, ws, mutation) {
       const newMutationDom = caller.mutationToDom();
       const newMutation = newMutationDom && Xml.domToText(newMutationDom);
       if (oldMutation != newMutation) {
-        Events.fire(new BlockChange(
+        eventUtils.fire(new BlockChange(
             caller, 'mutation', null, oldMutation, newMutation));
       }
     }
-    Events.setGroup(false);
+    eventUtils.setGroup(false);
   } else {
     alert('No define block on workspace'); // TODO decide what to do about this.
   }
@@ -419,7 +419,7 @@ const createProcedureCallbackFactory = function(workspace) {
           '</block>' +
           '</xml>';
       const blockDom = Xml.textToDom(blockText).firstChild;
-      Events.setGroup(true);
+      eventUtils.setGroup(true);
       const block = Xml.domToBlock(blockDom, workspace);
       const scale = workspace.scale; // To convert from pixel units to workspace units
       // Position the block so that it is at the top left of the visible workspace,
@@ -432,7 +432,7 @@ const createProcedureCallbackFactory = function(workspace) {
       }
       block.moveBy(posX / scale, (-workspace.scrollY + 30) / scale);
       block.scheduleSnapAndBump();
-      Events.setGroup(false);
+      eventUtils.setGroup(false);
     }
   };
 };
@@ -578,9 +578,9 @@ export const deleteProcedureDefCallback = function(procCode,
   const workspace = definitionRoot.workspace;
 
   // Delete the whole stack.
-  Events.setGroup(true);
+  eventUtils.setGroup(true);
   definitionRoot.dispose();
-  Events.setGroup(false);
+  eventUtils.setGroup(false);
 
   // TODO (#1354) Update this function when '_' is removed
   // Refresh toolbox, so caller doesn't appear there anymore

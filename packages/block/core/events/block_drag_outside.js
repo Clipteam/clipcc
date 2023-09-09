@@ -23,7 +23,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.DragBlockOutside');
 
-import * as Events from './events';
+import * as eventUtils from './utils';
 import {BlockBase} from './block_base';
 
 
@@ -47,7 +47,7 @@ goog.inherits(DragBlockOutside, BlockBase);
  * Type of this event.
  * @type {string}
  */
-DragBlockOutside.prototype.type = Events.DRAG_OUTSIDE;
+DragBlockOutside.prototype.type = eventUtils.DRAG_OUTSIDE;
 
 /**
  * Encode the event as JSON.
@@ -70,4 +70,4 @@ DragBlockOutside.prototype.fromJson = function(json) {
   this.isOutside = json['isOutside'];
 };
 
-Events.register(Events.DRAG_OUTSIDE, DragBlockOutside);
+eventUtils.register(eventUtils.DRAG_OUTSIDE, DragBlockOutside);

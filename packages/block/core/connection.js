@@ -29,7 +29,7 @@ goog.declareModuleId('Blockly.Connection');
 
 import * as common from './common';
 import * as constants from './constants';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockMove} from './events/block_move';
 import * as Xml from './xml';
 
@@ -201,19 +201,19 @@ Connection.prototype.connect_ = function(childConnection) {
     if (orphanBlock) {
       // Unable to reattach orphan.
       parentConnection.disconnect();
-      if (Events.getRecordUndo()) {
+      if (eventUtils.getRecordUndo()) {
         // Bump it off to the side after a moment.
-        const group = Events.getGroup();
+        const group = eventUtils.getGroup();
         setTimeout(function() {
           // Verify orphan hasn't been deleted or reconnected (user on meth).
           if (orphanBlock.workspace && !orphanBlock.getParent()) {
-            Events.setGroup(group);
+            eventUtils.setGroup(group);
             if (orphanBlock.outputConnection) {
               orphanBlock.outputConnection.bumpAwayFrom_(parentConnection);
             } else if (orphanBlock.previousConnection) {
               orphanBlock.previousConnection.bumpAwayFrom_(parentConnection);
             }
-            Events.setGroup(false);
+            eventUtils.setGroup(false);
           }
         }, constants.BUMP_DELAY);
       }
@@ -227,7 +227,7 @@ Connection.prototype.connect_ = function(childConnection) {
   }
 
   let event;
-  if (Events.isEnabled()) {
+  if (eventUtils.isEnabled()) {
     event = new BlockMove(childBlock);
   }
   // Establish the connections.
@@ -236,7 +236,7 @@ Connection.prototype.connect_ = function(childConnection) {
   childBlock.setParent(parentBlock);
   if (event) {
     event.recordNew();
-    Events.fire(event);
+    eventUtils.fire(event);
   }
 };
 
@@ -592,7 +592,7 @@ Connection.prototype.disconnect = function() {
 Connection.prototype.disconnectInternal_ = function(parentBlock,
     childBlock) {
   let event;
-  if (Events.isEnabled()) {
+  if (eventUtils.isEnabled()) {
     event = new BlockMove(childBlock);
   }
   const otherConnection = this.targetConnection;
@@ -601,7 +601,7 @@ Connection.prototype.disconnectInternal_ = function(parentBlock,
   childBlock.setParent(null);
   if (event) {
     event.recordNew();
-    Events.fire(event);
+    eventUtils.fire(event);
   }
 };
 
@@ -612,7 +612,7 @@ Connection.prototype.disconnectInternal_ = function(parentBlock,
 Connection.prototype.respawnShadow_ = function() {
   const parentBlock = this.getSourceBlock();
   const shadow = this.getShadowDom();
-  if (parentBlock.workspace && shadow && Events.getRecordUndo()) {
+  if (parentBlock.workspace && shadow && eventUtils.getRecordUndo()) {
     const blockShadow =
         Xml.domToBlock(shadow, parentBlock.workspace);
     if (blockShadow.outputConnection) {

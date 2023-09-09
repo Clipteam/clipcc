@@ -27,7 +27,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.VariableModel');
 
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {VarCreate} from './events/var_create';
 import * as scratchBlocksUtils from './scratch_blocks_utils';
 import * as utils from './utils';
@@ -95,7 +95,7 @@ export const VariableModel = function(workspace, name, opt_type, opt_id,
    */
   this.isCloud = opt_isCloud || false;
 
-  Events.fire(new VarCreate(this));
+  eventUtils.fire(new VarCreate(this));
 };
 
 /**

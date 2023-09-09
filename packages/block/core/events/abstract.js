@@ -29,7 +29,7 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.Abstract');
 
 import * as common from '../common';
-import * as Events from './events';
+import * as eventUtils from './utils';
 
 
 /**
@@ -49,13 +49,13 @@ export const Abstract = function() {
    * perspective, and should be undone together.
    * @type {string}
    */
-  this.group = Events.getGroup();
+  this.group = eventUtils.getGroup();
 
   /**
    * Sets whether the event should be added to the undo stack.
    * @type {boolean}
    */
-  this.recordUndo = Events.getRecordUndo();
+  this.recordUndo = eventUtils.getRecordUndo();
 };
 
 /**

@@ -23,7 +23,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.CommentMove');
 
-import * as Events from './events';
+import * as eventUtils from './utils';
 import {CommentBase} from './comment_base';
 import {ScratchBlockComment} from '../scratch_block_comment';
 
@@ -104,7 +104,7 @@ CommentMove.prototype.recordNew = function() {
  * Type of this event.
  * @type {string}
  */
-CommentMove.prototype.type = Events.COMMENT_MOVE;
+CommentMove.prototype.type = eventUtils.COMMENT_MOVE;
 
 /**
  * Override the location before the move.  Use this if you don't create the
@@ -186,4 +186,4 @@ CommentMove.prototype.run = function(forward) {
   }
 };
 
-Events.register(Events.COMMENT_MOVE, CommentMove);
+eventUtils.register(eventUtils.COMMENT_MOVE, CommentMove);

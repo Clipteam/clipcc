@@ -29,7 +29,7 @@ goog.declareModuleId('Blockly.BlockDragger');
 
 import * as BlockAnimations from './block_animations';
 import * as constants from './constants';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockMove} from './events/block_move';
 import {DragBlockOutside} from './events/block_drag_outside';
 import {EndBlockDrag} from './events/block_drag_end';
@@ -163,8 +163,8 @@ BlockDragger.initIconData_ = function(block) {
  * @package
  */
 BlockDragger.prototype.startBlockDrag = function(currentDragDeltaXY) {
-  if (!Events.getGroup()) {
-    Events.setGroup(true);
+  if (!eventUtils.getGroup()) {
+    eventUtils.setGroup(true);
   }
 
   this.workspace_.setResizesEnabled(false);
@@ -267,7 +267,7 @@ BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
         'blocklyToolboxGrab';
     toolbox.removeStyle(style);
   }
-  Events.setGroup(false);
+  eventUtils.setGroup(false);
 
   if (isOutside) {
     const ws = this.workspace_;
@@ -310,7 +310,7 @@ BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
 BlockDragger.prototype.fireDragOutsideEvent_ = function(isOutside) {
   const event = new DragBlockOutside(this.draggingBlock_);
   event.isOutside = isOutside;
-  Events.fire(event);
+  eventUtils.fire(event);
 };
 
 /**
@@ -320,7 +320,7 @@ BlockDragger.prototype.fireDragOutsideEvent_ = function(isOutside) {
  */
 BlockDragger.prototype.fireEndDragEvent_ = function(isOutside) {
   const event = new EndBlockDrag(this.draggingBlock_, isOutside);
-  Events.fire(event);
+  eventUtils.fire(event);
 };
 
 /**
@@ -331,7 +331,7 @@ BlockDragger.prototype.fireMoveEvent_ = function() {
   const event = new BlockMove(this.draggingBlock_);
   event.oldCoordinate = this.startXY_;
   event.recordNew();
-  Events.fire(event);
+  eventUtils.fire(event);
 };
 
 /**

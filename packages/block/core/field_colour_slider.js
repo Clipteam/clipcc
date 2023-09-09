@@ -30,7 +30,7 @@ goog.declareModuleId('Blockly.FieldColourSlider');
 import * as browserEvents from './browser_events';
 import * as common from './common';
 import {DropDownDiv} from './dropdowndiv';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Field} from './field';
 import {Msg} from './msg';
@@ -113,9 +113,9 @@ FieldColourSlider.prototype.getValue = function() {
  * @param {string} colour The new colour in '#rrggbb' format.
  */
 FieldColourSlider.prototype.setValue = function(colour) {
-  if (this.sourceBlock_ && Events.isEnabled() &&
+  if (this.sourceBlock_ && eventUtils.isEnabled() &&
       this.colour_ != colour) {
-    Events.fire(new BlockChange(
+    eventUtils.fire(new BlockChange(
         this.sourceBlock_, 'field', this.name, this.colour_, colour));
   }
   this.colour_ = colour;
@@ -388,7 +388,7 @@ FieldColourSlider.prototype.dispose = function() {
   if (FieldColourSlider.eyedropperEventData_) {
     browserEvents.unbind(FieldColourSlider.eyedropperEventData_);
   }
-  Events.setGroup(false);
+  eventUtils.setGroup(false);
   FieldColourSlider.superClass_.dispose.call(this);
 };
 

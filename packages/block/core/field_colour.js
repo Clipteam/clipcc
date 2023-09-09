@@ -27,7 +27,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.FieldColour');
 
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Field} from './field';
 import * as rendererConstants from './renderer/constants';
@@ -121,9 +121,9 @@ FieldColour.prototype.getValue = function() {
  * @param {string} colour The new colour in '#rrggbb' format.
  */
 FieldColour.prototype.setValue = function(colour) {
-  if (this.sourceBlock_ && Events.isEnabled() &&
+  if (this.sourceBlock_ && eventUtils.isEnabled() &&
       this.colour_ != colour) {
-    Events.fire(new BlockChange(
+    eventUtils.fire(new BlockChange(
         this.sourceBlock_, 'field', this.name, this.colour_, colour));
   }
   this.colour_ = colour;
@@ -252,7 +252,7 @@ FieldColour.widgetDispose_ = function() {
   if (FieldColour.changeEventKey_) {
     events.unlistenByKey(FieldColour.changeEventKey_);
   }
-  Events.setGroup(false);
+  eventUtils.setGroup(false);
 };
 
 Field.register('field_colour', FieldColour);

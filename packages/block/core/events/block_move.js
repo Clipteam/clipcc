@@ -25,7 +25,7 @@ goog.declareModuleId('Blockly.Events.BlockMove');
 
 import * as common from '../common';
 import * as constants from '../constants';
-import * as Events from './events';
+import * as eventUtils from './utils';
 import {BlockBase} from './block_base';
 
 const Coordinate = goog.require('goog.math.Coordinate');
@@ -53,7 +53,7 @@ goog.inherits(BlockMove, BlockBase);
  * Type of this event.
  * @type {string}
  */
-BlockMove.prototype.type = Events.MOVE;
+BlockMove.prototype.type = eventUtils.MOVE;
 
 /**
  * Encode the event as JSON.
@@ -184,4 +184,4 @@ BlockMove.prototype.run = function(forward) {
   }
 };
 
-Events.register(Events.BLOCK_MOVE, BlockMove);
+eventUtils.register(eventUtils.BLOCK_MOVE, BlockMove);

@@ -28,7 +28,7 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Warning');
 
 import {Bubble} from './bubble';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {Ui} from './events/ui';
 import {Icon} from './icon';
 import * as utils from './utils';
@@ -122,7 +122,7 @@ Warning.prototype.setVisible = function(visible) {
     // No change.
     return;
   }
-  Events.fire(
+  eventUtils.fire(
       new Ui(this.block_, 'warningOpen', !visible, visible));
   if (visible) {
     // Create the bubble to display all warnings.

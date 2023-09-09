@@ -35,7 +35,7 @@ import * as common from './common';
 import * as constants from './constants';
 import * as Css from './css';
 import {DropDownDiv} from './dropdowndiv';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {Grid} from './grid';
 import {Options} from './options';
 import {ScrollbarPair} from './scrollbar_pair';
@@ -483,10 +483,10 @@ const onKeyDown = function(e) {
   // Common code for delete and cut.
   // Don't delete in the flyout.
   if (deleteBlock && !selected.workspace.isFlyout) {
-    Events.setGroup(true);
+    eventUtils.setGroup(true);
     mainWorkspace.hideChaff();
     selected.dispose(/* heal */ true, true);
-    Events.setGroup(false);
+    eventUtils.setGroup(false);
   }
 };
 

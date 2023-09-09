@@ -34,7 +34,7 @@ goog.declareModuleId('Blockly.ContextMenu');
 import * as browserEvents from './browser_events';
 import * as clipboard from './clipboard';
 import * as constants from './constants';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockCreate} from './events/block_create';
 import {Msg} from './msg';
 import * as scratchBlocksUtils from './scratch_blocks_utils';
@@ -195,7 +195,7 @@ ContextMenu.hide = function() {
  */
 ContextMenu.callbackFactory = function(block, xml) {
   return function() {
-    Events.disable();
+    eventUtils.disable();
     let newBlock;
     try {
       newBlock = Xml.domToBlock(xml, block.workspace);
@@ -209,10 +209,10 @@ ContextMenu.callbackFactory = function(block, xml) {
       xy.y += constants.SNAP_RADIUS * 2;
       newBlock.moveBy(xy.x, xy.y);
     } finally {
-      Events.enable();
+      eventUtils.enable();
     }
-    if (Events.isEnabled() && !newBlock.isShadow()) {
-      Events.fire(new BlockCreate(newBlock));
+    if (eventUtils.isEnabled() && !newBlock.isShadow()) {
+      eventUtils.fire(new BlockCreate(newBlock));
     }
     newBlock.select();
   };
@@ -241,9 +241,9 @@ ContextMenu.blockDeleteOption = function(block) {
         Msg.DELETE_X_BLOCKS.replace('%1', String(descendantCount)),
     enabled: true,
     callback: function() {
-      Events.setGroup(true);
+      eventUtils.setGroup(true);
       block.dispose(true, true);
-      Events.setGroup(false);
+      eventUtils.setGroup(false);
     }
   };
   return deleteOption;
@@ -462,9 +462,9 @@ ContextMenu.commentDeleteOption = function(comment) {
     text: Msg.DELETE,
     enabled: true,
     callback: function() {
-      Events.setGroup(true);
+      eventUtils.setGroup(true);
       comment.dispose(true, true);
-      Events.setGroup(false);
+      eventUtils.setGroup(false);
     }
   };
   return deleteOption;
@@ -505,8 +505,8 @@ ContextMenu.workspaceCommentOption = function(ws, e) {
     // at the end (instead of CommentCreate followed by CommentMove,
     // which results in unexpected undo behavior).
     let disabled = false;
-    if (Events.isEnabled()) {
-      Events.disable();
+    if (eventUtils.isEnabled()) {
+      eventUtils.disable();
       disabled = true;
     }
     const comment = new WorkspaceCommentSvg(
@@ -544,7 +544,7 @@ ContextMenu.workspaceCommentOption = function(ws, e) {
       comment.select();
     }
     if (disabled) {
-      Events.enable();
+      eventUtils.enable();
     }
     WorkspaceComment.fireCreateEvent(comment);
   };

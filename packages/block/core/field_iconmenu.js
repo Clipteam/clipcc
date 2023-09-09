@@ -34,7 +34,7 @@ import {BlockSvg} from './block_svg';
 import * as browserEvents from './browser_events';
 import * as common from './common';
 import {DropDownDiv} from './dropdowndiv';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Field} from './field';
 import {FieldImage} from './field_image';
@@ -132,8 +132,8 @@ FieldIconMenu.prototype.setValue = function(newValue) {
   if (newValue === null || newValue === this.value_) {
     return;  // No change
   }
-  if (this.sourceBlock_ && Events.isEnabled()) {
-    Events.fire(new BlockChange(
+  if (this.sourceBlock_ && eventUtils.isEnabled()) {
+    eventUtils.fire(new BlockChange(
         this.sourceBlock_, 'field', this.name, this.value_, newValue));
   }
   this.value_ = newValue;

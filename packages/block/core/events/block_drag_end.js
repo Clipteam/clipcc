@@ -23,7 +23,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.EndBlockDrag');
 
-import * as Events from './events';
+import * as eventUtils from './utils';
 import {BlockBase} from './block_base';
 import * as Xml from '../xml';
 
@@ -54,7 +54,7 @@ goog.inherits(EndBlockDrag, BlockBase);
  * Type of this event.
  * @type {string}
  */
-EndBlockDrag.prototype.type = Events.END_DRAG;
+EndBlockDrag.prototype.type = eventUtils.END_DRAG;
 
 /**
  * Encode the event as JSON.
@@ -81,4 +81,4 @@ EndBlockDrag.prototype.fromJson = function(json) {
   this.xml = json['xml'];
 };
 
-Events.register(Events.END_DRAG, EndBlockDrag);
+eventUtils.register(eventUtils.END_DRAG, EndBlockDrag);

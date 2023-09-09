@@ -28,7 +28,7 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Flyout');
 
 import * as browserEvents from './browser_events';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockCreate} from './events/block_create';
 import {VarCreate} from './events/var_create';
 import {FlyoutButton} from './flyout_button';
@@ -809,7 +809,7 @@ Flyout.prototype.onMouseDown_ = function(e) {
  */
 Flyout.prototype.createBlock = function(originalBlock) {
   let newBlock = null;
-  Events.disable();
+  eventUtils.disable();
   const variablesBeforeCreation = this.targetWorkspace_.getAllVariables();
   this.targetWorkspace_.setResizesEnabled(false);
   try {
@@ -817,19 +817,19 @@ Flyout.prototype.createBlock = function(originalBlock) {
     // Close the flyout.
     this.targetWorkspace_.hideChaff();
   } finally {
-    Events.enable();
+    eventUtils.enable();
   }
 
   const newVariables = Variables.getAddedVariables(this.targetWorkspace_,
       variablesBeforeCreation);
 
-  if (Events.isEnabled()) {
-    Events.setGroup(true);
-    Events.fire(new BlockCreate(newBlock));
+  if (eventUtils.isEnabled()) {
+    eventUtils.setGroup(true);
+    eventUtils.fire(new BlockCreate(newBlock));
     // Fire a VarCreate event for each (if any) new variable created.
     for (let i = 0; i < newVariables.length; i++) {
       const thisVariable = newVariables[i];
-      Events.fire(new VarCreate(thisVariable));
+      eventUtils.fire(new VarCreate(thisVariable));
     }
   }
   if (this.autoClose) {

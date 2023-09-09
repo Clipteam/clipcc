@@ -31,7 +31,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.scratchBlocksUtils');
 
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockCreate} from './events/block_create';
 import * as registry from './registry';
 import * as Touch from './touch';
@@ -198,7 +198,7 @@ export const duplicateAndDragCallback = function(oldBlock, event) {
 
       // Disable events and manually emit events after the block has been
       // positioned and has had its shadow IDs fixed (Scratch-specific).
-      Events.disable();
+      eventUtils.disable();
       let newBlock;
       try {
         // Using domToBlock instead of domToWorkspace means that the new block
@@ -226,10 +226,10 @@ export const duplicateAndDragCallback = function(oldBlock, event) {
           newBlock.moveBy(offsetX, offsetY); // Just offset the block for touch.
         }
       } finally {
-        Events.enable();
+        eventUtils.enable();
       }
-      if (Events.isEnabled()) {
-        Events.fire(new BlockCreate(newBlock));
+      if (eventUtils.isEnabled()) {
+        eventUtils.fire(new BlockCreate(newBlock));
       }
 
       if (isMouseEvent) {
@@ -284,7 +284,7 @@ export const pasteCallback = function(ws, event) {
     const clipboard = goog.global.navigator.clipboard;
 
     clipboard.readText().then(function(data) {
-      Events.disable();
+      eventUtils.disable();
       let newBlock;
       try {
         const xml = Xml.textToDom(data);
@@ -303,9 +303,9 @@ export const pasteCallback = function(ws, event) {
         // Refresh toolbox to adapting new blocks
         ws.refreshToolboxSelection_();
       } finally {
-        Events.enable();
-        if (Events.isEnabled() && newBlock) {
-          Events.fire(new BlockCreate(newBlock));
+        eventUtils.enable();
+        if (eventUtils.isEnabled() && newBlock) {
+          eventUtils.fire(new BlockCreate(newBlock));
         }
       }
     });

@@ -27,7 +27,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.clipboard');
 
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import * as Xml from './xml';
 
 
@@ -90,7 +90,7 @@ export const duplicate = function(toDuplicate) {
  */
 export const paste = function() {
   if (clipboardXml) {
-    Events.setGroup(true);
+    eventUtils.setGroup(true);
     // Pasting always pastes to the main workspace, even if the copy started
     // in a flyout workspace.
     let workspace = clipboardSource;
@@ -98,7 +98,7 @@ export const paste = function() {
       workspace = workspace.targetWorkspace;
     }
     workspace.paste(clipboardXml);
-    Events.setGroup(false);
+    eventUtils.setGroup(false);
     return true;
   }
   return false;

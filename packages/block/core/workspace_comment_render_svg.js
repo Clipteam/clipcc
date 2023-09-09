@@ -30,7 +30,7 @@ goog.declareModuleId('Blockly.WorkspaceCommentSvg.render');
 import * as browserEvents from './browser_events';
 import * as common from './common';
 import * as constants from './constants';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {CommentChange} from './events/comment_change';
 import {Msg} from './msg';
 import {ScratchBubble} from './scratch_bubble';
@@ -518,7 +518,7 @@ WorkspaceCommentSvg.prototype.resizeMouseUp_ = function(/*e*/) {
   }
   // Fire a change event for the new width/height after
   // resize mouse up
-  Events.fire(new CommentChange(
+  eventUtils.fire(new CommentChange(
       this, {width: oldHW.width , height: oldHW.height},
       {width: this.width_, height: this.height_}));
 
@@ -539,13 +539,13 @@ WorkspaceCommentSvg.prototype.resizeMouseMove_ = function(e) {
   // the comment, so disable events here. The event is emitted in
   // resizeMouseUp_.
   let disabled = false;
-  if (Events.isEnabled()) {
-    Events.disable();
+  if (eventUtils.isEnabled()) {
+    eventUtils.disable();
     disabled = true;
   }
   this.setSize(this.RTL ? -newXY.x : newXY.x, newXY.y);
   if (disabled) {
-    Events.enable();
+    eventUtils.enable();
   }
 };
 
@@ -598,7 +598,7 @@ WorkspaceCommentSvg.prototype.setSize = function(width, height) {
     // we want to keep track of the width/height of the maximized comment
     this.width_ = width;
     this.height_ = height;
-    Events.fire(new CommentChange(this,
+    eventUtils.fire(new CommentChange(this,
         {width: oldWidth, height: oldHeight},
         {width: this.width_, height: this.height_}));
   }
@@ -668,7 +668,7 @@ WorkspaceComment.prototype.setMinimized = function(minimize) {
   if (this.isMinimized_ == minimize) {
     return;
   }
-  Events.fire(new CommentChange(this,
+  eventUtils.fire(new CommentChange(this,
       {minimized: this.isMinimized_}, {minimized: minimize}));
   this.isMinimized_ = minimize;
   if (minimize) {

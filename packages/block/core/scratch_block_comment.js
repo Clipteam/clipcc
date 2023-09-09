@@ -31,7 +31,7 @@ import * as browserEvents from './browser_events';
 import {Comment} from './comment';
 import * as constants from './constants';
 import {ContextMenu} from './contextmenu';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {Icon} from './icon';
 import {Msg} from './msg';
 import * as rendererConstants from './renderer/constants';
@@ -248,7 +248,7 @@ ScratchBlockComment.prototype.createEditor_ = function() {
   });
   browserEvents.conditionalBind(textarea, 'change', this, function(_e) {
     if (this.text_ != textarea.value) {
-      Events.fire(new (Events.get(Events.COMMENT_CHANGE))(
+      eventUtils.fire(new (eventUtils.get(eventUtils.COMMENT_CHANGE))(
           this, {text: this.text_}, {text: textarea.value}));
       this.text_ = textarea.value;
     }
@@ -409,7 +409,7 @@ ScratchBlockComment.prototype.setMinimized = function(minimize) {
   if (this.isMinimized_ == minimize) {
     return;
   }
-  Events.fire(new (Events.get(Events.COMMENT_CHANGE))(this,
+  eventUtils.fire(new (eventUtils.get(eventUtils.COMMENT_CHANGE))(this,
       {minimized: this.isMinimized_}, {minimized: minimize}));
   this.isMinimized_ = minimize;
   if (minimize) {
@@ -462,7 +462,7 @@ ScratchBlockComment.prototype.setSize = function(width, height) {
   this.width_ = width;
 
   if (oldWidth != this.width_ || oldHeight != this.height_) {
-    Events.fire(new (Events.get(Events.COMMENT_CHANGE))(
+    eventUtils.fire(new (eventUtils.get(eventUtils.COMMENT_CHANGE))(
         this,
         {width: oldWidth, height: oldHeight},
         {width: this.width_, height: this.height_}));
@@ -493,7 +493,7 @@ ScratchBlockComment.prototype.getLabelText = function() {
  */
 ScratchBlockComment.prototype.setText = function(text) {
   if (this.text_ != text) {
-    Events.fire(new (Events.get(Events.COMMENT_CHANGE))(
+    eventUtils.fire(new (eventUtils.get(eventUtils.COMMENT_CHANGE))(
         this, {text: this.text_}, {text: text}));
     this.text_ = text;
   }
@@ -509,14 +509,14 @@ ScratchBlockComment.prototype.setText = function(text) {
  * @package
  */
 ScratchBlockComment.prototype.moveTo = function(x, y) {
-  const event = new (Events.get(Events.COMMENT_MOVE))(this);
+  const event = new (eventUtils.get(eventUtils.COMMENT_MOVE))(this);
   if (this.bubble_) {
     this.bubble_.moveTo(x, y);
   }
   this.x_ = x;
   this.y_ = y;
   event.recordNew();
-  Events.fire(event);
+  eventUtils.fire(event);
 };
 
 /**
@@ -623,16 +623,16 @@ ScratchBlockComment.prototype.toXmlWithXY = function() {
  * @package
  */
 ScratchBlockComment.fireCreateEvent = function(comment) {
-  if (Events.isEnabled()) {
-    const existingGroup = Events.getGroup();
+  if (eventUtils.isEnabled()) {
+    const existingGroup = eventUtils.getGroup();
     if (!existingGroup) {
-      Events.setGroup(true);
+      eventUtils.setGroup(true);
     }
     try {
-      Events.fire(new (Events.get(Events.COMMENT_CREATE))(comment));
+      eventUtils.fire(new (eventUtils.get(eventUtils.COMMENT_CREATE))(comment));
     } finally {
       if (!existingGroup) {
-        Events.setGroup(false);
+        eventUtils.setGroup(false);
       }
     }
   }
@@ -642,11 +642,11 @@ ScratchBlockComment.fireCreateEvent = function(comment) {
  * Dispose of this comment.
  */
 ScratchBlockComment.prototype.dispose = function() {
-  if (Events.isEnabled()) {
+  if (eventUtils.isEnabled()) {
     // Emit delete event before disposal begins so that the
     // event's reference to this comment contains all the relevant
     // information (for undoing this event)
-    Events.fire(new (Events.get(Events.COMMENT_DELETE))(this));
+    eventUtils.fire(new (eventUtils.get(eventUtils.COMMENT_DELETE))(this));
   }
   this.block_.comment = null;
   this.workspace.removeTopComment(this);

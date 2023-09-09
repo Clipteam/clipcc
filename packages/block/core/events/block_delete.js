@@ -23,7 +23,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.BlockDelete');
 
-import * as Events from './events';
+import * as eventUtils from './utils';
 import {BlockBase} from './block_base';
 import * as Xml from '../xml';
 
@@ -50,7 +50,7 @@ export const BlockDelete = function(block) {
   } else {
     this.oldXml = Xml.blockToDom(block);
   }
-  this.ids = Events.getDescendantIds(block);
+  this.ids = eventUtils.getDescendantIds(block);
 };
 goog.inherits(BlockDelete, BlockBase);
 
@@ -58,7 +58,7 @@ goog.inherits(BlockDelete, BlockBase);
  * Type of this event.
  * @type {string}
  */
-BlockDelete.prototype.type = Events.DELETE;
+BlockDelete.prototype.type = eventUtils.DELETE;
 
 /**
  * Encode the event as JSON.
@@ -102,4 +102,4 @@ BlockDelete.prototype.run = function(forward) {
   }
 };
 
-Events.register(Events.BLOCK_DELETE, BlockDelete);
+eventUtils.register(eventUtils.BLOCK_DELETE, BlockDelete);

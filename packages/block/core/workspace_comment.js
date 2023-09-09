@@ -27,7 +27,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.WorkspaceComment');
 
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import * as utils from './utils';
 
 const dom = goog.require('goog.dom');
@@ -143,8 +143,8 @@ WorkspaceComment.prototype.dispose = function() {
     return;
   }
 
-  if (Events.isEnabled()) {
-    Events.fire(new (Events.get(Events.COMMENT_DELETE))(this));
+  if (eventUtils.isEnabled()) {
+    eventUtils.fire(new (eventUtils.get(eventUtils.COMMENT_DELETE))(this));
   }
 
   // Remove from the list of top comments and the comment database.
@@ -217,10 +217,10 @@ WorkspaceComment.prototype.getXY = function() {
  * @package
  */
 WorkspaceComment.prototype.moveBy = function(dx, dy) {
-  const event = new (Events.get(Events.COMMENT_MOVE))(this);
+  const event = new (eventUtils.get(eventUtils.COMMENT_MOVE))(this);
   this.xy_.translate(dx, dy);
   event.recordNew();
-  Events.fire(event);
+  eventUtils.fire(event);
 };
 
 /**
@@ -277,7 +277,7 @@ WorkspaceComment.prototype.getText = function() {
  */
 WorkspaceComment.prototype.setText = function(text) {
   if (this.content_ != text) {
-    Events.fire(new (Events.get(Events.COMMENT_CHANGE))(
+    eventUtils.fire(new (eventUtils.get(eventUtils.COMMENT_CHANGE))(
         this, {text: this.content_}, {text: text}));
     this.content_ = text;
   }
@@ -349,16 +349,16 @@ WorkspaceComment.prototype.toXml = function(opt_noId) {
  * @package
  */
 WorkspaceComment.fireCreateEvent = function(comment) {
-  if (Events.isEnabled()) {
-    const existingGroup = Events.getGroup();
+  if (eventUtils.isEnabled()) {
+    const existingGroup = eventUtils.getGroup();
     if (!existingGroup) {
-      Events.setGroup(true);
+      eventUtils.setGroup(true);
     }
     try {
-      Events.fire(new (Events.get(Events.COMMENT_CREATE))(comment));
+      eventUtils.fire(new (eventUtils.get(eventUtils.COMMENT_CREATE))(comment));
     } finally {
       if (!existingGroup) {
-        Events.setGroup(false);
+        eventUtils.setGroup(false);
       }
     }
   }

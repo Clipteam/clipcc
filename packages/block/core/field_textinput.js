@@ -32,7 +32,7 @@ import {Colours} from './colours';
 import * as common from './common';
 import * as constants from './constants';
 import {DropDownDiv} from './dropdowndiv';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Field} from './field';
 import * as rendererConstants from './renderer/constants';
@@ -188,8 +188,8 @@ FieldTextInput.prototype.setText = function(newText) {
     // No change.
     return;
   }
-  if (this.sourceBlock_ && Events.isEnabled()) {
-    Events.fire(new BlockChange(
+  if (this.sourceBlock_ && eventUtils.isEnabled()) {
+    eventUtils.fire(new BlockChange(
         this.sourceBlock_, 'field', this.name, this.text_, newText));
   }
   Field.prototype.setText.call(this, newText);
@@ -583,7 +583,7 @@ FieldTextInput.prototype.widgetDispose_ = function() {
     if (htmlInput.dropDownArrowMouseWrapper_) {
       browserEvents.unbind(htmlInput.dropDownArrowMouseWrapper_);
     }
-    Events.setGroup(false);
+    eventUtils.setGroup(false);
 
     // Animation of disposal
     htmlInput.style.fontSize = rendererConstants.FIELD_TEXTINPUT_FONTSIZE_INITIAL + 'pt';

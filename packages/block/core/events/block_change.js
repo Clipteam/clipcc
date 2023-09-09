@@ -23,7 +23,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.BlockChange');
 
-import * as Events from './events';
+import * as eventUtils from './utils';
 import {BlockBase} from './block_base';
 import * as Xml from '../xml';
 
@@ -54,7 +54,7 @@ goog.inherits(BlockChange, BlockBase);
  * Type of this event.
  * @type {string}
  */
-BlockChange.prototype.type = Events.CHANGE;
+BlockChange.prototype.type = eventUtils.CHANGE;
 
 /**
  * Encode the event as JSON.
@@ -141,7 +141,7 @@ BlockChange.prototype.run = function(forward) {
         const dom = Xml.textToDom('<xml>' + value + '</xml>');
         block.domToMutation(dom.firstChild);
       }
-      Events.fire(new BlockChange(
+      eventUtils.fire(new BlockChange(
           block, 'mutation', null, oldMutation, value));
       break;
     }
@@ -150,4 +150,4 @@ BlockChange.prototype.run = function(forward) {
   }
 };
 
-Events.register(Events.BLOCK_CHANGE, BlockChange);
+eventUtils.register(eventUtils.BLOCK_CHANGE, BlockChange);

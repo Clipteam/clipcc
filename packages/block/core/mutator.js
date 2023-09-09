@@ -30,7 +30,7 @@ goog.declareModuleId('Blockly.Mutator');
 
 import {Bubble} from './bubble';
 import * as constants from './constants';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Ui} from './events/ui';
 import {Icon} from './icon';
@@ -246,7 +246,7 @@ Mutator.prototype.setVisible = function(visible) {
     // No change.
     return;
   }
-  Events.fire(
+  eventUtils.fire(
       new Ui(this.block_, 'mutatorOpen', !visible, visible));
   if (visible) {
     // Create the bubble.
@@ -325,7 +325,7 @@ Mutator.prototype.workspaceChanged_ = function() {
 
   // When the mutator's workspace changes, update the source block.
   if (this.rootBlock_.workspace == this.workspace_) {
-    Events.setGroup(true);
+    eventUtils.setGroup(true);
     const block = this.block_;
     const oldMutationDom = block.mutationToDom();
     const oldMutation = oldMutationDom && Xml.domToText(oldMutationDom);
@@ -341,14 +341,14 @@ Mutator.prototype.workspaceChanged_ = function() {
     const newMutationDom = block.mutationToDom();
     const newMutation = newMutationDom && Xml.domToText(newMutationDom);
     if (oldMutation != newMutation) {
-      Events.fire(new BlockChange(
+      eventUtils.fire(new BlockChange(
           block, 'mutation', null, oldMutation, newMutation));
       // Ensure that any bump is part of this mutation's event group.
-      const group = Events.getGroup();
+      const group = eventUtils.getGroup();
       setTimeout(function() {
-        Events.setGroup(group);
+        eventUtils.setGroup(group);
         block.bumpNeighbours_();
-        Events.setGroup(false);
+        eventUtils.setGroup(false);
       }, constants.BUMP_DELAY);
     }
     if (block.rendered) {
@@ -359,7 +359,7 @@ Mutator.prototype.workspaceChanged_ = function() {
     if (!this.workspace_.isDragging()) {
       this.resizeBubble_();
     }
-    Events.setGroup(false);
+    eventUtils.setGroup(false);
   }
 };
 

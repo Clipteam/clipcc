@@ -35,7 +35,7 @@ import {BubbleDragger} from './bubble_dragger';
 import * as common from './common';
 import * as constants from './constants';
 import {DropDownDiv} from './dropdowndiv';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockCreate} from './events/block_create';
 import {Ui} from './events/ui';
 import {FlyoutDragger} from './flyout_dragger';
@@ -349,8 +349,8 @@ Gesture.prototype.updateIsDraggingFromFlyout_ = function() {
     this.startWorkspace_.updateScreenCalculationsIfScrolled();
     // Start the event group now, so that the same event group is used for block
     // creation and block dragging.
-    if (!Events.getGroup()) {
-      Events.setGroup(true);
+    if (!eventUtils.getGroup()) {
+      eventUtils.setGroup(true);
     }
     // The start block is no longer relevant, because this is a drag.
     this.startBlock_ = null;
@@ -751,8 +751,8 @@ Gesture.prototype.doBlockClick_ = function() {
   // Block click in an autoclosing flyout.
   if (this.flyout_ && this.flyout_.autoClose) {
     if (!this.targetBlock_.disabled) {
-      if (!Events.getGroup()) {
-        Events.setGroup(true);
+      if (!eventUtils.getGroup()) {
+        eventUtils.setGroup(true);
       }
       const newBlock = this.flyout_.createBlock(this.targetBlock_);
       newBlock.scheduleSnapAndBump();
@@ -762,17 +762,17 @@ Gesture.prototype.doBlockClick_ = function() {
     // If a field is being edited, don't fire any click events.
     const fieldEditing = WidgetDiv.isVisible() || DropDownDiv.isVisible();
     if (!fieldEditing) {
-      Events.fire(
+      eventUtils.fire(
           new Ui(this.startBlock_, 'click', undefined, undefined));
       // Scratch-specific: also fire a "stack click" event for this stack.
       // This is used to toggle the stack when any block in the stack is clicked.
       const rootBlock = this.startBlock_.getRootBlock();
-      Events.fire(
+      eventUtils.fire(
           new Ui(rootBlock, 'stackclick', undefined, undefined));
     }
   }
   this.bringBlockToFront_();
-  Events.setGroup(false);
+  eventUtils.setGroup(false);
 };
 
 /**
@@ -992,7 +992,7 @@ Gesture.prototype.forceStartBlockDrag = function(fakeEvent, block) {
  */
 Gesture.prototype.duplicateOnDrag_ = function() {
   let newBlock = null;
-  Events.disable();
+  eventUtils.disable();
   try {
     // Note: targetBlock_ should have no children.  If it has children we would
     // need to update shadow block IDs to avoid problems in the VM.
@@ -1006,15 +1006,15 @@ Gesture.prototype.duplicateOnDrag_ = function() {
     newBlock.moveBy(xy.x, xy.y);
     newBlock.setShadow(false);
   } finally {
-    Events.enable();
+    eventUtils.enable();
   }
   if (!newBlock) {
     // Something went wrong.
     console.error('Something went wrong while duplicating a block.');
     return;
   }
-  if (Events.isEnabled()) {
-    Events.fire(new BlockCreate(newBlock));
+  if (eventUtils.isEnabled()) {
+    eventUtils.fire(new BlockCreate(newBlock));
   }
   newBlock.select();
   this.targetBlock_ = newBlock;

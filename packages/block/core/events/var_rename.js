@@ -23,7 +23,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.VarRename');
 
-import * as Events from './events';
+import * as eventUtils from './utils';
 import {VarBase} from './var_base';
 
 
@@ -49,7 +49,7 @@ goog.inherits(VarRename, VarBase);
  * Type of this event.
  * @type {string}
  */
-VarRename.prototype.type = Events.VAR_RENAME;
+VarRename.prototype.type = eventUtils.VAR_RENAME;
 
 /**
  * Encode the event as JSON.
@@ -85,4 +85,4 @@ VarRename.prototype.run = function(forward) {
   }
 };
 
-Events.register(Events.VAR_RENAME, VarRename);
+eventUtils.register(eventUtils.VAR_RENAME, VarRename);

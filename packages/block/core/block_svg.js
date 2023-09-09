@@ -33,7 +33,7 @@ import * as browserEvents from './browser_events';
 import * as common from './common';
 import * as constants from './constants';
 import {ContextMenu} from './contextmenu';
-import * as Events from './events/events';
+import * as eventUtils from './events/utils';
 import {BlockMove} from './events/block_move';
 import {Ui} from './events/ui';
 import {Field} from './field';
@@ -202,16 +202,16 @@ BlockSvg.prototype.select = function() {
   if (common.getSelected()) {
     oldId = common.getSelected().id;
     // Unselect any previously selected block.
-    Events.disable();
+    eventUtils.disable();
     try {
       common.getSelected().unselect();
     } finally {
-      Events.enable();
+      eventUtils.enable();
     }
   }
   const event = new Ui(null, 'selected', oldId, this.id);
   event.workspaceId = this.workspace.id;
-  Events.fire(event);
+  eventUtils.fire(event);
   common.setSelected(this);
   this.addSelect();
 };
@@ -225,7 +225,7 @@ BlockSvg.prototype.unselect = function() {
   }
   const event = new Ui(null, 'selected', this.id, null);
   event.workspaceId = this.workspace.id;
-  Events.fire(event);
+  eventUtils.fire(event);
   common.setSelected(null);
   this.removeSelect();
 };
@@ -384,14 +384,14 @@ BlockSvg.prototype.getRelativeToSurfaceXY = function() {
  */
 BlockSvg.prototype.moveBy = function(dx, dy) {
   asserts.assert(!this.parentBlock_, 'Block has parent.');
-  const eventsEnabled = Events.isEnabled();
+  const eventsEnabled = eventUtils.isEnabled();
   const event = eventsEnabled ? new BlockMove(this) : undefined;
   const xy = this.getRelativeToSurfaceXY();
   this.translate(xy.x + dx, xy.y + dy);
   this.moveConnections_(dx, dy);
   if (eventsEnabled) {
     event.recordNew();
-    Events.fire(event);
+    eventUtils.fire(event);
   }
   this.workspace.resizeContents();
 };
@@ -859,14 +859,14 @@ BlockSvg.prototype.dispose = function(healStack, animate) {
   // Stop rerendering.
   this.rendered = false;
 
-  Events.disable();
+  eventUtils.disable();
   try {
     const icons = this.getIcons();
     for (let i = 0; i < icons.length; i++) {
       icons[i].dispose();
     }
   } finally {
-    Events.enable();
+    eventUtils.enable();
   }
   BlockSvg.superClass_.dispose.call(this, healStack);
   
@@ -1334,18 +1334,18 @@ BlockSvg.prototype.bumpNeighbours_ = function() {
 BlockSvg.prototype.scheduleSnapAndBump = function() {
   const block = this;
   // Ensure that any snap and bump are part of this move's event group.
-  const group = Events.getGroup();
+  const group = eventUtils.getGroup();
 
   setTimeout(function() {
-    Events.setGroup(group);
+    eventUtils.setGroup(group);
     block.snapToGrid();
-    Events.setGroup(false);
+    eventUtils.setGroup(false);
   }, constants.BUMP_DELAY / 2);
 
   setTimeout(function() {
-    Events.setGroup(group);
+    eventUtils.setGroup(group);
     block.bumpNeighbours_();
-    Events.setGroup(false);
+    eventUtils.setGroup(false);
   }, constants.BUMP_DELAY);
 };
 

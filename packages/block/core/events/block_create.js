@@ -23,7 +23,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.BlockCreate');
 
-import * as Events from './events';
+import * as eventUtils from './utils';
 import {BlockBase} from './block_base';
 import * as Xml from '../xml';
 
@@ -47,7 +47,7 @@ export const BlockCreate = function(block) {
   } else {
     this.xml = Xml.blockToDom(block);
   }
-  this.ids = Events.getDescendantIds(block);
+  this.ids = eventUtils.getDescendantIds(block);
 };
 goog.inherits(BlockCreate, BlockBase);
 
@@ -55,7 +55,7 @@ goog.inherits(BlockCreate, BlockBase);
  * Type of this event.
  * @type {string}
  */
-BlockCreate.prototype.type = Events.CREATE;
+BlockCreate.prototype.type = eventUtils.CREATE;
 
 /**
  * Encode the event as JSON.
@@ -101,4 +101,4 @@ BlockCreate.prototype.run = function(forward) {
   }
 };
 
-Events.register(Events.BLOCK_CREATE, BlockCreate);
+eventUtils.register(eventUtils.BLOCK_CREATE, BlockCreate);
