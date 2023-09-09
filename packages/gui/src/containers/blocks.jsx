@@ -156,7 +156,7 @@ class Blocks extends React.Component {
     componentDidUpdate (prevProps) {
         // If any modals are open, call hideChaff to close z-indexed field editors
         if (this.props.anyModalVisible && !prevProps.anyModalVisible) {
-            this.ScratchBlocks.common.getMainWorkspace().hideChaff(opt_allowToolbox);
+            this.ScratchBlocks.common.getMainWorkspace().hideChaff();
         }
 
         // Only rerender the toolbox when the blocks are visible and the xml is
