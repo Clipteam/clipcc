@@ -50,7 +50,12 @@ const messages = defineMessages({
         defaultMessage: 'Text',
         description: 'Label for the text tool',
         id: 'paint.textMode.text'
-    }
+    },
+    boolOpt: {
+        defaultMessage: 'Boolean Operation',
+        description: 'Label for the boolean operation tool',
+        id: 'paint.boolOptMode.boolOpt'
+    },
 });
 
 export default messages;

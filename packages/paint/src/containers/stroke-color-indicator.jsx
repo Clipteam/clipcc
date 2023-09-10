@@ -26,7 +26,8 @@ const mapStateToProps = state => ({
     colorIndex: state.scratchPaint.fillMode.colorIndex,
     disabled: state.scratchPaint.mode === Modes.BRUSH ||
         state.scratchPaint.mode === Modes.TEXT ||
-        state.scratchPaint.mode === Modes.FILL,
+        state.scratchPaint.mode === Modes.FILL ||
+        state.scratchPaint.mode === Modes.BOOLOPT,
     color: state.scratchPaint.color.strokeColor.primary,
     color2: state.scratchPaint.color.strokeColor.secondary,
     fillBitmapShapes: state.scratchPaint.fillBitmapShapes,

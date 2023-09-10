@@ -9,7 +9,8 @@ const vectorModesObj = {
     RESHAPE: null,
     OVAL: null,
     RECT: null,
-    TEXT: null
+    TEXT: null,
+    BOOLOPT: null
 };
 const bitmapModesObj = {
     BIT_BRUSH: null,
