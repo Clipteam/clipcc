@@ -357,35 +357,72 @@ class BlockCached {
             }
         }
 
-        // Cache all input children blocks in the operation lists. The
-        // operations can later be run in the order they appear in correctly
-        // executing the operations quickly in a flat loop instead of needing to
-        // recursivly iterate them.
-        for (const inputName in this._inputs) {
-            const input = this._inputs[inputName];
-            if (input.block) {
-                const inputCached = BlocksExecuteCache.getCached(blockContainer, input.block, BlockCached);
+        const order = runtime.getExecutionOrders(opcode);
 
-                if (inputCached._isHat) {
-                    continue;
-                }
-
-                this._ops.push(...inputCached._ops);
-                inputCached._parentKey = inputName;
-                inputCached._parentValues = this._argValues;
-
-                // Shadow values are static and do not change, go ahead and
-                // store their value on args.
-                if (inputCached._isShadowBlock) {
-                    this._argValues[inputName] = inputCached._shadowValue;
+        if (order) {
+            // Cache all inputs with given order.
+            for (const item of order) {
+                if (typeof item === 'object') {
+                    if (item.execute) {
+                        if (item.execute === this.opcode) {
+                            this._ops.push(this);
+                        } else {
+                            const cached = new BlockCached(blockContainer, {
+                                id: '',
+                                opcode: item.execute,
+                                fields: {},
+                                inputs: {}
+                            });
+                            cached._argValues = this._argValues;
+                            cached._parentValues = {};
+                            this._ops.push(cached);
+                        }
+                    }
+                } else if (this._inputs.hasOwnProperty(item)) {
+                    this._pushInput(item, blockContainer);
                 }
             }
-        }
+        } else {
+            // Cache all input children blocks in the operation lists. The
+            // operations can later be run in the order they appear in correctly
+            // executing the operations quickly in a flat loop instead of needing to
+            // recursivly iterate them.
+            for (const inputName in this._inputs) {
+                this._pushInput(inputName, blockContainer);
+            }
 
-        // The final operation is this block itself. At the top most block is a
-        // command block or a block that is being run as a monitor.
-        if (this._definedBlockFunction) {
-            this._ops.push(this);
+            // The final operation is this block itself. At the top most block is a
+            // command block or a block that is being run as a monitor.
+            if (this._definedBlockFunction) {
+                this._ops.push(this);
+            }
+        }
+    }
+
+    /**
+     * Push an input with given name to ops.
+     * @param {!string} inputName The input name.
+     * @param {!Blocks} blockContainer The related Blocks instance.
+     * @private
+     */
+    _pushInput (inputName, blockContainer) {
+        const input = this._inputs[inputName];
+        if (input.block) {
+            const inputCached = BlocksExecuteCache.getCached(blockContainer, input.block, BlockCached);
+
+            if (inputCached._isHat) {
+                return;
+            }
+
+            this._ops.push(...inputCached._ops);
+            inputCached._parentKey = inputName;
+            inputCached._parentValues = this._argValues;
+
+            // Shadow values are static and do not change, go ahead and
+            // store their value on args.
+            if (inputCached._isShadowBlock) {
+                this._argValues[inputName] = inputCached._shadowValue;
+            }
         }
     }
 }
@@ -513,8 +550,8 @@ const execute = function (sequencer, thread) {
     const start = i;
 
     for (; i < length; i++) {
-        const lastOperation = i === length - 1;
-        const opCached = ops[i];
+        let lastOperation = i === length - 1;
+        let opCached = ops[i];
 
         const blockFunction = opCached._blockFunction;
 
@@ -538,6 +575,22 @@ const execute = function (sequencer, thread) {
         // cc - preserve returned value
         if (opCached.opcode === 'procedures_return') {
             break;
+        }
+
+        // Skip to specific opcode to implement short-circuit evaluation.
+        if (blockUtility.skipToOpcode) {
+            if (typeof blockUtility.skipToOpcode === 'boolean') {
+                // blockUtility.skipToOpcode is true
+                blockUtility.skipToOpcode = null;
+                continue;
+            }
+            while (ops[i].opcode !== blockUtility.skipToOpcode) {
+                ++i;
+            }
+            blockUtility.skipToOpcode = null;
+            // Update current block.
+            opCached = ops[i];
+            lastOperation = i === length - 1;
         }
 
         // If it's a promise, wait until promise resolves.
@@ -568,7 +621,7 @@ const execute = function (sequencer, thread) {
                 }
                 return {
                     opCached: reportedCached.id,
-                    inputValue: reportedValues[inputName]
+                    inputValue: reportedValues ? reportedValues[inputName] : null
                 };
             });
 

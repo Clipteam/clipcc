@@ -243,6 +243,13 @@ class Runtime extends EventEmitter {
         this._hats = {};
 
         /**
+         * Map to look up a block's execution order.
+         * Keys are opcode for block, values are order array of its arguments.
+         * @type {Object.<string, Array.<string>>}
+         */
+        this._orders = {};
+
+        /**
          * A list of script block IDs that were glowing during the previous frame.
          * @type {!Array.<!string>}
          */
@@ -807,6 +814,15 @@ class Runtime extends EventEmitter {
                 // Collect monitored from package.
                 if (packageObject.getMonitored) {
                     this.monitorBlockInfo = Object.assign({}, this.monitorBlockInfo, packageObject.getMonitored());
+                }
+                // Collect execution orders from package.
+                if (packageObject.getOrders) {
+                    const packageOrders = packageObject.getOrders();
+                    for (const op in packageOrders) {
+                        if (packageOrders.hasOwnProperty(op)) {
+                            this._orders[op] = packageOrders[op];
+                        }
+                    }
                 }
             }
         }
@@ -1611,6 +1627,15 @@ class Runtime extends EventEmitter {
     getIsEdgeActivatedHat (opcode) {
         return this._hats.hasOwnProperty(opcode) &&
             this._hats[opcode].edgeActivated;
+    }
+
+    /**
+     * Retrieve the execution order of the given opcode.
+     * @param {!string} opcode The opcode to look up.
+     * @return {Array.<string | Object>} The execution order array of given opcode.
+     */
+    getExecutionOrders (opcode) {
+        return this._orders.hasOwnProperty(opcode) && this._orders[opcode];
     }
 
 
