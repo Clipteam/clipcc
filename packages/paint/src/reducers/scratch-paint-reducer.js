@@ -35,7 +35,7 @@ export default combineReducers({
     fillMode: fillModeReducer,
     font: fontReducer,
     format: formatReducer,
-    hoveredItemId: hoverReducer,
+    hover: hoverReducer,
     layout: layoutReducer,
     modals: modalsReducer,
     selectedItems: selectedItemReducer,
