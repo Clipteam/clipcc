@@ -307,22 +307,21 @@ Blockly.BlockSvg.prototype.connectionUiEffect = function() {
  * Change the colour of a block.
  */
 Blockly.BlockSvg.prototype.updateColour = function() {
-  var fillColour = (this.isGlowing_) ? this.getColourSecondary() : this.getColour();
-  var strokeColour = this.getColourTertiary();
+  const strokeColour = this.getColourTertiary();
 
   // Render block stroke
   this.svgPath_.setAttribute('stroke', strokeColour);
 
   // Render block fill
-  var fillColour = (this.isGlowingBlock_) ? this.getColourSecondary() : this.getColour();
+  const fillColour = (this.isGlowingBlock_) ? this.getColourSecondary() : this.getColour();
   this.svgPath_.setAttribute('fill', fillColour);
 
   // Render opacity
   this.svgPath_.setAttribute('fill-opacity', this.getOpacity());
 
   // Bump every dropdown to change its colour.
-  for (var x = 0, input; input = this.inputList[x]; x++) {
-    for (var y = 0, field; field = input.fieldRow[y]; y++) {
+  for (let x = 0, input; input = this.inputList[x]; x++) {
+    for (let y = 0, field; field = input.fieldRow[y]; y++) {
       field.setText(null);
     }
   }
@@ -335,7 +334,7 @@ Blockly.BlockSvg.prototype.updateColour = function() {
  */
 Blockly.BlockSvg.prototype.highlightForReplacement = function(add) {
   if (add) {
-    var replacementGlowFilterId = this.workspace.options.replacementGlowFilterId
+    const replacementGlowFilterId = this.workspace.options.replacementGlowFilterId
       || 'blocklyReplacementGlowFilter';
     this.svgPath_.setAttribute('filter', 'url(#' + replacementGlowFilterId + ')');
     Blockly.utils.addClass(/** @type {!Element} */ (this.svgGroup_),
@@ -355,17 +354,17 @@ Blockly.BlockSvg.prototype.highlightForReplacement = function(add) {
  * @return {!{height: number, width: number}} Object with height and width properties.
  */
 Blockly.BlockSvg.prototype.getHeightWidth = function(opt_ignoreFields) {
-  var height = this.height;
-  var width = this.width;
+  let height = this.height;
+  let width = this.width;
   // Add the size of the field shadow block.
   if (!opt_ignoreFields && this.getFieldShadowBlock_()) {
     height += Blockly.BlockSvg.FIELD_Y_OFFSET;
     height += Blockly.BlockSvg.FIELD_HEIGHT;
   }
   // Recursively add size of subsequent blocks.
-  var nextBlock = this.getNextBlock();
+  const nextBlock = this.getNextBlock();
   if (nextBlock) {
-    var nextHeightWidth = nextBlock.getHeightWidth(opt_ignoreFields);
+    const nextHeightWidth = nextBlock.getHeightWidth(opt_ignoreFields);
     width += nextHeightWidth.width;
     width -= Blockly.BlockSvg.NOTCH_WIDTH; // Exclude width of connected notch.
     height = Math.max(height, nextHeightWidth.height);
@@ -383,8 +382,8 @@ Blockly.BlockSvg.prototype.render = function(opt_bubble) {
   Blockly.Field.startCache();
   this.rendered = true;
 
-  var oldMetrics = this.renderingMetrics_;
-  var metrics = this.renderCompute_();
+  const oldMetrics = this.renderingMetrics_;
+  const metrics = this.renderCompute_();
 
   // Don't redraw if we don't need to.
   if (oldMetrics &&
@@ -408,7 +407,7 @@ Blockly.BlockSvg.prototype.render = function(opt_bubble) {
 
   if (opt_bubble !== false) {
     // Render all blocks above this one (propagate a reflow).
-    var parentBlock = this.getParent();
+    const parentBlock = this.getParent();
     if (parentBlock) {
       parentBlock.render(true);
     } else {
@@ -426,7 +425,7 @@ Blockly.BlockSvg.prototype.render = function(opt_bubble) {
  * @private
  */
 Blockly.BlockSvg.prototype.renderCompute_ = function() {
-  var metrics = {
+  const metrics = {
     statement: null,
     imageField: null,
     iconMenu: null,
@@ -441,20 +440,19 @@ Blockly.BlockSvg.prototype.renderCompute_ = function() {
   };
 
   // Does block have a statement?
-  for (var i = 0, input; input = this.inputList[i]; i++) {
+  for (let i = 0, input; input = this.inputList[i]; i++) {
     if (input.type == Blockly.NEXT_STATEMENT) {
       metrics.statement = input;
       // Compute minimum input size.
       metrics.bayHeight = Blockly.BlockSvg.MIN_BLOCK_Y;
       metrics.bayWidth = Blockly.BlockSvg.MIN_BLOCK_X;
       // Expand input size if there is a connection.
+      const linkedBlock = input.connection.targetBlock();
       if (input.connection && input.connection.targetConnection) {
-        var linkedBlock = input.connection.targetBlock();
-        var bBox = linkedBlock.getHeightWidth(true);
+        const bBox = linkedBlock.getHeightWidth(true);
         metrics.bayHeight = Math.max(metrics.bayHeight, bBox.height);
         metrics.bayWidth = Math.max(metrics.bayWidth, bBox.width);
       }
-      var linkedBlock = input.connection.targetBlock();
       if (linkedBlock && !linkedBlock.lastConnectionInStack()) {
         metrics.bayNotchAtRight = false;
       } else {
@@ -463,7 +461,7 @@ Blockly.BlockSvg.prototype.renderCompute_ = function() {
     }
 
     // Find image field, input fields
-    for (var j = 0, field; field = input.fieldRow[j]; j++) {
+    for (let j = 0, field; field = input.fieldRow[j]; j++) {
       if (field instanceof Blockly.FieldImage) {
         metrics.imageField = field;
       }
@@ -492,7 +490,7 @@ Blockly.BlockSvg.prototype.renderCompute_ = function() {
   // If this block is an icon menu shadow, attempt to set the parent's
   // ImageField src to the one that represents the current value of the field.
   if (metrics.iconMenu) {
-    var currentSrc = metrics.iconMenu.getSrcForValue(metrics.iconMenu.getValue());
+    const currentSrc = metrics.iconMenu.getSrcForValue(metrics.iconMenu.getValue());
     if (currentSrc) {
       metrics.iconMenu.setParentFieldImage(currentSrc);
     }
@@ -535,16 +533,16 @@ Blockly.BlockSvg.prototype.renderCompute_ = function() {
 Blockly.BlockSvg.prototype.renderDraw_ = function(metrics) {
   // Fetch the block's coordinates on the surface for use in anchoring
   // the connections.
-  var connectionsXY = this.getRelativeToSurfaceXY();
+  const connectionsXY = this.getRelativeToSurfaceXY();
   // Assemble the block's path.
-  var steps = [];
+  const steps = [];
 
   this.renderDrawLeft_(steps, connectionsXY, metrics);
   this.renderDrawBottom_(steps, connectionsXY, metrics);
   this.renderDrawRight_(steps, connectionsXY, metrics);
   this.renderDrawTop_(steps, connectionsXY, metrics);
 
-  var pathString = steps.join(' ');
+  const pathString = steps.join(' ');
   this.svgPath_.setAttribute('d', pathString);
 
   if (this.RTL) {
@@ -555,19 +553,19 @@ Blockly.BlockSvg.prototype.renderDraw_ = function(metrics) {
 
   // Horizontal blocks have a single Image Field that is specially positioned
   if (metrics.imageField) {
-    var imageField = metrics.imageField.getSvgRoot();
-    var imageFieldSize = metrics.imageField.getSize();
+    const imageField = metrics.imageField.getSvgRoot();
+    const imageFieldSize = metrics.imageField.getSize();
     // Image field's position is calculated relative to the "end" edge of the
     // block.
-    var imageFieldX = metrics.width - imageFieldSize.width -
+    let imageFieldX = metrics.width - imageFieldSize.width -
         Blockly.BlockSvg.SEP_SPACE_X / 1.5;
-    var imageFieldY = metrics.height - imageFieldSize.height -
+    const imageFieldY = metrics.height - imageFieldSize.height -
         Blockly.BlockSvg.SEP_SPACE_Y;
     if (metrics.endCap) {
       // End-cap image is offset by a grid unit to account for optical effect of no notch.
       imageFieldX -= Blockly.BlockSvg.GRID_UNIT;
     }
-    var imageFieldScale = "scale(1 1)";
+    let imageFieldScale = "scale(1 1)";
     if (this.RTL) {
       // Do we want to mirror the Image Field left-to-right?
       if (metrics.imageField.getFlipRTL()) {
@@ -592,8 +590,8 @@ Blockly.BlockSvg.prototype.renderDraw_ = function(metrics) {
 
   // Position value input
   if (this.getFieldShadowBlock_()) {
-    var input = this.getFieldShadowBlock_().getSvgRoot();
-    var valueX = (Blockly.BlockSvg.NOTCH_WIDTH +
+    const input = this.getFieldShadowBlock_().getSvgRoot();
+    let valueX = (Blockly.BlockSvg.NOTCH_WIDTH +
       (metrics.bayWidth ? 2 * Blockly.BlockSvg.GRID_UNIT +
         Blockly.BlockSvg.NOTCH_WIDTH * 2 : 0) + metrics.bayWidth);
     if (metrics.startHat) {
@@ -603,8 +601,8 @@ Blockly.BlockSvg.prototype.renderDraw_ = function(metrics) {
     if (this.RTL) {
       valueX = -valueX;
     }
-    var valueY = (metrics.height + Blockly.BlockSvg.FIELD_Y_OFFSET);
-    var transformation = 'translate(' + valueX + ',' + valueY + ')';
+    const valueY = (metrics.height + Blockly.BlockSvg.FIELD_Y_OFFSET);
+    const transformation = 'translate(' + valueX + ',' + valueY + ')';
     input.setAttribute('transform', transformation);
   }
 };
@@ -617,7 +615,7 @@ Blockly.BlockSvg.prototype.renderDraw_ = function(metrics) {
  * @private
  */
 Blockly.BlockSvg.prototype.renderClassify_ = function(metrics) {
-  var shapes = [];
+  const shapes = [];
 
   if (this.isShadow_) {
     shapes.push('argument');
@@ -664,13 +662,13 @@ Blockly.BlockSvg.prototype.renderDrawLeft_ = function(steps, connectionsXY, metr
     steps.push(Blockly.BlockSvg.TOP_LEFT_CORNER_START);
     // Top-left rounded corner.
     steps.push(Blockly.BlockSvg.TOP_LEFT_CORNER);
-    var cursorY = metrics.height - Blockly.BlockSvg.CORNER_RADIUS -
+    const cursorY = metrics.height - Blockly.BlockSvg.CORNER_RADIUS -
         Blockly.BlockSvg.SEP_SPACE_Y - Blockly.BlockSvg.NOTCH_HEIGHT;
     steps.push('V', cursorY);
     steps.push(Blockly.BlockSvg.NOTCH_PATH_DOWN);
     // Create previous block connection.
-    var connectionX = connectionsXY.x;
-    var connectionY = connectionsXY.y + metrics.height -
+    const connectionX = connectionsXY.x;
+    const connectionY = connectionsXY.y + metrics.height -
         Blockly.BlockSvg.CORNER_RADIUS * 2;
     this.previousConnection.moveTo(connectionX, connectionY);
     // This connection will be tightened when the parent renders.
@@ -749,13 +747,13 @@ Blockly.BlockSvg.prototype.renderDrawBottom_ = function(steps,
                Blockly.BlockSvg.CORNER_RADIUS);
 
     // Create statement connection.
-    var connectionX = connectionsXY.x + Blockly.BlockSvg.CORNER_RADIUS * 2 +
+    let connectionX = connectionsXY.x + Blockly.BlockSvg.CORNER_RADIUS * 2 +
         4 * Blockly.BlockSvg.GRID_UNIT;
     if (this.RTL) {
       connectionX = connectionsXY.x - Blockly.BlockSvg.CORNER_RADIUS * 2 -
           4 * Blockly.BlockSvg.GRID_UNIT;
     }
-    var connectionY = connectionsXY.y + metrics.height -
+    const connectionY = connectionsXY.y + metrics.height -
         Blockly.BlockSvg.CORNER_RADIUS * 2;
     metrics.statement.connection.moveTo(connectionX, connectionY);
     if (metrics.statement.connection.targetConnection) {
@@ -801,13 +799,13 @@ Blockly.BlockSvg.prototype.renderDrawRight_ = function(steps, connectionsXY, met
     this.width += Blockly.BlockSvg.NOTCH_WIDTH;
 
     // Create next block connection.
-    var connectionX;
+    let connectionX;
     if (this.RTL) {
       connectionX = connectionsXY.x - metrics.width;
     } else {
       connectionX = connectionsXY.x + metrics.width;
     }
-    var connectionY = connectionsXY.y + metrics.height -
+    const connectionY = connectionsXY.y + metrics.height -
         Blockly.BlockSvg.CORNER_RADIUS * 2;
     this.nextConnection.moveTo(connectionX, connectionY);
     if (this.nextConnection.targetConnection) {
@@ -849,7 +847,7 @@ Blockly.BlockSvg.prototype.renderDrawTop_ = function(steps, connectionsXY, metri
  * @private
  */
 Blockly.BlockSvg.prototype.getFieldShadowBlock_ = function() {
-  for (var i = 0, child; child = this.childBlocks_[i]; i++) {
+  for (let i = 0, child; child = this.childBlocks_[i]; i++) {
     if (child.isShadow()) {
       return child;
     }
@@ -874,8 +872,8 @@ Blockly.BlockSvg.prototype.positionNewBlock = function(newBlock, newConnection, 
   // We only need to position the new block if it's before the existing one,
   // otherwise its position is set by the previous block.
   if (newConnection.type == Blockly.NEXT_STATEMENT) {
-    var dx = existingConnection.x_ - newConnection.x_;
-    var dy = existingConnection.y_ - newConnection.y_;
+    const dx = existingConnection.x_ - newConnection.x_;
+    let dy = existingConnection.y_ - newConnection.y_;
 
     // When putting a c-block around another c-block, the outer block must
     // positioned above the inner block, as its connection point will stretch

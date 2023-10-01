@@ -33,13 +33,13 @@ goog.provide('Blockly.BlockAnimations');
  * @package
  */
 Blockly.BlockAnimations.disposeUiEffect = function(block) {
-  var workspace = block.workspace;
-  var svgGroup = block.getSvgRoot();
+  const workspace = block.workspace;
+  const svgGroup = block.getSvgRoot();
   workspace.getAudioManager().play('delete');
 
-  var xy = workspace.getSvgXY(svgGroup);
+  const xy = workspace.getSvgXY(svgGroup);
   // Deeply clone the current block.
-  var clone = svgGroup.cloneNode(true);
+  const clone = svgGroup.cloneNode(true);
   clone.translateX_ = xy.x;
   clone.translateY_ = xy.y;
   clone.setAttribute('transform', 'translate(' + xy.x + ',' + xy.y + ')');
@@ -62,15 +62,15 @@ Blockly.BlockAnimations.disposeUiEffect = function(block) {
  */
 Blockly.BlockAnimations.disposeUiStep_ = function(clone, rtl, start,
     workspaceScale) {
-  var ms = new Date - start;
-  var percent = ms / 150;
+  const ms = new Date - start;
+  const percent = ms / 150;
   if (percent > 1) {
     goog.dom.removeNode(clone);
   } else {
-    var x = clone.translateX_ +
+    const x = clone.translateX_ +
         (rtl ? -1 : 1) * clone.bBox_.width * workspaceScale / 2 * percent;
-    var y = clone.translateY_ + clone.bBox_.height * workspaceScale * percent;
-    var scale = (1 - percent) * workspaceScale;
+    const y = clone.translateY_ + clone.bBox_.height * workspaceScale * percent;
+    const scale = (1 - percent) * workspaceScale;
     clone.setAttribute('transform', 'translate(' + x + ',' + y + ')' +
         ' scale(' + scale + ')');
     setTimeout(Blockly.BlockAnimations.disposeUiStep_, 10, clone, rtl, start,

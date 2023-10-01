@@ -147,6 +147,12 @@ class RenderWebGL extends EventEmitter {
         /** @type {RenderWebGL.UseGpuModes} */
         this._useGpuMode = RenderWebGL.UseGpuModes.Automatic;
 
+        /** @type {boolean} */
+        this.edgelessStage = false;
+
+        /** @type {boolean} */
+        this.accurateCoordinates = false;
+
         /** @type {Drawable[]} */
         this._allDrawables = [];
 
@@ -236,6 +242,22 @@ class RenderWebGL extends EventEmitter {
      */
     get canvas () {
         return this._gl && this._gl.canvas;
+    }
+
+    /**
+     * Set whether the stage is edgeless.
+     * @param {boolean} value Whether the stage is edgeless
+     */
+    setEdgelessStage (value) {
+        this.edgelessStage = value;
+    }
+
+    /**
+     * Set whether rounds the coordinates.
+     * @param {boolean} value Whether rounds the coordinates.
+     */
+    setAccurateCoordinates (value) {
+        this.accurateCoordinates = value;
     }
 
     /**
@@ -483,6 +505,7 @@ class RenderWebGL extends EventEmitter {
         }
         const drawableID = this._nextDrawableId++;
         const drawable = new Drawable(drawableID);
+        drawable.setAccurateCoordinates(this.accurateCoordinates);
         this._allDrawables[drawableID] = drawable;
         this._addToDrawList(drawableID, group);
 
@@ -1270,8 +1293,12 @@ class RenderWebGL extends EventEmitter {
     extractColor (x, y, radius) {
         this._doExitDrawRegion();
 
-        const scratchX = Math.round(this._nativeSize[0] * ((x / this._gl.canvas.clientWidth) - 0.5));
-        const scratchY = Math.round(-this._nativeSize[1] * ((y / this._gl.canvas.clientHeight) - 0.5));
+        let scratchX = this._nativeSize[0] * ((x / this._gl.canvas.clientWidth) - 0.5);
+        let scratchY = -this._nativeSize[1] * ((y / this._gl.canvas.clientHeight) - 0.5);
+        if (!this._accurateCoordinates) {
+            scratchX = Math.round(scratchX);
+            scratchY = Math.round(scratchY);
+        }
 
         const gl = this._gl;
         twgl.bindFramebufferInfo(gl, this._queryBufferInfo);
@@ -1394,7 +1421,9 @@ class RenderWebGL extends EventEmitter {
         const bounds = drawable.getFastBounds();
 
         // Limit queries to the stage size.
-        bounds.clamp(this._xLeft, this._xRight, this._yBottom, this._yTop);
+        if (!this.edgelessStage) {
+            bounds.clamp(this._xLeft, this._xRight, this._yBottom, this._yTop);
+        }
 
         // Use integer coordinates for queries - weird things happen
         // when you provide float width/heights to gl.viewport and projection.

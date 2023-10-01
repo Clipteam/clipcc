@@ -189,10 +189,10 @@ Blockly.Events.fire = function(event) {
  * @private
  */
 Blockly.Events.fireNow_ = function() {
-  var queue = Blockly.Events.filter(Blockly.Events.FIRE_QUEUE_, true);
+  const queue = Blockly.Events.filter(Blockly.Events.FIRE_QUEUE_, true);
   Blockly.Events.FIRE_QUEUE_.length = 0;
-  for (var i = 0, event; event = queue[i]; i++) {
-    var workspace = Blockly.Workspace.getById(event.workspaceId);
+  for (let i = 0, event; event = queue[i]; i++) {
+    const workspace = Blockly.Workspace.getById(event.workspaceId);
     if (workspace) {
       workspace.fireChangeListener(event);
     }
@@ -206,20 +206,20 @@ Blockly.Events.fireNow_ = function() {
  * @return {!Array.<!Blockly.Events.Abstract>} Array of filtered events.
  */
 Blockly.Events.filter = function(queueIn, forward) {
-  var queue = goog.array.clone(queueIn);
+  let queue = goog.array.clone(queueIn);
   if (!forward) {
     // Undo is merged in reverse order.
     queue.reverse();
   }
-  var mergedQueue = [];
-  var hash = Object.create(null);
+  const mergedQueue = [];
+  const hash = Object.create(null);
   // Merge duplicates.
-  for (var i = 0, event; event = queue[i]; i++) {
+  for (let i = 0, event; event = queue[i]; i++) {
     if (!event.isNull()) {
-      var key = [event.type, event.blockId, event.workspaceId].join(' ');
+      const key = [event.type, event.blockId, event.workspaceId].join(' ');
 
-      var lastEntry = hash[key];
-      var lastEvent = lastEntry ? lastEntry.event : null;
+      const lastEntry = hash[key];
+      const lastEvent = lastEntry ? lastEntry.event : null;
       if (!lastEntry) {
         // Each item in the hash table has the event and the index of that event
         // in the input array.  This lets us make sure we only merge adjacent
@@ -260,7 +260,7 @@ Blockly.Events.filter = function(queueIn, forward) {
   }
   // Move mutation events to the top of the queue.
   // Intentionally skip first event.
-  for (var i = 1, event; event = queue[i]; i++) {
+  for (let i = 1, event; event = queue[i]; i++) {
     if (event.type == Blockly.Events.CHANGE &&
         event.element == 'mutation') {
       queue.unshift(queue.splice(i, 1)[0]);
@@ -274,7 +274,7 @@ Blockly.Events.filter = function(queueIn, forward) {
  * in the undo stack.  Called by Blockly.Workspace.clearUndo.
  */
 Blockly.Events.clearPendingUndo = function() {
-  for (var i = 0, event; event = Blockly.Events.FIRE_QUEUE_[i]; i++) {
+  for (let i = 0, event; event = Blockly.Events.FIRE_QUEUE_[i]; i++) {
     event.recordUndo = false;
   }
 };
@@ -330,9 +330,9 @@ Blockly.Events.setGroup = function(state) {
  * @private
  */
 Blockly.Events.getDescendantIds_ = function(block) {
-  var ids = [];
-  var descendants = block.getDescendants(false);
-  for (var i = 0, descendant; descendant = descendants[i]; i++) {
+  const ids = [];
+  const descendants = block.getDescendants(false);
+  for (let i = 0, descendant; descendant = descendants[i]; i++) {
     ids[i] = descendant.id;
   }
   return ids;
@@ -345,7 +345,7 @@ Blockly.Events.getDescendantIds_ = function(block) {
  * @return {!Blockly.Events.Abstract} The event represented by the JSON.
  */
 Blockly.Events.fromJson = function(json, workspace) {
-  var event;
+  let event;
   switch (json.type) {
     case Blockly.Events.CREATE:
       event = new Blockly.Events.Create(null);
@@ -408,12 +408,12 @@ Blockly.Events.disableOrphans = function(event) {
   if (event.type == Blockly.Events.MOVE ||
       event.type == Blockly.Events.CREATE) {
     Blockly.Events.disable();
-    var workspace = Blockly.Workspace.getById(event.workspaceId);
-    var block = workspace.getBlockById(event.blockId);
+    const workspace = Blockly.Workspace.getById(event.workspaceId);
+    let block = workspace.getBlockById(event.blockId);
     if (block) {
       if (block.getParent() && !block.getParent().disabled) {
-        var children = block.getDescendants(false);
-        for (var i = 0, child; child = children[i]; i++) {
+        const children = block.getDescendants(false);
+        for (let i = 0, child; child = children[i]; i++) {
           child.setDisabled(false);
         }
       } else if ((block.outputConnection || block.previousConnection) &&

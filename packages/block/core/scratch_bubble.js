@@ -68,13 +68,13 @@ Blockly.ScratchBubble = function(comment, workspace, content, anchorXY,
   this.x = bubbleX;
   this.y = bubbleY;
   this.isMinimized_ = minimized || false;
-  var canvas = workspace.getBubbleCanvas();
+  const canvas = workspace.getBubbleCanvas();
   canvas.appendChild(this.createDom_(content, !!(bubbleWidth && bubbleHeight),
       this.isMinimized_));
 
   this.setAnchorLocation(anchorXY);
   if (!bubbleWidth || !bubbleHeight) {
-    var bBox = /** @type {SVGLocatable} */ (this.content_).getBBox();
+    const bBox = /** @type {SVGLocatable} */ (this.content_).getBBox();
     bubbleWidth = bBox.width + 2 * Blockly.ScratchBubble.BORDER_WIDTH;
     bubbleHeight = bBox.height + 2 * Blockly.ScratchBubble.BORDER_WIDTH;
   }
@@ -247,11 +247,11 @@ Blockly.ScratchBubble.prototype.createCommentTopBar_ = function() {
  * @private
  */
 Blockly.ScratchBubble.prototype.createTopBarIcons_ = function() {
-  var topBarMiddleY = (Blockly.ScratchBubble.TOP_BAR_HEIGHT / 2) +
+  const topBarMiddleY = (Blockly.ScratchBubble.TOP_BAR_HEIGHT / 2) +
       Blockly.ScratchBubble.BORDER_WIDTH;
 
   // Minimize Toggle Icon in Comment Top Bar
-  var xInset = Blockly.ScratchBubble.TOP_BAR_ICON_INSET;
+  const xInset = Blockly.ScratchBubble.TOP_BAR_ICON_INSET;
   this.minimizeArrow_ = Blockly.utils.createSvgElement('image',
       {
         'x': xInset,
@@ -287,7 +287,7 @@ Blockly.ScratchBubble.prototype.createTopBarLabel_ = function() {
         'dominant-baseline': 'middle'
       }, this.bubbleGroup_);
 
-  var labelTextNode = document.createTextNode(this.labelText_);
+  const labelTextNode = document.createTextNode(this.labelText_);
   this.topBarLabel_.appendChild(labelTextNode);
 };
 
@@ -300,9 +300,9 @@ Blockly.ScratchBubble.prototype.createResizeHandle_ = function() {
       {'class': this.workspace_.RTL ?
                 'scratchCommentResizeSW' : 'scratchCommentResizeSE'},
       this.bubbleGroup_);
-  var resizeSize = Blockly.ScratchBubble.RESIZE_SIZE;
-  var outerPad = Blockly.ScratchBubble.RESIZE_OUTER_PAD;
-  var cornerPad = Blockly.ScratchBubble.RESIZE_CORNER_PAD;
+  const resizeSize = Blockly.ScratchBubble.RESIZE_SIZE;
+  const outerPad = Blockly.ScratchBubble.RESIZE_OUTER_PAD;
+  const cornerPad = Blockly.ScratchBubble.RESIZE_CORNER_PAD;
   // Build an (invisible) triangle that will catch resizes. It is padded on the
   // top/left by outerPad, and padded down/right by cornerPad.
   Blockly.utils.createSvgElement('polygon',
@@ -443,7 +443,7 @@ Blockly.ScratchBubble.prototype.resizeMouseDown_ = function(e) {
  * @private
  */
 Blockly.ScratchBubble.prototype.resizeMouseUp_ = function(_e) {
-  var oldHW = this.resizeStartSize_;
+  const oldHW = this.resizeStartSize_;
   this.resizeStartSize_ = null;
   if (this.width_ == oldHW.width && this.height_ == oldHW.height) {
     return;
@@ -558,7 +558,7 @@ Blockly.ScratchBubble.prototype.moveTo = function(x, y) {
  * @package
  */
 Blockly.ScratchBubble.prototype.setBubbleSize = function(width, height) {
-  var doubleBorderWidth = 2 * Blockly.ScratchBubble.BORDER_WIDTH;
+  const doubleBorderWidth = 2 * Blockly.ScratchBubble.BORDER_WIDTH;
   // Minimum size of a bubble.
   width = Math.max(width, doubleBorderWidth + 50);
   height = Math.max(height, Blockly.ScratchBubble.TOP_BAR_HEIGHT);
@@ -578,7 +578,7 @@ Blockly.ScratchBubble.prototype.setBubbleSize = function(width, height) {
         Blockly.ScratchBubble.TOP_BAR_ICON_INSET);
   }
   if (this.resizeGroup_) {
-    var resizeSize = Blockly.ScratchBubble.RESIZE_SIZE;
+    const resizeSize = Blockly.ScratchBubble.RESIZE_SIZE;
     if (this.workspace_.RTL) {
       // Mirror the resize group.
       this.resizeGroup_.setAttribute('transform', 'translate(' +
@@ -610,22 +610,22 @@ Blockly.ScratchBubble.prototype.setBubbleSize = function(width, height) {
  */
 Blockly.ScratchBubble.prototype.renderArrow_ = function() {
   // Find the relative coordinates of the top bar center of the bubble.
-  var relBubbleX = this.width_ / 2;
-  var relBubbleY = Blockly.ScratchBubble.TOP_BAR_HEIGHT / 2;
+  const relBubbleX = this.width_ / 2;
+  const relBubbleY = Blockly.ScratchBubble.TOP_BAR_HEIGHT / 2;
   // Find the relative coordinates of the center of the anchor.
-  var relAnchorX = -this.relativeLeft_;
-  var relAnchorY = -this.relativeTop_;
+  const relAnchorX = -this.relativeLeft_;
+  const relAnchorY = -this.relativeTop_;
   if (relBubbleX != relAnchorX || relBubbleY != relAnchorY) {
     // Compute the angle of the arrow's line.
-    var rise = relAnchorY - relBubbleY;
-    var run = relAnchorX - relBubbleX;
+    const rise = relAnchorY - relBubbleY;
+    let run = relAnchorX - relBubbleX;
     if (this.workspace_.RTL) {
       run *= -1;
       run -= this.width_;
     }
 
-    var baseX1 = relBubbleX;
-    var baseY1 = relBubbleY;
+    const baseX1 = relBubbleX;
+    const baseY1 = relBubbleY;
 
     this.bubbleArrow_.setAttribute('x1', baseX1);
     this.bubbleArrow_.setAttribute('y1', baseY1);

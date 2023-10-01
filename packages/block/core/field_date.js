@@ -98,7 +98,7 @@ Blockly.FieldDate.prototype.getValue = function() {
  */
 Blockly.FieldDate.prototype.setValue = function(date) {
   if (this.sourceBlock_) {
-    var validated = this.callValidator(date);
+    const validated = this.callValidator(date);
     // If the new date is invalid, validation returns null.
     // In this case we still want to display the illegal result.
     if (validated !== null) {
@@ -118,23 +118,23 @@ Blockly.FieldDate.prototype.showEditor_ = function() {
       Blockly.FieldDate.widgetDispose_);
 
   // Record viewport dimensions before adding the picker.
-  var viewportBBox = Blockly.utils.getViewportBBox();
-  var anchorBBox = this.getScaledBBox_();
+  const viewportBBox = Blockly.utils.getViewportBBox();
+  const anchorBBox = this.getScaledBBox_();
 
   // Create and add the date picker, then record the size.
-  var picker = this.createWidget_();
-  var pickerSize = goog.style.getSize(picker.getElement());
+  const picker = this.createWidget_();
+  const pickerSize = goog.style.getSize(picker.getElement());
 
   // Position the picker to line up with the field.
   Blockly.WidgetDiv.positionWithAnchor(viewportBBox, anchorBBox, pickerSize,
       this.sourceBlock_.RTL);
 
   // Configure event handler.
-  var thisField = this;
+  const thisField = this;
   Blockly.FieldDate.changeEventKey_ = goog.events.listen(picker,
       goog.ui.DatePicker.Events.CHANGE,
       function(event) {
-        var date = event.date ? event.date.toIsoString(true) : '';
+        let date = event.date ? event.date.toIsoString(true) : '';
         Blockly.WidgetDiv.hide();
         if (thisField.sourceBlock_) {
           // Call any validation function, and allow it to override.
@@ -152,10 +152,10 @@ Blockly.FieldDate.prototype.showEditor_ = function() {
 Blockly.FieldDate.prototype.createWidget_ = function() {
   // Create the date picker using Closure.
   Blockly.FieldDate.loadLanguage_();
-  var picker = new goog.ui.DatePicker();
+  const picker = new goog.ui.DatePicker();
   picker.setAllowNone(false);
   picker.setShowWeekNum(false);
-  var div = Blockly.WidgetDiv.DIV;
+  const div = Blockly.WidgetDiv.DIV;
   picker.render(div);
   picker.setDate(goog.date.DateTime.fromIsoString(this.getValue()));
   return picker;
@@ -178,11 +178,11 @@ Blockly.FieldDate.widgetDispose_ = function() {
  * @private
  */
 Blockly.FieldDate.loadLanguage_ = function() {
-  var reg = /^DateTimeSymbols_(.+)$/;
-  for (var prop in goog.i18n) {
-    var m = prop.match(reg);
+  const reg = /^DateTimeSymbols_(.+)$/;
+  for (const prop in goog.i18n) {
+    const m = prop.match(reg);
     if (m) {
-      var lang = m[1].toLowerCase().replace('_', '.');  // E.g. 'pt.br'
+      const lang = m[1].toLowerCase().replace('_', '.');  // E.g. 'pt.br'
       if (goog.getObjectByName(lang, Blockly.Msg)) {
         goog.i18n.DateTimeSymbols = goog.i18n[prop];
       }

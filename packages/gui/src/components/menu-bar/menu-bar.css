@@ -23,8 +23,8 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: var(--clipcc-menu-bar-standard-font-size);
     font-weight: bold;
-    background-color: var(--clipcc-motion-primary);
-    color: var(--clipcc-ui-white);
+    background-color: var(--clipcc-menu-bar-background);
+    color: var(--clipcc-on-motion-primary);
 }
 
 .main-menu {
@@ -45,26 +45,11 @@
     cursor: pointer;
 }
 
-.language-icon {
-    height:  1.5rem;
-    vertical-align: middle;
-}
-
-.language-caret {
-    margin: 0 .125rem;
-}
-
-.language-menu {
-    box-sizing: border-box;
-    display: inline-flex;
-    width: var(--clipcc-language-selector-width);
-}
-
 .menu-bar-item {
     display: flex;
     padding: 0 0.25rem;
     text-decoration: none;
-    color: var(--clipcc-ui-white);
+    color: var(--clipcc-on-motion-primary);
     user-select: none;
     align-self: center;
     position: relative;
@@ -100,10 +85,6 @@
 
 .file-group .menu-bar-item {
     padding: 0 0.75rem;
-}
-
-.menu-bar-item.language-menu {
-    padding: 0 0.5rem;
 }
 
 .menu-bar-menu {
@@ -154,6 +135,7 @@
 }
 
 .account-info-group .menu-bar-item {
+    margin: 0 .25rem;
     padding: 0 0.75rem;
 }
 
@@ -163,7 +145,11 @@
 }
 
 .help-icon {
-    margin-right: 0.35rem;
+    margin: 0 .25rem 0 0;
+}
+
+[dir="rtl"] .help-icon {
+    margin: 0 0 0 .25rem;
 }
 
 .account-nav-menu, .mystuff-button {
@@ -219,4 +205,12 @@
     height: 1.25rem;
     margin: 0.5rem;
     vertical-align: middle;
+}
+
+ .collapsible-label {
+    margin: 0 .5rem 0 .25rem;
+}
+
+[dir="rtl"] .collapsible-label {
+    margin: 0 0.25rem 0 0.5rem;
 }

@@ -1,7 +1,7 @@
 .sprite-info {
     padding: 0.75rem;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background-color: white;
+    background-color: var(--clipcc-ui-white);
     color: var(--clipcc-text-primary);
     border-top-left-radius: var(--clipcc-space);
     border-top-right-radius: var(--clipcc-space);
@@ -42,70 +42,6 @@
     padding: 0.5rem;
     outline: none;
     user-select: none;
-}
-
-.icon {
-    width: 100%;
-    height: 100%;
-}
-
-/* @todo: refactor radio divs to input */
-.radio-wrapper {
-    white-space: nowrap; /* make sure visibilty buttons don't wrap */
-}
-
-.radio {
-    filter: saturate(0);
-    cursor: pointer;
-}
-.radio.is-active {
-    filter: none;
-}
-.radio.is-disabled {
-    cursor: default;
-}
-
-.radio-first {
-    border: 1px solid var(--clipcc-ui-black-transparent);
-}
-
-[dir="ltr"] .radio-first {
-    border-top-left-radius: var(--clipcc-form-radius);
-    border-bottom-left-radius: var(--clipcc-form-radius);
-}
-
-[dir="rtl"] .radio-first {
-    border-top-right-radius: var(--clipcc-form-radius);
-    border-bottom-right-radius: var(--clipcc-form-radius);
-}
-
-.radio-first:focus {
-    border-color: var(--clipcc-motion-primary);
-    box-shadow: inset 0 0 0 -2px var(--clipcc-ui-black-transparent);
-}
-
-.radio-last {
-    border-bottom: 1px solid var(--clipcc-ui-black-transparent);
-    border-top: 1px solid var(--clipcc-ui-black-transparent);
-}
-
-[dir="ltr"] .radio-last {
-    border-right: 1px solid var(--clipcc-ui-black-transparent);
-    border-left: 1px solid var(--clipcc-ui-black-transparent);
-    border-top-right-radius: var(--clipcc-form-radius);
-    border-bottom-right-radius: var(--clipcc-form-radius);
-}
-
-[dir="rtl"] .radio-last {
-    border-left: 1px solid var(--clipcc-ui-black-transparent);
-    border-right: 1px solid var(--clipcc-ui-black-transparent);
-    border-top-left-radius: var(--clipcc-form-radius);
-    border-bottom-left-radius: var(--clipcc-form-radius);
-}
-
-.radio-last:focus {
-    border-color: var(--clipcc-motion-primary);
-    box-shadow: inset 0 0 0 -2px var(--clipcc-ui-black-transparent);
 }
 
 .icon {

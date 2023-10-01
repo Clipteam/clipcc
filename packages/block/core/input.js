@@ -111,7 +111,7 @@ Blockly.Input.prototype.insertFieldAt = function(index, field, opt_name) {
     return this;
   }
   // Generate a FieldLabel when given a plain text field.
-  if (goog.isString(field)) {
+  if (typeof field === 'string') {
     field = new Blockly.FieldLabel(/** @type {string} */ (field));
   }
   field.setSourceBlock(this.sourceBlock_);
@@ -146,7 +146,7 @@ Blockly.Input.prototype.insertFieldAt = function(index, field, opt_name) {
  * @throws {goog.asserts.AssertionError} if the field is not present.
  */
 Blockly.Input.prototype.removeField = function(name) {
-  for (var i = 0, field; field = this.fieldRow[i]; i++) {
+  for (let i = 0, field; field = this.fieldRow[i]; i++) {
     if (field.name === name) {
       field.dispose();
       this.fieldRow.splice(i, 1);
@@ -176,14 +176,14 @@ Blockly.Input.prototype.isVisible = function() {
  * @return {!Array.<!Blockly.Block>} List of blocks to render.
  */
 Blockly.Input.prototype.setVisible = function(visible) {
-  var renderList = [];
+  let renderList = [];
   if (this.visible_ == visible) {
     return renderList;
   }
   this.visible_ = visible;
 
-  var display = visible ? 'block' : 'none';
-  for (var y = 0, field; field = this.fieldRow[y]; y++) {
+  const display = visible ? 'block' : 'none';
+  for (let y = 0, field; field = this.fieldRow[y]; y++) {
     field.setVisible(visible);
   }
   if (this.connection) {
@@ -193,7 +193,7 @@ Blockly.Input.prototype.setVisible = function(visible) {
     } else {
       this.connection.hideAll();
     }
-    var child = this.connection.targetBlock();
+    const child = this.connection.targetBlock();
     if (child) {
       child.getSvgRoot().style.display = display;
       if (!visible) {
@@ -239,7 +239,7 @@ Blockly.Input.prototype.init = function() {
   if (!this.sourceBlock_.workspace.rendered) {
     return;  // Headless blocks don't need fields initialized.
   }
-  for (var i = 0; i < this.fieldRow.length; i++) {
+  for (let i = 0; i < this.fieldRow.length; i++) {
     this.fieldRow[i].init(this.sourceBlock_);
   }
 };
@@ -251,7 +251,7 @@ Blockly.Input.prototype.dispose = function() {
   if (this.outlinePath) {
     goog.dom.removeNode(this.outlinePath);
   }
-  for (var i = 0, field; field = this.fieldRow[i]; i++) {
+  for (let i = 0, field; field = this.fieldRow[i]; i++) {
     field.dispose();
   }
   if (this.connection) {

@@ -1,7 +1,7 @@
 /* Popover styles */
 :global(.Popover-body) {
-    background: white;
-    border: 1px solid #ddd;
+    background: var(--clipcc-ui-white);
+    border: 1px solid var(--clipcc-form-border, #ddd);
     padding: 4px;
     border-radius: 4px;
     padding: 4px;
@@ -9,8 +9,8 @@
 }
 
 :global(.Popover-tipShape) {
-    fill: white;
-    stroke: #ddd;
+    fill: var(--clipcc-ui-white);
+    stroke: var(--clipcc-form-border, #ddd);
 }
 
 .clickable {
@@ -26,7 +26,7 @@
 .row-header {
     font-family: "Helvetica Neue", Helvetica, sans-serif;
     font-size: 0.65rem;
-    color: #575E75;
+    color: var(--clipcc-text-primary);
     margin: 8px;
 }
 
@@ -43,7 +43,7 @@
 }
 
 .divider {
-    border-top: 1px solid #ddd;
+    border-top: 1px solid var(--clipcc-form-border, #ddd);
     margin: 8px;
 }
 
@@ -59,7 +59,7 @@
 .swatch {
     width: 1.5rem;
     height: 1.5rem;
-    border: 1px solid #ddd;
+    border: 1px solid var(--clipcc-form-border, #ddd);
     border-radius: 4px;
     box-sizing: content-box;
     display: flex;
@@ -84,6 +84,10 @@
 .swatch-icon {
     width: 1.5rem;
     height: 1.5rem;
+}
+
+[theme='dark'] .swatch-icon {
+    filter: invert(0.8);
 }
 
 .inactive-gradient {

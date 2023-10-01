@@ -305,6 +305,19 @@ class Runtime extends EventEmitter {
         this.compatibilityMode = false;
 
         /**
+         * The limit options.
+         * @type {object}
+         */
+        this.limitOptions = {
+            infiniteCloning: false,
+            edgelessStage: false,
+            unlimitedListLength: false,
+            unlimitedPenSize: false,
+            accurateCoordinates: false,
+            unlimitedSoundStuffs: false
+        };
+
+        /**
          * A reference to the current runtime stepping interval, set
          * by a `setInterval`.
          * @type {!number}
@@ -336,6 +349,18 @@ class Runtime extends EventEmitter {
          * @type {boolean}
          */
         this.redrawRequested = false;
+
+        /**
+         * Get stage width.
+         * @type {number}
+         */
+        this.stageWidth = 480;
+
+        /**
+         * Get stage height.
+         * @type {number}
+         */
+        this.stageHeight = 360;
 
         // Register all given block packages.
         this._registerBlockPackages();
@@ -413,6 +438,7 @@ class Runtime extends EventEmitter {
     }
 
     /**
+     * @deprecated Use `runtime.stageWidth` instead.
      * Width of the stage, in pixels.
      * @const {number}
      */
@@ -421,11 +447,20 @@ class Runtime extends EventEmitter {
     }
 
     /**
+     * @deprecated Use `runtime.stageHeight` instead.
      * Height of the stage, in pixels.
      * @const {number}
      */
     static get STAGE_HEIGHT () {
         return 360;
+    }
+
+    /**
+     * Event name for stage size update.
+     * @const {string}
+     */
+    static get STAGE_SIZE_UPDATE () {
+        return 'STAGE_SIZE_UPDATE';
     }
 
     /**
@@ -732,8 +767,8 @@ class Runtime extends EventEmitter {
      * How many clones can be created at a time.
      * @const {number}
      */
-    static get MAX_CLONES () {
-        return 300;
+    get MAX_CLONES () {
+        return this.limitOptions.infiniteCloning ? Infinity : 300;
     }
 
     // -----------------------------------------------------------------------------
@@ -1615,6 +1650,8 @@ class Runtime extends EventEmitter {
      */
     attachRenderer (renderer) {
         this.renderer = renderer;
+        this.renderer.setEdgelessStage(this.limitOptions.edgelessStage);
+        this.renderer.setAccurateCoordinates(this.limitOptions.accurateCoordinates);
         this.renderer.setLayerGroupOrdering(StageLayering.LAYER_GROUPS);
     }
 
@@ -2480,7 +2517,7 @@ class Runtime extends EventEmitter {
      * @return {boolean} True until the number of clones hits Runtime.MAX_CLONES.
      */
     clonesAvailable () {
-        return this._cloneCounter < Runtime.MAX_CLONES;
+        return this._cloneCounter < this.MAX_CLONES;
     }
 
     /**

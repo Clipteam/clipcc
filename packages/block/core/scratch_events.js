@@ -61,7 +61,7 @@ Blockly.Events.DragBlockOutside.prototype.type = Blockly.Events.DRAG_OUTSIDE;
  * @return {!Object} JSON representation.
  */
 Blockly.Events.DragBlockOutside.prototype.toJson = function() {
-  var json = Blockly.Events.DragBlockOutside.superClass_.toJson.call(this);
+  const json = Blockly.Events.DragBlockOutside.superClass_.toJson.call(this);
   if (this.isOutside) {
     json['isOutside'] = this.isOutside;
   }
@@ -110,7 +110,7 @@ Blockly.Events.EndBlockDrag.prototype.type = Blockly.Events.END_DRAG;
  * @return {!Object} JSON representation.
  */
 Blockly.Events.EndBlockDrag.prototype.toJson = function() {
-  var json = Blockly.Events.EndBlockDrag.superClass_.toJson.call(this);
+  const json = Blockly.Events.EndBlockDrag.superClass_.toJson.call(this);
   if (this.isOutside) {
     json['isOutside'] = this.isOutside;
   }

@@ -33,6 +33,7 @@ import SettingsModal from '../../containers/settings-modal.jsx';
 
 import layout, {STAGE_SIZE_MODES} from '../../lib/layout-constants';
 import {resolveStageSize} from '../../lib/screen-utils';
+import {themeMap} from '../../lib/themes';
 
 import styles from './gui.css';
 import addExtensionIcon from './icon--extensions.svg';
@@ -66,6 +67,7 @@ const GUIComponent = props => {
         backpackVisible,
         blocksTabVisible,
         canChangeLanguage,
+        canChangeTheme,
         canCreateNew,
         canEditTitle,
         canManageFiles,
@@ -118,7 +120,10 @@ const GUIComponent = props => {
         stageSizeMode,
         targetIsStage,
         telemetryModalVisible,
+        theme,
         vm,
+        stageWidth,
+        stageHeight,
         ...componentProps
     } = omit(props, 'dispatch');
     if (children) {
@@ -149,6 +154,8 @@ const GUIComponent = props => {
                 loading={loading}
                 stageSize={STAGE_SIZE_MODES.large}
                 vm={vm}
+                stageWidth={stageWidth}
+                stageHeight={stageHeight}
             >
                 {alertsVisible ? (
                     <Alerts className={styles.alertsContainer} />
@@ -209,6 +216,7 @@ const GUIComponent = props => {
                     authorThumbnailUrl={authorThumbnailUrl}
                     authorUsername={authorUsername}
                     canChangeLanguage={canChangeLanguage}
+                    canChangeTheme={canChangeTheme}
                     canCreateCopy={canCreateCopy}
                     canCreateNew={canCreateNew}
                     canEditTitle={canEditTitle}
@@ -297,13 +305,15 @@ const GUIComponent = props => {
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     <Box className={styles.blocksWrapper}>
                                         <Blocks
+                                            key={theme}
                                             canUseCloud={canUseCloud}
                                             grow={1}
                                             isVisible={blocksTabVisible}
                                             options={{
-                                                media: `${basePath}static/blocks-media/`
+                                                media: `${basePath}static/${themeMap[theme].blocksMediaFolder}/`
                                             }}
                                             stageSize={stageSize}
+                                            theme={theme}
                                             vm={vm}
                                         />
                                     </Box>
@@ -343,6 +353,8 @@ const GUIComponent = props => {
                                 isRtl={isRtl}
                                 stageSize={stageSize}
                                 vm={vm}
+                                stageWidth={stageWidth}
+                                stageHeight={stageHeight}
                             />
                             <Box className={styles.targetWrapper}>
                                 <TargetPane
@@ -371,6 +383,7 @@ GUIComponent.propTypes = {
     basePath: PropTypes.string,
     blocksTabVisible: PropTypes.bool,
     canChangeLanguage: PropTypes.bool,
+    canChangeTheme: PropTypes.bool,
     canCreateCopy: PropTypes.bool,
     canCreateNew: PropTypes.bool,
     canEditTitle: PropTypes.bool,
@@ -420,6 +433,7 @@ GUIComponent.propTypes = {
     stageSizeMode: PropTypes.oneOf(Object.keys(STAGE_SIZE_MODES)),
     targetIsStage: PropTypes.bool,
     telemetryModalVisible: PropTypes.bool,
+    theme: PropTypes.string,
     vm: PropTypes.instanceOf(VM).isRequired
 };
 GUIComponent.defaultProps = {
@@ -427,6 +441,7 @@ GUIComponent.defaultProps = {
     backpackVisible: false,
     basePath: './',
     canChangeLanguage: true,
+    canChangeTheme: true,
     canCreateNew: false,
     canEditTitle: false,
     canManageFiles: true,
@@ -445,7 +460,10 @@ GUIComponent.defaultProps = {
 
 const mapStateToProps = state => ({
     // This is the button's mode, as opposed to the actual current state
-    stageSizeMode: state.scratchGui.stageSize.stageSize
+    theme: state.scratchGui.theme.theme,
+    stageSizeMode: state.scratchGui.stageSize.stageSize,
+    stageWidth: state.scratchGui.settings.stageWidth,
+    stageHeight: state.scratchGui.settings.stageHeight
 });
 
 export default injectIntl(connect(

@@ -55,7 +55,7 @@ goog.inherits(Blockly.FieldLabelSerializable, Blockly.FieldLabel);
  * @nocollapse
  */
 Blockly.FieldLabelSerializable.fromJson = function(options) {
-  var text = Blockly.utils.replaceMessageReferences(options['text']);
+  const text = Blockly.utils.replaceMessageReferences(options['text']);
   return new Blockly.FieldLabelSerializable(text, options['class']);
 };
 
@@ -95,21 +95,21 @@ Blockly.FieldLabelSerializable.prototype.render_ = function() {
   if (this.visible_ && this.textElement_) {
     // Replace the text.
     goog.dom.removeChildren(/** @type {!Element} */ (this.textElement_));
-    var textNode = document.createTextNode(this.getDisplayText_());
+    const textNode = document.createTextNode(this.getDisplayText_());
     this.textElement_.appendChild(textNode);
     this.updateWidth();
 
     // Update text centering, based on newly calculated width.
-    var centerTextX = this.size_.width / 2;
+    let centerTextX = this.size_.width / 2;
 
     // If half the text length is not at least center of
     // visible field (FIELD_WIDTH), center it there instead.
-    var minOffset = Blockly.BlockSvg.FIELD_WIDTH / 2;
+    const minOffset = Blockly.BlockSvg.FIELD_WIDTH / 2;
     if (this.sourceBlock_.RTL) {
       // X position starts at the left edge of the block, in both RTL and LTR.
       // First offset by the width of the block to move to the right edge,
       // and then subtract to move to the same position as LTR.
-      var minCenter = this.size_.width - minOffset;
+      const minCenter = this.size_.width - minOffset;
       centerTextX = Math.min(minCenter, centerTextX);
     } else {
       // (width / 2) should exceed Blockly.BlockSvg.FIELD_WIDTH / 2

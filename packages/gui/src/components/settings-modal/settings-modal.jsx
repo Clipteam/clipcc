@@ -7,6 +7,7 @@ import intlShape from '../../lib/intl-shape.js';
 import Box from '../box/box.jsx';
 import Modal from '../../containers/modal.jsx';
 import Input from '../forms/input.jsx';
+import Select from '../select/select.jsx';
 import BufferedInputHOC from '../forms/buffered-input-hoc.jsx';
 import Switch from '../switch/switch.jsx';
 import styles from './settings-modal.css';
@@ -31,6 +32,26 @@ const messages = defineMessages({
         defaultMessage: 'Project',
         description: 'Label of project',
         id: 'gui.settingsModal.project'
+    },
+    system: {
+        defaultMessage: 'Follow System',
+        description: 'Label of follow system',
+        id: 'gui.settingsModal.theme.followSystem'
+    },
+    dark: {
+        defaultMessage: 'Dark',
+        description: 'Label of dark',
+        id: 'gui.settingsModal.theme.dark'
+    },
+    default: {
+        defaultMessage: 'Default',
+        description: 'Label of default',
+        id: 'gui.settingsModal.theme.default'
+    },
+    highContrast: {
+        defaultMessage: 'High Contrast',
+        description: 'Label of high contrast',
+        id: 'gui.settingsModal.theme.highContrast'
     }
 });
 
@@ -91,6 +112,38 @@ class SettingsModal extends React.Component {
                         <div className={styles.item}>
                             <div className={styles.label}>
                                 <FormattedMessage
+                                    defaultMessage="Theme"
+                                    description="Label of theme"
+                                    id="gui.settingsModal.theme"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Switch between dark and light, or follow system."
+                                    description="Description of theme"
+                                    id="gui.settingsModal.themeDescription"
+                                />
+                            </div>
+                            <Select
+                                value={this.props.theme}
+                                onChange={this.props.onChangeTheme}
+                                className={styles.selectSmall}
+                                options={[{
+                                    id: 'system',
+                                    text: this.props.intl.formatMessage(messages.system)
+                                }, {
+                                    id: 'default',
+                                    text: this.props.intl.formatMessage(messages.default)
+                                }, {
+                                    id: 'dark',
+                                    text: this.props.intl.formatMessage(messages.dark)
+                                }, {
+                                    id: 'high-contrast',
+                                    text: this.props.intl.formatMessage(messages.highContrast)
+                                }]}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
                                     defaultMessage="Hide Non-vanilla blocks"
                                     description="Label of hide non-vanilla blocks"
                                     id="gui.settingsModal.hideNonVanillaBlocks"
@@ -137,6 +190,153 @@ class SettingsModal extends React.Component {
                                 step="1"
                                 placeholder="30"
                             />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Infinite Cloning"
+                                    description="Label of infinite cloning"
+                                    id="gui.settingsModal.infiniteCloning"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Remove the limit of up to 300 clones for Scratch."
+                                    description="Description of infinite cloning"
+                                    id="gui.settingsModal.infiniteCloningDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.infiniteCloning}
+                                onChange={this.props.onChangeInfiniteCloning}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Edgeless Stage"
+                                    description="Label of edgeless stage"
+                                    id="gui.settingsModal.edgelessStage"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Allow sprites to move out of the stage area and change size freely."
+                                    description="Description of edgeless stage"
+                                    id="gui.settingsModal.edgelessStageDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.edgelessStage}
+                                onChange={this.props.onChangeEdgelessStage}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Unlimited List Length"
+                                    description="Label of unlimited list length"
+                                    id="gui.settingsModal.unlimitedListLength"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Remove the maximum list length limit."
+                                    description="Description of unlimited list length"
+                                    id="gui.settingsModal.unlimitedListLengthDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.unlimitedListLength}
+                                onChange={this.props.onChangeUnlimitedListLength}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Unlimited Pen Size"
+                                    description="Label of unlimited pen size"
+                                    id="gui.settingsModal.unlimitedPenSize"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Allow change pen size freely."
+                                    description="Description of unlimited pen size"
+                                    id="gui.settingsModal.unlimitedPenSizeDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.unlimitedPenSize}
+                                onChange={this.props.onChangeUnlimitedPenSize}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Unlimited Sound Stuffs"
+                                    description="Label of Unlimited Sound Stuffs"
+                                    id="gui.settingsModal.unlimitedSoundStuffs"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Allow change sound stuffs (Eg: effects, note, tempo) freely."
+                                    description="Description of unlimited sound stuffs"
+                                    id="gui.settingsModal.unlimitedSoundStuffsDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.unlimitedSoundStuffs}
+                                onChange={this.props.onChangeUnlimitedSoundStuffs}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Accurate Coordinates"
+                                    description="Label of accurate coordinates"
+                                    id="gui.settingsModal.accurateCoordinates"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Don't round coordinates."
+                                    description="Description of accurate coordinates"
+                                    id="gui.settingsModal.accurateCoordinatesDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.accurateCoordinates}
+                                onChange={this.props.onChangeAccurateCoordinates}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Stage Size"
+                                    description="Label of stage size"
+                                    id="gui.settingsModal.resolution"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Change stage size, width must not be greater than 480."
+                                    description="Description of stage size"
+                                    id="gui.settingsModal.resolutionDescription"
+                                />
+                            </div>
+                            <div className={styles.group}>
+                                <BufferedInput
+                                    small
+                                    tabIndex="0"
+                                    type="number"
+                                    precision={0}
+                                    placeholder={480}
+                                    value={this.props.stageWidth}
+                                    onSubmit={this.props.onChangeStageWidth}
+                                    className={classNames(styles.input)}
+                                />
+                                <div style={{margin: '0 1rem'}}>
+                                    {'×'}
+                                </div>
+                                <BufferedInput
+                                    small
+                                    tabIndex="0"
+                                    type="number"
+                                    precision={0}
+                                    placeholder={360}
+                                    value={this.props.stageHeight}
+                                    onSubmit={this.props.onChangeStageHeight}
+                                    className={classNames(styles.input)}
+                                />
+                            </div>
                         </div>
                         <p
                             className={styles.category}
@@ -199,13 +399,29 @@ class SettingsModal extends React.Component {
 SettingsModal.propTypes = {
     hideNonVanillaBlocks: PropTypes.bool.isRequired,
     autoSave: PropTypes.bool.isRequired,
+    infiniteCloning: PropTypes.bool.isRequired,
+    edgelessStage: PropTypes.bool.isRequired,
+    unlimitedListLength: PropTypes.bool.isRequired,
+    unlimitedPenSize: PropTypes.bool.isRequired,
+    unlimitedSoundStuffs: PropTypes.bool.isRequired,
+    accurateCoordinates: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
+    stageWidth: PropTypes.number.isRequired,
+    stageHeight: PropTypes.number.isRequired,
+    theme: PropTypes.string.isRequired,
     intl: intlShape.isRequired,
     onClose: PropTypes.func.isRequired,
     onChangeAutoSave: PropTypes.func.isRequired,
+    onChangeInfiniteCloning: PropTypes.func.isRequired,
+    onChangeEdgelessStage: PropTypes.func.isRequired,
+    onChangeUnlimitedListLength: PropTypes.func.isRequired,
+    onChangeUnlimitedPenSize: PropTypes.func.isRequired,
+    onChangeUnlimitedSoundStuffs: PropTypes.func.isRequired,
+    onChangeAccurateCoordinates: PropTypes.func.isRequired,
     onChangeAutoSaveInterval: PropTypes.func.isRequired,
     onChangeFramerate: PropTypes.func.isRequired,
+    onChangeTheme: PropTypes.func.isRequired,
     onChangeHideNonVanillaBlocks: PropTypes.func.isRequired
 };
 

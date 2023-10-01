@@ -3,9 +3,18 @@ const UPDATE = 'scratch-gui/settings/UPDATE';
 const defaultState = {
     hideNonVanillaBlocks: false,
     autoSave: false,
+    infiniteCloning: false,
+    edgelessStage: false,
+    unlimitedListLength: false,
+    unlimitedPenSize: false,
+    unlimitedSoundStuffs: false,
+    accurateCoordinates: false,
     autoSaveInterval: 120,
     compression: 6,
-    framerate: 30
+    framerate: 30,
+    theme: 'system',
+    stageWidth: 480,
+    stageHeight: 360
 };
 
 const initialState = JSON.parse(localStorage.getItem('settings')) || {};

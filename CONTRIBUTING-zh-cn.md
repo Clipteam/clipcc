@@ -45,6 +45,24 @@
 -   如果这是一个漏洞修复相关的 pull request，请为它添加单元测试。
 -   确保你已经 review 过一遍代码。
 
+# 同步上游
+
+由于本项目采用 monorepo 进行代码管理，因此仅能通过 patch 方式来手动从上游同步更改。以下是同步上游更改的基本流程：
+## 1. 生成 patch
+你需要为一个 scratch 仓库手动生成 patch。例如，现以 ``scratch-gui`` 为例，我想要从 ``allow-ts`` 分支中合并所有更改。   
+为了保证原有 commit 内容不丢失，请使用 ``git format-patch``来生成 patch([用法参考](https://git-scm.com/docs/git-format-patch))。   
+从 commit 历史中我们可以知道该分支的更改从 ``3a94170a`` 开始。因此我们使用``git format-patch 3a94170a``来生成 patch。
+
+## 2. 将 patch 拷贝到单独目录下，并使用脚本转换
+ClipCC 自带了基本的 patch 转换脚本。在正式开始之前您可以使用此脚本来对 patch 文件路径等信息做最基本的处理。   
+您可以使用``yarn patch:convert [文件夹路径] [包名]``来对某个目录下的所有 patch 文件进行转换。   
+需要注意的是，[包名] 为``packages/``目录下的子目录名称，而并非 npm 包名。   
+
+## 3. 处理冲突，并提交 commit
+在大多数情况下，patch 并不能直接应用，您需要根据实际情况来修改 patch 以解决冲突。   
+如果你并不确定 patch 是否能应用，您可以使用 ``git apply --check [PATCH 路径]``来对 patch 进行检查。   
+在确保无误后，你可以使用``git am``或``git apply``来应用 patch 到当前分支。
+
 # 许可证
 
 为 ClipCC 做贡献之前，您需要同意您的贡献将根据其 AGPL-3.0 许可证和开发者贡献协议(CLA)许可给 Clipteam。

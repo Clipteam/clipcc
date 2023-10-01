@@ -65,6 +65,9 @@ class Drawable {
         /** @type {!int} */
         this._id = id;
 
+        /** @type {boolean} */
+        this._accurateCoordinates = false;
+
         /**
          * The uniforms to be used by the vertex and pixel shaders.
          * Some of these are used by other parts of the renderer as well.
@@ -147,6 +150,14 @@ class Drawable {
     }
 
     /**
+     * Set whether rounds the coordinates.
+     * @param {boolean} value Whether rounds the coordinates.
+     */
+    setAccurateCoordinates (value) {
+        this._accurateCoordinates = value;
+    }
+
+    /**
      * @returns {number} The ID for this Drawable.
      */
     get id () {
@@ -207,8 +218,8 @@ class Drawable {
     updatePosition (position) {
         if (this._position[0] !== position[0] ||
             this._position[1] !== position[1]) {
-            this._position[0] = Math.round(position[0]);
-            this._position[1] = Math.round(position[1]);
+            this._position[0] = this._accurateCoordinates ? position[0] : Math.round(position[0]);
+            this._position[1] = this._accurateCoordinates ? position[1] : Math.round(position[1]);
             this.setTransformDirty();
         }
     }

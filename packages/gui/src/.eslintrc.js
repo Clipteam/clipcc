@@ -15,7 +15,7 @@ module.exports = {
         'import/no-nodejs-modules': 'error',
         'react/jsx-no-literals': 'error',
         'no-confusing-arrow': ['error', {
-            'allowParens': true
+            allowParens: true
         }]
     },
     settings: {

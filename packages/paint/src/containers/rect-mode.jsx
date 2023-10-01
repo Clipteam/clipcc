@@ -36,6 +36,9 @@ class RectMode extends React.Component {
         if (this.tool && nextProps.colorState !== this.props.colorState) {
             this.tool.setColorState(nextProps.colorState);
         }
+        if (this.tool && nextProps.radius !== this.props.radius) {
+            this.tool.setRadius(nextProps.radius);
+        }
         if (this.tool && nextProps.selectedItems !== this.props.selectedItems) {
             this.tool.onSelectionChanged(nextProps.selectedItems);
         }
@@ -65,6 +68,7 @@ class RectMode extends React.Component {
             this.props.onUpdateImage
         );
         this.tool.setColorState(this.props.colorState);
+        this.tool.setRadius(this.props.radius);
         this.tool.activate();
     }
     validateColorState () { // TODO move to shared class
@@ -136,6 +140,7 @@ RectMode.propTypes = {
         strokeColor: ColorStyleProptype,
         strokeWidth: PropTypes.number
     }).isRequired,
+    radius: PropTypes.number.isRequired,
     handleMouseDown: PropTypes.func.isRequired,
     isRectModeActive: PropTypes.bool.isRequired,
     onChangeFillColor: PropTypes.func.isRequired,
@@ -148,6 +153,7 @@ RectMode.propTypes = {
 
 const mapStateToProps = state => ({
     colorState: state.scratchPaint.color,
+    radius: state.scratchPaint.radius,
     isRectModeActive: state.scratchPaint.mode === Modes.RECT,
     selectedItems: state.scratchPaint.selectedItems
 });

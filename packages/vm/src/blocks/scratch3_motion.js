@@ -82,10 +82,14 @@ class Scratch3MotionBlocks {
             targetX = util.ioQuery('mouse', 'getScratchX');
             targetY = util.ioQuery('mouse', 'getScratchY');
         } else if (targetName === '_random_') {
-            const stageWidth = this.runtime.constructor.STAGE_WIDTH;
-            const stageHeight = this.runtime.constructor.STAGE_HEIGHT;
-            targetX = Math.round(stageWidth * (Math.random() - 0.5));
-            targetY = Math.round(stageHeight * (Math.random() - 0.5));
+            const stageWidth = this.runtime.stageWidth;
+            const stageHeight = this.runtime.stageHeight;
+            targetX = stageWidth * (Math.random() - 0.5);
+            targetY = stageHeight * (Math.random() - 0.5);
+            if (!this.runtime.limitOptions.accurateCoordinates) {
+                targetX = Math.round(targetX);
+                targetY = Math.round(targetY);
+            }
         } else {
             targetName = Cast.toString(targetName);
             const goToTarget = this.runtime.getSpriteTargetByName(targetName);
@@ -125,7 +129,12 @@ class Scratch3MotionBlocks {
             targetX = util.ioQuery('mouse', 'getScratchX');
             targetY = util.ioQuery('mouse', 'getScratchY');
         } else if (args.TOWARDS === '_random_') {
-            util.target.setDirection(Math.round(Math.random() * 360) - 180);
+            const randomDeg = Math.random() * 360;
+            util.target.setDirection(
+                this.runtime.limitOptions.accurateCoordinates
+                    ? randomDeg - 180
+                    : Math.round(randomDeg) - 180
+            );
             return;
         } else {
             args.TOWARDS = Cast.toString(args.TOWARDS);
@@ -191,8 +200,8 @@ class Scratch3MotionBlocks {
         // Measure distance to edges.
         // Values are positive when the sprite is far away,
         // and clamped to zero when the sprite is beyond.
-        const stageWidth = this.runtime.constructor.STAGE_WIDTH;
-        const stageHeight = this.runtime.constructor.STAGE_HEIGHT;
+        const stageWidth = this.runtime.stageWidth;
+        const stageHeight = this.runtime.stageWidth;
         const distLeft = Math.max(0, (stageWidth / 2) + bounds.left);
         const distTop = Math.max(0, (stageHeight / 2) - bounds.top);
         const distRight = Math.max(0, (stageWidth / 2) - bounds.right);

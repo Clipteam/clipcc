@@ -38,8 +38,8 @@ goog.provide('Blockly.utils.uiMenu');
  * @package
  */
 Blockly.utils.uiMenu.getSize = function(menu) {
-  var menuDom = menu.getElement();
-  var menuSize = goog.style.getSize(menuDom);
+  const menuDom = menu.getElement();
+  const menuSize = goog.style.getSize(menuDom);
   // Recalculate height for the total content, not only box height.
   menuSize.height = menuDom.scrollHeight;
   return menuSize;

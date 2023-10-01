@@ -28,7 +28,7 @@ goog.provide('Blockly.VirtualizedManager');
 
 /**
  * Class for virtualized manager.
- * @param {Blockly.WorkspaceSvg} workspace
+ * @param {Blockly.WorkspaceSvg} workspace The workspace.
  */
 Blockly.VirtualizedManager = function(workspace) {
   this.workspace = workspace;
@@ -41,7 +41,7 @@ Blockly.VirtualizedManager = function(workspace) {
 
 /**
  * Observe a block.
- * @param {Blockly.BlockSvg} block
+ * @param {Blockly.BlockSvg} block The block to observe.
  */
 Blockly.VirtualizedManager.prototype.observe = function(block) {
   if (!this._observedBlocks.includes(block)) {
@@ -51,7 +51,7 @@ Blockly.VirtualizedManager.prototype.observe = function(block) {
 
 /**
  * Unobserve a block.
- * @param {Blockly.BlockSvg} block
+ * @param {Blockly.BlockSvg} block The block to unobserve.
  */
 Blockly.VirtualizedManager.prototype.unobserve = function(block) {
   if (this._observedBlocks.includes(block)) {
@@ -72,23 +72,23 @@ Blockly.VirtualizedManager.prototype.dispose = function() {
  * Check if block need to be show or hide.
  */
 Blockly.VirtualizedManager.prototype.check = function() {
-  var workspace = this.workspace;
-  var workspaceHeight = workspace.getParentSvg().height.baseVal.value;
-  var workspaceWidth = workspace.getParentSvg().width.baseVal.value;
-  var workspaceCanvas = workspace.getCanvas();
-  var canvasPos = Blockly.utils.getRelativeXY(workspaceCanvas);
-  for (var i = 0; i < this._observedBlocks.length; i++) {
-    var block = this._observedBlocks[i];
+  const workspace = this.workspace;
+  const workspaceHeight = workspace.getParentSvg().height.baseVal.value;
+  const workspaceWidth = workspace.getParentSvg().width.baseVal.value;
+  const workspaceCanvas = workspace.getCanvas();
+  const canvasPos = Blockly.utils.getRelativeXY(workspaceCanvas);
+  for (let i = 0; i < this._observedBlocks.length; i++) {
+    const block = this._observedBlocks[i];
     // block may not have been rendered, so we skip checking for it.
     // see Clipteam/clipcc#10
     if (!block.rendered) {
       continue;
-    };
-    var blockPos = block.getRelativeToSurfaceXY();
+    }
+    const blockPos = block.getRelativeToSurfaceXY();
     blockPos.x *= workspace.scale;
     blockPos.y *= workspace.scale;
         
-    var visible = true;
+    let visible = true;
         
     // bottom-right check
     if (canvasPos.y + blockPos.y > workspaceHeight) {
@@ -97,7 +97,7 @@ Blockly.VirtualizedManager.prototype.check = function() {
       visible = false;
     } else {
       // top-left check
-      var blockSize = block.getHeightWidth();
+      const blockSize = block.getHeightWidth();
       blockSize.width *= workspace.scale;
       blockSize.height *= workspace.scale;
       if (canvasPos.x + blockPos.x + blockSize.width < 0) {

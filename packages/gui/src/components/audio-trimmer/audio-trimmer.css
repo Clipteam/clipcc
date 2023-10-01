@@ -109,7 +109,7 @@
 }
 
 .trimmer .trim-handle {
-    filter: hue-rotate(150deg);
+    filter: hue-rotate(-240deg) brightness(1.35);
 }
 
 .trim-handle img {

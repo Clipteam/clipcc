@@ -97,6 +97,7 @@
 .mod-menu-item {
     display: flex;
     margin: 0 -var(--clipcc-grid-unit);
+    color: var(--clipcc-text-primary);
     min-width: 6.25rem;
     padding: calc(3 * var(--clipcc-grid-unit));
     white-space: nowrap;

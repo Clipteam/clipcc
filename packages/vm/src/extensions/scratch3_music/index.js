@@ -715,8 +715,8 @@ class Scratch3MusicBlocks {
      * The maximum number of sounds to allow to play simultaneously.
      * @type {number}
      */
-    static get CONCURRENCY_LIMIT () {
-        return 30;
+    get CONCURRENCY_LIMIT () {
+        return this.runtime.limitOptions.unlimitedSoundStuffs ? Infinity : 30;
     }
 
     /**
@@ -985,7 +985,7 @@ class Scratch3MusicBlocks {
         if (util.runtime.audioEngine === null) return;
         if (util.target.sprite.soundBank === null) return;
         // If we're playing too many sounds, do not play the drum sound.
-        if (this._concurrencyCounter > Scratch3MusicBlocks.CONCURRENCY_LIMIT) {
+        if (this._concurrencyCounter > this.CONCURRENCY_LIMIT) {
             return;
         }
 
@@ -1045,8 +1045,8 @@ class Scratch3MusicBlocks {
     playNoteForBeats (args, util) {
         if (this._stackTimerNeedsInit(util)) {
             let note = Cast.toNumber(args.NOTE);
-            note = MathUtil.clamp(note,
-                Scratch3MusicBlocks.MIDI_NOTE_RANGE.min, Scratch3MusicBlocks.MIDI_NOTE_RANGE.max);
+            note = this.runtime.limitOptions.unlimitedSoundStuffs
+                ? note: MathUtil.clamp(note, Scratch3MusicBlocks.MIDI_NOTE_RANGE.min, Scratch3MusicBlocks.MIDI_NOTE_RANGE.max);
             let beats = Cast.toNumber(args.BEATS);
             beats = this._clampBeats(beats);
             // If the duration is 0, do not play the note. In Scratch 2.0, "play drum for 0 beats" plays the drum,
@@ -1086,7 +1086,7 @@ class Scratch3MusicBlocks {
         if (util.target.sprite.soundBank === null) return;
 
         // If we're playing too many sounds, do not play the note.
-        if (this._concurrencyCounter > Scratch3MusicBlocks.CONCURRENCY_LIMIT) {
+        if (this._concurrencyCounter > this.CONCURRENCY_LIMIT) {
             return;
         }
 
@@ -1195,7 +1195,7 @@ class Scratch3MusicBlocks {
      * @private
      */
     _clampBeats (beats) {
-        return MathUtil.clamp(beats, Scratch3MusicBlocks.BEAT_RANGE.min, Scratch3MusicBlocks.BEAT_RANGE.max);
+        return this.runtime.limitOptions.unlimitedSoundStuffs ? beats : MathUtil.clamp(beats, Scratch3MusicBlocks.BEAT_RANGE.min, Scratch3MusicBlocks.BEAT_RANGE.max);
     }
 
     /**
@@ -1310,7 +1310,7 @@ class Scratch3MusicBlocks {
      * @private
      */
     _updateTempo (tempo) {
-        tempo = MathUtil.clamp(tempo, Scratch3MusicBlocks.TEMPO_RANGE.min, Scratch3MusicBlocks.TEMPO_RANGE.max);
+        tempo = this.runtime.limitOptions.unlimitedSoundStuffs ? tempo : MathUtil.clamp(tempo, Scratch3MusicBlocks.TEMPO_RANGE.min, Scratch3MusicBlocks.TEMPO_RANGE.max);
         const stage = this.runtime.getTargetForStage();
         if (stage) {
             stage.tempo = tempo;

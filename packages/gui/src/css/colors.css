@@ -3,6 +3,8 @@
     --clipcc-ui-secondary: hsla(215, 75%, 95%, 1); /* #E9F1FC */
     --clipcc-ui-tertiary: hsla(215, 50%, 90%, 1); /* #D9E3F2 */
 
+    --clipcc-menu-bar-background: hsla(215, 100%, 65%, 1); /* #4C97FF */
+
     --clipcc-ui-modal-overlay: hsla(215, 100%, 65%, 0.9); /* 90% transparent version of motion-primary */
 
     --clipcc-ui-white: hsla(0, 100%, 100%, 1); /* #FFFFFF */
@@ -16,6 +18,7 @@
     --clipcc-text-primary-transparent: hsla(225, 15%, 40%, 0.75);
 
     --clipcc-motion-primary: hsla(215, 100%, 65%, 1); /* #4C97FF */
+    --clipcc-on-motion-primary: hsla(0, 100%, 100%, 1);
     --clipcc-motion-tertiary: hsla(215, 60%, 50%, 1); /* #3373CC */
     --clipcc-motion-transparent: hsla(215, 100%, 65%, 0.35); /* 35% transparent version of motion-primary */
     --clipcc-motion-light-transparent: hsla(215, 100%, 65%, 0.15); /* 15% transparent version of motion-primary */
@@ -43,4 +46,61 @@
     --clipcc-extensions-light: hsla(163, 57%, 85%, 1); /* opaque version of extensions-transparent, on white bg */
 
     --clipcc-drop-highlight: hsla(215, 100%, 77%, 1); /* lighter than motion-primary */
+}
+
+:root[theme='dark'] {
+    --clipcc-ui-primary: hsla(217, 16%, 15%, 1); /* #21262E */
+    --clipcc-ui-secondary: hsla(214, 13%, 20%, 1); /* #2D333B */
+    --clipcc-ui-tertiary: hsla(214, 13%, 25%, 1); /* #373E47 */
+
+    --clipcc-menu-bar-background: hsla(212, 12%, 30%, 1); /* #434C56 */
+
+    --clipcc-ui-modal-overlay: hsla(0, 0%, 1%, 0.5); /* 50% transparent version of black */
+
+    --clipcc-ui-white: hsla(217, 16%, 15%, 1); /* #21262E */
+    --clipcc-ui-white-dim: hsla(217, 16%, 15%, 0.75); /* 25% transparent version of ui-white */
+    --clipcc-ui-white-transparent: hsla(217, 16%, 15%, 0.25); /* 25% transparent version of ui-white */
+    --clipcc-ui-transparent: hsla(0, 100%, 100%, 0); /* 25% transparent version of ui-white */
+
+    --clipcc-ui-black-transparent: hsla(0, 1000%, 100%, 0.15); /* 15% transparent version of black */
+
+    --clipcc-text-primary: hsla(218, 11%, 85%, 1); /* #D5D8DD */
+    --clipcc-text-primary-transparent: hsla(0, 100%, 100%, 0.75);
+
+    --clipcc-motion-primary: hsla(215, 100%, 65%, 1); /* #4C97FF */
+    --clipcc-on-motion-primary: hsla(0, 100%, 100%, 1);
+    --clipcc-motion-tertiary: hsla(215, 60%, 50%, 1); /* #3373CC */
+    --clipcc-motion-transparent: hsla(215, 60%, 50%, 0.35); /* 35% transparent version of motion-primary */
+    --clipcc-motion-light-transparent: hsla(215, 100%, 65%, 0.15); /* 15% transparent version of motion-primary */
+
+    --clipcc-red-primary: hsla(20, 100%, 55%, 1); /* #FF661A */
+    --clipcc-red-tertiary: hsla(20, 100%, 45%, 1); /* #E64D00 */
+
+    --clipcc-sound-primary: hsla(300, 53%, 60%, 1); /* #CF63CF */
+    --clipcc-sound-tertiary: hsla(300, 48%, 50%, 1); /* #BD42BD */
+
+    --clipcc-control-primary: hsla(38, 100%, 55%, 1); /* #FFAB19 */
+
+    --clipcc-data-primary: hsla(30, 100%, 55%, 1); /* #FF8C1A */
+
+    --clipcc-pen-primary: hsla(163, 85%, 40%, 1); /* #0FBD8C */
+    --clipcc-pen-transparent: hsla(163, 85%, 40%, 0.25); /* #0FBD8C */
+
+    --clipcc-error-primary: hsla(30, 100%, 55%, 1); /* #FF8C1A */
+    --clipcc-error-light: hsla(30, 100%, 70%, 1); /* #FFB366 */
+    --clipcc-error-transparent: hsla(30, 100%, 55%, 0.25); /* #FF8C1A */
+
+    --clipcc-extensions-primary: hsla(163, 85%, 40%, 1); /* #0FBD8C */
+    --clipcc-extensions-tertiary: hsla(163, 85%, 30%, 1); /* #0B8E69 */
+    --clipcc-extensions-transparent: hsla(163, 85%, 40%, 0.35); /* 35% transparent version of extensions-primary */
+    --clipcc-extensions-light: hsla(163, 57%, 85%, 1); /* opaque version of extensions-transparent, on white bg */
+
+    --clipcc-drop-highlight: hsla(220, 16%, 22%, 1); /* lighter than motion-primary */
+
+    /* block-related stuffs */
+    --clipcc-block-workspace-background: var(--clipcc-ui-secondary);
+    --clipcc-block-flyout-background: var(--clipcc-ui-white);
+    --clipcc-block-main-background-dot: var(--clipcc-ui-tertiary);
+    --clipcc-block-scrollbar-color: var(--clipcc-ui-tertiary);
+    --clipcc-toolbox-text: var(--clipcc-on-motion-primary);
 }

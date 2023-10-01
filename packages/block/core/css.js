@@ -76,12 +76,12 @@ Blockly.Css.mediaPath_ = '';
  * @param {string} pathToMedia Path from page to the Blockly media directory.
  */
 Blockly.Css.inject = function(hasCss, pathToMedia) {
-  // Only inject the CSS once.
+  // Clear the CSS if it has already been injected.
   if (Blockly.Css.styleSheet_) {
-    return;
+    document.head.removeChild(Blockly.Css.styleSheet_.ownerNode);
   }
   // Placeholder for cursor rule.  Must be first rule (index 0).
-  var text = '.blocklyDraggable {}\n';
+  let text = '.blocklyDraggable {}\n';
   if (hasCss) {
     text += Blockly.Css.CONTENT.join('\n');
     if (Blockly.FieldDate) {
@@ -93,21 +93,22 @@ Blockly.Css.inject = function(hasCss, pathToMedia) {
   text = text.replace(/<<<PATH>>>/g, Blockly.Css.mediaPath_);
   // Dynamically replace colours in the CSS text, in case they have
   // been set at run-time injection.
-  for (var colourProperty in Blockly.Colours) {
-    if (Blockly.Colours.hasOwnProperty(colourProperty)) {
-      // Replace all
-      text = text.replace(
-        new RegExp('\\$colour\\_' + colourProperty, 'g'),
-        Blockly.Colours[colourProperty]
-      );
-    }
+  // Process longer colour properties first to handle common prefixes.
+  const compareByLength = function(a, b) { return b.length - a.length; };
+  const colourProperties = Object.keys(Blockly.Colours).sort(compareByLength);
+  for (let i = 0, colourProperty; colourProperty = colourProperties[i]; i++) {
+    // Replace all
+    text = text.replace(
+      new RegExp('\\$colour\\_' + colourProperty, 'g'),
+      Blockly.Colours[colourProperty]
+    );
   }
 
   // Inject CSS tag at start of head.
-  var cssNode = document.createElement('style');
+  const cssNode = document.createElement('style');
   document.head.insertBefore(cssNode, document.head.firstChild);
 
-  var cssTextNode = document.createTextNode(text);
+  const cssTextNode = document.createTextNode(text);
   cssNode.appendChild(cssTextNode);
   Blockly.Css.styleSheet_ = cssNode.sheet;
 };
@@ -127,8 +128,18 @@ Blockly.Css.setCursor = function(cursor) {
  * Array making up the CSS content for Blockly.
  */
 Blockly.Css.CONTENT = [
+  /* manage them via css variables to change colours dynamically. */
+  ':root {',
+    '--clipcc-block-workspace-background: $colour_workspace;',
+    '--clipcc-block-flyout-background: $colour_flyout;',
+    '--clipcc-block-main-background-dot: #888;',
+    '--clipcc-block-scrollbar-color: $colour_scrollbar;',
+  '}',
+  '[id ^= "blocklyGridPattern"] line {',
+    'stroke: var(--clipcc-block-main-background-dot);',
+  '}',
   '.blocklySvg {',
-    'background-color: $colour_workspace;',
+    'background-color: var(--clipcc-block-workspace-background);',
     'outline: none;',
     'overflow: hidden;',  /* IE overflows by default. */
     'position: absolute;',
@@ -465,7 +476,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyText {',
-    'fill: #fff;',
+    'fill: $colour_text;',
     'font-family: "Helvetica Neue", Helvetica, sans-serif;',
     'font-size: 12pt;',
     'font-weight: 500;',
@@ -480,7 +491,7 @@ Blockly.Css.CONTENT = [
   '}',
   '.blocklyNonEditableText>text,',
   '.blocklyEditableText>text {',
-    'fill: var(--clipcc-text-primary, $colour_text);',
+    'fill: var(--clipcc-field-text, $colour_textFieldText);',
   '}',
 
   '.blocklyEditableText>.blocklyEditableLabel {',
@@ -488,11 +499,11 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyDropdownText {',
-    'fill: #fff !important;',
+    'fill: var(--clipcc-block-text, $colour_text) !important;',
   '}',
 
   '.blocklyBubbleText {',
-    'fill: var(--clipcc-text-primary, $colour_text);',
+    'fill: var(--clipcc-field-text, $colour_textFieldText);',
   '}',
   '.blocklyFlyout {',
     'position: absolute;',
@@ -508,7 +519,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyFlyoutButton .blocklyText {',
-    'fill: var(--clipcc-text-primary, $colour_text);',
+    'fill: var(--clipcc-field-text, $colour_textFieldText);',
   '}',
 
   '.blocklyFlyoutButtonShadow {',
@@ -516,7 +527,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyFlyoutButton:hover {',
-    'fill: white;',
+    'fill: var(--clipcc-ui-white, white);',
     'cursor: pointer;',
   '}',
 
@@ -536,7 +547,7 @@ Blockly.Css.CONTENT = [
   '.blocklyFlyoutLabelText {',
     'font-family: "Helvetica Neue", Helvetica, sans-serif;',
     'font-size: 14pt;',
-    'fill: #575E75;',
+    'fill: var(--clipcc-text-primary, #575E75);',
     'font-weight: bold;',
   '}',
 
@@ -726,7 +737,7 @@ Blockly.Css.CONTENT = [
     'box-sizing: border-box;',
     'width: 100%;',
     'text-align: center;',
-    'color: var(--clipcc-text-primary, $colour_text);',
+    'color: var(--clipcc-field-text, $colour_textFieldText);',
     'font-weight: 500;',
   '}',
 
@@ -742,7 +753,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyFlyoutBackground {',
-    'fill: $colour_flyout;',
+    'fill: var(--clipcc-block-flyout-background);',
     'fill-opacity: .8;',
   '}',
 
@@ -764,7 +775,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyScrollbarHandle {',
-    'fill: $colour_scrollbar;',
+    'fill: var(--clipcc-block-scrollbar-color);',
   '}',
 
   '.blocklyScrollbarBackground:hover+.blocklyScrollbarHandle,',
@@ -855,7 +866,7 @@ Blockly.Css.CONTENT = [
   /* Category tree in Toolbox. */
   '.blocklyToolboxDiv {',
     'background-color: var(--clipcc-ui-white, $colour_toolbox);',
-    'color: var(--clipcc-text-primary, $colour_toolboxText);',
+    'color: var(--clipcc-toolbox-text, $colour_toolboxText);',
     'overflow-x: visible;',
     'overflow-y: auto;',
     'position: absolute;',
@@ -999,7 +1010,7 @@ Blockly.Css.CONTENT = [
   '.scratchColourPickerLabel {',
     'font-family: "Helvetica Neue", Helvetica, sans-serif;',
     'font-size: 0.65rem;',
-    'color: var(--clipcc-text-primary, $colour_toolboxText);',
+    'color: var(--clipcc-toolbox-text, $colour_toolboxText);',
     'margin: 8px;',
   '}',
 
@@ -1020,7 +1031,7 @@ Blockly.Css.CONTENT = [
   '.scratchNotePickerKeyLabel {',
     'font-family: "Helvetica Neue", Helvetica, sans-serif;',
     'font-size: 0.75rem;',
-    'fill: var(--clipcc-text-primary, $colour_text);',
+    'fill: var(--clipcc-field-text, $colour_textFieldText);',
     'pointer-events: none;',
   '}',
 
@@ -1039,7 +1050,7 @@ Blockly.Css.CONTENT = [
    */
 
   '.blocklyWidgetDiv .goog-menu {',
-    'background: #fff;',
+    'background: var(--clipcc-ui-white, #fff);',
     // 'border-color: #ccc #666 #666 #ccc;',
     // 'border-style: solid;',
     // 'border-width: 1px;',
@@ -1093,7 +1104,7 @@ Blockly.Css.CONTENT = [
    * #noflip to .goog-menuitem.
    */
   '.blocklyWidgetDiv .goog-menuitem {',
-    'color: #000;',
+    'color: var(--clipcc-text-primary, #000);',
     'font: normal 13px "Helvetica Neue", Helvetica, sans-serif;',
     'list-style: none;',
     'margin: 0;',
@@ -1104,7 +1115,7 @@ Blockly.Css.CONTENT = [
   '}',
 
   '.blocklyDropDownDiv .goog-menuitem {',
-    'color: #fff;',
+    'color: var(--clipcc-on-motion-primary, $colour_text);',
     'font: normal 13px "Helvetica Neue", Helvetica, sans-serif;',
     'font-weight: bold;',
     'list-style: none;',
@@ -1166,7 +1177,8 @@ Blockly.Css.CONTENT = [
   /* State: hover. */
   '.blocklyWidgetDiv .goog-menuitem-highlight,',
   '.blocklyWidgetDiv .goog-menuitem-hover {',
-    'background-color: #d6e9f8;',
+    'background-color: var(--clipcc-motion-primary, #d6e9f8);',
+    'color: var(--clipcc-on-motion-primary) !important;',
      /* Use an explicit top and bottom border so that the selection is visible',
       * in high contrast mode. */
     // 'border-color: #d6e9f8;',
@@ -1178,7 +1190,7 @@ Blockly.Css.CONTENT = [
 
   '.blocklyDropDownDiv .goog-menuitem-highlight,',
   '.blocklyDropDownDiv .goog-menuitem-hover {',
-    'background-color: rgba(0, 0, 0, 0.2);',
+    'background-color: $colour_menuHover;',
   '}',
 
   /* State: selected/checked. */
@@ -1296,7 +1308,7 @@ Blockly.Css.CONTENT = [
   '.scratchCategoryMenu {',
     'width: var(--clipcc-category-width, 85px);',
     'background: var(--clipcc-ui-white, $colour_toolbox);',
-    'color: var(--clipcc-text-primary, $colour_toolboxText);',
+    'color: var(--clipcc-toolbox-text, $colour_toolboxText);',
     'font-size: .7rem;',
     'user-select: none;',
     '-webkit-user-select: none;',
@@ -1308,7 +1320,7 @@ Blockly.Css.CONTENT = [
     'width: 100%;',
     'height: 50px;',
     'background: var(--clipcc-ui-white, $colour_toolbox);',
-    'color: var(--clipcc-text-primary, $colour_toolboxText);',
+    'color: var(--clipcc-toolbox-text, $colour_toolboxText);',
     'font-size: .7em;',
     'user-select: none;',
     '-webkit-user-select: none;',

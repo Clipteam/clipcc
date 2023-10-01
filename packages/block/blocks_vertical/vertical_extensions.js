@@ -35,25 +35,21 @@ goog.require('Blockly.constants');
 
 /**
  * Helper function that generates an extension based on a category name.
- * The generated function will set primary, secondary, and tertiary colours
- * based on the category name.
+ * The generated function will set primary, secondary, tertiary, and quaternary
+ * colours based on the category name.
  * @param {String} category The name of the category to set colours for.
  * @return {function} An extension function that sets colours based on the given
  *     category.
  */
 Blockly.ScratchBlocks.VerticalExtensions.colourHelper = function(category) {
-  var colours = Blockly.Colours[category];
-  if (!(colours && colours.primary && colours.secondary && colours.tertiary)) {
+  const colours = Blockly.Colours[category];
+  if (!(colours && colours.primary && colours.secondary && colours.tertiary &&
+    colours.quaternary)) {
     throw new Error('Could not find colours for category "' + category + '"');
   }
-  /**
-   * Set the primary, secondary, and tertiary colours on this block for the
-   * given category.
-   * @this {Blockly.Block}
-   */
   return function() {
     this.setColourFromRawValues_(colours.primary, colours.secondary,
-        colours.tertiary);
+        colours.tertiary, colours.quaternary);
   };
 };
 
@@ -62,7 +58,8 @@ Blockly.ScratchBlocks.VerticalExtensions.colourHelper = function(category) {
  */
 Blockly.ScratchBlocks.VerticalExtensions.COLOUR_TEXTFIELD = function() {
   this.setColourFromRawValues_(Blockly.Colours.textField,
-      Blockly.Colours.textField, Blockly.Colours.textField);
+      Blockly.Colours.textField, Blockly.Colours.textField,
+      Blockly.Colours.textField);
 };
 
 /**
@@ -162,18 +159,17 @@ Blockly.ScratchBlocks.VerticalExtensions.PROCEDURE_DEF_CONTEXTMENU = {
 
     // Find the delete option and update its callback to be specific to
     // functions.
-    for (var i = 0, option; option = menuOptions[i]; i++) {
+    for (let i = 0, option; option = menuOptions[i]; i++) {
       if (option.text == Blockly.Msg.DELETE_BLOCK) {
-        var input = this.getInput('custom_block');
+        const input = this.getInput('custom_block');
         // this is the root block, not the shadow block.
-        if (input && input.connection && input.connection.targetBlock()) {
-          var procCode = input.connection.targetBlock().getProcCode();
-        } else {
+        if (!input || !input.connection || !input.connection.targetBlock()) {
           return;
         }
-        var rootBlock = this;
+        const procCode = input.connection.targetBlock().getProcCode();
+        const rootBlock = this;
         option.callback = function() {
-          var didDelete = Blockly.Procedures.deleteProcedureDefCallback(
+          const didDelete = Blockly.Procedures.deleteProcedureDefCallback(
               procCode, rootBlock);
           if (!didDelete) {
             alert(Blockly.Msg.PROCEDURE_USED);
@@ -182,7 +178,7 @@ Blockly.ScratchBlocks.VerticalExtensions.PROCEDURE_DEF_CONTEXTMENU = {
       }
     }
     // Find and remove the duplicate option
-    for (var i = 0, option; option = menuOptions[i]; i++) {
+    for (let i = 0, option; option = menuOptions[i]; i++) {
       if (option.text == Blockly.Msg.DUPLICATE) {
         menuOptions.splice(i, 1);
         break;
@@ -220,12 +216,12 @@ Blockly.ScratchBlocks.VerticalExtensions.SCRATCH_EXTENSION = function() {
  * @package
  */
 Blockly.ScratchBlocks.VerticalExtensions.registerAll = function() {
-  var categoryNames =
+  const categoryNames =
       ['control', 'data', 'data_lists', 'sounds', 'motion', 'looks', 'event',
         'sensing', 'pen', 'operators', 'more'];
   // Register functions for all category colours.
-  for (var i = 0; i < categoryNames.length; i++) {
-    var name = categoryNames[i];
+  for (let i = 0; i < categoryNames.length; i++) {
+    const name = categoryNames[i];
     Blockly.Extensions.register('colours_' + name,
         Blockly.ScratchBlocks.VerticalExtensions.colourHelper(name));
   }

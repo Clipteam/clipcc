@@ -1,13 +1,13 @@
 const defaultsDeep = require('lodash.defaultsdeep');
-var path = require('path');
-var webpack = require('webpack');
-const { version } = require('../../package.json');
+const path = require('path');
+const webpack = require('webpack');
+const {version} = require('../../package.json');
 
 // Plugins
-var CopyWebpackPlugin = require('copy-webpack-plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var TerserPlugin = require('terser-webpack-plugin');
-var NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
 
@@ -29,8 +29,8 @@ const base = {
     },
     snapshot: {
         managedPaths: [
-            /^.+?[\\/]node_modules[\\/](?!scratch-(blocks|l10n|paint|render|storage|vm))[\\/]/,
-        ],
+            /^.+?[\\/]node_modules[\\/](?!scratch-(blocks|l10n|paint|render|storage|vm))[\\/]/
+        ]
     },
     module: {
         rules: [{
@@ -82,6 +82,12 @@ const base = {
                 }
             }]
         }, {
+            test: /\.hex$/,
+            type: 'asset/inline',
+            generator: {
+                dataUrl: content => `data:text/plain;base64,${content.toString('base64')}`
+            }
+        }, {
             resourceQuery: /raw/,
             type: 'asset/source'
         }]
@@ -94,7 +100,24 @@ const base = {
         ]
     },
     plugins: [
-        new NodePolyfillPlugin()
+        new NodePolyfillPlugin(),
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: '../block/media',
+                    to: 'static/blocks-media/default'
+                },
+                {
+                    from: '../block/media',
+                    to: 'static/blocks-media/high-contrast'
+                },
+                {
+                    from: 'src/lib/themes/high-contrast/blocks-media',
+                    to: 'static/blocks-media/high-contrast',
+                    force: true
+                }
+            ]
+        })
     ]
 };
 
@@ -106,11 +129,11 @@ module.exports = [
     // to run editor examples
     defaultsDeep({}, base, {
         entry: {
-            'gui': './src/playground/index.jsx',
-            'blocksonly': './src/playground/blocks-only.jsx',
-            'lifecycle': './src/playground/lifecycle-test.jsx',
-            'compatibilitytesting': './src/playground/compatibility-testing.jsx',
-            'player': './src/playground/player.jsx'
+            gui: './src/playground/index.jsx',
+            blocksonly: './src/playground/blocks-only.jsx',
+            lifecycle: './src/playground/lifecycle-test.jsx',
+            compatibilitytesting: './src/playground/compatibility-testing.jsx',
+            player: './src/playground/player.jsx'
         },
         output: {
             path: path.resolve(__dirname, 'build'),
@@ -120,12 +143,8 @@ module.exports = [
             rules: base.module.rules.concat([
                 {
                     test: /\.(svg|png|wav|gif|jpg)$/,
-                    resourceQuery: { not: [/raw/] },
-                    type: 'asset/resource',
-                    generator: {
-                        outputPath: 'static/assets/',
-                        publicPath: 'static/assets/',
-                    }
+                    resourceQuery: {not: [/raw/]},
+                    type: 'asset/inline'
                 }
             ])
         },
@@ -138,7 +157,7 @@ module.exports = [
         plugins: base.plugins.concat([
             new webpack.DefinePlugin({
                 'process.env.DEBUG': Boolean(process.env.DEBUG),
-                'process.env.GA_ID': '"' + (process.env.GA_ID || 'UA-000000-01') + '"',
+                'process.env.GA_ID': `"${process.env.GA_ID || 'UA-000000-01'}"`,
                 'clipcc.VERSION': version,
                 'clipcc.BUILD_TIME': Date.now()
             }),
@@ -182,14 +201,6 @@ module.exports = [
             new CopyWebpackPlugin({
                 patterns: [
                     {
-                        from: '../block/media',
-                        to: 'static/blocks-media'
-                    }
-                ]
-            }),
-            new CopyWebpackPlugin({
-                patterns: [
-                    {
                         from: 'extensions/**',
                         to: 'static',
                         context: 'src/examples'
@@ -227,8 +238,8 @@ module.exports = [
                 rules: base.module.rules.concat([
                     {
                         test: /\.(svg|png|wav|gif|jpg)$/,
-                        resourceQuery: { not: [/raw/] },
-                        type: 'asset/resource',
+                        resourceQuery: {not: [/raw/]},
+                        type: 'asset/inline',
                         generator: {
                             outputPath: 'static/assets/',
                             publicPath: `${STATIC_PATH}/assets/`
@@ -237,14 +248,6 @@ module.exports = [
                 ])
             },
             plugins: base.plugins.concat([
-                new CopyWebpackPlugin({
-                    patterns: [
-                        {
-                            from: '../block/media',
-                            to: 'static/blocks-media'
-                        }
-                    ]
-                }),
                 new CopyWebpackPlugin({
                     patterns: [
                         {

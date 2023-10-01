@@ -30,6 +30,11 @@ img.tool-select-icon {
     filter: brightness(0) invert(1);
 }
 
+[theme='dark'] .tool-select-icon {
+    /* Make the tool icons white while selected by making them black and inverting */
+    filter: brightness(0) invert(0.8);
+}
+
 @media only screen and (max-width: var(--clipcc-full-size-paint)) {
     .mod-tool-select {
         margin: 0;

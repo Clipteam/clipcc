@@ -18,6 +18,7 @@
 }
 
 .edit-field-title {
+    color: var(--clipcc-text-primary);
     display: block;
     margin-top: .125rem;
     font-size: .625rem;

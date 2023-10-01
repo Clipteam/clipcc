@@ -13,14 +13,15 @@
     "nohoist": [
       "**/google-closure-library",
       "**/google-closure-compiler",
+      "**/google-closure-deps",
       "**/google-closure-cmd"
     ]
   },
   "scripts": {
     "start": "yarn gui start",
     "prepare": "husky install",
-    "build:dist": "NODE_ENV=production yarn build:full",
-    "build:full": "yarn l10n build && yarn audio build && yarn storage build && yarn render build && yarn block build && yarn vm build && yarn paint build && yarn gui build",
+    "build:dist": "cross-env NODE_ENV=production yarn build:full",
+    "build:full": "yarn l10n build && yarn audio build && yarn storage build && yarn render build && yarn block build && yarn vm build && yarn paint build && node packages/gui/scripts/prepublish.mjs && yarn gui build",
     "build": "yarn block build && yarn gui build",
     "test": "yarn gui test:unit && yarn vm tap",
     "performance": "yarn vm performance",
@@ -29,6 +30,7 @@
     "translation:pull": "yarn block translate:sync:translations && yarn l10n pull:editor",
     "bump": "yarn changeset version",
     "release-all": "yarn changeset publish",
+    "patch:convert": "node ./scripts/convert-patch.js",
     "gui": "yarn workspace clipcc-gui",
     "vm": "yarn workspace clipcc-vm",
     "block": "yarn workspace clipcc-block",
@@ -44,6 +46,7 @@
     "@changesets/cli": "^2.26.1",
     "@commitlint/cli": "^17.4.2",
     "commitlint-config-gitmoji": "^2.2.10",
+    "cross-env": "^7.0.3",
     "husky": "^8.0.3"
   }
 }

@@ -101,12 +101,12 @@ Blockly.WorkspaceDragger.prototype.endDrag = function(currentDragDeltaXY) {
  * @package
  */
 Blockly.WorkspaceDragger.prototype.drag = function(currentDragDeltaXY) {
-  var metrics = this.startDragMetrics_;
-  var newXY = goog.math.Coordinate.sum(this.startScrollXY_, currentDragDeltaXY);
+  const metrics = this.startDragMetrics_;
+  const newXY = goog.math.Coordinate.sum(this.startScrollXY_, currentDragDeltaXY);
 
   // Bound the new XY based on workspace bounds.
-  var x = Math.min(newXY.x, -metrics.contentLeft);
-  var y = Math.min(newXY.y, -metrics.contentTop);
+  let x = Math.min(newXY.x, -metrics.contentLeft);
+  let y = Math.min(newXY.y, -metrics.contentTop);
   x = Math.max(x, metrics.viewWidth - metrics.contentLeft -
                metrics.contentWidth);
   y = Math.max(y, metrics.viewHeight - metrics.contentTop -
