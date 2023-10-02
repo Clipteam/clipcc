@@ -371,7 +371,9 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        Faster
+        <span>
+          Faster
+        </span>
       </div>
     </div>
     <div
@@ -387,7 +389,9 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        Slower
+        <span>
+          Slower
+        </span>
       </div>
     </div>
     <div
@@ -403,7 +407,9 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        Louder
+        <span>
+          Louder
+        </span>
       </div>
     </div>
     <div
@@ -419,7 +425,9 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        Softer
+        <span>
+          Softer
+        </span>
       </div>
     </div>
     <div
@@ -435,7 +443,9 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        Mute
+        <span>
+          Mute
+        </span>
       </div>
     </div>
     <div
@@ -451,7 +461,9 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        Fade in
+        <span>
+          Fade in
+        </span>
       </div>
     </div>
     <div
@@ -467,7 +479,9 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        Fade out
+        <span>
+          Fade out
+        </span>
       </div>
     </div>
     <div
@@ -483,7 +497,9 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        Reverse
+        <span>
+          Reverse
+        </span>
       </div>
     </div>
     <div
@@ -499,7 +515,9 @@ exports[`Sound Editor Component matches snapshot 1`] = `
       <div
         className={undefined}
       >
-        Robot
+        <span>
+          Robot
+        </span>
       </div>
     </div>
   </div>

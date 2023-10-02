@@ -18,7 +18,6 @@ class SpriteSelectorItem extends React.PureComponent {
         super(props);
         bindAll(this, [
             'getCostumeData',
-            'setRef',
             'handleClick',
             'handleDelete',
             'handleDuplicate',
@@ -31,6 +30,7 @@ class SpriteSelectorItem extends React.PureComponent {
             'handleTouchEnd'
         ]);
 
+        this.selectorRef = React.createRef();
         this.dragRecognizer = new DragRecognizer({
             onDrag: this.handleDrag,
             onDragEnd: this.handleDragEnd
@@ -76,7 +76,7 @@ class SpriteSelectorItem extends React.PureComponent {
     }
     handleTouchEnd (e) {
         const {x, y} = getEventXY(e);
-        const {top, left, bottom, right} = this.ref.getBoundingClientRect();
+        const {top, left, bottom, right} = this.selectorRef.current.getBoundingClientRect();
         if (x >= left && x <= right && y >= top && y <= bottom) {
             this.handleMouseEnter();
         }
@@ -90,16 +90,13 @@ class SpriteSelectorItem extends React.PureComponent {
             this.props.onClick(this.props.id);
         }
     }
-    handleDelete (e) {
-        e.stopPropagation(); // To prevent from bubbling back to handleClick
+    handleDelete () {
         this.props.onDeleteButtonClick(this.props.id);
     }
-    handleDuplicate (e) {
-        e.stopPropagation(); // To prevent from bubbling back to handleClick
+    handleDuplicate () {
         this.props.onDuplicateButtonClick(this.props.id);
     }
-    handleExport (e) {
-        e.stopPropagation();
+    handleExport () {
         this.props.onExportButtonClick(this.props.id);
     }
     handleMouseLeave () {
@@ -107,10 +104,6 @@ class SpriteSelectorItem extends React.PureComponent {
     }
     handleMouseEnter () {
         this.props.dispatchSetHoveredSprite(this.props.id);
-    }
-    setRef (component) {
-        // Access the DOM node using .elem because it is going through ContextMenuTrigger
-        this.ref = component && component.elem;
     }
     render () {
         const {
@@ -131,7 +124,7 @@ class SpriteSelectorItem extends React.PureComponent {
         } = this.props;
         return (
             <SpriteSelectorItemComponent
-                componentRef={this.setRef}
+                componentRef={this.selectorRef}
                 costumeURL={this.getCostumeData()}
                 preventContextMenu={this.dragRecognizer.gestureInProgress()}
                 onClick={this.handleClick}

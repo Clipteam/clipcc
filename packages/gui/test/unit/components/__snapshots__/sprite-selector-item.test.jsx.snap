@@ -86,7 +86,9 @@ exports[`SpriteSelectorItemComponent matches snapshot when given a number and de
       role="menuitem"
       tabIndex="-1"
     >
-      delete
+      <span>
+        delete
+      </span>
     </div>
   </nav>
 </div>
@@ -168,7 +170,9 @@ exports[`SpriteSelectorItemComponent matches snapshot when selected 1`] = `
       role="menuitem"
       tabIndex="-1"
     >
-      delete
+      <span>
+        delete
+      </span>
     </div>
   </nav>
 </div>

@@ -77,8 +77,7 @@ describe('SpriteSelectorItemComponent', () => {
         const contextMenu = wrapper.find('ContextMenu');
         expect(contextMenu.exists()).toBe(true);
 
-        // delete
-        contextMenu.find('DangerousMenuItem').simulate('click');
+        contextMenu.find({id: 'gui.spriteSelectorItem.contextMenuDelete'}).simulate('click');
         expect(onDeleteButtonClick).toHaveBeenCalled();
     });
 });
