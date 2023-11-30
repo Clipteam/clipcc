@@ -13,6 +13,7 @@ gulp.replace = require('gulp-replace');
 gulp.rename = require('gulp-rename');
 const glob = require('glob');
 const fs = require('fs');
+const path = require('path');
 const argv = require('yargs').argv;
 const closureCompiler = require('google-closure-compiler').gulp();
 const closureDeps = require('google-closure-deps');
@@ -262,6 +263,8 @@ window.BLOCKLY_BOOT = function() {
   }
 `;
 const UNCOMPRESSED_FOOTER = `
+// Load Blockly.
+goog.bootstrap(['Blockly']);
 delete this.BLOCKLY_DIR;
 delete this.BLOCKLY_BOOT;
 };
@@ -270,6 +273,8 @@ if (isNodeJS) {
   window.BLOCKLY_BOOT();
   module.exports = Blockly;
 } else {
+  // Import map.
+  document.write('<script type="importmap">{"imports":{"google-closure-library/":"/node_modules/google-closure-library/"}}</script>');
   // Delete any existing Closure (e.g. Soy's nogoog_shim).
   document.write('<script>var goog = undefined;</script>');
   // Set defines.
@@ -282,18 +287,51 @@ if (isNodeJS) {
 `;
 
 /**
+ * Class to resolve module import path.
+ * @implements {closureDeps.depGraph.ModuleResolver}
+ */
+class NodeModuleResolver {
+    /**
+     * @param {string} fromPath The path of the module that is doing the
+     *     importing.
+     * @param {string} importSpec The raw text of the import.
+     * @return {string} The resolved path of the referenced module.
+     * @override
+     */
+    resolve(fromPath, importSpec) {
+        let importPath;
+        if (importSpec.startsWith('./') || importSpec.startsWith('../')) {
+            importPath = path.resolve(path.dirname(fromPath), importSpec);
+        }
+        else {
+            importPath = path.resolve('node_modules', importSpec);
+        }
+        const suffix = ['', '.ts', '.js'];
+        for (const ext of suffix) {
+            if (fs.existsSync(importPath + ext)) {
+                return importPath + ext;
+            }
+        }
+        console.warn('cannot detect', importPath, 'from', fromPath, 'with', importSpec);
+        return importPath;
+    }
+}
+
+/**
  * Task for building blockly_uncompressed_vertical.js.
  */
 function buildUncompressed(callback) {
     const files = glob.globSync([
         './core/**/**/*.js',
+        './blocks_common/*.js',
+        './blocks_vertical/*.js',
+        './msg/*.js',
         './node_modules/google-closure-library/closure/goog/**/**/*.js',
         './node_modules/google-closure-library/third_party/closure/goog/**/**/*.js'
     ], {
         ignore: '**/block_render_svg_horizontal.js'
     });
     const dependencies = [];
-    const provides = [];
     for (const file of files) {
         const result = closureDeps.parser.parseFile(file);
         for (const dependency of result.dependencies) {
@@ -303,17 +341,9 @@ function buildUncompressed(callback) {
                 dependencies.push(dependency);
             }
         }
-        if (!file.startsWith('node_modules')) {
-            for (const dependency of result.dependencies) {
-                if (!dependency.isParsedFromDepsFile()) {
-                    provides.push(...dependency.closureSymbols);
-                }
-            }
-        }
     }
-    const addDependencyCode = closureDeps.depFile.getDepFileText(CLOSURE_LIBRARY, dependencies).replace(/\\/g, '/');
-    const requiresCode = '\n// Load Blockly.\n' + provides.sort().map(provide => `goog.require('${provide}');`).join('\n');
-    fs.writeFileSync('blockly_uncompressed_vertical.js', UNCOMPRESSED_HEADER + addDependencyCode + requiresCode + UNCOMPRESSED_FOOTER);
+    const addDependencyCode = closureDeps.depFile.getDepFileText(CLOSURE_LIBRARY, dependencies, new NodeModuleResolver()).replace(/\\/g, '/');
+    fs.writeFileSync('blockly_uncompressed_vertical.js', UNCOMPRESSED_HEADER + addDependencyCode + UNCOMPRESSED_FOOTER);
     callback();
 }
 
@@ -324,6 +354,14 @@ const build = gulp.parallel(
     buildCompressedCommonBlock
 );
 
+const buildCompressed = gulp.parallel(
+    buildCompressedBlockly,
+    buildCompressedBlock,
+    buildCompressedCommonBlock
+);
+
 module.exports = {
-    build
+    build,
+    buildUncompressed,
+    buildCompressed
 };

@@ -12,9 +12,11 @@
   "main": "./dist/vertical.js",
   "browser": "./shim/vertical.js",
   "scripts": {
-    "start": "http-server ./ -s -p 0 -o /tests/vertical_playground.html -c-1",
+    "start": "http-server ./ -s -p 0 -o /tests/vertical_playground.html -c-1 -e js",
     "deploy": "rimraf gh-pages/closure-library/scripts/ci/CloseAdobeDialog.exe && gh-pages -t -d gh-pages -m \"Build for $(git log --pretty=format:%H -n1) [skip ci]\"",
     "build": "gulp build && webpack",
+    "build:uncompressed": "gulp buildUncompressed",
+    "build:compressed": "gulp buildCompressed",
     "build:debug": "gulp build --debug",
     "build:strict": "gulp build --strict",
     "test:unit": "node tests/jsunit/test_runner.js",
