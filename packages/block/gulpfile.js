@@ -11,6 +11,8 @@
 const gulp = require('gulp');
 gulp.replace = require('gulp-replace');
 gulp.rename = require('gulp-rename');
+
+const browserSync = require('browser-sync');
 const glob = require('glob');
 const fs = require('fs');
 const path = require('path');
@@ -184,7 +186,8 @@ function buildCompressedBlockly() {
         }, argv.debug, argv.strict))
         .pipe(trimLicense())
         .pipe(gulp.rename('blockly_compressed_vertical.js'))
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest('./'))
+        .pipe(browserSync.stream());
 }
 
 /**
@@ -199,7 +202,8 @@ function buildCompressedBlock() {
         .pipe(trimLicense())
         .pipe(removeBlocklyBlocks())
         .pipe(gulp.rename('blocks_compressed_vertical.js'))
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest('./'))
+        .pipe(browserSync.stream());
 }
 
 /**
@@ -214,7 +218,33 @@ function buildCompressedCommonBlock() {
         .pipe(trimLicense())
         .pipe(removeBlocklyBlocks())
         .pipe(gulp.rename('blocks_compressed.js'))
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest('./'))
+        .pipe(browserSync.stream());
+}
+
+/**
+ * Task for watching files related to compressed.
+ */
+function watchCompressed() {
+    browserSync.create();
+    browserSync.init({
+        server: {
+            baseDir: '.',
+            index: 'tests/vertical_playground_compressed.html'
+        }
+    });
+    gulp.watch([
+        './core/**/**/*.js',
+        '!./core/block_render_svg_horizontal.js',
+    ], buildCompressedBlockly);
+    gulp.watch([
+        './blocks_vertical/*.js',
+        './build/gen_blocks.js'
+    ], buildCompressedBlock);
+    gulp.watch([
+        './blocks_common/*.js',
+        './build/gen_blocks.js'
+    ], buildCompressedCommonBlock);
 }
 
 const CLOSURE_LIBRARY = 'node_modules/google-closure-library/closure/goog';
@@ -360,8 +390,14 @@ const buildCompressed = gulp.parallel(
     buildCompressedCommonBlock
 );
 
+const startCompressed = gulp.series(
+    buildCompressed,
+    watchCompressed
+);
+
 module.exports = {
     build,
     buildUncompressed,
-    buildCompressed
+    buildCompressed,
+    startCompressed
 };
