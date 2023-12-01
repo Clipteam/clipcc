@@ -688,7 +688,7 @@ WorkspaceSvg.prototype.resize = function() {
     this.scrollbar.resize();
   }
   this.updateScreenCalculations_();
-  this.virtualizedManager.check();
+  this.virtualizedManager.requestCheck();
 };
 
 /**
@@ -756,7 +756,7 @@ WorkspaceSvg.prototype.translate = function(x, y) {
   if (this.blockDragSurface_) {
     this.blockDragSurface_.translateAndScaleGroup(x, y, this.scale);
   }
-  this.virtualizedManager.check();
+  this.virtualizedManager.requestCheck();
 };
 
 /**
@@ -1748,7 +1748,7 @@ WorkspaceSvg.prototype.setScale = function(newScale) {
     // No toolbox, resize flyout.
     this.flyout_.reflow();
   }
-  this.virtualizedManager.check();
+  this.virtualizedManager.requestCheck();
 };
 
 /**

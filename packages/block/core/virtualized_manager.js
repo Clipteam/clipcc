@@ -37,9 +37,10 @@ import * as utils from './utils';
 export const VirtualizedManager = function(workspace) {
   this.workspace = workspace;
   this._observedBlocks = [];
+  this._requestedCheck = false;
   this.observe = this.observe.bind(this);
   this.unobserve = this.unobserve.bind(this);
-  this.check = this.check.bind(this);
+  this.requestCheck = this.requestCheck.bind(this);
   this.dispose = this.dispose.bind(this);
 };
 
@@ -73,9 +74,22 @@ VirtualizedManager.prototype.dispose = function() {
 };
 
 /**
+ * Request check if block need to be show or hide.
+ */
+VirtualizedManager.prototype.requestCheck = function() {
+  if (!this._requestedCheck) {
+    this._requestedCheck = true;
+      queueMicrotask(() => {
+        this.check_();
+        this._requestedCheck = false;
+    });
+  }
+}
+
+/**
  * Check if block need to be show or hide.
  */
-VirtualizedManager.prototype.check = function() {
+VirtualizedManager.prototype.check_ = function() {
   const workspace = this.workspace;
   const workspaceHeight = workspace.getParentSvg().height.baseVal.value;
   const workspaceWidth = workspace.getParentSvg().width.baseVal.value;
