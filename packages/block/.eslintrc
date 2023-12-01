@@ -54,7 +54,8 @@
     },
     "env": {
         "es2020": true,
-        "browser": true
+        "browser": true,
+        "commonjs": true
     },
     "globals": {
         "Blockly": true, // Blockly global
