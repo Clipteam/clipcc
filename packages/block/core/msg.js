@@ -28,35 +28,10 @@
  * Name space for the Msg singleton.
  * Msg gets populated in the message files.
  */
-goog.provide('Blockly.Msg');
-
-
-/**
- * Back up original getMsg function.
- * @type {!Function}
- */
-goog.getMsgOrig = goog.getMsg;
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Msg');
 
 /**
- * Gets a localized message.
- * Overrides the default Closure function to check for a Blockly.Msg first.
- * Used infrequently, only known case is TODAY button in date picker.
- * @param {string} str Translatable string, places holders in the form {$foo}.
- * @param {Object<string, string>=} opt_values Maps place holder name to value.
- * @return {string} message with placeholders filled.
- * @suppress {duplicate}
+ * A dictionary of localised messages.
  */
-goog.getMsg = function(str, opt_values) {
-  const key = goog.getMsg.blocklyMsgMap[str];
-  if (key) {
-    str = Blockly.Msg[key];
-  }
-  return goog.getMsgOrig(str, opt_values);
-};
-
-/**
- * Mapping of Closure messages to Blockly.Msg names.
- */
-goog.getMsg.blocklyMsgMap = {
-  'Today': 'TODAY'
-};
+export const Msg = Object.create(null);

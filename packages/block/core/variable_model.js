@@ -24,11 +24,13 @@
  */
 'use strict';
 
-goog.provide('Blockly.VariableModel');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.VariableModel');
 
-goog.require('Blockly.Events.VarCreate');
-
-goog.require('goog.string');
+import * as eventUtils from './events/utils';
+import {VarCreate} from './events/var_create';
+import * as scratchBlocksUtils from './scratch_blocks_utils';
+import * as utils from './utils';
 
 
 /**
@@ -47,7 +49,7 @@ goog.require('goog.string');
  * @see {Blockly.FieldVariable}
  * @constructor
  */
-Blockly.VariableModel = function(workspace, name, opt_type, opt_id,
+export const VariableModel = function(workspace, name, opt_type, opt_id,
     opt_isLocal, opt_isCloud) {
   /**
    * The workspace the variable is in.
@@ -79,7 +81,7 @@ Blockly.VariableModel = function(workspace, name, opt_type, opt_id,
    * @type {string}
    * @private
    */
-  this.id_ = opt_id || Blockly.utils.genUid();
+  this.id_ = opt_id || utils.genUid();
 
   /**
    * Whether this variable is locally scoped.
@@ -93,24 +95,24 @@ Blockly.VariableModel = function(workspace, name, opt_type, opt_id,
    */
   this.isCloud = opt_isCloud || false;
 
-  Blockly.Events.fire(new Blockly.Events.VarCreate(this));
+  eventUtils.fire(new VarCreate(this));
 };
 
 /**
  * @return {!string} The ID for the variable.
  */
-Blockly.VariableModel.prototype.getId = function() {
+VariableModel.prototype.getId = function() {
   return this.id_;
 };
 
 /**
  * A custom compare function for the VariableModel objects.
- * @param {Blockly.VariableModel} var1 First variable to compare.
- * @param {Blockly.VariableModel} var2 Second variable to compare.
+ * @param {VariableModel} var1 First variable to compare.
+ * @param {VariableModel} var2 Second variable to compare.
  * @return {number} -1 if name of var1 is less than name of var2, 0 if equal,
  *     and 1 if greater.
  * @package
  */
-Blockly.VariableModel.compareByName = function(var1, var2) {
-  return Blockly.scratchBlocksUtils.compareStrings(var1.name, var2.name);
+VariableModel.compareByName = function(var1, var2) {
+  return scratchBlocksUtils.compareStrings(var1.name, var2.name);
 };

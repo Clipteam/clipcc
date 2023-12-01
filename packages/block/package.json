@@ -12,9 +12,11 @@
   "main": "./dist/vertical.js",
   "browser": "./shim/vertical.js",
   "scripts": {
-    "start": "http-server ./ -s -p 0 -o /tests/vertical_playground.html -c-1",
+    "start": "gulp startCompressed",
     "deploy": "rimraf gh-pages/closure-library/scripts/ci/CloseAdobeDialog.exe && gh-pages -t -d gh-pages -m \"Build for $(git log --pretty=format:%H -n1) [skip ci]\"",
     "build": "gulp build && webpack",
+    "build:uncompressed": "gulp buildUncompressed",
+    "build:compressed": "gulp buildCompressed",
     "build:debug": "gulp build --debug",
     "build:strict": "gulp build --strict",
     "test:unit": "node tests/jsunit/test_runner.js",
@@ -35,6 +37,7 @@
   },
   "devDependencies": {
     "async": "2.6.4",
+    "browser-sync": "^2.29.3",
     "chromedriver": "105.0.1",
     "copy-webpack-plugin": "^11.0.0",
     "eslint": "8.48.0",
@@ -47,7 +50,6 @@
     "gulp": "^4.0.2",
     "gulp-rename": "^2.0.0",
     "gulp-replace": "^1.1.4",
-    "http-server": "^14.1.1",
     "json": "9.0.6",
     "rimraf": "2.7.1",
     "selenium-webdriver": "4.8.0",

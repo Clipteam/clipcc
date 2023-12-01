@@ -24,13 +24,17 @@
 
 'use strict';
 
-goog.provide('Blockly.VirtualizedManager');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.VirtualizedManager');
+
+import * as utils from './utils';
+
 
 /**
  * Class for virtualized manager.
  * @param {Blockly.WorkspaceSvg} workspace The workspace.
  */
-Blockly.VirtualizedManager = function(workspace) {
+export const VirtualizedManager = function(workspace) {
   this.workspace = workspace;
   this._observedBlocks = [];
   this.observe = this.observe.bind(this);
@@ -43,7 +47,7 @@ Blockly.VirtualizedManager = function(workspace) {
  * Observe a block.
  * @param {Blockly.BlockSvg} block The block to observe.
  */
-Blockly.VirtualizedManager.prototype.observe = function(block) {
+VirtualizedManager.prototype.observe = function(block) {
   if (!this._observedBlocks.includes(block)) {
     this._observedBlocks.push(block);
   }
@@ -53,7 +57,7 @@ Blockly.VirtualizedManager.prototype.observe = function(block) {
  * Unobserve a block.
  * @param {Blockly.BlockSvg} block The block to unobserve.
  */
-Blockly.VirtualizedManager.prototype.unobserve = function(block) {
+VirtualizedManager.prototype.unobserve = function(block) {
   if (this._observedBlocks.includes(block)) {
     this._observedBlocks = this._observedBlocks.filter(function(i) {
       return i !== block;
@@ -64,19 +68,19 @@ Blockly.VirtualizedManager.prototype.unobserve = function(block) {
 /**
  * Dispose VirtualizedManager.
  */
-Blockly.VirtualizedManager.prototype.dispose = function() {
+VirtualizedManager.prototype.dispose = function() {
   this._observedBlocks = [];
 };
 
 /**
  * Check if block need to be show or hide.
  */
-Blockly.VirtualizedManager.prototype.check = function() {
+VirtualizedManager.prototype.check = function() {
   const workspace = this.workspace;
   const workspaceHeight = workspace.getParentSvg().height.baseVal.value;
   const workspaceWidth = workspace.getParentSvg().width.baseVal.value;
   const workspaceCanvas = workspace.getCanvas();
-  const canvasPos = Blockly.utils.getRelativeXY(workspaceCanvas);
+  const canvasPos = utils.getRelativeXY(workspaceCanvas);
   for (let i = 0; i < this._observedBlocks.length; i++) {
     const block = this._observedBlocks[i];
     // block may not have been rendered, so we skip checking for it.

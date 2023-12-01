@@ -8,11 +8,16 @@
  * @fileoverview Gulp script to build Blockly.
  */
 
+/* eslint-disable valid-jsdoc */
+
 const gulp = require('gulp');
 gulp.replace = require('gulp-replace');
 gulp.rename = require('gulp-rename');
+
+const browserSync = require('browser-sync');
 const glob = require('glob');
 const fs = require('fs');
+const path = require('path');
 const argv = require('yargs').argv;
 const closureCompiler = require('google-closure-compiler').gulp();
 const closureDeps = require('google-closure-deps');
@@ -46,14 +51,14 @@ const LICENSE_REGEX = new RegExp(`(/\\*
  * Helper for trimming down Apache License. (only Google's and MIT's)
  */
 function trimLicense() {
-    return gulp.replace(LICENSE_REGEX, '');
+  return gulp.replace(LICENSE_REGEX, '');
 }
 
 /**
  * Helper for remove Blockly.Blocks to be compatible with Blockly.
  */
 function removeBlocklyBlocks() {
-    return gulp.replace('var Blockly={Blocks:{}};', '');
+  return gulp.replace('var Blockly={Blocks:{},Colours:{},constants:{}};', '');
 }
 
 /**
@@ -63,52 +68,52 @@ function removeBlocklyBlocks() {
  * https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/DiagnosticGroups.java#L117
  */
 const JSCOMP_ERROR = [
-    'checkDebuggerStatement',
-    'checkPrototypalTypes',
-    'checkRegExp',
-    // 'checkTypes', // Disabled
-    // 'checkVars', // Warning, needs to be fixed
-    'conformanceViolations',
-    'const',
-    'constantProperty',
-    'deprecated',
-    'deprecatedAnnotations',
-    'duplicateMessage',
-    'es5Strict',
-    'externsValidation',
-    // 'extraRequire', // Warning
-    'functionParams',
-    'globalThis',
-    'invalidCasts',
-    'misplacedTypeAnnotation',
-    'missingOverride',
-    'missingPolyfill',
-    'missingProperties',
-    'missingProvide',
-    // 'missingRequire', // Warning, needs to be fixed
-    'missingReturn',
-    // 'missingSourcesWarnings', // Warning
-    'moduleLoad',
-    'moduleImport',
-    'msgDescriptions',
-    // 'nonStandardJsDocs', // Warning
-    'partialAlias',
-    // 'reportUnknownTypes', // Disabled
-    // 'strictCheckTypes', // --strict
-    // 'strictMissingProperties', // --strict
-    'strictModuleChecks',
-    'strictModuleDepCheck',
-    // 'strictPrimitiveOperators', // --strict
-    'suspiciousCode',
-    'typeInvalidation',
-    'undefinedVars',
-    'underscore',
-    'unknownDefines',
-    'unusedLocalVariables',
-    'unusedPrivateMembers',
-    'uselessCode',
-    'untranspilableFeatures',
-    'visibility'
+  'checkDebuggerStatement',
+  'checkPrototypalTypes',
+  'checkRegExp',
+  // 'checkTypes', // Disabled
+  // 'checkVars', // Warning, needs to be fixed
+  'conformanceViolations',
+  'const',
+  'constantProperty',
+  'deprecated',
+  'deprecatedAnnotations',
+  'duplicateMessage',
+  'es5Strict',
+  'externsValidation',
+  // 'extraRequire', // Warning
+  'functionParams',
+  'globalThis',
+  'invalidCasts',
+  'misplacedTypeAnnotation',
+  'missingOverride',
+  'missingPolyfill',
+  'missingProperties',
+  'missingProvide',
+  // 'missingRequire', // Warning, needs to be fixed
+  'missingReturn',
+  // 'missingSourcesWarnings', // Warning
+  'moduleLoad',
+  'moduleImport',
+  'msgDescriptions',
+  // 'nonStandardJsDocs', // Warning
+  'partialAlias',
+  // 'reportUnknownTypes', // Disabled
+  // 'strictCheckTypes', // --strict
+  // 'strictMissingProperties', // --strict
+  'strictModuleChecks',
+  'strictModuleDepCheck',
+  // 'strictPrimitiveOperators', // --strict
+  'suspiciousCode',
+  'typeInvalidation',
+  'undefinedVars',
+  'underscore',
+  'unknownDefines',
+  'unusedLocalVariables',
+  'unusedPrivateMembers',
+  'uselessCode',
+  'untranspilableFeatures',
+  'visibility'
 ];
 
 /**
@@ -116,11 +121,11 @@ const JSCOMP_ERROR = [
  * These are effected when the --debug or --strict flags are passed.
  */
 const JSCOMP_WARNING = [
-    'checkVars',
-    'extraRequire',
-    'missingRequire',
-    'missingSourcesWarnings',
-    'nonStandardJsDocs'
+  'checkVars',
+  'extraRequire',
+  'missingRequire',
+  'missingSourcesWarnings',
+  'nonStandardJsDocs'
 ];
 
 /**
@@ -128,8 +133,8 @@ const JSCOMP_WARNING = [
  * suppressions are always effected by default.
  */
 const JSCOMP_OFF = [
-    'checkTypes',
-    'reportUnknownTypes'
+  'checkTypes',
+  'reportUnknownTypes'
 ];
 
 /**
@@ -139,85 +144,112 @@ const JSCOMP_OFF = [
  * @param {boolean=} strict Whether compile in strict mode.
  */
 function compile(compilerOptions, debug, strict) {
-    const options = {
-        compilation_level: 'SIMPLE',
-        warning_level: (debug || strict) ? 'VERBOSE' : 'DEFAULT',
-        language_in: 'ECMASCRIPT_2020',
-        language_out: 'ECMASCRIPT5_STRICT',
-        hide_warnings_for: 'node_modules',
-        jscomp_off: [...JSCOMP_OFF]
-    };
+  const options = {
+    compilation_level: 'SIMPLE',
+    warning_level: (debug || strict) ? 'VERBOSE' : 'DEFAULT',
+    language_in: 'ECMASCRIPT_2020',
+    language_out: 'ECMASCRIPT5_STRICT',
+    hide_warnings_for: 'node_modules',
+    jscomp_off: [...JSCOMP_OFF]
+  };
 
-    if (debug || strict) {
-        options.jscomp_error = [...JSCOMP_ERROR];
-        options.jscomp_warning = [...JSCOMP_WARNING];
-        if (strict) {
-            options.jscomp_error.push(
-                'strictCheckTypes',
-                'strictMissingProperties',
-                'strictPrimitiveOperators'
-            );
-        }
+  if (debug || strict) {
+    options.jscomp_error = [...JSCOMP_ERROR];
+    options.jscomp_warning = [...JSCOMP_WARNING];
+    if (strict) {
+      options.jscomp_error.push(
+          'strictCheckTypes',
+          'strictMissingProperties',
+          'strictPrimitiveOperators'
+      );
     }
+  }
 
-    return closureCompiler({...options, ...compilerOptions});
+  return closureCompiler({...options, ...compilerOptions});
 }
 
 /**
  * Task for building blockly_compressed_vertical.js.
  */
 function buildCompressedBlockly() {
-    return gulp.src([
-        './core/**/**/*.js',
-        '!./core/block_render_svg_horizontal.js',
-        './node_modules/google-closure-library/closure/goog/**/**/*.js',
-        './node_modules/google-closure-library/third_party/closure/goog/**/**/*.js'
-    ], {base: './'})
-        .pipe(compile({
-            dependency_mode: 'PRUNE',
-            entry_point: './core/blockly.js',
-            rewrite_polyfills: false,
-            define: 'goog.DEBUG=false'
-        }, argv.debug, argv.strict))
-        .pipe(trimLicense())
-        .pipe(gulp.rename('blockly_compressed_vertical.js'))
-        .pipe(gulp.dest('./'));
+  return gulp.src([
+    './core/**/**/*.js',
+    '!./core/block_render_svg_horizontal.js',
+    './node_modules/google-closure-library/closure/goog/**/**/*.js',
+    './node_modules/google-closure-library/third_party/closure/goog/**/**/*.js'
+  ], {base: './'})
+      .pipe(compile({
+        dependency_mode: 'PRUNE',
+        entry_point: './core/blockly.js',
+        rewrite_polyfills: false,
+        define: 'goog.DEBUG=false',
+        module_resolution: 'NODE',
+        output_wrapper: '%output%\nvar Blockly=module$core$blockly;\n'
+      }, argv.debug, argv.strict))
+      .pipe(trimLicense())
+      .pipe(gulp.rename('blockly_compressed_vertical.js'))
+      .pipe(gulp.dest('./'))
+      .pipe(browserSync.stream());
 }
 
 /**
  * Task for building blocks_compressed_vertical.js.
  */
 function buildCompressedBlock() {
-    return gulp.src([
-        './blocks_vertical/*.js',
-        './build/gen_blocks.js',
-        './core/colours.js',
-        './core/constants.js'
-    ], {base: './'})
-        .pipe(compile({}, argv.debug, argv.strict))
-        .pipe(trimLicense())
-        .pipe(removeBlocklyBlocks())
-        .pipe(gulp.rename('blocks_compressed_vertical.js'))
-        .pipe(gulp.dest('./'));
+  return gulp.src([
+    './blocks_vertical/*.js',
+    './build/gen_blocks.js'
+  ], {base: './'})
+      .pipe(compile({}, argv.debug, argv.strict))
+      .pipe(trimLicense())
+      .pipe(removeBlocklyBlocks())
+      .pipe(gulp.rename('blocks_compressed_vertical.js'))
+      .pipe(gulp.dest('./'))
+      .pipe(browserSync.stream());
 }
 
 /**
  * Task for building blocks_compressed.js
  */
 function buildCompressedCommonBlock() {
-    return gulp.src([
-        './blocks_common/*.js',
-        './build/gen_blocks.js',
-        './core/colours.js',
-        './core/constants.js'
-    ], {base: './'})
-        .pipe(compile({}, argv.debug, argv.strict))
-        .pipe(trimLicense())
-        .pipe(removeBlocklyBlocks())
-        .pipe(gulp.rename('blocks_compressed.js'))
-        .pipe(gulp.dest('./'));
+  return gulp.src([
+    './blocks_common/*.js',
+    './build/gen_blocks.js'
+  ], {base: './'})
+      .pipe(compile({}, argv.debug, argv.strict))
+      .pipe(trimLicense())
+      .pipe(removeBlocklyBlocks())
+      .pipe(gulp.rename('blocks_compressed.js'))
+      .pipe(gulp.dest('./'))
+      .pipe(browserSync.stream());
 }
 
+/**
+ * Task for watching files related to compressed.
+ */
+function watchCompressed() {
+  browserSync.create();
+  browserSync.init({
+    server: {
+      baseDir: '.',
+      index: 'tests/vertical_playground_compressed.html'
+    }
+  });
+  gulp.watch([
+    './core/**/**/*.js',
+    '!./core/block_render_svg_horizontal.js',
+  ], buildCompressedBlockly);
+  gulp.watch([
+    './blocks_vertical/*.js',
+    './build/gen_blocks.js'
+  ], buildCompressedBlock);
+  gulp.watch([
+    './blocks_common/*.js',
+    './build/gen_blocks.js'
+  ], buildCompressedCommonBlock);
+}
+
+/* eslint-disable max-len */
 const CLOSURE_LIBRARY = 'node_modules/google-closure-library/closure/goog';
 const UNCOMPRESSED_HEADER = `'use strict';
 
@@ -233,7 +265,7 @@ window.BLOCKLY_DIR = (function() {
   if (!isNodeJS) {
     // Find name of current directory.
     var scripts = document.getElementsByTagName('script');
-    var re = new RegExp('(.+)[\/]blockly_uncompressed(_vertical|_horizontal|)\.js$');
+    var re = new RegExp('(.+)[\\/]blockly_uncompressed(_vertical|_horizontal|)\\.js$');
     for (var i = 0, script; script = scripts[i]; i++) {
       var match = re.exec(script.src);
       if (match) {
@@ -264,6 +296,8 @@ window.BLOCKLY_BOOT = function() {
   }
 `;
 const UNCOMPRESSED_FOOTER = `
+// Load Blockly.
+goog.bootstrap(['Blockly']);
 delete this.BLOCKLY_DIR;
 delete this.BLOCKLY_BOOT;
 };
@@ -272,6 +306,8 @@ if (isNodeJS) {
   window.BLOCKLY_BOOT();
   module.exports = Blockly;
 } else {
+  // Import map.
+  document.write('<script type="importmap">{"imports":{"google-closure-library/":"/node_modules/google-closure-library/"}}</script>');
   // Delete any existing Closure (e.g. Soy's nogoog_shim).
   document.write('<script>var goog = undefined;</script>');
   // Set defines.
@@ -282,41 +318,68 @@ if (isNodeJS) {
   document.write('<script>window.BLOCKLY_BOOT();</script>');
 }
 `;
+/* eslint-enable max-len */
+
+/**
+ * Class to resolve module import path.
+ * @implements {closureDeps.depGraph.ModuleResolver}
+ */
+class NodeModuleResolver {
+  /**
+   * @param {string} fromPath The path of the module that is doing the
+   *     importing.
+   * @param {string} importSpec The raw text of the import.
+   * @return {string} The resolved path of the referenced module.
+   * @override
+   */
+  resolve(fromPath, importSpec) {
+    let importPath;
+    if (importSpec.startsWith('./') || importSpec.startsWith('../')) {
+      importPath = path.resolve(path.dirname(fromPath), importSpec);
+    }
+    else {
+      importPath = path.resolve('node_modules', importSpec);
+    }
+    const suffix = ['', '.ts', '.js'];
+    for (const ext of suffix) {
+      if (fs.existsSync(importPath + ext)) {
+        return importPath + ext;
+      }
+    }
+    console.warn('cannot detect', importPath, 'from', fromPath, 'with', importSpec);
+    return importPath;
+  }
+}
 
 /**
  * Task for building blockly_uncompressed_vertical.js.
  */
 function buildUncompressed(callback) {
-    const files = glob.globSync([
-        './core/**/**/*.js',
-        './node_modules/google-closure-library/closure/goog/**/**/*.js',
-        './node_modules/google-closure-library/third_party/closure/goog/**/**/*.js'
-    ], {
-        ignore: '**/block_render_svg_horizontal.js'
-    });
-    const dependencies = [];
-    const provides = [];
-    for (const file of files) {
-        const result = closureDeps.parser.parseFile(file);
-        for (const dependency of result.dependencies) {
-            // dependencies parsed from goog.addDependency should be ignored
-            if (!dependency.isParsedFromDepsFile()) {
-                dependency.setClosurePath(CLOSURE_LIBRARY);
-                dependencies.push(dependency);
-            }
-        }
-        if (!file.startsWith('node_modules')) {
-            for (const dependency of result.dependencies) {
-                if (!dependency.isParsedFromDepsFile()) {
-                    provides.push(...dependency.closureSymbols);
-                }
-            }
-        }
+  const files = glob.globSync([
+    './core/**/**/*.js',
+    './blocks_common/*.js',
+    './blocks_vertical/*.js',
+    './msg/*.js',
+    './node_modules/google-closure-library/closure/goog/**/**/*.js',
+    './node_modules/google-closure-library/third_party/closure/goog/**/**/*.js'
+  ], {
+    ignore: '**/block_render_svg_horizontal.js'
+  });
+  const dependencies = [];
+  for (const file of files) {
+    const result = closureDeps.parser.parseFile(file);
+    for (const dependency of result.dependencies) {
+      // dependencies parsed from goog.addDependency should be ignored
+      if (!dependency.isParsedFromDepsFile()) {
+        dependency.setClosurePath(CLOSURE_LIBRARY);
+        dependencies.push(dependency);
+      }
     }
-    const addDependencyCode = closureDeps.depFile.getDepFileText(CLOSURE_LIBRARY, dependencies).replace(/\\/g, '/');
-    const requiresCode = '\n// Load Blockly.\n' + provides.sort().map(provide => `goog.require('${provide}');`).join('\n');
-    fs.writeFileSync('blockly_uncompressed_vertical.js', UNCOMPRESSED_HEADER + addDependencyCode + requiresCode + UNCOMPRESSED_FOOTER);
-    callback();
+  }
+  const addDependencyCode = closureDeps.depFile.getDepFileText(CLOSURE_LIBRARY, dependencies, new NodeModuleResolver())
+      .replace(/\\/g, '/');
+  fs.writeFileSync('blockly_uncompressed_vertical.js', UNCOMPRESSED_HEADER + addDependencyCode + UNCOMPRESSED_FOOTER);
+  callback();
 }
 
 const build = gulp.parallel(
@@ -326,6 +389,20 @@ const build = gulp.parallel(
     buildCompressedCommonBlock
 );
 
+const buildCompressed = gulp.parallel(
+    buildCompressedBlockly,
+    buildCompressedBlock,
+    buildCompressedCommonBlock
+);
+
+const startCompressed = gulp.series(
+    buildCompressed,
+    watchCompressed
+);
+
 module.exports = {
-    build
+  build,
+  buildUncompressed,
+  buildCompressed,
+  startCompressed
 };
