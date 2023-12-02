@@ -82,16 +82,16 @@ function test_getWorkspaceById() {
   var workspaceB = new Blockly.Workspace();
   try {
     assertEquals('Find workspaceA.', workspaceA,
-        Blockly.Workspace.getById(workspaceA.id));
+        Blockly.common.getWorkspaceById(workspaceA.id));
     assertEquals('Find workspaceB.', workspaceB,
-        Blockly.Workspace.getById(workspaceB.id));
+        Blockly.common.getWorkspaceById(workspaceB.id));
     assertEquals('No workspace found.', null,
-        Blockly.Workspace.getById('I do not exist.'));
+        Blockly.common.getWorkspaceById('I do not exist.'));
     workspaceA.dispose();
     assertEquals('Can\'t find workspaceA.', null,
-        Blockly.Workspace.getById(workspaceA.id));
+        Blockly.common.getWorkspaceById(workspaceA.id));
     assertEquals('WorkspaceB exists.', workspaceB,
-        Blockly.Workspace.getById(workspaceB.id));
+        Blockly.common.getWorkspaceById(workspaceB.id));
   } finally {
     workspaceB.dispose();
     workspaceA.dispose();

@@ -24,7 +24,9 @@ class Scratch3OperatorsBlocks {
             operator_equals: this.equals,
             operator_gt: this.gt,
             operator_and: this.and,
+            operator_and_temp: this.andTemp, // This is used to implement short-circuit evaluation.
             operator_or: this.or,
+            operator_or_temp: this.orTemp, // This is used to implement short-circuit evaluation.
             operator_not: this.not,
             operator_random: this.random,
             operator_join: this.join,
@@ -47,6 +49,18 @@ class Scratch3OperatorsBlocks {
             operator_ge: this.ge,
             operator_nequals: this.nequals
         };
+    }
+
+    /**
+     * Retrieve the block execution orders specified by this package.
+     * The last thing to execute should be the block's self.
+     * @return {object.<string, Array.<string>>} Mapping of opcode to execution orders.
+     */
+    getOrders() {
+        return {
+            operator_and: ['OPERAND1', {execute: 'operator_and_temp'}, 'OPERAND2', {execute: 'operator_and'}],
+            operator_or: ['OPERAND1', {execute: 'operator_or_temp'}, 'OPERAND2', {execute: 'operator_or'}]
+        }
     }
 
     add (args) {
@@ -81,8 +95,24 @@ class Scratch3OperatorsBlocks {
         return Cast.toBoolean(args.OPERAND1) && Cast.toBoolean(args.OPERAND2);
     }
 
+    andTemp (args, util) {
+        if (!Cast.toBoolean(args.OPERAND1)) {
+            util.skipToOpcode = 'operator_and';
+            return false;
+        }
+        util.skipToOpcode = true;
+    }
+
     or (args) {
         return Cast.toBoolean(args.OPERAND1) || Cast.toBoolean(args.OPERAND2);
+    }
+
+    orTemp (args, util) {
+        if (Cast.toBoolean(args.OPERAND1)) {
+            util.skipToOpcode = 'operator_or';
+            return true;
+        }
+        util.skipToOpcode = true;
     }
 
     not (args) {

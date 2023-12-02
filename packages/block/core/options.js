@@ -24,8 +24,13 @@
  */
 'use strict';
 
-goog.provide('Blockly.Options');
-goog.require('Blockly.Colours');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Options');
+
+import {Blocks} from './blocks';
+import {Colours} from './colours';
+import * as constants from './constants';
+import * as Xml from './xml';
 
 
 /**
@@ -35,93 +40,87 @@ goog.require('Blockly.Colours');
  *   https://developers.google.com/blockly/guides/get-started/web#configuration
  * @constructor
  */
-Blockly.Options = function(options) {
-  var readOnly = !!options['readOnly'];
-  if (readOnly) {
-    var languageTree = null;
-    var hasCategories = false;
-    var hasTrashcan = false;
-    var hasCollapse = false;
-    var hasComments = false;
-    var hasDisable = false;
-    var hasSounds = false;
-    var hasClipboard = false;
-  } else {
-    if (!options['toolbox'] && Blockly.Blocks.defaultToolbox) {
-      var oParser = new DOMParser();
-      var dom = oParser.parseFromString(Blockly.Blocks.defaultToolbox, 'text/xml');
+export const Options = function(options) {
+  const readOnly = !!options['readOnly'];
+  let languageTree = null;
+  let hasCategories = false;
+  let hasTrashcan = false;
+  let hasCollapse = false;
+  let hasComments = false;
+  let hasDisable = false;
+  let hasSounds = false;
+  let hasClipboard = false;
+  if (!readOnly) {
+    if (!options['toolbox'] && Blocks.defaultToolbox) {
+      const oParser = new DOMParser();
+      const dom = oParser.parseFromString(Blocks.defaultToolbox, 'text/xml');
       options['toolbox'] = dom.documentElement;
     }
-    var languageTree = Blockly.Options.parseToolboxTree(options['toolbox']);
-    var hasCategories = Boolean(languageTree &&
+    languageTree = Options.parseToolboxTree(options['toolbox']);
+    hasCategories = Boolean(languageTree &&
         languageTree.getElementsByTagName('category').length);
-    var hasTrashcan = options['trashcan'];
+    hasTrashcan = options['trashcan'];
     if (hasTrashcan === undefined) {
       hasTrashcan = false;
     }
-    var hasCollapse = options['collapse'];
+    hasCollapse = options['collapse'];
     if (hasCollapse === undefined) {
       hasCollapse = hasCategories;
     }
-    var hasComments = options['comments'];
+    hasComments = options['comments'];
     if (hasComments === undefined) {
       hasComments = hasCategories;
     }
-    var hasDisable = options['disable'];
+    hasDisable = options['disable'];
     if (hasDisable === undefined) {
       hasDisable = hasCategories;
     }
-    var hasSounds = options['sounds'];
+    hasSounds = options['sounds'];
     if (hasSounds === undefined) {
       hasSounds = true;
     }
-    var hasClipboard = options['clipboard'];
+    hasClipboard = options['clipboard'];
     if (hasClipboard === undefined) {
       hasClipboard = goog.global.navigator && goog.global.navigator.clipboard;
     }
   }
-  var rtl = !!options['rtl'];
-  var horizontalLayout = options['horizontalLayout'];
+  const rtl = !!options['rtl'];
+  let horizontalLayout = options['horizontalLayout'];
   if (horizontalLayout === undefined) {
     horizontalLayout = false;
   }
-  var toolboxAtStart = options['toolboxPosition'];
+  let toolboxAtStart = options['toolboxPosition'];
   if (toolboxAtStart === 'end') {
     toolboxAtStart = false;
   } else {
     toolboxAtStart = true;
   }
 
+  let toolboxPosition;
   if (horizontalLayout) {
-    var toolboxPosition = toolboxAtStart ?
-        Blockly.TOOLBOX_AT_TOP : Blockly.TOOLBOX_AT_BOTTOM;
+    toolboxPosition = toolboxAtStart ? constants.TOOLBOX_AT_TOP : constants.TOOLBOX_AT_BOTTOM;
   } else {
-    var toolboxPosition = (toolboxAtStart == rtl) ?
-        Blockly.TOOLBOX_AT_RIGHT : Blockly.TOOLBOX_AT_LEFT;
+    toolboxPosition = (toolboxAtStart == rtl) ? constants.TOOLBOX_AT_RIGHT : constants.TOOLBOX_AT_LEFT;
   }
 
-  var hasScrollbars = options['scrollbars'];
+  let hasScrollbars = options['scrollbars'];
   if (hasScrollbars === undefined) {
     hasScrollbars = hasCategories;
   }
-  var hasCss = options['css'];
+  let hasCss = options['css'];
   if (hasCss === undefined) {
     hasCss = true;
   }
-  var pathToMedia = 'https://blockly-demo.appspot.com/static/media/';
+  let pathToMedia = 'https://blockly-demo.appspot.com/static/media/';
   if (options['media']) {
     pathToMedia = options['media'];
   } else if (options['path']) {
     // 'path' is a deprecated option which has been replaced by 'media'.
     pathToMedia = options['path'] + 'media/';
   }
-  if (options['oneBasedIndex'] === undefined) {
-    var oneBasedIndex = true;
-  } else {
-    var oneBasedIndex = !!options['oneBasedIndex'];
-  }
+  const oneBasedIndex = options['oneBasedIndex'] === undefined ? true : !!options['oneBasedIndex'];
 
-  Blockly.Colours.overrideColours(options['colours']);
+  Colours.overrideColours(options['colours']);
 
   this.RTL = rtl;
   this.oneBasedIndex = oneBasedIndex;
@@ -138,8 +137,8 @@ Blockly.Options = function(options) {
   this.hasCss = hasCss;
   this.horizontalLayout = horizontalLayout;
   this.languageTree = languageTree;
-  this.gridOptions = Blockly.Options.parseGridOptions_(options);
-  this.zoomOptions = Blockly.Options.parseZoomOptions_(options);
+  this.gridOptions = Options.parseGridOptions_(options);
+  this.zoomOptions = Options.parseZoomOptions_(options);
   this.toolboxPosition = toolboxPosition;
 };
 
@@ -147,18 +146,18 @@ Blockly.Options = function(options) {
  * The parent of the current workspace, or null if there is no parent workspace.
  * @type {Blockly.Workspace}
  **/
-Blockly.Options.prototype.parentWorkspace = null;
+Options.prototype.parentWorkspace = null;
 
 /**
  * If set, sets the translation of the workspace to match the scrollbars.
  */
-Blockly.Options.prototype.setMetrics = null;
+Options.prototype.setMetrics = null;
 
 /**
  * Return an object with the metrics required to size the workspace.
  * @return {Object} Contains size and position metrics, or null.
  */
-Blockly.Options.prototype.getMetrics = null;
+Options.prototype.getMetrics = null;
 
 /**
  * Parse the user-specified zoom options, using reasonable defaults where
@@ -168,9 +167,9 @@ Blockly.Options.prototype.getMetrics = null;
  * @return {!Object} A dictionary of normalized options.
  * @private
  */
-Blockly.Options.parseZoomOptions_ = function(options) {
-  var zoom = options['zoom'] || {};
-  var zoomOptions = {};
+Options.parseZoomOptions_ = function(options) {
+  const zoom = options['zoom'] || {};
+  const zoomOptions = {};
   if (zoom['controls'] === undefined) {
     zoomOptions.controls = false;
   } else {
@@ -212,9 +211,9 @@ Blockly.Options.parseZoomOptions_ = function(options) {
  * @return {!Object} A dictionary of normalized options.
  * @private
  */
-Blockly.Options.parseGridOptions_ = function(options) {
-  var grid = options['grid'] || {};
-  var gridOptions = {};
+Options.parseGridOptions_ = function(options) {
+  const grid = options['grid'] || {};
+  const gridOptions = {};
   gridOptions.spacing = parseFloat(grid['spacing']) || 0;
   gridOptions.colour = grid['colour'] || '#888';
   gridOptions.length = parseFloat(grid['length']) || 1;
@@ -227,7 +226,7 @@ Blockly.Options.parseGridOptions_ = function(options) {
  * @param {Node|string} tree DOM tree of blocks, or text representation of same.
  * @return {Node} DOM tree of blocks, or null.
  */
-Blockly.Options.parseToolboxTree = function(tree) {
+Options.parseToolboxTree = function(tree) {
   if (tree) {
     if (typeof tree != 'string') {
       if (typeof XSLTProcessor == 'undefined' && tree.outerHTML) {
@@ -241,7 +240,7 @@ Blockly.Options.parseToolboxTree = function(tree) {
       }
     }
     if (typeof tree == 'string') {
-      tree = Blockly.Xml.textToDom(tree);
+      tree = Xml.textToDom(tree);
     }
   } else {
     tree = null;

@@ -20,13 +20,16 @@ class SettingsModal extends React.Component {
             'handleChangeAutoSave',
             'handleChangeAutoSaveInterval',
             'handleChangeFramerate',
+            'handleChangeTheme',
             'handleChangeInfiniteCloning',
             'handleChangeEdgelessStage',
             'handleChangeUnlimitedListLength',
             'handleChangeUnlimitedPenSize',
             'handleChangeUnlimitedSoundStuffs',
             'handleChangeAccurateCoordinates',
-            'handleChangeHideNonVanillaBlocks'
+            'handleChangeHideNonVanillaBlocks',
+            'handleChangeStageWidth',
+            'handleChangeStageHeight'
         ]);
     }
     handleClose () {
@@ -46,6 +49,9 @@ class SettingsModal extends React.Component {
         if (value >= 10 && value <= 240) {
             this.props.updateSettings({framerate: value});
         }
+    }
+    handleChangeTheme (value) {
+        this.props.updateSettings({theme: value});
     }
     handleChangeInfiniteCloning (value) {
         this.props.updateSettings({infiniteCloning: value});
@@ -68,6 +74,14 @@ class SettingsModal extends React.Component {
     handleChangeHideNonVanillaBlocks (value) {
         this.props.updateSettings({hideNonVanillaBlocks: value});
     }
+    handleChangeStageWidth (width) {
+        if (width >= 480) {
+            this.props.updateSettings({stageWidth: Math.round(width)});
+        }
+    }
+    handleChangeStageHeight (height) {
+        this.props.updateSettings({stageHeight: Math.round(height)});
+    }
     render () {
         return (
             <SettingsModalComponent
@@ -75,16 +89,20 @@ class SettingsModal extends React.Component {
                 autoSave={this.props.autoSave}
                 autoSaveInterval={this.props.autoSaveInterval}
                 framerate={this.props.framerate}
+                theme={this.props.theme}
                 infiniteCloning={this.props.infiniteCloning}
                 edgelessStage={this.props.edgelessStage}
                 unlimitedListLength={this.props.unlimitedListLength}
                 unlimitedPenSize={this.props.unlimitedPenSize}
                 unlimitedSoundStuffs={this.props.unlimitedSoundStuffs}
                 accurateCoordinates={this.props.accurateCoordinates}
+                stageHeight={this.props.stageHeight}
+                stageWidth={this.props.stageWidth}
                 onClose={this.handleClose}
                 onChangeAutoSave={this.handleChangeAutoSave}
                 onChangeAutoSaveInterval={this.handleChangeAutoSaveInterval}
                 onChangeFramerate={this.handleChangeFramerate}
+                onChangeTheme={this.handleChangeTheme}
                 onChangeInfiniteCloning={this.handleChangeInfiniteCloning}
                 onChangeEdgelessStage={this.handleChangeEdgelessStage}
                 onChangeUnlimitedListLength={this.handleChangeUnlimitedListLength}
@@ -92,6 +110,8 @@ class SettingsModal extends React.Component {
                 onChangeUnlimitedSoundStuffs={this.handleChangeUnlimitedSoundStuffs}
                 onChangeAccurateCoordinates={this.handleChangeAccurateCoordinates}
                 onChangeHideNonVanillaBlocks={this.handleChangeHideNonVanillaBlocks}
+                onChangeStageWidth={this.handleChangeStageWidth}
+                onChangeStageHeight={this.handleChangeStageHeight}
             />
         );
     }
@@ -108,8 +128,11 @@ SettingsModal.propTypes = {
     accurateCoordinates: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
+    theme: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
-    updateSettings: PropTypes.func.isRequired
+    updateSettings: PropTypes.func.isRequired,
+    stageHeight: PropTypes.number.isRequired,
+    stageWidth: PropTypes.number.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -122,7 +145,10 @@ const mapStateToProps = state => ({
     unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,
     accurateCoordinates: state.scratchGui.settings.accurateCoordinates,
     autoSaveInterval: state.scratchGui.settings.autoSaveInterval,
-    framerate: state.scratchGui.settings.framerate
+    framerate: state.scratchGui.settings.framerate,
+    theme: state.scratchGui.settings.theme,
+    stageHeight: state.scratchGui.settings.stageHeight,
+    stageWidth: state.scratchGui.settings.stageWidth
 });
 
 const mapDispatchToProps = dispatch => ({

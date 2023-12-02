@@ -25,6 +25,12 @@ class BlockUtility {
         this._nowObj = {
             now: () => this.sequencer.runtime.currentMSecs
         };
+
+        /**
+         * The opcode to skip to, which is used to implement short-circuit evaluation.
+         * @type {?string | ?boolean}
+         */
+        this.skipToOpcode = null;
     }
 
     /**

@@ -6,6 +6,7 @@ import {defineMessages, injectIntl, intlShape, FormattedMessage} from 'react-int
 import Box from '../box/box.jsx';
 import Modal from '../../containers/modal.jsx';
 import Input from '../forms/input.jsx';
+import Select from '../select/select.jsx';
 import BufferedInputHOC from '../forms/buffered-input-hoc.jsx';
 import Switch from '../switch/switch.jsx';
 import styles from './settings-modal.css';
@@ -30,6 +31,26 @@ const messages = defineMessages({
         defaultMessage: 'Project',
         description: 'Label of project',
         id: 'gui.settingsModal.project'
+    },
+    system: {
+        defaultMessage: 'Follow System',
+        description: 'Label of follow system',
+        id: 'gui.settingsModal.theme.followSystem'
+    },
+    dark: {
+        defaultMessage: 'Dark',
+        description: 'Label of dark',
+        id: 'gui.settingsModal.theme.dark'
+    },
+    default: {
+        defaultMessage: 'Default',
+        description: 'Label of default',
+        id: 'gui.settingsModal.theme.default'
+    },
+    highContrast: {
+        defaultMessage: 'High Contrast',
+        description: 'Label of high contrast',
+        id: 'gui.settingsModal.theme.highContrast'
     }
 });
 
@@ -87,6 +108,38 @@ class SettingsModal extends React.Component {
                         >
                             {this.props.intl.formatMessage(messages.appearance)}
                         </p>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Theme"
+                                    description="Label of theme"
+                                    id="gui.settingsModal.theme"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Switch between dark and light, or follow system."
+                                    description="Description of theme"
+                                    id="gui.settingsModal.themeDescription"
+                                />
+                            </div>
+                            <Select
+                                value={this.props.theme}
+                                onChange={this.props.onChangeTheme}
+                                className={styles.selectSmall}
+                                options={[{
+                                    id: 'system',
+                                    text: this.props.intl.formatMessage(messages.system)
+                                }, {
+                                    id: 'default',
+                                    text: this.props.intl.formatMessage(messages.default)
+                                }, {
+                                    id: 'dark',
+                                    text: this.props.intl.formatMessage(messages.dark)
+                                }, {
+                                    id: 'high-contrast',
+                                    text: this.props.intl.formatMessage(messages.highContrast)
+                                }]}
+                            />
+                        </div>
                         <div className={styles.item}>
                             <div className={styles.label}>
                                 <FormattedMessage
@@ -245,6 +298,45 @@ class SettingsModal extends React.Component {
                                 onChange={this.props.onChangeAccurateCoordinates}
                             />
                         </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Stage Size"
+                                    description="Label of stage size"
+                                    id="gui.settingsModal.resolution"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Change stage size, width must not be greater than 480."
+                                    description="Description of stage size"
+                                    id="gui.settingsModal.resolutionDescription"
+                                />
+                            </div>
+                            <div className={styles.group}>
+                                <BufferedInput
+                                    small
+                                    tabIndex="0"
+                                    type="number"
+                                    precision={0}
+                                    placeholder={480}
+                                    value={this.props.stageWidth}
+                                    onSubmit={this.props.onChangeStageWidth}
+                                    className={classNames(styles.input)}
+                                />
+                                <div style={{margin: '0 1rem'}}>
+                                    {'×'}
+                                </div>
+                                <BufferedInput
+                                    small
+                                    tabIndex="0"
+                                    type="number"
+                                    precision={0}
+                                    placeholder={360}
+                                    value={this.props.stageHeight}
+                                    onSubmit={this.props.onChangeStageHeight}
+                                    className={classNames(styles.input)}
+                                />
+                            </div>
+                        </div>
                         <p
                             className={styles.category}
                             ref={ref => this.categoryRef.project = ref}
@@ -314,6 +406,9 @@ SettingsModal.propTypes = {
     accurateCoordinates: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
+    stageWidth: PropTypes.number.isRequired,
+    stageHeight: PropTypes.number.isRequired,
+    theme: PropTypes.string.isRequired,
     intl: intlShape.isRequired,
     onClose: PropTypes.func.isRequired,
     onChangeAutoSave: PropTypes.func.isRequired,
@@ -325,6 +420,7 @@ SettingsModal.propTypes = {
     onChangeAccurateCoordinates: PropTypes.func.isRequired,
     onChangeAutoSaveInterval: PropTypes.func.isRequired,
     onChangeFramerate: PropTypes.func.isRequired,
+    onChangeTheme: PropTypes.func.isRequired,
     onChangeHideNonVanillaBlocks: PropTypes.func.isRequired
 };
 

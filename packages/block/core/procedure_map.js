@@ -24,14 +24,15 @@
  */
 'use strict';
 
-goog.provide('Blockly.ProcedureMap');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.ProcedureMap');
 
 /**
  * Class for a procedure map. This contains a dictionary data structure with
  * procedure proccodes as keys and its mutation as values. 
  * @param {!Blockly.Workspace} workspace The workspace this map belongs to.
  */
-Blockly.ProcedureMap = function(workspace) {
+export const ProcedureMap = function(workspace) {
   /**
    * A map from procedure proccode to list of global procedures.
    * @type {!Object.<string, Element>}
@@ -56,7 +57,7 @@ Blockly.ProcedureMap = function(workspace) {
 /**
  * Clear the procedure map.
  */
-Blockly.ProcedureMap.prototype.clear = function() {
+ProcedureMap.prototype.clear = function() {
   this.globalProcedureMap_ = new Object(null);
   this.localProcedureMap_ = new Object(null);
 };
@@ -67,7 +68,7 @@ Blockly.ProcedureMap.prototype.clear = function() {
  * @param {string} procCode The proccode to check for.
  * @return {Element} The mutation with the given name, or null if not found.
  */
-Blockly.ProcedureMap.prototype.getProcedure = function(procCode) {
+ProcedureMap.prototype.getProcedure = function(procCode) {
   if (this.localProcedureMap_.hasOwnProperty(procCode)) {
     return this.localProcedureMap_[procCode];
   }
@@ -82,7 +83,7 @@ Blockly.ProcedureMap.prototype.getProcedure = function(procCode) {
  * @return {!Array.<Element>} Array of mutation xml elements.
  * @package
  */
-Blockly.ProcedureMap.prototype.allGlobalProcedureMutations = function() {
+ProcedureMap.prototype.allGlobalProcedureMutations = function() {
   return Object.values(this.globalProcedureMap_);
 };
 
@@ -91,7 +92,7 @@ Blockly.ProcedureMap.prototype.allGlobalProcedureMutations = function() {
  * @return {!Array.<Element>} Array of mutation xml elements.
  * @package
  */
-Blockly.ProcedureMap.prototype.allLocalProcedureMutations = function() {
+ProcedureMap.prototype.allLocalProcedureMutations = function() {
   return Object.values(this.localProcedureMap_);
 };
 
@@ -100,8 +101,8 @@ Blockly.ProcedureMap.prototype.allLocalProcedureMutations = function() {
  * @param {Element} mutation The mutation of the procedure.
  * @returns {Element} The newly created procedure.
  */
-Blockly.ProcedureMap.prototype.createProcedureFromMutation = function(mutation) {
-  var procCode = mutation.getAttribute('proccode');
+ProcedureMap.prototype.createProcedureFromMutation = function(mutation) {
+  const procCode = mutation.getAttribute('proccode');
   if (mutation.getAttribute('global') == 'true') {
     if (this.globalProcedureMap_.hasOwnProperty(procCode)) {
       console.warn('Procedure "' + procCode + '" is already in use.');
@@ -124,8 +125,8 @@ Blockly.ProcedureMap.prototype.createProcedureFromMutation = function(mutation) 
  * @param {!Blockly.Block} definitionRoot The root block of the stack that
  *     defines the custom procedure.
  */
-Blockly.ProcedureMap.prototype.removeProcedure = function(definitionRoot) {
-  var block = definitionRoot.getChildren()[0];
+ProcedureMap.prototype.removeProcedure = function(definitionRoot) {
+  const block = definitionRoot.getChildren()[0];
   if (block.global_) {
     delete this.globalProcedureMap_[block.getProcCode()];
   }

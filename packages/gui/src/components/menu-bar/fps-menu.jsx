@@ -7,6 +7,7 @@ import {FormattedMessage} from 'react-intl';
 import {connect} from 'react-redux';
 
 import check from './check.svg';
+import fpsIcon from './icon--fps.svg';
 import {MenuItem, Submenu} from '../menu/menu.jsx';
 import {fpsMenuOpen, openFpsMenu} from '../../reducers/menus.js';
 import {updateSettings} from '../../reducers/settings';
@@ -52,6 +53,10 @@ class FPSMenu extends React.PureComponent {
                     onClick={this.props.onRequestOpen}
                     onMouseOver={this.handleMouseOver}
                 >
+                    <img
+                        src={fpsIcon}
+                        style={{width: 24}}
+                    />
                     <span className={styles.submenuLabel}>
                         <FormattedMessage
                             defaultMessage="FPS"

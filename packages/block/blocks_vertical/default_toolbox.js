@@ -607,7 +607,7 @@ Blockly.Blocks.defaultToolbox = '<xml id="toolbox-categories" style="display: no
         '</shadow>' +
       '</value>' +
     '</block>' +
-    '<block type="operator_index_of" id="operator_index_of">' +
+    '<block type="operator_indexof" id="operator_indexof">' +
       '<value name="POS">' +
         '<shadow type="math_whole_number">' +
           '<field name="NUM">1</field>' +

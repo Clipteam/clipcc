@@ -39,12 +39,14 @@ const resolveStageSize = (stageSizeMode, isFullSize) => {
  * Retrieve info used to determine the actual stage size based on the current GUI and browser state.
  * @param {STAGE_DISPLAY_SIZES} stageSize - the current fully-resolved stage size.
  * @param {boolean} isFullScreen - true if full-screen mode is enabled.
+ * @param {number} resolutionX - custom stage width.
+ * @param {number} resolutionY - custom stage height.
  * @return {StageDimensions} - an object describing the dimensions of the stage.
  */
-const getStageDimensions = (stageSize, isFullScreen) => {
+const getStageDimensions = (stageSize, isFullScreen, resolutionX, resolutionY) => {
     const stageDimensions = {
-        heightDefault: layout.standardStageHeight,
-        widthDefault: layout.standardStageWidth,
+        heightDefault: resolutionY || layout.standardStageHeight,
+        widthDefault: resolutionX || layout.standardStageWidth,
         height: 0,
         width: 0,
         scale: 0
@@ -55,11 +57,11 @@ const getStageDimensions = (stageSize, isFullScreen) => {
             STAGE_DIMENSION_DEFAULTS.menuHeightAdjustment -
             STAGE_DIMENSION_DEFAULTS.fullScreenSpacingBorderAdjustment;
 
-        stageDimensions.width = stageDimensions.height + (stageDimensions.height / 3);
+        stageDimensions.width = stageDimensions.height * (resolutionX / resolutionY);
 
         if (stageDimensions.width > window.innerWidth) {
             stageDimensions.width = window.innerWidth;
-            stageDimensions.height = stageDimensions.width * .75;
+            stageDimensions.height = stageDimensions.width * (resolutionY / resolutionX);
         }
 
         stageDimensions.scale = stageDimensions.width / stageDimensions.widthDefault;

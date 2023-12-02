@@ -24,15 +24,19 @@
  */
 'use strict';
 
-goog.provide('Blockly.FieldTextInputRemovable');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.FieldTextInputRemovable');
 
-goog.require('Blockly.BlockSvg.render');
-goog.require('Blockly.Colours');
-goog.require('Blockly.FieldTextInput');
-goog.require('Blockly.Msg');
-goog.require('Blockly.utils');
-goog.require('goog.dom');
-goog.require('goog.dom.TagName');
+import * as browserEvents from './browser_events';
+import * as common from './common';
+import {Field} from './field';
+import {FieldTextInput} from './field_textinput';
+import * as utils from './utils';
+import {WidgetDiv} from './widgetdiv';
+
+const dom = goog.require('goog.dom');
+const TagName = goog.require('goog.dom.TagName');
+
 
 /**
  * Class for an editable text field displaying a deletion icon when selected.
@@ -44,29 +48,29 @@ goog.require('goog.dom.TagName');
  * @param {RegExp=} opt_restrictor An optional regular expression to restrict
  *     typed text to. Text that doesn't match the restrictor will never show
  *     in the text field.
- * @extends {Blockly.FieldTextInput}
+ * @extends {FieldTextInput}
  * @constructor
  */
-Blockly.FieldTextInputRemovable = function(text, opt_validator, opt_restrictor) {
-  Blockly.FieldTextInputRemovable.superClass_.constructor.call(this, text,
+export const FieldTextInputRemovable = function(text, opt_validator, opt_restrictor) {
+  FieldTextInputRemovable.superClass_.constructor.call(this, text,
       opt_validator, opt_restrictor);
 };
-goog.inherits(Blockly.FieldTextInputRemovable, Blockly.FieldTextInput);
+goog.inherits(FieldTextInputRemovable, FieldTextInput);
 
 /**
  * Show the inline free-text editor on top of the text with the remove button.
  * @private
  */
-Blockly.FieldTextInputRemovable.prototype.showEditor_ = function() {
-  Blockly.FieldTextInputRemovable.superClass_.showEditor_.call(this);
+FieldTextInputRemovable.prototype.showEditor_ = function() {
+  FieldTextInputRemovable.superClass_.showEditor_.call(this);
 
-  var div = Blockly.WidgetDiv.DIV;
+  const div = WidgetDiv.DIV;
   div.className += ' removableTextInput';
-  var removeButton =
-      goog.dom.createDom(goog.dom.TagName.IMG, 'blocklyTextRemoveIcon');
+  const removeButton =
+      dom.createDom(TagName.IMG, 'blocklyTextRemoveIcon');
   removeButton.setAttribute('src',
-      Blockly.mainWorkspace.options.pathToMedia + 'icons/remove.svg');
-  this.removeButtonMouseWrapper_ = Blockly.bindEvent_(removeButton,
+      common.getMainWorkspace().options.pathToMedia + 'icons/remove.svg');
+  this.removeButtonMouseWrapper_ = browserEvents.bind(removeButton,
       'mousedown', this, this.removeCallback_);
   div.appendChild(removeButton);
 };
@@ -76,7 +80,7 @@ Blockly.FieldTextInputRemovable.prototype.showEditor_ = function() {
  * on sourceBlock and calls it if possible.
  * @private
  */
-Blockly.FieldTextInputRemovable.prototype.removeCallback_ = function() {
+FieldTextInputRemovable.prototype.removeCallback_ = function() {
   if (this.sourceBlock_ && this.sourceBlock_.removeFieldCallback) {
     this.sourceBlock_.removeFieldCallback(this);
   } else {
@@ -89,17 +93,17 @@ Blockly.FieldTextInputRemovable.prototype.removeCallback_ = function() {
  * dereferencing any string table references.
  * @param {!Object} options A JSON object with options (text, class, and
  *                          spellcheck).
- * @returns {!Blockly.FieldTextInputRemovable} The new text input.
+ * @returns {!FieldTextInputRemovable} The new text input.
  * @public
  */
-Blockly.FieldTextInputRemovable.fromJson = function(options) {
-  var text = Blockly.utils.replaceMessageReferences(options['text']);
-  var field = new Blockly.FieldTextInputRemovable(text, options['class']);
+FieldTextInputRemovable.fromJson = function(options) {
+  const text = utils.replaceMessageReferences(options['text']);
+  const field = new FieldTextInputRemovable(text, options['class']);
   if (typeof options['spellcheck'] == 'boolean') {
     field.setSpellcheck(options['spellcheck']);
   }
   return field;
 };
 
-Blockly.Field.register(
-    'field_input_removable', Blockly.FieldTextInputRemovable);
+Field.register(
+    'field_input_removable', FieldTextInputRemovable);
