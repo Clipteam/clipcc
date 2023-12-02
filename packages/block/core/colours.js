@@ -20,9 +20,10 @@
 
 'use strict';
 
-goog.provide('Blockly.Colours');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Colours');
 
-Blockly.Colours = {
+export const Colours = {
   // SVG colours: these must be specificed in #RRGGBB style
   // To add an opacity, this must be specified as a separate property (for SVG fill-opacity)
   "motion": {
@@ -127,32 +128,32 @@ Blockly.Colours = {
 };
 
 /**
- * Override the colours in Blockly.Colours with new values basded on the
+ * Override the colours in Colours with new values basded on the
  * given dictionary.
  * @param {!Object} colours Dictionary of colour properties and new values.
  * @package
  */
-Blockly.Colours.overrideColours = function(colours) {
+Colours.overrideColours = function(colours) {
   // Colour overrides provided by the injection
   if (colours) {
-    for (var colourProperty in colours) {
-      if (colours.hasOwnProperty(colourProperty) &&
-          Blockly.Colours.hasOwnProperty(colourProperty)) {
-        // If a property is in both colours option and Blockly.Colours,
-        // set the Blockly.Colours value to the override.
+    for (const colourProperty in colours) {
+      if (Object.prototype.hasOwnProperty.call(colours, colourProperty) &&
+          Object.prototype.hasOwnProperty.call(Colours, colourProperty)) {
+        // If a property is in both colours option and Colours,
+        // set the Colours value to the override.
         // Override Blockly category color object properties with those
         // provided.
-        var colourPropertyValue = colours[colourProperty];
+        const colourPropertyValue = colours[colourProperty];
         if (goog.isObject(colourPropertyValue)) {
-          for (var colourSequence in colourPropertyValue) {
-            if (colourPropertyValue.hasOwnProperty(colourSequence) &&
-              Blockly.Colours[colourProperty].hasOwnProperty(colourSequence)) {
-              Blockly.Colours[colourProperty][colourSequence] =
+          for (const colourSequence in colourPropertyValue) {
+            if (Object.prototype.hasOwnProperty.call(colourPropertyValue, colourSequence) &&
+                Object.prototype.hasOwnProperty.call(Colours[colourProperty], colourSequence)) {
+              Colours[colourProperty][colourSequence] =
                   colourPropertyValue[colourSequence];
             }
           }
         } else {
-          Blockly.Colours[colourProperty] = colourPropertyValue;
+          Colours[colourProperty] = colourPropertyValue;
         }
       }
     }

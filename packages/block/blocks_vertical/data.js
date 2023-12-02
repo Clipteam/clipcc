@@ -21,7 +21,6 @@
 'use strict';
 
 goog.provide('Blockly.Blocks.data');
-goog.provide('Blockly.Constants.Data');
 
 goog.require('Blockly.Blocks');
 goog.require('Blockly.Colours');
@@ -46,7 +45,7 @@ Blockly.Blocks['data_variable'] = {
           "variableType": ""
         }
       ],
-      "category": Blockly.Categories.data,
+      "category": Blockly.constants.Categories.data,
       "checkboxInFlyout": true,
       "extensions": ["contextMenu_getVariableBlock", "colours_data", "output_string"]
     });
@@ -71,7 +70,7 @@ Blockly.Blocks['data_setvariableto'] = {
           "name": "VALUE"
         }
       ],
-      "category": Blockly.Categories.data,
+      "category": Blockly.constants.Categories.data,
       "extensions": ["colours_data", "shape_statement"]
     });
   }
@@ -95,7 +94,7 @@ Blockly.Blocks['data_changevariableby'] = {
           "name": "VALUE"
         }
       ],
-      "category": Blockly.Categories.data,
+      "category": Blockly.constants.Categories.data,
       "extensions": ["colours_data", "shape_statement"]
     });
   }
@@ -117,7 +116,7 @@ Blockly.Blocks['data_showvariable'] = {
       ],
       "previousStatement": null,
       "nextStatement": null,
-      "category": Blockly.Categories.data,
+      "category": Blockly.constants.Categories.data,
       "extensions": ["colours_data"]
     });
   }
@@ -139,7 +138,7 @@ Blockly.Blocks['data_hidevariable'] = {
       ],
       "previousStatement": null,
       "nextStatement": null,
-      "category": Blockly.Categories.data,
+      "category": Blockly.constants.Categories.data,
       "extensions": ["colours_data"]
     });
   }
@@ -159,10 +158,10 @@ Blockly.Blocks['data_listcontents'] = {
           "type": "field_variable_getter",
           "text": "",
           "name": "LIST",
-          "variableType": Blockly.LIST_VARIABLE_TYPE
+          "variableType": Blockly.constants.LIST_VARIABLE_TYPE
         }
       ],
-      "category": Blockly.Categories.dataLists,
+      "category": Blockly.constants.Categories.dataLists,
       "extensions": ["contextMenu_getListBlock", "colours_data_lists", "output_string"],
       "checkboxInFlyout": true
     });
@@ -191,7 +190,7 @@ Blockly.Blocks['data_listindexall'] = {
           ]
         }
       ],
-      "category": Blockly.Categories.data,
+      "category": Blockly.constants.Categories.data,
       "extensions": ["colours_textfield", "output_string"]
     });
   }
@@ -219,7 +218,7 @@ Blockly.Blocks['data_listindexrandom'] = {
           ]
         }
       ],
-      "category": Blockly.Categories.data,
+      "category": Blockly.constants.Categories.data,
       "extensions": ["colours_textfield", "output_string"]
     });
   }
@@ -241,10 +240,10 @@ Blockly.Blocks['data_addtolist'] = {
         {
           "type": "field_variable",
           "name": "LIST",
-          "variableTypes": [Blockly.LIST_VARIABLE_TYPE]
+          "variableTypes": [Blockly.constants.LIST_VARIABLE_TYPE]
         }
       ],
-      "category": Blockly.Categories.dataLists,
+      "category": Blockly.constants.Categories.dataLists,
       "extensions": ["colours_data_lists", "shape_statement"]
     });
   }
@@ -266,10 +265,10 @@ Blockly.Blocks['data_deleteoflist'] = {
         {
           "type": "field_variable",
           "name": "LIST",
-          "variableTypes": [Blockly.LIST_VARIABLE_TYPE]
+          "variableTypes": [Blockly.constants.LIST_VARIABLE_TYPE]
         }
       ],
-      "category": Blockly.Categories.dataLists,
+      "category": Blockly.constants.Categories.dataLists,
       "extensions": ["colours_data_lists", "shape_statement"]
     });
   }
@@ -287,10 +286,10 @@ Blockly.Blocks['data_deletealloflist'] = {
         {
           "type": "field_variable",
           "name": "LIST",
-          "variableTypes": [Blockly.LIST_VARIABLE_TYPE]
+          "variableTypes": [Blockly.constants.LIST_VARIABLE_TYPE]
         }
       ],
-      "category": Blockly.Categories.dataLists,
+      "category": Blockly.constants.Categories.dataLists,
       "extensions": ["colours_data_lists", "shape_statement"]
     });
   }
@@ -316,10 +315,10 @@ Blockly.Blocks['data_insertatlist'] = {
         {
           "type": "field_variable",
           "name": "LIST",
-          "variableTypes": [Blockly.LIST_VARIABLE_TYPE]
+          "variableTypes": [Blockly.constants.LIST_VARIABLE_TYPE]
         }
       ],
-      "category": Blockly.Categories.dataLists,
+      "category": Blockly.constants.Categories.dataLists,
       "extensions": ["colours_data_lists", "shape_statement"]
     });
   }
@@ -341,14 +340,14 @@ Blockly.Blocks['data_replaceitemoflist'] = {
         {
           "type": "field_variable",
           "name": "LIST",
-          "variableTypes": [Blockly.LIST_VARIABLE_TYPE]
+          "variableTypes": [Blockly.constants.LIST_VARIABLE_TYPE]
         },
         {
           "type": "input_value",
           "name": "ITEM"
         }
       ],
-      "category": Blockly.Categories.dataLists,
+      "category": Blockly.constants.Categories.dataLists,
       "extensions": ["colours_data_lists", "shape_statement"]
     });
   }
@@ -370,13 +369,13 @@ Blockly.Blocks['data_itemoflist'] = {
         {
           "type": "field_variable",
           "name": "LIST",
-          "variableTypes": [Blockly.LIST_VARIABLE_TYPE]
+          "variableTypes": [Blockly.constants.LIST_VARIABLE_TYPE]
         }
       ],
       "output": null,
-      "category": Blockly.Categories.dataLists,
+      "category": Blockly.constants.Categories.dataLists,
       "extensions": ["colours_data_lists"],
-      "outputShape": Blockly.OUTPUT_SHAPE_ROUND
+      "outputShape": Blockly.constants.OUTPUT_SHAPE_ROUND
     });
   }
 };
@@ -397,13 +396,13 @@ Blockly.Blocks['data_itemnumoflist'] = {
         {
           "type": "field_variable",
           "name": "LIST",
-          "variableTypes": [Blockly.LIST_VARIABLE_TYPE]
+          "variableTypes": [Blockly.constants.LIST_VARIABLE_TYPE]
         }
       ],
       "output": null,
-      "category": Blockly.Categories.dataLists,
+      "category": Blockly.constants.Categories.dataLists,
       "extensions": ["colours_data_lists"],
-      "outputShape": Blockly.OUTPUT_SHAPE_ROUND
+      "outputShape": Blockly.constants.OUTPUT_SHAPE_ROUND
     });
   }
 };
@@ -420,10 +419,10 @@ Blockly.Blocks['data_lengthoflist'] = {
         {
           "type": "field_variable",
           "name": "LIST",
-          "variableTypes": [Blockly.LIST_VARIABLE_TYPE]
+          "variableTypes": [Blockly.constants.LIST_VARIABLE_TYPE]
         }
       ],
-      "category": Blockly.Categories.dataLists,
+      "category": Blockly.constants.Categories.dataLists,
       "extensions": ["colours_data_lists", "output_number"]
     });
   }
@@ -441,14 +440,14 @@ Blockly.Blocks['data_listcontainsitem'] = {
         {
           "type": "field_variable",
           "name": "LIST",
-          "variableTypes": [Blockly.LIST_VARIABLE_TYPE]
+          "variableTypes": [Blockly.constants.LIST_VARIABLE_TYPE]
         },
         {
           "type": "input_value",
           "name": "ITEM"
         }
       ],
-      "category": Blockly.Categories.dataLists,
+      "category": Blockly.constants.Categories.dataLists,
       "extensions": ["colours_data_lists", "output_boolean"]
     });
   }
@@ -466,10 +465,10 @@ Blockly.Blocks['data_showlist'] = {
         {
           "type": "field_variable",
           "name": "LIST",
-          "variableTypes": [Blockly.LIST_VARIABLE_TYPE]
+          "variableTypes": [Blockly.constants.LIST_VARIABLE_TYPE]
         }
       ],
-      "category": Blockly.Categories.dataLists,
+      "category": Blockly.constants.Categories.dataLists,
       "extensions": ["colours_data_lists", "shape_statement"]
     });
   }
@@ -487,131 +486,14 @@ Blockly.Blocks['data_hidelist'] = {
         {
           "type": "field_variable",
           "name": "LIST",
-          "variableTypes": [Blockly.LIST_VARIABLE_TYPE]
+          "variableTypes": [Blockly.constants.LIST_VARIABLE_TYPE]
         }
       ],
-      "category": Blockly.Categories.dataLists,
+      "category": Blockly.constants.Categories.dataLists,
       "extensions": ["colours_data_lists", "shape_statement"]
     });
   }
 };
-
-/**
- * Mixin to add a context menu for a data_variable block.  It adds one item for
- * each variable defined on the workspace.
- * @mixin
- * @augments Blockly.Block
- * @package
- * @readonly
- */
-Blockly.Constants.Data.CUSTOM_CONTEXT_MENU_GET_VARIABLE_MIXIN = {
-  /**
-   * Add context menu option to change the selected variable.
-   * @param {!Array} options List of menu options to add to.
-   * @this Blockly.Block
-   */
-  customContextMenu: function(options) {
-    var fieldName = 'VARIABLE';
-    if (this.isCollapsed()) {
-      return;
-    }
-    var currentVarName = this.getField(fieldName).text_;
-    if (!this.isInFlyout) {
-      var variablesList = this.workspace.getVariablesOfType('');
-      variablesList.sort(function(a, b) {
-        return Blockly.scratchBlocksUtils.compareStrings(a.name, b.name);
-      });
-      for (var i = 0; i < variablesList.length; i++) {
-        var varName = variablesList[i].name;
-        if (varName == currentVarName) continue;
-
-        var option = {enabled: true};
-        option.text = varName;
-
-        option.callback =
-            Blockly.Constants.Data.VARIABLE_OPTION_CALLBACK_FACTORY(this,
-                variablesList[i].getId(), fieldName);
-        options.push(option);
-      }
-    } else {
-      var renameOption = {
-        text: Blockly.Msg.RENAME_VARIABLE,
-        enabled: true,
-        callback: Blockly.Constants.Data.RENAME_OPTION_CALLBACK_FACTORY(this,
-            fieldName)
-      };
-      var deleteOption = {
-        text: Blockly.Msg.DELETE_VARIABLE.replace('%1', currentVarName),
-        enabled: true,
-        callback: Blockly.Constants.Data.DELETE_OPTION_CALLBACK_FACTORY(this,
-            fieldName)
-      };
-      options.push(renameOption);
-      options.push(deleteOption);
-    }
-  }
-};
-
-Blockly.Extensions.registerMixin('contextMenu_getVariableBlock',
-    Blockly.Constants.Data.CUSTOM_CONTEXT_MENU_GET_VARIABLE_MIXIN);
-
-/**
- * Mixin to add a context menu for a data_listcontents block.  It adds one item for
- * each list defined on the workspace.
- * @mixin
- * @augments Blockly.Block
- * @package
- * @readonly
- */
-Blockly.Constants.Data.CUSTOM_CONTEXT_MENU_GET_LIST_MIXIN = {
-  /**
-   * Add context menu option to change the selected list.
-   * @param {!Array} options List of menu options to add to.
-   * @this Blockly.Block
-   */
-  customContextMenu: function(options) {
-    var fieldName = 'LIST';
-    if (this.isCollapsed()) {
-      return;
-    }
-    var currentVarName = this.getField(fieldName).text_;
-    if (!this.isInFlyout) {
-      var variablesList = this.workspace.getVariablesOfType('list');
-      variablesList.sort(function(a, b) {
-        return Blockly.scratchBlocksUtils.compareStrings(a.name, b.name);
-      });
-      for (var i = 0; i < variablesList.length; i++) {
-        var varName = variablesList[i].name;
-        if (varName == currentVarName) continue;
-
-        var option = {enabled: true};
-        option.text = varName;
-
-        option.callback =
-            Blockly.Constants.Data.VARIABLE_OPTION_CALLBACK_FACTORY(this,
-                variablesList[i].getId(), fieldName);
-        options.push(option);
-      }
-    } else {
-      var renameOption = {
-        text: Blockly.Msg.RENAME_LIST,
-        enabled: true,
-        callback: Blockly.Constants.Data.RENAME_OPTION_CALLBACK_FACTORY(this,
-            fieldName)
-      };
-      var deleteOption = {
-        text: Blockly.Msg.DELETE_LIST.replace('%1', currentVarName),
-        enabled: true,
-        callback: Blockly.Constants.Data.DELETE_OPTION_CALLBACK_FACTORY(this,
-            fieldName)
-      };
-      options.push(renameOption);
-      options.push(deleteOption);
-    }
-  }
-};
-Blockly.Extensions.registerMixin('contextMenu_getListBlock',
-    Blockly.Constants.Data.CUSTOM_CONTEXT_MENU_GET_LIST_MIXIN);
 
 /**
  * Callback factory for dropdown menu options associated with a variable getter
@@ -623,10 +505,10 @@ Blockly.Extensions.registerMixin('contextMenu_getListBlock',
  * @param {string} fieldName The name of the field to update on the block.
  * @return {!function()} A function that updates the block with the new name.
  */
-Blockly.Constants.Data.VARIABLE_OPTION_CALLBACK_FACTORY = function(block,
+const VARIABLE_OPTION_CALLBACK_FACTORY = function(block,
     id, fieldName) {
   return function() {
-    var variableField = block.getField(fieldName);
+    const variableField = block.getField(fieldName);
     if (!variableField) {
       console.log("Tried to get a variable field on the wrong type of block.");
     }
@@ -641,11 +523,11 @@ Blockly.Constants.Data.VARIABLE_OPTION_CALLBACK_FACTORY = function(block,
  * @param {string} fieldName The name of the field to inspect on the block.
  * @return {!function()} A function that renames the variable.
  */
-Blockly.Constants.Data.RENAME_OPTION_CALLBACK_FACTORY = function(block,
+const RENAME_OPTION_CALLBACK_FACTORY = function(block,
     fieldName) {
   return function() {
-    var workspace = block.workspace;
-    var variable = block.getField(fieldName).getVariable();
+    const workspace = block.workspace;
+    const variable = block.getField(fieldName).getVariable();
     Blockly.Variables.renameVariable(workspace, variable);
   };
 };
@@ -657,11 +539,128 @@ Blockly.Constants.Data.RENAME_OPTION_CALLBACK_FACTORY = function(block,
  * @param {string} fieldName The name of the field to inspect on the block.
  * @return {!function()} A function that deletes the variable.
  */
-Blockly.Constants.Data.DELETE_OPTION_CALLBACK_FACTORY = function(block,
+const DELETE_OPTION_CALLBACK_FACTORY = function(block,
     fieldName) {
   return function() {
-    var workspace = block.workspace;
-    var variable = block.getField(fieldName).getVariable();
+    const workspace = block.workspace;
+    const variable = block.getField(fieldName).getVariable();
     workspace.deleteVariableById(variable.getId());
   };
 };
+
+/**
+ * Mixin to add a context menu for a data_variable block.  It adds one item for
+ * each variable defined on the workspace.
+ * @mixin
+ * @augments Blockly.Block
+ * @package
+ * @readonly
+ */
+const CUSTOM_CONTEXT_MENU_GET_VARIABLE_MIXIN = {
+  /**
+   * Add context menu option to change the selected variable.
+   * @param {!Array} options List of menu options to add to.
+   * @this Blockly.Block
+   */
+  customContextMenu: function(options) {
+    const fieldName = 'VARIABLE';
+    if (this.isCollapsed()) {
+      return;
+    }
+    const currentVarName = this.getField(fieldName).text_;
+    if (!this.isInFlyout) {
+      const variablesList = this.workspace.getVariablesOfType('');
+      variablesList.sort(function(a, b) {
+        return Blockly.scratchBlocksUtils.compareStrings(a.name, b.name);
+      });
+      for (let i = 0; i < variablesList.length; i++) {
+        const varName = variablesList[i].name;
+        if (varName == currentVarName) continue;
+
+        const option = {enabled: true};
+        option.text = varName;
+
+        option.callback =
+            VARIABLE_OPTION_CALLBACK_FACTORY(this,
+                variablesList[i].getId(), fieldName);
+        options.push(option);
+      }
+    } else {
+      const renameOption = {
+        text: Blockly.Msg.RENAME_VARIABLE,
+        enabled: true,
+        callback: RENAME_OPTION_CALLBACK_FACTORY(this,
+            fieldName)
+      };
+      const deleteOption = {
+        text: Blockly.Msg.DELETE_VARIABLE.replace('%1', currentVarName),
+        enabled: true,
+        callback: DELETE_OPTION_CALLBACK_FACTORY(this,
+            fieldName)
+      };
+      options.push(renameOption);
+      options.push(deleteOption);
+    }
+  }
+};
+
+Blockly.Extensions.registerMixin('contextMenu_getVariableBlock',
+    CUSTOM_CONTEXT_MENU_GET_VARIABLE_MIXIN);
+
+/**
+ * Mixin to add a context menu for a data_listcontents block.  It adds one item for
+ * each list defined on the workspace.
+ * @mixin
+ * @augments Blockly.Block
+ * @package
+ * @readonly
+ */
+const CUSTOM_CONTEXT_MENU_GET_LIST_MIXIN = {
+  /**
+   * Add context menu option to change the selected list.
+   * @param {!Array} options List of menu options to add to.
+   * @this Blockly.Block
+   */
+  customContextMenu: function(options) {
+    const fieldName = 'LIST';
+    if (this.isCollapsed()) {
+      return;
+    }
+    const currentVarName = this.getField(fieldName).text_;
+    if (!this.isInFlyout) {
+      const variablesList = this.workspace.getVariablesOfType('list');
+      variablesList.sort(function(a, b) {
+        return Blockly.scratchBlocksUtils.compareStrings(a.name, b.name);
+      });
+      for (let i = 0; i < variablesList.length; i++) {
+        const varName = variablesList[i].name;
+        if (varName == currentVarName) continue;
+
+        const option = {enabled: true};
+        option.text = varName;
+
+        option.callback =
+            VARIABLE_OPTION_CALLBACK_FACTORY(this,
+                variablesList[i].getId(), fieldName);
+        options.push(option);
+      }
+    } else {
+      const renameOption = {
+        text: Blockly.Msg.RENAME_LIST,
+        enabled: true,
+        callback: RENAME_OPTION_CALLBACK_FACTORY(this,
+            fieldName)
+      };
+      const deleteOption = {
+        text: Blockly.Msg.DELETE_LIST.replace('%1', currentVarName),
+        enabled: true,
+        callback: DELETE_OPTION_CALLBACK_FACTORY(this,
+            fieldName)
+      };
+      options.push(renameOption);
+      options.push(deleteOption);
+    }
+  }
+};
+Blockly.Extensions.registerMixin('contextMenu_getListBlock',
+    CUSTOM_CONTEXT_MENU_GET_LIST_MIXIN);

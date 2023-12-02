@@ -36,7 +36,7 @@
 
     align-items: center;
     justify-content: center;
-    color: #575e75;
+    color: var(--clipcc-text-primary, #575e75);
     font-size: 0.75rem;
 }
 

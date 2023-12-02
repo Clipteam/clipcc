@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
 import PropTypes from 'prop-types';
 import React from 'react';
@@ -58,13 +59,15 @@ const StageHeaderComponent = function (props) {
         onSetStageUnFull,
         showBranding,
         stageSizeMode,
-        vm
+        vm,
+        stageWidth,
+        stageHeight
     } = props;
 
     let header = null;
 
     if (isFullScreen) {
-        const stageDimensions = getStageDimensions(null, true);
+        const stageDimensions = getStageDimensions(null, true, stageWidth, stageHeight);
         const stageButton = showBranding ? (
             <div className={styles.embedScratchLogo}>
                 <a
@@ -145,7 +148,7 @@ const StageHeaderComponent = function (props) {
                             >
                                 <img
                                     alt={props.intl.formatMessage(messages.fullStageSizeMessage)}
-                                    className={styles.stageButtonIcon}
+                                    className={classNames(styles.stageButtonIcon, styles.fullscreenButtonIcon)}
                                     draggable={false}
                                     src={fullScreenIcon}
                                     title={props.intl.formatMessage(messages.fullscreenControl)}

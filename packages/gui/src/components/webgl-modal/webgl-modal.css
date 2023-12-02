@@ -55,7 +55,7 @@
     border-radius: 0.25rem;
     padding: 0.5rem 2rem;
     background: var(--clipcc-motion-primary);
-    color: white;
+    color: var(--clipcc-on-motion-primary);
     font-weight: bold;
     font-size: 0.875rem;
 }

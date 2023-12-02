@@ -5,6 +5,11 @@
     margin-top: 5vh; /* reduce top margin */
 }
 
+.group {
+    display: flex;
+    align-items: center;
+}
+
 .tag {
     margin: 0 0.5rem;
     padding: 0.2rem 0.5rem;
@@ -57,7 +62,8 @@
 }
 
 .item:hover {
-    background-color: hsl(0, 0%, 94%);
+    background-color: var(--clipcc-ui-tertiary);
+    border-radius: calc(var(--clipcc-form-radius) / 2);
 }
 
 .item > :last-child {
@@ -95,7 +101,7 @@
 }
 
 .select-small {
-    width: 10rem;
+    width: 11rem;
 }
 
 .select-big {

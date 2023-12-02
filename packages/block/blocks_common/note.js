@@ -47,7 +47,7 @@ Blockly.Blocks['note'] = {
           "value": 60
         }
       ],
-      "outputShape": Blockly.OUTPUT_SHAPE_ROUND,
+      "outputShape": Blockly.constants.OUTPUT_SHAPE_ROUND,
       "output": "Number",
       "colour": Blockly.Colours.textField,
       "colourSecondary": Blockly.Colours.textField,
