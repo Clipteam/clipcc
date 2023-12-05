@@ -94,6 +94,12 @@ const vmManagerHOC = function (WrappedComponent) {
                     accurateCoordinates: this.props.accurateCoordinates
                 });
             }
+            if (this.props.stageWidth !== prevProps.stageWidth) {
+                this.props.vm.setStageWidth(this.props.stageWidth);
+            }
+            if (this.props.stageHeight !== prevProps.stageHeight) {
+                this.props.vm.setStageHeight(this.props.stageHeight);
+            }
         }
         loadProject () {
             return this.props.vm.loadProject(this.props.projectData)
@@ -168,6 +174,8 @@ const vmManagerHOC = function (WrappedComponent) {
         unlimitedPenSize: PropTypes.bool.isRequired,
         unlimitedSoundStuffs: PropTypes.bool.isRequired,
         accurateCoordinates: PropTypes.bool.isRequired,
+        stageWidth: PropTypes.number.isRequired,
+        stageHeight: PropTypes.number.isRequired,
         vm: PropTypes.instanceOf(VM).isRequired
     };
 
@@ -189,7 +197,9 @@ const vmManagerHOC = function (WrappedComponent) {
             unlimitedListLength: state.scratchGui.settings.unlimitedListLength,
             unlimitedPenSize: state.scratchGui.settings.unlimitedPenSize,
             unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,
-            accurateCoordinates: state.scratchGui.settings.accurateCoordinates
+            accurateCoordinates: state.scratchGui.settings.accurateCoordinates,
+            stageWidth: state.scratchGui.settings.stageWidth,
+            stageHeight: state.scratchGui.settings.stageHeight
         };
     };
 

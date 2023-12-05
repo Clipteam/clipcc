@@ -24,12 +24,10 @@
  */
 'use strict';
 
-goog.provide('Blockly.FlyoutDragger');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.FlyoutDragger');
 
-goog.require('Blockly.WorkspaceDragger');
-
-goog.require('goog.asserts');
-goog.require('goog.math.Coordinate');
+import {WorkspaceDragger} from './workspace_dragger';
 
 
 /**
@@ -41,8 +39,8 @@ goog.require('goog.math.Coordinate');
  * @param {!Blockly.Flyout} flyout The flyout to drag.
  * @constructor
  */
-Blockly.FlyoutDragger = function(flyout) {
-  Blockly.FlyoutDragger.superClass_.constructor.call(this,
+export const FlyoutDragger = function(flyout) {
+  FlyoutDragger.superClass_.constructor.call(this,
       flyout.getWorkspace());
 
   /**
@@ -62,7 +60,7 @@ Blockly.FlyoutDragger = function(flyout) {
    */
   this.horizontalLayout_ = flyout.horizontalLayout_;
 };
-goog.inherits(Blockly.FlyoutDragger, Blockly.WorkspaceDragger);
+goog.inherits(FlyoutDragger, WorkspaceDragger);
 
 /**
  * Move the appropriate scrollbar to drag the flyout.
@@ -73,7 +71,7 @@ goog.inherits(Blockly.FlyoutDragger, Blockly.WorkspaceDragger);
  * @param {number} y The new y position to move the scrollbar to.
  * @private
  */
-Blockly.FlyoutDragger.prototype.updateScroll_ = function(x, y) {
+FlyoutDragger.prototype.updateScroll_ = function(x, y) {
   // Move the scrollbar and the flyout will scroll automatically.
   if (this.horizontalLayout_) {
     this.scrollbar_.set(x);

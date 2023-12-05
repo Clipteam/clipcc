@@ -153,7 +153,7 @@ function test_create_constructor() {
   try {
     var block = createSimpleTestBlock(workspace);
 
-    var event = new Blockly.Events.Create(block);
+    var event = new Blockly.Events.BlockCreate(block);
     checkCreateEventValues(event, block, ['1'], 'create');
   } finally {
     eventTest_tearDownWithMockBlocks();
@@ -179,7 +179,7 @@ function test_delete_constructor() {
   setUpMockMethod(mockControl_, Blockly.utils, 'genUid', null, ['1']);
   try {
     var block = createSimpleTestBlock(workspace);
-    var event = new Blockly.Events.Delete(block);
+    var event = new Blockly.Events.BlockDelete(block);
     checkDeleteEventValues(event, block, ['1'], 'delete');
   } finally {
     eventTest_tearDownWithMockBlocks();
@@ -206,7 +206,7 @@ function test_change_constructor() {
     var block = new Blockly.Block(workspace, 'field_variable_test_block');
     Blockly.Events.enable();
 
-    var event = new Blockly.Events.Change(block, 'field', 'VAR', 'id1', 'id2');
+    var event = new Blockly.Events.BlockChange(block, 'field', 'VAR', 'id1', 'id2');
     checkExactEventValues(event, {'element': 'field', 'name': 'VAR',
       'oldValue': 'id1', 'newValue': 'id2', 'type': 'change'});
   } finally {
@@ -240,7 +240,7 @@ function test_move_constructorCoordinate() {
     var coordinate = new goog.math.Coordinate(3,4);
     block1.xy_ = coordinate;
 
-    var event = new Blockly.Events.Move(block1);
+    var event = new Blockly.Events.BlockMove(block1);
     // Need to check for individual equality of the coordinate values since
     // the move event creates a new goog.math.Coordinate object
     assertEquals(event.oldCoordinate.x, coordinate.x);
@@ -262,7 +262,7 @@ function test_move_constructoroldParentId() {
     block1.parentBlock_ = block2;
     block1.xy_ = new goog.math.Coordinate(3,4);
 
-    var event = new Blockly.Events.Move(block1);
+    var event = new Blockly.Events.BlockMove(block1);
     checkExactEventValues(event, {'oldCoordinate': undefined,
       'oldParentId': '2', 'type': 'move'});
     block1.parentBlock_ = null;
@@ -657,8 +657,8 @@ function test_events_mergeChange() {
   eventTest_setUpWithMockBlocks();
   var block1 = workspace.newBlock('field_variable_test_block', '1');
   var events = [
-    new Blockly.Events.Change(block1, 'field', 'VAR', 'item', 'item1'),
-    new Blockly.Events.Change(block1, 'field', 'VAR', 'item1', 'item2')
+    new Blockly.Events.BlockChange(block1, 'field', 'VAR', 'item', 'item1'),
+    new Blockly.Events.BlockChange(block1, 'field', 'VAR', 'item1', 'item2')
   ];
   var filteredEvents = Blockly.Events.filter(events, true);
   assertEquals(1, filteredEvents.length);  // second change event merged into first

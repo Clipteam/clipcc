@@ -24,26 +24,31 @@
 
 'use strict';
 
-goog.provide('Blockly.VirtualizedManager');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.VirtualizedManager');
+
+import * as utils from './utils';
+
 
 /**
  * Class for virtualized manager.
- * @param {Blockly.WorkspaceSvg} workspace
+ * @param {Blockly.WorkspaceSvg} workspace The workspace.
  */
-Blockly.VirtualizedManager = function(workspace) {
+export const VirtualizedManager = function(workspace) {
   this.workspace = workspace;
   this._observedBlocks = [];
+  this._requestedCheck = false;
   this.observe = this.observe.bind(this);
   this.unobserve = this.unobserve.bind(this);
-  this.check = this.check.bind(this);
+  this.requestCheck = this.requestCheck.bind(this);
   this.dispose = this.dispose.bind(this);
 };
 
 /**
  * Observe a block.
- * @param {Blockly.BlockSvg} block
+ * @param {Blockly.BlockSvg} block The block to observe.
  */
-Blockly.VirtualizedManager.prototype.observe = function(block) {
+VirtualizedManager.prototype.observe = function(block) {
   if (!this._observedBlocks.includes(block)) {
     this._observedBlocks.push(block);
   }
@@ -51,9 +56,9 @@ Blockly.VirtualizedManager.prototype.observe = function(block) {
 
 /**
  * Unobserve a block.
- * @param {Blockly.BlockSvg} block
+ * @param {Blockly.BlockSvg} block The block to unobserve.
  */
-Blockly.VirtualizedManager.prototype.unobserve = function(block) {
+VirtualizedManager.prototype.unobserve = function(block) {
   if (this._observedBlocks.includes(block)) {
     this._observedBlocks = this._observedBlocks.filter(function(i) {
       return i !== block;
@@ -64,31 +69,44 @@ Blockly.VirtualizedManager.prototype.unobserve = function(block) {
 /**
  * Dispose VirtualizedManager.
  */
-Blockly.VirtualizedManager.prototype.dispose = function() {
+VirtualizedManager.prototype.dispose = function() {
   this._observedBlocks = [];
 };
 
 /**
+ * Request check if block need to be show or hide.
+ */
+VirtualizedManager.prototype.requestCheck = function() {
+  if (!this._requestedCheck) {
+    this._requestedCheck = true;
+      queueMicrotask(() => {
+        this.check_();
+        this._requestedCheck = false;
+    });
+  }
+}
+
+/**
  * Check if block need to be show or hide.
  */
-Blockly.VirtualizedManager.prototype.check = function() {
-  var workspace = this.workspace;
-  var workspaceHeight = workspace.getParentSvg().height.baseVal.value;
-  var workspaceWidth = workspace.getParentSvg().width.baseVal.value;
-  var workspaceCanvas = workspace.getCanvas();
-  var canvasPos = Blockly.utils.getRelativeXY(workspaceCanvas);
-  for (var i = 0; i < this._observedBlocks.length; i++) {
-    var block = this._observedBlocks[i];
+VirtualizedManager.prototype.check_ = function() {
+  const workspace = this.workspace;
+  const workspaceHeight = workspace.getParentSvg().height.baseVal.value;
+  const workspaceWidth = workspace.getParentSvg().width.baseVal.value;
+  const workspaceCanvas = workspace.getCanvas();
+  const canvasPos = utils.getRelativeXY(workspaceCanvas);
+  for (let i = 0; i < this._observedBlocks.length; i++) {
+    const block = this._observedBlocks[i];
     // block may not have been rendered, so we skip checking for it.
     // see Clipteam/clipcc#10
     if (!block.rendered) {
       continue;
-    };
-    var blockPos = block.getRelativeToSurfaceXY();
+    }
+    const blockPos = block.getRelativeToSurfaceXY();
     blockPos.x *= workspace.scale;
     blockPos.y *= workspace.scale;
         
-    var visible = true;
+    let visible = true;
         
     // bottom-right check
     if (canvasPos.y + blockPos.y > workspaceHeight) {
@@ -97,7 +115,7 @@ Blockly.VirtualizedManager.prototype.check = function() {
       visible = false;
     } else {
       // top-left check
-      var blockSize = block.getHeightWidth();
+      const blockSize = block.getHeightWidth();
       blockSize.width *= workspace.scale;
       blockSize.height *= workspace.scale;
       if (canvasPos.x + blockPos.x + blockSize.width < 0) {

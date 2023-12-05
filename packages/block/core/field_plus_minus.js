@@ -295,13 +295,4 @@ Blockly.FieldPlusMinus.prototype.setEnableMinus = function(enable) {
   this.render_();
 };
 
-Blockly.FieldPlusMinus.CSS = [
-  '.blocklyPlusMinus {',
-  '  cursor: default;',
-  '}',
-  '.blocklyPlusMinusRect {',
-  '  transition-duration: 0.3s',
-  '}'
-];
-
 Blockly.Field.register('field_plus_minus', Blockly.FieldPlusMinus);

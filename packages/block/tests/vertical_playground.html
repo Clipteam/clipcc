@@ -186,26 +186,26 @@
       }
 
       function glowBlock() {
-        if (Blockly.selected) {
-          workspace.glowBlock(Blockly.selected.id, true);
+        if (Blockly.common.getSelected()) {
+          workspace.glowBlock(Blockly.common.getSelected().id, true);
         }
       }
 
       function unglowBlock() {
-        if (Blockly.selected) {
-          workspace.glowBlock(Blockly.selected.id, false);
+        if (Blockly.common.getSelected()) {
+          workspace.glowBlock(Blockly.common.getSelected().id, false);
         }
       }
 
       function glowStack() {
-        if (Blockly.selected) {
-          workspace.glowStack(Blockly.selected.id, true);
+        if (Blockly.common.getSelected()) {
+          workspace.glowStack(Blockly.common.getSelected().id, true);
         }
       }
 
       function unglowStack() {
-        if (Blockly.selected) {
-          workspace.glowStack(Blockly.selected.id, false);
+        if (Blockly.common.getSelected()) {
+          workspace.glowStack(Blockly.common.getSelected().id, false);
         }
       }
 
@@ -293,9 +293,9 @@
       }
 
       function reportDemo() {
-        if (Blockly.selected) {
+        if (Blockly.common.getSelected()) {
           workspace.reportValue(
-            Blockly.selected.id,
+            Blockly.common.getSelected().id,
             document.getElementById('reportValue').value
           );
         }

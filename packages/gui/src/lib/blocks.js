@@ -25,7 +25,7 @@ export default function (vm) {
             colourSecondary: colors.secondary,
             colourTertiary: colors.tertiary,
             colourQuaternary: colors.quaternary,
-            outputShape: ScratchBlocks.OUTPUT_SHAPE_ROUND
+            outputShape: ScratchBlocks.constants.OUTPUT_SHAPE_ROUND
         };
     };
 
@@ -72,7 +72,7 @@ export default function (vm) {
             colourSecondary: ScratchBlocks.Colours.sensing.secondary,
             colourTertiary: ScratchBlocks.Colours.sensing.tertiary,
             colourQuaternary: ScratchBlocks.Colours.sensing.quaternary,
-            outputShape: ScratchBlocks.OUTPUT_SHAPE_ROUND
+            outputShape: ScratchBlocks.constants.OUTPUT_SHAPE_ROUND
         };
     };
 
@@ -326,9 +326,9 @@ export default function (vm) {
 
     ScratchBlocks.FlyoutExtensionCategoryHeader.getExtensionState = function (extensionId) {
         if (vm.getPeripheralIsConnected(extensionId)) {
-            return ScratchBlocks.StatusButtonState.READY;
+            return ScratchBlocks.constants.StatusButtonState.READY;
         }
-        return ScratchBlocks.StatusButtonState.NOT_READY;
+        return ScratchBlocks.constants.StatusButtonState.NOT_READY;
     };
 
     ScratchBlocks.FieldNote.playNote_ = function (noteNum, extensionId) {

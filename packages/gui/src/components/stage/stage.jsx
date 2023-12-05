@@ -29,10 +29,12 @@ const StageComponent = props => {
         onDeactivateColorPicker,
         onDoubleClick,
         onQuestionAnswered,
+        stageWidth,
+        stageHeight,
         ...boxProps
     } = props;
 
-    const stageDimensions = getStageDimensions(stageSize, isFullScreen);
+    const stageDimensions = getStageDimensions(stageSize, isFullScreen, stageWidth, stageHeight);
 
     return (
         <React.Fragment>
@@ -146,7 +148,12 @@ StageComponent.propTypes = {
     onQuestionAnswered: PropTypes.func,
     question: PropTypes.string,
     stageSize: PropTypes.oneOf(Object.keys(STAGE_DISPLAY_SIZES)).isRequired,
-    useEditorDragStyle: PropTypes.bool
+    useEditorDragStyle: PropTypes.bool,
+    layoutStyle: PropTypes.string,
+    resolutionX: PropTypes.number,
+    resolutionY: PropTypes.number,
+    stageWidth: PropTypes.number,
+    stageHeight: PropTypes.number
 };
 StageComponent.defaultProps = {
     dragRef: () => {}
