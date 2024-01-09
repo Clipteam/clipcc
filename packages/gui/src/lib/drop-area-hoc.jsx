@@ -47,26 +47,48 @@ const DropAreaHOC = function (dragTypes) {
                 this.ref = null;
                 this.containerBox = null;
             }
+            
+            // UNSAFE_componentWillReceiveProps (newProps) {
+            //     // If `dragging` becomes true, record the drop area rectangle
+            //     if (newProps.dragInfo.dragging && !this.props.dragInfo.dragging) {
+            //         this.dropAreaRect = this.ref && this.ref.getBoundingClientRect();
+            //     // If `dragging` becomes false, call the drop handler
+            //     } else if (!newProps.dragInfo.dragging && this.props.dragInfo.dragging && this.state.dragOver) {
+            //         this.props.onDrop(this.props.dragInfo);
+            //         this.setState({dragOver: false});
+            //     }
 
-            UNSAFE_componentWillReceiveProps (newProps) {
-                // If `dragging` becomes true, record the drop area rectangle
-                if (newProps.dragInfo.dragging && !this.props.dragInfo.dragging) {
+            //     // If a drag is in progress (currentOffset) and it matches the relevant drag types,
+            //     // test if the drag is within the drop area rect and set the state accordingly.
+            //     if (this.dropAreaRect && newProps.dragInfo.currentOffset &&
+            //         dragTypes.includes(newProps.dragInfo.dragType)) {
+            //         const {x, y} = newProps.dragInfo.currentOffset;
+            //         const {top, right, bottom, left} = this.dropAreaRect;
+            //         if (x > left && x < right && y > top && y < bottom) {
+            //             this.setState({dragOver: true});
+            //         } else {
+            //             this.setState({dragOver: false});
+            //         }
+            //     }
+            // }
+            componentDidUpdate (prevProps) {
+                // If the drag has ended, reset the dragOver state
+                if (this.props.dragInfo.dragging && !prevProps.dragInfo.dragging) {
                     this.dropAreaRect = this.ref && this.ref.getBoundingClientRect();
-                // If `dragging` becomes false, call the drop handler
-                } else if (!newProps.dragInfo.dragging && this.props.dragInfo.dragging && this.state.dragOver) {
-                    this.props.onDrop(this.props.dragInfo);
+                } else if (!this.props.dragInfo.dragging && prevProps.dragInfo.dragging && this.state.dragOver) {
+                    this.props.onDrop(prevProps.dragInfo);
+                    // eslint-disable-next-line react/no-did-update-set-state
                     this.setState({dragOver: false});
                 }
-
-                // If a drag is in progress (currentOffset) and it matches the relevant drag types,
-                // test if the drag is within the drop area rect and set the state accordingly.
-                if (this.dropAreaRect && newProps.dragInfo.currentOffset &&
-                    dragTypes.includes(newProps.dragInfo.dragType)) {
-                    const {x, y} = newProps.dragInfo.currentOffset;
+                if (this.dropAreaRect && this.props.dragInfo.currentOffset &&
+                    dragTypes.includes(this.props.dragInfo.dragType)) {
+                    const {x, y} = this.props.dragInfo.currentOffset;
                     const {top, right, bottom, left} = this.dropAreaRect;
                     if (x > left && x < right && y > top && y < bottom) {
+                        // eslint-disable-next-line react/no-did-update-set-state
                         this.setState({dragOver: true});
                     } else {
+                        // eslint-disable-next-line react/no-did-update-set-state
                         this.setState({dragOver: false});
                     }
                 }

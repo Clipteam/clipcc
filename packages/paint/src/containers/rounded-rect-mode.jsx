@@ -25,15 +25,28 @@ class RoundedRectMode extends React.Component {
             this.activateTool(this.props);
         }
     }
-    UNSAFE_componentWillReceiveProps (nextProps) {
-        if (this.tool && nextProps.hoveredItemId !== this.props.hoveredItemId) {
-            this.tool.setPrevHoveredItemId(nextProps.hoveredItemId);
+    // UNSAFE_componentWillReceiveProps (nextProps) {
+    //     if (this.tool && nextProps.hoveredItemId !== this.props.hoveredItemId) {
+    //         this.tool.setPrevHoveredItemId(nextProps.hoveredItemId);
+    //     }
+
+    //     if (nextProps.isRoundedRectModeActive && !this.props.isRoundedRectModeActive) {
+    //         this.activateTool();
+    //     } else if (!nextProps.isRoundedRectModeActive && this.props.isRoundedRectModeActive) {
+    //         this.deactivateTool();
+    //     }
+    // }
+    componentDidUpdate (prevProps) {
+        if (this.tool && prevProps.hoveredItemId !== this.props.hoveredItemId) {
+            this.tool.setPrevHoveredItemId(this.props.hoveredItemId);
         }
 
-        if (nextProps.isRoundedRectModeActive && !this.props.isRoundedRectModeActive) {
+        if (this.props.isRoundedRectModeActive && !prevProps.isRoundedRectModeActive) {
             this.activateTool();
-        } else if (!nextProps.isRoundedRectModeActive && this.props.isRoundedRectModeActive) {
+        } else if (!this.props.isRoundedRectModeActive && prevProps.isRoundedRectModeActive) {
             this.deactivateTool();
+        } else {
+            this.props = prevProps;
         }
     }
     shouldComponentUpdate (nextProps) {

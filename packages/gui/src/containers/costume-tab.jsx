@@ -102,26 +102,24 @@ class CostumeTab extends React.Component {
             this.state = {selectedCostumeIndex: 0};
         }
     }
-    UNSAFE_componentWillReceiveProps (nextProps) {
+    componentDidUpdate (prevProps) {
         const {
             editingTarget,
             sprites,
             stage
-        } = nextProps;
+        } = this.props;
 
         const target = editingTarget && sprites[editingTarget] ? sprites[editingTarget] : stage;
         if (!target || !target.costumes) {
+            this.props = prevProps;
             return;
         }
-
-        if (this.props.editingTarget === editingTarget) {
+        
+        if (prevProps.editingTarget === editingTarget) {
             // If costumes have been added or removed, change costumes to the editing target's
             // current costume.
-            const oldTarget = this.props.sprites[editingTarget] ?
-                this.props.sprites[editingTarget] : this.props.stage;
-            // @todo: Find and switch to the index of the costume that is new. This is blocked by
-            // https://github.com/LLK/scratch-vm/issues/967
-            // Right now, you can land on the wrong costume if a costume changing script is running.
+            const oldTarget = prevProps.sprites[editingTarget] ?
+                prevProps.sprites[editingTarget] : prevProps.stage;
             if (oldTarget.costumeCount !== target.costumeCount) {
                 this.setState({selectedCostumeIndex: target.currentCostume});
             }
@@ -130,6 +128,34 @@ class CostumeTab extends React.Component {
             this.setState({selectedCostumeIndex: target.currentCostume});
         }
     }
+    // UNSAFE_componentWillReceiveProps (nextProps) {
+    //     const {
+    //         editingTarget,
+    //         sprites,
+    //         stage
+    //     } = nextProps;
+
+    //     const target = editingTarget && sprites[editingTarget] ? sprites[editingTarget] : stage;
+    //     if (!target || !target.costumes) {
+    //         return;
+    //     }
+
+    //     if (this.props.editingTarget === editingTarget) {
+    //         // If costumes have been added or removed, change costumes to the editing target's
+    //         // current costume.
+    //         const oldTarget = this.props.sprites[editingTarget] ?
+    //             this.props.sprites[editingTarget] : this.props.stage;
+    //         // @todo: Find and switch to the index of the costume that is new. This is blocked by
+    //         // https://github.com/LLK/scratch-vm/issues/967
+    //         // Right now, you can land on the wrong costume if a costume changing script is running.
+    //         if (oldTarget.costumeCount !== target.costumeCount) {
+    //             this.setState({selectedCostumeIndex: target.currentCostume});
+    //         }
+    //     } else {
+    //         // If switching editing targets, update the costume index
+    //         this.setState({selectedCostumeIndex: target.currentCostume});
+    //     }
+    // }
     handleSelectCostume (costumeIndex) {
         this.props.vm.editingTarget.setCostume(costumeIndex);
         this.setState({selectedCostumeIndex: costumeIndex});
