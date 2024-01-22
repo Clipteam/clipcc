@@ -37,6 +37,7 @@ class Stage extends React.Component {
             'onWheel',
             'updateRect',
             'questionListener',
+            'relayoutListener',
             'setDragCanvas',
             'clearDragCanvas',
             'drawDragCanvas',
@@ -83,6 +84,7 @@ class Stage extends React.Component {
         this.attachMouseEvents(this.canvas);
         this.updateRect();
         this.props.vm.runtime.addListener('QUESTION', this.questionListener);
+        window.addEventListener('wc-after-connected', this.relayoutListener);
     }
     shouldComponentUpdate (nextProps, nextState) {
         return this.props.stageSize !== nextProps.stageSize ||
@@ -109,9 +111,14 @@ class Stage extends React.Component {
         this.detachRectEvents();
         this.stopColorPickingLoop();
         this.props.vm.runtime.removeListener('QUESTION', this.questionListener);
+        window.removeEventListener('wc-after-connected', this.relayoutListener);
     }
     questionListener (question) {
         this.setState({question: question});
+    }
+    relayoutListener () {
+        this.updateRect();
+        this.renderer.resize(this.rect.width, this.rect.height);
     }
     handleQuestionAnswered (answer) {
         this.setState({question: null}, () => {

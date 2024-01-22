@@ -46,9 +46,10 @@ function addWebComponent () {
     class WrappedWebGUI extends WebGUI {
         connectedCallback () {
             super.connectedCallback();
-            // Fix blockly display issue
+            // Fix web component's display issue
             requestAnimationFrame(() => {
                 window.dispatchEvent(new Event('resize'));
+                window.dispatchEvent(new Event('wc-after-connected'));
             });
         }
     }
