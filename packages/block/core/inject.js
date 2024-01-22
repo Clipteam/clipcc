@@ -64,7 +64,7 @@ export const inject = function(container, opt_options) {
         document.querySelector(container);
   }
   // Verify that the container is in document.
-  if (!dom.contains(document, container)) {
+  if (document !== container.ownerDocument) {
     throw 'Error: container is not in current document.';
   }
   const options = new Options(opt_options || {});

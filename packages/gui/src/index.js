@@ -43,7 +43,16 @@ function addWebComponent () {
             onSeeCommunity: 'function'
         }
     });
-    customElements.define('clipcc-gui', WebGUI);
+    class WrappedWebGUI extends WebGUI {
+        connectedCallback () {
+            super.connectedCallback();
+            // Fix blockly display issue
+            requestAnimationFrame(() => {
+                window.dispatchEvent(new Event('resize'));
+            });
+        }
+    }
+    customElements.define('clipcc-gui', WrappedWebGUI);
 }
 
 export {
