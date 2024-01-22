@@ -134,7 +134,8 @@ module.exports = [
             blocksonly: './src/playground/blocks-only.jsx',
             lifecycle: './src/playground/lifecycle-test.jsx',
             compatibilitytesting: './src/playground/compatibility-testing.jsx',
-            player: './src/playground/player.jsx'
+            player: './src/playground/player.jsx',
+            webcomponent: './src/playground/web-component.js',
         },
         output: {
             path: path.resolve(__dirname, 'build'),
@@ -190,6 +191,12 @@ module.exports = [
                 template: 'src/playground/index.ejs',
                 filename: 'lifecycle.html',
                 title: 'ClipCC GUI: Lifecycle Test'
+            }),
+            new HtmlWebpackPlugin({
+                chunks: ['lib.min', 'webcomponent'],
+                template: 'src/playground/index.ejs',
+                filename: 'webcomponent.html',
+                title: 'ClipCC GUI: Web Component Example'
             }),
             new CopyWebpackPlugin({
                 patterns: [

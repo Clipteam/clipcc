@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@microbit/microbit-universal-hex": "0.2.2",
+    "@r2wc/react-to-web-component": "2.0.1",
     "arraybuffer-loader": "1.0.8",
     "autoprefixer": "^9.0.1",
     "balance-text": "3.3.1",

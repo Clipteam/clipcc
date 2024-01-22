@@ -3551,6 +3551,18 @@
     "@pnpm/network.ca-file" "^1.0.1"
     config-chain "^1.1.11"
 
+"@r2wc/core@^1.0.0":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@r2wc/core/-/core-1.0.1.tgz#5f1c55b3f0ef63787034382a27204959818c8011"
+  integrity sha512-3Q/IEvGoJ8E+wy8Y6vo+Hot35z89Ei0Ghr7WAhprxz1LhuCAaA2BIYXY8GjaCvJLGhiOLuiPMWb8DKfbrUzEMg==
+
+"@r2wc/react-to-web-component@2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@r2wc/react-to-web-component/-/react-to-web-component-2.0.1.tgz#cda73451dd2995b4939636df0cc6c959c817d9f5"
+  integrity sha512-w/96bHkQoimZ5lHKH/VCesyBlQ2rmuZNczD9KbveB8FiYGTaiWL3zBAYAtXm6GObOT74FiMuny3VGGY31hQUTg==
+  dependencies:
+    "@r2wc/core" "^1.0.0"
+
 "@rollup/plugin-babel@^5.2.0":
   version "5.3.1"
   resolved "https://registry.yarnpkg.com/@rollup/plugin-babel/-/plugin-babel-5.3.1.tgz#04bc0608f4aa4b2e4b1aebf284344d0f68fda283"
