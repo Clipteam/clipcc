@@ -262,8 +262,7 @@ module.exports = [
                     patterns: [
                         {
                             from: 'src/lib/libraries/*.json',
-                            to: 'libraries',
-                            flatten: true
+                            to: 'libraries/[name][ext]',
                         }
                     ]
                 }),
