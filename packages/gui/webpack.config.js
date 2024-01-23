@@ -240,11 +240,7 @@ module.exports = [
                     {
                         test: /\.(svg|png|wav|gif|jpg)$/,
                         resourceQuery: {not: [/raw/]},
-                        type: 'asset/inline',
-                        generator: {
-                            outputPath: 'static/assets/',
-                            publicPath: `${STATIC_PATH}/assets/`
-                        }
+                        type: 'asset/inline'
                     }
                 ])
             },
