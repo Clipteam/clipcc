@@ -27,6 +27,7 @@ function addWebComponent () {
     )(GUI);
     const WebGUI = r2wc(WrappedGui, {
         props: {
+            isPlayerOnly: 'boolean',
             canEditTitle: 'boolean',
             canSave: 'boolean',
             canRemix: 'boolean',
