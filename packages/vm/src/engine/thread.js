@@ -383,8 +383,7 @@ class Thread {
      * @return {*} value Value for parameter.
      */
     getParam (paramName) {
-        // cc - ignore the top stack's param, it's not used by current stack
-        for (let i = this.stackFrames.length - 2; i >= 0; i--) {
+        for (let i = this.stackFrames.length - 1; i >= 0; i--) {
             const frame = this.stackFrames[i];
             if (frame.params === null) {
                 continue;

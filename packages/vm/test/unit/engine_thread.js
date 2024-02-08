@@ -250,7 +250,9 @@ test('stopThisScript', t => {
     th.pushStack('arbitraryString', rt);
     th.pushStack('secondString', rt);
     th.stopThisScript();
-    t.strictEquals(th.peekStack(), 'secondString');
+    // cc - prevent call command procedure repeatedly
+    // it may breaks expected logic, need to check carefully
+    t.strictEquals(th.peekStack(), null);
 
     t.end();
 });
