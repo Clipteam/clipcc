@@ -16,7 +16,7 @@ const uid = require('../util/uid');
 const MathUtil = require('../util/math-util');
 const StringUtil = require('../util/string-util');
 const VariableUtil = require('../util/variable-util');
-const {opcodeMap} = require('./migration');
+const {migrationMap, mergeDeep} = require('./migration');
 
 const {loadCostume} = require('../import/load-costume.js');
 const {loadSound} = require('../import/load-sound.js');
@@ -959,8 +959,8 @@ const parseScratchObject = function (object, runtime, extensions, zip, assets) {
             if (!object.blocks.hasOwnProperty(blockId)) continue;
             const blockJSON = object.blocks[blockId];
             // Migrate legacy opcode from old versions of ClipCC
-            if (opcodeMap.hasOwnProperty(blockJSON.opcode)) {
-                blockJSON.opcode = opcodeMap[blockJSON.opcode];
+            if (migrationMap.hasOwnProperty(blockJSON.opcode)) {
+                mergeDeep(blockJSON, migrationMap[blockJSON.opcode]);
             }
             blocks.createBlock(blockJSON);
 
