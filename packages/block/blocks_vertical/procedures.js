@@ -60,7 +60,12 @@ Blockly.ScratchBlocks.ProcedureUtils.callerDomToMutation = function(xmlElement) 
       JSON.parse(xmlElement.getAttribute('generateshadows'));
   this.argumentIds_ = JSON.parse(xmlElement.getAttribute('argumentids'));
   this.warp_ = JSON.parse(xmlElement.getAttribute('warp'));
-  this.return_ = JSON.parse(xmlElement.getAttribute('return'));
+  // don't update shape if caller still has connections
+  if (!(this.previousConnection && this.previousConnection.isConnected()) &&
+    !(this.outputConnection && this.outputConnection.isConnected()) &&
+    !(this.nextConnection && this.nextConnection.isConnected())) {
+    this.return_ = JSON.parse(xmlElement.getAttribute('return'));
+  }
   this.global_ = JSON.parse(xmlElement.getAttribute('global'));
   this.updateDisplay_();
 };
@@ -992,6 +997,8 @@ Blockly.Blocks['procedures_call'] = {
   updateShape_: Blockly.ScratchBlocks.ProcedureUtils.updateProcedureShape_,
 
   // Only exists on the external caller.
+  getReturn: Blockly.ScratchBlocks.ProcedureUtils.getReturn,
+  setReturn: Blockly.ScratchBlocks.ProcedureUtils.setReturn,
   attachShadow_: Blockly.ScratchBlocks.ProcedureUtils.attachShadow_,
   buildShadowDom_: Blockly.ScratchBlocks.ProcedureUtils.buildShadowDom_
 };

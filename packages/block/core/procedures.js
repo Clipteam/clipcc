@@ -573,7 +573,7 @@ const showProcedureDefCallback = function(block) {
 
 /**
  * Make a context menu option for showing the definition for a custom procedure,
- * based on a right-click on a custom command block.
+ * based on a right-click on a custom block.
  * @param {!Blockly.BlockSvg} block The block where the right-click originated.
  * @return {!Object} A menu option, containing text, enabled, and a callback.
  * @package
@@ -584,6 +584,24 @@ export const makeShowDefinitionOption = function(block) {
     text: Msg.SHOW_PROCEDURE_DEFINITION,
     callback: function() {
       showProcedureDefCallback(block);
+    }
+  };
+  return option;
+};
+
+/**
+ * Make a context menu option for changing the shape for a custom procedure,
+ * based on a right-click on a custom block.
+ * @param {!Blockly.BlockSvg} block The block where the right-click originated.
+ * @return {!Object} A menu option, containing text, enabled, and a callback.
+ * @package
+ */
+export const makeChangeShapeOption = function(block) {
+  const option = {
+    enabled: true,
+    text: Msg.CHANGE_PROCEDURE_SHAPE,
+    callback: function() {
+      block.setReturn(!block.getReturn());
     }
   };
   return option;
