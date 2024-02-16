@@ -999,6 +999,7 @@ Blockly.Blocks['procedures_call'] = {
   // Only exists on the external caller.
   getReturn: Blockly.ScratchBlocks.ProcedureUtils.getReturn,
   setReturn: Blockly.ScratchBlocks.ProcedureUtils.setReturn,
+  getGlobal: Blockly.ScratchBlocks.ProcedureUtils.getGlobal,
   attachShadow_: Blockly.ScratchBlocks.ProcedureUtils.attachShadow_,
   buildShadowDom_: Blockly.ScratchBlocks.ProcedureUtils.buildShadowDom_
 };

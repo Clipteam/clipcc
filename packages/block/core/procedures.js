@@ -489,9 +489,14 @@ const editProcedureCallback = function(block) {
     }
     block = innerBlock;
   } else if (block.type == constants.PROCEDURES_CALL_BLOCK_TYPE) {
+    let workspaceToSearch = null;
+    if (block.getGlobal()) {
+      // Change workspace before performing search
+      externalCheckoutWsCallback(block.getProcCode());
+    }
     // This is a call block, find the prototype corresponding to the procCode.
     // Make sure to search the correct workspace, call block can be in flyout.
-    const workspaceToSearch = block.workspace.isFlyout ?
+    workspaceToSearch = block.workspace.isFlyout ?
         block.workspace.targetWorkspace : block.workspace;
     block = getPrototypeBlock(
         block.getProcCode(), workspaceToSearch);
@@ -537,6 +542,23 @@ export const setExternalProcedureDefCallback = function(func) {
 };
 
 /**
+ * Callback to checkout current workspace for global procedures.
+ * @private
+ */
+let externalCheckoutWsCallback = function(/** proccode */) {
+  alert('External checkoutWs must be override Blockly.Procedures.externalCheckoutWsCallback');
+};
+
+/**
+ * Set the callback to checkout current workspace for global procedures.
+ * @param {function} func The callback to checkout current workspace.
+ * @public
+ */
+export const setExternalCheckoutWsCallback = function(func) {
+  externalCheckoutWsCallback = func;
+};
+
+/**
  * Make a context menu option for editing a custom procedure.
  * This appears in the context menu for procedure definitions and procedure
  * calls.
@@ -563,6 +585,9 @@ export const makeEditOption = function(block) {
  * @private
  */
 const showProcedureDefCallback = function(block) {
+    if (block.getGlobal()) {
+      externalCheckoutWsCallback(block.getProcCode());
+    }
   const workspace = block.workspace.isFlyout ? block.workspace.targetWorkspace : block.workspace;
   const defBlock = getDefineBlock(block.getProcCode(), workspace);
   if (defBlock) {
