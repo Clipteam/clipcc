@@ -1279,7 +1279,7 @@ Block.prototype.appendDummyInput = function(opt_name) {
  * @return {!Blockly.Input} The input object created.
  */
 Block.prototype.insertValueInput = function(index, name) {
-  return this.insertInput_(index, Blockly.INPUT_VALUE, name);
+  return this.insertInput_(index, constants.INPUT_VALUE, name);
 };
 
 /**
@@ -1581,10 +1581,10 @@ Block.prototype.insertInput_ = function(index, type, name) {
   asserts.assert(index <= this.inputList.length,
       'Input index ' + index + ' out of bounds.');
   let connection = null;
-  if (type == Blockly.INPUT_VALUE || type == Blockly.NEXT_STATEMENT) {
+  if (type == constants.INPUT_VALUE || type == constants.NEXT_STATEMENT) {
     connection = this.makeConnection_(type);
   }
-  const input = new Blockly.Input(type, name, this, connection);
+  const input = new Input(type, name, this, connection);
   // Insert input to list.
   this.inputList.splice(index, 0, input);
   return input;
