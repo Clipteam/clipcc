@@ -489,14 +489,13 @@ const editProcedureCallback = function(block) {
     }
     block = innerBlock;
   } else if (block.type == constants.PROCEDURES_CALL_BLOCK_TYPE) {
-    let workspaceToSearch = null;
     if (block.getGlobal()) {
       // Change workspace before performing search
       externalCheckoutWsCallback(block.getProcCode());
     }
     // This is a call block, find the prototype corresponding to the procCode.
     // Make sure to search the correct workspace, call block can be in flyout.
-    workspaceToSearch = block.workspace.isFlyout ?
+    const workspaceToSearch = block.workspace.isFlyout ?
         block.workspace.targetWorkspace : block.workspace;
     block = getPrototypeBlock(
         block.getProcCode(), workspaceToSearch);
