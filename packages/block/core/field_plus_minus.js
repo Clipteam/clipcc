@@ -193,7 +193,10 @@ FieldPlusMinus.fromJson = function(_options) {
  * Dispose of all DOM objects belonging to this field.
  */
 FieldPlusMinus.prototype.dispose = function() {
-  browserEvents.unbind(this.wrappers_);
+  for (const wrapper of this.wrappers_) {
+    browserEvents.unbind(wrapper);
+  }
+  this.wrappers_ = [];
   dom.removeNode(this.fieldGroup_);
   this.fieldGroup_ = null;
   this.svgElement_ = null;
