@@ -489,6 +489,10 @@ const editProcedureCallback = function(block) {
     }
     block = innerBlock;
   } else if (block.type == constants.PROCEDURES_CALL_BLOCK_TYPE) {
+    if (block.getGlobal()) {
+      // Change workspace before performing search
+      externalCheckoutWsCallback(block.getProcCode());
+    }
     // This is a call block, find the prototype corresponding to the procCode.
     // Make sure to search the correct workspace, call block can be in flyout.
     const workspaceToSearch = block.workspace.isFlyout ?
@@ -537,6 +541,23 @@ export const setExternalProcedureDefCallback = function(func) {
 };
 
 /**
+ * Callback to checkout current workspace for global procedures.
+ * @private
+ */
+let externalCheckoutWsCallback = function(/** proccode */) {
+  alert('External checkoutWs must be override Blockly.Procedures.externalCheckoutWsCallback');
+};
+
+/**
+ * Set the callback to checkout current workspace for global procedures.
+ * @param {function} func The callback to checkout current workspace.
+ * @public
+ */
+export const setExternalCheckoutWsCallback = function(func) {
+  externalCheckoutWsCallback = func;
+};
+
+/**
  * Make a context menu option for editing a custom procedure.
  * This appears in the context menu for procedure definitions and procedure
  * calls.
@@ -563,6 +584,9 @@ export const makeEditOption = function(block) {
  * @private
  */
 const showProcedureDefCallback = function(block) {
+    if (block.getGlobal()) {
+      externalCheckoutWsCallback(block.getProcCode());
+    }
   const workspace = block.workspace.isFlyout ? block.workspace.targetWorkspace : block.workspace;
   const defBlock = getDefineBlock(block.getProcCode(), workspace);
   if (defBlock) {
@@ -573,7 +597,7 @@ const showProcedureDefCallback = function(block) {
 
 /**
  * Make a context menu option for showing the definition for a custom procedure,
- * based on a right-click on a custom command block.
+ * based on a right-click on a custom block.
  * @param {!Blockly.BlockSvg} block The block where the right-click originated.
  * @return {!Object} A menu option, containing text, enabled, and a callback.
  * @package
@@ -584,6 +608,24 @@ export const makeShowDefinitionOption = function(block) {
     text: Msg.SHOW_PROCEDURE_DEFINITION,
     callback: function() {
       showProcedureDefCallback(block);
+    }
+  };
+  return option;
+};
+
+/**
+ * Make a context menu option for changing the shape for a custom procedure,
+ * based on a right-click on a custom block.
+ * @param {!Blockly.BlockSvg} block The block where the right-click originated.
+ * @return {!Object} A menu option, containing text, enabled, and a callback.
+ * @package
+ */
+export const makeChangeShapeOption = function(block) {
+  const option = {
+    enabled: true,
+    text: Msg.CHANGE_PROCEDURE_SHAPE,
+    callback: function() {
+      block.setReturn(!block.getReturn());
     }
   };
   return option;

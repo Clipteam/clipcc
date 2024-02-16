@@ -203,6 +203,12 @@ Blockly.ScratchBlocks.VerticalExtensions.PROCEDURE_CALL_CONTEXTMENU = {
    * @this Blockly.Block
    */
   customContextMenu: function(menuOptions) {
+    if (!(this.previousConnection && this.previousConnection.isConnected()) &&
+    !(this.outputConnection && this.outputConnection.isConnected()) &&
+    !(this.nextConnection && this.nextConnection.isConnected()) &&
+    !this.getProcCode().includes('%c')) {
+        menuOptions.push(Blockly.Procedures.makeChangeShapeOption(this));
+    }
     menuOptions.push(Blockly.Procedures.makeEditOption(this));
     menuOptions.push(Blockly.Procedures.makeShowDefinitionOption(this));
   }
@@ -219,7 +225,7 @@ Blockly.ScratchBlocks.VerticalExtensions.SCRATCH_EXTENSION = function() {
 Blockly.ScratchBlocks.VerticalExtensions.registerAll = function() {
   const categoryNames =
       ['control', 'data', 'data_lists', 'sounds', 'motion', 'looks', 'event',
-        'sensing', 'pen', 'operators', 'more'];
+        'sensing', 'pen', 'operators', 'more', 'argument'];
   // Register functions for all category colours.
   for (let i = 0; i < categoryNames.length; i++) {
     const name = categoryNames[i];

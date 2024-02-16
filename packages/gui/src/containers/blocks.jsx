@@ -53,6 +53,7 @@ class Blocks extends React.Component {
         this.ScratchBlocks = VMScratchBlocks(props.vm);
         bindAll(this, [
             'attachVM',
+            'checkoutWsByProccode',
             'detachVM',
             'getToolboxXML',
             'handleCategorySelected',
@@ -90,6 +91,7 @@ class Blocks extends React.Component {
     }
     componentDidMount () {
         this.ScratchBlocks.FieldColourSlider.activateEyedropper_ = this.props.onActivateColorPicker;
+        this.ScratchBlocks.Procedures.setExternalCheckoutWsCallback(this.checkoutWsByProccode);
         this.ScratchBlocks.Procedures.setExternalProcedureDefCallback(this.props.onActivateCustomProcedures);
         this.ScratchBlocks.ScratchMsgs.setLocale(this.props.locale);
 
@@ -557,6 +559,11 @@ class Blocks extends React.Component {
                 this.props.vm.refreshWorkspace();
                 this.updateToolbox(); // To show new variables/custom blocks
             });
+    }
+    checkoutWsByProccode (proccode) {
+        const [target] = this.props.vm.runtime.getProcedureDefinition(proccode);
+        if (!target) return;
+        this.props.vm.setEditingTarget(target.id);
     }
     render () {
         /* eslint-disable no-unused-vars */

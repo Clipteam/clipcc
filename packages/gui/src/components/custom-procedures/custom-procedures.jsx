@@ -146,7 +146,7 @@ const CustomProcedures = props => (
                         checked={props.return}
                         type="checkbox"
                         onChange={props.onToggleReturn}
-                        disabled={!props.new || props.disableReturn}
+                        disabled={props.disableReturn}
                     />
                     <FormattedMessage
                         defaultMessage="Has return value"

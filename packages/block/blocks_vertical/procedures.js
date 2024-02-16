@@ -60,7 +60,12 @@ Blockly.ScratchBlocks.ProcedureUtils.callerDomToMutation = function(xmlElement) 
       JSON.parse(xmlElement.getAttribute('generateshadows'));
   this.argumentIds_ = JSON.parse(xmlElement.getAttribute('argumentids'));
   this.warp_ = JSON.parse(xmlElement.getAttribute('warp'));
-  this.return_ = JSON.parse(xmlElement.getAttribute('return'));
+  // don't update shape if caller still has connections
+  if (!(this.previousConnection && this.previousConnection.isConnected()) &&
+    !(this.outputConnection && this.outputConnection.isConnected()) &&
+    !(this.nextConnection && this.nextConnection.isConnected())) {
+    this.return_ = JSON.parse(xmlElement.getAttribute('return'));
+  }
   this.global_ = JSON.parse(xmlElement.getAttribute('global'));
   this.updateDisplay_();
 };
@@ -1052,6 +1057,9 @@ Blockly.Blocks['procedures_call'] = {
   updateShape_: Blockly.ScratchBlocks.ProcedureUtils.updateProcedureShape_,
 
   // Only exists on the external caller.
+  getReturn: Blockly.ScratchBlocks.ProcedureUtils.getReturn,
+  setReturn: Blockly.ScratchBlocks.ProcedureUtils.setReturn,
+  getGlobal: Blockly.ScratchBlocks.ProcedureUtils.getGlobal,
   attachShadow_: Blockly.ScratchBlocks.ProcedureUtils.attachShadow_,
   buildShadowDom_: Blockly.ScratchBlocks.ProcedureUtils.buildShadowDom_
 };
@@ -1217,7 +1225,7 @@ Blockly.Blocks['argument_reporter_boolean'] = {
           "text": ""
         }
       ],
-      "extensions": ["colours_more", "output_boolean"]
+      "extensions": ["colours_argument", "output_boolean"]
     });
   }
 };
@@ -1247,7 +1255,7 @@ Blockly.Blocks['argument_reporter_string_number'] = {
           "text": ""
         }
       ],
-      "extensions": ["colours_more", "output_number", "output_string"]
+      "extensions": ["colours_argument", "output_number", "output_string"]
     });
   }
 };
@@ -1304,7 +1312,7 @@ Blockly.Blocks['argument_editor_command'] = {
           "text": "foo"
         }
       ],
-      "extensions": ["colours_more", "shape_statement"]
+      "extensions": ["colours_argument", "shape_statement"]
     });
   },
   // Exist on declaration and arguments editors, with different implementations.
