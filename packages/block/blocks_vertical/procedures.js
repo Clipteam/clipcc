@@ -1164,7 +1164,7 @@ Blockly.Blocks['argument_reporter_boolean'] = {
           "text": ""
         }
       ],
-      "extensions": ["colours_more", "output_boolean"]
+      "extensions": ["colours_argument", "output_boolean"]
     });
   }
 };
@@ -1179,7 +1179,7 @@ Blockly.Blocks['argument_reporter_string_number'] = {
           "text": ""
         }
       ],
-      "extensions": ["colours_more", "output_number", "output_string"]
+      "extensions": ["colours_argument", "output_number", "output_string"]
     });
   }
 };
