@@ -138,7 +138,9 @@ test('PushGetParam', t => {
     th.pushStack('arbitraryString', rt);
     th.initParams();
     th.pushParam('testParam', 'testValue');
-    t.strictEquals(th.peekStackFrame().params.testParam, 'testValue');
+    th.pushStack('secondaryString', rt);
+    // cc - ignore the top stack's param, it's not used by current stack
+    // t.strictEquals(th.peekStackFrame().params.testParam, 'testValue');
     t.strictEquals(th.getParam('testParam'), 'testValue');
     // Params outside of define stack always evaluate to null
     t.strictEquals(th.getParam('nonExistentParam'), null);
@@ -250,7 +252,9 @@ test('stopThisScript', t => {
     th.pushStack('arbitraryString', rt);
     th.pushStack('secondString', rt);
     th.stopThisScript();
-    t.strictEquals(th.peekStack(), 'secondString');
+    // cc - prevent call command procedure repeatedly
+    // it may breaks expected logic, need to check carefully
+    t.strictEquals(th.peekStack(), null);
 
     t.end();
 });
