@@ -325,7 +325,7 @@ Blockly.Blocks['operator_join_advanced'] = {
   init: function() {
     this.jsonInit({
       "message0": Blockly.Msg.OPERATORS_JOIN_ADVANCED,
-      "category": Blockly.Categories.operators,
+      "category": Blockly.constants.Categories.operators,
       "extensions": ["colours_operators", "output_string"]
     });
     this.argumentIds_ = [];
@@ -343,7 +343,7 @@ Blockly.Blocks['operator_join_advanced'] = {
    * @this Blockly.Block
    */
   mutationToDom: function() {
-    var container = document.createElement('mutation');
+    const container = document.createElement('mutation');
     container.setAttribute('argumentids', JSON.stringify(this.argumentIds_));
     return container;
   },
@@ -353,7 +353,7 @@ Blockly.Blocks['operator_join_advanced'] = {
    * @this Blockly.Block
    */
   domToMutation: function(xmlElement) {
-    var argumentIds = xmlElement.getAttribute('argumentids');
+    let argumentIds = xmlElement.getAttribute('argumentids');
     // don't update if args are not changed
     if (JSON.stringify(this.argumentIds_) === argumentIds) {
       return;
@@ -371,7 +371,7 @@ Blockly.Blocks['operator_join_advanced'] = {
    */
   customContextMenu: function(menuOptions, triggeredBlock) {
     if (triggeredBlock && triggeredBlock.isShadow()) {
-      var index = this.findBlockIndex_(triggeredBlock) + 1;
+      const index = this.findBlockIndex_(triggeredBlock) + 1;
       menuOptions.push({
         enabled: true,
         text: Blockly.Msg.INSERT_INPUT,
@@ -392,8 +392,8 @@ Blockly.Blocks['operator_join_advanced'] = {
    * @this Blockly.Block
    */
   findBlockIndex_: function(block) {
-    var childBlocks = this.getChildren(true);
-    for (var i = 0; i < childBlocks.length; ++i) {
+    const childBlocks = this.getChildren(true);
+    for (let i = 0; i < childBlocks.length; ++i) {
       if (childBlocks[i] === block) {
         return i;
       }
@@ -425,16 +425,16 @@ Blockly.Blocks['operator_join_advanced'] = {
    */
   insertInputWithIndex_: function(index, name) {
     Blockly.Events.setGroup(true);
-    var oldMutation = Blockly.Xml.domToText(this.mutationToDom());
+    const oldMutation = Blockly.Xml.domToText(this.mutationToDom());
     if (this.argumentIds_.length === 2) {
       this.plusminus_.setEnableMinus(true);
     }
     
     if (!name) name = Blockly.utils.genUid();
     this.argumentIds_.splice(index - 1, 0, name);
-    var input = this.insertValueInput(index, name);
+    const input = this.insertValueInput(index, name);
     Blockly.Events.disable();
-    var newBlock = this.workspace.newBlock('text');
+    const newBlock = this.workspace.newBlock('text');
     newBlock.setFieldValue('', 'TEXT');
     newBlock.setShadow(true);
     if (!this.isInsertionMarker()) {
@@ -447,7 +447,7 @@ Blockly.Blocks['operator_join_advanced'] = {
     }
     newBlock.outputConnection.connect(input.connection);
 
-    var newMutation = Blockly.Xml.domToText(this.mutationToDom());
+    const newMutation = Blockly.Xml.domToText(this.mutationToDom());
     Blockly.Events.fire(new Blockly.Events.BlockChange(this, 'mutation', null, oldMutation, newMutation));
     Blockly.Events.setGroup(false);
   },
@@ -461,13 +461,13 @@ Blockly.Blocks['operator_join_advanced'] = {
     // not allowed to remove input when there are less than 2 inputs
     if (this.argumentIds_.length <= 2) return;
     Blockly.Events.setGroup(true);
-    var oldMutation = Blockly.Xml.domToText(this.mutationToDom());
+    const oldMutation = Blockly.Xml.domToText(this.mutationToDom());
     if (this.argumentIds_.length === 3) {
       this.plusminus_.setEnableMinus(false);
     }
     this.removeInput(this.argumentIds_[index - 1]);
     this.argumentIds_.splice(index - 1, 1);
-    var newMutation = Blockly.Xml.domToText(this.mutationToDom());
+    const newMutation = Blockly.Xml.domToText(this.mutationToDom());
     Blockly.Events.fire(new Blockly.Events.BlockChange(this, 'mutation', null, oldMutation, newMutation));
     Blockly.Events.setGroup(false);
   },
@@ -478,16 +478,16 @@ Blockly.Blocks['operator_join_advanced'] = {
    * @this Blockly.Block
    */
   updateDisplay_: function() {
-    var wasRendered = this.rendered;
+    const wasRendered = this.rendered;
     this.rendered = false;
 
     // disconnect old blocks, except the first one and the last one
-    var connectionMap = {};
-    for (var i = 1; i < this.inputList.length - 1; ++i) {
-      var input = this.inputList[i];
+    const connectionMap = {};
+    for (let i = 1; i < this.inputList.length - 1; ++i) {
+      const input = this.inputList[i];
       if (input.connection) {
-        var target = input.connection.targetBlock();
-        var saveInfo = {
+        const target = input.connection.targetBlock();
+        const saveInfo = {
           shadow: input.connection.getShadowDom(),
           block: target
         };
@@ -500,21 +500,21 @@ Blockly.Blocks['operator_join_advanced'] = {
     }
 
     // remove all inputs, except the first one and the last one
-    for (var i = 1; i < this.inputList.length - 1; ++i) {
+    for (let i = 1; i < this.inputList.length - 1; ++i) {
       this.inputList[i].dispose();
     }
     this.inputList.splice(1, this.inputList.length - 2);
 
     // create inputs
-    for (var i = 0; i < this.argumentIds_.length; ++i) {
-      var id = this.argumentIds_[i];
-      var input = this.insertValueInput(i + 1, id);
+    for (let i = 0; i < this.argumentIds_.length; ++i) {
+      const id = this.argumentIds_[i];
+      const input = this.insertValueInput(i + 1, id);
 
       // populate args
-      var oldBlock = null;
-      var oldShadow = null;
+      let oldBlock = null;
+      let oldShadow = null;
       if (connectionMap && (id in connectionMap)) {
-        var saveInfo = connectionMap[id];
+        const saveInfo = connectionMap[id];
         oldBlock = saveInfo['block'];
         oldShadow = saveInfo['shadow'];
       }
@@ -527,7 +527,7 @@ Blockly.Blocks['operator_join_advanced'] = {
           // create shadow dom
           oldShadow = goog.dom.createDom('shadow');
           oldShadow.setAttribute('type', 'text');
-          var fieldDom = goog.dom.createDom('field', null, '');
+          const fieldDom = goog.dom.createDom('field', null, '');
           fieldDom.setAttribute('name', 'TEXT');
           oldShadow.appendChild(fieldDom);
         }
@@ -535,7 +535,7 @@ Blockly.Blocks['operator_join_advanced'] = {
       } else {
         // attach shadow
         Blockly.Events.disable();
-        var newBlock = this.workspace.newBlock('text');
+        const newBlock = this.workspace.newBlock('text');
         newBlock.setFieldValue('', 'TEXT');
         newBlock.setShadow(true);
         if (!this.isInsertionMarker()) {
@@ -551,10 +551,10 @@ Blockly.Blocks['operator_join_advanced'] = {
     }
 
     // delete unused shadow
-    for (var id in connectionMap) {
-      var saveInfo = connectionMap[id];
+    for (const id in connectionMap) {
+      const saveInfo = connectionMap[id];
       if (saveInfo) {
-        var block = saveInfo['block'];
+        const block = saveInfo['block'];
         if (block && block.isShadow()) {
           block.dispose();
           connectionMap[id] = null;

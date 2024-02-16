@@ -1278,7 +1278,7 @@ Block.prototype.appendDummyInput = function(opt_name) {
  *     input again.  Should be unique to this block.
  * @return {!Blockly.Input} The input object created.
  */
-Blockly.Block.prototype.insertValueInput = function(index, name) {
+Block.prototype.insertValueInput = function(index, name) {
   return this.insertInput_(index, Blockly.INPUT_VALUE, name);
 };
 
@@ -1576,15 +1576,15 @@ Block.prototype.appendInput_ = function(type, name) {
  * @return {!Blockly.Input} The input object created.
  * @protected
  */
-Blockly.Block.prototype.insertInput_ = function(index, type, name) {
+Block.prototype.insertInput_ = function(index, type, name) {
   // Validate argument.
-  goog.asserts.assert(index <= this.inputList.length,
+  asserts.assert(index <= this.inputList.length,
       'Input index ' + index + ' out of bounds.');
-  var connection = null;
+  let connection = null;
   if (type == Blockly.INPUT_VALUE || type == Blockly.NEXT_STATEMENT) {
     connection = this.makeConnection_(type);
   }
-  var input = new Blockly.Input(type, name, this, connection);
+  const input = new Blockly.Input(type, name, this, connection);
   // Insert input to list.
   this.inputList.splice(index, 0, input);
   return input;
