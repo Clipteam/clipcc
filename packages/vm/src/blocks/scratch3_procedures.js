@@ -47,14 +47,14 @@ class Scratch3ProcedureBlocks {
         for (let i = 0; i < paramIds.length; i++) {
             if (args.hasOwnProperty(paramIds[i])) {
                 util.pushParam(paramNames[i], args[paramIds[i]]);
-            } else if (paramDefaults[i]) {
-                util.pushParam(paramNames[i], paramDefaults[i]);
             } else if (paramIds[i].startsWith('SUBSTACK')) {
                 // It's a substack entry
                 util.pushParam(paramNames[i], {
                     entry: paramIds[i],
                     callerId: util.thread.peekStack()
                 });
+            } else {
+                util.pushParam(paramNames[i], paramDefaults[i]);
             }
         }
 
