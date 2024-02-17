@@ -23,8 +23,7 @@ const base = {
                 use: {
                     loader: 'codingclip-worker-loader',
                     options: {
-                        filename: '[name].js',
-                        inline: process.env.NODE_ENV === 'production' ? 'no-fallback' : 'fallback',
+                        filename: '[name].js'
                     }
                 }
             },
