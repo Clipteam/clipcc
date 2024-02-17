@@ -1240,7 +1240,7 @@ Blockly.Blocks['argument_command'] = {
           "text": ""
         }
       ],
-      "extensions": ["colours_more", "shape_statement"]
+      "extensions": ["colours_argument", "shape_statement"]
     });
   }
 };
