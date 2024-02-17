@@ -24,12 +24,17 @@
  */
 'use strict';
 
-goog.provide('Blockly.FieldTextDropdown');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.FieldTextDropdown');
 
-goog.require('Blockly.DropDownDiv');
-goog.require('Blockly.FieldDropdown');
-goog.require('Blockly.FieldTextInput');
-goog.require('goog.userAgent');
+import * as browserEvents from './browser_events';
+import * as common from './common';
+import {Field} from './field';
+import {FieldDropdown} from './field_dropdown';
+import {FieldTextInput} from './field_textinput';
+import * as Touch from './touch';
+import * as utils from './utils';
+import {WidgetDiv} from './widgetdiv';
 
 
 /**
@@ -44,28 +49,28 @@ goog.require('goog.userAgent');
  * @param {RegExp=} opt_restrictor An optional regular expression to restrict
  *     typed text to. Text that doesn't match the restrictor will never show
  *     in the text field.
- * @extends {Blockly.FieldTextInput}
+ * @extends {FieldTextInput}
  * @constructor
  */
-Blockly.FieldTextDropdown = function(text, menuGenerator, opt_validator, opt_restrictor) {
+export const FieldTextDropdown = function(text, menuGenerator, opt_validator, opt_restrictor) {
   this.menuGenerator_ = menuGenerator;
-  Blockly.FieldDropdown.prototype.trimOptions_.call(this);
-  Blockly.FieldTextDropdown.superClass_.constructor.call(this, text, opt_validator, opt_restrictor);
+  FieldDropdown.prototype.trimOptions_.call(this);
+  FieldTextDropdown.superClass_.constructor.call(this, text, opt_validator, opt_restrictor);
   this.addArgType('textdropdown');
 };
-goog.inherits(Blockly.FieldTextDropdown, Blockly.FieldTextInput);
+goog.inherits(FieldTextDropdown, FieldTextInput);
 
 /**
  * Construct a FieldTextDropdown from a JSON arg object,
  * dereferencing any string table references.
  * @param {!Object} element A JSON object with options.
- * @returns {!Blockly.FieldTextDropdown} The new field instance.
+ * @returns {!FieldTextDropdown} The new field instance.
  * @package
  * @nocollapse
  */
-Blockly.FieldTextDropdown.fromJson = function(element) {
-  var field =
-      new Blockly.FieldTextDropdown(element['text'], element['options']);
+FieldTextDropdown.fromJson = function(element) {
+  const field =
+      new FieldTextDropdown(element['text'], element['options']);
   if (typeof element['spellcheck'] == 'boolean') {
     field.setSpellcheck(element['spellcheck']);
   }
@@ -75,12 +80,12 @@ Blockly.FieldTextDropdown.fromJson = function(element) {
 /**
  * Install this text drop-down field on a block.
  */
-Blockly.FieldTextDropdown.prototype.init = function() {
+FieldTextDropdown.prototype.init = function() {
   if (this.fieldGroup_) {
     // Text input + dropdown has already been initialized once.
     return;
   }
-  Blockly.FieldTextDropdown.superClass_.init.call(this);
+  FieldTextDropdown.superClass_.init.call(this);
   // Add dropdown arrow: "option ▾" (LTR) or "▾ אופציה" (RTL)
   // Positioned on render, after text size is calculated.
   if (!this.arrow_) {
@@ -90,17 +95,17 @@ Blockly.FieldTextDropdown.prototype.init = function() {
     this.arrowX_ = 0;
     /** @type {Number} */
     this.arrowY_ = 11;
-    this.arrow_ = Blockly.utils.createSvgElement('image',
+    this.arrow_ = utils.createSvgElement('image',
         {
           'height': this.arrowSize_ + 'px',
           'width': this.arrowSize_ + 'px'
         });
     this.arrow_.setAttributeNS('http://www.w3.org/1999/xlink',
-        'xlink:href', Blockly.mainWorkspace.options.pathToMedia + 'dropdown-arrow-dark.svg');
+        'xlink:href', common.getMainWorkspace().options.pathToMedia + 'dropdown-arrow-dark.svg');
     this.arrow_.style.cursor = 'pointer';
     this.fieldGroup_.appendChild(this.arrow_);
     this.mouseUpWrapper_ =
-        Blockly.bindEvent_(this.arrow_, 'mouseup', this, this.showDropdown_);
+        browserEvents.bind(this.arrow_, 'mouseup', this, this.showDropdown_);
   }
   // Prevent the drop-down handler from changing the field colour on open.
   this.disableColourChange_ = true;
@@ -109,26 +114,26 @@ Blockly.FieldTextDropdown.prototype.init = function() {
 /**
  * Close the input widget if this input is being deleted.
  */
-Blockly.FieldTextDropdown.prototype.dispose = function() {
+FieldTextDropdown.prototype.dispose = function() {
   if (this.mouseUpWrapper_) {
-    Blockly.unbindEvent_(this.mouseUpWrapper_);
+    browserEvents.unbind(this.mouseUpWrapper_);
     this.mouseUpWrapper_ = null;
-    Blockly.Touch.clearTouchIdentifier();
+    Touch.clearTouchIdentifier();
   }
-  Blockly.FieldTextDropdown.superClass_.dispose.call(this);
+  FieldTextDropdown.superClass_.dispose.call(this);
 };
 
 /**
  * If the drop-down isn't open, show the text editor.
  */
-Blockly.FieldTextDropdown.prototype.showEditor_ = function() {
+FieldTextDropdown.prototype.showEditor_ = function() {
   if (!this.dropDownOpen_) {
-    Blockly.FieldTextDropdown.superClass_.showEditor_.call(this, null, null,
+    FieldTextDropdown.superClass_.showEditor_.call(this, null, null,
         true, function() {
           // When the drop-down arrow is clicked, hide text editor and show drop-down.
-          Blockly.WidgetDiv.hide();
+          WidgetDiv.hide();
           this.showDropdown_();
-          Blockly.Touch.clearTouchIdentifier();
+          Touch.clearTouchIdentifier();
         });
   }
 };
@@ -140,7 +145,7 @@ Blockly.FieldTextDropdown.prototype.showEditor_ = function() {
  *     (human-readable text, language-neutral name).
  * @private
  */
-Blockly.FieldTextDropdown.prototype.getOptions_ = Blockly.FieldDropdown.prototype.getOptions_;
+FieldTextDropdown.prototype.getOptions_ = FieldDropdown.prototype.getOptions_;
 
 /**
  * Position a drop-down arrow at the appropriate location at render-time.
@@ -148,17 +153,17 @@ Blockly.FieldTextDropdown.prototype.getOptions_ = Blockly.FieldDropdown.prototyp
  * @param {number} x X position the arrow is being rendered at, in px.
  * @return {number} Amount of space the arrow is taking up, in px.
  */
-Blockly.FieldTextDropdown.prototype.positionArrow = Blockly.FieldDropdown.prototype.positionArrow;
+FieldTextDropdown.prototype.positionArrow = FieldDropdown.prototype.positionArrow;
 
 /**
  * Create the dropdown menu.
  * @private
  */
-Blockly.FieldTextDropdown.prototype.showDropdown_ = Blockly.FieldDropdown.prototype.showEditor_;
+FieldTextDropdown.prototype.showDropdown_ = FieldDropdown.prototype.showEditor_;
 
 /**
  * Callback when the drop-down menu is hidden.
  */
-Blockly.FieldTextDropdown.prototype.onHide = Blockly.FieldDropdown.prototype.onHide;
+FieldTextDropdown.prototype.onHide = FieldDropdown.prototype.onHide;
 
-Blockly.Field.register('field_textdropdown', Blockly.FieldTextDropdown);
+Field.register('field_textdropdown', FieldTextDropdown);

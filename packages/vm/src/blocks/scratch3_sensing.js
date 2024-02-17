@@ -69,6 +69,7 @@ class Scratch3SensingBlocks {
             sensing_joystick_distance: this.getJoystickDistance,
             sensing_setdragmode: this.setDragMode,
             sensing_mousedown: this.getMouseDown,
+            sensing_mousepressed: this.getMousePressed,
             sensing_keypressed: this.getKeyPressed,
             sensing_current: this.current,
             sensing_dayssince2000: this.daysSince2000,
@@ -271,6 +272,10 @@ class Scratch3SensingBlocks {
 
     getMouseDown (args, util) {
         return util.ioQuery('mouse', 'getIsDown');
+    }
+
+    getMousePressed (args, util) {
+        return util.ioQuery('mouse', 'getMousePressed', [Number(args.MOUSE_OPTION)]);
     }
 
     getJoystickX (args, util) {

@@ -8,6 +8,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
 
@@ -115,6 +116,11 @@ const base = {
                 {
                     from: '../block/media',
                     to: 'static/blocks-media/high-contrast'
+                },
+                {
+                    from: 'src/lib/themes/high-contrast/blocks-media',
+                    to: 'static/blocks-media/high-contrast',
+                    force: true
                 }
             ]
         })
@@ -247,11 +253,7 @@ module.exports = [
                     {
                         test: /\.(svg|png|wav|gif|jpg)$/,
                         resourceQuery: {not: [/raw/]},
-                        type: 'asset/inline',
-                        generator: {
-                            outputPath: 'static/assets/',
-                            publicPath: `${STATIC_PATH}/assets/`
-                        }
+                        type: 'asset/inline'
                     }
                 ])
             },
@@ -261,10 +263,13 @@ module.exports = [
                     patterns: [
                         {
                             from: 'src/lib/libraries/*.json',
-                            to: 'libraries',
-                            flatten: true
+                            to: 'libraries/[name][ext]',
                         }
                     ]
+                }),
+                new WorkboxPlugin.GenerateSW({
+                    clientsClaim: true,
+                    skipWaiting: true,
                 })
             ])
         })) : []

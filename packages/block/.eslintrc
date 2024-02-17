@@ -3,8 +3,8 @@
         "curly": ["error", "multi-line"],
         "eol-last": ["error"],
         "indent": [
-            "error", 2,  # Blockly/Google use 2-space indents
-            # Blockly/Google uses +4 space indents for line continuations.
+            "error", 2,  // Blockly/Google use 2-space indents
+            // Blockly/Google uses +4 space indents for line continuations.
             {
                 "SwitchCase": 1,
                 "MemberExpression": 2,
@@ -20,7 +20,7 @@
                 "CallExpression": {
                     "arguments": 2
                 },
-                # Ignore default rules for ternary expressions.
+                // Ignore default rules for ternary expressions.
                 "ignoredNodes": ["ConditionalExpression"]
             }
         ],
@@ -31,30 +31,41 @@
             "error",
             {
                 "args": "after-used",
-                # Ignore vars starting with an underscore.
+                // Ignore vars starting with an underscore.
                 "varsIgnorePattern": "^_",
-                # Ignore arguments starting with an underscore.
+                // Ignore arguments starting with an underscore.
                 "argsIgnorePattern": "^_"
             }
         ],
         "no-use-before-define": ["error"],
-        "quotes": ["off"], # Blockly mixes single and double quotes
+        "no-self-assign": ["off"], // Blockly uses for exporting symbols.
+        "quotes": ["off"], // Blockly mixes single and double quotes
         "semi": ["error", "always"],
-        "space-before-function-paren": ["error", "never"], # Blockly doesn't have space before function paren
+        "space-before-function-paren": ["error", "never"], // Blockly doesn't have space before function paren
         "space-infix-ops": ["error"],
-        "strict": ["off"], # Blockly uses 'use strict' in files
-        "no-cond-assign": ["off"], # Blockly often uses cond-assignment in loops
-        "no-redeclare": ["off"], # Closure style allows redeclarations
+        "strict": ["off"], // Blockly uses 'use strict' in files
+        "no-cond-assign": ["off"], // Blockly often uses cond-assignment in loops
+        "no-redeclare": ["off"], // Closure style allows redeclarations
         "valid-jsdoc": ["error", {"requireReturn": false}],
         "no-console": ["off"],
-        "no-constant-condition": ["off"]
+        "no-constant-condition": ["off"],
+        "no-var": ["error"],
+        "prefer-const": ["error"]
     },
     "env": {
-        "browser": true
+        "es2020": true,
+        "browser": true,
+        "commonjs": true
     },
     "globals": {
-        "Blockly": true, # Blockly global
-        "goog": true, # goog closure libraries/includes
+        "Blockly": true, // Blockly global
+        "goog": true // goog closure libraries/includes
     },
-    "extends": "eslint:recommended"
+    "extends": "eslint:recommended",
+    "overrides": [{
+        "files": ["core/**/**/*.js"],
+        "parserOptions": {
+            "sourceType": "module"
+        }
+    }]
 }

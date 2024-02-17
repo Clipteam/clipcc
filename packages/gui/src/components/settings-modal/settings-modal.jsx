@@ -51,7 +51,7 @@ const messages = defineMessages({
         defaultMessage: 'High Contrast',
         description: 'Label of high contrast',
         id: 'gui.settingsModal.theme.highContrast'
-    },
+    }
 });
 
 const BufferedInput = BufferedInputHOC(Input);
@@ -298,6 +298,45 @@ class SettingsModal extends React.Component {
                                 onChange={this.props.onChangeAccurateCoordinates}
                             />
                         </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Stage Size"
+                                    description="Label of stage size"
+                                    id="gui.settingsModal.resolution"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Change stage size, width must not be greater than 480."
+                                    description="Description of stage size"
+                                    id="gui.settingsModal.resolutionDescription"
+                                />
+                            </div>
+                            <div className={styles.group}>
+                                <BufferedInput
+                                    small
+                                    tabIndex="0"
+                                    type="number"
+                                    precision={0}
+                                    placeholder={480}
+                                    value={this.props.stageWidth}
+                                    onSubmit={this.props.onChangeStageWidth}
+                                    className={classNames(styles.input)}
+                                />
+                                <div style={{margin: '0 1rem'}}>
+                                    {'×'}
+                                </div>
+                                <BufferedInput
+                                    small
+                                    tabIndex="0"
+                                    type="number"
+                                    precision={0}
+                                    placeholder={360}
+                                    value={this.props.stageHeight}
+                                    onSubmit={this.props.onChangeStageHeight}
+                                    className={classNames(styles.input)}
+                                />
+                            </div>
+                        </div>
                         <p
                             className={styles.category}
                             ref={ref => this.categoryRef.project = ref}
@@ -386,6 +425,8 @@ SettingsModal.propTypes = {
     accurateCoordinates: PropTypes.bool.isRequired,
     autoSaveInterval: PropTypes.number.isRequired,
     framerate: PropTypes.number.isRequired,
+    stageWidth: PropTypes.number.isRequired,
+    stageHeight: PropTypes.number.isRequired,
     theme: PropTypes.string.isRequired,
     intl: intlShape.isRequired,
     onClose: PropTypes.func.isRequired,

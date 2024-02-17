@@ -356,6 +356,18 @@ class Runtime extends EventEmitter {
          */
         this.version = typeof clipcc === 'undefined' ? 'unknown' : clipcc.VERSION;
 
+        /**
+         * Get stage width.
+         * @type {number}
+         */
+        this.stageWidth = 480;
+
+        /**
+         * Get stage height.
+         * @type {number}
+         */
+        this.stageHeight = 360;
+
         // Register all given block packages.
         this._registerBlockPackages();
 
@@ -432,6 +444,7 @@ class Runtime extends EventEmitter {
     }
 
     /**
+     * @deprecated Use `runtime.stageWidth` instead.
      * Width of the stage, in pixels.
      * @const {number}
      */
@@ -440,11 +453,20 @@ class Runtime extends EventEmitter {
     }
 
     /**
+     * @deprecated Use `runtime.stageHeight` instead.
      * Height of the stage, in pixels.
      * @const {number}
      */
     static get STAGE_HEIGHT () {
         return 360;
+    }
+
+    /**
+     * Event name for stage size update.
+     * @const {string}
+     */
+    static get STAGE_SIZE_UPDATE () {
+        return 'STAGE_SIZE_UPDATE';
     }
 
     /**

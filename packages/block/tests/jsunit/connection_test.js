@@ -40,13 +40,13 @@ function connectionTest_setUp() {
     };
   }
   input = new Blockly.Connection(createDummyBlock(),
-      Blockly.INPUT_VALUE);
+      Blockly.constants.INPUT_VALUE);
   output = new Blockly.Connection(createDummyBlock(),
-      Blockly.OUTPUT_VALUE);
+      Blockly.constants.OUTPUT_VALUE);
   previous = new Blockly.Connection(createDummyBlock(),
-      Blockly.PREVIOUS_STATEMENT);
+      Blockly.constants.PREVIOUS_STATEMENT);
   next = new Blockly.Connection(createDummyBlock(),
-      Blockly.NEXT_STATEMENT);
+      Blockly.constants.NEXT_STATEMENT);
 }
 
 function connectionTest_tearDown() {
@@ -75,7 +75,7 @@ function testCanConnectWithReason_Disconnect() {
   connectionTest_setUp();
 
   var tempConnection = new Blockly.Connection({workspace: dummyWorkspace, isMovable: isMovableFn},
-      Blockly.OUTPUT_VALUE);
+      Blockly.constants.OUTPUT_VALUE);
   Blockly.Connection.connectReciprocally_(input, tempConnection);
   assertEquals(Blockly.Connection.CAN_CONNECT,
       input.canConnectWithReason_(output));
@@ -86,9 +86,9 @@ function testCanConnectWithReason_Disconnect() {
 function testCanConnectWithReason_DifferentWorkspaces() {
   connectionTest_setUp();
 
-  input = new Blockly.Connection({workspace: {}}, Blockly.INPUT_VALUE);
+  input = new Blockly.Connection({workspace: {}}, Blockly.constants.INPUT_VALUE);
   output = new Blockly.Connection({workspace: dummyWorkspace},
-      Blockly.OUTPUT_VALUE);
+      Blockly.constants.OUTPUT_VALUE);
 
   assertEquals(Blockly.Connection.REASON_DIFFERENT_WORKSPACES,
       input.canConnectWithReason_(output));
@@ -255,11 +255,11 @@ function test_isConnectionAllowed_Distance() {
   var sharedWorkspace = {};
   // Two connections of opposite types near each other.
   var one = helper_createConnection(5 /* x */, 10 /* y */,
-      Blockly.INPUT_VALUE, null, true);
+      Blockly.constants.INPUT_VALUE, null, true);
   one.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
 
   var two = helper_createConnection(10 /* x */, 15 /* y */,
-      Blockly.OUTPUT_VALUE, null, true);
+      Blockly.constants.OUTPUT_VALUE, null, true);
   two.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
 
   assertTrue(two.isConnectionAllowed(one, 20.0));
@@ -273,18 +273,18 @@ function test_isConnectionAllowed_Unrendered() {
   var sharedWorkspace = {};
 
   var one = helper_createConnection(5 /* x */, 10 /* y */,
-      Blockly.INPUT_VALUE);
+      Blockly.constants.INPUT_VALUE);
   one.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
 
   // Don't offer to connect a left (male) value plug to
   // an available right (female) value plug.
   // Unlike in Blockly, you can't do this even if the left value plug isn't
   // already connected.
-  var two = helper_createConnection(0, 0, Blockly.OUTPUT_VALUE);
+  var two = helper_createConnection(0, 0, Blockly.constants.OUTPUT_VALUE);
   two.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
 
   assertFalse(one.isConnectionAllowed(two));
-  var three = helper_createConnection(0, 0, Blockly.INPUT_VALUE);
+  var three = helper_createConnection(0, 0, Blockly.constants.INPUT_VALUE);
   three.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
 
   Blockly.Connection.connectReciprocally_(two, three);
@@ -297,17 +297,17 @@ function test_isConnectionAllowed_Unrendered() {
 
 function test_isConnectionAllowed_NoNext() {
   var sharedWorkspace = {};
-  var one = helper_createConnection(0, 0, Blockly.NEXT_STATEMENT);
+  var one = helper_createConnection(0, 0, Blockly.constants.NEXT_STATEMENT);
   one.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
   one.sourceBlock_.nextConnection = one;
 
-  var two = helper_createConnection(0, 0, Blockly.PREVIOUS_STATEMENT);
+  var two = helper_createConnection(0, 0, Blockly.constants.PREVIOUS_STATEMENT);
   two.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
   two.sourceBlock_.previousConnection = two;
 
   assertTrue(two.isConnectionAllowed(one));
 
-  var three = helper_createConnection(0, 0, Blockly.PREVIOUS_STATEMENT);
+  var three = helper_createConnection(0, 0, Blockly.constants.PREVIOUS_STATEMENT);
   three.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
   three.sourceBlock_.previousConnection = three;
   Blockly.Connection.connectReciprocally_(one, three);
@@ -320,12 +320,12 @@ function test_isConnectionAllowed_InsertionMarker() {
   var sharedWorkspace = {};
   // Two connections of opposite types near each other.
   var one = helper_createConnection(5 /* x */, 10 /* y */,
-      Blockly.INPUT_VALUE);
+      Blockly.constants.INPUT_VALUE);
   one.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
 
   // The second one is an insertion marker.
   var two = helper_createConnection(10 /* x */, 15 /* y */,
-      Blockly.OUTPUT_VALUE);
+      Blockly.constants.OUTPUT_VALUE);
   two.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
   two.sourceBlock_.isInsertionMarker = function() {
       return true;
@@ -346,9 +346,9 @@ function testCheckConnection_Okay() {
 
 function test_canConnectWithReason_Procedures_WrongBlockType() {
   var sharedWorkspace = {};
-  var one = helper_createConnection(0, 0, Blockly.NEXT_STATEMENT);
+  var one = helper_createConnection(0, 0, Blockly.constants.NEXT_STATEMENT);
   one.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
-  one.sourceBlock_.type = Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE;
+  one.sourceBlock_.type = Blockly.constants.PROCEDURES_DEFINITION_BLOCK_TYPE;
   // Make one be the connection on its source block's input.
   one.sourceBlock_.getInput = function() {
     return {
@@ -356,7 +356,7 @@ function test_canConnectWithReason_Procedures_WrongBlockType() {
     };
   };
 
-  var two = helper_createConnection(0, 0, Blockly.PREVIOUS_STATEMENT);
+  var two = helper_createConnection(0, 0, Blockly.constants.PREVIOUS_STATEMENT);
   two.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
   // Fail because two's source block is the wrong type.
   two.sourceBlock_.type = 'wrong_type';
@@ -366,27 +366,27 @@ function test_canConnectWithReason_Procedures_WrongBlockType() {
 
 function test_canConnectWithReason_Procedures_Pass() {
   var sharedWorkspace = {};
-  var one = helper_createConnection(0, 0, Blockly.NEXT_STATEMENT);
+  var one = helper_createConnection(0, 0, Blockly.constants.NEXT_STATEMENT);
   one.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
-  one.sourceBlock_.type = Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE;
+  one.sourceBlock_.type = Blockly.constants.PROCEDURES_DEFINITION_BLOCK_TYPE;
   // Make one be the connection on its source block's input.
   one.sourceBlock_.getInput = function() {
     return {
       connection: one
     };
   };
-  var two = helper_createConnection(0, 0, Blockly.PREVIOUS_STATEMENT);
+  var two = helper_createConnection(0, 0, Blockly.constants.PREVIOUS_STATEMENT);
   two.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
-  two.sourceBlock_.type = Blockly.PROCEDURES_PROTOTYPE_BLOCK_TYPE;
+  two.sourceBlock_.type = Blockly.constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE;
   assertEquals(Blockly.Connection.CAN_CONNECT,
       one.canConnectWithReason_(two));
 }
 
 function test_canConnectWithReason_Procedures_NextConnection() {
   var sharedWorkspace = {};
-  var one = helper_createConnection(0, 0, Blockly.NEXT_STATEMENT);
+  var one = helper_createConnection(0, 0, Blockly.constants.NEXT_STATEMENT);
   one.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
-  one.sourceBlock_.type = Blockly.PROCEDURES_DEFINITION_BLOCK_TYPE;
+  one.sourceBlock_.type = Blockly.constants.PROCEDURES_DEFINITION_BLOCK_TYPE;
   // One is the next connection, not an input connection
   one.sourceBlock_.nextConnection = one;
   one.sourceBlock_.getInput = function() {
@@ -394,7 +394,7 @@ function test_canConnectWithReason_Procedures_NextConnection() {
       connection: null
     };
   };
-  var two = helper_createConnection(0, 0, Blockly.PREVIOUS_STATEMENT);
+  var two = helper_createConnection(0, 0, Blockly.constants.PREVIOUS_STATEMENT);
   two.sourceBlock_ = helper_makeSourceBlock(sharedWorkspace);
   // It should be okay, even if two's source block has the wrong type, because
   // it's not trying to connect to the input.

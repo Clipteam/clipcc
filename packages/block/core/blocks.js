@@ -26,12 +26,13 @@
 
 /**
  * A mapping of block type names to block prototype objects.
- * @name Blockly.Blocks
+ * @name Blocks
  */
-goog.provide('Blockly.Blocks');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Blocks');
 
 /*
  * A mapping of block type names to block prototype objects.
  * @type {!Object.<string,Object>}
  */
-Blockly.Blocks = new Object(null);
+export const Blocks = new Object(null);

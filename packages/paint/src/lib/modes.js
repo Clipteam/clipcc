@@ -9,7 +9,6 @@ const vectorModesObj = {
     RESHAPE: null,
     OVAL: null,
     RECT: null,
-    ROUNDED_RECT: null,
     TEXT: null
 };
 const bitmapModesObj = {
