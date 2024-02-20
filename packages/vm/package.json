@@ -95,7 +95,7 @@
     "script-loader": "0.7.2",
     "semantic-release": "19.0.5",
     "stats.js": "0.17.0",
-    "tap": "16.2.0",
+    "tap": "18.7.0",
     "terser-webpack-plugin": "^5.3.6",
     "tiny-worker": "2.3.0",
     "webpack": "^5.75.0",
