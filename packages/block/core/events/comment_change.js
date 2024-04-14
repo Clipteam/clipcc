@@ -29,84 +29,86 @@ import {CommentBase} from './comment_base';
 
 /**
  * Class for a comment change event.
- * @param {Blockly.WorkspaceComment | Blockly.ScratchBlockComment} comment
- *     The comment that is being changed. Null for a blank event.
- * @param {!object} oldContents Object containing previous state of a comment's
- *     properties. The possible properties can be: 'minimized', 'text', or
- *     'width' and 'height' together. Must contain the same property (or in the
- *     case of 'width' and 'height' properties) as the 'newContents' param.
- * @param {!object} newContents Object containing the new state of a comment's
- *     properties. The possible properties can be: 'minimized', 'text', or
- *     'width' and 'height' together. Must contain the same property (or in the
- *     case of 'width' and 'height' properties) as the 'oldContents' param.
  * @extends {CommentBase}
- * @constructor
+ * @class
  */
-export const CommentChange = function(comment, oldContents, newContents) {
-  if (!comment) {
-    return;  // Blank event to be populated by fromJson.
+export class CommentChange extends CommentBase {
+  /**
+   * @param {Blockly.WorkspaceComment | Blockly.ScratchBlockComment} comment
+   *     The comment that is being changed. Null for a blank event.
+   * @param {!object} oldContents Object containing previous state of a comment's
+   *     properties. The possible properties can be: 'minimized', 'text', or
+   *     'width' and 'height' together. Must contain the same property (or in the
+   *     case of 'width' and 'height' properties) as the 'newContents' param.
+   * @param {!object} newContents Object containing the new state of a comment's
+   *     properties. The possible properties can be: 'minimized', 'text', or
+   *     'width' and 'height' together. Must contain the same property (or in the
+   *     case of 'width' and 'height' properties) as the 'oldContents' param.
+   */
+  constructor(comment, oldContents, newContents) {
+    if (!comment) {
+      return;  // Blank event to be populated by fromJson.
+    }
+    super(comment);
+    /**
+    * Type of this event.
+    * @type {string}
+    */
+    this.type = eventUtils.COMMENT_CHANGE;
+    this.oldContents_ = oldContents;
+    this.newContents_ = newContents;
   }
-  CommentChange.superClass_.constructor.call(this, comment);
-  this.oldContents_ = oldContents;
-  this.newContents_ = newContents;
-};
-goog.inherits(CommentChange, CommentBase);
 
-/**
- * Type of this event.
- * @type {string}
- */
-CommentChange.prototype.type = eventUtils.COMMENT_CHANGE;
-
-/**
- * Encode the event as JSON.
- * @return {!Object} JSON representation.
- */
-CommentChange.prototype.toJson = function() {
-  const json = CommentChange.superClass_.toJson.call(this);
-  json['newContents'] = this.newContents_;
-  return json;
-};
-
-/**
- * Decode the JSON event.
- * @param {!Object} json JSON representation.
- */
-CommentChange.prototype.fromJson = function(json) {
-  CommentChange.superClass_.fromJson.call(this, json);
-  this.newContents_ = json['newValue'];
-};
-
-/**
- * Does this event record any change of state?
- * @return {boolean} False if something changed.
- */
-CommentChange.prototype.isNull = function() {
-  return this.oldContents_ == this.newContents_;
-};
-
-/**
- * Run a change event.
- * @param {boolean} forward True if run forward, false if run backward (undo).
- */
-CommentChange.prototype.run = function(forward) {
-  const comment = this.getComment_();
-  if (!comment) {
-    console.warn('Can\'t change non-existent comment: ' + this.commentId);
-    return;
+  /**
+   * Encode the event as JSON.
+   * @return {!Object} JSON representation.
+   */
+  toJson() {
+    const json = super.toJson();
+    json['newContents'] = this.newContents_;
+    return json;
   }
-  const contents = forward ? this.newContents_ : this.oldContents_;
 
-  if (Object.prototype.hasOwnProperty.call(contents, 'minimized')) {
-    comment.setMinimized(contents.minimized);
+  /**
+   * Decode the JSON event.
+   * @param {!Object} json JSON representation.
+   */
+  fromJson(json) {
+    super.fromJson(json);
+    this.newContents_ = json['newValue'];
   }
-  if (Object.prototype.hasOwnProperty.call(contents, 'width') &&
-      Object.prototype.hasOwnProperty.call(contents, 'height')) {
-    comment.setSize(contents.width, contents.height);
+
+  /**
+   * Does this event record any change of state?
+   * @return {boolean} False if something changed.
+   */
+  isNull() {
+    return this.oldContents_ == this.newContents_;
   }
-  if (Object.prototype.hasOwnProperty.call(contents, 'text')) {
-    comment.setText(contents.text);
+
+  /**
+   * Run a change event.
+   * @param {boolean} forward True if run forward, false if run backward (undo).
+   */
+  run(forward) {
+    const comment = this.getComment_();
+    if (!comment) {
+      console.warn('Can\'t change non-existent comment: ' + this.commentId);
+      return;
+    }
+    const contents = forward ? this.newContents_ : this.oldContents_;
+
+    if (Object.prototype.hasOwnProperty.call(contents, 'minimized')) {
+      comment.setMinimized(contents.minimized);
+    }
+    if (Object.prototype.hasOwnProperty.call(contents, 'width') &&
+        Object.prototype.hasOwnProperty.call(contents, 'height')) {
+      comment.setSize(contents.width, contents.height);
+    }
+    if (Object.prototype.hasOwnProperty.call(contents, 'text')) {
+      comment.setText(contents.text);
+    }
   }
-};
+}
 
 eventUtils.register(eventUtils.COMMENT_CHANGE, CommentChange);

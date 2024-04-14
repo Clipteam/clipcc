@@ -33,155 +33,157 @@ const Coordinate = goog.require('goog.math.Coordinate');
 
 /**
  * Class for a block move event.  Created before the move.
- * @param {Blockly.Block} block The moved block.  Null for a blank event.
  * @extends {BlockBase}
- * @constructor
+ * @class
  */
-export const BlockMove = function(block) {
-  if (!block) {
-    return;  // Blank event to be populated by fromJson.
-  }
-  BlockMove.superClass_.constructor.call(this, block);
-  const location = this.currentLocation_();
-  this.oldParentId = location.parentId;
-  this.oldInputName = location.inputName;
-  this.oldCoordinate = location.coordinate;
-};
-goog.inherits(BlockMove, BlockBase);
-
-/**
- * Type of this event.
- * @type {string}
- */
-BlockMove.prototype.type = eventUtils.MOVE;
-
-/**
- * Encode the event as JSON.
- * @return {!Object} JSON representation.
- */
-BlockMove.prototype.toJson = function() {
-  const json = BlockMove.superClass_.toJson.call(this);
-  if (this.newParentId) {
-    json['newParentId'] = this.newParentId;
-  }
-  if (this.newInputName) {
-    json['newInputName'] = this.newInputName;
-  }
-  if (this.newCoordinate) {
-    json['newCoordinate'] = Math.round(this.newCoordinate.x) + ',' +
-        Math.round(this.newCoordinate.y);
-  }
-  return json;
-};
-
-/**
- * Decode the JSON event.
- * @param {!Object} json JSON representation.
- */
-BlockMove.prototype.fromJson = function(json) {
-  BlockMove.superClass_.fromJson.call(this, json);
-  this.newParentId = json['newParentId'];
-  this.newInputName = json['newInputName'];
-  if (json['newCoordinate']) {
-    const xy = json['newCoordinate'].split(',');
-    this.newCoordinate =
-        new Coordinate(parseFloat(xy[0]), parseFloat(xy[1]));
-  }
-};
-
-/**
- * Record the block's new location.  Called after the move.
- */
-BlockMove.prototype.recordNew = function() {
-  const location = this.currentLocation_();
-  this.newParentId = location.parentId;
-  this.newInputName = location.inputName;
-  this.newCoordinate = location.coordinate;
-};
-
-/**
- * Returns the parentId and input if the block is connected,
- *   or the XY location if disconnected.
- * @return {!Object} Collection of location info.
- * @private
- */
-BlockMove.prototype.currentLocation_ = function() {
-  const workspace = common.getWorkspaceById(this.workspaceId);
-  const block = workspace.getBlockById(this.blockId);
-  const location = {};
-  const parent = block.getParent();
-  if (parent) {
-    location.parentId = parent.id;
-    const input = parent.getInputWithBlock(block);
-    if (input) {
-      location.inputName = input.name;
+export class BlockMove extends BlockBase {
+  /**
+   * @param {Blockly.Block} block The moved block.  Null for a blank event.
+   */
+  constructor(block) {
+    if (!block) {
+      return;  // Blank event to be populated by fromJson.
     }
-  } else {
-    const blockXY = block.getRelativeToSurfaceXY();
-    // The X position in the block move event should be the language agnostic
-    // position of the block. I.e. it should not be different in LTR vs. RTL.
-    const rtlAwareX = workspace.RTL ? workspace.getWidth() - blockXY.x : blockXY.x;
-    location.coordinate = new Coordinate(rtlAwareX, blockXY.y);
+    super(block);
+    /**
+    * Type of this event.
+    * @type {string}
+    */
+    this.type = eventUtils.MOVE;
+    const location = this.currentLocation_();
+    this.oldParentId = location.parentId;
+    this.oldInputName = location.inputName;
+    this.oldCoordinate = location.coordinate;
   }
-  return location;
-};
 
-/**
- * Does this event record any change of state?
- * @return {boolean} False if something changed.
- */
-BlockMove.prototype.isNull = function() {
-  return this.oldParentId == this.newParentId &&
-      this.oldInputName == this.newInputName &&
-      Coordinate.equals(this.oldCoordinate, this.newCoordinate);
-};
-
-/**
- * Run a move event.
- * @param {boolean} forward True if run forward, false if run backward (undo).
- */
-BlockMove.prototype.run = function(forward) {
-  const workspace = this.getEventWorkspace_();
-  const block = workspace.getBlockById(this.blockId);
-  if (!block) {
-    console.warn("Can't move non-existent block: " + this.blockId);
-    return;
+  /**
+   * Encode the event as JSON.
+   * @return {!Object} JSON representation.
+   */
+  toJson() {
+    const json = super.toJson();
+    if (this.newParentId) {
+      json['newParentId'] = this.newParentId;
+    }
+    if (this.newInputName) {
+      json['newInputName'] = this.newInputName;
+    }
+    if (this.newCoordinate) {
+      json['newCoordinate'] = Math.round(this.newCoordinate.x) + ',' +
+          Math.round(this.newCoordinate.y);
+    }
+    return json;
   }
-  const parentId = forward ? this.newParentId : this.oldParentId;
-  const inputName = forward ? this.newInputName : this.oldInputName;
-  const coordinate = forward ? this.newCoordinate : this.oldCoordinate;
-  let parentBlock = null;
-  if (parentId) {
-    parentBlock = workspace.getBlockById(parentId);
-    if (!parentBlock) {
-      console.warn("Can't connect to non-existent block: " + parentId);
+
+  /**
+   * Decode the JSON event.
+   * @param {!Object} json JSON representation.
+   */
+  fromJson(json) {
+    super.fromJson(json);
+    this.newParentId = json['newParentId'];
+    this.newInputName = json['newInputName'];
+    if (json['newCoordinate']) {
+      const xy = json['newCoordinate'].split(',');
+      this.newCoordinate =
+          new Coordinate(parseFloat(xy[0]), parseFloat(xy[1]));
+    }
+  }
+
+  /**
+   * Record the block's new location.  Called after the move.
+   */
+  recordNew() {
+    const location = this.currentLocation_();
+    this.newParentId = location.parentId;
+    this.newInputName = location.inputName;
+    this.newCoordinate = location.coordinate;
+  }
+
+  /**
+   * Returns the parentId and input if the block is connected,
+   *   or the XY location if disconnected.
+   * @return {!Object} Collection of location info.
+   * @private
+   */
+  currentLocation_() {
+    const workspace = common.getWorkspaceById(this.workspaceId);
+    const block = workspace.getBlockById(this.blockId);
+    const location = {};
+    const parent = block.getParent();
+    if (parent) {
+      location.parentId = parent.id;
+      const input = parent.getInputWithBlock(block);
+      if (input) {
+        location.inputName = input.name;
+      }
+    } else {
+      const blockXY = block.getRelativeToSurfaceXY();
+      // The X position in the block move event should be the language agnostic
+      // position of the block. I.e. it should not be different in LTR vs. RTL.
+      const rtlAwareX = workspace.RTL ? workspace.getWidth() - blockXY.x : blockXY.x;
+      location.coordinate = new Coordinate(rtlAwareX, blockXY.y);
+    }
+    return location;
+  }
+
+  /**
+   * Does this event record any change of state?
+   * @return {boolean} False if something changed.
+   */
+  isNull() {
+    return this.oldParentId == this.newParentId &&
+        this.oldInputName == this.newInputName &&
+        Coordinate.equals(this.oldCoordinate, this.newCoordinate);
+  }
+
+  /**
+   * Run a move event.
+   * @param {boolean} forward True if run forward, false if run backward (undo).
+   */
+  run(forward) {
+    const workspace = this.getEventWorkspace_();
+    const block = workspace.getBlockById(this.blockId);
+    if (!block) {
+      console.warn("Can't move non-existent block: " + this.blockId);
       return;
     }
-  }
-  if (block.getParent()) {
-    block.unplug();
-  }
-  if (coordinate) {
-    const xy = block.getRelativeToSurfaceXY();
-    const rtlAwareX = workspace.RTL ? workspace.getWidth() - coordinate.x : coordinate.x;
-    block.moveBy(rtlAwareX - xy.x, coordinate.y - xy.y);
-  } else {
-    const blockConnection = block.outputConnection || block.previousConnection;
-    let parentConnection;
-    if (inputName) {
-      const input = parentBlock.getInput(inputName);
-      if (input) {
-        parentConnection = input.connection;
+    const parentId = forward ? this.newParentId : this.oldParentId;
+    const inputName = forward ? this.newInputName : this.oldInputName;
+    const coordinate = forward ? this.newCoordinate : this.oldCoordinate;
+    let parentBlock = null;
+    if (parentId) {
+      parentBlock = workspace.getBlockById(parentId);
+      if (!parentBlock) {
+        console.warn("Can't connect to non-existent block: " + parentId);
+        return;
       }
-    } else if (blockConnection.type == constants.PREVIOUS_STATEMENT) {
-      parentConnection = parentBlock.nextConnection;
     }
-    if (parentConnection) {
-      blockConnection.connect(parentConnection);
+    if (block.getParent()) {
+      block.unplug();
+    }
+    if (coordinate) {
+      const xy = block.getRelativeToSurfaceXY();
+      const rtlAwareX = workspace.RTL ? workspace.getWidth() - coordinate.x : coordinate.x;
+      block.moveBy(rtlAwareX - xy.x, coordinate.y - xy.y);
     } else {
-      console.warn("Can't connect to non-existent input: " + inputName);
+      const blockConnection = block.outputConnection || block.previousConnection;
+      let parentConnection;
+      if (inputName) {
+        const input = parentBlock.getInput(inputName);
+        if (input) {
+          parentConnection = input.connection;
+        }
+      } else if (blockConnection.type == constants.PREVIOUS_STATEMENT) {
+        parentConnection = parentBlock.nextConnection;
+      }
+      if (parentConnection) {
+        blockConnection.connect(parentConnection);
+      } else {
+        console.warn("Can't connect to non-existent input: " + inputName);
+      }
     }
   }
-};
+}
 
 eventUtils.register(eventUtils.BLOCK_MOVE, BlockMove);

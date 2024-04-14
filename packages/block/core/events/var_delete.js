@@ -18,8 +18,6 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.VarDelete');
 
@@ -29,65 +27,67 @@ import {VarBase} from './var_base';
 
 /**
  * Class for a variable deletion event.
- * @param {Blockly.VariableModel} variable The deleted variable.
- *     Null for a blank event.
  * @extends {VarBase}
- * @constructor
+ * @class
  */
-export const VarDelete = function(variable) {
-  if (!variable) {
-    return;  // Blank event to be populated by fromJson.
+export class VarDelete extends VarBase {
+  /**
+   * @param {Blockly.VariableModel} variable The deleted variable.
+   *     Null for a blank event.
+   */
+  constructor(variable) {
+    if (!variable) {
+      return;  // Blank event to be populated by fromJson.
+    }
+    super(variable);
+    /**
+    * Type of this event.
+    * @type {string}
+    */
+    this.type = eventUtils.VAR_DELETE;
+    this.varType = variable.type;
+    this.varName = variable.name;
+    this.isLocal = variable.isLocal;
+    this.isCloud = variable.isCloud;
   }
-  VarDelete.superClass_.constructor.call(this, variable);
-  this.varType = variable.type;
-  this.varName = variable.name;
-  this.isLocal = variable.isLocal;
-  this.isCloud = variable.isCloud;
-};
-goog.inherits(VarDelete, VarBase);
 
-/**
- * Type of this event.
- * @type {string}
- */
-VarDelete.prototype.type = eventUtils.VAR_DELETE;
-
-/**
- * Encode the event as JSON.
- * @return {!Object} JSON representation.
- */
-VarDelete.prototype.toJson = function() {
-  const json = VarDelete.superClass_.toJson.call(this);
-  json['varType'] = this.varType;
-  json['varName'] = this.varName;
-  json['isLocal'] = this.isLocal;
-  json['isCloud'] = this.isCloud;
-  return json;
-};
-
-/**
- * Decode the JSON event.
- * @param {!Object} json JSON representation.
- */
-VarDelete.prototype.fromJson = function(json) {
-  VarDelete.superClass_.fromJson.call(this, json);
-  this.varType = json['varType'];
-  this.varName = json['varName'];
-  this.isLocal = json['isLocal'];
-  this.isCloud = json['isCloud'];
-};
-
-/**
- * Run a variable deletion event.
- * @param {boolean} forward True if run forward, false if run backward (undo).
- */
-VarDelete.prototype.run = function(forward) {
-  const workspace = this.getEventWorkspace_();
-  if (forward) {
-    workspace.deleteVariableById(this.varId);
-  } else {
-    workspace.createVariable(this.varName, this.varType, this.varId, this.isLocal, this.isCloud);
+  /**
+   * Encode the event as JSON.
+   * @return {!Object} JSON representation.
+   */
+  toJson() {
+    const json = super.toJson();
+    json['varType'] = this.varType;
+    json['varName'] = this.varName;
+    json['isLocal'] = this.isLocal;
+    json['isCloud'] = this.isCloud;
+    return json;
   }
-};
+
+  /**
+   * Decode the JSON event.
+   * @param {!Object} json JSON representation.
+   */
+  fromJson(json) {
+    super.fromJson(json);
+    this.varType = json['varType'];
+    this.varName = json['varName'];
+    this.isLocal = json['isLocal'];
+    this.isCloud = json['isCloud'];
+  }
+
+  /**
+   * Run a variable deletion event.
+   * @param {boolean} forward True if run forward, false if run backward (undo).
+   */
+  run(forward) {
+    const workspace = this.getEventWorkspace_();
+    if (forward) {
+      workspace.deleteVariableById(this.varId);
+    } else {
+      workspace.createVariable(this.varName, this.varType, this.varId, this.isLocal, this.isCloud);
+    }
+  }
+}
 
 eventUtils.register(eventUtils.VAR_DELETE, VarDelete);

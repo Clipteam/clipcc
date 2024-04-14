@@ -18,8 +18,6 @@
  * limitations under the License.
  */
 
-'use strict';
-
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.VarCreate');
 
@@ -29,65 +27,67 @@ import {VarBase} from './var_base';
 
 /**
  * Class for a variable creation event.
- * @param {Blockly.VariableModel} variable The created variable.
- *     Null for a blank event.
  * @extends {VarBase}
- * @constructor
+ * @class
  */
-export const VarCreate = function(variable) {
-  if (!variable) {
-    return;  // Blank event to be populated by fromJson.
+export class VarCreate extends VarBase {
+  /**
+   * @param {Blockly.VariableModel} variable The created variable.
+   *     Null for a blank event.
+   */
+  constructor(variable) {
+    if (!variable) {
+      return;  // Blank event to be populated by fromJson.
+    }
+    super(variable);
+    /**
+    * Type of this event.
+    * @type {string}
+    */
+    this.type = eventUtils.VAR_CREATE;
+    this.varType = variable.type;
+    this.varName = variable.name;
+    this.isLocal = variable.isLocal;
+    this.isCloud = variable.isCloud;
   }
-  VarCreate.superClass_.constructor.call(this, variable);
-  this.varType = variable.type;
-  this.varName = variable.name;
-  this.isLocal = variable.isLocal;
-  this.isCloud = variable.isCloud;
-};
-goog.inherits(VarCreate, VarBase);
 
-/**
- * Type of this event.
- * @type {string}
- */
-VarCreate.prototype.type = eventUtils.VAR_CREATE;
-
-/**
- * Encode the event as JSON.
- * @return {!Object} JSON representation.
- */
-VarCreate.prototype.toJson = function() {
-  const json = VarCreate.superClass_.toJson.call(this);
-  json['varType'] = this.varType;
-  json['varName'] = this.varName;
-  json['isLocal'] = this.isLocal;
-  json['isCloud'] = this.isCloud;
-  return json;
-};
-
-/**
- * Decode the JSON event.
- * @param {!Object} json JSON representation.
- */
-VarCreate.prototype.fromJson = function(json) {
-  VarCreate.superClass_.fromJson.call(this, json);
-  this.varType = json['varType'];
-  this.varName = json['varName'];
-  this.isLocal = json['isLocal'];
-  this.isCloud = json['isCloud'];
-};
-
-/**
- * Run a variable creation event.
- * @param {boolean} forward True if run forward, false if run backward (undo).
- */
-VarCreate.prototype.run = function(forward) {
-  const workspace = this.getEventWorkspace_();
-  if (forward) {
-    workspace.createVariable(this.varName, this.varType, this.varId, this.isLocal, this.isCloud);
-  } else {
-    workspace.deleteVariableById(this.varId);
+  /**
+   * Encode the event as JSON.
+   * @return {!Object} JSON representation.
+   */
+  toJson() {
+    const json = super.toJson();
+    json['varType'] = this.varType;
+    json['varName'] = this.varName;
+    json['isLocal'] = this.isLocal;
+    json['isCloud'] = this.isCloud;
+    return json;
   }
-};
+
+  /**
+   * Decode the JSON event.
+   * @param {!Object} json JSON representation.
+   */
+  fromJson(json) {
+    super.fromJson(json);
+    this.varType = json['varType'];
+    this.varName = json['varName'];
+    this.isLocal = json['isLocal'];
+    this.isCloud = json['isCloud'];
+  }
+
+  /**
+   * Run a variable creation event.
+   * @param {boolean} forward True if run forward, false if run backward (undo).
+   */
+  run(forward) {
+    const workspace = this.getEventWorkspace_();
+    if (forward) {
+      workspace.createVariable(this.varName, this.varType, this.varId, this.isLocal, this.isCloud);
+    } else {
+      workspace.deleteVariableById(this.varId);
+    }
+  }
+}
 
 eventUtils.register(eventUtils.VAR_CREATE, VarCreate);

@@ -29,84 +29,88 @@ import {Abstract} from './abstract';
 
 /**
  * Abstract class for a comment event.
- * @param {Blockly.WorkspaceComment | Blockly.ScratchBlockComment} comment
- *    The comment this event corresponds to.
  * @extends {Abstract}
- * @constructor
+ * @class
  */
-export const CommentBase = function(comment) {
-  /**
-   * The ID of the comment this event pertains to.
-   * @type {string}
-   */
-  this.commentId = comment.id;
+export class CommentBase extends Abstract {
+    /**
+    * @param {Blockly.WorkspaceComment | Blockly.ScratchBlockComment} comment
+    *    The comment this event corresponds to.
+    */
+  constructor(comment) {
+    super();
+    /**
+    * The ID of the comment this event pertains to.
+    * @type {string}
+    */
+    this.commentId = comment.id;
 
-  /**
-   * The workspace identifier for this event.
-   * @type {string}
-   */
-  this.workspaceId = comment.workspace.id;
+    /**
+    * The workspace identifier for this event.
+    * @type {string}
+    */
+    this.workspaceId = comment.workspace.id;
 
-  /**
-   * The ID of the block this comment belongs to or null if it is not a block
-   * comment.
-   * @type {string}
-   */
-  this.blockId = comment.blockId || null;
+    /**
+    * The ID of the block this comment belongs to or null if it is not a block
+    * comment.
+    * @type {string}
+    */
+    this.blockId = comment.blockId || null;
 
-  /**
-   * The event group id for the group this event belongs to. Groups define
-   * events that should be treated as an single action from the user's
-   * perspective, and should be undone together.
-   * @type {string}
-   */
-  this.group = eventUtils.getGroup();
+    /**
+    * The event group id for the group this event belongs to. Groups define
+    * events that should be treated as an single action from the user's
+    * perspective, and should be undone together.
+    * @type {string}
+    */
+    this.group = eventUtils.getGroup();
 
-  /**
-   * Sets whether the event should be added to the undo stack.
-   * @type {boolean}
-   */
-  this.recordUndo = eventUtils.getRecordUndo();
-};
-goog.inherits(CommentBase, Abstract);
-
-/**
- * Encode the event as JSON.
- * @return {!Object} JSON representation.
- */
-CommentBase.prototype.toJson = function() {
-  const json = {
-    'type': this.type
-  };
-  if (this.group) {
-    json['group'] = this.group;
+    /**
+    * Sets whether the event should be added to the undo stack.
+    * @type {boolean}
+    */
+    this.recordUndo = eventUtils.getRecordUndo();
   }
-  if (this.commentId) {
-    json['commentId'] = this.commentId;
-  }
-  if (this.blockId) {
-    json['blockId'] = this.blockId;
-  }
-  return json;
-};
 
-/**
- * Decode the JSON event.
- * @param {!Object} json JSON representation.
- */
-CommentBase.prototype.fromJson = function(json) {
-  this.commentId = json['commentId'];
-  this.group = json['group'];
-  this.blockId = json['blockId'];
-};
+  /**
+  * Encode the event as JSON.
+  * @return {!Object} JSON representation.
+  */
+  toJson() {
+    const json = {
+      'type': this.type
+    };
+    if (this.group) {
+      json['group'] = this.group;
+    }
+    if (this.commentId) {
+      json['commentId'] = this.commentId;
+    }
+    if (this.blockId) {
+      json['blockId'] = this.blockId;
+    }
+    return json;
+  }
 
-/**
- * Helper function for finding the comment this event pertains to.
- * @return {?(Blockly.WorkspaceComment | Blockly.ScratchBlockComment)}
- *     The comment this event pertains to, or null if it no longer exists.
- * @private
- */
-CommentBase.prototype.getComment_ = function() {
-  const workspace = this.getEventWorkspace_();
-  return workspace.getCommentById(this.commentId);
-};
+  /**
+  * Decode the JSON event.
+  * @param {!Object} json JSON representation.
+  */
+  fromJson(json) {
+    this.commentId = json['commentId'];
+    this.group = json['group'];
+    this.blockId = json['blockId'];
+  }
+
+  /**
+  * Helper function for finding the comment this event pertains to.
+  * @return {?(Blockly.WorkspaceComment | Blockly.ScratchBlockComment)}
+  *     The comment this event pertains to, or null if it no longer exists.
+  * @private
+  */
+  getComment_() {
+    const workspace = this.getEventWorkspace_();
+    return workspace.getCommentById(this.commentId);
+  }
+}
