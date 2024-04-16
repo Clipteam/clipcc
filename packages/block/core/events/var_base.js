@@ -17,6 +17,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+ 
+'use strict';
 
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.VarBase');
@@ -30,7 +32,7 @@ import {Abstract} from './abstract';
  * @class
  */
 export class VarBase extends Abstract {
-    /**
+  /**
      * @param {Blockly.VariableModel} variable The variable this event corresponds
      *     to.
      */

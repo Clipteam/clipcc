@@ -599,6 +599,7 @@ VerticalFlyout.prototype.createRect_ = function(block, x, y,
       }, null);
   rect.tooltip = block;
   Tooltip.bindMouseEvents(rect);
+  console.log(block)
   // Add the rectangles under the blocks, so that the blocks' tooltips work.
   this.workspace_.getCanvas().insertBefore(rect, block.getSvgRoot());
 

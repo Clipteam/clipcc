@@ -33,7 +33,7 @@ import {Abstract} from './abstract';
  * @class
  */
 export class CommentBase extends Abstract {
-    /**
+  /**
     * @param {Blockly.WorkspaceComment | Blockly.ScratchBlockComment} comment
     *    The comment this event corresponds to.
     */

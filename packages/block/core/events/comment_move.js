@@ -18,6 +18,8 @@
  * limitations under the License.
  */
 
+'use strict';
+
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Events.CommentMove');
 

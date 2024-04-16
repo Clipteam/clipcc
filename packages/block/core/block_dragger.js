@@ -44,383 +44,383 @@ const Timer = goog.require('goog.Timer');
 /**
  * Class for a block dragger.  It moves blocks around the workspace when they
  * are being dragged by a mouse or touch.
- * @param {!Blockly.BlockSvg} block The block to drag.
- * @param {!Blockly.WorkspaceSvg} workspace The workspace to drag on.
- * @constructor
+ * @class
  */
-export const BlockDragger = function(block, workspace) {
-  /**
-   * The top block in the stack that is being dragged.
-   * @type {!Blockly.BlockSvg}
-   * @private
-   */
-  this.draggingBlock_ = block;
+export class BlockDragger {
+  constructor(block, workspace) {
+    /**
+     * The top block in the stack that is being dragged.
+     * @type {!Blockly.BlockSvg}
+     * @private
+     */
+    this.draggingBlock_ = block;
 
-  /**
-   * The workspace on which the block is being dragged.
-   * @type {!Blockly.WorkspaceSvg}
-   * @private
-   */
-  this.workspace_ = workspace;
+    /**
+     * The workspace on which the block is being dragged.
+     * @type {!Blockly.WorkspaceSvg}
+     * @private
+     */
+    this.workspace_ = workspace;
 
-  /**
-   * Object that keeps track of connections on dragged blocks.
-   * @type {!InsertionMarkerManager}
-   * @private
-   */
-  this.draggedConnectionManager_ = new InsertionMarkerManager(
-      this.draggingBlock_);
+    /**
+     * Object that keeps track of connections on dragged blocks.
+     * @type {!InsertionMarkerManager}
+     * @private
+     */
+    this.draggedConnectionManager_ = new InsertionMarkerManager(
+        this.draggingBlock_);
 
-  /**
-   * Which delete area the mouse pointer is over, if any.
-   * One of {@link constants.DELETE_AREA_TRASH},
-   * {@link Blockly.constants.DELETE_AREA_TOOLBOX}, or {@link Blockly.constants.DELETE_AREA_NONE}.
-   * @type {?number}
-   * @private
-   */
-  this.deleteArea_ = null;
+    /**
+     * Which delete area the mouse pointer is over, if any.
+     * One of {@link constants.DELETE_AREA_TRASH},
+     * {@link Blockly.constants.DELETE_AREA_TOOLBOX}, or {@link Blockly.constants.DELETE_AREA_NONE}.
+     * @type {?number}
+     * @private
+     */
+    this.deleteArea_ = null;
 
-  /**
-   * Whether the block would be deleted if dropped immediately.
-   * @type {boolean}
-   * @private
-   */
-  this.wouldDeleteBlock_ = false;
+    /**
+     * Whether the block would be deleted if dropped immediately.
+     * @type {boolean}
+     * @private
+     */
+    this.wouldDeleteBlock_ = false;
 
-  /**
-   * Whether the currently dragged block is outside of the workspace. Keep
-   * track so that we can fire events only when this changes.
-   * @type {boolean}
-   * @private
-   */
-  this.wasOutside_ = false;
+    /**
+     * Whether the currently dragged block is outside of the workspace. Keep
+     * track so that we can fire events only when this changes.
+     * @type {boolean}
+     * @private
+     */
+    this.wasOutside_ = false;
 
-  /**
-   * The location of the top left corner of the dragging block at the beginning
-   * of the drag in workspace coordinates.
-   * @type {!Coordinate}
-   * @private
-   */
-  this.startXY_ = this.draggingBlock_.getRelativeToSurfaceXY();
+    /**
+     * The location of the top left corner of the dragging block at the beginning
+     * of the drag in workspace coordinates.
+     * @type {!Coordinate}
+     * @private
+     */
+    this.startXY_ = this.draggingBlock_.getRelativeToSurfaceXY();
 
-  /**
-   * A list of all of the icons (comment, warning, and mutator) that are
-   * on this block and its descendants.  Moving an icon moves the bubble that
-   * extends from it if that bubble is open.
-   * @type {Array.<!Object>}
-   * @private
-   */
-  this.dragIconData_ = BlockDragger.initIconData_(block);
-};
-
-/**
- * Sever all links from this object.
- * @package
- */
-BlockDragger.prototype.dispose = function() {
-  this.draggingBlock_ = null;
-  this.workspace_ = null;
-  this.startWorkspace_ = null;
-  this.dragIconData_.length = 0;
-
-  if (this.draggedConnectionManager_) {
-    this.draggedConnectionManager_.dispose();
-    this.draggedConnectionManager_ = null;
+    /**
+     * A list of all of the icons (comment, warning, and mutator) that are
+     * on this block and its descendants.  Moving an icon moves the bubble that
+     * extends from it if that bubble is open.
+     * @type {Array.<!Object>}
+     * @private
+     */
+    this.dragIconData_ = BlockDragger.initIconData_(block);
   }
-};
 
-/**
- * Make a list of all of the icons (comment, warning, and mutator) that are
- * on this block and its descendants.  Moving an icon moves the bubble that
- * extends from it if that bubble is open.
- * @param {!Blockly.BlockSvg} block The root block that is being dragged.
- * @return {!Array.<!Object>} The list of all icons and their locations.
- * @private
- */
-BlockDragger.initIconData_ = function(block) {
-  // Build a list of icons that need to be moved and where they started.
-  const dragIconData = [];
-  const descendants = block.getDescendants(false);
-  for (let i = 0, descendant; descendant = descendants[i]; i++) {
-    const icons = descendant.getIcons();
-    for (let j = 0; j < icons.length; j++) {
-      const data = {
-        // Coordinate with x and y properties (workspace coordinates).
-        location: icons[j].getIconLocation(),
-        // Blockly.Icon
-        icon: icons[j]
-      };
-      dragIconData.push(data);
+  /**
+   * Sever all links from this object.
+   * @package
+   */
+  dispose() {
+    this.draggingBlock_ = null;
+    this.workspace_ = null;
+    this.startWorkspace_ = null;
+    this.dragIconData_.length = 0;
+
+    if (this.draggedConnectionManager_) {
+      this.draggedConnectionManager_.dispose();
+      this.draggedConnectionManager_ = null;
     }
   }
-  return dragIconData;
-};
 
-/**
- * Start dragging a block.  This includes moving it to the drag surface.
- * @param {!Coordinate} currentDragDeltaXY How far the pointer has
- *     moved from the position at mouse down, in pixel units.
- * @package
- */
-BlockDragger.prototype.startBlockDrag = function(currentDragDeltaXY) {
-  if (!eventUtils.getGroup()) {
-    eventUtils.setGroup(true);
+  /**
+   * Make a list of all of the icons (comment, warning, and mutator) that are
+   * on this block and its descendants.  Moving an icon moves the bubble that
+   * extends from it if that bubble is open.
+   * @param {!Blockly.BlockSvg} block The root block that is being dragged.
+   * @return {!Array.<!Object>} The list of all icons and their locations.
+   * @private
+   */
+  static initIconData_(block) {
+    // Build a list of icons that need to be moved and where they started.
+    const dragIconData = [];
+    const descendants = block.getDescendants(false);
+    for (let i = 0, descendant; descendant = descendants[i]; i++) {
+      const icons = descendant.getIcons();
+      for (let j = 0; j < icons.length; j++) {
+        const data = {
+          // Coordinate with x and y properties (workspace coordinates).
+          location: icons[j].getIconLocation(),
+          // Blockly.Icon
+          icon: icons[j]
+        };
+        dragIconData.push(data);
+      }
+    }
+    return dragIconData;
   }
 
-  this.workspace_.setResizesEnabled(false);
-  BlockAnimations.disconnectUiStop();
+  /**
+   * Start dragging a block.  This includes moving it to the drag surface.
+   * @param {!Coordinate} currentDragDeltaXY How far the pointer has
+   *     moved from the position at mouse down, in pixel units.
+   * @package
+   */
+  startBlockDrag(currentDragDeltaXY) {
+    if (!eventUtils.getGroup()) {
+      eventUtils.setGroup(true);
+    }
 
-  if (this.draggingBlock_.getParent()) {
-    this.draggingBlock_.unplug();
+    this.workspace_.setResizesEnabled(false);
+    BlockAnimations.disconnectUiStop();
+
+    if (this.draggingBlock_.getParent()) {
+      this.draggingBlock_.unplug();
+      const delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
+      const newLoc = Coordinate.sum(this.startXY_, delta);
+
+      this.draggingBlock_.translate(newLoc.x, newLoc.y);
+      BlockAnimations.disconnectUiEffect(this.draggingBlock_);
+    }
+    this.draggingBlock_.setDragging(true);
+    // For future consideration: we may be able to put moveToDragSurface inside
+    // the block dragger, which would also let the block not track the block drag
+    // surface.
+    this.draggingBlock_.moveToDragSurface_();
+
+    const toolbox = this.workspace_.getToolbox();
+    if (toolbox) {
+      const style = this.draggingBlock_.isDeletable() ? 'blocklyToolboxDelete' :
+          'blocklyToolboxGrab';
+      toolbox.addStyle(style);
+    }
+  }
+
+  /**
+   * Execute a step of block dragging, based on the given event.  Update the
+   * display accordingly.
+   * @param {!Event} e The most recent move event.
+   * @param {!Coordinate} currentDragDeltaXY How far the pointer has
+   *     moved from the position at the start of the drag, in pixel units.
+   * @package
+   * @return {boolean} True if the event should be propagated, false if not.
+   */
+  dragBlock(e, currentDragDeltaXY) {
     const delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
     const newLoc = Coordinate.sum(this.startXY_, delta);
 
-    this.draggingBlock_.translate(newLoc.x, newLoc.y);
-    BlockAnimations.disconnectUiEffect(this.draggingBlock_);
-  }
-  this.draggingBlock_.setDragging(true);
-  // For future consideration: we may be able to put moveToDragSurface inside
-  // the block dragger, which would also let the block not track the block drag
-  // surface.
-  this.draggingBlock_.moveToDragSurface_();
+    this.draggingBlock_.moveDuringDrag(newLoc);
+    this.dragIcons_(delta);
 
-  const toolbox = this.workspace_.getToolbox();
-  if (toolbox) {
-    const style = this.draggingBlock_.isDeletable() ? 'blocklyToolboxDelete' :
-        'blocklyToolboxGrab';
-    toolbox.addStyle(style);
-  }
-};
-
-/**
- * Execute a step of block dragging, based on the given event.  Update the
- * display accordingly.
- * @param {!Event} e The most recent move event.
- * @param {!Coordinate} currentDragDeltaXY How far the pointer has
- *     moved from the position at the start of the drag, in pixel units.
- * @package
- * @return {boolean} True if the event should be propagated, false if not.
- */
-BlockDragger.prototype.dragBlock = function(e, currentDragDeltaXY) {
-  const delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
-  const newLoc = Coordinate.sum(this.startXY_, delta);
-
-  this.draggingBlock_.moveDuringDrag(newLoc);
-  this.dragIcons_(delta);
-
-  this.deleteArea_ = this.workspace_.isDeleteArea(e);
-  const isOutside = !this.workspace_.isInsideBlocksArea(e);
-  this.draggedConnectionManager_.update(delta, this.deleteArea_, isOutside);
-  if (isOutside !== this.wasOutside_) {
-    this.fireDragOutsideEvent_(isOutside);
-    this.wasOutside_ = isOutside;
-  }
-
-  this.updateCursorDuringBlockDrag_(isOutside);
-  return isOutside;
-};
-
-/**
- * Finish a block drag and put the block back on the workspace.
- * @param {!Event} e The mouseup/touchend event.
- * @param {!Coordinate} currentDragDeltaXY How far the pointer has
- *     moved from the position at the start of the drag, in pixel units.
- * @package
- */
-BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
-  // Make sure internal state is fresh.
-  this.dragBlock(e, currentDragDeltaXY);
-  this.dragIconData_ = [];
-  const isOutside = this.wasOutside_;
-  this.fireEndDragEvent_(isOutside);
-  this.draggingBlock_.setMouseThroughStyle(false);
-
-  BlockAnimations.disconnectUiStop();
-
-  const delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
-  const newLoc = Coordinate.sum(this.startXY_, delta);
-  this.draggingBlock_.moveOffDragSurface_(newLoc);
-
-  // Scratch-specific: note possible illegal definition deletion for rollback below.
-  const isDeletingProcDef = this.wouldDeleteBlock_ &&
-      (this.draggingBlock_.type == constants.PROCEDURES_DEFINITION_BLOCK_TYPE);
-
-  const deleted = this.maybeDeleteBlock_();
-  if (!deleted) {
-    // These are expensive and don't need to be done if we're deleting.
-    this.draggingBlock_.moveConnections_(delta.x, delta.y);
-    this.draggingBlock_.setDragging(false);
-    this.fireMoveEvent_();
-    if (this.draggedConnectionManager_.wouldConnectBlock()) {
-      // Applying connections also rerenders the relevant blocks.
-      this.draggedConnectionManager_.applyConnections();
-    } else {
-      this.draggingBlock_.render();
+    this.deleteArea_ = this.workspace_.isDeleteArea(e);
+    const isOutside = !this.workspace_.isInsideBlocksArea(e);
+    this.draggedConnectionManager_.update(delta, this.deleteArea_, isOutside);
+    if (isOutside !== this.wasOutside_) {
+      this.fireDragOutsideEvent_(isOutside);
+      this.wasOutside_ = isOutside;
     }
-    this.draggingBlock_.scheduleSnapAndBump();
-  }
-  this.workspace_.setResizesEnabled(true);
 
-  const toolbox = this.workspace_.getToolbox();
-  if (toolbox) {
-    const style = this.draggingBlock_.isDeletable() ? 'blocklyToolboxDelete' :
-        'blocklyToolboxGrab';
-    toolbox.removeStyle(style);
-  }
-  eventUtils.setGroup(false);
-
-  if (isOutside) {
-    const ws = this.workspace_;
-    // Reset a drag to outside of scratch-blocks
-    setTimeout(function() {
-      ws.undo();
-    });
+    this.updateCursorDuringBlockDrag_(isOutside);
+    return isOutside;
   }
 
-  // Scratch-specific: roll back deletes that create call blocks with defines.
-  // Have to wait for connections to be re-established, so put in setTimeout.
-  // Only do this if we deleted a proc def.
-  if (isDeletingProcDef) {
-    const ws = this.workspace_;
-    setTimeout(function() {
-      const allBlocks = ws.getAllBlocks();
-      for (let i = 0; i < allBlocks.length; i++) {
-        const block = allBlocks[i];
-        if (block.type == constants.PROCEDURES_CALL_BLOCK_TYPE) {
-          const procCode = block.getProcCode();
-          // Check for call blocks with no associated define block.
-          if (!Procedures.getDefineBlock(procCode, ws)) {
-            alert(Msg.PROCEDURE_USED);
-            ws.undo();
-            return; // There can only be one define deletion at a time.
+  /**
+   * Finish a block drag and put the block back on the workspace.
+   * @param {!Event} e The mouseup/touchend event.
+   * @param {!Coordinate} currentDragDeltaXY How far the pointer has
+   *     moved from the position at the start of the drag, in pixel units.
+   * @package
+   */
+  endBlockDrag(e, currentDragDeltaXY) {
+    // Make sure internal state is fresh.
+    this.dragBlock(e, currentDragDeltaXY);
+    this.dragIconData_ = [];
+    const isOutside = this.wasOutside_;
+    this.fireEndDragEvent_(isOutside);
+    this.draggingBlock_.setMouseThroughStyle(false);
+
+    BlockAnimations.disconnectUiStop();
+
+    const delta = this.pixelsToWorkspaceUnits_(currentDragDeltaXY);
+    const newLoc = Coordinate.sum(this.startXY_, delta);
+    this.draggingBlock_.moveOffDragSurface_(newLoc);
+
+    // Scratch-specific: note possible illegal definition deletion for rollback below.
+    const isDeletingProcDef = this.wouldDeleteBlock_ &&
+        (this.draggingBlock_.type == constants.PROCEDURES_DEFINITION_BLOCK_TYPE);
+
+    const deleted = this.maybeDeleteBlock_();
+    if (!deleted) {
+      // These are expensive and don't need to be done if we're deleting.
+      this.draggingBlock_.moveConnections_(delta.x, delta.y);
+      this.draggingBlock_.setDragging(false);
+      this.fireMoveEvent_();
+      if (this.draggedConnectionManager_.wouldConnectBlock()) {
+        // Applying connections also rerenders the relevant blocks.
+        this.draggedConnectionManager_.applyConnections();
+      } else {
+        this.draggingBlock_.render();
+      }
+      this.draggingBlock_.scheduleSnapAndBump();
+    }
+    this.workspace_.setResizesEnabled(true);
+
+    const toolbox = this.workspace_.getToolbox();
+    if (toolbox) {
+      const style = this.draggingBlock_.isDeletable() ? 'blocklyToolboxDelete' :
+          'blocklyToolboxGrab';
+      toolbox.removeStyle(style);
+    }
+    eventUtils.setGroup(false);
+
+    if (isOutside) {
+      const ws = this.workspace_;
+      // Reset a drag to outside of scratch-blocks
+      setTimeout(function() {
+        ws.undo();
+      });
+    }
+
+    // Scratch-specific: roll back deletes that create call blocks with defines.
+    // Have to wait for connections to be re-established, so put in setTimeout.
+    // Only do this if we deleted a proc def.
+    if (isDeletingProcDef) {
+      const ws = this.workspace_;
+      setTimeout(function() {
+        const allBlocks = ws.getAllBlocks();
+        for (let i = 0; i < allBlocks.length; i++) {
+          const block = allBlocks[i];
+          if (block.type == constants.PROCEDURES_CALL_BLOCK_TYPE) {
+            const procCode = block.getProcCode();
+            // Check for call blocks with no associated define block.
+            if (!Procedures.getDefineBlock(procCode, ws)) {
+              alert(Msg.PROCEDURE_USED);
+              ws.undo();
+              return; // There can only be one define deletion at a time.
+            }
           }
         }
+        // The proc deletion was valid, update the toolbox.
+        ws.refreshToolboxSelection_();
+      });
+    }
+  }
+
+  /**
+   * Fire an event when the dragged blocks move outside or back into the blocks workspace
+   * @param {?boolean} isOutside True if the drag is going outside the visible area.
+   * @private
+   */
+  fireDragOutsideEvent_(isOutside) {
+    const event = new DragBlockOutside(this.draggingBlock_);
+    event.isOutside = isOutside;
+    eventUtils.fire(event);
+  }
+
+  /**
+   * Fire an end drag event at the end of a block drag.
+   * @param {?boolean} isOutside True if the drag is going outside the visible area.
+   * @private
+   */
+  fireEndDragEvent_(isOutside) {
+    const event = new EndBlockDrag(this.draggingBlock_, isOutside);
+    eventUtils.fire(event);
+  }
+
+  /**
+   * Fire a move event at the end of a block drag.
+   * @private
+   */
+  fireMoveEvent_() {
+    const event = new BlockMove(this.draggingBlock_);
+    event.oldCoordinate = this.startXY_;
+    event.recordNew();
+    eventUtils.fire(event);
+  }
+
+  /**
+   * Shut the trash can and, if necessary, delete the dragging block.
+   * Should be called at the end of a block drag.
+   * @return {boolean} whether the block was deleted.
+   * @private
+   */
+  maybeDeleteBlock_() {
+    const trashcan = this.workspace_.trashcan;
+
+    if (this.wouldDeleteBlock_) {
+      if (trashcan) {
+        Timer.callOnce(trashcan.close, 100, trashcan);
       }
-      // The proc deletion was valid, update the toolbox.
-      ws.refreshToolboxSelection_();
-    });
-  }
-};
-
-/**
- * Fire an event when the dragged blocks move outside or back into the blocks workspace
- * @param {?boolean} isOutside True if the drag is going outside the visible area.
- * @private
- */
-BlockDragger.prototype.fireDragOutsideEvent_ = function(isOutside) {
-  const event = new DragBlockOutside(this.draggingBlock_);
-  event.isOutside = isOutside;
-  eventUtils.fire(event);
-};
-
-/**
- * Fire an end drag event at the end of a block drag.
- * @param {?boolean} isOutside True if the drag is going outside the visible area.
- * @private
- */
-BlockDragger.prototype.fireEndDragEvent_ = function(isOutside) {
-  const event = new EndBlockDrag(this.draggingBlock_, isOutside);
-  eventUtils.fire(event);
-};
-
-/**
- * Fire a move event at the end of a block drag.
- * @private
- */
-BlockDragger.prototype.fireMoveEvent_ = function() {
-  const event = new BlockMove(this.draggingBlock_);
-  event.oldCoordinate = this.startXY_;
-  event.recordNew();
-  eventUtils.fire(event);
-};
-
-/**
- * Shut the trash can and, if necessary, delete the dragging block.
- * Should be called at the end of a block drag.
- * @return {boolean} whether the block was deleted.
- * @private
- */
-BlockDragger.prototype.maybeDeleteBlock_ = function() {
-  const trashcan = this.workspace_.trashcan;
-
-  if (this.wouldDeleteBlock_) {
-    if (trashcan) {
-      Timer.callOnce(trashcan.close, 100, trashcan);
+      // Fire a move event, so we know where to go back to for an undo.
+      this.fireMoveEvent_();
+      this.draggingBlock_.dispose(false, true);
+    } else if (trashcan) {
+      // Make sure the trash can is closed.
+      trashcan.close();
     }
-    // Fire a move event, so we know where to go back to for an undo.
-    this.fireMoveEvent_();
-    this.draggingBlock_.dispose(false, true);
-  } else if (trashcan) {
-    // Make sure the trash can is closed.
-    trashcan.close();
+    return this.wouldDeleteBlock_;
   }
-  return this.wouldDeleteBlock_;
-};
 
-/**
- * Update the cursor (and possibly the trash can lid) to reflect whether the
- * dragging block would be deleted if released immediately.
- * @param {boolean} isOutside True if the cursor is outside of the blocks workspace
- * @private
- */
-BlockDragger.prototype.updateCursorDuringBlockDrag_ = function(isOutside) {
-  this.wouldDeleteBlock_ = this.draggedConnectionManager_.wouldDeleteBlock();
-  const trashcan = this.workspace_.trashcan;
-  if (this.wouldDeleteBlock_) {
-    this.draggingBlock_.setDeleteStyle(true);
-    if (this.deleteArea_ == constants.DELETE_AREA_TRASH && trashcan) {
-      trashcan.setOpen_(true);
+  /**
+   * Update the cursor (and possibly the trash can lid) to reflect whether the
+   * dragging block would be deleted if released immediately.
+   * @param {boolean} isOutside True if the cursor is outside of the blocks workspace
+   * @private
+   */
+  updateCursorDuringBlockDrag_(isOutside) {
+    this.wouldDeleteBlock_ = this.draggedConnectionManager_.wouldDeleteBlock();
+    const trashcan = this.workspace_.trashcan;
+    if (this.wouldDeleteBlock_) {
+      this.draggingBlock_.setDeleteStyle(true);
+      if (this.deleteArea_ == constants.DELETE_AREA_TRASH && trashcan) {
+        trashcan.setOpen_(true);
+      }
+    } else {
+      this.draggingBlock_.setDeleteStyle(false);
+      if (trashcan) {
+        trashcan.setOpen_(false);
+      }
     }
-  } else {
-    this.draggingBlock_.setDeleteStyle(false);
-    if (trashcan) {
-      trashcan.setOpen_(false);
+
+    if (isOutside) {
+      // Let mouse events through to GUI
+      this.draggingBlock_.setMouseThroughStyle(true);
+    } else {
+      this.draggingBlock_.setMouseThroughStyle(false);
     }
   }
 
-  if (isOutside) {
-    // Let mouse events through to GUI
-    this.draggingBlock_.setMouseThroughStyle(true);
-  } else {
-    this.draggingBlock_.setMouseThroughStyle(false);
+  /**
+   * Convert a coordinate object from pixels to workspace units, including a
+   * correction for mutator workspaces.
+   * This function does not consider differing origins.  It simply scales the
+   * input's x and y values.
+   * @param {!Coordinate} pixelCoord A coordinate with x and y values
+   *     in css pixel units.
+   * @return {!Coordinate} The input coordinate divided by the workspace
+   *     scale.
+   * @private
+   */
+  pixelsToWorkspaceUnits_(pixelCoord) {
+    let result = new Coordinate(pixelCoord.x / this.workspace_.scale,
+        pixelCoord.y / this.workspace_.scale);
+    if (this.workspace_.isMutator) {
+      // If we're in a mutator, its scale is always 1, purely because of some
+      // oddities in our rendering optimizations.  The actual scale is the same as
+      // the scale on the parent workspace.
+      // Fix that for dragging.
+      const mainScale = this.workspace_.options.parentWorkspace.scale;
+      result = result.scale(1 / mainScale);
+    }
+    return result;
   }
-};
 
-/**
- * Convert a coordinate object from pixels to workspace units, including a
- * correction for mutator workspaces.
- * This function does not consider differing origins.  It simply scales the
- * input's x and y values.
- * @param {!Coordinate} pixelCoord A coordinate with x and y values
- *     in css pixel units.
- * @return {!Coordinate} The input coordinate divided by the workspace
- *     scale.
- * @private
- */
-BlockDragger.prototype.pixelsToWorkspaceUnits_ = function(pixelCoord) {
-  let result = new Coordinate(pixelCoord.x / this.workspace_.scale,
-      pixelCoord.y / this.workspace_.scale);
-  if (this.workspace_.isMutator) {
-    // If we're in a mutator, its scale is always 1, purely because of some
-    // oddities in our rendering optimizations.  The actual scale is the same as
-    // the scale on the parent workspace.
-    // Fix that for dragging.
-    const mainScale = this.workspace_.options.parentWorkspace.scale;
-    result = result.scale(1 / mainScale);
+  /**
+   * Move all of the icons connected to this drag.
+   * @param {!Coordinate} dxy How far to move the icons from their
+   *     original positions, in workspace units.
+   * @private
+   */
+  dragIcons_(dxy) {
+    // Moving icons moves their associated bubbles.
+    for (let i = 0; i < this.dragIconData_.length; i++) {
+      const data = this.dragIconData_[i];
+      data.icon.setIconLocation(Coordinate.sum(data.location, dxy));
+    }
   }
-  return result;
-};
-
-/**
- * Move all of the icons connected to this drag.
- * @param {!Coordinate} dxy How far to move the icons from their
- *     original positions, in workspace units.
- * @private
- */
-BlockDragger.prototype.dragIcons_ = function(dxy) {
-  // Moving icons moves their associated bubbles.
-  for (let i = 0; i < this.dragIconData_.length; i++) {
-    const data = this.dragIconData_[i];
-    data.icon.setIconLocation(Coordinate.sum(data.location, dxy));
-  }
-};
+}

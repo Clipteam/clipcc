@@ -48,7 +48,7 @@ export class EndBlockDrag extends BlockBase {
     * Type of this event.
     * @type {string}
     */
-  this.type = eventUtils.END_DRAG;
+    this.type = eventUtils.END_DRAG;
     this.isOutside = isOutside;
     // If drag ends outside the blocks workspace, send the block XML
     if (isOutside) {

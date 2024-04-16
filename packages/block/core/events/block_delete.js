@@ -36,7 +36,7 @@ const dom = goog.require('goog.dom');
  * @class
  */
 export class BlockDelete extends BlockBase {
-    /**
+  /**
      * @param {Blockly.Block} block The deleted block.  Null for a blank event.
      */
   constructor(block) {
