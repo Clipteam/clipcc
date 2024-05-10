@@ -32,6 +32,7 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Procedures');
 
 import * as constants from './constants';
+import {getMainWorkspace} from './common';
 import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Msg} from './msg';
@@ -495,8 +496,14 @@ const editProcedureCallback = function(block) {
     }
     // This is a call block, find the prototype corresponding to the procCode.
     // Make sure to search the correct workspace, call block can be in flyout.
-    const workspaceToSearch = block.workspace.isFlyout ?
-        block.workspace.targetWorkspace : block.workspace;
+    // block's workspace may lost after checkout workspace
+    let workspaceToSearch;
+    if (block.workspace !== null) {
+      workspaceToSearch = block.workspace.isFlyout ? block.workspace.targetWorkspace : block.workspace;
+    } else {
+      workspaceToSearch = getMainWorkspace();
+    }
+
     block = getPrototypeBlock(
         block.getProcCode(), workspaceToSearch);
   }
@@ -584,10 +591,17 @@ export const makeEditOption = function(block) {
  * @private
  */
 const showProcedureDefCallback = function(block) {
-    if (block.getGlobal()) {
-      externalCheckoutWsCallback(block.getProcCode());
-    }
-  const workspace = block.workspace.isFlyout ? block.workspace.targetWorkspace : block.workspace;
+  let workspace;
+  if (block.getGlobal()) {
+    externalCheckoutWsCallback(block.getProcCode());
+  }
+  // block's workspace may lost after checkout workspace
+  if (block.workspace !== null) {
+    workspace = block.workspace.isFlyout ? block.workspace.targetWorkspace : block.workspace;
+  } else {
+    workspace = getMainWorkspace();
+  }
+
   const defBlock = getDefineBlock(block.getProcCode(), workspace);
   if (defBlock) {
     workspace.centerOnBlock(defBlock.id);
