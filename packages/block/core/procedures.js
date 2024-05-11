@@ -328,9 +328,13 @@ export const getCallers = function(name, ws, definitionRoot,
  * @param {string} name Name of procedure (procCode in scratch-blocks).
  * @param {!Blockly.Workspace} ws The workspace to find callers in.
  * @param {!Element} mutation New mutation for the callers.
+ * @deprecated Use ProcedureMap.updateProcedure instead
  * @package
  */
 export const mutateCallersAndPrototype = function(name, ws, mutation) {
+  console.warn('Deprecated call to Blockly.Procedures.mutateCallersAndPrototype, ' +
+    'please use ProcedureMap.updateProcedure instead.');
+
   const defineBlock = getDefineBlock(name, ws);
   const prototypeBlock = getPrototypeBlock(name, ws);
   if (defineBlock && prototypeBlock) {
