@@ -524,8 +524,7 @@ const editProcedureCallback = function(block) {
 const editProcedureCallbackFactory = function(block) {
   return function(mutation) {
     if (mutation) {
-      mutateCallersAndPrototype(block.getProcCode(),
-          block.workspace, mutation);
+      block.workspace.procedureMap_.updateProcedure(block.getProcCode(), mutation);
     }
   };
 };

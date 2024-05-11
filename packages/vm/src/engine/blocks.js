@@ -326,7 +326,7 @@ class Blocks {
         // Validate event
         if (typeof e !== 'object') return;
         if (typeof e.blockId !== 'string' && typeof e.varId !== 'string' &&
-            typeof e.commentId !== 'string') {
+            typeof e.commentId !== 'string' && typeof e.procCode !== 'string') {
             return;
         }
         const stage = this.runtime.getTargetForStage();
@@ -526,6 +526,20 @@ class Blocks {
                 this.emitProjectChanged();
             }
             break;
+        case 'func_update': {
+            const oldMutation = mutationAdapter(e.oldMutation);
+            const newMutation = mutationAdapter(e.newMutation);
+            const procCode = oldMutation.proccode;
+            if (oldMutation.global === 'true') {
+                for (const target of this.runtime.targets) {
+                    target.blocks.updateBlocksAfterFuncUpdate(procCode, newMutation);
+                }
+            } else {
+                editingTarget.blocks.updateBlocksAfterFuncUpdate(procCode, newMutation);
+            }
+            this.emitProjectChanged();
+            break;
+        }
         }
     }
 
@@ -929,6 +943,38 @@ class Blocks {
                 }
             }
         }
+    }
+
+    /**
+     * Keep blocks up to date after a procedure gets updated.
+     * @param {string} procCode The procCode of procedure to update
+     * @param {object} newMutation The new mutation of procedure
+     */
+    updateBlocksAfterFuncUpdate (procCode, newMutation) {
+        const blocks = this._blocks;
+        for (const blockId in blocks) {
+            const block = blocks[blockId];
+            if (block.opcode === 'procedures_prototype') {
+                if (block.mutation.proccode === procCode) {
+                    block.mutation.proccode = newMutation.proccode;
+                    block.mutation.argumentids = newMutation.argumentids;
+                    block.mutation.argumentnames = newMutation.argumentnames;
+                    block.mutation.argumentdefaults = newMutation.argumentdefaults;
+                    block.mutation.warp = newMutation.warp;
+                    block.mutation.global = newMutation.global;
+                    block.mutation.return = newMutation.return;
+                }
+            } else if (block.opcode === 'procedures_call') {
+                if (block.mutation.proccode === procCode) {
+                    block.mutation.proccode = newMutation.proccode;
+                    block.mutation.argumentids = newMutation.argumentids;
+                    block.mutation.warp = newMutation.warp;
+                    block.mutation.global = newMutation.global;
+                    block.mutation.return = newMutation.return;
+                }
+            }
+        }
+        this.resetCache();
     }
 
     /**

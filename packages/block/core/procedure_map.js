@@ -27,6 +27,11 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.ProcedureMap');
 
+import * as eventUtils from './events/utils';
+import {FuncUpdate} from './events/func_update';
+import * as Procedures from './procedures';
+import * as Xml from './xml';
+
 /**
  * Class for a procedure map. This contains a dictionary data structure with
  * procedure proccodes as keys and its mutation as values. 
@@ -133,4 +138,42 @@ ProcedureMap.prototype.removeProcedure = function(definitionRoot) {
   else {
     delete this.localProcedureMap_[block.getProcCode()];
   }
+};
+
+/**
+ * Update a procedure with new mutation.
+ * @param {string} procCode Old proccode of procedure.
+ * @param {Element} newMutation New mutation of procedure.
+ */
+ProcedureMap.prototype.updateProcedure = function(procCode, newMutation) {
+  const oldMutation = this.getProcedure(procCode);
+  if (!oldMutation) {
+    console.warn('Procedure "' + procCode + '" is is not found.');
+    return;
+  }
+
+  if (Xml.domToText(oldMutation) === Xml.domToText(newMutation)) {
+    return;
+  }
+
+  const defineBlock = Procedures.getDefineBlock(procCode, this.workspace);
+  const prototypeBlock = Procedures.getPrototypeBlock(procCode, this.workspace);
+  if (defineBlock && prototypeBlock) {
+    const callers = Procedures.getCallers(procCode, defineBlock.workspace, true);
+    callers.push(prototypeBlock);
+    for (const caller of callers) {
+      caller.domToMutation(newMutation);
+    }
+  }
+
+  if (oldMutation.getAttribute('global') == 'true') {
+    delete this.globalProcedureMap_[procCode];
+  } else {
+    delete this.localProcedureMap_[procCode];
+  }
+  this.createProcedureFromMutation(newMutation);
+
+  eventUtils.setGroup(true);
+  eventUtils.fire(new FuncUpdate(this.workspace, oldMutation, newMutation));
+  eventUtils.setGroup(false);
 };
