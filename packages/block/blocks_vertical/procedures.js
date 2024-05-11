@@ -56,8 +56,10 @@ Blockly.ScratchBlocks.ProcedureUtils.callerMutationToDom = function() {
  */
 Blockly.ScratchBlocks.ProcedureUtils.callerDomToMutation = function(xmlElement) {
   this.procCode_ = xmlElement.getAttribute('proccode');
-  this.generateShadows_ =
-      JSON.parse(xmlElement.getAttribute('generateshadows'));
+  // cc - callers should always generate shadows
+  // this.generateShadows_ =
+  //    JSON.parse(xmlElement.getAttribute('generateshadows'));
+  this.generateShadows_ = true;
   this.argumentIds_ = JSON.parse(xmlElement.getAttribute('argumentids'));
   this.warp_ = JSON.parse(xmlElement.getAttribute('warp'));
   // don't update shape if caller still has connections
