@@ -136,7 +136,6 @@ const handlePromise = (primitiveReportedValue, sequencer, thread, blockCached, l
                 // We need to pop out repeatedly until we find the next block.
                 const willPop = thread.peekStack();
                 if (willPop === null) {
-                    thraed.popStack();
                     return;
                 }
                 nextBlockId = thread.blockContainer.getNextBlock(willPop);
