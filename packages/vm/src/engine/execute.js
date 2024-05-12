@@ -593,7 +593,7 @@ const execute = function (sequencer, thread) {
         }
 
         // If it's a promise, wait until promise resolves.
-        // cc - if it's procedure_call_return, treat it as a promise.
+        // cc - if it's procedure_call with return value, treat it as a promise.
         const isValuePromise = isPromise(primitiveReportedValue);
         const isReturnCaller = isProcedureReturnCaller(opCached);
         if (isValuePromise || isReturnCaller) {
