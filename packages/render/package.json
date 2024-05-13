@@ -40,7 +40,7 @@
     "node-polyfill-webpack-plugin": "^2.0.1",
     "playwright-chromium": "1.13.0",
     "scratch-render-fonts": "1.0.0-prerelease.20221102164332",
-    "tap": "11.1.5",
+    "tap": "18.8.0",
     "terser-webpack-plugin": "^5.3.6",
     "travis-after-all": "1.4.5",
     "webpack": "^5.75.0",
