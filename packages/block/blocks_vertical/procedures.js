@@ -618,7 +618,7 @@ Blockly.ScratchBlocks.ProcedureUtils.updateDeclarationProcCode_ = function() {
     }
     const input = this.inputList[i];
     if (input.type == Blockly.constants.DUMMY_INPUT) {
-      this.procCode_ += input.fieldRow[0].getValue();
+      this.procCode_ += input.fieldRow[0].getValue().replace('%', '\\%');
     } else if (input.type == Blockly.constants.INPUT_VALUE) {
       // Inspect the argument editor.
       const target = input.connection.targetBlock();
