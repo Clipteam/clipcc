@@ -729,8 +729,6 @@ Blockly.ScratchBlocks.ProcedureUtils.getReturn = function() {
 Blockly.ScratchBlocks.ProcedureUtils.setReturn = function(ret) {
   this.return_ = ret;
   this.updateShape_();
-  this.updateDisplay_();
-  this.focusLastEditor_();
 };
 
 /**
