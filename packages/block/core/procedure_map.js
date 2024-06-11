@@ -3,7 +3,7 @@
  * Visual Blocks Editor
  *
  * Copyright 2023 Clip Team
- * 
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -31,23 +31,24 @@ import * as eventUtils from './events/utils';
 import {FuncUpdate} from './events/func_update';
 import * as Procedures from './procedures';
 import * as Xml from './xml';
+import {ProcedureModel} from './procedure_model';
 
 /**
  * Class for a procedure map. This contains a dictionary data structure with
- * procedure proccodes as keys and its mutation as values. 
+ * procedure proccodes as keys and its mutation as values.
  * @param {!Blockly.Workspace} workspace The workspace this map belongs to.
  */
 export const ProcedureMap = function(workspace) {
   /**
-   * A map from procedure proccode to list of global procedures.
-   * @type {!Object.<string, Element>}
+   * A map from proccode to global procedure models.
+   * @type {!Object.<string, ProcedureModel>}
    * @private
    */
   this.globalProcedureMap_ = {};
 
   /**
-   * A map from procedure proccode to list of local procedures.
-   * @type {!Object.<string, Element>}
+   * A map from proccode to local procedure models.
+   * @type {!Object.<string, ProcedureModel>}
    * @private
    */
   this.localProcedureMap_ = {};
@@ -71,16 +72,12 @@ ProcedureMap.prototype.clear = function() {
  * Get the variable by the given proccode. Local procedures are checked first.
  * Return null if it is not found.
  * @param {string} procCode The proccode to check for.
- * @return {Element} The mutation with the given name, or null if not found.
+ * @return {ProcedureModel} The procedure model or null if not found.
  */
 ProcedureMap.prototype.getProcedure = function(procCode) {
-  if (this.localProcedureMap_.hasOwnProperty(procCode)) {
-    return this.localProcedureMap_[procCode];
-  }
-  if (this.globalProcedureMap_.hasOwnProperty(procCode)) {
-    return this.globalProcedureMap_[procCode];
-  }
-  return null;
+  return this.localProcedureMap_[procCode] ||
+      this.globalProcedureMap_[procCode] ||
+      null;
 };
 
 /**
@@ -89,7 +86,8 @@ ProcedureMap.prototype.getProcedure = function(procCode) {
  * @package
  */
 ProcedureMap.prototype.allGlobalProcedureMutations = function() {
-  return Object.values(this.globalProcedureMap_);
+  return Object.values(this.globalProcedureMap_)
+      .map(procedure => procedure.mutation);
 };
 
 /**
@@ -98,35 +96,38 @@ ProcedureMap.prototype.allGlobalProcedureMutations = function() {
  * @package
  */
 ProcedureMap.prototype.allLocalProcedureMutations = function() {
-  return Object.values(this.localProcedureMap_);
+  return Object.values(this.localProcedureMap_)
+      .map(procedure => procedure.mutation);
 };
 
 /**
- * Create a procedure with a given mutation.
- * @param {Element} mutation The mutation of the procedure.
- * @returns {Element} The newly created procedure.
+ * Create a procedure with a given mutation. Definition block should be created
+ * externally if necessary.
+ * @param {!Element} mutation The mutation of the procedure.
+ * @return {ProcedureModel} The newly created procedure.
  */
 ProcedureMap.prototype.createProcedureFromMutation = function(mutation) {
   const procCode = mutation.getAttribute('proccode');
-  if (mutation.getAttribute('global') == 'true') {
-    if (this.globalProcedureMap_.hasOwnProperty(procCode)) {
-      console.warn('Procedure "' + procCode + '" is already in use.');
-      return this.globalProcedureMap_[procCode];
-    }
-    return this.globalProcedureMap_[procCode] = mutation;
+  let procedure = this.getProcedure(procCode);
+
+  if (procedure && !procedure.isExternal()) {
+    // There is a procedure defined in current target with the same procCode.
+    console.warn('Procedure "' + procCode + '" is already in use.');
+    return procedure;
   }
-  else {
-    if (this.localProcedureMap_.hasOwnProperty(procCode)) {
-      console.warn('Procedure "' + procCode + '" is already in use.');
-      return this.localProcedureMap_[procCode];
-    }
-    return this.localProcedureMap_[procCode] = mutation;
+
+  procedure = new ProcedureModel(this.workspace, mutation);
+  if (procedure.isGlobal()) {
+    this.globalProcedureMap_[procedure.getProcCode()] = procedure;
+  } else {
+    this.localProcedureMap_[procedure.getProcCode()] = procedure;
   }
+
+  return procedure;
 };
 
 /**
  * Remove a procedure from definition root block.
- * @param {string} procCode The identifier of the procedure to delete.
  * @param {!Blockly.Block} definitionRoot The root block of the stack that
  *     defines the custom procedure.
  */
@@ -134,8 +135,7 @@ ProcedureMap.prototype.removeProcedure = function(definitionRoot) {
   const block = definitionRoot.getChildren()[0];
   if (block.global_) {
     delete this.globalProcedureMap_[block.getProcCode()];
-  }
-  else {
+  } else {
     delete this.localProcedureMap_[block.getProcCode()];
   }
 };
@@ -146,12 +146,13 @@ ProcedureMap.prototype.removeProcedure = function(definitionRoot) {
  * @param {Element} newMutation New mutation of procedure.
  */
 ProcedureMap.prototype.updateProcedure = function(procCode, newMutation) {
-  const oldMutation = this.getProcedure(procCode);
-  if (!oldMutation) {
+  const oldProcedure = this.getProcedure(procCode);
+  if (!oldProcedure) {
     console.warn('Procedure "' + procCode + '" is is not found.');
     return;
   }
 
+  const oldMutation = oldProcedure.mutation;
   if (Xml.domToText(oldMutation) === Xml.domToText(newMutation)) {
     return;
   }

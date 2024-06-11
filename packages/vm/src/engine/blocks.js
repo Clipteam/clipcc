@@ -222,7 +222,7 @@ class Blocks {
     /**
      * Get all procedure definitions.
      * @param {?boolean} globalOnly True if only get global procedures.
-     * @return {?Array.<String>} Mutations of procedures.
+     * @return {?Array.<String>} Mutations of procedures. Set "external" if globalOnly is true. 
      */
     getAllProcedureDefinitions (globalOnly) {
         const procedures = [];
@@ -234,7 +234,9 @@ class Blocks {
                 const internal = this._getCustomBlockInternal(block);
                 if (internal && (!globalOnly || internal.mutation.global === 'true')) {
                     this._cache.procedureDefinitions[internal.mutation.proccode] = id; // The outer define block id
-                    procedures.push(this.mutationToXML(internal.mutation));
+                    procedures.push(this.mutationToXML(Object.assign({
+                        external: globalOnly // set external if globalOnly is true
+                    }, internal.mutation)));
                 }
             }
         }
