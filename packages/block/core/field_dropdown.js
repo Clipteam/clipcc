@@ -452,6 +452,29 @@ FieldDropdown.prototype.setText = function(text) {
 };
 
 /**
+ * Saves this field's value.
+ * @return {string} The dropdown value held by this field.
+ * @override
+ * @package
+ */
+FieldDropdown.prototype.saveState = function () {
+  return /** @type {string} */ (this.getValue());
+};
+
+/**
+ * Sets the field's value based on the given state.
+ * @param {*} state The state to apply to the dropdown field.
+ * @override
+ * @package
+ */
+FieldDropdown.prototype.loadState = function (state) {
+  if (this.isOptionListDynamic()) {
+    this.getOptions(false);
+  }
+  this.setValue(state);
+};
+
+/**
  * Position a drop-down arrow at the appropriate location at render-time.
  * @param {number} x X position the arrow is being rendered at, in px.
  * @return {number} Amount of space the arrow is taking up, in px.

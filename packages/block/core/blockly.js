@@ -123,6 +123,10 @@ import {WorkspaceDragger} from './workspace_dragger';
 import {WorkspaceSvg} from './workspace_svg';
 import * as Xml from './xml';
 import {ZoomControls} from './zoom_controls';
+import * as serializationRegistry from './serialization/registry';
+import * as serializationBlocks from './serialization/blocks';
+import * as serializationVariables from './serialization/variables';
+import * as serializationWorkspaces from './serialization/workspaces';
 
 /**
  * Cached value for whether 3D is supported.
@@ -289,6 +293,13 @@ WorkspaceSvg.prototype.newBlock = function(prototypeName, opt_id) {
   return new BlockSvg(this, prototypeName, opt_id);
 };
 
+const serialization = {
+  registry: serializationRegistry,
+  blocks: serializationBlocks,
+  variables: serializationVariables,
+  workspace: serializationWorkspaces
+};
+
 export {
   Block,
   BlockAnimations,
@@ -360,6 +371,7 @@ export {
   ScratchMsgs,
   Scrollbar,
   ScrollbarPair,
+  serialization,
   Toolbox,
   Tooltip,
   Touch,

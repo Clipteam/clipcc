@@ -293,6 +293,26 @@ FieldMatrix.prototype.getValue = function() {
 };
 
 /**
+ * Saves this field's value.
+ * @return {string} The text value held by this field.
+ * @override
+ * @package
+ */
+FieldMatrix.prototype.saveState = function () {
+  return /** @type {string} */ (this.getValue());
+};
+
+/**
+ * Sets the field's value based on the given state.
+ * @param {*} state The state to apply to the matrix field.
+ * @override
+ * @package
+ */
+FieldMatrix.prototype.loadState = function (state) {
+  this.setValue(state);
+};
+
+/**
  * Show the drop-down menu for editing this field.
  * @private
  */

@@ -73,6 +73,9 @@ Type.EVENT = new Type('event');
 /** @type {!Type<Blockly.Field>} */
 Type.FIELD = new Type('field');
 
+/** @type {!Type<Blockly.ISerializer>} */
+Type.SERIALIZER = new Type('serializer');
+
 /** @type {!Type<Blockly.VerticalFlyout>} */
 Type.FLYOUTS_VERTICAL_TOOLBOX =
     new Type('flyoutsVerticalToolbox');

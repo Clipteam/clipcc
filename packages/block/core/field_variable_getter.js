@@ -162,6 +162,27 @@ FieldVariableGetter.prototype.setValue = function(id) {
   this.setText(variable.name);
 };
 
+
+/**
+ * Saves this field getter's value.
+ * @return {string} The id of the variable referenced by this field.
+ * @override
+ * @package
+ */
+FieldVariableGetter.prototype.saveState = function () {
+  return this.getValue();
+};
+
+/**
+ * Sets the field getter's value based on the given state.
+ * @param {*} id The id of the variable to assign to this variable field.
+ * @override
+ * @package
+ */
+FieldVariableGetter.prototype.loadState = function (id) {
+  this.setValue(id);
+};
+
 /**
  * This field is editable, but only through the right-click menu.
  * @private

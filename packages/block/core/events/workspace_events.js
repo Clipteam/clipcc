@@ -1,0 +1,88 @@
+/**
+ * @license
+ * Copyright 2019 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/**
+ * @fileoverview Class for a finished loading workspace event.
+ */
+'use strict';
+
+/**
+ * Class for a finished loading workspace event.
+ * @class
+ */
+
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+import * as eventUtils from './utils.js';
+import { Abstract } from './abstract.js';
+
+goog.declareModuleId('Blockly.Events.FinishedLoading');
+
+/**
+ * Class for a finished loading event.
+ * Used to notify the developer when the workspace has finished loading (i.e
+ * domToWorkspace).
+ * Finished loading events do not record undo or redo.
+ * @extends {Abstract}
+ * @alias Blockly.Events.FinishedLoading
+ */
+export class FinishedLoading extends Abstract {
+  /**
+   * @param {!Workspace=} opt_workspace The workspace that has finished
+   *    loading.  Undefined for a blank event.
+   */
+  constructor(opt_workspace) {
+    super();
+    /**
+     * Whether or not the event is blank (to be populated by fromJson).
+     * @type {boolean}
+     */
+    this.isBlank = typeof opt_workspace === 'undefined';
+
+    /**
+     * The workspace identifier for this event.
+     * @type {string}
+     */
+    this.workspaceId = opt_workspace ? opt_workspace.id : '';
+
+    // Workspace events do not undo or redo.
+    this.recordUndo = false;
+
+    /**
+     * Type of this event.
+     * @type {string}
+     */
+    this.type = eventUtils.FINISHED_LOADING;
+  }
+
+  /**
+   * Encode the event as JSON.
+   * @return {!Object} JSON representation.
+   */
+  toJson() {
+    const json = {
+      'type': this.type,
+    };
+    if (this.group) {
+      json['group'] = this.group;
+    }
+    if (this.workspaceId) {
+      json['workspaceId'] = this.workspaceId;
+    }
+    return json;
+  }
+
+  /**
+   * Decode the JSON event.
+   * @param {!Object} json JSON representation.
+   */
+  fromJson(json) {
+    this.isBlank = false;
+    this.workspaceId = json['workspaceId'];
+    this.group = json['group'];
+  }
+}
+
+eventUtils.register(eventUtils.FINISHED_LOADING, FinishedLoading);

@@ -164,6 +164,11 @@ export const COMMENT_CHANGE = 'comment_change';
 export const COMMENT_DELETE = 'comment_delete';
 
 /**
+ * Name of event that records a workspace load.
+ */
+export const FINISHED_LOADING = 'finished_loading';
+
+/**
  * Name of event that records a UI change.
  * @const
  */

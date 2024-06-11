@@ -381,6 +381,29 @@ FieldVariable.prototype.onItemSelected = function(menu, menuItem) {
   this.setValue(id);
 };
 
+
+/**
+ * Saves this field's value.
+ * @return {string} The id of the variable referenced by this field.
+ * @override
+ * @package
+ */
+FieldVariable.prototype.saveState = function () {
+  // Make sure the variable is initialized.
+  this.initModel();
+  return this.variable_.getId();
+};
+
+/**
+ * Sets the field's value based on the given state.
+ * @param {*} id The id of the variable to assign to this variable field.
+ * @override
+ * @package
+ */
+FieldVariable.prototype.loadState = function (id) {
+  this.setValue(id);
+};
+
 /**
  * Overrides referencesVariables(), indicating this field refers to a variable.
  * @return {boolean} True.

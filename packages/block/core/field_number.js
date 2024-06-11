@@ -341,6 +341,26 @@ FieldNumber.numPadEraseButtonTouch = function(e) {
 };
 
 /**
+ * Saves this field's value.
+ * @return {number} The number value held by this field.
+ * @override
+ * @package
+ */
+FieldNumber.prototype.saveState = function () {
+  return /** @type {number} */ (this.getValue());
+};
+
+/**
+ * Sets the field's value based on the given state.
+ * @param {*} state The state to apply to the nuber field.
+ * @override
+ * @package
+ */
+FieldNumber.prototype.loadState = function (state) {
+  this.setValue(state);
+};
+
+/**
  * Update the displayed value and resize/scroll the text field as needed.
  * @param {string} newValue The new text to display.
  * @param {string} newSelection The new index to put the cursor
