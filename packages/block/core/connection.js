@@ -505,11 +505,12 @@ Connection.prototype.isConnectionAllowed = function(candidate) {
 /**
  * Connect this connection to another connection.
  * @param {!Connection} otherConnection Connection to connect to.
+ * @return {boolean} Whether the the blocks are now connected or not.
  */
 Connection.prototype.connect = function(otherConnection) {
   if (this.targetConnection == otherConnection) {
     // Already connected together.  NOP.
-    return;
+    return true;
   }
   this.checkConnection_(otherConnection);
   // Determine which block is superior (higher in the source stack).
@@ -520,6 +521,7 @@ Connection.prototype.connect = function(otherConnection) {
     // Inferior block.
     otherConnection.connect_(this);
   }
+  return this.isConnected();
 };
 
 /**

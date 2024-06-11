@@ -14,6 +14,7 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 import * as constants from '../constants';
 import * as eventUtils from '../events/utils';
+import { MissingBlockType, MissingConnection, BadConnectionCheck } from './exceptions';
 import { BlockCreate } from '../events/block_create';
 import * as Xml from '../xml';
 goog.declareModuleId('Blockly.serialization.blocks');
@@ -264,22 +265,59 @@ const load = function(state, workspace, {recordUndo = false} = {}) {
  * @return {!Blockly.Block} The block that was just loaded.
  */
 const loadInternal = function(state, workspace, parentConnection = undefined) {
+  if (!state['type']) {
+    throw new MissingBlockType(state);
+  }
+
   const block = workspace.newBlock(state['type'], state['id']);
   loadCoords(block, state);
   loadAttributes(block, state);
   loadExtraState(block, state);
-  if (parentConnection &&
-      (block.outputConnection || block.previousConnection)) {
-    parentConnection.connect(
-        /** @type {!Connection} */
-        (block.outputConnection || block.previousConnection));
-  }
+  tryToConnectParent(parentConnection, block, state);
   // loadIcons(block, state);
   loadFields(block, state);
   loadInputBlocks(block, state);
   loadNextBlocks(block, state);
   initBlock(block, workspace.rendered);
   return block;
+};
+
+/**
+ * Attempts to connect the block to the parent connection, if it exists.
+ * @param {(!Connection|undefined)} parentConnection The parent connnection to
+ *     try to connect the block to.
+ * @param {!Block} child The block to try to conecnt to the parent.
+ * @param {!State} state The state which defines the given block
+ */
+const tryToConnectParent = function(parentConnection, child, state) {
+  if (!parentConnection) {
+    return;
+  }
+
+  let connected = false;
+  let childConnection;
+  if (parentConnection.type == inputTypes.VALUE) {
+    childConnection = child.outputConnection;
+    if (!childConnection) {
+      throw new MissingConnection('output', child, state);
+    }
+    connected = parentConnection.connect(childConnection);
+  } else { // Statement type.
+    childConnection = child.previousConnection;
+    if (!childConnection) {
+      throw new MissingConnection('previous', child, state);
+    }
+    connected = parentConnection.connect(childConnection);
+  }
+
+  if (!connected) {
+    throw new BadConnectionCheck(
+        'bad connection',
+        parentConnection.type == constants.INPUT_VALUE ?
+            'output connection' : 'previous connection',
+        child,
+        state);
+  }
 };
 
 /**
@@ -370,9 +408,10 @@ const loadInputBlocks = function(block, state) {
   for (let i = 0; i < keys.length; i++) {
     const inputName = keys[i];
     const input = block.getInput(inputName);
-    if (input && input.connection) {
-      loadConnection(input.connection, state['inputs'][inputName]);
+    if (!input || !input.connection) {
+      throw new MissingConnection(inputName, block, state);
     }
+    loadConnection(input.connection, state['inputs'][inputName]);
   }
 };
 
@@ -386,9 +425,12 @@ const loadNextBlocks = function(block, state) {
   if (!state['next']) {
     return;
   }
-  if (block.nextConnection) {
-    loadConnection(block.nextConnection, state['next']);
+
+  if (!block.nextConnection) {
+    throw new MissingConnection('next', block, state);
   }
+
+  loadConnection(block.nextConnection, state['next']);
 };
 
 /**

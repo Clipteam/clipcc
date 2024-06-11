@@ -17,7 +17,7 @@
  */
 
 import * as goog from 'google-closure-library/closure/goog/goog.js';
-import * as registry from '../registry.js';
+import * as registry from '../registry';
 
 goog.declareModuleId('Blockly.serialization.registry');
 

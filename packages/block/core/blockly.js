@@ -125,6 +125,7 @@ import * as Xml from './xml';
 import {ZoomControls} from './zoom_controls';
 import * as serializationRegistry from './serialization/registry';
 import * as serializationBlocks from './serialization/blocks';
+import * as serializationExceptions from './serialization/exceptions';
 import * as serializationVariables from './serialization/variables';
 import * as serializationWorkspaces from './serialization/workspaces';
 
@@ -296,6 +297,7 @@ WorkspaceSvg.prototype.newBlock = function(prototypeName, opt_id) {
 const serialization = {
   registry: serializationRegistry,
   blocks: serializationBlocks,
+  exceptions: serializationExceptions,
   variables: serializationVariables,
   workspace: serializationWorkspaces
 };

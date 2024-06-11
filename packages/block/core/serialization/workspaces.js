@@ -11,11 +11,11 @@
 'use strict';
 
 import * as goog from 'google-closure-library/closure/goog/goog.js';
-import * as blocks from './blocks.js';
-import { FinishedLoading } from '../events/workspace_events.js';
+import * as blocks from './blocks';
+import { FinishedLoading } from '../events/workspace_events';
 import * as eventUtils from '../events/utils';
 import * as utils from '../utils';
-import * as variables from './variables.js';
+import * as variables from './variables';
 
 goog.declareModuleId('Blockly.serialization.workspaces');
 
