@@ -36,7 +36,6 @@ import {Ui} from './events/ui';
 import {Icon} from './icon';
 import * as utils from './utils';
 import {WorkspaceSvg} from './workspace_svg';
-import * as Xml from './xml';
 
 const dom = goog.require('goog.dom');
 
@@ -326,9 +325,8 @@ Mutator.prototype.workspaceChanged_ = function() {
   // When the mutator's workspace changes, update the source block.
   if (this.rootBlock_.workspace == this.workspace_) {
     eventUtils.setGroup(true);
-    const block = this.block_;
-    const oldMutationDom = block.mutationToDom();
-    const oldMutation = oldMutationDom && Xml.domToText(oldMutationDom);
+    const block = /** @type {!BlockSvg} */ (this.block_);
+    const oldExtraState = BlockChange.getExtraBlockState_(block);
     // Switch off rendering while the source block is rebuilt.
     const savedRendered = block.rendered;
     block.rendered = false;
@@ -338,11 +336,10 @@ Mutator.prototype.workspaceChanged_ = function() {
     block.rendered = savedRendered;
     // Mutation may have added some elements that need initializing.
     block.initSvg();
-    const newMutationDom = block.mutationToDom();
-    const newMutation = newMutationDom && Xml.domToText(newMutationDom);
-    if (oldMutation != newMutation) {
+    const newExtraState = BlockChange.getExtraBlockState_(block);
+    if (oldExtraState != newExtraState) {
       eventUtils.fire(new BlockChange(
-          block, 'mutation', null, oldMutation, newMutation));
+          block, 'mutation', null, oldExtraState, newExtraState));
       // Ensure that any bump is part of this mutation's event group.
       const group = eventUtils.getGroup();
       setTimeout(function() {

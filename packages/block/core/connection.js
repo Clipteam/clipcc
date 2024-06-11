@@ -32,6 +32,7 @@ import * as constants from './constants';
 import * as eventUtils from './events/utils';
 import {BlockMove} from './events/block_move';
 import * as Xml from './xml';
+import * as blocks from './serialization/blocks';
 
 const arrayUtils = goog.require('goog.array');
 const asserts = goog.require('goog.asserts');
@@ -165,13 +166,11 @@ Connection.prototype.connect_ = function(childConnection) {
     // Other connection is already connected to something.
     // Disconnect it and reattach it or bump it as needed.
     let orphanBlock = parentConnection.targetBlock();
-    let shadowDom = parentConnection.getShadowDom();
-    // Temporarily set the shadow DOM to null so it does not respawn.
-    parentConnection.setShadowDom(null);
+    let shadowState = parentConnection.stashShadowState_();
     // Displaced shadow blocks dissolve rather than reattaching or bumping.
     if (orphanBlock.isShadow()) {
       // Save the shadow block so that field values are preserved.
-      shadowDom = Xml.blockToDom(orphanBlock);
+      shadowState = blocks.save(orphanBlock);
       orphanBlock.dispose();
       orphanBlock = null;
     } else if (parentConnection.type == constants.NEXT_STATEMENT) {
@@ -219,7 +218,7 @@ Connection.prototype.connect_ = function(childConnection) {
       }
     }
     // Restore the shadow DOM.
-    parentConnection.setShadowDom(shadowDom);
+    parentConnection.applyShadowState_(shadowState);
   }
 
   if (isSurroundingC && previousParentConnection) {
@@ -612,19 +611,8 @@ Connection.prototype.disconnectInternal_ = function(parentBlock,
  * @protected
  */
 Connection.prototype.respawnShadow_ = function() {
-  const parentBlock = this.getSourceBlock();
-  const shadow = this.getShadowDom();
-  if (parentBlock.workspace && shadow && eventUtils.getRecordUndo()) {
-    const blockShadow =
-        Xml.domToBlock(shadow, parentBlock.workspace);
-    if (blockShadow.outputConnection) {
-      this.connect(blockShadow.outputConnection);
-    } else if (blockShadow.previousConnection) {
-      this.connect(blockShadow.previousConnection);
-    } else {
-      throw 'Child block does not have output or previous statement.';
-    }
-  }
+  // Have to keep respawnShadow_ for backwards compatibility.
+  this.createShadowBlock_(true);
 };
 
 /**
@@ -716,16 +704,49 @@ Connection.prototype.getOutputShape = function() {
  * Change a connection's shadow block.
  * @param {Element} shadow DOM representation of a block or null.
  */
-Connection.prototype.setShadowDom = function(shadow) {
-  this.shadowDom_ = shadow;
+Connection.prototype.setShadowDom = function(shadowDom) {
+  this.shadowDom_ = shadowDom;
 };
 
 /**
  * Return a connection's shadow block.
+ * @param {boolean=} returnCurrent If true, and the shadow block is currently
+ *     attached to this connection, this serializes the state of that block
+ *     and returns it (so that field values are correct). Otherwise the saved
+ *     shadowDom is just returned.
  * @return {Element} shadow DOM representation of a block or null.
  */
-Connection.prototype.getShadowDom = function() {
-  return this.shadowDom_;
+Connection.prototype.getShadowDom = function(returnCurrent) {
+  return (returnCurrent && this.targetBlock().isShadow()) ?
+      /** @type {!Element} */ (Xml.blockToDom(
+          /** @type {!Block} */ (this.targetBlock()))) :
+      this.shadowDom_;
+};
+
+/**
+ * Changes the connection's shadow block.
+ * @param {?blocks.State} shadowState An state represetation of the block or
+ *     null.
+ */
+Connection.prototype.setShadowState = function (shadowState) {
+  this.setShadowStateInternal_({ shadowState: shadowState });
+};
+
+/**
+ * Returns the serialized object representation of the connection's shadow
+ * block.
+ * @param {boolean=} returnCurrent If true, and the shadow block is currently
+ *     attached to this connection, this serializes the state of that block
+ *     and returns it (so that field values are correct). Otherwise the saved
+ *     state is just returned.
+ * @return {?blocks.State} Serialized object representation of the block, or
+ *     null.
+ */
+Connection.prototype.getShadowState = function (returnCurrent) {
+  if (returnCurrent && this.targetBlock() && this.targetBlock().isShadow()) {
+    return blocks.save(/** @type {!Block} */(this.targetBlock()));
+  }
+  return this.shadowState_;
 };
 
 /**
@@ -772,4 +793,138 @@ Connection.prototype.toString = function() {
     }
   }
   return msg + block.toDevString();
+};
+
+/**
+ * Returns the state of the shadowDom_ and shadowState_ properties, then
+ * temporarily sets those properties to null so no shadow respawns.
+ * @return {{shadowDom: ?Element, shadowState: ?blocks.State}} The state of both
+ *     the shadowDom_ and shadowState_ properties.
+ * @private
+ */
+Connection.prototype.stashShadowState_ = function () {
+  const shadowDom = this.getShadowDom(true);
+  const shadowState = this.getShadowState(true);
+  // Set to null so it doesn't respawn.
+  this.shadowDom_ = null;
+  this.shadowState_ = null;
+  return { shadowDom, shadowState };
+};
+
+/**
+ * Reapplies the stashed state of the shadowDom_ and shadowState_ properties.
+ * @param {{shadowDom: ?Element, shadowState: ?blocks.State}} param0 The state
+ *     to reapply to the shadowDom_ and shadowState_ properties.
+ * @private
+ */
+Connection.prototype.applyShadowState_ =
+  function ({ shadowDom, shadowState }) {
+    this.shadowDom_ = shadowDom;
+    this.shadowState_ = shadowState;
+  };
+
+/**
+ * Sets the state of the shadow of this connection.
+ * @param {{shadowDom: (?Element|undefined), shadowState:
+ *     (?blocks.State|undefined)}=} param0 The state to set the shadow of this
+ *     connection to.
+ * @private
+ */
+Connection.prototype.setShadowStateInternal_ =
+  function ({ shadowDom = null, shadowState = null } = {}) {
+    // One or both of these should always be null.
+    // If neither is null, the shadowState will get priority.
+    this.shadowDom_ = shadowDom;
+    this.shadowState_ = shadowState;
+
+    const target = this.targetBlock();
+    if (!target) {
+      this.respawnShadow_();
+      if (this.targetBlock() && this.targetBlock().isShadow()) {
+        this.serializeShadow_(this.targetBlock());
+      }
+    } else if (target.isShadow()) {
+      target.dispose(false);
+      this.respawnShadow_();
+      if (this.targetBlock() && this.targetBlock().isShadow()) {
+        this.serializeShadow_(this.targetBlock());
+      }
+    } else {
+      const shadow = this.createShadowBlock_(false);
+      this.serializeShadow_(shadow);
+      if (shadow) {
+        shadow.dispose(false);
+      }
+    }
+  };
+
+/**
+ * Creates a shadow block based on the current shadowState_ or shadowDom_.
+ * shadowState_ gets priority.
+ * @param {boolean} attemptToConnect Whether to try to connect the shadow block
+ *     to this connection or not.
+ * @return {?Block} The shadow block that was created, or null if both the
+ *     shadowState_ and shadowDom_ are null.
+ * @private
+ */
+Connection.prototype.createShadowBlock_ = function (attemptToConnect) {
+  const parentBlock = this.getSourceBlock();
+  const shadowState = this.getShadowState();
+  const shadowDom = this.getShadowDom();
+  if (!parentBlock.workspace || (!shadowState && !shadowDom)) {
+    return null;
+  }
+
+  let blockShadow;
+  if (shadowState) {
+    blockShadow = blocks.loadInternal(
+      shadowState,
+      parentBlock.workspace,
+      {
+        parentConnection: attemptToConnect ? this : undefined,
+        isShadow: true,
+        recordUndo: false,
+      });
+    return blockShadow;
+  }
+
+  if (shadowDom) {
+    blockShadow = Xml.domToBlock(shadowDom, parentBlock.workspace);
+    if (attemptToConnect) {
+      if (this.type == constants.INPUT_VALUE) {
+        if (!blockShadow.outputConnection) {
+          throw new Error('Shadow block is missing an output connection');
+        }
+        if (!this.connect(blockShadow.outputConnection)) {
+          throw new Error('Could not connect shadow block to connection');
+        }
+      } else if (this.type == constants.NEXT_STATEMENT) {
+        if (!blockShadow.previousConnection) {
+          throw new Error('Shadow block is missing previous connection');
+        }
+        if (!this.connect(blockShadow.previousConnection)) {
+          throw new Error('Could not connect shadow block to connection');
+        }
+      } else {
+        throw new Error(
+          'Cannot connect a shadow block to a previous/output connection');
+      }
+    }
+    return blockShadow;
+  }
+  return null;
+};
+
+/**
+ * Saves the given shadow block to both the shadowDom_ and shadowState_
+ * properties, in their respective serialized forms.
+ * @param {?Block} shadow The shadow to serialize, or null.
+ * @private
+ */
+Connection.prototype.serializeShadow_ = function (shadow) {
+  if (!shadow) {
+    return;
+  }
+  this.shadowDom_ = /** @type {!Element} */ (Xml.blockToDom(shadow));
+  this.shadowState_ = blocks.save(shadow);
 };

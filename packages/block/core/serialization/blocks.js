@@ -14,9 +14,8 @@
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 import * as constants from '../constants';
 import * as eventUtils from '../events/utils';
-import { MissingBlockType, MissingConnection, BadConnectionCheck } from './exceptions';
+import { MissingBlockType, MissingConnection, BadConnectionCheck, RealChildOfShadow } from './exceptions';
 import { BlockCreate } from '../events/block_create';
-import * as Xml from '../xml';
 goog.declareModuleId('Blockly.serialization.blocks');
 
 /**
@@ -64,7 +63,7 @@ export const save = function(block,
 
 /**
  * Adds attributes to the given state object based on the state of the block.
- * Eg collapsed, disabled, editable, etc.
+ * Eg collapsed, inline, etc.
  * @param {!Blockly.Block} block The block to base the attributes on.
  * @param {!State} state The state object to append
  *     to.
@@ -72,15 +71,6 @@ export const save = function(block,
 const saveAttributes = function(block, state) {
   if (block.isCollapsed()) {
     state['collapsed'] = true;
-  }
-  if (!block.isEditable()) {
-    state['editable'] = false;
-  }
-  if (!block.isDeletable() && !block.isShadow()) {
-    state['deletable'] = false;
-  }
-  if (!block.isMovable() && !block.isShadow()) {
-    state['movable'] = false;
   }
 
   if (block.inputsInline !== undefined &&
@@ -196,14 +186,15 @@ const saveNextBlocks = function(block, state) {
  *     shadow block, or any connected real block.
  */
 const saveConnection = function(connection) {
-  const shadow = connection.getShadowDom();
+  console.log(connection)
+  const shadow = connection.getShadowState();
   const child = connection.targetBlock();
   if (!shadow && !child) {
     return null;
   }
   const state = Object.create(null);
   if (shadow) {
-    state['shadow'] = Xml.domToText(shadow);
+    state['shadow'] = shadow;
   }
   if (child && !child.isShadow()) {
     state['block'] = save(child);
@@ -222,36 +213,8 @@ const saveConnection = function(connection) {
  * @return {!Block} The block that was just loaded.
  */
 // eslint-disable-next-line no-unused-vars
-const load = function(state, workspace, {recordUndo = false} = {}) {
-  const prevRecordUndo = eventUtils.getRecordUndo();
-  eventUtils.setRecordUndo(recordUndo);
-  const existingGroup = eventUtils.getGroup();
-  if (!existingGroup) {
-    eventUtils.setGroup(true);
-  }
-
-  // We only want to fire an event for the top block.
-  eventUtils.disable();
-
-  const block = loadInternal(state, workspace);
-
-  eventUtils.enable();
-  eventUtils.fire(new BlockCreate(block));
-
-  eventUtils.setGroup(existingGroup);
-  eventUtils.setRecordUndo(prevRecordUndo);
-
-  // Adding connections to the connection db is expensive. This defers that
-  // operation to decrease load time.
-  if (workspace.rendered) {
-    setTimeout(() => {
-      if (!block.disposed) {
-        block.setConnectionTracking(true);
-      }
-    }, 1);
-  }
-
-  return block;
+export const load = function(state, workspace, {recordUndo = false} = {}) {
+  return loadInternal(state, workspace, { recordUndo });
 };
 
 /**
@@ -262,23 +225,67 @@ const load = function(state, workspace, {recordUndo = false} = {}) {
  * @param {!Workspace} workspace The workspace to add the block to.
  * @param {!Connection=} parentConnection The optional parent connection to
  *     attach the block to.
+ * @param {boolean} isShadow Whether the block we are loading is a shadow block
+ *     or not.
  * @return {!Blockly.Block} The block that was just loaded.
  */
-const loadInternal = function(state, workspace, parentConnection = undefined) {
+export const loadInternal = function(
+    state, workspace, parentConnection = undefined, isShadow = false) {
+  const prevRecordUndo = eventUtils.getRecordUndo();
+  eventUtils.setRecordUndo(recordUndo);
+  const existingGroup = eventUtils.getGroup();
+  if (!existingGroup) {
+    eventUtils.setGroup(true);
+  }
+  eventUtils.disable();
+
+  const block = loadPrivate(state, workspace, { parentConnection, isShadow });
+
+  eventUtils.enable();
+  eventUtils.fire(new BlockCreate(block));
+  eventUtils.setGroup(existingGroup);
+  eventUtils.setRecordUndo(prevRecordUndo);
+};
+
+/**
+ * Loads the block represented by the given state into the given workspace.
+ * This is defined privately so that it can be called recursively without firing
+ * eroneous events. Events (and other things we only want to occur on the top
+ * block) are handled by loadInternal.
+ * @param {!State} state The state of a block to deserialize into the workspace.
+ * @param {!Workspace} workspace The workspace to add the block to.
+ * @param {{parentConnection: (!Connection|undefined), isShadow:
+ *     (boolean|undefined), recordUndo: (boolean|undefined)}=} param1
+ *     parentConnection: If provided, the system will attempt to connect the
+ *       block to this connection after it is created. Undefined by default.
+ *     isShadow: The block will be set to a shadow block after it is created.
+ *       False by default.
+ * @return {!Block} The block that was just loaded.
+ */
+const loadPrivate = function(
+    state,
+    workspace,
+    {
+      parentConnection = undefined,
+      isShadow = false,
+    } = {}
+) {
   if (!state['type']) {
     throw new MissingBlockType(state);
   }
 
   const block = workspace.newBlock(state['type'], state['id']);
+  block.setShadow(isShadow);
   loadCoords(block, state);
   loadAttributes(block, state);
   loadExtraState(block, state);
   tryToConnectParent(parentConnection, block, state);
-  // loadIcons(block, state);
+  loadIcons(block, state);
   loadFields(block, state);
   loadInputBlocks(block, state);
   loadNextBlocks(block, state);
   initBlock(block, workspace.rendered);
+
   return block;
 };
 
@@ -294,9 +301,13 @@ const tryToConnectParent = function(parentConnection, child, state) {
     return;
   }
 
+  if (parentConnection.getSourceBlock().isShadow() && !child.isShadow()) {
+    throw new RealChildOfShadow(state);
+  }
+
   let connected = false;
   let childConnection;
-  if (parentConnection.type == inputTypes.VALUE) {
+  if (parentConnection.type == constants.INPUT_VALUE) {
     childConnection = child.outputConnection;
     if (!childConnection) {
       throw new MissingConnection('output', child, state);
@@ -340,15 +351,6 @@ const loadCoords = function(block, state) {
 const loadAttributes = function(block, state) {
   if (state['collapsed']) {
     block.setCollapsed(true);
-  }
-  if (state['editable'] === false) {
-    block.setEditable(false);
-  }
-  if (state['deletable'] === false) {
-    block.setDeletable(false);
-  }
-  if (state['movable'] === false) {
-    block.setMovable(false);
   }
   if (state['inline'] !== undefined) {
     block.setInputsInline(state['inline']);
@@ -443,13 +445,13 @@ const loadNextBlocks = function(block, state) {
  */
 const loadConnection = function(connection, connectionState) {
   if (connectionState['shadow']) {
-    connection.setShadowDom(Xml.textToDom(connectionState['shadow']));
+    connection.setShadowState(connectionState['shadow']);
   }
   if (connectionState['block']) {
-    loadInternal(
+    loadPrivate(
         connectionState['block'],
         connection.getSourceBlock().workspace,
-        connection);
+        {parentConnection: connection});
   }
 };
 
@@ -459,7 +461,7 @@ const loadConnection = function(connection, connectionState) {
  * @param {!Blockly.Block} block The block to initialize.
  * @param {boolean} rendered Whether the block is a rendered or headless block.
  */
-const initBlock = function (block, rendered) {
+const initBlock = function(block, rendered) {
   if (rendered) {
     // Adding connections to the connection db is expensive. This defers that
     // operation to decrease load time.
