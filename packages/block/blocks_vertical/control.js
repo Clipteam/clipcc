@@ -222,6 +222,14 @@ Blockly.Blocks['control_stop'] = {
   domToMutation: function(xmlElement) {
     const hasNext = (xmlElement.getAttribute('hasnext') == 'true');
     this.setNextStatement(hasNext);
+  },
+  saveExtraState: function() {
+    return {
+      hasNext: this.nextConnection != null
+    };
+  },
+  loadExtraState: function(state) {
+    this.setNextStatement(state.hasNext);
   }
 };
 

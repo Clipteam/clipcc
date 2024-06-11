@@ -127,14 +127,15 @@ export const compareStrings = function(str1, str2) {
 
 /**
  * Determine if this block can be recycled in the flyout.  Blocks that have no
- * variablees and are not dynamic shadows can be recycled.
+ * variables and are not dynamic shadows can be recycled.
  * @param {Blockly.Block} block The block to check.
  * @return {boolean} True if the block can be recycled.
  * @package
  */
 export const blockIsRecyclable = function(block) {
-  // If the block needs to parse mutations, never recycle.
-  if (block.mutationToDom && block.domToMutation) {
+  // If the block needs to parse mutations or extra state, never recycle.
+  if ((block.mutationToDom && block.domToMutation) ||
+    (block.saveExtraState && block.loadExtraState)) {
     return false;
   }
 

@@ -62,6 +62,34 @@ Blockly.ScratchBlocks.ProcedureUtils.callerDomToMutation = function(xmlElement) 
 };
 
 /**
+ * Create extra state to represent the (non-editable) name and arguments of a procedure
+ * call block.
+ * @return {!Object} the block's extra state.
+ * @this Blockly.Block
+ */
+Blockly.ScratchBlocks.ProcedureUtils.callerSaveExtraState = function () {
+  return {
+    procCode: this.procCode_,
+    argumentIds: this.argumentIds_,
+    warp: this.warp_
+  };
+};
+
+/**
+ * Parse extra state to restore the (non-editable) name and arguments of a procedure
+ * call block.
+ * @param {!Object} state the block's extra state.
+ * @this Blockly.Block
+ */
+Blockly.ScratchBlocks.ProcedureUtils.callerLoadExtraState = function (state) {
+  this.procCode_ = state.procCode;
+  this.generateShadows_ = state.generateShadows;
+  this.argumentIds_ = state.argumentIds;
+  this.warp_ = state.warp;
+  this.updateDisplay_();
+};
+
+/**
  * Create XML to represent the (non-editable) name and arguments of a
  * procedures_prototype block or a procedures_declaration block.
  * @param {boolean=} opt_generateShadows Whether to include the generateshadows
@@ -102,6 +130,48 @@ Blockly.ScratchBlocks.ProcedureUtils.definitionDomToMutation = function(xmlEleme
   this.displayNames_ = JSON.parse(xmlElement.getAttribute('argumentnames'));
   this.argumentDefaults_ = JSON.parse(
       xmlElement.getAttribute('argumentdefaults'));
+  this.updateDisplay_();
+  if (this.updateArgumentReporterNames_) {
+    this.updateArgumentReporterNames_(prevArgIds, prevDisplayNames);
+  }
+};
+
+/**
+ * Create extra state to represent the (non-editable) name and arguments of a
+ * procedures_prototype block or a procedures_declaration block.
+ * @param {boolean=} opt_generateShadows Whether to include the generateshadows
+ *     flag in the generated extra state.  False if not provided.
+ * @return {!Object} the block's extra state. 
+ * @this Blockly.Block
+ */
+Blockly.ScratchBlocks.ProcedureUtils.definitionSaveExtraState = function(
+    opt_generateShadows) {
+  return {
+    generateShadows: opt_generateShadows,
+    procCode: this.procCode_,
+    argumentIds: this.argumentIds_,
+    argumentNames: this.displayNames_,
+    argumentDefaults: this.argumentDefaults_,
+    warp: this.warp_
+  };
+};
+
+/**
+ * Parse extra state to restore the (non-editable) name and arguments of a
+ * procedures_prototype block or a procedures_declaration block.
+ * @param {!Object} state the block's extra state.
+ * @this Blockly.Block
+ */
+Blockly.ScratchBlocks.ProcedureUtils.definitionLoadExtraState = function(state) {
+  this.procCode_ = state.procCode;
+  this.warp_ = state.warp;
+
+  const prevArgIds = this.argumentIds_;
+  const prevDisplayNames = this.displayNames_;
+
+  this.argumentIds_ = state.argumentIds;
+  this.displayNames_ = state.argumentNames;
+  this.argumentDefaults_ = state.argumentDefaults;
   this.updateDisplay_();
   if (this.updateArgumentReporterNames_) {
     this.updateArgumentReporterNames_(prevArgIds, prevDisplayNames);
@@ -812,6 +882,8 @@ Blockly.Blocks['procedures_call'] = {
   // Exist on all three blocks, but have different implementations.
   mutationToDom: Blockly.ScratchBlocks.ProcedureUtils.callerMutationToDom,
   domToMutation: Blockly.ScratchBlocks.ProcedureUtils.callerDomToMutation,
+  saveExtraState: Blockly.ScratchBlocks.ProcedureUtils.callerSaveExtraState,
+  loadExtraState: Blockly.ScratchBlocks.ProcedureUtils.callerLoadExtraState,
   populateArgument_: Blockly.ScratchBlocks.ProcedureUtils.populateArgumentOnCaller_,
   addProcedureLabel_: Blockly.ScratchBlocks.ProcedureUtils.addLabelField_,
 
@@ -849,6 +921,8 @@ Blockly.Blocks['procedures_prototype'] = {
   // Exist on all three blocks, but have different implementations.
   mutationToDom: Blockly.ScratchBlocks.ProcedureUtils.definitionMutationToDom,
   domToMutation: Blockly.ScratchBlocks.ProcedureUtils.definitionDomToMutation,
+  saveExtraState: Blockly.ScratchBlocks.ProcedureUtils.definitionSaveExtraState,
+  loadExtraState: Blockly.ScratchBlocks.ProcedureUtils.definitionLoadExtraState,
   populateArgument_: Blockly.ScratchBlocks.ProcedureUtils.populateArgumentOnPrototype_,
   addProcedureLabel_: Blockly.ScratchBlocks.ProcedureUtils.addLabelField_,
 
@@ -884,6 +958,8 @@ Blockly.Blocks['procedures_declaration'] = {
   // Exist on all three blocks, but have different implementations.
   mutationToDom: Blockly.ScratchBlocks.ProcedureUtils.definitionMutationToDom,
   domToMutation: Blockly.ScratchBlocks.ProcedureUtils.definitionDomToMutation,
+  saveExtraState: Blockly.ScratchBlocks.ProcedureUtils.definitionSaveExtraState,
+  loadExtraState: Blockly.ScratchBlocks.ProcedureUtils.definitionLoadExtraState,
   populateArgument_: Blockly.ScratchBlocks.ProcedureUtils.populateArgumentOnDeclaration_,
   addProcedureLabel_: Blockly.ScratchBlocks.ProcedureUtils.addLabelEditor_,
 
