@@ -1011,9 +1011,9 @@ Flyout.prototype.placeNewBlock_ = function(oldBlock) {
     // placed at position (0, 0) in main workspace units.
     block = /** @type {!BlockSvg} */ (Xml.domToBlock(xml, targetWorkspace));
   } else {
-    const json = /** @type {!blocks.State} */ (blocks.save(oldBlock));
+    const json = /** @type {!blocks.State} */ (blockSerializer.save(oldBlock));
     targetWorkspace.setResizesEnabled(false);
-    block = /** @type {!BlockSvg} */ (blocks.load(json, targetWorkspace));
+    block = /** @type {!BlockSvg} */ (blockSerializer.load(json, targetWorkspace));
   }
 
   // The offset in pixels between the main workspace's origin and the upper left

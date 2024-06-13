@@ -140,7 +140,8 @@ FlyoutButton.prototype.init = function(
    * @type {boolean}
    * @private
    */
-  this.isCategoryLabel_ = state['category-label'] !== 'false';
+  this.isCategoryLabel_ = typeof state['category-label'] === 'boolean' ?
+    state['category-label'] : state['category-label'] === 'true';
 
   /**
    * If specified, a CSS class to add to this button.
