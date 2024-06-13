@@ -587,6 +587,44 @@ WorkspaceCommentSvg.fromXml = function(xmlComment, workspace,
 };
 
 /**
+ * Create a rendered comment from state on the workspace.
+ * @param {!Object} info The comment state.
+ * @param {!Blockly.Workspace} workspace The workspace.
+ * @param {number=} opt_wsWidth The width of the workspace, which is used to
+ *     position comments correctly in RTL.
+ * @return {!WorkspaceCommentSvg} The created workspace comment.
+ * @package
+ */
+WorkspaceCommentSvg.fromState = function (info, workspace,
+  opt_wsWidth) {
+  eventUtils.disable();
+  let comment;
+  try {
+    comment = new WorkspaceCommentSvg(workspace,
+      info.content, info.h, info.w, info.minimized, info.id);
+    if (workspace.rendered) {
+      comment.initSvg();
+      comment.render(false);
+    }
+    // Position the comment correctly, taking into account the width of a
+    // rendered RTL workspace.
+    if (!isNaN(info.x) && !isNaN(info.y)) {
+      if (workspace.RTL) {
+        const wsWidth = opt_wsWidth || workspace.getWidth();
+        comment.moveBy(wsWidth - info.x, info.y);
+      } else {
+        comment.moveBy(info.x, info.y);
+      }
+    }
+  } finally {
+    eventUtils.enable();
+  }
+  WorkspaceComment.fireCreateEvent(comment);
+
+  return comment;
+};
+
+/**
  * Encode a comment subtree as XML with XY coordinates.
  * @param {boolean=} opt_noId True if the encoder should skip the comment id.
  * @return {!Element} Tree of XML elements.
@@ -606,4 +644,25 @@ WorkspaceCommentSvg.prototype.toXmlWithXY = function(opt_noId) {
   element.setAttribute('h', this.getHeight());
   element.setAttribute('w', this.getWidth());
   return element;
+};
+
+/**
+ * Encode a comment state as JSON with XY coordinates.
+ * @return {!Object} The comment state in JSON.
+ * @package
+ */
+WorkspaceCommentSvg.prototype.toStateWithXY = function () {
+  let width;  // Not used in LTR.
+  if (this.workspace.RTL) {
+    // Here be performance dragons: This calls getMetrics().
+    width = this.workspace.getWidth();
+  }
+  const commentState = this.toState();
+  const xy = this.getRelativeToSurfaceXY();
+  commentState.x =
+    Math.round(this.workspace.RTL ? width - xy.x : xy.x);
+  commentState.y = Math.round(xy.y);
+  commentState.h = this.getHeight();
+  commentState.w = this.getWidth();
+  return commentState;
 };

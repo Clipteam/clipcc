@@ -308,6 +308,33 @@ WorkspaceComment.prototype.toXmlWithXY = function(opt_noId) {
 };
 
 /**
+ * Encode a comment state as JSON.
+ * @return {!Object} The comment state in JSON.
+ * @package
+ */
+WorkspaceComment.prototype.toState = function () {
+  return {
+    id: this.id,
+    content: this.getText(),
+    minimized: this.isMinimized_
+  };
+};
+
+/**
+ * Encode a comment state as JSON with XY coordinates.
+ * @return {!Object} The comment state in JSON.
+ * @package
+ */
+WorkspaceComment.prototype.toStateWithXY = function () {
+  const commentState = this.toState();
+  commentState.x = Math.round(this.xy_.x);
+  commentState.y =  Math.round(this.xy_.y);
+  commentState.h = this.height_;
+  commentState.w = this.width_;
+  return commentState;
+};
+
+/**
  * Get the truncated text for this comment to display in the minimized
  * top bar.
  * @return {string} The truncated comment text
@@ -374,6 +401,25 @@ WorkspaceComment.fireCreateEvent = function(comment) {
 WorkspaceComment.fromXml = function(xmlComment, workspace) {
   const info = WorkspaceComment.parseAttributes(xmlComment);
 
+  const comment = new WorkspaceComment(
+      workspace, info.content, info.h, info.w, info.minimized, info.id);
+
+  if (!isNaN(info.x) && !isNaN(info.y)) {
+    comment.moveBy(info.x, info.y);
+  }
+
+  WorkspaceComment.fireCreateEvent(comment);
+  return comment;
+};
+
+/**
+ * Create a comment from JSON state on the workspace.
+ * @param {!Object} info The comment state.
+ * @param {!Blockly.Workspace} workspace The workspace.
+ * @return {!WorkspaceComment} The created workspace comment.
+ * @package
+ */
+WorkspaceComment.fromState = function(info, workspace) {
   const comment = new WorkspaceComment(
       workspace, info.content, info.h, info.w, info.minimized, info.id);
 

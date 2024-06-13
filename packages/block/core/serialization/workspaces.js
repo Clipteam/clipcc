@@ -1,7 +1,21 @@
 /**
  * @license
- * Copyright 2021 Google LLC
- * SPDX-License-Identifier: Apache-2.0
+ * Visual Blocks Editor
+ *
+ * Copyright 2024 Clip Team
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 /**
@@ -11,11 +25,13 @@
 'use strict';
 
 import * as goog from 'google-closure-library/closure/goog/goog.js';
-import * as blocks from './blocks';
+import * as blockSerializer from './blocks';
 import { FinishedLoading } from '../events/workspace_events';
 import * as eventUtils from '../events/utils';
 import * as utils from '../utils';
-import * as variables from './variables';
+import * as variableSerializer from './variables';
+import {WorkspaceComment} from '../workspace_comment';
+import {WorkspaceCommentSvg} from '../workspace_comment_svg';
 
 goog.declareModuleId('Blockly.serialization.workspaces');
 
@@ -27,20 +43,33 @@ goog.declareModuleId('Blockly.serialization.workspaces');
 export const save = function(workspace) {
   const state = Object.create(null);
 
-  // TODO: Switch this to use plugin serialization system (once it is built).
   const variableStates = [];
   const vars = workspace.getAllVariables();
   for (let i = 0; i < vars.length; i++) {
-    variableStates.push(variables.save(vars[i]));
+    variableStates.push(variableSerializer.save(vars[i]));
   }
+
   if (variableStates.length) {
     state['variables'] = variableStates;
   }
 
+  const commentStates = [];
+  const comments = workspace.getTopComments(true).filter(function(topComment) {
+    return topComment instanceof WorkspaceComment;
+  });
+
+  for (let i = 0, comment; comment = comments[i]; i++) {
+    commentStates.push(comment.toStateWithXY());
+  }
+  if (comments.length) {
+    state['comments'] = commentStates;
+  }
+
   const blockStates = [];
-  for (const block of workspace.getTopBlocks(false)) {
+  const blocks = workspace.getTopBlocks(true);
+  for (const block of blocks) {
     const blockState =
-      blocks.save(block, {addCoordinates: true});
+      blockSerializer.save(block, { addCoordinates: true });
     if (blockState) {
       blockStates.push(blockState);
     }
@@ -65,9 +94,6 @@ export const save = function(workspace) {
  *       by the user. False by default.
  */
 export const load = function(state, workspace, {recordUndo = false} = {}) {
-  // TODO: Switch this to use plugin serialization system (once it is built).
-  // TODO: Add something for clearing the state before deserializing.
-
   const prevRecordUndo = eventUtils.getRecordUndo();
   eventUtils.setRecordUndo(recordUndo);
   const existingGroup = eventUtils.getGroup();
@@ -80,27 +106,45 @@ export const load = function(state, workspace, {recordUndo = false} = {}) {
     workspace.setResizesEnabled(false);
   }
 
+  let width;  // Not used in LTR.
+  if (workspace.RTL) {
+    width = workspace.getWidth();
+  }
+
   if (state['variables']) {
     const variableStates = state['variables'];
-    for (let i = 0; i < variableStates.length; i++) {
-      variables.load(variableStates[i], workspace, {recordUndo});
+    for (const variableState of variableStates) {
+      variableSerializer.load(variableState, workspace, {recordUndo});
     }
   }
 
   if (state['blocks']) {
     const blockStates = state['blocks']['blocks'];
-    for (let i = 0; i < blockStates.length; i++) {
-      blocks.load(blockStates[i], workspace, {recordUndo});
+    for (const blockState of blockStates) {
+      blockSerializer.load(blockState, workspace, {recordUndo});
+    }
+  }
+
+  if (state['comments']) {
+    const commentStates = state['comments'];
+    for (const commentState of commentStates) {
+      if (workspace.rendered) {
+        WorkspaceCommentSvg.fromState(commentState, workspace, width);
+      } else {
+        WorkspaceComment.fromState(commentState, workspace);
+      }
     }
   }
 
   if (workspace.setResizesEnabled) {
     workspace.setResizesEnabled(true);
   }
-  utils.stopTextWidthCache();
 
   eventUtils.fire(new FinishedLoading(workspace));
 
-  eventUtils.setGroup(existingGroup);
+  if (!existingGroup) {
+    eventUtils.setGroup(false);
+  }
+  utils.stopTextWidthCache();
   eventUtils.setRecordUndo(prevRecordUndo);
 };
