@@ -31,6 +31,7 @@ goog.declareModuleId('Blockly.serialization.blocks');
 import * as constants from '../constants';
 import * as eventUtils from '../events/utils';
 import * as Variables from '../variables';
+import * as Xml from '../xml';
 import { MissingBlockType } from './exceptions';
 
 const asserts = goog.require('goog.asserts');
@@ -41,11 +42,20 @@ const asserts = goog.require('goog.asserts');
  * @param {{addCoordinates: (boolean|undefined)}=} param1
  *     addCoordinates: If true the coordinates of the block are added to the
  *       serialized state. False by default.
+ *     noId: Don't serialize id. False by default.
+ *     doFullSerialization: If true, fields that normally just save a reference
+ *       to some external state (eg variables) will instead serialize all of the
+ *       info about that state. This supports deserializing the block into a
+ *       workspace where that state doesn't yet exist. True by default.
  * @return {?State} The serialized state of the
  *     block, or null if the block could not be serialied (eg it was an
  *     insertion marker).
  */
-export const save = function(block, {addCoordinates = false, noId = false} = {}
+export const save = function (block, {
+  addCoordinates = false,
+  noId = false,
+  doFullSerialization = true
+} = {}
 ) {
   const state = {
     'type': block.type,
@@ -56,13 +66,13 @@ export const save = function(block, {addCoordinates = false, noId = false} = {}
   }
 
   saveExtraState(block, state);
-  saveFields(block, state);
+  saveFields(block, state, doFullSerialization);
 
   saveComment(block, state);
   saveAttributes(block, state);
 
-  saveInputBlocks(block, state);
-  saveNextBlocks(block, state);
+  saveInputBlocks(block, state, doFullSerialization);
+  saveNextBlocks(block, state, doFullSerialization);
 
   if (addCoordinates) {
     saveCoords(block, state);
@@ -130,6 +140,11 @@ const saveExtraState = function(block, state) {
     const extraState = block.saveExtraState();
     if (extraState !== null) {
       state['extraState'] = extraState;
+    } else if (block.mutationToDom) {
+      const extraState = block.mutationToDom();
+      if (extraState !== null) {
+        state['extraState'] = Xml.domToText(extraState);
+      }
     }
   }
 };
@@ -138,8 +153,11 @@ const saveExtraState = function(block, state) {
  * Adds the state of all of the fields on the block to the given state object.
  * @param {!Blockly.Block} block The block to serialize the field state of.
  * @param {!State} state The state object to append to.
+ * @param {boolean} doFullSerialization Whether or not to serialize the full
+ *     state of the field (rather than possibly saving a reference to some
+ *     state).
  */
-const saveFields = function(block, state) {
+const saveFields = function(block, state, doFullSerialization) {
   let hasFieldState = false;
   const fields = Object.create(null);
   for (let i = 0; i < block.inputList.length; i++) {
@@ -152,7 +170,7 @@ const saveFields = function(block, state) {
           const [name, variableState] = saveVariableState(field);
           fields[name] = variableState;
         } else {
-          fields[field.name] = field.saveState();
+          fields[field.name] = field.saveState(doFullSerialization);
         }
       }
     }
@@ -229,8 +247,11 @@ const saveVariableState = function(field) {
  * connected to inputs) to the given state object.
  * @param {!Block} block The block to serialize the input blocks of.
  * @param {!State} state The state object to append to.
+ * @param {boolean} doFullSerialization Whether or not to serialize the full
+ *     state of the field (rather than possibly saving a reference to some
+ *     state).
  */
-const saveInputBlocks = function(block, state) {
+const saveInputBlocks = function(block, state, doFullSerialization) {
   const inputs = Object.create(null);
 
   for (let i = 0, input; input = block.inputList[i]; i++) {
@@ -245,7 +266,7 @@ const saveInputBlocks = function(block, state) {
         inputState.shadow = shadowClone;
       }
       if (childBlock) {
-        inputState.block = save(childBlock);
+        inputState.block = save(childBlock, {doFullSerialization});
       }
     }
     if (Object.keys(inputState).length) {
@@ -263,12 +284,15 @@ const saveInputBlocks = function(block, state) {
  * state object.
  * @param {!Block} block The block to serialize the next blocks of.
  * @param {!State} state The state object to append to.
+ * @param {boolean} doFullSerialization Whether or not to serialize the full
+ *     state of the field (rather than possibly saving a reference to some
+ *     state).
  */
-const saveNextBlocks = function(block, state) {
+const saveNextBlocks = function(block, state, doFullSerialization) {
   const nextBlock = block.getNextBlock();
   const nextState = {};
   if (nextBlock) {
-    nextState.block = save(nextBlock);
+    nextState.block = save(nextBlock, {doFullSerialization});
   }
   const shadow = block.nextConnection && block.nextConnection.getShadowState();
   if (shadow && (!nextBlock || !nextBlock.isShadow())) {
@@ -421,8 +445,12 @@ const loadPrivate = function(
  * @param {!State} state The state object to reference.
  */
 const loadCoords = function(block, state) {
-  const x = state['x'] === undefined ? 10 : parseInt(state['x'], 10);
-  const y = state['y'] === undefined ? 10 : parseInt(state['y'], 10);
+  let x = state['x'] === undefined ? 0 : parseInt(state['x'], 10);
+  const y = state['y'] === undefined ? 0 : parseInt(state['y'], 10);
+
+  if (block.workspace.RTL) {
+    x = block.workspace.getWidth() - x;
+  }
   block.moveBy(x, y);
 };
 
@@ -474,7 +502,11 @@ const loadExtraState = function(block, state) {
   if (!state['extraState']) {
     return;
   }
-  block.loadExtraState(state['extraState']);
+  if (block.loadExtraState) {
+    block.loadExtraState(state['extraState']);
+  } else {
+    block.domToMutation(Xml.textToDom(state['extraState']));
+  }
   if (block.initSvg) {
     // Mutation may have added some elements that need initializing.
     block.initSvg();

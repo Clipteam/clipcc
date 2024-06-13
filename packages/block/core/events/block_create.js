@@ -25,10 +25,8 @@ goog.declareModuleId('Blockly.Events.BlockCreate');
 
 import * as eventUtils from './utils';
 import {BlockBase} from './block_base';
+import * as blocks from '../serialization/blocks';
 import * as Xml from '../xml';
-
-const dom = goog.require('goog.dom');
-
 
 /**
  * Class for a block creation event.
@@ -42,11 +40,14 @@ export const BlockCreate = function(block) {
   }
   BlockCreate.superClass_.constructor.call(this, block);
 
-  if (block.workspace.rendered) {
-    this.xml = Xml.blockToDomWithXY(block);
-  } else {
-    this.xml = Xml.blockToDom(block);
-  }
+  this.xml = Xml.blockToDomWithXY(block);
+
+  /**
+   * JSON representation of the block that was just created.
+   * @type { !blocks.State }
+   * /
+  this.json = /** @type {!blocks.State} */ (blocks.save(
+      block, { addCoordinates: true }));
   this.ids = eventUtils.getDescendantIds(block);
 };
 goog.inherits(BlockCreate, BlockBase);
@@ -64,6 +65,7 @@ BlockCreate.prototype.type = eventUtils.CREATE;
 BlockCreate.prototype.toJson = function() {
   const json = BlockCreate.superClass_.toJson.call(this);
   json['xml'] = Xml.domToText(this.xml);
+  json['json'] = this.json;
   json['ids'] = this.ids;
   return json;
 };
@@ -75,6 +77,7 @@ BlockCreate.prototype.toJson = function() {
 BlockCreate.prototype.fromJson = function(json) {
   BlockCreate.superClass_.fromJson.call(this, json);
   this.xml = Xml.textToDom('<xml>' + json['xml'] + '</xml>').firstChild;
+  this.json = /** @type {!blocks.State} */ (json['json']);
   this.ids = json['ids'];
 };
 
@@ -85,9 +88,7 @@ BlockCreate.prototype.fromJson = function(json) {
 BlockCreate.prototype.run = function(forward) {
   const workspace = this.getEventWorkspace_();
   if (forward) {
-    const xml = dom.createDom('xml');
-    xml.appendChild(this.xml);
-    Xml.domToWorkspace(xml, workspace);
+    blocks.load(this.json, workspace);
   } else {
     for (let i = 0, id; id = this.ids[i]; i++) {
       const block = workspace.getBlockById(id);

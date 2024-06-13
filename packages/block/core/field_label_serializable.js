@@ -93,26 +93,6 @@ FieldLabelSerializable.prototype.updateWidth = function() {
 };
 
 /**
- * Saves this field's value.
- * @return {string} The text value held by this field.
- * @override
- * @package
- */
-FieldLabelSerializable.prototype.saveState = function () {
-  return /** @type {string} */ (this.getValue());
-};
-
-/**
- * Sets the field's value based on the given state.
- * @param {*} state The state to apply to the label field.
- * @override
- * @package
- */
-FieldLabelSerializable.prototype.loadState = function (state) {
-  this.setValue(state);
-};
-
-/**
  * Draws the border with the correct width.
  * Saves the computed width in a property.
  * @private

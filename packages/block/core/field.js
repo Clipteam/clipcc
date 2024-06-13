@@ -35,6 +35,7 @@ import {BlockChange} from './events/block_change';
 import * as registry from './registry';
 import * as rendererConstants from './renderer/constants';
 import * as Touch from './touch';
+import * as Xml from './xml';
 import * as utils from './utils';
 
 const asserts = goog.require('goog.asserts');
@@ -679,10 +680,17 @@ Field.prototype.onMouseDown_ = function(e) {
 /**
  * Saves this fields value as something which can be serialized to JSON.Should
   * only be called by the serialization system.
- * @return { *} JSON serializable state.
+  * @param {boolean=} _doFullSerialization If true, this signals to the field that
+ *     if it normally just saves a reference to some state (eg variable fields)
+ *     it should instead serialize the full state of the thing being referenced.
+ * @return {*} JSON serializable state.
  * @package
   */
-Field.prototype.saveState = function () {
+Field.prototype.saveState = function (_doFullSerialization) {
+  const legacyState = this.saveLegacyState(Field);
+  if (legacyState !== null) {
+    return legacyState;
+  }
   return this.getValue();
 };
 
@@ -693,7 +701,53 @@ Field.prototype.saveState = function () {
  * @package
  */
 Field.prototype.loadState = function (state) {
+  if (this.loadLegacyState(Field, state)) {
+    return;
+  }
   this.setValue(state);
+};
+
+/**
+ * Returns a stringified version of the XML state, if it should be used.
+ * Otherwise this returns null, to signal the field should use its own
+ * serialization.
+ * @param {?} callingClass The class calling this method.
+ *     Used to see if `this` has overridden any relevant hooks.
+ * @return {?string} The stringified version of the XML state, or null.
+ * @protected
+ */
+Field.prototype.saveLegacyState = function (callingClass) {
+  if (callingClass.prototype.saveState === this.saveState &&
+    callingClass.prototype.toXml !== this.toXml) {
+    const elem = dom.createElement("field");
+    elem.setAttribute("name", this.name || '');
+    const text = Xml.domToText(this.toXml(elem));
+    return text.replace(
+      ' xmlns="https://developers.google.com/blockly/xml"', '');
+  }
+  // Either they called this on purpose from their saveState, or they have
+  // no implementations of either hook. Just do our thing.
+  return null;
+};
+
+// eslint-disable-next-line valid-jsdoc
+/**
+ * Loads the given state using either the old XML hoooks, if they should be
+ * used. Returns true to indicate loading has been handled, false otherwise.
+ * @param {?} callingClass The class calling this method.
+ *     Used to see if `this` has overridden any relevant hooks.
+ * @param {*} state The state to apply to the field.
+ * @return {boolean} Whether the state was applied or not.
+ */
+Field.prototype.loadLegacyState = function (callingClass, state) {
+  if (callingClass.prototype.loadState === this.loadState &&
+    callingClass.prototype.fromXml !== this.fromXml) {
+    this.fromXml(Xml.textToDom(/** @type {string} */(state)));
+    return true;
+  }
+  // Either they called this on purpose from their loadState, or they have
+  // no implementations of either hook. Just do our thing.
+  return false;
 };
 
 /**

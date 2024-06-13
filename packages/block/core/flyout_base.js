@@ -998,23 +998,25 @@ Flyout.prototype.placeNewBlock_ = function(oldBlock) {
     throw 'oldBlock is not rendered.';
   }
 
-  let block;
-  if (oldBlock.mutationToDom && !oldBlock.saveExtraState) {
-    // Create the new block by cloning the block in the flyout (via XML).
-    // This cast assumes that the oldBlock can not be an insertion marker.
-    const xml = /** @type {!Element} */ (Xml.blockToDom(oldBlock, true));
-    // The target workspace would normally resize during domToBlock, which will
-    // lead to weird jumps.  Save it for terminateDrag.
-    targetWorkspace.setResizesEnabled(false);
-    
-    // Using domToBlock instead of domToWorkspace means that the new block will be
-    // placed at position (0, 0) in main workspace units.
-    block = /** @type {!BlockSvg} */ (Xml.domToBlock(xml, targetWorkspace));
-  } else {
-    const json = /** @type {!blocks.State} */ (blockSerializer.save(oldBlock));
-    targetWorkspace.setResizesEnabled(false);
-    block = /** @type {!BlockSvg} */ (blockSerializer.load(json, targetWorkspace));
-  }
+  // Clone the block.
+  const json = /** @type {!blocks.State} */ (blockSerializer.save(oldBlock));
+  // Normallly this resizes leading to weird jumps. Save it for terminateDrag.
+  targetWorkspace.setResizesEnabled(false);
+  const block = /** @type {!BlockSvg} */ (blockSerializer.load(json, targetWorkspace));
+
+  this.positionNewBlock_(oldBlock, block);
+
+  return block;
+};
+
+/**
+ * Positions a block on the target workspace.
+ * @param {!BlockSvg} oldBlock The flyout block being copied.
+ * @param {!BlockSvg} block The block to posiiton.
+ * @private
+ */
+Flyout.prototype.positionNewBlock_ = function (oldBlock, block) {
+  const targetWorkspace = this.targetWorkspace_;
 
   // The offset in pixels between the main workspace's origin and the upper left
   // corner of the injection div.
@@ -1045,7 +1047,6 @@ Flyout.prototype.placeNewBlock_ = function(oldBlock) {
   const finalOffsetMainWs = finalOffsetPixels.scale(1 / targetWorkspace.scale);
 
   block.moveBy(finalOffsetMainWs.x, finalOffsetMainWs.y);
-  return block;
 };
 
 /**

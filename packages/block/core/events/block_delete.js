@@ -26,6 +26,7 @@ goog.declareModuleId('Blockly.Events.BlockDelete');
 import * as eventUtils from './utils';
 import {BlockBase} from './block_base';
 import * as Xml from '../xml';
+import * as blocks from '../serialization/blocks';
 
 const dom = goog.require('goog.dom');
 
@@ -45,12 +46,22 @@ export const BlockDelete = function(block) {
   }
   BlockDelete.superClass_.constructor.call(this, block);
 
-  if (block.workspace.rendered) {
-    this.oldXml = Xml.blockToDomWithXY(block);
-  } else {
-    this.oldXml = Xml.blockToDom(block);
-  }
+  this.oldXml = Xml.blockToDomWithXY(block);
   this.ids = eventUtils.getDescendantIds(block);
+
+
+  /**
+   * Was the block that was just deleted a shadow?
+   * @type {boolean}
+   */
+  this.wasShadow = block.isShadow();
+
+  /**
+   * JSON representation of the block that was just deleted.
+   * @type {!blocks.State}
+   */
+  this.oldJson = /** @type {!blocks.State} */ (blocks.save(
+      block, { addCoordinates: true }));
 };
 goog.inherits(BlockDelete, BlockBase);
 
@@ -96,9 +107,7 @@ BlockDelete.prototype.run = function(forward) {
       }
     }
   } else {
-    const xml = dom.createDom('xml');
-    xml.appendChild(this.oldXml);
-    Xml.domToWorkspace(xml, workspace);
+    blocks.load(this.oldJson, workspace);
   }
 };
 

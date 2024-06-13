@@ -452,22 +452,15 @@ FieldDropdown.prototype.setText = function(text) {
 };
 
 /**
- * Saves this field's value.
- * @return {*} The dropdown value held by this field.
- * @override
- * @package
- */
-FieldDropdown.prototype.saveState = function () {
-  return this.getValue();
-};
-
-/**
  * Sets the field's value based on the given state.
  * @param {*} state The state to apply to the dropdown field.
  * @override
  * @package
  */
 FieldDropdown.prototype.loadState = function (state) {
+  if (this.loadLegacyState(FieldDropdown, state)) {
+    return;
+  }
   if (this.isOptionListDynamic()) {
     this.getOptions(false);
   }
