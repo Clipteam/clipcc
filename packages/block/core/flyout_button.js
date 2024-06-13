@@ -42,13 +42,13 @@ const userAgent = goog.require('goog.userAgent');
  * @param {!Blockly.WorkspaceSvg} workspace The workspace in which to place this
  *     button.
  * @param {!Blockly.WorkspaceSvg} targetWorkspace The flyout's target workspace.
- * @param {!Element} xml The XML specifying the label/button.
+ * @param {!Object} state The label/button's state.
  * @param {boolean} isLabel Whether this button should be styled as a label.
  * @constructor
  */
-export const FlyoutButton = function(workspace, targetWorkspace, xml, isLabel) {
+export const FlyoutButton = function(workspace, targetWorkspace, state, isLabel) {
 
-  this.init(workspace, targetWorkspace, xml, isLabel);
+  this.init(workspace, targetWorkspace, state, isLabel);
 
   /**
    * Function to call when this button is clicked.
@@ -57,7 +57,7 @@ export const FlyoutButton = function(workspace, targetWorkspace, xml, isLabel) {
    */
   this.callback_ = null;
 
-  const callbackKey = xml.getAttribute('callbackKey');
+  const callbackKey = state.callbackkey;
   if (this.isLabel_ && callbackKey) {
     console.warn('Labels should not have callbacks. Label text: ' + this.text_);
   } else if (!this.isLabel_ &&
@@ -98,11 +98,11 @@ FlyoutButton.prototype.onMouseUpWrapper_ = null;
 * @param {!Blockly.WorkspaceSvg} workspace The workspace in which to place this
 *     button.
 * @param {!Blockly.WorkspaceSvg} targetWorkspace The flyout's target workspace.
-* @param {!Element} xml The XML specifying the label/button.
+* @param {!Object} state The label/button's state.
 * @param {boolean} isLabel Whether this button should be styled as a label.
  */
 FlyoutButton.prototype.init = function(
-    workspace, targetWorkspace, xml, isLabel) {
+    workspace, targetWorkspace, state, isLabel) {
 
   /**
    * @type {!Blockly.WorkspaceSvg}
@@ -120,7 +120,7 @@ FlyoutButton.prototype.init = function(
    * @type {string}
    * @private
    */
-  this.text_ = xml.getAttribute('text');
+  this.text_ = state.text;
 
   /**
    * @type {!Coordinate}
@@ -140,14 +140,14 @@ FlyoutButton.prototype.init = function(
    * @type {boolean}
    * @private
    */
-  this.isCategoryLabel_ = xml.getAttribute('category-label') === 'true';
+  this.isCategoryLabel_ = state['category-label'] !== 'false';
 
   /**
    * If specified, a CSS class to add to this button.
    * @type {?string}
    * @private
    */
-  this.cssClass_ = xml.getAttribute('web-class') || null;
+  this.cssClass_ = state['web-class'] || null;
 };
 
 /**

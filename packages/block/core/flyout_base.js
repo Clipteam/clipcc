@@ -39,6 +39,7 @@ import * as utils from './utils';
 import * as Variables from './variables';
 import {WorkspaceSvg} from './workspace_svg';
 import * as Xml from './xml';
+import * as blockSerializer from './serialization/blocks';
 
 const dom = goog.require('goog.dom');
 const Coordinate = goog.require('goog.math.Coordinate');
@@ -463,12 +464,209 @@ Flyout.prototype.hide = function() {
 };
 
 /**
+ * Converts the flyout definition into a list of flyout items.
+ * @param {?FlyoutDefinition} flyoutDef The definition of
+ *    the flyout in one of its many forms.
+ * @return {FlyoutItemInfoArray} A list of flyout items.
+ * @package
+ */
+Flyout.prototype.convertFlyoutDefToJsonArray = function(flyoutDef) {
+  if (!flyoutDef) {
+    return [];
+  }
+
+  if (flyoutDef['contents']) {
+    return flyoutDef['contents'];
+  }
+
+  // If it is already in the correct format return the flyoutDef.
+  if (Array.isArray(flyoutDef) && flyoutDef.length > 0 &&
+    !flyoutDef[0].nodeType) {
+    return flyoutDef;
+  }
+
+  return this.xmlToJsonArray_(
+      /** @type {!Array<Node>|!NodeList} */(flyoutDef));
+};
+
+/**
+ * Converts the xml for a toolbox to JSON.
+ * @param {!Node|!Array<Node>|!NodeList} toolboxDef The
+ *     definition of the toolbox in one of its many forms.
+ * @return {!FlyoutItemInfoArray|
+ *          !Array<ToolboxItemInfo>} A list of objects in
+ *          the toolbox.
+ * @private
+ */
+Flyout.prototype.xmlToJsonArray_ = function (toolboxDef) {
+  const arr = [];
+  // If it is a node it will have children.
+  let childNodes = toolboxDef.childNodes;
+  if (!childNodes) {
+    // Otherwise the toolboxDef is an array or collection.
+    childNodes = toolboxDef;
+  }
+  for (let i = 0, child; (child = childNodes[i]); i++) {
+    if (!child.tagName) {
+      if (typeof child === 'string') {
+        arr.push(child);
+      }
+      continue;
+    }
+    const obj = {};
+    const tagName = child.tagName.toUpperCase();
+    obj['kind'] = tagName;
+
+    // Store the XML for a block.
+    if (tagName == 'BLOCK') {
+      obj['blockxml'] = child;
+    } else if (child.childNodes && child.childNodes.length > 0) {
+      // Get the contents of a category
+      obj['contents'] = this.xmlToJsonArray_(child);
+    }
+
+    // Add XML attributes to object
+    this.addAttributes_(child, obj);
+    arr.push(obj);
+  }
+  return arr;
+};
+
+/**
+ * Adds the attributes on the node to the given object.
+ * @param {!Node} node The node to copy the attributes from.
+ * @param {!Object} obj The object to copy the attributes to.
+ * @private
+ */
+Flyout.prototype.addAttributes_ = function (node, obj) {
+  for (var j = 0; j < node.attributes.length; j++) {
+    var attr = node.attributes[j];
+    if (attr.nodeName.indexOf('css-') > -1) {
+      obj['cssconfig'] = obj['cssconfig'] || {};
+      obj['cssconfig'][attr.nodeName.replace('css-', '')] = attr.value;
+    } else {
+      obj[attr.nodeName] = attr.value;
+    }
+  }
+};
+
+Flyout.prototype.getRecycledBlock_ = function(id) {
+  const recycled = this.recycleBlocks_.findIndex(function (block) {
+    return block.id === id;
+  });
+  if (recycled > -1) {
+    return this.recycleBlocks_.splice(recycled, 1)[0];
+  }
+}
+
+/**
+ * Create a block from the xml and permanently disable any blocks that were
+ * defined as disabled.
+ * @param {!Object} blockInfo The info of the block.
+ * @return {!Blockly.BlockSvg} The block created from the blockXml.
+ * @private
+ */
+Flyout.prototype.createFlyoutBlock_ = function(blockInfo) {
+  let block;
+  if (blockInfo['blockxml']) {
+    const xml = typeof blockInfo['blockxml'] === 'string' ?
+      Xml.textToDom(blockInfo['blockxml']) :
+      blockInfo['blockxml'];
+    block = this.getRecycledBlock_(xml.getAttribute('id') || xml.getAttribute('type'));
+    if (!block) {
+      block = Xml.domToBlock(xml, this.workspace_);
+    }
+  } else {
+    block = this.getRecycledBlock_(blockInfo['id'] || blockInfo['type']);
+    if (!block) {
+      block = blockSerializer.load(blockInfo, this.workspace_);
+    }
+  }
+
+  if (block.disabled) {
+    // Record blocks that were initially disabled.
+    // Do not enable these blocks as a result of capacity filtering.
+    this.permanentlyDisabled_.push(block);
+  }
+  return block;
+};
+
+/**
+ * Create the blocks to be shown in this flyout.
+ * @param {!Object|!Array|string} content List of blocks to show
+ * @return {{contents: Object, gaps: Object}}  The populated flyout info
+ */
+Flyout.prototype.createFlyoutInfo_ = function (content) {
+  const contents = [];
+  const gaps = [];
+  this.permanentlyDisabled_.length = 0;
+  content = this.convertFlyoutDefToJsonArray(content);
+
+  const defaultGap = this.horizontalLayout_ ? this.GAP_X : this.GAP_Y;
+  for (let i = 0, contentInfo; (contentInfo = content[i]); i++) {
+    if (typeof contentInfo === 'string') {
+      const fnToApply = this.workspace_.targetWorkspace.getToolboxCategoryCallback(contentInfo);
+      content.splice(i + 1, 0, ...this.convertFlyoutDefToJsonArray(
+        fnToApply(this.workspace_.targetWorkspace)));
+      continue;
+    }
+    if (contentInfo['custom']) {
+      const fnToApply = this.workspace_.targetWorkspace.getToolboxCategoryCallback(contentInfo['custom']);
+      const newList = this.convertFlyoutDefToJsonArray(fnToApply(this.workspace_.targetWorkspace));
+      content.splice.apply(
+        content, [i, 1].concat(newList));
+      contentInfo = content[i];
+    }
+
+    const kind = contentInfo.kind.toUpperCase();
+    if (kind === 'BLOCK') {
+      const blockInfo = contentInfo;
+      const block = this.createFlyoutBlock_(blockInfo);
+      contents.push({type: 'block', block});
+      const gap = parseInt(contentInfo.gap, 10);
+      gaps.push(isNaN(gap) ? defaultGap : gap);
+    } else if (kind === 'SEP') {
+      const newGap = parseInt(contentInfo.gap, 10);
+      // Ignore gaps before the first block.
+      if (!isNaN(newGap) && gaps.length > 0) {
+        gaps[gaps.length - 1] = newGap;
+      } else {
+        gaps.push(defaultGap);
+      }
+    } else if (kind === 'LABEL' && this.shouldShowStatusButton(contentInfo.showStatusButton)) {
+      const curButton = new FlyoutExtensionCategoryHeader(this.workspace_,
+        this.targetWorkspace_, contentInfo);
+      contents.push({ type: 'button', button: curButton });
+      gaps.push(defaultGap);
+    } else if (kind === 'BUTTON' || kind === 'LABEL') {
+      // Labels behave the same as buttons, but are styled differently.
+      const isLabel = kind === 'LABEL';
+      const curButton = new FlyoutButton(this.workspace_,
+        this.targetWorkspace_, contentInfo, isLabel);
+      contents.push({ type: 'button', button: curButton });
+      gaps.push(defaultGap);
+    }
+  }
+
+  return {contents, gaps};
+}
+
+/**
+ * Whether we should show the status button near the label.
+ * @param {string|boolean|null} value The value
+ * @private
+ */
+Flyout.prototype.shouldShowStatusButton = function(value) {
+  return typeof value === 'boolean' ? value : value === 'true';
+}
+
+/**
  * Show and populate the flyout.
- * @param {!Array|string} xmlList List of blocks to show.
+ * @param {!Object|!Array|string} content List of blocks to show
  *     Variables and procedures have a custom set of blocks.
  * @param {boolean=} opt_visible Whether visible after show. Defaults to true.
  */
-Flyout.prototype.show = function(xmlList, opt_visible) {
+Flyout.prototype.show = function(content, opt_visible) {
   if (typeof opt_visible === 'undefined') {
     opt_visible = true;
   }
@@ -477,89 +675,15 @@ Flyout.prototype.show = function(xmlList, opt_visible) {
   this.hide();
   this.clearOldBlocks_();
 
+  if (typeof content === 'string') {
+    const fnToApply = this.workspace_.targetWorkspace.getToolboxCategoryCallback(contentInfo['custom']);
+    content = fnToApply(this.workspace_.targetWorkspace);
+  }
+
   // Set visible to true to create blocks properly.
   this.setVisible(true);
-  // Create the blocks to be shown in this flyout.
-  const contents = [];
-  const gaps = [];
-  this.permanentlyDisabled_.length = 0;
-  for (let i = 0, xml; xml = xmlList[i]; i++) {
-    // Handle dynamic categories, represented by a name instead of a list of XML.
-    // Look up the correct category generation function and call that to get a
-    // valid XML list.
-    if (typeof xml === 'string') {
-      const fnToApply = this.workspace_.targetWorkspace.getToolboxCategoryCallback(
-          xmlList[i]);
-      const newList = fnToApply(this.workspace_.targetWorkspace);
-      // Insert the new list of blocks in the middle of the list.
-      // We use splice to insert at index i, and remove a single element
-      // (the placeholder string). Because the spread operator (...) is not
-      // available, use apply and concat the array.
-      xmlList.splice.apply(xmlList, [i, 1].concat(newList));
-      xml = xmlList[i];
-    }
-    if (xml.tagName) {
-      const tagName = xml.tagName.toUpperCase();
-      const default_gap = this.horizontalLayout_ ? this.GAP_X : this.GAP_Y;
-      if (tagName == 'BLOCK') {
 
-        // We assume that in a flyout, the same block id (or type if missing id) means
-        // the same output BlockSVG.
-
-        // Look for a block that matches the id or type, our createBlock will assign
-        // id = type if none existed.
-        const id = xml.getAttribute('id') || xml.getAttribute('type');
-        const recycled = this.recycleBlocks_.findIndex(function(block) {
-          return block.id === id;
-        });
-
-
-        // If we found a recycled item, reuse the BlockSVG from last time.
-        // Otherwise, convert the XML block to a BlockSVG.
-        let curBlock;
-        if (recycled > -1) {
-          curBlock = this.recycleBlocks_.splice(recycled, 1)[0];
-        } else {
-          curBlock = Xml.domToBlock(xml, this.workspace_);
-        }
-
-        if (curBlock.disabled) {
-          // Record blocks that were initially disabled.
-          // Do not enable these blocks as a result of capacity filtering.
-          this.permanentlyDisabled_.push(curBlock);
-        }
-        contents.push({type: 'block', block: curBlock});
-        const gap = parseInt(xml.getAttribute('gap'), 10);
-        gaps.push(isNaN(gap) ? default_gap : gap);
-      } else if (xml.tagName.toUpperCase() == 'SEP') {
-        // Change the gap between two blocks.
-        // <sep gap="36"></sep>
-        // The default gap is 24, can be set larger or smaller.
-        // This overwrites the gap attribute on the previous block.
-        // Note that a deprecated method is to add a gap to a block.
-        // <block type="math_arithmetic" gap="8"></block>
-        const newGap = parseInt(xml.getAttribute('gap'), 10);
-        // Ignore gaps before the first block.
-        if (!isNaN(newGap) && gaps.length > 0) {
-          gaps[gaps.length - 1] = newGap;
-        } else {
-          gaps.push(default_gap);
-        }
-      } else if ((tagName == 'LABEL') && (xml.getAttribute('showStatusButton') == 'true')) {
-        const curButton = new FlyoutExtensionCategoryHeader(this.workspace_,
-            this.targetWorkspace_, xml);
-        contents.push({type: 'button', button: curButton});
-        gaps.push(default_gap);
-      } else if (tagName == 'BUTTON' || tagName == 'LABEL') {
-        // Labels behave the same as buttons, but are styled differently.
-        const isLabel = tagName == 'LABEL';
-        const curButton = new FlyoutButton(this.workspace_,
-            this.targetWorkspace_, xml, isLabel);
-        contents.push({type: 'button', button: curButton});
-        gaps.push(default_gap);
-      }
-    }
-  }
+  const {contents, gaps} = this.createFlyoutInfo_(content);
 
   this.emptyRecycleBlocks_();
 
@@ -874,18 +998,22 @@ Flyout.prototype.placeNewBlock_ = function(oldBlock) {
     throw 'oldBlock is not rendered.';
   }
 
-  // Create the new block by cloning the block in the flyout (via XML).
-  const xml = Xml.blockToDom(oldBlock);
-  // The target workspace would normally resize during domToBlock, which will
-  // lead to weird jumps.  Save it for terminateDrag.
-  targetWorkspace.setResizesEnabled(false);
-
-  // Using domToBlock instead of domToWorkspace means that the new block will be
-  // placed at position (0, 0) in main workspace units.
-  const block = Xml.domToBlock(xml, targetWorkspace);
-  const svgRootNew = block.getSvgRoot();
-  if (!svgRootNew) {
-    throw 'block is not rendered.';
+  let block;
+  if (oldBlock.mutationToDom && !oldBlock.saveExtraState) {
+    // Create the new block by cloning the block in the flyout (via XML).
+    // This cast assumes that the oldBlock can not be an insertion marker.
+    const xml = /** @type {!Element} */ (Xml.blockToDom(oldBlock, true));
+    // The target workspace would normally resize during domToBlock, which will
+    // lead to weird jumps.  Save it for terminateDrag.
+    targetWorkspace.setResizesEnabled(false);
+    
+    // Using domToBlock instead of domToWorkspace means that the new block will be
+    // placed at position (0, 0) in main workspace units.
+    block = /** @type {!BlockSvg} */ (Xml.domToBlock(xml, targetWorkspace));
+  } else {
+    const json = /** @type {!blocks.State} */ (blocks.save(oldBlock));
+    targetWorkspace.setResizesEnabled(false);
+    block = /** @type {!BlockSvg} */ (blocks.load(json, targetWorkspace));
   }
 
   // The offset in pixels between the main workspace's origin and the upper left

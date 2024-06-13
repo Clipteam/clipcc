@@ -41,13 +41,13 @@ import * as utils from './utils';
  * @param {!Blockly.WorkspaceSvg} workspace The workspace in which to place this
  *     header.
  * @param {!Blockly.WorkspaceSvg} targetWorkspace The flyout's target workspace.
- * @param {!Element} xml The XML specifying the header.
+ * @param {!Object} state The the header's state.
  * @extends {FlyoutButton}
  * @constructor
  */
-export const FlyoutExtensionCategoryHeader = function(workspace, targetWorkspace, xml) {
+export const FlyoutExtensionCategoryHeader = function(workspace, targetWorkspace, state) {
 
-  this.init(workspace, targetWorkspace, xml, false);
+  this.init(workspace, targetWorkspace, state, false);
 
   /**
    * @type {number}
@@ -58,7 +58,7 @@ export const FlyoutExtensionCategoryHeader = function(workspace, targetWorkspace
   /**
    * @type {string}
    */
-  this.extensionId = xml.getAttribute('id');
+  this.extensionId = state.id;
 
   /**
    * Whether this is a label at the top of a category.
