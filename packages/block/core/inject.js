@@ -386,7 +386,7 @@ const init = function(mainWorkspace) {
     } else if (mainWorkspace.flyout_) {
       // Build a fixed flyout with the root blocks.
       mainWorkspace.flyout_.init(mainWorkspace);
-      mainWorkspace.flyout_.show(options.languageTree.childNodes);
+      mainWorkspace.flyout_.show(options.languageTree);
       mainWorkspace.flyout_.scrollToStart();
       // Translate the workspace to avoid the fixed flyout.
       if (options.horizontalLayout) {

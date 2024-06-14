@@ -570,7 +570,7 @@ Flyout.prototype.createFlyoutBlock_ = function(blockInfo) {
   let block;
   if (blockInfo['blockxml']) {
     const xml = typeof blockInfo['blockxml'] === 'string' ?
-      Xml.textToDom(blockInfo['blockxml']) :
+      Xml.textToDom(`<xml>${blockInfo['blockxml']}</xml>`).firstChild :
       blockInfo['blockxml'];
     block = this.getRecycledBlock_(xml.getAttribute('id') || xml.getAttribute('type'));
     if (!block) {

@@ -92,8 +92,15 @@ export const save = function(workspace) {
  * @param {{recordUndo: (boolean|undefined)}=} param1
  *     recordUndo: If true, events triggered by this function will be undo-able
  *       by the user. False by default.
+ *     clear: If true, It will clear current workspace first. False by default.
  */
-export const load = function(state, workspace, {recordUndo = false} = {}) {
+export const load = function(state, workspace, {recordUndo = false, clear = false} = {}) {
+  if (clear) {
+    workspace.setResizesEnabled(false);
+    workspace.setToolboxRefreshEnabled(false);
+    workspace.clear();
+  }
+
   const prevRecordUndo = eventUtils.getRecordUndo();
   eventUtils.setRecordUndo(recordUndo);
   const existingGroup = eventUtils.getGroup();
@@ -147,4 +154,9 @@ export const load = function(state, workspace, {recordUndo = false} = {}) {
   }
   utils.stopTextWidthCache();
   eventUtils.setRecordUndo(prevRecordUndo);
+
+  if (clear) {
+    workspace.setResizesEnabled(true);
+    workspace.setToolboxRefreshEnabled(true);
+  }
 };

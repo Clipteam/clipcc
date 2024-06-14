@@ -59,6 +59,7 @@ import {WorkspaceAudio} from './workspace_audio';
 import {WorkspaceComment} from './workspace_comment';
 import {WorkspaceCommentSvg} from './workspace_comment_svg';
 import * as Xml from './xml';
+import * as toolboxUtils from './toolbox_utils';
 import * as blocks from './serialization/blocks';
 import {ZoomControls} from './zoom_controls';
 
@@ -1565,7 +1566,11 @@ WorkspaceSvg.buildDeleteList_ = function(topBlocks) {
  * @param {Node|string} tree DOM tree of blocks, or text representation of same.
  */
 WorkspaceSvg.prototype.updateToolbox = function(tree) {
-  tree = Options.parseToolboxTree(tree);
+  if (!Array.isArray(tree)) {
+    tree = Options.parseToolboxTree(tree || null);
+  }
+  tree = toolboxUtils.convertToolboxToJSON(tree);
+
   if (!tree) {
     if (this.options.languageTree) {
       throw 'Can\'t nullify an existing toolbox.';
@@ -1575,7 +1580,8 @@ WorkspaceSvg.prototype.updateToolbox = function(tree) {
   if (!this.options.languageTree) {
     throw 'Existing toolbox is null.  Can\'t create new toolbox.';
   }
-  if (tree.getElementsByTagName('category').length) {
+
+  if (tree[0]?.kind.toUpperCase() === 'CATEGORY') {
     if (!this.toolbox_) {
       throw 'Existing toolbox has no categories.  Can\'t change mode.';
     }
@@ -1587,7 +1593,7 @@ WorkspaceSvg.prototype.updateToolbox = function(tree) {
       throw 'Existing toolbox has categories.  Can\'t change mode.';
     }
     this.options.languageTree = tree;
-    this.flyout_.show(tree.childNodes);
+    this.flyout_.show(tree);
   }
 };
 

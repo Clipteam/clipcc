@@ -37,8 +37,6 @@ import {Icon} from './icon';
 import * as utils from './utils';
 import {WorkspaceSvg} from './workspace_svg';
 
-const dom = goog.require('goog.dom');
-
 
 /**
  * Class for a mutator dialog.
@@ -133,15 +131,15 @@ Mutator.prototype.createEditor_ = function() {
       {'x': Bubble.BORDER_WIDTH, 'y': Bubble.BORDER_WIDTH},
       null);
   // Convert the list of names into a list of XML objects for the flyout.
-  let quarkXml = null;
+  let quarkDef = null;
   if (this.quarkNames_.length) {
-    quarkXml = dom.createDom('xml');
+    quarkDef = [];
     for (let i = 0, quarkName; quarkName = this.quarkNames_[i]; i++) {
-      quarkXml.appendChild(dom.createDom('block', {'type': quarkName}));
+      quarkDef.push({kind: 'block', type: quarkName});
     }
   }
   const workspaceOptions = {
-    languageTree: quarkXml,
+    languageTree: quarkDef,
     parentWorkspace: this.block_.workspace,
     pathToMedia: this.block_.workspace.options.pathToMedia,
     RTL: this.block_.RTL,

@@ -33,7 +33,6 @@ import * as constants from './constants';
 import * as registry from './registry';
 import * as Touch from './touch';
 import * as utils from './utils';
-import * as Xml from './xml';
 
 const dom = goog.require('goog.dom');
 const TagName = goog.require('goog.dom.TagName');
@@ -191,11 +190,12 @@ Toolbox.prototype.createFlyout_ = function() {
 
 /**
  * Fill the toolbox with categories and blocks.
- * @param {!Node} newTree DOM tree of blocks.
+ * @param {!Array{Object}} newTree tree of blocks.
  * @private
  */
 Toolbox.prototype.populate_ = function(newTree) {
   this.categoryMenu_.populate(newTree);
+  console.log('populated:', this.categoryMenu_.categories_);
   this.selectedItem_ = null; // All categories has been disposed, so clear selected item.
   this.showAll_();
   if (!this.isCollapsed_) {
@@ -212,16 +212,14 @@ Toolbox.prototype.showAll_ = function() {
   for (let i = 0; i < this.categoryMenu_.categories_.length; i++) {
     const category = this.categoryMenu_.categories_[i];
 
-    // create a label node to go at the top of the category
-    const labelString = '<xml><label text="' + category.name_ + '"' +
-      ' id="' + category.id_ + '"' +
-      ' category-label="true"' +
-      ' showStatusButton="' + category.showStatusButton_ + '"' +
-      ' web-class="categoryLabel">' +
-      '</label></xml>';
-    const labelXML = Xml.textToDom(labelString);
-
-    allContents.push(labelXML.firstChild);
+    allContents.push({
+      kind: 'label',
+      id: category.id_,
+      text: category.name_,
+      'category-label': true,
+      showStatusButton: category.showStatusButton_,
+      'web-class': 'categoryLabel'
+    });
 
     allContents = allContents.concat(category.getContents());
   }
@@ -680,10 +678,10 @@ Toolbox.CategoryMenu.prototype.createDom = function() {
 /**
  * Fill the toolbox with categories and blocks by creating a new
  * {Toolbox.Category} for every category tag in the toolbox xml.
- * @param {Node} domTree DOM tree of blocks, or null.
+ * @param {?Array<Object>} tree tree of blocks, or null.
  */
-Toolbox.CategoryMenu.prototype.populate = function(domTree) {
-  if (!domTree) {
+Toolbox.CategoryMenu.prototype.populate = function(tree) {
+  if (!tree) {
     return;
   }
 
@@ -692,8 +690,8 @@ Toolbox.CategoryMenu.prototype.populate = function(domTree) {
   this.createDom();
   const categories = [];
   // Find actual categories from the DOM tree.
-  for (let i = 0, child; child = domTree.childNodes[i]; i++) {
-    if (!child.tagName || child.tagName.toUpperCase() != 'CATEGORY') {
+  for (let i = 0, child; child = tree[i]; i++) {
+    if (child.kind.toUpperCase() !== 'CATEGORY') {
       continue;
     }
     categories.push(child);
@@ -733,21 +731,21 @@ Toolbox.CategoryMenu.prototype.dispose = function() {
  * @param {Toolbox.CategoryMenu} parent The category menu that owns this
  *     category.
  * @param {Element} parentHtml The containing html div.
- * @param {Node} domTree DOM tree of blocks.
+ * @param {Object} tree tree of blocks.
  * @constructor
  */
-Toolbox.Category = function(parent, parentHtml, domTree) {
+Toolbox.Category = function(parent, parentHtml, tree) {
   this.parent_ = parent;
   this.parentHtml_ = parentHtml;
-  this.name_ = domTree.getAttribute('name');
-  this.id_ = domTree.getAttribute('id');
-  this.setColour(domTree);
-  this.custom_ = domTree.getAttribute('custom');
-  this.iconURI_ = domTree.getAttribute('iconURI');
-  this.showStatusButton_ = domTree.getAttribute('showStatusButton');
+  this.name_ = tree['name'];
+  this.id_ = tree['id'];
+  this.setColour(tree);
+  this.custom_ = tree['custom'];
+  this.iconURI_ = tree['iconURI'];
+  this.showStatusButton_ = tree['showStatusButton'];
   this.contents_ = [];
   if (!this.custom_) {
-    this.parseContents_(domTree);
+    this.parseContents_(tree.contents);
   }
   this.createDom();
 };
@@ -816,16 +814,16 @@ Toolbox.Category.prototype.setSelected = function(selected) {
 
 /**
  * Set the contents of this category from DOM.
- * @param {Node} domTree DOM tree of blocks.
+ * @param {Object} tree tree of blocks.
  * @constructor
  */
-Toolbox.Category.prototype.parseContents_ = function(domTree) {
-  for (let i = 0, child; child = domTree.childNodes[i]; i++) {
-    if (!child.tagName) {
-      // Skip
+Toolbox.Category.prototype.parseContents_ = function(tree) {
+  for (let i = 0, child; child = tree[i]; i++) {
+    if (!child.kind) {
       continue;
     }
-    switch (child.tagName.toUpperCase()) {
+
+    switch (child.kind.toUpperCase()) {
       case 'BLOCK':
       case 'SHADOW':
       case 'LABEL':
@@ -850,13 +848,13 @@ Toolbox.Category.prototype.getContents = function() {
 };
 
 /**
- * Set the colour of the category's background from a DOM node.
- * @param {Node} node DOM node with "colour" and "secondaryColour" attribute.
+ * Set the colour of the category's background from a category info.
+ * @param {Object} state category state with "colour" and "secondaryColour" attribute.
  *     Colours are a hex string or hue on a colour wheel (0-360).
  */
-Toolbox.Category.prototype.setColour = function(node) {
-  const colour = node.getAttribute('colour');
-  const secondaryColour = node.getAttribute('secondaryColour');
+Toolbox.Category.prototype.setColour = function(state) {
+  const colour = state['colour'];
+  const secondaryColour = state['secondaryColour'];
   if (typeof colour === 'string') {
     if (colour.match(/^#[0-9a-fA-F]{6}$/)) {
       this.colour_ = colour;

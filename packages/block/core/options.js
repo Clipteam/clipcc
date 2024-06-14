@@ -31,6 +31,7 @@ import {Blocks} from './blocks';
 import {Colours} from './colours';
 import * as constants from './constants';
 import * as Xml from './xml';
+import * as toolboxUtils from './toolbox_utils';
 
 
 /**
@@ -42,7 +43,7 @@ import * as Xml from './xml';
  */
 export const Options = function(options) {
   const readOnly = !!options['readOnly'];
-  let languageTree = null;
+  let toolboxContents = null;
   let hasCategories = false;
   let hasTrashcan = false;
   let hasCollapse = false;
@@ -56,9 +57,12 @@ export const Options = function(options) {
       const dom = oParser.parseFromString(Blocks.defaultToolbox, 'text/xml');
       options['toolbox'] = dom.documentElement;
     }
-    languageTree = Options.parseToolboxTree(options['toolbox']);
-    hasCategories = Boolean(languageTree &&
-        languageTree.getElementsByTagName('category').length);
+    let toolboxDef = options['toolbox'];
+    if (!Array.isArray(toolboxDef)) {
+      toolboxDef = Options.parseToolboxTree(toolboxDef || null);
+    }
+    toolboxContents = toolboxUtils.convertToolboxToJSON(toolboxDef);
+    hasCategories = toolboxUtils.hasCategories(toolboxContents);
     hasTrashcan = options['trashcan'];
     if (hasTrashcan === undefined) {
       hasTrashcan = false;
@@ -136,7 +140,7 @@ export const Options = function(options) {
   this.hasSounds = hasSounds;
   this.hasCss = hasCss;
   this.horizontalLayout = horizontalLayout;
-  this.languageTree = languageTree;
+  this.languageTree = toolboxContents;
   this.gridOptions = Options.parseGridOptions_(options);
   this.zoomOptions = Options.parseZoomOptions_(options);
   this.toolboxPosition = toolboxPosition;
@@ -223,7 +227,8 @@ Options.parseGridOptions_ = function(options) {
 
 /**
  * Parse the provided toolbox tree into a consistent DOM format.
- * @param {Node|string} tree DOM tree of blocks, or text representation of same.
+ * @param {Node|NodeList|?string} tree DOM tree of blocks, or text representation
+ *    of same.
  * @return {Node} DOM tree of blocks, or null.
  */
 Options.parseToolboxTree = function(tree) {
