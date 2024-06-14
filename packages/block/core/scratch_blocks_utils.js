@@ -37,6 +37,7 @@ import * as registry from './registry';
 import * as Touch from './touch';
 import * as utils from './utils';
 import * as Xml from './xml';
+import * as blocks from './serialization/blocks';
 
 const dom = goog.require('goog.dom');
 
@@ -190,8 +191,8 @@ export const duplicateAndDragCallback = function(oldBlock, event) {
         throw new Error('oldBlock is not rendered.');
       }
 
-      // Create the new block by cloning the block in the flyout (via XML).
-      const xml = Xml.blockToDom(oldBlock);
+      // Create the new block by cloning the block in the flyout (via JSON).
+      const state = blocks.save(oldBlock);
       // The target workspace would normally resize during domToBlock, which
       // will lead to weird jumps.
       // Resizing will be enabled when the drag ends.
@@ -204,7 +205,7 @@ export const duplicateAndDragCallback = function(oldBlock, event) {
       try {
         // Using domToBlock instead of domToWorkspace means that the new block
         // will be placed at position (0, 0) in main workspace units.
-        newBlock = Xml.domToBlock(xml, ws);
+        newBlock = blocks.load(state, ws);
 
         // Scratch-specific: Give shadow dom new IDs to prevent duplicating on paste
         changeObscuredShadowIds(newBlock);
@@ -265,10 +266,8 @@ export const copyCallback = function(block) {
   return function() {
     /** @type {Clipboard} */
     const clipboard = goog.global.navigator.clipboard;
-
-    const xml = dom.createDom('xml');
-    xml.appendChild(Xml.blockToDom(block, true));
-    clipboard.writeText(Xml.domToText(xml));
+    const state = blocks.save(block);
+    clipboard.writeText(JSON.stringify(state));
   };
 };
 
@@ -288,21 +287,26 @@ export const pasteCallback = function(ws, event) {
       eventUtils.disable();
       let newBlock;
       try {
-        const xml = Xml.textToDom(data);
-        if (!xml) {
-          throw 'Invalid XML';
+        try {
+          const state = JSON.parse(data);
+          newBlock = blocks.load(state, ws);
+        } catch (e) {
+          const xml = Xml.textToDom(data);
+          if (!xml) {
+            throw 'Invalid XML';
+          }
+
+          newBlock = Xml.domToBlock(xml.firstChild, ws);
+        } finally {
+          const point = utils.mouseToSvg(event, ws.getParentSvg(), ws.getInverseScreenCTM());
+          const rel = ws.getOriginOffsetInPixels();
+          const x = (point.x - rel.x) / ws.scale;
+          const y = (point.y - rel.y) / ws.scale;
+
+          newBlock.moveBy(ws.RTL ? -x : x, y);
+          // Refresh toolbox to adapting new blocks
+          ws.refreshToolboxSelection_();
         }
-
-        newBlock = Xml.domToBlock(xml.firstChild, ws);
-
-        const point = utils.mouseToSvg(event, ws.getParentSvg(),  ws.getInverseScreenCTM());
-        const rel = ws.getOriginOffsetInPixels();
-        const x = (point.x - rel.x) / ws.scale;
-        const y = (point.y - rel.y) / ws.scale;
-
-        newBlock.moveBy(ws.RTL ? -x : x, y);
-        // Refresh toolbox to adapting new blocks
-        ws.refreshToolboxSelection_();
       } finally {
         eventUtils.enable();
         if (eventUtils.isEnabled() && newBlock) {

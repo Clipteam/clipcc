@@ -29,12 +29,33 @@ const mutatorTagToObject = function (dom) {
 };
 
 /**
+ * Trying parse a string if it's a JSON.
+ * @param {string} value the string
+ * @returns {Object} The parsed object or null.
+ */
+const tryParse = function (str) {
+    try {
+        return JSON.parse(str);
+    } catch (e) {
+        return null;
+    }
+}
+
+/**
  * Adapter between mutator XML or DOM and block representation which can be
  * used by the Scratch runtime.
  * @param {(object|string)} mutation Mutation XML string or DOM.
  * @return {object} Object representing the mutation.
  */
 const mutationAdpater = function (mutation) {
+    const extraState = tryParse(mutation);
+    if (extraState) {
+        // For backward compatability
+        return Object.assign(extraState, {
+            tagName: 'mutation'
+        });
+    }
+
     let mutationParsed;
     // Check if the mutation is already parsed; if not, parse it.
     if (typeof mutation === 'object') {

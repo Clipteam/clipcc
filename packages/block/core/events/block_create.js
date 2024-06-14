@@ -45,7 +45,7 @@ export const BlockCreate = function(block) {
   /**
    * JSON representation of the block that was just created.
    * @type { !blocks.State }
-   * /
+   */
   this.json = /** @type {!blocks.State} */ (blocks.save(
       block, { addCoordinates: true }));
   this.ids = eventUtils.getDescendantIds(block);

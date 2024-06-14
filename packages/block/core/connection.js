@@ -836,26 +836,6 @@ Connection.prototype.setShadowStateInternal_ =
     // If neither is null, the shadowState will get priority.
     this.shadowDom_ = shadowDom;
     this.shadowState_ = shadowState;
-
-    const target = this.targetBlock();
-    if (!target) {
-      this.respawnShadow_();
-      if (this.targetBlock() && this.targetBlock().isShadow()) {
-        this.serializeShadow_(this.targetBlock());
-      }
-    } else if (target.isShadow()) {
-      target.dispose(false);
-      this.respawnShadow_();
-      if (this.targetBlock() && this.targetBlock().isShadow()) {
-        this.serializeShadow_(this.targetBlock());
-      }
-    } else {
-      const shadow = this.createShadowBlock_(false);
-      this.serializeShadow_(shadow);
-      if (shadow) {
-        shadow.dispose(false);
-      }
-    }
   };
 
 /**

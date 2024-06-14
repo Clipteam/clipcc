@@ -100,7 +100,7 @@ class CustomProcedures extends React.Component {
             }
             this.mutationRoot.moveBy(dx, dy);
         });
-        this.mutationRoot.domToMutation(this.props.mutator);
+        this.mutationRoot.loadExtraState(JSON.parse(this.props.mutator));
         this.mutationRoot.initSvg();
         this.mutationRoot.render();
         this.setState({warp: this.mutationRoot.getWarp()});
@@ -113,7 +113,7 @@ class CustomProcedures extends React.Component {
         this.props.onRequestClose();
     }
     handleOk () {
-        const newMutation = this.mutationRoot ? this.mutationRoot.mutationToDom(true) : null;
+        const newMutation = this.mutationRoot ? this.mutationRoot.saveExtraState(true) : null;
         this.props.onRequestClose(newMutation);
     }
     handleAddLabel () {
@@ -156,7 +156,7 @@ class CustomProcedures extends React.Component {
 
 CustomProcedures.propTypes = {
     isRtl: PropTypes.bool,
-    mutator: PropTypes.instanceOf(Element),
+    mutator: PropTypes.string,
     onRequestClose: PropTypes.func.isRequired,
     options: PropTypes.shape({
         media: PropTypes.string,

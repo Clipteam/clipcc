@@ -43,7 +43,7 @@ import * as uiMenu from './ui_menu_utils';
 import {WidgetDiv} from './widgetdiv';
 import {WorkspaceComment} from './workspace_comment';
 import {WorkspaceCommentSvg} from './workspace_comment_svg';
-import * as Xml from './xml';
+import * as blocks from './serialization/blocks';
 
 const events = goog.require('goog.events');
 const Coordinate = goog.require('goog.math.Coordinate');
@@ -190,15 +190,15 @@ ContextMenu.hide = function() {
  * Create a callback function that creates and configures a block,
  *   then places the new block next to the original.
  * @param {!Blockly.Block} block Original block.
- * @param {!Element} xml XML representation of new block.
+ * @param {!Object} state JSON representation of new block.
  * @return {!Function} Function that creates a block.
  */
-ContextMenu.callbackFactory = function(block, xml) {
+ContextMenu.callbackFactory = function(block, state) {
   return function() {
     eventUtils.disable();
     let newBlock;
     try {
-      newBlock = Xml.domToBlock(xml, block.workspace);
+      newBlock = blocks.load(state, block.workspace);
       // Move the new block next to the old block.
       const xy = block.getRelativeToSurfaceXY();
       if (block.RTL) {

@@ -194,9 +194,9 @@ Blockly.Blocks['control_stop'] = {
       // Create an event group to keep field value and mutator in sync
       // Return null at the end because setValue is called here already.
       Blockly.Events.setGroup(true);
-      const oldMutation = Blockly.Xml.domToText(this.sourceBlock_.mutationToDom());
+      const oldMutation = JSON.stringify(this.sourceBlock_.saveExtraState());
       this.sourceBlock_.setNextStatement(option == OTHER_SCRIPTS);
-      const newMutation = Blockly.Xml.domToText(this.sourceBlock_.mutationToDom());
+      const newMutation = JSON.stringify(this.sourceBlock_.saveExtraState());
       Blockly.Events.fire(new Blockly.Events.BlockChange(this.sourceBlock_,
           'mutation', null, oldMutation, newMutation));
       this.setValue(option);

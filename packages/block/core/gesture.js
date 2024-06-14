@@ -45,7 +45,7 @@ import * as Touch from './touch';
 import * as utils from './utils';
 import {WidgetDiv} from './widgetdiv';
 import {WorkspaceDragger} from './workspace_dragger';
-import * as Xml from './xml';
+import * as blocks from './serialization/blocks';
 
 const asserts = goog.require('goog.asserts');
 const Coordinate = goog.require('goog.math.Coordinate');
@@ -998,8 +998,8 @@ Gesture.prototype.duplicateOnDrag_ = function() {
     // need to update shadow block IDs to avoid problems in the VM.
     // Resizes will be reenabled at the end of the drag.
     this.startWorkspace_.setResizesEnabled(false);
-    const xmlBlock = Xml.blockToDom(this.targetBlock_);
-    newBlock = Xml.domToBlock(xmlBlock, this.startWorkspace_);
+    const blockState = blocks.save(this.targetBlock_);
+    newBlock = blocks.load(blockState, this.startWorkspace_);
 
     // Move the duplicate to original position.
     const xy = this.targetBlock_.getRelativeToSurfaceXY();

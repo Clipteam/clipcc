@@ -59,6 +59,7 @@ import {WorkspaceAudio} from './workspace_audio';
 import {WorkspaceComment} from './workspace_comment';
 import {WorkspaceCommentSvg} from './workspace_comment_svg';
 import * as Xml from './xml';
+import * as blocks from './serialization/blocks';
 import {ZoomControls} from './zoom_controls';
 
 const arrayUtils = goog.require('goog.array');
@@ -933,76 +934,128 @@ WorkspaceSvg.prototype.reportValue = function(id, value) {
 
 /**
  * Paste the provided block onto the workspace.
- * @param {!Element} xmlBlock XML block element.
+ * @param {!Element|Object} pasteInfo a JSON or XML block element.
  */
-WorkspaceSvg.prototype.paste = function(xmlBlock) {
+WorkspaceSvg.prototype.paste = function(pasteInfo) {
   if (!this.rendered) {
     return;
   }
   if (this.currentGesture_) {
     this.currentGesture_.cancel();  // Dragging while pasting?  No.
   }
-  if (xmlBlock.tagName.toLowerCase() == 'comment') {
-    this.pasteWorkspaceComment_(xmlBlock);
+  if (pasteInfo.tagName ? pasteInfo.tagName.toLowerCase() == 'comment' : 'h' in pasteInfo) {
+    this.pasteWorkspaceComment_(pasteInfo);
   } else {
-    this.pasteBlock_(xmlBlock);
+    this.pasteBlock_(pasteInfo);
   }
 };
 
 /**
  * Paste the provided block onto the workspace.
- * @param {!Element} xmlBlock XML block element.
+ * @param {!Element|Object} pasteInfo a JSON or XML block element
  */
-WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
+WorkspaceSvg.prototype.pasteBlock_ = function (pasteInfo) {
   eventUtils.disable();
   let block;
   try {
-    block = Xml.domToBlock(xmlBlock, this);
-    // Scratch-specific: Give shadow dom new IDs to prevent duplicating on paste
-    scratchBlocksUtils.changeObscuredShadowIds(block);
-    // Move the duplicate to original position.
-    let blockX = parseInt(xmlBlock.getAttribute('x'), 10);
-    let blockY = parseInt(xmlBlock.getAttribute('y'), 10);
-    if (!isNaN(blockX) && !isNaN(blockY)) {
-      if (this.RTL) {
-        blockX = -blockX;
-      }
-      // Offset block until not clobbering another block and not in connection
-      // distance with neighbouring blocks.
-      let collide;
-      do {
-        collide = false;
-        const allBlocks = this.getAllBlocks();
-        for (let i = 0, otherBlock; otherBlock = allBlocks[i]; i++) {
-          const otherXY = otherBlock.getRelativeToSurfaceXY();
-          if (Math.abs(blockX - otherXY.x) <= 1 &&
-              Math.abs(blockY - otherXY.y) <= 1) {
-            collide = true;
-            break;
-          }
+    // It's a xml
+    if (pasteInfo.tagName) {
+      const xmlBlock = pasteInfo;
+      block = Xml.domToBlock(xmlBlock, this);
+      // Scratch-specific: Give shadow dom new IDs to prevent duplicating on paste
+      scratchBlocksUtils.changeObscuredShadowIds(block);
+      // Move the duplicate to original position.
+      let blockX = parseInt(xmlBlock.getAttribute('x'), 10);
+      let blockY = parseInt(xmlBlock.getAttribute('y'), 10);
+      if (!isNaN(blockX) && !isNaN(blockY)) {
+        if (this.RTL) {
+          blockX = -blockX;
         }
-        if (!collide) {
-          // Check for blocks in snap range to any of its connections.
-          const connections = block.getConnections_(false);
-          for (let i = 0, connection; connection = connections[i]; i++) {
-            const neighbour = connection.closest(constants.SNAP_RADIUS,
-                new Coordinate(blockX, blockY));
-            if (neighbour.connection) {
+        // Offset block until not clobbering another block and not in connection
+        // distance with neighbouring blocks.
+        let collide;
+        do {
+          collide = false;
+          const allBlocks = this.getAllBlocks();
+          for (let i = 0, otherBlock; otherBlock = allBlocks[i]; i++) {
+            const otherXY = otherBlock.getRelativeToSurfaceXY();
+            if (Math.abs(blockX - otherXY.x) <= 1 &&
+              Math.abs(blockY - otherXY.y) <= 1) {
               collide = true;
               break;
             }
           }
-        }
-        if (collide) {
-          if (this.RTL) {
-            blockX -= constants.SNAP_RADIUS;
-          } else {
-            blockX += constants.SNAP_RADIUS;
+          if (!collide) {
+            // Check for blocks in snap range to any of its connections.
+            const connections = block.getConnections_(false);
+            for (let i = 0, connection; connection = connections[i]; i++) {
+              const neighbour = connection.closest(constants.SNAP_RADIUS,
+                new Coordinate(blockX, blockY));
+              if (neighbour.connection) {
+                collide = true;
+                break;
+              }
+            }
           }
-          blockY += constants.SNAP_RADIUS * 2;
-        }
-      } while (collide);
-      block.moveBy(blockX, blockY);
+          if (collide) {
+            if (this.RTL) {
+              blockX -= constants.SNAP_RADIUS;
+            } else {
+              blockX += constants.SNAP_RADIUS;
+            }
+            blockY += constants.SNAP_RADIUS * 2;
+          }
+        } while (collide);
+        block.moveBy(blockX, blockY);
+      }
+    } else {
+      block = blocks.load(pasteInfo);
+        // Scratch-specific: Give shadow dom new IDs to prevent duplicating on paste
+        scratchBlocksUtils.changeObscuredShadowIds(block);
+        // Move the duplicate to original position.
+        let blockX = parseInt(pasteInfo.x, 10);
+        let blockY = parseInt(pasteInfo.y, 10);
+        if (!isNaN(blockX) && !isNaN(blockY)) {
+          if (this.RTL) {
+            blockX = -blockX;
+          }
+          // Offset block until not clobbering another block and not in connection
+          // distance with neighbouring blocks.
+          let collide;
+          do {
+            collide = false;
+            const allBlocks = this.getAllBlocks();
+            for (let i = 0, otherBlock; otherBlock = allBlocks[i]; i++) {
+              const otherXY = otherBlock.getRelativeToSurfaceXY();
+              if (Math.abs(blockX - otherXY.x) <= 1 &&
+                Math.abs(blockY - otherXY.y) <= 1) {
+                collide = true;
+                break;
+              }
+            }
+            if (!collide) {
+              // Check for blocks in snap range to any of its connections.
+              const connections = block.getConnections_(false);
+              for (let i = 0, connection; connection = connections[i]; i++) {
+                const neighbour = connection.closest(constants.SNAP_RADIUS,
+                  new Coordinate(blockX, blockY));
+                if (neighbour.connection) {
+                  collide = true;
+                  break;
+                }
+              }
+            }
+            if (collide) {
+              if (this.RTL) {
+                blockX -= constants.SNAP_RADIUS;
+              } else {
+                blockX += constants.SNAP_RADIUS;
+              }
+              blockY += constants.SNAP_RADIUS * 2;
+            }
+          } while (collide);
+          block.moveBy(blockX, blockY);
+    }
     }
   } finally {
     eventUtils.enable();
@@ -1015,28 +1068,47 @@ WorkspaceSvg.prototype.pasteBlock_ = function(xmlBlock) {
 
 /**
  * Paste the provided comment onto the workspace.
- * @param {!Element} xmlComment XML workspace comment element.
+ * @param {!Element|Object} pasteInfo XML or JSON format workspace comment.
  * @private
  */
-WorkspaceSvg.prototype.pasteWorkspaceComment_ = function(xmlComment) {
+WorkspaceSvg.prototype.pasteWorkspaceComment_ = function(pasteInfo) {
   eventUtils.disable();
   let comment;
   try {
-    comment = WorkspaceCommentSvg.fromXml(xmlComment, this);
-    // Move the duplicate to original position.
-    let commentX = parseInt(xmlComment.getAttribute('x'), 10);
-    let commentY = parseInt(xmlComment.getAttribute('y'), 10);
-    if (!isNaN(commentX) && !isNaN(commentY)) {
-      if (this.RTL) {
-        commentX = -commentX;
+    // it's an xml
+    if (pasteInfo.tagName) {
+      comment = WorkspaceCommentSvg.fromXml(xmlComment, this);
+      // Move the duplicate to original position.
+      let commentX = parseInt(xmlComment.getAttribute('x'), 10);
+      let commentY = parseInt(xmlComment.getAttribute('y'), 10);
+      if (!isNaN(commentX) && !isNaN(commentY)) {
+        if (this.RTL) {
+          commentX = -commentX;
+        }
+        // Offset workspace comment.
+        // TODO: (github.com/google/blockly/issues/1719) properly offset comment
+        // such that it's not interfereing with any blocks
+        commentX += 50;
+        commentY += 50;
+        comment.moveBy(commentX, commentY);
       }
-      // Offset workspace comment.
-      // TODO: (github.com/google/blockly/issues/1719) properly offset comment
-      // such that it's not interfereing with any blocks
-      commentX += 50;
-      commentY += 50;
-      comment.moveBy(commentX, commentY);
+    } else {
+      comment = WorkspaceCommentSvg.fromState(pasteInfo, this);
+      // Move the duplicate to original position.
+      let commentX = parseInt(pasteInfo.x, 10);
+      let commentY = parseInt(pasteInfo.y, 10);
+      if (!isNaN(commentX) && !isNaN(commentY)) {
+        if (this.RTL) {
+          commentX = -commentX;
+        }
+        // Offset workspace comment.
+        // TODO: (github.com/google/blockly/issues/1719) properly offset comment
+        // such that it's not interfereing with any blocks
+        commentX += 50;
+        commentY += 50;
+        comment.moveBy(commentX, commentY);
     }
+  }
   } finally {
     eventUtils.enable();
   }

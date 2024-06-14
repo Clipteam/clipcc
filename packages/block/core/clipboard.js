@@ -28,15 +28,16 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.clipboard');
 
 import * as eventUtils from './events/utils';
+import * as blocks from './serialization/blocks';
 import * as Xml from './xml';
 
 
 /**
  * Contents of the local clipboard.
- * @type {Element}
+ * @type {Object}
  * @private
  */
-let clipboardXml = null;
+let clipboardState = null;
 
 /**
  * Source of the local clipboard.
@@ -51,17 +52,13 @@ let clipboardSource = null;
  *    to be copied.
  */
 export const copy = function(toCopy) {
-  let xml;
+  let state;
   if (toCopy.isComment) {
-    xml = toCopy.toXmlWithXY();
+    state = toCopy.toStateWithXY();
   } else {
-    xml = Xml.blockToDom(toCopy);
-    // Encode start position in XML.
-    const xy = toCopy.getRelativeToSurfaceXY();
-    xml.setAttribute('x', toCopy.RTL ? -xy.x : xy.x);
-    xml.setAttribute('y', xy.y);
+    state = blocks.save(toCopy, {addCoordinates: true});
   }
-  clipboardXml = xml;
+  clipboardState = state;
   clipboardSource = toCopy.workspace;
 };
 
@@ -72,15 +69,15 @@ export const copy = function(toCopy) {
  */
 export const duplicate = function(toDuplicate) {
   // Save the clipboard.
-  const clipboardXmlOld = clipboardXml;
+  const clipboardStateOld = clipboardState;
   const clipboardSourceOld = clipboardSource;
 
   // Create a duplicate via a copy/paste operation.
   copy(toDuplicate);
-  toDuplicate.workspace.paste(clipboardXml);
+  toDuplicate.workspace.paste(clipboardState);
 
   // Restore the clipboard.
-  clipboardXml = clipboardXmlOld;
+  clipboardState = clipboardStateOld;
   clipboardSource = clipboardSourceOld;
 };
 
@@ -89,7 +86,7 @@ export const duplicate = function(toDuplicate) {
  * @return {boolean} True if the paste was successful, false otherwise.
  */
 export const paste = function() {
-  if (clipboardXml) {
+  if (clipboardState) {
     eventUtils.setGroup(true);
     // Pasting always pastes to the main workspace, even if the copy started
     // in a flyout workspace.
@@ -97,7 +94,7 @@ export const paste = function() {
     if (workspace.isFlyout) {
       workspace = workspace.targetWorkspace;
     }
-    workspace.paste(clipboardXml);
+    workspace.paste(clipboardState);
     eventUtils.setGroup(false);
     return true;
   }

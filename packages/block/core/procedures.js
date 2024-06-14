@@ -37,10 +37,7 @@ import {BlockChange} from './events/block_change';
 import {Msg} from './msg';
 import {Names} from './names';
 import * as scratchBlocksUtils from './scratch_blocks_utils';
-import * as Xml from './xml';
-
-const dom = goog.require('goog.dom');
-
+import * as blocks from './serialization/blocks';
 
 /**
  * Constant to separate procedure names from variables and generated functions
@@ -81,7 +78,7 @@ export const allProcedures = function(root) {
 /**
  * Find all user-created procedure definition mutations in a workspace.
  * @param {!Blockly.Workspace} root Root workspace.
- * @return {!Array.<Element>} Array of mutation xml elements.
+ * @return {!Array.<Object>} Array of mutation xml elements.
  * @package
  */
 export const allProcedureMutations = function(root) {
@@ -89,7 +86,7 @@ export const allProcedureMutations = function(root) {
   const mutations = [];
   for (let i = 0; i < blocks.length; i++) {
     if (blocks[i].type == constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
-      const mutation = blocks[i].mutationToDom(/* opt_generateShadows */ true);
+      const mutation = blocks[i].saveExtraState(/* opt_generateShadows */ true);
       if (mutation) {
         mutations.push(mutation);
       }
@@ -109,8 +106,8 @@ const sortProcedureMutations = function(mutations) {
   const newMutations = mutations.slice();
 
   newMutations.sort(function(a, b) {
-    const procCodeA = a.getAttribute('proccode');
-    const procCodeB = b.getAttribute('proccode');
+    const procCodeA = a.proccode;
+    const procCodeB = b.proccode;
 
     return scratchBlocksUtils.compareStrings(procCodeA, procCodeB);
   });
@@ -220,12 +217,12 @@ export const rename = function(name) {
 /**
  * Construct the blocks required by the flyout for the procedure category.
  * @param {!Blockly.Workspace} workspace The workspace contianing procedures.
- * @return {!Array.<!Element>} Array of XML block elements.
+ * @return {!Array.<!Object>} Array of block elements.
  */
 export const flyoutCategory = function(workspace) {
-  const xmlList = [];
+  const content = [];
 
-  addCreateButton(workspace, xmlList);
+  addCreateButton(workspace, content);
 
   // Create call blocks for each procedure defined in the workspace
   let mutations = allProcedureMutations(workspace);
@@ -235,32 +232,35 @@ export const flyoutCategory = function(workspace) {
     // <block type="procedures_call">
     //   <mutation ...></mutation>
     // </block>
-    const block = dom.createDom('block');
-    block.setAttribute('type', 'procedures_call');
-    block.setAttribute('gap', 16);
-    block.appendChild(mutation);
-    xmlList.push(block);
+    const block = {
+      kind: 'block',
+      type: 'procedures_call',
+      gap: 16,
+      extraState: mutation
+    };
+    content.push(block);
   }
-  return xmlList;
+  return content;
 };
 
 /**
  * Create the "Make a Block..." button.
  * @param {!Blockly.Workspace} workspace The workspace contianing procedures.
- * @param {!Array.<!Element>} xmlList Array of XML block elements to add to.
+ * @param {!Array.<!Object>} content Array of block elements to add to.
  * @private
  */
-const addCreateButton = function(workspace, xmlList) {
-  const button = dom.createDom('button');
-  const msg = Msg.NEW_PROCEDURE;
+const addCreateButton = function(workspace, content) {
   const callbackKey = 'CREATE_PROCEDURE';
+  const button = {
+    kind: 'button',
+    text: Msg.NEW_PROCEDURE,
+    callbackkey: callbackKey
+  };
   const callback = function() {
     createProcedureDefCallback(workspace);
   };
-  button.setAttribute('text', msg);
-  button.setAttribute('callbackKey', callbackKey);
   workspace.registerButtonCallback(callbackKey, callback);
-  xmlList.push(button);
+  content.push(button);
 };
 
 /**
@@ -306,10 +306,10 @@ export const getCallers = function(name, ws, definitionRoot,
  * Find and edit all callers with a procCode using a new mutation.
  * @param {string} name Name of procedure (procCode in scratch-blocks).
  * @param {!Blockly.Workspace} ws The workspace to find callers in.
- * @param {!Element} mutation New mutation for the callers.
+ * @param {!Object} extraState New extraState for the callers.
  * @package
  */
-export const mutateCallersAndPrototype = function(name, ws, mutation) {
+export const mutateCallersAndPrototype = function (name, ws, extraState) {
   const defineBlock = getDefineBlock(name, ws);
   const prototypeBlock = getPrototypeBlock(name, ws);
   if (defineBlock && prototypeBlock) {
@@ -318,11 +318,11 @@ export const mutateCallersAndPrototype = function(name, ws, mutation) {
     callers.push(prototypeBlock);
     eventUtils.setGroup(true);
     for (let i = 0, caller; caller = callers[i]; i++) {
-      const oldMutationDom = caller.mutationToDom();
-      const oldMutation = oldMutationDom && Xml.domToText(oldMutationDom);
-      caller.domToMutation(mutation);
-      const newMutationDom = caller.mutationToDom();
-      const newMutation = newMutationDom && Xml.domToText(newMutationDom);
+      const oldMutationState = caller.saveExtraState();
+      const oldMutation = oldMutationState && JSON.stringify(oldMutationState);
+      caller.loadExtraState(extraState);
+      const newMutationState = caller.saveExtraState();
+      const newMutation = newMutationState && JSON.stringify(newMutationState);
       if (oldMutation != newMutation) {
         eventUtils.fire(new BlockChange(
             caller, 'mutation', null, oldMutation, newMutation));
@@ -372,20 +372,18 @@ export const getPrototypeBlock = function(procCode, workspace) {
 
 /**
  * Create a mutation for a brand new custom procedure.
- * @return {Element} The mutation for a new custom procedure
+ * @return {Object} The mutation for a new custom procedure
  * @package
  */
 export const newProcedureMutation = function() {
-  const mutationText = '<xml>' +
-      '<mutation' +
-      ' proccode="' + Msg['PROCEDURE_DEFAULT_NAME'] + '"' +
-      ' argumentids="[]"' +
-      ' argumentnames="[]"' +
-      ' argumentdefaults="[]"' +
-      ' warp="false">' +
-      '</mutation>' +
-      '</xml>';
-  return Xml.textToDom(mutationText).firstChild;
+  const state = {
+    proccode: Msg['PROCEDURE_DEFAULT_NAME'],
+    argumentids: [],
+    argumentnames: [],
+    argumentdefaults: [],
+    warp: false
+  };
+  return state;
 };
 
 /**
@@ -403,24 +401,26 @@ const createProcedureDefCallback = function(workspace) {
 /**
  * Callback factory for adding a new custom procedure from a mutation.
  * @param {!Blockly.Workspace} workspace The workspace to create the new procedure on.
- * @return {function(?Element)} callback for creating the new custom procedure.
+ * @return {function(?Object)} callback for creating the new custom procedure.
  * @private
  */
 const createProcedureCallbackFactory = function(workspace) {
   return function(mutation) {
     if (mutation) {
-      const blockText = '<xml>' +
-          '<block type="procedures_definition">' +
-          '<statement name="custom_block">' +
-          '<shadow type="procedures_prototype">' +
-          Xml.domToText(mutation) +
-          '</shadow>' +
-          '</statement>' +
-          '</block>' +
-          '</xml>';
-      const blockDom = Xml.textToDom(blockText).firstChild;
+      const blockState = {
+        type: 'procedures_definition',
+        inputs: {
+          'custom_block': {
+            block: {
+              type: 'procedures_prototype',
+              extraState: mutation,
+              shadow: true
+            }
+          }
+        }
+      };
       eventUtils.setGroup(true);
-      const block = Xml.domToBlock(blockDom, workspace);
+      const block = blocks.load(blockState, workspace);
       const scale = workspace.scale; // To convert from pixel units to workspace units
       // Position the block so that it is at the top left of the visible workspace,
       // padded from the edge by 30 units. Position in the top right if RTL.
@@ -473,7 +473,7 @@ const editProcedureCallback = function(block) {
   }
   // Block now refers to the procedure prototype block, it is safe to proceed.
   externalProcedureDefCallback(
-      block.mutationToDom(),
+      block.saveExtraState(),
       editProcedureCallbackFactory(block)
   );
 };

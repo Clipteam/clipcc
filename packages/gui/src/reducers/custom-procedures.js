@@ -14,7 +14,7 @@ const reducer = function (state, action) {
     case ACTIVATE_CUSTOM_PROCEDURES:
         return Object.assign({}, state, {
             active: true,
-            mutator: action.mutator,
+            mutator: JSON.stringify(action.mutator),
             callback: action.callback
         });
     case DEACTIVATE_CUSTOM_PROCEDURES:
