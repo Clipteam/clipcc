@@ -1426,12 +1426,10 @@ class Runtime extends EventEmitter {
     }
 
     /**
-     * @returns {Array.<object>} scratch-blocks XML for each category of extension blocks, in category order.
      * @param {?Target} [target] - the active editing target (optional)
-     * @property {string} id - the category / extension ID
-     * @property {string} xml - the XML text for this category, starting with `<category>` and ending with `</category>`
+     * @returns {Array.<object>} scratch-blocks JSON state for each category of extension blocks, in category order.
      */
-    getBlocksXML (target) {
+    getBlocksDef (target) {
         return this._blockInfo.map(categoryInfo => {
             const {name, color1, color2} = categoryInfo;
             // Filter out blocks that aren't supposed to be shown on this target, as determined by the block info's
@@ -1449,8 +1447,6 @@ class Runtime extends EventEmitter {
                 return blockFilterIncludesTarget && !block.info.hideFromPalette;
             });
 
-            const colorXML = `colour="${color1}" secondaryColour="${color2}"`;
-
             // Use a menu icon if there is one. Otherwise, use the block icon. If there's no icon,
             // the category menu will show its default colored circle.
             let menuIconURI = '';
@@ -1459,18 +1455,20 @@ class Runtime extends EventEmitter {
             } else if (categoryInfo.blockIconURI) {
                 menuIconURI = categoryInfo.blockIconURI;
             }
-            const menuIconXML = menuIconURI ?
-                `iconURI="${menuIconURI}"` : '';
-
             let statusButtonXML = '';
             if (categoryInfo.showStatusButton) {
                 statusButtonXML = 'showStatusButton="true"';
             }
 
             return {
+                kind: 'category',
+                name,
                 id: categoryInfo.id,
-                xml: `<category name="${name}" id="${categoryInfo.id}" ${statusButtonXML} ${colorXML} ${menuIconXML}>${
-                    paletteBlocks.map(block => block.xml).join('')}</category>`
+                showStatusButton: categoryInfo.showStatusButton,
+                colour: color1,
+                secondaryColour: color2,
+                iconURI: menuIconURI ?? '',
+                contents: paletteBlocks.map(block => block.state)
             };
         });
     }

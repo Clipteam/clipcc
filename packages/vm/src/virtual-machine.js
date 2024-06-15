@@ -1425,7 +1425,7 @@ class VirtualMachine extends EventEmitter {
     }
 
     /**
-     * Emit an Blockly/scratch-blocks compatible XML representation
+     * Emit an Blockly/scratch-blocks compatible JSON representation
      * of the current editing target's blocks.
      */
     emitWorkspaceUpdate () {
@@ -1469,16 +1469,16 @@ class VirtualMachine extends EventEmitter {
             .map(k => this.editingTarget.comments[k])
             .filter(c => c.blockId === null);
 
-        const xmlString = `<xml xmlns="http://www.w3.org/1999/xhtml">
-                            <variables>
-                                ${globalVariables.map(v => v.toXML()).join()}
-                                ${localVariables.map(v => v.toXML(true)).join()}
-                            </variables>
-                            ${workspaceComments.map(c => c.toXML()).join()}
-                            ${this.editingTarget.blocks.toXML(this.editingTarget.comments)}
-                        </xml>`;
 
-        this.emit('workspaceUpdate', {xml: xmlString});
+        const workspaceState = {
+            variables: [
+                ...globalVariables.map(v => v.toJSON()),
+                ...localVariables.map(v => v.toJSON(true))
+            ],
+            comments: workspaceComments.map(c => c.toJSON()),
+            blocks: {blocks: this.editingTarget.blocks.toJSON(this.editingTarget.comments)}
+        };
+        this.emit('workspaceUpdate', {json: workspaceState});
     }
 
     /**

@@ -28,10 +28,17 @@ class Comment {
         this.blockId = null;
     }
 
-    toXML () {
-        return `<comment id="${this.id}" x="${this.x}" y="${
-            this.y}" w="${this.width}" h="${this.height}" pinned="${
-            this.blockId !== null}" minimized="${this.minimized}">${xmlEscape(this.text)}</comment>`;
+    toJSON () {
+        return {
+            id: this.id,
+            x: this.x,
+            y: this.y,
+            w: this.width,
+            h: this.height,
+            pinned: this.blockId !== null,
+            minimized: this.minimized,
+            text: this.text
+        };
     }
 
     // TODO choose min and defaults for width and height

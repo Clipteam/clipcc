@@ -253,7 +253,9 @@ Monitor.propTypes = {
     spriteName: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
     targetId: PropTypes.string,
     theme: PropTypes.string,
-    toolboxXML: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+    toolboxContents: PropTypes.arrayOf({
+        id: PropTypes.string.isRequired
+    }), // eslint-disable-line react/no-unused-prop-types
     value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
@@ -274,7 +276,7 @@ const mapStateToProps = state => ({
     monitorLayout: state.scratchGui.monitorLayout,
     theme: state.scratchGui.theme.theme,
     // render on toolbox updates since changes to the blocks could affect monitor labels, i.e. updated locale
-    toolboxXML: state.scratchGui.toolbox.toolboxXML,
+    toolboxContens: state.scratchGui.toolbox.toolboxContents,
     vm: state.scratchGui.vm
 });
 const mapDispatchToProps = dispatch => ({

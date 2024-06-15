@@ -1,6 +1,5 @@
 const adapter = require('./adapter');
 const mutationAdapter = require('./mutation-adapter');
-const xmlEscape = require('../util/xml-escape');
 const MonitorRecord = require('./monitor-record');
 const Clone = require('../util/clone');
 const {Map} = require('immutable');
@@ -1052,41 +1051,44 @@ class Blocks {
     // ---------------------------------------------------------------------
 
     /**
-     * Encode all of `this._blocks` as an XML string usable
+     * Encode all of `this._blocks` as an JSON block state used
      * by a Blockly/scratch-blocks workspace.
      * @param {object<string, Comment>} comments Map of comments referenced by id
-     * @return {string} String of XML representing this object's blocks.
+     * @return {Array<Object>} Array of this object's blocks.
      */
-    toXML (comments) {
-        return this._scripts.map(script => this.blockToXML(script, comments)).join();
+    toJSON (comments) {
+        return this._scripts.map(script => this.blockToJSON(script, comments));
     }
 
     /**
      * Recursively encode an individual block and its children
-     * into a Blockly/scratch-blocks XML string.
+     * into a Blockly/scratch-blocks JSON state.
      * @param {!string} blockId ID of block to encode.
      * @param {object<string, Comment>} comments Map of comments referenced by id
-     * @return {string} String of XML representing this block and any children.
+     * @return {string} The JSON representing this block and any children.
      */
-    blockToXML (blockId, comments) {
+    blockToJSON (blockId, comments) {
         const block = this._blocks[blockId];
         // block should exist, but currently some blocks' next property point
         // to a blockId for non-existent blocks. Until we track down that behavior,
         // this early exit allows the project to load.
         if (!block) return;
-        // Encode properties of this block.
-        const tagName = (block.shadow) ? 'shadow' : 'block';
-        let xmlString =
-            `<${tagName}
-                id="${block.id}"
-                type="${block.opcode}"
-                ${block.topLevel ? `x="${block.x}" y="${block.y}"` : ''}
-            >`;
+        const blockState = {
+            id: block.id,
+            type: block.opcode
+        };
+
+        if (block.shadow) blockState.shadow = true;
+        if (block.topLevel) {
+            blockState.x = block.x;
+            blockState.y = block.y;
+        }
+
         const commentId = block.comment;
         if (commentId) {
             if (comments) {
                 if (comments.hasOwnProperty(commentId)) {
-                    xmlString += comments[commentId].toXML();
+                    blockState.comment = comments[commentId].toJSON();
                 } else {
                     log.warn(`Could not find comment with id: ${commentId} in provided comment descriptions.`);
                 }
@@ -1095,78 +1097,48 @@ class Blocks {
             }
         }
         // Add any mutation. Must come before inputs.
-        if (block.mutation) {
-            xmlString += this.mutationToXML(block.mutation);
-        }
+        if (block.mutation) blockState.extraState = block.mutation;
         // Add any inputs on this block.
         for (const input in block.inputs) {
             if (!block.inputs.hasOwnProperty(input)) continue;
+            if (!blockState.inputs) blockState.inputs = {};
             const blockInput = block.inputs[input];
             // Only encode a value tag if the value input is occupied.
             if (blockInput.block || blockInput.shadow) {
-                xmlString += `<value name="${blockInput.name}">`;
+                blockState.inputs[blockInput.name] = {};
+                const inputState = blockState.inputs[blockInput.name];
                 if (blockInput.block) {
-                    xmlString += this.blockToXML(blockInput.block, comments);
+                    inputState.block = this.blockToJSON(blockInput.block, comments);
                 }
                 if (blockInput.shadow && blockInput.shadow !== blockInput.block) {
                     // Obscured shadow.
-                    xmlString += this.blockToXML(blockInput.shadow, comments);
+                    inputState.block = this.blockToJSON(blockInput.shadow, comments);
+                    inputState.shadow = true;
                 }
-                xmlString += '</value>';
             }
         }
         // Add any fields on this block.
         for (const field in block.fields) {
             if (!block.fields.hasOwnProperty(field)) continue;
+            if (!blockState.fields) blockState.fields = {};
             const blockField = block.fields[field];
-            xmlString += `<field name="${blockField.name}"`;
+            blockState.fields[blockField.name] = {};
+            const fieldState = blockState.fields[blockField.name];
             const fieldId = blockField.id;
             if (fieldId) {
-                xmlString += ` id="${fieldId}"`;
+                fieldState.id =fieldId;
             }
             const varType = blockField.variableType;
             if (typeof varType === 'string') {
-                xmlString += ` variabletype="${varType}"`;
+                fieldState.variableType = varType;
             }
-            let value = blockField.value;
-            if (typeof value === 'string') {
-                value = xmlEscape(blockField.value);
-            }
-            xmlString += `>${value}</field>`;
+            fieldState.value = blockField.value;
         }
         // Add blocks connected to the next connection.
         if (block.next) {
-            xmlString += `<next>${this.blockToXML(block.next, comments)}</next>`;
+            blockState.next = this.blockToJSON(block.next, comments);
         }
-        xmlString += `</${tagName}>`;
-        return xmlString;
-    }
-
-    /**
-     * Recursively encode a mutation object to XML.
-     * @param {!object} mutation Object representing a mutation.
-     * @return {string} XML string representing a mutation.
-     */
-    mutationToXML (mutation) {
-        let mutationString = `<${mutation.tagName}`;
-        for (const prop in mutation) {
-            if (prop === 'children' || prop === 'tagName') continue;
-            let mutationValue = (typeof mutation[prop] === 'string') ?
-                xmlEscape(mutation[prop]) : mutation[prop];
-
-            // Handle dynamic extension blocks
-            if (prop === 'blockInfo') {
-                mutationValue = xmlEscape(JSON.stringify(mutation[prop]));
-            }
-
-            mutationString += ` ${prop}="${mutationValue}"`;
-        }
-        mutationString += '>';
-        for (let i = 0; i < mutation.children.length; i++) {
-            mutationString += this.mutationToXML(mutation.children[i]);
-        }
-        mutationString += `</${mutation.tagName}>`;
-        return mutationString;
+        return blockState;
     }
 
     // ---------------------------------------------------------------------

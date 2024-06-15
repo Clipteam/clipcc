@@ -34,10 +34,14 @@ class Variable {
         }
     }
 
-    toXML (isLocal) {
+    toJSON (isLocal) {
         isLocal = (isLocal === true);
-        return `<variable type="${this.type}" id="${this.id}" islocal="${isLocal
-        }" iscloud="${this.isCloud}">${xmlEscape(this.name)}</variable>`;
+        return {
+            type: this.type,
+            name: this.name,
+            isLocal,
+            isCloud: this.isCloud
+        };
     }
 
     /**

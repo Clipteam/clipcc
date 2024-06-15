@@ -19,37 +19,28 @@ const getExtensionColors = theme => getColorsForTheme(theme).pen;
  * Applies extension color theme to categories.
  * No changes are applied if called with the default theme, allowing extensions to provide their own colors.
  * These colors are not seen if the category provides a blockIconURI.
- * @param {Array.<object>} dynamicBlockXML - XML for each category of extension blocks, returned from getBlocksXML
+ * @param {Array.<object>} dynamicBlockDef - JSON definition for each category of extension blocks, returned from getBlocksXML
  * in the vm runtime.
  * @param {string} theme - Theme name
- * @returns {Array.<object>} Dynamic block XML updated with colors.
+ * @returns {Array.<object>} Dynamic block definition updated with colors.
  */
-const injectExtensionCategoryTheme = (dynamicBlockXML, theme) => {
+const injectExtensionCategoryTheme = (dynamicBlockDef, theme) => {
     // Don't do any manipulation for the default theme
-    if (theme === DEFAULT_THEME) return dynamicBlockXML;
+    if (theme === DEFAULT_THEME) return dynamicBlockDef;
 
     const extensionColors = getExtensionColors(theme);
     const extensionIcons = themeMap[theme].extensions;
-    const parser = new DOMParser();
-    const serializer = new XMLSerializer();
 
-    return dynamicBlockXML.map(extension => {
-        const dom = parser.parseFromString(extension.xml, 'text/xml');
-
-        dom.documentElement.setAttribute('colour', extensionColors.primary);
-        // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
-        dom.documentElement.setAttribute('secondaryColour', extensionColors.tertiary);
+    for (const extension of dynamicBlockDef) {
+        extension.colour = extensionColors.primary;
+        extension.secondaryColour = extensionColors.tertiary;
 
         const categoryIconURI = getCategoryIconURI(extensionIcons[extension.id]);
         if (categoryIconURI) {
-            dom.documentElement.setAttribute('iconURI', categoryIconURI);
+            extension.iconURI = categoryIconURI;
         }
-
-        return {
-            ...extension,
-            xml: serializer.serializeToString(dom)
-        };
-    });
+    }
+    return dynamicBlockDef;
 };
 
 const injectBlockIcons = (blockInfoJson, theme) => {

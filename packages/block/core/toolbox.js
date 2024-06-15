@@ -195,7 +195,6 @@ Toolbox.prototype.createFlyout_ = function() {
  */
 Toolbox.prototype.populate_ = function(newTree) {
   this.categoryMenu_.populate(newTree);
-  console.log('populated:', this.categoryMenu_.categories_);
   this.selectedItem_ = null; // All categories has been disposed, so clear selected item.
   this.showAll_();
   if (!this.isCollapsed_) {

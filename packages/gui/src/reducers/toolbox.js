@@ -1,8 +1,8 @@
 const UPDATE_TOOLBOX = 'scratch-gui/toolbox/UPDATE_TOOLBOX';
-import makeToolboxXML from '../lib/make-toolbox-xml';
+import makeToolboxContents from '../lib/make-toolbox';
 
 const initialState = {
-    toolboxXML: makeToolboxXML(true)
+    toolboxContents: makeToolboxContents(true)
 };
 
 const reducer = function (state, action) {
@@ -10,17 +10,17 @@ const reducer = function (state, action) {
     switch (action.type) {
     case UPDATE_TOOLBOX:
         return Object.assign({}, state, {
-            toolboxXML: action.toolboxXML
+            toolboxContents: action.toolboxContents
         });
     default:
         return state;
     }
 };
 
-const updateToolbox = function (toolboxXML) {
+const updateToolbox = function (toolboxContents) {
     return {
         type: UPDATE_TOOLBOX,
-        toolboxXML: toolboxXML
+        toolboxContents: toolboxContents
     };
 };
 
