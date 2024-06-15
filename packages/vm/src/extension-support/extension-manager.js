@@ -36,7 +36,7 @@ const builtinExtensions = {
  * @typedef {object} ConvertedBlockInfo - Raw extension block data paired with processed data ready for scratch-blocks
  * @property {ExtensionBlockMetadata} info - the raw block info
  * @property {object} json - the scratch-blocks JSON definition for this block
- * @property {string} xml - the scratch-blocks XML definition for this block
+ * @property {string} state - the scratch-blocks block state definition for this block
  */
 
 /**
@@ -255,16 +255,6 @@ class ExtensionManager {
     }
 
     /**
-     * Modify the provided text as necessary to ensure that it may be used as an attribute value in valid XML.
-     * @param {string} text - the text to be sanitized
-     * @returns {string} - the sanitized text
-     * @private
-     */
-    _sanitizeID (text) {
-        return text.toString().replace(/[<"&]/, '_');
-    }
-
-    /**
      * Apply minor cleanup and defaults for optional extension fields.
      * TODO: make the ID unique in cases where two copies of the same extension are loaded.
      * @param {string} serviceName - the name of the service hosting this extension block
@@ -388,7 +378,7 @@ class ExtensionManager {
             blockAllThreads: false,
             arguments: {}
         }, blockInfo);
-        blockInfo.opcode = blockInfo.opcode && this._sanitizeID(blockInfo.opcode);
+        blockInfo.opcode = blockInfo.opcode;
         blockInfo.text = blockInfo.text || blockInfo.opcode;
 
         switch (blockInfo.blockType) {
@@ -407,7 +397,7 @@ class ExtensionManager {
                 throw new Error('Missing opcode for block');
             }
 
-            const funcName = blockInfo.func ? this._sanitizeID(blockInfo.func) : blockInfo.opcode;
+            const funcName = blockInfo.func ?? blockInfo.opcode;
 
             const getBlockInfo = blockInfo.isDynamic ?
                 args => args && args.mutation && args.mutation.blockInfo :

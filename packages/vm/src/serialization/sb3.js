@@ -1205,35 +1205,6 @@ const deserializeMonitor = function (monitorData, runtime, targets, extensions) 
     runtime.requestAddMonitor(MonitorRecord(monitorData));
 };
 
-// Replace variable IDs throughout the project with
-// xml-safe versions.
-// This is to fix up projects imported from 2.0 where xml-unsafe names
-// were getting added to the variable ids.
-const replaceUnsafeCharsInVariableIds = function (targets) {
-    const allVarRefs = VariableUtil.getAllVarRefsForTargets(targets, true);
-    // Re-id the variables in the actual targets
-    targets.forEach(t => {
-        Object.keys(t.variables).forEach(id => {
-            const newId = StringUtil.replaceUnsafeChars(id);
-            if (newId === id) return;
-            t.variables[id].id = newId;
-            t.variables[newId] = t.variables[id];
-            delete t.variables[id];
-        });
-    });
-
-    // Replace the IDs in the blocks refrencing variables or lists
-    for (const id in allVarRefs) {
-        const newId = StringUtil.replaceUnsafeChars(id);
-        if (id === newId) continue; // ID was already safe, skip
-        // We're calling this on the stage target because we need a
-        // target to call on but this shouldn't matter because we're passing
-        // in all the varRefs we want to operate on
-        VariableUtil.updateVariableIdentifiers(allVarRefs[id], newId);
-    }
-    return targets;
-};
-
 /**
  * Deserialize the specified representation of a VM runtime and loads it into the provided runtime instance.
  * @param  {object} json - JSON representation of a VM runtime.
@@ -1290,7 +1261,6 @@ const deserialize = function (json, runtime, zip, isSingleSprite) {
                 delete t.targetPaneOrder;
                 return t;
             }))
-        .then(targets => replaceUnsafeCharsInVariableIds(targets))
         .then(targets => {
             monitorObjects.map(monitorDesc => deserializeMonitor(monitorDesc, runtime, targets, extensions));
             return targets;

@@ -25,9 +25,7 @@ goog.declareModuleId('Blockly.Events.CommentCreate');
 
 import * as eventUtils from './utils';
 import {CommentBase} from './comment_base';
-import * as Xml from '../xml';
-
-const dom = goog.require('goog.dom');
+import * as workspaces from '../serialization/workspaces';
 
 
 /**
@@ -77,7 +75,7 @@ export const CommentCreate = function(comment) {
    */
   this.minimized = comment.isMinimized() || false;
 
-  this.xml = comment.toXmlWithXY();
+  this.json = comment.toStateWithXY();
 };
 goog.inherits(CommentCreate, CommentBase);
 
@@ -95,7 +93,7 @@ CommentCreate.prototype.type = eventUtils.COMMENT_CREATE;
  */
 CommentCreate.prototype.toJson = function() {
   const json = CommentCreate.superClass_.toJson.call(this);
-  json['xml'] = Xml.domToText(this.xml);
+  json['json'] = this.json;
   return json;
 };
 
@@ -105,7 +103,7 @@ CommentCreate.prototype.toJson = function() {
  */
 CommentCreate.prototype.fromJson = function(json) {
   CommentCreate.superClass_.fromJson.call(this, json);
-  this.xml = Xml.textToDom('<xml>' + json['xml'] + '</xml>').firstChild;
+  this.json = json['json'];
 };
 
 /**
@@ -121,9 +119,7 @@ CommentCreate.prototype.run = function(forward) {
         block.setCommentText('', this.commentId, this.xy.x, this.xy.y, this.minimized);
       }
     } else {
-      const xml = dom.createDom('xml');
-      xml.appendChild(this.xml);
-      Xml.domToWorkspace(xml, workspace);
+      workspaces.load({comments: [this.json]}, workspace);
     }
   } else {
     const comment = this.getComment_();

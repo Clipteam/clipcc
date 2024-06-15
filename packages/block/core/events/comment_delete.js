@@ -25,10 +25,7 @@ goog.declareModuleId('Blockly.Events.CommentDelete');
 
 import * as eventUtils from './utils';
 import {CommentBase} from './comment_base';
-import * as Xml from '../xml';
-
-const dom = goog.require('goog.dom');
-
+import * as workspaces from '../serialization/workspaces';
 
 /**
  * Class for a comment deletion event.
@@ -49,7 +46,7 @@ export const CommentDelete = function(comment) {
   this.height = hw.height;
   this.width = hw.width;
 
-  this.xml = comment.toXmlWithXY();
+  this.json = comment.toStateWithXY();
 };
 goog.inherits(CommentDelete, CommentBase);
 
@@ -98,9 +95,7 @@ CommentDelete.prototype.run = function(forward) {
       block.setCommentText(this.text, this.commentId, this.xy.x, this.xy.y, this.minimized);
       block.comment.setSize(this.width, this.height);
     } else {
-      const xml = dom.createDom('xml');
-      xml.appendChild(this.xml);
-      Xml.domToWorkspace(xml, workspace);
+      workspaces.load({comments: [this.json]}, workspace);
     }
   }
 };

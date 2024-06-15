@@ -1,5 +1,4 @@
 const adapter = require('./adapter');
-const mutationAdapter = require('./mutation-adapter');
 const MonitorRecord = require('./monitor-record');
 const Clone = require('../util/clone');
 const {Map} = require('immutable');
@@ -270,9 +269,9 @@ class Blocks {
             const block = this._blocks[id];
             if (block.opcode === 'procedures_prototype' &&
                 block.mutation.proccode === name) {
-                const names = JSON.parse(block.mutation.argumentnames);
-                const ids = JSON.parse(block.mutation.argumentids);
-                const defaults = JSON.parse(block.mutation.argumentdefaults);
+                const names = block.mutation.argumentnames;
+                const ids = block.mutation.argumentids;
+                const defaults = block.mutation.argumentdefaults;
 
                 this._cache.procedureParamNames[name] = [names, ids, defaults];
                 return this._cache.procedureParamNames[name];
@@ -611,7 +610,7 @@ class Blocks {
             }
             break;
         case 'mutation':
-            block.mutation = mutationAdapter(args.value);
+            block.mutation = args.value;
             break;
         case 'checkbox': {
             // A checkbox usually has a one to one correspondence with the monitor
@@ -1110,10 +1109,9 @@ class Blocks {
                 if (blockInput.block) {
                     inputState.block = this.blockToJSON(blockInput.block, comments);
                 }
-                if (blockInput.shadow && blockInput.shadow !== blockInput.block) {
+                if (blockInput.shadow) {
                     // Obscured shadow.
                     inputState.block = this.blockToJSON(blockInput.shadow, comments);
-                    inputState.shadow = true;
                 }
             }
         }
@@ -1123,16 +1121,21 @@ class Blocks {
             if (!blockState.fields) blockState.fields = {};
             const blockField = block.fields[field];
             blockState.fields[blockField.name] = {};
-            const fieldState = blockState.fields[blockField.name];
+            const fields = blockState.fields;
             const fieldId = blockField.id;
+
+            // It's a variable
             if (fieldId) {
-                fieldState.id =fieldId;
+                fields[blockField.name] = {};
+                fields[blockField.name].id = fieldId;
             }
             const varType = blockField.variableType;
             if (typeof varType === 'string') {
-                fieldState.variableType = varType;
+                fields[blockField.name].variableType = varType;
+                fields[blockField.name].value = blockField.value;
             }
-            fieldState.value = blockField.value;
+
+            fields[blockField.name] = blockField.value;
         }
         // Add blocks connected to the next connection.
         if (block.next) {

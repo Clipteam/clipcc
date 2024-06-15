@@ -294,7 +294,7 @@ export const DELETE_AREA_TRASH = 1;
 export const DELETE_AREA_TOOLBOX = 2;
 
 /**
- * String for use in the "custom" attribute of a category in toolbox xml.
+ * String for use in the "custom" attribute of a category in toolbox definition.
  * This string indicates that the category should be dynamically populated with
  * variable blocks.
  * @const {string}
@@ -302,7 +302,7 @@ export const DELETE_AREA_TOOLBOX = 2;
 export const VARIABLE_CATEGORY_NAME = 'VARIABLE';
 
 /**
- * String for use in the "custom" attribute of a category in toolbox xml.
+ * String for use in the "custom" attribute of a category in toolbox definition.
  * This string indicates that the category should be dynamically populated with
  * procedure blocks.
  * @const {string}

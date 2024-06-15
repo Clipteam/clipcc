@@ -106,7 +106,7 @@ class Scratch3SensingBlocks {
                 getId: () => 'timer'
             },
             sensing_current: {
-                // This is different from the default toolbox xml id in order to support
+                // This is different from the default toolbox state id in order to support
                 // importing multiple monitors from the same opcode from sb2 files,
                 // something that is not currently supported in scratch 3.
                 getId: (_, fields) => getMonitorIdForBlockWithArgs('current', fields) // _${param}`

@@ -33,6 +33,19 @@ goog.require('Blockly.ScratchBlocks.VerticalExtensions');
 // Serialization and deserialization.
 
 /**
+ * Trying parse a JSON string.
+ * @param {string} string The string to be parsed
+ * @returns {Object?} Parsed object or null;
+ */
+const tryParse = function (string) {
+  try {
+    return JSON.parse(string);
+  } catch (e) {
+    return null;
+  }
+}
+
+/**
  * Create XML to represent the (non-editable) name and arguments of a procedure
  * call block.
  * @return {!Element} XML storage element.
@@ -68,10 +81,11 @@ Blockly.ScratchBlocks.ProcedureUtils.callerDomToMutation = function(xmlElement) 
  * @this Blockly.Block
  */
 Blockly.ScratchBlocks.ProcedureUtils.callerSaveExtraState = function () {
+  // Stringify all non-string stuff in order to keep compatitble for old mutation format.
   return {
     proccode: this.procCode_,
-    argumentids: this.argumentIds_,
-    warp: this.warp_
+    argumentids: JSON.stringify(this.argumentIds_),
+    warp: JSON.stringify(this.warp_)
   };
 };
 
@@ -83,9 +97,9 @@ Blockly.ScratchBlocks.ProcedureUtils.callerSaveExtraState = function () {
  */
 Blockly.ScratchBlocks.ProcedureUtils.callerLoadExtraState = function (state) {
   this.procCode_ = state.proccode;
-  this.generateShadows_ = state.generateshadows;
-  this.argumentIds_ = state.argumentids;
-  this.warp_ = state.warp;
+  this.generateShadows_ = tryParse(state.generateshadows) ?? [];
+  this.argumentIds_ = tryParse(state.argumentids) ?? [];
+  this.warp_ = tryParse(state.warp) ?? false;
   this.updateDisplay_();
 };
 
@@ -146,13 +160,14 @@ Blockly.ScratchBlocks.ProcedureUtils.definitionDomToMutation = function(xmlEleme
  */
 Blockly.ScratchBlocks.ProcedureUtils.definitionSaveExtraState = function(
     opt_generateShadows) {
+  // Stringify all non-string stuff in order to keep compatitble for old mutation format.
   return {
-    generateshadows: opt_generateShadows,
+    generateshadows: JSON.stringify(opt_generateShadows),
     proccode: this.procCode_,
-    argumentids: this.argumentIds_,
-    argumentnames: this.displayNames_,
-    argumentdefaults: this.argumentDefaults_,
-    warp: this.warp_
+    argumentids: JSON.stringify(this.argumentIds_),
+    argumentnames: JSON.stringify(this.displayNames_),
+    argumentdefaults: JSON.stringify(this.argumentDefaults_),
+    warp: JSON.stringify(this.warp_)
   };
 };
 
@@ -164,14 +179,14 @@ Blockly.ScratchBlocks.ProcedureUtils.definitionSaveExtraState = function(
  */
 Blockly.ScratchBlocks.ProcedureUtils.definitionLoadExtraState = function(state) {
   this.procCode_ = state.proccode;
-  this.warp_ = state.warp;
+  this.warp_ = tryParse(state.warp) ?? false;
 
   const prevArgIds = this.argumentIds_;
   const prevDisplayNames = this.displayNames_;
 
-  this.argumentIds_ = state.argumentids;
-  this.displayNames_ = state.argumentnames;
-  this.argumentDefaults_ = state.argumentdefaults;
+  this.argumentIds_ = tryParse(state.argumentids) ?? [];
+  this.displayNames_ = tryParse(state.argumentnames) ?? [];
+  this.argumentDefaults_ = tryParse(state.argumentdefaults) ?? [];
   this.updateDisplay_();
   if (this.updateArgumentReporterNames_) {
     this.updateArgumentReporterNames_(prevArgIds, prevDisplayNames);
@@ -481,7 +496,7 @@ Blockly.ScratchBlocks.ProcedureUtils.populateArgumentOnCaller_ = function(type,
     oldBlock.outputConnection.connect(input.connection);
     if (type != 'b' && this.generateShadows_) {
       const shadowState = oldShadow || this.buildShadowState_(type);
-      console.log("setting shadow state: " + shadowState);
+      console.log("setting shadow state: ", shadowState);
       input.connection.setShadowState(shadowState);
     }
   } else if (this.generateShadows_) {

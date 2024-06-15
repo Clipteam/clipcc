@@ -25,7 +25,7 @@ goog.declareModuleId('Blockly.Events.EndBlockDrag');
 
 import * as eventUtils from './utils';
 import {BlockBase} from './block_base';
-import * as Xml from '../xml';
+import * as blocks from '../serialization/blocks';
 
 
 /**
@@ -42,9 +42,9 @@ export const EndBlockDrag = function(block, isOutside) {
   }
   EndBlockDrag.superClass_.constructor.call(this, block);
   this.isOutside = isOutside;
-  // If drag ends outside the blocks workspace, send the block XML
+  // If drag ends outside the blocks workspace, send the block state
   if (isOutside) {
-    this.xml = Xml.blockToDom(block, true /* opt_noId */);
+    this.json = blocks.save(block, {noId: true});
   }
   this.recordUndo = false;
 };
@@ -65,8 +65,8 @@ EndBlockDrag.prototype.toJson = function() {
   if (this.isOutside) {
     json['isOutside'] = this.isOutside;
   }
-  if (this.xml) {
-    json['xml'] = this.xml;
+  if (this.json) {
+    json['json'] = this.json;
   }
   return json;
 };
@@ -78,7 +78,7 @@ EndBlockDrag.prototype.toJson = function() {
 EndBlockDrag.prototype.fromJson = function(json) {
   EndBlockDrag.superClass_.fromJson.call(this, json);
   this.isOutside = json['isOutside'];
-  this.xml = json['xml'];
+  this.json = json['json'];
 };
 
 eventUtils.register(eventUtils.END_DRAG, EndBlockDrag);

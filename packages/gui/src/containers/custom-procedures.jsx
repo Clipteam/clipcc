@@ -100,7 +100,7 @@ class CustomProcedures extends React.Component {
             }
             this.mutationRoot.moveBy(dx, dy);
         });
-        this.mutationRoot.loadExtraState(JSON.parse(this.props.mutator));
+        this.mutationRoot.loadExtraState(this.props.mutator);
         this.mutationRoot.initSvg();
         this.mutationRoot.render();
         this.setState({warp: this.mutationRoot.getWarp()});

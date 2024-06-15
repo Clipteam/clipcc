@@ -600,23 +600,6 @@ ScratchBlockComment.prototype.showContextMenu_ = function(e) {
 };
 
 /**
- * Encode a comment subtree as XML with XY coordinates.
- * @return {!Element} Tree of XML elements.
- * @package
- */
-ScratchBlockComment.prototype.toXmlWithXY = function() {
-  const element = dom.createDom('comment');
-  element.setAttribute('id', this.id);
-  element.textContent = this.text_;
-  element.setAttribute('x', Math.round(
-      this.workspace.RTL ? this.workspace.getWidth() - this.x_ : this.x_));
-  element.setAttribute('y', Math.round(this.y_));
-  element.setAttribute('h', this.height_);
-  element.setAttribute('w', this.width_);
-  return element;
-};
-
-/**
  * Encode a comment subtree as JSON with XY coordinates.
  * @return {!Object} The comment state JSON.
  * @package

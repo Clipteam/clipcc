@@ -299,7 +299,7 @@ const saveNextBlocks = function(block, state, doFullSerialization) {
     nextState.shadow = cloneShadow(shadow);
   }
 
-  if (nextState) {
+  if (Object.keys(nextState).length) {
     state['next'] = nextState;
   }
 };

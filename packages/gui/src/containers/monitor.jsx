@@ -276,7 +276,7 @@ const mapStateToProps = state => ({
     monitorLayout: state.scratchGui.monitorLayout,
     theme: state.scratchGui.theme.theme,
     // render on toolbox updates since changes to the blocks could affect monitor labels, i.e. updated locale
-    toolboxContens: state.scratchGui.toolbox.toolboxContents,
+    toolboxContents: state.scratchGui.toolbox.toolboxContents,
     vm: state.scratchGui.vm
 });
 const mapDispatchToProps = dispatch => ({

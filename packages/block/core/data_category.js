@@ -44,80 +44,80 @@ const dom = goog.require('goog.dom');
 /**
  * Construct the blocks required by the flyout for the variable category.
  * @param {!Blockly.Workspace} workspace The workspace containing variables.
- * @return {!Array.<!Element>} Array of XML block elements.
+ * @return {!Array.<!Element>} Array of block elements.
  */
 export const DataCategory = function(workspace) {
   let variableModelList = workspace.getVariablesOfType('');
   variableModelList.sort(VariableModel.compareByName);
-  const xmlList = [];
+  const content = [];
 
-  DataCategory.addCreateButton(xmlList, workspace, 'VARIABLE');
+  DataCategory.addCreateButton(content, workspace, 'VARIABLE');
 
   for (let i = 0; i < variableModelList.length; i++) {
-    DataCategory.addDataVariable(xmlList, variableModelList[i]);
+    DataCategory.addDataVariable(content, variableModelList[i]);
   }
 
   if (variableModelList.length > 0) {
-    xmlList[xmlList.length - 1].setAttribute('gap', 24);
+    content[content.length - 1].gap = 24;
     const firstVariable = variableModelList[0];
 
-    DataCategory.addSetVariableTo(xmlList, firstVariable);
-    DataCategory.addChangeVariableBy(xmlList, firstVariable);
-    DataCategory.addShowVariable(xmlList, firstVariable);
-    DataCategory.addHideVariable(xmlList, firstVariable);
+    DataCategory.addSetVariableTo(content, firstVariable);
+    DataCategory.addChangeVariableBy(content, firstVariable);
+    DataCategory.addShowVariable(content, firstVariable);
+    DataCategory.addHideVariable(content, firstVariable);
   }
 
   // Now add list variables to the flyout
-  DataCategory.addCreateButton(xmlList, workspace, 'LIST');
+  DataCategory.addCreateButton(content, workspace, 'LIST');
   variableModelList = workspace.getVariablesOfType(constants.LIST_VARIABLE_TYPE);
   variableModelList.sort(VariableModel.compareByName);
   for (let i = 0; i < variableModelList.length; i++) {
-    DataCategory.addDataList(xmlList, variableModelList[i]);
+    DataCategory.addDataList(content, variableModelList[i]);
   }
 
   if (variableModelList.length > 0) {
-    xmlList[xmlList.length - 1].setAttribute('gap', 24);
+    content[content.length - 1].gap = 24;
     const firstVariable = variableModelList[0];
 
-    DataCategory.addAddToList(xmlList, firstVariable);
-    DataCategory.addSep(xmlList);
-    DataCategory.addDeleteOfList(xmlList, firstVariable);
-    DataCategory.addDeleteAllOfList(xmlList, firstVariable);
-    DataCategory.addInsertAtList(xmlList, firstVariable);
-    DataCategory.addReplaceItemOfList(xmlList, firstVariable);
-    DataCategory.addSep(xmlList);
-    DataCategory.addItemOfList(xmlList, firstVariable);
-    DataCategory.addItemNumberOfList(xmlList, firstVariable);
-    DataCategory.addLengthOfList(xmlList, firstVariable);
-    DataCategory.addListContainsItem(xmlList, firstVariable);
-    DataCategory.addSep(xmlList);
-    DataCategory.addShowList(xmlList, firstVariable);
-    DataCategory.addHideList(xmlList, firstVariable);
+    DataCategory.addAddToList(content, firstVariable);
+    DataCategory.addSep(content);
+    DataCategory.addDeleteOfList(content, firstVariable);
+    DataCategory.addDeleteAllOfList(content, firstVariable);
+    DataCategory.addInsertAtList(content, firstVariable);
+    DataCategory.addReplaceItemOfList(content, firstVariable);
+    DataCategory.addSep(content);
+    DataCategory.addItemOfList(content, firstVariable);
+    DataCategory.addItemNumberOfList(content, firstVariable);
+    DataCategory.addLengthOfList(content, firstVariable);
+    DataCategory.addListContainsItem(content, firstVariable);
+    DataCategory.addSep(content);
+    DataCategory.addShowList(content, firstVariable);
+    DataCategory.addHideList(content, firstVariable);
   }
 
-  return xmlList;
+  return content;
 };
 
 /**
- * Construct and add a data_variable block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_variable block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addDataVariable = function(xmlList, variable) {
+DataCategory.addDataVariable = function(content, variable) {
   // <block id="variableId" type="data_variable">
   //    <field name="VARIABLE">variablename</field>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_variable', 'VARIABLE');
+  DataCategory.addBlock(content, variable, 'data_variable', 'VARIABLE');
   // In the flyout, this ID must match variable ID for monitor syncing reasons
-  xmlList[xmlList.length - 1].setAttribute('id', variable.getId());
+  content[content.length - 1].id = variable.getId();
 };
 
 /**
- * Construct and add a data_setvariableto block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_setvariableto block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addSetVariableTo = function(xmlList, variable) {
+DataCategory.addSetVariableTo = function (content, variable) {
   // <block type="data_setvariableto" gap="20">
   //   <value name="VARIABLE">
   //    <shadow type="data_variablemenu"></shadow>
@@ -128,16 +128,16 @@ DataCategory.addSetVariableTo = function(xmlList, variable) {
   //     </shadow>
   //   </value>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_setvariableto',
+  DataCategory.addBlock(content, variable, 'data_setvariableto',
       'VARIABLE', ['VALUE', 'text', 0]);
 };
 
 /**
- * Construct and add a data_changevariableby block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_changevariableby block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addChangeVariableBy = function(xmlList, variable) {
+DataCategory.addChangeVariableBy = function(content, variable) {
   // <block type="data_changevariableby">
   //   <value name="VARIABLE">
   //    <shadow type="data_variablemenu"></shadow>
@@ -148,60 +148,60 @@ DataCategory.addChangeVariableBy = function(xmlList, variable) {
   //     </shadow>
   //   </value>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_changevariableby',
+  DataCategory.addBlock(content, variable, 'data_changevariableby',
       'VARIABLE', ['VALUE', 'math_number', 1]);
 };
 
 /**
- * Construct and add a data_showVariable block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_showVariable block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addShowVariable = function(xmlList, variable) {
+DataCategory.addShowVariable = function (content, variable) {
   // <block type="data_showvariable">
   //   <value name="VARIABLE">
   //     <shadow type="data_variablemenu"></shadow>
   //   </value>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_showvariable',
+  DataCategory.addBlock(content, variable, 'data_showvariable',
       'VARIABLE');
 };
 
 /**
- * Construct and add a data_hideVariable block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_hideVariable block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addHideVariable = function(xmlList, variable) {
+DataCategory.addHideVariable = function(content, variable) {
   // <block type="data_hidevariable">
   //   <value name="VARIABLE">
   //     <shadow type="data_variablemenu"></shadow>
   //   </value>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_hidevariable',
+  DataCategory.addBlock(content, variable, 'data_hidevariable',
       'VARIABLE');
 };
 
 /**
- * Construct and add a data_listcontents block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_listcontents block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addDataList = function(xmlList, variable) {
+DataCategory.addDataList = function(content, variable) {
   // <block id="variableId" type="data_listcontents">
   //    <field name="LIST">variablename</field>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_listcontents', 'LIST');
+  DataCategory.addBlock(content, variable, 'data_listcontents', 'LIST');
   // In the flyout, this ID must match variable ID for monitor syncing reasons
-  xmlList[xmlList.length - 1].setAttribute('id', variable.getId());
+  content[content.length - 1].id = variable.getId();
 };
 
 /**
- * Construct and add a data_addtolist block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_addtolist block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addAddToList = function(xmlList, variable) {
+DataCategory.addAddToList = function (content, variable) {
   // <block type="data_addtolist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   //   <value name="ITEM">
@@ -210,16 +210,16 @@ DataCategory.addAddToList = function(xmlList, variable) {
   //     </shadow>
   //   </value>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_addtolist', 'LIST',
+  DataCategory.addBlock(content, variable, 'data_addtolist', 'LIST',
       ['ITEM', 'text', Msg.DEFAULT_LIST_ITEM]);
 };
 
 /**
- * Construct and add a data_deleteoflist block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_deleteoflist block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addDeleteOfList = function(xmlList, variable) {
+DataCategory.addDeleteOfList = function (content, variable) {
   // <block type="data_deleteoflist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   //   <value name="INDEX">
@@ -228,29 +228,29 @@ DataCategory.addDeleteOfList = function(xmlList, variable) {
   //     </shadow>
   //   </value>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_deleteoflist', 'LIST',
+  DataCategory.addBlock(content, variable, 'data_deleteoflist', 'LIST',
       ['INDEX', 'math_integer', 1]);
 };
 
 /**
- * Construct and add a data_deleteoflist block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_deleteoflist block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addDeleteAllOfList = function(xmlList, variable) {
+DataCategory.addDeleteAllOfList = function (content, variable) {
   // <block type="data_deletealloflist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_deletealloflist',
+  DataCategory.addBlock(content, variable, 'data_deletealloflist',
       'LIST');
 };
 
 /**
- * Construct and add a data_insertatlist block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_insertatlist block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addInsertAtList = function(xmlList, variable) {
+DataCategory.addInsertAtList = function(content, variable) {
   // <block type="data_insertatlist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   //   <value name="INDEX">
@@ -264,16 +264,16 @@ DataCategory.addInsertAtList = function(xmlList, variable) {
   //     </shadow>
   //   </value>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_insertatlist', 'LIST',
+  DataCategory.addBlock(content, variable, 'data_insertatlist', 'LIST',
       ['INDEX', 'math_integer', 1], ['ITEM', 'text', Msg.DEFAULT_LIST_ITEM]);
 };
 
 /**
- * Construct and add a data_replaceitemoflist block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_replaceitemoflist block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addReplaceItemOfList = function(xmlList, variable) {
+DataCategory.addReplaceItemOfList = function(content, variable) {
   // <block type="data_replaceitemoflist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   //   <value name="INDEX">
@@ -287,16 +287,16 @@ DataCategory.addReplaceItemOfList = function(xmlList, variable) {
   //     </shadow>
   //   </value>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_replaceitemoflist',
+  DataCategory.addBlock(content, variable, 'data_replaceitemoflist',
       'LIST', ['INDEX', 'math_integer', 1], ['ITEM', 'text', Msg.DEFAULT_LIST_ITEM]);
 };
 
 /**
- * Construct and add a data_itemoflist block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_itemoflist block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addItemOfList = function(xmlList, variable) {
+DataCategory.addItemOfList = function(content, variable) {
   // <block type="data_itemoflist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   //   <value name="INDEX">
@@ -305,15 +305,15 @@ DataCategory.addItemOfList = function(xmlList, variable) {
   //     </shadow>
   //   </value>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_itemoflist', 'LIST',
+  DataCategory.addBlock(content, variable, 'data_itemoflist', 'LIST',
       ['INDEX', 'math_integer', 1]);
 };
 
-/** Construct and add a data_itemnumoflist block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+/** Construct and add a data_itemnumoflist block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addItemNumberOfList = function(xmlList, variable) {
+DataCategory.addItemNumberOfList = function(content, variable) {
   // <block type="data_itemnumoflist">
   //   <value name="ITEM">
   //     <shadow type="text">
@@ -322,28 +322,28 @@ DataCategory.addItemNumberOfList = function(xmlList, variable) {
   //   </value>
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_itemnumoflist',
+  DataCategory.addBlock(content, variable, 'data_itemnumoflist',
       'LIST', ['ITEM', 'text', Msg.DEFAULT_LIST_ITEM]);
 };
 
 /**
- * Construct and add a data_lengthoflist block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_lengthoflist block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addLengthOfList = function(xmlList, variable) {
+DataCategory.addLengthOfList = function(content, variable) {
   // <block type="data_lengthoflist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_lengthoflist', 'LIST');
+  DataCategory.addBlock(content, variable, 'data_lengthoflist', 'LIST');
 };
 
 /**
- * Construct and add a data_listcontainsitem block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_listcontainsitem block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addListContainsItem = function(xmlList, variable) {
+DataCategory.addListContainsItem = function(content, variable) {
   // <block type="data_listcontainsitem">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   //   <value name="ITEM">
@@ -352,43 +352,43 @@ DataCategory.addListContainsItem = function(xmlList, variable) {
   //     </shadow>
   //   </value>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_listcontainsitem',
+  DataCategory.addBlock(content, variable, 'data_listcontainsitem',
       'LIST', ['ITEM', 'text', Msg.DEFAULT_LIST_ITEM]);
 };
 
 /**
- * Construct and add a data_showlist block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_showlist block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addShowList = function(xmlList, variable) {
+DataCategory.addShowList = function(content, variable) {
   // <block type="data_showlist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_showlist', 'LIST');
+  DataCategory.addBlock(content, variable, 'data_showlist', 'LIST');
 };
 
 /**
- * Construct and add a data_hidelist block to xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct and add a data_hidelist block to content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addHideList = function(xmlList, variable) {
+DataCategory.addHideList = function(content, variable) {
   // <block type="data_hidelist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   // </block>
-  DataCategory.addBlock(xmlList, variable, 'data_hidelist', 'LIST');
+  DataCategory.addBlock(content, variable, 'data_hidelist', 'LIST');
 };
 
 /**
- * Construct a create variable button and push it to the xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct a create variable button and push it to the content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {Blockly.Workspace} workspace Workspace to register callback to.
  * @param {string} type Type of variable this is for. For example, 'LIST' or
  *     'VARIABLE'.
  */
-DataCategory.addCreateButton = function(xmlList, workspace, type) {
-  const button = dom.createDom('button');
+DataCategory.addCreateButton = function(content, workspace, type) {
+  const button = {kind: 'button'};
   // Set default msg, callbackKey, and callback values for type 'VARIABLE'
   let msg = Msg.NEW_VARIABLE;
   let callbackKey = 'CREATE_VARIABLE';
@@ -402,16 +402,18 @@ DataCategory.addCreateButton = function(xmlList, workspace, type) {
       Variables.createVariable(button.getTargetWorkspace(), null,
           constants.LIST_VARIABLE_TYPE);};
   }
-  button.setAttribute('text', msg);
-  button.setAttribute('callbackKey', callbackKey);
+  Object.assign(button, {
+    text: msg,
+    callbackkey: callbackKey
+  });
   workspace.registerButtonCallback(callbackKey, callback);
-  xmlList.push(button);
+  content.push(button);
 };
 
 /**
  * Construct a variable block with the given variable, blockType, and optional
- *     value tags. Add the variable block to the given xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ *     value tags. Add the variable block to the given content.
+ * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  * @param {string} blockType Type of block. For example, 'data_hidelist' or
  *     data_showlist'.
@@ -422,7 +424,7 @@ DataCategory.addCreateButton = function(xmlList, workspace, type) {
  * @param {?Array.<string>} opt_secondValue Optional array containing the value
  *     name and shadow type of a second pair of value tags.
  */
-DataCategory.addBlock = function(xmlList, variable, blockType,
+DataCategory.addBlock = function(content, variable, blockType,
     fieldName, opt_value, opt_secondValue) {
   if (Blocks[blockType]) {
     let firstValueField;
@@ -436,25 +438,25 @@ DataCategory.addBlock = function(xmlList, variable, blockType,
           opt_secondValue[1], opt_secondValue[2]);
     }
 
-    const gap = 8;
-    const blockText = '<xml>' +
-        '<block type="' + blockType + '" gap="' + gap + '">' +
-        Variables.generateVariableFieldXml(variable, fieldName) +
-        firstValueField + secondValueField +
-        '</block>' +
-        '</xml>';
-    const block = Xml.textToDom(blockText).firstChild;
-    xmlList.push(block);
+    const blockState = {
+      kind: 'block',
+      type: blockType,
+      gap: 8,
+      fields: Variables.generateVariableFieldState(variable, fieldName)
+    };
+    blockState.inputs[firstValueField.name] = {block: firstValueField.field};
+    blockState.inputs[secondValueField.name] = {block: secondValueField.field};
+    content.push(blockState);
   }
 };
 
 /**
- * Create the text representation of a value dom element with a shadow of the
+ * Create the text representation of a value state with a shadow of the
  *     indicated type inside.
  * @param {string} valueName Name of the value tags.
  * @param {string} type The type of the shadow tags.
  * @param {string|number} value The default shadow value.
- * @return {string} The generated dom element in text.
+ * @return {Object} The generated state.
  */
 DataCategory.createValue = function(valueName, type, value) {
   let fieldName;
@@ -473,24 +475,23 @@ DataCategory.createValue = function(valueName, type, value) {
       }
       break;
   }
-  const valueField =
-      '<value name="' + valueName + '">' +
-      '<shadow type="' + type + '">' +
-      '<field name="' + fieldName + '">' + value + '</field>' +
-      '</shadow>' +
-      '</value>';
-  return valueField;
+  return {
+    name: valueName,
+    field: {
+      type: type,
+      fields: {[fieldName]: value},
+      shadow: true
+    }
+  };
 };
 
 /**
- * Construct a block separator. Add the separator to the given xmlList.
- * @param {!Array.<!Element>} xmlList Array of XML block elements.
+ * Construct a block separator. Add the separator to the given content.
+ * @param {!Array.<!Object>} content Array of block elements.
  */
-DataCategory.addSep = function(xmlList) {
-  const gap = 36;
-  const sepText = '<xml>' +
-      '<sep gap="' + gap + '"/>' +
-      '</xml>';
-  const sep = Xml.textToDom(sepText).firstChild;
-  xmlList.push(sep);
+DataCategory.addSep = function(content) {
+  content.push({
+    kind: sep,
+    gap: 36
+  });
 };

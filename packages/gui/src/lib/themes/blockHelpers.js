@@ -19,7 +19,7 @@ const getExtensionColors = theme => getColorsForTheme(theme).pen;
  * Applies extension color theme to categories.
  * No changes are applied if called with the default theme, allowing extensions to provide their own colors.
  * These colors are not seen if the category provides a blockIconURI.
- * @param {Array.<object>} dynamicBlockDef - JSON definition for each category of extension blocks, returned from getBlocksXML
+ * @param {Array.<object>} dynamicBlockDef - JSON definition for each category of extension blocks, returned from getBlocksDef
  * in the vm runtime.
  * @param {string} theme - Theme name
  * @returns {Array.<object>} Dynamic block definition updated with colors.

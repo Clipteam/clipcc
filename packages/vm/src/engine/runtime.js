@@ -15,7 +15,6 @@ const log = require('../util/log');
 const maybeFormatMessage = require('../util/maybe-format-message');
 const StageLayering = require('./stage-layering');
 const Variable = require('./variable');
-const xmlEscape = require('../util/xml-escape');
 const ScratchLinkWebSocket = require('../util/scratch-link-websocket');
 
 // Virtual I/O devices.
@@ -846,7 +845,7 @@ class Runtime extends EventEmitter {
      * @private
      */
     _makeExtensionMenuId (menuName, extensionId) {
-        return `${extensionId}_menu_${xmlEscape(menuName)}`;
+        return `${extensionId}_menu_${menuName}`;
     }
 
     /**
@@ -1108,7 +1107,7 @@ class Runtime extends EventEmitter {
     }
 
     /**
-     * Convert ExtensionBlockMetadata into scratch-blocks JSON & XML, and generate a proxy function.
+     * Convert ExtensionBlockMetadata into scratch-blocks JSON & BlockState, and generate a proxy function.
      * @param {ExtensionBlockMetadata} blockInfo - the block to convert
      * @param {CategoryInfo} categoryInfo - the category for this block
      * @returns {ConvertedBlockInfo} - the converted & original block information
@@ -1134,7 +1133,7 @@ class Runtime extends EventEmitter {
             blockJSON,
             categoryInfo,
             blockInfo,
-            inputList: []
+            inputs: {}
         };
 
         // If an icon for the extension exists, prepend it to each block, with a vertical separator.
@@ -1229,7 +1228,7 @@ class Runtime extends EventEmitter {
         }
 
         if (blockInfo.blockType === BlockType.REPORTER) {
-            if (!blockInfo.disableMonitor && context.inputList.length === 0) {
+            if (!blockInfo.disableMonitor && Object.keys(context.inputs).length === 0) {
                 blockJSON.checkboxInFlyout = true;
             }
         } else if (blockInfo.blockType === BlockType.LOOP) {
@@ -1247,14 +1246,18 @@ class Runtime extends EventEmitter {
             ++outLineNum;
         }
 
-        const mutation = blockInfo.isDynamic ? `<mutation blockInfo="${xmlEscape(JSON.stringify(blockInfo))}"/>` : '';
-        const inputs = context.inputList.join('');
-        const blockXML = `<block type="${extendedOpcode}">${mutation}${inputs}</block>`;
+        // Dynamic block is not finished now, just ignore it.
+        // const mutation = blockInfo.isDynamic ? `<mutation blockInfo="${xmlEscape(JSON.stringify(blockInfo))}"/>` : '';
+        const blockState = {
+            kind: 'block',
+            type: extendedOpcode,
+            inputs: context.inputs
+        };
 
         return {
             info: context.blockInfo,
             json: context.blockJSON,
-            xml: blockXML
+            state: blockState
         };
     }
 
@@ -1268,7 +1271,10 @@ class Runtime extends EventEmitter {
     _convertSeparatorForScratchBlocks (blockInfo) {
         return {
             info: blockInfo,
-            xml: '<sep gap="36"/>'
+            state: {
+                kind: 'sep',
+                gap: 36
+            }
         };
     }
 
@@ -1291,7 +1297,11 @@ class Runtime extends EventEmitter {
         const buttonText = maybeFormatMessage(buttonInfo.text, extensionMessageContext);
         return {
             info: buttonInfo,
-            xml: `<button text="${buttonText}" callbackKey="${buttonInfo.func}"></button>`
+            state: {
+                kind: 'button',
+                text: buttonText,
+                callbackKey: buttonInfo.func
+            }
         };
     }
 
@@ -1320,7 +1330,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Helper for _convertForScratchBlocks which handles linearization of argument placeholders. Called as a callback
-     * from string#replace. In addition to the return value the JSON and XML items in the context will be filled.
+     * from string#replace. In addition to the return value the JSON and inputState items in the context will be filled.
      * @param {object} context - information shared with _convertForScratchBlocks about the block, etc.
      * @param {string} match - the overall string matched by the placeholder regex, including brackets: '[FOO]'.
      * @param {string} placeholder - the name of the placeholder being matched: 'FOO'.
@@ -1328,9 +1338,6 @@ class Runtime extends EventEmitter {
      * @private
      */
     _convertPlaceholders (context, match, placeholder) {
-        // Sanitize the placeholder to ensure valid XML
-        placeholder = placeholder.replace(/[<"&]/, '_');
-
         // Determine whether the argument type is one of the known standard field types
         const argInfo = context.blockInfo.arguments[placeholder] || {};
         let argTypeInfo = ArgumentTypeMap[argInfo.type] || {};
@@ -1359,7 +1366,7 @@ class Runtime extends EventEmitter {
 
             const defaultValue =
                 typeof argInfo.defaultValue === 'undefined' ? '' :
-                    xmlEscape(maybeFormatMessage(argInfo.defaultValue, this.makeMessageContextForTarget()).toString());
+                    maybeFormatMessage(argInfo.defaultValue, this.makeMessageContextForTarget()).toString();
 
             if (argTypeInfo.check) {
                 // Right now the only type of 'check' we have specifies that the
@@ -1390,29 +1397,19 @@ class Runtime extends EventEmitter {
                 fieldName = (argTypeInfo.shadow && argTypeInfo.shadow.fieldName) || null;
             }
 
-            // <value> is the ScratchBlocks name for a block input.
             if (valueName) {
-                context.inputList.push(`<value name="${placeholder}">`);
+                context.inputs[placeholder] = {};
             }
 
-            // The <shadow> is a placeholder for a reporter and is visible when there's no reporter in this input.
-            // Boolean inputs don't need to specify a shadow in the XML.
             if (shadowType) {
-                context.inputList.push(`<shadow type="${shadowType}">`);
+                context.inputs[placeholder] = {block: {
+                    type: shadowType,
+                    shadow: true
+                }};
             }
 
-            // A <field> displays a dynamic value: a user-editable text field, a drop-down menu, etc.
-            // Leave out the field if defaultValue or fieldName are not specified
             if (defaultValue && fieldName) {
-                context.inputList.push(`<field name="${fieldName}">${defaultValue}</field>`);
-            }
-
-            if (shadowType) {
-                context.inputList.push('</shadow>');
-            }
-
-            if (valueName) {
-                context.inputList.push('</value>');
+                context.inputs[placeholder].block.fields = {[fieldName]: defaultValue};
             }
         }
 
@@ -1454,10 +1451,6 @@ class Runtime extends EventEmitter {
                 menuIconURI = categoryInfo.menuIconURI;
             } else if (categoryInfo.blockIconURI) {
                 menuIconURI = categoryInfo.blockIconURI;
-            }
-            let statusButtonXML = '';
-            if (categoryInfo.showStatusButton) {
-                statusButtonXML = 'showStatusButton="true"';
             }
 
             return {

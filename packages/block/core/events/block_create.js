@@ -26,7 +26,6 @@ goog.declareModuleId('Blockly.Events.BlockCreate');
 import * as eventUtils from './utils';
 import {BlockBase} from './block_base';
 import * as blocks from '../serialization/blocks';
-import * as Xml from '../xml';
 
 /**
  * Class for a block creation event.
@@ -39,8 +38,6 @@ export const BlockCreate = function(block) {
     return;  // Blank event to be populated by fromJson.
   }
   BlockCreate.superClass_.constructor.call(this, block);
-
-  this.xml = Xml.blockToDomWithXY(block);
 
   /**
    * JSON representation of the block that was just created.
@@ -64,7 +61,6 @@ BlockCreate.prototype.type = eventUtils.CREATE;
  */
 BlockCreate.prototype.toJson = function() {
   const json = BlockCreate.superClass_.toJson.call(this);
-  json['xml'] = Xml.domToText(this.xml);
   json['json'] = this.json;
   json['ids'] = this.ids;
   return json;
@@ -76,7 +72,6 @@ BlockCreate.prototype.toJson = function() {
  */
 BlockCreate.prototype.fromJson = function(json) {
   BlockCreate.superClass_.fromJson.call(this, json);
-  this.xml = Xml.textToDom('<xml>' + json['xml'] + '</xml>').firstChild;
   this.json = /** @type {!blocks.State} */ (json['json']);
   this.ids = json['ids'];
 };

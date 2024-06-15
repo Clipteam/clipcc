@@ -293,21 +293,6 @@ WorkspaceComment.prototype.isMinimized = function() {
 };
 
 /**
- * Encode a comment subtree as XML with XY coordinates.
- * @param {boolean=} opt_noId True if the encoder should skip the comment id.
- * @return {!Element} Tree of XML elements.
- * @package
- */
-WorkspaceComment.prototype.toXmlWithXY = function(opt_noId) {
-  const element = this.toXml(opt_noId);
-  element.setAttribute('x', Math.round(this.xy_.x));
-  element.setAttribute('y', Math.round(this.xy_.y));
-  element.setAttribute('h', this.height_);
-  element.setAttribute('w', this.width_);
-  return element;
-};
-
-/**
  * Encode a comment state as JSON.
  * @return {!Object} The comment state in JSON.
  * @package
@@ -349,25 +334,6 @@ WorkspaceComment.prototype.getLabelText = function() {
   } else {
     return this.content_;
   }
-};
-
-/**
- * Encode a comment subtree as XML, but don't serialize the XY coordinates or
- * width and height.  If you need that additional information use toXmlWithXY.
- * @param {boolean=} opt_noId True if the encoder should skip the comment id.
- * @return {!Element} Tree of XML elements.
- * @package
- */
-WorkspaceComment.prototype.toXml = function(opt_noId) {
-  const commentElement = dom.createDom('comment');
-  if (!opt_noId) {
-    commentElement.setAttribute('id', this.id);
-  }
-  if (this.isMinimized_) {
-    commentElement.setAttribute('minimized', true);
-  }
-  commentElement.textContent = this.getText();
-  return commentElement;
 };
 
 /**

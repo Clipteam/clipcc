@@ -78,7 +78,7 @@ export const allProcedures = function(root) {
 /**
  * Find all user-created procedure definition mutations in a workspace.
  * @param {!Blockly.Workspace} root Root workspace.
- * @return {!Array.<Object>} Array of mutation xml elements.
+ * @return {!Array.<Object>} Array of mutation elements.
  * @package
  */
 export const allProcedureMutations = function(root) {
@@ -98,8 +98,8 @@ export const allProcedureMutations = function(root) {
 /**
  * Sorts an array of procedure definition mutations alphabetically.
  * (Does not mutate the given array.)
- * @param {!Array.<Element>} mutations Array of mutation xml elements.
- * @return {!Array.<Element>} Sorted array of mutation xml elements.
+ * @param {!Array.<Element>} mutations Array of mutation elements.
+ * @return {!Array.<Element>} Sorted array of mutation elements.
  * @private
  */
 const sortProcedureMutations = function(mutations) {
@@ -319,10 +319,10 @@ export const mutateCallersAndPrototype = function (name, ws, extraState) {
     eventUtils.setGroup(true);
     for (let i = 0, caller; caller = callers[i]; i++) {
       const oldMutationState = caller.saveExtraState();
-      const oldMutation = oldMutationState && JSON.stringify(oldMutationState);
+      const oldMutation = oldMutationState;
       caller.loadExtraState(extraState);
       const newMutationState = caller.saveExtraState();
-      const newMutation = newMutationState && JSON.stringify(newMutationState);
+      const newMutation = newMutationState;
       if (oldMutation != newMutation) {
         eventUtils.fire(new BlockChange(
             caller, 'mutation', null, oldMutation, newMutation));

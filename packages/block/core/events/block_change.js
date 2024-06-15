@@ -134,7 +134,7 @@ BlockChange.prototype.run = function(forward) {
       const oldState = BlockChange.getExtraBlockState_(
           /** @type {!BlockSvg} */ (block));
       if (block.loadExtraState) {
-        block.loadExtraState(JSON.parse(/** @type {string} */ (value) || '{}'));
+        block.loadExtraState(value);
       } else if (block.domToMutation) {
         block.domToMutation(
             Xml.textToDom(/** @type {string} */ (value) || '<mutation/>'));
@@ -160,7 +160,7 @@ BlockChange.prototype.run = function(forward) {
 BlockChange.getExtraBlockState_ = function (block) {
   if (block.saveExtraState) {
     const state = block.saveExtraState();
-    return state ? JSON.stringify(state) : '';
+    return state;
   } else if (block.mutationToDom) {
     const state = block.mutationToDom();
     return state ? Xml.domToText(state) : '';
