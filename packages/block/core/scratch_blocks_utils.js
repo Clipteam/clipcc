@@ -88,10 +88,10 @@ export const changeObscuredShadowIds = function(block) {
     for (let j = 0; j < descendant.inputList.length; j++) {
       const connection = descendant.inputList[j].connection;
       if (connection) {
-        const shadowDom = connection.getShadowDom();
-        if (shadowDom) {
-          shadowDom.setAttribute('id', utils.genUid());
-          connection.setShadowDom(shadowDom);
+        const shadowState = connection.getShadowState();
+        if (shadowState) {
+          shadowState.id = utils.genUid();
+          connection.setShadowState(shadowState);
         }
       }
     }

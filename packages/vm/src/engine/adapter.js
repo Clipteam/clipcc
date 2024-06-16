@@ -29,22 +29,29 @@ const stateToBlock = function (state, blocks, isTopBlock, parent) {
 
     // Add fields
     for (const fieldName in state.fields) {
-        const field = state.fields[fieldName];
-        block.fields[fieldName] = {
+        const field = state.fields[fieldName] ?? '';
+        // It's possibly a variable
+        block.fields[typeof field === 'object' ? field.name : fieldName] = {
             name: fieldName,
-            id: field.id,
-            value: field.id ? field.value : field
+            id: typeof field === 'object' ? field.id : undefined,
+            value: field.id ? field.name : field
         };
+        if (typeof field.variableType === 'string') {
+            block.fields[field.name].variableType = field.variableType;
+        }
     }
 
     // Add inputs
     for (const inputName in state.inputs) {
         const input = state.inputs[inputName];
         stateToBlock(input.block, blocks, false, block.id);
+        if (input.shadow) {
+            stateToBlock(input.shadow, blocks, false, block.id);
+        }
         block.inputs[inputName] = {
             name: inputName,
-            block: input.block.id,
-            shadow: input.block.shadow ? input.block.id : null
+            block: input.block ? input.block.id : input.shadow?.id,
+            shadow: input.shadow? input.shadow.id : null
         }
     }
     //Add comments
@@ -53,8 +60,13 @@ const stateToBlock = function (state, blocks, isTopBlock, parent) {
     }
     // Add next
     if (state.next) {
-        stateToBlock(state.next.id, blocks, false, block.id);
-        block.next = state.next.id;
+        if (state.next.block) {
+            stateToBlock(state.next.block.id, blocks, false, block.id);
+            block.next = state.next.block.id;
+        } else if (state.next.shadow) {
+            stateToBlock(state.next.shadow.id, blocks, false, block.id);
+            block.next = state.next.shadow.id;
+        }
     }
     // Add mutation
     if (state.extraState) {

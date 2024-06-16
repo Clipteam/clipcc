@@ -442,10 +442,15 @@ DataCategory.addBlock = function(content, variable, blockType,
       kind: 'block',
       type: blockType,
       gap: 8,
-      fields: Variables.generateVariableFieldState(variable, fieldName)
+      fields: Variables.generateVariableFieldState(variable, fieldName),
+      inputs: {}
     };
-    blockState.inputs[firstValueField.name] = {block: firstValueField.field};
-    blockState.inputs[secondValueField.name] = {block: secondValueField.field};
+    if (firstValueField) {
+      blockState.inputs[firstValueField.name] = {block: firstValueField.field};
+    }
+    if (secondValueField) {
+      blockState.inputs[secondValueField.name] = {block: secondValueField.field};
+    }
     content.push(blockState);
   }
 };
@@ -491,7 +496,7 @@ DataCategory.createValue = function(valueName, type, value) {
  */
 DataCategory.addSep = function(content) {
   content.push({
-    kind: sep,
+    kind: 'sep',
     gap: 36
   });
 };

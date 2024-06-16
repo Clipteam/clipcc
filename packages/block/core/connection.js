@@ -859,12 +859,28 @@ Connection.prototype.createShadowBlock_ = function (attemptToConnect) {
   if (shadowState) {
     blockShadow = blocks.loadInternal(
       shadowState,
-      parentBlock.workspace,
-      {
-        parentConnection: attemptToConnect ? this : undefined,
-        isShadow: true,
-        recordUndo: false,
-      });
+      parentBlock.workspace
+    );
+    if (attemptToConnect) {
+      if (this.type == constants.INPUT_VALUE) {
+        if (!blockShadow.outputConnection) {
+          throw new Error('Shadow block is missing an output connection');
+        }
+        if (!this.connect(blockShadow.outputConnection)) {
+          throw new Error('Could not connect shadow block to connection');
+        }
+      } else if (this.type == constants.NEXT_STATEMENT) {
+        if (!blockShadow.previousConnection) {
+          throw new Error('Shadow block is missing previous connection');
+        }
+        if (!this.connect(blockShadow.previousConnection)) {
+          throw new Error('Could not connect shadow block to connection');
+        }
+      } else {
+        throw new Error(
+          'Cannot connect a shadow block to a previous/output connection');
+      }
+    }
     return blockShadow;
   }
 

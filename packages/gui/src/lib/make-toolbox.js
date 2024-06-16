@@ -679,6 +679,19 @@ const control = function (isInitialSetup, isStage, targetId, colors) {
                 }
             },
             blockSeparator,
+            {
+                kind: 'block',
+                type: 'control_repeat',
+                inputs: {
+                    TIMES: {
+                        block: {
+                            type: 'math_whole_number',
+                            fields: {NUM: '10'},
+                            shadow: true
+                        }
+                    }
+                }
+            },
             {kind: 'block', type: 'control_forever'},
             blockSeparator,
             {kind: 'block', type: 'control_if'},

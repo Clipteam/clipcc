@@ -590,6 +590,13 @@ const loadComment = function(block, blockState) {
  */
 const loadFieldVariable = function (workspace, state, field) {
   let variable;
+  // todo: completely firgure out why and remove it
+  if (typeof state === 'string') {
+    state = {
+      name: state,
+      variableType: field.defaultType_ ?? ''
+    }
+  }
   // This check ensures that there is not both a potential variable and a real
   // variable with the same name and type.
   if (!workspace.getPotentialVariableMap() && !workspace.isFlyout &&

@@ -895,7 +895,7 @@ WorkspaceSvg.prototype.glowStack = function(id, isGlowingStack) {
   if (id) {
     block = this.getBlockById(id);
     if (!block) {
-      throw 'Tried to glow stack on block that does not exist.';
+      throw `Tried to glow stack on block ${id} that does not exist.`;
     }
   }
   block.setGlowStack(isGlowingStack);

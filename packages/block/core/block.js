@@ -1621,7 +1621,7 @@ Block.prototype.removeInput = function(name, opt_quiet) {
   for (let i = 0, input; input = this.inputList[i]; i++) {
     if (input.name == name) {
       if (input.connection && input.connection.isConnected()) {
-        input.connection.setShadowDom(null);
+        input.connection.setShadowState(null);
         const block = input.connection.targetBlock();
         if (block.isShadow()) {
           // Destroy any attached shadow block.

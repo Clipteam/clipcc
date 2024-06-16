@@ -269,9 +269,9 @@ class Blocks {
             const block = this._blocks[id];
             if (block.opcode === 'procedures_prototype' &&
                 block.mutation.proccode === name) {
-                const names = block.mutation.argumentnames;
-                const ids = block.mutation.argumentids;
-                const defaults = block.mutation.argumentdefaults;
+                const names = JSON.parse(block.mutation.argumentnames);
+                const ids = JSON.parse(block.mutation.argumentids);
+                const defaults = JSON.parse(block.mutation.argumentdefaults);
 
                 this._cache.procedureParamNames[name] = [names, ids, defaults];
                 return this._cache.procedureParamNames[name];
@@ -1109,9 +1109,8 @@ class Blocks {
                 if (blockInput.block) {
                     inputState.block = this.blockToJSON(blockInput.block, comments);
                 }
-                if (blockInput.shadow) {
-                    // Obscured shadow.
-                    inputState.block = this.blockToJSON(blockInput.shadow, comments);
+                if (blockInput.shadow && blockInput.block !== blockInput.shadow) {
+                    inputState.shadow = this.blockToJSON(blockInput.shadow, comments);
                 }
             }
         }
@@ -1128,18 +1127,15 @@ class Blocks {
             if (fieldId) {
                 fields[blockField.name] = {};
                 fields[blockField.name].id = fieldId;
-            }
-            const varType = blockField.variableType;
-            if (typeof varType === 'string') {
-                fields[blockField.name].variableType = varType;
-                fields[blockField.name].value = blockField.value;
+                fields[blockField.name].variableType = blockField.variableType ?? '';
+                fields[blockField.name].name = blockField.value;
             }
 
             fields[blockField.name] = blockField.value;
         }
         // Add blocks connected to the next connection.
         if (block.next) {
-            blockState.next = this.blockToJSON(block.next, comments);
+            blockState.next = {block: this.blockToJSON(block.next, comments)};
         }
         return blockState;
     }
