@@ -125,13 +125,13 @@ FieldCheckbox.prototype.setValue = function(newBool) {
  * @override
  * @package
  */
-FieldCheckbox.prototype.saveState = function () {
+FieldCheckbox.prototype.saveState = function() {
   const legacyState = this.saveLegacyState(FieldCheckbox);
   if (legacyState !== null) {
     return legacyState;
   }
   return this.getValueBoolean();
-}
+};
 
 /**
  * Toggle the state of the checkbox.

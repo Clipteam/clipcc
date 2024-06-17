@@ -169,7 +169,7 @@ FieldVariableGetter.prototype.setValue = function(id) {
  * @override
  * @package
  */
-FieldVariableGetter.prototype.saveState = function () {
+FieldVariableGetter.prototype.saveState = function() {
   return this.getValue();
 };
 
@@ -179,7 +179,7 @@ FieldVariableGetter.prototype.saveState = function () {
  * @override
  * @package
  */
-FieldVariableGetter.prototype.loadState = function (id) {
+FieldVariableGetter.prototype.loadState = function(id) {
   this.setValue(id);
 };
 

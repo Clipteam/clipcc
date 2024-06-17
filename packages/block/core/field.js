@@ -686,7 +686,7 @@ Field.prototype.onMouseDown_ = function(e) {
  * @return {*} JSON serializable state.
  * @package
   */
-Field.prototype.saveState = function (_doFullSerialization) {
+Field.prototype.saveState = function(_doFullSerialization) {
   const legacyState = this.saveLegacyState(Field);
   if (legacyState !== null) {
     return legacyState;
@@ -700,7 +700,7 @@ Field.prototype.saveState = function (_doFullSerialization) {
  * @param {*} state The state we want to apply to the field.
  * @package
  */
-Field.prototype.loadState = function (state) {
+Field.prototype.loadState = function(state) {
   if (this.loadLegacyState(Field, state)) {
     return;
   }
@@ -716,14 +716,14 @@ Field.prototype.loadState = function (state) {
  * @return {?string} The stringified version of the XML state, or null.
  * @protected
  */
-Field.prototype.saveLegacyState = function (callingClass) {
+Field.prototype.saveLegacyState = function(callingClass) {
   if (callingClass.prototype.saveState === this.saveState &&
     callingClass.prototype.toXml !== this.toXml) {
     const elem = dom.createElement("field");
     elem.setAttribute("name", this.name || '');
     const text = Xml.domToText(this.toXml(elem));
     return text.replace(
-      ' xmlns="https://developers.google.com/blockly/xml"', '');
+        ' xmlns="https://developers.google.com/blockly/xml"', '');
   }
   // Either they called this on purpose from their saveState, or they have
   // no implementations of either hook. Just do our thing.
@@ -739,7 +739,7 @@ Field.prototype.saveLegacyState = function (callingClass) {
  * @param {*} state The state to apply to the field.
  * @return {boolean} Whether the state was applied or not.
  */
-Field.prototype.loadLegacyState = function (callingClass, state) {
+Field.prototype.loadLegacyState = function(callingClass, state) {
   if (callingClass.prototype.loadState === this.loadState &&
     callingClass.prototype.fromXml !== this.fromXml) {
     this.fromXml(Xml.textToDom(/** @type {string} */(state)));

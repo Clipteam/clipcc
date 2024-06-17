@@ -297,7 +297,7 @@ WorkspaceComment.prototype.isMinimized = function() {
  * @return {!Object} The comment state in JSON.
  * @package
  */
-WorkspaceComment.prototype.toState = function () {
+WorkspaceComment.prototype.toState = function() {
   return {
     id: this.id,
     content: this.getText(),
@@ -310,7 +310,7 @@ WorkspaceComment.prototype.toState = function () {
  * @return {!Object} The comment state in JSON.
  * @package
  */
-WorkspaceComment.prototype.toStateWithXY = function () {
+WorkspaceComment.prototype.toStateWithXY = function() {
   const commentState = this.toState();
   commentState.x = Math.round(this.xy_.x);
   commentState.y =  Math.round(this.xy_.y);

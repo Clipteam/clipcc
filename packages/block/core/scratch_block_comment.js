@@ -604,7 +604,7 @@ ScratchBlockComment.prototype.showContextMenu_ = function(e) {
  * @return {!Object} The comment state JSON.
  * @package
  */
-ScratchBlockComment.prototype.toStateWithXY = function () {
+ScratchBlockComment.prototype.toStateWithXY = function() {
   return {
     id: this.id,
     content: this.text_,

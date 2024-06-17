@@ -51,7 +51,7 @@ const asserts = goog.require('goog.asserts');
  *     block, or null if the block could not be serialied (eg it was an
  *     insertion marker).
  */
-export const save = function (block, {
+export const save = function(block, {
   addCoordinates = false,
   noId = false,
   doFullSerialization = true
@@ -483,7 +483,7 @@ const loadAttributes = function(block, state) {
     const children = block.getChildren(false);
     for (let i = 0, child; child = children[i]; i++) {
       asserts.assert(
-        child.isShadow(), 'Shadow block not allowed non-shadow child.');
+          child.isShadow(), 'Shadow block not allowed non-shadow child.');
     }
     block.setShadow(true);
   }
@@ -559,13 +559,13 @@ const loadComment = function(block, blockState) {
   // Note bubbleX and bubbleY can be NaN, but the ScratchBlockComment
   // constructor will handle that.
   block.setCommentText(state.text, commentId, bubbleX, bubbleY,
-    minimized == 'true');
+      minimized == 'true');
 
   const visible = state.pinned;
   if (visible && !block.isInFlyout) {
     // Give the renderer a millisecond to render and position the block
     // before positioning the comment bubble.
-    setTimeout(function () {
+    setTimeout(function() {
       if (block.comment && block.comment.setVisible) {
         block.comment.setVisible(visible);
       }
@@ -577,7 +577,7 @@ const loadComment = function(block, blockState) {
     block.comment && block.comment.setVisible) {
     block.comment.setSize(bubbleW, bubbleH);
   }
-}
+};
 
 /**
  * Decode an variable field state and set the value of that field.
@@ -588,14 +588,14 @@ const loadComment = function(block, blockState) {
  *     set.
  * @private
  */
-const loadFieldVariable = function (workspace, state, field) {
+const loadFieldVariable = function(workspace, state, field) {
   let variable;
   // todo: completely firgure out why and remove it
   if (typeof state === 'string') {
     state = {
       name: state,
       variableType: field.defaultType_ ?? ''
-    }
+    };
   }
   // This check ensures that there is not both a potential variable and a real
   // variable with the same name and type.
@@ -606,11 +606,11 @@ const loadFieldVariable = function (workspace, state, field) {
   }
   if (!variable) {
     variable = Variables.getOrCreateVariablePackage(workspace, state.id,
-      state.name, state.variableType);
+        state.name, state.variableType);
   }
 
   field.setValue(variable.getId());
-}
+};
 
 /**
  * Creates any child blocks (attached to inputs) defined by the given state
@@ -644,7 +644,7 @@ const loadInputBlocks = function(block, state) {
         input.connection.connect(inputBlock.previousConnection);
       } else {
         asserts.fail(
-          'Child block does not have output or previous statement.');
+            'Child block does not have output or previous statement.');
       }
     }
   }
@@ -666,14 +666,14 @@ const loadNextBlocks = function(block, state) {
   }
   if (state.next.block) {
     asserts.assert(block.nextConnection,
-      'Next statement does not exist.');
+        'Next statement does not exist.');
     // If there is more than one XML 'next' tag.
     asserts.assert(!block.nextConnection.isConnected(),
-      'Next statement is already connected.');
+        'Next statement is already connected.');
 
     const nextBlock = loadPrivate(state.next.block, block.workspace);
     asserts.assert(nextBlock.previousConnection,
-      'Next block does not have previous statement.');
+        'Next block does not have previous statement.');
     block.nextConnection.connect(nextBlock.previousConnection);
   }
 };

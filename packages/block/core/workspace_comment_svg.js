@@ -595,13 +595,13 @@ WorkspaceCommentSvg.fromXml = function(xmlComment, workspace,
  * @return {!WorkspaceCommentSvg} The created workspace comment.
  * @package
  */
-WorkspaceCommentSvg.fromState = function (info, workspace,
-  opt_wsWidth) {
+WorkspaceCommentSvg.fromState = function(info, workspace,
+    opt_wsWidth) {
   eventUtils.disable();
   let comment;
   try {
     comment = new WorkspaceCommentSvg(workspace,
-      info.content, info.h, info.w, info.minimized, info.id);
+        info.content, info.h, info.w, info.minimized, info.id);
     if (workspace.rendered) {
       comment.initSvg();
       comment.render(false);
@@ -651,7 +651,7 @@ WorkspaceCommentSvg.prototype.toXmlWithXY = function(opt_noId) {
  * @return {!Object} The comment state in JSON.
  * @package
  */
-WorkspaceCommentSvg.prototype.toStateWithXY = function () {
+WorkspaceCommentSvg.prototype.toStateWithXY = function() {
   let width;  // Not used in LTR.
   if (this.workspace.RTL) {
     // Here be performance dragons: This calls getMetrics().

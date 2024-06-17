@@ -498,7 +498,7 @@ Flyout.prototype.convertFlyoutDefToJsonArray = function(flyoutDef) {
  *          the toolbox.
  * @private
  */
-Flyout.prototype.xmlToJsonArray_ = function (toolboxDef) {
+Flyout.prototype.xmlToJsonArray_ = function(toolboxDef) {
   const arr = [];
   // If it is a node it will have children.
   let childNodes = toolboxDef.childNodes;
@@ -538,9 +538,9 @@ Flyout.prototype.xmlToJsonArray_ = function (toolboxDef) {
  * @param {!Object} obj The object to copy the attributes to.
  * @private
  */
-Flyout.prototype.addAttributes_ = function (node, obj) {
-  for (var j = 0; j < node.attributes.length; j++) {
-    var attr = node.attributes[j];
+Flyout.prototype.addAttributes_ = function(node, obj) {
+  for (let j = 0; j < node.attributes.length; j++) {
+    const attr = node.attributes[j];
     if (attr.nodeName.indexOf('css-') > -1) {
       obj['cssconfig'] = obj['cssconfig'] || {};
       obj['cssconfig'][attr.nodeName.replace('css-', '')] = attr.value;
@@ -551,13 +551,13 @@ Flyout.prototype.addAttributes_ = function (node, obj) {
 };
 
 Flyout.prototype.getRecycledBlock_ = function(id) {
-  const recycled = this.recycleBlocks_.findIndex(function (block) {
+  const recycled = this.recycleBlocks_.findIndex(function(block) {
     return block.id === id;
   });
   if (recycled > -1) {
     return this.recycleBlocks_.splice(recycled, 1)[0];
   }
-}
+};
 
 /**
  * Create a block from the xml and permanently disable any blocks that were
@@ -596,7 +596,7 @@ Flyout.prototype.createFlyoutBlock_ = function(blockInfo) {
  * @param {!Object|!Array|string} content List of blocks to show
  * @return {{contents: Object, gaps: Object}}  The populated flyout info
  */
-Flyout.prototype.createFlyoutInfo_ = function (content) {
+Flyout.prototype.createFlyoutInfo_ = function(content) {
   const contents = [];
   const gaps = [];
   this.permanentlyDisabled_.length = 0;
@@ -607,14 +607,14 @@ Flyout.prototype.createFlyoutInfo_ = function (content) {
     if (typeof contentInfo === 'string') {
       const fnToApply = this.workspace_.targetWorkspace.getToolboxCategoryCallback(contentInfo);
       content.splice(i + 1, 0, ...this.convertFlyoutDefToJsonArray(
-        fnToApply(this.workspace_.targetWorkspace)));
+          fnToApply(this.workspace_.targetWorkspace)));
       continue;
     }
     if (contentInfo['custom']) {
       const fnToApply = this.workspace_.targetWorkspace.getToolboxCategoryCallback(contentInfo['custom']);
       const newList = this.convertFlyoutDefToJsonArray(fnToApply(this.workspace_.targetWorkspace));
       content.splice.apply(
-        content, [i, 1].concat(newList));
+          content, [i, 1].concat(newList));
       contentInfo = content[i];
     }
 
@@ -635,21 +635,21 @@ Flyout.prototype.createFlyoutInfo_ = function (content) {
       }
     } else if (kind === 'LABEL' && this.shouldShowStatusButton(contentInfo.showStatusButton)) {
       const curButton = new FlyoutExtensionCategoryHeader(this.workspace_,
-        this.targetWorkspace_, contentInfo);
+          this.targetWorkspace_, contentInfo);
       contents.push({ type: 'button', button: curButton });
       gaps.push(defaultGap);
     } else if (kind === 'BUTTON' || kind === 'LABEL') {
       // Labels behave the same as buttons, but are styled differently.
       const isLabel = kind === 'LABEL';
       const curButton = new FlyoutButton(this.workspace_,
-        this.targetWorkspace_, contentInfo, isLabel);
+          this.targetWorkspace_, contentInfo, isLabel);
       contents.push({ type: 'button', button: curButton });
       gaps.push(defaultGap);
     }
   }
 
   return {contents, gaps};
-}
+};
 
 /**
  * Whether we should show the status button near the label.
@@ -658,7 +658,7 @@ Flyout.prototype.createFlyoutInfo_ = function (content) {
  */
 Flyout.prototype.shouldShowStatusButton = function(value) {
   return typeof value === 'boolean' ? value : value === 'true';
-}
+};
 
 /**
  * Show and populate the flyout.
@@ -1015,7 +1015,7 @@ Flyout.prototype.placeNewBlock_ = function(oldBlock) {
  * @param {!BlockSvg} block The block to posiiton.
  * @private
  */
-Flyout.prototype.positionNewBlock_ = function (oldBlock, block) {
+Flyout.prototype.positionNewBlock_ = function(oldBlock, block) {
   const targetWorkspace = this.targetWorkspace_;
 
   // The offset in pixels between the main workspace's origin and the upper left

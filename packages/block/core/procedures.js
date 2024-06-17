@@ -309,7 +309,7 @@ export const getCallers = function(name, ws, definitionRoot,
  * @param {!Object} extraState New extraState for the callers.
  * @package
  */
-export const mutateCallersAndPrototype = function (name, ws, extraState) {
+export const mutateCallersAndPrototype = function(name, ws, extraState) {
   const defineBlock = getDefineBlock(name, ws);
   const prototypeBlock = getPrototypeBlock(name, ws);
   if (defineBlock && prototypeBlock) {

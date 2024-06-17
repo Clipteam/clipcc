@@ -728,7 +728,7 @@ Connection.prototype.getShadowDom = function(returnCurrent) {
  * @param {?blocks.State} shadowState An state represetation of the block or
  *     null.
  */
-Connection.prototype.setShadowState = function (shadowState) {
+Connection.prototype.setShadowState = function(shadowState) {
   this.setShadowStateInternal_({ shadowState });
 };
 
@@ -742,7 +742,7 @@ Connection.prototype.setShadowState = function (shadowState) {
  * @return {?blocks.State} Serialized object representation of the block, or
  *     null.
  */
-Connection.prototype.getShadowState = function (returnCurrent) {
+Connection.prototype.getShadowState = function(returnCurrent) {
   if (returnCurrent && this.targetBlock() && this.targetBlock().isShadow()) {
     return blocks.save(/** @type {!Block} */(this.targetBlock()));
   }
@@ -802,7 +802,7 @@ Connection.prototype.toString = function() {
  *     the shadowDom_ and shadowState_ properties.
  * @private
  */
-Connection.prototype.stashShadowState_ = function () {
+Connection.prototype.stashShadowState_ = function() {
   const shadowDom = this.getShadowDom(true);
   const shadowState = this.getShadowState(true);
   // Set to null so it doesn't respawn.
@@ -818,7 +818,7 @@ Connection.prototype.stashShadowState_ = function () {
  * @private
  */
 Connection.prototype.applyShadowState_ =
-  function ({ shadowDom, shadowState }) {
+  function({ shadowDom, shadowState }) {
     this.shadowDom_ = shadowDom;
     this.shadowState_ = shadowState;
   };
@@ -831,7 +831,7 @@ Connection.prototype.applyShadowState_ =
  * @private
  */
 Connection.prototype.setShadowStateInternal_ =
-  function ({ shadowDom = null, shadowState = null } = {}) {
+  function({ shadowDom = null, shadowState = null } = {}) {
     // One or both of these should always be null.
     // If neither is null, the shadowState will get priority.
     this.shadowDom_ = shadowDom;
@@ -847,7 +847,7 @@ Connection.prototype.setShadowStateInternal_ =
  *     shadowState_ and shadowDom_ are null.
  * @private
  */
-Connection.prototype.createShadowBlock_ = function (attemptToConnect) {
+Connection.prototype.createShadowBlock_ = function(attemptToConnect) {
   const parentBlock = this.getSourceBlock();
   const shadowState = this.getShadowState();
   const shadowDom = this.getShadowDom();
@@ -858,8 +858,8 @@ Connection.prototype.createShadowBlock_ = function (attemptToConnect) {
   let blockShadow;
   if (shadowState) {
     blockShadow = blocks.load(
-      shadowState,
-      parentBlock.workspace
+        shadowState,
+        parentBlock.workspace
     );
     if (attemptToConnect) {
       if (this.type == constants.INPUT_VALUE) {
@@ -878,7 +878,7 @@ Connection.prototype.createShadowBlock_ = function (attemptToConnect) {
         }
       } else {
         throw new Error(
-          'Cannot connect a shadow block to a previous/output connection');
+            'Cannot connect a shadow block to a previous/output connection');
       }
     }
     return blockShadow;
@@ -903,7 +903,7 @@ Connection.prototype.createShadowBlock_ = function (attemptToConnect) {
         }
       } else {
         throw new Error(
-          'Cannot connect a shadow block to a previous/output connection');
+            'Cannot connect a shadow block to a previous/output connection');
       }
     }
     return blockShadow;
@@ -917,7 +917,7 @@ Connection.prototype.createShadowBlock_ = function (attemptToConnect) {
  * @param {?Block} shadow The shadow to serialize, or null.
  * @private
  */
-Connection.prototype.serializeShadow_ = function (shadow) {
+Connection.prototype.serializeShadow_ = function(shadow) {
   if (!shadow) {
     return;
   }

@@ -79,12 +79,12 @@ VirtualizedManager.prototype.dispose = function() {
 VirtualizedManager.prototype.requestCheck = function() {
   if (!this._requestedCheck) {
     this._requestedCheck = true;
-      queueMicrotask(() => {
-        this.check_();
-        this._requestedCheck = false;
+    queueMicrotask(() => {
+      this.check_();
+      this._requestedCheck = false;
     });
   }
-}
+};
 
 /**
  * Check if block need to be show or hide.

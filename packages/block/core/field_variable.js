@@ -391,7 +391,7 @@ FieldVariable.prototype.onItemSelected = function(menu, menuItem) {
  * @override
  * @package
  */
-FieldVariable.prototype.saveState = function (doFullSerialization) {
+FieldVariable.prototype.saveState = function(doFullSerialization) {
   const legacyState = this.saveLegacyState(FieldVariable);
   if (legacyState !== null) {
     return legacyState;
@@ -414,7 +414,7 @@ FieldVariable.prototype.saveState = function (doFullSerialization) {
  * @override
  * @package
  */
-FieldVariable.prototype.loadState = function (state) {
+FieldVariable.prototype.loadState = function(state) {
   if (this.loadLegacyState(FieldVariable, state)) {
     return;
   }

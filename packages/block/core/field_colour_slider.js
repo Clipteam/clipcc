@@ -298,7 +298,7 @@ FieldColourSlider.prototype.activateEyedropperInternal_ = function() {
  * @override
  * @package
  */
-FieldColourSlider.prototype.saveState = function () {
+FieldColourSlider.prototype.saveState = function() {
   return /** @type {string} */ (this.getValue());
 };
 
@@ -308,7 +308,7 @@ FieldColourSlider.prototype.saveState = function () {
  * @override
  * @package
  */
-FieldColourSlider.prototype.loadState = function (state) {
+FieldColourSlider.prototype.loadState = function(state) {
   this.setValue(state);
 };
 

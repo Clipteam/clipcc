@@ -955,7 +955,7 @@ WorkspaceSvg.prototype.paste = function(pasteInfo) {
  * Paste the provided block onto the workspace.
  * @param {!Element|Object} pasteInfo a JSON or XML block element
  */
-WorkspaceSvg.prototype.pasteBlock_ = function (pasteInfo) {
+WorkspaceSvg.prototype.pasteBlock_ = function(pasteInfo) {
   eventUtils.disable();
   let block;
   try {
@@ -991,7 +991,7 @@ WorkspaceSvg.prototype.pasteBlock_ = function (pasteInfo) {
             const connections = block.getConnections_(false);
             for (let i = 0, connection; connection = connections[i]; i++) {
               const neighbour = connection.closest(constants.SNAP_RADIUS,
-                new Coordinate(blockX, blockY));
+                  new Coordinate(blockX, blockY));
               if (neighbour.connection) {
                 collide = true;
                 break;
@@ -1011,52 +1011,52 @@ WorkspaceSvg.prototype.pasteBlock_ = function (pasteInfo) {
       }
     } else {
       block = blocks.load(pasteInfo);
-        // Scratch-specific: Give shadow dom new IDs to prevent duplicating on paste
-        scratchBlocksUtils.changeObscuredShadowIds(block);
-        // Move the duplicate to original position.
-        let blockX = parseInt(pasteInfo.x, 10);
-        let blockY = parseInt(pasteInfo.y, 10);
-        if (!isNaN(blockX) && !isNaN(blockY)) {
-          if (this.RTL) {
-            blockX = -blockX;
-          }
-          // Offset block until not clobbering another block and not in connection
-          // distance with neighbouring blocks.
-          let collide;
-          do {
-            collide = false;
-            const allBlocks = this.getAllBlocks();
-            for (let i = 0, otherBlock; otherBlock = allBlocks[i]; i++) {
-              const otherXY = otherBlock.getRelativeToSurfaceXY();
-              if (Math.abs(blockX - otherXY.x) <= 1 &&
+      // Scratch-specific: Give shadow dom new IDs to prevent duplicating on paste
+      scratchBlocksUtils.changeObscuredShadowIds(block);
+      // Move the duplicate to original position.
+      let blockX = parseInt(pasteInfo.x, 10);
+      let blockY = parseInt(pasteInfo.y, 10);
+      if (!isNaN(blockX) && !isNaN(blockY)) {
+        if (this.RTL) {
+          blockX = -blockX;
+        }
+        // Offset block until not clobbering another block and not in connection
+        // distance with neighbouring blocks.
+        let collide;
+        do {
+          collide = false;
+          const allBlocks = this.getAllBlocks();
+          for (let i = 0, otherBlock; otherBlock = allBlocks[i]; i++) {
+            const otherXY = otherBlock.getRelativeToSurfaceXY();
+            if (Math.abs(blockX - otherXY.x) <= 1 &&
                 Math.abs(blockY - otherXY.y) <= 1) {
+              collide = true;
+              break;
+            }
+          }
+          if (!collide) {
+            // Check for blocks in snap range to any of its connections.
+            const connections = block.getConnections_(false);
+            for (let i = 0, connection; connection = connections[i]; i++) {
+              const neighbour = connection.closest(constants.SNAP_RADIUS,
+                  new Coordinate(blockX, blockY));
+              if (neighbour.connection) {
                 collide = true;
                 break;
               }
             }
-            if (!collide) {
-              // Check for blocks in snap range to any of its connections.
-              const connections = block.getConnections_(false);
-              for (let i = 0, connection; connection = connections[i]; i++) {
-                const neighbour = connection.closest(constants.SNAP_RADIUS,
-                  new Coordinate(blockX, blockY));
-                if (neighbour.connection) {
-                  collide = true;
-                  break;
-                }
-              }
+          }
+          if (collide) {
+            if (this.RTL) {
+              blockX -= constants.SNAP_RADIUS;
+            } else {
+              blockX += constants.SNAP_RADIUS;
             }
-            if (collide) {
-              if (this.RTL) {
-                blockX -= constants.SNAP_RADIUS;
-              } else {
-                blockX += constants.SNAP_RADIUS;
-              }
-              blockY += constants.SNAP_RADIUS * 2;
-            }
-          } while (collide);
-          block.moveBy(blockX, blockY);
-    }
+            blockY += constants.SNAP_RADIUS * 2;
+          }
+        } while (collide);
+        block.moveBy(blockX, blockY);
+      }
     }
   } finally {
     eventUtils.enable();
@@ -1108,8 +1108,8 @@ WorkspaceSvg.prototype.pasteWorkspaceComment_ = function(pasteInfo) {
         commentX += 50;
         commentY += 50;
         comment.moveBy(commentX, commentY);
+      }
     }
-  }
   } finally {
     eventUtils.enable();
   }

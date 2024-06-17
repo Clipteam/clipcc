@@ -457,7 +457,7 @@ FieldDropdown.prototype.setText = function(text) {
  * @override
  * @package
  */
-FieldDropdown.prototype.loadState = function (state) {
+FieldDropdown.prototype.loadState = function(state) {
   if (this.loadLegacyState(FieldDropdown, state)) {
     return;
   }

@@ -298,7 +298,7 @@ FieldMatrix.prototype.getValue = function() {
  * @override
  * @package
  */
-FieldMatrix.prototype.saveState = function () {
+FieldMatrix.prototype.saveState = function() {
   return /** @type {string} */ (this.getValue());
 };
 
@@ -308,7 +308,7 @@ FieldMatrix.prototype.saveState = function () {
  * @override
  * @package
  */
-FieldMatrix.prototype.loadState = function (state) {
+FieldMatrix.prototype.loadState = function(state) {
   this.setValue(state);
 };
 

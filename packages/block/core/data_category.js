@@ -117,7 +117,7 @@ DataCategory.addDataVariable = function(content, variable) {
  * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addSetVariableTo = function (content, variable) {
+DataCategory.addSetVariableTo = function(content, variable) {
   // <block type="data_setvariableto" gap="20">
   //   <value name="VARIABLE">
   //    <shadow type="data_variablemenu"></shadow>
@@ -157,7 +157,7 @@ DataCategory.addChangeVariableBy = function(content, variable) {
  * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addShowVariable = function (content, variable) {
+DataCategory.addShowVariable = function(content, variable) {
   // <block type="data_showvariable">
   //   <value name="VARIABLE">
   //     <shadow type="data_variablemenu"></shadow>
@@ -201,7 +201,7 @@ DataCategory.addDataList = function(content, variable) {
  * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addAddToList = function (content, variable) {
+DataCategory.addAddToList = function(content, variable) {
   // <block type="data_addtolist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   //   <value name="ITEM">
@@ -219,7 +219,7 @@ DataCategory.addAddToList = function (content, variable) {
  * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addDeleteOfList = function (content, variable) {
+DataCategory.addDeleteOfList = function(content, variable) {
   // <block type="data_deleteoflist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   //   <value name="INDEX">
@@ -237,7 +237,7 @@ DataCategory.addDeleteOfList = function (content, variable) {
  * @param {!Array.<!Object>} content Array of block elements.
  * @param {?Blockly.VariableModel} variable Variable to select in the field.
  */
-DataCategory.addDeleteAllOfList = function (content, variable) {
+DataCategory.addDeleteAllOfList = function(content, variable) {
   // <block type="data_deletealloflist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   // </block>

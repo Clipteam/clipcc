@@ -104,7 +104,7 @@ BlockChange.prototype.run = function(forward) {
     // Close the mutator (if open) since we don't want to update it.
     block.mutator.setVisible(false);
   }
-  let value = forward ? this.newValue : this.oldValue;
+  const value = forward ? this.newValue : this.oldValue;
   switch (this.element) {
     case 'field': {
       const field = block.getField(this.name);
@@ -157,7 +157,7 @@ BlockChange.prototype.run = function(forward) {
  * @return {string} A stringified version of the extra state of the given block.
  * @package
  */
-BlockChange.getExtraBlockState_ = function (block) {
+BlockChange.getExtraBlockState_ = function(block) {
   if (block.saveExtraState) {
     const state = block.saveExtraState();
     return state;

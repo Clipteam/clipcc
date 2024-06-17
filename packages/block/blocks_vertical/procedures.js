@@ -37,13 +37,13 @@ goog.require('Blockly.ScratchBlocks.VerticalExtensions');
  * @param {string} string The string to be parsed
  * @returns {Object?} Parsed object or null;
  */
-const tryParse = function (string) {
+const tryParse = function(string) {
   try {
     return JSON.parse(string);
   } catch (e) {
     return null;
   }
-}
+};
 
 /**
  * Create XML to represent the (non-editable) name and arguments of a procedure
@@ -80,7 +80,7 @@ Blockly.ScratchBlocks.ProcedureUtils.callerDomToMutation = function(xmlElement) 
  * @return {!Object} the block's extra state.
  * @this Blockly.Block
  */
-Blockly.ScratchBlocks.ProcedureUtils.callerSaveExtraState = function () {
+Blockly.ScratchBlocks.ProcedureUtils.callerSaveExtraState = function() {
   // Stringify all non-string stuff in order to keep compatitble for old mutation format.
   return {
     proccode: this.procCode_,
@@ -95,7 +95,7 @@ Blockly.ScratchBlocks.ProcedureUtils.callerSaveExtraState = function () {
  * @param {!Object} state the block's extra state.
  * @this Blockly.Block
  */
-Blockly.ScratchBlocks.ProcedureUtils.callerLoadExtraState = function (state) {
+Blockly.ScratchBlocks.ProcedureUtils.callerLoadExtraState = function(state) {
   this.procCode_ = state.proccode;
   this.generateShadows_ = tryParse(state.generateshadows) ?? [];
   this.argumentIds_ = tryParse(state.argumentids) ?? [];
@@ -155,7 +155,7 @@ Blockly.ScratchBlocks.ProcedureUtils.definitionDomToMutation = function(xmlEleme
  * procedures_prototype block or a procedures_declaration block.
  * @param {boolean=} opt_generateShadows Whether to include the generateshadows
  *     flag in the generated extra state.  False if not provided.
- * @return {!Object} the block's extra state. 
+ * @return {!Object} the block's extra state.
  * @this Blockly.Block
  */
 Blockly.ScratchBlocks.ProcedureUtils.definitionSaveExtraState = function(
