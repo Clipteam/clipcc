@@ -166,7 +166,7 @@ Connection.prototype.connect_ = function(childConnection) {
     // Other connection is already connected to something.
     // Disconnect it and reattach it or bump it as needed.
     let orphanBlock = parentConnection.targetBlock();
-    let shadowState = parentConnection.stashShadowState_();
+    let {shadowState} = parentConnection.stashShadowState_();
     // Displaced shadow blocks dissolve rather than reattaching or bumping.
     if (orphanBlock.isShadow()) {
       // Save the shadow block so that field values are preserved.
@@ -729,7 +729,7 @@ Connection.prototype.getShadowDom = function(returnCurrent) {
  *     null.
  */
 Connection.prototype.setShadowState = function (shadowState) {
-  this.setShadowStateInternal_({ shadowState: shadowState });
+  this.setShadowStateInternal_({ shadowState });
 };
 
 /**
@@ -857,7 +857,7 @@ Connection.prototype.createShadowBlock_ = function (attemptToConnect) {
 
   let blockShadow;
   if (shadowState) {
-    blockShadow = blocks.loadInternal(
+    blockShadow = blocks.load(
       shadowState,
       parentBlock.workspace
     );
