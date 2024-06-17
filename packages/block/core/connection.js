@@ -218,7 +218,7 @@ Connection.prototype.connect_ = function(childConnection) {
       }
     }
     // Restore the shadow DOM.
-    parentConnection.applyShadowState_(shadowState);
+    parentConnection.applyShadowState_({ shadowState: shadowState });
   }
 
   if (isSurroundingC && previousParentConnection) {

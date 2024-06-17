@@ -44,7 +44,9 @@ const stateToBlock = function (state, blocks, isTopBlock, parent) {
     // Add inputs
     for (const inputName in state.inputs) {
         const input = state.inputs[inputName];
-        stateToBlock(input.block, blocks, false, block.id);
+        if (input.block) {
+            stateToBlock(input.block, blocks, false, block.id);
+        }
         if (input.shadow) {
             stateToBlock(input.shadow, blocks, false, block.id);
         }
@@ -61,10 +63,10 @@ const stateToBlock = function (state, blocks, isTopBlock, parent) {
     // Add next
     if (state.next) {
         if (state.next.block) {
-            stateToBlock(state.next.block.id, blocks, false, block.id);
+            stateToBlock(state.next.block, blocks, false, block.id);
             block.next = state.next.block.id;
         } else if (state.next.shadow) {
-            stateToBlock(state.next.shadow.id, blocks, false, block.id);
+            stateToBlock(state.next.shadow, blocks, false, block.id);
             block.next = state.next.shadow.id;
         }
     }

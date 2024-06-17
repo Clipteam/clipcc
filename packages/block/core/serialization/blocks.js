@@ -261,7 +261,7 @@ const saveInputBlocks = function(block, state, doFullSerialization) {
     } else {
       const childBlock = input.connection.targetBlock();
       const shadow = input.connection.getShadowState();
-      if (shadow && (!childBlock || !childBlock.isShadow())) {
+      if (shadow) {
         const shadowClone = cloneShadow(shadow);
         inputState.shadow = shadowClone;
       }

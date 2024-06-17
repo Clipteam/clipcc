@@ -350,8 +350,9 @@ RenderedConnection.prototype.disconnectInternal_ = function(parentBlock,
 RenderedConnection.prototype.respawnShadow_ = function() {
   const parentBlock = this.getSourceBlock();
   // Respawn the shadow block if there is one.
-  const shadow = this.getShadowDom();
-  if (parentBlock.workspace && shadow && eventUtils.getRecordUndo()) {
+  const shadowDom = this.getShadowDom();
+  const shadowState = this.getShadowState();
+  if (parentBlock.workspace && (shadowDom || shadowState) && eventUtils.getRecordUndo()) {
     RenderedConnection.superClass_.respawnShadow_.call(this);
     const blockShadow = this.targetBlock();
     if (!blockShadow) {
