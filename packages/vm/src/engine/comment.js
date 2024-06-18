@@ -36,7 +36,7 @@ class Comment {
             h: this.height,
             pinned: this.blockId !== null,
             minimized: this.minimized,
-            text: this.text
+            content: this.text
         };
     }
 

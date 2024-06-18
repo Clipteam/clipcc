@@ -225,11 +225,11 @@ Blockly.Blocks['control_stop'] = {
   },
   saveExtraState: function() {
     return {
-      hasNext: this.nextConnection != null
+      hasnext: this.nextConnection != null
     };
   },
   loadExtraState: function(state) {
-    this.setNextStatement(state.hasNext);
+    this.setNextStatement(state.hasnext);
   }
 };
 
