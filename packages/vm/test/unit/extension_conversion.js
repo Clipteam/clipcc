@@ -133,7 +133,11 @@ const testCategoryInfo = function (t, block) {
 
 const testButton = function (t, button) {
     t.same(button.json, null); // should be null or undefined
-    t.equal(button.xml, '<button text="this is a button" callbackKey="MAKE_A_VARIABLE"></button>');
+    t.same(button.state, {
+        kind: 'button',
+        text: "this is a button",
+        callbackkey: "MAKE_A_VARIABLE"
+    });
 };
 
 const testReporter = function (t, reporter) {
@@ -161,7 +165,7 @@ const testReporter = function (t, reporter) {
         }
     ]);
     t.notOk(reporter.json.hasOwnProperty('args1'));
-    t.equal(reporter.xml, '<block type="test_reporter"></block>');
+    t.same(reporter.state, {kind: 'block', type: 'test_reporter'});
 };
 
 const testInlineImage = function (t, inlineImage) {
@@ -186,12 +190,12 @@ const testInlineImage = function (t, inlineImage) {
         }
     ]);
     t.notOk(inlineImage.json.hasOwnProperty('args1'));
-    t.equal(inlineImage.xml, '<block type="test_inlineImage"></block>');
+    t.same(inlineImage.state, {kind: 'block', type: 'test_inlineImage'});
 };
 
 const testSeparator = function (t, separator) {
     t.same(separator.json, null); // should be null or undefined
-    t.equal(separator.xml, '<sep gap="36"/>');
+    t.equal(separator.state, {kind: 'sep', gap: 36});
 };
 
 const testCommand = function (t, command) {
@@ -208,10 +212,25 @@ const testCommand = function (t, command) {
         name: 'ARG'
     });
     t.notOk(command.json.hasOwnProperty('args1'));
-    t.equal(command.xml,
-        '<block type="test_command"><value name="ARG"><shadow type="text"></shadow></value>' +
-        '<value name="ARG_WITH_DEFAULT"><shadow type="text"><field name="TEXT">' +
-        'default text</field></shadow></value></block>');
+    t.same(command.state, {
+        kind: 'block',
+        type: 'test_command',
+        inputs: {
+            ARG: {
+                block: {
+                    type: 'text',
+                    shadow: true
+                }
+            },
+            ARG_WITH_DEFAULT: {
+                block: {
+                    type: 'text',
+                    fields: {TEXT: 'default text'},
+                    shadow: true
+                }
+            }
+        }
+    });
 };
 
 const testConditional = function (t, conditional) {
@@ -241,7 +260,13 @@ const testConditional = function (t, conditional) {
         name: 'SUBSTACK2'
     });
     t.notOk(conditional.json.hasOwnProperty('args4'));
-    t.equal(conditional.xml, '<block type="test_ifElse"><value name="THING"></value></block>');
+    t.same(conditional.state, {
+        kind: 'block',
+        type: 'test_ifElse',
+        inputs: {
+            THING: {}
+        }
+    });
 };
 
 const testLoop = function (t, loop) {
@@ -267,8 +292,18 @@ const testLoop = function (t, loop) {
     t.equal(loop.json.args2[0].type, 'field_image');
     t.equal(loop.json.args2[0].flip_rtl, true);
     t.notOk(loop.json.hasOwnProperty('args3'));
-    t.equal(loop.xml,
-        '<block type="test_loop"><value name="MANY"><shadow type="math_number"></shadow></value></block>');
+    t.same(loop.state, {
+        kind: 'block',
+        type: 'test_loop',
+        inputs: {
+            MANY: {
+                block: {
+                    type: 'math_number',
+                    shadow: true
+                }
+            }
+        }
+    });
 };
 
 test('registerExtensionPrimitives', t => {
@@ -306,10 +341,9 @@ test('custom field types should be added to block and EXTENSION_FIELD_ADDED call
     runtime.on(Runtime.EXTENSION_ADDED, categoryInfo => {
         const blockInfo = categoryInfo.blocks[0];
 
-        // We expect that for each argument there's a corresponding <field>-tag in the block XML
+        // We expect that for each argument there's a corresponding <field>-tag in the block state
         Object.values(blockInfo.info.arguments).forEach(argument => {
-            const regex = new RegExp(`<field name="field_${categoryInfo.id}_${argument.type}">`);
-            t.true(regex.test(blockInfo.xml));
+            t.true(`field_${categoryInfo.id}_${argument.type}` in blockInfo.state.fields);
         });
 
     });

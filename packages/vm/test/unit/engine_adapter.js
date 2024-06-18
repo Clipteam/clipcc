@@ -188,14 +188,14 @@ test('create variable with entity in name', t => {
     t.end();
 });
 
-test('create with invalid block xml', t => {
-    // Entirely invalid block XML
-    const result = adapter(events.createinvalid);
+test('create with empty block json', t => {
+    // empty block JSON
+    const result = adapter(events.createempty);
     t.ok(Array.isArray(result));
     t.equal(result.length, 0);
 
-    // Invalid grandchild tag
-    const result2 = adapter(events.createinvalidgrandchild);
+    // Undefined property
+    const result2 = adapter(events.createundefinedproperty);
     t.ok(Array.isArray(result2));
     t.equal(result2.length, 1);
     t.type(result2[0].id, 'string');
@@ -205,8 +205,8 @@ test('create with invalid block xml', t => {
     t.end();
 });
 
-test('create with invalid xml', t => {
-    const result = adapter(events.createbadxml);
+test('create with invalid json', t => {
+    const result = adapter(events.createbadjson);
     t.ok(Array.isArray(result));
     t.equal(result.length, 0);
     t.end();

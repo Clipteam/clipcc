@@ -26,7 +26,7 @@ test('spec', t => {
     t.type(v.value, 'number');
     t.equal(v.isCloud, varIsCloud);
 
-    t.type(v.toXML, 'function');
+    t.type(v.toJSON, 'function');
 
     v = new Variable(
         varId,
@@ -47,7 +47,7 @@ test('spec', t => {
     t.end();
 });
 
-test('toXML', t => {
+test('toJSON', t => {
     const varId = 'varId';
     const varName = 'varName';
     const varIsCloud = false;
@@ -59,52 +59,11 @@ test('toXML', t => {
         varIsCloud
     );
 
-    const parser = new htmlparser.Parser({
-        onopentag: function (name, attribs){
-            if (name === 'variable'){
-                t.equal(attribs.type, Variable.SCALAR_TYPE);
-                t.equal(attribs.id, varId);
-                t.equal(attribs.iscloud, varIsCloud.toString());
-                t.equal(attribs.islocal, varIsLocal.toString());
-            }
-        },
-        ontext: function (text){
-            t.equal(text, varName);
-        }
-    }, {decodeEntities: false});
-    parser.write(v.toXML(false));
-    parser.end();
-
-    t.end();
-});
-
-test('escape variable name for XML', t => {
-    const varId = 'varId';
-    const varName = '<>&\'"';
-    const varIsCloud = false;
-    const varIsLocal = false;
-    const v = new Variable(
-        varId,
-        varName,
-        Variable.SCALAR_TYPE,
-        varIsCloud
-    );
-
-    const parser = new htmlparser.Parser({
-        onopentag: function (name, attribs){
-            if (name === 'variable'){
-                t.equal(attribs.type, Variable.SCALAR_TYPE);
-                t.equal(attribs.id, varId);
-                t.equal(attribs.iscloud, varIsCloud.toString());
-                t.equal(attribs.islocal, varIsLocal.toString());
-            }
-        },
-        ontext: function (text){
-            t.equal(text, '&lt;&gt;&amp;&apos;&quot;');
-        }
-    }, {decodeEntities: false});
-    parser.write(v.toXML(false));
-    parser.end();
-
+    const varState = v.toJSON(false);
+    t.euqal(varState.type, Variable.SCALAR_TYPE);
+    t.equal(varState.id, varId);
+    t.equal(varState.isCloud, varIsCloud);
+    t.equal(varState.isLocal, varIsLocal);
+    
     t.end();
 });
