@@ -463,7 +463,7 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
             {kind: 'block', type: 'looks_show'},
             {kind: 'block', type: 'looks_hide'},
             blockSeparator,
-            {kind: 'block', type: 'looks_gofrontback'},
+            {kind: 'block', type: 'looks_gotofrontback'},
             {
                 kind: 'block',
                 type: 'looks_goforwardbackwardlayers',
