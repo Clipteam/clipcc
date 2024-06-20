@@ -538,7 +538,7 @@ test('emitWorkspaceUpdate', t => {
             },
             comments: {
                 someBlockComment: {
-                    toJSON: () => _{text: 'someBlockComment'}),
+                    toJSON: () => ({text: 'someBlockComment'}),
                     blockId: 'someBlockId'
                 }
             }
