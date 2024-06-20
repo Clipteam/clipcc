@@ -195,7 +195,7 @@ const testInlineImage = function (t, inlineImage) {
 
 const testSeparator = function (t, separator) {
     t.same(separator.json, null); // should be null or undefined
-    t.equal(separator.state, {kind: 'sep', gap: 36});
+    t.same(separator.state, {kind: 'sep', gap: 36});
 };
 
 const testCommand = function (t, command) {
@@ -345,8 +345,8 @@ test('custom field types should be added to block and EXTENSION_FIELD_ADDED call
         Object.values(blockInfo.info.arguments).forEach(argument => {
             for (const inputName in blockInfo.state.inputs) {
                 const inputBlock = blockInfo.state.inputs[inputName].block;
-                if (!(`field_${categoryInfo.id}_${argument.type}` in inputBlock.fields)) {
-                    t.fail('Expected field not found');
+                if (inputBlock && !(`field_${categoryInfo.id}_${argument.type}` in inputBlock.fields)) {
+                    t.fail(`Expected field "field_${ categoryInfo.id }_${ argument.type }" not found`);
                 }
             }
         });

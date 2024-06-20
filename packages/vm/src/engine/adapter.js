@@ -7,9 +7,12 @@ const uid = require('../util/uid');
  * @param {object} blocks Collection of blocks to add to.
  * @param {boolean} isTopBlock Whether blocks at this level are "top blocks."
  * @param {?string} parent Parent block ID.
- * @return {undefined}
  */
 const stateToBlock = function (state, blocks, isTopBlock, parent) {
+    if (Object.keys(state).length < 1) {
+        return;
+    }
+
     // Block skeleton.
     const block = {
         id: state.id ?? uid(), // Block ID

@@ -515,7 +515,7 @@ test('emitWorkspaceUpdate', t => {
             isStage: true,
             variables: {
                 global: {
-                    toJSON: () => {variableType: 'global'}
+                    toJSON: () => ({variableType: 'global'})
                 }
             },
             blocks: {
@@ -523,14 +523,14 @@ test('emitWorkspaceUpdate', t => {
             },
             comments: {
                 aStageComment: {
-                    toJSON: () => {text: 'aStageComment'},
+                    toJSON: () => ({text: 'aStageComment'}),
                     blockId: null
                 }
             }
         }, {
             variables: {
                 unused: {
-                    toJSON: () => {variableType: 'unused'}
+                    toJSON: () => ({variableType: 'unused'})
                 }
             },
             blocks: {
@@ -538,14 +538,14 @@ test('emitWorkspaceUpdate', t => {
             },
             comments: {
                 someBlockComment: {
-                    toJSON: () => {text: 'someBlockComment'},
+                    toJSON: () => _{text: 'someBlockComment'}),
                     blockId: 'someBlockId'
                 }
             }
         }, {
             variables: {
                 local: {
-                    toJSON: () => {variableType: 'local'}
+                    toJSON: () => ({variableType: 'local'})
                 }
             },
             blocks: {
@@ -553,11 +553,11 @@ test('emitWorkspaceUpdate', t => {
             },
             comments: {
                 someOtherComment: {
-                    toJSON: () => {text: 'someOtherComment'},
+                    toJSON: () => ({text: 'someOtherComment'}),
                     blockId: null
                 },
                 aBlockComment: {
-                    toJSON: () => {text: 'aBlockComment'},
+                    toJSON: () => ({text: 'aBlockComment'}),
                     blockId: 'a block'
                 }
             }
