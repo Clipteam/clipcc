@@ -1,6 +1,5 @@
 const test = require('tap').test;
 const Variable = require('../../src/engine/variable');
-const htmlparser = require('htmlparser2');
 
 test('spec', t => {
     t.type(typeof Variable.SCALAR_TYPE, typeof Variable.LIST_TYPE);
@@ -60,7 +59,7 @@ test('toJSON', t => {
     );
 
     const varState = v.toJSON(false);
-    t.euqal(varState.type, Variable.SCALAR_TYPE);
+    t.equal(varState.type, Variable.SCALAR_TYPE);
     t.equal(varState.id, varId);
     t.equal(varState.isCloud, varIsCloud);
     t.equal(varState.isLocal, varIsLocal);

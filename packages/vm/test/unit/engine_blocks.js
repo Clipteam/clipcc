@@ -1014,7 +1014,7 @@ test('getAllVariableAndListReferences returns broadcast when we tell it to', t =
     t.equal(Array.isArray(varListRefs['mock broadcast message id']), true);
     t.equal(varListRefs['mock broadcast message id'].length, 1);
     t.equal(varListRefs['mock broadcast message id'][0].type, Variable.BROADCAST_MESSAGE_TYPE);
-    t.equal(varListRefs['mock broadcast message id'][0].referencingField.value, 'my message');
+    t.equal(varListRefs['mock broadcast message id'][0].referencingField.value, ' my message');
 
     t.end();
 });

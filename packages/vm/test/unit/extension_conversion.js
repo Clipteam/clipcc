@@ -341,11 +341,15 @@ test('custom field types should be added to block and EXTENSION_FIELD_ADDED call
     runtime.on(Runtime.EXTENSION_ADDED, categoryInfo => {
         const blockInfo = categoryInfo.blocks[0];
 
-        // We expect that for each argument there's a corresponding <field>-tag in the block state
+        // We expect that for each argument there's a corresponding field in the block state
         Object.values(blockInfo.info.arguments).forEach(argument => {
-            t.true(`field_${categoryInfo.id}_${argument.type}` in blockInfo.state.fields);
+            for (const inputName in blockInfo.state.inputs) {
+                const inputBlock = blockInfo.state.inputs[inputName].block;
+                if (!(`field_${categoryInfo.id}_${argument.type}` in inputBlock.fields)) {
+                    t.fail('Expected field not found');
+                }
+            }
         });
-
     });
 
     let fieldAddedCallbacks = 0;

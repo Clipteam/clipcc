@@ -498,65 +498,66 @@ test('reorderTarget', t => {
 
 test('emitWorkspaceUpdate', t => {
     const vm = new VirtualMachine();
-    const blocksToXML = comments => {
-        let blockString = 'blocks\n';
+    const blocksToState = comments => {
+        const state = {type: 'block_test'};
         if (comments) {
             for (const commentId in comments) {
                 const comment = comments[commentId];
-                blockString += `A Block Comment: ${comment.toXML()}`;
+                state.comments[commentId] = comment.toJSON();
             }
 
         }
-        return blockString;
+        return state;
     };
+
     vm.runtime.targets = [
         {
             isStage: true,
             variables: {
                 global: {
-                    toXML: () => 'global'
+                    toJSON: () => {variableType: 'global'}
                 }
             },
             blocks: {
-                toXML: blocksToXML
+                toJSON: blocksToState
             },
             comments: {
                 aStageComment: {
-                    toXML: () => 'aStageComment',
+                    toJSON: () => {text: 'aStageComment'},
                     blockId: null
                 }
             }
         }, {
             variables: {
                 unused: {
-                    toXML: () => 'unused'
+                    toJSON: () => {variableType: 'unused'}
                 }
             },
             blocks: {
-                toXML: blocksToXML
+                toJSON: blocksToState
             },
             comments: {
                 someBlockComment: {
-                    toXML: () => 'someBlockComment',
+                    toJSON: () => {text: 'someBlockComment'},
                     blockId: 'someBlockId'
                 }
             }
         }, {
             variables: {
                 local: {
-                    toXML: () => 'local'
+                    toJSON: () => {variableType: 'local'}
                 }
             },
             blocks: {
-                toXML: blocksToXML
+                toJSON: blocksToState
             },
             comments: {
                 someOtherComment: {
-                    toXML: () => 'someOtherComment',
+                    toJSON: () => {text: 'someOtherComment'},
                     blockId: null
                 },
                 aBlockComment: {
-                    toXML: () => 'aBlockComment',
+                    toJSON: () => {text: 'aBlockComment'},
                     blockId: 'a block'
                 }
             }
@@ -564,17 +565,17 @@ test('emitWorkspaceUpdate', t => {
     ];
     vm.editingTarget = vm.runtime.targets[2];
 
-    let xml = null;
-    vm.emit = (event, data) => (xml = data.xml);
+    let jsonStr = null;
+    vm.emit = (event, data) => (jsonStr = JSON.stringify(data.json));
     vm.emitWorkspaceUpdate();
-    t.notEqual(xml.indexOf('global'), -1);
-    t.notEqual(xml.indexOf('local'), -1);
-    t.equal(xml.indexOf('unused'), -1);
-    t.notEqual(xml.indexOf('blocks'), -1);
-    t.equal(xml.indexOf('aStageComment'), -1);
-    t.equal(xml.indexOf('someBlockComment'), -1);
-    t.notEqual(xml.indexOf('someOtherComment'), -1);
-    t.notEqual(xml.indexOf('A Block Comment: aBlockComment'), -1);
+    t.notEqual(jsonStr.indexOf('global'), -1);
+    t.notEqual(jsonStr.indexOf('local'), -1);
+    t.equal(jsonStr.indexOf('unused'), -1);
+    t.notEqual(jsonStr.indexOf('blocks'), -1);
+    t.equal(jsonStr.indexOf('aStageComment'), -1);
+    t.equal(jsonStr.indexOf('someBlockComment'), -1);
+    t.notEqual(jsonStr.indexOf('someOtherComment'), -1);
+    t.notEqual(jsonStr.indexOf('aBlockComment'), -1);
     t.end();
 });
 

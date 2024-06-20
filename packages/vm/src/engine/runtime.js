@@ -1251,8 +1251,10 @@ class Runtime extends EventEmitter {
         const blockState = {
             kind: 'block',
             type: extendedOpcode,
-            inputs: context.inputs
         };
+        if (Object.keys(context.inputs).length > 0) {
+            blockState.inputs = context.inputs;
+        }
 
         return {
             info: context.blockInfo,
@@ -1300,7 +1302,7 @@ class Runtime extends EventEmitter {
             state: {
                 kind: 'button',
                 text: buttonText,
-                callbackKey: buttonInfo.func
+                callbackkey: buttonInfo.func
             }
         };
     }
