@@ -182,8 +182,8 @@
             "type": "data_variable",
             "id": "/b?}ZGt/N5FmS2yw5GHZ",
             "fields": {
-                "this & that": {
-                    "name": "VARIABLE",
+                "VARIABLE": {
+                    "name": "this & that",
                     "id": "k-q!YMpHim*lrSX)v(8t",
                     "variableType": ""
                 }
@@ -235,8 +235,8 @@
             "type": "data_variable",
             "id": "a block",
             "fields": {
-                "a mock variable": {
-                    "name": "VARIABLE",
+                "VARIABLE": {
+                    "name": "a mock variable",
                     "id": "mock var id",
                     "variableType": ""
                 }
@@ -254,8 +254,8 @@
                         "type": "event_broadcast_menu",
                         "id": "boadcast shadow",
                         "fields": {
-                            "my message": {
-                                "name": "BROADCAST_OPTION",
+                            "BROADCAST_OPTION": {
+                                "name": " my message",
                                 "id": "mock broadcast message id",
                                 "variableType": "broadcast_msg"
                             }
@@ -272,8 +272,8 @@
             "type": "data_listcontents",
             "id": "another block",
             "fields": {
-                "a mock list": {
-                    "name": "LIST",
+                "LIST": {
+                    "name": "a mock list",
                     "id": "mock list id",
                     "variableType": ""
                 }
