@@ -34,12 +34,11 @@ class Variable {
     }
 
     toJSON (isLocal) {
-        isLocal = (isLocal === true);
         return {
             id: this.id,
             type: this.type,
             name: this.name,
-            isLocal,
+            isLocal: !!isLocal,
             isCloud: this.isCloud
         };
     }
