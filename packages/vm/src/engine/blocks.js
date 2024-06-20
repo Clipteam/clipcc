@@ -1129,9 +1129,9 @@ class Blocks {
                 fields[blockField.name].id = fieldId;
                 fields[blockField.name].variableType = blockField.variableType ?? '';
                 fields[blockField.name].name = blockField.value;
+            } else {
+                fields[blockField.name] = blockField.value;
             }
-
-            fields[blockField.name] = blockField.value;
         }
         // Add blocks connected to the next connection.
         if (block.next) {

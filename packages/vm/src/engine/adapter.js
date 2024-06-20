@@ -31,13 +31,19 @@ const stateToBlock = function (state, blocks, isTopBlock, parent) {
     for (const fieldName in state.fields) {
         const field = state.fields[fieldName] ?? '';
         // It's possibly a variable
-        block.fields[typeof field === 'object' ? field.name : fieldName] = {
-            name: fieldName,
-            id: typeof field === 'object' ? field.id : undefined,
-            value: field.id ? field.name : field
-        };
-        if (typeof field.variableType === 'string') {
-            block.fields[field.name].variableType = field.variableType;
+        const isVariable = typeof field === 'object';
+        if (isVariable) {
+            block.fields[fieldName] = {
+                name: fieldName,
+                id: field.id,
+                value: field.name,
+                variableType: field.variableType
+            };
+        } else {
+            block.fields[fieldName] = {
+                name: fieldName,
+                value: field
+            };
         }
     }
 

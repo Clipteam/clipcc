@@ -167,8 +167,8 @@ const saveFields = function(block, state, doFullSerialization) {
       if (field.name && field.SERIALIZABLE) {
         hasFieldState = true;
         if (field.referencesVariables()) {
-          const [name, variableState] = saveVariableState(field);
-          fields[name] = variableState;
+          const variableState = saveVariableState(field);
+          fields[field.name] = variableState;
         } else {
           fields[field.name] = field.saveState(doFullSerialization);
         }
@@ -211,7 +211,7 @@ const saveComment = function(block, state) {
 /**
  * Encode a variable field as JSON.
  * @param {!Blockly.FieldVariable} field The field to encode.
- * @return {?[string, Object]} JSON, or null if the field did not need to be
+ * @return {?Object} JSON, or null if the field did not need to be
  *     serialized.
  * @private
  */
@@ -235,11 +235,11 @@ const saveVariableState = function(field) {
   if (!variable) {
     throw Error('Tried to serialize a variable field with no variable.');
   }
-  return [variable.name, {
-    name: field.name,
+  return {
+    name: variable.name,
     id: variable.getId(),
     variableType: variable.type
-  }];
+  };
 };
 
 /**
