@@ -501,6 +501,7 @@ test('emitWorkspaceUpdate', t => {
     const blocksToState = comments => {
         const state = {type: 'block_test'};
         if (comments) {
+            state.comments = {};
             for (const commentId in comments) {
                 const comment = comments[commentId];
                 state.comments[commentId] = comment.toJSON();
