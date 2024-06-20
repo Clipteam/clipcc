@@ -1404,14 +1404,13 @@ class Runtime extends EventEmitter {
             }
 
             if (shadowType) {
-                context.inputs[placeholder] = {block: {
+                context.inputs[placeholder].block = {
                     type: shadowType,
                     shadow: true
-                }};
-            }
-
-            if (defaultValue && fieldName) {
-                context.inputs[placeholder].block.fields = {[fieldName]: defaultValue};
+                };
+                if (defaultValue && fieldName) {
+                    context.inputs[placeholder].block.fields = { [fieldName]: defaultValue };
+                }
             }
         }
 
