@@ -10,7 +10,7 @@ class Clone {
      * @returns {object} a deep clone of the original object.
      */
     static simple (original) {
-        return structuredClone(original);
+        return JSON.parse(JSON.stringify(original));
     }
 }
 
