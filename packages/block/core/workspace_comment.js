@@ -398,25 +398,6 @@ WorkspaceComment.fromXml = function(xmlComment, workspace) {
 };
 
 /**
- * Create a comment from JSON state on the workspace.
- * @param {!Object} info The comment state.
- * @param {!Blockly.Workspace} workspace The workspace.
- * @return {!WorkspaceComment} The created workspace comment.
- * @package
- */
-WorkspaceComment.fromState = function(info, workspace) {
-  const comment = new WorkspaceComment(
-      workspace, info.content, info.h, info.w, info.minimized, info.id);
-
-  if (!isNaN(info.x) && !isNaN(info.y)) {
-    comment.moveBy(info.x, info.y);
-  }
-
-  WorkspaceComment.fireCreateEvent(comment);
-  return comment;
-};
-
-/**
  * Decode an XML comment tag and return the results in an object.
  * @param {!Element} xml XML comment element.
  * @return {!Object} An object containing the information about the comment.

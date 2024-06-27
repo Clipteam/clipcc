@@ -25,7 +25,7 @@ goog.declareModuleId('Blockly.Events.CommentCreate');
 
 import * as eventUtils from './utils';
 import {CommentBase} from './comment_base';
-import * as workspaces from '../serialization/workspaces';
+import * as comments from '../serialization/comments';
 
 
 /**
@@ -119,7 +119,7 @@ CommentCreate.prototype.run = function(forward) {
         block.setCommentText('', this.commentId, this.xy.x, this.xy.y, this.minimized);
       }
     } else {
-      workspaces.load({comments: [this.json]}, workspace);
+      comments.load([this.json], workspace);
     }
   } else {
     const comment = this.getComment_();

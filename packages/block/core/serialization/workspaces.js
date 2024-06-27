@@ -30,8 +30,7 @@ import { WorkspaceFinishedLoading } from '../events/workspace_finished_loading';
 import * as eventUtils from '../events/utils';
 import * as utils from '../utils';
 import * as variableSerializer from './variables';
-import {WorkspaceComment} from '../workspace_comment';
-import {WorkspaceCommentSvg} from '../workspace_comment_svg';
+import * as commentSerializer from './comments';
 
 goog.declareModuleId('Blockly.serialization.workspaces');
 
@@ -53,15 +52,9 @@ export const save = function(workspace) {
     state['variables'] = variableStates;
   }
 
-  const commentStates = [];
-  const comments = workspace.getTopComments(true).filter(function(topComment) {
-    return topComment instanceof WorkspaceComment;
-  });
-
-  for (let i = 0, comment; comment = comments[i]; i++) {
-    commentStates.push(comment.toStateWithXY());
-  }
-  if (comments.length) {
+  
+  const commentStates = commentSerializer.save(workspace);
+  if (commentStates.length) {
     state['comments'] = commentStates;
   }
 
@@ -134,13 +127,7 @@ export const load = function(state, workspace, {recordUndo = false, clear = fals
 
   if (state['comments']) {
     const commentStates = state['comments'];
-    for (const commentState of commentStates) {
-      if (workspace.rendered) {
-        WorkspaceCommentSvg.fromState(commentState, workspace, width);
-      } else {
-        WorkspaceComment.fromState(commentState, workspace);
-      }
-    }
+    commentSerializer.load(commentStates, workspace, width);
   }
 
   if (workspace.setResizesEnabled) {
