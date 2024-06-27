@@ -63,12 +63,12 @@ class MockBlock {
         mixin(this, prototype);
         this.init();
 
-        // bootstrap the mutation<->DOM cycle
+        // bootstrap the mutation<->state cycle
         this.blockInfoText = JSON.stringify(blockInfo);
-        const xmlElement = this.mutationToDom();
+        const state = this.saveExtraState();
 
-        // parse blockInfo from XML to fill dynamic properties
-        this.domToMutation(xmlElement);
+        // parse blockInfo from state to fill dynamic properties
+        this.loadExtraState(state);
     }
 
     jsonInit (json) {

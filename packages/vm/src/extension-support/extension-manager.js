@@ -255,6 +255,16 @@ class ExtensionManager {
     }
 
     /**
+     * Modify the provided text as necessary to ensure that it may be used as an attribute value in valid XML.
+     * @param {string} text - the text to be sanitized
+     * @returns {string} - the sanitized text
+     * @private
+     */
+    _sanitizeID (text) {
+        return text.toString().replace(/[<"&]/, '_');
+    }
+
+    /**
      * Apply minor cleanup and defaults for optional extension fields.
      * TODO: make the ID unique in cases where two copies of the same extension are loaded.
      * @param {string} serviceName - the name of the service hosting this extension block
