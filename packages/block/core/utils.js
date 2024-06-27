@@ -1027,3 +1027,21 @@ export const stopTextWidthCache = function() {
     cacheWidths = null;
   }
 };
+
+/**
+ * Returns the extra state of the given block (either as XML or a JSO, depending
+ * on the block's definition).
+ * @param {!BlockSvg} block The block to get the extra state of.
+ * @return {string} A stringified version of the extra state of the given block.
+ * @package
+ */
+export const getExtraBlockState_ = function (block) {
+  if (block.saveExtraState) {
+    const state = block.saveExtraState();
+    return state;
+  } else if (block.mutationToDom) {
+    const state = block.mutationToDom();
+    return state ? Xml.domToText(state) : '';
+  }
+  return '';
+};

@@ -26,6 +26,7 @@ goog.declareModuleId('Blockly.Events.BlockChange');
 import * as eventUtils from './utils';
 import {BlockBase} from './block_base';
 import * as Xml from '../xml';
+import {getExtraBlockState_} from '../utils';
 
 
 /**
@@ -131,7 +132,7 @@ BlockChange.prototype.run = function(forward) {
       block.setInputsInline(value);
       break;
     case 'mutation': {
-      const oldState = BlockChange.getExtraBlockState_(
+      const oldState = getExtraBlockState_(
           /** @type {!BlockSvg} */ (block));
       if (block.loadExtraState) {
         block.loadExtraState(JSON.parse(value ?? '{}'));
@@ -151,22 +152,5 @@ BlockChange.prototype.run = function(forward) {
 
 // TODO (#5397): Encapsulate this in the BlocklyMutationChange event when
 //    refactoring change events.
-/**
- * Returns the extra state of the given block (either as XML or a JSO, depending
- * on the block's definition).
- * @param {!BlockSvg} block The block to get the extra state of.
- * @return {string} A stringified version of the extra state of the given block.
- * @package
- */
-BlockChange.getExtraBlockState_ = function(block) {
-  if (block.saveExtraState) {
-    const state = block.saveExtraState();
-    return state;
-  } else if (block.mutationToDom) {
-    const state = block.mutationToDom();
-    return state ? Xml.domToText(state) : '';
-  }
-  return '';
-};
 
 eventUtils.register(eventUtils.BLOCK_CHANGE, BlockChange);
