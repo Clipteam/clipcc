@@ -29,7 +29,6 @@ goog.declareModuleId('Blockly.clipboard');
 
 import * as eventUtils from './events/utils';
 import * as blocks from './serialization/blocks';
-import * as Xml from './xml';
 
 
 /**

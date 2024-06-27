@@ -901,7 +901,7 @@ const sensing = function (isInitialSetup, isStage, targetId, colors, hideNonVani
     if (!isStage) {
         category.contents.push(
             blockSeparator,
-            { kind: 'block', type: 'sensing_setdragmode', id: 'sensing_setdragmode' },
+            {kind: 'block', type: 'sensing_setdragmode', id: 'sensing_setdragmode'},
             blockSeparator
         );
     }
@@ -1212,14 +1212,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 FROM: {
                     block: {
                         type: 'math_number',
-                        fields: { NUM: '1' },
+                        fields: {NUM: '1'},
                         shadow: true
                     }
                 },
                 TO: {
                     block: {
                         type: 'math_number',
-                        fields: { NUM: '10' },
+                        fields: {NUM: '10'},
                         shadow: true
                     }
                 }
@@ -1233,14 +1233,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 OPERAND1: {
                     block: {
                         type: 'text',
-                        fields: { TEXT: '' },
+                        fields: {TEXT: ''},
                         shadow: true
                     }
                 },
                 OPERAND2: {
                     block: {
                         type: 'math_number',
-                        fields: { NUM: '50' },
+                        fields: {NUM: '50'},
                         shadow: true
                     }
                 }
@@ -1253,14 +1253,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 OPERAND1: {
                     block: {
                         type: 'text',
-                        fields: { TEXT: '' },
+                        fields: {TEXT: ''},
                         shadow: true
                     }
                 },
                 OPERAND2: {
                     block: {
                         type: 'math_number',
-                        fields: { NUM: '50' },
+                        fields: {NUM: '50'},
                         shadow: true
                     }
                 }
@@ -1276,14 +1276,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                     OPERAND1: {
                         block: {
                             type: 'text',
-                            fields: { TEXT: '' },
+                            fields: {TEXT: ''},
                             shadow: true
                         }
                     },
                     OPERAND2: {
                         block: {
                             type: 'math_number',
-                            fields: { NUM: '50' },
+                            fields: {NUM: '50'},
                             shadow: true
                         }
                     }
@@ -1296,14 +1296,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                     OPERAND1: {
                         block: {
                             type: 'text',
-                            fields: { TEXT: '' },
+                            fields: {TEXT: ''},
                             shadow: true
                         }
                     },
                     OPERAND2: {
                         block: {
                             type: 'math_number',
-                            fields: { NUM: '50' },
+                            fields: {NUM: '50'},
                             shadow: true
                         }
                     }
@@ -1319,14 +1319,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 OPERAND1: {
                     block: {
                         type: 'text',
-                        fields: { TEXT: '' },
+                        fields: {TEXT: ''},
                         shadow: true
                     }
                 },
                 OPERAND2: {
                     block: {
                         type: 'math_number',
-                        fields: { NUM: '50' },
+                        fields: {NUM: '50'},
                         shadow: true
                     }
                 }
@@ -1342,14 +1342,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                     OPERAND1: {
                         block: {
                             type: 'text',
-                            fields: { TEXT: '' },
+                            fields: {TEXT: ''},
                             shadow: true
                         }
                     },
                     OPERAND2: {
                         block: {
                             type: 'math_number',
-                            fields: { NUM: '50' },
+                            fields: {NUM: '50'},
                             shadow: true
                         }
                     }
@@ -1374,21 +1374,21 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                         POS: {
                             block: {
                                 type: 'math_whole_number',
-                                fields: { NUM: '1' },
+                                fields: {NUM: '1'},
                                 shadow: true
                             }
                         },
                         STRING: {
                             block: {
                                 type: 'text',
-                                fields: { TEXT: `${apple} ${banana}` },
+                                fields: {TEXT: `${apple} ${banana}`},
                                 shadow: true
                             }
                         },
                         SUBSTRING: {
                             block: {
                                 type: 'text',
-                                fields: { TEXT: banana },
+                                fields: {TEXT: banana},
                                 shadow: true
                             }
                         }
@@ -1411,7 +1411,7 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                     STRING2: {
                         block: {
                             type: 'text',
-                            fields: { TEXT: banana },
+                            fields: {TEXT: banana},
                             shadow: true
                         }
                     }
@@ -1424,14 +1424,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                     LETTER: {
                         block: {
                             type: 'math_whole_number',
-                            fields: { NUM: '1' },
+                            fields: {NUM: '1'},
                             shadow: true
                         }
                     },
                     STRING: {
                         block: {
                             type: 'text',
-                            fields: { TEXT: apple },
+                            fields: {TEXT: apple},
                             shadow: true
                         }
                     }
@@ -1444,7 +1444,7 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                     STRING: {
                         block: {
                             type: 'text',
-                            fields: { TEXT: apple },
+                            fields: {TEXT: apple},
                             shadow: true
                         }
                     }
@@ -1457,14 +1457,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                     STRING1: {
                         block: {
                             type: 'text',
-                            fields: { TEXT: apple },
+                            fields: {TEXT: apple},
                             shadow: true
                         }
                     },
                     STRING2: {
                         block: {
                             type: 'text',
-                            fields: { TEXT: letter },
+                            fields: {TEXT: letter},
                             shadow: true
                         }
                     }
@@ -1481,14 +1481,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 NUM1: {
                     block: {
                         type: 'math_number',
-                        fields: { NUM: '' },
+                        fields: {NUM: ''},
                         shadow: true
                     }
                 },
                 NUM2: {
                     block: {
                         type: 'math_number',
-                        fields: { NUM: '' },
+                        fields: {NUM: ''},
                         shadow: true
                     }
                 }
@@ -1501,7 +1501,7 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 NUM: {
                     block: {
                         type: 'math_number',
-                        fields: { NUM: '' },
+                        fields: {NUM: ''},
                         shadow: true
                     }
                 }
@@ -1515,7 +1515,7 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 NUM: {
                     block: {
                         type: 'math_number',
-                        fields: { NUM: '' },
+                        fields: {NUM: ''},
                         shadow: true
                     }
                 }
@@ -1582,12 +1582,15 @@ const makeToolboxContents = function (isInitialSetup, isStage = true, targetId, 
     };
 
     const motionContents = moveCategory('motion') || motion(isInitialSetup, isStage, targetId, colors.motion);
-    const looksContents = moveCategory('looks') || looks(isInitialSetup, isStage, targetId, costumeName, backdropName, colors.looks);
+    const looksContents = moveCategory('looks') ||
+        looks(isInitialSetup, isStage, targetId, costumeName, backdropName, colors.looks);
     const soundContents = moveCategory('sound') || sound(isInitialSetup, isStage, targetId, soundName, colors.sounds);
     const eventsContents = moveCategory('event') || events(isInitialSetup, isStage, targetId, colors.event);
     const controlContents = moveCategory('control') || control(isInitialSetup, isStage, targetId, colors.control);
-    const sensingContents = moveCategory('sensing') || sensing(isInitialSetup, isStage, targetId, colors.sensing, hideNonVanillaBlocks);
-    const operatorsContents = moveCategory('operators') || operators(isInitialSetup, isStage, targetId, colors.operators, hideNonVanillaBlocks);
+    const sensingContents = moveCategory('sensing') ||
+        sensing(isInitialSetup, isStage, targetId, colors.sensing, hideNonVanillaBlocks);
+    const operatorsContents = moveCategory('operators') ||
+        operators(isInitialSetup, isStage, targetId, colors.operators, hideNonVanillaBlocks);
     const variablesContents = moveCategory('data') || variables(isInitialSetup, isStage, targetId, colors.data);
     const myBlocksContents = moveCategory('procedures') || myBlocks(isInitialSetup, isStage, targetId, colors.more);
 

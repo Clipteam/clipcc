@@ -36,10 +36,6 @@ import * as constants from './constants';
 import {Msg} from './msg';
 import {VariableModel} from './variable_model';
 import * as Variables from './variables';
-import * as Xml from './xml';
-
-const dom = goog.require('goog.dom');
-
 
 /**
  * Construct the blocks required by the flyout for the variable category.
@@ -404,7 +400,7 @@ DataCategory.addCreateButton = function(content, workspace, type) {
   }
   Object.assign(button, {
     text: msg,
-    callbackkey: callbackKey
+    callbackKey
   });
   workspace.registerButtonCallback(callbackKey, callback);
   content.push(button);

@@ -610,7 +610,7 @@ class Blocks {
             }
             break;
         case 'mutation':
-            block.mutation = args.value;
+            block.mutation = JSON.parse(args.value);
             break;
         case 'checkbox': {
             // A checkbox usually has a one to one correspondence with the monitor

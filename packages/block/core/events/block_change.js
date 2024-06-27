@@ -104,7 +104,7 @@ BlockChange.prototype.run = function(forward) {
     // Close the mutator (if open) since we don't want to update it.
     block.mutator.setVisible(false);
   }
-  const value = forward ? this.newValue : this.oldValue;
+  let value = forward ? this.newValue : this.oldValue;
   switch (this.element) {
     case 'field': {
       const field = block.getField(this.name);
@@ -134,10 +134,11 @@ BlockChange.prototype.run = function(forward) {
       const oldState = BlockChange.getExtraBlockState_(
           /** @type {!BlockSvg} */ (block));
       if (block.loadExtraState) {
-        block.loadExtraState(value);
+        block.loadExtraState(JSON.parse(value ?? '{}'));
       } else if (block.domToMutation) {
+        value = value || '<mutation></mutation>';
         block.domToMutation(
-            Xml.textToDom(/** @type {string} */ (value) || '<mutation/>'));
+            Xml.textToDom('<xml>' + value + '</xml>'));
       }
       eventUtils.fire(new BlockChange(
           block, 'mutation', null, oldState, value));

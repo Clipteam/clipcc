@@ -254,7 +254,7 @@ const addCreateButton = function(workspace, content) {
   const button = {
     kind: 'button',
     text: Msg.NEW_PROCEDURE,
-    callbackkey: callbackKey
+    callbackKey: callbackKey
   };
   const callback = function() {
     createProcedureDefCallback(workspace);
@@ -318,10 +318,10 @@ export const mutateCallersAndPrototype = function(name, ws, extraState) {
     callers.push(prototypeBlock);
     eventUtils.setGroup(true);
     for (let i = 0, caller; caller = callers[i]; i++) {
-      const oldMutationState = caller.saveExtraState();
+      const oldMutationState = JSON.stringify(caller.saveExtraState());
       const oldMutation = oldMutationState;
       caller.loadExtraState(extraState);
-      const newMutationState = caller.saveExtraState();
+      const newMutationState = JSON.stringify(caller.saveExtraState());
       const newMutation = newMutationState;
       if (oldMutation != newMutation) {
         eventUtils.fire(new BlockChange(
@@ -405,15 +405,15 @@ const createProcedureDefCallback = function(workspace) {
  * @private
  */
 const createProcedureCallbackFactory = function(workspace) {
-  return function(mutation) {
-    if (mutation) {
+  return function(extraState) {
+    if (extraState) {
       const blockState = {
         type: 'procedures_definition',
         inputs: {
           'custom_block': {
             block: {
               type: 'procedures_prototype',
-              extraState: mutation,
+              extraState,
               shadow: true
             }
           }

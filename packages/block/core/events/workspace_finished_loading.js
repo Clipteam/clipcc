@@ -18,17 +18,17 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 import * as eventUtils from './utils.js';
 import { Abstract } from './abstract.js';
 
-goog.declareModuleId('Blockly.Events.FinishedLoading');
+goog.declareModuleId('Blockly.Events.WorkspaceFinishedLoading');
 
 /**
- * Class for a finished loading event.
+ * Class for a workspace finished loading event.
  * Used to notify the developer when the workspace has finished loading (i.e
  * domToWorkspace).
  * Finished loading events do not record undo or redo.
  * @extends {Abstract}
- * @alias Blockly.Events.FinishedLoading
+ * @alias Blockly.Events.WorkspaceFinishedLoading
  */
-export class FinishedLoading extends Abstract {
+export class WorkspaceFinishedLoading extends Abstract {
   /**
    * @param {!Workspace=} opt_workspace The workspace that has finished
    *    loading.  Undefined for a blank event.
@@ -85,4 +85,4 @@ export class FinishedLoading extends Abstract {
   }
 }
 
-eventUtils.register(eventUtils.FINISHED_LOADING, FinishedLoading);
+eventUtils.register(eventUtils.WORKSPACE_FINISHED_LOADING, WorkspaceFinishedLoading);

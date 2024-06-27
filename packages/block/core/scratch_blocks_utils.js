@@ -39,8 +39,6 @@ import * as utils from './utils';
 import * as Xml from './xml';
 import * as blocks from './serialization/blocks';
 
-const dom = goog.require('goog.dom');
-
 
 /**
  * Measure some text using a canvas in-memory.

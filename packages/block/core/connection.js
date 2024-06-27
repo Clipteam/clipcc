@@ -702,7 +702,7 @@ Connection.prototype.getOutputShape = function() {
 
 /**
  * Change a connection's shadow block.
- * @param {Element} shadow DOM representation of a block or null.
+ * @param {Element} shadowDom DOM representation of a block or null.
  */
 Connection.prototype.setShadowDom = function(shadowDom) {
   this.shadowDom_ = shadowDom;

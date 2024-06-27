@@ -324,7 +324,7 @@ Mutator.prototype.workspaceChanged_ = function() {
   if (this.rootBlock_.workspace == this.workspace_) {
     eventUtils.setGroup(true);
     const block = /** @type {!BlockSvg} */ (this.block_);
-    const oldExtraState = BlockChange.getExtraBlockState_(block);
+    const oldExtraState = JSON.stringify(BlockChange.getExtraBlockState_(block));
     // Switch off rendering while the source block is rebuilt.
     const savedRendered = block.rendered;
     block.rendered = false;
@@ -334,7 +334,7 @@ Mutator.prototype.workspaceChanged_ = function() {
     block.rendered = savedRendered;
     // Mutation may have added some elements that need initializing.
     block.initSvg();
-    const newExtraState = BlockChange.getExtraBlockState_(block);
+    const newExtraState = JSON.stringify(BlockChange.getExtraBlockState_(block));
     if (oldExtraState != newExtraState) {
       eventUtils.fire(new BlockChange(
           block, 'mutation', null, oldExtraState, newExtraState));

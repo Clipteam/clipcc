@@ -690,7 +690,7 @@ Toolbox.CategoryMenu.prototype.populate = function(tree) {
   const categories = [];
   // Find actual categories from the DOM tree.
   for (let i = 0, child; child = tree[i]; i++) {
-    if (child.kind.toUpperCase() !== 'CATEGORY') {
+    if (!child.kind || child.kind.toUpperCase() !== 'CATEGORY') {
       continue;
     }
     categories.push(child);

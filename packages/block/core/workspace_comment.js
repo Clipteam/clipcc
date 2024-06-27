@@ -298,11 +298,15 @@ WorkspaceComment.prototype.isMinimized = function() {
  * @package
  */
 WorkspaceComment.prototype.toState = function() {
-  return {
+  const state = {
     id: this.id,
     content: this.getText(),
-    minimized: this.isMinimized_
   };
+  if (this.isMinimized_)  {
+    state.minimized = true;
+  }
+
+  return state;
 };
 
 /**
@@ -317,6 +321,21 @@ WorkspaceComment.prototype.toStateWithXY = function() {
   commentState.h = this.height_;
   commentState.w = this.width_;
   return commentState;
+};
+
+/**
+ * Encode a comment subtree as XML with XY coordinates.
+ * @param {boolean=} opt_noId True if the encoder should skip the comment id.
+* @return {!Element} Tree of XML elements.
+ * @package
+  */
+WorkspaceComment.prototype.toXmlWithXY = function(opt_noId) {
+  const element = this.toXml(opt_noId);
+  element.setAttribute('x', Math.round(this.xy_.x));
+  element.setAttribute('y', Math.round(this.xy_.y));
+  element.setAttribute('h', this.height_);
+  element.setAttribute('w', this.width_);
+  return element;
 };
 
 /**

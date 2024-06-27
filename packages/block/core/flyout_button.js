@@ -57,7 +57,7 @@ export const FlyoutButton = function(workspace, targetWorkspace, state, isLabel)
    */
   this.callback_ = null;
 
-  const callbackKey = state.callbackkey;
+  const callbackKey = state.callbackKey;
   if (this.isLabel_ && callbackKey) {
     console.warn('Labels should not have callbacks. Label text: ' + this.text_);
   } else if (!this.isLabel_ &&

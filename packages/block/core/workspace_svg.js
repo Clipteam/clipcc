@@ -1078,10 +1078,10 @@ WorkspaceSvg.prototype.pasteWorkspaceComment_ = function(pasteInfo) {
   try {
     // it's an xml
     if (pasteInfo.tagName) {
-      comment = WorkspaceCommentSvg.fromXml(xmlComment, this);
+      comment = WorkspaceCommentSvg.fromXml(pasteInfo, this);
       // Move the duplicate to original position.
-      let commentX = parseInt(xmlComment.getAttribute('x'), 10);
-      let commentY = parseInt(xmlComment.getAttribute('y'), 10);
+      let commentX = parseInt(pasteInfo.getAttribute('x'), 10);
+      let commentY = parseInt(pasteInfo.getAttribute('y'), 10);
       if (!isNaN(commentX) && !isNaN(commentY)) {
         if (this.RTL) {
           commentX = -commentX;

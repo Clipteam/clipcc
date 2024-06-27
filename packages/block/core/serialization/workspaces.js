@@ -26,7 +26,7 @@
 
 import * as goog from 'google-closure-library/closure/goog/goog.js';
 import * as blockSerializer from './blocks';
-import { FinishedLoading } from '../events/workspace_events';
+import { WorkspaceFinishedLoading } from '../events/workspace_finished_loading';
 import * as eventUtils from '../events/utils';
 import * as utils from '../utils';
 import * as variableSerializer from './variables';
@@ -147,7 +147,7 @@ export const load = function(state, workspace, {recordUndo = false, clear = fals
     workspace.setResizesEnabled(true);
   }
 
-  eventUtils.fire(new FinishedLoading(workspace));
+  eventUtils.fire(new WorkspaceFinishedLoading(workspace));
 
   if (!existingGroup) {
     eventUtils.setGroup(false);

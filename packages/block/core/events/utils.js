@@ -166,7 +166,7 @@ export const COMMENT_DELETE = 'comment_delete';
 /**
  * Name of event that records a workspace load.
  */
-export const FINISHED_LOADING = 'finished_loading';
+export const WORKSPACE_FINISHED_LOADING = 'workspace_finished_loading';
 
 /**
  * Name of event that records a UI change.

@@ -28,8 +28,6 @@ import {BlockBase} from './block_base';
 import * as Xml from '../xml';
 import * as blocks from '../serialization/blocks';
 
-const dom = goog.require('goog.dom');
-
 
 /**
  * Class for a block deletion event.
@@ -46,7 +44,11 @@ export const BlockDelete = function(block) {
   }
   BlockDelete.superClass_.constructor.call(this, block);
 
-  this.oldXml = Xml.blockToDomWithXY(block);
+if (block.workspace.rendered) {
+    this.oldXml = Xml.blockToDomWithXY(block);
+} else {
+  this.oldXml = Xml.blockToDom(block);
+}
   this.ids = eventUtils.getDescendantIds(block);
 
 
