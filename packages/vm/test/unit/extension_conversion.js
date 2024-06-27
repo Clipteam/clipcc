@@ -16,7 +16,7 @@ const testExtensionInfo = {
     color3: '#333333',
     blocks: [
         {
-            func: 'MAKE_A_VARIABLE',
+            func: 'CREATE_VARIABLE',
             blockType: BlockType.BUTTON,
             text: 'this is a button'
         },
@@ -136,7 +136,7 @@ const testButton = function (t, button) {
     t.same(button.state, {
         kind: 'button',
         text: "this is a button",
-        callbackkey: "MAKE_A_VARIABLE"
+        callbackKey: "CREATE_VARIABLE"
     });
 };
 

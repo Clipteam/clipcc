@@ -96,7 +96,7 @@ test('Changing a block should emit a project changed event', t => {
     blockContainer.changeBlock({
         element: 'mutation',
         id: 'a new block',
-        value: '<mutation></mutation>'
+        value: '{}'
     });
 
     t.equal(projectChanged, true);

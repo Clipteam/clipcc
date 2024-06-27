@@ -17,7 +17,7 @@ import errorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
 import {BLOCKS_DEFAULT_SCALE, STAGE_DISPLAY_SIZES} from '../lib/layout-constants';
 import DropAreaHOC from '../lib/drop-area-hoc.jsx';
 import DragConstants from '../lib/drag-constants';
-// import defineDynamicBlock from '../lib/define-dynamic-block';
+import defineDynamicBlock from '../lib/define-dynamic-block';
 import {DEFAULT_THEME, getColorsForTheme, themeMap} from '../lib/themes';
 import {injectExtensionBlockTheme, injectExtensionCategoryTheme} from '../lib/themes/blockHelpers';
 
@@ -460,8 +460,7 @@ class Blocks extends React.Component {
                 });
 
                 this.ScratchBlocks.defineBlocksWithJsonArray(staticBlocksJson);
-                // cc - not finished, just ignore it
-                /*
+
                 dynamicBlocksInfo.forEach(blockInfo => {
                     // This is creating the block factory / constructor -- NOT a specific instance of the block.
                     // The factory should only know static info about the block: the category info and the opcode.
@@ -471,7 +470,6 @@ class Blocks extends React.Component {
                         defineDynamicBlock(this.ScratchBlocks, categoryInfo, blockInfo, extendedOpcode);
                     this.ScratchBlocks.Blocks[extendedOpcode] = blockDefinition;
                 });
-                */
             }
         };
 

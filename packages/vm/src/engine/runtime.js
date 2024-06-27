@@ -1246,12 +1246,18 @@ class Runtime extends EventEmitter {
             ++outLineNum;
         }
 
-        // Dynamic block is not finished now, just ignore it.
-        // const mutation = blockInfo.isDynamic ? `<mutation blockInfo="${xmlEscape(JSON.stringify(blockInfo))}"/>` : '';
         const blockState = {
             kind: 'block',
             type: extendedOpcode,
         };
+
+        if (blockInfo.isDynamic) {
+            blockState.extraState = {
+                kind: 'dynamic',
+                blockInfo: JSON.stringify(blockInfo)
+            };
+        }
+
         if (Object.keys(context.inputs).length > 0) {
             blockState.inputs = context.inputs;
         }
@@ -1290,7 +1296,7 @@ class Runtime extends EventEmitter {
      */
     _convertButtonForScratchBlocks (buttonInfo) {
         // for now we only support these pre-defined callbacks handled in scratch-blocks
-        const supportedCallbackKeys = ['MAKE_A_LIST', 'MAKE_A_PROCEDURE', 'MAKE_A_VARIABLE'];
+        const supportedCallbackKeys = ['CREATE_LIST', 'CREATE_PROCEDURE', 'CREATE_VARIABLE'];
         if (supportedCallbackKeys.indexOf(buttonInfo.func) < 0) {
             log.error(`Custom button callbacks not supported yet: ${buttonInfo.func}`);
         }
@@ -1302,7 +1308,7 @@ class Runtime extends EventEmitter {
             state: {
                 kind: 'button',
                 text: buttonText,
-                callbackkey: buttonInfo.func
+                callbackKey: buttonInfo.func
             }
         };
     }

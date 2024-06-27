@@ -38,13 +38,13 @@ const defineDynamicBlock = (ScratchBlocks, categoryInfo, staticBlockInfo, extend
         // we need a block info update (through `domToMutation`) before we have a completely initialized block
         this.needsBlockInfoUpdate = true;
     },
-    mutationToDom: function () {
-        const container = document.createElement('mutation');
-        container.setAttribute('blockInfo', this.blockInfoText);
-        return container;
+    saveExtraState: function () {
+        return {
+            blockInfo: this.blockInfoText
+        };
     },
-    domToMutation: function (xmlElement) {
-        const blockInfoText = xmlElement.getAttribute('blockInfo');
+    loadExtraState: function (state) {
+        const blockInfoText = state.blockInfo;
         if (!blockInfoText) return;
         if (!this.needsBlockInfoUpdate) {
             throw new Error('Attempted to update block info twice');
