@@ -28,6 +28,7 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.WorkspaceSvg');
 
 import * as browserEvents from './browser_events';
+import * as comments from './serialization/comments';
 import {Colours} from './colours';
 import * as common from './common';
 import {ConnectionDB} from './connection_db';
@@ -1094,7 +1095,7 @@ WorkspaceSvg.prototype.pasteWorkspaceComment_ = function(pasteInfo) {
         comment.moveBy(commentX, commentY);
       }
     } else {
-      comment = WorkspaceCommentSvg.fromState(pasteInfo, this);
+      comment = comments.createCommentFromState(pasteInfo, this);
       // Move the duplicate to original position.
       let commentX = parseInt(pasteInfo.x, 10);
       let commentY = parseInt(pasteInfo.y, 10);

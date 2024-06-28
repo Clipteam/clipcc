@@ -119,7 +119,7 @@ CommentCreate.prototype.run = function(forward) {
         block.setCommentText('', this.commentId, this.xy.x, this.xy.y, this.minimized);
       }
     } else {
-      comments.load([this.json], workspace);
+      comments.createCommentFromState(this.json, workspace);
     }
   } else {
     const comment = this.getComment_();

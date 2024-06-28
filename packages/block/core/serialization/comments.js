@@ -7,8 +7,9 @@ import {WorkspaceCommentSvg} from '../workspace_comment_svg';
  * @param {!State} state The state of a workspace comment to deserialize into the workspace.
  * @param {!Workspace} workspace The workspace to add the block to.
  * @param {number=} opt_wsWidth The width for coordinate calculation need.
+ * @returns {WorkspaceComment} The created comment.
  */
-const createCommentFromState = function(state, workspace, opt_wsWidth) {
+export const createCommentFromState = function(state, workspace, opt_wsWidth) {
   let comment;
   if (workspace.rendered) {
     eventUtils.disable();
@@ -30,7 +31,6 @@ const createCommentFromState = function(state, workspace, opt_wsWidth) {
     } finally {
       eventUtils.enable();
     }
-    WorkspaceComment.fireCreateEvent(comment);
   } else {
     comment = new WorkspaceComment(
         workspace, state.content, state.h, state.w, state.minimized, state.id);
@@ -38,9 +38,8 @@ const createCommentFromState = function(state, workspace, opt_wsWidth) {
     if (!isNaN(state.x) && !isNaN(state.y)) {
       comment.moveBy(state.x, state.y);
     }
-
-    WorkspaceComment.fireCreateEvent(comment);
   }
+  return comment;
 };
 
 /**
