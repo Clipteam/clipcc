@@ -1,4 +1,5 @@
 require('chromedriver');
+const path = require('path');
 const webdriver = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 const builder = new webdriver.Builder().forBrowser('chrome');
@@ -13,6 +14,8 @@ if (process.env.CI) {
 
 const browser = builder.build();
 
+const url = 'http://localhost:' + (process.env.PORT || 8071);
+
 // Parse jsunit html report, exit(1) if there are any failures.
 const testHtml = function(htmlString) {
   const regex = /[\d]+\spassed,\s([\d]+)\sfailed./i;
@@ -26,16 +29,17 @@ const testHtml = function(htmlString) {
   console.log(detail);
   console.log("============Unit Test Summary=================");
   if (parseInt(numOfFailure) !== 0) {
-    console.log(htmlString);
+    // replace to file path for debugging
+    const outputString = htmlString.replaceAll(url, path.join(__dirname, '../..').replace(/\\/g, '/'))
+        .replace(/(core\/.*?):/g, '$1.js:');
+    console.log(outputString);
     throw `${numOfFailure} test(s) failed`;
   }
 };
 
-const url = 'localhost:' + (process.env.PORT || 8071);
-
 const runTests = async function() {
   try {
-    await browser.get("http://" + url + "/tests/jsunit/vertical_tests.html");
+    await browser.get(url + "/tests/jsunit/vertical_tests.html");
     await browser.sleep(1000);
     const element = await browser.findElement({id: "closureTestRunnerLog"});
     const text = await element.getText();

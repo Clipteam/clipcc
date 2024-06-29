@@ -252,7 +252,7 @@ function watchCompressed() {
 /**
  * Task for running tests.
  */
-function test(callback) {
+function runTests(callback) {
   browserSync.create();
   browserSync.init({
     server: {
@@ -405,22 +405,25 @@ function buildUncompressed(callback) {
   callback();
 }
 
-const build = gulp.parallel(
-    buildUncompressed,
-    buildCompressedBlockly,
-    buildCompressedBlock,
-    buildCompressedCommonBlock
-);
-
 const buildCompressed = gulp.parallel(
     buildCompressedBlockly,
     buildCompressedBlock,
     buildCompressedCommonBlock
 );
 
+const build = gulp.parallel(
+    buildCompressed,
+    buildUncompressed
+);
+
 const startCompressed = gulp.series(
     buildCompressed,
     watchCompressed
+);
+
+const test = gulp.series(
+    buildUncompressed,
+    runTests
 );
 
 module.exports = {

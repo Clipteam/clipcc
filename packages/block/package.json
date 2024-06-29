@@ -19,7 +19,7 @@
     "build:compressed": "gulp buildCompressed",
     "build:debug": "gulp build --debug",
     "build:strict": "gulp build --strict",
-    "test:unit": "node tests/jsunit/test_runner.js",
+    "test:unit": "gulp test",
     "test:lint": "eslint .",
     "test:messages": "yarn run translate && node i18n/test_scratch_msgs.js",
     "test": "yarn run test:messages && yarn run test:unit",
