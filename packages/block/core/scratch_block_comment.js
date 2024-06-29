@@ -607,7 +607,7 @@ ScratchBlockComment.prototype.showContextMenu_ = function(e) {
 ScratchBlockComment.prototype.toStateWithXY = function() {
   return {
     id: this.id,
-    content: this.text_,
+    text: this.text_,
     x: Math.round(
       this.workspace.RTL ? this.workspace.getWidth() - this.x_ : this.x_),
     y: Math.round(this.y_),

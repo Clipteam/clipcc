@@ -15,7 +15,7 @@ export const createCommentFromState = function(state, workspace, opt_wsWidth) {
     eventUtils.disable();
     try {
       comment = new WorkspaceCommentSvg(workspace,
-          state.content, state.h, state.w, state.minimized, state.id);
+          state.text, state.h, state.w, state.minimized, state.id);
       comment.initSvg();
       comment.render(false);
       // Position the comment correctly, taking into account the width of a
@@ -33,7 +33,7 @@ export const createCommentFromState = function(state, workspace, opt_wsWidth) {
     }
   } else {
     comment = new WorkspaceComment(
-        workspace, state.content, state.h, state.w, state.minimized, state.id);
+        workspace, state.text, state.h, state.w, state.minimized, state.id);
 
     if (!isNaN(state.x) && !isNaN(state.y)) {
       comment.moveBy(state.x, state.y);

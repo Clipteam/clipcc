@@ -300,7 +300,7 @@ WorkspaceComment.prototype.isMinimized = function() {
 WorkspaceComment.prototype.toState = function() {
   const state = {
     id: this.id,
-    content: this.getText(),
+    text: this.getText(),
   };
   if (this.isMinimized_)  {
     state.minimized = true;
