@@ -67,5 +67,10 @@
         "parserOptions": {
             "sourceType": "module"
         }
+    }, {
+        "files": ["tests/jsunit/test_runner.js", "gulpfile.js"],
+        "env": {
+            "node": true
+        }
     }]
 }

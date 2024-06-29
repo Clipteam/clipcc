@@ -249,6 +249,33 @@ function watchCompressed() {
   ], buildCompressedCommonBlock);
 }
 
+/**
+ * Task for running tests.
+ */
+function test(callback) {
+  browserSync.create();
+  browserSync.init({
+    server: {
+      baseDir: '.',
+      serveStaticOptions: {
+        extensions: ['js'] // for importing modules without file extension
+      }
+    },
+    open: false,
+    port: process.env.PORT || 8071
+  }, (err, _browser) => {
+    if (err) throw err;
+    // import test runner script
+    const {runTests} = require('./tests/jsunit/test_runner.js');
+    runTests().then(() => {
+      browserSync.exit();
+      callback();
+    }).catch(err => {
+      throw err;
+    });
+  });
+}
+
 /* eslint-disable max-len */
 const CLOSURE_LIBRARY = 'node_modules/google-closure-library/closure/goog';
 const UNCOMPRESSED_HEADER = `'use strict';
@@ -336,17 +363,9 @@ class NodeModuleResolver {
     let importPath;
     if (importSpec.startsWith('./') || importSpec.startsWith('../')) {
       importPath = path.resolve(path.dirname(fromPath), importSpec);
-    }
-    else {
+    } else {
       importPath = path.resolve('node_modules', importSpec);
     }
-    const suffix = ['', '.ts', '.js'];
-    for (const ext of suffix) {
-      if (fs.existsSync(importPath + ext)) {
-        return importPath + ext;
-      }
-    }
-    console.warn('cannot detect', importPath, 'from', fromPath, 'with', importSpec);
     return importPath;
   }
 }
@@ -372,6 +391,10 @@ function buildUncompressed(callback) {
       // dependencies parsed from goog.addDependency should be ignored
       if (!dependency.isParsedFromDepsFile()) {
         dependency.setClosurePath(CLOSURE_LIBRARY);
+        if (dependency.path.match(/core[\\/].*\.js/g)) {
+          // core/*.js should be no-extension modules
+          dependency.path = dependency.path.replace(/(core[\\/].*)\.js/g, '$1');
+        }
         dependencies.push(dependency);
       }
     }
@@ -404,5 +427,6 @@ module.exports = {
   build,
   buildUncompressed,
   buildCompressed,
-  startCompressed
+  startCompressed,
+  test
 };
