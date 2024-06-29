@@ -32,7 +32,7 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
         type: 'motion_movesteps',
         inputs: {
             STEPS: {
-                block: {
+                shadow: {
                     type: 'math_number',
                     fields: {NUM: '10'},
                     shadow: true
@@ -44,7 +44,7 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
         type: 'motion_turnright',
         inputs: {
             DEGREES: {
-                block: {
+                shadow: {
                     type: 'math_number',
                     fields: {NUM: '15'},
                     shadow: true
@@ -56,7 +56,7 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
         type: 'motion_turnleft',
         inputs: {
             DEGREES: {
-                block: {
+                shadow: {
                     type: 'math_number',
                     fields: {NUM: '15'},
                     shadow: true
@@ -70,7 +70,7 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
         type: 'motion_goto',
         inputs: {
             TO: {
-                block: {
+                shadow: {
                     type: 'motion_goto_menu',
                     fields: {TO: '_random_'},
                     shadow: true
@@ -83,7 +83,7 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
         id: 'motion_gotoxy',
         inputs: {
             X: {
-                block: {
+                shadow: {
                     type: 'math_number',
                     id: 'movex',
                     fields: {NUM: '36'},
@@ -91,7 +91,7 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
                 }
             },
             Y: {
-                block: {
+                shadow: {
                     type: 'math_number',
                     id: 'movey',
                     fields: {NUM: '28'},
@@ -106,14 +106,14 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
         id: 'motion_glideto',
         inputs: {
             SECS: {
-                block: {
+                shadow: {
                     type: 'math_number',
                     fields: {NUM: '1'},
                     shadow: true
                 }
             },
             TO: {
-                block: {
+                shadow: {
                     type: 'motion_glideto_menu',
                     fields: {TO: '_random_'},
                     shadow: true
@@ -126,14 +126,14 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
         type: 'motion_glidesecstoxy',
         inputs: {
             SECS: {
-                block: {
+                shadow: {
                     type: 'math_number',
                     fields: {NUM: '1'},
                     shadow: true
                 }
             },
             X: {
-                block: {
+                shadow: {
                     type: 'math_number',
                     id: 'glidex',
                     fields: {NUM: '36'},
@@ -141,7 +141,7 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
                 }
             },
             Y: {
-                block: {
+                shadow: {
                     type: 'math_number',
                     id: 'glidey',
                     fields: {NUM: '28'},
@@ -157,7 +157,7 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
         id: 'motion_pointindirection',
         inputs: {
             DIRECTION: {
-                block: {
+                shadow: {
                     type: 'math_angle',
                     fields: {NUM: '90'},
                     shadow: true
@@ -170,7 +170,7 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
         type: 'motion_pointtowards',
         inputs: {
             TOWARDS: {
-                block: {
+                shadow: {
                     type: 'motion_pointtowards_menu',
                     fields: {TOWARDS: '_mouse_'},
                     shadow: true
@@ -184,7 +184,7 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
         type: 'motion_changexby',
         inputs: {
             DX: {
-                block: {
+                shadow: {
                     type: 'math_number',
                     fields: {NUM: '10'},
                     shadow: true
@@ -197,7 +197,7 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
         type: 'motion_setx',
         inputs: {
             X: {
-                block: {
+                shadow: {
                     type: 'math_number',
                     id: 'setx',
                     fields: {NUM: '36'},
@@ -211,7 +211,7 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
         type: 'motion_changeyby',
         inputs: {
             DY: {
-                block: {
+                shadow: {
                     type: 'math_number',
                     fields: {NUM: '10'},
                     shadow: true
@@ -224,7 +224,7 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
         type: 'motion_sety',
         inputs: {
             Y: {
-                block: {
+                shadow: {
                     type: 'math_number',
                     id: 'sety',
                     fields: {NUM: '28'},
@@ -277,7 +277,7 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
                 type: 'looks_switchbackdropto',
                 inputs: {
                     BACKDROP: {
-                        block: {
+                        shadow: {
                             type: 'looks_backdrops',
                             fields: {BACKDROP: backdropName},
                             shadow: true
@@ -289,7 +289,7 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
                 type: 'looks_switchbackdroptoandwait',
                 inputs: {
                     BACKDROP: {
-                        block: {
+                        shadow: {
                             type: 'looks_backdrops',
                             fields: {BACKDROP: backdropName},
                             shadow: true
@@ -304,14 +304,14 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
             type: 'looks_sayforsecs',
             inputs: {
                 MESSAGE: {
-                    block: {
+                    shadow: {
                         type: 'text',
                         fields: {TEXT: hello},
                         shadow: true
                     }
                 },
                 SECS: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '2'},
                         shadow: true
@@ -324,7 +324,7 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
             type: 'looks_say',
             inputs: {
                 MESSAGE: {
-                    block: {
+                    shadow: {
                         type: 'text',
                         fields: {TEXT: hello},
                         shadow: true
@@ -337,14 +337,14 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
             type: 'looks_thinkforsecs',
             inputs: {
                 MESSAGE: {
-                    block: {
+                    shadow: {
                         type: 'text',
                         fields: {TEXT: hmm},
                         shadow: true
                     }
                 },
                 SECS: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '2'},
                         shadow: true
@@ -357,7 +357,7 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
             type: 'looks_think',
             inputs: {
                 MESSAGE: {
-                    block: {
+                    shadow: {
                         type: 'text',
                         fields: {TEXT: hmm},
                         shadow: true
@@ -372,7 +372,7 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
             id: `${targetId}_switchcostumeto`,
             inputs: {
                 COSTUME: {
-                    block: {
+                    shadow: {
                         type: 'looks_costume',
                         fields: {COSTUME: costumeName},
                         shadow: true
@@ -386,7 +386,7 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
             type: 'looks_switchbackdropto',
             inputs: {
                 BACKDROP: {
-                    block: {
+                    shadow: {
                         type: 'looks_backdrops',
                         fields: {BACKDROP: backdropName},
                         shadow: true
@@ -401,7 +401,7 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
             type: 'looks_changesizeby',
             inputs: {
                 CHANGE: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '10'},
                         shadow: true
@@ -414,7 +414,7 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
             type: 'looks_setsizeto',
             inputs: {
                 SIZE: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '100'},
                         shadow: true
@@ -431,7 +431,7 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
             type: 'looks_changeeffectby',
             inputs: {
                 CHANGE: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '25'},
                         shadow: true
@@ -444,7 +444,7 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
             type: 'looks_seteffectto',
             inputs: {
                 VALUE: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '0'},
                         shadow: true
@@ -469,7 +469,7 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
                 type: 'looks_goforwardbackwardlayers',
                 inputs: {
                     NUM: {
-                        block: {
+                        shadow: {
                             type: 'math_integer',
                             fields: {NUM: '1'},
                             shadow: true
@@ -509,7 +509,7 @@ const sound = function (isInitialSetup, isStage, targetId, soundName, colors) {
             id: `${targetId}_sound_playuntildone`,
             inputs: {
                 SOUND_MENU: {
-                    block: {
+                    shadow: {
                         type: 'sound_sounds_menu',
                         fields: {SOUND_MENU: soundName},
                         shadow: true
@@ -523,7 +523,7 @@ const sound = function (isInitialSetup, isStage, targetId, soundName, colors) {
             id: `${targetId}_sound_play`,
             inputs: {
                 SOUND_MENU: {
-                    block: {
+                    shadow: {
                         type: 'sound_sounds_menu',
                         fields: {SOUND_MENU: soundName},
                         shadow: true
@@ -538,7 +538,7 @@ const sound = function (isInitialSetup, isStage, targetId, soundName, colors) {
             type: 'sound_changeeffectby',
             inputs: {
                 VALUE: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '10'},
                         shadow: true
@@ -551,7 +551,7 @@ const sound = function (isInitialSetup, isStage, targetId, soundName, colors) {
             type: 'sound_seteffectto',
             inputs: {
                 VALUE: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '100'},
                         shadow: true
@@ -566,7 +566,7 @@ const sound = function (isInitialSetup, isStage, targetId, soundName, colors) {
             type: 'sound_changevolumeby',
             inputs: {
                 VOLUME: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '-10'},
                         shadow: true
@@ -579,7 +579,7 @@ const sound = function (isInitialSetup, isStage, targetId, soundName, colors) {
             type: 'sound_setvolumeto',
             inputs: {
                 VOLUME: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '100'},
                         shadow: true
@@ -617,7 +617,7 @@ const events = function (isInitialSetup, isStage, targetId, colors) {
                 type: 'event_whengreaterthan',
                 inputs: {
                     VALUE: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: '10'},
                             shadow: true
@@ -632,7 +632,7 @@ const events = function (isInitialSetup, isStage, targetId, colors) {
                 type: 'event_broadcast',
                 inputs: {
                     BROADCAST_INPUT: {
-                        block: {
+                        shadow: {
                             type: 'event_broadcast_menu',
                             shadow: true
                         }
@@ -644,7 +644,7 @@ const events = function (isInitialSetup, isStage, targetId, colors) {
                 type: 'event_broadcastandwait',
                 inputs: {
                     BROADCAST_INPUT: {
-                        block: {
+                        shadow: {
                             type: 'event_broadcast_menu',
                             shadow: true
                         }
@@ -670,7 +670,7 @@ const control = function (isInitialSetup, isStage, targetId, colors) {
                 type: 'control_wait',
                 inputs: {
                     DURATION: {
-                        block: {
+                        shadow: {
                             type: 'math_positive_number',
                             fields: {NUM: '1'},
                             shadow: true
@@ -684,7 +684,7 @@ const control = function (isInitialSetup, isStage, targetId, colors) {
                 type: 'control_repeat',
                 inputs: {
                     TIMES: {
-                        block: {
+                        shadow: {
                             type: 'math_whole_number',
                             fields: {NUM: '10'},
                             shadow: true
@@ -710,7 +710,7 @@ const control = function (isInitialSetup, isStage, targetId, colors) {
             type: 'control_create_clone_of',
             inputs: {
                 CLONE_OPTION: {
-                    block: {
+                    shadow: {
                         type: 'control_create_clone_of_menu',
                         shadow: true
                     }
@@ -725,7 +725,7 @@ const control = function (isInitialSetup, isStage, targetId, colors) {
                 type: 'control_create_clone_of',
                 inputs: {
                     CLONE_OPTION: {
-                        block: {
+                        shadow: {
                             type: 'control_create_clone_of_menu',
                             shadow: true
                         }
@@ -756,28 +756,28 @@ const sensing = function (isInitialSetup, isStage, targetId, colors, hideNonVani
             type: 'sensing_distancebetweenposition',
             inputs: {
                 X1: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '0'},
                         shadow: true
                     }
                 },
                 Y1: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '0'},
                         shadow: true
                     }
                 },
                 X2: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '1'},
                         shadow: true
                     }
                 },
                 Y2: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '1'},
                         shadow: true
@@ -790,28 +790,28 @@ const sensing = function (isInitialSetup, isStage, targetId, colors, hideNonVani
             type: 'sensing_directionbetweenposition',
             inputs: {
                 X1: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '0'},
                         shadow: true
                     }
                 },
                 Y1: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '0'},
                         shadow: true
                     }
                 },
                 X2: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '1'},
                         shadow: true
                     }
                 },
                 Y2: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '1'},
                         shadow: true
@@ -824,14 +824,14 @@ const sensing = function (isInitialSetup, isStage, targetId, colors, hideNonVani
             type: 'sensing_colorat',
             inputs: {
                 X: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '0'},
                         shadow: true
                     }
                 },
                 Y: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '0'},
                         shadow: true
@@ -847,7 +847,7 @@ const sensing = function (isInitialSetup, isStage, targetId, colors, hideNonVani
             id: 'askandwait',
             inputs: {
                 QUESTION: {
-                    block: {
+                    shadow: {
                         type: 'text',
                         fields: {TEXT: name},
                         shadow: true
@@ -864,7 +864,7 @@ const sensing = function (isInitialSetup, isStage, targetId, colors, hideNonVani
             type: 'sensing_keypressed',
             inputs: {
                 KEY_OPTION: {
-                    block: {
+                    shadow: {
                         type: 'sensing_keyoptions',
                         shadow: true
                     }
@@ -879,7 +879,7 @@ const sensing = function (isInitialSetup, isStage, targetId, colors, hideNonVani
             type: 'sensing_mousepressed',
             inputs: {
                 MOUSE_OPTION: {
-                    block: {
+                    shadow: {
                         type: 'sensing_mouseoptions',
                         shadow: true
                     }
@@ -927,7 +927,7 @@ const sensing = function (isInitialSetup, isStage, targetId, colors, hideNonVani
             type: 'sensing_of',
             inputs: {
                 OBJECT: {
-                    block: {
+                    shadow: {
                         type: 'sensing_of_object_menu',
                         id: 'sensing_of_object_menu',
                         shadow: true
@@ -969,14 +969,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_add',
                 inputs: {
                     NUM1: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
                         }
                     },
                     NUM2: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
@@ -989,14 +989,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_subtract',
                 inputs: {
                     NUM1: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
                         }
                     },
                     NUM2: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
@@ -1009,14 +1009,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_multiply',
                 inputs: {
                     NUM1: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
                         }
                     },
                     NUM2: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
@@ -1029,14 +1029,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_divide',
                 inputs: {
                     NUM1: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
                         }
                     },
                     NUM2: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
@@ -1053,14 +1053,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_power',
                 inputs: {
                     NUM1: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
                         }
                     },
                     NUM2: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
@@ -1073,14 +1073,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_bitand',
                 inputs: {
                     NUM1: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
                         }
                     },
                     NUM2: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
@@ -1093,14 +1093,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_bitor',
                 inputs: {
                     NUM1: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
                         }
                     },
                     NUM2: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
@@ -1113,14 +1113,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_bitxor',
                 inputs: {
                     NUM1: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
                         }
                     },
                     NUM2: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
@@ -1133,7 +1133,7 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_bitnot',
                 inputs: {
                     NUM1: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
@@ -1146,14 +1146,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_bitlsh',
                 inputs: {
                     NUM1: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
                         }
                     },
                     NUM2: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
@@ -1166,14 +1166,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_bitrsh',
                 inputs: {
                     NUM1: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
                         }
                     },
                     NUM2: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
@@ -1186,14 +1186,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_bitursh',
                 inputs: {
                     NUM1: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
                         }
                     },
                     NUM2: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: ''},
                             shadow: true
@@ -1210,14 +1210,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
             type: 'operator_random',
             inputs: {
                 FROM: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '1'},
                         shadow: true
                     }
                 },
                 TO: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '10'},
                         shadow: true
@@ -1231,14 +1231,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
             type: 'operator_gt',
             inputs: {
                 OPERAND1: {
-                    block: {
+                    shadow: {
                         type: 'text',
                         fields: {TEXT: ''},
                         shadow: true
                     }
                 },
                 OPERAND2: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '50'},
                         shadow: true
@@ -1251,14 +1251,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
             type: 'operator_lt',
             inputs: {
                 OPERAND1: {
-                    block: {
+                    shadow: {
                         type: 'text',
                         fields: {TEXT: ''},
                         shadow: true
                     }
                 },
                 OPERAND2: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '50'},
                         shadow: true
@@ -1274,14 +1274,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_ge',
                 inputs: {
                     OPERAND1: {
-                        block: {
+                        shadow: {
                             type: 'text',
                             fields: {TEXT: ''},
                             shadow: true
                         }
                     },
                     OPERAND2: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: '50'},
                             shadow: true
@@ -1294,14 +1294,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_le',
                 inputs: {
                     OPERAND1: {
-                        block: {
+                        shadow: {
                             type: 'text',
                             fields: {TEXT: ''},
                             shadow: true
                         }
                     },
                     OPERAND2: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: '50'},
                             shadow: true
@@ -1317,14 +1317,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
             type: 'operator_equals',
             inputs: {
                 OPERAND1: {
-                    block: {
+                    shadow: {
                         type: 'text',
                         fields: {TEXT: ''},
                         shadow: true
                     }
                 },
                 OPERAND2: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: '50'},
                         shadow: true
@@ -1340,14 +1340,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_nequals',
                 inputs: {
                     OPERAND1: {
-                        block: {
+                        shadow: {
                             type: 'text',
                             fields: {TEXT: ''},
                             shadow: true
                         }
                     },
                     OPERAND2: {
-                        block: {
+                        shadow: {
                             type: 'math_number',
                             fields: {NUM: '50'},
                             shadow: true
@@ -1372,21 +1372,21 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                     type: 'operator_indexof',
                     inputs: {
                         POS: {
-                            block: {
+                            shadow: {
                                 type: 'math_whole_number',
                                 fields: {NUM: '1'},
                                 shadow: true
                             }
                         },
                         STRING: {
-                            block: {
+                            shadow: {
                                 type: 'text',
                                 fields: {TEXT: `${apple} ${banana}`},
                                 shadow: true
                             }
                         },
                         SUBSTRING: {
-                            block: {
+                            shadow: {
                                 type: 'text',
                                 fields: {TEXT: banana},
                                 shadow: true
@@ -1402,14 +1402,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_join',
                 inputs: {
                     STRING1: {
-                        block: {
+                        shadow: {
                             type: 'text',
                             fields: {TEXT: `${apple} `},
                             shadow: true
                         }
                     },
                     STRING2: {
-                        block: {
+                        shadow: {
                             type: 'text',
                             fields: {TEXT: banana},
                             shadow: true
@@ -1422,14 +1422,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_letter_of',
                 inputs: {
                     LETTER: {
-                        block: {
+                        shadow: {
                             type: 'math_whole_number',
                             fields: {NUM: '1'},
                             shadow: true
                         }
                     },
                     STRING: {
-                        block: {
+                        shadow: {
                             type: 'text',
                             fields: {TEXT: apple},
                             shadow: true
@@ -1442,7 +1442,7 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_length',
                 inputs: {
                     STRING: {
-                        block: {
+                        shadow: {
                             type: 'text',
                             fields: {TEXT: apple},
                             shadow: true
@@ -1455,14 +1455,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 type: 'operator_contains',
                 inputs: {
                     STRING1: {
-                        block: {
+                        shadow: {
                             type: 'text',
                             fields: {TEXT: apple},
                             shadow: true
                         }
                     },
                     STRING2: {
-                        block: {
+                        shadow: {
                             type: 'text',
                             fields: {TEXT: letter},
                             shadow: true
@@ -1479,14 +1479,14 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
             type: 'operator_mod',
             inputs: {
                 NUM1: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: ''},
                         shadow: true
                     }
                 },
                 NUM2: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: ''},
                         shadow: true
@@ -1499,7 +1499,7 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
             type: 'operator_round',
             inputs: {
                 NUM: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: ''},
                         shadow: true
@@ -1513,7 +1513,7 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
             type: 'operator_mathop',
             inputs: {
                 NUM: {
-                    block: {
+                    shadow: {
                         type: 'math_number',
                         fields: {NUM: ''},
                         shadow: true

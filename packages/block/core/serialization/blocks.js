@@ -261,7 +261,8 @@ const saveInputBlocks = function(block, state, doFullSerialization) {
     } else {
       const childBlock = input.connection.targetBlock();
       const shadow = input.connection.getShadowState();
-      if (shadow) {
+      // Don't save shadow if it's a statement input
+      if (shadow && (!childBlock || !childBlock.isShadow())) {
         const shadowClone = cloneShadow(shadow);
         inputState.shadow = shadowClone;
       }
@@ -636,16 +637,20 @@ const loadInputBlocks = function(block, state) {
     if (inputState.shadow) {
       input.connection.setShadowState(inputState.shadow);
     }
-    if (inputState.block) {
-      const inputBlock = loadPrivate(inputState.block, block.workspace);
-      if (inputBlock.outputConnection) {
-        input.connection.connect(inputBlock.outputConnection);
-      } else if (inputBlock.previousConnection) {
-        input.connection.connect(inputBlock.previousConnection);
-      } else {
-        asserts.fail(
-            'Child block does not have output or previous statement.');
-      }
+
+    // Use the shadow block if there is no child block.
+    if (!inputState.block) {
+      inputState.block = inputState.shadow;
+    }
+
+    const inputBlock = loadPrivate(inputState.block, block.workspace);
+    if (inputBlock.outputConnection) {
+      input.connection.connect(inputBlock.outputConnection);
+    } else if (inputBlock.previousConnection) {
+      input.connection.connect(inputBlock.previousConnection);
+    } else {
+      asserts.fail(
+          'Child block does not have output or previous statement.');
     }
   }
 };

@@ -55,14 +55,14 @@ const stateToBlock = function (state, blocks, isTopBlock, parent) {
         const input = state.inputs[inputName];
         if (input.block) {
             stateToBlock(input.block, blocks, false, block.id);
-        }
-        if (input.shadow) {
-            stateToBlock(input.shadow, blocks, false, block.id);
+            if (input.shadow && input.block.id !== input.shadow.id) {
+                stateToBlock(input.shadow, blocks, false, block.id);
+            }
         }
         block.inputs[inputName] = {
             name: inputName,
             block: input.block?.id,
-            shadow: input.shadow ? input.shadow.id : input.block?.id
+            shadow: input.shadow ? input.shadow.id : null
         }
 
         if (!block.inputs[inputName].block) {
