@@ -61,8 +61,12 @@ const stateToBlock = function (state, blocks, isTopBlock, parent) {
         }
         block.inputs[inputName] = {
             name: inputName,
-            block: input.block ? input.block.id : input.shadow?.id,
-            shadow: input.shadow? input.shadow.id : null
+            block: input.block?.id,
+            shadow: input.shadow ? input.shadow.id : input.block?.id
+        }
+
+        if (!block.inputs[inputName].block) {
+            block.inputs[inputName].block = block.inputs[inputName].shadow
         }
     }
     //Add comments
