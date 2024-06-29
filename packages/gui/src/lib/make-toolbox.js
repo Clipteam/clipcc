@@ -446,7 +446,7 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
                 VALUE: {
                     block: {
                         type: 'math_number',
-                        fields: {NUM: '25'},
+                        fields: {NUM: '0'},
                         shadow: true
                     }
                 }
