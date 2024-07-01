@@ -19,9 +19,6 @@
  */
 'use strict';
 
-goog.require('goog.testing');
-goog.require('goog.testing.MockControl');
-
 var mockControl_;
 var workspace;
 var XML_TEXT = ['<xml xmlns="http://www.w3.org/1999/xhtml">',
@@ -53,7 +50,6 @@ var XML_TEXT = ['<xml xmlns="http://www.w3.org/1999/xhtml">',
 
 function xmlTest_setUp() {
   workspace = new Blockly.Workspace();
-  mockControl_ = new goog.testing.MockControl();
 }
 
 function xmlTest_setUpWithMockBlocks() {
@@ -87,7 +83,9 @@ function xmlTest_setUpWithMockBlocks() {
 }
 
 function xmlTest_tearDown() {
-  mockControl_.$tearDown();
+  if (mockControl_) {
+    mockControl_.mockRestore();
+  }
   workspace.dispose();
 }
 
@@ -153,7 +151,7 @@ function test_domToText() {
 function test_domToWorkspace_BackwardCompatibility() {
   // Expect that workspace still loads without serialized variables.
   xmlTest_setUpWithMockBlocks();
-  setUpMockMethod(mockControl_, Blockly.utils, 'genUid', null, ['1', '1']);
+  mockControl_ = setUpMockMethod(Blockly.utils, 'genUid', null, ['1', '1']);
   try {
     var dom = Blockly.Xml.textToDom(
         '<xml>' +
@@ -314,7 +312,7 @@ function test_blockToDom_fieldToDom_trivial() {
 
 function test_blockToDom_fieldToDom_defaultCase() {
   xmlTest_setUpWithMockBlocks();
-  setUpMockMethod(mockControl_, Blockly.utils, 'genUid', null, ['1', '1']);
+  mockControl_ = setUpMockMethod(Blockly.utils, 'genUid', null, ['1', '1']);
   try {
     workspace.createVariable('name1');
 
@@ -353,7 +351,7 @@ function test_blockToDom_fieldToDom_notAFieldVariable() {
 
 function test_variablesToDom_oneVariable() {
   xmlTest_setUp();
-  setUpMockMethod(mockControl_, Blockly.utils, 'genUid', null, ['1']);
+  mockControl_ = setUpMockMethod(Blockly.utils, 'genUid', null, ['1']);
 
   workspace.createVariable('name1');
   var resultDom = Blockly.Xml.variablesToDom(workspace.getAllVariables());

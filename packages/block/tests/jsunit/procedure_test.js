@@ -19,9 +19,6 @@
  */
 'use strict';
 
-goog.require('goog.testing');
-goog.require('goog.testing.MockControl');
-
 var workspace;
 //var mockControl_;
 

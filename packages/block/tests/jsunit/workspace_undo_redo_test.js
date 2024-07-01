@@ -25,9 +25,6 @@
 'use strict';
 
 goog.require('goog.events.EventHandler');
-goog.require('goog.testing');
-goog.require('goog.testing.events');
-goog.require('goog.testing.MockControl');
 
 
 var workspace;

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Unit Tests for Vertical Scratch-Blockly</title>
     <script src="../../blockly_uncompressed_vertical.js"></script>
-    <script>goog.require('goog.testing.jsunit');</script>
+    <script src="https://unpkg.com/@live-codes/browser-jest/dist/browser-jest.umd.js"></script>
     <script type="module">
       import * as Blockly from '../../core/blockly';
       window.Blockly = Blockly;
@@ -35,5 +35,6 @@
     <script defer src="xml_test.js"></script>
     <div id="blocklyDiv" style="display: none; height: 480px; width: 600px;"></div>
     <xml id="toolbox" style="display: none"></xml>
+    <script defer src="test_runner_jest.js"></script>
   </body>
 </html>
