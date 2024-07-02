@@ -1,18 +1,26 @@
-require('chromedriver');
 const path = require('path');
-const webdriver = require('selenium-webdriver');
-const chrome = require('selenium-webdriver/chrome');
-const builder = new webdriver.Builder().forBrowser('chrome');
+const webdriverio = require('webdriverio');
 
+const options = {
+  capabilities: {
+    browserName: 'chrome',
+  },
+  logLevel: 'warn',
+};
+
+// Run in headless mode on Github Actions.
 if (process.env.CI) {
-  const options = new chrome.Options().headless();
-  if (process.platform === 'linux') {
-    options.addArguments('no-sandbox');
-  }
-  builder.setChromeOptions(options);
+  options.capabilities['goog:chromeOptions'] = {
+    args: ['--headless', '--no-sandbox', '--disable-dev-shm-usage']
+  };
+} else {
+  // --disable-gpu is needed to prevent Chrome from hanging on Linux with
+  // NVIDIA drivers older than v295.20. See
+  // https://github.com/google/blockly/issues/5345 for details.
+  options.capabilities['goog:chromeOptions'] = {
+    args: ['--disable-gpu']
+  };
 }
-
-const browser = builder.build();
 
 const url = 'http://localhost:' + (process.env.PORT || 8071);
 
@@ -22,12 +30,12 @@ const testHtml = function(htmlString) {
   const numOfFailure = regex.exec(htmlString)[1];
   const regex2 = /Unit Tests for .*]/;
   const testStatus = regex2.exec(htmlString)[0];
-  console.log("============Unit Test Summary=================");
+  console.log('============Unit Test Summary=================');
   console.log(testStatus);
   const regex3 = /\d+ passed,\s\d+ failed/;
   const detail = regex3.exec(htmlString)[0];
   console.log(detail);
-  console.log("============Unit Test Summary=================");
+  console.log('============Unit Test Summary=================');
   if (parseInt(numOfFailure) !== 0) {
     // replace to file path for debugging
     const outputString = htmlString.replaceAll(url, path.join(__dirname, '../..').replace(/\\/g, '/'))
@@ -38,14 +46,25 @@ const testHtml = function(htmlString) {
 };
 
 const runTests = async function() {
+  console.log('Starting webdriverio...');
+  const browser = await webdriverio.remote(options);
   try {
-    await browser.get(url + "/tests/jsunit/vertical_tests.html");
-    await browser.sleep(1000);
-    const element = await browser.findElement({id: "closureTestRunnerLog"});
-    const text = await element.getText();
+    await browser.url(url + '/tests/jsunit/vertical_tests.html');
+    await browser.waitUntil(async function() {
+      const element = await browser.$('#closureTestRunnerLog');
+      if (!element.isExisting()) {
+        return false;
+      }
+      const text = await element.getText();
+      const regex = /[\d]+\spassed,\s([\d]+)\sfailed./i;
+      return regex.test(text);
+    }, {
+      timeout: 100000,
+    });
+    const text = await (await browser.$('#closureTestRunnerLog')).getText();
     testHtml(text);
   } finally {
-    await browser.quit();
+    await browser.deleteSession();
   }
 };
 
