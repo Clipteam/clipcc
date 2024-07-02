@@ -268,10 +268,14 @@ function runTests(callback) {
     // import test runner script
     const {runTests} = require('./tests/jsunit/test_runner.js');
     runTests().then(() => {
-      browserSync.exit();
+      if (!argv.keep) { // use --keep to keep test backend running
+        browserSync.exit();
+      }
       callback();
     }).catch(err => {
-      throw err;
+      if (!argv.keep) { // use --keep to keep test backend running
+        throw err;
+      }
     });
   });
 }
