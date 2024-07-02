@@ -7,7 +7,9 @@
     <script>goog.require('goog.testing.jsunit');</script>
     <script type="module">
       import * as Blockly from '../../core/blockly';
+      import * as eventUtils from '../../core/events/utils';
       window.Blockly = Blockly;
+      window.eventUtils = eventUtils;
     </script>
   </head>
   <body>

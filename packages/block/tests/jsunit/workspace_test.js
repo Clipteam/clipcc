@@ -166,7 +166,7 @@ function test_clear_Trivial() {
   workspaceTest_setUp();
   workspace.createVariable('name1', 'type1', 'id1');
   workspace.createVariable('name2', 'type2', 'id2');
-  setUpMockMethod(mockControl_, Blockly.Events, 'setGroup', [true, false],
+  setUpMockMethod(mockControl_, eventUtils.TEST_ONLY, 'setGroup', [true, false],
     null);
 
   try {
@@ -183,7 +183,7 @@ function test_clear_Trivial() {
 
 function test_clear_NoVariables() {
   workspaceTest_setUp();
-  setUpMockMethod(mockControl_, Blockly.Events, 'setGroup', [true, false],
+  setUpMockMethod(mockControl_, eventUtils.TEST_ONLY, 'setGroup', [true, false],
     null);
 
   try {

@@ -128,7 +128,7 @@ function test_wsCommentXY() {
 function test_wsCommentText() {
   workspaceCommentTest_setUp();
 
-  Blockly.Events.fire = temporary_fireEvent;
+  eventUtils.TEST_ONLY.fire = temporary_fireEvent;
   temporary_fireEvent.firedEvents_ = [];
   try {
     var comment =
@@ -153,7 +153,7 @@ function test_wsCommentText() {
     comment.dispose();
   } finally {
     workspaceCommentTest_tearDown();
-    Blockly.Events.fire = savedFireFunc;
+    eventUtils.TEST_ONLY.fire = savedFireFunc;
   }
 }
 
