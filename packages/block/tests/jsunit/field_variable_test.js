@@ -18,23 +18,25 @@
  * limitations under the License.
  */
 
-/**
+ /**
  * @fileoverview Tests for Blockly.FieldVariable
  * @author marisaleung@google.com (Marisa Leung)
  */
 'use strict';
+
+goog.require('goog.testing');
+goog.require('goog.testing.MockControl');
 
 var workspace;
 var mockControl_;
 
 function fieldVariableTestWithMocks_setUp() {
   workspace = new Blockly.Workspace();
+  mockControl_ = new goog.testing.MockControl();
 }
 
 function fieldVariableTestWithMocks_tearDown() {
-  if (mockControl_) {
-    mockControl_.mockRestore();
-  }
+  mockControl_.$tearDown();
   workspace.dispose();
 }
 
@@ -69,7 +71,7 @@ function test_fieldVariable_setValueMatchId() {
   var oldId = fieldVariable.getValue();
   var event = new Blockly.Events.BlockChange(
         fieldVariable.sourceBlock_, 'field', undefined, oldId, 'id2');
-  mockControl_ = setUpMockMethod(Blockly.Events, 'fire', [event], null);
+  setUpMockMethod(mockControl_, Blockly.Events, 'fire', [event], null);
 
   fieldVariable.setValue('id2');
   assertEquals('name2', fieldVariable.getText());
@@ -118,7 +120,7 @@ function test_fieldVariable_dropdownCreateVariablesExist() {
 function test_fieldVariable_setValueNull() {
   // This should no longer create a variable for the selected option.
   fieldVariableTestWithMocks_setUp();
-  mockControl_ = setUpMockMethod(Blockly.utils, 'genUid', null, ['id1', null]);
+  setUpMockMethod(mockControl_, Blockly.utils, 'genUid', null, ['id1', null]);
 
   var fieldVariable = fieldVariable_createAndInitField(workspace);
   try {

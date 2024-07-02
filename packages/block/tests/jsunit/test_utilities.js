@@ -18,168 +18,14 @@
  * limitations under the License.
  */
 
-/**
+ /**
  * @fileoverview Test utilities.
  * @author marisaleung@google.com (Marisa Leung)
  */
 'use strict';
 
+goog.require('goog.testing');
 
-/* Functions from goog.testing.asserts */
-
-function _argumentsIncludeComments(expectedNumberOfNonCommentArgs, args) {
-  return args.length == expectedNumberOfNonCommentArgs + 1;
-}
-
-function _nonCommentArg(desiredNonCommentArgIndex, expectedNumberOfNonCommentArgs, args) {
-  return _argumentsIncludeComments(expectedNumberOfNonCommentArgs, args) ?
-      args[desiredNonCommentArgIndex] :
-      args[desiredNonCommentArgIndex - 1];
-}
-
-function _commentArg(expectedNumberOfNonCommentArgs, args) {
-  if (_argumentsIncludeComments(expectedNumberOfNonCommentArgs, args)) {
-    return args[0];
-  }
-  return null;
-}
-
-function _validateArguments(expectedNumberOfNonCommentArgs, args) {
-  const valid = args.length == expectedNumberOfNonCommentArgs ||
-      args.length == expectedNumberOfNonCommentArgs + 1 &&
-      typeof args[0] === 'string';
-  if (!valid) {
-    throw new Error(
-        'Incorrect arguments passed to assert function.\n' +
-        'Expected ' + expectedNumberOfNonCommentArgs + ' argument(s) plus ' +
-        'optional comment; got ' + args.length + '.');
-  }
-}
-
-const PRIMITIVE_TRUE_TYPES = ['String', 'Boolean', 'Number', 'Array', 'RegExp', 'Date', 'Function', 'ArrayBuffer'];
-
-function _trueTypeOf(something) {
-  let result = typeof something;
-  try {
-    switch (result) {
-      case 'string':
-        break;
-      case 'boolean':
-        break;
-      case 'number':
-        break;
-      case 'object':
-        if (something == null) {
-          result = 'null';
-          break;
-        }
-      // eslint-disable-next-line no-fallthrough
-      case 'function': {
-        let foundConstructor = false;
-        for (let i = 0; i < PRIMITIVE_TRUE_TYPES.length; i++) {
-          // NOTE: this cannot be a for-of loop because it's used from Rhino
-          // without the necessary Array.prototype[Symbol.iterator] polyfill.
-          const trueType = PRIMITIVE_TRUE_TYPES[i];
-          if (something.constructor === globalThis[trueType]) {
-            result = trueType;
-            foundConstructor = true;
-            break;
-          }
-        }
-        // Constructor doesn't match any of the known "primitive" constructors.
-        if (!foundConstructor) {
-          const m = something.constructor.toString().match(/function\s*([^( ]+)\(/);
-          if (m) {
-            result = m[1];
-          }
-        }
-        break;
-      }
-    }
-  } catch (e) {
-    /* empty */
-  } finally {
-    result = result.slice(0, 1).toUpperCase() + result.slice(1);
-  }
-  return result;
-}
-
-function assertEquals() {
-  _validateArguments(2, arguments);
-  const var1 = _nonCommentArg(1, 2, arguments);
-  const var2 = _nonCommentArg(2, 2, arguments);
-  expect(var1 === var2).toBeTruthy();
-}
-
-function assertNotEquals() {
-  _validateArguments(2, arguments);
-  const var1 = _nonCommentArg(1, 2, arguments);
-  const var2 = _nonCommentArg(2, 2, arguments);
-  expect(var1 !== var2).toBeTruthy();
-}
-
-function assertTrue() {
-  _validateArguments(1, arguments);
-  const booleanValue = _nonCommentArg(1, 1, arguments);
-  if (typeof(booleanValue) != 'boolean') {
-    throw new Error('Bad argument to assertTrue(boolean)');
-  }
-  expect(booleanValue).toBeTruthy();
-}
-
-function assertFalse() {
-  _validateArguments(1, arguments);
-  const booleanValue = _nonCommentArg(1, 1, arguments);
-  if (typeof(booleanValue) != 'boolean') {
-    throw new Error('Bad argument to assertTrue(boolean)');
-  }
-  expect(booleanValue).toBeFalsy();
-}
-
-function assertArrayEquals() {
-  _validateArguments(2, arguments);
-  var v1 = _nonCommentArg(1, 2, arguments);
-  var v2 = _nonCommentArg(2, 2, arguments);
-  
-  const typeOfVar1 = _trueTypeOf(v1);
-  const typeOfVar2 = _trueTypeOf(v2);
-  if (typeOfVar1 != 'Array') {
-    throw new Error('Expected an array for assertArrayEquals but found a ' + typeOfVar1);
-  } else if (typeOfVar2 != 'Array') {
-    throw new Error('Expected an array for assertArrayEquals but found a ' + typeOfVar2);
-  }
-
-  expect(v1).toEqual(v2);
-}
-
-function assertNull() {
-  _validateArguments(1, arguments);
-  var val = _nonCommentArg(1, 1, arguments);
-  expect(val).toBeNull();
-}
-
-function assertNotNull() {
-  _validateArguments(1, arguments);
-  var val = _nonCommentArg(1, 1, arguments);
-  expect(val).not.toBeNull();
-}
-
-function assertUndefined() {
-  _validateArguments(1, arguments);
-  var val = _nonCommentArg(1, 1, arguments);
-  expect(val).toBeUndefined();
-}
-function assertNotUndefined() {
-  _validateArguments(1, arguments);
-  var val = _nonCommentArg(1, 1, arguments);
-  expect(val).not.toBeUndefined();
-}
-
-function assert() {
-  _validateArguments(1, arguments);
-  var val = _nonCommentArg(1, 1, arguments);
-  assertTrue(val);
-}
 
 /**
  * The normal blockly event fire function.  We sometimes override this.  This
@@ -213,31 +59,35 @@ function isEqualArrays(array1, array2) {
 /**
  * Creates a controlled MethodMock. Sets the expected return values and
  *     the parameters if any exist. Sets the method to replay.
+ * @param {!goog.testing.MockControl} mockControl Object that holds a set
+ *    of mocks for this test.
  * @param {!Object} scope The scope of the method to be mocked out.
  * @param {!string} funcName The name of the function we're going to mock.
  * @param {Array<Object>} parameters The parameters to call the mock with.
  * @param {Array<!Object>} return_values The values to return when called.
- * @return {!expect.Spy} The mocked method.
+ * @return {!goog.testing.MockInterface} The mocked method.
  */
-function setUpMockMethod(scope, funcName, parameters, return_values) {
-  const mockMethod = jest.spyOn(scope, funcName);
+function setUpMockMethod(mockControl, scope, funcName, parameters,
+	return_values) {
+  var mockMethod = mockControl.createMethodMock(scope, funcName);
   if (return_values) {
-    for (let i = 0, return_value; return_value = return_values[i]; i++) {
+    for (var i = 0, return_value; return_value = return_values[i]; i++) {
       if (parameters && i < parameters.length) {
-        mockMethod(parameters[i]).mockReturnValueOnce(return_value);
+        mockMethod(parameters[i]).$returns(return_value);
       }
       else {
-        mockMethod().mockReturnValueOnce(return_value);
+        mockMethod().$returns(return_value);
       }
     }
   }
   // If there are no return values but there are parameters, we are only
   // recording specific method calls.
   else if (parameters) {
-    for (let i = 0; i < parameters.length; i++) {
+    for (var i = 0; i < parameters.length; i++) {
       mockMethod(parameters[i]);
     }
   }
+  mockMethod.$replay();
   return mockMethod;
 }
 

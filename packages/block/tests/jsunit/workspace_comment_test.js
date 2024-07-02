@@ -19,6 +19,8 @@
  */
 'use strict';
 
+goog.require('goog.testing');
+
 var workspace;
 
 function workspaceCommentTest_setUp() {

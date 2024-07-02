@@ -19,6 +19,8 @@
  */
 'use strict';
 
+goog.require('goog.testing');
+
 var block;
 var workspace;
 var originalCreateIcon = Blockly.ScratchBlockComment.createIcon;

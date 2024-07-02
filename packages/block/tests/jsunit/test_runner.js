@@ -20,7 +20,10 @@ const url = 'http://localhost:' + (process.env.PORT || 8071);
 const testHtml = function(htmlString) {
   const regex = /[\d]+\spassed,\s([\d]+)\sfailed./i;
   const numOfFailure = regex.exec(htmlString)[1];
+  const regex2 = /Unit Tests for .*]/;
+  const testStatus = regex2.exec(htmlString)[0];
   console.log("============Unit Test Summary=================");
+  console.log(testStatus);
   const regex3 = /\d+ passed,\s\d+ failed/;
   const detail = regex3.exec(htmlString)[0];
   console.log(detail);
@@ -38,7 +41,7 @@ const runTests = async function() {
   try {
     await browser.get(url + "/tests/jsunit/vertical_tests.html");
     await browser.sleep(1000);
-    const element = await browser.findElement({id: "test-report"});
+    const element = await browser.findElement({id: "closureTestRunnerLog"});
     const text = await element.getText();
     testHtml(text);
   } finally {
