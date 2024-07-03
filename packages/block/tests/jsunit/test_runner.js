@@ -45,24 +45,29 @@ const testHtml = function(htmlString) {
   }
 };
 
+const runTest = async function(browser, file) {
+  await browser.url(url + file);
+  await browser.waitUntil(async function() {
+    const element = await browser.$('#closureTestRunnerLog');
+    if (!element.isExisting()) {
+      return false;
+    }
+    const text = await element.getText();
+    const regex = /[\d]+\spassed,\s([\d]+)\sfailed./i;
+    return regex.test(text);
+  }, {
+    timeout: 100000,
+  });
+  const text = await (await browser.$('#closureTestRunnerLog')).getText();
+  testHtml(text);
+};
+
 const runTests = async function() {
   console.log('Starting webdriverio...');
   const browser = await webdriverio.remote(options);
   try {
-    await browser.url(url + '/tests/jsunit/vertical_tests.html');
-    await browser.waitUntil(async function() {
-      const element = await browser.$('#closureTestRunnerLog');
-      if (!element.isExisting()) {
-        return false;
-      }
-      const text = await element.getText();
-      const regex = /[\d]+\spassed,\s([\d]+)\sfailed./i;
-      return regex.test(text);
-    }, {
-      timeout: 100000,
-    });
-    const text = await (await browser.$('#closureTestRunnerLog')).getText();
-    testHtml(text);
+    await runTest(browser, '/tests/jsunit/vertical_tests.html');
+    await runTest(browser, '/tests/workspace_svg/index.html');
   } finally {
     await browser.deleteSession();
   }
