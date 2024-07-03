@@ -870,7 +870,9 @@ BlockSvg.prototype.dispose = function(healStack, animate) {
   }
   BlockSvg.superClass_.dispose.call(this, healStack);
   
-  blockWorkspace.virtualizedManager.unobserve(this);
+  if (blockWorkspace.virtualizedManager) {
+    blockWorkspace.virtualizedManager.unobserve(this);
+  }
 
   dom.removeNode(this.svgGroup_);
   blockWorkspace.resizeContents();
