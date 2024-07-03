@@ -321,7 +321,7 @@ export const getGroup = function() {
  * @param {boolean|string} state True to start new group, false to end group.
  *   String to set group explicitly.
  */
-export const setGroupInternal = function(state) {
+const setGroupInternal = function(state) {
   if (typeof state == 'boolean') {
     group = state ? utils.genUid() : '';
   } else {
