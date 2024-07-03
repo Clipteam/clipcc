@@ -1,60 +1,83 @@
-require('chromedriver');
-var webdriver = require('selenium-webdriver');
-var chrome = require('selenium-webdriver/chrome');
-var builder = new webdriver.Builder().forBrowser('chrome');
+const path = require('path');
+const webdriverio = require('webdriverio');
 
+const options = {
+  capabilities: {
+    browserName: 'chrome',
+  },
+  logLevel: 'warn',
+};
+
+// Run in headless mode on Github Actions.
 if (process.env.CI) {
-  const options = new chrome.Options().headless();
-  if (process.platform === 'linux') {
-    options.addArguments('no-sandbox');
-  }
-  builder.setChromeOptions(options);
+  options.capabilities['goog:chromeOptions'] = {
+    args: ['--headless', '--no-sandbox', '--disable-dev-shm-usage']
+  };
+} else {
+  // --disable-gpu is needed to prevent Chrome from hanging on Linux with
+  // NVIDIA drivers older than v295.20. See
+  // https://github.com/google/blockly/issues/5345 for details.
+  options.capabilities['goog:chromeOptions'] = {
+    args: ['--disable-gpu']
+  };
 }
 
-var browser = builder.build();
+const url = 'http://localhost:' + (process.env.PORT || 8071);
 
 // Parse jsunit html report, exit(1) if there are any failures.
-var testHtml = function (htmlString) {
-  var regex = /[\d]+\spassed,\s([\d]+)\sfailed./i;
-  var numOfFailure = regex.exec(htmlString)[1];
-  var regex2 = /Unit Tests for .*]/;
-  var testStatus = regex2.exec(htmlString)[0];
-  console.log("============Unit Test Summary=================");
+const testHtml = function(htmlString) {
+  const regex = /[\d]+\spassed,\s([\d]+)\sfailed./i;
+  const numOfFailure = regex.exec(htmlString)[1];
+  const regex2 = /Unit Tests for .*]/;
+  const testStatus = regex2.exec(htmlString)[0];
+  console.log('============Unit Test Summary=================');
   console.log(testStatus);
-  var regex3 = /\d+ passed,\s\d+ failed/;
-  var detail = regex3.exec(htmlString)[0];
+  const regex3 = /\d+ passed,\s\d+ failed/;
+  const detail = regex3.exec(htmlString)[0];
   console.log(detail);
-  console.log("============Unit Test Summary=================");
+  console.log('============Unit Test Summary=================');
   if (parseInt(numOfFailure) !== 0) {
-    console.log(htmlString);
-    process.exit(1);
+    // replace to file path for debugging
+    const outputString = htmlString.replaceAll(url, path.join(__dirname, '../..').replace(/\\/g, '/'))
+        .replace(/(core\/.*?):/g, '$1.js:');
+    console.log(outputString);
+    throw `${numOfFailure} test(s) failed`;
   }
 };
 
-var path = process.cwd();
+const runTest = async function(browser, file) {
+  await browser.url(url + file);
+  await browser.waitUntil(async function() {
+    const element = await browser.$('#closureTestRunnerLog');
+    if (!element.isExisting()) {
+      return false;
+    }
+    const text = await element.getText();
+    const regex = /[\d]+\spassed,\s([\d]+)\sfailed./i;
+    return regex.test(text);
+  }, {
+    timeout: 100000,
+  });
+  const text = await (await browser.$('#closureTestRunnerLog')).getText();
+  testHtml(text);
+};
 
-var runTests = async function () {
+const runTests = async function() {
+  console.log('Starting webdriverio...');
+  const browser = await webdriverio.remote(options);
   try {
-    var element, text;
-
-    await browser.get("file://" + path + "/tests/jsunit/vertical_tests.html");
-    await browser.sleep(5000);
-    element = await browser.findElement({id: "closureTestRunnerLog"});
-    text = await element.getText();
-    testHtml(text);
-
-    await browser.get("file://" + path + "/tests/jsunit/horizontal_tests.html");
-    await browser.sleep(5000);
-    element = await browser.findElement({id: "closureTestRunnerLog"});
-    text = await element.getText();
-    testHtml(text);
-  }
-  finally {
-    await browser.quit();
+    await runTest(browser, '/tests/jsunit/vertical_tests.html');
+    await runTest(browser, '/tests/workspace_svg/index.html');
+  } finally {
+    await browser.deleteSession();
   }
 };
 
-runTests().catch(e => {
-  console.error(e);
-  process.exit(1);
-});
+module.exports = {runTests};
+
+if (require.main === module) {
+  runTests().catch(e => {
+    console.error(e);
+    process.exit(1);
+  });
+}

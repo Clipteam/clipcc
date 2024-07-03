@@ -2,12 +2,20 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Blockly Workspace SVG testing</title>
+<title>Unit Tests for Blockly Workspace</title>
 <script src="../../blockly_uncompressed_vertical.js"></script>
-<script src="../../blocks_vertical/vertical_extensions.js"></script>
-<script src="../../blocks_vertical/looks.js"></script>
 <script>goog.require('goog.testing.jsunit');</script>
-<script src="../../msg/messages.js"></script>
+<script type="module">
+  import * as Blockly from '../../core/blockly';
+  import * as eventUtils from '../../core/events/utils';
+  import * as constants from '../../core/renderer/constants';
+  window.Blockly = Object.assign({}, Blockly);
+  window.eventUtils = eventUtils;
+  window.constants = constants;
+</script>
+<script defer src="../../blocks_vertical/vertical_extensions.js"></script>
+<script defer src="../../blocks_vertical/looks.js"></script>
+<script defer src="../../msg/messages.js"></script>
 
 <script>
 'use strict';
@@ -45,9 +53,9 @@ h1 {
 
   <div id="blocklyDiv"></div>
 
-  <h1>Blockly Workspace testing</h1>
-  <script src="../jsunit/test_utilities.js"></script>
-  <script src="workspace_svg_test.js"></script>
+  <h1>Unit Tests for Blockly Workspace</h1>
+  <script defer src="../jsunit/test_utilities.js"></script>
+  <script defer src="workspace_svg_test.js"></script>
 
   
   <xml id="toolbox-categories" style="display: none">

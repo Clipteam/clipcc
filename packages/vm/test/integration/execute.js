@@ -74,13 +74,13 @@ fs.readdirSync(executeDir)
             let didEnd;
             const reporters = {
                 comment (message) {
-                    t.comment(message);
+                    t.comment(`[${path.basename(uri)}] ${message}`);
                 },
                 pass (reason) {
-                    t.pass(reason);
+                    t.pass(`[${path.basename(uri)}] ${reason}`);
                 },
                 fail (reason) {
-                    t.fail(reason);
+                    t.fail(`[${path.basename(uri)}] ${reason}`);
                 },
                 plan (count) {
                     didPlan = true;
