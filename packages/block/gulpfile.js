@@ -409,6 +409,19 @@ function buildUncompressed(callback) {
   callback();
 }
 
+/**
+ * Task for running uncompressed blockly.
+ */
+function runUncompressed() {
+  browserSync.create();
+  browserSync.init({
+    server: {
+      baseDir: '.',
+      index: 'tests/vertical_playground_compressed.html'
+    }
+  });
+}
+
 const buildCompressed = gulp.parallel(
     buildCompressedBlockly,
     buildCompressedBlock,
@@ -425,6 +438,11 @@ const startCompressed = gulp.series(
     watchCompressed
 );
 
+const startUncompressed = gulp.series(
+    buildUncompressed,
+    runUncompressed
+);
+
 const test = gulp.series(
     buildUncompressed,
     runTests
@@ -434,6 +452,7 @@ module.exports = {
   build,
   buildUncompressed,
   buildCompressed,
+  startUncompressed,
   startCompressed,
   test
 };
