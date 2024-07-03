@@ -26,7 +26,7 @@ const LICENSE_REGEX = new RegExp(`(/\\*
 
  [\\w ]+
 
- Copyright \\d+ (Google Inc.|Massachusetts Institute of Technology)
+ Copyright \\d+ (Google Inc.|Massachusetts Institute of Technology|Clip Team)
  (https://developers.google.com/blockly/|All rights reserved.)
 
  Licensed under the Apache License, Version 2.0 \\(the "License"\\);
@@ -42,7 +42,7 @@ const LICENSE_REGEX = new RegExp(`(/\\*
  limitations under the License.
 \\*/)|(\\/\\*\\*
 \\* @license
-\\* (Copyright \\d+ (Google LLC|Massachusetts Institute of Technology))
+\\* (Copyright \\d+ (Google LLC|Massachusetts Institute of Technology|Clip Team))
 ( \\* All rights reserved.
 )? \\* SPDX-License-Identifier: Apache-2.0
 \\*\\/)`, 'g');
