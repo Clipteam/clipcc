@@ -76,11 +76,11 @@ FuncUpdate.prototype.fromJson = function(json) {
 FuncUpdate.prototype.run = function(forward) {
   const workspace = this.getEventWorkspace_();
   if (forward) {
-    workspace.procedureMap_.updateProcedure(this.procCode, this.newMutation);
+    workspace.updateProcedure(this.procCode, this.newMutation);
   } else {
     const newMutationDom = Xml.textToDom('<xml>' + this.newMutation + '</xml>');
     const newProcCode = newMutationDom.getAttribute('proccode');
-    workspace.procedureMap_.updateProcedure(newProcCode, this.oldMutation);
+    workspace.updateProcedure(newProcCode, this.oldMutation);
   }
 };
 

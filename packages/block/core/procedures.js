@@ -229,7 +229,7 @@ export const flyoutCategory = function(workspace) {
   addCreateButton(workspace, xmlList);
 
   // Create call blocks for each procedure
-  let globalMutations = workspace.procedureMap_.allGlobalProcedureMutations();
+  let globalMutations = workspace.allGlobalProcedureMutations();
   globalMutations = sortProcedureMutations(globalMutations);
   let localMutations = allProcedureMutations(workspace);
   localMutations = sortProcedureMutations(localMutations);
@@ -459,7 +459,7 @@ const createProcedureCallbackFactory = function(workspace) {
       block.scheduleSnapAndBump();
       eventUtils.setGroup(false);
       // Add to procedure map of the workspace
-      workspace.procedureMap_.createProcedureFromMutation(mutation);
+      workspace.createProcedureFromMutation(mutation);
     }
   };
 };
@@ -525,7 +525,7 @@ const editProcedureCallback = function(block) {
 const editProcedureCallbackFactory = function(block) {
   return function(mutation) {
     if (mutation) {
-      block.workspace.procedureMap_.updateProcedure(block.getProcCode(), mutation);
+      block.workspace.updateProcedure(block.getProcCode(), mutation);
     }
   };
 };
@@ -663,7 +663,7 @@ export const deleteProcedureDefCallback = function(procCode,
 
   const workspace = definitionRoot.workspace;
 
-  workspace.procedureMap_.removeProcedure(definitionRoot);
+  workspace.removeProcedure(definitionRoot);
 
   // Delete the whole stack.
   eventUtils.setGroup(true);

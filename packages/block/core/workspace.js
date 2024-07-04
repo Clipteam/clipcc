@@ -667,13 +667,59 @@ Workspace.prototype.getVariableMap = function() {
 };
 
 /**
+ * Return the map of all procedures on the workspace.
+ * @return {?ProcedureMap} The procedure map.
+ * @package
+ */
+Workspace.prototype.getProcedureMap = function() {
+  return this.procedureMap_;
+};
+
+/* Begin functions that are just pass-throughs to the procedure map. */
+/**
  * Create a procedure with a given mutation.
  * @param {Element} mutation The mutation of the procedure.
- * @returns {Element} The newly created procedure.
+ * @return {Element} The newly created procedure.
  */
 Workspace.prototype.createProcedureFromMutation = function(mutation) {
   return this.procedureMap_.createProcedureFromMutation(mutation);
 };
+
+/**
+ * Get all global procedure definition mutations.
+ * @return {!Array.<Element>} Array of mutation xml elements.
+ */
+Workspace.prototype.allGlobalProcedureMutations = function() {
+  return this.procedureMap_.allGlobalProcedureMutations();
+};
+
+/**
+ * Get all local procedure definition mutations.
+ * @return {!Array.<Element>} Array of mutation xml elements.
+ */
+ProcedureMap.prototype.allLocalProcedureMutations = function() {
+  return this.procedureMap_.allLocalProcedureMutations();
+};
+
+/**
+ * Remove a procedure from definition root block.
+ * @param {!Blockly.Block} definitionRoot The root block of the stack that
+ *     defines the custom procedure.
+ */
+ProcedureMap.prototype.removeProcedure = function(definitionRoot) {
+  this.procedureMap_.removeProcedure(definitionRoot);
+};
+
+/**
+ * Update a procedure with new mutation.
+ * @param {string} procCode Old proccode of procedure.
+ * @param {Element} newMutation New mutation of procedure.
+ */
+ProcedureMap.prototype.updateProcedure = function(procCode, newMutation) {
+  this.procedureMap_.updateProcedure(procCode, newMutation);
+};
+
+/* End functions that are just pass-throughs to the procedure map. */
 
 /**
  * Database of all workspaces.

@@ -15,7 +15,7 @@ var mockControl_;
 
 function procedureMapTest_setUp() {
   workspace = new Blockly.Workspace();
-  procedureMap = workspace.procedureMap_;
+  procedureMap = workspace.getProcedureMap();
   mockControl_ = new goog.testing.MockControl();
 }
 

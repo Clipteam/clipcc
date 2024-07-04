@@ -259,7 +259,7 @@ BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
       }
     }
     if (canDeleteProcDef) {
-      this.workspace_.procedureMap_.removeProcedure(this.draggingBlock_);
+      this.workspace_.removeProcedure(this.draggingBlock_);
     }
   }
 
