@@ -639,7 +639,14 @@ export const makeChangeShapeOption = function(block) {
     enabled: true,
     text: Msg.CHANGE_PROCEDURE_SHAPE,
     callback: function() {
+      const oldMutationDom = block.mutationToDom();
+      const oldMutation = oldMutationDom && Xml.domToText(oldMutationDom);
       block.setReturn(!block.getReturn());
+      const newMutationDom = block.mutationToDom();
+      const newMutation = newMutationDom && Xml.domToText(newMutationDom);
+      eventUtils.setGroup(true);
+      eventUtils.fire(new BlockChange(block, 'mutation', null, oldMutation, newMutation));
+      eventUtils.setGroup(false);
     }
   };
   return option;

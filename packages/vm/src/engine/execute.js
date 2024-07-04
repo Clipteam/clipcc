@@ -37,17 +37,12 @@ const isPromise = function (value) {
 };
 
 /**
- * Utility function to determine if a block is a procedure caller with return value.
+ * Utility function to determine if a block is a procedure caller.
  * @param {BlockCached} cached Cached block to check.
- * @return {boolean} True if the block is a procedure caller with return value.
+ * @return {boolean} True if the block is a procedure.
  */
-const isProcedureReturnCaller = function (cached) {
-    if (cached.opcode === 'procedures_call') {
-        if (cached.mutation.return === undefined) return false;
-        return typeof cached.mutation.return === 'boolean' ?
-            cached.mutation.return : JSON.parse(cached.mutation.return);
-    }
-    return false;
+const isProcedureCaller = function (cached) {
+    return cached.opcode === 'procedures_call';
 };
 
 /**
@@ -518,7 +513,7 @@ const execute = function (sequencer, thread) {
         // The reporting block must exist and must be the next one in the sequence of operations.
         if (ops[i] && ops[i].id === currentStackFrame.reporting) {
             const opCached = ops[i];
-            const inputValue = thread.justReported ?? '';
+            const inputValue = thread.justReported;
 
             thread.justReported = null;
 
@@ -526,9 +521,10 @@ const execute = function (sequencer, thread) {
             const argValues = opCached._parentValues;
             
             // cc - if current call is the last operation, which means that it is called by clicking directly,
-            // then call handleReport
+            // then call handleReport.
             if (currentStackFrame.waitingReporter && i === length - 1) {
-                handleReport(inputValue, sequencer, thread, opCached, true);
+                // cc - if returned value is null, then set the argument to undefined to avoid visual report. 
+                handleReport(inputValue ?? undefined, sequencer, thread, opCached, true);
             } else if (inputName === 'BROADCAST_INPUT') {
                 // Something is plugged into the broadcast input.
                 // Cast it to a string. We don't need an id here.
@@ -593,10 +589,10 @@ const execute = function (sequencer, thread) {
         }
 
         // If it's a promise, wait until promise resolves.
-        // cc - if it's procedure_call with return value, treat it as a promise.
+        // cc - if it's procedure_call, treat it as a promise.
         const isValuePromise = isPromise(primitiveReportedValue);
-        const isReturnCaller = isProcedureReturnCaller(opCached);
-        if (isValuePromise || isReturnCaller) {
+        const isCaller = isProcedureCaller(opCached);
+        if (isValuePromise || isCaller) {
             if (isValuePromise) {
                 handlePromise(primitiveReportedValue, sequencer, thread, opCached, lastOperation);
             }
@@ -606,7 +602,7 @@ const execute = function (sequencer, thread) {
             // operation if it is promise waiting will set its parent value at
             // that time.
             thread.justReported = null;
-            currentStackFrame.waitingReporter = isReturnCaller;
+            currentStackFrame.waitingReporter = isCaller;
             currentStackFrame.reporting = ops[i].id;
             currentStackFrame.reported = ops.slice(0, i).map(reportedCached => {
                 const inputName = reportedCached._parentKey;

@@ -697,7 +697,7 @@ Workspace.prototype.allGlobalProcedureMutations = function() {
  * Get all local procedure definition mutations.
  * @return {!Array.<Element>} Array of mutation xml elements.
  */
-ProcedureMap.prototype.allLocalProcedureMutations = function() {
+Workspace.prototype.allLocalProcedureMutations = function() {
   return this.procedureMap_.allLocalProcedureMutations();
 };
 
@@ -706,7 +706,7 @@ ProcedureMap.prototype.allLocalProcedureMutations = function() {
  * @param {!Blockly.Block} definitionRoot The root block of the stack that
  *     defines the custom procedure.
  */
-ProcedureMap.prototype.removeProcedure = function(definitionRoot) {
+Workspace.prototype.removeProcedure = function(definitionRoot) {
   this.procedureMap_.removeProcedure(definitionRoot);
 };
 
@@ -715,7 +715,7 @@ ProcedureMap.prototype.removeProcedure = function(definitionRoot) {
  * @param {string} procCode Old proccode of procedure.
  * @param {Element} newMutation New mutation of procedure.
  */
-ProcedureMap.prototype.updateProcedure = function(procCode, newMutation) {
+Workspace.prototype.updateProcedure = function(procCode, newMutation) {
   this.procedureMap_.updateProcedure(procCode, newMutation);
 };
 
