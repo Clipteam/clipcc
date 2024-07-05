@@ -30,6 +30,7 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Field');
 
 import * as browserEvents from './browser_events';
+import * as constants from './constants';
 import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import * as registry from './registry';
@@ -703,7 +704,8 @@ Field.prototype.getClickTarget_ = function() {
   for (let i = 0, input; input = this.sourceBlock_.inputList[i]; i++) {
     nFields += input.fieldRow.length;
   }
-  if (nFields <= 1 && this.sourceBlock_.outputConnection && this.sourceBlock_.type !== Blockly.constants.PROCEDURES_DECLARATION_BLOCK_TYPE) {
+  if (nFields <= 1 && this.sourceBlock_.outputConnection &&
+      this.sourceBlock_.type !== constants.PROCEDURES_DECLARATION_BLOCK_TYPE) {
     return this.sourceBlock_.getSvgRoot();
   } else {
     return this.getSvgRoot();

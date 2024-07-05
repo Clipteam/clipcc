@@ -255,7 +255,7 @@ Blockly.ScratchBlocks.ProcedureUtils.createAllInputs_ = function(connectionMap) 
   let argumentCount = 0;
   for (let i = 0; i < procComponents.length; i++) {
     // The first component should always be created even if the value is ''.
-    let component = procComponents[i];
+    const component = procComponents[i];
     let labelText;
     if (component.substring(0, 1) == '%') {
       const argumentType = component.substring(1, 2);
@@ -742,7 +742,7 @@ Blockly.ScratchBlocks.ProcedureUtils.getGlobal = function() {
 
 /**
  * Externally-visible function to set the global on procedure declaration.
- * @returns {boolean} The value of the global_ property.
+ * @param {boolean} global The value of global_ property.
  * @public
  */
 Blockly.ScratchBlocks.ProcedureUtils.setGlobal = function(global) {
@@ -893,7 +893,7 @@ Blockly.ScratchBlocks.ProcedureUtils.updatePrototypeShape_ = function() {
  * @this Blockly.Block
  */
 Blockly.ScratchBlocks.ProcedureUtils.updateProcedureShape_ = function() {
-  var isReturn = this.getOutputShape() != Blockly.constants.OUTPUT_SHAPE_NORMAL;
+  const isReturn = this.getOutputShape() != Blockly.constants.OUTPUT_SHAPE_NORMAL;
   if (isReturn != this.return_) {
     if (this.return_) {
       this.setOutputShape(Blockly.constants.OUTPUT_SHAPE_ROUND);
@@ -1130,8 +1130,9 @@ Blockly.Blocks['procedures_return'] = {
       const group = Blockly.Events.getGroup();
       // Makes it so the move and the disable event get undone together.
       Blockly.Events.setGroup(event.group);
-      var root = this.getRootBlock();
-      this.setDisabled(root.type != Blockly.constants.PROCEDURES_DEFINITION_BLOCK_TYPE || !root.getInputTargetBlock('custom_block').return_);
+      const root = this.getRootBlock();
+      this.setDisabled(root.type != Blockly.constants.PROCEDURES_DEFINITION_BLOCK_TYPE ||
+          !root.getInputTargetBlock('custom_block').return_);
       Blockly.Events.setGroup(group);
     }
   }

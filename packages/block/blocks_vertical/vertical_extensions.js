@@ -206,7 +206,7 @@ Blockly.ScratchBlocks.VerticalExtensions.PROCEDURE_CALL_CONTEXTMENU = {
     if (!(this.previousConnection && this.previousConnection.isConnected()) &&
     !(this.outputConnection && this.outputConnection.isConnected()) &&
     !(this.nextConnection && this.nextConnection.isConnected())) {
-        menuOptions.push(Blockly.Procedures.makeChangeShapeOption(this));
+      menuOptions.push(Blockly.Procedures.makeChangeShapeOption(this));
     }
     menuOptions.push(Blockly.Procedures.makeEditOption(this));
     menuOptions.push(Blockly.Procedures.makeShowDefinitionOption(this));

@@ -35,7 +35,6 @@ import {DragBlockOutside} from './events/block_drag_outside';
 import {EndBlockDrag} from './events/block_drag_end';
 import {InsertionMarkerManager} from './insertion_marker_manager';
 import {Msg} from './msg';
-import * as Procedures from './procedures';
 
 const Coordinate = goog.require('goog.math.Coordinate');
 const Timer = goog.require('goog.Timer');
