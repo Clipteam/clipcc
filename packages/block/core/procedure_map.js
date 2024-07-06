@@ -132,7 +132,7 @@ ProcedureMap.prototype.createProcedureFromMutation = function(mutation) {
  *     defines the custom procedure.
  */
 ProcedureMap.prototype.removeProcedure = function(definitionRoot) {
-  const block = definitionRoot.getChildren()[0];
+  const block = definitionRoot.getInput('custom_block').connection.targetBlock();
   if (block.global_) {
     delete this.globalProcedureMap_[block.getProcCode()];
   } else {

@@ -247,7 +247,7 @@ BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
   let canDeleteProcDef = true;
   if (isDeletingProcDef) {
     const allBlocks = this.workspace_.getAllBlocks();
-    const deletingProcCode = this.draggingBlock_.getChildren()[0].getProcCode();
+    const deletingProcCode = this.draggingBlock_.getInput('custom_block').connection.targetBlock().getProcCode();
     for (let i = 0; i < allBlocks.length; i++) {
       const block = allBlocks[i];
       if (block.type == constants.PROCEDURES_CALL_BLOCK_TYPE) {
