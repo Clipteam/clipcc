@@ -217,8 +217,8 @@ Connection.prototype.connect_ = function(childConnection) {
         }, constants.BUMP_DELAY);
       }
     }
-    // Restore the shadow DOM.
-    parentConnection.applyShadowState_({ shadowState: shadowState });
+    // Restore the shadow state.
+    parentConnection.applyShadowState_({ shadowState });
   }
 
   if (isSurroundingC && previousParentConnection) {

@@ -9,7 +9,7 @@
             "id": "z!+#Nqr,_(V=xz0y7a@d",
             "inputs": {
                 "DURATION": {
-                    "block": {
+                    "shadow": {
                         "type": "math_number",
                         "id": "!6Ahqg4f}Ljl}X5Hws?Z",
                         "fields": {"NUM": "10"},
@@ -37,7 +37,7 @@
             },
             "inputs": {
                 "DURATION": {
-                    "block": {
+                    "shadow": {
                         "type": "math_number",
                         "id": "!6Ahqg4f}Ljl}X5Hws?Z",
                         "fields": {
@@ -154,7 +154,7 @@
             "id": "l^H_{8[DDyDW?m)HIt@b",
             "inputs": {
                 "OPERAND1": {
-                    "block": {
+                    "shadow": {
                         "type": "text",
                         "id": "Ud@4y]bc./]uv~te?brb",
                         "fields": {
@@ -164,7 +164,7 @@
                     }
                 },
                 "OPERAND2": {
-                    "block": {
+                    "shadow": {
                         "type": "text",
                         "id": "p8[y..,[K;~G,k7]N;08",
                         "fields": {
@@ -250,7 +250,7 @@
             "id": "a broadcast block",
             "inputs": {
                 "BROADCAST_INPUT": {
-                    "block": {
+                    "shadow": {
                         "type": "event_broadcast_menu",
                         "id": "boadcast shadow",
                         "fields": {

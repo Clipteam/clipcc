@@ -80,7 +80,6 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
     }, {
         kind: 'block',
         type: 'motion_gotoxy',
-        id: 'motion_gotoxy',
         inputs: {
             X: {
                 shadow: {
@@ -925,6 +924,7 @@ const sensing = function (isInitialSetup, isStage, targetId, colors, hideNonVani
         {
             kind: 'block',
             type: 'sensing_of',
+            id: 'of',
             inputs: {
                 OBJECT: {
                     shadow: {
@@ -1239,8 +1239,8 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 },
                 OPERAND2: {
                     shadow: {
-                        type: 'math_number',
-                        fields: {NUM: '50'},
+                        type: 'text',
+                        fields: {TEXT: '50'},
                         shadow: true
                     }
                 }
@@ -1259,8 +1259,8 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 },
                 OPERAND2: {
                     shadow: {
-                        type: 'math_number',
-                        fields: {NUM: '50'},
+                        type: 'text',
+                        fields: {TEXT: '50'},
                         shadow: true
                     }
                 }
@@ -1282,8 +1282,8 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                     },
                     OPERAND2: {
                         shadow: {
-                            type: 'math_number',
-                            fields: {NUM: '50'},
+                            type: 'text',
+                            fields: {TEXT: '50'},
                             shadow: true
                         }
                     }
@@ -1302,8 +1302,8 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                     },
                     OPERAND2: {
                         shadow: {
-                            type: 'math_number',
-                            fields: {NUM: '50'},
+                            type: 'text',
+                            fields: {TEXT: '50'},
                             shadow: true
                         }
                     }
@@ -1325,8 +1325,8 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 },
                 OPERAND2: {
                     shadow: {
-                        type: 'math_number',
-                        fields: {NUM: '50'},
+                        type: 'text',
+                        fields: {TEXT: '50'},
                         shadow: true
                     }
                 }
@@ -1348,8 +1348,8 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                     },
                     OPERAND2: {
                         shadow: {
-                            type: 'math_number',
-                            fields: {NUM: '50'},
+                            type: 'text',
+                            fields: {TEXT: '50'},
                             shadow: true
                         }
                     }
