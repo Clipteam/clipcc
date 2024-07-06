@@ -618,12 +618,12 @@ const tokenizeInterpolationInternal = function(message,
  * 87 characters ^ 20 length > 128 bits (better than a UUID).
  * @return {string} A globally unique ID string.
  */
-export const genUid = function() {
+const genUidInternal = function() {
   const length = 20;
-  const soupLength = genUid.soup_.length;
+  const soupLength = genUidInternal.soup_.length;
   const id = [];
   for (let i = 0; i < length; i++) {
-    id[i] = genUid.soup_.charAt(Math.random() * soupLength);
+    id[i] = genUidInternal.soup_.charAt(Math.random() * soupLength);
   }
   return id.join('');
 };
@@ -635,7 +635,7 @@ export const genUid = function() {
  * to properly escape in your own environment.  Issues #251, #625, #682, #1304.
  * @private
  */
-genUid.soup_ = '!#$%()*+,-./:;=?@[]^_`{|}~' +
+genUidInternal.soup_ = '!#$%()*+,-./:;=?@[]^_`{|}~' +
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
 /**
@@ -1044,4 +1044,24 @@ export const getExtraBlockState_ = function (block) {
     return state ? Xml.domToText(state) : '';
   }
   return '';
+};
+
+/**
+ * Namespace object for internal implementations we want to be able to
+ * stub in tests. Do not use externally.
+ * @internal
+ */
+const internal = {
+  genUid: genUidInternal
+};
+
+export const TEST_ONLY = internal;
+
+/**
+ * Generate a unique ID.
+ * @see genUidInternal
+ * @return {string} A globally unique ID string.
+ */
+export const genUid = function() {
+  return internal.genUid();
 };

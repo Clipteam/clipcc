@@ -89,7 +89,7 @@ Field.register = function(type, fieldClass) {
  * @throws {Error} if the field class is not found.
  */
 Field.get = function(type) {
-  return registry.getClass(registry.Type.FIELD, type, true);
+  return registry.getClass(registry.Type.FIELD, type, false);
 };
 
 /**

@@ -184,7 +184,7 @@ const FIRE_QUEUE = [];
  * Create a custom event and fire it.
  * @param {!Blockly.Events.Abstract} event Custom data for event.
  */
-export const fire = function(event) {
+const fireInternal = function(event) {
   if (!isEnabled()) {
     return;
   }
@@ -326,7 +326,7 @@ export const getGroup = function() {
  * @param {boolean|string} state True to start new group, false to end group.
  *   String to set group explicitly.
  */
-export const setGroup = function(state) {
+const setGroupInternal = function(state) {
   if (typeof state == 'boolean') {
     group = state ? utils.genUid() : '';
   } else {
@@ -433,4 +433,35 @@ export const setRecordUndo = function(newValue) {
  */
 export const getRecordUndo = function() {
   return recordUndo;
+};
+
+/**
+ * Namespace object for internal implementations we want to be able to
+ * stub in tests. Do not use externally.
+ * @internal
+ */
+const internal = {
+  fire: fireInternal,
+  setGroup: setGroupInternal,
+  fireNow,
+  FIRE_QUEUE,
+};
+
+export const TEST_ONLY = internal;
+
+/**
+ * Create a custom event and fire it.
+ * @param {!Blockly.Events.Abstract} event Custom data for event.
+ */
+export const fire = function(event) {
+  internal.fire(event);
+};
+
+/**
+ * Start or stop a group.
+ * @param {boolean|string} state True to start new group, false to end group.
+ *   String to set group explicitly.
+ */
+export const setGroup = function(state) {
+  internal.setGroup(state);
 };
