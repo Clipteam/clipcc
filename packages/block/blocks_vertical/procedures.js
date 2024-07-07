@@ -927,6 +927,20 @@ Blockly.ScratchBlocks.ProcedureUtils.updateDefinitionReturn_ = function(newRetur
       input.type = input.connection.type = Blockly.constants.NEXT_STATEMENT;
     }
 
+    // Search for return blocks in definition and update disable state.
+    const nextBlock = this.getNextBlock(); // the very first block after definition
+    if (nextBlock) {
+      const allBlocks = nextBlock.getDescendants(false, true); // unordered, ignore shadows
+      const group = Blockly.Events.getGroup();
+      Blockly.Events.setGroup(true);
+      for (const block of allBlocks) {
+        if (block.type == Blockly.constants.PROCEDURES_RETURN_BLOCK_TYPE) {
+          block.setDisabled(!newReturn);
+        }
+      }
+      Blockly.Events.setGroup(group);
+    }
+
     // Update the block's apperance to match the mutation.
     if (this.rendered && !this.isInsertionMarker()) {
       this.initSvg();
