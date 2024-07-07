@@ -246,7 +246,16 @@ BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
 
   let canDeleteProcDef = true;
   if (isDeletingProcDef) {
-    const allBlocks = this.workspace_.getAllBlocks();
+    const allBlocks = [];
+    const topBlocks = this.workspace_.getTopBlocks();
+    for (const block of topBlocks) {
+      // skip insertion marker blocks and the corresponding definition block
+      if (block.isInsertionMarker_ || block.id == this.draggingBlock_.id) {
+        continue;
+      }
+      allBlocks.push.apply(allBlocks, block.getDescendants(false));
+    }
+
     const deletingProcCode = this.draggingBlock_.getInput('custom_block').connection.targetBlock().getProcCode();
     for (let i = 0; i < allBlocks.length; i++) {
       const block = allBlocks[i];
