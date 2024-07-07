@@ -747,7 +747,6 @@ Blockly.ScratchBlocks.ProcedureUtils.getGlobal = function() {
  */
 Blockly.ScratchBlocks.ProcedureUtils.setGlobal = function(global) {
   this.global_ = global;
-  this.updateShape_();
 };
 
 /**
