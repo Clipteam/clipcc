@@ -247,12 +247,20 @@ class Blocks {
     /**
      * Get the procedure definition for a given name.
      * @param {?string} name Name of procedure to query.
+     * @param {?boolean} globalOnly True if only find global procedures.
      * @return {?string} ID of procedure definition.
      */
-    getProcedureDefinition (name) {
+    getProcedureDefinition (name, globalOnly) {
         const blockID = this._cache.procedureDefinitions[name];
         if (typeof blockID !== 'undefined') {
-            return blockID;
+            if (blockID) {
+                const internal = blockID && this._getCustomBlockInternal(this._blocks[blockID]);
+                if (!globalOnly || internal.mutation.global === 'true') {
+                    return blockID;
+                }
+            }
+            
+            return null;
         }
 
         for (const id in this._blocks) {
@@ -262,7 +270,12 @@ class Blocks {
                 const internal = this._getCustomBlockInternal(block);
                 if (internal && internal.mutation.proccode === name) {
                     this._cache.procedureDefinitions[name] = id; // The outer define block id
-                    return id;
+                    // suppose procedure proccode is unique in one target
+                    if (!globalOnly || internal.mutation.global === 'true') {
+                        return id;
+                    } else {
+                        return null;
+                    }
                 }
             }
         }
