@@ -25,40 +25,45 @@ goog.declareModuleId('Blockly.Events.BlockBase');
 
 import {Abstract} from './abstract';
 
-
 /**
  * Abstract class for a block event.
- * @param {Blockly.Block} block The block this event corresponds to.
  * @extends {Abstract}
- * @constructor
  */
-export const BlockBase = function(block) {
-  BlockBase.superClass_.constructor.call(this);
+export class BlockBase extends Abstract {
+  /**
+   * @param {Blockly.Block} block The block this event corresponds to.
+   */
+  constructor(block) {
+    super();
+
+    if (!block) {
+      return;  // Blank event to be populated by fromJson.
+    }
+
+    /**
+    * The block id for the block this event pertains to
+    * @type {string}
+    */
+    this.blockId = block.id;
+    this.workspaceId = block.workspace.id;
+  }
 
   /**
-   * The block id for the block this event pertains to
-   * @type {string}
-   */
-  this.blockId = block.id;
-  this.workspaceId = block.workspace.id;
-};
-goog.inherits(BlockBase, Abstract);
+  * Encode the event as JSON.
+  * @return {!Object} JSON representation.
+  */
+  toJson() {
+    const json = super.toJson();
+    json['blockId'] = this.blockId;
+    return json;
+  }
 
-/**
- * Encode the event as JSON.
- * @return {!Object} JSON representation.
- */
-BlockBase.prototype.toJson = function() {
-  const json = BlockBase.superClass_.toJson.call(this);
-  json['blockId'] = this.blockId;
-  return json;
-};
-
-/**
- * Decode the JSON event.
- * @param {!Object} json JSON representation.
- */
-BlockBase.prototype.fromJson = function(json) {
-  BlockBase.superClass_.toJson.call(this);
-  this.blockId = json['blockId'];
-};
+  /**
+  * Decode the JSON event.
+  * @param {!Object} json JSON representation.
+  */
+  fromJson(json) {
+    super.toJson();
+    this.blockId = json['blockId'];
+  }
+}

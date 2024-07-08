@@ -29,60 +29,60 @@ import {VarBase} from './var_base';
 
 /**
  * Class for a variable rename event.
- * @param {Blockly.VariableModel} variable The renamed variable.
- *     Null for a blank event.
- * @param {string} newName The new name the variable will be changed to.
  * @extends {VarBase}
- * @constructor
  */
-export const VarRename = function(variable, newName) {
-  if (!variable) {
-    return;  // Blank event to be populated by fromJson.
+export class VarRename extends VarBase {
+  /**
+   * @param {Blockly.VariableModel} variable The renamed variable.
+   *     Null for a blank event.
+   * @param {string} newName The new name the variable will be changed to.
+   */
+  constructor(variable, newName) {
+    super(variable);
+
+    /**
+     * Type of this event.
+     * @type {string}
+     */
+    this.type = eventUtils.VAR_RENAME;
+
+    this.oldName = variable.name;
+    this.newName = newName;
   }
-  VarRename.superClass_.constructor.call(this, variable);
-  this.oldName = variable.name;
-  this.newName = newName;
-};
-goog.inherits(VarRename, VarBase);
 
-/**
- * Type of this event.
- * @type {string}
- */
-VarRename.prototype.type = eventUtils.VAR_RENAME;
-
-/**
- * Encode the event as JSON.
- * @return {!Object} JSON representation.
- */
-VarRename.prototype.toJson = function() {
-  const json = VarRename.superClass_.toJson.call(this);
-  json['oldName'] = this.oldName;
-  json['newName'] = this.newName;
-  return json;
-};
-
-/**
- * Decode the JSON event.
- * @param {!Object} json JSON representation.
- */
-VarRename.prototype.fromJson = function(json) {
-  VarRename.superClass_.fromJson.call(this, json);
-  this.oldName = json['oldName'];
-  this.newName = json['newName'];
-};
-
-/**
- * Run a variable rename event.
- * @param {boolean} forward True if run forward, false if run backward (undo).
- */
-VarRename.prototype.run = function(forward) {
-  const workspace = this.getEventWorkspace_();
-  if (forward) {
-    workspace.renameVariableById(this.varId, this.newName);
-  } else {
-    workspace.renameVariableById(this.varId, this.oldName);
+  /**
+   * Encode the event as JSON.
+   * @return {!Object} JSON representation.
+   */
+  toJson() {
+    const json = super.toJson();
+    json['oldName'] = this.oldName;
+    json['newName'] = this.newName;
+    return json;
   }
-};
+
+  /**
+   * Decode the JSON event.
+   * @param {!Object} json JSON representation.
+   */
+  fromJson(json) {
+    super.fromJson(json);
+    this.oldName = json['oldName'];
+    this.newName = json['newName'];
+  }
+
+  /**
+   * Run a variable rename event.
+   * @param {boolean} forward True if run forward, false if run backward (undo).
+   */
+  run(forward) {
+    const workspace = this.getEventWorkspace_();
+    if (forward) {
+      workspace.renameVariableById(this.varId, this.newName);
+    } else {
+      workspace.renameVariableById(this.varId, this.oldName);
+    }
+  }
+}
 
 eventUtils.register(eventUtils.VAR_RENAME, VarRename);

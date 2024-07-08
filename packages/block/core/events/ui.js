@@ -37,56 +37,59 @@ import {Abstract} from './abstract';
  * editing to work (e.g. scrolling the workspace, zooming, opening toolbox
  * categories).
  * UI events do not undo or redo.
- * @param {Blockly.Block} block The affected block.
- * @param {string} element One of 'selected', 'comment', 'mutator', etc.
- * @param {*} oldValue Previous value of element.
- * @param {*} newValue New value of element.
  * @extends {Abstract}
- * @constructor
  */
-export const Ui = function(block, element, oldValue, newValue) {
-  Ui.superClass_.constructor.call(this);
-  this.blockId = block ? block.id : null;
-  this.workspaceId = block ? block.workspace.id : null;
-  this.element = element;
-  this.oldValue = oldValue;
-  this.newValue = newValue;
-  // UI events do not undo or redo.
-  this.recordUndo = false;
-};
-goog.inherits(Ui, Abstract);
+export class Ui extends Abstract {
+  /**
+   * @param {Blockly.Block} block The affected block.
+   * @param {string} element One of 'selected', 'comment', 'mutator', etc.
+   * @param {*} oldValue Previous value of element.
+   * @param {*} newValue New value of element.
+   */
+  constructor(block, element, oldValue, newValue) {
+    super();
 
-/**
- * Type of this event.
- * @type {string}
- */
-Ui.prototype.type = eventUtils.UI;
+    /**
+     * Type of this event.
+     * @type {string}
+     */
+    this.type = eventUtils.UI;
 
-/**
- * Encode the event as JSON.
- * @return {!Object} JSON representation.
- */
-Ui.prototype.toJson = function() {
-  const json = Ui.superClass_.toJson.call(this);
-  json['element'] = this.element;
-  if (this.newValue !== undefined) {
-    json['newValue'] = this.newValue;
+    this.blockId = block ? block.id : null;
+    this.workspaceId = block ? block.workspace.id : null;
+    this.element = element;
+    this.oldValue = oldValue;
+    this.newValue = newValue;
+    // UI events do not undo or redo.
+    this.recordUndo = false;
   }
-  if (this.blockId) {
-    json['blockId'] = this.blockId;
-  }
-  return json;
-};
 
-/**
- * Decode the JSON event.
- * @param {!Object} json JSON representation.
- */
-Ui.prototype.fromJson = function(json) {
-  Ui.superClass_.fromJson.call(this, json);
-  this.element = json['element'];
-  this.newValue = json['newValue'];
-  this.blockId = json['blockId'];
-};
+  /**
+  * Encode the event as JSON.
+  * @return {!Object} JSON representation.
+  */
+  toJson() {
+    const json = super.toJson();
+    json['element'] = this.element;
+    if (this.newValue !== undefined) {
+      json['newValue'] = this.newValue;
+    }
+    if (this.blockId) {
+      json['blockId'] = this.blockId;
+    }
+    return json;
+  }
+
+  /**
+  * Decode the JSON event.
+  * @param {!Object} json JSON representation.
+  */
+  fromJson(json) {
+    super.fromJson(json);
+    this.element = json['element'];
+    this.newValue = json['newValue'];
+    this.blockId = json['blockId'];
+  }
+}
 
 eventUtils.register(eventUtils.UI, Ui);

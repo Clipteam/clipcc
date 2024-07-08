@@ -28,38 +28,43 @@ import {Abstract} from './abstract';
 
 /**
  * Abstract class for a variable event.
- * @param {Blockly.VariableModel} variable The variable this event corresponds
- *     to.
  * @extends {Abstract}
- * @constructor
  */
-export const VarBase = function(variable) {
-  VarBase.superClass_.constructor.call(this);
+export class VarBase extends Abstract {
+  /**
+   * @param {Blockly.VariableModel} variable The variable this event corresponds
+   */
+  constructor(variable) {
+    super();
+
+    if (!variable) {
+      return;  // Blank event to be populated by fromJson.
+    }
+
+    /**
+    * The variable id for the variable this event pertains to.
+    * @type {string}
+    */
+    this.varId = variable.getId();
+    this.workspaceId = variable.workspace.id;
+  }
 
   /**
-   * The variable id for the variable this event pertains to.
-   * @type {string}
-   */
-  this.varId = variable.getId();
-  this.workspaceId = variable.workspace.id;
-};
-goog.inherits(VarBase, Abstract);
+  * Encode the event as JSON.
+  * @return {!Object} JSON representation.
+  */
+  toJson() {
+    const json = super.toJson();
+    json['varId'] = this.varId;
+    return json;
+  }
 
-/**
- * Encode the event as JSON.
- * @return {!Object} JSON representation.
- */
-VarBase.prototype.toJson = function() {
-  const json = VarBase.superClass_.toJson.call(this);
-  json['varId'] = this.varId;
-  return json;
-};
-
-/**
- * Decode the JSON event.
- * @param {!Object} json JSON representation.
- */
-VarBase.prototype.fromJson = function(json) {
-  VarBase.superClass_.toJson.call(this);
-  this.varId = json['varId'];
-};
+  /**
+  * Decode the JSON event.
+  * @param {!Object} json JSON representation.
+  */
+  fromJson(json) {
+    super.toJson();
+    this.varId = json['varId'];
+  }
+}

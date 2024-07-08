@@ -29,80 +29,79 @@ import * as Xml from '../xml';
 
 const dom = goog.require('goog.dom');
 
-
 /**
  * Class for a comment deletion event.
- * @param {Blockly.WorkspaceComment | Blockly.ScratchBlockComment} comment
- *     The deleted comment. Null for a blank event.
  * @extends {CommentBase}
- * @constructor
  */
-export const CommentDelete = function(comment) {
-  if (!comment) {
-    return;  // Blank event to be populated by fromJson.
+export class CommentDelete extends CommentBase {
+  /**
+   * @param {Blockly.WorkspaceComment | Blockly.ScratchBlockComment} comment
+   *     The deleted comment. Null for a blank event.
+   */
+  constructor(comment) {
+    super(comment);
+
+    /**
+     * Type of this event.
+     * @type {string}
+     */
+    CommentDelete.prototype.type = eventUtils.COMMENT_DELETE;
+
+    this.xy = comment.getXY();
+    this.minimized = comment.isMinimized() || false;
+    this.text = comment.getText();
+    const hw = comment.getHeightWidth();
+    this.height = hw.height;
+    this.width = hw.width;
+
+    this.xml = comment.toXmlWithXY();
   }
-  CommentDelete.superClass_.constructor.call(this, comment);
-  this.xy = comment.getXY();
-  this.minimized = comment.isMinimized() || false;
-  this.text = comment.getText();
-  const hw = comment.getHeightWidth();
-  this.height = hw.height;
-  this.width = hw.width;
 
-  this.xml = comment.toXmlWithXY();
-};
-goog.inherits(CommentDelete, CommentBase);
+  /**
+   * Encode the event as JSON.
+   * TODO (github.com/google/blockly/issues/1266): "Full" and "minimal"
+   * serialization.
+   * @return {!Object} JSON representation.
+   */
+  toJson() {
+    const json = super.toJson();
+    return json;
+  }
 
-/**
- * Type of this event.
- * @type {string}
- */
-CommentDelete.prototype.type = eventUtils.COMMENT_DELETE;
+  /**
+   * Decode the JSON event.
+   * @param {!Object} json JSON representation.
+   */
+  fromJson(json) {
+    super.fromJson(json);
+  }
 
-/**
- * Encode the event as JSON.
- * TODO (github.com/google/blockly/issues/1266): "Full" and "minimal"
- * serialization.
- * @return {!Object} JSON representation.
- */
-CommentDelete.prototype.toJson = function() {
-  const json = CommentDelete.superClass_.toJson.call(this);
-  return json;
-};
-
-/**
- * Decode the JSON event.
- * @param {!Object} json JSON representation.
- */
-CommentDelete.prototype.fromJson = function(json) {
-  CommentDelete.superClass_.fromJson.call(this, json);
-};
-
-/**
- * Run a creation event.
- * @param {boolean} forward True if run forward, false if run backward (undo).
- */
-CommentDelete.prototype.run = function(forward) {
-  if (forward) {
-    const comment = this.getComment_();
-    if (comment) {
-      comment.dispose(false, false);
+  /**
+   * Run a creation event.
+   * @param {boolean} forward True if run forward, false if run backward (undo).
+   */
+  run(forward) {
+    if (forward) {
+      const comment = this.getComment_();
+      if (comment) {
+        comment.dispose(false, false);
+      } else {
+        // Only complain about root-level block.
+        console.warn("Can't delete non-existent comment: " + this.commentId);
+      }
     } else {
-      // Only complain about root-level block.
-      console.warn("Can't delete non-existent comment: " + this.commentId);
-    }
-  } else {
-    const workspace = this.getEventWorkspace_();
-    if (this.blockId) {
-      const block = workspace.getBlockById(this.blockId);
-      block.setCommentText(this.text, this.commentId, this.xy.x, this.xy.y, this.minimized);
-      block.comment.setSize(this.width, this.height);
-    } else {
-      const xml = dom.createDom('xml');
-      xml.appendChild(this.xml);
-      Xml.domToWorkspace(xml, workspace);
+      const workspace = this.getEventWorkspace_();
+      if (this.blockId) {
+        const block = workspace.getBlockById(this.blockId);
+        block.setCommentText(this.text, this.commentId, this.xy.x, this.xy.y, this.minimized);
+        block.comment.setSize(this.width, this.height);
+      } else {
+        const xml = dom.createDom('xml');
+        xml.appendChild(this.xml);
+        Xml.domToWorkspace(xml, workspace);
+      }
     }
   }
-};
+}
 
 eventUtils.register(eventUtils.COMMENT_DELETE, CommentDelete);

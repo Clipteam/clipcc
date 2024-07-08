@@ -26,48 +26,47 @@ goog.declareModuleId('Blockly.Events.DragBlockOutside');
 import * as eventUtils from './utils';
 import {BlockBase} from './block_base';
 
-
 /**
  * Class for a block drag event. Fired when block dragged into or out of
  * the blocks UI.
- * @param {Blockly.Block} block The moved block.  Null for a blank event.
  * @extends {BlockBase}
- * @constructor
  */
-export const DragBlockOutside = function(block) {
-  if (!block) {
-    return;  // Blank event to be populated by fromJson.
+export class DragBlockOutside extends BlockBase {
+  /**
+   * @param {Blockly.Block} block The moved block.  Null for a blank event.
+   */
+  constructor(block) {
+    super(block);
+
+    /**
+     * Type of this event.
+     * @type {string}
+     */
+    DragBlockOutside.prototype.type = eventUtils.DRAG_OUTSIDE;
+
+    this.recordUndo = false;
   }
-  DragBlockOutside.superClass_.constructor.call(this, block);
-  this.recordUndo = false;
-};
-goog.inherits(DragBlockOutside, BlockBase);
 
-/**
- * Type of this event.
- * @type {string}
- */
-DragBlockOutside.prototype.type = eventUtils.DRAG_OUTSIDE;
-
-/**
- * Encode the event as JSON.
- * @return {!Object} JSON representation.
- */
-DragBlockOutside.prototype.toJson = function() {
-  const json = DragBlockOutside.superClass_.toJson.call(this);
-  if (this.isOutside) {
-    json['isOutside'] = this.isOutside;
+  /**
+  * Encode the event as JSON.
+  * @return {!Object} JSON representation.
+  */
+  toJson() {
+    const json = super.toJson();
+    if (this.isOutside) {
+      json['isOutside'] = this.isOutside;
+    }
+    return json;
   }
-  return json;
-};
 
-/**
- * Decode the JSON event.
- * @param {!Object} json JSON representation.
- */
-DragBlockOutside.prototype.fromJson = function(json) {
-  DragBlockOutside.superClass_.fromJson.call(this, json);
-  this.isOutside = json['isOutside'];
-};
+  /**
+  * Decode the JSON event.
+  * @param {!Object} json JSON representation.
+  */
+  fromJson(json) {
+    super.fromJson(json);
+    this.isOutside = json['isOutside'];
+  }
+}
 
 eventUtils.register(eventUtils.DRAG_OUTSIDE, DragBlockOutside);

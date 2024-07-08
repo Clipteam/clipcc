@@ -29,76 +29,74 @@ import * as Xml from '../xml';
 
 const dom = goog.require('goog.dom');
 
-
 /**
  * Class for a block creation event.
- * @param {Blockly.Block} block The created block.  Null for a blank event.
  * @extends {BlockBase}
- * @constructor
  */
-export const BlockCreate = function(block) {
-  if (!block) {
-    return;  // Blank event to be populated by fromJson.
+export class BlockCreate extends BlockBase {
+  /**
+   * @param {Blockly.Block} block The created block.  Null for a blank event.
+   */
+  constructor(block) {
+    super(block);
+
+    /**
+     * Type of this event.
+     * @type {string}
+     */
+    BlockCreate.prototype.type = eventUtils.CREATE;
+
+    if (block.workspace.rendered) {
+      this.xml = Xml.blockToDomWithXY(block);
+    } else {
+      this.xml = Xml.blockToDom(block);
+    }
+    this.ids = eventUtils.getDescendantIds(block);
   }
-  BlockCreate.superClass_.constructor.call(this, block);
 
-  if (block.workspace.rendered) {
-    this.xml = Xml.blockToDomWithXY(block);
-  } else {
-    this.xml = Xml.blockToDom(block);
+  /**
+   * Encode the event as JSON.
+   * @return {!Object} JSON representation.
+   */
+  toJson() {
+    const json = super.toJson();
+    json['xml'] = Xml.domToText(this.xml);
+    json['ids'] = this.ids;
+    return json;
   }
-  this.ids = eventUtils.getDescendantIds(block);
-};
-goog.inherits(BlockCreate, BlockBase);
 
-/**
- * Type of this event.
- * @type {string}
- */
-BlockCreate.prototype.type = eventUtils.CREATE;
+  /**
+   * Decode the JSON event.
+   * @param {!Object} json JSON representation.
+   */
+  fromJson(json) {
+    super.fromJson(json);
+    this.xml = Xml.textToDom('<xml>' + json['xml'] + '</xml>').firstChild;
+    this.ids = json['ids'];
+  }
 
-/**
- * Encode the event as JSON.
- * @return {!Object} JSON representation.
- */
-BlockCreate.prototype.toJson = function() {
-  const json = BlockCreate.superClass_.toJson.call(this);
-  json['xml'] = Xml.domToText(this.xml);
-  json['ids'] = this.ids;
-  return json;
-};
-
-/**
- * Decode the JSON event.
- * @param {!Object} json JSON representation.
- */
-BlockCreate.prototype.fromJson = function(json) {
-  BlockCreate.superClass_.fromJson.call(this, json);
-  this.xml = Xml.textToDom('<xml>' + json['xml'] + '</xml>').firstChild;
-  this.ids = json['ids'];
-};
-
-/**
- * Run a creation event.
- * @param {boolean} forward True if run forward, false if run backward (undo).
- */
-BlockCreate.prototype.run = function(forward) {
-  const workspace = this.getEventWorkspace_();
-  if (forward) {
-    const xml = dom.createDom('xml');
-    xml.appendChild(this.xml);
-    Xml.domToWorkspace(xml, workspace);
-  } else {
-    for (let i = 0, id; id = this.ids[i]; i++) {
-      const block = workspace.getBlockById(id);
-      if (block) {
-        block.dispose(false, false);
-      } else if (id == this.blockId) {
-        // Only complain about root-level block.
-        console.warn("Can't uncreate non-existent block: " + id);
+  /**
+   * Run a creation event.
+   * @param {boolean} forward True if run forward, false if run backward (undo).
+   */
+  run(forward) {
+    const workspace = this.getEventWorkspace_();
+    if (forward) {
+      const xml = dom.createDom('xml');
+      xml.appendChild(this.xml);
+      Xml.domToWorkspace(xml, workspace);
+    } else {
+      for (let i = 0, id; id = this.ids[i]; i++) {
+        const block = workspace.getBlockById(id);
+        if (block) {
+          block.dispose(false, false);
+        } else if (id == this.blockId) {
+          // Only complain about root-level block.
+          console.warn("Can't uncreate non-existent block: " + id);
+        }
       }
     }
   }
-};
+}
 
 eventUtils.register(eventUtils.BLOCK_CREATE, BlockCreate);

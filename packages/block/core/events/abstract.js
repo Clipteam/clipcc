@@ -31,84 +31,84 @@ goog.declareModuleId('Blockly.Events.Abstract');
 import * as common from '../common';
 import * as eventUtils from './utils';
 
-
 /**
  * Abstract class for an event.
- * @constructor
  */
-export const Abstract = function() {
-  /**
-   * The workspace identifier for this event.
-   * @type {string|undefined}
-   */
-  this.workspaceId = undefined;
+export class Abstract {
+  constructor() {
+    /**
+    * The workspace identifier for this event.
+    * @type {string|undefined}
+    */
+    this.workspaceId = undefined;
 
-  /**
-   * The event group id for the group this event belongs to. Groups define
-   * events that should be treated as an single action from the user's
-   * perspective, and should be undone together.
-   * @type {string}
-   */
-  this.group = eventUtils.getGroup();
+    /**
+    * The event group id for the group this event belongs to. Groups define
+    * events that should be treated as an single action from the user's
+    * perspective, and should be undone together.
+    * @type {string}
+    */
+    this.group = eventUtils.getGroup();
 
-  /**
-   * Sets whether the event should be added to the undo stack.
-   * @type {boolean}
-   */
-  this.recordUndo = eventUtils.getRecordUndo();
-};
-
-/**
- * Encode the event as JSON.
- * @return {!Object} JSON representation.
- */
-Abstract.prototype.toJson = function() {
-  const json = {
-    'type': this.type
-  };
-  if (this.group) {
-    json['group'] = this.group;
+    /**
+    * Sets whether the event should be added to the undo stack.
+    * @type {boolean}
+    */
+    this.recordUndo = eventUtils.getRecordUndo();
   }
-  return json;
-};
 
-/**
- * Decode the JSON event.
- * @param {!Object} json JSON representation.
- */
-Abstract.prototype.fromJson = function(json) {
-  this.group = json['group'];
-};
-
-/**
- * Does this event record any change of state?
- * By default we assume events are non-null.  Subclasses may override to
- * indicate that they do not change state.
- * @return {boolean} False if something changed.
- */
-Abstract.prototype.isNull = function() {
-  return false;
-};
-
-/**
- * Run an event.
- * @param {boolean} _forward True if run forward, false if run backward (undo).
- */
-Abstract.prototype.run = function(_forward) {
-  // Defined by subclasses.
-};
-
-/**
- * Get workspace the event belongs to.
- * @return {Blockly.Workspace} The workspace the event belongs to.
- * @throws {Error} if workspace is null.
- * @protected
- */
-Abstract.prototype.getEventWorkspace_ = function() {
-  const workspace = common.getWorkspaceById(this.workspaceId);
-  if (!workspace) {
-    throw Error('Workspace is null. Event must have been generated from real' +
-      ' Blockly events.');
+  /**
+  * Encode the event as JSON.
+  * @return {!Object} JSON representation.
+  */
+  toJson() {
+    const json = {
+      'type': this.type
+    };
+    if (this.group) {
+      json['group'] = this.group;
+    }
+    return json;
   }
-  return workspace;
-};
+
+  /**
+  * Decode the JSON event.
+  * @param {!Object} json JSON representation.
+  */
+  fromJson(json) {
+    this.group = json['group'];
+  }
+
+  /**
+  * Does this event record any change of state?
+  * By default we assume events are non-null.  Subclasses may override to
+  * indicate that they do not change state.
+  * @return {boolean} False if something changed.
+  */
+  isNull() {
+    return false;
+  }
+
+  /**
+  * Run an event.
+  * @param {boolean} _forward True if run forward, false if run backward (undo).
+  */
+  run(_forward) {
+    // Defined by subclasses.
+  }
+
+  /**
+  * Get workspace the event belongs to.
+  * @return {Blockly.Workspace} The workspace the event belongs to.
+  * @throws {Error} if workspace is null.
+  * @protected
+  */
+  getEventWorkspace_() {
+    const workspace = common.getWorkspaceById(this.workspaceId);
+    if (!workspace) {
+      throw Error('Workspace is null. Event must have been generated from real' +
+       ' Blockly events.');
+    }
+    return workspace;
+  }
+}
