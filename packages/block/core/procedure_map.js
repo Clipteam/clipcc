@@ -108,9 +108,10 @@ ProcedureMap.prototype.allLocalProcedureMutations = function() {
  */
 ProcedureMap.prototype.createProcedureFromMutation = function(mutation) {
   const procCode = mutation.getAttribute('proccode');
+  const external = mutation.getAttribute('external') === 'true';
   let procedure = this.getProcedure(procCode);
 
-  if (procedure && !procedure.isExternal()) {
+  if (procedure && procedure.isExternal() === external) {
     // There is a procedure defined in current target with the same procCode.
     console.warn('Procedure "' + procCode + '" is already in use.');
     return procedure;
