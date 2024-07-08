@@ -76,7 +76,7 @@ function test_procedureMap_newProcedure_coverExternalGlobal() {
   const xml = '<xml xmlns="http://www.w3.org/1999/xhtml"><procedures>' +
     '<mutation proccode="test proc" ' +
       'argumentids="" argumentnames="" argumentdefaults="" ' +
-      'warp="true" return="false" global="false" external="true"></mutation>' +
+      'warp="true" return="false" global="true" external="true"></mutation>' +
   '</procedures></xml>';
   const newMutation = '<xml><mutation proccode="test proc" ' +
       'argumentids="" argumentnames="" argumentdefaults="" ' +
@@ -86,6 +86,36 @@ function test_procedureMap_newProcedure_coverExternalGlobal() {
     Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(xml), workspace);
     let procedure = procedureMap.getProcedure('test proc');
     assertEquals(true, procedure.isExternal());
+
+    const mock = mockControl_.createMethodMock(console, 'warn');
+    mock('Procedure "test proc" is already in use.').$never();
+    mock.$replay();
+    workspace.createProcedureFromMutation(Blockly.Xml.textToDom(newMutation).firstChild);
+    mock.$verify();
+
+    procedure = procedureMap.getProcedure('test proc');
+    assertNotNull(procedure);
+    assertEquals('test proc', procedure.getProcCode());
+    assertEquals(false, procedure.isExternal());
+  } finally {
+    procedureMapTest_tearDown();
+  }
+}
+
+function test_procedureMap_newProcedure_externalAfterLocalCovered() {
+  const xml = '<xml xmlns="http://www.w3.org/1999/xhtml"><procedures>' +
+    '<mutation proccode="test proc" ' +
+      'argumentids="" argumentnames="" argumentdefaults="" ' +
+      'warp="true" return="false" global="false"></mutation>' +
+  '</procedures></xml>';
+  const newMutation = '<xml><mutation proccode="test proc" ' +
+      'argumentids="" argumentnames="" argumentdefaults="" ' +
+      'warp="true" return="false" global="true" external="true"></mutation></xml>';
+  procedureMapTest_setUp();
+  try {
+    Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(xml), workspace);
+    let procedure = procedureMap.getProcedure('test proc');
+    assertEquals(false, procedure.isExternal());
 
     const mock = mockControl_.createMethodMock(console, 'warn');
     mock('Procedure "test proc" is already in use.').$never();
