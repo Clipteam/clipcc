@@ -35,140 +35,142 @@ const userAgent = goog.require('goog.userAgent');
 
 /**
  * Class for loading, storing, and playing audio for a workspace.
- * @param {Blockly.WorkspaceSvg} parentWorkspace The parent of the workspace
- *     this audio object belongs to, or null.
- * @constructor
  */
-export const WorkspaceAudio = function(parentWorkspace) {
+export class WorkspaceAudio {
+  /**
+   * @param {Blockly.WorkspaceSvg} parentWorkspace The parent of the workspace
+   *     this audio object belongs to, or null.
+   */
+  constructor(parentWorkspace) {
+    /**
+     * Time that the last sound was played.
+     * @type {Date}
+     * @private
+     */
+    this.lastSound_ = null;
+
+    /**
+     * The parent of the workspace this object belongs to, or null.  May be
+     * checked for sounds that this object can't find.
+     * @type {Blockly.WorkspaceSvg}
+     * @private
+     */
+    this.parentWorkspace_ = parentWorkspace;
+
+    /**
+     * Database of pre-loaded sounds.
+     * @private
+     * @const
+     */
+    this.SOUNDS_ = Object.create(null);
+  }
 
   /**
-   * The parent of the workspace this object belongs to, or null.  May be
-   * checked for sounds that this object can't find.
-   * @type {Blockly.WorkspaceSvg}
-   * @private
+   * Dispose of this audio manager.
+   * @package
    */
-  this.parentWorkspace_ = parentWorkspace;
+  dispose() {
+    this.parentWorkspace_ = null;
+    this.SOUNDS_ = null;
+  }
 
   /**
-   * Database of pre-loaded sounds.
-   * @private
-   * @const
+   * Load an audio file.  Cache it, ready for instantaneous playing.
+   * @param {!Array.<string>} filenames List of file types in decreasing order of
+   *   preference (i.e. increasing size).  E.g. ['media/go.mp3', 'media/go.wav']
+   *   Filenames include path from Blockly's root.  File extensions matter.
+   * @param {string} name Name of sound.
+   * @package
    */
-  this.SOUNDS_ = Object.create(null);
-};
-
-/**
- * Time that the last sound was played.
- * @type {Date}
- * @private
- */
-WorkspaceAudio.prototype.lastSound_ = null;
-
-/**
- * Dispose of this audio manager.
- * @package
- */
-WorkspaceAudio.prototype.dispose = function() {
-  this.parentWorkspace_ = null;
-  this.SOUNDS_ = null;
-};
-
-/**
- * Load an audio file.  Cache it, ready for instantaneous playing.
- * @param {!Array.<string>} filenames List of file types in decreasing order of
- *   preference (i.e. increasing size).  E.g. ['media/go.mp3', 'media/go.wav']
- *   Filenames include path from Blockly's root.  File extensions matter.
- * @param {string} name Name of sound.
- * @package
- */
-WorkspaceAudio.prototype.load = function(filenames, name) {
-  if (!filenames.length) {
-    return;
-  }
-  let audioTest;
-  try {
-    audioTest = new window['Audio']();
-  } catch (e) {
-    // No browser support for Audio.
-    // IE can throw an error even if the Audio object exists.
-    return;
-  }
-  let sound;
-  for (let i = 0; i < filenames.length; i++) {
-    const filename = filenames[i];
-    const ext = filename.match(/\.(\w+)$/);
-    if (ext && audioTest.canPlayType('audio/' + ext[1])) {
-      // Found an audio format we can play.
-      sound = new window['Audio'](filename);
-      break;
-    }
-  }
-  if (sound && sound.play) {
-    this.SOUNDS_[name] = sound;
-  }
-};
-
-/**
- * Preload all the audio files so that they play quickly when asked for.
- * @package
- */
-WorkspaceAudio.prototype.preload = function() {
-  for (const name in this.SOUNDS_) {
-    const sound = this.SOUNDS_[name];
-    sound.volume = 0.01;
-    const playPromise = sound.play();
-
-    // Edge does not return a promise, so we need to check.
-    if (playPromise) {
-      // If we don't wait for the play request to complete before calling pause() we will get an exception:
-      // Uncaught (in promise) DOMException: The play() request was interrupted by a call to pause().
-      // See more: https://developers.google.com/web/updates/2017/06/play-request-was-interrupted
-      playPromise.then(sound.pause).catch(function() {
-        // Play without user interaction was prevented.
-      });
-    } else {
-      sound.pause();
-    }
-
-    // iOS can only process one sound at a time.  Trying to load more than one
-    // corrupts the earlier ones.  Just load one and leave the others uncached.
-    if (userAgent.IPAD || userAgent.IPHONE) {
-      break;
-    }
-  }
-};
-
-/**
- * Play a named sound at specified volume.  If volume is not specified,
- * use full volume (1).
- * @param {string} name Name of sound.
- * @param {number=} opt_volume Volume of sound (0-1).
- */
-WorkspaceAudio.prototype.play = function(name, opt_volume) {
-  const sound = this.SOUNDS_[name];
-  if (sound) {
-    // Don't play one sound on top of another.
-    const now = new Date;
-    if (this.lastSound_ != null &&
-        now - this.lastSound_ < constants.SOUND_LIMIT) {
+  load(filenames, name) {
+    if (!filenames.length) {
       return;
     }
-    this.lastSound_ = now;
-    let mySound;
-    const ie9 = userAgent.DOCUMENT_MODE &&
-              userAgent.DOCUMENT_MODE === 9;
-    if (ie9 || userAgent.IPAD || userAgent.ANDROID) {
-      // Creating a new audio node causes lag in IE9, Android and iPad. Android
-      // and IE9 refetch the file from the server, iPad uses a singleton audio
-      // node which must be deleted and recreated for each new audio tag.
-      mySound = sound;
-    } else {
-      mySound = sound.cloneNode();
+    let audioTest;
+    try {
+      audioTest = new window['Audio']();
+    } catch (e) {
+      // No browser support for Audio.
+      // IE can throw an error even if the Audio object exists.
+      return;
     }
-    mySound.volume = (opt_volume === undefined ? 1 : opt_volume);
-    mySound.play();
-  } else if (this.parentWorkspace_) {
-    // Maybe a workspace on a lower level knows about this sound.
-    this.parentWorkspace_.getAudioManager().play(name, opt_volume);
+    let sound;
+    for (let i = 0; i < filenames.length; i++) {
+      const filename = filenames[i];
+      const ext = filename.match(/\.(\w+)$/);
+      if (ext && audioTest.canPlayType('audio/' + ext[1])) {
+        // Found an audio format we can play.
+        sound = new window['Audio'](filename);
+        break;
+      }
+    }
+    if (sound && sound.play) {
+      this.SOUNDS_[name] = sound;
+    }
   }
-};
+
+  /**
+   * Preload all the audio files so that they play quickly when asked for.
+   * @package
+   */
+  preload() {
+    for (const name in this.SOUNDS_) {
+      const sound = this.SOUNDS_[name];
+      sound.volume = 0.01;
+      const playPromise = sound.play();
+
+      // Edge does not return a promise, so we need to check.
+      if (playPromise) {
+        // If we don't wait for the play request to complete before calling pause() we will get an exception:
+        // Uncaught (in promise) DOMException: The play() request was interrupted by a call to pause().
+        // See more: https://developers.google.com/web/updates/2017/06/play-request-was-interrupted
+        playPromise.then(sound.pause).catch(function() {
+          // Play without user interaction was prevented.
+        });
+      } else {
+        sound.pause();
+      }
+
+      // iOS can only process one sound at a time.  Trying to load more than one
+      // corrupts the earlier ones.  Just load one and leave the others uncached.
+      if (userAgent.IPAD || userAgent.IPHONE) {
+        break;
+      }
+    }
+  }
+
+  /**
+   * Play a named sound at specified volume.  If volume is not specified,
+   * use full volume (1).
+   * @param {string} name Name of sound.
+   * @param {number=} opt_volume Volume of sound (0-1).
+   */
+  play(name, opt_volume) {
+    const sound = this.SOUNDS_[name];
+    if (sound) {
+      // Don't play one sound on top of another.
+      const now = new Date;
+      if (this.lastSound_ != null &&
+          now - this.lastSound_ < constants.SOUND_LIMIT) {
+        return;
+      }
+      this.lastSound_ = now;
+      let mySound;
+      const ie9 = userAgent.DOCUMENT_MODE &&
+                userAgent.DOCUMENT_MODE === 9;
+      if (ie9 || userAgent.IPAD || userAgent.ANDROID) {
+        // Creating a new audio node causes lag in IE9, Android and iPad. Android
+        // and IE9 refetch the file from the server, iPad uses a singleton audio
+        // node which must be deleted and recreated for each new audio tag.
+        mySound = sound;
+      } else {
+        mySound = sound.cloneNode();
+      }
+      mySound.volume = (opt_volume === undefined ? 1 : opt_volume);
+      mySound.play();
+    } else if (this.parentWorkspace_) {
+      // Maybe a workspace on a lower level knows about this sound.
+      this.parentWorkspace_.getAudioManager().play(name, opt_volume);
+    }
+  }
+}

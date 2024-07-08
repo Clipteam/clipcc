@@ -52,20 +52,23 @@ export const DEFAULT = 'default';
 
 /**
  * A name with the type of the element stored in the generic.
- * @param {string} name The name of the registry type.
  * @template T
  */
-export const Type = function(name) {
-  this.name_ = name;
-};
-
-/**
- * Returns the name of the type.
- * @return {string} The name.
- */
-Type.prototype.toString = function() {
-  return this.name_;
-};
+export class Type {
+  /**
+   * @param {string} name The name of the registry type.
+   */
+  constructor(name) {
+    this.name_ = name;
+  }
+  /**
+   * Returns the name of the type.
+   * @return {string} The name.
+   */
+  toString() {
+    return this.name_;
+  }
+}
 
 /** @type {!Type<Blockly.Events.Abstract>} */
 Type.EVENT = new Type('event');
