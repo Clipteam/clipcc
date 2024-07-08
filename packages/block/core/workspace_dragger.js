@@ -41,92 +41,94 @@ const Coordinate = goog.require('goog.math.Coordinate');
  * @param {!Blockly.WorkspaceSvg} workspace The workspace to drag.
  * @constructor
  */
-export const WorkspaceDragger = function(workspace) {
-  /**
-   * @type {!Blockly.WorkspaceSvg}
-   * @private
-   */
-  this.workspace_ = workspace;
+export class WorkspaceDragger {
+  constructor(workspace) {
+    /**
+    * @type {!Blockly.WorkspaceSvg}
+    * @private
+    */
+    this.workspace_ = workspace;
 
-  /**
-   * The workspace's metrics object at the beginning of the drag.  Contains size
-   * and position metrics of a workspace.
-   * Coordinate system: pixel coordinates.
-   * @type {!Object}
-   * @private
-   */
-  this.startDragMetrics_ = workspace.getMetrics();
+    /**
+    * The workspace's metrics object at the beginning of the drag.  Contains size
+    * and position metrics of a workspace.
+    * Coordinate system: pixel coordinates.
+    * @type {!Object}
+    * @private
+    */
+    this.startDragMetrics_ = workspace.getMetrics();
 
-  /**
-   * The scroll position of the workspace at the beginning of the drag.
-   * Coordinate system: pixel coordinates.
-   * @type {!Coordinate}
-   * @private
-   */
-  this.startScrollXY_ = new Coordinate(
-      workspace.scrollX, workspace.scrollY);
-};
-
-/**
- * Sever all links from this object.
- * @package
- */
-WorkspaceDragger.prototype.dispose = function() {
-  this.workspace_ = null;
-};
-
-/**
- * Start dragging the workspace.
- * @package
- */
-WorkspaceDragger.prototype.startDrag = function() {
-  if (common.getSelected()) {
-    common.getSelected().unselect();
+    /**
+    * The scroll position of the workspace at the beginning of the drag.
+    * Coordinate system: pixel coordinates.
+    * @type {!Coordinate}
+    * @private
+    */
+    this.startScrollXY_ = new Coordinate(
+        workspace.scrollX, workspace.scrollY);
   }
-};
 
-/**
- * Finish dragging the workspace and put everything back where it belongs.
- * @param {!Coordinate} currentDragDeltaXY How far the pointer has
- *     moved from the position at the start of the drag, in pixel coordinates.
- * @package
- */
-WorkspaceDragger.prototype.endDrag = function(currentDragDeltaXY) {
-  // Make sure everything is up to date.
-  this.drag(currentDragDeltaXY);
-};
+  /**
+  * Sever all links from this object.
+  * @package
+  */
+  dispose() {
+    this.workspace_ = null;
+  }
 
-/**
- * Move the workspace based on the most recent mouse movements.
- * @param {!Coordinate} currentDragDeltaXY How far the pointer has
- *     moved from the position at the start of the drag, in pixel coordinates.
- * @package
- */
-WorkspaceDragger.prototype.drag = function(currentDragDeltaXY) {
-  const metrics = this.startDragMetrics_;
-  const newXY = Coordinate.sum(this.startScrollXY_, currentDragDeltaXY);
+  /**
+  * Start dragging the workspace.
+  * @package
+  */
+  startDrag() {
+    if (common.getSelected()) {
+      common.getSelected().unselect();
+    }
+  }
 
-  // Bound the new XY based on workspace bounds.
-  let x = Math.min(newXY.x, -metrics.contentLeft);
-  let y = Math.min(newXY.y, -metrics.contentTop);
-  x = Math.max(x, metrics.viewWidth - metrics.contentLeft -
-               metrics.contentWidth);
-  y = Math.max(y, metrics.viewHeight - metrics.contentTop -
-               metrics.contentHeight);
+  /**
+  * Finish dragging the workspace and put everything back where it belongs.
+  * @param {!Coordinate} currentDragDeltaXY How far the pointer has
+  *     moved from the position at the start of the drag, in pixel coordinates.
+  * @package
+  */
+  endDrag(currentDragDeltaXY) {
+    // Make sure everything is up to date.
+    this.drag(currentDragDeltaXY);
+  }
 
-  x = -x - metrics.contentLeft;
-  y = -y - metrics.contentTop;
+  /**
+  * Move the workspace based on the most recent mouse movements.
+  * @param {!Coordinate} currentDragDeltaXY How far the pointer has
+  *     moved from the position at the start of the drag, in pixel coordinates.
+  * @package
+  */
+  drag(currentDragDeltaXY) {
+    const metrics = this.startDragMetrics_;
+    const newXY = Coordinate.sum(this.startScrollXY_, currentDragDeltaXY);
 
-  this.updateScroll_(x, y);
-};
+    // Bound the new XY based on workspace bounds.
+    let x = Math.min(newXY.x, -metrics.contentLeft);
+    let y = Math.min(newXY.y, -metrics.contentTop);
+    x = Math.max(x, metrics.viewWidth - metrics.contentLeft -
+                metrics.contentWidth);
+    y = Math.max(y, metrics.viewHeight - metrics.contentTop -
+                metrics.contentHeight);
 
-/**
- * Move the scrollbars to drag the workspace.
- * x and y are in pixels.
- * @param {number} x The new x position to move the scrollbar to.
- * @param {number} y The new y position to move the scrollbar to.
- * @private
- */
-WorkspaceDragger.prototype.updateScroll_ = function(x, y) {
-  this.workspace_.scrollbar.set(x, y);
-};
+    x = -x - metrics.contentLeft;
+    y = -y - metrics.contentTop;
+
+    this.updateScroll_(x, y);
+  }
+
+  /**
+  * Move the scrollbars to drag the workspace.
+  * x and y are in pixels.
+  * @param {number} x The new x position to move the scrollbar to.
+  * @param {number} y The new y position to move the scrollbar to.
+  * @private
+  */
+  updateScroll_(x, y) {
+    this.workspace_.scrollbar.set(x, y);
+  }
+}

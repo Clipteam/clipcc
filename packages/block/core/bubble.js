@@ -50,9 +50,14 @@ export class Bubble {
    *     point.
    * @param {?number} bubbleWidth Width of bubble, or null if not resizable.
    * @param {?number} bubbleHeight Height of bubble, or null if not resizable.
+   * @param {boolean?} opt_skipConstruct Whether skip this class's construction.
    */
   constructor(workspace, content, shape, anchorXY,
-      bubbleWidth, bubbleHeight) {
+      bubbleWidth, bubbleHeight, opt_skipConstruct) {
+    if (opt_skipConstruct) {
+      return;
+    }
+
     /**
      * Whether bubble is visible.
      * @type {boolean}
