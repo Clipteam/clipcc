@@ -624,46 +624,6 @@ export class Toolbox {
       }
     };
   }
-
-  // Category menu
-  /**
-   * Class for a table of category titles that will control which category is
-   * displayed.
-   * @param {Toolbox} parent The toolbox that owns the category menu.
-   * @param {Element} parentHtml The containing html div.
-   */
-  static CategoryMenu(parent, parentHtml) {
-    this.parent_ = parent;
-    this.height_ = 0;
-    this.parentHtml_ = parentHtml;
-    this.createDom();
-    this.categories_ = [];
-  }
-
-  // Category
-  /**
-   * Class for the data model of a category in the toolbox.
-   * @param {Toolbox.CategoryMenu} parent The category menu that owns this
-   *     category.
-   * @param {Element} parentHtml The containing html div.
-   * @param {Node} domTree DOM tree of blocks.
-   * @constructor
-   */
-  static Category(parent, parentHtml, domTree) {
-    this.parent_ = parent;
-    this.parentHtml_ = parentHtml;
-    this.name_ = domTree.getAttribute('name');
-    this.id_ = domTree.getAttribute('id');
-    this.setColour(domTree);
-    this.custom_ = domTree.getAttribute('custom');
-    this.iconURI_ = domTree.getAttribute('iconURI');
-    this.showStatusButton_ = domTree.getAttribute('showStatusButton');
-    this.contents_ = [];
-    if (!this.custom_) {
-      this.parseContents_(domTree);
-    }
-    this.createDom();
-  }
 }
 
 /**
@@ -687,191 +647,236 @@ Toolbox.prototype.height = 0;
 
 Toolbox.prototype.selectedItem_ = null;
 
+// Category menu
 /**
- * @return {number} the height of the category menu.
+ * Class for a table of category titles that will control which category is
+ * displayed.
  */
-Toolbox.CategoryMenu.prototype.getHeight = function() {
-  return this.height_;
-};
-
-/**
- * Create the DOM for the category menu.
- */
-Toolbox.CategoryMenu.prototype.createDom = function() {
-  this.table = dom.createDom('div', this.parent_.horizontalLayout_ ?
-    'scratchCategoryMenuHorizontal' : 'scratchCategoryMenu');
-  this.parentHtml_.appendChild(this.table);
-};
-
-/**
- * Fill the toolbox with categories and blocks by creating a new
- * {Toolbox.Category} for every category tag in the toolbox xml.
- * @param {Node} domTree DOM tree of blocks, or null.
- */
-Toolbox.CategoryMenu.prototype.populate = function(domTree) {
-  if (!domTree) {
-    return;
+Toolbox.CategoryMenu = class {
+  /**
+   * @param {Toolbox} parent The toolbox that owns the category menu.
+   * @param {Element} parentHtml The containing html div.
+   */
+  constructor(parent, parentHtml) {
+    this.parent_ = parent;
+    this.height_ = 0;
+    this.parentHtml_ = parentHtml;
+    this.createDom();
+    this.categories_ = [];
   }
 
-  // Remove old categories
-  this.dispose();
-  this.createDom();
-  const categories = [];
-  // Find actual categories from the DOM tree.
-  for (let i = 0, child; child = domTree.childNodes[i]; i++) {
-    if (!child.tagName || child.tagName.toUpperCase() != 'CATEGORY') {
-      continue;
+  /**
+   * @return {number} the height of the category menu.
+   */
+  getHeight() {
+    return this.height_;
+  }
+
+  /**
+   * Create the DOM for the category menu.
+   */
+  createDom() {
+    this.table = dom.createDom('div', this.parent_.horizontalLayout_ ?
+      'scratchCategoryMenuHorizontal' : 'scratchCategoryMenu');
+    this.parentHtml_.appendChild(this.table);
+  }
+
+  /**
+   * Fill the toolbox with categories and blocks by creating a new
+   * {Toolbox.Category} for every category tag in the toolbox xml.
+   * @param {Node} domTree DOM tree of blocks, or null.
+   */
+  populate(domTree) {
+    if (!domTree) {
+      return;
     }
-    categories.push(child);
+
+    // Remove old categories
+    this.dispose();
+    this.createDom();
+    const categories = [];
+    // Find actual categories from the DOM tree.
+    for (let i = 0, child; child = domTree.childNodes[i]; i++) {
+      if (!child.tagName || child.tagName.toUpperCase() != 'CATEGORY') {
+        continue;
+      }
+      categories.push(child);
+    }
+
+    // Create a single column of categories
+    for (let i = 0; i < categories.length; i++) {
+      const child = categories[i];
+      const row = dom.createDom('div', 'scratchCategoryMenuRow');
+      this.table.appendChild(row);
+      if (child) {
+        this.categories_.push(new Toolbox.Category(this, row,
+            child));
+      }
+    }
+    this.height_ = this.table.offsetHeight;
   }
 
-  // Create a single column of categories
-  for (let i = 0; i < categories.length; i++) {
-    const child = categories[i];
-    const row = dom.createDom('div', 'scratchCategoryMenuRow');
-    this.table.appendChild(row);
-    if (child) {
-      this.categories_.push(new Toolbox.Category(this, row,
-          child));
+  /**
+   * Dispose of this Category Menu and all of its children.
+   */
+  dispose() {
+    for (let i = 0, category; category = this.categories_[i]; i++) {
+      category.dispose();
+    }
+    this.categories_ = [];
+    if (this.table) {
+      dom.removeNode(this.table);
+      this.table = null;
     }
   }
-  this.height_ = this.table.offsetHeight;
 };
 
+// Category
 /**
- * Dispose of this Category Menu and all of its children.
- */
-Toolbox.CategoryMenu.prototype.dispose = function() {
-  for (let i = 0, category; category = this.categories_[i]; i++) {
-    category.dispose();
+   * Class for the data model of a category in the toolbox.
+   * @param {Toolbox.CategoryMenu} parent The category menu that owns this
+   *     category.
+   * @param {Element} parentHtml The containing html div.
+   * @param {Node} domTree DOM tree of blocks.
+   * @constructor
+   */
+Toolbox.Category = class {
+  constructor(parent, parentHtml, domTree) {
+    this.parent_ = parent;
+    this.parentHtml_ = parentHtml;
+    this.name_ = domTree.getAttribute('name');
+    this.id_ = domTree.getAttribute('id');
+    this.setColour(domTree);
+    this.custom_ = domTree.getAttribute('custom');
+    this.iconURI_ = domTree.getAttribute('iconURI');
+    this.showStatusButton_ = domTree.getAttribute('showStatusButton');
+    this.contents_ = [];
+    if (!this.custom_) {
+      this.parseContents_(domTree);
+    }
+    this.createDom();
   }
-  this.categories_ = [];
-  if (this.table) {
-    dom.removeNode(this.table);
-    this.table = null;
-  }
-};
 
-
-/**
+  /**
  * Dispose of this category and all of its contents.
  */
-Toolbox.Category.prototype.dispose = function() {
-  if (this.item_) {
-    dom.removeNode(this.item_);
-    this.item_ = null;
+  dispose() {
+    if (this.item_) {
+      dom.removeNode(this.item_);
+      this.item_ = null;
+    }
+    this.parent_ = null;
+    this.parentHtml_ = null;
+    this.contents_ = null;
   }
-  this.parent_ = null;
-  this.parentHtml_ = null;
-  this.contents_ = null;
-};
 
-/**
+  /**
  * Used to determine the css classes for the menu item for this category
  * based on its current state.
  * @private
  * @param {boolean=} selected Indication whether the category is currently selected.
  * @return {string} The css class names to be applied, space-separated.
  */
-Toolbox.Category.prototype.getMenuItemClassName_ = function(selected) {
-  const classNames = [
-    'scratchCategoryMenuItem',
-    'scratchCategoryId-' + this.id_,
-  ];
-  if (selected) {
-    classNames.push('categorySelected');
+  getMenuItemClassName_(selected) {
+    const classNames = [
+      'scratchCategoryMenuItem',
+      'scratchCategoryId-' + this.id_,
+    ];
+    if (selected) {
+      classNames.push('categorySelected');
+    }
+    return classNames.join(' ');
   }
-  return classNames.join(' ');
-};
 
-/**
+  /**
  * Create the DOM for a category in the toolbox.
  */
-Toolbox.Category.prototype.createDom = function() {
-  const toolbox = this.parent_.parent_;
-  this.item_ = dom.createDom('div',
-      {'class': this.getMenuItemClassName_()});
-  this.label_ = dom.createDom('div',
-      {'class': 'scratchCategoryMenuItemLabel'},
-      utils.replaceMessageReferences(this.name_));
-  // cc beg - new category style
-  this.colorBar_ = dom.createDom('div',
-      {'class': 'scratchCategoryItemColorBar'});
-  this.colorBar_.style.backgroundColor = this.colour_;
-  this.colorBar_.style.borderColor = this.secondaryColour_;
-  this.item_.appendChild(this.colorBar_);
-  // cc end - new category style
-  this.item_.appendChild(this.label_);
-  this.parentHtml_.appendChild(this.item_);
-  browserEvents.bind(
-      this.item_, 'mouseup', toolbox, toolbox.setSelectedItemFactory(this));
-};
+  createDom() {
+    const toolbox = this.parent_.parent_;
+    this.item_ = dom.createDom('div',
+        { 'class': this.getMenuItemClassName_() });
+    this.label_ = dom.createDom('div',
+        { 'class': 'scratchCategoryMenuItemLabel' },
+        utils.replaceMessageReferences(this.name_));
+    // cc beg - new category style
+    this.colorBar_ = dom.createDom('div',
+        { 'class': 'scratchCategoryItemColorBar' });
+    this.colorBar_.style.backgroundColor = this.colour_;
+    this.colorBar_.style.borderColor = this.secondaryColour_;
+    this.item_.appendChild(this.colorBar_);
+    // cc end - new category style
+    this.item_.appendChild(this.label_);
+    this.parentHtml_.appendChild(this.item_);
+    browserEvents.bind(
+        this.item_, 'mouseup', toolbox, toolbox.setSelectedItemFactory(this));
+  }
 
-/**
+  /**
  * Set the selected state of this category.
  * @param {boolean} selected Whether this category is selected.
  */
-Toolbox.Category.prototype.setSelected = function(selected) {
-  this.item_.className = this.getMenuItemClassName_(selected);
-};
+  setSelected(selected) {
+    this.item_.className = this.getMenuItemClassName_(selected);
+  }
 
-/**
+  /**
  * Set the contents of this category from DOM.
  * @param {Node} domTree DOM tree of blocks.
  * @constructor
  */
-Toolbox.Category.prototype.parseContents_ = function(domTree) {
-  for (let i = 0, child; child = domTree.childNodes[i]; i++) {
-    if (!child.tagName) {
-      // Skip
-      continue;
-    }
-    switch (child.tagName.toUpperCase()) {
-      case 'BLOCK':
-      case 'SHADOW':
-      case 'LABEL':
-      case 'BUTTON':
-      case 'SEP':
-      case 'TEXT':
-        this.contents_.push(child);
-        break;
-      default:
-        break;
+  parseContents_(domTree) {
+    for (let i = 0, child; child = domTree.childNodes[i]; i++) {
+      if (!child.tagName) {
+        // Skip
+        continue;
+      }
+      switch (child.tagName.toUpperCase()) {
+        case 'BLOCK':
+        case 'SHADOW':
+        case 'LABEL':
+        case 'BUTTON':
+        case 'SEP':
+        case 'TEXT':
+          this.contents_.push(child);
+          break;
+        default:
+          break;
+      }
     }
   }
-};
 
-/**
+  /**
  * Get the contents of this category.
  * @return {!Array|string} xmlList List of blocks to show, or a string with the
  *     name of a custom category.
  */
-Toolbox.Category.prototype.getContents = function() {
-  return this.custom_ ? this.custom_ : this.contents_;
-};
+  getContents() {
+    return this.custom_ ? this.custom_ : this.contents_;
+  }
 
-/**
+  /**
  * Set the colour of the category's background from a DOM node.
  * @param {Node} node DOM node with "colour" and "secondaryColour" attribute.
  *     Colours are a hex string or hue on a colour wheel (0-360).
  */
-Toolbox.Category.prototype.setColour = function(node) {
-  const colour = node.getAttribute('colour');
-  const secondaryColour = node.getAttribute('secondaryColour');
-  if (typeof colour === 'string') {
-    if (colour.match(/^#[0-9a-fA-F]{6}$/)) {
-      this.colour_ = colour;
+  setColour(node) {
+    const colour = node.getAttribute('colour');
+    const secondaryColour = node.getAttribute('secondaryColour');
+    if (typeof colour === 'string') {
+      if (colour.match(/^#[0-9a-fA-F]{6}$/)) {
+        this.colour_ = colour;
+      } else {
+        this.colour_ = common.hueToRgb(colour);
+      }
+      if (secondaryColour.match(/^#[0-9a-fA-F]{6}$/)) {
+        this.secondaryColour_ = secondaryColour;
+      } else {
+        this.secondaryColour_ = common.hueToRgb(secondaryColour);
+      }
+      this.hasColours_ = true;
     } else {
-      this.colour_ = common.hueToRgb(colour);
+      this.colour_ = '#000000';
+      this.secondaryColour_ = '#000000';
     }
-    if (secondaryColour.match(/^#[0-9a-fA-F]{6}$/)) {
-      this.secondaryColour_ = secondaryColour;
-    } else {
-      this.secondaryColour_ = common.hueToRgb(secondaryColour);
-    }
-    this.hasColours_ = true;
-  } else {
-    this.colour_ = '#000000';
-    this.secondaryColour_ = '#000000';
   }
 };

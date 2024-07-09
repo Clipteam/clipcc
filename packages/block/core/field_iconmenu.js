@@ -55,9 +55,10 @@ export class FieldIconMenu extends Field {
     // [{src: '...', width: 20, height: 20, alt: '...', value: 'machine_value'}, ...]
     // First icon provides the default values.
     const defaultValue = icons[0].value;
-    super(defaultValue);
+    super(null);
     /** @type {object} */
     this.icons_ = icons;
+    this.setValue(defaultValue);
     this.addArgType('iconmenu');
   }
 

@@ -40,13 +40,6 @@ export class BlockMove extends BlockBase {
    */
   constructor(block) {
     super(block);
-
-    /**
-     * Type of this event.
-     * @type {string}
-     */
-    BlockMove.prototype.type = eventUtils.MOVE;
-
     const location = this.currentLocation_();
     this.oldParentId = location.parentId;
     this.oldInputName = location.inputName;
@@ -182,5 +175,11 @@ export class BlockMove extends BlockBase {
     }
   }
 }
+
+/**
+ * Type of this event.
+ * @type {string}
+ */
+BlockMove.prototype.type = eventUtils.MOVE;
 
 eventUtils.register(eventUtils.BLOCK_MOVE, BlockMove);

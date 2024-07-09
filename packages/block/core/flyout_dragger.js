@@ -36,46 +36,49 @@ import {WorkspaceDragger} from './workspace_dragger';
  * Note that the workspace itself manages whether or not it has a drag surface
  * and how to do translations based on that.  This simply passes the right
  * commands based on events.
- * @param {!Blockly.Flyout} flyout The flyout to drag.
- * @constructor
  */
-export const FlyoutDragger = function(flyout) {
-  FlyoutDragger.superClass_.constructor.call(this,
-      flyout.getWorkspace());
-
+export class FlyoutDragger extends WorkspaceDragger {
   /**
-   * The scrollbar to update to move the flyout.
-   * Unlike the main workspace, the flyout has only one scrollbar, in either the
-   * horizontal or the vertical direction.
-   * @type {!Blockly.Scrollbar}
-   * @private
+   * @param {!Blockly.Flyout} flyout The flyout to drag.
    */
-  this.scrollbar_ = flyout.scrollbar_;
+  constructor(flyout) {
+    super(flyout.getWorkspace());
 
-  /**
-   * Whether the flyout scrolls horizontally.  If false, the flyout scrolls
-   * vertically.
-   * @type {boolean}
-   * @private
-   */
-  this.horizontalLayout_ = flyout.horizontalLayout_;
-};
-goog.inherits(FlyoutDragger, WorkspaceDragger);
+    /**
+    * The scrollbar to update to move the flyout.
+    * Unlike the main workspace, the flyout has only one scrollbar, in either the
+    * horizontal or the vertical direction.
+    * @type {!Blockly.Scrollbar}
+    * @private
+    */
+    this.scrollbar_ = flyout.scrollbar_;
 
-/**
- * Move the appropriate scrollbar to drag the flyout.
- * Since flyouts only scroll in one direction at a time, this will discard one
- * of the calculated values.
- * x and y are in pixels.
- * @param {number} x The new x position to move the scrollbar to.
- * @param {number} y The new y position to move the scrollbar to.
- * @private
- */
-FlyoutDragger.prototype.updateScroll_ = function(x, y) {
-  // Move the scrollbar and the flyout will scroll automatically.
-  if (this.horizontalLayout_) {
-    this.scrollbar_.set(x);
-  } else {
-    this.scrollbar_.set(y);
+    /**
+    * Whether the flyout scrolls horizontally.  If false, the flyout scrolls
+    * vertically.
+    * @type {boolean}
+    * @private
+    */
+    this.horizontalLayout_ = flyout.horizontalLayout_;
   }
-};
+
+  /**
+  * Move the appropriate scrollbar to drag the flyout.
+  * Since flyouts only scroll in one direction at a time, this will discard one
+  * of the calculated values.
+  * x and y are in pixels.
+  * @param {number} x The new x position to move the scrollbar to.
+  * @param {number} y The new y position to move the scrollbar to.
+  * @private
+  */
+  updateScroll_(x, y) {
+    // Move the scrollbar and the flyout will scroll automatically.
+    if (this.horizontalLayout_) {
+      this.scrollbar_.set(x);
+    } else {
+      this.scrollbar_.set(y);
+    }
+  }
+}
+
+

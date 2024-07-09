@@ -40,11 +40,9 @@ export class VarRename extends VarBase {
   constructor(variable, newName) {
     super(variable);
 
-    /**
-     * Type of this event.
-     * @type {string}
-     */
-    this.type = eventUtils.VAR_RENAME;
+    if (!variable) {
+      return;  // Blank event to be populated by fromJson.
+    }
 
     this.oldName = variable.name;
     this.newName = newName;
@@ -84,5 +82,11 @@ export class VarRename extends VarBase {
     }
   }
 }
+
+/**
+ * Type of this event.
+ * @type {string}
+ */
+VarRename.prototype.type = eventUtils.VAR_RENAME;
 
 eventUtils.register(eventUtils.VAR_RENAME, VarRename);

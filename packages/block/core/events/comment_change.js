@@ -46,12 +46,6 @@ export class CommentChange extends CommentBase {
   constructor(comment, oldContents, newContents) {
     super(comment);
 
-    /**
-     * Type of this event.
-     * @type {string}
-     */
-    this.type = eventUtils.COMMENT_CHANGE;
-
     this.oldContents_ = oldContents;
     this.newContents_ = newContents;
   }
@@ -107,5 +101,11 @@ export class CommentChange extends CommentBase {
     }
   }
 }
+
+/**
+ * Type of this event.
+ * @type {string}
+ */
+CommentChange.prototype.type = eventUtils.COMMENT_CHANGE;
 
 eventUtils.register(eventUtils.COMMENT_CHANGE, CommentChange);

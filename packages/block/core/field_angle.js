@@ -52,12 +52,12 @@ export class FieldAngle extends FieldTextInput {
    */
   constructor(opt_value, opt_validator) {
     const numRestrictor = new RegExp("[\\d]|[\\.]|[-]|[eE]");
+    opt_value = (opt_value && !isNaN(opt_value)) ? String(opt_value) : '0';
     super(opt_value, opt_validator, numRestrictor);
     // Add degree symbol: '360°' (LTR) or '°360' (RTL)
     this.symbol_ = utils.createSvgElement('tspan', {}, null);
     this.symbol_.appendChild(document.createTextNode('\u00B0'));
 
-    opt_value = (opt_value && !isNaN(opt_value)) ? String(opt_value) : '0';
     this.addArgType('angle');
   }
 
@@ -80,7 +80,7 @@ export class FieldAngle extends FieldTextInput {
   dispose_() {
     const thisField = this;
     return function() {
-      FieldAngle.superClass_.dispose_.call(thisField)();
+      FieldTextInput.prototype.dispose_.call(thisField)();
       thisField.gauge_ = null;
       if (thisField.mouseDownWrapper_) {
         browserEvents.unbind(thisField.mouseDownWrapper_);
@@ -323,8 +323,6 @@ export class FieldAngle extends FieldTextInput {
     return String(n);
   }
 }
-
-
 
 /**
  * Round angles to the nearest 15 degrees when using mouse.

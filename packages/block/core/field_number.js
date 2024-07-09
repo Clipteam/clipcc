@@ -306,7 +306,7 @@ export class FieldNumber extends FieldTextInput {
     // Updates the display. The actual setValue occurs when editing ends.
     htmlInput.value = newValue;
     // Resize and scroll the text field appropriately
-    FieldNumber.superClass_.resizeEditor_.call(
+    FieldTextInput.prototype.resizeEditor_.call(
         FieldNumber.activeField_);
     htmlInput.setSelectionRange(newSelection, newSelection);
     htmlInput.scrollLeft = htmlInput.scrollWidth;
@@ -322,8 +322,6 @@ export class FieldNumber extends FieldTextInput {
     DropDownDiv.content_.removeAttribute('aria-haspopup');
   }
 }
-
-
 
 /**
  * Fixed width of the num-pad drop-down, in px.

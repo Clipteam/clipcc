@@ -42,13 +42,6 @@ export class CommentMove extends CommentBase {
     super(comment);
 
     /**
-     * Type of this event.
-     * @type {string}
-     */
-    this.type = eventUtils.COMMENT_MOVE;
-
-
-    /**
      * The comment that is being moved.  Will be cleared after recording the new
      * location.
      * @type {?Blockly.WorkspaceComment | ScratchBlockComment}
@@ -184,5 +177,11 @@ export class CommentMove extends CommentBase {
     }
   }
 }
+
+/**
+ * Type of this event.
+ * @type {string}
+ */
+CommentMove.prototype.type = eventUtils.COMMENT_MOVE;
 
 eventUtils.register(eventUtils.COMMENT_MOVE, CommentMove);

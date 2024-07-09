@@ -41,12 +41,6 @@ export class CommentDelete extends CommentBase {
   constructor(comment) {
     super(comment);
 
-    /**
-     * Type of this event.
-     * @type {string}
-     */
-    CommentDelete.prototype.type = eventUtils.COMMENT_DELETE;
-
     this.xy = comment.getXY();
     this.minimized = comment.isMinimized() || false;
     this.text = comment.getText();
@@ -103,5 +97,11 @@ export class CommentDelete extends CommentBase {
     }
   }
 }
+
+/**
+ * Type of this event.
+ * @type {string}
+ */
+CommentDelete.prototype.type = eventUtils.COMMENT_DELETE;
 
 eventUtils.register(eventUtils.COMMENT_DELETE, CommentDelete);

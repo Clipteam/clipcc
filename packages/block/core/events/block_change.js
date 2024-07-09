@@ -41,12 +41,6 @@ export class BlockChange extends BlockBase {
    */
   constructor(block, element, name, oldValue, newValue) {
     super(block);
-
-    /**
-     * Type of this event.
-     * @type {string}
-     */
-    this.type = eventUtils.CHANGE;
   
     this.element = element;
     this.name = name;
@@ -148,5 +142,11 @@ export class BlockChange extends BlockBase {
     }
   }
 }
+
+/**
+ * Type of this event.
+ * @type {string}
+ */
+BlockChange.prototype.type = eventUtils.CHANGE;
 
 eventUtils.register(eventUtils.BLOCK_CHANGE, BlockChange);

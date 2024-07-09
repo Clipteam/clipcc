@@ -946,8 +946,7 @@ export class WorkspaceSvg extends Workspace {
    */
   createVariable(name, opt_type, opt_id, opt_isLocal, opt_isCloud) {
     const variableInMap = (this.getVariable(name, opt_type) != null);
-    const newVar = WorkspaceSvg.superClass_.createVariable.call(
-        this, name, opt_type, opt_id, opt_isLocal, opt_isCloud);
+    const newVar = super.createVariable(name, opt_type, opt_id, opt_isLocal, opt_isCloud);
     // For performance reasons, only refresh the the toolbox for new variables.
     // Variables that already exist should already be there.
     if (!variableInMap && (opt_type != constants.BROADCAST_MESSAGE_VARIABLE_TYPE)) {

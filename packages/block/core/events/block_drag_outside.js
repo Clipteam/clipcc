@@ -38,12 +38,6 @@ export class DragBlockOutside extends BlockBase {
   constructor(block) {
     super(block);
 
-    /**
-     * Type of this event.
-     * @type {string}
-     */
-    DragBlockOutside.prototype.type = eventUtils.DRAG_OUTSIDE;
-
     this.recordUndo = false;
   }
 
@@ -68,5 +62,11 @@ export class DragBlockOutside extends BlockBase {
     this.isOutside = json['isOutside'];
   }
 }
+
+/**
+ * Type of this event.
+ * @type {string}
+ */
+DragBlockOutside.prototype.type = eventUtils.DRAG_OUTSIDE;
 
 eventUtils.register(eventUtils.DRAG_OUTSIDE, DragBlockOutside);

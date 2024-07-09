@@ -40,12 +40,6 @@ export class EndBlockDrag extends BlockBase {
   constructor(block, isOutside) {
     super(block);
 
-    /**
-     * Type of this event.
-     * @type {string}
-     */
-    EndBlockDrag.prototype.type = eventUtils.END_DRAG;
-
     this.isOutside = isOutside;
     // If drag ends outside the blocks workspace, send the block XML
     if (isOutside) {
@@ -79,5 +73,11 @@ export class EndBlockDrag extends BlockBase {
     this.xml = json['xml'];
   }
 }
+
+/**
+ * Type of this event.
+ * @type {string}
+ */
+EndBlockDrag.prototype.type = eventUtils.END_DRAG;
 
 eventUtils.register(eventUtils.END_DRAG, EndBlockDrag);

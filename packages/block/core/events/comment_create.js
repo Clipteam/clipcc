@@ -44,13 +44,6 @@ export class CommentCreate extends CommentBase {
     super(comment);
 
     /**
-     * Type of this event.
-     * @type {string}
-     */
-    this.type = eventUtils.COMMENT_CREATE;
-
-
-    /**
      * The text content of this comment.
      * @type {string}
      */
@@ -134,5 +127,11 @@ export class CommentCreate extends CommentBase {
     }
   }
 }
+
+/**
+ * Type of this event.
+ * @type {string}
+ */
+CommentCreate.prototype.type = eventUtils.COMMENT_CREATE;
 
 eventUtils.register(eventUtils.COMMENT_CREATE, CommentCreate);

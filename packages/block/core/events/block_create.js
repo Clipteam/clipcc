@@ -40,12 +40,6 @@ export class BlockCreate extends BlockBase {
   constructor(block) {
     super(block);
 
-    /**
-     * Type of this event.
-     * @type {string}
-     */
-    BlockCreate.prototype.type = eventUtils.CREATE;
-
     if (block.workspace.rendered) {
       this.xml = Xml.blockToDomWithXY(block);
     } else {
@@ -98,5 +92,11 @@ export class BlockCreate extends BlockBase {
     }
   }
 }
+
+/**
+ * Type of this event.
+ * @type {string}
+ */
+BlockCreate.prototype.type = eventUtils.CREATE;
 
 eventUtils.register(eventUtils.BLOCK_CREATE, BlockCreate);

@@ -38,12 +38,9 @@ export class VarCreate extends VarBase {
    */
   constructor(variable) {
     super(variable);
-
-    /**
-     * Type of this event.
-     * @type {string}
-     */
-    this.type = eventUtils.VAR_CREATE;
+    if (!variable) {
+      return;  // Blank event to be populated by fromJson.
+    }
 
     this.varType = variable.type;
     this.varName = variable.name;
@@ -89,5 +86,11 @@ export class VarCreate extends VarBase {
     }
   }
 }
+
+/**
+ * Type of this event.
+ * @type {string}
+ */
+VarCreate.prototype.type = eventUtils.VAR_CREATE;
 
 eventUtils.register(eventUtils.VAR_CREATE, VarCreate);

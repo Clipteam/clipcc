@@ -99,14 +99,15 @@ function test_field_isEditable_nonEditableBlock_false() {
 }
 
 function test_field_register_with_custom_field() {
-  var CustomFieldType = function(value) {
-    CustomFieldType.superClass_.constructor.call(this, value);
-  };
-  goog.inherits(CustomFieldType, Blockly.Field);
+  class CustomFieldType extends Blockly.Field {
+    constructor (value) {
+      super(value);
+    }
 
-  CustomFieldType.fromJson = function(options) {
-    return new CustomFieldType(options['value']);
-  };
+    static fromJson (options) {
+      return new CustomFieldType(options['value']);
+    }
+  }
 
   var json = {
     type: 'field_custom_test',

@@ -39,11 +39,9 @@ export class VarDelete extends VarBase {
   constructor(variable) {
     super(variable);
 
-    /**
-     * Type of this event.
-     * @type {string}
-     */
-    this.type = eventUtils.VAR_DELETE;
+    if (!variable) {
+      return;  // Blank event to be populated by fromJson.
+    }
 
     this.varType = variable.type;
     this.varName = variable.name;
@@ -89,5 +87,11 @@ export class VarDelete extends VarBase {
     }
   }
 }
+
+/**
+ * Type of this event.
+ * @type {string}
+ */
+VarDelete.prototype.type = eventUtils.VAR_DELETE;
 
 eventUtils.register(eventUtils.VAR_DELETE, VarDelete);
