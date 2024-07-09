@@ -35,32 +35,98 @@ import * as utils from './utils';
 
 /**
  * Class for a checkbox field.
- * @param {string} state The initial state of the field ('TRUE' or 'FALSE').
- * @param {Function=} opt_validator A function that is executed when a new
- *     option is selected.  Its sole argument is the new checkbox state.  If
- *     it returns a value, this becomes the new checkbox state, unless the
- *     value is null, in which case the change is aborted.
  * @extends {Field}
- * @constructor
  */
-export const FieldCheckbox = function(state, opt_validator) {
-  FieldCheckbox.superClass_.constructor.call(this, '', opt_validator);
-  // Set the initial state.
-  this.setValue(state);
-  this.addArgType('checkbox');
-};
-goog.inherits(FieldCheckbox, Field);
+export class FieldCheckbox extends Field {
+  /**
+   * @param {string} state The initial state of the field ('TRUE' or 'FALSE').
+   * @param {Function=} opt_validator A function that is executed when a new
+   *     option is selected.  Its sole argument is the new checkbox state.  If
+   *     it returns a value, this becomes the new checkbox state, unless the
+   *     value is null, in which case the change is aborted.
+   */
+  constructor(state, opt_validator) {
+    super('', opt_validator);
+    // Set the initial state.
+    this.setValue(state);
+    this.addArgType('checkbox');
+  }
 
-/**
- * Construct a FieldCheckbox from a JSON arg object.
- * @param {!Object} options A JSON object with options (checked).
- * @returns {!FieldCheckbox} The new field instance.
- * @package
- * @nocollapse
- */
-FieldCheckbox.fromJson = function(options) {
-  return new FieldCheckbox(options['checked'] ? 'TRUE' : 'FALSE');
-};
+  /**
+   * Construct a FieldCheckbox from a JSON arg object.
+   * @param {!Object} options A JSON object with options (checked).
+   * @returns {!FieldCheckbox} The new field instance.
+   * @package
+   * @nocollapse
+   */
+  static fromJson(options) {
+    return new FieldCheckbox(options['checked'] ? 'TRUE' : 'FALSE');
+  }
+
+  /**
+   * Install this checkbox on a block.
+   */
+  init() {
+    if (this.fieldGroup_) {
+      // Checkbox has already been initialized once.
+      return;
+    }
+    super.init();
+    // The checkbox doesn't use the inherited text element.
+    // Instead it uses a custom checkmark element that is either visible or not.
+    this.checkElement_ = utils.createSvgElement('text',
+        {'class': 'blocklyText blocklyCheckbox', 'x': -3, 'y': 14},
+        this.fieldGroup_);
+    const textNode = document.createTextNode(FieldCheckbox.CHECK_CHAR);
+    this.checkElement_.appendChild(textNode);
+    this.checkElement_.style.display = this.state_ ? 'block' : 'none';
+  }
+
+  /**
+   * Return 'TRUE' if the checkbox is checked, 'FALSE' otherwise.
+   * @return {string} Current state.
+   */
+  getValue() {
+    return String(this.state_).toUpperCase();
+  }
+
+  /**
+   * Set the checkbox to be checked if newBool is 'TRUE' or true,
+   * unchecks otherwise.
+   * @param {string|boolean} newBool New state.
+   */
+  setValue(newBool) {
+    const newState = (typeof newBool == 'string') ?
+        (newBool.toUpperCase() == 'TRUE') : !!newBool;
+    if (this.state_ !== newState) {
+      if (this.sourceBlock_ && eventUtils.isEnabled()) {
+        eventUtils.fire(new BlockChange(
+            this.sourceBlock_, 'field', this.name, this.state_, newState));
+      }
+      this.state_ = newState;
+      if (this.checkElement_) {
+        this.checkElement_.style.display = newState ? 'block' : 'none';
+      }
+    }
+  }
+
+  /**
+   * Toggle the state of the checkbox.
+   * @private
+   */
+  showEditor_() {
+    let newState = !this.state_;
+    if (this.sourceBlock_) {
+      // Call any validation function, and allow it to override.
+      newState = this.callValidator(newState);
+    }
+    if (newState !== null) {
+      this.setValue(String(newState).toUpperCase());
+    }
+  }
+}
+
+
 
 /**
  * Character for the checkmark.
@@ -71,67 +137,5 @@ FieldCheckbox.CHECK_CHAR = '\u2713';
  * Mouse cursor style when over the hotspot that initiates editability.
  */
 FieldCheckbox.prototype.CURSOR = 'default';
-
-/**
- * Install this checkbox on a block.
- */
-FieldCheckbox.prototype.init = function() {
-  if (this.fieldGroup_) {
-    // Checkbox has already been initialized once.
-    return;
-  }
-  FieldCheckbox.superClass_.init.call(this);
-  // The checkbox doesn't use the inherited text element.
-  // Instead it uses a custom checkmark element that is either visible or not.
-  this.checkElement_ = utils.createSvgElement('text',
-      {'class': 'blocklyText blocklyCheckbox', 'x': -3, 'y': 14},
-      this.fieldGroup_);
-  const textNode = document.createTextNode(FieldCheckbox.CHECK_CHAR);
-  this.checkElement_.appendChild(textNode);
-  this.checkElement_.style.display = this.state_ ? 'block' : 'none';
-};
-
-/**
- * Return 'TRUE' if the checkbox is checked, 'FALSE' otherwise.
- * @return {string} Current state.
- */
-FieldCheckbox.prototype.getValue = function() {
-  return String(this.state_).toUpperCase();
-};
-
-/**
- * Set the checkbox to be checked if newBool is 'TRUE' or true,
- * unchecks otherwise.
- * @param {string|boolean} newBool New state.
- */
-FieldCheckbox.prototype.setValue = function(newBool) {
-  const newState = (typeof newBool == 'string') ?
-      (newBool.toUpperCase() == 'TRUE') : !!newBool;
-  if (this.state_ !== newState) {
-    if (this.sourceBlock_ && eventUtils.isEnabled()) {
-      eventUtils.fire(new BlockChange(
-          this.sourceBlock_, 'field', this.name, this.state_, newState));
-    }
-    this.state_ = newState;
-    if (this.checkElement_) {
-      this.checkElement_.style.display = newState ? 'block' : 'none';
-    }
-  }
-};
-
-/**
- * Toggle the state of the checkbox.
- * @private
- */
-FieldCheckbox.prototype.showEditor_ = function() {
-  let newState = !this.state_;
-  if (this.sourceBlock_) {
-    // Call any validation function, and allow it to override.
-    newState = this.callValidator(newState);
-  }
-  if (newState !== null) {
-    this.setValue(String(newState).toUpperCase());
-  }
-};
 
 Field.register('field_checkbox', FieldCheckbox);
