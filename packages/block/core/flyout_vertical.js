@@ -46,11 +46,12 @@ const userAgent = goog.require('goog.userAgent');
 
 /**
  * Class for a flyout.
- * @param {!Object} workspaceOptions Dictionary of options for the workspace.
  * @extends {Flyout}
- * @constructor
  */
 export class VerticalFlyout extends Flyout {
+  /**
+   * @param {!Object} workspaceOptions Dictionary of options for the workspace.
+   */
   constructor(workspaceOptions) {
     super(workspaceOptions);
     workspaceOptions.getMetrics = this.getMetrics_.bind(this);

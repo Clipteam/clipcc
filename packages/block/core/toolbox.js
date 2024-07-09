@@ -822,7 +822,6 @@ Toolbox.Category = class {
   /**
  * Set the contents of this category from DOM.
  * @param {Node} domTree DOM tree of blocks.
- * @constructor
  */
   parseContents_(domTree) {
     for (let i = 0, child; child = domTree.childNodes[i]; i++) {

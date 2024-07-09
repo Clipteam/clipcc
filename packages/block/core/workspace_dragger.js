@@ -38,10 +38,11 @@ const Coordinate = goog.require('goog.math.Coordinate');
  * Note that the workspace itself manages whether or not it has a drag surface
  * and how to do translations based on that.  This simply passes the right
  * commands based on events.
- * @param {!Blockly.WorkspaceSvg} workspace The workspace to drag.
- * @constructor
  */
 export class WorkspaceDragger {
+  /**
+   * @param {!Blockly.WorkspaceSvg} workspace The workspace to drag.
+   */
   constructor(workspace) {
     /**
     * @type {!Blockly.WorkspaceSvg}

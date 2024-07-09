@@ -71,13 +71,13 @@ const Rect = goog.require('goog.math.Rect');
 /**
  * Class for a workspace.  This is an onscreen area with optional trashcan,
  * scrollbars, bubbles, and dragging.
+ * @extends {Workspace}
  */
 export class WorkspaceSvg extends Workspace {
   /**
    * @param {!Blockly.Options} options Dictionary of options.
    * @param {Blockly.BlockDragSurfaceSvg=} opt_blockDragSurface Drag surface for
    *     blocks.
-   * @extends {Workspace}
    */
   constructor(options, opt_blockDragSurface) {
     super(options);
