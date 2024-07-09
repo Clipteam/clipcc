@@ -37,160 +37,165 @@ const Size = goog.require('goog.math.Size');
 
 /**
  * Class for an image on a block.
- * @param {string} src The URL of the image.
- * @param {number} width Width of the image.
- * @param {number} height Height of the image.
- * @param {string=} opt_alt Optional alt text for when block is collapsed.
- * @param {boolean} flip_rtl Whether to flip the icon in RTL
  * @extends {Field}
- * @constructor
  */
-export const FieldImage = function(src, width, height, opt_alt, flip_rtl) {
-  this.sourceBlock_ = null;
+export class FieldImage extends Field {
+  /**
+   * @param {string} src The URL of the image.
+   * @param {number} width Width of the image.
+   * @param {number} height Height of the image.
+   * @param {string=} opt_alt Optional alt text for when block is collapsed.
+   * @param {boolean} flip_rtl Whether to flip the icon in RTL
+   */
+  constructor(src, width, height, opt_alt, flip_rtl) {
+    super(null);
+    this.sourceBlock_ = null;
 
-  // Ensure height and width are numbers.  Strings are bad at math.
-  this.height_ = Number(height);
-  this.width_ = Number(width);
-  this.size_ = new Size(this.width_, this.height_);
-  this.text_ = opt_alt || '';
-  this.flipRTL_ = flip_rtl;
-  this.setValue(src);
-};
-goog.inherits(FieldImage, Field);
+    // Ensure height and width are numbers.  Strings are bad at math.
+    this.height_ = Number(height);
+    this.width_ = Number(width);
+    this.size_ = new Size(this.width_, this.height_);
+    this.text_ = opt_alt || '';
+    this.flipRTL_ = flip_rtl;
+    this.setValue(src);
+  }
 
-/**
- * Construct a FieldImage from a JSON arg object,
- * dereferencing any string table references.
- * @param {!Object} options A JSON object with options (src, width, height, alt,
- *     and flipRtl/flip_rtl).
- * @returns {!FieldImage} The new field instance.
- * @package
- * @nocollapse
- */
-FieldImage.fromJson = function(options) {
-  const src = utils.replaceMessageReferences(options['src']);
-  const width = Number(utils.replaceMessageReferences(options['width']));
-  const height =
-      Number(utils.replaceMessageReferences(options['height']));
-  const alt = utils.replaceMessageReferences(options['alt']);
-  const flip_rtl = !!options['flip_rtl'] || !!options['flipRtl'];
-  return new FieldImage(src, width, height, alt, flip_rtl);
-};
+  /**
+   * Construct a FieldImage from a JSON arg object,
+   * dereferencing any string table references.
+   * @param {!Object} options A JSON object with options (src, width, height, alt,
+   *     and flipRtl/flip_rtl).
+   * @returns {!FieldImage} The new field instance.
+   * @package
+   * @nocollapse
+   */
+  static fromJson(options) {
+    const src = utils.replaceMessageReferences(options['src']);
+    const width = Number(utils.replaceMessageReferences(options['width']));
+    const height =
+        Number(utils.replaceMessageReferences(options['height']));
+    const alt = utils.replaceMessageReferences(options['alt']);
+    const flip_rtl = !!options['flip_rtl'] || !!options['flipRtl'];
+    return new FieldImage(src, width, height, alt, flip_rtl);
+  }
+
+  /**
+   * Install this image on a block.
+   */
+  init() {
+    if (this.fieldGroup_) {
+      // Image has already been initialized once.
+      return;
+    }
+    // Build the DOM.
+    /** @type {SVGElement} */
+    this.fieldGroup_ = utils.createSvgElement('g', {}, null);
+    if (!this.visible_) {
+      this.fieldGroup_.style.display = 'none';
+    }
+    /** @type {SVGElement} */
+    this.imageElement_ = utils.createSvgElement(
+        'image',
+        {
+          'height': this.height_ + 'px',
+          'width': this.width_ + 'px'
+        },
+        this.fieldGroup_);
+    this.setValue(this.src_);
+    this.sourceBlock_.getSvgRoot().appendChild(this.fieldGroup_);
+
+    // Configure the field to be transparent with respect to tooltips.
+    this.setTooltip(this.sourceBlock_);
+    Tooltip.bindMouseEvents(this.imageElement_);
+  }
+
+  /**
+   * Dispose of all DOM objects belonging to this text.
+   */
+  dispose() {
+    dom.removeNode(this.fieldGroup_);
+    this.fieldGroup_ = null;
+    this.imageElement_ = null;
+  }
+
+  /**
+   * Change the tooltip text for this field.
+   * @param {string|!Element} newTip Text for tooltip or a parent element to
+   *     link to for its tooltip.
+   */
+  setTooltip(newTip) {
+    this.imageElement_.tooltip = newTip;
+  }
+
+  /**
+   * Get the source URL of this image.
+   * @return {string} Current text.
+   * @override
+   */
+  getValue() {
+    return this.src_;
+  }
+
+  /**
+   * Set the source URL of this image.
+   * @param {?string} src New source.
+   * @override
+   */
+  setValue(src) {
+    if (src === null) {
+      // No change if null.
+      return;
+    }
+    this.src_ = src;
+    if (this.imageElement_) {
+      this.imageElement_.setAttributeNS('http://www.w3.org/1999/xlink',
+          'xlink:href', src || '');
+    }
+  }
+
+  /**
+   * Get whether to flip this image in RTL
+   * @return {boolean} True if we should flip in RTL.
+   */
+  getFlipRTL() {
+    return this.flipRTL_;
+  }
+
+  /**
+   * Set the alt text of this image.
+   * @param {?string} alt New alt text.
+   * @override
+   */
+  setText(alt) {
+    if (alt === null) {
+      // No change if null.
+      return;
+    }
+    this.text_ = alt;
+  }
+
+  /**
+   * Images are fixed width, no need to render.
+   * @private
+   */
+  render_() {
+    // NOP
+  }
+
+  /**
+   * Images are fixed width, no need to update.
+   * @private
+   */
+  updateWidth() {
+    // NOP
+  }
+}
+
+
 
 /**
  * Editable fields are saved by the XML renderer, non-editable fields are not.
  */
 FieldImage.prototype.EDITABLE = false;
-
-/**
- * Install this image on a block.
- */
-FieldImage.prototype.init = function() {
-  if (this.fieldGroup_) {
-    // Image has already been initialized once.
-    return;
-  }
-  // Build the DOM.
-  /** @type {SVGElement} */
-  this.fieldGroup_ = utils.createSvgElement('g', {}, null);
-  if (!this.visible_) {
-    this.fieldGroup_.style.display = 'none';
-  }
-  /** @type {SVGElement} */
-  this.imageElement_ = utils.createSvgElement(
-      'image',
-      {
-        'height': this.height_ + 'px',
-        'width': this.width_ + 'px'
-      },
-      this.fieldGroup_);
-  this.setValue(this.src_);
-  this.sourceBlock_.getSvgRoot().appendChild(this.fieldGroup_);
-
-  // Configure the field to be transparent with respect to tooltips.
-  this.setTooltip(this.sourceBlock_);
-  Tooltip.bindMouseEvents(this.imageElement_);
-};
-
-/**
- * Dispose of all DOM objects belonging to this text.
- */
-FieldImage.prototype.dispose = function() {
-  dom.removeNode(this.fieldGroup_);
-  this.fieldGroup_ = null;
-  this.imageElement_ = null;
-};
-
-/**
- * Change the tooltip text for this field.
- * @param {string|!Element} newTip Text for tooltip or a parent element to
- *     link to for its tooltip.
- */
-FieldImage.prototype.setTooltip = function(newTip) {
-  this.imageElement_.tooltip = newTip;
-};
-
-/**
- * Get the source URL of this image.
- * @return {string} Current text.
- * @override
- */
-FieldImage.prototype.getValue = function() {
-  return this.src_;
-};
-
-/**
- * Set the source URL of this image.
- * @param {?string} src New source.
- * @override
- */
-FieldImage.prototype.setValue = function(src) {
-  if (src === null) {
-    // No change if null.
-    return;
-  }
-  this.src_ = src;
-  if (this.imageElement_) {
-    this.imageElement_.setAttributeNS('http://www.w3.org/1999/xlink',
-        'xlink:href', src || '');
-  }
-};
-
-/**
- * Get whether to flip this image in RTL
- * @return {boolean} True if we should flip in RTL.
- */
-FieldImage.prototype.getFlipRTL = function() {
-  return this.flipRTL_;
-};
-
-/**
- * Set the alt text of this image.
- * @param {?string} alt New alt text.
- * @override
- */
-FieldImage.prototype.setText = function(alt) {
-  if (alt === null) {
-    // No change if null.
-    return;
-  }
-  this.text_ = alt;
-};
-
-/**
- * Images are fixed width, no need to render.
- * @private
- */
-FieldImage.prototype.render_ = function() {
-  // NOP
-};
-
-/**
- * Images are fixed width, no need to update.
- * @private
- */
-FieldImage.prototype.updateWidth = function() {
-  // NOP
-};
 
 Field.register('field_image', FieldImage);
