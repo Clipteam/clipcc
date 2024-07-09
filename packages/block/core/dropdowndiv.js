@@ -36,7 +36,7 @@ const style = goog.require('goog.style');
 /**
  * Class for drop-down div.
  */
-class DropDownDiv {
+export class DropDownDiv {
   /**
    * Create and insert the DOM element for this div.
    * @param {Element} container Element that the div should be contained in.
