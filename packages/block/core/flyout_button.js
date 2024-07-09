@@ -39,15 +39,20 @@ const userAgent = goog.require('goog.userAgent');
 /**
  * Class for a button or label in the flyout. Labels behave the same as buttons,
  * but are styled differently.
- * @param {!Blockly.WorkspaceSvg} workspace The workspace in which to place this
- *     button.
- * @param {!Blockly.WorkspaceSvg} targetWorkspace The flyout's target workspace.
- * @param {!Element} xml The XML specifying the label/button.
- * @param {boolean} isLabel Whether this button should be styled as a label.
- * @constructor
  */
 export class FlyoutButton {
-  constructor(workspace, targetWorkspace, xml, isLabel) {
+  /**
+   * @param {!Blockly.WorkspaceSvg} workspace The workspace in which to place this
+   *     button.
+   * @param {!Blockly.WorkspaceSvg} targetWorkspace The flyout's target workspace.
+   * @param {!Element} xml The XML specifying the label/button.
+   * @param {boolean} isLabel Whether this button should be styled as a label.
+   * @param {boolean=} opt_skipConstruct Whether skip this constructor.
+   */
+  constructor(workspace, targetWorkspace, xml, isLabel, opt_skipConstruct) {
+    if (opt_skipConstruct) {
+      return;
+    }
 
     this.init(workspace, targetWorkspace, xml, isLabel);
 
