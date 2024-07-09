@@ -40,70 +40,73 @@ const TagName = goog.require('goog.dom.TagName');
 
 /**
  * Class for an editable text field displaying a deletion icon when selected.
- * @param {string} text The initial content of the field.
- * @param {Function=} opt_validator An optional function that is called
- *     to validate any constraints on what the user entered.  Takes the new
- *     text as an argument and returns either the accepted text, a replacement
- *     text, or null to abort the change.
- * @param {RegExp=} opt_restrictor An optional regular expression to restrict
- *     typed text to. Text that doesn't match the restrictor will never show
- *     in the text field.
  * @extends {FieldTextInput}
- * @constructor
  */
-export const FieldTextInputRemovable = function(text, opt_validator, opt_restrictor) {
-  FieldTextInputRemovable.superClass_.constructor.call(this, text,
-      opt_validator, opt_restrictor);
-};
-goog.inherits(FieldTextInputRemovable, FieldTextInput);
-
-/**
- * Show the inline free-text editor on top of the text with the remove button.
- * @private
- */
-FieldTextInputRemovable.prototype.showEditor_ = function() {
-  FieldTextInputRemovable.superClass_.showEditor_.call(this);
-
-  const div = WidgetDiv.DIV;
-  div.className += ' removableTextInput';
-  const removeButton =
-      dom.createDom(TagName.IMG, 'blocklyTextRemoveIcon');
-  removeButton.setAttribute('src',
-      common.getMainWorkspace().options.pathToMedia + 'icons/remove.svg');
-  this.removeButtonMouseWrapper_ = browserEvents.bind(removeButton,
-      'mousedown', this, this.removeCallback_);
-  div.appendChild(removeButton);
-};
-
-/**
- * Function to call when remove button is called. Checks for removeFieldCallback
- * on sourceBlock and calls it if possible.
- * @private
- */
-FieldTextInputRemovable.prototype.removeCallback_ = function() {
-  if (this.sourceBlock_ && this.sourceBlock_.removeFieldCallback) {
-    this.sourceBlock_.removeFieldCallback(this);
-  } else {
-    console.warn('Expected a source block with removeFieldCallback');
+export class FieldTextInputRemovable extends FieldTextInput {
+  /**
+   * @param {string} text The initial content of the field.
+   * @param {Function=} opt_validator An optional function that is called
+   *     to validate any constraints on what the user entered.  Takes the new
+   *     text as an argument and returns either the accepted text, a replacement
+   *     text, or null to abort the change.
+   * @param {RegExp=} opt_restrictor An optional regular expression to restrict
+   *     typed text to. Text that doesn't match the restrictor will never show
+   *     in the text field.
+   */
+  constructor(text, opt_validator, opt_restrictor) {
+    super(text, opt_validator, opt_restrictor);
   }
-};
 
-/**
- * Helper function to construct a FieldTextInputRemovable from a JSON arg object,
- * dereferencing any string table references.
- * @param {!Object} options A JSON object with options (text, class, and
- *                          spellcheck).
- * @returns {!FieldTextInputRemovable} The new text input.
- * @public
- */
-FieldTextInputRemovable.fromJson = function(options) {
-  const text = utils.replaceMessageReferences(options['text']);
-  const field = new FieldTextInputRemovable(text, options['class']);
-  if (typeof options['spellcheck'] == 'boolean') {
-    field.setSpellcheck(options['spellcheck']);
+  /**
+   * Show the inline free-text editor on top of the text with the remove button.
+   * @private
+   */
+  showEditor_() {
+    super.showEditor_();
+
+    const div = WidgetDiv.DIV;
+    div.className += ' removableTextInput';
+    const removeButton =
+        dom.createDom(TagName.IMG, 'blocklyTextRemoveIcon');
+    removeButton.setAttribute('src',
+        common.getMainWorkspace().options.pathToMedia + 'icons/remove.svg');
+    this.removeButtonMouseWrapper_ = browserEvents.bind(removeButton,
+        'mousedown', this, this.removeCallback_);
+    div.appendChild(removeButton);
   }
-  return field;
-};
+
+  /**
+   * Function to call when remove button is called. Checks for removeFieldCallback
+   * on sourceBlock and calls it if possible.
+   * @private
+   */
+  removeCallback_() {
+    if (this.sourceBlock_ && this.sourceBlock_.removeFieldCallback) {
+      this.sourceBlock_.removeFieldCallback(this);
+    } else {
+      console.warn('Expected a source block with removeFieldCallback');
+    }
+  }
+
+  /**
+   * Helper function to construct a FieldTextInputRemovable from a JSON arg object,
+   * dereferencing any string table references.
+   * @param {!Object} options A JSON object with options (text, class, and
+   *                          spellcheck).
+   * @returns {!FieldTextInputRemovable} The new text input.
+   * @public
+   */
+  static fromJson(options) {
+    const text = utils.replaceMessageReferences(options['text']);
+    const field = new FieldTextInputRemovable(text, options['class']);
+    if (typeof options['spellcheck'] == 'boolean') {
+      field.setSpellcheck(options['spellcheck']);
+    }
+    return field;
+  }
+}
+
+
 
 Field.register(
     'field_input_removable', FieldTextInputRemovable);
