@@ -46,68 +46,608 @@ const userAgent = goog.require('goog.userAgent');
 
 /**
  * Abstract class for an editable field.
- * @param {string} text The initial content of the field.
- * @param {Function=} opt_validator An optional function that is called
- *     to validate any constraints on what the user entered.  Takes the new
- *     text as an argument and returns either the accepted text, a replacement
- *     text, or null to abort the change.
- * @constructor
  */
-export const Field = function(text, opt_validator) {
-  this.size_ = new Size(
-      rendererConstants.FIELD_WIDTH,
-      rendererConstants.FIELD_HEIGHT);
-  this.setValue(text);
-  this.setValidator(opt_validator);
+export class Field {
+  /**
+   * @param {string} text The initial content of the field.
+   * @param {Function=} opt_validator An optional function that is called
+   *     to validate any constraints on what the user entered.  Takes the new
+   *     text as an argument and returns either the accepted text, a replacement
+   *     text, or null to abort the change.
+   */
+  constructor(text, opt_validator) {
+    this.size_ = new Size(
+        rendererConstants.FIELD_WIDTH,
+        rendererConstants.FIELD_HEIGHT);
+    this.setValue(text);
+    this.setValidator(opt_validator);
+
+    /**
+     * Maximum characters of text to display before adding an ellipsis.
+     * Same for strings and numbers.
+     * @type {number}
+     */
+    this.maxDisplayLength = rendererConstants.MAX_DISPLAY_LENGTH;
+  }
 
   /**
-   * Maximum characters of text to display before adding an ellipsis.
-   * Same for strings and numbers.
-   * @type {number}
+   * Registers a field type. May also override an existing field type.
+   * Field.fromJson uses this registry to find the appropriate field.
+   * @param {!string} type The field type name as used in the JSON definition.
+   * @param {!{fromJson: Function}} fieldClass The field class containing a
+   *     fromJson function that can construct an instance of the field.
+   * @throws {Error} if the type name is empty, or the fieldClass is not an
+   *     object containing a fromJson function.
    */
-  this.maxDisplayLength = rendererConstants.MAX_DISPLAY_LENGTH;
-};
-
-/**
- * Registers a field type. May also override an existing field type.
- * Field.fromJson uses this registry to find the appropriate field.
- * @param {!string} type The field type name as used in the JSON definition.
- * @param {!{fromJson: Function}} fieldClass The field class containing a
- *     fromJson function that can construct an instance of the field.
- * @throws {Error} if the type name is empty, or the fieldClass is not an
- *     object containing a fromJson function.
- */
-Field.register = function(type, fieldClass) {
-  registry.register(registry.Type.FIELD, type, fieldClass);
-};
-
-/**
- * Get a field type.
- * @param {string} type The field type name as used in the JSON definition.
- * @return {?Field} The field class.
- * @throws {Error} if the field class is not found.
- */
-Field.get = function(type) {
-  return registry.getClass(registry.Type.FIELD, type, false);
-};
-
-/**
- * Construct a Field from a JSON arg object.
- * Finds the appropriate registered field by the type name as registered using
- * Field.register.
- * @param {!Object} options A JSON object with a type and options specific
- *     to the field type.
- * @returns {?Field} The new field instance or null if a field wasn't
- *     found with the given type name
- * @package
- */
-Field.fromJson = function(options) {
-  const fieldClass = Field.get(options['type']);
-  if (fieldClass) {
-    return fieldClass.fromJson(options);
+  static register(type, fieldClass) {
+    registry.register(registry.Type.FIELD, type, fieldClass);
   }
-  return null;
-};
+
+  /**
+   * Get a field type.
+   * @param {string} type The field type name as used in the JSON definition.
+   * @return {?Field} The field class.
+   * @throws {Error} if the field class is not found.
+   */
+  static get(type) {
+    return registry.getClass(registry.Type.FIELD, type, false);
+  }
+
+  /**
+   * Construct a Field from a JSON arg object.
+   * Finds the appropriate registered field by the type name as registered using
+   * Field.register.
+   * @param {!Object} options A JSON object with a type and options specific
+   *     to the field type.
+   * @returns {?Field} The new field instance or null if a field wasn't
+   *     found with the given type name
+   * @package
+   */
+  static fromJson(options) {
+    const fieldClass = Field.get(options['type']);
+    if (fieldClass) {
+      return fieldClass.fromJson(options);
+    }
+    return null;
+  }
+
+  /**
+   * Attach this field to a block.
+   * @param {!Blockly.Block} block The block containing this field.
+   */
+  setSourceBlock(block) {
+    asserts.assert(!this.sourceBlock_, 'Field already bound to a block.');
+    this.sourceBlock_ = block;
+  }
+
+  /**
+   * Install this field on a block.
+   */
+  init() {
+    if (this.fieldGroup_) {
+      // Field has already been initialized once.
+      return;
+    }
+    // Build the DOM.
+    this.fieldGroup_ = utils.createSvgElement('g', {}, null);
+    if (!this.visible_) {
+      this.fieldGroup_.style.display = 'none';
+    }
+    // Add an attribute to cassify the type of field.
+    if (this.getArgTypes() !== null) {
+      if (this.sourceBlock_.isShadow()) {
+        this.sourceBlock_.svgGroup_.setAttribute('data-argument-type',
+            this.getArgTypes());
+      } else {
+        // Fields without a shadow wrapper, like square dropdowns.
+        this.fieldGroup_.setAttribute('data-argument-type', this.getArgTypes());
+      }
+    }
+    // Adjust X to be flipped for RTL. Position is relative to horizontal start of source block.
+    const size = this.getSize();
+    const fieldX = (this.sourceBlock_.RTL) ? -size.width / 2 : size.width / 2;
+    /** @type {!Element} */
+    this.textElement_ = utils.createSvgElement('text',
+        {
+          'class': this.className_,
+          'x': fieldX,
+          'y': size.height / 2 + rendererConstants.FIELD_TOP_PADDING,
+          'dominant-baseline': 'middle',
+          'dy': userAgent.EDGE_OR_IE ? Field.IE_TEXT_OFFSET : '0',
+          'text-anchor': 'middle'
+        }, this.fieldGroup_);
+
+    this.updateEditable();
+    this.sourceBlock_.getSvgRoot().appendChild(this.fieldGroup_);
+    // Force a render.
+    this.render_();
+    this.size_.width = 0;
+    this.mouseDownWrapper_ = browserEvents.conditionalBind(
+        this.getClickTarget_(), 'mousedown', this, this.onMouseDown_);
+  }
+
+  /**
+   * Initializes the model of the field after it has been installed on a block.
+   * No-op by default.
+   */
+  initModel() {
+  }
+
+  /**
+   * Dispose of all DOM objects belonging to this editable field.
+   */
+  dispose() {
+    if (this.mouseDownWrapper_) {
+      browserEvents.unbind(this.mouseDownWrapper_);
+      this.mouseDownWrapper_ = null;
+    }
+    this.sourceBlock_ = null;
+    dom.removeNode(this.fieldGroup_);
+    this.fieldGroup_ = null;
+    this.textElement_ = null;
+    this.validator_ = null;
+  }
+
+  /**
+   * Add or remove the UI indicating if this field is editable or not.
+   */
+  updateEditable() {
+    const group = this.fieldGroup_;
+    if (!this.EDITABLE || !group) {
+      return;
+    }
+    if (this.sourceBlock_.isEditable()) {
+      utils.addClass(group, 'blocklyEditableText');
+      utils.removeClass(group, 'blocklyNonEditableText');
+      this.fieldGroup_.style.cursor = this.CURSOR;
+    } else {
+      utils.addClass(group, 'blocklyNonEditableText');
+      utils.removeClass(group, 'blocklyEditableText');
+      this.fieldGroup_.style.cursor = '';
+    }
+  }
+
+  /**
+   * Check whether this field is currently editable.  Some fields are never
+   * editable (e.g. text labels).  Those fields are not serialized to XML.  Other
+   * fields may be editable, and therefore serialized, but may exist on
+   * non-editable blocks.
+   * @return {boolean} whether this field is editable and on an editable block
+   */
+  isCurrentlyEditable() {
+    return this.EDITABLE && !!this.sourceBlock_ && this.sourceBlock_.isEditable();
+  }
+
+  /**
+   * Gets whether this editable field is visible or not.
+   * @return {boolean} True if visible.
+   */
+  isVisible() {
+    return this.visible_;
+  }
+
+  /**
+   * Sets whether this editable field is visible or not.
+   * @param {boolean} visible True if visible.
+   */
+  setVisible(visible) {
+    if (this.visible_ == visible) {
+      return;
+    }
+    this.visible_ = visible;
+    const root = this.getSvgRoot();
+    if (root) {
+      root.style.display = visible ? 'block' : 'none';
+      this.render_();
+    }
+  }
+
+  /**
+   * Adds a string to the field's array of argTypes (used for styling).
+   * @param {string} argType New argType.
+   */
+  addArgType(argType) {
+    if (this.argType_ == null) {
+      this.argType_ = [];
+    }
+    this.argType_.push(argType);
+  }
+
+  /**
+   * Gets the field's argTypes joined as a string, or returns null (used for styling).
+   * @return {string} argType string, or null.
+   */
+  getArgTypes() {
+    if (this.argType_ === null || this.argType_.length === 0) {
+      return null;
+    } else {
+      return this.argType_.join(' ');
+    }
+  }
+
+  /**
+   * Sets a new validation function for editable fields.
+   * @param {Function} handler New validation function, or null.
+   */
+  setValidator(handler) {
+    this.validator_ = handler;
+  }
+
+  /**
+   * Gets the validation function for editable fields.
+   * @return {Function} Validation function, or null.
+   */
+  getValidator() {
+    return this.validator_;
+  }
+
+  /**
+   * Validates a change.  Does nothing.  Subclasses may override this.
+   * @param {string} text The user's text.
+   * @return {string} No change needed.
+   */
+  classValidator(text) {
+    return text;
+  }
+
+  /**
+   * Calls the validation function for this field, as well as all the validation
+   * function for the field's class and its parents.
+   * @param {string} text Proposed text.
+   * @return {?string} Revised text, or null if invalid.
+   */
+  callValidator(text) {
+    const classResult = this.classValidator(text);
+    if (classResult === null) {
+      // Class validator rejects value.  Game over.
+      return null;
+    } else if (classResult !== undefined) {
+      text = classResult;
+    }
+    const userValidator = this.getValidator();
+    if (userValidator) {
+      const userResult = userValidator.call(this, text);
+      if (userResult === null) {
+        // User validator rejects value.  Game over.
+        return null;
+      } else if (userResult !== undefined) {
+        text = userResult;
+      }
+    }
+    return text;
+  }
+
+  /**
+   * Gets the group element for this editable field.
+   * Used for measuring the size and for positioning.
+   * @return {!Element} The group element.
+   */
+  getSvgRoot() {
+    return /** @type {!Element} */ (this.fieldGroup_);
+  }
+
+  /**
+   * Draws the border with the correct width.
+   * Saves the computed width in a property.
+   * @private
+   */
+  render_() {
+    if (this.visible_ && this.textElement_) {
+      // Replace the text.
+      this.textElement_.textContent = this.getDisplayText_();
+      this.updateWidth();
+
+      // Update text centering, based on newly calculated width.
+      let centerTextX = (this.size_.width - this.arrowWidth_) / 2;
+      if (this.sourceBlock_.RTL) {
+        centerTextX += this.arrowWidth_;
+      }
+
+      // In a text-editing shadow block's field,
+      // if half the text length is not at least center of
+      // visible field (FIELD_WIDTH), center it there instead,
+      // unless there is a drop-down arrow.
+      if (this.sourceBlock_.isShadow() && !this.positionArrow) {
+        const minOffset = rendererConstants.FIELD_WIDTH / 2;
+        if (this.sourceBlock_.RTL) {
+          // X position starts at the left edge of the block, in both RTL and LTR.
+          // First offset by the width of the block to move to the right edge,
+          // and then subtract to move to the same position as LTR.
+          const minCenter = this.size_.width - minOffset;
+          centerTextX = Math.min(minCenter, centerTextX);
+        } else {
+          // (width / 2) should exceed rendererConstants.FIELD_WIDTH / 2
+          // if the text is longer.
+          centerTextX = Math.max(minOffset, centerTextX);
+        }
+      }
+
+      // Apply new text element x position.
+      this.textElement_.setAttribute('x', centerTextX);
+    }
+
+    // Update any drawn box to the correct width and height.
+    if (this.box_) {
+      this.box_.setAttribute('width', this.size_.width);
+      this.box_.setAttribute('height', this.size_.height);
+    }
+  }
+
+  /**
+   * Updates the width of the field. This calls getCachedWidth which won't cache
+   * the approximated width on IE/Edge when `getComputedTextLength` fails. Once
+   * it eventually does succeed, the result will be cached.
+   **/
+  updateWidth() {
+    // Calculate width of field
+    let width = utils.getTextWidth(this.textElement_);
+
+    // Add padding to left and right of text.
+    if (this.EDITABLE) {
+      width += rendererConstants.EDITABLE_FIELD_PADDING;
+    }
+
+    // Adjust width for drop-down arrows.
+    this.arrowWidth_ = 0;
+    if (this.positionArrow) {
+      this.arrowWidth_ = this.positionArrow(width);
+      width += this.arrowWidth_;
+    }
+
+    // Add padding to any drawn box.
+    if (this.box_) {
+      width += 2 * rendererConstants.BOX_FIELD_PADDING;
+    }
+
+    // Set width of the field.
+    this.size_.width = width;
+  }
+
+  /**
+   * Returns the height and width of the field.
+   * @return {!Size} Height and width.
+   */
+  getSize() {
+    if (!this.size_.width) {
+      this.render_();
+    }
+    return this.size_;
+  }
+
+  /**
+   * Returns the bounding box of the rendered field, accounting for workspace
+   * scaling.
+   * @return {!Object} An object with top, bottom, left, and right in pixels
+   *     relative to the top left corner of the page (window coordinates).
+   * @private
+   */
+  getScaledBBox_() {
+    const size = this.getSize();
+    const scaledHeight = size.height * this.sourceBlock_.workspace.scale;
+    const scaledWidth = size.width * this.sourceBlock_.workspace.scale;
+    const xy = this.getAbsoluteXY_();
+    return {
+      top: xy.y,
+      bottom: xy.y + scaledHeight,
+      left: xy.x,
+      right: xy.x + scaledWidth
+    };
+  }
+
+  /**
+   * Get the text from this field as displayed on screen.  May differ from getText
+   * due to ellipsis, and other formatting.
+   * @return {string} Currently displayed text.
+   * @private
+   */
+  getDisplayText_() {
+    let text = this.text_;
+    if (!text) {
+      // Prevent the field from disappearing if empty.
+      return Field.NBSP;
+    }
+    if (text.length > this.maxDisplayLength) {
+      // Truncate displayed string and add an ellipsis ('...').
+      text = text.substring(0, this.maxDisplayLength - 2) + '\u2026';
+    }
+    // Replace whitespace with non-breaking spaces so the text doesn't collapse.
+    text = text.replace(/\s/g, Field.NBSP);
+    if (this.sourceBlock_.RTL) {
+      // The SVG is LTR, force text to be RTL unless a number.
+      if (this.sourceBlock_.editable_ && this.sourceBlock_.type === 'math_number') {
+        text = '\u202A' + text + '\u202C';
+      } else {
+        text = '\u202B' + text + '\u202C';
+      }
+    }
+    return text;
+  }
+
+  /**
+   * Get the text from this field.
+   * @return {string} Current text.
+   */
+  getText() {
+    return this.text_;
+  }
+
+  /**
+   * Set the text in this field.  Trigger a rerender of the source block.
+   * @param {*} newText New text.
+   */
+  setText(newText) {
+    if (newText === null) {
+      // No change if null.
+      return;
+    }
+    newText = String(newText);
+    if (newText === this.text_) {
+      // No change.
+      return;
+    }
+    this.text_ = newText;
+    this.forceRerender();
+  }
+
+  /**
+   * Force a rerender of the block that this field is installed on, which will
+   * rerender this field and adjust for any sizing changes.
+   * Other fields on the same block will not rerender, because their sizes have
+   * already been recorded.
+   * @package
+   */
+  forceRerender() {
+    // Set width to 0 to force a rerender of this field.
+    this.size_.width = 0;
+
+    if (this.sourceBlock_ && this.sourceBlock_.rendered) {
+      this.sourceBlock_.render();
+      this.sourceBlock_.bumpNeighbours_();
+    }
+  }
+
+  /**
+   * Update the text node of this field to display the current text.
+   * @private
+   */
+  updateTextNode_() {
+    if (!this.textElement_) {
+      // Not rendered yet.
+      return;
+    }
+    let text = this.text_;
+    if (text.length > this.maxDisplayLength) {
+      // Truncate displayed string and add an ellipsis ('...').
+      text = text.substring(0, this.maxDisplayLength - 2) + '\u2026';
+      // Add special class for sizing font when truncated
+      this.textElement_.setAttribute('class', this.className_ + ' blocklyTextTruncated');
+    } else {
+      this.textElement_.setAttribute('class', this.className_);
+    }
+    // Empty the text element.
+    dom.removeChildren(/** @type {!Element} */ (this.textElement_));
+    // Replace whitespace with non-breaking spaces so the text doesn't collapse.
+    text = text.replace(/\s/g, Field.NBSP);
+    if (this.sourceBlock_.RTL && text) {
+      // The SVG is LTR, force text to be RTL.
+      if (this.sourceBlock_.editable_ && this.sourceBlock_.type === 'math_number') {
+        text = '\u202A' + text + '\u202C';
+      } else {
+        text = '\u202B' + text + '\u202C';
+      }
+    }
+    if (!text) {
+      // Prevent the field from disappearing if empty.
+      text = Field.NBSP;
+    }
+    const textNode = document.createTextNode(text);
+    this.textElement_.appendChild(textNode);
+
+    // Cached width is obsolete.  Clear it.
+    this.size_.width = 0;
+  }
+
+  /**
+   * By default there is no difference between the human-readable text and
+   * the language-neutral values.  Subclasses (such as dropdown) may define this.
+   * @return {string} Current value.
+   */
+  getValue() {
+    return this.getText();
+  }
+
+  /**
+   * By default there is no difference between the human-readable text and
+   * the language-neutral values.  Subclasses (such as dropdown) may define this.
+   * @param {string} newValue New value.
+   */
+  setValue(newValue) {
+    if (newValue === null) {
+      // No change if null.
+      return;
+    }
+    const oldValue = this.getValue();
+    if (oldValue == newValue) {
+      return;
+    }
+    if (this.sourceBlock_ && eventUtils.isEnabled()) {
+      eventUtils.fire(new BlockChange(
+          this.sourceBlock_, 'field', this.name, oldValue, newValue));
+    }
+    this.setText(newValue);
+  }
+
+  /**
+   * Handle a mouse down event on a field.
+   * @param {!Event} e Mouse down event.
+   * @private
+   */
+  onMouseDown_(e) {
+    if (!this.sourceBlock_ || !this.sourceBlock_.workspace) {
+      return;
+    }
+    const gesture = this.sourceBlock_.workspace.getGesture(e);
+    if (gesture) {
+      gesture.setStartField(this);
+    }
+    this.useTouchInteraction_ = Touch.getTouchIdentifierFromEvent(event) !== 'mouse';
+  }
+
+  /**
+   * Change the tooltip text for this field.
+   * @param {string|!Element} _newTip Text for tooltip or a parent element to
+   *     link to for its tooltip.
+   * @abstract
+   */
+  setTooltip(_newTip) {
+    // Non-abstract sub-classes may wish to implement this.  See FieldLabel.
+  }
+
+  /**
+   * Select the element to bind the click handler to. When this element is
+   * clicked on an editable field, the editor will open.
+   *
+   * If the block has only one field and no output connection, we handle clicks
+   * over the whole block. Otherwise, handle clicks over the the group containing
+   * the field.
+   *
+   * @return {!Element} Element to bind click handler to.
+   * @private
+   */
+  getClickTarget_() {
+    let nFields = 0;
+
+    for (let i = 0, input; input = this.sourceBlock_.inputList[i]; i++) {
+      nFields += input.fieldRow.length;
+    }
+    if (nFields <= 1 && this.sourceBlock_.outputConnection) {
+      return this.sourceBlock_.getSvgRoot();
+    } else {
+      return this.getSvgRoot();
+    }
+  }
+
+  /**
+   * Return the absolute coordinates of the top-left corner of this field.
+   * The origin (0,0) is the top-left corner of the page body.
+   * @return {!goog.math.Coordinate} Object with .x and .y properties.
+   * @private
+   */
+  getAbsoluteXY_() {
+    return style.getPageOffset(this.getClickTarget_());
+  }
+
+  /**
+   * Whether this field references any Blockly variables.  If true it may need to
+   * be handled differently during serialization and deserialization.  Subclasses
+   * may override this.
+   * @return {boolean} True if this field has any variable references.
+   * @package
+   */
+  referencesVariables() {
+    return false;
+  }
+}
 
 
 /**
@@ -193,540 +733,3 @@ Field.prototype.EDITABLE = true;
  * @public
  */
 Field.prototype.SERIALIZABLE = true;
-
-/**
- * Attach this field to a block.
- * @param {!Blockly.Block} block The block containing this field.
- */
-Field.prototype.setSourceBlock = function(block) {
-  asserts.assert(!this.sourceBlock_, 'Field already bound to a block.');
-  this.sourceBlock_ = block;
-};
-
-/**
- * Install this field on a block.
- */
-Field.prototype.init = function() {
-  if (this.fieldGroup_) {
-    // Field has already been initialized once.
-    return;
-  }
-  // Build the DOM.
-  this.fieldGroup_ = utils.createSvgElement('g', {}, null);
-  if (!this.visible_) {
-    this.fieldGroup_.style.display = 'none';
-  }
-  // Add an attribute to cassify the type of field.
-  if (this.getArgTypes() !== null) {
-    if (this.sourceBlock_.isShadow()) {
-      this.sourceBlock_.svgGroup_.setAttribute('data-argument-type',
-          this.getArgTypes());
-    } else {
-      // Fields without a shadow wrapper, like square dropdowns.
-      this.fieldGroup_.setAttribute('data-argument-type', this.getArgTypes());
-    }
-  }
-  // Adjust X to be flipped for RTL. Position is relative to horizontal start of source block.
-  const size = this.getSize();
-  const fieldX = (this.sourceBlock_.RTL) ? -size.width / 2 : size.width / 2;
-  /** @type {!Element} */
-  this.textElement_ = utils.createSvgElement('text',
-      {
-        'class': this.className_,
-        'x': fieldX,
-        'y': size.height / 2 + rendererConstants.FIELD_TOP_PADDING,
-        'dominant-baseline': 'middle',
-        'dy': userAgent.EDGE_OR_IE ? Field.IE_TEXT_OFFSET : '0',
-        'text-anchor': 'middle'
-      }, this.fieldGroup_);
-
-  this.updateEditable();
-  this.sourceBlock_.getSvgRoot().appendChild(this.fieldGroup_);
-  // Force a render.
-  this.render_();
-  this.size_.width = 0;
-  this.mouseDownWrapper_ = browserEvents.conditionalBind(
-      this.getClickTarget_(), 'mousedown', this, this.onMouseDown_);
-};
-
-/**
- * Initializes the model of the field after it has been installed on a block.
- * No-op by default.
- */
-Field.prototype.initModel = function() {
-};
-
-/**
- * Dispose of all DOM objects belonging to this editable field.
- */
-Field.prototype.dispose = function() {
-  if (this.mouseDownWrapper_) {
-    browserEvents.unbind(this.mouseDownWrapper_);
-    this.mouseDownWrapper_ = null;
-  }
-  this.sourceBlock_ = null;
-  dom.removeNode(this.fieldGroup_);
-  this.fieldGroup_ = null;
-  this.textElement_ = null;
-  this.validator_ = null;
-};
-
-/**
- * Add or remove the UI indicating if this field is editable or not.
- */
-Field.prototype.updateEditable = function() {
-  const group = this.fieldGroup_;
-  if (!this.EDITABLE || !group) {
-    return;
-  }
-  if (this.sourceBlock_.isEditable()) {
-    utils.addClass(group, 'blocklyEditableText');
-    utils.removeClass(group, 'blocklyNonEditableText');
-    this.fieldGroup_.style.cursor = this.CURSOR;
-  } else {
-    utils.addClass(group, 'blocklyNonEditableText');
-    utils.removeClass(group, 'blocklyEditableText');
-    this.fieldGroup_.style.cursor = '';
-  }
-};
-
-/**
- * Check whether this field is currently editable.  Some fields are never
- * editable (e.g. text labels).  Those fields are not serialized to XML.  Other
- * fields may be editable, and therefore serialized, but may exist on
- * non-editable blocks.
- * @return {boolean} whether this field is editable and on an editable block
- */
-Field.prototype.isCurrentlyEditable = function() {
-  return this.EDITABLE && !!this.sourceBlock_ && this.sourceBlock_.isEditable();
-};
-
-/**
- * Gets whether this editable field is visible or not.
- * @return {boolean} True if visible.
- */
-Field.prototype.isVisible = function() {
-  return this.visible_;
-};
-
-/**
- * Sets whether this editable field is visible or not.
- * @param {boolean} visible True if visible.
- */
-Field.prototype.setVisible = function(visible) {
-  if (this.visible_ == visible) {
-    return;
-  }
-  this.visible_ = visible;
-  const root = this.getSvgRoot();
-  if (root) {
-    root.style.display = visible ? 'block' : 'none';
-    this.render_();
-  }
-};
-
-/**
- * Adds a string to the field's array of argTypes (used for styling).
- * @param {string} argType New argType.
- */
-Field.prototype.addArgType = function(argType) {
-  if (this.argType_ == null) {
-    this.argType_ = [];
-  }
-  this.argType_.push(argType);
-};
-
-/**
- * Gets the field's argTypes joined as a string, or returns null (used for styling).
- * @return {string} argType string, or null.
- */
-Field.prototype.getArgTypes = function() {
-  if (this.argType_ === null || this.argType_.length === 0) {
-    return null;
-  } else {
-    return this.argType_.join(' ');
-  }
-};
-
-/**
- * Sets a new validation function for editable fields.
- * @param {Function} handler New validation function, or null.
- */
-Field.prototype.setValidator = function(handler) {
-  this.validator_ = handler;
-};
-
-/**
- * Gets the validation function for editable fields.
- * @return {Function} Validation function, or null.
- */
-Field.prototype.getValidator = function() {
-  return this.validator_;
-};
-
-/**
- * Validates a change.  Does nothing.  Subclasses may override this.
- * @param {string} text The user's text.
- * @return {string} No change needed.
- */
-Field.prototype.classValidator = function(text) {
-  return text;
-};
-
-/**
- * Calls the validation function for this field, as well as all the validation
- * function for the field's class and its parents.
- * @param {string} text Proposed text.
- * @return {?string} Revised text, or null if invalid.
- */
-Field.prototype.callValidator = function(text) {
-  const classResult = this.classValidator(text);
-  if (classResult === null) {
-    // Class validator rejects value.  Game over.
-    return null;
-  } else if (classResult !== undefined) {
-    text = classResult;
-  }
-  const userValidator = this.getValidator();
-  if (userValidator) {
-    const userResult = userValidator.call(this, text);
-    if (userResult === null) {
-      // User validator rejects value.  Game over.
-      return null;
-    } else if (userResult !== undefined) {
-      text = userResult;
-    }
-  }
-  return text;
-};
-
-/**
- * Gets the group element for this editable field.
- * Used for measuring the size and for positioning.
- * @return {!Element} The group element.
- */
-Field.prototype.getSvgRoot = function() {
-  return /** @type {!Element} */ (this.fieldGroup_);
-};
-
-/**
- * Draws the border with the correct width.
- * Saves the computed width in a property.
- * @private
- */
-Field.prototype.render_ = function() {
-  if (this.visible_ && this.textElement_) {
-    // Replace the text.
-    this.textElement_.textContent = this.getDisplayText_();
-    this.updateWidth();
-
-    // Update text centering, based on newly calculated width.
-    let centerTextX = (this.size_.width - this.arrowWidth_) / 2;
-    if (this.sourceBlock_.RTL) {
-      centerTextX += this.arrowWidth_;
-    }
-
-    // In a text-editing shadow block's field,
-    // if half the text length is not at least center of
-    // visible field (FIELD_WIDTH), center it there instead,
-    // unless there is a drop-down arrow.
-    if (this.sourceBlock_.isShadow() && !this.positionArrow) {
-      const minOffset = rendererConstants.FIELD_WIDTH / 2;
-      if (this.sourceBlock_.RTL) {
-        // X position starts at the left edge of the block, in both RTL and LTR.
-        // First offset by the width of the block to move to the right edge,
-        // and then subtract to move to the same position as LTR.
-        const minCenter = this.size_.width - minOffset;
-        centerTextX = Math.min(minCenter, centerTextX);
-      } else {
-        // (width / 2) should exceed rendererConstants.FIELD_WIDTH / 2
-        // if the text is longer.
-        centerTextX = Math.max(minOffset, centerTextX);
-      }
-    }
-
-    // Apply new text element x position.
-    this.textElement_.setAttribute('x', centerTextX);
-  }
-
-  // Update any drawn box to the correct width and height.
-  if (this.box_) {
-    this.box_.setAttribute('width', this.size_.width);
-    this.box_.setAttribute('height', this.size_.height);
-  }
-};
-
-/**
- * Updates the width of the field. This calls getCachedWidth which won't cache
- * the approximated width on IE/Edge when `getComputedTextLength` fails. Once
- * it eventually does succeed, the result will be cached.
- **/
-Field.prototype.updateWidth = function() {
-  // Calculate width of field
-  let width = utils.getTextWidth(this.textElement_);
-
-  // Add padding to left and right of text.
-  if (this.EDITABLE) {
-    width += rendererConstants.EDITABLE_FIELD_PADDING;
-  }
-
-  // Adjust width for drop-down arrows.
-  this.arrowWidth_ = 0;
-  if (this.positionArrow) {
-    this.arrowWidth_ = this.positionArrow(width);
-    width += this.arrowWidth_;
-  }
-
-  // Add padding to any drawn box.
-  if (this.box_) {
-    width += 2 * rendererConstants.BOX_FIELD_PADDING;
-  }
-
-  // Set width of the field.
-  this.size_.width = width;
-};
-
-/**
- * Returns the height and width of the field.
- * @return {!Size} Height and width.
- */
-Field.prototype.getSize = function() {
-  if (!this.size_.width) {
-    this.render_();
-  }
-  return this.size_;
-};
-
-/**
- * Returns the bounding box of the rendered field, accounting for workspace
- * scaling.
- * @return {!Object} An object with top, bottom, left, and right in pixels
- *     relative to the top left corner of the page (window coordinates).
- * @private
- */
-Field.prototype.getScaledBBox_ = function() {
-  const size = this.getSize();
-  const scaledHeight = size.height * this.sourceBlock_.workspace.scale;
-  const scaledWidth = size.width * this.sourceBlock_.workspace.scale;
-  const xy = this.getAbsoluteXY_();
-  return {
-    top: xy.y,
-    bottom: xy.y + scaledHeight,
-    left: xy.x,
-    right: xy.x + scaledWidth
-  };
-};
-
-/**
- * Get the text from this field as displayed on screen.  May differ from getText
- * due to ellipsis, and other formatting.
- * @return {string} Currently displayed text.
- * @private
- */
-Field.prototype.getDisplayText_ = function() {
-  let text = this.text_;
-  if (!text) {
-    // Prevent the field from disappearing if empty.
-    return Field.NBSP;
-  }
-  if (text.length > this.maxDisplayLength) {
-    // Truncate displayed string and add an ellipsis ('...').
-    text = text.substring(0, this.maxDisplayLength - 2) + '\u2026';
-  }
-  // Replace whitespace with non-breaking spaces so the text doesn't collapse.
-  text = text.replace(/\s/g, Field.NBSP);
-  if (this.sourceBlock_.RTL) {
-    // The SVG is LTR, force text to be RTL unless a number.
-    if (this.sourceBlock_.editable_ && this.sourceBlock_.type === 'math_number') {
-      text = '\u202A' + text + '\u202C';
-    } else {
-      text = '\u202B' + text + '\u202C';
-    }
-  }
-  return text;
-};
-
-/**
- * Get the text from this field.
- * @return {string} Current text.
- */
-Field.prototype.getText = function() {
-  return this.text_;
-};
-
-/**
- * Set the text in this field.  Trigger a rerender of the source block.
- * @param {*} newText New text.
- */
-Field.prototype.setText = function(newText) {
-  if (newText === null) {
-    // No change if null.
-    return;
-  }
-  newText = String(newText);
-  if (newText === this.text_) {
-    // No change.
-    return;
-  }
-  this.text_ = newText;
-  this.forceRerender();
-};
-
-/**
- * Force a rerender of the block that this field is installed on, which will
- * rerender this field and adjust for any sizing changes.
- * Other fields on the same block will not rerender, because their sizes have
- * already been recorded.
- * @package
- */
-Field.prototype.forceRerender = function() {
-  // Set width to 0 to force a rerender of this field.
-  this.size_.width = 0;
-
-  if (this.sourceBlock_ && this.sourceBlock_.rendered) {
-    this.sourceBlock_.render();
-    this.sourceBlock_.bumpNeighbours_();
-  }
-};
-
-/**
- * Update the text node of this field to display the current text.
- * @private
- */
-Field.prototype.updateTextNode_ = function() {
-  if (!this.textElement_) {
-    // Not rendered yet.
-    return;
-  }
-  let text = this.text_;
-  if (text.length > this.maxDisplayLength) {
-    // Truncate displayed string and add an ellipsis ('...').
-    text = text.substring(0, this.maxDisplayLength - 2) + '\u2026';
-    // Add special class for sizing font when truncated
-    this.textElement_.setAttribute('class', this.className_ + ' blocklyTextTruncated');
-  } else {
-    this.textElement_.setAttribute('class', this.className_);
-  }
-  // Empty the text element.
-  dom.removeChildren(/** @type {!Element} */ (this.textElement_));
-  // Replace whitespace with non-breaking spaces so the text doesn't collapse.
-  text = text.replace(/\s/g, Field.NBSP);
-  if (this.sourceBlock_.RTL && text) {
-    // The SVG is LTR, force text to be RTL.
-    if (this.sourceBlock_.editable_ && this.sourceBlock_.type === 'math_number') {
-      text = '\u202A' + text + '\u202C';
-    } else {
-      text = '\u202B' + text + '\u202C';
-    }
-  }
-  if (!text) {
-    // Prevent the field from disappearing if empty.
-    text = Field.NBSP;
-  }
-  const textNode = document.createTextNode(text);
-  this.textElement_.appendChild(textNode);
-
-  // Cached width is obsolete.  Clear it.
-  this.size_.width = 0;
-};
-
-/**
- * By default there is no difference between the human-readable text and
- * the language-neutral values.  Subclasses (such as dropdown) may define this.
- * @return {string} Current value.
- */
-Field.prototype.getValue = function() {
-  return this.getText();
-};
-
-/**
- * By default there is no difference between the human-readable text and
- * the language-neutral values.  Subclasses (such as dropdown) may define this.
- * @param {string} newValue New value.
- */
-Field.prototype.setValue = function(newValue) {
-  if (newValue === null) {
-    // No change if null.
-    return;
-  }
-  const oldValue = this.getValue();
-  if (oldValue == newValue) {
-    return;
-  }
-  if (this.sourceBlock_ && eventUtils.isEnabled()) {
-    eventUtils.fire(new BlockChange(
-        this.sourceBlock_, 'field', this.name, oldValue, newValue));
-  }
-  this.setText(newValue);
-};
-
-/**
- * Handle a mouse down event on a field.
- * @param {!Event} e Mouse down event.
- * @private
- */
-Field.prototype.onMouseDown_ = function(e) {
-  if (!this.sourceBlock_ || !this.sourceBlock_.workspace) {
-    return;
-  }
-  const gesture = this.sourceBlock_.workspace.getGesture(e);
-  if (gesture) {
-    gesture.setStartField(this);
-  }
-  this.useTouchInteraction_ = Touch.getTouchIdentifierFromEvent(event) !== 'mouse';
-};
-
-/**
- * Change the tooltip text for this field.
- * @param {string|!Element} _newTip Text for tooltip or a parent element to
- *     link to for its tooltip.
- * @abstract
- */
-Field.prototype.setTooltip = function(_newTip) {
-  // Non-abstract sub-classes may wish to implement this.  See FieldLabel.
-};
-
-/**
- * Select the element to bind the click handler to. When this element is
- * clicked on an editable field, the editor will open.
- *
- * If the block has only one field and no output connection, we handle clicks
- * over the whole block. Otherwise, handle clicks over the the group containing
- * the field.
- *
- * @return {!Element} Element to bind click handler to.
- * @private
- */
-Field.prototype.getClickTarget_ = function() {
-  let nFields = 0;
-
-  for (let i = 0, input; input = this.sourceBlock_.inputList[i]; i++) {
-    nFields += input.fieldRow.length;
-  }
-  if (nFields <= 1 && this.sourceBlock_.outputConnection) {
-    return this.sourceBlock_.getSvgRoot();
-  } else {
-    return this.getSvgRoot();
-  }
-};
-
-/**
- * Return the absolute coordinates of the top-left corner of this field.
- * The origin (0,0) is the top-left corner of the page body.
- * @return {!goog.math.Coordinate} Object with .x and .y properties.
- * @private
- */
-Field.prototype.getAbsoluteXY_ = function() {
-  return style.getPageOffset(this.getClickTarget_());
-};
-
-/**
- * Whether this field references any Blockly variables.  If true it may need to
- * be handled differently during serialization and deserialization.  Subclasses
- * may override this.
- * @return {boolean} True if this field has any variable references.
- * @package
- */
-Field.prototype.referencesVariables = function() {
-  return false;
-};
