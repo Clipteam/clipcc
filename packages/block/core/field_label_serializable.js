@@ -38,32 +38,81 @@ const dom = goog.require('goog.dom');
 
 /**
  * Class for a variable getter field.
- * @param {string} text The initial content of the field.
- * @param {string} opt_class Optional CSS class for the field's text.
  * @extends {FieldLabel}
- * @constructor
  *
  */
-export const FieldLabelSerializable = function(text, opt_class) {
-  FieldLabelSerializable.superClass_.constructor.call(this, text,
-      opt_class);
-  // Used in base field rendering, but we don't need it.
-  this.arrowWidth_ = 0;
-};
-goog.inherits(FieldLabelSerializable, FieldLabel);
+export class FieldLabelSerializable extends FieldLabel {
+  /**
+   * @param {string} text The initial content of the field.
+   * @param {string} opt_class Optional CSS class for the field's text.
+   */
+  constructor(text, opt_class) {
+    super(text, opt_class);
+    // Used in base field rendering, but we don't need it.
+    this.arrowWidth_ = 0;
+  }
 
-/**
- * Construct a FieldLabelSerializable from a JSON arg object,
- * dereferencing any string table references.
- * @param {!Object} options A JSON object with options (text, and class).
- * @returns {!FieldLabelSerializable} The new field instance.
- * @package
- * @nocollapse
- */
-FieldLabelSerializable.fromJson = function(options) {
-  const text = utils.replaceMessageReferences(options['text']);
-  return new FieldLabelSerializable(text, options['class']);
-};
+  /**
+  * Construct a FieldLabelSerializable from a JSON arg object,
+  * dereferencing any string table references.
+  * @param {!Object} options A JSON object with options (text, and class).
+  * @returns {!FieldLabelSerializable} The new field instance.
+  * @package
+  * @nocollapse
+  */
+  static fromJson(options) {
+    const text = utils.replaceMessageReferences(options['text']);
+    return new FieldLabelSerializable(text, options['class']);
+  }
+
+  /**
+  * Updates the width of the field. This calls getCachedWidth which won't cache
+  * the approximated width on IE/Edge when `getComputedTextLength` fails. Once
+  * it eventually does succeed, the result will be cached.
+  **/
+  updateWidth() {
+    // Set width of the field.
+    // Unlike the base Field class, this doesn't add space to editable fields.
+    this.size_.width = utils.getTextWidth(this.textElement_);
+  }
+
+  /**
+  * Draws the border with the correct width.
+  * Saves the computed width in a property.
+  * @private
+  */
+  render_() {
+    if (this.visible_ && this.textElement_) {
+      // Replace the text.
+      dom.removeChildren(/** @type {!Element} */ (this.textElement_));
+      const textNode = document.createTextNode(this.getDisplayText_());
+      this.textElement_.appendChild(textNode);
+      this.updateWidth();
+
+      // Update text centering, based on newly calculated width.
+      let centerTextX = this.size_.width / 2;
+
+      // If half the text length is not at least center of
+      // visible field (FIELD_WIDTH), center it there instead.
+      const minOffset = rendererConstants.FIELD_WIDTH / 2;
+      if (this.sourceBlock_.RTL) {
+        // X position starts at the left edge of the block, in both RTL and LTR.
+        // First offset by the width of the block to move to the right edge,
+        // and then subtract to move to the same position as LTR.
+        const minCenter = this.size_.width - minOffset;
+        centerTextX = Math.min(minCenter, centerTextX);
+      } else {
+        // (width / 2) should exceed rendererConstants.FIELD_WIDTH / 2
+        // if the text is longer.
+        centerTextX = Math.max(minOffset, centerTextX);
+      }
+      // Apply new text element x position.
+      this.textElement_.setAttribute('x', centerTextX);
+    }
+  }
+}
+
+
 
 /**
  * Editable fields usually show some sort of UI for the user to change them.
@@ -80,52 +129,6 @@ FieldLabelSerializable.prototype.EDITABLE = false;
  * @public
  */
 FieldLabelSerializable.prototype.SERIALIZABLE = true;
-
-/**
- * Updates the width of the field. This calls getCachedWidth which won't cache
- * the approximated width on IE/Edge when `getComputedTextLength` fails. Once
- * it eventually does succeed, the result will be cached.
- **/
-FieldLabelSerializable.prototype.updateWidth = function() {
-  // Set width of the field.
-  // Unlike the base Field class, this doesn't add space to editable fields.
-  this.size_.width = utils.getTextWidth(this.textElement_);
-};
-
-/**
- * Draws the border with the correct width.
- * Saves the computed width in a property.
- * @private
- */
-FieldLabelSerializable.prototype.render_ = function() {
-  if (this.visible_ && this.textElement_) {
-    // Replace the text.
-    dom.removeChildren(/** @type {!Element} */ (this.textElement_));
-    const textNode = document.createTextNode(this.getDisplayText_());
-    this.textElement_.appendChild(textNode);
-    this.updateWidth();
-
-    // Update text centering, based on newly calculated width.
-    let centerTextX = this.size_.width / 2;
-
-    // If half the text length is not at least center of
-    // visible field (FIELD_WIDTH), center it there instead.
-    const minOffset = rendererConstants.FIELD_WIDTH / 2;
-    if (this.sourceBlock_.RTL) {
-      // X position starts at the left edge of the block, in both RTL and LTR.
-      // First offset by the width of the block to move to the right edge,
-      // and then subtract to move to the same position as LTR.
-      const minCenter = this.size_.width - minOffset;
-      centerTextX = Math.min(minCenter, centerTextX);
-    } else {
-      // (width / 2) should exceed rendererConstants.FIELD_WIDTH / 2
-      // if the text is longer.
-      centerTextX = Math.max(minOffset, centerTextX);
-    }
-    // Apply new text element x position.
-    this.textElement_.setAttribute('x', centerTextX);
-  }
-};
 
 Field.register(
     'field_label_serializable', FieldLabelSerializable);
