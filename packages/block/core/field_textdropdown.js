@@ -39,104 +39,108 @@ import {WidgetDiv} from './widgetdiv';
 
 /**
  * Class for a combination text + drop-down field.
- * @param {string} text The initial content of the text field.
- * @param {(!Array.<!Array.<string>>|!Function)} menuGenerator An array of
- *     options for a dropdown list, or a function which generates these options.
- * @param {Function=} opt_validator An optional function that is called
- *     to validate any constraints on what the user entered.  Takes the new
- *     text as an argument and returns the accepted text or null to abort
- *     the change.
- * @param {RegExp=} opt_restrictor An optional regular expression to restrict
- *     typed text to. Text that doesn't match the restrictor will never show
- *     in the text field.
  * @extends {FieldTextInput}
- * @constructor
  */
-export const FieldTextDropdown = function(text, menuGenerator, opt_validator, opt_restrictor) {
-  this.menuGenerator_ = menuGenerator;
-  FieldDropdown.prototype.trimOptions_.call(this);
-  FieldTextDropdown.superClass_.constructor.call(this, text, opt_validator, opt_restrictor);
-  this.addArgType('textdropdown');
-};
-goog.inherits(FieldTextDropdown, FieldTextInput);
+export class FieldTextDropdown extends FieldTextInput {
+  /**
+   * @param {string} text The initial content of the text field.
+   * @param {(!Array.<!Array.<string>>|!Function)} menuGenerator An array of
+   *     options for a dropdown list, or a function which generates these options.
+   * @param {Function=} opt_validator An optional function that is called
+   *     to validate any constraints on what the user entered.  Takes the new
+   *     text as an argument and returns the accepted text or null to abort
+   *     the change.
+   * @param {RegExp=} opt_restrictor An optional regular expression to restrict
+   *     typed text to. Text that doesn't match the restrictor will never show
+   *     in the text field.
+   */
+  constructor(text, menuGenerator, opt_validator, opt_restrictor) {
+    super(text, opt_validator, opt_restrictor);
+    this.menuGenerator_ = menuGenerator;
+    FieldDropdown.prototype.trimOptions_.call(this);
+    this.addArgType('textdropdown');
+  }
 
-/**
- * Construct a FieldTextDropdown from a JSON arg object,
- * dereferencing any string table references.
- * @param {!Object} element A JSON object with options.
- * @returns {!FieldTextDropdown} The new field instance.
- * @package
- * @nocollapse
- */
-FieldTextDropdown.fromJson = function(element) {
-  const field =
-      new FieldTextDropdown(element['text'], element['options']);
-  if (typeof element['spellcheck'] == 'boolean') {
-    field.setSpellcheck(element['spellcheck']);
+  /**
+  * Construct a FieldTextDropdown from a JSON arg object,
+  * dereferencing any string table references.
+  * @param {!Object} element A JSON object with options.
+  * @returns {!FieldTextDropdown} The new field instance.
+  * @package
+  * @nocollapse
+  */
+  static fromJson(element) {
+    const field =
+       new FieldTextDropdown(element['text'], element['options']);
+    if (typeof element['spellcheck'] == 'boolean') {
+      field.setSpellcheck(element['spellcheck']);
+    }
+    return field;
   }
-  return field;
-};
 
-/**
- * Install this text drop-down field on a block.
- */
-FieldTextDropdown.prototype.init = function() {
-  if (this.fieldGroup_) {
-    // Text input + dropdown has already been initialized once.
-    return;
+  /**
+  * Install this text drop-down field on a block.
+  */
+  init() {
+    if (this.fieldGroup_) {
+      // Text input + dropdown has already been initialized once.
+      return;
+    }
+    super.init();
+    // Add dropdown arrow: "option ▾" (LTR) or "▾ אופציה" (RTL)
+    // Positioned on render, after text size is calculated.
+    if (!this.arrow_) {
+      /** @type {Number} */
+      this.arrowSize_ = 12;
+      /** @type {Number} */
+      this.arrowX_ = 0;
+      /** @type {Number} */
+      this.arrowY_ = 11;
+      this.arrow_ = utils.createSvgElement('image',
+          {
+            'height': this.arrowSize_ + 'px',
+            'width': this.arrowSize_ + 'px'
+          });
+      this.arrow_.setAttributeNS('http://www.w3.org/1999/xlink',
+          'xlink:href', common.getMainWorkspace().options.pathToMedia + 'dropdown-arrow-dark.svg');
+      this.arrow_.style.cursor = 'pointer';
+      this.fieldGroup_.appendChild(this.arrow_);
+      this.mouseUpWrapper_ =
+         browserEvents.bind(this.arrow_, 'mouseup', this, this.showDropdown_);
+    }
+    // Prevent the drop-down handler from changing the field colour on open.
+    this.disableColourChange_ = true;
   }
-  FieldTextDropdown.superClass_.init.call(this);
-  // Add dropdown arrow: "option ▾" (LTR) or "▾ אופציה" (RTL)
-  // Positioned on render, after text size is calculated.
-  if (!this.arrow_) {
-    /** @type {Number} */
-    this.arrowSize_ = 12;
-    /** @type {Number} */
-    this.arrowX_ = 0;
-    /** @type {Number} */
-    this.arrowY_ = 11;
-    this.arrow_ = utils.createSvgElement('image',
-        {
-          'height': this.arrowSize_ + 'px',
-          'width': this.arrowSize_ + 'px'
-        });
-    this.arrow_.setAttributeNS('http://www.w3.org/1999/xlink',
-        'xlink:href', common.getMainWorkspace().options.pathToMedia + 'dropdown-arrow-dark.svg');
-    this.arrow_.style.cursor = 'pointer';
-    this.fieldGroup_.appendChild(this.arrow_);
-    this.mouseUpWrapper_ =
-        browserEvents.bind(this.arrow_, 'mouseup', this, this.showDropdown_);
-  }
-  // Prevent the drop-down handler from changing the field colour on open.
-  this.disableColourChange_ = true;
-};
 
-/**
- * Close the input widget if this input is being deleted.
- */
-FieldTextDropdown.prototype.dispose = function() {
-  if (this.mouseUpWrapper_) {
-    browserEvents.unbind(this.mouseUpWrapper_);
-    this.mouseUpWrapper_ = null;
-    Touch.clearTouchIdentifier();
+  /**
+  * Close the input widget if this input is being deleted.
+  */
+  dispose() {
+    if (this.mouseUpWrapper_) {
+      browserEvents.unbind(this.mouseUpWrapper_);
+      this.mouseUpWrapper_ = null;
+      Touch.clearTouchIdentifier();
+    }
+    super.dispose();
   }
-  FieldTextDropdown.superClass_.dispose.call(this);
-};
 
-/**
- * If the drop-down isn't open, show the text editor.
- */
-FieldTextDropdown.prototype.showEditor_ = function() {
-  if (!this.dropDownOpen_) {
-    FieldTextDropdown.superClass_.showEditor_.call(this, null, null,
-        true, function() {
-          // When the drop-down arrow is clicked, hide text editor and show drop-down.
-          WidgetDiv.hide();
-          this.showDropdown_();
-          Touch.clearTouchIdentifier();
-        });
+  /**
+  * If the drop-down isn't open, show the text editor.
+  */
+  showEditor_() {
+    if (!this.dropDownOpen_) {
+      super.showEditor_(null, null,
+          true, function() {
+            // When the drop-down arrow is clicked, hide text editor and show drop-down.
+            WidgetDiv.hide();
+            this.showDropdown_();
+            Touch.clearTouchIdentifier();
+          });
+    }
   }
-};
+}
+
+
 
 /**
  * Return a list of the options for this dropdown.
