@@ -39,30 +39,93 @@ const userAgent = goog.require('goog.userAgent');
 
 /**
  * Class for a non-editable field.
- * @param {string} text The initial content of the field.
- * @param {string=} opt_class Optional CSS class for the field's text.
  * @extends {Field}
- * @constructor
  */
-export const FieldLabel = function(text, opt_class) {
-  this.size_ = new Size(0, 0);
-  this.class_ = opt_class;
-  this.setValue(text);
-};
-goog.inherits(FieldLabel, Field);
+export class FieldLabel extends Field {
+  /**
+   * @param {string} text The initial content of the field.
+   * @param {string=} opt_class Optional CSS class for the field's text.
+   */
+  constructor(text, opt_class) {
+    super(null);
+    this.size_ = new Size(0, 0);
+    this.class_ = opt_class;
+    this.setValue(text);
+  }
 
-/**
- * Construct a FieldLabel from a JSON arg object,
- * dereferencing any string table references.
- * @param {!Object} options A JSON object with options (text, and class).
- * @returns {!FieldLabel} The new field instance.
- * @package
- * @nocollapse
- */
-FieldLabel.fromJson = function(options) {
-  const text = utils.replaceMessageReferences(options['text']);
-  return new FieldLabel(text, options['class']);
-};
+  /**
+  * Construct a FieldLabel from a JSON arg object,
+  * dereferencing any string table references.
+  * @param {!Object} options A JSON object with options (text, and class).
+  * @returns {!FieldLabel} The new field instance.
+  * @package
+  * @nocollapse
+  */
+  static fromJson(options) {
+    const text = utils.replaceMessageReferences(options['text']);
+    return new FieldLabel(text, options['class']);
+  }
+
+  /**
+  * Install this text on a block.
+  */
+  init() {
+    if (this.textElement_) {
+      // Text has already been initialized once.
+      return;
+    }
+    // Build the DOM.
+    this.textElement_ = utils.createSvgElement('text',
+        {
+          'class': 'blocklyText',
+          'y': rendererConstants.FIELD_TOP_PADDING,
+          'text-anchor': 'middle',
+          'dominant-baseline': 'middle',
+          'dy': userAgent.EDGE_OR_IE ? Field.IE_TEXT_OFFSET : '0'
+        }, null);
+    if (this.class_) {
+      utils.addClass(this.textElement_, this.class_);
+    }
+    if (!this.visible_) {
+      this.textElement_.style.display = 'none';
+    }
+    this.sourceBlock_.getSvgRoot().appendChild(this.textElement_);
+
+    // Configure the field to be transparent with respect to tooltips.
+    this.textElement_.tooltip = this.sourceBlock_;
+    Tooltip.bindMouseEvents(this.textElement_);
+    // Force a render.
+    this.render_();
+  }
+
+  /**
+  * Dispose of all DOM objects belonging to this text.
+  */
+  dispose() {
+    dom.removeNode(this.textElement_);
+    this.textElement_ = null;
+  }
+
+  /**
+  * Gets the group element for this field.
+  * Used for measuring the size and for positioning.
+  * @return {!Element} The group element.
+  */
+  getSvgRoot() {
+    return /** @type {!Element} */ (this.textElement_);
+  }
+
+  /**
+  * Change the tooltip text for this field.
+  * @param {string|!Element} newTip Text for tooltip or a parent element to
+  *     link to for its tooltip.
+  */
+  setTooltip(newTip) {
+    this.textElement_.tooltip = newTip;
+  }
+}
+
+
 
 /**
  * Editable fields usually show some sort of UI for the user to change them.
@@ -78,63 +141,5 @@ FieldLabel.prototype.EDITABLE = false;
  * @public
  */
 FieldLabel.prototype.SERIALIZABLE = false;
-
-/**
- * Install this text on a block.
- */
-FieldLabel.prototype.init = function() {
-  if (this.textElement_) {
-    // Text has already been initialized once.
-    return;
-  }
-  // Build the DOM.
-  this.textElement_ = utils.createSvgElement('text',
-      {
-        'class': 'blocklyText',
-        'y': rendererConstants.FIELD_TOP_PADDING,
-        'text-anchor': 'middle',
-        'dominant-baseline': 'middle',
-        'dy': userAgent.EDGE_OR_IE ? Field.IE_TEXT_OFFSET : '0'
-      }, null);
-  if (this.class_) {
-    utils.addClass(this.textElement_, this.class_);
-  }
-  if (!this.visible_) {
-    this.textElement_.style.display = 'none';
-  }
-  this.sourceBlock_.getSvgRoot().appendChild(this.textElement_);
-
-  // Configure the field to be transparent with respect to tooltips.
-  this.textElement_.tooltip = this.sourceBlock_;
-  Tooltip.bindMouseEvents(this.textElement_);
-  // Force a render.
-  this.render_();
-};
-
-/**
- * Dispose of all DOM objects belonging to this text.
- */
-FieldLabel.prototype.dispose = function() {
-  dom.removeNode(this.textElement_);
-  this.textElement_ = null;
-};
-
-/**
- * Gets the group element for this field.
- * Used for measuring the size and for positioning.
- * @return {!Element} The group element.
- */
-FieldLabel.prototype.getSvgRoot = function() {
-  return /** @type {!Element} */ (this.textElement_);
-};
-
-/**
- * Change the tooltip text for this field.
- * @param {string|!Element} newTip Text for tooltip or a parent element to
- *     link to for its tooltip.
- */
-FieldLabel.prototype.setTooltip = function(newTip) {
-  this.textElement_.tooltip = newTip;
-};
 
 Field.register('field_label', FieldLabel);
