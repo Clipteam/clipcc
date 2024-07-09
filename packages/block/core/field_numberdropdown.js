@@ -34,46 +34,47 @@ import {FieldTextDropdown} from './field_textdropdown';
 
 /**
  * Class for a combination number + drop-down field.
- * @param {number|string} value The initial content of the field.
- * @param {(!Array.<!Array.<string>>|!Function)} menuGenerator An array of
- *     options for a dropdown list, or a function which generates these options.
- * @param {number|string|undefined} opt_min Minimum value.
- * @param {number|string|undefined} opt_max Maximum value.
- * @param {number|string|undefined} opt_precision Precision for value.
- * @param {Function=} opt_validator An optional function that is called
- *     to validate any constraints on what the user entered.  Takes the new
- *     text as an argument and returns the accepted text or null to abort
- *     the change.
  * @extends {Blockly.FieldTextInput}
- * @constructor
  */
-export const FieldNumberDropdown = function(value, menuGenerator, opt_min, opt_max,
-    opt_precision, opt_validator) {
-  this.setConstraints_ = FieldNumber.prototype.setConstraints_;
+export class FieldNumberDropdown extends FieldTextDropdown {
+  /**
+   * @param {number|string} value The initial content of the field.
+   * @param {(!Array.<!Array.<string>>|!Function)} menuGenerator An array of
+   *     options for a dropdown list, or a function which generates these options.
+   * @param {number|string|undefined} opt_min Minimum value.
+   * @param {number|string|undefined} opt_max Maximum value.
+   * @param {number|string|undefined} opt_precision Precision for value.
+   * @param {Function=} opt_validator An optional function that is called
+   *     to validate any constraints on what the user entered.  Takes the new
+   *     text as an argument and returns the accepted text or null to abort
+   *     the change.
+   */
+  constructor(value, menuGenerator, opt_min, opt_max, opt_precision, opt_validator) {
+    super(value, menuGenerator, opt_validator);
+    this.setConstraints_ = FieldNumber.prototype.setConstraints_;
+    const numRestrictor = FieldNumber.prototype.getNumRestrictor.call(
+        this, opt_min, opt_max, opt_precision
+    );
+    this.setRestrictor(numRestrictor);
+    this.addArgType('numberdropdown');
+  }
 
-  const numRestrictor = FieldNumber.prototype.getNumRestrictor.call(
-      this, opt_min, opt_max, opt_precision
-  );
-  FieldNumberDropdown.superClass_.constructor.call(
-      this, value, menuGenerator, opt_validator, numRestrictor
-  );
-  this.addArgType('numberdropdown');
-};
-goog.inherits(FieldNumberDropdown, FieldTextDropdown);
+  /**
+  * Construct a FieldTextDropdown from a JSON arg object,
+  * dereferencing any string table references.
+  * @param {!Object} element A JSON object with options.
+  * @returns {!FieldNumberDropdown} The new field instance.
+  * @package
+  * @nocollapse
+  */
+  static fromJson(element) {
+    return new FieldNumberDropdown(
+        element['value'], element['options'],
+        element['min'], element['max'], element['precision']
+    );
+  }
+}
 
-/**
- * Construct a FieldTextDropdown from a JSON arg object,
- * dereferencing any string table references.
- * @param {!Object} element A JSON object with options.
- * @returns {!FieldNumberDropdown} The new field instance.
- * @package
- * @nocollapse
- */
-FieldNumberDropdown.fromJson = function(element) {
-  return new FieldNumberDropdown(
-      element['value'], element['options'],
-      element['min'], element['max'], element['precision']
-  );
-};
+
 
 Field.register('field_numberdropdown', FieldNumberDropdown);
