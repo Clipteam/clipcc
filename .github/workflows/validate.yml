@@ -17,6 +17,6 @@ jobs:
           node-version: 20.x
           cache: 'yarn'
       - name: Install and build
-        run: yarn install --frozen-lockfile && cross-env NO_CDN=1 yarn run build:full
+        run: yarn install --frozen-lockfile && NO_CDN=1 yarn run build:full
       - name: Test
         run: yarn test
