@@ -30,12 +30,11 @@ goog.declareModuleId('Blockly.BlockDragger');
 import * as BlockAnimations from './block_animations';
 import * as constants from './constants';
 import * as eventUtils from './events/utils';
-import {BlockMove} from './events/block_move';
-import {DragBlockOutside} from './events/block_drag_outside';
-import {EndBlockDrag} from './events/block_drag_end';
-import {InsertionMarkerManager} from './insertion_marker_manager';
-import {Msg} from './msg';
-import * as Procedures from './procedures';
+import { BlockMove } from './events/block_move';
+import { DragBlockOutside } from './events/block_drag_outside';
+import { EndBlockDrag } from './events/block_drag_end';
+import { InsertionMarkerManager } from './insertion_marker_manager';
+import { Msg } from './msg';
 
 const Coordinate = goog.require('goog.math.Coordinate');
 const Timer = goog.require('goog.Timer');
@@ -189,7 +188,7 @@ export class BlockDragger {
     const toolbox = this.workspace_.getToolbox();
     if (toolbox) {
       const style = this.draggingBlock_.isDeletable() ? 'blocklyToolboxDelete' :
-          'blocklyToolboxGrab';
+        'blocklyToolboxGrab';
       toolbox.addStyle(style);
     }
   }
@@ -245,7 +244,34 @@ export class BlockDragger {
 
     // Scratch-specific: note possible illegal definition deletion for rollback below.
     const isDeletingProcDef = this.wouldDeleteBlock_ &&
-        (this.draggingBlock_.type == constants.PROCEDURES_DEFINITION_BLOCK_TYPE);
+      (this.draggingBlock_.type == constants.PROCEDURES_DEFINITION_BLOCK_TYPE);
+
+    let canDeleteProcDef = true;
+    if (isDeletingProcDef) {
+      const allBlocks = [];
+      const topBlocks = this.workspace_.getTopBlocks();
+      for (const block of topBlocks) {
+        // skip insertion marker blocks and the corresponding definition block
+        if (block.isInsertionMarker_ || block.id == this.draggingBlock_.id) {
+          continue;
+        }
+        allBlocks.push.apply(allBlocks, block.getDescendants(false));
+      }
+
+      const deletingProcCode = this.draggingBlock_.getInput('custom_block').connection.targetBlock().getProcCode();
+      for (let i = 0; i < allBlocks.length; i++) {
+        const block = allBlocks[i];
+        if (block.type == constants.PROCEDURES_CALL_BLOCK_TYPE) {
+          const procCode = block.getProcCode();
+          if (procCode == deletingProcCode) {
+            canDeleteProcDef = false;
+          }
+        }
+      }
+      if (canDeleteProcDef) {
+        this.workspace_.removeProcedure(this.draggingBlock_);
+      }
+    }
 
     const deleted = this.maybeDeleteBlock_();
     if (!deleted) {
@@ -266,7 +292,7 @@ export class BlockDragger {
     const toolbox = this.workspace_.getToolbox();
     if (toolbox) {
       const style = this.draggingBlock_.isDeletable() ? 'blocklyToolboxDelete' :
-          'blocklyToolboxGrab';
+        'blocklyToolboxGrab';
       toolbox.removeStyle(style);
     }
     eventUtils.setGroup(false);
@@ -285,18 +311,10 @@ export class BlockDragger {
     if (isDeletingProcDef) {
       const ws = this.workspace_;
       setTimeout(function() {
-        const allBlocks = ws.getAllBlocks();
-        for (let i = 0; i < allBlocks.length; i++) {
-          const block = allBlocks[i];
-          if (block.type == constants.PROCEDURES_CALL_BLOCK_TYPE) {
-            const procCode = block.getProcCode();
-            // Check for call blocks with no associated define block.
-            if (!Procedures.getDefineBlock(procCode, ws)) {
-              alert(Msg.PROCEDURE_USED);
-              ws.undo();
-              return; // There can only be one define deletion at a time.
-            }
-          }
+        if (!canDeleteProcDef) {
+          alert(Msg.PROCEDURE_USED);
+          ws.undo();
+          return;
         }
         // The proc deletion was valid, update the toolbox.
         ws.refreshToolboxSelection_();

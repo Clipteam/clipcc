@@ -13,46 +13,51 @@ class Scratch3ProcedureBlocks {
      */
     getPrimitives () {
         return {
-            procedures_definition: this.definition,
+            procedures_definition: this.noOp,
             procedures_call: this.call,
+            procedures_return: this.return,
+            procedures_discard: this.noOp,
             argument_reporter_string_number: this.argumentReporterStringNumber,
             argument_reporter_boolean: this.argumentReporterBoolean
         };
     }
 
-    definition () {
+    noOp () {
         // No-op: execute the blocks.
     }
 
     call (args, util) {
-        if (!util.stackFrame.executed) {
-            const procedureCode = args.mutation.proccode;
-            const paramNamesIdsAndDefaults = util.getProcedureParamNamesIdsAndDefaults(procedureCode);
+        const procedureCode = args.mutation.proccode;
+        const paramNamesIdsAndDefaults = util.getProcedureParamNamesIdsAndDefaults(procedureCode);
 
-            // If null, procedure could not be found, which can happen if custom
-            // block is dragged between sprites without the definition.
-            // Match Scratch 2.0 behavior and noop.
-            if (paramNamesIdsAndDefaults === null) {
-                return;
-            }
-
-            const [paramNames, paramIds, paramDefaults] = paramNamesIdsAndDefaults;
-
-            // Initialize params for the current stackFrame to {}, even if the procedure does
-            // not take any arguments. This is so that `getParam` down the line does not look
-            // at earlier stack frames for the values of a given parameter (#1729)
-            util.initParams();
-            for (let i = 0; i < paramIds.length; i++) {
-                if (args.hasOwnProperty(paramIds[i])) {
-                    util.pushParam(paramNames[i], args[paramIds[i]]);
-                } else {
-                    util.pushParam(paramNames[i], paramDefaults[i]);
-                }
-            }
-
-            util.stackFrame.executed = true;
-            util.startProcedure(procedureCode);
+        // If null, procedure could not be found, which can happen if custom
+        // block is dragged between sprites without the definition.
+        // Match Scratch 2.0 behavior and noop.
+        if (paramNamesIdsAndDefaults === null) {
+            return;
         }
+
+        const [paramNames, paramIds, paramDefaults] = paramNamesIdsAndDefaults;
+
+        // Initialize params for the current stackFrame to {}, even if the procedure does
+        // not take any arguments. This is so that `getParam` down the line does not look
+        // at earlier stack frames for the values of a given parameter (#1729)
+        util.initParams();
+        for (let i = 0; i < paramIds.length; i++) {
+            if (args.hasOwnProperty(paramIds[i])) {
+                util.pushParam(paramNames[i], args[paramIds[i]]);
+            } else {
+                util.pushParam(paramNames[i], paramDefaults[i]);
+            }
+        }
+
+        util.stackFrame.executed = true;
+        util.startProcedure(procedureCode);
+    }
+
+    return (args, util) {
+        util.thread.pushReportedValue(args.VALUE);
+        util.stopThisScript();
     }
 
     argumentReporterStringNumber (args, util) {

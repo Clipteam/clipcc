@@ -486,8 +486,9 @@ export class Connection {
 
   /**
    * Disconnect this connection.
+   * @param {boolean=} opt_noRespawnShadow True if don't respawn shadow block. Defaults to false.
    */
-  disconnect() {
+  disconnect(opt_noRespawnShadow) {
     const otherConnection = this.targetConnection;
     asserts.assert(otherConnection, 'Source connection not connected.');
     asserts.assert(otherConnection.targetConnection == this,
@@ -506,7 +507,9 @@ export class Connection {
       parentConnection = otherConnection;
     }
     this.disconnectInternal_(parentBlock, childBlock);
-    parentConnection.respawnShadow_();
+    if (!opt_noRespawnShadow) {
+      parentConnection.respawnShadow_();
+    }
   }
 
   /**

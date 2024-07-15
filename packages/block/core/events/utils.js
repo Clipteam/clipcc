@@ -164,6 +164,12 @@ export const COMMENT_CHANGE = 'comment_change';
 export const COMMENT_DELETE = 'comment_delete';
 
 /**
+ * Name of event that updates a function.
+ * @const
+ */
+export const FUNC_UPDATE = 'func_update';
+
+/**
  * Name of event that records a UI change.
  * @const
  */

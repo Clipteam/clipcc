@@ -33,6 +33,7 @@ import * as eventUtils from './events/utils';
 import {ScratchBlockComment} from './scratch_block_comment';
 import * as utils from './utils';
 import {VariableMap} from './variable_map';
+import {ProcedureMap} from './procedure_map';
 import {WidgetDiv} from './widgetdiv';
 
 const arrayUtils = goog.require('goog.array');
@@ -110,6 +111,13 @@ export class Workspace {
      * @private
      */
     this.variableMap_ = new VariableMap(this);
+
+    /**
+     * @type {!Blockly.ProcedureMap}
+     * A map from procedure proccode to mutation of procedures.
+     * @private
+     */
+    this.procedureMap_ = new ProcedureMap(this);
 
     /**
      * Blocks in the flyout can refer to variables that don't exist in the main
@@ -289,6 +297,7 @@ export class Workspace {
       eventUtils.setGroup(false);
     }
     this.variableMap_.clear();
+    this.procedureMap_.clear();
     // Any block with a drop-down or WidgetDiv was disposed.
     if (DropDownDiv) {
       DropDownDiv.hideWithoutAnimation();
@@ -631,6 +640,68 @@ export class Workspace {
   getVariableMap() {
     return this.variableMap_;
   }
+
+  /**
+   * Return the map of all procedures on the workspace.
+   * @return {?ProcedureMap} The procedure map.
+   * @package
+   */
+  getProcedureMap() {
+    return this.procedureMap_;
+  }
+
+  /* Begin functions that are just pass-throughs to the procedure map. */
+  /**
+   * Create a procedure with a given mutation.
+   * @param {Element} mutation The mutation of the procedure.
+   * @return {Element} The newly created procedure.
+   */
+  createProcedureFromMutation(mutation) {
+    return this.procedureMap_.createProcedureFromMutation(mutation);
+  }
+
+  /**
+   * Get all global procedure definition mutations.
+   * @return {!Array.<Element>} Array of mutation xml elements.
+   */
+  allGlobalProcedureMutations() {
+    return this.procedureMap_.allGlobalProcedureMutations();
+  }
+
+  /**
+   * Get all local procedure definition mutations.
+   * @return {!Array.<Element>} Array of mutation xml elements.
+   */
+  allLocalProcedureMutations() {
+    return this.procedureMap_.allLocalProcedureMutations();
+  }
+
+  /**
+   * Remove a procedure from definition root block.
+   * @param {!Blockly.Block} definitionRoot The root block of the stack that
+   *     defines the custom procedure.
+   */
+  removeProcedure(definitionRoot) {
+    this.procedureMap_.removeProcedure(definitionRoot);
+  }
+
+  /**
+   * Update a procedure with new mutation.
+   * @param {string} procCode Old proccode of procedure.
+   * @param {Element} newMutation New mutation of procedure.
+   */
+  updateProcedure(procCode, newMutation) {
+    this.procedureMap_.updateProcedure(procCode, newMutation);
+  }
+
+  /**
+   * Find the workspace with the specified ID.
+   * @param {string} id ID of workspace to find.
+   * @return {Blockly.Workspace} The sought after workspace or null if not found.
+   */
+  static getById(id) {
+    return Workspace.WorkspaceDB_[id] || null;
+  }
 }
 
 /**
@@ -659,6 +730,14 @@ Workspace.prototype.MAX_UNDO = 1024;
  * See: http://tvtropes.org/pmwiki/pmwiki.php/Main/DiagonalBilling.
  */
 Workspace.SCAN_ANGLE = 3;
+
+/* End functions that are just pass-throughs to the procedure map. */
+
+/**
+ * Database of all workspaces.
+ * @private
+ */
+Workspace.WorkspaceDB_ = Object.create(null);
 
 // Export symbols that would otherwise be renamed by Closure compiler.
 Workspace.prototype['clear'] = Workspace.prototype.clear;

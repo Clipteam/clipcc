@@ -793,7 +793,6 @@ class Target extends EventEmitter {
             });
         }
     }
-
 }
 
 module.exports = Target;
