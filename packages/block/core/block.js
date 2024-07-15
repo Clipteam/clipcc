@@ -1657,7 +1657,7 @@ export class Block {
    * e.g., OUTPUT_SHAPE_NORMAL(null), OUTPUT_SHAPE_HEXAGONAL, OUTPUT_SHAPE_ROUND, OUTPUT_SHAPE_SQUARE.
    * @param {?number} outputShape Value representing output shape
    *     (see constants.js).
-  */
+   */
   setOutputShape(outputShape) {
     this.outputShape_ = outputShape;
   }

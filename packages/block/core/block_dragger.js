@@ -30,11 +30,11 @@ goog.declareModuleId('Blockly.BlockDragger');
 import * as BlockAnimations from './block_animations';
 import * as constants from './constants';
 import * as eventUtils from './events/utils';
-import { BlockMove } from './events/block_move';
-import { DragBlockOutside } from './events/block_drag_outside';
-import { EndBlockDrag } from './events/block_drag_end';
-import { InsertionMarkerManager } from './insertion_marker_manager';
-import { Msg } from './msg';
+import {BlockMove} from './events/block_move';
+import {DragBlockOutside} from './events/block_drag_outside';
+import {EndBlockDrag} from './events/block_drag_end';
+import {InsertionMarkerManager} from './insertion_marker_manager';
+import {Msg} from './msg';
 
 const Coordinate = goog.require('goog.math.Coordinate');
 const Timer = goog.require('goog.Timer');
@@ -188,7 +188,7 @@ export class BlockDragger {
     const toolbox = this.workspace_.getToolbox();
     if (toolbox) {
       const style = this.draggingBlock_.isDeletable() ? 'blocklyToolboxDelete' :
-        'blocklyToolboxGrab';
+          'blocklyToolboxGrab';
       toolbox.addStyle(style);
     }
   }
