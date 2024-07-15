@@ -175,6 +175,9 @@ Blockly.ScratchBlocks.VerticalExtensions.PROCEDURE_DEF_CONTEXTMENU = {
             alert(Blockly.Msg.PROCEDURE_USED);
           }
         };
+
+        // Add force delete option after delete option.
+        menuOptions.splice(i + 1, 0, Blockly.Procedures.makeForceDeleteOption(this));
       }
     }
     // Find and remove the duplicate option

@@ -33,6 +33,7 @@ goog.declareModuleId('Blockly.Procedures');
 
 import * as constants from './constants';
 import {getMainWorkspace} from './common';
+import * as dialog from './dialog';
 import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Msg} from './msg';
@@ -682,4 +683,36 @@ export const deleteProcedureDefCallback = function(procCode,
   workspace.refreshToolboxSelection_();
 
   return true;
+};
+
+/**
+ * Make a context menu option for deleting a custom procedure.
+ * This appears in the context menu for procedure definitions.
+ * @param {!Blockly.BlockSvg} block The block where the right-click originated.
+ * @return {!Object} A menu option, containing text, enabled, and a callback.
+ * @package
+ */
+export const makeForceDeleteOption = function(block) {
+  return {
+    enabled: true,
+    text: Msg.FORCE_DELETE,
+    callback: function() {
+      dialog.confirm(Msg.FORCE_DELETE_INFO, function(ok) {
+        if (ok) {
+          const workspace = block.workspace;
+
+          workspace.removeProcedure(block);
+
+          // Delete the whole stack.
+          eventUtils.setGroup(true);
+          block.dispose();
+          eventUtils.setGroup(false);
+
+          // TODO (#1354) Update this function when '_' is removed
+          // Refresh toolbox, so caller doesn't appear there anymore
+          workspace.refreshToolboxSelection_();
+        }
+      });
+    }
+  };
 };

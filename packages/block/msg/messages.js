@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /**
  * @license
  * Visual Blocks Language
@@ -332,6 +333,8 @@ Blockly.Msg.HELP = 'Help';
 Blockly.Msg.UNDO = 'Undo';
 Blockly.Msg.REDO = 'Redo';
 Blockly.Msg.EDIT_PROCEDURE = 'Edit';
+Blockly.Msg.FORCE_DELETE = 'Force Delete';
+Blockly.Msg.FORCE_DELETE_INFO = 'You are going to forcibly delete the definition, which may cause undefined function. Press OK to continue.';
 Blockly.Msg.CHANGE_PROCEDURE_SHAPE = 'Change Shape';
 Blockly.Msg.SHOW_PROCEDURE_DEFINITION = 'Go to definition';
 Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT = 'Say something...';
