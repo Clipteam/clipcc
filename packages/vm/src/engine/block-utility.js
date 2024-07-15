@@ -25,6 +25,12 @@ class BlockUtility {
         this._nowObj = {
             now: () => this.sequencer.runtime.currentMSecs
         };
+
+        /**
+         * The opcode to skip to, which is used to implement short-circuit evaluation.
+         * @type {?string | ?boolean}
+         */
+        this.skipToOpcode = null;
     }
 
     /**
@@ -160,7 +166,11 @@ class BlockUtility {
      * @return {Array.<string>} List of param names for a procedure.
      */
     getProcedureParamNamesAndIds (procedureCode) {
-        return this.thread.target.blocks.getProcedureParamNamesAndIds(procedureCode);
+        const result = this.thread.blockContainer.getProcedureParamNamesAndIds(procedureCode);
+        if (result) {
+            return result;
+        }
+        return this.sequencer.runtime.getProcedureParamNamesAndIds(procedureCode);
     }
 
     /**
@@ -169,7 +179,11 @@ class BlockUtility {
      * @return {Array.<string>} List of param names for a procedure.
      */
     getProcedureParamNamesIdsAndDefaults (procedureCode) {
-        return this.thread.target.blocks.getProcedureParamNamesIdsAndDefaults(procedureCode);
+        const result = this.thread.blockContainer.getProcedureParamNamesIdsAndDefaults(procedureCode);
+        if (result) {
+            return result;
+        }
+        return this.sequencer.runtime.getProcedureParamNamesIdsAndDefaults(procedureCode);
     }
 
     /**

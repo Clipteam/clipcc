@@ -883,10 +883,20 @@ BlockSvg.prototype.dispose = function(healStack, animate) {
 };
 
 /**
- * Enable or disable a block.
+ * Updates the style of the block (and children) to match the current
+ * disabled state.
  */
 BlockSvg.prototype.updateDisabled = function() {
-  // not supported
+  const children = this.getChildren(false);
+  this.updateColour();
+  if (this.isCollapsed()) {
+    return;
+  }
+  for (let i = 0, child; child = children[i]; i++) {
+    if (child.rendered) {
+      child.updateDisabled();
+    }
+  }
 };
 
 /**
@@ -906,7 +916,7 @@ BlockSvg.prototype.getCommentText = function() {
  * Set this block's comment text.
  * @param {?string} text The text, or null to delete.
  * @param {string=} commentId Id of the comment, or a new one will be generated if not provided.
- * @param {number=} commentX Optional x position for scratch comment in workspace coordinates
+ * @param {number=} commentX ptional x position for scratch comment in workspace coordinates
  * @param {number=} commentY Optional y position for scratch comment in workspace coordinates
  * @param {boolean=} minimized Optional minimized state for scratch comment, defaults to false
  */
@@ -1018,6 +1028,19 @@ BlockSvg.prototype.setMutator = function(mutator) {
     mutator.block_ = this;
     this.mutator = mutator;
     mutator.createIcon();
+  }
+};
+
+/**
+ * Set whether the block is disabled or not.
+ * @param {boolean} disabled True if disabled.
+ */
+BlockSvg.prototype.setDisabled = function(disabled) {
+  if (this.isDisabled() != disabled) {
+    BlockSvg.superClass_.setDisabled.call(this, disabled);
+    if (this.rendered && !this.getInheritedDisabled()) {
+      this.updateDisabled();
+    }
   }
 };
 

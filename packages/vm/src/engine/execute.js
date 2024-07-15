@@ -37,6 +37,15 @@ const isPromise = function (value) {
 };
 
 /**
+ * Utility function to determine if a block is a procedure caller.
+ * @param {BlockCached} cached Cached block to check.
+ * @return {boolean} True if the block is a procedure.
+ */
+const isProcedureCaller = function (cached) {
+    return cached.opcode === 'procedures_call';
+};
+
+/**
  * Handle any reported value from the primitive, either directly returned
  * or after a promise resolves.
  * @param {*} resolvedValue Value eventually returned from the primitive.
@@ -116,14 +125,17 @@ const handlePromise = (primitiveReportedValue, sequencer, thread, blockCached, l
         if (lastOperation) {
             let stackFrame;
             let nextBlockId;
+            let target;
             do {
                 // In the case that the promise is the last block in the current thread stack
                 // We need to pop out repeatedly until we find the next block.
-                const popped = thread.popStack();
-                if (popped === null) {
+                const willPop = thread.peekStack();
+                if (willPop === null) {
                     return;
                 }
-                nextBlockId = thread.target.blocks.getNextBlock(popped);
+                nextBlockId = thread.blockContainer.getNextBlock(willPop);
+                target = thread.peekStackFrame().target;
+                thread.popStack();
                 if (nextBlockId !== null) {
                     // A next block exists so break out this loop
                     break;
@@ -131,9 +143,9 @@ const handlePromise = (primitiveReportedValue, sequencer, thread, blockCached, l
                 // Investigate the next block and if not in a loop,
                 // then repeat and pop the next item off the stack frame
                 stackFrame = thread.peekStackFrame();
-            } while (stackFrame !== null && !stackFrame.isLoop);
+            } while (stackFrame !== null && !stackFrame.isLoop && !stackFrame.waitingReporter);
 
-            thread.pushStack(nextBlockId);
+            thread.pushStack(nextBlockId, target);
         }
     }, rejectionReason => {
         // Promise rejected: the primitive had some error.
@@ -339,35 +351,72 @@ class BlockCached {
             }
         }
 
-        // Cache all input children blocks in the operation lists. The
-        // operations can later be run in the order they appear in correctly
-        // executing the operations quickly in a flat loop instead of needing to
-        // recursivly iterate them.
-        for (const inputName in this._inputs) {
-            const input = this._inputs[inputName];
-            if (input.block) {
-                const inputCached = BlocksExecuteCache.getCached(blockContainer, input.block, BlockCached);
+        const order = runtime.getExecutionOrders(opcode);
 
-                if (inputCached._isHat) {
-                    continue;
-                }
-
-                this._ops.push(...inputCached._ops);
-                inputCached._parentKey = inputName;
-                inputCached._parentValues = this._argValues;
-
-                // Shadow values are static and do not change, go ahead and
-                // store their value on args.
-                if (inputCached._isShadowBlock) {
-                    this._argValues[inputName] = inputCached._shadowValue;
+        if (order) {
+            // Cache all inputs with given order.
+            for (const item of order) {
+                if (typeof item === 'object') {
+                    if (item.execute) {
+                        if (item.execute === this.opcode) {
+                            this._ops.push(this);
+                        } else {
+                            const cached = new BlockCached(blockContainer, {
+                                id: '',
+                                opcode: item.execute,
+                                fields: {},
+                                inputs: {}
+                            });
+                            cached._argValues = this._argValues;
+                            cached._parentValues = {};
+                            this._ops.push(cached);
+                        }
+                    }
+                } else if (this._inputs.hasOwnProperty(item)) {
+                    this._pushInput(item, blockContainer);
                 }
             }
-        }
+        } else {
+            // Cache all input children blocks in the operation lists. The
+            // operations can later be run in the order they appear in correctly
+            // executing the operations quickly in a flat loop instead of needing to
+            // recursivly iterate them.
+            for (const inputName in this._inputs) {
+                this._pushInput(inputName, blockContainer);
+            }
 
-        // The final operation is this block itself. At the top most block is a
-        // command block or a block that is being run as a monitor.
-        if (this._definedBlockFunction) {
-            this._ops.push(this);
+            // The final operation is this block itself. At the top most block is a
+            // command block or a block that is being run as a monitor.
+            if (this._definedBlockFunction) {
+                this._ops.push(this);
+            }
+        }
+    }
+
+    /**
+     * Push an input with given name to ops.
+     * @param {!string} inputName The input name.
+     * @param {!Blocks} blockContainer The related Blocks instance.
+     * @private
+     */
+    _pushInput (inputName, blockContainer) {
+        const input = this._inputs[inputName];
+        if (input.block) {
+            const inputCached = BlocksExecuteCache.getCached(blockContainer, input.block, BlockCached);
+
+            if (inputCached._isHat) {
+                return;
+            }
+
+            this._ops.push(...inputCached._ops);
+            inputCached._parentKey = inputName;
+            inputCached._parentValues = this._argValues;
+
+            // Shadow values are static and do not change, go ahead and
+            // store their value on args.
+            if (inputCached._isShadowBlock) {
+                this._argValues[inputName] = inputCached._shadowValue;
+            }
         }
     }
 }
@@ -462,7 +511,7 @@ const execute = function (sequencer, thread) {
         }
 
         // The reporting block must exist and must be the next one in the sequence of operations.
-        if (thread.justReported !== null && ops[i] && ops[i].id === currentStackFrame.reporting) {
+        if (ops[i] && ops[i].id === currentStackFrame.reporting) {
             const opCached = ops[i];
             const inputValue = thread.justReported;
 
@@ -470,8 +519,13 @@ const execute = function (sequencer, thread) {
 
             const inputName = opCached._parentKey;
             const argValues = opCached._parentValues;
-
-            if (inputName === 'BROADCAST_INPUT') {
+            
+            // cc - if current call is the last operation, which means that it is called by clicking directly,
+            // then call handleReport.
+            if (currentStackFrame.waitingReporter && i === length - 1) {
+                // cc - if returned value is null, then set the argument to undefined to avoid visual report. 
+                handleReport(inputValue ?? undefined, sequencer, thread, opCached, true);
+            } else if (inputName === 'BROADCAST_INPUT') {
                 // Something is plugged into the broadcast input.
                 // Cast it to a string. We don't need an id here.
                 argValues.BROADCAST_OPTION.id = null;
@@ -485,13 +539,14 @@ const execute = function (sequencer, thread) {
 
         currentStackFrame.reporting = null;
         currentStackFrame.reported = null;
+        currentStackFrame.waitingReporter = false;
     }
 
     const start = i;
 
     for (; i < length; i++) {
-        const lastOperation = i === length - 1;
-        const opCached = ops[i];
+        let lastOperation = i === length - 1;
+        let opCached = ops[i];
 
         const blockFunction = opCached._blockFunction;
 
@@ -512,15 +567,42 @@ const execute = function (sequencer, thread) {
 
         const primitiveReportedValue = blockFunction(argValues, blockUtility);
 
+        // cc - preserve returned value
+        if (opCached.opcode === 'procedures_return') {
+            break;
+        }
+
+        // Skip to specific opcode to implement short-circuit evaluation.
+        if (blockUtility.skipToOpcode) {
+            if (typeof blockUtility.skipToOpcode === 'boolean') {
+                // blockUtility.skipToOpcode is true
+                blockUtility.skipToOpcode = null;
+                continue;
+            }
+            while (ops[i].opcode !== blockUtility.skipToOpcode) {
+                ++i;
+            }
+            blockUtility.skipToOpcode = null;
+            // Update current block.
+            opCached = ops[i];
+            lastOperation = i === length - 1;
+        }
+
         // If it's a promise, wait until promise resolves.
-        if (isPromise(primitiveReportedValue)) {
-            handlePromise(primitiveReportedValue, sequencer, thread, opCached, lastOperation);
+        // cc - if it's procedure_call, treat it as a promise.
+        const isValuePromise = isPromise(primitiveReportedValue);
+        const isCaller = isProcedureCaller(opCached);
+        if (isValuePromise || isCaller) {
+            if (isValuePromise) {
+                handlePromise(primitiveReportedValue, sequencer, thread, opCached, lastOperation);
+            }
 
             // Store the already reported values. They will be thawed into the
             // future versions of the same operations by block id. The reporting
             // operation if it is promise waiting will set its parent value at
             // that time.
             thread.justReported = null;
+            currentStackFrame.waitingReporter = isCaller;
             currentStackFrame.reporting = ops[i].id;
             currentStackFrame.reported = ops.slice(0, i).map(reportedCached => {
                 const inputName = reportedCached._parentKey;
@@ -534,7 +616,7 @@ const execute = function (sequencer, thread) {
                 }
                 return {
                     opCached: reportedCached.id,
-                    inputValue: reportedValues[inputName]
+                    inputValue: reportedValues ? reportedValues[inputName] : null
                 };
             });
 

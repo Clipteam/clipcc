@@ -30,6 +30,7 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Field');
 
 import * as browserEvents from './browser_events';
+import * as constants from './constants';
 import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import * as registry from './registry';
@@ -692,7 +693,7 @@ Field.prototype.setTooltip = function(_newTip) {
  *
  * If the block has only one field and no output connection, we handle clicks
  * over the whole block. Otherwise, handle clicks over the the group containing
- * the field.
+ * the field. (Except procedure_declaration)
  *
  * @return {!Element} Element to bind click handler to.
  * @private
@@ -703,7 +704,8 @@ Field.prototype.getClickTarget_ = function() {
   for (let i = 0, input; input = this.sourceBlock_.inputList[i]; i++) {
     nFields += input.fieldRow.length;
   }
-  if (nFields <= 1 && this.sourceBlock_.outputConnection) {
+  if (nFields <= 1 && this.sourceBlock_.outputConnection &&
+      this.sourceBlock_.type !== constants.PROCEDURES_DECLARATION_BLOCK_TYPE) {
     return this.sourceBlock_.getSvgRoot();
   } else {
     return this.getSvgRoot();
