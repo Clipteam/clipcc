@@ -220,10 +220,11 @@ class Blocks {
     }
 
     /**
-     * Get all global procedure definitions.
-     * @return {?Array.<String>} Mutations of procedures.
+     * Get all procedure definitions.
+     * @param {?boolean} globalOnly True if only get global procedures.
+     * @return {?Array.<String>} Mutations of procedures. Set "external" if globalOnly is true. 
      */
-    getAllGlobalProcedures () {
+    getAllProcedureDefinitions (globalOnly) {
         const procedures = [];
 
         for (const id in this._blocks) {
@@ -231,10 +232,10 @@ class Blocks {
             const block = this._blocks[id];
             if (block.opcode === 'procedures_definition') {
                 const internal = this._getCustomBlockInternal(block);
-                if (internal && internal.mutation.global === 'true') { // TODO: don't use boolean in string
+                if (internal && (!globalOnly || internal.mutation.global === 'true')) {
                     this._cache.procedureDefinitions[internal.mutation.proccode] = id; // The outer define block id
                     procedures.push(this.mutationToXML(Object.assign({
-                        target: this.id
+                        external: globalOnly // set external if globalOnly is true
                     }, internal.mutation)));
                 }
             }
@@ -246,12 +247,20 @@ class Blocks {
     /**
      * Get the procedure definition for a given name.
      * @param {?string} name Name of procedure to query.
+     * @param {?boolean} globalOnly True if only find global procedures.
      * @return {?string} ID of procedure definition.
      */
-    getProcedureDefinition (name) {
+    getProcedureDefinition (name, globalOnly) {
         const blockID = this._cache.procedureDefinitions[name];
         if (typeof blockID !== 'undefined') {
-            return blockID;
+            if (blockID) {
+                const internal = blockID && this._getCustomBlockInternal(this._blocks[blockID]);
+                if (!globalOnly || internal.mutation.global === 'true') {
+                    return blockID;
+                }
+            }
+            
+            return null;
         }
 
         for (const id in this._blocks) {
@@ -261,7 +270,12 @@ class Blocks {
                 const internal = this._getCustomBlockInternal(block);
                 if (internal && internal.mutation.proccode === name) {
                     this._cache.procedureDefinitions[name] = id; // The outer define block id
-                    return id;
+                    // suppose procedure proccode is unique in one target
+                    if (!globalOnly || internal.mutation.global === 'true') {
+                        return id;
+                    } else {
+                        return null;
+                    }
                 }
             }
         }
@@ -326,7 +340,7 @@ class Blocks {
         // Validate event
         if (typeof e !== 'object') return;
         if (typeof e.blockId !== 'string' && typeof e.varId !== 'string' &&
-            typeof e.commentId !== 'string') {
+            typeof e.commentId !== 'string' && typeof e.procCode !== 'string') {
             return;
         }
         const stage = this.runtime.getTargetForStage();
@@ -526,6 +540,20 @@ class Blocks {
                 this.emitProjectChanged();
             }
             break;
+        case 'func_update': {
+            const oldMutation = mutationAdapter(e.oldMutation);
+            const newMutation = mutationAdapter(e.newMutation);
+            const procCode = oldMutation.proccode;
+            if (oldMutation.global === 'true') {
+                for (const target of this.runtime.targets) {
+                    target.blocks.updateBlocksAfterFuncUpdate(procCode, newMutation);
+                }
+            } else {
+                editingTarget.blocks.updateBlocksAfterFuncUpdate(procCode, newMutation);
+            }
+            this.emitProjectChanged();
+            break;
+        }
         }
     }
 
@@ -929,6 +957,38 @@ class Blocks {
                 }
             }
         }
+    }
+
+    /**
+     * Keep blocks up to date after a procedure gets updated.
+     * @param {string} procCode The procCode of procedure to update
+     * @param {object} newMutation The new mutation of procedure
+     */
+    updateBlocksAfterFuncUpdate (procCode, newMutation) {
+        const blocks = this._blocks;
+        for (const blockId in blocks) {
+            const block = blocks[blockId];
+            if (block.opcode === 'procedures_prototype') {
+                if (block.mutation.proccode === procCode) {
+                    block.mutation.proccode = newMutation.proccode;
+                    block.mutation.argumentids = newMutation.argumentids;
+                    block.mutation.argumentnames = newMutation.argumentnames;
+                    block.mutation.argumentdefaults = newMutation.argumentdefaults;
+                    block.mutation.warp = newMutation.warp;
+                    block.mutation.global = newMutation.global;
+                    block.mutation.return = newMutation.return;
+                }
+            } else if (block.opcode === 'procedures_call') {
+                if (block.mutation.proccode === procCode) {
+                    block.mutation.proccode = newMutation.proccode;
+                    block.mutation.argumentids = newMutation.argumentids;
+                    block.mutation.warp = newMutation.warp;
+                    block.mutation.global = newMutation.global;
+                    block.mutation.return = newMutation.return;
+                }
+            }
+        }
+        this.resetCache();
     }
 
     /**

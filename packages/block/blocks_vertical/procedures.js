@@ -56,8 +56,10 @@ Blockly.ScratchBlocks.ProcedureUtils.callerMutationToDom = function() {
  */
 Blockly.ScratchBlocks.ProcedureUtils.callerDomToMutation = function(xmlElement) {
   this.procCode_ = xmlElement.getAttribute('proccode');
-  this.generateShadows_ =
-      JSON.parse(xmlElement.getAttribute('generateshadows'));
+  // cc - callers should always generate shadows
+  // this.generateShadows_ =
+  //    JSON.parse(xmlElement.getAttribute('generateshadows'));
+  this.generateShadows_ = true;
   this.argumentIds_ = JSON.parse(xmlElement.getAttribute('argumentids'));
   this.warp_ = JSON.parse(xmlElement.getAttribute('warp'));
   // don't update shape if caller still has connections
@@ -254,7 +256,7 @@ Blockly.ScratchBlocks.ProcedureUtils.createAllInputs_ = function(connectionMap) 
   let argumentCount = 0;
   for (let i = 0; i < procComponents.length; i++) {
     // The first component should always be created even if the value is ''.
-    let component = procComponents[i];
+    const component = procComponents[i];
     let labelText;
     if (component.substring(0, 1) == '%') {
       const argumentType = component.substring(1, 2);
@@ -650,7 +652,7 @@ Blockly.ScratchBlocks.ProcedureUtils.updateDeclarationProcCode_ = function() {
     }
     const input = this.inputList[i];
     if (input.type == Blockly.constants.DUMMY_INPUT) {
-      this.procCode_ += input.fieldRow[0].getValue();
+      this.procCode_ += input.fieldRow[0].getValue().replace('%', '\\%');
     } else if (input.type == Blockly.constants.INPUT_VALUE) {
       // Inspect the argument editor.
       const target = input.connection.targetBlock();
@@ -799,12 +801,11 @@ Blockly.ScratchBlocks.ProcedureUtils.getGlobal = function() {
 
 /**
  * Externally-visible function to set the global on procedure declaration.
- * @returns {boolean} The value of the global_ property.
+ * @param {boolean} global The value of global_ property.
  * @public
  */
 Blockly.ScratchBlocks.ProcedureUtils.setGlobal = function(global) {
   this.global_ = global;
-  this.updateShape_();
 };
 
 /**
@@ -951,7 +952,7 @@ Blockly.ScratchBlocks.ProcedureUtils.updatePrototypeShape_ = function() {
  * @this Blockly.Block
  */
 Blockly.ScratchBlocks.ProcedureUtils.updateProcedureShape_ = function() {
-  var isReturn = this.getOutputShape() != Blockly.constants.OUTPUT_SHAPE_NORMAL;
+  const isReturn = this.getOutputShape() != Blockly.constants.OUTPUT_SHAPE_NORMAL;
   if (isReturn != this.return_) {
     if (this.return_) {
       this.setOutputShape(Blockly.constants.OUTPUT_SHAPE_ROUND);
@@ -983,6 +984,20 @@ Blockly.ScratchBlocks.ProcedureUtils.updateDefinitionReturn_ = function(newRetur
       input.type = input.connection.type = Blockly.constants.INPUT_VALUE;
     } else {
       input.type = input.connection.type = Blockly.constants.NEXT_STATEMENT;
+    }
+
+    // Search for return blocks in definition and update disable state.
+    const nextBlock = this.getNextBlock(); // the very first block after definition
+    if (nextBlock) {
+      const allBlocks = nextBlock.getDescendants(false, true); // unordered, ignore shadows
+      const group = Blockly.Events.getGroup();
+      Blockly.Events.setGroup(true);
+      for (const block of allBlocks) {
+        if (block.type == Blockly.constants.PROCEDURES_RETURN_BLOCK_TYPE) {
+          block.setDisabled(!newReturn);
+        }
+      }
+      Blockly.Events.setGroup(group);
     }
 
     // Update the block's apperance to match the mutation.
@@ -1189,8 +1204,9 @@ Blockly.Blocks['procedures_return'] = {
       const group = Blockly.Events.getGroup();
       // Makes it so the move and the disable event get undone together.
       Blockly.Events.setGroup(event.group);
-      var root = this.getRootBlock();
-      this.setDisabled(root.type != Blockly.constants.PROCEDURES_DEFINITION_BLOCK_TYPE || !root.getInputTargetBlock('custom_block').return_);
+      const root = this.getRootBlock();
+      this.setDisabled(root.type != Blockly.constants.PROCEDURES_DEFINITION_BLOCK_TYPE ||
+          !root.getInputTargetBlock('custom_block').return_);
       Blockly.Events.setGroup(group);
     }
   }

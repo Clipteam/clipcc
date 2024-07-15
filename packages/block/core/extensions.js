@@ -446,3 +446,11 @@ const extensionParentTooltip = function() {
 };
 register('parent_tooltip_when_inline',
     extensionParentTooltip);
+
+/**
+ * Namespace object for tests.
+ * @internal
+ */
+export const TEST_ONLY = {
+  ALL
+};

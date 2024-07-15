@@ -32,6 +32,8 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Procedures');
 
 import * as constants from './constants';
+import {getMainWorkspace} from './common';
+import * as dialog from './dialog';
 import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Msg} from './msg';
@@ -228,7 +230,7 @@ export const flyoutCategory = function(workspace) {
   addCreateButton(workspace, xmlList);
 
   // Create call blocks for each procedure
-  let globalMutations = workspace.procedureMap_.allGlobalProcedureMutations();
+  let globalMutations = workspace.allGlobalProcedureMutations();
   globalMutations = sortProcedureMutations(globalMutations);
   let localMutations = allProcedureMutations(workspace);
   localMutations = sortProcedureMutations(localMutations);
@@ -254,9 +256,6 @@ export const flyoutCategory = function(workspace) {
     const block = dom.createDom('block');
     block.setAttribute('type', 'procedures_call');
     block.setAttribute('gap', i == globalMutations.length - 1 ? 36 : 16);
-    if (i < globalMutations.length) {
-      mutation.setAttribute('generateshadows', true);
-    }
     block.appendChild(mutation);
     xmlList.push(block);
   }
@@ -327,9 +326,13 @@ export const getCallers = function(name, ws, definitionRoot,
  * @param {string} name Name of procedure (procCode in scratch-blocks).
  * @param {!Blockly.Workspace} ws The workspace to find callers in.
  * @param {!Element} mutation New mutation for the callers.
+ * @deprecated Use ProcedureMap.updateProcedure instead
  * @package
  */
 export const mutateCallersAndPrototype = function(name, ws, mutation) {
+  console.warn('Deprecated call to Blockly.Procedures.mutateCallersAndPrototype, ' +
+    'please use ProcedureMap.updateProcedure instead.');
+
   const defineBlock = getDefineBlock(name, ws);
   const prototypeBlock = getPrototypeBlock(name, ws);
   if (defineBlock && prototypeBlock) {
@@ -457,7 +460,7 @@ const createProcedureCallbackFactory = function(workspace) {
       block.scheduleSnapAndBump();
       eventUtils.setGroup(false);
       // Add to procedure map of the workspace
-      workspace.procedureMap_.createProcedureFromMutation(mutation);
+      workspace.createProcedureFromMutation(mutation);
     }
   };
 };
@@ -495,8 +498,14 @@ const editProcedureCallback = function(block) {
     }
     // This is a call block, find the prototype corresponding to the procCode.
     // Make sure to search the correct workspace, call block can be in flyout.
-    const workspaceToSearch = block.workspace.isFlyout ?
-        block.workspace.targetWorkspace : block.workspace;
+    // block's workspace may lost after checkout workspace
+    let workspaceToSearch;
+    if (block.workspace !== null) {
+      workspaceToSearch = block.workspace.isFlyout ? block.workspace.targetWorkspace : block.workspace;
+    } else {
+      workspaceToSearch = getMainWorkspace();
+    }
+
     block = getPrototypeBlock(
         block.getProcCode(), workspaceToSearch);
   }
@@ -517,8 +526,7 @@ const editProcedureCallback = function(block) {
 const editProcedureCallbackFactory = function(block) {
   return function(mutation) {
     if (mutation) {
-      mutateCallersAndPrototype(block.getProcCode(),
-          block.workspace, mutation);
+      block.workspace.updateProcedure(block.getProcCode(), mutation);
     }
   };
 };
@@ -584,10 +592,17 @@ export const makeEditOption = function(block) {
  * @private
  */
 const showProcedureDefCallback = function(block) {
-    if (block.getGlobal()) {
-      externalCheckoutWsCallback(block.getProcCode());
-    }
-  const workspace = block.workspace.isFlyout ? block.workspace.targetWorkspace : block.workspace;
+  let workspace;
+  if (block.getGlobal()) {
+    externalCheckoutWsCallback(block.getProcCode());
+  }
+  // block's workspace may lost after checkout workspace
+  if (block.workspace !== null) {
+    workspace = block.workspace.isFlyout ? block.workspace.targetWorkspace : block.workspace;
+  } else {
+    workspace = getMainWorkspace();
+  }
+
   const defBlock = getDefineBlock(block.getProcCode(), workspace);
   if (defBlock) {
     workspace.centerOnBlock(defBlock.id);
@@ -625,7 +640,14 @@ export const makeChangeShapeOption = function(block) {
     enabled: true,
     text: Msg.CHANGE_PROCEDURE_SHAPE,
     callback: function() {
+      const oldMutationDom = block.mutationToDom();
+      const oldMutation = oldMutationDom && Xml.domToText(oldMutationDom);
       block.setReturn(!block.getReturn());
+      const newMutationDom = block.mutationToDom();
+      const newMutation = newMutationDom && Xml.domToText(newMutationDom);
+      eventUtils.setGroup(true);
+      eventUtils.fire(new BlockChange(block, 'mutation', null, oldMutation, newMutation));
+      eventUtils.setGroup(false);
     }
   };
   return option;
@@ -649,7 +671,7 @@ export const deleteProcedureDefCallback = function(procCode,
 
   const workspace = definitionRoot.workspace;
 
-  workspace.procedureMap_.removeProcedure(definitionRoot);
+  workspace.removeProcedure(definitionRoot);
 
   // Delete the whole stack.
   eventUtils.setGroup(true);
@@ -661,4 +683,36 @@ export const deleteProcedureDefCallback = function(procCode,
   workspace.refreshToolboxSelection_();
 
   return true;
+};
+
+/**
+ * Make a context menu option for forcibly deleting a custom procedure.
+ * This appears in the context menu for procedure definitions.
+ * @param {!Blockly.BlockSvg} block The block where the right-click originated.
+ * @return {!Object} A menu option, containing text, enabled, and a callback.
+ * @package
+ */
+export const makeForceDeleteOption = function(block) {
+  return {
+    enabled: true,
+    text: Msg.FORCE_DELETE,
+    callback: function() {
+      dialog.confirm(Msg.FORCE_DELETE_INFO, function(ok) {
+        if (ok) {
+          const workspace = block.workspace;
+
+          workspace.removeProcedure(block);
+
+          // Delete the whole stack.
+          eventUtils.setGroup(true);
+          block.dispose();
+          eventUtils.setGroup(false);
+
+          // TODO (#1354) Update this function when '_' is removed
+          // Refresh toolbox, so caller doesn't appear there anymore
+          workspace.refreshToolboxSelection_();
+        }
+      });
+    }
+  };
 };

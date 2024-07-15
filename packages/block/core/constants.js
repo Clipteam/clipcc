@@ -390,6 +390,12 @@ export const PROCEDURES_DECLARATION_BLOCK_TYPE = 'procedures_declaration';
 export const PROCEDURES_CALL_BLOCK_TYPE = 'procedures_call';
 
 /**
+ * The type of all procedure return blocks.
+ * @const {string}
+ */
+export const PROCEDURES_RETURN_BLOCK_TYPE = 'procedures_return';
+
+/**
  * ENUM for flyout status button states.
  * @const
  */

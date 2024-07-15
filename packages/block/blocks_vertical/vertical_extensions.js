@@ -175,6 +175,9 @@ Blockly.ScratchBlocks.VerticalExtensions.PROCEDURE_DEF_CONTEXTMENU = {
             alert(Blockly.Msg.PROCEDURE_USED);
           }
         };
+
+        // Add force delete option after delete option.
+        menuOptions.splice(i + 1, 0, Blockly.Procedures.makeForceDeleteOption(this));
       }
     }
     // Find and remove the duplicate option
@@ -207,7 +210,7 @@ Blockly.ScratchBlocks.VerticalExtensions.PROCEDURE_CALL_CONTEXTMENU = {
     !(this.outputConnection && this.outputConnection.isConnected()) &&
     !(this.nextConnection && this.nextConnection.isConnected()) &&
     !this.getProcCode().includes('%c')) {
-        menuOptions.push(Blockly.Procedures.makeChangeShapeOption(this));
+      menuOptions.push(Blockly.Procedures.makeChangeShapeOption(this));
     }
     menuOptions.push(Blockly.Procedures.makeEditOption(this));
     menuOptions.push(Blockly.Procedures.makeShowDefinitionOption(this));

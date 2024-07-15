@@ -31,7 +31,7 @@ goog.require('goog.testing');
  * The normal blockly event fire function.  We sometimes override this.  This
  * handle lets us reset after an override.
  */
-var savedFireFunc = Blockly.Events.fire;
+var savedFireFunc = eventUtils.TEST_ONLY.fire;
 
 /**
  * A helper function to replace Blockly.Events.fire in tests.
@@ -40,8 +40,8 @@ function temporary_fireEvent(event) {
   if (!Blockly.Events.isEnabled()) {
     return;
   }
-  Blockly.Events.FIRE_QUEUE_.push(event);
-  Blockly.Events.fireNow_();
+  eventUtils.TEST_ONLY.FIRE_QUEUE.push(event);
+  eventUtils.TEST_ONLY.fireNow();
 }
 
 /**

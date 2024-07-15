@@ -757,7 +757,7 @@ const domToBlockHeadless = function(xmlBlock, workspace) {
             // child block was completely created and will be connected to its parent. So the
             // parent block can change its connection type based on its child's data.
             block.childWillConnect(blockChild);
-          }    
+          }
           if (blockChild.outputConnection) {
             input.connection.connect(blockChild.outputConnection);
           } else if (blockChild.previousConnection) {

@@ -35,7 +35,6 @@ import {DragBlockOutside} from './events/block_drag_outside';
 import {EndBlockDrag} from './events/block_drag_end';
 import {InsertionMarkerManager} from './insertion_marker_manager';
 import {Msg} from './msg';
-import * as Procedures from './procedures';
 
 const Coordinate = goog.require('goog.math.Coordinate');
 const Timer = goog.require('goog.Timer');
@@ -247,8 +246,17 @@ BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
 
   let canDeleteProcDef = true;
   if (isDeletingProcDef) {
-    const allBlocks = this.workspace_.getAllBlocks();
-    const deletingProcCode = this.draggingBlock_.getChildren()[0].getProcCode();
+    const allBlocks = [];
+    const topBlocks = this.workspace_.getTopBlocks();
+    for (const block of topBlocks) {
+      // skip insertion marker blocks and the corresponding definition block
+      if (block.isInsertionMarker_ || block.id == this.draggingBlock_.id) {
+        continue;
+      }
+      allBlocks.push.apply(allBlocks, block.getDescendants(false));
+    }
+
+    const deletingProcCode = this.draggingBlock_.getInput('custom_block').connection.targetBlock().getProcCode();
     for (let i = 0; i < allBlocks.length; i++) {
       const block = allBlocks[i];
       if (block.type == constants.PROCEDURES_CALL_BLOCK_TYPE) {
@@ -259,7 +267,7 @@ BlockDragger.prototype.endBlockDrag = function(e, currentDragDeltaXY) {
       }
     }
     if (canDeleteProcDef) {
-      this.workspace_.procedureMap_.removeProcedure(this.draggingBlock_);
+      this.workspace_.removeProcedure(this.draggingBlock_);
     }
   }
 

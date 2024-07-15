@@ -2651,18 +2651,6 @@ class Runtime extends EventEmitter {
         stage.variables[variable.id] = variable;
         return variable;
     }
-    
-    /**
-     * Get all mutations of global procedures.
-     * @return {?Array.<string>} List of all mutations' XML string.
-     */
-    getAllGlobalProcedures () {
-        const procedures = [];
-        for (const target of this.targets) {
-            procedures.push(...target.blocks.getAllGlobalProcedures());
-        }
-        return procedures;
-    }
 
     /**
      * Get names and ids of parameters for the given procedure.
@@ -2705,13 +2693,13 @@ class Runtime extends EventEmitter {
     }
 
     /**
-     * Get the procedure definition for a given name.
+     * Get the global procedure definition for a given name.
      * @param {?string} name Name of procedure to query.
      * @return {[?Target, ?string]} ID of procedure definition.
      */
     getProcedureDefinition (name) {
         for (const target of this.targets) {
-            const definition = target.blocks.getProcedureDefinition(name);
+            const definition = target.blocks.getProcedureDefinition(name, true);
             if (definition) {
                 return [target, definition];
             }
