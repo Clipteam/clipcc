@@ -686,7 +686,7 @@ export const deleteProcedureDefCallback = function(procCode,
 };
 
 /**
- * Make a context menu option for deleting a custom procedure.
+ * Make a context menu option for forcibly deleting a custom procedure.
  * This appears in the context menu for procedure definitions.
  * @param {!Blockly.BlockSvg} block The block where the right-click originated.
  * @return {!Object} A menu option, containing text, enabled, and a callback.
