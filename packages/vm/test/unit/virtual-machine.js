@@ -520,7 +520,8 @@ test('emitWorkspaceUpdate', t => {
                 }
             },
             blocks: {
-                toJSON: blocksToState
+                toJSON: blocksToState,
+                getAllProcedureDefinitions: () => []
             },
             comments: {
                 aStageComment: {
@@ -535,7 +536,8 @@ test('emitWorkspaceUpdate', t => {
                 }
             },
             blocks: {
-                toJSON: blocksToState
+                toJSON: blocksToState,
+                getAllProcedureDefinitions: () => []
             },
             comments: {
                 someBlockComment: {
@@ -550,7 +552,8 @@ test('emitWorkspaceUpdate', t => {
                 }
             },
             blocks: {
-                toJSON: blocksToState
+                toJSON: blocksToState,
+                getAllProcedureDefinitions: () => []
             },
             comments: {
                 someOtherComment: {

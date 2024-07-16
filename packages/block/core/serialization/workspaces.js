@@ -31,6 +31,7 @@ import * as eventUtils from '../events/utils';
 import * as utils from '../utils';
 import * as variableSerializer from './variables';
 import * as commentSerializer from './comments';
+import * as procedureSerializer from './procedures';
 
 goog.declareModuleId('Blockly.serialization.workspaces');
 
@@ -128,6 +129,11 @@ export const load = function(state, workspace, {recordUndo = false, clear = fals
   if (state['comments']) {
     const commentStates = state['comments'];
     commentSerializer.load(commentStates, workspace, width);
+  }
+
+  if (state['procedures']) {
+    const procedureStates = state['procedures'];
+    procedureSerializer.load(procedureStates, workspace);
   }
 
   if (workspace.setResizesEnabled) {

@@ -637,6 +637,12 @@ const loadInputBlocks = function(block, state) {
     }
 
     const inputBlock = loadPrivate(inputState.block, block.workspace);
+    if (block.childWillConnect) {
+      // This event was newly added to Blockly by ClipCC. It will be triggered when a
+      // child block was completely created and will be connected to its parent. So the
+      // parent block can change its connection type based on its child's data.
+      block.childWillConnect(inputBlock);
+    }
     if (inputBlock.outputConnection) {
       input.connection.connect(inputBlock.outputConnection);
     } else if (inputBlock.previousConnection) {

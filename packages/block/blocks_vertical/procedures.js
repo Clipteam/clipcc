@@ -56,6 +56,8 @@ Blockly.ScratchBlocks.ProcedureUtils.callerMutationToDom = function() {
   container.setAttribute('proccode', this.procCode_);
   container.setAttribute('argumentids', JSON.stringify(this.argumentIds_));
   container.setAttribute('warp', JSON.stringify(this.warp_));
+  container.setAttribute('return', JSON.stringify(this.return_));
+  container.setAttribute('global', JSON.stringify(this.global_));
   return container;
 };
 
@@ -67,10 +69,19 @@ Blockly.ScratchBlocks.ProcedureUtils.callerMutationToDom = function() {
  */
 Blockly.ScratchBlocks.ProcedureUtils.callerDomToMutation = function(xmlElement) {
   this.procCode_ = xmlElement.getAttribute('proccode');
-  this.generateShadows_ =
-      JSON.parse(xmlElement.getAttribute('generateshadows'));
+  // cc - callers should always generate shadows
+  // this.generateShadows_ =
+  //    JSON.parse(xmlElement.getAttribute('generateshadows'));
+  this.generateShadows_ = true;
   this.argumentIds_ = JSON.parse(xmlElement.getAttribute('argumentids'));
   this.warp_ = JSON.parse(xmlElement.getAttribute('warp'));
+  // don't update shape if caller still has connections
+  if (!(this.previousConnection && this.previousConnection.isConnected()) &&
+    !(this.outputConnection && this.outputConnection.isConnected()) &&
+    !(this.nextConnection && this.nextConnection.isConnected())) {
+    this.return_ = JSON.parse(xmlElement.getAttribute('return'));
+  }
+  this.global_ = JSON.parse(xmlElement.getAttribute('global'));
   this.updateDisplay_();
 };
 
@@ -85,7 +96,9 @@ Blockly.ScratchBlocks.ProcedureUtils.callerSaveExtraState = function() {
   return {
     proccode: this.procCode_,
     argumentids: JSON.stringify(this.argumentIds_),
-    warp: JSON.stringify(this.warp_)
+    warp: JSON.stringify(this.warp_),
+    return: JSON.stringify(this.return_),
+    global: JSON.stringify(this.global_)
   };
 };
 
@@ -100,6 +113,12 @@ Blockly.ScratchBlocks.ProcedureUtils.callerLoadExtraState = function(state) {
   this.generateShadows_ = tryParse(state.generateshadows) ?? [];
   this.argumentIds_ = tryParse(state.argumentids) ?? [];
   this.warp_ = tryParse(state.warp) ?? false;
+  // don't update shape if caller still has connections
+  if (!(this.previousConnection && this.previousConnection.isConnected()) &&
+    !(this.outputConnection && this.outputConnection.isConnected()) &&
+    !(this.nextConnection && this.nextConnection.isConnected())) {
+    this.return_ = tryParse(state.return) ?? false;
+  this.global_ = tryParse(state.global) ?? false;
   this.updateDisplay_();
 };
 
@@ -124,6 +143,8 @@ Blockly.ScratchBlocks.ProcedureUtils.definitionMutationToDom = function(
   container.setAttribute('argumentdefaults',
       JSON.stringify(this.argumentDefaults_));
   container.setAttribute('warp', JSON.stringify(this.warp_));
+  container.setAttribute('return', JSON.stringify(this.return_));
+  container.setAttribute('global', JSON.stringify(this.global_));
   return container;
 };
 
@@ -136,6 +157,8 @@ Blockly.ScratchBlocks.ProcedureUtils.definitionMutationToDom = function(
 Blockly.ScratchBlocks.ProcedureUtils.definitionDomToMutation = function(xmlElement) {
   this.procCode_ = xmlElement.getAttribute('proccode');
   this.warp_ = JSON.parse(xmlElement.getAttribute('warp'));
+  this.return_ = JSON.parse(xmlElement.getAttribute('return'));
+  this.global_ = JSON.parse(xmlElement.getAttribute('global'));
 
   const prevArgIds = this.argumentIds_;
   const prevDisplayNames = this.displayNames_;
@@ -167,7 +190,9 @@ Blockly.ScratchBlocks.ProcedureUtils.definitionSaveExtraState = function(
     argumentids: JSON.stringify(this.argumentIds_),
     argumentnames: JSON.stringify(this.displayNames_),
     argumentdefaults: JSON.stringify(this.argumentDefaults_),
-    warp: JSON.stringify(this.warp_)
+    warp: JSON.stringify(this.warp_),
+    return: JSON.stringify(this.return_),
+    global: JSON.stringify(this.global_)
   };
 };
 
@@ -180,6 +205,8 @@ Blockly.ScratchBlocks.ProcedureUtils.definitionSaveExtraState = function(
 Blockly.ScratchBlocks.ProcedureUtils.definitionLoadExtraState = function(state) {
   this.procCode_ = state.proccode;
   this.warp_ = tryParse(state.warp) ?? false;
+  this.return_ = tryParse(state.return) ?? false;
+  this.global_ = tryParse(state.global) ?? false;
 
   const prevArgIds = this.argumentIds_;
   const prevDisplayNames = this.displayNames_;
@@ -219,6 +246,8 @@ Blockly.ScratchBlocks.ProcedureUtils.updateDisplay_ = function() {
 
   const connectionMap = this.disconnectOldBlocks_();
   this.removeAllInputs_();
+
+  this.updateShape_();
 
   this.createAllInputs_(connectionMap);
   this.deleteShadows_(connectionMap);
@@ -295,7 +324,9 @@ Blockly.ScratchBlocks.ProcedureUtils.createAllInputs_ = function(connectionMap) 
   });
   // Create arguments and labels as appropriate.
   let argumentCount = 0;
-  for (let i = 0, component; component = procComponents[i]; i++) {
+  for (let i = 0; i < procComponents.length; i++) {
+    // The first component should always be created even if the value is ''.
+    const component = procComponents[i];
     let labelText;
     if (component.substring(0, 1) == '%') {
       const argumentType = component.substring(1, 2);
@@ -661,7 +692,7 @@ Blockly.ScratchBlocks.ProcedureUtils.updateDeclarationProcCode_ = function() {
     }
     const input = this.inputList[i];
     if (input.type == Blockly.constants.DUMMY_INPUT) {
-      this.procCode_ += input.fieldRow[0].getValue();
+      this.procCode_ += input.fieldRow[0].getValue().replace('%', '\\%');
     } else if (input.type == Blockly.constants.INPUT_VALUE) {
       // Inspect the argument editor.
       const target = input.connection.targetBlock();
@@ -753,6 +784,43 @@ Blockly.ScratchBlocks.ProcedureUtils.getWarp = function() {
  */
 Blockly.ScratchBlocks.ProcedureUtils.setWarp = function(warp) {
   this.warp_ = warp;
+};
+
+/**
+ * Externally-visible function to get the return on procedure declaration.
+ * @return {boolean} The value of the return_ property.
+ * @public
+ */
+Blockly.ScratchBlocks.ProcedureUtils.getReturn = function() {
+  return this.return_;
+};
+
+/**
+ * Externally-visible function to set the return on procedure declaration.
+ * @param {boolean} ret The value of the return_ property.
+ * @public
+ */
+Blockly.ScratchBlocks.ProcedureUtils.setReturn = function(ret) {
+  this.return_ = ret;
+  this.updateShape_();
+};
+
+/**
+ * Externally-visible function to get the global on procedure declaration.
+ * @returns {boolean} The value of the global_ property.
+ * @public
+ */
+Blockly.ScratchBlocks.ProcedureUtils.getGlobal = function() {
+  return this.global_;
+};
+
+/**
+ * Externally-visible function to set the global on procedure declaration.
+ * @param {boolean} global The value of global_ property.
+ * @public
+ */
+Blockly.ScratchBlocks.ProcedureUtils.setGlobal = function(global) {
+  this.global_ = global;
 };
 
 /**
@@ -857,9 +925,115 @@ Blockly.ScratchBlocks.ProcedureUtils.updateArgumentReporterNames_ = function(pre
   }
 };
 
+/**
+ * Update the prototype and definition's shape to meet its return type.
+ * @this Blockly.Block
+ */
+Blockly.ScratchBlocks.ProcedureUtils.updatePrototypeShape_ = function() {
+  const isReturn = this.getOutputShape() != Blockly.constants.OUTPUT_SHAPE_NORMAL;
+  if (isReturn != this.return_) {
+    const parent = this.getParent();
+    if (this.return_) {
+      this.setOutputShape(Blockly.constants.OUTPUT_SHAPE_ROUND);
+      if (this.previousConnection && this.previousConnection.isConnected()) {
+        this.previousConnection.disconnect(true);
+      }
+      this.setPreviousStatement(false);
+      this.setNextStatement(false);
+      this.setOutput(true);
+      if (parent) {
+        parent.updateReturn(this.return_);
+        this.outputConnection.connect(parent.getInput('custom_block').connection);
+      }
+    } else {
+      this.setOutputShape(Blockly.constants.OUTPUT_SHAPE_NORMAL);
+      if (this.outputConnection && this.outputConnection.isConnected()) {
+        this.outputConnection.disconnect(true);
+      }
+      this.setOutput(false);
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+      if (parent) {
+        parent.updateReturn(this.return_);
+        this.previousConnection.connect(parent.getInput('custom_block').connection);
+      }
+    }
+  }
+};
+
+/**
+ * Update the block's shape to meet its return type.
+ * @this Blockly.Block
+ */
+Blockly.ScratchBlocks.ProcedureUtils.updateProcedureShape_ = function() {
+  const isReturn = this.getOutputShape() != Blockly.constants.OUTPUT_SHAPE_NORMAL;
+  if (isReturn != this.return_) {
+    if (this.return_) {
+      this.setOutputShape(Blockly.constants.OUTPUT_SHAPE_ROUND);
+      this.setPreviousStatement(false);
+      this.setNextStatement(false);
+      this.setOutput(true);
+    }
+    else {
+      this.setOutputShape(Blockly.constants.OUTPUT_SHAPE_NORMAL);
+      this.setOutput(false);
+      this.setPreviousStatement(true, null);
+      this.setNextStatement(true, null);
+    }
+  }
+};
+
+/**
+ * Update return status to match the prototype block.
+ * @param {boolean} newReturn New return status.
+ * @this Blockly.Block
+ */
+Blockly.ScratchBlocks.ProcedureUtils.updateDefinitionReturn_ = function(newReturn) {
+  if (this.return_ !== newReturn) {
+    this.return_ = newReturn;
+
+    // Change the shape of custom_block input to match new return status.
+    const input = this.getInput('custom_block');
+    if (this.return_) {
+      input.type = input.connection.type = Blockly.constants.INPUT_VALUE;
+    } else {
+      input.type = input.connection.type = Blockly.constants.NEXT_STATEMENT;
+    }
+
+    // Search for return blocks in definition and update disable state.
+    const nextBlock = this.getNextBlock(); // the very first block after definition
+    if (nextBlock) {
+      const allBlocks = nextBlock.getDescendants(false, true); // unordered, ignore shadows
+      const group = Blockly.Events.getGroup();
+      Blockly.Events.setGroup(true);
+      for (const block of allBlocks) {
+        if (block.type == Blockly.constants.PROCEDURES_RETURN_BLOCK_TYPE) {
+          block.setDisabled(!newReturn);
+        }
+      }
+      Blockly.Events.setGroup(group);
+    }
+
+    // Update the block's apperance to match the mutation.
+    if (this.rendered && !this.isInsertionMarker()) {
+      this.initSvg();
+      this.render();
+    }
+  }
+};
+
+/**
+ * The event to change the input shape to match muation of child block.
+ * @param {Blockly.Block} childBlock The child block that will be connected to this block.
+ * @this Blockly.Block
+ */
+Blockly.ScratchBlocks.ProcedureUtils.definitionChildWillConnect_ = function(childBlock) {
+  this.updateReturn(childBlock.return_);
+};
+
 Blockly.Blocks['procedures_definition'] = {
   /**
-   * Block for defining a procedure with no return value.
+   * Block for defining a procedure.
    * @this Blockly.Block
    */
   init: function() {
@@ -873,12 +1047,17 @@ Blockly.Blocks['procedures_definition'] = {
       ],
       "extensions": ["colours_more", "shape_hat", "procedure_def_contextmenu"]
     });
-  }
+    this.return_ = false;
+  },
+  // procedures_definition doesn't store mutation data, it gets mutation from procedures_prototype.
+  updateReturn: Blockly.ScratchBlocks.ProcedureUtils.updateDefinitionReturn_,
+  // Only exists on definition block to change it shape to fit prototype block.
+  childWillConnect: Blockly.ScratchBlocks.ProcedureUtils.definitionChildWillConnect_
 };
 
 Blockly.Blocks['procedures_call'] = {
   /**
-   * Block for calling a procedure with no return value.
+   * Block for calling a procedure.
    * @this Blockly.Block
    */
   init: function() {
@@ -888,6 +1067,8 @@ Blockly.Blocks['procedures_call'] = {
     this.procCode_ = '';
     this.argumentIds_ = [];
     this.warp_ = false;
+    this.return_ = false;
+    this.global_ = false;
   },
   // Shared.
   getProcCode: Blockly.ScratchBlocks.ProcedureUtils.getProcCode,
@@ -904,15 +1085,19 @@ Blockly.Blocks['procedures_call'] = {
   loadExtraState: Blockly.ScratchBlocks.ProcedureUtils.callerLoadExtraState,
   populateArgument_: Blockly.ScratchBlocks.ProcedureUtils.populateArgumentOnCaller_,
   addProcedureLabel_: Blockly.ScratchBlocks.ProcedureUtils.addLabelField_,
+  updateShape_: Blockly.ScratchBlocks.ProcedureUtils.updateProcedureShape_,
 
   // Only exists on the external caller.
+  getReturn: Blockly.ScratchBlocks.ProcedureUtils.getReturn,
+  setReturn: Blockly.ScratchBlocks.ProcedureUtils.setReturn,
+  getGlobal: Blockly.ScratchBlocks.ProcedureUtils.getGlobal,
   attachShadow_: Blockly.ScratchBlocks.ProcedureUtils.attachShadow_,
   buildShadowState_: Blockly.ScratchBlocks.ProcedureUtils.buildShadowState_
 };
 
 Blockly.Blocks['procedures_prototype'] = {
   /**
-   * Block for calling a procedure with no return value, for rendering inside
+   * Block for calling a procedure, for rendering inside
    * define block.
    * @this Blockly.Block
    */
@@ -927,6 +1112,8 @@ Blockly.Blocks['procedures_prototype'] = {
     this.argumentIds_ = [];
     this.argumentDefaults_ = [];
     this.warp_ = false;
+    this.return_ = false;
+    this.global_ = false;
   },
   // Shared.
   getProcCode: Blockly.ScratchBlocks.ProcedureUtils.getProcCode,
@@ -943,6 +1130,7 @@ Blockly.Blocks['procedures_prototype'] = {
   loadExtraState: Blockly.ScratchBlocks.ProcedureUtils.definitionLoadExtraState,
   populateArgument_: Blockly.ScratchBlocks.ProcedureUtils.populateArgumentOnPrototype_,
   addProcedureLabel_: Blockly.ScratchBlocks.ProcedureUtils.addLabelField_,
+  updateShape_: Blockly.ScratchBlocks.ProcedureUtils.updatePrototypeShape_,
 
   // Only exists on procedures_prototype.
   createArgumentReporter_: Blockly.ScratchBlocks.ProcedureUtils.createArgumentReporter_,
@@ -964,6 +1152,8 @@ Blockly.Blocks['procedures_declaration'] = {
     this.argumentIds_ = [];
     this.argumentDefaults_ = [];
     this.warp_ = false;
+    this.return_ = false;
+    this.global_ = false;
   },
   // Shared.
   getProcCode: Blockly.ScratchBlocks.ProcedureUtils.getProcCode,
@@ -980,6 +1170,7 @@ Blockly.Blocks['procedures_declaration'] = {
   loadExtraState: Blockly.ScratchBlocks.ProcedureUtils.definitionLoadExtraState,
   populateArgument_: Blockly.ScratchBlocks.ProcedureUtils.populateArgumentOnDeclaration_,
   addProcedureLabel_: Blockly.ScratchBlocks.ProcedureUtils.addLabelEditor_,
+  updateShape_: Blockly.ScratchBlocks.ProcedureUtils.updateProcedureShape_,
 
   // Exist on declaration and arguments editors, with different implementations.
   removeFieldCallback: Blockly.ScratchBlocks.ProcedureUtils.removeFieldCallback,
@@ -989,10 +1180,74 @@ Blockly.Blocks['procedures_declaration'] = {
   focusLastEditor_: Blockly.ScratchBlocks.ProcedureUtils.focusLastEditor_,
   getWarp: Blockly.ScratchBlocks.ProcedureUtils.getWarp,
   setWarp: Blockly.ScratchBlocks.ProcedureUtils.setWarp,
+  getReturn: Blockly.ScratchBlocks.ProcedureUtils.getReturn,
+  setReturn: Blockly.ScratchBlocks.ProcedureUtils.setReturn,
+  getGlobal: Blockly.ScratchBlocks.ProcedureUtils.getGlobal,
+  setGlobal: Blockly.ScratchBlocks.ProcedureUtils.setGlobal,
   addLabelExternal: Blockly.ScratchBlocks.ProcedureUtils.addLabelExternal,
   addBooleanExternal: Blockly.ScratchBlocks.ProcedureUtils.addBooleanExternal,
   addStringNumberExternal: Blockly.ScratchBlocks.ProcedureUtils.addStringNumberExternal,
   onChangeFn: Blockly.ScratchBlocks.ProcedureUtils.updateDeclarationProcCode_
+};
+
+Blockly.Blocks['procedures_return'] = {
+  /**
+   * Block for defining a procedure.
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": Blockly.Msg.PROCEDURES_RETURN,
+      "args0": [
+        {
+          "type": "input_value",
+          "name": "VALUE"
+        }
+      ],
+      "extensions": ["colours_more", "shape_end"]
+    });
+  },
+  /**
+   * Procedure return cannot exist without the corresponding procedure definition.
+   * @param {!Blockly.Events.Abstract} event Change event.
+   * @this {Blockly.Block}
+   */
+  onchange: function(event) {
+    // Don't change state if:
+    //   * It's at the start of a drag.
+    //   * It's not a move event.
+    if (!this.workspace.isDragging || this.workspace.isDragging() || event.type != Blockly.Events.BLOCK_MOVE) {
+      return;
+    }
+    if (!this.isInFlyout) {
+      const group = Blockly.Events.getGroup();
+      // Makes it so the move and the disable event get undone together.
+      Blockly.Events.setGroup(event.group);
+      const root = this.getRootBlock();
+      this.setDisabled(root.type != Blockly.constants.PROCEDURES_DEFINITION_BLOCK_TYPE ||
+          !root.getInputTargetBlock('custom_block').return_);
+      Blockly.Events.setGroup(group);
+    }
+  }
+};
+
+Blockly.Blocks['procedures_discard'] = {
+  /**
+   * Block for calling and discarding the return value of a procedure.
+   * @this Blockly.Block
+   */
+  init: function() {
+    this.jsonInit({
+      "message0": " %1",
+      "args0": [
+        {
+          "type": "input_value",
+          "name": "VALUE"
+        }
+      ],
+      "extensions": ["colours_more", "shape_statement"]
+    });
+  }
 };
 
 Blockly.Blocks['argument_reporter_boolean'] = {
@@ -1005,7 +1260,7 @@ Blockly.Blocks['argument_reporter_boolean'] = {
           "text": ""
         }
       ],
-      "extensions": ["colours_more", "output_boolean"]
+      "extensions": ["colours_argument", "output_boolean"]
     });
   }
 };
@@ -1020,7 +1275,7 @@ Blockly.Blocks['argument_reporter_string_number'] = {
           "text": ""
         }
       ],
-      "extensions": ["colours_more", "output_number", "output_string"]
+      "extensions": ["colours_argument", "output_number", "output_string"]
     });
   }
 };

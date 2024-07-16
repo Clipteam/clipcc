@@ -238,6 +238,11 @@ export const TOOLBOX_AT_LEFT = 2;
 export const TOOLBOX_AT_RIGHT = 3;
 
 /**
+ * ENUM for output shape: normal (command block).
+ */
+export const OUTPUT_SHAPE_NORMAL = null;
+
+/**
  * ENUM for output shape: hexagonal (booleans/predicates).
  * @const
  */
@@ -373,10 +378,22 @@ export const PROCEDURES_DEFINITION_BLOCK_TYPE = 'procedures_definition';
 export const PROCEDURES_PROTOTYPE_BLOCK_TYPE = 'procedures_prototype';
 
 /**
+ * The type of all procedure declaration blocks.
+ * @const {string}
+ */
+export const PROCEDURES_DECLARATION_BLOCK_TYPE = 'procedures_declaration';
+
+/**
  * The type of all procedure call blocks.
  * @const {string}
  */
 export const PROCEDURES_CALL_BLOCK_TYPE = 'procedures_call';
+
+/**
+ * The type of all procedure return blocks.
+ * @const {string}
+ */
+export const PROCEDURES_RETURN_BLOCK_TYPE = 'procedures_return';
 
 /**
  * ENUM for flyout status button states.

@@ -32,6 +32,8 @@ import * as goog from 'google-closure-library/closure/goog/goog.js';
 goog.declareModuleId('Blockly.Procedures');
 
 import * as constants from './constants';
+import {getMainWorkspace} from './common';
+import * as dialog from './dialog';
 import * as eventUtils from './events/utils';
 import {BlockChange} from './events/block_change';
 import {Msg} from './msg';
@@ -87,7 +89,7 @@ export const allProcedureMutations = function(root) {
   for (let i = 0; i < blocks.length; i++) {
     if (blocks[i].type == constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
       const mutation = blocks[i].saveExtraState(/* opt_generateShadows */ true);
-      if (mutation) {
+      if (mutation && mutation['global'] != 'true') {
         mutations.push(mutation);
       }
     }
@@ -224,9 +226,28 @@ export const flyoutCategory = function(workspace) {
 
   addCreateButton(workspace, content);
 
-  // Create call blocks for each procedure defined in the workspace
-  let mutations = allProcedureMutations(workspace);
-  mutations = sortProcedureMutations(mutations);
+  // Create call blocks for each procedure
+  let globalMutations = workspace.allGlobalProcedureMutations();
+  globalMutations = sortProcedureMutations(globalMutations);
+  let localMutations = allProcedureMutations(workspace);
+  localMutations = sortProcedureMutations(localMutations);
+  const mutations = globalMutations.concat(localMutations);
+  
+  content.push({
+    kind: 'block',
+    type: 'procedures_return',
+    gap: mutations.length > 0 ? 36 : 16,
+    inputs: {
+      VALUE: {
+        shadow: {
+          type: 'text',
+          fields: {TEXT: '0'},
+          shadow: true
+        }
+      }
+    }
+  });
+  
   for (let i = 0; i < mutations.length; i++) {
     const mutation = mutations[i];
     // <block type="procedures_call">
@@ -235,7 +256,7 @@ export const flyoutCategory = function(workspace) {
     const block = {
       kind: 'block',
       type: 'procedures_call',
-      gap: 16,
+      gap: i == globalMutations.length - 1 ? 36 : 16,
       extraState: mutation
     };
     content.push(block);
@@ -307,9 +328,13 @@ export const getCallers = function(name, ws, definitionRoot,
  * @param {string} name Name of procedure (procCode in scratch-blocks).
  * @param {!Blockly.Workspace} ws The workspace to find callers in.
  * @param {!Object} extraState New extraState for the callers.
+ * @deprecated Use ProcedureMap.updateProcedure instead
  * @package
  */
 export const mutateCallersAndPrototype = function(name, ws, extraState) {
+  console.warn('Deprecated call to Blockly.Procedures.mutateCallersAndPrototype, ' +
+    'please use ProcedureMap.updateProcedure instead.');
+
   const defineBlock = getDefineBlock(name, ws);
   const prototypeBlock = getPrototypeBlock(name, ws);
   if (defineBlock && prototypeBlock) {
@@ -381,7 +406,9 @@ export const newProcedureMutation = function() {
     argumentids: [],
     argumentnames: [],
     argumentdefaults: [],
-    warp: false
+    warp: false,
+    return: false,
+    global: false
   };
   return state;
 };
@@ -394,7 +421,8 @@ export const newProcedureMutation = function() {
 const createProcedureDefCallback = function(workspace) {
   externalProcedureDefCallback(
       newProcedureMutation(),
-      createProcedureCallbackFactory(workspace)
+      createProcedureCallbackFactory(workspace),
+      true
   );
 };
 
@@ -433,6 +461,8 @@ const createProcedureCallbackFactory = function(workspace) {
       block.moveBy(posX / scale, (-workspace.scrollY + 30) / scale);
       block.scheduleSnapAndBump();
       eventUtils.setGroup(false);
+      // Add to procedure map of the workspace
+      workspace.createProcedureFromMutation(mutation);
     }
   };
 };
@@ -464,17 +494,28 @@ const editProcedureCallback = function(block) {
     }
     block = innerBlock;
   } else if (block.type == constants.PROCEDURES_CALL_BLOCK_TYPE) {
+    if (block.getGlobal()) {
+      // Change workspace before performing search
+      externalCheckoutWsCallback(block.getProcCode());
+    }
     // This is a call block, find the prototype corresponding to the procCode.
     // Make sure to search the correct workspace, call block can be in flyout.
-    const workspaceToSearch = block.workspace.isFlyout ?
-        block.workspace.targetWorkspace : block.workspace;
+    // block's workspace may lost after checkout workspace
+    let workspaceToSearch;
+    if (block.workspace !== null) {
+      workspaceToSearch = block.workspace.isFlyout ? block.workspace.targetWorkspace : block.workspace;
+    } else {
+      workspaceToSearch = getMainWorkspace();
+    }
+
     block = getPrototypeBlock(
         block.getProcCode(), workspaceToSearch);
   }
   // Block now refers to the procedure prototype block, it is safe to proceed.
   externalProcedureDefCallback(
       block.saveExtraState(),
-      editProcedureCallbackFactory(block)
+      editProcedureCallbackFactory(block),
+      false
   );
 };
 
@@ -487,8 +528,7 @@ const editProcedureCallback = function(block) {
 const editProcedureCallbackFactory = function(block) {
   return function(mutation) {
     if (mutation) {
-      mutateCallersAndPrototype(block.getProcCode(),
-          block.workspace, mutation);
+      block.workspace.updateProcedure(block.getProcCode(), mutation);
     }
   };
 };
@@ -508,6 +548,23 @@ let externalProcedureDefCallback = function(/** mutator, callback */) {
  */
 export const setExternalProcedureDefCallback = function(func) {
   externalProcedureDefCallback = func;
+};
+
+/**
+ * Callback to checkout current workspace for global procedures.
+ * @private
+ */
+let externalCheckoutWsCallback = function(/** proccode */) {
+  alert('External checkoutWs must be override Blockly.Procedures.externalCheckoutWsCallback');
+};
+
+/**
+ * Set the callback to checkout current workspace for global procedures.
+ * @param {function} func The callback to checkout current workspace.
+ * @public
+ */
+export const setExternalCheckoutWsCallback = function(func) {
+  externalCheckoutWsCallback = func;
 };
 
 /**
@@ -537,13 +594,27 @@ export const makeEditOption = function(block) {
  * @private
  */
 const showProcedureDefCallback = function(block) {
-  alert('TODO(#1136): implement showing procedure definition (procCode was "' +
-      block.procCode_ + '")');
+  let workspace;
+  if (block.getGlobal()) {
+    externalCheckoutWsCallback(block.getProcCode());
+  }
+  // block's workspace may lost after checkout workspace
+  if (block.workspace !== null) {
+    workspace = block.workspace.isFlyout ? block.workspace.targetWorkspace : block.workspace;
+  } else {
+    workspace = getMainWorkspace();
+  }
+
+  const defBlock = getDefineBlock(block.getProcCode(), workspace);
+  if (defBlock) {
+    workspace.centerOnBlock(defBlock.id);
+    defBlock.select();
+  }
 };
 
 /**
  * Make a context menu option for showing the definition for a custom procedure,
- * based on a right-click on a custom command block.
+ * based on a right-click on a custom block.
  * @param {!Blockly.BlockSvg} block The block where the right-click originated.
  * @return {!Object} A menu option, containing text, enabled, and a callback.
  * @package
@@ -554,6 +625,29 @@ export const makeShowDefinitionOption = function(block) {
     text: Msg.SHOW_PROCEDURE_DEFINITION,
     callback: function() {
       showProcedureDefCallback(block);
+    }
+  };
+  return option;
+};
+
+/**
+ * Make a context menu option for changing the shape for a custom procedure,
+ * based on a right-click on a custom block.
+ * @param {!Blockly.BlockSvg} block The block where the right-click originated.
+ * @return {!Object} A menu option, containing text, enabled, and a callback.
+ * @package
+ */
+export const makeChangeShapeOption = function(block) {
+  const option = {
+    enabled: true,
+    text: Msg.CHANGE_PROCEDURE_SHAPE,
+    callback: function() {
+      const oldExtraState = JSON.stringify(block.saveExtraState());
+      block.setReturn(!block.getReturn());
+      const newExtraState = JSON.stringify(block.saveExtraState());
+      eventUtils.setGroup(true);
+      eventUtils.fire(new BlockChange(block, 'mutation', null, oldExtraState, newExtraState));
+      eventUtils.setGroup(false);
     }
   };
   return option;
@@ -577,6 +671,8 @@ export const deleteProcedureDefCallback = function(procCode,
 
   const workspace = definitionRoot.workspace;
 
+  workspace.removeProcedure(definitionRoot);
+
   // Delete the whole stack.
   eventUtils.setGroup(true);
   definitionRoot.dispose();
@@ -587,4 +683,36 @@ export const deleteProcedureDefCallback = function(procCode,
   workspace.refreshToolboxSelection_();
 
   return true;
+};
+
+/**
+ * Make a context menu option for forcibly deleting a custom procedure.
+ * This appears in the context menu for procedure definitions.
+ * @param {!Blockly.BlockSvg} block The block where the right-click originated.
+ * @return {!Object} A menu option, containing text, enabled, and a callback.
+ * @package
+ */
+export const makeForceDeleteOption = function(block) {
+  return {
+    enabled: true,
+    text: Msg.FORCE_DELETE,
+    callback: function() {
+      dialog.confirm(Msg.FORCE_DELETE_INFO, function(ok) {
+        if (ok) {
+          const workspace = block.workspace;
+
+          workspace.removeProcedure(block);
+
+          // Delete the whole stack.
+          eventUtils.setGroup(true);
+          block.dispose();
+          eventUtils.setGroup(false);
+
+          // TODO (#1354) Update this function when '_' is removed
+          // Refresh toolbox, so caller doesn't appear there anymore
+          workspace.refreshToolboxSelection_();
+        }
+      });
+    }
+  };
 };

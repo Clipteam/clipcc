@@ -488,6 +488,9 @@ export const domToWorkspace = function(xml, workspace) {
         }
         variablesFirst = false;
       }
+      else if (name == 'procedures') {
+        domToProcedures(xmlChild, workspace);
+      }
     }
   } finally {
     if (!existingGroup) {
@@ -634,6 +637,18 @@ export const domToVariables = function(xmlVariables, workspace) {
 };
 
 /**
+ * Decode an XML list of procedures and add the procedures to the workspace.
+ * @param {!Element} xmlProcedures List of XML procedures elements.
+ * @param {!Blockly.Workspace} workspace The workspace to which the procedures
+ *     should be added.
+ */
+export const domToProcedures = function(xmlProcedures, workspace) {
+  for (let i = 0, xmlChild; xmlChild = xmlProcedures.children[i]; i++) {
+    workspace.createProcedureFromMutation(xmlChild);
+  }
+};
+
+/**
  * Decode an XML block tag and create a block (and possibly sub blocks) on the
  * workspace.
  * @param {!Element} xmlBlock XML block element.
@@ -737,6 +752,12 @@ const domToBlockHeadless = function(xmlBlock, workspace) {
         if (childBlockElement) {
           blockChild = domToBlockHeadless(childBlockElement,
               workspace);
+          if (block.childWillConnect) {
+            // This event was newly added to Blockly by ClipCC. It will be triggered when a
+            // child block was completely created and will be connected to its parent. So the
+            // parent block can change its connection type based on its child's data.
+            block.childWillConnect(blockChild);
+          }
           if (blockChild.outputConnection) {
             input.connection.connect(blockChild.outputConnection);
           } else if (blockChild.previousConnection) {

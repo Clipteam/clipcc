@@ -1469,14 +1469,15 @@ class VirtualMachine extends EventEmitter {
             .map(k => this.editingTarget.comments[k])
             .filter(c => c.blockId === null);
 
-
         const workspaceState = {
             variables: [
                 ...globalVariables.map(v => v.toJSON()),
                 ...localVariables.map(v => v.toJSON(true))
             ],
             comments: workspaceComments.map(c => c.toJSON()),
-            blocks: {blocks: this.editingTarget.blocks.toJSON(this.editingTarget.comments)}
+            blocks: {blocks: this.editingTarget.blocks.toJSON(this.editingTarget.comments)},
+            procedures: this.runtime.targets.map(target =>
+                target.blocks.getAllProcedureDefinitions(target !== this.editingTarget))
         };
         this.emit('workspaceUpdate', {json: workspaceState});
     }

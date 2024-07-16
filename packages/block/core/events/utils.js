@@ -169,6 +169,12 @@ export const COMMENT_DELETE = 'comment_delete';
 export const WORKSPACE_FINISHED_LOADING = 'workspace_finished_loading';
 
 /**
+ * Name of event that updates a function.
+ * @const
+ */
+export const FUNC_UPDATE = 'func_update';
+
+/**
  * Name of event that records a UI change.
  * @const
  */
