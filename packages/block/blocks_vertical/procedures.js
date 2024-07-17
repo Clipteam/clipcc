@@ -118,6 +118,7 @@ Blockly.ScratchBlocks.ProcedureUtils.callerLoadExtraState = function(state) {
     !(this.outputConnection && this.outputConnection.isConnected()) &&
     !(this.nextConnection && this.nextConnection.isConnected())) {
     this.return_ = tryParse(state.return) ?? false;
+  }
   this.global_ = tryParse(state.global) ?? false;
   this.updateDisplay_();
 };
