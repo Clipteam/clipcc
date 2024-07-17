@@ -98,8 +98,11 @@ const createVMAsset = function (storage, assetType, dataFormat, data) {
  * caching this costume in storage - This function should be responsible for
  * adding the costume to the VM and handling other UI flow that should come after adding the costume
  * @param {Function} handleError The function to execute if there is an error parsing the costume
+ * @param {number=} stageWidth The stage width.
+ * @param {number=} stageHeight The stage height.
  */
-const costumeUpload = async function (fileData, fileType, storage, handleCostume, handleError = () => {}) {
+const costumeUpload = async function (fileData, fileType, storage, handleCostume, handleError = () => {},
+    stageWidth = 480, stageHeight = 360) {
     let costumeFormat = null;
     let assetType = null;
     switch (fileType) {
@@ -137,7 +140,7 @@ const costumeUpload = async function (fileData, fileType, storage, handleCostume
                 if (frameNumber === numFrames - 1) {
                     handleCostume(costumes);
                 }
-            }, handleError);
+            }, handleError, stageWidth, stageHeight);
         });
         return; // Abandon this load, do not try to load gif itself
     }
@@ -147,6 +150,7 @@ const costumeUpload = async function (fileData, fileType, storage, handleCostume
     }
 
     const bitmapAdapter = new BitmapAdapter();
+    bitmapAdapter.setStageSize(stageWidth, stageHeight);
     const addCostumeFromBuffer = function (dataBuffer) {
         const vmCostume = createVMAsset(
             storage,
@@ -232,7 +236,8 @@ const convertToWav = async function (data) {
     });
 };
 
-const spriteUpload = function (fileData, fileType, spriteName, storage, handleSprite, handleError = () => {}) {
+const spriteUpload = function (fileData, fileType, spriteName, storage, handleSprite, handleError = () => {},
+    stageWidth = 480, stageHeight = 360) {
     switch (fileType) {
     case '':
     case 'application/zip': { // We think this is a .sprite2 or .sprite3 file
@@ -268,7 +273,7 @@ const spriteUpload = function (fileData, fileType, spriteName, storage, handleSp
             randomizeSpritePosition(newSprite);
             // TODO probably just want sprite upload to handle this object directly
             handleSprite(JSON.stringify(newSprite));
-        }, handleError);
+        }, handleError, stageWidth, stageHeight);
         return;
     }
     default: {

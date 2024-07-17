@@ -11,6 +11,18 @@ class BitmapAdapter {
     constructor (makeImage, makeCanvas) {
         this._makeImage = makeImage ? makeImage : () => new Image();
         this._makeCanvas = makeCanvas ? makeCanvas : () => document.createElement('canvas');
+        this.stageWidth = 480;
+        this.stageHeight = 360;
+    }
+
+    /**
+     * Set current stage size.
+     * @param {number} width The stage width.
+     * @param {number} height The stage height.
+     */
+    setStageSize (width, height) {
+        this.stageWidth = width;
+        this.stageHeight = height;
     }
 
     /**
@@ -67,19 +79,17 @@ class BitmapAdapter {
      * @return {object} Array of new width, new height
      */
     getResizedWidthHeight (oldWidth, oldHeight) {
-        const STAGE_WIDTH = 480;
-        const STAGE_HEIGHT = 360;
-        const STAGE_RATIO = STAGE_WIDTH / STAGE_HEIGHT;
+        const STAGE_RATIO = this.stageWidth / this.stageHeight;
 
         // If both dimensions are smaller than or equal to corresponding stage dimension,
         // double both dimensions
-        if ((oldWidth <= STAGE_WIDTH) && (oldHeight <= STAGE_HEIGHT)) {
+        if ((oldWidth <= this.stageWidth) && (oldHeight <= this.stageHeight)) {
             return {width: oldWidth * 2, height: oldHeight * 2};
         }
 
         // If neither dimension is larger than 2x corresponding stage dimension,
         // this is an in-between image, return it as is
-        if ((oldWidth <= STAGE_WIDTH * 2) && (oldHeight <= STAGE_HEIGHT * 2)) {
+        if ((oldWidth <= this.stageWidth * 2) && (oldHeight <= this.stageHeight * 2)) {
             return {width: oldWidth, height: oldHeight};
         }
 
@@ -87,7 +97,7 @@ class BitmapAdapter {
         // Otherwise, figure out how to resize
         if (imageRatio >= STAGE_RATIO) {
             // Wide Image
-            return {width: STAGE_WIDTH * 2, height: STAGE_WIDTH * 2 / imageRatio};
+            return {width: this.stageWidth * 2, height: this.stageWidth * 2 / imageRatio};
         }
         // In this case we have either:
         // - A wide image, but not with as big a ratio between width and height,
