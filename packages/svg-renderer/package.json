@@ -4,6 +4,7 @@
   "description": "SVG renderer for ClipCC",
   "main": "./dist/node/ScratchSVGRenderer.js",
   "browser": "./dist/web/ScratchSVGRenderer.js",
+  "node": "./dist/node/ScratchSVGRenderer.js",
   "exports": {
     "webpack": "./src/index.js",
     "browser": "./dist/web/ScratchSVGRenderer.js",
