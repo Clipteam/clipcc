@@ -107,7 +107,7 @@ class BitmapAdapter {
         // one of the stage dimensions, so pick the smaller of the two dimensions (to fit)
         // - A tall image
         // In any of these cases, resize the image to fit the height to double the stage height
-        return {width: STAGE_HEIGHT * 2 * imageRatio, height: STAGE_HEIGHT * 2};
+        return {width: this.stageHeight * 2 * imageRatio, height: this.stageHeight * 2};
     }
 
     /**
