@@ -2,13 +2,13 @@
   "name": "clipcc-svg-renderer",
   "version": "3.2.0",
   "description": "SVG renderer for ClipCC",
-  "main": "./dist/node/ScratchSVGRenderer.js",
-  "browser": "./dist/web/ScratchSVGRenderer.js",
-  "node": "./dist/node/ScratchSVGRenderer.js",
+  "main": "./dist/node/scratch-svg-renderer.js",
+  "browser": "./dist/web/scratch-svg-renderer.js",
+  "node": "./dist/node/scratch-svg-renderer.js",
   "exports": {
     "webpack": "./src/index.js",
-    "browser": "./dist/web/ScratchSVGRenderer.js",
-    "node": "./dist/node/ScratchSVGRenderer.js",
+    "browser": "./dist/web/scratch-svg-renderer.js",
+    "node": "./dist/node/scratch-svg-renderer.js",
     "default": "./src/index.js"
   },
   "scripts": {
