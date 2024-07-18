@@ -177,6 +177,15 @@ class Sequencer {
      * @param {!Thread} thread Thread object to step.
      */
     stepThread (thread) {
+        // check if thread is compiled
+        if (thread.compileResult) {
+            const result = thread.compileResult.next();
+            if (result.done) {
+                thread.status = Thread.STATUS_DONE;
+            }
+            return;
+        }
+
         let currentBlockId = thread.peekStack();
         if (!currentBlockId) {
             // A "null block" - empty branch.

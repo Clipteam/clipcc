@@ -44,6 +44,23 @@ class JSGenerator {
     constructor () {}
 
     /**
+     * Generate JavaScript for single thread.
+     * @param {IRInst[]} irList list of IR instruction
+     * @return {Function} generated function
+     */
+    compileForThread (irList) {
+        return new Function([
+            'return (function (thread) {',
+            'const target = thread.target;',
+            'const stage = target.runtime.getTargetForStage();',
+            'const {Cast} = this;',
+            'return (function* () {',
+            this.generateInstructionList(irList).code + ';',
+            '});})'
+        ].join(''));
+    }
+
+    /**
      * Generate JavaScript code for IR instructions.
      * @param {IRInst[]} irList list of IR instruction
      * @return {TypedExpression} generated code
