@@ -1,12 +1,27 @@
+const { IR_IDENTIFIER } = require('./constants');
 const ScratchIRGenerator = require('./ir-scratch');
+
+/** @import Blocks from '../engine/blocks' */
+/** @import Target from '../engine/target' */
+/** @import Thread from '../engine/thread' */
 
 class IRGenerator {
     /**
-     * @param {Blocks} blockContainer
+     * @param {Thread} thread
      */
-    constructor (blockContainer) {
-        this.blockContainer = blockContainer;
+    constructor (thread) {
+        this.thread = thread;
+        this.blockContainer = /** @type {Blocks} */ (thread.blockContainer);
         this.generator = ScratchIRGenerator;
+
+        this.clear();
+    }
+
+    /**
+     * Clear compiler context.
+     */
+    clear () {
+        this.variables = {};
     }
 
     /**
@@ -100,6 +115,90 @@ class IRGenerator {
             // input undefined when no block is connected to substack
             return [];
         }
+    }
+
+    /**
+     * Generate IR from variable field.
+     * @param {Object} block block to generate ir
+     * @param {string} name field name
+     * @return {IRBaseInst[]}
+     */
+    fromVariable (block, name) {
+        if (block.fields.hasOwnProperty(name)) {
+            const field = block.fields[name];
+            return this.lookupVariable(field.name, field.id);
+        } else {
+            throw `no variable field ${name} in block ${block.opcode}`;
+        }
+    }
+
+    /**
+     * Generate IR from variable.
+     * @param {string} name name of data
+     * @param {string} id id of data
+     * @return {IRBaseInst}
+     */
+    lookupVariable (name, id) {
+        const target = /** @type {Target} */ (this.thread.target);
+        const stage = /** @type {?Target} */ (target.runtime.getTargetForStage());
+        
+        // lookup by id
+        if (target.variables.hasOwnProperty(id)) {
+            return {
+                opcode: IR_IDENTIFIER,
+                name: name,
+                id: id,
+                scope: 'target'
+            };
+        }
+        
+        // lookup in stage by id
+        if (!target.isStage && stage) {
+            if (stage.variables.hasOwnProperty(id)) {
+                return {
+                    opcode: IR_IDENTIFIER,
+                    name: name,
+                    id: id,
+                    scope: 'stage'
+                };
+            }
+        }
+
+        // lookup by name
+        for (const varId in this.variables) {
+            const currVar = this.variables[varId];
+            if (currVar.name === name && currVar.type === '') {
+                return {
+                    opcode: IR_IDENTIFIER,
+                    name: name,
+                    id: varId,
+                    scope: 'target'
+                };
+            }
+        }
+        
+        // lookup in stage by name
+        if (!target.isStage && stage) {
+            for (const varId in stage.variables) {
+                const currVar = stage.variables[varId];
+                if (currVar.name === name && currVar.type === '') {
+                    return {
+                        opcode: IR_IDENTIFIER,
+                        name: name,
+                        id: varId,
+                        scope: 'stage'
+                    };
+                }
+            }
+        }
+
+        // create a new variable in current target
+        return {
+            opcode: IR_IDENTIFIER,
+            name: name,
+            id: varId,
+            scope: 'target'
+        };
     }
 }
 

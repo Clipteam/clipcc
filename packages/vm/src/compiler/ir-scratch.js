@@ -93,6 +93,21 @@ const operator_sub = function (block, /** @type {IRGenerator} */ generator) {
     };
 };
 
+const data_variable = function (block, /** @type {IRGenerator} */ generator) {
+    return {
+        opcode: constants.IR_LOAD,
+        variable: generator.fromVariable(block, 'VARIABLE')
+    };
+};
+
+const data_setvariableto = function (block, /** @type {IRGenerator} */ generator) {
+    return {
+        opcode: constants.IR_STORE,
+        variable: generator.fromVariable(block, 'VARIABLE'),
+        value: generator.fromValue(block, 'VALUE')
+    };
+};
+
 module.exports = {
     colour_picker,
     math_number,
@@ -108,5 +123,7 @@ module.exports = {
     control_if_else,
     control_wait,
     operator_add,
-    operator_sub
+    operator_sub,
+    data_variable,
+    data_setvariableto
 };

@@ -1,5 +1,14 @@
 const constants = require('./constants');
 
+/**
+ * Get JS string literal.
+ * @param {string} str string
+ * @return {string} quoted string
+ */
+const quote = function (str) {
+    return JSON.stringify(str);
+}
+
 class TypedExpression {
     /**
      * @param {string} code
@@ -60,6 +69,13 @@ class JSGenerator {
             case constants.IR_CONSTANT: {
                 return new TypedExpression(ir.value, constants.TYPE_UNKNOWN);
             }
+            case constants.IR_IDENTIFIER: {
+                if (ir.scope === 'stage') {
+                    return new TypedExpression(`stage.variables[${quote(ir.id)}].value`, constants.TYPE_UNKNOWN);
+                } else {
+                    return new TypedExpression(`target.variables[${quote(ir.id)}].value`, constants.TYPE_UNKNOWN);
+                }
+            }
             case constants.IR_WHILE: {
                 const test = this.generateInstruction(ir.test);
                 const body = this.generateInstructionList(ir.body);
@@ -105,6 +121,17 @@ class JSGenerator {
                 return new TypedExpression(
                     `(${left.asNumber()}) - (${right.asNumber()})`,
                     constants.TYPE_NUMBER
+                );
+            }
+            case constants.IR_LOAD: {
+                return this.generateInstruction(ir.variable);
+            }
+            case constants.IR_STORE: {
+                const variable = this.generateInstruction(ir.variable);
+                const value = this.generateInstruction(ir.value);
+                return new TypedExpression(
+                    `(${variable.code}) = (${value.code})`,
+                    constants.TYPE_STATEMENT
                 );
             }
             default: {
