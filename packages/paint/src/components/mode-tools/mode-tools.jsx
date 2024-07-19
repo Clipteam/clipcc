@@ -11,6 +11,7 @@ import {changeBitEraserSize} from '../../reducers/bit-eraser-size';
 import {setShapesFilled} from '../../reducers/fill-bitmap-shapes';
 
 import FontDropdown from '../../containers/font-dropdown.jsx';
+import BoolOptDropdown from '../../containers/boolopt-dropdown.jsx';
 import LiveInputHOC from '../forms/live-input-hoc.jsx';
 import Label from '../forms/label.jsx';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
@@ -319,6 +320,14 @@ const ModeToolsComponent = props => {
             </div>
         );
     }
+    case Modes.BOOLOPT:
+        return (
+            <div className={classNames(props.className, styles.modeTools)}>
+                <InputGroup>
+                    <BoolOptDropdown />
+                </InputGroup>
+            </div>
+        );
     default:
         // Leave empty for now, if mode not supported
         return (
