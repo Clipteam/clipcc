@@ -53,6 +53,9 @@ class BooleanOperationTool extends paper.Tool {
     }
 
     handleMouseDown(event) {
+        this.selectionBoxMode = true;
+        this.selectionBoxTool.onMouseDown(event.modifiers.shift);
+
         const hitResult = paper.project.hitTest(event.point, {
             tolerance: 2,
             fill: true,
@@ -61,10 +64,12 @@ class BooleanOperationTool extends paper.Tool {
         });
 
         if (hitResult && hitResult.item) {
-            this.selectionBoxMode = true;
-            this.selectionBoxTool.onMouseDown(event.modifiers.shift);
-
             const selectedItem = hitResult.item;
+            // PointText doesn't support boolean operation
+            if (selectedItem.fontSize) {
+                alert(`Text doesn't support boolean operations.`);
+                return;
+            }
             if (!this.selectedItems.includes(selectedItem)) {
                 this.selectedItems.push(selectedItem);
                 selectedItem.selected = true;
