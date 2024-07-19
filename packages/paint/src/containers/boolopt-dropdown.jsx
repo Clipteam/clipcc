@@ -64,7 +64,7 @@ class BoolOptDropdown extends React.Component {
                 componentRef={this.setDropdown}
                 mode={this.props.mode}
                 onClickOutsideDropdown={this.handleClickOutsideDropdown}
-                onChooseUnite={this.onChooseUnite}
+                onChooseUnite={this.handleChangeUnite}
                 onChooseIntersect={this.handleChangeIntersect}
                 onChooseSubtract={this.handleChangeSubtract}
                 onChooseExclude={this.handleChangeExclude}

@@ -29,6 +29,7 @@ class BooleanOperationTool extends paper.Tool {
         this.selectedItems = [];
         this.operation = operation;
 
+        this.onSelectionChanged = this.onSelectionChanged.bind(this);
         this.onMouseDown = this.handleMouseDown;
         this.onMouseUp = this.handleMouseUp;
         this.onKeyUp = nudgeTool.onKeyUp;
@@ -37,6 +38,14 @@ class BooleanOperationTool extends paper.Tool {
         selectRootItem();
         setSelectedItems();
         this.boundingBoxTool.setSelectionBounds();
+    }
+
+    /**
+     * Should be called if the selection changes to update the bounds of the bounding box.
+     * @param {Array<paper.Item>} selectedItems Array of selected items.
+     */
+    onSelectionChanged(selectedItems) {
+        this.boundingBoxTool.onSelectionChanged(selectedItems);
     }
 
     setOperation (operation) {
@@ -98,7 +107,7 @@ class BooleanOperationTool extends paper.Tool {
             item2.remove();
 
             result.selected = true;
-            this.setSelectedItems();
+            this.setSelectedItems([result]);
 
             this.selectedItems = [result];
             this.boundingBoxTool.onSelectionChanged([result]);

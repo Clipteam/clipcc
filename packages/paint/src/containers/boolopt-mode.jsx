@@ -32,7 +32,9 @@ class BoolOptMode extends React.Component {
         } else if (!nextProps.isBoolOptModeActive && this.props.isBoolOptModeActive) {
             this.deactivateTool();
         }
-
+        if (nextProps.selectedItems !== this.props.selectedItems && this.tool) {
+            this.tool.onSelectionChanged(nextProps.selectedItems);
+        }
         if (nextProps.boolOptMode !== this.props.boolOptMode && this.tool) {
             this.tool.setOperation(nextProps.boolOptMode);
         }
