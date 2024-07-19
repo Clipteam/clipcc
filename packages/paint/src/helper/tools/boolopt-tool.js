@@ -87,24 +87,34 @@ class BooleanOperationTool extends paper.Tool {
         if (this.selectedItems.length === 2) {
             const [item1, item2] = this.selectedItems;
             let result;
-            switch (this.operation) {
-            case 'unite':
-                result = item1.unite(item2);
-                break;
-            case 'intersect':
-                result = item1.intersect(item2);
-                break;
-            case 'subtract':
-                result = item1.subtract(item2);
-                break;
-            case 'exclude':
-                result = item1.exclude(item2);
-                break;
-            case 'divide':
-                result = item1.divide(item2);
-                break;
-            default:
-                console.warn('Unknown boolean operation');
+            try {
+                switch (this.operation) {
+                    case 'unite':
+                        result = item1.unite(item2);
+                        break;
+                    case 'intersect':
+                        result = item1.intersect(item2);
+                        break;
+                    case 'subtract':
+                        result = item1.subtract(item2);
+                        break;
+                    case 'exclude':
+                        result = item1.exclude(item2);
+                        break;
+                    case 'divide':
+                        result = item1.divide(item2);
+                        break;
+                    default:
+                        console.warn('Unknown boolean operation');
+                        return;
+                }
+            } catch (e) {
+                item1.selected = false;
+                item2.selected = false;
+                this.setSelectedItems([]);
+                this.boundingBoxTool.onSelectionChanged([]);
+                console.error(e);
+                alert('Failed to apply boolean operation: ' + e.message);
                 return;
             }
 
