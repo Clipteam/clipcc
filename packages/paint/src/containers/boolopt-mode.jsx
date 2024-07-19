@@ -7,7 +7,8 @@ import Modes from '../lib/modes';
 
 import {changeMode} from '../reducers/modes';
 import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
-import {clearSelection, getSelectedLeafItems} from '../helper/selection';
+import {getSelectedLeafItems} from '../helper/selection';
+import {setCursor} from '../reducers/cursor';
 
 import BoolOptTool from '../helper/tools/boolopt-tool';
 import BoolOptModeComponent from '../components/boolopt-mode/boolopt-mode.jsx';
@@ -21,26 +22,24 @@ class BoolOptMode extends React.Component {
         ]);
     }
     componentDidMount () {
-        if (this.props.isSelectModeActive) {
+        if (this.props.isBoolOptModeActive) {
             this.activateTool(this.props);
         }
     }
     componentWillReceiveProps (nextProps) {
-        if (this.tool && nextProps.hoveredItemId !== this.props.hoveredItemId) {
-            this.tool.setPrevHoveredItemId(nextProps.hoveredItemId);
-        }
-        if (this.tool && nextProps.selectedItems !== this.props.selectedItems) {
-            this.tool.onSelectionChanged(nextProps.selectedItems);
+        if (nextProps.isBoolOptModeActive && !this.props.isBoolOptModeActive) {
+            this.activateTool();
+        } else if (!nextProps.isBoolOptModeActive && this.props.isBoolOptModeActive) {
+            this.deactivateTool();
         }
 
-        if (nextProps.isSelectModeActive && !this.props.isSelectModeActive) {
-            this.activateTool();
-        } else if (!nextProps.isSelectModeActive && this.props.isSelectModeActive) {
-            this.deactivateTool();
+        if (nextProps.boolOptMode !== this.props.boolOptMode && this.tool) {
+            this.tool.setOperation(nextProps.boolOptMode);
         }
     }
     shouldComponentUpdate (nextProps) {
-        return nextProps.isBoolOptModeActive !== this.props.isBoolOptModeActive;
+        return nextProps.isBoolOptModeActive !== this.props.isBoolOptModeActive ||
+            nextProps.boolOptMode !== this.props.boolOptMode;
     }
     componentWillUnmount () {
         if (this.tool) {
@@ -49,13 +48,11 @@ class BoolOptMode extends React.Component {
     }
     activateTool () {
         this.tool = new BoolOptTool(
-            this.props.setHoveredItem,
-            this.props.clearHoveredItem,
             this.props.setSelectedItems,
             this.props.clearSelectedItems,
             this.props.setCursor,
             this.props.onUpdateImage,
-            this.props.switchToTextTool
+            this.props.boolOptMode
         );
         this.tool.activate();
     }
@@ -75,35 +72,29 @@ class BoolOptMode extends React.Component {
 }
 
 BoolOptMode.propTypes = {
-    clearHoveredItem: PropTypes.func.isRequired,
-    clearSelectedItems: PropTypes.func.isRequired,
     handleMouseDown: PropTypes.func.isRequired,
-    hoveredItemId: PropTypes.number,
+    boolOptMode: PropTypes.string,
     isBoolOptModeActive: PropTypes.bool.isRequired,
     onUpdateImage: PropTypes.func.isRequired,
     selectedItems: PropTypes.arrayOf(PropTypes.instanceOf(paper.Item)),
     setCursor: PropTypes.func.isRequired,
-    setHoveredItem: PropTypes.func.isRequired,
     setSelectedItems: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
     isBoolOptModeActive: state.scratchPaint.mode === Modes.BOOLOPT,
-    hoveredItemId: state.scratchPaint.hoveredItemId,
+    boolOptMode: state.scratchPaint.booloptMode,
     selectedItems: state.scratchPaint.selectedItems
 });
 const mapDispatchToProps = dispatch => ({
-    setHoveredItem: hoveredItemId => {
-        dispatch(setHoveredItem(hoveredItemId));
-    },
-    clearHoveredItem: () => {
-        dispatch(clearHoveredItem());
-    },
-    clearSelectedItems: () => {
-        dispatch(clearSelectedItems());
+    setCursor: cursorString => {
+        dispatch(setCursor(cursorString));
     },
     setSelectedItems: () => {
         dispatch(setSelectedItems(getSelectedLeafItems(), false /* bitmapMode */));
+    },
+    clearSelectedItems: () => {
+        dispatch(clearSelectedItems());
     },
     handleMouseDown: () => {
         dispatch(changeMode(Modes.BOOLOPT));
@@ -114,4 +105,3 @@ export default connect(
     mapStateToProps,
     mapDispatchToProps
 )(BoolOptMode);
-
