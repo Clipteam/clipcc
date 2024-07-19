@@ -82,16 +82,16 @@ function test_getWorkspaceById() {
   var workspaceB = new Blockly.Workspace();
   try {
     assertEquals('Find workspaceA.', workspaceA,
-        Blockly.Workspace.getById(workspaceA.id));
+        Blockly.common.getWorkspaceById(workspaceA.id));
     assertEquals('Find workspaceB.', workspaceB,
-        Blockly.Workspace.getById(workspaceB.id));
+        Blockly.common.getWorkspaceById(workspaceB.id));
     assertEquals('No workspace found.', null,
-        Blockly.Workspace.getById('I do not exist.'));
+        Blockly.common.getWorkspaceById('I do not exist.'));
     workspaceA.dispose();
     assertEquals('Can\'t find workspaceA.', null,
-        Blockly.Workspace.getById(workspaceA.id));
+        Blockly.common.getWorkspaceById(workspaceA.id));
     assertEquals('WorkspaceB exists.', workspaceB,
-        Blockly.Workspace.getById(workspaceB.id));
+        Blockly.common.getWorkspaceById(workspaceB.id));
   } finally {
     workspaceB.dispose();
     workspaceA.dispose();
@@ -166,7 +166,7 @@ function test_clear_Trivial() {
   workspaceTest_setUp();
   workspace.createVariable('name1', 'type1', 'id1');
   workspace.createVariable('name2', 'type2', 'id2');
-  setUpMockMethod(mockControl_, Blockly.Events, 'setGroup', [true, false],
+  setUpMockMethod(mockControl_, eventUtils.TEST_ONLY, 'setGroup', [true, false],
     null);
 
   try {
@@ -183,7 +183,7 @@ function test_clear_Trivial() {
 
 function test_clear_NoVariables() {
   workspaceTest_setUp();
-  setUpMockMethod(mockControl_, Blockly.Events, 'setGroup', [true, false],
+  setUpMockMethod(mockControl_, eventUtils.TEST_ONLY, 'setGroup', [true, false],
     null);
 
   try {

@@ -3,9 +3,11 @@ import defineDynamicBlock from '../../../src/lib/define-dynamic-block';
 import BlockType from 'clipcc-vm/src/extension-support/block-type';
 
 const MockScratchBlocks = {
-    OUTPUT_SHAPE_HEXAGONAL: 1,
-    OUTPUT_SHAPE_ROUND: 2,
-    OUTPUT_SHAPE_SQUARE: 3
+    constants: {
+        OUTPUT_SHAPE_HEXAGONAL: 1,
+        OUTPUT_SHAPE_ROUND: 2,
+        OUTPUT_SHAPE_SQUARE: 3
+    }
 };
 
 const categoryInfo = {
@@ -107,7 +109,7 @@ describe('defineDynamicBlock', () => {
             extensions: ['scratch_extension'],
             inputsInline: true,
             nextConnection: true,
-            outputShape_: MockScratchBlocks.OUTPUT_SHAPE_SQUARE,
+            outputShape_: MockScratchBlocks.constants.OUTPUT_SHAPE_SQUARE,
             previousConnection: true,
             type: extendedOpcode
         });
@@ -123,7 +125,7 @@ describe('defineDynamicBlock', () => {
             // extensions: undefined, // no icon means no extension
             inputsInline: true,
             nextConnection: true,
-            outputShape_: MockScratchBlocks.OUTPUT_SHAPE_SQUARE,
+            outputShape_: MockScratchBlocks.constants.OUTPUT_SHAPE_SQUARE,
             previousConnection: true,
             type: extendedOpcode
         });
@@ -139,7 +141,7 @@ describe('defineDynamicBlock', () => {
             // extensions: undefined, // no icon means no extension
             inputsInline: true,
             nextConnection: false, // terminal
-            outputShape_: MockScratchBlocks.OUTPUT_SHAPE_SQUARE,
+            outputShape_: MockScratchBlocks.constants.OUTPUT_SHAPE_SQUARE,
             previousConnection: true,
             type: extendedOpcode
         });
@@ -157,7 +159,7 @@ describe('defineDynamicBlock', () => {
             inputsInline: true,
             // nextConnection: undefined, // reporter
             outputConnection: true, // reporter
-            outputShape_: MockScratchBlocks.OUTPUT_SHAPE_ROUND, // reporter
+            outputShape_: MockScratchBlocks.constants.OUTPUT_SHAPE_ROUND, // reporter
             // previousConnection: undefined, // reporter
             type: extendedOpcode
         });
@@ -175,7 +177,7 @@ describe('defineDynamicBlock', () => {
             inputsInline: true,
             // nextConnection: undefined, // reporter
             outputConnection: true, // reporter
-            outputShape_: MockScratchBlocks.OUTPUT_SHAPE_HEXAGONAL, // Boolean
+            outputShape_: MockScratchBlocks.constants.OUTPUT_SHAPE_HEXAGONAL, // Boolean
             // previousConnection: undefined, // reporter
             type: extendedOpcode
         });
@@ -191,7 +193,7 @@ describe('defineDynamicBlock', () => {
             // extensions: undefined, // no icon means no extension
             inputsInline: true,
             nextConnection: true,
-            outputShape_: MockScratchBlocks.OUTPUT_SHAPE_SQUARE,
+            outputShape_: MockScratchBlocks.constants.OUTPUT_SHAPE_SQUARE,
             // previousConnection: undefined, // hat
             type: extendedOpcode
         });

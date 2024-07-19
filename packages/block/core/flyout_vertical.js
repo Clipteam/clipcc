@@ -24,33 +24,37 @@
  */
 'use strict';
 
-goog.provide('Blockly.VerticalFlyout');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.VerticalFlyout');
 
-goog.require('Blockly.Block');
-goog.require('Blockly.Comment');
-goog.require('Blockly.Events');
-goog.require('Blockly.Flyout');
-goog.require('Blockly.FlyoutButton');
-goog.require('Blockly.utils');
-goog.require('Blockly.WorkspaceSvg');
-goog.require('goog.dom');
-goog.require('goog.dom.animationFrame.polyfill');
-goog.require('goog.events');
-goog.require('goog.math.Rect');
-goog.require('goog.userAgent');
+import * as browserEvents from './browser_events';
+import * as constants from './constants';
+import {DropDownDiv} from './dropdowndiv';
+import * as eventUtils from './events/utils';
+import {BlockChange} from './events/block_change';
+import {Flyout} from './flyout_base';
+import * as registry from './registry';
+import * as rendererConstants from './renderer/constants';
+import {Tooltip} from './tooltip';
+import * as utils from './utils';
+import {WidgetDiv} from './widgetdiv';
+
+const dom = goog.require('goog.dom');
+const Rect = goog.require('goog.math.Rect');
+const userAgent = goog.require('goog.userAgent');
 
 
 /**
  * Class for a flyout.
  * @param {!Object} workspaceOptions Dictionary of options for the workspace.
- * @extends {Blockly.Flyout}
+ * @extends {Flyout}
  * @constructor
  */
-Blockly.VerticalFlyout = function(workspaceOptions) {
+export const VerticalFlyout = function(workspaceOptions) {
   workspaceOptions.getMetrics = this.getMetrics_.bind(this);
   workspaceOptions.setMetrics = this.setMetrics_.bind(this);
 
-  Blockly.VerticalFlyout.superClass_.constructor.call(this, workspaceOptions);
+  VerticalFlyout.superClass_.constructor.call(this, workspaceOptions);
   /**
    * Flyout should be laid out vertically.
    * @type {boolean}
@@ -67,77 +71,77 @@ Blockly.VerticalFlyout = function(workspaceOptions) {
    */
   this.checkboxes_ = {};
 };
-goog.inherits(Blockly.VerticalFlyout, Blockly.Flyout);
+goog.inherits(VerticalFlyout, Flyout);
 
 /**
  * Does the flyout automatically close when a block is created?
  * @type {boolean}
  */
-Blockly.VerticalFlyout.prototype.autoClose = false;
+VerticalFlyout.prototype.autoClose = false;
 
 /**
  * The width of the flyout, if not otherwise specified.
  * @type {number}
  */
-Blockly.VerticalFlyout.prototype.DEFAULT_WIDTH = 250;
+VerticalFlyout.prototype.DEFAULT_WIDTH = 250;
 
 /**
  * Size of a checkbox next to a variable reporter.
  * @type {number}
  * @const
  */
-Blockly.VerticalFlyout.prototype.CHECKBOX_SIZE = 25;
+VerticalFlyout.prototype.CHECKBOX_SIZE = 25;
 
 /**
  * Amount of touchable padding around reporter checkboxes.
  * @type {number}
  * @const
  */
-Blockly.VerticalFlyout.prototype.CHECKBOX_TOUCH_PADDING = 12;
+VerticalFlyout.prototype.CHECKBOX_TOUCH_PADDING = 12;
 
 /**
  * SVG path data for checkmark in checkbox.
  * @type {string}
  * @const
  */
-Blockly.VerticalFlyout.prototype.CHECKMARK_PATH =
-    'M' + Blockly.VerticalFlyout.prototype.CHECKBOX_SIZE / 4 +
-    ' ' + Blockly.VerticalFlyout.prototype.CHECKBOX_SIZE / 2 +
-    'L' + 5 * Blockly.VerticalFlyout.prototype.CHECKBOX_SIZE / 12 +
-    ' ' + 2 * Blockly.VerticalFlyout.prototype.CHECKBOX_SIZE / 3 +
-    'L' + 3 * Blockly.VerticalFlyout.prototype.CHECKBOX_SIZE / 4 +
-    ' ' + Blockly.VerticalFlyout.prototype.CHECKBOX_SIZE / 3;
+VerticalFlyout.prototype.CHECKMARK_PATH =
+    'M' + VerticalFlyout.prototype.CHECKBOX_SIZE / 4 +
+    ' ' + VerticalFlyout.prototype.CHECKBOX_SIZE / 2 +
+    'L' + 5 * VerticalFlyout.prototype.CHECKBOX_SIZE / 12 +
+    ' ' + 2 * VerticalFlyout.prototype.CHECKBOX_SIZE / 3 +
+    'L' + 3 * VerticalFlyout.prototype.CHECKBOX_SIZE / 4 +
+    ' ' + VerticalFlyout.prototype.CHECKBOX_SIZE / 3;
 
 /**
  * Size of the checkbox corner radius
  * @type {number}
  * @const
  */
-Blockly.VerticalFlyout.prototype.CHECKBOX_CORNER_RADIUS = 5;
+VerticalFlyout.prototype.CHECKBOX_CORNER_RADIUS = 5;
 
 /**
  * Space above and around the checkbox.
  * @type {number}
  * @const
  */
-Blockly.VerticalFlyout.prototype.CHECKBOX_MARGIN = Blockly.Flyout.prototype.MARGIN;
+VerticalFlyout.prototype.CHECKBOX_MARGIN = Flyout.prototype.MARGIN;
 
 /**
  * Total additional width of a row that contains a checkbox.
  * @type {number}
  * @const
  */
-Blockly.VerticalFlyout.prototype.CHECKBOX_SPACE_X =
-    Blockly.VerticalFlyout.prototype.CHECKBOX_SIZE +
-    2 * Blockly.VerticalFlyout.prototype.CHECKBOX_MARGIN;
+VerticalFlyout.prototype.CHECKBOX_SPACE_X =
+    VerticalFlyout.prototype.CHECKBOX_SIZE +
+    2 * VerticalFlyout.prototype.CHECKBOX_MARGIN;
 
 /**
  * Initializes the flyout.
  * @param {!Blockly.Workspace} targetWorkspace The workspace in which to create
  *     new blocks.
  */
-Blockly.VerticalFlyout.prototype.init = function(targetWorkspace) {
-  Blockly.VerticalFlyout.superClass_.init.call(this, targetWorkspace);
+VerticalFlyout.prototype.init = function(targetWorkspace) {
+  VerticalFlyout.superClass_.init.call(this, targetWorkspace);
   this.workspace_.scale = targetWorkspace.scale;
 };
 
@@ -146,8 +150,8 @@ Blockly.VerticalFlyout.prototype.init = function(targetWorkspace) {
  * @param {string} tagName HTML element
  * @return {!Element} The flyout's SVG group.
  */
-Blockly.VerticalFlyout.prototype.createDom = function(tagName) {
-  Blockly.VerticalFlyout.superClass_.createDom.call(this, tagName);
+VerticalFlyout.prototype.createDom = function(tagName) {
+  VerticalFlyout.superClass_.createDom.call(this, tagName);
 
   /*
     <defs>
@@ -158,10 +162,10 @@ Blockly.VerticalFlyout.prototype.createDom = function(tagName) {
       </clipPath>
     </defs>
   */
-  this.defs_ = Blockly.utils.createSvgElement('defs', {}, this.svgGroup_);
-  const clipPath = Blockly.utils.createSvgElement('clipPath',
+  this.defs_ = utils.createSvgElement('defs', {}, this.svgGroup_);
+  const clipPath = utils.createSvgElement('clipPath',
       {'id':'blocklyBlockMenuClipPath'}, this.defs_);
-  this.clipRect_ = Blockly.utils.createSvgElement('rect',
+  this.clipRect_ = utils.createSvgElement('rect',
       {
         'id': 'blocklyBlockMenuClipRect',
         'height': '0',
@@ -182,7 +186,7 @@ Blockly.VerticalFlyout.prototype.createDom = function(tagName) {
  * @return {Object} Contains the position and size of the bounding
  * box containing the elements (blocks, buttons, labels) in the flyout.
  */
-Blockly.VerticalFlyout.prototype.getContentBoundingBox_ = function() {
+VerticalFlyout.prototype.getContentBoundingBox_ = function() {
   const contentBounds = this.workspace_.getBlocksBoundingBox();
   const bounds = {
     xMin: contentBounds.x,
@@ -236,7 +240,7 @@ Blockly.VerticalFlyout.prototype.getContentBoundingBox_ = function() {
  * @return {Object} Contains size and position metrics of the flyout.
  * @private
  */
-Blockly.VerticalFlyout.prototype.getMetrics_ = function() {
+VerticalFlyout.prototype.getMetrics_ = function() {
   if (!this.isVisible()) {
     // Flyout is hidden.
     return null;
@@ -288,7 +292,7 @@ Blockly.VerticalFlyout.prototype.getMetrics_ = function() {
  *     similar x property.
  * @private
  */
-Blockly.VerticalFlyout.prototype.setMetrics_ = function(xyRatio) {
+VerticalFlyout.prototype.setMetrics_ = function(xyRatio) {
   const metrics = this.getMetrics_();
   // This is a fix to an apparent race condition.
   if (!metrics) {
@@ -311,7 +315,7 @@ Blockly.VerticalFlyout.prototype.setMetrics_ = function(xyRatio) {
 /**
  * Move the flyout to the edge of the workspace.
  */
-Blockly.VerticalFlyout.prototype.position = function() {
+VerticalFlyout.prototype.position = function() {
   if (!this.isVisible()) {
     return;
   }
@@ -330,16 +334,16 @@ Blockly.VerticalFlyout.prototype.position = function() {
   if (this.parentToolbox_) {
     const toolboxWidth = this.parentToolbox_.getWidth();
     const categoryWidth = toolboxWidth - this.width_;
-    x = this.toolboxPosition_ == Blockly.TOOLBOX_AT_RIGHT ?
+    x = this.toolboxPosition_ == constants.TOOLBOX_AT_RIGHT ?
         targetWorkspaceMetrics.viewWidth : categoryWidth;
     y = 0;
   } else {
-    x = this.toolboxPosition_ == Blockly.TOOLBOX_AT_RIGHT ?
+    x = this.toolboxPosition_ == constants.TOOLBOX_AT_RIGHT ?
         targetWorkspaceMetrics.viewWidth - this.width_ : 0;
     y = 0;
   }
 
-  // Record the height for Blockly.Flyout.getMetrics_
+  // Record the height for Flyout.getMetrics_
   this.height_ = Math.max(0, targetWorkspaceMetrics.viewHeight - y);
 
   this.setBackgroundPath_(this.width_, this.height_);
@@ -347,7 +351,7 @@ Blockly.VerticalFlyout.prototype.position = function() {
   this.svgGroup_.setAttribute("width", this.width_);
   this.svgGroup_.setAttribute("height", this.height_);
   const transform = 'translate(' + x + 'px,' + y + 'px)';
-  Blockly.utils.setCssTransform(this.svgGroup_, transform);
+  utils.setCssTransform(this.svgGroup_, transform);
 
   // Update the scrollbar (if one exists).
   if (this.scrollbar_) {
@@ -369,8 +373,8 @@ Blockly.VerticalFlyout.prototype.position = function() {
  *     rounded corners.
  * @private
  */
-Blockly.VerticalFlyout.prototype.setBackgroundPath_ = function(width, height) {
-  const atRight = this.toolboxPosition_ == Blockly.TOOLBOX_AT_RIGHT;
+VerticalFlyout.prototype.setBackgroundPath_ = function(width, height) {
+  const atRight = this.toolboxPosition_ == constants.TOOLBOX_AT_RIGHT;
   // Decide whether to start on the left or right.
   const path = ['M ' + 0 + ',0'];
   // Top.
@@ -398,14 +402,14 @@ Blockly.VerticalFlyout.prototype.setBackgroundPath_ = function(width, height) {
  * @param {number} pos The targeted move position in workspace coordinates.
  * @package
  */
-Blockly.VerticalFlyout.prototype.moveTo = function(pos) {
+VerticalFlyout.prototype.moveTo = function(pos) {
   this.scrollbar_.set(pos * this.workspace_.scale);
 };
 
 /**
  * Scroll the flyout to the top.
  */
-Blockly.VerticalFlyout.prototype.scrollToStart = function() {
+VerticalFlyout.prototype.scrollToStart = function() {
   this.scrollbar_.set(0);
 };
 
@@ -414,7 +418,7 @@ Blockly.VerticalFlyout.prototype.scrollToStart = function() {
  * @param {number} pos The targeted scroll position in workspace coordinates.
  * @package
  */
-Blockly.VerticalFlyout.prototype.scrollTo = function(pos) {
+VerticalFlyout.prototype.scrollTo = function(pos) {
   this.scrollTarget = pos * this.workspace_.scale;
 
   // Make sure not to set the scroll target below the lowest point we can
@@ -432,7 +436,7 @@ Blockly.VerticalFlyout.prototype.scrollTo = function(pos) {
  * @param {!Event} e Mouse wheel scroll event.
  * @private
  */
-Blockly.VerticalFlyout.prototype.wheel_ = function(e) {
+VerticalFlyout.prototype.wheel_ = function(e) {
   // remove scrollTarget to stop auto scrolling in stepScrollAnimation
   this.scrollTarget = null;
 
@@ -441,7 +445,7 @@ Blockly.VerticalFlyout.prototype.wheel_ = function(e) {
   if (delta) {
     // Firefox's mouse wheel deltas are a tenth that of Chrome/Safari.
     // DeltaMode is 1 for a mouse wheel, but not for a trackpad scroll event
-    if (goog.userAgent.GECKO && (e.deltaMode === 1)) {
+    if (userAgent.GECKO && (e.deltaMode === 1)) {
       delta *= 10;
     }
     const metrics = this.getMetrics_();
@@ -451,8 +455,8 @@ Blockly.VerticalFlyout.prototype.wheel_ = function(e) {
     pos = Math.max(pos, 0);
     this.scrollbar_.set(pos);
     // When the flyout moves from a wheel event, hide WidgetDiv and DropDownDiv.
-    Blockly.WidgetDiv.hide(true);
-    Blockly.DropDownDiv.hideWithoutAnimation();
+    WidgetDiv.hide(true);
+    DropDownDiv.hideWithoutAnimation();
   }
 
   // Don't scroll the page.
@@ -465,8 +469,8 @@ Blockly.VerticalFlyout.prototype.wheel_ = function(e) {
  * Delete blocks and background buttons from a previous showing of the flyout.
  * @private
  */
-Blockly.VerticalFlyout.prototype.clearOldBlocks_ = function() {
-  Blockly.VerticalFlyout.superClass_.clearOldBlocks_.call(this);
+VerticalFlyout.prototype.clearOldBlocks_ = function() {
+  VerticalFlyout.superClass_.clearOldBlocks_.call(this);
 
   // Do the same for checkboxes.
   for (const checkboxId in this.checkboxes_) {
@@ -475,7 +479,7 @@ Blockly.VerticalFlyout.prototype.clearOldBlocks_ = function() {
     }
     const checkbox = this.checkboxes_[checkboxId];
     checkbox.block.flyoutCheckbox = null;
-    goog.dom.removeNode(checkbox.svgRoot);
+    dom.removeNode(checkbox.svgRoot);
   }
   this.checkboxes_ = {};
 };
@@ -488,12 +492,12 @@ Blockly.VerticalFlyout.prototype.clearOldBlocks_ = function() {
  *     a button for that block.
  * @private
  */
-Blockly.VerticalFlyout.prototype.addBlockListeners_ = function(root, block,
+VerticalFlyout.prototype.addBlockListeners_ = function(root, block,
     rect) {
-  Blockly.VerticalFlyout.superClass_.addBlockListeners_.call(this, root, block,
+  VerticalFlyout.superClass_.addBlockListeners_.call(this, root, block,
       rect);
   if (block.flyoutCheckbox) {
-    this.listeners_.push(Blockly.bindEvent_(block.flyoutCheckbox.svgRoot,
+    this.listeners_.push(browserEvents.bind(block.flyoutCheckbox.svgRoot,
         'mousedown', null, this.checkboxClicked_(block.flyoutCheckbox)));
   }
 };
@@ -504,7 +508,7 @@ Blockly.VerticalFlyout.prototype.addBlockListeners_ = function(root, block,
  * @param {!Array.<number>} gaps The visible gaps between blocks.
  * @private
  */
-Blockly.VerticalFlyout.prototype.layout_ = function(contents, gaps) {
+VerticalFlyout.prototype.layout_ = function(contents, gaps) {
   const margin = this.MARGIN;
   const flyoutWidth = this.getWidth() / this.workspace_.scale;
   const cursorX = margin;
@@ -541,13 +545,13 @@ Blockly.VerticalFlyout.prototype.layout_ = function(contents, gaps) {
       // The block moves a bit extra for the hat, but the block's rectangle
       // doesn't.  That's because the hat actually extends up from 0.
       block.moveBy(moveX,
-          cursorY + (block.startHat_ ? Blockly.BlockSvg.START_HAT_HEIGHT : 0));
+          cursorY + (block.startHat_ ? rendererConstants.START_HAT_HEIGHT : 0));
 
       const rect = this.createRect_(block, this.RTL ? moveX - blockHW.width : moveX, cursorY, blockHW, i);
 
       this.addBlockListeners_(root, block, rect);
 
-      cursorY += blockHW.height + gaps[i] + (block.startHat_ ? Blockly.BlockSvg.START_HAT_HEIGHT : 0);
+      cursorY += blockHW.height + gaps[i] + (block.startHat_ ? rendererConstants.START_HAT_HEIGHT : 0);
     } else if (item.type == 'button') {
       const button = item.button;
       const buttonSvg = button.createDom();
@@ -559,7 +563,7 @@ Blockly.VerticalFlyout.prototype.layout_ = function(contents, gaps) {
       button.show();
       // Clicking on a flyout button or label is a lot like clicking on the
       // flyout background.
-      this.listeners_.push(Blockly.bindEventWithChecks_(
+      this.listeners_.push(browserEvents.conditionalBind(
           buttonSvg, 'mousedown', this, this.onMouseDown_));
 
       this.buttons_.push(button);
@@ -581,11 +585,11 @@ Blockly.VerticalFlyout.prototype.layout_ = function(contents, gaps) {
  *     block.
  * @private
  */
-Blockly.VerticalFlyout.prototype.createRect_ = function(block, x, y,
+VerticalFlyout.prototype.createRect_ = function(block, x, y,
     blockHW, index) {
   // Create an invisible rectangle under the block to act as a button.  Just
   // using the block as a button is poor, since blocks have holes in them.
-  const rect = Blockly.utils.createSvgElement('rect',
+  const rect = utils.createSvgElement('rect',
       {
         'fill-opacity': 0,
         'x': x,
@@ -594,7 +598,7 @@ Blockly.VerticalFlyout.prototype.createRect_ = function(block, x, y,
         'width': blockHW.width
       }, null);
   rect.tooltip = block;
-  Blockly.Tooltip.bindMouseEvents(rect);
+  Tooltip.bindMouseEvents(rect);
   // Add the rectangles under the blocks, so that the blocks' tooltips work.
   this.workspace_.getCanvas().insertBefore(rect, block.getSvgRoot());
 
@@ -612,19 +616,19 @@ Blockly.VerticalFlyout.prototype.createRect_ = function(block, x, y,
  *     block.
  * @private
  */
-Blockly.VerticalFlyout.prototype.createCheckbox_ = function(block, cursorX,
+VerticalFlyout.prototype.createCheckbox_ = function(block, cursorX,
     cursorY, blockHW) {
-  const checkboxState = Blockly.VerticalFlyout.getCheckboxState(block.id);
+  const checkboxState = VerticalFlyout.getCheckboxState(block.id);
   const svgRoot = block.getSvgRoot();
   const extraSpace = this.CHECKBOX_SIZE + this.CHECKBOX_MARGIN;
   const width = this.RTL ? this.getWidth() / this.workspace_.scale - extraSpace : cursorX;
   const height = cursorY + blockHW.height / 2 - this.CHECKBOX_SIZE / 2;
   const touchMargin = this.CHECKBOX_TOUCH_PADDING;
-  const checkboxGroup = Blockly.utils.createSvgElement('g',
+  const checkboxGroup = utils.createSvgElement('g',
       {
         'transform': 'translate(' + width + ', ' + height + ')'
       }, null);
-  Blockly.utils.createSvgElement('rect',
+  utils.createSvgElement('rect',
       {
         'class': 'blocklyFlyoutCheckbox',
         'height': this.CHECKBOX_SIZE,
@@ -632,12 +636,12 @@ Blockly.VerticalFlyout.prototype.createCheckbox_ = function(block, cursorX,
         'rx': this.CHECKBOX_CORNER_RADIUS,
         'ry': this.CHECKBOX_CORNER_RADIUS
       }, checkboxGroup);
-  Blockly.utils.createSvgElement('path',
+  utils.createSvgElement('path',
       {
         'class': 'blocklyFlyoutCheckboxPath',
         'd': this.CHECKMARK_PATH
       }, checkboxGroup);
-  Blockly.utils.createSvgElement('rect',
+  utils.createSvgElement('rect',
       {
         'class': 'blocklyTouchTargetBackground',
         'x': -touchMargin + 'px',
@@ -648,7 +652,7 @@ Blockly.VerticalFlyout.prototype.createCheckbox_ = function(block, cursorX,
   const checkboxObj = {svgRoot: checkboxGroup, clicked: checkboxState, block: block};
 
   if (checkboxState) {
-    Blockly.utils.addClass((checkboxObj.svgRoot), 'checked');
+    utils.addClass((checkboxObj.svgRoot), 'checked');
   }
 
   block.flyoutCheckbox = checkboxObj;
@@ -664,7 +668,7 @@ Blockly.VerticalFlyout.prototype.createCheckbox_ = function(block, cursorX,
  * @return {!Function} Function to call when checkbox is clicked.
  * @private
  */
-Blockly.VerticalFlyout.prototype.checkboxClicked_ = function(checkboxObj) {
+VerticalFlyout.prototype.checkboxClicked_ = function(checkboxObj) {
   return function(e) {
     this.setCheckboxState(checkboxObj.block.id, !checkboxObj.clicked);
     // This event has been handled.  No need to bubble up to the document.
@@ -679,7 +683,7 @@ Blockly.VerticalFlyout.prototype.checkboxClicked_ = function(checkboxObj) {
  * @param {boolean} value Value to set the checkbox to.
  * @public
  */
-Blockly.VerticalFlyout.prototype.setCheckboxState = function(blockId, value) {
+VerticalFlyout.prototype.setCheckboxState = function(blockId, value) {
   const checkboxObj = this.checkboxes_[blockId];
   if (!checkboxObj || checkboxObj.clicked === value) {
     return;
@@ -689,12 +693,12 @@ Blockly.VerticalFlyout.prototype.setCheckboxState = function(blockId, value) {
   checkboxObj.clicked = value;
 
   if (checkboxObj.clicked) {
-    Blockly.utils.addClass(checkboxObj.svgRoot, 'checked');
+    utils.addClass(checkboxObj.svgRoot, 'checked');
   } else {
-    Blockly.utils.removeClass(checkboxObj.svgRoot, 'checked');
+    utils.removeClass(checkboxObj.svgRoot, 'checked');
   }
 
-  Blockly.Events.fire(new Blockly.Events.Change(
+  eventUtils.fire(new BlockChange(
       checkboxObj.block, 'checkbox', null, oldValue, value));
 };
 
@@ -707,7 +711,7 @@ Blockly.VerticalFlyout.prototype.setCheckboxState = function(blockId, value) {
  * @return {boolean} true if the drag is toward the workspace.
  * @package
  */
-Blockly.VerticalFlyout.prototype.isDragTowardWorkspace = function(currentDragDeltaXY) {
+VerticalFlyout.prototype.isDragTowardWorkspace = function(currentDragDeltaXY) {
   const dx = currentDragDeltaXY.x;
   const dy = currentDragDeltaXY.y;
   // Direction goes from -180 to 180, with 0 toward the right and 90 on top.
@@ -715,7 +719,7 @@ Blockly.VerticalFlyout.prototype.isDragTowardWorkspace = function(currentDragDel
 
   let draggingTowardWorkspace = false;
   const range = this.dragAngleRange_;
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_LEFT) {
+  if (this.toolboxPosition_ == constants.TOOLBOX_AT_LEFT) {
     // Vertical at left.
     if (dragDirection < range && dragDirection > -range) {
       draggingTowardWorkspace = true;
@@ -736,9 +740,9 @@ Blockly.VerticalFlyout.prototype.isDragTowardWorkspace = function(currentDragDel
  * window edge. In RTL, the delete area extends off to the right.
  * The top/bottom do not extend to allow dragging blocks outside of the workspace
  * to be dropped (e.g. to the backpack).
- * @return {goog.math.Rect} Rectangle in which to delete.
+ * @return {Rect} Rectangle in which to delete.
  */
-Blockly.VerticalFlyout.prototype.getClientRect = function() {
+VerticalFlyout.prototype.getClientRect = function() {
   if (!this.svgGroup_) {
     return null;
   }
@@ -753,10 +757,10 @@ Blockly.VerticalFlyout.prototype.getClientRect = function() {
   const width = flyoutRect.width;
   const height = flyoutRect.height;
 
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_LEFT) {
-    return new goog.math.Rect(x - BIG_NUM, y, BIG_NUM + width, height);
+  if (this.toolboxPosition_ == constants.TOOLBOX_AT_LEFT) {
+    return new Rect(x - BIG_NUM, y, BIG_NUM + width, height);
   } else {  // Right
-    return new goog.math.Rect(x, y, BIG_NUM + width, height);
+    return new Rect(x, y, BIG_NUM + width, height);
   }
 };
 
@@ -765,7 +769,7 @@ Blockly.VerticalFlyout.prototype.getClientRect = function() {
  * For RTL: Lay out the blocks right-aligned.
  * @param {!Array<!Blockly.Block>} blocks The blocks to reflow.
  */
-Blockly.VerticalFlyout.prototype.reflowInternal_ = function(/* blocks */) {
+VerticalFlyout.prototype.reflowInternal_ = function(/* blocks */) {
   // This is a no-op because the flyout is a fixed size.
   return;
 };
@@ -776,6 +780,10 @@ Blockly.VerticalFlyout.prototype.reflowInternal_ = function(/* blocks */) {
  * @return {boolean} Whether the block is checked.
  * @public
  */
-Blockly.VerticalFlyout.getCheckboxState = function(/* blockId */) {
+VerticalFlyout.getCheckboxState = function(/* blockId */) {
   return false;
 };
+
+registry.register(
+    registry.Type.FLYOUTS_VERTICAL_TOOLBOX, registry.DEFAULT,
+    VerticalFlyout);

@@ -45,10 +45,10 @@ class _StackFrame {
         this.reported = null;
 
         /**
-         * Name of waiting reporter.
-         * @type {string}
+         * Whether is waiting a custom reporter.
+         * @type {boolean}
          */
-        this.waitingReporter = null;
+        this.waitingReporter = false;
 
         /**
          * Procedure parameters.
@@ -61,6 +61,12 @@ class _StackFrame {
          * @type {Object}
          */
         this.executionContext = null;
+
+        /**
+         * The target of blocks that this thread will execute.
+         * @type {?Target}
+         */
+        this.target = null;
     }
 
     /**
@@ -74,7 +80,7 @@ class _StackFrame {
         this.warpMode = false;
         this.justReported = null;
         this.reported = null;
-        this.waitingReporter = null;
+        this.waitingReporter = false;
         this.params = null;
         this.executionContext = null;
 
@@ -187,6 +193,12 @@ class Thread {
         this.warpTimer = null;
 
         this.justReported = null;
+
+        /**
+         * An option to forcely mention that a control flow has happened.
+         * @type {boolean}
+         */
+        this.controlFlowed = false;
     }
 
     /**
@@ -237,14 +249,26 @@ class Thread {
     /**
      * Push stack and update stack frames appropriately.
      * @param {string} blockId Block ID to push to stack.
+     * @param {?Target} target New target context.
      */
-    pushStack (blockId) {
+    pushStack (blockId, target) {
         this.stack.push(blockId);
         // Push an empty stack frame, if we need one.
         // Might not, if we just popped the stack.
         if (this.stack.length > this.stackFrames.length) {
             const parent = this.stackFrames[this.stackFrames.length - 1];
-            this.stackFrames.push(_StackFrame.create(typeof parent !== 'undefined' && parent.warpMode));
+            const stackFrame = _StackFrame.create(typeof parent !== 'undefined' && parent.warpMode);
+            if (target) {
+                stackFrame.target = target;
+            }
+            else if (parent) {
+                stackFrame.target = parent.target;
+            }
+            else {
+                stackFrame.target = this.target;
+            }
+            this.blockContainer = stackFrame.target.blocks;
+            this.stackFrames.push(stackFrame);
         }
     }
 
@@ -264,6 +288,10 @@ class Thread {
      */
     popStack () {
         _StackFrame.release(this.stackFrames.pop());
+        const stackFrame = this.peekStackFrame();
+        if (stackFrame) {
+            this.blockContainer = stackFrame.target.blocks;
+        }
         return this.stack.pop();
     }
 
@@ -273,13 +301,20 @@ class Thread {
     stopThisScript () {
         let blockID = this.peekStack();
         while (blockID !== null) {
-            const block = this.target.blocks.getBlock(blockID);
-            if (typeof block !== 'undefined' && block.opcode === 'procedures_call') {
+            const block = this.blockContainer.getBlock(blockID);
+            if (this.peekStackFrame().waitingReporter) {
+                // cc - check if a reporter procedure is on the stack
+                break;
+            } else if (typeof block !== 'undefined' && block.opcode === 'procedures_call') {
+                // cc - prevent call command procedure repeatedly
+                this.goToNextBlock();
                 break;
             }
             this.popStack();
             blockID = this.peekStack();
         }
+        
+        this.controlFlowed = true;
 
         if (this.stack.length === 0) {
             // Clean up!
@@ -348,7 +383,8 @@ class Thread {
      * @return {*} value Value for parameter.
      */
     getParam (paramName) {
-        for (let i = this.stackFrames.length - 1; i >= 0; i--) {
+        // cc - ignore the top stack's param, it's not used by current stack
+        for (let i = this.stackFrames.length - 2; i >= 0; i--) {
             const frame = this.stackFrames[i];
             if (frame.params === null) {
                 continue;
@@ -376,7 +412,7 @@ class Thread {
      * where execution proceeds from one block to the next.
      */
     goToNextBlock () {
-        const nextBlockId = this.target.blocks.getNextBlock(this.peekStack());
+        const nextBlockId = this.blockContainer.getNextBlock(this.peekStack());
         this.reuseStackForNextBlock(nextBlockId);
     }
 
@@ -389,9 +425,20 @@ class Thread {
     isRecursiveCall (procedureCode) {
         let callCount = 5; // Max number of enclosing procedure calls to examine.
         const sp = this.stack.length - 1;
+        let flag = false;
         for (let i = sp - 1; i >= 0; i--) {
-            const block = this.target.blocks.getBlock(this.stack[i]);
-            if (block.opcode === 'procedures_call' &&
+            let blockId = this.stack[i];
+            // cc - that the flag is set means the stack has been checked, otherwise it should be checked first.
+            if (!flag && this.stackFrames[i].waitingReporter) {
+                blockId = this.stackFrames[i].reporting;
+                flag = true;
+                ++i;
+            } else {
+                flag = false;
+            }
+            const block = this.stackFrames[i].target.blocks.getBlock(blockId);
+            // cc - block maybe not exists when triggered in toolbox.
+            if (block && block.opcode === 'procedures_call' &&
                 block.mutation.proccode === procedureCode) {
                 return true;
             }

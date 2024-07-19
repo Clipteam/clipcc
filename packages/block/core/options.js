@@ -24,8 +24,13 @@
  */
 'use strict';
 
-goog.provide('Blockly.Options');
-goog.require('Blockly.Colours');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Options');
+
+import {Blocks} from './blocks';
+import {Colours} from './colours';
+import * as constants from './constants';
+import * as Xml from './xml';
 
 
 /**
@@ -35,7 +40,7 @@ goog.require('Blockly.Colours');
  *   https://developers.google.com/blockly/guides/get-started/web#configuration
  * @constructor
  */
-Blockly.Options = function(options) {
+export const Options = function(options) {
   const readOnly = !!options['readOnly'];
   let languageTree = null;
   let hasCategories = false;
@@ -46,12 +51,12 @@ Blockly.Options = function(options) {
   let hasSounds = false;
   let hasClipboard = false;
   if (!readOnly) {
-    if (!options['toolbox'] && Blockly.Blocks.defaultToolbox) {
+    if (!options['toolbox'] && Blocks.defaultToolbox) {
       const oParser = new DOMParser();
-      const dom = oParser.parseFromString(Blockly.Blocks.defaultToolbox, 'text/xml');
+      const dom = oParser.parseFromString(Blocks.defaultToolbox, 'text/xml');
       options['toolbox'] = dom.documentElement;
     }
-    languageTree = Blockly.Options.parseToolboxTree(options['toolbox']);
+    languageTree = Options.parseToolboxTree(options['toolbox']);
     hasCategories = Boolean(languageTree &&
         languageTree.getElementsByTagName('category').length);
     hasTrashcan = options['trashcan'];
@@ -93,9 +98,9 @@ Blockly.Options = function(options) {
 
   let toolboxPosition;
   if (horizontalLayout) {
-    toolboxPosition = toolboxAtStart ? Blockly.TOOLBOX_AT_TOP : Blockly.TOOLBOX_AT_BOTTOM;
+    toolboxPosition = toolboxAtStart ? constants.TOOLBOX_AT_TOP : constants.TOOLBOX_AT_BOTTOM;
   } else {
-    toolboxPosition = (toolboxAtStart == rtl) ? Blockly.TOOLBOX_AT_RIGHT : Blockly.TOOLBOX_AT_LEFT;
+    toolboxPosition = (toolboxAtStart == rtl) ? constants.TOOLBOX_AT_RIGHT : constants.TOOLBOX_AT_LEFT;
   }
 
   let hasScrollbars = options['scrollbars'];
@@ -115,7 +120,7 @@ Blockly.Options = function(options) {
   }
   const oneBasedIndex = options['oneBasedIndex'] === undefined ? true : !!options['oneBasedIndex'];
 
-  Blockly.Colours.overrideColours(options['colours']);
+  Colours.overrideColours(options['colours']);
 
   this.RTL = rtl;
   this.oneBasedIndex = oneBasedIndex;
@@ -132,8 +137,8 @@ Blockly.Options = function(options) {
   this.hasCss = hasCss;
   this.horizontalLayout = horizontalLayout;
   this.languageTree = languageTree;
-  this.gridOptions = Blockly.Options.parseGridOptions_(options);
-  this.zoomOptions = Blockly.Options.parseZoomOptions_(options);
+  this.gridOptions = Options.parseGridOptions_(options);
+  this.zoomOptions = Options.parseZoomOptions_(options);
   this.toolboxPosition = toolboxPosition;
 };
 
@@ -141,18 +146,18 @@ Blockly.Options = function(options) {
  * The parent of the current workspace, or null if there is no parent workspace.
  * @type {Blockly.Workspace}
  **/
-Blockly.Options.prototype.parentWorkspace = null;
+Options.prototype.parentWorkspace = null;
 
 /**
  * If set, sets the translation of the workspace to match the scrollbars.
  */
-Blockly.Options.prototype.setMetrics = null;
+Options.prototype.setMetrics = null;
 
 /**
  * Return an object with the metrics required to size the workspace.
  * @return {Object} Contains size and position metrics, or null.
  */
-Blockly.Options.prototype.getMetrics = null;
+Options.prototype.getMetrics = null;
 
 /**
  * Parse the user-specified zoom options, using reasonable defaults where
@@ -162,7 +167,7 @@ Blockly.Options.prototype.getMetrics = null;
  * @return {!Object} A dictionary of normalized options.
  * @private
  */
-Blockly.Options.parseZoomOptions_ = function(options) {
+Options.parseZoomOptions_ = function(options) {
   const zoom = options['zoom'] || {};
   const zoomOptions = {};
   if (zoom['controls'] === undefined) {
@@ -206,7 +211,7 @@ Blockly.Options.parseZoomOptions_ = function(options) {
  * @return {!Object} A dictionary of normalized options.
  * @private
  */
-Blockly.Options.parseGridOptions_ = function(options) {
+Options.parseGridOptions_ = function(options) {
   const grid = options['grid'] || {};
   const gridOptions = {};
   gridOptions.spacing = parseFloat(grid['spacing']) || 0;
@@ -221,7 +226,7 @@ Blockly.Options.parseGridOptions_ = function(options) {
  * @param {Node|string} tree DOM tree of blocks, or text representation of same.
  * @return {Node} DOM tree of blocks, or null.
  */
-Blockly.Options.parseToolboxTree = function(tree) {
+Options.parseToolboxTree = function(tree) {
   if (tree) {
     if (typeof tree != 'string') {
       if (typeof XSLTProcessor == 'undefined' && tree.outerHTML) {
@@ -235,7 +240,7 @@ Blockly.Options.parseToolboxTree = function(tree) {
       }
     }
     if (typeof tree == 'string') {
-      tree = Blockly.Xml.textToDom(tree);
+      tree = Xml.textToDom(tree);
     }
   } else {
     tree = null;

@@ -53,6 +53,7 @@ class Blocks extends React.Component {
         this.ScratchBlocks = VMScratchBlocks(props.vm);
         bindAll(this, [
             'attachVM',
+            'checkoutWsByProccode',
             'detachVM',
             'getToolboxXML',
             'handleCategorySelected',
@@ -78,8 +79,8 @@ class Blocks extends React.Component {
             'setBlocks',
             'setLocale'
         ]);
-        this.ScratchBlocks.prompt = this.handlePromptStart;
-        this.ScratchBlocks.statusButtonCallback = this.handleConnectionModalStart;
+        this.ScratchBlocks.dialog.setPrompt(this.handlePromptStart);
+        this.ScratchBlocks.common.setStatusButtonCallback(this.handleConnectionModalStart);
         this.ScratchBlocks.recordSoundCallback = this.handleOpenSoundRecorder;
 
         this.state = {
@@ -90,7 +91,8 @@ class Blocks extends React.Component {
     }
     componentDidMount () {
         this.ScratchBlocks.FieldColourSlider.activateEyedropper_ = this.props.onActivateColorPicker;
-        this.ScratchBlocks.Procedures.externalProcedureDefCallback = this.props.onActivateCustomProcedures;
+        this.ScratchBlocks.Procedures.setExternalCheckoutWsCallback(this.checkoutWsByProccode);
+        this.ScratchBlocks.Procedures.setExternalProcedureDefCallback(this.props.onActivateCustomProcedures);
         this.ScratchBlocks.ScratchMsgs.setLocale(this.props.locale);
 
         const workspaceConfig = defaultsDeep({},
@@ -102,18 +104,19 @@ class Blocks extends React.Component {
 
         // Register buttons under new callback keys for creating variables,
         // lists, and procedures from extensions.
+        // cc - These callbacks are the same as those in blockly, maybe unnecessary to register.
 
-        const toolboxWorkspace = this.workspace.getFlyout().getWorkspace();
+        // const toolboxWorkspace = this.workspace.getFlyout().getWorkspace();
 
-        const varListButtonCallback = type =>
-            (() => this.ScratchBlocks.Variables.createVariable(this.workspace, null, type));
-        const procButtonCallback = () => {
-            this.ScratchBlocks.Procedures.createProcedureDefCallback_(this.workspace);
-        };
+        // const varListButtonCallback = type =>
+        //     (() => this.ScratchBlocks.Variables.createVariable(this.workspace, null, type));
+        // const procButtonCallback = () => {
+        //     this.ScratchBlocks.Procedures.createProcedureDefCallback(this.workspace);
+        // };
 
-        toolboxWorkspace.registerButtonCallback('MAKE_A_VARIABLE', varListButtonCallback(''));
-        toolboxWorkspace.registerButtonCallback('MAKE_A_LIST', varListButtonCallback('list'));
-        toolboxWorkspace.registerButtonCallback('MAKE_A_PROCEDURE', procButtonCallback);
+        // toolboxWorkspace.registerButtonCallback('MAKE_A_VARIABLE', varListButtonCallback(''));
+        // toolboxWorkspace.registerButtonCallback('MAKE_A_LIST', varListButtonCallback('list'));
+        // toolboxWorkspace.registerButtonCallback('MAKE_A_PROCEDURE', procButtonCallback);
 
         // Store the xml of the toolbox that is actually rendered.
         // This is used in componentDidUpdate instead of prevProps, because
@@ -155,7 +158,7 @@ class Blocks extends React.Component {
     componentDidUpdate (prevProps) {
         // If any modals are open, call hideChaff to close z-indexed field editors
         if (this.props.anyModalVisible && !prevProps.anyModalVisible) {
-            this.ScratchBlocks.hideChaff();
+            this.ScratchBlocks.common.getMainWorkspace().hideChaff();
         }
 
         // Only rerender the toolbox when the blocks are visible and the xml is
@@ -509,12 +512,12 @@ class Blocks extends React.Component {
         p.prompt.title = optTitle ? optTitle :
             this.ScratchBlocks.Msg.VARIABLE_MODAL_TITLE;
         p.prompt.varType = typeof optVarType === 'string' ?
-            optVarType : this.ScratchBlocks.SCALAR_VARIABLE_TYPE;
+            optVarType : this.ScratchBlocks.constants.SCALAR_VARIABLE_TYPE;
         p.prompt.showVariableOptions = // This flag means that we should show variable/list options about scope
-            optVarType !== this.ScratchBlocks.BROADCAST_MESSAGE_VARIABLE_TYPE &&
+            optVarType !== this.ScratchBlocks.constants.BROADCAST_MESSAGE_VARIABLE_TYPE &&
             p.prompt.title !== this.ScratchBlocks.Msg.RENAME_VARIABLE_MODAL_TITLE &&
             p.prompt.title !== this.ScratchBlocks.Msg.RENAME_LIST_MODAL_TITLE;
-        p.prompt.showCloudOption = (optVarType === this.ScratchBlocks.SCALAR_VARIABLE_TYPE) && this.props.canUseCloud;
+        p.prompt.showCloudOption = (optVarType === this.ScratchBlocks.constants.SCALAR_VARIABLE_TYPE) && this.props.canUseCloud;
         this.setState(p);
     }
     handleConnectionModalStart (extensionId) {
@@ -557,6 +560,11 @@ class Blocks extends React.Component {
                 this.updateToolbox(); // To show new variables/custom blocks
             });
     }
+    checkoutWsByProccode (proccode) {
+        const [target] = this.props.vm.runtime.getProcedureDefinition(proccode);
+        if (!target) return;
+        this.props.vm.setEditingTarget(target.id);
+    }
     render () {
         /* eslint-disable no-unused-vars */
         const {
@@ -594,7 +602,7 @@ class Blocks extends React.Component {
                     <Prompt
                         defaultValue={this.state.prompt.defaultValue}
                         isStage={vm.runtime.getEditingTarget().isStage}
-                        showListMessage={this.state.prompt.varType === this.ScratchBlocks.LIST_VARIABLE_TYPE}
+                        showListMessage={this.state.prompt.varType === this.ScratchBlocks.constants.LIST_VARIABLE_TYPE}
                         label={this.state.prompt.message}
                         showCloudOption={this.state.prompt.showCloudOption}
                         showVariableOptions={this.state.prompt.showVariableOptions}
@@ -700,7 +708,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     onActivateColorPicker: callback => dispatch(activateColorPicker(callback)),
-    onActivateCustomProcedures: (data, callback) => dispatch(activateCustomProcedures(data, callback)),
+    onActivateCustomProcedures: (data, callback, isNew) => dispatch(activateCustomProcedures(data, callback, isNew)),
     onOpenConnectionModal: id => {
         dispatch(setConnectionModalExtensionId(id));
         dispatch(openConnectionModal());

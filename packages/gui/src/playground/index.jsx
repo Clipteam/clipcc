@@ -21,6 +21,16 @@ const appTarget = document.createElement('div');
 appTarget.className = styles.app;
 document.body.appendChild(appTarget);
 
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js').then(registration => {
+            console.log('SW registered: ', registration);
+        }).catch(registrationError => {
+            console.log('SW registration failed: ', registrationError);
+        });
+    });
+}
+
 if (supportedBrowser()) {
     // require needed here to avoid importing unsupported browser-crashing code
     // at the top level

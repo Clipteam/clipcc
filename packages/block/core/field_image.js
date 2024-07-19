@@ -24,12 +24,15 @@
  */
 'use strict';
 
-goog.provide('Blockly.FieldImage');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.FieldImage');
 
-goog.require('Blockly.Field');
-goog.require('goog.dom');
-goog.require('goog.math.Size');
-goog.require('goog.userAgent');
+import {Field} from './field';
+import {Tooltip} from './tooltip';
+import * as utils from './utils';
+
+const dom = goog.require('goog.dom');
+const Size = goog.require('goog.math.Size');
 
 
 /**
@@ -39,62 +42,62 @@ goog.require('goog.userAgent');
  * @param {number} height Height of the image.
  * @param {string=} opt_alt Optional alt text for when block is collapsed.
  * @param {boolean} flip_rtl Whether to flip the icon in RTL
- * @extends {Blockly.Field}
+ * @extends {Field}
  * @constructor
  */
-Blockly.FieldImage = function(src, width, height, opt_alt, flip_rtl) {
+export const FieldImage = function(src, width, height, opt_alt, flip_rtl) {
   this.sourceBlock_ = null;
 
   // Ensure height and width are numbers.  Strings are bad at math.
   this.height_ = Number(height);
   this.width_ = Number(width);
-  this.size_ = new goog.math.Size(this.width_, this.height_);
+  this.size_ = new Size(this.width_, this.height_);
   this.text_ = opt_alt || '';
   this.flipRTL_ = flip_rtl;
   this.setValue(src);
 };
-goog.inherits(Blockly.FieldImage, Blockly.Field);
+goog.inherits(FieldImage, Field);
 
 /**
  * Construct a FieldImage from a JSON arg object,
  * dereferencing any string table references.
  * @param {!Object} options A JSON object with options (src, width, height, alt,
  *     and flipRtl/flip_rtl).
- * @returns {!Blockly.FieldImage} The new field instance.
+ * @returns {!FieldImage} The new field instance.
  * @package
  * @nocollapse
  */
-Blockly.FieldImage.fromJson = function(options) {
-  const src = Blockly.utils.replaceMessageReferences(options['src']);
-  const width = Number(Blockly.utils.replaceMessageReferences(options['width']));
+FieldImage.fromJson = function(options) {
+  const src = utils.replaceMessageReferences(options['src']);
+  const width = Number(utils.replaceMessageReferences(options['width']));
   const height =
-      Number(Blockly.utils.replaceMessageReferences(options['height']));
-  const alt = Blockly.utils.replaceMessageReferences(options['alt']);
+      Number(utils.replaceMessageReferences(options['height']));
+  const alt = utils.replaceMessageReferences(options['alt']);
   const flip_rtl = !!options['flip_rtl'] || !!options['flipRtl'];
-  return new Blockly.FieldImage(src, width, height, alt, flip_rtl);
+  return new FieldImage(src, width, height, alt, flip_rtl);
 };
 
 /**
  * Editable fields are saved by the XML renderer, non-editable fields are not.
  */
-Blockly.FieldImage.prototype.EDITABLE = false;
+FieldImage.prototype.EDITABLE = false;
 
 /**
  * Install this image on a block.
  */
-Blockly.FieldImage.prototype.init = function() {
+FieldImage.prototype.init = function() {
   if (this.fieldGroup_) {
     // Image has already been initialized once.
     return;
   }
   // Build the DOM.
   /** @type {SVGElement} */
-  this.fieldGroup_ = Blockly.utils.createSvgElement('g', {}, null);
+  this.fieldGroup_ = utils.createSvgElement('g', {}, null);
   if (!this.visible_) {
     this.fieldGroup_.style.display = 'none';
   }
   /** @type {SVGElement} */
-  this.imageElement_ = Blockly.utils.createSvgElement(
+  this.imageElement_ = utils.createSvgElement(
       'image',
       {
         'height': this.height_ + 'px',
@@ -106,14 +109,14 @@ Blockly.FieldImage.prototype.init = function() {
 
   // Configure the field to be transparent with respect to tooltips.
   this.setTooltip(this.sourceBlock_);
-  Blockly.Tooltip.bindMouseEvents(this.imageElement_);
+  Tooltip.bindMouseEvents(this.imageElement_);
 };
 
 /**
  * Dispose of all DOM objects belonging to this text.
  */
-Blockly.FieldImage.prototype.dispose = function() {
-  goog.dom.removeNode(this.fieldGroup_);
+FieldImage.prototype.dispose = function() {
+  dom.removeNode(this.fieldGroup_);
   this.fieldGroup_ = null;
   this.imageElement_ = null;
 };
@@ -123,7 +126,7 @@ Blockly.FieldImage.prototype.dispose = function() {
  * @param {string|!Element} newTip Text for tooltip or a parent element to
  *     link to for its tooltip.
  */
-Blockly.FieldImage.prototype.setTooltip = function(newTip) {
+FieldImage.prototype.setTooltip = function(newTip) {
   this.imageElement_.tooltip = newTip;
 };
 
@@ -132,7 +135,7 @@ Blockly.FieldImage.prototype.setTooltip = function(newTip) {
  * @return {string} Current text.
  * @override
  */
-Blockly.FieldImage.prototype.getValue = function() {
+FieldImage.prototype.getValue = function() {
   return this.src_;
 };
 
@@ -141,7 +144,7 @@ Blockly.FieldImage.prototype.getValue = function() {
  * @param {?string} src New source.
  * @override
  */
-Blockly.FieldImage.prototype.setValue = function(src) {
+FieldImage.prototype.setValue = function(src) {
   if (src === null) {
     // No change if null.
     return;
@@ -157,7 +160,7 @@ Blockly.FieldImage.prototype.setValue = function(src) {
  * Get whether to flip this image in RTL
  * @return {boolean} True if we should flip in RTL.
  */
-Blockly.FieldImage.prototype.getFlipRTL = function() {
+FieldImage.prototype.getFlipRTL = function() {
   return this.flipRTL_;
 };
 
@@ -166,7 +169,7 @@ Blockly.FieldImage.prototype.getFlipRTL = function() {
  * @param {?string} alt New alt text.
  * @override
  */
-Blockly.FieldImage.prototype.setText = function(alt) {
+FieldImage.prototype.setText = function(alt) {
   if (alt === null) {
     // No change if null.
     return;
@@ -178,7 +181,7 @@ Blockly.FieldImage.prototype.setText = function(alt) {
  * Images are fixed width, no need to render.
  * @private
  */
-Blockly.FieldImage.prototype.render_ = function() {
+FieldImage.prototype.render_ = function() {
   // NOP
 };
 
@@ -186,8 +189,8 @@ Blockly.FieldImage.prototype.render_ = function() {
  * Images are fixed width, no need to update.
  * @private
  */
-Blockly.FieldImage.prototype.updateWidth = function() {
+FieldImage.prototype.updateWidth = function() {
   // NOP
 };
 
-Blockly.Field.register('field_image', Blockly.FieldImage);
+Field.register('field_image', FieldImage);
