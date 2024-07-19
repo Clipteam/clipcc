@@ -1,5 +1,10 @@
+import Modes from '../../lib/modes';
+
 import paper from '@scratch/paper';
+import {selectRootItem} from '../selection';
 import BoundingBoxTool from '../selection-tools/bounding-box-tool';
+import SelectionBoxTool from '../selection-tools/selection-box-tool';
+import NudgeTool from '../selection-tools/nudge-tool';
 
 class BooleanOperationTool extends paper.Tool {
     constructor(setSelectedItems, clearSelectedItems, setCursor, onUpdateImage, operation) {
@@ -17,11 +22,21 @@ class BooleanOperationTool extends paper.Tool {
             onUpdateImage
         );
 
+        const nudgeTool = new NudgeTool(Modes.BOOLOPT, this.boundingBoxTool, onUpdateImage);
+        this.selectionBoxTool = new SelectionBoxTool(Modes.BOOLOPT, setSelectedItems, clearSelectedItems);
+        this.selectionBoxMode = false;
+
         this.selectedItems = [];
         this.operation = operation;
 
         this.onMouseDown = this.handleMouseDown;
         this.onMouseUp = this.handleMouseUp;
+        this.onKeyUp = nudgeTool.onKeyUp;
+        this.onKeyDown = nudgeTool.onKeyDown;
+
+        selectRootItem();
+        setSelectedItems();
+        this.boundingBoxTool.setSelectionBounds();
     }
 
     setOperation (operation) {
@@ -37,6 +52,9 @@ class BooleanOperationTool extends paper.Tool {
         });
 
         if (hitResult && hitResult.item) {
+            this.selectionBoxMode = true;
+            this.selectionBoxTool.onMouseDown(event.modifiers.shift);
+
             const selectedItem = hitResult.item;
             if (!this.selectedItems.includes(selectedItem)) {
                 this.selectedItems.push(selectedItem);
@@ -51,6 +69,7 @@ class BooleanOperationTool extends paper.Tool {
     }
 
     handleMouseUp(event) {
+        this.boundingBoxTool.onMouseUp(event);
         if (this.selectedItems.length === 2) {
             const [item1, item2] = this.selectedItems;
             let result;
@@ -86,11 +105,16 @@ class BooleanOperationTool extends paper.Tool {
 
             this.onUpdateImage();
         }
-
-        this.boundingBoxTool.onMouseUp(event);
     }
 
-    deactivateTool () {}
+    deactivateTool () {
+        this.boundingBoxTool.deactivateTool();
+        this.selectionBoxTool = null;
+        this.onMouseDown = null;
+        this.onKeyDown = null;
+        this.onMouseUp = null;
+        this.onKeyUp = null;
+    }
 }
 
 export default BooleanOperationTool;
