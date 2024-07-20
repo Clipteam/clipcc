@@ -547,9 +547,11 @@ class Blocks extends React.Component {
     }
     handleCustomProceduresClose (data) {
         this.props.onRequestCloseCustomProcedures(data);
-        const ws = this.workspace;
-        ws.refreshToolboxSelection_();
-        ws.toolbox_.scrollToCategoryById('myBlocks');
+        if (data) {
+            const ws = this.workspace;
+            ws.refreshToolboxSelection_();
+            ws.toolbox_.scrollToCategoryById('myBlocks');
+        }
     }
     handleDrop (dragInfo) {
         fetch(dragInfo.payload.bodyUrl)
