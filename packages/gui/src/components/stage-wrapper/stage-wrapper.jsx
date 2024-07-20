@@ -19,6 +19,7 @@ const StageWrapperComponent = function (props) {
         loading,
         stageSize,
         vm,
+        guiWidth,
         stageWidth,
         stageHeight
     } = props;
@@ -45,6 +46,7 @@ const StageWrapperComponent = function (props) {
                         <Stage
                             stageSize={stageSize}
                             vm={vm}
+                            guiWidth={guiWidth}
                             stageWidth={stageWidth}
                             stageHeight={stageHeight}
                         /> :
@@ -63,6 +65,7 @@ StageWrapperComponent.propTypes = {
     isRendererSupported: PropTypes.bool.isRequired,
     isRtl: PropTypes.bool.isRequired,
     loading: PropTypes.bool,
+    guiWidth: PropTypes.number,
     stageSize: PropTypes.oneOf(Object.keys(STAGE_DISPLAY_SIZES)).isRequired,
     vm: PropTypes.instanceOf(VM).isRequired
 };

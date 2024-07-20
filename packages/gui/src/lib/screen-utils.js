@@ -41,9 +41,10 @@ const resolveStageSize = (stageSizeMode, isFullSize) => {
  * @param {boolean} isFullScreen - true if full-screen mode is enabled.
  * @param {number} resolutionX - custom stage width.
  * @param {number} resolutionY - custom stage height.
+ * @param {number} guiWidth - context's current maximum gui width. used for responsive design.
  * @return {StageDimensions} - an object describing the dimensions of the stage.
  */
-const getStageDimensions = (stageSize, isFullScreen, resolutionX, resolutionY) => {
+const getStageDimensions = (stageSize, isFullScreen, resolutionX, resolutionY, guiWidth) => {
     const stageDimensions = {
         heightDefault: resolutionY || layout.standardStageHeight,
         widthDefault: resolutionX || layout.standardStageWidth,
@@ -74,6 +75,12 @@ const getStageDimensions = (stageSize, isFullScreen, resolutionX, resolutionY) =
     // Round off dimensions to prevent resampling/blurriness
     stageDimensions.height = Math.round(stageDimensions.height);
     stageDimensions.width = Math.round(stageDimensions.width);
+
+    if (guiWidth && !isFullScreen) {
+        stageDimensions.width = guiWidth;
+        stageDimensions.height = stageDimensions.width * .75;
+        stageDimensions.scale = stageDimensions.width / stageDimensions.widthDefault;
+    }
 
     return stageDimensions;
 };

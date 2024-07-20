@@ -92,6 +92,7 @@ class Stage extends React.Component {
             this.state.question !== nextState.question ||
             this.props.micIndicator !== nextProps.micIndicator ||
             this.props.isStarted !== nextProps.isStarted ||
+            this.props.guiWidth !== nextProps.guiWidth ||
             this.props.stageHeight !== nextProps.stageHeight ||
             this.props.stageWidth !== nextProps.stageWidth;
     }
@@ -444,6 +445,7 @@ Stage.propTypes = {
     micIndicator: PropTypes.bool,
     onActivateColorPicker: PropTypes.func,
     onDeactivateColorPicker: PropTypes.func,
+    guiWidth: PropTypes.number,
     stageSize: PropTypes.oneOf(Object.keys(STAGE_DISPLAY_SIZES)).isRequired,
     useEditorDragStyle: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired

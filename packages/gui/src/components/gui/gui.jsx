@@ -121,6 +121,7 @@ const GUIComponent = props => {
         telemetryModalVisible,
         theme,
         vm,
+        guiWidth,
         stageWidth,
         stageHeight,
         ...componentProps
@@ -153,6 +154,7 @@ const GUIComponent = props => {
                 loading={loading}
                 stageSize={STAGE_SIZE_MODES.large}
                 vm={vm}
+                guiWidth={guiWidth}
                 stageWidth={stageWidth}
                 stageHeight={stageHeight}
             >
@@ -352,6 +354,7 @@ const GUIComponent = props => {
                                 isRtl={isRtl}
                                 stageSize={stageSize}
                                 vm={vm}
+                                guiWidth={guiWidth}
                                 stageWidth={stageWidth}
                                 stageHeight={stageHeight}
                             />

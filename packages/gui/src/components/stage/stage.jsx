@@ -29,12 +29,13 @@ const StageComponent = props => {
         onDeactivateColorPicker,
         onDoubleClick,
         onQuestionAnswered,
+        guiWidth,
         stageWidth,
         stageHeight,
         ...boxProps
     } = props;
 
-    const stageDimensions = getStageDimensions(stageSize, isFullScreen, stageWidth, stageHeight);
+    const stageDimensions = getStageDimensions(stageSize, isFullScreen, stageWidth, stageHeight, guiWidth);
 
     return (
         <React.Fragment>
@@ -152,6 +153,7 @@ StageComponent.propTypes = {
     layoutStyle: PropTypes.string,
     resolutionX: PropTypes.number,
     resolutionY: PropTypes.number,
+    guiWidth: PropTypes.number,
     stageWidth: PropTypes.number,
     stageHeight: PropTypes.number
 };
