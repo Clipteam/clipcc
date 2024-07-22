@@ -24,12 +24,19 @@
  */
 'use strict';
 
-goog.provide('Blockly.WorkspaceCommentSvg');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.WorkspaceCommentSvg');
 
-goog.require('Blockly.Events.CommentCreate');
-goog.require('Blockly.Events.CommentDelete');
-goog.require('Blockly.Events.CommentMove');
-goog.require('Blockly.WorkspaceComment');
+import * as browserEvents from './browser_events';
+import * as common from './common';
+import * as eventUtils from './events/utils';
+import {Ui} from './events/ui';
+import * as utils from './utils';
+import {WorkspaceComment} from './workspace_comment';
+
+const asserts = goog.require('goog.asserts');
+const dom = goog.require('goog.dom');
+const Coordinate = goog.require('goog.math.Coordinate');
 
 
 /**
@@ -41,28 +48,28 @@ goog.require('Blockly.WorkspaceComment');
  * @param {boolean} minimized Whether this comment is minimized.
  * @param {string=} opt_id Optional ID.  Use this ID if provided, otherwise
  *     create a new ID.
- * @extends {Blockly.WorkspaceComment}
+ * @extends {WorkspaceComment}
  * @constructor
  */
-Blockly.WorkspaceCommentSvg = function(workspace, content, height, width, minimized,
+export const WorkspaceCommentSvg = function(workspace, content, height, width, minimized,
     opt_id) {
   // Create core elements for the block.
   /**
    * @type {SVGElement}
    * @private
    */
-  this.svgGroup_ = Blockly.utils.createSvgElement(
+  this.svgGroup_ = utils.createSvgElement(
       'g', {}, null);
   this.svgGroup_.translate_ = '';
 
-  this.svgRect_ = Blockly.utils.createSvgElement(
+  this.svgRect_ = utils.createSvgElement(
       'rect',
       {
         'class': 'scratchCommentRect scratchWorkspaceCommentBorder',
         'x': 0,
         'y': 0,
-        'rx': 4 * Blockly.WorkspaceCommentSvg.BORDER_WIDTH,
-        'ry': 4 * Blockly.WorkspaceCommentSvg.BORDER_WIDTH
+        'rx': 4 * WorkspaceCommentSvg.BORDER_WIDTH,
+        'ry': 4 * WorkspaceCommentSvg.BORDER_WIDTH
       });
   this.svgGroup_.appendChild(this.svgRect_);
 
@@ -81,13 +88,13 @@ Blockly.WorkspaceCommentSvg = function(workspace, content, height, width, minimi
    * @private
    */
   this.useDragSurface_ =
-      Blockly.utils.is3dSupported() && !!workspace.blockDragSurface_;
+      utils.is3dSupported() && !!workspace.blockDragSurface_;
 
-  Blockly.WorkspaceCommentSvg.superClass_.constructor.call(this,
+  WorkspaceCommentSvg.superClass_.constructor.call(this,
       workspace, content, height, width, minimized, opt_id);
 
   this.render();
-}; goog.inherits(Blockly.WorkspaceCommentSvg, Blockly.WorkspaceComment);
+}; goog.inherits(WorkspaceCommentSvg, WorkspaceComment);
 
 /**
  * The width and height to use to size a workspace comment when it is first
@@ -95,37 +102,37 @@ Blockly.WorkspaceCommentSvg = function(workspace, content, height, width, minimi
  * @type {number}
  * @package
  */
-Blockly.WorkspaceCommentSvg.DEFAULT_SIZE = 200;
+WorkspaceCommentSvg.DEFAULT_SIZE = 200;
 
 /**
  * Dispose of this comment.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.dispose = function() {
+WorkspaceCommentSvg.prototype.dispose = function() {
   if (!this.workspace) {
     // The comment has already been deleted.
     return;
   }
   // If this comment is being deleted, unlink the mouse events.
-  if (Blockly.selected == this) {
+  if (common.getSelected() == this) {
     this.unselect();
     this.workspace.cancelCurrentGesture();
   }
 
-  if (Blockly.Events.isEnabled()) {
-    Blockly.Events.fire(new Blockly.Events.CommentDelete(this));
+  if (eventUtils.isEnabled()) {
+    eventUtils.fire(new (eventUtils.get(eventUtils.COMMENT_DELETE))(this));
   }
 
-  goog.dom.removeNode(this.svgGroup_);
+  dom.removeNode(this.svgGroup_);
   // Sever JavaScript to DOM connections.
   this.svgGroup_ = null;
   this.svgRect_ = null;
   // Dispose of any rendered components
   this.disposeInternal_();
 
-  Blockly.Events.disable();
-  Blockly.WorkspaceCommentSvg.superClass_.dispose.call(this);
-  Blockly.Events.enable();
+  eventUtils.disable();
+  WorkspaceCommentSvg.superClass_.dispose.call(this);
+  eventUtils.enable();
 };
 
 /**
@@ -133,12 +140,12 @@ Blockly.WorkspaceCommentSvg.prototype.dispose = function() {
  * May be called more than once.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.initSvg = function() {
-  goog.asserts.assert(this.workspace.rendered, 'Workspace is headless.');
+WorkspaceCommentSvg.prototype.initSvg = function() {
+  asserts.assert(this.workspace.rendered, 'Workspace is headless.');
   if (!this.workspace.options.readOnly && !this.eventsInit_) {
-    Blockly.bindEventWithChecks_(
+    browserEvents.conditionalBind(
         this.svgRectTarget_, 'mousedown', this, this.pathMouseDown_);
-    Blockly.bindEventWithChecks_(
+    browserEvents.conditionalBind(
         this.svgHandleTarget_, 'mousedown', this, this.pathMouseDown_);
   }
   this.eventsInit_ = true;
@@ -154,7 +161,7 @@ Blockly.WorkspaceCommentSvg.prototype.initSvg = function() {
  * @param {!Event} e Mouse down event or touch start event.
  * @private
  */
-Blockly.WorkspaceCommentSvg.prototype.pathMouseDown_ = function(e) {
+WorkspaceCommentSvg.prototype.pathMouseDown_ = function(e) {
   const gesture = this.workspace.getGesture(e);
   if (gesture) {
     gesture.handleBubbleStart(e, this);
@@ -166,45 +173,35 @@ Blockly.WorkspaceCommentSvg.prototype.pathMouseDown_ = function(e) {
  * @param {!Event} e Mouse event.
  * @private
  */
-Blockly.WorkspaceCommentSvg.prototype.showContextMenu_ = function(e) {
-  if (this.workspace.options.readOnly) {
-    return;
-  }
-  // Save the current workspace comment in a variable for use in closures.
-  const comment = this;
-  const menuOptions = [];
-
-  if (this.isDeletable() && this.isMovable()) {
-    menuOptions.push(Blockly.ContextMenu.commentDuplicateOption(comment));
-    menuOptions.push(Blockly.ContextMenu.commentDeleteOption(comment));
-  }
-
-  Blockly.ContextMenu.show(e, menuOptions, this.RTL);
+WorkspaceCommentSvg.prototype.showContextMenu_ = function(e) {
+  throw new Error(
+      'The implementation of showContextMenu should be ' +
+      'monkey-patched in by blockly.js');
 };
 
 /**
  * Select this comment.  Highlight it visually.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.select = function() {
-  if (Blockly.selected == this) {
+WorkspaceCommentSvg.prototype.select = function() {
+  if (common.getSelected() == this) {
     return;
   }
   let oldId = null;
-  if (Blockly.selected) {
-    oldId = Blockly.selected.id;
+  if (common.getSelected()) {
+    oldId = common.getSelected().id;
     // Unselect any previously selected block or comment.
-    Blockly.Events.disable();
+    eventUtils.disable();
     try {
-      Blockly.selected.unselect();
+      common.getSelected().unselect();
     } finally {
-      Blockly.Events.enable();
+      eventUtils.enable();
     }
   }
-  const event = new Blockly.Events.Ui(null, 'selected', oldId, this.id);
+  const event = new Ui(null, 'selected', oldId, this.id);
   event.workspaceId = this.workspace.id;
-  Blockly.Events.fire(event);
-  Blockly.selected = this;
+  eventUtils.fire(event);
+  common.setSelected(this);
   this.addSelect();
 };
 
@@ -212,14 +209,14 @@ Blockly.WorkspaceCommentSvg.prototype.select = function() {
  * Unselect this comment.  Remove its highlighting.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.unselect = function() {
-  if (Blockly.selected != this) {
+WorkspaceCommentSvg.prototype.unselect = function() {
+  if (common.getSelected() != this) {
     return;
   }
-  const event = new Blockly.Events.Ui(null, 'selected', this.id, null);
+  const event = new Ui(null, 'selected', this.id, null);
   event.workspaceId = this.workspace.id;
-  Blockly.Events.fire(event);
-  Blockly.selected = null;
+  eventUtils.fire(event);
+  common.setSelected(null);
   this.removeSelect();
 };
 
@@ -227,8 +224,8 @@ Blockly.WorkspaceCommentSvg.prototype.unselect = function() {
  * Select this comment.  Highlight it visually.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.addSelect = function() {
-  Blockly.utils.addClass(
+WorkspaceCommentSvg.prototype.addSelect = function() {
+  utils.addClass(
       /** @type {!Element} */ (this.svgGroup_), 'blocklySelected');
   this.setFocus();
 };
@@ -237,8 +234,8 @@ Blockly.WorkspaceCommentSvg.prototype.addSelect = function() {
  * Unselect this comment.  Remove its highlighting.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.removeSelect = function() {
-  Blockly.utils.removeClass(
+WorkspaceCommentSvg.prototype.removeSelect = function() {
+  utils.removeClass(
       /** @type {!Element} */ (this.svgGroup_), 'blocklySelected');
   this.blurFocus();
 };
@@ -247,8 +244,8 @@ Blockly.WorkspaceCommentSvg.prototype.removeSelect = function() {
  * Focus this comment.  Highlight it visually.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.addFocus = function() {
-  Blockly.utils.addClass(
+WorkspaceCommentSvg.prototype.addFocus = function() {
+  utils.addClass(
       /** @type {!Element} */ (this.svgGroup_), 'blocklyFocused');
 };
 
@@ -256,8 +253,8 @@ Blockly.WorkspaceCommentSvg.prototype.addFocus = function() {
  * Unfocus this comment.  Remove its highlighting.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.removeFocus = function() {
-  Blockly.utils.removeClass(
+WorkspaceCommentSvg.prototype.removeFocus = function() {
+  utils.removeClass(
       /** @type {!Element} */ (this.svgGroup_), 'blocklyFocused');
 };
 
@@ -267,11 +264,11 @@ Blockly.WorkspaceCommentSvg.prototype.removeFocus = function() {
  * If the comment is on the workspace, (0, 0) is the origin of the workspace
  * coordinate system.
  * This does not change with workspace scale.
- * @return {!goog.math.Coordinate} Object with .x and .y properties in
+ * @return {!Coordinate} Object with .x and .y properties in
  *     workspace coordinates.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.getRelativeToSurfaceXY = function() {
+WorkspaceCommentSvg.prototype.getRelativeToSurfaceXY = function() {
   let x = 0;
   let y = 0;
 
@@ -282,7 +279,7 @@ Blockly.WorkspaceCommentSvg.prototype.getRelativeToSurfaceXY = function() {
   if (element) {
     do {
       // Loop through this comment and every parent.
-      const xy = Blockly.utils.getRelativeXY(element);
+      const xy = utils.getRelativeXY(element);
       x += xy.x;
       y += xy.y;
       // If this element is the current element on the drag surface, include
@@ -298,7 +295,7 @@ Blockly.WorkspaceCommentSvg.prototype.getRelativeToSurfaceXY = function() {
     } while (element && element != this.workspace.getBubbleCanvas() &&
         element != dragSurfaceGroup);
   }
-  this.xy_ = new goog.math.Coordinate(x, y);
+  this.xy_ = new Coordinate(x, y);
   return this.xy_;
 };
 
@@ -308,13 +305,13 @@ Blockly.WorkspaceCommentSvg.prototype.getRelativeToSurfaceXY = function() {
  * @param {number} dy Vertical offset, in workspace units.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.moveBy = function(dx, dy) {
-  const event = new Blockly.Events.CommentMove(this);
+WorkspaceCommentSvg.prototype.moveBy = function(dx, dy) {
+  const event = new (eventUtils.get(eventUtils.COMMENT_MOVE))(this);
   // TODO: Do I need to look up the relative to surface XY position here?
   const xy = this.getRelativeToSurfaceXY();
   this.translate(xy.x + dx, xy.y + dy);
   event.recordNew();
-  Blockly.Events.fire(event);
+  eventUtils.fire(event);
   this.workspace.resizeContents();
 };
 
@@ -325,8 +322,8 @@ Blockly.WorkspaceCommentSvg.prototype.moveBy = function(dx, dy) {
  * @param {number} y The y coordinate of the translation in workspace units.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.translate = function(x, y) {
-  this.xy_ = new goog.math.Coordinate(x, y);
+WorkspaceCommentSvg.prototype.translate = function(x, y) {
+  this.xy_ = new Coordinate(x, y);
   this.getSvgRoot().setAttribute('transform',
       'translate(' + x + ',' + y + ')');
 };
@@ -337,7 +334,7 @@ Blockly.WorkspaceCommentSvg.prototype.translate = function(x, y) {
  * Does nothing if useDragSurface_ is false.
  * @private
  */
-Blockly.WorkspaceCommentSvg.prototype.moveToDragSurface_ = function() {
+WorkspaceCommentSvg.prototype.moveToDragSurface_ = function() {
   if (!this.useDragSurface_) {
     return;
   }
@@ -356,11 +353,11 @@ Blockly.WorkspaceCommentSvg.prototype.moveToDragSurface_ = function() {
  * Move this comment back to the workspace block canvas.
  * Generally should be called at the same time as setDragging(false).
  * Does nothing if useDragSurface_ is false.
- * @param {!goog.math.Coordinate} newXY The position the comment should take on
+ * @param {!Coordinate} newXY The position the comment should take on
  *     on the workspace canvas, in workspace coordinates.
  * @private
  */
-Blockly.WorkspaceCommentSvg.prototype.moveOffDragSurface_ = function(newXY) {
+WorkspaceCommentSvg.prototype.moveOffDragSurface_ = function(newXY) {
   if (!this.useDragSurface_) {
     return;
   }
@@ -374,11 +371,11 @@ Blockly.WorkspaceCommentSvg.prototype.moveOffDragSurface_ = function(newXY) {
  * drag surface to translate blocks.
  * @param {?Blockly.BlockDragSurfaceSvg} dragSurface The surface that carries
  *     rendered items during a drag, or null if no drag surface is in use.
- * @param {!goog.math.Coordinate} newLoc The location to translate to, in
+ * @param {!Coordinate} newLoc The location to translate to, in
  *     workspace coordinates.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.moveDuringDrag = function(dragSurface, newLoc) {
+WorkspaceCommentSvg.prototype.moveDuringDrag = function(dragSurface, newLoc) {
   if (dragSurface) {
     dragSurface.translateSurface(newLoc.x, newLoc.y);
   } else {
@@ -394,7 +391,7 @@ Blockly.WorkspaceCommentSvg.prototype.moveDuringDrag = function(dragSurface, new
  * @param {number} y The y position to move to.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.moveTo = function(x, y) {
+WorkspaceCommentSvg.prototype.moveTo = function(x, y) {
   this.translate(x, y);
 };
 
@@ -403,8 +400,8 @@ Blockly.WorkspaceCommentSvg.prototype.moveTo = function(x, y) {
  * Used when the comment is switching from 3d to 2d transform or vice versa.
  * @private
  */
-Blockly.WorkspaceCommentSvg.prototype.clearTransformAttributes_ = function() {
-  Blockly.utils.removeAttribute(this.getSvgRoot(), 'transform');
+WorkspaceCommentSvg.prototype.clearTransformAttributes_ = function() {
+  utils.removeAttribute(this.getSvgRoot(), 'transform');
 };
 
 /**
@@ -416,7 +413,7 @@ Blockly.WorkspaceCommentSvg.prototype.clearTransformAttributes_ = function() {
  *    properties in workspace units.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.getBubbleSize = function() {
+WorkspaceCommentSvg.prototype.getBubbleSize = function() {
   if (this.rendered_) {
     return {
       width: parseInt(this.svgRect_.getAttribute('width')),
@@ -431,27 +428,27 @@ Blockly.WorkspaceCommentSvg.prototype.getBubbleSize = function() {
  * Returns the coordinates of a bounding box describing the dimensions of this
  * comment.
  * Coordinate system: workspace coordinates.
- * @return {!{topLeft: goog.math.Coordinate, bottomRight: goog.math.Coordinate}}
+ * @return {!{topLeft: Coordinate, bottomRight: Coordinate}}
  *    Object with top left and bottom right coordinates of the bounding box.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.getBoundingRectangle = function() {
+WorkspaceCommentSvg.prototype.getBoundingRectangle = function() {
   const blockXY = this.getRelativeToSurfaceXY();
   const commentBounds = this.getHeightWidth();
   let topLeft;
   let bottomRight;
   if (this.RTL) {
-    topLeft = new goog.math.Coordinate(blockXY.x - (commentBounds.width),
+    topLeft = new Coordinate(blockXY.x - (commentBounds.width),
         blockXY.y);
     // Add the width of the tab/puzzle piece knob to the x coordinate
     // since X is the corner of the rectangle, not the whole puzzle piece.
-    bottomRight = new goog.math.Coordinate(blockXY.x,
+    bottomRight = new Coordinate(blockXY.x,
         blockXY.y + commentBounds.height);
   } else {
     // Subtract the width of the tab/puzzle piece knob to the x coordinate
     // since X is the corner of the rectangle, not the whole puzzle piece.
-    topLeft = new goog.math.Coordinate(blockXY.x, blockXY.y);
-    bottomRight = new goog.math.Coordinate(blockXY.x + commentBounds.width,
+    topLeft = new Coordinate(blockXY.x, blockXY.y);
+    bottomRight = new Coordinate(blockXY.x + commentBounds.width,
         blockXY.y + commentBounds.height);
   }
   return {topLeft: topLeft, bottomRight: bottomRight};
@@ -461,12 +458,12 @@ Blockly.WorkspaceCommentSvg.prototype.getBoundingRectangle = function() {
  * Add or remove the UI indicating if this comment is movable or not.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.updateMovable = function() {
+WorkspaceCommentSvg.prototype.updateMovable = function() {
   if (this.isMovable()) {
-    Blockly.utils.addClass(
+    utils.addClass(
         /** @type {!Element} */ (this.svgGroup_), 'blocklyDraggable');
   } else {
-    Blockly.utils.removeClass(
+    utils.removeClass(
         /** @type {!Element} */ (this.svgGroup_), 'blocklyDraggable');
   }
 };
@@ -476,8 +473,8 @@ Blockly.WorkspaceCommentSvg.prototype.updateMovable = function() {
  * @param {boolean} movable True if movable.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.setMovable = function(movable) {
-  Blockly.WorkspaceCommentSvg.superClass_.setMovable.call(this, movable);
+WorkspaceCommentSvg.prototype.setMovable = function(movable) {
+  WorkspaceCommentSvg.superClass_.setMovable.call(this, movable);
   this.updateMovable();
 };
 
@@ -486,15 +483,15 @@ Blockly.WorkspaceCommentSvg.prototype.setMovable = function(movable) {
  * @param {boolean} adding True if adding, false if removing.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.setDragging = function(adding) {
+WorkspaceCommentSvg.prototype.setDragging = function(adding) {
   if (adding) {
     const group = this.getSvgRoot();
     group.translate_ = '';
     group.skew_ = '';
-    Blockly.utils.addClass(
+    utils.addClass(
         /** @type {!Element} */ (this.svgGroup_), 'blocklyDragging');
   } else {
-    Blockly.utils.removeClass(
+    utils.removeClass(
         /** @type {!Element} */ (this.svgGroup_), 'blocklyDragging');
   }
 };
@@ -504,7 +501,7 @@ Blockly.WorkspaceCommentSvg.prototype.setDragging = function(adding) {
  * @return {Element} The root SVG node (probably a group).
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.getSvgRoot = function() {
+WorkspaceCommentSvg.prototype.getSvgRoot = function() {
   return this.svgGroup_;
 };
 
@@ -513,7 +510,7 @@ Blockly.WorkspaceCommentSvg.prototype.getSvgRoot = function() {
  * @return {string} Comment text.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.getText = function() {
+WorkspaceCommentSvg.prototype.getText = function() {
   return this.textarea_ ? this.textarea_.value : this.content_;
 };
 
@@ -522,8 +519,8 @@ Blockly.WorkspaceCommentSvg.prototype.getText = function() {
  * @param {string} text Comment text.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.setText = function(text) {
-  Blockly.WorkspaceCommentSvg.superClass_.setText.call(this, text);
+WorkspaceCommentSvg.prototype.setText = function(text) {
+  WorkspaceCommentSvg.superClass_.setText.call(this, text);
   if (this.textarea_) {
     this.textarea_.value = text;
   }
@@ -535,17 +532,17 @@ Blockly.WorkspaceCommentSvg.prototype.setText = function(text) {
  *     otherwise.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.setDeleteStyle = function(enable) {
+WorkspaceCommentSvg.prototype.setDeleteStyle = function(enable) {
   if (enable) {
-    Blockly.utils.addClass(
+    utils.addClass(
         /** @type {!Element} */ (this.svgGroup_), 'blocklyDraggingDelete');
   } else {
-    Blockly.utils.removeClass(
+    utils.removeClass(
         /** @type {!Element} */ (this.svgGroup_), 'blocklyDraggingDelete');
   }
 };
 
-Blockly.WorkspaceCommentSvg.prototype.setAutoLayout = function() {
+WorkspaceCommentSvg.prototype.setAutoLayout = function() {
   // NOP for compatibility with the bubble dragger.
 };
 
@@ -555,17 +552,17 @@ Blockly.WorkspaceCommentSvg.prototype.setAutoLayout = function() {
  * @param {!Blockly.Workspace} workspace The workspace.
  * @param {number=} opt_wsWidth The width of the workspace, which is used to
  *     position comments correctly in RTL.
- * @return {!Blockly.WorkspaceCommentSvg} The created workspace comment.
+ * @return {!WorkspaceCommentSvg} The created workspace comment.
  * @package
  */
-Blockly.WorkspaceCommentSvg.fromXml = function(xmlComment, workspace,
+WorkspaceCommentSvg.fromXml = function(xmlComment, workspace,
     opt_wsWidth) {
-  Blockly.Events.disable();
+  eventUtils.disable();
   let comment;
   try {
-    const info = Blockly.WorkspaceComment.parseAttributes(xmlComment);
+    const info = WorkspaceComment.parseAttributes(xmlComment);
 
-    comment = new Blockly.WorkspaceCommentSvg(workspace,
+    comment = new WorkspaceCommentSvg(workspace,
         info.content, info.h, info.w, info.minimized, info.id);
     if (workspace.rendered) {
       comment.initSvg();
@@ -582,9 +579,9 @@ Blockly.WorkspaceCommentSvg.fromXml = function(xmlComment, workspace,
       }
     }
   } finally {
-    Blockly.Events.enable();
+    eventUtils.enable();
   }
-  Blockly.WorkspaceComment.fireCreateEvent(comment);
+  WorkspaceComment.fireCreateEvent(comment);
 
   return comment;
 };
@@ -595,7 +592,7 @@ Blockly.WorkspaceCommentSvg.fromXml = function(xmlComment, workspace,
  * @return {!Element} Tree of XML elements.
  * @package
  */
-Blockly.WorkspaceCommentSvg.prototype.toXmlWithXY = function(opt_noId) {
+WorkspaceCommentSvg.prototype.toXmlWithXY = function(opt_noId) {
   let width;  // Not used in LTR.
   if (this.workspace.RTL) {
     // Here be performance dragons: This calls getMetrics().

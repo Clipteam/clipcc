@@ -117,7 +117,7 @@ class StageSelector extends React.Component {
                     }
                 });
             }, this.props.onCloseImporting);
-        }, this.props.onCloseImporting);
+        }, this.props.onCloseImporting, this.props.vm.runtime.stageWidth, this.props.vm.runtime.stageHeight);
     }
     handleFileUploadClick (e) {
         e.stopPropagation(); // Prevent click from selecting the stage, that is handled manually in backdrop upload

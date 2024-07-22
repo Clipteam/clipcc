@@ -1469,11 +1469,17 @@ class VirtualMachine extends EventEmitter {
             .map(k => this.editingTarget.comments[k])
             .filter(c => c.blockId === null);
 
+        const procedures = this.runtime.targets.map(target =>
+            target.blocks.getAllProcedureDefinitions(target !== this.editingTarget));
+
         const xmlString = `<xml xmlns="http://www.w3.org/1999/xhtml">
                             <variables>
                                 ${globalVariables.map(v => v.toXML()).join()}
                                 ${localVariables.map(v => v.toXML(true)).join()}
                             </variables>
+                            <procedures>
+                                ${procedures.join('')}
+                            </procedures>
                             ${workspaceComments.map(c => c.toXML()).join()}
                             ${this.editingTarget.blocks.toXML(this.editingTarget.comments)}
                         </xml>`;

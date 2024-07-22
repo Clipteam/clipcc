@@ -28,7 +28,10 @@
  * @name Blockly.utils.uiMenu
  * @namespace
  **/
-goog.provide('Blockly.utils.uiMenu');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.utils.uiMenu');
+
+const style = goog.require('goog.style');
 
 
 /**
@@ -37,9 +40,9 @@ goog.provide('Blockly.utils.uiMenu');
  * @return {!goog.math.Size} Object with width and height properties.
  * @package
  */
-Blockly.utils.uiMenu.getSize = function(menu) {
+export const getSize = function(menu) {
   const menuDom = menu.getElement();
-  const menuSize = goog.style.getSize(menuDom);
+  const menuSize = style.getSize(menuDom);
   // Recalculate height for the total content, not only box height.
   menuSize.height = menuDom.scrollHeight;
   return menuSize;
@@ -59,7 +62,7 @@ Blockly.utils.uiMenu.getSize = function(menu) {
  *     widget div, in window coordinates.
  * @package
  */
-Blockly.utils.uiMenu.adjustBBoxesForRTL = function(viewportBBox, anchorBBox,
+export const adjustBBoxesForRTL = function(viewportBBox, anchorBBox,
     menuSize) {
   anchorBBox.left += menuSize.width;
   anchorBBox.right += menuSize.width;

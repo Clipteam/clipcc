@@ -24,32 +24,35 @@
  */
 'use strict';
 
-goog.provide('Blockly.HorizontalFlyout');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.HorizontalFlyout');
 
-goog.require('Blockly.Block');
-goog.require('Blockly.Comment');
-goog.require('Blockly.Events');
-goog.require('Blockly.FlyoutButton');
-goog.require('Blockly.Flyout');
-goog.require('Blockly.WorkspaceSvg');
-goog.require('goog.dom');
-goog.require('goog.dom.animationFrame.polyfill');
-goog.require('goog.events');
-goog.require('goog.math.Rect');
-goog.require('goog.userAgent');
+import {BlockSvg} from './block_svg';
+import * as browserEvents from './browser_events';
+import * as constants from './constants';
+import {DropDownDiv} from './dropdowndiv';
+import {Flyout} from './flyout_base';
+import * as registry from './registry';
+import {Scrollbar} from './scrollbar';
+import {Tooltip} from './tooltip';
+import * as utils from './utils';
+import {WidgetDiv} from './widgetdiv';
+
+const Rect = goog.require('goog.math.Rect');
+const userAgent = goog.require('goog.userAgent');
 
 
 /**
  * Class for a flyout.
  * @param {!Object} workspaceOptions Dictionary of options for the workspace.
- * @extends {Blockly.Flyout}
+ * @extends {Flyout}
  * @constructor
  */
-Blockly.HorizontalFlyout = function(workspaceOptions) {
+export const HorizontalFlyout = function(workspaceOptions) {
   workspaceOptions.getMetrics = this.getMetrics_.bind(this);
   workspaceOptions.setMetrics = this.setMetrics_.bind(this);
 
-  Blockly.HorizontalFlyout.superClass_.constructor.call(this, workspaceOptions);
+  HorizontalFlyout.superClass_.constructor.call(this, workspaceOptions);
   /**
    * Flyout should be laid out horizontally vs vertically.
    * @type {boolean}
@@ -57,7 +60,7 @@ Blockly.HorizontalFlyout = function(workspaceOptions) {
    */
   this.horizontalLayout_ = true;
 };
-goog.inherits(Blockly.HorizontalFlyout, Blockly.Flyout);
+goog.inherits(HorizontalFlyout, Flyout);
 
 /**
  * Return an object with all the metrics required to size scrollbars for the
@@ -75,7 +78,7 @@ goog.inherits(Blockly.HorizontalFlyout, Blockly.Flyout);
  * @return {Object} Contains size and position metrics of the flyout.
  * @private
  */
-Blockly.HorizontalFlyout.prototype.getMetrics_ = function() {
+HorizontalFlyout.prototype.getMetrics_ = function() {
   if (!this.isVisible()) {
     // Flyout is hidden.
     return null;
@@ -91,11 +94,11 @@ Blockly.HorizontalFlyout.prototype.getMetrics_ = function() {
 
   let absoluteTop = this.SCROLLBAR_PADDING;
   const absoluteLeft = this.SCROLLBAR_PADDING;
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_BOTTOM) {
+  if (this.toolboxPosition_ == constants.TOOLBOX_AT_BOTTOM) {
     absoluteTop = 0;
   }
   let viewHeight = this.height_;
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_TOP) {
+  if (this.toolboxPosition_ == constants.TOOLBOX_AT_TOP) {
     viewHeight += this.MARGIN;
   }
   const viewWidth = this.width_ - 2 * this.SCROLLBAR_PADDING;
@@ -122,7 +125,7 @@ Blockly.HorizontalFlyout.prototype.getMetrics_ = function() {
  *     similar x property.
  * @private
  */
-Blockly.HorizontalFlyout.prototype.setMetrics_ = function(xyRatio) {
+HorizontalFlyout.prototype.setMetrics_ = function(xyRatio) {
   const metrics = this.getMetrics_();
   // This is a fix to an apparent race condition.
   if (!metrics) {
@@ -144,7 +147,7 @@ Blockly.HorizontalFlyout.prototype.setMetrics_ = function(xyRatio) {
 /**
  * Move the flyout to the edge of the workspace.
  */
-Blockly.HorizontalFlyout.prototype.position = function() {
+HorizontalFlyout.prototype.position = function() {
   if (!this.isVisible()) {
     return;
   }
@@ -164,13 +167,13 @@ Blockly.HorizontalFlyout.prototype.position = function() {
   this.setBackgroundPath_(edgeWidth, edgeHeight);
 
   let x = targetWorkspaceMetrics.absoluteLeft;
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_RIGHT) {
+  if (this.toolboxPosition_ == constants.TOOLBOX_AT_RIGHT) {
     x += targetWorkspaceMetrics.viewWidth;
     x -= this.width_;
   }
 
   let y = targetWorkspaceMetrics.absoluteTop;
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_BOTTOM) {
+  if (this.toolboxPosition_ == constants.TOOLBOX_AT_BOTTOM) {
     y += targetWorkspaceMetrics.viewHeight;
     y -= this.height_;
   }
@@ -186,7 +189,7 @@ Blockly.HorizontalFlyout.prototype.position = function() {
   this.svgGroup_.setAttribute("width", this.width_);
   this.svgGroup_.setAttribute("height", this.height_);
   const transform = 'translate(' + x + 'px,' + y + 'px)';
-  Blockly.utils.setCssTransform(this.svgGroup_, transform);
+  utils.setCssTransform(this.svgGroup_, transform);
 
   // Update the scrollbar (if one exists).
   if (this.scrollbar_) {
@@ -208,8 +211,8 @@ Blockly.HorizontalFlyout.prototype.position = function() {
  *     rounded corners.
  * @private
  */
-Blockly.HorizontalFlyout.prototype.setBackgroundPath_ = function(width, height) {
-  const atTop = this.toolboxPosition_ == Blockly.TOOLBOX_AT_TOP;
+HorizontalFlyout.prototype.setBackgroundPath_ = function(width, height) {
+  const atTop = this.toolboxPosition_ == constants.TOOLBOX_AT_TOP;
   // Start at top left.
   const path = ['M 0,' + (atTop ? 0 : this.CORNER_RADIUS)];
 
@@ -248,14 +251,14 @@ Blockly.HorizontalFlyout.prototype.setBackgroundPath_ = function(width, height) 
  * @param {number} pos The targeted move position in workspace coordinates.
  * @package
  */
-Blockly.HorizontalFlyout.prototype.moveTo = function(pos) {
+HorizontalFlyout.prototype.moveTo = function(pos) {
   this.scrollbar_.set(pos * this.workspace_.scale);
 };
 
 /**
  * Scroll the flyout to the top.
  */
-Blockly.HorizontalFlyout.prototype.scrollToStart = function() {
+HorizontalFlyout.prototype.scrollToStart = function() {
   this.scrollbar_.set(this.RTL ? Infinity : 0);
 };
 
@@ -264,7 +267,7 @@ Blockly.HorizontalFlyout.prototype.scrollToStart = function() {
  * @param {number} pos The targeted scroll position.
  * @package
  */
-Blockly.HorizontalFlyout.prototype.scrollTo = function(pos) {
+HorizontalFlyout.prototype.scrollTo = function(pos) {
   this.scrollTarget = pos * this.workspace_.scale;
 
   // Make sure not to set the scroll target past the farthest point we can
@@ -282,7 +285,7 @@ Blockly.HorizontalFlyout.prototype.scrollTo = function(pos) {
  * @param {!Event} e Mouse wheel scroll event.
  * @private
  */
-Blockly.HorizontalFlyout.prototype.wheel_ = function(e) {
+HorizontalFlyout.prototype.wheel_ = function(e) {
   // remove scrollTarget to stop auto scrolling in stepScrollAnimation
   this.scrollTarget = null;
 
@@ -300,7 +303,7 @@ Blockly.HorizontalFlyout.prototype.wheel_ = function(e) {
   if (delta) {
     // Firefox's mouse wheel deltas are a tenth that of Chrome/Safari.
     // DeltaMode is 1 for a mouse wheel, but not for a trackpad scroll event
-    if (goog.userAgent.GECKO && (e.deltaMode === 1)) {
+    if (userAgent.GECKO && (e.deltaMode === 1)) {
       delta *= 10;
     }
     const metrics = this.getMetrics_();
@@ -310,8 +313,8 @@ Blockly.HorizontalFlyout.prototype.wheel_ = function(e) {
     pos = Math.max(pos, 0);
     this.scrollbar_.set(pos);
     // When the flyout moves from a wheel event, hide WidgetDiv and DropDownDiv.
-    Blockly.WidgetDiv.hide(true);
-    Blockly.DropDownDiv.hideWithoutAnimation();
+    WidgetDiv.hide(true);
+    DropDownDiv.hideWithoutAnimation();
   }
 
   // Don't scroll the page.
@@ -326,7 +329,7 @@ Blockly.HorizontalFlyout.prototype.wheel_ = function(e) {
  * @param {!Array.<number>} gaps The visible gaps between blocks.
  * @private
  */
-Blockly.HorizontalFlyout.prototype.layout_ = function(contents, gaps) {
+HorizontalFlyout.prototype.layout_ = function(contents, gaps) {
   this.workspace_.scale = this.targetWorkspace_.scale;
   const margin = this.MARGIN;
   let cursorX = margin;
@@ -358,9 +361,9 @@ Blockly.HorizontalFlyout.prototype.layout_ = function(contents, gaps) {
 
       // Create an invisible rectangle under the block to act as a button.  Just
       // using the block as a button is poor, since blocks have holes in them.
-      const rect = Blockly.utils.createSvgElement('rect', {'fill-opacity': 0}, null);
+      const rect = utils.createSvgElement('rect', {'fill-opacity': 0}, null);
       rect.tooltip = block;
-      Blockly.Tooltip.bindMouseEvents(rect);
+      Tooltip.bindMouseEvents(rect);
       // Add the rectangles under the blocks, so that the blocks' tooltips work.
       this.workspace_.getCanvas().insertBefore(rect, block.getSvgRoot());
       block.flyoutRect_ = rect;
@@ -374,7 +377,7 @@ Blockly.HorizontalFlyout.prototype.layout_ = function(contents, gaps) {
       button.show();
       // Clicking on a flyout button or label is a lot like clicking on the
       // flyout background.
-      this.listeners_.push(Blockly.bindEventWithChecks_(buttonSvg, 'mousedown',
+      this.listeners_.push(browserEvents.conditionalBind(buttonSvg, 'mousedown',
           this, this.onMouseDown_));
 
 
@@ -393,7 +396,7 @@ Blockly.HorizontalFlyout.prototype.layout_ = function(contents, gaps) {
  * @return {boolean} true if the drag is toward the workspace.
  * @package
  */
-Blockly.HorizontalFlyout.prototype.isDragTowardWorkspace = function(currentDragDeltaXY) {
+HorizontalFlyout.prototype.isDragTowardWorkspace = function(currentDragDeltaXY) {
   const dx = currentDragDeltaXY.x;
   const dy = currentDragDeltaXY.y;
   // Direction goes from -180 to 180, with 0 toward the right and 90 on top.
@@ -401,7 +404,7 @@ Blockly.HorizontalFlyout.prototype.isDragTowardWorkspace = function(currentDragD
 
   let draggingTowardWorkspace = false;
   const range = this.dragAngleRange_;
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_TOP) {
+  if (this.toolboxPosition_ == constants.TOOLBOX_AT_TOP) {
     // Horizontal at top.
     if (dragDirection < 90 + range && dragDirection > 90 - range) {
       draggingTowardWorkspace = true;
@@ -417,9 +420,9 @@ Blockly.HorizontalFlyout.prototype.isDragTowardWorkspace = function(currentDragD
 
 /**
  * Return the deletion rectangle for this flyout in viewport coordinates.
- * @return {goog.math.Rect} Rectangle in which to delete.
+ * @return {Rect} Rectangle in which to delete.
  */
-Blockly.HorizontalFlyout.prototype.getClientRect = function() {
+HorizontalFlyout.prototype.getClientRect = function() {
   if (!this.svgGroup_) {
     return null;
   }
@@ -432,11 +435,11 @@ Blockly.HorizontalFlyout.prototype.getClientRect = function() {
   const y = flyoutRect.top;
   const height = flyoutRect.height;
 
-  if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_TOP) {
-    return new goog.math.Rect(-BIG_NUM, y - BIG_NUM, BIG_NUM * 2,
+  if (this.toolboxPosition_ == constants.TOOLBOX_AT_TOP) {
+    return new Rect(-BIG_NUM, y - BIG_NUM, BIG_NUM * 2,
         BIG_NUM + height);
-  } else if (this.toolboxPosition_ == Blockly.TOOLBOX_AT_BOTTOM) {
-    return new goog.math.Rect(-BIG_NUM, y, BIG_NUM * 2,
+  } else if (this.toolboxPosition_ == constants.TOOLBOX_AT_BOTTOM) {
+    return new Rect(-BIG_NUM, y, BIG_NUM * 2,
         BIG_NUM + height);
   }
 };
@@ -446,7 +449,7 @@ Blockly.HorizontalFlyout.prototype.getClientRect = function() {
  * For RTL: Lay out the blocks right-aligned.
  * @param {!Array<!Blockly.Block>} blocks The blocks to reflow.
  */
-Blockly.HorizontalFlyout.prototype.reflowInternal_ = function(blocks) {
+HorizontalFlyout.prototype.reflowInternal_ = function(blocks) {
   this.workspace_.scale = this.targetWorkspace_.scale;
   let flyoutHeight = 0;
   for (let i = 0, block; block = blocks[i]; i++) {
@@ -454,7 +457,7 @@ Blockly.HorizontalFlyout.prototype.reflowInternal_ = function(blocks) {
   }
   flyoutHeight += this.MARGIN * 1.5;
   flyoutHeight *= this.workspace_.scale;
-  flyoutHeight += Blockly.Scrollbar.scrollbarThickness;
+  flyoutHeight += Scrollbar.scrollbarThickness;
   if (this.height_ != flyoutHeight) {
     for (let i = 0, block; block = blocks[i]; i++) {
       const blockHW = block.getHeightWidth();
@@ -469,7 +472,7 @@ Blockly.HorizontalFlyout.prototype.reflowInternal_ = function(blocks) {
         // For hat blocks we want to shift them down by the hat height
         // since the y coordinate is the corner, not the top of the hat.
         const hatOffset =
-            block.startHat_ ? Blockly.BlockSvg.START_HAT_HEIGHT : 0;
+            block.startHat_ ? BlockSvg.START_HAT_HEIGHT : 0;
         if (hatOffset) {
           block.moveBy(0, hatOffset);
         }
@@ -483,3 +486,7 @@ Blockly.HorizontalFlyout.prototype.reflowInternal_ = function(blocks) {
     this.targetWorkspace_.resize();
   }
 };
+
+registry.register(
+    registry.Type.FLYOUTS_HORIZONTAL_TOOLBOX, registry.DEFAULT,
+    HorizontalFlyout);

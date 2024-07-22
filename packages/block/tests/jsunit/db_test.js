@@ -27,7 +27,7 @@ function test_DB_getNeighbours() {
 
   // Set up some connections.
   for (var i = 0; i < 10; i++) {
-      db.addConnection_(helper_createConnection(0, i, Blockly.PREVIOUS_STATEMENT));
+      db.addConnection_(helper_createConnection(0, i, Blockly.constants.PREVIOUS_STATEMENT));
   }
 
   // Test block belongs at beginning
@@ -65,7 +65,7 @@ function test_DB_getNeighbours() {
 }
 
 function helper_getNeighbours(db, x, y, radius) {
-  return db.getNeighbours(helper_createConnection(x, y, Blockly.NEXT_STATEMENT), radius);
+  return db.getNeighbours(helper_createConnection(x, y, Blockly.constants.NEXT_STATEMENT), radius);
 }
 
 function helper_createConnection(x, y, type) {

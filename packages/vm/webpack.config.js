@@ -113,11 +113,11 @@ module.exports = [
                     from: '../block/media',
                     to: 'media'
                 }, {
-                    from: '../../node_modules/clipcc-storage/dist/web'
+                    from: '../storage/dist/web'
                 }, {
-                    from: '../../node_modules/clipcc-render/dist/web'
+                    from: '../render/dist/web'
                 }, {
-                    from: '../../node_modules/scratch-svg-renderer/dist/web'
+                    from: '../svg-renderer/dist/web'
                 }, {
                     from: 'src/playground'
                 }]

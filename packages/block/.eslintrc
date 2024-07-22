@@ -54,11 +54,23 @@
     },
     "env": {
         "es2020": true,
-        "browser": true
+        "browser": true,
+        "commonjs": true
     },
     "globals": {
         "Blockly": true, // Blockly global
         "goog": true // goog closure libraries/includes
     },
-    "extends": "eslint:recommended"
+    "extends": "eslint:recommended",
+    "overrides": [{
+        "files": ["core/**/**/*.js"],
+        "parserOptions": {
+            "sourceType": "module"
+        }
+    }, {
+        "files": ["tests/jsunit/test_runner.js", "gulpfile.js"],
+        "env": {
+            "node": true
+        }
+    }]
 }

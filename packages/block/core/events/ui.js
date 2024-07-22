@@ -24,13 +24,12 @@
  */
 'use strict';
 
-goog.provide('Blockly.Events.Ui');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Events.Ui');
 
-goog.require('Blockly.Events');
-goog.require('Blockly.Events.Abstract');
+import * as eventUtils from './utils';
+import {Abstract} from './abstract';
 
-goog.require('goog.array');
-goog.require('goog.math.Coordinate');
 
 /**
  * Class for a UI event.
@@ -42,11 +41,11 @@ goog.require('goog.math.Coordinate');
  * @param {string} element One of 'selected', 'comment', 'mutator', etc.
  * @param {*} oldValue Previous value of element.
  * @param {*} newValue New value of element.
- * @extends {Blockly.Events.Abstract}
+ * @extends {Abstract}
  * @constructor
  */
-Blockly.Events.Ui = function(block, element, oldValue, newValue) {
-  Blockly.Events.Ui.superClass_.constructor.call(this);
+export const Ui = function(block, element, oldValue, newValue) {
+  Ui.superClass_.constructor.call(this);
   this.blockId = block ? block.id : null;
   this.workspaceId = block ? block.workspace.id : null;
   this.element = element;
@@ -55,20 +54,20 @@ Blockly.Events.Ui = function(block, element, oldValue, newValue) {
   // UI events do not undo or redo.
   this.recordUndo = false;
 };
-goog.inherits(Blockly.Events.Ui, Blockly.Events.Abstract);
+goog.inherits(Ui, Abstract);
 
 /**
  * Type of this event.
  * @type {string}
  */
-Blockly.Events.Ui.prototype.type = Blockly.Events.UI;
+Ui.prototype.type = eventUtils.UI;
 
 /**
  * Encode the event as JSON.
  * @return {!Object} JSON representation.
  */
-Blockly.Events.Ui.prototype.toJson = function() {
-  const json = Blockly.Events.Ui.superClass_.toJson.call(this);
+Ui.prototype.toJson = function() {
+  const json = Ui.superClass_.toJson.call(this);
   json['element'] = this.element;
   if (this.newValue !== undefined) {
     json['newValue'] = this.newValue;
@@ -83,9 +82,11 @@ Blockly.Events.Ui.prototype.toJson = function() {
  * Decode the JSON event.
  * @param {!Object} json JSON representation.
  */
-Blockly.Events.Ui.prototype.fromJson = function(json) {
-  Blockly.Events.Ui.superClass_.fromJson.call(this, json);
+Ui.prototype.fromJson = function(json) {
+  Ui.superClass_.fromJson.call(this, json);
   this.element = json['element'];
   this.newValue = json['newValue'];
   this.blockId = json['blockId'];
 };
+
+eventUtils.register(eventUtils.UI, Ui);

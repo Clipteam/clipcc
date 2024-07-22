@@ -34,6 +34,7 @@ import SelectMode from '../../containers/select-mode.jsx';
 import StrokeColorIndicatorComponent from '../../containers/stroke-color-indicator.jsx';
 import StrokeWidthIndicatorComponent from '../../containers/stroke-width-indicator.jsx';
 import TextMode from '../../containers/text-mode.jsx';
+import BoolOptMode from '../../containers/boolopt-mode.jsx';
 
 import Formats, {isBitmap, isVector} from '../../lib/format';
 import styles from './paint-editor.css';
@@ -160,6 +161,9 @@ const PaintEditorComponent = props => (
                         onUpdateImage={props.onUpdateImage}
                     />
                     <RectMode
+                        onUpdateImage={props.onUpdateImage}
+                    />
+                    <BoolOptMode
                         onUpdateImage={props.onUpdateImage}
                     />
                 </div>
