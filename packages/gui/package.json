@@ -10,6 +10,7 @@
     "url": "https://github.com/Clipteam/clipcc.git"
   },
   "main": "./dist/scratch-gui.js",
+  "types": "./index.d.ts",
   "scripts": {
     "build": "yarn run clean && webpack --color --bail",
     "clean": "rimraf ./build && mkdirp build && rimraf ./dist && mkdirp dist",
@@ -32,6 +33,8 @@
   },
   "dependencies": {
     "@microbit/microbit-universal-hex": "0.2.2",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
     "arraybuffer-loader": "1.0.8",
     "autoprefixer": "^9.0.1",
     "balance-text": "3.3.1",
@@ -44,6 +47,7 @@
     "clipcc-paint": "3.2.0",
     "clipcc-render": "3.2.0",
     "clipcc-storage": "3.2.0",
+    "clipcc-svg-renderer": "3.2.0",
     "clipcc-vm": "3.2.0",
     "computed-style-to-inline-style": "3.0.0",
     "copy-webpack-plugin": "11.0.0",
@@ -88,7 +92,6 @@
     "redux": "4.2.0",
     "redux-throttle": "0.1.1",
     "scratch-render-fonts": "1.0.0-prerelease.20221102164332",
-    "clipcc-svg-renderer": "3.2.0",
     "startaudiocontext": "1.2.1",
     "style-loader": "3.3.1",
     "to-style": "1.3.3",
