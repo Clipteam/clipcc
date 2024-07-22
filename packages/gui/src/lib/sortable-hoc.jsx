@@ -20,27 +20,8 @@ const SortableHOC = function (WrappedComponent) {
             this.containerBox = null;
         }
 
-        // UNSAFE_componentWillReceiveProps (newProps) {
-        //     if (newProps.dragInfo.dragging && !this.props.dragInfo.dragging) {
-        //         // Drag just started, snapshot the sorted bounding boxes for sortables.
-        //         this.boxes = this.sortableRefs.map(el => el && el.getBoundingClientRect());
-        //         this.boxes.sort((a, b) => { // Sort top-to-bottom, left-to-right (in LTR) / right-to-left (in RTL).
-        //             if (a.top === b.top) return (a.left - b.left) * (this.props.isRtl ? -1 : 1);
-        //             return a.top - b.top;
-        //         });
-        //         if (!this.ref) {
-        //             throw new Error('The containerRef must be assigned to the sortable area');
-        //         }
-        //         this.containerBox = this.ref.getBoundingClientRect();
-        //     } else if (!newProps.dragInfo.dragging && this.props.dragInfo.dragging) {
-        //         const newIndex = this.getMouseOverIndex();
-        //         if (newIndex !== null) {
-        //             this.props.onDrop(Object.assign({}, this.props.dragInfo, {newIndex}));
-        //         }
-        //     }
-        // }
-        componentDidUpdate (prevProps) {
-            if (this.props.dragInfo.dragging && !prevProps.dragInfo.dragging) {
+        UNSAFE_componentWillReceiveProps (newProps) {
+            if (newProps.dragInfo.dragging && !this.props.dragInfo.dragging) {
                 // Drag just started, snapshot the sorted bounding boxes for sortables.
                 this.boxes = this.sortableRefs.map(el => el && el.getBoundingClientRect());
                 this.boxes.sort((a, b) => { // Sort top-to-bottom, left-to-right (in LTR) / right-to-left (in RTL).
@@ -51,13 +32,14 @@ const SortableHOC = function (WrappedComponent) {
                     throw new Error('The containerRef must be assigned to the sortable area');
                 }
                 this.containerBox = this.ref.getBoundingClientRect();
-            } else if (!this.props.dragInfo.dragging && prevProps.dragInfo.dragging) {
+            } else if (!newProps.dragInfo.dragging && this.props.dragInfo.dragging) {
                 const newIndex = this.getMouseOverIndex();
                 if (newIndex !== null) {
                     this.props.onDrop(Object.assign({}, this.props.dragInfo, {newIndex}));
                 }
             }
         }
+
         handleAddSortable (node) {
             this.sortableRefs.push(node);
         }

@@ -52,6 +52,8 @@ const ProjectSaverHOC = function (WrappedComponent) {
                 'leavePageConfirm',
                 'tryToAutoSave'
             ]);
+        }
+        UNSAFE_componentWillMount () {
             if (typeof window === 'object') {
                 // Note: it might be better to use a listener instead of assigning onbeforeunload;
                 // but then it'd be hard to turn this listening off in our tests

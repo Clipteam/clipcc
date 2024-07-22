@@ -57,48 +57,26 @@ class SoundTab extends React.Component {
         ]);
         this.state = {selectedSoundIndex: 0};
     }
-    componentDidUpdate (prevProps) {
+
+    UNSAFE_componentWillReceiveProps (nextProps) {
         const {
             editingTarget,
             sprites,
             stage
-        } = this.props;
+        } = nextProps;
 
         const target = editingTarget && sprites[editingTarget] ? sprites[editingTarget] : stage;
         if (!target || !target.sounds) {
-            this.props = prevProps;
             return;
         }
 
         // If switching editing targets, reset the sound index
-        if (prevProps.editingTarget !== editingTarget) {
+        if (this.props.editingTarget !== editingTarget) {
             this.setState({selectedSoundIndex: 0});
         } else if (this.state.selectedSoundIndex > target.sounds.length - 1) {
             this.setState({selectedSoundIndex: Math.max(target.sounds.length - 1, 0)});
-        } else {
-            this.props = prevProps;
-            return;
         }
     }
-    // UNSAFE_componentWillReceiveProps (nextProps) {
-    //     const {
-    //         editingTarget,
-    //         sprites,
-    //         stage
-    //     } = nextProps;
-
-    //     const target = editingTarget && sprites[editingTarget] ? sprites[editingTarget] : stage;
-    //     if (!target || !target.sounds) {
-    //         return;
-    //     }
-
-    //     // If switching editing targets, reset the sound index
-    //     if (this.props.editingTarget !== editingTarget) {
-    //         this.setState({selectedSoundIndex: 0});
-    //     } else if (this.state.selectedSoundIndex > target.sounds.length - 1) {
-    //         this.setState({selectedSoundIndex: Math.max(target.sounds.length - 1, 0)});
-    //     }
-    // }
 
     handleSelectSound (soundIndex) {
         this.setState({selectedSoundIndex: soundIndex});

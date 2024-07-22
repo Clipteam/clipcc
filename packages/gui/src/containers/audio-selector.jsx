@@ -42,7 +42,6 @@ class AudioSelector extends React.Component {
             distanceThreshold: 0
         });
     }
-    /*
     UNSAFE_componentWillReceiveProps (newProps) {
         const {trimStart, trimEnd} = this.props;
         if (newProps.trimStart === trimStart && newProps.trimEnd === trimEnd) return;
@@ -50,15 +49,6 @@ class AudioSelector extends React.Component {
             trimStart: newProps.trimStart,
             trimEnd: newProps.trimEnd
         });
-    }
-    */
-    getDerivedStateFromProps (props, state) {
-        const {trimStart, trimEnd} = state;
-        if (props.trimStart === trimStart && props.trimEnd === trimEnd) return null;
-        return {
-            trimStart: props.trimStart,
-            trimEnd: props.trimEnd
-        };
     }
     clearSelection () {
         this.props.onSetTrim(null, null);
