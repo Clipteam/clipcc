@@ -7,12 +7,12 @@ import Modes from '../lib/modes';
 import {changeMode} from '../reducers/modes';
 import {clearHoveredItem, setHoveredItem} from '../reducers/hover';
 import {clearSelectedItems, setSelectedItems} from '../reducers/selected-items';
+
 import {getSelectedLeafItems} from '../helper/selection';
+import RoundedRectTool from '../helper/tools/rounded-rect-tool';
+import RoundedRectModeComponent from '../components/rounded-rect-mode/rounded-rect-mode.jsx';
 
-import ReshapeTool from '../helper/selection-tools/reshape-tool';
-import ReshapeModeComponent from '../components/reshape-mode/reshape-mode.jsx';
-
-class ReshapeMode extends React.Component {
+class RoundedRectMode extends React.Component {
     constructor (props) {
         super(props);
         bindAll(this, [
@@ -21,20 +21,23 @@ class ReshapeMode extends React.Component {
         ]);
     }
     componentDidMount () {
-        if (this.props.isReshapeModeActive) {
+        if (this.props.isRoundedRectModeActive) {
             this.activateTool(this.props);
         }
     }
-    componentDidUpdate (prevProps) {
-        if (this.tool && this.props.hoveredItemId !== prevProps.hoveredItemId) {
-            this.tool.setPrevHoveredItemId(this.props.hoveredItemId);
+    UNSAFE_componentWillReceiveProps (nextProps) {
+        if (this.tool && nextProps.hoveredItemId !== this.props.hoveredItemId) {
+            this.tool.setPrevHoveredItemId(nextProps.hoveredItemId);
         }
 
-        if (this.props.isReshapeModeActive && !prevProps.isReshapeModeActive) {
+        if (nextProps.isRoundedRectModeActive && !this.props.isRoundedRectModeActive) {
             this.activateTool();
-        } else if (!this.props.isReshapeModeActive && prevProps.isReshapeModeActive) {
+        } else if (!nextProps.isRoundedRectModeActive && this.props.isRoundedRectModeActive) {
             this.deactivateTool();
         }
+    }
+    shouldComponentUpdate (nextProps) {
+        return nextProps.isRoundedRectModeActive !== this.props.isRoundedRectModeActive;
     }
     componentWillUnmount () {
         if (this.tool) {
@@ -42,48 +45,44 @@ class ReshapeMode extends React.Component {
         }
     }
     activateTool () {
-        this.tool = new ReshapeTool(
+        this.tool = new RoundedRectTool(
             this.props.setHoveredItem,
             this.props.clearHoveredItem,
             this.props.setSelectedItems,
             this.props.clearSelectedItems,
-            this.props.onUpdateImage,
-            this.props.switchToTextTool
+            this.props.onUpdateImage
         );
-        this.tool.setPrevHoveredItemId(this.props.hoveredItemId);
         this.tool.activate();
     }
     deactivateTool () {
         this.tool.deactivateTool();
         this.tool.remove();
         this.tool = null;
-        this.hitResult = null;
     }
     render () {
         return (
-            <ReshapeModeComponent
-                isSelected={this.props.isReshapeModeActive}
+            <RoundedRectModeComponent
+                isSelected={this.props.isRoundedRectModeActive}
                 onMouseDown={this.props.handleMouseDown}
             />
         );
     }
 }
 
-ReshapeMode.propTypes = {
+RoundedRectMode.propTypes = {
     clearHoveredItem: PropTypes.func.isRequired,
     clearSelectedItems: PropTypes.func.isRequired,
     handleMouseDown: PropTypes.func.isRequired,
     hoveredItemId: PropTypes.number,
-    isReshapeModeActive: PropTypes.bool.isRequired,
+    isRoundedRectModeActive: PropTypes.bool.isRequired,
     onUpdateImage: PropTypes.func.isRequired,
     setHoveredItem: PropTypes.func.isRequired,
-    setSelectedItems: PropTypes.func.isRequired,
-    switchToTextTool: PropTypes.func.isRequired
+    setSelectedItems: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
-    isReshapeModeActive: state.scratchPaint.mode === Modes.RESHAPE,
-    hoveredItemId: state.scratchPaint.hover.hoveredItemId
+    isRoundedRectModeActive: state.scratchPaint.mode === Modes.ROUNDED_RECT,
+    hoveredItemId: state.scratchPaint.hoveredItemId
 });
 const mapDispatchToProps = dispatch => ({
     setHoveredItem: hoveredItemId => {
@@ -99,14 +98,13 @@ const mapDispatchToProps = dispatch => ({
         dispatch(setSelectedItems(getSelectedLeafItems(), false /* bitmapMode */));
     },
     handleMouseDown: () => {
-        dispatch(changeMode(Modes.RESHAPE));
+        dispatch(changeMode(Modes.ROUNDED_RECT));
     },
-    switchToTextTool: () => {
-        dispatch(changeMode(Modes.TEXT));
+    deactivateTool () {
     }
 });
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(ReshapeMode);
+)(RoundedRectMode);

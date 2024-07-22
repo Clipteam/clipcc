@@ -60,12 +60,13 @@ class ColorPicker extends React.Component {
             hex: color
         };
     }
-    componentWillReceiveProps (newProps) {
-        const color = newProps.colorIndex === 0 ? this.props.color : this.props.color2;
-        const newColor = newProps.colorIndex === 0 ? newProps.color : newProps.color2;
-        const colorSetByEyedropper = this.props.isEyeDropping && color !== newColor;
-        if (colorSetByEyedropper || this.props.colorIndex !== newProps.colorIndex) {
+    componentDidUpdate (prevProps) {
+        const prevColor = this.props.colorIndex === 0 ? prevProps.color : prevProps.color2;
+        const newColor = this.props.colorIndex === 0 ? this.props.color : this.props.color2;
+        const colorSetByEyedropper = prevProps.isEyeDropping && prevColor !== newColor;
+        if (colorSetByEyedropper || this.props.colorIndex !== prevProps.colorIndex) {
             const hsv = this.getHsv(newColor);
+            // eslint-disable-next-line react/no-did-update-set-state
             this.setState({
                 hue: hsv[0],
                 saturation: hsv[1],
@@ -109,7 +110,7 @@ class ColorPicker extends React.Component {
     handleBrightnessChange (brightness) {
         const newHex = hsvToHex(
             this.state.hue,
-            this.state.saturation,
+            this.saturation,
             brightness
         );
         this.setState({
@@ -166,8 +167,8 @@ class ColorPicker extends React.Component {
     render () {
         return (
             <ColorPickerComponent
-                brightness={this.state.brightness}
                 hex={this.state.hex}
+                brightness={this.state.brightness}
                 color={this.props.color}
                 color2={this.props.color2}
                 colorIndex={this.props.colorIndex}
@@ -184,9 +185,9 @@ class ColorPicker extends React.Component {
                 onChangeGradientTypeRadial={this.handleChangeGradientTypeRadial}
                 onChangeGradientTypeSolid={this.handleChangeGradientTypeSolid}
                 onChangeGradientTypeVertical={this.handleChangeGradientTypeVertical}
+                onHexChange={this.handleHexChange}
                 onHueChange={this.handleHueChange}
                 onSaturationChange={this.handleSaturationChange}
-                onHexChange={this.handleHexChange}
                 onSelectColor={this.props.onSelectColor}
                 onSelectColor2={this.props.onSelectColor2}
                 onSwap={this.props.onSwap}

@@ -1,4 +1,4 @@
-import 'lumen5-web-audio-test-api';
+import '../../helpers/web-audio-setup';
 
 import React from 'react';
 import configureStore from 'redux-mock-store';
@@ -7,10 +7,6 @@ import VM from 'clipcc-vm';
 import {LoadingState} from '../../../src/reducers/project-state';
 
 import vmManagerHOC from '../../../src/lib/vm-manager-hoc.jsx';
-
-WebAudioTestAPI.setState({
-    'AudioContext#resume': 'enabled'
-});
 
 describe('VMManagerHOC', () => {
     const mockStore = configureStore();

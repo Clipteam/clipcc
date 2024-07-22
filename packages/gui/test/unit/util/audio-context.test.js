@@ -1,9 +1,5 @@
-import 'lumen5-web-audio-test-api';
+import '../../helpers/web-audio-setup';
 import SharedAudioContext from '../../../src/lib/audio/shared-audio-context';
-
-WebAudioTestAPI.setState({
-    'AudioContext#resume': 'enabled'
-});
 
 describe('Shared Audio Context', () => {
     const audioContext = new AudioContext();

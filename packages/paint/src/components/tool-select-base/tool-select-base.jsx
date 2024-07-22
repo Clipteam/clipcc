@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
 import PropTypes from 'prop-types';
-import {injectIntl, intlShape} from 'react-intl';
+import {injectIntl} from 'react-intl';
+import intlShape from '../../lib/intl-shape.js';
 
 import Button from '../button/button.jsx';
 

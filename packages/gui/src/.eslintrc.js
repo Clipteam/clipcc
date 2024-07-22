@@ -19,8 +19,8 @@ module.exports = {
         }]
     },
     settings: {
-        'react': {
-            version: '16.2' // Prevent 16.3 lifecycle method errors
+        react: {
+            version: 'detect'
         },
         'import/resolver': {
             webpack: {

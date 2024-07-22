@@ -1,4 +1,5 @@
 import React from 'react';
+import 'jest-localstorage-mock';
 import configureStore from 'redux-mock-store';
 import {mount} from 'enzyme';
 import VM from 'clipcc-vm';

@@ -22,8 +22,7 @@ module.exports = {
     },
     entry: {
         l10n: './src/index.js',
-        supportedLocales: './src/supported-locales.js',
-        localeData: './src/locale-data.js'
+        supportedLocales: './src/supported-locales.js'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
