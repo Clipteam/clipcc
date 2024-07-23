@@ -8,8 +8,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const WorkboxPlugin = require('workbox-webpack-plugin');
-
+const {ModuleFederationPlugin} = require('@module-federation/enhanced');
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
 
 const base = {
@@ -22,8 +21,9 @@ const base = {
     },
     output: {
         library: 'GUI',
+        publicPath: 'auto',
         filename: '[name].js',
-        chunkFilename: 'chunks/[name].js'
+        chunkFilename: 'chunks/[name].[contenthash].js'
     },
     resolve: {
         symlinks: false
@@ -231,10 +231,6 @@ module.exports = [
                 path: path.resolve('dist'),
                 publicPath: `${STATIC_PATH}/`
             },
-            externals: {
-                'react': 'react',
-                'react-dom': 'react-dom'
-            },
             module: {
                 rules: base.module.rules.concat([
                     {
@@ -262,9 +258,24 @@ module.exports = [
                         }
                     ]
                 }),
-                new WorkboxPlugin.GenerateSW({
-                    clientsClaim: true,
-                    skipWaiting: true,
+                new ModuleFederationPlugin({
+                    name: 'clipcc',
+                    filename: 'clipcc-remote-loader.js',
+                    exposes: {
+                        './index': './src/index.js'
+                    },
+                    shared: {
+                        'react': {
+                            singleton: true,
+                            version: '0',
+                            requiredVersion: false
+                        },
+                        'react-dom': {
+                            requiredVersion: false,
+                            singleton: true,
+                            version: '0'
+                        }
+                    }
                 })
             ])
         })) : []

@@ -15,7 +15,7 @@ interface SelfInfo {
     budge_text: string;
     created_at: string;
     updated_at: string;
-};
+}
 
 export interface WrappedGUIProps {
     id: string;
@@ -41,9 +41,17 @@ export interface WrappedGUIProps {
     canCreateNew?: boolean;
     userInfo?: SelfInfo;
     userToken?: string;
+    userPermission?: string[];
     enableCommunity?: boolean;
+    isPlayerOnly?: boolean;
+    guiWidth?: number;
+    openSourceLevel?: number;
+    onProjectLoaded? (): void;
+    onVmInit? (vm: unknown): void;
+    onStorageInit? (storage: unknown): void;
+    onGreenFlag? (): void;
+    onRef? (ref: unknown): void;
+    onUpdateUserToken? (token: string): void;
 }
 
 declare class WrappedGUI extends Component<WrappedGUIProps> {}
-
-export = WrappedGUI;
