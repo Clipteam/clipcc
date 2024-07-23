@@ -41,11 +41,12 @@ export interface WrappedGUIProps {
     canCreateNew?: boolean;
     userInfo?: SelfInfo;
     userToken?: string;
-    userPermission?: string[];
+    userPermissions?: string[];
     enableCommunity?: boolean;
     isPlayerOnly?: boolean;
     guiWidth?: number;
     openSourceLevel?: number;
+    encryptFunc (id: number): string;
     onProjectLoaded? (): void;
     onVmInit? (vm: unknown): void;
     onStorageInit? (storage: unknown): void;

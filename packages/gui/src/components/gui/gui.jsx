@@ -90,7 +90,6 @@ const GUIComponent = props => {
         isTelemetryEnabled,
         loading,
         logo,
-        renderLogin,
         onClickAbout,
         onClickAccountNav,
         onCloseAccountNav,
@@ -101,6 +100,8 @@ const GUIComponent = props => {
         onActivateSoundsTab,
         onActivateTab,
         onClickLogo,
+        onClickLogin,
+        onClickRemix,
         onExtensionButtonClick,
         onProjectTelemetryEvent,
         onRequestCloseBackdropLibrary,
@@ -125,6 +126,8 @@ const GUIComponent = props => {
         guiWidth,
         stageWidth,
         stageHeight,
+        authorizationToken,
+        openSourceLevel,
         ...componentProps
     } = omit(props, 'dispatch');
     if (children) {
@@ -230,11 +233,12 @@ const GUIComponent = props => {
                     enableCommunity={enableCommunity}
                     isShared={isShared}
                     logo={logo}
-                    renderLogin={renderLogin}
                     showComingSoon={showComingSoon}
                     onClickAbout={onClickAbout}
                     onClickAccountNav={onClickAccountNav}
                     onClickLogo={onClickLogo}
+                    onClickLogin={onClickLogin}
+                    onClickRemix={onClickRemix}
                     onCloseAccountNav={onCloseAccountNav}
                     onLogOut={onLogOut}
                     onOpenRegistration={onOpenRegistration}
@@ -312,7 +316,7 @@ const GUIComponent = props => {
                                             grow={1}
                                             isVisible={blocksTabVisible}
                                             options={{
-                                                media: `${basePath}static/${themeMap[theme].blocksMediaFolder}/`
+                                                media: `${basePath}/${themeMap[theme].blocksMediaFolder}/`
                                             }}
                                             stageSize={stageSize}
                                             theme={theme}
@@ -412,6 +416,8 @@ GUIComponent.propTypes = {
     onActivateTab: PropTypes.func,
     onClickAccountNav: PropTypes.func,
     onClickLogo: PropTypes.func,
+    onClickLogin: PropTypes.func,
+    onClickRemix: PropTypes.func,
     onCloseAccountNav: PropTypes.func,
     onExtensionButtonClick: PropTypes.func,
     onLogOut: PropTypes.func,
@@ -429,7 +435,6 @@ GUIComponent.propTypes = {
     onTelemetryModalOptIn: PropTypes.func,
     onTelemetryModalOptOut: PropTypes.func,
     onToggleLoginOpen: PropTypes.func,
-    renderLogin: PropTypes.func,
     settingsModalVisible: PropTypes.bool,
     showComingSoon: PropTypes.bool,
     soundsTabVisible: PropTypes.bool,
@@ -442,7 +447,7 @@ GUIComponent.propTypes = {
 GUIComponent.defaultProps = {
     backpackHost: null,
     backpackVisible: false,
-    basePath: './',
+    basePath: '',
     canChangeLanguage: true,
     canChangeTheme: true,
     canCreateNew: false,

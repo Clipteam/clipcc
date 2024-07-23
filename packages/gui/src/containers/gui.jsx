@@ -26,6 +26,11 @@ import {
     closeTelemetryModal,
     openExtensionLibrary
 } from '../reducers/modals';
+import {
+    setInfo,
+    setPermissions,
+    setToken
+} from '../reducers/session';
 
 import FontLoaderHOC from '../lib/font-loader-hoc.jsx';
 import LocalizationHOC from '../lib/localization-hoc.jsx';
@@ -46,12 +51,21 @@ import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 class GUI extends React.Component {
     componentDidMount () {
         setIsScratchDesktop(this.props.isScratchDesktop);
+        this.props.onSetUserInfo(this.props.userInfo);
+        this.props.onSetUserPermissions(this.props.userPermissions);
+        this.props.onSetUserToken(this.props.userToken);
         this.props.onStorageInit(storage);
         this.props.onVmInit(this.props.vm);
     }
     componentDidUpdate (prevProps) {
         if (this.props.projectId !== prevProps.projectId && this.props.projectId !== null) {
             this.props.onUpdateProjectId(this.props.projectId);
+        }
+        if (this.props.userInfo !== prevProps.userInfo) {
+            this.props.onSetUserInfo(this.props.userInfo);
+        }
+        if (this.props.userToken !== prevProps.userToken) {
+            this.props.onSetUserToken(this.props.userToken);
         }
         if (this.props.isShowingProject && !prevProps.isShowingProject) {
             // this only notifies container when a project changes from not yet loaded to loaded
@@ -78,6 +92,9 @@ class GUI extends React.Component {
             onVmInit,
             projectHost,
             projectId,
+            userInfo,
+            userPermissions,
+            userToken,
             /* eslint-enable no-unused-vars */
             children,
             fetchingProject,
@@ -103,6 +120,9 @@ GUI.propTypes = {
     cloudHost: PropTypes.string,
     error: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
     fetchingProject: PropTypes.bool,
+    userInfo: PropTypes.object,
+    userPermissions: PropTypes.arrayOf(PropTypes.string),
+    userToken: PropTypes.string,
     intl: intlShape,
     isError: PropTypes.bool,
     isLoading: PropTypes.bool,
@@ -165,7 +185,10 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
     onRequestCloseCostumeLibrary: () => dispatch(closeCostumeLibrary()),
     onRequestCloseSettingsModal: () => dispatch(closeSettingsModal()),
-    onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal())
+    onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal()),
+    onSetUserInfo: data => dispatch(setInfo(data)),
+    onSetUserPermissions: permissions => dispatch(setPermissions(permissions)),
+    onSetUserToken: token => dispatch(setToken(token))
 });
 
 const ConnectedGUI = injectIntl(connect(

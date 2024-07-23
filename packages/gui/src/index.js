@@ -1,5 +1,7 @@
+import {compose} from 'redux';
 import GUI from './containers/gui.jsx';
 import AppStateHOC from './lib/app-state-hoc.jsx';
+import CommunityHOC from './lib/community-hoc.jsx';
 import GuiReducer, {guiInitialState, guiMiddleware, initEmbedded, initFullScreen, initPlayer} from './reducers/gui';
 import LocalesReducer, {localesInitialState, initLocale} from './reducers/locales';
 import {ScratchPaintReducer} from 'clipcc-paint';
@@ -14,8 +16,11 @@ const guiReducers = {
     scratchPaint: ScratchPaintReducer
 };
 
+const WrappedGUI = compose(AppStateHOC, CommunityHOC)(GUI);
+
 export {
-    GUI as default,
+    WrappedGUI as default,
+    GUI,
     AppStateHOC,
     setAppElement,
     guiReducers,

@@ -34,7 +34,7 @@ export default function (projectId, vmState, params) {
     if (creatingProject) {
         Object.assign(opts, {
             method: 'post',
-            url: `${storage.projectHost}/${qs}`
+            url: `${storage.projectHost}project/json?name=${queryParams.title}`
         });
     } else {
         Object.assign(opts, {

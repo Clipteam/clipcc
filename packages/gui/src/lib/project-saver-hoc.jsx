@@ -7,6 +7,7 @@ import VM from 'clipcc-vm';
 import collectMetadata from '../lib/collect-metadata';
 import log from '../lib/log';
 import storage from '../lib/storage';
+import {fetchToken} from '../lib/token';
 import dataURItoBlob from '../lib/data-uri-to-blob';
 import saveProjectToServer from '../lib/save-project-to-server';
 
@@ -169,7 +170,9 @@ const ProjectSaverHOC = function (WrappedComponent) {
                 });
         }
         createNewProjectToStorage () {
-            return this.storeProject(null)
+            return this.storeProject(null, {
+                title: this.props.reduxProjectTitle
+            })
                 .then(response => {
                     this.props.onCreatedProject(response.id.toString(), this.props.loadingState);
                 })
@@ -226,25 +229,30 @@ const ProjectSaverHOC = function (WrappedComponent) {
             // serialized project refers to a newer asset than what
             // we just finished saving).
             const savedVMState = this.props.vm.toJSON();
-            return Promise.all(this.props.vm.assets
-                .filter(asset => !asset.clean)
-                .map(
-                    asset => storage.store(
-                        asset.assetType,
-                        asset.dataFormat,
-                        asset.data,
-                        asset.assetId
-                    ).then(response => {
-                        // Asset servers respond with {status: ok} for successful POSTs
-                        if (response.status !== 'ok') {
-                            // Errors include a `code` property, e.g. "Forbidden"
-                            return Promise.reject(response.code);
-                        }
-                        asset.clean = true;
-                    })
-                )
-            )
-                .then(() => this.props.onUpdateProjectData(projectId, savedVMState, requestParams))
+            return fetchToken(this.props.authorizationToken)
+                .then(newToken => {
+                    this.props.onUpdateUserToken(newToken);
+                    return Promise.all(this.props.vm.assets
+                        .filter(asset => !asset.clean)
+                        .map(
+                            asset => storage.store(
+                                asset.assetType,
+                                asset.dataFormat,
+                                asset.data,
+                                asset.assetId
+                            ).then(response => {
+                                // Asset servers respond with {status: ok} for successful POSTs
+                                if (response.status !== 'ok') {
+                                    // Errors include a `code` property, e.g. "Forbidden"
+                                    return Promise.reject(response.code);
+                                }
+                                asset.clean = true;
+                            })
+                        )
+                    );
+                })
+                .then(() => this.storeProjectThumbnail())
+                .then(thumbnail => this.props.onUpdateProjectData(projectId, savedVMState, requestParams, thumbnail))
                 .then(response => {
                     this.props.onSetProjectUnchanged();
                     const id = response.id.toString();
@@ -257,24 +265,23 @@ const ProjectSaverHOC = function (WrappedComponent) {
                 .catch(err => {
                     log.error(err);
                     throw err; // pass the error up the chain
-                });
+                });;
         }
 
         /**
-         * Store a snapshot of the project once it has been saved/created.
-         * Needs to happen _after_ save because the project must have an ID.
-         * @param {!string} projectId - id of the project, must be defined.
+         * Store a snapshot of the project.
          */
-        storeProjectThumbnail (projectId) {
-            try {
-                this.getProjectThumbnail(dataURI => {
-                    this.props.onUpdateProjectThumbnail(projectId, dataURItoBlob(dataURI));
-                });
-            } catch (e) {
-                log.error('Project thumbnail save error', e);
-                // This is intentionally fire/forget because a failure
-                // to save the thumbnail is not vitally important to the user.
-            }
+        storeProjectThumbnail() {
+            return new Promise(resolve => {
+                try {
+                    this.getProjectThumbnail(dataURI => {
+                        resolve(dataURItoBlob(dataURI));
+                    });
+                } catch (e) {
+                    log.error('Project thumbnail save error', e);
+                    resolve(null);
+                }
+            });
         }
 
         getProjectThumbnail (callback) {
@@ -408,6 +415,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
         const loadingState = state.scratchGui.projectState.loadingState;
         const isShowingWithId = getIsShowingWithId(loadingState);
         return {
+            authorizationToken: state.scratchGui.session.token,
             autoSaveTimeoutId: state.scratchGui.timeout.autoSaveTimeoutId,
             isAnyCreatingNewState: getIsAnyCreatingNewState(loadingState),
             isLoading: getIsLoading(loadingState),

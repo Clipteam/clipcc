@@ -23,7 +23,6 @@ import {MenuItem, MenuSection} from '../menu/menu.jsx';
 import ProjectTitleInput from './project-title-input.jsx';
 import AuthorInfo from './author-info.jsx';
 import AccountNav from '../../containers/account-nav.jsx';
-import LoginDropdown from './login-dropdown.jsx';
 import SB3Downloader from '../../containers/sb3-downloader.jsx';
 import DeletionRestorer from '../../containers/deletion-restorer.jsx';
 import TurboMode from '../../containers/turbo-mode.jsx';
@@ -31,15 +30,14 @@ import MenuBarHOC from '../../containers/menu-bar-hoc.jsx';
 import SettingsMenu from './settings-menu.jsx';
 
 import {openSettingsModal} from '../../reducers/modals';
-import {setPlayer} from '../../reducers/mode';
 import {
     autoUpdateProject,
     getIsUpdating,
     getIsShowingProject,
     manualUpdateProject,
     requestNewProject,
-    remixProject,
-    saveProjectAsCopy
+    saveProjectAsCopy,
+    createProject
 } from '../../reducers/project-state';
 import {
     openAboutMenu,
@@ -54,10 +52,6 @@ import {
     openEditMenu,
     closeEditMenu,
     editMenuOpen,
-    openLanguageMenu,
-    closeLanguageMenu,
-    languageMenuOpen,
-    openLoginMenu,
     closeLoginMenu,
     loginMenuOpen,
     settingsMenuOpen,
@@ -71,7 +65,6 @@ import styles from './menu-bar.css';
 
 // import helpIcon from '../../lib/assets/icon--tutorials.svg';
 import mystuffIcon from './icon--mystuff.png';
-import profileIcon from './icon--profile.png';
 import remixIcon from './icon--remix.svg';
 import dropdownCaret from './dropdown-caret.svg';
 import fileIcon from './icon--file.svg';
@@ -82,14 +75,6 @@ import aboutIcon from './icon--about.svg';
 import clipccLogo from './clipcc-logo-white.svg';
 
 import sharedMessages from '../../lib/shared-messages';
-
-const ariaMessages = defineMessages({
-    tutorials: {
-        id: 'gui.menuBar.tutorialsLibrary',
-        defaultMessage: 'Tutorials',
-        description: 'accessibility text for the tutorials button'
-    }
-});
 
 const MenuBarItemTooltip = ({
     children,
@@ -207,13 +192,8 @@ class MenuBar extends React.Component {
         this.props.onClickSaveAsCopy();
         this.props.onRequestCloseFile();
     }
-    handleClickSeeCommunity (waitForUpdate) {
-        if (this.props.shouldSaveBeforeTransition()) {
-            this.props.autoUpdateProject(); // save before transitioning to project page
-            waitForUpdate(true); // queue the transition to project page
-        } else {
-            waitForUpdate(false); // immediately transition to project page
-        }
+    handleClickSeeCommunity () {
+        location.href = `/project/${this.props.reduxProjectId}`;
     }
     handleClickShare (waitForUpdate) {
         if (!this.props.isShared) {
@@ -433,7 +413,7 @@ class MenuBar extends React.Component {
                                             {newProjectMessage}
                                         </MenuItem>
                                     </MenuSection>
-                                    {(this.props.canSave || this.props.canCreateCopy || this.props.canRemix) && (
+                                    {(this.props.canSave || this.props.canCreateCopy || this.props.canRemix) && this.props.username && (
                                         <MenuSection>
                                             {this.props.canSave && (
                                                 <MenuItem onClick={this.handleClickSave}>
@@ -549,7 +529,7 @@ class MenuBar extends React.Component {
                     <div className={classNames(styles.menuBarItem)}>
                         {this.props.canShare ? (
                             (this.props.isShowingProject || this.props.isUpdating) && (
-                                <ProjectWatcher onDoneUpdating={this.props.onSeeCommunity}>
+                                <ProjectWatcher onDoneUpdating={this.handleClickSeeCommunity}>
                                     {
                                         waitForUpdate => (
                                             <ShareButton
@@ -566,10 +546,8 @@ class MenuBar extends React.Component {
                                 </ProjectWatcher>
                             )
                         ) : (
-                            this.props.showComingSoon ? (
-                                <MenuBarItemTooltip id="share-button">
-                                    <ShareButton className={styles.menuBarButton} />
-                                </MenuBarItemTooltip>
+                                this.props.username && this.props.reduxProjectId === "0" ? (
+                                    null
                             ) : []
                         )}
                         {this.props.canRemix ? remixButton : []}
@@ -577,7 +555,7 @@ class MenuBar extends React.Component {
                     <div className={classNames(styles.menuBarItem, styles.communityButtonWrapper)}>
                         {this.props.enableCommunity ? (
                             (this.props.isShowingProject || this.props.isUpdating) && (
-                                <ProjectWatcher onDoneUpdating={this.props.onSeeCommunity}>
+                                <ProjectWatcher onDoneUpdating={this.props.onClickSeeCommunity}>
                                     {
                                         waitForUpdate => (
                                             <CommunityButton
@@ -612,7 +590,7 @@ class MenuBar extends React.Component {
                         this.props.username ? (
                             // ************ user is logged in ************
                             <React.Fragment>
-                                <a href="/mystuff/">
+                                <a href="/stuff/">
                                     <div
                                         className={classNames(
                                             styles.menuBarItem,
@@ -649,20 +627,6 @@ class MenuBar extends React.Component {
                                         styles.menuBarItem,
                                         styles.hoverable
                                     )}
-                                    key="join"
-                                    onClick={this.props.onOpenRegistration}
-                                >
-                                    <FormattedMessage
-                                        defaultMessage="Join Scratch"
-                                        description="Link for creating a Scratch account"
-                                        id="gui.menuBar.joinScratch"
-                                    />
-                                </div>
-                                <div
-                                    className={classNames(
-                                        styles.menuBarItem,
-                                        styles.hoverable
-                                    )}
                                     key="login"
                                     onClick={this.props.onClickLogin}
                                 >
@@ -671,62 +635,11 @@ class MenuBar extends React.Component {
                                         description="Link for signing in to your Scratch account"
                                         id="gui.menuBar.signIn"
                                     />
-                                    <LoginDropdown
-                                        className={classNames(styles.menuBarMenu)}
-                                        isOpen={this.props.loginMenuOpen}
-                                        isRtl={this.props.isRtl}
-                                        renderLogin={this.props.renderLogin}
-                                        onClose={this.props.onRequestCloseLogin}
-                                    />
                                 </div>
                             </React.Fragment>
                         )
                     ) : (
-                        // ******** no login session is available, so don't show login stuff
-                        <React.Fragment>
-                            {this.props.showComingSoon ? (
-                                <React.Fragment>
-                                    <MenuBarItemTooltip id="mystuff">
-                                        <div
-                                            className={classNames(
-                                                styles.menuBarItem,
-                                                styles.hoverable,
-                                                styles.mystuffButton
-                                            )}
-                                        >
-                                            <img
-                                                className={styles.mystuffIcon}
-                                                src={mystuffIcon}
-                                            />
-                                        </div>
-                                    </MenuBarItemTooltip>
-                                    <MenuBarItemTooltip
-                                        id="account-nav"
-                                        place={this.props.isRtl ? 'right' : 'left'}
-                                    >
-                                        <div
-                                            className={classNames(
-                                                styles.menuBarItem,
-                                                styles.hoverable,
-                                                styles.accountNavMenu
-                                            )}
-                                        >
-                                            <img
-                                                className={styles.profileIcon}
-                                                src={profileIcon}
-                                            />
-                                            <span>
-                                                {'scratch-cat'}
-                                            </span>
-                                            <img
-                                                className={styles.dropdownCaretIcon}
-                                                src={dropdownCaret}
-                                            />
-                                        </div>
-                                    </MenuBarItemTooltip>
-                                </React.Fragment>
-                            ) : []}
-                        </React.Fragment>
+                        null
                     )}
                 </div>
 
@@ -785,6 +698,7 @@ MenuBar.propTypes = {
     onClickRemix: PropTypes.func,
     onClickSave: PropTypes.func,
     onClickSaveAsCopy: PropTypes.func,
+    onClickSeeCommunity: PropTypes.func,
     onClickSettings: PropTypes.func,
     onLogOut: PropTypes.func,
     onOpenRegistration: PropTypes.func,
@@ -798,12 +712,11 @@ MenuBar.propTypes = {
     onRequestCloseFile: PropTypes.func,
     onRequestCloseSettings: PropTypes.func,
     onRequestCloseLogin: PropTypes.func,
-    onSeeCommunity: PropTypes.func,
     onShare: PropTypes.func,
     onStartSelectingFileUpload: PropTypes.func,
     onToggleLoginOpen: PropTypes.func,
     projectTitle: PropTypes.string,
-    renderLogin: PropTypes.func,
+    reduxProjectId: PropTypes.number,
     sessionExists: PropTypes.bool,
     settingsMenuOpen: PropTypes.bool,
     shouldSaveBeforeTransition: PropTypes.func,
@@ -820,7 +733,7 @@ MenuBar.defaultProps = {
 
 const mapStateToProps = (state, ownProps) => {
     const loadingState = state.scratchGui.projectState.loadingState;
-    const user = state.session && state.session.session && state.session.session.user;
+    const user = state.scratchGui.session && state.scratchGui.session.info;
     return {
         aboutMenuOpen: aboutMenuOpen(state),
         accountMenuOpen: accountMenuOpen(state),
@@ -833,11 +746,12 @@ const mapStateToProps = (state, ownProps) => {
         locale: state.locales.locale,
         loginMenuOpen: loginMenuOpen(state),
         projectTitle: state.scratchGui.projectTitle,
-        sessionExists: state.session && typeof state.session.session !== 'undefined',
+        reduxProjectId: state.scratchGui.projectState.projectId,
+        sessionExists: state.scratchGui.session && typeof state.scratchGui.session.info !== 'undefined',
+        username: user ? user.name : null,
         settingsMenuOpen: settingsMenuOpen(state),
-        username: user ? user.username : null,
         userOwnsProject: ownProps.authorUsername && user &&
-            (ownProps.authorUsername === user.username),
+            (ownProps.authorUsername === user.name),
         vm: state.scratchGui.vm
     };
 };
@@ -853,15 +767,12 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseEdit: () => dispatch(closeEditMenu()),
     onClickSettings: () => dispatch(openSettingsMenu()),
     onRequestCloseSettings: () => dispatch(closeSettingsMenu()),
-    onClickLogin: () => dispatch(openLoginMenu()),
     onRequestCloseLogin: () => dispatch(closeLoginMenu()),
     onRequestOpenAbout: () => dispatch(openAboutMenu()),
     onRequestCloseAbout: () => dispatch(closeAboutMenu()),
     onClickNew: needSave => dispatch(requestNewProject(needSave)),
-    onClickRemix: () => dispatch(remixProject()),
     onClickSave: () => dispatch(manualUpdateProject()),
-    onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
-    onSeeCommunity: () => dispatch(setPlayer(true))
+    onClickSaveAsCopy: () => dispatch(saveProjectAsCopy())
 });
 
 export default compose(

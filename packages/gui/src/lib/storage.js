@@ -32,6 +32,9 @@ class Storage extends ScratchStorage {
             asset => `static/extension-assets/scratch3_music/${asset.assetId}.${asset.dataFormat}`
         );
     }
+    setAuthorizationToken (token) {
+        this.authorizationToken = `Bearer ${token}`;
+    }
     setProjectHost (projectHost) {
         this.projectHost = projectHost;
     }
@@ -39,27 +42,51 @@ class Storage extends ScratchStorage {
         this.projectToken = projectToken;
     }
     getProjectGetConfig (projectAsset) {
-        const path = `${this.projectHost}/${projectAsset.assetId}`;
-        const qs = this.projectToken ? `?token=${this.projectToken}` : '';
-        return path + qs;
+        const [projectState, projectId] = projectAsset.assetId.split('|');
+        switch (projectState) {
+        case 'public':
+            return `${this.projectHost}project/download?keys=${encodeURIComponent(projectId)}`;
+        default:
+            return {
+                url: `${this.projectHost}project/privateJson?id=${projectId}&t=${Date.now()}`,
+                withCredentials: true,
+                headers: {
+                    authorization: this.authorizationToken
+                }
+            };
+        }
     }
     getProjectCreateConfig () {
         return {
-            url: `${this.projectHost}/`,
-            withCredentials: true
+            url: `${this.projectHost}project/create`,
+            withCredentials: true,
+            headers: {
+                authorization: this.authorizationToken
+            }
         };
     }
     getProjectUpdateConfig (projectAsset) {
         return {
-            url: `${this.projectHost}/${projectAsset.assetId}`,
-            withCredentials: true
+            url: `${this.projectHost}project/json/${projectAsset.assetId}`,
+            withCredentials: true,
+            headers: {
+                authorization: this.authorizationToken
+            }
         };
     }
     setAssetHost (assetHost) {
         this.assetHost = assetHost;
     }
+    setCdnHost (cdnHost) {
+        this.cdnHost = cdnHost;
+    }
     getAssetGetConfig (asset) {
-        return `${this.assetHost}/internalapi/asset/${asset.assetId}.${asset.dataFormat}/get/`;
+        return {
+            url: `${this.cdnHost}project/asset/${asset.assetId}.${asset.dataFormat}`,
+            headers: {
+                referer: location.host
+            }
+        };
     }
     getAssetCreateConfig (asset) {
         return {
@@ -68,8 +95,10 @@ class Storage extends ScratchStorage {
             // assetId as part of the create URI. So, force the method to POST.
             // Then when storage finds this config to use for the "update", still POSTs
             method: 'post',
-            url: `${this.assetHost}/${asset.assetId}.${asset.dataFormat}`,
-            withCredentials: true
+            url: `${this.assetHost}uploadAsset/${asset.assetId}.${asset.dataFormat}`,
+            headers: {
+                authorization: this.authorizationToken
+            }
         };
     }
     setTranslatorFunction (translator) {

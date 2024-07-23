@@ -23,6 +23,7 @@ import {
 
 import log from './log';
 import storage from './storage';
+import {fetchToken} from './token';
 
 /* Higher Order Component to provide behavior for loading projects by id. If
  * there's no id, the default project is loaded.
@@ -39,6 +40,8 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             storage.setProjectHost(props.projectHost);
             storage.setProjectToken(props.projectToken);
             storage.setAssetHost(props.assetHost);
+            storage.setCdnHost(props.cdnHost);
+            storage.setAuthorizationToken(props.userToken);
             storage.setTranslatorFunction(props.intl.formatMessage);
             // props.projectId might be unset, in which case we use our default;
             // or it may be set by an even higher HOC, and passed to us.
@@ -56,6 +59,12 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             if (prevProps.projectHost !== this.props.projectHost) {
                 storage.setProjectHost(this.props.projectHost);
             }
+            if (prevProps.userToken !== this.props.userToken) {
+                storage.setAuthorizationToken(this.props.userToken);
+            }
+            if (prevProps.cdnHost !== this.props.cdnHost) {
+                storage.setCdnHost(this.props.cdnHost);
+            }
             if (prevProps.projectToken !== this.props.projectToken) {
                 storage.setProjectToken(this.props.projectToken);
             }
@@ -72,15 +81,34 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 this.props.onActivateTab(BLOCKS_TAB_INDEX);
             }
         }
-        fetchProject (projectId, loadingState) {
-            return storage
-                .load(storage.AssetType.Project, projectId, storage.DataFormat.JSON)
+        fetchProject(projectId, loadingState) {
+            let projectState = 'public';
+            const userId = this.props.userInfo && this.props.userInfo.id;
+            // If the user is the author and on the creation page, get the private JSON, otherwise get the public JSON
+            if (
+                (this.props.authorId === userId) &&
+                (!this.props.isPlayerOnly || !this.props.isShared)
+            ) {
+                projectState = 'private';
+            }
+
+            if (projectState === 'public' & projectId !== '0') {
+                projectId = this.props.encryptFunc(projectId);
+            }
+
+            const project = projectId === '0' ? '0' : `${projectState}|${projectId}`;
+
+            return fetchToken(this.props.userToken)
+                .then(token => {
+                    if (this.props.onUpdateUserToken) {
+                        this.props.onUpdateUserToken(token);
+                    }
+                    return storage.load(storage.AssetType.Project, project, storage.DataFormat.JSON);
+                })
                 .then(projectAsset => {
                     if (projectAsset) {
                         this.props.onFetchedProjectData(projectAsset.data, loadingState);
                     } else {
-                        // Treat failure to load as an error
-                        // Throw to be caught by catch later on
                         throw new Error('Could not find project');
                     }
                 })
@@ -92,6 +120,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         render () {
             const {
                 /* eslint-disable no-unused-vars */
+                encryptFunc,
                 assetHost,
                 intl,
                 isLoadingProject: isLoadingProjectProp,
@@ -101,6 +130,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 onFetchedProjectData: onFetchedProjectDataProp,
                 onProjectUnchanged,
                 projectHost,
+                cdnHost,
                 projectId,
                 reduxProjectId,
                 setProjectId: setProjectIdProp,
@@ -118,7 +148,9 @@ const ProjectFetcherHOC = function (WrappedComponent) {
     }
     ProjectFetcherComponent.propTypes = {
         assetHost: PropTypes.string,
+        cdnHost: PropTypes.string,
         canSave: PropTypes.bool,
+        encryptFunc: PropTypes.func,
         intl: intlShape.isRequired,
         isCreatingNew: PropTypes.bool,
         isFetchingWithId: PropTypes.bool,
@@ -133,11 +165,13 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         projectToken: PropTypes.string,
         projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         reduxProjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-        setProjectId: PropTypes.func
+        setProjectId: PropTypes.func,
+        userToken: PropTypes.string
     };
     ProjectFetcherComponent.defaultProps = {
-        assetHost: 'https://assets.scratch.mit.edu',
-        projectHost: 'https://projects.scratch.mit.edu'
+        cdnHost: 'https://static.codingclip.com/v1/',
+        assetHost: 'https://api.codingclip.com/v1/project/',
+        projectHost: 'https://api.codingclip.com/v1/project/'
     };
 
     const mapStateToProps = state => ({
