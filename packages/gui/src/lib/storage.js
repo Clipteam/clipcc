@@ -45,7 +45,7 @@ class Storage extends ScratchStorage {
         const [projectState, projectId] = projectAsset.assetId.split('|');
         switch (projectState) {
         case 'public':
-            return `${this.projectHost}project/download?keys=${encodeURIComponent(projectId)}`;
+            return `${this.projectHost}project/json/${projectId}.json`;
         default:
             return {
                 url: `${this.projectHost}project/privateJson?id=${projectId}&t=${Date.now()}`,

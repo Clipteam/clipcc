@@ -46,7 +46,6 @@ export interface WrappedGUIProps {
     isPlayerOnly?: boolean;
     guiWidth?: number;
     openSourceLevel?: number;
-    encryptFunc (id: number): string;
     onProjectLoaded? (): void;
     onVmInit? (vm: unknown): void;
     onStorageInit? (storage: unknown): void;

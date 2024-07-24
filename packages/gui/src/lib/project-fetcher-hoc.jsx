@@ -92,10 +92,6 @@ const ProjectFetcherHOC = function (WrappedComponent) {
                 projectState = 'private';
             }
 
-            if (projectState === 'public' & projectId !== '0') {
-                projectId = this.props.encryptFunc(projectId);
-            }
-
             const project = projectId === '0' ? '0' : `${projectState}|${projectId}`;
 
             return fetchToken(this.props.userToken)
