@@ -11,8 +11,8 @@ interface SelfInfo {
     email: string;
     avatar: string;
     bio: string;
-    budge_type: number;
-    budge_text: string;
+    badge_type: number;
+    badge_text: string;
     created_at: string;
     updated_at: string;
 }
