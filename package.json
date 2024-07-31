@@ -4,7 +4,7 @@
   "version": "3.2",
   "private": true,
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "workspaces": {
     "packages": [
@@ -21,9 +21,9 @@
     "start": "yarn gui start",
     "prepare": "husky install",
     "build:dist": "cross-env NODE_ENV=production yarn build:full",
-    "build:full": "yarn l10n build && yarn audio build && yarn storage build && yarn render build && yarn block build && yarn vm build && yarn paint build && node packages/gui/scripts/prepublish.mjs && yarn gui build",
+    "build:full": "yarn l10n build && yarn audio build && yarn storage build && yarn svgRenderer build && yarn render build && yarn block build && yarn vm build && yarn paint build && node packages/gui/scripts/prepublish.mjs && yarn gui build",
     "build": "yarn block build && yarn gui build",
-    "test": "yarn vm tap",
+    "test": "yarn block test:unit && yarn vm tap",
     "performance": "yarn vm performance",
     "translation:build": "yarn gui i18n:src && yarn vm i18n:src && yarn block translate",
     "translation:push": "tx push",
@@ -36,6 +36,7 @@
     "block": "yarn workspace clipcc-block",
     "l10n": "yarn workspace clipcc-l10n",
     "render": "yarn workspace clipcc-render",
+    "svgRenderer": "yarn workspace clipcc-svg-renderer",
     "storage": "yarn workspace clipcc-storage",
     "paint": "yarn workspace clipcc-paint",
     "parser": "yarn workspace clipcc-parser",

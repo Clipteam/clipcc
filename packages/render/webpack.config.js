@@ -20,7 +20,10 @@ const base = {
                 test: /\.js$/,
                 loader: 'babel-loader',
                 options: {
-                    presets: [['@babel/preset-env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}]]
+                    presets: [[
+                        '@babel/preset-env',
+                        {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}
+                    ]]
                 }
             },
             {
@@ -93,7 +96,7 @@ module.exports = [
             '!ify-loader!grapheme-breaker': 'grapheme-breaker',
             '!ify-loader!linebreak': 'linebreak',
             'hull.js': true,
-            'scratch-svg-renderer': true,
+            'clipcc-svg-renderer': true,
             'twgl.js': true,
             'xml-escape': true
         }

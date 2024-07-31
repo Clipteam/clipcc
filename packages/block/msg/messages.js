@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /**
  * @license
  * Visual Blocks Language
@@ -232,6 +233,7 @@ Blockly.Msg.OPERATORS_INDEXOF = 'position %1 of %2 contain %3';
 
 // Procedures blocks
 Blockly.Msg.PROCEDURES_DEFINITION = 'define %1';
+Blockly.Msg.PROCEDURES_RETURN = 'return %1';
 
 // Sensing blocks
 Blockly.Msg.SENSING_TOUCHINGOBJECT = 'touching %1?';
@@ -316,7 +318,7 @@ Blockly.Msg.CATEGORY_CONTROL = 'Control';
 Blockly.Msg.CATEGORY_SENSING = 'Sensing';
 Blockly.Msg.CATEGORY_OPERATORS = 'Operators';
 Blockly.Msg.CATEGORY_VARIABLES = 'Variables';
-Blockly.Msg.CATEGORY_MYBLOCKS = 'My Blocks';
+Blockly.Msg.CATEGORY_MYBLOCKS = 'Functions';
 
 // Context menus
 Blockly.Msg.DUPLICATE = 'Duplicate';
@@ -331,6 +333,9 @@ Blockly.Msg.HELP = 'Help';
 Blockly.Msg.UNDO = 'Undo';
 Blockly.Msg.REDO = 'Redo';
 Blockly.Msg.EDIT_PROCEDURE = 'Edit';
+Blockly.Msg.FORCE_DELETE = 'Force Delete';
+Blockly.Msg.FORCE_DELETE_INFO = 'You are going to forcibly delete the definition, which may cause undefined function. Press OK to continue.';
+Blockly.Msg.CHANGE_PROCEDURE_SHAPE = 'Change Shape';
 Blockly.Msg.SHOW_PROCEDURE_DEFINITION = 'Go to definition';
 Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT = 'Say something...';
 Blockly.Msg.COPY = 'Copy to Clipboard';
@@ -356,12 +361,12 @@ Blockly.Msg.DELETE_VARIABLE_CONFIRMATION = 'Delete %1 uses of the "%2" variable?
 Blockly.Msg.CANNOT_DELETE_VARIABLE_PROCEDURE = 'Can\'t delete the variable "%1" because it\'s part of the definition of the function "%2"';
 Blockly.Msg.DELETE_VARIABLE = 'Delete the "%1" variable';
 
-// Custom Procedures
+// Custom Procedures (Functions)
 // @todo Remove these once fully managed by Scratch VM / Scratch GUI
-Blockly.Msg.NEW_PROCEDURE = 'Make a Block';
-Blockly.Msg.PROCEDURE_ALREADY_EXISTS = 'A procedure named "%1" already exists.';
-Blockly.Msg.PROCEDURE_DEFAULT_NAME = 'block name';
-Blockly.Msg.PROCEDURE_USED = 'To delete a block definition, first remove all uses of the block';
+Blockly.Msg.NEW_PROCEDURE = 'Make a Function';
+Blockly.Msg.PROCEDURE_ALREADY_EXISTS = 'A function named "%1" already exists.';
+Blockly.Msg.PROCEDURE_DEFAULT_NAME = 'function name';
+Blockly.Msg.PROCEDURE_USED = 'To delete a function definition, first remove all uses of the function';
 
 // Lists
 // @todo Remove these once fully managed by Scratch VM / Scratch GUI

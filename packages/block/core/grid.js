@@ -25,11 +25,12 @@
  */
 'use strict';
 
-goog.provide('Blockly.Grid');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Grid');
 
-goog.require('Blockly.utils');
+import * as utils from './utils';
 
-goog.require('goog.userAgent');
+const userAgent = goog.require('goog.userAgent');
 
 
 /**
@@ -40,7 +41,7 @@ goog.require('goog.userAgent');
  *     https://developers.google.com/blockly/guides/configure/web/grid
  * @constructor
  */
-Blockly.Grid = function(pattern, options) {
+export const Grid = function(pattern, options) {
   /**
    * The grid's SVG pattern, created during injection.
    * @type {!SVGElement}
@@ -90,13 +91,13 @@ Blockly.Grid = function(pattern, options) {
  * @type {number}
  * @private
  */
-Blockly.Grid.prototype.scale_ = 1;
+Grid.prototype.scale_ = 1;
 
 /**
  * Dispose of this grid and unlink from the DOM.
  * @package
  */
-Blockly.Grid.prototype.dispose = function() {
+Grid.prototype.dispose = function() {
   this.gridPattern_ = null;
 };
 
@@ -105,7 +106,7 @@ Blockly.Grid.prototype.dispose = function() {
  * @return {boolean} True if blocks should snap, false otherwise.
  * @package
  */
-Blockly.Grid.prototype.shouldSnap = function() {
+Grid.prototype.shouldSnap = function() {
   return this.snapToGrid_;
 };
 
@@ -114,7 +115,7 @@ Blockly.Grid.prototype.shouldSnap = function() {
  * @return {number} The spacing of the grid points.
  * @package
  */
-Blockly.Grid.prototype.getSpacing = function() {
+Grid.prototype.getSpacing = function() {
   return this.spacing_;
 };
 
@@ -124,7 +125,7 @@ Blockly.Grid.prototype.getSpacing = function() {
  * @return {string} The pattern ID.
  * @package
  */
-Blockly.Grid.prototype.getPatternId = function() {
+Grid.prototype.getPatternId = function() {
   return this.gridPattern_.id;
 };
 
@@ -133,7 +134,7 @@ Blockly.Grid.prototype.getPatternId = function() {
  * @param {number} scale The new workspace scale.
  * @package
  */
-Blockly.Grid.prototype.update = function(scale) {
+Grid.prototype.update = function(scale) {
   this.scale_ = scale;
   // MSIE freaks if it sees a 0x0 pattern, so set empty patterns to 100x100.
   const safeSpacing = (this.spacing_ * scale) || 100;
@@ -164,7 +165,7 @@ Blockly.Grid.prototype.update = function(scale) {
  * @param {number} y2 The new y end position of the line (in px).
  * @private
  */
-Blockly.Grid.prototype.setLineAttributes_ = function(line, width, x1, x2, y1, y2) {
+Grid.prototype.setLineAttributes_ = function(line, width, x1, x2, y1, y2) {
   if (line) {
     line.setAttribute('stroke-width', width);
     line.setAttribute('x1', x1);
@@ -180,11 +181,11 @@ Blockly.Grid.prototype.setLineAttributes_ = function(line, width, x1, x2, y1, y2
  * @param {number} y The new y position ofthe grid (in px).
  * @package
  */
-Blockly.Grid.prototype.moveTo = function(x, y) {
+Grid.prototype.moveTo = function(x, y) {
   this.gridPattern_.setAttribute('x', x);
   this.gridPattern_.setAttribute('y', y);
 
-  if (goog.userAgent.IE || goog.userAgent.EDGE) {
+  if (userAgent.IE || userAgent.EDGE) {
     // IE/Edge doesn't notice that the x/y offsets have changed.
     // Force an update.
     this.update(this.scale_);
@@ -199,29 +200,29 @@ Blockly.Grid.prototype.moveTo = function(x, y) {
  * @return {!SVGElement} The SVG element for the grid pattern.
  * @package
  */
-Blockly.Grid.createDom = function(rnd, gridOptions, defs) {
+Grid.createDom = function(rnd, gridOptions, defs) {
   /*
     <pattern id="blocklyGridPattern837493" patternUnits="userSpaceOnUse">
       <rect stroke="#888" />
       <rect stroke="#888" />
     </pattern>
   */
-  const gridPattern = Blockly.utils.createSvgElement('pattern',
+  const gridPattern = utils.createSvgElement('pattern',
       {
         'id': 'blocklyGridPattern' + rnd,
         'patternUnits': 'userSpaceOnUse'
       }, defs);
   if (gridOptions['length'] > 0 && gridOptions['spacing'] > 0) {
-    Blockly.utils.createSvgElement('line',
+    utils.createSvgElement('line',
         {'stroke': gridOptions['colour']}, gridPattern);
     if (gridOptions['length'] > 1) {
-      Blockly.utils.createSvgElement('line',
+      utils.createSvgElement('line',
           {'stroke': gridOptions['colour']}, gridPattern);
     }
     // x1, y1, x1, x2 properties will be set later in update.
   } else {
     // Edge 16 doesn't handle empty patterns
-    Blockly.utils.createSvgElement('line', {}, gridPattern);
+    utils.createSvgElement('line', {}, gridPattern);
   }
   return gridPattern;
 };

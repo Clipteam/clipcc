@@ -54,7 +54,7 @@ Blockly.Blocks['colour_picker'] = {
           "colour": randomColour()
         }
       ],
-      "outputShape": Blockly.OUTPUT_SHAPE_ROUND,
+      "outputShape": Blockly.constants.OUTPUT_SHAPE_ROUND,
       "output": "Colour"
     });
   }

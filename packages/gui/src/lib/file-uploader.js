@@ -1,7 +1,9 @@
-import {BitmapAdapter, sanitizeSvg} from 'scratch-svg-renderer';
+import {BitmapAdapter, sanitizeSvg} from 'clipcc-svg-renderer';
 import randomizeSpritePosition from './randomize-sprite-position.js';
 import bmpConverter from './bmp-converter';
 import gifDecoder from './gif-decoder';
+import SharedAudioContext from './audio/shared-audio-context';
+import WavEncoder from 'wav-encoder';
 
 /**
  * Extract the file name given a string of the form fileName + ext
@@ -96,13 +98,16 @@ const createVMAsset = function (storage, assetType, dataFormat, data) {
  * caching this costume in storage - This function should be responsible for
  * adding the costume to the VM and handling other UI flow that should come after adding the costume
  * @param {Function} handleError The function to execute if there is an error parsing the costume
+ * @param {number=} stageWidth The stage width.
+ * @param {number=} stageHeight The stage height.
  */
-const costumeUpload = function (fileData, fileType, storage, handleCostume, handleError = () => {}) {
+const costumeUpload = async function (fileData, fileType, storage, handleCostume, handleError = () => {},
+    stageWidth = 480, stageHeight = 360) {
     let costumeFormat = null;
     let assetType = null;
     switch (fileType) {
     case 'image/svg+xml': {
-        // run svg bytes through scratch-svg-renderer's sanitization code
+        // run svg bytes through clipcc-svg-renderer's sanitization code
         fileData = sanitizeSvg.sanitizeByteStream(fileData);
 
         costumeFormat = storage.DataFormat.SVG;
@@ -117,10 +122,10 @@ const costumeUpload = function (fileData, fileType, storage, handleCostume, hand
     case 'image/bmp': {
         // Convert .bmp files to .png to compress them. .bmps are completely uncompressed,
         // and would otherwise take up a lot of storage space and take much longer to upload and download.
-        bmpConverter(fileData).then(dataUrl => {
-            costumeUpload(dataUrl, 'image/png', storage, handleCostume);
-        });
-        return; // Return early because we're triggering another proper costumeUpload
+        costumeFormat = storage.DataFormat.PNG;
+        assetType = storage.AssetType.ImageBitmap;
+        fileData = await bmpConverter(fileData);
+        break;
     }
     case 'image/png': {
         costumeFormat = storage.DataFormat.PNG;
@@ -135,7 +140,7 @@ const costumeUpload = function (fileData, fileType, storage, handleCostume, hand
                 if (frameNumber === numFrames - 1) {
                     handleCostume(costumes);
                 }
-            }, handleError);
+            }, handleError, stageWidth, stageHeight);
         });
         return; // Abandon this load, do not try to load gif itself
     }
@@ -145,6 +150,7 @@ const costumeUpload = function (fileData, fileType, storage, handleCostume, hand
     }
 
     const bitmapAdapter = new BitmapAdapter();
+    bitmapAdapter.setStageSize(stageWidth, stageHeight);
     const addCostumeFromBuffer = function (dataBuffer) {
         const vmCostume = createVMAsset(
             storage,
@@ -179,7 +185,7 @@ const costumeUpload = function (fileData, fileType, storage, handleCostume, hand
  * as well as handling other UI flow that should come after adding the sound
  * @param {Function} handleError The function to execute if there is an error parsing the sound
  */
-const soundUpload = function (fileData, fileType, storage, handleSound, handleError) {
+const soundUpload = async function (fileData, fileType, storage, handleSound, handleError) {
     let soundFormat;
     switch (fileType) {
     case 'audio/mp3':
@@ -191,6 +197,15 @@ const soundUpload = function (fileData, fileType, storage, handleSound, handleEr
     case 'audio/wave':
     case 'audio/x-wav':
     case 'audio/x-pn-wav': {
+        soundFormat = storage.DataFormat.WAV;
+        break;
+    }
+    // Convert to wav
+    case 'audio/flac':
+    case 'audio/ogg':
+    case 'audio/m4a':
+    case 'audio/aac': {
+        fileData = await convertToWav(fileData);
         soundFormat = storage.DataFormat.WAV;
         break;
     }
@@ -208,7 +223,21 @@ const soundUpload = function (fileData, fileType, storage, handleSound, handleEr
     handleSound(vmSound);
 };
 
-const spriteUpload = function (fileData, fileType, spriteName, storage, handleSprite, handleError = () => {}) {
+const convertToWav = async function (data) {
+    const context = new SharedAudioContext();
+    const decoded = await context.decodeAudioData(data);
+    const channels = [];
+    for (let i = 0; i < decoded.numberOfChannels; i++) {
+        channels.push(decoded.getChannelData(i));
+    }
+    return WavEncoder.encode({
+        sampleRate: decoded.sampleRate,
+        channelData: channels
+    });
+};
+
+const spriteUpload = function (fileData, fileType, spriteName, storage, handleSprite, handleError = () => {},
+    stageWidth = 480, stageHeight = 360) {
     switch (fileType) {
     case '':
     case 'application/zip': { // We think this is a .sprite2 or .sprite3 file
@@ -244,7 +273,7 @@ const spriteUpload = function (fileData, fileType, spriteName, storage, handleSp
             randomizeSpritePosition(newSprite);
             // TODO probably just want sprite upload to handle this object directly
             handleSprite(JSON.stringify(newSprite));
-        }, handleError);
+        }, handleError, stageWidth, stageHeight);
         return;
     }
     default: {

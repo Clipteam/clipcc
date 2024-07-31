@@ -24,168 +24,24 @@
  */
 'use strict';
 
-goog.provide('Blockly.Scrollbar');
-goog.provide('Blockly.ScrollbarPair');
+import * as goog from 'google-closure-library/closure/goog/goog.js';
+goog.declareModuleId('Blockly.Scrollbar');
 
-goog.require('goog.dom');
-goog.require('goog.events');
+import * as browserEvents from './browser_events';
+import {DropDownDiv} from './dropdowndiv';
+import * as Touch from './touch';
+import * as utils from './utils';
+import {WidgetDiv} from './widgetdiv';
+
+const dom = goog.require('goog.dom');
+const BrowserFeature = goog.require('goog.events.BrowserFeature');
+const Coordinate = goog.require('goog.math.Coordinate');
 
 
 /**
  * A note on units: most of the numbers that are in CSS pixels are scaled if the
  * scrollbar is in a mutator.
  */
-
-/**
- * Class for a pair of scrollbars.  Horizontal and vertical.
- * @param {!Blockly.Workspace} workspace Workspace to bind the scrollbars to.
- * @constructor
- */
-Blockly.ScrollbarPair = function(workspace) {
-  this.workspace_ = workspace;
-  this.hScroll = new Blockly.Scrollbar(
-      workspace, true, true, 'blocklyMainWorkspaceScrollbar');
-  this.vScroll = new Blockly.Scrollbar(
-      workspace, false, true, 'blocklyMainWorkspaceScrollbar');
-  this.corner_ = Blockly.utils.createSvgElement(
-      'rect',
-      {
-        'height': Blockly.Scrollbar.scrollbarThickness,
-        'width': Blockly.Scrollbar.scrollbarThickness,
-        'class': 'blocklyScrollbarBackground'
-      },
-      null);
-  Blockly.utils.insertAfter(this.corner_, workspace.getBubbleCanvas());
-};
-
-/**
- * Previously recorded metrics from the workspace.
- * @type {Object}
- * @private
- */
-Blockly.ScrollbarPair.prototype.oldHostMetrics_ = null;
-
-/**
- * Dispose of this pair of scrollbars.
- * Unlink from all DOM elements to prevent memory leaks.
- */
-Blockly.ScrollbarPair.prototype.dispose = function() {
-  goog.dom.removeNode(this.corner_);
-  this.corner_ = null;
-  this.workspace_ = null;
-  this.oldHostMetrics_ = null;
-  this.hScroll.dispose();
-  this.hScroll = null;
-  this.vScroll.dispose();
-  this.vScroll = null;
-};
-
-/**
- * Recalculate both of the scrollbars' locations and lengths.
- * Also reposition the corner rectangle.
- */
-Blockly.ScrollbarPair.prototype.resize = function() {
-  // Look up the host metrics once, and use for both scrollbars.
-  const hostMetrics = this.workspace_.getMetrics();
-  if (!hostMetrics) {
-    // Host element is likely not visible.
-    return;
-  }
-
-  // Only change the scrollbars if there has been a change in metrics.
-  let resizeH = false;
-  let resizeV = false;
-  if (!this.oldHostMetrics_ ||
-      this.oldHostMetrics_.viewWidth != hostMetrics.viewWidth ||
-      this.oldHostMetrics_.viewHeight != hostMetrics.viewHeight ||
-      this.oldHostMetrics_.absoluteTop != hostMetrics.absoluteTop ||
-      this.oldHostMetrics_.absoluteLeft != hostMetrics.absoluteLeft) {
-    // The window has been resized or repositioned.
-    resizeH = true;
-    resizeV = true;
-  } else {
-    // Has the content been resized or moved?
-    if (!this.oldHostMetrics_ ||
-        this.oldHostMetrics_.contentWidth != hostMetrics.contentWidth ||
-        this.oldHostMetrics_.viewLeft != hostMetrics.viewLeft ||
-        this.oldHostMetrics_.contentLeft != hostMetrics.contentLeft) {
-      resizeH = true;
-    }
-    if (!this.oldHostMetrics_ ||
-        this.oldHostMetrics_.contentHeight != hostMetrics.contentHeight ||
-        this.oldHostMetrics_.viewTop != hostMetrics.viewTop ||
-        this.oldHostMetrics_.contentTop != hostMetrics.contentTop) {
-      resizeV = true;
-    }
-  }
-  if (resizeH) {
-    this.hScroll.resize(hostMetrics);
-  }
-  if (resizeV) {
-    this.vScroll.resize(hostMetrics);
-  }
-
-  // Reposition the corner square.
-  if (!this.oldHostMetrics_ ||
-      this.oldHostMetrics_.viewWidth != hostMetrics.viewWidth ||
-      this.oldHostMetrics_.absoluteLeft != hostMetrics.absoluteLeft) {
-    this.corner_.setAttribute('x', this.vScroll.position_.x);
-  }
-  if (!this.oldHostMetrics_ ||
-      this.oldHostMetrics_.viewHeight != hostMetrics.viewHeight ||
-      this.oldHostMetrics_.absoluteTop != hostMetrics.absoluteTop) {
-    this.corner_.setAttribute('y', this.hScroll.position_.y);
-  }
-
-  // Cache the current metrics to potentially short-cut the next resize event.
-  this.oldHostMetrics_ = hostMetrics;
-};
-
-/**
- * Set the handles of both scrollbars to be at a certain position in CSS pixels
- * relative to their parents.
- * @param {number} x Horizontal scroll value.
- * @param {number} y Vertical scroll value.
- */
-Blockly.ScrollbarPair.prototype.set = function(x, y) {
-  // This function is equivalent to:
-  //   this.hScroll.set(x);
-  //   this.vScroll.set(y);
-  // However, that calls setMetrics twice which causes a chain of
-  // getAttribute->setAttribute->getAttribute resulting in an extra layout pass.
-  // Combining them speeds up rendering.
-  const xyRatio = {};
-
-  const hHandlePosition = x * this.hScroll.ratio_;
-  const vHandlePosition = y * this.vScroll.ratio_;
-
-  const hBarLength = this.hScroll.scrollViewSize_;
-  const vBarLength = this.vScroll.scrollViewSize_;
-
-  xyRatio.x = this.getRatio_(hHandlePosition, hBarLength);
-  xyRatio.y = this.getRatio_(vHandlePosition, vBarLength);
-  this.workspace_.setMetrics(xyRatio);
-
-  this.hScroll.setHandlePosition(hHandlePosition);
-  this.vScroll.setHandlePosition(vHandlePosition);
-};
-
-/**
- * Helper to calculate the ratio of handle position to scrollbar view size.
- * @param {number} handlePosition The value of the handle.
- * @param {number} viewSize The total size of the scrollbar's view.
- * @return {number} Ratio.
- * @private
- */
-Blockly.ScrollbarPair.prototype.getRatio_ = function(handlePosition, viewSize) {
-  const ratio = handlePosition / viewSize;
-  if (isNaN(ratio)) {
-    return 0;
-  }
-  return ratio;
-};
-
-// --------------------------------------------------------------------
 
 /**
  * Class for a pure SVG scrollbar.
@@ -197,7 +53,7 @@ Blockly.ScrollbarPair.prototype.getRatio_ = function(handlePosition, viewSize) {
  * @param {string=} opt_class A class to be applied to this scrollbar.
  * @constructor
  */
-Blockly.Scrollbar = function(workspace, horizontal, opt_pair, opt_class) {
+export const Scrollbar = function(workspace, horizontal, opt_pair, opt_class) {
   this.workspace_ = workspace;
   this.pair_ = opt_pair || false;
   this.horizontal_ = horizontal;
@@ -209,13 +65,13 @@ Blockly.Scrollbar = function(workspace, horizontal, opt_pair, opt_class) {
    * The upper left corner of the scrollbar's SVG group in CSS pixels relative
    * to the scrollbar's origin.  This is usually relative to the injection div
    * origin.
-   * @type {goog.math.Coordinate}
+   * @type {Coordinate}
    * @private
    */
-  this.position_ = new goog.math.Coordinate(0, 0);
+  this.position_ = new Coordinate(0, 0);
 
   // Store the thickness in a temp variable for readability.
-  const scrollbarThickness = Blockly.Scrollbar.scrollbarThickness;
+  const scrollbarThickness = Scrollbar.scrollbarThickness;
   if (horizontal) {
     this.svgBackground_.setAttribute('height', scrollbarThickness);
     this.outerSvg_.setAttribute('height', scrollbarThickness);
@@ -234,9 +90,9 @@ Blockly.Scrollbar = function(workspace, horizontal, opt_pair, opt_class) {
     this.positionAttribute_ = 'y';
   }
   const scrollbar = this;
-  this.onMouseDownBarWrapper_ = Blockly.bindEventWithChecks_(
+  this.onMouseDownBarWrapper_ = browserEvents.conditionalBind(
       this.svgBackground_, 'mousedown', scrollbar, scrollbar.onMouseDownBar_);
-  this.onMouseDownHandleWrapper_ = Blockly.bindEventWithChecks_(this.svgHandle_,
+  this.onMouseDownHandleWrapper_ = browserEvents.conditionalBind(this.svgHandle_,
       'mousedown', scrollbar, scrollbar.onMouseDownHandle_);
 };
 
@@ -244,10 +100,10 @@ Blockly.Scrollbar = function(workspace, horizontal, opt_pair, opt_class) {
  * The location of the origin of the workspace that the scrollbar is in,
  * measured in CSS pixels relative to the injection div origin.  This is usually
  * (0, 0).  When the scrollbar is in a flyout it may have a different origin.
- * @type {goog.math.Coordinate}
+ * @type {Coordinate}
  * @private
  */
-Blockly.Scrollbar.prototype.origin_ = new goog.math.Coordinate(0, 0);
+Scrollbar.prototype.origin_ = new Coordinate(0, 0);
 
 /**
    * Whether or not the origin of the scrollbar has changed. Used
@@ -255,7 +111,7 @@ Blockly.Scrollbar.prototype.origin_ = new goog.math.Coordinate(0, 0);
    * @type {boolean}
    * @private
    */
-Blockly.Scrollbar.prototype.originHasChanged_ = true;
+Scrollbar.prototype.originHasChanged_ = true;
 
 /**
  * The size of the area within which the scrollbar handle can move, in CSS
@@ -263,14 +119,14 @@ Blockly.Scrollbar.prototype.originHasChanged_ = true;
  * @type {number}
  * @private
  */
-Blockly.Scrollbar.prototype.scrollViewSize_ = 0;
+Scrollbar.prototype.scrollViewSize_ = 0;
 
 /**
  * The length of the scrollbar handle in CSS pixels.
  * @type {number}
  * @private
  */
-Blockly.Scrollbar.prototype.handleLength_ = 0;
+Scrollbar.prototype.handleLength_ = 0;
 
 /**
  * The offset of the start of the handle from the scrollbar position, in CSS
@@ -278,29 +134,29 @@ Blockly.Scrollbar.prototype.handleLength_ = 0;
  * @type {number}
  * @private
  */
-Blockly.Scrollbar.prototype.handlePosition_ = 0;
+Scrollbar.prototype.handlePosition_ = 0;
 
 /**
  * Whether the scrollbar handle is visible.
  * @type {boolean}
  * @private
  */
-Blockly.Scrollbar.prototype.isVisible_ = true;
+Scrollbar.prototype.isVisible_ = true;
 
 /**
  * Whether the workspace containing this scrollbar is visible.
  * @type {boolean}
  * @private
  */
-Blockly.Scrollbar.prototype.containerVisible_ = true;
+Scrollbar.prototype.containerVisible_ = true;
 
 /**
  * Width of vertical scrollbar or height of horizontal scrollbar in CSS pixels.
  * Scrollbars should be larger on touch devices.
  */
-Blockly.Scrollbar.scrollbarThickness = 11;
-if (goog.events.BrowserFeature.TOUCH_ENABLED) {
-  Blockly.Scrollbar.scrollbarThickness = 14;
+Scrollbar.scrollbarThickness = 11;
+if (BrowserFeature.TOUCH_ENABLED) {
+  Scrollbar.scrollbarThickness = 14;
 }
 
 /**
@@ -311,7 +167,7 @@ if (goog.events.BrowserFeature.TOUCH_ENABLED) {
  * @return {boolean} Whether the two sets of metrics are equivalent.
  * @private
  */
-Blockly.Scrollbar.metricsAreEquivalent_ = function(first, second) {
+Scrollbar.metricsAreEquivalent_ = function(first, second) {
   if (!(first && second)) {
     return false;
   }
@@ -336,14 +192,14 @@ Blockly.Scrollbar.metricsAreEquivalent_ = function(first, second) {
  * Dispose of this scrollbar.
  * Unlink from all DOM elements to prevent memory leaks.
  */
-Blockly.Scrollbar.prototype.dispose = function() {
+Scrollbar.prototype.dispose = function() {
   this.cleanUp_();
-  Blockly.unbindEvent_(this.onMouseDownBarWrapper_);
+  browserEvents.unbind(this.onMouseDownBarWrapper_);
   this.onMouseDownBarWrapper_ = null;
-  Blockly.unbindEvent_(this.onMouseDownHandleWrapper_);
+  browserEvents.unbind(this.onMouseDownHandleWrapper_);
   this.onMouseDownHandleWrapper_ = null;
 
-  goog.dom.removeNode(this.outerSvg_);
+  dom.removeNode(this.outerSvg_);
   this.outerSvg_ = null;
   this.svgGroup_ = null;
   this.svgBackground_ = null;
@@ -356,7 +212,7 @@ Blockly.Scrollbar.prototype.dispose = function() {
  * accordingly.
  * @param {number} newLength The new scrollbar handle length in CSS pixels.
  */
-Blockly.Scrollbar.prototype.setHandleLength_ = function(newLength) {
+Scrollbar.prototype.setHandleLength_ = function(newLength) {
   this.handleLength_ = newLength;
   this.svgHandle_.setAttribute(this.lengthAttribute_, this.handleLength_);
 };
@@ -366,7 +222,7 @@ Blockly.Scrollbar.prototype.setHandleLength_ = function(newLength) {
  * change the SVG attribute accordingly.
  * @param {number} newPosition The new scrollbar handle offset in CSS pixels.
  */
-Blockly.Scrollbar.prototype.setHandlePosition = function(newPosition) {
+Scrollbar.prototype.setHandlePosition = function(newPosition) {
   this.handlePosition_ = newPosition;
   this.svgHandle_.setAttribute(this.positionAttribute_, this.handlePosition_);
 };
@@ -377,19 +233,10 @@ Blockly.Scrollbar.prototype.setHandlePosition = function(newPosition) {
  * @param {number} newSize The new scrollbar background length in CSS pixels.
  * @private
  */
-Blockly.Scrollbar.prototype.setScrollViewSize_ = function(newSize) {
+Scrollbar.prototype.setScrollViewSize_ = function(newSize) {
   this.scrollViewSize_ = newSize;
   this.outerSvg_.setAttribute(this.lengthAttribute_, this.scrollViewSize_);
   this.svgBackground_.setAttribute(this.lengthAttribute_, this.scrollViewSize_);
-};
-
-/**
- * Set whether this scrollbar's container is visible.
- * @param {boolean} visible Whether the container is visible.
- */
-Blockly.ScrollbarPair.prototype.setContainerVisible = function(visible) {
-  this.hScroll.setContainerVisible(visible);
-  this.vScroll.setContainerVisible(visible);
 };
 
 /**
@@ -399,14 +246,14 @@ Blockly.ScrollbarPair.prototype.setContainerVisible = function(visible) {
  * @param {number} y The new y coordinate.
  * @private
  */
-Blockly.Scrollbar.prototype.setPosition_ = function(x, y) {
+Scrollbar.prototype.setPosition_ = function(x, y) {
   this.position_.x = x;
   this.position_.y = y;
 
   const tempX = this.position_.x + this.origin_.x;
   const tempY = this.position_.y + this.origin_.y;
   const transform = 'translate(' + tempX + 'px,' + tempY + 'px)';
-  Blockly.utils.setCssTransform(this.outerSvg_, transform);
+  utils.setCssTransform(this.outerSvg_, transform);
 };
 
 /**
@@ -415,7 +262,7 @@ Blockly.Scrollbar.prototype.setPosition_ = function(x, y) {
  * required dimensions.  If not provided, it will be fetched from the host
  * object.
  */
-Blockly.Scrollbar.prototype.resize = function(opt_metrics) {
+Scrollbar.prototype.resize = function(opt_metrics) {
   // Determine the location, height and width of the host element.
   let hostMetrics = opt_metrics;
   if (!hostMetrics) {
@@ -430,7 +277,7 @@ Blockly.Scrollbar.prototype.resize = function(opt_metrics) {
   // we want to continue with the resize even if workspace metrics haven't.
   if (this.originHasChanged_) {
     this.originHasChanged_ = false;
-  } else if (Blockly.Scrollbar.metricsAreEquivalent_(hostMetrics,
+  } else if (Scrollbar.metricsAreEquivalent_(hostMetrics,
       this.oldHostMetrics_)) {
     return;
   }
@@ -463,7 +310,7 @@ Blockly.Scrollbar.prototype.resize = function(opt_metrics) {
  *     required dimensions, possibly fetched from the host object.
  * @private
  */
-Blockly.Scrollbar.prototype.resizeHorizontal_ = function(hostMetrics) {
+Scrollbar.prototype.resizeHorizontal_ = function(hostMetrics) {
   // TODO: Inspect metrics to determine if we can get away with just a content
   // resize.
   this.resizeViewHorizontal(hostMetrics);
@@ -475,22 +322,22 @@ Blockly.Scrollbar.prototype.resizeHorizontal_ = function(hostMetrics) {
  * @param {!Object} hostMetrics A data structure describing all the
  *     required dimensions, possibly fetched from the host object.
  */
-Blockly.Scrollbar.prototype.resizeViewHorizontal = function(hostMetrics) {
+Scrollbar.prototype.resizeViewHorizontal = function(hostMetrics) {
   let viewSize = hostMetrics.viewWidth - 1;
   if (this.pair_) {
     // Shorten the scrollbar to make room for the corner square.
-    viewSize -= Blockly.Scrollbar.scrollbarThickness;
+    viewSize -= Scrollbar.scrollbarThickness;
   }
   this.setScrollViewSize_(Math.max(0, viewSize));
 
   let xCoordinate = hostMetrics.absoluteLeft + 0.5;
   if (this.pair_ && this.workspace_.RTL) {
-    xCoordinate += Blockly.Scrollbar.scrollbarThickness;
+    xCoordinate += Scrollbar.scrollbarThickness;
   }
 
   // Horizontal toolbar should always be just above the bottom of the workspace.
   const yCoordinate = hostMetrics.absoluteTop + hostMetrics.viewHeight -
-      Blockly.Scrollbar.scrollbarThickness - 0.5;
+      Scrollbar.scrollbarThickness - 0.5;
   this.setPosition_(xCoordinate, yCoordinate);
 
   // If the view has been resized, a content resize will also be necessary.  The
@@ -504,7 +351,7 @@ Blockly.Scrollbar.prototype.resizeViewHorizontal = function(hostMetrics) {
  * @param {!Object} hostMetrics A data structure describing all the
  *     required dimensions, possibly fetched from the host object.
  */
-Blockly.Scrollbar.prototype.resizeContentHorizontal = function(hostMetrics) {
+Scrollbar.prototype.resizeContentHorizontal = function(hostMetrics) {
   if (!this.pair_) {
     // Only show the scrollbar if needed.
     // Ideally this would also apply to scrollbar pairs, but that's a bigger
@@ -532,7 +379,7 @@ Blockly.Scrollbar.prototype.resizeContentHorizontal = function(hostMetrics) {
  *     required dimensions, possibly fetched from the host object.
  * @private
  */
-Blockly.Scrollbar.prototype.resizeVertical_ = function(hostMetrics) {
+Scrollbar.prototype.resizeVertical_ = function(hostMetrics) {
   // TODO: Inspect metrics to determine if we can get away with just a content
   // resize.
   this.resizeViewVertical(hostMetrics);
@@ -544,18 +391,18 @@ Blockly.Scrollbar.prototype.resizeVertical_ = function(hostMetrics) {
  * @param {!Object} hostMetrics A data structure describing all the
  *     required dimensions, possibly fetched from the host object.
  */
-Blockly.Scrollbar.prototype.resizeViewVertical = function(hostMetrics) {
+Scrollbar.prototype.resizeViewVertical = function(hostMetrics) {
   let viewSize = hostMetrics.viewHeight - 1;
   if (this.pair_) {
     // Shorten the scrollbar to make room for the corner square.
-    viewSize -= Blockly.Scrollbar.scrollbarThickness;
+    viewSize -= Scrollbar.scrollbarThickness;
   }
   this.setScrollViewSize_(Math.max(0, viewSize));
 
   let xCoordinate = hostMetrics.absoluteLeft + 0.5;
   if (!this.workspace_.RTL) {
     xCoordinate += hostMetrics.viewWidth -
-        Blockly.Scrollbar.scrollbarThickness - 1;
+        Scrollbar.scrollbarThickness - 1;
   }
   const yCoordinate = hostMetrics.absoluteTop + 0.5;
   this.setPosition_(xCoordinate, yCoordinate);
@@ -571,7 +418,7 @@ Blockly.Scrollbar.prototype.resizeViewVertical = function(hostMetrics) {
  * @param {!Object} hostMetrics A data structure describing all the
  *     required dimensions, possibly fetched from the host object.
  */
-Blockly.Scrollbar.prototype.resizeContentVertical = function(hostMetrics) {
+Scrollbar.prototype.resizeContentVertical = function(hostMetrics) {
   if (!this.pair_) {
     // Only show the scrollbar if needed.
     this.setVisible(this.scrollViewSize_ < hostMetrics.contentHeight);
@@ -597,7 +444,7 @@ Blockly.Scrollbar.prototype.resizeContentVertical = function(hostMetrics) {
  * @param {string=} opt_class A class to be applied to this scrollbar.
  * @private
  */
-Blockly.Scrollbar.prototype.createDom_ = function(opt_class) {
+Scrollbar.prototype.createDom_ = function(opt_class) {
   /* Create the following DOM:
   <svg class="blocklyScrollbarHorizontal  optionalClass">
     <g>
@@ -611,13 +458,13 @@ Blockly.Scrollbar.prototype.createDom_ = function(opt_class) {
   if (opt_class) {
     className += ' ' + opt_class;
   }
-  this.outerSvg_ = Blockly.utils.createSvgElement(
+  this.outerSvg_ = utils.createSvgElement(
       'svg', {'class': className}, null);
-  this.svgGroup_ = Blockly.utils.createSvgElement('g', {}, this.outerSvg_);
-  this.svgBackground_ = Blockly.utils.createSvgElement(
+  this.svgGroup_ = utils.createSvgElement('g', {}, this.outerSvg_);
+  this.svgBackground_ = utils.createSvgElement(
       'rect', {'class': 'blocklyScrollbarBackground'}, this.svgGroup_);
-  const radius = Math.floor((Blockly.Scrollbar.scrollbarThickness - 5) / 2);
-  this.svgHandle_ = Blockly.utils.createSvgElement(
+  const radius = Math.floor((Scrollbar.scrollbarThickness - 5) / 2);
+  this.svgHandle_ = utils.createSvgElement(
       'rect',
       {
         'class': 'blocklyScrollbarHandle',
@@ -625,7 +472,7 @@ Blockly.Scrollbar.prototype.createDom_ = function(opt_class) {
         'ry': radius
       },
       this.svgGroup_);
-  Blockly.utils.insertAfter(this.outerSvg_, this.workspace_.getParentSvg());
+  utils.insertAfter(this.outerSvg_, this.workspace_.getParentSvg());
 };
 
 /**
@@ -633,7 +480,7 @@ Blockly.Scrollbar.prototype.createDom_ = function(opt_class) {
  * needed.
  * @return {boolean} True if visible.
  */
-Blockly.Scrollbar.prototype.isVisible = function() {
+Scrollbar.prototype.isVisible = function() {
   return this.isVisible_;
 };
 
@@ -642,7 +489,7 @@ Blockly.Scrollbar.prototype.isVisible = function() {
  * display accordingly if visibility has changed.
  * @param {boolean} visible Whether the container is visible
  */
-Blockly.Scrollbar.prototype.setContainerVisible = function(visible) {
+Scrollbar.prototype.setContainerVisible = function(visible) {
   const visibilityChanged = (visible != this.containerVisible_);
 
   this.containerVisible_ = visible;
@@ -656,7 +503,7 @@ Blockly.Scrollbar.prototype.setContainerVisible = function(visible) {
  * Only applies to non-paired scrollbars.
  * @param {boolean} visible True if visible.
  */
-Blockly.Scrollbar.prototype.setVisible = function(visible) {
+Scrollbar.prototype.setVisible = function(visible) {
   const visibilityChanged = (visible != this.isVisible());
 
   // Ideally this would also apply to scrollbar pairs, but that's a bigger
@@ -676,7 +523,7 @@ Blockly.Scrollbar.prototype.setVisible = function(visible) {
  * We cannot rely on the containing workspace being hidden to hide us
  * because it is not necessarily our parent in the DOM.
  */
-Blockly.Scrollbar.prototype.updateDisplay_ = function() {
+Scrollbar.prototype.updateDisplay_ = function() {
   let show = true;
   // Check whether our parent/container is visible.
   if (!this.containerVisible_) {
@@ -697,21 +544,21 @@ Blockly.Scrollbar.prototype.updateDisplay_ = function() {
  * @param {!Event} e Mouse down event.
  * @private
  */
-Blockly.Scrollbar.prototype.onMouseDownBar_ = function(e) {
+Scrollbar.prototype.onMouseDownBar_ = function(e) {
   this.workspace_.markFocused();
-  Blockly.Touch.clearTouchIdentifier();  // This is really a click.
+  Touch.clearTouchIdentifier();  // This is really a click.
   this.cleanUp_();
-  if (Blockly.utils.isRightButton(e)) {
+  if (utils.isRightButton(e)) {
     // Right-click.
     // Scrollbars have no context menu.
     e.stopPropagation();
     return;
   }
-  const mouseXY = Blockly.utils.mouseToSvg(e, this.workspace_.getParentSvg(),
+  const mouseXY = utils.mouseToSvg(e, this.workspace_.getParentSvg(),
       this.workspace_.getInverseScreenCTM());
   const mouseLocation = this.horizontal_ ? mouseXY.x : mouseXY.y;
 
-  const handleXY = Blockly.utils.getInjectionDivXY_(this.svgHandle_);
+  const handleXY = utils.getInjectionDivXY(this.svgHandle_);
   const handleStart = this.horizontal_ ? handleXY.x : handleXY.y;
   let handlePosition = this.handlePosition_;
 
@@ -725,8 +572,8 @@ Blockly.Scrollbar.prototype.onMouseDownBar_ = function(e) {
   }
   // When the scrollbars are clicked, hide the WidgetDiv/DropDownDiv without
   // animation in anticipation of a workspace move.
-  Blockly.WidgetDiv.hide(true);
-  Blockly.DropDownDiv.hideWithoutAnimation();
+  WidgetDiv.hide(true);
+  DropDownDiv.hideWithoutAnimation();
 
   this.setHandlePosition(this.constrainHandle_(handlePosition));
   this.onScroll_();
@@ -740,10 +587,10 @@ Blockly.Scrollbar.prototype.onMouseDownBar_ = function(e) {
  * @param {!Event} e Mouse down event.
  * @private
  */
-Blockly.Scrollbar.prototype.onMouseDownHandle_ = function(e) {
+Scrollbar.prototype.onMouseDownHandle_ = function(e) {
   this.workspace_.markFocused();
   this.cleanUp_();
-  if (Blockly.utils.isRightButton(e)) {
+  if (utils.isRightButton(e)) {
     // Right-click.
     // Scrollbars have no context menu.
     e.stopPropagation();
@@ -754,14 +601,14 @@ Blockly.Scrollbar.prototype.onMouseDownHandle_ = function(e) {
 
   // Record the current mouse position.
   this.startDragMouse_ = this.horizontal_ ? e.clientX : e.clientY;
-  Blockly.Scrollbar.onMouseUpWrapper_ = Blockly.bindEventWithChecks_(document,
+  Scrollbar.onMouseUpWrapper_ = browserEvents.conditionalBind(document,
       'mouseup', this, this.onMouseUpHandle_);
-  Blockly.Scrollbar.onMouseMoveWrapper_ = Blockly.bindEventWithChecks_(document,
+  Scrollbar.onMouseMoveWrapper_ = browserEvents.conditionalBind(document,
       'mousemove', this, this.onMouseMoveHandle_);
   // When the scrollbars are clicked, hide the WidgetDiv/DropDownDiv without
   // animation in anticipation of a workspace move.
-  Blockly.WidgetDiv.hide(true);
-  Blockly.DropDownDiv.hideWithoutAnimation();
+  WidgetDiv.hide(true);
+  DropDownDiv.hideWithoutAnimation();
 
   e.stopPropagation();
   e.preventDefault();
@@ -772,7 +619,7 @@ Blockly.Scrollbar.prototype.onMouseDownHandle_ = function(e) {
  * @param {!Event} e Mouse up event.
  * @private
  */
-Blockly.Scrollbar.prototype.onMouseMoveHandle_ = function(e) {
+Scrollbar.prototype.onMouseMoveHandle_ = function(e) {
   const currentMouse = this.horizontal_ ? e.clientX : e.clientY;
   const mouseDelta = currentMouse - this.startDragMouse_;
   const handlePosition = this.startDragHandle + mouseDelta;
@@ -785,8 +632,8 @@ Blockly.Scrollbar.prototype.onMouseMoveHandle_ = function(e) {
  * Release the scrollbar handle and reset state accordingly.
  * @private
  */
-Blockly.Scrollbar.prototype.onMouseUpHandle_ = function() {
-  Blockly.Touch.clearTouchIdentifier();
+Scrollbar.prototype.onMouseUpHandle_ = function() {
+  Touch.clearTouchIdentifier();
   this.cleanUp_();
 };
 
@@ -795,15 +642,15 @@ Blockly.Scrollbar.prototype.onMouseUpHandle_ = function() {
  * wrap up lose ends associated with the scrollbar.
  * @private
  */
-Blockly.Scrollbar.prototype.cleanUp_ = function() {
-  Blockly.hideChaff(true);
-  if (Blockly.Scrollbar.onMouseUpWrapper_) {
-    Blockly.unbindEvent_(Blockly.Scrollbar.onMouseUpWrapper_);
-    Blockly.Scrollbar.onMouseUpWrapper_ = null;
+Scrollbar.prototype.cleanUp_ = function() {
+  this.workspace_.hideChaff(true);
+  if (Scrollbar.onMouseUpWrapper_) {
+    browserEvents.unbind(Scrollbar.onMouseUpWrapper_);
+    Scrollbar.onMouseUpWrapper_ = null;
   }
-  if (Blockly.Scrollbar.onMouseMoveWrapper_) {
-    Blockly.unbindEvent_(Blockly.Scrollbar.onMouseMoveWrapper_);
-    Blockly.Scrollbar.onMouseMoveWrapper_ = null;
+  if (Scrollbar.onMouseMoveWrapper_) {
+    browserEvents.unbind(Scrollbar.onMouseMoveWrapper_);
+    Scrollbar.onMouseMoveWrapper_ = null;
   }
 };
 
@@ -814,7 +661,7 @@ Blockly.Scrollbar.prototype.cleanUp_ = function() {
  * @return {number} Constrained value, in CSS pixels.
  * @private
  */
-Blockly.Scrollbar.prototype.constrainHandle_ = function(value) {
+Scrollbar.prototype.constrainHandle_ = function(value) {
   if (value <= 0 || isNaN(value) || this.scrollViewSize_ < this.handleLength_) {
     value = 0;
   } else {
@@ -827,7 +674,7 @@ Blockly.Scrollbar.prototype.constrainHandle_ = function(value) {
  * Called when scrollbar is moved.
  * @private
  */
-Blockly.Scrollbar.prototype.onScroll_ = function() {
+Scrollbar.prototype.onScroll_ = function() {
   let ratio = this.handlePosition_ / this.scrollViewSize_;
   if (isNaN(ratio)) {
     ratio = 0;
@@ -847,7 +694,7 @@ Blockly.Scrollbar.prototype.onScroll_ = function() {
  *     pixels.  It may be larger than the maximum allowable position of the
  *     scrollbar handle.
  */
-Blockly.Scrollbar.prototype.set = function(value) {
+Scrollbar.prototype.set = function(value) {
   this.setHandlePosition(this.constrainHandle_(value * this.ratio_));
   this.onScroll_();
 };
@@ -860,9 +707,9 @@ Blockly.Scrollbar.prototype.set = function(value) {
  * @param {number} x The x coordinate of the scrollbar's origin, in CSS pixels.
  * @param {number} y The y coordinate of the scrollbar's origin, in CSS pixels.
  */
-Blockly.Scrollbar.prototype.setOrigin = function(x, y) {
+Scrollbar.prototype.setOrigin = function(x, y) {
   if (x != this.origin_.x || y != this.origin_.y) {
-    this.origin_ = new goog.math.Coordinate(x, y);
+    this.origin_ = new Coordinate(x, y);
     this.originHasChanged_ = true;
   }
 };

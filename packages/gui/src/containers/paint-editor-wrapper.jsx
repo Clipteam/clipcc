@@ -3,7 +3,7 @@ import React from 'react';
 import bindAll from 'lodash.bindall';
 import VM from 'clipcc-vm';
 import PaintEditor from 'clipcc-paint';
-import {inlineSvgFonts} from 'scratch-svg-renderer';
+import {inlineSvgFonts} from 'clipcc-svg-renderer';
 
 import {connect} from 'react-redux';
 
