@@ -326,10 +326,8 @@ Blockly.ScratchBlocks.ProcedureUtils.addLabelField_ = function(text) {
  * @private
  */
 Blockly.ScratchBlocks.ProcedureUtils.addLabelEditor_ = function(text) {
-  if (text) {
-    this.appendDummyInput(Blockly.utils.genUid()).
-        appendField(new Blockly.FieldTextInputRemovable(text));
-  }
+  this.appendDummyInput(Blockly.utils.genUid()).
+      appendField(new Blockly.FieldTextInputRemovable(text));
 };
 
 /**
