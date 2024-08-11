@@ -15,8 +15,8 @@
  */
 
 import * as goog from 'google-closure-library/closure/goog/goog.js';
-import * as eventUtils from './utils.js';
-import { Abstract } from './abstract.js';
+import * as eventUtils from './utils';
+import { Abstract } from './abstract';
 
 goog.declareModuleId('Blockly.Events.WorkspaceFinishedLoading');
 
