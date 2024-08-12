@@ -353,7 +353,7 @@ Blockly.Blocks['operator_join_advanced'] = {
    * @this Blockly.Block
    */
   domToMutation: function(xmlElement) {
-    let argumentIds = xmlElement.getAttribute('argumentids');
+    const argumentIds = xmlElement.getAttribute('argumentids');
     // don't update if args are not changed
     if (JSON.stringify(this.argumentIds_) === argumentIds) {
       return;
@@ -365,7 +365,7 @@ Blockly.Blocks['operator_join_advanced'] = {
   },
   /**
    * Add context menu option to insert or delete an input.
-   * @param {!Array} options List of menu options to add to.
+   * @param {!Array} menuOptions List of menu options to add to.
    * @param {Blockly.Block} triggeredBlock The block that triggered the menu event.
    * @this Blockly.Block
    */
