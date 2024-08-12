@@ -2,11 +2,10 @@ name: Validate
 
 on:
   push:
+    branches:
+      - dev/3.2
+      - community
   pull_request:
-
-concurrency:
-      group: ${{ github.head_ref || github.ref_name }}
-      cancel-in-progress: true
 
 jobs:
   validate:
