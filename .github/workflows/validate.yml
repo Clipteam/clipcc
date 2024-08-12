@@ -4,11 +4,14 @@ on:
   push:
   pull_request:
 
+concurrency:
+      group: ${{ github.head_ref || github.ref_name }}
+      cancel-in-progress: true
+
 jobs:
   validate:
     name: Validating Code
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.event.pull_request == null || github.event_name == 'pull_request'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
