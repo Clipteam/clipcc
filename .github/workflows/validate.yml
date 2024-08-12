@@ -3,7 +3,8 @@ name: Validate
 on:
   push:
     branches:
-      - dev/3.2
+      - master
+      - 'dev/**'
       - community
   pull_request:
 
