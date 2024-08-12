@@ -144,8 +144,6 @@ function test_tokenizeInterpolation() {
   tokens = Blockly.utils.tokenizeInterpolation('%%%x%%0%00%01%');
   assertArrayEquals('Torture interpolations.', ['%%x%0', 0, 1, '%'], tokens);
 
-  Blockly.Msg = Blockly.Msg || {};
-
   Blockly.Msg.STRING_REF = 'test string';
   tokens = Blockly.utils.tokenizeInterpolation('%{bky_string_ref}');
   assertArrayEquals('String table reference, lowercase', ['test string'], tokens);
@@ -190,7 +188,6 @@ function test_tokenizeInterpolation() {
 }
 
 function test_replaceMessageReferences() {
-  Blockly.Msg = Blockly.Msg || {};
   Blockly.Msg.STRING_REF = 'test string';
 
   var resultString = Blockly.utils.replaceMessageReferences('');

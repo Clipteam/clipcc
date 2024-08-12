@@ -871,7 +871,9 @@ BlockSvg.prototype.dispose = function(healStack, animate) {
   }
   BlockSvg.superClass_.dispose.call(this, healStack);
   
-  blockWorkspace.virtualizedManager.unobserve(this);
+  if (blockWorkspace.virtualizedManager) {
+    blockWorkspace.virtualizedManager.unobserve(this);
+  }
 
   dom.removeNode(this.svgGroup_);
   blockWorkspace.resizeContents();
@@ -882,10 +884,20 @@ BlockSvg.prototype.dispose = function(healStack, animate) {
 };
 
 /**
- * Enable or disable a block.
+ * Updates the style of the block (and children) to match the current
+ * disabled state.
  */
 BlockSvg.prototype.updateDisabled = function() {
-  // not supported
+  const children = this.getChildren(false);
+  this.updateColour();
+  if (this.isCollapsed()) {
+    return;
+  }
+  for (let i = 0, child; child = children[i]; i++) {
+    if (child.rendered) {
+      child.updateDisabled();
+    }
+  }
 };
 
 /**
@@ -1017,6 +1029,19 @@ BlockSvg.prototype.setMutator = function(mutator) {
     mutator.block_ = this;
     this.mutator = mutator;
     mutator.createIcon();
+  }
+};
+
+/**
+ * Set whether the block is disabled or not.
+ * @param {boolean} disabled True if disabled.
+ */
+BlockSvg.prototype.setDisabled = function(disabled) {
+  if (this.isDisabled() != disabled) {
+    BlockSvg.superClass_.setDisabled.call(this, disabled);
+    if (this.rendered && !this.getInheritedDisabled()) {
+      this.updateDisabled();
+    }
   }
 };
 

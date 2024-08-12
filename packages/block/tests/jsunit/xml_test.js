@@ -153,7 +153,7 @@ function test_domToText() {
 function test_domToWorkspace_BackwardCompatibility() {
   // Expect that workspace still loads without serialized variables.
   xmlTest_setUpWithMockBlocks();
-  setUpMockMethod(mockControl_, Blockly.utils, 'genUid', null, ['1', '1']);
+  setUpMockMethod(mockControl_, Blockly.utils.TEST_ONLY, 'genUid', null, ['1', '1']);
   try {
     var dom = Blockly.Xml.textToDom(
         '<xml>' +
@@ -314,7 +314,7 @@ function test_blockToDom_fieldToDom_trivial() {
 
 function test_blockToDom_fieldToDom_defaultCase() {
   xmlTest_setUpWithMockBlocks();
-  setUpMockMethod(mockControl_, Blockly.utils, 'genUid', null, ['1', '1']);
+  setUpMockMethod(mockControl_, Blockly.utils.TEST_ONLY, 'genUid', null, ['1', '1']);
   try {
     workspace.createVariable('name1');
 
@@ -353,7 +353,7 @@ function test_blockToDom_fieldToDom_notAFieldVariable() {
 
 function test_variablesToDom_oneVariable() {
   xmlTest_setUp();
-  setUpMockMethod(mockControl_, Blockly.utils, 'genUid', null, ['1']);
+  setUpMockMethod(mockControl_, Blockly.utils.TEST_ONLY, 'genUid', null, ['1']);
 
   workspace.createVariable('name1');
   var resultDom = Blockly.Xml.variablesToDom(workspace.getAllVariables());

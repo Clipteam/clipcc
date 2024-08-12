@@ -1,0 +1,12 @@
+version: 2
+updates:
+  # This configures updates for the root package.json
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+  # This configures updates for each workspace in the packages directory
+  - package-ecosystem: "npm"
+    directory: "/packages/*"
+    schedule:
+      interval: "daily"

@@ -1,8 +1,12 @@
 name: Validate
 
 on:
-  pull_request:
   push:
+    branches:
+      - master
+      - 'dev/**'
+      - community
+  pull_request:
 
 jobs:
   validate:
@@ -14,9 +18,9 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 20.x
           cache: 'yarn'
       - name: Install and build
-        run: yarn install --frozen-lockfile && yarn run build:full
+        run: yarn install --frozen-lockfile && NO_CDN=1 yarn run build:full
       - name: Test
         run: yarn test

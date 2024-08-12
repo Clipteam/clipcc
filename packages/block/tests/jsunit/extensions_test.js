@@ -28,7 +28,7 @@ function test_extension() {
   var workspace = new Blockly.Workspace();
   var block;
   try {
-    assertUndefined(Blockly.Extensions.ALL_['extensions_test']);
+    assertUndefined(Blockly.Extensions.TEST_ONLY.ALL['extensions_test']);
 
     var numCallsToBefore = 0;
     var numCallsToAfter = 0;
@@ -51,8 +51,8 @@ function test_extension() {
       this.extendedWithAfter = true;
     });
 
-    assert(typeof Blockly.Extensions.ALL_['extensions_test_before'] === 'function');
-    assert(typeof Blockly.Extensions.ALL_['extensions_test_after'] === 'function');
+    assert(typeof Blockly.Extensions.TEST_ONLY.ALL['extensions_test_before'] === 'function');
+    assert(typeof Blockly.Extensions.TEST_ONLY.ALL['extensions_test_after'] === 'function');
     assertEquals(0, numCallsToBefore);
     assertEquals(0, numCallsToAfter);
 
@@ -66,8 +66,8 @@ function test_extension() {
     block && block.dispose();
     workspace.dispose();
 
-    delete Blockly.Extensions.ALL_['extensions_test_before'];
-    delete Blockly.Extensions.ALL_['extensions_test_after'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['extensions_test_before'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['extensions_test_after'];
     delete Blockly.Blocks['extension_test_block'];
   }
 }
@@ -77,7 +77,7 @@ function test_extension_missing() {
   var block;
   var exceptionWasThrown = false;
   try {
-    assertUndefined(Blockly.Extensions.ALL_['missing_extension']);
+    assertUndefined(Blockly.Extensions.TEST_ONLY.ALL['missing_extension']);
     Blockly.defineBlocksWithJsonArray([{
       "type": "missing_extension_block",
       "message0": "missing_extension_block",
@@ -99,37 +99,37 @@ function test_extension_missing() {
 function test_extension_not_a_function() {
   var exceptionWasThrown = false;
   try {
-    assertUndefined(Blockly.Extensions.ALL_['extension_just_a_string']);
+    assertUndefined(Blockly.Extensions.TEST_ONLY.ALL['extension_just_a_string']);
     Blockly.Extensions.register('extension_just_a_string', 'extension_just_a_string');
   } catch (e) {
     // Expected.
     exceptionWasThrown = true;
   } finally {
-    delete Blockly.Extensions.ALL_['extension_just_a_string'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['extension_just_a_string'];
   }
   assert(exceptionWasThrown);
 
   var exceptionWasThrown = false;
   try {
-    assertUndefined(Blockly.Extensions.ALL_['extension_is_null']);
+    assertUndefined(Blockly.Extensions.TEST_ONLY.ALL['extension_is_null']);
     Blockly.Extensions.register('extension_is_null', null);
   } catch (e) {
     // Expected.
     exceptionWasThrown = true;
   } finally {
-    delete Blockly.Extensions.ALL_['extension_is_null'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['extension_is_null'];
   }
   assert(exceptionWasThrown);
 
   var exceptionWasThrown = false;
   try {
-    assertUndefined(Blockly.Extensions.ALL_['extension_is_undefined']);
+    assertUndefined(Blockly.Extensions.TEST_ONLY.ALL['extension_is_undefined']);
     Blockly.Extensions.register('extension_is_undefined');
   } catch (e) {
     // Expected.
     exceptionWasThrown = true;
   } finally {
-    delete Blockly.Extensions.ALL_['extension_is_undefined'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['extension_is_undefined'];
   }
   assert(exceptionWasThrown);
 }
@@ -208,11 +208,11 @@ function test_mixin_extension() {
   var workspace = new Blockly.Workspace();
   var block;
   try {
-    assertUndefined(Blockly.Extensions.ALL_['mixin_test']);
+    assertUndefined(Blockly.Extensions.TEST_ONLY.ALL['mixin_test']);
 
     // Extension defined before the block type is defined.
     Blockly.Extensions.registerMixin('mixin_test', TEST_MIXIN);
-    assert(typeof Blockly.Extensions.ALL_['mixin_test'] === 'function');
+    assert(typeof Blockly.Extensions.TEST_ONLY.ALL['mixin_test'] === 'function');
 
     Blockly.defineBlocksWithJsonArray([{
       "type": "test_block_mixin",
@@ -228,7 +228,7 @@ function test_mixin_extension() {
     block && block.dispose();
     workspace.dispose();
 
-    delete Blockly.Extensions.ALL_['mixin_test'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['mixin_test'];
     delete Blockly.Blocks['test_block_mixin'];
   }
 }
@@ -241,11 +241,11 @@ function test_bad_mixin_overwrites_local_value() {
   var workspace = new Blockly.Workspace();
   var block;
   try {
-    assertUndefined(Blockly.Extensions.ALL_['mixin_bad_inputList']);
+    assertUndefined(Blockly.Extensions.TEST_ONLY.ALL['mixin_bad_inputList']);
 
     // Extension defined before the block type is defined.
     Blockly.Extensions.registerMixin('mixin_bad_inputList', TEST_MIXIN_BAD_INPUTLIST);
-    assert(typeof Blockly.Extensions.ALL_['mixin_bad_inputList'] === 'function');
+    assert(typeof Blockly.Extensions.TEST_ONLY.ALL['mixin_bad_inputList'] === 'function');
 
     Blockly.defineBlocksWithJsonArray([{
       "type": "test_block_bad_inputList",
@@ -265,7 +265,7 @@ function test_bad_mixin_overwrites_local_value() {
     block && block.dispose();
     workspace.dispose();
 
-    delete Blockly.Extensions.ALL_['mixin_bad_inputList'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['mixin_bad_inputList'];
     delete Blockly.Blocks['test_block_bad_inputList'];
   }
 }
@@ -278,11 +278,11 @@ function test_bad_mixin_overwrites_prototype() {
   var workspace = new Blockly.Workspace();
   var block;
   try {
-    assertUndefined(Blockly.Extensions.ALL_['mixin_bad_colour_']);
+    assertUndefined(Blockly.Extensions.TEST_ONLY.ALL['mixin_bad_colour_']);
 
     // Extension defined before the block type is defined.
     Blockly.Extensions.registerMixin('mixin_bad_colour_', TEST_MIXIN_BAD_COLOUR);
-    assert(typeof Blockly.Extensions.ALL_['mixin_bad_colour_'] === 'function');
+    assert(typeof Blockly.Extensions.TEST_ONLY.ALL['mixin_bad_colour_'] === 'function');
 
     Blockly.defineBlocksWithJsonArray([{
       "type": "test_block_bad_colour",
@@ -302,7 +302,7 @@ function test_bad_mixin_overwrites_prototype() {
     block && block.dispose();
     workspace.dispose();
 
-    delete Blockly.Extensions.ALL_['mixin_bad_colour_'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['mixin_bad_colour_'];
     delete Blockly.Blocks['test_block_bad_colour'];
   }
 }
@@ -350,7 +350,7 @@ function test_mutator_mixin() {
     }
     workspace.dispose();
     Blockly.Events.enable();
-    delete Blockly.Extensions.ALL_['mutator_test'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['mutator_test'];
   }
 }
 
@@ -368,7 +368,7 @@ function test_mutator_mixin_no_dialog() {
     // Events code calls mutationToDom and expects it to give back a meaningful
     // value.
     Blockly.Events.disable();
-    assertUndefined(Blockly.Extensions.ALL_['mutator_test']);
+    assertUndefined(Blockly.Extensions.TEST_ONLY.ALL['mutator_test']);
     Blockly.Extensions.registerMutator('mutator_test',
       {
         domToMutation: function() {
@@ -392,7 +392,7 @@ function test_mutator_mixin_no_dialog() {
     }
     workspace.dispose();
     Blockly.Events.enable();
-    delete Blockly.Extensions.ALL_['mutator_test'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['mutator_test'];
   }
 }
 
@@ -416,7 +416,7 @@ function test_mutator_mixin_no_decompose_fails() {
     // Expected.
     exceptionWasThrown = true;
   } finally {
-    delete Blockly.Extensions.ALL_['mutator_test'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['mutator_test'];
   }
   assertTrue(exceptionWasThrown);
 }
@@ -440,7 +440,7 @@ function test_mutator_mixin_no_compose_fails() {
     // Expected.
     exceptionWasThrown = true;
   } finally {
-    delete Blockly.Extensions.ALL_['mutator_test'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['mutator_test'];
   }
   assertTrue(exceptionWasThrown);
 }
@@ -464,7 +464,7 @@ function test_mutator_mixin_no_domToMutation_fails() {
     // Expected.
     exceptionWasThrown = true;
   } finally {
-    delete Blockly.Extensions.ALL_['mutator_test'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['mutator_test'];
   }
   assertTrue(exceptionWasThrown);
 }
@@ -488,7 +488,7 @@ function test_mutator_mixin_no_mutationToDom_fails() {
     // Expected.
     exceptionWasThrown = true;
   } finally {
-    delete Blockly.Extensions.ALL_['mutator_test'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['mutator_test'];
   }
   assertTrue(exceptionWasThrown);
 }
@@ -506,7 +506,7 @@ function test_use_mutator_as_extension_fails() {
     }]);
 
     Blockly.Events.disable();
-    assertUndefined(Blockly.Extensions.ALL_['mutator_test']);
+    assertUndefined(Blockly.Extensions.TEST_ONLY.ALL['mutator_test']);
     Blockly.Extensions.registerMutator('mutator_test',
       {
         domToMutation: function() {
@@ -524,14 +524,14 @@ function test_use_mutator_as_extension_fails() {
     // Expected
     exceptionWasThrown = true;
     // Should have failed on apply, not on register.
-    assertNotNull(Blockly.Extensions.ALL_['mutator_test']);
+    assertNotNull(Blockly.Extensions.TEST_ONLY.ALL['mutator_test']);
   } finally {
     if (block) {
       block.dispose();
     }
     workspace.dispose();
     Blockly.Events.enable();
-    delete Blockly.Extensions.ALL_['mutator_test'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['mutator_test'];
   }
   assertTrue(exceptionWasThrown);
 }
@@ -551,7 +551,7 @@ function test_use_mutator_mixin_as_extension_fails() {
     // Events code calls mutationToDom and expects it to give back a meaningful
     // value.
     Blockly.Events.disable();
-    assertUndefined(Blockly.Extensions.ALL_['mutator_test']);
+    assertUndefined(Blockly.Extensions.TEST_ONLY.ALL['mutator_test']);
     Blockly.Extensions.registerMixin('mutator_test',
       {
         domToMutation: function() {
@@ -567,14 +567,14 @@ function test_use_mutator_mixin_as_extension_fails() {
     // Expected
     exceptionWasThrown = true;
     // Should have failed on apply, not on register.
-    assertNotNull(Blockly.Extensions.ALL_['mutator_test']);
+    assertNotNull(Blockly.Extensions.TEST_ONLY.ALL['mutator_test']);
   } finally {
     if (block) {
       block.dispose();
     }
     workspace.dispose();
     Blockly.Events.enable();
-    delete Blockly.Extensions.ALL_['mutator_test'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['mutator_test'];
   }
   assertTrue(exceptionWasThrown);
 }
@@ -594,7 +594,7 @@ function test_use_extension_as_mutator_fails() {
     // Events code calls mutationToDom and expects it to give back a meaningful
     // value.
     Blockly.Events.disable();
-    assertUndefined(Blockly.Extensions.ALL_['extensions_test']);
+    assertUndefined(Blockly.Extensions.TEST_ONLY.ALL['extensions_test']);
     Blockly.Extensions.register('extensions_test', function() {
       return 'extensions_test_fn';
     });
@@ -604,14 +604,14 @@ function test_use_extension_as_mutator_fails() {
     // Expected
     exceptionWasThrown = true;
     // Should have failed on apply, not on register.
-    assertNotNull(Blockly.Extensions.ALL_['extensions_test']);
+    assertNotNull(Blockly.Extensions.TEST_ONLY.ALL['extensions_test']);
   } finally {
     if (block) {
       block.dispose();
     }
     workspace.dispose();
     Blockly.Events.enable();
-    delete Blockly.Extensions.ALL_['extensions_test'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['extensions_test'];
   }
   assertTrue(exceptionWasThrown);
 }
@@ -629,7 +629,7 @@ function test_mutator_mixin_plus_function() {
     }]);
 
     Blockly.Events.disable();
-    assertUndefined(Blockly.Extensions.ALL_['extensions_test']);
+    assertUndefined(Blockly.Extensions.TEST_ONLY.ALL['extensions_test']);
     Blockly.Extensions.registerMutator('extensions_test',
       {
         domToMutation: function() {
@@ -653,7 +653,7 @@ function test_mutator_mixin_plus_function() {
     }
     workspace.dispose();
     Blockly.Events.enable();
-    delete Blockly.Extensions.ALL_['extensions_test'];
+    delete Blockly.Extensions.TEST_ONLY.ALL['extensions_test'];
   }
   assertTrue(fnWasCalled);
 }

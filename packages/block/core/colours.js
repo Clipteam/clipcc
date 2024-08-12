@@ -94,6 +94,12 @@ export const Colours = {
     "tertiary": "#FF3355",
     "quaternary": "#FF3355"
   },
+  "argument": {
+    "primary": "#F47983",
+    "secondary": "#F15764",
+    "tertiary": "#EE3645",
+    "quaternary": "#EE3645"
+  },
   "text": "#FFFFFF",
   "workspace": "#F9F9F9",
   "toolboxHover": "#4C97FF",

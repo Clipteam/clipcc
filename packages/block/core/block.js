@@ -1152,6 +1152,14 @@ Block.prototype.getInputsInline = function() {
 };
 
 /**
+ * Get whether the block is disabled or not.
+ * @returns {boolean} True if disabled.
+ */
+Block.prototype.isDisabled = function() {
+  return this.disabled;
+};
+
+/**
  * Set whether the block is disabled or not.
  * @param {boolean} disabled True if disabled.
  */
@@ -1724,7 +1732,7 @@ Block.prototype.setCommentText = function(text) {
 
 /**
  * Set this block's output shape.
- * e.g., null, OUTPUT_SHAPE_HEXAGONAL, OUTPUT_SHAPE_ROUND, OUTPUT_SHAPE_SQUARE.
+ * e.g., OUTPUT_SHAPE_NORMAL(null), OUTPUT_SHAPE_HEXAGONAL, OUTPUT_SHAPE_ROUND, OUTPUT_SHAPE_SQUARE.
  * @param {?number} outputShape Value representing output shape
  *     (see constants.js).
  */

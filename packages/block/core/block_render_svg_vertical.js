@@ -101,6 +101,14 @@ BlockSvg.prototype.updateColour = function() {
       field.setText(null);
     }
   }
+
+  // Render disabled style
+  if (this.isDisabled() || this.getInheritedDisabled()) {
+    utils.addClass(this.svgGroup_, 'blocklyDisabled');
+  }
+  else {
+    utils.removeClass(this.svgGroup_, 'blocklyDisabled');
+  }
 };
 
 /**
@@ -343,7 +351,7 @@ BlockSvg.prototype.renderCompute_ = function(iconWidth) {
     if (!input.isVisible()) {
       continue;
     }
-    const isSecondInputOnProcedure = this.type == 'procedures_definition' &&
+    const isSecondInputOnProcedure = this.type == constants.PROCEDURES_DEFINITION_BLOCK_TYPE &&
         lastType && lastType == constants.NEXT_STATEMENT;
     let row;
     // Don't create a new row for the second dummy input on a procedure block.
@@ -438,6 +446,10 @@ BlockSvg.prototype.renderCompute_ = function(iconWidth) {
         fieldValueWidth = Math.max(fieldValueWidth, input.fieldWidth);
       }
     }
+    if (this.type == constants.PROCEDURES_DEFINITION_BLOCK_TYPE) {
+      // fieldStatementWidth is needed for rendering procedures_definition.
+      fieldStatementWidth = Math.max(fieldStatementWidth, input.fieldWidth);
+    }
     previousRow = row;
   }
   // Compute padding for output blocks.
@@ -502,7 +514,8 @@ BlockSvg.prototype.computeInputHeight_ = function(input, row,
     previousRow) {
   if (this.inputList.length === 1 && this.outputConnection &&
       (this.isShadow() &&
-      !scratchBlocksUtils.isShadowArgumentReporter(this))) {
+      !scratchBlocksUtils.isShadowArgumentReporter(this) &&
+      this.type !== constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE)) {
     // "Lone" field blocks are smaller.
     return rendererConstants.MIN_BLOCK_Y_SINGLE_FIELD_OUTPUT;
   } else if (this.outputConnection) {
@@ -562,7 +575,8 @@ BlockSvg.prototype.computeRightEdge_ = function(curEdge, hasStatement) {
     edge = Math.max(edge, rendererConstants.MIN_BLOCK_X);
   } else if (this.outputConnection) {
     if (this.isShadow() &&
-        !scratchBlocksUtils.isShadowArgumentReporter(this)) {
+        !scratchBlocksUtils.isShadowArgumentReporter(this) &&
+        this.type !== constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
       // Single-fields
       edge = Math.max(edge, rendererConstants.MIN_BLOCK_X_SHADOW_OUTPUT);
     } else {
@@ -593,7 +607,8 @@ BlockSvg.prototype.computeOutputPadding_ = function(inputRows) {
   // Only apply to blocks with outputs and not single fields (shadows).
   if (!this.getOutputShape() || !this.outputConnection ||
       (this.isShadow() &&
-      !scratchBlocksUtils.isShadowArgumentReporter(this))) {
+      !scratchBlocksUtils.isShadowArgumentReporter(this) &&
+      this.type !== constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE)) {
     return;
   }
   // Blocks with outputs must have single row to be padded.
@@ -611,7 +626,7 @@ BlockSvg.prototype.computeOutputPadding_ = function(inputRows) {
   let otherShape;
   // In checking the left/start side, a field takes precedence over any input.
   // That's because a field will be rendered before any value input.
-  if (firstField) {
+  if (firstField || !firstInput.connection) {
     otherShape = 0; // Field comes first in the row.
   } else {
     // Value input comes first in the row.
@@ -866,18 +881,22 @@ BlockSvg.prototype.renderDrawRight_ = function(steps,
       // Move to the right edge
       cursorX = Math.max(cursorX, inputRows.rightEdge);
       this.width = Math.max(this.width, cursorX);
-      if (!this.edgeShape_) {
-        // Include corner radius in drawing the horizontal line.
-        steps.push('H', cursorX - rendererConstants.CORNER_RADIUS - this.edgeShapeWidth_);
-        steps.push(rendererConstants.TOP_RIGHT_CORNER);
+      if (this.type == constants.PROCEDURES_DEFINITION_BLOCK_TYPE) {
+        this.renderDefineBlock_(steps, inputRows, row[0], row, cursorY);
       } else {
-        // Don't include corner radius - no corner (edge shape drawn).
-        steps.push('H', cursorX - this.edgeShapeWidth_);
-      }
-      // Subtract CORNER_RADIUS * 2 to account for the top right corner
-      // and also the bottom right corner. Only move vertically the non-corner length.
-      if (!this.edgeShape_) {
-        steps.push('v', row.height - rendererConstants.CORNER_RADIUS * 2);
+        if (!this.edgeShape_) {
+          // Include corner radius in drawing the horizontal line.
+          steps.push('H', cursorX - rendererConstants.CORNER_RADIUS - this.edgeShapeWidth_);
+          steps.push(rendererConstants.TOP_RIGHT_CORNER);
+        } else {
+          // Don't include corner radius - no corner (edge shape drawn).
+          steps.push('H', cursorX - this.edgeShapeWidth_);
+        }
+        // Subtract CORNER_RADIUS * 2 to account for the top right corner
+        // and also the bottom right corner. Only move vertically the non-corner length.
+        if (!this.edgeShape_) {
+          steps.push('v', row.height - rendererConstants.CORNER_RADIUS * 2);
+        }
       }
     } else if (row.type == constants.NEXT_STATEMENT) {
       // Nested statement.
