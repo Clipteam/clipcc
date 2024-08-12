@@ -102,10 +102,14 @@ ProcedureMap.prototype.allLocalProcedureMutations = function() {
 /**
  * Create a procedure with a given mutation. Definition block should be created
  * externally if necessary.
- * @param {!Object} mutation The mutation of the procedure.
+ * @param {!Array.<Element> | !Object} mutation The mutation of the procedure.
  * @return {ProcedureModel} The newly created procedure.
  */
 ProcedureMap.prototype.createProcedureFromMutation = function(mutation) {
+  if (mutation.childNodes) {
+    mutation['proccode'] = mutation.getAttribute('proccode');
+    mutation['external'] = mutation.getAttribute('proccode');
+  }
   const procCode = mutation['proccode'];
   const external = mutation['external'] === 'true';
   let procedure = this.getProcedure(procCode);

@@ -339,6 +339,25 @@ WorkspaceComment.prototype.toXmlWithXY = function(opt_noId) {
 };
 
 /**
+ * Encode a comment subtree as XML, but don't serialize the XY coordinates or
+ * width and height.  If you need that additional information use toXmlWithXY.
+ * @param {boolean=} opt_noId True if the encoder should skip the comment id.
+ * @return {!Element} Tree of XML elements.
+ * @package
+ */
+WorkspaceComment.prototype.toXml = function (opt_noId) {
+  const commentElement = dom.createDom('comment');
+  if (!opt_noId) {
+    commentElement.setAttribute('id', this.id);
+  }
+  if (this.isMinimized_) {
+    commentElement.setAttribute('minimized', true);
+  }
+  commentElement.textContent = this.getText();
+  return commentElement;
+};
+
+/**
  * Get the truncated text for this comment to display in the minimized
  * top bar.
  * @return {string} The truncated comment text

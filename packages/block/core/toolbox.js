@@ -853,7 +853,7 @@ Toolbox.Category.prototype.getContents = function() {
  */
 Toolbox.Category.prototype.setColour = function(state) {
   const colour = state['colour'];
-  const secondaryColour = state['secondaryColour'];
+  const secondaryColour = state['secondaryColour'] || state['secondarycolour'];
   if (typeof colour === 'string') {
     if (colour.match(/^#[0-9a-fA-F]{6}$/)) {
       this.colour_ = colour;

@@ -517,6 +517,28 @@ const trimName = function(name) {
 };
 
 /**
+ * Generate XML string for variable field.
+ * @param {!Blockly.VariableModel} variableModel The variable model to generate
+ *     an XML string from.
+ * @param {?string} opt_name The optional name of the field, such as "VARIABLE"
+ *     or "LIST". Defaults to "VARIABLE".
+ * @return {string} The generated XML.
+ */
+export const generateVariableFieldXml = function (variableModel, opt_name) {
+  // The variable name may be user input, so it may contain characters that need
+  // to be escaped to create valid XML.
+  let typeString = variableModel.type;
+  if (typeString == '') {
+    typeString = '\'\'';
+  }
+  const fieldName = opt_name || 'VARIABLE';
+  const text = '<field name="' + fieldName + '" id="' + variableModel.getId() +
+    '" variabletype="' + stringUtils.htmlEscape(typeString) +
+    '">' + stringUtils.htmlEscape(variableModel.name) + '</field>';
+  return text;
+};
+
+/**
  * Generate block state for variable field.
  * @param {!Blockly.VariableModel} variableModel The variable model to generate
  *     an state from.

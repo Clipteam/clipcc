@@ -113,18 +113,18 @@ function test_abstract_constructor() {
 
 // Test util
 function checkCreateEventValues(event, block, ids, type) {
-  var expected_xml = Blockly.Xml.domToText(Blockly.Xml.blockToDom(block));
-  var result_xml = Blockly.Xml.domToText(event.xml);
-  assertEquals(expected_xml, result_xml);
+  var expected_json = JSON.stringify(Blockly.serialization.blocks.save(block, { addCoordinates: true}));
+  var result_json = JSON.stringify(event.json);
+  assertEquals(expected_json, result_json);
   isEqualArrays(ids, event.ids);
   assertEquals(type, event.type);
 }
 
 // Test util
 function checkDeleteEventValues(event, block, ids, type) {
-  var expected_xml = Blockly.Xml.domToText(Blockly.Xml.blockToDom(block));
-  var result_xml = Blockly.Xml.domToText(event.oldXml);
-  assertEquals(expected_xml, result_xml);
+  var expected_json = JSON.stringify(Blockly.serialization.blocks.save(block, { addCoordinates: true }));
+  var result_json = JSON.stringify(event.oldJson);
+  assertEquals(expected_json, result_json);
   isEqualArrays(ids, event.ids);
   assertEquals(type, event.type);
 }

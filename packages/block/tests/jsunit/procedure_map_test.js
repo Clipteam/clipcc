@@ -37,9 +37,9 @@ function test_procedureMap_newProcedure() {
     assertNotNull(procedure);
     assertEquals('test proc', procedure.getProcCode());
     assertEquals(false, procedure.isExternal());
-    assertEquals(true, JSON.parse(procedure.mutation.getAttribute('warp')));
-    assertEquals(false, JSON.parse(procedure.mutation.getAttribute('return')));
-    assertEquals(false, JSON.parse(procedure.mutation.getAttribute('global')));
+    assertEquals(true, JSON.parse(procedure.mutation['warp']));
+    assertEquals(false, JSON.parse(procedure.mutation['return']));
+    assertEquals(false, JSON.parse(procedure.mutation['global']));
   } finally {
     procedureMapTest_tearDown();
   }
