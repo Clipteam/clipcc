@@ -595,7 +595,7 @@ Blockly.Blocks.defaultToolbox = '<xml id="toolbox-categories" style="display: no
         '</shadow>' +
       '</value>' +
     '</block>' +
-    '<block type="operator_join_advanced" id="operator_join_advanced">' +
+    '<block type="operator_join_multiple" id="operator_join_multiple">' +
       '<mutation argumentids="[&quot;STRING1&quot;, &quot;STRING2&quot;]"></mutation>' +
       '<value name="STRING1">' +
         '<shadow type="text">' +

@@ -317,14 +317,14 @@ Blockly.Blocks['operator_join'] = {
   }
 };
 
-Blockly.Blocks['operator_join_advanced'] = {
+Blockly.Blocks['operator_join_multiple'] = {
   /**
-   * Block for advanced string join operator.
+   * Block for string join operator with multiple arguments.
    * @this Blockly.Block
    */
   init: function() {
     this.jsonInit({
-      "message0": Blockly.Msg.OPERATORS_JOIN_ADVANCED,
+      "message0": Blockly.Msg.OPERATORS_JOIN_MULTIPLE,
       "category": Blockly.constants.Categories.operators,
       "extensions": ["colours_operators", "output_string"]
     });
@@ -338,7 +338,7 @@ Blockly.Blocks['operator_join_advanced'] = {
     this.appendDummyInput('DUMMY_INPUT').appendField(this.plusminus_, 'PLUS_MINUS');
   },
   /**
-   * Create XML to represent the arguments of an advanced join block.
+   * Create XML to represent the arguments of a join block with multiple arguments.
    * @return {!Element} XML storage element.
    * @this Blockly.Block
    */
@@ -348,7 +348,7 @@ Blockly.Blocks['operator_join_advanced'] = {
     return container;
   },
   /**
-   * Parse XML to restore the arguments of an advanced join block.
+   * Parse XML to restore the arguments of a join block with multiple arguments.
    * @param {!Element} xmlElement XML storage element.
    * @this Blockly.Block
    */

@@ -30,7 +30,7 @@ class Scratch3OperatorsBlocks {
             operator_not: this.not,
             operator_random: this.random,
             operator_join: this.join,
-            operator_join_advanced: this.joinAdvanced,
+            operator_join_multiple: this.joinMultiple,
             operator_indexof: this.indexOf,
             operator_letter_of: this.letterOf,
             operator_length: this.length,
@@ -137,7 +137,7 @@ class Scratch3OperatorsBlocks {
         return Cast.toString(args.STRING1) + Cast.toString(args.STRING2);
     }
     
-    joinAdvanced (args) {
+    joinMultiple (args) {
         let result = '';
         const ids = JSON.parse(args.mutation.argumentids);
         for (const id of ids) {
