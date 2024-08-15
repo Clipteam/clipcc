@@ -68,6 +68,7 @@ const runTests = async function() {
   try {
     await runTest(browser, '/tests/jsunit/vertical_tests.html');
     await runTest(browser, '/tests/workspace_svg/index.html');
+    await runTest(browser, '/tests/blocks/index.html');
   } finally {
     await browser.deleteSession();
   }
