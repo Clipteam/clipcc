@@ -437,7 +437,7 @@ Blockly.Blocks['operator_join_multiple'] = {
     const newBlock = this.workspace.newBlock('text');
     newBlock.setFieldValue('', 'TEXT');
     newBlock.setShadow(true);
-    if (!this.isInsertionMarker()) {
+    if (this.rendered && !this.isInsertionMarker()) {
       newBlock.initSvg();
       newBlock.render(false);
     }
@@ -538,7 +538,7 @@ Blockly.Blocks['operator_join_multiple'] = {
         const newBlock = this.workspace.newBlock('text');
         newBlock.setFieldValue('', 'TEXT');
         newBlock.setShadow(true);
-        if (!this.isInsertionMarker()) {
+        if (wasRendered && !this.isInsertionMarker()) {
           newBlock.initSvg();
           newBlock.render(false);
         }
