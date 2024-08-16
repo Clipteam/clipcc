@@ -8,4 +8,3 @@ export type * from './type/ccx';
 // @ts-expect-error it doesn't't take effect because it's external.
 const Ctx = makeUnsandboxedCtx();
 export default Ctx;
- 

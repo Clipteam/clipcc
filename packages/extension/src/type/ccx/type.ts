@@ -24,12 +24,12 @@ export interface CCXExtensionClass {
      * @param data Project's original data.
      * @param extensions All extensions, A map of url and version.
      */
-    beforeProjectLoad? (projectData: any, extensions: Record<string, string>): void;
+    beforeProjectLoad? (projectData: unknown, extensions: Record<string, string>): void;
     /**
      * This event is triggered when the editor is saving an project.
      * @param data Project's original data.
      */
-    beforeProjectSave? (data: any): void;
+    beforeProjectSave? (data: unknown): void;
 }
 
 /**
@@ -127,13 +127,13 @@ export interface ExtensionInfo {
 
 export interface SettingsItemBoolean {
     id: string;
-    type: "boolean";
+    type: 'boolean';
     default: boolean;
 }
 
 export interface SettingsItemNumber {
     id: string;
-    type: "number";
+    type: 'number';
     default: number;
     max?: number;
     min?: number;
@@ -142,7 +142,7 @@ export interface SettingsItemNumber {
 
 export interface SettingsItemSelector {
     id: string;
-    type: "selector";
+    type: 'selector';
     default: string;
     items: string[];
 }
@@ -207,8 +207,10 @@ export interface CategoryPrototype {
 export interface ButtonPrototype {
     categoryId: string;
     messageId: string;
-    callback: Function;
+    callback: () => void;
 }
+
+export type BaseBlockPrim = (args: Record<string, unknown>, util?: unknown) => unknown;
 
 export type VmInstance = unknown;
 export type BlockInstance = unknown;

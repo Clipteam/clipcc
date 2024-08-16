@@ -85,7 +85,7 @@ export interface API {
      * Get settings from GUI.
      * @param id Full setting id.
      */
-    getSettings(id: string): any;
+    getSettings(id: string): unknown;
 
     /**
      * Register the function ``func`` with ``name`` as a global function.
@@ -93,7 +93,7 @@ export interface API {
      * @param name Function's name
      * @param func Function
      */
-    registerGlobalFunction(name: string, func: Function): void;
+    registerGlobalFunction(name: string, func: (...args: unknown[]) => unknown): void;
     /**
      * Unregister a registered function. Doesn't work in sandboxed environment.
      * @param name Function's name
@@ -106,5 +106,5 @@ export interface API {
      * @param args Function's arguments
      * @returns the return value of the corresponding function.
      */
-    callGlobalFunction(name: string, ...args: any[]): any;
+    callGlobalFunction(name: string, ...args: unknown[]): unknown;
 }

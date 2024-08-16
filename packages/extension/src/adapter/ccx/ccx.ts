@@ -19,6 +19,7 @@ import {
 import ExtensionSandbox from './ccx.worker';
 
 declare global {
+    // eslint-disable-next-line no-var
     var ClipCCExtension: Ctx | WorkerCtx | undefined;
 }
 
@@ -50,10 +51,10 @@ export interface CCXAdapterEvents {
     DISABLED: [id: string, extension: CCXExtension];
     REFRESH_TOOLBOX: [];
     REGISTER_BLOCK: [blocks: BlockJSON[]];
-    REGISTER_BUTTON: [id: string, func: Function];
+    REGISTER_BUTTON: [id: string, func: () => void];
     LOCALE_ADDED: [Record<string, unknown>];
     SETTINGS_ADDED: [id: string, settings: SettingsItem[]];
-    [eventName: string]: [...params: any[]];
+    [eventName: string]: [...params: unknown[]];
 }
 
 class CCXAdapter extends Emitter<CCXAdapterEvents> {
@@ -176,7 +177,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                 locales[result[1]] = JSON.parse(await zipData.files[fileName].async('text'));
             }
         }
-        if (info.default_language && locales.hasOwnProperty(info.default_language)) { // default language param
+        if (info.default_language && info.default_language in locales) { // default language param
             locales.default = locales[info.default_language];
         } else {
             locales.default = locales.en;
@@ -186,7 +187,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
 
         // Load main.js
         switch (env) {
-        case 'sandboxed':
+        case 'sandboxed': {
             const originalScript = await zipData.files['main.js'].async('text');
             return new Promise((resolve, reject) => {
                 // If we `require` this at the global level it breaks non-webpack targets, including tests
@@ -203,14 +204,14 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                 } as CCXExtension);
                 this.pendingExtensions.push({
                     extensionId: info.id,
-                    mainScript: URL.createObjectURL(new Blob([originalScript], { type: "text/javascript" })),
+                    mainScript: URL.createObjectURL(new Blob([originalScript], { type: 'text/javascript' })),
                     resolve,
                     reject
                 });
                 dispatch.addWorker(ExtensionWorker);
             });
-            break;
-        case 'unsandboxed':
+        }
+        case 'unsandboxed': {
             let extensionObject = null as unknown as ExtensionClass;
             try {
                 const originalScript = await zipData.files['main.js'].async('text');
@@ -228,7 +229,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                         return true;
                     }
                 }));
-                // @ts-expect-error
+                // @ts-expect-error Assume it is
                 extensionObject = (new extensionObject()) as ExtensionClass;
                 if (typeof extensionObject.onInit === 'function') {
                     await extensionObject.onInit();
@@ -255,13 +256,12 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                     env: 'unsandboxed',
                     fileContent: buffer
                 });
-            } catch (e) {
-                throw e;
             } finally {
                 // revoke temporary ctx
                 delete global.ClipCCExtension;
             }
             break;
+        }
         default:
             throw new Error('unexpected env');
         }
@@ -293,16 +293,12 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
                 // We can't know if the function exists, just ignore it.
                 console.error(e);
             }
-        } else {
-            if (status) {
-                if (typeof targetExt.instance.onInit === 'function') {
-                    await targetExt.instance.onInit();
-                }
-            } else {
-                if (typeof targetExt.instance.onUninit === 'function') {
-                    await targetExt.instance.onUninit();
-                }
+        } else if (status) {
+            if (typeof targetExt.instance.onInit === 'function') {
+                await targetExt.instance.onInit();
             }
+        } else if (typeof targetExt.instance.onUninit === 'function') {
+            await targetExt.instance.onUninit();
         }
 
         targetExt.enabled = status;
@@ -365,7 +361,9 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      * @param {string} serviceName - the name of the service hosting the extension.
      */
     registerExtensionService (extensionId: string, serviceName: string) {
-        const extensionInfo = this.loadedCCXExtension.get(extensionId)!;
+        const extensionInfo = this.loadedCCXExtension.get(extensionId);
+        if (!extensionInfo) return;
+
         extensionInfo.instance = serviceName;
         this.loadedCCXExtension.set(extensionId, extensionInfo);
         this.emit('LOADED', extensionInfo.id, extensionInfo);

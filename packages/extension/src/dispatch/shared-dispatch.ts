@@ -239,11 +239,11 @@ class SharedDispatch {
      * @returns {object} - purified object.
      */
     _purifyObject (obj: unknown, visited = new Set(), depth = 1): unknown {
-        if (typeof obj === "function" || typeof obj === "symbol") {
+        if (typeof obj === 'function' || typeof obj === 'symbol') {
             return undefined;
         }
 
-        if (obj !== null && typeof obj === "object") {
+        if (obj !== null && typeof obj === 'object') {
             if (visited.has(obj)) return undefined;
             visited.add(obj);
 

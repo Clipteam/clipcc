@@ -89,7 +89,7 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
      * @param {'sandboxed' | 'unsandboxed'} env - Extension's running environment.
      */
     async load (ext: string | ExtensionClass, env: 'sandboxed' | 'unsandboxed' = 'sandboxed') {
-        if (!this.vm) throw new Error(`VM hadn't been attached`);
+        if (!this.vm) throw new Error('VM hadn\'t been attached');
 
         if (typeof ext === 'string') {
             switch (env) {
@@ -138,7 +138,7 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
     */
     async reload (extensionId: string) {
         if (!this.vm) {
-            throw new Error(`VM hadn't been attached`);
+            throw new Error('VM hadn\'t been attached');
         }
 
         const targetExt = this.loadedScratchExtension.get(extensionId);
@@ -180,6 +180,8 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
      * @private
      */
     private _registerExtensionInfo (extensionObject: ExtensionClass | null, extensionInfo: ExtensionMetadata, extensionURL: string, serviceName?: string) {
+        if (!this.vm) throw new Error('VM hadn\'t been attached');
+
         if (!this.loadedScratchExtension.has(extensionInfo.id)) {
             if (!extensionObject && !serviceName) {
                 throw new Error(`Cannnot mark ${extensionInfo.id} as loaded.`);
@@ -195,7 +197,6 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
             } as ScratchExtension);
         }
         extensionInfo = this._prepareExtensionInfo(extensionObject, extensionInfo, serviceName);
-        if (!this.vm) throw new Error(`VM hadn't been attached`);
 
         this.vm.runtime._registerExtensionPrimitives(extensionInfo);
     }
@@ -302,7 +303,7 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
          * Fetch the items appropriate for the target currently being edited. This assumes that menus only
          * collect items when opened by the user while editing a particular target.
          */
-        if (!this.vm) throw new Error(`VM hadn't been attached`);
+        if (!this.vm) throw new Error('VM hadn\'t been attached');
 
         const editingTarget = this.vm.runtime.getEditingTarget() || this.vm.runtime.getTargetForStage();
         const editingTargetID = editingTarget ? editingTarget.id : null;

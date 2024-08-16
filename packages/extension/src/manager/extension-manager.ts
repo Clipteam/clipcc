@@ -1,9 +1,8 @@
-import formatMessage from "format-message";
+import formatMessage from 'format-message';
 import { Emitter } from 'strict-event-emitter';
 import {
     ScratchAdapter,
-    CCXAdapter,
-    ScratchExtension
+    CCXAdapter
 } from '../adapter';
 import {
     StandardScratchExtensionClass as ExtensionClass
@@ -27,7 +26,7 @@ export interface Events {
     EXTENSION_LOAD_ERROR: [extensionID: string, reason: unknown];
     EXTENSION_ENABLED: [extensionID: string, extension: Extension],
     EXTENSION_DISABLED: [extensionID: string, extension: Extension],
-    [eventName: string]: [...params: any[]]
+    [eventName: string]: [...params: unknown[]]
 }
 
 class ExtensionManager extends Emitter<Events> {
@@ -77,6 +76,7 @@ class ExtensionManager extends Emitter<Events> {
         this.ccxAdapter.on('ENABLED', this.handleExtensionEnabled.bind(this));
         this.ccxAdapter.on('DISABLED', this.handleExtensionDisabled.bind(this));
     }
+
     /**
      * Check whether an extension is registered or is in the process of loading. This is intended to control loading or
      * adding extensions so it may return `true` before the extension is ready to be used. Use the promise returned by
@@ -112,16 +112,6 @@ class ExtensionManager extends Emitter<Events> {
     }
 
     /**
-     * Synchronously load an internal extension (core or non-core) by ID. This call will
-     * fail if the provided id is not does not match an internal extension.
-     * @param {string} extensionId - the ID of an internal extension
-     * @deprecated use loadExtensionURL instead.
-     */
-    loadExtensionIdSync () {
-        console.warn('this method is deprecated. use loadExtensionURL instead.');
-    }
-
-    /**
      * Load an extension by URL or internal extension ID
      * @param {string} extensionURL - the URL for the extension to load OR the ID of an internal extension
      * @returns {Promise<string>} resolved with extensionId once the extension is loaded and initialized or rejected on failure
@@ -147,11 +137,12 @@ class ExtensionManager extends Emitter<Events> {
                 const extensionId = await this.scratchAdapter.load(extensionURL, env);
                 return extensionId;
             }
-            case 'ccx':
+            case 'ccx': {
                 const extensionId = await this.ccxAdapter.load(extensionURL, env);
                 return extensionId;
+            }
             default:
-                throw new Error(`Invaild extension type`);
+                throw new Error('Invaild extension type');
             }
         } catch (e: unknown) {
             this.emit('EXTENSION_LOAD_ERROR', extensionURL, e);
@@ -186,7 +177,7 @@ class ExtensionManager extends Emitter<Events> {
         case 'ccx':
             return this.ccxAdapter.reload(extensionURL);
         default:
-            throw new Error(`Invaild extension type`);
+            throw new Error('Invaild extension type');
         }
     }
 

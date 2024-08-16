@@ -12,7 +12,7 @@ interface Runtime {
     makeMessageContextForTarget: (target: Target) => void;
     _blockInfo: unknown[];
     _hats: Record<string, unknown>;
-    _primitives: Record<string, Function>;
+    _primitives: Record<string, (args: Record<string, unknown>) => unknown>;
 }
 
 export interface VM {

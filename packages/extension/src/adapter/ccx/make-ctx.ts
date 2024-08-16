@@ -1,4 +1,4 @@
-import formatMessage from "format-message";
+import formatMessage from 'format-message';
 import xmlEscape from 'xml-escape';
 import {
     API,
@@ -8,14 +8,15 @@ import {
     ButtonPrototype,
     ParameterPrototype,
     ParameterType,
-    MenuItemPrototype
-} from "../../type/ccx";
-import { VM } from "../../type/virtual-machine";
+    MenuItemPrototype,
+    BaseBlockPrim
+} from '../../type/ccx';
+import { VM } from '../../type/virtual-machine';
 import { ScratchBlocksConstants, Cast } from '../../util';
-import type { CCXAdapter } from "./ccx";
+import type { CCXAdapter } from './ccx';
 import type { WorkerDispatch } from '../../dispatch/worker-dispatch';
 import { CentralDispatch as centralDispatch } from '../../dispatch/central-dispatch';
-import { TargetType } from "../../type/scratch";
+import { TargetType } from '../../type/scratch';
 
 interface BlockInfo {
     categoryId: string;
@@ -158,7 +159,7 @@ export class ExtensionCentralAPI implements API {
      * Global functions
      * @type {Record<string, Function>}
      */
-    globalFuncion: Record<string, Function> = {};
+    globalFuncion: Record<string, (...args: unknown[]) => unknown | undefined> = {};
 
     /**
      * Central Dispatcher.
@@ -191,7 +192,7 @@ export class ExtensionCentralAPI implements API {
         this.blocksToBeRegistered = [];
     }
 
-    private requestRegisterButton (id: string, func: Function) {
+    private requestRegisterButton (id: string, func: () => void) {
         this.adapter.emit('REGISTER_BUTTON', id, func);
     }
 
@@ -295,7 +296,7 @@ export class ExtensionCentralAPI implements API {
             blockJSON.outputShape = ScratchBlocksConstants.OUTPUT_SHAPE_HEXAGONAL;
             break;
         case BlockType.HAT:
-            if (!this.vm) throw new Error(`VM hadn't been attached`);
+            if (!this.vm) throw new Error('VM hadn\'t been attached');
             this.vm.runtime._hats[block.opcode] = {
                 edgeActivated: true // CCX doesn't support spicify this
             };
@@ -380,8 +381,9 @@ export class ExtensionCentralAPI implements API {
 
             blockJSON[`args${outLineNum}`] = blockJSON[`args${outLineNum}`] || [];
             const blockArgs = blockJSON[`args${outLineNum}`];
-            if (argJSON) blockArgs!.push(argJSON as BlocklyArg);
-            const argNum = blockArgs!.length;
+            if (!blockArgs) continue;
+            if (argJSON) blockArgs.push(argJSON as BlocklyArg);
+            const argNum = blockArgs.length;
 
             convertedText += `%${argNum}`;
         }
@@ -399,14 +401,14 @@ export class ExtensionCentralAPI implements API {
 
         if (this.vm) {
             if (typeof block.function === 'string') {
-                this.vm.runtime._primitives[block.opcode] = (args: unknown, _util: unknown) => {
+                this.vm.runtime._primitives[block.opcode] = (args: unknown) => {
                     return this.dispatch.call(block.function as string, block.opcode, args);
                 };
             } else {
                 this.vm.runtime._primitives[block.opcode] = block.function;
             }
         } else {
-            console.warn(`VM hadn't be attached, skip register primitives`);
+            console.warn('VM hadn\'t be attached, skip register primitives');
         }
 
         this.blocksToBeRegistered.push(blockJSON as BlockJSON);
@@ -544,12 +546,12 @@ export class ExtensionCentralAPI implements API {
                             toolboxXML += `<field name="${fieldName}">${xmlEscape(param?.default ?? '')}</field>`;
                         }
                         if (shadowType) toolboxXML += '</shadow>';
-                        toolboxXML += `</value>`;
+                        toolboxXML += '</value>';
                     }
                 }
-                toolboxXML += `</block>`;
+                toolboxXML += '</block>';
             }
-            toolboxXML += `</category>`;
+            toolboxXML += '</category>';
             processedXML.push({
                 id: category.categoryId,
                 xml: toolboxXML
@@ -574,22 +576,22 @@ export class ExtensionCentralAPI implements API {
         return this.adapter.guiSettings[id];
     }
 
-    registerGlobalFunction (name: string, func: Function) {
-        if (this.globalFuncion.hasOwnProperty(name)) {
+    registerGlobalFunction (name: string, func: (...args: unknown[]) => unknown) {
+        if (name in this.globalFuncion) {
             throw 'Register an existed global function.';
         }
         this.globalFuncion[name] = func;
     }
 
     unregisterGlobalFunction (name: string) {
-        if (!this.globalFuncion.hasOwnProperty(name)) {
+        if (!(name in this.globalFuncion)) {
             throw 'Try to unregister an unexisted global function.';
         }
         delete this.globalFuncion[name];
     }
 
     callGlobalFunction (name: string, ...args: any[]) {
-        if (!this.globalFuncion.hasOwnProperty(name)) {
+        if (!(name in this.globalFuncion)) {
             throw 'Call an unexisted global function.';
         }
         return this.globalFuncion[name](...args);
@@ -621,7 +623,7 @@ class ExtensionWorkerAPI implements API {
      * Block's function. A pair of opcode + function.
      * @type {Record<string, Function>}
      */
-    private blockPrimitives: Record<string, Function> = {};
+    private blockPrimitives: Record<string, BaseBlockPrim> = {};
     // Make it private to prevent security issues.
     #dispatch: WorkerDispatch;
 
@@ -691,7 +693,7 @@ class ExtensionWorkerAPI implements API {
         throw new Error('getBlockInstance is not avaiable in sandboxed environment');
     }
 
-    // @ts-expect-error
+    // @ts-expect-error it's stub in sandbox
     getStageCanvas () {
         throw new Error('getStageCanvas is not avaiable in sandboxed environment');
     }
@@ -701,15 +703,15 @@ class ExtensionWorkerAPI implements API {
         return this.#dispatch.call('ccxAPI', 'getSettings', id);
     }
 
-    registerGlobalFunction (name: string, func: Function) {
+    registerGlobalFunction () {
         throw new Error('registerGlobalFunction is not avaiable in sandboxed environment');
     }
 
-    unregisterGlobalFunction (name: string) {
+    unregisterGlobalFunction () {
         throw new Error('unregisterGlobalFunction is not avaiable in sandboxed environment');
     }
 
-    callGlobalFunction (name: string, ...args: any[]) {
+    callGlobalFunction () {
         throw new Error('callGlobalFunction is not avaiable in sandboxed environment');
     }
 }
@@ -774,7 +776,7 @@ class ExtensionUnsandboxedAPI implements API {
         return this.centralAPI.getSettings(id);
     }
 
-    registerGlobalFunction (name: string, func: Function) {
+    registerGlobalFunction (name: string, func: (...args: unknown[]) => unknown) {
         return this.centralAPI.registerGlobalFunction(name, func);
     }
 
@@ -782,7 +784,7 @@ class ExtensionUnsandboxedAPI implements API {
         return this.centralAPI.unregisterGlobalFunction(name);
     }
 
-    callGlobalFunction (name: string, ...args: any[]) {
+    callGlobalFunction (name: string, ...args: unknown[]) {
         return this.centralAPI.callGlobalFunction(name, ...args);
     }
 }
