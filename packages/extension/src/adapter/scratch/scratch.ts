@@ -307,17 +307,16 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
 
         const editingTarget = this.vm.runtime.getEditingTarget() || this.vm.runtime.getTargetForStage();
         const editingTargetID = editingTarget ? editingTarget.id : null;
-        const extensionMessageContext = this.vm.runtime.makeMessageContextForTarget(editingTarget);
 
         // TODO: Fix this to use dispatch.call when extensions are running in workers.
         const menuFunc = extensionObject[menuItemFunctionName] as (editingTargetID: string | null) => MenuItems;
         const menuItems = menuFunc.call(extensionObject, editingTargetID).map(
             item => {
-                item = maybeFormatMessage(item, extensionMessageContext);
+                item = maybeFormatMessage(item);
                 switch (typeof item) {
                 case 'object':
                     return [
-                        maybeFormatMessage(item.text, extensionMessageContext),
+                        maybeFormatMessage(item.text),
                         item.value
                     ];
                 case 'string':

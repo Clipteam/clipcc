@@ -1,4 +1,4 @@
-import formatMessage, { Locales, MessageObject } from 'format-message';
+import formatMessage, { Locales, Message } from 'format-message';
 /**
  * Check if `maybeMessage` looks like a message object, and if so pass it to `formatMessage`.
  * Otherwise, return `maybeMessage` as-is.
@@ -7,9 +7,9 @@ import formatMessage, { Locales, MessageObject } from 'format-message';
  * @param {string} [locale] - the locale to pass to `formatMessage` if it gets called.
  * @return {string|*} - the formatted message OR the original `maybeMessage` input.
  */
-export const maybeFormatMessage = function (maybeMessage?: MessageObject, args?: object, locale?: Locales) {
-    if (maybeMessage && maybeMessage.id && maybeMessage.default) {
-        return formatMessage(maybeMessage, args, locale);
+export const maybeFormatMessage = function<T> (maybeMessage: T, args?: object, locale?: Locales) {
+    if (maybeMessage && typeof maybeMessage === 'object' && 'id' in maybeMessage && 'default' in maybeMessage) {
+        return formatMessage(maybeMessage as Message, args, locale);
     }
     return maybeMessage;
 };
