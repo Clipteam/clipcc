@@ -197,6 +197,7 @@ Blockly.Msg.OPERATORS_NOT = 'not %1';
 Blockly.Msg.OPERATORS_JOIN = 'join %1 %2';
 Blockly.Msg.OPERATORS_JOIN_APPLE = 'apple';
 Blockly.Msg.OPERATORS_JOIN_BANANA = 'banana';
+Blockly.Msg.OPERATORS_JOIN_MULTIPLE = 'join';
 Blockly.Msg.OPERATORS_LETTEROF = 'letter %1 of %2';
 Blockly.Msg.OPERATORS_LETTEROF_APPLE = 'a';
 Blockly.Msg.OPERATORS_LENGTH = 'length of %1';
@@ -340,6 +341,8 @@ Blockly.Msg.SHOW_PROCEDURE_DEFINITION = 'Go to definition';
 Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT = 'Say something...';
 Blockly.Msg.COPY = 'Copy to Clipboard';
 Blockly.Msg.PASTE = 'Paste';
+Blockly.Msg.INSERT_INPUT = 'Insert an Input';
+Blockly.Msg.DELETE_INPUT = 'Delete the Input';
 
 // Color
 Blockly.Msg.COLOUR_HUE_LABEL = 'Color';

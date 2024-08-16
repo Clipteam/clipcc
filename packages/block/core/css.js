@@ -1378,5 +1378,14 @@ export const CONTENT = [
   '.scratchCategoryMenuItem:hover {',
     'color: $colour_toolboxHover !important;',
   '}',
+  
+  /* FieldPlusMinus */
+  '.blocklyPlusMinus {',
+  '  cursor: default;',
+  '}',
+
+  '.blocklyPlusMinusRect {',
+  '  transition-duration: 0.3s',
+  '}',
   ''
 ];
