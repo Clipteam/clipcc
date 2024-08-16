@@ -5,7 +5,6 @@
     ],
     "extends": [
         "eslint:recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
         "plugin:@typescript-eslint/recommended"
     ],
     "parserOptions": {
@@ -21,17 +20,22 @@
         "no-confusing-arrow": ["error"],
         "no-else-return": "error",
         "no-lonely-if": "error",
+        "eol-last": "error",
         "no-useless-constructor": "error",
         "no-useless-return": "error",
         "no-var": "error",
         "comma-spacing": "error",
+        "quotes": ["error", "single"],
         "func-call-spacing": "error",
         "dot-location": ["error", "property"],
         "no-whitespace-before-property": "error",
         "space-before-function-paren": "error",
-        "space-unary-ops": ["error", {
-            "words": true,
-            "nonwords": false
-        }]
+        "space-unary-ops": [
+            "error",
+            {
+                "words": true,
+                "nonwords": false
+            }
+        ]
     }
 }
