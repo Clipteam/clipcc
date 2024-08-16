@@ -560,7 +560,9 @@ FieldTextInput.prototype.resizeEditor_ = function() {
  * @return {Number} Border radius in px.
 */
 FieldTextInput.prototype.getBorderRadius = function() {
-  if (this.sourceBlock_.getOutputShape() == constants.OUTPUT_SHAPE_ROUND) {
+  // If source block is procedure_declaration, use TEXT radius.
+  if (this.sourceBlock_.type != constants.PROCEDURES_DECLARATION_BLOCK_TYPE &&
+      this.sourceBlock_.getOutputShape() == constants.OUTPUT_SHAPE_ROUND) {
     return rendererConstants.NUMBER_FIELD_CORNER_RADIUS;
   }
   return rendererConstants.TEXT_FIELD_CORNER_RADIUS;

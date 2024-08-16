@@ -243,6 +243,13 @@ class Runtime extends EventEmitter {
         this._hats = {};
 
         /**
+         * Map to look up a block's execution order.
+         * Keys are opcode for block, values are order array of its arguments.
+         * @type {Object.<string, Array.<string>>}
+         */
+        this._orders = {};
+
+        /**
          * A list of script block IDs that were glowing during the previous frame.
          * @type {!Array.<!string>}
          */
@@ -835,6 +842,15 @@ class Runtime extends EventEmitter {
                 // Collect monitored from package.
                 if (packageObject.getMonitored) {
                     this.monitorBlockInfo = Object.assign({}, this.monitorBlockInfo, packageObject.getMonitored());
+                }
+                // Collect execution orders from package.
+                if (packageObject.getOrders) {
+                    const packageOrders = packageObject.getOrders();
+                    for (const op in packageOrders) {
+                        if (packageOrders.hasOwnProperty(op)) {
+                            this._orders[op] = packageOrders[op];
+                        }
+                    }
                 }
             }
         }
@@ -1639,6 +1655,15 @@ class Runtime extends EventEmitter {
     getIsEdgeActivatedHat (opcode) {
         return this._hats.hasOwnProperty(opcode) &&
             this._hats[opcode].edgeActivated;
+    }
+
+    /**
+     * Retrieve the execution order of the given opcode.
+     * @param {!string} opcode The opcode to look up.
+     * @return {Array.<string | Object>} The execution order array of given opcode.
+     */
+    getExecutionOrders (opcode) {
+        return this._orders.hasOwnProperty(opcode) && this._orders[opcode];
     }
 
 
@@ -2631,6 +2656,45 @@ class Runtime extends EventEmitter {
         const stage = this.getTargetForStage();
         stage.variables[variable.id] = variable;
         return variable;
+    }
+
+    /**
+     * Get names and ids of parameters for the given procedure.
+     * @param {string} procedureCode Procedure code for procedure to query.
+     * @return {Array.<string>} List of param names for a procedure.
+     */
+    getProcedureParamNamesAndIds (procedureCode) {
+        return this.getProcedureParamNamesIdsAndDefaults(name).slice(0, 2);
+    }
+
+    /**
+     * Get names, ids, and defaults of parameters for the given procedure.
+     * @param {?string} name Name of procedure to query.
+     * @return {?Array.<string>} List of param names for a procedure.
+     */
+    getProcedureParamNamesIdsAndDefaults (name) {
+        for (const target of this.targets) {
+            const result = target.blocks.getProcedureParamNamesIdsAndDefaults(name);
+            if (result) {
+                return result;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the global procedure definition for a given name.
+     * @param {?string} name Name of procedure to query.
+     * @return {[?Target, ?string]} ID of procedure definition.
+     */
+    getProcedureDefinition (name) {
+        for (const target of this.targets) {
+            const definition = target.blocks.getProcedureDefinition(name, true);
+            if (definition) {
+                return [target, definition];
+            }
+        }
+        return [null, null];
     }
 
     /**

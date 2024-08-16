@@ -12,8 +12,8 @@ import styles from './custom-procedures.css';
 
 const messages = defineMessages({
     myblockModalTitle: {
-        defaultMessage: 'Make a Block',
-        description: 'Title for the modal where you create a custom block.',
+        defaultMessage: 'Make a Function',
+        description: 'Title for the modal where you create a custom function.',
         id: 'gui.customProcedures.myblockModalTitle'
     }
 });
@@ -114,6 +114,35 @@ const CustomProcedures = props => (
                     />
                 </label>
             </div>
+            <div className={styles.checkboxRow}>
+                <label>
+                    <input
+                        checked={props.return}
+                        type="checkbox"
+                        onChange={props.onToggleReturn}
+                    />
+                    <FormattedMessage
+                        defaultMessage="Has return value"
+                        description="Label for checkbox to has return value"
+                        id="gui.customProcedures.hasReturnValue"
+                    />
+                </label>
+            </div>
+            <div className={styles.checkboxRow}>
+                <label>
+                    <input
+                        checked={props.global}
+                        type="checkbox"
+                        onChange={props.onToggleGlobal}
+                        disabled={!props.new}
+                    />
+                    <FormattedMessage
+                        defaultMessage="Global function"
+                        description="Label for checkbox to be global "
+                        id="gui.customProcedures.isGlobal"
+                    />
+                </label>
+            </div>
             <Box className={styles.buttonRow}>
                 <button
                     className={styles.cancelButton}
@@ -148,7 +177,12 @@ CustomProcedures.propTypes = {
     onAddTextNumber: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,
     onOk: PropTypes.func.isRequired,
+    onToggleGlobal: PropTypes.func.isRequired,
+    onToggleReturn: PropTypes.func.isRequired,
     onToggleWarp: PropTypes.func.isRequired,
+    new: PropTypes.bool.isRequired,
+    global: PropTypes.bool.isRequired,
+    return: PropTypes.bool.isRequired,
     warp: PropTypes.bool.isRequired
 };
 

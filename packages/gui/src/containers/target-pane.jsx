@@ -149,7 +149,7 @@ class TargetPane extends React.Component {
                         }
                     })
                     .catch(this.props.onCloseImporting);
-            }, this.props.onCloseImporting);
+            }, this.props.onCloseImporting, this.props.vm.runtime.stageWidth, this.props.vm.runtime.stageHeight);
         }, this.props.onCloseImporting);
     }
     setFileInput (input) {

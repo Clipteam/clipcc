@@ -153,7 +153,7 @@ function test_createVariableNullAndUndefinedType() {
 
 function test_createVariableNullId() {
   variableMapTest_setUp();
-  setUpMockMethod(mockControl_, Blockly.utils, 'genUid', null, ['1', '2']);
+  setUpMockMethod(mockControl_, Blockly.utils.TEST_ONLY, 'genUid', null, ['1', '2']);
   try {
     variable_map.createVariable('name1', 'type1', null);
     checkVariableValues(variable_map, 'name1', 'type1', '1');
@@ -165,7 +165,7 @@ function test_createVariableNullId() {
 
 function test_createVariableUndefinedId() {
   variableMapTest_setUp();
-  setUpMockMethod(mockControl_, Blockly.utils, 'genUid', null, ['1', '2']);
+  setUpMockMethod(mockControl_, Blockly.utils.TEST_ONLY, 'genUid', null, ['1', '2']);
   try {
     variable_map.createVariable('name1', 'type1', undefined);
     checkVariableValues(variable_map, 'name1', 'type1', '1');
