@@ -83,7 +83,7 @@ export interface ExtensionMetadata {
     /**
      * The blocks provided by this extension, plus separators
      */
-    blocks: (ExtensionBlockMetadata | string)[];
+    blocks: (ExtensionBlockMetadata | '---')[];
     /**
      * Map of menu name to metadata for each of this extension's menus.
      */

@@ -31,7 +31,7 @@ export interface ScratchExtension extends Extension {
 
 export interface ScratchAdapterEvents {
     LOADED: [url: string, extension: ScratchExtension];
-    [eventName: string]: [...params: any[]]
+    [eventName: string]: [...params: unknown[]]
 }
 
 class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
@@ -147,7 +147,7 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
         }
         // It's running in worker
         if (typeof targetExt.instance === 'string') {
-            const info = await dispatch.call(targetExt.instance, 'getInfo');
+            const info = await dispatch.call<ExtensionMetadata>(targetExt.instance, 'getInfo');
             const processedInfo = this._prepareExtensionInfo(null, info, targetExt.instance);
             this.vm.runtime._refreshExtensionPrimitives(processedInfo);
             return processedInfo;
@@ -228,12 +228,12 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
         extensionInfo.name = extensionInfo.name || extensionInfo.id;
         extensionInfo.blocks = extensionInfo.blocks || [];
         extensionInfo.targetTypes = extensionInfo.targetTypes || [];
-        extensionInfo.blocks = extensionInfo.blocks.reduce((results: Array<string | ExtensionBlockMetadata>, blockInfo) => {
+        extensionInfo.blocks = extensionInfo.blocks.reduce((results: Array<'---' | ExtensionBlockMetadata>, blockInfo) => {
             try {
                 let result;
                 switch (blockInfo) {
                 case '---': // Separator
-                    result = '---';
+                    result = '---' as const;
                     break;
                 default: // An ExtensionBlockMetadata object
                     result = this._prepareBlockInfo(extensionObject, blockInfo as ExtensionBlockMetadata, serviceName);
@@ -298,7 +298,7 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
      * @returns {Array} menu items ready for scratch-blocks.
      * @private
      */
-    private _getExtensionMenuItems (extensionObject: ExtensionClass, menuItemFunctionName: string, serviceName?: string): any[] {
+    private _getExtensionMenuItems (extensionObject: ExtensionClass, menuItemFunctionName: string, serviceName?: string): MenuItems {
         /*
          * Fetch the items appropriate for the target currently being edited. This assumes that menus only
          * collect items when opened by the user while editing a particular target.
@@ -329,6 +329,7 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
         if (!menuItems || menuItems.length < 1) {
             throw new Error(`Extension menu returned no items: ${menuItemFunctionName}`);
         }
+        // @ts-expect-error Overwritten internally
         return menuItems;
     }
 
@@ -374,7 +375,7 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
             const callBlockFunc = (() => {
                 // Maybe there's a worker
                 if (extensionObject === null) {
-                    if (serviceName && dispatch._isRemoteService(serviceName)) {
+                    if (serviceName && dispatch.isRemoteService(serviceName)) {
                         return (args: BlockArgs, _util: unknown, realBlockInfo: unknown) =>
                             dispatch.call(serviceName, funcName, args, undefined, realBlockInfo);
                     } 
@@ -388,11 +389,11 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
                     console.warn(`Could not find extension block function called ${funcName}`);
                 }
                 return (args: BlockArgs, util: unknown, realBlockInfo: unknown) =>
-                    // @ts-expect-error
+                    // @ts-expect-error assume there's a fuction or throw the error
                     extensionObject[funcName](args, util, realBlockInfo);
             })();
 
-            // @ts-expect-error
+            // @ts-expect-error Overwrited when processing
             blockInfo.func = (args: BlockArgs, util: unknown) => {
                 const realBlockInfo = getBlockInfo(args);
                 // TODO: filter args using the keys of realBlockInfo.arguments? maybe only if sandboxed?
@@ -425,7 +426,7 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
         }
         const id = this.nextExtensionWorker++;
         this.pendingWorkers[id] = workerInfo;
-        return [id, workerInfo.extensionURL];
+        return [id, workerInfo.extensionURL] as const;
     }
 
     /**
@@ -433,7 +434,7 @@ class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
      * @param {string} serviceName - the name of the service hosting the extension.
      */
     async registerExtensionService (extensionURL: string, serviceName: string) {
-        const info = await dispatch.call(serviceName, 'getInfo');
+        const info = await dispatch.call<ExtensionMetadata>(serviceName, 'getInfo');
         this._registerExtensionInfo(null, info, extensionURL, serviceName);
         this.emit('LOADED', info.id, this.loadedScratchExtension.get(info.id) as ScratchExtension);
     }

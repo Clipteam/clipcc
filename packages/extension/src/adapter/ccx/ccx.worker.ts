@@ -13,7 +13,7 @@ let extensionId = '';
 
 dispatch.waitForConnection.then(() => {
     dispatch.call('ccxAdapter', 'allocateWorker').then(x => {
-        const [id, extId, mainScript] = x;
+        const [id, extId, mainScript] = x as [number, string, string];
         workerId = id;
         extensionId = extId;
 

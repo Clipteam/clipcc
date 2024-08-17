@@ -16,7 +16,7 @@ class ExtensionWorker {
     constructor () {
         dispatch.waitForConnection.then(() => {
             dispatch.call('scratchAdapter', 'allocateWorker').then(x => {
-                const [id, url] = x;
+                const [id, url] = x as [number, string];
                 this.workerId = id;
                 this.extensionURL = url;
 

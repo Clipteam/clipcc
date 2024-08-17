@@ -353,7 +353,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
         }
         const id = this.nextExtensionWorker++;
         this.pendingWorkers[id] = workerInfo;
-        return [id, workerInfo.extensionId, workerInfo.mainScript];
+        return [id, workerInfo.extensionId, workerInfo.mainScript] as const;
     }
 
     /**

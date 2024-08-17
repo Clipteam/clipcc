@@ -590,7 +590,7 @@ export class ExtensionCentralAPI implements API {
         delete this.globalFuncion[name];
     }
 
-    callGlobalFunction (name: string, ...args: any[]) {
+    callGlobalFunction (name: string, ...args: unknown[]) {
         if (!(name in this.globalFuncion)) {
             throw 'Call an unexisted global function.';
         }
