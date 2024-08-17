@@ -1,2 +1,2 @@
 export * from './manager';
-export * from './type/scratch';
+export * from './types/scratch';

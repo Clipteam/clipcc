@@ -3,8 +3,8 @@ import {
     CCXExtensionClass as ExtensionClass,
     ExtensionInfo,
     SettingsItem
-} from '../../type/ccx';
-import { VM } from '../../type/virtual-machine';
+} from '../../types/ccx';
+import { VM } from '../../types/virtual-machine';
 import { CentralDispatch as dispatch } from '../../dispatch/central-dispatch';
 import { Extension } from '../../manager';
 import * as JSZip from 'jszip';

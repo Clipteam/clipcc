@@ -1,4 +1,4 @@
-import formatMessage from 'format-message';
+import formatMessage, { Translation } from 'format-message';
 import { Emitter } from 'strict-event-emitter';
 import {
     ScratchAdapter,
@@ -6,17 +6,19 @@ import {
 } from '../adapter';
 import {
     StandardScratchExtensionClass as ExtensionClass
-} from '../type/scratch';
+} from '../types/scratch';
 import {
     SettingsItem
-} from '../type/ccx';
-import { VM } from '../type/virtual-machine';
+} from '../types/ccx';
+import { VM } from '../types/virtual-machine';
 export interface Extension {
     id: string;
     type: 'scratch' | 'ccx';
     env: 'unsandboxed' | 'sandboxed';
     url: string;
 }
+
+type WrappedExtensionClass = () => { new(): ExtensionClass };
 
 export interface Events {
     EXTENSION_LOADING: [extensionURL: string];
@@ -40,7 +42,7 @@ class ExtensionManager extends Emitter<Events> {
      * Map of internal extensions.
      * The key name as the extension's id.
      */
-    internalExtensions = new Map<string, () => ExtensionClass>();
+    internalExtensions = new Map<string, WrappedExtensionClass>();
 
     /**
      * Editor's Virtual Machine instance.
@@ -103,7 +105,7 @@ class ExtensionManager extends Emitter<Events> {
      * @param {string} extensionId - the ID of the extension.
      * @param {ScratchExtensionClass} extensionClass - the class of the extension.
      */
-    registerInternalExtension (extensionId: string, extensionClassGetter: () => ExtensionClass) {
+    registerInternalExtension (extensionId: string, extensionClassGetter: WrappedExtensionClass) {
         if (this.internalExtensions.has(extensionId)) {
             console.warn(`${extensionId} had been registered before. re-registering...`);
         }
@@ -127,7 +129,7 @@ class ExtensionManager extends Emitter<Events> {
         this.emit('EXTENSION_LOADING', extensionURL);
         try {
             if (this.internalExtensions.has(extensionURL)) {
-                const internalExtensionGetter = this.internalExtensions.get(extensionURL) as () => ExtensionClass;
+                const internalExtensionGetter = this.internalExtensions.get(extensionURL)!;
                 await this.scratchAdapter.load(internalExtensionGetter());
                 return extensionURL;
             }
@@ -197,7 +199,7 @@ class ExtensionManager extends Emitter<Events> {
      * @returns {Promise} Promise that resolves when all the blocks have been
      *     updated for a new locale (or empty if locale hasn't changed.)
      */
-    async setLocale (locale: string, messages: any) {
+    async setLocale (locale: string, messages: { [key: string]: string | Translation } | undefined) {
         if (locale !== formatMessage.setup().locale) {
             formatMessage.setup({locale: locale, translations: {[locale]: messages}});
         }

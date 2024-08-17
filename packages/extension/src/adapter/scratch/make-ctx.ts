@@ -4,8 +4,8 @@ import {
     ArgumentType,
     ReporterScope,
     StandardScratchExtensionClass as ExtensionClass
-} from '../../type/scratch';
-import { VM } from '../../type/virtual-machine';
+} from '../../types/scratch';
+import { VM } from '../../types/virtual-machine';
 import { Cast } from '../../util';
 
 export interface Ctx {

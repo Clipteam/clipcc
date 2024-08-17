@@ -4,7 +4,7 @@ interface Target {
     id: string;
 }
 
-interface Runtime {
+export interface Runtime {
     _registerExtensionPrimitives: (extensionInfo: ExtensionMetadata) => void;
     _refreshExtensionPrimitives: (extensionInfo: ExtensionMetadata) => void;
     getEditingTarget: () => Target;

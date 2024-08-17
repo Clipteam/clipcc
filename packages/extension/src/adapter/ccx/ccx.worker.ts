@@ -1,7 +1,7 @@
 /* eslint-env worker */
 import { Ctx, WorkerCtx, makeCtxForWorker } from './make-ctx';
 import { WorkerDispatch as dispatch } from '../../dispatch/worker-dispatch';
-import { CCXExtensionClass as ExtensionClass } from '../../type/ccx';
+import { CCXExtensionClass as ExtensionClass } from '../../types/ccx';
 
 declare global {
     // eslint-disable-next-line no-var
@@ -29,7 +29,7 @@ dispatch.waitForConnection.then(() => {
 
 // @ts-expect-error make extension export correctly
 self.module = new Proxy({}, {
-    set (target: Record<string, unknown>, prop: string, value: any) {
+    set (target: Record<string, unknown>, prop: string, value: {new(): ExtensionClass}) {
         if (prop === 'exports') {
             const extensionObject = new value() as ExtensionClass;
             const serviceName = `ccxSandbox.${workerId}`;
@@ -46,4 +46,5 @@ self.module = new Proxy({}, {
     }
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default null as any;

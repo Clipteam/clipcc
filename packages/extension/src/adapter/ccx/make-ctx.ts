@@ -10,13 +10,13 @@ import {
     ParameterType,
     MenuItemPrototype,
     BaseBlockPrim
-} from '../../type/ccx';
-import { VM } from '../../type/virtual-machine';
+} from '../../types/ccx';
+import { VM } from '../../types/virtual-machine';
 import { ScratchBlocksConstants, Cast } from '../../util';
 import type { CCXAdapter } from './ccx';
 import type { WorkerDispatch } from '../../dispatch/worker-dispatch';
 import { CentralDispatch as centralDispatch } from '../../dispatch/central-dispatch';
-import { TargetType } from '../../type/scratch';
+import { TargetType } from '../../types/scratch';
 
 interface BlockInfo {
     categoryId: string;
@@ -106,7 +106,7 @@ interface BlocklyArg {
     type: string;
     name: string;
     check?: string;
-    options?: [string, string][] | FieldMenuItems | (() => MenuItemPrototype[]);
+    options?: [string, unknown][] | FieldMenuItems | (() => MenuItemPrototype[]);
 }
 
 type FieldMenuItems = {
@@ -163,7 +163,6 @@ export class ExtensionCentralAPI implements API {
 
     /**
      * Central Dispatcher.
-     * @type {CentralDispatch}
      */
     dispatch = centralDispatch;
 
@@ -245,7 +244,7 @@ export class ExtensionCentralAPI implements API {
                 block.param[paramId].menuId = `${block.opcode}.menu.${paramId}`;
             }
 
-            let menuItems: [string, string][] | (() => MenuItemPrototype[]);
+            let menuItems: [string, unknown][] | (() => MenuItemPrototype[]);
             if (typeof block.param[paramId].menu === 'function') {
                 menuItems = block.param[paramId].menu as (() => MenuItemPrototype[]);
             } else {
@@ -312,7 +311,6 @@ export class ExtensionCentralAPI implements API {
             id: block.messageId,
             default: block.messageId
         });
-        let inBranchNum = 0;
         let outLineNum = 0;
         // clear next arg
         blockJSON[`args${outLineNum}`] = [];
@@ -340,7 +338,6 @@ export class ExtensionCentralAPI implements API {
                     type: 'input_statement',
                     name: placeholder
                 }];
-                ++inBranchNum;
                 ++outLineNum;
                 // clear next arg
                 blockJSON[`args${outLineNum}`] = [];

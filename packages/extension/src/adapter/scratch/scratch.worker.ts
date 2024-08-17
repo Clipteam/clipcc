@@ -57,4 +57,5 @@ globalThis.Scratch = makeCtx(true);
 const extensionWorker = new ExtensionWorker();
 globalThis.Scratch.extensions.register = extensionWorker.register.bind(extensionWorker);
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default null as any;

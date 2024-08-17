@@ -181,7 +181,7 @@ export const FilterType = {
 
 export interface ParameterPrototype {
     type: ParameterType;
-    default?: any;
+    default?: string;
     menu?: MenuItemPrototype[] | (() => MenuItemPrototype[]);
     menuId?: string;
     field?: boolean;
@@ -190,7 +190,7 @@ export interface ParameterPrototype {
 
 export interface MenuItemPrototype {
     messageId: string;
-    value: any;
+    value: unknown;
 }
 
 export interface ShadowPrototype {

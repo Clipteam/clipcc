@@ -1,10 +1,5 @@
-import {
-    ExtensionCentralAPI,
-    makeUnsandboxedCtx,
-    makeCtxForWorker
-} from '../../adapter/ccx/make-ctx';
+import {ExtensionCentralAPI} from '../../adapter/ccx/make-ctx';
 import type { CCXAdapter } from '../../adapter/ccx/ccx';
-import { ParameterType } from '../../type/ccx/type';
 
 const fakeAdapter = {
     emit: jest.fn(),
