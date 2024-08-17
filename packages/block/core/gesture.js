@@ -647,7 +647,7 @@ Gesture.prototype.handleRightClick = function(e) {
   if (this.targetBlock_) {
     this.bringBlockToFront_();
     this.targetBlock_.workspace.hideChaff(this.flyout_);
-    this.targetBlock_.showContextMenu_(e);
+    this.targetBlock_.showContextMenu_(e, this.startBlock_);
   } else if (this.startBubble_) {
     this.startBubble_.showContextMenu_(e);
   } else if (this.startWorkspace_ && !this.flyout_) {

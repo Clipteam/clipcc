@@ -10,6 +10,7 @@ import clipboardReducer from './clipboard';
 import cursorReducer from './cursor';
 import fillBitmapShapesReducer from './fill-bitmap-shapes';
 import fillModeReducer from './fill-mode';
+import boolOptModeReducer from './boolopt-mode';
 import fontReducer from './font';
 import formatReducer from './format';
 import hoverReducer from './hover';
@@ -24,6 +25,7 @@ import zoomLevelsReducer from './zoom-levels';
 export default combineReducers({
     mode: modeReducer,
     bitBrushSize: bitBrushSizeReducer,
+    booloptMode: boolOptModeReducer,
     bitEraserSize: bitEraserSizeReducer,
     radius: radiusReducer,
     brushMode: brushModeReducer,

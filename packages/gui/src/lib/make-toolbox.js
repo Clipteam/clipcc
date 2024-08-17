@@ -1396,6 +1396,32 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                 }
             );
         }
+        if (!hideNonVanillaBlocks) {
+            category.contents.push({
+                kind: 'block',
+                type: 'operator_join_multiple',
+                id: 'operator_join_multiple',
+                extraState: {
+                    argumentids: '["STRING1", "STRING2"]'
+                },
+                inputs: {
+                    STRING1: {
+                        shadow: {
+                            type: 'text',
+                            fields: { TEXT: `${apple} ` },
+                            shadow: true
+                        }
+                    },
+                    STRING2: {
+                        shadow: {
+                            type: 'text',
+                            fields: { TEXT: banana },
+                            shadow: true
+                        }
+                    }
+                }
+            });
+        }
         category.contents.push(
             {
                 kind: 'block',

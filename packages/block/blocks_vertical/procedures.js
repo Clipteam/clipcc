@@ -328,14 +328,12 @@ Blockly.ScratchBlocks.ProcedureUtils.createAllInputs_ = function(connectionMap) 
   for (let i = 0; i < procComponents.length; i++) {
     // The first component should always be created even if the value is ''.
     const component = procComponents[i];
-    let labelText;
     if (component.substring(0, 1) == '%') {
       const argumentType = component.substring(1, 2);
       if (!(argumentType == 'n' || argumentType == 'b' || argumentType == 's')) {
         throw new Error(
             'Found an custom procedure with an invalid type: ' + argumentType);
       }
-      labelText = component.substring(2).trim();
 
       const id = this.argumentIds_[argumentCount];
 
@@ -346,10 +344,15 @@ Blockly.ScratchBlocks.ProcedureUtils.createAllInputs_ = function(connectionMap) 
       this.populateArgument_(argumentType, argumentCount, connectionMap, id,
           input);
       argumentCount++;
+
+      const labelText = component.substring(2).trim();
+      if (labelText) {
+        this.addProcedureLabel_(labelText.replace(/\\%/, '%'));
+      }
     } else {
-      labelText = component.trim();
+      this.addProcedureLabel_(component.trim().replace(/\\%/, '%'));
     }
-    this.addProcedureLabel_(labelText.replace(/\\%/, '%'));
+    
   }
 };
 
@@ -398,10 +401,8 @@ Blockly.ScratchBlocks.ProcedureUtils.addLabelField_ = function(text) {
  * @private
  */
 Blockly.ScratchBlocks.ProcedureUtils.addLabelEditor_ = function(text) {
-  if (text) {
-    this.appendDummyInput(Blockly.utils.genUid()).
-        appendField(new Blockly.FieldTextInputRemovable(text));
-  }
+  this.appendDummyInput(Blockly.utils.genUid()).
+      appendField(new Blockly.FieldTextInputRemovable(text));
 };
 
 /**

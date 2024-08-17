@@ -60,10 +60,11 @@
     "scratch-translate-extension-languages": "0.0.20191118205314"
   },
   "peerDependencies": {
-    "scratch-svg-renderer": "^0.2.0-prerelease"
+    "clipcc-svg-renderer": "^3.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.13.10",
+    "@babel/eslint-parser": "7.18.2",
     "@babel/preset-env": "7.14.8",
     "@commitlint/cli": "17.0.2",
     "@commitlint/config-conventional": "17.0.2",
@@ -91,7 +92,7 @@
     "pngjs": "3.3.3",
     "scratch-render-fonts": "1.0.0-prerelease.20221102164332",
     "scratch-semantic-release-config": "1.0.5",
-    "scratch-svg-renderer": "0.2.0-prerelease.20210727023023",
+    "clipcc-svg-renderer": "3.2.0",
     "script-loader": "0.7.2",
     "semantic-release": "19.0.5",
     "stats.js": "0.17.0",
