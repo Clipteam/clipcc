@@ -25,7 +25,6 @@ goog.declareModuleId('Blockly.Events.BlockDelete');
 
 import * as eventUtils from './utils';
 import {BlockBase} from './block_base';
-import * as Xml from '../xml';
 import * as blocks from '../serialization/blocks';
 
 

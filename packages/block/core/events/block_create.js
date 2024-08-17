@@ -41,7 +41,7 @@ export const BlockCreate = function(block) {
 
   /**
    * JSON representation of the block that was just created.
-   * @type { !blocks.State }
+   * @type {!blocks.State}
    */
   this.json = /** @type {!blocks.State} */ (blocks.save(
       block, { addCoordinates: block.workspace.rendered }));
