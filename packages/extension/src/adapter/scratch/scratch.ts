@@ -312,6 +312,7 @@ export class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
 
     private _prepareBlockInfo (extensionObject: ExtensionClass | null, blockInfo: ExtensionBlockMetadata, serviceName?: string): ExtensionBlockMetadata {
         blockInfo = {
+            blockType: BlockType.COMMAND,
             terminal: false,
             blockAllThreads: false,
             arguments: {},

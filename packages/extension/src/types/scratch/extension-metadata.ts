@@ -128,7 +128,7 @@ export interface ExtensionBlockMetadata {
     /**
      * The type of block (command, reporter, etc.) being described.
      */
-    blockType: BlockType;
+    blockType?: BlockType;
     /**
      * The text on the block, with [PLACEHOLDERS] for arguments.
      */
