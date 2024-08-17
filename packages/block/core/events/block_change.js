@@ -138,8 +138,8 @@ BlockChange.prototype.run = function(forward) {
         block.loadExtraState(JSON.parse(value ?? '{}'));
       } else if (block.domToMutation) {
         value = value || '<mutation></mutation>';
-        block.domToMutation(
-            Xml.textToDom('<xml>' + value + '</xml>'));
+        const dom = Xml.textToDom('<xml>' + value + '</xml>');
+        block.domToMutation(dom.firstChild);
       }
       eventUtils.fire(new BlockChange(
           block, 'mutation', null, oldState, value));
@@ -149,8 +149,5 @@ BlockChange.prototype.run = function(forward) {
       console.warn('Unknown change type: ' + this.element);
   }
 };
-
-// TODO (#5397): Encapsulate this in the BlocklyMutationChange event when
-//    refactoring change events.
 
 eventUtils.register(eventUtils.BLOCK_CHANGE, BlockChange);

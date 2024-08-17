@@ -1362,6 +1362,10 @@ class Runtime extends EventEmitter {
      * @private
      */
     _convertPlaceholders (context, match, placeholder) {
+        // cc - preserved for compatability
+        // Sanitize the placeholder to ensure valid XML
+        placeholder = placeholder.replace(/[<"&]/, '_');
+
         // Determine whether the argument type is one of the known standard field types
         const argInfo = context.blockInfo.arguments[placeholder] || {};
         let argTypeInfo = ArgumentTypeMap[argInfo.type] || {};

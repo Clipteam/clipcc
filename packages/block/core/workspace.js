@@ -682,14 +682,6 @@ Workspace.prototype.getProcedureMap = function() {
  * @return {Element} The newly created procedure.
  */
 Workspace.prototype.createProcedureFromMutation = function(mutation) {
-  if (mutation instanceof Element) {
-    // Add xml attributes to object
-    const obj = {};
-    for (const attr of mutation.attributes) {
-      obj[attr.nodeName] = attr.value;
-    }
-    mutation = obj;
-  }
   return this.procedureMap_.createProcedureFromMutation(mutation);
 };
 

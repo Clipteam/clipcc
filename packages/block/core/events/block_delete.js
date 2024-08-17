@@ -44,11 +44,6 @@ export const BlockDelete = function(block) {
   }
   BlockDelete.superClass_.constructor.call(this, block);
 
-if (block.workspace.rendered) {
-    this.oldXml = Xml.blockToDomWithXY(block);
-} else {
-  this.oldXml = Xml.blockToDom(block);
-}
   this.ids = eventUtils.getDescendantIds(block);
 
 
@@ -63,7 +58,7 @@ if (block.workspace.rendered) {
    * @type {!blocks.State}
    */
   this.oldJson = /** @type {!blocks.State} */ (blocks.save(
-      block, { addCoordinates: true }));
+      block, { addCoordinates: block.workspace.rendered }));
 };
 goog.inherits(BlockDelete, BlockBase);
 

@@ -326,9 +326,9 @@ WorkspaceComment.prototype.toStateWithXY = function() {
 /**
  * Encode a comment subtree as XML with XY coordinates.
  * @param {boolean=} opt_noId True if the encoder should skip the comment id.
-* @return {!Element} Tree of XML elements.
+ * @return {!Element} Tree of XML elements.
  * @package
-  */
+ */
 WorkspaceComment.prototype.toXmlWithXY = function(opt_noId) {
   const element = this.toXml(opt_noId);
   element.setAttribute('x', Math.round(this.xy_.x));

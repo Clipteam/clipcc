@@ -555,7 +555,6 @@ export const generateVariableFieldState = function(variableModel, opt_name) {
       id: variableModel.getId(),
       variableType: typeString,
       value: variableModel.name
-
     }
   };
 };

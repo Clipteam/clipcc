@@ -107,9 +107,14 @@ ProcedureMap.prototype.allLocalProcedureMutations = function() {
  */
 ProcedureMap.prototype.createProcedureFromMutation = function(mutation) {
   if (mutation.childNodes) {
-    mutation['proccode'] = mutation.getAttribute('proccode');
-    mutation['external'] = mutation.getAttribute('proccode');
+    // Add xml attributes to object
+    const obj = {};
+    for (const attr of mutation.attributes) {
+      obj[attr.nodeName] = attr.value;
+    }
+    mutation = obj;
   }
+
   const procCode = mutation['proccode'];
   const external = mutation['external'] === 'true';
   let procedure = this.getProcedure(procCode);

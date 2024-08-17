@@ -402,7 +402,7 @@ export const getPrototypeBlock = function(procCode, workspace) {
  */
 export const newProcedureMutation = function() {
   const state = {
-    proccode: Msg['PROCEDURE_DEFAULT_NAME'],
+    proccode: Msg.PROCEDURE_DEFAULT_NAME,
     argumentids: [],
     argumentnames: [],
     argumentdefaults: [],

@@ -35,6 +35,7 @@ goog.declareModuleId('Blockly.utils');
 
 import * as constants from './constants';
 import {Msg} from './msg';
+import * as Xml from './xml';
 
 const dom = goog.require('goog.dom');
 const Coordinate = goog.require('goog.math.Coordinate');
@@ -1035,7 +1036,7 @@ export const stopTextWidthCache = function() {
  * @return {string} A stringified version of the extra state of the given block.
  * @package
  */
-export const getExtraBlockState_ = function (block) {
+export const getExtraBlockState = function(block) {
   if (block.saveExtraState) {
     const state = block.saveExtraState();
     return state;
