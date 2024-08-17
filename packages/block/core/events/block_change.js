@@ -26,7 +26,7 @@ goog.declareModuleId('Blockly.Events.BlockChange');
 import * as eventUtils from './utils';
 import {BlockBase} from './block_base';
 import * as Xml from '../xml';
-import {getExtraBlockState_} from '../utils';
+import {getExtraBlockState} from '../utils';
 
 
 /**
@@ -132,7 +132,7 @@ BlockChange.prototype.run = function(forward) {
       block.setInputsInline(value);
       break;
     case 'mutation': {
-      const oldState = getExtraBlockState_(
+      const oldState = getExtraBlockState(
           /** @type {!BlockSvg} */ (block));
       if (block.loadExtraState) {
         block.loadExtraState(JSON.parse(value ?? '{}'));
