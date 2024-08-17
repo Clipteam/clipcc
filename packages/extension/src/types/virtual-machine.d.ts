@@ -15,7 +15,7 @@ export interface Runtime {
     _primitives: Record<string, (args: Record<string, unknown>) => unknown>;
 }
 
-export interface VM {
+export interface VirtualMachine {
     runtime: Runtime;
     renderer?: {
         canvas: HTMLCanvasElement

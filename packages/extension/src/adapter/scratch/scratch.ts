@@ -8,7 +8,7 @@ import {
     MenuItems,
     BlockArgs
 } from '../../types/scratch';
-import { Runtime, VM } from '../../types/virtual-machine';
+import { Runtime, VirtualMachine } from '../../types/virtual-machine';
 import {
     maybeFormatMessage
 } from '../../util';
@@ -40,7 +40,7 @@ export class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
      * Should be set by `attachVM` while initializing.
      * @todo add more strict type check when VM adds TS support.
      */
-    private vm?: VM;
+    private vm?: VirtualMachine;
 
     /**
      * The ID number to provide to the next extension worker.
@@ -70,7 +70,7 @@ export class ScratchAdapter extends Emitter<ScratchAdapterEvents> {
      * Set the VM for the extension manager.
      * @param vm - the VM instance.
      */
-    attachVM (vm: VM): void {
+    attachVM (vm: VirtualMachine): void {
         this.vm = vm;
     }
 

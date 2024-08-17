@@ -4,7 +4,7 @@ import {
     ExtensionInfo,
     SettingsItem
 } from '../../types/ccx';
-import { VM } from '../../types/virtual-machine';
+import { VirtualMachine } from '../../types/virtual-machine';
 import { CentralDispatch as dispatch } from '../../dispatch/central-dispatch';
 import { Extension } from '../../manager';
 import * as JSZip from 'jszip';
@@ -22,7 +22,6 @@ declare global {
     // eslint-disable-next-line no-var
     var ClipCCExtension: Ctx | WorkerCtx | undefined;
 }
-
 
 interface Target {
     isStage: boolean;
@@ -63,7 +62,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      * Should be set by `attachVM` while initializing.
      * @todo add more strict type check when VM adds TS support.
      */
-    vm?: VM;
+    vm?: VirtualMachine;
     /**
      * CCXAdapter's central api.
      * @type {ExtensionCentralAPI}
@@ -116,7 +115,7 @@ class CCXAdapter extends Emitter<CCXAdapterEvents> {
      * Set the VM for the extension manager.
      * @param {VirtualMachine} vm - the VM instance.
      */
-    attachVM (vm: VM) {
+    attachVM (vm: VirtualMachine) {
         this.vm = vm;
         this.api.attachVM(vm);
     }

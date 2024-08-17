@@ -11,7 +11,7 @@ import {
     MenuItemPrototype,
     BaseBlockPrim
 } from '../../types/ccx';
-import { VM } from '../../types/virtual-machine';
+import { VirtualMachine } from '../../types/virtual-machine';
 import { ScratchBlocksConstants, Cast } from '../../util';
 import type { CCXAdapter } from './ccx';
 import type { WorkerDispatch } from '../../dispatch/worker-dispatch';
@@ -129,7 +129,7 @@ export class ExtensionCentralAPI implements API {
      * Should be set by `attachVM` while initializing.
      * @todo add more strict type check when VM adds TS support.
      */
-    vm?: VM;
+    vm?: VirtualMachine;
 
     /**
      * Editor's Blockly instance.
@@ -174,7 +174,7 @@ export class ExtensionCentralAPI implements API {
      * Set the VM for the api.
      * @param {VirtualMachine} vm - the VM instance.
      */
-    attachVM (vm: VM) {
+    attachVM (vm: VirtualMachine) {
         this.vm = vm;
     }
 

@@ -5,7 +5,7 @@ import {
     ReporterScope,
     StandardScratchExtensionClass as ExtensionClass
 } from '../../types/scratch';
-import { VM } from '../../types/virtual-machine';
+import { VirtualMachine } from '../../types/virtual-machine';
 import { Cast } from '../../util';
 
 export interface Ctx {
@@ -18,7 +18,7 @@ export interface Ctx {
         register: (extensionObj: ExtensionClass) => void,
         unsandboxed: boolean
     }
-    vm?: VM
+    vm?: VirtualMachine
 }
 
 export function makeCtx (sandboxed = false) {
@@ -36,7 +36,7 @@ export function makeCtx (sandboxed = false) {
         }
     };
     if (!sandboxed) {
-        ctx.vm = null as unknown as VM;
+        ctx.vm = null as unknown as VirtualMachine;
     }
     return ctx;
 }

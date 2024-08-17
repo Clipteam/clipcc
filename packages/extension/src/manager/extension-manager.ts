@@ -10,7 +10,7 @@ import {
 import {
     SettingsItem
 } from '../types/ccx';
-import { VM } from '../types/virtual-machine';
+import { VirtualMachine } from '../types/virtual-machine';
 export interface Extension {
     id: string;
     type: 'scratch' | 'ccx';
@@ -49,7 +49,7 @@ class ExtensionManager extends Emitter<Events> {
      * Should be set by `attachVM` while initializing.
      * @todo add more strict type check when VM adds TS support.
      */
-    vm?: VM;
+    vm?: VirtualMachine;
 
     /**
      * Editor's Blockly instance.
@@ -211,7 +211,7 @@ class ExtensionManager extends Emitter<Events> {
      * Set the VM for the extension manager.
      * @param {VirtualMachine} vm - the VM instance.
      */
-    attachVM (vm: VM) {
+    attachVM (vm: VirtualMachine) {
         this.vm = vm;
         this.scratchAdapter.attachVM(vm);
         this.ccxAdapter.attachVM(vm);
