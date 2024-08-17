@@ -17,7 +17,7 @@
 }
 
 .switch.disabled {
-    background-color: #9c9c9c;
+    opacity: .7;
 }
 
 .slider {
