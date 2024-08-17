@@ -44,7 +44,7 @@ export const BlockCreate = function(block) {
    * @type { !blocks.State }
    */
   this.json = /** @type {!blocks.State} */ (blocks.save(
-      block, { addCoordinates: true }));
+      block, { addCoordinates: block.workspace.rendered }));
   this.ids = eventUtils.getDescendantIds(block);
 };
 goog.inherits(BlockCreate, BlockBase);

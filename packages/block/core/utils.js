@@ -35,14 +35,13 @@ goog.declareModuleId('Blockly.utils');
 
 import * as constants from './constants';
 import {Msg} from './msg';
-import * as Xml from './xml';
 
 const dom = goog.require('goog.dom');
 const Coordinate = goog.require('goog.math.Coordinate');
 const stringUtils = goog.require('goog.string');
 const style = goog.require('goog.style');
 const userAgent = goog.require('goog.userAgent');
-
+const asserts = goog.require('goog.asserts');
 
 /**
  * To allow ADVANCED_OPTIMIZATIONS, combining variable.name and variable['name']
@@ -1042,9 +1041,71 @@ export const getExtraBlockState = function(block) {
     return state;
   } else if (block.mutationToDom) {
     const state = block.mutationToDom();
-    return state ? Xml.domToText(state) : '';
+    return state ? domToText(state) : '';
   }
   return '';
+};
+
+/**
+ * Converts a DOM structure into plain text.
+ * Currently the text format is fairly ugly: all one line with no whitespace.
+ * @param {!Element} dom A tree of XML elements.
+ * @return {string} Text representation.
+ */
+export const domToText = function (dom) {
+  const oSerializer = new XMLSerializer();
+  return oSerializer.serializeToString(dom);
+};
+
+/**
+ * Converts a DOM structure into properly indented text.
+ * @param {!Element} dom A tree of XML elements.
+ * @return {string} Text representation.
+ */
+export const domToPrettyText = function (dom) {
+  // This function is not guaranteed to be correct for all XML.
+  // But it handles the XML that Blockly generates.
+  const blob = domToText(dom);
+  // Place every open and close tag on its own line.
+  const lines = blob.split('<');
+  // Indent every line.
+  let indent = '';
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (line[0] == '/') {
+      indent = indent.substring(2);
+    }
+    lines[i] = indent + '<' + line;
+    if (line[0] != '/' && line.slice(-2) != '/>') {
+      indent += '  ';
+    }
+  }
+  // Pull simple tags back together.
+  // E.g. <foo></foo>
+  let text = lines.join('\n');
+  text = text.replace(/(<(\w+)\b[^>]*>[^\n]*)\n *<\/\2>/g, '$1</$2>');
+  // Trim leading blank line.
+  return text.replace(/^\n/, '');
+};
+
+/**
+ * Converts plain text into a DOM structure.
+ * Throws an error if XML doesn't parse.
+ * @param {string} text Text representation.
+ * @return {!Element} A tree of XML elements.
+ */
+export const textToDom = function (text) {
+  const oParser = new DOMParser();
+  const dom = oParser.parseFromString(text, 'text/xml');
+  // The DOM should have one and only one top-level node, an XML tag.
+  if (!dom || !dom.firstChild ||
+    dom.firstChild.nodeName.toLowerCase() != 'xml' ||
+    dom.firstChild !== dom.lastChild) {
+    // Whatever we got back from the parser is not XML.
+    asserts.fail('Blockly.Xml.textToDom did not obtain a valid XML tree.');
+    return null;
+  }
+  return dom.firstChild;
 };
 
 /**

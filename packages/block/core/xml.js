@@ -346,8 +346,7 @@ const cloneShadow = function(shadow) {
  * @return {string} Text representation.
  */
 export const domToText = function(dom) {
-  const oSerializer = new XMLSerializer();
-  return oSerializer.serializeToString(dom);
+  return utils.domToText(dom);
 };
 
 /**
@@ -356,29 +355,7 @@ export const domToText = function(dom) {
  * @return {string} Text representation.
  */
 export const domToPrettyText = function(dom) {
-  // This function is not guaranteed to be correct for all XML.
-  // But it handles the XML that Blockly generates.
-  const blob = domToText(dom);
-  // Place every open and close tag on its own line.
-  const lines = blob.split('<');
-  // Indent every line.
-  let indent = '';
-  for (let i = 1; i < lines.length; i++) {
-    const line = lines[i];
-    if (line[0] == '/') {
-      indent = indent.substring(2);
-    }
-    lines[i] = indent + '<' + line;
-    if (line[0] != '/' && line.slice(-2) != '/>') {
-      indent += '  ';
-    }
-  }
-  // Pull simple tags back together.
-  // E.g. <foo></foo>
-  let text = lines.join('\n');
-  text = text.replace(/(<(\w+)\b[^>]*>[^\n]*)\n *<\/\2>/g, '$1</$2>');
-  // Trim leading blank line.
-  return text.replace(/^\n/, '');
+  return utils.domToPrettyText(dom);
 };
 
 /**
@@ -388,17 +365,7 @@ export const domToPrettyText = function(dom) {
  * @return {!Element} A tree of XML elements.
  */
 export const textToDom = function(text) {
-  const oParser = new DOMParser();
-  const dom = oParser.parseFromString(text, 'text/xml');
-  // The DOM should have one and only one top-level node, an XML tag.
-  if (!dom || !dom.firstChild ||
-      dom.firstChild.nodeName.toLowerCase() != 'xml' ||
-      dom.firstChild !== dom.lastChild) {
-    // Whatever we got back from the parser is not XML.
-    asserts.fail('Blockly.Xml.textToDom did not obtain a valid XML tree.');
-    return null;
-  }
-  return dom.firstChild;
+  return utils.textToDom(text);
 };
 
 /**
