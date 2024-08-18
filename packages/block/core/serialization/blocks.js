@@ -264,9 +264,9 @@ const saveInputBlocks = function(block, state, doFullSerialization) {
       if (shadow) {
         const shadowClone = cloneShadow(shadow);
         inputState.shadow = shadowClone;
-        if (childBlock && !childBlock.isShadow()) {
-          inputState.block = save(childBlock, { doFullSerialization });
-        }
+      }
+      if (childBlock && !childBlock.isShadow()) {
+        inputState.block = save(childBlock, { doFullSerialization });
       }
     }
     if (Object.keys(inputState).length) {
