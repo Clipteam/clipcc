@@ -60,14 +60,14 @@ export const ProcedureModel = function(workspace, mutation) {
    * @type {boolean}
    * @private
    */
-  this.external = mutation['external'] === 'true';
+  this.external = mutation['external'];
 
   /**
    * True if procedure is global.
    * @type {boolean}
    * @private
    */
-  this.global = mutation['global'] === 'true';
+  this.global = mutation['global'];
 };
 
 /**

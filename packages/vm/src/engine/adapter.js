@@ -85,7 +85,12 @@ const stateToBlock = function (state, blocks, isTopBlock, parent) {
     }
     // Add mutation
     if (state.extraState) {
-        block.mutation = state.extraState;
+        block.mutation = {
+            // cc - keep backwards compatability
+            tagName: 'mutation',
+            children: [],
+            ...state.extraState
+        };
     }
 };
 

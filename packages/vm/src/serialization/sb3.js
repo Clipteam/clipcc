@@ -962,6 +962,21 @@ const parseScratchObject = function (object, runtime, extensions, zip, assets) {
             if (migrationMap.hasOwnProperty(blockJSON.opcode)) {
                 mergeDeep(blockJSON, migrationMap[blockJSON.opcode]);
             }
+
+            // cc - migrate old mutation
+            if (blockJSON.mutation) {
+                const {mutation} = blockJSON;
+                if (typeof mutation.wrap === 'string') {
+                    mutation.wrap = JSON.parse(mutation.wrap);
+                }
+                if (typeof mutation.return === 'string') {
+                    mutation.wrap = JSON.parse(mutation.return);
+                }
+                if (typeof mutation.global === 'string') {
+                    mutation.global = JSON.parse(mutation.global);
+                }
+            }
+
             blocks.createBlock(blockJSON);
 
             // If the block is from an extension, record it.

@@ -92,13 +92,13 @@ Blockly.ScratchBlocks.ProcedureUtils.callerDomToMutation = function(xmlElement) 
  * @this Blockly.Block
  */
 Blockly.ScratchBlocks.ProcedureUtils.callerSaveExtraState = function() {
-  // Stringify all non-string stuff in order to keep compatitble for old mutation format.
   return {
     proccode: this.procCode_,
+    // Still stringify array to keep backwards compatability
     argumentids: JSON.stringify(this.argumentIds_),
-    warp: JSON.stringify(this.warp_),
-    return: JSON.stringify(this.return_),
-    global: JSON.stringify(this.global_)
+    warp: this.warp_,
+    return: this.return_,
+    global: this.global_
   };
 };
 
@@ -112,14 +112,14 @@ Blockly.ScratchBlocks.ProcedureUtils.callerLoadExtraState = function(state) {
   this.procCode_ = state.proccode;
   this.generateShadows_ = tryParse(state.generateshadows) ?? [];
   this.argumentIds_ = tryParse(state.argumentids) ?? [];
-  this.warp_ = tryParse(state.warp) ?? false;
+  this.warp_ = state.warp;
   // don't update shape if caller still has connections
   if (!(this.previousConnection && this.previousConnection.isConnected()) &&
     !(this.outputConnection && this.outputConnection.isConnected()) &&
     !(this.nextConnection && this.nextConnection.isConnected())) {
-    this.return_ = tryParse(state.return) ?? false;
+    this.return_ = state.return;
   }
-  this.global_ = tryParse(state.global) ?? false;
+  this.global_ = state.global;
   this.updateDisplay_();
 };
 
@@ -191,9 +191,9 @@ Blockly.ScratchBlocks.ProcedureUtils.definitionSaveExtraState = function(
     argumentids: JSON.stringify(this.argumentIds_),
     argumentnames: JSON.stringify(this.displayNames_),
     argumentdefaults: JSON.stringify(this.argumentDefaults_),
-    warp: JSON.stringify(this.warp_),
-    return: JSON.stringify(this.return_),
-    global: JSON.stringify(this.global_)
+    warp: this.warp_,
+    return: this.return_,
+    global: this.global_
   };
 };
 
@@ -205,9 +205,9 @@ Blockly.ScratchBlocks.ProcedureUtils.definitionSaveExtraState = function(
  */
 Blockly.ScratchBlocks.ProcedureUtils.definitionLoadExtraState = function(state) {
   this.procCode_ = state.proccode;
-  this.warp_ = tryParse(state.warp) ?? false;
-  this.return_ = tryParse(state.return) ?? false;
-  this.global_ = tryParse(state.global) ?? false;
+  this.warp_ = state.warp;
+  this.return_ = state.return;
+  this.global_ = state.global;
 
   const prevArgIds = this.argumentIds_;
   const prevDisplayNames = this.displayNames_;

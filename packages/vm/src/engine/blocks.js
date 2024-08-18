@@ -6,6 +6,7 @@ const BlocksExecuteCache = require('./blocks-execute-cache');
 const BlocksRuntimeCache = require('./blocks-runtime-cache');
 const log = require('../util/log');
 const Variable = require('./variable');
+const mutationAdapter = require('./mutation-adapter');
 const getMonitorIdForBlockWithArgs = require('../util/get-monitor-id');
 
 /**
@@ -220,7 +221,7 @@ class Blocks {
     /**
      * Get all procedure definitions.
      * @param {?boolean} globalOnly True if only get global procedures.
-     * @return {?Array.<String>} Mutations of procedures. Set "external" if globalOnly is true. 
+     * @return {?Array.<String>} Mutations of procedures. Set "external" if globalOnly is true.
      */
     getAllProcedureDefinitions (globalOnly) {
         const procedures = [];
@@ -230,7 +231,7 @@ class Blocks {
             const block = this._blocks[id];
             if (block.opcode === 'procedures_definition') {
                 const internal = this._getCustomBlockInternal(block);
-                if (internal && (!globalOnly || internal.mutation.global === 'true')) {
+                if (internal && (!globalOnly || internal.mutation.global)) {
                     this._cache.procedureDefinitions[internal.mutation.proccode] = id; // The outer define block id
                     procedures.push(Object.assign({
                         external: globalOnly // set external if globalOnly is true
@@ -253,7 +254,7 @@ class Blocks {
         if (typeof blockID !== 'undefined') {
             if (blockID) {
                 const internal = blockID && this._getCustomBlockInternal(this._blocks[blockID]);
-                if (!globalOnly || internal.mutation.global === 'true') {
+                if (!globalOnly || internal.mutation.global) {
                     return blockID;
                 }
             }
@@ -269,11 +270,11 @@ class Blocks {
                 if (internal && internal.mutation.proccode === name) {
                     this._cache.procedureDefinitions[name] = id; // The outer define block id
                     // suppose procedure proccode is unique in one target
-                    if (!globalOnly || internal.mutation.global === 'true') {
+                    if (!globalOnly || internal.mutation.global) {
                         return id;
-                    } else {
-                        return null;
                     }
+                    return null;
+                    
                 }
             }
         }
@@ -542,7 +543,7 @@ class Blocks {
             const oldMutation = mutationAdapter(e.oldMutation);
             const newMutation = mutationAdapter(e.newMutation);
             const procCode = oldMutation.proccode;
-            if (oldMutation.global === 'true') {
+            if (oldMutation.global) {
                 for (const target of this.runtime.targets) {
                     target.blocks.updateBlocksAfterFuncUpdate(procCode, newMutation);
                 }
@@ -662,7 +663,8 @@ class Blocks {
             }
             break;
         case 'mutation':
-            block.mutation = JSON.parse(args.value);
+            // cc - keep backwards compatability
+            block.mutation = mutationAdapter(args.value);
             break;
         case 'checkbox': {
             // A checkbox usually has a one to one correspondence with the monitor
@@ -1137,7 +1139,7 @@ class Blocks {
      * Encode all of `this._blocks` as an JSON block state used
      * by a Blockly/scratch-blocks workspace.
      * @param {object<string, Comment>} comments Map of comments referenced by id
-     * @return {Array<Object>} Array of this object's blocks.
+     * @return {Array<object>} Array of this object's blocks.
      */
     toJSON (comments) {
         return this._scripts.map(script => this.blockToJSON(script, comments));

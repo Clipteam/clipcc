@@ -462,7 +462,7 @@ const createProcedureCallbackFactory = function(workspace) {
       block.scheduleSnapAndBump();
       eventUtils.setGroup(false);
       // Add to procedure map of the workspace
-      workspace.createProcedureFromMutation(mutation);
+      workspace.createProcedureFromMutation(extraState);
     }
   };
 };
