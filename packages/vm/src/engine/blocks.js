@@ -540,8 +540,8 @@ class Blocks {
             }
             break;
         case 'func_update': {
-            const oldMutation = mutationAdapter(e.oldMutation);
-            const newMutation = mutationAdapter(e.newMutation);
+            const oldMutation = e.oldMutation;
+            const newMutation = e.newMutation;
             const procCode = oldMutation.proccode;
             if (oldMutation.global) {
                 for (const target of this.runtime.targets) {

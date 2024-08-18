@@ -96,6 +96,8 @@ const primitiveOpcodeInfoMap = {
     data_listcontents: [LIST_PRIMITIVE, 'LIST']
 };
 
+const oldMutationBlocks = ['procedures_call', 'procedures_prototype'];
+
 /**
  * Serializes primitives described above into a more compact format
  * @param {object} block the block to serialize
@@ -964,13 +966,13 @@ const parseScratchObject = function (object, runtime, extensions, zip, assets) {
             }
 
             // cc - migrate old mutation
-            if (blockJSON.mutation) {
+            if (blockJSON.mutation && oldMutationBlocks.includes(blockJSON.opcode)) {
                 const {mutation} = blockJSON;
-                if (typeof mutation.wrap === 'string') {
-                    mutation.wrap = JSON.parse(mutation.wrap);
+                if (typeof mutation.warp === 'string') {
+                    mutation.warp = JSON.parse(mutation.warp);
                 }
                 if (typeof mutation.return === 'string') {
-                    mutation.wrap = JSON.parse(mutation.return);
+                    mutation.return = JSON.parse(mutation.return);
                 }
                 if (typeof mutation.global === 'string') {
                     mutation.global = JSON.parse(mutation.global);
