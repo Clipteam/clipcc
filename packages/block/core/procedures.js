@@ -403,9 +403,9 @@ export const getPrototypeBlock = function(procCode, workspace) {
 export const newProcedureMutation = function() {
   const state = {
     proccode: Msg.PROCEDURE_DEFAULT_NAME,
-    argumentids: [],
-    argumentnames: [],
-    argumentdefaults: [],
+    argumentids: '[]',
+    argumentnames: '[]',
+    argumentdefaults: '[]',
     warp: false,
     return: false,
     global: false
