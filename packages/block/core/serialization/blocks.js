@@ -318,20 +318,6 @@ const cloneShadow = function(shadow) {
  * Loads the block represented by the given state into the given workspace.
  * @param {!State} state The state of a block to deserialize into the workspace.
  * @param {!Workspace} workspace The workspace to add the block to.
- * @return {!Block} The block that was just loaded.
- */
-export const load = function(state, workspace) {
-  return loadInternal(state, workspace);
-};
-
-/**
- * Loads the block represented by the given state into the given workspace.
- * This is defined internally so that the extra parameters don't clutter our
- * external API.
- * But it is exported so that other places within Blockly can call it directly
- * with the extra paramters.
- * @param {!State} state The state of a block to deserialize into the workspace.
- * @param {!Workspace} workspace The workspace to add the block to.
  * @param {{parentConnection: (!Connection|undefined), isShadow:
  *     (boolean|undefined)}=} param1
  *     parentConnection: If provided, the system will attempt to connect the
@@ -342,7 +328,7 @@ export const load = function(state, workspace) {
  *       by the user. False by default.
  * @return {!Block} The block that was just loaded.
  */
-export const loadInternal = function(
+export const load = function(
     state,
     workspace
 ) {
@@ -405,7 +391,7 @@ export const loadInternal = function(
  * Loads the block represented by the given state into the given workspace.
  * This is defined privately so that it can be called recursively without firing
  * eroneous events. Events (and other things we only want to occur on the top
- * block) are handled by loadInternal.
+ * block) are handled by load.
  * @param {!State} state The state of a block to deserialize into the workspace.
  * @param {!Workspace} workspace The workspace to add the block to.
  * @return {!Block} The block that was just loaded.
