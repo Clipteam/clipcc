@@ -116,7 +116,7 @@ ProcedureMap.prototype.createProcedureFromMutation = function(mutation) {
   }
 
   const procCode = mutation['proccode'];
-  const external = mutation['external'];
+  const external = !!mutation['external'];
   let procedure = this.getProcedure(procCode);
 
   if (procedure && procedure.isExternal() === external) {

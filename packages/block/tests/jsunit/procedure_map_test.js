@@ -25,14 +25,20 @@ function procedureMapTest_tearDown() {
 }
 
 function test_procedureMap_newProcedure() {
-  const xml = '<xml xmlns="http://www.w3.org/1999/xhtml"><procedures>' +
-    '<mutation proccode="test proc" ' +
-      'argumentids="" argumentnames="" argumentdefaults="" ' +
-      'warp="true" return="false" global="false"></mutation>' +
-  '</procedures></xml>';
+  const json = {
+    procedures: [{
+      proccode: 'test proc',
+      argumentids: '[]',
+      argumentnames: '[]',
+      argumentdefaults: '[]',
+      warp: true,
+      return: false,
+      global: false
+    }]
+  };
   procedureMapTest_setUp();
   try {
-    Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(xml), workspace);
+    Blockly.serialization.workspace.load(json, workspace);
     const procedure = procedureMap.getProcedure('test proc');
     assertNotNull(procedure);
     assertEquals('test proc', procedure.getProcCode());
@@ -46,22 +52,34 @@ function test_procedureMap_newProcedure() {
 }
 
 function test_procedureMap_newProcedure_conflictName() {
-  const xml = '<xml xmlns="http://www.w3.org/1999/xhtml"><procedures>' +
-    '<mutation proccode="test proc" ' +
-      'argumentids="" argumentnames="" argumentdefaults="" ' +
-      'warp="true" return="false" global="false"></mutation>' +
-  '</procedures></xml>';
-  const newMutation = '<xml><mutation proccode="test proc" ' +
-      'argumentids="" argumentnames="" argumentdefaults="" ' +
-      'warp="true" return="false" global="false"></mutation></xml>';
+  const json = {
+    procedures: [{
+      proccode: 'test proc',
+      argumentids: '[]',
+      argumentnames: '[]',
+      argumentdefaults: '[]',
+      warp: true,
+      return: false,
+      global: false
+    }]
+  };
+  const newMutation = {
+    proccode: 'test proc',
+    argumentids: '[]',
+    argumentnames: '[]',
+    argumentdefaults: '[]',
+    warp: true,
+    return: false,
+    global: false
+  };
   procedureMapTest_setUp();
   try {
-    Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(xml), workspace);
+    Blockly.serialization.workspace.load(json, workspace);
 
     const mock = mockControl_.createMethodMock(console, 'warn');
     mock('Procedure "test proc" is already in use.').$once();
     mock.$replay();
-    const procedure = workspace.createProcedureFromMutation(Blockly.Xml.textToDom(newMutation).firstChild);
+    const procedure = workspace.createProcedureFromMutation(newMutation);
     mock.$verify();
 
     assertNotNull(procedure);
@@ -73,24 +91,37 @@ function test_procedureMap_newProcedure_conflictName() {
 }
 
 function test_procedureMap_newProcedure_coverExternalGlobal() {
-  const xml = '<xml xmlns="http://www.w3.org/1999/xhtml"><procedures>' +
-    '<mutation proccode="test proc" ' +
-      'argumentids="" argumentnames="" argumentdefaults="" ' +
-      'warp="true" return="false" global="true" external="true"></mutation>' +
-  '</procedures></xml>';
-  const newMutation = '<xml><mutation proccode="test proc" ' +
-      'argumentids="" argumentnames="" argumentdefaults="" ' +
-      'warp="true" return="false" global="false"></mutation></xml>';
+  const json = {
+    procedures: [{
+      proccode: 'test proc',
+      argumentids: '[]',
+      argumentnames: '[]',
+      argumentdefaults: '[]',
+      warp: true,
+      return: false,
+      global: true,
+      external: true
+    }]
+  };
+  const newMutation = {
+    proccode: 'test proc',
+    argumentids: '[]',
+    argumentnames: '[]',
+    argumentdefaults: '[]',
+    warp: true,
+    return: false,
+    global: false
+  };
   procedureMapTest_setUp();
   try {
-    Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(xml), workspace);
+    Blockly.serialization.workspace.load(json, workspace);
     let procedure = procedureMap.getProcedure('test proc');
     assertEquals(true, procedure.isExternal());
 
     const mock = mockControl_.createMethodMock(console, 'warn');
     mock('Procedure "test proc" is already in use.').$never();
     mock.$replay();
-    workspace.createProcedureFromMutation(Blockly.Xml.textToDom(newMutation).firstChild);
+    workspace.createProcedureFromMutation(newMutation);
     mock.$verify();
 
     procedure = procedureMap.getProcedure('test proc');
@@ -103,24 +134,35 @@ function test_procedureMap_newProcedure_coverExternalGlobal() {
 }
 
 function test_procedureMap_newProcedure_externalAfterLocalCovered() {
-  const xml = '<xml xmlns="http://www.w3.org/1999/xhtml"><procedures>' +
-    '<mutation proccode="test proc" ' +
-      'argumentids="" argumentnames="" argumentdefaults="" ' +
-      'warp="true" return="false" global="false"></mutation>' +
-  '</procedures></xml>';
-  const newMutation = '<xml><mutation proccode="test proc" ' +
-      'argumentids="" argumentnames="" argumentdefaults="" ' +
-      'warp="true" return="false" global="true" external="true"></mutation></xml>';
-  procedureMapTest_setUp();
+  const json = {
+    procedures: [{
+      proccode: 'test proc',
+      argumentids: '[]',
+      argumentnames: '[]',
+      warp: true,
+      return: false,
+      global: false
+    }]
+  };
+  const newMutation = {
+    proccode: 'test proc',
+    argumentids: '[]',
+    argumentnames: '[]',
+    argumentdefaults: '[]',
+    warp: true,
+    return: false,
+    global: true,
+    external: true
+  };
   try {
-    Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(xml), workspace);
+    Blockly.serialization.workspace.load(json, workspace);
     let procedure = procedureMap.getProcedure('test proc');
     assertEquals(false, procedure.isExternal());
 
     const mock = mockControl_.createMethodMock(console, 'warn');
     mock('Procedure "test proc" is already in use.').$never();
     mock.$replay();
-    workspace.createProcedureFromMutation(Blockly.Xml.textToDom(newMutation).firstChild);
+    workspace.createProcedureFromMutation(newMutation);
     mock.$verify();
 
     procedure = procedureMap.getProcedure('test proc');
@@ -133,15 +175,24 @@ function test_procedureMap_newProcedure_externalAfterLocalCovered() {
 }
 
 function test_procedureMap_getProcedure_localFirst() {
-  const xml = '<xml><mutation proccode="test proc" ' +
-    'argumentids="" argumentnames="" argumentdefaults="" ' +
-    'warp="true" return="false" global="true" external="true"></mutation></xml>';
+  const json = {
+    proccode: 'test proc',
+    argumentids: '[]',
+    argumentnames: '[]',
+    argumentdefaults: '[]',
+    warp: true,
+    return: false,
+    global: true,
+    external: true
+  };
   procedureMapTest_setUp();
   try {
-    const mutation1 = Blockly.Xml.textToDom(xml).firstChild;
-    const mutation2 = mutation1.cloneNode();
-    mutation2.setAttribute('global', false);
-    mutation2.setAttribute('external', false);
+    const mutation1 = json;
+    const mutation2 = {
+      ...json,
+      global: false,
+      external: false
+    };
 
     procedureMap.createProcedureFromMutation(mutation1);
     procedureMap.createProcedureFromMutation(mutation2);
