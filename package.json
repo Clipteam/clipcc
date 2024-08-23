@@ -30,7 +30,7 @@
     "translation:pull": "yarn block translate:sync:translations && yarn l10n pull:editor",
     "bump": "yarn changeset version",
     "release-all": "yarn changeset publish",
-    "patch:convert": "node ./scripts/convert-patch.js",
+    "patch:convert": "node ./scripts/convert-patch.mjs",
     "gui": "yarn workspace clipcc-gui",
     "vm": "yarn workspace clipcc-vm",
     "block": "yarn workspace clipcc-block",
@@ -48,6 +48,7 @@
     "@commitlint/cli": "^17.4.2",
     "commitlint-config-gitmoji": "^2.2.10",
     "cross-env": "^7.0.3",
+    "glob": "^11.0.0",
     "husky": "^8.0.3"
   }
 }

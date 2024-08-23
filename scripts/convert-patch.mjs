@@ -1,26 +1,26 @@
 /**
+ * @fileoverview
  * Convert patches generated from scratch's repo to
  * monorepo-acceptable format.
  */
-const fs = require('fs');
-const path = require('path');
+
+import fs from 'fs';
+import path from 'path';
+import {globSync} from 'glob';
 
 const args = process.argv.slice(2);
 if (args.length < 2) {
-    console.log(`Usage: yarn patch:convert [FOLDER_PATH] [PACKAGE_NAME]`);
+    console.log(`Usage: yarn patch:convert [GLOB_PATTERN] [PACKAGE_NAME]`);
     process.exit(1);
 }
-const patchDir = path.resolve(args[0]);
+const globPattern = args[0];
 const packageName = args[1];
 const dry = args[2] === 'dry';
 let currentFileCtx = null;
 
-const dirContent = fs.readdirSync(patchDir, { withFileTypes: true });
-for (const info of dirContent) {
-    // skip child directory
-    if (info.isDirectory()) continue;
-    console.log(`processing ${info.name}...`);
-    const filePath = path.join(patchDir, info.name);
+const files = globSync(globPattern);
+for (const filePath of files) {
+    console.log(`processing ${path.basename(filePath)}...`);
     currentFileCtx = fs.readFileSync(filePath).toString();
     processPatch();
     if (dry) {
