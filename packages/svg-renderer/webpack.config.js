@@ -82,7 +82,7 @@ module.exports = [
         target: 'node',
         output: {
             library: 'ScratchSVGRenderer',
-            libraryTarget: 'commonjs2',
+            libraryTarget: 'umd',
             path: path.resolve('dist', 'node'),
             filename: '[name].js'
         },
