@@ -34,7 +34,7 @@ const base = {
             test: /\.([cm]?ts|tsx)$/,
             loader: 'ts-loader',
             options: {
-                transpileOnly: true
+                transpileOnly: process.env.NODE_ENV !== 'production'
             }
         }]
     },
