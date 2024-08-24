@@ -21,7 +21,7 @@ const base = {
         rules: [{
             include: [
                 path.resolve('src'),
-                /node_modules[\\/]clipcc-[^\\/]+[\\/]src/
+                path.resolve('..')
             ],
             test: /\.([cm]?ts|tsx)$/,
             loader: 'ts-loader',
