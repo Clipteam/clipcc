@@ -15,6 +15,7 @@ npm-*
 
 # Build
 /dist
+/declarations
 /playground
 /benchmark
 

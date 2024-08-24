@@ -40,6 +40,12 @@ const CORE_EXTENSIONS = [
 ];
 
 /**
+ * @typedef {number} int
+ * @typedef {import('./engine/target')} Target
+ * @typedef {import('./serialization/sb3').ImportedExtensionsInfo} ImportedExtensionsInfo
+ */
+
+/**
  * Handles connections between blocks, stage, and extensions.
  * @constructor
  */
@@ -1401,7 +1407,7 @@ class VirtualMachine extends EventEmitter {
      * Emit metadata about available targets.
      * An editor UI could use this to display a list of targets and show
      * the currently editing one.
-     * @param {bool} triggerProjectChange If true, also emit a project changed event.
+     * @param {boolean} triggerProjectChange If true, also emit a project changed event.
      * Disabled selectively by updates that don't affect project serialization.
      * Defaults to true.
      */

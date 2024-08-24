@@ -11,7 +11,9 @@
   },
   "main": "./dist/node/scratch-vm.js",
   "browser": "./src/index.js",
+  "types": "./declarations/index.d.ts",
   "scripts": {
+    "build:types": "tsc --project ./tsconfig.dts.json",
     "build": "webpack --progress --color --bail",
     "coverage": "tap ./test/{unit,integration}/*.js --coverage --coverage-report=lcov",
     "deploy": "touch playground/.nojekyll && gh-pages -t -d playground -m \"Build for $(git log -n1 --pretty=format:\"%h %s\") [skip ci]\"",
@@ -19,7 +21,7 @@
     "i18n:src": "mkdirp translations/core && format-message extract --out-file translations/core/en.json src/extensions/**/index.js",
     "i18n:push": "tx-push-src scratch-editor extensions translations/core/en.json",
     "lint": "eslint . && format-message lint src/**/*.js",
-    "prepublish": "in-publish && yarn run build || not-in-publish",
+    "prepublish": "in-publish && yarn build:types && yarn run build || not-in-publish",
     "start": "webpack-dev-server",
     "tap": "tap ./test/{unit,integration}/*.js",
     "tap:unit": "tap ./test/unit/*.js",
