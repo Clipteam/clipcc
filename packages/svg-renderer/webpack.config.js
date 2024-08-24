@@ -29,7 +29,7 @@ const base = {
         }, {
             include: [
                 path.resolve('src'),
-                /node_modules[\\/]clipcc-[^\\/]+[\\/]src/
+                path.resolve('..')
             ],
             test: /\.([cm]?ts|tsx)$/,
             loader: 'ts-loader',
@@ -60,10 +60,30 @@ module.exports = [
         ])
     }),
     defaultsDeep({}, base, {
+        target: 'web',
         output: {
             library: 'ScratchSVGRenderer',
             libraryTarget: 'umd',
             path: path.resolve('dist', 'web'),
+            filename: '[name].js'
+        },
+        module: {
+            rules: [{
+                options: {
+                    presets: [['env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}]]
+                }
+            }]
+        },
+        optimization: {
+            minimize: process.env.NODE_ENV === 'production'
+        }
+    }),
+    defaultsDeep({}, base, {
+        target: 'node',
+        output: {
+            library: 'ScratchSVGRenderer',
+            libraryTarget: 'commonjs2',
+            path: path.resolve('dist', 'node'),
             filename: '[name].js'
         },
         module: {
