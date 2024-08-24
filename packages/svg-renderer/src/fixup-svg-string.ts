@@ -1,9 +1,9 @@
 /**
  * Fixup svg string prior to parsing.
- * @param {!string} svgString String of the svg to fix.
- * @returns {!string} fixed svg that should be parseable.
+ * @param svgString String of the svg to fix.
+ * @returns fixed svg that should be parseable.
  */
-module.exports = function (svgString) {
+export default function (svgString: string): string {
     // Add root svg namespace if it does not exist.
     const svgAttrs = svgString.match(/<svg [^>]*>/);
     if (svgAttrs && svgAttrs[0].indexOf('xmlns=') === -1) {
@@ -58,4 +58,4 @@ module.exports = function (svgString) {
     svgString = svgString.replace(/<script[\s\S]*>[\s\S]*<\/script>/, '<script></script>');
 
     return svgString;
-};
+}

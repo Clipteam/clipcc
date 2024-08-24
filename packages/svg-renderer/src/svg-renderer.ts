@@ -1,67 +1,78 @@
-const loadSvgString = require('./load-svg-string');
-const serializeSvgToString = require('./serialize-svg-to-string');
+import loadSvgString from './load-svg-string';
+import serializeSvgToString from './serialize-svg-to-string';
+
+/**
+ * A measured SVG "viewbox"
+ */
+interface SvgMeasurements {
+    /**
+     * The left edge of the SVG viewbox.
+     */
+    x: number;
+    /**
+     * The top edge of the SVG viewbox.
+     */
+    y: number;
+    /**
+     * The width of the SVG viewbox.
+     */
+    width: number;
+    /**
+     * The height of the SVG viewbox.
+     */
+    height: number;
+}
 
 /**
  * Main quirks-mode SVG rendering code.
  * @deprecated Call into individual methods exported from this library instead.
  */
 class SvgRenderer {
+    private _canvas: HTMLCanvasElement;
+    private _context: CanvasRenderingContext2D;
+    private _measurements: SvgMeasurements;
+    private _cachedImage: HTMLImageElement | null;
+    private _svgTag?: SVGElement;
+    loaded: boolean;
     /**
      * Create a quirks-mode SVG renderer for a particular canvas.
      * @param {HTMLCanvasElement} [canvas] An optional canvas element to draw to. If this is not provided, the renderer
      * will create a new canvas.
      * @constructor
      */
-    constructor (canvas) {
+    constructor (canvas: HTMLCanvasElement) {
         /**
          * The canvas that this SVG renderer will render to.
          * @type {HTMLCanvasElement}
          * @private
          */
         this._canvas = canvas || document.createElement('canvas');
-        this._context = this._canvas.getContext('2d');
-
-        /**
-         * A measured SVG "viewbox"
-         * @typedef {object} SvgRenderer#SvgMeasurements
-         * @property {number} x - The left edge of the SVG viewbox.
-         * @property {number} y - The top edge of the SVG viewbox.
-         * @property {number} width - The width of the SVG viewbox.
-         * @property {number} height - The height of the SVG viewbox.
-         */
+        this._context = this._canvas.getContext('2d')!;
 
         /**
          * The measurement box of the currently loaded SVG.
-         * @type {SvgRenderer#SvgMeasurements}
-         * @private
          */
         this._measurements = {x: 0, y: 0, width: 0, height: 0};
 
         /**
          * The `<img>` element with the contents of the currently loaded SVG.
-         * @type {?HTMLImageElement}
-         * @private
          */
         this._cachedImage = null;
 
         /**
          * True if this renderer's current SVG is loaded and can be rendered to the canvas.
-         * @type {boolean}
          */
         this.loaded = false;
     }
 
-    /**
-     * @returns {!HTMLCanvasElement} this renderer's target canvas.
-     */
     get canvas () {
         return this._canvas;
     }
 
     /**
-     * @return {Array<number>} the natural size, in Scratch units, of this SVG.
+     * @return the natural size, in Scratch units, of this SVG.
      */
-    get size () {
+    get size (): [number, number] {
         return [this._measurements.width, this._measurements.height];
     }
 
@@ -78,7 +89,7 @@ class SvgRenderer {
      * @param {?boolean} fromVersion2 True if we should perform conversion from
      *     version 2 to version 3 svg.
      */
-    loadString (svgString, fromVersion2) {
+    loadString (svgString: string, fromVersion2?: boolean) {
         // New svg string invalidates the cached image
         this._cachedImage = null;
         const svgTag = loadSvgString(svgString, fromVersion2);
@@ -94,11 +105,11 @@ class SvgRenderer {
 
     /**
      * Load an SVG string, normalize it, and prepare it for (synchronous) rendering.
-     * @param {!string} svgString String of SVG data to draw in quirks-mode.
-     * @param {?boolean} fromVersion2 True if we should perform conversion from version 2 to version 3 svg.
-     * @param {Function} [onFinish] - An optional callback to call when the SVG is loaded and can be rendered.
+     * @param svgString String of SVG data to draw in quirks-mode.
+     * @param fromVersion2 True if we should perform conversion from version 2 to version 3 svg.
+     * @param onFinish - An optional callback to call when the SVG is loaded and can be rendered.
      */
-    loadSVG (svgString, fromVersion2, onFinish) {
+    loadSVG (svgString: string, fromVersion2: boolean | undefined, onFinish: () => void) {
         this.loadString(svgString, fromVersion2);
         this._createSVGImage(onFinish);
     }
@@ -107,7 +118,7 @@ class SvgRenderer {
      * Creates an <img> element for the currently loaded SVG string, then calls the callback once it's loaded.
      * @param {Function} [onFinish] - An optional callback to call when the <img> has loaded.
      */
-    _createSVGImage (onFinish) {
+    _createSVGImage (onFinish: () => void) {
         if (this._cachedImage === null) this._cachedImage = new Image();
         const img = this._cachedImage;
 
@@ -127,7 +138,10 @@ class SvgRenderer {
      * @returns {string} String representing current SVG data.
      * @deprecated Use the standalone `serializeSvgToString` export instead.
      */
-    toString (shouldInjectFonts) {
+    toString (shouldInjectFonts?: boolean) {
+        if (!this._svgTag) {
+            throw new Error('SVG not loaded');
+        }
         return serializeSvgToString(this._svgTag, shouldInjectFonts);
     }
 
@@ -135,7 +149,7 @@ class SvgRenderer {
      * Synchronously draw the loaded SVG to this renderer's `canvas`.
      * @param {number} [scale] - Optionally, also scale the image by this factor.
      */
-    draw (scale) {
+    draw (scale: number) {
         if (!this.loaded) throw new Error('SVG image has not finished loading');
         this._drawFromImage(scale);
     }
@@ -144,7 +158,7 @@ class SvgRenderer {
      * Draw to the canvas from a loaded image element.
      * @param {number} [scale] - Optionally, also scale the image by this factor.
      **/
-    _drawFromImage (scale) {
+    _drawFromImage (scale: number) {
         if (this._cachedImage === null) return;
 
         const ratio = Number.isFinite(scale) ? scale : 1;
@@ -166,4 +180,4 @@ class SvgRenderer {
     }
 }
 
-module.exports = SvgRenderer;
+export default SvgRenderer;

@@ -1,7 +1,7 @@
 /**
  * @fileOverview Import bitmap data into Scratch 3.0, resizing image as necessary.
  */
-const getFonts = require('scratch-render-fonts');
+import getFonts from 'scratch-render-fonts';
 
 /**
  * Given SVG data, inline the fonts. This allows them to be rendered correctly when set
@@ -17,7 +17,7 @@ const getFonts = require('scratch-render-fonts');
  * @param {string} svgString The string representation of the svg to modify
  * @return {string} The svg with any needed fonts inlined
  */
-const inlineSvgFonts = function (svgString) {
+export default function inlineSvgFonts (svgString: string): string {
     const FONTS = getFonts();
     // Make it clear that this function only operates on strings.
     // If we don't explicitly throw this here, the function silently fails.
@@ -26,7 +26,7 @@ const inlineSvgFonts = function (svgString) {
     }
 
     // Collect fonts that need injection.
-    const fontsNeeded = new Set();
+    const fontsNeeded = new Set<string>();
     const fontRegex = /font-family="([^"]*)"/g;
     let matches = fontRegex.exec(svgString);
     while (matches) {
@@ -46,5 +46,3 @@ const inlineSvgFonts = function (svgString) {
     }
     return svgString;
 };
-
-module.exports = inlineSvgFonts;

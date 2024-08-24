@@ -9,14 +9,16 @@ const base = {
         host: '0.0.0.0',
         port: process.env.PORT || 8576
     },
+    resolve: {
+        extensions: ['.ts', '.js']
+    },
     devtool: 'cheap-module-source-map',
     entry: {
-        'scratch-svg-renderer': './src/index.js'
+        'scratch-svg-renderer': './src/index.ts'
     },
     module: {
         rules: [{
             include: [
-                path.resolve('src'),
                 path.resolve('node_modules', 'scratch-render-fonts')
             ],
             test: /\.js$/,
@@ -24,6 +26,12 @@ const base = {
             options: {
                 presets: [['@babel/preset-env', {targets: {}}]]
             }
+        }, {
+            include: [
+                path.resolve('src')
+            ],
+            test: /\.ts$/,
+            loader: 'ts-loader'
         }]
     },
     plugins: []

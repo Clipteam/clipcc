@@ -1,22 +1,22 @@
-const DOMPurify = require('isomorphic-dompurify');
-const SvgElement = require('./svg-element');
-const convertFonts = require('./font-converter');
-const fixupSvgString = require('./fixup-svg-string');
-const transformStrokeWidths = require('./transform-applier');
+import DOMPurify from 'isomorphic-dompurify';
+import SvgElement from './svg-element';
+import convertFonts from './font-converter';
+import fixupSvgString from './fixup-svg-string';
+import transformStrokeWidths from './transform-applier';
 
 /**
- * @param {SVGElement} svgTag the tag to search within
- * @param {string} [tagName] svg tag to search for (or collect all elements if not given)
- * @return {Array} a list of elements with the given tagname
+ * @param svgTag the tag to search within
+ * @param tagName svg tag to search for (or collect all elements if not given)
+ * @return a list of elements with the given tagname
  */
-const collectElements = (svgTag, tagName) => {
-    const elts = [];
-    const collectElementsInner = domElement => {
-        if ((domElement.localName === tagName || typeof tagName === 'undefined') && domElement.getAttribute) {
+const collectElements = (svgTag: SVGElement, tagName?: string) => {
+    const elts: Element[] = [];
+    const collectElementsInner = (domElement: Element) => {
+        if ((domElement.localName === tagName || typeof tagName === 'undefined') && 'getAttribute' in domElement) {
             elts.push(domElement);
         }
         for (let i = 0; i < domElement.childNodes.length; i++) {
-            collectElementsInner(domElement.childNodes[i]);
+            collectElementsInner(domElement.childNodes[i] as Element);
         }
     };
     collectElementsInner(svgTag);
@@ -28,7 +28,7 @@ const collectElements = (svgTag, tagName) => {
  * SVG defaults to x2 = 1 when missing.
  * @param {SVGSVGElement} svgTag the SVG tag to apply the transformation to
  */
-const transformGradients = svgTag => {
+const transformGradients = (svgTag: SVGSVGElement) => {
     const linearGradientElements = collectElements(svgTag, 'linearGradient');
 
     // For each gradient element, supply x2 if necessary.
@@ -44,7 +44,7 @@ const transformGradients = svgTag => {
  * within SVGs.
  * @param {SVGSVGElement} svgTag the SVG tag to apply the transformation to
  */
-const transformImages = svgTag => {
+const transformImages = (svgTag: SVGSVGElement) => {
     const imageElements = collectElements(svgTag, 'image');
 
     // For each image element, set image rendering to pixelated
@@ -68,15 +68,15 @@ const transformImages = svgTag => {
  * 4. Any required fonts are injected.
  * @param {SVGSVGElement} svgTag the SVG tag to apply the transformation to
  */
-const transformText = svgTag => {
+const transformText = (svgTag: SVGSVGElement) => {
     // Collect all text elements into a list.
-    const textElements = [];
-    const collectText = domElement => {
+    const textElements: SVGTextElement[] = [];
+    const collectText = (domElement: SVGElement) => {
         if (domElement.localName === 'text') {
-            textElements.push(domElement);
+            textElements.push(domElement as SVGTextElement);
         }
         for (let i = 0; i < domElement.childNodes.length; i++) {
-            collectText(domElement.childNodes[i]);
+            collectText(domElement.childNodes[i] as SVGElement);
         }
     };
     collectText(svgTag);
@@ -100,7 +100,7 @@ const transformText = svgTag => {
         // Only fix if text does not have child tspans.
         // @todo this will not work for font sizes with units such as em, percent
         // However, text made in scratch 2 should only ever export size 22 font.
-        const fontSize = parseFloat(textElement.getAttribute('font-size'));
+        const fontSize = parseFloat(textElement.getAttribute('font-size') ?? '');
         const tx = 2;
         let ty = 0;
         let spacing = 1.2;
@@ -165,9 +165,9 @@ const transformText = svgTag => {
  * @param {SVGSVGElement} rootNode The root SVG node to traverse.
  * @return {number} The largest stroke width in the SVG.
  */
-const findLargestStrokeWidth = rootNode => {
+const findLargestStrokeWidth = (rootNode: SVGSVGElement) => {
     let largestStrokeWidth = 0;
-    const collectStrokeWidths = domElement => {
+    const collectStrokeWidths = (domElement: SVGElement) => {
         if (domElement.getAttribute) {
             if (domElement.getAttribute('stroke')) {
                 largestStrokeWidth = Math.max(largestStrokeWidth, 1);
@@ -180,7 +180,7 @@ const findLargestStrokeWidth = rootNode => {
             }
         }
         for (let i = 0; i < domElement.childNodes.length; i++) {
-            collectStrokeWidths(domElement.childNodes[i]);
+            collectStrokeWidths(domElement.childNodes[i] as SVGElement);
         }
     };
     collectStrokeWidths(rootNode);
@@ -202,7 +202,7 @@ const findLargestStrokeWidth = rootNode => {
  * a natural and performant way.
  * @param {SVGSVGElement} svgTag the SVG tag to apply the transformation to
  */
-const transformMeasurements = svgTag => {
+const transformMeasurements = (svgTag: SVGSVGElement) => {
     // Append the SVG dom to the document.
     // This allows us to use `getBBox` on the page,
     // which returns the full bounding-box of all drawn SVG
@@ -229,7 +229,7 @@ const transformMeasurements = svgTag => {
         document.body.appendChild(svgSpot);
         // Take the bounding box. We have to get elements via svgSpot
         // because we added it via innerHTML.
-        bbox = svgSpot.children[0].getBBox();
+        bbox = (svgSpot.children[0] as SVGSVGElement).getBBox();
     } finally {
         // Always destroy the element, even if, for example, getBBox throws.
         document.body.removeChild(svgSpot);
@@ -252,8 +252,8 @@ const transformMeasurements = svgTag => {
     const y = bbox.y - halfStrokeWidth;
 
     // Set the correct measurements on the SVG tag
-    svgTag.setAttribute('width', width);
-    svgTag.setAttribute('height', height);
+    svgTag.setAttribute('width', String(width));
+    svgTag.setAttribute('height', String(height));
     svgTag.setAttribute('viewBox',
         `${x} ${y} ${width} ${height}`);
 };
@@ -263,14 +263,16 @@ const transformMeasurements = svgTag => {
  * have a round `stroke-linejoin` and `stroke-linecap`... for some reason.
  * @param {SVGSVGElement} svgTag the SVG tag to apply the transformation to
  */
-const setGradientStrokeRoundedness = svgTag => {
-    const elements = collectElements(svgTag);
+const setGradientStrokeRoundedness = (svgTag: SVGSVGElement) => {
+    const elements = collectElements(svgTag) as SVGElement[];
 
     for (const elt of elements) {
         if (!elt.style) continue;
         const stroke = elt.style.stroke || elt.getAttribute('stroke');
         if (stroke && stroke.match(/^url\(#.*\)$/)) {
+            // @ts-expect-error ignore
             elt.style['stroke-linejoin'] = 'round';
+            // @ts-expect-error ignore
             elt.style['stroke-linecap'] = 'round';
         }
     }
@@ -281,7 +283,7 @@ const setGradientStrokeRoundedness = svgTag => {
  * @param {SVGSvgElement} svgTag root SVG node to operate upon
  * @param {boolean} [fromVersion2] True if we should perform conversion from version 2 to version 3 svg.
  */
-const normalizeSvg = (svgTag, fromVersion2) => {
+const normalizeSvg = (svgTag: SVGSVGElement, fromVersion2?: boolean) => {
     if (fromVersion2) {
         // Fix gradients. Scratch 2 exports no x2 when x2 = 0, but
         // SVG default is that x2 is 1. This must be done before
@@ -302,8 +304,8 @@ const normalizeSvg = (svgTag, fromVersion2) => {
         // Renderer expects a view box.
         transformMeasurements(svgTag);
     } else if (!svgTag.getAttribute('width') || !svgTag.getAttribute('height')) {
-        svgTag.setAttribute('width', svgTag.viewBox.baseVal.width);
-        svgTag.setAttribute('height', svgTag.viewBox.baseVal.height);
+        svgTag.setAttribute('width', String(svgTag.viewBox.baseVal.width));
+        svgTag.setAttribute('height', String(svgTag.viewBox.baseVal.height));
     }
 };
 
@@ -317,7 +319,7 @@ const normalizeSvg = (svgTag, fromVersion2) => {
  * @param {boolean} [fromVersion2] True if we should perform conversion from version 2 to version 3 svg.
  * @return {SVGSVGElement} The normalized SVG element.
  */
-const loadSvgString = (svgString, fromVersion2) => {
+const loadSvgString = (svgString: string, fromVersion2?: boolean) => {
     // Parse string into SVG XML.
     const parser = new DOMParser();
     svgString = fixupSvgString(svgString);
@@ -326,9 +328,9 @@ const loadSvgString = (svgString, fromVersion2) => {
         svgDom.documentElement.localName !== 'svg') {
         throw new Error('Document does not appear to be SVG.');
     }
-    const svgTag = svgDom.documentElement;
+    const svgTag = svgDom.documentElement as unknown as SVGSVGElement;
     normalizeSvg(svgTag, fromVersion2);
     return svgTag;
 };
 
-module.exports = loadSvgString;
+export default loadSvgString;

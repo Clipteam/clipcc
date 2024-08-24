@@ -4,14 +4,13 @@
 
 /**
  * Given an SVG, replace Scratch 2.0 fonts with new 3.0 fonts. Add defaults where there are none.
- * @param {SVGElement} svgTag The SVG dom object
- * @return {void}
+ * @param svgTag The SVG dom object
  */
-const convertFonts = function (svgTag) {
+const convertFonts = function (svgTag: SVGElement) {
     // Collect all text elements into a list.
-    const textElements = [];
-    const collectText = domElement => {
-        if (domElement.localName === 'text') {
+    const textElements: Element[] = [];
+    const collectText = (domElement: Element | Node) => {
+        if (domElement instanceof Element && domElement.localName === 'text') {
             textElements.push(domElement);
         }
         for (let i = 0; i < domElement.childNodes.length; i++) {
@@ -35,4 +34,4 @@ const convertFonts = function (svgTag) {
     }
 };
 
-module.exports = convertFonts;
+export default convertFonts;

@@ -1,10 +1,12 @@
+// @ts-nocheck
+
 /**
  * @fileOverview Sanitize the content of an SVG aggressively, to make it as safe
  * as possible
  */
-const fixupSvgString = require('./fixup-svg-string');
-const {generate, parse, walk} = require('css-tree');
-const DOMPurify = require('isomorphic-dompurify');
+import fixupSvgString from './fixup-svg-string';
+import {generate, parse, walk} from 'css-tree';
+import DOMPurify from 'isomorphic-dompurify';
 
 const sanitizeSvg = {};
 
@@ -101,4 +103,4 @@ sanitizeSvg.sanitizeSvgText = function (rawSvgText) {
     return sanitizedText;
 };
 
-module.exports = sanitizeSvg;
+export default sanitizeSvg;
