@@ -28,10 +28,14 @@ const base = {
             }
         }, {
             include: [
-                path.resolve('src')
+                path.resolve('src'),
+                /node_modules[\\/]clipcc-[^\\/]+[\\/]src/
             ],
-            test: /\.ts$/,
-            loader: 'ts-loader'
+            test: /\.([cm]?ts|tsx)$/,
+            loader: 'ts-loader',
+            options: {
+                transpileOnly: true
+            }
         }]
     },
     plugins: []

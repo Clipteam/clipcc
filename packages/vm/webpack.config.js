@@ -14,8 +14,23 @@ const base = {
         libraryTarget: 'umd',
         filename: '[name].js'
     },
+    resolve: {
+        extensions: ['.ts', '.js']
+    },
     module: {
         rules: [{
+            include: [
+                path.resolve('src'),
+                /node_modules[\\/]clipcc-[^\\/]+[\\/]src/
+            ],
+            test: /\.([cm]?ts|tsx)$/,
+            loader: 'ts-loader',
+            options: {
+                transpileOnly: true,
+                allowTsInNodeModules: true
+            }
+        },
+        {
             test: /\.js$/,
             loader: 'babel-loader',
             include: path.resolve(__dirname, 'src'),

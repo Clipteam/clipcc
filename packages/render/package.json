@@ -43,6 +43,8 @@
     "tap": "11.1.5",
     "terser-webpack-plugin": "^5.3.6",
     "travis-after-all": "1.4.5",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.5.4",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.11.1"
@@ -52,12 +54,12 @@
   },
   "dependencies": {
     "clipcc-storage": "3.2.0",
+    "clipcc-svg-renderer": "3.2.0",
     "grapheme-breaker": "0.3.2",
     "hull.js": "0.2.10",
     "ify-loader": "1.1.0",
     "linebreak": "0.3.0",
     "minilog": "3.1.0",
-    "clipcc-svg-renderer": "3.2.0",
     "twgl.js": "4.4.0"
   }
 }

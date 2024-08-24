@@ -1,4 +1,4 @@
-import Matrix, { MatrixDescriptor, Matrix as MatrixType } from 'transformation-matrix';
+import * as Matrix from 'transformation-matrix';
 import SvgElement from './svg-element';
 import log from './util/log';
 
@@ -14,8 +14,8 @@ interface BBox {
  */
 
 // Adapted from paper.js's Path.applyTransform
-const _parseTransform = function (domElement: Element): MatrixType {
-    let matrix: MatrixType = Matrix.identity();
+const _parseTransform = function (domElement: Element): Matrix.Matrix {
+    let matrix: Matrix.Matrix = Matrix.identity();
     const string = domElement.attributes?.getNamedItem('transform')?.value;
     if (!string) return matrix;
 
@@ -55,7 +55,7 @@ const _parseTransform = function (domElement: Element): MatrixType {
 
 // Adapted from paper.js's Matrix.decompose
 // Given a matrix, return the x and y scale factors of the matrix
-const _getScaleFactor = function (matrix: MatrixType) {
+const _getScaleFactor = function (matrix: Matrix.Matrix) {
     const a = matrix.a;
     const b = matrix.b;
     const c = matrix.c;
@@ -76,7 +76,7 @@ const _getScaleFactor = function (matrix: MatrixType) {
 
 // Returns null if matrix is not invertible. Otherwise returns given ellipse
 // transformed by transform, an object {radiusX, radiusY, rotation}.
-const _calculateTransformedEllipse = function (radiusX: number, radiusY: number, theta: number, transform: MatrixType) {
+const _calculateTransformedEllipse = function (radiusX: number, radiusY: number, theta: number, transform: Matrix.Matrix) {
     theta = -theta * Math.PI / 180;
     const a = transform.a;
     const b = -transform.c;
@@ -134,7 +134,7 @@ const _calculateTransformedEllipse = function (radiusX: number, radiusY: number,
 };
 
 // Adapted from paper.js's PathItem.setPathData
-const _transformPath = function (pathString: string, transform: MatrixType) {
+const _transformPath = function (pathString: string, transform: Matrix.Matrix) {
     if (!transform || Matrix.toString(transform) === Matrix.toString(Matrix.identity())) return pathString;
     // First split the path data into parts of command-coordinates pairs
     // Commands are any of these characters: mzlhvcsqta
@@ -310,7 +310,7 @@ const _quadraticMean = function (a: number, b: number) {
     return Math.sqrt(((a * a) + (b * b)) / 2);
 };
 
-const _createGradient = function (gradientId: string, svgTag: SVGElement, bbox: BBox, matrix: MatrixType) {
+const _createGradient = function (gradientId: string, svgTag: SVGElement, bbox: BBox, matrix: Matrix.Matrix) {
     // Adapted from Paper.js's SvgImport.getValue
     const getValue = function (node: SVGElement, name: string, isString?: boolean, allowNull?: boolean, allowPercent?: boolean, defaultValue?: string) {
         // Interpret value as number. Never return NaN, but 0 instead.
@@ -516,7 +516,7 @@ const _parseUrl = (value: string | undefined, windowRef: Window) => {
 const transformStrokeWidths = function (svgTag: SVGElement, windowRef: Window, bboxForTesting?: BBox) {
     const inherited = Matrix.identity();
 
-    const applyTransforms = (element: Element, matrix: MatrixType, strokeWidth: number, fill?: string, stroke?: string) => {
+    const applyTransforms = (element: Element, matrix: Matrix.Matrix, strokeWidth: number, fill?: string, stroke?: string) => {
         if (_isContainerElement(element)) {
             // Push fills and stroke width down to leaves
             // @ts-expect-error ignore it

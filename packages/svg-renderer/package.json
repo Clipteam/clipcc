@@ -2,12 +2,12 @@
   "name": "clipcc-svg-renderer",
   "version": "3.2.0",
   "description": "SVG renderer for ClipCC",
-  "main": "./src/index.js",
+  "main": "./src/index.ts",
   "browser": "./dist/web/scratch-svg-renderer.js",
   "exports": {
-    "webpack": "./src/index.js",
+    "webpack": "./src/index.ts",
     "browser": "./dist/web/scratch-svg-renderer.js",
-    "default": "./src/index.js"
+    "default": "./src/index.ts"
   },
   "scripts": {
     "build": "yarn run clean && webpack",

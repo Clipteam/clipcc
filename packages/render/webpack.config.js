@@ -10,9 +10,24 @@ const base = {
         host: '0.0.0.0',
         port: process.env.PORT || 8361
     },
+    resolve: {
+        extensions: ['.ts', '.js']
+    },
     devtool: 'cheap-module-source-map',
     module: {
         rules: [
+            {
+                include: [
+                    path.resolve('src'),
+                    /node_modules[\\/]clipcc-[^\\/]+[\\/]src/
+                ],
+                test: /\.([cm]?ts|tsx)$/,
+                loader: 'ts-loader',
+                options: {
+                    transpileOnly: true,
+                    allowTsInNodeModules: true
+                }
+            },
             {
                 include: [
                     path.resolve('src')

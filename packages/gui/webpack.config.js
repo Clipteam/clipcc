@@ -26,6 +26,7 @@ const base = {
         chunkFilename: 'chunks/[name].js'
     },
     resolve: {
+        extensions: ['.ts', '.js', 'tsx', 'jsx'],
         symlinks: false
     },
     snapshot: {
@@ -35,6 +36,18 @@ const base = {
     },
     module: {
         rules: [{
+            include: [
+                path.resolve(__dirname, 'src'),
+                /node_modules[\\/]clipcc-[^\\/]+[\\/]src/
+            ],
+            test: /\.([cm]?ts|tsx)$/,
+            loader: 'ts-loader',
+            options: {
+                transpileOnly: true,
+                allowTsInNodeModules: true
+            }
+        },
+        {
             test: /\.jsx?$/,
             loader: 'babel-loader',
             include: [
