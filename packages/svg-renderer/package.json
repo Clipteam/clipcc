@@ -15,7 +15,7 @@
     "start": "webpack-dev-server",
     "test": "yarn run test:lint && yarn run test:unit",
     "test:lint": "eslint . --ext .js",
-    "test:unit": "tap ./test/*.js --disable-coverage",
+    "test:unit": "tap ./test/*.js --allow-incomplete-coverage",
     "watch": "webpack --watch"
   },
   "author": "Massachusetts Institute of Technology",
