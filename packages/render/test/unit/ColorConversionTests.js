@@ -2,7 +2,7 @@ const {test, Test} = require('tap');
 
 const {rgbToHsv, hsvToRgb} = require('../../src/util/color-conversions');
 
-Test.prototype.addAssert('colorsAlmostEqual', 2, function (found, wanted, message, extra) {
+Test.prototype.colorsAlmostEqual = function (found, wanted, message, extra) {
     /* eslint-disable no-invalid-this */
     message += `: found ${JSON.stringify(Array.from(found))}, wanted ${JSON.stringify(Array.from(wanted))}`;
 
@@ -21,7 +21,7 @@ Test.prototype.addAssert('colorsAlmostEqual', 2, function (found, wanted, messag
 
     return this.pass(message);
     /* eslint-enable no-invalid-this */
-});
+};
 
 test('RGB to HSV', t => {
     const dst = [0, 0, 0];
