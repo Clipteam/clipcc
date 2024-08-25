@@ -22,7 +22,7 @@ test('fixupSvgString should make parsing fixtures not throw', t => {
 
     // Make sure undefineds aren't being written into the file
     t.equal(fixed.indexOf('undefined'), -1);
-    t.notThrow(() => {
+    t.doesNotThrow(() => {
         domParser.parseFromString(fixed, 'text/xml');
     });
     t.end();
@@ -36,7 +36,7 @@ test('fixupSvgString should correct namespace declarations bound to reserved nam
 
     // Make sure undefineds aren't being written into the file
     t.equal(fixed.indexOf('undefined'), -1);
-    t.notThrow(() => {
+    t.doesNotThrow(() => {
         domParser.parseFromString(fixed, 'text/xml');
     });
     t.end();
@@ -69,7 +69,7 @@ test('fixupSvgString should strip `svg:` prefix from tag names', t => {
 
     // Make sure undefineds aren't being written into the file
     t.equal(fixed.indexOf('undefined'), -1);
-    t.notThrow(() => {
+    t.doesNotThrow(() => {
         domParser.parseFromString(fixed, 'text/xml');
     });
 
@@ -130,7 +130,7 @@ test('fixupSvgString should correct invalid mime type', t => {
     // Make sure we replace an invalid mime type from Photoshop exported SVGs
     t.not(svgString.indexOf('img/png'), -1);
     t.equal(fixed.indexOf('img/png'), -1);
-    t.notThrow(() => {
+    t.doesNotThrow(() => {
         domParser.parseFromString(fixed, 'text/xml');
     });
     t.end();
