@@ -6,8 +6,7 @@
 npm-*
 
 # Testing
-/.nyc_output
-/coverage
+/.tap
 
 # Build
 /build
