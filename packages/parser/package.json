@@ -11,8 +11,8 @@
   },
   "scripts": {
     "test:lint": "eslint . --ext=js",
-    "test:unit": "tap test/unit/*.js",
-    "test:integration": "tap test/integration/*.js",
+    "test:unit": "tap test/unit/*.js --allow-incomplete-coverage",
+    "test:integration": "tap test/integration/*.js --allow-incomplete-coverage",
     "test:coverage": "tap test/{unit,integration}/*.js --coverage --coverage-report=lcov",
     "test:benchmark": "node test/benchmark/performance.js",
     "test": "yarn run test:lint && yarn run test:unit && yarn run test:integration",

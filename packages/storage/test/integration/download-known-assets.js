@@ -89,15 +89,15 @@ test('load', t => {
     const promises = [];
     const checkAsset = (assetInfo, asset) => {
         t.type(asset, storage.Asset);
-        t.strictEqual(asset.assetId, assetInfo.id);
-        t.strictEqual(asset.assetType, assetInfo.type);
+       t.equal(asset.assetId, assetInfo.id);
+       t.equal(asset.assetType, assetInfo.type);
         t.ok(asset.data.length);
 
         // Web assets should come back as clean
-        t.true(asset.clean);
+       t.ok(asset.clean);
 
         if (assetInfo.md5) {
-            t.strictEqual(md5(asset.data), assetInfo.md5);
+           t.equal(md5(asset.data), assetInfo.md5);
         }
     };
     for (let i = 0; i < testAssets.length; ++i) {

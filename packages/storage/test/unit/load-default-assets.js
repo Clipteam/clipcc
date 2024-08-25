@@ -27,10 +27,10 @@ test('load', t => {
     const promises = [];
     const checkAsset = (assetType, id, asset) => {
         t.type(asset, storage.Asset);
-        t.strictEqual(asset.assetId, id);
-        t.strictEqual(asset.assetType, assetType);
+       t.equal(asset.assetId, id);
+       t.equal(asset.assetType, assetType);
         t.ok(asset.data.length);
-        t.strictEqual(md5(asset.data), id);
+       t.equal(md5(asset.data), id);
     };
     for (let i = 0; i < defaultAssetTypes.length; ++i) {
         const assetType = defaultAssetTypes[i];
