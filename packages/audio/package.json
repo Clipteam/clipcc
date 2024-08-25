@@ -9,7 +9,7 @@
     "build": "webpack --bail",
     "watch": "webpack --watch",
     "lint": "eslint .",
-    "tap": "tap test/effects/*.js test/*.js --allow-incomplete-coverage"
+    "tap": "tap test/effects/*.js test/*.js --disable-coverage"
   },
   "repository": {
     "type": "git",

@@ -18,7 +18,7 @@
     "prepublish": "yarn run build",
     "prepublish-watch": "yarn run watch",
     "start": "webpack-dev-server",
-    "tap": "tap test/unit test/integration --allow-incomplete-coverage",
+    "tap": "tap test/unit test/integration --disable-coverage",
     "test": "yarn run lint && yarn run docs && yarn run build && yarn run tap",
     "version": "json -f package.json -I -e \"this.repository.sha = '$(git log -n1 --pretty=format:%H)'\"",
     "watch": "webpack --progress --color --watch --watch-poll"
