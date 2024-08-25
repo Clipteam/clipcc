@@ -129,12 +129,7 @@ test('Execute Scratch projects', async t => {
             } catch (error) {
                 t.fail(error.message);
             } finally {
-                // Cleanup
-                vm.stopAll();
-                vm.clear();
-                if (vm.runtime._steppingInterval) {
-                    clearInterval(vm.runtime._steppingInterval);
-                }
+                vm.quit();
                 log.suggest.clear();
             }
         });
