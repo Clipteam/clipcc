@@ -77,7 +77,7 @@ test('noTransformPath', t => {
     comparisonFileAppend(svgString, svgElement, 'noTransformPath');
 
     t.equal(d, svgElement.getElementById('path').attributes.d.value);
-   t.notOk(svgElement.getElementById('path').attributes.transform);
+    t.notOk(svgElement.getElementById('path').attributes.transform);
     t.end();
 });
 
@@ -106,7 +106,7 @@ test('identityTransformPath', t => {
     comparisonFileAppend(svgString, svgElement, 'identityTransformPath');
 
     t.equal(d, svgElement.getElementById('path').attributes.d.value);
-   t.notOk(svgElement.getElementById('path').attributes.transform);
+    t.notOk(svgElement.getElementById('path').attributes.transform);
     t.end();
 });
 
@@ -124,7 +124,7 @@ test('transformBox', t => {
     const transformed = `M 45 45 L 245 45 L 245 145 L 45 145 Z `;
     t.equal(transformed, svgElement.getElementById('path').attributes.d.value);
     // Transform is integrated into path, so the attribute should be gone
-   t.notOk(svgElement.getElementById('path').attributes.transform);
+    t.notOk(svgElement.getElementById('path').attributes.transform);
     const quadraticMean = Math.sqrt(((20 * 20) + (10 * 10)) / 2);
     t.equal(`${quadraticMean}`, svgElement.getElementById('path').attributes['stroke-width'].value);
     t.end();
@@ -144,7 +144,7 @@ test('transformPath', t => {
     'Q 85 145 105 165 Q 125 185 105 185 Q 85 185 85 205 M 45 45 A 80 100 0 1 1 45 245 Z ';
     t.equal(doubled, svgElement.getElementById('path').attributes.d.value);
     // Transform is integrated into path, so the attribute should be gone
-   t.notOk(svgElement.getElementById('path').attributes.transform);
+    t.notOk(svgElement.getElementById('path').attributes.transform);
     t.equal('2', svgElement.getElementById('path').attributes['stroke-width'].value);
     t.end();
 });
@@ -161,7 +161,7 @@ test('composedTransformPathIdentity', t => {
     comparisonFileAppend(svgString, svgElement, 'composedTransformPathIdentity');
 
     t.equal(d, svgElement.getElementById('path').attributes.d.value);
-   t.notOk(svgElement.getElementById('path').attributes.transform);
+    t.notOk(svgElement.getElementById('path').attributes.transform);
     t.end();
 });
 
@@ -199,8 +199,8 @@ test('parentTransformPath', t => {
     'Q 40 100 60 120 Q 80 140 60 140 Q 40 140 40 160 M 0 0 A 80 100 0 1 1 0 200 Z ';
     t.equal(doubled, svgElement.getElementById('path').attributes.d.value);
     // Transform should be gone from both child and parent
-   t.notOk(svgElement.getElementById('group').attributes.transform);
-   t.notOk(svgElement.getElementById('path').attributes.transform);
+    t.notOk(svgElement.getElementById('group').attributes.transform);
+    t.notOk(svgElement.getElementById('path').attributes.transform);
     t.equal('2', svgElement.getElementById('path').attributes['stroke-width'].value);
     t.end();
 });
@@ -261,7 +261,7 @@ test('variousTransformsPath', t => {
     'Q 173.4379 320.0852 148.842 299.9166 Q 124.2462 279.7479 114.3068 291.1131 M 144.6301 159.8543 ' +
     'A 75.4328 127.2656 -51.6345 1 1 45.2364 273.5062 Z ';
     t.equal(transformedPath, svgElement.getElementById('path').attributes.d.value);
-   t.notOk(svgElement.getElementById('path').attributes.transform);
+    t.notOk(svgElement.getElementById('path').attributes.transform);
     t.end();
 });
 
