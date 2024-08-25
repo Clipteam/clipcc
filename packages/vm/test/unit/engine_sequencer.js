@@ -104,7 +104,7 @@ test('stepThread', t => {
     let th = generateThread(r);
     t.not(th.status, Thread.STATUS_DONE);
     s.stepThread(th);
-   t.equal(th.status, Thread.STATUS_DONE);
+    t.equal(th.status, Thread.STATUS_DONE);
     th = generateThread(r);
     th.status = Thread.STATUS_YIELD;
     s.stepThread(th);
@@ -121,10 +121,10 @@ test('stepToBranch', t => {
     const s = new Sequencer(r);
     const th = generateThread(r);
     s.stepToBranch(th, 2, false);
-   t.equal(th.peekStack(), null);
+    t.equal(th.peekStack(), null);
     th.popStack();
     s.stepToBranch(th, 1, false);
-   t.equal(th.peekStack(), null);
+    t.equal(th.peekStack(), null);
     th.popStack();
     th.popStack();
     s.stepToBranch(th, 1, false);
@@ -137,10 +137,10 @@ test('retireThread', t => {
     const r = new Runtime();
     const s = new Sequencer(r);
     const th = generateThread(r);
-   t.equal(th.stack.length, 12);
+    t.equal(th.stack.length, 12);
     s.retireThread(th);
-   t.equal(th.stack.length, 0);
-   t.equal(th.status, Thread.STATUS_DONE);
+    t.equal(th.stack.length, 0);
+    t.equal(th.status, Thread.STATUS_DONE);
     
     t.end();
 });
@@ -151,9 +151,9 @@ test('stepToProcedure', t => {
     const th = generateThread(r);
     let expectedBlock = th.peekStack();
     s.stepToProcedure(th, '');
-   t.equal(th.peekStack(), expectedBlock);
+    t.equal(th.peekStack(), expectedBlock);
     s.stepToProcedure(th, 'faceCode');
-   t.equal(th.peekStack(), expectedBlock);
+    t.equal(th.peekStack(), expectedBlock);
 
     th.target.blocks.createBlock({
         id: 'internalId',
@@ -168,7 +168,7 @@ test('stepToProcedure', t => {
         block: 'internalId'
     };
     s.stepToProcedure(th, 'othercode');
-   t.equal(th.peekStack(), expectedBlock);
+    t.equal(th.peekStack(), expectedBlock);
     
     
     t.end();
@@ -178,11 +178,11 @@ test('stepThreads', t => {
     const r = new Runtime();
     r.currentStepTime = Infinity;
     const s = new Sequencer(r);
-   t.equal(s.stepThreads().length, 0);
+    t.equal(s.stepThreads().length, 0);
     generateThread(r);
-   t.equal(r.threads.length, 1);
+    t.equal(r.threads.length, 1);
     // Threads should be marked DONE and removed in the same step they finish.
-   t.equal(s.stepThreads().length, 1);
+    t.equal(s.stepThreads().length, 1);
     
     t.end();
 });

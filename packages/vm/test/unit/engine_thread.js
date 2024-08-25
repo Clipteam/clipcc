@@ -45,8 +45,8 @@ test('popStack', t => {
     const s = new Sprite(null, r);
     const rt = new RenderedTarget(s, r);
     th.pushStack('arbitraryString', rt);
-   t.equal(th.popStack(), 'arbitraryString');
-   t.equal(th.popStack(), undefined);
+    t.equal(th.popStack(), 'arbitraryString');
+    t.equal(th.popStack(), undefined);
 
     t.end();
 });
@@ -58,9 +58,9 @@ test('atStackTop', t => {
     const rt = new RenderedTarget(s, r);
     th.pushStack('arbitraryString', rt);
     th.pushStack('secondString', rt);
-   t.equal(th.atStackTop(), false);
+    t.equal(th.atStackTop(), false);
     th.popStack();
-   t.equal(th.atStackTop(), true);
+    t.equal(th.atStackTop(), true);
 
     t.end();
 });
@@ -72,7 +72,7 @@ test('reuseStackForNextBlock', t => {
     const rt = new RenderedTarget(s, r);
     th.pushStack('arbitraryString', rt);
     th.reuseStackForNextBlock('secondString');
-   t.equal(th.popStack(), 'secondString');
+    t.equal(th.popStack(), 'secondString');
 
     t.end();
 });
@@ -83,9 +83,9 @@ test('peekStackFrame', t => {
     const s = new Sprite(null, r);
     const rt = new RenderedTarget(s, r);
     th.pushStack('arbitraryString', rt);
-   t.equal(th.peekStackFrame().warpMode, false);
+    t.equal(th.peekStackFrame().warpMode, false);
     th.popStack();
-   t.equal(th.peekStackFrame(), null);
+    t.equal(th.peekStackFrame(), null);
 
     t.end();
 });
@@ -97,9 +97,9 @@ test('peekParentStackFrame', t => {
     const rt = new RenderedTarget(s, r);
     th.pushStack('arbitraryString', rt);
     th.peekStackFrame().warpMode = true;
-   t.equal(th.peekParentStackFrame(), null);
+    t.equal(th.peekParentStackFrame(), null);
     th.pushStack('secondString', rt);
-   t.equal(th.peekParentStackFrame().warpMode, true);
+    t.equal(th.peekParentStackFrame().warpMode, true);
 
     t.end();
 });
@@ -112,7 +112,7 @@ test('pushReportedValue', t => {
     th.pushStack('arbitraryString', rt);
     th.pushStack('secondString', rt);
     th.pushReportedValue('value');
-   t.equal(th.justReported, 'value');
+    t.equal(th.justReported, 'value');
 
     t.end();
 });
@@ -123,9 +123,9 @@ test('peekStack', t => {
     const s = new Sprite(null, r);
     const rt = new RenderedTarget(s, r);
     th.pushStack('arbitraryString', rt);
-   t.equal(th.peekStack(), 'arbitraryString');
+    t.equal(th.peekStack(), 'arbitraryString');
     th.popStack();
-   t.equal(th.peekStack(), null);
+    t.equal(th.peekStack(), null);
 
     t.end();
 });
@@ -140,10 +140,10 @@ test('PushGetParam', t => {
     th.pushParam('testParam', 'testValue');
     th.pushStack('secondaryString', rt);
     // cc - ignore the top stack's param, it's not used by current stack
-    //t.equals(th.peekStackFrame().params.testParam, 'testValue');
-   t.equal(th.getParam('testParam'), 'testValue');
+    // t.equals(th.peekStackFrame().params.testParam, 'testValue');
+    t.equal(th.getParam('testParam'), 'testValue');
     // Params outside of define stack always evaluate to null
-   t.equal(th.getParam('nonExistentParam'), null);
+    t.equal(th.getParam('nonExistentParam'), null);
 
     t.end();
 });
@@ -188,18 +188,18 @@ test('goToNextBlock', t => {
     rt.blocks.createBlock(block2);
     th.target = rt;
 
-   t.equal(th.peekStack(), null);
+    t.equal(th.peekStack(), null);
     th.pushStack('secondString', rt);
-   t.equal(th.peekStack(), 'secondString');
+    t.equal(th.peekStack(), 'secondString');
     th.goToNextBlock();
-   t.equal(th.peekStack(), null);
+    t.equal(th.peekStack(), null);
     th.pushStack('secondString', rt);
     th.pushStack('arbitraryString', rt);
-   t.equal(th.peekStack(), 'arbitraryString');
+    t.equal(th.peekStack(), 'arbitraryString');
     th.goToNextBlock();
-   t.equal(th.peekStack(), 'secondString');
+    t.equal(th.peekStack(), 'secondString');
     th.goToNextBlock();
-   t.equal(th.peekStack(), null);
+    t.equal(th.peekStack(), null);
 
     t.end();
 });
@@ -244,17 +244,17 @@ test('stopThisScript', t => {
     th.target = rt;
 
     th.stopThisScript();
-   t.equal(th.peekStack(), null);
+    t.equal(th.peekStack(), null);
     th.pushStack('arbitraryString', rt);
-   t.equal(th.peekStack(), 'arbitraryString');
+    t.equal(th.peekStack(), 'arbitraryString');
     th.stopThisScript();
-   t.equal(th.peekStack(), null);
+    t.equal(th.peekStack(), null);
     th.pushStack('arbitraryString', rt);
     th.pushStack('secondString', rt);
     th.stopThisScript();
     // cc - prevent call command procedure repeatedly
     // it may breaks expected logic, need to check carefully
-   t.equal(th.peekStack(), null);
+    t.equal(th.peekStack(), null);
 
     t.end();
 });
@@ -298,19 +298,19 @@ test('isRecursiveCall', t => {
     rt.blocks.createBlock(block2);
     th.target = rt;
 
-   t.equal(th.isRecursiveCall('fakeCode'), false);
+    t.equal(th.isRecursiveCall('fakeCode'), false);
     th.pushStack('secondString', rt);
-   t.equal(th.isRecursiveCall('fakeCode'), false);
+    t.equal(th.isRecursiveCall('fakeCode'), false);
     th.pushStack('arbitraryString', rt);
-   t.equal(th.isRecursiveCall('fakeCode'), true);
+    t.equal(th.isRecursiveCall('fakeCode'), true);
     th.pushStack('arbitraryString', rt);
-   t.equal(th.isRecursiveCall('fakeCode'), true);
+    t.equal(th.isRecursiveCall('fakeCode'), true);
     th.popStack();
-   t.equal(th.isRecursiveCall('fakeCode'), true);
+    t.equal(th.isRecursiveCall('fakeCode'), true);
     th.popStack();
-   t.equal(th.isRecursiveCall('fakeCode'), false);
+    t.equal(th.isRecursiveCall('fakeCode'), false);
     th.popStack();
-   t.equal(th.isRecursiveCall('fakeCode'), false);
+    t.equal(th.isRecursiveCall('fakeCode'), false);
 
     t.end();
 });

@@ -284,13 +284,13 @@ test('getExtensionIdForOpcode', t => {
     t.equal(sb3.getExtensionIdForOpcode('wedo_loopy'), 'wedo');
 
     // does not consider CORE to be extensions
-   t.notOk(sb3.getExtensionIdForOpcode('control_loopy'));
+    t.notOk(sb3.getExtensionIdForOpcode('control_loopy'));
 
     // only considers things before the first underscore
     t.equal(sb3.getExtensionIdForOpcode('hello_there_loopy'), 'hello');
 
     // does not return anything for opcodes with no extension
-   t.notOk(sb3.getExtensionIdForOpcode('hello'));
+    t.notOk(sb3.getExtensionIdForOpcode('hello'));
 
     // forbidden characters must be replaced with '-'
     t.equal(sb3.getExtensionIdForOpcode('hi:there/happy_people'), 'hi-there-happy');

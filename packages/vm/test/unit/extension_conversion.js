@@ -280,7 +280,7 @@ test('registerExtensionPrimitives', t => {
 
         blocksInfo.forEach(blockInfo => {
             // `true` here means "either an object or a non-empty string but definitely not null or undefined"
-           t.ok(blockInfo.info, 'Every block and pseudo-block must have a non-empty "info" field');
+            t.ok(blockInfo.info, 'Every block and pseudo-block must have a non-empty "info" field');
         });
 
         // Note that this also implicitly tests that block order is preserved
@@ -309,7 +309,7 @@ test('custom field types should be added to block and EXTENSION_FIELD_ADDED call
         // We expect that for each argument there's a corresponding <field>-tag in the block XML
         Object.values(blockInfo.info.arguments).forEach(argument => {
             const regex = new RegExp(`<field name="field_${categoryInfo.id}_${argument.type}">`);
-           t.ok(regex.test(blockInfo.xml));
+            t.ok(regex.test(blockInfo.xml));
         });
 
     });

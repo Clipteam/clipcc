@@ -25,8 +25,8 @@ test('stage and provider are null initially', t => {
     const runtime = new Runtime();
     const cloud = new Cloud(runtime);
 
-   t.equal(cloud.provider, null);
-   t.equal(cloud.stage, null);
+    t.equal(cloud.provider, null);
+    t.equal(cloud.stage, null);
     t.end();
 });
 
@@ -39,7 +39,7 @@ test('setProvider sets the provider', t => {
     };
 
     cloud.setProvider(provider);
-   t.equal(cloud.provider, provider);
+    t.equal(cloud.provider, provider);
 
     t.end();
 });
@@ -55,7 +55,7 @@ test('postData update message updates the variable', t => {
     );
     stage.variables[fooVar.id] = fooVar;
 
-   t.equal(fooVar.value, 0);
+    t.equal(fooVar.value, 0);
 
     const cloud = new Cloud(runtime);
     cloud.setStage(stage);
@@ -63,7 +63,7 @@ test('postData update message updates the variable', t => {
         name: 'foo',
         value: 3
     }});
-   t.equal(fooVar.value, 3);
+    t.equal(fooVar.value, 3);
     t.end();
 });
 
@@ -87,8 +87,8 @@ test('requestUpdateVariable calls provider\'s updateVariable function', t => {
     cloud.setProvider(provider);
     cloud.requestUpdateVariable('foo', 3);
     t.equal(updateVariableCalled, true);
-   t.equal(mockVarName, 'foo');
-   t.equal(mockVarValue, 3);
+    t.equal(mockVarName, 'foo');
+    t.equal(mockVarValue, 3);
     t.end();
 });
 
@@ -113,10 +113,10 @@ test('requestCreateVariable calls provider\'s createVariable function', t => {
     cloud.setProvider(provider);
     cloud.requestCreateVariable(mockVariable);
     t.equal(createVariableCalled, true);
-   t.equal(mockVarName, 'my var');
-   t.equal(mockVarValue, 0);
+    t.equal(mockVarName, 'my var');
+    t.equal(mockVarValue, 0);
     // Calling requestCreateVariable does not set isCloud flag on variable
-   t.equal(mockVariable.isCloud, false);
+    t.equal(mockVariable.isCloud, false);
     t.end();
 });
 
@@ -140,8 +140,8 @@ test('requestRenameVariable calls provider\'s renameVariable function', t => {
     cloud.setProvider(provider);
     cloud.requestRenameVariable('my var', 'new var name');
     t.equal(renameVariableCalled, true);
-   t.equal(mockVarOldName, 'my var');
-   t.equal(mockVarNewName, 'new var name');
+    t.equal(mockVarOldName, 'my var');
+    t.equal(mockVarNewName, 'new var name');
     t.end();
 });
 
@@ -163,6 +163,6 @@ test('requestDeleteVariable calls provider\'s deleteVariable function', t => {
     cloud.setProvider(provider);
     cloud.requestDeleteVariable('my var');
     t.equal(deleteVariableCalled, true);
-   t.equal(mockVarName, 'my var');
+    t.equal(mockVarName, 'my var');
     t.end();
 });

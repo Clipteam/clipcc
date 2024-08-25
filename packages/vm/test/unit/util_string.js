@@ -10,51 +10,51 @@ test('splitFirst', t => {
 });
 
 test('withoutTrailingDigits', t => {
-   t.equal(StringUtil.withoutTrailingDigits('boeing747'), 'boeing');
-   t.equal(StringUtil.withoutTrailingDigits('boeing747 '), 'boeing747 ');
-   t.equal(StringUtil.withoutTrailingDigits('boeing𝟨'), 'boeing𝟨');
-   t.equal(StringUtil.withoutTrailingDigits('boeing 747'), 'boeing ');
-   t.equal(StringUtil.withoutTrailingDigits('747'), '');
+    t.equal(StringUtil.withoutTrailingDigits('boeing747'), 'boeing');
+    t.equal(StringUtil.withoutTrailingDigits('boeing747 '), 'boeing747 ');
+    t.equal(StringUtil.withoutTrailingDigits('boeing𝟨'), 'boeing𝟨');
+    t.equal(StringUtil.withoutTrailingDigits('boeing 747'), 'boeing ');
+    t.equal(StringUtil.withoutTrailingDigits('747'), '');
     t.end();
 });
 
 test('unusedName', t => {
-   t.equal(
+    t.equal(
         StringUtil.unusedName(
             'name',
             ['not the same name']
         ),
         'name'
     );
-   t.equal(
+    t.equal(
         StringUtil.unusedName(
             'name',
             ['name']
         ),
         'name2'
     );
-   t.equal(
+    t.equal(
         StringUtil.unusedName(
             'name',
             ['name30']
         ),
         'name'
     );
-   t.equal(
+    t.equal(
         StringUtil.unusedName(
             'name',
             ['name', 'name2']
         ),
         'name3'
     );
-   t.equal(
+    t.equal(
         StringUtil.unusedName(
             'name',
             ['name', 'name3']
         ),
         'name2'
     );
-   t.equal(
+    t.equal(
         StringUtil.unusedName(
             'boeing747',
             ['boeing747']

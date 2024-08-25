@@ -26,42 +26,42 @@ test('sb3-roundtrip', t => {
     runtime2.attachStorage(makeTestStorage());
 
     const testRuntimeState = (label, runtime) => {
-       t.equal(runtime.targets.length, 2, `${label}: target count`);
+        t.equal(runtime.targets.length, 2, `${label}: target count`);
         const [stageClone, spriteClone] = runtime.targets;
 
-       t.equal(stageClone.isOriginal, true);
-       t.equal(stageClone.isStage, true);
+        t.equal(stageClone.isOriginal, true);
+        t.equal(stageClone.isStage, true);
 
         const stage = stageClone.sprite;
-       t.equal(stage.name, 'Stage');
-       t.equal(stage.clones.length, 1);
-       t.equal(stage.clones[0], stageClone);
+        t.equal(stage.name, 'Stage');
+        t.equal(stage.clones.length, 1);
+        t.equal(stage.clones[0], stageClone);
 
-       t.equal(stage.costumes.length, 1);
+        t.equal(stage.costumes.length, 1);
         const [building] = stage.costumes;
-       t.equal(building.assetId, 'fe5e3566965f9de793beeffce377d054');
-       t.equal(building.dataFormat, 'jpg');
+        t.equal(building.assetId, 'fe5e3566965f9de793beeffce377d054');
+        t.equal(building.dataFormat, 'jpg');
 
-       t.equal(stage.sounds.length, 0);
+        t.equal(stage.sounds.length, 0);
 
-       t.equal(spriteClone.isOriginal, true);
-       t.equal(spriteClone.isStage, false);
+        t.equal(spriteClone.isOriginal, true);
+        t.equal(spriteClone.isStage, false);
 
         const sprite = spriteClone.sprite;
-       t.equal(sprite.name, 'Sprite');
-       t.equal(sprite.clones.length, 1);
-       t.equal(sprite.clones[0], spriteClone);
+        t.equal(sprite.name, 'Sprite');
+        t.equal(sprite.clones.length, 1);
+        t.equal(sprite.clones[0], spriteClone);
 
-       t.equal(sprite.costumes.length, 2);
+        t.equal(sprite.costumes.length, 2);
         const [cat, squirrel] = sprite.costumes;
-       t.equal(cat.assetId, 'f88bf1935daea28f8ca098462a31dbb0');
-       t.equal(cat.dataFormat, 'svg');
-       t.equal(squirrel.assetId, '7e24c99c1b853e52f8e7f9004416fa34');
-       t.equal(squirrel.dataFormat, 'png');
+        t.equal(cat.assetId, 'f88bf1935daea28f8ca098462a31dbb0');
+        t.equal(cat.dataFormat, 'svg');
+        t.equal(squirrel.assetId, '7e24c99c1b853e52f8e7f9004416fa34');
+        t.equal(squirrel.dataFormat, 'png');
 
-       t.equal(sprite.sounds.length, 1);
+        t.equal(sprite.sounds.length, 1);
         const [meow] = sprite.sounds;
-       t.equal(meow.md5, '83c36d806dc92327b9e7049a565c6bff.wav');
+        t.equal(meow.md5, '83c36d806dc92327b9e7049a565c6bff.wav');
     };
 
     const loadThings = Promise.all([
