@@ -4,7 +4,6 @@ const {rgbToHsv, hsvToRgb} = require('../../src/util/color-conversions');
 
 const plugin = t => ({
     colorsAlmostEqual: (found, wanted, message, extra) => {
-        /* eslint-disable no-invalid-this */
         message += `: found ${JSON.stringify(Array.from(found))}, wanted ${JSON.stringify(Array.from(wanted))}`;
 
         // should always return another assert call, or
@@ -21,7 +20,6 @@ const plugin = t => ({
         }
 
         return t.pass(message);
-        /* eslint-enable no-invalid-this */
     }
 });
 
