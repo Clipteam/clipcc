@@ -61,6 +61,7 @@ const executeDir = path.resolve(__dirname, '../fixtures/execute');
 fs.readdirSync(executeDir)
     .filter(uri => uri.endsWith('.sb2') || uri.endsWith('.sb3'))
     .forEach(uri => {
+        // eslint-disable-next-line require-await
         test(uri, async t => {
             // Disable logging during this test.
             log.suggest.deny('vm', 'error');
