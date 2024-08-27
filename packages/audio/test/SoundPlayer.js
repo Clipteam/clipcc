@@ -44,7 +44,7 @@ tap.test('SoundPlayer', suite => {
         t.equal(soundPlayer.initialized, false, 'not yet initialized');
         soundPlayer.play();
         t.equal(soundPlayer.initialized, true, 'now is initialized');
-        t.deepEqual(soundPlayer.outputNode.toJSON(), {
+        t.same(soundPlayer.outputNode.toJSON(), {
             buffer: audioContext.DECODE_AUDIO_DATA_RESULT.toJSON(),
             inputs: [],
             loop: false,
@@ -64,7 +64,7 @@ tap.test('SoundPlayer', suite => {
         t.plan(1);
         soundPlayer.play();
         soundPlayer.connect(audioEngine);
-        t.deepEqual(help.engineInputs, [
+        t.same(help.engineInputs, [
             soundPlayer.outputNode.toJSON()
         ], 'output node connects to input node');
         t.end();
@@ -79,7 +79,7 @@ tap.test('SoundPlayer', suite => {
         audioContext.$processTo(0);
         soundPlayer.stop();
         t.equal(soundPlayer.outputNode, null, 'nullify outputNode immediately (taken sound is stopping)');
-        t.deepEqual(help.engineInputs, [{
+        t.same(help.engineInputs, [{
             name: 'GainNode',
             gain: {
                 value: 1,
@@ -92,7 +92,7 @@ tap.test('SoundPlayer', suite => {
         t.equal(outputNode.$state, 'PLAYING');
 
         audioContext.$processTo(audioEngine.DECAY_DURATION + 0.001);
-        t.deepEqual(help.engineInputs, [{
+        t.same(help.engineInputs, [{
             name: 'GainNode',
             gain: {
                 value: 0,
@@ -123,7 +123,7 @@ tap.test('SoundPlayer', suite => {
         t.equal(originalNode, soundPlayer.outputNode, 'same output node');
         t.equal(soundPlayer.outputNode.$state, 'PLAYING');
         return Promise.resolve().then(() => {
-            t.deepEqual(log, ['finished first', 'finished second', 'finished third'], 'finished in order');
+            t.same(log, ['finished first', 'finished second', 'finished third'], 'finished in order');
 
             // fast forward to one ms before decay time
             audioContext.$processTo(audioEngine.DECAY_DURATION - 0.001);
@@ -138,7 +138,7 @@ tap.test('SoundPlayer', suite => {
             t.equal(soundPlayer.isStarting, false, 'player.isStarting now false');
 
             soundPlayer.play();
-            t.notEqual(originalNode, soundPlayer.outputNode, 'New output node');
+            t.not(originalNode, soundPlayer.outputNode, 'New output node');
 
             t.end();
         });
@@ -170,7 +170,7 @@ tap.test('SoundPlayer', suite => {
         .then(() => {
 
             t.equal(log[0], 'play 1 finished');
-            t.notEqual(soundPlayer.outputNode, firstPlayNode, 'created new player node');
+            t.not(soundPlayer.outputNode, firstPlayNode, 'created new player node');
 
             t.equal(help.engineInputs.length, 2, 'there should be 2 players connected');
             t.equal(firstPlayNode.$state, 'PLAYING');
@@ -179,7 +179,7 @@ tap.test('SoundPlayer', suite => {
 
             const {currentTime} = audioContext;
             audioContext.$processTo(currentTime + audioEngine.DECAY_WAIT + 0.001);
-            t.notEqual(help.engineInputs[0].gain.value, 1,
+            t.not(help.engineInputs[0].gain.value, 1,
             'old sound connected to gain node which will fade');
 
             audioContext.$processTo(currentTime + audioEngine.DECAY_WAIT + audioEngine.DECAY_DURATION + 0.001);

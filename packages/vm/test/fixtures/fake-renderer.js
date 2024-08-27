@@ -70,11 +70,11 @@ FakeRenderer.prototype.getBounds = function (d) { // eslint-disable-line no-unus
 
 FakeRenderer.prototype.setEdgelessStage = function () {
     // no-op in FakeRenderer
-}
+};
 
 FakeRenderer.prototype.setAccurateCoordinates = function () {
     // no-op in FakeRenderer
-}
+};
 
 FakeRenderer.prototype.setDrawableOrder = function (d, a, optG, optA, optB) { // eslint-disable-line no-unused-vars
     if (d === 999) return 1; // fake for test case

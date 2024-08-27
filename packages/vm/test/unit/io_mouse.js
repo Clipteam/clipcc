@@ -28,11 +28,11 @@ test('mouseUp', t => {
         canvasWidth: 480,
         canvasHeight: 360
     });
-    t.strictEquals(m.getClientX(), -20);
-    t.strictEquals(m.getClientY(), 10);
-    t.strictEquals(m.getScratchX(), -240);
-    t.strictEquals(m.getScratchY(), 170);
-    t.strictEquals(m.getIsDown(), false);
+    t.equal(m.getClientX(), -20);
+    t.equal(m.getClientY(), 10);
+    t.equal(m.getScratchX(), -240);
+    t.equal(m.getScratchY(), 170);
+    t.equal(m.getIsDown(), false);
     t.end();
 });
 
@@ -48,11 +48,11 @@ test('mouseDown', t => {
         canvasWidth: 480,
         canvasHeight: 360
     });
-    t.strictEquals(m.getClientX(), 9.9);
-    t.strictEquals(m.getClientY(), 400.1);
-    t.strictEquals(m.getScratchX(), -230);
-    t.strictEquals(m.getScratchY(), -180);
-    t.strictEquals(m.getIsDown(), true);
+    t.equal(m.getClientX(), 9.9);
+    t.equal(m.getClientY(), 400.1);
+    t.equal(m.getScratchX(), -230);
+    t.equal(m.getScratchY(), -180);
+    t.equal(m.getIsDown(), true);
     t.end();
 });
 
@@ -67,10 +67,10 @@ test('at zoomed scale', t => {
         canvasWidth: 960,
         canvasHeight: 720
     });
-    t.strictEquals(m.getClientX(), 240);
-    t.strictEquals(m.getClientY(), 540);
-    t.strictEquals(m.getScratchX(), -120);
-    t.strictEquals(m.getScratchY(), -90);
+    t.equal(m.getClientX(), 240);
+    t.equal(m.getClientY(), 540);
+    t.equal(m.getScratchX(), -120);
+    t.equal(m.getScratchY(), -90);
     t.end();
 });
 
@@ -109,23 +109,23 @@ test('mousedown activating click hats', t => {
 
     // Mouse move without mousedown
     m.postData(mouseMoveEvent);
-    t.strictEquals(ranClickHats, false);
+    t.equal(ranClickHats, false);
 
     // Mouse down event triggers the hats if target is not draggable
     dummyTarget.draggable = false;
     m.postData(mouseDownEvent);
-    t.strictEquals(ranClickHats, true);
+    t.equal(ranClickHats, true);
 
     // But another mouse move while down doesn't trigger
     ranClickHats = false;
     m.postData(mouseDownEvent);
-    t.strictEquals(ranClickHats, false);
+    t.equal(ranClickHats, false);
 
     // And it does trigger on mouse up if target is draggable
     ranClickHats = false;
     dummyTarget.draggable = true;
     m.postData(mouseUpEvent);
-    t.strictEquals(ranClickHats, true);
+    t.equal(ranClickHats, true);
 
     // And hats don't trigger if mouse down is outside canvas
     ranClickHats = false;
@@ -133,7 +133,7 @@ test('mousedown activating click hats', t => {
         x: 50000,
         y: 50
     }));
-    t.strictEquals(ranClickHats, false);
+    t.equal(ranClickHats, false);
 
     t.end();
 });

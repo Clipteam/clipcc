@@ -28,8 +28,8 @@ test('zeroJoystickTest', t => {
         y: 0,
         distance: 0
     });
-    t.strictEquals(j.getX(), 0);
-    t.strictEquals(j.getY(), 0);
-    t.strictEquals(j.getDistance(), 0);
+    t.equal(j.getX(), 0);
+    t.equal(j.getY(), 0);
+    t.equal(j.getDistance(), 0);
     t.end();
 });

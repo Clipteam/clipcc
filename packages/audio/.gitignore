@@ -6,8 +6,7 @@
 npm-*
 
 # Testing
-/.nyc_output
-/coverage
+/.tap
 
 /dist.js
 /dist.js.map
