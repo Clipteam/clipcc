@@ -7,7 +7,7 @@ tap.test('AudioEngine', t => {
     const audioEngine = new AudioEngine(new AudioContext());
 
     t.plan(1);
-    t.deepEqual(audioEngine.inputNode.toJSON(), {
+    t.same(audioEngine.inputNode.toJSON(), {
         gain: {
             inputs: [],
             value: 1

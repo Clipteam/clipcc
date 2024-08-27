@@ -30,6 +30,8 @@ const VirtualMachine = require('../../src/index');
 const whenThreadsComplete = (t, vm, uri, timeLimit = 5000) =>
     // When the number of threads reaches 0 the test is expected to be complete.
     new Promise((resolve, reject) => {
+        let timeoutId = null;
+        
         const intervalId = setInterval(() => {
             let active = 0;
             const threads = vm.runtime.threads;
@@ -39,21 +41,19 @@ const whenThreadsComplete = (t, vm, uri, timeLimit = 5000) =>
                 }
             }
             if (active === 0) {
+                clearInterval(intervalId);
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                }
                 resolve();
             }
         }, 50);
 
-        const timeoutId = setTimeout(() => {
+        timeoutId = setTimeout(() => {
+            clearInterval(intervalId);
             t.fail(`Timeout waiting for threads to complete: ${uri}`);
             reject(new Error('time limit reached'));
         }, timeLimit);
-
-        // Clear the interval to allow the process to exit
-        // naturally.
-        t.tearDown(() => {
-            clearInterval(intervalId);
-            clearTimeout(timeoutId);
-        });
     });
 
 const executeDir = path.resolve(__dirname, '../fixtures/execute');
@@ -61,10 +61,11 @@ const executeDir = path.resolve(__dirname, '../fixtures/execute');
 fs.readdirSync(executeDir)
     .filter(uri => uri.endsWith('.sb2') || uri.endsWith('.sb3'))
     .forEach(uri => {
-        test(uri, t => {
+        // eslint-disable-next-line require-await
+        test(uri, async t => {
             // Disable logging during this test.
             log.suggest.deny('vm', 'error');
-            t.tearDown(() => log.suggest.clear());
+            t.teardown(() => log.suggest.clear());
 
             const vm = new VirtualMachine();
 
@@ -106,17 +107,10 @@ fs.readdirSync(executeDir)
             vm.attachStorage(makeTestStorage());
 
             // Start the VM and initialize some vm properties.
-            // complete.
             vm.start();
             vm.clear();
             vm.setCompatibilityMode(false);
             vm.setTurboMode(false);
-
-            // Stop the runtime interval once the test is complete so the test
-            // process may naturally exit.
-            t.tearDown(() => {
-                clearInterval(vm.runtime._steppingInterval);
-            });
 
             // Report the text of SAY events as testing instructions.
             vm.runtime.on('SAY', (target, type, text) => reportVmResult(text));

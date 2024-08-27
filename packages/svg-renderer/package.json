@@ -15,7 +15,7 @@
     "start": "webpack-dev-server",
     "test": "yarn run test:lint && yarn run test:unit",
     "test:lint": "eslint . --ext .js",
-    "test:unit": "tap ./test/*.js",
+    "test:unit": "tap ./test/*.js --allow-incomplete-coverage --allow-empty-coverage",
     "watch": "webpack --watch"
   },
   "author": "Massachusetts Institute of Technology",
@@ -52,7 +52,7 @@
     "scratch-render-fonts": "1.0.73",
     "scratch-semantic-release-config": "1.0.14",
     "semantic-release": "19.0.5",
-    "tap": "11.1.5",
+    "tap": "21.0.1",
     "webpack": "5.93.0",
     "webpack-cli": "5.1.4",
     "webpack-dev-server": "3.11.3",
