@@ -27,9 +27,11 @@ const VirtualMachine = require('../../src/index');
  * been reached.
  */
 
-const whenThreadsComplete = (vm, uri, timeLimit = 5000) =>
+const whenThreadsComplete = (t, vm, uri, timeLimit = 5000) =>
     // When the number of threads reaches 0 the test is expected to be complete.
     new Promise((resolve, reject) => {
+        let timeoutId = null;
+        
         const intervalId = setInterval(() => {
             let active = 0;
             const threads = vm.runtime.threads;
@@ -40,35 +42,36 @@ const whenThreadsComplete = (vm, uri, timeLimit = 5000) =>
             }
             if (active === 0) {
                 clearInterval(intervalId);
-                // eslint-disable-next-line no-use-before-define
-                clearTimeout(timeoutId);
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                }
                 resolve();
             }
         }, 50);
 
-        const timeoutId = setTimeout(() => {
+        timeoutId = setTimeout(() => {
             clearInterval(intervalId);
-            reject(new Error(`Timeout waiting for threads to complete: ${uri}`));
+            t.fail(`Timeout waiting for threads to complete: ${uri}`);
+            reject(new Error('time limit reached'));
         }, timeLimit);
     });
 
 const executeDir = path.resolve(__dirname, '../fixtures/execute');
 
-const testFiles = fs.readdirSync(executeDir)
-    .filter(uri => uri.endsWith('.sb2') || uri.endsWith('.sb3'));
-
-test('Execute Scratch projects', async t => {
-    for (const uri of testFiles) {
-        await t.test(uri, async t => {
+fs.readdirSync(executeDir)
+    .filter(uri => uri.endsWith('.sb2') || uri.endsWith('.sb3'))
+    .forEach(uri => {
+        test(uri, async t => {
             // Disable logging during this test.
             log.suggest.deny('vm', 'error');
+            t.teardown(() => log.suggest.clear());
 
             const vm = new VirtualMachine();
 
             // Map string messages to tap reporting methods. This will be used
             // with events from scratch's runtime emitted on block instructions.
-            let didPlan = false;
-            let didEnd = false;
+            let didPlan;
+            let didEnd;
             const reporters = {
                 comment (message) {
                     t.comment(`[${path.basename(uri)}] ${message}`);
@@ -81,10 +84,12 @@ test('Execute Scratch projects', async t => {
                 },
                 plan (count) {
                     didPlan = true;
-                    t.plan(Number(count) + 1); // +1 for the implicit end check
+                    t.plan(Number(count));
                 },
                 end () {
                     didEnd = true;
+                    vm.quit();
+                    t.end();
                 }
             };
             const reportVmResult = text => {
@@ -111,27 +116,26 @@ test('Execute Scratch projects', async t => {
 
             const project = readFileToBuffer(path.resolve(executeDir, uri));
 
-            try {
-                // Load the project and once all threads are complete ensure that
-                // the scratch project sent us a "end" message.
-                await vm.loadProject(project);
-                await vm.greenFlag();
-                await whenThreadsComplete(vm, uri);
+            // Load the project and once all threads are complete ensure that
+            // the scratch project sent us a "end" message.
+            return vm.loadProject(project)
+                .then(() => vm.greenFlag())
+                .then(() => whenThreadsComplete(t, vm, uri))
+                .then(() => {
+                    // Setting a plan is not required but is a good idea.
+                    if (!didPlan) {
+                        t.comment('did not say "plan NUMBER_OF_TESTS"');
+                    }
 
-                // Setting a plan is not required but is a good idea.
-                if (!didPlan) {
-                    t.comment('did not say "plan NUMBER_OF_TESTS"');
-                }
-
-                // Check if the test ended properly
-                t.ok(didEnd, 'test ended properly');
-
-            } catch (error) {
-                t.fail(error.message);
-            } finally {
-                vm.quit();
-                log.suggest.clear();
-            }
+                    // End must be called so that tap knows the test is done. If
+                    // the test has an SAY "end" block but that block did not
+                    // execute, this explicit failure will raise that issue so
+                    // it can be resolved.
+                    if (!didEnd) {
+                        t.fail('did not say "end"');
+                        vm.quit();
+                        t.end();
+                    }
+                });
         });
-    }
-});
+    });
