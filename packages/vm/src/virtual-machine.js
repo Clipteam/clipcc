@@ -1,5 +1,3 @@
-// @ts-check
-
 let _TextEncoder;
 if (typeof TextEncoder === 'undefined') {
     _TextEncoder = require('fastestsmallesttextencoderdecoder').TextEncoder;
