@@ -6,7 +6,7 @@
  */
 import fixupSvgString from './fixup-svg-string';
 import {generate, parse, walk} from 'css-tree';
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 
 const sanitizeSvg = {};
 
