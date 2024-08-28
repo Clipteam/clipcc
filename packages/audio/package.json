@@ -8,7 +8,7 @@
   "scripts": {
     "test": "yarn run lint && yarn run tap && yarn run build",
     "build:types": "tsc --project ./tsconfig.dts.json",
-    "build": "webpack --bail",
+    "build": "yarn build:types && webpack --bail",
     "watch": "webpack --watch",
     "lint": "eslint .",
     "tap": "tap test/effects/*.js test/*.js --allow-incomplete-coverage --allow-empty-coverage"

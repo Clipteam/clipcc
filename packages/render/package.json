@@ -14,7 +14,7 @@
   "browser": "./dist/web/scratch-render.js",
   "scripts": {
     "build:types": "tsc --project ./tsconfig.dts.json",
-    "build": "webpack --progress --color",
+    "build": "yarn build:types && webpack --progress --color",
     "docs": "jsdoc -c .jsdoc.json",
     "lint": "eslint .",
     "prepublish": "yarn run build",
