@@ -1,3 +1,4 @@
+const {IgnorePlugin} = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const defaultsDeep = require('lodash.defaultsdeep');
 const path = require('path');
@@ -42,7 +43,12 @@ const base = {
             }
         }]
     },
-    plugins: []
+    plugins: [
+        new IgnorePlugin({
+            resourceRegExp: /canvas/,
+            contextRegExp: /jsdom$/
+        })
+    ]
 };
 
 module.exports = [

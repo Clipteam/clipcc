@@ -11,18 +11,14 @@ const base = {
         port: process.env.PORT || 8361
     },
     resolve: {
-        extensions: ['.ts', '.js'],
-        alias: {
-            'clipcc-svg-renderer': path.resolve(__dirname, '../svg-renderer/src/index.ts')
-        }
+        extensions: ['.ts', '.js']
     },
     devtool: 'cheap-module-source-map',
     module: {
         rules: [
             {
                 include: [
-                    path.resolve('src'),
-                    path.resolve('../svg-renderer/src')
+                    path.resolve('src')
                 ],
                 test: /\.([cm]?ts|tsx)$/,
                 loader: 'ts-loader',

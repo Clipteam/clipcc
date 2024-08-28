@@ -24,7 +24,7 @@ module.exports = {
     },
     externals: {
         'audio-context': true,
-        'minilog': true,
+        '@turbowarp/nanolog': true,
         'startaudiocontext': true
     }
 };

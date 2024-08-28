@@ -31,8 +31,7 @@ const base = {
             'clipcc-vm': path.resolve(__dirname, '../vm/src/index.js'),
             'clipcc-storage': path.resolve(__dirname, '../storage/src/index.js'),
             'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
-            'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js'),
-            'clipcc-svg-renderer': path.resolve(__dirname, '../svg-renderer/src/index.ts')
+            'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js')
         },
         symlinks: false
     },
