@@ -28,8 +28,7 @@ const base = {
             }
         }, {
             include: [
-                path.resolve('src'),
-                path.resolve('..')
+                path.resolve('src')
             ],
             test: /\.([cm]?ts|tsx)$/,
             loader: 'ts-loader',

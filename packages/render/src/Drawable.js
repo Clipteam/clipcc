@@ -8,9 +8,13 @@ const EffectTransform = require('./EffectTransform');
 const log = require('./util/log');
 
 /**
+ * @typedef {number} int
+ */
+
+/**
  * An internal workspace for calculating texture locations from world vectors
  * this is REUSED for memory conservation reasons
- * @type {twgl.v3}
+ * @type {twgl.v3.Vec3}
  */
 const __isTouchingPosition = twgl.v3.create();
 const FLOATING_POINT_ERROR_ALLOWANCE = 1e-6;
@@ -22,8 +26,8 @@ const FLOATING_POINT_ERROR_ALLOWANCE = 1e-6;
  * the drawable inverseMatrix is up to date.
  *
  * @param {Drawable} drawable The drawable to get the inverse matrix and uniforms from
- * @param {twgl.v3} vec [x,y] scratch space vector
- * @return {twgl.v3} [x,y] texture space float vector - transformed by effects and matrix
+ * @param {twgl.v3.Vec3} vec [x,y] scratch space vector
+ * @return {twgl.v3.Vec3} [x,y] texture space float vector - transformed by effects and matrix
  */
 const getLocalPosition = (drawable, vec) => {
     // Transfrom from world coordinates to Drawable coordinates.
@@ -195,7 +199,7 @@ class Drawable {
     }
 
     /**
-     * @returns {object.<string, *>} the shader uniforms to be used when rendering this Drawable.
+     * @returns {Record<string, *>} the shader uniforms to be used when rendering this Drawable.
      */
     getUniforms () {
         if (this._transformDirty) {
@@ -284,7 +288,7 @@ class Drawable {
     /**
      * Update the position, direction, scale, or effect properties of this Drawable.
      * @deprecated Use specific update* methods instead.
-     * @param {object.<string,*>} properties The new property values to set.
+     * @param {Record<string,*>} properties The new property values to set.
      */
     updateProperties (properties) {
         if ('position' in properties) {
@@ -502,15 +506,29 @@ class Drawable {
     // Otherwise, set it to `_isTouchingLinear`.
     // This allows several checks to be moved from the `isTouching` function to `updateCPURenderAttributes`.
 
-    // eslint-disable-next-line no-unused-vars
-    _isTouchingNever (vec) {
+    /**
+     * @private
+     * @param {twgl.v3.Vec3} vec The Vec3 object
+     * @returns {false} false.
+     */
+    _isTouchingNever (vec) { // eslint-disable-line no-unused-vars
         return false;
     }
 
+    /**
+      * @private
+      * @param {twgl.v3.Vec3} vec The Vec3 object
+      * @returns {boolean} Whether is touching nearest.
+      */
     _isTouchingNearest (vec) {
         return this.skin.isTouchingNearest(getLocalPosition(this, vec));
     }
 
+    /**
+      * @private
+      * @param {twgl.v3.Vec3} vec The Vec3 object
+      * @returns {boolean} Whether is touching linear.
+      */
     _isTouchingLinear (vec) {
         return this.skin.isTouchingLinear(getLocalPosition(this, vec));
     }
@@ -599,7 +617,7 @@ class Drawable {
      * Transform all the convex hull points by the current Drawable's
      * transform. This allows us to skip recalculating the convex hull
      * for many Drawable updates, including translation, rotation, scaling.
-     * @return {!Array.<!Array.number>} Array of glPoints which are Array<x, y>
+     * @return {Array.<number[]>} Array of glPoints which are Array<x, y>
      * @private
      */
     _getTransformedHullPoints () {

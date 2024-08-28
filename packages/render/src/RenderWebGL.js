@@ -25,9 +25,22 @@ const __blendColor = new Uint8ClampedArray(4);
 const __cpuTouchingColorPixelCount = 4e4;
 
 /**
- * @callback RenderWebGL#idFilterFunc
+ * @typedef {number} int
+ * @typedef {import('./Skin')} Skin
+ * @typedef {import('./PenSkin').PenAttributes} PenAttributes
+ */
+
+/**
+ * @typedef LayerGroup
+ * @property {int} groupIndex The relative position of this layer group in the group ordering
+ * @property {int} drawListOffset The absolute position of this layer group in the draw list
+ * This number gets updated as drawables get added to or deleted from the draw list.
+ */
+
+/**
+ * @callback idFilterFunc
  * @param {int} drawableID The ID to filter.
- * @return {bool} True if the ID passes the filter, otherwise false.
+ * @return {boolean} True if the ID passes the filter, otherwise false.
  */
 
 /**
@@ -92,7 +105,8 @@ class RenderWebGL extends EventEmitter {
     /**
      * Check if this environment appears to support this renderer before attempting to create an instance.
      * Catching an exception from the constructor is also a valid way to test for (lack of) support.
-     * @param {canvas} [optCanvas] - An optional canvas to use for the test. Otherwise a temporary canvas will be used.
+     * @param {HTMLCanvasElement} [optCanvas] - An optional canvas to use for the test.
+     *     Otherwise a temporary canvas will be used.
      * @returns {boolean} - True if this environment appears to support this renderer, false otherwise.
      */
     static isSupported (optCanvas) {
@@ -106,7 +120,7 @@ class RenderWebGL extends EventEmitter {
 
     /**
      * Ask TWGL to create a rendering context with the attributes used by this renderer.
-     * @param {canvas} canvas - attach the context to this canvas.
+     * @param {HTMLCanvasElement} canvas - attach the context to this canvas.
      * @returns {WebGLRenderingContext} - a TWGL rendering context (backed by either WebGL 1.0 or 2.0).
      * @private
      */
@@ -115,8 +129,7 @@ class RenderWebGL extends EventEmitter {
         // getWebGLContext = try WebGL 1.0 only
         // getContext = try WebGL 2.0 and if that doesn't work, try WebGL 1.0
         // getContext || getWebGLContext  = try WebGL 2.0 and if that doesn't work, try WebGL 1.0
-        return twgl.getContext(canvas, contextAttribs) ||
-            twgl.getWebGLContext(canvas, contextAttribs);
+        return twgl.getContext(canvas, contextAttribs);
     }
 
     /**
@@ -127,7 +140,7 @@ class RenderWebGL extends EventEmitter {
      * Queries such as "touching color?" will always execute at the native size.
      * @see RenderWebGL#setStageSize
      * @see RenderWebGL#resize
-     * @param {canvas} canvas The canvas to draw onto.
+     * @param {HTMLCanvasElement} canvas The canvas to draw onto.
      * @param {int} [xLeft=-240] The x-coordinate of the left edge.
      * @param {int} [xRight=240] The x-coordinate of the right edge.
      * @param {int} [yBottom=-180] The y-coordinate of the bottom edge.
@@ -167,15 +180,8 @@ class RenderWebGL extends EventEmitter {
         /** @type {Array<String>} */
         this._groupOrdering = [];
 
-        /**
-         * @typedef LayerGroup
-         * @property {int} groupIndex The relative position of this layer group in the group ordering
-         * @property {int} drawListOffset The absolute position of this layer group in the draw list
-         * This number gets updated as drawables get added to or deleted from the draw list.
-         */
-
         // Map of group name to layer group
-        /** @type {Object.<string, LayerGroup>} */
+        /** @type {Record<string, LayerGroup>} */
         this._layerGroups = {};
 
         /** @type {int} */
@@ -196,7 +202,7 @@ class RenderWebGL extends EventEmitter {
         /** @type {any} */
         this._regionId = null;
 
-        /** @type {function} */
+        /** @type {function | null} */
         this._exitRegion = null;
 
         /** @type {object} */
@@ -205,7 +211,7 @@ class RenderWebGL extends EventEmitter {
             exit: () => this._exitDrawBackground()
         };
 
-        /** @type {Array.<snapshotCallback>} */
+        /** @type {Array<SnapshotCallback>} */
         this._snapshotCallbacks = [];
 
         /** @type {Array<number>} */
@@ -304,7 +310,7 @@ class RenderWebGL extends EventEmitter {
     /**
      * Tell the renderer to draw various debug information to the provided canvas
      * during certain operations.
-     * @param {canvas} canvas The canvas to use for debug output.
+     * @param {HTMLCanvasElement} canvas The canvas to use for debug output.
      */
     setDebugCanvas (canvas) {
         this._debugCanvas = canvas;
@@ -451,6 +457,12 @@ class RenderWebGL extends EventEmitter {
         this._reskin(skinId, newSkin);
     }
 
+    /**
+     * Update current skin.
+     * @private
+     * @param {number} skinId The skin id.
+     * @param {Skin} newSkin the new skin.
+     */
     _reskin (skinId, newSkin) {
         const oldSkin = this._allSkins[skinId];
         this._allSkins[skinId] = newSkin;
@@ -496,7 +508,7 @@ class RenderWebGL extends EventEmitter {
     /**
      * Create a new Drawable and add it to the scene.
      * @param {string} group Layer group to add the drawable to
-     * @returns {int} The ID of the new Drawable.
+     * @returns {int | void} The ID of the new Drawable.
      */
     createDrawable (group) {
         if (!group || !Object.prototype.hasOwnProperty.call(this._layerGroups, group)) {
@@ -529,6 +541,12 @@ class RenderWebGL extends EventEmitter {
         }
     }
 
+    /**
+     * Add drawable to draw list.
+     * @private
+     * @param {number} drawableID the drawable id.
+     * @param {string} group The name of group
+     */
     _addToDrawList (drawableID, group) {
         const currentLayerGroup = this._layerGroups[group];
         const currentGroupOrderingIndex = currentLayerGroup.groupIndex;
@@ -539,6 +557,12 @@ class RenderWebGL extends EventEmitter {
         this._updateOffsets('add', currentGroupOrderingIndex);
     }
 
+    /**
+     * Update offsets.
+     * @private
+     * @param {'add' | 'delete'} updateType The update type.
+     * @param {number} currentGroupOrderingIndex the current group ordering index.
+     */
     _updateOffsets (updateType, currentGroupOrderingIndex) {
         for (let i = currentGroupOrderingIndex + 1; i < this._groupOrdering.length; i++) {
             const laterGroupName = this._groupOrdering[i];
@@ -554,8 +578,13 @@ class RenderWebGL extends EventEmitter {
         return this._drawList.filter(id => this._allDrawables[id]._visible);
     }
 
-    // Given a layer group, return the index where it ends (non-inclusive),
-    // e.g. the returned index does not have a drawable from this layer group in it)
+    /** e.g. the returned index does not have a drawable from this layer group in it)
+     * Given a layer group, return the index where it ends (non-inclusive).
+     * @private
+     * @param {LayerGroup} layerGroup The layer group.
+     * @returns {number} the index where it ends (non-inclusive).
+     *     e.g. the returned index does not have a drawable from this layer group in it)
+     */
     _endIndexForKnownLayerGroup (layerGroup) {
         const groupIndex = layerGroup.groupIndex;
         if (groupIndex === this._groupOrdering.length - 1) {
@@ -621,7 +650,7 @@ class RenderWebGL extends EventEmitter {
      * of the layer group.
      * @param {boolean=} optIsRelative If set, `order` refers to a relative change.
      * @param {number=} optMin If set, order constrained to be at least `optMin`.
-     * @return {?number} New order if changed, or null.
+     * @return {number | null | undefined} New order if changed, or null.
      */
     setDrawableOrder (drawableID, order, group, optIsRelative, optMin) {
         if (!group || !Object.prototype.hasOwnProperty.call(this._layerGroups, group)) {
@@ -695,7 +724,7 @@ class RenderWebGL extends EventEmitter {
     /**
      * Get the precise bounds for a Drawable.
      * @param {int} drawableID ID of Drawable to get bounds for.
-     * @return {object} Bounds for a tight box around the Drawable.
+     * @return {Rectangle} Bounds for a tight box around the Drawable.
      */
     getBounds (drawableID) {
         const drawable = this._allDrawables[drawableID];
@@ -888,6 +917,14 @@ class RenderWebGL extends EventEmitter {
         gl.enable(gl.BLEND);
     }
 
+    /**
+     * @private
+     * @param {number} drawableID The drawable id.
+     * @param {number[]} candidateIDs The candidate ids.
+     * @param {Rectangle} bounds The bounds.
+     * @param {number[] | undefined} color3b The color3b.
+     * @param {number[] | undefined} mask3b The mask3b.
+     */
     _isTouchingColorGpuStart (drawableID, candidateIDs, bounds, color3b, mask3b) {
         this._doExitDrawRegion();
 
@@ -1441,7 +1478,8 @@ class RenderWebGL extends EventEmitter {
      * could possibly intersect the given bounds.
      * @param {int} drawableID - ID for drawable of query.
      * @param {Array<int>} candidateIDs - Candidates for touching query.
-     * @return {?Array< {id, drawable, intersection} >} Filtered candidates with useful data.
+     * @return {?Array< {id: number, drawable: Drawable, intersection: Rectangle} >}
+     *     Filtered candidates with useful data.
      */
     _candidatesTouching (drawableID, candidateIDs) {
         const bounds = this._touchingBounds(drawableID);
@@ -1587,7 +1625,7 @@ class RenderWebGL extends EventEmitter {
      * Update the position, direction, scale, or effect properties of this Drawable.
      * @deprecated Use specific updateDrawable* methods instead.
      * @param {int} drawableID The ID of the Drawable to update.
-     * @param {object.<string,*>} properties The new property values to set.
+     * @param {Record<string,*>} properties The new property values to set.
      */
     updateDrawableProperties (drawableID, properties) {
         const drawable = this._allDrawables[drawableID];
@@ -1607,8 +1645,8 @@ class RenderWebGL extends EventEmitter {
     /**
      * Update the position object's x & y members to keep the drawable fenced in view.
      * @param {int} drawableID - The ID of the Drawable to update.
-     * @param {Array.<number, number>} position to be fenced - An array of type [x, y]
-     * @return {Array.<number, number>} The fenced position as an array [x, y]
+     * @param {[number, number]} position to be fenced - An array of type [x, y]
+     * @return {[number, number]} The fenced position as an array [x, y]
      */
     getFencedPositionOfDrawable (drawableID, position) {
         let x = position[0];
@@ -1646,7 +1684,8 @@ class RenderWebGL extends EventEmitter {
      * @param {int} penSkinID - the unique ID of a Pen Skin.
      */
     penClear (penSkinID) {
-        const skin = /** @type {PenSkin} */ this._allSkins[penSkinID];
+        /** @type {PenSkin} */
+        const skin = this._allSkins[penSkinID];
         skin.clear();
     }
 
@@ -1658,7 +1697,8 @@ class RenderWebGL extends EventEmitter {
      * @param {number} y - the Y coordinate of the point to draw.
      */
     penPoint (penSkinID, penAttributes, x, y) {
-        const skin = /** @type {PenSkin} */ this._allSkins[penSkinID];
+        /** @type {PenSkin} */
+        const skin = this._allSkins[penSkinID];
         skin.drawPoint(penAttributes, x, y);
     }
 
@@ -1672,7 +1712,8 @@ class RenderWebGL extends EventEmitter {
      * @param {number} y1 - the Y coordinate of the end of the line.
      */
     penLine (penSkinID, penAttributes, x0, y0, x1, y1) {
-        const skin = /** @type {PenSkin} */ this._allSkins[penSkinID];
+        /** @type {PenSkin} */
+        const skin = this._allSkins[penSkinID];
         skin.drawLine(penAttributes, x0, y0, x1, y1);
     }
 
@@ -1821,7 +1862,7 @@ class RenderWebGL extends EventEmitter {
      * @param {module:twgl/m4.Mat4} projection The projection matrix to use.
      * @param {object} [opts] Options for drawing
      * @param {idFilterFunc} opts.filter An optional filter function.
-     * @param {object.<string,*>} opts.extraUniforms Extra uniforms for the shaders.
+     * @param {Record<string,*>} opts.extraUniforms Extra uniforms for the shaders.
      * @param {int} opts.effectMask Bitmask for effects to allow
      * @param {boolean} opts.ignoreVisibility Draw all, despite visibility (e.g. stamping, touching color)
      * @param {int} opts.framebufferWidth The width of the framebuffer being drawn onto. Defaults to "native" width
@@ -2045,7 +2086,7 @@ class RenderWebGL extends EventEmitter {
      * Sample a "final" color from an array of drawables at a given scratch space.
      * Will blend any alpha values with the drawables "below" it.
      * @param {twgl.v3} vec Scratch Vector Space to sample
-     * @param {Array<Drawables>} drawables A list of drawables with the "top most"
+     * @param {Array<{drawable: Drawable}>} drawables A list of drawables with the "top most"
      *              drawable at index 0
      * @param {Uint8ClampedArray} dst The color3b space to store the answer in.
      * @return {Uint8ClampedArray} The dst vector with everything blended down.
@@ -2077,12 +2118,12 @@ class RenderWebGL extends EventEmitter {
     }
 
     /**
-     * @callback RenderWebGL#snapshotCallback
+     * @callback SnapshotCallback
      * @param {string} dataURI Data URI of the snapshot of the renderer
      */
 
     /**
-     * @param {snapshotCallback} callback Function called in the next frame with the snapshot data
+     * @param {SnapshotCallback} callback Function called in the next frame with the snapshot data
      */
     requestSnapshot (callback) {
         this._snapshotCallbacks.push(callback);

@@ -26,7 +26,14 @@ const base = {
         chunkFilename: 'chunks/[name].js'
     },
     resolve: {
-        extensions: ['.ts', '.js', 'tsx', 'jsx'],
+        extensions: ['.ts', '.js', '.tsx', '.jsx'],
+        alias: {
+            'clipcc-vm': path.resolve(__dirname, '../vm/src/index.js'),
+            'clipcc-storage': path.resolve(__dirname, '../storage/src/index.js'),
+            'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
+            'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js'),
+            'clipcc-svg-renderer': path.resolve(__dirname, '../svg-renderer/src/index.ts')
+        },
         symlinks: false
     },
     snapshot: {
@@ -38,7 +45,11 @@ const base = {
         rules: [{
             include: [
                 path.resolve(__dirname, 'src'),
-                /node_modules[\\/]clipcc-[^\\/]+[\\/]src/
+                path.resolve(__dirname, '../vm/src'),
+                path.resolve(__dirname, '../storage/src'),
+                path.resolve(__dirname, '../audio/src'),
+                path.resolve(__dirname, '../svg-renderer/src'),
+                path.resolve(__dirname, '../../node_modules/clipcc-svg-renderer/src')
             ],
             test: /\.([cm]?ts|tsx)$/,
             loader: 'ts-loader',
@@ -271,13 +282,13 @@ module.exports = [
                     patterns: [
                         {
                             from: 'src/lib/libraries/*.json',
-                            to: 'libraries/[name][ext]',
+                            to: 'libraries/[name][ext]'
                         }
                     ]
                 }),
                 new WorkboxPlugin.GenerateSW({
                     clientsClaim: true,
-                    skipWaiting: true,
+                    skipWaiting: true
                 })
             ])
         })) : []

@@ -15,13 +15,21 @@ const base = {
         filename: '[name].js'
     },
     resolve: {
+        alias: {
+            'clipcc-storage': path.resolve(__dirname, '../storage/src/index.js'),
+            'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
+            'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js'),
+            'clipcc-svg-renderer': path.resolve(__dirname, '../svg-renderer/src/index.ts')
+        },
         extensions: ['.ts', '.js']
     },
     module: {
         rules: [{
             include: [
                 path.resolve('src'),
-                path.resolve('..')
+                path.resolve('../svg-renderer/src'),
+                path.resolve('../storage/src'),
+                path.resolve('../render/src')
             ],
             test: /\.([cm]?ts|tsx)$/,
             loader: 'ts-loader',

@@ -3,9 +3,11 @@
   "version": "3.2.0",
   "description": "audio engine for scratch 3.0",
   "main": "dist.js",
-  "browser": "./src/index.js",
+  "browser": "dist.js",
+  "types": "./types",
   "scripts": {
     "test": "yarn run lint && yarn run tap && yarn run build",
+    "build:types": "tsc --project ./tsconfig.dts.json",
     "build": "webpack --bail",
     "watch": "webpack --watch",
     "lint": "eslint .",
@@ -35,6 +37,7 @@
     "eslint-config-scratch": "^9.0.8",
     "json": "9.0.6",
     "tap": "21.0.1",
+    "typescript": "^5.5.4",
     "web-audio-test-api": "0.5.2",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1"

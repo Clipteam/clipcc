@@ -1,5 +1,9 @@
-/// <reference path="./types/global.d.ts" />
-
 const VirtualMachine = require('./virtual-machine');
 
+const ArgumentType = require('./extension-support/argument-type');
+const BlockType = require('./extension-support/block-type');
+
 module.exports = VirtualMachine;
+
+module.exports.ArgumentType = ArgumentType;
+module.exports.BlockType = BlockType;

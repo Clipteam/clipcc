@@ -1,3 +1,5 @@
+// @ts-check
+
 let _TextEncoder;
 if (typeof TextEncoder === 'undefined') {
     _TextEncoder = require('fastestsmallesttextencoderdecoder').TextEncoder;
@@ -27,6 +29,9 @@ require('canvas-toBlob');
 
 const RESERVED_NAMES = ['_mouse_', '_stage_', '_edge_', '_myself_', '_random_'];
 
+/**
+ * @type {string[]}
+ */
 const CORE_EXTENSIONS = [
     // 'motion',
     // 'looks',
@@ -43,6 +48,15 @@ const CORE_EXTENSIONS = [
  * @typedef {number} int
  * @typedef {import('./engine/target')} Target
  * @typedef {import('./serialization/sb3').ImportedExtensionsInfo} ImportedExtensionsInfo
+ * @typedef {import('clipcc-audio')} AudioEngine
+ * @typedef {import('clipcc-render').RenderWebGL} RenderWebGL
+ * @typedef {import('clipcc-storage')} ScratchStorage
+ */
+
+/**
+ * @typedef {Object} FileDesc
+ * @property {string} fileName
+ * @property {string} fileContent
  */
 
 /**
@@ -65,13 +79,13 @@ class VirtualMachine extends EventEmitter {
         /**
          * The "currently editing"/selected target ID for the VM.
          * Block events from any Blockly workspace are routed to this target.
-         * @type {Target}
+         * @type {Target | null}
          */
         this.editingTarget = null;
 
         /**
          * The currently dragging target, for redirecting IO data.
-         * @type {Target}
+         * @type {Target | null}
          */
         this._dragTarget = null;
 
@@ -236,7 +250,7 @@ class VirtualMachine extends EventEmitter {
      */
     setLimitOptions (options) {
         this.runtime.limitOptions = Object.assign({}, this.runtime.limitOptions, options);
-        if (options.hasOwnProperty('edgelessStage') && this.runtime.renderer) {
+        if (options.hasOwnProperty() && this.runtime.renderer) {
             this.runtime.renderer.setEdgelessStage(options.edgelessStage);
         }
         if (options.hasOwnProperty('accurateCoordinates') && this.runtime.renderer) {
@@ -322,14 +336,14 @@ class VirtualMachine extends EventEmitter {
             return value;
         }, 2);
         this.emit('playgroundData', {
-            blocks: this.editingTarget.blocks,
+            blocks: this.editingTarget?.blocks,
             threads: filteredThreadData
         });
     }
 
     /**
      * Post I/O data to the virtual devices.
-     * @param {?string} device Name of virtual I/O device.
+     * @param {string} device Name of virtual I/O device.
      * @param {object} data Any data object to post to the I/O device.
      */
     postIOData (device, data) {
@@ -338,10 +352,18 @@ class VirtualMachine extends EventEmitter {
         }
     }
 
+    /**
+     * Set video provider.
+     * @param {unknown} videoProvider the video provider.
+     */
     setVideoProvider (videoProvider) {
         this.runtime.ioDevices.video.setProvider(videoProvider);
     }
 
+    /**
+     * Set cloud provider.
+     * @param {unknown} cloudProvider the cloud provider.
+     */
     setCloudProvider (cloudProvider) {
         this.runtime.ioDevices.cloud.setProvider(cloudProvider);
     }
@@ -383,7 +405,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Load a Scratch project from a .sb, .sb2, .sb3 or json string.
      * @param {string | object} input A json string, object, or ArrayBuffer representing the project to load.
-     * @return {!Promise} Promise that resolves after targets are installed.
+     * @return {!Promise<void>} Promise that resolves after targets are installed.
      */
     loadProject (input) {
         if (typeof input === 'object' && !(input instanceof ArrayBuffer) &&
@@ -463,7 +485,7 @@ class VirtualMachine extends EventEmitter {
     }
 
     /**
-     * @returns {string} Project in a Scratch 3.0 JSON representation.
+     * @returns {Promise<Blob>} Project in a Scratch 3.0 JSON representation.
      */
     saveProjectSb3 () {
         const soundDescs = serializeSounds(this.runtime);
@@ -499,6 +521,11 @@ class VirtualMachine extends EventEmitter {
         ), []);
     }
 
+    /**
+     * Add file descs to zip
+     * @param {FileDesc[]} fileDescs The array of file descs.
+     * @param {JSZip} zip the JSZip instance.
+     */
     _addFileDescsToZip (fileDescs, zip) {
         for (let i = 0; i < fileDescs.length; i++) {
             const currFileDesc = fileDescs[i];
@@ -552,7 +579,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Load a project from a Scratch JSON representation.
      * @param {string} json JSON string representing a project.
-     * @returns {Promise} Promise that resolves after the project has loaded
+     * @returns {Promise<void>} Promise that resolves after the project has loaded
      */
     fromJSON (json) {
         log.warning('fromJSON is now just a wrapper around loadProject, please use that function instead.');
@@ -563,7 +590,7 @@ class VirtualMachine extends EventEmitter {
      * Load a project from a Scratch JSON representation.
      * @param {string} projectJSON JSON string representing a project.
      * @param {?JSZip} zip Optional zipped project containing assets to be loaded.
-     * @returns {Promise} Promise that resolves after the project has loaded
+     * @returns {Promise<void>} Promise that resolves after the project has loaded
      */
     deserializeProject (projectJSON, zip) {
         // Clear the current runtime
@@ -601,7 +628,7 @@ class VirtualMachine extends EventEmitter {
      * @param {Array.<Target>} targets - the targets to be installed
      * @param {ImportedExtensionsInfo} extensions - metadata about extensions used by these targets
      * @param {boolean} wholeProject - set to true if installing a whole project, as opposed to a single sprite.
-     * @returns {Promise} resolved once targets have been installed
+     * @returns {Promise<void>} resolved once targets have been installed
      */
     installTargets (targets, extensions, wholeProject) {
         const extensionPromises = [];
@@ -652,7 +679,7 @@ class VirtualMachine extends EventEmitter {
      * Add a sprite, this could be .sprite2 or .sprite3. Unpack and validate
      * such a file first.
      * @param {string | object} input A json string, object, or ArrayBuffer representing the project to load.
-     * @return {!Promise} Promise that resolves after targets are installed.
+     * @return {!Promise<void>} Promise that resolves after targets are installed.
      */
     addSprite (input) {
         const errorPrefix = 'Sprite Upload Error:';
@@ -703,7 +730,7 @@ class VirtualMachine extends EventEmitter {
      * Add a single sprite from the "Sprite2" (i.e., SB2 sprite) format.
      * @param {object} sprite Object representing 2.0 sprite to be added.
      * @param {?ArrayBuffer} zip Optional zip of assets being referenced by json
-     * @returns {Promise} Promise that resolves after the sprite is added
+     * @returns {Promise<void>} Promise that resolves after the sprite is added
      */
     _addSprite2 (sprite, zip) {
         // Validate & parse
@@ -718,7 +745,7 @@ class VirtualMachine extends EventEmitter {
      * Add a single sb3 sprite.
      * @param {object} sprite Object rperesenting 3.0 sprite to be added.
      * @param {?ArrayBuffer} zip Optional zip of assets being referenced by target json
-     * @returns {Promise} Promise that resolves after the sprite is added
+     * @returns {Promise<void>} Promise that resolves after the sprite is added
      */
     _addSprite3 (sprite, zip) {
         // Validate & parse
@@ -738,7 +765,7 @@ class VirtualMachine extends EventEmitter {
      * @property {number} [bitmapResolution] - the resolution scale for a bitmap costume.
      * @param {string} optTargetId - the id of the target to add to, if not the editing target.
      * @param {string} optVersion - if this is 2, load costume as sb2, otherwise load costume as sb3.
-     * @returns {?Promise} - a promise that resolves when the costume has been added
+     * @returns {?Promise<void>} - a promise that resolves when the costume has been added
      */
     addCostume (md5ext, costumeObject, optTargetId, optVersion) {
         const target = optTargetId ? this.runtime.getTargetById(optTargetId) :
@@ -764,7 +791,7 @@ class VirtualMachine extends EventEmitter {
      * @property {number} rotationCenterX - the X component of the costume's origin.
      * @property {number} rotationCenterY - the Y component of the costume's origin.
      * @property {number} [bitmapResolution] - the resolution scale for a bitmap costume.
-     * @returns {?Promise} - a promise that resolves when the costume has been added
+     * @returns {?Promise<void>} - a promise that resolves when the costume has been added
      */
     addCostumeFromLibrary (md5ext, costumeObject) {
         if (!this.editingTarget) return Promise.reject();
@@ -774,7 +801,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Duplicate the costume at the given index. Add it at that index + 1.
      * @param {!int} costumeIndex Index of costume to duplicate
-     * @returns {?Promise} - a promise that resolves when the costume has been decoded and added
+     * @returns {?Promise<void>} - a promise that resolves when the costume has been decoded and added
      */
     duplicateCostume (costumeIndex) {
         const originalCostume = this.editingTarget.getCostumes()[costumeIndex];
@@ -790,7 +817,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Duplicate the sound at the given index. Add it at that index + 1.
      * @param {!int} soundIndex Index of sound to duplicate
-     * @returns {?Promise} - a promise that resolves when the sound has been decoded and added
+     * @returns {?Promise<void>} - a promise that resolves when the sound has been decoded and added
      */
     duplicateSound (soundIndex) {
         const originalSound = this.editingTarget.getSounds()[soundIndex];
@@ -814,7 +841,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Delete a costume from the current editing target.
      * @param {int} costumeIndex - the index of the costume to be removed.
-     * @return {?function} A function to restore the deleted costume, or null,
+     * @return {?Function} A function to restore the deleted costume, or null,
      * if no costume was deleted.
      */
     deleteCostume (costumeIndex) {
@@ -834,7 +861,7 @@ class VirtualMachine extends EventEmitter {
      * Add a sound to the current editing target.
      * @param {!object} soundObject Object representing the costume.
      * @param {string} optTargetId - the id of the target to add to, if not the editing target.
-     * @returns {?Promise} - a promise that resolves when the sound has been decoded and added
+     * @returns {?Promise<void>} - a promise that resolves when the sound has been decoded and added
      */
     addSound (soundObject, optTargetId) {
         const target = optTargetId ? this.runtime.getTargetById(optTargetId) :
@@ -1057,7 +1084,7 @@ class VirtualMachine extends EventEmitter {
      * @property {number} rotationCenterX - the X component of the backdrop's origin.
      * @property {number} rotationCenterY - the Y component of the backdrop's origin.
      * @property {number} [bitmapResolution] - the resolution scale for a bitmap backdrop.
-     * @returns {?Promise} - a promise that resolves when the backdrop has been added
+     * @returns {?Promise<void>} - a promise that resolves when the backdrop has been added
      */
     addBackdrop (md5ext, backdropObject) {
         return loadCostume(md5ext, backdropObject, this.runtime).then(() => {
@@ -1151,7 +1178,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Duplicate a sprite.
      * @param {string} targetId ID of a target whose sprite to duplicate.
-     * @returns {Promise} Promise that resolves when duplicated target has
+     * @returns {Promise<void>} Promise that resolves when duplicated target has
      *     been added to the runtime.
      */
     duplicateSprite (targetId) {
@@ -1217,8 +1244,8 @@ class VirtualMachine extends EventEmitter {
     /**
      * set the current locale and builtin messages for the VM
      * @param {!string} locale       current locale
-     * @param {!object} messages     builtin messages map for current locale
-     * @returns {Promise} Promise that resolves when all the blocks have been
+     * @param {!Record<string, string | formatMessage.Translation>} messages     builtin messages map for current locale
+     * @returns {Promise<void>} Promise that resolves when all the blocks have been
      *     updated for a new locale (or empty if locale hasn't changed.)
      */
     setLocale (locale, messages) {
@@ -1230,7 +1257,7 @@ class VirtualMachine extends EventEmitter {
 
     /**
      * get the current locale for the VM
-     * @returns {string} the current locale in the VM
+     * @returns {formatMessage.Locales} the current locale in the VM
      */
     getLocale () {
         return formatMessage.setup().locale;
@@ -1315,7 +1342,7 @@ class VirtualMachine extends EventEmitter {
      * @param {!string} targetId Id of target to add blocks to.
      * @param {?string} optFromTargetId Optional target id indicating that blocks are being
      * shared from that target. This is needed for resolving any potential variable conflicts.
-     * @return {!Promise} Promise that resolves when the extensions and blocks have been added.
+     * @return {!Promise<void>} Promise that resolves when the extensions and blocks have been added.
      */
     shareBlocksToTarget (blocks, targetId, optFromTargetId) {
         const sb3 = require('./serialization/sb3');
@@ -1356,7 +1383,7 @@ class VirtualMachine extends EventEmitter {
      * Sets the newly added costume as the current costume.
      * @param {!number} costumeIndex Index of the costume of the editing target to share.
      * @param {!string} targetId Id of target to add the costume.
-     * @return {Promise} Promise that resolves when the new costume has been loaded.
+     * @return {Promise<void>} Promise that resolves when the new costume has been loaded.
      */
     shareCostumeToTarget (costumeIndex, targetId) {
         const originalCostume = this.editingTarget.getCostumes()[costumeIndex];
@@ -1377,7 +1404,7 @@ class VirtualMachine extends EventEmitter {
      * Called when sounds are dragged from editing target to another target.
      * @param {!number} soundIndex Index of the sound of the editing target to share.
      * @param {!string} targetId Id of target to add the sound.
-     * @return {Promise} Promise that resolves when the new sound has been loaded.
+     * @return {Promise<void>} Promise that resolves when the new sound has been loaded.
      */
     shareSoundToTarget (soundIndex, targetId) {
         const originalSound = this.editingTarget.getSounds()[soundIndex];
@@ -1407,7 +1434,7 @@ class VirtualMachine extends EventEmitter {
      * Emit metadata about available targets.
      * An editor UI could use this to display a list of targets and show
      * the currently editing one.
-     * @param {boolean} triggerProjectChange If true, also emit a project changed event.
+     * @param {boolean=} triggerProjectChange If true, also emit a project changed event.
      * Disabled selectively by updates that don't affect project serialization.
      * Defaults to true.
      */

@@ -10,8 +10,10 @@
     "url": "https://github.com/Clipteam/clipcc.git"
   },
   "main": "./dist/node/scratch-render.js",
-  "browser": "./src/index.js",
+  "types": "./dist/types/index.d.ts",
+  "browser": "./dist/web/scratch-render.js",
   "scripts": {
+    "build:types": "tsc --project ./tsconfig.dts.json",
     "build": "webpack --progress --color",
     "docs": "jsdoc -c .jsdoc.json",
     "lint": "eslint .",
@@ -24,6 +26,7 @@
     "watch": "webpack --progress --color --watch --watch-poll"
   },
   "devDependencies": {
+    "@types/hull.js": "^1.0.4",
     "babel-core": "6.26.3",
     "babel-eslint": "10.1.0",
     "babel-loader": "^9.1.2",
@@ -60,6 +63,6 @@
     "ify-loader": "1.1.0",
     "linebreak": "0.3.0",
     "minilog": "3.1.0",
-    "twgl.js": "4.4.0"
+    "twgl.js": "4.24.0"
   }
 }

@@ -5,6 +5,16 @@ const twgl = require('twgl.js');
 const RenderConstants = require('./RenderConstants');
 const Silhouette = require('./Silhouette');
 
+/**
+ * @typedef {number} int
+ * @typedef {import('twgl.js').v3.Vec3} Vec3
+ * @typedef {import('./Drawable')} Drawable
+ * @typedef {import('./Rectangle')} Rectangle
+ */
+
+/**
+ * @abstract
+ */
 class Skin extends EventEmitter {
     /**
      * Create a Skin, which stores and/or generates textures for use in rendering.
@@ -20,7 +30,7 @@ class Skin extends EventEmitter {
         /** @type {Vec3} */
         this._rotationCenter = twgl.v3.create(0, 0);
 
-        /** @type {WebGLTexture} */
+        /** @type {WebGLTexture | null} */
         this._texture = null;
 
         /**
@@ -38,7 +48,7 @@ class Skin extends EventEmitter {
 
             /**
              * The actual WebGL texture object for the skin.
-             * @type {WebGLTexture}
+             * @type {WebGLTexture | null}
              */
             u_skin: null
         };
@@ -114,7 +124,7 @@ class Skin extends EventEmitter {
 
     /**
      * Get the bounds of the drawable for determining its fenced position.
-     * @param {Array<number>} drawable - The Drawable instance this skin is using.
+     * @param {Drawable} drawable - The Drawable instance this skin is using.
      * @param {?Rectangle} result - Optional destination for bounds calculation.
      * @return {!Rectangle} The drawable's bounds. For compatibility with Scratch 2, we always use getAABB.
      */
@@ -125,7 +135,7 @@ class Skin extends EventEmitter {
     /**
      * Update and returns the uniforms for this skin.
      * @param {Array<number>} scale - The scaling factors to be used.
-     * @returns {object.<string, *>} the shader uniforms to be used when rendering with this Skin.
+     * @returns {Record<string, *>} the shader uniforms to be used when rendering with this Skin.
      */
     getUniforms (scale) {
         this._uniforms.u_skin = this.getTexture(scale);

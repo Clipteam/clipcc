@@ -5296,6 +5296,11 @@
     "@types/qs" "*"
     "@types/serve-static" "*"
 
+"@types/fastestsmallesttextencoderdecoder@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@types/fastestsmallesttextencoderdecoder/-/fastestsmallesttextencoderdecoder-1.0.2.tgz#eb130322c3cfab1a06566fd227cbf433ca5cb598"
+  integrity sha512-0Md9qUxGnQ9uJ0NjsA70Y0NHIl3NwfBO1d8CGXK0zhczRL85CXJ3M0JZsmCNQ0WcAbt08FuT4U1G1mWQqgOsUg==
+
 "@types/glob@^7.1.1":
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/@types/glob/-/glob-7.2.0.tgz#bc1b5bf3aa92f25bd5dd39f35c57361bdce5b2eb"
@@ -5320,6 +5325,11 @@
   integrity sha512-Qs5aULi+zV1bwKAg5z1PWnDXWmsn+LxIvUGv6E2+OOMYhclZMO+OXd9pYVf2gLykf2I7IV2u7oTHwChPNsvJ7g==
   dependencies:
     "@types/node" "*"
+
+"@types/hull.js@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@types/hull.js/-/hull.js-1.0.4.tgz#633d26095e93fb8e6fee4fa8b421d0902559ce48"
+  integrity sha512-4eMDYQSFROPgbExE7btF37tCeXnGrMEPo0S2Ul00XIgWnxTLZGlJTSme42phtNpIBKVgbD/U1DWzVnMBhB9tUQ==
 
 "@types/is-ci@^3.0.0":
   version "3.0.0"
@@ -27204,10 +27214,10 @@ tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-0.14.5.tgz#5ae68177f192d4456269d108afa93ff8743f4f64"
   integrity sha512-KXXFFdAbFXY4geFIwoyNK+f5Z1b7swfXABfL7HXCmoIWMKU3dmS26672A4EeQtDzLKy7SXmfBu51JolvEKwtGA==
 
-twgl.js@4.4.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/twgl.js/-/twgl.js-4.4.0.tgz#cc605fbbd3d8d951174df827a7896ab03b4679fb"
-  integrity sha512-W+uFP2DyK2dNhE38PcpituNi8CBm+YO5gY6o/IWEILT7NNDTT1wo3YcMmydwiCfUbnT7tz+EcjV7KlZLgE1PlQ==
+twgl.js@4.24.0:
+  version "4.24.0"
+  resolved "https://registry.yarnpkg.com/twgl.js/-/twgl.js-4.24.0.tgz#71b21ad56e1300cb10f12b1b72cae5bb31d81604"
+  integrity sha512-JGVTxuV9dqaBmajXyvuZIlhCHrTbIaoNjQvtdoLHyK74OtbmNwZUj6rfdp+pz9htitI/tVxiVQ2nuw+KmD29vg==
 
 type-check@^0.4.0, type-check@~0.4.0:
   version "0.4.0"
@@ -27389,7 +27399,7 @@ typedarray@^0.0.6:
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==
 
-typescript@5.5, typescript@^5.5.3:
+typescript@5.5, typescript@^5.5.3, typescript@^5.5.4:
   version "5.5.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.5.4.tgz#d9852d6c82bad2d2eda4fd74a5762a8f5909e9ba"
   integrity sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==
@@ -27398,11 +27408,6 @@ typescript@5.5, typescript@^5.5.3:
   version "5.0.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.0.3.tgz#fe976f0c826a88d0a382007681cbb2da44afdedf"
   integrity sha512-xv8mOEDnigb/tN9PSMTwSEqAnUvkoXMQlicOb0IUVDBSQCgBSaAAROUZYy2IcUy5qU6XajK5jjjO7TMWqBTKZA==
-
-typescript@^5.5.4:
-  version "5.5.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.5.4.tgz#d9852d6c82bad2d2eda4fd74a5762a8f5909e9ba"
-  integrity sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==
 
 ua-parser-js@^0.7.30:
   version "0.7.35"

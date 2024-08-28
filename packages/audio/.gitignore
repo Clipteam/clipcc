@@ -10,3 +10,4 @@ npm-*
 
 /dist.js
 /dist.js.map
+/types
