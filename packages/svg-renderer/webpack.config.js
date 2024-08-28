@@ -24,7 +24,12 @@ const base = {
             test: /\.js$/,
             loader: 'babel-loader',
             options: {
-                presets: [['@babel/preset-env', {targets: {}}]]
+                presets: [['@babel/preset-env', {
+                    targets: {
+                        browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8'],
+                        node: '20'
+                    }
+                }]]
             }
         }, {
             include: [
@@ -66,13 +71,6 @@ module.exports = [
             path: path.resolve('dist', 'web'),
             filename: '[name].js'
         },
-        module: {
-            rules: [{
-                options: {
-                    presets: [['env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}]]
-                }
-            }]
-        },
         optimization: {
             minimize: process.env.NODE_ENV === 'production'
         }
@@ -84,13 +82,6 @@ module.exports = [
             libraryTarget: 'umd',
             path: path.resolve('dist', 'node'),
             filename: '[name].js'
-        },
-        module: {
-            rules: [{
-                options: {
-                    presets: [['env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}]]
-                }
-            }]
         },
         optimization: {
             minimize: process.env.NODE_ENV === 'production'
