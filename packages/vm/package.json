@@ -14,7 +14,7 @@
   "types": "./dist/types/index.d.ts",
   "scripts": {
     "build:types": "tsc --project ./tsconfig.dts.json",
-    "build": "webpack --progress --color --bail",
+    "build": "yarn build:types && webpack --progress --color --bail",
     "coverage": "tap ./test/{unit,integration}/*.js --coverage --coverage-report=lcov",
     "deploy": "touch playground/.nojekyll && gh-pages -t -d playground -m \"Build for $(git log -n1 --pretty=format:\"%h %s\") [skip ci]\"",
     "docs": "jsdoc -c .jsdoc.json",

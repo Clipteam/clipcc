@@ -1,5 +1,6 @@
 const {IgnorePlugin} = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const defaultsDeep = require('lodash.defaultsdeep');
 const path = require('path');
 
@@ -37,11 +38,15 @@ const base = {
                 path.resolve('src')
             ],
             test: /\.([cm]?ts|tsx)$/,
-            loader: 'ts-loader',
-            options: {
-                transpileOnly: process.env.NODE_ENV !== 'production'
-            }
+            loader: 'ts-loader'
         }]
+    },
+    optimization: {
+        minimizer: [
+            new TerserPlugin({
+                include: /\.js$/
+            })
+        ]
     },
     plugins: [
         new IgnorePlugin({

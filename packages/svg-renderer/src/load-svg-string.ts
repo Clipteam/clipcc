@@ -1,4 +1,4 @@
-import DOMPurify from 'isomorphic-dompurify';
+import DOMPurify from 'dompurify';
 import SvgElement from './svg-element';
 import convertFonts from './font-converter';
 import fixupSvgString from './fixup-svg-string';
