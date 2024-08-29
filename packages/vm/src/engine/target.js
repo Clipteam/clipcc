@@ -10,6 +10,10 @@ const StringUtil = require('../util/string-util');
 const VariableUtil = require('../util/variable-util');
 
 /**
+ * @typedef {import('./runtime')} Runtime
+ */
+
+/**
  * @fileoverview
  * A Target is an abstract "code-running" object for the Scratch VM.
  * Examples include sprites/clones or potentially physical-world devices.
@@ -47,27 +51,27 @@ class Target extends EventEmitter {
         /**
          * Dictionary of variables and their values for this target.
          * Key is the variable id.
-         * @type {Object.<string,*>}
+         * @type {Record<string,*>}
          */
         this.variables = {};
         /**
          * Dictionary of comments for this target.
          * Key is the comment id.
-         * @type {Object.<string,*>}
+         * @type {Record<string,*>}
          */
         this.comments = {};
         /**
          * Dictionary of custom state for this target.
          * This can be used to store target-specific custom state for blocks which need it.
          * TODO: do we want to persist this in SB3 files?
-         * @type {Object.<string,*>}
+         * @type {Record<string,*>}
          */
         this._customState = {};
 
         /**
          * Currently known values for edge-activated hats.
          * Keys are block ID for the hat; values are the currently known values.
-         * @type {Object.<string, *>}
+         * @type {Record<string, *>}
          */
         this._edgeActivatedHatValues = {};
     }
@@ -100,6 +104,11 @@ class Target extends EventEmitter {
         return oldValue;
     }
 
+    /**
+     * Whether the block has edge-activated value.
+     * @param {string} blockId The block id.
+     * @returns {boolean} Whether the block has edge-activated value.
+     */
     hasEdgeActivatedValue (blockId) {
         return this._edgeActivatedHatValues.hasOwnProperty(blockId);
     }
@@ -136,7 +145,7 @@ class Target extends EventEmitter {
      * if it exists.
      * @param {string} id Id of the variable.
      * @param {string} name Name of the variable.
-     * @return {?Variable} Variable object.
+     * @return {Variable | undefined} Variable object.
      */
     lookupBroadcastMsg (id, name) {
         let broadcastMsg;
@@ -165,7 +174,7 @@ class Target extends EventEmitter {
      * if it exists. Does not create a new broadcast message variable if
      * it doesn't exist.
      * @param {string} name Name of the variable.
-     * @return {?Variable} Variable object.
+     * @return {Variable | undefined} Variable object.
      */
     lookupBroadcastByInputValue (name) {
         const vars = this.variables;
@@ -181,8 +190,7 @@ class Target extends EventEmitter {
      * Look up a variable object.
      * Search begins for local variables; then look for globals.
      * @param {string} id Id of the variable.
-     * @param {string} name Name of the variable.
-     * @return {!Variable} Variable object.
+     * @return {Variable | undefined} Variable object.
      */
     lookupVariableById (id) {
         // If we have a local copy, return it.
@@ -204,7 +212,7 @@ class Target extends EventEmitter {
      * was not found.
      * @param {string} name Name of the variable.
      * @param {string} type Type of the variable. Defaults to Variable.SCALAR_TYPE.
-     * @param {?bool} skipStage Optional flag to skip checking the stage
+     * @param {boolean=} skipStage Optional flag to skip checking the stage
      * @return {?Variable} Variable object if found, or null if not.
      */
     lookupVariableByNameAndType (name, type, skipStage) {
@@ -239,7 +247,7 @@ class Target extends EventEmitter {
     * Search begins for local lists; then look for globals.
     * @param {!string} id Id of the list.
     * @param {!string} name Name of the list.
-    * @return {!Varible} Variable object representing the found/created list.
+    * @return {Variable} Variable object representing the found/created list.
      */
     lookupOrCreateList (id, name) {
         let list = this.lookupVariableById(id);
@@ -343,7 +351,7 @@ class Target extends EventEmitter {
                         element: 'field',
                         name: variable.type === Variable.LIST_TYPE ? 'LIST' : 'VARIABLE',
                         value: id
-                    }, this.runtime);
+                    });
                     const monitorBlock = blocks.getBlock(variable.id);
                     if (monitorBlock) {
                         this.runtime.requestUpdateMonitor(Map({
@@ -497,7 +505,7 @@ class Target extends EventEmitter {
      * variables as well as any stage variables unless the skipStage flag is true.
      * For the stage, this is all stage variables.
      * @param {string} type The variable type to search for; defaults to Variable.SCALAR_TYPE
-     * @param {?bool} skipStage Optional flag to skip the stage.
+     * @param {?boolean} skipStage Optional flag to skip the stage.
      * @return {Array<string>} A list of variable names
      */
     getAllVariableNamesInScopeByType (type, skipStage) {

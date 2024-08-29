@@ -90,7 +90,7 @@ class MicroBit {
 
         /**
          * The most recently received value for each sensor.
-         * @type {Object.<string, number>}
+         * @type {Record<string, number>}
          * @private
          */
         this._sensors = {
@@ -105,7 +105,7 @@ class MicroBit {
 
         /**
          * The most recently received value for each gesture.
-         * @type {Object.<string, Object>}
+         * @type {Record<string, Object>}
          * @private
          */
         this._gestures = {

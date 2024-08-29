@@ -7,7 +7,7 @@
  * @property {string} [menuIconURI] - URI for an image to be placed on this extension's category menu item. Data URI ok.
  * @property {string} [docsURI] - link to documentation content for this extension.
  * @property {Array.<ExtensionBlockMetadata|string>} blocks - the blocks provided by this extension, plus separators.
- * @property {Object.<ExtensionMenuMetadata>} [menus] - map of menu name to metadata for each of this extension's menus.
+ * @property {Record<ExtensionMenuMetadata>} [menus] - map of menu name to metadata for each of this extension's menus.
  */
 
 /**
@@ -24,7 +24,7 @@
  * @property {Boolean} [isEdgeActivated] - sets whether a hat block is edge-activated.
  * @property {Boolean} [shouldRestartExistingThreads] - sets whether a hat/event block should restart existing threads.
  * @property {int} [branchCount] - for flow control blocks, the number of branches/substacks for this block.
- * @property {Object.<ExtensionArgumentMetadata>} [arguments] - map of argument placeholder to metadata about each arg.
+ * @property {Record<ExtensionArgumentMetadata>} [arguments] - map of argument placeholder to metadata about each arg.
  */
 
 /**

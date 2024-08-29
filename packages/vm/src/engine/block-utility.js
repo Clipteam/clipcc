@@ -7,6 +7,13 @@ const Timer = require('../util/timer');
  * runtime, thread, target, and convenient methods.
  */
 
+/**
+ * @typedef {import('./target')} Target
+ * @typedef {import('./sequencer')} Sequencer
+ * @typedef {import('./runtime')} Runtime
+ * @typedef {{now: () => number | undefined}} NowObj
+ */
+
 class BlockUtility {
     constructor (sequencer = null, thread = null) {
         /**
@@ -22,6 +29,9 @@ class BlockUtility {
          */
         this.thread = thread;
 
+        /**
+         * @type {NowObj}
+         */
         this._nowObj = {
             now: () => this.sequencer.runtime.currentMSecs
         };
@@ -46,13 +56,13 @@ class BlockUtility {
      * @type {Runtime}
      */
     get runtime () {
-        return this.sequencer.runtime;
+        return this.sequencer?.runtime;
     }
 
     /**
      * Use the runtime's currentMSecs value as a timestamp value for now
      * This is useful in some cases where we need compatibility with Scratch 2
-     * @type {function}
+     * @type {NowObj?}
      */
     get nowObj () {
         if (this.runtime) {

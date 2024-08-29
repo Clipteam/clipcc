@@ -12,7 +12,7 @@
  * many rows, or a single row of items.
  * @param {{x: number, y: number}} position The xy coordinates to retreive the corresponding index of.
  * @param {Array.<DOMRect>} boxes The rects of the items, returned from `getBoundingClientRect`
- * @param {bool} isRtl are the boxes in RTL order.
+ * @param {boolean} isRtl are the boxes in RTL order.
  * @return {?number} index of the corresponding box, or null if one could not be found.
  */
 const indexForPositionOnList = ({x, y}, boxes, isRtl) => {

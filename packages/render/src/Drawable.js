@@ -75,7 +75,7 @@ class Drawable {
         /**
          * The uniforms to be used by the vertex and pixel shaders.
          * Some of these are used by other parts of the renderer as well.
-         * @type {Object.<string,*>}
+         * @type {Record<string,*>}
          * @private
          */
         this._uniforms = {

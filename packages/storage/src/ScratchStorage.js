@@ -109,7 +109,7 @@ class ScratchStorage {
      * @param {DataFormat} dataFormat - The dataFormat of the data for the cached asset.
      * @param {Buffer} data - The data for the cached asset.
      * @param {string} [id] - The id for the cached asset.
-     * @param {bool} [generateId] - flag to set id to an md5 hash of data if `id` isn't supplied
+     * @param {boolean} [generateId] - flag to set id to an md5 hash of data if `id` isn't supplied
      * @returns {Asset} generated Asset with `id` attribute set if not supplied
      */
     createAsset (assetType, dataFormat, data, id, generateId) {

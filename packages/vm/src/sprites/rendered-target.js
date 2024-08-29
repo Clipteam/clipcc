@@ -46,7 +46,7 @@ class RenderedTarget extends Target {
 
         /**
          * Map of current graphic effect values.
-         * @type {!Object.<string, number>}
+         * @type {!Record<string, number>}
          */
         this.effects = {
             color: 0,

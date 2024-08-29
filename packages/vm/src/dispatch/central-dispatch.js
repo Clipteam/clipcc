@@ -18,7 +18,7 @@ class CentralDispatch extends SharedDispatch {
          * If the entry is a Worker, the service is provided by an object on that worker.
          * Otherwise, the service is provided locally and methods on the service will be called directly.
          * @see {setService}
-         * @type {object.<Worker|object>}
+         * @type {Record<Worker|object>}
          */
         this.services = {};
 

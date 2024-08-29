@@ -3,6 +3,10 @@ const Thread = require('./thread');
 const execute = require('./execute.js');
 
 /**
+ * @typedef {import('./runtime')} Runtime
+ */
+
+/**
  * Profiler frame name for stepping a single thread.
  * @const {string}
  */
@@ -39,6 +43,9 @@ let stepThreadsInnerProfilerId = -1;
 let executeProfilerId = -1;
 
 class Sequencer {
+    /**
+     * @param {Runtime} runtime The runtime object.
+     */
     constructor (runtime) {
         /**
          * A utility timer for timing thread sequencing.
