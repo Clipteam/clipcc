@@ -1,10 +1,10 @@
+// @ts-nocheck
 // Test transform-applier
 
-const test = require('tap').test;
-const jsdom = require('jsdom');
-const {JSDOM} = jsdom;
-const transformStrokeWidths = require('../src/transform-applier');
-const log = require('../src/util/log');
+import {test} from 'tap';
+import {JSDOM} from 'jsdom';
+import transformStrokeWidths from '../src/transform-applier';
+import log from '../src/util/log';
 
 // PathData, absolute instructions only
 const d = 'M -20 -20 0 10 ' +

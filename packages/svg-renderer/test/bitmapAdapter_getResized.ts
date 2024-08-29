@@ -1,7 +1,7 @@
 // Test getResizedWidthHeight function of bitmap adapter class
 
-const test = require('tap').test;
-const BitmapAdapter = require('../src/bitmap-adapter');
+import {test} from 'tap';
+import BitmapAdapter from '../src/bitmap-adapter';
 
 test('zero', t => {
     const bitmapAdapter = new BitmapAdapter();

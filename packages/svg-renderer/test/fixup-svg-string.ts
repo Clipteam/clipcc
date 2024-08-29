@@ -1,8 +1,8 @@
-const test = require('tap').test;
-const fs = require('fs');
-const path = require('path');
-const DOMParser = require('xmldom').DOMParser;
-const fixupSvgString = require('../src/fixup-svg-string');
+import {test} from 'tap';
+import fs from 'fs';
+import path from 'path';
+import {DOMParser} from 'xmldom';
+import fixupSvgString from '../src/fixup-svg-string';
 
 // The browser DOMParser throws on errors by default, replicate that here
 // by customizing the error callback to throw (defaults to logging)
@@ -55,14 +55,14 @@ test('fixupSvgString should strip `svg:` prefix from tag names', t => {
         .toString();
     const fixed = fixupSvgString(svgString);
 
-    const checkPrefixes = element => {
+    const checkPrefixes = (element: Element) => {
         t.not(element.prefix, 'svg');
         // JSDOM doesn't have element.children, only element.childNodes
         if (element.childNodes) {
             // JSDOM's childNodes is not iterable, so for...of cannot be used here
             for (let i = 0; i < element.childNodes.length; i++) {
                 const child = element.childNodes[i];
-                if (child.nodeType === 1 /* Node.ELEMENT_NODE */) checkPrefixes(child);
+                if (child.nodeType === 1 /* Node.ELEMENT_NODE */) checkPrefixes(child as Element);
             }
         }
     };
@@ -73,7 +73,7 @@ test('fixupSvgString should strip `svg:` prefix from tag names', t => {
         domParser.parseFromString(fixed, 'text/xml');
     });
 
-    checkPrefixes(domParser.parseFromString(fixed, 'text/xml'));
+    checkPrefixes(domParser.parseFromString(fixed, 'text/xml') as unknown as Element);
 
     t.end();
 });

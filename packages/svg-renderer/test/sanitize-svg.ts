@@ -1,8 +1,8 @@
-const test = require('tap').test;
-const fs = require('fs');
-const path = require('path');
+import {test} from 'tap';
+import fs from 'fs';
+import path from 'path';
 
-const sanitizeSvg = require('../src/sanitize-svg');
+import sanitizeSvg from '../src/sanitize-svg';
 
 // find all svg fixtures with filenames ending '.sanitized.svg', and compare their
 // content to the result when we run sanitizeSvg.sanitizeSvgText() on the raw
@@ -11,7 +11,7 @@ test('compare svg content before and after sanitize-svg sanitizes it', t => {
     const dirPath = path.resolve(__dirname, './fixtures/');
     const fixtureFilenames = fs.readdirSync(dirPath);
     // for simplicity, we'll call those existing '.sanitized.svg' files "correct"
-    const correctSvgFilenames = [];
+    const correctSvgFilenames: string[] = [];
     fixtureFilenames.forEach(filename => {
         if (/^.*.sanitized.svg$/.test(filename)) {
             correctSvgFilenames.push(filename);
