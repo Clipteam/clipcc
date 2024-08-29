@@ -5089,12 +5089,12 @@
   resolved "https://registry.yarnpkg.com/@tootallnate/quickjs-emscripten/-/quickjs-emscripten-0.23.0.tgz#db4ecfd499a9765ab24002c3b696d02e6d32a12c"
   integrity sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==
 
-"@transifex/api@4.2.5":
-  version "4.2.5"
-  resolved "https://registry.yarnpkg.com/@transifex/api/-/api-4.2.5.tgz#438a0f2ec9b3ac30f045fd62e9862fa9d9c2e489"
-  integrity sha512-br8ubTnKohECW3dPrR3h1casERTn3EvaV+gpHkWDZf3rlurkksAvEh/i9U+fIUzBF6ooYI0SG1JjRzuKkeaSZg==
+"@transifex/api@7.1.3":
+  version "7.1.3"
+  resolved "https://registry.yarnpkg.com/@transifex/api/-/api-7.1.3.tgz#a6b59698012a003a17fe47b89ae615a635db870e"
+  integrity sha512-oT6QXhRqduGqDNMfyRK4+u1RrAux0sCJe7rtFvEDc6oDg8h6dIr+2O2o8oSOio6E+JFS9KVrRbCIy2jFsPtRFQ==
   dependencies:
-    core-js "^3.22.4"
+    core-js "^3.35.0"
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.9"
@@ -9995,10 +9995,10 @@ core-js@^2.4.0, core-js@^2.5.0, core-js@^2.6.5:
   resolved "https://registry.yarnpkg.com/core-js/-/core-js-2.6.12.tgz#d9333dfa7b065e347cc5682219d6f690859cc2ec"
   integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
 
-core-js@^3.22.4:
-  version "3.30.0"
-  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.30.0.tgz#64ac6f83bc7a49fd42807327051701d4b1478dea"
-  integrity sha512-hQotSSARoNh1mYPi9O2YaWeiq/cEB95kOrFb4NCrO4RIFt1qqNpKsaE+vy/L3oiqvND5cThqXzUU3r9F7Efztg==
+core-js@^3.35.0:
+  version "3.38.1"
+  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.38.1.tgz#aa375b79a286a670388a1a363363d53677c0383e"
+  integrity sha512-OP35aUorbU3Zvlx7pjsFdu1rGNnD4pgw/CWoYzRY3t2EzoVT7shKHY1dlAy3f41cGIO7ZDPQimhGFTlEYkG/Hw==
 
 core-js@~2.3.0:
   version "2.3.0"
