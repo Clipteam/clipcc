@@ -2,9 +2,9 @@
   "name": "clipcc-audio",
   "version": "3.2.0",
   "description": "audio engine for scratch 3.0",
-  "main": "dist.js",
+  "main": "src/index.js",
   "browser": "dist.js",
-  "types": "./types",
+  "types": "./dist/types/index.d.ts",
   "scripts": {
     "test": "yarn run lint && yarn run tap && yarn run build",
     "build:types": "tsc --project ./tsconfig.dts.json",

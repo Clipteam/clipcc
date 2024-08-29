@@ -8,6 +8,6 @@ npm-*
 # Testing
 /.tap
 
+/dist
 /dist.js
 /dist.js.map
-/types
