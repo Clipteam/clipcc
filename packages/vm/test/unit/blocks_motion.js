@@ -21,8 +21,8 @@ test('Coordinates have limited precision', t => {
 
     motion.goToXY({X: 0.999999999, Y: 0.999999999}, util);
 
-    t.equals(motion.getX({}, util), 1);
-    t.equals(motion.getY({}, util), 1);
+    t.equal(motion.getX({}, util), 1);
+    t.equal(motion.getY({}, util), 1);
     t.end();
 });
 
@@ -37,7 +37,7 @@ test('Costumed stage has correct size', t => {
     
     motion.goToXY({X: 640, Y: 640}, util);
 
-    t.equals(motion.getX({}, util), 640);
-    t.equals(motion.getY({}, util), 640);
+    t.equal(motion.getX({}, util), 640);
+    t.equal(motion.getY({}, util), 640);
     t.end();
 });

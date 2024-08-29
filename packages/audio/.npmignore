@@ -2,5 +2,4 @@
 /.circleci
 
 # Testing
-/.nyc_output
-/coverage
+/.tap

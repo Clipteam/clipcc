@@ -202,8 +202,8 @@ const testCommand = function (t, command) {
     t.equal(command.json.type, 'test_command');
     testCategoryInfo(t, command);
     t.equal(command.json.outputShape, ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE);
-    t.assert(command.json.hasOwnProperty('previousStatement'));
-    t.assert(command.json.hasOwnProperty('nextStatement'));
+    t.ok(command.json.hasOwnProperty('previousStatement'));
+    t.ok(command.json.hasOwnProperty('nextStatement'));
     t.notOk(command.json.extensions && command.json.extensions.length); // OK if it's absent or empty
     t.equal(command.json.message0, 'text with %1 %2');
     t.notOk(command.json.hasOwnProperty('message1'));
@@ -315,7 +315,7 @@ test('registerExtensionPrimitives', t => {
 
         blocksInfo.forEach(blockInfo => {
             // `true` here means "either an object or a non-empty string but definitely not null or undefined"
-            t.true(blockInfo.info, 'Every block and pseudo-block must have a non-empty "info" field');
+            t.ok(blockInfo.info, 'Every block and pseudo-block must have a non-empty "info" field');
         });
 
         // Note that this also implicitly tests that block order is preserved

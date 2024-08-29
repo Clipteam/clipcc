@@ -14,7 +14,7 @@ e.g. STAGE_DIMENSION_DEFAULTS in lib/screen-utils.js */
     --clipcc-library-filter-bar-height: 2.5rem;
 
     --clipcc-stage-standard-border-width: 0.0625rem;
-    --clipcc-stage-full-screen-border-width: 0.1875rem;
+    --clipcc-stage-full-screen-border-width: 0.0625rem;
     --clipcc-stage-full-screen-stage-padding: 0.1875rem;
 
     --clipcc-form-radius: calc(var(--clipcc-space) / 2);

@@ -9,6 +9,9 @@ npm-*
 dist/*
 /playground
 
+# Tests
+/.tap
+
 # Editors
 /#*
 *~

@@ -72,11 +72,11 @@ test('addHelper', t => {
     t.equal(storage._helpers.length, initialHelperCount + loggingHelpers.length);
 
     // We shouldn't have any log entries yet
-    t.deepEqual(logContainer, []);
+    t.same(logContainer, []);
 
     return storage.load(storage.AssetType.Project, '0').then(() => {
         // Verify that all helpers were consulted, and in the correct order
-        t.deepEqual(logContainer, [
+        t.same(logContainer, [
             'first',
             'second',
             'third'
