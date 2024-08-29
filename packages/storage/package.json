@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/Clipteam/clipcc.git"
   },
-  "main": "./src/index.js",
+  "main": "./dist/node/scratch-storage.js",
   "types": "./dist/types/index.d.ts",
   "browser": "./dist/web/scratch-storage.js",
   "scripts": {
