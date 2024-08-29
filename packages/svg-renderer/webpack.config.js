@@ -28,8 +28,7 @@ const base = {
             options: {
                 presets: [['@babel/preset-env', {
                     targets: {
-                        browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8'],
-                        node: '20'
+                        browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']
                     }
                 }]]
             }
@@ -80,18 +79,6 @@ module.exports = [
             library: 'ScratchSVGRenderer',
             libraryTarget: 'umd',
             path: path.resolve('dist', 'web'),
-            filename: '[name].js'
-        },
-        optimization: {
-            minimize: process.env.NODE_ENV === 'production'
-        }
-    }),
-    defaultsDeep({}, base, {
-        target: 'node',
-        output: {
-            library: 'ScratchSVGRenderer',
-            libraryTarget: 'umd',
-            path: path.resolve('dist', 'node'),
             filename: '[name].js'
         },
         optimization: {
