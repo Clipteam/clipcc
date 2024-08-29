@@ -207,7 +207,7 @@ test('create with empty block json', t => {
 
 test('create with invalid json', t => {
     const result = adapter(events.createbadjson);
-    t.true(typeof result !== 'object');
+    t.ok(typeof result !== 'object');
     t.end();
 });
 
