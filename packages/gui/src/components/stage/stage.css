@@ -24,6 +24,7 @@
 
 .stage.full-screen {
     border: var(--clipcc-stage-full-screen-border-width) solid rgb(126, 133, 151);
+    border-radius: 0;
 }
 
 .with-color-picker {
