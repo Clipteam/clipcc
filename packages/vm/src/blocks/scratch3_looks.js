@@ -382,7 +382,7 @@ class Scratch3LooksBlocks {
      * Utility function to set the costume of a target.
      * Matches the behavior of Scratch 2.0 for different types of arguments.
      * @param {!Target} target Target to set costume to.
-     * @param {Any} requestedCostume Costume requested, e.g., 0, 'name', etc.
+     * @param {any} requestedCostume Costume requested, e.g., 0, 'name', etc.
      * @param {boolean=} optZeroIndex Set to zero-index the requestedCostume.
      * @return {Array.<!Thread>} Any threads started by this switch.
      */
@@ -416,7 +416,7 @@ class Scratch3LooksBlocks {
      * Utility function to set the backdrop of a target.
      * Matches the behavior of Scratch 2.0 for different types of arguments.
      * @param {!Target} stage Target to set backdrop to.
-     * @param {Any} requestedBackdrop Backdrop requested, e.g., 0, 'name', etc.
+     * @param {any} requestedBackdrop Backdrop requested, e.g., 0, 'name', etc.
      * @param {boolean=} optZeroIndex Set to zero-index the requestedBackdrop.
      * @return {Array.<!Thread>} Any threads started by this switch.
      */

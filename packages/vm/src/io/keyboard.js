@@ -131,7 +131,7 @@ class Keyboard {
 
     /**
      * Get key down state for a specified key.
-     * @param  {Any} keyArg key argument.
+     * @param  {any} keyArg key argument.
      * @return {boolean} Is the specified key down?
      */
     getKeyIsDown (keyArg) {

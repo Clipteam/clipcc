@@ -1,17 +1,16 @@
 /**
  * Default types of Target supported by the VM
- * @enum {string}
  */
-const TargetType = {
+enum TargetType {
     /**
      * Rendered target which can move, change costumes, etc.
      */
-    SPRITE: 'sprite',
+    SPRITE = 'sprite',
 
     /**
      * Rendered target which cannot move but can change backdrops
      */
-    STAGE: 'stage'
+    STAGE = 'stage'
 };
 
 module.exports = TargetType;
