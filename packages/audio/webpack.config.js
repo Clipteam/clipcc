@@ -14,6 +14,16 @@ module.exports = {
     },
     module: {
         rules: [{
+            include: [
+                path.resolve('src')
+            ],
+            test: /\.([cm]?ts|tsx)$/,
+            loader: 'ts-loader',
+            options: {
+                transpileOnly: true,
+                allowTsInNodeModules: true
+            }
+        }, {
             test: /\.js$/,
             include: path.resolve(__dirname, 'src'),
             loader: 'babel-loader',
