@@ -167,7 +167,7 @@ class Blocks extends React.Component {
         if (this.props.isVisible && JSON.stringify(this.props.toolboxContents) !== JSON.stringify(this._renderedToolboxContents)) {
             this.requestToolboxUpdate();
         }
-        if (this.props.hideNonVanillaBlocks !== prevProps.hideNonVanillaBlocks) {
+        if (this.props.isVisible && this.props.hideNonVanillaBlocks !== prevProps.hideNonVanillaBlocks) {
             const toolboxContents = this.getToolboxContents();
             if (toolboxContents.length) {
                 this.props.updateToolboxState(toolboxContents);
@@ -182,16 +182,13 @@ class Blocks extends React.Component {
             return;
         }
         // @todo hack to resize blockly manually in case resize happened while hidden
-        // @todo hack to reload the workspace due to gui bug #413
+        // @todo hack to reload the workspace due to gui bug scratchfoundation/scratch-gui#413
         if (this.props.isVisible) { // Scripts tab
             this.workspace.setVisible(true);
             if (prevProps.locale !== this.props.locale || this.props.locale !== this.props.vm.getLocale()) {
                 // call setLocale if the locale has changed, or changed while the blocks were hidden.
                 // vm.getLocale() will be out of sync if locale was changed while not visible
                 this.setLocale();
-            } else {
-                this.props.vm.refreshWorkspace();
-                this.requestToolboxUpdate();
             }
 
             window.dispatchEvent(new Event('resize'));
