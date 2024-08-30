@@ -792,7 +792,7 @@ class Blocks {
                 // Moved to the new parent's input.
                 // Don't obscure the shadow block.
                 let oldShadow = null;
-                if (this._blocks[e.newParent]Object.prototype.hasOwnProperty.call(.inputs, e.newInput)) {
+                if (Object.prototype.hasOwnProperty.call(this._blocks[e.newParent].inputs, e.newInput)) {
                     oldShadow = this._blocks[e.newParent].inputs[e.newInput].shadow;
                 }
 
