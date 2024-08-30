@@ -83,7 +83,8 @@ test('importing sb3 project with special chars in variable names', t => {
         // Find all the references for this variable, and verify they have the correct ID
         // There should be only two, one on the stage and one on bananas
         t.equal(allVarListFields[fooVarId].length, 2);
-        const stageVarBlocks = stageBlocks.filter(block => Object.prototype.hasOwnProperty.call(block.fields, 'VARIABLE'));
+        const stageVarBlocks = stageBlocks.filter(block =>
+            Object.prototype.hasOwnProperty.call(block.fields, 'VARIABLE'));
         t.equal(stageVarBlocks.length, 1);
         t.equal(stageVarBlocks[0].fields.VARIABLE.id, fooVarId);
         const catVarBlocks = catBlocks.filter(block => Object.prototype.hasOwnProperty.call(block.fields, 'VARIABLE'));

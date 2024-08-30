@@ -477,10 +477,18 @@ const serializeTarget = function (target, extensions) {
     if (Object.prototype.hasOwnProperty.call(target, 'volume')) obj.volume = target.volume;
     if (Object.prototype.hasOwnProperty.call(target, 'layerOrder')) obj.layerOrder = target.layerOrder;
     if (obj.isStage) { // Only the stage should have these properties
-        if (Object.prototype.hasOwnProperty.call(target, 'tempo')) obj.tempo = target.tempo;
-        if (Object.prototype.hasOwnProperty.call(target, 'videoTransparency')) obj.videoTransparency = target.videoTransparency;
-        if (Object.prototype.hasOwnProperty.call(target, 'videoState')) obj.videoState = target.videoState;
-        if (Object.prototype.hasOwnProperty.call(target, 'textToSpeechLanguage')) obj.textToSpeechLanguage = target.textToSpeechLanguage;
+        if (Object.prototype.hasOwnProperty.call(target, 'tempo')) {
+            obj.tempo = target.tempo;
+        }
+        if (Object.prototype.hasOwnProperty.call(target, 'videoTransparency')) {
+            obj.videoTransparency = target.videoTransparency;
+        }
+        if (Object.prototype.hasOwnProperty.call(target, 'videoState')) {
+            obj.videoState = target.videoState;
+        }
+        if (Object.prototype.hasOwnProperty.call(target, 'textToSpeechLanguage')) {
+            obj.textToSpeechLanguage = target.textToSpeechLanguage;
+        }
     } else { // The stage does not need the following properties, but sprites should
         obj.visible = target.visible;
         obj.x = target.x;

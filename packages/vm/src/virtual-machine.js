@@ -1494,7 +1494,10 @@ class VirtualMachine extends EventEmitter {
      */
     getTargetIdForDrawableId (drawableId) {
         const target = this.runtime.getTargetByDrawableId(drawableId);
-        if (target && Object.prototype.hasOwnProperty.call(target, 'id') && Object.prototype.hasOwnProperty.call(target, 'isStage') && !target.isStage) {
+        if (target &&
+            Object.prototype.hasOwnProperty.call(target, 'id') &&
+            Object.prototype.hasOwnProperty.call(target, 'isStage') && !target.isStage
+        ) {
             return target.id;
         }
         return null;
