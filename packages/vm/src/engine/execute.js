@@ -372,7 +372,7 @@ class BlockCached {
                             this._ops.push(cached);
                         }
                     }
-                } else if (this._inputs.hasOwnProperty(item)) {
+                } else if (Object.prototype.hasOwnProperty.call(this._inputs, item)) {
                     this._pushInput(item, blockContainer);
                 }
             }

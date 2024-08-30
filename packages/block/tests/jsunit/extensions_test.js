@@ -384,8 +384,8 @@ function test_mutator_mixin_no_dialog() {
     // Make sure all of the functions were installed correctly.
     assertEquals(block.domToMutation(), 'domToMutationFn');
     assertEquals(block.mutationToDom(), 'mutationToDomFn');
-    assertFalse(block.hasOwnProperty('compose'));
-    assertFalse(block.hasOwnProperty('decompose'));
+    assertFalse(Object.prototype.hasOwnProperty.call(block, 'compose'));
+    assertFalse(Object.prototype.hasOwnProperty.call(block, 'decompose'));
   } finally {
     if (block) {
       block.dispose();

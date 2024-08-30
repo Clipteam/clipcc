@@ -12,9 +12,9 @@ class Joystick {
     }
 
     postData (data) {
-        if (data.hasOwnProperty('x')) this._x = data.x;
-        if (data.hasOwnProperty('y')) this._y = data.y;
-        if (data.hasOwnProperty('distance')) this._distance = data.distance;
+        if (Object.prototype.hasOwnProperty.call(data, 'x')) this._x = data.x;
+        if (Object.prototype.hasOwnProperty.call(data, 'y')) this._y = data.y;
+        if (Object.prototype.hasOwnProperty.call(data, 'distance')) this._distance = data.distance;
     }
 
     getX () {

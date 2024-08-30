@@ -230,10 +230,10 @@ class VirtualMachine extends EventEmitter {
      */
     setLimitOptions (options) {
         this.runtime.limitOptions = Object.assign({}, this.runtime.limitOptions, options);
-        if (options.hasOwnProperty('edgelessStage') && this.runtime.renderer) {
+        if (Object.prototype.hasOwnProperty.call(options, 'edgelessStage') && this.runtime.renderer) {
             this.runtime.renderer.setEdgelessStage(options.edgelessStage);
         }
-        if (options.hasOwnProperty('accurateCoordinates') && this.runtime.renderer) {
+        if (Object.prototype.hasOwnProperty.call(options, 'accurateCoordinates') && this.runtime.renderer) {
             this.runtime.renderer.setAccurateCoordinates(options.accurateCoordinates);
         }
     }
@@ -428,7 +428,7 @@ class VirtualMachine extends EventEmitter {
             .then(() => this.runtime.emitProjectLoaded())
             .catch(error => {
                 // Intentionally rejecting here (want errors to be handled by caller)
-                if (error.hasOwnProperty('validationError')) {
+                if (Object.prototype.hasOwnProperty.call(error, 'validationError')) {
                     return Promise.reject(JSON.stringify(error));
                 }
                 return Promise.reject(error);
@@ -686,7 +686,7 @@ class VirtualMachine extends EventEmitter {
             .then(() => this.runtime.emitProjectChanged())
             .catch(error => {
                 // Intentionally rejecting here (want errors to be handled by caller)
-                if (error.hasOwnProperty('validationError')) {
+                if (Object.prototype.hasOwnProperty.call(error, 'validationError')) {
                     return Promise.reject(JSON.stringify(error));
                 }
                 return Promise.reject(`${errorPrefix} ${error}`);
@@ -1412,7 +1412,7 @@ class VirtualMachine extends EventEmitter {
             targetList: this.runtime.targets
                 .filter(
                     // Don't report clones.
-                    target => !target.hasOwnProperty('isOriginal') || target.isOriginal
+                    target => !Object.prototype.hasOwnProperty.call(target, 'isOriginal') || target.isOriginal
                 ).map(
                     target => target.toJSON()
                 ),
@@ -1494,7 +1494,7 @@ class VirtualMachine extends EventEmitter {
      */
     getTargetIdForDrawableId (drawableId) {
         const target = this.runtime.getTargetByDrawableId(drawableId);
-        if (target && target.hasOwnProperty('id') && target.hasOwnProperty('isStage') && !target.isStage) {
+        if (target && Object.prototype.hasOwnProperty.call(target, 'id') && Object.prototype.hasOwnProperty.call(target, 'isStage') && !target.isStage) {
             return target.id;
         }
         return null;
