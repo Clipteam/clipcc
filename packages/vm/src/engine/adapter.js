@@ -1,9 +1,22 @@
 const uid = require('../util/uid');
 
 /**
+ * @typedef {object} BlockState Blockly's state.
+ * @property {string} type Block's type (opcode in VM)
+ * @property {Record<string, any>} fields Block's fields
+ * @property {Reocrd<string, {block?: BlockState, shadow?: BlockState}} inputs Block's inputs
+ * @property {{id: string}=} comment Block's comment
+ * @property {BlockState?} next The next block.
+ * @property {any=} extraState The block's extra state.
+ * @property {number} x Block's x coordinate.
+ * @property {number} y Block's y coordinate.
+ * @property {boolean=} shadow Whether the block is a shadow.
+ */
+
+/**
  * Convert and an individual block state to the representation tree.
  * Based on Blockly.serialzation.blocks.save`.
- * @param {Object} state Block state for an individual block.
+ * @param {BlockState} state Block state for an individual block.
  * @param {object} blocks Collection of blocks to add to.
  * @param {boolean} isTopBlock Whether blocks at this level are "top blocks."
  * @param {?string} parent Parent block ID.
@@ -63,13 +76,13 @@ const stateToBlock = function (state, blocks, isTopBlock, parent) {
             name: inputName,
             block: input.block ? input.block.id : null,
             shadow: input.shadow ? input.shadow.id : null
-        }
+        };
 
         if (!block.inputs[inputName].block) {
-            block.inputs[inputName].block = block.inputs[inputName].shadow
+            block.inputs[inputName].block = block.inputs[inputName].shadow;
         }
     }
-    //Add comments
+    // Add comments
     if (state.comment) {
         block.comment = state.comment.id;
     }
@@ -98,7 +111,7 @@ const stateToBlock = function (state, blocks, isTopBlock, parent) {
  * Convert outer blocks state from a Blockly CREATE event
  * to a usable form for the Scratch runtime.
  * This structure is based on Blockly xml.js:`domToWorkspace` and `domToBlock`.
- * @param {Object} state state for this event.
+ * @param {object} state state for this event.
  * @return {Array.<object>} Usable list of blocks from this CREATE event.
  */
 const stateToBlocks = function (state) {
