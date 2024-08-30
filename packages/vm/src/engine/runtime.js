@@ -811,14 +811,14 @@ class Runtime extends EventEmitter {
      */
     _registerBlockPackages () {
         for (const packageName in defaultBlockPackages) {
-            if (defaultBlockPackages.hasOwnProperty(packageName)) {
+            if (Object.prototype.hasOwnProperty.call(defaultBlockPackages, packageName)) {
                 // @todo pass a different runtime depending on package privilege?
                 const packageObject = new (defaultBlockPackages[packageName])(this);
                 // Collect primitives from package.
                 if (packageObject.getPrimitives) {
                     const packagePrimitives = packageObject.getPrimitives();
                     for (const op in packagePrimitives) {
-                        if (packagePrimitives.hasOwnProperty(op)) {
+                        if (Object.prototype.hasOwnProperty.call(packagePrimitives, op)) {
                             this._primitives[op] =
                                 packagePrimitives[op].bind(packageObject);
                         }
@@ -828,7 +828,7 @@ class Runtime extends EventEmitter {
                 if (packageObject.getHats) {
                     const packageHats = packageObject.getHats();
                     for (const hatName in packageHats) {
-                        if (packageHats.hasOwnProperty(hatName)) {
+                        if (Object.prototype.hasOwnProperty.call(packageHats, hatName)) {
                             this._hats[hatName] = packageHats[hatName];
                         }
                     }
@@ -841,7 +841,7 @@ class Runtime extends EventEmitter {
                 if (packageObject.getOrders) {
                     const packageOrders = packageObject.getOrders();
                     for (const op in packageOrders) {
-                        if (packageOrders.hasOwnProperty(op)) {
+                        if (Object.prototype.hasOwnProperty.call(packageOrders, op)) {
                             this._orders[op] = packageOrders[op];
                         }
                     }
@@ -907,7 +907,7 @@ class Runtime extends EventEmitter {
         this._fillExtensionCategory(categoryInfo, extensionInfo);
 
         for (const fieldTypeName in categoryInfo.customFieldTypes) {
-            if (extensionInfo.customFieldTypes.hasOwnProperty(fieldTypeName)) {
+            if (Object.prototype.hasOwnProperty.call(extensionInfo.customFieldTypes, fieldTypeName)) {
                 const fieldTypeInfo = categoryInfo.customFieldTypes[fieldTypeName];
 
                 // Emit events for custom field types from extension
@@ -950,7 +950,7 @@ class Runtime extends EventEmitter {
         categoryInfo.menuInfo = {};
 
         for (const menuName in extensionInfo.menus) {
-            if (extensionInfo.menus.hasOwnProperty(menuName)) {
+            if (Object.prototype.hasOwnProperty.call(extensionInfo.menus, menuName)) {
                 const menuInfo = extensionInfo.menus[menuName];
                 const convertedMenu = this._buildMenuForScratchBlocks(menuName, menuInfo, categoryInfo);
                 categoryInfo.menus.push(convertedMenu);
@@ -958,7 +958,7 @@ class Runtime extends EventEmitter {
             }
         }
         for (const fieldTypeName in extensionInfo.customFieldTypes) {
-            if (extensionInfo.customFieldTypes.hasOwnProperty(fieldTypeName)) {
+            if (Object.prototype.hasOwnProperty.call(extensionInfo.customFieldTypes, fieldTypeName)) {
                 const fieldType = extensionInfo.customFieldTypes[fieldTypeName];
                 const fieldTypeInfo = this._buildCustomFieldInfo(
                     fieldTypeName,
@@ -1194,7 +1194,7 @@ class Runtime extends EventEmitter {
             break;
         case BlockType.HAT:
         case BlockType.EVENT:
-            if (!blockInfo.hasOwnProperty('isEdgeActivated')) {
+            if (!Object.prototype.hasOwnProperty.call(blockInfo, 'isEdgeActivated')) {
                 // if absent, this property defaults to true
                 blockInfo.isEdgeActivated = true;
             }
@@ -1638,7 +1638,7 @@ class Runtime extends EventEmitter {
      * @return {boolean} True if the op is known to be a hat.
      */
     getIsHat (opcode) {
-        return this._hats.hasOwnProperty(opcode);
+        return Object.prototype.hasOwnProperty.call(this._hats, opcode);
     }
 
     /**
@@ -1647,7 +1647,7 @@ class Runtime extends EventEmitter {
      * @return {boolean} True if the op is known to be a edge-activated hat.
      */
     getIsEdgeActivatedHat (opcode) {
-        return this._hats.hasOwnProperty(opcode) &&
+        return Object.prototype.hasOwnProperty.call(this._hats, opcode) &&
             this._hats[opcode].edgeActivated;
     }
 
@@ -1657,7 +1657,7 @@ class Runtime extends EventEmitter {
      * @return {Array.<string | Object>} The execution order array of given opcode.
      */
     getExecutionOrders (opcode) {
-        return this._orders.hasOwnProperty(opcode) && this._orders[opcode];
+        return Object.prototype.hasOwnProperty.call(this._orders, opcode) && this._orders[opcode];
     }
 
 
@@ -1880,7 +1880,7 @@ class Runtime extends EventEmitter {
      */
     startHats (requestedHatOpcode,
         optMatchFields, optTarget) {
-        if (!this._hats.hasOwnProperty(requestedHatOpcode)) {
+        if (!Object.prototype.hasOwnProperty.call(this._hats, requestedHatOpcode)) {
             // No known hat with this opcode.
             return;
         }
@@ -1890,7 +1890,7 @@ class Runtime extends EventEmitter {
         const hatMeta = instance._hats[requestedHatOpcode];
 
         for (const opts in optMatchFields) {
-            if (!optMatchFields.hasOwnProperty(opts)) continue;
+            if (!Object.prototype.hasOwnProperty.call(optMatchFields, opts)) continue;
             optMatchFields[opts] = optMatchFields[opts].toUpperCase();
         }
 
@@ -2118,7 +2118,7 @@ class Runtime extends EventEmitter {
         const newTargets = [];
         for (let i = 0; i < this.targets.length; i++) {
             this.targets[i].onStopAll();
-            if (this.targets[i].hasOwnProperty('isOriginal') &&
+            if (Object.hasOwnProperty.call(this.targets[i], 'isOriginal') &&
                 !this.targets[i].isOriginal) {
                 this.targets[i].dispose();
             } else {
@@ -2151,7 +2151,7 @@ class Runtime extends EventEmitter {
 
         // Find all edge-activated hats, and add them to threads to be evaluated.
         for (const hatType in this._hats) {
-            if (!this._hats.hasOwnProperty(hatType)) continue;
+            if (!Object.prototype.hasOwnProperty.call(this._hats, hatType)) continue;
             const hat = this._hats[hatType];
             if (hat.edgeActivated) {
                 this.startHats(hatType);

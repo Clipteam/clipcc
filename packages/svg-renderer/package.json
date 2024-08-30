@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@turbowarp/nanolog": "^0.2.0",
-    "base64-js": "^1.2.1",
+    "base64-js": "^1.5.1",
     "base64-loader": "^1.0.0",
     "css-tree": "^1.1.3",
     "fastestsmallesttextencoderdecoder": "^1.0.22",

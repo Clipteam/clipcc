@@ -414,7 +414,12 @@ class Blocks extends React.Component {
             }
             log.error(error);
         }
-        this.workspace.addChangeListener(this.props.vm.blockListener);
+
+        // cc - make sure the VM's blockListener is not triggered when updating the workspace
+        // fix scratchfoundation/scratch-gui#9552
+        setTimeout(() => {
+            this.workspace.addChangeListener(this.props.vm.blockListener);
+        }, 0);
 
         if (this.props.vm.editingTarget && this.props.workspaceMetrics.targets[this.props.vm.editingTarget.id]) {
             const {scrollX, scrollY, scale} = this.props.workspaceMetrics.targets[this.props.vm.editingTarget.id];
