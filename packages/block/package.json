@@ -52,7 +52,7 @@
     "gulp-replace": "^1.1.4",
     "json": "9.0.6",
     "rimraf": "2.7.1",
-    "terser-webpack-plugin": "^5.3.6",
+    "terser-webpack-plugin": "^5.3.10",
     "transifex": "1.6.6",
     "webdriverio": "^8.39.0",
     "webpack": "^5.75.0",
