@@ -1,0 +1,28 @@
+{
+  "name": "clipcc-extension",
+  "version": "3.2.0",
+  "type": "module",
+  "description": "ClipCC's extension manager",
+  "main": "dist/node/index.js",
+  "browser": "dist/web/clipcc-extension.js",
+  "types": "dist/types/index.d.ts",
+  "author": "Clipteam",
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "build": "yarn run clean && tsc --project ./tsconfig.node.json && webpack",
+    "clean": "rimraf ./dist"
+  },
+  "devDependencies": {
+    "@types/mime-types": "^2.1.4",
+    "clipcc-vm": "3.2.0",
+    "node-polyfill-webpack-plugin": "^4.0.0",
+    "terser-webpack-plugin": "^5.3.10",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.5.4",
+    "webpack": "^5.94.0"
+  },
+  "dependencies": {
+    "jszip": "^3.10.1",
+    "mime-types": "^2.1.35"
+  }
+}

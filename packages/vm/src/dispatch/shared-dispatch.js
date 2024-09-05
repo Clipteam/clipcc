@@ -82,7 +82,7 @@ class SharedDispatch {
                     return this._remoteTransferCall(provider, service, method, transfer, ...args);
                 }
 
-                const result = provider[method].apply(provider, args);
+                const result = provider[method](...args);
                 return Promise.resolve(result);
             }
             return Promise.reject(new Error(`Service not found: ${service}`));
@@ -146,27 +146,27 @@ class SharedDispatch {
         // So we should limit the maximum recursion depth.
         if (depth > 5) return undefined;
 
-        if (typeof obj === "function" || typeof obj === "symbol") {
+        if (typeof obj === 'function' || typeof obj === 'symbol') {
             return undefined;
         }
 
-        if (obj !== null && typeof obj === "object") {
+        if (obj !== null && typeof obj === 'object') {
             if (visited.has(obj)) return undefined;
             visited.add(obj);
 
             if (Array.isArray(obj)) {
-                return obj.map((item) => this._purifyObject(item, visited, depth + 1));
-            } else {
-                const result = {};
-                for (const key in obj) {
-                    const value = obj[key];
-                    const sanitizedValue = this._purifyObject(value, visited, depth + 1);
-                    if (sanitizedValue !== undefined) {
-                        result[key] = sanitizedValue;
-                    }
-                }
-                return result;
+                return obj.map(item => this._purifyObject(item, visited, depth + 1));
             }
+            const result = {};
+            for (const key in obj) {
+                const value = obj[key];
+                const sanitizedValue = this._purifyObject(value, visited, depth + 1);
+                if (sanitizedValue !== undefined) {
+                    result[key] = sanitizedValue;
+                }
+            }
+            return result;
+            
         }
         return obj;
     }
