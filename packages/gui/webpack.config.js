@@ -31,7 +31,8 @@ const base = {
             'clipcc-vm': path.resolve(__dirname, '../vm/src/index.js'),
             'clipcc-storage': path.resolve(__dirname, '../storage/src/index.js'),
             'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
-            'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js')
+            'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js'),
+            'clipcc-extension': path.resolve(__dirname, '../extension/src/index.ts')
         },
         symlinks: false
     },
@@ -48,6 +49,7 @@ const base = {
                 path.resolve(__dirname, '../storage/src'),
                 path.resolve(__dirname, '../audio/src'),
                 path.resolve(__dirname, '../svg-renderer/src'),
+                path.resolve(__dirname, '../extension/src'),
                 path.resolve(__dirname, '../../node_modules/clipcc-svg-renderer/src')
             ],
             test: /\.([cm]?ts|tsx)$/,

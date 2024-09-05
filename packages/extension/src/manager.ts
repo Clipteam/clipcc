@@ -82,7 +82,7 @@ class Manager {
         }
     }
 
-    async enableExtensions (...extensionIds: CCX.Manifest['id'][]) {
+    async enable (...extensionIds: CCX.Manifest['id'][]) {
         const orderedExtensionIds = this.getExtensionLoadOrder(extensionIds);
         for (const {id, mode} of orderedExtensionIds) {
             const script = this.scripts[id];
@@ -183,4 +183,6 @@ class Manager {
     }
 }
 
-export default Manager;
+export {
+    Manager
+};

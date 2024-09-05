@@ -41,6 +41,7 @@ import themeManagerHOC from '../lib/theme-manager-hoc.jsx';
 
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
+import ccxManagerHOC from '../lib/ccx-manager-hoc.tsx';
 
 class GUI extends React.Component {
     componentDidMount () {
@@ -178,6 +179,7 @@ const ConnectedGUI = injectIntl(connect(
 const WrappedGui = compose(
     LocalizationHOC,
     ErrorBoundaryHOC('Top Level App'),
+    ccxManagerHOC,
     FontLoaderHOC,
     QueryParserHOC,
     ProjectFetcherHOC,
