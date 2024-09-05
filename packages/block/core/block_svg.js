@@ -150,6 +150,13 @@ BlockSvg.prototype.isGlowingBlock_ = false;
 BlockSvg.prototype.isGlowingStack_ = false;
 
 /**
+ * Mouse down bind data of block.
+ * @type {Array<any[]>}
+ * @private
+ */
+BlockSvg.prototype.mouseDownBindData_ = null;
+
+/**
  * Constant for identifying rows that are to be rendered inline.
  * Don't collide with Blockly.constants.INPUT_VALUE and friends.
  * @const
@@ -176,8 +183,8 @@ BlockSvg.prototype.initSvg = function() {
   this.updateColour();
   this.updateMovable();
   if (!this.workspace.options.readOnly && !this.eventsInit_) {
-    browserEvents.conditionalBind(
-        this.getSvgRoot(), 'mousedown', this, this.onMouseDown_);
+    this.mouseDownBindData_ = browserEvents.conditionalBind(
+       this.getSvgRoot(), 'mousedown', this, this.onMouseDown_);
   }
   this.eventsInit_ = true;
 
@@ -1109,8 +1116,18 @@ BlockSvg.prototype.setVisible = function(visible) {
   if (!svgRoot) {
     return;
   }
-  if (visible) svgRoot.style.display = '';
-  else svgRoot.style.display = 'none';
+  if (visible) { 
+    svgRoot.style.display = '';
+    if (!this.workspace.options.readOnly && !this.isInFlyout) {
+      this.mouseDownBindData_ = browserEvents.conditionalBind(
+         this.getSvgRoot(), 'mousedown', this, this.onMouseDown_);
+    }
+    Tooltip.bindMouseEvents(this.svgPath_);
+  } else {
+    svgRoot.style.display = 'none';
+    if(!this.isInFlyout) browserEvents.unbind(this.mouseDownBindData_);
+    Tooltip.unbindMouseEvents(this.svgPath_);
+  };
 };
 
 /**

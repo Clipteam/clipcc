@@ -131,6 +131,8 @@ Tooltip.MARGINS = 5;
  */
 Tooltip.DIV = null;
 
+Tooltip.listeners_ = [];
+
 /**
  * Create the tooltip div and inject it onto the page.
  */
@@ -149,16 +151,27 @@ Tooltip.createDom = function() {
  * @param {!Element} element SVG element onto which tooltip is to be bound.
  */
 Tooltip.bindMouseEvents = function(element) {
-  browserEvents.bind(element, 'mouseover', null,
-      Tooltip.onMouseOver_);
-  browserEvents.bind(element, 'mouseout', null,
-      Tooltip.onMouseOut_);
+  Tooltip.listeners_.push(browserEvents.bind(element, 'mouseover', null,
+      Tooltip.onMouseOver_));
+  Tooltip.listeners_.push(browserEvents.bind(element, 'mouseout', null,
+      Tooltip.onMouseOut_));
 
   // Don't use browserEvents.bind for mousemove since that would create a
   // corresponding touch handler, even though this only makes sense in the
   // context of a mouseover/mouseout.
   element.addEventListener('mousemove', Tooltip.onMouseMove_, false);
 };
+
+/**
+ * Unbinds the required mouse events onto an SVG element.
+ * @param {!Element} element SVG element onto which tooltip is to be bound.
+ */
+Tooltip.unbindMouseEvents = function(element) {
+  Tooltip.listeners_.forEach(function(listener) {
+    browserEvents.unbind(listener);
+  })
+  element.removeEventListener('mousemove', Tooltip.onMouseMove_, false);
+}
 
 /**
  * Hide the tooltip if the mouse is over a different object.
