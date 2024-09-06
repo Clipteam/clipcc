@@ -64,6 +64,19 @@ export const setLocale = function(locale) {
 };
 
 /**
+ * Append new locale strings.
+ * @param {Object} newLocales new locale object.
+ * @package
+ */
+export const appendLocales = function(newLocales) {
+  if (newLocales['default']) {
+    Object.assign(Msg, newLocales['default']);
+    delete newLocales.default;
+  }
+  Object.assign(locales, newLocales);
+};
+
+/**
  * Gets a localized message, for use in the Scratch VM with json init.
  * Does not interpolate placeholders. Provided to allow default values in
  * dynamic menus, for example, 'next backdrop', or 'random position'

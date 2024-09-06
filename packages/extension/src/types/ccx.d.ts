@@ -89,7 +89,7 @@ declare namespace CCX {
     interface CategoryPrototype {
         categoryId: string;
         messageId: string;
-        color: string;
+        color: `#${string}`;
     }
 
     interface ButtonPrototype {
@@ -123,7 +123,7 @@ declare namespace CCX {
         function callGlobalFunction(name: string, ...args: unknown[]): unknown;
 
         function getVmInstance(): VirtualMachine;
-        function getBlockInstance(): ScratchBlocks;
+        function getBlockInstance(): ScratchBlocks | null;
     }
 
     interface Context {

@@ -44,6 +44,11 @@ class Target extends EventEmitter {
          */
         this.id = uid();
         /**
+         * Whether this target is stage
+         * @type {boolean}
+         */
+        this.isStage = false;
+        /**
          * Blocks run as code for this target.
          * @type {!Blocks}
          */

@@ -40,7 +40,7 @@ const ccxManagerHOC = function <P extends CCXManagerProps>(
             super(props);
             initCtx(props.vm, props.setExtendedXML);
             attachScratchBlocks(props.blocks);
-            props.manager.registerAddLocale(props.addLocale);
+            props.manager.registerAddGuiLocale(props.addLocale);
         }
 
         render() {

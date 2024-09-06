@@ -3,6 +3,7 @@ import * as JSZip from 'jszip';
 import Graph from "./util/graph";
 import { matchVersion } from "./util/version";
 import mime from 'mime-types';
+import { scratchBlocks } from "./ctx";
 
 const enum ERROR {
     UNAVAILABLE_EXTENSION = 0x90,
@@ -53,7 +54,7 @@ class Manager {
             }
 
             // Load locales
-            const locales: Record<string, Record<string, string>> = {};
+            const locales: Record<string, CCX.LocaleMap> = {};
             for (const fileName in zipData.files) {
                 const result = fileName.match(/^locales\/([A-Za-z0-9_-]+).json$/);
                 if (result) {
@@ -74,7 +75,8 @@ class Manager {
             }
 
             // Load locales before ``main.js`` executed to prevent block locale issues.
-            // @todo
+            this.addGuiLocale(locales);
+            scratchBlocks.ScratchMsgs.locales.appendLocales(locales);
 
             // Store script
             const script = await zipData.files['main.js'].async('text');
@@ -182,12 +184,12 @@ class Manager {
         requireStack.pop();
     }
 
-    private addLocale (locale: Record<string, CCX.LocaleMap>) {
-        console.error('addLocale() should be registered first.');
+    private addGuiLocale (locale: Record<string, CCX.LocaleMap>) {
+        console.error('addGuiLocale() should be registered first.');
     }
 
-    registerAddLocale (func: (locale: Record<string, CCX.LocaleMap>) => void) {
-        this.addLocale = func;
+    registerAddGuiLocale (func: (locale: Record<string, CCX.LocaleMap>) => void) {
+        this.addGuiLocale = func;
     }
 }
 
