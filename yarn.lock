@@ -5615,7 +5615,7 @@
     "@types/prop-types" "*"
     csstype "^3.0.2"
 
-"@types/react@^16.1.0":
+"@types/react@16.1.0":
   version "16.1.0"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.1.0.tgz#6c0e9955ce73f332b4a1948d45decaf18c764c6e"
   integrity sha512-gXrB20mWBLrYGtkdf5fA6wL3FEXpY2Nz8OOgVn1qonp66JE4mqFXUigKD8CVDofQu+EsSy8G4UFRJAshFWMOvA==

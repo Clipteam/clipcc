@@ -17,16 +17,6 @@ interface CCXManagerProps {
     [key: string]: any;
 }
 
-interface State {
-    scratchGui: {
-        vm: VirtualMachine;
-        blocks: ScratchBlocks;
-        ccx: {
-            manager: Manager;
-        };
-    };
-}
-
 /*
  * Higher Order Component to initialize CCX.
  * @param {React.ComponentType<any>} WrappedComponent component to manage CCX for
@@ -56,13 +46,13 @@ const ccxManagerHOC = function <P extends CCXManagerProps>(
         }
     }
 
-    const mapStateToProps = (state: State): Pick<CCXManagerProps, 'vm' | 'manager' | 'blocks'> => ({
+    const mapStateToProps = (state: any): Pick<CCXManagerProps, 'vm' | 'manager' | 'blocks'> => ({
         vm: state.scratchGui.vm,
         blocks: state.scratchGui.blocks,
         manager: state.scratchGui.ccx.manager
     });
 
-    const mapDispatchToProps = (dispatch) => ({
+    const mapDispatchToProps = (dispatch: any) => ({
         setExtendedXML: (xml: string) => dispatch(setExtendedXML(xml)),
         addLocale: (locale: Record<string, Record<string, string>>) => {
             dispatch(addLocales(locale));

@@ -1,6 +1,8 @@
 import VirtualMachine, { ImportedExtensionsInfo, Target } from 'clipcc-vm';
 import { BlockType, ParameterType, FilterType } from './enum';
 
+type ScratchBlocks = any;
+
 declare namespace CCX {
     interface Manifest {
         id: string;
@@ -150,3 +152,5 @@ declare namespace CCX {
         };
     }
 }
+
+export { CCX };

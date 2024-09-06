@@ -25,7 +25,7 @@ interface RequireInfo {
 }
 
 class Manager {
-    private manifests: Record<CCX.Manifest['id'], CCX.Manifest> = {};
+    manifests: Record<CCX.Manifest['id'], CCX.Manifest> = {};
     private instances: Record<CCX.Manifest['id'], CCX.Class> = {};
     private scripts: Record<CCX.Manifest['id'], string> = {};
 

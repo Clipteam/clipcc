@@ -35,7 +35,6 @@ import {resolveStageSize} from '../../lib/screen-utils';
 import {themeMap} from '../../lib/themes';
 
 import styles from './gui.css';
-import addExtensionIcon from './icon--extensions.svg';
 import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
@@ -100,7 +99,6 @@ const GUIComponent = props => {
         onActivateSoundsTab,
         onActivateTab,
         onClickLogo,
-        onExtensionButtonClick,
         onProjectTelemetryEvent,
         onRequestCloseBackdropLibrary,
         onRequestCloseCostumeLibrary,
@@ -316,19 +314,6 @@ const GUIComponent = props => {
                                             vm={vm}
                                         />
                                     </Box>
-                                    <Box className={styles.extensionButtonContainer}>
-                                        <button
-                                            className={styles.extensionButton}
-                                            title={intl.formatMessage(messages.addExtension)}
-                                            onClick={onExtensionButtonClick}
-                                        >
-                                            <img
-                                                className={styles.extensionButtonIcon}
-                                                draggable={false}
-                                                src={addExtensionIcon}
-                                            />
-                                        </button>
-                                    </Box>
                                     <Box className={styles.watermark}>
                                         <Watermark />
                                     </Box>
@@ -409,7 +394,6 @@ GUIComponent.propTypes = {
     onClickAccountNav: PropTypes.func,
     onClickLogo: PropTypes.func,
     onCloseAccountNav: PropTypes.func,
-    onExtensionButtonClick: PropTypes.func,
     onLogOut: PropTypes.func,
     onOpenRegistration: PropTypes.func,
     onRequestCloseBackdropLibrary: PropTypes.func,

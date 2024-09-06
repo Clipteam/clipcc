@@ -29,7 +29,7 @@ import TurboMode from '../../containers/turbo-mode.jsx';
 import MenuBarHOC from '../../containers/menu-bar-hoc.jsx';
 import SettingsMenu from './settings-menu.jsx';
 
-import {openSettingsModal} from '../../reducers/modals';
+import {openSettingsModal, openExtensionLibrary} from '../../reducers/modals';
 import {setPlayer} from '../../reducers/mode';
 import {
     autoUpdateProject,
@@ -76,6 +76,7 @@ import dropdownCaret from './dropdown-caret.svg';
 import fileIcon from './icon--file.svg';
 import editIcon from './icon--edit.svg';
 import aboutIcon from './icon--about.svg';
+import pluginsIcon from './icon--plugins.svg';
 
 // import scratchLogo from './scratch-logo.svg';
 import clipccLogo from './clipcc-logo-white.svg';
@@ -523,6 +524,19 @@ class MenuBar extends React.Component {
                                 </MenuSection>
                             </MenuBarMenu>
                         </div>
+                        <div
+                            className={classNames(styles.menuBarItem, styles.hoverable)}
+                            onMouseUp={this.props.onClickPlugins}
+                        >
+                            <img src={pluginsIcon} />
+                            <span className={styles.collapsibleLabel}>
+                                <FormattedMessage
+                                    defaultMessage="Plugins"
+                                    description="Text for plugins"
+                                    id="gui.menuBar.plugins"
+                                />
+                            </span>
+                        </div>
                     </div>
                     <Divider className={classNames(styles.divider)} />
                     {this.props.canEditTitle ? (
@@ -847,6 +861,7 @@ const mapDispatchToProps = dispatch => ({
     onClickAccount: () => dispatch(openAccountMenu()),
     onRequestCloseAccount: () => dispatch(closeAccountMenu()),
     onClickFile: () => dispatch(openFileMenu()),
+    onClickPlugins: () => dispatch(openExtensionLibrary()),
     onRequestCloseFile: () => dispatch(closeFileMenu()),
     onClickEdit: () => dispatch(openEditMenu()),
     onRequestCloseEdit: () => dispatch(closeEditMenu()),
