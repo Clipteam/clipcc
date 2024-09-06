@@ -356,7 +356,5 @@ export default function (vm) {
         return true;
     };
 
-    window.ScratchBlocks = ScratchBlocks;
-
     return ScratchBlocks;
 }
