@@ -33,6 +33,7 @@ import {
     activateTab,
     SOUNDS_TAB_INDEX
 } from '../reducers/editor-tab';
+import { setScratchBlocks } from '../reducers/blocks';
 
 const addFunctionListener = (object, property, callback) => {
     const oldFn = object[property];
@@ -51,6 +52,7 @@ class Blocks extends React.Component {
     constructor (props) {
         super(props);
         this.ScratchBlocks = VMScratchBlocks(props.vm);
+        this.props.setBlocks(this.ScratchBlocks);
         bindAll(this, [
             'attachVM',
             'checkoutWsByProccode',
@@ -167,7 +169,9 @@ class Blocks extends React.Component {
         if (this.props.isVisible && this.props.toolboxXML !== this._renderedToolboxXML) {
             this.requestToolboxUpdate();
         }
-        if (this.props.hideNonVanillaBlocks !== prevProps.hideNonVanillaBlocks) {
+        if (this.props.hideNonVanillaBlocks !== prevProps.hideNonVanillaBlocks ||
+            this.props.extendedXML !== prevProps.extendedXML
+        ) {
             const toolboxXML = this.getToolboxXML();
             if (toolboxXML) {
                 this.props.updateToolboxState(toolboxXML);
@@ -378,7 +382,7 @@ class Blocks extends React.Component {
                 targetSounds.length > 0 ? targetSounds[targetSounds.length - 1].name : '',
                 getColorsForTheme(this.props.theme),
                 this.props.hideNonVanillaBlocks
-            );
+            ) + this.props.extendedXML;
         } catch {
             return null;
         }
@@ -592,6 +596,7 @@ class Blocks extends React.Component {
             onActivateCustomProcedures,
             onRequestCloseExtensionLibrary,
             onRequestCloseCustomProcedures,
+            setBlocks,
             toolboxXML,
             updateMetrics: updateMetricsProp,
             workspaceMetrics,
@@ -665,6 +670,7 @@ Blocks.propTypes = {
         comments: PropTypes.bool,
         collapse: PropTypes.bool
     }),
+    setBlocks: PropTypes.func,
     stageSize: PropTypes.oneOf(Object.keys(STAGE_DISPLAY_SIZES)).isRequired,
     theme: PropTypes.oneOf(Object.keys(themeMap)),
     toolboxXML: PropTypes.string,
@@ -729,6 +735,9 @@ const mapDispatchToProps = dispatch => ({
     },
     onRequestCloseCustomProcedures: data => {
         dispatch(deactivateCustomProcedures(data));
+    },
+    setBlocks: blocks => {
+        dispatch(setScratchBlocks(blocks))
     },
     updateToolboxState: toolboxXML => {
         dispatch(updateToolbox(toolboxXML));

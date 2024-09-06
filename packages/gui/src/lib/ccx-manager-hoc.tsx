@@ -1,19 +1,29 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { initCtx } from 'clipcc-extension';
-import { Manager } from 'clipcc-extension';
+import { initCtx, attachScratchBlocks } from 'clipcc-extension';
+import type { Manager } from 'clipcc-extension';
 import VirtualMachine from 'clipcc-vm';
+import { setExtendedXML } from '../reducers/ccx';
+import { addLocales, updateLocale } from '../reducers/locales';
+
+type ScratchBlocks = any;
 
 interface CCXManagerProps {
     vm: VirtualMachine;
-    ccx: Manager;
+    manager: Manager;
+    blocks: ScratchBlocks;
+    setExtendedXML (xml: string): void;
+    addLocale (locale: Record<string, Record<string, string>>): void;
     [key: string]: any;
 }
 
 interface State {
     scratchGui: {
         vm: VirtualMachine;
-        ccx: Manager;
+        blocks: ScratchBlocks;
+        ccx: {
+            manager: Manager;
+        };
     };
 }
 
@@ -24,13 +34,13 @@ interface State {
  */
 const ccxManagerHOC = function <P extends CCXManagerProps>(
     WrappedComponent: React.ComponentType<P>
-): React.ComponentClass<Omit<P, 'vm' | 'ccx'>> {
+): React.ComponentClass<Omit<P, 'vm' | 'manager'>> {
     class CCXManager extends React.Component<P> {
-        static displayName = `CCXManager(${WrappedComponent.displayName || WrappedComponent.name || 'Component'})`;
-
         constructor(props: P) {
             super(props);
-            initCtx(props.vm);
+            initCtx(props.vm, props.setExtendedXML);
+            attachScratchBlocks(props.blocks);
+            props.manager.registerAddLocale(props.addLocale);
         }
 
         render() {
@@ -46,13 +56,26 @@ const ccxManagerHOC = function <P extends CCXManagerProps>(
         }
     }
 
-    const mapStateToProps = (state: State): Pick<CCXManagerProps, 'vm' | 'ccx'> => ({
+    const mapStateToProps = (state: State): Pick<CCXManagerProps, 'vm' | 'manager' | 'blocks'> => ({
         vm: state.scratchGui.vm,
-        ccx: state.scratchGui.ccx
+        blocks: state.scratchGui.blocks,
+        manager: state.scratchGui.ccx.manager
+    });
+
+    const mapDispatchToProps = (dispatch) => ({
+        setExtendedXML: (xml: string) => dispatch(setExtendedXML(xml)),
+        addLocale: (locale: Record<string, Record<string, string>>) => {
+            dispatch(addLocales(locale));
+            dispatch(updateLocale());
+        }
     });
 
     // @ts-ignore
-    return connect(mapStateToProps)(CCXManager) as unknown as React.ComponentClass<Omit<P, 'vm' | 'ccx'>>;
+    return connect(
+        mapStateToProps,
+        mapDispatchToProps
+    // @ts-ignore
+    )(CCXManager) as React.ComponentClass<Omit<P, 'vm' | 'manager'>>;
 };
 
 export default ccxManagerHOC;

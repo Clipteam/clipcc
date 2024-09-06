@@ -1,18 +1,28 @@
 import {addLocaleData} from 'react-intl';
+import {cloneDeep} from 'lodash';
 
 import {localeData, isRtl} from 'clipcc-l10n';
 import editorMessages from 'clipcc-l10n/locales/editor-msgs';
 
 addLocaleData(localeData);
 
-const UPDATE_LOCALES = 'scratch-gui/locales/UPDATE_LOCALES';
+const UPDATE_LOCALE = 'scratch-gui/locales/UPDATE_LOCALE';
 const SELECT_LOCALE = 'scratch-gui/locales/SELECT_LOCALE';
+const ADD_LOCALE = 'scratch-gui/locales/ADD_LOCALE';
+
+const DEFAULT_LANGUAGE = 'default';
 
 const initialState = {
     isRtl: false,
     locale: 'en',
-    messagesByLocale: editorMessages,
-    messages: editorMessages.en
+    messagesByLocale: {
+        [DEFAULT_LANGUAGE]: cloneDeep(editorMessages.en),
+        ...editorMessages
+    },
+    messages: Object.assign({},
+        editorMessages[DEFAULT_LANGUAGE],
+        editorMessages.en
+    )
 };
 
 const reducer = function (state, action) {
@@ -22,16 +32,27 @@ const reducer = function (state, action) {
         return Object.assign({}, state, {
             isRtl: isRtl(action.locale),
             locale: action.locale,
-            messagesByLocale: state.messagesByLocale,
-            messages: state.messagesByLocale[action.locale]
+            messages: Object.assign({},
+                state.messagesByLocale[DEFAULT_LANGUAGE],
+                state.messagesByLocale[action.locale]
+            )
         });
-    case UPDATE_LOCALES:
-        return Object.assign({}, state, {
-            isRtl: state.isRtl,
-            locale: state.locale,
-            messagesByLocale: action.messagesByLocale,
-            messages: action.messagesByLocale[state.locale]
-        });
+    case UPDATE_LOCALE:
+        Object.assign(state.messages,
+            state.messagesByLocale[DEFAULT_LANGUAGE],
+            state.messagesByLocale[state.locale]
+        );
+        return state;
+    case ADD_LOCALE: {
+        const newState = Object.assign({}, state);
+        for (const locale in action.messagesByLocale) {
+            newState.messagesByLocale[locale] = Object.assign({},
+                newState.messagesByLocale[locale],
+                action.messagesByLocale[locale]
+            );
+        }
+        return newState;
+    }
     default:
         return state;
     }
@@ -44,22 +65,31 @@ const selectLocale = function (locale) {
     };
 };
 
-const setLocales = function (localesMessages) {
+const updateLocale = function () {
     return {
-        type: UPDATE_LOCALES,
+        type: UPDATE_LOCALE
+    };
+};
+
+const addLocales = function (localesMessages) {
+    return {
+        type: ADD_LOCALE,
         messagesByLocale: localesMessages
     };
 };
+
 const initLocale = function (currentState, locale) {
-    if (Object.prototype.hasOwnProperty.call(currentState.messagesByLocale, locale)) {
+    if (Object.hasOwnProperty.call(currentState.messagesByLocale, locale)) {
         return Object.assign(
             {},
             currentState,
             {
                 isRtl: isRtl(locale),
                 locale: locale,
-                messagesByLocale: currentState.messagesByLocale,
-                messages: currentState.messagesByLocale[locale]
+                messages: Object.assign({},
+                    currentState.messagesByLocale[DEFAULT_LANGUAGE],
+                    currentState.messagesByLocale[locale]
+                )
             }
         );
     }
@@ -71,5 +101,6 @@ export {
     initialState as localesInitialState,
     initLocale,
     selectLocale,
-    setLocales
+    updateLocale,
+    addLocales
 };

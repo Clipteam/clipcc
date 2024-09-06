@@ -181,6 +181,14 @@ class Manager {
         }
         requireStack.pop();
     }
+
+    private addLocale (locale: Record<string, CCX.LocaleMap>) {
+        console.error('addLocale() should be registered first.');
+    }
+
+    registerAddLocale (func: (locale: Record<string, CCX.LocaleMap>) => void) {
+        this.addLocale = func;
+    }
 }
 
 export {
