@@ -17,9 +17,15 @@ interface Action {
 const reducer = function (state = initialState, action: Action) {
     switch (action.type) {
         case SET_MANAGER:
-            return action.manager!;
+            return {
+                ...state,
+                manager: action.manager
+            };
         case SET_EXTENDED_XML:
-            return action.extendedXML!;
+            return {
+                ...state,
+                extendedXML: action.extendedXML
+            };
         default:
             return state;
     }
@@ -37,7 +43,7 @@ const setExtendedXML = function (xml: string) {
         type: SET_EXTENDED_XML,
         extendedXML: xml
     };
-}
+};
 
 export {
     reducer as default,

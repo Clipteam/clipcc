@@ -16,6 +16,7 @@
     "@types/mime-types": "^2.1.4",
     "clipcc-vm": "3.2.0",
     "node-polyfill-webpack-plugin": "^4.0.0",
+    "redux": "^5.0.1",
     "terser-webpack-plugin": "^5.3.10",
     "ts-loader": "^9.5.1",
     "typescript": "^5.5.4",

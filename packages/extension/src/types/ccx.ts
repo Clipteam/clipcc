@@ -1,5 +1,6 @@
 import VirtualMachine, { ImportedExtensionsInfo, Target } from 'clipcc-vm';
 import { BlockType, ParameterType, FilterType } from './enum';
+import type { Store } from 'redux';
 
 type ScratchBlocks = any;
 
@@ -126,6 +127,7 @@ declare namespace CCX {
 
         function getVmInstance(): VirtualMachine;
         function getBlockInstance(): ScratchBlocks | null;
+        function getReduxStore(): Store;
     }
 
     interface Context {
@@ -144,12 +146,14 @@ declare namespace CCX {
             callGlobalFunction: typeof API.callGlobalFunction;
             getVmInstance: typeof API.getVmInstance;
             getBlockInstance: typeof API.getBlockInstance;
+            getReduxStore: typeof API.getReduxStore;
         };
         type: {
             BlockType: typeof BlockType;
             ParameterType: typeof ParameterType;
             FilterType: typeof FilterType;
         };
+        Extension: Function
     }
 }
 

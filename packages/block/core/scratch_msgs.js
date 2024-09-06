@@ -71,9 +71,19 @@ export const setLocale = function(locale) {
 export const appendLocales = function(newLocales) {
   if (newLocales['default']) {
     Object.assign(Msg, newLocales['default']);
-    delete newLocales.default;
+    delete newLocales['default'];
   }
-  Object.assign(locales, newLocales);
+  for (const localeCode in newLocales) {
+    const newLocale = newLocales[localeCode];
+    if (locales[localeCode]) {
+      Object.assign(locales[localeCode], newLocale);
+    } else {
+      locales[localeCode] = newLocale;
+    }
+  }
+  
+  // Refresh current locales
+  Object.assign(Msg, locales[currentLocale]);
 };
 
 /**

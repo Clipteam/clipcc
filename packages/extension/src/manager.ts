@@ -76,10 +76,11 @@ class Manager {
 
             // Load locales before ``main.js`` executed to prevent block locale issues.
             this.addGuiLocale(locales);
-            scratchBlocks.ScratchMsgs.locales.appendLocales(locales);
+            scratchBlocks?.ScratchMsgs.appendLocales(locales);
 
-            // Store script
+            // Store infos
             const script = await zipData.files['main.js'].async('text');
+            this.manifests[manifest.id] = manifest;
             this.scripts[manifest.id] = script;
         }
     }
@@ -89,7 +90,7 @@ class Manager {
         for (const {id, mode} of orderedExtensionIds) {
             const script = this.scripts[id];
             const manifest = this.manifests[id];
-            const ExportedClass = eval(script);
+            const ExportedClass = eval(manifest.api == 1 ? `let module = {};${script}` : script);
             if (!ExportedClass) {
                 throw {
                     error: ERROR.MISSING_EXPORTS,

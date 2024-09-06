@@ -12,29 +12,32 @@ interface CCXManagerProps {
     vm: VirtualMachine;
     manager: Manager;
     blocks: ScratchBlocks;
-    setExtendedXML (xml: string): void;
-    addLocale (locale: Record<string, Record<string, string>>): void;
+    setExtendedXML(xml: string): void;
+    addLocale(locale: Record<string, Record<string, string>>): void;
+    store: any;
     [key: string]: any;
 }
 
-/*
- * Higher Order Component to initialize CCX.
- * @param {React.ComponentType<any>} WrappedComponent component to manage CCX for
- * @returns {React.ComponentClass<Omit<CCXManagerProps, 'vm' | 'ccx'>>} connected component with ccx bound to redux
- */
 const ccxManagerHOC = function <P extends CCXManagerProps>(
     WrappedComponent: React.ComponentType<P>
 ): React.ComponentClass<Omit<P, 'vm' | 'manager'>> {
     class CCXManager extends React.Component<P> {
         constructor(props: P) {
             super(props);
-            initCtx(props.vm, props.setExtendedXML);
+            initCtx(props.vm, props.setExtendedXML, props.store); // Pass store to initCtx
             attachScratchBlocks(props.blocks);
             props.manager.registerAddGuiLocale(props.addLocale);
         }
 
+        componentDidUpdate(prevProps: Readonly<P>): void {
+            if (prevProps.blocks !== this.props.blocks) {
+                attachScratchBlocks(this.props.blocks);
+            }
+        }
+
         render() {
             const {
+                store,
                 ...componentProps
             } = this.props;
             return (
@@ -64,7 +67,7 @@ const ccxManagerHOC = function <P extends CCXManagerProps>(
     return connect(
         mapStateToProps,
         mapDispatchToProps
-    // @ts-ignore
+        // @ts-ignore
     )(CCXManager) as React.ComponentClass<Omit<P, 'vm' | 'manager'>>;
 };
 

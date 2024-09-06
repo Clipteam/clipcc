@@ -3,6 +3,7 @@ import { ParameterType, BlockType, FilterType } from './types/enum';
 import type VirtualMachine from 'clipcc-vm';
 import { ScratchBlocksConstants } from "./util/scratch-blocks-constants";
 import { xmlEscape } from "./util/xml-escape";
+import type { Store } from 'redux';
 
 let context: CCX.Context | undefined;
 
@@ -103,17 +104,27 @@ interface CategoryInfo {
     color: `#${string}`;
 }
 
-function initCtx (vm: VirtualMachine, setXML: XMLSetter) {
-    let hasWarned = false;
-    let toolboxRefreshTimeoutId: ReturnType<typeof setTimeout> | undefined;
+function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
+    if (context) return;
+    let hasWarned = false, suspendedRefresh = false;
     const globalFunctions = new Map<string, (...args: unknown[]) => unknown>();
     const categoryInfo: Record<string, CategoryInfo> = {};
+ 
+    // Listen locale changes
+    let prevLocale: string | undefined;
+    store.subscribe(() => {
+        const {locales: {locale}} = store.getState();
+        if (prevLocale !== locale) {
+            prevLocale = locale;
+            refreshToolbox();
+        }
+    });
 
     function blockTranslate (messageId: string) {
         return scratchBlocks ? scratchBlocks.Msg[messageId] : messageId;
     }
 
-    function registerBlock (block: CCX.BlockPrototype) {
+    function makeBlocklyJSON (block: CCX.BlockPrototype) {
         const blocksToBeRegistered: BlockJSON[] = [];
         const category = categoryInfo[block.categoryId];
         category.blocks[block.opcode] = block;
@@ -291,14 +302,80 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter) {
 
         blocksToBeRegistered.push(blockJSON as BlockJSON);
 
-        scratchBlocks?.defineBlocksWithJsonArray(blocksToBeRegistered);
+        return blocksToBeRegistered;
+    }
+
+    function generateLocalizedData (block: CCX.BlockPrototype): Pick<BlockJSON, 'message0' | 'args0'> {
+        const text = blockTranslate(block.messageId);
+        const args0: BlocklyArg[] = [];
+        let message0 = '';
+        let argIndex = 0;
+
+        const re = /\[(.+?)]/g;
+        let lastIndex = 0;
+        let match;
+
+        while ((match = re.exec(text)) !== null) {
+            message0 += text.substring(lastIndex, match.index);
+            lastIndex = re.lastIndex;
+
+            const placeholder = match[1].replace(/[<"&]/, '_');
+            argIndex++;
+
+            if (placeholder.startsWith('SUBSTACK')) {
+                message0 += `%${argIndex}`;
+                args0.push({
+                    type: 'input_statement',
+                    name: placeholder === 'SUBSTACK1' ? 'SUBSTACK' : placeholder
+                });
+            } else {
+                const param = block.param?.[placeholder] as Partial<CCX.ParameterPrototype> | undefined;
+                const argTypeInfo = param ? (ParameterTypeMap[param.type!] || {}) : {};
+
+                const arg: Partial<BlocklyArg> = {
+                    type: param?.menu && param.field ? 'field_dropdown' : 'input_value',
+                    name: placeholder
+                };
+
+                if (argTypeInfo.check) {
+                    arg.check = argTypeInfo.check;
+                }
+
+                if (param?.menu && param.field) {
+                    arg.options = typeof param.menu === 'function'
+                        ? param.menu().map(item => [blockTranslate(item.messageId), item.value])
+                        : param.menu.map(item => [blockTranslate(item.messageId), item.value]);
+                }
+
+                message0 += `%${argIndex}`;
+                args0.push(arg as BlocklyArg);
+            }
+        }
+
+        message0 += text.substring(lastIndex);
+
+        return { message0, args0 };
+    }
+
+    function registerBlock (block: CCX.BlockPrototype) {
+        if (!scratchBlocks) return;
+        const blocklyJSONs = makeBlocklyJSON(block);
+        const mainBlocklyJSON = blocklyJSONs.pop();
+        scratchBlocks.defineBlocksWithJsonArray(blocklyJSONs);
+        scratchBlocks.Blocks[block.opcode] = {
+            init () {
+                return this.jsonInit({
+                    ...mainBlocklyJSON,
+                    ...generateLocalizedData(block)
+                });
+            }
+        };
     }
 
     function refreshToolbox () {
-        if (toolboxRefreshTimeoutId) {
-            clearTimeout(toolboxRefreshTimeoutId);
-        }
-        toolboxRefreshTimeoutId = setTimeout(() => {
+        if (suspendedRefresh) return;
+        suspendedRefresh = true;
+        queueMicrotask(() => {
             const generatedXML = generateToolboxXML();
             let xmlString = '';
             for (const { xml } of generatedXML) {
@@ -306,8 +383,8 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter) {
             }
             setXML(xmlString);
 
-            clearTimeout(toolboxRefreshTimeoutId);
-        }, 0);
+            suspendedRefresh = false;
+        });
     }
 
     function generateToolboxXML () {
@@ -456,13 +533,17 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter) {
             },
             getBlockInstance () {
                 return scratchBlocks;
+            },
+            getReduxStore () {
+                return store;
             }
         },
         type: {
             BlockType,
             ParameterType,
             FilterType
-        }
+        },
+        Extension: class {}
     };
 }
 
