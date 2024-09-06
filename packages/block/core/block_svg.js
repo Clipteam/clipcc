@@ -678,9 +678,10 @@ BlockSvg.prototype.showHelp_ = function() {
 /**
  * Show the context menu for this block.
  * @param {!Event} e Mouse event.
+ * @param {?Blockly.BlockSvg} triggeredBlock Original shadow block.
  * @private
  */
-BlockSvg.prototype.showContextMenu_ = function(e) {
+BlockSvg.prototype.showContextMenu_ = function(e, triggeredBlock) {
   if (this.workspace.options.readOnly || !this.contextMenu) {
     return;
   }
@@ -697,13 +698,13 @@ BlockSvg.prototype.showContextMenu_ = function(e) {
       menuOptions.push(ContextMenu.blockCopyOption(block));
     }
   } else if (this.parentBlock_ && this.isShadow_) {
-    this.parentBlock_.showContextMenu_(e);
+    this.parentBlock_.showContextMenu_(e, triggeredBlock);
     return;
   }
 
   // Allow the block to add or modify menuOptions.
   if (this.customContextMenu) {
-    this.customContextMenu(menuOptions);
+    this.customContextMenu(menuOptions, triggeredBlock);
   }
   ContextMenu.show(e, menuOptions, this.RTL);
   ContextMenu.currentBlock = this;
@@ -916,7 +917,7 @@ BlockSvg.prototype.getCommentText = function() {
  * Set this block's comment text.
  * @param {?string} text The text, or null to delete.
  * @param {string=} commentId Id of the comment, or a new one will be generated if not provided.
- * @param {number=} commentX ptional x position for scratch comment in workspace coordinates
+ * @param {number=} commentX Optional x position for scratch comment in workspace coordinates
  * @param {number=} commentY Optional y position for scratch comment in workspace coordinates
  * @param {boolean=} minimized Optional minimized state for scratch comment, defaults to false
  */

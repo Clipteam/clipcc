@@ -71,6 +71,7 @@ import {FieldMatrix} from './field_matrix';
 import {FieldNote} from './field_note';
 import {FieldNumber} from './field_number';
 import {FieldNumberDropdown} from './field_numberdropdown';
+import {FieldPlusMinus} from './field_plus_minus';
 import {FieldTextDropdown} from './field_textdropdown';
 import {FieldTextInput} from './field_textinput';
 import {FieldTextInputRemovable} from './field_textinput_removable';
@@ -328,6 +329,7 @@ export {
   FieldNote,
   FieldNumber,
   FieldNumberDropdown,
+  FieldPlusMinus,
   FieldTextDropdown,
   FieldTextInput,
   FieldTextInputRemovable,

@@ -9,7 +9,7 @@
     "build": "webpack --bail",
     "watch": "webpack --watch",
     "lint": "eslint .",
-    "tap": "tap test/effects/*.js test/*.js"
+    "tap": "tap test/effects/*.js test/*.js --allow-incomplete-coverage --allow-empty-coverage"
   },
   "repository": {
     "type": "git",
@@ -28,12 +28,13 @@
   },
   "devDependencies": {
     "@babel/core": "7.14.8",
+    "@babel/eslint-parser": "7.18.2",
     "@babel/preset-env": "7.14.8",
     "babel-eslint": "10.0.3",
     "eslint": "3.19.0",
     "eslint-config-scratch": "^9.0.8",
     "json": "9.0.6",
-    "tap": "12.7.0",
+    "tap": "21.0.1",
     "web-audio-test-api": "0.5.2",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1"

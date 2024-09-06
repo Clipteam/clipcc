@@ -871,6 +871,21 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
                     </shadow>
                 </value>
             </block>
+            ${hideNonVanillaBlocks ? '' : `
+            <block type="operator_join_multiple" id="operator_join_multiple">
+                <mutation argumentids="[&quot;STRING1&quot;, &quot;STRING2&quot;]"></mutation>
+                <value name="STRING1">
+                <shadow type="text">
+                    <field name="TEXT">${apple} </field>
+                </shadow>
+                </value>
+                <value name="STRING2">
+                <shadow type="text">
+                    <field name="TEXT">${banana}</field>
+                </shadow>
+                </value>
+            </block>
+            `}
             <block type="operator_letter_of">
                 <value name="LETTER">
                     <shadow type="math_whole_number">

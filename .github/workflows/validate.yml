@@ -2,6 +2,10 @@ name: Validate
 
 on:
   push:
+    branches:
+      - master
+      - 'dev/**'
+      - community
   pull_request:
 
 jobs:

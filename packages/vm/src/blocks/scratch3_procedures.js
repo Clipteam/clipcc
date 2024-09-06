@@ -45,7 +45,7 @@ class Scratch3ProcedureBlocks {
         // at earlier stack frames for the values of a given parameter (#1729)
         util.initParams();
         for (let i = 0; i < paramIds.length; i++) {
-            if (args.hasOwnProperty(paramIds[i])) {
+            if (Object.prototype.hasOwnProperty.call(args, paramIds[i])) {
                 util.pushParam(paramNames[i], args[paramIds[i]]);
             } else if (paramIds[i].startsWith('SUBSTACK')) {
                 // It's a substack entry

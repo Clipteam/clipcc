@@ -174,7 +174,7 @@ const serializeFields = function (fields) {
     for (const fieldName in fields) {
         if (!hasOwnProperty.call(fields, fieldName)) continue;
         obj[fieldName] = [fields[fieldName].value];
-        if (fields[fieldName].hasOwnProperty('id')) {
+        if (Object.hasOwnProperty.call(fields[fieldName], 'id')) {
             obj[fieldName].push(fields[fieldName].id);
         }
     }
@@ -302,7 +302,7 @@ const serializeBlocks = function (blocks) {
     const obj = Object.create(null);
     const extensionIDs = new Set();
     for (const blockID in blocks) {
-        if (!blocks.hasOwnProperty(blockID)) continue;
+        if (!Object.prototype.hasOwnProperty.call(blocks, blockID)) continue;
         obj[blockID] = serializeBlock(blocks[blockID], blocks);
         const extensionID = getExtensionIdForOpcode(blocks[blockID].opcode);
         if (extensionID) {
@@ -429,7 +429,7 @@ const serializeVariables = function (variables) {
 const serializeComments = function (comments) {
     const obj = Object.create(null);
     for (const commentId in comments) {
-        if (!comments.hasOwnProperty(commentId)) continue;
+        if (!Object.prototype.hasOwnProperty.call(comments, commentId)) continue;
         const comment = comments[commentId];
 
         const serializedComment = Object.create(null);
@@ -474,13 +474,21 @@ const serializeTarget = function (target, extensions) {
     obj.currentCostume = target.currentCostume;
     obj.costumes = target.costumes.map(serializeCostume);
     obj.sounds = target.sounds.map(serializeSound);
-    if (target.hasOwnProperty('volume')) obj.volume = target.volume;
-    if (target.hasOwnProperty('layerOrder')) obj.layerOrder = target.layerOrder;
+    if (Object.prototype.hasOwnProperty.call(target, 'volume')) obj.volume = target.volume;
+    if (Object.prototype.hasOwnProperty.call(target, 'layerOrder')) obj.layerOrder = target.layerOrder;
     if (obj.isStage) { // Only the stage should have these properties
-        if (target.hasOwnProperty('tempo')) obj.tempo = target.tempo;
-        if (target.hasOwnProperty('videoTransparency')) obj.videoTransparency = target.videoTransparency;
-        if (target.hasOwnProperty('videoState')) obj.videoState = target.videoState;
-        if (target.hasOwnProperty('textToSpeechLanguage')) obj.textToSpeechLanguage = target.textToSpeechLanguage;
+        if (Object.prototype.hasOwnProperty.call(target, 'tempo')) {
+            obj.tempo = target.tempo;
+        }
+        if (Object.prototype.hasOwnProperty.call(target, 'videoTransparency')) {
+            obj.videoTransparency = target.videoTransparency;
+        }
+        if (Object.prototype.hasOwnProperty.call(target, 'videoState')) {
+            obj.videoState = target.videoState;
+        }
+        if (Object.prototype.hasOwnProperty.call(target, 'textToSpeechLanguage')) {
+            obj.textToSpeechLanguage = target.textToSpeechLanguage;
+        }
     } else { // The stage does not need the following properties, but sprites should
         obj.visible = target.visible;
         obj.x = target.x;
@@ -853,7 +861,7 @@ const deserializeBlocks = function (blocks) {
  * SoundBank for the sound assets. null for unsupported objects.
  */
 const parseScratchAssets = function (object, runtime, zip) {
-    if (!object.hasOwnProperty('name')) {
+    if (!Object.prototype.hasOwnProperty.call(object, 'name')) {
         // Watcher/monitor - skip this object until those are implemented in VM.
         // @todo
         return Promise.resolve(null);
@@ -883,7 +891,7 @@ const parseScratchAssets = function (object, runtime, zip) {
             costumeSource.dataFormat ||
             (costumeSource.assetType && costumeSource.assetType.runtimeFormat) || // older format
             'png'; // if all else fails, guess that it might be a PNG
-        const costumeMd5Ext = costumeSource.hasOwnProperty('md5ext') ?
+        const costumeMd5Ext = Object.prototype.hasOwnProperty.call(costumeSource, 'md5ext') ?
             costumeSource.md5ext : `${costumeSource.assetId}.${dataFormat}`;
         costume.md5 = costumeMd5Ext;
         costume.dataFormat = dataFormat;
@@ -937,7 +945,7 @@ const parseScratchAssets = function (object, runtime, zip) {
  * @return {!Promise.<Target>} Promise for the target created (stage or sprite), or null for unsupported objects.
  */
 const parseScratchObject = function (object, runtime, extensions, zip, assets) {
-    if (!object.hasOwnProperty('name')) {
+    if (!Object.prototype.hasOwnProperty.call(object, 'name')) {
         // Watcher/monitor - skip this object until those are implemented in VM.
         // @todo
         return Promise.resolve(null);
@@ -949,17 +957,17 @@ const parseScratchObject = function (object, runtime, extensions, zip, assets) {
     const sprite = new Sprite(blocks, runtime);
 
     // Sprite/stage name from JSON.
-    if (object.hasOwnProperty('name')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'name')) {
         sprite.name = object.name;
     }
-    if (object.hasOwnProperty('blocks')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'blocks')) {
         deserializeBlocks(object.blocks);
         // Take a second pass to create objects and add extensions
         for (const blockId in object.blocks) {
-            if (!object.blocks.hasOwnProperty(blockId)) continue;
+            if (!Object.prototype.hasOwnProperty.call(object.blocks, blockId)) continue;
             const blockJSON = object.blocks[blockId];
             // Migrate legacy opcode from old versions of ClipCC
-            if (migrationMap.hasOwnProperty(blockJSON.opcode)) {
+            if (Object.prototype.hasOwnProperty.call(migrationMap, blockJSON.opcode)) {
                 mergeDeep(blockJSON, migrationMap[blockJSON.opcode]);
             }
             blocks.createBlock(blockJSON);
@@ -978,22 +986,22 @@ const parseScratchObject = function (object, runtime, extensions, zip, assets) {
     // Create the first clone, and load its run-state from JSON.
     const target = sprite.createClone(object.isStage ? StageLayering.BACKGROUND_LAYER : StageLayering.SPRITE_LAYER);
     // Load target properties from JSON.
-    if (object.hasOwnProperty('tempo')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'tempo')) {
         target.tempo = object.tempo;
     }
-    if (object.hasOwnProperty('volume')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'volume')) {
         target.volume = object.volume;
     }
-    if (object.hasOwnProperty('videoTransparency')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'videoTransparency')) {
         target.videoTransparency = object.videoTransparency;
     }
-    if (object.hasOwnProperty('videoState')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'videoState')) {
         target.videoState = object.videoState;
     }
-    if (object.hasOwnProperty('textToSpeechLanguage')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'textToSpeechLanguage')) {
         target.textToSpeechLanguage = object.textToSpeechLanguage;
     }
-    if (object.hasOwnProperty('variables')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'variables')) {
         for (const varId in object.variables) {
             const variable = object.variables[varId];
             // A variable is a cloud variable if:
@@ -1013,7 +1021,7 @@ const parseScratchObject = function (object, runtime, extensions, zip, assets) {
             target.variables[newVariable.id] = newVariable;
         }
     }
-    if (object.hasOwnProperty('lists')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'lists')) {
         for (const listId in object.lists) {
             const list = object.lists[listId];
             const newList = new Variable(
@@ -1026,7 +1034,7 @@ const parseScratchObject = function (object, runtime, extensions, zip, assets) {
             target.variables[newList.id] = newList;
         }
     }
-    if (object.hasOwnProperty('broadcasts')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'broadcasts')) {
         for (const broadcastId in object.broadcasts) {
             const broadcast = object.broadcasts[broadcastId];
             const newBroadcast = new Variable(
@@ -1040,7 +1048,7 @@ const parseScratchObject = function (object, runtime, extensions, zip, assets) {
             target.variables[newBroadcast.id] = newBroadcast;
         }
     }
-    if (object.hasOwnProperty('comments')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'comments')) {
         for (const commentId in object.comments) {
             const comment = object.comments[commentId];
             const newComment = new Comment(
@@ -1058,37 +1066,37 @@ const parseScratchObject = function (object, runtime, extensions, zip, assets) {
             target.comments[newComment.id] = newComment;
         }
     }
-    if (object.hasOwnProperty('x')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'x')) {
         target.x = object.x;
     }
-    if (object.hasOwnProperty('y')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'y')) {
         target.y = object.y;
     }
-    if (object.hasOwnProperty('direction')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'direction')) {
         target.direction = object.direction;
     }
-    if (object.hasOwnProperty('size')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'size')) {
         target.size = object.size;
     }
-    if (object.hasOwnProperty('visible')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'visible')) {
         target.visible = object.visible;
     }
-    if (object.hasOwnProperty('currentCostume')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'currentCostume')) {
         target.currentCostume = MathUtil.clamp(object.currentCostume, 0, object.costumes.length - 1);
     }
-    if (object.hasOwnProperty('rotationStyle')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'rotationStyle')) {
         target.rotationStyle = object.rotationStyle;
     }
-    if (object.hasOwnProperty('isStage')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'isStage')) {
         target.isStage = object.isStage;
     }
-    if (object.hasOwnProperty('targetPaneOrder')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'targetPaneOrder')) {
         // Temporarily store the 'targetPaneOrder' property
         // so that we can correctly order sprites in the target pane.
         // This will be deleted after we are done parsing and ordering the targets list.
         target.targetPaneOrder = object.targetPaneOrder;
     }
-    if (object.hasOwnProperty('draggable')) {
+    if (Object.prototype.hasOwnProperty.call(object, 'draggable')) {
         target.draggable = object.draggable;
     }
     Promise.all(costumePromises).then(costumes => {

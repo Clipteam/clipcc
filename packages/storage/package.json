@@ -14,8 +14,8 @@
     "build": "webpack --progress --color --bail",
     "coverage": "tap ./test/{unit,integration}/*.js --coverage --coverage-report=lcov",
     "lint": "eslint .",
-    "tap-integration": "tap ./test/integration/*.js",
-    "tap-unit": "tap ./test/unit/*.js",
+    "tap-integration": "tap ./test/integration/*.js --allow-incomplete-coverage --allow-empty-coverage",
+    "tap-unit": "tap ./test/unit/*.js --allow-incomplete-coverage --allow-empty-coverage",
     "tap": "yarn run tap-unit && yarn run tap-integration",
     "test": "yarn run tap",
     "version": "json -f package.json -I -e \"this.repository.sha = '$(git log -n1 --pretty=format:%H)'\"",
@@ -24,13 +24,14 @@
   },
   "dependencies": {
     "arraybuffer-loader": "^1.0.3",
-    "base64-js": "1.3.0",
+    "base64-js": "1.5.1",
     "fastestsmallesttextencoderdecoder": "^1.0.7",
     "js-md5": "0.7.3",
     "minilog": "3.1.0"
   },
   "devDependencies": {
     "@babel/core": "7.14.8",
+    "@babel/eslint-parser": "7.18.2",
     "@babel/polyfill": "7.12.1",
     "@babel/preset-env": "7.14.8",
     "@commitlint/cli": "8.2.0",
@@ -47,8 +48,8 @@
     "node-fetch": "2.6.1",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "semantic-release": "^15.10.5",
-    "tap": "12.1.1",
-    "terser-webpack-plugin": "^5.3.6",
+    "tap": "21.0.1",
+    "terser-webpack-plugin": "^5.3.10",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1"
   },

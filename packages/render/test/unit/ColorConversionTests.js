@@ -1,27 +1,29 @@
-const {test, Test} = require('tap');
+const {test, applyPlugin} = require('tap');
 
 const {rgbToHsv, hsvToRgb} = require('../../src/util/color-conversions');
 
-Test.prototype.addAssert('colorsAlmostEqual', 2, function (found, wanted, message, extra) {
-    /* eslint-disable no-invalid-this */
-    message += `: found ${JSON.stringify(Array.from(found))}, wanted ${JSON.stringify(Array.from(wanted))}`;
+const plugin = t => ({
+    colorsAlmostEqual: (found, wanted, message, extra) => {
+        message += `: found ${JSON.stringify(Array.from(found))}, wanted ${JSON.stringify(Array.from(wanted))}`;
 
-    // should always return another assert call, or
-    // this.pass(message) or this.fail(message, extra)
-    if (found.length !== wanted.length) {
-        return this.fail(message, extra);
-    }
-
-    for (let i = 0; i < found.length; i++) {
-        // smallest meaningful difference--detects changes in hue value after rounding
-        if (Math.abs(found[i] - wanted[i]) >= 0.5 / 360) {
-            return this.fail(message, extra);
+        // should always return another assert call, or
+        // this.pass(message) or this.fail(message, extra)
+        if (found.length !== wanted.length) {
+            return t.fail(message, extra);
         }
-    }
 
-    return this.pass(message);
-    /* eslint-enable no-invalid-this */
+        for (let i = 0; i < found.length; i++) {
+            // smallest meaningful difference--detects changes in hue value after rounding
+            if (Math.abs(found[i] - wanted[i]) >= 0.5 / 360) {
+                return t.fail(message, extra);
+            }
+        }
+
+        return t.pass(message);
+    }
 });
+
+applyPlugin(plugin);
 
 test('RGB to HSV', t => {
     const dst = [0, 0, 0];

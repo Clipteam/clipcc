@@ -20,7 +20,7 @@ const defaultState = {
 const initialState = JSON.parse(localStorage.getItem('settings')) || {};
 let needUpdate = false;
 for (const key in defaultState) {
-    if (!initialState.hasOwnProperty(key)) {
+    if (!Object.prototype.hasOwnProperty.call(initialState, key)) {
         initialState[key] = defaultState[key];
         needUpdate = true;
     }

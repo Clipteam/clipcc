@@ -206,7 +206,7 @@ class CostumeTab extends React.Component {
                     }
                 });
             }, this.props.onCloseImporting);
-        }, this.props.onCloseImporting);
+        }, this.props.onCloseImporting, this.props.vm.runtime.stageWidth, this.props.vm.runtime.stageHeight);
     }
     handleFileUploadClick () {
         this.fileInput.click();
