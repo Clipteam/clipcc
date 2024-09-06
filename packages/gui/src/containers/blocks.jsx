@@ -149,6 +149,7 @@ class Blocks extends React.Component {
             this.state.prompt !== nextState.prompt ||
             this.props.isVisible !== nextProps.isVisible ||
             this._renderedToolboxXML !== nextProps.toolboxXML ||
+            this.props.extendedXML !== nextProps.extendedXML ||
             this.props.extensionLibraryVisible !== nextProps.extensionLibraryVisible ||
             this.props.customProceduresVisible !== nextProps.customProceduresVisible ||
             this.props.locale !== nextProps.locale ||
@@ -381,8 +382,9 @@ class Blocks extends React.Component {
                 stageCostumes[stageCostumes.length - 1].name,
                 targetSounds.length > 0 ? targetSounds[targetSounds.length - 1].name : '',
                 getColorsForTheme(this.props.theme),
+                this.props.extendedXML,
                 this.props.hideNonVanillaBlocks
-            ) + this.props.extendedXML;
+            )
         } catch {
             return null;
         }
@@ -674,6 +676,7 @@ Blocks.propTypes = {
     stageSize: PropTypes.oneOf(Object.keys(STAGE_DISPLAY_SIZES)).isRequired,
     theme: PropTypes.oneOf(Object.keys(themeMap)),
     toolboxXML: PropTypes.string,
+    extendedXML: PropTypes.string,
     updateMetrics: PropTypes.func,
     updateToolboxState: PropTypes.func,
     vm: PropTypes.instanceOf(VM).isRequired,
@@ -715,6 +718,7 @@ const mapStateToProps = state => ({
     locale: state.locales.locale,
     messages: state.locales.messages,
     toolboxXML: state.scratchGui.toolbox.toolboxXML,
+    extendedXML: state.scratchGui.ccx.extendedXML,
     customProceduresVisible: state.scratchGui.customProcedures.active,
     workspaceMetrics: state.scratchGui.workspaceMetrics
 });

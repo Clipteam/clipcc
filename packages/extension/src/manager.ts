@@ -29,7 +29,8 @@ class Manager {
     private instances: Record<CCX.Manifest['id'], CCX.Class> = {};
     private scripts: Record<CCX.Manifest['id'], string> = {};
 
-    async loadFromArrayBuffer (...extensions: ArrayBuffer[]): Promise<void> {
+    async loadFromArrayBuffer (...extensions: ArrayBuffer[]): Promise<CCX.Manifest[]> {
+        const loadedManifests: CCX.Manifest[] = [];
         for (const extension of extensions) {
             const zipData = await JSZip.loadAsync(extension);
 
@@ -82,7 +83,10 @@ class Manager {
             const script = await zipData.files['main.js'].async('text');
             this.manifests[manifest.id] = manifest;
             this.scripts[manifest.id] = script;
+
+            loadedManifests.push(manifest);
         }
+        return loadedManifests;
     }
 
     async enable (...extensionIds: CCX.Manifest['id'][]) {

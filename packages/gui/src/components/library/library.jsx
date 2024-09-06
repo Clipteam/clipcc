@@ -12,6 +12,7 @@ import TagButton from '../../containers/tag-button.jsx';
 import Spinner from '../spinner/spinner.jsx';
 
 import styles from './library.css';
+import Button from '../button/button.jsx';
 
 const messages = defineMessages({
     filterPlaceholder: {
@@ -23,6 +24,10 @@ const messages = defineMessages({
         id: 'gui.library.allTag',
         defaultMessage: 'All',
         description: 'Label for library tag to revert to all items after filtering by tag.'
+    },
+    upload: {
+        id: 'gui.library.upload',
+        defaultMessage: 'Upload'
     }
 });
 
@@ -200,6 +205,13 @@ class LibraryComponent extends React.Component {
                                 ))}
                             </div>
                         }
+                        {this.props.onUpload && (
+                            <div className={styles.uploadWrapper}>
+                                <Button className={styles.uploadButton} onClick={this.props.onUpload}>
+                                    {this.props.intl.formatMessage(messages.upload)}
+                                </Button>
+                            </div>
+                        )}
                     </div>
                 )}
                 <div
@@ -267,6 +279,7 @@ LibraryComponent.propTypes = {
     onItemMouseLeave: PropTypes.func,
     onItemSelected: PropTypes.func,
     onRequestClose: PropTypes.func,
+    onUpload: PropTypes.func,
     setStopHandler: PropTypes.func,
     showPlayButton: PropTypes.bool,
     tags: PropTypes.arrayOf(PropTypes.shape(TagButton.propTypes)),

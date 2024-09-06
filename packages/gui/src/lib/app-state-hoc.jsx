@@ -104,6 +104,7 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
                 <Provider store={this.store}>
                     <ConnectedIntlProvider>
                         <WrappedComponent
+                            store={this.store}
                             {...componentProps}
                         />
                     </ConnectedIntlProvider>

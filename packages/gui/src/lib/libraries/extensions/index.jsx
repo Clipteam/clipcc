@@ -318,4 +318,7 @@ export default [
         ),
         helpLink: 'https://scratch.mit.edu/vernier'
     }
-];
+].map(item => {
+    item.tags = ['scratch'];
+    return item;
+});

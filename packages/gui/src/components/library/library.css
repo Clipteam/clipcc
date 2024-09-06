@@ -58,6 +58,21 @@
     overflow: hidden;
 }
 
+.upload-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    height: var(--clipcc-library-filter-bar-height);
+    overflow: hidden;
+    margin-left: auto;
+}
+
+.upload-wrapper .upload-button {
+    background-color: var(--clipcc-motion-primary);
+    color: var(--clipcc-on-motion-primary);
+    border-radius: 9999px;
+}
+
 .spinner-wrapper {
     width: 100%;
     height: 100%;

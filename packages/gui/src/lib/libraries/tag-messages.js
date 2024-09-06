@@ -125,5 +125,15 @@ export default defineMessages({
         defaultMessage: 'Letters',
         description: 'Tag for filtering a library for letters',
         id: 'gui.libraryTags.letters'
+    },
+    scratch: {
+        defaultMessage: 'Scratch',
+        description: 'Tag for filtering a library for Scratch extensions',
+        id: 'gui.libraryTags.scratch'
+    },
+    clipcc: {
+        defaultMessage: 'ClipCC',
+        description: 'Tag for filtering a library for CCX',
+        id: 'gui.libraryTags.clipcc'
     }
 });

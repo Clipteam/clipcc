@@ -526,14 +526,14 @@ class MenuBar extends React.Component {
                         </div>
                         <div
                             className={classNames(styles.menuBarItem, styles.hoverable)}
-                            onMouseUp={this.props.onClickPlugins}
+                            onMouseUp={this.props.onClickExtensions}
                         >
                             <img src={pluginsIcon} />
                             <span className={styles.collapsibleLabel}>
                                 <FormattedMessage
-                                    defaultMessage="Plugins"
-                                    description="Text for plugins"
-                                    id="gui.menuBar.plugins"
+                                    defaultMessage="Extensions"
+                                    description="Text for extensions"
+                                    id="gui.menuBar.extensions"
                                 />
                             </span>
                         </div>
@@ -861,7 +861,7 @@ const mapDispatchToProps = dispatch => ({
     onClickAccount: () => dispatch(openAccountMenu()),
     onRequestCloseAccount: () => dispatch(closeAccountMenu()),
     onClickFile: () => dispatch(openFileMenu()),
-    onClickPlugins: () => dispatch(openExtensionLibrary()),
+    onClickExtensions: () => dispatch(openExtensionLibrary()),
     onRequestCloseFile: () => dispatch(closeFileMenu()),
     onClickEdit: () => dispatch(openEditMenu()),
     onRequestCloseEdit: () => dispatch(closeEditMenu()),

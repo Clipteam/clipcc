@@ -995,12 +995,13 @@ const xmlClose = '</xml>';
  * @param {?string} backdropName - The name of the default selected backdrop dropdown.
  * @param {?string} soundName -  The name of the default selected sound dropdown.
  * @param {?object} colors - The colors for the theme.
+ * @param {string=} extraXML extra XML string.
  * @param {?boolean} hideNonVanillaBlocks - hide non-vanilla blocks.
  * @returns {string} - a ScratchBlocks-style XML document for the contents of the toolbox.
  */
 const makeToolboxXML = function (isInitialSetup, isStage = true, targetId, categoriesXML = [],
     costumeName = '', backdropName = '', soundName = '', colors = defaultColors,
-    hideNonVanillaBlocks = false) {
+    extraXML = '', hideNonVanillaBlocks = false) {
     isStage = isInitialSetup || isStage;
     const gap = [categorySeparator];
 
@@ -1045,6 +1046,7 @@ const makeToolboxXML = function (isInitialSetup, isStage = true, targetId, categ
         everything.push(gap, extensionCategory.xml);
     }
 
+    everything.push(extraXML);
     everything.push(xmlClose);
     return everything.join('\n');
 };

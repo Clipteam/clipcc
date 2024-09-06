@@ -2,12 +2,14 @@ import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
 import VM from 'clipcc-vm';
-import {defineMessages, injectIntl, intlShape} from 'react-intl';
+import { defineMessages, injectIntl, intlShape } from 'react-intl';
 
 import extensionLibraryContent from '../lib/libraries/extensions/index.jsx';
 
 import LibraryComponent from '../components/library/library.jsx';
 import extensionIcon from '../components/action-menu/icon--sprite.svg';
+import extensionTag from '../lib/libraries/extension-tag';
+import { connect } from 'react-redux';
 
 const messages = defineMessages({
     extensionTitle: {
@@ -23,13 +25,50 @@ const messages = defineMessages({
 });
 
 class ExtensionLibrary extends React.PureComponent {
-    constructor (props) {
+    constructor(props) {
         super(props);
         bindAll(this, [
-            'handleItemSelect'
+            'refreshExtensionLibraryThumbnailData',
+            'handleItemSelect',
+            'handleUpload'
         ]);
+        this.manifests = Object.values(props.manager.manifests);
+        this.state = {
+            extensionLibraryThumbnailData: extensionLibraryContent.map(extension => ({
+                rawURL: extension.iconURL || extensionIcon,
+                ...extension
+            }))
+        }
     }
-    handleItemSelect (item) {
+    componentDidMount () {
+        this.refreshExtensionLibraryThumbnailData();
+    }
+    refreshExtensionLibraryThumbnailData () {
+        this.setState({
+            extensionLibraryThumbnailData: [
+                ...extensionLibraryContent.map(extension => ({
+                    rawURL: extension.iconURL || extensionIcon,
+                    ...extension
+                })),
+                ...this.manifests.map(manifest => ({
+                    name: this.props.intl.formatMessage({ id: `${manifest.id}.name`, defaultMessage: `${manifest.id}.name` }),
+                    description: this.props.intl.formatMessage({ id: `${manifest.id}.description`, defaultMessage: `${manifest.id}.description` }),
+                    extensionId: manifest.id,
+                    rawURL: manifest.icon,
+                    iconURL: manifest.icon,
+                    insetIconURL: manifest.inset_icon,
+                    tags: ['clipcc'],
+                    featured: true
+                }))
+            ]
+        });
+    }
+    componentDidUpdate (prevProps) {
+        if (prevProps.locale !== this.props.locale) {
+            this.refreshExtensionLibraryThumbnailData();
+        }
+    }
+    handleItemSelect(item) {
         const id = item.extensionId;
         let url = item.extensionURL ? item.extensionURL : id;
         if (!item.disabled && !id) {
@@ -37,7 +76,9 @@ class ExtensionLibrary extends React.PureComponent {
             url = prompt(this.props.intl.formatMessage(messages.extensionUrl));
         }
         if (id && !item.disabled) {
-            if (this.props.vm.extensionManager.isExtensionLoaded(url)) {
+            if (item.tags.includes('clipcc')) {
+                this.props.manager.enable(id);
+            } else if (this.props.vm.extensionManager.isExtensionLoaded(url)) {
                 this.props.onCategorySelected(id);
             } else {
                 this.props.vm.extensionManager.loadExtensionURL(url).then(() => {
@@ -46,18 +87,65 @@ class ExtensionLibrary extends React.PureComponent {
             }
         }
     }
-    render () {
-        const extensionLibraryThumbnailData = extensionLibraryContent.map(extension => ({
-            rawURL: extension.iconURL || extensionIcon,
-            ...extension
-        }));
+    handleUpload() {
+        const input = document.createElement('input');
+        input.style = 'display: none';
+        input.type = 'file';
+        input.multiple = true;
+        input.accept = '.js,.ccx';
+
+        input.onchange = async (e) => {
+            const files = e.target.files;
+            const errors = [];
+
+            for (let file of files) {
+                try {
+                    if (file.name.endsWith('.js')) {
+                        const dataURI = await this.fileToDataURI(file);
+                        await this.props.vm.extensionManager.loadExtensionURL(dataURI);
+                    } else if (file.name.endsWith('.ccx')) {
+                        const arrayBuffer = await this.fileToArrayBuffer(file);
+                        const manifests = await this.props.manager.loadFromArrayBuffer(arrayBuffer);
+                        this.manifests.push(...manifests);
+                        this.refreshExtensionLibraryThumbnailData();
+                    }
+                } catch (error) {
+                    errors.push({ file: file.name, error });
+                }
+            }
+        };
+
+        input.click();
+    }
+
+    fileToDataURI(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = (e) => reject(e);
+            reader.readAsDataURL(file);
+        });
+    }
+
+    fileToArrayBuffer(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = (e) => reject(e);
+            reader.readAsArrayBuffer(file);
+        });
+    }
+
+    render() {
         return (
             <LibraryComponent
-                data={extensionLibraryThumbnailData}
-                filterable={false}
+                data={this.state.extensionLibraryThumbnailData}
+                filterable
+                tags={extensionTag}
                 id="extensionLibrary"
                 title={this.props.intl.formatMessage(messages.extensionTitle)}
                 visible={this.props.visible}
+                onUpload={this.handleUpload}
                 onItemSelected={this.handleItemSelect}
                 onRequestClose={this.props.onRequestClose}
             />
@@ -66,11 +154,20 @@ class ExtensionLibrary extends React.PureComponent {
 }
 
 ExtensionLibrary.propTypes = {
+    manager: PropTypes.object,
     intl: intlShape.isRequired,
+    locale: PropTypes.string.isRequired,
     onCategorySelected: PropTypes.func,
     onRequestClose: PropTypes.func,
     visible: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired // eslint-disable-line react/no-unused-prop-types
 };
 
-export default injectIntl(ExtensionLibrary);
+const mapStateToProps = (state) => ({
+    manager: state.scratchGui.ccx.manager,
+    locale: state.locales.locale
+});
+
+export default injectIntl(
+    connect(mapStateToProps)(ExtensionLibrary)
+);
