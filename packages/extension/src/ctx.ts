@@ -305,10 +305,12 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
         return blocksToBeRegistered;
     }
 
-    function generateLocalizedData (block: CCX.BlockPrototype): Pick<BlockJSON, 'message0' | 'args0'> {
+    function generateLocalizedData (block: CCX.BlockPrototype): Partial<BlockJSON> {
         const text = blockTranslate(block.messageId);
-        const args0: BlocklyArg[] = [];
-        let message0 = '';
+        const result: Partial<BlockJSON> = {};
+        let currentMessage = '';
+        let currentArgs: BlocklyArg[] = [];
+        let messageIndex = 0;
         let argIndex = 0;
 
         const re = /\[(.+?)]/g;
@@ -316,18 +318,29 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
         let match;
 
         while ((match = re.exec(text)) !== null) {
-            message0 += text.substring(lastIndex, match.index);
+            currentMessage += text.substring(lastIndex, match.index);
             lastIndex = re.lastIndex;
 
             const placeholder = match[1].replace(/[<"&]/, '_');
-            argIndex++;
 
             if (placeholder.startsWith('SUBSTACK')) {
-                message0 += `%${argIndex}`;
-                args0.push({
+                // Finish current message and args
+                if (currentMessage) {
+                    result[`message${messageIndex}`] = currentMessage;
+                    result[`args${messageIndex}`] = currentArgs;
+                    messageIndex++;
+                    currentMessage = '';
+                    currentArgs = [];
+                    argIndex = 0;
+                }
+
+                // Add substack
+                result[`message${messageIndex}`] = '%1';
+                result[`args${messageIndex}`] = [{
                     type: 'input_statement',
                     name: placeholder === 'SUBSTACK1' ? 'SUBSTACK' : placeholder
-                });
+                }];
+                messageIndex++;
             } else {
                 const param = block.param?.[placeholder] as Partial<CCX.ParameterPrototype> | undefined;
                 const argTypeInfo = param ? (ParameterTypeMap[param.type!] || {}) : {};
@@ -347,14 +360,20 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
                         : param.menu.map(item => [blockTranslate(item.messageId), item.value]);
                 }
 
-                message0 += `%${argIndex}`;
-                args0.push(arg as BlocklyArg);
+                currentMessage += `%${argIndex + 1}`;
+                currentArgs.push(arg as BlocklyArg);
+                argIndex++;
             }
         }
 
-        message0 += text.substring(lastIndex);
+        currentMessage += text.substring(lastIndex);
 
-        return { message0, args0 };
+        if (currentMessage || currentArgs.length > 0) {
+            result[`message${messageIndex}`] = currentMessage;
+            result[`args${messageIndex}`] = currentArgs;
+        }
+
+        return result;
     }
 
     function registerBlock (block: CCX.BlockPrototype) {
