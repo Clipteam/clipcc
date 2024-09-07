@@ -89,6 +89,10 @@ class Manager {
         return loadedManifests;
     }
 
+    isEnabled (id: CCX.Manifest['id']) {
+        return id in this.instances;
+    }
+
     async enable (...extensionIds: CCX.Manifest['id'][]) {
         const orderedExtensionIds = this.getExtensionLoadOrder(extensionIds);
         for (const {id, mode} of orderedExtensionIds) {

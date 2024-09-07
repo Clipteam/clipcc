@@ -21,6 +21,14 @@ const messages = defineMessages({
         defaultMessage: 'Enter the URL of the extension',
         description: 'Prompt for unoffical extension url',
         id: 'gui.extensionLibrary.extensionUrl'
+    },
+    enabled: {
+        defaultMessage: 'Enabled',
+        id: 'gui.extensionLibrary.enabled'
+    },
+    disabled: {
+        defaultMessage: 'Disabled',
+        id: 'gui.extensionLibrary.disabled'
     }
 });
 
@@ -48,6 +56,9 @@ class ExtensionLibrary extends React.PureComponent {
             extensionLibraryThumbnailData: [
                 ...extensionLibraryContent.map(extension => ({
                     rawURL: extension.iconURL || extensionIcon,
+                    category: this.props.vm.extensionManager.isExtensionLoaded(extension.extensionId) ?
+                        this.props.intl.formatMessage(messages.enabled) :
+                        this.props.intl.formatMessage(messages.disabled),
                     ...extension
                 })),
                 ...this.manifests.map(manifest => ({
@@ -57,7 +68,11 @@ class ExtensionLibrary extends React.PureComponent {
                     rawURL: manifest.icon,
                     iconURL: manifest.icon,
                     insetIconURL: manifest.inset_icon,
+                    author: Array.isArray(manifest.author) ? manifest.author.join(', ') : manifest.author,
                     tags: ['clipcc'],
+                    category: this.props.manager.isEnabled(manifest.id) ?
+                        this.props.intl.formatMessage(messages.enabled) : 
+                        this.props.intl.formatMessage(messages.disabled),
                     featured: true
                 }))
             ]
@@ -141,6 +156,7 @@ class ExtensionLibrary extends React.PureComponent {
             <LibraryComponent
                 data={this.state.extensionLibraryThumbnailData}
                 filterable
+                categorized
                 tags={extensionTag}
                 id="extensionLibrary"
                 title={this.props.intl.formatMessage(messages.extensionTitle)}

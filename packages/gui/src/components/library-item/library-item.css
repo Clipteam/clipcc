@@ -101,15 +101,17 @@
 }
 
 .featured-item {
-    flex-basis: 300px;
-    max-width: 300px;
+    flex-basis: 280px;
+    max-width: 280px;
     height: auto;
     overflow: hidden;
     padding: 0;
+    cursor: initial;
 }
 
 .featured-image-container {
     position: relative;
+    cursor: pointer;
 }
 
 .featured-image {
@@ -120,7 +122,7 @@
     font-weight: bold;
     padding: 10px;
     /* height: 140px; */
-    width: 300px;
+    width: 280px;
 }
 
 [dir="ltr"] .featured-extension-text {

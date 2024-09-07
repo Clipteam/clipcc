@@ -52,7 +52,9 @@ class LibraryComponent extends React.Component {
             playingItem: null,
             filterQuery: '',
             selectedTag: ALL_TAG.tag,
-            loaded: false
+            loaded: false,
+            filteredData: [],
+            categories: []
         };
     }
     componentDidMount () {
@@ -67,10 +69,27 @@ class LibraryComponent extends React.Component {
             prevState.selectedTag !== this.state.selectedTag) {
             this.scrollToTop();
         }
+
+        if (prevState.loaded !== this.state.loaded && this.state.loaded || 
+            prevState.selectedTag !== this.state.selectedTag ||
+            prevState.filterQuery !== this.state.filterQuery ||
+            prevProps.data !== this.props.data
+        ) {
+            if (this.props.categorized) {
+                this.setState({
+                    filteredData: this.getFilteredData(),
+                    categories: this.collectCategory()
+                }); 
+            } else {
+                this.setState({
+                    filteredData: this.getFilteredData()
+                });
+            }
+        }
     }
     handleSelect (id) {
         this.handleClose();
-        this.props.onItemSelected(this.getFilteredData()[id]);
+        this.props.onItemSelected(this.state.filteredData[id]);
     }
     handleClose () {
         this.props.onRequestClose();
@@ -82,7 +101,7 @@ class LibraryComponent extends React.Component {
                 selectedTag: tag.toLowerCase()
             });
         } else {
-            this.props.onItemMouseLeave(this.getFilteredData()[[this.state.playingItem]]);
+            this.props.onItemMouseLeave(this.state.filteredData[[this.state.playingItem]]);
             this.setState({
                 filterQuery: '',
                 playingItem: null,
@@ -93,7 +112,7 @@ class LibraryComponent extends React.Component {
     handleMouseEnter (id) {
         // don't restart if mouse over already playing item
         if (this.props.onItemMouseEnter && this.state.playingItem !== id) {
-            this.props.onItemMouseEnter(this.getFilteredData()[id]);
+            this.props.onItemMouseEnter(this.state.filteredData[id]);
             this.setState({
                 playingItem: id
             });
@@ -101,7 +120,7 @@ class LibraryComponent extends React.Component {
     }
     handleMouseLeave (id) {
         if (this.props.onItemMouseLeave) {
-            this.props.onItemMouseLeave(this.getFilteredData()[id]);
+            this.props.onItemMouseLeave(this.state.filteredData[id]);
             this.setState({
                 playingItem: null
             });
@@ -121,7 +140,7 @@ class LibraryComponent extends React.Component {
                 selectedTag: ALL_TAG.tag
             });
         } else {
-            this.props.onItemMouseLeave(this.getFilteredData()[[this.state.playingItem]]);
+            this.props.onItemMouseLeave(this.state.filteredData[[this.state.playingItem]]);
             this.setState({
                 filterQuery: event.target.value,
                 playingItem: null,
@@ -131,6 +150,14 @@ class LibraryComponent extends React.Component {
     }
     handleFilterClear () {
         this.setState({filterQuery: ''});
+    }
+    collectCategory () {
+        const categories = [];
+        for (const item of this.props.data) {
+            if (!item.category || categories.includes(item.category)) continue;
+            categories.push(item.category);
+        }
+        return categories;
     }
     getFilteredData () {
         if (this.state.selectedTag === 'all') {
@@ -163,6 +190,7 @@ class LibraryComponent extends React.Component {
         this.filteredDataRef = ref;
     }
     render () {
+        console.log(this.state);
         return (
             <Modal
                 fullScreen
@@ -220,30 +248,70 @@ class LibraryComponent extends React.Component {
                     })}
                     ref={this.setFilteredDataRef}
                 >
-                    {this.state.loaded ? this.getFilteredData().map((dataItem, index) => (
-                        <LibraryItem
-                            bluetoothRequired={dataItem.bluetoothRequired}
-                            collaborator={dataItem.collaborator}
-                            description={dataItem.description}
-                            disabled={dataItem.disabled}
-                            extensionId={dataItem.extensionId}
-                            featured={dataItem.featured}
-                            hidden={dataItem.hidden}
-                            iconMd5={dataItem.costumes ? dataItem.costumes[0].md5ext : dataItem.md5ext}
-                            iconRawURL={dataItem.rawURL}
-                            icons={dataItem.costumes}
-                            id={index}
-                            insetIconURL={dataItem.insetIconURL}
-                            internetConnectionRequired={dataItem.internetConnectionRequired}
-                            isPlaying={this.state.playingItem === index}
-                            key={typeof dataItem.name === 'string' ? dataItem.name : dataItem.rawURL}
-                            name={dataItem.name}
-                            showPlayButton={this.props.showPlayButton}
-                            onMouseEnter={this.handleMouseEnter}
-                            onMouseLeave={this.handleMouseLeave}
-                            onSelect={this.handleSelect}
-                        />
-                    )) : (
+                    {this.state.loaded ? (
+                        this.props.categorized ? (
+                            this.state.categories.map(category => (
+                                <div className={styles.category}>
+                                    <span className={styles.name}>{category}</span>
+                                    <div className={styles.libraryScrollGrid}>
+                                        {
+                                            this.state.filteredData
+                                                .filter(item => item.category === category)
+                                                .map((dataItem, index) => (
+                                                    <LibraryItem
+                                                        bluetoothRequired={dataItem.bluetoothRequired}
+                                                        author={dataItem.author}
+                                                        description={dataItem.description}
+                                                        disabled={dataItem.disabled}
+                                                        extensionId={dataItem.extensionId}
+                                                        featured={dataItem.featured}
+                                                        hidden={dataItem.hidden}
+                                                        iconMd5={dataItem.costumes ? dataItem.costumes[0].md5ext : dataItem.md5ext}
+                                                        iconRawURL={dataItem.rawURL}
+                                                        icons={dataItem.costumes}
+                                                        id={index}
+                                                        insetIconURL={dataItem.insetIconURL}
+                                                        internetConnectionRequired={dataItem.internetConnectionRequired}
+                                                        isPlaying={this.state.playingItem === index}
+                                                        key={typeof dataItem.name === 'string' ? dataItem.name : dataItem.rawURL}
+                                                        name={dataItem.name}
+                                                        showPlayButton={this.props.showPlayButton}
+                                                        onMouseEnter={this.handleMouseEnter}
+                                                        onMouseLeave={this.handleMouseLeave}
+                                                        onSelect={this.handleSelect}
+                                                    />
+                                                ))
+                                        }
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            this.state.filteredData.map((dataItem, index) => (
+                                <LibraryItem
+                                    bluetoothRequired={dataItem.bluetoothRequired}
+                                    author={dataItem.author}
+                                    description={dataItem.description}
+                                    disabled={dataItem.disabled}
+                                    extensionId={dataItem.extensionId}
+                                    featured={dataItem.featured}
+                                    hidden={dataItem.hidden}
+                                    iconMd5={dataItem.costumes ? dataItem.costumes[0].md5ext : dataItem.md5ext}
+                                    iconRawURL={dataItem.rawURL}
+                                    icons={dataItem.costumes}
+                                    id={index}
+                                    insetIconURL={dataItem.insetIconURL}
+                                    internetConnectionRequired={dataItem.internetConnectionRequired}
+                                    isPlaying={this.state.playingItem === index}
+                                    key={typeof dataItem.name === 'string' ? dataItem.name : dataItem.rawURL}
+                                    name={dataItem.name}
+                                    showPlayButton={this.props.showPlayButton}
+                                    onMouseEnter={this.handleMouseEnter}
+                                    onMouseLeave={this.handleMouseLeave}
+                                    onSelect={this.handleSelect}
+                                />
+                            ))
+                        )
+                    ) : (
                         <div className={styles.spinnerWrapper}>
                             <Spinner
                                 large
@@ -282,6 +350,7 @@ LibraryComponent.propTypes = {
     onUpload: PropTypes.func,
     setStopHandler: PropTypes.func,
     showPlayButton: PropTypes.bool,
+    categorized: PropTypes.bool,
     tags: PropTypes.arrayOf(PropTypes.shape(TagButton.propTypes)),
     title: PropTypes.string.isRequired
 };

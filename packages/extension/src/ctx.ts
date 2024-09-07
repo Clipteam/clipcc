@@ -89,7 +89,7 @@ interface BlocklyArg {
     type: string;
     name: string;
     check?: string;
-    options?: [string, unknown][] | FieldMenuItem[] | (() => FieldMenuItem[]);
+    options?: [string, any][] | FieldMenuItem[] | (() => FieldMenuItem[]);
 }
 
 interface FieldMenuItem {
@@ -120,7 +120,7 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
         }
     });
 
-    function blockTranslate (messageId: string) {
+    function blockTranslate (messageId: string): string {
         return scratchBlocks ? scratchBlocks.Msg[messageId] : messageId;
     }
 
@@ -355,9 +355,14 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
                 }
 
                 if (param?.menu && param.field) {
-                    arg.options = typeof param.menu === 'function'
-                        ? param.menu().map(item => [blockTranslate(item.messageId), item.value])
-                        : param.menu.map(item => [blockTranslate(item.messageId), item.value]);
+                    if (typeof param.menu === 'function') {
+                        const menuFunc = param.menu;
+                        arg.options = () => {
+                            return menuFunc().map(item => ({text: blockTranslate(item.messageId), value: item.value}));
+                        }
+                    } else {
+                        arg.options = param.menu.map(item => [blockTranslate(item.messageId), item.value]);
+                    }
                 }
 
                 currentMessage += `%${argIndex + 1}`;

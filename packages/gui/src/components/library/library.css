@@ -50,6 +50,19 @@
     height: var(--clipcc-library-filter-bar-height);
 }
 
+.category {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0.5rem;
+    width: 100%;
+}
+
+.category .name {
+    color: var(--clipcc-text-primary);
+    font-weight: bold;
+    font-size: 18px;
+}
+
 .tag-wrapper {
     display: flex;
     flex-direction: row;

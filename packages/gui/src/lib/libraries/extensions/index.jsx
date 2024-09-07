@@ -116,7 +116,7 @@ export default [
             />
         ),
         extensionId: 'text2speech',
-        collaborator: 'Amazon Web Services',
+        author: 'Amazon Web Services',
         iconURL: text2speechIconURL,
         insetIconURL: text2speechInsetIconURL,
         description: (
@@ -138,7 +138,7 @@ export default [
             />
         ),
         extensionId: 'translate',
-        collaborator: 'Google',
+        author: 'Google',
         iconURL: translateIconURL,
         insetIconURL: translateInsetIconURL,
         description: (
@@ -154,7 +154,7 @@ export default [
     {
         name: 'Makey Makey',
         extensionId: 'makeymakey',
-        collaborator: 'JoyLabz',
+        author: 'JoyLabz',
         iconURL: makeymakeyIconURL,
         insetIconURL: makeymakeyInsetIconURL,
         description: (
@@ -169,7 +169,7 @@ export default [
     {
         name: 'micro:bit',
         extensionId: 'microbit',
-        collaborator: 'micro:bit',
+        author: 'micro:bit',
         iconURL: microbitIconURL,
         insetIconURL: microbitInsetIconURL,
         description: (
@@ -199,7 +199,7 @@ export default [
     {
         name: 'LEGO MINDSTORMS EV3',
         extensionId: 'ev3',
-        collaborator: 'LEGO',
+        author: 'LEGO',
         iconURL: ev3IconURL,
         insetIconURL: ev3InsetIconURL,
         description: (
@@ -229,7 +229,7 @@ export default [
     {
         name: 'LEGO BOOST',
         extensionId: 'boost',
-        collaborator: 'LEGO',
+        author: 'LEGO',
         iconURL: boostIconURL,
         insetIconURL: boostInsetIconURL,
         description: (
@@ -260,7 +260,7 @@ export default [
     {
         name: 'LEGO Education WeDo 2.0',
         extensionId: 'wedo2',
-        collaborator: 'LEGO',
+        author: 'LEGO',
         iconURL: wedo2IconURL,
         insetIconURL: wedo2InsetIconURL,
         description: (
@@ -291,7 +291,7 @@ export default [
     {
         name: 'Go Direct Force & Acceleration',
         extensionId: 'gdxfor',
-        collaborator: 'Vernier',
+        author: 'Vernier',
         iconURL: gdxforIconURL,
         insetIconURL: gdxforInsetIconURL,
         description: (

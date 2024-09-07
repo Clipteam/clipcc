@@ -111,7 +111,7 @@ class LibraryItem extends React.PureComponent {
         return (
             <LibraryItemComponent
                 bluetoothRequired={this.props.bluetoothRequired}
-                collaborator={this.props.collaborator}
+                author={this.props.author}
                 description={this.props.description}
                 disabled={this.props.disabled}
                 extensionId={this.props.extensionId}
@@ -140,7 +140,7 @@ class LibraryItem extends React.PureComponent {
 
 LibraryItem.propTypes = {
     bluetoothRequired: PropTypes.bool,
-    collaborator: PropTypes.string,
+    author: PropTypes.string,
     description: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.node
@@ -151,6 +151,7 @@ LibraryItem.propTypes = {
     hidden: PropTypes.bool,
     iconMd5: PropTypes.string,
     iconRawURL: PropTypes.string,
+    category: PropTypes.string,
     icons: PropTypes.arrayOf(
         PropTypes.shape({
             baseLayerMD5: PropTypes.string, // 2.0 library format, TODO GH-5084

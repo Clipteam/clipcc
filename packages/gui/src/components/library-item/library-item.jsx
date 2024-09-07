@@ -24,9 +24,8 @@ class LibraryItemComponent extends React.PureComponent {
                     this.props.extensionId ? styles.libraryItemExtension : null,
                     this.props.hidden ? styles.hidden : null
                 )}
-                onClick={this.props.onClick}
             >
-                <div className={styles.featuredImageContainer}>
+                <div className={styles.featuredImageContainer} onClick={this.props.onClick}>
                     {this.props.disabled ? (
                         <div className={styles.comingSoonText}>
                             <FormattedMessage
@@ -58,7 +57,7 @@ class LibraryItemComponent extends React.PureComponent {
                     <br />
                     <span className={styles.featuredDescription}>{this.props.description}</span>
                 </div>
-                {this.props.bluetoothRequired || this.props.internetConnectionRequired || this.props.collaborator ? (
+                {this.props.bluetoothRequired || this.props.internetConnectionRequired || this.props.author ? (
                     <div className={styles.featuredExtensionMetadata}>
                         <div className={styles.featuredExtensionRequirement}>
                             {this.props.bluetoothRequired || this.props.internetConnectionRequired ? (
@@ -84,19 +83,19 @@ class LibraryItemComponent extends React.PureComponent {
                             ) : null}
                         </div>
                         <div className={styles.featuredExtensionCollaboration}>
-                            {this.props.collaborator ? (
+                            {this.props.author ? (
                                 <div>
                                     <div>
                                         <FormattedMessage
-                                            defaultMessage="Collaboration with"
-                                            description="Label for extension collaboration"
-                                            id="gui.extensionLibrary.collaboration"
+                                            defaultMessage="Author"
+                                            description="Label for extension author"
+                                            id="gui.extensionLibrary.author"
                                         />
                                     </div>
                                     <div
                                         className={styles.featuredExtensionMetadataDetail}
                                     >
-                                        {this.props.collaborator}
+                                        {this.props.author}
                                     </div>
                                 </div>
                             ) : null}
@@ -150,7 +149,7 @@ class LibraryItemComponent extends React.PureComponent {
 
 LibraryItemComponent.propTypes = {
     bluetoothRequired: PropTypes.bool,
-    collaborator: PropTypes.string,
+    author: PropTypes.string,
     description: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.node
