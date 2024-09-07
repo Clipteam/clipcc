@@ -1,9 +1,9 @@
-import { CCX } from "./types/ccx";
+import {CCX} from './types/ccx';
 import * as JSZip from 'jszip';
-import Graph from "./util/graph";
-import { matchVersion } from "./util/version";
+import Graph from './util/graph';
+import {matchVersion} from './util/version';
 import mime from 'mime-types';
-import context, { scratchBlocks } from "./ctx";
+import context, {scratchBlocks} from './ctx';
 
 const enum ERROR {
     UNAVAILABLE_EXTENSION = 0x90,
@@ -18,7 +18,7 @@ const enum LoadMode {
     UNLOAD,
     INITIATIVE_LOAD,
     PASSIVE_LOAD
-};
+}
 
 interface RequireInfo {
     id: CCX.Manifest['id'];
@@ -45,14 +45,14 @@ class Manager {
             if ('icon' in manifest) {
                 const data = await zipData.files[manifest.icon].async('arraybuffer');
                 manifest.icon = URL.createObjectURL(new Blob(
-                    [data], { type: mime.lookup(manifest.icon) || 'image/png' }
+                    [data], {type: mime.lookup(manifest.icon) || 'image/png'}
                 ));
             }
 
             if ('inset_icon' in manifest) {
                 const data = await zipData.files[manifest.inset_icon].async('arraybuffer');
                 manifest.inset_icon = URL.createObjectURL(new Blob(
-                    [data], { type: mime.lookup(manifest.inset_icon) || 'image/svg+xml' }
+                    [data], {type: mime.lookup(manifest.inset_icon) || 'image/svg+xml'}
                 ));
             }
 
@@ -120,7 +120,7 @@ class Manager {
                 }
 
                 if (typeof instance.beforeProjectLoad === 'function') {
-                    context.api.on('beforeProjectLoad', (params) => {
+                    context.api.on('beforeProjectLoad', params => {
                         instance.beforeProjectLoad(...params);
                     });
                 }
@@ -140,7 +140,7 @@ class Manager {
                 console.error(`Unavailable extension: ${extensionId}`);
                 throw {
                     code: ERROR.UNAVAILABLE_EXTENSION,
-                    extension: [{ id: extensionId, version: 'any' }],
+                    extension: [{id: extensionId, version: 'any'}],
                     requireStack: []
                 };
             }
@@ -167,7 +167,7 @@ class Manager {
      * @param requireStack Require stack.
      * @param graph Load order.
      */
-    private _checkExtensionLoadingOrderById(extensionId: CCX.Manifest['id'], requireStack: RequireInfo[], graph: Graph) {
+    private _checkExtensionLoadingOrderById (extensionId: CCX.Manifest['id'], requireStack: RequireInfo[], graph: Graph) {
         requireStack.push({
             id: extensionId,
             version: this.manifests[extensionId].version
@@ -179,7 +179,7 @@ class Manager {
             if (!(dependency in this.manifests)) {
                 throw {
                     code: ERROR.UNAVAILABLE_EXTENSION,
-                    extension: [{ id: dependency, version: this.manifests[extensionId].dependency[dependency] }],
+                    extension: [{id: dependency, version: this.manifests[extensionId].dependency[dependency]}],
                     requireStack
                 };
             }
@@ -193,11 +193,10 @@ class Manager {
             if (matchVersion(this.manifests[dependency].version, targetVersion)) {
                 graph.addEdge(dependency, extensionId);
                 this._checkExtensionLoadingOrderById(dependency, requireStack, graph);
-            }
-            else {
+            } else {
                 throw {
                     code: ERROR.UNAVAILABLE_EXTENSION,
-                    extension: [{ id: dependency, version: this.manifests[extensionId].dependency[dependency] }],
+                    extension: [{id: dependency, version: this.manifests[extensionId].dependency[dependency]}],
                     requireStack
                 };
             }
@@ -217,7 +216,7 @@ class Manager {
         console.error('addGuiSettings() should be registered first.');
     }
 
-    registerAddGuiSettings(func: (id: CCX.Manifest['id'], options: CCX.Settings) => void) {
+    registerAddGuiSettings (func: (id: CCX.Manifest['id'], options: CCX.Settings) => void) {
         this.addGuiSettings = func;
     }
 }

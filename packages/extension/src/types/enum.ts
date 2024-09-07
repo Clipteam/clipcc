@@ -24,4 +24,4 @@ export {
     BlockType,
     ParameterType,
     FilterType
-}
+};

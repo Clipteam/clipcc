@@ -25,36 +25,36 @@ class Graph {
     private node: Record<string, NodeData> = {};
     private nodeCount: number = 0;
 
-    addNode(node: string): void {
+    addNode (node: string): void {
         if (!this.node.hasOwnProperty(node)) {
-            this.node[node] = { in: 0, out: 0 };
+            this.node[node] = {in: 0, out: 0};
             this.edge[node] = {};
             ++this.nodeCount;
         }
     }
 
-    hasNode(node: string): boolean {
+    hasNode (node: string): boolean {
         return this.node.hasOwnProperty(node);
     }
 
-    addEdge(from: string, to: string, w = 0, data?: any): void {
+    addEdge (from: string, to: string, w = 0, data?: any): void {
         this.addNode(from);
         this.addNode(to);
         if (this.edge[from][to]) throw ERROR_DUPLICATED_EDGE;
-        this.edge[from][to] = { w, data };
+        this.edge[from][to] = {w, data};
         ++this.node[from].out;
         ++this.node[to].in;
     }
 
-    dijkstra(from: string, to: string): { from: string; to: string }[] {
+    dijkstra (from: string, to: string): { from: string; to: string }[] {
         const tmp: { [key: string]: NodeInfo } = {};
         for (const node in this.node) {
             tmp[node] = {
                 vis: false,
-                dis: this.edge[from].hasOwnProperty(node)
-                    ? this.edge[from][node].w : INF,
-                path: this.edge[from].hasOwnProperty(node)
-                    ? [{ from, to: node }] : []
+                dis: this.edge[from].hasOwnProperty(node) ?
+                    this.edge[from][node].w : INF,
+                path: this.edge[from].hasOwnProperty(node) ?
+                    [{from, to: node}] : []
             };
         }
         tmp[from].dis = 0;
@@ -79,7 +79,7 @@ class Graph {
                 ) {
                     tmp[node].dis = tmp[idx].dis + this.edge[idx][node].w;
                     tmp[node].path = [...tmp[idx].path];
-                    tmp[node].path.push({ from: idx, to: node });
+                    tmp[node].path.push({from: idx, to: node});
                 }
             }
         }
@@ -87,7 +87,7 @@ class Graph {
         return tmp[to].path;
     }
 
-    bfs(from: string, to: string): { from: string; to: string }[] {
+    bfs (from: string, to: string): { from: string; to: string }[] {
         const queue: string[] = [];
         const path: { [key: string]: { from: string; to: string }[] } = {};
         queue.push(from);
@@ -96,14 +96,14 @@ class Graph {
             for (const node in this.edge[cur]) {
                 if (path[node]) continue;
                 path[node] = [...(path[cur] || [])];
-                path[node].push({ from: cur, to: node });
+                path[node].push({from: cur, to: node});
                 queue.push(node);
             }
         }
         return path[to] || [];
     }
 
-    topo(): string[] {
+    topo (): string[] {
         const queue: string[] = [];
         const res: string[] = [];
         const nodeClone = clone(this.node);

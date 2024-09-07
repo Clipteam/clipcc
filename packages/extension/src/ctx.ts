@@ -1,10 +1,10 @@
-import { CCX } from "./types/ccx";
-import { ParameterType, BlockType, FilterType } from './types/enum';
+import {CCX} from './types/ccx';
+import {ParameterType, BlockType, FilterType} from './types/enum';
 import type VirtualMachine from 'clipcc-vm';
-import { ScratchBlocksConstants } from "./util/scratch-blocks-constants";
-import { xmlEscape } from "./util/xml-escape";
-import type { Store } from 'redux';
-import { createEmitter } from "./util/event-emitter";
+import {ScratchBlocksConstants} from './util/scratch-blocks-constants';
+import {xmlEscape} from './util/xml-escape';
+import type {Store} from 'redux';
+import {createEmitter} from './util/event-emitter';
 
 let context: CCX.Context | undefined;
 
@@ -20,12 +20,12 @@ let scratchBlocks: ScratchBlocks | null = null;
 interface ShadowType {
     type: string;
     fieldName: string;
-};
+}
 
 interface ParameterTypeInfo {
     shadow?: ShadowType;
     check?: string;
-};
+}
 
 const ParameterTypeMap: Record<ParameterType, ParameterTypeInfo> = {
     [ParameterType.ANGLE]: {
@@ -107,7 +107,7 @@ interface CategoryInfo {
 
 function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
     if (context) return;
-    let hasWarned = false, suspendedRefresh = false;
+    let hasWarned = false; let suspendedRefresh = false;
     const globalFunctions = new Map<string, (...args: unknown[]) => unknown>();
     const categoryInfo: Record<string, CategoryInfo> = {};
     const emitter = createEmitter<CCX.EventMap>();
@@ -160,7 +160,7 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
                         text: blockTranslate(prototype.messageId),
                         value: prototype.value
                     }))
-                )
+                );
             } else {
                 menuItems = [];
                 for (const item of block.param[paramId].menu) {
@@ -190,30 +190,30 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
 
         // Set block type
         switch (block.type) {
-            case BlockType.COMMAND:
-                blockJSON.outputShape = ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE;
-                blockJSON.previousStatement = null; // null = available connection; undefined = hat
-                if (!block.option?.terminal) {
-                    blockJSON.nextStatement = null; // null = available connection; undefined = terminal
-                }
-                break;
-            case BlockType.REPORTER:
-                blockJSON.output = 'String'; // TODO: distinguish number & string here?
-                blockJSON.outputShape = ScratchBlocksConstants.OUTPUT_SHAPE_ROUND;
-                break;
-            case BlockType.BOOLEAN:
-                blockJSON.output = 'Boolean';
-                blockJSON.outputShape = ScratchBlocksConstants.OUTPUT_SHAPE_HEXAGONAL;
-                break;
-            case BlockType.HAT:
-                vm.runtime._hats[block.opcode] = {
-                    edgeActivated: true // CCX doesn't support spicify this
-                };
-                blockJSON.outputShape = ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE;
+        case BlockType.COMMAND:
+            blockJSON.outputShape = ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE;
+            blockJSON.previousStatement = null; // null = available connection; undefined = hat
+            if (!block.option?.terminal) {
                 blockJSON.nextStatement = null; // null = available connection; undefined = terminal
-                break;
-            default:
-                throw new Error('unknown block type');
+            }
+            break;
+        case BlockType.REPORTER:
+            blockJSON.output = 'String'; // TODO: distinguish number & string here?
+            blockJSON.outputShape = ScratchBlocksConstants.OUTPUT_SHAPE_ROUND;
+            break;
+        case BlockType.BOOLEAN:
+            blockJSON.output = 'Boolean';
+            blockJSON.outputShape = ScratchBlocksConstants.OUTPUT_SHAPE_HEXAGONAL;
+            break;
+        case BlockType.HAT:
+            vm.runtime._hats[block.opcode] = {
+                edgeActivated: true // CCX doesn't support spicify this
+            };
+            blockJSON.outputShape = ScratchBlocksConstants.OUTPUT_SHAPE_SQUARE;
+            blockJSON.nextStatement = null; // null = available connection; undefined = terminal
+            break;
+        default:
+            throw new Error('unknown block type');
         }
 
         // Process arguments
@@ -362,9 +362,7 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
                 if (param?.menu && param.field) {
                     if (typeof param.menu === 'function') {
                         const menuFunc = param.menu;
-                        arg.options = () => {
-                            return menuFunc().map(item => ({text: blockTranslate(item.messageId), value: item.value}));
-                        }
+                        arg.options = () => menuFunc().map(item => ({text: blockTranslate(item.messageId), value: item.value}));
                     } else {
                         arg.options = param.menu.map(item => [blockTranslate(item.messageId), item.value]);
                     }
@@ -407,7 +405,7 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
         queueMicrotask(() => {
             const generatedXML = generateToolboxXML();
             let xmlString = '';
-            for (const { xml } of generatedXML) {
+            for (const {xml} of generatedXML) {
                 xmlString += xml;
             }
             setXML(xmlString);
@@ -511,7 +509,7 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
                 };
                 refreshToolbox();
             },
-            addBlock(block) {
+            addBlock (block) {
                 if (!(block.categoryId in categoryInfo)) {
                     throw new Error(`missing category "${block.categoryId}"`);
                 }
@@ -526,39 +524,40 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
                     context!.api.addBlock(block);
                 }
             },
-            addButton(button) {
-                const toolboxWs = scratchBlocks?.getMainWorkspace().getFlyout().getWorkspace();
+            addButton (button) {
+                const toolboxWs = scratchBlocks?.getMainWorkspace().getFlyout()
+                    .getWorkspace();
                 toolboxWs.registerButtonCallback(button.messageId, button.callback);
             },
 
-            removeCategory(categoryId) {
+            removeCategory (categoryId) {
                 console.warn('removeCategory() was stubbed in CCX V2');
             },
-            removeBlock(opcode) {
+            removeBlock (opcode) {
                 console.warn('removeBlock() was stubbed in CCX V2');
             },
-            removeBlocks(opcodes) {
+            removeBlocks (opcodes) {
                 console.warn('removeBlocks() was stubbed in CCX V2');
             },
-            removeButton(buttonId) {
+            removeButton (buttonId) {
                 console.warn('removeButton() was stubbed in CCX V2');
             },
 
-            getSettings(id) {
+            getSettings (id) {
                 return store.getState().scratchGui.settings[id];
             },
 
-            registerGlobalFunction(name, func) {
+            registerGlobalFunction (name, func) {
                 if (!hasWarned) {
                     hasWarned = true;
                     console.warn('globalFunction API has been deprecated since CCX V2, please manage global function by yourself.');
                 }
                 globalFunctions.set(name, func);
             },
-            unregisterGlobalFunction(name) {
+            unregisterGlobalFunction (name) {
                 globalFunctions.delete(name);
             },
-            callGlobalFunction(name, ...args) {
+            callGlobalFunction (name, ...args) {
                 const func = globalFunctions.get(name);
                 if (!func) throw `global function ${name} not found`;
                 return func(...args);

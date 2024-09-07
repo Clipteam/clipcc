@@ -11,11 +11,11 @@ export interface Emitter<T extends EventMap> {
     emit<K extends EventKey<T>>(eventName: K, params: T[K]): void;
 }
 
-export function createEmitter <T extends EventMap>(): Emitter<T> {
+export function createEmitter <T extends EventMap> (): Emitter<T> {
 
     return {
         events: {} as Partial<{ [K in EventKey<T>]: EventReceiver<T[K]>[] }>,
-        on<K extends EventKey<T>>(eventName: K, fn: EventReceiver<T[K]>) {
+        on<K extends EventKey<T>> (eventName: K, fn: EventReceiver<T[K]>) {
             if (!(eventName in this.events)) {
                 this.events[eventName] = [];
             }
@@ -24,25 +24,25 @@ export function createEmitter <T extends EventMap>(): Emitter<T> {
             return () => this.off(eventName, fn);
         },
 
-        once<K extends EventKey<T>>(eventName: K, fn: EventReceiver<T[K]>) {
-            const onceFn: EventReceiver<T[K]> = (params) => {
+        once<K extends EventKey<T>> (eventName: K, fn: EventReceiver<T[K]>) {
+            const onceFn: EventReceiver<T[K]> = params => {
                 this.off(eventName, onceFn);
                 fn(params);
             };
             return this.on(eventName, onceFn);
         },
 
-        off<K extends EventKey<T>>(eventName: K, fn: EventReceiver<T[K]>) {
+        off<K extends EventKey<T>> (eventName: K, fn: EventReceiver<T[K]>) {
             if (eventName in this.events) {
-                this.events[eventName] = this.events[eventName]!.filter((cb) => cb !== fn);
+                this.events[eventName] = this.events[eventName]!.filter(cb => cb !== fn);
             }
         },
 
-        emit<K extends EventKey<T>>(eventName: K, params: T[K]) {
+        emit<K extends EventKey<T>> (eventName: K, params: T[K]) {
             const callbacks = this.events[eventName] || [];
-            callbacks.forEach((callback) => {
+            callbacks.forEach(callback => {
                 (callback as EventReceiver<T[K]>)(params);
             });
-        },
+        }
     };
 }

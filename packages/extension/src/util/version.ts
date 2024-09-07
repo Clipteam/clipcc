@@ -1,6 +1,6 @@
 import clone from './clone';
 
-function compareParsedVersion(ver1: string[], ver2: string[]): number {
+function compareParsedVersion (ver1: string[], ver2: string[]): number {
     const len = Math.max(ver1.length, ver2.length);
     for (let i = 0; i < len; ++i) {
         const v1 = i < ver1.length ? parseInt(ver1[i], 10) || 0 : 0;
@@ -11,7 +11,7 @@ function compareParsedVersion(ver1: string[], ver2: string[]): number {
     return 0;
 }
 
-function matchVersion(ver: string, reg: string): boolean {
+function matchVersion (ver: string, reg: string): boolean {
     if (reg[0] === '^') {
         const minVer = reg.substring(1).split('.');
         const maxVer = clone(minVer);
@@ -24,9 +24,9 @@ function matchVersion(ver: string, reg: string): boolean {
         return compareParsedVersion(ver.split('.'), maxVer) < 0 && compareParsedVersion(ver.split('.'), minVer) >= 0;
     } else if (reg.includes('*')) {
         return new RegExp(reg.replace(/\*/g, '\\d*')).test(ver);
-    } else {
-        return compareParsedVersion(ver.split('.'), reg.split('.')) === 0;
     }
+    return compareParsedVersion(ver.split('.'), reg.split('.')) === 0;
+    
 }
 
-export { compareParsedVersion, matchVersion };
+export {compareParsedVersion, matchVersion};

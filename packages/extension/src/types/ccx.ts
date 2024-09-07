@@ -1,7 +1,7 @@
-import VirtualMachine, { ImportedExtensionsInfo, Target } from 'clipcc-vm';
-import { BlockType, ParameterType, FilterType } from './enum';
-import type { Store } from 'redux';
-import { Emitter } from '../util/event-emitter';
+import VirtualMachine, {ImportedExtensionsInfo, Target} from 'clipcc-vm';
+import {BlockType, ParameterType, FilterType} from './enum';
+import type {Store} from 'redux';
+import {Emitter} from '../util/event-emitter';
 
 type ScratchBlocks = any;
 
@@ -166,4 +166,4 @@ interface ContextAPI extends Emitter<CCX.EventMap> {
     getReduxStore: typeof CCX.API.getReduxStore;
 }
 
-export { CCX };
+export {CCX};

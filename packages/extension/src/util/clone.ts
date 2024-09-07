@@ -1,4 +1,4 @@
-function clone<T>(obj: T): T {
+function clone<T> (obj: T): T {
     const res: any = Array.isArray(obj) ? [] : {};
     if (typeof obj !== 'object') {
         return obj;
