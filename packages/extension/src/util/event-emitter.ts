@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type EventMap = Record<string, any>;
 
 type EventKey<T extends EventMap> = string & keyof T;
@@ -11,8 +12,11 @@ export interface Emitter<T extends EventMap> {
     emit<K extends EventKey<T>>(eventName: K, params: T[K]): void;
 }
 
+/**
+ * Create a event emitter.
+ * @returns a event emitter.
+ */
 export function createEmitter <T extends EventMap> (): Emitter<T> {
-
     return {
         events: {} as Partial<{ [K in EventKey<T>]: EventReceiver<T[K]>[] }>,
         on<K extends EventKey<T>> (eventName: K, fn: EventReceiver<T[K]>) {

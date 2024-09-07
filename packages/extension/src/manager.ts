@@ -25,6 +25,11 @@ interface RequireInfo {
     version: CCX.Manifest['version'];
 }
 
+interface OrderInfo {
+    id: string;
+    mode: LoadMode;
+}
+
 class Manager {
     manifests: Record<CCX.Manifest['id'], CCX.Manifest> = {};
     private instances: Record<CCX.Manifest['id'], CCX.Class> = {};
@@ -96,20 +101,18 @@ class Manager {
         return id in this.instances;
     }
 
-    async enable (...extensionIds: CCX.Manifest['id'][]) {
+    enable (...extensionIds: CCX.Manifest['id'][]) {
         if (!context) {
             throw ERROR.MISSING_CONTEXT;
         }
         const orderedExtensionIds = this.getExtensionLoadOrder(extensionIds);
-        for (const {id, mode} of orderedExtensionIds) {
+        for (const {id} of orderedExtensionIds) {
             const script = this.scripts[id];
             const manifest = this.manifests[id];
-            const ExportedClass = eval(manifest.api == 1 ? `let module = {};${script}` : script);
+            // eslint-disable-next-line no-eval
+            const ExportedClass = eval(manifest.api === 1 ? `let module = {};${script}` : script);
             if (!ExportedClass) {
-                throw {
-                    error: ERROR.MISSING_EXPORTS,
-                    id
-                };
+                throw new Error(`Missing exported class (${ERROR.MISSING_EXPORTS}) (${id})`);
             }
 
             const instance = new ExportedClass();
@@ -133,16 +136,11 @@ class Manager {
      * Get the correct loading order.
      * @param extensions The list of extension ID.
      */
-    getExtensionLoadOrder (extensions: CCX.Manifest['id'][]) {
+    getExtensionLoadOrder (extensions: CCX.Manifest['id'][]): OrderInfo[] {
         const graph = new Graph();
         for (const extensionId of extensions) {
             if (!(extensionId in this.manifests)) {
-                console.error(`Unavailable extension: ${extensionId}`);
-                throw {
-                    code: ERROR.UNAVAILABLE_EXTENSION,
-                    extension: [{id: extensionId, version: 'any'}],
-                    requireStack: []
-                };
+                throw new Error(`Unavailable extension ${extensionId} (${ERROR.UNAVAILABLE_EXTENSION})`);
             }
             this._checkExtensionLoadingOrderById(extensionId, [], graph);
         }
@@ -167,7 +165,8 @@ class Manager {
      * @param requireStack Require stack.
      * @param graph Load order.
      */
-    private _checkExtensionLoadingOrderById (extensionId: CCX.Manifest['id'], requireStack: RequireInfo[], graph: Graph) {
+    private _checkExtensionLoadingOrderById (
+        extensionId: CCX.Manifest['id'], requireStack: RequireInfo[], graph: Graph) {
         requireStack.push({
             id: extensionId,
             version: this.manifests[extensionId].version
@@ -177,34 +176,30 @@ class Manager {
         }
         for (const dependency in this.manifests[extensionId].dependency) {
             if (!(dependency in this.manifests)) {
-                throw {
-                    code: ERROR.UNAVAILABLE_EXTENSION,
-                    extension: [{id: dependency, version: this.manifests[extensionId].dependency[dependency]}],
-                    requireStack
-                };
+                throw new Error(
+                    `Unavailable extension ${dependency} (${ERROR.UNAVAILABLE_EXTENSION})\nstack:\n${requireStack}`
+                );
             }
             if (this._hasRequired(dependency, requireStack)) {
-                throw {
-                    code: ERROR.CIRCULAR_REQUIREMENT,
-                    requireStack
-                };
+                throw new Error(
+                    `Circular requirement ${dependency} (${ERROR.CIRCULAR_REQUIREMENT})\nstack: ${requireStack}`
+                );
             }
             const targetVersion = this.manifests[extensionId].dependency[dependency];
             if (matchVersion(this.manifests[dependency].version, targetVersion)) {
                 graph.addEdge(dependency, extensionId);
                 this._checkExtensionLoadingOrderById(dependency, requireStack, graph);
             } else {
-                throw {
-                    code: ERROR.UNAVAILABLE_EXTENSION,
-                    extension: [{id: dependency, version: this.manifests[extensionId].dependency[dependency]}],
-                    requireStack
-                };
+                throw new Error(
+                    `Unavailable extension ${dependency} (${ERROR.UNAVAILABLE_EXTENSION})\nstack: ${requireStack}
+                `);
             }
         }
         requireStack.pop();
     }
 
-    private addGuiLocale (locale: Record<string, CCX.LocaleMap>) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    private addGuiLocale (_locale: Record<string, CCX.LocaleMap>) {
         console.error('addGuiLocale() should be registered first.');
     }
 
@@ -212,7 +207,8 @@ class Manager {
         this.addGuiLocale = func;
     }
 
-    private addGuiSettings (id: CCX.Manifest['id'], options: CCX.Settings) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    private addGuiSettings (_id: CCX.Manifest['id'], _options: CCX.Settings) {
         console.error('addGuiSettings() should be registered first.');
     }
 

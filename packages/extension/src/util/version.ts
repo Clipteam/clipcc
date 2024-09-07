@@ -1,6 +1,13 @@
 import clone from './clone';
 
-function compareParsedVersion (ver1: string[], ver2: string[]): number {
+/**
+ * Compares two parsed version arrays and determines their order.
+ *
+ * @param ver1 - The first version array to compare.
+ * @param ver2 - The second version array to compare.
+ * @returns Returns -1 if ver1 is less than ver2, 1 if ver1 is greater than ver2, and 0 if they are equal.
+ */
+function compareParsedVersion (ver1: string[], ver2: string[]) {
     const len = Math.max(ver1.length, ver2.length);
     for (let i = 0; i < len; ++i) {
         const v1 = i < ver1.length ? parseInt(ver1[i], 10) || 0 : 0;
@@ -11,7 +18,14 @@ function compareParsedVersion (ver1: string[], ver2: string[]): number {
     return 0;
 }
 
-function matchVersion (ver: string, reg: string): boolean {
+/**
+ * Checks if a version matches a given version range pattern.
+ *
+ * @param ver - The version to check.
+ * @param reg - The version range pattern, which can start with '^', '~', or contain '*'.
+ * @returns Returns true if the version matches the pattern, otherwise false.
+ */
+function matchVersion (ver: string, reg: string) {
     if (reg[0] === '^') {
         const minVer = reg.substring(1).split('.');
         const maxVer = clone(minVer);
@@ -26,7 +40,6 @@ function matchVersion (ver: string, reg: string): boolean {
         return new RegExp(reg.replace(/\*/g, '\\d*')).test(ver);
     }
     return compareParsedVersion(ver.split('.'), reg.split('.')) === 0;
-    
 }
 
 export {compareParsedVersion, matchVersion};

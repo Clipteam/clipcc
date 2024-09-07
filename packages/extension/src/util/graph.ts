@@ -6,7 +6,7 @@ const INF = 0x3f3f3f3f;
 
 interface EdgeData {
     w: number;
-    data: any;
+    data: unknown;
 }
 
 interface NodeData {
@@ -26,7 +26,7 @@ class Graph {
     private nodeCount: number = 0;
 
     addNode (node: string): void {
-        if (!this.node.hasOwnProperty(node)) {
+        if (!this.hasNode(node)) {
             this.node[node] = {in: 0, out: 0};
             this.edge[node] = {};
             ++this.nodeCount;
@@ -34,10 +34,10 @@ class Graph {
     }
 
     hasNode (node: string): boolean {
-        return this.node.hasOwnProperty(node);
+        return Object.hasOwnProperty.call(this.node, node);
     }
 
-    addEdge (from: string, to: string, w = 0, data?: any): void {
+    addEdge (from: string, to: string, w = 0, data?: unknown): void {
         this.addNode(from);
         this.addNode(to);
         if (this.edge[from][to]) throw ERROR_DUPLICATED_EDGE;
@@ -51,9 +51,9 @@ class Graph {
         for (const node in this.node) {
             tmp[node] = {
                 vis: false,
-                dis: this.edge[from].hasOwnProperty(node) ?
+                dis: Object.hasOwnProperty.call(this.edge[from], node) ?
                     this.edge[from][node].w : INF,
-                path: this.edge[from].hasOwnProperty(node) ?
+                path: Object.hasOwnProperty.call(this.edge[from], node) ?
                     [{from, to: node}] : []
             };
         }
@@ -74,7 +74,7 @@ class Graph {
             tmp[idx].vis = true;
             ++cnt;
             for (const node in this.node) {
-                if (!tmp[node].vis && this.edge[idx].hasOwnProperty(node) &&
+                if (!tmp[node].vis && Object.hasOwnProperty.call(this.edge[idx], node) &&
                     (tmp[idx].dis + this.edge[idx][node].w < tmp[node].dis)
                 ) {
                     tmp[node].dis = tmp[idx].dis + this.edge[idx][node].w;

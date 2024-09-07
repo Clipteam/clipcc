@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 import VirtualMachine, {ImportedExtensionsInfo, Target} from 'clipcc-vm';
 import {BlockType, ParameterType, FilterType} from './enum';
 import type {Store} from 'redux';
 import {Emitter} from '../util/event-emitter';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ScratchBlocks = any;
 
 declare namespace CCX {
@@ -56,20 +58,20 @@ declare namespace CCX {
 
     type SafeScratchValue = string | number;
 
-    interface BlockPrototype {
-        opcode: string;
-        type: BlockType;
-        option?: BlockOption;
-        param?: Record<string, ParameterPrototype>;
-        messageId: string;
-        categoryId: string;
-        function: (args: Record<string, unknown>, util?: unknown) => SafeScratchValue;
-    }
-
     interface BlockOption {
         terminal?: boolean;
         monitor?: boolean;
         filter?: FilterType[]
+    }
+
+    interface MenuItemPrototype {
+        messageId: string;
+        value: SafeScratchValue;
+    }
+
+    interface ShadowPrototype {
+        type: string;
+        fieldName: string;
     }
 
     interface ParameterPrototype {
@@ -81,14 +83,14 @@ declare namespace CCX {
         shadow?: ShadowPrototype;
     }
 
-    interface MenuItemPrototype {
+    interface BlockPrototype {
+        opcode: string;
+        type: BlockType;
+        option?: BlockOption;
+        param?: Record<string, ParameterPrototype>;
         messageId: string;
-        value: SafeScratchValue;
-    }
-
-    interface ShadowPrototype {
-        type: string;
-        fieldName: string;
+        categoryId: string;
+        function: (args: Record<string, unknown>, util?: unknown) => SafeScratchValue;
     }
 
     interface CategoryPrototype {
@@ -138,12 +140,14 @@ declare namespace CCX {
     }
 
     interface Context {
+        // eslint-disable-next-line no-use-before-define
         api: ContextAPI;
         type: {
             BlockType: typeof BlockType;
             ParameterType: typeof ParameterType;
             FilterType: typeof FilterType;
         };
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
         Extension: Function
     }
 }

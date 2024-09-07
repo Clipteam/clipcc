@@ -9,11 +9,14 @@ import {createEmitter} from './util/event-emitter';
 let context: CCX.Context | undefined;
 
 declare global {
+    // eslint-disable-next-line no-var
     var ClipCCExtension: CCX.Context | undefined;
 }
 
 type XMLSetter = (xml: string) => void;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ScratchBlocks = any;
+type AnyFunction = (...args: unknown[]) => unknown;
 
 let scratchBlocks: ScratchBlocks | null = null;
 
@@ -69,6 +72,18 @@ const ParameterTypeMap: Record<ParameterType, ParameterTypeInfo> = {
     }
 };
 
+interface FieldMenuItem {
+    text: string;
+    value: CCX.SafeScratchValue;
+}
+
+interface BlocklyArg {
+    type: string;
+    name: string;
+    check?: string;
+    options?: [string, unknown][] | FieldMenuItem[] | (() => FieldMenuItem[]);
+}
+
 export interface BlockJSON {
     type: string;
     inputsInline: boolean;
@@ -86,18 +101,6 @@ export interface BlockJSON {
     checkboxInFlyout?: boolean;
 }
 
-interface BlocklyArg {
-    type: string;
-    name: string;
-    check?: string;
-    options?: [string, any][] | FieldMenuItem[] | (() => FieldMenuItem[]);
-}
-
-interface FieldMenuItem {
-    text: string;
-    value: CCX.SafeScratchValue;
-}
-
 interface CategoryInfo {
     categoryId: string;
     messageId: string;
@@ -105,15 +108,120 @@ interface CategoryInfo {
     color: `#${string}`;
 }
 
+/**
+ * Initialize CCX's global context.
+ * @param vm The virtual machine instance.
+ * @param setXML GUI Method to update extra toolbox xml
+ * @param store Redux's store object
+ */
 function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
     if (context) return;
     let hasWarned = false; let suspendedRefresh = false;
-    const globalFunctions = new Map<string, (...args: unknown[]) => unknown>();
+    const globalFunctions = new Map<string, AnyFunction>();
     const categoryInfo: Record<string, CategoryInfo> = {};
     const emitter = createEmitter<CCX.EventMap>();
     vm.on('BEFORE_INSTALL_TARGETS', (...params: [VirtualMachine.Target[], VirtualMachine.ImportedExtensionsInfo]) => {
         emitter.emit('beforeProjectLoad', params);
     });
+
+    const blockTranslate = function (messageId: string): string {
+        return scratchBlocks ? scratchBlocks.Msg[messageId] ?? messageId : messageId;
+    };
+
+    const generateToolboxXML = function () {
+        const processedXML = [];
+        for (const categoryId in categoryInfo) {
+            const category = categoryInfo[categoryId];
+            let toolboxXML =
+                `<category
+                name="${blockTranslate(category.messageId)}"
+                id="${category.categoryId}"
+                colour="${category.color}"
+                secondaryColour="undefined"
+            >`;
+            // Add blocks
+            for (const opcode in category.blocks) {
+                const block = category.blocks[opcode];
+                // It's a button
+                if ('callback' in block) {
+                    toolboxXML += `
+                    <button
+                        text="${blockTranslate(block.messageId)}"
+                        callbackKey="${block.messageId}">
+                    </button>`;
+                    continue;
+                }
+
+                // Skip show if necessary
+                if (Array.isArray(block.option?.filter)) {
+                    // Hide from palette
+                    if (block.option?.filter.length) continue;
+                    if (!block.option?.filter.includes(
+                        vm.editingTarget?.isStage ? FilterType.STAGE : FilterType.SPRITE
+                    )) {
+                        continue;
+                    }
+                }
+
+                toolboxXML += `<block type="${block.opcode}" >`;
+                const text = blockTranslate(block.messageId);
+                const re = /\[(.+?)]/g;
+                let searchResult = null;
+                while ((searchResult = re.exec(text)) !== null) {
+                    if (searchResult) {
+                        const placeholder = searchResult[1].replace(/[<"&]/, '_');
+                        if (placeholder.startsWith('SUBSTACK')) continue;
+                        let fieldName;
+                        const param = block.param ? block.param[placeholder] : null;
+                        const argTypeInfo = param ? (ParameterTypeMap[param.type] || {}) : {};
+                        let shadowType = param ? param.menuId : null;
+                        if ((param?.menu && param?.field) || param?.menuId) {
+                            fieldName = placeholder;
+                        } else {
+                            shadowType = (argTypeInfo.shadow && argTypeInfo.shadow.type) || null;
+                            fieldName = (argTypeInfo.shadow && argTypeInfo.shadow.fieldName) || null;
+                        }
+
+                        toolboxXML += `<value name="${xmlEscape(placeholder)}">`;
+                        // The <shadow> is a placeholder for a reporter,
+                        // and is visible when there's no reporter in this input.
+                        // Boolean inputs don't need to specify a shadow in the XML.
+                        if (shadowType) toolboxXML += `<shadow type="${shadowType}">`;
+
+                        // A <field> displays a dynamic value: a user-editable text field, a drop-down menu, etc.
+                        // Leave out the field if defaultValue or fieldName are not specified
+                        if (param?.default && fieldName) {
+                            toolboxXML += `<field name="${fieldName}">${xmlEscape(param?.default ?? '')}</field>`;
+                        }
+                        if (shadowType) toolboxXML += '</shadow>';
+                        toolboxXML += '</value>';
+                    }
+                }
+                toolboxXML += '</block>';
+            }
+            toolboxXML += '</category>';
+            processedXML.push({
+                id: category.categoryId,
+                xml: toolboxXML
+            });
+        }
+        return processedXML;
+    };
+
+    const refreshToolbox = function () {
+        if (suspendedRefresh) return;
+        suspendedRefresh = true;
+        queueMicrotask(() => {
+            const generatedXML = generateToolboxXML();
+            let xmlString = '';
+            for (const {xml} of generatedXML) {
+                xmlString += xml;
+            }
+            setXML(xmlString);
+
+            suspendedRefresh = false;
+        });
+    };
  
     // Listen locale changes
     let prevLocale: string | undefined;
@@ -125,11 +233,7 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
         }
     });
 
-    function blockTranslate (messageId: string): string {
-        return scratchBlocks ? scratchBlocks.Msg[messageId] ?? messageId : messageId;
-    }
-
-    function makeBlocklyJSON (block: CCX.BlockPrototype) {
+    const makeBlocklyJSON = function (block: CCX.BlockPrototype) {
         const blocksToBeRegistered: BlockJSON[] = [];
         const category = categoryInfo[block.categoryId];
         category.blocks[block.opcode] = block;
@@ -138,7 +242,9 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
             inputsInline: true,
             category: block.categoryId,
             colour: category.color,
+            // eslint-disable-next-line no-undefined
             colourSecondary: undefined,
+            // eslint-disable-next-line no-undefined
             colourTertiary: undefined
         };
 
@@ -177,7 +283,9 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
                 inputsInline: true,
                 output: 'String',
                 colour: category.color,
+                // eslint-disable-next-line no-undefined
                 colourSecondary: undefined,
+                // eslint-disable-next-line no-undefined
                 colourTertiary: undefined,
                 outputShape: ScratchBlocksConstants.OUTPUT_SHAPE_ROUND,
                 args0: [{
@@ -308,9 +416,9 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
         blocksToBeRegistered.push(blockJSON as BlockJSON);
 
         return blocksToBeRegistered;
-    }
+    };
 
-    function generateLocalizedData (block: CCX.BlockPrototype): Partial<BlockJSON> {
+    const generateLocalizedData = function (block: CCX.BlockPrototype): Partial<BlockJSON> {
         const text = blockTranslate(block.messageId);
         const result: Partial<BlockJSON> = {};
         let currentMessage = '';
@@ -362,7 +470,8 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
                 if (param?.menu && param.field) {
                     if (typeof param.menu === 'function') {
                         const menuFunc = param.menu;
-                        arg.options = () => menuFunc().map(item => ({text: blockTranslate(item.messageId), value: item.value}));
+                        arg.options = () =>
+                            menuFunc().map(item => ({text: blockTranslate(item.messageId), value: item.value}));
                     } else {
                         arg.options = param.menu.map(item => [blockTranslate(item.messageId), item.value]);
                     }
@@ -382,9 +491,9 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
         }
 
         return result;
-    }
+    };
 
-    function registerBlock (block: CCX.BlockPrototype) {
+    const registerBlock = function (block: CCX.BlockPrototype) {
         if (!scratchBlocks) return;
         const blocklyJSONs = makeBlocklyJSON(block);
         const mainBlocklyJSON = blocklyJSONs.pop();
@@ -397,101 +506,8 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
                 });
             }
         };
-    }
+    };
 
-    function refreshToolbox () {
-        if (suspendedRefresh) return;
-        suspendedRefresh = true;
-        queueMicrotask(() => {
-            const generatedXML = generateToolboxXML();
-            let xmlString = '';
-            for (const {xml} of generatedXML) {
-                xmlString += xml;
-            }
-            setXML(xmlString);
-
-            suspendedRefresh = false;
-        });
-    }
-
-    function generateToolboxXML () {
-        const processedXML = [];
-        for (const categoryId in categoryInfo) {
-            const category = categoryInfo[categoryId];
-            let toolboxXML =
-                `<category
-                name="${blockTranslate(category.messageId)}"
-                id="${category.categoryId}"
-                colour="${category.color}"
-                secondaryColour="undefined"
-            >`;
-            // Add blocks
-            for (const opcode in category.blocks) {
-                const block = category.blocks[opcode];
-                // It's a button
-                if ('callback' in block) {
-                    toolboxXML += `
-                    <button
-                        text="${blockTranslate(block.messageId)}"
-                        callbackKey="${block.messageId}">
-                    </button>`;
-                    continue;
-                }
-
-                // Skip show if necessary
-                if (Array.isArray(block.option?.filter)) {
-                    // Hide from palette
-                    if (block.option?.filter.length) continue;
-                    if (!block.option?.filter.includes(
-                        vm.editingTarget?.isStage ? FilterType.STAGE : FilterType.SPRITE
-                    )) {
-                        continue;
-                    }
-                }
-
-                toolboxXML += `<block type="${block.opcode}" >`;
-                const text = blockTranslate(block.messageId);
-                const re = /\[(.+?)]/g;
-                let searchResult = null;
-                while ((searchResult = re.exec(text)) !== null) {
-                    if (searchResult) {
-                        const placeholder = searchResult[1].replace(/[<"&]/, '_');
-                        if (placeholder.startsWith('SUBSTACK')) continue;
-                        let fieldName;
-                        const param = block.param ? block.param[placeholder] : null;
-                        const argTypeInfo = param ? (ParameterTypeMap[param.type] || {}) : {};
-                        let shadowType = param ? param.menuId : null;
-                        if ((param?.menu && param?.field) || param?.menuId) {
-                            fieldName = placeholder;
-                        } else {
-                            shadowType = (argTypeInfo.shadow && argTypeInfo.shadow.type) || null;
-                            fieldName = (argTypeInfo.shadow && argTypeInfo.shadow.fieldName) || null;
-                        }
-
-                        toolboxXML += `<value name="${xmlEscape(placeholder)}">`;
-                        // The <shadow> is a placeholder for a reporter and is visible when there's no reporter in this input.
-                        // Boolean inputs don't need to specify a shadow in the XML.
-                        if (shadowType) toolboxXML += `<shadow type="${shadowType}">`;
-
-                        // A <field> displays a dynamic value: a user-editable text field, a drop-down menu, etc.
-                        // Leave out the field if defaultValue or fieldName are not specified
-                        if (param?.default && fieldName) {
-                            toolboxXML += `<field name="${fieldName}">${xmlEscape(param?.default ?? '')}</field>`;
-                        }
-                        if (shadowType) toolboxXML += '</shadow>';
-                        toolboxXML += '</value>';
-                    }
-                }
-                toolboxXML += '</block>';
-            }
-            toolboxXML += '</category>';
-            processedXML.push({
-                id: category.categoryId,
-                xml: toolboxXML
-            });
-        }
-        return processedXML;
-    }
     globalThis.ClipCCExtension = context = {
         api: {
             events: emitter.events,
@@ -530,16 +546,16 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
                 toolboxWs.registerButtonCallback(button.messageId, button.callback);
             },
 
-            removeCategory (categoryId) {
+            removeCategory () {
                 console.warn('removeCategory() was stubbed in CCX V2');
             },
-            removeBlock (opcode) {
+            removeBlock () {
                 console.warn('removeBlock() was stubbed in CCX V2');
             },
-            removeBlocks (opcodes) {
+            removeBlocks () {
                 console.warn('removeBlocks() was stubbed in CCX V2');
             },
-            removeButton (buttonId) {
+            removeButton () {
                 console.warn('removeButton() was stubbed in CCX V2');
             },
 
@@ -550,7 +566,9 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
             registerGlobalFunction (name, func) {
                 if (!hasWarned) {
                     hasWarned = true;
-                    console.warn('globalFunction API has been deprecated since CCX V2, please manage global function by yourself.');
+                    console.warn(
+                        'globalFunction API has been deprecated since CCX V2, manage global function by yourself.'
+                    );
                 }
                 globalFunctions.set(name, func);
             },
@@ -559,7 +577,7 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
             },
             callGlobalFunction (name, ...args) {
                 const func = globalFunctions.get(name);
-                if (!func) throw `global function ${name} not found`;
+                if (!func) throw new Error(`global function ${name} not found`);
                 return func(...args);
             },
 
@@ -582,6 +600,10 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
     };
 }
 
+/**
+ * Attach scratch blocks
+ * @param blocks The ScratchBlocks instance
+ */
 function attachScratchBlocks (blocks: ScratchBlocks) {
     scratchBlocks = blocks;
 }

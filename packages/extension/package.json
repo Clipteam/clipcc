@@ -10,7 +10,7 @@
   "license": "AGPL-3.0-only",
   "scripts": {
     "build": "yarn run clean && tsc --project ./tsconfig.node.json && webpack",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint ./src --ext .ts",
     "clean": "rimraf ./dist"
   },
   "devDependencies": {
