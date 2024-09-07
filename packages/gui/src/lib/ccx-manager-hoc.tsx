@@ -1,10 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { initCtx, attachScratchBlocks } from 'clipcc-extension';
-import type { Manager } from 'clipcc-extension';
+import type { CCX, Manager } from 'clipcc-extension';
 import VirtualMachine from 'clipcc-vm';
 import { setExtendedXML } from '../reducers/ccx';
 import { addLocales, updateLocale } from '../reducers/locales';
+import { get } from 'idb-keyval';
 
 type ScratchBlocks = any;
 
@@ -18,15 +19,32 @@ interface CCXManagerProps {
     [key: string]: any;
 }
 
+let initialized = false;
+async function loadPersistentCCX (manager: Manager) {
+    if (initialized) return;
+    
+    const rawCCX = await get<Record<CCX.Manifest['id'], ArrayBuffer>>('persistentCCX');
+    if (!rawCCX) {
+        initialized = true;
+        return;
+    }
+    const persistentCCXs = Object.values(rawCCX);
+    manager.loadFromArrayBuffer(...persistentCCXs);
+    initialized = true;
+}
+
 const ccxManagerHOC = function <P extends CCXManagerProps>(
     WrappedComponent: React.ComponentType<P>
-): React.ComponentClass<Omit<P, 'vm' | 'manager'>> {
+): React.ComponentClass<Omit<P, 'vm' | 'manager' | 'blocks' | 'persistentCCX'>> {
     class CCXManager extends React.Component<P> {
         constructor(props: P) {
             super(props);
             initCtx(props.vm, props.setExtendedXML, props.store); // Pass store to initCtx
             attachScratchBlocks(props.blocks);
             props.manager.registerAddGuiLocale(props.addLocale);
+            if (props.persistentCCX) {
+                loadPersistentCCX(props.manager);
+            }
         }
 
         componentDidUpdate(prevProps: Readonly<P>): void {
@@ -49,9 +67,10 @@ const ccxManagerHOC = function <P extends CCXManagerProps>(
         }
     }
 
-    const mapStateToProps = (state: any): Pick<CCXManagerProps, 'vm' | 'manager' | 'blocks'> => ({
+    const mapStateToProps = (state: any): Pick<CCXManagerProps, 'vm' | 'manager' | 'blocks' | 'persistentCCX'> => ({
         vm: state.scratchGui.vm,
         blocks: state.scratchGui.blocks,
+        persistentCCX: state.scratchGui.settings.persistentCCX,
         manager: state.scratchGui.ccx.manager
     });
 
@@ -68,7 +87,7 @@ const ccxManagerHOC = function <P extends CCXManagerProps>(
         mapStateToProps,
         mapDispatchToProps
         // @ts-ignore
-    )(CCXManager) as React.ComponentClass<Omit<P, 'vm' | 'manager'>>;
+    )(CCXManager) as React.ComponentClass<Omit<P, 'vm' | 'manager' | 'blocks' | 'persistentCCX'>>;
 };
 
 export default ccxManagerHOC;

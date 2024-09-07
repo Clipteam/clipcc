@@ -1,4 +1,6 @@
 const UPDATE = 'scratch-gui/settings/UPDATE';
+const NEW_ITEM = 'scratch-gui/settings/NEW_ITEM';
+const RESET_DEFAULT = 'scratch-gui/settings/RESET_DEFAULT';
 
 const defaultState = {
     hideNonVanillaBlocks: false,
@@ -9,6 +11,8 @@ const defaultState = {
     unlimitedPenSize: false,
     unlimitedSoundStuffs: false,
     accurateCoordinates: false,
+    saveCCXInProject: false,
+    persistentCCX: false,
     autoSaveInterval: 120,
     compression: 6,
     framerate: 30,
@@ -20,7 +24,7 @@ const defaultState = {
 const initialState = JSON.parse(localStorage.getItem('settings')) || {};
 let needUpdate = false;
 for (const key in defaultState) {
-    if (!Object.prototype.hasOwnProperty.call(initialState, key)) {
+    if (!Object.hasOwnProperty.call(initialState, key)) {
         initialState[key] = defaultState[key];
         needUpdate = true;
     }
@@ -36,6 +40,20 @@ const reducer = function (state, action) {
         localStorage.setItem('settings', JSON.stringify(newSettings));
         return newSettings;
     }
+    case NEW_ITEM: {
+        if (Object.hasOwnProperty.call(state, action.key)) {
+            // if the setting item already exists
+            return state;
+        }
+        const newSettings = Object.assign({}, state, {
+            [action.key]: action.defaultValue
+        });
+        localStorage.setItem('settings', JSON.stringify(newSettings));
+        return newSettings;
+    }
+    case RESET_DEFAULT:
+        localStorage.setItem('settings', JSON.stringify(defaultState));
+        return defaultState;
     default:
         return state;
     }
@@ -48,8 +66,20 @@ const updateSettings = function (settings) {
     };
 };
 
+const addNewSetting = (key, defaultValue) => ({
+    type: NEW_ITEM,
+    key,
+    defaultValue
+});
+
+const resetSettingsToDefault = () => ({
+    type: RESET_DEFAULT
+});
+
 export {
     reducer as default,
     initialState as settingsInitialState,
-    updateSettings
+    updateSettings,
+    addNewSetting,
+    resetSettingsToDefault
 };

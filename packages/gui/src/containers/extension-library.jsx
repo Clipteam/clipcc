@@ -2,6 +2,7 @@ import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
 import VM from 'clipcc-vm';
+import { update } from 'idb-keyval';
 import { defineMessages, injectIntl, intlShape } from 'react-intl';
 
 import extensionLibraryContent from '../lib/libraries/extensions/index.jsx';
@@ -122,9 +123,16 @@ class ExtensionLibrary extends React.PureComponent {
                         await this.props.vm.extensionManager.loadExtensionURL(dataURI);
                     } else if (file.name.endsWith('.ccx')) {
                         const arrayBuffer = await this.fileToArrayBuffer(file);
+
                         const manifests = await this.props.manager.loadFromArrayBuffer(arrayBuffer);
+                        if (!manifests.length) return;
+
                         this.manifests.push(...manifests);
                         this.refreshExtensionLibraryThumbnailData();
+                        update('persistentCCX', (persistentCCXs) => {
+                            if (!persistentCCXs) persistentCCXs = {};
+                            return Object.assign(persistentCCXs, ...manifests.map(({id}) => ({[id]: arrayBuffer})));
+                        });
                     }
                 } catch (error) {
                     errors.push({ file: file.name, error });
@@ -182,6 +190,7 @@ ExtensionLibrary.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
+    persistentCCX: state.scratchGui.settings.persistentCCX,
     manager: state.scratchGui.ccx.manager,
     locale: state.locales.locale
 });

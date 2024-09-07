@@ -388,6 +388,42 @@ class SettingsModal extends React.Component {
                                 placeholder="300"
                             />
                         </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Save ClipCC Extensions In Project"
+                                    description="Label of save extensions in project"
+                                    id="gui.settingsModal.saveExtensionsInProject"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Save loaded ClipCC extensions in your project."
+                                    description="Description of save ClipCC extensions in project"
+                                    id="gui.settingsModal.saveCCXInProjectDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.saveCCXInProject}
+                                onChange={this.props.onChangeSaveCCXInProject}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Persistent Uploaded ClipCC Extensions"
+                                    description="Label of persistent uploaded ClipCC extensions"
+                                    id="gui.settingsModal.persistentCCX"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Persistent uploaded ClipCC extensions in IndexedDB."
+                                    description="Description of persistent uploaded ClipCC extensions"
+                                    id="gui.settingsModal.persistentCCXDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.persistentCCX}
+                                onChange={this.props.onChangePersistentCCX}
+                            />
+                        </div>
                     </Box>
                 </Box>
             </Modal>
@@ -398,6 +434,8 @@ class SettingsModal extends React.Component {
 SettingsModal.propTypes = {
     hideNonVanillaBlocks: PropTypes.bool.isRequired,
     autoSave: PropTypes.bool.isRequired,
+    saveCCXInProject: PropTypes.bool.isRequired,
+    persistentCCX: PropTypes.bool.isRequired,
     infiniteCloning: PropTypes.bool.isRequired,
     edgelessStage: PropTypes.bool.isRequired,
     unlimitedListLength: PropTypes.bool.isRequired,
@@ -416,6 +454,8 @@ SettingsModal.propTypes = {
     onChangeEdgelessStage: PropTypes.func.isRequired,
     onChangeUnlimitedListLength: PropTypes.func.isRequired,
     onChangeUnlimitedPenSize: PropTypes.func.isRequired,
+    onChangeSaveCCXInProject:PropTypes.func.isRequired,
+    onChangePersistentCCX: PropTypes.func.isRequired,
     onChangeUnlimitedSoundStuffs: PropTypes.func.isRequired,
     onChangeAccurateCoordinates: PropTypes.func.isRequired,
     onChangeAutoSaveInterval: PropTypes.func.isRequired,

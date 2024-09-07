@@ -161,7 +161,7 @@ class LibraryComponent extends React.Component {
             if (!item.category || categories.includes(item.category)) continue;
             categories.push(item.category);
         }
-        return categories;
+        return categories.reverse();
     }
     getFilteredData () {
         if (this.state.selectedTag === 'all') {

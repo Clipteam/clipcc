@@ -121,7 +121,7 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
     });
 
     function blockTranslate (messageId: string): string {
-        return scratchBlocks ? scratchBlocks.Msg[messageId] : messageId;
+        return scratchBlocks ? scratchBlocks.Msg[messageId] ?? messageId : messageId;
     }
 
     function makeBlocklyJSON (block: CCX.BlockPrototype) {
@@ -498,6 +498,7 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
                     blocks: {},
                     color: category.color
                 };
+                refreshToolbox();
             },
             addBlock(block) {
                 if (!(block.categoryId in categoryInfo)) {

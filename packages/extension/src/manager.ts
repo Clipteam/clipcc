@@ -39,6 +39,7 @@ class Manager {
             if (!('main.js' in zipData.files)) throw ERROR.MISSING_ENTRY;
 
             const manifest: CCX.Manifest = JSON.parse(await zipData.files['info.json'].async('text'));
+            if (manifest.id in this.manifests) continue;
             
             if ('icon' in manifest) {
                 const data = await zipData.files[manifest.icon].async('arraybuffer');

@@ -28,6 +28,8 @@ class SettingsModal extends React.Component {
             'handleChangeUnlimitedSoundStuffs',
             'handleChangeAccurateCoordinates',
             'handleChangeHideNonVanillaBlocks',
+            'handleChangeSaveCCXInProject',
+            'handleChangePersistentCCX',
             'handleChangeStageWidth',
             'handleChangeStageHeight'
         ]);
@@ -37,6 +39,12 @@ class SettingsModal extends React.Component {
     }
     handleChangeAutoSave (value) {
         this.props.updateSettings({autoSave: value});
+    }
+    handleChangeSaveCCXInProject (value) {
+        this.props.updateSettings({saveCCXInProject: value});
+    }
+    handleChangePersistentCCX(value) {
+        this.props.updateSettings({ persistentCCX: value });
     }
     handleChangeAutoSaveInterval (value) {
         value = Math.round(value);
@@ -87,6 +95,8 @@ class SettingsModal extends React.Component {
             <SettingsModalComponent
                 hideNonVanillaBlocks={this.props.hideNonVanillaBlocks}
                 autoSave={this.props.autoSave}
+                saveCCXInProject={this.props.saveCCXInProject}
+                persistentCCX={this.props.persistentCCX}
                 autoSaveInterval={this.props.autoSaveInterval}
                 framerate={this.props.framerate}
                 theme={this.props.theme}
@@ -110,6 +120,8 @@ class SettingsModal extends React.Component {
                 onChangeUnlimitedSoundStuffs={this.handleChangeUnlimitedSoundStuffs}
                 onChangeAccurateCoordinates={this.handleChangeAccurateCoordinates}
                 onChangeHideNonVanillaBlocks={this.handleChangeHideNonVanillaBlocks}
+                onChangeSaveCCXInProject={this.handleChangeSaveCCXInProject}
+                onChangePersistentCCX={this.handleChangePersistentCCX}
                 onChangeStageWidth={this.handleChangeStageWidth}
                 onChangeStageHeight={this.handleChangeStageHeight}
             />
@@ -119,6 +131,8 @@ class SettingsModal extends React.Component {
 
 SettingsModal.propTypes = {
     hideNonVanillaBlocks: PropTypes.bool.isRequired,
+    saveCCXInProject: PropTypes.bool.isRequired,
+    persistentCCX: PropTypes.bool.isRequired,
     autoSave: PropTypes.bool.isRequired,
     infiniteCloning: PropTypes.bool.isRequired,
     edgelessStage: PropTypes.bool.isRequired,
@@ -136,6 +150,8 @@ SettingsModal.propTypes = {
 };
 
 const mapStateToProps = state => ({
+    saveCCXInProject: state.scratchGui.settings.saveCCXInProject,
+    persistentCCX: state.scratchGui.settings.persistentCCX,
     hideNonVanillaBlocks: state.scratchGui.settings.hideNonVanillaBlocks,
     autoSave: state.scratchGui.settings.autoSave,
     infiniteCloning: state.scratchGui.settings.infiniteCloning,
