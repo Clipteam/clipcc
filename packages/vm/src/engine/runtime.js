@@ -278,7 +278,7 @@ class Runtime extends EventEmitter {
          * ClipCC's version
          * @deprecated keep compatability for some old CCX extensions.
          */
-        this.version = clipcc.VERSION;
+        this.version = typeof window === 'undefined' ? 'unknown' : clipcc.VERSION; // defined by WebpackDefinePlugin
 
         /**
          * Flag to emit a targets update at the end of a step. When target data
