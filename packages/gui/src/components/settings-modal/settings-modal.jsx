@@ -65,7 +65,9 @@ class SettingsModal extends React.Component {
             project: null
         };
         bindAll(this, [
-            'handleJumpToCategoryWrapper'
+            'handleJumpToCategoryWrapper',
+            'renderExtensionSettings',
+            'handleChangeSettingsItem'
         ]);
     }
     handleJumpToCategoryWrapper (id) {
@@ -74,6 +76,84 @@ class SettingsModal extends React.Component {
                 behavior: 'smooth'
             });
         };
+    }
+    handleChangeSettingsItem (id) {
+        return value => {
+            this.props.onChangeSettingsItem(id, value);
+        };
+    }
+    renderExtensionSettings () {
+        const ids = Object.keys(this.props.extensionSettings);
+        const content = [];
+        for (const id of ids) {
+            const settings = this.props.extensionSettings[id];
+            if (!this.categoryRef.hasOwnProperty(id)) {
+                this.categoryRef[id] = null;
+            }
+            const currentContent = [(<p
+                key={id}
+                className={classNames(styles.category)}
+                ref={ref => this.categoryRef[id] = ref}
+            >
+                {this.props.intl.formatMessage({id: `${id}.name`})}
+            </p>)];
+            for (const item of settings) {
+                let element = null;
+                switch (item.type) {
+                case 'boolean': {
+                    element = (<Switch
+                        key={item.id}
+                        onChange={this.handleChangeSettingsItem(item.id)}
+                        value={this.props.settings[item.id]}
+                    />);
+                    break;
+                }
+                case 'number': {
+                    element = (<BufferedInput
+                        key={item.id}
+                        small
+                        tabIndex="0"
+                        type="number"
+                        min={item.min}
+                        max={item.max}
+                        precision={item.precision}
+                        placeholder="6"
+                        value={this.props.settings[item.id]}
+                        onSubmit={this.handleChangeSettingsItem(item.id)}
+                        className={classNames(styles.input)}
+                    />);
+                    break;
+                }
+                case 'selector': {
+                    const options = item.options.map(v => ({
+                        id: v.id,
+                        text: this.props.intl.formatMessage({id: v.message})
+                    }));
+                    element = (<Select
+                        options={options}
+                        onChange={this.handleChangeSettingsItem(item.id)}
+                        value={this.props.settings[item.id]}
+                    />);
+                    break;
+                }
+                default: {
+                    element = (<p>{'Error Type'}</p>);
+                }
+                }
+
+                currentContent.push(<div
+                    key={item.id}
+                    className={classNames(styles.item)}
+                >
+                    <p className={classNames(styles.label)}>
+                        {this.props.intl.formatMessage({id: item.message})}
+                    </p>
+                    {element}
+                </div>);
+            }
+            content.push(currentContent);
+        }
+        return content;
     }
     render () {
         return (
@@ -97,6 +177,14 @@ class SettingsModal extends React.Component {
                         <p onClick={this.handleJumpToCategoryWrapper('project')}>
                             {this.props.intl.formatMessage(messages.project)}
                         </p>
+                        {Object.keys(this.props.extensionSettings).map(id => (
+                            <p
+                                key={id}
+                                onClick={this.handleJumpToCategoryWrapper(id)}
+                            >
+                                {this.props.intl.formatMessage({ id: `${id}.name` })}
+                            </p>
+                        ))}
                     </Box>
                     <Box
                         className={classNames(styles.content, styles.scrollbar)}
@@ -122,7 +210,7 @@ class SettingsModal extends React.Component {
                                 />
                             </div>
                             <Select
-                                value={this.props.theme}
+                                value={this.props.settings.theme}
                                 onChange={this.props.onChangeTheme}
                                 className={styles.selectSmall}
                                 options={[{
@@ -154,7 +242,7 @@ class SettingsModal extends React.Component {
                                 />
                             </div>
                             <Switch
-                                value={this.props.hideNonVanillaBlocks}
+                                value={this.props.settings.hideNonVanillaBlocks}
                                 onChange={this.props.onChangeHideNonVanillaBlocks}
                             />
                         </div>
@@ -178,7 +266,7 @@ class SettingsModal extends React.Component {
                                 />
                             </div>
                             <BufferedInput
-                                value={this.props.framerate}
+                                value={this.props.settings.framerate}
                                 onSubmit={this.props.onChangeFramerate}
                                 className={styles.input}
                                 small
@@ -204,7 +292,7 @@ class SettingsModal extends React.Component {
                                 />
                             </div>
                             <Switch
-                                value={this.props.infiniteCloning}
+                                value={this.props.settings.infiniteCloning}
                                 onChange={this.props.onChangeInfiniteCloning}
                             />
                         </div>
@@ -222,7 +310,7 @@ class SettingsModal extends React.Component {
                                 />
                             </div>
                             <Switch
-                                value={this.props.edgelessStage}
+                                value={this.props.settings.edgelessStage}
                                 onChange={this.props.onChangeEdgelessStage}
                             />
                         </div>
@@ -240,7 +328,7 @@ class SettingsModal extends React.Component {
                                 />
                             </div>
                             <Switch
-                                value={this.props.unlimitedListLength}
+                                value={this.props.settings.unlimitedListLength}
                                 onChange={this.props.onChangeUnlimitedListLength}
                             />
                         </div>
@@ -258,7 +346,7 @@ class SettingsModal extends React.Component {
                                 />
                             </div>
                             <Switch
-                                value={this.props.unlimitedPenSize}
+                                value={this.props.settings.unlimitedPenSize}
                                 onChange={this.props.onChangeUnlimitedPenSize}
                             />
                         </div>
@@ -276,7 +364,7 @@ class SettingsModal extends React.Component {
                                 />
                             </div>
                             <Switch
-                                value={this.props.unlimitedSoundStuffs}
+                                value={this.props.settings.unlimitedSoundStuffs}
                                 onChange={this.props.onChangeUnlimitedSoundStuffs}
                             />
                         </div>
@@ -294,7 +382,7 @@ class SettingsModal extends React.Component {
                                 />
                             </div>
                             <Switch
-                                value={this.props.accurateCoordinates}
+                                value={this.props.settings.accurateCoordinates}
                                 onChange={this.props.onChangeAccurateCoordinates}
                             />
                         </div>
@@ -318,7 +406,7 @@ class SettingsModal extends React.Component {
                                     type="number"
                                     precision={0}
                                     placeholder={480}
-                                    value={this.props.stageWidth}
+                                    value={this.props.settings.stageWidth}
                                     onSubmit={this.props.onChangeStageWidth}
                                     className={classNames(styles.input)}
                                 />
@@ -331,7 +419,7 @@ class SettingsModal extends React.Component {
                                     type="number"
                                     precision={0}
                                     placeholder={360}
-                                    value={this.props.stageHeight}
+                                    value={this.props.settings.stageHeight}
                                     onSubmit={this.props.onChangeStageHeight}
                                     className={classNames(styles.input)}
                                 />
@@ -357,12 +445,12 @@ class SettingsModal extends React.Component {
                                 />
                             </div>
                             <Switch
-                                value={this.props.autoSave}
+                                value={this.props.settings.autoSave}
                                 onChange={this.props.onChangeAutoSave}
                             />
                         </div>
                         <div className={styles.item}>
-                            <div className={classNames(styles.label, this.props.autoSave ? null : styles.disabled)}>
+                            <div className={classNames(styles.label, this.props.settings.autoSave ? null : styles.disabled)}>
                                 <FormattedMessage
                                     defaultMessage="Auto Save Interval"
                                     description="Label of auto save interval"
@@ -375,8 +463,8 @@ class SettingsModal extends React.Component {
                                 />
                             </div>
                             <BufferedInput
-                                value={this.props.autoSaveInterval}
-                                disabled={!this.props.autoSave}
+                                value={this.props.settings.autoSaveInterval}
+                                disabled={!this.props.settings.autoSave}
                                 onSubmit={this.props.onChangeAutoSaveInterval}
                                 className={styles.input}
                                 small
@@ -402,7 +490,7 @@ class SettingsModal extends React.Component {
                                 />
                             </div>
                             <Switch
-                                value={this.props.saveCCXInProject}
+                                value={this.props.settings.saveCCXInProject}
                                 onChange={this.props.onChangeSaveCCXInProject}
                             />
                         </div>
@@ -420,10 +508,11 @@ class SettingsModal extends React.Component {
                                 />
                             </div>
                             <Switch
-                                value={this.props.persistentCCX}
+                                value={this.props.settings.persistentCCX}
                                 onChange={this.props.onChangePersistentCCX}
                             />
                         </div>
+                        {this.renderExtensionSettings()}
                     </Box>
                 </Box>
             </Modal>
@@ -432,23 +521,11 @@ class SettingsModal extends React.Component {
 }
 
 SettingsModal.propTypes = {
-    hideNonVanillaBlocks: PropTypes.bool.isRequired,
-    autoSave: PropTypes.bool.isRequired,
-    saveCCXInProject: PropTypes.bool.isRequired,
-    persistentCCX: PropTypes.bool.isRequired,
-    infiniteCloning: PropTypes.bool.isRequired,
-    edgelessStage: PropTypes.bool.isRequired,
-    unlimitedListLength: PropTypes.bool.isRequired,
-    unlimitedPenSize: PropTypes.bool.isRequired,
-    unlimitedSoundStuffs: PropTypes.bool.isRequired,
-    accurateCoordinates: PropTypes.bool.isRequired,
-    autoSaveInterval: PropTypes.number.isRequired,
-    framerate: PropTypes.number.isRequired,
-    stageWidth: PropTypes.number.isRequired,
-    stageHeight: PropTypes.number.isRequired,
-    theme: PropTypes.string.isRequired,
+    extensionSettings: PropTypes.object.isRequired,
+    settings: PropTypes.object.isRequired,
     intl: intlShape.isRequired,
     onClose: PropTypes.func.isRequired,
+    onChangeSettings: PropTypes.func.isRequired,
     onChangeAutoSave: PropTypes.func.isRequired,
     onChangeInfiniteCloning: PropTypes.func.isRequired,
     onChangeEdgelessStage: PropTypes.func.isRequired,

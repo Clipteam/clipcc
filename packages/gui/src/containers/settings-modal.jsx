@@ -37,6 +37,9 @@ class SettingsModal extends React.Component {
     handleClose () {
         this.props.onClose();
     }
+    handleChangeSettings (id, value) {
+        this.props.updateSettings({ [id]: value });
+    }
     handleChangeAutoSave (value) {
         this.props.updateSettings({autoSave: value});
     }
@@ -93,21 +96,8 @@ class SettingsModal extends React.Component {
     render () {
         return (
             <SettingsModalComponent
-                hideNonVanillaBlocks={this.props.hideNonVanillaBlocks}
-                autoSave={this.props.autoSave}
-                saveCCXInProject={this.props.saveCCXInProject}
-                persistentCCX={this.props.persistentCCX}
-                autoSaveInterval={this.props.autoSaveInterval}
-                framerate={this.props.framerate}
-                theme={this.props.theme}
-                infiniteCloning={this.props.infiniteCloning}
-                edgelessStage={this.props.edgelessStage}
-                unlimitedListLength={this.props.unlimitedListLength}
-                unlimitedPenSize={this.props.unlimitedPenSize}
-                unlimitedSoundStuffs={this.props.unlimitedSoundStuffs}
-                accurateCoordinates={this.props.accurateCoordinates}
-                stageHeight={this.props.stageHeight}
-                stageWidth={this.props.stageWidth}
+                extensionSettings={this.props.extensionSettings}
+                settings={this.props.settings}
                 onClose={this.handleClose}
                 onChangeAutoSave={this.handleChangeAutoSave}
                 onChangeAutoSaveInterval={this.handleChangeAutoSaveInterval}
@@ -124,47 +114,22 @@ class SettingsModal extends React.Component {
                 onChangePersistentCCX={this.handleChangePersistentCCX}
                 onChangeStageWidth={this.handleChangeStageWidth}
                 onChangeStageHeight={this.handleChangeStageHeight}
+                onChangeSettings={this.handleChangeSettings}
             />
         );
     }
 }
 
 SettingsModal.propTypes = {
-    hideNonVanillaBlocks: PropTypes.bool.isRequired,
-    saveCCXInProject: PropTypes.bool.isRequired,
-    persistentCCX: PropTypes.bool.isRequired,
-    autoSave: PropTypes.bool.isRequired,
-    infiniteCloning: PropTypes.bool.isRequired,
-    edgelessStage: PropTypes.bool.isRequired,
-    unlimitedListLength: PropTypes.bool.isRequired,
-    unlimitedPenSize: PropTypes.bool.isRequired,
-    unlimitedSoundStuffs: PropTypes.bool.isRequired,
-    accurateCoordinates: PropTypes.bool.isRequired,
-    autoSaveInterval: PropTypes.number.isRequired,
-    framerate: PropTypes.number.isRequired,
-    theme: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
     updateSettings: PropTypes.func.isRequired,
-    stageHeight: PropTypes.number.isRequired,
-    stageWidth: PropTypes.number.isRequired
+    settings: PropTypes.object.isRequired,
+    extensionSettings: PropTypes.object.isRequired
 };
 
 const mapStateToProps = state => ({
-    saveCCXInProject: state.scratchGui.settings.saveCCXInProject,
-    persistentCCX: state.scratchGui.settings.persistentCCX,
-    hideNonVanillaBlocks: state.scratchGui.settings.hideNonVanillaBlocks,
-    autoSave: state.scratchGui.settings.autoSave,
-    infiniteCloning: state.scratchGui.settings.infiniteCloning,
-    edgelessStage: state.scratchGui.settings.edgelessStage,
-    unlimitedListLength: state.scratchGui.settings.unlimitedListLength,
-    unlimitedPenSize: state.scratchGui.settings.unlimitedPenSize,
-    unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,
-    accurateCoordinates: state.scratchGui.settings.accurateCoordinates,
-    autoSaveInterval: state.scratchGui.settings.autoSaveInterval,
-    framerate: state.scratchGui.settings.framerate,
-    theme: state.scratchGui.settings.theme,
-    stageHeight: state.scratchGui.settings.stageHeight,
-    stageWidth: state.scratchGui.settings.stageWidth
+    settings: state.scratchGui.settings,
+    extensionSettings: state.scratchGui.extensionSettings
 });
 
 const mapDispatchToProps = dispatch => ({

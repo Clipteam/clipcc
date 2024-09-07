@@ -6,6 +6,8 @@ import VirtualMachine from 'clipcc-vm';
 import { setExtendedXML } from '../reducers/ccx';
 import { addLocales, updateLocale } from '../reducers/locales';
 import { get } from 'idb-keyval';
+import {addNewSetting} from '../reducers/settings';
+import {newExtensionSettings} from '../reducers/extension-settings';
 
 type ScratchBlocks = any;
 
@@ -15,6 +17,7 @@ interface CCXManagerProps {
     blocks: ScratchBlocks;
     setExtendedXML(xml: string): void;
     addLocale(locale: Record<string, Record<string, string>>): void;
+    loadSettings(id: CCX.Manifest['id'], options: CCX.Settings): void;
     store: any;
     [key: string]: any;
 }
@@ -42,6 +45,7 @@ const ccxManagerHOC = function <P extends CCXManagerProps>(
             initCtx(props.vm, props.setExtendedXML, props.store); // Pass store to initCtx
             attachScratchBlocks(props.blocks);
             props.manager.registerAddGuiLocale(props.addLocale);
+            props.manager.registerAddGuiSettings(props.loadSettings);
             if (props.persistentCCX) {
                 loadPersistentCCX(props.manager);
             }
@@ -76,6 +80,17 @@ const ccxManagerHOC = function <P extends CCXManagerProps>(
 
     const mapDispatchToProps = (dispatch: any) => ({
         setExtendedXML: (xml: string) => dispatch(setExtendedXML(xml)),
+        loadSettings: (id: string, settings: CCX.Settings) => {
+            if (!Array.isArray(settings)) {
+                throw Error('Bad settings format: Expect an array.');
+            }
+            for (const item of settings) {
+                item.message = `${id}.settings.${item.id}`;
+                item.id = `${id}.${item.id}`;
+                dispatch(addNewSetting(item.id, item.default));
+            }
+            dispatch(newExtensionSettings(id, settings));
+        },
         addLocale: (locale: Record<string, Record<string, string>>) => {
             dispatch(addLocales(locale));
             dispatch(updateLocale());

@@ -19,14 +19,17 @@ declare namespace CCX {
 
     type LocaleMap = Record<string, string>;
 
-    interface SettingsItemBoolean {
+    interface SettingsItemBase {
         id: string;
+        message?: string;
+    }
+
+    interface SettingsItemBoolean extends SettingsItemBase {
         type: 'boolean';
         default: boolean;
     }
 
-    interface SettingsItemNumber {
-        id: string;
+    interface SettingsItemNumber extends SettingsItemBase {
         type: 'number';
         default: number;
         max?: number;
@@ -34,14 +37,12 @@ declare namespace CCX {
         precision?: number;
     }
 
-    interface SettingsItemText {
-        id: string;
+    interface SettingsItemText extends SettingsItemBase {
         type: 'text';
         default: string;
     }
-
-    interface SettingsItemSelector {
-        id: string;
+    
+    interface SettingsItemSelector extends SettingsItemBase {
         type: 'selector';
         default: string;
         items: string[];

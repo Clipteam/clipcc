@@ -73,7 +73,8 @@ class Manager {
             if ('settings.json' in zipData.files) {
                 const content = await zipData.files['settings.json'].async('text');
                 const settings: CCX.Settings = JSON.parse(content);
-                // @todo
+
+                this.addGuiSettings(manifest.id, settings);
             }
 
             // Load locales before ``main.js`` executed to prevent block locale issues.
@@ -200,6 +201,14 @@ class Manager {
 
     registerAddGuiLocale (func: (locale: Record<string, CCX.LocaleMap>) => void) {
         this.addGuiLocale = func;
+    }
+
+    private addGuiSettings (id: CCX.Manifest['id'], options: CCX.Settings) {
+        console.error('addGuiSettings() should be registered first.');
+    }
+
+    registerAddGuiSettings(func: (id: CCX.Manifest['id'], options: CCX.Settings) => void) {
+        this.addGuiSettings = func;
     }
 }
 

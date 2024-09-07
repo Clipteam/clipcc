@@ -8,6 +8,7 @@ import connectionModalReducer, {connectionModalInitialState} from './connection-
 import customProceduresReducer, {customProceduresInitialState} from './custom-procedures';
 import blockDragReducer, {blockDragInitialState} from './block-drag';
 import editorTabReducer, {editorTabInitialState} from './editor-tab';
+import extensionSettingsReducer, {extensionSettingsInitialState} from './extension-settings';
 import hoveredTargetReducer, {hoveredTargetInitialState} from './hovered-target';
 import menuReducer, {menuInitialState} from './menus';
 import micIndicatorReducer, {micIndicatorInitialState} from './mic-indicator';
@@ -44,6 +45,7 @@ const guiInitialState = {
     connectionModal: connectionModalInitialState,
     customProcedures: customProceduresInitialState,
     editorTab: editorTabInitialState,
+    extensionSettings: extensionSettingsInitialState,
     mode: modeInitialState,
     hoveredTarget: hoveredTargetInitialState,
     settings: settingsInitialState,
@@ -128,6 +130,7 @@ const guiReducer = combineReducers({
     connectionModal: connectionModalReducer,
     customProcedures: customProceduresReducer,
     editorTab: editorTabReducer,
+    extensionSettings: extensionSettingsReducer,
     mode: modeReducer,
     hoveredTarget: hoveredTargetReducer,
     settings: settingsReducer,

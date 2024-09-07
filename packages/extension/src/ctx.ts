@@ -534,7 +534,7 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
             },
 
             getSettings(id) {
-                return 'stub';
+                return store.getState().scratchGui.settings[id];
             },
 
             registerGlobalFunction(name, func) {
