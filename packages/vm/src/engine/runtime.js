@@ -275,6 +275,12 @@ class Runtime extends EventEmitter {
         this._cloneCounter = 0;
 
         /**
+         * ClipCC's version
+         * @deprecated keep compatability for some old CCX extensions.
+         */
+        this.version = clipcc.VERSION;
+
+        /**
          * Flag to emit a targets update at the end of a step. When target data
          * changes, this flag is set to true.
          * @type {boolean}

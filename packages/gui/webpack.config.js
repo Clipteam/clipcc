@@ -184,7 +184,7 @@ module.exports = [
             new webpack.DefinePlugin({
                 'process.env.DEBUG': Boolean(process.env.DEBUG),
                 'process.env.GA_ID': `"${process.env.GA_ID || 'UA-000000-01'}"`,
-                'clipcc.VERSION': version,
+                'clipcc.VERSION': `"${version}"`,
                 'clipcc.BUILD_TIME': Date.now()
             }),
             new HtmlWebpackPlugin({

@@ -63,7 +63,7 @@ const base = {
     plugins: [
         new NodePolyfillPlugin(),
         new webpack.DefinePlugin({
-            'clipcc.VERSION': version,
+            'clipcc.VERSION': `"${version}"`,
             'clipcc.BUILD_TIME': Date.now()
         })
     ]
