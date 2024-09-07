@@ -2658,7 +2658,7 @@ class Runtime extends EventEmitter {
      * @return {Array.<string>} List of param names for a procedure.
      */
     getProcedureParamNamesAndIds (procedureCode) {
-        return this.getProcedureParamNamesIdsAndDefaults(name).slice(0, 2);
+        return this.getProcedureParamNamesIdsAndDefaults(procedureCode).slice(0, 2);
     }
 
     /**
