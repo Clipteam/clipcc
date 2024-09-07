@@ -1,4 +1,4 @@
 module.exports = {
     root: true,
-    extends: ['scratch', 'scratch/node']
+    extends: ['clipcc', 'clipcc/node']
 };

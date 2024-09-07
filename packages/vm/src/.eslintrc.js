@@ -1,6 +1,6 @@
 module.exports = {
     root: true,
-    extends: ['scratch', 'scratch/es6'],
+    extends: ['clipcc', 'clipcc/es6'],
     env: {
         browser: true
     }
