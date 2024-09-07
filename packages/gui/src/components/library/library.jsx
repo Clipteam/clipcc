@@ -46,6 +46,7 @@ class LibraryComponent extends React.Component {
             'handlePlayingEnd',
             'handleSelect',
             'handleTagClick',
+            'refreshFilteredData',
             'setFilteredDataRef'
         ]);
         this.state = {
@@ -75,16 +76,19 @@ class LibraryComponent extends React.Component {
             prevState.filterQuery !== this.state.filterQuery ||
             prevProps.data !== this.props.data
         ) {
-            if (this.props.categorized) {
-                this.setState({
-                    filteredData: this.getFilteredData(),
-                    categories: this.collectCategory()
-                }); 
-            } else {
-                this.setState({
-                    filteredData: this.getFilteredData()
-                });
-            }
+            this.refreshFilteredData();
+        }
+    }
+    refreshFilteredData () {
+        if (this.props.categorized) {
+            this.setState({
+                filteredData: this.getFilteredData(),
+                categories: this.collectCategory()
+            });
+        } else {
+            this.setState({
+                filteredData: this.getFilteredData()
+            });
         }
     }
     handleSelect (id) {
@@ -190,7 +194,6 @@ class LibraryComponent extends React.Component {
         this.filteredDataRef = ref;
     }
     render () {
-        console.log(this.state);
         return (
             <Modal
                 fullScreen
@@ -257,7 +260,7 @@ class LibraryComponent extends React.Component {
                                         {
                                             this.state.filteredData
                                                 .filter(item => item.category === category)
-                                                .map((dataItem, index) => (
+                                                .map((dataItem) => (
                                                     <LibraryItem
                                                         bluetoothRequired={dataItem.bluetoothRequired}
                                                         author={dataItem.author}
@@ -269,10 +272,10 @@ class LibraryComponent extends React.Component {
                                                         iconMd5={dataItem.costumes ? dataItem.costumes[0].md5ext : dataItem.md5ext}
                                                         iconRawURL={dataItem.rawURL}
                                                         icons={dataItem.costumes}
-                                                        id={index}
+                                                        id={this.state.filteredData.indexOf(dataItem)}
                                                         insetIconURL={dataItem.insetIconURL}
                                                         internetConnectionRequired={dataItem.internetConnectionRequired}
-                                                        isPlaying={this.state.playingItem === index}
+                                                        isPlaying={this.state.playingItem === this.state.filteredData.indexOf(dataItem)}
                                                         key={typeof dataItem.name === 'string' ? dataItem.name : dataItem.rawURL}
                                                         name={dataItem.name}
                                                         showPlayButton={this.props.showPlayButton}

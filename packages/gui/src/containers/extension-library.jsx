@@ -101,6 +101,8 @@ class ExtensionLibrary extends React.PureComponent {
                 });
             }
         }
+
+        this.refreshExtensionLibraryThumbnailData();
     }
     handleUpload() {
         const input = document.createElement('input');
