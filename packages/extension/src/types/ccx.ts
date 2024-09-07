@@ -1,6 +1,7 @@
 import VirtualMachine, { ImportedExtensionsInfo, Target } from 'clipcc-vm';
 import { BlockType, ParameterType, FilterType } from './enum';
 import type { Store } from 'redux';
+import { Emitter } from '../util/event-emitter';
 
 type ScratchBlocks = any;
 
@@ -130,25 +131,14 @@ declare namespace CCX {
         function getBlockInstance(): ScratchBlocks | null;
         function getReduxStore(): Store;
     }
+    
+    interface EventMap {
+        onInit: [];
+        beforeProjectLoad: [VirtualMachine.Target[], VirtualMachine.ImportedExtensionsInfo];
+    }
 
     interface Context {
-        api: {
-            addCategory: typeof API.addCategory;
-            addBlock: typeof API.addBlock;
-            addBlocks: typeof API.addBlocks;
-            addButton: typeof API.addButton;
-            removeCategory: typeof API.removeCategory;
-            removeBlock: typeof API.removeBlock;
-            removeBlocks: typeof API.removeBlocks;
-            removeButton: typeof API.removeButton;
-            getSettings: typeof API.getSettings;
-            registerGlobalFunction: typeof API.registerGlobalFunction;
-            unregisterGlobalFunction: typeof API.unregisterGlobalFunction;
-            callGlobalFunction: typeof API.callGlobalFunction;
-            getVmInstance: typeof API.getVmInstance;
-            getBlockInstance: typeof API.getBlockInstance;
-            getReduxStore: typeof API.getReduxStore;
-        };
+        api: ContextAPI;
         type: {
             BlockType: typeof BlockType;
             ParameterType: typeof ParameterType;
@@ -156,6 +146,24 @@ declare namespace CCX {
         };
         Extension: Function
     }
+}
+
+interface ContextAPI extends Emitter<CCX.EventMap> {
+    addCategory: typeof CCX.API.addCategory;
+    addBlock: typeof CCX.API.addBlock;
+    addBlocks: typeof CCX.API.addBlocks;
+    addButton: typeof CCX.API.addButton;
+    removeCategory: typeof CCX.API.removeCategory;
+    removeBlock: typeof CCX.API.removeBlock;
+    removeBlocks: typeof CCX.API.removeBlocks;
+    removeButton: typeof CCX.API.removeButton;
+    getSettings: typeof CCX.API.getSettings;
+    registerGlobalFunction: typeof CCX.API.registerGlobalFunction;
+    unregisterGlobalFunction: typeof CCX.API.unregisterGlobalFunction;
+    callGlobalFunction: typeof CCX.API.callGlobalFunction;
+    getVmInstance: typeof CCX.API.getVmInstance;
+    getBlockInstance: typeof CCX.API.getBlockInstance;
+    getReduxStore: typeof CCX.API.getReduxStore;
 }
 
 export { CCX };

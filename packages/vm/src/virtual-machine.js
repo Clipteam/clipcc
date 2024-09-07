@@ -189,6 +189,10 @@ class VirtualMachine extends EventEmitter {
         this.variableListener = this.variableListener.bind(this);
     }
 
+    static get BEFORE_INSTALL_TARGETS () {
+        return 'BEFORE_INSTALL_TARGETS';
+    }
+
     /**
      * Start running the VM - do this before anything else.
      */
@@ -617,6 +621,9 @@ class VirtualMachine extends EventEmitter {
                     performance.measure('scratch-vm-deserialize',
                         'scratch-vm-deserialize-start', 'scratch-vm-deserialize-end');
                 }
+
+                this.emit(VirtualMachine.BEFORE_INSTALL_TARGETS, targets, extensions);
+
                 return this.installTargets(targets, extensions, true);
             });
     }

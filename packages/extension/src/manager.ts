@@ -3,14 +3,15 @@ import * as JSZip from 'jszip';
 import Graph from "./util/graph";
 import { matchVersion } from "./util/version";
 import mime from 'mime-types';
-import { scratchBlocks } from "./ctx";
+import context, { scratchBlocks } from "./ctx";
 
 const enum ERROR {
     UNAVAILABLE_EXTENSION = 0x90,
     CIRCULAR_REQUIREMENT,
     MISSING_MANIFEST,
     MISSING_ENTRY,
-    MISSING_EXPORTS
+    MISSING_EXPORTS,
+    MISSING_CONTEXT
 }
 
 const enum LoadMode {
@@ -96,6 +97,9 @@ class Manager {
     }
 
     async enable (...extensionIds: CCX.Manifest['id'][]) {
+        if (!context) {
+            throw ERROR.MISSING_CONTEXT;
+        }
         const orderedExtensionIds = this.getExtensionLoadOrder(extensionIds);
         for (const {id, mode} of orderedExtensionIds) {
             const script = this.scripts[id];
@@ -109,10 +113,16 @@ class Manager {
             }
 
             const instance = new ExportedClass();
-            if ('onInit' in instance) {
-                instance.onInit();
-                if (manifest.api > 1) {
-                    console.warn('onInit() has been deprecated since CCX V2, use constructor instead.');
+            // bind CCX V1 event function
+            if (manifest.api === 1) {
+                if (typeof instance.onInit === 'function') {
+                    instance.onInit();
+                }
+
+                if (typeof instance.beforeProjectLoad === 'function') {
+                    context.api.on('beforeProjectLoad', (params) => {
+                        instance.beforeProjectLoad(...params);
+                    });
                 }
             }
             this.instances[id] = instance as CCX.Class;

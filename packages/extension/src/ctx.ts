@@ -4,6 +4,7 @@ import type VirtualMachine from 'clipcc-vm';
 import { ScratchBlocksConstants } from "./util/scratch-blocks-constants";
 import { xmlEscape } from "./util/xml-escape";
 import type { Store } from 'redux';
+import { createEmitter } from "./util/event-emitter";
 
 let context: CCX.Context | undefined;
 
@@ -109,6 +110,10 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
     let hasWarned = false, suspendedRefresh = false;
     const globalFunctions = new Map<string, (...args: unknown[]) => unknown>();
     const categoryInfo: Record<string, CategoryInfo> = {};
+    const emitter = createEmitter<CCX.EventMap>();
+    vm.on('BEFORE_INSTALL_TARGETS', (...params: [VirtualMachine.Target[], VirtualMachine.ImportedExtensionsInfo]) => {
+        emitter.emit('beforeProjectLoad', params);
+    });
  
     // Listen locale changes
     let prevLocale: string | undefined;
@@ -491,6 +496,12 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
     }
     globalThis.ClipCCExtension = context = {
         api: {
+            events: emitter.events,
+            on: emitter.on,
+            emit: emitter.emit,
+            off: emitter.off,
+            once: emitter.once,
+
             addCategory (category) {
                 categoryInfo[category.categoryId] = {
                     categoryId: category.categoryId,
