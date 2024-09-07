@@ -379,10 +379,9 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
             if (param.menu && param.field) {
                 argJSON.type = 'field_dropdown';
                 if (typeof param.menu === 'function') {
-                    argJSON.options = param.menu().map(item => ([
-                        blockTranslate(item.messageId),
-                        item.value
-                    ]));
+                    const menuFunc = param.menu;
+                    argJSON.options = () =>
+                        menuFunc().map(item => ({ text: blockTranslate(item.messageId), value: item.value }));
                 } else {
                     argJSON.options = param.menu.map(item => ([
                         blockTranslate(item.messageId),
