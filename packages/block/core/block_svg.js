@@ -151,10 +151,10 @@ BlockSvg.prototype.isGlowingStack_ = false;
 
 /**
  * Mouse down bind data of block.
- * @type {Array<any[]>}
+ * @type {!Array.<!Array>}
  * @private
  */
-BlockSvg.prototype.mouseDownBindData_ = null;
+BlockSvg.prototype.mouseDownBindData_ = [];
 
 /**
  * Constant for identifying rows that are to be rendered inline.
