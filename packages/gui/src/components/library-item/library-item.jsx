@@ -9,6 +9,7 @@ import classNames from 'classnames';
 
 import bluetoothIconURL from './bluetooth.svg';
 import internetConnectionIconURL from './internet-connection.svg';
+import trashcanIconURL from './trash-can.svg';
 
 /* eslint-disable react/prefer-stateless-function */
 class LibraryItemComponent extends React.PureComponent {
@@ -59,6 +60,24 @@ class LibraryItemComponent extends React.PureComponent {
                 </div>
                 {this.props.bluetoothRequired || this.props.internetConnectionRequired || this.props.author ? (
                     <div className={styles.featuredExtensionMetadata}>
+                        {this.props.version ? (
+                            <div className={styles.featuredExtensionVersion}>
+                                <div>
+                                    <div>
+                                        <FormattedMessage
+                                            defaultMessage="Version"
+                                            description="Label for extension version"
+                                            id="gui.extensionLibrary.version"
+                                        />
+                                    </div>
+                                    <div
+                                        className={styles.featuredExtensionMetadataDetail}
+                                    >
+                                        {this.props.version}
+                                    </div>
+                                </div>
+                            </div>
+                        ) : null}
                         <div className={styles.featuredExtensionRequirement}>
                             {this.props.bluetoothRequired || this.props.internetConnectionRequired ? (
                                 <div>
@@ -155,7 +174,9 @@ LibraryItemComponent.propTypes = {
         PropTypes.node
     ]),
     disabled: PropTypes.bool,
+    deletable: PropTypes.bool,
     extensionId: PropTypes.string,
+    version: PropTypes.string,
     featured: PropTypes.bool,
     hidden: PropTypes.bool,
     iconURL: PropTypes.string,
@@ -168,6 +189,7 @@ LibraryItemComponent.propTypes = {
     ]),
     onBlur: PropTypes.func.isRequired,
     onClick: PropTypes.func.isRequired,
+    onDelete: PropTypes.func,
     onFocus: PropTypes.func.isRequired,
     onKeyPress: PropTypes.func.isRequired,
     onMouseEnter: PropTypes.func.isRequired,

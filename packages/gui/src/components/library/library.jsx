@@ -266,7 +266,9 @@ class LibraryComponent extends React.Component {
                                                         author={dataItem.author}
                                                         description={dataItem.description}
                                                         disabled={dataItem.disabled}
+                                                        deletable={dataItem.deletable}
                                                         extensionId={dataItem.extensionId}
+                                                        version={dataItem.version}
                                                         featured={dataItem.featured}
                                                         hidden={dataItem.hidden}
                                                         iconMd5={dataItem.costumes ? dataItem.costumes[0].md5ext : dataItem.md5ext}
@@ -295,7 +297,9 @@ class LibraryComponent extends React.Component {
                                     author={dataItem.author}
                                     description={dataItem.description}
                                     disabled={dataItem.disabled}
+                                    deletable={dataItem.deletable}
                                     extensionId={dataItem.extensionId}
+                                    version={dataItem.version}
                                     featured={dataItem.featured}
                                     hidden={dataItem.hidden}
                                     iconMd5={dataItem.costumes ? dataItem.costumes[0].md5ext : dataItem.md5ext}

@@ -69,6 +69,8 @@ class ExtensionLibrary extends React.PureComponent {
                     rawURL: manifest.icon,
                     iconURL: manifest.icon,
                     insetIconURL: manifest.inset_icon,
+                    deletable: !this.props.manager.isEnabled(manifest.id),
+                    version: manifest.version,
                     author: Array.isArray(manifest.author) ? manifest.author.join(', ') : manifest.author,
                     tags: ['clipcc'],
                     category: this.props.manager.isEnabled(manifest.id) ?

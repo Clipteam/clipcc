@@ -11,7 +11,8 @@ const enum ERROR {
     MISSING_MANIFEST,
     MISSING_ENTRY,
     MISSING_EXPORTS,
-    MISSING_CONTEXT
+    MISSING_CONTEXT,
+    ALREADY_ENABLED
 }
 
 const enum LoadMode {
@@ -41,11 +42,17 @@ class Manager {
             const zipData = await JSZip.loadAsync(extension);
 
             // Validate
-            if (!('info.json' in zipData.files)) throw ERROR.MISSING_MANIFEST;
-            if (!('main.js' in zipData.files)) throw ERROR.MISSING_ENTRY;
+            if (!('info.json' in zipData.files)) {
+                throw new Error(`Missing manifest (${ERROR.MISSING_MANIFEST})`);
+            }
 
             const manifest: CCX.Manifest = JSON.parse(await zipData.files['info.json'].async('text'));
             if (manifest.id in this.manifests) continue;
+
+            if (!('main.js' in zipData.files)) {
+                throw new Error(`Missing entry ${manifest.id} (${ERROR.MISSING_ENTRY})`);
+            }
+
             
             if ('icon' in manifest) {
                 const data = await zipData.files[manifest.icon].async('arraybuffer');
@@ -97,25 +104,36 @@ class Manager {
         return loadedManifests;
     }
 
+    unload (...ids: CCX.Manifest['id'][]) {
+        for (const id of ids) {
+            if (this.isEnabled(id)) {
+                throw new Error(`${id} already enabled (${ERROR.ALREADY_ENABLED})`);
+            }
+            delete this.manifests[id];
+            delete this.scripts[id];
+        }
+    }
+
     isEnabled (id: CCX.Manifest['id']) {
         return id in this.instances;
     }
 
     enable (...extensionIds: CCX.Manifest['id'][]) {
         if (!context) {
-            throw ERROR.MISSING_CONTEXT;
+            throw new Error(`Missing global CCX context (${ERROR.MISSING_CONTEXT})`);
         }
         const orderedExtensionIds = this.getExtensionLoadOrder(extensionIds);
         for (const {id} of orderedExtensionIds) {
             const script = this.scripts[id];
             const manifest = this.manifests[id];
+            // Made CCX V1 extensions can be exported properly.
             // eslint-disable-next-line no-eval
             const ExportedClass = eval(manifest.api === 1 ? `let module = {};${script}` : script);
             if (!ExportedClass) {
                 throw new Error(`Missing exported class (${ERROR.MISSING_EXPORTS}) (${id})`);
             }
 
-            const instance = new ExportedClass();
+            const instance: CCX.Class = new ExportedClass();
             // bind CCX V1 event function
             if (manifest.api === 1) {
                 if (typeof instance.onInit === 'function') {
@@ -124,11 +142,12 @@ class Manager {
 
                 if (typeof instance.beforeProjectLoad === 'function') {
                     context.api.on('beforeProjectLoad', params => {
-                        instance.beforeProjectLoad(...params);
+                        instance.beforeProjectLoad!(...params);
                     });
                 }
             }
             this.instances[id] = instance as CCX.Class;
+            delete this.scripts[id];
         }
     }
 
