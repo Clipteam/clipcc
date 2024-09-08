@@ -44,7 +44,7 @@
     "playwright-chromium": "1.13.0",
     "scratch-render-fonts": "1.0.0-prerelease.20221102164332",
     "tap": "21.0.1",
-    "terser-webpack-plugin": "^5.3.6",
+    "terser-webpack-plugin": "^5.3.10",
     "travis-after-all": "1.4.5",
     "ts-loader": "^9.5.1",
     "typescript": "^5.5.4",

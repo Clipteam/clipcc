@@ -93,7 +93,7 @@
     "semantic-release": "19.0.5",
     "stats.js": "0.17.0",
     "tap": "21.0.1",
-    "terser-webpack-plugin": "^5.3.6",
+    "terser-webpack-plugin": "^5.3.10",
     "tiny-worker": "2.3.0",
     "ts-loader": "^9.5.1",
     "typescript": "^5.5.4",
