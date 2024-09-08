@@ -360,7 +360,7 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
             }
 
             // create param lazily in order to avoid errors caused by BRANCH
-            const param = block.param ? block.param[placeholder] as Partial<CCX.ParameterPrototype> : {};
+            const param = block.param ? (block.param[placeholder] ?? {}) as Partial<CCX.ParameterPrototype> : {};
 
             const argTypeInfo = param ? (ParameterTypeMap[param.type!] || {}) : {};
             // Layout a block argument (e.g. an input slot on the block)
@@ -454,7 +454,7 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
                 }];
                 messageIndex++;
             } else {
-                const param = block.param?.[placeholder] as Partial<CCX.ParameterPrototype> | undefined;
+                const param = block.param?.[placeholder] as Partial<CCX.ParameterPrototype> ?? {};
                 const argTypeInfo = param ? (ParameterTypeMap[param.type!] || {}) : {};
 
                 const arg: Partial<BlocklyArg> = {
@@ -499,7 +499,7 @@ function initCtx (vm: VirtualMachine, setXML: XMLSetter, store: Store) {
         scratchBlocks.defineBlocksWithJsonArray(blocklyJSONs);
         scratchBlocks.Blocks[block.opcode] = {
             init () {
-                return this.jsonInit({
+                this.jsonInit({
                     ...mainBlocklyJSON,
                     ...generateLocalizedData(block)
                 });
