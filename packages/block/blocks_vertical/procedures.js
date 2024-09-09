@@ -260,7 +260,7 @@ Blockly.ScratchBlocks.ProcedureUtils.createAllInputs_ = function(connectionMap) 
     if (component.substring(0, 1) == '%') {
       const argumentType = component.substring(1, 2);
       if (!(
-          argumentType == 'n' || argumentType == 'b' ||
+        argumentType == 'n' || argumentType == 'b' ||
           argumentType == 's' || argumentType == 'c'
       )) {
         throw new Error(
@@ -665,7 +665,7 @@ Blockly.ScratchBlocks.ProcedureUtils.updateDeclarationProcCode_ = function() {
         this.procCode_ += '%s';
       }
     } else if (input.type == Blockly.constants.NEXT_STATEMENT) {
-      var target = input.connection.targetBlock();
+      const target = input.connection.targetBlock();
       this.displayNames_.push(target.getFieldValue('TEXT'));
       this.argumentIds_.push(input.name);
       this.procCode_ += '%c';
@@ -691,7 +691,7 @@ Blockly.ScratchBlocks.ProcedureUtils.focusLastEditor_ = function() {
       target.getField('TEXT').showEditor_();
     } else if (newInput.type == Blockly.constants.NEXT_STATEMENT) {
       // Inspect the argument editor.
-      var target = newInput.connection.targetBlock();
+      const target = newInput.connection.targetBlock();
       target.getField('TEXT').showEditor_();
     }
   }
