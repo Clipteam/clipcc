@@ -34,6 +34,7 @@ goog.declareModuleId('Blockly.scratchBlocksUtils');
 import * as eventUtils from './events/utils';
 import {BlockCreate} from './events/block_create';
 import * as registry from './registry';
+import {ARGUMENT_REPORTERS} from './constants';
 import * as Touch from './touch';
 import * as utils from './utils';
 import * as Xml from './xml';
@@ -108,7 +109,7 @@ export const changeObscuredShadowIds = function(block) {
  * @package
  */
 export const isShadowArgumentReporter = function(block) {
-  if (block.isShadow() && (block.type == 'argument_command' || block.type == 'argument_reporter_boolean' || block.type == 'argument_reporter_string_number')) {
+  if (block.isShadow() && ARGUMENT_REPORTERS.includes(block.type)) {
     return true;
   }
   return false;

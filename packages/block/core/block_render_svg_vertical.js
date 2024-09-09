@@ -824,6 +824,85 @@ BlockSvg.prototype.renderDrawTop_ = function(steps, rightEdge) {
 };
 
 /**
+ * Calculate the maximum width of the block.
+ * @param {!Array.<!Array.<!Object>>} inputRows 2D array of objects, each
+ *     containing position information.
+ * @param {number} iconWidth Offset of first row due to icons.
+ * @return {number} Maximum width of the block.
+ * @private
+ */
+BlockSvg.prototype.calculateMaxWidth_ = function(inputRows, iconWidth) {
+  let maxWidth = 0;
+  let cursorX = 0;
+
+  for (let y = 0, row; row = inputRows[y]; y++) {
+    cursorX = row.paddingStart;
+    if (y == 0) {
+      cursorX += this.RTL ? -iconWidth : iconWidth;
+    }
+
+    if (row.type == BlockSvg.INLINE) {
+      for (let x = 0, input; input = row[x]; x++) {
+        const fieldX = BlockSvg.getAlignedCursor_(cursorX, input,
+            inputRows.rightEdge);
+        cursorX = fieldX;
+        cursorX = this.getFieldRowWidth_(input.fieldRow, cursorX);
+        if (input.type == constants.INPUT_VALUE) {
+          if (this.previousConnection) {
+            cursorX = Math.max(cursorX, rendererConstants.INPUT_AND_FIELD_MIN_X);
+          }
+          cursorX += input.renderWidth + rendererConstants.SEP_SPACE_X;
+        }
+      }
+      cursorX -= rendererConstants.SEP_SPACE_X;
+      cursorX += row.paddingEnd;
+    } else if (row.type == constants.NEXT_STATEMENT) {
+      const input = row[0];
+      cursorX = inputRows.statementEdge + rendererConstants.NOTCH_WIDTH;
+      if (input.connection.isConnected()) {
+        cursorX = Math.max(cursorX, inputRows.statementEdge +
+          input.connection.targetBlock().getHeightWidth().width);
+      }
+    }
+    maxWidth = Math.max(maxWidth, cursorX);
+  }
+  return maxWidth;
+};
+
+/**
+ * Calculate the width of fields in a row.
+ * @param {!Array.<!Blockly.Field>} fieldRow Array of fields in a row.
+ * @param {number} cursorX Current X position.
+ * @return {number} Updated X position after rendering fields.
+ * @private
+ */
+BlockSvg.prototype.getFieldRowWidth_ = function(fieldRow, cursorX) {
+  for (let t = 0, field; field = fieldRow[t]; t++) {
+    if (!field.isVisible()) {
+      continue;
+    }
+    if (this.previousConnection && !(field instanceof FieldLabel) &&
+      !(field instanceof FieldImage)) {
+      cursorX = this.RTL ?
+        Math.min(cursorX, -rendererConstants.INPUT_AND_FIELD_MIN_X) :
+        Math.max(cursorX, rendererConstants.INPUT_AND_FIELD_MIN_X);
+    }
+    if (this.RTL) {
+      cursorX -= field.renderSep + field.renderWidth;
+      if (field.renderWidth) {
+        cursorX -= rendererConstants.SEP_SPACE_X;
+      }
+    } else {
+      cursorX += field.renderSep + field.renderWidth;
+      if (field.renderWidth) {
+        cursorX += rendererConstants.SEP_SPACE_X;
+      }
+    }
+  }
+  return cursorX;
+};
+
+/**
  * Render the right edge of the block.
  * @param {!Array.<string>} steps Path of block outline.
  * @param {!Array.<!Array.<!Object>>} inputRows 2D array of objects, each
@@ -837,6 +916,8 @@ BlockSvg.prototype.renderDrawRight_ = function(steps,
   let cursorX = 0;
   let cursorY = 0;
   let connectionX, connectionY;
+  const maxWidth = this.calculateMaxWidth_(inputRows, iconWidth);
+
   for (let y = 0, row; row = inputRows[y]; y++) {
     cursorX = row.paddingStart;
     if (y == 0) {
@@ -877,9 +958,9 @@ BlockSvg.prototype.renderDrawRight_ = function(steps,
       cursorX += row.paddingEnd;
       // Update right edge for all inputs, such that all rows
       // stretch to be at least the size of all previous rows.
-      inputRows.rightEdge = Math.max(cursorX, inputRows.rightEdge);
+      inputRows.rightEdge = Math.max(cursorX, inputRows.rightEdge, maxWidth);
       // Move to the right edge
-      cursorX = Math.max(cursorX, inputRows.rightEdge);
+      cursorX = inputRows.rightEdge;
       this.width = Math.max(this.width, cursorX);
       if (this.type == constants.PROCEDURES_DEFINITION_BLOCK_TYPE) {
         this.renderDefineBlock_(steps, inputRows, row[0], row, cursorY);

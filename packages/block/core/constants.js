@@ -396,6 +396,15 @@ export const PROCEDURES_CALL_BLOCK_TYPE = 'procedures_call';
 export const PROCEDURES_RETURN_BLOCK_TYPE = 'procedures_return';
 
 /**
+ * The type of all argument reporters
+ */
+export const ARGUMENT_REPORTERS = [
+  'argument_command',
+  'argument_reporter_boolean',
+  'argument_reporter_string_number'
+];
+
+/**
  * ENUM for flyout status button states.
  * @const
  */
