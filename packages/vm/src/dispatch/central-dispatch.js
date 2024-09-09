@@ -50,7 +50,7 @@ class CentralDispatch extends SharedDispatch {
                 throw new Error(`Cannot use 'callSync' on remote provider for service ${service}.`);
             }
 
-            return provider[method].apply(provider, args);
+            return provider[method](...args);
         }
         throw new Error(`Provider not found for service: ${service}`);
     }

@@ -250,8 +250,8 @@ class Scratch3DataBlocks {
      * @const {number}
      */
     get LIST_ITEM_LIMIT () {
-        return this.runtime.limitOptions.unlimitedListLength
-            ? Infinity : 200000;
+        return this.runtime.limitOptions.unlimitedListLength ?
+            Infinity : 200000;
     }
 }
 

@@ -361,6 +361,7 @@ class BlockCached {
                         if (item.execute === this.opcode) {
                             this._ops.push(this);
                         } else {
+                            // eslint-disable-next-line no-shadow
                             const cached = new BlockCached(blockContainer, {
                                 id: '',
                                 opcode: item.execute,
@@ -524,6 +525,7 @@ const execute = function (sequencer, thread) {
             // then call handleReport.
             if (currentStackFrame.waitingReporter && i === length - 1) {
                 // cc - if returned value is null, then set the argument to undefined to avoid visual report. 
+                // eslint-disable-next-line no-undefined
                 handleReport(inputValue ?? undefined, sequencer, thread, opCached, true);
             } else if (inputName === 'BROADCAST_INPUT') {
                 // Something is plugged into the broadcast input.

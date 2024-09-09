@@ -260,11 +260,9 @@ class Thread {
             const stackFrame = _StackFrame.create(typeof parent !== 'undefined' && parent.warpMode);
             if (target) {
                 stackFrame.target = target;
-            }
-            else if (parent) {
+            } else if (parent) {
                 stackFrame.target = parent.target;
-            }
-            else {
+            } else {
                 stackFrame.target = this.target;
             }
             this.blockContainer = stackFrame.target.blocks;

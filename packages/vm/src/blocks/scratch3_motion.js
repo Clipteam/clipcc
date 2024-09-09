@@ -131,9 +131,9 @@ class Scratch3MotionBlocks {
         } else if (args.TOWARDS === '_random_') {
             const randomDeg = Math.random() * 360;
             util.target.setDirection(
-                this.runtime.limitOptions.accurateCoordinates
-                    ? randomDeg - 180
-                    : Math.round(randomDeg) - 180
+                this.runtime.limitOptions.accurateCoordinates ?
+                    randomDeg - 180 :
+                    Math.round(randomDeg) - 180
             );
             return;
         } else {

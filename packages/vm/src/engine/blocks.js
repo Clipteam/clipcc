@@ -222,7 +222,7 @@ class Blocks {
     /**
      * Get all procedure definitions.
      * @param {?boolean} globalOnly True if only get global procedures.
-     * @return {?Array.<String>} Mutations of procedures. Set "external" if globalOnly is true. 
+     * @return {?Array.<String>} Mutations of procedures. Set "external" if globalOnly is true.
      */
     getAllProcedureDefinitions (globalOnly) {
         const procedures = [];
@@ -273,9 +273,9 @@ class Blocks {
                     // suppose procedure proccode is unique in one target
                     if (!globalOnly || internal.mutation.global === 'true') {
                         return id;
-                    } else {
-                        return null;
                     }
+                    return null;
+                    
                 }
             }
         }
@@ -492,7 +492,10 @@ class Blocks {
                 if (Object.prototype.hasOwnProperty.call(change, 'minimized')) {
                     comment.minimized = change.minimized;
                 }
-                if (Object.prototype.hasOwnProperty.call(change, 'width') && Object.prototype.hasOwnProperty.call(change, 'height')){
+                if (
+                    Object.prototype.hasOwnProperty.call(change, 'width') &&
+                    Object.prototype.hasOwnProperty.call(change, 'height')
+                ) {
                     comment.width = change.width;
                     comment.height = change.height;
                 }

@@ -246,7 +246,7 @@ class BlockUtility {
             this.sequencer.runtime.ioDevices[device] &&
             this.sequencer.runtime.ioDevices[device][func]) {
             const devObject = this.sequencer.runtime.ioDevices[device];
-            return devObject[func].apply(devObject, args);
+            return devObject[func](...args);
         }
     }
 }

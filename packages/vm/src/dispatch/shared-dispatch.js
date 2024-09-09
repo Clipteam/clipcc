@@ -82,7 +82,7 @@ class SharedDispatch {
                     return this._remoteTransferCall(provider, service, method, transfer, ...args);
                 }
 
-                const result = provider[method].apply(provider, args);
+                const result = provider[method](...args);
                 return Promise.resolve(result);
             }
             return Promise.reject(new Error(`Service not found: ${service}`));
@@ -126,7 +126,7 @@ class SharedDispatch {
         return new Promise((resolve, reject) => {
             const responseId = this._storeCallbacks(resolve, reject);
 
-            args = this._purifyObject(args);
+            args = JSON.parse(JSON.stringify(args));
 
             if (transfer) {
                 provider.postMessage({service, method, responseId, args}, transfer);
@@ -134,41 +134,6 @@ class SharedDispatch {
                 provider.postMessage({service, method, responseId, args});
             }
         });
-    }
-
-    /**
-     * Purify an object so that it can be safely transferred to the worker.
-     * @param {obj} object - The Object that need to be purified.
-     * @returns {object} - purified object.
-     */
-    _purifyObject (obj, visited = new Set(), depth = 1) {
-        // Unlimited depth recursion is very expensive to execute
-        // So we should limit the maximum recursion depth.
-        if (depth > 5) return undefined;
-
-        if (typeof obj === "function" || typeof obj === "symbol") {
-            return undefined;
-        }
-
-        if (obj !== null && typeof obj === "object") {
-            if (visited.has(obj)) return undefined;
-            visited.add(obj);
-
-            if (Array.isArray(obj)) {
-                return obj.map((item) => this._purifyObject(item, visited, depth + 1));
-            } else {
-                const result = {};
-                for (const key in obj) {
-                    const value = obj[key];
-                    const sanitizedValue = this._purifyObject(value, visited, depth + 1);
-                    if (sanitizedValue !== undefined) {
-                        result[key] = sanitizedValue;
-                    }
-                }
-                return result;
-            }
-        }
-        return obj;
     }
 
     /**

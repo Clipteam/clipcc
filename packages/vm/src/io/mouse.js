@@ -125,8 +125,8 @@ class Mouse {
      * @return {number} Clamped and integer rounded X position of the mouse cursor.
      */
     getScratchX () {
-        return this.runtime.limitOptions.accurateCoordinates
-            ? this._scratchX : Math.round(this._scratchX);
+        return this.runtime.limitOptions.accurateCoordinates ?
+            this._scratchX : Math.round(this._scratchX);
     }
 
     /**
@@ -134,8 +134,8 @@ class Mouse {
      * @return {number} Clamped and integer rounded Y position of the mouse cursor.
      */
     getScratchY () {
-        return this.runtime.limitOptions.accurateCoordinates
-            ? this._scratchY : Math.round(this._scratchY);
+        return this.runtime.limitOptions.accurateCoordinates ?
+            this._scratchY : Math.round(this._scratchY);
     }
 
     /**
@@ -151,7 +151,7 @@ class Mouse {
      * @param {number} button Button number.
      * @return {boolean} Is the mouse down?
      */
-    getMousePressed(button) {
+    getMousePressed (button) {
         return this._isDown[button];
     }
 }

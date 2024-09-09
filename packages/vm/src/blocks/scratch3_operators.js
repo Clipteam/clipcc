@@ -57,11 +57,11 @@ class Scratch3OperatorsBlocks {
      * The last thing to execute should be the block's self.
      * @return {object.<string, Array.<string>>} Mapping of opcode to execution orders.
      */
-    getOrders() {
+    getOrders () {
         return {
             operator_and: ['OPERAND1', {execute: 'operator_and_temp'}, 'OPERAND2', {execute: 'operator_and'}],
             operator_or: ['OPERAND1', {execute: 'operator_or_temp'}, 'OPERAND2', {execute: 'operator_or'}]
-        }
+        };
     }
 
     add (args) {

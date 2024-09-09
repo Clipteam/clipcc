@@ -2276,9 +2276,9 @@ class Runtime extends EventEmitter {
      */
     _updateGlows (optExtraThreads) {
         const searchThreads = [];
-        searchThreads.push.apply(searchThreads, this.threads);
+        searchThreads.push(...this.threads);
         if (optExtraThreads) {
-            searchThreads.push.apply(searchThreads, optExtraThreads);
+            searchThreads.push(...optExtraThreads);
         }
         // Set of scripts that request a glow this frame.
         const requestedGlowsThisFrame = [];
