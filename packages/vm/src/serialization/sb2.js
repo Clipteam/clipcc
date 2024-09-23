@@ -5,6 +5,10 @@
  * scratch-vm runtime structures.
  */
 
+/**
+ * @typedef {number} int
+ */
+
 const Blocks = require('../engine/blocks');
 const RenderedTarget = require('../sprites/rendered-target');
 const Sprite = require('../sprites/sprite');
@@ -121,7 +125,7 @@ const flatten = function (blocks) {
  * @param {Function} getVariableId function to retreive a variable's ID based on name
  * @param {ImportedExtensionsInfo} extensions - (in/out) parsed extension information will be stored here.
  * @param {ParseState} parseState - info on the state of parsing beyond the current block.
- * @param {object<int, Comment>} comments - Comments from sb2 project that need to be attached to blocks.
+ * @param {Record<int, Comment>} comments - Comments from sb2 project that need to be attached to blocks.
  * They are indexed in this object by the sb2 flattened block list index indicating
  * which block they should attach to.
  * @param {int} commentIndex The current index of the top block in this list if it were in a flattened
@@ -899,7 +903,7 @@ const specMapBlock = function (block) {
  * @param {Function} getVariableId function to retrieve a variable's ID based on name
  * @param {ImportedExtensionsInfo} extensions - (in/out) parsed extension information will be stored here.
  * @param {ParseState} parseState - info on the state of parsing beyond the current block.
- * @param {object<int, Comment>} comments - Comments from sb2 project that need to be attached to blocks.
+ * @param {Record<int, Comment>} comments - Comments from sb2 project that need to be attached to blocks.
  * They are indexed in this object by the sb2 flattened block list index indicating
  * which block they should attach to.
  * @param {int} commentIndex The comment index for the block to be parsed if it were in a flattened

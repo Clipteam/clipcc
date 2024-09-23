@@ -289,7 +289,7 @@ class RenderedTarget extends Target {
 
     /**
      * Get the rendered direction and scale, after applying rotation style.
-     * @return {object<string, number>} Direction and scale to render.
+     * @return {Record<string, number>} Direction and scale to render.
      */
     _getRenderedDirectionAndScale () {
         // Default: no changes to `this.direction` or `this.scale`.

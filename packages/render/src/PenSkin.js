@@ -13,6 +13,11 @@ const ShaderManager = require('./ShaderManager');
  */
 
 /**
+ * @typedef {number} int
+ * @typedef {import('./RenderWebGL')} RenderWebGL
+ */
+
+/**
  * The pen attributes to use when unspecified.
  * @type {PenAttributes}
  * @memberof PenSkin
