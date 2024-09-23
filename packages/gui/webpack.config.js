@@ -47,8 +47,7 @@ const base = {
                 path.resolve(__dirname, '../vm/src'),
                 path.resolve(__dirname, '../storage/src'),
                 path.resolve(__dirname, '../audio/src'),
-                path.resolve(__dirname, '../svg-renderer/src'),
-                path.resolve(__dirname, '../../node_modules/clipcc-svg-renderer/src')
+                path.resolve(__dirname, '../svg-renderer/src')
             ],
             test: /\.([cm]?ts|tsx)$/,
             loader: 'ts-loader',

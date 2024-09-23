@@ -77,13 +77,13 @@ class VirtualMachine extends EventEmitter {
         /**
          * The "currently editing"/selected target ID for the VM.
          * Block events from any Blockly workspace are routed to this target.
-         * @type {Target | null}
+         * @type {?Target}
          */
         this.editingTarget = null;
 
         /**
          * The currently dragging target, for redirecting IO data.
-         * @type {Target | null}
+         * @type {?Target}
          */
         this._dragTarget = null;
 
