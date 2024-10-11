@@ -77,7 +77,7 @@
     "eslint": "5.3.0",
     "eslint-config-scratch": "^9.0.8",
     "format-message-cli": "6.2.0",
-    "gh-pages": "1.2.0",
+    "gh-pages": "6.2.0",
     "in-publish": "2.0.1",
     "js-md5": "0.7.3",
     "jsdoc": "3.6.6",
