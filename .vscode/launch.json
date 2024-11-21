@@ -1,0 +1,63 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug ClipCC GUI",
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "yarn",
+            "restart": true,
+            "timeout": 30000,
+            "runtimeArgs": [
+                "start"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/packages/gui/build/**/*.js",
+                "${workspaceFolder}/packages/*/dist/**/*.js",
+                "${workspaceFolder}/packages/gui/.webpack/**/*.js"
+            ],
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ],
+            "sourceMaps": true,
+            "serverReadyAction": {
+                "pattern": "Project is running at:",
+                "uriFormat": "http://localhost:8601",
+                "action": "debugWithChrome",
+                "killOnServerStop": true,
+                "webRoot": "${workspaceFolder}/packages/gui"
+            },
+            "env": {
+                "BROWSER": "none",
+                "NODE_ENV": "development"
+            },
+            "console": "integratedTerminal",
+            "outputCapture": "std"
+        },
+        {
+            "name": "Debug Chrome",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:8601",
+            "webRoot": "${workspaceFolder}/packages/gui",
+            "sourceMapPathOverrides": {
+                "webpack://clipcc-gui/./*": "${webRoot}/*",
+                "webpack:///./*": "${workspaceFolder}/*",
+                "webpack:///./~/*": "${workspaceFolder}/node_modules/*",
+                "webpack:///*": "*",
+                "../[resource-path]": "${workspaceFolder}/packages/*" // 添加此行支持 VM source maps
+            }
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug",
+            "configurations": ["Debug ClipCC GUI", "Debug Chrome"]
+        }
+    ]
+}
