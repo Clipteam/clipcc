@@ -50,7 +50,7 @@
                 "webpack:///./*": "${workspaceFolder}/*",
                 "webpack:///./~/*": "${workspaceFolder}/node_modules/*",
                 "webpack:///*": "*",
-                "../[resource-path]": "${workspaceFolder}/packages/*" // 添加此行支持 VM source maps
+                "../[resource-path]": "${workspaceFolder}/packages/*"
             }
         }
     ],
