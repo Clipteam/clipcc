@@ -48,7 +48,7 @@ const CORE_EXTENSIONS = [
  * @typedef {import('./serialization/sb3').ImportedExtensionsInfo} ImportedExtensionsInfo
  * @typedef {import('clipcc-audio')} AudioEngine
  * @typedef {import('clipcc-render')} RenderWebGL
- * @typedef {import('clipcc-storage')} ScratchStorage
+ * @typedef {import('clipcc-storage').ScratchStorage} ScratchStorage
  */
 
 /**
