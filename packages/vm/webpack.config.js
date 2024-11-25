@@ -51,6 +51,11 @@ const base = {
         {
             resourceQuery: /raw/,
             type: 'asset/source'
+        },
+        {
+            resourceQuery: '?arrayBuffer',
+            type: 'javascript/auto',
+            use: 'arraybuffer-loader'
         }]
     },
     optimization: {
