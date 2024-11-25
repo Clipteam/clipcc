@@ -16,7 +16,7 @@ const base = {
     },
     resolve: {
         alias: {
-            'clipcc-storage': path.resolve(__dirname, '../storage/src/index.js'),
+            'clipcc-storage': path.resolve(__dirname, '../storage/src/index.ts'),
             'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
             'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js')
         },

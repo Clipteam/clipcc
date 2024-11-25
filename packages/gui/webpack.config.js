@@ -29,7 +29,7 @@ const base = {
         extensions: ['.ts', '.js', '.tsx', '.jsx'],
         alias: {
             'clipcc-vm': path.resolve(__dirname, '../vm/src/index.js'),
-            'clipcc-storage': path.resolve(__dirname, '../storage/src/index.js'),
+            'clipcc-storage': path.resolve(__dirname, '../storage/src/index.ts'),
             'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
             'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js')
         },
@@ -110,6 +110,10 @@ const base = {
             generator: {
                 dataUrl: content => `data:text/plain;base64,${content.toString('base64')}`
             }
+        }, {
+            resourceQuery: '?arrayBuffer',
+            type: 'javascript/auto',
+            use: 'arraybuffer-loader'
         }, {
             resourceQuery: /raw/,
             type: 'asset/source'

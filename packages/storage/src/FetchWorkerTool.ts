@@ -1,7 +1,21 @@
+import {Headers, applyMetadata} from './scratchFetch';
+import {ScratchGetRequest, Tool} from './Tool';
+
+interface DeferredJob {
+    id: string,
+    resolve: (buffer: ArrayBuffer) => void;
+    reject: (error: unknown) => void;
+}
+
 /**
  * Get and send assets with a worker that uses fetch.
  */
-class PrivateFetchWorkerTool {
+class PrivateFetchWorkerTool implements Tool {
+    private _workerSupport: {fetch: boolean};
+    private _supportError: unknown;
+    private worker: Worker | null;
+    private jobs: Record<string, DeferredJob | undefined>;
+
     constructor () {
         /**
          * What does the worker support of the APIs we need?
@@ -13,13 +27,13 @@ class PrivateFetchWorkerTool {
 
         /**
          * A possible error occurred standing up the worker.
-         * @type {!Error}
+         * @type {Error?}
          */
         this._supportError = null;
 
         /**
          * The worker that runs fetch and returns data for us.
-         * @type {!Worker}
+         * @type {Worker?}
          */
         this.worker = null;
 
@@ -31,28 +45,33 @@ class PrivateFetchWorkerTool {
 
         try {
             if (this.isGetSupported) {
-                const FetchWorker = new Worker(
-                    new URL('./FetchWorkerTool.worker', import.meta.url)
+                // Yes, this is a browser API and we've specified `browser: false` in the eslint env,
+                // but `isGetSupported` checks for the presence of Worker and uses it only if present.
+                // Also see https://webpack.js.org/guides/web-workers/
+                // eslint-disable-next-line no-undef
+                const worker = new Worker(
+                    /* webpackChunkName: "fetch-worker" */ new URL('./FetchWorkerTool.worker', import.meta.url)
                 );
 
-                this.worker = FetchWorker;
-
-                this.worker.addEventListener('message', ({data}) => {
+                worker.addEventListener('message', ({data}) => {
                     if (data.support) {
                         this._workerSupport = data.support;
                         return;
                     }
                     for (const message of data) {
-                        if (this.jobs[message.id]) {
+                        const job = this.jobs[message.id];
+                        if (job) {
                             if (message.error) {
-                                this.jobs[message.id].reject(message.error);
+                                job.reject(message.error);
                             } else {
-                                this.jobs[message.id].resolve(message.buffer);
+                                job.resolve(message.buffer);
                             }
                             delete this.jobs[message.id];
                         }
                     }
                 });
+
+                this.worker = worker;
             }
         } catch (error) {
             this._supportError = error;
@@ -67,7 +86,7 @@ class PrivateFetchWorkerTool {
      * guess that it does if the window does until the worker can inform us.
      * @returns {boolean} Is get supported?
      */
-    get isGetSupported () {
+    get isGetSupported (): boolean {
         return (
             typeof Worker !== 'undefined' &&
             this._workerSupport.fetch &&
@@ -79,17 +98,34 @@ class PrivateFetchWorkerTool {
      * Request data from a server with a worker using fetch.
      * @param {{url:string}} reqConfig - Request configuration for data to get.
      * @param {{method:string}} options - Additional options to configure fetch.
-     * @returns {Promise.<Buffer>} Resolve to Buffer of data from server.
+     * @returns {Promise.<Buffer|Uint8Array|null>} Resolve to Buffer of data from server.
      */
-    get ({url, ...options}) {
-        return new Promise((resolve, reject) => {
+    get ({url, ...options}: ScratchGetRequest): Promise<Uint8Array | null> {
+        const worker = this.worker;
+
+        if (!worker) {
+            return Promise.reject(new Error('The worker could not be initialized'));
+        }
+
+        return new Promise<ArrayBuffer>((resolve, reject) => {
             // TODO: Use a Scratch standard ID generator ...
             const id = Math.random().toString(16)
                 .substring(2);
-            this.worker.postMessage({
+            const augmentedOptions = applyMetadata(
+                Object.assign({method: 'GET'}, options)
+            );
+            // the Fetch spec says options.headers could be:
+            // "A Headers object, an object literal, or an array of two-item arrays to set request's headers."
+            // structured clone (postMessage) doesn't support Headers objects
+            // so turn it into an array of two-item arrays to make it to the worker intact
+            if (augmentedOptions && augmentedOptions.headers instanceof Headers) {
+                augmentedOptions.headers = Array.from(augmentedOptions.headers.entries());
+            }
+
+            worker.postMessage({
                 id,
                 url,
-                options: Object.assign({method: 'GET'}, options)
+                options: augmentedOptions
             });
             this.jobs[id] = {
                 id,
@@ -105,7 +141,7 @@ class PrivateFetchWorkerTool {
      * Is sending supported? always false for FetchWorkerTool.
      * @returns {boolean} Is sending supported?
      */
-    get isSendSupported () {
+    get isSendSupported (): boolean {
         return false;
     }
 
@@ -113,9 +149,11 @@ class PrivateFetchWorkerTool {
      * Send data to a server.
      * @throws {Error} A not implemented error.
      */
-    send () {
+    send (): never {
         throw new Error('Not implemented.');
     }
+
+    private static _instance?: PrivateFetchWorkerTool;
 
     /**
      * Return a static PrivateFetchWorkerTool instance on demand.
@@ -133,7 +171,9 @@ class PrivateFetchWorkerTool {
 /**
  * Get and send assets with a worker that uses fetch.
  */
-class PublicFetchWorkerTool {
+export default class PublicFetchWorkerTool {
+    private inner: PrivateFetchWorkerTool;
+
     constructor () {
         /**
          * Shared instance of an internal worker. PublicFetchWorkerTool proxies
@@ -147,16 +187,16 @@ class PublicFetchWorkerTool {
      * Is get supported?
      * @returns {boolean} Is get supported?
      */
-    get isGetSupported () {
+    get isGetSupported (): boolean {
         return this.inner.isGetSupported;
     }
 
     /**
      * Request data from a server with a worker that uses fetch.
      * @param {{url:string}} reqConfig - Request configuration for data to get.
-     * @returns {Promise.<Buffer>} Resolve to Buffer of data from server.
+     * @returns {Promise.<Buffer|Uint8Array|null>} Resolve to Buffer of data from server.
      */
-    get (reqConfig) {
+    get (reqConfig: ScratchGetRequest): Promise<Uint8Array | null> {
         return this.inner.get(reqConfig);
     }
 
@@ -164,7 +204,7 @@ class PublicFetchWorkerTool {
      * Is sending supported?
      * @returns {boolean} Is sending supported?
      */
-    get isSendSupported () {
+    get isSendSupported (): boolean {
         return false;
     }
 
@@ -172,9 +212,7 @@ class PublicFetchWorkerTool {
      * Send data to a server with a worker that uses fetch.
      * @throws {Error} A not implemented error.
      */
-    send () {
+    send (): never {
         throw new Error('Not implemented.');
     }
 }
-
-module.exports = PublicFetchWorkerTool;
