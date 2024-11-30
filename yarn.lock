@@ -13985,20 +13985,6 @@ escope@^3.6.0:
     esrecurse "^4.1.0"
     estraverse "^4.1.1"
 
-eslint-config-scratch@9.0.8:
-  version "9.0.8"
-  resolved "https://registry.yarnpkg.com/eslint-config-scratch/-/eslint-config-scratch-9.0.8.tgz#afaebfd9081a0e78f0bc7437385e4f4ce81399ad"
-  integrity sha512-Lc5nTlGt8NFNxkdWE7SRPGwhDl1NJ56w96H61noohaGuIlKv96HmqRluuOZ5jAZ5fWHktZIZJh7I+3Ce7fIVYA==
-  optionalDependencies:
-    eslint-plugin-react ">=7.27.0"
-
-eslint-config-scratch@9.0.9:
-  version "9.0.9"
-  resolved "https://registry.yarnpkg.com/eslint-config-scratch/-/eslint-config-scratch-9.0.9.tgz#f0cf832cddeb3bf6883b8f0ea1b43b037ff39174"
-  integrity sha512-6OlJ8Gc/X35bMCA1fWnEdJ7r3NC+xLn8qDLUj8hUTM+N7P+AKgS+itWUUoWlVpVvIpQlR6Bq1ctdL5zVp2+1Aw==
-  optionalDependencies:
-    eslint-plugin-react ">=7.27.0"
-
 eslint-import-resolver-node@^0.3.4, eslint-import-resolver-node@^0.3.6:
   version "0.3.7"
   resolved "https://registry.yarnpkg.com/eslint-import-resolver-node/-/eslint-import-resolver-node-0.3.7.tgz#83b375187d412324a1963d84fa664377a23eb4d7"

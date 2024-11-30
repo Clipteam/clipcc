@@ -9,7 +9,7 @@ export interface AssetType {
 
 /**
  * Enumeration of the supported asset types.
- * @type {Object.<String,AssetType>}
+ * @type {Record<string, AssetType>}
  * @typedef {Object} AssetType - Information about a supported asset type.
  * @property {string} contentType - the MIME type associated with this kind of data. Useful for data URIs, etc.
  * @property {string} name - The human-readable name of this asset type.

@@ -67,8 +67,8 @@ export default class BuiltinHelper extends Helper {
 
         /**
          * In-memory storage for all built-in assets.
-         * @type {Object.<AssetType, AssetIdMap>} Maps asset type to a map of asset ID to actual assets.
-         * @typedef {Object.<string, BuiltinAssetRecord>} AssetIdMap - Maps asset ID to asset.
+         * @type {Record<AssetType, AssetIdMap>} Maps asset type to a map of asset ID to actual assets.
+         * @typedef {Record<string, BuiltinAssetRecord>} AssetIdMap - Maps asset ID to asset.
          */
         this.assets = {};
 
