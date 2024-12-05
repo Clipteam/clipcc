@@ -30,7 +30,7 @@ class Skin extends EventEmitter {
         /** @type {Vec3} */
         this._rotationCenter = twgl.v3.create(0, 0);
 
-        /** @type {WebGLTexture | null} */
+        /** @type {?WebGLTexture} */
         this._texture = null;
 
         /**
@@ -48,7 +48,7 @@ class Skin extends EventEmitter {
 
             /**
              * The actual WebGL texture object for the skin.
-             * @type {WebGLTexture | null}
+             * @type {?WebGLTexture}
              */
             u_skin: null
         };

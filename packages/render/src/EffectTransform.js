@@ -4,6 +4,10 @@
  * representing how the shaders apply effects.
  */
 
+/**
+ * @typedef {import('./Drawable')} Drawable
+ */
+
 const twgl = require('twgl.js');
 
 const {rgbToHsv, hsvToRgb} = require('./util/color-conversions');

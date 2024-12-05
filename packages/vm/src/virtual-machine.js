@@ -48,7 +48,7 @@ const CORE_EXTENSIONS = [
  * @typedef {import('./serialization/sb3').ImportedExtensionsInfo} ImportedExtensionsInfo
  * @typedef {import('clipcc-audio')} AudioEngine
  * @typedef {import('clipcc-render')} RenderWebGL
- * @typedef {import('clipcc-storage')} ScratchStorage
+ * @typedef {import('clipcc-storage').ScratchStorage} ScratchStorage
  */
 
 /**
@@ -77,13 +77,13 @@ class VirtualMachine extends EventEmitter {
         /**
          * The "currently editing"/selected target ID for the VM.
          * Block events from any Blockly workspace are routed to this target.
-         * @type {Target | null}
+         * @type {?Target}
          */
         this.editingTarget = null;
 
         /**
          * The currently dragging target, for redirecting IO data.
-         * @type {Target | null}
+         * @type {?Target}
          */
         this._dragTarget = null;
 

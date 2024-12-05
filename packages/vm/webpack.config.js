@@ -16,7 +16,6 @@ const base = {
     },
     resolve: {
         alias: {
-            'clipcc-storage': path.resolve(__dirname, '../storage/src/index.js'),
             'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
             'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js')
         },
@@ -26,7 +25,6 @@ const base = {
         rules: [{
             include: [
                 path.resolve('src'),
-                path.resolve('../storage/src'),
                 path.resolve('../render/src')
             ],
             test: /\.([cm]?ts|tsx)$/,
@@ -51,6 +49,11 @@ const base = {
         {
             resourceQuery: /raw/,
             type: 'asset/source'
+        },
+        {
+            resourceQuery: '?arrayBuffer',
+            type: 'javascript/auto',
+            use: 'arraybuffer-loader'
         }]
     },
     optimization: {

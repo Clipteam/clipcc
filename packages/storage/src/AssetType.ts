@@ -1,8 +1,15 @@
-const DataFormat = require('./DataFormat');
+import {DataFormat} from './DataFormat';
+
+export interface AssetType {
+    contentType: string,
+    name: string,
+    runtimeFormat: DataFormat,
+    immutable: boolean
+}
 
 /**
  * Enumeration of the supported asset types.
- * @type {Record<String,AssetType>}
+ * @type {Record<string, AssetType>}
  * @typedef {Object} AssetType - Information about a supported asset type.
  * @property {string} contentType - the MIME type associated with this kind of data. Useful for data URIs, etc.
  * @property {string} name - The human-readable name of this asset type.
@@ -10,7 +17,7 @@ const DataFormat = require('./DataFormat');
  *     example, a project stored in SB2 format on disk will be returned as JSON when loaded into memory.
  * @property {boolean} immutable - Indicates if the asset id is determined by the asset content.
  */
-const AssetType = {
+export const AssetType = {
     ImageBitmap: {
         contentType: 'image/png',
         name: 'ImageBitmap',
@@ -41,6 +48,4 @@ const AssetType = {
         runtimeFormat: DataFormat.JSON,
         immutable: true
     }
-};
-
-module.exports = AssetType;
+} as const;

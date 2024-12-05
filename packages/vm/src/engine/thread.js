@@ -49,7 +49,7 @@ class _StackFrame {
 
         /**
          * Persists reported inputs during async block.
-         * @type {Object | null}
+         * @type {?Object}
          */
         this.reported = null;
 
@@ -61,13 +61,13 @@ class _StackFrame {
 
         /**
          * Procedure parameters.
-         * @type {Object | null}
+         * @type {?Object}
          */
         this.params = null;
 
         /**
          * A context passed to block implementations.
-         * @type {Object | null}
+         * @type {?Object}
          */
         this.executionContext = null;
 
@@ -137,7 +137,7 @@ class _StackFrame {
  */
 class Thread {
     /**
-     * @param {string} firstBlock First block to execute in the thread.
+     * @param {?string} firstBlock First block to execute in the thread.
      */
     constructor (firstBlock) {
         /**
@@ -179,7 +179,7 @@ class Thread {
 
         /**
          * The Blocks this thread will execute.
-         * @type {Blocks | null}
+         * @type {?Blocks}
          */
         this.blockContainer = null;
 

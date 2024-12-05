@@ -202,7 +202,7 @@ class RenderWebGL extends EventEmitter {
         /** @type {any} */
         this._regionId = null;
 
-        /** @type {function | null} */
+        /** @type {?function} */
         this._exitRegion = null;
 
         /** @type {object} */
@@ -922,8 +922,8 @@ class RenderWebGL extends EventEmitter {
      * @param {number} drawableID The drawable id.
      * @param {number[]} candidateIDs The candidate ids.
      * @param {Rectangle} bounds The bounds.
-     * @param {number[] | undefined} color3b The color3b.
-     * @param {number[] | undefined} mask3b The mask3b.
+     * @param {number[]} [color3b] The color3b.
+     * @param {number[]} [mask3b] The mask3b.
      */
     _isTouchingColorGpuStart (drawableID, candidateIDs, bounds, color3b, mask3b) {
         this._doExitDrawRegion();
