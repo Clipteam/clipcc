@@ -17,7 +17,7 @@
     "@types/mime-types": "^2.1.4",
     "clipcc-vm": "3.2.0",
     "eslint": "^8.57.0",
-    "eslint-config-clipcc": "^3.2.0",
+    "eslint-config-clipcc": "^9.0.9",
     "node-polyfill-webpack-plugin": "^4.0.0",
     "redux": "^5.0.1",
     "terser-webpack-plugin": "^5.3.10",
