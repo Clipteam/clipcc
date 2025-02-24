@@ -4,9 +4,11 @@
   "description": "audio engine for scratch 3.0",
   "main": "dist.js",
   "browser": "./src/index.js",
+  "types": "./dist/types/index.d.ts",
   "scripts": {
     "test": "yarn run lint && yarn run tap && yarn run build",
-    "build": "webpack --bail",
+    "build:types": "tsc --project ./tsconfig.dts.json",
+    "build": "yarn build:types && webpack --bail",
     "watch": "webpack --watch",
     "lint": "eslint .",
     "tap": "tap test/effects/*.js test/*.js --allow-incomplete-coverage --allow-empty-coverage"
@@ -22,8 +24,8 @@
   },
   "homepage": "https://github.com/Clipteam/clipcc#readme",
   "dependencies": {
+    "@turbowarp/nanolog": "^0.2.0",
     "audio-context": "1.0.1",
-    "minilog": "^3.0.1",
     "startaudiocontext": "1.2.1"
   },
   "devDependencies": {
@@ -32,9 +34,10 @@
     "@babel/preset-env": "7.14.8",
     "babel-eslint": "10.0.3",
     "eslint": "3.19.0",
-    "eslint-config-scratch": "^9.0.8",
+    "eslint-config-clipcc": "^9.0.9",
     "json": "9.0.6",
     "tap": "21.0.1",
+    "typescript": "^5.5.4",
     "web-audio-test-api": "0.5.2",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1"

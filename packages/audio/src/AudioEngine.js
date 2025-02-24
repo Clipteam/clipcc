@@ -60,7 +60,7 @@ class AudioEngine {
 
         /**
          * a map of soundIds to audio buffers, holding sounds for all sprites
-         * @type {Object<String, ArrayBuffer>}
+         * @type {Record<string, ArrayBuffer>}
          */
         this.audioBuffers = {};
 

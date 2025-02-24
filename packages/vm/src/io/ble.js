@@ -89,7 +89,7 @@ class BLE extends JSONRPC {
     }
 
     /**
-     * @return {bool} whether the peripheral is connected.
+     * @return {boolean} whether the peripheral is connected.
      */
     isConnected () {
         return this._connected;

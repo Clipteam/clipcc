@@ -152,7 +152,7 @@ class GdxFor {
 
         /**
          * The most recently received value for each sensor.
-         * @type {Object.<string, number>}
+         * @type {Record<string, number>}
          * @private
          */
         this._sensors = {

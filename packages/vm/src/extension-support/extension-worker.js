@@ -3,7 +3,7 @@
 const ArgumentType = require('../extension-support/argument-type');
 const BlockType = require('../extension-support/block-type');
 const dispatch = require('../dispatch/worker-dispatch');
-const TargetType = require('../extension-support/target-type');
+const TargetType = require('./target-type');
 
 class ExtensionWorker {
     constructor () {

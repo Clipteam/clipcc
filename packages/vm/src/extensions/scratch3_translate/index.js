@@ -48,7 +48,7 @@ class Scratch3TranslateBlocks {
         /**
          * List of supported language name and language code pairs, for use in the block menu.
          * Filled in by getInfo so it is updated when the interface language changes.
-         * @type {Array.<object.<string, string>>}
+         * @type {Array.<Record<string, string>>}
          * @private
          */
         this._supportedLanguages = [];
@@ -157,7 +157,7 @@ class Scratch3TranslateBlocks {
     /**
      * Computes a list of language code and name pairs for the given language.
      * @param {string} code The language code to get the list of language pairs
-     * @return {Array.<object.<string, string>>} An array of languge name and
+     * @return {Array.<Record<string, string>>} An array of languge name and
      *   language code pairs.
      * @private
      */

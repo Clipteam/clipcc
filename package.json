@@ -37,6 +37,7 @@
     "l10n": "yarn workspace clipcc-l10n",
     "render": "yarn workspace clipcc-render",
     "svg-renderer": "yarn workspace clipcc-svg-renderer",
+    "lint-config": "yarn workspace eslint-config-clipcc",
     "storage": "yarn workspace clipcc-storage",
     "paint": "yarn workspace clipcc-paint",
     "parser": "yarn workspace clipcc-parser",

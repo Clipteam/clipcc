@@ -47,7 +47,7 @@ const defaultExtensionColors = ['#0FBD8C', '#0DA57A', '#0B8E69'];
 
 /**
  * Information used for converting Scratch argument types into scratch-blocks data.
- * @type {object.<ArgumentType, {shadowType: string, fieldType: string}>}
+ * @type {Record<ArgumentType, {shadowType: string, fieldType: string}>}
  */
 const ArgumentTypeMap = (() => {
     const map = {};
@@ -224,7 +224,7 @@ class Runtime extends EventEmitter {
         /**
          * Map to look up a block primitive's implementation function by its opcode.
          * This is a two-step lookup: package name first, then primitive name.
-         * @type {Object.<string, Function>}
+         * @type {Record<string, Function>}
          */
         this._primitives = {};
 
@@ -238,14 +238,14 @@ class Runtime extends EventEmitter {
         /**
          * Map to look up hat blocks' metadata.
          * Keys are opcode for hat, values are metadata objects.
-         * @type {Object.<string, Object>}
+         * @type {Record<string, Object>}
          */
         this._hats = {};
 
         /**
          * Map to look up a block's execution order.
          * Keys are opcode for block, values are order array of its arguments.
-         * @type {Object.<string, Array.<string>>}
+         * @type {Record<string, Array.<string>>}
          */
         this._orders = {};
 
@@ -374,7 +374,7 @@ class Runtime extends EventEmitter {
 
         // Register and initialize "IO devices", containers for processing
         // I/O related data.
-        /** @type {Object.<string, Object>} */
+        /** @type {Record<string, Object>} */
         this.ioDevices = {
             clock: new Clock(this),
             cloud: new Cloud(this),

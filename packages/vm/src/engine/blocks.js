@@ -29,7 +29,7 @@ class Blocks {
         /**
          * All blocks in the workspace.
          * Keys are block IDs, values are metadata about the block.
-         * @type {Object.<string, Object>}
+         * @type {Record<string, Object>}
          */
         this._blocks = {};
 
@@ -49,24 +49,24 @@ class Blocks {
         this._cache = {
             /**
              * Cache block inputs by block id
-             * @type {object.<string, !Array.<object>>}
+             * @type {Record<string, !Array.<object>>}
              */
             inputs: {},
             /**
              * Cache procedure Param Names by block id
-             * @type {object.<string, ?Array.<string>>}
+             * @type {Record<string, ?Array.<string>>}
              */
             procedureParamNames: {},
             /**
              * Cache procedure definitions by block id
-             * @type {object.<string, ?string>}
+             * @type {Record<string, ?string>}
              */
             procedureDefinitions: {},
 
             /**
              * A cache for execute to use and store on. Only available to
              * execute.
-             * @type {object.<string, object>}
+             * @type {Record<string, object>}
              */
             _executeCached: {},
 
@@ -79,7 +79,7 @@ class Blocks {
 
             /**
              * A cache of hat opcodes to collection of theads to execute.
-             * @type {object.<string, object>}
+             * @type {Record<string, object>}
              */
             scripts: {}
         };
@@ -900,7 +900,7 @@ class Blocks {
      * @param {Array<object>} optBlocks Optional list of blocks to constrain the search to.
      * This is useful for getting variable/list references for a stack of blocks instead
      * of all blocks on the workspace
-     * @param {?boolean} optIncludeBroadcast Optional whether to include broadcast fields.
+     * @param {boolean=} optIncludeBroadcast Optional whether to include broadcast fields.
      * @return {object} A map of variable ID to a list of all variable references
      * for that ID. A variable reference contains the field referencing that variable
      * and also the type of the variable being referenced.
@@ -1141,7 +1141,7 @@ class Blocks {
     /**
      * Encode all of `this._blocks` as an XML string usable
      * by a Blockly/scratch-blocks workspace.
-     * @param {object<string, Comment>} comments Map of comments referenced by id
+     * @param {Record<string, Comment>} comments Map of comments referenced by id
      * @return {string} String of XML representing this object's blocks.
      */
     toXML (comments) {
@@ -1152,7 +1152,7 @@ class Blocks {
      * Recursively encode an individual block and its children
      * into a Blockly/scratch-blocks XML string.
      * @param {!string} blockId ID of block to encode.
-     * @param {object<string, Comment>} comments Map of comments referenced by id
+     * @param {Record<string, Comment>} comments Map of comments referenced by id
      * @return {string} String of XML representing this block and any children.
      */
     blockToXML (blockId, comments) {

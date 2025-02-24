@@ -1,3 +1,3 @@
 module.exports = {
-    extends: ['scratch', 'scratch/es6', 'scratch/node']
+    extends: ['clipcc', 'clipcc/es6', 'clipcc/node']
 };

@@ -887,7 +887,7 @@ const _paperColorToCanvasStyle = function (color, context) {
 /**
  * @param {paper.Shape.Ellipse} oval Vector oval to convert
  * @param {paper.Raster} bitmap raster to draw selection
- * @return {bool} true if the oval was drawn
+ * @return {boolean} true if the oval was drawn
  */
 const commitOvalToBitmap = function (oval, bitmap) {
     const radiusX = Math.abs(oval.size.width / 2);

@@ -1,5 +1,5 @@
 module.exports = {
-    extends: ['scratch', 'scratch/node'],
+    extends: ['clipcc', 'clipcc/node'],
     env: {
         es6: true
     }

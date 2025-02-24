@@ -26,6 +26,12 @@ const base = {
         chunkFilename: 'chunks/[name].js'
     },
     resolve: {
+        extensions: ['.ts', '.js', '.tsx', '.jsx'],
+        alias: {
+            'clipcc-vm': path.resolve(__dirname, '../vm/src/index.js'),
+            'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
+            'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js')
+        },
         symlinks: false
     },
     snapshot: {
@@ -35,6 +41,20 @@ const base = {
     },
     module: {
         rules: [{
+            include: [
+                path.resolve(__dirname, 'src'),
+                path.resolve(__dirname, '../vm/src'),
+                path.resolve(__dirname, '../audio/src'),
+                path.resolve(__dirname, '../svg-renderer/src')
+            ],
+            test: /\.([cm]?ts|tsx)$/,
+            loader: 'ts-loader',
+            options: {
+                transpileOnly: true,
+                allowTsInNodeModules: true
+            }
+        },
+        {
             test: /\.jsx?$/,
             loader: 'babel-loader',
             include: [
@@ -88,6 +108,10 @@ const base = {
             generator: {
                 dataUrl: content => `data:text/plain;base64,${content.toString('base64')}`
             }
+        }, {
+            resourceQuery: '?arrayBuffer',
+            type: 'javascript/auto',
+            use: 'arraybuffer-loader'
         }, {
             resourceQuery: /raw/,
             type: 'asset/source'
@@ -258,13 +282,13 @@ module.exports = [
                     patterns: [
                         {
                             from: 'src/lib/libraries/*.json',
-                            to: 'libraries/[name][ext]',
+                            to: 'libraries/[name][ext]'
                         }
                     ]
                 }),
                 new WorkboxPlugin.GenerateSW({
                     clientsClaim: true,
-                    skipWaiting: true,
+                    skipWaiting: true
                 })
             ])
         })) : []

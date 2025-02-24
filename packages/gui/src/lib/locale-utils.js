@@ -20,7 +20,7 @@ const wideLocales = [
 /**
  * Identify the languages where translations are too long to fit in fixed width parts of the gui.
  * @param {string} locale The current locale.
- * @return {bool} true if translations in this language are too long
+ * @return {boolean} true if translations in this language are too long
  */
 
 const isWideLocale = locale => (

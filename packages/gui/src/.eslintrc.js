@@ -1,7 +1,7 @@
 const path = require('path');
 module.exports = {
     root: true,
-    extends: ['scratch', 'scratch/es6', 'scratch/react', 'plugin:import/errors'],
+    extends: ['clipcc', 'clipcc/es6', 'clipcc/react', 'plugin:import/errors'],
     env: {
         browser: true
     },
