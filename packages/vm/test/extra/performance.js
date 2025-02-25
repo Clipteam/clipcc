@@ -1,8 +1,7 @@
-const fs = require('fs');
+/* eslint-disable no-console */
 const path = require('path');
 const process = require('process');
 
-const log = require('../../src/util/log');
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/index');
@@ -13,16 +12,16 @@ const VirtualMachine = require('../../src/index');
 
 let averageTime = -1;
 
-const whenTaskComplete = () => {
+const whenTaskComplete = () =>
     // When the number of threads reaches 0 the test is expected to be complete.
-    return new Promise((resolve, reject) => {
+    new Promise(resolve => {
         setInterval(() => {
-            if (averageTime != -1) resolve();
+            if (averageTime !== -1) resolve();
         }, 50);
-    });
-};
+    })
+;
 
-const reportVmResult = (text) => {
+const reportVmResult = text => {
     const separatorIndex = text.indexOf(' ');
     const command = text.substring(0, separatorIndex);
     const value = text.substring(separatorIndex + 1);
@@ -31,8 +30,7 @@ const reportVmResult = (text) => {
         averageTime = value;
         break;
     case 'invaild':
-        throw new Error('invaild quicksort result: ' + value);
-        break;
+        throw new Error(`invaild quicksort result: ${value}`);
     default:
         console.log(`${command} ${value}`);
     }
@@ -59,10 +57,10 @@ const project = readFileToBuffer(filePath);
 // Load the project and once all threads are complete ensure that
 // the scratch project sent us a "end" message.
 return vm.loadProject(project)
-.then(() => vm.greenFlag())
-.then(() => whenTaskComplete())
-.then(() => {
-    vm.quit();
-    console.log('test finished! average time is ' + averageTime);
-    process.exit(0);
-});
+    .then(() => vm.greenFlag())
+    .then(() => whenTaskComplete())
+    .then(() => {
+        vm.quit();
+        console.log(`test finished! average time is ${averageTime}`);
+        process.exit(0);
+    });

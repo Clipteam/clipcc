@@ -269,8 +269,8 @@ class RenderedTarget extends Target {
         const oldX = this.x;
         const oldY = this.y;
         if (this.renderer) {
-            const position = this.runtime.limitOptions.edgelessStage
-            ? [x, y] : this.renderer.getFencedPositionOfDrawable(this.drawableID, [x, y]);
+            const position = this.runtime.limitOptions.edgelessStage ?
+                [x, y] : this.renderer.getFencedPositionOfDrawable(this.drawableID, [x, y]);
             this.x = position[0];
             this.y = position[1];
 
@@ -374,10 +374,10 @@ class RenderedTarget extends Target {
             const costumeSize = this.renderer.getCurrentSkinSize(this.drawableID);
             const origW = costumeSize[0];
             const origH = costumeSize[1];
-            const minScale = this.runtime.limitOptions.edgelessStage
-                ? 0 : Math.min(1, Math.max(5 / origW, 5 / origH));
-            const maxScale = this.runtime.limitOptions.edgelessStage
-            ? Infinity : Math.min(
+            const minScale = this.runtime.limitOptions.edgelessStage ?
+                0 : Math.min(1, Math.max(5 / origW, 5 / origH));
+            const maxScale = this.runtime.limitOptions.edgelessStage ?
+                Infinity : Math.min(
                     (1.5 * this.runtime.stageWidth) / origW,
                     (1.5 * this.runtime.stageHeight) / origH
                 );

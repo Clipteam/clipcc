@@ -1045,8 +1045,9 @@ class Scratch3MusicBlocks {
     playNoteForBeats (args, util) {
         if (this._stackTimerNeedsInit(util)) {
             let note = Cast.toNumber(args.NOTE);
-            note = this.runtime.limitOptions.unlimitedSoundStuffs
-                ? note: MathUtil.clamp(note, Scratch3MusicBlocks.MIDI_NOTE_RANGE.min, Scratch3MusicBlocks.MIDI_NOTE_RANGE.max);
+            note = this.runtime.limitOptions.unlimitedSoundStuffs ?
+                note :
+                MathUtil.clamp(note, Scratch3MusicBlocks.MIDI_NOTE_RANGE.min, Scratch3MusicBlocks.MIDI_NOTE_RANGE.max);
             let beats = Cast.toNumber(args.BEATS);
             beats = this._clampBeats(beats);
             // If the duration is 0, do not play the note. In Scratch 2.0, "play drum for 0 beats" plays the drum,
@@ -1195,7 +1196,8 @@ class Scratch3MusicBlocks {
      * @private
      */
     _clampBeats (beats) {
-        return this.runtime.limitOptions.unlimitedSoundStuffs ? beats : MathUtil.clamp(beats, Scratch3MusicBlocks.BEAT_RANGE.min, Scratch3MusicBlocks.BEAT_RANGE.max);
+        return this.runtime.limitOptions.unlimitedSoundStuffs ?
+            beats : MathUtil.clamp(beats, Scratch3MusicBlocks.BEAT_RANGE.min, Scratch3MusicBlocks.BEAT_RANGE.max);
     }
 
     /**
@@ -1310,7 +1312,8 @@ class Scratch3MusicBlocks {
      * @private
      */
     _updateTempo (tempo) {
-        tempo = this.runtime.limitOptions.unlimitedSoundStuffs ? tempo : MathUtil.clamp(tempo, Scratch3MusicBlocks.TEMPO_RANGE.min, Scratch3MusicBlocks.TEMPO_RANGE.max);
+        tempo = this.runtime.limitOptions.unlimitedSoundStuffs ?
+            tempo : MathUtil.clamp(tempo, Scratch3MusicBlocks.TEMPO_RANGE.min, Scratch3MusicBlocks.TEMPO_RANGE.max);
         const stage = this.runtime.getTargetForStage();
         if (stage) {
             stage.tempo = tempo;

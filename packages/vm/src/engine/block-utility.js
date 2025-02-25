@@ -256,6 +256,7 @@ class BlockUtility {
             this.sequencer.runtime.ioDevices[device] &&
             this.sequencer.runtime.ioDevices[device][func]) {
             const devObject = this.sequencer.runtime.ioDevices[device];
+            // eslint-disable-next-line prefer-spread
             return devObject[func].apply(devObject, args);
         }
     }

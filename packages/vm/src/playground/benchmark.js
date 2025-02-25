@@ -61,17 +61,18 @@ const SLOW = .1;
 const projectInput = document.querySelector('input');
 let projectData = null;
 
-projectInput.addEventListener('change', (event) => {
+projectInput.addEventListener('change', event => {
     const [data] = event.target.files;
     const reader = new FileReader();
     reader.addEventListener('loadend', () => {
         projectData = reader.result;
-    })
+    });
     reader.readAsArrayBuffer(data);
 });
 
 document.querySelector('.run')
     .addEventListener('click', () => {
+        // eslint-disable-next-line no-alert
         if (!projectData) return alert('empty project');
         Scratch.vm.loadProject(projectData);
     }, false);

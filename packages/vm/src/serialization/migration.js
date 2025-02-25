@@ -49,8 +49,8 @@ const mergeDeep = (target, ...sources) => {
         }
     }
 
-  return mergeDeep(target, ...sources);
-}
+    return mergeDeep(target, ...sources);
+};
 
 
 module.exports = {

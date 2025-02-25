@@ -80,11 +80,14 @@ class Scratch3SensingBlocks {
             sensing_username: this.getUsername,
             sensing_userid: () => {}, // legacy no-op block,
             sensing_operatingsystem: this.getOS,
-            sensing_clipcc_version: () => typeof window === 'undefined' ? 'UNKNOWN' : clipcc.VERSION, // defined by WebpackDefinePlugin
-            sensing_turnonturbomode: (args) => {
+            // eslint-disable-next-line no-confusing-arrow
+            sensing_clipcc_version: () =>
+                // eslint-disable-next-line no-undef
+                typeof clipcc === 'undefined' ? 'UNKNOWN' : clipcc.VERSION, // defined by WebpackDefinePlugin
+            sensing_turnonturbomode: () => {
                 this.setTurboMode(true);
             },
-            sensing_turnoffturbomode: (args) => {
+            sensing_turnoffturbomode: () => {
                 this.setTurboMode(false);
             },
             sensing_isturbomode: () => this.runtime.turboMode,
@@ -224,13 +227,13 @@ class Scratch3SensingBlocks {
         return Math.sqrt((dx * dx) + (dy * dy));
     }
 
-    distanceBetweenPosition (args, util) {
+    distanceBetweenPosition (args) {
         const dx = args.X1 - args.X2;
         const dy = args.Y1 - args.Y2;
         return Math.sqrt((dx * dx) + (dy * dy));
     }
 
-    directionBetweenPosition (args, util) {
+    directionBetweenPosition (args) {
         const dx = args.X2 - args.X1;
         const dy = args.Y2 - args.Y1;
         let d = MathUtil.radToDeg(Math.atan(dx / dy));
@@ -394,10 +397,13 @@ class Scratch3SensingBlocks {
 
     getOS () {
         const userAgent = navigator.userAgent;
-        const isWin = (navigator.platform == 'Win32') || (navigator.platform == 'Windows');
-        const isMac = (navigator.platform == 'Mac68K') || (navigator.platform == 'MacPPC') || (navigator.platform == 'Macintosh') || (navigator.platform == 'MacIntel');
+        const isWin = (navigator.platform === 'Win32') || (navigator.platform === 'Windows');
+        const isMac = (navigator.platform === 'Mac68K') ||
+            (navigator.platform === 'MacPPC') ||
+            (navigator.platform === 'Macintosh') ||
+            (navigator.platform === 'MacIntel');
         if (isMac) return 'Mac';
-        const isUnix = (navigator.platform == 'X11') && !isWin && !isMac;
+        const isUnix = (navigator.platform === 'X11') && !isWin && !isMac;
         if (isUnix) return 'Unix';
         const isLinux = (String(navigator.platform).indexOf('Linux') > -1);
         if (isLinux) return 'Linux';

@@ -111,7 +111,8 @@ test('importing sb3 project with special chars in variable names', t => {
         // There should be one
         t.equal(allVarListFields[ltPerfectVarId].length, 1);
         const bananasBlocks = Object.keys(bananas.blocks._blocks).map(blockId => bananas.blocks._blocks[blockId]);
-        const bananasVarBlocks = bananasBlocks.filter(block => Object.prototype.hasOwnProperty.call(block.fields, 'VARIABLE'));
+        const bananasVarBlocks = bananasBlocks.filter(
+            block => Object.prototype.hasOwnProperty.call(block.fields, 'VARIABLE'));
         t.equal(bananasVarBlocks.length, 1);
         t.equal(bananasVarBlocks[0].fields.VARIABLE.id, ltPerfectVarId);
 
