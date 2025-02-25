@@ -39,7 +39,7 @@ const Variable = require('../engine/variable');
 
 /**
  * Mapping of Scratch 2.0 opcode to Scratch 3.0 block metadata.
- * @type {object.<SB2SpecMap_blockInfo>}
+ * @type {Record<string, SB2SpecMap_blockInfo>}
  */
 const specMap = {
     'forward:': {

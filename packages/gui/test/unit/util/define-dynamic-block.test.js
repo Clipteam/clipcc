@@ -1,6 +1,6 @@
 import defineDynamicBlock from '../../../src/lib/define-dynamic-block';
 
-import BlockType from 'clipcc-vm/src/extension-support/block-type';
+import {BlockType} from 'clipcc-vm';
 
 const MockScratchBlocks = {
     constants: {

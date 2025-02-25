@@ -21,7 +21,7 @@ let nextId = 0;
 
 /**
  * The mapping of names to ids.
- * @const {Object.<string, number>}
+ * @const {Record<string, number>}
  */
 const profilerNames = {};
 

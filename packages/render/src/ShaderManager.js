@@ -1,5 +1,8 @@
 const twgl = require('twgl.js');
 
+/**
+ * @typedef {number} int
+ */
 
 class ShaderManager {
     /**
@@ -11,7 +14,7 @@ class ShaderManager {
 
         /**
          * The cache of all shaders compiled so far, filled on demand.
-         * @type {Object<ShaderManager.DRAW_MODE, Array<ProgramInfo>>}
+         * @type {Record<ShaderManager.DRAW_MODE, Array<ProgramInfo>>}
          * @private
          */
         this._shaderCache = {};

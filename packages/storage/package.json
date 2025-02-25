@@ -6,59 +6,69 @@
   "homepage": "https://github.com/Clipteam/clipcc#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Clipteam/clipcc.git"
+    "url": "https://github.com/Clipteam/clipcc.git",
+    "sha": "3ce4eb1f66902edcbd245b018376c375c2365953"
   },
   "main": "./dist/node/scratch-storage.js",
-  "browser": "./src/index.js",
+  "browser": "./dist/web/scratch-storage.js",
+  "types": "./dist/types/index.d.ts",
   "scripts": {
-    "build": "webpack --progress --color --bail",
+    "build": "rimraf dist && webpack --mode=production",
     "coverage": "tap ./test/{unit,integration}/*.js --coverage --coverage-report=lcov",
-    "lint": "eslint .",
-    "tap-integration": "tap ./test/integration/*.js --allow-incomplete-coverage --allow-empty-coverage",
-    "tap-unit": "tap ./test/unit/*.js --allow-incomplete-coverage --allow-empty-coverage",
-    "tap": "yarn run tap-unit && yarn run tap-integration",
-    "test": "yarn run tap",
+    "semantic-release": "semantic-release",
+    "test": "yarn run test:lint && jest \"test[\\\\/](unit|integration)\"",
+    "test:clearCache": "jest --clearCache",
+    "test:integration": "jest \"test[\\\\/]integration\"",
+    "test:lint": "eslint .",
+    "test:unit": "jest \"test[\\\\/]unit\"",
     "version": "json -f package.json -I -e \"this.repository.sha = '$(git log -n1 --pretty=format:%H)'\"",
-    "watch": "webpack --progress --colors --watch",
-    "semantic-release": "semantic-release"
+    "watch": "webpack --watch"
+  },
+  "tap": {
+    "check-coverage": false
   },
   "dependencies": {
+    "@babel/runtime": "^7.21.0",
+    "@turbowarp/nanolog": "^0.2.0",
     "arraybuffer-loader": "^1.0.3",
-    "base64-js": "1.5.1",
+    "base64-js": "^1.3.0",
+    "cross-fetch": "^4.0.0",
     "fastestsmallesttextencoderdecoder": "^1.0.7",
-    "js-md5": "0.7.3",
-    "minilog": "3.1.0"
+    "js-md5": "^0.7.3"
   },
   "devDependencies": {
-    "@babel/core": "7.14.8",
-    "@babel/eslint-parser": "7.18.2",
+    "@babel/core": "7.26.0",
+    "@babel/plugin-transform-runtime": "7.25.9",
     "@babel/polyfill": "7.12.1",
-    "@babel/preset-env": "7.14.8",
-    "@commitlint/cli": "8.2.0",
-    "@commitlint/config-conventional": "8.2.0",
-    "@commitlint/travis-cli": "8.2.0",
-    "babel-eslint": "10.1.0",
-    "babel-loader": "^9.1.2",
-    "cz-conventional-changelog": "3.3.0",
-    "eslint": "7.27.0",
-    "eslint-config-scratch": "^9.0.8",
-    "eslint-plugin-react": "7.24.0",
-    "husky": "1.3.1",
+    "@babel/preset-env": "7.26.0",
+    "@commitlint/cli": "18.6.1",
+    "@commitlint/config-conventional": "18.6.3",
+    "@commitlint/travis-cli": "8.3.6",
+    "@types/jest": "29.5.14",
+    "@typescript-eslint/eslint-plugin": "7.18.0",
+    "babel-loader": "9.2.1",
+    "buffer": "6.0.3",
+    "eslint": "8.57.1",
+    "eslint-config-clipcc": "9.0.9",
+    "eslint-plugin-jest": "27.9.0",
+    "eslint-plugin-react": "7.37.2",
+    "file-loader": "6.2.0",
+    "husky": "8.0.3",
+    "jest": "29.7.0",
     "json": "^9.0.4",
-    "node-fetch": "2.6.1",
-    "node-polyfill-webpack-plugin": "^2.0.1",
-    "semantic-release": "^15.10.5",
-    "tap": "21.0.1",
-    "terser-webpack-plugin": "^5.3.10",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.1"
+    "rimraf": "6.0.1",
+    "scratch-semantic-release-config": "1.0.16",
+    "semantic-release": "19.0.5",
+    "ts-jest": "29.2.5",
+    "ts-jest-mock-import-meta": "1.2.1",
+    "ts-loader": "9.5.1",
+    "typescript": "^5.7.2",
+    "webpack": "5.96.1",
+    "webpack-cli": "5.1.4"
   },
   "config": {
     "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
+      "path": "cz-conventional-changelog"
     }
-  },
-  "release": {
-    "branch": "develop"
   }
 }

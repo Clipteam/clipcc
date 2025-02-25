@@ -10,7 +10,7 @@ const CLOSE_ALERT_WITH_ID = 'scratch-gui/alerts/CLOSE_ALERT_WITH_ID';
 /**
  * Initial state of alerts reducer
  *
- * {bool} visible - whether the alerts are visible
+ * {boolean} visible - whether the alerts are visible
  * {array} alertsList - list of alerts, each with properties:
  *  * alertType (required): one of AlertTypes
  *  * closeButton (optional): bool indicating that we should show close button

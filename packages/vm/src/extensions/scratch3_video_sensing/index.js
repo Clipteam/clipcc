@@ -52,7 +52,6 @@ const SensingSubject = {
 /**
  * States the video sensing activity can be set to.
  * @readonly
- * @enum {string}
  */
 const VideoState = {
     /** Video turned off. */

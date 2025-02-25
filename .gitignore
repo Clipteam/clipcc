@@ -1,7 +1,8 @@
 # General
 .DS_Store
 .nyc_output
-.vscode
+.vscode/*
+!.vscode/launch.json
 node_modules
 npm-*
 yarn-error.log

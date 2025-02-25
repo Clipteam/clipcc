@@ -12,7 +12,7 @@ class Scratch3OperatorsBlocks {
 
     /**
      * Retrieve the block primitives implemented by this package.
-     * @return {object.<string, Function>} Mapping of opcode to Function.
+     * @return {Record<string, Function>} Mapping of opcode to Function.
      */
     getPrimitives () {
         return {
@@ -55,7 +55,7 @@ class Scratch3OperatorsBlocks {
     /**
      * Retrieve the block execution orders specified by this package.
      * The last thing to execute should be the block's self.
-     * @return {object.<string, Array.<string>>} Mapping of opcode to execution orders.
+     * @return {Record<string, Array.<string>>} Mapping of opcode to execution orders.
      */
     getOrders () {
         return {

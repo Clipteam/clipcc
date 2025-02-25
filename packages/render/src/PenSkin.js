@@ -7,14 +7,19 @@ const ShaderManager = require('./ShaderManager');
 
 /**
  * Attributes to use when drawing with the pen
- * @typedef {object} PenSkin#PenAttributes
+ * @typedef {object} PenAttributes
  * @property {number} [diameter] - The size (diameter) of the pen.
  * @property {Array<number>} [color4f] - The pen color as an array of [r,g,b,a], each component in the range [0,1].
  */
 
 /**
+ * @typedef {number} int
+ * @typedef {import('./RenderWebGL')} RenderWebGL
+ */
+
+/**
  * The pen attributes to use when unspecified.
- * @type {PenSkin#PenAttributes}
+ * @type {PenAttributes}
  * @memberof PenSkin
  * @private
  * @const

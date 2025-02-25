@@ -1,4 +1,4 @@
-import ScratchStorage from 'clipcc-storage';
+import {ScratchStorage} from 'clipcc-storage';
 
 import defaultProject from './default-project';
 

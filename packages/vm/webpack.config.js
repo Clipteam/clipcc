@@ -14,8 +14,27 @@ const base = {
         libraryTarget: 'umd',
         filename: '[name].js'
     },
+    resolve: {
+        alias: {
+            'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
+            'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js')
+        },
+        extensions: ['.ts', '.js']
+    },
     module: {
         rules: [{
+            include: [
+                path.resolve('src'),
+                path.resolve('../render/src')
+            ],
+            test: /\.([cm]?ts|tsx)$/,
+            loader: 'ts-loader',
+            options: {
+                transpileOnly: true,
+                allowTsInNodeModules: true
+            }
+        },
+        {
             test: /\.js$/,
             loader: 'babel-loader',
             include: path.resolve(__dirname, 'src'),
@@ -30,6 +49,11 @@ const base = {
         {
             resourceQuery: /raw/,
             type: 'asset/source'
+        },
+        {
+            resourceQuery: '?arrayBuffer',
+            type: 'javascript/auto',
+            use: 'arraybuffer-loader'
         }]
     },
     optimization: {

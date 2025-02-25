@@ -5,6 +5,12 @@
 const _stackFrameFreeList = [];
 
 /**
+ * @typedef {import('./target')} Target
+ * @typedef {import('./blocks')} Blocks
+ * @typedef {import('../util/timer')} Timer
+ */
+
+/**
  * A frame used for each level of the stack. A general purpose
  * place to store a bunch of execution context and parameters
  * @param {boolean} warpMode Whether this level of the stack is warping
@@ -12,6 +18,9 @@ const _stackFrameFreeList = [];
  * @private
  */
 class _StackFrame {
+    /**
+     * @param {boolean} warpMode Whether this level is in warp mode.
+     */
     constructor (warpMode) {
         /**
          * Whether this level of the stack is a loop.
@@ -28,7 +37,7 @@ class _StackFrame {
 
         /**
          * Reported value from just executed block.
-         * @type {Any}
+         * @type {any}
          */
         this.justReported = null;
 
@@ -40,7 +49,7 @@ class _StackFrame {
 
         /**
          * Persists reported inputs during async block.
-         * @type {Object}
+         * @type {?Object}
          */
         this.reported = null;
 
@@ -52,13 +61,13 @@ class _StackFrame {
 
         /**
          * Procedure parameters.
-         * @type {Object}
+         * @type {?Object}
          */
         this.params = null;
 
         /**
          * A context passed to block implementations.
-         * @type {Object}
+         * @type {?Object}
          */
         this.executionContext = null;
 
@@ -125,10 +134,11 @@ class _StackFrame {
 
 /**
  * A thread is a running stack context and all the metadata needed.
- * @param {?string} firstBlock First block to execute in the thread.
- * @constructor
  */
 class Thread {
+    /**
+     * @param {?string} firstBlock First block to execute in the thread.
+     */
     constructor (firstBlock) {
         /**
          * ID of top block of the thread
@@ -169,7 +179,7 @@ class Thread {
 
         /**
          * The Blocks this thread will execute.
-         * @type {Blocks}
+         * @type {?Blocks}
          */
         this.blockContainer = null;
 

@@ -61,7 +61,6 @@ test('#760 - broadcastAndWait', t => {
     const util = new BlockUtility();
     util.sequencer = rt.sequencer;
     util.thread = th;
-    util.runtime = rt;
 
     // creates threads
     e.broadcastAndWait({BROADCAST_OPTION: {id: 'testBroadcastID', name: 'message'}}, util);
