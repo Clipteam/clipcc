@@ -532,7 +532,7 @@ export class FieldMatrix extends Blockly.Field<string> {
   }
 }
 
-interface FieldMatrixFromJsonConfig extends Blockly.FieldConfig {
+export interface FieldMatrixFromJsonConfig extends Blockly.FieldConfig {
   matrix: string;
 }
 

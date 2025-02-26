@@ -7,7 +7,6 @@ const baseConfig = {
   entry: './src/index.ts',
   output: {
     library: 'ScratchBlocks',
-    libraryTarget: 'commonjs2',
     filename: '[name].js'
   },
   resolve: {
@@ -34,6 +33,7 @@ module.exports = [
   }),
   defaultsDeep({}, baseConfig, {
     output: {
+      libraryTarget: 'umd',
       path: path.resolve(__dirname, 'dist', 'web')
     }
   }),
@@ -44,6 +44,7 @@ module.exports = [
       port: process.env.PORT || 8071
     },
     output: {
+      libraryTarget: 'umd',
       path: path.resolve(__dirname, 'dist', 'playground')
     },
     plugins: [
@@ -54,9 +55,6 @@ module.exports = [
         }, {
           from: 'media',
           to: 'media'
-        }, {
-          from: 'dist',
-          to: 'dist'
         }, {
           from: 'tests/playground.html',
           to: 'index.html'
