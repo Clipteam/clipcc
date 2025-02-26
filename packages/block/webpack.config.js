@@ -14,6 +14,10 @@ module.exports = [{
   },
   module: {
     rules: [{
+      test: /\.css$/,
+      use: 'raw-loader',
+      include: path.resolve(__dirname, 'src')
+    }, {
       test: /\.ts$/,
       use: 'ts-loader',
       exclude: /node_modules/
@@ -33,6 +37,10 @@ module.exports = [{
   },
   module: {
     rules: [{
+      test: /\.css$/,
+      use: 'raw-loader',
+      include: path.resolve(__dirname, 'src')
+    }, {
       test: /\.ts$/,
       use: 'ts-loader',
       exclude: /node_modules/

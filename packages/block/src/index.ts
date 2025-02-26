@@ -5,10 +5,14 @@
  */
 
 import * as Blockly from 'blockly';
+import { registerFieldAngle } from './fields/angle';
 import './blocks/extensions';
 import './blocks/test';
 
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
+  // Register the fields.
+  registerFieldAngle();
+
   const defaultOptions: Blockly.BlocklyOptions = {
     renderer: 'zelos'
   };

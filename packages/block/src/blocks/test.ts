@@ -21,3 +21,30 @@ Blockly.Blocks['test_add'] = {
     });
   }
 };
+
+Blockly.Blocks['math_angle'] = {
+  init: function() {
+    this.jsonInit({
+      message0: '%1',
+      args0: [{
+        type: 'field_angle',
+        name: 'NUM',
+        value: 90
+      }],
+      extensions: ['output_number']
+    });
+  }
+};
+
+Blockly.Blocks['test_field_angle'] = {
+  init: function(this: Blockly.Block) {
+    this.jsonInit({
+      message0: 'angle %1',
+      args0: [{
+        type: 'input_value',
+        name: 'DEGREES'
+      }],
+      extensions: ['colours_motion', 'shape_statement']
+    });
+  }
+};

@@ -70,25 +70,39 @@
 							}
 						}
 					}
-				}
+				}, {
+					'kind': 'block',
+					'type': 'test_field_angle',
+          'inputs': {
+            'DEGREES': {
+							'shadow': {
+								'type': 'math_angle',
+								'fields': {
+									'NUM': 90
+								}
+							}
+            }
+          }
+        }
 			]
 		};
 
 		function start() {
 			ScratchBlocks.inject('blocklyDiv', {
-			toolbox: toolbox,
-			scrollbars: false,
-			horizontalLayout: false,
-			toolboxPosition: 'left',
-      zoom: {
-        controls: true,
-        wheel: true,
-        startScale: 0.675,
-        maxScale: 4,
-        minScale: 0.25,
-        scaleSpeed: 1.1
-      }
-		});
+        media: '../media/',
+        toolbox: toolbox,
+        scrollbars: false,
+        horizontalLayout: false,
+        toolboxPosition: 'left',
+        zoom: {
+          controls: true,
+          wheel: true,
+          startScale: 0.675,
+          maxScale: 4,
+          minScale: 0.25,
+          scaleSpeed: 1.1
+        }
+      });
 		}
 	</script>
 </head>

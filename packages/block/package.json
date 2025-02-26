@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "blockly": "^12.0.0-beta.1",
+    "raw-loader": "^4.0.2",
     "source-map-loader": "^5.0.0",
     "ts-loader": "^9.5.2",
     "typescript": "^5.7.3"
