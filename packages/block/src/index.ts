@@ -6,12 +6,14 @@
 
 import * as Blockly from 'blockly';
 import { registerFieldAngle } from './fields/angle';
+import { registerFieldMatrix } from './fields/matrix';
 import './blocks/extensions';
 import './blocks/test';
 
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
   // Register the fields.
   registerFieldAngle();
+  registerFieldMatrix();
 
   const defaultOptions: Blockly.BlocklyOptions = {
     renderer: 'zelos'

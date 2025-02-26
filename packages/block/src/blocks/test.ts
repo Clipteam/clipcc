@@ -36,6 +36,19 @@ Blockly.Blocks['math_angle'] = {
   }
 };
 
+Blockly.Blocks['matrix'] = {
+  init: function() {
+    this.jsonInit({
+      message0: '%1',
+      args0: [{
+        type: 'field_matrix',
+        name: 'MATRIX'
+      }],
+      extensions: ['output_number']
+    });
+  }
+};
+
 Blockly.Blocks['test_field_angle'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
@@ -45,6 +58,19 @@ Blockly.Blocks['test_field_angle'] = {
         name: 'DEGREES'
       }],
       extensions: ['colours_motion', 'shape_statement']
+    });
+  }
+};
+
+Blockly.Blocks['test_field_matrix'] = {
+  init: function(this: Blockly.Block) {
+    this.jsonInit({
+      message0: 'matrix %1',
+      args0: [{
+        type: 'input_value',
+        name: 'MATRIX'
+      }],
+      extensions: ['colours_pen', 'shape_statement']
     });
   }
 };
