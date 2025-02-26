@@ -52,7 +52,7 @@ export const FieldAngle = function(opt_value, opt_validator) {
   // Add degree symbol: '360°' (LTR) or '°360' (RTL)
   this.symbol_ = utils.createSvgElement('tspan', {}, null);
   this.symbol_.appendChild(document.createTextNode('\u00B0'));
-  
+
   const numRestrictor = new RegExp("[\\d]|[\\.]|[-]|[eE]");
 
   opt_value = (opt_value && !isNaN(opt_value)) ? String(opt_value) : '0';
