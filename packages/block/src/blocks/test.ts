@@ -17,8 +17,7 @@ Blockly.Blocks['test_add'] = {
         type: 'input_value',
         name: 'NUM2'
       }],
-      output: 'Number',
-      extensions: []
+      extensions: ['colours_operators', 'output_number']
     });
   }
 };

@@ -5,13 +5,14 @@
  */
 
 import * as Blockly from 'blockly';
+import './blocks/extensions';
 import './blocks/test';
 
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
   const defaultOptions: Blockly.BlocklyOptions = {
     renderer: 'zelos'
   };
-  Object.assign(options ?? {}, defaultOptions);
+  options = Object.assign(defaultOptions, options);
 
   const workspace = Blockly.inject(container, options);
   return workspace;

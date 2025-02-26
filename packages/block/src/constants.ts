@@ -22,11 +22,6 @@
  * @fileoverview Blockly constants.
  * @author fenichel@google.com (Rachel Fenichel)
  */
-'use strict';
-
-import * as goog from 'google-closure-library/closure/goog/goog.js';
-goog.declareModuleId('Blockly.constants');
-
 
 /**
  * Number of pixels the mouse must move before a drag starts.
@@ -207,7 +202,7 @@ export const DRAG_FREE = 2;
  * Lookup table for determining the opposite type of a connection.
  * @const
  */
-export const OPPOSITE_TYPE = [];
+export const OPPOSITE_TYPE: number[] = [];
 OPPOSITE_TYPE[INPUT_VALUE] = OUTPUT_VALUE;
 OPPOSITE_TYPE[OUTPUT_VALUE] = INPUT_VALUE;
 OPPOSITE_TYPE[NEXT_STATEMENT] = PREVIOUS_STATEMENT;
@@ -265,17 +260,17 @@ export const OUTPUT_SHAPE_SQUARE = 3;
  * @const
  */
 export const Categories = {
-  "motion": "motion",
-  "looks": "looks",
-  "sound": "sounds",
-  "pen": "pen",
-  "data": "data",
-  "dataLists": "data-lists",
-  "event": "events",
-  "control": "control",
-  "sensing": "sensing",
-  "operators": "operators",
-  "more": "more"
+  motion: 'motion',
+  looks: 'looks',
+  sound: 'sounds',
+  pen: 'pen',
+  data: 'data',
+  dataLists: 'data-lists',
+  event: 'events',
+  control: 'control',
+  sensing: 'sensing',
+  operators: 'operators',
+  more: 'more'
 };
 
 /**
@@ -400,6 +395,6 @@ export const PROCEDURES_RETURN_BLOCK_TYPE = 'procedures_return';
  * @const
  */
 export const StatusButtonState = {
-  "READY": "ready",
-  "NOT_READY": "not ready",
+  READY: 'ready',
+  NOT_READY: 'not ready',
 };
