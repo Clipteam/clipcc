@@ -120,12 +120,6 @@ export class FieldMatrix extends Blockly.Field<string> {
 
   /**
    * Touch event wrapper.
-   * Runs when the field is selected.
-   */
-  private mouseDownHandler: Blockly.browserEvents.Data | null = null;
-
-  /**
-   * Touch event wrapper.
    * Runs when the clear button editor button is selected.
    */
   private clearButtonWrapper: Blockly.browserEvents.Data | null = null;
@@ -219,15 +213,23 @@ export class FieldMatrix extends Blockly.Field<string> {
       }, this.fieldGroup_);
       this.arrow.setAttributeNS(
         'http://www.w3.org/1999/xlink', 'xlink:href',
-        // Blockly.getMainWorkspace doesn't work when initView is called on toolbox init.
-        this.getSourceBlock()!.workspace.options.pathToMedia + 'dropdown-arrow.svg'
+        this.getWorkspaceOptions().pathToMedia + 'dropdown-arrow.svg'
       );
       this.arrow.style.cursor = 'default';
     }
+  }
 
-    this.mouseDownHandler = Blockly.browserEvents.conditionalBind(
-      this.getClickTarget_()!, 'mousedown', this, this.onMouseDown_
-    );
+  /**
+   * Get options of workspace.
+   */
+  private getWorkspaceOptions(): Blockly.Options {
+    // Blockly.getMainWorkspace doesn't work when initView is called on toolbox init.
+    const workspace = Blockly.getMainWorkspace() ?? this.getSourceBlock()?.workspace;
+    if (workspace.isFlyout) {
+      return workspace.options.parentWorkspace!.options;
+    } else {
+      return workspace.options;
+    }
   }
 
   /**
@@ -335,6 +337,9 @@ export class FieldMatrix extends Blockly.Field<string> {
   private updateMatrix() {
     const matrix = this.getValue()!;
     const sourceBlockParent = this.getSourceBlock()?.getParent() as Blockly.BlockSvg;
+    if (!sourceBlockParent) {
+      return;
+    }
     for (let i = 0; i < matrix.length; i++) {
       if (matrix[i] === LEDState.OFF) {
         this.fillMatrixNode(this.ledButtons, i, sourceBlockParent.getColourSecondary());
@@ -347,14 +352,13 @@ export class FieldMatrix extends Blockly.Field<string> {
   }
 
   protected override doClassValidation_(newValue?: string): string | null {
-    return newValue
-      ? newValue + FieldMatrix.ZEROS.substr(0, 25 - newValue.length)
-      : newValue ?? '';
+    return newValue === undefined ? FieldMatrix.ZEROS
+      : newValue + FieldMatrix.ZEROS.substr(0, 25 - newValue.length);
   }
 
   protected override doValueUpdate_(newValue: string): void {
     super.doValueUpdate_(newValue);
-    if (!newValue) {
+    if (newValue) {
       this.updateMatrix();
     }
   }
@@ -494,10 +498,6 @@ export class FieldMatrix extends Blockly.Field<string> {
   override dispose(): void {
     super.dispose();
     this.matrixStage = null;
-    if (this.mouseDownHandler) {
-      Blockly.browserEvents.unbind(this.mouseDownHandler);
-      this.mouseDownHandler = null;
-    }
     if (this.matrixTouchWrapper) {
       Blockly.browserEvents.unbind(this.matrixTouchWrapper);
       this.matrixTouchWrapper = null;
@@ -529,6 +529,16 @@ export class FieldMatrix extends Blockly.Field<string> {
     this.size_.width = FieldMatrix.THUMBNAIL_SIZE + FieldMatrix.ARROW_SIZE +
       (this.getConstants()!.FIELD_DROPDOWN_SVG_ARROW_PADDING * 1.5);
     this.positionBorderRect_();
+  }
+
+  /**
+   * The element to bind the click handler to. If not set explicitly, defaults
+   * to the SVG root of the field. When this element is
+   * clicked on an editable field, the editor will open.
+   * @returns Element to bind click handler to.
+   */
+  protected override getClickTarget_(): Element | null {
+    return (this.getSourceBlock() as Blockly.BlockSvg).getSvgRoot();
   }
 }
 
