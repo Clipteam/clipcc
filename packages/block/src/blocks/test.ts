@@ -73,6 +73,20 @@ Blockly.Blocks['colour_picker'] = {
   }
 };
 
+Blockly.Blocks['note'] = {
+  init: function(this: Blockly.Block) {
+    this.jsonInit({
+      message0: '%1',
+      args0: [{
+        type: 'field_note',
+        name: 'NOTE',
+        note: 60
+      }],
+      extensions: ['output_number']
+    });
+  }
+};
+
 Blockly.Blocks['test_field_angle'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
@@ -110,4 +124,17 @@ Blockly.Blocks['test_field_colour_slider'] = {
       extensions: ['colours_sensing', 'shape_statement']
     });
   }
-}
+};
+
+Blockly.Blocks['test_field_note'] = {
+  init: function(this: Blockly.Block) {
+    this.jsonInit({
+      message0: 'note %1',
+      args0: [{
+        type: 'input_value',
+        name: 'NOTE'
+      }],
+      extensions: ['colours_sounds', 'shape_statement']
+    });
+  }
+};

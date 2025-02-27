@@ -8,6 +8,7 @@ import * as Blockly from 'blockly';
 import { registerFieldAngle } from './fields/angle';
 import { registerFieldColourSlider } from './fields/colour_slider';
 import { registerFieldMatrix } from './fields/matrix';
+import { registerFieldNote } from './fields/note';
 import './blocks/extensions';
 import './blocks/test';
 
@@ -16,6 +17,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerFieldAngle();
   registerFieldColourSlider();
   registerFieldMatrix();
+  registerFieldNote();
 
   const defaultOptions: Blockly.BlocklyOptions = {
     renderer: 'zelos'
