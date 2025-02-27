@@ -6,6 +6,7 @@
 
 import * as Blockly from 'blockly';
 import { registerFieldAngle } from './fields/angle';
+import { registerFieldColourSlider } from './fields/colour_slider';
 import { registerFieldMatrix } from './fields/matrix';
 import './blocks/extensions';
 import './blocks/test';
@@ -13,6 +14,7 @@ import './blocks/test';
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
   // Register the fields.
   registerFieldAngle();
+  registerFieldColourSlider();
   registerFieldMatrix();
 
   const defaultOptions: Blockly.BlocklyOptions = {
