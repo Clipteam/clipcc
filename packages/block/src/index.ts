@@ -11,6 +11,7 @@ import { registerFieldMatrix } from './fields/matrix';
 import { registerFieldNote } from './fields/note';
 import './blocks/extensions';
 import './blocks/test';
+import { createTheme } from './colours';
 
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
   // Register the fields.
@@ -20,10 +21,12 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerFieldNote();
 
   const defaultOptions: Blockly.BlocklyOptions = {
-    renderer: 'zelos'
+    renderer: 'zelos',
+    theme: createTheme()
   };
   options = Object.assign(defaultOptions, options);
 
   const workspace = Blockly.inject(container, options);
+
   return workspace;
 }

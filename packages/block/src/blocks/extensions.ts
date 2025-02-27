@@ -45,7 +45,7 @@ const colourHelper = function(category: string) {
     throw new Error('Could not find colours for category "' + category + '"');
   }
   return function(this: Blockly.Block) {
-    this.setColour(colours.primary);
+    this.setStyle(category);
   };
 };
 

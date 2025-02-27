@@ -18,6 +18,8 @@
  * limitations under the License.
  */
 
+import * as Blockly from 'blockly/core';
+
 export const Colours: Record<string, Record<string, string> | string | number> = {
   // SVG colours: these must be specificed in #RRGGBB style
   // To add an opacity, this must be specified as a separate property (for SVG fill-opacity)
@@ -128,6 +130,72 @@ export const Colours: Record<string, Record<string, string> | string | number> =
   menuHover: 'rgba(0, 0, 0, 0.2)'
 };
 
+const blockStyles: {[key: string]: Partial<Blockly.Theme.BlockStyle>} = {
+  motion: {
+    colourPrimary: '#4C97FF',
+    colourSecondary: '#4280D7',
+    colourTertiary: '#3373CC'
+  },
+  looks: {
+    colourPrimary: '#9966FF',
+    colourSecondary: '#855CD6',
+    colourTertiary: '#774DCB'
+  },
+  sounds: {
+    colourPrimary: '#CF63CF',
+    colourSecondary: '#C94FC9',
+    colourTertiary: '#BD42BD'
+  },
+  control: {
+    colourPrimary: '#FFAB19',
+    colourSecondary: '#EC9C13',
+    colourTertiary: '#CF8B17'
+  },
+  event: {
+    colourPrimary: '#FFBF00',
+    colourSecondary: '#E6AC00',
+    colourTertiary: '#CC9900'
+  },
+  sensing: {
+    colourPrimary: '#5CB1D6',
+    colourSecondary: '#47A8D1',
+    colourTertiary: '#2E8EB8'
+  },
+  pen: {
+    colourPrimary: '#0fBD8C',
+    colourSecondary: '#0DA57A',
+    colourTertiary: '#0B8E69'
+  },
+  operators: {
+    colourPrimary: '#59C059',
+    colourSecondary: '#46B946',
+    colourTertiary: '#389438'
+  },
+  data: {
+    colourPrimary: '#FF8C1A',
+    colourSecondary: '#FF8000',
+    colourTertiary: '#DB6E00'
+  },
+  data_lists: {
+    colourPrimary: '#FF661A',
+    colourSecondary: '#FF5500',
+    colourTertiary: '#E64D00'
+  },
+  more: {
+    colourPrimary: '#FF6680',
+    colourSecondary: '#FF4D6A',
+    colourTertiary: '#FF3355'
+  },
+  argument: {
+    colourPrimary: '#F47983',
+    colourSecondary: '#F15764',
+    colourTertiary: '#EE3645'
+  },
+  textField: {
+    colourPrimary: '#FFFFFF'
+  }
+};
+
 /**
  * Override the colours in Colours with new values basded on the
  * given dictionary.
@@ -161,3 +229,10 @@ export const overrideColours = function(colours?: typeof Colours) {
     }
   }
 };
+
+export function createTheme(): Blockly.Theme {
+  return Blockly.Theme.defineTheme('scratch', {
+    name: 'scratch',
+    blockStyles
+  });
+}
