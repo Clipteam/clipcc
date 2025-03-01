@@ -521,6 +521,18 @@ export class FieldMatrix extends Blockly.Field<string> {
   }
 
   /**
+   * Updates the field to match the colour/style of the block.
+   */
+  override applyColour(): void {
+    const sourceBlock = this.getSourceBlock() as Blockly.BlockSvg;
+    const sourceBlockParent = sourceBlock.getParent() as Blockly.BlockSvg;
+    if (sourceBlock && sourceBlockParent) {
+      sourceBlock.pathObject.svgPath.setAttribute('stroke', sourceBlockParent.getColourTertiary());
+      sourceBlock.pathObject.svgPath.setAttribute('fill', sourceBlockParent.getColourSecondary());
+    }
+  }
+
+  /**
    * Updates the size of the field based on the text.
    * @param margin margin to use when positioning the text element.
    */
