@@ -6,6 +6,7 @@
 
 import * as Blockly from 'blockly';
 import { registerFieldAngle } from './fields/angle';
+import { registerFieldButton } from './fields/button';
 import { registerFieldColourSlider } from './fields/colour_slider';
 import { registerFieldMatrix } from './fields/matrix';
 import { registerFieldNote } from './fields/note';
@@ -16,6 +17,7 @@ import { createTheme } from './colours';
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
   // Register the fields.
   registerFieldAngle();
+  registerFieldButton();
   registerFieldColourSlider();
   registerFieldMatrix();
   registerFieldNote();

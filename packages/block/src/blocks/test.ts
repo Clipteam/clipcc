@@ -5,6 +5,7 @@
  */
 
 import * as Blockly from 'blockly';
+import { FieldButton } from '../fields/button';
 
 Blockly.Blocks['test_add'] = {
   init: function(this: Blockly.Block) {
@@ -136,5 +137,26 @@ Blockly.Blocks['test_field_note'] = {
       }],
       extensions: ['colours_sounds', 'shape_statement']
     });
+  }
+};
+
+Blockly.Blocks['test_field_button'] = {
+  init: function(this: Blockly.Block) {
+    this.jsonInit({
+      message0: 'button',
+      extensions: ['colours_looks', 'shape_statement']
+    });
+    this.appendDummyInput('DUMMY_INPUT').appendField(new FieldButton(
+      '/media/plus.svg',
+      (field: FieldButton) => {
+        console.log('onclick plus');
+        this.getInput('DUMMY_INPUT')?.removeField('BUTTON_PLUS');
+      }
+    ), 'BUTTON_PLUS').appendField(new FieldButton(
+      '/media/minus.svg',
+      (field: FieldButton) => {
+        console.log('onclick minus');
+      }
+    ), 'BUTTON_MINUS');
   }
 };
