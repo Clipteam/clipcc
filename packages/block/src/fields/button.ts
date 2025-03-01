@@ -156,7 +156,7 @@ export class FieldButton extends Blockly.Field<string> {
   private onMouseEnter() {
     this.button?.setAttribute(
       'fill',
-      (this.getSourceBlock() as Blockly.BlockSvg).getColourTertiary()
+      (this.getSourceBlock() as Blockly.BlockSvg).getColourSecondary()
     );
   }
 
