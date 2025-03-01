@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from 'blockly';
+import * as Blockly from 'blockly/core';
 import { registerFieldAngle } from './fields/angle';
 import { registerFieldButton } from './fields/button';
 import { registerFieldColourSlider } from './fields/colour_slider';

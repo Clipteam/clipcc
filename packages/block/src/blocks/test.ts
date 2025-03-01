@@ -147,13 +147,13 @@ Blockly.Blocks['test_field_button'] = {
       extensions: ['colours_looks', 'shape_statement']
     });
     this.appendDummyInput('DUMMY_INPUT').appendField(new FieldButton(
-      '/media/plus.svg',
+      '/media/icons/plus.svg',
       (field: FieldButton) => {
         console.log('onclick plus');
         this.getInput('DUMMY_INPUT')?.removeField('BUTTON_PLUS');
       }
     ), 'BUTTON_PLUS').appendField(new FieldButton(
-      '/media/minus.svg',
+      '/media/icons/minus.svg',
       (field: FieldButton) => {
         console.log('onclick minus');
       }
