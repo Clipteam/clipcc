@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from 'blockly';
+import * as Blockly from 'blockly/core';
 import { FieldButton } from '../fields/button';
 
 Blockly.Blocks['test_add'] = {
@@ -19,71 +19,6 @@ Blockly.Blocks['test_add'] = {
         name: 'NUM2'
       }],
       extensions: ['colours_operators', 'output_number']
-    });
-  }
-};
-
-Blockly.Blocks['math_angle'] = {
-  init: function(this: Blockly.Block) {
-    this.jsonInit({
-      message0: '%1',
-      args0: [{
-        type: 'field_angle',
-        name: 'NUM',
-        value: 90
-      }],
-      extensions: ['output_number']
-    });
-  }
-};
-
-Blockly.Blocks['matrix'] = {
-  init: function(this: Blockly.Block) {
-    this.jsonInit({
-      message0: '%1',
-      args0: [{
-        type: 'field_matrix',
-        name: 'MATRIX'
-      }],
-      extensions: ['output_number']
-    });
-  }
-};
-
-/**
- * Pick a random colour.
- * @return {string} #RRGGBB for random colour.
- */
-function randomColour() {
-  const num = Math.floor(Math.random() * Math.pow(2, 24));
-  return '#' + ('00000' + num.toString(16)).substr(-6);
-}
-
-Blockly.Blocks['colour_picker'] = {
-  init: function(this: Blockly.Block) {
-    this.jsonInit({
-      message0: '%1',
-      args0: [{
-        type: 'field_colour_slider',
-        name: 'COLOUR',
-        colour: randomColour()
-      }],
-      extensions: ['output_number']
-    });
-    this.setOutput(true, 'Colour');
-  }
-};
-
-Blockly.Blocks['note'] = {
-  init: function(this: Blockly.Block) {
-    this.jsonInit({
-      message0: '%1',
-      args0: [{
-        type: 'field_note',
-        name: 'NOTE',
-        note: 60
-      }],
-      extensions: ['output_number']
     });
   }
 };

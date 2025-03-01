@@ -39,11 +39,6 @@ import { Colours } from '../colours';
  *     category.
  */
 const colourHelper = function(category: string) {
-  const colours = Colours[category] as { primary: string; secondary: string; tertiary: string; quaternary: string; };
-  if (!(colours && colours.primary && colours.secondary && colours.tertiary &&
-    colours.quaternary)) {
-    throw new Error('Could not find colours for category "' + category + '"');
-  }
   return function(this: Blockly.Block) {
     this.setStyle(category);
   };
