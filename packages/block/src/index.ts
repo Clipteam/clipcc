@@ -11,6 +11,8 @@ import { registerFieldButton } from './fields/button';
 import { registerFieldColourSlider } from './fields/colour_slider';
 import { registerFieldMatrix } from './fields/matrix';
 import { registerFieldNote } from './fields/note';
+import { ContinuousToolBox } from './toolbox/toolbox';
+import { ContinuousVerticalFlyout } from './toolbox/flyout';
 
 import './blocks/extensions';
 import './blocks/common';
@@ -26,7 +28,11 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
 
   const defaultOptions: Blockly.BlocklyOptions = {
     renderer: 'zelos',
-    theme: createTheme()
+    theme: createTheme(),
+    plugins: {
+      toolbox: ContinuousToolBox,
+      flyoutsVerticalToolbox: ContinuousVerticalFlyout
+    }
   };
   options = Object.assign(defaultOptions, options);
 
