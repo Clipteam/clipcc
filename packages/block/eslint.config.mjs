@@ -45,11 +45,18 @@ export default [
       }],
       'quote-props': ['warn', 'as-needed'],
       'comma-dangle': ['error', 'never'],
-      'indent': ['error', 2, {
+      indent: ['error', 2, {
         SwitchCase: 1
       }],
       // Allow any text in the license tag. Other checks are not relevant.
-      'jsdoc/check-values': ['off']
+      'jsdoc/check-values': ['off'],
+      'jsdoc/require-param': ['warn', {
+        checkDestructured: false,
+        checkDestructuredRoots: false
+      }],
+      'jsdoc/check-param-names': ['warn', {
+        checkDestructured: false
+      }]
     }
   },
   {

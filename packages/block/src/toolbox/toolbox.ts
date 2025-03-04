@@ -29,7 +29,6 @@ export class ContinuousToolBox extends Blockly.Toolbox {
 
     const flyout = this.getFlyout() as ContinuousVerticalFlyout;
     flyout.show(this.getFlyoutContents());
-    flyout.recordScrollPositions();
     flyout.setAutoClose(false);
 
     this.selectItemByPosition(0);

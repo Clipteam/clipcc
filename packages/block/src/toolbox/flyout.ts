@@ -34,6 +34,38 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
   }
 
   /**
+   * Show and populate the flyout.
+   * @param flyoutDef Contents to display
+   *     in the flyout. This is either an array of Nodes, a NodeList, a
+   *     toolbox definition, or a string with the name of the dynamic category.
+   */
+  override show(flyoutDef: Blockly.utils.toolbox.FlyoutDefinition | string): void {
+    super.show(flyoutDef);
+    this.recordScrollPositions();
+  }
+
+  /**
+   * Sets the translation of the flyout to match the scrollbars.
+   * Override to update the selected category.
+   * @param xyRatio Contains a y property which is a float between 0 and 1
+   *     specifying the degree of scrolling and a similar x property.
+   */
+  protected override setMetrics_(xyRatio: { x: number; y: number; }): void {
+    super.setMetrics_(xyRatio);
+
+    // Auto select category on scrolling.
+    if (this.scrollTarget) {
+      // If we are currently auto-scrolling, due to selecting a category by
+      // clicking on it, do not update the category selection.
+      return;
+    }
+    const category = this.getCategoryByScrollPosition(-this.workspace_.scrollY);
+    if (category) {
+      (this.targetWorkspace.getToolbox() as ContinuousToolBox).updateSelectedCategory(category);
+    }
+  }
+
+  /**
    * Records scroll position for each category in the toolbox.
    * The scroll position is determined by the coordinates of each category's
    * label after the entire flyout has been rendered.
@@ -113,20 +145,5 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
 
     this.workspace_.scrollbar?.setY(scrollPos + diff * ContinuousVerticalFlyout.SCROLL_ANIMATION_FRACTION);
     requestAnimationFrame(this.stepScrollAnimation.bind(this));
-  }
-
-  protected override wheel_(e: WheelEvent): void {
-    super.wheel_(e);
-
-    // Auto select category on scrolling.
-    if (this.scrollTarget) {
-      // If we are currently auto-scrolling, due to selecting a category by
-      // clicking on it, do not update the category selection.
-      return;
-    }
-    const category = this.getCategoryByScrollPosition(-this.workspace_.scrollY);
-    if (category) {
-      (this.targetWorkspace.getToolbox() as ContinuousToolBox).updateSelectedCategory(category);
-    }
   }
 }
