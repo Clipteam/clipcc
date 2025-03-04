@@ -40,9 +40,6 @@ export default [
         tabWidth: 2,
         ignoreUrls: true
       }],
-      'no-use-before-define': ['error', {
-        classes: false
-      }],
       'quote-props': ['warn', 'as-needed'],
       'comma-dangle': ['error', 'never'],
       indent: ['error', 2, {
