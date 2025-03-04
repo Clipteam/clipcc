@@ -5,14 +5,15 @@
  */
 
 import * as Blockly from 'blockly/core';
-import { createTheme } from './colours';
-import { registerFieldAngle } from './fields/angle';
-import { registerFieldButton } from './fields/button';
-import { registerFieldColourSlider } from './fields/colour_slider';
-import { registerFieldMatrix } from './fields/matrix';
-import { registerFieldNote } from './fields/note';
-import { ContinuousToolBox } from './toolbox/toolbox';
-import { ContinuousVerticalFlyout } from './toolbox/flyout';
+import {createTheme} from './colours';
+import {registerFieldAngle} from './fields/angle';
+import {registerFieldButton} from './fields/button';
+import {registerFieldColourSlider} from './fields/colour_slider';
+import {registerFieldMatrix} from './fields/matrix';
+import {registerFieldNote} from './fields/note';
+import {registerScratchCategory} from './toolbox/category';
+import {ContinuousToolBox} from './toolbox/toolbox';
+import {ContinuousVerticalFlyout} from './toolbox/flyout';
 
 import './blocks/extensions';
 import './blocks/common';
@@ -25,6 +26,8 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerFieldColourSlider();
   registerFieldMatrix();
   registerFieldNote();
+
+  registerScratchCategory();
 
   const defaultOptions: Blockly.BlocklyOptions = {
     renderer: 'zelos',

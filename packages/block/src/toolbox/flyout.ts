@@ -5,7 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import { ContinuousToolBox } from './toolbox';
+import {ContinuousToolBox} from './toolbox';
 
 /**
  * Class for continuous flyout.
@@ -17,8 +17,8 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
    */
   static readonly SCROLL_ANIMATION_FRACTION = 0.3;
 
+  /** Maps from category names to their positions. */
   protected scrollPositions: Map<string, number> = new Map<string, number>();
-  protected labelGaps: number[] = [];
 
   /**
    * The target position for the flyout scroll animation in pixels.
@@ -79,7 +79,7 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
 
   /**
    * Get an item in the toolbox based on the scroll position of the flyout.
-   * @param {number} position Current scroll position of the workspace.
+   * @param position Current scroll position of the workspace.
    * @returns The category name of scroll position, null if not found.
    */
   getCategoryByScrollPosition(position: number): string | null {

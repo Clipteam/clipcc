@@ -5,7 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import { ContinuousVerticalFlyout } from './flyout';
+import {ContinuousVerticalFlyout} from './flyout';
 
 /**
  * Class for continuous toolbox.
@@ -80,6 +80,7 @@ export class ContinuousToolBox extends Blockly.Toolbox {
   /**
    * Select the category with given name.
    * @param name Category name.
+   * @returns Category item.
    */
   getToolboxCategoryByName(name: string): Blockly.ToolboxCategory | null {
     for (const item of this.contents.values()) {
