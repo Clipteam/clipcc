@@ -179,6 +179,7 @@ export class FieldVariableGetter extends Blockly.FieldLabel {
 }
 
 export interface FieldVariableFromJsonConfig extends Blockly.FieldLabelFromJsonConfig {
+  text: string;
   name: string;
   variableType?: string;
 }

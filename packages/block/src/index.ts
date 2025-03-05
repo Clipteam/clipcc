@@ -52,6 +52,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
     Constants.VARIABLE_CATEGORY_NAME,
     variableCategory
   );
+  workspace.refreshToolboxSelection();
 
   return workspace;
 }
