@@ -6,20 +6,22 @@
 
 import * as Blockly from 'blockly/core';
 
+import * as Constants from './constants';
 import {createTheme} from './colours';
 import {registerFieldAngle} from './fields/angle';
 import {registerFieldButton} from './fields/button';
 import {registerFieldColourSlider} from './fields/colour_slider';
 import {registerFieldMatrix} from './fields/matrix';
 import {registerFieldNote} from './fields/note';
+import {registerFieldVariableGetter} from './fields/variable_getter';
 import {registerScratchCategory} from './toolbox/category';
 import {ContinuousToolBox} from './toolbox/toolbox';
 import {ContinuousVerticalFlyout} from './toolbox/flyout';
-
-import * as en from 'blockly/msg/en';
+import {flyoutCategory as variableCategory} from './data_category';
 
 import './blocks/extensions';
 import './blocks/common';
+import './blocks/data';
 import './blocks/test';
 
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
@@ -29,6 +31,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerFieldColourSlider();
   registerFieldMatrix();
   registerFieldNote();
+  registerFieldVariableGetter();
 
   registerScratchCategory();
 
@@ -42,8 +45,13 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   };
   options = Object.assign(defaultOptions, options);
 
-  Blockly.setLocale(en);
   const workspace = Blockly.inject(container, options);
+
+  // Dynamic categories.
+  workspace.registerToolboxCategoryCallback(
+    Constants.VARIABLE_CATEGORY_NAME,
+    variableCategory
+  );
 
   return workspace;
 }

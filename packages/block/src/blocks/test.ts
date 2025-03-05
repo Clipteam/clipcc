@@ -18,7 +18,23 @@ Blockly.Blocks['test_add'] = {
         type: 'input_value',
         name: 'NUM2'
       }],
-      extensions: ['colours_operators', 'output_number']
+      extensions: ['colours_operators', 'shape_statement']
+    });
+  }
+};
+
+Blockly.Blocks['test_str'] = {
+  init: function(this: Blockly.Block) {
+    this.jsonInit({
+      message0: 'text %1 %2',
+      args0: [{
+        type: 'input_value',
+        name: 'NUM1'
+      }, {
+        type: 'input_value',
+        name: 'NUM2'
+      }],
+      extensions: ['colours_operators', 'shape_statement']
     });
   }
 };

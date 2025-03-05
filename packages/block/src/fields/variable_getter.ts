@@ -23,171 +23,169 @@
  *     picker in the right-click menu.
  * @author fenichel@google.com (Rachel Fenichel)
  */
-'use strict';
 
-import * as goog from 'google-closure-library/closure/goog/goog.js';
-goog.declareModuleId('Blockly.FieldVariableGetter');
-
-import * as eventUtils from './events/utils';
-import {BlockChange} from './events/block_change';
-import {Field} from './field';
-import * as rendererConstants from './renderer/constants';
-import * as utils from './utils';
-import * as Variables from './variables';
-
-const Size = goog.require('goog.math.Size');
-
+import * as Blockly from 'blockly/core';
 
 /**
  * Class for a variable getter field.
- * @param {string} text The initial content of the field.
- * @param {string} name Optional CSS class for the field's text.
- * @param {string} opt_varType The type of variable this field is associated with.
- * @extends {Blockly.FieldLabel}
- * @constructor
- *
  */
-export const FieldVariableGetter = function(text, name, opt_varType) {
-  this.size_ = new Size(rendererConstants.FIELD_WIDTH,
-      rendererConstants.FIELD_HEIGHT);
-  this.text_ = text;
+export class FieldVariableGetter extends Blockly.FieldLabel {
+  /**
+   * Editable fields usually show some sort of UI indicating they are
+   * editable. They will also be saved by the serializer.
+   */
+  override EDITABLE = false;
 
   /**
-   * Maximum characters of text to display before adding an ellipsis.
-   * Same for strings and numbers.
-   * @type {number}
+   * Serializable fields are saved by the serializer, non-serializable fields
+   * are not. Editable fields should also be serializable. This is not the
+   * case by default so that SERIALIZABLE is backwards compatible.
    */
-  this.maxDisplayLength = rendererConstants.MAX_DISPLAY_LENGTH;
+  override SERIALIZABLE = true;
 
-  this.name_ = name;
-  this.variableType_ = opt_varType ? opt_varType : '';
-};
-goog.inherits(FieldVariableGetter, Field);
+  private variableName: string;
+  private variableType: string;
+  private variable: Blockly.IVariableModel<Blockly.IVariableState> | null = null;
 
-/**
- * Construct a FieldVariableGetter from a JSON arg object,
- * dereferencing any string table references.
- * @param {!Object} options A JSON object with options (variable,
- *                          variableTypes, and defaultType).
- * @returns {!FieldVariableGetter} The new field instance.
- * @package
- * @nocollapse
- */
-FieldVariableGetter.fromJson = function(options) {
-  const varname = utils.replaceMessageReferences(options['text']);
-  return new FieldVariableGetter(varname, options['name'],
-      options['class'], options['variableType']);
-};
+  /**
+   * @param name The name of variable.
+   * @param type The type of variable this field is associated with.
+   */
+  constructor(name: string, type?: string) {
+    super(Blockly.Field.SKIP_SETUP);
 
-/**
- * Editable fields usually show some sort of UI for the user to change them.
- * This field should be serialized, but only edited programmatically.
- * @type {boolean}
- * @public
- */
-FieldVariableGetter.prototype.EDITABLE = false;
-
-/**
- * Serializable fields are saved by the XML renderer, non-serializable fields
- * are not.  This field should be serialized, but only edited programmatically.
- * @type {boolean}
- * @public
- */
-FieldVariableGetter.prototype.SERIALIZABLE = true;
-
-/**
- * Install this field on a block.
- */
-FieldVariableGetter.prototype.init = function() {
-  if (this.fieldGroup_) {
-    // Field has already been initialized once.
-    return;
-  }
-  FieldVariableGetter.superClass_.init.call(this);
-  if (this.variable_) {
-    return; // Initialization already happened.
-  }
-  this.workspace_ = this.sourceBlock_.workspace;
-  const variable = Variables.getOrCreateVariablePackage(
-      this.workspace_, null, this.text_, this.variableType_);
-  this.setValue(variable.getId());
-};
-
-/**
- * Get the variable's ID.
- * @return {string} Current variable's ID.
- */
-FieldVariableGetter.prototype.getValue = function() {
-  return this.variable_ ? this.variable_.getId() : '';
-};
-
-/**
- * Get the text from this field.
- * @return {string} Current text.
- */
-FieldVariableGetter.prototype.getText = function() {
-  return this.variable_ ? this.variable_.name : '';
-};
-
-/**
- * Get the variable model for the variable associated with this field.
- * Not guaranteed to be in the variable map on the workspace (e.g. if accessed
- * after the variable has been deleted).
- * @return {?Blockly.VariableModel} the selected variable, or null if none was
- *     selected.
- * @package
- */
-FieldVariableGetter.prototype.getVariable = function() {
-  return this.variable_;
-};
-
-FieldVariableGetter.prototype.setValue = function(id) {
-  // What do I do when id is null?  That happens when undoing a change event
-  // for the first time the value was set.
-  const workspace = this.sourceBlock_.workspace;
-  const variable = Variables.getVariable(workspace, id);
-
-  if (!variable) {
-    throw new Error('Variable id doesn\'t point to a real variable!  ID was ' +
-        id);
+    this.variableName = name;
+    this.variableType = type ?? '';
   }
 
-  if (this.sourceBlock_ && eventUtils.isEnabled()) {
-    const oldValue = this.variable_ ? this.variable_.getId() : null;
-    eventUtils.fire(new BlockChange(
-        this.sourceBlock_, 'field', this.name, oldValue, variable.getId()));
+  /**
+   * Construct a FieldVariableGetter from a JSON arg object,
+   * dereferencing any string table references.
+   * @param options A JSON object with options (variable,
+   *                          variableTypes, and defaultType).
+   * @returns The new field instance.
+   */
+  static override fromJson(options: FieldVariableFromJsonConfig): FieldVariableGetter {
+    const varname = Blockly.utils.parsing.replaceMessageReferences(options.text);
+    return new FieldVariableGetter(varname, options.variableType);
   }
-  this.variable_ = variable;
-  this.value_ = id;
-  this.setText(variable.name);
-};
+
+  /**
+   * Sets the field's value based on the given XML element. Should only be
+   * called by Blockly.Xml.
+   * @param fieldElement The element containing info about the field's state.
+   */
+  override fromXml(fieldElement: Element): void {
+    this.variableName = fieldElement.textContent ?? '';
+    this.variableType = fieldElement.getAttribute('variabletype') ?? '';
+    this.setValue(fieldElement.getAttribute('id'));
+  }
+
+  /**
+   * Serializes this field's value to XML. Should only be called by Blockly.Xml.
+   * @param fieldElement The element to populate with info about the field's
+   *     state.
+   * @returns The element containing info about the field's state.
+   */
+  override toXml(fieldElement: Element): Element {
+    fieldElement.setAttribute('id', this.variable!.getId());
+    fieldElement.setAttribute('variabletype', this.variable!.getType());
+    fieldElement.textContent = this.variable!.getName();
+    return fieldElement;
+  }
+
+  /**
+   * Initializes the model of the field after it has been installed on a block.
+   */
+  override initModel(): void {
+    const block = this.getSourceBlock();
+    if (!block) {
+      throw new Blockly.UnattachedFieldError();
+    }
+    if (this.variable) {
+      return; // Initialization already happened.
+    }
+    const variable = Blockly.Variables.getOrCreateVariablePackage(
+      block.workspace,
+      null,
+      this.variableName,
+      this.variableType
+    );
+    // Don't call setValue because we don't want to cause a rerender.
+    this.doValueUpdate_(variable.getId());
+  }
+
+  /**
+   * Get the variable's ID.
+   * @returns Current variable's ID.
+   */
+  override getValue(): string {
+    return this.variable ? this.variable.getId() : '';
+  }
+
+  /**
+   * Get the text from this field.
+   * @returns Current text.
+   */
+  override getText(): string {
+    return this.variable ? this.variable.getName() : '';
+  }
+
+  /**
+   * Get the variable model for the variable associated with this field.
+   * Not guaranteed to be in the variable map on the workspace (e.g. if accessed
+   * after the variable has been deleted).
+   * @returns the selected variable, or null if none was selected.
+   */
+  getVariable(): Blockly.IVariableModel<Blockly.IVariableState> | null {
+    return this.variable;
+  }
+
+  /**
+   * Used to change the variable of this field.
+   * @param newValue New variable id.
+   */
+  protected override doValueUpdate_(newValue: string): void {
+    // What do I do when id is null?  That happens when undoing a change event
+    // for the first time the value was set.
+    const workspace = this.getSourceBlock()!.workspace;
+    const variable = Blockly.Variables.getVariable(workspace, newValue);
+
+    if (!variable) {
+      throw new Error(`Variable id doesn't point to a real variable!  ID was ${newValue}`);
+    }
+
+    super.doValueUpdate_(newValue);
+    this.variable = variable;
+  }
+
+  /**
+   * Whether this field references any Blockly variables.  If true it may need
+   * to be handled differently during serialization and deserialization.
+   * Subclasses may override this.
+   * @returns True if this field has any variable references.
+   */
+  override referencesVariables(): boolean {
+    return true;
+  }
+
+  /**
+   * Refresh the variable name referenced by this field if this field references
+   * variables.
+   */
+  override refreshVariableName(): void {
+    this.forceRerender();
+  }
+}
+
+export interface FieldVariableFromJsonConfig extends Blockly.FieldLabelFromJsonConfig {
+  name: string;
+  variableType?: string;
+}
 
 /**
- * This field is editable, but only through the right-click menu.
- * @private
+ * Register the field and any dependencies.
  */
-FieldVariableGetter.prototype.showEditor_ = function() {
-  // nop.
-};
-
-/**
- * Add or remove the UI indicating if this field is editable or not.
- * This field is editable, but only through the right-click menu.
- * Suppress default editable behaviour.
- */
-FieldVariableGetter.prototype.updateEditable = function() {
-  // nop.
-};
-
-/**
- * Whether this field references any Blockly variables.  If true it may need to
- * be handled differently during serialization and deserialization.  Subclasses
- * may override this.
- * @return {boolean} True if this field has any variable references.
- * @package
- */
-FieldVariableGetter.prototype.referencesVariables = function() {
-  return true;
-};
-
-Field.register('field_variable_getter', FieldVariableGetter);
+export function registerFieldVariableGetter() {
+  Blockly.fieldRegistry.register('field_variable_getter', FieldVariableGetter);
+}
