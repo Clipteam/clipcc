@@ -5,6 +5,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<title>Test Playground</title>
 	<script src="main.js"></script>
+  <script>
+    window.Blockly.Msg = window.Blockly.Msg.Msg;
+  </script>
+  <script src="messages.js"></script>
 	<style>
 		html, body {
 			height: 100%;
@@ -74,48 +78,27 @@
 						}
 					}
 				}, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }]
+					'kind': 'block',
+					'type': 'test_str',
+					'inputs': {
+						'NUM1': {
+							'shadow': {
+								'type': 'text',
+								'fields': {
+									'TEXT': 'sss'
+								}
+							}
+						},
+						'NUM2': {
+							'shadow': {
+								'type': 'text',
+								'fields': {
+									'TEXT': 5
+								}
+							}
+						}
+					}
+				}]
       }, {
         kind: 'category',
         name: 'Category 2',
@@ -168,151 +151,19 @@
         }, {
           'kind': 'block',
           'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
         }]
+      }, {
+        kind: 'category',
+        name: 'Variables',
+        custom: 'VARIABLE'
       }]
 		};
 
 		function start() {
 			ScratchBlocks.inject('blocklyDiv', {
         media: '../media/',
+        collapse: false,
+        disable: false,
         toolbox: toolbox,
         scrollbars: false,
         horizontalLayout: false,

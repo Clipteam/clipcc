@@ -17,7 +17,7 @@ export default [
       // node modules
       'node_modules/*',
       // build artifacts
-      'msg/*',
+      'msg/{js,json}/**',
       'i18n/*',
       'shim/*',
       'dist/*',
@@ -54,15 +54,38 @@ export default [
       'jsdoc/check-param-names': ['warn', {
         checkDestructured: false
       }]
+    },
+    settings: {
+      // Allowlist some JSDoc tag aliases we use.
+      jsdoc: {
+        tagNamePreference: {
+          fileoverview: 'fileoverview'
+        }
+      }
     }
   },
   {
-    files: ['webpack.config.js'],
+    files: [
+      'scripts/**/*.js',
+      'webpack.config.js'
+    ],
     languageOptions: {
       sourceType: 'commonjs',
       globals: {
         ...globals.node
       }
+    }
+  },
+  {
+    files: ['msg/messages.js'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: {
+        Blockly: 'readonly'
+      }
+    },
+    rules: {
+      'max-len': ['off']
     }
   },
   ...tslint.config({

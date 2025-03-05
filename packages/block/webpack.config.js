@@ -44,8 +44,7 @@ module.exports = [
       port: process.env.PORT || 8071
     },
     output: {
-      libraryTarget: 'umd',
-      path: path.resolve(__dirname, 'dist', 'playground')
+      path: path.resolve(__dirname, 'build')
     },
     plugins: [
       new CopyWebpackPlugin({
@@ -58,6 +57,8 @@ module.exports = [
         }, {
           from: 'tests/playground.html',
           to: 'index.html'
+        }, {
+          from: 'msg/messages.js'
         }]
       })
     ]
