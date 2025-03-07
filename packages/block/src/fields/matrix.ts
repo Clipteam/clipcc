@@ -25,7 +25,8 @@
  */
 
 import * as Blockly from 'blockly/core';
-import styles from '../styles/matrix.css'
+import {getWorkspaceOptions} from '../utils';
+import styles from '../styles/matrix.css';
 
 enum LEDState {
   ON = '1',
@@ -213,22 +214,9 @@ export class FieldMatrix extends Blockly.Field<string> {
       }, this.fieldGroup_);
       this.arrow.setAttributeNS(
         'http://www.w3.org/1999/xlink', 'xlink:href',
-        this.getWorkspaceOptions().pathToMedia + 'dropdown-arrow.svg'
+        getWorkspaceOptions(this).pathToMedia + 'dropdown-arrow.svg'
       );
       this.arrow.style.cursor = 'default';
-    }
-  }
-
-  /**
-   * Get options of workspace.
-   */
-  private getWorkspaceOptions(): Blockly.Options {
-    // Blockly.getMainWorkspace doesn't work when initView is called on toolbox init.
-    const workspace = Blockly.getMainWorkspace() ?? this.getSourceBlock()?.workspace;
-    if (workspace.isFlyout) {
-      return workspace.options.parentWorkspace!.options;
-    } else {
-      return workspace.options;
     }
   }
 

@@ -18,6 +18,8 @@
  * limitations under the License.
  */
 
+import * as Blockly from 'blockly/core';
+
 /**
  * @fileoverview Utility methods for Scratch Blocks but not Blockly.
  * @author fenichel@google.com (Rachel Fenichel)
@@ -34,4 +36,19 @@ export function compareStrings(str1: string, str2: string): number {
     sensitivity: 'base',
     numeric: true
   });
+}
+
+/**
+ * Get current workspace options.
+ * Blockly.getMainWorkspace doesn't work when initView is called on toolbox init.
+ * @param field The current field.
+ * @returns Workspace options.
+ */
+export function getWorkspaceOptions(field: Blockly.Field): Blockly.Options {
+  const workspace = Blockly.getMainWorkspace() ?? field.getSourceBlock()?.workspace;
+  if (workspace.isFlyout) {
+    return workspace.options.parentWorkspace!.options;
+  } else {
+    return workspace.options;
+  }
 }
