@@ -25,6 +25,15 @@ import './blocks/common';
 import './blocks/data';
 import './blocks/test';
 
+/**
+ * Inject a Blockly editor into the specified container element (usually a div).
+ * The necessary stuffs and dynamic categories for main workspace will be registered.
+ * If there is a need to inject multiple workspaces, use `injectWorkspace` after the
+ * first workspace injected.
+ * @param container Containing element, or its ID, or a CSS selector.
+ * @param options Optional dictionary of options.
+ * @returns Newly created main workspace.
+ */
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
   // Register the fields.
   registerFieldAngle();
@@ -37,17 +46,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
 
   registerScratchCategory();
 
-  const defaultOptions: Blockly.BlocklyOptions = {
-    renderer: 'zelos',
-    theme: createTheme(),
-    plugins: {
-      toolbox: ContinuousToolBox,
-      flyoutsVerticalToolbox: ContinuousVerticalFlyout
-    }
-  };
-  options = Object.assign(defaultOptions, options);
-
-  const workspace = Blockly.inject(container, options);
+  const workspace = injectWorkspace(container, options);
 
   // Dynamic categories.
   workspace.registerToolboxCategoryCallback(
@@ -57,4 +56,23 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   workspace.refreshToolboxSelection();
 
   return workspace;
+}
+
+/**
+ * Inject a Blockly editor into the specified container element (usually a div).
+ * @param container Containing element, or its ID, or a CSS selector.
+ * @param options Optional dictionary of options.
+ * @returns Newly created main workspace.
+ */
+export function injectWorkspace(container: Element | string, options?: Blockly.BlocklyOptions) {
+  const defaultOptions: Blockly.BlocklyOptions = {
+    renderer: 'zelos',
+    theme: createTheme(),
+    plugins: {
+      toolbox: ContinuousToolBox,
+      flyoutsVerticalToolbox: ContinuousVerticalFlyout
+    }
+  };
+  options = Object.assign(defaultOptions, options);
+  return Blockly.inject(container, options);
 }
