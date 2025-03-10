@@ -19,6 +19,7 @@ import {registerScratchCategory} from './toolbox/category';
 import {ContinuousToolBox} from './toolbox/toolbox';
 import {ContinuousVerticalFlyout} from './toolbox/flyout';
 import {flyoutCategory as variableCategory} from './data_category';
+import styles from './styles/blockly.css';
 
 import './blocks/extensions';
 import './blocks/common';
@@ -36,6 +37,8 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerFieldVerticalSeparator();
 
   registerScratchCategory();
+
+  Blockly.Css.register(styles);
 
   const defaultOptions: Blockly.BlocklyOptions = {
     renderer: 'zelos',
