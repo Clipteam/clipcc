@@ -22,144 +22,86 @@
  * @fileoverview Vertical separator field. Draws a vertical line.
  * @author ericr@media.mit.edu (Eric Rosenbaum)
  */
-'use strict';
 
-import * as goog from 'google-closure-library/closure/goog/goog.js';
-goog.declareModuleId('Blockly.FieldVerticalSeparator');
-
-import {Field} from './field';
-import * as rendererConstants from './renderer/constants';
-import * as utils from './utils';
-
-const dom = goog.require('goog.dom');
-const Size = goog.require('goog.math.Size');
+import * as Blockly from 'blockly/core';
 
 
 /**
  * Class for a vertical separator line.
- * @extends {Field}
- * @constructor
  */
-export const FieldVerticalSeparator = function() {
-  this.sourceBlock_ = null;
-  this.width_ = 1;
-  this.height_ = rendererConstants.ICON_SEPARATOR_HEIGHT;
-  this.size_ = new Size(this.width_, this.height_);
-};
-goog.inherits(FieldVerticalSeparator, Field);
+export class FieldVerticalSeparator extends Blockly.Field {
+  /** Editable fields are saved by the XML renderer, non-editable fields are not. */
+  override EDITABLE = false;
 
-/**
- * Construct a FieldVerticalSeparator from a JSON arg object.
- * @param {!Object} _element A JSON object with options (unused, but passed in
- *     by Field.fromJson).
- * @returns {!FieldVerticalSeparator} The new field instance.
- * @package
- * @nocollapse
- */
-FieldVerticalSeparator.fromJson = function(
-    /* eslint-disable no-unused-vars */ _element
-    /* eslint-enable no-unused-vars */) {
-  return new FieldVerticalSeparator();
-};
-/**
- * Editable fields are saved by the XML renderer, non-editable fields are not.
- */
-FieldVerticalSeparator.prototype.EDITABLE = false;
+  protected lineElement: SVGElement | null = null;
 
-/**
- * Install this field on a block.
- */
-FieldVerticalSeparator.prototype.init = function() {
-  if (this.fieldGroup_) {
-    // Image has already been initialized once.
+  constructor() {
+    super(Blockly.Field.SKIP_SETUP);
+    this.size_ = new Blockly.utils.Size(1, 0);
+  }
+
+  /**
+   * Construct a FieldVerticalSeparator from a JSON arg object.
+   * @param options A JSON object with options (unused, but passed in by Field.fromJson).
+   * @returns The new field instance.
+   */
+  static override fromJson(options: Blockly.FieldConfig): Blockly.Field {
+    return new FieldVerticalSeparator();
+  }
+
+  /**
+   * Install this field on a block.
+   */
+  protected override initView(): void {
+    this.lineElement = Blockly.utils.dom.createSvgElement('line', {
+      stroke: (this.getSourceBlock() as Blockly.BlockSvg).getColourSecondary(),
+      'stroke-linecap': 'round',
+      x1: 0,
+      y1: 0,
+      x2: 0,
+      y2: this.size_.height
+    }, this.fieldGroup_);
+  }
+
+  /**
+   * Get the value of this field. A no-op in this case.
+   * @returns null.
+   */
+  override getValue() {
+    return null;
+  }
+
+  /**
+   * Set the value of this field. A no-op in this case.
+   * @param newValue New value.
+   * @param fireChangeEvent Whether to fire a change event.
+   */
+  override setValue(newValue: string, fireChangeEvent?: boolean): void {
     return;
   }
-  // Build the DOM.
-  /** @type {SVGElement} */
-  this.fieldGroup_ = utils.createSvgElement('g', {}, null);
-  if (!this.visible_) {
-    this.fieldGroup_.style.display = 'none';
+
+  /**
+   * Separator lines are fixed width, no need to update.
+   * @param margin margin to use when positioning the text element.
+   */
+  protected override updateSize_(margin?: number): void {
+    this.size_.height = 9 * this.getConstants()!.NOTCH_HEIGHT;
+    if (this.lineElement) {
+      this.lineElement.setAttribute('y2', `${this.size_.height}`);
+    }
   }
-  /** @type {SVGElement} */
-  this.lineElement_ = utils.createSvgElement('line',
-      {
-        'stroke': this.sourceBlock_.getColourSecondary(),
-        'stroke-linecap': 'round',
-        'x1': 0,
-        'y1': 0,
-        'x2': 0,
-        'y2': this.height_
-      }, this.fieldGroup_);
 
-  this.sourceBlock_.getSvgRoot().appendChild(this.fieldGroup_);
-};
+  /**
+   * Separator lines are fixed width, no need to render.
+   */
+  protected override render_(): void {
+    return;
+  }
+}
 
 /**
- * Set the height of the line element, without adjusting the field's height.
- * This allows the line's height to be changed without causing it to be
- * centered with the new height (needed for correct rendering of hat blocks).
- * @param {number} newHeight the new height for the line.
- * @package
+ * Register the field and any dependencies.
  */
-FieldVerticalSeparator.prototype.setLineHeight = function(newHeight) {
-  this.lineElement_.setAttribute('y2', newHeight);
-};
-
-/**
- * Dispose of all DOM objects belonging to this text.
- */
-FieldVerticalSeparator.prototype.dispose = function() {
-  dom.removeNode(this.fieldGroup_);
-  this.fieldGroup_ = null;
-  this.lineElement_ = null;
-};
-
-/**
- * Get the value of this field. A no-op in this case.
- * @return {string} null.
- * @override
- */
-FieldVerticalSeparator.prototype.getValue = function() {
-  return null;
-};
-
-/**
- * Set the value of this field. A no-op in this case.
- * @param {?string} src New value.
- * @override
- */
-FieldVerticalSeparator.prototype.setValue = function(
-    /* eslint-disable no-unused-vars */ src
-    /* eslint-enable no-unused-vars */) {
-  return;
-};
-
-/**
- * Set the text of this field. A no-op in this case.
- * @param {?string} alt New text.
- * @override
- */
-FieldVerticalSeparator.prototype.setText = function(
-    /* eslint-disable no-unused-vars */ alt
-    /* eslint-enable no-unused-vars */) {
-  return;
-};
-
-/**
- * Separator lines are fixed width, no need to render.
- * @private
- */
-FieldVerticalSeparator.prototype.render_ = function() {
-  // NOP
-};
-
-/**
- * Separator lines are fixed width, no need to update.
- * @private
- */
-FieldVerticalSeparator.prototype.updateWidth = function() {
-  // NOP
-};
-
-Field.register(
-    'field_vertical_separator', FieldVerticalSeparator);
+export function registerFieldVerticalSeparator() {
+  Blockly.fieldRegistry.register('field_vertical_separator', FieldVerticalSeparator);
+}

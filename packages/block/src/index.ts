@@ -13,15 +13,19 @@ import {registerFieldButton} from './fields/button';
 import {registerFieldColourSlider} from './fields/colour_slider';
 import {registerFieldMatrix} from './fields/matrix';
 import {registerFieldNote} from './fields/note';
+import {registerFieldTextInputRemovable} from './fields/textinput_removable';
 import {registerFieldVariableGetter} from './fields/variable_getter';
+import {registerFieldVerticalSeparator} from './fields/vertical_separator';
 import {registerScratchCategory} from './toolbox/category';
 import {ContinuousToolBox} from './toolbox/toolbox';
 import {ContinuousVerticalFlyout} from './toolbox/flyout';
 import {flyoutCategory as variableCategory} from './data_category';
+import {flyoutCategory as procedureCategory} from './procedures_category';
 
 import './blocks/extensions';
 import './blocks/common';
 import './blocks/data';
+import './blocks/procedures';
 import './blocks/test';
 
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
@@ -31,7 +35,9 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerFieldColourSlider();
   registerFieldMatrix();
   registerFieldNote();
+  registerFieldTextInputRemovable();
   registerFieldVariableGetter();
+  registerFieldVerticalSeparator();
 
   registerScratchCategory();
 
@@ -51,6 +57,10 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   workspace.registerToolboxCategoryCallback(
     Constants.VARIABLE_CATEGORY_NAME,
     variableCategory
+  );
+  workspace.registerToolboxCategoryCallback(
+    Constants.PROCEDURE_CATEGORY_NAME,
+    procedureCategory
   );
   workspace.refreshToolboxSelection();
 
