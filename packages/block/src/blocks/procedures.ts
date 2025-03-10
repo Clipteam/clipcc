@@ -26,7 +26,17 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
-import {ProcedureState} from '../serialization/procedures';
+
+export interface ProcedureExtraState {
+  proccode: string;
+  argumentids: string[];
+  argumentnames?: string[]; // procedure_definition only
+  argumentdefaults?: string[]; // procedure_definition only
+  generateshadows?: boolean; // procedure_call only
+  warp: boolean;
+  return: boolean;
+  global: boolean;
+}
 
 interface ConnectionMap {
   [key: string]: {
@@ -209,7 +219,7 @@ function parseStringOrObject(object: unknown) {
  */
 function callerSaveExtraState(
   this: ProcedureCallBlock
-): ProcedureState {
+): ProcedureExtraState {
   return {
     proccode: this.procCode_,
     argumentids: this.argumentIds_,
@@ -226,7 +236,7 @@ function callerSaveExtraState(
  */
 function callerLoadExtraState(
   this: ProcedureCallBlock,
-  state: ProcedureState
+  state: ProcedureExtraState
 ) {
   this.procCode_ = state.proccode;
   this.generateShadows_ = true;
@@ -254,8 +264,8 @@ function callerLoadExtraState(
 function definitionSaveExtraState(
   this: ProcedurePrototypeBlock | ProcedureDeclarationBlock,
   generateShadows?: boolean
-): ProcedureState {
-  const result: ProcedureState = {
+): ProcedureExtraState {
+  const result: ProcedureExtraState = {
     proccode: this.procCode_,
     argumentids: this.argumentIds_,
     argumentnames: this.displayNames_,
@@ -277,7 +287,7 @@ function definitionSaveExtraState(
  */
 function definitionLoadExtraState(
   this: ProcedurePrototypeBlock | ProcedureDeclarationBlock,
-  state: ProcedureState
+  state: ProcedureExtraState
 ) {
   this.procCode_ = state.proccode;
   this.warp_ = parseStringOrObject(state.warp);
