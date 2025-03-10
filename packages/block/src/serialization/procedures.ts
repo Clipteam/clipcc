@@ -5,3 +5,14 @@
  */
 
 import * as Blockly from 'blockly/core';
+
+export interface ProcedureExtraState {
+  proccode: string;
+  argumentids: string[];
+  argumentnames?: string[]; // procedure_definition only
+  argumentdefaults?: string[]; // procedure_definition only
+  generateshadows?: boolean; // procedure_call only
+  warp: boolean;
+  return: boolean;
+  global: boolean;
+}
