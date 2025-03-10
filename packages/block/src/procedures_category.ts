@@ -235,7 +235,7 @@ export const flyoutCategory = function(workspace) {
   let localMutations = allProcedureMutations(workspace);
   localMutations = sortProcedureMutations(localMutations);
   const mutations = globalMutations.concat(localMutations);
-  
+
   // append procedures_return block
   xmlList.push(Xml.textToDom(
       '<xml><block type="procedures_return" gap="' +
@@ -247,7 +247,7 @@ export const flyoutCategory = function(workspace) {
       '</shadow>' +
       '</value>' +
       '</block></xml>').firstChild);
-  
+
   for (let i = 0; i < mutations.length; i++) {
     const mutation = mutations[i];
     // <block type="procedures_call">
