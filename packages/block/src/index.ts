@@ -20,12 +20,10 @@ import {registerScratchCategory} from './toolbox/category';
 import {ContinuousToolBox} from './toolbox/toolbox';
 import {ContinuousVerticalFlyout} from './toolbox/flyout';
 import {flyoutCategory as variableCategory} from './data_category';
-import {flyoutCategory as procedureCategory} from './procedures_category';
 
 import './blocks/extensions';
 import './blocks/common';
 import './blocks/data';
-import './blocks/procedures';
 import './blocks/test';
 
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
