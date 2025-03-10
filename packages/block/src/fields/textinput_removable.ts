@@ -25,11 +25,12 @@
 
 import * as Blockly from 'blockly/core';
 import {ProcedureDeclarationBlock} from '../blocks/procedures';
+import styles from '../styles/textinput_removable.css';
 
 /**
  * Class for an editable text field displaying a deletion icon when selected.
  */
-class FieldTextInputRemovable extends Blockly.FieldTextInput {
+export class FieldTextInputRemovable extends Blockly.FieldTextInput {
   private removeButtonMouseWrapper: Blockly.browserEvents.Data | null = null;
 
   /**
@@ -64,6 +65,7 @@ class FieldTextInputRemovable extends Blockly.FieldTextInput {
   }
 
   override dispose(): void {
+    super.dispose();
     if (this.removeButtonMouseWrapper) {
       Blockly.browserEvents.unbind(this.removeButtonMouseWrapper);
     }
@@ -114,4 +116,5 @@ class FieldTextInputRemovable extends Blockly.FieldTextInput {
  */
 export function registerFieldTextInputRemovable() {
   Blockly.fieldRegistry.register('field_input_removable', FieldTextInputRemovable);
+  Blockly.Css.register(styles);
 }
