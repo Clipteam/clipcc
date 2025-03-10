@@ -27,6 +27,7 @@
 import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
 import {ProcedureExtraState} from '../serialization/procedures';
+import {FieldTextInputRemovable} from '../fields/textinput_removable';
 
 interface ConnectionMap {
   [key: string]: {
@@ -35,7 +36,7 @@ interface ConnectionMap {
   } | null
 }
 
-export interface ProcedureBlock extends Blockly.Block {
+export interface ProcedureBlock extends Blockly.BlockSvg {
   procCode_: string;
   argumentIds_: string[];
   warp_: boolean;
@@ -51,6 +52,10 @@ export interface ProcedureBlock extends Blockly.Block {
   updateDisplay_: () => void;
 
   // Exist on all three blocks, but have different implementations.
+  mutationToDom: () => Element,
+  domToMutation: (xmlElement: Element) => void,
+  saveExtraState: () => ProcedureExtraState,
+  loadExtraState: (state: ProcedureExtraState) => void,
   populateArgument_: (
     type: string, index: number, connectionMap: ConnectionMap,
     id: string, input: Blockly.Input
@@ -59,7 +64,12 @@ export interface ProcedureBlock extends Blockly.Block {
   updateShape_: () => void;
 }
 
+export interface ProcedureDefinitionBlock extends Blockly.BlockSvg {
+  type: 'procedures_definition';
+}
+
 export interface ProcedureCallBlock extends ProcedureBlock {
+  type: 'procedures_call';
   generateShadows_: boolean;
 
   attachShadow_: (input: Blockly.Input, argumentType: string) => void;
@@ -67,6 +77,7 @@ export interface ProcedureCallBlock extends ProcedureBlock {
 }
 
 export interface ProcedurePrototypeBlock extends ProcedureBlock {
+  type: 'procedures_prototype';
   displayNames_: string[];
   argumentDefaults_: string[];
 
@@ -75,6 +86,7 @@ export interface ProcedurePrototypeBlock extends ProcedureBlock {
 }
 
 export interface ProcedureDeclarationBlock extends ProcedureBlock {
+  type: 'procedures_declaration';
   displayNames_: string[];
   argumentDefaults_: string[];
 
@@ -341,10 +353,6 @@ function disconnectOldBlocks(this: ProcedureBlock): ConnectionMap {
       };
       connectionMap[input.name] = saveInfo;
 
-      // Remove the shadow DOM, then disconnect the block.  Otherwise a shadow
-      // block will respawn instantly, and we'd have to remove it when we remove
-      // the input.
-      input.connection.setShadowState(null);
       if (target) {
         input.connection.disconnect();
       }
@@ -422,7 +430,7 @@ function deleteShadows(this: ProcedureBlock, connectionMap: ConnectionMap) {
       if (saveInfo) {
         const block = saveInfo['block'];
         if (block && block.isShadow()) {
-          block.dispose();
+          block.dispose(true);
           connectionMap[id] = null;
           // At this point we know which shadow DOMs are about to be orphaned in
           // the VM.  What do we do with that information?
@@ -450,8 +458,8 @@ function addLabelField(this: ProcedureCallBlock | ProcedurePrototypeBlock, text:
  * @param text The label text.
  */
 function addLabelEditor(this: ProcedureDeclarationBlock, text: string) {
-  // this.appendDummyInput(Blockly.utils.idGenerator.genUid())
-  //   .appendField(new Blockly.FieldTextInputRemovable(text));
+  this.appendDummyInput(Blockly.utils.idGenerator.genUid())
+    .appendField(new FieldTextInputRemovable(text));
 }
 
 /**
@@ -874,7 +882,7 @@ function removeFieldCallback(this: ProcedureDeclarationBlock, field: Blockly.Fie
     const input = this.inputList[n];
     if (input.connection) {
       const target = input.connection.targetBlock()!;
-      if (target.getField(field.name!) === field) {
+      if (field.name && target.getField(field.name) === field) {
         inputNameToRemove = input.name;
       }
     } else {
@@ -930,7 +938,7 @@ function updateArgumentReporterNames(
   if (!definitionBlock) return;
 
   // Create a list of argument reporters that are descendants of the definition stack (see above comment)
-  const allBlocks = definitionBlock.getDescendants(false);
+  const allBlocks = definitionBlock.getDescendants(false) as Blockly.BlockSvg[];
   for (const block of allBlocks) {
     if (
       (block.type === 'argument_reporter_string_number' ||
@@ -1223,7 +1231,7 @@ Blockly.Blocks['argument_editor_boolean'] = {
         name: 'TEXT',
         text: 'foo'
       }],
-      extensions: ['colours_textField', 'output_boolean']
+      extensions: ['colours_textfield', 'output_boolean']
     });
   },
   // Exist on declaration and arguments editors, with different implementations.
@@ -1239,7 +1247,7 @@ Blockly.Blocks['argument_editor_string_number'] = {
         name: 'TEXT',
         text: 'foo'
       }],
-      extensions: ['colours_textField', 'output_number', 'output_string']
+      extensions: ['colours_textfield', 'output_number', 'output_string']
     });
   },
   // Exist on declaration and arguments editors, with different implementations.

@@ -183,4 +183,21 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
       global: false
     };
   }
+
+  /**
+   * Create a procedure model from extra state.
+   * @param workspace The workspace of procedure.
+   * @param state The extra state of procedure.
+   * @returns The procedure model.
+   */
+  static loadExtraState(workspace: Blockly.Workspace, state: ProcedureExtraState): ProcedureModel {
+    const model = new ProcedureModel(workspace, state.proccode);
+    if (state.argumentnames && state.argumentids) {
+      for (let i = 0; i < state.argumentids.length; ++i) {
+        const param = new ParameterModel(workspace, state.argumentnames[i], state.argumentids[i]);
+        model.parameters.push(param);
+      }
+    }
+    return model;
+  }
 }

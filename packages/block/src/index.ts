@@ -84,3 +84,5 @@ export function injectWorkspace(container: Element | string, options?: Blockly.B
   options = Object.assign(defaultOptions, options);
   return Blockly.inject(container, options);
 }
+
+export {setExternalProcedureDefCallback} from './procedures_category';
