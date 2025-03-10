@@ -560,7 +560,10 @@ export class FieldNote extends Blockly.FieldTextInput {
    */
   private onMouseUp() {
     this.mouseIsDown = false;
-    Blockly.browserEvents.unbind(this.mouseUpWrapper!);
+    if (this.mouseUpWrapper) {
+      Blockly.browserEvents.unbind(this.mouseUpWrapper);
+      this.mouseUpWrapper = null;
+    }
   }
 
   /**
