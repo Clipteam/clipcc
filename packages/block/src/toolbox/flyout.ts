@@ -91,7 +91,11 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
    */
   scrollTo(position: number, animation?: boolean): void {
     if (animation) {
-      this.scrollTarget = position * this.workspace_.scale;
+      const metrics = this.workspace_.getMetrics();
+      this.scrollTarget = Math.min(
+        position,
+        Math.max(metrics.scrollHeight - metrics.viewHeight, 0)
+      ) * this.workspace_.scale;
       this.stepScrollAnimation();
     } else {
       this.workspace_.scrollbar?.setY(position * this.workspace_.scale);
