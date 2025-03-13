@@ -17,6 +17,9 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
    */
   static readonly SCROLL_ANIMATION_FRACTION = 0.3;
 
+  /** The width of the flyout, if not otherwise specified. */
+  static readonly DEFAULT_WIDTH = 250;
+
   /** Maps from category names to their positions. */
   protected scrollPositions: Map<string, number> = new Map<string, number>();
 
@@ -145,5 +148,50 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
 
     this.workspace_.scrollbar?.setY(scrollPos + diff * ContinuousVerticalFlyout.SCROLL_ANIMATION_FRACTION);
     requestAnimationFrame(this.stepScrollAnimation.bind(this));
+  }
+
+  /**
+   * Compute width of flyout.
+   * For RTL: Lay out the blocks and buttons to be right-aligned.
+   */
+  protected override reflowInternal_(): void {
+    this.workspace_.scale = this.getFlyoutScale();
+    const flyoutWidth = ContinuousVerticalFlyout.DEFAULT_WIDTH * this.workspace_.scale;
+
+    if (this.getWidth() !== flyoutWidth) {
+      if (this.RTL) {
+        // With the flyoutWidth known, right-align the flyout contents.
+        for (const item of this.getContents()) {
+          const oldX = item.getElement().getBoundingRectangle().left;
+          const newX =
+            flyoutWidth / this.workspace_.scale -
+            item.getElement().getBoundingRectangle().getWidth() -
+            this.MARGIN -
+            this.tabWidth_;
+          item.getElement().moveBy(newX - oldX, 0);
+        }
+      }
+
+      // TODO(#7689): Remove this.
+      // Workspace with no scrollbars where this is permanently
+      // open on the left.
+      // If scrollbars exist they properly update the metrics.
+      if (
+        !this.targetWorkspace.scrollbar &&
+        !this.autoClose &&
+        this.targetWorkspace.getFlyout() === this &&
+        this.toolboxPosition_ === Blockly.utils.toolbox.Position.LEFT
+      ) {
+        this.targetWorkspace.translate(
+          this.targetWorkspace.scrollX + flyoutWidth,
+          this.targetWorkspace.scrollY
+        );
+      }
+
+      this.width_ = flyoutWidth;
+      this.position();
+      this.targetWorkspace.resizeContents();
+      this.targetWorkspace.recordDragTargets();
+    }
   }
 }
