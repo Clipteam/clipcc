@@ -230,6 +230,10 @@ export const overrideColours = function(colours?: typeof Colours) {
   }
 };
 
+/**
+ * Create the scratch theme.
+ * @returns The newly created theme.
+ */
 export function createTheme(): Blockly.Theme {
   return Blockly.Theme.defineTheme('scratch', {
     name: 'scratch',

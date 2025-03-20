@@ -73,7 +73,6 @@ export const LONGPRESS = 750;
  * is line (0x1) instead of pixel (0x0). In these cases, a single "scroll" has
  * a delta of 1, which makes the workspace scroll very slowly (just one pixel).
  * To compensate, that delta is multiplied by this value.
- * @const
  * @package
  */
 export const LINE_SCROLL_MULTIPLIER = 15;
@@ -115,92 +114,77 @@ export const SPRITE = {
 
 /**
  * Required name space for SVG elements.
- * @const
  */
 export const SVG_NS = 'http://www.w3.org/2000/svg';
 
 /**
  * Required name space for HTML elements.
- * @const
  */
 export const HTML_NS = 'http://www.w3.org/1999/xhtml';
 
 /**
  * ENUM for a right-facing value input.  E.g. 'set item to' or 'return'.
- * @const
  */
 export const INPUT_VALUE = 1;
 
 /**
  * ENUM for a left-facing value output.  E.g. 'random fraction'.
- * @const
  */
 export const OUTPUT_VALUE = 2;
 
 /**
  * ENUM for a down-facing block stack.  E.g. 'if-do' or 'else'.
- * @const
  */
 export const NEXT_STATEMENT = 3;
 
 /**
  * ENUM for an up-facing block stack.  E.g. 'break out of loop'.
- * @const
  */
 export const PREVIOUS_STATEMENT = 4;
 
 /**
  * ENUM for an dummy input.  Used to add field(s) with no input.
- * @const
  */
 export const DUMMY_INPUT = 5;
 
 /**
  * ENUM for left alignment.
- * @const
  */
 export const ALIGN_LEFT = -1;
 
 /**
  * ENUM for centre alignment.
- * @const
  */
 export const ALIGN_CENTRE = 0;
 
 /**
  * ENUM for right alignment.
- * @const
  */
 export const ALIGN_RIGHT = 1;
 
 /**
  * ENUM for no drag operation.
- * @const
  */
 export const DRAG_NONE = 0;
 
 /**
  * ENUM for inside the sticky DRAG_RADIUS.
- * @const
  */
 export const DRAG_STICKY = 1;
 
 /**
  * ENUM for inside the non-sticky DRAG_RADIUS, for differentiating between
  * clicks and drags.
- * @const
  */
 export const DRAG_BEGIN = 1;
 
 /**
  * ENUM for freely draggable (outside the DRAG_RADIUS, if one applies).
- * @const
  */
 export const DRAG_FREE = 2;
 
 /**
  * Lookup table for determining the opposite type of a connection.
- * @const
  */
 export const OPPOSITE_TYPE: number[] = [];
 OPPOSITE_TYPE[INPUT_VALUE] = OUTPUT_VALUE;
@@ -210,25 +194,21 @@ OPPOSITE_TYPE[PREVIOUS_STATEMENT] = NEXT_STATEMENT;
 
 /**
  * ENUM for toolbox and flyout at top of screen.
- * @const
  */
 export const TOOLBOX_AT_TOP = 0;
 
 /**
  * ENUM for toolbox and flyout at bottom of screen.
- * @const
  */
 export const TOOLBOX_AT_BOTTOM = 1;
 
 /**
  * ENUM for toolbox and flyout at left of screen.
- * @const
  */
 export const TOOLBOX_AT_LEFT = 2;
 
 /**
  * ENUM for toolbox and flyout at right of screen.
- * @const
  */
 export const TOOLBOX_AT_RIGHT = 3;
 
@@ -239,25 +219,21 @@ export const OUTPUT_SHAPE_NORMAL = null;
 
 /**
  * ENUM for output shape: hexagonal (booleans/predicates).
- * @const
  */
 export const OUTPUT_SHAPE_HEXAGONAL = 1;
 
 /**
  * ENUM for output shape: rounded (numbers).
- * @const
  */
 export const OUTPUT_SHAPE_ROUND = 2;
 
 /**
  * ENUM for output shape: squared (any/all values; strings).
- * @const
  */
 export const OUTPUT_SHAPE_SQUARE = 3;
 
 /**
  * ENUM for categories.
- * @const
  */
 export const Categories = {
   motion: 'motion',
@@ -276,20 +252,17 @@ export const Categories = {
 /**
  * ENUM representing that an event is not in any delete areas.
  * Null for backwards compatibility reasons.
- * @const
  */
 export const DELETE_AREA_NONE = null;
 
 /**
  * ENUM representing that an event is in the delete area of the trash can.
- * @const
  */
 export const DELETE_AREA_TRASH = 1;
 
 /**
  * ENUM representing that an event is in the delete area of the toolbox or
  * flyout.
- * @const
  */
 export const DELETE_AREA_TOOLBOX = 2;
 
@@ -297,7 +270,6 @@ export const DELETE_AREA_TOOLBOX = 2;
  * String for use in the "custom" attribute of a category in toolbox xml.
  * This string indicates that the category should be dynamically populated with
  * variable blocks.
- * @const {string}
  */
 export const VARIABLE_CATEGORY_NAME = 'VARIABLE';
 
@@ -305,7 +277,6 @@ export const VARIABLE_CATEGORY_NAME = 'VARIABLE';
  * String for use in the "custom" attribute of a category in toolbox xml.
  * This string indicates that the category should be dynamically populated with
  * procedure blocks.
- * @const {string}
  */
 export const PROCEDURE_CATEGORY_NAME = 'PROCEDURE';
 
@@ -313,7 +284,6 @@ export const PROCEDURE_CATEGORY_NAME = 'PROCEDURE';
  * String for use in the dropdown created in field_variable.
  * This string indicates that this option in the dropdown is 'Rename
  * variable...' and if selected, should trigger the prompt to rename a variable.
- * @const {string}
  */
 export const RENAME_VARIABLE_ID = 'RENAME_VARIABLE_ID';
 
@@ -321,7 +291,6 @@ export const RENAME_VARIABLE_ID = 'RENAME_VARIABLE_ID';
  * String for use in the dropdown created in field_variable.
  * This string indicates that this option in the dropdown is 'Delete the "%1"
  * variable' and if selected, should trigger the prompt to delete a variable.
- * @const {string}
  */
 export const DELETE_VARIABLE_ID = 'DELETE_VARIABLE_ID';
 
@@ -330,7 +299,6 @@ export const DELETE_VARIABLE_ID = 'DELETE_VARIABLE_ID';
  * specifically for broadcast messages.
  * This string indicates that this option in the dropdown is 'New message...'
  * and if selected, should trigger the prompt to create a new message.
- * @const {string}
  */
 export const NEW_BROADCAST_MESSAGE_ID = 'NEW_BROADCAST_MESSAGE_ID';
 
@@ -338,7 +306,6 @@ export const NEW_BROADCAST_MESSAGE_ID = 'NEW_BROADCAST_MESSAGE_ID';
  * String representing the variable type of broadcast message blocks.
  * This string, for use in differentiating between types of variables,
  * indicates that the current variable is a broadcast message.
- * @const {string}
  */
 export const BROADCAST_MESSAGE_VARIABLE_TYPE = 'broadcast_msg';
 
@@ -346,7 +313,6 @@ export const BROADCAST_MESSAGE_VARIABLE_TYPE = 'broadcast_msg';
  * String representing the variable type of list blocks.
  * This string, for use in differentiating between types of variables,
  * indicates that the current variable is a list.
- * @const {string}
  */
 export const LIST_VARIABLE_TYPE = 'list';
 
@@ -356,45 +322,38 @@ export const LIST_VARIABLE_TYPE = 'list';
  * String representing the variable type of scalar variables.
  * This string, for use in differentiating between types of variables,
  * indicates that the current variable is a scalar variable.
- * @const {string}
  */
 export const SCALAR_VARIABLE_TYPE = '';
 
 /**
  * The type of all procedure definition blocks.
- * @const {string}
  */
 export const PROCEDURES_DEFINITION_BLOCK_TYPE = 'procedures_definition';
 
 /**
  * The type of all procedure prototype blocks.
- * @const {string}
  */
 export const PROCEDURES_PROTOTYPE_BLOCK_TYPE = 'procedures_prototype';
 
 /**
  * The type of all procedure declaration blocks.
- * @const {string}
  */
 export const PROCEDURES_DECLARATION_BLOCK_TYPE = 'procedures_declaration';
 
 /**
  * The type of all procedure call blocks.
- * @const {string}
  */
 export const PROCEDURES_CALL_BLOCK_TYPE = 'procedures_call';
 
 /**
  * The type of all procedure return blocks.
- * @const {string}
  */
 export const PROCEDURES_RETURN_BLOCK_TYPE = 'procedures_return';
 
 /**
  * ENUM for flyout status button states.
- * @const
  */
 export const StatusButtonState = {
   READY: 'ready',
-  NOT_READY: 'not ready',
+  NOT_READY: 'not ready'
 };

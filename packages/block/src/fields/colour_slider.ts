@@ -113,11 +113,11 @@ export class FieldColourSlider extends Blockly.Field<string> {
   /**
    * Create the hue, saturation or value CSS gradient for the slide backgrounds.
    * @param channel Either "hue", "saturation" or "brightness".
-   * @return Array colour hex colour stops for the given channel.
+   * @returns Array colour hex colour stops for the given channel.
    */
   private createColourStops(channel: ColourChannel) {
     const stops = [];
-    for(let n = 0; n <= 360; n += 20) {
+    for (let n = 0; n <= 360; n += 20) {
       switch (channel) {
         case 'hue':
           stops.push(Blockly.utils.colour.hsvToHex(n, this.saturation, this.brightness));
@@ -181,7 +181,7 @@ export class FieldColourSlider extends Blockly.Field<string> {
   /**
    * Create label and readout DOM elements, returning the readout.
    * @param labelText Text for the label
-   * @return The container node and the readout node.
+   * @returns The container node and the readout node.
    */
   private createLabelDom(labelText: string) {
     const labelContainer = document.createElement('div');
@@ -199,7 +199,7 @@ export class FieldColourSlider extends Blockly.Field<string> {
   /**
    * Factory for creating the different slider callbacks.
    * @param channel One of "hue", "saturation" or "brightness".
-   * @return The callback for slider update.
+   * @returns The callback for slider update.
    */
   private sliderCallbackFactory(channel: ColourChannel) {
     return (event: Event) => {
@@ -216,7 +216,7 @@ export class FieldColourSlider extends Blockly.Field<string> {
           this.brightness = Number(channelValue);
           break;
       }
-      let colour = Blockly.utils.colour.hsvToHex(this.hue, this.saturation, this.brightness);
+      const colour = Blockly.utils.colour.hsvToHex(this.hue, this.saturation, this.brightness);
       if (colour !== null) {
         this.setValue(colour, true);
       }
@@ -228,7 +228,7 @@ export class FieldColourSlider extends Blockly.Field<string> {
    * @param red Red value in [0, 255].
    * @param green Green value in [0, 255].
    * @param blue Blue value in [0, 255].
-   * @return HSV representation of the color.
+   * @returns HSV representation of the color.
    * @see https://github.com/google/closure-library/blob/master/closure/goog/color/color.js#L501
    */
   private rgbToHsv(red: number, green: number, blue: number) {
@@ -266,7 +266,7 @@ export class FieldColourSlider extends Blockly.Field<string> {
   /**
    * Converts from HEX value to an array of HSV values.
    * @param value HEX value.
-   * @return HSV representation of the color.
+   * @returns HSV representation of the color.
    */
   private hexToHsv(value: string) {
     const rgb = Blockly.utils.colour.hexToRgb(value);
