@@ -61,3 +61,6 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
 
   return workspace;
 }
+
+// Monkey-patches
+Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
