@@ -4,6 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const baseConfig = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+  devtool: process.env.NODE_ENV === 'production' ? false : 'eval-source-map',
   entry: './src/index.ts',
   output: {
     library: 'ScratchBlocks',
@@ -21,8 +22,14 @@ const baseConfig = {
       test: /\.ts$/,
       use: 'ts-loader',
       exclude: /node_modules/
+    }, {
+      test: /_compressed\.js$/,
+      enforce: 'pre',
+      use: 'source-map-loader',
+      include: /blockly/
     }]
-  }
+  },
+  ignoreWarnings: [/Failed to parse source map/]
 };
 
 module.exports = [
