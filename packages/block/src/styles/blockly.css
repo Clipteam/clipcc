@@ -9,6 +9,10 @@
   transition: 0.25s ease-out;
 }
 
+.blocklyDropDownDiv .blocklyMenuItem:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
 .blocklyWidgetDiv .blocklyMenuItem {
   transition: 0.25s ease-out;
 }
@@ -17,7 +21,7 @@
   box-shadow: 0 8px 8px 0 hsla(0, 0%, 0%, 0.15);
 }
 
-.blocklyMenuItem:hover {
+.blocklyWidgetDiv .blocklyMenuItem:hover {
   background-color: #d6e9f8;
 }
 
