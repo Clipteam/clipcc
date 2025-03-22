@@ -1,4 +1,12 @@
 {
+  "include": [
+    "./src"
+  ],
+  "exclude": [
+    "./src/procedures_category.ts",
+    "./src/blocks/procedures.ts",
+    "./src/fields/textinput_removable.ts"
+  ],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
 

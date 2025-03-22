@@ -4,7 +4,11 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 	<title>Test Playground</title>
-	<script src="../dist/web/main.js"></script>
+	<script src="main.js"></script>
+  <script>
+    window.Blockly.Msg = window.Blockly.Msg.Msg;
+  </script>
+  <script src="messages.js"></script>
 	<style>
 		html, body {
 			height: 100%;
@@ -47,13 +51,24 @@
   </style>
 	<script>
 		const toolbox = {
-			'kind': 'flyoutToolbox',
-			'contents': [
-				{
+			kind: 'categoryToolbox',
+			contents: [{
+        kind: 'category',
+        name: 'Category 1',
+        colour: '#4C97FF',
+        contents: [{
 					'kind': 'block',
-					'type': 'controls_repeat_ext',
+					'type': 'test_add',
 					'inputs': {
-						'TIMES': {
+						'NUM1': {
+							'shadow': {
+								'type': 'math_number',
+								'fields': {
+									'NUM': 5
+								}
+							}
+						},
+						'NUM2': {
 							'shadow': {
 								'type': 'math_number',
 								'fields': {
@@ -62,17 +77,109 @@
 							}
 						}
 					}
-				}
-			]
+				}, {
+					'kind': 'block',
+					'type': 'test_str',
+					'inputs': {
+						'NUM1': {
+							'shadow': {
+								'type': 'text',
+								'fields': {
+									'TEXT': 'sss'
+								}
+							}
+						},
+						'NUM2': {
+							'shadow': {
+								'type': 'text',
+								'fields': {
+									'TEXT': 5
+								}
+							}
+						}
+					}
+				}]
+      }, {
+        kind: 'category',
+        name: 'Category 2',
+        contents: [{
+					'kind': 'block',
+					'type': 'test_field_angle',
+          'inputs': {
+            'DEGREES': {
+							'shadow': {
+								'type': 'math_angle',
+								'fields': {
+									'NUM': 90
+								}
+							}
+            }
+          }
+        }, {
+					'kind': 'block',
+					'type': 'test_field_matrix',
+          'inputs': {
+            'MATRIX': {
+							'shadow': {
+								'type': 'matrix',
+								'fields': {
+									'MATRIX': ''
+								}
+							}
+            }
+          }
+        }, {
+          'kind': 'block',
+          'type': 'test_field_colour_slider',
+          'inputs': {
+            'COLOR': {
+              'shadow': {
+                'type': 'colour_picker'
+              }
+            }
+          }
+        }, {
+          'kind': 'block',
+          'type': 'test_field_note',
+          'inputs': {
+            'NOTE': {
+              'shadow': {
+                'type': 'note'
+              }
+            }
+          }
+        }, {
+          'kind': 'block',
+          'type': 'test_field_button'
+        }]
+      }, {
+        kind: 'category',
+        name: 'Variables',
+        custom: 'VARIABLE'
+      }]
 		};
 
 		function start() {
 			ScratchBlocks.inject('blocklyDiv', {
-			toolbox: toolbox,
-			scrollbars: false,
-			horizontalLayout: false,
-			toolboxPosition: 'left',
-		});
+        media: '../media/',
+        collapse: false,
+        disable: false,
+        toolbox: toolbox,
+        horizontalLayout: false,
+        toolboxPosition: 'left',
+        move: {
+          scrollbars: true,
+          wheel: true
+        },
+        zoom: {
+          controls: true,
+          wheel: true,
+          startScale: 0.675,
+          maxScale: 4,
+          minScale: 0.25,
+          scaleSpeed: 1.1
+        }
+      });
 		}
 	</script>
 </head>

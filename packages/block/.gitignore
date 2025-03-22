@@ -25,6 +25,7 @@ python_compressed.js
 
 /accessible/*
 /dist
+/build
 /msg/js/*
 !/msg/js/en.js
 /msg/json/*

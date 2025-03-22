@@ -1,0 +1,30 @@
+.blocklyWidgetDiv .blocklyMenu {
+  box-shadow: 0 8px 8px 0 hsla(0, 0%, 0%, 0.15);
+  transition: 0.25s ease-out;
+  border: none;
+}
+
+.blocklyDropDownDiv .blocklyMenuItem {
+  color: #fff;
+  transition: 0.25s ease-out;
+}
+
+.blocklyDropDownDiv .blocklyMenuItem:hover {
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.blocklyWidgetDiv .blocklyMenuItem {
+  transition: 0.25s ease-out;
+}
+
+.blocklyWidgetDiv .blocklyMenu:focus {
+  box-shadow: 0 8px 8px 0 hsla(0, 0%, 0%, 0.15);
+}
+
+.blocklyWidgetDiv .blocklyMenuItem:hover {
+  background-color: #d6e9f8;
+}
+
+.blocklyMenuItemDisabled:hover {
+  background-color: #fff;
+}
