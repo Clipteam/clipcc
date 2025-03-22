@@ -37,7 +37,7 @@ Blockly.Blocks['data_variable'] = {
         variableType: Constants.SCALAR_VARIABLE_TYPE
       }],
       checkboxInFlyout: true,
-      extensions: ['colours_data', 'output_string']
+      extensions: ['contextMenu_getVariableBlock', 'colours_data', 'output_string']
     });
   }
 };
