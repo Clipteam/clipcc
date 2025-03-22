@@ -6,6 +6,7 @@
 
 import * as Blockly from 'blockly/core';
 import {ContinuousToolBox} from './toolbox';
+import {ContinuousFlyoutMetrics} from './flyout_metrics';
 
 /**
  * Class for continuous flyout.
@@ -34,6 +35,9 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
    */
   constructor(workspaceOptions: Blockly.Options) {
     super(workspaceOptions);
+    this.workspace_.setMetricsManager(
+      new ContinuousFlyoutMetrics(this.workspace_, this)
+    );
   }
 
   /**
@@ -69,6 +73,29 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
   }
 
   /**
+   * Add extra padding to the bottom of the flyout to make it possible
+   * to scroll to the last category.
+   * @param contentMetrics Content metrics for the flyout.
+   * @param viewMetrics View metrics for the flyout.
+   * @returns Extra padding.
+   */
+  getExtraPadding(
+    contentMetrics: Blockly.MetricsManager.ContainerRegion,
+    viewMetrics: Blockly.MetricsManager.ContainerRegion
+  ): {width: number; height: number} {
+    if (this.scrollPositions.size > 0) {
+      const lastCategoryPosition = Array.from(this.scrollPositions.values()).pop()!;
+      const margin = 2 * this.MARGIN * this.workspace_.scale;
+      const lastCategoryHeight = contentMetrics.height - lastCategoryPosition * this.workspace_.scale;
+      return {
+        width: 0,
+        height: Math.max(0, viewMetrics.height - lastCategoryHeight - margin)
+      };
+    }
+    return {width: 0, height: 0};
+  }
+
+  /**
    * Records scroll position for each category in the toolbox.
    * The scroll position is determined by the coordinates of each category's
    * label after the entire flyout has been rendered.
@@ -93,9 +120,9 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
     if (animation) {
       const metrics = this.workspace_.getMetrics();
       this.scrollTarget = Math.min(
-        position,
+        position * this.workspace_.scale,
         Math.max(metrics.scrollHeight - metrics.viewHeight, 0)
-      ) * this.workspace_.scale;
+      );
       this.stepScrollAnimation();
     } else {
       this.workspace_.scrollbar?.setY(position * this.workspace_.scale);
