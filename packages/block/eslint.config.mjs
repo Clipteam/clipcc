@@ -98,6 +98,7 @@ export default [
       parser: tslint.parser
     },
     rules: {
+      'no-invalid-this': ['off'], // Should be resolve by TypeScript compiler.
       'jsdoc/check-values': ['off'],
       '@typescript-eslint/no-unused-vars': ['error', {
         args: 'none'

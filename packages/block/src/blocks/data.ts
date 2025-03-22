@@ -37,7 +37,7 @@ Blockly.Blocks['data_variable'] = {
         variableType: Constants.SCALAR_VARIABLE_TYPE
       }],
       checkboxInFlyout: true,
-      extensions: ['colours_data', 'output_string']
+      extensions: ['contextMenu_getVariableBlock', 'colours_data', 'output_string']
     });
   }
 };
@@ -459,8 +459,8 @@ function renameOptionCallbackFactory(
 ): () => void {
   return function() {
     const workspace = block.workspace;
-    const variable = (block.getField(fieldName) as Blockly.FieldVariable).getVariable();
-    Blockly.Variables.renameVariable(workspace, variable!);
+    const variable = (block.getField(fieldName) as Blockly.FieldVariable).getVariable()!;
+    Blockly.Variables.renameVariable(workspace, variable);
   };
 };
 
@@ -476,9 +476,9 @@ function deleteOptionCallbackFactory(
   fieldName: string
 ): () => void {
   return function() {
-    const workspace = block.workspace;
-    const variable = (block.getField(fieldName) as Blockly.FieldVariable).getVariable();
-    workspace.getVariableMap().deleteVariable(variable!);
+    const variable = (block.getField(fieldName) as Blockly.FieldVariable).getVariable()!;
+    Blockly.Variables.deleteVariable(variable.getWorkspace(), variable, block);
+    (block.workspace as Blockly.WorkspaceSvg).refreshToolboxSelection();
   };
 };
 

@@ -5,7 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import { FieldButton } from '../fields/button';
+import {FieldButton} from '../fields/button';
 
 Blockly.Blocks['test_add'] = {
   init: function(this: Blockly.Block) {

@@ -28,7 +28,6 @@ import styles from '../styles/note.css';
 
 /**
  * Class for a note input field, for selecting a musical note on a piano.
- * @extends {Blockly.FieldTextInput}
  */
 export class FieldNote extends Blockly.FieldTextInput {
   /**
@@ -247,7 +246,7 @@ export class FieldNote extends Blockly.FieldTextInput {
    *     to validate any constraints on what the user entered.  Takes the new
    *     text as an argument and returns the accepted text or null to abort
    *     the change.
-   * @constructor
+   * @param config A map of options used to configure the field.
    */
   constructor(
     value?: string | number,
@@ -296,6 +295,10 @@ export class FieldNote extends Blockly.FieldTextInput {
 
   /**
    * Show a field with piano keys.
+   * @param event Optional mouse event that triggered the field to open, or
+   *     undefined if triggered programmatically.
+   * @param quietInput True if editor should be created without focus.
+   *     Defaults to false.
    */
   protected override showEditor_(event?: Event, quietInput?: boolean): void {
     // Mobile browsers have issues with in-line textareas (focus & keyboards).
@@ -312,12 +315,12 @@ export class FieldNote extends Blockly.FieldTextInput {
     this.fieldEditorHeight = FieldNote.TOP_MENU_HEIGHT + FieldNote.WHITE_KEY_HEIGHT + FieldNote.EDGE_PADDING;
 
     const svg = Blockly.utils.dom.createSvgElement('svg', {
-      'xmlns': 'http://www.w3.org/2000/svg',
+      xmlns: 'http://www.w3.org/2000/svg',
       'xmlns:html': 'http://www.w3.org/1999/xhtml',
       'xmlns:xlink': 'http://www.w3.org/1999/xlink',
-      'version': '1.1',
-      'height': this.fieldEditorHeight + 'px',
-      'width': this.fieldEditorWidth + 'px'
+      version: '1.1',
+      height: this.fieldEditorHeight + 'px',
+      width: this.fieldEditorWidth + 'px'
     }, div);
 
     // Add the white and black keys
@@ -336,11 +339,11 @@ export class FieldNote extends Blockly.FieldTextInput {
 
     // Note name indicator at the top of the field
     this.noteNameText = Blockly.utils.dom.createSvgElement('text', {
-      'x': this.fieldEditorWidth / 2,
-      'y': FieldNote.TOP_MENU_HEIGHT / 2,
-      'class': 'blocklyText',
+      x: this.fieldEditorWidth / 2,
+      y: FieldNote.TOP_MENU_HEIGHT / 2,
+      class: 'blocklyText',
       'text-anchor': 'middle',
-      'dominant-baseline': 'middle',
+      'dominant-baseline': 'middle'
     }, svg);
 
     // Note names on the low and high C keys
@@ -351,28 +354,28 @@ export class FieldNote extends Blockly.FieldTextInput {
 
     // Horizontal line at the top of the keys
     Blockly.utils.dom.createSvgElement('line', {
-      'stroke': (this.getSourceBlock() as Blockly.BlockSvg).getColourTertiary(),
-      'x1': 0,
-      'y1': FieldNote.TOP_MENU_HEIGHT,
-      'x2': this.fieldEditorWidth,
-      'y2': FieldNote.TOP_MENU_HEIGHT
+      stroke: (this.getSourceBlock() as Blockly.BlockSvg).getColourTertiary(),
+      x1: 0,
+      y1: FieldNote.TOP_MENU_HEIGHT,
+      x2: this.fieldEditorWidth,
+      y2: FieldNote.TOP_MENU_HEIGHT
     }, svg);
 
     // Drop shadow at the top of the keys
     Blockly.utils.dom.createSvgElement('rect', {
-      'x': 0,
-      'y': FieldNote.TOP_MENU_HEIGHT,
-      'width': this.fieldEditorWidth,
-      'height': FieldNote.SHADOW_HEIGHT,
-      'fill': FieldNote.SHADOW_COLOR,
+      x: 0,
+      y: FieldNote.TOP_MENU_HEIGHT,
+      width: this.fieldEditorWidth,
+      height: FieldNote.SHADOW_HEIGHT,
+      fill: FieldNote.SHADOW_COLOR,
       'fill-opacity': FieldNote.SHADOW_OPACITY
     }, svg);
 
     // Octave buttons
     const octaveDownButton = this.addOctaveButton(0, true, svg);
     const octaveUpButton = this.addOctaveButton(
-        (this.fieldEditorWidth + FieldNote.INSET * 2) -
-        FieldNote.OCTAVE_BUTTON_SIZE, false, svg);
+      (this.fieldEditorWidth + FieldNote.INSET * 2) -
+      FieldNote.OCTAVE_BUTTON_SIZE, false, svg);
 
     this.octaveDownMouseDownWrapper = Blockly.browserEvents.bind(
       octaveDownButton, 'mousedown', this,
@@ -403,7 +406,10 @@ export class FieldNote extends Blockly.FieldTextInput {
    * @param blackKeyGroup The group for all black piano keys.
    * @param keySVGarray An array containing all the key SVGs.
    */
-  private addPianoOctave(x: number, whiteKeyGroup: SVGElement, blackKeyGroup: SVGElement, keySVGarray: SVGElement[] | null) {
+  private addPianoOctave(
+    x: number, whiteKeyGroup: SVGElement, blackKeyGroup: SVGElement, keySVGarray: SVGElement[] | null
+  ) {
+    // eslint-disable-next-line one-var
     let xIncrement, width, height, fill, stroke, group;
     x += FieldNote.EDGE_PADDING / 2;
     const y = FieldNote.TOP_MENU_HEIGHT;
@@ -427,9 +433,9 @@ export class FieldNote extends Blockly.FieldTextInput {
         group = whiteKeyGroup;
       }
       const attr = {
-        'd': this.getPianoKeyPath(x, y, width, height),
-        'fill': fill,
-        'stroke': stroke
+        d: this.getPianoKeyPath(x, y, width, height),
+        fill: fill,
+        stroke: stroke
       };
       x += xIncrement;
 
@@ -462,14 +468,14 @@ export class FieldNote extends Blockly.FieldTextInput {
    */
   private getPianoKeyPath(x: number, y: number, width: number, height: number): string {
     return 'M' + x + ' ' + y + ' ' +
-      'L' + x + ' ' + (y + height -  FieldNote.KEY_RADIUS) + ' ' +
+      'L' + x + ' ' + (y + height - FieldNote.KEY_RADIUS) + ' ' +
       'Q' + x + ' ' + (y + height) + ' ' +
       (x + FieldNote.KEY_RADIUS) + ' ' + (y + height) + ' ' +
       'L' + (x + width - FieldNote.KEY_RADIUS) + ' ' + (y + height) + ' ' +
       'Q' + (x + width) + ' ' + (y + height) + ' ' +
       (x + width) + ' ' + (y + height - FieldNote.KEY_RADIUS) + ' ' +
       'L' + (x + width) + ' ' + y + ' ' +
-      'L' + x +  ' ' + y;
+      'L' + x + ' ' + y;
   }
 
   /**
@@ -483,10 +489,10 @@ export class FieldNote extends Blockly.FieldTextInput {
     const group = Blockly.utils.dom.createSvgElement('g', {}, svg);
     const imageSize = FieldNote.OCTAVE_BUTTON_SIZE;
     const arrow = Blockly.utils.dom.createSvgElement('image', {
-      'width': imageSize,
-      'height': imageSize,
-      'x': x - FieldNote.INSET,
-      'y': -1 * FieldNote.INSET
+      width: imageSize,
+      height: imageSize,
+      x: x - FieldNote.INSET,
+      y: -1 * FieldNote.INSET
     }, group);
     arrow.setAttributeNS(
       'http://www.w3.org/1999/xlink',
@@ -494,11 +500,11 @@ export class FieldNote extends Blockly.FieldTextInput {
       Blockly.getMainWorkspace().options.pathToMedia + FieldNote.ARROW_SVG_PATH
     );
     Blockly.utils.dom.createSvgElement('line', {
-      'stroke': (this.getSourceBlock() as Blockly.BlockSvg).getColourTertiary(),
-      'x1': x - FieldNote.INSET,
-      'y1': 0,
-      'x2': x - FieldNote.INSET,
-      'y2': FieldNote.TOP_MENU_HEIGHT - FieldNote.INSET
+      stroke: (this.getSourceBlock() as Blockly.BlockSvg).getColourTertiary(),
+      x1: x - FieldNote.INSET,
+      y1: 0,
+      x2: x - FieldNote.INSET,
+      y2: FieldNote.TOP_MENU_HEIGHT - FieldNote.INSET
     }, group);
     if (flipped) {
       const translateX = -1 * FieldNote.OCTAVE_BUTTON_SIZE + (FieldNote.INSET * 2);
@@ -515,16 +521,16 @@ export class FieldNote extends Blockly.FieldTextInput {
    */
   private addCKeyLabel(x: number, svg: SVGElement): SVGElement {
     return Blockly.utils.dom.createSvgElement('text', {
-      'x': x,
-      'y': FieldNote.TOP_MENU_HEIGHT + FieldNote.WHITE_KEY_HEIGHT - FieldNote.KEY_LABEL_PADDING,
-      'class': 'scratchNotePickerKeyLabel',
+      x: x,
+      y: FieldNote.TOP_MENU_HEIGHT + FieldNote.WHITE_KEY_HEIGHT - FieldNote.KEY_LABEL_PADDING,
+      class: 'scratchNotePickerKeyLabel',
       'text-anchor': 'middle'
     }, svg);
   }
 
   /**
    * Set the visibility of the C key labels.
-   * @paramvisible If true, set labels to be visible.
+   * @param visible If true, set labels to be visible.
    */
   private setCKeyLabelsVisible(visible: boolean) {
     if (visible) {
@@ -560,7 +566,10 @@ export class FieldNote extends Blockly.FieldTextInput {
    */
   private onMouseUp() {
     this.mouseIsDown = false;
-    Blockly.browserEvents.unbind(this.mouseUpWrapper!);
+    if (this.mouseUpWrapper) {
+      Blockly.browserEvents.unbind(this.mouseUpWrapper);
+      this.mouseUpWrapper = null;
+    }
   }
 
   /**
@@ -585,7 +594,6 @@ export class FieldNote extends Blockly.FieldTextInput {
 
   /**
    * Play a note, by calling the externally overriden play note function.
-   * @private
    */
   private playNoteInternal() {
     if (FieldNote.playNote) {
@@ -598,7 +606,6 @@ export class FieldNote extends Blockly.FieldTextInput {
    * Overridden externally.
    * @param noteNum the MIDI note number to play.
    * @param id An id to select a scratch extension to play the note.
-   * @private
    */
   static playNote(noteNum: number, id: string) {
     return;
@@ -700,7 +707,7 @@ export class FieldNote extends Blockly.FieldTextInput {
     if (this.keySVGs[index]) {
       this.keySVGs[index].setAttribute('fill', FieldNote.KEY_SELECTED_COLOR);
       // Update the note name text
-      const noteName =  FieldNote.KEY_INFO[index].name;
+      const noteName = FieldNote.KEY_INFO[index].name;
       this.noteNameText!.textContent = noteName + ' (' + Math.floor(noteNum) + ')';
       // Update the low and high C note names
       const lowCNum = this.displayedOctave * 12;
@@ -712,9 +719,9 @@ export class FieldNote extends Blockly.FieldTextInput {
   /**
    * Ensure that only a valid MIDI note number may be entered.
    * @param newValue The user's text.
-   * @return A string representing a valid note number, or null if invalid.
+   * @returns A string representing a valid note number, or null if invalid.
    */
-  protected override doClassValidation_(newValue?: any): string | null {
+  protected override doClassValidation_(newValue: string): string | null {
     if (newValue === null) {
       return null;
     }

@@ -28,14 +28,13 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
-import { Colours } from '../colours';
 
 /**
  * Helper function that generates an extension based on a category name.
  * The generated function will set primary, secondary, tertiary, and quaternary
  * colours based on the category name.
  * @param category The name of the category to set colours for.
- * @return An extension function that sets colours based on the given
+ * @returns An extension function that sets colours based on the given
  *     category.
  */
 const colourHelper = function(category: string) {
@@ -47,7 +46,7 @@ const colourHelper = function(category: string) {
 /**
  * Extension to set the colours of a text field, which are all the same.
  */
-const COLOUR_TEXTFIELD = function (this: Blockly.Block) {
+const COLOUR_TEXTFIELD = function(this: Blockly.Block) {
   colourHelper('textField').apply(this);
 };
 
@@ -56,7 +55,7 @@ const COLOUR_TEXTFIELD = function (this: Blockly.Block) {
  * inputs.  That means the block should have a previous connection and a next
  * connection and have inline inputs.
  */
-const SHAPE_STATEMENT = function (this: Blockly.Block) {
+const SHAPE_STATEMENT = function(this: Blockly.Block) {
   this.setInputsInline(true);
   this.setPreviousStatement(true, null);
   this.setNextStatement(true, null);
@@ -67,7 +66,7 @@ const SHAPE_STATEMENT = function (this: Blockly.Block) {
  * inputs.  That means the block should have a next connection and have inline
  * inputs, but have no previous connection.
  */
-const SHAPE_HAT = function (this: Blockly.Block) {
+const SHAPE_HAT = function(this: Blockly.Block) {
   this.setInputsInline(true);
   this.setNextStatement(true, null);
 };
@@ -77,7 +76,7 @@ const SHAPE_HAT = function (this: Blockly.Block) {
  * inputs.  That means the block should have a previous connection and have
  * inline inputs, but have no next connection.
  */
-const SHAPE_END = function (this: Blockly.Block) {
+const SHAPE_END = function(this: Blockly.Block) {
   this.setInputsInline(true);
   this.setPreviousStatement(true, null);
 };
@@ -87,7 +86,7 @@ const SHAPE_END = function (this: Blockly.Block) {
  * That means the block has inline inputs, a round output shape, and a 'Number'
  * output type.
  */
-const OUTPUT_NUMBER = function (this: Blockly.Block) {
+const OUTPUT_NUMBER = function(this: Blockly.Block) {
   this.setInputsInline(true);
   this.setOutputShape(Constants.OUTPUT_SHAPE_ROUND);
   this.setOutput(true, 'Number');
@@ -98,7 +97,7 @@ const OUTPUT_NUMBER = function (this: Blockly.Block) {
  * That means the block has inline inputs, a round output shape, and a 'String'
  * output type.
  */
-const OUTPUT_STRING = function (this: Blockly.Block) {
+const OUTPUT_STRING = function(this: Blockly.Block) {
   this.setInputsInline(true);
   this.setOutputShape(Constants.OUTPUT_SHAPE_ROUND);
   this.setOutput(true, 'String');
@@ -109,7 +108,7 @@ const OUTPUT_STRING = function (this: Blockly.Block) {
  * That means the block has inline inputs, a round output shape, and a 'Boolean'
  * output type.
  */
-const OUTPUT_BOOLEAN = function (this: Blockly.Block) {
+const OUTPUT_BOOLEAN = function(this: Blockly.Block) {
   this.setInputsInline(true);
   this.setOutputShape(Constants.OUTPUT_SHAPE_HEXAGONAL);
   this.setOutput(true, 'Boolean');
@@ -125,7 +124,7 @@ const PROCEDURE_DEF_CONTEXTMENU = {
    * menu.
    * @param menuOptions List of menu options to edit.
    */
-  customContextMenu: function(this: Blockly.Block ,menuOptions: Array<
+  customContextMenu: function(this: Blockly.Block, menuOptions: Array<
     | Blockly.ContextMenuRegistry.ContextMenuOption
     | Blockly.ContextMenuRegistry.LegacyContextMenuOption
   >) {
@@ -189,7 +188,7 @@ const PROCEDURE_CALL_CONTEXTMENU = {
   }
 };
 
-const SCRATCH_EXTENSION = function (this: Blockly.Block) {
+const SCRATCH_EXTENSION = function(this: Blockly.Block) {
   (this as any).isScratchExtension = true;
 };
 
@@ -225,6 +224,6 @@ const registerAll = function() {
 
   // Extension blocks have slightly different block rendering.
   Blockly.Extensions.register('scratch_extension', SCRATCH_EXTENSION);
-}
+};
 
 registerAll();

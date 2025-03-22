@@ -22,7 +22,6 @@ import * as Blockly from 'blockly/core';
 
 /**
  * Class for a button field.
- * @extends {Blockly.Field<string>}
  */
 export class FieldButton extends Blockly.Field<string> {
   /**
@@ -103,15 +102,15 @@ export class FieldButton extends Blockly.Field<string> {
    * Create the block UI for this field.
    */
   override initView(): void {
-    const grid_unit = this.getConstants()!.FIELD_BORDER_RECT_RADIUS;
+    const GRID_UNIT = this.getConstants()!.FIELD_BORDER_RECT_RADIUS;
     const sourceBlock = this.getSourceBlock() as Blockly.BlockSvg;
     this.button = Blockly.utils.dom.createSvgElement('rect', {
       width: FieldButton.RECT_WIDTH,
       height: FieldButton.RECT_WIDTH,
       x: 0,
       y: 0,
-      rx: grid_unit,
-      ry: grid_unit,
+      rx: GRID_UNIT,
+      ry: GRID_UNIT,
       stroke: sourceBlock.getColourTertiary(),
       fill: sourceBlock.getColour()
     }, this.fieldGroup_);
@@ -175,6 +174,9 @@ export interface FieldButtonFromJsonConfig extends Blockly.FieldConfig {
   src: string;
 }
 
+/**
+ * Register the field and any dependencies.
+ */
 export function registerFieldButton() {
   Blockly.fieldRegistry.register('field_button', FieldButton);
 }

@@ -6,6 +6,7 @@
 
 import * as Blockly from 'blockly/core';
 import {ContinuousToolBox} from './toolbox';
+import {ContinuousFlyoutMetrics} from './flyout_metrics';
 
 /**
  * Class for continuous flyout.
@@ -16,6 +17,9 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
    * scrolled at a time. Lower values will produce a smoother, slower scroll.
    */
   static readonly SCROLL_ANIMATION_FRACTION = 0.3;
+
+  /** The width of the flyout, if not otherwise specified. */
+  static readonly DEFAULT_WIDTH = 250;
 
   /** Maps from category names to their positions. */
   protected scrollPositions: Map<string, number> = new Map<string, number>();
@@ -31,6 +35,9 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
    */
   constructor(workspaceOptions: Blockly.Options) {
     super(workspaceOptions);
+    this.workspace_.setMetricsManager(
+      new ContinuousFlyoutMetrics(this.workspace_, this)
+    );
   }
 
   /**
@@ -66,6 +73,29 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
   }
 
   /**
+   * Add extra padding to the bottom of the flyout to make it possible
+   * to scroll to the last category.
+   * @param contentMetrics Content metrics for the flyout.
+   * @param viewMetrics View metrics for the flyout.
+   * @returns Extra padding.
+   */
+  getExtraPadding(
+    contentMetrics: Blockly.MetricsManager.ContainerRegion,
+    viewMetrics: Blockly.MetricsManager.ContainerRegion
+  ): {width: number; height: number} {
+    if (this.scrollPositions.size > 0) {
+      const lastCategoryPosition = Array.from(this.scrollPositions.values()).pop()!;
+      const margin = 2 * this.MARGIN * this.workspace_.scale;
+      const lastCategoryHeight = contentMetrics.height - lastCategoryPosition * this.workspace_.scale;
+      return {
+        width: 0,
+        height: Math.max(0, viewMetrics.height - lastCategoryHeight - margin)
+      };
+    }
+    return {width: 0, height: 0};
+  }
+
+  /**
    * Records scroll position for each category in the toolbox.
    * The scroll position is determined by the coordinates of each category's
    * label after the entire flyout has been rendered.
@@ -88,7 +118,11 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
    */
   scrollTo(position: number, animation?: boolean): void {
     if (animation) {
-      this.scrollTarget = position * this.workspace_.scale;
+      const metrics = this.workspace_.getMetrics();
+      this.scrollTarget = Math.min(
+        position * this.workspace_.scale,
+        Math.max(metrics.scrollHeight - metrics.viewHeight, 0)
+      );
       this.stepScrollAnimation();
     } else {
       this.workspace_.scrollbar?.setY(position * this.workspace_.scale);
@@ -145,5 +179,50 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
 
     this.workspace_.scrollbar?.setY(scrollPos + diff * ContinuousVerticalFlyout.SCROLL_ANIMATION_FRACTION);
     requestAnimationFrame(this.stepScrollAnimation.bind(this));
+  }
+
+  /**
+   * Compute width of flyout.
+   * For RTL: Lay out the blocks and buttons to be right-aligned.
+   */
+  protected override reflowInternal_(): void {
+    this.workspace_.scale = this.getFlyoutScale();
+    const flyoutWidth = ContinuousVerticalFlyout.DEFAULT_WIDTH * this.workspace_.scale;
+
+    if (this.getWidth() !== flyoutWidth) {
+      if (this.RTL) {
+        // With the flyoutWidth known, right-align the flyout contents.
+        for (const item of this.getContents()) {
+          const oldX = item.getElement().getBoundingRectangle().left;
+          const newX =
+            flyoutWidth / this.workspace_.scale -
+            item.getElement().getBoundingRectangle().getWidth() -
+            this.MARGIN -
+            this.tabWidth_;
+          item.getElement().moveBy(newX - oldX, 0);
+        }
+      }
+
+      // TODO(#7689): Remove this.
+      // Workspace with no scrollbars where this is permanently
+      // open on the left.
+      // If scrollbars exist they properly update the metrics.
+      if (
+        !this.targetWorkspace.scrollbar &&
+        !this.autoClose &&
+        this.targetWorkspace.getFlyout() === this &&
+        this.toolboxPosition_ === Blockly.utils.toolbox.Position.LEFT
+      ) {
+        this.targetWorkspace.translate(
+          this.targetWorkspace.scrollX + flyoutWidth,
+          this.targetWorkspace.scrollY
+        );
+      }
+
+      this.width_ = flyoutWidth;
+      this.position();
+      this.targetWorkspace.resizeContents();
+      this.targetWorkspace.recordDragTargets();
+    }
   }
 }

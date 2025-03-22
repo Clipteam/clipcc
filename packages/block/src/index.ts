@@ -21,6 +21,7 @@ import {ContinuousToolBox} from './toolbox/toolbox';
 import {ContinuousVerticalFlyout} from './toolbox/flyout';
 import {flyoutCategory as variableCategory} from './data_category';
 import {flyoutCategory as procedureCategory} from './procedures_category';
+import styles from './styles/blockly.css';
 
 import './blocks/extensions';
 import './blocks/common';
@@ -49,6 +50,8 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerFieldVerticalSeparator();
 
   registerScratchCategory();
+
+  Blockly.Css.register(styles);
 
   const workspace = injectWorkspace(container, options);
 
@@ -86,3 +89,6 @@ export function injectWorkspace(container: Element | string, options?: Blockly.B
 }
 
 export {setExternalProcedureDefCallback} from './procedures_category';
+
+// Monkey-patches
+Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
