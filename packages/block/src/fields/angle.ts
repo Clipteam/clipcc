@@ -160,15 +160,12 @@ export class FieldAngle extends Blockly.FieldNumber {
     this.gauge = null;
     if (this.mouseDownHandler) {
       Blockly.browserEvents.unbind(this.mouseDownHandler);
-      this.mouseDownHandler = null;
     }
     if (this.mouseUpHandler) {
       Blockly.browserEvents.unbind(this.mouseUpHandler);
-      this.mouseUpHandler = null;
     }
     if (this.mouseMoveHandler) {
       Blockly.browserEvents.unbind(this.mouseMoveHandler);
-      this.mouseMoveHandler = null;
     }
   }
 
@@ -325,9 +322,11 @@ export class FieldAngle extends Blockly.FieldNumber {
   protected onMouseUp() {
     if (this.mouseMoveHandler) {
       Blockly.browserEvents.unbind(this.mouseMoveHandler);
+      this.mouseMoveHandler = null;
     }
     if (this.mouseUpHandler) {
       Blockly.browserEvents.unbind(this.mouseUpHandler);
+      this.mouseUpHandler = null;
     }
   }
 
