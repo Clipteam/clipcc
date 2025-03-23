@@ -49,6 +49,7 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
   override show(flyoutDef: Blockly.utils.toolbox.FlyoutDefinition | string): void {
     super.show(flyoutDef);
     this.recordScrollPositions();
+    this.workspace_.resizeContents();
   }
 
   /**
