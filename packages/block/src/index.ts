@@ -23,6 +23,8 @@ import {flyoutCategory as variableCategory} from './data_category';
 import {flyoutCategory as procedureCategory} from './procedures_category';
 import styles from './styles/blockly.css';
 
+import './connection_checker';
+
 import './blocks/extensions';
 import './blocks/common';
 import './blocks/data';
