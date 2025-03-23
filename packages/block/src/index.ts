@@ -53,6 +53,9 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
 
   Blockly.Css.register(styles);
 
+  // Unregister unused items.
+  Blockly.ContextMenuRegistry.registry.unregister('blockInline');
+
   const workspace = injectWorkspace(container, options);
 
   // Dynamic categories.
