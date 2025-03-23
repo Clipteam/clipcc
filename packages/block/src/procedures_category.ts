@@ -115,7 +115,7 @@ function getDefineBlock(
   for (const block of blocks) {
     if (isProcedureDefinitionBlock(block)) {
       const prototypeBlock = block.getInput('custom_block')!.connection!.targetBlock()!;
-      if (isProcedureCallBlock(prototypeBlock) && prototypeBlock.getProcCode() == procCode) {
+      if (isProcedurePrototypeBlock(prototypeBlock) && prototypeBlock.getProcCode() == procCode) {
         return block;
       }
     }
@@ -314,4 +314,153 @@ let externalCheckoutWorkspaceCallback = function(procCode: string) {
  */
 export function setExternalCheckoutWsCallback(callback: typeof externalCheckoutWorkspaceCallback) {
   externalCheckoutWorkspaceCallback = callback;
+}
+
+/**
+ * Make a context menu option for editing a custom procedure.
+ * This appears in the context menu for procedure definitions and procedure
+ * calls.
+ * @param block The block where the right-click originated.
+ * @returns A menu option, containing text, enabled, and a callback.
+ */
+export function makeEditOption(
+  block: ProcedureDefinitionBlock | ProcedureCallBlock
+): Blockly.ContextMenuRegistry.LegacyContextMenuOption {
+  const editOption = {
+    enabled: true,
+    text: Blockly.Msg.EDIT_PROCEDURE,
+    callback: function() {
+      editProcedureCallback(block);
+    }
+  };
+  return editOption;
+}
+
+/**
+ * Callback to show the procedure definition corresponding to a custom command
+ * block.
+ * @param block The block that was right-clicked.
+ */
+function showProcedureDefCallback(block: ProcedureCallBlock) {
+  let workspace;
+  // if (block.getGlobal()) {
+  //   externalCheckoutWorkspaceCallback(block.getProcCode());
+  // }
+  // block's workspace may lost after checkout workspace
+  if (block.workspace !== null) {
+    workspace = block.workspace.isFlyout ? block.workspace.targetWorkspace! : block.workspace;
+  } else {
+    workspace = Blockly.getMainWorkspace() as Blockly.WorkspaceSvg;
+  }
+
+  const defBlock = getDefineBlock(block.getProcCode(), workspace);
+  if (defBlock) {
+    workspace.centerOnBlock(defBlock.id);
+    defBlock.select();
+  }
+}
+
+/**
+ * Make a context menu option for showing the definition for a custom procedure,
+ * based on a right-click on a custom block.
+ * @param block The block where the right-click originated.
+ * @returns A menu option, containing text, enabled, and a callback.
+ */
+export function makeShowDefinitionOption(
+  block: ProcedureCallBlock
+): Blockly.ContextMenuRegistry.LegacyContextMenuOption {
+  const option = {
+    enabled: true,
+    text: Blockly.Msg.SHOW_PROCEDURE_DEFINITION,
+    callback: function() {
+      showProcedureDefCallback(block);
+    }
+  };
+  return option;
+}
+
+/**
+ * Make a context menu option for changing the shape for a custom procedure,
+ * based on a right-click on a custom block.
+ * @param block The block where the right-click originated.
+ * @returns A menu option, containing text, enabled, and a callback.
+ */
+export function makeChangeShapeOption(
+  block: ProcedureCallBlock
+): Blockly.ContextMenuRegistry.LegacyContextMenuOption {
+  const option = {
+    enabled: true,
+    text: Blockly.Msg.CHANGE_PROCEDURE_SHAPE,
+    callback: function() {
+      const oldState = block.saveExtraState();
+      // block.setReturn(!block.getReturn());
+      const newState = block.saveExtraState();
+      Blockly.Events.setGroup(true);
+      Blockly.Events.fire(new Blockly.Events.BlockChange(block, 'mutation', null, oldState, newState));
+      Blockly.Events.setGroup(false);
+    }
+  };
+  return option;
+}
+
+/**
+ * Callback to try to delete a custom block definitions.
+ * @param procCode The identifier of the procedure to delete.
+ * @param definitionRoot The root block of the stack that defines the custom procedure.
+ * @returns True if the custom procedure was deleted, false otherwise.
+ */
+function deleteProcedureDefCallbackfunction(procCode: string, definitionRoot: Blockly.BlockSvg): boolean {
+  // const callers = getCallers(procCode, definitionRoot.workspace, definitionRoot, false /* allowRecursive */);
+  // if (callers.length > 0) {
+  //   return false;
+  // }
+
+  const workspace = definitionRoot.workspace;
+
+  // workspace.getProcedureMap().delete(definitionRoot);
+
+  // Delete the whole stack.
+  Blockly.Events.setGroup(true);
+  definitionRoot.dispose();
+  Blockly.Events.setGroup(false);
+
+  // TODO (#1354) Update this function when '_' is removed
+  // Refresh toolbox, so caller doesn't appear there anymore
+  workspace.refreshToolboxSelection();
+
+  return true;
+}
+
+/**
+ * Make a context menu option for forcibly deleting a custom procedure.
+ * This appears in the context menu for procedure definitions.
+ * @param block The block where the right-click originated.
+ * @returns A menu option, containing text, enabled, and a callback.
+ * @package
+ */
+export function makeForceDeleteOption(
+  block: Blockly.BlockSvg
+): Blockly.ContextMenuRegistry.LegacyContextMenuOption {
+  return {
+    enabled: true,
+    text: Blockly.Msg.FORCE_DELETE,
+    callback: function() {
+      // dialog.confirm(Blockly.Msg.FORCE_DELETE_INFO, function(ok) {
+      //   if (ok) {
+      //     const workspace = block.workspace;
+
+      //     workspace.removeProcedure(block);
+
+      //     // Delete the whole stack.
+      //     Blockly.Events.setGroup(true);
+      //     block.dispose();
+      //     Blockly.Events.setGroup(false);
+
+      //     // TODO (#1354) Update this function when '_' is removed
+      //     // Refresh toolbox, so caller doesn't appear there anymore
+      //     workspace.refreshToolboxSelection();
+      //   }
+      // });
+    }
+  };
 }
