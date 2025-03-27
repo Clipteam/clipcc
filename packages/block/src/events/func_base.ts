@@ -1,60 +1,69 @@
 /**
  * @license
- * Visual Blocks Editor
- *
  * Copyright 2024 Clip Team
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * SPDX-License-Identifier: Apache-2.0
  */
 
-'use strict';
-
-import * as goog from 'google-closure-library/closure/goog/goog.js';
-goog.declareModuleId('Blockly.Events.FuncBase');
-
-import {Abstract} from './abstract';
+import * as Blockly from 'blockly/core';
+import {ProcedureModel} from '../procedure_model';
 
 /**
- * Abstract class for a function event.
- * @param {!Workspace} workspace The workspace of procedure.
- * @param {Element} mutation The mutation of procedure.
- * @extends {Abstract}
- * @constructor
+ * Abstract class for a procedure event.
  */
-export const FuncBase = function(workspace, mutation) {
-  FuncBase.superClass_.constructor.call(this);
-  this.workspaceId = workspace.id;
-  this.procCode = mutation.getAttribute('proccode');
-};
-goog.inherits(FuncBase, Abstract);
+export class FuncBase extends Blockly.Events.Abstract {
+  /** Whether or not the event was constructed without necessary parameters. */
+  override isBlank: boolean = false;
 
-/**
- * Encode the event as JSON.
- * @return {!Object} JSON representation.
- */
-FuncBase.prototype.toJson = function() {
-  const json = FuncBase.superClass_.toJson.call(this);
-  json['procCode'] = this.procCode;
-  return json;
-};
+  /** The procCode of procedure. */
+  protected procCode?: string;
 
-/**
- * Decode the JSON event.
- * @param {!Object} json JSON representation.
- */
-FuncBase.prototype.fromJson = function(json) {
-  FuncBase.superClass_.toJson.call(this);
-  this.procCode = json['procCode'];
-};
+  /**
+   * @param procedure The procedure model.
+   */
+  constructor(procedure?: ProcedureModel) {
+    super();
+    this.isBlank = !procedure;
+    if (this.isBlank) return;
+    this.procCode = procedure!.getProcCode();
+  }
 
+  /**
+   * Encode the event as JSON.
+   * @returns JSON representation.
+   */
+  override toJson(): FuncBaseJson {
+    const json = super.toJson() as FuncBaseJson;
+    if (!this.procCode) {
+      throw new Error('The procCode is undefined. Either pass a procedure to the constructor, or call fromJson.');
+    }
+    json.procCode = this.procCode;
+    return json;
+  }
+
+  /**
+   * Deserializes the JSON event.
+   * @param json The JSON object that describes the event.
+   * @param workspace The workspace of the event belong to.
+   * @param event The event to append new properties to. Should be a subclass
+   *     of Abstract (like all events), but we can't specify that due to the
+   *     fact that parameters to static methods in subclasses must be
+   *     supertypes of parameters to static methods in superclasses.
+   * @returns The newly created event instance.
+   */
+  static override fromJson(
+    json: FuncBaseJson,
+    workspace: Blockly.Workspace,
+    event?: Blockly.Events.Abstract
+  ): FuncBase {
+    const newEvent = super.fromJson(
+      json, workspace,
+      event ?? new FuncBase()
+    ) as FuncBase;
+    newEvent.procCode = json.procCode;
+    return newEvent;
+  }
+}
+
+export interface FuncBaseJson extends Blockly.Events.AbstractEventJson {
+  procCode: string;
+}
