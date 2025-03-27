@@ -15,6 +15,7 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
   protected returnTypes: string[] | null = null;
   protected enabled: boolean = true;
   protected global: boolean = false;
+  protected warp: boolean = false;
 
   /**
    * @param workspace The workspace this parameter model belongs to.
@@ -32,6 +33,16 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
    */
   setName(name: string): this {
     this.procCode = name;
+    return this;
+  }
+
+  /**
+   * Sets the procedure procCode of the procedure.
+   * @param procCode Procedure procCode.
+   * @returns The model instance.
+   */
+  setProcCode(procCode: string): this {
+    this.procCode = procCode;
     return this;
   }
 
@@ -78,6 +89,15 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
     return this;
   }
 
+  pushParameter(parameterModel: ParameterModel): this {
+    this.parameters.push(parameterModel);
+    parameterModel.setProcedureModel(this);
+    if (Blockly.isObservable(parameterModel)) {
+      parameterModel.startPublishing();
+    }
+    return this;
+  }
+
   /**
    * Sets the return type(s) of the procedure.
    * Pass null to represent a procedure that does not return.
@@ -104,6 +124,16 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
     return this;
   }
 
+  setWarp(warp: boolean): this {
+    this.warp = warp;
+    return this;
+  }
+
+  setGlobal(global: boolean): this {
+    this.global = global;
+    return this;
+  }
+
   /**
    * Returns the unique language-neutral ID for the procedure.
    * @returns Procedure procCode.
@@ -118,6 +148,30 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
    */
   getName(): string {
     return this.procCode;
+  }
+
+  getProcCode(): string {
+    return this.procCode;
+  }
+
+  getWarp(): boolean {
+    return this.warp;
+  }
+
+  getGlobal(): boolean {
+    return this.global;
+  }
+
+  getReturn(): boolean {
+    return !!this.returnTypes;
+  }
+
+  getArguments(): {argumentIds: string[]; argumentNames: string[]; argumentDefaults: string[];} {
+    return {
+      argumentIds: this.parameters.map((param) => param.getId()),
+      argumentNames: this.parameters.map((param) => param.getName()),
+      argumentDefaults: this.parameters.map((param) => param.getDefaultValue())
+    };
   }
 
   /**
@@ -177,11 +231,34 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
       proccode: this.procCode,
       argumentids: this.parameters.map((param) => param.getId()),
       argumentnames: this.parameters.map((param) => param.getName()),
-      argumentdefaults: this.parameters.map((param) => ''),
-      warp: false,
-      return: this.returnTypes !== null,
-      global: false
+      argumentdefaults: this.parameters.map((param) => param.getDefaultValue()),
+      warp: this.warp,
+      return: this.getReturn(),
+      global: this.global
     };
+  }
+
+  /**
+   * Deserializes the state of the procedure.
+   * @param state Extra state of procedure definition.
+   */
+  loadExtraState(state: ProcedureExtraState): void {
+    this.procCode = state.proccode;
+    this.warp = state.warp;
+    this.global = state.global;
+    this.returnTypes = state.return ? [] : null;
+    this.parameters = [];
+    if (state.argumentnames && state.argumentids) {
+      for (let i = 0; i < state.argumentids.length; ++i) {
+        const param = new ParameterModel(
+          this.workspace,
+          state.argumentnames[i],
+          state.argumentids[i],
+          state.argumentdefaults?.[i]
+        );
+        this.parameters.push(param);
+      }
+    }
   }
 
   /**
@@ -192,12 +269,7 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
    */
   static loadExtraState(workspace: Blockly.Workspace, state: ProcedureExtraState): ProcedureModel {
     const model = new ProcedureModel(workspace, state.proccode);
-    if (state.argumentnames && state.argumentids) {
-      for (let i = 0; i < state.argumentids.length; ++i) {
-        const param = new ParameterModel(workspace, state.argumentnames[i], state.argumentids[i]);
-        model.parameters.push(param);
-      }
-    }
+    model.loadExtraState(state);
     return model;
   }
 }

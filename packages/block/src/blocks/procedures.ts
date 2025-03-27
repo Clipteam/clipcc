@@ -22,18 +22,19 @@
  * @fileoverview Procedure blocks for Scratch.
  */
 
-/* eslint-disable no-invalid-this */
-
 import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
 import {ProcedureExtraState} from '../serialization/procedures';
 import {FieldTextInputRemovable} from '../fields/textinput_removable';
 import {
+  deleteProcedureDefCallbackfunction,
   makeChangeShapeOption,
   makeEditOption,
   makeForceDeleteOption,
   makeShowDefinitionOption
 } from '../procedures_category';
+import {ProcedureModel} from '../procedure_model';
+import {ParameterModel} from '../parameter_model';
 
 interface ConnectionMap {
   [key: string]: {
@@ -43,14 +44,11 @@ interface ConnectionMap {
 }
 
 export interface ProcedureBlock extends Blockly.BlockSvg {
-  procCode_: string;
-  argumentIds_: string[];
-  warp_: boolean;
-  return_: boolean;
-  global_: boolean;
+  model: ProcedureModel;
 
   // Shared.
-  getProcCode: () => string;
+  getProcCode: () => string; // Deprecated
+  getProcedureModel: () => ProcedureModel;
   removeAllInputs_: () => void;
   disconnectOldBlocks_: () => ConnectionMap;
   deleteShadows_: (connectionMap: ConnectionMap) => void;
@@ -78,14 +76,13 @@ export interface ProcedureCallBlock extends ProcedureBlock {
   type: 'procedures_call';
   generateShadows_: boolean;
 
+  getTargetWorkspace_: () => Blockly.WorkspaceSvg;
   attachShadow_: (input: Blockly.Input, argumentType: string) => void;
   buildShadowState_: (type: string) => Blockly.serialization.blocks.State;
 }
 
 export interface ProcedurePrototypeBlock extends ProcedureBlock {
   type: 'procedures_prototype';
-  displayNames_: string[];
-  argumentDefaults_: string[];
 
   createArgumentReporter_: (argumentType: string, displayName: string) => Blockly.BlockSvg;
   updateArgumentReporterNames_: (prevArgIds: string[], prevDisplayNames: string[]) => void;
@@ -93,8 +90,6 @@ export interface ProcedurePrototypeBlock extends ProcedureBlock {
 
 export interface ProcedureDeclarationBlock extends ProcedureBlock {
   type: 'procedures_declaration';
-  displayNames_: string[];
-  argumentDefaults_: string[];
 
   removeFieldCallback: (field: Blockly.Field) => void;
   createArgumentEditor_: (argumentType: string, displayName: string) => Blockly.BlockSvg;
@@ -124,11 +119,11 @@ export interface ProcedureArgumentEditorBlock extends Blockly.BlockSvg {
  */
 function callerMutationToDom(this: ProcedureCallBlock): Element {
   const container = document.createElement('mutation');
-  container.setAttribute('proccode', this.procCode_);
-  container.setAttribute('argumentids', JSON.stringify(this.argumentIds_));
-  container.setAttribute('warp', JSON.stringify(this.warp_));
-  container.setAttribute('return', JSON.stringify(this.return_));
-  container.setAttribute('global', JSON.stringify(this.global_));
+  container.setAttribute('proccode', this.model.getProcCode());
+  container.setAttribute('argumentids', JSON.stringify(this.model.getArguments().argumentIds));
+  container.setAttribute('warp', JSON.stringify(this.model.getWarp()));
+  container.setAttribute('return', JSON.stringify(this.model.getReturn()));
+  container.setAttribute('global', JSON.stringify(this.model.getGlobal()));
   return container;
 }
 
@@ -138,21 +133,14 @@ function callerMutationToDom(this: ProcedureCallBlock): Element {
  * @param xmlElement XML storage element.
  */
 function callerDomToMutation(this: ProcedureCallBlock, xmlElement: Element) {
-  this.procCode_ = xmlElement.getAttribute('proccode')!;
-  // cc - callers should always generate shadows
-  // this.generateShadows_ =
-  //    JSON.parse(xmlElement.getAttribute('generateshadows'));
-  this.generateShadows_ = true;
-  this.argumentIds_ = JSON.parse(xmlElement.getAttribute('argumentids')!);
-  this.warp_ = JSON.parse(xmlElement.getAttribute('warp')!);
-  // don't update shape if caller still has connections
-  if (!(this.previousConnection && this.previousConnection.isConnected()) &&
-    !(this.outputConnection && this.outputConnection.isConnected()) &&
-    !(this.nextConnection && this.nextConnection.isConnected())) {
-    this.return_ = JSON.parse(xmlElement.getAttribute('return')!);
-  }
-  this.global_ = JSON.parse(xmlElement.getAttribute('global')!);
-  this.updateDisplay_();
+  this.loadExtraState({
+    proccode: xmlElement.getAttribute('proccode')!,
+    argumentids: JSON.parse(xmlElement.getAttribute('argumentids')!),
+    warp: JSON.parse(xmlElement.getAttribute('warp')!),
+    return: JSON.parse(xmlElement.getAttribute('return')!),
+    global: JSON.parse(xmlElement.getAttribute('global')!),
+    generateshadows: JSON.parse(xmlElement.getAttribute('generateshadows')!)
+  });
 }
 
 /**
@@ -167,17 +155,18 @@ function definitionMutationToDom(
   generateShadows?: boolean
 ): Element {
   const container = document.createElement('mutation');
+  const argumentsInfo = this.model.getArguments();
 
   if (generateShadows) {
     container.setAttribute('generateshadows', 'true');
   }
-  container.setAttribute('proccode', this.procCode_);
-  container.setAttribute('argumentids', JSON.stringify(this.argumentIds_));
-  container.setAttribute('argumentnames', JSON.stringify(this.displayNames_));
-  container.setAttribute('argumentdefaults', JSON.stringify(this.argumentDefaults_));
-  container.setAttribute('warp', JSON.stringify(this.warp_));
-  container.setAttribute('return', JSON.stringify(this.return_));
-  container.setAttribute('global', JSON.stringify(this.global_));
+  container.setAttribute('proccode', this.model.getProcCode());
+  container.setAttribute('argumentids', JSON.stringify(argumentsInfo.argumentIds));
+  container.setAttribute('argumentnames', JSON.stringify(argumentsInfo.argumentNames));
+  container.setAttribute('argumentdefaults', JSON.stringify(argumentsInfo.argumentDefaults));
+  container.setAttribute('warp', JSON.stringify(this.model.getWarp()));
+  container.setAttribute('return', JSON.stringify(this.model.getReturn()));
+  container.setAttribute('global', JSON.stringify(this.model.getGlobal()));
   return container;
 }
 
@@ -190,21 +179,15 @@ function definitionDomToMutation(
   this: ProcedurePrototypeBlock | ProcedureDeclarationBlock,
   xmlElement: Element
 ) {
-  this.procCode_ = xmlElement.getAttribute('proccode')!;
-  this.warp_ = JSON.parse(xmlElement.getAttribute('warp')!);
-  this.return_ = JSON.parse(xmlElement.getAttribute('return')!);
-  this.global_ = JSON.parse(xmlElement.getAttribute('global')!);
-
-  const prevArgIds = this.argumentIds_;
-  const prevDisplayNames = this.displayNames_;
-
-  this.argumentIds_ = JSON.parse(xmlElement.getAttribute('argumentids')!);
-  this.displayNames_ = JSON.parse(xmlElement.getAttribute('argumentnames')!);
-  this.argumentDefaults_ = JSON.parse(xmlElement.getAttribute('argumentdefaults')!);
-  this.updateDisplay_();
-  if ('updateArgumentReporterNames_' in this) {
-    this.updateArgumentReporterNames_(prevArgIds, prevDisplayNames);
-  }
+  this.loadExtraState({
+    proccode: xmlElement.getAttribute('proccode')!,
+    warp: JSON.parse(xmlElement.getAttribute('warp')!),
+    return: JSON.parse(xmlElement.getAttribute('return')!),
+    global: JSON.parse(xmlElement.getAttribute('global')!),
+    argumentids: JSON.parse(xmlElement.getAttribute('argumentids')!),
+    argumentnames: JSON.parse(xmlElement.getAttribute('argumentnames')!),
+    argumentdefaults: JSON.parse(xmlElement.getAttribute('argumentdefaults')!)
+  });
 }
 
 /**
@@ -229,11 +212,11 @@ function callerSaveExtraState(
   this: ProcedureCallBlock
 ): ProcedureExtraState {
   return {
-    proccode: this.procCode_,
-    argumentids: this.argumentIds_,
-    warp: this.warp_,
-    return: this.return_,
-    global: this.global_
+    proccode: this.model.getProcCode(),
+    argumentids: this.model.getArguments().argumentIds,
+    warp: this.model.getWarp(),
+    return: this.model.getReturn(),
+    global: this.model.getGlobal()
   };
 }
 
@@ -246,19 +229,22 @@ function callerLoadExtraState(
   this: ProcedureCallBlock,
   state: ProcedureExtraState
 ) {
-  this.procCode_ = state.proccode;
-  this.generateShadows_ = true;
-  this.argumentIds_ = parseStringOrObject(state.argumentids);
-  this.warp_ = parseStringOrObject(state.warp);
-  this.global_ = parseStringOrObject(state.global);
-  // don't update shape if caller still has connections
-  if (
-    !(this.previousConnection && this.previousConnection.isConnected()) &&
-    !(this.outputConnection && this.outputConnection.isConnected()) &&
-    !(this.nextConnection && this.nextConnection.isConnected())
-  ) {
-    this.return_ = parseStringOrObject(state.return);
+  const procedureMap = this.getTargetWorkspace_().getProcedureMap();
+  if (procedureMap.has(state.proccode)) {
+    this.model = procedureMap.get(state.proccode) as ProcedureModel;
+  } else {
+    console.error(`A procedure caller is loaded without any definition ${state.proccode}`);
   }
+
+  this.generateShadows_ = true;
+  // // don't update shape if caller still has connections
+  // if (
+  //   !(this.previousConnection && this.previousConnection.isConnected()) &&
+  //   !(this.outputConnection && this.outputConnection.isConnected()) &&
+  //   !(this.nextConnection && this.nextConnection.isConnected())
+  // ) {
+  //   this.return_ = parseStringOrObject(state.return);
+  // }
   this.updateDisplay_();
 }
 
@@ -273,14 +259,15 @@ function definitionSaveExtraState(
   this: ProcedurePrototypeBlock | ProcedureDeclarationBlock,
   generateShadows?: boolean
 ): ProcedureExtraState {
+  const argumentInfo = this.model.getArguments();
   const result: ProcedureExtraState = {
-    proccode: this.procCode_,
-    argumentids: this.argumentIds_,
-    argumentnames: this.displayNames_,
-    argumentdefaults: this.argumentDefaults_,
-    warp: this.warp_,
-    return: this.return_,
-    global: this.global_
+    proccode: this.model.getProcCode(),
+    argumentids: argumentInfo.argumentIds,
+    argumentnames: argumentInfo.argumentNames,
+    argumentdefaults: argumentInfo.argumentDefaults,
+    warp: this.model.getWarp(),
+    return: this.model.getReturn(),
+    global: this.model.getGlobal()
   };
   if (generateShadows) {
     result.generateshadows = true;
@@ -297,20 +284,27 @@ function definitionLoadExtraState(
   this: ProcedurePrototypeBlock | ProcedureDeclarationBlock,
   state: ProcedureExtraState
 ) {
-  this.procCode_ = state.proccode;
-  this.warp_ = parseStringOrObject(state.warp);
-  this.return_ = parseStringOrObject(state.return);
-  this.global_ = parseStringOrObject(state.global);
+  if (!this.model) {
+    const procedureMap = this.workspace.getProcedureMap();
+    if (procedureMap.has(state.proccode)) {
+      this.model = procedureMap.get(state.proccode) as ProcedureModel;
+    } else {
+      console.error(`A procedure is loaded without any definition ${state.proccode}`);
+    }
+  }
 
-  const prevArgIds = this.argumentIds_;
-  const prevDisplayNames = this.displayNames_;
+  const prevArguments = this.model.getArguments();
+  state.argumentids = parseStringOrObject(state.argumentids);
+  state.argumentnames = parseStringOrObject(state.argumentnames);
+  state.argumentdefaults = parseStringOrObject(state.argumentdefaults);
 
-  this.argumentIds_ = parseStringOrObject(state.argumentids);
-  this.displayNames_ = parseStringOrObject(state.argumentnames);
-  this.argumentDefaults_ = parseStringOrObject(state.argumentdefaults);
+  this.model.loadExtraState(state);
   this.updateDisplay_();
   if ('updateArgumentReporterNames_' in this) {
-    this.updateArgumentReporterNames_(prevArgIds, prevDisplayNames);
+    this.updateArgumentReporterNames_(
+      prevArguments.argumentIds,
+      prevArguments.argumentNames
+    );
   }
 }
 
@@ -325,7 +319,15 @@ function definitionLoadExtraState(
  * @returns Procedure name.
  */
 function getProcCode(this: ProcedureBlock): string {
-  return this.procCode_;
+  return this.model.getProcCode();
+}
+
+/**
+ * Returns the procedure model associated with this block.
+ * @returns Procedure model.
+ */
+function getProcedureModel(this: ProcedureBlock): ProcedureModel {
+  return this.model;
 }
 
 /**
@@ -387,7 +389,7 @@ function removeAllInputs(this: ProcedureBlock) {
  */
 function createAllInputs(this: ProcedureBlock, connectionMap: ConnectionMap) {
   // Split the proc into components, by %n, %b, and %s (ignoring escaped).
-  let procComponents = this.procCode_.split(/(?=[^\\]%[nbs])/);
+  let procComponents = this.model.getProcCode().split(/(?=[^\\]%[nbs])/);
   procComponents = procComponents.map(function(c) {
     return c.trim(); // Strip whitespace.
   });
@@ -401,7 +403,7 @@ function createAllInputs(this: ProcedureBlock, connectionMap: ConnectionMap) {
         throw new Error('Found an custom procedure with an invalid type: ' + argumentType);
       }
 
-      const id = this.argumentIds_[argumentCount];
+      const id = this.model.getParameter(argumentCount).getId();
 
       const input = this.appendValueInput(id);
       if (argumentType == 'b') {
@@ -619,7 +621,7 @@ function populateArgumentOnPrototype(
   }
 
   const oldTypeMatches = checkOldTypeMatches(oldBlock, type);
-  const displayName = this.displayNames_[index];
+  const displayName = this.model.getParameter(index).getName();
 
   // Decide which block to attach.
   let argumentReporter;
@@ -665,7 +667,7 @@ function populateArgumentOnDeclaration(
   // blocks instead of argument editor blocks.  Create a new version for argument
   // editors.
   const oldTypeMatches = checkOldTypeMatches(oldBlock, type);
-  const displayName = this.displayNames_[index];
+  const displayName = this.model.getParameter(index).getName();
 
   // Decide which block to attach.
   let argumentEditor;
@@ -745,30 +747,28 @@ function createArgumentEditor(
  * and their text.
  */
 function updateDeclarationProcCode(this: ProcedureDeclarationBlock) {
-  this.procCode_ = '';
-  this.displayNames_ = [];
-  this.argumentIds_ = [];
-  for (let i = 0; i < this.inputList.length; i++) {
-    if (i !== 0) {
-      this.procCode_ += ' ';
-    }
-    const input = this.inputList[i];
+  const procCodeParts = [];
+  const params = this.model.getParameters();
+  let currentParamIndex = 0;
+  for (const input of this.inputList) {
     if (input.type === Constants.DUMMY_INPUT) {
-      this.procCode_ += input.fieldRow[0].getValue().replace('%', '\\%');
+      procCodeParts.push(input.fieldRow[0].getValue().replace('%', '\\%'));
     } else if (input.type === Constants.INPUT_VALUE) {
       // Inspect the argument editor.
       const target = input.connection!.targetBlock()!;
-      this.displayNames_.push(target.getFieldValue('TEXT'));
-      this.argumentIds_.push(input.name);
+      params[currentParamIndex].setName(target.getFieldValue('TEXT'));
+      currentParamIndex += 1;
+      // this.argumentIds_.push(input.name);
       if (target.type === 'argument_editor_boolean') {
-        this.procCode_ += '%b';
+        procCodeParts.push('%b');
       } else {
-        this.procCode_ += '%s';
+        procCodeParts.push('%s');
       }
     } else {
       throw new Error('Unexpected input type on a procedure mutator root: ' + input.type);
     }
   }
+  this.model.setProcCode(procCodeParts.join(' '));
 }
 
 /**
@@ -792,7 +792,7 @@ function focusLastEditor(this: ProcedureDeclarationBlock) {
  */
 function addLabelExternal(this: ProcedureDeclarationBlock) {
   Blockly.WidgetDiv.hide();
-  this.procCode_ = this.procCode_ + ' label text';
+  this.model.setProcCode(this.model.getProcCode() + ' label text');
   this.updateDisplay_();
   this.focusLastEditor_();
 }
@@ -803,10 +803,13 @@ function addLabelExternal(this: ProcedureDeclarationBlock) {
  */
 function addBooleanExternal(this: ProcedureDeclarationBlock) {
   Blockly.WidgetDiv.hide();
-  this.procCode_ = this.procCode_ + ' %b';
-  this.displayNames_.push('boolean');
-  this.argumentIds_.push(Blockly.utils.idGenerator.genUid());
-  this.argumentDefaults_.push('false');
+  this.model.setProcCode(this.model.getProcCode() + ' %b');
+  this.model.pushParameter(new ParameterModel(
+    this.workspace,
+    'boolean',
+    Blockly.utils.idGenerator.genUid(),
+    'false'
+  ));
   this.updateDisplay_();
   this.focusLastEditor_();
 }
@@ -817,10 +820,13 @@ function addBooleanExternal(this: ProcedureDeclarationBlock) {
  */
 function addStringNumberExternal(this: ProcedureDeclarationBlock) {
   Blockly.WidgetDiv.hide();
-  this.procCode_ = this.procCode_ + ' %s';
-  this.displayNames_.push('number or text');
-  this.argumentIds_.push(Blockly.utils.idGenerator.genUid());
-  this.argumentDefaults_.push('');
+  this.model.setProcCode(this.model.getProcCode() + ' %s');
+  this.model.pushParameter(new ParameterModel(
+    this.workspace,
+    'number or text',
+    Blockly.utils.idGenerator.genUid(),
+    ''
+  ));
   this.updateDisplay_();
   this.focusLastEditor_();
 }
@@ -830,7 +836,7 @@ function addStringNumberExternal(this: ProcedureDeclarationBlock) {
  * @returns The value of the warp_ property.
  */
 function getWarp(this: ProcedureDeclarationBlock): boolean {
-  return this.warp_;
+  return this.model.getWarp();
 }
 
 /**
@@ -838,7 +844,7 @@ function getWarp(this: ProcedureDeclarationBlock): boolean {
  * @param warp The value of the warp_ property.
  */
 function setWarp(this: ProcedureDeclarationBlock, warp: boolean) {
-  this.warp_ = warp;
+  this.model.setWarp(warp);
 }
 
 /**
@@ -846,7 +852,7 @@ function setWarp(this: ProcedureDeclarationBlock, warp: boolean) {
  * @returns The value of the return_ property.
  */
 function getReturn(this: ProcedureDeclarationBlock): boolean {
-  return this.return_;
+  return this.model.getReturn();
 }
 
 /**
@@ -854,7 +860,7 @@ function getReturn(this: ProcedureDeclarationBlock): boolean {
  * @param ret The value of the return_ property.
  */
 function setReturn(this: ProcedureDeclarationBlock, ret: boolean) {
-  this.return_ = ret;
+  this.model.setReturnTypes([]);
   this.updateShape_();
 }
 
@@ -863,7 +869,7 @@ function setReturn(this: ProcedureDeclarationBlock, ret: boolean) {
  * @returns The value of the global_ property.
  */
 function getGlobal(this: ProcedureDeclarationBlock): boolean {
-  return this.global_;
+  return this.model.getGlobal();
 }
 
 /**
@@ -871,7 +877,7 @@ function getGlobal(this: ProcedureDeclarationBlock): boolean {
  * @param global The value of global_ property.
  */
 function setGlobal(this: ProcedureDeclarationBlock, global: boolean) {
-  this.global_ = global;
+  this.model.setGlobal(global);
 }
 
 /**
@@ -957,16 +963,16 @@ function updateArgumentReporterNames(
 
   // Create a list of "name changes", including the new name and blocks matching the old name
   // Only search over the current set of argument ids, ignore args that have been removed
-  for (let i = 0, id; id = this.argumentIds_[i]; i++) {
+  for (const param of this.model.getParameters()) {
     // Find the previous index of this argument id. Could be -1 if it is newly added.
-    const prevIndex = prevArgIds.indexOf(id);
-    if (prevIndex == -1) continue; // Newly added argument, no corresponding previous argument to update.
+    const prevIndex = prevArgIds.indexOf(param.getId());
+    if (prevIndex === -1) continue; // Newly added argument, no corresponding previous argument to update.
     const prevName = prevDisplayNames[prevIndex];
-    if (prevName != this.displayNames_[i]) {
+    if (prevName !== param.getName()) {
       nameChanges.push({
-        newName: this.displayNames_[i],
+        newName: param.getName(),
         blocks: argReporters.filter(function(block) {
-          return block.getFieldValue('VALUE') == prevName;
+          return block.getFieldValue('VALUE') === prevName;
         })
       });
     }
@@ -987,9 +993,10 @@ function updateArgumentReporterNames(
 function updateProcedureShape(
   this: ProcedureCallBlock | ProcedureDeclarationBlock | ProcedurePrototypeBlock
 ) {
-  const isReturn = this.getOutputShape() !== Constants.OUTPUT_SHAPE_NORMAL;
-  if (isReturn != this.return_) {
-    if (this.return_) {
+  const prevIsReturn = this.getOutputShape() !== Constants.OUTPUT_SHAPE_NORMAL;
+  const isReturn = this.model.getReturn();
+  if (prevIsReturn != isReturn) {
+    if (isReturn) {
       this.setOutputShape(Constants.OUTPUT_SHAPE_ROUND);
       this.setPreviousStatement(false);
       this.setNextStatement(false);
@@ -1001,6 +1008,14 @@ function updateProcedureShape(
       this.setNextStatement(true, null);
     }
   }
+}
+
+/**
+ * Get the main workspace associated with current workspace.
+ * @returns The workspace.
+ */
+function getCallerTargetWorkspace(this: ProcedureCallBlock) {
+  return this.workspace.isFlyout ? this.workspace.targetWorkspace : this.workspace;
 }
 
 /**
@@ -1027,14 +1042,15 @@ Blockly.Blocks['procedures_call'] = {
     this.jsonInit({
       extensions: ['colours_more', 'shape_statement', 'procedure_call_contextmenu']
     });
-    this.procCode_ = '';
-    this.argumentIds_ = [];
-    this.warp_ = false;
-    this.return_ = false;
-    this.global_ = false;
+    // this.procCode_ = '';
+    // this.argumentIds_ = [];
+    // this.warp_ = false;
+    // this.return_ = false;
+    // this.global_ = false;
   },
   // Shared
   getProcCode: getProcCode,
+  getProcedureModel: getProcedureModel,
   removeAllInputs_: removeAllInputs,
   disconnectOldBlocks_: disconnectOldBlocks,
   deleteShadows_: deleteShadows,
@@ -1051,6 +1067,7 @@ Blockly.Blocks['procedures_call'] = {
   // updateShape_: updateShape,
 
   // Only exists on the external caller.
+  getTargetWorkspace_: getCallerTargetWorkspace,
   attachShadow_: attachShadow,
   buildShadowState_: buildShadowState
 } as ProcedureCallBlock;
@@ -1064,18 +1081,10 @@ Blockly.Blocks['procedures_prototype'] = {
     this.jsonInit({
       extensions: ['colours_more', 'shape_statement']
     });
-
-    /* Data known about the procedure. */
-    this.procCode_ = '';
-    this.displayNames_ = [];
-    this.argumentIds_ = [];
-    this.argumentDefaults_ = [];
-    this.warp_ = false;
-    this.return_ = false;
-    this.global_ = false;
   },
   // Shared.
   getProcCode: getProcCode,
+  getProcedureModel: getProcedureModel,
   removeAllInputs_: removeAllInputs,
   disconnectOldBlocks_: disconnectOldBlocks,
   deleteShadows_: deleteShadows,
@@ -1104,17 +1113,12 @@ Blockly.Blocks['procedures_declaration'] = {
     this.jsonInit({
       extensions: ['colours_more', 'shape_statement']
     });
-    /* Data known about the procedure. */
-    this.procCode_ = '';
-    this.displayNames_ = [];
-    this.argumentIds_ = [];
-    this.argumentDefaults_ = [];
-    this.warp_ = false;
-    this.return_ = false;
-    this.global_ = false;
+    // Create a procedure model.
+    this.model = new ProcedureModel(this.workspace, '');
   },
   // Shared.
   getProcCode: getProcCode,
+  getProcedureModel: getProcedureModel,
   removeAllInputs_: removeAllInputs,
   disconnectOldBlocks_: disconnectOldBlocks,
   deleteShadows_: deleteShadows,
@@ -1288,10 +1292,10 @@ const PROCEDURE_DEF_CONTEXTMENU = {
         }
         const procCode = (input.connection.targetBlock() as ProcedurePrototypeBlock).getProcCode();
         option.callback = () => {
-          // const didDelete = deleteProcedureDefCallback(procCode, this);
-          // if (!didDelete) {
-          //   alert(Blockly.Msg.PROCEDURE_USED);
-          // }
+          const didDelete = deleteProcedureDefCallbackfunction(procCode, this);
+          if (!didDelete) {
+            alert(Blockly.Msg.PROCEDURE_USED);
+          }
         };
 
         // Add force delete option after delete option.
@@ -1317,7 +1321,6 @@ Blockly.Extensions.registerMixin('procedure_def_contextmenu', PROCEDURE_DEF_CONT
 const PROCEDURE_CALL_CONTEXTMENU = {
   /**
    * Add the "edit" option to the context menu.
-   * @todo Add "go to definition" option once implemented.
    * @param menuOptions List of menu options to edit.
    */
   customContextMenu: function(this: ProcedureCallBlock, menuOptions: Array<

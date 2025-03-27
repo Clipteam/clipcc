@@ -10,6 +10,7 @@ export class ParameterModel implements Blockly.procedures.IParameterModel {
   protected workspace: Blockly.Workspace;
   protected id: string;
   protected name: string;
+  protected defaultValue: string;
   protected types: string[] = [];
   protected model: Blockly.procedures.IProcedureModel | null = null;
 
@@ -17,11 +18,13 @@ export class ParameterModel implements Blockly.procedures.IParameterModel {
    * @param workspace The workspace this parameter model belongs to.
    * @param name Name of parameter.
    * @param id Optional ID of paramter, or pass null to generate a random ID.
+   * @param defaultValue Optional default value of paramter.
    */
-  constructor(workspace: Blockly.Workspace, name: string, id?: string) {
+  constructor(workspace: Blockly.Workspace, name: string, id?: string, defaultValue?: string) {
     this.workspace = workspace;
     this.name = name;
     this.id = id ?? Blockly.utils.idGenerator.genUid();
+    this.defaultValue = defaultValue ?? '';
   }
 
   /**
@@ -68,6 +71,10 @@ export class ParameterModel implements Blockly.procedures.IParameterModel {
    */
   getId(): string {
     return this.id;
+  }
+
+  getDefaultValue(): string {
+    return this.defaultValue;
   }
 
   /**

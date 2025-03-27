@@ -178,6 +178,12 @@ function createProcedureCallbackFactory(
 ): (state?: ProcedureExtraState) => void {
   return function(state?: ProcedureExtraState) {
     if (state) {
+      Blockly.Events.setGroup(true);
+      // Add to procedure map of the workspace.
+      const model = ProcedureModel.loadExtraState(workspace, state);
+      workspace.getProcedureMap().add(model);
+
+      // Create the definition block.
       const blockState: Blockly.serialization.blocks.State = {
         type: Constants.PROCEDURES_DEFINITION_BLOCK_TYPE,
         inputs: {
@@ -189,8 +195,7 @@ function createProcedureCallbackFactory(
           }
         }
       };
-      Blockly.Events.setGroup(true);
-      const block = Blockly.serialization.blocks.append(blockState, workspace) as Blockly.BlockSvg;
+      const block = Blockly.serialization.blocks.append(blockState, workspace) as ProcedureDefinitionBlock;
       Blockly.renderManagement.finishQueuedRenders().then(() => {
         const scale = workspace.scale; // To convert from pixel units to workspace units
         // Position the block so that it is at the top left of the visible workspace,
@@ -205,9 +210,6 @@ function createProcedureCallbackFactory(
         block.scheduleSnapAndBump();
         Blockly.Events.setGroup(false);
       });
-
-      // Add to procedure map of the workspace.
-      workspace.getProcedureMap().add(ProcedureModel.loadExtraState(workspace, state));
     }
   };
 }
@@ -260,7 +262,7 @@ function editProcedureCallback(block: ProcedureDefinitionBlock | ProcedureCallBl
   // Block now refers to the procedure prototype block, it is safe to proceed.
   externalProcedureDefCallback(
     prototypeBlock.saveExtraState(),
-    editProcedureCallbackFactory(block),
+    editProcedureCallbackFactory(prototypeBlock),
     false
   );
 }
@@ -268,12 +270,31 @@ function editProcedureCallback(block: ProcedureDefinitionBlock | ProcedureCallBl
 /**
  * Callback factory for editing an existing custom procedure.
  * @param block The procedure prototype block being edited.
- * @return Callback for editing the custom procedure.
+ * @returns Callback for editing the custom procedure.
  */
-function editProcedureCallbackFactory(block: Blockly.BlockSvg) {
+function editProcedureCallbackFactory(block: ProcedurePrototypeBlock) {
   return function(state?: ProcedureExtraState) {
     if (state) {
-      // @todo
+      const procedureMap = block.workspace.getProcedureMap();
+      const prevProcCode = block.getProcCode();
+      const procedureModel = procedureMap.get(prevProcCode) as ProcedureModel;
+
+      // Update the model with extra states.
+      procedureModel.loadExtraState(state);
+      if (procedureModel.getProcCode() !== prevProcCode) {
+        procedureMap.delete(prevProcCode);
+        procedureMap.add(procedureModel);
+      }
+
+      // Update all procedure blocks.
+      const allBlocks = block.workspace.getAllBlocks(false);
+      for (const block of allBlocks) {
+        if (isProcedureCallBlock(block) || isProcedurePrototypeBlock(block)) {
+          block.updateDisplay_();
+        }
+      }
+
+      // @todo emit procedure events
     }
   };
 }
@@ -409,7 +430,7 @@ export function makeChangeShapeOption(
  * @param definitionRoot The root block of the stack that defines the custom procedure.
  * @returns True if the custom procedure was deleted, false otherwise.
  */
-function deleteProcedureDefCallbackfunction(procCode: string, definitionRoot: Blockly.BlockSvg): boolean {
+export function deleteProcedureDefCallbackfunction(procCode: string, definitionRoot: Blockly.BlockSvg): boolean {
   // const callers = getCallers(procCode, definitionRoot.workspace, definitionRoot, false /* allowRecursive */);
   // if (callers.length > 0) {
   //   return false;
