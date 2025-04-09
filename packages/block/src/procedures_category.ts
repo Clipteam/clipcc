@@ -38,6 +38,9 @@ import type {
   ProcedureDefinitionBlock,
   ProcedurePrototypeBlock
 } from './blocks/procedures';
+import {FuncCreate} from './events/func_create';
+import {FuncChange} from './events/func_change';
+import {FuncDelete} from './events/func_delete';
 
 /**
  * Construct the blocks required by the flyout for the procedure category.
@@ -182,6 +185,7 @@ function createProcedureCallbackFactory(
       // Add to procedure map of the workspace.
       const model = ProcedureModel.loadExtraState(workspace, state);
       workspace.getProcedureMap().add(model);
+      Blockly.Events.fire(new FuncCreate(model));
 
       // Create the definition block.
       const blockState: Blockly.serialization.blocks.State = {
@@ -294,7 +298,9 @@ function editProcedureCallbackFactory(block: ProcedurePrototypeBlock) {
         }
       }
 
-      // @todo emit procedure events
+      Blockly.Events.setGroup(true);
+      Blockly.Events.fire(new FuncChange(procedureModel, state));
+      Blockly.Events.setGroup(false);
     }
   };
 }
@@ -437,12 +443,14 @@ export function deleteProcedureDefCallbackfunction(procCode: string, definitionR
   // }
 
   const workspace = definitionRoot.workspace;
-
-  // workspace.getProcedureMap().delete(definitionRoot);
+  const procedureMap = workspace.getProcedureMap();
+  const procedureModel = procedureMap.get(procCode) as ProcedureModel;
+  procedureMap.delete(procCode);
 
   // Delete the whole stack.
   Blockly.Events.setGroup(true);
   definitionRoot.dispose();
+  Blockly.Events.fire(new FuncDelete(procedureModel));
   Blockly.Events.setGroup(false);
 
   // TODO (#1354) Update this function when '_' is removed
