@@ -26,7 +26,7 @@ export class ConnectionChecker extends Blockly.ConnectionChecker {
     const canConnect = super.doDragChecks(a, b, distance);
 
     if (canConnect) {
-      // Prevent other blocks connect to the input of precedure definition.
+      // Prevent other blocks connect to the input of procedure definition.
       if (
         b.getSourceBlock().type === Constants.PROCEDURES_DEFINITION_BLOCK_TYPE &&
         b.getParentInput()?.name === 'custom_block'
