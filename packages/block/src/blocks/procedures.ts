@@ -35,6 +35,7 @@ import {
 } from '../procedures_category';
 import {ProcedureModel} from '../procedure_model';
 import {ParameterModel} from '../parameter_model';
+import {ProcedureArgumentDragStrategy} from '../procedure_argument_drag_strategy';
 
 interface ConnectionMap {
   [key: string]: {
@@ -1248,7 +1249,7 @@ Blockly.Blocks['procedures_discard'] = {
 };
 
 Blockly.Blocks['argument_reporter_boolean'] = {
-  init: function() {
+  init: function(this: Blockly.BlockSvg) {
     this.jsonInit({
       message0: '%1',
       args0: [{
@@ -1258,11 +1259,12 @@ Blockly.Blocks['argument_reporter_boolean'] = {
       }],
       extensions: ['colours_argument', 'output_boolean']
     });
+    this.setDragStrategy(new ProcedureArgumentDragStrategy(this));
   }
 };
 
 Blockly.Blocks['argument_reporter_string_number'] = {
-  init: function() {
+  init: function(this: Blockly.BlockSvg) {
     this.jsonInit({
       message0: '%1',
       args0: [{
@@ -1272,6 +1274,7 @@ Blockly.Blocks['argument_reporter_string_number'] = {
       }],
       extensions: ['colours_argument', 'output_number', 'output_string']
     });
+    this.setDragStrategy(new ProcedureArgumentDragStrategy(this));
   }
 };
 
