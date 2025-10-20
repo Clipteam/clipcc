@@ -279,12 +279,14 @@
     }
 
     function applyMutation() {
-      const state = mutationRoot.saveExtraState();
-      callback(state);
-      callback = null;
-      mutationRoot = null;
-      functionEditor.clear();
-      mainWorkspace.refreshToolboxSelection();
+      if (mutationRoot) {
+        const state = mutationRoot.saveExtraState();
+        callback(state);
+        callback = null;
+        mutationRoot = null;
+        functionEditor.clear();
+        mainWorkspace.refreshToolboxSelection();
+      }
     }
 
     function cancel() {
