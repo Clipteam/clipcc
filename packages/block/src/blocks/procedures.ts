@@ -65,6 +65,7 @@ export interface ProcedureBlock extends Blockly.BlockSvg {
     id: string, input: Blockly.Input
   ) => void;
   addProcedureLabel_: (text: string) => void;
+  setShape_: (shape: number | null, noConnectionUpdate?: boolean) => void;
   updateShape_: () => void;
 }
 
@@ -74,8 +75,11 @@ export interface ProcedureDefinitionBlock extends Blockly.BlockSvg {
 
 export interface ProcedureCallBlock extends ProcedureBlock {
   type: 'procedures_call';
+  return_: boolean;
   generateShadows_: boolean;
 
+  getReturn: () => boolean;
+  setReturn: (ret: boolean) => void;
   getTargetWorkspace_: () => Blockly.WorkspaceSvg;
   attachShadow_: (input: Blockly.Input, argumentType: string) => void;
   buildShadowState_: (type: string) => Blockly.serialization.blocks.State;
@@ -120,10 +124,13 @@ export interface ProcedureArgumentEditorBlock extends Blockly.BlockSvg {
 function callerMutationToDom(this: ProcedureCallBlock): Element {
   const container = document.createElement('mutation');
   container.setAttribute('proccode', this.model.getProcCode());
+  container.setAttribute('return', JSON.stringify(this.return_));
+
+  // Unused properties.
   container.setAttribute('argumentids', JSON.stringify(this.model.getArguments().argumentIds));
   container.setAttribute('warp', JSON.stringify(this.model.getWarp()));
-  container.setAttribute('return', JSON.stringify(this.model.getReturn()));
   container.setAttribute('global', JSON.stringify(this.model.getGlobal()));
+
   return container;
 }
 
@@ -215,7 +222,7 @@ function callerSaveExtraState(
     proccode: this.model.getProcCode(),
     argumentids: this.model.getArguments().argumentIds,
     warp: this.model.getWarp(),
-    return: this.model.getReturn(),
+    return: this.return_,
     global: this.model.getGlobal()
   };
 }
@@ -237,14 +244,15 @@ function callerLoadExtraState(
   }
 
   this.generateShadows_ = true;
-  // // don't update shape if caller still has connections
-  // if (
-  //   !(this.previousConnection && this.previousConnection.isConnected()) &&
-  //   !(this.outputConnection && this.outputConnection.isConnected()) &&
-  //   !(this.nextConnection && this.nextConnection.isConnected())
-  // ) {
-  //   this.return_ = parseStringOrObject(state.return);
-  // }
+  // Don't update shape if caller still has connections
+  if (
+    !(this.previousConnection && this.previousConnection.isConnected()) &&
+    !(this.outputConnection && this.outputConnection.isConnected()) &&
+    !(this.nextConnection && this.nextConnection.isConnected())
+  ) {
+    this.return_ = parseStringOrObject(state.return);
+  }
+
   this.updateDisplay_();
 }
 
@@ -337,7 +345,7 @@ function getProcedureModel(this: ProcedureBlock): ProcedureModel {
 function updateDisplay(this: ProcedureBlock) {
   const connectionMap = this.disconnectOldBlocks_();
   this.removeAllInputs_();
-  // this.updateShape_();
+  this.updateShape_();
   this.createAllInputs_(connectionMap);
   this.deleteShadows_(connectionMap);
 }
@@ -860,7 +868,7 @@ function getReturn(this: ProcedureDeclarationBlock): boolean {
  * @param ret The value of the return_ property.
  */
 function setReturn(this: ProcedureDeclarationBlock, ret: boolean) {
-  this.model.setReturnTypes([]);
+  this.model.setReturnTypes(ret ? [] : null);
   this.updateShape_();
 }
 
@@ -988,25 +996,35 @@ function updateArgumentReporterNames(
 }
 
 /**
- * Update the block's shape to meet its return type.
+ * Set the block's shape.
+ * @param shape The new shape.
+ * @param noConnectionUpdate True to not update the connection, used for
+ *    prototype block.
  */
-function updateProcedureShape(
-  this: ProcedureCallBlock | ProcedureDeclarationBlock | ProcedurePrototypeBlock
+function setProcedureShape(
+  this: ProcedureCallBlock | ProcedureDeclarationBlock | ProcedurePrototypeBlock,
+  shape: number | null,
+  noConnectionUpdate?: boolean
 ) {
-  const prevIsReturn = this.getOutputShape() !== Constants.OUTPUT_SHAPE_NORMAL;
-  const isReturn = this.model.getReturn();
-  if (prevIsReturn != isReturn) {
-    if (isReturn) {
-      this.setOutputShape(Constants.OUTPUT_SHAPE_ROUND);
-      this.setPreviousStatement(false);
-      this.setNextStatement(false);
-      this.setOutput(true);
-    } else {
+  switch (shape) {
+    case Constants.OUTPUT_SHAPE_NORMAL:
       this.setOutputShape(Constants.OUTPUT_SHAPE_NORMAL);
-      this.setOutput(false);
-      this.setPreviousStatement(true, null);
-      this.setNextStatement(true, null);
-    }
+      if (!noConnectionUpdate) {
+        this.setOutput(false);
+        this.setPreviousStatement(true, null);
+        this.setNextStatement(true, null);
+      }
+      break;
+    case Constants.OUTPUT_SHAPE_ROUND:
+      this.setOutputShape(Constants.OUTPUT_SHAPE_ROUND);
+      if (!noConnectionUpdate) {
+        this.setPreviousStatement(false);
+        this.setNextStatement(false);
+        this.setOutput(true);
+      }
+      break;
+    default:
+      console.error(`Unknown shape ${shape}`);
   }
 }
 
@@ -1042,11 +1060,7 @@ Blockly.Blocks['procedures_call'] = {
     this.jsonInit({
       extensions: ['colours_more', 'shape_statement', 'procedure_call_contextmenu']
     });
-    // this.procCode_ = '';
-    // this.argumentIds_ = [];
-    // this.warp_ = false;
-    // this.return_ = false;
-    // this.global_ = false;
+    this.return_ = false;
   },
   // Shared
   getProcCode: getProcCode,
@@ -1064,12 +1078,26 @@ Blockly.Blocks['procedures_call'] = {
   loadExtraState: callerLoadExtraState,
   populateArgument_: populateArgumentOnCaller,
   addProcedureLabel_: addLabelField,
-  // updateShape_: updateShape,
+  setShape_: setProcedureShape,
+  updateShape_() {
+    const prevIsReturn = this.getOutputShape() !== Constants.OUTPUT_SHAPE_NORMAL;
+    const isReturn = this.return_;
+    if (prevIsReturn !== isReturn) {
+      this.setShape_(isReturn ? Constants.OUTPUT_SHAPE_ROUND : Constants.OUTPUT_SHAPE_NORMAL);
+    }
+  },
 
   // Only exists on the external caller.
   getTargetWorkspace_: getCallerTargetWorkspace,
   attachShadow_: attachShadow,
-  buildShadowState_: buildShadowState
+  buildShadowState_: buildShadowState,
+  setReturn(ret: boolean) {
+    this.return_ = ret;
+    this.updateShape_();
+  },
+  getReturn() {
+    return this.return_;
+  }
 } as ProcedureCallBlock;
 
 /**
@@ -1098,7 +1126,14 @@ Blockly.Blocks['procedures_prototype'] = {
   loadExtraState: definitionLoadExtraState,
   populateArgument_: populateArgumentOnPrototype,
   addProcedureLabel_: addLabelField,
-  updateShape_: updateProcedureShape,
+  setShape_: setProcedureShape,
+  updateShape_() {
+    const prevIsReturn = this.getOutputShape() !== Constants.OUTPUT_SHAPE_NORMAL;
+    const isReturn = this.model.getReturn();
+    if (prevIsReturn !== isReturn) {
+      this.setShape_(isReturn ? Constants.OUTPUT_SHAPE_ROUND : Constants.OUTPUT_SHAPE_NORMAL, true);
+    }
+  },
 
   // Only exists on procedures_prototype.
   createArgumentReporter_: createArgumentReporter,
@@ -1132,7 +1167,14 @@ Blockly.Blocks['procedures_declaration'] = {
   loadExtraState: definitionLoadExtraState,
   populateArgument_: populateArgumentOnDeclaration,
   addProcedureLabel_: addLabelEditor,
-  updateShape_: updateProcedureShape,
+  setShape_: setProcedureShape,
+  updateShape_() {
+    const prevIsReturn = this.getOutputShape() !== Constants.OUTPUT_SHAPE_NORMAL;
+    const isReturn = this.model.getReturn();
+    if (prevIsReturn !== isReturn) {
+      this.setShape_(isReturn ? Constants.OUTPUT_SHAPE_ROUND : Constants.OUTPUT_SHAPE_NORMAL);
+    }
+  },
 
   // Exist on declaration and arguments editors, with different implementations.
   removeFieldCallback: removeFieldCallback,

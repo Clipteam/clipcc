@@ -420,7 +420,7 @@ export function makeChangeShapeOption(
     text: Blockly.Msg.CHANGE_PROCEDURE_SHAPE,
     callback: function() {
       const oldState = block.saveExtraState();
-      // block.setReturn(!block.getReturn());
+      block.setReturn(!block.getReturn());
       const newState = block.saveExtraState();
       Blockly.Events.setGroup(true);
       Blockly.Events.fire(new Blockly.Events.BlockChange(block, 'mutation', null, oldState, newState));

@@ -293,6 +293,18 @@
       functionEditor.clear();
       mainWorkspace.refreshToolboxSelection();
     }
+
+    function changeShape() {
+      if (mutationRoot) {
+        mutationRoot.setReturn(!mutationRoot.getReturn());
+      }
+    }
+
+    function changeGlobal() {
+      if (mutationRoot) {
+        mutationRoot.setGlobal(!mutationRoot.getGlobal());
+      }
+    }
 	</script>
 </head>
 <body onload="start()">
