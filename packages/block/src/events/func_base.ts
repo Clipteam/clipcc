@@ -23,8 +23,13 @@ export class FuncBase extends Blockly.Events.Abstract {
   constructor(procedure?: ProcedureModel) {
     super();
     this.isBlank = !procedure;
-    if (this.isBlank) return;
-    this.procCode = procedure!.getProcCode();
+    if (!procedure) {
+      this.isBlank = true;
+      return;
+    }
+    this.isBlank = false;
+    this.procCode = procedure.getProcCode();
+    this.workspaceId = procedure.getWorkspaceId();
   }
 
   /**

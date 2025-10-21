@@ -235,6 +235,14 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
   }
 
   /**
+   * Get the workspace id that the procedure belongs to.
+   * @returns The ID of current workspace.
+   */
+  getWorkspaceId(): string {
+    return this.workspace.id;
+  }
+
+  /**
    * Serializes the state of the procedure to JSON.
    * @returns JSON serializable state of the procedure.
    */
