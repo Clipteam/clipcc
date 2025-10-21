@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+	<meta charset='utf-8' />
+	<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
 	<title>Test Playground</title>
-	<script src="main.js"></script>
+	<script src='main.js'></script>
   <script>
     window.Blockly.Msg = window.Blockly.Msg.Msg;
   </script>
-  <script src="messages.js"></script>
+  <script src='messages.js'></script>
 	<style>
 		html, body {
 			height: 100%;
@@ -156,6 +156,286 @@
         kind: 'category',
         name: 'Variables',
         custom: 'VARIABLE'
+      }, {
+        kind: 'category',
+        name: 'Looks',
+        contents: [
+          {
+            'kind': 'block',
+            'type': 'looks_sayforsecs',
+            'inputs': {
+              'MESSAGE': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': 'Hello!'
+                  }
+                }
+              },
+              'SECS': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 2
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_say',
+            'inputs': {
+              'MESSAGE': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': 'Hello!'
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_thinkforsecs',
+            'inputs': {
+              'MESSAGE': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': 'Hmm...'
+                  }
+                }
+              },
+              'SECS': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 2
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_think',
+            'inputs': {
+              'MESSAGE': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': 'Hmm...'
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_show'
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_hide'
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_hideallsprites'
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_changeeffectby',
+            'inputs': {
+              'CHANGE': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 25
+                  }
+                }
+              }
+            },
+            'fields': {
+              'EFFECT': 'COLOR'
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_seteffectto',
+            'inputs': {
+              'VALUE': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            },
+            'fields': {
+              'EFFECT': 'COLOR'
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_cleargraphiceffects'
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_changesizeby',
+            'inputs': {
+              'CHANGE': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 10
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_setsizeto',
+            'inputs': {
+              'SIZE': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 100
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_size'
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_changestretchby',
+            'inputs': {
+              'CHANGE': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 10
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_setstretchto',
+            'inputs': {
+              'STRETCH': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 100
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_costume',
+            'fields': {
+              'COSTUME': 'COSTUME1'
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_switchcostumeto',
+            'inputs': {
+              'COSTUME': {
+                'shadow': {
+                  'type': 'looks_costume'
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_nextcostume'
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_switchbackdropto',
+            'inputs': {
+              'BACKDROP': {
+                'shadow': {
+                  'type': 'looks_backdrops'
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_backdrops',
+            'fields': {
+              'BACKDROP': 'BACKDROP1'
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_gotofrontback',
+            'fields': {
+              'FRONT_BACK': 'front'
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_goforwardbackwardlayers',
+            'inputs': {
+              'NUM': {
+                'shadow': {
+                  'type': 'math_integer',
+                  'fields': {
+                    'NUM': 1
+                  }
+                }
+              }
+            },
+            'fields': {
+              'FORWARD_BACKWARD': 'forward'
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_backdropnumbername',
+            'fields': {
+              'NUMBER_NAME': 'number'
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_costumenumbername',
+            'fields': {
+              'NUMBER_NAME': 'number'
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_switchbackdroptoandwait',
+            'inputs': {
+              'BACKDROP': {
+                'shadow': {
+                  'type': 'looks_backdrops'
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'looks_nextbackdrop'
+          }
+        ],
       }]
 		};
 
@@ -183,8 +463,8 @@
 		}
 	</script>
 </head>
-<body onload="start()">
-	<div id="collaborators"></div>
-	<div id="blocklyDiv"></div>
+<body onload='start()'>
+	<div id='collaborators'></div>
+	<div id='blocklyDiv'></div>
 </body>
 </html>
