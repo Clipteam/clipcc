@@ -23,6 +23,7 @@ import {flyoutCategory as variableCategory} from './data_category';
 import {flyoutCategory as procedureCategory} from './procedures_category';
 import styles from './styles/blockly.css';
 
+import './renderer/renderer';
 import './connection_checker';
 
 import './blocks/extensions';
@@ -82,7 +83,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
  */
 export function injectWorkspace(container: Element | string, options?: Blockly.BlocklyOptions) {
   const defaultOptions: Blockly.BlocklyOptions = {
-    renderer: 'zelos',
+    renderer: 'scratch',
     theme: createTheme(),
     plugins: {
       toolbox: ContinuousToolBox,

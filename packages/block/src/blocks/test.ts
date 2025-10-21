@@ -39,6 +39,24 @@ Blockly.Blocks['test_str'] = {
   }
 };
 
+Blockly.Blocks['test_boolean'] = {
+  init: function(this: Blockly.Block) {
+    this.jsonInit({
+      message0: 'text %1 %2',
+      args0: [{
+        type: 'input_value',
+        name: 'COND1',
+        check: 'Boolean'
+      }, {
+        type: 'input_value',
+        name: 'COND2',
+        check: 'Boolean'
+      }],
+      extensions: ['colours_operators', 'output_number']
+    });
+  }
+};
+
 Blockly.Blocks['test_field_angle'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
