@@ -490,7 +490,7 @@ Blockly.Blocks['looks_costumenumbername'] = {
 
 /**
  * Block to switch the backdrop to the selected one and wait.
-*/
+ */
 Blockly.Blocks['looks_switchbackdroptoandwait'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
@@ -508,7 +508,7 @@ Blockly.Blocks['looks_switchbackdroptoandwait'] = {
 
 /**
  * Block to switch the backdrop to the next one.
-*/
+ */
 Blockly.Blocks['looks_nextbackdrop'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
