@@ -25,6 +25,7 @@ import './blocks/extensions';
 import './blocks/common';
 import './blocks/data';
 import './blocks/looks';
+import './blocks/sound';
 import './blocks/test';
 
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
