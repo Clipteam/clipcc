@@ -1349,9 +1349,10 @@ const PROCEDURE_DEF_CONTEXTMENU = {
         menuOptions.splice(i + 1, 0, makeForceDeleteOption(this));
       }
     }
+
     // Find and remove the duplicate option
     for (let i = 0, option; option = menuOptions[i]; i++) {
-      if (option.text == Blockly.Msg.DUPLICATE) {
+      if (option.text === Blockly.Msg.DUPLICATE_BLOCK) {
         menuOptions.splice(i, 1);
         break;
       }
