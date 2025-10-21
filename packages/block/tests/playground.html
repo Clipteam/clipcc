@@ -536,6 +536,593 @@
             'type': 'sound_volume'
           }
         ]
+      }, {
+        kind: 'category',
+        name: 'Operators',
+        contents: [
+          {
+            'kind': 'block',
+            'type': 'operator_add',
+            'inputs': {
+              'NUM1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'NUM2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_subtract',
+            'inputs': {
+              'NUM1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'NUM2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_multiply',
+            'inputs': {
+              'NUM1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'NUM2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_divide',
+            'inputs': {
+              'NUM1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'NUM2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_random',
+            'inputs': {
+              'FROM': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 1
+                  }
+                }
+              },
+              'TO': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 10
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_lt',
+            'inputs': {
+              'OPERAND1': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': ''
+                  }
+                }
+              },
+              'OPERAND2': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': ''
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_equals',
+            'inputs': {
+              'OPERAND1': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': ''
+                  }
+                }
+              },
+              'OPERAND2': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': ''
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_gt',
+            'inputs': {
+              'OPERAND1': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': ''
+                  }
+                }
+              },
+              'OPERAND2': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': ''
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_and'
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_or'
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_not'
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_join',
+            'inputs': {
+              'STRING1': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': 'apple'
+                  }
+                }
+              },
+              'STRING2': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': 'banana'
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_letter_of',
+            'inputs': {
+              'LETTER': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 1
+                  }
+                }
+              },
+              'STRING': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': 'apple'
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_length',
+            'inputs': {
+              'STRING': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': 'apple'
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_contains',
+            'inputs': {
+              'STRING1': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': 'apple'
+                  }
+                }
+              },
+              'STRING2': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': 'a'
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_mod',
+            'inputs': {
+              'NUM1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'NUM2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_round',
+            'inputs': {
+              'NUM': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_mathop',
+            'inputs': {
+              'NUM': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_power',
+            'inputs': {
+              'NUM1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'NUM2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_bitand',
+            'inputs': {
+              'NUM1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'NUM2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_bitor',
+            'inputs': {
+              'NUM1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'NUM2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_bitxor',
+            'inputs': {
+              'NUM1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'NUM2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_bitnot',
+            'inputs': {
+              'NUM1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_bitlsh',
+            'inputs': {
+              'NUM1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'NUM2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_bitrsh',
+            'inputs': {
+              'NUM1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'NUM2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_bitursh',
+            'inputs': {
+              'NUM1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'NUM2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_ge',
+            'inputs': {
+              'OPERAND1': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': ''
+                  }
+                }
+              },
+              'OPERAND2': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': ''
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_le',
+            'inputs': {
+              'OPERAND1': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': ''
+                  }
+                }
+              },
+              'OPERAND2': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': ''
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_nequals',
+            'inputs': {
+              'OPERAND1': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': ''
+                  }
+                }
+              },
+              'OPERAND2': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': ''
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'operator_indexof',
+            'inputs': {
+              'POS': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 1
+                  }
+                }
+              },
+              'STRING': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': 'apple'
+                  }
+                }
+              },
+              'SUBSTRING': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': 'a'
+                  }
+                }
+              }
+            }
+          }
+        ]
       }]
 		};
 
