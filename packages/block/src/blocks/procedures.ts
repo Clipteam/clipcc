@@ -24,7 +24,7 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
-import {ProcedureExtraState} from '../serialization/procedures';
+import {ProcedureExtraState, ProcedureCallerExtraState} from '../serialization/procedures';
 import {FieldTextInputRemovable} from '../fields/textinput_removable';
 import {
   deleteProcedureDefCallbackfunction,
@@ -59,8 +59,6 @@ export interface ProcedureBlock extends Blockly.BlockSvg {
   // Exist on all three blocks, but have different implementations.
   mutationToDom: () => Element,
   domToMutation: (xmlElement: Element) => void,
-  saveExtraState: () => ProcedureExtraState,
-  loadExtraState: (state: ProcedureExtraState) => void,
   populateArgument_: (
     type: string, index: number, connectionMap: ConnectionMap,
     id: string, input: Blockly.Input
@@ -72,12 +70,18 @@ export interface ProcedureBlock extends Blockly.BlockSvg {
 
 export interface ProcedureDefinitionBlock extends Blockly.BlockSvg {
   type: 'procedures_definition';
+
+  saveExtraState: () => ProcedureExtraState,
+  loadExtraState: (state: ProcedureExtraState) => void,
 }
 
 export interface ProcedureCallBlock extends ProcedureBlock {
   type: 'procedures_call';
   return_: boolean;
   generateShadows_: boolean;
+
+  saveExtraState: () => ProcedureCallerExtraState,
+  loadExtraState: (state: ProcedureCallerExtraState) => void,
 
   getReturn: () => boolean;
   setReturn: (ret: boolean) => void;
@@ -89,12 +93,18 @@ export interface ProcedureCallBlock extends ProcedureBlock {
 export interface ProcedurePrototypeBlock extends ProcedureBlock {
   type: 'procedures_prototype';
 
+  saveExtraState: () => ProcedureExtraState,
+  loadExtraState: (state: ProcedureExtraState) => void,
+
   createArgumentReporter_: (argumentType: string, displayName: string) => Blockly.BlockSvg;
   updateArgumentReporterNames_: (prevArgIds: string[], prevDisplayNames: string[]) => void;
 }
 
 export interface ProcedureDeclarationBlock extends ProcedureBlock {
   type: 'procedures_declaration';
+
+  saveExtraState: () => ProcedureExtraState,
+  loadExtraState: (state: ProcedureExtraState) => void,
 
   removeFieldCallback: (field: Blockly.Field) => void;
   createArgumentEditor_: (argumentType: string, displayName: string) => Blockly.BlockSvg;
@@ -123,14 +133,16 @@ export interface ProcedureArgumentEditorBlock extends Blockly.BlockSvg {
  * @returns XML storage element.
  */
 function callerMutationToDom(this: ProcedureCallBlock): Element {
+  const extraState = this.model.saveExtraState();
+
   const container = document.createElement('mutation');
-  container.setAttribute('proccode', this.model.getProcCode());
-  container.setAttribute('return', JSON.stringify(this.return_));
+  container.setAttribute('proccode', extraState.proccode);
+  container.setAttribute('return', JSON.stringify(this.return_)); // return_ might be modified in caller
 
   // Unused properties.
-  container.setAttribute('argumentids', JSON.stringify(this.model.getArguments().argumentIds));
-  container.setAttribute('warp', JSON.stringify(this.model.getWarp()));
-  container.setAttribute('global', JSON.stringify(this.model.getGlobal()));
+  container.setAttribute('argumentids', JSON.stringify(extraState.argumentids));
+  container.setAttribute('warp', JSON.stringify(extraState.warp));
+  container.setAttribute('global', JSON.stringify(extraState.global));
 
   return container;
 }
@@ -163,18 +175,18 @@ function definitionMutationToDom(
   generateShadows?: boolean
 ): Element {
   const container = document.createElement('mutation');
-  const argumentsInfo = this.model.getArguments();
+  const extraState = this.model.saveExtraState();
 
   if (generateShadows) {
     container.setAttribute('generateshadows', 'true');
   }
-  container.setAttribute('proccode', this.model.getProcCode());
-  container.setAttribute('argumentids', JSON.stringify(argumentsInfo.argumentIds));
-  container.setAttribute('argumentnames', JSON.stringify(argumentsInfo.argumentNames));
-  container.setAttribute('argumentdefaults', JSON.stringify(argumentsInfo.argumentDefaults));
-  container.setAttribute('warp', JSON.stringify(this.model.getWarp()));
-  container.setAttribute('return', JSON.stringify(this.model.getReturn()));
-  container.setAttribute('global', JSON.stringify(this.model.getGlobal()));
+  container.setAttribute('proccode', extraState.proccode);
+  container.setAttribute('argumentids', JSON.stringify(extraState.argumentids));
+  container.setAttribute('argumentnames', JSON.stringify(extraState.argumentnames));
+  container.setAttribute('argumentdefaults', JSON.stringify(extraState.argumentdefaults));
+  container.setAttribute('warp', JSON.stringify(extraState.warp));
+  container.setAttribute('return', JSON.stringify(extraState.return));
+  container.setAttribute('global', JSON.stringify(extraState.global));
   return container;
 }
 
@@ -218,14 +230,13 @@ function parseStringOrObject(object: unknown) {
  */
 function callerSaveExtraState(
   this: ProcedureCallBlock
-): ProcedureExtraState {
-  return {
-    proccode: this.model.getProcCode(),
-    argumentids: this.model.getArguments().argumentIds,
-    warp: this.model.getWarp(),
-    return: this.return_,
-    global: this.model.getGlobal()
-  };
+): ProcedureCallerExtraState {
+  const extraState = this.model.saveExtraState();
+  extraState.return = this.return_; // use caller's return property
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const {argumentnames, argumentdefaults, ...remains} = extraState; // remove used keys
+  return remains;
 }
 
 /**
@@ -235,7 +246,7 @@ function callerSaveExtraState(
  */
 function callerLoadExtraState(
   this: ProcedureCallBlock,
-  state: ProcedureExtraState
+  state: ProcedureCallerExtraState
 ) {
   const procedureMap = this.getTargetWorkspace_().getProcedureMap();
   if (procedureMap.has(state.proccode)) {
@@ -268,20 +279,11 @@ function definitionSaveExtraState(
   this: ProcedurePrototypeBlock | ProcedureDeclarationBlock,
   generateShadows?: boolean
 ): ProcedureExtraState {
-  const argumentInfo = this.model.getArguments();
-  const result: ProcedureExtraState = {
-    proccode: this.model.getProcCode(),
-    argumentids: argumentInfo.argumentIds,
-    argumentnames: argumentInfo.argumentNames,
-    argumentdefaults: argumentInfo.argumentDefaults,
-    warp: this.model.getWarp(),
-    return: this.model.getReturn(),
-    global: this.model.getGlobal()
-  };
+  const extraState = this.model.saveExtraState();
   if (generateShadows) {
-    result.generateshadows = true;
+    extraState.generateshadows = true;
   }
-  return result;
+  return extraState;
 }
 
 /**
@@ -302,7 +304,7 @@ function definitionLoadExtraState(
     }
   }
 
-  const prevArguments = this.model.getArguments();
+  const extraState = this.model.saveExtraState();
   state.argumentids = parseStringOrObject(state.argumentids);
   state.argumentnames = parseStringOrObject(state.argumentnames);
   state.argumentdefaults = parseStringOrObject(state.argumentdefaults);
@@ -311,8 +313,8 @@ function definitionLoadExtraState(
   this.updateDisplay_();
   if ('updateArgumentReporterNames_' in this) {
     this.updateArgumentReporterNames_(
-      prevArguments.argumentIds,
-      prevArguments.argumentNames
+      extraState.argumentids,
+      extraState.argumentnames!
     );
   }
 }
@@ -813,7 +815,7 @@ function addLabelExternal(this: ProcedureDeclarationBlock) {
 function addBooleanExternal(this: ProcedureDeclarationBlock) {
   Blockly.WidgetDiv.hide();
   this.model.setProcCode(this.model.getProcCode() + ' %b');
-  this.model.pushParameter(new ParameterModel(
+  this.model.appendParameter(new ParameterModel(
     this.workspace,
     'boolean',
     Blockly.utils.idGenerator.genUid(),
@@ -830,7 +832,7 @@ function addBooleanExternal(this: ProcedureDeclarationBlock) {
 function addStringNumberExternal(this: ProcedureDeclarationBlock) {
   Blockly.WidgetDiv.hide();
   this.model.setProcCode(this.model.getProcCode() + ' %s');
-  this.model.pushParameter(new ParameterModel(
+  this.model.appendParameter(new ParameterModel(
     this.workspace,
     'number or text',
     Blockly.utils.idGenerator.genUid(),

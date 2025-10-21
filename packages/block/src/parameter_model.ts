@@ -73,6 +73,10 @@ export class ParameterModel implements Blockly.procedures.IParameterModel {
     return this.id;
   }
 
+  /**
+   * Returns the default value of the parameter.
+   * @returns The default value of this parameter.
+   */
   getDefaultValue(): string {
     return this.defaultValue;
   }

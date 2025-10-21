@@ -28,16 +28,17 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
 
   /**
    * Sets the procedure procCode of the procedure.
+   * The procedure map should also be updated when procCode is updated.
    * @param name Procedure procCode.
    * @returns The model instance.
    */
   setName(name: string): this {
-    this.procCode = name;
-    return this;
+    return this.setProcCode(name);
   }
 
   /**
    * Sets the procedure procCode of the procedure.
+   * The procedure map should also be updated when procCode is updated.
    * @param procCode Procedure procCode.
    * @returns The model instance.
    */
@@ -89,7 +90,12 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
     return this;
   }
 
-  pushParameter(parameterModel: ParameterModel): this {
+  /**
+   * Append a parameter into the list of parameters.
+   * @param parameterModel Model of parameter.
+   * @returns The model instance.
+   */
+  appendParameter(parameterModel: ParameterModel): this {
     this.parameters.push(parameterModel);
     parameterModel.setProcedureModel(this);
     if (Blockly.isObservable(parameterModel)) {
@@ -101,6 +107,7 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
   /**
    * Sets the return type(s) of the procedure.
    * Pass null to represent a procedure that does not return.
+   * Set types to [] (empty list) to return any types.
    * @param types Return types or null.
    * @returns The model instance.
    */
@@ -124,11 +131,21 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
     return this;
   }
 
+  /**
+   * Set whether this procedure should run in warp mode.
+   * @param warp New value to be set.
+   * @returns The model instance.
+   */
   setWarp(warp: boolean): this {
     this.warp = warp;
     return this;
   }
 
+  /**
+   * Set whether this procedure is global.
+   * @param global New value to be set.
+   * @returns The model instance.
+   */
   setGlobal(global: boolean): this {
     this.global = global;
     return this;
@@ -150,28 +167,36 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
     return this.procCode;
   }
 
+  /**
+   * Returns the procCode of the procedure.
+   * @returns Procedure procCode.
+   */
   getProcCode(): string {
     return this.procCode;
   }
 
+  /**
+   * Returns whether the procedure should run in warp mode.
+   * @returns True iff the procedure should run in warp mode.
+   */
   getWarp(): boolean {
     return this.warp;
   }
 
+  /**
+   * Returns whether the procedure is global.
+   * @returns True iff the procedure is global.
+   */
   getGlobal(): boolean {
     return this.global;
   }
 
+  /**
+   * Returns whether the procedure returns a value.
+   * @returns True iff the procedure returns a value.
+   */
   getReturn(): boolean {
     return !!this.returnTypes;
-  }
-
-  getArguments(): {argumentIds: string[]; argumentNames: string[]; argumentDefaults: string[];} {
-    return {
-      argumentIds: this.parameters.map((param) => param.getId()),
-      argumentNames: this.parameters.map((param) => param.getName()),
-      argumentDefaults: this.parameters.map((param) => param.getDefaultValue())
-    };
   }
 
   /**
@@ -223,7 +248,7 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
   }
 
   /**
-   * Serializes the state of the procedure to JSON.
+   * Serializes the state of the procedure to JSON which is used in Scratch.
    * @returns JSON serializable state of the procedure.
    */
   saveExtraState(): ProcedureExtraState {
@@ -250,13 +275,12 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
     this.parameters = [];
     if (state.argumentnames && state.argumentids) {
       for (let i = 0; i < state.argumentids.length; ++i) {
-        const param = new ParameterModel(
+        this.parameters.push(new ParameterModel(
           this.workspace,
           state.argumentnames[i],
           state.argumentids[i],
-          state.argumentdefaults?.[i]
-        );
-        this.parameters.push(param);
+          state.argumentdefaults[i]
+        ));
       }
     }
   }

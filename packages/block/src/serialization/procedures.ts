@@ -4,15 +4,18 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from 'blockly/core';
-
-export interface ProcedureExtraState {
+/** The procedure extra state without argumentnames and argumentdefaults. */
+export interface ProcedureCallerExtraState {
   proccode: string;
   argumentids: string[];
-  argumentnames?: string[]; // procedure_definition only
-  argumentdefaults?: string[]; // procedure_definition only
-  generateshadows?: boolean; // procedure_call only
   warp: boolean;
   return: boolean;
   global: boolean;
+  generateshadows?: boolean;
+}
+
+/** The full procedure extra state for definition and prototypes. */
+export interface ProcedureExtraState extends ProcedureCallerExtraState {
+  argumentnames: string[];
+  argumentdefaults: string[];
 }

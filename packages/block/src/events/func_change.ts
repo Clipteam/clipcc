@@ -40,7 +40,9 @@ export class FuncChange extends FuncBase {
       warp: false,
       return: false,
       global: false,
-      argumentids: []
+      argumentids: [],
+      argumentdefaults: [],
+      argumentnames: []
     };
   }
 
