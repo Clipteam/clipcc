@@ -78,6 +78,21 @@
 		#importExport {
 			font-family: monospace;
 		}
+
+    .eventList {
+      height: 150px;
+      width: 100%;
+      overflow-y: visible;
+      overflow-x: hidden;
+    }
+
+    #eventList {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      padding-left: 10px;
+      font-size: 90%;
+    }
   </style>
 	<script>
 		const toolbox = {
@@ -204,8 +219,13 @@
     let callback = null;
     let mainWorkspace = null;
     let functionEditor = null;
+    let eventListElement = null;
+    let loadTime = 0;
+    let events = [];
 
 		function start() {
+      loadTime = Number(new Date());
+
 			mainWorkspace = ScratchBlocks.inject('blocklyDiv', {
         toolbox: toolbox,
         toolboxPosition: 'left',
@@ -228,6 +248,21 @@
           scaleSpeed: 1.1
         }
       });
+
+      eventListElement = document.getElementById('eventList');
+
+      mainWorkspace.addChangeListener(event => {
+        const item = document.createElement('li');
+        item.innerText = `${event.type} (${(Number(new Date()) - loadTime) / 1000})`;
+        item.setAttribute('data-index', events.length);
+        item.onclick = () => {
+          console.log(events[item.getAttribute('data-index')]);
+        };
+        eventListElement.appendChild(item);
+        events.push(event);
+        eventListElement.parentElement.scrollTop = eventListElement.scrollHeight;
+      });
+
       functionEditor = ScratchBlocks.injectWorkspace('functionDiv', {
         media: '../media/',
         zoom: {
@@ -320,6 +355,10 @@
   <div class="left">
     <h1>Blocks Playground</h1>
     <div class="controlPanel">
+    </div>
+    <h1>Events</h1>
+    <div class="eventList">
+      <ul id="eventList"></ul>
     </div>
     <h1>Function Editor</h1>
     <div class="editorActions">
