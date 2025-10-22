@@ -1527,6 +1527,86 @@
           {
             'kind': 'block',
             'type': 'sensing_turnoffturbomode'
+          },
+
+          {
+            'kind': 'block',
+            'type': 'event_whentouchingobject',
+            'inputs': {
+              'TOUCHINGOBJECTMENU': {
+                'shadow': {
+                  'type': 'event_touchingobjectmenu'
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'event_touchingobjectmenu'
+          },
+          {
+            'kind': 'block',
+            'type': 'event_whenflagclicked'
+          },
+          {
+            'kind': 'block',
+            'type': 'event_whenthisspriteclicked'
+          },
+          {
+            'kind': 'block',
+            'type': 'event_whenstageclicked'
+          },
+          {
+            'kind': 'block',
+            'type': 'event_whenbroadcastreceived'
+          },
+          {
+            'kind': 'block',
+            'type': 'event_whenbackdropswitchesto'
+          },
+          {
+            'kind': 'block',
+            'type': 'event_whengreaterthan',
+            'inputs': {
+              'VALUE': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 10
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'event_broadcast_menu'
+          },
+          {
+            'kind': 'block',
+            'type': 'event_broadcast',
+            'inputs': {
+              'BROADCAST_INPUT': {
+                'shadow': {
+                  'type': 'event_broadcast_menu'
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'event_broadcastandwait',
+            'inputs': {
+              'BROADCAST_INPUT': {
+                'shadow': {
+                  'type': 'event_broadcast_menu'
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'event_whenkeypressed'
           }
         ]
       }]

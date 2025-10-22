@@ -52,3 +52,18 @@ export function getWorkspaceOptions(field: Blockly.Field): Blockly.Options {
     return workspace.options;
   }
 }
+
+/**
+ * Get current workspace options from block.
+ * Blockly.getMainWorkspace doesn't work when initView is called on toolbox init.
+ * @param block The current block.
+ * @returns Workspace options.
+ */
+export function getWorkspaceOptionsFromBlock(block: Blockly.Block): Blockly.Options {
+  const workspace = Blockly.getMainWorkspace() ?? block.workspace;
+  if (workspace.isFlyout) {
+    return workspace.options.parentWorkspace!.options;
+  } else {
+    return workspace.options;
+  }
+}
