@@ -320,7 +320,7 @@ Blockly.Blocks['looks_costume'] = {
           ]
         }
       ],
-      extensions: ['output_string']
+      extensions: ['colours_looks', 'output_string']
     });
   }
 };
@@ -389,7 +389,7 @@ Blockly.Blocks['looks_backdrops'] = {
           ]
         }
       ],
-      extensions: ['output_string']
+      extensions: ['colours_looks', 'output_string']
     });
   }
 };
