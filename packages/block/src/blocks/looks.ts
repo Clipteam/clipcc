@@ -268,7 +268,7 @@ Blockly.Blocks['looks_size'] = {
  * and 'set stretch to' - but were removed altogether in Scratch 2.0, and
  * displayed as red 'undefined' blocks. Some Scratch projects still contain
  * these blocks, however, and they don't open in 3.0 unless the blocks
- * actually exist (though they still don't funcitonally do anything).
+ * actually exist (though they still don't functionally do anything).
  */
 Blockly.Blocks['looks_changestretchby'] = {
   init: function(this: Blockly.Block) {
