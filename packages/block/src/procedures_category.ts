@@ -431,36 +431,6 @@ export function makeChangeShapeOption(
 }
 
 /**
- * Callback to try to delete a custom block definitions.
- * @param procCode The identifier of the procedure to delete.
- * @param definitionRoot The root block of the stack that defines the custom procedure.
- * @returns True if the custom procedure was deleted, false otherwise.
- */
-export function deleteProcedureDefCallbackfunction(procCode: string, definitionRoot: Blockly.BlockSvg): boolean {
-  // const callers = getCallers(procCode, definitionRoot.workspace, definitionRoot, false /* allowRecursive */);
-  // if (callers.length > 0) {
-  //   return false;
-  // }
-
-  const workspace = definitionRoot.workspace;
-  const procedureMap = workspace.getProcedureMap();
-  const procedureModel = procedureMap.get(procCode) as ProcedureModel;
-  procedureMap.delete(procCode);
-
-  // Delete the whole stack.
-  Blockly.Events.setGroup(true);
-  definitionRoot.dispose();
-  Blockly.Events.fire(new FuncDelete(procedureModel));
-  Blockly.Events.setGroup(false);
-
-  // TODO (#1354) Update this function when '_' is removed
-  // Refresh toolbox, so caller doesn't appear there anymore
-  workspace.refreshToolboxSelection();
-
-  return true;
-}
-
-/**
  * Make a context menu option for forcibly deleting a custom procedure.
  * This appears in the context menu for procedure definitions.
  * @param block The block where the right-click originated.

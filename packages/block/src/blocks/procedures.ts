@@ -27,7 +27,6 @@ import * as Constants from '../constants';
 import {ProcedureExtraState, ProcedureCallerExtraState} from '../serialization/procedures';
 import {FieldTextInputRemovable} from '../fields/textinput_removable';
 import {
-  deleteProcedureDefCallbackfunction,
   makeChangeShapeOption,
   makeEditOption,
   makeForceDeleteOption,
@@ -36,6 +35,7 @@ import {
 import {ProcedureModel} from '../procedure_model';
 import {ParameterModel} from '../parameter_model';
 import {ProcedureArgumentDragStrategy} from '../procedure_argument_drag_strategy';
+import {FuncDelete} from '../events/func_delete';
 
 interface ConnectionMap {
   [key: string]: {
@@ -70,9 +70,6 @@ export interface ProcedureBlock extends Blockly.BlockSvg {
 
 export interface ProcedureDefinitionBlock extends Blockly.BlockSvg {
   type: 'procedures_definition';
-
-  saveExtraState: () => ProcedureExtraState,
-  loadExtraState: (state: ProcedureExtraState) => void,
 }
 
 export interface ProcedureCallBlock extends ProcedureBlock {
@@ -1052,6 +1049,22 @@ Blockly.Blocks['procedures_definition'] = {
       }],
       extensions: ['colours_more', 'shape_hat', 'procedure_def_contextmenu']
     });
+  },
+  /**
+   * Destroy the definition block.
+   */
+  destroy: function(this: ProcedureDefinitionBlock) {
+    const input = this.getInput('custom_block');
+    // this is the root block, not the shadow block.
+    if (input && input.connection && input.connection.targetBlock()) {
+      const procCode = (input.connection.targetBlock() as ProcedurePrototypeBlock).getProcCode();
+
+      const procedureMap = this.workspace.getProcedureMap();
+      const procedureModel = procedureMap.get(procCode) as ProcedureModel;
+      procedureMap.delete(procCode);
+
+      Blockly.Events.fire(new FuncDelete(procedureModel));
+    }
   }
 };
 
@@ -1327,28 +1340,6 @@ const PROCEDURE_DEF_CONTEXTMENU = {
   >) {
     // Add the edit option at the end.
     menuOptions.push(makeEditOption(this));
-
-    // Find the delete option and update its callback to be specific to
-    // functions.
-    for (let i = 0, option; option = menuOptions[i]; i++) {
-      if (option.text == Blockly.Msg.DELETE_BLOCK) {
-        const input = this.getInput('custom_block');
-        // this is the root block, not the shadow block.
-        if (!input || !input.connection || !input.connection.targetBlock()) {
-          return;
-        }
-        const procCode = (input.connection.targetBlock() as ProcedurePrototypeBlock).getProcCode();
-        option.callback = () => {
-          const didDelete = deleteProcedureDefCallbackfunction(procCode, this);
-          if (!didDelete) {
-            alert(Blockly.Msg.PROCEDURE_USED);
-          }
-        };
-
-        // Add force delete option after delete option.
-        menuOptions.splice(i + 1, 0, makeForceDeleteOption(this));
-      }
-    }
 
     // Find and remove the duplicate option
     for (let i = 0, option; option = menuOptions[i]; i++) {

@@ -23,6 +23,10 @@ import {flyoutCategory as variableCategory} from './data_category';
 import {flyoutCategory as procedureCategory} from './procedures_category';
 import styles from './styles/blockly.css';
 
+import {FuncChange} from './events/func_change';
+import {FuncCreate} from './events/func_create';
+import {FuncDelete} from './events/func_delete';
+
 import './renderer/renderer';
 import './connection_checker';
 
@@ -70,8 +74,21 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
     Constants.PROCEDURE_CATEGORY_NAME,
     procedureCategory
   );
-  workspace.refreshToolboxSelection();
 
+  // Event listener to update toolbox selection. VAR_CREATE, VAR_DELETE, VAR_RENAME
+  // and VAR_TYPE_CHANGE has been listend internally.
+  // See (private) Blockly.Workspace.variableChangeCallback.
+  workspace.addChangeListener((event: Blockly.Events.Abstract) => {
+    switch (event.type) {
+      case FuncCreate.TYPE:
+      case FuncChange.TYPE:
+      case FuncDelete.TYPE:
+        workspace.refreshToolboxSelection();
+        break;
+    }
+  });
+
+  workspace.refreshToolboxSelection();
   return workspace;
 }
 
