@@ -42,7 +42,7 @@ Blockly.Blocks['control_forever'] = {
       args2: [
         {
           type: 'field_image',
-          src: 'repeat.svg',
+          src: getWorkspaceOptionsFromBlock(this).pathToMedia + 'repeat.svg',
           width: 24,
           height: 24,
           alt: '*',
