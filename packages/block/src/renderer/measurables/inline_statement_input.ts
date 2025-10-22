@@ -5,7 +5,6 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {ConstantProvider} from '../constants';
 
 /**
  * An object containing information about the space an inline statement input
@@ -18,7 +17,7 @@ export class InlineStatementInput extends Blockly.blockRendering.InlineInput {
    * @param constants The rendering constants provider.
    * @param input The statement input to measure and store information for.
    */
-  constructor(constants: ConstantProvider, input: Blockly.Input) {
+  constructor(constants: Blockly.blockRendering.ConstantProvider, input: Blockly.Input) {
     super(constants, input);
 
     this.type |= InlineStatementInput.TYPE;
