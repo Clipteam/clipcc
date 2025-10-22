@@ -1237,6 +1237,298 @@
             'type': 'control_all_at_once',
           }
         ]
+      }, {
+        kind: 'category',
+        name: 'Sensing',
+        contents: [
+          {
+            'kind': 'block',
+            'type': 'sensing_touchingobject',
+            'inputs': {
+              'TOUCHINGOBJECTMENU': {
+                'shadow': {
+                  'type': 'sensing_touchingobjectmenu'
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_touchingcolor',
+            'inputs': {
+              'COLOR': {
+                'shadow': {
+                  'type': 'colour_picker',
+                  'fields': {
+                    'COLOUR': '#FF0000'
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_coloristouchingcolor',
+            'inputs': {
+              'COLOR': {
+                'shadow': {
+                  'type': 'colour_picker',
+                  'fields': {
+                    'COLOUR': '#FF0000'
+                  }
+                }
+              },
+              'COLOR2': {
+                'shadow': {
+                  'type': 'colour_picker',
+                  'fields': {
+                    'COLOUR': '#0000FF'
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_distanceto',
+            'inputs': {
+              'DISTANCETOMENU': {
+                'shadow': {
+                  'type': 'sensing_distancetomenu'
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_distancebetweenposition',
+            'inputs': {
+              'X1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'Y1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'X2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'Y2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_directionbetweenposition',
+            'inputs': {
+              'X1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'Y1': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'X2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'Y2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_askandwait',
+            'inputs': {
+              'QUESTION': {
+                'shadow': {
+                  'type': 'text',
+                  'fields': {
+                    'TEXT': ''
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_answer'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_keypressed',
+            'inputs': {
+              'KEY_OPTION': {
+                'shadow': {
+                  'type': 'sensing_keyoptions'
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_mousedown'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_mousepressed',
+            'inputs': {
+              'MOUSE_OPTION': {
+                'shadow': {
+                  'type': 'sensing_mouseoptions'
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_mousex'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_mousey'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_setdragmode'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_loudness'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_loud'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_timer'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_resettimer'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_of',
+            'inputs': {
+              'OBJECT': {
+                'shadow': {
+                  'type': 'sensing_of_object_menu'
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_current'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_dayssince2000'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_username'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_userid'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_operatingsystem'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_clipcc_version'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_joystickx'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_joysticky'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_joystick_distance'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_colorat',
+            'inputs': {
+              'X': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'Y': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_isturbomode'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_turnonturbomode'
+          },
+          {
+            'kind': 'block',
+            'type': 'sensing_turnoffturbomode'
+          }
+        ]
       }]
 		};
 
