@@ -19,6 +19,7 @@
  */
 
 import * as Blockly from 'blockly/core';
+import {getWorkspaceOptionsFromBlock} from '../utils';
 
 /**
  * Block for repeat n times (external number).
@@ -80,8 +81,7 @@ Blockly.Blocks['control_repeat'] = {
       args2: [
         {
           type: 'field_image',
-          // src: Blockly.common.getMainWorkspace().options.pathToMedia + 'repeat.svg',
-          src: 'repeat.svg',
+          src: getWorkspaceOptionsFromBlock(this).pathToMedia + 'repeat.svg',
           width: 24,
           height: 24,
           alt: '*',
@@ -275,8 +275,7 @@ Blockly.Blocks['control_repeat_until'] = {
       args2: [
         {
           type: 'field_image',
-          // src: Blockly.common.getMainWorkspace().options.pathToMedia + 'repeat.svg',
-          src: 'repeat.svg',
+          src: getWorkspaceOptionsFromBlock(this).pathToMedia + 'repeat.svg',
           width: 24,
           height: 24,
           alt: '*',
@@ -315,8 +314,7 @@ Blockly.Blocks['control_while'] = {
       args2: [
         {
           type: 'field_image',
-          // src: Blockly.common.getMainWorkspace().options.pathToMedia + 'repeat.svg',
-          src: 'repeat.svg',
+          src: getWorkspaceOptionsFromBlock(this).pathToMedia + 'repeat.svg',
           width: 24,
           height: 24,
           alt: '*',
