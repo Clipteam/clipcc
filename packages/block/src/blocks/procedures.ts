@@ -1049,6 +1049,7 @@ Blockly.Blocks['procedures_definition'] = {
       }],
       extensions: ['colours_more', 'shape_hat', 'procedure_def_contextmenu']
     });
+    this.hat = Constants.SHAPE_BOWLER_HAT;
   },
   /**
    * Destroy the definition block.

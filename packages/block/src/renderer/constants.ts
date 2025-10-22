@@ -10,6 +10,9 @@ import * as Blockly from 'blockly/core';
  * An object that provides constants for rendering blocks in Scratch mode.
  */
 export class ConstantProvider extends Blockly.zelos.ConstantProvider {
+  /** Height of the top hat. */
+  BOWLER_HAT_HEIGHT = 20;
+
   /**
    * Get an object with connection shape and sizing information based on the
    * type of the connection.
