@@ -1607,6 +1607,276 @@
           {
             'kind': 'block',
             'type': 'event_whenkeypressed'
+          },{
+            'kind': 'block',
+            'type': 'motion_movesteps',
+            'inputs': {
+              'STEPS': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 10
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_turnright',
+            'inputs': {
+              'DEGREES': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 15
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_turnleft',
+            'inputs': {
+              'DEGREES': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 15
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_pointindirection',
+            'inputs': {
+              'DIRECTION': {
+                'shadow': {
+                  'type': 'math_angle',
+                  'fields': {
+                    'ANGLE': 90
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_pointtowards',
+            'inputs': {
+              'TOWARDS': {
+                'shadow': {
+                  'type': 'motion_pointtowards_menu'
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_gotoxy',
+            'inputs': {
+              'X': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'Y': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_goto',
+            'inputs': {
+              'TO': {
+                'shadow': {
+                  'type': 'motion_goto_menu'
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_glidesecstoxy',
+            'inputs': {
+              'SECS': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 1
+                  }
+                }
+              },
+              'X': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              },
+              'Y': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_glideto',
+            'inputs': {
+              'SECS': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 1
+                  }
+                }
+              },
+              'TO': {
+                'shadow': {
+                  'type': 'motion_glideto_menu'
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_changexby',
+            'inputs': {
+              'DX': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 10
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_setx',
+            'inputs': {
+              'X': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_changeyby',
+            'inputs': {
+              'DY': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 10
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_sety',
+            'inputs': {
+              'Y': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 0
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_ifonedgebounce'
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_setrotationstyle',
+            'fields': {
+              'STYLE': 'left-right'
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_xposition'
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_yposition'
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_direction'
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_scroll_right',
+            'inputs': {
+              'DISTANCE': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 10
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_scroll_up',
+            'inputs': {
+              'DISTANCE': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 10
+                  }
+                }
+              }
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_align_scene',
+            'fields': {
+              'ALIGNMENT': 'middle'
+            }
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_xscroll'
+          },
+          {
+            'kind': 'block',
+            'type': 'motion_yscroll'
           }
         ]
       }]
