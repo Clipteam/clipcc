@@ -197,11 +197,7 @@ Blockly.Blocks['control_stop'] = {
     this.appendDummyInput()
       .appendField(Blockly.Msg.CONTROL_STOP)
       .appendField(stopDropdown, 'STOP_OPTION');
-    // this.setColour(Blockly.Colours.control.primary,
-    //     Blockly.Colours.control.secondary,
-    //     Blockly.Colours.control.tertiary,
-    //     Blockly.Colours.control.quaternary
-    // );
+    Blockly.Extensions.apply('colours_control', this, false);
     this.setPreviousStatement(true);
   },
   mutationToDom: function(this: Blockly.Block) {
