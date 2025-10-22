@@ -43,7 +43,7 @@ Blockly.Blocks['sound_sounds_menu'] = {
           ['10', '9']
         ]
       }],
-      extensions: ['output_string']
+      extensions: ['colours_sounds', 'output_string']
     });
   }
 };
