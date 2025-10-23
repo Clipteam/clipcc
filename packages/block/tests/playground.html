@@ -1,131 +1,133 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset='utf-8' />
-	<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
-	<title>Test Playground</title>
-	<script src='main.js'></script>
+  <meta charset='utf-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+  <title>Test Playground</title>
+  <script src='main.js'></script>
   <script>
     window.Blockly.Msg = window.Blockly.Msg.Msg;
   </script>
   <script src='messages.js'></script>
-	<style>
-		html, body {
-			height: 100%;
-		}
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
 
-		body {
-			background-color: #fff;
-			font-family: sans-serif;
-			overflow: hidden;
-		}
+    body {
+      background-color: #fff;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
 
-		h1 {
-			font-weight: normal;
-			font-size: 140%;
-		}
+    h1 {
+      font-weight: normal;
+      font-size: 140%;
+    }
 
-		#blocklyDiv {
-			float: right;
-			height: 95%;
-			width: 70%;
-		}
+    #blocklyDiv {
+      float: right;
+      height: 95%;
+      width: 100%;
+    }
 
-		#collaborators {
-			float: right;
-			width: 30px;
-			margin-left: 10px;
-		}
+    #collaborators {
+      float: right;
+      width: 30px;
+      margin-left: 10px;
+    }
 
-		#collaborators > img {
-			margin-right: 5px;
-			height: 30px;
-			padding-bottom: 5px;
-			width: 30px;
-			border-radius: 3px;
-		}
+    #collaborators>img {
+      margin-right: 5px;
+      height: 30px;
+      padding-bottom: 5px;
+      width: 30px;
+      border-radius: 3px;
+    }
 
-		#importExport {
-			font-family: monospace;
-		}
+    #importExport {
+      font-family: monospace;
+    }
   </style>
-	<script>
-		const toolbox = {
-			kind: 'categoryToolbox',
-			contents: [{
+  <script>
+    const toolbox = {
+      kind: 'categoryToolbox',
+      contents: [{
         kind: 'category',
         name: 'Category 1',
         colour: '#4C97FF',
         contents: [{
-					'kind': 'block',
-					'type': 'test_add',
-					'inputs': {
-						'NUM1': {
-							'shadow': {
-								'type': 'math_number',
-								'fields': {
-									'NUM': 5
-								}
-							}
-						},
-						'NUM2': {
-							'shadow': {
-								'type': 'math_number',
-								'fields': {
-									'NUM': 5
-								}
-							}
-						}
-					}
-				}, {
-					'kind': 'block',
-					'type': 'test_str',
-					'inputs': {
-						'NUM1': {
-							'shadow': {
-								'type': 'text',
-								'fields': {
-									'TEXT': 'sss'
-								}
-							}
-						},
-						'NUM2': {
-							'shadow': {
-								'type': 'text',
-								'fields': {
-									'TEXT': 5
-								}
-							}
-						}
-					}
-				}]
+          'kind': 'block',
+          'type': 'test_add',
+          'inputs': {
+            'NUM1': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 5
+                }
+              }
+            },
+            'NUM2': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 5
+                }
+              }
+            }
+          }
+        }, {
+          'kind': 'block',
+          'type': 'test_str',
+          'inputs': {
+            'NUM1': {
+              'shadow': {
+                'type': 'text',
+                'fields': {
+                  'TEXT': 'sss'
+                }
+              }
+            },
+            'NUM2': {
+              'shadow': {
+                'type': 'text',
+                'fields': {
+                  'TEXT': 5
+                }
+              }
+            }
+          }
+        }]
       }, {
         kind: 'category',
         name: 'Category 2',
         contents: [{
-					'kind': 'block',
-					'type': 'test_field_angle',
+          'kind': 'block',
+          'type': 'test_field_angle',
           'inputs': {
             'DEGREES': {
-							'shadow': {
-								'type': 'math_angle',
-								'fields': {
-									'NUM': 90
-								}
-							}
+              'shadow': {
+                'type': 'math_angle',
+                'fields': {
+                  'NUM': 90
+                }
+              }
             }
           }
         }, {
-					'kind': 'block',
-					'type': 'test_field_matrix',
+          'kind': 'block',
+          'type': 'test_field_matrix',
           'inputs': {
             'MATRIX': {
-							'shadow': {
-								'type': 'matrix',
-								'fields': {
-									'MATRIX': ''
-								}
-							}
+              'shadow': {
+                'type': 'matrix',
+                'fields': {
+                  'MATRIX': ''
+                }
+              }
             }
           }
         }, {
@@ -1123,7 +1125,7 @@
             }
           }
         ]
-      },{
+      }, {
         kind: 'category',
         name: 'Controls',
         contents: [
@@ -1239,296 +1241,572 @@
         ]
       }, {
         kind: 'category',
+        name: 'Motion',
+        contents: [{
+          'kind': 'block',
+          'type': 'motion_movesteps',
+          'inputs': {
+            'STEPS': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 10
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_turnright',
+          'inputs': {
+            'DEGREES': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 15
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_turnleft',
+          'inputs': {
+            'DEGREES': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 15
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_pointindirection',
+          'inputs': {
+            'DIRECTION': {
+              'shadow': {
+                'type': 'math_angle',
+                'fields': {
+                  'ANGLE': 90
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_pointtowards',
+          'inputs': {
+            'TOWARDS': {
+              'shadow': {
+                'type': 'motion_pointtowards_menu'
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_gotoxy',
+          'inputs': {
+            'X': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            },
+            'Y': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_goto',
+          'inputs': {
+            'TO': {
+              'shadow': {
+                'type': 'motion_goto_menu'
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_glidesecstoxy',
+          'inputs': {
+            'SECS': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 1
+                }
+              }
+            },
+            'X': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            },
+            'Y': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_glideto',
+          'inputs': {
+            'SECS': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 1
+                }
+              }
+            },
+            'TO': {
+              'shadow': {
+                'type': 'motion_glideto_menu'
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_changexby',
+          'inputs': {
+            'DX': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 10
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_setx',
+          'inputs': {
+            'X': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_changeyby',
+          'inputs': {
+            'DY': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 10
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_sety',
+          'inputs': {
+            'Y': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_ifonedgebounce'
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_setrotationstyle',
+          'fields': {
+            'STYLE': 'left-right'
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_xposition'
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_yposition'
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_direction'
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_scroll_right',
+          'inputs': {
+            'DISTANCE': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 10
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_scroll_up',
+          'inputs': {
+            'DISTANCE': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 10
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_align_scene',
+          'fields': {
+            'ALIGNMENT': 'middle'
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_xscroll'
+        },
+        {
+          'kind': 'block',
+          'type': 'motion_yscroll'
+        }]
+      }, {
+        kind: 'category',
         name: 'Sensing',
+        contents: [{
+          'kind': 'block',
+          'type': 'sensing_touchingobject',
+          'inputs': {
+            'TOUCHINGOBJECTMENU': {
+              'shadow': {
+                'type': 'sensing_touchingobjectmenu'
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_touchingcolor',
+          'inputs': {
+            'COLOR': {
+              'shadow': {
+                'type': 'colour_picker',
+                'fields': {
+                  'COLOUR': '#FF0000'
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_coloristouchingcolor',
+          'inputs': {
+            'COLOR': {
+              'shadow': {
+                'type': 'colour_picker',
+                'fields': {
+                  'COLOUR': '#FF0000'
+                }
+              }
+            },
+            'COLOR2': {
+              'shadow': {
+                'type': 'colour_picker',
+                'fields': {
+                  'COLOUR': '#0000FF'
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_distanceto',
+          'inputs': {
+            'DISTANCETOMENU': {
+              'shadow': {
+                'type': 'sensing_distancetomenu'
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_distancebetweenposition',
+          'inputs': {
+            'X1': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            },
+            'Y1': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            },
+            'X2': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            },
+            'Y2': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_directionbetweenposition',
+          'inputs': {
+            'X1': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            },
+            'Y1': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            },
+            'X2': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            },
+            'Y2': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_askandwait',
+          'inputs': {
+            'QUESTION': {
+              'shadow': {
+                'type': 'text',
+                'fields': {
+                  'TEXT': ''
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_answer'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_keypressed',
+          'inputs': {
+            'KEY_OPTION': {
+              'shadow': {
+                'type': 'sensing_keyoptions'
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_mousedown'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_mousepressed',
+          'inputs': {
+            'MOUSE_OPTION': {
+              'shadow': {
+                'type': 'sensing_mouseoptions'
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_mousex'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_mousey'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_setdragmode'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_loudness'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_loud'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_timer'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_resettimer'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_of',
+          'inputs': {
+            'OBJECT': {
+              'shadow': {
+                'type': 'sensing_of_object_menu'
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_current'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_dayssince2000'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_username'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_userid'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_operatingsystem'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_clipcc_version'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_joystickx'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_joysticky'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_joystick_distance'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_colorat',
+          'inputs': {
+            'X': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            },
+            'Y': {
+              'shadow': {
+                'type': 'math_number',
+                'fields': {
+                  'NUM': 0
+                }
+              }
+            }
+          }
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_isturbomode'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_turnonturbomode'
+        },
+        {
+          'kind': 'block',
+          'type': 'sensing_turnoffturbomode'
+        }]
+      }, {
+        kind: 'category',
+        name: 'Event',
         contents: [
-          {
-            'kind': 'block',
-            'type': 'sensing_touchingobject',
-            'inputs': {
-              'TOUCHINGOBJECTMENU': {
-                'shadow': {
-                  'type': 'sensing_touchingobjectmenu'
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_touchingcolor',
-            'inputs': {
-              'COLOR': {
-                'shadow': {
-                  'type': 'colour_picker',
-                  'fields': {
-                    'COLOUR': '#FF0000'
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_coloristouchingcolor',
-            'inputs': {
-              'COLOR': {
-                'shadow': {
-                  'type': 'colour_picker',
-                  'fields': {
-                    'COLOUR': '#FF0000'
-                  }
-                }
-              },
-              'COLOR2': {
-                'shadow': {
-                  'type': 'colour_picker',
-                  'fields': {
-                    'COLOUR': '#0000FF'
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_distanceto',
-            'inputs': {
-              'DISTANCETOMENU': {
-                'shadow': {
-                  'type': 'sensing_distancetomenu'
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_distancebetweenposition',
-            'inputs': {
-              'X1': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              },
-              'Y1': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              },
-              'X2': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              },
-              'Y2': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_directionbetweenposition',
-            'inputs': {
-              'X1': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              },
-              'Y1': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              },
-              'X2': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              },
-              'Y2': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_askandwait',
-            'inputs': {
-              'QUESTION': {
-                'shadow': {
-                  'type': 'text',
-                  'fields': {
-                    'TEXT': ''
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_answer'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_keypressed',
-            'inputs': {
-              'KEY_OPTION': {
-                'shadow': {
-                  'type': 'sensing_keyoptions'
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_mousedown'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_mousepressed',
-            'inputs': {
-              'MOUSE_OPTION': {
-                'shadow': {
-                  'type': 'sensing_mouseoptions'
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_mousex'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_mousey'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_setdragmode'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_loudness'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_loud'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_timer'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_resettimer'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_of',
-            'inputs': {
-              'OBJECT': {
-                'shadow': {
-                  'type': 'sensing_of_object_menu'
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_current'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_dayssince2000'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_username'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_userid'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_operatingsystem'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_clipcc_version'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_joystickx'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_joysticky'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_joystick_distance'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_colorat',
-            'inputs': {
-              'X': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              },
-              'Y': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_isturbomode'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_turnonturbomode'
-          },
-          {
-            'kind': 'block',
-            'type': 'sensing_turnoffturbomode'
-          },
-
           {
             'kind': 'block',
             'type': 'event_whentouchingobject',
@@ -1607,283 +1885,13 @@
           {
             'kind': 'block',
             'type': 'event_whenkeypressed'
-          },{
-            'kind': 'block',
-            'type': 'motion_movesteps',
-            'inputs': {
-              'STEPS': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 10
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_turnright',
-            'inputs': {
-              'DEGREES': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 15
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_turnleft',
-            'inputs': {
-              'DEGREES': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 15
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_pointindirection',
-            'inputs': {
-              'DIRECTION': {
-                'shadow': {
-                  'type': 'math_angle',
-                  'fields': {
-                    'ANGLE': 90
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_pointtowards',
-            'inputs': {
-              'TOWARDS': {
-                'shadow': {
-                  'type': 'motion_pointtowards_menu'
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_gotoxy',
-            'inputs': {
-              'X': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              },
-              'Y': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_goto',
-            'inputs': {
-              'TO': {
-                'shadow': {
-                  'type': 'motion_goto_menu'
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_glidesecstoxy',
-            'inputs': {
-              'SECS': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 1
-                  }
-                }
-              },
-              'X': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              },
-              'Y': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_glideto',
-            'inputs': {
-              'SECS': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 1
-                  }
-                }
-              },
-              'TO': {
-                'shadow': {
-                  'type': 'motion_glideto_menu'
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_changexby',
-            'inputs': {
-              'DX': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 10
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_setx',
-            'inputs': {
-              'X': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_changeyby',
-            'inputs': {
-              'DY': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 10
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_sety',
-            'inputs': {
-              'Y': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 0
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_ifonedgebounce'
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_setrotationstyle',
-            'fields': {
-              'STYLE': 'left-right'
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_xposition'
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_yposition'
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_direction'
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_scroll_right',
-            'inputs': {
-              'DISTANCE': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 10
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_scroll_up',
-            'inputs': {
-              'DISTANCE': {
-                'shadow': {
-                  'type': 'math_number',
-                  'fields': {
-                    'NUM': 10
-                  }
-                }
-              }
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_align_scene',
-            'fields': {
-              'ALIGNMENT': 'middle'
-            }
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_xscroll'
-          },
-          {
-            'kind': 'block',
-            'type': 'motion_yscroll'
           }
         ]
       }]
-		};
+    };
 
-		function start() {
-			ScratchBlocks.inject('blocklyDiv', {
+    function start() {
+      ScratchBlocks.inject('blocklyDiv', {
         media: '../media/',
         collapse: false,
         disable: false,
@@ -1903,11 +1911,13 @@
           scaleSpeed: 1.1
         }
       });
-		}
-	</script>
+    }
+  </script>
 </head>
+
 <body onload='start()'>
-	<div id='collaborators'></div>
-	<div id='blocklyDiv'></div>
+  <!-- <div id='collaborators'></div> -->
+  <div id='blocklyDiv'></div>
 </body>
+
 </html>
