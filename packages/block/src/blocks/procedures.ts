@@ -1214,7 +1214,11 @@ Blockly.Blocks['procedures_declaration'] = {
   addLabelExternal: addLabelExternal,
   addBooleanExternal: addBooleanExternal,
   addStringNumberExternal: addStringNumberExternal,
-  onChangeFn: updateDeclarationProcCode
+  onChangeFn: updateDeclarationProcCode,
+  isSimpleReporter() {
+    // Fix wrong label shape when there's only one label.
+    return false;
+  }
 } as ProcedureDeclarationBlock;
 
 /**
