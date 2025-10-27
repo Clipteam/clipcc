@@ -302,7 +302,7 @@ export class FieldNote extends Blockly.FieldTextInput {
    */
   protected override showEditor_(event?: Event, quietInput?: boolean): void {
     // Mobile browsers have issues with in-line textareas (focus & keyboards).
-    super.showEditor_(event, quietInput);
+    super.showEditor_(event, quietInput, false);
 
     // If there is an existing drop-down someone else owns, hide it immediately and clear it.
     Blockly.DropDownDiv.hideWithoutAnimation();

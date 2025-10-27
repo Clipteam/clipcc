@@ -177,7 +177,7 @@ export class FieldAngle extends Blockly.FieldNumber {
    *     Defaults to false.
    */
   protected override showEditor_(event?: Event, quietInput?: boolean): void {
-    super.showEditor_(event, quietInput);
+    super.showEditor_(event, quietInput, false);
     // If there is an existing drop-down someone else owns, hide it immediately and clear it.
     Blockly.DropDownDiv.hideWithoutAnimation();
     Blockly.DropDownDiv.clearContent();
