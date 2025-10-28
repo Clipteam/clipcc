@@ -29,6 +29,7 @@ import {FuncDelete} from './events/func_delete';
 
 import './renderer/renderer';
 import './connection_checker';
+import './dragger';
 
 import './blocks/extensions';
 import './blocks/common';

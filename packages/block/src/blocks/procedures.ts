@@ -34,8 +34,8 @@ import {
 } from '../procedures_category';
 import {ProcedureModel} from '../procedure_model';
 import {ParameterModel} from '../parameter_model';
-import {ProcedureArgumentDragStrategy} from '../procedure_argument_drag_strategy';
 import {FuncDelete} from '../events/func_delete';
+import {IShadowTemplate} from '../interfaces/i_shadow_template';
 
 interface ConnectionMap {
   [key: string]: {
@@ -120,6 +120,10 @@ export interface ProcedureDeclarationBlock extends ProcedureBlock {
 
 export interface ProcedureArgumentEditorBlock extends Blockly.BlockSvg {
   removeFieldCallback: (field: Blockly.Field) => void;
+}
+
+export interface ProcedureArgumentReporterBlock extends Blockly.BlockSvg, IShadowTemplate {
+  shadowTemplate: boolean;
 }
 
 // Serialization and deserialization.
@@ -1275,7 +1279,7 @@ Blockly.Blocks['procedures_discard'] = {
 };
 
 Blockly.Blocks['argument_reporter_boolean'] = {
-  init: function(this: Blockly.BlockSvg) {
+  init: function() {
     this.jsonInit({
       message0: '%1',
       args0: [{
@@ -1285,12 +1289,12 @@ Blockly.Blocks['argument_reporter_boolean'] = {
       }],
       extensions: ['colours_argument', 'output_boolean']
     });
-    this.setDragStrategy(new ProcedureArgumentDragStrategy(this));
+    this.shadowTemplate = true;
   }
-};
+} as ProcedureArgumentReporterBlock;
 
 Blockly.Blocks['argument_reporter_string_number'] = {
-  init: function(this: Blockly.BlockSvg) {
+  init: function() {
     this.jsonInit({
       message0: '%1',
       args0: [{
@@ -1300,9 +1304,9 @@ Blockly.Blocks['argument_reporter_string_number'] = {
       }],
       extensions: ['colours_argument', 'output_number', 'output_string']
     });
-    this.setDragStrategy(new ProcedureArgumentDragStrategy(this));
+    this.shadowTemplate = true;
   }
-};
+} as ProcedureArgumentReporterBlock;
 
 Blockly.Blocks['argument_editor_boolean'] = {
   init: function() {
