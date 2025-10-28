@@ -253,7 +253,14 @@ function callerLoadExtraState(
   if (procedureMap.has(state.proccode)) {
     this.model = procedureMap.get(state.proccode) as ProcedureModel;
   } else {
-    console.error(`A procedure caller is loaded without any definition ${state.proccode}`);
+    console.warn(`A procedure caller is loaded without any definition ${state.proccode}`);
+
+    // Create a temporary model.
+    this.model = ProcedureModel.loadExtraState(this.workspace, {
+      argumentnames: [],
+      argumentdefaults: [],
+      ...state
+    });
   }
 
   this.generateShadows_ = true;
@@ -301,7 +308,10 @@ function definitionLoadExtraState(
     if (procedureMap.has(state.proccode)) {
       this.model = procedureMap.get(state.proccode) as ProcedureModel;
     } else {
-      console.error(`A procedure is loaded without any definition ${state.proccode}`);
+      console.warn(`A procedure is loaded without any definition ${state.proccode}`);
+
+      // Create a temporary model.
+      this.model = ProcedureModel.loadExtraState(this.workspace, state);
     }
   }
 
