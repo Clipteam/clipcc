@@ -93,6 +93,11 @@
       padding-left: 10px;
       font-size: 90%;
     }
+
+    #dataContent {
+      height: 10em;
+      resize: none;
+    }
   </style>
 	<script>
 		const toolbox = {
@@ -349,13 +354,27 @@
         mutationRoot.setGlobal(!mutationRoot.getGlobal());
       }
     }
+
+    function saveWorkspace() {
+      const textarea = document.getElementById('dataContent');
+      const state = ScratchBlocks.saveWorkspace(mainWorkspace);
+      textarea.value = JSON.stringify(state, null, 2);
+    }
+
+    function loadWorkspace() {
+      const textarea = document.getElementById('dataContent');
+      const state = ScratchBlocks.loadWorkspace(JSON.parse(textarea.value), mainWorkspace, true);
+    }
 	</script>
 </head>
 <body onload="start()">
   <div class="left">
     <h1>Blocks Playground</h1>
     <div class="controlPanel">
+      <button id="save" onclick="saveWorkspace()">Save</button>
+      <button id="load" onclick="loadWorkspace()">Load</button>
     </div>
+    <textarea id="dataContent"></textarea>
     <h1>Events</h1>
     <div class="eventList">
       <ul id="eventList"></ul>
