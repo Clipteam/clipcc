@@ -115,3 +115,5 @@ export {setExternalProcedureDefCallback} from './procedures_category';
 
 // Monkey-patches
 Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
+Blockly.FlyoutButton.TEXT_MARGIN_X = 40;
+Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;

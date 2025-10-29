@@ -28,3 +28,26 @@
 .blocklyMenuItemDisabled:hover {
   background-color: #fff;
 }
+
+.blocklyFlyoutButton {
+  fill: none;
+  pointer-events: all;
+}
+
+.blocklyFlyoutButtonBackground {
+    stroke: #c6c6c6;
+}
+
+.blocklyFlyoutButtonShadow {
+  fill: transparent;
+}
+
+.blocklyFlyoutButton:hover {
+  fill: white;
+  cursor: pointer;
+}
+
+.blocklyFlyoutButton .blocklyText {
+  fill: #575E75 !important;
+  font-weight: 500 !important;
+}
