@@ -1,0 +1,28 @@
+/**
+ * @license
+ * Copyright 2025 Clip Team
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+import * as Blockly from 'blockly/core';
+import {isShadowTemplate} from '../interfaces/i_shadow_template';
+
+/**
+ * An object that handles creating and setting each of the SVG elements
+ * used by the renderer.
+ */
+export class PathObject extends Blockly.zelos.PathObject {
+  /**
+   * Apply the stored colours to the block's path, taking into account whether
+   * the paths belong to a shadow block.
+   * @param block The source block.
+   */
+  override applyColour(block: Blockly.BlockSvg): void {
+    super.applyColour(block);
+
+    // Shadow templates should render in normal colour.
+    if (isShadowTemplate(block) && block.shadowTemplate) {
+      this.svgPath.setAttribute('fill', this.style.colourPrimary);
+    }
+  }
+}

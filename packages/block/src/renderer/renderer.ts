@@ -8,6 +8,7 @@ import * as Blockly from 'blockly/core';
 import {ConstantProvider} from './constants';
 import {Drawer} from './drawer';
 import {RenderInfo} from './render_info';
+import {PathObject} from './path_object';
 
 /**
  * Custom renderer for Scratch-style blocks.
@@ -41,6 +42,16 @@ export class ScratchRenderer extends Blockly.zelos.Renderer {
    */
   protected override makeRenderInfo_(block: Blockly.BlockSvg): Blockly.zelos.RenderInfo {
     return new RenderInfo(this, block);
+  }
+
+  /**
+   * Create a new instance of a renderer path object.
+   * @param root The root SVG element.
+   * @param style The style object to use for colouring.
+   * @returns The renderer path object.
+   */
+  override makePathObject(root: SVGElement, style: Blockly.Theme.BlockStyle): Blockly.zelos.PathObject {
+    return new PathObject(root, style, this.getConstants() as ConstantProvider);
   }
 }
 
