@@ -90,8 +90,12 @@
       list-style: none;
       margin: 0;
       padding: 0;
-      padding-left: 10px;
+      margin: 0 10px;
       font-size: 90%;
+    }
+
+    #eventList > li {
+      padding: 0 5px;
     }
 
     #dataContent {
@@ -256,10 +260,18 @@
 
       eventListElement = document.getElementById('eventList');
 
+      let lastGroup = null;
+      let lastGroupColor = 0;
+      const groupColors = ['#fff', '#eee', '#ddd', '#eee'];
       mainWorkspace.addChangeListener(event => {
+        if (!event.group || event.group !== lastGroup) {
+          lastGroupColor = (lastGroupColor + 1) % groupColors.length;
+        }
+        lastGroup = event.group;
         const item = document.createElement('li');
         item.innerText = `${event.type} (${(Number(new Date()) - loadTime) / 1000})`;
         item.setAttribute('data-index', events.length);
+        item.style.backgroundColor = groupColors[lastGroupColor];
         item.onclick = () => {
           console.log(events[item.getAttribute('data-index')]);
         };
