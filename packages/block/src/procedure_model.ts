@@ -179,7 +179,7 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
    * Returns whether the procedure should run in warp mode.
    * @returns True iff the procedure should run in warp mode.
    */
-  getWarp(): boolean {
+  isWarp(): boolean {
     return this.warp;
   }
 
@@ -187,7 +187,7 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
    * Returns whether the procedure is global.
    * @returns True iff the procedure is global.
    */
-  getGlobal(): boolean {
+  isGlobal(): boolean {
     return this.global;
   }
 
@@ -195,7 +195,7 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
    * Returns whether the procedure returns a value.
    * @returns True iff the procedure returns a value.
    */
-  getReturn(): boolean {
+  isReporter(): boolean {
     return !!this.returnTypes;
   }
 
@@ -245,6 +245,7 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
   /**
    * Serializes the state of the procedure to JSON.
    * @returns JSON serializable state of the procedure.
+   * @deprecated Use saveExtraState instead.
    */
   saveState(): Blockly.serialization.procedures.State {
     return {
@@ -266,7 +267,7 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
       argumentnames: this.parameters.map((param) => param.getName()),
       argumentdefaults: this.parameters.map((param) => param.getDefaultValue()),
       warp: this.warp,
-      return: this.getReturn(),
+      return: this.isReporter(),
       global: this.global
     };
   }

@@ -858,7 +858,7 @@ function addStringNumberExternal(this: ProcedureDeclarationBlock) {
  * @returns The value of the warp_ property.
  */
 function getWarp(this: ProcedureDeclarationBlock): boolean {
-  return this.model.getWarp();
+  return this.model.isWarp();
 }
 
 /**
@@ -874,7 +874,7 @@ function setWarp(this: ProcedureDeclarationBlock, warp: boolean) {
  * @returns The value of the return_ property.
  */
 function getReturn(this: ProcedureDeclarationBlock): boolean {
-  return this.model.getReturn();
+  return this.model.isReporter();
 }
 
 /**
@@ -891,7 +891,7 @@ function setReturn(this: ProcedureDeclarationBlock, ret: boolean) {
  * @returns The value of the global_ property.
  */
 function getGlobal(this: ProcedureDeclarationBlock): boolean {
-  return this.model.getGlobal();
+  return this.model.isGlobal();
 }
 
 /**
@@ -1160,7 +1160,7 @@ Blockly.Blocks['procedures_prototype'] = {
   setShape_: setProcedureShape,
   updateShape_() {
     const prevIsReturn = this.getOutputShape() !== Constants.OUTPUT_SHAPE_NORMAL;
-    const isReturn = this.model.getReturn();
+    const isReturn = this.model.isReporter();
     if (prevIsReturn !== isReturn) {
       this.setShape_(isReturn ? Constants.OUTPUT_SHAPE_ROUND : Constants.OUTPUT_SHAPE_NORMAL, true);
     }
@@ -1204,7 +1204,7 @@ Blockly.Blocks['procedures_declaration'] = {
   setShape_: setProcedureShape,
   updateShape_() {
     const prevIsReturn = this.getOutputShape() !== Constants.OUTPUT_SHAPE_NORMAL;
-    const isReturn = this.model.getReturn();
+    const isReturn = this.model.isReporter();
     if (prevIsReturn !== isReturn) {
       this.setShape_(isReturn ? Constants.OUTPUT_SHAPE_ROUND : Constants.OUTPUT_SHAPE_NORMAL);
     }
