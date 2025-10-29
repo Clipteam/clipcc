@@ -21,7 +21,7 @@ import {ContinuousToolBox} from './toolbox/toolbox';
 import {ContinuousVerticalFlyout} from './toolbox/flyout';
 import {flyoutCategory as variableCategory} from './data_category';
 import {flyoutCategory as procedureCategory} from './procedures_category';
-import {isProcedureCallBlock, isProcedurePrototypeBlock} from './utils';
+import {isProcedureCallBlock, isProcedurePrototypeBlock} from './blocks/procedures';
 import styles from './styles/blockly.css';
 
 import {FuncChange} from './events/func_change';

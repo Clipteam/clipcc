@@ -126,6 +126,55 @@ export interface ProcedureArgumentReporterBlock extends Blockly.BlockSvg, IShado
   shadowTemplate: boolean;
 }
 
+// Helper functions to check type of procedure blocks.
+
+/**
+ * Check whether block is procedures_definition.
+ * @param block The block object.
+ * @returns True if block is procedures_definition.
+ */
+export function isProcedureDefinitionBlock(block: Blockly.Block): block is ProcedureDefinitionBlock {
+  return block.type === Constants.PROCEDURES_DEFINITION_BLOCK_TYPE;
+}
+
+/**
+ * Check whether block is procedures_call.
+ * @param block The block object.
+ * @returns True if block is procedures_call.
+ */
+export function isProcedureCallBlock(block: Blockly.Block): block is ProcedureCallBlock {
+  return block.type === Constants.PROCEDURES_CALL_BLOCK_TYPE;
+}
+
+/**
+ * Check whether block is procedures_prototype.
+ * @param block The block object.
+ * @returns True if block is procedures_prototype.
+ */
+export function isProcedurePrototypeBlock(block: Blockly.Block): block is ProcedurePrototypeBlock {
+  return block.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE;
+}
+
+/**
+ * Check whether block is argument_editor_*.
+ * @param block The block object.
+ * @returns True if block is argument_editor_*.
+ */
+export function isProcedureArgumentEditorBlock(block: Blockly.Block): block is ProcedureArgumentEditorBlock {
+  return block.type === 'argument_editor_string_number' || block.type === 'argument_editor_boolean';
+}
+
+/**
+ * Check whether block is argument_reporter_*.
+ * @param block The block object.
+ * @returns True if block is argument_reporter_*.
+ */
+export function isProcedureArgumentReporterBlock(block: Blockly.Block): block is ProcedureArgumentReporterBlock {
+  return block.type === 'argument_reporter_string_number' || block.type === 'argument_reporter_boolean';
+}
+
+// End of helper functions.
+
 // Serialization and deserialization.
 
 /**
@@ -974,11 +1023,8 @@ function updateArgumentReporterNames(
   // Create a list of argument reporters that are descendants of the definition stack (see above comment)
   const allBlocks = definitionBlock.getDescendants(false) as Blockly.BlockSvg[];
   for (const block of allBlocks) {
-    if (
-      (block.type === 'argument_reporter_string_number' ||
-      block.type === 'argument_reporter_boolean') &&
-      !block.isShadow()
-    ) { // Exclude arg reporters in the prototype block, which are shadows.
+    if (isProcedureArgumentReporterBlock(block) && !block.isShadow()) {
+      // Exclude arg reporters in the prototype block, which are shadows.
       argReporters.push(block);
     }
   }

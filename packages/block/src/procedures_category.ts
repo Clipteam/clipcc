@@ -25,18 +25,16 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from './constants';
-import {
-  compareStrings,
-  isProcedureCallBlock,
-  isProcedureDefinitionBlock,
-  isProcedurePrototypeBlock
-} from './utils';
+import {compareStrings} from './utils';
 import {ProcedureModel} from './procedure_model';
 import type {ProcedureExtraState} from './serialization/procedures';
-import type {
-  ProcedureCallBlock,
-  ProcedureDefinitionBlock,
-  ProcedurePrototypeBlock
+import {
+  isProcedureCallBlock,
+  isProcedureDefinitionBlock,
+  isProcedurePrototypeBlock,
+  type ProcedureCallBlock,
+  type ProcedureDefinitionBlock,
+  type ProcedurePrototypeBlock
 } from './blocks/procedures';
 import {FuncChange} from './events/func_change';
 

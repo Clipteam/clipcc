@@ -19,12 +19,6 @@
  */
 
 import * as Blockly from 'blockly/core';
-import * as Constants from './constants';
-import type {
-  ProcedurePrototypeBlock,
-  ProcedureCallBlock,
-  ProcedureDefinitionBlock
-} from './blocks/procedures';
 
 /**
  * @fileoverview Utility methods for Scratch Blocks but not Blockly.
@@ -57,31 +51,4 @@ export function getWorkspaceOptions(field: Blockly.Field): Blockly.Options {
   } else {
     return workspace.options;
   }
-}
-
-/**
- * Check whether block is procedures_definition.
- * @param block The block object.
- * @returns True if block is procedures_definition.
- */
-export function isProcedureDefinitionBlock(block: Blockly.Block): block is ProcedureDefinitionBlock {
-  return block.type === Constants.PROCEDURES_DEFINITION_BLOCK_TYPE;
-}
-
-/**
- * Check whether block is procedures_call.
- * @param block The block object.
- * @returns True if block is procedures_call.
- */
-export function isProcedureCallBlock(block: Blockly.Block): block is ProcedureCallBlock {
-  return block.type === Constants.PROCEDURES_CALL_BLOCK_TYPE;
-}
-
-/**
- * Check whether block is procedures_prototype.
- * @param block The block object.
- * @returns True if block is procedures_prototype.
- */
-export function isProcedurePrototypeBlock(block: Blockly.Block): block is ProcedurePrototypeBlock {
-  return block.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE;
 }
