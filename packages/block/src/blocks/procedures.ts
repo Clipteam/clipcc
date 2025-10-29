@@ -468,16 +468,16 @@ function createAllInputs(this: ProcedureBlock, connectionMap: ConnectionMap) {
   let argumentCount = 0;
   for (const component of procComponents) {
     // The first component should always be created even if the value is ''.
-    if (component.substring(0, 1) == '%') {
+    if (component.substring(0, 1) === '%') {
       const argumentType = component.substring(1, 2);
-      if (!(argumentType == 'n' || argumentType == 'b' || argumentType == 's')) {
+      if (!(argumentType === 'n' || argumentType === 'b' || argumentType === 's')) {
         throw new Error('Found an custom procedure with an invalid type: ' + argumentType);
       }
 
       const id = this.model.getParameter(argumentCount).getId();
 
       const input = this.appendValueInput(id);
-      if (argumentType == 'b') {
+      if (argumentType === 'b') {
         input.setCheck('Boolean');
       }
       this.populateArgument_(argumentType, argumentCount, connectionMap, id, input);
@@ -576,7 +576,7 @@ function attachShadow(
     let newBlock;
     try {
       newBlock = this.workspace.newBlock(blockType) as Blockly.BlockSvg;
-      if (argumentType == 'n') {
+      if (argumentType === 'n') {
         newBlock.setFieldValue('1', 'NUM');
       } else {
         newBlock.setFieldValue('', 'TEXT');
@@ -766,7 +766,7 @@ function checkOldTypeMatches(oldBlock: Blockly.BlockSvg | null, type: string) {
     return false;
   }
   if ((type === 'n' || type === 's') &&
-      oldBlock.type == 'argument_reporter_string_number') {
+      oldBlock.type === 'argument_reporter_string_number') {
     return true;
   }
   if (type === 'b' && oldBlock.type === 'argument_reporter_boolean') {
@@ -1300,7 +1300,7 @@ Blockly.Blocks['procedures_return'] = {
     // Don't change state if:
     //   * It's at the start of a drag.
     //   * It's not a move event.
-    if (!this.workspace.isDragging || this.workspace.isDragging() || event.type != Blockly.Events.BLOCK_MOVE) {
+    if (!this.workspace.isDragging || this.workspace.isDragging() || event.type !== Blockly.Events.BLOCK_MOVE) {
       return;
     }
     if (!this.isInFlyout) {
@@ -1308,7 +1308,7 @@ Blockly.Blocks['procedures_return'] = {
       // Makes it so the move and the disable event get undone together.
       Blockly.Events.setGroup(event.group);
       const root = this.getRootBlock();
-      const shouldDisable = root.type != Constants.PROCEDURES_DEFINITION_BLOCK_TYPE;
+      const shouldDisable = root.type !== Constants.PROCEDURES_DEFINITION_BLOCK_TYPE;
       this.setDisabledReason(shouldDisable, 'Return block should be placed in a function definition.');
       Blockly.Events.setGroup(group);
     }

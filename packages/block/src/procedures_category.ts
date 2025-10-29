@@ -114,7 +114,7 @@ function getDefineBlock(
   for (const block of blocks) {
     if (isProcedureDefinitionBlock(block)) {
       const prototypeBlock = block.getInput('custom_block')!.connection!.targetBlock()!;
-      if (isProcedurePrototypeBlock(prototypeBlock) && prototypeBlock.getProcCode() == procCode) {
+      if (isProcedurePrototypeBlock(prototypeBlock) && prototypeBlock.getProcCode() === procCode) {
         return block;
       }
     }
