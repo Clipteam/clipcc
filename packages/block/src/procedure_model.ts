@@ -132,10 +132,6 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel, Block
    * @returns The model instance.
    */
   setEnabled(enabled: boolean): this {
-    if (this.enabled === enabled) {
-      return this;
-    }
-
     this.enabled = enabled;
     return this;
   }
