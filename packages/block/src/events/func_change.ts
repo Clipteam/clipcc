@@ -26,15 +26,18 @@ export class FuncChange extends FuncBase {
 
   /**
    * @param procedure The procedure model.
+   * @param oldExtraState The old extra state of procedure.
    * @param newExtraState The new extra state of procedure.
    */
   constructor(
     procedure?: ProcedureModel,
+    oldExtraState?: ProcedureExtraState,
     newExtraState?: ProcedureExtraState
   ) {
     super(procedure);
     if (!procedure) return;
-    this.oldExtraState = procedure.saveExtraState();
+    this.procCode = oldExtraState?.proccode; // use previous proccode
+    this.oldExtraState = oldExtraState;
     this.newExtraState = newExtraState ?? {
       proccode: '',
       warp: false,
@@ -93,9 +96,9 @@ export class FuncChange extends FuncBase {
       throw new Error('The event is incomplete. Either pass a procedure to the constructor, or call fromJson.');
     }
     if (forward) {
-      this.updateProcedure(this.procCode, this.newExtraState);
+      this.updateProcedure(this.procCode, this.oldExtraState, this.newExtraState);
     } else {
-      this.updateProcedure(this.newExtraState.proccode, this.oldExtraState);
+      this.updateProcedure(this.newExtraState.proccode, this.newExtraState, this.oldExtraState);
     }
   }
 
@@ -103,21 +106,29 @@ export class FuncChange extends FuncBase {
    * Update extra state of the procedure with given procCode, then update the
    * procedure map with new procCode.
    * @param procCode The procCode of procedure.
-   * @param extraState The new extra state of procedure.
+   * @param oldExtraState The old extra state of procedure.
+   * @param newExtraState The new extra state of procedure.
    */
-  protected updateProcedure(procCode: string, extraState: ProcedureExtraState) {
+  protected updateProcedure(procCode: string, oldExtraState: ProcedureExtraState, newExtraState: ProcedureExtraState) {
     const workspace = this.getEventWorkspace_();
     const procedureMap = workspace.getProcedureMap();
     if (!procedureMap.has(procCode)) {
       throw new Error(`The procedure ${procCode} is undefined.`);
     }
     const procedure = procedureMap.get(procCode) as ProcedureModel;
-    procedure.loadExtraState(extraState);
+    procedure.loadExtraState(newExtraState);
 
     // Update key in procedure map if necessary.
-    if (extraState.proccode !== procCode) {
-      procedureMap.delete(procedure.getId());
+    if (newExtraState.proccode !== procCode) {
+      // Prevent FuncDelete and FuncCreate here.
+      Blockly.Events.disable();
+      procedureMap.delete(procCode);
       procedureMap.add(procedure);
+      Blockly.Events.enable();
+    }
+
+    if (Blockly.Events.isEnabled()) {
+      Blockly.Events.fire(new FuncChange(procedure, oldExtraState, newExtraState));
     }
   }
 }

@@ -21,6 +21,7 @@ import {ContinuousToolBox} from './toolbox/toolbox';
 import {ContinuousVerticalFlyout} from './toolbox/flyout';
 import {flyoutCategory as variableCategory} from './data_category';
 import {flyoutCategory as procedureCategory} from './procedures_category';
+import {isProcedureCallBlock, isProcedurePrototypeBlock} from './utils';
 import styles from './styles/blockly.css';
 
 import {FuncChange} from './events/func_change';
@@ -83,8 +84,21 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   // See (private) Blockly.Workspace.variableChangeCallback.
   workspace.addChangeListener((event: Blockly.Events.Abstract) => {
     switch (event.type) {
+      case FuncChange.TYPE: {
+        // Update all procedure blocks.
+        Blockly.Events.disable();
+        const allBlocks = workspace.getAllBlocks(false);
+        for (const block of allBlocks) {
+          if (isProcedureCallBlock(block) || isProcedurePrototypeBlock(block)) {
+            block.updateDisplay_();
+          }
+        }
+        Blockly.Events.enable();
+
+        workspace.refreshToolboxSelection();
+        break;
+      }
       case FuncCreate.TYPE:
-      case FuncChange.TYPE:
       case FuncDelete.TYPE:
         workspace.refreshToolboxSelection();
         break;

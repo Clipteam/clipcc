@@ -38,9 +38,7 @@ import type {
   ProcedureDefinitionBlock,
   ProcedurePrototypeBlock
 } from './blocks/procedures';
-import {FuncCreate} from './events/func_create';
 import {FuncChange} from './events/func_change';
-import {FuncDelete} from './events/func_delete';
 
 /**
  * Construct the blocks required by the flyout for the procedure category.
@@ -185,7 +183,6 @@ function createProcedureCallbackFactory(
       // Add to procedure map of the workspace.
       const model = ProcedureModel.loadExtraState(workspace, state);
       workspace.getProcedureMap().add(model);
-      Blockly.Events.fire(new FuncCreate(model));
 
       // Create the definition block.
       const blockState: Blockly.serialization.blocks.State = {
@@ -199,21 +196,21 @@ function createProcedureCallbackFactory(
           }
         }
       };
-      const block = Blockly.serialization.blocks.append(blockState, workspace) as ProcedureDefinitionBlock;
-      Blockly.renderManagement.finishQueuedRenders().then(() => {
-        const scale = workspace.scale; // To convert from pixel units to workspace units
-        // Position the block so that it is at the top left of the visible workspace,
-        // padded from the edge by 30 units. Position in the top right if RTL.
-        let posX = -workspace.scrollX;
-        if (workspace.RTL) {
-          posX += workspace.getMetrics().contentWidth - 30;
-        } else {
-          posX += 30;
-        }
-        block.moveBy(posX / scale, (-workspace.scrollY + 30) / scale);
-        block.scheduleSnapAndBump();
-        Blockly.Events.setGroup(false);
-      });
+      const block = Blockly.serialization.blocks.append(
+        blockState, workspace, {recordUndo: true}
+      ) as ProcedureDefinitionBlock;
+      const scale = workspace.scale; // To convert from pixel units to workspace units
+      // Position the block so that it is at the top left of the visible workspace,
+      // padded from the edge by 30 units. Position in the top right if RTL.
+      let posX = -workspace.scrollX;
+      if (workspace.RTL) {
+        posX += workspace.getMetrics().contentWidth - 30;
+      } else {
+        posX += 30;
+      }
+      block.moveBy(posX / scale, (-workspace.scrollY + 30) / scale);
+      block.scheduleSnapAndBump();
+      Blockly.Events.setGroup(false);
     }
   };
 }
@@ -282,24 +279,20 @@ function editProcedureCallbackFactory(block: ProcedurePrototypeBlock) {
       const procedureMap = block.workspace.getProcedureMap();
       const prevProcCode = block.getProcCode();
       const procedureModel = procedureMap.get(prevProcCode) as ProcedureModel;
+      const oldState = procedureModel.saveExtraState();
 
       // Update the model with extra states.
       procedureModel.loadExtraState(state);
       if (procedureModel.getProcCode() !== prevProcCode) {
+        // Prevent FuncDelete and FuncCreate events here.
+        Blockly.Events.disable();
         procedureMap.delete(prevProcCode);
         procedureMap.add(procedureModel);
-      }
-
-      // Update all procedure blocks.
-      const allBlocks = block.workspace.getAllBlocks(false);
-      for (const block of allBlocks) {
-        if (isProcedureCallBlock(block) || isProcedurePrototypeBlock(block)) {
-          block.updateDisplay_();
-        }
+        Blockly.Events.enable();
       }
 
       Blockly.Events.setGroup(true);
-      Blockly.Events.fire(new FuncChange(procedureModel, state));
+      Blockly.Events.fire(new FuncChange(procedureModel, oldState, state));
       Blockly.Events.setGroup(false);
     }
   };

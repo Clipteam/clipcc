@@ -1075,10 +1075,7 @@ Blockly.Blocks['procedures_definition'] = {
       const procCode = (input.connection.targetBlock() as ProcedurePrototypeBlock).getProcCode();
 
       const procedureMap = this.workspace.getProcedureMap();
-      const procedureModel = procedureMap.get(procCode) as ProcedureModel;
       procedureMap.delete(procCode);
-
-      Blockly.Events.fire(new FuncDelete(procedureModel));
     }
   }
 };

@@ -7,8 +7,10 @@
 import * as Blockly from 'blockly/core';
 import {ParameterModel} from './parameter_model';
 import {ProcedureExtraState} from './serialization/procedures';
+import {FuncCreate} from './events/func_create';
+import {FuncDelete} from './events/func_delete';
 
-export class ProcedureModel implements Blockly.procedures.IProcedureModel {
+export class ProcedureModel implements Blockly.procedures.IProcedureModel, Blockly.IObservable {
   protected workspace: Blockly.Workspace;
   protected procCode: string;
   protected parameters: ParameterModel[] = [];
@@ -17,6 +19,9 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
   protected global: boolean = false;
   protected warp: boolean = false;
 
+  /** Whether events should be fired. */
+  protected shouldFireEvents: boolean = false;
+
   /**
    * @param workspace The workspace this parameter model belongs to.
    * @param procCode Proccode of procedure.
@@ -24,6 +29,22 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
   constructor(workspace: Blockly.Workspace, procCode: string) {
     this.workspace = workspace;
     this.procCode = procCode;
+  }
+
+  /**
+   * Tells the procedure model it should fire events.
+   */
+  startPublishing(): void {
+    this.shouldFireEvents = true;
+    Blockly.Events.fire(new FuncCreate(this));
+  }
+
+  /**
+   * Tells the procedure model it should not fire events.
+   */
+  stopPublishing(): void {
+    Blockly.Events.fire(new FuncDelete(this));
+    this.shouldFireEvents = false;
   }
 
   /**
@@ -65,10 +86,6 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
     this.parameters.splice(index, 0, parameterModel);
     parameterModel.setProcedureModel(this);
 
-    if (Blockly.isObservable(parameterModel)) {
-      parameterModel.startPublishing();
-    }
-
     return this;
   }
 
@@ -81,12 +98,7 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
     if (!this.parameters[index]) {
       return this;
     }
-
-    const [parameterModel] = this.parameters.splice(index, 1);
-    if (Blockly.isObservable(parameterModel)) {
-      parameterModel.stopPublishing();
-    }
-
+    this.parameters.splice(index, 1);
     return this;
   }
 
@@ -98,9 +110,6 @@ export class ProcedureModel implements Blockly.procedures.IProcedureModel {
   appendParameter(parameterModel: ParameterModel): this {
     this.parameters.push(parameterModel);
     parameterModel.setProcedureModel(this);
-    if (Blockly.isObservable(parameterModel)) {
-      parameterModel.startPublishing();
-    }
     return this;
   }
 
