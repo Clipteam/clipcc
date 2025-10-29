@@ -37,6 +37,8 @@ import './blocks/data';
 import './blocks/procedures';
 import './blocks/test';
 
+import './serialization/procedures';
+
 /**
  * Inject a Blockly editor into the specified container element (usually a div).
  * The necessary stuffs and dynamic categories for main workspace will be registered.
@@ -110,6 +112,30 @@ export function injectWorkspace(container: Element | string, options?: Blockly.B
   };
   options = Object.assign(defaultOptions, options);
   return Blockly.inject(container, options);
+}
+
+/**
+ * Returns the state of the workspace as a plain JavaScript object.
+ * @param workspace The workspace to serialize.
+ * @returns The serialized state of the workspace.
+ */
+export function saveWorkspace(workspace: Blockly.Workspace) {
+  return Blockly.serialization.workspaces.save(workspace);
+}
+
+/**
+ * Loads the variable represented by the given state into the given workspace.
+ * @param state The state of the workspace to deserialize into the workspace.
+ * @param workspace The workspace to add the new state to.
+ * @param recordUndo If true, events triggered by this function will be
+ *     undo-able by the user. False by default.
+ */
+export function loadWorkspace(
+  state: {[key: string]: unknown},
+  workspace: Blockly.Workspace,
+  recordUndo?: boolean
+) {
+  Blockly.serialization.workspaces.load(state, workspace, {recordUndo});
 }
 
 export {setExternalProcedureDefCallback} from './procedures_category';

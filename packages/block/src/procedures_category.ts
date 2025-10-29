@@ -32,7 +32,7 @@ import {
   isProcedurePrototypeBlock
 } from './utils';
 import {ProcedureModel} from './procedure_model';
-import {ProcedureExtraState} from './serialization/procedures';
+import type {ProcedureExtraState} from './serialization/procedures';
 import type {
   ProcedureCallBlock,
   ProcedureDefinitionBlock,

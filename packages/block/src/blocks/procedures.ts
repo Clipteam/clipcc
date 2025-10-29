@@ -24,7 +24,7 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
-import {ProcedureExtraState, ProcedureCallerExtraState} from '../serialization/procedures';
+import type {ProcedureExtraState, ProcedureCallerExtraState} from '../serialization/procedures';
 import {FieldTextInputRemovable} from '../fields/textinput_removable';
 import {
   makeChangeShapeOption,
@@ -35,7 +35,7 @@ import {
 import {ProcedureModel} from '../procedure_model';
 import {ParameterModel} from '../parameter_model';
 import {FuncDelete} from '../events/func_delete';
-import {IShadowTemplate} from '../interfaces/i_shadow_template';
+import type {IShadowTemplate} from '../interfaces/i_shadow_template';
 
 interface ConnectionMap {
   [key: string]: {
