@@ -453,7 +453,7 @@ function deleteShadows(this: ProcedureBlock, connectionMap: ConnectionMap) {
   // Get rid of all of the old shadow blocks if they aren't connected.
   if (connectionMap) {
     for (const id in connectionMap) {
-      if (!(id in connectionMap)) {
+      if (!Object.prototype.hasOwnProperty.call(connectionMap, id)) {
         continue;
       }
       const saveInfo = connectionMap[id];
