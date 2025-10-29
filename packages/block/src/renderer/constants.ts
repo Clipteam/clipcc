@@ -44,4 +44,33 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
         throw Error('Unknown type');
     }
   }
+
+  override getCSS_(selector: string): string[] {
+    const css = super.getCSS_(selector);
+    const flyoutButtonStyle: string[] = [
+      `${selector} .blocklyFlyoutButton {`,
+      `fill: none;`,
+      `pointer-events: all;`,
+      `}`,
+      ``,
+      `${selector} .blocklyFlyoutButtonBackground {`,
+      `stroke: #c6c6c6;`,
+      `}`,
+      ``,
+      `${selector} .blocklyFlyoutButtonShadow {`,
+      `fill: transparent;`,
+      `}`,
+      ``,
+      `${selector} .blocklyFlyoutButton:hover {`,
+      `fill: white;`,
+      `cursor: pointer;`,
+      `}`,
+      ``,
+      `${selector} .blocklyFlyoutButton .blocklyText {`,
+      `fill: #575E75;`,
+      `font-weight: 500;`,
+      `}`
+    ];
+    return css.concat(flyoutButtonStyle);
+  }
 }
