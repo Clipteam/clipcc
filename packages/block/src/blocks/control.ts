@@ -176,22 +176,7 @@ Blockly.Blocks['control_stop'] = {
         [Blockly.Msg.CONTROL_STOP_OTHER, OTHER_SCRIPTS]
       ];
     }, function(this: Blockly.FieldDropdown, option) {
-      // Create an event group to keep field value and mutator in sync
-      // Return null at the end because setValue is called here already.
-      const block = this.sourceBlock_;
-      if (!block) return null;
-
-      Blockly.Events.setGroup(true);
-      const oldMutation = block.mutationToDom ?
-        Blockly.Xml.domToText(block.mutationToDom()) :
-        '';
-      block.setNextStatement(option === OTHER_SCRIPTS);
-      const newMutation = block.mutationToDom ?
-        Blockly.Xml.domToText(block.mutationToDom()) :
-        '';
-      Blockly.Events.fire(new Blockly.Events.BlockChange(block,
-        'mutation', null, oldMutation, newMutation));
-      Blockly.Events.setGroup(false);
+      this.getSourceBlock()?.setNextStatement(option === OTHER_SCRIPTS);
       return option;
     });
     this.appendDummyInput()
