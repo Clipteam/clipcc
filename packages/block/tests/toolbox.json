@@ -710,6 +710,31 @@
         },
         {
           "kind": "block",
+          "type": "operator_join_multiple",
+          "inputs": {
+            "STRING1": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "apple"
+                }
+              }
+            },
+            "STRING2": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "banana"
+                }
+              }
+            }
+          },
+          "extraState": {
+            "argumentids": ["STRING1", "STRING2"]
+          }
+        },
+        {
+          "kind": "block",
           "type": "operator_letter_of",
           "inputs": {
             "LETTER": {
