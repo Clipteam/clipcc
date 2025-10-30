@@ -187,11 +187,12 @@ Blockly.Blocks['control_stop'] = {
     Blockly.Extensions.apply('colours_control', this, false);
     this.setPreviousStatement(true);
   },
-  // mutationToDom: function(this: Blockly.Block) {
-  //   const container = document.createElement('mutation');
-  //   container.setAttribute('hasnext', String(this.nextConnection != null));
-  //   return container;
-  // },
+  mutationToDom: function() {
+    const extraState = this.saveExtraState();
+    const container = document.createElement('mutation');
+    container.setAttribute('hasnext', extraState.hasNext.toString());
+    return container;
+  },
   domToMutation: function(xmlElement: Element) {
     this.loadExtraState({hasNext: xmlElement.getAttribute('hasnext') === 'true'});
   },
