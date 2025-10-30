@@ -21,7 +21,7 @@
 import * as Blockly from 'blockly/core';
 import {getWorkspaceOptionsFromBlock} from '../utils';
 
-type ControlStopExtraState = { hasNext: boolean };
+type ControlStopExtraState = { hasnext: boolean };
 
 /**
  * Block for repeat n times (external number).
@@ -197,11 +197,10 @@ Blockly.Blocks['control_stop'] = {
     this.loadExtraState({hasNext: xmlElement.getAttribute('hasnext') === 'true'});
   },
   saveExtraState: function(): ControlStopExtraState {
-    return {hasNext: this.nextConnection != null};
+    return {hasnext: this.nextConnection != null};
   },
   loadExtraState: function(state: ControlStopExtraState) {
-    const hasNext = state.hasNext;
-    this.setNextStatement(hasNext);
+    this.setNextStatement(state.hasnext);
   }
 };
 
