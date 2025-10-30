@@ -21,7 +21,9 @@
 import * as Blockly from 'blockly/core';
 import {getWorkspaceOptionsFromBlock} from '../utils';
 
-type ControlStopExtraState = { hasnext: boolean };
+interface ControlStopExtraState {
+  hasnext: boolean
+}
 
 /**
  * Block for repeat n times (external number).
@@ -165,39 +167,49 @@ Blockly.Blocks['control_stop'] = {
     const ALL_SCRIPTS = 'all';
     const THIS_SCRIPT = 'this script';
     const OTHER_SCRIPTS = 'other scripts in sprite';
-    const stopDropdown = new Blockly.FieldDropdown(function() {
-      if (this.sourceBlock_ &&
+    const stopDropdown = new Blockly.FieldDropdown(
+      function() {
+        if (
+          this.sourceBlock_ &&
           this.sourceBlock_.nextConnection &&
-          this.sourceBlock_.nextConnection.isConnected()) {
+          this.sourceBlock_.nextConnection.isConnected()
+        ) {
+          return [
+            [Blockly.Msg.CONTROL_STOP_OTHER, OTHER_SCRIPTS]
+          ];
+        }
         return [
+          [Blockly.Msg.CONTROL_STOP_ALL, ALL_SCRIPTS],
+          [Blockly.Msg.CONTROL_STOP_THIS, THIS_SCRIPT],
           [Blockly.Msg.CONTROL_STOP_OTHER, OTHER_SCRIPTS]
         ];
+      },
+      function(this: Blockly.FieldDropdown, option) {
+        this.getSourceBlock()?.setNextStatement(option === OTHER_SCRIPTS);
+        return option;
       }
-      return [[Blockly.Msg.CONTROL_STOP_ALL, ALL_SCRIPTS],
-        [Blockly.Msg.CONTROL_STOP_THIS, THIS_SCRIPT],
-        [Blockly.Msg.CONTROL_STOP_OTHER, OTHER_SCRIPTS]
-      ];
-    }, function(this: Blockly.FieldDropdown, option) {
-      this.getSourceBlock()?.setNextStatement(option === OTHER_SCRIPTS);
-      return option;
-    });
+    );
     this.appendDummyInput()
       .appendField(Blockly.Msg.CONTROL_STOP)
       .appendField(stopDropdown, 'STOP_OPTION');
     Blockly.Extensions.apply('colours_control', this, false);
     this.setPreviousStatement(true);
   },
-  mutationToDom: function() {
-    const extraState = this.saveExtraState();
+  mutationToDom: function(): Element {
+    const extraState = this.saveExtraState() as ControlStopExtraState;
     const container = document.createElement('mutation');
-    container.setAttribute('hasnext', extraState.hasNext.toString());
+    container.setAttribute('hasnext', extraState.hasnext.toString());
     return container;
   },
   domToMutation: function(xmlElement: Element) {
-    this.loadExtraState({hasNext: xmlElement.getAttribute('hasnext') === 'true'});
+    this.loadExtraState({
+      hasnext: xmlElement.getAttribute('hasnext') === 'true'
+    });
   },
   saveExtraState: function(): ControlStopExtraState {
-    return {hasnext: this.nextConnection != null};
+    return {
+      hasnext: this.nextConnection !== null
+    };
   },
   loadExtraState: function(state: ControlStopExtraState) {
     this.setNextStatement(state.hasnext);
