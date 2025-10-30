@@ -194,11 +194,11 @@ Blockly.Blocks['control_stop'] = {
     this.loadExtraState({hasNext: xmlElement.getAttribute('hasnext') === 'true'});
   },
   saveExtraState: function() {
-    return {hasnext: this.nextConnection != null};
+    return {hasNext: this.nextConnection != null};
   },
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   loadExtraState: function(state: any) {
-    const hasNext = (state['hasnext'] == 'true' || state['hasnext']);
+    const hasNext = state['hasNext'] || false;
     this.setNextStatement(hasNext);
   }
 };
