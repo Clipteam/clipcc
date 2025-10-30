@@ -303,6 +303,7 @@ interface OperatorJoinMultipleBlock extends Blockly.BlockSvg {
 
   onButtonMinusClick(): void;
   onButtonPlusClick(): void;
+  changeArgumentsWrapper(callback: () => void): void;
   updateDisplay(): void;
 }
 
@@ -350,23 +351,66 @@ Blockly.Blocks['operator_join_multiple'] = {
     this.updateDisplay();
   },
   /**
+   * Add context menu option to insert inputs.
+   * @param options List of menu options to add to.
+   */
+  customContextMenu: function(
+    options: Array<
+      Blockly.ContextMenuRegistry.ContextMenuOption |
+      Blockly.ContextMenuRegistry.LegacyContextMenuOption
+    >
+  ) {
+    // [WARNING] Access private startBlock here, should be fixed later. The actual
+    // behaviour might be undefined.
+    const startBlock: Blockly.BlockSvg | null = (this.workspace.currentGesture_! as any).startBlock;
+    if (startBlock && startBlock.isShadow() && startBlock.getParent() === this) {
+      // Find the index of startBlock.
+      const index = this.getChildren(true).findIndex((block: Blockly.BlockSvg) => block === startBlock);
+      if (index === -1) return;
+
+      // Add Insert & Delete options.
+      options.push({
+        enabled: true,
+        text: Blockly.Msg.INSERT_INPUT,
+        callback: () => {
+          this.changeArgumentsWrapper(() => {
+            this.argumentids.splice(index, 0, Blockly.utils.idGenerator.genUid());
+          });
+        }
+      }, {
+        enabled: true,
+        text: Blockly.Msg.DELETE_INPUT,
+        callback: () => {
+          this.changeArgumentsWrapper(() => {
+            this.argumentids.splice(index, 1);
+          });
+        }
+      });
+    }
+  },
+  /**
    * Click event handler for plus button.
    */
   onButtonPlusClick: function() {
-    const oldExtraState = this.saveExtraState();
-    this.argumentids.push(Blockly.utils.idGenerator.genUid());
-    const newExtraState = this.saveExtraState();
-    Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
-      this, 'mutation', null, oldExtraState, newExtraState
-    ));
-    this.updateDisplay();
+    this.changeArgumentsWrapper(() => {
+      this.argumentids.push(Blockly.utils.idGenerator.genUid());
+    });
   },
   /**
    * Click event handler for minus button.
    */
   onButtonMinusClick: function() {
+    this.changeArgumentsWrapper(() => {
+      this.argumentids.pop();
+    });
+  },
+  /**
+   * The helper function to change the argumentids.
+   * @param callback The callback which performs changing.
+   */
+  changeArgumentsWrapper(callback: () => void): void {
     const oldExtraState = this.saveExtraState();
-    this.argumentids.pop();
+    callback();
     const newExtraState = this.saveExtraState();
     Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
       this, 'mutation', null, oldExtraState, newExtraState
