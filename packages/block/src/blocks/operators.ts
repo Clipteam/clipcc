@@ -21,11 +21,10 @@
 
 import * as Blockly from 'blockly/core';
 
+/**
+ * Block for adding two numbers.
+ */
 Blockly.Blocks['operator_add'] = {
-  /**
-   * Block for adding two numbers.
-   * @this Blockly.Block
-   */
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.OPERATORS_ADD,

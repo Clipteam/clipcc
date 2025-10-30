@@ -370,8 +370,7 @@ Blockly.Blocks['control_start_as_clone'] = {
     this.jsonInit({
       id: 'control_start_as_clone',
       message0: Blockly.Msg.CONTROL_STARTASCLONE,
-      args0: [
-      ],
+      args0: [],
       extensions: ['colours_control', 'shape_hat']
     });
   }
@@ -424,8 +423,7 @@ Blockly.Blocks['control_delete_this_clone'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.CONTROL_DELETETHISCLONE,
-      args0: [
-      ],
+      args0: [],
       extensions: ['colours_control', 'shape_end']
     });
   }

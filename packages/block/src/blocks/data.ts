@@ -30,12 +30,14 @@ Blockly.Blocks['data_variable'] = {
     this.jsonInit({
       message0: '%1',
       lastDummyAlign0: 'CENTRE',
-      args0: [{
-        type: 'field_variable_getter',
-        text: '',
-        name: 'VARIABLE',
-        variableType: Constants.SCALAR_VARIABLE_TYPE
-      }],
+      args0: [
+        {
+          type: 'field_variable_getter',
+          text: '',
+          name: 'VARIABLE',
+          variableType: Constants.SCALAR_VARIABLE_TYPE
+        }
+      ],
       checkboxInFlyout: true,
       extensions: ['contextMenu_getVariableBlock', 'colours_data', 'output_string']
     });
@@ -49,15 +51,18 @@ Blockly.Blocks['data_setvariableto'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.DATA_SETVARIABLETO,
-      args0: [{
-        type: 'field_variable',
-        name: 'VARIABLE',
-        variableTypes: [Constants.SCALAR_VARIABLE_TYPE],
-        defaultType: Constants.SCALAR_VARIABLE_TYPE
-      }, {
-        type: 'input_value',
-        name: 'VALUE'
-      }],
+      args0: [
+        {
+          type: 'field_variable',
+          name: 'VARIABLE',
+          variableTypes: [Constants.SCALAR_VARIABLE_TYPE],
+          defaultType: Constants.SCALAR_VARIABLE_TYPE
+        },
+        {
+          type: 'input_value',
+          name: 'VALUE'
+        }
+      ],
       extensions: ['colours_data', 'shape_statement']
     });
   }
@@ -70,15 +75,18 @@ Blockly.Blocks['data_changevariableby'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.DATA_CHANGEVARIABLEBY,
-      args0: [{
-        type: 'field_variable',
-        name: 'VARIABLE',
-        variableTypes: [Constants.SCALAR_VARIABLE_TYPE],
-        defaultType: Constants.SCALAR_VARIABLE_TYPE
-      }, {
-        type: 'input_value',
-        name: 'VALUE'
-      }],
+      args0: [
+        {
+          type: 'field_variable',
+          name: 'VARIABLE',
+          variableTypes: [Constants.SCALAR_VARIABLE_TYPE],
+          defaultType: Constants.SCALAR_VARIABLE_TYPE
+        },
+        {
+          type: 'input_value',
+          name: 'VALUE'
+        }
+      ],
       extensions: ['colours_data', 'shape_statement']
     });
   }
@@ -91,12 +99,14 @@ Blockly.Blocks['data_showvariable'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.DATA_SHOWVARIABLE,
-      args0: [{
-        type: 'field_variable',
-        name: 'VARIABLE',
-        variableTypes: [Constants.SCALAR_VARIABLE_TYPE],
-        defaultType: Constants.SCALAR_VARIABLE_TYPE
-      }],
+      args0: [
+        {
+          type: 'field_variable',
+          name: 'VARIABLE',
+          variableTypes: [Constants.SCALAR_VARIABLE_TYPE],
+          defaultType: Constants.SCALAR_VARIABLE_TYPE
+        }
+      ],
       previousStatement: null,
       nextStatement: null,
       extensions: ['colours_data']
@@ -111,12 +121,14 @@ Blockly.Blocks['data_hidevariable'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.DATA_HIDEVARIABLE,
-      args0: [{
-        type: 'field_variable',
-        name: 'VARIABLE',
-        variableTypes: [Constants.SCALAR_VARIABLE_TYPE],
-        defaultType: Constants.SCALAR_VARIABLE_TYPE
-      }],
+      args0: [
+        {
+          type: 'field_variable',
+          name: 'VARIABLE',
+          variableTypes: [Constants.SCALAR_VARIABLE_TYPE],
+          defaultType: Constants.SCALAR_VARIABLE_TYPE
+        }
+      ],
       previousStatement: null,
       nextStatement: null,
       extensions: ['colours_data']
@@ -132,12 +144,14 @@ Blockly.Blocks['data_listcontents'] = {
     this.jsonInit({
       message0: '%1',
       lastDummyAlign0: 'CENTRE',
-      args0: [{
-        type: 'field_variable_getter',
-        text: '',
-        name: 'LIST',
-        variableType: Constants.LIST_VARIABLE_TYPE
-      }],
+      args0: [
+        {
+          type: 'field_variable_getter',
+          text: '',
+          name: 'LIST',
+          variableType: Constants.LIST_VARIABLE_TYPE
+        }
+      ],
       extensions: ['contextMenu_getListBlock', 'colours_data_lists', 'output_string'],
       checkboxInFlyout: true
     });
@@ -151,18 +165,20 @@ Blockly.Blocks['data_listindexall'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: '%1',
-      args0: [{
-        type: 'field_numberdropdown',
-        name: 'INDEX',
-        value: '1',
-        min: 1,
-        precision: 1,
-        options: [
-          ['1', '1'],
-          [Blockly.Msg.DATA_INDEX_LAST, 'last'],
-          [Blockly.Msg.DATA_INDEX_ALL, 'all']
-        ]
-      }],
+      args0: [
+        {
+          type: 'field_numberdropdown',
+          name: 'INDEX',
+          value: '1',
+          min: 1,
+          precision: 1,
+          options: [
+            ['1', '1'],
+            [Blockly.Msg.DATA_INDEX_LAST, 'last'],
+            [Blockly.Msg.DATA_INDEX_ALL, 'all']
+          ]
+        }
+      ],
       extensions: ['colours_textfield', 'output_string']
     });
   }
@@ -175,18 +191,20 @@ Blockly.Blocks['data_listindexrandom'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: '%1',
-      args0: [{
-        type: 'field_numberdropdown',
-        name: 'INDEX',
-        value: '1',
-        min: 1,
-        precision: 1,
-        options: [
-          ['1', '1'],
-          [Blockly.Msg.DATA_INDEX_LAST, 'last'],
-          [Blockly.Msg.DATA_INDEX_RANDOM, 'random']
-        ]
-      }],
+      args0: [
+        {
+          type: 'field_numberdropdown',
+          name: 'INDEX',
+          value: '1',
+          min: 1,
+          precision: 1,
+          options: [
+            ['1', '1'],
+            [Blockly.Msg.DATA_INDEX_LAST, 'last'],
+            [Blockly.Msg.DATA_INDEX_RANDOM, 'random']
+          ]
+        }
+      ],
       extensions: ['colours_textfield', 'output_string']
     });
   }
@@ -199,15 +217,18 @@ Blockly.Blocks['data_addtolist'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.DATA_ADDTOLIST,
-      args0: [{
-        type: 'input_value',
-        name: 'ITEM'
-      }, {
-        type: 'field_variable',
-        name: 'LIST',
-        variableTypes: [Constants.LIST_VARIABLE_TYPE],
-        defaultType: Constants.LIST_VARIABLE_TYPE
-      }],
+      args0: [
+        {
+          type: 'input_value',
+          name: 'ITEM'
+        },
+        {
+          type: 'field_variable',
+          name: 'LIST',
+          variableTypes: [Constants.LIST_VARIABLE_TYPE],
+          defaultType: Constants.LIST_VARIABLE_TYPE
+        }
+      ],
       extensions: ['colours_data_lists', 'shape_statement']
     });
   }
@@ -220,15 +241,18 @@ Blockly.Blocks['data_deleteoflist'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.DATA_DELETEOFLIST,
-      args0: [{
-        type: 'input_value',
-        name: 'INDEX'
-      }, {
-        type: 'field_variable',
-        name: 'LIST',
-        variableTypes: [Constants.LIST_VARIABLE_TYPE],
-        defaultType: Constants.LIST_VARIABLE_TYPE
-      }],
+      args0: [
+        {
+          type: 'input_value',
+          name: 'INDEX'
+        },
+        {
+          type: 'field_variable',
+          name: 'LIST',
+          variableTypes: [Constants.LIST_VARIABLE_TYPE],
+          defaultType: Constants.LIST_VARIABLE_TYPE
+        }
+      ],
       extensions: ['colours_data_lists', 'shape_statement']
     });
   }
@@ -241,12 +265,14 @@ Blockly.Blocks['data_deletealloflist'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.DATA_DELETEALLOFLIST,
-      args0: [{
-        type: 'field_variable',
-        name: 'LIST',
-        variableTypes: [Constants.LIST_VARIABLE_TYPE],
-        defaultType: Constants.LIST_VARIABLE_TYPE
-      }],
+      args0: [
+        {
+          type: 'field_variable',
+          name: 'LIST',
+          variableTypes: [Constants.LIST_VARIABLE_TYPE],
+          defaultType: Constants.LIST_VARIABLE_TYPE
+        }
+      ],
       extensions: ['colours_data_lists', 'shape_statement']
     });
   }
@@ -259,18 +285,22 @@ Blockly.Blocks['data_insertatlist'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.DATA_INSERTATLIST,
-      args0: [{
-        type: 'input_value',
-        name: 'ITEM'
-      }, {
-        type: 'input_value',
-        name: 'INDEX'
-      }, {
-        type: 'field_variable',
-        name: 'LIST',
-        variableTypes: [Constants.LIST_VARIABLE_TYPE],
-        defaultType: Constants.LIST_VARIABLE_TYPE
-      }],
+      args0: [
+        {
+          type: 'input_value',
+          name: 'ITEM'
+        },
+        {
+          type: 'input_value',
+          name: 'INDEX'
+        },
+        {
+          type: 'field_variable',
+          name: 'LIST',
+          variableTypes: [Constants.LIST_VARIABLE_TYPE],
+          defaultType: Constants.LIST_VARIABLE_TYPE
+        }
+      ],
       extensions: ['colours_data_lists', 'shape_statement']
     });
   }
@@ -283,18 +313,22 @@ Blockly.Blocks['data_replaceitemoflist'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.DATA_REPLACEITEMOFLIST,
-      args0: [{
-        type: 'input_value',
-        name: 'INDEX'
-      }, {
-        type: 'field_variable',
-        name: 'LIST',
-        variableTypes: [Constants.LIST_VARIABLE_TYPE],
-        defaultType: Constants.LIST_VARIABLE_TYPE
-      }, {
-        type: 'input_value',
-        name: 'ITEM'
-      }],
+      args0: [
+        {
+          type: 'input_value',
+          name: 'INDEX'
+        },
+        {
+          type: 'field_variable',
+          name: 'LIST',
+          variableTypes: [Constants.LIST_VARIABLE_TYPE],
+          defaultType: Constants.LIST_VARIABLE_TYPE
+        },
+        {
+          type: 'input_value',
+          name: 'ITEM'
+        }
+      ],
       extensions: ['colours_data_lists', 'shape_statement']
     });
   }
@@ -307,15 +341,18 @@ Blockly.Blocks['data_itemoflist'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.DATA_ITEMOFLIST,
-      args0: [{
-        type: 'input_value',
-        name: 'INDEX'
-      }, {
-        type: 'field_variable',
-        name: 'LIST',
-        variableTypes: [Constants.LIST_VARIABLE_TYPE],
-        defaultType: Constants.LIST_VARIABLE_TYPE
-      }],
+      args0: [
+        {
+          type: 'input_value',
+          name: 'INDEX'
+        },
+        {
+          type: 'field_variable',
+          name: 'LIST',
+          variableTypes: [Constants.LIST_VARIABLE_TYPE],
+          defaultType: Constants.LIST_VARIABLE_TYPE
+        }
+      ],
       output: null,
       extensions: ['colours_data_lists'],
       outputShape: Constants.OUTPUT_SHAPE_ROUND
@@ -330,15 +367,18 @@ Blockly.Blocks['data_itemnumoflist'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.DATA_ITEMNUMOFLIST,
-      args0: [{
-        type: 'input_value',
-        name: 'ITEM'
-      }, {
-        type: 'field_variable',
-        name: 'LIST',
-        variableTypes: [Constants.LIST_VARIABLE_TYPE],
-        defaultType: Constants.LIST_VARIABLE_TYPE
-      }],
+      args0: [
+        {
+          type: 'input_value',
+          name: 'ITEM'
+        },
+        {
+          type: 'field_variable',
+          name: 'LIST',
+          variableTypes: [Constants.LIST_VARIABLE_TYPE],
+          defaultType: Constants.LIST_VARIABLE_TYPE
+        }
+      ],
       output: null,
       extensions: ['colours_data_lists'],
       outputShape: Constants.OUTPUT_SHAPE_ROUND
@@ -353,12 +393,14 @@ Blockly.Blocks['data_lengthoflist'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.DATA_LENGTHOFLIST,
-      args0: [{
-        type: 'field_variable',
-        name: 'LIST',
-        variableTypes: [Constants.LIST_VARIABLE_TYPE],
-        defaultType: Constants.LIST_VARIABLE_TYPE
-      }],
+      args0: [
+        {
+          type: 'field_variable',
+          name: 'LIST',
+          variableTypes: [Constants.LIST_VARIABLE_TYPE],
+          defaultType: Constants.LIST_VARIABLE_TYPE
+        }
+      ],
       extensions: ['colours_data_lists', 'output_number']
     });
   }
@@ -371,15 +413,18 @@ Blockly.Blocks['data_listcontainsitem'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.DATA_LISTCONTAINSITEM,
-      args0: [{
-        type: 'field_variable',
-        name: 'LIST',
-        variableTypes: [Constants.LIST_VARIABLE_TYPE],
-        defaultType: Constants.LIST_VARIABLE_TYPE
-      }, {
-        type: 'input_value',
-        name: 'ITEM'
-      }],
+      args0: [
+        {
+          type: 'field_variable',
+          name: 'LIST',
+          variableTypes: [Constants.LIST_VARIABLE_TYPE],
+          defaultType: Constants.LIST_VARIABLE_TYPE
+        },
+        {
+          type: 'input_value',
+          name: 'ITEM'
+        }
+      ],
       extensions: ['colours_data_lists', 'output_boolean']
     });
   }
@@ -392,12 +437,14 @@ Blockly.Blocks['data_showlist'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.DATA_SHOWLIST,
-      args0: [{
-        type: 'field_variable',
-        name: 'LIST',
-        variableTypes: [Constants.LIST_VARIABLE_TYPE],
-        defaultType: Constants.LIST_VARIABLE_TYPE
-      }],
+      args0: [
+        {
+          type: 'field_variable',
+          name: 'LIST',
+          variableTypes: [Constants.LIST_VARIABLE_TYPE],
+          defaultType: Constants.LIST_VARIABLE_TYPE
+        }
+      ],
       extensions: ['colours_data_lists', 'shape_statement']
     });
   }
@@ -410,12 +457,14 @@ Blockly.Blocks['data_hidelist'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.DATA_HIDELIST,
-      args0: [{
-        type: 'field_variable',
-        name: 'LIST',
-        variableTypes: [Constants.LIST_VARIABLE_TYPE],
-        defaultType: Constants.LIST_VARIABLE_TYPE
-      }],
+      args0: [
+        {
+          type: 'field_variable',
+          name: 'LIST',
+          variableTypes: [Constants.LIST_VARIABLE_TYPE],
+          defaultType: Constants.LIST_VARIABLE_TYPE
+        }
+      ],
       extensions: ['colours_data_lists', 'shape_statement']
     });
   }

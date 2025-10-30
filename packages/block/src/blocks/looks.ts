@@ -50,10 +50,12 @@ Blockly.Blocks['looks_say'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.LOOKS_SAY,
-      args0: [{
-        type: 'input_value',
-        name: 'MESSAGE'
-      }],
+      args0: [
+        {
+          type: 'input_value',
+          name: 'MESSAGE'
+        }
+      ],
       extensions: ['colours_looks', 'shape_statement']
     });
   }
@@ -88,10 +90,12 @@ Blockly.Blocks['looks_think'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.LOOKS_THINK,
-      args0: [{
-        type: 'input_value',
-        name: 'MESSAGE'
-      }],
+      args0: [
+        {
+          type: 'input_value',
+          name: 'MESSAGE'
+        }
+      ],
       extensions: ['colours_looks', 'shape_statement']
     });
   }
@@ -294,10 +298,12 @@ Blockly.Blocks['looks_setstretchto'] = {
   init: function() {
     this.jsonInit({
       message0: Blockly.Msg.LOOKS_SETSTRETCHTO,
-      args0: [{
-        type: 'input_value',
-        name: 'STRETCH'
-      }],
+      args0: [
+        {
+          type: 'input_value',
+          name: 'STRETCH'
+        }
+      ],
       extensions: ['colours_looks', 'shape_statement']
     });
   }
