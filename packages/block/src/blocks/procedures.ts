@@ -590,7 +590,7 @@ function attachShadow(
       Blockly.Events.enable();
     }
     if (Blockly.Events.isEnabled()) {
-      Blockly.Events.fire(new Blockly.Events.BlockCreate(newBlock));
+      Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.BLOCK_CREATE))(newBlock));
     }
     newBlock.outputConnection.connect(input.connection!);
   }
@@ -624,7 +624,7 @@ function createArgumentReporter(
     Blockly.Events.enable();
   }
   if (Blockly.Events.isEnabled()) {
-    Blockly.Events.fire(new Blockly.Events.BlockCreate(newBlock));
+    Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.BLOCK_CREATE))(newBlock));
   }
   return newBlock;
 }
@@ -808,7 +808,7 @@ function createArgumentEditor(
     Blockly.Events.enable();
   }
   if (Blockly.Events.isEnabled()) {
-    Blockly.Events.fire(new Blockly.Events.BlockCreate(newBlock));
+    Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.BLOCK_CREATE))(newBlock));
   }
   return newBlock;
 }
