@@ -433,7 +433,7 @@ Blockly.Blocks['operator_join_multiple'] = {
       if (input.connection) {
         const target = input.connection.targetBlock() as Blockly.BlockSvg;
         connectionMap[input.name] = {
-          shadow: input.connection.getShadowState(),
+          shadow: input.connection.getShadowState(true),
           block: target
         };
         if (target) {
