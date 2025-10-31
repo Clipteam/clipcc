@@ -347,7 +347,7 @@ Blockly.Blocks['operator_join_multiple'] = {
     };
   },
   loadExtraState: function(state: OperatorJoinMultipleExtraState) {
-    this.argumentids = state.argumentids;
+    this.argumentids = Array.from(state.argumentids); // deep-copy
     this.updateDisplay();
   },
   /**
