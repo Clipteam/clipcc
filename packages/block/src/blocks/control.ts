@@ -22,7 +22,7 @@ import * as Blockly from 'blockly/core';
 import {getWorkspaceOptionsFromBlock} from '../utils';
 
 interface ControlStopExtraState {
-  hasnext: boolean
+  hasnext: boolean;
 }
 
 /**
