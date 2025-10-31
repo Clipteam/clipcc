@@ -484,7 +484,6 @@ Blockly.Blocks['operator_join_multiple'] = {
           newBlock.setShadow(true);
           if (!this.isInsertionMarker()) {
             newBlock.initSvg();
-            newBlock.render();
           }
         } finally {
           Blockly.Events.enable();
