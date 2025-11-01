@@ -1214,9 +1214,6 @@ Blockly.Blocks['procedures_prototype'] = {
       this.setShape_(isReturn ? Constants.OUTPUT_SHAPE_ROUND : Constants.OUTPUT_SHAPE_NORMAL, true);
     }
   },
-  canBeFocused() {
-    return false;
-  },
 
   // Only exists on procedures_prototype.
   createArgumentReporter_: createArgumentReporter,
@@ -1257,9 +1254,6 @@ Blockly.Blocks['procedures_declaration'] = {
     if (prevIsReturn !== isReturn) {
       this.setShape_(isReturn ? Constants.OUTPUT_SHAPE_ROUND : Constants.OUTPUT_SHAPE_NORMAL);
     }
-  },
-  canBeFocused() {
-    return false;
   },
 
   // Exist on declaration and arguments editors, with different implementations.
