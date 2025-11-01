@@ -829,7 +829,6 @@ function updateDeclarationProcCode(this: ProcedureDeclarationBlock) {
       const target = input.connection!.targetBlock()!;
       params[currentParamIndex].setName(target.getFieldValue('TEXT'));
       currentParamIndex += 1;
-      // this.argumentIds_.push(input.name);
       if (target.type === 'argument_editor_boolean') {
         procCodeParts.push('%b');
       } else {
@@ -961,24 +960,31 @@ function removeFieldCallback(this: ProcedureDeclarationBlock, field: Blockly.Fie
     return;
   }
   let inputNameToRemove = null;
+  let parameterIndex = 0;
   for (let n = 0; n < this.inputList.length; n++) {
     const input = this.inputList[n];
     if (input.connection) {
       const target = input.connection.targetBlock()!;
       if (field.name && target.getField(field.name) === field) {
         inputNameToRemove = input.name;
+        continue;
       }
     } else {
       for (let j = 0; j < input.fieldRow.length; j++) {
         if (input.fieldRow[j] === field) {
           inputNameToRemove = input.name;
+          continue;
         }
       }
+    }
+    if (input.type !== Blockly.inputs.inputTypes.DUMMY) {
+      ++parameterIndex;
     }
   }
   if (inputNameToRemove) {
     Blockly.WidgetDiv.hide();
     this.removeInput(inputNameToRemove);
+    this.model.deleteParameter(parameterIndex);
     this.onChangeFn();
     this.updateDisplay_();
   }
