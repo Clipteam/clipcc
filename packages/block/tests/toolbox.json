@@ -115,11 +115,13 @@
     {
       "kind": "category",
       "name": "Variables",
+      "categorystyle": "data",
       "custom": "VARIABLE"
     },
     {
       "kind": "category",
       "name": "Looks",
+      "categorystyle": "looks",
       "contents": [
         {
           "kind": "block",
@@ -401,6 +403,7 @@
     {
       "kind": "category",
       "name": "Sound",
+      "categorystyle": "sounds",
       "contents": [
         {
           "kind": "block",
@@ -497,6 +500,7 @@
     {
       "kind": "category",
       "name": "Operators",
+      "categorystyle": "operators",
       "contents": [
         {
           "kind": "block",
@@ -1110,6 +1114,7 @@
     {
       "kind": "category",
       "name": "Controls",
+      "categorystyle": "control",
       "contents": [
         {
           "kind": "block",
@@ -1221,6 +1226,7 @@
     {
       "kind": "category",
       "name": "Motion",
+      "categorystyle": "motion",
       "contents": [
         {
           "kind": "block",
@@ -1498,6 +1504,7 @@
     {
       "kind": "category",
       "name": "Sensing",
+      "categorystyle": "sensing",
       "contents": [
         {
           "kind": "block",
@@ -1791,6 +1798,7 @@
     {
       "kind": "category",
       "name": "Event",
+      "categorystyle": "event",
       "contents": [
         {
           "kind": "block",
