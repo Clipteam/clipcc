@@ -1304,13 +1304,13 @@ Blockly.Blocks['procedures_return'] = {
       return;
     }
     if (!this.isInFlyout) {
-      const group = Blockly.Events.getGroup();
-      // Makes it so the move and the disable event get undone together.
-      Blockly.Events.setGroup(event.group);
+      // There is no need to record the enable/disable change on the undo/redo
+      // list since the change will be automatically recreated when replayed.
+      Blockly.Events.setRecordUndo(false);
       const root = this.getRootBlock();
       const shouldDisable = root.type !== Constants.PROCEDURES_DEFINITION_BLOCK_TYPE;
       this.setDisabledReason(shouldDisable, 'Return block should be placed in a function definition.');
-      Blockly.Events.setGroup(group);
+      Blockly.Events.setRecordUndo(true);
     }
   }
 };
