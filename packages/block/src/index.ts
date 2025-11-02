@@ -31,7 +31,6 @@ import './blocks/control';
 import './blocks/sensing';
 import './blocks/event';
 import './blocks/motion';
-import './blocks/test';
 
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
   // Register the fields.
