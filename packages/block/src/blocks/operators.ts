@@ -343,7 +343,7 @@ Blockly.Blocks['operator_join_multiple'] = {
   },
   saveExtraState: function(): OperatorJoinMultipleExtraState {
     return {
-      argumentids: this.argumentids
+      argumentids: Array.from(this.argumentids) // deep-copy
     };
   },
   loadExtraState: function(state: OperatorJoinMultipleExtraState) {
@@ -362,7 +362,8 @@ Blockly.Blocks['operator_join_multiple'] = {
   ) {
     // [WARNING] Access private startBlock here, should be fixed later. The actual
     // behaviour might be undefined.
-    const startBlock: Blockly.BlockSvg | null = (this.workspace.currentGesture_! as any).startBlock;
+    // @ts-expect-error Accessing private startBlock here.
+    const startBlock: Blockly.BlockSvg | null = this.workspace.currentGesture_?.startBlock;
     if (startBlock && startBlock.isShadow() && startBlock.getParent() === this) {
       // Find the index of startBlock.
       const index = this.getChildren(true).findIndex((block: Blockly.BlockSvg) => block === startBlock);
@@ -413,7 +414,7 @@ Blockly.Blocks['operator_join_multiple'] = {
     callback();
     const newExtraState = this.saveExtraState();
     Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
-      this, 'mutation', null, oldExtraState, newExtraState
+      this, 'mutation', null, JSON.stringify(oldExtraState), JSON.stringify(newExtraState)
     ));
     this.updateDisplay();
   },
