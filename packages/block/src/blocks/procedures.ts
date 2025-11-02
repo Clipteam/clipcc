@@ -584,7 +584,6 @@ function attachShadow(
       newBlock.setShadow(true);
       if (!this.isInsertionMarker()) {
         newBlock.initSvg();
-        newBlock.render();
       }
     } finally {
       Blockly.Events.enable();
@@ -618,7 +617,6 @@ function createArgumentReporter(
     newBlock.setFieldValue(displayName, 'VALUE');
     if (!this.isInsertionMarker()) {
       newBlock.initSvg();
-      newBlock.render();
     }
   } finally {
     Blockly.Events.enable();
@@ -802,7 +800,7 @@ function createArgumentEditor(
     newBlock.setShadow(true);
     if (!this.isInsertionMarker()) {
       newBlock.initSvg();
-      newBlock.render();
+      newBlock.render(); // Render immediately for rendering TextInput field correctly.
     }
   } finally {
     Blockly.Events.enable();
