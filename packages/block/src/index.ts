@@ -24,7 +24,13 @@ import styles from './styles/blockly.css';
 import './blocks/extensions';
 import './blocks/common';
 import './blocks/data';
-import './blocks/test';
+import './blocks/looks';
+import './blocks/sound';
+import './blocks/operators';
+import './blocks/control';
+import './blocks/sensing';
+import './blocks/event';
+import './blocks/motion';
 
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
   // Register the fields.

@@ -1,190 +1,87 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<title>Test Playground</title>
-	<script src="main.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Test Playground</title>
+  <script src="main.js"></script>
   <script>
     window.Blockly.Msg = window.Blockly.Msg.Msg;
   </script>
   <script src="messages.js"></script>
-	<style>
-		html, body {
-			height: 100%;
-		}
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
 
-		body {
-			background-color: #fff;
-			font-family: sans-serif;
-			overflow: hidden;
-		}
+    body {
+      background-color: #fff;
+      font-family: sans-serif;
+      overflow: hidden;
+    }
 
-		h1 {
-			font-weight: normal;
-			font-size: 140%;
-		}
+    h1 {
+      font-weight: normal;
+      font-size: 140%;
+    }
 
-		#blocklyDiv {
-			float: right;
-			height: 95%;
-			width: 70%;
-		}
+    #blocklyDiv {
+      float: right;
+      height: 95%;
+      width: 100%;
+    }
 
-		#collaborators {
-			float: right;
-			width: 30px;
-			margin-left: 10px;
-		}
+    #collaborators {
+      float: right;
+      width: 30px;
+      margin-left: 10px;
+    }
 
-		#collaborators > img {
-			margin-right: 5px;
-			height: 30px;
-			padding-bottom: 5px;
-			width: 30px;
-			border-radius: 3px;
-		}
+    #collaborators>img {
+      margin-right: 5px;
+      height: 30px;
+      padding-bottom: 5px;
+      width: 30px;
+      border-radius: 3px;
+    }
 
-		#importExport {
-			font-family: monospace;
-		}
+    #importExport {
+      font-family: monospace;
+    }
   </style>
-	<script>
-		const toolbox = {
-			kind: 'categoryToolbox',
-			contents: [{
-        kind: 'category',
-        name: 'Category 1',
-        colour: '#4C97FF',
-        contents: [{
-					'kind': 'block',
-					'type': 'test_add',
-					'inputs': {
-						'NUM1': {
-							'shadow': {
-								'type': 'math_number',
-								'fields': {
-									'NUM': 5
-								}
-							}
-						},
-						'NUM2': {
-							'shadow': {
-								'type': 'math_number',
-								'fields': {
-									'NUM': 5
-								}
-							}
-						}
-					}
-				}, {
-					'kind': 'block',
-					'type': 'test_str',
-					'inputs': {
-						'NUM1': {
-							'shadow': {
-								'type': 'text',
-								'fields': {
-									'TEXT': 'sss'
-								}
-							}
-						},
-						'NUM2': {
-							'shadow': {
-								'type': 'text',
-								'fields': {
-									'TEXT': 5
-								}
-							}
-						}
-					}
-				}]
-      }, {
-        kind: 'category',
-        name: 'Category 2',
-        contents: [{
-					'kind': 'block',
-					'type': 'test_field_angle',
-          'inputs': {
-            'DEGREES': {
-							'shadow': {
-								'type': 'math_angle',
-								'fields': {
-									'NUM': 90
-								}
-							}
-            }
+  <script>
+    function start() {
+      fetch('toolbox.json').then(response => response.json()).then(toolbox => {
+        ScratchBlocks.inject('blocklyDiv', {
+          media: '../media/',
+          collapse: false,
+          disable: false,
+          toolbox: toolbox,
+          horizontalLayout: false,
+          toolboxPosition: 'left',
+          move: {
+            scrollbars: true,
+            wheel: true
+          },
+          zoom: {
+            controls: true,
+            wheel: true,
+            startScale: 0.675,
+            maxScale: 4,
+            minScale: 0.25,
+            scaleSpeed: 1.1
           }
-        }, {
-					'kind': 'block',
-					'type': 'test_field_matrix',
-          'inputs': {
-            'MATRIX': {
-							'shadow': {
-								'type': 'matrix',
-								'fields': {
-									'MATRIX': ''
-								}
-							}
-            }
-          }
-        }, {
-          'kind': 'block',
-          'type': 'test_field_colour_slider',
-          'inputs': {
-            'COLOR': {
-              'shadow': {
-                'type': 'colour_picker'
-              }
-            }
-          }
-        }, {
-          'kind': 'block',
-          'type': 'test_field_note',
-          'inputs': {
-            'NOTE': {
-              'shadow': {
-                'type': 'note'
-              }
-            }
-          }
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }]
-      }, {
-        kind: 'category',
-        name: 'Variables',
-        custom: 'VARIABLE'
-      }]
-		};
-
-		function start() {
-			ScratchBlocks.inject('blocklyDiv', {
-        media: '../media/',
-        collapse: false,
-        disable: false,
-        toolbox: toolbox,
-        horizontalLayout: false,
-        toolboxPosition: 'left',
-        move: {
-          scrollbars: true,
-          wheel: true
-        },
-        zoom: {
-          controls: true,
-          wheel: true,
-          startScale: 0.675,
-          maxScale: 4,
-          minScale: 0.25,
-          scaleSpeed: 1.1
-        }
+        });
       });
-		}
-	</script>
+    }
+  </script>
 </head>
+
 <body onload="start()">
-	<div id="collaborators"></div>
-	<div id="blocklyDiv"></div>
+  <!-- <div id="collaborators"></div> -->
+  <div id="blocklyDiv"></div>
 </body>
+
 </html>
