@@ -410,11 +410,13 @@ export function makeChangeShapeOption(
     enabled: true,
     text: Blockly.Msg.CHANGE_PROCEDURE_SHAPE,
     callback: function() {
-      const oldState = block.saveExtraState();
+      const oldState = JSON.stringify(block.saveExtraState());
       block.setReturn(!block.getReturn());
-      const newState = block.saveExtraState();
+      const newState = JSON.stringify(block.saveExtraState());
       Blockly.Events.setGroup(true);
-      Blockly.Events.fire(new Blockly.Events.BlockChange(block, 'mutation', null, oldState, newState));
+      Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
+        block, 'mutation', null, oldState, newState
+      ));
       Blockly.Events.setGroup(false);
     }
   };
