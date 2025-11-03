@@ -454,37 +454,3 @@ export function makeChangeShapeOption(
   };
   return option;
 }
-
-/**
- * Make a context menu option for forcibly deleting a custom procedure.
- * This appears in the context menu for procedure definitions.
- * @param block The block where the right-click originated.
- * @returns A menu option, containing text, enabled, and a callback.
- * @package
- */
-export function makeForceDeleteOption(
-  block: Blockly.BlockSvg
-): Blockly.ContextMenuRegistry.LegacyContextMenuOption {
-  return {
-    enabled: true,
-    text: Blockly.Msg.FORCE_DELETE,
-    callback: function() {
-      // dialog.confirm(Blockly.Msg.FORCE_DELETE_INFO, function(ok) {
-      //   if (ok) {
-      //     const workspace = block.workspace;
-
-      //     workspace.removeProcedure(block);
-
-      //     // Delete the whole stack.
-      //     Blockly.Events.setGroup(true);
-      //     block.dispose();
-      //     Blockly.Events.setGroup(false);
-
-      //     // TODO (#1354) Update this function when '_' is removed
-      //     // Refresh toolbox, so caller doesn't appear there anymore
-      //     workspace.refreshToolboxSelection();
-      //   }
-      // });
-    }
-  };
-}

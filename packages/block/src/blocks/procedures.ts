@@ -30,12 +30,10 @@ import {
   getCallBlocks,
   makeChangeShapeOption,
   makeEditOption,
-  makeForceDeleteOption,
   makeShowDefinitionOption
 } from '../procedures_category';
 import {ProcedureModel} from '../procedure_model';
 import {ParameterModel} from '../parameter_model';
-import {FuncDelete} from '../events/func_delete';
 import type {IShadowTemplate} from '../interfaces/i_shadow_template';
 import type {IDynamicDeletable} from '../interfaces/i_dynamic_deletable';
 
