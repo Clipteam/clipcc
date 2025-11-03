@@ -27,6 +27,7 @@ import * as Constants from '../constants';
 import type {ProcedureExtraState, ProcedureCallerExtraState} from '../serialization/procedures';
 import {FieldTextInputRemovable} from '../fields/textinput_removable';
 import {
+  getCallBlocks,
   makeChangeShapeOption,
   makeEditOption,
   makeForceDeleteOption,
@@ -36,6 +37,7 @@ import {ProcedureModel} from '../procedure_model';
 import {ParameterModel} from '../parameter_model';
 import {FuncDelete} from '../events/func_delete';
 import type {IShadowTemplate} from '../interfaces/i_shadow_template';
+import type {IDynamicDeletable} from '../interfaces/i_dynamic_deletable';
 
 interface ConnectionMap {
   [key: string]: {
@@ -48,7 +50,7 @@ export interface ProcedureBlock extends Blockly.BlockSvg {
   model: ProcedureModel;
 
   // Shared.
-  getProcCode: () => string; // Deprecated
+  getProcCode: () => string;
   getProcedureModel: () => ProcedureModel;
   removeAllInputs_: () => void;
   disconnectOldBlocks_: () => ConnectionMap;
@@ -68,8 +70,10 @@ export interface ProcedureBlock extends Blockly.BlockSvg {
   updateShape_: () => void;
 }
 
-export interface ProcedureDefinitionBlock extends Blockly.BlockSvg {
+export interface ProcedureDefinitionBlock extends Blockly.BlockSvg, IDynamicDeletable {
   type: 'procedures_definition';
+
+  getProcCode: () => string;
 }
 
 export interface ProcedureCallBlock extends ProcedureBlock {
@@ -1104,7 +1108,7 @@ function getCallerTargetWorkspace(this: ProcedureCallBlock) {
  * Block for defining a procedure.
  */
 Blockly.Blocks['procedures_definition'] = {
-  init: function(this: Blockly.Block) {
+  init: function() {
     this.jsonInit({
       message0: Blockly.Msg.PROCEDURES_DEFINITION,
       args0: [{
@@ -1116,19 +1120,58 @@ Blockly.Blocks['procedures_definition'] = {
     this.hat = Constants.SHAPE_BOWLER_HAT;
   },
   /**
-   * Destroy the definition block.
+   * The method called during disposal.
    */
-  destroy: function(this: ProcedureDefinitionBlock) {
-    const input = this.getInput('custom_block');
-    // this is the root block, not the shadow block.
-    if (input && input.connection && input.connection.targetBlock()) {
-      const procCode = (input.connection.targetBlock() as ProcedurePrototypeBlock).getProcCode();
-
-      const procedureMap = this.workspace.getProcedureMap();
-      procedureMap.delete(procCode);
+  destroy: function() {
+    // Remove the procedure model from map.
+    this.workspace.getProcedureMap().delete(this.getProcCode());
+  },
+  /**
+   * Delete a block and hide chaff when doing so. This is called from the
+   * context menu and keyboard shortcuts as the full delete action.
+   */
+  checkAndDelete: function() {
+    if (this.workspace.isFlyout || !this.checkDeletable(false)) {
+      return;
     }
+
+    Blockly.Events.setGroup(true);
+    this.workspace.hideChaff();
+    if (this.outputConnection) {
+      // Do not attempt to heal rows
+      // (https://github.com/google/blockly/issues/4832)
+      this.dispose(false, true);
+    } else {
+      this.dispose(true, true);
+    }
+    Blockly.Events.setGroup(false);
+  },
+  /**
+   * Check whether the block is deletable currently.
+   * @param quiet True to not alert.
+   * @returns True if the block is deletable.
+   */
+  checkDeletable: function(quiet: boolean) {
+    const callers = getCallBlocks(this.getProcCode(), this.workspace, this);
+    if (!quiet && callers.length > 0) {
+      Blockly.dialog.alert(Blockly.Msg.PROCEDURE_USED);
+      return false;
+    }
+    return true;
+  },
+  /**
+   * Get procCode of the procedure.
+   * @returns The procCode of current procedure.
+   */
+  getProcCode: function() {
+    const input = this.getInput('custom_block');
+    const targetBlock = input?.connection?.targetBlock();
+    if (targetBlock) {
+      return (targetBlock as ProcedurePrototypeBlock).getProcCode();
+    }
+    return null;
   }
-};
+} as ProcedureDefinitionBlock;
 
 /**
  * Block for calling a procedure.

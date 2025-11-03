@@ -140,6 +140,38 @@ function getPrototypeBlock(
 }
 
 /**
+ * Find all callers of a named procedure.
+ * @param procCode The identifier of the procedure.
+ * @param workspace The workspace to find callers in.
+ * @param definitionRoot The root of the stack where the procedure defined.
+ * @param allowRecursive True if the search should include recursive procedure
+ *      calls.
+ * @returns Array of caller blocks.
+ */
+export function getCallBlocks(
+  procCode: string,
+  workspace: Blockly.Workspace,
+  definitionRoot: ProcedureDefinitionBlock,
+  allowRecursive?: boolean
+): ProcedureCallBlock[] {
+  const callers = [];
+
+  for (const topBlock of workspace.getTopBlocks()) {
+    if (topBlock.id === definitionRoot.id && !allowRecursive) {
+      continue;
+    }
+
+    for (const block of topBlock.getDescendants(false)) {
+      if (isProcedureCallBlock(block) && procCode === block.getProcCode()) {
+        callers.push(block);
+      }
+    }
+  }
+
+  return callers;
+}
+
+/**
  * Create a state for a brand new custom procedure.
  * @returns The extra state for a new custom procedure
  */

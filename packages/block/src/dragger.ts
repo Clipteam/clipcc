@@ -6,6 +6,7 @@
 
 import * as Blockly from 'blockly/core';
 import {isShadowTemplate} from './interfaces/i_shadow_template';
+import {isDynamicDeletable} from './interfaces/i_dynamic_deletable';
 
 /**
  * Custom dragger.
@@ -53,6 +54,24 @@ export class Dragger extends Blockly.dragging.Dragger {
     Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.BLOCK_CREATE))(newBlock));
 
     return newBlock;
+  }
+
+  /**
+   * Handles any drag cleanup.
+   * @param e PointerEvent that finished the drag.
+   */
+  override onDragEnd(e: PointerEvent): void {
+    // Check for IDynamicDeletable.
+    const root = this.draggable instanceof Blockly.BlockSvg ? this.draggable.getRootBlock() : this.draggable;
+    if (isDynamicDeletable(root) && Blockly.isDeletable(root)) {
+      if (this.wouldDeleteDraggable(e, root) && !root.checkDeletable(false)) {
+        this.draggable.revertDrag();
+        this.draggable.endDrag(e);
+        return;
+      }
+    }
+
+    super.onDragEnd(e);
   }
 }
 
