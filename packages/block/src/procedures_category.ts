@@ -271,19 +271,12 @@ function editProcedureCallback(block: ProcedureDefinitionBlock | ProcedureCallBl
     }
     prototypeBlock = innerBlock;
   } else if (isProcedureCallBlock(block)) {
-    // @todo edit global procedure
-    // if (block.getGlobal()) {
-    //   // Change workspace before performing search
-    //   externalCheckoutWsCallback(block.getProcCode());
-    // }
-    // This is a call block, find the prototype corresponding to the procCode.
-    // Make sure to search the correct workspace, call block can be in flyout.
-    // block's workspace may lost after checkout workspace
-    let workspaceToSearch;
-    if (block.workspace !== null) {
-      workspaceToSearch = block.workspace.isFlyout ? block.workspace.targetWorkspace! : block.workspace;
-    } else {
-      workspaceToSearch = Blockly.getMainWorkspace();
+    let workspaceToSearch = block.workspace.isFlyout ? block.workspace.targetWorkspace! : block.workspace;
+
+    // Checkout to workspace of the definition block.
+    if (block.model.isGlobal()) {
+      externalCheckoutWorkspaceCallback(block.getProcCode());
+      workspaceToSearch = Blockly.getMainWorkspace() as Blockly.WorkspaceSvg;
     }
 
     prototypeBlock = getPrototypeBlock(block.getProcCode(), workspaceToSearch)!;
@@ -362,7 +355,7 @@ let externalCheckoutWorkspaceCallback = function(procCode: string) {
  * Set the callback to checkout current workspace for global procedures.
  * @param callback The callback to checkout current workspace.
  */
-export function setExternalCheckoutWsCallback(callback: typeof externalCheckoutWorkspaceCallback) {
+export function setExternalCheckoutWorkspaceCallback(callback: typeof externalCheckoutWorkspaceCallback) {
   externalCheckoutWorkspaceCallback = callback;
 }
 
@@ -392,14 +385,10 @@ export function makeEditOption(
  * @param block The block that was right-clicked.
  */
 function showProcedureDefCallback(block: ProcedureCallBlock) {
-  let workspace;
-  // if (block.getGlobal()) {
-  //   externalCheckoutWorkspaceCallback(block.getProcCode());
-  // }
-  // block's workspace may lost after checkout workspace
-  if (block.workspace !== null) {
-    workspace = block.workspace.isFlyout ? block.workspace.targetWorkspace! : block.workspace;
-  } else {
+  let workspace = block.workspace.isFlyout ? block.workspace.targetWorkspace! : block.workspace;
+  // Checkout to workspace of the definition block.
+  if (block.model.isGlobal()) {
+    externalCheckoutWorkspaceCallback(block.getProcCode());
     workspace = Blockly.getMainWorkspace() as Blockly.WorkspaceSvg;
   }
 
