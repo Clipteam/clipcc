@@ -5,7 +5,7 @@
  */
 
 import * as Blockly from 'blockly';
-import {registerFieldAngle} from '../../src/fields/angle';
+import {FieldAngle, registerFieldAngle} from '../../src/fields/angle';
 
 describe('FieldAngle', () => {
   let workspace: Blockly.Workspace;
@@ -59,9 +59,26 @@ describe('FieldAngle', () => {
       expect(block.getFieldValue('TEST_FIELD')).toBe(170);
     });
 
-    test('Value lower than -180', () => {
-      block.setFieldValue(-190, 'TEST_FIELD');
-      expect(block.getFieldValue('TEST_FIELD')).toBe(170);
+    test('NaN', () => {
+      block.setFieldValue(NaN, 'TEST_FIELD');
+      expect(block.getFieldValue('TEST_FIELD')).toBe(0);
+    });
+
+    test('Bad value', () => {
+      block.setFieldValue('bad', 'TEST_FIELD');
+      expect(block.getFieldValue('TEST_FIELD')).toBe(0);
+    });
+  });
+
+  describe('fromJson', () => {
+    test('Empty', () => {
+      expect(FieldAngle.fromJson({}).getValue()).toBe(0);
+    });
+
+    test('Valid value', () => {
+      expect(FieldAngle.fromJson({
+        angle: 10
+      }).getValue()).toBe(10);
     });
   });
 
