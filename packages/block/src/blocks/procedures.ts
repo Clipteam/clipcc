@@ -488,10 +488,10 @@ function createAllInputs(this: ProcedureBlock, connectionMap: ConnectionMap) {
 
       const labelText = component.substring(2).trim();
       if (labelText) {
-        this.addProcedureLabel_(labelText.replace(/\\%/, '%'));
+        this.addProcedureLabel_(labelText.replace(/\\%/g, '%'));
       }
     } else {
-      this.addProcedureLabel_(component.trim().replace(/\\%/, '%'));
+      this.addProcedureLabel_(component.trim().replace(/\\%/g, '%'));
     }
   }
 }
@@ -824,7 +824,7 @@ function updateDeclarationProcCode(this: ProcedureDeclarationBlock) {
   let currentParamIndex = 0;
   for (const input of this.inputList) {
     if (input.type === Constants.DUMMY_INPUT) {
-      procCodeParts.push(input.fieldRow[0].getValue().replace('%', '\\%'));
+      procCodeParts.push((input.fieldRow[0] as Blockly.FieldLabel).getValue()?.replace(/%/g, '\\%'));
     } else if (input.type === Constants.INPUT_VALUE) {
       // Inspect the argument editor.
       const target = input.connection!.targetBlock()!;
