@@ -38,15 +38,7 @@ export class FuncChange extends FuncBase {
     if (!procedure) return;
     this.procCode = oldExtraState?.proccode; // use previous proccode
     this.oldExtraState = oldExtraState;
-    this.newExtraState = newExtraState ?? {
-      proccode: '',
-      warp: false,
-      return: false,
-      global: false,
-      argumentids: [],
-      argumentdefaults: [],
-      argumentnames: []
-    };
+    this.newExtraState = newExtraState;
   }
 
   /**
