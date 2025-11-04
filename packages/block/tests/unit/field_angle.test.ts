@@ -5,11 +5,110 @@
  */
 
 import * as Blockly from 'blockly';
-import {FieldAngle, registerFieldAngle} from '../../src/fields/angle';
+import {FieldAngle, FieldAngleFromJsonConfig, registerFieldAngle} from '../../src/fields/angle';
+import {ConstructorTestCase, FromJsonTestCase, runConstructorTests, runFromJsonTests} from '../helpers/field';
+
+const constructorTestCases: ConstructorTestCase<typeof FieldAngle>[] = [
+  {
+    title: 'Empty',
+    args: [],
+    expectedValue: 0
+  },
+  {
+    title: 'Undefined',
+    args: [undefined],
+    expectedValue: 0
+  },
+  {
+    title: 'Null',
+    args: [null as any],
+    expectedValue: 0
+  },
+  {
+    title: 'NaN',
+    args: [NaN],
+    expectedValue: 0
+  },
+  {
+    title: 'Non-Parsable String',
+    args: ['bad-string'],
+    expectedValue: 0
+  },
+  {
+    title: 'Integer in (-180, 180)',
+    args: [10],
+    expectedValue: 10
+  },
+  {
+    title: 'Integer <= -180',
+    args: [-190],
+    expectedValue: 170
+  },
+  {
+    title: 'Integer > 180',
+    args: [190],
+    expectedValue: -170
+  },
+  {
+    title: 'Integer 180',
+    args: [180],
+    expectedValue: 180
+  },
+  {
+    title: 'Integer -180',
+    args: [-180],
+    expectedValue: 180
+  },
+  {
+    title: 'Float',
+    args: [20.1],
+    expectedValue: 20.1
+  },
+  {
+    title: 'Integer String',
+    args: ['10'],
+    expectedValue: 10
+  },
+  {
+    title: 'Float String',
+    args: ['20.1'],
+    expectedValue: 20.1
+  },
+  {
+    title: 'Infinity',
+    args: [Infinity],
+    expectedValue: 0
+  },
+  {
+    title: 'Negative Infinity',
+    args: [-Infinity],
+    expectedValue: 0
+  },
+  {
+    title: 'Infinity String',
+    args: ['Infinity'],
+    expectedValue: 0
+  },
+  {
+    title: 'Negative Infinity String',
+    args: ['-Infinity'],
+    expectedValue: 0
+  },
+];
+
+const fromJsonTestCases = constructorTestCases.map(({title, args, expectedValue, expectedText}) => ({
+  title, expectedValue, expectedText,
+  config: {
+    angle: args[0]
+  }
+} as FromJsonTestCase<typeof FieldAngle, FieldAngleFromJsonConfig>));
 
 describe('FieldAngle', () => {
   let workspace: Blockly.Workspace;
   let block: Blockly.Block;
+
+  runConstructorTests(FieldAngle, constructorTestCases);
+  runFromJsonTests(FieldAngle, fromJsonTestCases);
 
   beforeAll(() => {
     registerFieldAngle();
