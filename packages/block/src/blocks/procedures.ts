@@ -72,6 +72,7 @@ export interface ProcedureDefinitionBlock extends Blockly.BlockSvg, IDynamicDele
   type: 'procedures_definition';
 
   getProcCode: () => string;
+  getProcedureModel: () => ProcedureModel;
 }
 
 export interface ProcedureCallBlock extends ProcedureBlock {
@@ -1162,10 +1163,17 @@ Blockly.Blocks['procedures_definition'] = {
    * @returns The procCode of current procedure.
    */
   getProcCode: function() {
+    return this.getProcedureModel().getProcCode();
+  },
+  /**
+   * Get procedure model of current block.
+   * @returns The procedure model.
+   */
+  getProcedureModel: function() {
     const input = this.getInput('custom_block');
     const targetBlock = input?.connection?.targetBlock();
     if (targetBlock) {
-      return (targetBlock as ProcedurePrototypeBlock).getProcCode();
+      return (targetBlock as ProcedurePrototypeBlock).getProcedureModel();
     }
     return null;
   }
@@ -1347,7 +1355,7 @@ Blockly.Blocks['procedures_return'] = {
       // list since the change will be automatically recreated when replayed.
       Blockly.Events.setRecordUndo(false);
       const root = this.getRootBlock();
-      const shouldDisable = root.type !== Constants.PROCEDURES_DEFINITION_BLOCK_TYPE;
+      const shouldDisable = !isProcedureDefinitionBlock(root) || !root.getProcedureModel().isReporter();
       this.setDisabledReason(shouldDisable, 'Return block should be placed in a function definition.');
       Blockly.Events.setRecordUndo(true);
     }
