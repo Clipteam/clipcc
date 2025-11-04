@@ -65,6 +65,9 @@ module.exports = [
           from: 'tests/playground.html',
           to: 'index.html'
         }, {
+          from: 'tests/toolbox.json',
+          to: 'toolbox.json'
+        }, {
           from: 'msg/messages.js'
         }]
       })

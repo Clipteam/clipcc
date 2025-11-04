@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-	<title>Test Playground</title>
-	<script src="main.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Test Playground</title>
+  <script src="main.js"></script>
   <script>
     window.Blockly.Msg = window.Blockly.Msg.Msg;
   </script>
@@ -67,13 +68,13 @@
 			margin-left: 10px;
 		}
 
-		#collaborators > img {
-			margin-right: 5px;
-			height: 30px;
-			padding-bottom: 5px;
-			width: 30px;
-			border-radius: 3px;
-		}
+    #collaborators > img {
+      margin-right: 5px;
+      height: 30px;
+      padding-bottom: 5px;
+      width: 30px;
+      border-radius: 3px;
+    }
 
 		#importExport {
 			font-family: monospace;
@@ -104,126 +105,6 @@
     }
   </style>
 	<script>
-		const toolbox = {
-			kind: 'categoryToolbox',
-			contents: [{
-        kind: 'category',
-        name: 'Category 1',
-        colour: '#4C97FF',
-        contents: [{
-					'kind': 'block',
-					'type': 'test_add',
-					'inputs': {
-						'NUM1': {
-							'shadow': {
-								'type': 'math_number',
-								'fields': {
-									'NUM': 5
-								}
-							}
-						},
-						'NUM2': {
-							'shadow': {
-								'type': 'math_number',
-								'fields': {
-									'NUM': 5
-								}
-							}
-						}
-					}
-				}, {
-					'kind': 'block',
-					'type': 'test_str',
-					'inputs': {
-						'NUM1': {
-							'shadow': {
-								'type': 'text',
-								'fields': {
-									'TEXT': 'sss'
-								}
-							}
-						},
-						'NUM2': {
-							'shadow': {
-								'type': 'text',
-								'fields': {
-									'TEXT': 5
-								}
-							}
-						}
-					}
-				}, {
-					'kind': 'block',
-					'type': 'test_boolean',
-					'inputs': {
-						'COND1': {},
-						'COND2': {}
-					}
-				}]
-      }, {
-        kind: 'category',
-        name: 'Category 2',
-        contents: [{
-					'kind': 'block',
-					'type': 'test_field_angle',
-          'inputs': {
-            'DEGREES': {
-							'shadow': {
-								'type': 'math_angle',
-								'fields': {
-									'NUM': 90
-								}
-							}
-            }
-          }
-        }, {
-					'kind': 'block',
-					'type': 'test_field_matrix',
-          'inputs': {
-            'MATRIX': {
-							'shadow': {
-								'type': 'matrix',
-								'fields': {
-									'MATRIX': ''
-								}
-							}
-            }
-          }
-        }, {
-          'kind': 'block',
-          'type': 'test_field_colour_slider',
-          'inputs': {
-            'COLOR': {
-              'shadow': {
-                'type': 'colour_picker'
-              }
-            }
-          }
-        }, {
-          'kind': 'block',
-          'type': 'test_field_note',
-          'inputs': {
-            'NOTE': {
-              'shadow': {
-                'type': 'note'
-              }
-            }
-          }
-        }, {
-          'kind': 'block',
-          'type': 'test_field_button'
-        }]
-      }, {
-        kind: 'category',
-        name: 'Variables',
-        custom: 'VARIABLE'
-      }, {
-        kind: 'category',
-        name: 'Functions',
-        custom: 'PROCEDURE'
-      }]
-		};
-
     let mutationRoot = null;
     let callback = null;
     let mainWorkspace = null;
@@ -232,7 +113,13 @@
     let loadTime = 0;
     let events = [];
 
-		function start() {
+    function start() {
+      fetch('toolbox.json').then(response => response.json()).then(toolbox => {
+        injectWorkspaces(toolbox);
+      });
+    }
+
+		function injectWorkspaces(toolbox) {
       loadTime = Number(new Date());
 
 			mainWorkspace = ScratchBlocks.inject('blocklyDiv', {
@@ -379,6 +266,7 @@
     }
 	</script>
 </head>
+
 <body onload="start()">
   <div class="left">
     <h1>Blocks Playground</h1>
@@ -408,4 +296,5 @@
     <div id="blocklyDiv"></div>
   </div>
 </body>
+
 </html>

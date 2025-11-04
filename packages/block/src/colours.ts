@@ -197,6 +197,26 @@ const blockStyles: {[key: string]: Partial<Blockly.Theme.BlockStyle>} = {
 };
 
 /**
+ * Build category styles from existing block styles.
+ * @returns The category styles.
+ */
+function buildCategoryStyles(): {[key: string]: Blockly.Theme.CategoryStyle} {
+  const keys = [
+    'motion', 'looks', 'sounds', 'control', 'event',
+    'sensing', 'operators', 'data', 'more'
+  ];
+  const categoryStyles: {[key: string]: Blockly.Theme.CategoryStyle} = {};
+  for (const key of keys) {
+    if (key in blockStyles && blockStyles[key].colourPrimary) {
+      categoryStyles[key] = {
+        colour: blockStyles[key].colourPrimary
+      };
+    }
+  }
+  return categoryStyles;
+}
+
+/**
  * Override the colours in Colours with new values basded on the
  * given dictionary.
  * @param colours Dictionary of colour properties and new values.
@@ -237,6 +257,7 @@ export const overrideColours = function(colours?: typeof Colours) {
 export function createTheme(): Blockly.Theme {
   return Blockly.Theme.defineTheme('scratch', {
     name: 'scratch',
-    blockStyles
+    blockStyles,
+    categoryStyles: buildCategoryStyles()
   });
 }

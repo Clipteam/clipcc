@@ -34,9 +34,15 @@ import './dragger';
 
 import './blocks/extensions';
 import './blocks/common';
+import './blocks/motion';
+import './blocks/looks';
+import './blocks/sound';
+import './blocks/event';
+import './blocks/control';
+import './blocks/sensing';
+import './blocks/operators';
 import './blocks/data';
 import './blocks/procedures';
-import './blocks/test';
 
 import './serialization/procedures';
 
