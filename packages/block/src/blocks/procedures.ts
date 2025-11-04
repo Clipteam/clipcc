@@ -36,6 +36,7 @@ import {ProcedureModel} from '../procedure_model';
 import {ParameterModel} from '../parameter_model';
 import type {IShadowTemplate} from '../interfaces/i_shadow_template';
 import type {IDynamicDeletable} from '../interfaces/i_dynamic_deletable';
+import {FuncChange} from '../events/func_change';
 
 interface ConnectionMap {
   [key: string]: {
@@ -1346,8 +1347,11 @@ Blockly.Blocks['procedures_return'] = {
   onchange: function(this: Blockly.BlockSvg, event: Blockly.Events.Abstract) {
     // Don't change state if:
     //   * It's at the start of a drag.
-    //   * It's not a move event.
-    if (!this.workspace.isDragging || this.workspace.isDragging() || event.type !== Blockly.Events.BLOCK_MOVE) {
+    //   * It's not a BlockMove nor a FuncChange.
+    if (
+      !this.workspace.isDragging || this.workspace.isDragging() ||
+      (event.type !== Blockly.Events.BLOCK_MOVE && event.type !== FuncChange.TYPE)
+    ) {
       return;
     }
     if (!this.isInFlyout) {
