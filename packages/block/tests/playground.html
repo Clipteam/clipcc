@@ -10,36 +10,65 @@
     window.Blockly.Msg = window.Blockly.Msg.Msg;
   </script>
   <script src="messages.js"></script>
-  <style>
-    html,
-    body {
-      height: 100%;
+	<style>
+		html, body {
+			height: 100%;
+      margin: 0px;
+		}
+
+		body {
+			background-color: #fff;
+			font-family: sans-serif;
+			overflow: hidden;
+      display: flex;
+		}
+
+    .left {
+      width: 30%;
+			height: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
-    body {
-      background-color: #fff;
-      font-family: sans-serif;
-      overflow: hidden;
+    .controlPanel {
+      flex: 1;
+      margin: 0.5rem;
     }
 
-    h1 {
-      font-weight: normal;
-      font-size: 140%;
+    .editorActions {
+      margin: 0.5rem;
     }
 
-    #blocklyDiv {
-      float: right;
-      height: 95%;
+    .right {
+      width: 70%;
+			height: 100%;
+    }
+
+		h1 {
+			font-weight: normal;
+			font-size: 140%;
+      margin-top: 0.5rem;
+      margin-left: 0.5rem;
+      margin-bottom: 0px;
+		}
+
+		#blocklyDiv {
+			height: 100%;
+			width: 100%;
+		}
+
+    #functionDiv {
+      height: 100px;
       width: 100%;
     }
 
-    #collaborators {
-      float: right;
-      width: 30px;
-      margin-left: 10px;
-    }
+		#collaborators {
+			float: right;
+			width: 30px;
+			margin-left: 10px;
+		}
 
-    #collaborators>img {
+    #collaborators > img {
       margin-right: 5px;
       height: 30px;
       padding-bottom: 5px;
@@ -47,41 +76,225 @@
       border-radius: 3px;
     }
 
-    #importExport {
-      font-family: monospace;
+		#importExport {
+			font-family: monospace;
+		}
+
+    .eventList {
+      height: 150px;
+      width: 100%;
+      overflow-y: visible;
+      overflow-x: hidden;
+    }
+
+    #eventList {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      margin: 0 10px;
+      font-size: 90%;
+    }
+
+    #eventList > li {
+      padding: 0 5px;
+    }
+
+    #dataContent {
+      height: 10em;
+      resize: none;
     }
   </style>
-  <script>
+	<script>
+    let mutationRoot = null;
+    let callback = null;
+    let mainWorkspace = null;
+    let functionEditor = null;
+    let eventListElement = null;
+    let loadTime = 0;
+    let events = [];
+
     function start() {
       fetch('toolbox.json').then(response => response.json()).then(toolbox => {
-        ScratchBlocks.inject('blocklyDiv', {
-          media: '../media/',
-          collapse: false,
-          disable: false,
-          toolbox: toolbox,
-          horizontalLayout: false,
-          toolboxPosition: 'left',
-          move: {
-            scrollbars: true,
-            wheel: true
-          },
-          zoom: {
-            controls: true,
-            wheel: true,
-            startScale: 0.675,
-            maxScale: 4,
-            minScale: 0.25,
-            scaleSpeed: 1.1
-          }
-        });
+        injectWorkspaces(toolbox);
       });
     }
-  </script>
+
+		function injectWorkspaces(toolbox) {
+      loadTime = Number(new Date());
+
+			mainWorkspace = ScratchBlocks.inject('blocklyDiv', {
+        toolbox: toolbox,
+        toolboxPosition: 'left',
+        media: '../media/',
+        collapse: false,
+        disable: false,
+        toolbox: toolbox,
+        horizontalLayout: false,
+        toolboxPosition: 'left',
+        move: {
+          scrollbars: true,
+          wheel: true
+        },
+        zoom: {
+          controls: true,
+          wheel: true,
+          startScale: 0.675,
+          maxScale: 4,
+          minScale: 0.25,
+          scaleSpeed: 1.1
+        }
+      });
+
+      eventListElement = document.getElementById('eventList');
+
+      let lastGroup = null;
+      let lastGroupColor = 0;
+      const groupColors = ['#fff', '#eee', '#ddd', '#eee'];
+      mainWorkspace.addChangeListener(event => {
+        if (!event.group || event.group !== lastGroup) {
+          lastGroupColor = (lastGroupColor + 1) % groupColors.length;
+        }
+        lastGroup = event.group;
+        const item = document.createElement('li');
+        item.innerText = `${event.type} (${(Number(new Date()) - loadTime) / 1000})`;
+        item.setAttribute('data-index', events.length);
+        item.style.backgroundColor = groupColors[lastGroupColor];
+        item.onclick = () => {
+          console.log(events[item.getAttribute('data-index')]);
+        };
+        eventListElement.appendChild(item);
+        events.push(event);
+        eventListElement.parentElement.scrollTop = eventListElement.scrollHeight;
+      });
+
+      functionEditor = ScratchBlocks.injectWorkspace('functionDiv', {
+        media: '../media/',
+        zoom: {
+          startScale: 0.75
+        }
+      });
+
+      function positionDeclarationBlock(workspace, block) {
+        // Keep the block centered on the workspace.
+        let {viewHeight, viewWidth} = workspace.getMetrics();
+        viewHeight /= workspace.scale;
+        viewWidth /= workspace.scale;
+        block.moveTo({
+          x: viewWidth > block.width ? (viewWidth / 2) - (block.width / 2) : viewWidth - block.width,
+          y: (viewHeight / 2) - (block.height / 2)
+        });
+      }
+
+      functionEditor.addChangeListener(() => {
+        if (mutationRoot) {
+          mutationRoot.onChangeFn();
+          positionDeclarationBlock(functionEditor, mutationRoot);
+        }
+      });
+
+      ScratchBlocks.setExternalProcedureDefCallback((state, cb, isCreate) => {
+        functionEditor.clear();
+        mutationRoot = functionEditor.newBlock('procedures_declaration');
+        mutationRoot.loadExtraState(state);
+        mutationRoot.setMovable(false);
+        mutationRoot.setDeletable(false);
+        mutationRoot.contextMenu = false;
+        mutationRoot.initSvg();
+        positionDeclarationBlock(functionEditor, mutationRoot);
+        mutationRoot.render();
+        callback = cb;
+      });
+		}
+
+    function addLabel() {
+      if (mutationRoot) {
+        mutationRoot.addLabelExternal();
+      }
+    }
+
+    function addBoolean() {
+      if (mutationRoot) {
+        mutationRoot.addBooleanExternal();
+      }
+    }
+
+    function addTextNumber() {
+      if (mutationRoot) {
+        mutationRoot.addStringNumberExternal();
+      }
+    }
+
+    function applyMutation() {
+      if (mutationRoot) {
+        const state = mutationRoot.saveExtraState();
+        callback(state);
+        callback = null;
+        mutationRoot = null;
+        functionEditor.clear();
+        mainWorkspace.refreshToolboxSelection();
+      }
+    }
+
+    function cancel() {
+      callback = null;
+      mutationRoot = null;
+      functionEditor.clear();
+      mainWorkspace.refreshToolboxSelection();
+    }
+
+    function changeShape() {
+      if (mutationRoot) {
+        mutationRoot.setReturn(!mutationRoot.getReturn());
+      }
+    }
+
+    function changeGlobal() {
+      if (mutationRoot) {
+        mutationRoot.setGlobal(!mutationRoot.getGlobal());
+      }
+    }
+
+    function saveWorkspace() {
+      const textarea = document.getElementById('dataContent');
+      const state = ScratchBlocks.saveWorkspace(mainWorkspace);
+      textarea.value = JSON.stringify(state, null, 2);
+    }
+
+    function loadWorkspace() {
+      const textarea = document.getElementById('dataContent');
+      const state = ScratchBlocks.loadWorkspace(JSON.parse(textarea.value), mainWorkspace, true);
+    }
+	</script>
 </head>
 
 <body onload="start()">
-  <!-- <div id="collaborators"></div> -->
-  <div id="blocklyDiv"></div>
+  <div class="left">
+    <h1>Blocks Playground</h1>
+    <div class="controlPanel">
+      <button id="save" onclick="saveWorkspace()">Save</button>
+      <button id="load" onclick="loadWorkspace()">Load</button>
+    </div>
+    <textarea id="dataContent"></textarea>
+    <h1>Events</h1>
+    <div class="eventList">
+      <ul id="eventList"></ul>
+    </div>
+    <h1>Function Editor</h1>
+    <div class="editorActions">
+      <button id="text_number" onclick="addTextNumber()">Add text/number input</button>
+      <button id="boolean" onclick="addBoolean()">Add boolean input</button>
+      <button id="label" onclick="addLabel()">Add label</button>
+      <button id="changeShape" onclick="changeShape()">Change shape</button>
+      <button id="changeGlobal" onclick="changeGlobal()">Change global</button>
+      <button id="cancelButton" onclick="cancel()">cancel</button>
+      <button id="okButton" onclick="applyMutation()">ok</button>
+    </div>
+    <div id="functionDiv"></div>
+  </div>
+  <div class="right">
+    <div id="collaborators"></div>
+    <div id="blocklyDiv"></div>
+  </div>
 </body>
 
 </html>

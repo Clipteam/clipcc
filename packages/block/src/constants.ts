@@ -351,6 +351,16 @@ export const PROCEDURES_CALL_BLOCK_TYPE = 'procedures_call';
 export const PROCEDURES_RETURN_BLOCK_TYPE = 'procedures_return';
 
 /**
+ * String for use in the creation of blocks with bowler hat.
+ */
+export const SHAPE_BOWLER_HAT = 'bowler';
+
+/**
+ * String for use in the creation of blocks with cap hat.
+ */
+export const SHAPE_CAP_HAT = 'cap';
+
+/**
  * ENUM for flyout status button states.
  */
 export const StatusButtonState = {

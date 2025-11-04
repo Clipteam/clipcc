@@ -1761,6 +1761,12 @@
       "name": "Variables",
       "categorystyle": "data",
       "custom": "VARIABLE"
+    },
+    {
+      "kind": "category",
+      "name": "Functions",
+      "categorystyle": "more",
+      "custom": "PROCEDURE"
     }
   ]
 }

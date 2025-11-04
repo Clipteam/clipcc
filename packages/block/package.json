@@ -17,7 +17,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
-    "blockly": "^12.0.0-beta.1"
+    "blockly": "^12.3.1"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^12.0.2",
