@@ -73,4 +73,9 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
     ];
     return css.concat(flyoutButtonStyle);
   }
+
+  override setFontConstants_(theme: Blockly.Theme) {
+    super.setFontConstants_(theme);
+    this.FIELD_DROPDOWN_BORDER_RECT_HEIGHT = 8 * this.GRID_UNIT;
+  }
 }
