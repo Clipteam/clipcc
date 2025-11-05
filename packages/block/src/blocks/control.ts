@@ -203,7 +203,7 @@ Blockly.Blocks['control_stop'] = {
   },
   domToMutation: function(xmlElement: Element) {
     this.loadExtraState({
-      hasnext: JSON.parse(xmlElement.getAttribute('hasnext'))
+      hasnext: JSON.parse(xmlElement.getAttribute('hasnext') || 'false')
     });
   },
   saveExtraState: function(): ControlStopExtraState {
