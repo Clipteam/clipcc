@@ -4,15 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from 'blockly';
+import * as Blockly from 'blockly/core';
 import {FieldAngle, FieldAngleFromJsonConfig} from '../../src/fields/angle';
 import {
-  ConstructorTestCase,
-  FromJsonTestCase,
+  type ConstructorTestCase,
+  type FromJsonTestCase,
+  type SetValueTestCase,
   runConstructorTests,
   runFromJsonTests,
   runSetValueTests,
-  SetValueTestCase
+  setupSerializationTests
 } from '../helpers/field';
 
 const constructorTestCases: ConstructorTestCase<typeof FieldAngle>[] = [
@@ -128,20 +129,19 @@ const setValueTestCases = constructorTestCases.map(({title, args, expectedValue,
 } as SetValueTestCase<typeof FieldAngle>));
 
 describe('FieldAngle', () => {
-  let workspace: Blockly.Workspace;
-  let block: Blockly.Block;
-
   runConstructorTests(FieldAngle, constructorTestCases);
   runFromJsonTests(FieldAngle, fromJsonTestCases);
   runSetValueTests(FieldAngle, setValueTestCases);
 
-  // describe('Serialization', () => {
-  //   test('Simple', () => {
-  //     block.setFieldValue(90, 'TEST_FIELD');
-  //     const json = Blockly.serialization.blocks.save(block);
-  //     expect(json?.fields).toEqual({
-  //       TEST_FIELD: 90
-  //     });
-  //   });
-  // });
+  describe('Serialization', () => {
+    const context = setupSerializationTests(FieldAngle, 'ANGLE');
+
+    test('Simple', () => {
+      context.block.setFieldValue(90, 'ANGLE');
+      const json = Blockly.serialization.blocks.save(context.block);
+      expect(json?.fields).toEqual({
+        ANGLE: 90
+      });
+    });
+  });
 });

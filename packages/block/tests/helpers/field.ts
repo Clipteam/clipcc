@@ -4,11 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from 'blockly';
+import * as Blockly from 'blockly/core';
 import type {Constructor} from './type_traits';
-import type {FieldAngle} from '../../src/fields/angle';
+import {defineTestBlockInput} from './block';
 
-interface FieldTestCase<T extends Constructor<Blockly.Field>> {
+export interface FieldTestContext {
+  workspace: Blockly.Workspace;
+  block: Blockly.Block;
+}
+
+export interface FieldTestCase<T extends Constructor<Blockly.Field>> {
   title: string;
   checkThrow?: boolean;
   invalid?: boolean;
@@ -124,4 +129,40 @@ export function runSetValueTests<T extends Blockly.Field>(
       });
     }
   });
+}
+
+/**
+ * Setup the context of serialization test.
+ * @param FieldClass The class of the field to be tested.
+ * @param name The field name.
+ * @param ctorArgs Arguments for constructor.
+ * @returns Context for testing.
+ */
+export function setupSerializationTests<T extends Constructor<Blockly.Field>>(
+  FieldClass: T,
+  name: string,
+  ctorArgs?: ConstructorParameters<T>,
+) {
+  const context: FieldTestContext = {} as FieldTestContext;
+
+  beforeAll(() => {
+    context.workspace = new Blockly.Workspace();
+    defineTestBlockInput();
+  });
+
+  beforeEach(() => {
+    context.block = context.workspace.newBlock('test_block_input');
+    const field = ctorArgs ? new FieldClass(...ctorArgs) : new FieldClass();
+    context.block.getInput('INPUT')?.appendField(field, name);
+  });
+
+  afterEach(() => {
+    context.block.dispose();
+  });
+
+  afterAll(() => {
+    context.workspace.dispose();
+  });
+
+  return context;
 }
