@@ -34,6 +34,10 @@ export interface SetValueTestCase<T extends Constructor<Blockly.Field>> extends 
   value: Parameters<InstanceType<T>['setValue']>[0];
 }
 
+export interface ValidatorTestCase<T extends Constructor<Blockly.Field>, V extends Blockly.FieldValidator> extends SetValueTestCase<T> {
+  validator: V;
+}
+
 function assertion<T extends Constructor<Blockly.Field>>(
   instance: InstanceType<T>,
   testCase: FieldTestCase<T>,
@@ -124,6 +128,32 @@ export function runSetValueTests<T extends Blockly.Field>(
     for (const testCase of testCases) {
       test(testCase.title, () => {
         const field = testCase.ctorArgs ? new FieldClass(...testCase.ctorArgs) : new FieldClass();
+        field.setValue(testCase.value);
+        assertion(field, testCase, assertionCallback);
+      });
+    }
+  });
+}
+
+/**
+ * Runs test suite for validator for the specified field.
+ * @param FieldClass The class of the field to be tested.
+ * @param testCases Test cases for given field.
+ * @param assertionCallback Custom function for assertion.
+ */
+export function runValidatorTests<V extends Blockly.FieldValidator, T extends Blockly.Field>(
+  FieldClass: Constructor<T>,
+  testCases: ValidatorTestCase<typeof FieldClass, V>[],
+  assertionCallback?: (
+    instance: InstanceType<typeof FieldClass>,
+    testCase: FieldTestCase<typeof FieldClass>
+  ) => void
+) {
+  describe('Validators', () => {
+    for (const testCase of testCases) {
+      test(testCase.title, () => {
+        const field = testCase.ctorArgs ? new FieldClass(...testCase.ctorArgs) : new FieldClass();
+        field.setValidator(testCase.validator);
         field.setValue(testCase.value);
         assertion(field, testCase, assertionCallback);
       });

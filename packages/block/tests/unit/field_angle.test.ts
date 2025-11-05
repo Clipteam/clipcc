@@ -10,9 +10,11 @@ import {
   type ConstructorTestCase,
   type FromJsonTestCase,
   type SetValueTestCase,
+  type ValidatorTestCase,
   runConstructorTests,
   runFromJsonTests,
   runSetValueTests,
+  runValidatorTests,
   setupSerializationTests
 } from '../helpers/field';
 
@@ -128,10 +130,32 @@ const setValueTestCases = constructorTestCases.map(({title, args, expectedValue,
   expectedText: invalid ? '42' : expectedText
 } as SetValueTestCase<typeof FieldAngle>));
 
+const validatorTestCases: ValidatorTestCase<typeof FieldAngle, Blockly.FieldNumberValidator>[] = [
+  {
+    title: 'Null Validator',
+    validator: () => null,
+    value: 60,
+    expectedValue: 0
+  },
+  {
+    title: 'Undefined Validator',
+    validator: () => undefined,
+    value: 60,
+    expectedValue: 60,
+  },
+  {
+    title: 'Force Multiple of 90 Validator',
+    validator: newValue => Math.round((newValue as number) / 90) * 90,
+    value: 60,
+    expectedValue: 90,
+  }
+];
+
 describe('FieldAngle', () => {
   runConstructorTests(FieldAngle, constructorTestCases);
   runFromJsonTests(FieldAngle, fromJsonTestCases);
   runSetValueTests(FieldAngle, setValueTestCases);
+  runValidatorTests(FieldAngle, validatorTestCases);
 
   describe('Serialization', () => {
     const context = setupSerializationTests(FieldAngle, 'ANGLE');
