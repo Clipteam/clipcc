@@ -11,6 +11,7 @@ import type {FieldAngle} from '../../src/fields/angle';
 interface FieldTestCase<T extends Constructor<Blockly.Field>> {
   title: string;
   checkThrow?: boolean;
+  invalid?: boolean;
   expectedValue: ReturnType<InstanceType<T>['getValue']>;
   expectedText?: ReturnType<InstanceType<T>['getText']>;
 }
@@ -21,6 +22,29 @@ export interface ConstructorTestCase<T extends Constructor<Blockly.Field>> exten
 
 export interface FromJsonTestCase<T extends Constructor<Blockly.Field>, C extends Blockly.FieldConfig> extends FieldTestCase<T> {
   config: C;
+}
+
+export interface SetValueTestCase<T extends Constructor<Blockly.Field>> extends FieldTestCase<T> {
+  ctorArgs?: ConstructorParameters<T>;
+  value: Parameters<InstanceType<T>['setValue']>[0];
+}
+
+function assertion<T extends Constructor<Blockly.Field>>(
+  instance: InstanceType<T>,
+  testCase: FieldTestCase<T>,
+  assertionCallback?: (
+    instance: InstanceType<T>,
+    testCase: FieldTestCase<T>
+  ) => void
+) {
+  if (assertionCallback) {
+    assertionCallback(instance, testCase);
+  } else {
+    expect(instance.getValue()).toStrictEqual(testCase.expectedValue);
+    expect(instance.getText()).toStrictEqual(
+      testCase.expectedText === undefined ? String(testCase.expectedValue) : testCase.expectedText
+    );
+  }
 }
 
 /**
@@ -37,24 +61,13 @@ export function runConstructorTests<T extends Blockly.Field>(
     testCase: FieldTestCase<typeof FieldClass>
   ) => void
 ) {
-  const assertion: typeof assertionCallback = (instance, testCase) => {
-    if (assertionCallback) {
-      assertionCallback(instance, testCase);
-    } else {
-      expect(instance.getValue()).toStrictEqual(testCase.expectedValue);
-      expect(instance.getText()).toStrictEqual(
-        testCase.expectedText === undefined ? String(testCase.expectedValue) : testCase.expectedText
-      );
-    }
-  };
-
   describe('Constructor', () => {
     for (const testCase of testCases) {
       test(testCase.title, () => {
         if (testCase.checkThrow) {
           expect(() => new FieldClass(...testCase.args)).toThrow();
         } else {
-          assertion(new FieldClass(...testCase.args), testCase);
+          assertion(new FieldClass(...testCase.args), testCase, assertionCallback);
         }
       });
     }
@@ -75,25 +88,39 @@ export function runFromJsonTests<ConfigType extends Blockly.FieldConfig, T exten
     testCase: FieldTestCase<typeof FieldClass>
   ) => void
 ) {
-  const assertion: typeof assertionCallback = (instance, testCase) => {
-    if (assertionCallback) {
-      assertionCallback(instance, testCase);
-    } else {
-      expect(instance.getValue()).toStrictEqual(testCase.expectedValue);
-      expect(instance.getText()).toStrictEqual(
-        testCase.expectedText === undefined ? String(testCase.expectedValue) : testCase.expectedText
-      );
-    }
-  };
-
   describe('fromJson', () => {
     for (const testCase of testCases) {
       test(testCase.title, () => {
         if (testCase.checkThrow) {
           expect(() => (FieldClass as any).fromJson(testCase.config)).toThrow();
         } else {
-          assertion((FieldClass as any).fromJson(testCase.config), testCase);
+          assertion((FieldClass as any).fromJson(testCase.config), testCase, assertionCallback);
         }
+      });
+    }
+  });
+}
+
+/**
+ * Runs test suite for setValue for the specified field.
+ * @param FieldClass The class of the field to be tested.
+ * @param testCases Test cases for given field.
+ * @param assertionCallback Custom function for assertion.
+ */
+export function runSetValueTests<T extends Blockly.Field>(
+  FieldClass: Constructor<T>,
+  testCases: SetValueTestCase<typeof FieldClass>[],
+  assertionCallback?: (
+    instance: InstanceType<typeof FieldClass>,
+    testCase: FieldTestCase<typeof FieldClass>
+  ) => void
+) {
+  describe('setValue', () => {
+    for (const testCase of testCases) {
+      test(testCase.title, () => {
+        const field = testCase.ctorArgs ? new FieldClass(...testCase.ctorArgs) : new FieldClass();
+        field.setValue(testCase.value);
+        assertion(field, testCase, assertionCallback);
       });
     }
   });
