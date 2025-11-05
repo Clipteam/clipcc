@@ -4,54 +4,38 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import * as Blockly from 'blockly';
-import {FieldButton, registerFieldButton} from '../../src/fields/button';
+import * as Blockly from 'blockly/core';
+import {FieldButton} from '../../src/fields/button';
+import {setupSerializationTests} from '../helpers/field';
 
 describe('FieldButton', () => {
-  let workspace: Blockly.Workspace;
-  let block: Blockly.Block;
-
-  beforeAll(() => {
-    registerFieldButton();
-
-    Blockly.defineBlocksWithJsonArray([
-      {
-        type: 'test_block',
-        message0: 'test',
-      }
-    ]);
-
-    workspace = new Blockly.Workspace();
-  });
-
-  afterAll(() => {
-    workspace.dispose();
-  });
-
-  beforeEach(() => {
-    block = workspace.newBlock('test_block');
-    const field = new FieldButton('', () => {
-      throw 'Clicked!';
-    });
-    block.appendDummyInput('DUMMY_INPUT').appendField(field, 'BUTTON');
-  });
-
-  afterEach(() => {
-    block.dispose();
-  });
-
   describe('Operations', () => {
+    const callback = (field: FieldButton) => {
+      throw `${field.name} clicked`;
+    };
+    const context = setupSerializationTests(FieldButton, 'BUTTON', ['path/to/image', callback]);
+
     test('Click', () => {
-      const field = block.getField('BUTTON') as FieldButton;
+      expect(() => {
+        context.block.getField('BUTTON')!.showEditor();
+      }).toThrow('BUTTON clicked');
+    });
+
+    test('Click When Disabled', () => {
+      const field = context.block.getField('BUTTON')!;
+      field.setEnabled(false);
       expect(() => {
         field.showEditor();
-      }).toThrow('Clicked!');
+      }).not.toThrow('BUTTON clicked');
     });
   });
 
   describe('Serialization', () => {
+    const context = setupSerializationTests(FieldButton, 'BUTTON');
+
     test('Unserializable', () => {
-      const json = Blockly.serialization.blocks.save(block);
+      context.block.setFieldValue('path/to/image', 'BUTTON');
+      const json = Blockly.serialization.blocks.save(context.block);
       expect(json?.fields).toBeUndefined();
     });
   });
