@@ -28,3 +28,48 @@
 .blocklyMenuItemDisabled:hover {
   background-color: #fff;
 }
+
+.blocklyWorkspace {
+  --commentFillColour: #fef49c;
+  --commentTopBarColour: #e4db8c;
+  --commentBorderColour: #bca903;
+}
+
+.blocklyDeleteIcon {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+.blocklyResizeHandle {
+  height: 20px;
+  width: 20px;
+}
+
+.blocklyFoldoutIcon {
+  width: 32px;
+  height: 32px;
+  transform-origin: 16px 16px;
+}
+
+.blocklyCollapsed.blocklyComment .blocklyFoldoutIcon {
+  transform: rotate(-180deg);
+}
+
+.blocklyComment .blocklyCommentTopbarBackground {
+  height: 32px;
+  fill: var(--commentTopBarColour);
+  border-radius: 4px 4px 0 0;
+  border: none;
+}
+
+.blocklyCommentHighlight {
+  stroke: var(--commentBorderColour);
+  stroke-width: 1px;
+}
+
+.blocklyComment .blocklyTextarea {
+  border: none;
+  padding: 12px;
+}
+

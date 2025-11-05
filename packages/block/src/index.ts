@@ -70,6 +70,9 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
 
   Blockly.Css.register(styles);
 
+  // Add workspace comment options.
+  Blockly.ContextMenuItems.registerCommentOptions();
+
   // Unregister unused items.
   Blockly.ContextMenuRegistry.registry.unregister('blockInline');
 
@@ -164,3 +167,7 @@ export {setExternalProcedureDefCallback} from './procedures_category';
 Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
 Blockly.FlyoutButton.TEXT_MARGIN_X = 40;
 Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;
+Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(
+  200,
+  200
+);
