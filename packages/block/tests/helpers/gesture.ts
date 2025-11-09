@@ -4,12 +4,27 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {jest, expect} from '@jest/globals';
 import * as Blockly from 'blockly/core';
 
 export class Gesture {
   constructor(
     protected workspace: Blockly.WorkspaceSvg
   ) {}
+
+  protected getContextMenuDom(): Element {
+    const container = Blockly.common.getParentContainer() || document.body;
+    if (!container) {
+      throw new Error('workspace not injected');
+    }
+
+    const div = container.querySelector('.blocklyWidgetDiv > .blocklyContextMenu');
+    if (!div) {
+      throw new Error('context menu div not found');
+    }
+
+    return div;
+  }
 
   protected findBlockById(id: string): Blockly.BlockSvg {
     const block = this.workspace.getBlockById(id);
@@ -69,14 +84,14 @@ export class Gesture {
 
     target.dispatchEvent(new PointerEvent('pointerdown', Object.assign({
       bubbles: true,
-      button: 3,
+      button: 2,
       pointerType: 'mouse',
       view: window
     }, options)));
 
     target.dispatchEvent(new PointerEvent('pointerup', Object.assign({
       bubbles: true,
-      button: 3,
+      button: 2,
       pointerType: 'mouse',
       view: window
     }, options)));
@@ -109,5 +124,36 @@ export class Gesture {
     }
 
     this.dispatchClick(this.getFieldClickTarget(field));
+  }
+
+  selectContextMenu(block: Blockly.BlockSvg | string, name: string, noThrow?: boolean) {
+    if (typeof block === 'string') {
+      block = this.findBlockById(block);
+    }
+
+    const xy = block.getSvgRoot().getBoundingClientRect();
+    this.dispatchRightClick(this.getBlockClickTarget(block), {
+      clientX: xy.x,
+      clientY: xy.y
+    });
+
+    const menu = this.getContextMenuDom();
+    for (const menuItem of menu.children) {
+      const text = menuItem.firstElementChild?.innerHTML;
+      if (text === name) {
+        // Add offset to clientXY, checked by Blockly.
+        this.dispatchClick(menuItem, {
+          clientX: xy.x + 1,
+          clientY: xy.y + 1
+        });
+        jest.advanceTimersToNextFrame();
+        jest.runOnlyPendingTimers();
+        return;
+      }
+    }
+
+    if (!noThrow) {
+      throw new Error(`context menu ${name} not found`);
+    }
   }
 }
