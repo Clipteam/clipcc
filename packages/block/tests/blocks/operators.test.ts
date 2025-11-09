@@ -9,7 +9,7 @@ import * as Blockly from 'blockly/core';
 import {setupPlayground} from '../helpers/playground';
 
 jest.mock('blockly/core', () => {
-  const actualModule = jest.requireActual('blockly/core') as any;
+  const actualModule = jest.requireActual('blockly/core') as typeof Blockly;
   return {
     __esModule: true,
     ...actualModule,
