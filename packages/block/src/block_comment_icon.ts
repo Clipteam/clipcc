@@ -62,6 +62,11 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
   }
 
   override onLocationChange(blockOrigin: Blockly.utils.Coordinate) {
+    if (this.sourceBlock.isInsertionMarker()) {
+      this.commentBubble.dispose();
+      return;
+    }
+
     super.onLocationChange(blockOrigin);
     const newAnchor = this.calculateAnchor();
     this.commentBubble.setAnchor(newAnchor);

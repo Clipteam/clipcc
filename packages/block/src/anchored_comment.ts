@@ -20,9 +20,14 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
   protected static readonly TOP_BAR_HEIGHT = 32;
   protected static readonly CHAIN_THICKNESS = 1;
 
+  private dragStrategy = new Blockly.dragging.BubbleDragStrategy(this, this.workspace);
+
   constructor(sourceBlock: Blockly.BlockSvg) {
-    super(sourceBlock.workspace, sourceBlock.id);
-    this.id = `anchored_comment_${sourceBlock.id}`;
+    const id = `anchored_comment_${sourceBlock.id}`;
+    super(sourceBlock.workspace, id);
+    this.id = id;
+    this.getSvgRoot().setAttribute('data-id', id);
+    this.getSvgRoot().setAttribute('id', id);
     this.sourceBlock = sourceBlock;
 
     this.setPlaceholderText(Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT);
@@ -43,6 +48,14 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     );
     // Move chain to back so it doesn't overlap the bubble
     this.getSvgRoot().insertBefore(this.chain, this.getSvgRoot().firstChild);
+
+    // Make comment view draggable
+    Blockly.browserEvents.conditionalBind(
+      this.getSvgRoot(),
+      'pointerdown',
+      this,
+      this.startGesture
+    );
   }
 
   /**
@@ -84,6 +97,14 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     this.moveTo(left, top);
   }
 
+  startGesture(e: PointerEvent) {
+    const gesture = this.workspace.getGesture(e);
+    if (gesture) {
+      gesture.handleBubbleStart(e, this);
+      Blockly.common.setSelected(this);
+    }
+  }
+
   setDragging() {}
 
   moveDuringDrag(newLoc: Blockly.utils.Coordinate) {
@@ -116,24 +137,15 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
   }
 
   startDrag() {
-    this.dragStartLocation = this.getRelativeToSurfaceXY();
-    this.workspace.setResizesEnabled(false);
-
-    this.workspace.getLayerManager()?.moveToDragLayer(this);
-
-    // block's comment also seen as a part of block while dragging
-    Blockly.utils.dom.addClass(this.getSvgRoot(), 'blocklyDragging');
+    this.dragStrategy.startDrag();
   }
 
   drag(newLocation: Blockly.utils.Coordinate) {
-    this.moveTo(newLocation);
+    this.dragStrategy.drag(newLocation);
   }
 
   endDrag() {
-    this.workspace.setResizesEnabled(true);
-    this.workspace.getLayerManager()?.moveOffDragLayer(this, Blockly.layers.BUBBLE);
-    Blockly.utils.dom.removeClass(this.getSvgRoot(), 'blocklyDragging');
-    // fire block_comment_move event
+    this.dragStrategy.endDrag();
   }
 
   revertDrag() {
