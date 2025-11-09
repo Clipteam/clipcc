@@ -14,6 +14,7 @@
     "start": "webpack serve",
     "build": "webpack --progress --color --bail",
     "test": "jest --silent --verbose",
+    "coverage": "jest --silent --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },

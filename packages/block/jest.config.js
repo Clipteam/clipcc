@@ -15,6 +15,9 @@ const sharedConfig = {
 
 /** @type {import('jest').Config} **/
 module.exports = {
+  collectCoverageFrom: [
+    '<rootDir>/src/**/*.ts'
+  ],
   projects: [{
     displayName: 'Unit Tests',
     testMatch: ['<rootDir>/tests/unit/**/*.test.[jt]s'],
