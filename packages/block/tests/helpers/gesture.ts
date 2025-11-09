@@ -12,7 +12,7 @@ export class Gesture {
     protected workspace: Blockly.WorkspaceSvg
   ) {}
 
-  protected getContextMenuDom(): Element {
+  getContextMenuDom(): Element {
     const container = Blockly.common.getParentContainer() || document.body;
     if (!container) {
       throw new Error('workspace not injected');
@@ -155,5 +155,9 @@ export class Gesture {
     if (!noThrow) {
       throw new Error(`context menu ${name} not found`);
     }
+  }
+
+  clickWorkspace() {
+    this.dispatchClick(this.workspace.svgGroup_);
   }
 }
