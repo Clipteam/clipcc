@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {jest, describe, expect, test} from '@jest/globals';
 import * as Blockly from 'blockly/core';
 import {FieldButton} from '../../src/fields/button';
 import {setupSerializationTests} from '../helpers/field';

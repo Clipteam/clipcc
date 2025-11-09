@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import {describe, expect, test} from '@jest/globals';
 import * as Blockly from 'blockly/core';
 import {FieldAngle, FieldAngleFromJsonConfig} from '../../src/fields/angle';
 import {
