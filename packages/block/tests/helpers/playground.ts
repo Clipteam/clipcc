@@ -6,11 +6,13 @@
 
 import * as Blockly from 'blockly/core';
 import * as Blocks from '../../src/index';
+import {Gesture} from './gesture';
 
 import * as toolbox from '../toolbox.json';
 
 export interface PlaygroundTestContext {
   workspace: Blockly.WorkspaceSvg;
+  gesture: Gesture;
 }
 
 const defaultOptions: Blockly.BlocklyOptions = {
@@ -49,6 +51,7 @@ export function setupPlayground(options?: Blockly.BlocklyOptions) {
     require('../../msg/messages');
 
     context.workspace = Blocks.inject(container, Object.assign({}, defaultOptions, options));
+    context.gesture = new Gesture(context.workspace);
   });
 
   afterAll(() => {

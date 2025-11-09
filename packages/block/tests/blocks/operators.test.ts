@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {clickField} from '../helpers/block';
 import {setupPlayground} from '../helpers/playground';
 
 describe('Blocks: Operators', () => {
@@ -13,11 +12,12 @@ describe('Blocks: Operators', () => {
   describe('operator_join_multiple', () => {
     test('Append an Input', () => {
       const block = context.workspace.newBlock('operator_join_multiple');
+      block.initSvg();
       block.loadExtraState!({
         argumentids: ['STRING1']
       });
 
-      clickField(block, 'BUTTON_PLUS');
+      context.gesture.clickField(block, 'BUTTON_PLUS');
 
       const state = block.saveExtraState!();
       expect(state.argumentids.length).toBe(2);
@@ -25,11 +25,12 @@ describe('Blocks: Operators', () => {
 
     test('Remove an Input', () => {
       const block = context.workspace.newBlock('operator_join_multiple');
+      block.initSvg();
       block.loadExtraState!({
         argumentids: ['STRING1', 'STRING2']
       });
 
-      clickField(block, 'BUTTON_MINUS');
+      context.gesture.clickField(block, 'BUTTON_MINUS');
 
       const state = block.saveExtraState!();
       expect(state.argumentids.length).toBe(1);
@@ -37,11 +38,12 @@ describe('Blocks: Operators', () => {
 
     test('Minimum Inputs', () => {
       const block = context.workspace.newBlock('operator_join_multiple');
+      block.initSvg();
       block.loadExtraState!({
         argumentids: ['STRING1']
       });
 
-      clickField(block, 'BUTTON_MINUS');
+      context.gesture.clickField(block, 'BUTTON_MINUS');
 
       const state = block.saveExtraState!();
       expect(state.argumentids.length).toBe(1);
