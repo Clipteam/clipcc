@@ -7,11 +7,18 @@
 import {jest, expect} from '@jest/globals';
 import * as Blockly from 'blockly/core';
 
+/**
+ * Helper for UI testing.
+ */
 export class Gesture {
   constructor(
     protected workspace: Blockly.WorkspaceSvg
   ) {}
 
+  /**
+   * Get element of context menu.
+   * @returns HTML element of context menu.
+   */
   getContextMenuDom(): Element {
     const container = Blockly.common.getParentContainer() || document.body;
     if (!container) {
@@ -26,6 +33,11 @@ export class Gesture {
     return div;
   }
 
+  /**
+   * Find block from current workspace with given id.
+   * @param id The block id.
+   * @returns The block.
+   */
   protected findBlockById(id: string): Blockly.BlockSvg {
     const block = this.workspace.getBlockById(id);
     if (!block) {
@@ -34,6 +46,12 @@ export class Gesture {
     return block;
   }
 
+  /**
+   * Find field from given block with name.
+   * @param block Block where the field is in.
+   * @param name Name of the field.
+   * @returns The field.
+   */
   protected findFieldByName(block: Blockly.BlockSvg | string, name: string): Blockly.Field {
     if (typeof block === 'string') {
       block = this.findBlockById(block);
@@ -46,10 +64,20 @@ export class Gesture {
     return field;
   }
 
+  /**
+   * Get click target element of given block.
+   * @param block The block.
+   * @returns Element that handles pointer events.
+   */
   protected getBlockClickTarget(block: Blockly.BlockSvg): Element {
     return block.getSvgRoot();
   }
 
+  /**
+   * Get click target element of given field.
+   * @param field The field.
+   * @returns Element that handles pointer events.
+   */
   protected getFieldClickTarget(field: Blockly.Field): Element {
     // @ts-expect-error Accessing protected getClickTarget_
     const target = field.getClickTarget_();
@@ -59,6 +87,11 @@ export class Gesture {
     return target;
   }
 
+  /**
+   * Simulate click on target.
+   * @param target The element.
+   * @param options Additional options to construct PointerEvent.
+   */
   protected dispatchClick(target: Element, options?: PointerEventInit) {
     expect(this.workspace.currentGesture_).toBeNull();
 
@@ -79,6 +112,11 @@ export class Gesture {
     expect(this.workspace.currentGesture_).toBeNull();
   }
 
+  /**
+   * Simulate right click on target.
+   * @param target The element.
+   * @param options Additional options to construct PointerEvent.
+   */
   protected dispatchRightClick(target: Element, options?: PointerEventInit) {
     expect(this.workspace.currentGesture_).toBeNull();
 
@@ -99,6 +137,10 @@ export class Gesture {
     expect(this.workspace.currentGesture_).toBeNull();
   }
 
+  /**
+   * Click the block.
+   * @param block The block to click.
+   */
   clickBlock(block: Blockly.BlockSvg | string) {
     if (typeof block === 'string') {
       block = this.findBlockById(block);
@@ -107,6 +149,10 @@ export class Gesture {
     this.dispatchClick(this.getBlockClickTarget(block));
   }
 
+  /**
+   * Right click the block.
+   * @param block The block to click.
+   */
   rightClickBlock(block: Blockly.BlockSvg | string) {
     if (typeof block === 'string') {
       block = this.findBlockById(block);
@@ -115,6 +161,11 @@ export class Gesture {
     this.dispatchRightClick(this.getBlockClickTarget(block));
   }
 
+  /**
+   * Click the field.
+   * @param block Block where the field is in.
+   * @param field The field to click.
+   */
   clickField(block: Blockly.BlockSvg | string | null, field: Blockly.Field | string) {
     if (typeof field === 'string') {
       if (block === null) {
@@ -126,6 +177,13 @@ export class Gesture {
     this.dispatchClick(this.getFieldClickTarget(field));
   }
 
+  /**
+   * Click the context menu item of given block.
+   * @param block The block to right click.
+   * @param name Name of the context menu item.
+   * @param noThrow True if not to throw an error when context menu item is
+   *      not found.
+   */
   selectContextMenu(block: Blockly.BlockSvg | string, name: string, noThrow?: boolean) {
     if (typeof block === 'string') {
       block = this.findBlockById(block);
@@ -157,6 +215,9 @@ export class Gesture {
     }
   }
 
+  /**
+   * Click the workspace, used for closing all opened widgets.
+   */
   clickWorkspace() {
     this.dispatchClick(this.workspace.svgGroup_);
   }

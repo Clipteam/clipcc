@@ -12,6 +12,12 @@ interface Context extends PlaygroundTestContext {
   variable: Blockly.IVariableModel<Blockly.IVariableState>;
 }
 
+/**
+ * Custom prompt function to return a constant value 'PROMPT_VALUE'.
+ * @param message The message to display to the user.
+ * @param defaultValue The value to initialize the prompt with.
+ * @param callback The callback for handling user response.
+ */
 function customPrompt(
   message: string,
   defaultValue: string,

@@ -41,6 +41,12 @@ export interface ValidatorTestCase<T extends Constructor<Blockly.Field>, V exten
   validator: V;
 }
 
+/**
+ * Assert the test case.
+ * @param instance The field instance.
+ * @param testCase Current test case.
+ * @param assertionCallback Custom function for assertion.
+ */
 function assertion<T extends Constructor<Blockly.Field>>(
   instance: InstanceType<T>,
   testCase: FieldTestCase<T>,
