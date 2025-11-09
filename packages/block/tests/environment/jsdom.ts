@@ -7,7 +7,7 @@
 import * as jsdom from 'jsdom';
 import type {
   EnvironmentContext,
-  JestEnvironmentConfig,
+  JestEnvironmentConfig
 } from '@jest/environment';
 import BaseEnv from '@jest/environment-jsdom-abstract';
 

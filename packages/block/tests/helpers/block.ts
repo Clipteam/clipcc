@@ -13,15 +13,15 @@ import * as Blockly from 'blockly/core';
 export function defineTestBlockInput(name: string = 'test_block_input') {
   Blockly.defineBlocksWithJsonArray([
     {
-      'type': name,
-      'message0': '%1',
-      'args0': [
+      type: name,
+      message0: '%1',
+      args0: [
         {
-          'type': 'input_value',
-          'name': 'INPUT',
-        },
+          type: 'input_value',
+          name: 'INPUT'
+        }
       ],
-      'output': null,
-    },
+      output: null
+    }
   ]);
 }

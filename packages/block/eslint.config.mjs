@@ -23,11 +23,10 @@ export default [
       'dist/*',
       'gh-pages/*',
       'build/*',
-      // tests
-      'tests/*',
       // old sources
       'core/*',
-      'blocks_*/*'
+      'blocks_*/*',
+      'msg/*.js'
     ]
   },
   eslint.configs.recommended,

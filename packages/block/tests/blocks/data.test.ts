@@ -28,7 +28,7 @@ describe('Blocks: Data', () => {
     const json: Blockly.serialization.blocks.State = {
       type: 'data_variable',
       fields: {
-        VARIABLE: '<field name=\"VARIABLE\" id=\"TEST_ID\" variabletype=\"\">TEST_VARIABLE</field>'
+        VARIABLE: '<field name="VARIABLE" id="TEST_ID" variabletype="">TEST_VARIABLE</field>'
       }
     };
 
@@ -55,7 +55,7 @@ describe('Blocks: Data', () => {
       // Context Menu in Workspace
       context.gesture.rightClickBlock(block);
       const menu = context.gesture.getContextMenuDom();
-      const items = Array.from(menu.children).map(element => element.firstElementChild?.innerHTML);
+      const items = Array.from(menu.children).map((element) => element.firstElementChild?.innerHTML);
       expect(items).toStrictEqual([
         Blockly.Msg.DUPLICATE_BLOCK,
         Blockly.Msg.DELETE_BLOCK,
@@ -67,7 +67,7 @@ describe('Blocks: Data', () => {
       block.isInFlyout = true;
       context.gesture.rightClickBlock(block);
       const flyoutMenu = context.gesture.getContextMenuDom();
-      const flyoutItems = Array.from(flyoutMenu.children).map(element => element.firstElementChild?.innerHTML);
+      const flyoutItems = Array.from(flyoutMenu.children).map((element) => element.firstElementChild?.innerHTML);
       expect(flyoutItems).toStrictEqual([
         Blockly.Msg.RENAME_VARIABLE,
         Blockly.Msg.DELETE_VARIABLE.replace('%1', 'TEST_VARIABLE')
@@ -123,7 +123,7 @@ describe('Blocks: Data', () => {
     const json: Blockly.serialization.blocks.State = {
       type: 'data_listcontents',
       fields: {
-        LIST: '<field name=\"LIST\" id=\"TEST_ID\" variabletype=\"list\">TEST_LIST</field>'
+        LIST: '<field name="LIST" id="TEST_ID" variabletype="list">TEST_LIST</field>'
       }
     };
 
@@ -150,7 +150,7 @@ describe('Blocks: Data', () => {
       // Context Menu in Workspace
       context.gesture.rightClickBlock(block);
       const menu = context.gesture.getContextMenuDom();
-      const items = Array.from(menu.children).map(element => element.firstElementChild?.innerHTML);
+      const items = Array.from(menu.children).map((element) => element.firstElementChild?.innerHTML);
       expect(items).toStrictEqual([
         Blockly.Msg.DUPLICATE_BLOCK,
         Blockly.Msg.DELETE_BLOCK,
@@ -162,7 +162,7 @@ describe('Blocks: Data', () => {
       block.isInFlyout = true;
       context.gesture.rightClickBlock(block);
       const flyoutMenu = context.gesture.getContextMenuDom();
-      const flyoutItems = Array.from(flyoutMenu.children).map(element => element.firstElementChild?.innerHTML);
+      const flyoutItems = Array.from(flyoutMenu.children).map((element) => element.firstElementChild?.innerHTML);
       expect(flyoutItems).toStrictEqual([
         Blockly.Msg.RENAME_LIST,
         Blockly.Msg.DELETE_LIST.replace('%1', 'TEST_LIST')

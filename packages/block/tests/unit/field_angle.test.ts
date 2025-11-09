@@ -34,7 +34,8 @@ const constructorTestCases: ConstructorTestCase<typeof FieldAngle>[] = [
   },
   {
     title: 'Null',
-    args: [null as any],
+    // @ts-expect-error Pass null as an argument, for test usage.
+    args: [null],
     expectedValue: 0,
     invalid: true
   },
@@ -113,7 +114,7 @@ const constructorTestCases: ConstructorTestCase<typeof FieldAngle>[] = [
     args: ['-Infinity'],
     expectedValue: 0,
     invalid: true
-  },
+  }
 ];
 
 const fromJsonTestCases = constructorTestCases.map(({title, args, expectedValue, expectedText}) => ({
@@ -142,13 +143,13 @@ const validatorTestCases: ValidatorTestCase<typeof FieldAngle, Blockly.FieldNumb
     title: 'Undefined Validator',
     validator: () => undefined,
     value: 60,
-    expectedValue: 60,
+    expectedValue: 60
   },
   {
     title: 'Force Multiple of 90 Validator',
-    validator: newValue => Math.round((newValue as number) / 90) * 90,
+    validator: (newValue) => Math.round((newValue as number) / 90) * 90,
     value: 60,
-    expectedValue: 90,
+    expectedValue: 90
   }
 ];
 

@@ -26,7 +26,8 @@ export interface ConstructorTestCase<T extends Constructor<Blockly.Field>> exten
   args: ConstructorParameters<T>;
 }
 
-export interface FromJsonTestCase<T extends Constructor<Blockly.Field>, C extends Blockly.FieldConfig> extends FieldTestCase<T> {
+export interface FromJsonTestCase<T extends Constructor<Blockly.Field>, C extends Blockly.FieldConfig>
+  extends FieldTestCase<T> {
   config: C;
 }
 
@@ -35,7 +36,8 @@ export interface SetValueTestCase<T extends Constructor<Blockly.Field>> extends 
   value: Parameters<InstanceType<T>['setValue']>[0];
 }
 
-export interface ValidatorTestCase<T extends Constructor<Blockly.Field>, V extends Blockly.FieldValidator> extends SetValueTestCase<T> {
+export interface ValidatorTestCase<T extends Constructor<Blockly.Field>, V extends Blockly.FieldValidator>
+  extends SetValueTestCase<T> {
   validator: V;
 }
 
@@ -102,8 +104,10 @@ export function runFromJsonTests<ConfigType extends Blockly.FieldConfig, T exten
     for (const testCase of testCases) {
       test(testCase.title, () => {
         if (testCase.checkThrow) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           expect(() => (FieldClass as any).fromJson(testCase.config)).toThrow();
         } else {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           assertion((FieldClass as any).fromJson(testCase.config), testCase, assertionCallback);
         }
       });
@@ -172,7 +176,7 @@ export function runValidatorTests<V extends Blockly.FieldValidator, T extends Bl
 export function setupSerializationTests<T extends Constructor<Blockly.Field>>(
   FieldClass: T,
   name: string,
-  ctorArgs?: ConstructorParameters<T>,
+  ctorArgs?: ConstructorParameters<T>
 ) {
   const context: FieldTestContext = {} as FieldTestContext;
 

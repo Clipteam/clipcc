@@ -49,7 +49,9 @@ export function setupPlayground(options?: Blockly.BlocklyOptions) {
     const container = document.createElement('div');
     document.body.appendChild(container);
 
-    (window as any).Blockly.Msg = Blockly.Msg;
+    // @ts-expect-error @todo Overwrite window.Blockly.Msg here, should be fixed later.
+    window.Blockly.Msg = Blockly.Msg;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     require('../../msg/messages');
 
     context.workspace = Blocks.inject(container, Object.assign({}, defaultOptions, options));
