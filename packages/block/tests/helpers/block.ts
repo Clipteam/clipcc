@@ -25,3 +25,15 @@ export function defineTestBlockInput(name: string = 'test_block_input') {
     },
   ]);
 }
+
+/**
+ * Helper function for clicking a field.
+ * @param block The block.
+ * @param name The field name to click.
+ */
+export function clickField(block: Blockly.Block, name: string) {
+  const field = block.getField(name);
+  if (field) {
+    field.showEditor();
+  }
+}

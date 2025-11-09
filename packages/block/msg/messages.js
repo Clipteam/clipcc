@@ -28,6 +28,8 @@
  * All message strings must use single quotes for the scripts to work properly
  */
 
+const Blockly = require('blockly/core');
+
 'use strict';
 
 // Control blocks
