@@ -114,80 +114,6 @@ const OUTPUT_BOOLEAN = function(this: Blockly.Block) {
   this.setOutput(true, 'Boolean');
 };
 
-/**
- * Mixin to add a context menu for a procedure definition block.
- * It adds the "edit" option and removes the "duplicate" option.
- */
-const PROCEDURE_DEF_CONTEXTMENU = {
-  /**
-   * Add the "edit" option and removes the "duplicate" option from the context
-   * menu.
-   * @param menuOptions List of menu options to edit.
-   */
-  customContextMenu: function(this: Blockly.Block, menuOptions: Array<
-    | Blockly.ContextMenuRegistry.ContextMenuOption
-    | Blockly.ContextMenuRegistry.LegacyContextMenuOption
-  >) {
-    // // Add the edit option at the end.
-    // menuOptions.push(Blockly.Procedures.makeEditOption(this));
-
-    // // Find the delete option and update its callback to be specific to
-    // // functions.
-    // for (let i = 0, option; option = menuOptions[i]; i++) {
-    //   if (option.text == Blockly.Msg.DELETE_BLOCK) {
-    //     const input = this.getInput('custom_block');
-    //     // this is the root block, not the shadow block.
-    //     if (!input || !input.connection || !input.connection.targetBlock()) {
-    //       return;
-    //     }
-    //     const procCode = input.connection.targetBlock().getProcCode();
-    //     const rootBlock = this;
-    //     option.callback = function() {
-    //       const didDelete = Blockly.Procedures.deleteProcedureDefCallback(
-    //           procCode, rootBlock);
-    //       if (!didDelete) {
-    //         alert(Blockly.Msg.PROCEDURE_USED);
-    //       }
-    //     };
-
-    //     // Add force delete option after delete option.
-    //     menuOptions.splice(i + 1, 0, Blockly.Procedures.makeForceDeleteOption(this));
-    //   }
-    // }
-    // // Find and remove the duplicate option
-    // for (let i = 0, option; option = menuOptions[i]; i++) {
-    //   if (option.text == Blockly.Msg.DUPLICATE) {
-    //     menuOptions.splice(i, 1);
-    //     break;
-    //   }
-    // }
-  }
-};
-
-/**
- * Mixin to add a context menu for a procedure call block.
- * It adds the "edit" option and the "define" option.
- */
-const PROCEDURE_CALL_CONTEXTMENU = {
-  /**
-   * Add the "edit" option to the context menu.
-   * @todo Add "go to definition" option once implemented.
-   * @param menuOptions List of menu options to edit.
-   */
-  customContextMenu: function(this: Blockly.Block, menuOptions: Array<
-    | Blockly.ContextMenuRegistry.ContextMenuOption
-    | Blockly.ContextMenuRegistry.LegacyContextMenuOption
-  >) {
-    // if (!(this.previousConnection && this.previousConnection.isConnected()) &&
-    // !(this.outputConnection && this.outputConnection.isConnected()) &&
-    // !(this.nextConnection && this.nextConnection.isConnected())) {
-    //   menuOptions.push(Blockly.Procedures.makeChangeShapeOption(this));
-    // }
-    // menuOptions.push(Blockly.Procedures.makeEditOption(this));
-    // menuOptions.push(Blockly.Procedures.makeShowDefinitionOption(this));
-  }
-};
-
 const SCRATCH_EXTENSION = function(this: Blockly.Block) {
   (this as any).isScratchExtension = true;
 };
@@ -217,10 +143,6 @@ const registerAll = function() {
   Blockly.Extensions.register('output_number', OUTPUT_NUMBER);
   Blockly.Extensions.register('output_string', OUTPUT_STRING);
   Blockly.Extensions.register('output_boolean', OUTPUT_BOOLEAN);
-
-  // Custom procedures have interesting context menus.
-  Blockly.Extensions.registerMixin('procedure_def_contextmenu', PROCEDURE_DEF_CONTEXTMENU);
-  Blockly.Extensions.registerMixin('procedure_call_contextmenu', PROCEDURE_CALL_CONTEXTMENU);
 
   // Extension blocks have slightly different block rendering.
   Blockly.Extensions.register('scratch_extension', SCRATCH_EXTENSION);
