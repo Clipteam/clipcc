@@ -28,6 +28,8 @@ import {FuncChange} from './events/func_change';
 import {FuncCreate} from './events/func_create';
 import {FuncDelete} from './events/func_delete';
 
+import './block_comment_icon';
+
 import './renderer/renderer';
 import './connection_checker';
 import './dragger';
