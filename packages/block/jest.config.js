@@ -23,7 +23,7 @@ module.exports = {
   }, {
     displayName: 'DOM Tests',
     testMatch: ['<rootDir>/tests/blocks/**/*.test.[jt]s'],
-    testEnvironment: 'jest-fixed-jsdom',
+    testEnvironment: '<rootDir>/tests/environment/jsdom.ts',
     setupFiles: ['jest-canvas-mock'],
     ...sharedConfig
   }]
