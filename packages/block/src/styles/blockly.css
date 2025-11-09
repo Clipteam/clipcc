@@ -59,13 +59,36 @@
 .blocklyComment .blocklyCommentTopbarBackground {
   height: 32px;
   fill: var(--commentTopBarColour);
-  border-radius: 4px 4px 0 0;
-  border: none;
+}
+
+.blocklyCollapsed .blocklyCommentTopbarBackground {
+  outline: 1px solid var(--commentBorderColour);
+}
+
+.blocklyComment {
+  border: 100px solid var(--commentBorderColour);
+  border-radius: 4px;
 }
 
 .blocklyCommentHighlight {
   stroke: var(--commentBorderColour);
-  stroke-width: 1px;
+  stroke-width: 2px;
+}
+
+.blocklyCollapsed .blocklyCommentHighlight {
+  stroke-width: 0;
+}
+
+.blocklySelected .blocklyCommentHighlight {
+  stroke: var(--commentBorderColour);
+}
+
+.blocklyCollapsed .blocklyCommentHighlight {
+  stroke: var(--commentBorderColour);
+}
+
+.blocklySelected.blocklyCollapsed .blocklyCommentTopbarBackground {
+  stroke-width: 0;
 }
 
 .blocklyComment .blocklyTextarea {
