@@ -49,6 +49,7 @@ export function setupPlayground(options?: Blockly.BlocklyOptions) {
     const container = document.createElement('div');
     document.body.appendChild(container);
 
+    (window as any).Blockly.Msg = Blockly.Msg;
     require('../../msg/messages');
 
     context.workspace = Blocks.inject(container, Object.assign({}, defaultOptions, options));
