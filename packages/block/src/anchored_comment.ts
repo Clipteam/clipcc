@@ -6,11 +6,14 @@
 
 import * as Blockly from 'blockly/core';
 
-export class AnchoredComment extends Blockly.comments.CommentView implements Blockly.IBubble {
+export class AnchoredComment extends Blockly.comments.CommentView implements Blockly.IBubble, Blockly.ISelectable {
   protected sourceBlock: Blockly.BlockSvg;
   protected dragStartLocation?: Blockly.utils.Coordinate;
   protected chain: SVGPathElement;
   protected anchor?: Blockly.utils.Coordinate;
+  protected relativeLeft: number = 50;
+  protected relativeTop: number = 0;
+  id: string;
 
   // @todo inject css from these values?
   protected static readonly BORDER_WIDTH = 1;
@@ -19,6 +22,7 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
 
   constructor(sourceBlock: Blockly.BlockSvg) {
     super(sourceBlock.workspace, sourceBlock.id);
+    this.id = `anchored_comment_${sourceBlock.id}`;
     this.sourceBlock = sourceBlock;
 
     this.setPlaceholderText(Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT);
@@ -47,6 +51,7 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
    */
   setAnchor(anchor: Blockly.utils.Coordinate) {
     this.anchor = anchor;
+    this.positionRelativeToAnchor();
     this.renderChain();
   }
 
@@ -62,17 +67,33 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     const bubbleY = bubbleXY.y + AnchoredComment.TOP_BAR_HEIGHT / 2;
 
     const {x: anchorX, y: anchorY} = this.anchor;
+    const offsetX = anchorX - bubbleX;
+    const offsetY = anchorY - bubbleY;
 
-    this.chain.setAttribute('x1', bubbleX.toString());
-    this.chain.setAttribute('y1', bubbleY.toString());
-    this.chain.setAttribute('x2', anchorX.toString());
-    this.chain.setAttribute('y2', anchorY.toString());
+    this.chain.setAttribute('x1', '0');
+    this.chain.setAttribute('y1', '0');
+    this.chain.setAttribute('x2', offsetX.toString());
+    this.chain.setAttribute('y2', offsetY.toString());
+  }
+
+  positionRelativeToAnchor() {
+    if (!this.anchor) return;
+
+    const left = this.relativeLeft + this.anchor.x;
+    const top = this.relativeTop + this.anchor.y;
+    this.moveTo(left, top);
   }
 
   setDragging() {}
 
   moveDuringDrag(newLoc: Blockly.utils.Coordinate) {
     this.moveTo(newLoc);
+
+    if (this.anchor) {
+      this.relativeTop = newLoc.y - this.anchor.y;
+      this.relativeLeft = newLoc.x - this.anchor.x;
+    }
+
     this.renderChain();
   }
 
@@ -132,9 +153,14 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     return this.workspace;
   }
 
-  onNodeFocus() { }
+  onNodeFocus() {
+    this.bringToFront();
+  }
 
   onNodeBlur() { }
+
+  select() { }
+  unselect() { }
 
   canBeFocused() {
     return true;

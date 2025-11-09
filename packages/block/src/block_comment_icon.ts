@@ -54,10 +54,9 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
 
   calculateAnchor(): Blockly.utils.Coordinate {
     const block = this.sourceBlock as Blockly.BlockSvg;
-    const blockXY = block.getRelativeToSurfaceXY();
-    const blockSize = block.getHeightWidth();
-    const x = blockXY.x + blockSize.width;
-    const y = blockXY.y + this.offsetInBlock.y;
+    const blockRect = block.getBoundingRectangleWithoutChildren();
+    const y = blockRect.top + this.offsetInBlock.y;
+    const x = blockRect.right;
 
     return new Blockly.utils.Coordinate(x, y);
   }
@@ -111,19 +110,27 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
   saveState(): BlockCommentState {
     const size = this.commentBubble.getSize();
     const bubbleXY = this.commentBubble.getRelativeToSurfaceXY();
+    const actualXY = Blockly.utils.Coordinate.difference(
+      bubbleXY,
+      this.workspaceLocation
+    );
     return {
       text: this.commentBubble.getText(),
       width: size.width,
       height: size.height,
-      x: bubbleXY.x,
-      y: bubbleXY.y,
+      x: actualXY.x,
+      y: actualXY.y,
       collapsed: this.commentBubble.isCollapsed()
     };
   }
 
   loadState(state: BlockCommentState) {
     this.setText(state.text);
-    this.setBubbleLocation(new Blockly.utils.Coordinate(state.x, state.y));
+    const currentXY = Blockly.utils.Coordinate.sum(
+      this.workspaceLocation,
+      new Blockly.utils.Coordinate(state.x, state.y)
+    );
+    this.setBubbleLocation(new Blockly.utils.Coordinate(currentXY.x, currentXY.y));
     this.setBubbleSize(new Blockly.utils.Size(state.width, state.height));
     this.commentBubble.setCollapsed(state.collapsed);
   }
