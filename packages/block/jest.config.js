@@ -24,6 +24,7 @@ module.exports = {
     displayName: 'DOM Tests',
     testMatch: ['<rootDir>/tests/blocks/**/*.test.[jt]s'],
     testEnvironment: 'jest-fixed-jsdom',
+    setupFiles: ['jest-canvas-mock'],
     ...sharedConfig
   }]
 };
