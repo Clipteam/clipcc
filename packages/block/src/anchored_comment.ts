@@ -7,7 +7,8 @@
 import * as Blockly from 'blockly/core';
 
 export class AnchoredComment extends Blockly.comments.CommentView implements Blockly.IBubble, Blockly.ISelectable {
-  protected sourceBlock: Blockly.BlockSvg;
+  sourceBlock: Blockly.BlockSvg;
+
   protected dragStartLocation?: Blockly.utils.Coordinate;
   protected chain: SVGPathElement;
   protected anchor?: Blockly.utils.Coordinate;
@@ -55,6 +56,31 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
       'pointerdown',
       this,
       this.startGesture
+    );
+
+    this.addTextChangeListener((oldText: string, newText: string) => {
+      Blockly.Events.fire(
+        new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
+          this.sourceBlock,
+          'comment',
+          null,
+          oldText,
+          newText
+        )
+      );
+    });
+    this.addSizeChangeListener((oldSize: Blockly.utils.Size, newSize: Blockly.utils.Size) => {
+      Blockly.Events.fire(
+        new (Blockly.Events.get('block_comment_resize'))(
+          this,
+          oldSize,
+          newSize
+        )
+      );
+    });
+
+    Blockly.Events.fire(
+      new (Blockly.Events.get('block_comment_create'))(this)
     );
   }
 
@@ -132,8 +158,17 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
       coordinate = new Blockly.utils.Coordinate(arg1, arg2 as number);
     }
 
+    const oldCoordinate = this.getRelativeToSurfaceXY();
     super.moveTo(coordinate);
     this.renderChain();
+
+    Blockly.Events.fire(
+      new (Blockly.Events.get('block_comment_move'))(
+        this,
+        oldCoordinate,
+        coordinate
+      )
+    );
   }
 
   startDrag() {
@@ -145,7 +180,16 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
   }
 
   endDrag() {
+    const oldCoordinate = this.getRelativeToSurfaceXY();
     this.dragStrategy.endDrag();
+
+    Blockly.Events.fire(
+      new (Blockly.Events.get('block_comment_move'))(
+        this,
+        oldCoordinate,
+        this.getRelativeToSurfaceXY()
+      )
+    );
   }
 
   revertDrag() {
@@ -183,5 +227,11 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
       Blockly.utils.dom.removeNode(this.chain);
     }
     super.dispose();
+
+    Blockly.Events.fire(
+      new (Blockly.Events.get('block_comment_delete'))(
+        this
+      )
+    );
   }
 }

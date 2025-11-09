@@ -27,6 +27,11 @@ import styles from './styles/blockly.css';
 import {FuncChange} from './events/func_change';
 import {FuncCreate} from './events/func_create';
 import {FuncDelete} from './events/func_delete';
+import './events/block_comment_create';
+import './events/block_comment_delete';
+import './events/block_comment_move';
+import './events/block_comment_resize';
+import './events/block_comment_collapse';
 
 import './block_comment_icon';
 

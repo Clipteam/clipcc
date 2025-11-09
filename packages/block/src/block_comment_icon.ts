@@ -104,6 +104,14 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
     this.commentBubble.setSize(size);
   }
 
+  setCollapsed(collapsed: boolean): void {
+    this.commentBubble.setCollapsed(collapsed);
+  }
+
+  getCollapsed(): boolean {
+    return this.commentBubble.isCollapsed();
+  }
+
   setBubbleLocation(location: Blockly.utils.Coordinate): void {
     this.commentBubble.moveTo(location);
   }
