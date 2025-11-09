@@ -10,23 +10,21 @@ import {setupSerializationTests} from '../helpers/field';
 
 describe('FieldButton', () => {
   describe('Operations', () => {
-    const callback = (field: FieldButton) => {
-      throw `${field.name} clicked`;
-    };
+    const callback = jest.fn((field: FieldButton) => null);
     const context = setupSerializationTests(FieldButton, 'BUTTON', ['path/to/image', callback]);
 
     test('Click', () => {
-      expect(() => {
-        context.block.getField('BUTTON')!.showEditor();
-      }).toThrow('BUTTON clicked');
+      callback.mockClear();
+      context.block.getField('BUTTON')!.showEditor();
+      expect(callback).toHaveBeenCalledTimes(1);
     });
 
     test('Click When Disabled', () => {
+      callback.mockClear();
       const field = context.block.getField('BUTTON')!;
       field.setEnabled(false);
-      expect(() => {
-        field.showEditor();
-      }).not.toThrow('BUTTON clicked');
+      field.showEditor();
+      expect(callback).toHaveBeenCalledTimes(0);
     });
   });
 
