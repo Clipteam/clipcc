@@ -55,7 +55,7 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
    * The chain connects from the bubble's topbar left-center to the anchor.
    */
   renderChain() {
-    if (!this.chain || !this.anchor) return;
+    if (!this.anchor) return;
 
     const bubbleXY = this.getRelativeToSurfaceXY();
     const bubbleX = bubbleXY.x;

@@ -47,6 +47,27 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
     return;
   }
 
+  override getSize(): Blockly.utils.Size {
+    // Remove the built-in padding
+    return new Blockly.utils.Size(-8, 0);
+  }
+
+  calculateAnchor(): Blockly.utils.Coordinate {
+    const block = this.sourceBlock as Blockly.BlockSvg;
+    const blockXY = block.getRelativeToSurfaceXY();
+    const blockSize = block.getHeightWidth();
+    const x = blockXY.x + blockSize.width;
+    const y = blockXY.y + this.offsetInBlock.y;
+
+    return new Blockly.utils.Coordinate(x, y);
+  }
+
+  override onLocationChange(blockOrigin: Blockly.utils.Coordinate) {
+    super.onLocationChange(blockOrigin);
+    const newAnchor = this.calculateAnchor();
+    this.commentBubble.setAnchor(newAnchor);
+  }
+
   bubbleIsVisible() {
     return true;
   }
@@ -107,8 +128,6 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
     this.commentBubble.setCollapsed(state.collapsed);
   }
 }
-
-console.log(BlockCommentIcon);
 
 // Replace the default comment icon with BlockCommentIcon
 Blockly.registry.register(
