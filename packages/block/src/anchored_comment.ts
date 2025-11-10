@@ -8,12 +8,12 @@ import * as Blockly from 'blockly/core';
 
 export class AnchoredComment extends Blockly.comments.CommentView implements Blockly.IBubble, Blockly.ISelectable {
   sourceBlock: Blockly.BlockSvg;
+  relativeLeft: number = 50;
+  relativeTop: number = 0;
 
   protected dragStartLocation?: Blockly.utils.Coordinate;
   protected chain: SVGPathElement;
   protected anchor?: Blockly.utils.Coordinate;
-  protected relativeLeft: number = 50;
-  protected relativeTop: number = 0;
   id: string;
 
   // @todo inject css from these values?
@@ -79,6 +79,15 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
       );
     });
 
+    this.addOnCollapseListener((newCollapse: boolean) => {
+      Blockly.Events.fire(
+        new (Blockly.Events.get('block_comment_collapse'))(
+          this,
+          newCollapse
+        )
+      );
+    });
+
     Blockly.Events.fire(
       new (Blockly.Events.get('block_comment_create'))(this)
     );
@@ -113,6 +122,13 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     this.chain.setAttribute('y1', '0');
     this.chain.setAttribute('x2', offsetX.toString());
     this.chain.setAttribute('y2', offsetY.toString());
+  }
+
+  setPositionRelativeToAnchor(left: number, top: number) {
+    this.relativeLeft = left;
+    this.relativeTop = top;
+    this.positionRelativeToAnchor();
+    this.renderChain();
   }
 
   positionRelativeToAnchor() {
@@ -161,6 +177,8 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     const oldCoordinate = this.getRelativeToSurfaceXY();
     super.moveTo(coordinate);
     this.renderChain();
+
+    if (!this.sourceBlock) return; // moveTo called during super constructor
 
     Blockly.Events.fire(
       new (Blockly.Events.get('block_comment_move'))(

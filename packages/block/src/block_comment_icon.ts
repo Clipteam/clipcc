@@ -24,8 +24,6 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
     super(sourceBlock);
 
     this.commentBubble = new AnchoredComment(sourceBlock);
-    // fire block_comment_create event
-    // register listeners
   }
 
   override getType(): Blockly.icons.IconType<BlockCommentIcon> {
@@ -122,30 +120,21 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
 
   saveState(): BlockCommentState {
     const size = this.commentBubble.getSize();
-    const bubbleXY = this.commentBubble.getRelativeToSurfaceXY();
-    const actualXY = Blockly.utils.Coordinate.difference(
-      bubbleXY,
-      this.workspaceLocation
-    );
     return {
       text: this.commentBubble.getText(),
       width: size.width,
       height: size.height,
-      x: actualXY.x,
-      y: actualXY.y,
+      x: this.commentBubble.relativeLeft,
+      y: this.commentBubble.relativeTop,
       collapsed: this.commentBubble.isCollapsed()
     };
   }
 
   loadState(state: BlockCommentState) {
     this.setText(state.text);
-    const currentXY = Blockly.utils.Coordinate.sum(
-      this.workspaceLocation,
-      new Blockly.utils.Coordinate(state.x, state.y)
-    );
-    this.setBubbleLocation(new Blockly.utils.Coordinate(currentXY.x, currentXY.y));
+    this.commentBubble.setPositionRelativeToAnchor(state.x, state.y);
     this.setBubbleSize(new Blockly.utils.Size(state.width, state.height));
-    this.commentBubble.setCollapsed(state.collapsed);
+    this.setCollapsed(state.collapsed);
   }
 }
 
