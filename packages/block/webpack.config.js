@@ -60,7 +60,8 @@ module.exports = [
           to: 'media'
         }, {
           from: 'media',
-          to: 'media'
+          to: 'media',
+          force: true
         }, {
           from: 'tests/playground.html',
           to: 'index.html'

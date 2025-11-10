@@ -23,6 +23,7 @@ import {flyoutCategory as variableCategory} from './data_category';
 import {flyoutCategory as procedureCategory} from './procedures_category';
 import {isProcedureCallBlock, isProcedurePrototypeBlock} from './blocks/procedures';
 import styles from './styles/blockly.css';
+import commentStyles from './styles/comment.css';
 
 import {FuncChange} from './events/func_change';
 import {FuncCreate} from './events/func_create';
@@ -76,6 +77,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerScratchCategory();
 
   Blockly.Css.register(styles);
+  Blockly.Css.register(commentStyles);
 
   // Add workspace comment options.
   Blockly.ContextMenuItems.registerCommentOptions();
