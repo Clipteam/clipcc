@@ -97,15 +97,6 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
   }
 
   /**
-   * Returns the weight of this icon for rendering order.
-   * Negative weight means this icon is rendered last.
-   * @returns -1 to ensure comment is rendered after other icons.
-   */
-  override getWeight() {
-    return -1;
-  }
-
-  /**
    * Initializes the icon view. No-op for block comment icon.
    */
   override initView() {
