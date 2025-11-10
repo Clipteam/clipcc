@@ -17,6 +17,26 @@ import {BowlerHat} from './measurables/bowler_hat';
  */
 export class RenderInfo extends Blockly.zelos.RenderInfo {
   /**
+   * Create rows of Measurable objects representing all renderable parts of the
+   * block. Overridden to exclude block comment icons from rendering.
+   */
+  protected override createRows_(): void {
+    super.createRows_();
+
+    const activeRow = this.rows[this.rows.length - 2] as Blockly.blockRendering.InputRow;
+    for (const elem of activeRow.elements) {
+      // Drop block comment icons from rendering.
+      if (
+        Blockly.blockRendering.Types.isIcon(elem) &&
+        elem.icon?.getType() === Blockly.icons.IconType.COMMENT
+      ) {
+        activeRow.elements.splice(activeRow.elements.indexOf(elem), 1);
+        break;
+      }
+    }
+  }
+
+  /**
    * Create all non-spacer elements that belong on the top row.
    */
   protected override populateTopRow_(): void {

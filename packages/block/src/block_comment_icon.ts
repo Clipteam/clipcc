@@ -108,11 +108,11 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
 
   /**
    * Returns the size of the icon.
-   * @returns A size with negative width to remove built-in padding.
+   * Block comment icons have no visual representation in the icon row.
+   * @returns A size of (0, 0) since the comment is rendered outside the block.
    */
   override getSize(): Blockly.utils.Size {
-    // Remove the built-in padding
-    return new Blockly.utils.Size(-8, 0);
+    return new Blockly.utils.Size(0, 0);
   }
 
   /**
