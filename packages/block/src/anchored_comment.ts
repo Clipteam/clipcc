@@ -5,6 +5,8 @@
  */
 
 import * as Blockly from 'blockly/core';
+import {BlockCommentMove} from './events/block_comment_move';
+import {BlockCommentDelete} from './events/block_comment_delete';
 
 export class AnchoredComment extends Blockly.comments.CommentView implements Blockly.IBubble, Blockly.ISelectable {
   sourceBlock: Blockly.BlockSvg | null;
@@ -167,7 +169,7 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     if (!this.sourceBlock) return; // moveTo called during super constructor
 
     Blockly.Events.fire(
-      new (Blockly.Events.get('block_comment_move'))(
+      new BlockCommentMove(
         this,
         oldCoordinate,
         coordinate
@@ -188,7 +190,7 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     this.dragStrategy.endDrag();
 
     Blockly.Events.fire(
-      new (Blockly.Events.get('block_comment_move'))(
+      new BlockCommentMove(
         this,
         oldCoordinate,
         this.getRelativeToSurfaceXY()
@@ -255,7 +257,7 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     }
 
     Blockly.Events.fire(
-      new (Blockly.Events.get('block_comment_delete'))(
+      new BlockCommentDelete(
         this
       )
     );

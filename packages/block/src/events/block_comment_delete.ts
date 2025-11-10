@@ -8,7 +8,7 @@ import * as Blockly from 'blockly/core';
 import type {AnchoredComment} from '../anchored_comment';
 import {BlockCommentBase} from './block_comment_base';
 
-class BlockCommentDelete extends BlockCommentBase {
+export class BlockCommentDelete extends BlockCommentBase {
   type = 'block_comment_delete';
 
   constructor(optAnchoredComment?: AnchoredComment) {

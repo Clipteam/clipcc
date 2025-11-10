@@ -6,6 +6,9 @@
 
 import * as Blockly from 'blockly/core';
 import {AnchoredComment} from './anchored_comment';
+import {BlockCommentCreate} from './events/block_comment_create';
+import {BlockCommentResize} from './events/block_comment_resize';
+import {BlockCommentCollapse} from './events/block_comment_collapse';
 
 /**
  * State interface for block comment icon serialization.
@@ -44,7 +47,7 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
     this.commentBubble.addOnCollapseListener(this.onCommentCollapse.bind(this));
 
     Blockly.Events.fire(
-      new (Blockly.Events.get('block_comment_create'))(this.commentBubble)
+      new BlockCommentCreate(this.commentBubble)
     );
   }
 
@@ -63,7 +66,7 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
 
   private onCommentSizeChange(oldSize: Blockly.utils.Size, newSize: Blockly.utils.Size) {
     Blockly.Events.fire(
-      new (Blockly.Events.get('block_comment_resize'))(
+      new BlockCommentResize(
         this.commentBubble,
         oldSize,
         newSize
@@ -73,7 +76,7 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
 
   private onCommentCollapse(newCollapse: boolean) {
     Blockly.Events.fire(
-      new (Blockly.Events.get('block_comment_collapse'))(
+      new BlockCommentCollapse(
         this.commentBubble,
         newCollapse
       )

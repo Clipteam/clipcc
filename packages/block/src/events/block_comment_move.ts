@@ -9,7 +9,7 @@ import type {AnchoredComment} from '../anchored_comment';
 import {BlockCommentBase, BlockCommentBaseJson} from './block_comment_base';
 import type {BlockCommentIcon} from '../block_comment_icon';
 
-class BlockCommentMove extends BlockCommentBase {
+export class BlockCommentMove extends BlockCommentBase {
   type = 'block_comment_move';
   oldCoordinate_?: Blockly.utils.Coordinate;
   newCoordinate_?: Blockly.utils.Coordinate;

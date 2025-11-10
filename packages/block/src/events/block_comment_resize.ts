@@ -14,45 +14,12 @@ export class BlockCommentResize extends BlockCommentBase {
   oldSize?: Blockly.utils.Size;
   newSize?: Blockly.utils.Size;
 
-  constructor(optAnchoredComment?: AnchoredComment) {
+  constructor(optAnchoredComment?: AnchoredComment, oldSize?: Blockly.utils.Size, newSize?: Blockly.utils.Size) {
     super(optAnchoredComment);
     if (!optAnchoredComment) return;
 
-    this.oldSize = optAnchoredComment.getSize();
-  }
-
-  /**
-   * Record the comment's new size. Called after the resize. Can only be
-   * called once.
-   */
-  recordCurrentSizeAsNewSize() {
-    if (this.newSize) {
-      throw new Error(
-        'Tried to record the new size of a comment on the ' +
-          'same event twice.'
-      );
-    }
-    const workspace = this.getEventWorkspace_();
-    if (!this.blockId) {
-      throw new Error(
-        'The block ID is undefined. Either pass a comment to ' +
-          'the constructor, or call fromJson'
-      );
-    }
-    const block = workspace.getBlockById(this.blockId);
-    if (!block) {
-      throw new Error(
-        'The block associated with the comment resize event ' +
-          'could not be found'
-      );
-    }
-    const comment = block.getIcon(Blockly.icons.IconType.COMMENT) as BlockCommentIcon;
-    if (!comment) {
-      throw new Error(
-        `Comment icon for block with ID ${this.blockId} not found.`
-      );
-    }
-    this.newSize = comment.getBubbleSize();
+    this.oldSize = oldSize;
+    this.newSize = newSize;
   }
 
   toJson(): BlockCommentResizeJson {
@@ -89,10 +56,6 @@ export class BlockCommentResize extends BlockCommentBase {
     newEvent.oldSize = new Blockly.utils.Size(json['oldWidth'], json['oldHeight']);
     newEvent.newSize = new Blockly.utils.Size(json['newWidth'], json['newHeight']);
     return newEvent;
-  }
-
-  isNull(): boolean {
-    return Blockly.utils.Size.equals(this.oldSize, this.newSize);
   }
 
   run(forward: boolean) {

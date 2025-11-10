@@ -15,7 +15,7 @@ interface CommentJson {
   height: number;
 };
 
-class BlockCommentCreate extends BlockCommentBase {
+export class BlockCommentCreate extends BlockCommentBase {
   json?: CommentJson;
   type = 'block_comment_create';
 
