@@ -10,8 +10,6 @@ import {BlockCommentDelete} from './events/block_comment_delete';
 
 export class AnchoredComment extends Blockly.comments.CommentView implements Blockly.IBubble, Blockly.ISelectable {
   sourceBlock: Blockly.BlockSvg | null;
-  relativeLeft: number = 50;
-  relativeTop: number = 0;
 
   protected dragStartLocation?: Blockly.utils.Coordinate;
   protected chain: SVGPathElement;
@@ -49,8 +47,6 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
       },
       this.getSvgRoot()
     );
-    this.chain.setAttribute('x1', '0');
-    this.chain.setAttribute('y1', '0');
     // Move chain to back so it doesn't overlap the bubble
     this.getSvgRoot().insertBefore(this.chain, this.getSvgRoot().firstChild);
 
@@ -68,49 +64,50 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
    * @param anchor The anchor coordinate.
    */
   setAnchor(anchor: Blockly.utils.Coordinate) {
+    const oldAnchor = this.anchor;
+    const hasAnchored = !!this.anchor;
     this.anchor = anchor;
-    this.positionRelativeToAnchor();
-    this.renderChain();
+
+    if (!hasAnchored) {
+      // position bubble relative to anchor at first
+      this.initAnchor();
+    } else if (oldAnchor) {
+      const oldLocation = this.getRelativeToSurfaceXY();
+      const delta = Blockly.utils.Coordinate.difference(this.anchor, oldAnchor);
+      const newLocation = Blockly.utils.Coordinate.sum(oldLocation, delta);
+      this.moveTo(newLocation);
+    }
+  }
+
+  /**
+   * Initialize the bubble position at first.
+   */
+  protected initAnchor() {
+    if (!this.anchor) return;
+
+    const verticalOffset = AnchoredComment.TOP_BAR_HEIGHT / 2;
+    const horizontalOffset = 40;
+
+    this.moveTo(
+      this.anchor.x + horizontalOffset * (this.workspace.RTL ? -1 : 1),
+      this.anchor.y - verticalOffset
+    );
   }
 
   /**
    * Render the chain connecting the bubble to its anchor.
-   * The chain connects from the bubble's topbar left-center to the anchor.
+   * The chain connects from the anchor to the bubble's top-center.
    */
-  renderChain() {
+  protected renderChain() {
     if (!this.anchor) return;
 
-    const bubbleXY = this.getRelativeToSurfaceXY();
-    const bubbleX = bubbleXY.x;
-    const bubbleY = bubbleXY.y + AnchoredComment.TOP_BAR_HEIGHT / 2;
+    const location = this.getRelativeToSurfaceXY();
+    const bubbleWidth = this.getSize().width;
 
-    const {x: anchorX, y: anchorY} = this.anchor;
-    const offsetX = anchorX - bubbleX;
-    const offsetY = anchorY - bubbleY;
-
-    this.chain.setAttribute('x2', offsetX.toString());
-    this.chain.setAttribute('y2', offsetY.toString());
-  }
-
-  /**
-   * Sets the position of this bubble relative to its anchor.
-   * @param left The left position relative to the anchor.
-   * @param top The top position relative to the anchor.
-   */
-  setPositionRelativeToAnchor(left: number, top: number) {
-    this.relativeLeft = left;
-    this.relativeTop = top;
-    this.positionRelativeToAnchor();
-    this.renderChain();
-  }
-
-  /** Positions the bubble relative to its anchor. Does not render its tail. */
-  protected positionRelativeToAnchor() {
-    if (!this.anchor) return;
-
-    const left = this.relativeLeft + this.anchor.x;
-    const top = this.relativeTop + this.anchor.y;
-    this.moveTo(left, top);
+    this.chain.setAttribute('x1', (this.anchor.x - location.x).toString());
+    this.chain.setAttribute('y1', (this.anchor.y - location.y).toString());
+    this.chain.setAttribute('x2', (bubbleWidth / 2).toString());
+    this.chain.setAttribute('y2', (AnchoredComment.TOP_BAR_HEIGHT / 2).toString());
   }
 
   /**
@@ -135,13 +132,6 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
    */
   moveDuringDrag(newLoc: Blockly.utils.Coordinate) {
     this.moveTo(newLoc);
-
-    if (this.anchor) {
-      this.relativeTop = newLoc.y - this.anchor.y;
-      this.relativeLeft = newLoc.x - this.anchor.x;
-    }
-
-    this.renderChain();
   }
 
   isMovable() {
@@ -162,19 +152,8 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
       coordinate = new Blockly.utils.Coordinate(arg1, arg2 as number);
     }
 
-    const oldCoordinate = this.getRelativeToSurfaceXY();
     super.moveTo(coordinate);
     this.renderChain();
-
-    if (!this.sourceBlock) return; // moveTo called during super constructor
-
-    Blockly.Events.fire(
-      new BlockCommentMove(
-        this,
-        oldCoordinate,
-        coordinate
-      )
-    );
   }
 
   startDrag() {

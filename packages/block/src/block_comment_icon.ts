@@ -250,12 +250,18 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
    */
   saveState(): BlockCommentState {
     const size = this.commentBubble.getSize();
+    const bubbleXY = this.commentBubble.getRelativeToSurfaceXY();
+    const relativeXY = Blockly.utils.Coordinate.difference(
+      bubbleXY,
+      this.workspaceLocation
+    );
+
     return {
       text: this.commentBubble.getText(),
       width: size.width,
       height: size.height,
-      x: this.commentBubble.relativeLeft,
-      y: this.commentBubble.relativeTop,
+      x: relativeXY.x,
+      y: relativeXY.y,
       collapsed: this.commentBubble.isCollapsed()
     };
   }
@@ -266,10 +272,19 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
    * @param state The saved state to restore.
    */
   loadState(state: BlockCommentState) {
+    Blockly.Events.setGroup(true);
+
     this.setText(state.text);
-    this.commentBubble.setPositionRelativeToAnchor(state.x, state.y);
+    const relativeXY = new Blockly.utils.Coordinate(state.x, state.y);
+    const currentXY = Blockly.utils.Coordinate.sum(
+      this.workspaceLocation,
+      relativeXY
+    );
+    this.setBubbleLocation(currentXY);
     this.setBubbleSize(new Blockly.utils.Size(state.width, state.height));
     this.setCollapsed(state.collapsed);
+
+    Blockly.Events.setGroup(false);
   }
 }
 
