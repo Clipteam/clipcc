@@ -47,6 +47,8 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
       },
       this.getSvgRoot()
     );
+    this.chain.setAttribute('x1', '0');
+    this.chain.setAttribute('y1', '0');
     // Move chain to back so it doesn't overlap the bubble
     this.getSvgRoot().insertBefore(this.chain, this.getSvgRoot().firstChild);
 
@@ -118,12 +120,15 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     const offsetX = anchorX - bubbleX;
     const offsetY = anchorY - bubbleY;
 
-    this.chain.setAttribute('x1', '0');
-    this.chain.setAttribute('y1', '0');
     this.chain.setAttribute('x2', offsetX.toString());
     this.chain.setAttribute('y2', offsetY.toString());
   }
 
+  /**
+   * Sets the position of this bubble relative to its anchor.
+   * @param left The left position relative to the anchor.
+   * @param top The top position relative to the anchor.
+   */
   setPositionRelativeToAnchor(left: number, top: number) {
     this.relativeLeft = left;
     this.relativeTop = top;
@@ -131,7 +136,8 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     this.renderChain();
   }
 
-  positionRelativeToAnchor() {
+  /** Positions the bubble relative to its anchor. Does not render its tail. */
+  protected positionRelativeToAnchor() {
     if (!this.anchor) return;
 
     const left = this.relativeLeft + this.anchor.x;
@@ -139,6 +145,11 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     this.moveTo(left, top);
   }
 
+  /**
+   * Start a drag gesture for this bubble. Used to make the bubble draggable.
+   * @param e The pointer down event.
+   * @internal
+   */
   startGesture(e: PointerEvent) {
     const gesture = this.workspace.getGesture(e);
     if (gesture) {
@@ -149,6 +160,11 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
 
   setDragging() {}
 
+  /**
+   * Move this bubble during a drag.
+   * @param newLoc The location to translate to, in workspace coordinates.
+   * @internal
+   */
   moveDuringDrag(newLoc: Blockly.utils.Coordinate) {
     this.moveTo(newLoc);
 
@@ -164,8 +180,12 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     return true;
   }
 
+  /**
+   * Moves the anchored comment to the given coordinates.
+   * @internal
+   */
   moveTo(x: number, y: number): void;
-  moveTo(newLoc: Blockly.utils.Coordinate): void;
+  override moveTo(newLoc: Blockly.utils.Coordinate): void;
   moveTo(arg1: number | Blockly.utils.Coordinate, arg2?: number) {
     let coordinate: Blockly.utils.Coordinate;
     if (arg1 instanceof Blockly.utils.Coordinate) {
@@ -219,28 +239,42 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
   setDeleteStyle() {}
   showContextMenu() {}
 
-  getFocusableElement() {
+  /**
+   * See IFocusableNode.getFocusableElement.
+   * @returns The element that can be focused.
+   */
+  getFocusableElement(): HTMLElement | SVGElement {
     return this.getSvgRoot();
   }
 
+  /**
+   * See IFocusableNode.getFocusableTree.
+   * @returns The focusable tree (workspace).
+   */
   getFocusableTree() {
     return this.workspace;
   }
 
+  /** See IFocusableNode.onNodeFocus. */
   onNodeFocus() {
     this.bringToFront();
   }
 
+  /** See IFocusableNode.onNodeBlur. */
   onNodeBlur() { }
 
   select() { }
   unselect() { }
 
+  /**
+   * See IFocusableNode.canBeFocused.
+   * @returns Whether this node can be focused. always true for anchored comments.
+   */
   canBeFocused() {
     return true;
   }
 
-  dispose() {
+  override dispose() {
     if (this.chain) {
       Blockly.utils.dom.removeNode(this.chain);
     }

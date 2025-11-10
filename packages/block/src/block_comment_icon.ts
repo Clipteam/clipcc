@@ -7,6 +7,10 @@
 import * as Blockly from 'blockly/core';
 import {AnchoredComment} from './anchored_comment';
 
+/**
+ * State interface for block comment icon serialization.
+ * Extends the base CommentState with additional positioning and size information.
+ */
 export interface BlockCommentState extends Blockly.icons.CommentState {
   text: string;
   height: number;
@@ -16,40 +20,73 @@ export interface BlockCommentState extends Blockly.icons.CommentState {
   collapsed: boolean;
 }
 
-// Should implement Blockly.ICommentIcon, but seems it's not exported
+/**
+ * Class for a block comment icon.
+ * This icon displays an anchored comment bubble that is always visible on the block.
+ * Should implement Blockly.ICommentIcon, but seems it's not exported.
+ */
 export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISerializable, Blockly.IHasBubble {
+  /**
+   * The anchored comment bubble associated with this icon.
+   */
   protected commentBubble: AnchoredComment;
 
+  /**
+   * Constructor for a block comment icon.
+   * @param sourceBlock The block this comment is attached to.
+   */
   constructor(sourceBlock: Blockly.BlockSvg) {
     super(sourceBlock);
 
     this.commentBubble = new AnchoredComment(sourceBlock);
   }
 
+  /**
+   * Returns the type of this icon.
+   * @returns The icon type for comment icons.
+   */
   override getType(): Blockly.icons.IconType<BlockCommentIcon> {
     return Blockly.icons.CommentIcon.TYPE;
   }
 
+  /**
+   * Dispose of this icon and clean up the associated comment bubble.
+   */
   override dispose() {
     super.dispose();
     this.commentBubble.dispose();
   }
 
-  // Rendered at last
+  /**
+   * Returns the weight of this icon for rendering order.
+   * Negative weight means this icon is rendered last.
+   * @returns -1 to ensure comment is rendered after other icons.
+   */
   override getWeight() {
     return -1;
   }
 
-  // If comment has this icon, the bubble should always visible.
+  /**
+   * Initializes the icon view. No-op for block comment icon.
+   */
   override initView() {
     return;
   }
 
+  /**
+   * Returns the size of the icon.
+   * @returns A size with negative width to remove built-in padding.
+   */
   override getSize(): Blockly.utils.Size {
     // Remove the built-in padding
     return new Blockly.utils.Size(-8, 0);
   }
 
+  /**
+   * Calculates the anchor position for the comment bubble.
+   * The anchor is positioned at the right edge of the block.
+   * @returns The coordinate where the comment bubble should anchor.
+   */
   calculateAnchor(): Blockly.utils.Coordinate {
     const block = this.sourceBlock as Blockly.BlockSvg;
     const blockRect = block.getBoundingRectangleWithoutChildren();
@@ -59,6 +96,11 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
     return new Blockly.utils.Coordinate(x, y);
   }
 
+  /**
+   * Called when the icon's location changes (e.g., when the block moves).
+   * Updates the comment bubble's anchor position.
+   * @param blockOrigin The new origin coordinate of the block.
+   */
   override onLocationChange(blockOrigin: Blockly.utils.Coordinate) {
     if (this.sourceBlock.isInsertionMarker()) {
       this.commentBubble.dispose();
@@ -70,54 +112,109 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
     this.commentBubble.setAnchor(newAnchor);
   }
 
+  /**
+   * Checks if the bubble is currently visible.
+   * For this icon type, the bubble is always visible.
+   * @returns Always true since the anchored comment is always shown.
+   */
   bubbleIsVisible() {
     return true;
   }
 
+  /**
+   * Determines if this bubble can receive focus.
+   * @returns Always false since anchored comments cannot be focused.
+   */
   canBeFocused() {
     return false;
   }
 
+  /**
+   * Sets the visibility of the bubble.
+   * For this icon type, the visibility cannot be changed.
+   * @returns A resolved promise indicating the operation is complete.
+   */
   setBubbleVisible() {
     return Promise.resolve();
   }
 
+  /**
+   * Gets the bubble associated with this icon.
+   * @returns The anchored comment bubble.
+   */
   getBubble() {
     return this.commentBubble;
   }
 
+  /**
+   * Gets the text content of the comment.
+   * @returns The comment text.
+   */
   getText(): string {
     return this.commentBubble.getText();
   }
 
+  /**
+   * Sets the text content of the comment.
+   * @param text The new comment text.
+   */
   setText(text: string): void {
     this.commentBubble.setText(text);
   }
 
+  /**
+   * Gets the size of the comment bubble.
+   * @returns The width and height of the bubble.
+   */
   getBubbleSize(): Blockly.utils.Size {
     return this.commentBubble.getSize();
   }
 
+  /**
+   * Sets the size of the comment bubble.
+   * @param size The new size for the bubble.
+   */
   setBubbleSize(size: Blockly.utils.Size): void {
     this.commentBubble.setSize(size);
   }
 
+  /**
+   * Sets the collapsed state of the comment bubble.
+   * @param collapsed Whether the bubble should be collapsed.
+   */
   setCollapsed(collapsed: boolean): void {
     this.commentBubble.setCollapsed(collapsed);
   }
 
+  /**
+   * Gets the collapsed state of the comment bubble.
+   * @returns True if the bubble is collapsed, false otherwise.
+   */
   getCollapsed(): boolean {
     return this.commentBubble.isCollapsed();
   }
 
+  /**
+   * Sets the location of the comment bubble.
+   * @param location The new coordinate for the bubble.
+   */
   setBubbleLocation(location: Blockly.utils.Coordinate): void {
     this.commentBubble.moveTo(location);
   }
 
+  /**
+   * Gets the current location of the comment bubble relative to the workspace surface.
+   * @returns The coordinate of the bubble, or undefined if not available.
+   */
   getBubbleLocation() : Blockly.utils.Coordinate | undefined {
     return this.commentBubble.getRelativeToSurfaceXY();
   }
 
+  /**
+   * Saves the current state of the comment for serialization.
+   * Implements ISerializable interface.
+   * @returns An object containing all serializable state.
+   */
   saveState(): BlockCommentState {
     const size = this.commentBubble.getSize();
     return {
@@ -130,6 +227,11 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
     };
   }
 
+  /**
+   * Loads a previously saved state to restore the comment.
+   * Implements ISerializable interface.
+   * @param state The saved state to restore.
+   */
   loadState(state: BlockCommentState) {
     this.setText(state.text);
     this.commentBubble.setPositionRelativeToAnchor(state.x, state.y);
