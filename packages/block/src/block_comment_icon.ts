@@ -30,7 +30,6 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
    * The anchored comment bubble associated with this icon.
    */
   protected commentBubble: AnchoredComment;
-
   /**
    * Constructor for a block comment icon.
    * @param sourceBlock The block this comment is attached to.
@@ -39,6 +38,46 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
     super(sourceBlock);
 
     this.commentBubble = new AnchoredComment(sourceBlock);
+
+    this.commentBubble.addTextChangeListener(this.onCommentTextChange.bind(this));
+    this.commentBubble.addSizeChangeListener(this.onCommentSizeChange.bind(this));
+    this.commentBubble.addOnCollapseListener(this.onCommentCollapse.bind(this));
+
+    Blockly.Events.fire(
+      new (Blockly.Events.get('block_comment_create'))(this.commentBubble)
+    );
+  }
+
+  private onCommentTextChange(oldText: string, newText: string) {
+    this.sourceBlock.setCommentText(newText);
+    Blockly.Events.fire(
+      new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
+        this.sourceBlock,
+        'comment',
+        null,
+        oldText,
+        newText
+      )
+    );
+  }
+
+  private onCommentSizeChange(oldSize: Blockly.utils.Size, newSize: Blockly.utils.Size) {
+    Blockly.Events.fire(
+      new (Blockly.Events.get('block_comment_resize'))(
+        this.commentBubble,
+        oldSize,
+        newSize
+      )
+    );
+  }
+
+  private onCommentCollapse(newCollapse: boolean) {
+    Blockly.Events.fire(
+      new (Blockly.Events.get('block_comment_collapse'))(
+        this.commentBubble,
+        newCollapse
+      )
+    );
   }
 
   /**
@@ -53,8 +92,8 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
    * Dispose of this icon and clean up the associated comment bubble.
    */
   override dispose() {
-    super.dispose();
     this.commentBubble.dispose();
+    super.dispose();
   }
 
   /**

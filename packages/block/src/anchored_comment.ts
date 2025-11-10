@@ -7,7 +7,7 @@
 import * as Blockly from 'blockly/core';
 
 export class AnchoredComment extends Blockly.comments.CommentView implements Blockly.IBubble, Blockly.ISelectable {
-  sourceBlock: Blockly.BlockSvg;
+  sourceBlock: Blockly.BlockSvg | null;
   relativeLeft: number = 50;
   relativeTop: number = 0;
 
@@ -58,40 +58,6 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
       'pointerdown',
       this,
       this.startGesture
-    );
-
-    this.addTextChangeListener((oldText: string, newText: string) => {
-      Blockly.Events.fire(
-        new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
-          this.sourceBlock,
-          'comment',
-          null,
-          oldText,
-          newText
-        )
-      );
-    });
-    this.addSizeChangeListener((oldSize: Blockly.utils.Size, newSize: Blockly.utils.Size) => {
-      Blockly.Events.fire(
-        new (Blockly.Events.get('block_comment_resize'))(
-          this,
-          oldSize,
-          newSize
-        )
-      );
-    });
-
-    this.addOnCollapseListener((newCollapse: boolean) => {
-      Blockly.Events.fire(
-        new (Blockly.Events.get('block_comment_collapse'))(
-          this,
-          newCollapse
-        )
-      );
-    });
-
-    Blockly.Events.fire(
-      new (Blockly.Events.get('block_comment_create'))(this)
     );
   }
 
@@ -275,15 +241,25 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
   }
 
   override dispose() {
+    this.disposing = true;
     if (this.chain) {
       Blockly.utils.dom.removeNode(this.chain);
     }
-    super.dispose();
+
+    if (this.sourceBlock) {
+      const block = this.sourceBlock;
+      this.sourceBlock = null; // Break recursive loop
+      if (!block.isDeadOrDying()) {
+        block.setCommentText(null);
+      }
+    }
 
     Blockly.Events.fire(
       new (Blockly.Events.get('block_comment_delete'))(
         this
       )
     );
+
+    super.dispose();
   }
 }

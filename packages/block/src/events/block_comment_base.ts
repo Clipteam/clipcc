@@ -17,7 +17,7 @@ export class BlockCommentBase extends Blockly.Events.Abstract {
     super();
     this.isBlank = !optAnchoredComment;
 
-    if (!optAnchoredComment) return;
+    if (!optAnchoredComment?.sourceBlock) return;
 
     this.commentId = optAnchoredComment.id;
     this.blockId = optAnchoredComment.sourceBlock.id;
