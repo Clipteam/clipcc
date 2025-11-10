@@ -1,3 +1,9 @@
+.blocklyWorkspace, .blocklyBlockDragSurface {
+  --commentFillColour: #fef49c;
+  --commentTopBarColour: #e4db8c;
+  --commentBorderColour: #bca903;
+}
+
 .blocklyCollapsed.blocklyComment .blocklyFoldoutIcon {
   transform: rotate(-180deg);
 }
@@ -21,15 +27,13 @@
   stroke-width: 2px;
 }
 
-.blocklyCollapsed .blocklyCommentHighlight {
-  stroke-width: 0;
-}
-
 .blocklySelected .blocklyCommentHighlight {
   stroke: var(--commentBorderColour);
+  stroke-width: 2px;
 }
 
 .blocklyCollapsed .blocklyCommentHighlight {
+  stroke-width: 0;
   stroke: var(--commentBorderColour);
 }
 

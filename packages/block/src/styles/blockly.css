@@ -28,9 +28,3 @@
 .blocklyMenuItemDisabled:hover {
   background-color: #fff;
 }
-
-.blocklyWorkspace {
-  --commentFillColour: #fef49c;
-  --commentTopBarColour: #e4db8c;
-  --commentBorderColour: #bca903;
-}
