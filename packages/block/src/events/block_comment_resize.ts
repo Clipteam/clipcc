@@ -14,9 +14,9 @@ export class BlockCommentResize extends BlockCommentBase {
   oldSize?: Blockly.utils.Size;
   newSize?: Blockly.utils.Size;
 
-  constructor(optAnchoredComment?: AnchoredComment, oldSize?: Blockly.utils.Size, newSize?: Blockly.utils.Size) {
-    super(optAnchoredComment);
-    if (!optAnchoredComment) return;
+  constructor(anchoredComment?: AnchoredComment, oldSize?: Blockly.utils.Size, newSize?: Blockly.utils.Size) {
+    super(anchoredComment);
+    if (!anchoredComment) return;
 
     this.oldSize = oldSize;
     this.newSize = newSize;

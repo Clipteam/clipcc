@@ -11,24 +11,29 @@ import type {BlockCommentIcon} from '../block_comment_icon';
 
 export class BlockCommentMove extends BlockCommentBase {
   type = 'block_comment_move';
-  oldCoordinate_?: Blockly.utils.Coordinate;
-  newCoordinate_?: Blockly.utils.Coordinate;
+  oldCoordinate?: Blockly.utils.Coordinate;
+  newCoordinate?: Blockly.utils.Coordinate;
 
   constructor(
-    optAnchoredComment?: AnchoredComment,
+    anchoredComment?: AnchoredComment,
     oldCoordinate?: Blockly.utils.Coordinate,
     newCoordinate?: Blockly.utils.Coordinate
   ) {
-    super(optAnchoredComment);
-    this.oldCoordinate_ = oldCoordinate;
-    this.newCoordinate_ = newCoordinate;
+    super(anchoredComment);
+    this.oldCoordinate = oldCoordinate;
+    this.newCoordinate = newCoordinate;
   }
 
   toJson(): BlockCommentMoveJson {
+    if (!this.newCoordinate || !this.oldCoordinate) {
+      throw new Error('Incomplete coordinate');
+    }
     return {
       ...super.toJson(),
-      newCoordinate: this.newCoordinate_!,
-      oldCoordinate: this.oldCoordinate_!
+      newCoordinateX: this.newCoordinate.x,
+      newCoordinateY: this.newCoordinate.y,
+      oldX: this.oldCoordinate.x,
+      oldY: this.oldCoordinate.y
     };
   }
 
@@ -42,20 +47,20 @@ export class BlockCommentMove extends BlockCommentBase {
       workspace,
       event ?? new BlockCommentMove()
     ) as BlockCommentMove;
-    newEvent.newCoordinate_ = new Blockly.utils.Coordinate(
-      json['newCoordinate']['x'],
-      json['newCoordinate']['y']
+    newEvent.newCoordinate = new Blockly.utils.Coordinate(
+      json['newCoordinateX'],
+      json['newCoordinateY']
     );
-    newEvent.oldCoordinate_ = new Blockly.utils.Coordinate(
-      json['oldCoordinate']['x'],
-      json['oldCoordinate']['y']
+    newEvent.oldCoordinate = new Blockly.utils.Coordinate(
+      json['oldX'],
+      json['oldY']
     );
 
     return newEvent;
   }
 
   run(forward: boolean) {
-    if (!this.oldCoordinate_ || !this.newCoordinate_) {
+    if (!this.oldCoordinate || !this.newCoordinate) {
       throw new Error('Incomplete coordinate');
     }
 
@@ -77,20 +82,16 @@ export class BlockCommentMove extends BlockCommentBase {
     }
 
     comment.setBubbleLocation(
-      forward ? this.newCoordinate_ : this.oldCoordinate_
+      forward ? this.newCoordinate : this.oldCoordinate
     );
   }
 }
 
 interface BlockCommentMoveJson extends BlockCommentBaseJson {
-  newCoordinate: {
-    x: number;
-    y: number;
-  };
-  oldCoordinate: {
-    x: number;
-    y: number;
-  };
+  newCoordinateX: number;
+  newCoordinateY: number;
+  oldX: number;
+  oldY: number;
 }
 
 Blockly.registry.register(

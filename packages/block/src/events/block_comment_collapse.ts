@@ -13,8 +13,8 @@ export class BlockCommentCollapse extends BlockCommentBase {
   type = 'block_comment_collapse';
   newCollapsed: boolean;
 
-  constructor(optAnchoredComment?: AnchoredComment, collapsed?: boolean) {
-    super(optAnchoredComment);
+  constructor(anchoredComment?: AnchoredComment, collapsed?: boolean) {
+    super(anchoredComment);
     this.newCollapsed = !!collapsed;
   }
 

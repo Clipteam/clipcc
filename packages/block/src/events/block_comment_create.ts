@@ -19,11 +19,11 @@ export class BlockCommentCreate extends BlockCommentBase {
   json?: CommentJson;
   type = 'block_comment_create';
 
-  constructor(optAnchoredComment?: AnchoredComment) {
-    super(optAnchoredComment);
-    if (!optAnchoredComment) return;
-    const size = optAnchoredComment.getSize();
-    const commentXY = optAnchoredComment.getRelativeToSurfaceXY();
+  constructor(anchoredComment?: AnchoredComment) {
+    super(anchoredComment);
+    if (!anchoredComment) return;
+    const size = anchoredComment.getSize();
+    const commentXY = anchoredComment.getRelativeToSurfaceXY();
     this.json = {
       x: commentXY.x,
       y: commentXY.y,

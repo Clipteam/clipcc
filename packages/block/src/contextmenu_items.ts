@@ -14,7 +14,7 @@ export function registerAddBlockComment() {
   const original = Blockly.ContextMenuRegistry.registry.getItem('blockComment')!;
   const blockCommentOption = {
     ...original,
-    preconditionFn: function (scope: Blockly.ContextMenuRegistry.Scope) {
+    preconditionFn: function(scope: Blockly.ContextMenuRegistry.Scope) {
       const block = scope.block;
       if (
         block &&
