@@ -160,6 +160,11 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     }
   }
 
+  /**
+   * Sets whether or not this bubble is being dragged.
+   * This method is required by the IBubble interface, but always true for anchored comments.
+   * It is implemented as a no-op to satisfy the interface contract.
+   */
   setDragging() {}
 
   /**
@@ -171,6 +176,10 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     this.moveTo(newLoc);
   }
 
+  /**
+   * Returns whether this bubble is movable. Always true for anchored comments.
+   * @returns true
+   */
   isMovable() {
     return true;
   }
@@ -195,9 +204,14 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
 
   startDrag() {
     this.dragStrategy.startDrag();
-    this.dragStartLocation = this.getRelativeToSurfaceXY(); // dragStategy.startLoc is private
+    this.dragStartLocation = this.getRelativeToSurfaceXY(); // dragStrategy.startLoc is private
   }
 
+  /**
+   * Handles moving elements to the new location, and updating any
+   * visuals based on that (e.g connection previews for blocks).
+   * @param newLocation Workspace coordinate to which the draggable has
+   */
   drag(newLocation: Blockly.utils.Coordinate) {
     this.dragStrategy.drag(newLocation);
   }
@@ -225,6 +239,10 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     );
   };
 
+  /**
+   * Handles any drag cleanup, including e.g. connecting or deleting
+   * blocks.
+   */
   endDrag() {
     const coordinate = this.getRelativeToSurfaceXY();
     this.dragStrategy.endDrag();
@@ -234,6 +252,7 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     }
   }
 
+  /** Moves the draggable back to where it was at the start of the drag. */
   revertDrag() {
     if (this.dragStartLocation) {
       this.moveTo(this.dragStartLocation);
@@ -267,7 +286,10 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
   /** See IFocusableNode.onNodeBlur. */
   onNodeBlur() { }
 
+  /** See ISelectable.select. */
   select() { }
+
+  /** See ISelectable.unselect. */
   unselect() { }
 
   /**

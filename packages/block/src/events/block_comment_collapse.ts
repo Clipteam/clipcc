@@ -57,7 +57,7 @@ export class BlockCommentCollapse extends BlockCommentBase {
       );
     }
 
-    comment.setCollapsed(forward ? !this.newCollapsed : this.newCollapsed);
+    comment.setCollapsed(forward ? this.newCollapsed : !this.newCollapsed);
   }
 }
 

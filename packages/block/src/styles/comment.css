@@ -18,7 +18,7 @@
 }
 
 .blocklyComment {
-  border: 100px solid var(--commentBorderColour);
+  border: 1px solid var(--commentBorderColour);
   border-radius: 4px;
 }
 

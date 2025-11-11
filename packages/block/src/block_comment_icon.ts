@@ -275,7 +275,7 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
    * Gets the current location of the comment bubble relative to the workspace surface.
    * @returns The coordinate of the bubble, or undefined if not available.
    */
-  getBubbleLocation() : Blockly.utils.Coordinate | undefined {
+  getBubbleLocation(): Blockly.utils.Coordinate | undefined {
     return this.commentBubble.getRelativeToSurfaceXY();
   }
 

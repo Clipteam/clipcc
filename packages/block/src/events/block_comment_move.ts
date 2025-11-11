@@ -76,7 +76,7 @@ export class BlockCommentMove extends BlockCommentBase {
       );
     }
 
-    comment?.setBubbleLocation(
+    comment.setBubbleLocation(
       forward ? this.newCoordinate_ : this.oldCoordinate_
     );
   }
