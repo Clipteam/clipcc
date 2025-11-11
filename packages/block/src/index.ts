@@ -52,6 +52,8 @@ import './blocks/operators';
 import './blocks/data';
 import './blocks/procedures';
 
+import {registerAddBlockComment} from './contextmenu_items';
+
 import './serialization/procedures';
 
 /**
@@ -75,6 +77,9 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerFieldVerticalSeparator();
 
   registerScratchCategory();
+  registerAddBlockComment();
+
+  // Register styles.
 
   Blockly.Css.register(styles);
   Blockly.Css.register(commentStyles);
