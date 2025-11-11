@@ -187,6 +187,7 @@ export function setupSerializationTests<T extends Constructor<Blockly.Field>>(
   const context: FieldTestContext = {} as FieldTestContext;
 
   beforeAll(() => {
+    Blockly.Events.disable();
     context.workspace = new Blockly.Workspace();
     defineTestBlockInput();
   });
