@@ -321,6 +321,7 @@ Blockly.Msg.CATEGORY_MYBLOCKS = 'Functions';
 Blockly.Msg.DUPLICATE_BLOCK = 'Duplicate';
 Blockly.Msg.DELETE = 'Delete';
 Blockly.Msg.ADD_COMMENT = 'Add Comment';
+Blockly.Msg.DUPLICATE_COMMENT = 'Duplicate Comment';
 Blockly.Msg.REMOVE_COMMENT = 'Remove Comment';
 Blockly.Msg.DELETE_BLOCK = 'Delete Block';
 Blockly.Msg.DELETE_X_BLOCKS = 'Delete %1 Blocks';
