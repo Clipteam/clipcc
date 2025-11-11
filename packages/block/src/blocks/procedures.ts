@@ -1123,6 +1123,9 @@ Blockly.Blocks['procedures_definition'] = {
    * The method called during disposal.
    */
   destroy: function() {
+    if (this.isInsertionMarker()) {
+      return;
+    }
     // Remove the procedure model from map.
     this.workspace.getProcedureMap().delete(this.getProcCode());
   },
