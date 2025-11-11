@@ -8,11 +8,24 @@ import * as Blockly from 'blockly/core';
 
 export class AnchoredComment extends Blockly.comments.CommentView implements Blockly.IBubble, Blockly.ISelectable {
   sourceBlock: Blockly.BlockSvg | null;
+  id: string;
 
+  /**
+   * The location where a drag started. Used to revert drag and fire move event.
+   */
   protected dragStartLocation?: Blockly.utils.Coordinate;
   protected chain: SVGPathElement;
   protected anchor?: Blockly.utils.Coordinate;
-  id: string;
+  /**
+   * Whether the comment position should be automatically adjusted
+   * when the anchor changes. Set to false during state restoration.
+   */
+  protected autoAdjustPosition = true;
+  /**
+   * Pending location to be applied when anchor is set.
+   * Used during state restoration when location is set before anchor.
+   */
+  protected pendingLocation?: Blockly.utils.Coordinate;
 
   // @todo inject css from these values?
   protected static readonly BORDER_WIDTH = 1;
@@ -70,14 +83,37 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     this.anchor = anchor;
 
     if (!hasAnchored) {
-      // position bubble relative to anchor at first
-      this.initAnchor();
-    } else if (oldAnchor) {
+      // If there's a pending location from loadState, use it instead of initAnchor
+      if (this.pendingLocation) {
+        this.moveTo(this.pendingLocation);
+        this.pendingLocation = undefined;
+      } else {
+        // position bubble relative to anchor at first
+        this.initAnchor();
+      }
+    } else if (oldAnchor && this.autoAdjustPosition) {
       const oldLocation = this.getRelativeToSurfaceXY();
       const delta = Blockly.utils.Coordinate.difference(this.anchor, oldAnchor);
       const newLocation = Blockly.utils.Coordinate.sum(oldLocation, delta);
       this.moveTo(newLocation);
     }
+  }
+
+  /**
+   * Sets a pending location to be applied when anchor is set.
+   * Used during state restoration.
+   * @param location The location to apply when anchor is set.
+   */
+  setPendingLocation(location: Blockly.utils.Coordinate | undefined) {
+    this.pendingLocation = location;
+  }
+
+  /**
+   * Checks if the anchor has been set.
+   * @returns True if anchor exists.
+   */
+  hasAnchor(): boolean {
+    return !!this.anchor;
   }
 
   /**
