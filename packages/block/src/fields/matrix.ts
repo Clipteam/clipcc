@@ -336,9 +336,11 @@ export class FieldMatrix extends Blockly.Field<string> {
     }
   }
 
-  protected override doClassValidation_(newValue?: string): string | null {
-    return newValue === undefined ? FieldMatrix.ZEROS :
-      newValue + FieldMatrix.ZEROS.substr(0, 25 - newValue.length);
+  protected override doClassValidation_(newValue: string): string | null {
+    if (newValue === '' || /[01]+/.test(newValue)) {
+      return newValue.substring(0, 25) + FieldMatrix.ZEROS.substring(0, 25 - newValue.length);
+    }
+    return null;
   }
 
   protected override doValueUpdate_(newValue: string): void {
@@ -538,6 +540,8 @@ export class FieldMatrix extends Blockly.Field<string> {
     return (this.getSourceBlock() as Blockly.BlockSvg).getSvgRoot();
   }
 }
+
+FieldMatrix.prototype.DEFAULT_VALUE = FieldMatrix.ZEROS;
 
 export interface FieldMatrixFromJsonConfig extends Blockly.FieldConfig {
   matrix: string;
