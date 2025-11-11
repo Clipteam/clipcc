@@ -17,26 +17,6 @@ import {BowlerHat} from './measurables/bowler_hat';
  */
 export class RenderInfo extends Blockly.zelos.RenderInfo {
   /**
-   * Create rows of Measurable objects representing all renderable parts of the
-   * block. Overridden to exclude block comment icons from rendering.
-   */
-  protected override createRows_(): void {
-    super.createRows_();
-
-    const activeRow = this.rows[this.rows.length - 2] as Blockly.blockRendering.InputRow;
-    for (const elem of activeRow.elements) {
-      // Drop block comment icons from rendering.
-      if (
-        Blockly.blockRendering.Types.isIcon(elem) &&
-        elem.icon?.getType() === Blockly.icons.IconType.COMMENT
-      ) {
-        activeRow.elements.splice(activeRow.elements.indexOf(elem), 1);
-        break;
-      }
-    }
-  }
-
-  /**
    * Create all non-spacer elements that belong on the top row.
    */
   protected override populateTopRow_(): void {
@@ -99,6 +79,13 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
     prev: Blockly.blockRendering.Measurable | null,
     next: Blockly.blockRendering.Measurable | null
   ): number {
+    if (!prev && next &&
+        Blockly.blockRendering.Types.isIcon(next) &&
+        next.icon.getType() === Blockly.icons.IconType.COMMENT
+    ) {
+      return this.constants_.NO_PADDING;
+    }
+
     // Add more space before and after inline statement.
     if (prev && next && (next.type & InlineStatementInput.TYPE)) {
       return this.constants_.LARGE_PADDING;
@@ -107,5 +94,33 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
       return this.constants_.LARGE_PADDING;
     }
     return super.getInRowSpacing_(prev, next);
+  }
+
+  protected override addElemSpacing_() {
+    let targetRow: Blockly.blockRendering.Row | null = null;
+    let commentIcon: Blockly.blockRendering.Icon | null = null;
+    let commentIconIndex = -1;
+    for (const row of this.rows) {
+      let findFlag = false;
+      for (const elem of row.elements) {
+        // Remove block comment icons from alignment, then we restore it.
+        if (
+          Blockly.blockRendering.Types.isIcon(elem) &&
+          elem.icon?.getType() === Blockly.icons.IconType.COMMENT
+        ) {
+          targetRow = row;
+          commentIcon = elem;
+          commentIconIndex = row.elements.indexOf(elem);
+          row.elements.splice(commentIconIndex, 1);
+          findFlag = true;
+          break;
+        }
+      }
+      if (findFlag) break;
+    }
+    super.addElemSpacing_();
+    if (commentIcon) {
+      targetRow!.elements.splice(commentIconIndex, 0, commentIcon);
+    }
   }
 }

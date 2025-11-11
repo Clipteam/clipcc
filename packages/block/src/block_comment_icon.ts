@@ -10,7 +10,7 @@ import {BlockCommentCreate} from './events/block_comment_create';
 import {BlockCommentResize} from './events/block_comment_resize';
 import {BlockCommentCollapse} from './events/block_comment_collapse';
 import {BlockCommentDelete} from './events/block_comment_delete';
-import { BlockCommentMove } from './events/block_comment_move';
+import {BlockCommentMove} from './events/block_comment_move';
 
 /**
  * State interface for block comment icon serialization.
