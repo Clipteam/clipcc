@@ -96,7 +96,12 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
     return super.getInRowSpacing_(prev, next);
   }
 
-  protected override addElemSpacing_() {
+  /**
+   * Omits the block comment icon from rendering process.
+   * @returns An object containing the target row, comment icon, and its index.
+   * @internal
+   */
+  private omitCommentIcon() {
     let targetRow: Blockly.blockRendering.Row | null = null;
     let commentIcon: Blockly.blockRendering.Icon | null = null;
     let commentIconIndex = -1;
@@ -118,7 +123,33 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
       }
       if (findFlag) break;
     }
+
+    return {targetRow, commentIcon, commentIconIndex};
+  }
+
+  /**
+   * Add horizontal spacing between and around elements within each row.
+   * @internal
+   */
+  protected override addElemSpacing_() {
+    const {targetRow, commentIcon, commentIconIndex} = this.omitCommentIcon();
     super.addElemSpacing_();
+    if (commentIcon) {
+      targetRow!.elements.splice(commentIconIndex, 0, commentIcon);
+    }
+  }
+
+  /**
+   * Finalize horizontal alignment of elements on the block.
+   *
+   * In particular, reduce the implicit spacing created by the left and
+   * right output connection shapes by adding setting negative spacing onto the
+   * leftmost and rightmost spacers.
+   * @internal
+   */
+  protected override finalizeHorizontalAlignment_() {
+    const {targetRow, commentIcon, commentIconIndex} = this.omitCommentIcon();
+    super.finalizeHorizontalAlignment_();
     if (commentIcon) {
       targetRow!.elements.splice(commentIconIndex, 0, commentIcon);
     }
