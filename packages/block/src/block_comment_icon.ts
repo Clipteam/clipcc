@@ -36,6 +36,10 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
    */
   protected commentBubble: AnchoredComment;
   /**
+   * Whether this icon is currently being disposed or not.
+   */
+  protected disposing = false;
+  /**
    * Constructor for a block comment icon.
    * @param sourceBlock The block this comment is attached to.
    */
@@ -99,7 +103,9 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
 
   private onCommentDispose() {
     Blockly.Events.setGroup(true);
-    this.sourceBlock.setCommentText(null);
+    if (!this.disposing) {
+      this.sourceBlock.setCommentText(null);
+    }
 
     Blockly.Events.fire(
       new BlockCommentDelete(
@@ -121,6 +127,7 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
    * Dispose of this icon and clean up the associated comment bubble.
    */
   override dispose() {
+    this.disposing = true;
     if (!this.commentBubble.isDeadOrDying()) {
       this.commentBubble.dispose();
     }
