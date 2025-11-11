@@ -9,6 +9,8 @@ import {AnchoredComment} from './anchored_comment';
 import {BlockCommentCreate} from './events/block_comment_create';
 import {BlockCommentResize} from './events/block_comment_resize';
 import {BlockCommentCollapse} from './events/block_comment_collapse';
+import {BlockCommentDelete} from './events/block_comment_delete';
+import { BlockCommentMove } from './events/block_comment_move';
 
 /**
  * State interface for block comment icon serialization.
@@ -45,6 +47,8 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
     this.commentBubble.addTextChangeListener(this.onCommentTextChange.bind(this));
     this.commentBubble.addSizeChangeListener(this.onCommentSizeChange.bind(this));
     this.commentBubble.addOnCollapseListener(this.onCommentCollapse.bind(this));
+    this.commentBubble.addMoveListener(this.onCommentMove.bind(this));
+    this.commentBubble.addDisposeListener(this.onCommentDispose.bind(this));
 
     Blockly.Events.fire(
       new BlockCommentCreate(this.commentBubble)
@@ -83,6 +87,28 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
     );
   }
 
+  private onCommentMove(oldCoordinate: Blockly.utils.Coordinate, newCoordinate: Blockly.utils.Coordinate) {
+    Blockly.Events.fire(
+      new BlockCommentMove(
+        this.commentBubble,
+        oldCoordinate,
+        newCoordinate
+      )
+    );
+  }
+
+  private onCommentDispose() {
+    Blockly.Events.setGroup(true);
+    this.sourceBlock.setCommentText(null);
+
+    Blockly.Events.fire(
+      new BlockCommentDelete(
+        this.commentBubble
+      )
+    );
+    Blockly.Events.setGroup(false);
+  }
+
   /**
    * Returns the type of this icon.
    * @returns The icon type for comment icons.
@@ -95,7 +121,10 @@ export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISer
    * Dispose of this icon and clean up the associated comment bubble.
    */
   override dispose() {
-    this.commentBubble.dispose();
+    if (!this.commentBubble.isDeadOrDying()) {
+      this.commentBubble.dispose();
+    }
+
     super.dispose();
   }
 

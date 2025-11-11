@@ -5,8 +5,6 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {BlockCommentMove} from './events/block_comment_move';
-import {BlockCommentDelete} from './events/block_comment_delete';
 
 export class AnchoredComment extends Blockly.comments.CommentView implements Blockly.IBubble, Blockly.ISelectable {
   sourceBlock: Blockly.BlockSvg | null;
@@ -22,6 +20,9 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
   protected static readonly CHAIN_THICKNESS = 1;
 
   private dragStrategy = new Blockly.dragging.BubbleDragStrategy(this, this.workspace);
+  private moveListener: Array<
+    (oldCoordinate: Blockly.utils.Coordinate, newCoordinate: Blockly.utils.Coordinate) => void
+  > = [];
 
   constructor(sourceBlock: Blockly.BlockSvg) {
     const id = `anchored_comment_${sourceBlock.id}`;
@@ -158,23 +159,43 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
 
   startDrag() {
     this.dragStrategy.startDrag();
+    this.dragStartLocation = this.getRelativeToSurfaceXY(); // dragStategy.startLoc is private
   }
 
   drag(newLocation: Blockly.utils.Coordinate) {
     this.dragStrategy.drag(newLocation);
   }
 
+  /**
+   * Registers a callback that listens for anchored comment moving.
+   * @param listener The callback function.
+   */
+  addMoveListener(listener: (
+    oldCoordinate: Blockly.utils.Coordinate,
+    newCoordinate: Blockly.utils.Coordinate
+    ) => void
+  ) {
+    this.moveListener.push(listener);
+  }
+
+  /**
+   * Removes the given listener from the comment editor.
+   * @param listener The callback function to remove.
+   */
+  removeMoveListener(listener: () => void) {
+    this.moveListener.splice(
+      this.moveListener.indexOf(listener),
+      1
+    );
+  };
+
   endDrag() {
-    const oldCoordinate = this.getRelativeToSurfaceXY();
+    const coordinate = this.getRelativeToSurfaceXY();
     this.dragStrategy.endDrag();
 
-    Blockly.Events.fire(
-      new BlockCommentMove(
-        this,
-        oldCoordinate,
-        this.getRelativeToSurfaceXY()
-      )
-    );
+    for (let i = this.moveListener.length - 1; i >= 0; i--) {
+      this.moveListener[i](this.dragStartLocation!, coordinate);
+    }
   }
 
   revertDrag() {
@@ -226,20 +247,6 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     if (this.chain) {
       Blockly.utils.dom.removeNode(this.chain);
     }
-
-    if (this.sourceBlock) {
-      const block = this.sourceBlock;
-      this.sourceBlock = null; // Break recursive loop
-      if (!block.isDeadOrDying()) {
-        block.setCommentText(null);
-      }
-    }
-
-    Blockly.Events.fire(
-      new BlockCommentDelete(
-        this
-      )
-    );
 
     super.dispose();
   }
