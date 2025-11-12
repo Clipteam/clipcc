@@ -8,6 +8,7 @@ import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
 import {InlineStatementInput} from './measurables/inline_statement_input';
 import {BowlerHat} from './measurables/bowler_hat';
+import {isInvisibleIcon} from '../interfaces/i_invisible_icon';
 
 /**
  * An object containing all sizing information needed to draw this block.
@@ -16,6 +17,31 @@ import {BowlerHat} from './measurables/bowler_hat';
  * repeatedly may be expensive.
  */
 export class RenderInfo extends Blockly.zelos.RenderInfo {
+  /** Invisible icons that need block offset for rendering. */
+  invisibleIcons: Blockly.blockRendering.Icon[] = [];
+
+  /**
+   * Create rows of Measurable objects representing all renderable parts of the
+   * block.
+   */
+  protected override createRows_(): void {
+    super.createRows_();
+
+    // Remove comment icons.
+    for (const row of this.rows) {
+      for (let i = 0; i < row.elements.length; ++i) {
+        const element = row.elements[i];
+        if (
+          Blockly.blockRendering.Types.isIcon(element) &&
+          isInvisibleIcon(element.icon) && element.icon.invisible
+        ) {
+          row.elements.splice(i, 1);
+          this.invisibleIcons.push(element);
+        }
+      }
+    }
+  }
+
   /**
    * Create all non-spacer elements that belong on the top row.
    */
@@ -79,13 +105,6 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
     prev: Blockly.blockRendering.Measurable | null,
     next: Blockly.blockRendering.Measurable | null
   ): number {
-    if (!prev && next &&
-        Blockly.blockRendering.Types.isIcon(next) &&
-        next.icon.getType() === Blockly.icons.IconType.COMMENT
-    ) {
-      return this.constants_.NO_PADDING;
-    }
-
     // Add more space before and after inline statement.
     if (prev && next && (next.type & InlineStatementInput.TYPE)) {
       return this.constants_.LARGE_PADDING;
@@ -94,64 +113,5 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
       return this.constants_.LARGE_PADDING;
     }
     return super.getInRowSpacing_(prev, next);
-  }
-
-  /**
-   * Omits the block comment icon from rendering process.
-   * @returns An object containing the target row, comment icon, and its index.
-   * @internal
-   */
-  private omitCommentIcon() {
-    let targetRow: Blockly.blockRendering.Row | null = null;
-    let commentIcon: Blockly.blockRendering.Icon | null = null;
-    let commentIconIndex = -1;
-    for (const row of this.rows) {
-      let findFlag = false;
-      for (const elem of row.elements) {
-        // Remove block comment icons from alignment, then we restore it.
-        if (
-          Blockly.blockRendering.Types.isIcon(elem) &&
-          elem.icon?.getType() === Blockly.icons.IconType.COMMENT
-        ) {
-          targetRow = row;
-          commentIcon = elem;
-          commentIconIndex = row.elements.indexOf(elem);
-          row.elements.splice(commentIconIndex, 1);
-          findFlag = true;
-          break;
-        }
-      }
-      if (findFlag) break;
-    }
-
-    return {targetRow, commentIcon, commentIconIndex};
-  }
-
-  /**
-   * Add horizontal spacing between and around elements within each row.
-   * @internal
-   */
-  protected override addElemSpacing_() {
-    const {targetRow, commentIcon, commentIconIndex} = this.omitCommentIcon();
-    super.addElemSpacing_();
-    if (commentIcon) {
-      targetRow!.elements.splice(commentIconIndex, 0, commentIcon);
-    }
-  }
-
-  /**
-   * Finalize horizontal alignment of elements on the block.
-   *
-   * In particular, reduce the implicit spacing created by the left and
-   * right output connection shapes by adding setting negative spacing onto the
-   * leftmost and rightmost spacers.
-   * @internal
-   */
-  protected override finalizeHorizontalAlignment_() {
-    const {targetRow, commentIcon, commentIconIndex} = this.omitCommentIcon();
-    super.finalizeHorizontalAlignment_();
-    if (commentIcon) {
-      targetRow!.elements.splice(commentIconIndex, 0, commentIcon);
-    }
   }
 }

@@ -11,6 +11,7 @@ import {BlockCommentResize} from './events/block_comment_resize';
 import {BlockCommentCollapse} from './events/block_comment_collapse';
 import {BlockCommentDelete} from './events/block_comment_delete';
 import {BlockCommentMove} from './events/block_comment_move';
+import {IInvisibleIcon} from './interfaces/i_invisible_icon';
 
 /**
  * State interface for block comment icon serialization.
@@ -30,7 +31,14 @@ export interface BlockCommentState extends Blockly.icons.CommentState {
  * This icon displays an anchored comment bubble that is always visible on the block.
  * Should implement Blockly.ICommentIcon, but seems it's not exported.
  */
-export class BlockCommentIcon extends Blockly.icons.Icon implements Blockly.ISerializable, Blockly.IHasBubble {
+export class BlockCommentIcon
+  extends Blockly.icons.Icon
+  implements Blockly.ISerializable, Blockly.IHasBubble, IInvisibleIcon
+// eslint-disable-next-line brace-style
+{
+  /** Invisible icon with offsetInBlock. */
+  invisible: boolean = true;
+
   /**
    * The anchored comment bubble associated with this icon.
    */
