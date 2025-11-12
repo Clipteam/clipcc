@@ -30,8 +30,8 @@ export class BlockCommentMove extends BlockCommentBase {
     }
     return {
       ...super.toJson(),
-      newCoordinateX: this.newCoordinate.x,
-      newCoordinateY: this.newCoordinate.y,
+      newX: this.newCoordinate.x,
+      newY: this.newCoordinate.y,
       oldX: this.oldCoordinate.x,
       oldY: this.oldCoordinate.y
     };
@@ -48,8 +48,8 @@ export class BlockCommentMove extends BlockCommentBase {
       event ?? new BlockCommentMove()
     ) as BlockCommentMove;
     newEvent.newCoordinate = new Blockly.utils.Coordinate(
-      json['newCoordinateX'],
-      json['newCoordinateY']
+      json['newX'],
+      json['newY']
     );
     newEvent.oldCoordinate = new Blockly.utils.Coordinate(
       json['oldX'],
@@ -88,8 +88,8 @@ export class BlockCommentMove extends BlockCommentBase {
 }
 
 interface BlockCommentMoveJson extends BlockCommentBaseJson {
-  newCoordinateX: number;
-  newCoordinateY: number;
+  newX: number;
+  newY: number;
   oldX: number;
   oldY: number;
 }
