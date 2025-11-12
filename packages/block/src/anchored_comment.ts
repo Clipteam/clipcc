@@ -202,6 +202,16 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     this.renderChain();
   }
 
+  /**
+   * Sets the size of the comment in workspace units without firing events.
+   * updates the view elements to reflect the new size, and triggers size change listeners.
+   * @param size The new size.
+   */
+  override setSizeWithoutFiringEvents(size: Blockly.utils.Size): void {
+    super.setSizeWithoutFiringEvents(size);
+    this.renderChain();
+  }
+
   startDrag() {
     this.dragStrategy.startDrag();
     this.dragStartLocation = this.getRelativeToSurfaceXY(); // dragStrategy.startLoc is private
