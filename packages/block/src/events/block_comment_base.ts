@@ -13,23 +13,31 @@ export class BlockCommentBase extends Blockly.Events.Abstract {
   blockId?: string;
   workspaceId?: string;
 
-  constructor(optAnchoredComment?: AnchoredComment) {
+  constructor(anchoredComment?: AnchoredComment) {
     super();
-    this.isBlank = !optAnchoredComment;
+    this.isBlank = !anchoredComment;
 
-    if (!optAnchoredComment?.sourceBlock) return;
+    if (!anchoredComment?.sourceBlock) return;
 
-    this.commentId = optAnchoredComment.id;
-    this.blockId = optAnchoredComment.sourceBlock.id;
-    this.workspaceId = optAnchoredComment.sourceBlock.workspace.id;
+    this.commentId = anchoredComment.id;
+    this.blockId = anchoredComment.sourceBlock.id;
+    this.workspaceId = anchoredComment.sourceBlock.workspace.id;
   }
 
   override toJson(): BlockCommentBaseJson {
-    return {
-      ...super.toJson(),
-      commentId: this.commentId,
-      blockId: this.blockId
+    const json: BlockCommentBaseJson = {
+      ...super.toJson()
     };
+
+    if (this.commentId) {
+      json['commentId'] = this.commentId;
+    }
+
+    if (this.blockId) {
+      json['blockId'] = this.blockId;
+    }
+
+    return json;
   }
 
   static override fromJson(
