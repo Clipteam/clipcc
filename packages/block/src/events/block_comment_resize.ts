@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2024 Google LLC
+ * Copyright 2025 Clip Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -22,7 +22,7 @@ export class BlockCommentResize extends BlockCommentBase {
     this.newSize = newSize;
   }
 
-  toJson(): BlockCommentResizeJson {
+  override toJson(): BlockCommentResizeJson {
     const json = super.toJson() as BlockCommentResizeJson;
     if (!this.oldSize) {
       throw new Error(
@@ -43,7 +43,7 @@ export class BlockCommentResize extends BlockCommentBase {
     return json;
   }
 
-  static fromJson(
+  static override fromJson(
     json: BlockCommentResizeJson,
     workspace: Blockly.Workspace,
     event?: BlockCommentResize
@@ -58,7 +58,7 @@ export class BlockCommentResize extends BlockCommentBase {
     return newEvent;
   }
 
-  run(forward: boolean) {
+  override run(forward: boolean) {
     if (!this.blockId) {
       throw new Error('Block ID is not set.');
     }

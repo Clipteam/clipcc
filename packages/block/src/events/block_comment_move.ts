@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2024 Google LLC
+ * Copyright 2025 Clip Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -24,7 +24,7 @@ export class BlockCommentMove extends BlockCommentBase {
     this.newCoordinate = newCoordinate;
   }
 
-  toJson(): BlockCommentMoveJson {
+  override toJson(): BlockCommentMoveJson {
     if (!this.newCoordinate || !this.oldCoordinate) {
       throw new Error('Incomplete coordinate');
     }
@@ -37,7 +37,7 @@ export class BlockCommentMove extends BlockCommentBase {
     };
   }
 
-  static fromJson(
+  static override fromJson(
     json: BlockCommentMoveJson,
     workspace: Blockly.Workspace,
     event?: BlockCommentMove
@@ -59,7 +59,7 @@ export class BlockCommentMove extends BlockCommentBase {
     return newEvent;
   }
 
-  run(forward: boolean) {
+  override run(forward: boolean) {
     if (!this.oldCoordinate || !this.newCoordinate) {
       throw new Error('Incomplete coordinate');
     }

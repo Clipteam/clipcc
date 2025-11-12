@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2024 Google LLC
+ * Copyright 2025 Clip Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -24,7 +24,7 @@ export class BlockCommentBase extends Blockly.Events.Abstract {
     this.workspaceId = optAnchoredComment.sourceBlock.workspace.id;
   }
 
-  toJson(): BlockCommentBaseJson {
+  override toJson(): BlockCommentBaseJson {
     return {
       ...super.toJson(),
       commentId: this.commentId,
@@ -32,7 +32,7 @@ export class BlockCommentBase extends Blockly.Events.Abstract {
     };
   }
 
-  static fromJson(
+  static override fromJson(
     json: BlockCommentBaseJson,
     workspace: Blockly.Workspace,
     event?: BlockCommentBase

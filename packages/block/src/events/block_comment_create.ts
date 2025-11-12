@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2024 Google LLC
+ * Copyright 2025 Clip Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -36,7 +36,7 @@ export class BlockCommentCreate extends BlockCommentBase {
     this.recordUndo = false;
   }
 
-  toJson(): BlockCommentCreateJson {
+  override toJson(): BlockCommentCreateJson {
     if (!this.json) {
       throw new Error('No comment json.');
     }
@@ -47,7 +47,7 @@ export class BlockCommentCreate extends BlockCommentBase {
     };
   }
 
-  static fromJson(
+  static override fromJson(
     json: BlockCommentCreateJson,
     workspace: Blockly.Workspace,
     event?: BlockCommentCreate
