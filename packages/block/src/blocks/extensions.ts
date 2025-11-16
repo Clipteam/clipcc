@@ -115,6 +115,7 @@ const OUTPUT_BOOLEAN = function(this: Blockly.Block) {
 };
 
 const SCRATCH_EXTENSION = function(this: Blockly.Block) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (this as any).isScratchExtension = true;
 };
 

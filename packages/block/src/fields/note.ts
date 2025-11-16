@@ -722,10 +722,7 @@ export class FieldNote extends Blockly.FieldTextInput {
    * @returns A string representing a valid note number, or null if invalid.
    */
   protected override doClassValidation_(newValue: string): string | null {
-    if (newValue === null) {
-      return null;
-    }
-    let n = parseFloat(newValue || '0');
+    let n = parseFloat(newValue);
     if (isNaN(n)) {
       return null;
     }
