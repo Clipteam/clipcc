@@ -209,9 +209,8 @@ export class AnchoredComment
    * See IBoundedElement.moveBy.
    * @param dx Horizontal offset in workspace units.
    * @param dy Vertical offset in workspace units.
-   * @param reason Why is this move happening?  'user', 'bump', 'snap'...
    */
-  moveBy(dx: number, dy: number, reason?: string[]): void {
+  moveBy(dx: number, dy: number): void {
     const oldLocation = this.getRelativeToSurfaceXY();
     const newLocation = new Blockly.utils.Coordinate(
       oldLocation.x + dx,
