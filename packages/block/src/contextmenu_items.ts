@@ -45,8 +45,8 @@ function isDeletable(block: Blockly.BlockSvg): boolean {
 
 /**
  * Constructs a list of blocks that can be deleted in the given workspace.
- * @param workspace workspace to delete all blocks from
- * @returns list of blocks to delete.
+ * @param workspace Workspace to delete all blocks from
+ * @returns List of blocks to delete.
  */
 function getDeletableBlocks(workspace: Blockly.WorkspaceSvg): Blockly.BlockSvg[] {
   const deleteList: Blockly.BlockSvg[] = [];
@@ -82,7 +82,7 @@ function deleteBlocks(blocks: Blockly.BlockSvg[]) {
 
 /**
  * Recursively delete blocks, waiting for dying blocks to be disposed.
- * @param blocks Blocks to delete,
+ * @param blocks Blocks to delete.
  */
 function deleteBlocksInternal(blocks: Blockly.BlockSvg[]) {
   const dyingBlocks: Set<Blockly.BlockSvg> = new Set();
@@ -197,7 +197,7 @@ export function registerDuplicateStackedBlock() {
       Blockly.clipboard.paste(data, scope.block.workspace);
     }
   } as Blockly.ContextMenuRegistry.RegistryItem;
-  Blockly.ContextMenuRegistry.registry.unregister(duplicateOption.id);
+  Blockly.ContextMenuRegistry.registry.unregister(original!.id);
   Blockly.ContextMenuRegistry.registry.register(duplicateOption);
 }
 
@@ -257,7 +257,10 @@ export function registerPasteFromPasteboard() {
           Blockly.clipboard.paste(data, scope.workspace!, wsLocation);
         } catch (e) {
           console.error('Failed to parse clipboard data as JSON.', e);
+          Blockly.dialog.alert(Blockly.Msg['PASTE_ERROR']);
         }
+      }).catch((e) => {
+        console.error('Failed to read clipboard contents.', e);
       });
     }
   };
