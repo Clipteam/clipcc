@@ -32,6 +32,19 @@ export class MetricsManager extends Blockly.MetricsManager {
         }
         break;
       }
+      case Blockly.Events.BLOCK_DELETE: {
+        const deleteEvent = e as Blockly.Events.BlockDelete;
+        if (!deleteEvent.blockId) break;
+        const block = this.workspace_.getBlockById(deleteEvent.blockId);
+        if (block) {
+          const commentIcon =
+            this.workspace_.getBlockById(deleteEvent.blockId)
+              ?.getIcon(Blockly.icons.IconType.COMMENT) as BlockCommentIcon;
+          if (!commentIcon) break;
+          this.trackedBlockComments.delete(commentIcon.getBubble());
+        }
+        break;
+      }
     }
   }
   /**
@@ -73,7 +86,7 @@ export class MetricsManager extends Blockly.MetricsManager {
   }
 }
 
-// Register and overrides the original metrics manager.
+// Register and override the original metrics manager.
 Blockly.registry.register(
   Blockly.registry.Type.METRICS_MANAGER,
   Blockly.registry.DEFAULT,
