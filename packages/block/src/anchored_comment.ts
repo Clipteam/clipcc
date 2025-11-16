@@ -6,7 +6,9 @@
 
 import * as Blockly from 'blockly/core';
 
-export class AnchoredComment extends Blockly.comments.CommentView implements Blockly.IBubble, Blockly.ISelectable {
+export class AnchoredComment
+  extends Blockly.comments.CommentView
+  implements Blockly.IBubble, Blockly.ISelectable, Blockly.IBoundedElement {
   sourceBlock: Blockly.BlockSvg | null;
   id: string;
 
@@ -203,6 +205,22 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
   }
 
   /**
+   * Move the element by a relative offset.
+   * See IBoundedElement.moveBy.
+   * @param dx Horizontal offset in workspace units.
+   * @param dy Vertical offset in workspace units.
+   * @param reason Why is this move happening?  'user', 'bump', 'snap'...
+   */
+  moveBy(dx: number, dy: number, reason?: string[]): void {
+    const oldLocation = this.getRelativeToSurfaceXY();
+    const newLocation = new Blockly.utils.Coordinate(
+      oldLocation.x + dx,
+      oldLocation.y + dy
+    );
+    this.moveTo(newLocation);
+  }
+
+  /**
    * Sets the size of the comment in workspace units without firing events.
    * updates the view elements to reflect the new size, and triggers size change listeners.
    * @param size The new size.
@@ -317,5 +335,20 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     }
 
     super.dispose();
+  }
+
+  /**
+   * See IBoundedElement.getBoundingRectangle.
+   * @returns Object with coordinates of the bounded element.
+   */
+  getBoundingRectangle(): Blockly.utils.Rect {
+    const location = this.getRelativeToSurfaceXY();
+    const size = this.getSize();
+    return new Blockly.utils.Rect(
+      location.y,
+      location.y + size.height,
+      location.x,
+      location.x + size.width
+    );
   }
 }
