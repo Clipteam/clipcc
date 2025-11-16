@@ -349,7 +349,7 @@ export class FieldColourSlider extends Blockly.Field<string> {
     }
 
     Blockly.DropDownDiv.setColour('#ffffff', '#dddddd');
-    Blockly.DropDownDiv.showPositionedByBlock(this, this.getSourceBlock()?.getParent() as Blockly.BlockSvg);
+    Blockly.DropDownDiv.showPositionedByBlock(this, this.getSourceBlock() as Blockly.BlockSvg);
 
     // Set value updates the slider positions
     // Do this before attaching callbacks to avoid extra events from initial set

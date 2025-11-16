@@ -48,3 +48,6 @@ python_compressed.js
 
 # Closure Flags
 /closureflags
+
+# Test Coverage
+/coverage

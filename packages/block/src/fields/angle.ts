@@ -370,11 +370,8 @@ export class FieldAngle extends Blockly.FieldNumber {
    * @returns A string representing a valid angle, or null if invalid.
    */
   protected override doClassValidation_(newValue: string): number | null {
-    if (newValue === null) {
-      return null;
-    }
-    let n = parseFloat(newValue || '0');
-    if (isNaN(n)) {
+    let n = parseFloat(newValue);
+    if (isNaN(n) || n === Infinity || n === -Infinity) {
       return null;
     }
     n = n % 360;
