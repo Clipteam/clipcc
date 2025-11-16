@@ -43,11 +43,32 @@ export class MetricsManager extends Blockly.MetricsManager {
    * @returns The metrics for the content container.
    */
   override getContentMetrics(optGetWorkspaceCoordinates?: boolean): Blockly.MetricsManager.ContainerRegion {
-    // Dirty hack to include block comment bubbles in content metrics.
-    const originalTopElements: Blockly.IBoundedElement[] = [...this.workspace_['topBoundedElements']];
-    this.workspace_['topBoundedElements'].push(...Array.from(this.trackedBlockComments));
+    const scale = optGetWorkspaceCoordinates ? 1 : this.workspace_.scale;
     const metrics = super.getContentMetrics(optGetWorkspaceCoordinates);
-    this.workspace_['topBoundedElements'] = originalTopElements;
+
+    for (const comment of this.trackedBlockComments) {
+      const commentMetrics = comment.getBoundingRectangle();
+
+      const commentTop = commentMetrics.top * scale;
+      const commentLeft = commentMetrics.left * scale;
+      const commentBottom = commentMetrics.bottom * scale;
+      const commentRight = commentMetrics.right * scale;
+
+      // Expand the bounding box to include this comment
+      metrics.top = Math.min(metrics.top, commentTop);
+      metrics.left = Math.min(metrics.left, commentLeft);
+
+      const metricsBottom = metrics.top + metrics.height;
+      const metricsRight = metrics.left + metrics.width;
+
+      const newBottom = Math.max(metricsBottom, commentBottom);
+      const newRight = Math.max(metricsRight, commentRight);
+
+      // Update height and width based on new bounds
+      metrics.height = newBottom - metrics.top;
+      metrics.width = newRight - metrics.left;
+    }
+
     return metrics;
   }
 }
