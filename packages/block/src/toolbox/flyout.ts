@@ -53,6 +53,21 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
   }
 
   /**
+   * Set whether the flyout is visible.
+   * Override to record drag targets when flyout becomes visible.
+   * @param visible True if visible.
+   */
+  override setVisible(visible: boolean): void {
+    const wasVisible = this.isVisible();
+    super.setVisible(visible);
+
+    // Refresh drag targets when flyout becomes visible
+    if (!wasVisible && visible && !this.autoClose) {
+      this.targetWorkspace.recordDragTargets();
+    }
+  }
+
+  /**
    * Sets the translation of the flyout to match the scrollbars.
    * Override to update the selected category.
    * @param xyRatio Contains a y property which is a float between 0 and 1
