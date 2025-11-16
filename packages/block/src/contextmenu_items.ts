@@ -179,3 +179,87 @@ export function registerDeleteStackedBlock() {
   Blockly.ContextMenuRegistry.registry.register(deleteOption);
 }
 
+/**
+ * Registers a block duplicate option that duplicates the selected block and
+ * its descendants.
+ */
+export function registerDuplicateStackedBlock() {
+  const original =
+    Blockly.ContextMenuRegistry.registry.getItem('blockDuplicate');
+  const duplicateOption = {
+    ...original,
+    callback(scope: Blockly.ContextMenuRegistry.Scope) {
+      if (!scope.block) return;
+
+      // Copy data of the block and its descendants.
+      const data = scope.block.toCopyData(true);
+      if (!data) return;
+      Blockly.clipboard.paste(data, scope.block.workspace);
+    }
+  } as Blockly.ContextMenuRegistry.RegistryItem;
+  Blockly.ContextMenuRegistry.registry.unregister(duplicateOption.id);
+  Blockly.ContextMenuRegistry.registry.register(duplicateOption);
+}
+
+/**
+ * Registers a context menu item to copy block data to the clipboard.
+ */
+export function registerCopyToPasteboard() {
+  const copyOption: Blockly.ContextMenuRegistry.RegistryItem = {
+    id: 'blockCopyToClipboard',
+    weight: 4,
+    displayText: Blockly.Msg['COPY'],
+    scopeType: Blockly.ContextMenuRegistry.ScopeType.BLOCK,
+    preconditionFn(scope: Blockly.ContextMenuRegistry.Scope) {
+      return scope.block && !scope.block.isInFlyout ? 'enabled' : 'hidden';
+    },
+    callback(scope: Blockly.ContextMenuRegistry.Scope) {
+      if (!scope.block) return;
+
+      const data = scope.block.toCopyData(true);
+      if (!data) return;
+
+      const jsonString = JSON.stringify(data);
+      navigator.clipboard.writeText(jsonString);
+    }
+  };
+
+  Blockly.ContextMenuRegistry.registry.register(copyOption);
+}
+
+/**
+ * Registers a context menu item to paste block data from the clipboard.
+ */
+export function registerPasteFromPasteboard() {
+  const pasteOption: Blockly.ContextMenuRegistry.RegistryItem = {
+    id: 'blockPasteFromClipboard',
+    weight: 4,
+    displayText: Blockly.Msg['PASTE'],
+    scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
+    preconditionFn(scope: Blockly.ContextMenuRegistry.Scope) {
+      return scope.workspace?.isMutator ? 'hidden' : 'enabled';
+    },
+    callback(
+      scope: Blockly.ContextMenuRegistry.Scope,
+      menuOpenEvent: Event,
+      menuSelectEvent: Event,
+      location: Blockly.utils.Coordinate
+    ) {
+      if (!scope.workspace) return;
+
+      navigator.clipboard.readText().then((text) => {
+        try {
+          const data: Blockly.clipboard.BlockCopyData = JSON.parse(text);
+          const wsLocation = Blockly.utils.svgMath.screenToWsCoordinates(
+            scope.workspace!,
+            location
+          );
+          Blockly.clipboard.paste(data, scope.workspace!, wsLocation);
+        } catch (e) {
+          console.error('Failed to parse clipboard data as JSON.', e);
+        }
+      });
+    }
+  };
+  Blockly.ContextMenuRegistry.registry.register(pasteOption);
+}

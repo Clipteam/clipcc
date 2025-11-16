@@ -52,7 +52,14 @@ import './blocks/operators';
 import './blocks/data';
 import './blocks/procedures';
 
-import {registerAddBlockComment, registerDeleteAll, registerDeleteStackedBlock} from './contextmenu_items';
+import {
+  registerAddBlockComment,
+  registerCopyToPasteboard,
+  registerDeleteAll,
+  registerDeleteStackedBlock,
+  registerDuplicateStackedBlock,
+  registerPasteFromPasteboard
+} from './contextmenu_items';
 
 import './serialization/procedures';
 
@@ -80,6 +87,9 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerAddBlockComment();
   registerDeleteAll();
   registerDeleteStackedBlock();
+  registerDuplicateStackedBlock();
+  registerCopyToPasteboard();
+  registerPasteFromPasteboard();
 
   // Register styles.
 
