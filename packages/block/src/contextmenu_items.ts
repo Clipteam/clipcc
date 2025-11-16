@@ -76,30 +76,14 @@ function getDeletableBlocksInStack(block: Blockly.BlockSvg): Blockly.BlockSvg[] 
  */
 function deleteBlocks(blocks: Blockly.BlockSvg[]) {
   Blockly.Events.setGroup(true);
-  deleteBlocksInternal(blocks);
-  Blockly.Events.setGroup(false);
-}
 
-/**
- * Recursively delete blocks, waiting for dying blocks to be disposed.
- * @param blocks Blocks to delete.
- */
-function deleteBlocksInternal(blocks: Blockly.BlockSvg[]) {
-  const dyingBlocks: Set<Blockly.BlockSvg> = new Set();
-  const DELAY = 10;
   for (const block of blocks) {
-    if (block.isDeadOrDying()) {
-      dyingBlocks.add(block);
-      continue;
+    if (!block.isDeadOrDying()) {
+      block.dispose(false, true);
     }
-    block.dispose(false, true);
   }
 
-  if (dyingBlocks.size) {
-    setTimeout(() => {
-      deleteBlocksInternal(Array.from(dyingBlocks));
-    }, DELAY);
-  }
+  Blockly.Events.setGroup(false);
 }
 
 /**
