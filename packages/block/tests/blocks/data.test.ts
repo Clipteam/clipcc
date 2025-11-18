@@ -64,6 +64,7 @@ describe('Blocks: Data', () => {
       const items = Array.from(menu.children).map((element) => element.firstElementChild?.innerHTML);
       expect(items).toStrictEqual([
         Blockly.Msg.DUPLICATE_BLOCK,
+        Blockly.Msg.ADD_COMMENT,
         Blockly.Msg.DELETE_BLOCK,
         'TEST_VARIABLE_2'
       ]);
@@ -159,6 +160,7 @@ describe('Blocks: Data', () => {
       const items = Array.from(menu.children).map((element) => element.firstElementChild?.innerHTML);
       expect(items).toStrictEqual([
         Blockly.Msg.DUPLICATE_BLOCK,
+        Blockly.Msg.ADD_COMMENT,
         Blockly.Msg.DELETE_BLOCK,
         'TEST_LIST_2'
       ]);
