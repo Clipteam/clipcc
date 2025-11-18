@@ -47,7 +47,7 @@ export class BlockCommentResize extends BlockCommentBase {
     json: BlockCommentResizeJson,
     workspace: Blockly.Workspace,
     event?: BlockCommentResize
-  ): BlockCommentBase {
+  ): BlockCommentResize {
     const newEvent = super.fromJson(
       json,
       workspace,
