@@ -35,11 +35,11 @@ export function registerAddBlockComment() {
 
 
 /**
- * Determines whether a block is deletable.
+ * Determines whether a block should be deleted.
  * @param block The block to check.
- * @returns True if the block is deletable.
+ * @returns True if the block should be deleted.
  */
-function isDeletable(block: Blockly.BlockSvg): boolean {
+function shouldDelete(block: Blockly.BlockSvg): boolean {
   return block.isDeletable() && !block.isShadow();
 }
 
@@ -53,7 +53,7 @@ function getDeletableBlocks(workspace: Blockly.WorkspaceSvg): Blockly.BlockSvg[]
   const topBlocks = workspace.getTopBlocks(true);
   for (const topBlock of topBlocks) {
     for (const block of topBlock.getDescendants(false)) {
-      if (isDeletable(block)) {
+      if (shouldDelete(block)) {
         deleteList.push(block);
       }
     }
@@ -67,7 +67,7 @@ function getDeletableBlocks(workspace: Blockly.WorkspaceSvg): Blockly.BlockSvg[]
  * @returns Deletable blocks in the stack.
  */
 function getDeletableBlocksInStack(block: Blockly.BlockSvg): Blockly.BlockSvg[] {
-  return block.getDescendants(false).filter(isDeletable);
+  return block.getDescendants(false).filter(shouldDelete);
 }
 
 /**
