@@ -63,7 +63,7 @@ export class BlockCommentIcon
     this.commentBubble.addDisposeListener(this.onCommentDispose.bind(this));
 
     Blockly.Events.fire(
-      new BlockCommentCreate(this.commentBubble)
+      new BlockCommentCreate(this)
     );
   }
 

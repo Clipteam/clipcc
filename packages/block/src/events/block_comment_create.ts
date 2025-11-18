@@ -5,31 +5,17 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {AnchoredComment} from '../anchored_comment';
 import {BlockCommentBase, BlockCommentBaseJson} from './block_comment_base';
-
-interface CommentJson {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
+import type {BlockCommentIcon, BlockCommentState} from '../block_comment_icon';
 
 export class BlockCommentCreate extends BlockCommentBase {
-  json?: CommentJson;
+  json?: BlockCommentState;
   type = 'block_comment_create';
 
-  constructor(anchoredComment?: AnchoredComment) {
-    super(anchoredComment);
-    if (!anchoredComment) return;
-    const size = anchoredComment.getSize();
-    const commentXY = anchoredComment.getRelativeToSurfaceXY();
-    this.json = {
-      x: commentXY.x,
-      y: commentXY.y,
-      width: size.width,
-      height: size.height
-    };
+  constructor(icon?: BlockCommentIcon) {
+    super(icon?.getBubble());
+    if (!icon) return;
+    this.json = icon.saveState();
     // Disable undo because Blockly already tracks comment creation for
     // undo purposes; this event exists solely to keep the Scratch VM apprised
     // of the state of things.
@@ -58,14 +44,16 @@ export class BlockCommentCreate extends BlockCommentBase {
       x: json['x'],
       y: json['y'],
       width: json['width'],
-      height: json['height']
+      height: json['height'],
+      text: json['text'],
+      collapsed: json['collapsed']
     };
 
     return newEvent;
   }
 }
 
-interface BlockCommentCreateJson extends BlockCommentBaseJson, CommentJson {}
+interface BlockCommentCreateJson extends BlockCommentBaseJson, BlockCommentState {}
 
 Blockly.registry.register(
   Blockly.registry.Type.EVENT,
