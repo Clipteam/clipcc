@@ -181,7 +181,4 @@ export {setExternalProcedureDefCallback} from './procedures_category';
 Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
 Blockly.FlyoutButton.TEXT_MARGIN_X = 40;
 Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;
-Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(
-  200,
-  200
-);
+Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(200, 200);
