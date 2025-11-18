@@ -250,3 +250,16 @@ export function registerPasteFromPasteboard() {
   };
   Blockly.ContextMenuRegistry.registry.register(pasteOption);
 }
+
+/**
+ * Registers all Scratch-specific context menu items.
+ * Will override some default Blockly context menu items.
+ */
+export function registerScratchContextMenu() {
+  registerAddBlockComment();
+  registerDeleteAll();
+  registerDeleteStackedBlock();
+  registerDuplicateStackedBlock();
+  registerCopyToPasteboard();
+  registerPasteFromPasteboard();
+}

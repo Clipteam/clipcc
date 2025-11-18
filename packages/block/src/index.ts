@@ -8,6 +8,7 @@ import * as Blockly from 'blockly/core';
 
 import * as Constants from './constants';
 import {createTheme} from './colours';
+import {registerScratchContextMenu} from './contextmenu_items';
 import {registerFieldAngle} from './fields/angle';
 import {registerFieldButton} from './fields/button';
 import {registerFieldColourSlider} from './fields/colour_slider';
@@ -52,15 +53,6 @@ import './blocks/operators';
 import './blocks/data';
 import './blocks/procedures';
 
-import {
-  registerAddBlockComment,
-  registerCopyToPasteboard,
-  registerDeleteAll,
-  registerDeleteStackedBlock,
-  registerDuplicateStackedBlock,
-  registerPasteFromPasteboard
-} from './contextmenu_items';
-
 import './serialization/procedures';
 
 /**
@@ -84,12 +76,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerFieldVerticalSeparator();
 
   registerScratchCategory();
-  registerAddBlockComment();
-  registerDeleteAll();
-  registerDeleteStackedBlock();
-  registerDuplicateStackedBlock();
-  registerCopyToPasteboard();
-  registerPasteFromPasteboard();
+  registerScratchContextMenu();
 
   // Register styles.
 
