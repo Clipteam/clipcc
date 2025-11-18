@@ -25,10 +25,12 @@ export class MetricsManager extends Blockly.MetricsManager {
           this.workspace_.getBlockById(changeEvent.blockId)
             ?.getIcon(Blockly.icons.IconType.COMMENT) as BlockCommentIcon;
         if (!commentIcon) break;
+        const bubble = commentIcon.getBubble();
+        if (!bubble) break;
         if (changeEvent.newValue === null) {
-          this.trackedBlockComments.delete(commentIcon.getBubble());
+          this.trackedBlockComments.delete(bubble);
         } else {
-          this.trackedBlockComments.add(commentIcon.getBubble());
+          this.trackedBlockComments.add(bubble);
         }
         break;
       }
@@ -41,12 +43,15 @@ export class MetricsManager extends Blockly.MetricsManager {
             this.workspace_.getBlockById(deleteEvent.blockId)
               ?.getIcon(Blockly.icons.IconType.COMMENT) as BlockCommentIcon;
           if (!commentIcon) break;
-          this.trackedBlockComments.delete(commentIcon.getBubble());
+          const bubble = commentIcon.getBubble();
+          if (!bubble) break;
+          this.trackedBlockComments.delete(bubble);
         }
         break;
       }
     }
   }
+
   /**
    * Gets content metrics in either pixel or workspace coordinates.
    * The content area is a rectangle around all the top bounded elements on the
