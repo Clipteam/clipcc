@@ -6,7 +6,7 @@
 
 import * as Blockly from 'blockly/core';
 import type {AnchoredComment} from './anchored_comment';
-import type {BlockCommentIcon} from './block_comment_icon';
+import {getCommentBubbleFromBlock} from './utils';
 
 export class MetricsManager extends Blockly.MetricsManager {
   protected trackedBlockComments = new Set<AnchoredComment>();
@@ -18,14 +18,22 @@ export class MetricsManager extends Blockly.MetricsManager {
 
   commentChangeListener(e: Blockly.Events.Abstract): void {
     switch (e.type) {
+      case Blockly.Events.BLOCK_CREATE: {
+        const createEvent = e as Blockly.Events.BlockCreate;
+        if (!createEvent.ids) break;
+        for (const id of createEvent.ids) {
+          const block = this.workspace_.getBlockById(id);
+          const bubble = getCommentBubbleFromBlock(block);
+          if (!bubble) continue;
+          this.trackedBlockComments.add(bubble);
+        }
+        break;
+      }
       case Blockly.Events.BLOCK_CHANGE: {
         const changeEvent = e as Blockly.Events.BlockChange;
         if (changeEvent.element !== 'comment' || !changeEvent.blockId) break;
-        const commentIcon =
-          this.workspace_.getBlockById(changeEvent.blockId)
-            ?.getIcon(Blockly.icons.IconType.COMMENT) as BlockCommentIcon;
-        if (!commentIcon) break;
-        const bubble = commentIcon.getBubble();
+        const block = this.workspace_.getBlockById(changeEvent.blockId);
+        const bubble = getCommentBubbleFromBlock(block);
         if (!bubble) break;
         if (changeEvent.newValue === null) {
           this.trackedBlockComments.delete(bubble);
@@ -38,15 +46,9 @@ export class MetricsManager extends Blockly.MetricsManager {
         const deleteEvent = e as Blockly.Events.BlockDelete;
         if (!deleteEvent.blockId) break;
         const block = this.workspace_.getBlockById(deleteEvent.blockId);
-        if (block) {
-          const commentIcon =
-            this.workspace_.getBlockById(deleteEvent.blockId)
-              ?.getIcon(Blockly.icons.IconType.COMMENT) as BlockCommentIcon;
-          if (!commentIcon) break;
-          const bubble = commentIcon.getBubble();
-          if (!bubble) break;
-          this.trackedBlockComments.delete(bubble);
-        }
+        const bubble = getCommentBubbleFromBlock(block);
+        if (!bubble) break;
+        this.trackedBlockComments.delete(bubble);
         break;
       }
     }

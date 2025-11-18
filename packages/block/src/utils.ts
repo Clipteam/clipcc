@@ -19,6 +19,7 @@
  */
 
 import * as Blockly from 'blockly/core';
+import type {AnchoredComment} from './anchored_comment';
 
 /**
  * @fileoverview Utility methods for Scratch Blocks but not Blockly.
@@ -66,4 +67,14 @@ export function getWorkspaceOptionsFromBlock(block: Blockly.Block): Blockly.Opti
   } else {
     return workspace.options;
   }
+}
+
+/**
+ * Get comment bubble from block.
+ * @param block The block to get the comment bubble from.
+ * @returns The comment bubble, or null if none exists.
+ */
+export function getCommentBubbleFromBlock(block: Blockly.BlockSvg | null): AnchoredComment | null {
+  const bubble = block?.getIcon(Blockly.icons.IconType.COMMENT)?.getBubble() as AnchoredComment;
+  return bubble ?? null;
 }
