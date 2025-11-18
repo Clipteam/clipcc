@@ -28,13 +28,13 @@ export class BlockCommentMove extends BlockCommentBase {
     if (!this.newCoordinate || !this.oldCoordinate) {
       throw new Error('Incomplete coordinate');
     }
-    return {
-      ...super.toJson(),
-      newX: this.newCoordinate.x,
-      newY: this.newCoordinate.y,
-      oldX: this.oldCoordinate.x,
-      oldY: this.oldCoordinate.y
-    };
+
+    const json = super.toJson() as BlockCommentMoveJson;
+    json['newX'] = this.newCoordinate.x;
+    json['newY'] = this.newCoordinate.y;
+    json['oldX'] = this.oldCoordinate.x;
+    json['oldY'] = this.oldCoordinate.y;
+    return json;
   }
 
   static override fromJson(

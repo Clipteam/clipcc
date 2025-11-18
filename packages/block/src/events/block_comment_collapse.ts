@@ -19,10 +19,9 @@ export class BlockCommentCollapse extends BlockCommentBase {
   }
 
   override toJson(): BlockCommentCollapseJson {
-    return {
-      ...super.toJson(),
-      newCollapsed: this.newCollapsed
-    };
+    const json = super.toJson() as BlockCommentCollapseJson;
+    json['newCollapsed'] = this.newCollapsed;
+    return json;
   }
 
   static override fromJson(

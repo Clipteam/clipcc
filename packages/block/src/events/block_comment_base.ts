@@ -25,17 +25,17 @@ export class BlockCommentBase extends Blockly.Events.Abstract {
   }
 
   override toJson(): BlockCommentBaseJson {
-    const json: BlockCommentBaseJson = {
-      ...super.toJson()
-    };
+    const json = super.toJson() as BlockCommentBaseJson;
 
-    if (this.commentId) {
-      json['commentId'] = this.commentId;
+    if (!this.blockId) {
+      throw new Error('The block ID is undefined. Either pass a block to the constructor, or call fromJson');
+    }
+    if (!this.commentId) {
+      throw new Error('The comment ID is undefined. Either pass a comment to the constructor, or call fromJson');
     }
 
-    if (this.blockId) {
-      json['blockId'] = this.blockId;
-    }
+    json['commentId'] = this.commentId;
+    json['blockId'] = this.blockId;
 
     return json;
   }

@@ -41,10 +41,7 @@ export class BlockCommentCreate extends BlockCommentBase {
       throw new Error('No comment json.');
     }
 
-    return {
-      ...super.toJson(),
-      ...this.json
-    };
+    return Object.assign(super.toJson(), this.json);
   }
 
   static override fromJson(
