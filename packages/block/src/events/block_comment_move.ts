@@ -5,7 +5,6 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {AnchoredComment} from '../anchored_comment';
 import {BlockCommentBase, BlockCommentBaseJson} from './block_comment_base';
 import type {BlockCommentIcon} from '../block_comment_icon';
 
@@ -15,11 +14,11 @@ export class BlockCommentMove extends BlockCommentBase {
   newCoordinate?: Blockly.utils.Coordinate;
 
   constructor(
-    anchoredComment?: AnchoredComment,
+    icon?: BlockCommentIcon,
     oldCoordinate?: Blockly.utils.Coordinate,
     newCoordinate?: Blockly.utils.Coordinate
   ) {
-    super(anchoredComment);
+    super(icon);
     this.oldCoordinate = oldCoordinate;
     this.newCoordinate = newCoordinate;
   }

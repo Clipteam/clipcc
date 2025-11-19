@@ -5,15 +5,15 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {AnchoredComment} from '../anchored_comment';
 import {BlockCommentBase} from './block_comment_base';
+import type {BlockCommentIcon} from '../block_comment_icon';
 
 export class BlockCommentDelete extends BlockCommentBase {
   type = 'block_comment_delete';
 
-  constructor(anchoredComment?: AnchoredComment) {
-    super(anchoredComment);
-    if (!anchoredComment) return;
+  constructor(icon?: BlockCommentIcon) {
+    super(icon);
+    if (!icon) return;
 
     // Disable undo because Blockly already tracks comment deletion for
     // undo purposes; this event exists solely to keep the Scratch VM apprised

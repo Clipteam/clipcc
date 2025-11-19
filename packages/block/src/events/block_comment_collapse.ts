@@ -5,16 +5,15 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {AnchoredComment} from '../anchored_comment';
 import {BlockCommentBase, BlockCommentBaseJson} from './block_comment_base';
-import {BlockCommentIcon} from '../block_comment_icon';
+import type {BlockCommentIcon} from '../block_comment_icon';
 
 export class BlockCommentCollapse extends BlockCommentBase {
   type = 'block_comment_collapse';
   newCollapsed: boolean;
 
-  constructor(anchoredComment?: AnchoredComment, collapsed?: boolean) {
-    super(anchoredComment);
+  constructor(icon?: BlockCommentIcon, collapsed?: boolean) {
+    super(icon);
     this.newCollapsed = !!collapsed;
   }
 

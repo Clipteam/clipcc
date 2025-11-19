@@ -5,7 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {AnchoredComment} from '../anchored_comment';
+import type {BlockCommentIcon} from '../block_comment_icon';
 
 export class BlockCommentBase extends Blockly.Events.Abstract {
   isBlank: boolean;
@@ -13,15 +13,18 @@ export class BlockCommentBase extends Blockly.Events.Abstract {
   blockId?: string;
   workspaceId?: string;
 
-  constructor(anchoredComment: AnchoredComment | null = null) {
+  constructor(icon?: BlockCommentIcon) {
     super();
-    this.isBlank = !anchoredComment;
+    this.isBlank = !icon;
+    if (!icon) return;
 
-    if (!anchoredComment?.sourceBlock) return;
+    const sourceBlock = icon.getSourceBlock();
+    const anchoredComment = icon.getBubble();
 
-    this.commentId = anchoredComment.id;
-    this.blockId = anchoredComment.sourceBlock.id;
-    this.workspaceId = anchoredComment.sourceBlock.workspace.id;
+    // Anchored comment is a bubble, so comment only exists if it's rendered.
+    this.commentId = anchoredComment?.id;
+    this.blockId = sourceBlock.id;
+    this.workspaceId = sourceBlock.workspace.id;
   }
 
   override toJson(): BlockCommentBaseJson {
@@ -29,9 +32,6 @@ export class BlockCommentBase extends Blockly.Events.Abstract {
 
     if (!this.blockId) {
       throw new Error('The block ID is undefined. Either pass a block to the constructor, or call fromJson');
-    }
-    if (!this.commentId) {
-      throw new Error('The comment ID is undefined. Either pass a comment to the constructor, or call fromJson');
     }
 
     json['commentId'] = this.commentId;

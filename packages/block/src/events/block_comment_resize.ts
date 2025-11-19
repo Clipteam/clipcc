@@ -5,7 +5,6 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {AnchoredComment} from '../anchored_comment';
 import {BlockCommentBase, BlockCommentBaseJson} from './block_comment_base';
 import {BlockCommentIcon} from '../block_comment_icon';
 
@@ -14,10 +13,12 @@ export class BlockCommentResize extends BlockCommentBase {
   oldSize?: Blockly.utils.Size;
   newSize?: Blockly.utils.Size;
 
-  constructor(anchoredComment?: AnchoredComment, oldSize?: Blockly.utils.Size, newSize?: Blockly.utils.Size) {
-    super(anchoredComment);
-    if (!anchoredComment) return;
-
+  constructor(
+    icon?: BlockCommentIcon,
+    oldSize?: Blockly.utils.Size,
+    newSize?: Blockly.utils.Size
+  ) {
+    super(icon);
     this.oldSize = oldSize;
     this.newSize = newSize;
   }

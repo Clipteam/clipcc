@@ -13,7 +13,7 @@ export class BlockCommentCreate extends BlockCommentBase {
   type = 'block_comment_create';
 
   constructor(icon?: BlockCommentIcon) {
-    super(icon?.getBubble());
+    super(icon);
     if (!icon) return;
     this.json = icon.saveState();
     // Disable undo because Blockly already tracks comment creation for

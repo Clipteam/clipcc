@@ -47,6 +47,19 @@ export class BlockCommentIcon
    * Whether this icon is currently being disposed or not.
    */
   protected disposing = false;
+
+  /**
+   * Internal state maintained by the icon.
+   * This state is dispatched to the anchored comment when it's created.
+   */
+  protected state: BlockCommentState = {
+    text: '',
+    width: 200,
+    height: 200,
+    x: 0,
+    y: 0,
+    collapsed: false
+  };
   /**
    * Constructor for a block comment icon.
    * @param sourceBlock The block this comment is attached to.
@@ -56,6 +69,7 @@ export class BlockCommentIcon
   }
 
   private onCommentTextChange(oldText: string, newText: string) {
+    this.state.text = newText;
     this.sourceBlock.setCommentText(newText);
     Blockly.Events.fire(
       new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
@@ -71,9 +85,11 @@ export class BlockCommentIcon
   private onCommentSizeChange(oldSize: Blockly.utils.Size, newSize: Blockly.utils.Size) {
     if (!this.commentBubble) return;
 
+    this.state.width = newSize.width;
+    this.state.height = newSize.height;
     Blockly.Events.fire(
       new BlockCommentResize(
-        this.commentBubble,
+        this,
         oldSize,
         newSize
       )
@@ -83,9 +99,10 @@ export class BlockCommentIcon
   private onCommentCollapse(newCollapse: boolean) {
     if (!this.commentBubble) return;
 
+    this.state.collapsed = newCollapse;
     Blockly.Events.fire(
       new BlockCommentCollapse(
-        this.commentBubble,
+        this,
         newCollapse
       )
     );
@@ -94,9 +111,14 @@ export class BlockCommentIcon
   private onCommentMove(oldCoordinate: Blockly.utils.Coordinate, newCoordinate: Blockly.utils.Coordinate) {
     if (!this.commentBubble) return;
 
+    // Update state with relative position
+    const anchor = this.calculateAnchor();
+    const relativeXY = Blockly.utils.Coordinate.difference(newCoordinate, anchor);
+    this.state.x = relativeXY.x;
+    this.state.y = relativeXY.y;
     Blockly.Events.fire(
       new BlockCommentMove(
-        this.commentBubble,
+        this,
         oldCoordinate,
         newCoordinate
       )
@@ -112,7 +134,7 @@ export class BlockCommentIcon
     if (this.commentBubble) {
       Blockly.Events.fire(
         new BlockCommentDelete(
-          this.commentBubble
+          this
         )
       );
     }
@@ -141,6 +163,7 @@ export class BlockCommentIcon
 
   /**
    * Initializes the icon view and creates the anchored comment bubble.
+   * Dispatches the maintained state to the newly created comment bubble.
    */
   override initView() {
     if (this.commentBubble) return;
@@ -152,6 +175,18 @@ export class BlockCommentIcon
     this.commentBubble.addOnCollapseListener(this.onCommentCollapse.bind(this));
     this.commentBubble.addMoveListener(this.onCommentMove.bind(this));
     this.commentBubble.addDisposeListener(this.onCommentDispose.bind(this));
+
+    this.commentBubble.setText(this.state.text);
+    this.commentBubble.setSize(new Blockly.utils.Size(this.state.width, this.state.height));
+    this.commentBubble.setCollapsed(this.state.collapsed);
+
+    // Set location if we have position data
+    if (this.state.x !== 0 || this.state.y !== 0) {
+      const anchor = this.calculateAnchor();
+      const relativeXY = new Blockly.utils.Coordinate(this.state.x, this.state.y);
+      const absoluteXY = Blockly.utils.Coordinate.sum(anchor, relativeXY);
+      this.commentBubble.setPendingLocation(absoluteXY);
+    }
 
     Blockly.Events.fire(
       new BlockCommentCreate(this)
@@ -205,7 +240,7 @@ export class BlockCommentIcon
    * @returns Always true since the anchored comment is always shown.
    */
   bubbleIsVisible() {
-    return true;
+    return !!this.commentBubble;
   }
 
   /**
@@ -238,7 +273,7 @@ export class BlockCommentIcon
    * @returns The comment text.
    */
   getText(): string {
-    return this.commentBubble?.getText() ?? '';
+    return this.state.text;
   }
 
   /**
@@ -246,6 +281,7 @@ export class BlockCommentIcon
    * @param text The new comment text.
    */
   setText(text: string): void {
+    this.state.text = text;
     this.commentBubble?.setText(text);
   }
 
@@ -254,7 +290,7 @@ export class BlockCommentIcon
    * @returns The width and height of the bubble.
    */
   getBubbleSize(): Blockly.utils.Size {
-    return this.commentBubble?.getSize() ?? new Blockly.utils.Size(0, 0);
+    return new Blockly.utils.Size(this.state.width, this.state.height);
   }
 
   /**
@@ -262,6 +298,8 @@ export class BlockCommentIcon
    * @param size The new size for the bubble.
    */
   setBubbleSize(size: Blockly.utils.Size): void {
+    this.state.width = size.width;
+    this.state.height = size.height;
     this.commentBubble?.setSize(size);
   }
 
@@ -270,6 +308,7 @@ export class BlockCommentIcon
    * @param collapsed Whether the bubble should be collapsed.
    */
   setCollapsed(collapsed: boolean): void {
+    this.state.collapsed = collapsed;
     this.commentBubble?.setCollapsed(collapsed);
   }
 
@@ -278,7 +317,7 @@ export class BlockCommentIcon
    * @returns True if the bubble is collapsed, false otherwise.
    */
   getCollapsed(): boolean {
-    return this.commentBubble?.isCollapsed() ?? false;
+    return this.state.collapsed;
   }
 
   /**
@@ -286,6 +325,12 @@ export class BlockCommentIcon
    * @param location The new coordinate for the bubble.
    */
   setBubbleLocation(location: Blockly.utils.Coordinate): void {
+    // Store relative position in state
+    const anchor = this.calculateAnchor();
+    const relativeXY = Blockly.utils.Coordinate.difference(location, anchor);
+    this.state.x = relativeXY.x;
+    this.state.y = relativeXY.y;
+
     this.commentBubble?.moveTo(location);
   }
 
@@ -294,7 +339,14 @@ export class BlockCommentIcon
    * @returns The coordinate of the bubble, or undefined if not available.
    */
   getBubbleLocation(): Blockly.utils.Coordinate | undefined {
-    return this.commentBubble?.getRelativeToSurfaceXY();
+    if (this.commentBubble) {
+      return this.commentBubble.getRelativeToSurfaceXY();
+    }
+
+    // Calculate location from state if bubble doesn't exist yet
+    const anchor = this.calculateAnchor();
+    const relativeXY = new Blockly.utils.Coordinate(this.state.x, this.state.y);
+    return Blockly.utils.Coordinate.sum(anchor, relativeXY);
   }
 
   /**
@@ -303,33 +355,7 @@ export class BlockCommentIcon
    * @returns An object containing all serializable state.
    */
   saveState(): BlockCommentState {
-    if (!this.commentBubble) {
-      return {
-        text: '',
-        width: 0,
-        height: 0,
-        x: 0,
-        y: 0,
-        collapsed: false
-      };
-    }
-
-    const size = this.commentBubble.getActualSize();
-    const bubbleXY = this.commentBubble.getRelativeToSurfaceXY();
-    const anchor = this.calculateAnchor();
-    const relativeXY = Blockly.utils.Coordinate.difference(
-      bubbleXY,
-      anchor
-    );
-
-    return {
-      text: this.commentBubble.getText(),
-      width: size.width,
-      height: size.height,
-      x: relativeXY.x,
-      y: relativeXY.y,
-      collapsed: this.commentBubble.isCollapsed()
-    };
+    return {...this.state};
   }
 
   /**
@@ -338,25 +364,77 @@ export class BlockCommentIcon
    * @param state The saved state to restore.
    */
   loadState(state: BlockCommentState) {
-    if (!this.commentBubble) return;
+    const oldState = this.saveState();
+    this.state = {...state};
 
     Blockly.Events.setGroup(true);
+    if (this.commentBubble) {
+      this.commentBubble.setText(state.text);
+      this.commentBubble.setSize(new Blockly.utils.Size(state.width, state.height));
+      this.commentBubble.setCollapsed(state.collapsed);
 
-    this.setText(state.text);
-    this.setBubbleSize(new Blockly.utils.Size(state.width, state.height));
-    this.setCollapsed(state.collapsed);
+      const anchor = this.calculateAnchor();
+      const relativeXY = new Blockly.utils.Coordinate(state.x, state.y);
+      const absoluteXY = Blockly.utils.Coordinate.sum(anchor, relativeXY);
 
-    const anchor = this.calculateAnchor();
-    const relativeXY = new Blockly.utils.Coordinate(state.x, state.y);
-    const absoluteXY = Blockly.utils.Coordinate.sum(anchor, relativeXY);
+      this.commentBubble.setPendingLocation(absoluteXY);
 
-    this.commentBubble.setPendingLocation(absoluteXY);
+      if (this.commentBubble.hasAnchor()) {
+        this.commentBubble.moveTo(absoluteXY);
+        this.commentBubble.setPendingLocation(undefined);
+      }
+    } else {
+      // Compares with old state to fire events properly
+      if (oldState.text !== state.text) {
+        this.sourceBlock.setCommentText(state.text);
+        Blockly.Events.fire(
+          new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
+            this.sourceBlock,
+            'comment',
+            null,
+            oldState.text,
+            state.text
+          )
+        );
+      }
 
-    if (this.commentBubble.hasAnchor()) {
-      this.setBubbleLocation(absoluteXY);
-      this.commentBubble.setPendingLocation(undefined);
+      if (oldState.width !== state.width || oldState.height !== state.height) {
+        Blockly.Events.fire(
+          new BlockCommentResize(
+            this,
+            new Blockly.utils.Size(oldState.width, oldState.height),
+            new Blockly.utils.Size(state.width, state.height)
+          )
+        );
+      }
+
+      if (oldState.collapsed !== state.collapsed) {
+        Blockly.Events.fire(
+          new BlockCommentCollapse(
+            this,
+            state.collapsed
+          )
+        );
+      }
+
+      if (oldState.x !== state.x || oldState.y !== state.y) {
+        const oldAnchor = this.calculateAnchor();
+        const oldRelativeXY = new Blockly.utils.Coordinate(oldState.x, oldState.y);
+        const oldAbsoluteXY = Blockly.utils.Coordinate.sum(oldAnchor, oldRelativeXY);
+
+        const newAnchor = this.calculateAnchor();
+        const newRelativeXY = new Blockly.utils.Coordinate(state.x, state.y);
+        const newAbsoluteXY = Blockly.utils.Coordinate.sum(newAnchor, newRelativeXY);
+
+        Blockly.Events.fire(
+          new BlockCommentMove(
+            this,
+            oldAbsoluteXY,
+            newAbsoluteXY
+          )
+        );
+      }
     }
-
     Blockly.Events.setGroup(false);
   }
 }
