@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {jest, expect} from '@jest/globals';
+import {vi, expect} from 'vitest';
 import * as Blockly from 'blockly/core';
 
 /**
@@ -204,8 +204,8 @@ export class Gesture {
           clientX: xy.x + 1,
           clientY: xy.y + 1
         });
-        jest.advanceTimersToNextFrame();
-        jest.runOnlyPendingTimers();
+        vi.advanceTimersToNextFrame();
+        vi.runOnlyPendingTimers();
         return;
       }
     }

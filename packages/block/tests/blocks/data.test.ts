@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {jest, describe, expect, test, beforeEach, afterEach} from '@jest/globals';
+import {vi, describe, expect, test, beforeEach, afterEach} from 'vitest';
 import * as Blockly from 'blockly/core';
 import {PlaygroundTestContext, setupPlayground} from '../helpers/playground';
 
@@ -48,7 +48,7 @@ describe('Blocks: Data', () => {
     });
 
     test('Context Menu', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       const anotherVariable = context.workspace.getVariableMap()
         .createVariable('TEST_VARIABLE_2', '', 'TEST_ID_2');
@@ -86,7 +86,7 @@ describe('Blocks: Data', () => {
     });
 
     test('Rename Variable', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       const block = Blockly.serialization.blocks.append(json, context.workspace) as Blockly.BlockSvg;
       block.initSvg();
@@ -98,7 +98,7 @@ describe('Blocks: Data', () => {
     });
 
     test('Change Referenced Variable', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       const anotherVariable = context.workspace.getVariableMap()
         .createVariable('TEST_VARIABLE_2', '', 'TEST_ID_2');
@@ -114,7 +114,7 @@ describe('Blocks: Data', () => {
     });
 
     test('Delete Variable', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       const block = Blockly.serialization.blocks.append(json, context.workspace) as Blockly.BlockSvg;
       block.initSvg();
@@ -144,7 +144,7 @@ describe('Blocks: Data', () => {
     });
 
     test('Context Menu', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       const anotherVariable = context.workspace.getVariableMap()
         .createVariable('TEST_VARIABLE_2', '', 'TEST_ID_2');
@@ -182,7 +182,7 @@ describe('Blocks: Data', () => {
     });
 
     test('Rename List', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       const block = Blockly.serialization.blocks.append(json, context.workspace) as Blockly.BlockSvg;
       block.initSvg();
@@ -194,7 +194,7 @@ describe('Blocks: Data', () => {
     });
 
     test('Change Referenced List', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       const anotherList = context.workspace.getVariableMap()
         .createVariable('TEST_LIST_2', 'list', 'TEST_ID_3');
@@ -210,7 +210,7 @@ describe('Blocks: Data', () => {
     });
 
     test('Delete List', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       const block = Blockly.serialization.blocks.append(json, context.workspace) as Blockly.BlockSvg;
       block.initSvg();

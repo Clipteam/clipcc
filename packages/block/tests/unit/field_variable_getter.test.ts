@@ -4,33 +4,29 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {jest, describe, expect, test, afterEach} from '@jest/globals';
+import {vi, describe, expect, test, afterEach, beforeEach} from 'vitest';
 import * as Blockly from 'blockly/core';
 import {FieldVariableGetter} from '../../src/fields/variable_getter';
 import {setupSerializationTests} from '../helpers/field';
 
-jest.mock('blockly/core', () => {
-  const actualModule = jest.requireActual('blockly/core') as typeof Blockly;
-  return {
-    __esModule: true,
-    ...actualModule,
-    Variables: {
-      ...actualModule.Variables,
-      getOrCreateVariablePackage: jest.fn((
-        workspace: Blockly.Workspace,
-        id: string | null, name: string, type: string
-      ) => {
-        return workspace.getVariableMap().createVariable(name, type, 'VARIABLE_ID');
-      })
-    }
-  };
-});
-
 describe('FieldVariableGetter', () => {
   const context = setupSerializationTests(FieldVariableGetter, 'VARIABLE', ['VARIABLE_NAME', '']);
 
-  afterEach(() => {
+  beforeEach(() => {
     context.workspace.getVariableMap().clear();
+
+    vi.spyOn(Blockly.Variables, 'getOrCreateVariablePackage').mockImplementation((
+      workspace: Blockly.Workspace,
+      id: string | null,
+      optName?: string,
+      optType?: string
+    ) => {
+      return workspace.getVariableMap().createVariable(optName ?? '', optType ?? '', 'VARIABLE_ID');
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   describe('Constructor', () => {

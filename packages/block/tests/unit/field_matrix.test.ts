@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {describe, expect, test} from '@jest/globals';
+import {describe, expect, test} from 'vitest';
 import * as Blockly from 'blockly/core';
 import {FieldMatrix, FieldMatrixFromJsonConfig} from '../../src/fields/matrix';
 import {

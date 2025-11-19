@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {jest, describe, expect, test} from '@jest/globals';
+import {vi, describe, expect, test} from 'vitest';
 import * as Blockly from 'blockly/core';
 import {FieldButton} from '../../src/fields/button';
 import {setupSerializationTests} from '../helpers/field';
 
 describe('FieldButton', () => {
   describe('Operations', () => {
-    const callback = jest.fn((field: FieldButton) => null);
+    const callback = vi.fn((field: FieldButton) => null);
     const context = setupSerializationTests(FieldButton, 'BUTTON', ['path/to/image', callback]);
 
     test('Click', () => {

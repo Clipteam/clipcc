@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {beforeAll, afterAll} from '@jest/globals';
+import {beforeAll, afterAll} from 'vitest';
 import * as Blockly from 'blockly/core';
 import * as Blocks from '../../src/index';
 import {Gesture} from './gesture';

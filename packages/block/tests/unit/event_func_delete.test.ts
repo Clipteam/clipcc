@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {describe, expect, test, beforeAll, afterAll, afterEach} from '@jest/globals';
+import {describe, expect, test, beforeAll, afterAll, afterEach} from 'vitest';
 import * as Blockly from 'blockly/core';
 import {FuncDelete} from '../../src/events/func_delete';
 import {ProcedureModel} from '../../src/procedure_model';

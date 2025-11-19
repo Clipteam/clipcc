@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {jest, describe, expect, test} from '@jest/globals';
+import {vi, describe, expect, test} from 'vitest';
 import * as Blockly from 'blockly/core';
 import {setupPlayground} from '../helpers/playground';
 
-jest.mock('blockly/core', () => {
-  const actualModule = jest.requireActual('blockly/core') as typeof Blockly;
+vi.mock('blockly/core', async () => {
+  const actualModule = await vi.importActual<typeof Blockly>('blockly/core');
   return {
     __esModule: true,
     ...actualModule,
@@ -17,7 +17,7 @@ jest.mock('blockly/core', () => {
       ...actualModule.utils,
       idGenerator: {
         ...actualModule.utils.idGenerator,
-        genUid: jest.fn().mockReturnValue('CUSTOM_ID')
+        genUid: vi.fn().mockReturnValue('CUSTOM_ID')
       }
     }
   };
@@ -54,7 +54,7 @@ describe('Blocks: Operators', () => {
     });
 
     test('Insert an Input', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       const block = context.workspace.newBlock('operator_join_multiple');
       block.initSvg();
@@ -72,7 +72,7 @@ describe('Blocks: Operators', () => {
     });
 
     test('Remove an Input From Context Menu', () => {
-      jest.useFakeTimers();
+      vi.useFakeTimers();
 
       const block = context.workspace.newBlock('operator_join_multiple');
       block.initSvg();
