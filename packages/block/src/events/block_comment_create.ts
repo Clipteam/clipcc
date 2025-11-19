@@ -48,6 +48,7 @@ export class BlockCommentCreate extends BlockCommentBase {
       text: json['text'],
       collapsed: json['collapsed']
     };
+    newEvent.recordUndo = false;
 
     return newEvent;
   }

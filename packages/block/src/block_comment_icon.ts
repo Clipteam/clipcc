@@ -209,7 +209,7 @@ export class BlockCommentIcon
    */
   calculateAnchor(): Blockly.utils.Coordinate {
     const block = this.sourceBlock as Blockly.BlockSvg;
-    const blockRect = block.getBoundingRectangleWithoutChildren();
+    const blockRect = block.rendered ? block.getBoundingRectangleWithoutChildren() : new Blockly.utils.Rect(0, 0, 0, 0);
     const y = blockRect.top + this.offsetInBlock.y;
     const x = blockRect.right;
 

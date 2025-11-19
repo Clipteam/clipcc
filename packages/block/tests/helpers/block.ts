@@ -7,6 +7,20 @@
 import * as Blockly from 'blockly/core';
 
 /**
+ * Define a primitive test block.
+ * @param name Name for block prototype.
+ */
+export function defineTestBlock(name: string = 'test_block') {
+  Blockly.defineBlocksWithJsonArray([
+    {
+      type: name,
+      message0: 'test',
+      output: null
+    }
+  ]);
+}
+
+/**
  * Define a test block with an input.
  * @param name Name for block prototype.
  */

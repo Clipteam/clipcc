@@ -20,6 +20,20 @@ export class BlockCommentDelete extends BlockCommentBase {
     // of the state of things.
     this.recordUndo = false;
   }
+
+  static override fromJson(
+    json: Blockly.Events.AbstractEventJson,
+    workspace: Blockly.Workspace,
+    event?: BlockCommentDelete
+  ): BlockCommentDelete {
+    const newEvent = super.fromJson(
+      json,
+      workspace,
+      event ?? new BlockCommentDelete()
+    ) as BlockCommentDelete;
+    newEvent.recordUndo = false;
+    return newEvent;
+  }
 }
 
 Blockly.registry.register(
