@@ -314,7 +314,7 @@ export class BlockCommentIcon
       };
     }
 
-    const size = this.commentBubble.getSize();
+    const size = this.commentBubble.getActualSize();
     const bubbleXY = this.commentBubble.getRelativeToSurfaceXY();
     const anchor = this.calculateAnchor();
     const relativeXY = Blockly.utils.Coordinate.difference(

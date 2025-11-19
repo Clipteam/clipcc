@@ -310,6 +310,15 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     return true;
   }
 
+  /**
+   * Gets the actual size of the comment bubble.
+   * Whether collapsed or expanded.
+   * @returns The size of the comment bubble.
+   */
+  getActualSize(): Blockly.utils.Size {
+    return this['size'];
+  }
+
   override dispose() {
     this.disposing = true;
     if (this.chain) {
