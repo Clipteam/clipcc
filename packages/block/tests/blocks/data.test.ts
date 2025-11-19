@@ -65,6 +65,7 @@ describe('Blocks: Data', () => {
       expect(items).toStrictEqual([
         Blockly.Msg.DUPLICATE_BLOCK,
         Blockly.Msg.ADD_COMMENT,
+        Blockly.Msg.COPY,
         Blockly.Msg.DELETE_BLOCK,
         'TEST_VARIABLE_2'
       ]);
@@ -161,6 +162,7 @@ describe('Blocks: Data', () => {
       expect(items).toStrictEqual([
         Blockly.Msg.DUPLICATE_BLOCK,
         Blockly.Msg.ADD_COMMENT,
+        Blockly.Msg.COPY,
         Blockly.Msg.DELETE_BLOCK,
         'TEST_LIST_2'
       ]);
