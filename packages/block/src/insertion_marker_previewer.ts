@@ -124,8 +124,7 @@ export class InsertionMarkerPreviewer implements Blockly.IConnectionPreviewer {
 
     // Render disconnected from everything else so that we have a valid
     // connection location.
-    marker.queueRender();
-    Blockly.renderManagement.triggerQueuedRenders();
+    marker.render();
 
     // Connect() also renders the insertion marker.
     markerConn.connect(staticConn);
