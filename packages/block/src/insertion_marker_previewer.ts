@@ -160,6 +160,26 @@ export class InsertionMarkerPreviewer implements Blockly.IConnectionPreviewer {
     return markerConn;
   }
 
+  protected saveConnection(
+    connection: Blockly.Connection,
+    doFullSerialization: boolean,
+    saveIds: boolean
+  ): Blockly.serialization.blocks.ConnectionState | null {
+    const shadow = connection.getShadowState(true);
+    const child = connection.targetBlock();
+    if (!shadow && !child) {
+      return null;
+    }
+    const state = Object.create(null);
+    if (shadow) {
+      state['shadow'] = shadow;
+    }
+    if (child && !child.isShadow()) {
+      state['block'] = Blockly.serialization.blocks.save(child, {doFullSerialization, saveIds});
+    }
+    return state;
+  }
+
   /**
    * Transforms the given block into a JSON representation used to construct an
    * insertion marker.
@@ -171,13 +191,31 @@ export class InsertionMarkerPreviewer implements Blockly.IConnectionPreviewer {
   protected serializeBlockToInsertionMarker(block: Blockly.BlockSvg) {
     const blockJson = Blockly.serialization.blocks.save(block, {
       addCoordinates: false,
-      addInputBlocks: true,
+      addInputBlocks: false,
       addNextBlocks: false,
       doFullSerialization: false
     });
 
     if (!blockJson) {
       throw new Error(`Failed to serialize source block. ${block.toDevString()}`);
+    }
+
+    // Serialize all inputs except non-shadow statements.
+    const inputs = Object.create(null);
+    for (const input of block.inputList) {
+      if (
+        !input.connection ||
+        (input.type === Blockly.inputs.inputTypes.STATEMENT && !input.connection.targetBlock()?.isShadow())
+      ) {
+        continue;
+      }
+      const connectionState = this.saveConnection(input.connection, false, true);
+      if (connectionState) {
+        inputs[input.name] = connectionState;
+      }
+    }
+    if (Object.keys(inputs).length) {
+      blockJson['inputs'] = inputs;
     }
 
     return blockJson;
