@@ -13,7 +13,7 @@ export class BlockCommentBase extends Blockly.Events.Abstract {
   blockId?: string;
   workspaceId?: string;
 
-  constructor(anchoredComment?: AnchoredComment) {
+  constructor(anchoredComment: AnchoredComment | null = null) {
     super();
     this.isBlank = !anchoredComment;
 

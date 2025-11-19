@@ -42,7 +42,7 @@ export class BlockCommentIcon
   /**
    * The anchored comment bubble associated with this icon.
    */
-  protected commentBubble: AnchoredComment;
+  protected commentBubble: AnchoredComment | null = null;
   /**
    * Whether this icon is currently being disposed or not.
    */
@@ -53,18 +53,6 @@ export class BlockCommentIcon
    */
   constructor(sourceBlock: Blockly.BlockSvg) {
     super(sourceBlock);
-
-    this.commentBubble = new AnchoredComment(sourceBlock);
-
-    this.commentBubble.addTextChangeListener(this.onCommentTextChange.bind(this));
-    this.commentBubble.addSizeChangeListener(this.onCommentSizeChange.bind(this));
-    this.commentBubble.addOnCollapseListener(this.onCommentCollapse.bind(this));
-    this.commentBubble.addMoveListener(this.onCommentMove.bind(this));
-    this.commentBubble.addDisposeListener(this.onCommentDispose.bind(this));
-
-    Blockly.Events.fire(
-      new BlockCommentCreate(this)
-    );
   }
 
   private onCommentTextChange(oldText: string, newText: string) {
@@ -81,6 +69,8 @@ export class BlockCommentIcon
   }
 
   private onCommentSizeChange(oldSize: Blockly.utils.Size, newSize: Blockly.utils.Size) {
+    if (!this.commentBubble) return;
+
     Blockly.Events.fire(
       new BlockCommentResize(
         this.commentBubble,
@@ -91,6 +81,8 @@ export class BlockCommentIcon
   }
 
   private onCommentCollapse(newCollapse: boolean) {
+    if (!this.commentBubble) return;
+
     Blockly.Events.fire(
       new BlockCommentCollapse(
         this.commentBubble,
@@ -100,6 +92,8 @@ export class BlockCommentIcon
   }
 
   private onCommentMove(oldCoordinate: Blockly.utils.Coordinate, newCoordinate: Blockly.utils.Coordinate) {
+    if (!this.commentBubble) return;
+
     Blockly.Events.fire(
       new BlockCommentMove(
         this.commentBubble,
@@ -115,11 +109,13 @@ export class BlockCommentIcon
       this.sourceBlock.setCommentText(null);
     }
 
-    Blockly.Events.fire(
-      new BlockCommentDelete(
-        this.commentBubble
-      )
-    );
+    if (this.commentBubble) {
+      Blockly.Events.fire(
+        new BlockCommentDelete(
+          this.commentBubble
+        )
+      );
+    }
     Blockly.Events.setGroup(false);
   }
 
@@ -136,7 +132,7 @@ export class BlockCommentIcon
    */
   override dispose() {
     this.disposing = true;
-    if (!this.commentBubble.isDeadOrDying()) {
+    if (this.commentBubble && !this.commentBubble.isDeadOrDying()) {
       this.commentBubble.dispose();
     }
 
@@ -144,10 +140,22 @@ export class BlockCommentIcon
   }
 
   /**
-   * Initializes the icon view. No-op for block comment icon.
+   * Initializes the icon view and creates the anchored comment bubble.
    */
   override initView() {
-    return;
+    if (this.commentBubble) return;
+
+    this.commentBubble = new AnchoredComment(this.sourceBlock as Blockly.BlockSvg);
+
+    this.commentBubble.addTextChangeListener(this.onCommentTextChange.bind(this));
+    this.commentBubble.addSizeChangeListener(this.onCommentSizeChange.bind(this));
+    this.commentBubble.addOnCollapseListener(this.onCommentCollapse.bind(this));
+    this.commentBubble.addMoveListener(this.onCommentMove.bind(this));
+    this.commentBubble.addDisposeListener(this.onCommentDispose.bind(this));
+
+    Blockly.Events.fire(
+      new BlockCommentCreate(this)
+    );
   }
 
   /**
@@ -179,6 +187,8 @@ export class BlockCommentIcon
    * @param blockOrigin The new origin coordinate of the block.
    */
   override onLocationChange(blockOrigin: Blockly.utils.Coordinate) {
+    if (!this.commentBubble) return;
+
     if (this.sourceBlock.isInsertionMarker()) {
       this.commentBubble.dispose();
       return;
@@ -217,7 +227,7 @@ export class BlockCommentIcon
 
   /**
    * Gets the bubble associated with this icon.
-   * @returns The anchored comment bubble.
+   * @returns The anchored comment bubble, or null.
    */
   getBubble() {
     return this.commentBubble;
@@ -228,7 +238,7 @@ export class BlockCommentIcon
    * @returns The comment text.
    */
   getText(): string {
-    return this.commentBubble.getText();
+    return this.commentBubble?.getText() ?? '';
   }
 
   /**
@@ -236,7 +246,7 @@ export class BlockCommentIcon
    * @param text The new comment text.
    */
   setText(text: string): void {
-    this.commentBubble.setText(text);
+    this.commentBubble?.setText(text);
   }
 
   /**
@@ -244,7 +254,7 @@ export class BlockCommentIcon
    * @returns The width and height of the bubble.
    */
   getBubbleSize(): Blockly.utils.Size {
-    return this.commentBubble.getSize();
+    return this.commentBubble?.getSize() ?? new Blockly.utils.Size(0, 0);
   }
 
   /**
@@ -252,7 +262,7 @@ export class BlockCommentIcon
    * @param size The new size for the bubble.
    */
   setBubbleSize(size: Blockly.utils.Size): void {
-    this.commentBubble.setSize(size);
+    this.commentBubble?.setSize(size);
   }
 
   /**
@@ -260,7 +270,7 @@ export class BlockCommentIcon
    * @param collapsed Whether the bubble should be collapsed.
    */
   setCollapsed(collapsed: boolean): void {
-    this.commentBubble.setCollapsed(collapsed);
+    this.commentBubble?.setCollapsed(collapsed);
   }
 
   /**
@@ -268,7 +278,7 @@ export class BlockCommentIcon
    * @returns True if the bubble is collapsed, false otherwise.
    */
   getCollapsed(): boolean {
-    return this.commentBubble.isCollapsed();
+    return this.commentBubble?.isCollapsed() ?? false;
   }
 
   /**
@@ -276,7 +286,7 @@ export class BlockCommentIcon
    * @param location The new coordinate for the bubble.
    */
   setBubbleLocation(location: Blockly.utils.Coordinate): void {
-    this.commentBubble.moveTo(location);
+    this.commentBubble?.moveTo(location);
   }
 
   /**
@@ -284,7 +294,7 @@ export class BlockCommentIcon
    * @returns The coordinate of the bubble, or undefined if not available.
    */
   getBubbleLocation(): Blockly.utils.Coordinate | undefined {
-    return this.commentBubble.getRelativeToSurfaceXY();
+    return this.commentBubble?.getRelativeToSurfaceXY();
   }
 
   /**
@@ -293,6 +303,17 @@ export class BlockCommentIcon
    * @returns An object containing all serializable state.
    */
   saveState(): BlockCommentState {
+    if (!this.commentBubble) {
+      return {
+        text: '',
+        width: 0,
+        height: 0,
+        x: 0,
+        y: 0,
+        collapsed: false
+      };
+    }
+
     const size = this.commentBubble.getSize();
     const bubbleXY = this.commentBubble.getRelativeToSurfaceXY();
     const anchor = this.calculateAnchor();
@@ -317,6 +338,8 @@ export class BlockCommentIcon
    * @param state The saved state to restore.
    */
   loadState(state: BlockCommentState) {
+    if (!this.commentBubble) return;
+
     Blockly.Events.setGroup(true);
 
     this.setText(state.text);
