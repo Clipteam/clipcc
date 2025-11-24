@@ -34,6 +34,7 @@ import './events/block_comment_delete';
 import './events/block_comment_move';
 import './events/block_comment_resize';
 import './events/block_comment_collapse';
+import './events/block_change';
 
 import './block_comment_icon';
 
