@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {describe, expect, test, beforeAll, afterAll, beforeEach} from '@jest/globals';
+import {describe, expect, test, beforeAll, afterAll, beforeEach, afterEach} from '@jest/globals';
 import * as Blockly from 'blockly/core';
 import {defineTestBlock} from '../helpers/block';
 import {BlockCommentDelete} from '../../src/events/block_comment_delete';
@@ -25,6 +25,10 @@ describe('Event: BlockCommentDelete', () => {
     block = workspace.newBlock('test_block') as Blockly.BlockSvg;
     icon = new BlockCommentIcon(block);
     block.addIcon(icon);
+  });
+
+  afterEach(() => {
+    block.dispose();
   });
 
   afterAll(() => {

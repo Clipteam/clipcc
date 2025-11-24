@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import {describe, expect, test, beforeAll, afterAll, beforeEach} from '@jest/globals';
+import {describe, expect, test, beforeAll, afterAll, beforeEach, afterEach} from '@jest/globals';
 import * as Blockly from 'blockly/core';
 import {defineTestBlock} from '../helpers/block';
 import {BlockCommentMove} from '../../src/events/block_comment_move';
@@ -25,6 +25,10 @@ describe('Event: BlockCommentMove', () => {
     block = workspace.newBlock('test_block') as Blockly.BlockSvg;
     icon = new BlockCommentIcon(block);
     block.addIcon(icon);
+  });
+
+  afterEach(() => {
+    block.dispose();
   });
 
   afterAll(() => {
@@ -96,14 +100,16 @@ describe('Event: BlockCommentMove', () => {
 
     test('Throws error when coordinates are incomplete', () => {
       const event = new BlockCommentMove(icon);
-      expect(() => event.toJson()).toThrow('Incomplete coordinate');
+      expect(() => event.toJson())
+        .toThrow('The event is incomplete. Either pass a comment to the constructor, or call fromJson.');
     });
   });
 
   describe('Error Handling', () => {
     test('Throws error when running without coordinates', () => {
       const event = new BlockCommentMove(icon);
-      expect(() => event.run(true)).toThrow('Incomplete coordinate');
+      expect(() => event.run(true))
+        .toThrow('The event is incomplete. Either pass a comment to the constructor, or call fromJson.');
     });
 
     test('Throws error when block not found', () => {
