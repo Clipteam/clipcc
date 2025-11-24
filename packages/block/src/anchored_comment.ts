@@ -166,6 +166,12 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
     this.renderChain();
   }
 
+  moveToWithFiringEvents(newLoc: Blockly.utils.Coordinate): void {
+    const oldLoc = this.getRelativeToSurfaceXY();
+    this.moveTo(newLoc);
+    this.onMove(oldLoc, newLoc);
+  }
+
   /**
    * Sets the size of the comment in workspace units without firing events.
    * updates the view elements to reflect the new size, and triggers size change listeners.
@@ -214,16 +220,29 @@ export class AnchoredComment extends Blockly.comments.CommentView implements Blo
   };
 
   /**
+   * Triggers listeners when the position of the comment changes, either
+   * programmatically or manually by the user.
+   * @param oldCoordinate The old coordinate.
+   * @param newCoordinate The new coordinate.
+   */
+  private onMove(oldCoordinate: Blockly.utils.Coordinate, newCoordinate: Blockly.utils.Coordinate) {
+    if (!this.moveListener) {
+      // Current instance is not constructed.
+      return;
+    }
+    for (let i = this.moveListener.length - 1; i >= 0; i--) {
+      this.moveListener[i](oldCoordinate, newCoordinate);
+    }
+  }
+
+  /**
    * Handles any drag cleanup, including e.g. connecting or deleting
    * blocks.
    */
   endDrag() {
     const coordinate = this.getRelativeToSurfaceXY();
     this.dragStrategy.endDrag();
-
-    for (let i = this.moveListener.length - 1; i >= 0; i--) {
-      this.moveListener[i](this.dragStartLocation!, coordinate);
-    }
+    this.onMove(this.dragStartLocation!, coordinate);
   }
 
   /** Moves the draggable back to where it was at the start of the drag. */

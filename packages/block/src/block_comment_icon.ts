@@ -81,7 +81,7 @@ export class BlockCommentIcon
   /**
    * @param sourceBlock The block this comment is attached to.
    */
-  constructor(sourceBlock: Blockly.BlockSvg) {
+  constructor(sourceBlock: Blockly.Block) {
     super(sourceBlock);
 
     Blockly.Events.fire(new BlockCommentCreate(this));
@@ -146,14 +146,6 @@ export class BlockCommentIcon
     if (!this.disposing) {
       this.sourceBlock.setCommentText(null);
     }
-
-    if (this.commentBubble) {
-      Blockly.Events.fire(
-        new BlockCommentDelete(
-          this
-        )
-      );
-    }
   }
 
   /**
@@ -169,8 +161,12 @@ export class BlockCommentIcon
    */
   override dispose() {
     this.disposing = true;
+
+    Blockly.Events.fire(new BlockCommentDelete(this));
+
     if (this.commentBubble && !this.commentBubble.isDeadOrDying()) {
       this.commentBubble.dispose();
+      this.commentBubble = null;
     }
 
     super.dispose();
@@ -359,7 +355,7 @@ export class BlockCommentIcon
     this.useDefaultLocation = false;
     this.state.x = location.x;
     this.state.y = location.y;
-    this.commentBubble?.moveTo(location);
+    this.commentBubble?.moveToWithFiringEvents(location);
   }
 
   /**
@@ -393,7 +389,7 @@ export class BlockCommentIcon
       this.commentBubble.setText(state.text);
       this.commentBubble.setSize(new Blockly.utils.Size(state.width, state.height));
       this.commentBubble.setCollapsed(state.collapsed);
-      this.commentBubble.moveTo(state.x, state.y);
+      this.commentBubble.moveToWithFiringEvents(new Blockly.utils.Coordinate(state.x, state.y));
     } else {
       this.onCommentTextChange(oldState.text, state.text);
       this.onCommentSizeChange(
