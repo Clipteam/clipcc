@@ -8,59 +8,84 @@ import * as Blockly from 'blockly/core';
 import {BlockCommentBase, BlockCommentBaseJson} from './block_comment_base';
 import type {BlockCommentIcon} from '../block_comment_icon';
 
+/**
+ * Notifies listeners when a block comment is moved.
+ */
 export class BlockCommentMove extends BlockCommentBase {
-  type = 'block_comment_move';
+  /** Type of this event. */
+  override type = 'block_comment_move';
+
+  /** The previous coordinate before move. */
   oldCoordinate?: Blockly.utils.Coordinate;
+
+  /** The new coordinate after move. */
   newCoordinate?: Blockly.utils.Coordinate;
 
+  /**
+   * @param icon The comment icon this event corresponds to.
+   * @param oldCoordinate The previous coordinate before move.
+   * @param newCoordinate The new coordinate after move.
+   */
   constructor(
     icon?: BlockCommentIcon,
     oldCoordinate?: Blockly.utils.Coordinate,
     newCoordinate?: Blockly.utils.Coordinate
   ) {
     super(icon);
+    if (!icon) return;
     this.oldCoordinate = oldCoordinate;
     this.newCoordinate = newCoordinate;
   }
 
+  /**
+   * Encode the event as JSON.
+   * @returns JSON representation.
+   */
   override toJson(): BlockCommentMoveJson {
     if (!this.newCoordinate || !this.oldCoordinate) {
-      throw new Error('Incomplete coordinate');
+      throw new Error('The event is incomplete. Either pass a comment to the constructor, or call fromJson.');
     }
 
     const json = super.toJson() as BlockCommentMoveJson;
-    json['newX'] = this.newCoordinate.x;
-    json['newY'] = this.newCoordinate.y;
-    json['oldX'] = this.oldCoordinate.x;
-    json['oldY'] = this.oldCoordinate.y;
+    json.newX = this.newCoordinate.x;
+    json.newY = this.newCoordinate.y;
+    json.oldX = this.oldCoordinate.x;
+    json.oldY = this.oldCoordinate.y;
     return json;
   }
 
+  /**
+   * Deserializes the JSON event.
+   * @param json The JSON object that describes the event.
+   * @param workspace The workspace of the event belong to.
+   * @param event The event to append new properties to. Should be a subclass
+   *     of Abstract (like all events), but we can't specify that due to the
+   *     fact that parameters to static methods in subclasses must be
+   *     supertypes of parameters to static methods in superclasses.
+   * @returns The newly created event instance.
+   */
   static override fromJson(
     json: BlockCommentMoveJson,
     workspace: Blockly.Workspace,
-    event?: BlockCommentMove
+    event?: Blockly.Events.Abstract
   ): BlockCommentMove {
     const newEvent = super.fromJson(
       json,
       workspace,
       event ?? new BlockCommentMove()
     ) as BlockCommentMove;
-    newEvent.newCoordinate = new Blockly.utils.Coordinate(
-      json['newX'],
-      json['newY']
-    );
-    newEvent.oldCoordinate = new Blockly.utils.Coordinate(
-      json['oldX'],
-      json['oldY']
-    );
-
+    newEvent.newCoordinate = new Blockly.utils.Coordinate(json.newX, json.newY);
+    newEvent.oldCoordinate = new Blockly.utils.Coordinate(json.oldX, json.oldY);
     return newEvent;
   }
 
+  /**
+   * Run an event.
+   * @param forward True if run forward, false if run backward (undo).
+   */
   override run(forward: boolean) {
     if (!this.oldCoordinate || !this.newCoordinate) {
-      throw new Error('Incomplete coordinate');
+      throw new Error('The event is incomplete. Either pass a comment to the constructor, or call fromJson.');
     }
 
     if (!this.blockId) {
@@ -68,7 +93,6 @@ export class BlockCommentMove extends BlockCommentBase {
     }
     const workspace = this.getEventWorkspace_();
     const block = workspace.getBlockById(this.blockId);
-
     if (!block) {
       throw new Error(`Block with ID ${this.blockId} not found.`);
     }
@@ -86,7 +110,7 @@ export class BlockCommentMove extends BlockCommentBase {
   }
 }
 
-interface BlockCommentMoveJson extends BlockCommentBaseJson {
+export interface BlockCommentMoveJson extends BlockCommentBaseJson {
   newX: number;
   newY: number;
   oldX: number;
