@@ -146,6 +146,11 @@ export class FieldMatrix extends Blockly.Field<string> {
   private matrixReleaseWrapper: Blockly.browserEvents.Data | null = null;
 
   /**
+   * Value when editor is opened.
+   */
+  private valueWhenEditorWasOpened: string | null = null;
+
+  /**
    * @param value The default matrix value represented by a 25-bit integer.
    * @param validator  A function that is called to validate changes to the
    *     field's value. Takes in a value & returns a validated value, or null to
@@ -276,7 +281,9 @@ export class FieldMatrix extends Blockly.Field<string> {
     div.appendChild(buttonDiv);
 
     Blockly.DropDownDiv.setColour(sourceBlockParent.getColour(), sourceBlockParent.getColourTertiary());
-    Blockly.DropDownDiv.showPositionedByBlock<string>(this, sourceBlock);
+    Blockly.DropDownDiv.showPositionedByBlock<string>(this, sourceBlock, this.disposeEditor.bind(this));
+
+    this.valueWhenEditorWasOpened = this.value_;
 
     this.matrixTouchWrapper = Blockly.browserEvents.bind(this.matrixStage, 'mousedown', this, this.onMouseDown);
     this.clearButtonWrapper = Blockly.browserEvents.bind(clearButton, 'click', this, this.clearMatrix);
@@ -356,7 +363,7 @@ export class FieldMatrix extends Blockly.Field<string> {
    */
   private clearMatrix(e: MouseEvent) {
     if (e.button != 0) return;
-    this.setValue(FieldMatrix.ZEROS);
+    this.setIntermediateValue(FieldMatrix.ZEROS);
   }
 
   /**
@@ -365,7 +372,7 @@ export class FieldMatrix extends Blockly.Field<string> {
    */
   private fillMatrix(e: MouseEvent) {
     if (e.button != 0) return;
-    this.setValue(FieldMatrix.ONES);
+    this.setIntermediateValue(FieldMatrix.ONES);
   }
 
   /**
@@ -383,7 +390,7 @@ export class FieldMatrix extends Blockly.Field<string> {
     if (led < 0 || led > 24) return;
     const oldMatrix = this.getValue()!;
     const newMatrix = oldMatrix.substr(0, led) + state + oldMatrix.substr(led + 1);
-    this.setValue(newMatrix);
+    this.setIntermediateValue(newMatrix);
   }
 
   private fillLEDNode(led: number) {
@@ -480,10 +487,36 @@ export class FieldMatrix extends Blockly.Field<string> {
   }
 
   /**
-   * Clean up this FieldMatrix, as well as the inherited Field.
+   * Change the value without firing a BlockChange event.
+   * BlockFieldIntermediateChange event is fired.
+   * @param value New value.
    */
-  override dispose(): void {
-    super.dispose();
+  protected setIntermediateValue(value: string) {
+    const oldValue = this.value_;
+    this.setValue(value, false);
+    if (
+      this.sourceBlock_ &&
+      Blockly.Events.isEnabled() &&
+      this.value_ !== oldValue
+    ) {
+      // Fire a special event indicating that the value changed but the change
+      // isn't complete yet and normal field change listeners can wait.
+      Blockly.Events.fire(
+        new (Blockly.Events.get(Blockly.Events.BLOCK_FIELD_INTERMEDIATE_CHANGE))(
+          this.sourceBlock_,
+          this.name || null,
+          oldValue,
+          this.value_
+        )
+      );
+    }
+  }
+
+  /**
+   * Closes the editor, saves the results, and disposes of any events or
+   * DOM-references belonging to the editor.
+   */
+  protected disposeEditor() {
     this.matrixStage = null;
     if (this.matrixTouchWrapper) {
       Blockly.browserEvents.unbind(this.matrixTouchWrapper);
@@ -505,6 +538,28 @@ export class FieldMatrix extends Blockly.Field<string> {
       Blockly.browserEvents.unbind(this.fillButtonWrapper);
       this.fillButtonWrapper = null;
     }
+
+    if (
+      this.sourceBlock_ &&
+      Blockly.Events.isEnabled() &&
+      this.valueWhenEditorWasOpened !== null &&
+      this.valueWhenEditorWasOpened !== this.value_
+    ) {
+      // When closing a field input widget, fire an event indicating that the
+      // user has completed a sequence of changes. The value may have changed
+      // multiple times while the editor was open, but this will fire an event
+      // containing the value when the editor was opened as well as the new one.
+      Blockly.Events.fire(
+        new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
+          this.sourceBlock_,
+          'field',
+          this.name || null,
+          this.valueWhenEditorWasOpened,
+          this.value_
+        )
+      );
+    }
+    this.valueWhenEditorWasOpened = null;
   }
 
   /**
