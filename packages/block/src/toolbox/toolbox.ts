@@ -12,6 +12,9 @@ import {CollapsibleToolboxCategory} from './collapsible_category';
  * Class for continuous toolbox.
  */
 export class ContinuousToolBox extends Blockly.Toolbox {
+  /** Gap between categories. */
+  static readonly CATEGORY_GAP = 36;
+
   /** The list of items in the toolbox. */
   protected contentsList: Blockly.IToolboxItem[] = [];
 
@@ -62,6 +65,11 @@ export class ContinuousToolBox extends Blockly.Toolbox {
     let contents: Blockly.utils.toolbox.FlyoutItemInfo[] = [];
     for (const toolboxItem of this.contentsList) {
       if (toolboxItem instanceof Blockly.ToolboxCategory) {
+        // Add gap between categories.
+        if (contents.length !== 0) {
+          contents.push({kind: 'sep', gap: ContinuousToolBox.CATEGORY_GAP});
+        }
+
         // The label of category.
         contents.push({kind: 'label', text: toolboxItem.getName(), id: toolboxItem.getId()});
 

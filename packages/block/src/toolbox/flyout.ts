@@ -22,6 +22,9 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
   /** The width of the flyout, if not otherwise specified. */
   static readonly DEFAULT_WIDTH = 250;
 
+  /** Default vertical gap. */
+  override readonly GAP_Y: number = 10;
+
   /** Maps from category names to their positions. */
   protected scrollPositions: Map<string, number> = new Map<string, number>();
 
