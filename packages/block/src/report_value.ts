@@ -7,7 +7,7 @@
 
 import * as Blockly from 'blockly/core';
 import {Colours} from './colours';
-import styles from './styles/visual_report.css';
+import styles from './styles/report_value.css';
 
 /**
  * Get the first available field in a block, or null if none exist.
@@ -45,6 +45,8 @@ export function reportValue(id: string, value: string, workspace?: Blockly.Works
   const field = getFirstAvailableField(block);
   if (!field) return;
 
+  Blockly.DropDownDiv.hideWithoutAnimation();
+  Blockly.DropDownDiv.clearContent();
   const contentDiv = Blockly.DropDownDiv.getContentDiv();
   const valueReportBox = document.createElement('div');
   valueReportBox.setAttribute('class', 'valueReportBox');

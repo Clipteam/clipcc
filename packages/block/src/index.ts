@@ -159,7 +159,7 @@ export function loadWorkspace(
   Blockly.serialization.workspaces.load(state, workspace, {recordUndo});
 }
 
-export {reportValue} from './visual_reporting';
+export {reportValue} from './report_value';
 export {setExternalProcedureDefCallback} from './procedures_category';
 
 // Monkey-patches
