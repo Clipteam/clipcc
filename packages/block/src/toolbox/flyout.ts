@@ -89,6 +89,19 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
   }
 
   /**
+   * Serialize a block to JSON.
+   * @param block The block to serialize.
+   * @returns A serialized representation of the block.
+   */
+  protected serializeBlock(block: Blockly.BlockSvg): Blockly.serialization.blocks.State {
+    const blockState = super.serializeBlock(block);
+    // This function is used to copy blocks from the flyout to the workspace.
+    // We should delete id here to avoid conflicts in workspace.
+    delete blockState.id;
+    return blockState;
+  }
+
+  /**
    * Add extra padding to the bottom of the flyout to make it possible
    * to scroll to the last category.
    * @param contentMetrics Content metrics for the flyout.
