@@ -38,7 +38,7 @@ export class ContinuousFlyoutMetrics extends Blockly.FlyoutMetricsManager {
       viewMetrics || this.getViewMetrics()
     );
     scrollMetrics.height += extraMetrics.height;
-    scrollMetrics.width += extraMetrics.width;
+    scrollMetrics.width = 0; // Scroll width should be 0 for vertical toolbox.
     return scrollMetrics;
   }
 }
