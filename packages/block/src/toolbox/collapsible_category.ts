@@ -5,12 +5,9 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {ScratchCategory} from './category';
+import {ToolboxCategory} from './category';
 
 export class CollapsibleToolboxCategory extends Blockly.CollapsibleToolboxCategory {
-  /** Default color for the category. */
-  static readonly DEFAULT_COLOUR = ScratchCategory.DEFAULT_COLOUR;
-
   /** Element of colour bar on the left of category. */
   protected colourBar: HTMLDivElement | null = null;
 
@@ -33,7 +30,7 @@ export class CollapsibleToolboxCategory extends Blockly.CollapsibleToolboxCatego
     if (colour) {
       this.colourBar!.style.backgroundColor = colour;
     } else {
-      this.colourBar!.style.backgroundColor = ScratchCategory.DEFAULT_COLOUR;
+      this.colourBar!.style.backgroundColor = ToolboxCategory.DEFAULT_COLOUR;
     }
   }
 

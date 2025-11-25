@@ -7,7 +7,7 @@
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals';
 import * as Blockly from 'blockly/core';
 import {setupPlayground} from '../helpers/playground';
-import {ContinuousToolBox} from '../../src/toolbox/toolbox';
+import {Toolbox} from '../../src/toolbox/toolbox';
 
 const toolboxDefinition: Blockly.utils.toolbox.ToolboxDefinition = {
   kind: 'categoryToolbox',
@@ -85,7 +85,7 @@ function isParentCategory(category: Blockly.IToolboxItem, potentialParent: Block
  * @param toolbox The toolbox.
  * @param name Name of selected category.
  */
-function checkToolboxCategories(toolbox: ContinuousToolBox, name: string) {
+function checkToolboxCategories(toolbox: Toolbox, name: string) {
   const selected = toolbox.getSelectedItem() as Blockly.ToolboxCategory;
   expect(selected.getName()).toBe(name);
 
@@ -110,7 +110,7 @@ describe('Toolbox', () => {
   let spy: jest.SpiedFunction<(id: string) => void>;
 
   beforeEach(() => {
-    const toolbox = context.workspace.getToolbox() as ContinuousToolBox;
+    const toolbox = context.workspace.getToolbox() as Toolbox;
     // Spy updateSelectedCategoryById to prevent category selection based on
     // position, since we don't have any contents.
     spy = jest.spyOn(toolbox, 'updateSelectedCategoryById').mockImplementation(() => {});
@@ -141,13 +141,13 @@ describe('Toolbox', () => {
 
   describe('Nested Categories', () => {
     test('Select a Inner Category', () => {
-      const toolbox = context.workspace.getToolbox() as ContinuousToolBox;
+      const toolbox = context.workspace.getToolbox() as Toolbox;
       toolbox.selectItemByPosition(3);
       checkToolboxCategories(toolbox, 'Category 2.2');
     });
 
     test('Select a Inner Category when Flyout Hidden', () => {
-      const toolbox = context.workspace.getToolbox() as ContinuousToolBox;
+      const toolbox = context.workspace.getToolbox() as Toolbox;
       toolbox.selectItemByPosition(3);
       toolbox.selectItemByPosition(3);
       expect(toolbox.getFlyout()!.isVisible()).toBeFalsy();
@@ -157,14 +157,14 @@ describe('Toolbox', () => {
     });
 
     test('Change Category', () => {
-      const toolbox = context.workspace.getToolbox() as ContinuousToolBox;
+      const toolbox = context.workspace.getToolbox() as Toolbox;
       toolbox.selectItemByPosition(3);
       toolbox.selectItemByPosition(0);
       checkToolboxCategories(toolbox, 'Category 1');
     });
 
     test('Change Category with Same Parent', () => {
-      const toolbox = context.workspace.getToolbox() as ContinuousToolBox;
+      const toolbox = context.workspace.getToolbox() as Toolbox;
       toolbox.selectItemByPosition(4);
       toolbox.selectItemByPosition(2);
       checkToolboxCategories(toolbox, 'Category 2.1');
