@@ -62,7 +62,7 @@ export class ContinuousToolBox extends Blockly.Toolbox {
     for (const toolboxItem of this.contentsList) {
       if (toolboxItem instanceof Blockly.ToolboxCategory) {
         // The label of category.
-        contents.push({kind: 'label', text: toolboxItem.getName()});
+        contents.push({kind: 'label', text: toolboxItem.getName(), id: toolboxItem.getId()});
 
         let itemContents = toolboxItem.getContents();
         if (typeof itemContents === 'string') {
@@ -77,18 +77,14 @@ export class ContinuousToolBox extends Blockly.Toolbox {
   }
 
   /**
-   * Select the category with given name.
-   * @param name Category name.
+   * Select the category with given ID.
+   * @param id Category unique ID.
    * @returns Category item.
    */
-  getToolboxCategoryByName(name: string): Blockly.ToolboxCategory | null {
-    for (const item of this.contents.values()) {
-      if (
-        item instanceof Blockly.ToolboxCategory &&
-        item.isSelectable() && item.getName() === name
-      ) {
-        return item;
-      }
+  getToolboxCategoryById(id: string): Blockly.ToolboxCategory | null {
+    const item = this.contents.get(id);
+    if (item instanceof Blockly.ToolboxCategory && item.isSelectable()) {
+      return item;
     }
     return null;
   }
@@ -96,15 +92,15 @@ export class ContinuousToolBox extends Blockly.Toolbox {
   /**
    * Update the selected category without calling updateFlyout_. Should be called
    * when the flyout is being scrolled.
-   * @param name Category name.
+   * @param id Category unique ID.
    */
-  updateSelectedCategory(name: string): void {
+  updateSelectedCategoryById(id: string): void {
     const oldItem = this.selectedItem_;
     if (!oldItem || !this.getFlyout()?.isVisible()) {
       // Don't change if no item is selected or toolbox is hidden.
       return;
     }
-    const newItem = this.getToolboxCategoryByName(name);
+    const newItem = this.getToolboxCategoryById(id);
     if (!newItem || oldItem === newItem) {
       return;
     }
@@ -145,7 +141,7 @@ export class ContinuousToolBox extends Blockly.Toolbox {
     } else {
       const animation = flyout.isVisible();
       flyout.setVisible(true);
-      flyout.scrollToCategory(newItem.getName(), animation);
+      flyout.scrollToCategoryById(newItem.getId(), animation);
     }
   }
 

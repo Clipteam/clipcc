@@ -7,6 +7,7 @@
 import * as Blockly from 'blockly/core';
 import {ContinuousToolBox} from './toolbox';
 import {ContinuousFlyoutMetrics} from './flyout_metrics';
+import type {FlyoutButton} from './flyout_button';
 
 /**
  * Class for continuous flyout.
@@ -82,9 +83,9 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
       // clicking on it, do not update the category selection.
       return;
     }
-    const category = this.getCategoryByScrollPosition(-this.workspace_.scrollY);
-    if (category) {
-      (this.targetWorkspace.getToolbox() as ContinuousToolBox).updateSelectedCategory(category);
+    const id = this.getCategoryIdByScrollPosition(-this.workspace_.scrollY);
+    if (id) {
+      (this.targetWorkspace.getToolbox() as ContinuousToolBox).updateSelectedCategoryById(id);
     }
   }
 
@@ -120,9 +121,9 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
     this.scrollPositions.clear();
     for (const item of this.contents) {
       if (item.getType() === 'label') {
-        const button = item.getElement() as Blockly.FlyoutButton;
+        const button = item.getElement() as FlyoutButton;
         const position = button.getPosition();
-        this.scrollPositions.set(button.getButtonText(), position.y - this.MARGIN);
+        this.scrollPositions.set(button.getLabelId()!, position.y - this.MARGIN);
       }
     }
   }
@@ -147,30 +148,30 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
 
   /**
    * Scrolls flyout to the given category.
-   * @param category Category name.
+   * @param id Category unique ID.
    * @param animation True if plays animation on scrolling.
    */
-  scrollToCategory(category: string, animation?: boolean): void {
-    const position = this.scrollPositions.get(category);
+  scrollToCategoryById(id: string, animation?: boolean): void {
+    const position = this.scrollPositions.get(id);
     if (position !== undefined) {
       this.scrollTo(position, animation);
     } else {
-      console.warn(`Cannot scroll to category ${category}`);
+      console.warn(`Cannot scroll to category id ${id}`);
     }
   }
 
   /**
    * Get an item in the toolbox based on the scroll position of the flyout.
    * @param position Current scroll position of the workspace.
-   * @returns The category name of scroll position, null if not found.
+   * @returns The category unique ID of scroll position, null if not found.
    */
-  getCategoryByScrollPosition(position: number): string | null {
+  getCategoryIdByScrollPosition(position: number): string | null {
     const scaledPosition = Math.round(position / this.workspace_.scale);
     // Traverse in reverse to find the category.
-    for (const category of Array.from(this.scrollPositions.keys()).reverse()) {
-      const position = this.scrollPositions.get(category)!;
+    for (const id of Array.from(this.scrollPositions.keys()).reverse()) {
+      const position = this.scrollPositions.get(id)!;
       if (position <= scaledPosition) {
-        return category;
+        return id;
       }
     }
     return null;

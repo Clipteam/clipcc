@@ -33,6 +33,7 @@ import './connection_checker';
 import './dragger';
 import './insertion_marker_previewer';
 import './toolbox/collapsible_category';
+import './toolbox/inflaters/label';
 
 import './blocks/extensions';
 import './blocks/common';
