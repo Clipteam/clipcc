@@ -68,6 +68,7 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
     // Refresh drag targets when flyout becomes visible
     if (!wasVisible && visible && !this.autoClose) {
       this.targetWorkspace.recordDragTargets();
+      this.reflow();
     }
   }
 
@@ -78,6 +79,10 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
    *     specifying the degree of scrolling and a similar x property.
    */
   protected override setMetrics_(xyRatio: { x: number; y: number; }): void {
+    if (!this.isVisible()) {
+      return;
+    }
+
     super.setMetrics_(xyRatio);
 
     // Auto select category on scrolling.
