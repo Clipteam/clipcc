@@ -138,8 +138,9 @@ export class ContinuousToolBox extends Blockly.Toolbox {
     oldItem: Blockly.ISelectableToolboxItem | null,
     newItem: Blockly.ISelectableToolboxItem
   ): void {
+    const previousItem = oldItem ?? this.previouslySelectedItem_;
     super.selectItem_(oldItem, newItem);
-    this.updateCollapsibleCategories(oldItem, newItem);
+    this.updateCollapsibleCategories(previousItem, newItem);
   }
 
   /**
@@ -181,7 +182,7 @@ export class ContinuousToolBox extends Blockly.Toolbox {
     // Collapse all items from old item to LCA.
     for (const item of oldParents) {
       if (item === lca) break;
-      if (item.isCollapsible()) {
+      if (item.isCollapsible() && (item as CollapsibleToolboxCategory).isExpanded()) {
         (item as CollapsibleToolboxCategory).setExpanded(false);
       }
     }
@@ -189,7 +190,7 @@ export class ContinuousToolBox extends Blockly.Toolbox {
     // Expand all items from new item to LCA.
     for (const item of newParents) {
       if (item === lca) break;
-      if (item.isCollapsible()) {
+      if (item.isCollapsible() && !(item as CollapsibleToolboxCategory).isExpanded()) {
         (item as CollapsibleToolboxCategory).setExpanded(true);
       }
     }
