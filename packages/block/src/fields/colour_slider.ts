@@ -65,6 +65,11 @@ export class FieldColourSlider extends Blockly.Field<string> {
    */
   private sliderCallbacksEnabled: boolean = false;
 
+  /**
+   * Value when editor is opened.
+   */
+  private valueWhenEditorWasOpened: string | null = null;
+
   private hue: number = 0;
   private saturation: number = 0;
   private brightness: number = 0;
@@ -218,7 +223,7 @@ export class FieldColourSlider extends Blockly.Field<string> {
       }
       const colour = Blockly.utils.colour.hsvToHex(this.hue, this.saturation, this.brightness);
       if (colour !== null) {
-        this.setValue(colour, true);
+        this.setIntermediateValue(colour);
       }
     };
   }
@@ -274,6 +279,32 @@ export class FieldColourSlider extends Blockly.Field<string> {
   }
 
   /**
+   * Change the value without firing a BlockChange event.
+   * BlockFieldIntermediateChange event is fired.
+   * @param value New value.
+   */
+  protected setIntermediateValue(value: string) {
+    const oldValue = this.value_;
+    this.setValue(value, false);
+    if (
+      this.sourceBlock_ &&
+      Blockly.Events.isEnabled() &&
+      this.value_ !== oldValue
+    ) {
+      // Fire a special event indicating that the value changed but the change
+      // isn't complete yet and normal field change listeners can wait.
+      Blockly.Events.fire(
+        new (Blockly.Events.get(Blockly.Events.BLOCK_FIELD_INTERMEDIATE_CHANGE))(
+          this.sourceBlock_,
+          this.name || null,
+          oldValue,
+          this.value_
+        )
+      );
+    }
+  }
+
+  /**
    * Activate the eyedropper, passing in a callback for setting the field value.
    */
   private activateEyedropperInternal() {
@@ -286,7 +317,7 @@ export class FieldColourSlider extends Blockly.Field<string> {
       this.hue = hsv[0];
       this.saturation = hsv[1];
       this.brightness = hsv[2];
-      this.setValue(value);
+      this.setIntermediateValue(value);
     });
   }
 
@@ -349,11 +380,16 @@ export class FieldColourSlider extends Blockly.Field<string> {
     }
 
     Blockly.DropDownDiv.setColour('#ffffff', '#dddddd');
-    Blockly.DropDownDiv.showPositionedByBlock(this, this.getSourceBlock() as Blockly.BlockSvg);
+    Blockly.DropDownDiv.showPositionedByBlock(
+      this,
+      this.getSourceBlock() as Blockly.BlockSvg,
+      this.disposeEditor.bind(this)
+    );
 
     // Set value updates the slider positions
     // Do this before attaching callbacks to avoid extra events from initial set
     this.setValue(this.getValue());
+    this.valueWhenEditorWasOpened = this.value_;
 
     // Enable callbacks for the sliders
     this.sliderCallbacksEnabled = true;
@@ -410,9 +446,10 @@ export class FieldColourSlider extends Blockly.Field<string> {
   }
 
   /**
-   * Clean up this FieldColourSlider, as well as the inherited Field.
+   * Closes the editor, saves the results, and disposes of any events or
+   * DOM-references belonging to the editor.
    */
-  override dispose(): void {
+  protected disposeEditor() {
     if (this.hueChangeEventKey) {
       Blockly.browserEvents.unbind(this.hueChangeEventKey);
     }
@@ -425,9 +462,29 @@ export class FieldColourSlider extends Blockly.Field<string> {
     if (this.eyedropperEventData) {
       Blockly.browserEvents.unbind(this.eyedropperEventData);
     }
-    Blockly.Events.setGroup(false);
-    super.dispose();
-  };
+
+    if (
+      this.sourceBlock_ &&
+      Blockly.Events.isEnabled() &&
+      this.valueWhenEditorWasOpened !== null &&
+      this.valueWhenEditorWasOpened !== this.value_
+    ) {
+      // When closing a field input widget, fire an event indicating that the
+      // user has completed a sequence of changes. The value may have changed
+      // multiple times while the editor was open, but this will fire an event
+      // containing the value when the editor was opened as well as the new one.
+      Blockly.Events.fire(
+        new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
+          this.sourceBlock_,
+          'field',
+          this.name || null,
+          this.valueWhenEditorWasOpened,
+          this.value_
+        )
+      );
+    }
+    this.valueWhenEditorWasOpened = null;
+  }
 }
 
 export interface FieldColourSliderFromJsonConfig extends Blockly.FieldConfig {
