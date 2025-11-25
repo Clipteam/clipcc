@@ -9,18 +9,95 @@ on:
   pull_request:
 
 jobs:
-  validate:
-    name: Validating Code
+  setup:
+    name: Setup and Build
     runs-on: ubuntu-latest
+    outputs:
+      gui-changed: ${{ steps.changes.outputs.gui }}
+      vm-changed: ${{ steps.changes.outputs.vm }}
+      block-changed: ${{ steps.changes.outputs.block }}
+      should-run-all-tests: ${{ steps.check-types.outputs.should-run-all }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.x
           cache: 'yarn'
-      - name: Install and build
-        run: yarn install --frozen-lockfile && yarn run build:full
-      - name: Test
-        run: yarn test
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build all packages
+        run: yarn run build:full
+
+      - name: Check types
+        id: check-types
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            if [[ "${{ github.base_ref }}" == "master" ]]; then
+              echo "should-run-all=true" >> $GITHUB_OUTPUT
+            else
+              echo "should-run-all=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "should-run-all=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Detect changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            gui:
+              - 'packages/gui/**'
+              - 'packages/l10n/**'
+              - 'packages/paint/**'
+              - 'packages/storage/**'
+            vm:
+              - 'packages/vm/**'
+              - 'packages/storage/**'
+            block:
+              - 'packages/block/**'
+
+  test-gui:
+    name: Test GUI
+    runs-on: ubuntu-latest
+    needs: setup
+    if: needs.setup.outputs.gui-changed == 'true' || needs.setup.outputs.should-run-all-tests == 'true'
+    steps:
+      - name: Run GUI tests
+        run: yarn gui test:unit
+
+  test-vm:
+    name: Test VM
+    runs-on: ubuntu-latest
+    needs: setup
+    if: needs.setup.outputs.vm-changed == 'true' || needs.setup.outputs.should-run-all-tests == 'true'
+    steps:
+      - name: Run VM tests
+        run: yarn vm test
+
+  test-block:
+    name: Test Block
+    runs-on: ubuntu-latest
+    needs: setup
+    if: needs.setup.outputs.block-changed == 'true' || needs.setup.outputs.should-run-all-tests == 'true'
+    steps:
+      - name: Run Block tests
+        run: yarn block test
+
+  validate:
+    name: Summarize
+    runs-on: ubuntu-latest
+    needs: [setup, test-gui, test-vm, test-block]
+    if: always() && needs.setup.result == 'success'
+    steps:
+      - name: Check test results
+        run: |
+          # Check if any test job failed
+          if [[ "${{ needs.test-gui.result }}" == "failure" || "${{ needs.test-vm.result }}" == "failure" || "${{ needs.test-block.result }}" == "failure" ]]; then
+            exit 1
+          fi
