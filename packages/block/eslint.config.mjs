@@ -23,11 +23,10 @@ export default [
       'dist/*',
       'gh-pages/*',
       'build/*',
-      // tests
-      'tests/*',
       // old sources
       'core/*',
-      'blocks_*/*'
+      'blocks_*/*',
+      'msg/*.js'
     ]
   },
   eslint.configs.recommended,
@@ -67,7 +66,9 @@ export default [
   {
     files: [
       'scripts/**/*.js',
-      'webpack.config.js'
+      'tests/**/*.js',
+      'webpack.config.js',
+      'jest.config.js'
     ],
     languageOptions: {
       sourceType: 'commonjs',
@@ -89,7 +90,10 @@ export default [
     }
   },
   ...tslint.config({
-    files: ['src/**/*.ts'],
+    files: [
+      'src/**/*.ts',
+      'tests/**/*.ts'
+    ],
     extends: [
       tslint.configs.recommended,
       jsdoc.configs['flat/recommended-typescript']

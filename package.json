@@ -23,7 +23,7 @@
     "build:dist": "cross-env NODE_ENV=production yarn build:full",
     "build:full": "yarn l10n build && yarn audio build && yarn storage build && yarn svg-renderer build && yarn render build && yarn block build && yarn vm build && yarn paint build && node packages/gui/scripts/prepublish.mjs && yarn gui build",
     "build": "yarn block build && yarn gui build",
-    "test": "yarn gui test:unit && yarn block test:unit && yarn vm test",
+    "test": "yarn gui test:unit && yarn block test && yarn vm test",
     "performance": "yarn vm performance",
     "translation:build": "yarn gui i18n:src && yarn vm i18n:src && yarn block translate",
     "translation:push": "tx push",

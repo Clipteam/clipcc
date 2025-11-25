@@ -267,10 +267,36 @@ export class FieldNote extends Blockly.FieldTextInput {
   }
 
   /**
-   * Clean up this FieldNote, as well as the inherited FieldTextInput.
+   * Change the value without firing a BlockChange event.
+   * BlockFieldIntermediateChange event is fired.
+   * @param value New value.
    */
-  override dispose(): void {
-    super.dispose();
+  protected setIntermediateValue(value: number) {
+    const oldValue = this.value_;
+    this.setEditorValue_(value, false);
+    if (
+      this.sourceBlock_ &&
+      Blockly.Events.isEnabled() &&
+      this.value_ !== oldValue
+    ) {
+      // Fire a special event indicating that the value changed but the change
+      // isn't complete yet and normal field change listeners can wait.
+      Blockly.Events.fire(
+        new (Blockly.Events.get(Blockly.Events.BLOCK_FIELD_INTERMEDIATE_CHANGE))(
+          this.sourceBlock_,
+          this.name || null,
+          oldValue,
+          this.value_
+        )
+      );
+    }
+  }
+
+  /**
+   * Closes the editor, saves the results, and disposes of any events or
+   * DOM-references belonging to the editor.
+   */
+  protected disposeEditor() {
     this.mouseDownWrappers.forEach(function(wrapper) {
       Blockly.browserEvents.unbind(wrapper);
     });
@@ -394,7 +420,7 @@ export class FieldNote extends Blockly.FieldTextInput {
       sourceBlock.getParent()!.getColour(),
       sourceBlock.getParent()!.getColourTertiary()
     );
-    Blockly.DropDownDiv.showPositionedByBlock(this, sourceBlock);
+    Blockly.DropDownDiv.showPositionedByBlock(this, sourceBlock, this.disposeEditor.bind(this));
 
     this.updateSelection();
   }
@@ -588,7 +614,7 @@ export class FieldNote extends Blockly.FieldTextInput {
    */
   private selectNoteWithMouseEvent(e: MouseEvent) {
     const newNoteNum = Number((e.target as HTMLElement).getAttribute('data-pitch')) + this.displayedOctave * 12;
-    this.setEditorValue_(newNoteNum);
+    this.setIntermediateValue(newNoteNum);
     this.playNoteInternal();
   }
 
@@ -628,7 +654,7 @@ export class FieldNote extends Blockly.FieldTextInput {
     }
 
     const newNote = Number(this.getText()) + (octaves * 12);
-    this.setEditorValue_(newNote);
+    this.setIntermediateValue(newNote);
 
     this.animationTarget = this.fieldEditorWidth * octaves * -1;
     this.animationPos = 0;
@@ -722,10 +748,7 @@ export class FieldNote extends Blockly.FieldTextInput {
    * @returns A string representing a valid note number, or null if invalid.
    */
   protected override doClassValidation_(newValue: string): string | null {
-    if (newValue === null) {
-      return null;
-    }
-    let n = parseFloat(newValue || '0');
+    let n = parseFloat(newValue);
     if (isNaN(n)) {
       return null;
     }

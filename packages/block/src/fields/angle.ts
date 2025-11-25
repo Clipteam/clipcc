@@ -153,10 +153,10 @@ export class FieldAngle extends Blockly.FieldNumber {
   }
 
   /**
-   * Clean up this FieldAngle, as well as the inherited FieldTextInput.
+   * Closes the editor, saves the results, and disposes of any events or
+   * DOM-references belonging to the editor.
    */
-  override dispose(): void {
-    super.dispose();
+  protected disposeEditor() {
     this.gauge = null;
     if (this.mouseDownHandler) {
       Blockly.browserEvents.unbind(this.mouseDownHandler);
@@ -259,7 +259,7 @@ export class FieldAngle extends Blockly.FieldNumber {
       circle.style.stroke = sourceBlockParent.getColourTertiary();
       circle.style.fill = sourceBlockParent.getColourSecondary();
       Blockly.DropDownDiv.setColour(sourceBlockParent.getColour(), sourceBlockParent.getColourTertiary());
-      Blockly.DropDownDiv.showPositionedByBlock(this, sourceBlock);
+      Blockly.DropDownDiv.showPositionedByBlock(this, sourceBlock, this.disposeEditor.bind(this));
     }
 
     this.mouseDownHandler = Blockly.browserEvents.bind(this.handle, 'mousedown', this, this.onMouseDown);
@@ -359,9 +359,24 @@ export class FieldAngle extends Blockly.FieldNumber {
     if (FieldAngle.ROUND) {
       angle = Math.round(angle / FieldAngle.ROUND) * FieldAngle.ROUND;
     }
-    this.setValue(angle);
-    this.setEditorValue_(this.getValue());
-    this.resizeEditor_();
+    const oldValue = this.value_;
+    this.setEditorValue_(angle, false);
+    if (
+      this.sourceBlock_ &&
+      Blockly.Events.isEnabled() &&
+      this.value_ !== oldValue
+    ) {
+      // Fire a special event indicating that the value changed but the change
+      // isn't complete yet and normal field change listeners can wait.
+      Blockly.Events.fire(
+        new (Blockly.Events.get(Blockly.Events.BLOCK_FIELD_INTERMEDIATE_CHANGE))(
+          this.sourceBlock_,
+          this.name || null,
+          oldValue,
+          this.value_
+        )
+      );
+    }
   }
 
   /**
@@ -370,11 +385,8 @@ export class FieldAngle extends Blockly.FieldNumber {
    * @returns A string representing a valid angle, or null if invalid.
    */
   protected override doClassValidation_(newValue: string): number | null {
-    if (newValue === null) {
-      return null;
-    }
-    let n = parseFloat(newValue || '0');
-    if (isNaN(n)) {
+    let n = parseFloat(newValue);
+    if (isNaN(n) || n === Infinity || n === -Infinity) {
       return null;
     }
     n = n % 360;
