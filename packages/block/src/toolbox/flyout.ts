@@ -93,7 +93,7 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
    * @param block The block to serialize.
    * @returns A serialized representation of the block.
    */
-  protected serializeBlock(block: Blockly.BlockSvg): Blockly.serialization.blocks.State {
+  protected override serializeBlock(block: Blockly.BlockSvg): Blockly.serialization.blocks.State {
     const blockState = super.serializeBlock(block);
     // This function is used to copy blocks from the flyout to the workspace.
     // We should delete id here to avoid conflicts in workspace.
