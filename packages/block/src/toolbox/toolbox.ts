@@ -6,6 +6,7 @@
 
 import * as Blockly from 'blockly/core';
 import {ContinuousVerticalFlyout} from './flyout';
+import {CollapsibleToolboxCategory} from './collapsible_category';
 
 /**
  * Class for continuous toolbox.
@@ -111,6 +112,86 @@ export class ContinuousToolBox extends Blockly.Toolbox {
 
     if (this.shouldSelectItem_(oldItem, newItem)) {
       this.selectItem_(oldItem, newItem);
+    }
+  }
+
+  /**
+   * Decides whether the old item should be deselected.
+   * @param oldItem The previously selected toolbox item.
+   * @param newItem The newly selected toolbox item.
+   * @returns True if the old item should be deselected, false otherwise.
+   */
+  protected override shouldDeselectItem_(
+    oldItem: Blockly.ISelectableToolboxItem | null,
+    newItem: Blockly.ISelectableToolboxItem | null
+  ): boolean {
+    return oldItem !== null;
+  }
+
+  /**
+   * Selects the given item, marks it selected, and updates aria state.
+   * The related parent items should be collapsed or expanded here.
+   * @param oldItem The previously selected toolbox item.
+   * @param newItem The newly selected toolbox item.
+   */
+  protected override selectItem_(
+    oldItem: Blockly.ISelectableToolboxItem | null,
+    newItem: Blockly.ISelectableToolboxItem
+  ): void {
+    super.selectItem_(oldItem, newItem);
+    this.updateCollapsibleCategories(oldItem, newItem);
+  }
+
+  /**
+   * Get all parents of given item, including itself. The result is ordered from
+   * given item to the root.
+   * @param item The toolbox item.
+   * @returns Array storing all parents ant itself.
+   */
+  private getParents(item: Blockly.IToolboxItem | null): Blockly.IToolboxItem[] {
+    const parents = [];
+    while (item) {
+      parents.push(item);
+      item = item.getParent();
+    }
+    return parents;
+  }
+
+  /**
+   * Collapse or expand all related parent categories.
+   * @param oldItem The previously selected toolbox item.
+   * @param newItem The newly selected toolbox item.
+   */
+  private updateCollapsibleCategories(
+    oldItem: Blockly.ISelectableToolboxItem | null,
+    newItem: Blockly.ISelectableToolboxItem | null
+  ): void {
+    // Get LCA (Lowest Common Ancestor) of two parents chains.
+    const oldParents = this.getParents(oldItem);
+    const newParents = this.getParents(newItem);
+    let lca: Blockly.IToolboxItem | null = null;
+    for (let i = oldParents.length, j = newParents.length; i >= 0 && j >= 0; --i, --j) {
+      if (oldParents[i] == newParents[j]) {
+        lca = oldParents[i];
+      } else {
+        break;
+      }
+    }
+
+    // Collapse all items from old item to LCA.
+    for (const item of oldParents) {
+      if (item === lca) break;
+      if (item.isCollapsible()) {
+        (item as CollapsibleToolboxCategory).setExpanded(false);
+      }
+    }
+
+    // Expand all items from new item to LCA.
+    for (const item of newParents) {
+      if (item === lca) break;
+      if (item.isCollapsible()) {
+        (item as CollapsibleToolboxCategory).setExpanded(true);
+      }
     }
   }
 

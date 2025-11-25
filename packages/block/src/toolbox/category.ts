@@ -71,6 +71,14 @@ export class ScratchCategory extends Blockly.ToolboxCategory {
   }
 
   /**
+   * Get whether this category is selectable.
+   * @returns True if this category is not disabled.
+   */
+  override isSelectable(): boolean {
+    return !this.isDisabled_;
+  }
+
+  /**
    * Sets the current category as selected.
    * @param isSelected True if this category is selected, false otherwise.
    */

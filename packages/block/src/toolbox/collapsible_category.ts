@@ -49,6 +49,14 @@ export class CollapsibleToolboxCategory extends Blockly.CollapsibleToolboxCatego
   }
 
   /**
+   * Get whether this category is selectable.
+   * @returns True if this category is not disabled.
+   */
+  override isSelectable(): boolean {
+    return !this.isDisabled_;
+  }
+
+  /**
    * Sets the current category as selected.
    * @param isSelected True if this category is selected, false otherwise.
    */
@@ -71,6 +79,37 @@ export class CollapsibleToolboxCategory extends Blockly.CollapsibleToolboxCatego
       Blockly.utils.aria.State.SELECTED,
       isSelected
     );
+  }
+
+  /**
+   * Opens or closes the current category and the associated flyout.
+   * @param isExpanded True to expand the category, false to close.
+   */
+  override setExpanded(isExpanded: boolean): void {
+    if (this.expanded_ === isExpanded) return;
+
+    this.expanded_ = isExpanded;
+    if (isExpanded) {
+      this.subcategoriesDiv_!.style.display = 'block';
+      this.openIcon_(this.iconDom_);
+    } else {
+      this.subcategoriesDiv_!.style.display = 'none';
+      this.closeIcon_(this.iconDom_);
+    }
+    Blockly.utils.aria.setState(
+      this.htmlDiv_ as HTMLDivElement,
+      Blockly.utils.aria.State.EXPANDED,
+      isExpanded
+    );
+  }
+
+  /**
+   * Handles when the toolbox item is clicked.
+   * @param e Click event to handle.
+   */
+  override onClick(e: Event): void {
+    // Shouldn't do anything since the behaviour is handled by toolbox.
+    // See ContinuousToolBox.updateCollapsibleCategories
   }
 }
 
