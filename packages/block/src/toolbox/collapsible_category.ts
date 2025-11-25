@@ -90,7 +90,7 @@ export class CollapsibleToolboxCategory extends Blockly.CollapsibleToolboxCatego
 
     this.expanded_ = isExpanded;
     if (isExpanded) {
-      this.subcategoriesDiv_!.style.display = 'block';
+      this.subcategoriesDiv_!.style.display = '';
       this.openIcon_(this.iconDom_);
     } else {
       this.subcategoriesDiv_!.style.display = 'none';
