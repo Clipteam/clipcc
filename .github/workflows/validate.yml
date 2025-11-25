@@ -9,14 +9,9 @@ on:
   pull_request:
 
 jobs:
-  setup:
-    name: Setup and Build
+  validate:
+    name: Validate
     runs-on: ubuntu-latest
-    outputs:
-      gui-changed: ${{ steps.changes.outputs.gui }}
-      vm-changed: ${{ steps.changes.outputs.vm }}
-      block-changed: ${{ steps.changes.outputs.block }}
-      should-run-all-tests: ${{ steps.check-types.outputs.should-run-all }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -62,42 +57,14 @@ jobs:
             block:
               - 'packages/block/**'
 
-  test-gui:
-    name: Test GUI
-    runs-on: ubuntu-latest
-    needs: setup
-    if: needs.setup.outputs.gui-changed == 'true' || needs.setup.outputs.should-run-all-tests == 'true'
-    steps:
-      - name: Run GUI tests
+      - name: Test GUI
+        if: steps.changes.outputs.gui == 'true' || steps.check-types.outputs.should-run-all == 'true'
         run: yarn gui test:unit
 
-  test-vm:
-    name: Test VM
-    runs-on: ubuntu-latest
-    needs: setup
-    if: needs.setup.outputs.vm-changed == 'true' || needs.setup.outputs.should-run-all-tests == 'true'
-    steps:
-      - name: Run VM tests
+      - name: Test VM
+        if: steps.changes.outputs.vm == 'true' || steps.check-types.outputs.should-run-all == 'true'
         run: yarn vm test
 
-  test-block:
-    name: Test Block
-    runs-on: ubuntu-latest
-    needs: setup
-    if: needs.setup.outputs.block-changed == 'true' || needs.setup.outputs.should-run-all-tests == 'true'
-    steps:
-      - name: Run Block tests
+      - name: Test Block
+        if: steps.changes.outputs.block == 'true' || steps.check-types.outputs.should-run-all == 'true'
         run: yarn block test
-
-  validate:
-    name: Summarize
-    runs-on: ubuntu-latest
-    needs: [setup, test-gui, test-vm, test-block]
-    if: always() && needs.setup.result == 'success'
-    steps:
-      - name: Check test results
-        run: |
-          # Check if any test job failed
-          if [[ "${{ needs.test-gui.result }}" == "failure" || "${{ needs.test-vm.result }}" == "failure" || "${{ needs.test-block.result }}" == "failure" ]]; then
-            exit 1
-          fi
