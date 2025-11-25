@@ -20,7 +20,7 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
   static readonly SCROLL_ANIMATION_FRACTION = 0.3;
 
   /** The width of the flyout, if not otherwise specified. */
-  static readonly DEFAULT_WIDTH = 250;
+  static readonly DEFAULT_WIDTH = 350;
 
   /** Default vertical gap. */
   override readonly GAP_Y: number = 10;
