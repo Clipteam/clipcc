@@ -148,4 +148,14 @@ export class ContinuousToolBox extends Blockly.Toolbox {
       flyout.scrollToCategory(newItem.getName(), animation);
     }
   }
+
+  /**
+   * Called when a node of this tree has received active focus.
+   * We shouldn't do anything when getting focused.
+   *
+   * See IFocusableTree.onTreeFocus.
+   * @param node The node receiving active focus.
+   * @param previousTree The previous tree that held active focus, or null if none.
+   */
+  override onTreeFocus(node: Blockly.IFocusableNode, previousTree: Blockly.IFocusableTree | null): void {}
 }
