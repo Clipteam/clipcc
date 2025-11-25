@@ -1,13 +1,11 @@
 
 /**
-/**
  * @license
  * Copyright 2025 Clip Team
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import * as Blockly from 'blockly/core';
-import {encodeEntities} from './utils';
 import {Colours} from './colours';
 import styles from './styles/visual_report.css';
 
@@ -55,8 +53,7 @@ export function reportValue(id: string, value: string, workspace?: Blockly.Works
     img.src = value;
     valueReportBox.appendChild(img);
   } else {
-    const encodedStr = encodeEntities(value);
-    valueReportBox.innerHTML = encodedStr;
+    valueReportBox.innerText = value;
   }
   contentDiv.appendChild(valueReportBox);
   Blockly.DropDownDiv.setColour(

@@ -39,21 +39,6 @@ export function compareStrings(str1: string, str2: string): number {
 }
 
 /**
- * Encode a string's HTML entities.
- * E.g., <a> -> &lt;a&gt;
- * Does not exist in Blockly, but needed in scratch-blocks
- * @param rawStr Unencoded raw string to encode.
- * @returns String with HTML entities encoded.
- * @package
- */
-export const encodeEntities = function(rawStr: string) {
-  // CC-BY-SA https://stackoverflow.com/questions/18749591/encode-html-entities-in-javascript
-  return rawStr.replace(/[\u00A0-\u9999<>&]/gim, function(i) {
-    return '&#' + i.charCodeAt(0) + ';';
-  });
-};
-
-/**
  * Get current workspace options.
  * Blockly.getMainWorkspace doesn't work when initView is called on toolbox init.
  * @param field The current field.
