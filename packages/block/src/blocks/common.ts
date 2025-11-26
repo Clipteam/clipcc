@@ -334,11 +334,6 @@ Blockly.Blocks['unknown'] = {
       case 'create':
       case 'delete':
       case 'move':
-        // see Blockly/core/connnection.ts:connect_ implementation
-        if (event.type === 'move' || (event as Blockly.Events.BlockMove).reason?.at(0) !== 'connect') {
-          return;
-        }
-
         if (this.shape !== this.inferShape_()) {
           this.shape = this.inferShape_();
           this.updateShape_(this.shape);
