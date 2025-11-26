@@ -242,14 +242,13 @@ Blockly.Blocks['unknown'] = {
     this.blockInfo = {};
     this.updateDisplay_();
     this.setMovable(false);
-    console.log('init');
   },
   updateDisplay_: function(this: UnknownBlock) {
     this.removeAllInputs();
     this.updateShape_();
     this.setPlaceholderText_(this.placeholderText);
   },
-  removeAllInputs(this: UnknownBlock) {
+  removeAllInputs: function(this: UnknownBlock) {
     // Delete inputs directly instead of with block.removeInput to avoid splicing
     // out of the input list at every index.
     for (const input of this.inputList) {
@@ -258,10 +257,23 @@ Blockly.Blocks['unknown'] = {
     this.inputList = [];
   },
   updateShape_: function(this: UnknownBlock) {
-    this.setOutputShape(Constants.OUTPUT_SHAPE_NORMAL);
+    if (this.getNextBlock() || this.getPreviousBlock()) {
+        this.setOutputShape(Constants.OUTPUT_SHAPE_NORMAL);
+        this.setOutput(false);
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
+    } else if (this.outputConnection?.isConnected())  {
+        const isBoolean = this.outputConnection?.targetConnection?.getCheck()?. includes('Boolean');
+        this.setOutputShape(isBoolean ? Constants.OUTPUT_SHAPE_HEXAGONAL : Constants. OUTPUT_SHAPE_ROUND);
+        this.setOutput(true);
+        this.setPreviousStatement(false);
+        this.setNextStatement(false);
+    } else {
+        this.setOutputShape(Constants.OUTPUT_SHAPE_NORMAL);
     this.setOutput(true);
     this.setPreviousStatement(true);
     this.setNextStatement(true);
+    }
   },
   setPlaceholderText_: function(this: UnknownBlock, text: string) {
     this.appendDummyInput().appendField(text);
@@ -276,5 +288,15 @@ Blockly.Blocks['unknown'] = {
     this.blockInfo = state.blockInfo;
     this.placeholderText = state.placeholderText;
     this.updateDisplay_();
+  },
+  onchange: function(this: UnknownBlock, event: Blockly.Events.Abstract) {
+    switch (event.type) {
+      case 'change':
+      case 'create':
+      case 'delete':
+      case 'move':
+      this.updateShape_();
+      break;
+    }
   }
 } as UnknownBlock;
