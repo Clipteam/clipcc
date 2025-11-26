@@ -65,8 +65,10 @@ export class FieldButton extends Blockly.Field<string> {
    * @param value Path to the image.
    * @param onClick Function to be called when button clicked.
    */
-  constructor(value: string, onClick?: (field: FieldButton) => void) {
+  constructor(value: string | typeof Blockly.Field.SKIP_SETUP, onClick?: (field: FieldButton) => void) {
     super(Blockly.Field.SKIP_SETUP);
+
+    if (value === Blockly.Field.SKIP_SETUP) return;
 
     if (typeof onClick === 'function') {
       this.onClickHandler = onClick;

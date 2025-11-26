@@ -249,10 +249,12 @@ export class FieldNote extends Blockly.FieldTextInput {
    * @param config A map of options used to configure the field.
    */
   constructor(
-    value?: string | number,
+    value?: string | number | typeof Blockly.Field.SKIP_SETUP,
     validator?: Blockly.FieldTextInputValidator | null,
     config?: Blockly.FieldTextInputConfig
   ) {
+    if (value === Blockly.Field.SKIP_SETUP) return;
+
     value = (value && !isNaN(value as number)) ? String(value) : '0';
     super(value, validator, config);
   }
