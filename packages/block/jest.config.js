@@ -24,14 +24,11 @@ module.exports = {
     testEnvironment: 'node',
     ...sharedConfig
   }, {
-    displayName: 'Unit Tests on Browser',
-    testMatch: ['<rootDir>/tests/browser/**/*.test.[jt]s'],
-    testEnvironment: '<rootDir>/tests/environment/jsdom.ts',
-    setupFiles: ['jest-canvas-mock'],
-    ...sharedConfig
-  }, {
     displayName: 'DOM Tests',
-    testMatch: ['<rootDir>/tests/blocks/**/*.test.[jt]s'],
+    testMatch: [
+      '<rootDir>/tests/blocks/**/*.test.[jt]s',
+      '<rootDir>/tests/browser/**/*.test.[jt]s'
+    ],
     testEnvironment: '<rootDir>/tests/environment/jsdom.ts',
     setupFiles: ['jest-canvas-mock'],
     ...sharedConfig
