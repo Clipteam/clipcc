@@ -212,12 +212,37 @@ Blockly.Blocks['text'] = {
 /* Special Blocks */
 
 interface UnknownBlock extends Blockly.BlockSvg {
+  /**
+   * Used to retain unknown block info.
+   */
   blockInfo: Record<string, unknown>;
+  /**
+   * User-friendly placeholder text to show on the block.
+   */
   placeholderText: string;
+  /**
+   * Current shape of the block.
+   */
+  shape: number | null;
 
+  /**
+   * Force update display based on current shape and placeholder text.
+   */
   updateDisplay_: () => void;
-  removeAllInputs: () => void;
-  updateShape_: () => void;
+  /**
+   * Infer what shape should we are, based on connection status.
+   * @returns Constants.OUTPUT_SHAPE_*, or -1 if unable to infer the shape.
+   */
+  inferShape_: () => number | null;
+  /**
+   * Change block shape based on given shape.
+   * @param shape The shape to change to. accepts Constants.OUTPUT_SHAPE_* and -1;
+   */
+  updateShape_: (shape: number | null) => void;
+  /**
+   * Set the placeholder text shown on the block. usually use the unknown block's type.
+   * @param text The placeholder text to set.
+   */
   setPlaceholderText_: (text: string) => void;
 }
 
@@ -238,45 +263,66 @@ Blockly.Blocks['unknown'] = {
       extensions: ['colours_unknown']
     });
     this.placeholderText = '';
-
     this.blockInfo = {};
-    this.updateDisplay_();
+    // Init shape; placeholder text is empty by default and will be set by loadExtraState.
+    this.shape = this.inferShape_();
+    this.updateShape_(this.shape);
+    // Unknown blocks are not movable. Since we don't know their real shape and connections,
+    // allowing moving may break the workspace when the block becomes 'known'.
     this.setMovable(false);
   },
   updateDisplay_: function(this: UnknownBlock) {
-    this.removeAllInputs();
-    this.updateShape_();
+    this.updateShape_(this.shape);
     this.setPlaceholderText_(this.placeholderText);
   },
-  removeAllInputs: function(this: UnknownBlock) {
-    // Delete inputs directly instead of with block.removeInput to avoid splicing
-    // out of the input list at every index.
-    for (const input of this.inputList) {
-      input.dispose();
+  inferShape_: function(this: UnknownBlock) {
+    if (this.getNextBlock() || this.getPreviousBlock()) { // If it has next/previous block
+      return Constants.OUTPUT_SHAPE_NORMAL;
+    } else if (this.outputConnection?.isConnected()) { // If we're connected to other block
+      // Shape based on the type of block we're connected to. Boolean is the only special case in Scratch.
+      const isBoolean = this.outputConnection?.targetConnection?.getCheck()?.includes('Boolean');
+      return isBoolean ? Constants.OUTPUT_SHAPE_HEXAGONAL : Constants.OUTPUT_SHAPE_ROUND;
+    } else {
+      return -1; // Indicate we don't know change to which shape
     }
-    this.inputList = [];
   },
-  updateShape_: function(this: UnknownBlock) {
-    if (this.getNextBlock() || this.getPreviousBlock()) {
+  updateShape_: function(this: UnknownBlock, shape: number | null) {
+    switch (shape) {
+      case Constants.OUTPUT_SHAPE_NORMAL:
         this.setOutputShape(Constants.OUTPUT_SHAPE_NORMAL);
         this.setOutput(false);
         this.setPreviousStatement(true);
         this.setNextStatement(true);
-    } else if (this.outputConnection?.isConnected())  {
-        const isBoolean = this.outputConnection?.targetConnection?.getCheck()?. includes('Boolean');
-        this.setOutputShape(isBoolean ? Constants.OUTPUT_SHAPE_HEXAGONAL : Constants. OUTPUT_SHAPE_ROUND);
+        return;
+      case Constants.OUTPUT_SHAPE_HEXAGONAL:
+        this.setOutputShape(Constants.OUTPUT_SHAPE_HEXAGONAL);
         this.setOutput(true);
         this.setPreviousStatement(false);
         this.setNextStatement(false);
-    } else {
+        return;
+      case Constants.OUTPUT_SHAPE_ROUND:
+        this.setOutputShape(Constants.OUTPUT_SHAPE_ROUND);
+        this.setOutput(true);
+        this.setPreviousStatement(false);
+        this.setNextStatement(false);
+        return;
+      default:
+        // Unable to infer shape, so we allow it connected in any way.
         this.setOutputShape(Constants.OUTPUT_SHAPE_NORMAL);
-    this.setOutput(true);
-    this.setPreviousStatement(true);
-    this.setNextStatement(true);
+        this.setOutput(true);
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
     }
   },
   setPlaceholderText_: function(this: UnknownBlock, text: string) {
-    this.appendDummyInput().appendField(text);
+    const input = this.getInput('PLACEHOLDER') ?? this.appendDummyInput('PLACEHOLDER');
+    for (const field of input.fieldRow) {
+      if (field.name === 'PLACEHOLDER_TEXT') {
+        field.setValue(text);
+        return;
+      }
+    }
+    input.appendField(text, 'PLACEHOLDER_TEXT');
   },
   saveExtraState: function(this: UnknownBlock): UnknownBlockExtraState {
     return {
@@ -287,16 +333,20 @@ Blockly.Blocks['unknown'] = {
   loadExtraState: function(this: UnknownBlock, state: UnknownBlockExtraState) {
     this.blockInfo = state.blockInfo;
     this.placeholderText = state.placeholderText;
-    this.updateDisplay_();
+    this.setPlaceholderText_(this.placeholderText);
   },
   onchange: function(this: UnknownBlock, event: Blockly.Events.Abstract) {
+    // Only respond to events that may change connection status
     switch (event.type) {
       case 'change':
       case 'create':
       case 'delete':
       case 'move':
-      this.updateShape_();
-      break;
+        if (this.shape !== this.inferShape_()) {
+          this.shape = this.inferShape_();
+          this.updateShape_(this.shape);
+        }
+        break;
     }
   }
 } as UnknownBlock;
