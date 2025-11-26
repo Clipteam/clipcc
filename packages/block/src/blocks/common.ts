@@ -211,15 +211,11 @@ Blockly.Blocks['text'] = {
 
 /* Special Blocks */
 
-interface UnknownBlock extends Blockly.BlockSvg {
+export interface UnknownBlock extends Blockly.BlockSvg {
   /**
-   * Used to retain unknown block info.
+   * Used to retain unknown block state.
    */
-  blockInfo: Record<string, unknown>;
-  /**
-   * User-friendly placeholder text to show on the block.
-   */
-  placeholderText: string;
+  unknownBlockState: Blockly.serialization.blocks.State | null;
   /**
    * Current shape of the block.
    */
@@ -243,13 +239,10 @@ interface UnknownBlock extends Blockly.BlockSvg {
    * Set the placeholder text shown on the block. usually use the unknown block's type.
    * @param text The placeholder text to set.
    */
-  setPlaceholderText_: (text: string) => void;
+  updatePlaceholderText_: () => void;
 }
 
-interface UnknownBlockExtraState {
-  blockInfo: Record<string, unknown>;
-  placeholderText: string;
-}
+export type UnknownBlockExtraState = Blockly.serialization.blocks.State;
 
 /**
  * Placeholder block for non-existing blocks in clipcc-block.
@@ -258,12 +251,11 @@ interface UnknownBlockExtraState {
  * WARNING: this block should only exists in blockly side, VM should never see this block.
  */
 Blockly.Blocks['unknown'] = {
-  init: function(this: UnknownBlock) {
+  init: function() {
     this.jsonInit({
       extensions: ['colours_unknown']
     });
-    this.placeholderText = '';
-    this.blockInfo = {};
+    this.unknownBlockState = null;
     // Init shape; placeholder text is empty by default and will be set by loadExtraState.
     this.shape = this.inferShape_();
     this.updateShape_(this.shape);
@@ -271,11 +263,11 @@ Blockly.Blocks['unknown'] = {
     // allowing moving may break the workspace when the block becomes 'known'.
     this.setMovable(false);
   },
-  updateDisplay_: function(this: UnknownBlock) {
+  updateDisplay_: function() {
     this.updateShape_(this.shape);
-    this.setPlaceholderText_(this.placeholderText);
+    this.updatePlaceholderText_();
   },
-  inferShape_: function(this: UnknownBlock) {
+  inferShape_: function() {
     if (this.getNextBlock() || this.getPreviousBlock()) { // If it has next/previous block
       return Constants.OUTPUT_SHAPE_NORMAL;
     } else if (this.outputConnection?.isConnected()) { // If we're connected to other block
@@ -286,7 +278,7 @@ Blockly.Blocks['unknown'] = {
       return -1; // Indicate we don't know change to which shape
     }
   },
-  updateShape_: function(this: UnknownBlock, shape: number | null) {
+  updateShape_: function(shape: number | null) {
     switch (shape) {
       case Constants.OUTPUT_SHAPE_NORMAL:
         this.setOutputShape(Constants.OUTPUT_SHAPE_NORMAL);
@@ -314,7 +306,8 @@ Blockly.Blocks['unknown'] = {
         this.setNextStatement(true);
     }
   },
-  setPlaceholderText_: function(this: UnknownBlock, text: string) {
+  updatePlaceholderText_: function() {
+    const text = this.unknownBlockState?.type ?? 'unknown';
     const input = this.getInput('PLACEHOLDER') ?? this.appendDummyInput('PLACEHOLDER');
     for (const field of input.fieldRow) {
       if (field.name === 'PLACEHOLDER_TEXT') {
@@ -324,24 +317,28 @@ Blockly.Blocks['unknown'] = {
     }
     input.appendField(text, 'PLACEHOLDER_TEXT');
   },
-  saveExtraState: function(this: UnknownBlock): UnknownBlockExtraState {
-    return {
-      blockInfo: this.blockInfo,
-      placeholderText: this.placeholderText
-    };
+  saveExtraState: function(): UnknownBlockExtraState {
+    if (!this.unknownBlockState) {
+      throw new Error('Unknown block unknownBlockState is null when saving extra state.');
+    }
+    return this.unknownBlockState;
   },
-  loadExtraState: function(this: UnknownBlock, state: UnknownBlockExtraState) {
-    this.blockInfo = state.blockInfo;
-    this.placeholderText = state.placeholderText;
-    this.setPlaceholderText_(this.placeholderText);
+  loadExtraState: function(state: UnknownBlockExtraState) {
+    this.unknownBlockState = state;
+    this.updatePlaceholderText_();
   },
-  onchange: function(this: UnknownBlock, event: Blockly.Events.Abstract) {
+  onchange: function(event: Blockly.Events.Abstract) {
     // Only respond to events that may change connection status
     switch (event.type) {
       case 'change':
       case 'create':
       case 'delete':
       case 'move':
+        // see Blockly/core/connnection.ts:connect_ implementation
+        if (event.type === 'move' || (event as Blockly.Events.BlockMove).reason?.at(0) !== 'connect') {
+          return;
+        }
+
         if (this.shape !== this.inferShape_()) {
           this.shape = this.inferShape_();
           this.updateShape_(this.shape);
