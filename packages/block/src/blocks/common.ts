@@ -280,7 +280,7 @@ Blockly.Blocks['unknown'] = {
       return Constants.OUTPUT_SHAPE_NORMAL;
     } else if (this.outputConnection?.isConnected()) { // If we're connected to other block
       // Shape based on the type of block we're connected to. Boolean is the only special case in Scratch.
-      const isBoolean = this.outputConnection?.targetConnection?.getCheck()?.includes('Boolean');
+      const isBoolean = this.outputConnection.targetConnection?.getCheck()?.includes('Boolean');
       return isBoolean ? Constants.OUTPUT_SHAPE_HEXAGONAL : Constants.OUTPUT_SHAPE_ROUND;
     } else {
       return -1; // Indicate we don't know change to which shape
