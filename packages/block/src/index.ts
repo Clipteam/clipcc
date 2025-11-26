@@ -34,6 +34,7 @@ import './toolbox/flyout';
 import './toolbox/toolbox';
 import './toolbox/category';
 import './toolbox/collapsible_category';
+import './toolbox/inflaters/block';
 import './toolbox/inflaters/label';
 
 import './blocks/extensions';
