@@ -208,3 +208,73 @@ Blockly.Blocks['text'] = {
     });
   }
 };
+
+/* Special Blocks */
+
+interface UnknownBlock extends Blockly.BlockSvg {
+  blockInfo: Record<string, unknown>;
+  placeholderText: string;
+
+  updateDisplay_: () => void;
+  removeAllInputs: () => void;
+  updateShape_: () => void;
+  setPlaceholderText_: (text: string) => void;
+}
+
+interface UnknownBlockExtraState {
+  blockInfo: Record<string, unknown>;
+  placeholderText: string;
+}
+
+/**
+ * Placeholder block for non-existing blocks in clipcc-block.
+ * It stores the unknown block info and placeholder text in extra state. its shape based on its connection status.
+ * So that it won't break the renderer and users can identify the missing blocks.
+ * WARNING: this block should only exists in blockly side, VM should never see this block.
+ */
+Blockly.Blocks['unknown'] = {
+  init: function(this: UnknownBlock) {
+    this.jsonInit({
+      extensions: ['colours_unknown']
+    });
+    this.placeholderText = '';
+
+    this.blockInfo = {};
+    this.updateDisplay_();
+    this.setMovable(false);
+    console.log('init');
+  },
+  updateDisplay_: function(this: UnknownBlock) {
+    this.removeAllInputs();
+    this.updateShape_();
+    this.setPlaceholderText_(this.placeholderText);
+  },
+  removeAllInputs(this: UnknownBlock) {
+    // Delete inputs directly instead of with block.removeInput to avoid splicing
+    // out of the input list at every index.
+    for (const input of this.inputList) {
+      input.dispose();
+    }
+    this.inputList = [];
+  },
+  updateShape_: function(this: UnknownBlock) {
+    this.setOutputShape(Constants.OUTPUT_SHAPE_NORMAL);
+    this.setOutput(true);
+    this.setPreviousStatement(true);
+    this.setNextStatement(true);
+  },
+  setPlaceholderText_: function(this: UnknownBlock, text: string) {
+    this.appendDummyInput().appendField(text);
+  },
+  saveExtraState: function(this: UnknownBlock): UnknownBlockExtraState {
+    return {
+      blockInfo: this.blockInfo,
+      placeholderText: this.placeholderText
+    };
+  },
+  loadExtraState: function(this: UnknownBlock, state: UnknownBlockExtraState) {
+    this.blockInfo = state.blockInfo;
+    this.placeholderText = state.placeholderText;
+    this.updateDisplay_();
+  }
+} as UnknownBlock;

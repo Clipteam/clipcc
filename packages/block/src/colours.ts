@@ -97,6 +97,12 @@ export const Colours: Record<string, Record<string, string> | string | number> =
     tertiary: '#EE3645',
     quaternary: '#EE3645'
   },
+  unknown: {
+    primary: '#FF0000',
+    secondary: '#CC0000',
+    tertiary: '#AA0000',
+    quaternary: '#AA0000'
+  },
   text: '#FFFFFF',
   workspace: '#F9F9F9',
   toolboxHover: '#4C97FF',
@@ -190,6 +196,11 @@ const blockStyles: {[key: string]: Partial<Blockly.Theme.BlockStyle>} = {
     colourPrimary: '#F47983',
     colourSecondary: '#F15764',
     colourTertiary: '#EE3645'
+  },
+  unknown: {
+    colourPrimary: '#FF0000',
+    colourSecondary: '#CC0000',
+    colourTertiary: '#AA0000'
   },
   textField: {
     colourPrimary: '#FFFFFF'
