@@ -32,6 +32,8 @@ import './renderer/renderer';
 import './connection_checker';
 import './dragger';
 import './insertion_marker_previewer';
+import './toolbox/collapsible_category';
+import './toolbox/inflaters/label';
 
 import './blocks/extensions';
 import './blocks/common';
@@ -165,3 +167,4 @@ export {setExternalProcedureDefCallback} from './procedures_category';
 Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
 Blockly.FlyoutButton.TEXT_MARGIN_X = 40;
 Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;
+Blockly.ToolboxCategory.nestedPadding = 6;

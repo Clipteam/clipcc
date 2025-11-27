@@ -1,5 +1,7 @@
 .blocklyToolbox {
   width: 100px;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .clipccToolboxCategoryContainer {
@@ -11,6 +13,7 @@
 }
 
 .clipccCategoryItem {
+  position: relative;
   cursor: pointer;
   text-align: center;
   display: flex;
@@ -28,7 +31,7 @@
 }
 
 .blocklyToolboxSelected .clipccCategoryItemColorBar {
-  width: calc(100% - 0.4em);
+  width: 100%;
   border-radius: 0.4em;
 }
 
@@ -42,4 +45,14 @@
 .blocklyToolboxSelected .clipccCategoryItemLabel {
   color: #fff;
   font-weight: bold;
+}
+
+.clipccToolboxCategoryGroup {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+.clipccToolboxCategoryGroup:focus {
+  outline: none;
 }

@@ -6,11 +6,15 @@
 
 import * as Blockly from 'blockly/core';
 import {ContinuousVerticalFlyout} from './flyout';
+import {CollapsibleToolboxCategory} from './collapsible_category';
 
 /**
  * Class for continuous toolbox.
  */
 export class ContinuousToolBox extends Blockly.Toolbox {
+  /** Gap between categories. */
+  static readonly CATEGORY_GAP = 36;
+
   /** The list of items in the toolbox. */
   protected contentsList: Blockly.IToolboxItem[] = [];
 
@@ -61,8 +65,13 @@ export class ContinuousToolBox extends Blockly.Toolbox {
     let contents: Blockly.utils.toolbox.FlyoutItemInfo[] = [];
     for (const toolboxItem of this.contentsList) {
       if (toolboxItem instanceof Blockly.ToolboxCategory) {
+        // Add gap between categories.
+        if (contents.length !== 0) {
+          contents.push({kind: 'sep', gap: ContinuousToolBox.CATEGORY_GAP});
+        }
+
         // The label of category.
-        contents.push({kind: 'label', text: toolboxItem.getName()});
+        contents.push({kind: 'label', text: toolboxItem.getName(), id: toolboxItem.getId()});
 
         let itemContents = toolboxItem.getContents();
         if (typeof itemContents === 'string') {
@@ -77,18 +86,14 @@ export class ContinuousToolBox extends Blockly.Toolbox {
   }
 
   /**
-   * Select the category with given name.
-   * @param name Category name.
+   * Select the category with given ID.
+   * @param id Category unique ID.
    * @returns Category item.
    */
-  getToolboxCategoryByName(name: string): Blockly.ToolboxCategory | null {
-    for (const item of this.contents.values()) {
-      if (
-        item instanceof Blockly.ToolboxCategory &&
-        item.isSelectable() && item.getName() === name
-      ) {
-        return item;
-      }
+  getToolboxCategoryById(id: string): Blockly.ToolboxCategory | null {
+    const item = this.contents.get(id);
+    if (item instanceof Blockly.ToolboxCategory && item.isSelectable()) {
+      return item;
     }
     return null;
   }
@@ -96,15 +101,15 @@ export class ContinuousToolBox extends Blockly.Toolbox {
   /**
    * Update the selected category without calling updateFlyout_. Should be called
    * when the flyout is being scrolled.
-   * @param name Category name.
+   * @param id Category unique ID.
    */
-  updateSelectedCategory(name: string): void {
+  updateSelectedCategoryById(id: string): void {
     const oldItem = this.selectedItem_;
     if (!oldItem || !this.getFlyout()?.isVisible()) {
       // Don't change if no item is selected or toolbox is hidden.
       return;
     }
-    const newItem = this.getToolboxCategoryByName(name);
+    const newItem = this.getToolboxCategoryById(id);
     if (!newItem || oldItem === newItem) {
       return;
     }
@@ -115,6 +120,87 @@ export class ContinuousToolBox extends Blockly.Toolbox {
 
     if (this.shouldSelectItem_(oldItem, newItem)) {
       this.selectItem_(oldItem, newItem);
+    }
+  }
+
+  /**
+   * Decides whether the old item should be deselected.
+   * @param oldItem The previously selected toolbox item.
+   * @param newItem The newly selected toolbox item.
+   * @returns True if the old item should be deselected, false otherwise.
+   */
+  protected override shouldDeselectItem_(
+    oldItem: Blockly.ISelectableToolboxItem | null,
+    newItem: Blockly.ISelectableToolboxItem | null
+  ): boolean {
+    return oldItem !== null;
+  }
+
+  /**
+   * Selects the given item, marks it selected, and updates aria state.
+   * The related parent items should be collapsed or expanded here.
+   * @param oldItem The previously selected toolbox item.
+   * @param newItem The newly selected toolbox item.
+   */
+  protected override selectItem_(
+    oldItem: Blockly.ISelectableToolboxItem | null,
+    newItem: Blockly.ISelectableToolboxItem
+  ): void {
+    const previousItem = oldItem ?? this.previouslySelectedItem_;
+    super.selectItem_(oldItem, newItem);
+    this.updateCollapsibleCategories(previousItem, newItem);
+  }
+
+  /**
+   * Get all parents of given item, including itself. The result is ordered from
+   * given item to the root.
+   * @param item The toolbox item.
+   * @returns Array storing all parents ant itself.
+   */
+  private getParents(item: Blockly.IToolboxItem | null): Blockly.IToolboxItem[] {
+    const parents = [];
+    while (item) {
+      parents.push(item);
+      item = item.getParent();
+    }
+    return parents;
+  }
+
+  /**
+   * Collapse or expand all related parent categories.
+   * @param oldItem The previously selected toolbox item.
+   * @param newItem The newly selected toolbox item.
+   */
+  private updateCollapsibleCategories(
+    oldItem: Blockly.ISelectableToolboxItem | null,
+    newItem: Blockly.ISelectableToolboxItem | null
+  ): void {
+    // Get LCA (Lowest Common Ancestor) of two parents chains.
+    const oldParents = this.getParents(oldItem);
+    const newParents = this.getParents(newItem);
+    let lca: Blockly.IToolboxItem | null = null;
+    for (let i = oldParents.length, j = newParents.length; i >= 0 && j >= 0; --i, --j) {
+      if (oldParents[i] == newParents[j]) {
+        lca = oldParents[i];
+      } else {
+        break;
+      }
+    }
+
+    // Collapse all items from old item to LCA.
+    for (const item of oldParents) {
+      if (item === lca) break;
+      if (item.isCollapsible() && (item as CollapsibleToolboxCategory).isExpanded()) {
+        (item as CollapsibleToolboxCategory).setExpanded(false);
+      }
+    }
+
+    // Expand all items from new item to LCA.
+    for (const item of newParents) {
+      if (item === lca) break;
+      if (item.isCollapsible() && !(item as CollapsibleToolboxCategory).isExpanded()) {
+        (item as CollapsibleToolboxCategory).setExpanded(true);
+      }
     }
   }
 
@@ -145,7 +231,17 @@ export class ContinuousToolBox extends Blockly.Toolbox {
     } else {
       const animation = flyout.isVisible();
       flyout.setVisible(true);
-      flyout.scrollToCategory(newItem.getName(), animation);
+      flyout.scrollToCategoryById(newItem.getId(), animation);
     }
   }
+
+  /**
+   * Called when a node of this tree has received active focus.
+   * We shouldn't do anything when getting focused.
+   *
+   * See IFocusableTree.onTreeFocus.
+   * @param node The node receiving active focus.
+   * @param previousTree The previous tree that held active focus, or null if none.
+   */
+  override onTreeFocus(node: Blockly.IFocusableNode, previousTree: Blockly.IFocusableTree | null): void {}
 }
