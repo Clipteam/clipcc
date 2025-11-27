@@ -22,6 +22,7 @@ import {ContinuousVerticalFlyout} from './toolbox/flyout';
 import {flyoutCategory as variableCategory} from './data_category';
 import {flyoutCategory as procedureCategory} from './procedures_category';
 import {isProcedureCallBlock, isProcedurePrototypeBlock} from './blocks/procedures';
+import {ZoomControls} from './zoom_controls';
 import styles from './styles/blockly.css';
 
 import {FuncChange} from './events/func_change';
@@ -132,7 +133,23 @@ export function injectWorkspace(container: Element | string, options?: Blockly.B
     }
   };
   options = Object.assign(defaultOptions, options);
-  return Blockly.inject(container, options);
+  let initZoomControl = false;
+  if (options.zoom?.controls) {
+    // Use our ZoomControls implementation.
+    options.zoom.controls = false;
+    initZoomControl = true;
+  }
+  const workspace = Blockly.inject(container, options);
+  if (initZoomControl) {
+    workspace.zoomControls_ = new ZoomControls(workspace) as unknown as Blockly.ZoomControls;
+    const svgZoomControls = workspace.zoomControls_.createDom();
+    workspace.svgGroup_.appendChild(svgZoomControls);
+    workspace.zoomControls_!.init();
+    // To trigger zoom controls positioning.
+    workspace.resize();
+  }
+
+  return workspace;
 }
 
 /**
