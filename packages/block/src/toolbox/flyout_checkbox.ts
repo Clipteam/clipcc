@@ -7,6 +7,9 @@
 import * as Blockly from 'blockly/core';
 import styles from '../styles/checkbox.css';
 
+/**
+ * Class for a checkbox in the flyout.
+ */
 export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRenderedElement, Blockly.IFocusableNode {
   /** Size of a checkbox. */
   static readonly CHECKBOX_SIZE = 25;
@@ -50,12 +53,14 @@ export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRendere
   /**
    * @param flyoutElement The flyout element associated with.
    * @param workspace The workspace in which to place this checkbox.
-   * @param onChange Event handler when checkbox state is changeed.
+   * @param onChange Event handler when checkbox state is changeed. The first
+   *      argument represents the new checkbox state and the second one refers
+   *      to the checkbox instance.
    */
   constructor(
     protected readonly flyoutElement: (Blockly.IBoundedElement & Blockly.IFocusableNode) | null,
     protected readonly workspace: Blockly.WorkspaceSvg,
-    protected readonly onChange?: (newChecked: boolean) => void
+    protected readonly onChange?: (newChecked: boolean, self: FlyoutCheckbox) => void
   ) {
     this.svgGroup = Blockly.utils.dom.createSvgElement(
       Blockly.utils.Svg.G,
@@ -113,8 +118,16 @@ export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRendere
     }
 
     if (fireChangeEvent && this.onChange) {
-      this.onChange(newChecked);
+      this.onChange(newChecked, this);
     }
+  }
+
+  /**
+   * Get the flyout element which the checkbox is associated with.
+   * @returns The flyout element or a null value.
+   */
+  getChildElement() {
+    return this.flyoutElement;
   }
 
   protected onMouseDown(e: PointerEvent) {

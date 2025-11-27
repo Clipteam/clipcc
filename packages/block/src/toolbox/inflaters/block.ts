@@ -25,25 +25,33 @@ export class BlockFlyoutInflater extends Blockly.BlockFlyoutInflater {
     const block = flyoutItem.getElement() as Blockly.BlockSvg;
     if (isCheckboxInFlyout(block) && block.checkboxInFlyout) {
       return new Blockly.FlyoutItem(
-        new FlyoutCheckbox(block, flyout.getWorkspace(), (newChecked: boolean) => {
-          // Fire a block change event when checkbox state changes.
-          if (Blockly.Events.isEnabled()) {
-            Blockly.Events.fire(
-              new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
-                block,
-                'checkbox',
-                null,
-                !newChecked,
-                newChecked
-              )
-            );
-          }
-        }),
+        new FlyoutCheckbox(block, flyout.getWorkspace(), this.onCheckboxChange.bind(this)),
         BlockFlyoutInflater.TYPE
       );
     }
 
     return flyoutItem;
+  }
+
+  /**
+   * Event handler triggered when the checkbox state is changed.
+   * @param newChecked The new checkbox state.
+   * @param checkbox The checkbox instance.
+   */
+  protected onCheckboxChange(newChecked: boolean, checkbox: FlyoutCheckbox) {
+    // Fire a block change event when checkbox state changes.
+    if (Blockly.Events.isEnabled()) {
+      const block = checkbox.getChildElement()!;
+      Blockly.Events.fire(
+        new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
+          block,
+          'checkbox',
+          null,
+          !newChecked,
+          newChecked
+        )
+      );
+    }
   }
 }
 
