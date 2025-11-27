@@ -129,7 +129,7 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
       return;
     }
 
-    const normalized = typeof newValue === 'number' ? this.formatNumber_(newValue) : `${newValue}`;
+    const normalized = typeof newValue === 'number' ? this.formatNumber(newValue) : `${newValue}`;
     super.setValue(normalized, fireChangeEvent);
   }
 
@@ -206,7 +206,7 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
       numeric = Number(numeric.toFixed(this.decimalPlaces));
     }
 
-    return this.formatNumber_(numeric);
+    return this.formatNumber(numeric);
   }
 
   protected override getText_(): string | null {
@@ -235,7 +235,8 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
       return;
     }
     FieldScratchNumber.activeField_ = this;
-    this.showNumPad_();
+    this.moveCursorToEnd();
+    this.showNumPad();
   }
 
   protected override widgetDispose_(): void {
@@ -291,7 +292,7 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     }
   }
 
-  private formatNumber_(value: number): string {
+  private formatNumber(value: number): string {
     if (Object.is(value, -0)) {
       return '0';
     }
@@ -307,20 +308,20 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     this.negativeAllowed_ = this.min_ < 0 || !Number.isFinite(this.min_);
   }
 
-  private showNumPad_(): void {
+  private showNumPad(): void {
     Blockly.DropDownDiv.hideWithoutAnimation();
     Blockly.DropDownDiv.clearContent();
     const contentDiv = Blockly.DropDownDiv.getContentDiv();
     contentDiv.setAttribute('role', 'menu');
     contentDiv.setAttribute('aria-haspopup', 'true');
     contentDiv.style.width = `${FieldScratchNumber.DROPDOWN_WIDTH}px`;
-    this.addButtons_(contentDiv);
+    this.addButtons(contentDiv);
 
     const sourceBlock = this.getSourceBlock() as Blockly.BlockSvg | null;
     if (!sourceBlock) {
       return;
     }
-    const colourSource = (sourceBlock.getParent() as Blockly.BlockSvg | null) || sourceBlock;
+    const colourSource = (sourceBlock.getParent() as Blockly.BlockSvg | null) ?? sourceBlock;
     Blockly.DropDownDiv.setColour(
       colourSource.getColour(),
       colourSource.getColourTertiary()
@@ -329,11 +330,11 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     Blockly.DropDownDiv.showPositionedByBlock(
       this as Blockly.Field<string | null | undefined>,
       sourceBlock,
-      this.onHide_.bind(this)
+      this.onHide.bind(this)
     );
   }
 
-  private addButtons_(contentDiv: Element): void {
+  private addButtons(contentDiv: Element): void {
     const sourceBlock = this.getSourceBlock() as Blockly.BlockSvg | null;
     const colourSource = (sourceBlock?.getParent() as Blockly.BlockSvg | null) || sourceBlock;
     const buttonColour = colourSource?.getColour() || String(Colours.numPadBackground);
@@ -359,12 +360,7 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
       } else if (buttonText === ' ' && this.negativeAllowed_) {
         button.style.visibility = 'hidden';
       }
-      Blockly.browserEvents.bind(
-        button,
-        'pointerdown',
-        this,
-        FieldScratchNumber.handleNumPadButton
-      );
+      Blockly.browserEvents.bind(button, 'pointerdown', this, FieldScratchNumber.handleNumPadButton);
       contentDiv.appendChild(button);
     }
 
@@ -377,12 +373,7 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     const eraseImage = document.createElement('img');
     eraseImage.src = FieldScratchNumber.NUMPAD_DELETE_ICON;
     eraseButton.appendChild(eraseImage);
-    Blockly.browserEvents.bind(
-      eraseButton,
-      'pointerdown',
-      null,
-      FieldScratchNumber.handleNumPadErase
-    );
+    Blockly.browserEvents.bind(eraseButton, 'pointerdown', null, FieldScratchNumber.handleNumPadErase);
     contentDiv.appendChild(eraseButton);
   }
 
@@ -394,7 +385,7 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     }
     const button = e.currentTarget as HTMLButtonElement | null;
     const spliceValue = button?.dataset.value ?? '';
-    field.insertTextAtCursor_(spliceValue);
+    field.insertTextAtCursor(spliceValue);
     Blockly.Touch.clearTouchIdentifier();
   }
 
@@ -404,11 +395,11 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     if (!field || !field.htmlInput_) {
       return;
     }
-    field.eraseFromInput_();
+    field.eraseFromInput();
     Blockly.Touch.clearTouchIdentifier();
   }
 
-  private insertTextAtCursor_(text: string): void {
+  private insertTextAtCursor(text: string): void {
     const input = this.htmlInput_;
     if (!input) {
       return;
@@ -416,10 +407,10 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     const start = input.selectionStart ?? input.value.length;
     const end = input.selectionEnd ?? start;
     const newValue = input.value.slice(0, start) + text + input.value.slice(end);
-    this.updateDisplay_(newValue, start + text.length);
+    this.updateDisplay(newValue, start + text.length);
   }
 
-  private eraseFromInput_(): void {
+  private eraseFromInput(): void {
     const input = this.htmlInput_;
     if (!input) {
       return;
@@ -430,25 +421,30 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
       start = Math.max(0, start - 1);
     }
     const newValue = input.value.slice(0, start) + input.value.slice(end);
-    this.updateDisplay_(newValue, start);
+    this.updateDisplay(newValue, start);
   }
 
-  private updateDisplay_(newValue: string, newSelection: number): void {
+  private updateDisplay(newValue: string, newSelection: number): void {
     const input = this.htmlInput_;
     if (!input) {
       return;
     }
-    input.value = newValue;
+    this.setEditorValue_(newValue, false);
     this.resizeEditor_();
     input.setSelectionRange(newSelection, newSelection);
     input.scrollLeft = input.scrollWidth;
-    const validator = this as unknown as {validate_: () => void};
-    if (typeof validator.validate_ === 'function') {
-      validator.validate_();
-    }
   }
 
-  private onHide_(): void {
+  private moveCursorToEnd(): void {
+    const input = this.htmlInput_;
+    if (!input) {
+      return;
+    }
+    const length = input.value.length;
+    input.setSelectionRange(length, length);
+  }
+
+  private onHide(): void {
     const contentDiv = Blockly.DropDownDiv.getContentDiv();
     contentDiv.removeAttribute('role');
     contentDiv.removeAttribute('aria-haspopup');
