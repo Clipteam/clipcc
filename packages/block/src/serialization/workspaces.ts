@@ -82,13 +82,12 @@ function convertToUnknown(blockState: BlockState): BlockState {
   // Check if this block type exists
   if (!blockExists(blockState.type)) {
     // Store the original state (with already converted children) as extraState
-    const originalState = {...blockState};
     return {
       type: 'unknown',
       id: blockState.id,
       x: blockState.x,
       y: blockState.y,
-      extraState: originalState
+      extraState: blockState
     };
   }
 
@@ -100,15 +99,14 @@ function convertToUnknown(blockState: BlockState): BlockState {
  * @param state The workspace state to process.
  * @returns The processed workspace state.
  */
-function convertWorkspaceStateToUnknown(state: {[key: string]: unknown}): {[key: string]: unknown} {
-  const result = {...state};
-  if (result.blocks && typeof result.blocks === 'object') {
-    const blocks = result.blocks as {blocks?: BlockState[]};
+function convertWorkspaceStateToUnknown(state: Record<string, unknown>): Record<string, unknown> {
+  if (typeof state.blocks === 'object') {
+    const blocks = state.blocks as {blocks?: BlockState[]};
     if (blocks.blocks && Array.isArray(blocks.blocks)) {
       blocks.blocks = blocks.blocks.map(convertToUnknown);
     }
   }
-  return result;
+  return state;
 }
 
 /**
@@ -116,15 +114,14 @@ function convertWorkspaceStateToUnknown(state: {[key: string]: unknown}): {[key:
  * @param state The workspace state to process.
  * @returns The processed workspace state.
  */
-function convertWorkspaceStateFromUnknown(state: {[key: string]: unknown}): {[key: string]: unknown} {
-  const result = {...state};
-  if (result.blocks && typeof result.blocks === 'object') {
-    const blocks = result.blocks as {blocks?: BlockState[]};
+function convertWorkspaceStateFromUnknown(state: Record<string, unknown>): Record<string, unknown> {
+  if (typeof state.blocks === 'object') {
+    const blocks = state.blocks as {blocks?: BlockState[]};
     if (blocks.blocks && Array.isArray(blocks.blocks)) {
       blocks.blocks = blocks.blocks.map(convertUnknownToOriginal);
     }
   }
-  return result;
+  return state;
 }
 
 /**
@@ -147,10 +144,10 @@ export function saveWorkspace(workspace: Blockly.Workspace) {
  *     undo-able by the user. False by default.
  */
 export function loadWorkspace(
-  state: { [key: string]: unknown },
+  state: Record<string, unknown>,
   workspace: Blockly.Workspace,
   recordUndo?: boolean
 ) {
-  const processedState = convertWorkspaceStateToUnknown(state);
-  Blockly.serialization.workspaces.load(processedState, workspace, {recordUndo});
+  convertWorkspaceStateToUnknown(state);
+  Blockly.serialization.workspaces.load(state, workspace, {recordUndo});
 }
