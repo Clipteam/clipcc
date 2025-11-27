@@ -53,6 +53,7 @@ export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRendere
   /**
    * @param flyoutElement The flyout element associated with.
    * @param workspace The workspace in which to place this checkbox.
+   * @param value The initial state of checkbox.
    * @param onChange Event handler when checkbox state is changeed. The first
    *      argument represents the new checkbox state and the second one refers
    *      to the checkbox instance.
@@ -60,6 +61,7 @@ export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRendere
   constructor(
     protected readonly flyoutElement: (Blockly.IBoundedElement & Blockly.IFocusableNode) | null,
     protected readonly workspace: Blockly.WorkspaceSvg,
+    value: boolean = false,
     protected readonly onChange?: (newChecked: boolean, self: FlyoutCheckbox) => void
   ) {
     this.svgGroup = Blockly.utils.dom.createSvgElement(
@@ -76,6 +78,9 @@ export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRendere
       this,
       this.onMouseDown
     );
+
+    // Set initial state.
+    this.setChecked(value, false);
 
     if (flyoutElement) {
       // Append the flyout item.
