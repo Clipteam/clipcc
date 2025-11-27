@@ -13,6 +13,7 @@ import {registerFieldButton} from './fields/button';
 import {registerFieldColourSlider} from './fields/colour_slider';
 import {registerFieldMatrix} from './fields/matrix';
 import {registerFieldNote} from './fields/note';
+import {registerFieldScratchNumber} from './fields/scratch_number';
 import {registerFieldTextInputRemovable} from './fields/textinput_removable';
 import {registerFieldVariableGetter} from './fields/variable_getter';
 import {registerFieldVerticalSeparator} from './fields/vertical_separator';
@@ -63,6 +64,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerFieldColourSlider();
   registerFieldMatrix();
   registerFieldNote();
+  registerFieldScratchNumber();
   registerFieldTextInputRemovable();
   registerFieldVariableGetter();
   registerFieldVerticalSeparator();

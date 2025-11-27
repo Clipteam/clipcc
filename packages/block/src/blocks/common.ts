@@ -60,7 +60,7 @@ Blockly.Blocks['math_number'] = {
     this.jsonInit({
       message0: '%1',
       args0: [{
-        type: 'field_number',
+        type: 'field_scratch_number',
         name: 'NUM',
         value: '0'
       }],
@@ -118,7 +118,7 @@ Blockly.Blocks['math_positive_number'] = {
     this.jsonInit({
       message0: '%1',
       args0: [{
-        type: 'field_number',
+        type: 'field_scratch_number',
         name: 'NUM',
         min: 0
       }],
