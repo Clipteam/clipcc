@@ -16,9 +16,6 @@ import {registerFieldNote} from './fields/note';
 import {registerFieldTextInputRemovable} from './fields/textinput_removable';
 import {registerFieldVariableGetter} from './fields/variable_getter';
 import {registerFieldVerticalSeparator} from './fields/vertical_separator';
-import {registerScratchCategory} from './toolbox/category';
-import {ContinuousToolBox} from './toolbox/toolbox';
-import {ContinuousVerticalFlyout} from './toolbox/flyout';
 import {flyoutCategory as variableCategory} from './data_category';
 import {flyoutCategory as procedureCategory} from './procedures_category';
 import {isProcedureCallBlock, isProcedurePrototypeBlock} from './blocks/procedures';
@@ -32,6 +29,10 @@ import './renderer/renderer';
 import './connection_checker';
 import './dragger';
 import './insertion_marker_previewer';
+
+import './toolbox/flyout';
+import './toolbox/toolbox';
+import './toolbox/category';
 import './toolbox/collapsible_category';
 import './toolbox/inflaters/label';
 
@@ -68,8 +69,6 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerFieldTextInputRemovable();
   registerFieldVariableGetter();
   registerFieldVerticalSeparator();
-
-  registerScratchCategory();
 
   Blockly.Css.register(styles);
 
@@ -127,11 +126,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
 export function injectWorkspace(container: Element | string, options?: Blockly.BlocklyOptions) {
   const defaultOptions: Blockly.BlocklyOptions = {
     renderer: 'scratch',
-    theme: createTheme(),
-    plugins: {
-      toolbox: ContinuousToolBox,
-      flyoutsVerticalToolbox: ContinuousVerticalFlyout
-    }
+    theme: createTheme()
   };
   options = Object.assign(defaultOptions, options);
   return Blockly.inject(container, options);

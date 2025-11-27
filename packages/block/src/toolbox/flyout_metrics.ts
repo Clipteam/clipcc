@@ -5,17 +5,17 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {ContinuousVerticalFlyout} from './flyout';
+import {VerticalFlyout} from './flyout';
 
 /**
  * Class for calculating metrics for a continuous flyout's workspace.
  */
-export class ContinuousFlyoutMetrics extends Blockly.FlyoutMetricsManager {
+export class FlyoutMetrics extends Blockly.FlyoutMetricsManager {
   /**
    * @param workspace The flyout's workspace.
    * @param flyout The flyout.
    */
-  constructor(workspace: Blockly.WorkspaceSvg, flyout: ContinuousVerticalFlyout) {
+  constructor(workspace: Blockly.WorkspaceSvg, flyout: VerticalFlyout) {
     super(workspace, flyout);
   }
 
@@ -33,7 +33,7 @@ export class ContinuousFlyoutMetrics extends Blockly.FlyoutMetricsManager {
     contentMetrics?: Blockly.MetricsManager.ContainerRegion
   ): { height: number; width: number; top: number; left: number; } {
     const scrollMetrics = super.getScrollMetrics(getWorkspaceCoordinates, viewMetrics, contentMetrics);
-    const extraMetrics = (this.flyout_ as ContinuousVerticalFlyout).getExtraPadding(
+    const extraMetrics = (this.flyout_ as VerticalFlyout).getExtraPadding(
       contentMetrics || this.getContentMetrics(),
       viewMetrics || this.getViewMetrics()
     );

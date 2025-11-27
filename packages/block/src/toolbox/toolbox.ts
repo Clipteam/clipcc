@@ -5,13 +5,14 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {ContinuousVerticalFlyout} from './flyout';
+import {VerticalFlyout} from './flyout';
 import {CollapsibleToolboxCategory} from './collapsible_category';
+import styles from '../styles/toolbox.css';
 
 /**
- * Class for continuous toolbox.
+ * Class for customized toolbox.
  */
-export class ContinuousToolBox extends Blockly.Toolbox {
+export class Toolbox extends Blockly.Toolbox {
   /** Gap between categories. */
   static readonly CATEGORY_GAP = 36;
 
@@ -31,7 +32,7 @@ export class ContinuousToolBox extends Blockly.Toolbox {
   override init(): void {
     super.init();
 
-    const flyout = this.getFlyout() as ContinuousVerticalFlyout;
+    const flyout = this.getFlyout() as VerticalFlyout;
     flyout.show(this.getFlyoutContents());
     flyout.setAutoClose(false);
 
@@ -67,7 +68,7 @@ export class ContinuousToolBox extends Blockly.Toolbox {
       if (toolboxItem instanceof Blockly.ToolboxCategory) {
         // Add gap between categories.
         if (contents.length !== 0) {
-          contents.push({kind: 'sep', gap: ContinuousToolBox.CATEGORY_GAP});
+          contents.push({kind: 'sep', gap: Toolbox.CATEGORY_GAP});
         }
 
         // The label of category.
@@ -225,7 +226,7 @@ export class ContinuousToolBox extends Blockly.Toolbox {
     if (!newItem) {
       return;
     }
-    const flyout = this.getFlyout() as ContinuousVerticalFlyout;
+    const flyout = this.getFlyout() as VerticalFlyout;
     if (!this.selectedItem_) {
       flyout.setVisible(false);
     } else {
@@ -245,3 +246,12 @@ export class ContinuousToolBox extends Blockly.Toolbox {
    */
   override onTreeFocus(node: Blockly.IFocusableNode, previousTree: Blockly.IFocusableTree | null): void {}
 }
+
+Blockly.registry.register(
+  Blockly.registry.Type.TOOLBOX,
+  Blockly.registry.DEFAULT,
+  Toolbox,
+  true
+);
+
+Blockly.Css.register(styles);

@@ -5,14 +5,14 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {ContinuousToolBox} from './toolbox';
-import {ContinuousFlyoutMetrics} from './flyout_metrics';
+import {Toolbox} from './toolbox';
+import {FlyoutMetrics} from './flyout_metrics';
 import type {FlyoutButton} from './flyout_button';
 
 /**
- * Class for continuous flyout.
+ * Class for customized flyout.
  */
-export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
+export class VerticalFlyout extends Blockly.VerticalFlyout {
   /**
    * The percentage of the distance to the scrollTarget that should be
    * scrolled at a time. Lower values will produce a smoother, slower scroll.
@@ -39,9 +39,7 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
    */
   constructor(workspaceOptions: Blockly.Options) {
     super(workspaceOptions);
-    this.workspace_.setMetricsManager(
-      new ContinuousFlyoutMetrics(this.workspace_, this)
-    );
+    this.workspace_.setMetricsManager(new FlyoutMetrics(this.workspace_, this));
   }
 
   /**
@@ -93,7 +91,7 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
     }
     const id = this.getCategoryIdByScrollPosition(-this.workspace_.scrollY);
     if (id) {
-      (this.targetWorkspace.getToolbox() as ContinuousToolBox).updateSelectedCategoryById(id);
+      (this.targetWorkspace.getToolbox() as Toolbox).updateSelectedCategoryById(id);
     }
   }
 
@@ -202,7 +200,7 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
       return;
     }
 
-    this.workspace_.scrollbar?.setY(scrollPos + diff * ContinuousVerticalFlyout.SCROLL_ANIMATION_FRACTION);
+    this.workspace_.scrollbar?.setY(scrollPos + diff * VerticalFlyout.SCROLL_ANIMATION_FRACTION);
     requestAnimationFrame(this.stepScrollAnimation.bind(this));
   }
 
@@ -212,7 +210,7 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
    */
   protected override reflowInternal_(): void {
     this.workspace_.scale = this.getFlyoutScale();
-    const flyoutWidth = ContinuousVerticalFlyout.DEFAULT_WIDTH * this.workspace_.scale;
+    const flyoutWidth = VerticalFlyout.DEFAULT_WIDTH * this.workspace_.scale;
 
     if (this.getWidth() !== flyoutWidth) {
       if (this.RTL) {
@@ -251,3 +249,10 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
     }
   }
 }
+
+Blockly.registry.register(
+  Blockly.registry.Type.FLYOUTS_VERTICAL_TOOLBOX,
+  Blockly.registry.DEFAULT,
+  VerticalFlyout,
+  true
+);
