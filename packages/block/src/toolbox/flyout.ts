@@ -214,6 +214,16 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   }
 
   /**
+   * Reflow flyout contents.
+   */
+  override reflow(): void {
+    // @todo A temporary fix for Blockly#9486, we assume that the reflow internal
+    // won't fire a BLOCK_CHANGE or BLOCK_FIELD_INTERMEDIATE_CHANGE event.
+    // See the implementation of reflowWrapper in Blockly.FlyoutBase.
+    this.reflowInternal_();
+  }
+
+  /**
    * Compute width of flyout.
    * For RTL: Lay out the blocks and buttons to be right-aligned.
    */
