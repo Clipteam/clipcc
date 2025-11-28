@@ -51,7 +51,7 @@ export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRendere
   private lastHeight: number = 0;
 
   /**
-   * @param flyoutElement The flyout element associated with.
+   * @param flyoutItem The flyout element associated with.
    * @param workspace The workspace in which to place this checkbox.
    * @param targetWorkspace The flyout's target workspace.
    * @param value The initial state of checkbox.
@@ -60,7 +60,7 @@ export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRendere
    *      to the checkbox instance.
    */
   constructor(
-    protected readonly flyoutElement: (Blockly.IBoundedElement & Blockly.IFocusableNode) | null,
+    protected readonly flyoutItem: Blockly.FlyoutItem | null,
     protected readonly workspace: Blockly.WorkspaceSvg,
     protected readonly targetWorkspace: Blockly.WorkspaceSvg,
     value: boolean = false,
@@ -84,6 +84,7 @@ export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRendere
     // Set initial state.
     this.setChecked(value, false);
 
+    const flyoutElement = this.flyoutItem?.getElement();
     if (flyoutElement) {
       // Append the flyout item.
       if (flyoutElement && Blockly.isRenderedElement(flyoutElement)) {
@@ -130,11 +131,11 @@ export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRendere
   }
 
   /**
-   * Get the flyout element which the checkbox is associated with.
-   * @returns The flyout element or a null value.
+   * Get the flyout item which the checkbox is associated with.
+   * @returns The flyout item or a null value.
    */
-  getChildElement() {
-    return this.flyoutElement;
+  getChildItem() {
+    return this.flyoutItem;
   }
 
   protected onMouseDown(e: PointerEvent) {
@@ -204,11 +205,12 @@ export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRendere
    * Position the checkbox in middle.
    */
   protected updateCheckboxPosition() {
-    if (this.flyoutElement) {
-      const itemHeight = this.flyoutElement.getBoundingRectangle().getHeight();
+    const flyoutElement = this.flyoutItem?.getElement();
+    if (flyoutElement) {
+      const itemHeight = flyoutElement.getBoundingRectangle().getHeight();
       const offsetY = (itemHeight - FlyoutCheckbox.CHECKBOX_SIZE) / 2;
       if (offsetY < 0) {
-        this.flyoutElement.moveBy(0, offsetY);
+        flyoutElement.moveBy(0, offsetY);
       } else {
         this.checkboxSvg.setAttribute('transform', `translate(0, ${offsetY})`);
       }
@@ -239,7 +241,7 @@ export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRendere
   /** Implementation of Blockly.IBoundedElement */
 
   getBoundingRectangle(): Blockly.utils.Rect {
-    const itemRect = this.flyoutElement?.getBoundingRectangle();
+    const itemRect = this.flyoutItem?.getElement().getBoundingRectangle();
     let height = FlyoutCheckbox.CHECKBOX_SIZE;
     let width = FlyoutCheckbox.CHECKBOX_SIZE;
     if (itemRect) {

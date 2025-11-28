@@ -19,7 +19,7 @@ export class BlockFlyoutInflater extends Blockly.BlockFlyoutInflater {
    * @param flyout The flyout to create the block on.
    * @returns A newly created block.
    */
-  load(state: object, flyout: Blockly.IFlyout): Blockly.FlyoutItem {
+  override load(state: object, flyout: Blockly.IFlyout): Blockly.FlyoutItem {
     const flyoutItem = super.load(state, flyout);
 
     // Add checkbox if checkboxInFlyout is true in block.
@@ -28,7 +28,7 @@ export class BlockFlyoutInflater extends Blockly.BlockFlyoutInflater {
       const state = getCheckboxState(block.workspace.id, block.id);
       return new Blockly.FlyoutItem(
         new FlyoutCheckbox(
-          block,
+          flyoutItem,
           flyout.getWorkspace(),
           flyout.targetWorkspace!,
           state,
@@ -42,6 +42,23 @@ export class BlockFlyoutInflater extends Blockly.BlockFlyoutInflater {
   }
 
   /**
+   * Dispose the flyout item.
+   * @param item The flyout item to dispose of.
+   */
+  override disposeItem(item: Blockly.FlyoutItem): void {
+    const element = item.getElement();
+    if (element instanceof FlyoutCheckbox) {
+      const childItem = element.getChildItem();
+      if (childItem) {
+        super.disposeItem(childItem);
+      }
+      element.dispose();
+    } else {
+      super.disposeItem(item);
+    }
+  }
+
+  /**
    * Event handler triggered when the checkbox state is changed.
    * @param newChecked The new checkbox state.
    * @param checkbox The checkbox instance.
@@ -49,7 +66,7 @@ export class BlockFlyoutInflater extends Blockly.BlockFlyoutInflater {
   protected onCheckboxChange(newChecked: boolean, checkbox: FlyoutCheckbox) {
     // Fire a block change event when checkbox state changes.
     if (Blockly.Events.isEnabled()) {
-      const block = checkbox.getChildElement()!;
+      const block = checkbox.getChildItem()!.getElement();
       Blockly.Events.fire(
         new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
           block,
