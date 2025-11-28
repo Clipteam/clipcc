@@ -225,8 +225,7 @@ Blockly.Blocks['sensing_answer'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.SENSING_ANSWER,
-      checkboxInFlyout: true,
-      extensions: ['colours_sensing', 'output_number']
+      extensions: ['colours_sensing', 'output_number', 'monitor_block']
     });
   }
 };
@@ -454,8 +453,7 @@ Blockly.Blocks['sensing_loudness'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.SENSING_LOUDNESS,
-      checkboxInFlyout: true,
-      extensions: ['colours_sensing', 'output_number']
+      extensions: ['colours_sensing', 'output_number', 'monitor_block']
     });
   }
 };
@@ -483,8 +481,7 @@ Blockly.Blocks['sensing_timer'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.SENSING_TIMER,
-      checkboxInFlyout: true,
-      extensions: ['colours_sensing', 'output_number']
+      extensions: ['colours_sensing', 'output_number', 'monitor_block']
     });
   }
 };
@@ -584,8 +581,7 @@ Blockly.Blocks['sensing_current'] = {
           ]
         }
       ],
-      checkboxInFlyout: true,
-      extensions: ['colours_sensing', 'output_number']
+      extensions: ['colours_sensing', 'output_number', 'monitor_block']
     });
   }
 };
@@ -609,8 +605,7 @@ Blockly.Blocks['sensing_username'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.SENSING_USERNAME,
-      checkboxInFlyout: true,
-      extensions: ['colours_sensing', 'output_number']
+      extensions: ['colours_sensing', 'output_number', 'monitor_block']
     });
   }
 };

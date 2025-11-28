@@ -1,0 +1,22 @@
+.blocklyFlyoutCheckbox {
+  fill: white;
+  stroke: #c8c8c8;
+}
+
+.checked > .blocklyFlyoutCheckbox {
+  fill: #4C97FF;
+  stroke: #3373CC;
+}
+
+.blocklyFlyoutCheckboxPath {
+  fill: transparent;
+  stroke: white;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.blocklyFlyoutCheckboxBackground {
+  fill: transparent;
+  cursor: pointer;
+}

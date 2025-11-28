@@ -34,6 +34,7 @@ import './toolbox/flyout';
 import './toolbox/toolbox';
 import './toolbox/category';
 import './toolbox/collapsible_category';
+import './toolbox/inflaters/block';
 import './toolbox/inflaters/label';
 
 import './blocks/extensions';
@@ -157,6 +158,7 @@ export function loadWorkspace(
 }
 
 export {setExternalProcedureDefCallback} from './procedures_category';
+export {setGetCheckboxState} from './utils';
 
 // Monkey-patches
 Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;

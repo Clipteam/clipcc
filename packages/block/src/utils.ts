@@ -67,3 +67,22 @@ export function getWorkspaceOptionsFromBlock(block: Blockly.Block): Blockly.Opti
     return workspace.options;
   }
 }
+
+/**
+ * Get the initial checkbox state for blocks in flyout. This should be override
+ * by external editor with setGetCheckboxState.
+ * @param workspaceId Workspace ID.
+ * @param blockId Block ID.
+ * @returns The state of checkbox.
+ */
+export let getCheckboxState = function(workspaceId: string, blockId: string) {
+  return false;
+};
+
+/**
+ * Set getCheckboxState.
+ * @param func The function to set to.
+ */
+export function setGetCheckboxState(func: typeof getCheckboxState) {
+  getCheckboxState = func;
+}

@@ -174,6 +174,8 @@
         }
       });
 
+      registerCheckboxHandler(mainWorkspace.getFlyout().getWorkspace());
+
       function positionDeclarationBlock(workspace, block) {
         // Keep the block centered on the workspace.
         let {viewHeight, viewWidth} = workspace.getMetrics();
@@ -263,6 +265,37 @@
     function loadWorkspace() {
       const textarea = document.getElementById('dataContent');
       const state = ScratchBlocks.loadWorkspace(JSON.parse(textarea.value), mainWorkspace, true);
+    }
+
+    /** Helpers to store checkbox state. */
+
+    function getCheckboxKey(blockId) {
+      const workspace = mainWorkspace.getFlyout().getWorkspace();
+      const block = workspace.getBlockById(blockId);
+      if (block.type === 'data_variable') {
+        const varId = block.getField('VARIABLE').getValue();
+        return varId;
+      } else if (block.type === 'data_listcontents') {
+        const varId = block.getField('LIST').getValue();
+        return varId;
+      }
+      return block.type;
+    }
+
+    const checkboxStateMap = new Map();
+    function getCheckboxState(workspaceId, blockId) {
+      const key = getCheckboxKey(blockId);
+      return checkboxStateMap.get(key) ?? false;
+    }
+
+    function registerCheckboxHandler(workspace) {
+      ScratchBlocks.setGetCheckboxState(getCheckboxState);
+      workspace.addChangeListener(event => {
+        if (event.type === 'change' && event.element === 'checkbox') {
+          const key = getCheckboxKey(event.blockId);
+          checkboxStateMap.set(key, event.newValue);
+        }
+      });
     }
 	</script>
 </head>
