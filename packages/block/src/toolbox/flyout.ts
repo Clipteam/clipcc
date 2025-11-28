@@ -136,7 +136,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   recordScrollPositions(): void {
     this.scrollPositions.clear();
     for (const item of this.contents) {
-      if (item.getType() === 'label') {
+      if (item.getType() === 'label' || item.getType() === 'status_indicator_label') {
         const button = item.getElement() as FlyoutButton;
         const position = button.getPosition();
         this.scrollPositions.set(button.getLabelId()!, position.y - this.MARGIN);
