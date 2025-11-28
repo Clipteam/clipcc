@@ -126,7 +126,7 @@ const SCRATCH_EXTENSION = function(this: Blockly.Block) {
 const registerAll = function() {
   const categoryNames =
       ['control', 'data', 'data_lists', 'sounds', 'motion', 'looks', 'event',
-        'sensing', 'pen', 'operators', 'more', 'argument'];
+        'sensing', 'pen', 'operators', 'more', 'argument', 'unknown'];
   // Register functions for all category colours.
   for (const name of categoryNames) {
     Blockly.Extensions.register('colours_' + name, colourHelper(name));

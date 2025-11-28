@@ -208,3 +208,137 @@ Blockly.Blocks['text'] = {
     });
   }
 };
+
+/* Special Blocks */
+
+export interface UnknownBlock extends Blockly.BlockSvg {
+  /**
+   * Used to retain unknown block state.
+   */
+  unknownBlockState: Blockly.serialization.blocks.State | null;
+  /**
+   * Current shape of the block.
+   */
+  shape: number | null;
+
+  /**
+   * Force update display based on current shape and placeholder text.
+   */
+  updateDisplay_: () => void;
+  /**
+   * Infer what shape should we are, based on connection status.
+   * @returns Constants.OUTPUT_SHAPE_*, or -1 if unable to infer the shape.
+   */
+  inferShape_: () => number | null;
+  /**
+   * Change block shape based on given shape.
+   * @param shape The shape to change to. accepts Constants.OUTPUT_SHAPE_* and -1;
+   */
+  updateShape_: (shape: number | null) => void;
+  /**
+   * Set the placeholder text shown on the block. usually use the unknown block's type.
+   * @param text The placeholder text to set.
+   */
+  updatePlaceholderText_: () => void;
+}
+
+export type UnknownBlockExtraState = Blockly.serialization.blocks.State;
+
+/**
+ * Placeholder block for non-existing blocks in clipcc-block.
+ * It stores the unknown block info and placeholder text in extra state. its shape based on its connection status.
+ * So that it won't break the renderer and users can identify the missing blocks.
+ * WARNING: this block should only exists in blockly side, VM should never see this block.
+ */
+Blockly.Blocks['unknown'] = {
+  init: function() {
+    this.jsonInit({
+      extensions: ['colours_unknown']
+    });
+    this.unknownBlockState = null;
+    // Init shape; placeholder text is empty by default and will be set by loadExtraState.
+    this.shape = this.inferShape_();
+    this.updateShape_(this.shape);
+    // Unknown blocks are not movable. Since we don't know their real shape and connections,
+    // allowing moving may break the workspace when the block becomes 'known'.
+    this.setMovable(false);
+  },
+  updateDisplay_: function() {
+    this.updateShape_(this.shape);
+    this.updatePlaceholderText_();
+  },
+  inferShape_: function() {
+    if (this.getNextBlock() || this.getPreviousBlock()) { // If it has next/previous block
+      return Constants.OUTPUT_SHAPE_NORMAL;
+    } else if (this.outputConnection?.isConnected()) { // If we're connected to other block
+      // Shape based on the type of block we're connected to. Boolean is the only special case in Scratch.
+      const isBoolean = this.outputConnection.targetConnection?.getCheck()?.includes('Boolean');
+      return isBoolean ? Constants.OUTPUT_SHAPE_HEXAGONAL : Constants.OUTPUT_SHAPE_ROUND;
+    } else {
+      return -1; // Indicate we don't know change to which shape
+    }
+  },
+  updateShape_: function(shape: number | null) {
+    switch (shape) {
+      case Constants.OUTPUT_SHAPE_NORMAL:
+        this.setOutputShape(Constants.OUTPUT_SHAPE_NORMAL);
+        this.setOutput(false);
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
+        return;
+      case Constants.OUTPUT_SHAPE_HEXAGONAL:
+        this.setOutputShape(Constants.OUTPUT_SHAPE_HEXAGONAL);
+        this.setOutput(true);
+        this.setPreviousStatement(false);
+        this.setNextStatement(false);
+        return;
+      case Constants.OUTPUT_SHAPE_ROUND:
+        this.setOutputShape(Constants.OUTPUT_SHAPE_ROUND);
+        this.setOutput(true);
+        this.setPreviousStatement(false);
+        this.setNextStatement(false);
+        return;
+      default:
+        // Unable to infer shape, so we allow it connected in any way.
+        this.setOutputShape(Constants.OUTPUT_SHAPE_NORMAL);
+        this.setOutput(true);
+        this.setPreviousStatement(true);
+        this.setNextStatement(true);
+    }
+  },
+  updatePlaceholderText_: function() {
+    const text = this.unknownBlockState?.type ?? 'unknown';
+    const input = this.getInput('PLACEHOLDER') ?? this.appendDummyInput('PLACEHOLDER');
+    for (const field of input.fieldRow) {
+      if (field.name === 'PLACEHOLDER_TEXT') {
+        field.setValue(text);
+        return;
+      }
+    }
+    input.appendField(text, 'PLACEHOLDER_TEXT');
+  },
+  saveExtraState: function(): UnknownBlockExtraState {
+    if (!this.unknownBlockState) {
+      throw new Error('Unknown block unknownBlockState is null when saving extra state.');
+    }
+    return this.unknownBlockState;
+  },
+  loadExtraState: function(state: UnknownBlockExtraState) {
+    this.unknownBlockState = state;
+    this.updatePlaceholderText_();
+  },
+  onchange: function(event: Blockly.Events.Abstract) {
+    // Only respond to events that may change connection status
+    switch (event.type) {
+      case 'change':
+      case 'create':
+      case 'delete':
+      case 'move':
+        if (this.shape !== this.inferShape_()) {
+          this.shape = this.inferShape_();
+          this.updateShape_(this.shape);
+        }
+        break;
+    }
+  }
+} as UnknownBlock;
