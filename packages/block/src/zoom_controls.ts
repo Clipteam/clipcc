@@ -7,64 +7,226 @@
 import * as Blockly from 'blockly/core';
 
 /**
- * Type definition for the private fields in Blockly.ZoomControls.
+ * Class for a zoom controls.
+ * Copied from Blockly.ZoomControls and make it Scratch-styled.
  */
-type ZoomControlsInternals = {
-  WIDTH: number;
-  HEIGHT: number;
-  SMALL_SPACING: number;
-  LARGE_SPACING: number;
-  MARGIN_VERTICAL: number;
-  MARGIN_HORIZONTAL: number;
-  svgGroup: SVGElement | null;
-  zoomInGroup: SVGGElement | null;
-  zoomOutGroup: SVGGElement | null;
-  zoomResetGroup: SVGGElement | null;
-  boundEvents: Blockly.browserEvents.Data[];
-  workspace: Blockly.WorkspaceSvg;
-  initialized: boolean;
-  left: number;
-  top: number;
-
-  zoom(amount: number, e: PointerEvent): void;
-  resetZoom(e: PointerEvent): void;
-};
-
-// @ts-expect-error dirty hack to override Blockly ZoomControls in minimal changes
-export class ZoomControls extends Blockly.ZoomControls {
+export class ZoomControls implements Blockly.IPositionable {
   static readonly XLINK_NS = 'http://www.w3.org/1999/xlink';
+  /**
+   * The unique ID for this component that is used to register with the
+   * ComponentManager.
+   */
+  id = 'zoomControls';
 
-  static readonly ICON_SIZE = 36;
-  static readonly ICON_SPACING = 8;
-  static readonly ICON_MARGIN = 12;
-  static readonly TOTAL_HEIGHT = ZoomControls.ICON_SIZE * 3 + ZoomControls.ICON_SPACING * 2;
+  /**
+   * Array holding info needed to unbind events.
+   * Used for disposing.
+   * Ex: [[node, name, func], [node, name, func]].
+   */
+  private boundEvents: Blockly.browserEvents.Data[] = [];
+
+  /** The zoom in svg <g> element. */
+  private zoomInGroup: SVGGElement | null = null;
+
+  /** The zoom out svg <g> element. */
+  private zoomOutGroup: SVGGElement | null = null;
+
+  /** The zoom reset svg <g> element. */
+  private zoomResetGroup: SVGGElement | null = null;
+
+  private readonly ICON_SIZE = 36;
+  private readonly ICON_SPACING = 8;
+  private readonly ICON_MARGIN = 12;
+  private readonly TOTAL_HEIGHT =
+    this.ICON_SIZE * 3 + this.ICON_SPACING * 2;
 
   /**
    * Zoom in icon path.
    */
-  ZOOM_IN_PATH_ = 'zoom-in.svg';
+  private readonly ZOOM_IN_PATH_ = 'zoom-in.svg';
 
   /**
    * Zoom out icon path.
    */
-  ZOOM_OUT_PATH_ = 'zoom-out.svg';
+  private readonly ZOOM_OUT_PATH_ = 'zoom-out.svg';
 
   /**
    * Zoom reset icon path.
    */
-  ZOOM_RESET_PATH_ = 'zoom-reset.svg';
+  private readonly ZOOM_RESET_PATH_ = 'zoom-reset.svg';
 
-  constructor(workspace: Blockly.WorkspaceSvg) {
-    super(workspace);
-    const internals = this.getInternals_();
+  /** Width of the zoom controls. */
+  private readonly WIDTH = this.ICON_SIZE;
 
-    // Override the default sizes with Scratch Blocks flavor sizes.
-    internals.WIDTH = ZoomControls.ICON_SIZE;
-    internals.HEIGHT = ZoomControls.ICON_SIZE;
-    internals.SMALL_SPACING = ZoomControls.ICON_SPACING;
-    internals.LARGE_SPACING = ZoomControls.ICON_SPACING;
-    internals.MARGIN_VERTICAL = ZoomControls.ICON_MARGIN;
-    internals.MARGIN_HORIZONTAL = ZoomControls.ICON_MARGIN;
+  /** Height of each zoom control. */
+  private readonly HEIGHT = this.ICON_SIZE;
+
+  /** Small spacing used between the zoom in and out control, in pixels. */
+  private readonly SMALL_SPACING = this.ICON_SPACING;
+
+  /**
+   * Large spacing used between the zoom in and reset control, in pixels.
+   */
+  private readonly LARGE_SPACING = this.ICON_SPACING;
+
+  /** The SVG group containing the zoom controls. */
+  private svgGroup: SVGElement | null = null;
+
+  /** Left coordinate of the zoom controls. */
+  private left = 0;
+
+  /** Top coordinate of the zoom controls. */
+  private top = 0;
+
+  /** Whether this has been initialized. */
+  private initialized = false;
+
+  /** @param workspace The workspace to sit in. */
+  constructor(private readonly workspace: Blockly.WorkspaceSvg) { }
+
+  /**
+   * Create the zoom controls.
+   * @returns The zoom controls SVG group.
+   */
+  createDom(): SVGElement {
+    this.svgGroup = Blockly.utils.dom.createSvgElement(Blockly.utils.Svg.G, {});
+
+    // Each filter/pattern needs a unique ID for the case of multiple Blockly
+    // instances on a page.  Browser behaviour becomes undefined otherwise.
+    // https://neil.fraser.name/news/2015/11/01/
+    const rnd = String(Math.random()).substring(2);
+    this.createZoomOutSvg(rnd);
+    this.createZoomInSvg(rnd);
+    if (this.workspace.isMovable()) {
+      // If we zoom to the center and the workspace isn't movable we could
+      // loose blocks at the edges of the workspace.
+      this.createZoomResetSvg(rnd);
+    }
+    return this.svgGroup;
+  }
+
+  /** Initializes the zoom controls. */
+  init() {
+    this.workspace.getComponentManager().addComponent({
+      component: this,
+      weight: Blockly.ComponentManager.ComponentWeight.ZOOM_CONTROLS_WEIGHT,
+      capabilities: [Blockly.ComponentManager.Capability.POSITIONABLE]
+    });
+    this.initialized = true;
+  }
+
+  /**
+   * Disposes of this zoom controls.
+   * Unlink from all DOM elements to prevent memory leaks.
+   */
+  dispose() {
+    this.workspace.getComponentManager().removeComponent('zoomControls');
+    if (this.svgGroup) {
+      Blockly.utils.dom.removeNode(this.svgGroup);
+    }
+    for (const event of this.boundEvents) {
+      Blockly.browserEvents.unbind(event);
+    }
+    this.boundEvents.length = 0;
+  }
+
+  /**
+   * Returns the bounding rectangle of the UI element in pixel units relative to
+   * the Blockly injection div.
+   * @returns The UI elements's bounding box. Null if bounding box should be
+   *     ignored by other UI elements.
+   */
+  getBoundingRectangle(): Blockly.utils.Rect | null {
+    let height = this.SMALL_SPACING + 2 * this.HEIGHT;
+    if (this.zoomResetGroup) {
+      height += this.LARGE_SPACING + this.HEIGHT;
+    }
+    const bottom = this.top + height;
+    const right = this.left + this.WIDTH;
+    return new Blockly.utils.Rect(this.top, bottom, this.left, right);
+  }
+
+  /**
+   * Positions the zoom controls.
+   * use Scratch-style ordering: zoom-in, zoom-out, reset (top to bottom).
+   * @param metrics The workspace metrics.
+   * @param savedPositions List of rectangles that are already on the workspace.
+   */
+  position(
+    metrics: Blockly.MetricsManager.UiMetrics,
+    savedPositions: Blockly.utils.Rect[]
+  ): void {
+    // Not yet initialized.
+    if (!this.initialized) {
+      return;
+    }
+
+    const cornerPosition =
+      Blockly.uiPosition.getCornerOppositeToolbox(
+        this.workspace,
+        metrics
+      );
+
+    const startRect = Blockly.uiPosition.getStartPositionRect(
+      cornerPosition,
+      new Blockly.utils.Size(this.ICON_SIZE, this.TOTAL_HEIGHT),
+      this.ICON_MARGIN,
+      this.ICON_MARGIN,
+      metrics,
+      this.workspace
+    );
+
+    const verticalPosition = cornerPosition.vertical;
+    const bumpDirection =
+      verticalPosition === Blockly.uiPosition.verticalPosition.TOP ?
+        Blockly.uiPosition.bumpDirection.DOWN :
+        Blockly.uiPosition.bumpDirection.UP;
+    const positionRect = Blockly.uiPosition.bumpPositionRect(
+      startRect,
+      this.ICON_MARGIN,
+      bumpDirection,
+      savedPositions
+    );
+
+    // Position is always the same regardless of vertical position
+    this.zoomInGroup?.setAttribute('transform', 'translate(0, 0)');
+    this.zoomOutGroup?.setAttribute(
+      'transform',
+      `translate(0, ${this.ICON_SIZE + this.ICON_SPACING})`
+    );
+    this.zoomResetGroup?.setAttribute(
+      'transform',
+      `translate(0, ${(this.ICON_SIZE + this.ICON_SPACING) * 2})`
+    );
+
+    this.top = positionRect.top;
+    this.left = positionRect.left;
+    this.svgGroup?.setAttribute(
+      'transform',
+      `translate(${this.left}, ${this.top})`
+    );
+  }
+
+  /**
+   * Appends an icon image to the parent SVG group.
+   * @param parent The parent SVG group element to append the icon to.
+   * @param fileName The file name of the icon image.
+   */
+  private appendIcon_(parent: SVGGElement | null, fileName: string) {
+    if (!parent) return;
+    const image = Blockly.utils.dom.createSvgElement(
+      'image',
+      {
+        width: this.WIDTH,
+        height: this.HEIGHT
+      },
+      parent
+    );
+    image.setAttributeNS(
+      ZoomControls.XLINK_NS,
+      'xlink:href',
+      this.workspace.options.pathToMedia + fileName
+    );
   }
 
   /**
@@ -75,23 +237,22 @@ export class ZoomControls extends Blockly.ZoomControls {
    *     These IDs must be unique in case there are multiple Blockly instances
    *     on the same page.
    */
-  protected override createZoomOutSvg(_rnd: string): void {
-    const internals = this.getInternals_();
-    if (!internals.svgGroup) return;
-    internals.zoomOutGroup = Blockly.utils.dom.createSvgElement(
+  protected createZoomOutSvg(_rnd: string): void {
+    if (!this.svgGroup) return;
+    this.zoomOutGroup = Blockly.utils.dom.createSvgElement(
       'g',
       {class: 'blocklyZoom blocklyZoomOut'},
-      internals.svgGroup
+      this.svgGroup
     ) as SVGGElement;
-    const zoomOutGroup = internals.zoomOutGroup;
+    const zoomOutGroup = this.zoomOutGroup;
     if (!zoomOutGroup) return;
     this.appendIcon_(zoomOutGroup, this.ZOOM_OUT_PATH_);
-    internals.boundEvents.push(
+    this.boundEvents.push(
       Blockly.browserEvents.conditionalBind(
         zoomOutGroup,
         'pointerdown',
         null,
-        internals.zoom.bind(this, -1)
+        this.zoom.bind(this, -1)
       )
     );
   }
@@ -104,25 +265,40 @@ export class ZoomControls extends Blockly.ZoomControls {
    *     These IDs must be unique in case there are multiple Blockly instances
    *     on the same page.
    */
-  protected override createZoomInSvg(_rnd: string): void {
-    const internals = this.getInternals_();
-    if (!internals.svgGroup) return;
-    internals.zoomInGroup = Blockly.utils.dom.createSvgElement(
+  protected createZoomInSvg(_rnd: string): void {
+    if (!this.svgGroup) return;
+    this.zoomInGroup = Blockly.utils.dom.createSvgElement(
       'g',
       {class: 'blocklyZoom blocklyZoomIn'},
-      internals.svgGroup
+      this.svgGroup
     ) as SVGGElement;
-    const zoomInGroup = internals.zoomInGroup;
+    const zoomInGroup = this.zoomInGroup;
     if (!zoomInGroup) return;
     this.appendIcon_(zoomInGroup, this.ZOOM_IN_PATH_);
-    internals.boundEvents.push(
+    this.boundEvents.push(
       Blockly.browserEvents.conditionalBind(
         zoomInGroup,
         'pointerdown',
         null,
-        internals.zoom.bind(this, 1)
+        this.zoom.bind(this, 1)
       )
     );
+  }
+
+  /**
+   * Handles a mouse down event on the zoom in or zoom out buttons on the
+   * workspace.
+   * @param amount Amount of zooming. Negative amount values zoom out, and
+   *     positive amount values zoom in.
+   * @param e A mouse down event.
+   */
+  protected zoom(amount: number, e: PointerEvent) {
+    this.workspace.markFocused();
+    this.workspace.zoomCenter(amount);
+    this.fireZoomEvent();
+    Blockly.Touch.clearTouchIdentifier(); // Don't block future drags.
+    e.stopPropagation(); // Don't start a workspace scroll.
+    e.preventDefault(); // Stop double-clicking from selecting text.
   }
 
   /**
@@ -131,117 +307,61 @@ export class ZoomControls extends Blockly.ZoomControls {
    * Blockly implementation.
    * @param _rnd The random string to use as a suffix in the clip path's ID.
    */
-  protected override createZoomResetSvg(_rnd: string): void {
-    const internals = this.getInternals_();
-    if (!internals.svgGroup) return;
-    internals.zoomResetGroup = Blockly.utils.dom.createSvgElement(
+  protected createZoomResetSvg(_rnd: string): void {
+    if (!this.svgGroup) return;
+    this.zoomResetGroup = Blockly.utils.dom.createSvgElement(
       'g',
       {class: 'blocklyZoom blocklyZoomReset'},
-      internals.svgGroup
+      this.svgGroup
     ) as SVGGElement;
-    const zoomResetGroup = internals.zoomResetGroup;
+    const zoomResetGroup = this.zoomResetGroup;
     if (!zoomResetGroup) return;
     this.appendIcon_(zoomResetGroup, this.ZOOM_RESET_PATH_);
-    internals.boundEvents.push(
+    this.boundEvents.push(
       Blockly.browserEvents.conditionalBind(
         zoomResetGroup,
         'pointerdown',
         null,
-        internals.resetZoom.bind(this)
+        this.resetZoom.bind(this)
       )
     );
   }
 
   /**
-   * Positions the zoom controls.
-   * Override to use Scratch-style ordering: zoom-in, zoom-out, reset (top to bottom).
-   * @param metrics The workspace metrics.
-   * @param savedPositions List of rectangles that are already on the workspace.
+   * Handles a mouse down event on the reset zoom button on the workspace.
+   * @param e A mouse down event.
    */
-  override position(
-    metrics: Blockly.MetricsManager.UiMetrics,
-    savedPositions: Blockly.utils.Rect[]
-  ): void {
-    const internals = this.getInternals_();
-    // Not yet initialized.
-    if (!internals.initialized) {
-      return;
-    }
+  protected resetZoom(e: PointerEvent) {
+    this.workspace.markFocused();
 
-    const cornerPosition =
-      Blockly.uiPosition.getCornerOppositeToolbox(
-        internals.workspace,
-        metrics
-      );
+    // zoom is passed amount and computes the new scale using the formula:
+    // targetScale = currentScale * Math.pow(speed, amount)
+    const targetScale = this.workspace.options.zoomOptions.startScale;
+    const currentScale = this.workspace.scale;
+    const speed = this.workspace.options.zoomOptions.scaleSpeed;
+    // To compute amount:
+    // amount = log(speed, (targetScale / currentScale))
+    // Math.log computes natural logarithm (ln), to change the base, use
+    // formula: log(base, value) = ln(value) / ln(base)
+    const amount = Math.log(targetScale / currentScale) / Math.log(speed);
+    this.workspace.beginCanvasTransition();
+    this.workspace.zoomCenter(amount);
+    this.workspace.scrollCenter();
 
-    const startRect = Blockly.uiPosition.getStartPositionRect(
-      cornerPosition,
-      new Blockly.utils.Size(ZoomControls.ICON_SIZE, ZoomControls.TOTAL_HEIGHT),
-      ZoomControls.ICON_MARGIN,
-      ZoomControls.ICON_MARGIN,
-      metrics,
-      internals.workspace
-    );
-
-    const verticalPosition = cornerPosition.vertical;
-    const bumpDirection =
-      verticalPosition === Blockly.uiPosition.verticalPosition.TOP ?
-        Blockly.uiPosition.bumpDirection.DOWN :
-        Blockly.uiPosition.bumpDirection.UP;
-    const positionRect = Blockly.uiPosition.bumpPositionRect(
-      startRect,
-      ZoomControls.ICON_MARGIN,
-      bumpDirection,
-      savedPositions
-    );
-
-    // Position is always the same regardless of vertical position
-    internals.zoomInGroup?.setAttribute('transform', 'translate(0, 0)');
-    internals.zoomOutGroup?.setAttribute(
-      'transform',
-      `translate(0, ${ZoomControls.ICON_SIZE + ZoomControls.ICON_SPACING})`
-    );
-    internals.zoomResetGroup?.setAttribute(
-      'transform',
-      `translate(0, ${(ZoomControls.ICON_SIZE + ZoomControls.ICON_SPACING) * 2})`
-    );
-
-    internals.top = positionRect.top;
-    internals.left = positionRect.left;
-    internals.svgGroup?.setAttribute(
-      'transform',
-      `translate(${internals.left}, ${internals.top})`
-    );
+    setTimeout(this.workspace.endCanvasTransition.bind(this.workspace), 500);
+    this.fireZoomEvent();
+    Blockly.Touch.clearTouchIdentifier(); // Don't block future drags.
+    e.stopPropagation(); // Don't start a workspace scroll.
+    e.preventDefault(); // Stop double-clicking from selecting text.
   }
 
-  /**
-   * Appends an icon image to the parent SVG group.
-   * @param parent The parent SVG group element to append the icon to.
-   * @param fileName The file name of the icon image.
-   */
-  private appendIcon_(parent: SVGGElement | null, fileName: string) {
-    const internals = this.getInternals_();
-    if (!parent) return;
-    const image = Blockly.utils.dom.createSvgElement(
-      'image',
-      {
-        width: internals.WIDTH,
-        height: internals.HEIGHT
-      },
-      parent
+  /** Fires a zoom control UI event. */
+  private fireZoomEvent() {
+    const uiEvent = new (Blockly.Events.get(Blockly.Events.CLICK))(
+      null,
+      this.workspace.id,
+      'zoom_controls'
     );
-    image.setAttributeNS(
-      ZoomControls.XLINK_NS,
-      'xlink:href',
-      internals.workspace.options.pathToMedia + fileName
-    );
-  }
-
-  /**
-   * A more elegant way to get the internals with type safety.
-   * @returns instanced Blockly.ZoomControls
-   */
-  private getInternals_(): ZoomControlsInternals {
-    return this as unknown as ZoomControlsInternals;
+    Blockly.Events.fire(uiEvent);
   }
 }
