@@ -189,7 +189,7 @@ export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRendere
     Blockly.utils.dom.createSvgElement(
       Blockly.utils.Svg.RECT,
       {
-        class: 'blocklyFlyoutCheckboxBackground',
+        class: 'blocklyTouchTargetBackground',
         x: `${-FlyoutCheckbox.CHECKBOX_TOUCH_PADDING}px`,
         y: `${-FlyoutCheckbox.CHECKBOX_TOUCH_PADDING}px`,
         height: FlyoutCheckbox.CHECKBOX_SIZE + 2 * FlyoutCheckbox.CHECKBOX_TOUCH_PADDING,

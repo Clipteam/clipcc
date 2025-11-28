@@ -19,6 +19,7 @@
  */
 
 import * as Blockly from 'blockly/core';
+import * as Constants from './constants';
 
 /**
  * @fileoverview Utility methods for Scratch Blocks but not Blockly.
@@ -86,3 +87,37 @@ export let getCheckboxState = function(workspaceId: string, blockId: string) {
 export function setGetCheckboxState(func: typeof getCheckboxState) {
   getCheckboxState = func;
 }
+
+/**
+ * Gets the extension state.
+ * @param extensionId The ID of the extension in question.
+ * @returns The state of the extension.
+ */
+export let getExtensionState = function(extensionId: string) {
+  return Constants.StatusButtonState.NOT_READY;
+};
+
+/**
+ * Set getExtensionState.
+ * @param func The function to set to.
+ */
+export function setGetExtensionState(func: typeof getExtensionState) {
+  getExtensionState = func;
+}
+
+/**
+ * Wrapper to a callback for status buttons.
+ * @param id An identifier.
+ */
+export let statusButtonCallback = function(id: string) {
+  console.log(`Status button was pressed for ${id}`);
+};
+
+/**
+ * Set statusButtonCallback.
+ * @param callback The function to set to.
+ */
+export const setStatusButtonCallback = function(callback: typeof statusButtonCallback) {
+  statusButtonCallback = callback;
+};
+
