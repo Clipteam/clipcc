@@ -157,6 +157,7 @@ export function loadWorkspace(
   Blockly.serialization.workspaces.load(state, workspace, {recordUndo});
 }
 
+export {reportValue} from './report_value';
 export {setExternalProcedureDefCallback} from './procedures_category';
 export {setGetCheckboxState} from './utils';
 

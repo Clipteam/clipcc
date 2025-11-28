@@ -96,6 +96,15 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   }
 
   /**
+   * Serialize a block to JSON.
+   * @param block The block to serialize.
+   * @returns A serialized representation of the block.
+   */
+  protected override serializeBlock(block: Blockly.BlockSvg): Blockly.serialization.blocks.State {
+    return Blockly.serialization.blocks.save(block, {saveIds: false})!;
+  }
+
+  /**
    * Add extra padding to the bottom of the flyout to make it possible
    * to scroll to the last category.
    * @param contentMetrics Content metrics for the flyout.
