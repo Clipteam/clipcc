@@ -53,6 +53,7 @@ export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRendere
   /**
    * @param flyoutElement The flyout element associated with.
    * @param workspace The workspace in which to place this checkbox.
+   * @param targetWorkspace The flyout's target workspace.
    * @param value The initial state of checkbox.
    * @param onChange Event handler when checkbox state is changeed. The first
    *      argument represents the new checkbox state and the second one refers
@@ -61,6 +62,7 @@ export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRendere
   constructor(
     protected readonly flyoutElement: (Blockly.IBoundedElement & Blockly.IFocusableNode) | null,
     protected readonly workspace: Blockly.WorkspaceSvg,
+    protected readonly targetWorkspace: Blockly.WorkspaceSvg,
     value: boolean = false,
     protected readonly onChange?: (newChecked: boolean, self: FlyoutCheckbox) => void
   ) {
@@ -136,7 +138,15 @@ export class FlyoutCheckbox implements Blockly.IBoundedElement, Blockly.IRendere
   }
 
   protected onMouseDown(e: PointerEvent) {
+    const gesture = this.targetWorkspace.getGesture(e);
+    const flyout = this.targetWorkspace.getFlyout();
+    if (gesture && flyout) {
+      gesture.handleFlyoutStart(e, flyout);
+      gesture.cancel();
+    }
+
     this.toggleChecked();
+
     // This event has been handled.  No need to bubble up to the document.
     e.stopPropagation();
     e.preventDefault();

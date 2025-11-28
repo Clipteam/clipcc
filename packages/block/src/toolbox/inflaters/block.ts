@@ -27,7 +27,13 @@ export class BlockFlyoutInflater extends Blockly.BlockFlyoutInflater {
     if (isCheckboxInFlyout(block) && block.checkboxInFlyout) {
       const state = getCheckboxState(block.workspace.id, block.id);
       return new Blockly.FlyoutItem(
-        new FlyoutCheckbox(block, flyout.getWorkspace(), state, this.onCheckboxChange.bind(this)),
+        new FlyoutCheckbox(
+          block,
+          flyout.getWorkspace(),
+          flyout.targetWorkspace!,
+          state,
+          this.onCheckboxChange.bind(this)
+        ),
         BlockFlyoutInflater.TYPE
       );
     }
