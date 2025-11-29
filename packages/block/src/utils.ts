@@ -74,7 +74,7 @@ export function getWorkspaceOptionsFromBlock(block: Blockly.Block): Blockly.Opti
  * @param block The block to get the comment bubble from.
  * @returns The comment bubble, or null if none exists.
  */
-export function getCommentBubbleFromBlock(block: Blockly.BlockSvg | null): AnchoredComment | null {
+export function getCommentBubbleFromBlock(block: Blockly.Block | null): AnchoredComment | null {
   const bubble = block?.getIcon(Blockly.icons.IconType.COMMENT)?.getBubble() as AnchoredComment;
   return bubble ?? null;
 }

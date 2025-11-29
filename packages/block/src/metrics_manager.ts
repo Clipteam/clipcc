@@ -5,11 +5,10 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {AnchoredComment} from './anchored_comment';
 import {getCommentBubbleFromBlock} from './utils';
 
 export class MetricsManager extends Blockly.MetricsManager {
-  protected trackedBlockComments = new Set<AnchoredComment>();
+  protected trackedCommentedBlocks = new Set<Blockly.Block>();
 
   constructor(workspace: Blockly.WorkspaceSvg) {
     super(workspace);
@@ -23,9 +22,9 @@ export class MetricsManager extends Blockly.MetricsManager {
         if (!createEvent.ids) break;
         for (const id of createEvent.ids) {
           const block = this.workspace_.getBlockById(id);
-          const bubble = getCommentBubbleFromBlock(block);
-          if (!bubble) continue;
-          this.trackedBlockComments.add(bubble);
+          const hasComment = !!getCommentBubbleFromBlock(block);
+          if (!hasComment) continue;
+          this.trackedCommentedBlocks.add(block!);
         }
         break;
       }
@@ -33,22 +32,13 @@ export class MetricsManager extends Blockly.MetricsManager {
         const changeEvent = e as Blockly.Events.BlockChange;
         if (changeEvent.element !== 'comment' || !changeEvent.blockId) break;
         const block = this.workspace_.getBlockById(changeEvent.blockId);
-        const bubble = getCommentBubbleFromBlock(block);
-        if (!bubble) break;
+        const hasComment = !!getCommentBubbleFromBlock(block);
+        if (!hasComment) break;
         if (changeEvent.newValue === null) {
-          this.trackedBlockComments.delete(bubble);
+          this.trackedCommentedBlocks.delete(block!);
         } else {
-          this.trackedBlockComments.add(bubble);
+          this.trackedCommentedBlocks.add(block!);
         }
-        break;
-      }
-      case Blockly.Events.BLOCK_DELETE: {
-        const deleteEvent = e as Blockly.Events.BlockDelete;
-        if (!deleteEvent.blockId) break;
-        const block = this.workspace_.getBlockById(deleteEvent.blockId);
-        const bubble = getCommentBubbleFromBlock(block);
-        if (!bubble) break;
-        this.trackedBlockComments.delete(bubble);
         break;
       }
     }
@@ -66,7 +56,9 @@ export class MetricsManager extends Blockly.MetricsManager {
     const scale = optGetWorkspaceCoordinates ? 1 : this.workspace_.scale;
     const metrics = super.getContentMetrics(optGetWorkspaceCoordinates);
 
-    for (const comment of this.trackedBlockComments) {
+    for (const block of this.trackedCommentedBlocks) {
+      const comment = getCommentBubbleFromBlock(block);
+      if (!comment) continue;
       const commentMetrics = comment.getBoundingRectangle();
 
       const commentTop = commentMetrics.top * scale;
