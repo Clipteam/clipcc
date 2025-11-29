@@ -338,6 +338,7 @@ Blockly.Msg.SHOW_PROCEDURE_DEFINITION = 'Go to definition';
 Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT = 'Say something...';
 Blockly.Msg.COPY = 'Copy to Clipboard';
 Blockly.Msg.PASTE = 'Paste';
+Blockly.Msg.PASTE_ERROR = 'Clipboard content is not valid block data and cannot be pasted.';
 Blockly.Msg.INSERT_INPUT = 'Insert an Input';
 Blockly.Msg.DELETE_INPUT = 'Delete the Input';
 

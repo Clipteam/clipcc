@@ -70,8 +70,15 @@ export function flyoutCategory(workspace: Blockly.WorkspaceSvg): Blockly.utils.t
     }
   });
 
-  // Create call blocks for each procedure
+  // Create call blocks for each procedure.
   const states = allProcedureExtraStates(workspace);
+  if (states.length) {
+    // Add gap.
+    toolboxDef.push({
+      kind: 'sep',
+      gap: 36
+    });
+  }
   for (const state of states) {
     toolboxDef.push({
       kind: 'block',

@@ -5,12 +5,11 @@
  */
 
 import * as Blockly from 'blockly/core';
-import styles from '../styles/category.css';
 
 /**
  * Class for scratch category.
  */
-export class ScratchCategory extends Blockly.ToolboxCategory {
+export class ToolboxCategory extends Blockly.ToolboxCategory {
   /** Default color for the category. */
   static readonly DEFAULT_COLOUR = '#575E75';
 
@@ -55,7 +54,7 @@ export class ScratchCategory extends Blockly.ToolboxCategory {
     if (colour) {
       this.colourBar!.style.backgroundColor = colour;
     } else {
-      this.colourBar!.style.backgroundColor = ScratchCategory.DEFAULT_COLOUR;
+      this.colourBar!.style.backgroundColor = ToolboxCategory.DEFAULT_COLOUR;
     }
   }
 
@@ -68,6 +67,14 @@ export class ScratchCategory extends Blockly.ToolboxCategory {
     this.colourBar = document.createElement('div');
     this.colourBar.className = this.cssConfig_['icon']!;
     return this.colourBar;
+  }
+
+  /**
+   * Get whether this category is selectable.
+   * @returns True if this category is not disabled.
+   */
+  override isSelectable(): boolean {
+    return !this.isDisabled_;
   }
 
   /**
@@ -96,15 +103,10 @@ export class ScratchCategory extends Blockly.ToolboxCategory {
   }
 }
 
-/**
- * Register the toolbox item class and any dependencies.
- */
-export function registerScratchCategory() {
-  Blockly.registry.register(
-    Blockly.registry.Type.TOOLBOX_ITEM,
-    Blockly.ToolboxCategory.registrationName,
-    ScratchCategory,
-    true
-  );
-  Blockly.Css.register(styles);
-}
+
+Blockly.registry.register(
+  Blockly.registry.Type.TOOLBOX_ITEM,
+  Blockly.ToolboxCategory.registrationName,
+  ToolboxCategory,
+  true
+);

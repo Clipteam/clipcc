@@ -4,7 +4,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const baseConfig = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  devtool: process.env.NODE_ENV === 'production' ? false : 'eval-source-map',
+  devtool: process.env.NODE_ENV === 'production' ? false : 'eval-cheap-module-source-map',
   entry: './src/index.ts',
   output: {
     library: 'ScratchBlocks',

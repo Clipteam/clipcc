@@ -6,6 +6,9 @@
 
 import * as Blockly from 'blockly/core';
 
+/**
+ * Comment anchored to a block.
+ */
 export class AnchoredComment
   extends Blockly.comments.CommentView
   implements Blockly.IBubble, Blockly.ISelectable, Blockly.IBoundedElement {
@@ -16,22 +19,14 @@ export class AnchoredComment
    * The location where a drag started. Used to revert drag and fire move event.
    */
   protected dragStartLocation?: Blockly.utils.Coordinate;
+
   protected chain: SVGPathElement;
-  protected anchor?: Blockly.utils.Coordinate;
-  /**
-   * Whether the comment position should be automatically adjusted
-   * when the anchor changes. Set to false during state restoration.
-   */
-  protected autoAdjustPosition = true;
-  /**
-   * Pending location to be applied when anchor is set.
-   * Used during state restoration when location is set before anchor.
-   */
-  protected pendingLocation?: Blockly.utils.Coordinate;
+
+  protected anchor: Blockly.utils.Coordinate | null = null;
 
   // @todo inject css from these values?
   protected static readonly BORDER_WIDTH = 1;
-  protected static readonly TOP_BAR_HEIGHT = 32;
+  static readonly TOP_BAR_HEIGHT = 32;
   protected static readonly CHAIN_THICKNESS = 1;
 
   private dragStrategy = new Blockly.dragging.BubbleDragStrategy(this, this.workspace);
@@ -39,13 +34,16 @@ export class AnchoredComment
     (oldCoordinate: Blockly.utils.Coordinate, newCoordinate: Blockly.utils.Coordinate) => void
   > = [];
 
+  /**
+   * @param sourceBlock The block this comment is attached to.
+   */
   constructor(sourceBlock: Blockly.BlockSvg) {
-    const id = `anchored_comment_${sourceBlock.id}`;
-    super(sourceBlock.workspace, id);
-    this.id = id;
-    this.getSvgRoot().setAttribute('data-id', id);
-    this.getSvgRoot().setAttribute('id', id);
+    super(sourceBlock.workspace, `anchored_comment_${sourceBlock.id}`);
+    this.id = this.commentId;
     this.sourceBlock = sourceBlock;
+
+    this.getSvgRoot().setAttribute('data-id', this.id);
+    this.getSvgRoot().setAttribute('id', this.id);
 
     this.setPlaceholderText(Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT);
     this.getSvgRoot().setAttribute(
@@ -78,36 +76,22 @@ export class AnchoredComment
   /**
    * Set the anchor for the chain (where the chain connects to the block).
    * @param anchor The anchor coordinate.
+   * @param adjustPosition True if the comment position should be automatically
+   *      adjusted to keep the relative coordinate.
+   * @
    */
-  setAnchor(anchor: Blockly.utils.Coordinate) {
+  setAnchor(anchor: Blockly.utils.Coordinate, adjustPosition: boolean = true) {
     const oldAnchor = this.anchor;
-    const hasAnchored = !!this.anchor;
     this.anchor = anchor;
 
-    if (!hasAnchored) {
-      // If there's a pending location from loadState, use it instead of initAnchor
-      if (this.pendingLocation) {
-        this.moveTo(this.pendingLocation);
-        this.pendingLocation = undefined;
-      } else {
-        // position bubble relative to anchor at first
-        this.initAnchor();
-      }
-    } else if (oldAnchor && this.autoAdjustPosition) {
+    if (oldAnchor && adjustPosition) {
       const oldLocation = this.getRelativeToSurfaceXY();
       const delta = Blockly.utils.Coordinate.difference(this.anchor, oldAnchor);
       const newLocation = Blockly.utils.Coordinate.sum(oldLocation, delta);
       this.moveTo(newLocation);
+    } else {
+      this.renderChain();
     }
-  }
-
-  /**
-   * Sets a pending location to be applied when anchor is set.
-   * Used during state restoration.
-   * @param location The location to apply when anchor is set.
-   */
-  setPendingLocation(location: Blockly.utils.Coordinate | undefined) {
-    this.pendingLocation = location;
   }
 
   /**
@@ -116,21 +100,6 @@ export class AnchoredComment
    */
   hasAnchor(): boolean {
     return !!this.anchor;
-  }
-
-  /**
-   * Initialize the bubble position at first.
-   */
-  protected initAnchor() {
-    if (!this.anchor) return;
-
-    const verticalOffset = AnchoredComment.TOP_BAR_HEIGHT / 2;
-    const horizontalOffset = 40;
-
-    this.moveTo(
-      this.anchor.x + horizontalOffset * (this.workspace.RTL ? -1 : 1),
-      this.anchor.y - verticalOffset
-    );
   }
 
   /**
@@ -162,12 +131,7 @@ export class AnchoredComment
     }
   }
 
-  /**
-   * Sets whether or not this bubble is being dragged.
-   * This method is required by the IBubble interface, but always true for anchored comments.
-   * It is implemented as a no-op to satisfy the interface contract.
-   */
-  setDragging() {}
+  setDragging(dragging: boolean) {}
 
   /**
    * Move this bubble during a drag.
@@ -202,6 +166,12 @@ export class AnchoredComment
 
     super.moveTo(coordinate);
     this.renderChain();
+  }
+
+  moveToWithFiringEvents(newLoc: Blockly.utils.Coordinate): void {
+    const oldLoc = this.getRelativeToSurfaceXY();
+    this.moveTo(newLoc);
+    this.onMove(oldLoc, newLoc);
   }
 
   /**
@@ -267,16 +237,29 @@ export class AnchoredComment
   };
 
   /**
+   * Triggers listeners when the position of the comment changes, either
+   * programmatically or manually by the user.
+   * @param oldCoordinate The old coordinate.
+   * @param newCoordinate The new coordinate.
+   */
+  private onMove(oldCoordinate: Blockly.utils.Coordinate, newCoordinate: Blockly.utils.Coordinate) {
+    if (!this.moveListener) {
+      // Current instance is not constructed.
+      return;
+    }
+    for (let i = this.moveListener.length - 1; i >= 0; i--) {
+      this.moveListener[i](oldCoordinate, newCoordinate);
+    }
+  }
+
+  /**
    * Handles any drag cleanup, including e.g. connecting or deleting
    * blocks.
    */
   endDrag() {
     const coordinate = this.getRelativeToSurfaceXY();
     this.dragStrategy.endDrag();
-
-    for (let i = this.moveListener.length - 1; i >= 0; i--) {
-      this.moveListener[i](this.dragStartLocation!, coordinate);
-    }
+    this.onMove(this.dragStartLocation!, coordinate);
   }
 
   /** Moves the draggable back to where it was at the start of the drag. */
@@ -286,7 +269,7 @@ export class AnchoredComment
     }
   }
 
-  setDeleteStyle() {}
+  setDeleteStyle(enable: boolean) {}
   showContextMenu() {}
 
   /**
@@ -311,13 +294,13 @@ export class AnchoredComment
   }
 
   /** See IFocusableNode.onNodeBlur. */
-  onNodeBlur() { }
+  onNodeBlur() {}
 
   /** See ISelectable.select. */
-  select() { }
+  select() {}
 
   /** See ISelectable.unselect. */
-  unselect() { }
+  unselect() {}
 
   /**
    * See IFocusableNode.canBeFocused.

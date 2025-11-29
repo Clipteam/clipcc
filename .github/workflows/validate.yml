@@ -9,18 +9,174 @@ on:
   pull_request:
 
 jobs:
-  validate:
-    name: Validating Code
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 20.x
+          node-version: 24.x
           cache: 'yarn'
-      - name: Install and build
-        run: yarn install --frozen-lockfile && yarn run build:full
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build all packages
+        run: yarn run build:full
+
+  check-types:
+    name: Check Types
+    runs-on: ubuntu-latest
+    outputs:
+      should-run-all: ${{ steps.check-types.outputs.should-run-all }}
+      gui: ${{ steps.changes.outputs.gui }}
+      vm: ${{ steps.changes.outputs.vm }}
+      block: ${{ steps.changes.outputs.block }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Check types
+        id: check-types
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            if [[ "${{ github.base_ref }}" == "master" ]]; then
+              echo "should-run-all=true" >> $GITHUB_OUTPUT
+            else
+              echo "should-run-all=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "should-run-all=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Detect changes
+        uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            gui:
+              - 'packages/gui/**'
+              - 'packages/l10n/**'
+              - 'packages/paint/**'
+              - 'packages/storage/**'
+            vm:
+              - 'packages/vm/**'
+              - 'packages/storage/**'
+            block:
+              - 'packages/block/**'
+
+  test-gui:
+    name: Test GUI
+    needs: [build, check-types]
+    runs-on: ubuntu-latest
+    if: needs.check-types.outputs.gui == 'true' || needs.check-types.outputs.should-run-all == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: 'yarn'
+
+      - name: Restore node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
       - name: Test
-        run: yarn test
+        run: yarn gui test:unit
+
+      - name: Lint
+        run: yarn gui lint
+
+  test-vm:
+    name: Test VM
+    needs: [build, check-types]
+    runs-on: ubuntu-latest
+    if: needs.check-types.outputs.vm == 'true' || needs.check-types.outputs.should-run-all == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: 'yarn'
+
+      - name: Restore node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Test
+        run: yarn vm test
+
+      - name: Lint
+        run: yarn vm lint
+
+  test-block:
+    name: Test Block
+    needs: [build, check-types]
+    runs-on: ubuntu-latest
+    if: needs.check-types.outputs.block == 'true' || needs.check-types.outputs.should-run-all == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+          cache: 'yarn'
+
+      - name: Restore node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Test
+        run: yarn block test
+
+      - name: Lint
+        run: yarn block lint
