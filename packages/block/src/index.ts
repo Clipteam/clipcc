@@ -17,9 +17,6 @@ import {registerFieldNote} from './fields/note';
 import {registerFieldTextInputRemovable} from './fields/textinput_removable';
 import {registerFieldVariableGetter} from './fields/variable_getter';
 import {registerFieldVerticalSeparator} from './fields/vertical_separator';
-import {registerScratchCategory} from './toolbox/category';
-import {ContinuousToolBox} from './toolbox/toolbox';
-import {ContinuousVerticalFlyout} from './toolbox/flyout';
 import {flyoutCategory as variableCategory} from './data_category';
 import {flyoutCategory as procedureCategory} from './procedures_category';
 import {isProcedureCallBlock, isProcedurePrototypeBlock} from './blocks/procedures';
@@ -41,6 +38,14 @@ import './block_comment_icon';
 import './renderer/renderer';
 import './connection_checker';
 import './dragger';
+import './insertion_marker_previewer';
+
+import './toolbox/flyout';
+import './toolbox/toolbox';
+import './toolbox/category';
+import './toolbox/collapsible_category';
+import './toolbox/inflaters/block';
+import './toolbox/inflaters/label';
 
 import './blocks/extensions';
 import './blocks/common';
@@ -76,11 +81,14 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerFieldVariableGetter();
   registerFieldVerticalSeparator();
 
+<<<<<<< HEAD
   registerScratchCategory();
   registerScratchContextMenu();
 
   // Register styles.
 
+=======
+>>>>>>> feat/modern-blockly/main
   Blockly.Css.register(styles);
   Blockly.Css.register(commentStyles);
 
@@ -141,11 +149,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
 export function injectWorkspace(container: Element | string, options?: Blockly.BlocklyOptions) {
   const defaultOptions: Blockly.BlocklyOptions = {
     renderer: 'scratch',
-    theme: createTheme(),
-    plugins: {
-      toolbox: ContinuousToolBox,
-      flyoutsVerticalToolbox: ContinuousVerticalFlyout
-    }
+    theme: createTheme()
   };
   options = Object.assign(defaultOptions, options);
   return Blockly.inject(container, options);
@@ -175,10 +179,16 @@ export function loadWorkspace(
   Blockly.serialization.workspaces.load(state, workspace, {recordUndo});
 }
 
+export {reportValue} from './report_value';
 export {setExternalProcedureDefCallback} from './procedures_category';
+export {setGetCheckboxState} from './utils';
 
 // Monkey-patches
 Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
 Blockly.FlyoutButton.TEXT_MARGIN_X = 40;
 Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;
+<<<<<<< HEAD
 Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(200, 200);
+=======
+Blockly.ToolboxCategory.nestedPadding = 6;
+>>>>>>> feat/modern-blockly/main
