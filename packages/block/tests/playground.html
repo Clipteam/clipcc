@@ -83,8 +83,9 @@
     .eventList {
       height: 150px;
       width: 100%;
-      overflow-y: visible;
+      overflow-y: auto;
       overflow-x: hidden;
+      position: relative;
     }
 
     #eventList {
@@ -93,10 +94,16 @@
       padding: 0;
       margin: 0 10px;
       font-size: 90%;
+      position: relative;
     }
 
     #eventList > li {
       padding: 0 5px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 20px;
+      line-height: 20px;
     }
 
     #dataContent {
@@ -110,8 +117,14 @@
     let mainWorkspace = null;
     let functionEditor = null;
     let eventListElement = null;
+    let eventListContainer = null;
     let loadTime = 0;
     let events = [];
+
+    const ITEM_HEIGHT = 20;
+    const BUFFER_SIZE = 5;
+    let visibleItems = new Map();
+    let lastScrollTop = 0;
 
     function start() {
       fetch('toolbox.json').then(response => response.json()).then(toolbox => {
@@ -146,6 +159,8 @@
       });
 
       eventListElement = document.getElementById('eventList');
+      eventListContainer = eventListElement.parentElement;
+      eventListContainer.addEventListener('scroll', handleScroll);
 
       let lastGroup = null;
       let lastGroupColor = 0;
@@ -155,21 +170,18 @@
           lastGroupColor = (lastGroupColor + 1) % groupColors.length;
         }
         lastGroup = event.group;
-        const item = document.createElement('li');
-        item.innerText = `${event.type} (${(Number(new Date()) - loadTime) / 1000})`;
-        item.setAttribute('data-index', events.length);
-        item.style.backgroundColor = groupColors[lastGroupColor];
-        item.onclick = () => {
-          console.log(events[item.getAttribute('data-index')]);
-        };
-        eventListElement.appendChild(item);
-        events.push(event);
-        eventListElement.parentElement.scrollTop = eventListElement.scrollHeight;
 
-        // Test whether visual report works
-        if (event.type === 'click' && event.blockId) {
-          ScratchBlocks.reportValue(event.blockId, 'tada!');
-        }
+        events.push({
+          event: event,
+          type: event.type,
+          timestamp: (Number(new Date()) - loadTime) / 1000,
+          backgroundColor: groupColors[lastGroupColor]
+        });
+
+        // Update the event list height and render visible items to improve performance
+        eventListElement.style.height = `${events.length * ITEM_HEIGHT}px`;
+        renderVisibleItems();
+        eventListContainer.scrollTop = eventListContainer.scrollHeight;
       });
 
       functionEditor = ScratchBlocks.injectWorkspace('functionDiv', {
@@ -270,6 +282,51 @@
     function loadWorkspace() {
       const textarea = document.getElementById('dataContent');
       const state = ScratchBlocks.loadWorkspace(JSON.parse(textarea.value), mainWorkspace, true);
+    }
+
+    function handleScroll() {
+      const scrollTop = eventListContainer.scrollTop;
+
+      if (Math.abs(scrollTop - lastScrollTop) > ITEM_HEIGHT / 2) {
+        lastScrollTop = scrollTop;
+        renderVisibleItems();
+      }
+    }
+
+    function renderVisibleItems() {
+      if (!eventListContainer || events.length === 0) return;
+
+      const scrollTop = eventListContainer.scrollTop;
+      const containerHeight = eventListContainer.clientHeight;
+
+      const startIndex = Math.max(0, Math.floor(scrollTop / ITEM_HEIGHT) - BUFFER_SIZE);
+      const endIndex = Math.min(
+        events.length - 1,
+        Math.ceil((scrollTop + containerHeight) / ITEM_HEIGHT) + BUFFER_SIZE
+      );
+
+      for (const [index, item] of visibleItems.entries()) {
+        if (index < startIndex || index > endIndex) {
+          eventListElement.removeChild(item);
+          visibleItems.delete(index);
+        }
+      }
+
+      for (let i = startIndex; i <= endIndex; i++) {
+        if (!visibleItems.has(i)) {
+          const eventData = events[i];
+          const item = document.createElement('li');
+          item.innerText = `${eventData.type} (${eventData.timestamp})`;
+          item.setAttribute('data-index', i);
+          item.style.backgroundColor = eventData.backgroundColor;
+          item.style.top = `${i * ITEM_HEIGHT}px`;
+          item.onclick = () => {
+            console.log(events[parseInt(item.getAttribute('data-index'))].event);
+          };
+          eventListElement.appendChild(item);
+          visibleItems.set(i, item);
+        }
+      }
     }
 
     /** Helpers to store checkbox state. */

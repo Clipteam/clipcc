@@ -8,6 +8,7 @@ import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
 import {InlineStatementInput} from './measurables/inline_statement_input';
 import {BowlerHat} from './measurables/bowler_hat';
+import {isInvisibleIcon} from '../interfaces/i_invisible_icon';
 
 /**
  * An object containing all sizing information needed to draw this block.
@@ -16,6 +17,31 @@ import {BowlerHat} from './measurables/bowler_hat';
  * repeatedly may be expensive.
  */
 export class RenderInfo extends Blockly.zelos.RenderInfo {
+  /** Invisible icons that need block offset for rendering. */
+  invisibleIcons: Blockly.blockRendering.Icon[] = [];
+
+  /**
+   * Create rows of Measurable objects representing all renderable parts of the
+   * block.
+   */
+  protected override createRows_(): void {
+    super.createRows_();
+
+    // Remove comment icons.
+    for (const row of this.rows) {
+      for (let i = 0; i < row.elements.length; ++i) {
+        const element = row.elements[i];
+        if (
+          Blockly.blockRendering.Types.isIcon(element) &&
+          isInvisibleIcon(element.icon) && element.icon.invisible
+        ) {
+          row.elements.splice(i, 1);
+          this.invisibleIcons.push(element);
+        }
+      }
+    }
+  }
+
   /**
    * Create all non-spacer elements that belong on the top row.
    */

@@ -321,6 +321,7 @@ Blockly.Msg.CATEGORY_MYBLOCKS = 'Functions';
 Blockly.Msg.DUPLICATE_BLOCK = 'Duplicate';
 Blockly.Msg.DELETE = 'Delete';
 Blockly.Msg.ADD_COMMENT = 'Add Comment';
+Blockly.Msg.DUPLICATE_COMMENT = 'Duplicate Comment';
 Blockly.Msg.REMOVE_COMMENT = 'Remove Comment';
 Blockly.Msg.DELETE_BLOCK = 'Delete Block';
 Blockly.Msg.DELETE_X_BLOCKS = 'Delete %1 Blocks';
@@ -337,6 +338,7 @@ Blockly.Msg.SHOW_PROCEDURE_DEFINITION = 'Go to definition';
 Blockly.Msg.WORKSPACE_COMMENT_DEFAULT_TEXT = 'Say something...';
 Blockly.Msg.COPY = 'Copy to Clipboard';
 Blockly.Msg.PASTE = 'Paste';
+Blockly.Msg.PASTE_ERROR = 'Clipboard content is not valid block data and cannot be pasted.';
 Blockly.Msg.INSERT_INPUT = 'Insert an Input';
 Blockly.Msg.DELETE_INPUT = 'Delete the Input';
 
