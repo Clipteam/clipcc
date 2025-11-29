@@ -148,6 +148,14 @@ export class BlockCommentIcon
     }
   }
 
+  /** Keeps the serialized state aligned with the bubble's rendered position. */
+  private syncBubbleLocationState() {
+    if (!this.commentBubble) return;
+    const location = this.commentBubble.getRelativeToSurfaceXY();
+    this.state.x = location.x;
+    this.state.y = location.y;
+  }
+
   /**
    * Returns the type of this icon.
    * @returns The icon type for comment icons.
@@ -258,6 +266,9 @@ export class BlockCommentIcon
       ));
     }
     this.commentBubble.setAnchor(anchor, this.shouldAutoAdjust);
+    if (this.shouldAutoAdjust) {
+      this.syncBubbleLocationState();
+    }
     if (!this.shouldAutoAdjust) this.shouldAutoAdjust = true;
   }
 
