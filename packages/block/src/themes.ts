@@ -212,7 +212,7 @@ export function createTheme(): Blockly.Theme {
     categoryStyles: buildCategoryStyles(),
     componentStyles: {
       selectedGlowColour: 'transparent',
-      insertionMarkerColour: 'transparent',
+      insertionMarkerColour: Colours.insertionMarker as string,
       insertionMarkerOpacity: Colours.insertionMarkerOpacity as number,
       replacementGlowColour: Colours.replacementGlow as string,
       scrollbarColour: Colours.scrollbar as string,

@@ -77,6 +77,12 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
       `}`,
       ``,
       `${selector} .blocklyHighlightedConnectionPath {`,
+      `stroke: transparent;`,
+      `}`,
+      ``,
+      // Boolean connection highlight override
+      `${selector} .blocklyOutlinePath ~ .blocklyHighlightedConnectionPath,`,
+      `${selector} .blocklyHighlightedConnectionPath:has(~ .blocklyOutlinePath) {`,
       `stroke: var(--clipcc-block-replacementGlow);`,
       `}`
     ];
