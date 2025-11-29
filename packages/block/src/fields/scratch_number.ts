@@ -64,13 +64,43 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
   /** Currently active field while the numpad is displayed. */
   private static activeField_: FieldScratchNumber | null = null;
 
+  /** The minimum value this number field can contain. */
   private min_ = -Infinity;
+
+  /** The maximum value this number field can contain. */
   private max_ = Infinity;
+
+  /** The multiple to which this fields value is rounded. */
   private precision_ = 0;
+
+  /**
+   * The number of decimal places to allow, or null to allow any number of
+   * decimal digits.
+   */
   private decimalPlaces: number | null = null;
+
   private decimalAllowed_ = true;
   private negativeAllowed_ = true;
 
+  /**
+   * @param value The initial value of the field. Should cast to a number.
+   *     Defaults to 0. Also accepts Field.SKIP_SETUP if you wish to skip setup
+   *     (only used by subclasses that want to handle configuration and setting
+   *     the field value after their own constructors have run).
+   * @param min Minimum value. Will only be used if config is not
+   *     provided.
+   * @param max Maximum value. Will only be used if config is not
+   *     provided.
+   * @param precision Precision for value. Will only be used if config
+   *     is not provided.
+   * @param validator A function that is called to validate changes to the
+   *     field's value. Takes in a number & returns a validated number, or null
+   *     to abort the change.
+   * @param config A map of options used to configure the field.
+   *     See the [field creation documentation]{@link
+   * https://developers.google.com/blockly/guides/create-custom-blocks/fields/built-in-fields/number#creation}
+   * for a list of properties this parameter supports.
+   */
   constructor(
     value?: string | number | null | typeof Blockly.Field.SKIP_SETUP,
     min?: string | number | null,
@@ -98,6 +128,10 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     }
   }
 
+  /**
+   * Configure the field based on the given map of options.
+   * @param config A map of options to configure the field based on.
+   */
   protected override configure_(config: FieldScratchNumberConfig): void {
     super.configure_(config);
     if (config.min !== undefined || config.max !== undefined || config.precision !== undefined) {
@@ -133,6 +167,18 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     super.setValue(normalized, fireChangeEvent);
   }
 
+  /**
+   * Set the maximum, minimum and precision constraints on this field.
+   * Any of these properties may be undefined or NaN to be disabled.
+   * Setting precision (usually a power of 10) enforces a minimum step between
+   * values. That is, the user's value will rounded to the closest multiple of
+   * precision. The least significant digit place is inferred from the
+   * precision. Integers values can be enforces by choosing an integer
+   * precision.
+   * @param min Minimum value.
+   * @param max Maximum value.
+   * @param precision Precision for value.
+   */
   setConstraints(
     min: number | string | undefined | null,
     max: number | string | undefined | null,
@@ -149,33 +195,70 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     }
   }
 
+  /**
+   * Sets the minimum value this field can contain. Updates the value to
+   * reflect.
+   * @param min Minimum value.
+   */
   setMin(min: number | string | undefined | null): void {
     this.setMinInternal(min);
     this.updateRestrictionFlags();
   }
 
+  /**
+   * Sets the maximum value this field can contain. Updates the value to
+   * reflect.
+   * @param max Maximum value.
+   */
   setMax(max: number | string | undefined | null): void {
     this.setMaxInternal(max);
     this.updateRestrictionFlags();
   }
 
+  /**
+   * Sets the precision of this field's value, i.e. the number to which the
+   * value is rounded. Updates the field to reflect.
+   * @param precision The number to which the field's value is rounded.
+   */
   setPrecision(precision: number | string | undefined | null): void {
     this.setPrecisionInternal(precision);
     this.updateRestrictionFlags();
   }
 
+  /**
+   * Returns the current minimum value this field can contain. Default is
+   * -Infinity.
+   * @returns The current minimum value this field can contain.
+   */
   getMin(): number {
     return this.min_;
   }
 
+  /**
+   * Returns the current maximum value this field can contain. Default is
+   * Infinity.
+   * @returns The current maximum value this field can contain.
+   */
   getMax(): number {
     return this.max_;
   }
 
+  /**
+   * Returns the current precision of this field. The precision being the
+   * number to which the field's value is rounded. A precision of 0 means that
+   * the value is not rounded.
+   * @returns The number to which this field's value is rounded.
+   */
   getPrecision(): number {
     return this.precision_;
   }
 
+  /**
+   * Ensure that the input value is a valid number (must fulfill the
+   * constraints placed on the field).
+   * @param newValue The input value.
+   * @returns A valid number, or null if invalid.
+   */
   protected override doClassValidation_(newValue?: string | null): string | null {
     if (newValue === null || newValue === undefined) {
       return null;
@@ -227,6 +310,12 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     return text;
   }
 
+  /**
+   * Show the inline free-text editor on top of the text and the num-pad if
+   * appropriate.
+   * @param event The event that triggered the editor to open.
+   * @param quietInput Whether to suppress the on-screen keyboard on touch devices.
+   */
   protected override showEditor_(event?: Event, quietInput?: boolean): void {
     const showNumPad = this.shouldUseNumPad(event);
     super.showEditor_(event, showNumPad ? true : quietInput, false);
@@ -256,6 +345,11 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     return true;
   }
 
+  /**
+   * Sets the minimum value this field can contain. Called internally to avoid
+   * value updates.
+   * @param min Minimum value.
+   */
   private setMinInternal(min: number | string | undefined | null): void {
     if (min == null) {
       this.min_ = -Infinity;
@@ -267,6 +361,11 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     }
   }
 
+  /**
+   * Sets the maximum value this field can contain. Called internally to avoid
+   * value updates.
+   * @param max Maximum value.
+   */
   private setMaxInternal(max: number | string | undefined | null): void {
     if (max == null) {
       this.max_ = Infinity;
@@ -278,6 +377,11 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     }
   }
 
+  /**
+   * Sets the precision of this field's value. Called internally to avoid
+   * value updates.
+   * @param precision The number to which the field's value is rounded.
+   */
   private setPrecisionInternal(precision: number | string | undefined | null): void {
     this.precision_ = Number(precision) || 0;
     let precisionString = String(this.precision_);
@@ -308,6 +412,9 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     this.negativeAllowed_ = this.min_ < 0 || !Number.isFinite(this.min_);
   }
 
+  /**
+   * Show the number pad.
+   */
   private showNumPad(): void {
     Blockly.DropDownDiv.hideWithoutAnimation();
     Blockly.DropDownDiv.clearContent();
@@ -334,6 +441,11 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     );
   }
 
+  /**
+   * Add number, punctuation, and erase buttons to the numeric keypad's content
+   * div.
+   * @param contentDiv The div for the numeric keypad.
+   */
   private addButtons(contentDiv: Element): void {
     const sourceBlock = this.getSourceBlock() as Blockly.BlockSvg | null;
     const colourSource = (sourceBlock?.getParent() as Blockly.BlockSvg | null) || sourceBlock;
@@ -377,6 +489,11 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     contentDiv.appendChild(eraseButton);
   }
 
+  /**
+   * Call for when a num-pad number or punctuation button is touched.
+   * Determine what the user is inputting and update the text field appropriately.
+   * @param e DOM event triggering the touch.
+   */
   private static handleNumPadButton(e: PointerEvent): void {
     e.preventDefault();
     const field = FieldScratchNumber.activeField_;
@@ -389,6 +506,11 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     Blockly.Touch.clearTouchIdentifier();
   }
 
+  /**
+   * Call for when the num-pad erase button is touched.
+   * Determine what the user is asking to erase, and erase it.
+   * @param e DOM event triggering the touch.
+   */
   private static handleNumPadErase(e: PointerEvent): void {
     e.preventDefault();
     const field = FieldScratchNumber.activeField_;
@@ -424,6 +546,11 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     this.updateDisplay(newValue, start);
   }
 
+  /**
+   * Update the displayed value and resize/scroll the text field as needed.
+   * @param newValue The new text to display.
+   * @param newSelection The new index to put the cursor
+   */
   private updateDisplay(newValue: string, newSelection: number): void {
     const input = this.htmlInput_;
     if (!input) {
@@ -444,6 +571,9 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     input.setSelectionRange(length, length);
   }
 
+  /**
+   * Callback for when the drop-down is hidden.
+   */
   private onHide(): void {
     const contentDiv = Blockly.DropDownDiv.getContentDiv();
     contentDiv.removeAttribute('role');
@@ -453,6 +583,11 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     }
   }
 
+  /**
+   * Construct a FieldNumber from a JSON arg object.
+   * @param options A JSON object with options (value, min, max, and precision).
+   * @returns The new field instance.
+   */
   static override fromJson(options: FieldScratchNumberFromJsonConfig): FieldScratchNumber {
     return new FieldScratchNumber(
       options.value,
@@ -469,6 +604,7 @@ FieldScratchNumber.prototype.DEFAULT_VALUE = '0';
 
 /** Register the field so block JSON can reference it. */
 export function registerFieldScratchNumber() {
-  Blockly.fieldRegistry.register('field_scratch_number', FieldScratchNumber);
+  // Override Blockly's field number
+  Blockly.fieldRegistry.register('field_number', FieldScratchNumber);
   Blockly.Css.register(styles);
 }
