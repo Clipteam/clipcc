@@ -285,53 +285,6 @@ export class FieldNumber extends Blockly.FieldTextInput {
   }
 
   /**
-   * Ensure that the input value is a valid number (must fulfill the
-   * constraints placed on the field).
-   * @param newValue The input value.
-   * @returns A valid number, or null if invalid.
-   */
-  protected override doClassValidation_(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    newValue?: any
-  ): string | null {
-    if (newValue === null) {
-      return null;
-    }
-
-    if (typeof newValue === 'string' && newValue.trim() === '') {
-      return '';
-    }
-
-    // Clean up text.
-    newValue = `${newValue}`;
-    // TODO: Handle cases like 'ten', '1.203,14', etc.
-    // 'O' is sometimes mistaken for '0' by inexperienced users.
-    newValue = newValue.replace(/O/gi, '0');
-    // Strip out thousands separators.
-    newValue = newValue.replace(/,/g, '');
-    // Ignore case of 'Infinity'.
-    newValue = newValue.replace(/infinity/i, 'Infinity');
-
-    // Clean up number.
-    let n = Number(newValue || 0);
-    if (isNaN(n)) {
-      // Invalid number.
-      return null;
-    }
-    // Get the value in range.
-    n = Math.min(Math.max(n, this.min_), this.max_);
-    // Round to nearest multiple of precision.
-    if (this.precision_ && isFinite(n)) {
-      n = Math.round(n / this.precision_) * this.precision_;
-    }
-    // Clean up floating point errors.
-    if (this.decimalPlaces !== null) {
-      n = Number(n.toFixed(this.decimalPlaces));
-    }
-    return String(n);
-  }
-
-  /**
    * Return an appropriate restrictor, depending on whether this FieldNumber
    * allows decimal or negative numbers.
    * @returns Regular expression for this FieldNumber's restrictor.
