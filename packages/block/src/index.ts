@@ -7,7 +7,7 @@
 import * as Blockly from 'blockly/core';
 
 import * as Constants from './constants';
-import {createTheme, injectCssVariables} from './colours';
+import {createTheme, injectCssVariables} from './themes';
 import {registerScratchContextMenu} from './contextmenu_items';
 import {registerFieldAngle} from './fields/angle';
 import {registerFieldButton} from './fields/button';

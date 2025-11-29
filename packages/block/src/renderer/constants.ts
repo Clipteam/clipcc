@@ -74,6 +74,10 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
       `${selector} .blocklyCommentText.blocklyText {`,
       `font-weight: 400;`,
       `color: #575e75;`, // @TODO: Use CSS variable. (same as --clipcc-text-primary)
+      `}`,
+      ``,
+      `${selector} .blocklyHighlightedConnectionPath {`,
+      `stroke: var(--clipcc-block-replacementGlow);`,
       `}`
     ];
     return css.concat(flyoutButtonStyle);

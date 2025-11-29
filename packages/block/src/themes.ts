@@ -209,6 +209,18 @@ export function createTheme(): Blockly.Theme {
   return Blockly.Theme.defineTheme('scratch', {
     name: 'scratch',
     blockStyles,
-    categoryStyles: buildCategoryStyles()
+    categoryStyles: buildCategoryStyles(),
+    componentStyles: {
+      selectedGlowColour: 'transparent',
+      insertionMarkerColour: 'transparent',
+      insertionMarkerOpacity: Colours.insertionMarkerOpacity as number,
+      replacementGlowColour: Colours.replacementGlow as string,
+      scrollbarColour: Colours.scrollbar as string,
+      toolboxBackgroundColour: Colours.toolbox as string,
+      toolboxForegroundColour: Colours.toolboxText as string,
+      flyoutBackgroundColour: Colours.flyout as string,
+      workspaceBackgroundColour: Colours.workspace as string
+    },
+    startHats: true
   });
 }
