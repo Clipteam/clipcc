@@ -20,19 +20,19 @@
 
 import * as Blockly from 'blockly/core';
 
-import styles from '../styles/scratch_number.css';
+import styles from '../styles/number.css';
 import {Colours} from '../colours';
 
 /**
- * Additional config supported by the Scratch number field.
+ * Additional config supported by the number field.
  */
-export interface FieldScratchNumberConfig extends Blockly.FieldTextInputConfig {
+export interface FieldNumberConfig extends Blockly.FieldTextInputConfig {
   min?: number | string | null;
   max?: number | string | null;
   precision?: number | string | null;
 }
 
-export interface FieldScratchNumberFromJsonConfig extends FieldScratchNumberConfig {
+export interface FieldNumberFromJsonConfig extends FieldNumberConfig {
   value?: string | number | null;
 }
 
@@ -40,7 +40,7 @@ export interface FieldScratchNumberFromJsonConfig extends FieldScratchNumberConf
  * Scratch flavoured number field that supports nullable values and touch numpads.
  * Extends FieldTextInput (and thus Field<string>) to allow blank input states.
  */
-export class FieldScratchNumber extends Blockly.FieldTextInput {
+export class FieldNumber extends Blockly.FieldTextInput {
   /** Fixed width of the num-pad drop-down, in px. */
   private static readonly DROPDOWN_WIDTH = 168;
 
@@ -62,7 +62,7 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     String(Colours.numPadText) + '"/></svg>';
 
   /** Currently active field while the numpad is displayed. */
-  private static activeField_: FieldScratchNumber | null = null;
+  private static activeField_: FieldNumber | null = null;
 
   /** The minimum value this number field can contain. */
   private min_ = -Infinity;
@@ -107,7 +107,7 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     max?: string | number | null,
     precision?: string | number | null,
     validator?: Blockly.FieldTextInputValidator | Blockly.FieldNumberValidator | null,
-    config?: FieldScratchNumberConfig
+    config?: FieldNumberConfig
   ) {
     super(Blockly.Field.SKIP_SETUP);
 
@@ -132,7 +132,7 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
    * Configure the field based on the given map of options.
    * @param config A map of options to configure the field based on.
    */
-  protected override configure_(config: FieldScratchNumberConfig): void {
+  protected override configure_(config: FieldNumberConfig): void {
     super.configure_(config);
     if (config.min !== undefined || config.max !== undefined || config.precision !== undefined) {
       this.setConstraints(config.min, config.max, config.precision);
@@ -320,18 +320,18 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     const showNumPad = this.shouldUseNumPad(event);
     super.showEditor_(event, showNumPad ? true : quietInput, false);
     if (!showNumPad) {
-      FieldScratchNumber.activeField_ = null;
+      FieldNumber.activeField_ = null;
       return;
     }
-    FieldScratchNumber.activeField_ = this;
+    FieldNumber.activeField_ = this;
     this.moveCursorToEnd();
     this.showNumPad();
   }
 
   protected override widgetDispose_(): void {
     super.widgetDispose_();
-    if (FieldScratchNumber.activeField_ === this) {
-      FieldScratchNumber.activeField_ = null;
+    if (FieldNumber.activeField_ === this) {
+      FieldNumber.activeField_ = null;
     }
   }
 
@@ -421,7 +421,7 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     const contentDiv = Blockly.DropDownDiv.getContentDiv();
     contentDiv.setAttribute('role', 'menu');
     contentDiv.setAttribute('aria-haspopup', 'true');
-    contentDiv.style.width = `${FieldScratchNumber.DROPDOWN_WIDTH}px`;
+    contentDiv.style.width = `${FieldNumber.DROPDOWN_WIDTH}px`;
     this.addButtons(contentDiv);
 
     const sourceBlock = this.getSourceBlock() as Blockly.BlockSvg | null;
@@ -452,7 +452,7 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     const buttonColour = colourSource?.getColour() || String(Colours.numPadBackground);
     const buttonBorderColour = colourSource?.getColourTertiary() || String(Colours.numPadBorder);
 
-    for (const buttonText of FieldScratchNumber.NUMPAD_BUTTONS) {
+    for (const buttonText of FieldNumber.NUMPAD_BUTTONS) {
       if (buttonText === '-' && !this.negativeAllowed_) {
         continue;
       }
@@ -472,7 +472,7 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
       } else if (buttonText === ' ' && this.negativeAllowed_) {
         button.style.visibility = 'hidden';
       }
-      Blockly.browserEvents.bind(button, 'pointerdown', this, FieldScratchNumber.handleNumPadButton);
+      Blockly.browserEvents.bind(button, 'pointerdown', this, FieldNumber.handleNumPadButton);
       contentDiv.appendChild(button);
     }
 
@@ -483,9 +483,9 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     eraseButton.style.border = `1px solid ${buttonBorderColour}`;
     eraseButton.title = 'Delete';
     const eraseImage = document.createElement('img');
-    eraseImage.src = FieldScratchNumber.NUMPAD_DELETE_ICON;
+    eraseImage.src = FieldNumber.NUMPAD_DELETE_ICON;
     eraseButton.appendChild(eraseImage);
-    Blockly.browserEvents.bind(eraseButton, 'pointerdown', null, FieldScratchNumber.handleNumPadErase);
+    Blockly.browserEvents.bind(eraseButton, 'pointerdown', null, FieldNumber.handleNumPadErase);
     contentDiv.appendChild(eraseButton);
   }
 
@@ -496,7 +496,7 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
    */
   private static handleNumPadButton(e: PointerEvent): void {
     e.preventDefault();
-    const field = FieldScratchNumber.activeField_;
+    const field = FieldNumber.activeField_;
     if (!field || !field.htmlInput_) {
       return;
     }
@@ -513,7 +513,7 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
    */
   private static handleNumPadErase(e: PointerEvent): void {
     e.preventDefault();
-    const field = FieldScratchNumber.activeField_;
+    const field = FieldNumber.activeField_;
     if (!field || !field.htmlInput_) {
       return;
     }
@@ -578,8 +578,8 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
     const contentDiv = Blockly.DropDownDiv.getContentDiv();
     contentDiv.removeAttribute('role');
     contentDiv.removeAttribute('aria-haspopup');
-    if (FieldScratchNumber.activeField_ === this) {
-      FieldScratchNumber.activeField_ = null;
+    if (FieldNumber.activeField_ === this) {
+      FieldNumber.activeField_ = null;
     }
   }
 
@@ -588,8 +588,8 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
    * @param options A JSON object with options (value, min, max, and precision).
    * @returns The new field instance.
    */
-  static override fromJson(options: FieldScratchNumberFromJsonConfig): FieldScratchNumber {
-    return new FieldScratchNumber(
+  static override fromJson(options: FieldNumberFromJsonConfig): FieldNumber {
+    return new FieldNumber(
       options.value,
       options.min,
       options.max,
@@ -600,11 +600,11 @@ export class FieldScratchNumber extends Blockly.FieldTextInput {
   }
 }
 
-FieldScratchNumber.prototype.DEFAULT_VALUE = '0';
+FieldNumber.prototype.DEFAULT_VALUE = '0';
 
 /** Register the field so block JSON can reference it. */
-export function registerFieldScratchNumber() {
+export function registerFieldNumber() {
   // Override Blockly's field number
-  Blockly.fieldRegistry.register('field_number', FieldScratchNumber);
+  Blockly.fieldRegistry.register('field_number', FieldNumber);
   Blockly.Css.register(styles);
 }
