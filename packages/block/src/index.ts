@@ -80,15 +80,10 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerFieldTextInputRemovable();
   registerFieldVariableGetter();
   registerFieldVerticalSeparator();
-
-<<<<<<< HEAD
-  registerScratchCategory();
   registerScratchContextMenu();
 
   // Register styles.
 
-=======
->>>>>>> feat/modern-blockly/main
   Blockly.Css.register(styles);
   Blockly.Css.register(commentStyles);
 
@@ -187,8 +182,5 @@ export {setGetCheckboxState} from './utils';
 Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
 Blockly.FlyoutButton.TEXT_MARGIN_X = 40;
 Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;
-<<<<<<< HEAD
 Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(200, 200);
-=======
 Blockly.ToolboxCategory.nestedPadding = 6;
->>>>>>> feat/modern-blockly/main
