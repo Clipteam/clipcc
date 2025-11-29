@@ -332,6 +332,41 @@ export class FieldNumber extends Blockly.FieldTextInput {
   }
 
   /**
+   * Return an appropriate restrictor, depending on whether this FieldNumber
+   * allows decimal or negative numbers.
+   * @returns Regular expression for this FieldNumber's restrictor.
+   */
+  protected getNumRestrictor() {
+    let pattern = '[\\d]'; // Always allow digits.
+    if (this.decimalAllowed) {
+      pattern += '|[\\.]';
+    }
+    if (this.negativeAllowed) {
+      pattern += '|[-]';
+    }
+    if (this.exponentialAllowed) {
+      pattern += '|[eE]';
+    }
+    return new RegExp(pattern);
+  }
+
+  /**
+   * Handle key down event to enforce number restrictions.
+   * @param e Keyboard event.
+   */
+  override onHtmlInputKeyDown_(e: KeyboardEvent) {
+    super.onHtmlInputKeyDown_(e);
+    // key can be things like "Backspace", so only validate when it represents a single
+    // character so as to allow non-textual input to work as normal.
+    if (e.key.length === 1) {
+      const validator = this.getNumRestrictor();
+      if (!e.key.match(validator)) {
+        e.preventDefault();
+      }
+    }
+  }
+
+  /**
    * Returns the current precision of this field. The precision being the
    * number to which the field's value is rounded. A precision of 0 means that
    * the value is not rounded.
@@ -380,7 +415,7 @@ export class FieldNumber extends Blockly.FieldTextInput {
   protected override showEditor_(event?: Event, quietInput?: boolean): void {
     FieldNumber.activeField = this;
     const showNumPad = this.shouldUseNumPad(event);
-    super.showEditor_(event, true, false);
+    super.showEditor_(event, showNumPad, false);
     if (showNumPad) {
       ;
       this.showNumPad();
