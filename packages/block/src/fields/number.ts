@@ -413,7 +413,8 @@ export class FieldNumber extends Blockly.FieldTextInput {
    * @param newSelection The new index to put the cursor
    */
   private updateDisplay(newValue: string, newSelection: number) {
-    this.setEditorValue_(newValue);
+    const oldValue = this.htmlInput_!.value;
+    this.setEditorValue_(newValue, false);
     // Resize and scroll the text field appropriately
     const htmlInput = this.htmlInput_;
     if (!htmlInput) {
@@ -421,6 +422,23 @@ export class FieldNumber extends Blockly.FieldTextInput {
     }
     htmlInput.setSelectionRange(newSelection, newSelection);
     htmlInput.scrollLeft = htmlInput.scrollWidth;
+
+    if (
+      this.sourceBlock_ &&
+          Blockly.Events.isEnabled() &&
+          this.value_ !== oldValue
+    ) {
+      // Fire a special event indicating that the value changed but the change
+      // isn't complete yet and normal field change listeners can wait.
+      Blockly.Events.fire(
+        new (Blockly.Events.get(Blockly.Events.BLOCK_FIELD_INTERMEDIATE_CHANGE))(
+          this.sourceBlock_,
+          this.name || null,
+          oldValue,
+          this.value_
+        )
+      );
+    }
   }
 
   /**
