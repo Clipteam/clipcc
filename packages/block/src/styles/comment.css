@@ -39,6 +39,10 @@
   border-radius: 4px;
 }
 
+.blocklyDragging.blocklyComment {
+  filter: drop-shadow(0 0px 6px hsla(0, 0%, 0%, 0.6));
+}
+
 .blocklyCommentHighlight {
   rx: 4px;
   ry: 4px;

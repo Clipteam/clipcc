@@ -29,3 +29,12 @@
 .blocklyWidgetDiv .blocklyMenuItemDisabled .blocklyMenuItemHighlight {
   background: none;
 }
+
+.blocklyDragging>.blocklyPath {
+  fill-opacity: 1;
+  stroke-opacity: 1;
+}
+
+.blocklyDragging:not(.blocklyDragging .blocklyDragging)>.blocklyPath {
+  filter: drop-shadow(0 0px 6px hsla(0, 0%, 0%, 0.6));
+}
