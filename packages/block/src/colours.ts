@@ -21,82 +21,6 @@
 import * as Blockly from 'blockly/core';
 
 export const Colours: Record<string, Record<string, string> | string | number> = {
-  // SVG colours: these must be specificed in #RRGGBB style
-  // To add an opacity, this must be specified as a separate property (for SVG fill-opacity)
-  motion: {
-    primary: '#4C97FF',
-    secondary: '#4280D7',
-    tertiary: '#3373CC',
-    quaternary: '#3373CC'
-  },
-  looks: {
-    primary: '#9966FF',
-    secondary: '#855CD6',
-    tertiary: '#774DCB',
-    quaternary: '#774DCB'
-  },
-  sounds: {
-    primary: '#CF63CF',
-    secondary: '#C94FC9',
-    tertiary: '#BD42BD',
-    quaternary: '#BD42BD'
-  },
-  control: {
-    primary: '#FFAB19',
-    secondary: '#EC9C13',
-    tertiary: '#CF8B17',
-    quaternary: '#CF8B17'
-  },
-  event: {
-    primary: '#FFBF00',
-    secondary: '#E6AC00',
-    tertiary: '#CC9900',
-    quaternary: '#CC9900'
-  },
-  sensing: {
-    primary: '#5CB1D6',
-    secondary: '#47A8D1',
-    tertiary: '#2E8EB8',
-    quaternary: '#2E8EB8'
-  },
-  pen: {
-    primary: '#0fBD8C',
-    secondary: '#0DA57A',
-    tertiary: '#0B8E69',
-    quaternary: '#0B8E69'
-  },
-  operators: {
-    primary: '#59C059',
-    secondary: '#46B946',
-    tertiary: '#389438',
-    quaternary: '#389438'
-  },
-  data: {
-    primary: '#FF8C1A',
-    secondary: '#FF8000',
-    tertiary: '#DB6E00',
-    quaternary: '#DB6E00'
-  },
-  // This is not a new category, but rather for differentiation
-  // between lists and scalar variables.
-  data_lists: {
-    primary: '#FF661A',
-    secondary: '#FF5500',
-    tertiary: '#E64D00',
-    quaternary: '#E64D00'
-  },
-  more: {
-    primary: '#FF6680',
-    secondary: '#FF4D6A',
-    tertiary: '#FF3355',
-    quaternary: '#FF3355'
-  },
-  argument: {
-    primary: '#F47983',
-    secondary: '#F15764',
-    tertiary: '#EE3645',
-    quaternary: '#EE3645'
-  },
   text: '#FFFFFF',
   workspace: '#F9F9F9',
   toolboxHover: '#4C97FF',
@@ -127,8 +51,32 @@ export const Colours: Record<string, Record<string, string> | string | number> =
   numPadText: 'white', // Do not use hex here, it cannot be inlined with data-uri SVG
   valueReportBackground: '#FFFFFF',
   valueReportBorder: '#AAAAAA',
-  menuHover: 'rgba(0, 0, 0, 0.2)'
+  menuHover: 'rgba(76, 151, 255, 0.2)'
 };
+
+/**
+ * Inject CSS variables for clipcc-block colors.
+ */
+export function injectCssVariables(): void {
+  let root = document.querySelector('#clipcc-block-theme');
+  if (!root) {
+    root = document.createElement('style');
+    root.id = 'clipcc-block-theme';
+    document.head.appendChild(root);
+
+    const cssVars: string[] = [];
+    cssVars.push(':root {');
+    for (const prop in Colours) {
+      if (!Object.prototype.hasOwnProperty.call(Colours, prop)) {
+        continue;
+      }
+      cssVars.push(`  --clipcc-block-${prop}: ${Colours[prop]};`);
+    }
+    cssVars.push('}');
+
+    root.textContent = cssVars.join('\n');
+  }
+}
 
 const blockStyles: {[key: string]: Partial<Blockly.Theme.BlockStyle>} = {
   motion: {
@@ -222,32 +170,35 @@ function buildCategoryStyles(): {[key: string]: Blockly.Theme.CategoryStyle} {
  * @param colours Dictionary of colour properties and new values.
  * @package
  */
-export const overrideColours = function(colours?: typeof Colours) {
+export function overrideColours(colours?: typeof Colours) {
   // Colour overrides provided by the injection
-  if (colours) {
-    for (const colourProperty in colours) {
-      if (Object.prototype.hasOwnProperty.call(colours, colourProperty) &&
-          Object.prototype.hasOwnProperty.call(Colours, colourProperty)) {
-        // If a property is in both colours option and Colours,
-        // set the Colours value to the override.
-        // Override Blockly category color object properties with those
-        // provided.
-        const colourPropertyValue = colours[colourProperty];
-        if (typeof colourPropertyValue === 'object') {
-          for (const colourSequence in colourPropertyValue) {
-            if (Object.prototype.hasOwnProperty.call(colourPropertyValue, colourSequence) &&
-                typeof Colours[colourProperty] === 'object' &&
-                Object.prototype.hasOwnProperty.call(Colours[colourProperty], colourSequence)) {
-              Colours[colourProperty][colourSequence] =
-                  colourPropertyValue[colourSequence];
-            }
+  if (!colours) return;
+
+  for (const colourProperty in colours) {
+    if (Object.prototype.hasOwnProperty.call(colours, colourProperty) &&
+      Object.prototype.hasOwnProperty.call(Colours, colourProperty)) {
+      // If a property is in both colours option and Colours,
+      // set the Colours value to the override.
+      // Override Blockly category color object properties with those
+      // provided.
+      const colourPropertyValue = colours[colourProperty];
+      if (typeof colourPropertyValue === 'object') {
+        for (const colourSequence in colourPropertyValue) {
+          if (Object.prototype.hasOwnProperty.call(colourPropertyValue, colourSequence) &&
+            typeof Colours[colourProperty] === 'object' &&
+            Object.prototype.hasOwnProperty.call(Colours[colourProperty], colourSequence)) {
+            Colours[colourProperty][colourSequence] =
+              colourPropertyValue[colourSequence];
           }
-        } else {
-          Colours[colourProperty] = colourPropertyValue;
         }
+      } else {
+        Colours[colourProperty] = colourPropertyValue;
       }
     }
   }
+
+  // Refresh CSS variables.
+  injectCssVariables();
 };
 
 /**

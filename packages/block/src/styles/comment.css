@@ -9,6 +9,10 @@
   transform: rotate(-180deg);
 }
 
+.blocklyCommentText::placeholder {
+  font-style: italic;
+}
+
 .blocklyComment .blocklyCommentTopbarBackground {
   height: 32px;
   fill: none;

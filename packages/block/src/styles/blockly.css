@@ -22,10 +22,10 @@
   box-shadow: 0 8px 8px 0 hsla(0, 0%, 0%, 0.15);
 }
 
-.blocklyWidgetDiv .blocklyMenuItem:hover {
-  background-color: #d6e9f8;
+.blocklyWidgetDiv .blocklyMenuItemHighlight {
+  background-color: var(--clipcc-block-menuHover);
 }
 
-.blocklyMenuItemDisabled:hover {
-  background-color: #fff;
+.blocklyWidgetDiv .blocklyMenuItemDisabled .blocklyMenuItemHighlight {
+  background: none;
 }

@@ -7,7 +7,7 @@
 import * as Blockly from 'blockly/core';
 
 import * as Constants from './constants';
-import {createTheme} from './colours';
+import {createTheme, injectCssVariables} from './colours';
 import {registerScratchContextMenu} from './contextmenu_items';
 import {registerFieldAngle} from './fields/angle';
 import {registerFieldButton} from './fields/button';
@@ -84,7 +84,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerScratchContextMenu();
 
   // Register styles.
-
+  injectCssVariables();
   Blockly.Css.register(styles);
   Blockly.Css.register(commentStyles);
 
