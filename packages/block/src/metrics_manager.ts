@@ -6,6 +6,7 @@
 
 import * as Blockly from 'blockly/core';
 import {getCommentBubbleFromBlock} from './utils';
+import type {BlockCommentDelete} from './events/block_comment_delete';
 
 export class MetricsManager extends Blockly.MetricsManager {
   protected trackedCommentedBlocks = new Set<Blockly.Block>();
@@ -23,7 +24,7 @@ export class MetricsManager extends Blockly.MetricsManager {
         for (const id of createEvent.ids) {
           const block = this.workspace_.getBlockById(id);
           const hasComment = !!getCommentBubbleFromBlock(block);
-          if (!hasComment) continue;
+          if (!hasComment) break;
           this.trackedCommentedBlocks.add(block!);
         }
         break;
@@ -34,11 +35,19 @@ export class MetricsManager extends Blockly.MetricsManager {
         const block = this.workspace_.getBlockById(changeEvent.blockId);
         const hasComment = !!getCommentBubbleFromBlock(block);
         if (!hasComment) break;
-        if (changeEvent.newValue === null) {
+        if (!block?.getCommentText()) {
           this.trackedCommentedBlocks.delete(block!);
         } else {
           this.trackedCommentedBlocks.add(block!);
         }
+        break;
+      }
+      case 'block_comment_delete': {
+        const deleteEvent = e as BlockCommentDelete;
+        if (!deleteEvent.blockId) break;
+        const block = this.workspace_.getBlockById(deleteEvent.blockId);
+        if (!block) break;
+        this.trackedCommentedBlocks.delete(block);
         break;
       }
     }
