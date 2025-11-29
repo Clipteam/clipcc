@@ -28,6 +28,7 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
+import type {ICheckboxInFlyout} from '../interfaces/i_checkbox_in_flyout';
 
 /**
  * Helper function that generates an extension based on a category name.
@@ -120,6 +121,13 @@ const SCRATCH_EXTENSION = function(this: Blockly.Block) {
 };
 
 /**
+ * Extension to make a checkbox before the block when in a flyout.
+ */
+const MONITOR_BLOCK = function(this: Blockly.Block) {
+  (this as Blockly.Block & ICheckboxInFlyout).checkboxInFlyout = true;
+};
+
+/**
  * Register all extensions for scratch-blocks.
  * @package
  */
@@ -147,6 +155,9 @@ const registerAll = function() {
 
   // Extension blocks have slightly different block rendering.
   Blockly.Extensions.register('scratch_extension', SCRATCH_EXTENSION);
+
+  // Register extension for monitor blocks.
+  Blockly.Extensions.register('monitor_block', MONITOR_BLOCK);
 };
 
 registerAll();

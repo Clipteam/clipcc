@@ -5,44 +5,20 @@
  */
 
 import * as Blockly from 'blockly/core';
+import {ToolboxCategory} from './category';
 
-/**
- * Class for scratch category.
- */
-export class ToolboxCategory extends Blockly.ToolboxCategory {
-  /** Default color for the category. */
-  static readonly DEFAULT_COLOUR = '#575E75';
-
+export class CollapsibleToolboxCategory extends Blockly.CollapsibleToolboxCategory {
   /** Element of colour bar on the left of category. */
   protected colourBar: HTMLDivElement | null = null;
 
-  /**
-   * @param categoryDef The information needed to create a category in the
-   *     toolbox.
-   * @param parentToolbox The parent toolbox for the category.
-   * @param parent The parent category or null if the category does not have
-   *     a parent.
-   */
-  constructor(
-    categoryDef: Blockly.utils.toolbox.CategoryInfo,
-    parentToolbox: Blockly.IToolbox,
-    parent?: Blockly.ICollapsibleToolboxItem
-  ) {
-    super(categoryDef, parentToolbox, parent);
-  }
-
-  /**
-   * Creates an object holding the default classes for a category.
-   * @returns The configuration object holding all the CSS classes for a
-   *     category.
-   */
-  protected makeDefaultCssConfig_(): Blockly.ToolboxCategory.CssConfig {
+  override makeDefaultCssConfig_() {
     const cssConfig = super.makeDefaultCssConfig_();
     cssConfig.container = 'clipccToolboxCategoryContainer';
     cssConfig.row = 'clipccToolboxCategory';
     cssConfig.icon = 'clipccCategoryItemColorBar';
     cssConfig.label = 'clipccCategoryItemLabel';
     cssConfig.rowcontentcontainer = 'clipccCategoryItem';
+    cssConfig.contents = 'clipccToolboxCategoryGroup';
     return cssConfig;
   }
 
@@ -63,7 +39,7 @@ export class ToolboxCategory extends Blockly.ToolboxCategory {
    * the color bar.
    * @returns The element that contains color bar.
    */
-  protected override createIconDom_(): Element {
+  override createIconDom_(): HTMLSpanElement {
     this.colourBar = document.createElement('div');
     this.colourBar.className = this.cssConfig_['icon']!;
     return this.colourBar;
@@ -101,12 +77,42 @@ export class ToolboxCategory extends Blockly.ToolboxCategory {
       isSelected
     );
   }
-}
 
+  /**
+   * Opens or closes the current category and the associated flyout.
+   * @param isExpanded True to expand the category, false to close.
+   */
+  override setExpanded(isExpanded: boolean): void {
+    if (this.expanded_ === isExpanded) return;
+
+    this.expanded_ = isExpanded;
+    if (isExpanded) {
+      this.subcategoriesDiv_!.style.display = '';
+      this.openIcon_(this.iconDom_);
+    } else {
+      this.subcategoriesDiv_!.style.display = 'none';
+      this.closeIcon_(this.iconDom_);
+    }
+    Blockly.utils.aria.setState(
+      this.htmlDiv_ as HTMLDivElement,
+      Blockly.utils.aria.State.EXPANDED,
+      isExpanded
+    );
+  }
+
+  /**
+   * Handles when the toolbox item is clicked.
+   * @param e Click event to handle.
+   */
+  override onClick(e: Event): void {
+    // Shouldn't do anything since the behaviour is handled by toolbox.
+    // See ContinuousToolBox.updateCollapsibleCategories
+  }
+}
 
 Blockly.registry.register(
   Blockly.registry.Type.TOOLBOX_ITEM,
-  Blockly.ToolboxCategory.registrationName,
-  ToolboxCategory,
+  Blockly.CollapsibleToolboxCategory.registrationName,
+  CollapsibleToolboxCategory,
   true
 );

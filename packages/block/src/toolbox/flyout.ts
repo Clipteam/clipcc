@@ -5,13 +5,14 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {ContinuousToolBox} from './toolbox';
-import {ContinuousFlyoutMetrics} from './flyout_metrics';
+import {Toolbox} from './toolbox';
+import {FlyoutMetrics} from './flyout_metrics';
+import type {FlyoutButton} from './flyout_button';
 
 /**
- * Class for continuous flyout.
+ * Class for customized flyout.
  */
-export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
+export class VerticalFlyout extends Blockly.VerticalFlyout {
   /**
    * The percentage of the distance to the scrollTarget that should be
    * scrolled at a time. Lower values will produce a smoother, slower scroll.
@@ -19,7 +20,10 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
   static readonly SCROLL_ANIMATION_FRACTION = 0.3;
 
   /** The width of the flyout, if not otherwise specified. */
-  static readonly DEFAULT_WIDTH = 250;
+  static readonly DEFAULT_WIDTH = 350;
+
+  /** Default vertical gap. */
+  override readonly GAP_Y: number = 10;
 
   /** Maps from category names to their positions. */
   protected scrollPositions: Map<string, number> = new Map<string, number>();
@@ -35,9 +39,7 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
    */
   constructor(workspaceOptions: Blockly.Options) {
     super(workspaceOptions);
-    this.workspace_.setMetricsManager(
-      new ContinuousFlyoutMetrics(this.workspace_, this)
-    );
+    this.workspace_.setMetricsManager(new FlyoutMetrics(this.workspace_, this));
   }
 
   /**
@@ -64,6 +66,7 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
     // Refresh drag targets when flyout becomes visible
     if (!wasVisible && visible && !this.autoClose) {
       this.targetWorkspace.recordDragTargets();
+      this.reflow();
     }
   }
 
@@ -74,6 +77,10 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
    *     specifying the degree of scrolling and a similar x property.
    */
   protected override setMetrics_(xyRatio: { x: number; y: number; }): void {
+    if (!this.isVisible()) {
+      return;
+    }
+
     super.setMetrics_(xyRatio);
 
     // Auto select category on scrolling.
@@ -82,10 +89,19 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
       // clicking on it, do not update the category selection.
       return;
     }
-    const category = this.getCategoryByScrollPosition(-this.workspace_.scrollY);
-    if (category) {
-      (this.targetWorkspace.getToolbox() as ContinuousToolBox).updateSelectedCategory(category);
+    const id = this.getCategoryIdByScrollPosition(-this.workspace_.scrollY);
+    if (id) {
+      (this.targetWorkspace.getToolbox() as Toolbox).updateSelectedCategoryById(id);
     }
+  }
+
+  /**
+   * Serialize a block to JSON.
+   * @param block The block to serialize.
+   * @returns A serialized representation of the block.
+   */
+  protected override serializeBlock(block: Blockly.BlockSvg): Blockly.serialization.blocks.State {
+    return Blockly.serialization.blocks.save(block, {saveIds: false})!;
   }
 
   /**
@@ -120,9 +136,9 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
     this.scrollPositions.clear();
     for (const item of this.contents) {
       if (item.getType() === 'label') {
-        const button = item.getElement() as Blockly.FlyoutButton;
+        const button = item.getElement() as FlyoutButton;
         const position = button.getPosition();
-        this.scrollPositions.set(button.getButtonText(), position.y - this.MARGIN);
+        this.scrollPositions.set(button.getLabelId()!, position.y - this.MARGIN);
       }
     }
   }
@@ -147,30 +163,30 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
 
   /**
    * Scrolls flyout to the given category.
-   * @param category Category name.
+   * @param id Category unique ID.
    * @param animation True if plays animation on scrolling.
    */
-  scrollToCategory(category: string, animation?: boolean): void {
-    const position = this.scrollPositions.get(category);
+  scrollToCategoryById(id: string, animation?: boolean): void {
+    const position = this.scrollPositions.get(id);
     if (position !== undefined) {
       this.scrollTo(position, animation);
     } else {
-      console.warn(`Cannot scroll to category ${category}`);
+      console.warn(`Cannot scroll to category id ${id}`);
     }
   }
 
   /**
    * Get an item in the toolbox based on the scroll position of the flyout.
    * @param position Current scroll position of the workspace.
-   * @returns The category name of scroll position, null if not found.
+   * @returns The category unique ID of scroll position, null if not found.
    */
-  getCategoryByScrollPosition(position: number): string | null {
+  getCategoryIdByScrollPosition(position: number): string | null {
     const scaledPosition = Math.round(position / this.workspace_.scale);
     // Traverse in reverse to find the category.
-    for (const category of Array.from(this.scrollPositions.keys()).reverse()) {
-      const position = this.scrollPositions.get(category)!;
+    for (const id of Array.from(this.scrollPositions.keys()).reverse()) {
+      const position = this.scrollPositions.get(id)!;
       if (position <= scaledPosition) {
-        return category;
+        return id;
       }
     }
     return null;
@@ -193,8 +209,18 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
       return;
     }
 
-    this.workspace_.scrollbar?.setY(scrollPos + diff * ContinuousVerticalFlyout.SCROLL_ANIMATION_FRACTION);
+    this.workspace_.scrollbar?.setY(scrollPos + diff * VerticalFlyout.SCROLL_ANIMATION_FRACTION);
     requestAnimationFrame(this.stepScrollAnimation.bind(this));
+  }
+
+  /**
+   * Reflow flyout contents.
+   */
+  override reflow(): void {
+    // @todo A temporary fix for Blockly#9486, we assume that the reflow internal
+    // won't fire a BLOCK_CHANGE or BLOCK_FIELD_INTERMEDIATE_CHANGE event.
+    // See the implementation of reflowWrapper in Blockly.FlyoutBase.
+    this.reflowInternal_();
   }
 
   /**
@@ -203,7 +229,7 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
    */
   protected override reflowInternal_(): void {
     this.workspace_.scale = this.getFlyoutScale();
-    const flyoutWidth = ContinuousVerticalFlyout.DEFAULT_WIDTH * this.workspace_.scale;
+    const flyoutWidth = VerticalFlyout.DEFAULT_WIDTH * this.workspace_.scale;
 
     if (this.getWidth() !== flyoutWidth) {
       if (this.RTL) {
@@ -242,3 +268,10 @@ export class ContinuousVerticalFlyout extends Blockly.VerticalFlyout {
     }
   }
 }
+
+Blockly.registry.register(
+  Blockly.registry.Type.FLYOUTS_VERTICAL_TOOLBOX,
+  Blockly.registry.DEFAULT,
+  VerticalFlyout,
+  true
+);

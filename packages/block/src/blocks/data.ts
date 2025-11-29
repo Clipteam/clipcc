@@ -38,8 +38,7 @@ Blockly.Blocks['data_variable'] = {
           variableType: Constants.SCALAR_VARIABLE_TYPE
         }
       ],
-      checkboxInFlyout: true,
-      extensions: ['contextMenu_getVariableBlock', 'colours_data', 'output_string']
+      extensions: ['contextMenu_getVariableBlock', 'colours_data', 'output_string', 'monitor_block']
     });
   }
 };
@@ -152,8 +151,7 @@ Blockly.Blocks['data_listcontents'] = {
           variableType: Constants.LIST_VARIABLE_TYPE
         }
       ],
-      extensions: ['contextMenu_getListBlock', 'colours_data_lists', 'output_string'],
-      checkboxInFlyout: true
+      extensions: ['contextMenu_getListBlock', 'colours_data_lists', 'output_string', 'monitor_block']
     });
   }
 };

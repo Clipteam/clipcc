@@ -2,6 +2,7 @@
   box-shadow: 0 8px 8px 0 hsla(0, 0%, 0%, 0.15);
   transition: 0.25s ease-out;
   border: none;
+  outline: none;
 }
 
 .blocklyDropDownDiv .blocklyMenuItem {

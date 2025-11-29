@@ -507,7 +507,7 @@ function addBlock(
       secondValueField = createValue(secondValue[0], secondValue[1], secondValue[2]);
     }
 
-    const gap = 8;
+    const gap = 10;
     const blockText = '<xml>' +
         '<block type="' + blockType + '" gap="' + gap + '">' +
         generateVariableFieldXml(variable, fieldName) +
