@@ -51,7 +51,8 @@ export const Colours: Record<string, Record<string, string> | string | number> =
   numPadText: 'white', // Do not use hex here, it cannot be inlined with data-uri SVG
   valueReportBackground: '#FFFFFF',
   valueReportBorder: '#AAAAAA',
-  menuHover: 'rgba(76, 151, 255, 0.2)'
+  menuHover: 'rgba(76, 151, 255, 0.2)',
+  dropdownRadius: '.2em'
 };
 
 /**
@@ -220,6 +221,9 @@ export function createTheme(): Blockly.Theme {
       toolboxForegroundColour: Colours.toolboxText as string,
       flyoutBackgroundColour: Colours.flyout as string,
       workspaceBackgroundColour: Colours.workspace as string
+    },
+    fontStyle: {
+      weight: '500'
     },
     startHats: true
   });

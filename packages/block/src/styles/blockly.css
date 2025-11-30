@@ -35,6 +35,21 @@
   stroke-opacity: 1;
 }
 
-.blocklyDragging:not(.blocklyDragging .blocklyDragging)>.blocklyPath {
+.blocklyBlockDragSurface :not(.blocklyDragging)>.blocklyDragging {
   filter: drop-shadow(0 0px 6px hsla(0, 0%, 0%, 0.6));
+}
+
+.blocklyBlockDragSurface .blocklyComment {
+  filter: drop-shadow(0 0px 6px hsla(0, 0%, 0%, 0.6));
+}
+
+.blocklyDisabledPattern>.blocklyPath {
+  fill: revert-layer;
+  fill-opacity: .5;
+  stroke-opacity: .5;
+}
+
+.blocklyDropDownDiv {
+  border-radius: var(--clipcc-block-dropdownRadius);
+  outline: none;
 }

@@ -84,6 +84,11 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
       `${selector} .blocklyOutlinePath ~ .blocklyHighlightedConnectionPath,`,
       `${selector} .blocklyHighlightedConnectionPath:has(~ .blocklyOutlinePath) {`,
       `stroke: var(--clipcc-block-replacementGlow);`,
+      `}`,
+      `${selector} .blocklyFlyoutLabelText {`,
+      `font-family: "Helvetica Neue", Helvetica, sans-serif;`,
+      `font-size: 14pt;`,
+      `font-weight: bold;`,
       `}`
     ];
     return css.concat(flyoutButtonStyle);
