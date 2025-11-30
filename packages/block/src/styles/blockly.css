@@ -53,3 +53,18 @@
   border-radius: var(--clipcc-block-dropdownRadius);
   outline: none;
 }
+
+.blocklyZoom>image,
+.blocklyZoom>svg>image {
+  opacity: 0.7;
+}
+
+.blocklyZoom>image:hover,
+.blocklyZoom>svg>image:hover {
+  opacity: 0.9;
+}
+
+.blocklyZoom>image:active,
+.blocklyZoom>svg>image:active {
+  opacity: 1;
+}
