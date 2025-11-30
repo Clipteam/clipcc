@@ -8,6 +8,7 @@ import * as Blockly from 'blockly/core';
 import {Toolbox} from './toolbox';
 import {FlyoutMetrics} from './flyout_metrics';
 import type {FlyoutButton} from './flyout_button';
+import type {BlockFlyoutInflater} from './inflaters/block';
 
 /**
  * Class for customized flyout.
@@ -40,6 +41,31 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   constructor(workspaceOptions: Blockly.Options) {
     super(workspaceOptions);
     this.workspace_.setMetricsManager(new FlyoutMetrics(this.workspace_, this));
+    this.setRecyclingEnabled(true);
+  }
+
+  /**
+   * Sets the function used to determine whether a block is recyclable.
+   * @param func The function used to determine if a block is recyclable.
+   */
+  setBlockIsRecyclable(func: (block: Blockly.Block) => boolean) {
+    this.getRecyclableInflater().recycleEligibilityChecker = func;
+  }
+
+  /**
+   * Set whether the flyout can recycle blocks.
+   * @param isEnabled True to allow blocks to be recycled, false otherwise.
+   */
+  setRecyclingEnabled(isEnabled: boolean) {
+    this.getRecyclableInflater().recyclingEnabled = isEnabled;
+  }
+
+  /**
+   * Returns the recyclable block flyout inflater.
+   * @returns The recyclable inflater.
+   */
+  protected getRecyclableInflater(): BlockFlyoutInflater {
+    return this.getInflaterForType('block') as BlockFlyoutInflater;
   }
 
   /**

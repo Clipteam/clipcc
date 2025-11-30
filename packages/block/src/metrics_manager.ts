@@ -7,8 +7,9 @@
 import * as Blockly from 'blockly/core';
 import {getCommentBubbleFromBlock} from './utils';
 import type {BlockCommentDelete} from './events/block_comment_delete';
+import {ContinuousMetrics} from '@blockly/continuous-toolbox';
 
-export class MetricsManager extends Blockly.MetricsManager {
+export class MetricsManager extends ContinuousMetrics {
   protected trackedCommentedBlocks = new Set<Blockly.Block>();
 
   constructor(workspace: Blockly.WorkspaceSvg) {

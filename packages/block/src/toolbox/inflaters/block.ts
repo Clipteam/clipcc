@@ -8,8 +8,9 @@ import * as Blockly from 'blockly/core';
 import {isCheckboxInFlyout} from '../../interfaces/i_checkbox_in_flyout';
 import {FlyoutCheckbox} from '../flyout_checkbox';
 import {getCheckboxState} from '../../utils';
+import {RecyclableBlockFlyoutInflater} from '@blockly/continuous-toolbox';
 
-export class BlockFlyoutInflater extends Blockly.BlockFlyoutInflater {
+export class BlockFlyoutInflater extends RecyclableBlockFlyoutInflater {
   static readonly TYPE = 'block';
 
   /**

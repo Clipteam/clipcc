@@ -19,6 +19,7 @@
     "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@blockly/continuous-toolbox": "^7.0.3",
     "blockly": "^12.3.1"
   },
   "devDependencies": {
