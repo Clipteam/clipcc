@@ -138,7 +138,7 @@ export class InsertionMarkerPreviewer implements Blockly.IConnectionPreviewer {
       if (marker.isDeadOrDying()) return;
       Blockly.Events.disable();
       try {
-        // Hide blocks inside the marker block.
+        // Hide Nested insertion markers.
         for (const block of marker.getChildren(false)) {
           if (block.isInsertionMarker() && block.getSurroundParent() === marker) {
             block.getSvgRoot().setAttribute('visibility', 'hidden');
