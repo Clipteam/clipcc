@@ -1,7 +1,7 @@
 .scratchColourPickerLabel {
   font-family: "Helvetica Neue", Helvetica, sans-serif;
   font-size: 0.65rem;
-  color: var(--colour-toolboxText);
+  color: var(--clipcc-block-toolboxText);
   margin: 8px;
 }
 

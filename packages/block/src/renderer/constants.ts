@@ -5,6 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
+import {Colours} from '../themes';
 
 /**
  * An object that provides constants for rendering blocks in Scratch mode.
@@ -73,7 +74,7 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
       ``,
       `${selector} .blocklyCommentText.blocklyText {`,
       `font-weight: 400;`,
-      `color: #575e75;`, // @TODO: Use CSS variable. (same as --clipcc-text-primary)
+      `color: var(--clipcc-block-textFieldText, ${Colours.textFieldText});`,
       `}`,
       ``,
       `${selector} .blocklyHighlightedConnectionPath {`,
@@ -83,7 +84,7 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
       // Boolean connection highlight override
       `${selector} .blocklyOutlinePath ~ .blocklyHighlightedConnectionPath,`,
       `${selector} .blocklyHighlightedConnectionPath:has(~ .blocklyOutlinePath) {`,
-      `stroke: var(--clipcc-block-replacementGlow);`,
+      `stroke: var(--clipcc-block-replacementGlow, ${Colours.replacementGlow});`,
       `}`,
       `${selector} .blocklyFlyoutLabelText {`,
       `font-family: "Helvetica Neue", Helvetica, sans-serif;`,
