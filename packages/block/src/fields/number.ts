@@ -77,12 +77,6 @@ export class FieldNumber extends Blockly.FieldTextInput {
    */
   static activeField: FieldNumber | null = null;
 
-  /**
-   * The number of decimal places to allow, or null to allow any number of
-   * decimal digits.
-   */
-  private decimalPlaces: number | null = null;
-
   protected decimalAllowed = true;
   protected negativeAllowed = true;
   protected exponentialAllowed = true;
@@ -187,7 +181,7 @@ export class FieldNumber extends Blockly.FieldTextInput {
    * @param min Minimum value.
    */
   private setMinInternal(min: number | string | undefined | null) {
-    if (min == null) {
+    if (min === null) {
       this.min_ = -Infinity;
     } else {
       min = Number(min);
@@ -196,7 +190,7 @@ export class FieldNumber extends Blockly.FieldTextInput {
       }
     }
 
-    this.negativeAllowed = (typeof min == 'undefined') || isNaN(min as number) ||
+    this.negativeAllowed = (typeof min === 'undefined') || isNaN(min as number) ||
       (min as number) < 0;
   }
 
@@ -225,7 +219,7 @@ export class FieldNumber extends Blockly.FieldTextInput {
    * @param max Maximum value.
    */
   private setMaxInternal(max: number | string | undefined | null) {
-    if (max == null) {
+    if (max === null) {
       this.max_ = Infinity;
     } else {
       max = Number(max);
@@ -268,14 +262,6 @@ export class FieldNumber extends Blockly.FieldTextInput {
       precisionString = this.precision_.toLocaleString('en-US', {
         maximumFractionDigits: 20
       });
-    }
-    const decimalIndex = precisionString.indexOf('.');
-    if (decimalIndex === -1) {
-      // If the precision is 0 (float) allow any number of decimals,
-      // otherwise allow none.
-      this.decimalPlaces = precision ? 0 : null;
-    } else {
-      this.decimalPlaces = precisionString.length - decimalIndex - 1;
     }
 
     this.decimalAllowed = (typeof precision === 'undefined') ||
@@ -386,8 +372,7 @@ export class FieldNumber extends Blockly.FieldTextInput {
     contentDiv.setAttribute('aria-haspopup', 'true');
 
     this.addButtons(contentDiv);
-    // Select all
-    this.htmlInput_!.setSelectionRange(0, this.htmlInput_!.value.length);
+    this.htmlInput_!.select();
 
     // Set colour and size of drop-down
     const sourceBlock = this.getSourceBlock() as Blockly.BlockSvg;
@@ -412,7 +397,7 @@ export class FieldNumber extends Blockly.FieldTextInput {
    * @param newValue The new text to display.
    * @param newSelection The new index to put the cursor
    */
-  private updateDisplay(newValue: string, newSelection: number) {
+  protected updateDisplay(newValue: string, newSelection: number) {
     const oldValue = this.htmlInput_!.value;
     this.setEditorValue_(newValue, false);
     // Resize and scroll the text field appropriately
@@ -467,14 +452,14 @@ export class FieldNumber extends Blockly.FieldTextInput {
       const touchCallback = this.numPadButtonTouchFactory(buttonText);
       const data = Blockly.browserEvents.bind(button, 'mousedown', button, touchCallback);
       this.buttonTouchCallbacks.push(data);
-      if (buttonText == '.' && !this.decimalAllowed) {
+      if (buttonText === '.' && !this.decimalAllowed) {
         // Don't show the decimal point for inputs that must be round numbers
         button.setAttribute('style', 'visibility: hidden');
-      } else if (buttonText == '-' && !this.negativeAllowed) {
+      } else if (buttonText === '-' && !this.negativeAllowed) {
         continue;
-      } else if (buttonText == ' ' && !this.negativeAllowed) {
+      } else if (buttonText === ' ' && !this.negativeAllowed) {
         continue;
-      } else if (buttonText == ' ' && this.negativeAllowed) {
+      } else if (buttonText === ' ' && this.negativeAllowed) {
         button.setAttribute('style', 'visibility: hidden');
       }
       contentDiv.appendChild(button);
@@ -543,7 +528,7 @@ export class FieldNumber extends Blockly.FieldTextInput {
     const selectionEnd = field.htmlInput_!.selectionEnd!;
 
     // If selection is zero-length, shift start to the left 1 character
-    if (selectionStart == selectionEnd) {
+    if (selectionStart === selectionEnd) {
       selectionStart = Math.max(0, selectionStart - 1);
     }
 
