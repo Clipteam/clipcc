@@ -95,7 +95,16 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   Blockly.ContextMenuRegistry.registry.unregister('blockInline');
 
   const workspace = injectWorkspace(container, options);
-  virtualize(workspace);
+  const virtualizedManager = virtualize(workspace);
+  // @todo should we unbind this on workspace dispose? seems there's no way to listen to it.
+  Blockly.browserEvents.conditionalBind(
+    window,
+    'resize',
+    null,
+    () => {
+      virtualizedManager.virtualize();
+    }
+  );
 
   // Dynamic categories.
   workspace.registerToolboxCategoryCallback(

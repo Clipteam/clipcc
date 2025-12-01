@@ -16,42 +16,44 @@ export class VirtualizedManager {
   constructor(workspace: Blockly.WorkspaceSvg) {
     this.workspaceRef = new WeakRef(workspace);
 
-    workspace.addChangeListener((e) => {
-      switch (e.type) {
-        // This event only happens when a block's connections are changed.
-        case Blockly.Events.BLOCK_MOVE: {
-          // See blockly/core/connection.ts#L131
-          const event = e as Blockly.Events.BlockMove;
-          if (event.type !== Blockly.Events.BLOCK_MOVE) break;
-          if (!event.blockId) break;
-
-          const block = workspace.getBlockById(event.blockId);
-          if (!block) break;
-          if (!block.getParent()) {
-            // Observe top blocks only.
-            this.observe(block);
-          } else {
-            this.unobserve(block.id);
-            if (!this.isBlockVisible(block)) {
-              this.setBlockVisibility(block, true);
-            }
-          }
-
-          break;
-        }
-        case Blockly.Events.BLOCK_DELETE: {
-          const event = e as Blockly.Events.BlockDelete;
-          if (!event.blockId) break;
-          this.unobserve(event.blockId);
-          break;
-        }
-        case Blockly.Events.VIEWPORT_CHANGE: {
-          this.virtualize();
-          break;
-        }
-      }
-    });
+    workspace.addChangeListener(this.workspaceChangeListener);
   }
+
+  protected workspaceChangeListener = (e: Blockly.Events.Abstract) => {
+    switch (e.type) {
+      // This event only happens when a block's connections are changed.
+      case Blockly.Events.BLOCK_MOVE: {
+        // See blockly/core/connection.ts#L131
+        const event = e as Blockly.Events.BlockMove;
+        if (event.type !== Blockly.Events.BLOCK_MOVE) break;
+        if (!event.blockId) break;
+
+        const block = this.workspace.getBlockById(event.blockId);
+        if (!block) break;
+        if (!block.getParent()) {
+          // Observe top blocks only.
+          this.observe(block);
+        } else {
+          this.unobserve(block.id);
+          if (!this.isBlockVisible(block)) {
+            this.setBlockVisibility(block, true);
+          }
+        }
+
+        break;
+      }
+      case Blockly.Events.BLOCK_DELETE: {
+        const event = e as Blockly.Events.BlockDelete;
+        if (!event.blockId) break;
+        this.unobserve(event.blockId);
+        break;
+      }
+      case Blockly.Events.VIEWPORT_CHANGE: {
+        this.virtualize();
+        break;
+      }
+    }
+  };
 
   /**
    * Get the workspace from WeakRef.
@@ -65,7 +67,13 @@ export class VirtualizedManager {
   /**
    * Check whether these blocks are offscreen, then update their visibility.
    */
-  protected virtualize(): void {
+  virtualize(): void {
+    // Check workspace here since it's public.
+    if (!this.workspace) {
+      this.dispose();
+      return;
+    }
+
     const metrics = this.workspace.getMetrics();
     const viewLeft = metrics.viewLeft;
     const viewRight = metrics.viewLeft + metrics.viewWidth;
@@ -118,7 +126,6 @@ export class VirtualizedManager {
       Blockly.utils.dom.addClass(block.getSvgRoot(), 'blocklyBlockHidden');
     }
   }
-  protected updateObservingBlocks(): void { }
 
   /**
    * Start observing a block for virtualization.
@@ -135,12 +142,23 @@ export class VirtualizedManager {
   protected unobserve(blockId: string): void {
     this.observingBlocks.delete(blockId);
   }
+
+  /**
+   * Dispose the manager.
+   */
+  dispose(): void {
+    this.observingBlocks.clear();
+    if (this.workspace) {
+      this.workspace.removeChangeListener(this.workspaceChangeListener);
+    }
+  }
 }
 
 /**
  * Virtualize the given workspace. Make blocks offscreen invisible.
  * @param workspace The workspace to virtualize.
+ * @returns The VirtualizedManager instance.
  */
-export function virtualize(workspace: Blockly.WorkspaceSvg): void {
-  new VirtualizedManager(workspace);
+export function virtualize(workspace: Blockly.WorkspaceSvg): VirtualizedManager {
+  return new VirtualizedManager(workspace);
 }
