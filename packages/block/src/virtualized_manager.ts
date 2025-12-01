@@ -74,14 +74,16 @@ export class VirtualizedManager {
       return;
     }
 
+    const scale = this.workspace.getScale();
     const metrics = this.workspace.getMetrics();
-    const viewLeft = metrics.viewLeft;
+    // metrics.flyoutWidth always return 0 since it's not always open.
+    const flyoutWidth = this.workspace.getFlyout()?.getWidth() ?? 0;
+    const viewLeft = metrics.viewLeft - flyoutWidth;
     const viewRight = metrics.viewLeft + metrics.viewWidth;
     const viewTop = metrics.viewTop;
     const viewBottom = metrics.viewTop + metrics.viewHeight;
     for (const [, block] of this.observingBlocks) {
       const blockBoundingBox = block.getBoundingRectangle();
-      const scale = this.workspace.getScale();
       blockBoundingBox.left *= scale;
       blockBoundingBox.right *= scale;
       blockBoundingBox.top *= scale;
