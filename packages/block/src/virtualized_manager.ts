@@ -160,5 +160,9 @@ export class VirtualizedManager {
  * @returns The VirtualizedManager instance.
  */
 export function virtualize(workspace: Blockly.WorkspaceSvg): VirtualizedManager {
+  if (workspace.getFlyout()) {
+    virtualize(workspace.getFlyout()!.getWorkspace());
+  }
+
   return new VirtualizedManager(workspace);
 }
