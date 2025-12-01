@@ -106,7 +106,7 @@ export class CollapsibleToolboxCategory extends Blockly.CollapsibleToolboxCatego
    */
   override onClick(e: Event): void {
     // Shouldn't do anything since the behaviour is handled by toolbox.
-    // See ContinuousToolBox.updateCollapsibleCategories
+    // See Toolbox.updateCollapsibleCategories
   }
 }
 
