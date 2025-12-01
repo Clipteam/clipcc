@@ -60,6 +60,7 @@ import './blocks/data';
 import './blocks/procedures';
 
 import './serialization/procedures';
+import {virtualize} from './virtualized_manager';
 
 /**
  * Inject a Blockly editor into the specified container element (usually a div).
@@ -94,6 +95,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   Blockly.ContextMenuRegistry.registry.unregister('blockInline');
 
   const workspace = injectWorkspace(container, options);
+  virtualize(workspace);
 
   // Dynamic categories.
   workspace.registerToolboxCategoryCallback(

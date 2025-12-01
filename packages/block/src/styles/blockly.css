@@ -29,3 +29,7 @@
 .blocklyMenuItemDisabled:hover {
   background-color: #fff;
 }
+
+.blocklyBlockHidden {
+  display: none;
+}
