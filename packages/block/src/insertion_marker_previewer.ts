@@ -140,7 +140,7 @@ export class InsertionMarkerPreviewer implements Blockly.IConnectionPreviewer {
       try {
         // Hide Nested insertion markers.
         for (const block of marker.getChildren(false)) {
-          if (block.isInsertionMarker() && block.getSurroundParent() === marker) {
+          if (block.isInsertionMarker()) {
             block.getSvgRoot().setAttribute('visibility', 'hidden');
           }
         }
