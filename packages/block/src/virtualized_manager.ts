@@ -12,11 +12,39 @@ export class VirtualizedManager {
    */
   protected workspaceRef: WeakRef<Blockly.WorkspaceSvg>;
   protected observingBlocks = new Map<string, Blockly.BlockSvg>();
+  protected immediate: boolean;
 
-  constructor(workspace: Blockly.WorkspaceSvg) {
+  constructor(workspace: Blockly.WorkspaceSvg, immediate = true) {
     this.workspaceRef = new WeakRef(workspace);
+    this.immediate = immediate;
+
+    if (immediate) {
+      this.hijackWorkspace();
+    }
 
     workspace.addChangeListener(this.workspaceChangeListener);
+  }
+
+  /**
+   * Hijack workspace methods to update block visibility immediately on viewport changes.
+   */
+  protected hijackWorkspace() {
+    const proto: Blockly.WorkspaceSvg = Object.getPrototypeOf(this.workspace);
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const manager = this;
+    const originalMaybeFireViewportChangeEvent = proto.maybeFireViewportChangeEvent.bind(
+      this.workspace
+    );
+    proto.maybeFireViewportChangeEvent = function() {
+      originalMaybeFireViewportChangeEvent();
+      manager.virtualize();
+    };
+
+    const originalResize = proto.resize.bind(this.workspace);
+    proto.resize = function() {
+      originalResize();
+      manager.virtualize();
+    };
   }
 
   protected workspaceChangeListener = (e: Blockly.Events.Abstract) => {
@@ -49,6 +77,7 @@ export class VirtualizedManager {
         break;
       }
       case Blockly.Events.VIEWPORT_CHANGE: {
+        if (this.immediate) break;
         this.virtualize();
         break;
       }
@@ -159,12 +188,17 @@ export class VirtualizedManager {
 /**
  * Virtualize the given workspace. Make blocks offscreen invisible.
  * @param workspace The workspace to virtualize.
+ * @param immediate Whether update block's visibility immediately.
+ * Immediate mode hijacks workspace methods to update visibility immediately on viewport changes.
+  If false, it uses workspace change listener to update visibility, which may be delayed. and you
+  need to call `virtualize()` manually when window resized.
+  Default to true.
  * @returns The VirtualizedManager instance.
  */
-export function virtualize(workspace: Blockly.WorkspaceSvg): VirtualizedManager {
+export function virtualize(workspace: Blockly.WorkspaceSvg, immediate = true): VirtualizedManager {
   if (workspace.getFlyout()) {
-    virtualize(workspace.getFlyout()!.getWorkspace());
+    virtualize(workspace.getFlyout()!.getWorkspace(), immediate);
   }
 
-  return new VirtualizedManager(workspace);
+  return new VirtualizedManager(workspace, immediate);
 }

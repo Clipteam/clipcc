@@ -95,25 +95,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   Blockly.ContextMenuRegistry.registry.unregister('blockInline');
 
   const workspace = injectWorkspace(container, options);
-  const virtualizedManager = virtualize(workspace);
-  const workspaceResizeHandler = Blockly.browserEvents.conditionalBind(
-    window,
-    'resize',
-    null,
-    () => {
-      // Don't hide all the chaff. Leave the dropdown and widget divs open if
-      // possible.
-      Blockly.Tooltip.hide();
-      workspace.hideComponents(true);
-      Blockly.DropDownDiv.repositionForWindowResize();
-      Blockly.WidgetDiv.repositionForWindowResize();
-      Blockly.common.svgResize(workspace);
-      Blockly.bumpObjects.bumpTopObjectsIntoBounds(workspace);
-      // Re-virtualize after resize
-      virtualizedManager.virtualize();
-    }
-  );
-  workspace.setResizeHandlerWrapper(workspaceResizeHandler);
+  virtualize(workspace);
 
   // Dynamic categories.
   workspace.registerToolboxCategoryCallback(
