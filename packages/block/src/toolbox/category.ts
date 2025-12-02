@@ -6,6 +6,10 @@
 
 import * as Blockly from 'blockly/core';
 
+export type CategoryInfo = Blockly.utils.toolbox.CategoryInfo & {
+  showStatusButton?: boolean;
+};
+
 /**
  * Class for scratch category.
  */
@@ -16,6 +20,9 @@ export class ToolboxCategory extends Blockly.ToolboxCategory {
   /** Element of colour bar on the left of category. */
   protected colourBar: HTMLDivElement | null = null;
 
+  /** Whether this toolbox category has a status indicator button. */
+  protected showStatusButton: boolean = false;
+
   /**
    * @param categoryDef The information needed to create a category in the
    *     toolbox.
@@ -24,11 +31,12 @@ export class ToolboxCategory extends Blockly.ToolboxCategory {
    *     a parent.
    */
   constructor(
-    categoryDef: Blockly.utils.toolbox.CategoryInfo,
+    categoryDef: CategoryInfo,
     parentToolbox: Blockly.IToolbox,
     parent?: Blockly.ICollapsibleToolboxItem
   ) {
     super(categoryDef, parentToolbox, parent);
+    this.showStatusButton = !!categoryDef.showStatusButton;
   }
 
   /**
@@ -100,6 +108,15 @@ export class ToolboxCategory extends Blockly.ToolboxCategory {
       Blockly.utils.aria.State.SELECTED,
       isSelected
     );
+  }
+
+  /**
+   * Returns whether or not this category's label in the flyout should display
+   * status indicators.
+   * @returns True if status indicator should be shown.
+   */
+  shouldShowStatusButton() {
+    return this.showStatusButton;
   }
 }
 

@@ -47,6 +47,7 @@ import './toolbox/category';
 import './toolbox/collapsible_category';
 import './toolbox/inflaters/block';
 import './toolbox/inflaters/label';
+import './toolbox/inflaters/status_indicator_label';
 
 import './blocks/extensions';
 import './blocks/common';

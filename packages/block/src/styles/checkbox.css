@@ -16,7 +16,7 @@
   stroke-linejoin: round;
 }
 
-.blocklyFlyoutCheckboxBackground {
+.blocklyTouchTargetBackground {
   fill: transparent;
   cursor: pointer;
 }
