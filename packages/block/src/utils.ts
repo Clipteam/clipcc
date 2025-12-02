@@ -19,7 +19,6 @@
  */
 
 import * as Blockly from 'blockly/core';
-import * as Constants from './constants';
 import type {AnchoredComment} from './anchored_comment';
 
 /**
