@@ -40,8 +40,8 @@ export class MetricsManager extends Blockly.MetricsManager {
         }
         break;
       }
-      case 'block_comment_delete': {
-        const deleteEvent = e as BlockCommentDelete;
+      case Blockly.Events.BLOCK_DELETE: {
+        const deleteEvent = e as Blockly.Events.BlockDelete;
         if (!deleteEvent.blockId) break;
         const block = this.workspace_.getBlockById(deleteEvent.blockId);
         if (!block || block.getCommentText() === null) break;
