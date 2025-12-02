@@ -1823,11 +1823,6 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-1.0.2.tgz#bbe12dca5b4ef983a0d0af4b07b9bc90ea0ababa"
   integrity sha512-6zABk/ECA/QYSCQ1NGiVwwbQerUCZ+TQbp64Q3AgmfNvurHH0j8TtXa1qbShXA6qqkpAj4V5W8pP6mLe1mcMqA==
 
-"@blockly/continuous-toolbox@^7.0.3":
-  version "7.0.3"
-  resolved "https://registry.yarnpkg.com/@blockly/continuous-toolbox/-/continuous-toolbox-7.0.3.tgz#c7b9923448040455f5bb5733ab7faa11d59f3d73"
-  integrity sha512-EWfEuEpq9XfksSHCwer+U8WvEgtm+iw1aqRftCLrWeSLv09JKDJ/zxOiQsFm5luPU0mWVJHIPaNoSUaHpR5N4w==
-
 "@changesets/apply-release-plan@^7.0.10":
   version "7.0.10"
   resolved "https://registry.yarnpkg.com/@changesets/apply-release-plan/-/apply-release-plan-7.0.10.tgz#d6f64258bd8706dd57aaefcdab052b6e4ced8ec5"
