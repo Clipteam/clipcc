@@ -10,7 +10,7 @@ import {FlyoutCheckbox} from '../flyout_checkbox';
 import {getCheckboxState} from '../../utils';
 
 export class BlockFlyoutInflater extends Blockly.BlockFlyoutInflater {
-  static readonly TYPE = 'block';
+  static readonly TYPE: string = 'block';
 
   /**
    * Inflates a flyout block from the given state and adds it to the flyout.
