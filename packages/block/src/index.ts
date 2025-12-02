@@ -38,6 +38,7 @@ import './block_comment_icon';
 import './renderer/renderer';
 import './connection_checker';
 import './dragger';
+import './metrics_manager';
 import './insertion_marker_previewer';
 
 import './toolbox/flyout';
