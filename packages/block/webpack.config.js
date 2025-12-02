@@ -33,20 +33,7 @@ const baseConfig = {
 };
 
 module.exports = [
-  defaultsDeep({}, baseConfig, {
-    target: 'node',
-    output: {
-      libraryTarget: 'commonjs2',
-      path: path.resolve(__dirname, 'dist', 'node')
-    }
-  }),
-  defaultsDeep({}, baseConfig, {
-    target: 'web',
-    output: {
-      libraryTarget: 'umd',
-      path: path.resolve(__dirname, 'dist', 'web')
-    }
-  }),
+  // Playground
   defaultsDeep({}, baseConfig, {
     target: 'web',
     devServer: {
@@ -55,6 +42,7 @@ module.exports = [
       port: process.env.PORT || 8071
     },
     output: {
+      libraryTarget: 'umd',
       path: path.resolve(__dirname, 'build')
     },
     plugins: [
@@ -77,5 +65,21 @@ module.exports = [
         }]
       })
     ]
+  }),
+  // Node-compatible
+  defaultsDeep({}, baseConfig, {
+    target: 'node',
+    output: {
+      libraryTarget: 'commonjs2',
+      path: path.resolve(__dirname, 'dist', 'node')
+    }
+  }),
+  // Web-comptible
+  defaultsDeep({}, baseConfig, {
+    target: 'web',
+    output: {
+      libraryTarget: 'umd',
+      path: path.resolve(__dirname, 'dist', 'web')
+    }
   })
 ];

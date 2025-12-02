@@ -9,14 +9,14 @@ import * as Blockly from 'blockly/core';
 import * as Constants from './constants';
 import {createTheme} from './colours';
 import {registerScratchContextMenu} from './contextmenu_items';
-import {registerFieldAngle} from './fields/angle';
-import {registerFieldButton} from './fields/button';
-import {registerFieldColourSlider} from './fields/colour_slider';
-import {registerFieldMatrix} from './fields/matrix';
-import {registerFieldNote} from './fields/note';
-import {registerFieldTextInputRemovable} from './fields/textinput_removable';
-import {registerFieldVariableGetter} from './fields/variable_getter';
-import {registerFieldVerticalSeparator} from './fields/vertical_separator';
+import {FieldAngle, registerFieldAngle} from './fields/angle';
+import {FieldButton, registerFieldButton} from './fields/button';
+import {FieldColourSlider, registerFieldColourSlider} from './fields/colour_slider';
+import {FieldMatrix, registerFieldMatrix} from './fields/matrix';
+import {FieldNote, registerFieldNote} from './fields/note';
+import {FieldTextInputRemovable, registerFieldTextInputRemovable} from './fields/textinput_removable';
+import {FieldVariableGetter, registerFieldVariableGetter} from './fields/variable_getter';
+import {FieldVerticalSeparator, registerFieldVerticalSeparator} from './fields/vertical_separator';
 import {flyoutCategory as variableCategory} from './data_category';
 import {flyoutCategory as procedureCategory} from './procedures_category';
 import {isProcedureCallBlock, isProcedurePrototypeBlock} from './blocks/procedures';
@@ -184,9 +184,21 @@ Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(200, 20
 Blockly.ToolboxCategory.nestedPadding = 6;
 
 // Exports
-export const Msg = Blockly.Msg;
+export * from 'blockly/core';
 
 export * as callbackRegistry from './callback_registry';
 export * as constants from './constants';
+export * as utils from './utils';
 
 export {reportValue} from './report_value';
+
+export {
+  FieldAngle,
+  FieldButton,
+  FieldColourSlider,
+  FieldMatrix,
+  FieldNote,
+  FieldTextInputRemovable,
+  FieldVariableGetter,
+  FieldVerticalSeparator
+};
