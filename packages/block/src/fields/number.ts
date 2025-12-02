@@ -49,7 +49,12 @@ export class FieldNumber extends Blockly.FieldTextInput {
    */
   // Calculator order
   private static readonly NUMPAD_BUTTONS =
-    ['7', '8', '9', '4', '5', '6', '1', '2', '3', '.', '0', '-', ' '] as const;
+    [
+      '7', '8', '9',
+      '4', '5', '6',
+      '1', '2', '3',
+      '.', '0', '-', ' '
+    ] as const;
 
   /**
    * Fixed width of the num-pad drop-down, in px.
@@ -71,23 +76,12 @@ export class FieldNumber extends Blockly.FieldTextInput {
     '0,1,1.41,0L23,18.59l2.73-2.73a1,1,0,1,1,1.42,1.41L24.42,20Z" fill="' +
     Colours.numPadText + '"/></svg>';
 
-  /**
-   * Currently active field during an edit.
-   * Used to give a reference to the num-pad button callbacks.
-   */
-  static activeField: FieldNumber | null = null;
-
   protected decimalAllowed = true;
   protected negativeAllowed = true;
   protected exponentialAllowed = true;
 
   /** Don't spellcheck numbers.  Our validator does a better job. */
   protected override spellcheck_ = false;
-
-  /**
-   * Touch event wrappers for the num-pad buttons.
-   */
-  private buttonTouchCallbacks: Blockly.browserEvents.Data[] = [];
 
   /**
    * @param value The initial value of the field. Should cast to a number.
@@ -176,17 +170,18 @@ export class FieldNumber extends Blockly.FieldTextInput {
   }
 
   /**
-   * Sets the minimum value this field can contain. Called internally to avoid
-   * value updates.
+   * Sets the minimum value this field can contain. Called internally to avoid value updates.
    * @param min Minimum value.
    */
   private setMinInternal(min: number | string | undefined | null) {
-    if (min === null) {
+    if (min === undefined || min === null) {
       this.min_ = -Infinity;
     } else {
       min = Number(min);
       if (!isNaN(min)) {
         this.min_ = min;
+      } else {
+        this.min_ = -Infinity;
       }
     }
 
@@ -214,17 +209,18 @@ export class FieldNumber extends Blockly.FieldTextInput {
   }
 
   /**
-   * Sets the maximum value this field can contain. Called internally to avoid
-   * value updates.
+   * Sets the maximum value this field can contain. Called internally to avoid value updates.
    * @param max Maximum value.
    */
   private setMaxInternal(max: number | string | undefined | null) {
-    if (max === null) {
+    if (max === undefined || max === null) {
       this.max_ = Infinity;
     } else {
       max = Number(max);
       if (!isNaN(max)) {
         this.max_ = max;
+      } else {
+        this.max_ = Infinity;
       }
     }
   }
@@ -352,11 +348,9 @@ export class FieldNumber extends Blockly.FieldTextInput {
    *     Defaults to false.
    */
   protected override showEditor_(event?: Event, quietInput?: boolean): void {
-    FieldNumber.activeField = this;
     const showNumPad = this.shouldUseNumPad(event);
     super.showEditor_(event, showNumPad, false);
     if (showNumPad) {
-      ;
       this.showNumPad();
     }
   }
@@ -380,16 +374,17 @@ export class FieldNumber extends Blockly.FieldTextInput {
     Blockly.DropDownDiv.setColour(sourceBlockParent.getColour(),
       sourceBlockParent.getColourTertiary());
     contentDiv.style.width = FieldNumber.DROPDOWN_WIDTH + 'px';
-    Blockly.DropDownDiv.showPositionedByBlock<string>(this, sourceBlock, this.disposeEditor.bind(this));
+    Blockly.DropDownDiv.showPositionedByBlock<string>(this, sourceBlock, this.onHide.bind(this));
   }
 
-  protected disposeEditor() {
-    FieldNumber.activeField = null;
-    // Unbind all button touch event wrappers
-    for (const data of this.buttonTouchCallbacks) {
-      Blockly.browserEvents.unbind(data);
-    }
-    this.buttonTouchCallbacks = [];
+  /**
+   * Callback for when the drop-down is hidden.
+   */
+  private onHide() {
+    // Clear accessibility properties
+    const contentDiv = Blockly.DropDownDiv.getContentDiv();
+    contentDiv.removeAttribute('role');
+    contentDiv.removeAttribute('aria-haspopup');
   }
 
   /**
@@ -449,9 +444,7 @@ export class FieldNumber extends Blockly.FieldTextInput {
           'border: 1px solid ' + buttonBorderColour + ';');
       button.title = buttonText;
       button.innerHTML = buttonText;
-      const touchCallback = this.numPadButtonTouchFactory(buttonText);
-      const data = Blockly.browserEvents.bind(button, 'mousedown', button, touchCallback);
-      this.buttonTouchCallbacks.push(data);
+      Blockly.browserEvents.bind(button, 'mousedown', this, this.numPadButtonTouch);
       if (buttonText === '.' && !this.decimalAllowed) {
         // Don't show the decimal point for inputs that must be round numbers
         button.setAttribute('style', 'visibility: hidden');
@@ -477,38 +470,35 @@ export class FieldNumber extends Blockly.FieldTextInput {
     eraseImage.src = FieldNumber.NUMPAD_DELETE_ICON;
     eraseButton.appendChild(eraseImage);
 
-    Blockly.browserEvents.bind(eraseButton, 'mousedown', null,
-      FieldNumber.numPadEraseButtonTouch);
+    Blockly.browserEvents.bind(eraseButton, 'mousedown', this, this.numPadEraseButtonTouch);
     contentDiv.appendChild(eraseButton);
-  };
+  }
 
   /**
-   * Make a callback for when a num-pad number or punctuation button is touched.
+   * Call for when a num-pad number or punctuation button is touched.
    * Determine what the user is inputting and update the text field appropriately.
-   * @param buttonText The text of the button that was touched.
-   * @returns The callback function.
+   * @param e DOM event triggering the touch.
    */
-  protected numPadButtonTouchFactory(buttonText: string) {
-    const callback = function(this: FieldNumber, e: PointerEvent) {
-      // Old value of the text field
-      const oldValue = this.htmlInput_!.value;
-      // Determine the selected portion of the text field
-      const selectionStart = this.htmlInput_!.selectionStart!;
-      const selectionEnd = this.htmlInput_!.selectionEnd!;
+  protected numPadButtonTouch(e: PointerEvent) {
+    // String of the button (e.g., '7')
+    const spliceValue = (e.target as HTMLElement).innerText;
+    // Old value of the text field
+    const oldValue = this.htmlInput_!.value;
+    // Determine the selected portion of the text field
+    const selectionStart = this.htmlInput_!.selectionStart!;
+    const selectionEnd = this.htmlInput_!.selectionEnd!;
 
-      // Splice in the new value
-      const newValue = oldValue.slice(0, selectionStart) + buttonText + oldValue.slice(selectionEnd);
+    // Splice in the new value
+    const newValue = oldValue.slice(0, selectionStart) + spliceValue + oldValue.slice(selectionEnd);
 
-      // Set new value and advance the cursor
-      this.updateDisplay(newValue, selectionStart + buttonText.length);
+    // Set new value and advance the cursor
+    this.updateDisplay(newValue, selectionStart + spliceValue.length);
 
-      // This is just a click.
-      Blockly.Touch.clearTouchIdentifier();
+    // This is just a click.
+    Blockly.Touch.clearTouchIdentifier();
 
-      // Prevent default to not lose input focus
-      e.preventDefault();
-    };
-    return callback.bind(this);
+    // Prevent default to not lose input focus
+    e.preventDefault();
   }
 
   /**
@@ -516,16 +506,12 @@ export class FieldNumber extends Blockly.FieldTextInput {
    * Determine what the user is asking to erase, and erase it.
    * @param e DOM event triggering the touch.
    */
-  static numPadEraseButtonTouch(e: PointerEvent) {
-    if (!FieldNumber.activeField) {
-      return;
-    }
-    const field = FieldNumber.activeField;
+  protected numPadEraseButtonTouch(e: PointerEvent) {
     // Old value of the text field
-    const oldValue = field.htmlInput_!.value;
+    const oldValue = this.htmlInput_!.value;
     // Determine what is selected to erase (if anything)
-    let selectionStart = field.htmlInput_!.selectionStart!;
-    const selectionEnd = field.htmlInput_!.selectionEnd!;
+    let selectionStart = this.htmlInput_!.selectionStart!;
+    const selectionEnd = this.htmlInput_!.selectionEnd!;
 
     // If selection is zero-length, shift start to the left 1 character
     if (selectionStart === selectionEnd) {
@@ -536,7 +522,7 @@ export class FieldNumber extends Blockly.FieldTextInput {
     const newValue = oldValue.slice(0, selectionStart) +
       oldValue.slice(selectionEnd);
 
-    field.updateDisplay(newValue, selectionStart);
+    this.updateDisplay(newValue, selectionStart);
 
     // This is just a click.
     Blockly.Touch.clearTouchIdentifier();
