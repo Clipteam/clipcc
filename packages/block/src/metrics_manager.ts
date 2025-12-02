@@ -23,7 +23,7 @@ export class MetricsManager extends Blockly.MetricsManager {
         for (const id of createEvent.ids) {
           const block = this.workspace_.getBlockById(id);
           if (!block || block.getCommentText() === null) break;
-          this.trackedCommentedBlocks.add(block!);
+          this.trackedCommentedBlocks.add(block);
         }
         break;
       }
@@ -33,9 +33,9 @@ export class MetricsManager extends Blockly.MetricsManager {
         const block = this.workspace_.getBlockById(changeEvent.blockId);
         if (!block) break;
         if (block.getCommentText() === null) {
-          this.trackedCommentedBlocks.delete(block!);
+          this.trackedCommentedBlocks.delete(block);
         } else {
-          this.trackedCommentedBlocks.add(block!);
+          this.trackedCommentedBlocks.add(block);
         }
         break;
       }
