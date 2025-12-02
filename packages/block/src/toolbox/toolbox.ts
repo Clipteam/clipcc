@@ -6,6 +6,7 @@
 
 import * as Blockly from 'blockly/core';
 import {VerticalFlyout} from './flyout';
+import {ToolboxCategory} from './category';
 import {CollapsibleToolboxCategory} from './collapsible_category';
 import styles from '../styles/toolbox.css';
 
@@ -57,7 +58,11 @@ export class Toolbox extends Blockly.Toolbox {
         }
 
         // The label of category.
-        contents.push({kind: 'label', text: toolboxItem.getName(), id: toolboxItem.getId()});
+        if ((toolboxItem as ToolboxCategory).shouldShowStatusButton()) {
+          contents.push({kind: 'status_indicator_label', text: toolboxItem.getName(), id: toolboxItem.getId()});
+        } else {
+          contents.push({kind: 'label', text: toolboxItem.getName(), id: toolboxItem.getId()});
+        }
 
         let itemContents = toolboxItem.getContents();
         if (typeof itemContents === 'string') {
