@@ -176,13 +176,17 @@ export function loadWorkspace(
   Blockly.serialization.workspaces.load(state, workspace, {recordUndo});
 }
 
-export {reportValue} from './report_value';
-export const setLocale = Blockly.setLocale;
-export * as callbackRegistry from './callback_registry';
-
 // Monkey-patches
 Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
 Blockly.FlyoutButton.TEXT_MARGIN_X = 40;
 Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;
 Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(200, 200);
 Blockly.ToolboxCategory.nestedPadding = 6;
+
+// Exports
+export const Msg = Blockly.Msg;
+
+export * as callbackRegistry from './callback_registry';
+export * as constants from './constants';
+
+export {reportValue} from './report_value';

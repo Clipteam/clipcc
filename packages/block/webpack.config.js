@@ -34,17 +34,21 @@ const baseConfig = {
 
 module.exports = [
   defaultsDeep({}, baseConfig, {
+    target: 'node',
     output: {
-      path: path.resolve(__dirname, 'dist')
+      libraryTarget: 'commonjs2',
+      path: path.resolve(__dirname, 'dist', 'node')
     }
   }),
   defaultsDeep({}, baseConfig, {
+    target: 'web',
     output: {
       libraryTarget: 'umd',
       path: path.resolve(__dirname, 'dist', 'web')
     }
   }),
   defaultsDeep({}, baseConfig, {
+    target: 'web',
     devServer: {
       static: false,
       host: '0.0.0.0',
