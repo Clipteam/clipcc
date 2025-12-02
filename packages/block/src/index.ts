@@ -177,8 +177,7 @@ export function loadWorkspace(
 }
 
 export {reportValue} from './report_value';
-export {setExternalProcedureDefCallback} from './procedures_category';
-export {setGetCheckboxState} from './utils';
+export * as callbackRegistry from './callback_registry';
 
 // Monkey-patches
 Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
