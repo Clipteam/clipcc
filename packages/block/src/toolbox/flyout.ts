@@ -10,6 +10,7 @@ import {FlyoutMetrics} from './flyout_metrics';
 import type {FlyoutButton} from './flyout_button';
 import type {BlockFlyoutInflater} from './inflaters/block';
 import {FlyoutStatusIndicatorLabel} from './flyout_status_indicator_label';
+import styles from '../styles/flyout.css';
 
 /**
  * Class for customized flyout.
@@ -73,7 +74,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   /**
    * Whether to animate the flyout collapse/expand.
    */
-  private animateCollapse = true;
+  private animateCollapse = false;
 
   /**
    * The current x offset for collapse animation in pixels.
@@ -88,6 +89,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     super(workspaceOptions);
     this.workspace_.setMetricsManager(new FlyoutMetrics(this.workspace_, this));
     this.setRecyclingEnabled(true);
+    this.setCollapseAnimationEnabled(true);
   }
 
   /**
@@ -220,16 +222,17 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
       }
     }
 
-    this.svgGroup_!.style['willChange'] = 'transform';
-    this.collapseAnimationId = requestAnimationFrame(this.stepCollapseAnimation.bind(this));
+    this.collapseAnimationId = requestAnimationFrame(this.stepCollapseAnimation.bind(this, this.getX(), this.getY()));
   }
 
   /**
    * Step the collapse animation by translating the flyout.
    *
    * Should NOT call directly. Use startCollapseAnimation instead.
+   * @param startX The starting x position of the flyout.
+   * @param startY The starting y position of the flyout.
    */
-  private stepCollapseAnimation(): void {
+  private stepCollapseAnimation(startX: number, startY: number): void {
     this.collapseAnimationId = null;
 
     const elapsed = (Date.now() - this.collapseStartTime!) / 60;
@@ -248,10 +251,10 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     }
 
     this.collapseAnimationOffset = offset;
-    const x = this.getX() + this.collapseAnimationOffset;
-    const y = this.getY();
-    Blockly.utils.dom.setCssTransform(this.svgGroup_!, 'translate(' + x + 'px,' + y + 'px)');
-    this.collapseAnimationId = requestAnimationFrame(this.stepCollapseAnimation.bind(this));
+    const x = startX + this.collapseAnimationOffset;
+    const y = startY;
+    Blockly.utils.dom.setCssTransform(this.svgGroup_!, 'translate3d(' + x + 'px,' + y + 'px, 0)');
+    this.collapseAnimationId = requestAnimationFrame(this.stepCollapseAnimation.bind(this, startX, startY));
   }
 
   /**
@@ -269,8 +272,6 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     } else {
       super.setVisible(false);
     }
-
-    this.svgGroup_!.style['willChange'] = '';
   }
 
   /**
@@ -409,7 +410,6 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
 
     this.scrollStartTime = Date.now();
     this.scrollFrom = -this.workspace_.scrollY;
-    this.svgGroup_!.style['willChange'] = 'transform';
     this.scrollAnimationId = requestAnimationFrame(this.stepScrollAnimation.bind(this));
   }
 
@@ -427,7 +427,6 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     if (Math.abs(diff) < 1) {
       this.workspace_.scrollbar?.setY(this.scrollTarget!);
       this.scrollTarget = null;
-      this.svgGroup_!.style['willChange'] = '';
       return;
     }
 
@@ -501,6 +500,8 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     }
   }
 }
+
+Blockly.Css.register(styles);
 
 Blockly.registry.register(
   Blockly.registry.Type.FLYOUTS_VERTICAL_TOOLBOX,
