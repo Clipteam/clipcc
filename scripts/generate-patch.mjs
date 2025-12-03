@@ -80,8 +80,10 @@ function processPatch(patchContent) {
             if (diffMeta[j].startsWith('rename from ') || diffMeta[j].startsWith('rename to ')) {
                 const prefix = diffMeta[j].startsWith('rename from ') ? 'rename from ' : 'rename to ';
                 const filePath = diffMeta[j].substring(prefix.length);
-                const rewritten = rewritePath(filePath, '').substring(1); // remove leading /
-                diffMeta[j] = `${prefix}${rewritten}`;
+                const rewritten = rewritePath(filePath, '');
+                // Only remove leading slash if rewritePath actually transformed the path
+                // (rewritePath adds a leading slash via the prefix when it transforms)
+                diffMeta[j] = `${prefix}${rewritten.startsWith('/') ? rewritten.substring(1) : rewritten}`;
             }
         }
 
