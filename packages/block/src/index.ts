@@ -148,21 +148,7 @@ export function injectWorkspace(container: Element | string, options?: Blockly.B
     theme: scratchTheme
   };
   options = Object.assign(defaultOptions, options);
-  let initZoomControl = false;
-  if (options.zoom?.controls) {
-    // Use our ZoomControls implementation.
-    options.zoom.controls = false;
-    initZoomControl = true;
-  }
   const workspace = Blockly.inject(container, options);
-  if (initZoomControl) {
-    workspace.zoomControls_ = new ZoomControls(workspace) as unknown as Blockly.ZoomControls;
-    const svgZoomControls = workspace.zoomControls_.createDom();
-    workspace.svgGroup_.appendChild(svgZoomControls);
-    workspace.zoomControls_!.init();
-    // To trigger zoom controls positioning.
-    workspace.resize();
-  }
 
   return workspace;
 }
@@ -197,6 +183,12 @@ Blockly.FlyoutButton.TEXT_MARGIN_X = 40;
 Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;
 Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(200, 200);
 Blockly.ToolboxCategory.nestedPadding = 6;
+
+Blockly.WorkspaceSvg.prototype.addZoomControls = function() {
+  this.zoomControls_ = new ZoomControls(this) as unknown as Blockly.ZoomControls;
+  const svgZoomControls = this.zoomControls_.createDom();
+  this.svgGroup_.appendChild(svgZoomControls);
+};
 
 export {reportValue} from './report_value';
 export {setExternalProcedureDefCallback} from './procedures_category';
