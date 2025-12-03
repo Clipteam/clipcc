@@ -204,6 +204,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
 
     this.collapseStartTime = Date.now() - elapsed * 60;
 
+    this.workspace_.scrollbar?.setVisible(false);
     if (visible) {
       super.setVisible(true);
       this.collapseAnimationOffset = initialOffset !== 0 ? initialOffset : -this.getWidth();
@@ -215,7 +216,6 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
         this.reflow();
       }
     } else {
-      this.workspace_.scrollbar?.setVisible(false);
       if (initialOffset !== 0) {
         this.collapseAnimationOffset = initialOffset;
         this.position();
