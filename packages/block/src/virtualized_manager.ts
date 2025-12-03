@@ -11,38 +11,57 @@ export class VirtualizedManager {
    * Hold a weak reference to the workspace to avoid memory leaks.
    */
   protected workspaceRef: WeakRef<Blockly.WorkspaceSvg>;
+  /**
+   * Blocks being observed for virtualization.
+   */
   protected observingBlocks = new Map<string, Blockly.BlockSvg>();
+  /**
+   * Whether to update block visibility immediately on viewport changes.
+   * If true, workspace methods will be hooked to listen viewport changes immediately.
+   */
   protected immediate: boolean;
+  /**
+   * Whether a virtualization check has been requested.
+   * Any requested check will perform in next microtask.
+   */
+  protected requestedCheck = false;
 
   constructor(workspace: Blockly.WorkspaceSvg, immediate = true) {
     this.workspaceRef = new WeakRef(workspace);
     this.immediate = immediate;
 
     if (immediate) {
-      this.hijackWorkspace();
+      this.hookWorkspace();
     }
 
     workspace.addChangeListener(this.workspaceChangeListener);
   }
 
   /**
-   * Hijack workspace methods to update block visibility immediately on viewport changes.
+   * Get the workspace from WeakRef.
+   * Always exists since the manager is tied to the workspace's lifecycle.
+   * @returns The workspace.
    */
-  protected hijackWorkspace() {
+  protected get workspace(): Blockly.WorkspaceSvg {
+    return this.workspaceRef.deref()!;
+  }
+
+  /**
+   * Hook workspace methods to update block visibility immediately on viewport changes.
+   */
+  protected hookWorkspace() {
     const proto: Blockly.WorkspaceSvg = Object.getPrototypeOf(this.workspace);
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const manager = this;
-    const originalMaybeFireViewportChangeEvent = proto.maybeFireViewportChangeEvent.bind(
-      this.workspace
-    );
+    const originalMaybeFireViewportChangeEvent = proto.maybeFireViewportChangeEvent;
     proto.maybeFireViewportChangeEvent = function() {
-      originalMaybeFireViewportChangeEvent();
+      originalMaybeFireViewportChangeEvent.call(this);
       manager.virtualize();
     };
 
-    const originalResize = proto.resize.bind(this.workspace);
+    const originalResize = proto.resize;
     proto.resize = function() {
-      originalResize();
+      originalResize.call(this);
       manager.virtualize();
     };
   }
@@ -85,18 +104,25 @@ export class VirtualizedManager {
   };
 
   /**
-   * Get the workspace from WeakRef.
-   * Always exists since the manager is tied to the workspace's lifecycle.
-   * @returns The workspace.
+   * Check whether these blocks are offscreen, then update their visibility.
+   * This method performs in next microtask to batch multiple calls.
    */
-  protected get workspace(): Blockly.WorkspaceSvg {
-    return this.workspaceRef.deref()!;
+  protected virtualize(): void {
+    if (this.requestedCheck) return;
+    this.requestedCheck = true;
+
+    // Perform in next microtask.
+    Promise.resolve().then(() => {
+      this.requestedCheck = false;
+      this.virtualizeInternal();
+    });
   }
 
   /**
-   * Check whether these blocks are offscreen, then update their visibility.
+   * Actual logics to check whether these blocks are offscreen,
+   * then update their visibility.
    */
-  virtualize(): void {
+  protected virtualizeInternal(): void {
     // Check workspace here since it's public.
     if (!this.workspace) {
       this.dispose();
