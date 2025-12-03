@@ -18,14 +18,7 @@
   fill: none;
 }
 
-.blocklyCollapsed .blocklyCommentTopbarBackground {
-  rx: 4px;
-  ry: 4px;
-  stroke: var(--commentBorderColour);
-  stroke-width: 1px;
-  fill: var(--commentTopBarColour);
-}
-
+.blocklyCollapsed .blocklyCommentTopbarBackground,
 .blocklySelected.blocklyCollapsed .blocklyCommentTopbarBackground {
   rx: 4px;
   ry: 4px;

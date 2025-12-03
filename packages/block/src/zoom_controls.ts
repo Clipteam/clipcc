@@ -7,7 +7,7 @@
 import * as Blockly from 'blockly/core';
 
 /**
- * Class for a zoom controls.
+ * Class for zoom controls.
  * Copied from Blockly.ZoomControls and make it Scratch-styled.
  */
 export class ZoomControls implements Blockly.IPositionable {
@@ -55,20 +55,6 @@ export class ZoomControls implements Blockly.IPositionable {
    */
   private readonly ZOOM_RESET_PATH_ = 'zoom-reset.svg';
 
-  /** Width of the zoom controls. */
-  private readonly WIDTH = this.ICON_SIZE;
-
-  /** Height of each zoom control. */
-  private readonly HEIGHT = this.ICON_SIZE;
-
-  /** Small spacing used between the zoom in and out control, in pixels. */
-  private readonly SMALL_SPACING = this.ICON_SPACING;
-
-  /**
-   * Large spacing used between the zoom in and reset control, in pixels.
-   */
-  private readonly LARGE_SPACING = this.ICON_SPACING;
-
   /** The SVG group containing the zoom controls. */
   private svgGroup: SVGElement | null = null;
 
@@ -99,7 +85,7 @@ export class ZoomControls implements Blockly.IPositionable {
     this.createZoomInSvg(rnd);
     if (this.workspace.isMovable()) {
       // If we zoom to the center and the workspace isn't movable we could
-      // loose blocks at the edges of the workspace.
+      // lose blocks at the edges of the workspace.
       this.createZoomResetSvg(rnd);
     }
     return this.svgGroup;
@@ -137,12 +123,12 @@ export class ZoomControls implements Blockly.IPositionable {
    *     ignored by other UI elements.
    */
   getBoundingRectangle(): Blockly.utils.Rect | null {
-    let height = this.SMALL_SPACING + 2 * this.HEIGHT;
+    let height = this.ICON_SPACING + 2 * this.ICON_SIZE;
     if (this.zoomResetGroup) {
-      height += this.LARGE_SPACING + this.HEIGHT;
+      height += this.ICON_SPACING + this.ICON_SIZE;
     }
     const bottom = this.top + height;
-    const right = this.left + this.WIDTH;
+    const right = this.left + this.ICON_SIZE;
     return new Blockly.utils.Rect(this.top, bottom, this.left, right);
   }
 
@@ -217,8 +203,8 @@ export class ZoomControls implements Blockly.IPositionable {
     const image = Blockly.utils.dom.createSvgElement(
       'image',
       {
-        width: this.WIDTH,
-        height: this.HEIGHT
+        width: this.ICON_SIZE,
+        height: this.ICON_SIZE
       },
       parent
     );
