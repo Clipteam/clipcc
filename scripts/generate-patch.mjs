@@ -196,7 +196,7 @@ function main() {
         const outputFile = join(MIGRATION_DIR, `${sanitizedRange}.patch`);
 
         // Generate patch from the squashed commit directly to file
-        run(`git format-patch -1 --stdout > "${tmpPatchFile}"`, { cwd: UPSTREAM_DIR, shell: true });
+        run(`git format-patch -1 --histogram --stdout > "${tmpPatchFile}"`, { cwd: UPSTREAM_DIR, shell: true });
 
         // Read, process, and write the patch
         const patchContent = readFileSync(tmpPatchFile, 'utf-8');
