@@ -44,6 +44,8 @@ export const Colours: Record<string, Record<string, string> | string | number> =
   replacementGlowOpacity: 1,
   colourPickerStroke: '#FFFFFF',
   // CSS colours: support RGBA
+  flyoutBorder: 'hsla(0, 0%, 0%, 0.15)',
+  toolboxBorder: 'hsla(0, 0%, 0%, 0.15)',
   fieldShadow: 'rgba(0,0,0,0.1)',
   dropDownShadow: 'rgba(0, 0, 0, .3)',
   numPadBackground: '#547AB2',
@@ -65,19 +67,19 @@ export function injectCssVariables(): void {
     root = document.createElement('style');
     root.id = 'clipcc-block-theme';
     document.head.appendChild(root);
-
-    const cssVars: string[] = [];
-    cssVars.push(':root {');
-    for (const prop in Colours) {
-      if (!Object.prototype.hasOwnProperty.call(Colours, prop)) {
-        continue;
-      }
-      cssVars.push(`  --clipcc-block-${prop}: ${Colours[prop]};`);
-    }
-    cssVars.push('}');
-
-    root.textContent = cssVars.join('\n');
   }
+
+  const cssVars: string[] = [];
+  cssVars.push(':root {');
+  for (const prop in Colours) {
+    if (!Object.prototype.hasOwnProperty.call(Colours, prop)) {
+      continue;
+    }
+    cssVars.push(`  --clipcc-block-${prop}: ${Colours[prop]};`);
+  }
+  cssVars.push('}');
+
+  root.textContent = cssVars.join('\n');
 }
 
 const blockStyles: {[key: string]: Partial<Blockly.Theme.BlockStyle>} = {
