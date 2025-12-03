@@ -166,66 +166,64 @@ function buildCategoryStyles(): {[key: string]: Blockly.Theme.CategoryStyle} {
   return categoryStyles;
 }
 
-/**
- * Override the colours in Colours with new values basded on the
- * given dictionary.
- * @param colours Dictionary of colour properties and new values.
- * @package
- */
-export function overrideColours(colours?: typeof Colours) {
-  // Colour overrides provided by the injection
-  if (!colours) return;
-
-  for (const colourProperty in colours) {
-    if (Object.prototype.hasOwnProperty.call(colours, colourProperty) &&
-      Object.prototype.hasOwnProperty.call(Colours, colourProperty)) {
-      // If a property is in both colours option and Colours,
-      // set the Colours value to the override.
-      // Override Blockly category color object properties with those
-      // provided.
-      const colourPropertyValue = colours[colourProperty];
-      if (typeof colourPropertyValue === 'object') {
-        for (const colourSequence in colourPropertyValue) {
-          if (Object.prototype.hasOwnProperty.call(colourPropertyValue, colourSequence) &&
-            typeof Colours[colourProperty] === 'object' &&
-            Object.prototype.hasOwnProperty.call(Colours[colourProperty], colourSequence)) {
-            Colours[colourProperty][colourSequence] =
-              colourPropertyValue[colourSequence];
-          }
-        }
-      } else {
-        Colours[colourProperty] = colourPropertyValue;
-      }
-    }
-  }
-
-  // Refresh CSS variables.
-  injectCssVariables();
+export const defaultTheme = {
+  name: 'scratch',
+  blockStyles,
+  categoryStyles: buildCategoryStyles(),
+  componentStyles: {
+    selectedGlowColour: 'transparent',
+    insertionMarkerColour: Colours.insertionMarker as string,
+    insertionMarkerOpacity: Colours.insertionMarkerOpacity as number,
+    replacementGlowColour: Colours.replacementGlow as string,
+    scrollbarColour: Colours.scrollbar as string,
+    toolboxBackgroundColour: Colours.toolbox as string,
+    toolboxForegroundColour: Colours.toolboxText as string,
+    flyoutBackgroundColour: Colours.flyout as string,
+    workspaceBackgroundColour: Colours.workspace as string
+  },
+  fontStyle: {
+    weight: '500'
+  },
+  startHats: true
 };
-
 /**
- * Create the scratch theme.
+ * Create a custom theme based on the scratch theme.
+ * @param name Name of the theme.
+ * @param themeDef The theme object to override default scratch theme.
  * @returns The newly created theme.
  */
-export function createTheme(): Blockly.Theme {
-  return Blockly.Theme.defineTheme('scratch', {
-    name: 'scratch',
-    blockStyles,
-    categoryStyles: buildCategoryStyles(),
-    componentStyles: {
-      selectedGlowColour: 'transparent',
-      insertionMarkerColour: Colours.insertionMarker as string,
-      insertionMarkerOpacity: Colours.insertionMarkerOpacity as number,
-      replacementGlowColour: Colours.replacementGlow as string,
-      scrollbarColour: Colours.scrollbar as string,
-      toolboxBackgroundColour: Colours.toolbox as string,
-      toolboxForegroundColour: Colours.toolboxText as string,
-      flyoutBackgroundColour: Colours.flyout as string,
-      workspaceBackgroundColour: Colours.workspace as string
-    },
-    fontStyle: {
-      weight: '500'
-    },
-    startHats: true
-  });
+export function createTheme(name: string, themeDef: object): Blockly.Theme {
+  const customTheme = Object.assign({base: 'scratch', name}, themeDef);
+  const theme = Blockly.Theme.defineTheme(name, customTheme);
+  Blockly.registry.register(Blockly.registry.Type.THEME, name, theme, true);
+  return theme;
 }
+
+/**
+ * Get a defined theme by name.
+ * @param name Name of the theme.
+ * @returns The theme object, or null if not found.
+ */
+export function getTheme(name: string): Blockly.Theme | null {
+  if (!Blockly.registry.hasItem(Blockly.registry.Type.THEME, name)) {
+    return null;
+  }
+  return Blockly.registry.getObject(Blockly.registry.Type.THEME, name);
+}
+
+/**
+ * Set the theme of the workspace.
+ * @param name The theme's name.
+ * @param workspace The workspace to set the theme to. use main workspace by default.
+ */
+export function setTheme(name: string, workspace: Blockly.WorkspaceSvg) {
+  if (!workspace) {
+    workspace = Blockly.getMainWorkspace() as Blockly.WorkspaceSvg;
+  }
+  const theme = getTheme(name) ?? getTheme('scratch')!;
+  workspace.setTheme(theme);
+  // Refresh CSS variables.
+  injectCssVariables();
+}
+
+export const scratchTheme = Blockly.Theme.defineTheme('scratch', defaultTheme);

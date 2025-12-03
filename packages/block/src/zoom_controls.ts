@@ -1,6 +1,6 @@
 /**
  * @license
- * Copyright 2025 Clip Team
+ * Copyright 2024 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 

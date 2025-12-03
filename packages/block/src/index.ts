@@ -7,7 +7,7 @@
 import * as Blockly from 'blockly/core';
 
 import * as Constants from './constants';
-import {createTheme, injectCssVariables} from './themes';
+import {scratchTheme, injectCssVariables} from './theme';
 import {registerScratchContextMenu} from './contextmenu_items';
 import {registerFieldAngle} from './fields/angle';
 import {registerFieldButton} from './fields/button';
@@ -145,7 +145,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
 export function injectWorkspace(container: Element | string, options?: Blockly.BlocklyOptions) {
   const defaultOptions: Blockly.BlocklyOptions = {
     renderer: 'scratch',
-    theme: createTheme()
+    theme: scratchTheme
   };
   options = Object.assign(defaultOptions, options);
   let initZoomControl = false;
@@ -191,13 +191,15 @@ export function loadWorkspace(
   Blockly.serialization.workspaces.load(state, workspace, {recordUndo});
 }
 
-export {reportValue} from './report_value';
-export {setExternalProcedureDefCallback} from './procedures_category';
-export {setGetCheckboxState} from './utils';
-
 // Monkey-patches
 Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
 Blockly.FlyoutButton.TEXT_MARGIN_X = 40;
 Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;
 Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(200, 200);
 Blockly.ToolboxCategory.nestedPadding = 6;
+
+export {reportValue} from './report_value';
+export {setExternalProcedureDefCallback} from './procedures_category';
+export {setGetCheckboxState} from './utils';
+export {createTheme, getTheme, setTheme} from './theme';
+

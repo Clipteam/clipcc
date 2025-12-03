@@ -17,7 +17,7 @@
 		}
 
 		body {
-			background-color: #fff;
+			background: #fff;
 			font-family: sans-serif;
 			overflow: hidden;
       display: flex;
@@ -127,9 +127,60 @@
     let lastScrollTop = 0;
 
     function start() {
+      registerNostalgicTheme();
       fetch('toolbox.json').then(response => response.json()).then(toolbox => {
         injectWorkspaces(toolbox);
       });
+    }
+
+    function registerNostalgicTheme() {
+      const nostalgicThemeDef = {
+        categoryStyles: {
+          motion: {
+            colour: "#4a6cd4"
+          },
+          looks: {
+            colour: "#8a55d7"
+          },
+          sounds: {
+            colour: "#bb42c3"
+          },
+          events: {
+            colour: "#c88330"
+          },
+          control: {
+            colour: "#e1a91a"
+          },
+          sensing: {
+            colour: "#2ca5e2"
+          },
+          operators: {
+            colour: "#5cb712"
+          },
+          data: {
+            colour: "#ee7d16"
+          },
+          data_lists: {
+            colour: "#cc5b22"
+          },
+          more: {
+            colour: "#632d99"
+          },
+          pen: {
+            colour: "#0e9a6c"
+          }
+        },
+        componentStyles: {
+          workspaceBackgroundColour: '#e1e1e1',
+          toolboxBackgroundColour: '#d3d3d3',
+          flyoutBackgroundColour: '#d3d3d3'
+        },
+        fontStyle: {
+          weight: '600',
+          size: '12'
+        }
+      };
+      ScratchBlocks.createTheme('nostalgic', nostalgicThemeDef);
     }
 
 		function injectWorkspaces(toolbox) {
@@ -365,6 +416,10 @@
         }
       });
     }
+
+    function changeTheme(themeName) {
+      ScratchBlocks.setTheme(themeName, mainWorkspace);
+    }
 	</script>
 </head>
 
@@ -374,6 +429,10 @@
     <div class="controlPanel">
       <button id="save" onclick="saveWorkspace()">Save</button>
       <button id="load" onclick="loadWorkspace()">Load</button>
+      <select id="ThemeSelect" onchange="changeTheme(this.value)">
+        <option value="scratch">Scratch</option>
+        <option value="nostalgic">Nostalgic</option>
+      </select>
     </div>
     <textarea id="dataContent"></textarea>
     <h1>Events</h1>

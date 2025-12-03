@@ -5,7 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {Colours} from '../themes';
+import {Colours} from '../theme';
 
 /**
  * An object that provides constants for rendering blocks in Scratch mode.
