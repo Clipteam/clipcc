@@ -220,6 +220,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
       }
     }
 
+    this.svgGroup_!.style['willChange'] = 'transform';
     this.collapseAnimationId = requestAnimationFrame(this.stepCollapseAnimation.bind(this));
   }
 
@@ -247,7 +248,9 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     }
 
     this.collapseAnimationOffset = offset;
-    this.position();
+    const x = this.getX() + this.collapseAnimationOffset;
+    const y = this.getY();
+    Blockly.utils.dom.setCssTransform(this.svgGroup_!, 'translate(' + x + 'px,' + y + 'px)');
     this.collapseAnimationId = requestAnimationFrame(this.stepCollapseAnimation.bind(this));
   }
 
@@ -266,23 +269,8 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     } else {
       super.setVisible(false);
     }
-  }
 
-  /**
-   * Move the flyout to the edge of the workspace.
-   */
-  override position(): void {
-    if (!this.isVisible() && this.collapseTarget === null) {
-      return;
-    }
-
-    super.position();
-
-    if (this.collapseAnimationOffset !== 0) {
-      const x = this.getX() + this.collapseAnimationOffset;
-      const y = this.getY();
-      Blockly.utils.dom.setCssTransform(this.svgGroup_!, 'translate(' + x + 'px,' + y + 'px)');
-    }
+    this.svgGroup_!.style['willChange'] = '';
   }
 
   /**
@@ -421,6 +409,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
 
     this.scrollStartTime = Date.now();
     this.scrollFrom = -this.workspace_.scrollY;
+    this.svgGroup_!.style['willChange'] = 'transform';
     this.scrollAnimationId = requestAnimationFrame(this.stepScrollAnimation.bind(this));
   }
 
@@ -438,6 +427,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     if (Math.abs(diff) < 1) {
       this.workspace_.scrollbar?.setY(this.scrollTarget!);
       this.scrollTarget = null;
+      this.svgGroup_!.style['willChange'] = '';
       return;
     }
 
