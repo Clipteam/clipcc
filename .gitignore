@@ -7,6 +7,9 @@ node_modules
 npm-*
 yarn-error.log
 
+# Upstream
+upstream-llk/
+.migration/
 
 # Dist
 dist
