@@ -8,6 +8,7 @@ import * as Blockly from 'blockly/core';
 import {Toolbox} from './toolbox';
 import {FlyoutMetrics} from './flyout_metrics';
 import type {FlyoutButton} from './flyout_button';
+import {FlyoutStatusIndicatorLabel} from './flyout_status_indicator_label';
 import styles from '../styles/flyout.css';
 
 /**
@@ -136,7 +137,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   recordScrollPositions(): void {
     this.scrollPositions.clear();
     for (const item of this.contents) {
-      if (item.getType() === 'label') {
+      if (item.getType() === 'label' || item.getType() === 'status_indicator_label') {
         const button = item.getElement() as FlyoutButton;
         const position = button.getPosition();
         this.scrollPositions.set(button.getLabelId()!, position.y - this.MARGIN);
@@ -266,6 +267,17 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
       this.position();
       this.targetWorkspace.resizeContents();
       this.targetWorkspace.recordDragTargets();
+    }
+  }
+
+  /**
+   * Refresh all status indicators.
+   */
+  refreshStatusButtons() {
+    for (const item of this.contents) {
+      if (item instanceof FlyoutStatusIndicatorLabel) {
+        item.refreshStatus();
+      }
     }
   }
 }

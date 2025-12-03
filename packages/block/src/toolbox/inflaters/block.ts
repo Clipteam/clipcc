@@ -5,12 +5,12 @@
  */
 
 import * as Blockly from 'blockly/core';
+import * as callbackRegistry from '../../callback_registry';
 import {isCheckboxInFlyout} from '../../interfaces/i_checkbox_in_flyout';
 import {FlyoutCheckbox} from '../flyout_checkbox';
-import {getCheckboxState} from '../../utils';
 
 export class BlockFlyoutInflater extends Blockly.BlockFlyoutInflater {
-  static readonly TYPE = 'block';
+  static readonly TYPE: string = 'block';
 
   /**
    * Inflates a flyout block from the given state and adds it to the flyout.
@@ -25,7 +25,7 @@ export class BlockFlyoutInflater extends Blockly.BlockFlyoutInflater {
     // Add checkbox if checkboxInFlyout is true in block.
     const block = flyoutItem.getElement() as Blockly.BlockSvg;
     if (isCheckboxInFlyout(block) && block.checkboxInFlyout) {
-      const state = getCheckboxState(block.workspace.id, block.id);
+      const state = (callbackRegistry.get('getCheckboxState'))(block.workspace.id, block.id);
       return new Blockly.FlyoutItem(
         new FlyoutCheckbox(
           flyoutItem,

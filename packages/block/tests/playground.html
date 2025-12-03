@@ -268,7 +268,7 @@
         }
       });
 
-      ScratchBlocks.setExternalProcedureDefCallback((state, cb, isCreate) => {
+      ScratchBlocks.callbackRegistry.register('externalProcedureDefCallback', (state, cb, isCreate) => {
         functionEditor.clear();
         mutationRoot = functionEditor.newBlock('procedures_declaration');
         mutationRoot.loadExtraState(state);
@@ -402,13 +402,13 @@
     }
 
     const checkboxStateMap = new Map();
-    function getCheckboxState(workspaceId, blockId) {
-      const key = getCheckboxKey(blockId);
-      return checkboxStateMap.get(key) ?? false;
-    }
 
     function registerCheckboxHandler(workspace) {
-      ScratchBlocks.setGetCheckboxState(getCheckboxState);
+      ScratchBlocks.callbackRegistry.register('getCheckboxState', (workspaceId, blockId) => {
+        const key = getCheckboxKey(blockId);
+        return checkboxStateMap.get(key) ?? false;
+      });
+
       workspace.addChangeListener(event => {
         if (event.type === 'change' && event.element === 'checkbox') {
           const key = getCheckboxKey(event.blockId);

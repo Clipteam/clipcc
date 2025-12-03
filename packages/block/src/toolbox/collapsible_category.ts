@@ -5,11 +5,30 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {ToolboxCategory} from './category';
+import {CategoryInfo, ToolboxCategory} from './category';
 
 export class CollapsibleToolboxCategory extends Blockly.CollapsibleToolboxCategory {
   /** Element of colour bar on the left of category. */
   protected colourBar: HTMLDivElement | null = null;
+
+  /** Whether this toolbox category has a status indicator button. */
+  protected showStatusButton: boolean = false;
+
+  /**
+   * @param categoryDef The information needed to create a category in the
+   *     toolbox.
+   * @param parentToolbox The parent toolbox for the category.
+   * @param parent The parent category or null if the category does not have
+   *     a parent.
+   */
+  constructor(
+    categoryDef: CategoryInfo,
+    parentToolbox: Blockly.IToolbox,
+    parent?: Blockly.ICollapsibleToolboxItem
+  ) {
+    super(categoryDef, parentToolbox, parent);
+    this.showStatusButton = !!categoryDef.showStatusButton;
+  }
 
   override makeDefaultCssConfig_() {
     const cssConfig = super.makeDefaultCssConfig_();
@@ -107,6 +126,15 @@ export class CollapsibleToolboxCategory extends Blockly.CollapsibleToolboxCatego
   override onClick(e: Event): void {
     // Shouldn't do anything since the behaviour is handled by toolbox.
     // See ContinuousToolBox.updateCollapsibleCategories
+  }
+
+  /**
+   * Returns whether or not this category's label in the flyout should display
+   * status indicators.
+   * @returns True if status indicator should be shown.
+   */
+  shouldShowStatusButton() {
+    return this.showStatusButton;
   }
 }
 

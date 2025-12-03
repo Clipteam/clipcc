@@ -19,6 +19,7 @@
  */
 
 import * as Blockly from 'blockly/core';
+import type {AnchoredComment} from './anchored_comment';
 
 /**
  * @fileoverview Utility methods for Scratch Blocks but not Blockly.
@@ -69,20 +70,11 @@ export function getWorkspaceOptionsFromBlock(block: Blockly.Block): Blockly.Opti
 }
 
 /**
- * Get the initial checkbox state for blocks in flyout. This should be override
- * by external editor with setGetCheckboxState.
- * @param workspaceId Workspace ID.
- * @param blockId Block ID.
- * @returns The state of checkbox.
+ * Get comment bubble from block.
+ * @param block The block to get the comment bubble from.
+ * @returns The comment bubble, or null if none exists.
  */
-export let getCheckboxState = function(workspaceId: string, blockId: string) {
-  return false;
-};
-
-/**
- * Set getCheckboxState.
- * @param func The function to set to.
- */
-export function setGetCheckboxState(func: typeof getCheckboxState) {
-  getCheckboxState = func;
+export function getCommentBubbleFromBlock(block: Blockly.Block | null): AnchoredComment | null {
+  const bubble = block?.getIcon(Blockly.icons.IconType.COMMENT)?.getBubble() as AnchoredComment;
+  return bubble ?? null;
 }
