@@ -68,11 +68,24 @@ export class VirtualizedManager {
 
   protected workspaceChangeListener = (e: Blockly.Events.Abstract) => {
     switch (e.type) {
+      case Blockly.Events.BLOCK_CREATE: {
+        const event = e as Blockly.Events.BlockCreate;
+        if (!event.ids) break;
+
+        for (const id of event.ids) {
+          const block = this.workspace.getBlockById(id);
+          if (!block) continue;
+          if (!block.getParent()) {
+            // Observe top blocks only.
+            this.observe(block);
+          }
+        }
+        break;
+      }
       // This event only happens when a block's connections are changed.
       case Blockly.Events.BLOCK_MOVE: {
         // See blockly/core/connection.ts#L131
         const event = e as Blockly.Events.BlockMove;
-        if (event.type !== Blockly.Events.BLOCK_MOVE) break;
         if (!event.blockId) break;
 
         const block = this.workspace.getBlockById(event.blockId);
@@ -86,7 +99,6 @@ export class VirtualizedManager {
             this.setBlockVisibility(block, true);
           }
         }
-
         break;
       }
       case Blockly.Events.BLOCK_DELETE: {
