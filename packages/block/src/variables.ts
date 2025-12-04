@@ -54,7 +54,8 @@ export function createVariableVisually(
 ) {
   // Decide on a modal message based on the type. If type was not
   // provided, default to the original message for scalar variables.
-  let newMsg; let modalTitle;
+  let newMsg: string;
+  let modalTitle: string;
   if (type === Constants.BROADCAST_MESSAGE_VARIABLE_TYPE) {
     newMsg = Blockly.Msg.NEW_BROADCAST_MESSAGE_TITLE;
     modalTitle = Blockly.Msg.BROADCAST_MODAL_TITLE;
@@ -65,7 +66,7 @@ export function createVariableVisually(
     // Note: this case covers 1) scalar variables, 2) any new type of
     // variable not explicitly checked for above, and 3) a null or undefined
     // type -- turns a falsey type into ''
-    // TODO (#1251) Warn developers that they didn't provide an type/
+    // TODO (#1251) Warn developers that they didn't provide a type/
     // provided a falsey type
     type = type ? type : '';
     newMsg = Blockly.Msg.NEW_VARIABLE_TITLE;
@@ -113,7 +114,7 @@ export function createVariableVisually(
           new (Blockly.Events.get(Blockly.Events.VAR_CREATE))(variable)
         );
 
-        // Refresh checkobx status
+        // Refresh checkbox status
         const toolbox = workspace.getToolbox();
         if (!toolbox) return;
         const flyout = toolbox.getFlyout() as VerticalFlyout;
@@ -293,8 +294,8 @@ export function renameVariableVisually(
   const varType = variable.getType();
   if (varType === Constants.BROADCAST_MESSAGE_VARIABLE_TYPE) {
     console.warn(
-      `Unexpected attempt to rename a broadcast message with
-      id: "${variable.getId()} and name: ${variable.getName()}`
+      `Unexpected attempt to rename a broadcast message with ` +
+      `id: "${variable.getId()} and name: ${variable.getName()}`
     );
     return;
   }
@@ -310,7 +311,7 @@ export function renameVariableVisually(
 
   const promptText = promptMsg.replace('%1', variable.getName());
   let promptDefaultText = variable.getName();
-  if (variable.getIsCloud() && variable.getName().indexOf(CLOUD_PREFIX) == 0) {
+  if (variable.getIsCloud() && variable.getName().indexOf(CLOUD_PREFIX) === 0) {
     promptDefaultText = promptDefaultText.substring(CLOUD_PREFIX.length);
   }
 
@@ -322,7 +323,7 @@ export function renameVariableVisually(
       if (
         variable.getIsCloud() &&
         newName.length > 0 &&
-        newName.indexOf(CLOUD_PREFIX) == 0
+        newName.indexOf(CLOUD_PREFIX) === 0
       ) {
         newName = newName.substring(CLOUD_PREFIX.length);
         // The name validator will add the prefix back
