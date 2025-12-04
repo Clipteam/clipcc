@@ -25,6 +25,7 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from './constants';
+import {createVariableVisually} from './variables';
 
 /**
  * Construct the elements (blocks and button) required by the flyout for the
@@ -451,10 +452,8 @@ function addCreateButton(
   let msg = Blockly.Msg.NEW_VARIABLE;
   let callbackKey = 'CREATE_VARIABLE';
   let callback = function(button: Blockly.FlyoutButton) {
-    Blockly.Variables.createVariableButtonHandler(
-      button.getTargetWorkspace(),
-      undefined,
-      ''
+    createVariableVisually(
+      button.getTargetWorkspace(), undefined, Constants.SCALAR_VARIABLE_TYPE
     );
   };
 
@@ -462,10 +461,8 @@ function addCreateButton(
     msg = Blockly.Msg.NEW_LIST;
     callbackKey = 'CREATE_LIST';
     callback = function(button) {
-      Blockly.Variables.createVariableButtonHandler(
-        button.getTargetWorkspace(),
-        undefined,
-        Constants.LIST_VARIABLE_TYPE
+      createVariableVisually(
+        button.getTargetWorkspace(), undefined, Constants.LIST_VARIABLE_TYPE
       );
     };
   }

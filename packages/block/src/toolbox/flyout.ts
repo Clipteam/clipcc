@@ -9,6 +9,7 @@ import {Toolbox} from './toolbox';
 import {FlyoutMetrics} from './flyout_metrics';
 import type {FlyoutButton} from './flyout_button';
 import {FlyoutStatusIndicatorLabel} from './flyout_status_indicator_label';
+import {FlyoutCheckbox} from './flyout_checkbox';
 
 /**
  * Class for customized flyout.
@@ -276,6 +277,23 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     for (const item of this.contents) {
       if (item instanceof FlyoutStatusIndicatorLabel) {
         item.refreshStatus();
+      }
+    }
+  }
+
+  /**
+   * Set the checkbox state for a block in the flyout.
+   * @param blockId The block ID.
+   * @param state The new state of the checkbox.
+   */
+  setCheckboxState(blockId: string, state: boolean) {
+    for (const item of this.contents) {
+      if (item instanceof FlyoutCheckbox) {
+        const block = item.getChildItem()?.getElement() as Blockly.BlockSvg;
+        if (block && block.id === blockId) {
+          item.setChecked(state);
+          break;
+        }
       }
     }
   }
