@@ -27,11 +27,6 @@
   fill: var(--commentTopBarColour);
 }
 
-.blocklyComment {
-  border: 1px solid var(--commentBorderColour);
-  border-radius: 4px;
-}
-
 .blocklyDragging.blocklyComment {
   filter: drop-shadow(0 0px 6px hsla(0, 0%, 0%, 0.6));
 }
