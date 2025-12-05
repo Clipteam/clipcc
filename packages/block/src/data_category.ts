@@ -516,10 +516,10 @@ function addBlock(
       inputs: {}
     };
     if (firstValueField) {
-      blockState.inputs![firstValueField.name] = {block: firstValueField.field};
+      blockState.inputs![firstValueField.name] = {shadow: firstValueField.field};
     }
     if (secondValueField) {
-      blockState.inputs![secondValueField.name] = {block: secondValueField.field};
+      blockState.inputs![secondValueField.name] = {shadow: secondValueField.field};
     }
     contents.push(blockState);
   }
@@ -554,8 +554,7 @@ function createValue(valueName: string, type: string, value: string | number) {
     name: valueName,
     field: {
       type: type,
-      fields: {[fieldName]: value},
-      shadow: true
+      fields: {[fieldName]: value}
     }
   };
 }
