@@ -10,7 +10,7 @@ import type {VariableModel} from './variable_model';
 /**
  * Class that provides storage for variables.
  */
-class ScratchVariableMap extends Blockly.VariableMap {
+export class VariableMap extends Blockly.VariableMap {
   /**
    * Create a variable with a given name, optional type, and optional ID.
    * @param name The name of the variable. This must be unique across variables
@@ -105,6 +105,6 @@ class ScratchVariableMap extends Blockly.VariableMap {
 Blockly.registry.register(
   Blockly.registry.Type.VARIABLE_MAP,
   Blockly.registry.DEFAULT,
-  ScratchVariableMap,
+  VariableMap,
   true
 );

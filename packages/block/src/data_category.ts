@@ -588,8 +588,8 @@ function generateVariableFieldState(
   return {
     [fieldName]: {
       id: variableModel.getId(),
-      variableType: typeString,
-      value: variableModel.getName()
+      variabletype: typeString,
+      name: variableModel.getName()
     }
   };
 }
