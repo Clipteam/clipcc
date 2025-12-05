@@ -33,6 +33,8 @@ import './events/block_comment_move';
 import './events/block_comment_resize';
 import './events/block_comment_collapse';
 import './events/block_change';
+import './events/var_create';
+import './events/var_delete';
 
 import './block_comment_icon';
 
