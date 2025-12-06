@@ -58,11 +58,10 @@ export class VariableModel
    * @returns a JSON representation of this VariableModel.
    */
   override save(): ScratchVariableState {
-    const state = super.save();
-    return Object.assign(state, {
-      isLocal: this.isLocal,
-      isCloud: this.isCloud
-    });
+    const state = super.save() as ScratchVariableState;
+    state.isLocal = this.isLocal;
+    state.isCloud = this.isCloud;
+    return state;
   }
 
   /**
