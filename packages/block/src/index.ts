@@ -38,6 +38,7 @@ import './block_comment_icon';
 import './renderer/renderer';
 import './connection_checker';
 import './dragger';
+import './metrics_manager';
 import './insertion_marker_previewer';
 
 import './toolbox/flyout';
@@ -46,6 +47,7 @@ import './toolbox/category';
 import './toolbox/collapsible_category';
 import './toolbox/inflaters/block';
 import './toolbox/inflaters/label';
+import './toolbox/inflaters/status_indicator_label';
 
 import './blocks/extensions';
 import './blocks/common';
@@ -177,8 +179,7 @@ export function loadWorkspace(
 }
 
 export {reportValue} from './report_value';
-export {setExternalProcedureDefCallback} from './procedures_category';
-export {setGetCheckboxState} from './utils';
+export * as callbackRegistry from './callback_registry';
 
 // Monkey-patches
 Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;

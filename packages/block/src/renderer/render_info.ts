@@ -9,6 +9,7 @@ import * as Constants from '../constants';
 import {InlineStatementInput} from './measurables/inline_statement_input';
 import {BowlerHat} from './measurables/bowler_hat';
 import {isInvisibleIcon} from '../interfaces/i_invisible_icon';
+import {isShadowTemplate} from '../interfaces/i_shadow_template';
 
 /**
  * An object containing all sizing information needed to draw this block.
@@ -91,6 +92,23 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
     }
 
     super.addInput_(input, activeRow);
+
+    // Modify minimal height of inputs that should be rendered like non-shadow blocks, including
+    // shadow templates and inline shadow statement.
+    if (input instanceof Blockly.inputs.DummyInput || input instanceof Blockly.inputs.EndRowInput) {
+      const sourceBlock = input.getSourceBlock();
+      if (
+        (isShadowTemplate(sourceBlock) && sourceBlock.shadowTemplate) ||
+        (sourceBlock.isShadow() && sourceBlock.previousConnection)
+      ) {
+        // Dummy and end-row inputs have no visual representation, but the
+        // information is still important.
+        activeRow.minHeight = Math.max(
+          activeRow.minHeight,
+          this.constants_.DUMMY_INPUT_MIN_HEIGHT
+        );
+      }
+    }
   }
 
   /**
@@ -113,5 +131,82 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
       return this.constants_.LARGE_PADDING;
     }
     return super.getInRowSpacing_(prev, next);
+  }
+
+  /**
+   * Finalize vertical alignment of rows on a block.  In particular, reduce the
+   * implicit spacing when a non-shadow block is connected to any of an input
+   * row's inline inputs.
+   * This function is overridden to prevent applying tight-nesting to shadow
+   * templates.
+   */
+  protected override finalizeVerticalAlignment_(): void {
+    if (this.outputConnection) {
+      return;
+    }
+    // Run through every input row on the block and only apply tight nesting
+    // logic to input rows that have a prev and next notch.
+    for (let i = 2; i < this.rows.length - 1; i += 2) {
+      const prevSpacer = this.rows[i - 1] as Blockly.blockRendering.SpacerRow;
+      const row = this.rows[i];
+      const nextSpacer = this.rows[i + 1] as Blockly.blockRendering.SpacerRow;
+
+      const firstRow = i === 2;
+      const hasPrevNotch = firstRow ?
+        !!this.topRow.hasPreviousConnection :
+        !!prevSpacer.followsStatement;
+      const hasNextNotch = i + 2 >= this.rows.length - 1 ?
+        !!this.bottomRow.hasNextConnection :
+        !!nextSpacer.precedesStatement;
+
+      if (hasPrevNotch) {
+        const elem = row.elements[1];
+        const hasSingleTextOrImageField = (
+          row.elements.length === 3 &&
+          elem instanceof Blockly.blockRendering.Field &&
+          (elem.field instanceof Blockly.FieldLabel || elem.field instanceof Blockly.FieldImage)
+        );
+        if (!firstRow && hasSingleTextOrImageField) {
+          // Remove some padding if we have a single image or text field.
+          prevSpacer.height -= this.constants_.SMALL_PADDING;
+          nextSpacer.height -= this.constants_.SMALL_PADDING;
+          row.height -= this.constants_.MEDIUM_PADDING;
+        } else if (!firstRow && !hasNextNotch) {
+          // Add a small padding so the notch doesn't clash with inputs/fields.
+          prevSpacer.height += this.constants_.SMALL_PADDING;
+        } else if (hasNextNotch) {
+          // Determine if the input row has non-shadow connected blocks or shadow templates.
+          let shouldTightNesting = false;
+          const minVerticalTightNestingHeight = 40;
+          for (let j = 0; j < row.elements.length; j++) {
+            const elem = row.elements[j];
+            if (
+              Blockly.blockRendering.Types.isInlineInput(elem) &&
+              elem.connectedBlock &&
+              this.shouldTightNesting(elem.connectedBlock) &&
+              elem.connectedBlock.getHeightWidth().height >= minVerticalTightNestingHeight
+            ) {
+              shouldTightNesting = true;
+              break;
+            }
+          }
+          // Apply tight-nesting.
+          if (shouldTightNesting) {
+            prevSpacer.height -= this.constants_.SMALL_PADDING;
+            nextSpacer.height -= this.constants_.SMALL_PADDING;
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Check whether tight-nesting should be applied to parent block. It should be
+   * applied when the block has non-shadow connected blocks or shadow templates.
+   * @param connectedBlock The connected block to check.
+   * @returns True if parent block should apply tight-nesting.
+   */
+  protected shouldTightNesting(connectedBlock: Blockly.BlockSvg) {
+    return !connectedBlock.isShadow() || (isShadowTemplate(connectedBlock) && connectedBlock.shadowTemplate);
   }
 }

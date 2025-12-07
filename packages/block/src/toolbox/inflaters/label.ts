@@ -11,7 +11,7 @@ import {FlyoutButton} from '../flyout_button';
  * Class responsible for creating labels for flyouts.
  */
 export class LabelFlyoutInflater extends Blockly.LabelFlyoutInflater {
-  static readonly TYPE = 'label';
+  static readonly TYPE: string = 'label';
 
   /**
    * Inflates a flyout label from the given state and adds it to the flyout.
