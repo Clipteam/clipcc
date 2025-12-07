@@ -31,7 +31,7 @@
 }
 
 .blocklyBlockHidden {
-  visibility: hidden;
+  display: none;
 }
 
 .blocklyBlockDragSurface .blocklyBlock {
