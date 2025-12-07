@@ -14,7 +14,7 @@ export class VirtualizedManager {
   /**
    * Blocks being observed for virtualization.
    */
-  protected observingBlocks = new Map<string, Blockly.BlockSvg>();
+  protected observedBlocks = new Set<string>();
   /**
    * Whether to update block visibility immediately on viewport changes.
    * If true, workspace methods will be hooked to listen viewport changes immediately.
@@ -77,7 +77,7 @@ export class VirtualizedManager {
           if (!block) continue;
           if (!block.getParent()) {
             // Observe top blocks only.
-            this.observe(block);
+            this.observe(id);
           }
         }
         break;
@@ -92,7 +92,7 @@ export class VirtualizedManager {
         if (!block) break;
         if (!block.getParent()) {
           // Observe top blocks only.
-          this.observe(block);
+          this.observe(block.id);
         } else {
           this.unobserve(block.id);
           if (!this.isBlockVisible(block)) {
@@ -149,7 +149,9 @@ export class VirtualizedManager {
     const viewRight = metrics.viewLeft + metrics.viewWidth;
     const viewTop = metrics.viewTop;
     const viewBottom = metrics.viewTop + metrics.viewHeight;
-    for (const [, block] of this.observingBlocks) {
+    for (const blockId of this.observedBlocks) {
+      const block = this.workspace.getBlockById(blockId);
+      if (!block) continue;
       const blockBoundingBox = block.getBoundingRectangle();
       blockBoundingBox.left *= scale;
       blockBoundingBox.right *= scale;
@@ -198,10 +200,10 @@ export class VirtualizedManager {
 
   /**
    * Start observing a block for virtualization.
-   * @param block The block to observe.
+   * @param blockId The block to observe.
    */
-  protected observe(block: Blockly.BlockSvg): void {
-    this.observingBlocks.set(block.id, block);
+  protected observe(blockId: string): void {
+    this.observedBlocks.add(blockId);
   }
 
   /**
@@ -209,14 +211,14 @@ export class VirtualizedManager {
    * @param blockId The block ID to stop observing.
    */
   protected unobserve(blockId: string): void {
-    this.observingBlocks.delete(blockId);
+    this.observedBlocks.delete(blockId);
   }
 
   /**
    * Dispose the manager.
    */
   dispose(): void {
-    this.observingBlocks.clear();
+    this.observedBlocks.clear();
     if (this.workspace) {
       this.workspace.removeChangeListener(this.workspaceChangeListener);
     }
