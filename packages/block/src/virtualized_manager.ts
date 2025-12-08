@@ -5,6 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
+import {QuadTree} from './utils/quad_tree';
 
 export class VirtualizedManager {
   /**
@@ -15,6 +16,14 @@ export class VirtualizedManager {
    * Blocks being observed for virtualization.
    */
   protected observedBlocks = new Set<string>();
+  /**
+   * The quad tree used to manage block positions.
+   */
+  protected quadTree: QuadTree<string>;
+  /**
+   * Currently visible block IDs.
+   */
+  protected currentlyVisibleBlocks = new Set<string>();
   /**
    * Whether to update block visibility immediately on viewport changes.
    * If true, workspace methods will be hooked to listen viewport changes immediately.
@@ -29,6 +38,19 @@ export class VirtualizedManager {
   constructor(workspace: Blockly.WorkspaceSvg, immediate = true) {
     this.workspaceRef = new WeakRef(workspace);
     this.immediate = immediate;
+
+    const rect = this.getViewportRect();
+    const viewWidth = rect.right - rect.left;
+    const viewHeight = rect.bottom - rect.top;
+    const cx = (rect.left + rect.right) / 2;
+    const cy = (rect.top + rect.bottom) / 2;
+
+    const halfW = viewWidth * 2;
+    const halfH = viewHeight * 2;
+
+    this.quadTree = new QuadTree(
+      new Blockly.utils.Rect(cy - halfH, cy + halfH, cx - halfW, cx + halfW)
+    );
 
     if (immediate) {
       this.hookWorkspace();
@@ -92,7 +114,11 @@ export class VirtualizedManager {
         if (!block) break;
         if (!block.getParent()) {
           // Observe top blocks only.
-          this.observe(block.id);
+          if (!this.observedBlocks.has(block.id)) {
+            this.observe(block.id);
+          } else {
+            this.updateBlockPosition(block.id);
+          }
         } else {
           this.unobserve(block.id);
           if (!this.isBlockVisible(block)) {
@@ -131,6 +157,28 @@ export class VirtualizedManager {
   }
 
   /**
+   * Get the current viewport rectangle in workspace coordinates.
+   * @returns The viewport rectangle.
+   */
+  protected getViewportRect(): Blockly.utils.Rect {
+    const scale = this.workspace.getScale();
+    const metrics = this.workspace.getMetrics();
+    // metrics.flyoutWidth always return 0 since it's not always open.
+    const flyoutWidth = this.workspace.getFlyout()?.getWidth() ?? 0;
+    const viewLeft = (metrics.viewLeft - flyoutWidth) / scale;
+    const viewTop = metrics.viewTop / scale;
+    const viewWidth = (metrics.viewWidth + flyoutWidth) / scale;
+    const viewHeight = metrics.viewHeight / scale;
+
+    return new Blockly.utils.Rect(
+      viewTop,
+      viewTop + viewHeight,
+      viewLeft,
+      viewLeft + viewWidth
+    );
+  }
+
+  /**
    * Actual logics to check whether these blocks are offscreen,
    * then update their visibility.
    */
@@ -141,38 +189,40 @@ export class VirtualizedManager {
       return;
     }
 
-    const scale = this.workspace.getScale();
-    const metrics = this.workspace.getMetrics();
-    // metrics.flyoutWidth always return 0 since it's not always open.
-    const flyoutWidth = this.workspace.getFlyout()?.getWidth() ?? 0;
-    const viewLeft = metrics.viewLeft - flyoutWidth;
-    const viewRight = metrics.viewLeft + metrics.viewWidth;
-    const viewTop = metrics.viewTop;
-    const viewBottom = metrics.viewTop + metrics.viewHeight;
-    for (const blockId of this.observedBlocks) {
-      const block = this.workspace.getBlockById(blockId);
-      if (!block) continue;
-      const blockBoundingBox = block.getBoundingRectangle();
-      blockBoundingBox.left *= scale;
-      blockBoundingBox.right *= scale;
-      blockBoundingBox.top *= scale;
-      blockBoundingBox.bottom *= scale;
+    const viewRect = this.getViewportRect();
 
-      const isOffscreen =
-        blockBoundingBox.right < viewLeft ||
-        blockBoundingBox.left > viewRight ||
-        blockBoundingBox.bottom < viewTop ||
-        blockBoundingBox.top > viewBottom;
+    const visibleIds = new Set(this.quadTree.query(viewRect));
+    const toHide: string[] = [];
+    const toShow: string[] = [];
 
-      if (isOffscreen) {
-        if (this.isBlockVisible(block)) {
-          this.setBlockVisibility(block, false);
-        }
-      } else {
-        if (!this.isBlockVisible(block)) {
-          this.setBlockVisibility(block, true);
-        }
+    // Identify blocks to hide
+    for (const id of this.currentlyVisibleBlocks) {
+      if (!visibleIds.has(id)) {
+        toHide.push(id);
       }
+    }
+    // Identify blocks to show
+    for (const id of visibleIds) {
+      if (!this.currentlyVisibleBlocks.has(id)) {
+        toShow.push(id);
+      }
+    }
+
+    // Apply changes
+    for (const id of toHide) {
+      const block = this.workspace.getBlockById(id);
+      if (block) {
+        this.setBlockVisibility(block, false);
+      }
+      this.currentlyVisibleBlocks.delete(id);
+    }
+
+    for (const id of toShow) {
+      const block = this.workspace.getBlockById(id);
+      if (block) {
+        this.setBlockVisibility(block, true);
+      }
+      this.currentlyVisibleBlocks.add(id);
     }
   }
 
@@ -203,7 +253,17 @@ export class VirtualizedManager {
    * @param blockId The block to observe.
    */
   protected observe(blockId: string): void {
+    if (this.observedBlocks.has(blockId)) return;
     this.observedBlocks.add(blockId);
+
+    const block = this.workspace.getBlockById(blockId);
+    if (block) {
+      const rect = block.getBoundingRectangle();
+      this.quadTree.insert(blockId, rect);
+      if (this.isBlockVisible(block)) {
+        this.currentlyVisibleBlocks.add(blockId);
+      }
+    }
   }
 
   /**
@@ -212,6 +272,25 @@ export class VirtualizedManager {
    */
   protected unobserve(blockId: string): void {
     this.observedBlocks.delete(blockId);
+    this.quadTree.remove(blockId);
+    this.currentlyVisibleBlocks.delete(blockId);
+    const block = this.workspace.getBlockById(blockId);
+    // Make sure the block is visible when unobserved.
+    if (block) {
+      this.setBlockVisibility(block, true);
+    }
+  }
+
+  /**
+   * Update the position of a block in the QuadTree.
+   * @param blockId The block ID to update.
+   */
+  protected updateBlockPosition(blockId: string): void {
+    const block = this.workspace.getBlockById(blockId);
+    if (!block) return;
+
+    const rect = block.getBoundingRectangle();
+    this.quadTree.insert(blockId, rect);
   }
 
   /**
@@ -219,6 +298,8 @@ export class VirtualizedManager {
    */
   dispose(): void {
     this.observedBlocks.clear();
+    this.currentlyVisibleBlocks.clear();
+    this.quadTree.clear();
     if (this.workspace) {
       this.workspace.removeChangeListener(this.workspaceChangeListener);
     }

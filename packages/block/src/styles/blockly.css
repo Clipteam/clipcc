@@ -33,7 +33,3 @@
 .blocklyBlockHidden {
   display: none;
 }
-
-.blocklyBlockDragSurface .blocklyBlock {
-  content-visibility: auto;
-}
