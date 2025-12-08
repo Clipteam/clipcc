@@ -52,11 +52,19 @@ export class VirtualizedManager {
       new Blockly.utils.Rect(cy - halfH, cy + halfH, cx - halfW, cx + halfW)
     );
 
+    for (const block of workspace.getTopBlocks(false)) {
+      if (!block.getParent()) {
+        // Observe top blocks only.
+        this.observe(block.id);
+      }
+    }
+
     if (immediate) {
       this.hookWorkspace();
     }
-
     workspace.addChangeListener(this.workspaceChangeListener);
+
+    this.virtualize();
   }
 
   /**
