@@ -16,11 +16,12 @@ export interface PlaygroundTestContext {
   gesture: Gesture;
 }
 
-const defaultOptions: Blockly.BlocklyOptions = {
+const defaultOptions: Blocks.ClipCCBlockOptions = {
   media: '../../media',
   collapse: false,
   disable: false,
   toolbox: toolbox,
+  virtualized: false,
   horizontalLayout: false,
   toolboxPosition: 'left',
   move: {
