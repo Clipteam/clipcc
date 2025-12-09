@@ -30,6 +30,12 @@
   background-color: #fff;
 }
 
-.blocklyBlockHidden {
+.blocklyVirtualizedHidden {
   display: none;
 }
+
+.blocklyBlock .blocklyVirtualizedHidden {
+  display: block;
+  content-visibility: hidden;
+}
+
