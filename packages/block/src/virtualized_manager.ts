@@ -231,12 +231,15 @@ export class VirtualizedManager {
         this.setBlockVisibility(next, false);
       }
 
-      // Show the nearest previous hidden blocks
+      if (!this.isBlockVisible(block)) {
+        this.setBlockVisibility(block, true);
+      }
+
+      // Show previous hidden blocks
       let prev = block.getPreviousBlock();
       while (prev) {
         if (!this.isBlockVisible(prev)) {
           this.setBlockVisibility(prev, true);
-        } else {
           break;
         }
         prev = prev.getPreviousBlock();
