@@ -81,13 +81,13 @@ export class VirtualizedManager {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const manager = this;
     const originalMaybeFireViewportChangeEvent = proto.maybeFireViewportChangeEvent;
-    proto.maybeFireViewportChangeEvent = function() {
+    this.workspace.maybeFireViewportChangeEvent = function() {
       originalMaybeFireViewportChangeEvent.call(this);
       manager.virtualize();
     };
 
     const originalResize = proto.resize;
-    proto.resize = function() {
+    this.workspace.resize = function() {
       originalResize.call(this);
       manager.virtualize();
     };
@@ -277,7 +277,7 @@ export class VirtualizedManager {
     const scale = this.workspace.getScale();
     const metrics = this.workspace.getMetrics();
     const viewHeight = metrics.viewHeight / scale;
-    const buffer = Math.ceil(viewHeight / block.height);
+    const buffer = Math.ceil(viewHeight / block.height) * 2;
     let current: Blockly.BlockSvg | null = block.getNextBlock();
     for (let i = 0; i < buffer; ++i) {
       if (!current) break;
