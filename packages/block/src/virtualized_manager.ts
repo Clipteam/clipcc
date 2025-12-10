@@ -274,14 +274,14 @@ export class VirtualizedManager {
     const buffer = Math.ceil(viewHeight / block.height);
     let current: Blockly.BlockSvg | null = block.getNextBlock();
     for (let i = 0; i < buffer; ++i) {
-        if (!current) break;
-        if (this.hiddenBlocks.has(current.id)) {
-            this.setBlockVisibility(current, true);
-        }
-        current = current.getNextBlock();
+      if (!current) break;
+      if (this.hiddenBlocks.has(current.id)) {
+        this.setBlockVisibility(current, true);
+      }
+      current = current.getNextBlock();
     }
     if (current) {
-        this.setBlockVisibility(current, false);
+      this.setBlockVisibility(current, false);
     }
   }
 
@@ -320,7 +320,7 @@ export class VirtualizedManager {
     // Track statement blocks only.
     if (!block || block.outputConnection?.isConnected()) return;
 
-    const rect = this.getBlockBoundingRectangle(block);
+    const rect = block.getBoundingRectangleWithoutChildren();
     this.observedBlocks.add(blockId);
     this.quadTree.insert(blockId, rect);
   }
@@ -340,16 +340,6 @@ export class VirtualizedManager {
   }
 
   /**
-   * Get blocking bounding rectangle without next blocks,
-   * but including connected blocks.
-   * @param block The block to get rectangle for.
-   * @returns The bounding rectangle.
-   */
-  protected getBlockBoundingRectangle(block: Blockly.BlockSvg): Blockly.utils.Rect {
-    return block.getBoundingRectangleWithoutChildren();
-  }
-
-  /**
    * Update the position of a block in the QuadTree.
    * @param blockId The block ID to update.
    */
@@ -357,7 +347,7 @@ export class VirtualizedManager {
     const block = this.workspace.getBlockById(blockId);
     if (!block) return;
 
-    const rect = this.getBlockBoundingRectangle(block);
+    const rect = block.getBoundingRectangleWithoutChildren();
     this.quadTree.insert(blockId, rect);
   }
 
