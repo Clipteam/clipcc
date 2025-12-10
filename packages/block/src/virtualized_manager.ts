@@ -223,48 +223,49 @@ export class VirtualizedManager {
       }
     }
 
-    const proposedToHide = new Set<string>();
+    const blocksToHide = new Set<string>();
+    const blocksToShow = new Set<string>();
+
     // Update top block's visibility
     const topBlocks = this.workspace.getTopBlocks(false);
     for (const block of topBlocks) {
       if (!visibleIds.has(block.id)) {
-        if (!this.hiddenBlocks.has(block.id)) {
-          proposedToHide.add(block.id);
-        }
-      } else if (this.hiddenBlocks.has(block.id)) {
-        this.setBlockVisibility(block, true);
+        blocksToHide.add(block.id);
       }
     }
 
     // Hide the block after the last visible blocks if has.
     for (const block of lastVisibleBlocks) {
       const root = block.getRootBlock();
-      proposedToHide.delete(root.id);
+      blocksToHide.delete(root.id);
       const target = block.getNextBlock();
       if (target) {
-        this.setBlockVisibility(target, false);
-      }
-
-      if (!this.isBlockVisible(block)) {
-        this.setBlockVisibility(block, true);
+        blocksToHide.add(target.id);
       }
 
       // Show previous hidden blocks
-      let prev = block.getPreviousBlock();
+      let prev: Blockly.BlockSvg | null = block;
       while (prev) {
-        if (!this.isBlockVisible(prev)) {
-          this.setBlockVisibility(prev, true);
-          break;
-        }
+        if (blocksToShow.has(prev.id)) break;
+        blocksToShow.add(prev.id);
+        blocksToHide.delete(prev.id);
         prev = prev.getPreviousBlock();
       }
     }
 
     // Finally hide proposed blocks
-    for (const id of proposedToHide) {
+    for (const id of blocksToHide) {
+      if (blocksToShow.has(id)) continue;
       const block = this.workspace.getBlockById(id);
-      if (block) {
+      if (block && !this.hiddenBlocks.has(id)) {
         this.setBlockVisibility(block, false);
+      }
+    }
+
+    for (const id of blocksToShow) {
+      const block = this.workspace.getBlockById(id);
+      if (block && this.hiddenBlocks.has(id)) {
+        this.setBlockVisibility(block, true);
       }
     }
   }
