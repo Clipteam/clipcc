@@ -127,7 +127,7 @@ export class VirtualizedManager {
           const descendants = block.getDescendants(false);
           for (const desc of descendants) {
             if (this.observedBlocks.has(desc.id)) {
-              this.updateBlockPosition(desc.id);
+              this.updateObserve(desc.id);
             } else {
               this.observe(desc.id);
             }
@@ -347,12 +347,16 @@ export class VirtualizedManager {
   }
 
   /**
-   * Update the position of a block in the QuadTree.
+   * Update the status for observed block.
    * @param blockId The block ID to update.
    */
-  protected updateBlockPosition(blockId: string): void {
+  protected updateObserve(blockId: string): void {
+    if (!this.observedBlocks.has(blockId)) return;
     const block = this.workspace.getBlockById(blockId);
-    if (!block) return;
+    if (!block || block.outputConnection?.isConnected()) {
+      this.unobserve(blockId);
+      return;
+    }
 
     const rect = this.getBlockBoundingRect(block);
     this.quadTree.insert(blockId, rect);
