@@ -80,13 +80,13 @@ export class QuadTree<T> {
     const midX = (this.bounds.left + this.bounds.right) / 2;
     const midY = (this.bounds.top + this.bounds.bottom) / 2;
 
-    const topQuadrant = rect.top < midY && rect.bottom < midY;
-    const bottomQuadrant = rect.top > midY;
+    const topQuadrant = rect.bottom <= midY;
+    const bottomQuadrant = rect.top >= midY;
 
-    if (rect.left < midX && rect.right < midX) {
+    if (rect.right <= midX) {
       if (topQuadrant) return 1; // Top-Left
       if (bottomQuadrant) return 2; // Bottom-Left
-    } else if (rect.left > midX) {
+    } else if (rect.left >= midX) {
       if (topQuadrant) return 0; // Top-Right
       if (bottomQuadrant) return 3; // Bottom-Right
     }

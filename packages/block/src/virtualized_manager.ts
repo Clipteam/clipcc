@@ -56,6 +56,8 @@ export class VirtualizedManager {
       this.observe(block.id);
     }
 
+    this.virtualize();
+
     if (immediate) {
       this.hookWorkspace();
     }
@@ -114,10 +116,15 @@ export class VirtualizedManager {
       case Blockly.Events.BLOCK_CHANGE: {
         const event = e as (Blockly.Events.BlockMove | Blockly.Events.BlockChange);
         if (!event.blockId) break;
+        if (event instanceof Blockly.Events.BlockChange) {
+          if (event.element === 'disabled' || event.element === 'comment') {
+            // No need to update position for these changes.
+            break;
+          }
+        }
         const block = this.workspace.getBlockById(event.blockId);
         if (block) {
-          const root = block.getRootBlock();
-          const descendants = root.getDescendants(true);
+          const descendants = block.getDescendants(false);
           for (const desc of descendants) {
             if (this.observedBlocks.has(desc.id)) {
               this.updateBlockPosition(desc.id);
@@ -126,12 +133,11 @@ export class VirtualizedManager {
             }
           }
         }
-        this.virtualize();
         break;
       }
       case Blockly.Events.BLOCK_DRAG: {
         const event = e as Blockly.Events.BlockDrag;
-        if (!event.isStart || !event.blockId) break;
+        if (!event.blockId) break;
         const block = this.workspace.getBlockById(event.blockId);
         if (!block) break;
         this.addDraggingBuffer(block);
@@ -183,7 +189,7 @@ export class VirtualizedManager {
   }
 
   /**
-   * Actual logics to check whether these blocks are offscreen,
+   * Actual logic to check whether these blocks are offscreen,
    * then update their visibility.
    */
   protected virtualizeInternal(): void {
@@ -318,9 +324,9 @@ export class VirtualizedManager {
     if (this.observedBlocks.has(blockId)) return;
     const block = this.workspace.getBlockById(blockId);
     // Track statement blocks only.
-    if (!block || block.outputConnection?.isConnected()) return;
+    if (!block || block.outputConnection) return;
 
-    const rect = block.getBoundingRectangleWithoutChildren();
+    const rect = this.getBlockBoundingRect(block);
     this.observedBlocks.add(blockId);
     this.quadTree.insert(blockId, rect);
   }
@@ -347,8 +353,28 @@ export class VirtualizedManager {
     const block = this.workspace.getBlockById(blockId);
     if (!block) return;
 
-    const rect = block.getBoundingRectangleWithoutChildren();
+    const rect = this.getBlockBoundingRect(block);
     this.quadTree.insert(blockId, rect);
+  }
+
+  /**
+   * Get the bounding rectangle of a block relative to the workspace surface.
+   * Consider inputs but not next blocks.
+   * @param block The block to get bounding rectangle for.
+   * @returns The bounding rectangle.
+   */
+  protected getBlockBoundingRect(block: Blockly.BlockSvg): Blockly.utils.Rect {
+    const blockXY = block.getRelativeToSurfaceXY();
+    let left;
+    let right;
+    if (block.RTL) {
+      left = blockXY.x - block.width;
+      right = blockXY.x;
+    } else {
+      left = blockXY.x;
+      right = blockXY.x + block.width;
+    }
+    return new Blockly.utils.Rect(blockXY.y, blockXY.y + block.height, left, right);
   }
 
   /**

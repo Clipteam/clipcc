@@ -64,6 +64,10 @@ import './blocks/procedures';
 import './serialization/procedures';
 import {virtualize} from './virtualized_manager';
 
+export interface ClipCCBlockOptions extends Blockly.BlocklyOptions {
+  virtualized?: boolean;
+}
+
 /**
  * Inject a Blockly editor into the specified container element (usually a div).
  * The necessary stuffs and dynamic categories for main workspace will be registered.
@@ -73,7 +77,7 @@ import {virtualize} from './virtualized_manager';
  * @param options Optional dictionary of options.
  * @returns Newly created main workspace.
  */
-export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
+export function inject(container: Element | string, options?: ClipCCBlockOptions) {
   // Register the fields.
   registerFieldAngle();
   registerFieldButton();
@@ -136,10 +140,6 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
 
   workspace.refreshToolboxSelection();
   return workspace;
-}
-
-export interface ClipCCBlockOptions extends Blockly.BlocklyOptions {
-  virtualized?: boolean;
 }
 
 /**
