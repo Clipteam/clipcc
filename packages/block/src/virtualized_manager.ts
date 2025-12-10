@@ -324,7 +324,7 @@ export class VirtualizedManager {
     if (this.observedBlocks.has(blockId)) return;
     const block = this.workspace.getBlockById(blockId);
     // Track statement blocks only.
-    if (!block || block.outputConnection) return;
+    if (!block || block.outputConnection?.isConnected()) return;
 
     const rect = this.getBlockBoundingRect(block);
     this.observedBlocks.add(blockId);
