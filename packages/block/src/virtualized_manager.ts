@@ -129,6 +129,14 @@ export class VirtualizedManager {
         this.virtualize();
         break;
       }
+      case Blockly.Events.BLOCK_DRAG: {
+        const event = e as Blockly.Events.BlockDrag;
+        if (!event.isStart || !event.blockId) break;
+        const block = this.workspace.getBlockById(event.blockId);
+        if (!block) break;
+        this.addDraggingBuffer(block);
+        break;
+      }
       case Blockly.Events.VIEWPORT_CHANGE: {
         if (this.immediate) break;
         this.virtualize();
@@ -226,9 +234,9 @@ export class VirtualizedManager {
     for (const block of lastVisibleBlocks) {
       const root = block.getRootBlock();
       proposedToHide.delete(root.id);
-      const next = block.getNextBlock();
-      if (next) {
-        this.setBlockVisibility(next, false);
+      const target = block.getNextBlock();
+      if (target) {
+        this.setBlockVisibility(target, false);
       }
 
       if (!this.isBlockVisible(block)) {
@@ -252,6 +260,28 @@ export class VirtualizedManager {
       if (block) {
         this.setBlockVisibility(block, false);
       }
+    }
+  }
+
+  /**
+   * Display possible-visible blocks during dragging.
+   * @param block The block to add extra buffer blocks.
+   */
+  protected addDraggingBuffer(block: Blockly.BlockSvg): void {
+    const scale = this.workspace.getScale();
+    const metrics = this.workspace.getMetrics();
+    const viewHeight = metrics.viewHeight / scale;
+    const buffer = Math.ceil(viewHeight / block.height);
+    let current: Blockly.BlockSvg | null = block.getNextBlock();
+    for (let i = 0; i < buffer; ++i) {
+        if (!current) break;
+        if (this.hiddenBlocks.has(current.id)) {
+            this.setBlockVisibility(current, true);
+        }
+        current = current.getNextBlock();
+    }
+    if (current) {
+        this.setBlockVisibility(current, false);
     }
   }
 
