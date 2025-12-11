@@ -30,10 +30,11 @@
   background-color: #fff;
 }
 
-.blocklyBlockHidden {
+.blocklyVirtualizedHidden {
   display: none;
 }
 
-.blocklyBlockDragSurface .blocklyBlock {
-  content-visibility: auto;
+.blocklyBlock .blocklyVirtualizedHidden {
+  display: block;
+  content-visibility: hidden;
 }

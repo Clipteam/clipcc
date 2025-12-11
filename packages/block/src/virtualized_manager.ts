@@ -5,6 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
+import {QuadTree} from './utils/quad_tree';
 
 export class VirtualizedManager {
   /**
@@ -14,7 +15,15 @@ export class VirtualizedManager {
   /**
    * Blocks being observed for virtualization.
    */
-  protected observedBlocks = new Set<string>();
+  protected observedBlocks = new Map<string, Blockly.BlockSvg>();
+  /**
+   * The quad tree used to manage block positions.
+   */
+  protected quadTree: QuadTree<Blockly.BlockSvg>;
+  /**
+   * Set of blocks that are currently hidden.
+   */
+  protected hiddenBlocks = new Set<Blockly.BlockSvg>();
   /**
    * Whether to update block visibility immediately on viewport changes.
    * If true, workspace methods will be hooked to listen viewport changes immediately.
@@ -30,10 +39,28 @@ export class VirtualizedManager {
     this.workspaceRef = new WeakRef(workspace);
     this.immediate = immediate;
 
+    const rect = this.getViewportRect();
+    const viewWidth = rect.right - rect.left;
+    const viewHeight = rect.bottom - rect.top;
+    const cx = (rect.left + rect.right) / 2;
+    const cy = (rect.top + rect.bottom) / 2;
+
+    const halfW = viewWidth * 2;
+    const halfH = viewHeight * 2;
+
+    this.quadTree = new QuadTree(
+      new Blockly.utils.Rect(cy - halfH, cy + halfH, cx - halfW, cx + halfW)
+    );
+
+    for (const block of workspace.getAllBlocks(false)) {
+      this.observe(block);
+    }
+
+    this.virtualize();
+
     if (immediate) {
       this.hookWorkspace();
     }
-
     workspace.addChangeListener(this.workspaceChangeListener);
   }
 
@@ -54,15 +81,21 @@ export class VirtualizedManager {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
     const manager = this;
     const originalMaybeFireViewportChangeEvent = proto.maybeFireViewportChangeEvent;
-    proto.maybeFireViewportChangeEvent = function() {
+    this.workspace.maybeFireViewportChangeEvent = function() {
       originalMaybeFireViewportChangeEvent.call(this);
       manager.virtualize();
     };
 
     const originalResize = proto.resize;
-    proto.resize = function() {
+    this.workspace.resize = function() {
       originalResize.call(this);
       manager.virtualize();
+    };
+
+    const originalDispose = proto.dispose;
+    this.workspace.dispose = function() {
+      originalDispose.call(this);
+      manager.dispose();
     };
   }
 
@@ -74,37 +107,47 @@ export class VirtualizedManager {
 
         for (const id of event.ids) {
           const block = this.workspace.getBlockById(id);
-          if (!block) continue;
-          if (!block.getParent()) {
-            // Observe top blocks only.
-            this.observe(id);
-          }
+          if (block) this.observe(block);
         }
-        break;
-      }
-      // This event only happens when a block's connections are changed.
-      case Blockly.Events.BLOCK_MOVE: {
-        // See blockly/core/connection.ts#L131
-        const event = e as Blockly.Events.BlockMove;
-        if (!event.blockId) break;
-
-        const block = this.workspace.getBlockById(event.blockId);
-        if (!block) break;
-        if (!block.getParent()) {
-          // Observe top blocks only.
-          this.observe(block.id);
-        } else {
-          this.unobserve(block.id);
-          if (!this.isBlockVisible(block)) {
-            this.setBlockVisibility(block, true);
-          }
-        }
+        this.virtualize();
         break;
       }
       case Blockly.Events.BLOCK_DELETE: {
         const event = e as Blockly.Events.BlockDelete;
         if (!event.blockId) break;
         this.unobserve(event.blockId);
+        this.virtualize();
+        break;
+      }
+      case Blockly.Events.BLOCK_MOVE:
+      case Blockly.Events.BLOCK_CHANGE: {
+        const event = e as (Blockly.Events.BlockMove | Blockly.Events.BlockChange);
+        if (!event.blockId) break;
+        if (event instanceof Blockly.Events.BlockChange) {
+          if (event.element === 'disabled' || event.element === 'comment') {
+            // No need to update position for these changes.
+            break;
+          }
+        }
+        const block = this.workspace.getBlockById(event.blockId);
+        if (block) {
+          const descendants = block.getDescendants(false);
+          for (const desc of descendants) {
+            if (this.observedBlocks.has(desc.id)) {
+              this.updateObserve(desc);
+            } else {
+              this.observe(desc);
+            }
+          }
+        }
+        break;
+      }
+      case Blockly.Events.BLOCK_DRAG: {
+        const event = e as Blockly.Events.BlockDrag;
+        if (!event.blockId) break;
+        const block = this.workspace.getBlockById(event.blockId);
+        if (!block) break;
+        this.addDraggingBuffer(block);
         break;
       }
       case Blockly.Events.VIEWPORT_CHANGE: {
@@ -131,48 +174,126 @@ export class VirtualizedManager {
   }
 
   /**
-   * Actual logics to check whether these blocks are offscreen,
+   * Get the current viewport rectangle in workspace coordinates.
+   * @returns The viewport rectangle.
+   */
+  protected getViewportRect(): Blockly.utils.Rect {
+    const scale = this.workspace.getScale();
+    const metrics = this.workspace.getMetrics();
+    // metrics.flyoutWidth always return 0 since it's not always open.
+    const flyoutWidth = this.workspace.getFlyout()?.getWidth() ?? 0;
+    const viewLeft = (metrics.viewLeft - flyoutWidth) / scale;
+    const viewTop = metrics.viewTop / scale;
+    const viewWidth = (metrics.viewWidth + flyoutWidth) / scale;
+    const viewHeight = metrics.viewHeight / scale;
+
+    return new Blockly.utils.Rect(
+      viewTop,
+      viewTop + viewHeight,
+      viewLeft,
+      viewLeft + viewWidth
+    );
+  }
+
+  /**
+   * Actual logic to check whether these blocks are offscreen,
    * then update their visibility.
    */
   protected virtualizeInternal(): void {
-    // Check workspace here since it's public.
+    // Check workspace here since it may get called in public.
     if (!this.workspace) {
       this.dispose();
       return;
     }
 
+    const viewRect = this.getViewportRect();
+    const visibleBlocks = new Set(this.quadTree.query(viewRect));
+    // Found the last visible blocks in their stacks.
+    const lastVisibleBlocks = new Set<Blockly.BlockSvg>();
+    const processedIds = new Set<string>();
+    for (const block of visibleBlocks) {
+      let current: Blockly.BlockSvg | null = block;
+      while (current) {
+        // Avoid processing the same block again.
+        if (processedIds.has(current.id)) break;
+        processedIds.add(current.id);
+        const next = current.getNextBlock();
+        if (!next) { // Reached the end of the stack...
+          lastVisibleBlocks.add(current); // then it's the last visible block!
+          break;
+        }
+        if (!visibleBlocks.has(next)) { // Next block is not visible...
+          lastVisibleBlocks.add(current); // then it's the last visible block!
+          break;
+        }
+        current = next;
+      }
+    }
+
+    const blocksToHide = new Set<Blockly.BlockSvg>();
+    const blocksToShow = new Set<Blockly.BlockSvg>();
+
+    // Update top block's visibility
+    const topBlocks = this.workspace.getTopBlocks(false);
+    for (const block of topBlocks) {
+      if (!visibleBlocks.has(block)) {
+        blocksToHide.add(block);
+      }
+    }
+
+    // Hide the block after the last visible blocks if has.
+    for (const block of lastVisibleBlocks) {
+      const root = block.getRootBlock();
+      blocksToHide.delete(root);
+      const target = block.getNextBlock();
+      if (target) {
+        blocksToHide.add(target);
+      }
+
+      // Show previous hidden blocks
+      let prev: Blockly.BlockSvg | null = block;
+      while (prev) {
+        if (blocksToShow.has(prev)) break;
+        blocksToShow.add(prev);
+        blocksToHide.delete(prev);
+        prev = prev.getPreviousBlock();
+      }
+    }
+
+    // Finally hide proposed blocks
+    for (const block of blocksToHide) {
+      if (blocksToShow.has(block)) continue;
+      if (!this.hiddenBlocks.has(block)) {
+        this.setBlockVisibility(block, false);
+      }
+    }
+
+    for (const block of blocksToShow) {
+      if (this.hiddenBlocks.has(block)) {
+        this.setBlockVisibility(block, true);
+      }
+    }
+  }
+
+  /**
+   * Display possible-visible blocks during dragging.
+   * @param block The block to add extra buffer blocks.
+   */
+  protected addDraggingBuffer(block: Blockly.BlockSvg): void {
     const scale = this.workspace.getScale();
     const metrics = this.workspace.getMetrics();
-    // metrics.flyoutWidth always return 0 since it's not always open.
-    const flyoutWidth = this.workspace.getFlyout()?.getWidth() ?? 0;
-    const viewLeft = metrics.viewLeft - flyoutWidth;
-    const viewRight = metrics.viewLeft + metrics.viewWidth;
-    const viewTop = metrics.viewTop;
-    const viewBottom = metrics.viewTop + metrics.viewHeight;
-    for (const blockId of this.observedBlocks) {
-      const block = this.workspace.getBlockById(blockId);
-      if (!block) continue;
-      const blockBoundingBox = block.getBoundingRectangle();
-      blockBoundingBox.left *= scale;
-      blockBoundingBox.right *= scale;
-      blockBoundingBox.top *= scale;
-      blockBoundingBox.bottom *= scale;
-
-      const isOffscreen =
-        blockBoundingBox.right < viewLeft ||
-        blockBoundingBox.left > viewRight ||
-        blockBoundingBox.bottom < viewTop ||
-        blockBoundingBox.top > viewBottom;
-
-      if (isOffscreen) {
-        if (this.isBlockVisible(block)) {
-          this.setBlockVisibility(block, false);
-        }
-      } else {
-        if (!this.isBlockVisible(block)) {
-          this.setBlockVisibility(block, true);
-        }
+    const viewHeight = metrics.viewHeight / scale;
+    const buffer = Math.ceil(viewHeight / block.height) * 2;
+    let current: Blockly.BlockSvg | null = block.getNextBlock();
+    for (let i = 0; i < buffer; ++i) {
+      if (!current) break;
+      if (this.hiddenBlocks.has(current)) {
+        this.setBlockVisibility(current, true);
       }
+      current = current.getNextBlock();
+    }
+    if (current) {
+      this.setBlockVisibility(current, false);
     }
   }
 
@@ -182,7 +303,7 @@ export class VirtualizedManager {
    * @returns Whether the block is visible.
    */
   protected isBlockVisible(block: Blockly.BlockSvg): boolean {
-    return !Blockly.utils.dom.hasClass(block.getSvgRoot(), 'blocklyBlockHidden');
+    return !this.hiddenBlocks.has(block);
   }
 
   /**
@@ -191,19 +312,28 @@ export class VirtualizedManager {
    * @param visible Whether the block visible.
    */
   protected setBlockVisibility(block: Blockly.BlockSvg, visible: boolean): void {
+    const svgRoot = block.getSvgRoot();
     if (visible) {
-      Blockly.utils.dom.removeClass(block.getSvgRoot(), 'blocklyBlockHidden');
+      Blockly.utils.dom.removeClass(svgRoot, 'blocklyVirtualizedHidden');
+      this.hiddenBlocks.delete(block);
     } else {
-      Blockly.utils.dom.addClass(block.getSvgRoot(), 'blocklyBlockHidden');
+      Blockly.utils.dom.addClass(svgRoot, 'blocklyVirtualizedHidden');
+      this.hiddenBlocks.add(block);
     }
   }
 
   /**
    * Start observing a block for virtualization.
-   * @param blockId The block to observe.
+   * @param block The block to observe.
    */
-  protected observe(blockId: string): void {
-    this.observedBlocks.add(blockId);
+  protected observe(block: Blockly.BlockSvg): void {
+    if (this.observedBlocks.has(block.id)) return;
+    // Track statement blocks only.
+    if (block.outputConnection?.isConnected()) return;
+
+    const rect = this.getBlockBoundingRect(block);
+    this.observedBlocks.set(block.id, block);
+    this.quadTree.insert(block, rect);
   }
 
   /**
@@ -211,7 +341,47 @@ export class VirtualizedManager {
    * @param blockId The block ID to stop observing.
    */
   protected unobserve(blockId: string): void {
+    const block = this.observedBlocks.get(blockId);
+    if (!block) return;
     this.observedBlocks.delete(blockId);
+    this.quadTree.remove(block);
+    // Make sure the block is visible when unobserved.
+    this.setBlockVisibility(block, true);
+  }
+
+  /**
+   * Update the status for observed block.
+   * @param block The block to update.
+   */
+  protected updateObserve(block: Blockly.BlockSvg): void {
+    if (!this.observedBlocks.has(block.id)) return;
+    if (block.outputConnection?.isConnected()) {
+      this.unobserve(block.id);
+      return;
+    }
+
+    const rect = this.getBlockBoundingRect(block);
+    this.quadTree.insert(block, rect);
+  }
+
+  /**
+   * Get the bounding rectangle of a block relative to the workspace surface.
+   * Consider inputs but not next blocks.
+   * @param block The block to get bounding rectangle for.
+   * @returns The bounding rectangle.
+   */
+  protected getBlockBoundingRect(block: Blockly.BlockSvg): Blockly.utils.Rect {
+    const blockXY = block.getRelativeToSurfaceXY();
+    let left;
+    let right;
+    if (block.RTL) {
+      left = blockXY.x - block.width;
+      right = blockXY.x;
+    } else {
+      left = blockXY.x;
+      right = blockXY.x + block.width;
+    }
+    return new Blockly.utils.Rect(blockXY.y, blockXY.y + block.height, left, right);
   }
 
   /**
@@ -219,6 +389,7 @@ export class VirtualizedManager {
    */
   dispose(): void {
     this.observedBlocks.clear();
+    this.quadTree.clear();
     if (this.workspace) {
       this.workspace.removeChangeListener(this.workspaceChangeListener);
     }

@@ -64,6 +64,10 @@ import './blocks/procedures';
 import './serialization/procedures';
 import {virtualize} from './virtualized_manager';
 
+export interface ClipCCBlockOptions extends Blockly.BlocklyOptions {
+  virtualized?: boolean;
+}
+
 /**
  * Inject a Blockly editor into the specified container element (usually a div).
  * The necessary stuffs and dynamic categories for main workspace will be registered.
@@ -73,7 +77,7 @@ import {virtualize} from './virtualized_manager';
  * @param options Optional dictionary of options.
  * @returns Newly created main workspace.
  */
-export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
+export function inject(container: Element | string, options?: ClipCCBlockOptions) {
   // Register the fields.
   registerFieldAngle();
   registerFieldButton();
@@ -97,7 +101,6 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   Blockly.ContextMenuRegistry.registry.unregister('blockInline');
 
   const workspace = injectWorkspace(container, options);
-  virtualize(workspace);
 
   // Dynamic categories.
   workspace.registerToolboxCategoryCallback(
@@ -145,13 +148,18 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
  * @param options Optional dictionary of options.
  * @returns Newly created main workspace.
  */
-export function injectWorkspace(container: Element | string, options?: Blockly.BlocklyOptions) {
-  const defaultOptions: Blockly.BlocklyOptions = {
+export function injectWorkspace(container: Element | string, options?: ClipCCBlockOptions) {
+  const defaultOptions: ClipCCBlockOptions = {
     renderer: 'scratch',
-    theme: createTheme()
+    theme: createTheme(),
+    virtualized: true
   };
   options = Object.assign(defaultOptions, options);
-  return Blockly.inject(container, options);
+  const workspace = Blockly.inject(container, options);
+  if (options.virtualized) {
+    virtualize(workspace);
+  }
+  return workspace;
 }
 
 /**
