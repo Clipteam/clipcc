@@ -34,5 +34,11 @@
     "dest": "/editor/paint-editor.json",
     "translation": "/packages/paint/translations/%two_letters_code%.json",
     "type": "chrome"
+  },
+  {
+    "source": "/packages/block/msg/json/en.json",
+    "dest": "/editor/blocks.json",
+    "translation": "/packages/block/msg/json/%two_letters_code%.json",
+    "type": "chrome"
   }
 ]
