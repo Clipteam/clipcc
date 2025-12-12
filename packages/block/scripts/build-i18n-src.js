@@ -88,7 +88,7 @@ const CONST_DESC_PATTERN = /{{Notranslate}}/i;
  * @returns {string} The parsed string.
  */
 function parseString(str) {
-  return JSON.parse(`"${str.replace(/[^\\]"/g, '\\"').replace(/\\'/g, '\'')}"`);
+  return JSON.parse(`"${str.replace(/(?<=[^\\])"/g, '\\"').replace(/\\'/g, '\'')}"`);
 }
 
 try {
