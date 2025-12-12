@@ -17,7 +17,7 @@
     "coverage": "jest --silent --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "i18n:src": "node scripts/js_to_json.js --input_file msg/messages.js --output_dir msg/json --quiet"
+    "i18n:src": "node scripts/build-i18n-src.js --input_file msg/messages.js --output_dir msg/json --quiet"
   },
   "dependencies": {
     "blockly": "^12.3.1"

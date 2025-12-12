@@ -67,7 +67,7 @@ const option = {
 };
 
 const HELP_MESSAGE = `
-Usage: js_to_json.js [options]
+Usage: build-i18n-src.js [options]
 
 Options:
   --lang <code>         ISO 639-1 source language code, defaults to 'en'.
