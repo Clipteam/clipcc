@@ -82,7 +82,21 @@ export function injectCssVariables(): void {
   root.textContent = cssVars.join('\n');
 }
 
-const blockStyles: {[key: string]: Partial<Blockly.Theme.BlockStyle>} = {
+export interface ThemeDefinition {
+  blockStyles?: {
+    [key: string]: Partial<Blockly.Theme.BlockStyle>;
+  };
+  categoryStyles?: {
+    [key: string]: Blockly.Theme.CategoryStyle;
+  };
+  componentStyles?: Blockly.Theme.ComponentStyle;
+  fontStyle?: Blockly.Theme.FontStyle;
+  startHats?: boolean;
+  base?: string | Blockly.Theme;
+  name?: string;
+}
+
+const defaultBlockStyles: Record<string, Partial<Blockly.Theme.BlockStyle>> = {
   motion: {
     colourPrimary: '#4C97FF',
     colourSecondary: '#4280D7',
@@ -150,14 +164,17 @@ const blockStyles: {[key: string]: Partial<Blockly.Theme.BlockStyle>} = {
 
 /**
  * Build category styles from existing block styles.
+ * @param blockStyles The block styles to build from.
  * @returns The category styles.
  */
-function buildCategoryStyles(): {[key: string]: Blockly.Theme.CategoryStyle} {
+function buildCategoryStyles(
+  blockStyles: Record<string, Partial<Blockly.Theme.BlockStyle>>
+): Record<string, Blockly.Theme.CategoryStyle> {
   const keys = [
     'motion', 'looks', 'sounds', 'control', 'event',
     'sensing', 'operators', 'data', 'more'
   ];
-  const categoryStyles: {[key: string]: Blockly.Theme.CategoryStyle} = {};
+  const categoryStyles: Record<string, Blockly.Theme.CategoryStyle> = {};
   for (const key of keys) {
     if (key in blockStyles && blockStyles[key].colourPrimary) {
       categoryStyles[key] = {
@@ -170,8 +187,8 @@ function buildCategoryStyles(): {[key: string]: Blockly.Theme.CategoryStyle} {
 
 export const defaultTheme = {
   name: 'scratch',
-  blockStyles,
-  categoryStyles: buildCategoryStyles(),
+  blockStyles: defaultBlockStyles,
+  categoryStyles: buildCategoryStyles(defaultBlockStyles),
   componentStyles: {
     selectedGlowColour: 'transparent',
     insertionMarkerColour: Colours.insertionMarker as string,
@@ -188,15 +205,27 @@ export const defaultTheme = {
   },
   startHats: true
 };
+
 /**
  * Create a custom theme based on the scratch theme.
  * @param name Name of the theme.
  * @param themeDef The theme object to override default scratch theme.
  * @returns The newly created theme.
  */
-export function createTheme(name: string, themeDef: object): Blockly.Theme {
-  const customTheme = Object.assign({base: 'scratch', name}, themeDef);
-  const theme = Blockly.Theme.defineTheme(name, customTheme);
+export function createTheme(name: string, themeDef: ThemeDefinition): Blockly.Theme {
+  if (themeDef.blockStyles) {
+    themeDef.categoryStyles = Object.assign(
+      buildCategoryStyles(themeDef.blockStyles),
+      themeDef.categoryStyles || {}
+    );
+  }
+  if (!themeDef.name) themeDef.name = name;
+  if (!themeDef.base) themeDef.base = 'scratch';
+  if (!Object.prototype.hasOwnProperty.call(themeDef, 'startHats')) {
+    themeDef.startHats = true;
+  }
+
+  const theme = Blockly.Theme.defineTheme(name, themeDef as Required<ThemeDefinition>);
   Blockly.registry.register(Blockly.registry.Type.THEME, name, theme, true);
   return theme;
 }
@@ -218,9 +247,10 @@ export function getTheme(name: string): Blockly.Theme | null {
  * @param name The theme's name.
  * @param workspace The workspace to set the theme to. use main workspace by default.
  */
-export function setTheme(name: string, workspace: Blockly.WorkspaceSvg) {
+export function setTheme(name: string, workspace?: Blockly.WorkspaceSvg) {
   if (!workspace) {
     workspace = Blockly.getMainWorkspace() as Blockly.WorkspaceSvg;
+    if (!workspace.rendered) return;
   }
   const theme = getTheme(name) ?? getTheme('scratch')!;
   workspace.setTheme(theme);
