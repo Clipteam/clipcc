@@ -193,6 +193,7 @@ Blockly.WorkspaceSvg.prototype.addZoomControls = function() {
 };
 
 export {reportValue} from './report_value';
+export const setLocale = Blockly.setLocale;
 export * as callbackRegistry from './callback_registry';
 export {createTheme, getTheme, setTheme} from './theme';
 

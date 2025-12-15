@@ -15,7 +15,6 @@
     "clean": "rimraf ./build && mkdirp build && rimraf ./dist && mkdirp dist",
     "deploy": "touch build/.nojekyll && gh-pages -t -d build -m \"[skip ci] Build for $(git log --pretty=format:%H -n1)\"",
     "prune": "./prune-gh-pages.sh",
-    "i18n:push": "tx-push-src scratch-editor interface translations/en.json",
     "i18n:src": "rimraf ./translations/messages/src && babel src > tmp.js && rimraf tmp.js && node ./scripts/build-i18n-src.js ./translations/messages/src ./translations/",
     "start": "webpack-dev-server",
     "test": "yarn run test:unit && yarn run test:integration",
