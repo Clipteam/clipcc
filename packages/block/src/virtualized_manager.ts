@@ -75,6 +75,7 @@ export class VirtualizedManager {
 
   /**
    * Hook workspace methods to update block visibility immediately on viewport changes.
+   * Should only be called when `immediate` is true.
    */
   protected hookWorkspace() {
     const proto: Blockly.WorkspaceSvg = Object.getPrototypeOf(this.workspace);
@@ -392,6 +393,21 @@ export class VirtualizedManager {
     this.quadTree.clear();
     if (this.workspace) {
       this.workspace.removeChangeListener(this.workspaceChangeListener);
+      if (this.immediate) {
+        // Restore hooked methods.
+        if (Object.hasOwnProperty.call(this.workspace, 'maybeFireViewportChangeEvent')) {
+          // @ts-expect-error The original method is in its prototype, safe to delete here.
+          delete this.workspace.maybeFireViewportChangeEvent;
+        }
+        if (Object.hasOwnProperty.call(this.workspace, 'resize')) {
+          // @ts-expect-error The original method is in its prototype, safe to delete here.
+          delete this.workspace.resize;
+        }
+        if (Object.hasOwnProperty.call(this.workspace, 'dispose')) {
+          // @ts-expect-error The original method is in its prototype, safe to delete here.
+          delete this.workspace.dispose;
+        }
+      }
     }
   }
 }
