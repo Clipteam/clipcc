@@ -151,8 +151,7 @@ export function inject(container: Element | string, options?: ClipCCBlockOptions
 export function injectWorkspace(container: Element | string, options?: ClipCCBlockOptions) {
   const defaultOptions: ClipCCBlockOptions = {
     renderer: 'scratch',
-    theme: createTheme(),
-    virtualized: true
+    theme: createTheme()
   };
   options = Object.assign(defaultOptions, options);
   const workspace = Blockly.inject(container, options);

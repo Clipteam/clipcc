@@ -21,7 +21,6 @@ const defaultOptions: Blocks.ClipCCBlockOptions = {
   collapse: false,
   disable: false,
   toolbox: toolbox,
-  virtualized: false,
   horizontalLayout: false,
   toolboxPosition: 'left',
   move: {
