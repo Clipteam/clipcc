@@ -35,6 +35,11 @@
 }
 
 .blocklyBlock .blocklyVirtualizedHidden {
-  display: block;
   content-visibility: hidden;
+}
+
+@supports not (content-visibility: hidden) {
+  .blocklyBlock .blocklyVirtualizedHidden {
+    visibility: hidden;
+  }
 }
