@@ -1,16 +1,62 @@
 /**
  * @license
- * Copyright 2024 Google LLC
+ * Copyright 2015 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
 
 import * as Blockly from 'blockly/core';
 
 /**
+ * Interface for zoom controls.
+ * Should keep up with Blockly.ZoomControls's public fields.
+ */
+export interface IZoomControls extends Blockly.IPositionable {
+  /**
+   * The unique ID for this component that is used to register with the
+   * ComponentManager.
+   */
+  id: string;
+
+  /**
+   * Create the zoom controls.
+   * @returns The zoom controls SVG group.
+   */
+  createDom(): SVGElement;
+
+  /**
+   * Initializes the zoom controls.
+   */
+  init(): void;
+
+  /**
+   * Disposes of this zoom controls.
+   * Unlink from all DOM elements to prevent memory leaks.
+   */
+  dispose(): void;
+
+  /**
+   * Returns the bounding rectangle of the UI element in pixel units relative to
+   * the Blockly injection div.
+   * @returns The UI elements's bounding box. Null if bounding box should be
+   *     ignored by other UI elements.
+   */
+  getBoundingRectangle(): Blockly.utils.Rect | null;
+
+  /**
+   * Positions the zoom controls.
+   * It is positioned in the opposite corner to the corner the
+   * categories/toolbox starts at.
+   * @param metrics The workspace metrics.
+   * @param savedPositions List of rectangles that are already on the workspace.
+   */
+  position(metrics: Blockly.MetricsManager.UiMetrics, savedPositions: Blockly.utils.Rect[]): void;
+}
+
+/**
  * Class for zoom controls.
  * Copied from Blockly.ZoomControls and make it Scratch-styled.
  */
-export class ZoomControls implements Blockly.IPositionable {
+export class ZoomControls implements IZoomControls {
   static readonly XLINK_NS = 'http://www.w3.org/1999/xlink';
   /**
    * The unique ID for this component that is used to register with the
