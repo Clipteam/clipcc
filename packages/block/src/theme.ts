@@ -185,7 +185,7 @@ function buildCategoryStyles(
   return categoryStyles;
 }
 
-export const defaultTheme = {
+const scratchTheme = {
   name: 'scratch',
   blockStyles: defaultBlockStyles,
   categoryStyles: buildCategoryStyles(defaultBlockStyles),
@@ -236,9 +236,6 @@ export function createTheme(name: string, themeDef: ThemeDefinition): Blockly.Th
  * @returns The theme object, or null if not found.
  */
 export function getTheme(name: string): Blockly.Theme | null {
-  if (!Blockly.registry.hasItem(Blockly.registry.Type.THEME, name)) {
-    return null;
-  }
   return Blockly.registry.getObject(Blockly.registry.Type.THEME, name);
 }
 
@@ -258,4 +255,8 @@ export function setTheme(name: string, workspace?: Blockly.WorkspaceSvg) {
   injectCssVariables();
 }
 
-export const scratchTheme = Blockly.Theme.defineTheme('scratch', defaultTheme);
+export type BlockStyle = Blockly.Theme.BlockStyle;
+export type CategoryStyle = Blockly.Theme.CategoryStyle;
+export type ComponentStyle = Blockly.Theme.ComponentStyle;
+export type FontStyle = Blockly.Theme.FontStyle;
+export const Scratch = Blockly.Theme.defineTheme('scratch', scratchTheme);

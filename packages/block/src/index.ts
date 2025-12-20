@@ -7,7 +7,7 @@
 import * as Blockly from 'blockly/core';
 
 import * as Constants from './constants';
-import {scratchTheme, injectCssVariables} from './theme';
+import {injectCssVariables, Scratch} from './theme';
 import {registerScratchContextMenu} from './contextmenu_items';
 import {registerFieldAngle} from './fields/angle';
 import {registerFieldButton} from './fields/button';
@@ -147,7 +147,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
 export function injectWorkspace(container: Element | string, options?: Blockly.BlocklyOptions) {
   const defaultOptions: Blockly.BlocklyOptions = {
     renderer: 'scratch',
-    theme: scratchTheme
+    theme: Scratch
   };
   options = Object.assign(defaultOptions, options);
   const workspace = Blockly.inject(container, options);
@@ -195,5 +195,5 @@ Blockly.WorkspaceSvg.prototype.addZoomControls = function() {
 export {reportValue} from './report_value';
 export const setLocale = Blockly.setLocale;
 export * as callbackRegistry from './callback_registry';
-export {createTheme, getTheme, setTheme} from './theme';
+export * as Theme from './theme';
 
