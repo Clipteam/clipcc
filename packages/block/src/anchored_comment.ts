@@ -154,9 +154,9 @@ export class AnchoredComment
    * Moves the anchored comment to the given coordinates.
    * @internal
    */
-  moveTo(x: number, y: number): void;
+  override moveTo(x: number, y: number): void;
   override moveTo(newLoc: Blockly.utils.Coordinate): void;
-  moveTo(arg1: number | Blockly.utils.Coordinate, arg2?: number) {
+  override moveTo(arg1: number | Blockly.utils.Coordinate, arg2?: number) {
     let coordinate: Blockly.utils.Coordinate;
     if (arg1 instanceof Blockly.utils.Coordinate) {
       coordinate = arg1;

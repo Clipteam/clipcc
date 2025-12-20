@@ -285,7 +285,7 @@ export class BlockCommentIcon
    * Determines if this bubble can receive focus.
    * @returns Always false since anchored comments cannot be focused.
    */
-  canBeFocused() {
+  override canBeFocused() {
     return false;
   }
 
