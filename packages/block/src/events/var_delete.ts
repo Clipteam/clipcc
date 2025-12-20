@@ -13,18 +13,29 @@ interface VarDeleteJson extends Blockly.Events.VarDeleteJson {
   isLocal: boolean;
 }
 
+/**
+ * Class for a variable deletion event.
+ */
 export class VarDelete extends Blockly.Events.VarDelete {
   isCloud = false;
   isLocal = false;
 
+  /**
+   * Create a variable deletion event.
+   * @param variable The deleted variable. Undefined for a blank event.
+   */
   constructor(variable?: VariableModel) {
     super(variable);
     if (!variable) return;
 
-    this.isLocal = variable.getIsLocal();
-    this.isCloud = variable.getIsCloud();
+    this.isLocal = variable.getLocal();
+    this.isCloud = variable.getCloud();
   }
 
+  /**
+   * Encode the event as JSON.
+   * @returns JSON representation.
+   */
   override toJson(): VarDeleteJson {
     const json = super.toJson() as VarDeleteJson;
     json.isLocal = this.isLocal;
@@ -32,6 +43,13 @@ export class VarDelete extends Blockly.Events.VarDelete {
     return json;
   }
 
+  /**
+   * Decode the JSON event.
+   * @param json The JSON representation.
+   * @param workspace The workspace to deserialize to.
+   * @param event The event to append to. Undefined for a blank event.
+   * @returns The created event.
+   */
   static override fromJson(
     json: VarDeleteJson,
     workspace: Blockly.Workspace,

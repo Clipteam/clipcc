@@ -13,18 +13,29 @@ interface VarCreateJson extends Blockly.Events.VarCreateJson {
   isLocal: boolean;
 }
 
+/**
+ * Class for a variable creation event.
+ */
 export class VarCreate extends Blockly.Events.VarCreate {
   isCloud = false;
   isLocal = false;
 
+  /**
+   * Create a variable creation event.
+   * @param variable The created variable. Undefined for a blank event.
+   */
   constructor(variable?: VariableModel) {
     super(variable);
     if (!variable) return;
 
-    this.isLocal = variable.getIsLocal();
-    this.isCloud = variable.getIsCloud();
+    this.isLocal = variable.getLocal();
+    this.isCloud = variable.getCloud();
   }
 
+  /**
+   * Encode the event as JSON.
+   * @returns JSON representation.
+   */
   override toJson(): VarCreateJson {
     const json = super.toJson() as VarCreateJson;
     json.isLocal = this.isLocal;
@@ -32,21 +43,32 @@ export class VarCreate extends Blockly.Events.VarCreate {
     return json;
   }
 
+  /**
+   * Decode the JSON event.
+   * @param json The JSON representation.
+   * @param workspace The workspace to deserialize to.
+   * @param event The event to append to. Undefined for a blank event.
+   * @returns The created event.
+   */
   static override fromJson(
     json: VarCreateJson,
     workspace: Blockly.Workspace,
-    event?: Blockly.Events.VarCreate
+    event?: Blockly.Events.Abstract
   ): VarCreate {
-    const varCreate = super.fromJson(
+    const newEvent = super.fromJson(
       json,
       workspace,
-      event
+      event ?? new VarCreate()
     ) as VarCreate;
-    varCreate.isLocal = json.isLocal;
-    varCreate.isCloud = json.isCloud;
-    return varCreate;
+    newEvent.isLocal = json.isLocal;
+    newEvent.isCloud = json.isCloud;
+    return newEvent;
   }
 
+  /**
+   * Run a variable creation event.
+   * @param forward True if run forward, false if run backward (undo).
+   */
   override run(forward: boolean) {
     const workspace = this.getEventWorkspace_();
     if (!this.varId) {
