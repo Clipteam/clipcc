@@ -7,7 +7,7 @@
 import * as Blockly from 'blockly/core';
 
 import * as Constants from './constants';
-import {createTheme} from './colours';
+import {injectCssVariables, Scratch} from './theme';
 import {registerScratchContextMenu} from './contextmenu_items';
 import {registerFieldAngle} from './fields/angle';
 import {registerFieldButton} from './fields/button';
@@ -21,6 +21,7 @@ import {registerFieldVerticalSeparator} from './fields/vertical_separator';
 import {flyoutCategory as variableCategory} from './data_category';
 import {flyoutCategory as procedureCategory} from './procedures_category';
 import {isProcedureCallBlock, isProcedurePrototypeBlock} from './blocks/procedures';
+import {ZoomControls} from './zoom_controls';
 import styles from './styles/blockly.css';
 import commentStyles from './styles/comment.css';
 
@@ -92,7 +93,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerScratchContextMenu();
 
   // Register styles.
-
+  injectCssVariables();
   Blockly.Css.register(styles);
   Blockly.Css.register(commentStyles);
 
@@ -153,10 +154,12 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
 export function injectWorkspace(container: Element | string, options?: Blockly.BlocklyOptions) {
   const defaultOptions: Blockly.BlocklyOptions = {
     renderer: 'scratch',
-    theme: createTheme()
+    theme: Scratch
   };
   options = Object.assign(defaultOptions, options);
-  return Blockly.inject(container, options);
+  const workspace = Blockly.inject(container, options);
+
+  return workspace;
 }
 
 /**
@@ -183,12 +186,21 @@ export function loadWorkspace(
   Blockly.serialization.workspaces.load(state, workspace, {recordUndo});
 }
 
-export {reportValue} from './report_value';
-export * as callbackRegistry from './callback_registry';
-
 // Monkey-patches
 Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
 Blockly.FlyoutButton.TEXT_MARGIN_X = 40;
 Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;
 Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(200, 200);
 Blockly.ToolboxCategory.nestedPadding = 6;
+
+Blockly.WorkspaceSvg.prototype.addZoomControls = function() {
+  this.zoomControls_ = new ZoomControls(this) as unknown as Blockly.ZoomControls;
+  const svgZoomControls = this.zoomControls_.createDom();
+  this.svgGroup_.appendChild(svgZoomControls);
+};
+
+export {reportValue} from './report_value';
+export const setLocale = Blockly.setLocale;
+export * as callbackRegistry from './callback_registry';
+export * as Theme from './theme';
+

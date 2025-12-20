@@ -1,0 +1,44 @@
+#
+# Basic Crowdin CLI configuration
+# See https://crowdin.github.io/crowdin-cli/configuration for more information
+# See https://support.crowdin.com/developer/configuration-file/ for all available options
+#
+
+#
+# Your Crowdin credentials
+#
+"project_id_env": "CROWDIN_PROJECT_ID"
+"api_token_env": "CROWDIN_PERSONAL_TOKEN"
+"base_path": "."
+"base_url": "https://api.crowdin.com"
+
+#
+# Defines whether to preserve the original directory structure in the Crowdin project
+# Recommended to set to true
+#
+"preserve_hierarchy": true
+
+#
+# Files configuration.
+# See https://support.crowdin.com/developer/configuration-file/ for all available options
+#
+"files": [
+  {
+    "source": "/packages/gui/translations/en.json",
+    "dest": "/editor/interface.json",
+    "translation": "/packages/gui/translations/%two_letters_code%.json",
+    "type": "chrome"
+  },
+  {
+    "source": "/packages/paint/translations/en.json",
+    "dest": "/editor/paint-editor.json",
+    "translation": "/packages/paint/translations/%two_letters_code%.json",
+    "type": "chrome"
+  },
+  {
+    "source": "/packages/block/msg/json/en.json",
+    "dest": "/editor/blocks.json",
+    "translation": "/packages/block/msg/json/%two_letters_code%.json",
+    "type": "chrome"
+  }
+]

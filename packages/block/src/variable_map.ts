@@ -23,7 +23,7 @@ export class VariableMap extends Blockly.VariableMap {
    * @param isCloud Whether this variable is a cloud variable.
    * @returns The newly created variable.
    */
-  createVariable(
+  override createVariable(
     name: string,
     varType?: string,
     varId?: string,

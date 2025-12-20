@@ -1119,6 +1119,12 @@ Blockly.Blocks['procedures_definition'] = {
     });
     this.hat = Constants.SHAPE_BOWLER_HAT;
   },
+  setStyle: function(blockStyleName: string) {
+    // equivalent to super.setStyle()
+    const proto: Blockly.Block = Object.getPrototypeOf(this);
+    proto.setStyle.call(this, blockStyleName);
+    this.hat = Constants.SHAPE_BOWLER_HAT;
+  },
   /**
    * The method called during disposal.
    */

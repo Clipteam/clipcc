@@ -39,7 +39,7 @@ export class FieldVariable extends Blockly.FieldVariable {
     this.menuGenerator_ = FieldVariable.dropdownCreate as Blockly.MenuGenerator;
   }
 
-  initModel() {
+  override initModel() {
     if (!this.getVariable()) {
       const sourceBlock = this.getSourceBlock();
       if (sourceBlock) {
@@ -90,7 +90,7 @@ export class FieldVariable extends Blockly.FieldVariable {
    * Include a special option at the end for creating a new variable name.
    * @returns Array of variable names.
    */
-  static dropdownCreate(this: FieldVariable): Blockly.MenuOption[] {
+  static override dropdownCreate(this: FieldVariable): Blockly.MenuOption[] {
     let options = super.dropdownCreate();
     const type = this.getDefaultType();
     if (type === Constants.BROADCAST_MESSAGE_VARIABLE_TYPE) {
@@ -123,7 +123,7 @@ export class FieldVariable extends Blockly.FieldVariable {
    * @param menu The Menu component clicked.
    * @param menuItem The MenuItem selected within menu.
    */
-  onItemSelected_(menu: Blockly.Menu, menuItem: Blockly.MenuItem) {
+  override onItemSelected_(menu: Blockly.Menu, menuItem: Blockly.MenuItem) {
     const sourceBlock = this.getSourceBlock();
     if (sourceBlock && !sourceBlock.isDeadOrDying()) {
       const selectedItem = menuItem.getValue();
