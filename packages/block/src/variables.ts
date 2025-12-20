@@ -311,7 +311,7 @@ export function renameVariableVisually(
 
   const promptText = promptMsg.replace('%1', variable.getName());
   let promptDefaultText = variable.getName();
-  if (variable.getIsCloud() && variable.getName().indexOf(CLOUD_PREFIX) === 0) {
+  if (variable.getCloud() && variable.getName().indexOf(CLOUD_PREFIX) === 0) {
     promptDefaultText = promptDefaultText.substring(CLOUD_PREFIX.length);
   }
 
@@ -321,7 +321,7 @@ export function renameVariableVisually(
     promptDefaultText,
     (newName: string, additionalVars: string[]) => {
       if (
-        variable.getIsCloud() &&
+        variable.getCloud() &&
         newName.length > 0 &&
         newName.indexOf(CLOUD_PREFIX) === 0
       ) {
@@ -329,12 +329,12 @@ export function renameVariableVisually(
         // The name validator will add the prefix back
       }
       additionalVars = additionalVars || [];
-      const additionalVarNames = variable.getIsLocal() ? [] : additionalVars;
+      const additionalVarNames = variable.getLocal() ? [] : additionalVars;
       const validatedText = validate(
         newName,
         workspace,
         additionalVarNames,
-        variable.getIsCloud()
+        variable.getCloud()
       );
       if (validatedText) {
         workspace.getVariableMap().renameVariable(variable, validatedText);

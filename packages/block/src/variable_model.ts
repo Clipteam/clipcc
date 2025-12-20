@@ -41,7 +41,7 @@ export class VariableModel
    * Get whether this variable is locally scoped.
    * @returns Whether this variable is locally scoped.
    */
-  getIsLocal(): boolean {
+  getLocal(): boolean {
     return this.isLocal;
   }
 
@@ -49,7 +49,7 @@ export class VariableModel
    * Get whether this variable is a cloud variable.
    * @returns Whether this variable is a cloud variable.
    */
-  getIsCloud(): boolean {
+  getCloud(): boolean {
     return this.isCloud;
   }
 
