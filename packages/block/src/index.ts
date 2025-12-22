@@ -21,6 +21,7 @@ import {flyoutCategory as variableCategory} from './data_category';
 import {flyoutCategory as procedureCategory} from './procedures_category';
 import {isProcedureCallBlock, isProcedurePrototypeBlock} from './blocks/procedures';
 import {ZoomControls} from './zoom_controls';
+import {buildGlowFilter} from './glow';
 import styles from './styles/blockly.css';
 import commentStyles from './styles/comment.css';
 
@@ -97,6 +98,9 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   Blockly.ContextMenuRegistry.registry.unregister('blockInline');
 
   const workspace = injectWorkspace(container, options);
+
+  // Build glow filter for glowStack.
+  buildGlowFilter(workspace);
 
   // Dynamic categories.
   workspace.registerToolboxCategoryCallback(
@@ -196,4 +200,5 @@ export {reportValue} from './report_value';
 export const setLocale = Blockly.setLocale;
 export * as callbackRegistry from './callback_registry';
 export * as Theme from './theme';
+export {glowStack} from './glow';
 
