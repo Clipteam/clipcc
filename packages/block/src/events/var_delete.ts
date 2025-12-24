@@ -8,11 +8,6 @@ import * as Blockly from 'blockly/core';
 import type {VariableModel} from '../variable_model';
 import type {VariableMap} from '../variable_map';
 
-interface VarDeleteJson extends Blockly.Events.VarDeleteJson {
-  isCloud: boolean;
-  isLocal: boolean;
-}
-
 /**
  * Class for a variable deletion event.
  */
@@ -92,6 +87,11 @@ export class VarDelete extends Blockly.Events.VarDelete {
     }
   }
 };
+
+interface VarDeleteJson extends Blockly.Events.VarDeleteJson {
+  isCloud: boolean;
+  isLocal: boolean;
+}
 
 Blockly.registry.register(
   Blockly.registry.Type.EVENT,

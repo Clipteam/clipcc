@@ -50,7 +50,7 @@ export const CLOUD_PREFIX = '☁ ';
 export function createVariableVisually(
   workspace: Blockly.WorkspaceSvg,
   callback?: (id?: string) => void,
-  type?: string
+  type = Constants.SCALAR_VARIABLE_TYPE
 ) {
   // Decide on a modal message based on the type. If type was not
   // provided, default to the original message for scalar variables.
@@ -63,12 +63,6 @@ export function createVariableVisually(
     newMsg = Blockly.Msg.NEW_LIST_TITLE;
     modalTitle = Blockly.Msg.LIST_MODAL_TITLE;
   } else {
-    // Note: this case covers 1) scalar variables, 2) any new type of
-    // variable not explicitly checked for above, and 3) a null or undefined
-    // type -- turns a falsey type into ''
-    // TODO (#1251) Warn developers that they didn't provide a type/
-    // provided a falsey type
-    type = type ? type : '';
     newMsg = Blockly.Msg.NEW_VARIABLE_TITLE;
     modalTitle = Blockly.Msg.VARIABLE_MODAL_TITLE;
   }

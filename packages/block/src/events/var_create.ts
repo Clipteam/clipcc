@@ -8,11 +8,6 @@ import * as Blockly from 'blockly/core';
 import type {VariableModel} from '../variable_model';
 import type {VariableMap} from '../variable_map';
 
-interface VarCreateJson extends Blockly.Events.VarCreateJson {
-  isCloud: boolean;
-  isLocal: boolean;
-}
-
 /**
  * Class for a variable creation event.
  */
@@ -92,6 +87,11 @@ export class VarCreate extends Blockly.Events.VarCreate {
     }
   }
 };
+
+interface VarCreateJson extends Blockly.Events.VarCreateJson {
+  isCloud: boolean;
+  isLocal: boolean;
+}
 
 Blockly.registry.register(
   Blockly.registry.Type.EVENT,
