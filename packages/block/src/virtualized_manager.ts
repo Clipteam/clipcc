@@ -128,13 +128,17 @@ export class VirtualizedManager {
       case Blockly.Events.BLOCK_CHANGE: {
         const event = e as (Blockly.Events.BlockMove | Blockly.Events.BlockChange);
         if (!event.blockId) break;
+        let block = this.workspace.getBlockById(event.blockId);
         if (event instanceof Blockly.Events.BlockChange) {
           if (event.element === 'disabled' || event.element === 'comment') {
             // No need to update position for these changes.
             break;
           }
+          if (block && event.element === 'field') {
+            // Field change may affect block size. Update its parent.
+            block = block.getParent();
+          }
         }
-        const block = this.workspace.getBlockById(event.blockId);
         if (block) {
           const descendants = block.getDescendants(false);
           for (const desc of descendants) {
