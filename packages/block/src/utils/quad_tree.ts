@@ -6,30 +6,21 @@
 
 import * as Blockly from 'blockly/core';
 
-interface QuadTreeRecord<T> {
-  item: T;
-  rect: Blockly.utils.Rect;
-}
-
 export class QuadTree<T> {
   /**
-   * Records that belong to this node but don't fit into any single child quadrant.
+   * Items that belong to this node but don't fit into any single child quadrant.
    * (i.e., they overlap the dividing lines).
    */
-  protected records: QuadTreeRecord<T>[] = [];
+  protected items: T[] = [];
+  protected itemRects: Blockly.utils.Rect[] = [];
   protected nodes: QuadTree<T>[] = [];
-  protected itemMap?: Map<T, Blockly.utils.Rect>;
 
   constructor(
     protected bounds: Blockly.utils.Rect,
     protected maxObjects = 10,
     protected maxLevels = 5,
     protected level = 0
-  ) {
-    if (level === 0) {
-      this.itemMap = new Map();
-    }
-  }
+  ) {}
 
   /**
    * Splits the node into four subnodes.
@@ -102,11 +93,6 @@ export class QuadTree<T> {
    */
   insert(item: T, rect: Blockly.utils.Rect): void {
     if (this.level === 0) {
-      if (this.itemMap!.has(item)) {
-        this.remove(item);
-      }
-      this.itemMap!.set(item, rect);
-
       while (!this.contains(this.bounds, rect)) {
         this.grow(rect);
       }
@@ -144,17 +130,20 @@ export class QuadTree<T> {
       }
     }
 
-    this.records.push({item, rect});
+    this.items.push(item);
+    this.itemRects.push(rect);
 
-    if (this.records.length > this.maxObjects && this.level < this.maxLevels) {
+    if (this.items.length > this.maxObjects && this.level < this.maxLevels) {
       if (!this.nodes.length) this.split();
 
       let i = 0;
-      while (i < this.records.length) {
-        const {item, rect} = this.records[i];
+      while (i < this.items.length) {
+        const item = this.items[i];
+        const rect = this.itemRects[i];
         const index = this.getIndex(rect);
         if (index !== -1) {
-          this.records.splice(i, 1);
+          this.items.splice(i, 1);
+          this.itemRects.splice(i, 1);
           this.nodes[index].insertInternal(item, rect);
         } else {
           i++;
@@ -213,11 +202,13 @@ export class QuadTree<T> {
       this.level + 1
     );
     newChild.nodes = this.nodes;
-    newChild.records = this.records;
+    newChild.items = this.items;
+    newChild.itemRects = this.itemRects;
 
     this.bounds = newBounds;
     this.nodes = [];
-    this.records = [];
+    this.items = [];
+    this.itemRects = [];
     this.split();
     this.nodes[quadrant] = newChild;
   }
@@ -231,9 +222,9 @@ export class QuadTree<T> {
   query(range: Blockly.utils.Rect, found: T[] = []): T[] {
     if (!this.bounds.intersects(range)) return found;
 
-    for (const obj of this.records) {
-      if (obj.rect.intersects(range)) {
-        found.push(obj.item);
+    for (let i = 0; i < this.items.length; i++) {
+      if (this.itemRects[i].intersects(range)) {
+        found.push(this.items[i]);
       }
     }
 
@@ -247,16 +238,11 @@ export class QuadTree<T> {
   /**
    * Removes an item from the QuadTree.
    * @param item The item to remove.
+   * @param rect The bounding box of the item.
    * @returns True if the item was found and removed, false otherwise.
    */
-  remove(item: T): boolean {
-    if (this.level === 0) {
-      const rect = this.itemMap!.get(item);
-      if (!rect) return false;
-      this.itemMap!.delete(item);
-      return this.removeInternal(item, rect);
-    }
-    return false;
+  remove(item: T, rect: Blockly.utils.Rect): boolean {
+    return this.removeInternal(item, rect);
   }
 
   /**
@@ -273,9 +259,10 @@ export class QuadTree<T> {
       }
     }
 
-    const idx = this.records.findIndex((obj) => obj.item === item);
+    const idx = this.items.indexOf(item);
     if (idx !== -1) {
-      this.records.splice(idx, 1);
+      this.items.splice(idx, 1);
+      this.itemRects.splice(idx, 1);
       return true;
     }
 
@@ -286,10 +273,8 @@ export class QuadTree<T> {
    * Clears the QuadTree.
    */
   clear(): void {
-    this.records = [];
+    this.items = [];
+    this.itemRects = [];
     this.nodes = [];
-    if (this.level === 0) {
-      this.itemMap!.clear();
-    }
   }
 }

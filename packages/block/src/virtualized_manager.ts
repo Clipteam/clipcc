@@ -19,7 +19,7 @@ export class VirtualizedManager {
   /**
    * Blocks being observed for virtualization.
    */
-  protected observedBlocks = new Map<string, Blockly.BlockSvg>();
+  protected observedBlocks = new Map<string, {block: Blockly.BlockSvg; rect: Blockly.utils.Rect}>();
   /**
    * The quad tree used to manage block positions.
    */
@@ -356,7 +356,7 @@ export class VirtualizedManager {
     if (block.outputConnection?.isConnected()) return;
 
     const rect = this.getBlockBoundingRect(block);
-    this.observedBlocks.set(block.id, block);
+    this.observedBlocks.set(block.id, {block, rect});
     this.quadTree.insert(block, rect);
   }
 
@@ -365,12 +365,12 @@ export class VirtualizedManager {
    * @param blockId The block ID to stop observing.
    */
   protected unobserve(blockId: string): void {
-    const block = this.observedBlocks.get(blockId);
-    if (!block) return;
+    const entry = this.observedBlocks.get(blockId);
+    if (!entry) return;
     this.observedBlocks.delete(blockId);
-    this.quadTree.remove(block);
+    this.quadTree.remove(entry.block, entry.rect);
     // Make sure the block is visible when unobserved.
-    this.setBlockVisibility(block, true);
+    this.setBlockVisibility(entry.block, true);
   }
 
   /**
@@ -378,13 +378,16 @@ export class VirtualizedManager {
    * @param block The block to update.
    */
   protected updateObserve(block: Blockly.BlockSvg): void {
-    if (!this.observedBlocks.has(block.id)) return;
+    const entry = this.observedBlocks.get(block.id);
+    if (!entry) return;
     if (block.outputConnection?.isConnected()) {
       this.unobserve(block.id);
       return;
     }
 
+    this.quadTree.remove(block, entry.rect);
     const rect = this.getBlockBoundingRect(block);
+    entry.rect = rect;
     this.quadTree.insert(block, rect);
   }
 
