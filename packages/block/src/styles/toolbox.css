@@ -2,10 +2,13 @@
   width: 100px;
   overflow-y: auto;
   scrollbar-width: none;
+  border-right: 1px solid var(--clipcc-block-toolboxBorder);
+  box-sizing: content-box;
 }
 
 .clipccToolboxCategoryContainer {
   font-size: 0.8rem;
+  outline: none;
 }
 
 .clipccToolboxCategory {

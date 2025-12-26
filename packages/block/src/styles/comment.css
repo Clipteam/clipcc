@@ -1,4 +1,5 @@
-.blocklyWorkspace, .blocklyBlockDragSurface {
+.blocklyWorkspace,
+.blocklyBlockDragSurface {
   --commentFillColour: #fef49c;
   --commentTopBarColour: #e4db8c;
   --commentBorderColour: #bca903;
@@ -8,41 +9,54 @@
   transform: rotate(-180deg);
 }
 
+.blocklyCommentText::placeholder {
+  font-style: italic;
+}
+
 .blocklyComment .blocklyCommentTopbarBackground {
   height: 32px;
+  fill: none;
+}
+
+.blocklyCollapsed .blocklyCommentTopbarBackground,
+.blocklySelected.blocklyCollapsed .blocklyCommentTopbarBackground {
+  rx: 4px;
+  ry: 4px;
+  stroke: var(--commentBorderColour);
+  stroke-width: 1px;
   fill: var(--commentTopBarColour);
 }
 
-.blocklyCollapsed .blocklyCommentTopbarBackground {
-  outline: 1px solid var(--commentBorderColour);
-}
-
-.blocklyComment {
-  border: 1px solid var(--commentBorderColour);
-  border-radius: 4px;
+.blocklyDragging.blocklyComment {
+  filter: drop-shadow(0 0px 6px hsla(0, 0%, 0%, 0.6));
 }
 
 .blocklyCommentHighlight {
+  rx: 4px;
+  ry: 4px;
   stroke: var(--commentBorderColour);
-  stroke-width: 2px;
+  stroke-width: 1px;
+  fill: var(--commentTopBarColour);
 }
 
 .blocklySelected .blocklyCommentHighlight {
   stroke: var(--commentBorderColour);
-  stroke-width: 2px;
+  stroke-width: 1px;
 }
 
 .blocklyCollapsed .blocklyCommentHighlight {
-  stroke-width: 0;
-  stroke: var(--commentBorderColour);
+  stroke: none;
+  fill: none;
 }
 
-.blocklySelected.blocklyCollapsed .blocklyCommentTopbarBackground {
-  stroke-width: 0;
+.blocklyCollapsed.blocklySelected .blocklyCommentHighlight {
+  stroke: none;
+  fill: none;
 }
 
 .blocklyComment .blocklyTextarea {
   border: none;
+  border-radius: 0px 0px 4px 4px;
   padding: 12px;
 }
 
@@ -61,4 +75,12 @@
   width: 32px;
   height: 32px;
   transform-origin: 16px 16px;
+}
+
+.blocklyCommentForeignObject {
+  padding: 1px;
+}
+
+.blocklyCommentForeignObject>body {
+  background: none;
 }

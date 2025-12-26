@@ -10,12 +10,7 @@
         "clean": "rimraf ./dist ./locales && mkdirp dist locales",
         "lint:js": "eslint . --ext .js",
         "lint:json": "jshint -e .json www editor/blocks editor/extensions editor/interface editor/paint-editor",
-        "lint": "yarn lint:js && yarn lint:json",
-        "pull:interface": "babel-node scripts/tx-pull-editor clipcc-editor interface ./editor/interface/",
-        "pull:paint": "babel-node scripts/tx-pull-editor clipcc-editor paint-editor ./editor/paint-editor/",
-        "pull:extensions": "babel-node scripts/tx-pull-editor clipcc-editor extensions ./editor/extensions/",
-        "pull:blocks": "babel-node scripts/tx-pull-editor clipcc-editor blocks ./editor/blocks/",
-        "pull:editor": "yarn pull:blocks && yarn pull:extensions && yarn pull:interface"
+        "lint": "yarn lint:js && yarn lint:json"
     },
     "repository": {
         "type": "git",
