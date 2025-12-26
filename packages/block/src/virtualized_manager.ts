@@ -9,6 +9,10 @@ import {QuadTree} from './utils/quad_tree';
 
 export class VirtualizedManager {
   /**
+   * Height of each buffered block during dragging, in pixels.
+   */
+  static readonly BUFFERED_BLOCK_HEIGHT = 40;
+  /**
    * Hold a weak reference to the workspace to avoid memory leaks.
    */
   protected workspaceRef: WeakRef<Blockly.WorkspaceSvg>;
@@ -45,8 +49,8 @@ export class VirtualizedManager {
     const cx = (rect.left + rect.right) / 2;
     const cy = (rect.top + rect.bottom) / 2;
 
-    const halfW = viewWidth * 2;
-    const halfH = viewHeight * 2;
+    const halfW = viewWidth / 2;
+    const halfH = viewHeight / 2;
 
     this.quadTree = new QuadTree(
       new Blockly.utils.Rect(cy - halfH, cy + halfH, cx - halfW, cx + halfW)
@@ -212,6 +216,7 @@ export class VirtualizedManager {
     // Found the last visible blocks in their stacks.
     const lastVisibleBlocks = new Set<Blockly.BlockSvg>();
     const processedIds = new Set<string>();
+    const rootBlocks = this.workspace.getTopBlocks(false);
     for (const block of visibleBlocks) {
       let current: Blockly.BlockSvg | null = block;
       while (current) {
@@ -227,6 +232,15 @@ export class VirtualizedManager {
           lastVisibleBlocks.add(current); // then it's the last visible block!
           break;
         }
+
+        const inputs = current.getChildren(false);
+        for (const input of inputs) {
+          if (input === next) continue;
+          if (input.getPreviousBlock()) {
+            // It's a branch's root, add to rootBlocks.
+            rootBlocks.push(input);
+          }
+        }
         current = next;
       }
     }
@@ -234,9 +248,8 @@ export class VirtualizedManager {
     const blocksToHide = new Set<Blockly.BlockSvg>();
     const blocksToShow = new Set<Blockly.BlockSvg>();
 
-    // Update top block's visibility
-    const topBlocks = this.workspace.getTopBlocks(false);
-    for (const block of topBlocks) {
+    // Update root block's visibility
+    for (const block of rootBlocks) {
       if (!visibleBlocks.has(block)) {
         blocksToHide.add(block);
       }
@@ -279,21 +292,31 @@ export class VirtualizedManager {
   /**
    * Display possible-visible blocks during dragging.
    * @param block The block to add extra buffer blocks.
+   * @param buffer Number of blocks to show as buffer. If not provided, it will be
+   * calculated based on workspace height.
    */
-  protected addDraggingBuffer(block: Blockly.BlockSvg): void {
-    const scale = this.workspace.getScale();
-    const metrics = this.workspace.getMetrics();
-    const viewHeight = metrics.viewHeight / scale;
-    const buffer = Math.ceil(viewHeight / block.height) * 2;
-    let current: Blockly.BlockSvg | null = block.getNextBlock();
+  protected addDraggingBuffer(block: Blockly.BlockSvg, buffer?: number): void {
+    if (!buffer) {
+      const scale = this.workspace.getScale();
+      const {height} = this.workspace.getCachedParentSvgSize();
+      buffer = Math.ceil(height / VirtualizedManager.BUFFERED_BLOCK_HEIGHT / scale);
+    }
+
+    let current: Blockly.BlockSvg | null = block;
     for (let i = 0; i < buffer; ++i) {
       if (!current) break;
       if (this.hiddenBlocks.has(current)) {
         this.setBlockVisibility(current, true);
       }
-      current = current.getNextBlock();
+      const children = current.getChildren(false);
+      const nextBlock = current.getNextBlock();
+      for (const child of children) {
+        if (child === nextBlock) continue;
+        this.addDraggingBuffer(child, buffer - i - 1);
+      }
+      current = nextBlock;
     }
-    if (current) {
+    if (current && this.hiddenBlocks.has(current)) {
       this.setBlockVisibility(current, false);
     }
   }
@@ -329,7 +352,7 @@ export class VirtualizedManager {
    */
   protected observe(block: Blockly.BlockSvg): void {
     if (this.observedBlocks.has(block.id)) return;
-    // Track statement blocks only.
+    // Track root-level blocks only.
     if (block.outputConnection?.isConnected()) return;
 
     const rect = this.getBlockBoundingRect(block);
