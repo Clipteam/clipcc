@@ -178,6 +178,7 @@ export class VirtualizedManager {
 
     // Perform in next microtask.
     Promise.resolve().then(() => {
+      if (!this.requestedCheck) return;
       this.requestedCheck = false;
       this.virtualizeInternal();
     });
@@ -422,6 +423,7 @@ export class VirtualizedManager {
   dispose(): void {
     this.observedBlocks.clear();
     this.quadTree.clear();
+    this.requestedCheck = false;
     if (this.workspace) {
       this.workspace.removeChangeListener(this.workspaceChangeListener);
       if (this.immediate) {
