@@ -149,6 +149,7 @@ export class VirtualizedManager {
             }
           }
         }
+        this.virtualize();
         break;
       }
       case Blockly.Events.BLOCK_DRAG: {
