@@ -45,7 +45,7 @@
     "react-style-proptype": "^3",
     "react-tooltip": "^3",
     "redux": "^3",
-    "scratch-render-fonts": "^1.0.0-prerelease.20210401210003"
+    "scratch-render-fonts": "1.0.174"
   },
   "devDependencies": {
     "@babel/preset-env": "7.14.8",
@@ -95,7 +95,7 @@
     "regenerator-runtime": "0.13.9",
     "rimraf": "2.7.1",
     "clipcc-l10n": "3.2.0",
-    "scratch-render-fonts": "1.0.0-prerelease.20221024190656",
+    "scratch-render-fonts": "1.0.174",
     "scratch-semantic-release-config": "1.0.5",
     "semantic-release": "19.0.5",
     "style-loader": "^3.3.1",

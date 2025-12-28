@@ -54,12 +54,11 @@ const ProjectSaverHOC = function (WrappedComponent) {
             ]);
         }
         componentWillMount () {
-            if (typeof window === 'object') {
+            if (!this.props.noBeforeUnloadHandler && typeof window === 'object') {
                 // Note: it might be better to use a listener instead of assigning onbeforeunload;
                 // but then it'd be hard to turn this listening off in our tests
                 window.onbeforeunload = e => this.leavePageConfirm(e);
             }
-
             // Allow the GUI consumer to pass in a function to receive a trigger
             // for triggering thumbnail or whole project saves.
             // These functions are called with null on unmount to prevent stale references.
@@ -339,6 +338,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
                 onUpdatedProject,
                 onUpdateProjectData,
                 onUpdateProjectThumbnail,
+                noBeforeUnloadHandler,
                 reduxProjectId,
                 reduxProjectTitle,
                 setAutoSaveTimeoutId: setAutoSaveTimeoutIdProp,
@@ -391,6 +391,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
         onUpdateProjectData: PropTypes.func.isRequired,
         onUpdateProjectThumbnail: PropTypes.func,
         onUpdatedProject: PropTypes.func,
+        noBeforeUnloadHandler: PropTypes.bool.isRequired,
         projectChanged: PropTypes.bool,
         reduxProjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         reduxProjectTitle: PropTypes.string,
@@ -402,6 +403,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
         onRemixing: () => {},
         onSetProjectThumbnailer: () => {},
         onSetProjectSaver: () => {},
+        noBeforeUnloadHandler: false,
         onUpdateProjectData: saveProjectToServer
     };
     const mapStateToProps = (state, ownProps) => {

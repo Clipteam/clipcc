@@ -27116,24 +27116,10 @@ schema-utils@^4.0.0:
     ajv-formats "^2.1.1"
     ajv-keywords "^5.0.0"
 
-scratch-render-fonts@1.0.0-prerelease.20221024190656:
-  version "1.0.0-prerelease.20221024190656"
-  resolved "https://registry.yarnpkg.com/scratch-render-fonts/-/scratch-render-fonts-1.0.0-prerelease.20221024190656.tgz#fc0441924f199c6ca5274ba024bea733295452d6"
-  integrity sha512-ZN2K7wKh8sJrzTZ61AwTTMwrm2AB/jsiHLeF8M1n0A0SoRaBfB7iBYv6cwvW2ZN+pnUBClHAb7bT9/KRlExfFg==
-  dependencies:
-    base64-loader "1.0.0"
-
-scratch-render-fonts@1.0.0-prerelease.20221102164332:
-  version "1.0.0-prerelease.20221102164332"
-  resolved "https://registry.yarnpkg.com/scratch-render-fonts/-/scratch-render-fonts-1.0.0-prerelease.20221102164332.tgz#388ee501b646be317bb107c078e82c5cd70add50"
-  integrity sha512-22MbRDGUSArVEoHatg5rt7f/H0wWhMrcyN6HD0OQJeDqdlO3qSSX9/qvdzNJGYWwZkhrdJWcI5JGD1YuJfefmw==
-  dependencies:
-    base64-loader "1.0.0"
-
-scratch-render-fonts@1.0.73:
-  version "1.0.73"
-  resolved "https://registry.yarnpkg.com/scratch-render-fonts/-/scratch-render-fonts-1.0.73.tgz#abdf741ed2a4aa77d0048f5ba74b45939acb3ee0"
-  integrity sha512-wJJ1nmoln6YFmAiru8HcPLuI9mMXn7GN8mrnfVFxMRXxCnXQr6I/M3U4rOWyM/JOPi/MJiSD+EwTzij5hXOTQQ==
+scratch-render-fonts@1.0.174:
+  version "1.0.174"
+  resolved "https://registry.yarnpkg.com/scratch-render-fonts/-/scratch-render-fonts-1.0.174.tgz#972310b1c821fc8d3b88244d89ac008b80762488"
+  integrity sha512-zPLFqOFUdThCffM6youkvajLTUgK//JLDtWWjhsHvl2S6FuiU6O0Ecynjyni5xsm/jgAOH+AHwjWaehAYsYHUw==
   dependencies:
     base64-loader "^1.0.0"
 

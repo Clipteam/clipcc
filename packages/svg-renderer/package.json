@@ -19,7 +19,7 @@
   "license": "AGPL-3.0-only",
   "homepage": "https://github.com/Clipteam/clipcc/packages/svg-renderer#readme",
   "peerDependencies": {
-    "scratch-render-fonts": "^1.0.0"
+    "scratch-render-fonts": "1.0.174"
   },
   "dependencies": {
     "@turbowarp/nanolog": "^0.2.0",
@@ -49,7 +49,7 @@
     "json": "9.0.6",
     "mkdirp": "2.1.6",
     "rimraf": "3.0.2",
-    "scratch-render-fonts": "1.0.73",
+    "scratch-render-fonts": "1.0.174",
     "scratch-semantic-release-config": "1.0.14",
     "semantic-release": "19.0.5",
     "tap": "21.0.1",
