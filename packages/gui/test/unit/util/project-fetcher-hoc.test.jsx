@@ -4,7 +4,6 @@ import configureStore from 'redux-mock-store';
 import {mountWithIntl} from '../../helpers/intl-helpers.jsx';
 
 import ProjectFetcherHOC from '../../../src/lib/project-fetcher-hoc.jsx';
-import storage from '../../../src/lib/storage';
 import {LoadingState} from '../../../src/reducers/project-state';
 
 jest.mock('react-ga');
@@ -15,6 +14,8 @@ describe('ProjectFetcherHOC', () => {
 
     beforeEach(() => {
         store = mockStore({
+            // TODO: Provide storage
+            // config:
             scratchGui: {
                 projectState: {}
             }

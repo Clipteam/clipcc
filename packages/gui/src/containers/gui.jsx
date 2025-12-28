@@ -35,7 +35,6 @@ import ProjectFetcherHOC from '../lib/project-fetcher-hoc.jsx';
 import TitledHOC from '../lib/titled-hoc.jsx';
 import ProjectSaverHOC from '../lib/project-saver-hoc.jsx';
 import QueryParserHOC from '../lib/query-parser-hoc.jsx';
-import storage from '../lib/storage';
 import vmListenerHOC from '../lib/vm-listener-hoc.jsx';
 import vmManagerHOC from '../lib/vm-manager-hoc.jsx';
 import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
@@ -46,7 +45,8 @@ import GUIComponent from '../components/gui/gui.jsx';
 
 class GUI extends React.Component {
     componentDidMount () {
-        this.props.onStorageInit(storage);
+        this.props.onStorageInit(this.props.storage.scratchStorage);
+        this.props.storage.setProjectMetadata?.(this.props.projectId);
         this.props.onVmInit(this.props.vm);
         if (this.props.platform) {
             this.props.setPlatform(this.props.platform);
@@ -54,7 +54,10 @@ class GUI extends React.Component {
     }
     componentDidUpdate (prevProps) {
         if (this.props.projectId !== prevProps.projectId && this.props.projectId !== null) {
-            this.props.onUpdateProjectId(this.props.projectId);
+            if (this.props.projectId !== null) {
+                this.props.onUpdateProjectId(this.props.projectId);
+            }
+            this.props.storage.setProjectMetadata?.(this.props.projectId);
         }
         if (this.props.isShowingProject && !prevProps.isShowingProject) {
             // this only notifies container when a project changes from not yet loaded to loaded
@@ -124,7 +127,7 @@ GUI.propTypes = {
 };
 
 GUI.defaultProps = {
-    onStorageInit: storageInstance => storageInstance.addOfficialScratchWebStores(),
+    onStorageInit: () => {},
     onProjectLoaded: () => {},
     onUpdateProjectId: () => {},
     onVmInit: (/* vm */) => {}
@@ -133,6 +136,7 @@ GUI.defaultProps = {
 const mapStateToProps = (state, ownProps) => {
     const loadingState = state.scratchGui.projectState.loadingState;
     return {
+        storage: state.scratchGui.config.storage,
         activeTabIndex: state.scratchGui.editorTab.activeTabIndex,
         alertsVisible: state.scratchGui.alerts.visible,
         backdropLibraryVisible: state.scratchGui.modals.backdropLibrary,

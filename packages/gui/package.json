@@ -126,6 +126,7 @@
     "@typescript-eslint/eslint-plugin": "^8.50.1",
     "@typescript-eslint/parser": "^8.50.1",
     "@types/react-modal": "^3.16.3",
+    "@types/prop-types": "^15.7.15",
     "@babel/preset-typescript": "^7.28.5",
     "@commitlint/cli": "17.1.2",
     "@commitlint/config-conventional": "17.1.0",

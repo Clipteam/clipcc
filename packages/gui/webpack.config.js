@@ -116,6 +116,7 @@ const base = {
     optimization: {
         minimizer: [
             new TerserPlugin({
+                parallel: 2,
                 include: /\.min\.js$/
             })
         ]
@@ -232,7 +233,12 @@ module.exports = [
                 patterns: [
                     {
                         from: 'extension-worker.{js,js.map}',
-                        context: '../vm/dist/web'
+                        context: '../vm/dist/web',
+                        noErrorOnMissing: true
+                    }, {
+                        from: 'chunks/fetch-worker.*.{js,js.map}',
+                        context: '../storage/dist/web',
+                        noErrorOnMissing: true
                     }
                 ]
             })

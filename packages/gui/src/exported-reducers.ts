@@ -1,6 +1,6 @@
 import {ScratchPaintReducer} from 'clipcc-paint';
 import LocalesReducer, {localesInitialState, initLocale} from './reducers/locales.js';
-import GuiReducer, {guiInitialState, guiMiddleware, initEmbedded, initFullScreen, initPlayer} from './reducers/gui.js';
+import GuiReducer, {buildInitialState, guiMiddleware, initEmbedded, initFullScreen, initPlayer} from './reducers/gui.js';
 import {setFullScreen, setPlayer} from './reducers/mode.js';
 
 export const guiReducers = {
@@ -10,7 +10,7 @@ export const guiReducers = {
 };
 
 export {
-    guiInitialState,
+    buildInitialState,
     guiMiddleware,
     initEmbedded,
     initPlayer,

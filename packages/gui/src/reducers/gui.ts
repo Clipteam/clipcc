@@ -30,14 +30,16 @@ import vmStatusReducer, {vmStatusInitialState} from './vm-status';
 import workspaceMetricsReducer, {workspaceMetricsInitialState} from './workspace-metrics';
 import throttle from 'redux-throttle';
 
+import { GUIConfig } from '../gui-config.js';
 
 const guiMiddleware = compose(applyMiddleware(throttle(300, {leading: true, trailing: true})));
 
-const guiInitialState = {
+const buildInitialState = (config: GUIConfig) => ({
     alerts: alertsInitialState,
     assetDrag: assetDragInitialState,
     blockDrag: blockDragInitialState,
     colorPicker: colorPickerInitialState,
+    config,
     connectionModal: connectionModalInitialState,
     customProcedures: customProceduresInitialState,
     editorTab: editorTabInitialState,
@@ -60,10 +62,10 @@ const guiInitialState = {
     theme: themeInitialState,
     timeout: timeoutInitialState,
     toolbox: toolboxInitialState,
-    vm: vmInitialState,
+    vm: vmInitialState(config),
     vmStatus: vmStatusInitialState,
     workspaceMetrics: workspaceMetricsInitialState
-};
+});
 
 const initPlayer = function (currentState) {
     return Object.assign(
@@ -116,12 +118,19 @@ const initTelemetryModal = function (currentState) {
     );
 };
 
+const configReducer = function (state: GUIConfig, _action: unknown) {
+    if (typeof state === 'undefined') return null;
+
+    return state;
+};
+
 const guiReducer = combineReducers({
     alerts: alertsReducer,
     assetDrag: assetDragReducer,
     blockDrag: blockDragReducer,
     colorPicker: colorPickerReducer,
     connectionModal: connectionModalReducer,
+    config: configReducer,
     customProcedures: customProceduresReducer,
     editorTab: editorTabReducer,
     mode: modeReducer,
@@ -150,7 +159,7 @@ const guiReducer = combineReducers({
 
 export {
     guiReducer as default,
-    guiInitialState,
+    buildInitialState,
     guiMiddleware,
     initEmbedded,
     initFullScreen,

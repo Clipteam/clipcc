@@ -1,14 +1,14 @@
-import storage from './storage';
 import {inlineSvgFonts} from 'clipcc-svg-renderer';
 
 // Contains 'font-family', but doesn't only contain 'font-family="none"'
 const HAS_FONT_REGEXP = 'font-family(?!="none")';
 
 const getCostumeUrl = (function () {
+    // This caching looks very weird
     let cachedAssetId;
     let cachedUrl;
 
-    return function (asset) {
+    return function (scratchStorage, asset) {
 
         if (cachedAssetId === asset.assetId) {
             return cachedUrl;
@@ -18,7 +18,7 @@ const getCostumeUrl = (function () {
 
         // If the SVG refers to fonts, they must be inlined in order to display correctly in the img tag.
         // Avoid parsing the SVG when possible, since it's expensive.
-        if (asset.assetType === storage.AssetType.ImageVector) {
+        if (asset.assetType === scratchStorage.AssetType.ImageVector) {
             const svgString = asset.decodeText();
             if (svgString.match(HAS_FONT_REGEXP)) {
                 const svgText = inlineSvgFonts(svgString);

@@ -15,7 +15,6 @@ import DragConstants from '../lib/drag-constants';
 import DropAreaHOC from '../lib/drop-area-hoc.jsx';
 
 import {connect} from 'react-redux';
-import storage from '../lib/storage';
 import VM from 'clipcc-vm';
 
 const dragTypes = [DragConstants.COSTUME, DragConstants.SOUND, DragConstants.SPRITE];
@@ -28,7 +27,6 @@ class Backpack extends React.Component {
             'handleDrop',
             'handleToggle',
             'handleDelete',
-            'getBackpackAssetURL',
             'getContents',
             'handleMouseEnter',
             'handleMouseLeave',
@@ -50,14 +48,8 @@ class Backpack extends React.Component {
             contents: []
         };
 
-        // If a host is given, add it as a web source to the storage module
-        // TODO remove the hacky flag that prevents double adding
-        if (props.host && !storage._hasAddedBackpackSource) {
-            storage.addWebSource(
-                [storage.AssetType.ImageVector, storage.AssetType.ImageBitmap, storage.AssetType.Sound],
-                this.getBackpackAssetURL
-            );
-            storage._hasAddedBackpackSource = true;
+        if (props.host) {
+            props.storage.setBackpackHost?.(props.host);
         }
     }
     componentDidMount () {
@@ -67,9 +59,6 @@ class Backpack extends React.Component {
     componentWillUnmount () {
         this.props.vm.removeListener('BLOCK_DRAG_END', this.handleBlockDragEnd);
         this.props.vm.removeListener('BLOCK_DRAG_UPDATE', this.handleBlockDragUpdate);
-    }
-    getBackpackAssetURL (asset) {
-        return `${this.props.host}/${asset.assetId}.${asset.dataFormat}`;
     }
     handleToggle () {
         const newState = !this.state.expanded;
@@ -86,7 +75,7 @@ class Backpack extends React.Component {
         let presaveAsset = null;
         switch (dragInfo.dragType) {
         case DragConstants.COSTUME:
-            payloader = costumePayload;
+            payloader = costume => costumePayload(this.props.storage.scratchStorage, costume);
             presaveAsset = dragInfo.payload.asset;
             break;
         case DragConstants.SOUND:
@@ -262,6 +251,7 @@ const getTokenAndUsername = state => {
 
 const mapStateToProps = state => Object.assign(
     {
+        storage: state.scratchGui.config.storage,
         dragInfo: state.scratchGui.assetDrag,
         vm: state.scratchGui.vm,
         blockDrag: state.scratchGui.blockDrag

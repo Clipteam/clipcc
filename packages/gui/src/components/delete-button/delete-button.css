@@ -25,6 +25,10 @@
   transition: all 0.15s ease-out;
 }
 
+.delete-button-clicked {
+  background-color: var(--clipcc-data-primary);
+}
+
 .delete-icon {
     position: relative;
     margin: 0.25rem;

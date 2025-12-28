@@ -6,9 +6,10 @@ import popWav from '!!arraybuffer-loader!./83a9787d4cb6f3b7632b4ddfebf74367.wav'
 import backdrop from './cd21514d0531fdffb22204e0ec5ed84a.svg?raw';
 // import costume1 from './bcf454acf82e4504149f7ffe07081dbc.svg?raw';
 // import costume2 from './0fb9be3e8397c983338cb71dc84d0b25.svg?raw';
+import { TranslatorFunction } from '../../gui-config';
 /* eslint-enable import/no-unresolved */
 
-const defaultProject = translator => {
+const defaultProject = (translator: TranslatorFunction) => {
     let _TextEncoder;
     if (typeof TextEncoder === 'undefined') {
         _TextEncoder = require('fastestsmallesttextencoderdecoder').TextEncoder;

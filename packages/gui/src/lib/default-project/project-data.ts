@@ -1,17 +1,18 @@
 import projectDataMessages from './messages';
 import sharedMessages from '../shared-messages';
+import { MessageObject, TranslatorFunction } from '../../gui-config';
 
 const messages = {...projectDataMessages, ...sharedMessages};
 
 // use the default message if a translation function is not passed
-const defaultTranslator = msgObj => msgObj.defaultMessage;
+const defaultTranslator = (msgObj: MessageObject) => msgObj.defaultMessage;
 
 /**
  * Generate a localized version of the default project
  * @param {function} translateFunction a function to use for translating the default names
  * @return {object} the project data json for the default project
  */
-const projectData = translateFunction => {
+const projectData = (translateFunction?: TranslatorFunction) => {
     const translator = translateFunction || defaultTranslator;
     return ({
         targets: [
