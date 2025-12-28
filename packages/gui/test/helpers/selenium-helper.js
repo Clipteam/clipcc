@@ -44,13 +44,13 @@ class SeleniumHelper {
         return {
             blocksTab: "*[@id='react-tabs-1']",
             costumesTab: "*[@id='react-tabs-3']",
-            modal: '*[@class="ReactModalPortal"]',
-            reportedValue: '*[@class="blocklyDropDownContent"]',
+            modal: '*[contains(concat(" ", @class, " "), " ReactModalPortal ")]',
+            reportedValue: '*[contains(concat(" ", @class, " "), " blocklyDropDownContent ")]',
             soundsTab: "*[@id='react-tabs-5']",
-            spriteTile: '*[starts-with(@class,"react-contextmenu-wrapper")]',
-            menuBar: '*[contains(@class,"menu-bar_menu-bar_")]',
-            monitors: '*[starts-with(@class,"stage_monitor-wrapper")]',
-            contextMenu: '*[starts-with(@class,"react-contextmenu")]'
+            spriteTile: '*[contains(concat(" ", @class, " "), " react-contextmenu-wrapper ")]',
+            menuBar: '*[contains(concat(" ", @class), " menu-bar_menu-bar_")]',
+            monitors: '*[contains(concat(" ", @class), " stage_monitor-wrapper_")]',
+            contextMenu: '*[contains(concat(" ", @class, " "), " react-contextmenu ")]'
         };
     }
 
@@ -143,9 +143,9 @@ class SeleniumHelper {
         // out. First we wait for the block pane itself to appear, then wait 100ms for the toolbox to finish refreshing,
         // then finally click the toolbox text.
 
-        await this.findByXpath('//div[contains(@class, "blocks_blocks")]');
+        await this.findByXpath('//div[contains(concat(" ", @class), " blocks_blocks_")]');
         await this.driver.sleep(100);
-        await this.clickText(categoryText, 'div[contains(@class, "blocks_blocks")]');
+        await this.clickText(categoryText, 'div[contains(concat(" ", @class), " blocks_blocks_")]');
         await this.driver.sleep(500); // Wait for scroll to finish
     }
 

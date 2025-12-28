@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import omit from 'lodash.omit';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {defineMessages, FormattedMessage, injectIntl, intlShape} from 'react-intl';
 import {connect} from 'react-redux';
 import MediaQuery from 'react-responsive';
@@ -39,6 +39,8 @@ import addExtensionIcon from './icon--extensions.svg';
 import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
+import {setPlatform} from '../../reducers/platform.js';
+import {PLATFORM} from '../../lib/platform.js';
 
 const messages = defineMessages({
     addExtension: {
@@ -89,6 +91,7 @@ const GUIComponent = props => {
         isTelemetryEnabled,
         loading,
         logo,
+        manuallySaveThumbnails,
         renderLogin,
         onClickAbout,
         onClickAccountNav,
@@ -101,6 +104,9 @@ const GUIComponent = props => {
         onActivateTab,
         onClickLogo,
         onExtensionButtonClick,
+        onNewSpriteClick,
+        onNewLibraryCostumeClick,
+        onNewLibraryBackdropClick,
         onProjectTelemetryEvent,
         onRequestCloseBackdropLibrary,
         onRequestCloseCostumeLibrary,
@@ -113,6 +119,7 @@ const GUIComponent = props => {
         onTelemetryModalCancel,
         onTelemetryModalOptIn,
         onTelemetryModalOptOut,
+        onUpdateProjectThumbnail,
         settingsModalVisible,
         showComingSoon,
         soundsTabVisible,
@@ -120,14 +127,21 @@ const GUIComponent = props => {
         targetIsStage,
         telemetryModalVisible,
         theme,
+        useExternalPeripheralList,
         vm,
         stageWidth,
         stageHeight,
         ...componentProps
-    } = omit(props, 'dispatch');
+    } = omit(props, 'dispatch', 'setPlatform');
     if (children) {
         return <Box {...componentProps}>{children}</Box>;
     }
+
+    useEffect(() => {
+        if (props.platform) {
+            setPlatform(props.platform);
+        }
+    }, [props.platform]);
 
     const tabClassNames = {
         tabs: styles.tabs,
@@ -151,6 +165,7 @@ const GUIComponent = props => {
                 isRendererSupported={isRendererSupported}
                 isRtl={isRtl}
                 loading={loading}
+                onUpdateProjectThumbnail={onUpdateProjectThumbnail}
                 stageSize={STAGE_SIZE_MODES.large}
                 vm={vm}
                 stageWidth={stageWidth}
@@ -194,6 +209,7 @@ const GUIComponent = props => {
                 ) : null}
                 {connectionModalVisible ? (
                     <ConnectionModal
+                        useExternalPeripheralList={useExternalPeripheralList}
                         vm={vm}
                     />
                 ) : null}
@@ -334,7 +350,11 @@ const GUIComponent = props => {
                                     </Box>
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
-                                    {costumesTabVisible ? <CostumeTab vm={vm} /> : null}
+                                    {costumesTabVisible ? <CostumeTab
+                                        vm={vm}
+                                        onNewLibraryBackdropClick={onNewLibraryBackdropClick}
+                                        onNewLibraryCostumeClick={onNewLibraryCostumeClick}
+                                    /> : null}
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     {soundsTabVisible ? <SoundTab vm={vm} /> : null}
@@ -359,6 +379,8 @@ const GUIComponent = props => {
                                 <TargetPane
                                     stageSize={stageSize}
                                     vm={vm}
+                                    onNewSpriteClick={onNewSpriteClick}
+                                    onNewBackdropClick={onNewLibraryBackdropClick}
                                 />
                             </Box>
                         </Box>
@@ -411,6 +433,8 @@ GUIComponent.propTypes = {
     onCloseAccountNav: PropTypes.func,
     onExtensionButtonClick: PropTypes.func,
     onLogOut: PropTypes.func,
+    onNewSpriteClick: PropTypes.func,
+    onNewLibraryCostumeClick: PropTypes.func,
     onOpenRegistration: PropTypes.func,
     onRequestCloseBackdropLibrary: PropTypes.func,
     onRequestCloseCostumeLibrary: PropTypes.func,
@@ -425,14 +449,18 @@ GUIComponent.propTypes = {
     onTelemetryModalOptIn: PropTypes.func,
     onTelemetryModalOptOut: PropTypes.func,
     onToggleLoginOpen: PropTypes.func,
+    onUpdateProjectThumbnail: PropTypes.func,
+    platform: PropTypes.oneOf(Object.keys(PLATFORM)),
     renderLogin: PropTypes.func,
     settingsModalVisible: PropTypes.bool,
     showComingSoon: PropTypes.bool,
     soundsTabVisible: PropTypes.bool,
     stageSizeMode: PropTypes.oneOf(Object.keys(STAGE_SIZE_MODES)),
+    setPlatform: PropTypes.func,
     targetIsStage: PropTypes.bool,
     telemetryModalVisible: PropTypes.bool,
     theme: PropTypes.string,
+    useExternalPeripheralList: PropTypes.bool, // true for CDM, false for normal Scratch Link
     vm: PropTypes.instanceOf(VM).isRequired
 };
 GUIComponent.defaultProps = {
@@ -454,7 +482,8 @@ GUIComponent.defaultProps = {
     isShared: false,
     loading: false,
     showComingSoon: false,
-    stageSizeMode: STAGE_SIZE_MODES.large
+    stageSizeMode: STAGE_SIZE_MODES.large,
+    useExternalPeripheralList: false
 };
 
 const mapStateToProps = state => ({
@@ -465,6 +494,11 @@ const mapStateToProps = state => ({
     stageHeight: state.scratchGui.settings.stageHeight
 });
 
+const mapDispatchToProps = dispatch => ({
+    setPlatform: platform => dispatch(setPlatform(platform))
+});
+
 export default injectIntl(connect(
-    mapStateToProps
+    mapStateToProps,
+    mapDispatchToProps
 )(GUIComponent));

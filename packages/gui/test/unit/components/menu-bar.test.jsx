@@ -6,6 +6,8 @@ import {menuInitialState} from '../../../src/reducers/menus';
 import {LoadingState} from '../../../src/reducers/project-state';
 import {DEFAULT_THEME} from '../../../src/lib/themes';
 
+import {PLATFORM} from '../../../src/lib/platform';
+
 import configureStore from 'redux-mock-store';
 import {Provider} from 'react-redux';
 import VM from 'clipcc-vm';
@@ -27,7 +29,10 @@ describe('MenuBar Component', () => {
             timeTravel: {
                 year: 'NOW'
             },
-            vm: new VM()
+            vm: new VM(),
+            platform: {
+                platform: PLATFORM.WEB
+            }
         }
     });
 

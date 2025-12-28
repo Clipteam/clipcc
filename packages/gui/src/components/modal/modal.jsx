@@ -17,7 +17,9 @@ const ModalComponent = props => (
     <ReactModal
         isOpen
         className={classNames(styles.modalContent, props.className, {
-            [styles.fullScreen]: props.fullScreen
+            [styles.fullScreen]: props.fullScreen,
+            // Used by scratch-platorm to distinguish between editor modals and other modals
+            'scratch-editor-modal': true
         })}
         contentLabel={props.contentLabel}
         overlayClassName={styles.modalOverlay}

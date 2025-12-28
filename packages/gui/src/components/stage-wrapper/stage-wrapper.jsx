@@ -17,6 +17,8 @@ const StageWrapperComponent = function (props) {
         isRtl,
         isRendererSupported,
         loading,
+        manuallySaveThumbnails,
+        onUpdateProjectThumbnail,
         stageSize,
         vm,
         stageWidth,
@@ -33,6 +35,8 @@ const StageWrapperComponent = function (props) {
         >
             <Box className={styles.stageMenuWrapper}>
                 <StageHeader
+                    manuallySaveThumbnails={manuallySaveThumbnails}
+                    onUpdateProjectThumbnail={onUpdateProjectThumbnail}
                     stageSize={stageSize}
                     vm={vm}
                     stageWidth={stageWidth}
@@ -63,6 +67,8 @@ StageWrapperComponent.propTypes = {
     isRendererSupported: PropTypes.bool.isRequired,
     isRtl: PropTypes.bool.isRequired,
     loading: PropTypes.bool,
+    manuallySaveThumbnails: PropTypes.bool,
+    onUpdateProjectThumbnail: PropTypes.func,
     stageSize: PropTypes.oneOf(Object.keys(STAGE_DISPLAY_SIZES)).isRequired,
     vm: PropTypes.instanceOf(VM).isRequired
 };

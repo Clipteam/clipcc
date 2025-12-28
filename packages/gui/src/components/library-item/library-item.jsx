@@ -1,8 +1,10 @@
 import {FormattedMessage} from 'react-intl';
 import PropTypes from 'prop-types';
+import bindAll from 'lodash.bindall';
 import React from 'react';
 
 import Box from '../box/box.jsx';
+import ScratchImage from '../scratch-image/scratch-image.jsx';
 import PlayButton from '../../containers/play-button.jsx';
 import styles from './library-item.css';
 import classNames from 'classnames';
@@ -10,8 +12,37 @@ import classNames from 'classnames';
 import bluetoothIconURL from './bluetooth.svg';
 import internetConnectionIconURL from './internet-connection.svg';
 
+import {PLATFORM} from '../../lib/platform.js';
+
 /* eslint-disable react/prefer-stateless-function */
 class LibraryItemComponent extends React.PureComponent {
+    constructor (props) {
+        super(props);
+        bindAll(this, [
+            'renderImage'
+        ]);
+    }
+    renderImage (className, imageSource) {
+        // Scratch Android and Scratch Desktop assume the user is offline and has
+        // local access to the image assets. In those cases we use the `ScratchImage`
+        // component which loads the local assets by using a queue. In Scratch Web
+        // we don't have the assets locally and want to directly download them from
+        // the assets service.
+        // TODO: Abstract this logic in the `ScratchImage` component itself.
+        const url = imageSource.uri ?? imageSource.assetServiceUri;
+
+        if (this.props.platform === PLATFORM.ANDROID ||
+            this.props.platform === PLATFORM.DESKTOP) {
+            return (<ScratchImage
+                className={className}
+                imageSource={imageSource}
+            />);
+        }
+        return (<img
+            className={className}
+            src={url}
+        />);
+    }
     render () {
         return this.props.featured ? (
             <div
@@ -36,10 +67,9 @@ class LibraryItemComponent extends React.PureComponent {
                             />
                         </div>
                     ) : null}
-                    <img
-                        className={styles.featuredImage}
-                        src={this.props.iconURL}
-                    />
+                    {this.props.iconSource ? (
+                        this.renderImage(styles.featuredImage, this.props.iconSource)
+                    ) : null}
                 </div>
                 {this.props.insetIconURL ? (
                     <div className={styles.libraryItemInsetImageContainer}>
@@ -127,10 +157,7 @@ class LibraryItemComponent extends React.PureComponent {
                         onMouseEnter={this.props.showPlayButton ? this.props.onMouseEnter : null}
                         onMouseLeave={this.props.showPlayButton ? this.props.onMouseLeave : null}
                     >
-                        <img
-                            className={styles.libraryItemImage}
-                            src={this.props.iconURL}
-                        />
+                        {this.renderImage(styles.libraryItemImage, this.props.iconSource)}
                     </Box>
                 </Box>
                 <span className={styles.libraryItemName}>{this.props.name}</span>
@@ -159,7 +186,7 @@ LibraryItemComponent.propTypes = {
     extensionId: PropTypes.string,
     featured: PropTypes.bool,
     hidden: PropTypes.bool,
-    iconURL: PropTypes.string,
+    iconSource: ScratchImage.ImageSourcePropType,
     insetIconURL: PropTypes.string,
     internetConnectionRequired: PropTypes.bool,
     isPlaying: PropTypes.bool,
@@ -175,6 +202,7 @@ LibraryItemComponent.propTypes = {
     onMouseLeave: PropTypes.func.isRequired,
     onPlay: PropTypes.func.isRequired,
     onStop: PropTypes.func.isRequired,
+    platform: PropTypes.oneOf(Object.keys(PLATFORM)),
     showPlayButton: PropTypes.bool
 };
 

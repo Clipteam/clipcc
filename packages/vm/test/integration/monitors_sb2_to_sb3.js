@@ -4,40 +4,25 @@ const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/index');
 
-let vm;
+const projectUri = path.resolve(__dirname, '../fixtures/monitors.sb2');
+const project = readFileToBuffer(projectUri);
 
-tap.beforeEach(() => {
-    const projectUri = path.resolve(__dirname, '../fixtures/monitors.sb2');
-    const project = readFileToBuffer(projectUri);
-
-    vm = new VirtualMachine();
-    vm.attachStorage(makeTestStorage());
-
-    // TODO figure out why running threads doesn't work in this test
-    // vm.start();
-    vm.clear();
-    vm.setCompatibilityMode(false);
-    vm.setTurboMode(false);
-
-    return vm.loadProject(project);
-});
 const test = tap.test;
 
 test('saving and loading sb2 project with monitors preserves sliderMin and sliderMax', t => {
+    const vm = new VirtualMachine();
+    vm.attachStorage(makeTestStorage());
 
     vm.on('playgroundData', e /* eslint-disable-line no-unused-vars */ => {
-        // TODO related to above TODO, comment these back in when we figure out
-        // why running threads doesn't work with this test
-
-        // const threads = JSON.parse(e.threads);
+        const threads = JSON.parse(e.threads);
         // All monitors should create threads that finish during the step and
         // are revoved from runtime.threads.
-        // t.equal(threads.length, 0);
+        t.equal(threads.length, 0);
 
         // we care that the last step updated the right number of monitors
         // we don't care whether the last step ran other threads or not
-        // const lastStepUpdatedMonitorThreads = vm.runtime._lastStepDoneThreads.filter(thread => thread.updateMonitor);
-        // t.equal(lastStepUpdatedMonitorThreads.length, 8);
+        const lastStepUpdatedMonitorThreads = vm.runtime._lastStepDoneThreads.filter(thread => thread.updateMonitor);
+        t.equal(lastStepUpdatedMonitorThreads.length, 8);
 
         // There should be one additional hidden monitor that is in the monitorState but
         // does not start a thread.
@@ -139,13 +124,18 @@ test('saving and loading sb2 project with monitors preserves sliderMin and slide
         t.equal(monitorRecord.spriteName, null);
         t.equal(monitorRecord.targetId, null);
 
+        vm.quit();
         t.end();
     });
 
     // Start VM, load project, and run
     t.doesNotThrow(() => {
-        const sb3ProjectJson = vm.toJSON();
-        return vm.loadProject(sb3ProjectJson).then(() => {
+        vm.start();
+        vm.clear();
+        vm.setCompatibilityMode(false);
+        vm.setTurboMode(false);
+        return vm.loadProject(project).then(() => {
+            vm.greenFlag();
             setTimeout(() => {
                 vm.getPlaygroundData();
                 vm.stopAll();

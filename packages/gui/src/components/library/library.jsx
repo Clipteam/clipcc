@@ -9,6 +9,7 @@ import Modal from '../../containers/modal.jsx';
 import Divider from '../divider/divider.jsx';
 import Filter from '../filter/filter.jsx';
 import TagButton from '../../containers/tag-button.jsx';
+import storage from '../../lib/storage';
 import Spinner from '../spinner/spinner.jsx';
 
 import styles from './library.css';
@@ -28,6 +29,63 @@ const messages = defineMessages({
 
 const ALL_TAG = {tag: 'all', intlLabel: messages.allTag};
 const tagListPrefix = [ALL_TAG];
+
+/**
+ * Find the AssetType which corresponds to a particular file extension. For example, 'png' => AssetType.ImageBitmap.
+ * @param {string} fileExtension - the file extension to look up.
+ * @returns {AssetType} - the AssetType corresponding to the extension, if any.
+ */
+const getAssetTypeForFileExtension = function (fileExtension) {
+    const compareOptions = {
+        sensitivity: 'accent',
+        usage: 'search'
+    };
+    for (const assetTypeId in storage.AssetType) {
+        const assetType = storage.AssetType[assetTypeId];
+        if (fileExtension.localeCompare(assetType.runtimeFormat, compareOptions) === 0) {
+            return assetType;
+        }
+    }
+};
+
+/**
+ * Figure out one or more icon(s) for a library item.
+ * If it's an animated thumbnail, this will return an array of `imageSource`.
+ * Otherwise it'll return just one `imageSource`.
+ * @param {object} item - either a library item or one of a library item's costumes.
+ *   The latter is used internally as part of processing an animated thumbnail.
+ * @returns {LibraryItem.PropTypes.icons} - an `imageSource` or array of them
+ */
+const getItemIcons = function (item) {
+    const costumes = (item.json && item.json.costumes) || item.costumes;
+    if (costumes) {
+        return costumes.map(getItemIcons);
+    }
+
+    if (item.rawURL) {
+        return {
+            uri: item.rawURL
+        };
+    }
+
+    if (item.assetId && item.dataFormat) {
+        return {
+            assetId: item.assetId,
+            assetType: getAssetTypeForFileExtension(item.dataFormat),
+            assetServiceUri: `https://cdn.assets.scratch.mit.edu/internalapi/asset/${item.assetId}.${item.dataFormat}/get/`
+        };
+    }
+
+    const md5ext = item.md5ext || item.md5 || item.baseLayerMD5;
+    if (md5ext) {
+        const [assetId, fileExtension] = md5ext.split('.');
+        return {
+            assetId: assetId,
+            assetType: getAssetTypeForFileExtension(fileExtension),
+            assetServiceUri: `https://cdn.assets.scratch.mit.edu/internalapi/asset/${md5ext}/get/`
+        };
+    }
+};
 
 class LibraryComponent extends React.Component {
     constructor (props) {
@@ -65,7 +123,8 @@ class LibraryComponent extends React.Component {
     }
     handleSelect (id) {
         this.handleClose();
-        this.props.onItemSelected(this.getFilteredData()[id]);
+        this.props.onItemSelected(this.getFilteredData()
+            .find(item => this.constructKey(item) === id));
     }
     handleClose () {
         this.props.onRequestClose();
@@ -77,7 +136,8 @@ class LibraryComponent extends React.Component {
                 selectedTag: tag.toLowerCase()
             });
         } else {
-            this.props.onItemMouseLeave(this.getFilteredData()[[this.state.playingItem]]);
+            this.props.onItemMouseLeave((this.getFilteredData()
+                .find(item => this.constructKey(item) === this.state.playingItem)));
             this.setState({
                 filterQuery: '',
                 playingItem: null,
@@ -88,7 +148,8 @@ class LibraryComponent extends React.Component {
     handleMouseEnter (id) {
         // don't restart if mouse over already playing item
         if (this.props.onItemMouseEnter && this.state.playingItem !== id) {
-            this.props.onItemMouseEnter(this.getFilteredData()[id]);
+            this.props.onItemMouseEnter(this.getFilteredData()
+                .find(item => this.constructKey(item) === id));
             this.setState({
                 playingItem: id
             });
@@ -96,7 +157,8 @@ class LibraryComponent extends React.Component {
     }
     handleMouseLeave (id) {
         if (this.props.onItemMouseLeave) {
-            this.props.onItemMouseLeave(this.getFilteredData()[id]);
+            this.props.onItemMouseLeave(this.getFilteredData()
+                .find(item => this.constructKey(item) === id));
             this.setState({
                 playingItem: null
             });
@@ -116,7 +178,8 @@ class LibraryComponent extends React.Component {
                 selectedTag: ALL_TAG.tag
             });
         } else {
-            this.props.onItemMouseLeave(this.getFilteredData()[[this.state.playingItem]]);
+            this.props.onItemMouseLeave(this.getFilteredData()
+                .find(item => this.constructKey(item) === this.state.playingItem));
             this.setState({
                 filterQuery: event.target.value,
                 playingItem: null,
@@ -128,7 +191,7 @@ class LibraryComponent extends React.Component {
         this.setState({filterQuery: ''});
     }
     getFilteredData () {
-        if (this.state.selectedTag === 'all') {
+        if (this.state.selectedTag === ALL_TAG.tag) {
             if (!this.state.filterQuery) return this.props.data;
             return this.props.data.filter(dataItem => (
                 (dataItem.tags || [])
@@ -151,11 +214,71 @@ class LibraryComponent extends React.Component {
                 .indexOf(this.state.selectedTag) !== -1
         ));
     }
+    constructKey (data) {
+        return typeof data.name === 'string' ? data.name : data.rawURL;
+    }
     scrollToTop () {
         this.filteredDataRef.scrollTop = 0;
     }
     setFilteredDataRef (ref) {
         this.filteredDataRef = ref;
+    }
+    renderElement (data) {
+        const key = this.constructKey(data);
+        const icons = getItemIcons(data);
+        return (<LibraryItem
+            bluetoothRequired={data.bluetoothRequired}
+            collaborator={data.collaborator}
+            description={data.description}
+            disabled={data.disabled}
+            extensionId={data.extensionId}
+            featured={data.featured}
+            hidden={data.hidden}
+            icons={icons}
+            id={key}
+            insetIconURL={data.insetIconURL}
+            internetConnectionRequired={data.internetConnectionRequired}
+            isPlaying={this.state.playingItem === key}
+            key={key}
+            name={data.name}
+            showPlayButton={this.props.showPlayButton}
+            onMouseEnter={this.handleMouseEnter}
+            onMouseLeave={this.handleMouseLeave}
+            onSelect={this.handleSelect}
+        />);
+    }
+    renderData (data) {
+        if (this.state.selectedTag !== ALL_TAG.tag || !this.props.withCategories) {
+            return data.map(item => this.renderElement(item));
+        }
+
+        // Object.groupBy is not available on older versions of javascript
+        const dataByCategory = data.reduce((acc, el) => {
+            acc[el.category] = acc[el.category] || [];
+            acc[el.category].push(el);
+            return acc;
+        }, {});
+        const categoriesOrder = Object.values(CATEGORIES);
+
+        return Object.entries(dataByCategory)
+            .sort(([key1], [key2]) => categoriesOrder.indexOf(key1) - categoriesOrder.indexOf(key2))
+            .map(([key, values]) =>
+                (<div
+                    key={key}
+                    className={styles.libraryCategory}
+                >
+                    {key === 'undefined' ?
+                        null :
+                        <span className={styles.libraryCategoryTitle}>
+                            {this.props.intl.formatMessage(messages[key])}
+                        </span>
+                    }
+                    <div
+                        className={styles.libraryCategoryItems}
+                    >
+                        {values.map(item => this.renderElement(item))}
+                    </div>
+                </div>));
     }
     render () {
         return (
@@ -208,30 +331,7 @@ class LibraryComponent extends React.Component {
                     })}
                     ref={this.setFilteredDataRef}
                 >
-                    {this.state.loaded ? this.getFilteredData().map((dataItem, index) => (
-                        <LibraryItem
-                            bluetoothRequired={dataItem.bluetoothRequired}
-                            collaborator={dataItem.collaborator}
-                            description={dataItem.description}
-                            disabled={dataItem.disabled}
-                            extensionId={dataItem.extensionId}
-                            featured={dataItem.featured}
-                            hidden={dataItem.hidden}
-                            iconMd5={dataItem.costumes ? dataItem.costumes[0].md5ext : dataItem.md5ext}
-                            iconRawURL={dataItem.rawURL}
-                            icons={dataItem.costumes}
-                            id={index}
-                            insetIconURL={dataItem.insetIconURL}
-                            internetConnectionRequired={dataItem.internetConnectionRequired}
-                            isPlaying={this.state.playingItem === index}
-                            key={typeof dataItem.name === 'string' ? dataItem.name : dataItem.rawURL}
-                            name={dataItem.name}
-                            showPlayButton={this.props.showPlayButton}
-                            onMouseEnter={this.handleMouseEnter}
-                            onMouseLeave={this.handleMouseLeave}
-                            onSelect={this.handleSelect}
-                        />
-                    )) : (
+                    {this.state.loaded ? this.renderData(this.getFilteredData()) : (
                         <div className={styles.spinnerWrapper}>
                             <Spinner
                                 large
@@ -261,6 +361,7 @@ LibraryComponent.propTypes = {
         /* eslint-enable react/no-unused-prop-types, lines-around-comment */
     ),
     filterable: PropTypes.bool,
+    withCategories: PropTypes.bool,
     id: PropTypes.string.isRequired,
     intl: intlShape.isRequired,
     onItemMouseEnter: PropTypes.func,

@@ -1,5 +1,6 @@
 const SET_FULL_SCREEN = 'scratch-gui/mode/SET_FULL_SCREEN';
 const SET_PLAYER = 'scratch-gui/mode/SET_PLAYER';
+const SET_EMBEDDED = 'scratch-gui/mode/SET_EMBEDDED';
 
 const initialState = {
     showBranding: false,
@@ -20,6 +21,16 @@ const reducer = function (state, action) {
             isPlayerOnly: action.isPlayerOnly,
             hasEverEnteredEditor: state.hasEverEnteredEditor || !action.isPlayerOnly
         });
+    case SET_EMBEDDED:
+        if (action.isEmbedded) {
+            return Object.assign({}, state, {
+                showBranding: true,
+                isFullScreen: true,
+                isPlayerOnly: true,
+                hasEverEnteredEditor: false
+            });
+        }
+        return state;
     default:
         return state;
     }
@@ -37,10 +48,17 @@ const setPlayer = function (isPlayerOnly) {
         isPlayerOnly: isPlayerOnly
     };
 };
+const setEmbedded = function (isEmbedded) {
+    return {
+        type: SET_EMBEDDED,
+        isEmbedded: isEmbedded
+    };
+};
 
 export {
     reducer as default,
     initialState as modeInitialState,
     setFullScreen,
-    setPlayer
+    setPlayer,
+    setEmbedded
 };

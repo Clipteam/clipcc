@@ -82,3 +82,23 @@
 [dir="rtl"] .stage-button-icon {
     transform: scaleX(-1);
 }
+
+.rightSection {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: transparent;
+
+    .setThumbnailButton {
+        padding: 0.625rem 0.75rem;
+        font-size: 0.75rem;
+        line-height: 0.875rem;
+        color: var(--clipcc-ui-white);
+        background-color: var(--clipcc-motion-primary);
+    }
+
+    .setThumbnailButton:active {
+        filter: brightness(90%);
+    }
+}

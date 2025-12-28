@@ -65,6 +65,7 @@ import {
 } from '../../reducers/menus';
 
 import collectMetadata from '../../lib/collect-metadata';
+import {PLATFORM} from '../../lib/platform';
 
 import styles from './menu-bar.css';
 
@@ -78,17 +79,13 @@ import editIcon from './icon--edit.svg';
 import aboutIcon from './icon--about.svg';
 
 // import scratchLogo from './scratch-logo.svg';
+import scratchLogoAndroid from './scratch-logo-android.svg';
 import clipccLogo from './clipcc-logo-white.svg';
 
 import sharedMessages from '../../lib/shared-messages';
 
-const ariaMessages = defineMessages({
-    tutorials: {
-        id: 'gui.menuBar.tutorialsLibrary',
-        defaultMessage: 'Tutorials',
-        description: 'accessibility text for the tutorials button'
-    }
-});
+
+const getScratchLogo = platform => (platform === PLATFORM.ANDROID ? scratchLogoAndroid : clipccLogo);
 
 const MenuBarItemTooltip = ({
     children,
@@ -389,7 +386,7 @@ class MenuBar extends React.Component {
                                     [styles.clickable]: typeof this.props.onClickLogo !== 'undefined'
                                 })}
                                 draggable={false}
-                                src={this.props.logo}
+                                src={getScratchLogo(this.props.platform)}
                                 onClick={this.props.onClickLogo}
                             />
                         </div>
@@ -801,6 +798,7 @@ MenuBar.propTypes = {
     onShare: PropTypes.func,
     onStartSelectingFileUpload: PropTypes.func,
     onToggleLoginOpen: PropTypes.func,
+    platform: PropTypes.oneOf(Object.keys(PLATFORM)),
     projectTitle: PropTypes.string,
     renderLogin: PropTypes.func,
     sessionExists: PropTypes.bool,
@@ -831,6 +829,7 @@ const mapStateToProps = (state, ownProps) => {
         isShowingProject: getIsShowingProject(loadingState),
         locale: state.locales.locale,
         loginMenuOpen: loginMenuOpen(state),
+        platform: state.scratchGui.platform.platform,
         projectTitle: state.scratchGui.projectTitle,
         sessionExists: state.session && typeof state.session.session !== 'undefined',
         settingsMenuOpen: settingsMenuOpen(state),

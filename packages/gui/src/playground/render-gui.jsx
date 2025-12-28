@@ -6,6 +6,7 @@ import AppStateHOC from '../lib/app-state-hoc.jsx';
 import GUI from '../containers/gui.jsx';
 import HashParserHOC from '../lib/hash-parser-hoc.jsx';
 import log from '../lib/log.js';
+import {PLATFORM} from '../lib/platform.js';
 
 const onClickLogo = () => {
     // window.location = 'https://scratch.mit.edu';
@@ -66,7 +67,7 @@ export default appTarget => {
         simulateScratchDesktop ?
             <WrappedGui
                 canEditTitle
-                isScratchDesktop
+                platform={PLATFORM.DESKTOP}
                 showTelemetryModal
                 canSave={false}
                 onTelemetryModalCancel={handleTelemetryModalCancel}

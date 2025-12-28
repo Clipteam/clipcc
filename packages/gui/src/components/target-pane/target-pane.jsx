@@ -27,6 +27,7 @@ const TargetPane = ({
     onChangeSpriteRotationStyle,
     onChangeSpriteSize,
     onChangeSpriteVisibility,
+
     onChangeSpriteX,
     onChangeSpriteY,
     onDeleteSprite,
@@ -34,6 +35,7 @@ const TargetPane = ({
     onDuplicateSprite,
     onExportSprite,
     onFileUploadClick,
+    onNewBackdropClick,
     onNewSpriteClick,
     onPaintSpriteClick,
     onRequestCloseSpriteLibrary,
@@ -88,6 +90,7 @@ const TargetPane = ({
                 id={stage.id}
                 selected={stage.id === editingTarget}
                 onSelect={onSelectSprite}
+                onNewBackdropClick={onNewBackdropClick}
             />}
             <div>
                 {spriteLibraryVisible ? (
@@ -108,8 +111,6 @@ const spriteShape = PropTypes.shape({
         asset: PropTypes.object, // eslint-disable-line react/forbid-prop-types
         url: PropTypes.string,
         name: PropTypes.string.isRequired,
-        // The following are optional because costumes uploaded from disk
-        // will not have these properties available
         bitmapResolution: PropTypes.number,
         rotationCenterX: PropTypes.number,
         rotationCenterY: PropTypes.number
@@ -146,6 +147,7 @@ TargetPane.propTypes = {
     onDuplicateSprite: PropTypes.func,
     onExportSprite: PropTypes.func,
     onFileUploadClick: PropTypes.func,
+    onNewBackdropClick: PropTypes.func,
     onNewSpriteClick: PropTypes.func,
     onPaintSpriteClick: PropTypes.func,
     onRequestCloseExtensionLibrary: PropTypes.func,

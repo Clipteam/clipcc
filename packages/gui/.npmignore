@@ -6,7 +6,7 @@
 npm-*
 
 # Double copies of all the static assets and tutorial gifs
-/src
+# /src
 
 # Testing
 /.tap

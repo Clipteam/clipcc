@@ -42,6 +42,7 @@ class TargetPane extends React.Component {
             'handleDuplicateSprite',
             'handleExportSprite',
             'handleNewSprite',
+            'handleNewSpriteClick',
             'handleSelectSprite',
             'handleSurpriseSpriteClick',
             'handlePaintSpriteClick',
@@ -129,6 +130,10 @@ class TargetPane extends React.Component {
     }
     handleActivateBlocksTab () {
         this.props.onActivateTab(BLOCKS_TAB_INDEX);
+    }
+    handleNewSpriteClick (e) {
+        e.preventDefault();
+        this.props.onNewSpriteClick(this.handleNewSprite);
     }
     handleNewSprite (spriteJSONString) {
         return this.props.vm.addSprite(spriteJSONString)
@@ -236,13 +241,14 @@ class TargetPane extends React.Component {
     render () {
         /* eslint-disable no-unused-vars */
         const {
-            dispatchUpdateRestore,
+            dispatchUpdateRestore, // eslint-disable-line no-unused-vars
             isRtl,
-            onActivateTab,
-            onCloseImporting,
-            onHighlightTarget,
-            onReceivedBlocks,
-            onShowImporting,
+            onActivateTab, // eslint-disable-line no-unused-vars
+            onCloseImporting, // eslint-disable-line no-unused-vars
+            onHighlightTarget, // eslint-disable-line no-unused-vars
+            onNewSpriteClick, // eslint-disable-line no-unused-vars
+            onReceivedBlocks, // eslint-disable-line no-unused-vars
+            onShowImporting, // eslint-disable-line no-unused-vars
             workspaceMetrics,
             ...componentProps
         } = this.props;
@@ -268,6 +274,7 @@ class TargetPane extends React.Component {
                 onSelectSprite={this.handleSelectSprite}
                 onSpriteUpload={this.handleSpriteUpload}
                 onSurpriseSpriteClick={this.handleSurpriseSpriteClick}
+                onNewSpriteClick={this.handleNewSpriteClick}
             />
         );
     }
@@ -298,8 +305,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    onNewSpriteClick: e => {
-        e.preventDefault();
+    onNewSpriteClick: () => {
         dispatch(openSpriteLibrary());
     },
     onRequestCloseSpriteLibrary: () => {
@@ -321,7 +327,15 @@ const mapDispatchToProps = dispatch => ({
     onShowImporting: () => dispatch(showStandardAlert('importingAsset'))
 });
 
+const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+    ...ownProps,
+    ...stateProps,
+    ...dispatchProps,
+    onNewSpriteClick: ownProps.onNewSpriteClick || dispatchProps.onNewSpriteClick
+});
+
 export default injectIntl(connect(
     mapStateToProps,
-    mapDispatchToProps
+    mapDispatchToProps,
+    mergeProps
 )(TargetPane));

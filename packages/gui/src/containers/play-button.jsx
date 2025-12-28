@@ -19,7 +19,7 @@ class PlayButton extends React.Component {
             touchStarted: false
         };
     }
-    getDerivedStateFromProps (props, state) {
+    static getDerivedStateFromProps (props, state) {
         // if touchStarted is true and it's not playing, the sound must have ended.
         // reset the touchStarted state to allow the sound to be replayed
         if (state.touchStarted && !props.isPlaying) {

@@ -81,7 +81,9 @@ class CostumeTab extends React.Component {
             'handleDuplicateCostume',
             'handleExportCostume',
             'handleNewCostume',
+            'handleNewBackdropClick',
             'handleNewBlankCostume',
+            'handleNewCostumeClick',
             'handleSurpriseCostume',
             'handleSurpriseBackdrop',
             'handleFileUploadClick',
@@ -160,6 +162,20 @@ class CostumeTab extends React.Component {
             // if making new costume takes a while
             return this.props.vm.addCostume(c.md5, c, targetId);
         }));
+    }
+    handleNewBackdropClick (e) {
+        e.preventDefault();
+        this.props.onNewLibraryBackdropClick(jsonStr => {
+            const costume = JSON.parse(jsonStr);
+            this.handleNewCostume(costume, true);
+        });
+    }
+    handleNewCostumeClick (e) {
+        e.preventDefault();
+        this.props.onNewLibraryCostumeClick(jsonStr => {
+            const costume = JSON.parse(jsonStr);
+            this.handleNewCostume(costume, true);
+        });
     }
     handleNewBlankCostume () {
         const name = this.props.vm.editingTarget.isStage ?
@@ -246,8 +262,6 @@ class CostumeTab extends React.Component {
             dispatchUpdateRestore, // eslint-disable-line no-unused-vars
             intl,
             isRtl,
-            onNewLibraryBackdropClick,
-            onNewLibraryCostumeClick,
             vm
         } = this.props;
 
@@ -261,7 +275,7 @@ class CostumeTab extends React.Component {
         const addLibraryMessage = isStage ? messages.addLibraryBackdropMsg : messages.addLibraryCostumeMsg;
         const addFileMessage = isStage ? messages.addFileBackdropMsg : messages.addFileCostumeMsg;
         const addSurpriseFunc = isStage ? this.handleSurpriseBackdrop : this.handleSurpriseCostume;
-        const addLibraryFunc = isStage ? onNewLibraryBackdropClick : onNewLibraryCostumeClick;
+        const addLibraryFunc = isStage ? this.handleNewBackdropClick : this.handleNewCostumeClick;
         const addLibraryIcon = isStage ? addLibraryBackdropIcon : addLibraryCostumeIcon;
 
         const costumeData = target.costumes ? target.costumes.map(costume => ({
@@ -362,12 +376,10 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     onActivateSoundsTab: () => dispatch(activateTab(SOUNDS_TAB_INDEX)),
-    onNewLibraryBackdropClick: e => {
-        e.preventDefault();
+    onNewLibraryBackdropClick: () => {
         dispatch(openBackdropLibrary());
     },
-    onNewLibraryCostumeClick: e => {
-        e.preventDefault();
+    onNewLibraryCostumeClick: () => {
         dispatch(openCostumeLibrary());
     },
     dispatchUpdateRestore: restoreState => {
@@ -377,9 +389,18 @@ const mapDispatchToProps = dispatch => ({
     onShowImporting: () => dispatch(showStandardAlert('importingAsset'))
 });
 
+const mergeProps = (stateProps, dispatchProps, ownProps) => ({
+    ...ownProps,
+    ...stateProps,
+    ...dispatchProps,
+    onNewLibraryCostumeClick: ownProps.onNewLibraryCostumeClick || dispatchProps.onNewLibraryCostumeClick,
+    onNewLibraryBackdropClick: ownProps.onNewLibraryBackdropClick || dispatchProps.onNewLibraryBackdropClick
+});
+
 export default errorBoundaryHOC('Costume Tab')(
     injectIntl(connect(
         mapStateToProps,
-        mapDispatchToProps
+        mapDispatchToProps,
+        mergeProps
     )(CostumeTab))
 );

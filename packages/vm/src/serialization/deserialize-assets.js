@@ -1,5 +1,6 @@
 const JSZip = require('jszip');
 const log = require('../util/log');
+const {sanitizeByteStream} = require('clipcc-svg-renderer');
 
 /**
  * Deserializes sound from file into storage cache so that it can
@@ -141,6 +142,12 @@ const deserializeCostume = function (costume, runtime, zip, assetFileName, textL
             return Promise.resolve(null);
         }
         textLayerFilePromise = textLayerFile.async('uint8array')
+            // eslint-disable-next-line arrow-body-style
+            .then(data => {
+                return (costumeFormat === 'svg' ?
+                    sanitizeByteStream(data) :
+                    data);
+            })
             .then(data => storage.createAsset(
                 storage.AssetType.ImageBitmap,
                 'png',

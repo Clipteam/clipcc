@@ -33,6 +33,7 @@ import {
     getIsUpdating,
     projectError
 } from '../reducers/project-state';
+import {getProjectThumbnail, storeProjectThumbnail} from './store-project-thumbnail';
 
 /**
  * Higher Order Component to provide behavior for saving projects.
@@ -48,7 +49,6 @@ const ProjectSaverHOC = function (WrappedComponent) {
         constructor (props) {
             super(props);
             bindAll(this, [
-                'getProjectThumbnail',
                 'leavePageConfirm',
                 'tryToAutoSave'
             ]);
@@ -62,7 +62,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
             // Allow the GUI consumer to pass in a function to receive a trigger
             // for triggering thumbnail or whole project saves.
             // These functions are called with null on unmount to prevent stale references.
-            this.props.onSetProjectThumbnailer(this.getProjectThumbnail);
+            this.props.onSetProjectThumbnailer(callback => getProjectThumbnail(this.props.vm, callback));
             this.props.onSetProjectSaver(this.tryToAutoSave);
         }
         componentDidUpdate (prevProps) {
@@ -71,6 +71,23 @@ const ProjectSaverHOC = function (WrappedComponent) {
             }
             if (!this.props.isLoading && prevProps.isLoading) {
                 this.reportTelemetryEvent('projectDidLoad');
+            }
+
+            if (
+                !this.props.manuallySaveThumbnails &&
+                this.props.onUpdateProjectThumbnail &&
+                this.props.saveThumbnailOnLoad &&
+                this.props.isShowingWithId &&
+                !prevProps.isShowingWithId
+            ) {
+                setTimeout(() =>
+                    storeProjectThumbnail(this.props.vm, dataURI => {
+                        this.props.onUpdateProjectThumbnail(
+                            this.props.reduxProjectId,
+                            dataURItoBlob(dataURI)
+                        );
+                    })
+                );
             }
 
             if (this.props.projectChanged && !prevProps.projectChanged) {
@@ -168,7 +185,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
                 });
         }
         createNewProjectToStorage () {
-            return this.storeProject(null)
+            return this.storeProject(null, {}, {isCreatingProject: true})
                 .then(response => {
                     this.props.onCreatedProject(response.id.toString(), this.props.loadingState);
                 })
@@ -214,8 +231,9 @@ const ProjectSaverHOC = function (WrappedComponent) {
          * @param  {number|string|undefined} projectId - defined value will PUT/update; undefined/null will POST/create
          * @return {Promise} - resolves with json object containing project's existing or new id
          * @param {?object} requestParams - object of params to add to request body
+         * @param {?object} options - additional options for the store operation
          */
-        storeProject (projectId, requestParams) {
+        storeProject (projectId, requestParams, options) {
             requestParams = requestParams || {};
             this.clearAutoSaveTimeout();
             // Serialize VM state now before embarking on
@@ -247,8 +265,16 @@ const ProjectSaverHOC = function (WrappedComponent) {
                 .then(response => {
                     this.props.onSetProjectUnchanged();
                     const id = response.id.toString();
-                    if (id && this.props.onUpdateProjectThumbnail) {
-                        this.storeProjectThumbnail(id);
+                    if (this.props.onUpdateProjectThumbnail && id && (
+                        !this.props.manuallySaveThumbnails ||
+                        // Always save thumbnail on project creation
+                        options?.isCreatingProject)) {
+                        storeProjectThumbnail(this.props.vm, dataURI => {
+                            this.props.onUpdateProjectThumbnail(
+                                id,
+                                dataURItoBlob(dataURI)
+                            );
+                        });
                     }
                     this.reportTelemetryEvent('projectDidSave');
                     return response;
@@ -257,32 +283,6 @@ const ProjectSaverHOC = function (WrappedComponent) {
                     log.error(err);
                     throw err; // pass the error up the chain
                 });
-        }
-
-        /**
-         * Store a snapshot of the project once it has been saved/created.
-         * Needs to happen _after_ save because the project must have an ID.
-         * @param {!string} projectId - id of the project, must be defined.
-         */
-        storeProjectThumbnail (projectId) {
-            try {
-                this.getProjectThumbnail(dataURI => {
-                    this.props.onUpdateProjectThumbnail(projectId, dataURItoBlob(dataURI));
-                });
-            } catch (e) {
-                log.error('Project thumbnail save error', e);
-                // This is intentionally fire/forget because a failure
-                // to save the thumbnail is not vitally important to the user.
-            }
-        }
-
-        getProjectThumbnail (callback) {
-            this.props.vm.postIOData('video', {forceTransparentPreview: true});
-            this.props.vm.renderer.requestSnapshot(dataURI => {
-                this.props.vm.postIOData('video', {forceTransparentPreview: false});
-                callback(dataURI);
-            });
-            this.props.vm.renderer.draw();
         }
 
         /**
@@ -337,11 +337,11 @@ const ProjectSaverHOC = function (WrappedComponent) {
                 onShowSavingAlert,
                 onUpdatedProject,
                 onUpdateProjectData,
-                onUpdateProjectThumbnail,
                 noBeforeUnloadHandler,
                 reduxProjectId,
                 reduxProjectTitle,
                 setAutoSaveTimeoutId: setAutoSaveTimeoutIdProp,
+                saveThumbnailOnLoad,
                 /* eslint-enable no-unused-vars */
                 ...componentProps
             } = this.props;
@@ -395,7 +395,9 @@ const ProjectSaverHOC = function (WrappedComponent) {
         projectChanged: PropTypes.bool,
         reduxProjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         reduxProjectTitle: PropTypes.string,
+        saveThumbnailOnLoad: PropTypes.bool,
         setAutoSaveTimeoutId: PropTypes.func.isRequired,
+        manuallySaveThumbnails: PropTypes.bool,
         vm: PropTypes.instanceOf(VM).isRequired
     };
     ProjectSaverComponent.defaultProps = {
@@ -404,6 +406,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
         onSetProjectThumbnailer: () => {},
         onSetProjectSaver: () => {},
         noBeforeUnloadHandler: false,
+        saveThumbnailOnLoad: false,
         onUpdateProjectData: saveProjectToServer
     };
     const mapStateToProps = (state, ownProps) => {
