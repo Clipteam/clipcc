@@ -42,7 +42,7 @@
     "json": "9.0.6",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "playwright-chromium": "1.13.0",
-    "scratch-render-fonts": "1.0.174",
+    "scratch-render-fonts": "1.0.252",
     "tap": "21.0.1",
     "terser-webpack-plugin": "^5.3.10",
     "travis-after-all": "1.4.5",

@@ -1,8 +1,7 @@
-import DOMPurify from 'isomorphic-dompurify';
 import SvgElement from './svg-element';
 import convertFonts from './font-converter';
-import fixupSvgString from './fixup-svg-string';
 import transformStrokeWidths from './transform-applier';
+import sanitizeSvg from './sanitize-svg';
 
 /**
  * @param svgTag the tag to search within
@@ -208,24 +207,10 @@ const transformMeasurements = (svgTag: SVGSVGElement) => {
     // which returns the full bounding-box of all drawn SVG
     // elements, similar to how Scratch 2.0 did measurement.
     const svgSpot = document.createElement('span');
-    // Since we're adding user-provided SVG to document.body,
-    // sanitizing is required. This should not affect bounding box calculation.
-    // outerHTML is attribute of Element (and not HTMLElement), so use it instead of
-    // calling serializer or toString()
-    // NOTE: svgTag remains untouched!
-    const rawValue = svgTag.outerHTML;
-    const sanitizedValue = DOMPurify.sanitize(rawValue, {
-        // Use SVG profile (no HTML elements)
-        USE_PROFILES: {svg: true},
-        // Remove some tags that Scratch does not use.
-        FORBID_TAGS: ['a', 'audio', 'canvas', 'video'],
-        // Allow data URI in image tags (e.g. SVGs converted from bitmap)
-        ADD_DATA_URI_TAGS: ['image']
-    });
     let bbox;
     try {
         // Insert sanitized value.
-        svgSpot.innerHTML = sanitizedValue;
+        svgSpot.innerHTML = svgTag.outerHTML;
         document.body.appendChild(svgSpot);
         // Take the bounding box. We have to get elements via svgSpot
         // because we added it via innerHTML.
@@ -322,8 +307,10 @@ const normalizeSvg = (svgTag: SVGSVGElement, fromVersion2?: boolean) => {
 const loadSvgString = (svgString: string, fromVersion2?: boolean) => {
     // Parse string into SVG XML.
     const parser = new DOMParser();
-    svgString = fixupSvgString(svgString);
-    const svgDom = parser.parseFromString(svgString, 'text/xml');
+    // Since we're adding user-provided SVG to document.body as part of normalization,
+    // sanitization is required. This should not affect bounding box calculation.
+    const sanitizedSvgString = sanitizeSvg.sanitizeSvgText(svgString);
+    const svgDom = parser.parseFromString(sanitizedSvgString, 'text/xml');
     if (svgDom.childNodes.length < 1 ||
         svgDom.documentElement.localName !== 'svg') {
         throw new Error('Document does not appear to be SVG.');
