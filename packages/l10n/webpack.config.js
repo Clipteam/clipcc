@@ -10,12 +10,7 @@ module.exports = {
             use: {
                 loader: 'babel-loader',
                 options: {
-                    presets: ['@babel/preset-env'],
-                    plugins: [
-                        '@babel/plugin-proposal-object-rest-spread',
-                        '@babel/plugin-syntax-dynamic-import',
-                        '@babel/plugin-transform-async-to-generator'
-                    ]
+                    presets: ['@babel/preset-env']
                 }
             }
         }]

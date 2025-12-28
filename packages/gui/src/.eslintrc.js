@@ -1,7 +1,7 @@
 const path = require('path');
 module.exports = {
     root: true,
-    extends: ['clipcc', 'clipcc/es6', 'clipcc/react', 'plugin:import/errors'],
+    extends: ['clipcc', 'clipcc/es6', 'clipcc/react', 'clipcc/ts', 'plugin:import/errors'],
     env: {
         browser: true
     },
@@ -19,9 +19,6 @@ module.exports = {
         }]
     },
     settings: {
-        'react': {
-            version: '16.2' // Prevent 16.3 lifecycle method errors
-        },
         'import/resolver': {
             webpack: {
                 config: path.resolve(__dirname, '../webpack.config.js')

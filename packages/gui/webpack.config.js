@@ -8,7 +8,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const WorkboxPlugin = require('workbox-webpack-plugin');
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
 
@@ -69,13 +68,10 @@ const base = {
                 // in much lower dependencies.
                 babelrc: false,
                 plugins: [
-                    '@babel/plugin-syntax-dynamic-import',
-                    '@babel/plugin-transform-async-to-generator',
-                    '@babel/plugin-proposal-object-rest-spread',
                     ['react-intl', {
                         messagesDir: './translations/messages/'
                     }]],
-                presets: ['@babel/preset-env', '@babel/preset-react']
+                presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript']
             }
         },
         {
@@ -248,7 +244,7 @@ module.exports = [
         defaultsDeep({}, base, {
             target: 'web',
             entry: {
-                'scratch-gui': './src/index.js'
+                'scratch-gui': './src/index.ts'
             },
             output: {
                 libraryTarget: 'umd',
@@ -257,7 +253,9 @@ module.exports = [
             },
             externals: {
                 'react': 'react',
-                'react-dom': 'react-dom'
+                'react-dom': 'react-dom',
+                'redux': 'redux',
+                'react-redux': 'react-redux'
             },
             module: {
                 rules: base.module.rules.concat([
@@ -285,10 +283,6 @@ module.exports = [
                             to: 'libraries/[name][ext]'
                         }
                     ]
-                }),
-                new WorkboxPlugin.GenerateSW({
-                    clientsClaim: true,
-                    skipWaiting: true
                 })
             ])
         })) : []
