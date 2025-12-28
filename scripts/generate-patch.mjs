@@ -131,9 +131,9 @@ function main() {
     const args = process.argv.slice(2);
     
     if (args.length < 1) {
-        console.log('Usage: yarn run patch:generate <commit-range>');
-        console.log('Example: yarn run patch:generate HEAD~5..HEAD');
-        console.log('Example: yarn run patch:generate abc123..def456');
+        console.log('Usage: yarn run upstream:propose <commit-range>');
+        console.log('Example: yarn run upstream:propose HEAD~5..HEAD');
+        console.log('Example: yarn run upstream:propose abc123..def456');
         process.exit(1);
     }
 
