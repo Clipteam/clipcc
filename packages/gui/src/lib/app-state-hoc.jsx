@@ -16,11 +16,12 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 /**
  * Higher Order Component to provide redux state. If an `intl` prop is provided
  * it will override the internal `intl` redux state
+ *
  * @param {React.Component} WrappedComponent - component to provide state for
  * @param {boolean} localesOnly - only provide the locale state, not everything
  *                      required by the GUI. Used to exclude excess state when
  *                      only rendering modals, not the GUI.
- * @param {import('../gui-config').GUIConfigFactory} configFactory - The configuration to use.
+ * @param {GUIConfigFactory} configFactory - The configuration to use.
  *
  * @returns {React.Component} component with redux and intl state provided
  */
@@ -57,9 +58,9 @@ const AppStateHOC = function (WrappedComponent, localesOnly, configFactory) {
                 } = guiRedux;
                 const {ScratchPaintReducer} = require('clipcc-paint');
 
-                const configOrLegacy = configFactory
-                    ? configFactory()
-                    : require('../legacy-config').legacyConfig;
+                const configOrLegacy = configFactory ?
+                    configFactory() :
+                    require('../legacy-config').legacyConfig;
                 let initializedGui = buildInitialState(configOrLegacy)
                 if (props.isFullScreen || props.isPlayerOnly) {
                     if (props.isFullScreen) {

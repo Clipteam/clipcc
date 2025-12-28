@@ -1,7 +1,7 @@
-import ScratchStorage, { Asset } from 'scratch-storage';
+import {ScratchStorage, Asset} from 'clipcc-storage';
 
 import defaultProject from './default-project';
-import { GUIStorage, TranslatorFunction } from '../gui-config';
+import {GUIStorage, TranslatorFunction} from '../gui-config';
 
 import saveProjectToServer from '../lib/save-project-to-server';
 
@@ -14,20 +14,20 @@ export class LegacyStorage implements GUIStorage {
 
     readonly scratchStorage = new ScratchStorage();
 
-    constructor() {
+    constructor () {
         this.cacheDefaultProject(this.scratchStorage);
         this.addOfficialScratchWebStores(this.scratchStorage);
     }
 
-    setProjectHost(host: string): void {
+    setProjectHost (host: string): void {
         this.projectHost = host;
     }
 
-    setProjectToken(token: string): void {
+    setProjectToken (token: string): void {
         this.projectToken = token;
     }
 
-    setProjectMetadata(projectId: string | null | undefined): void {
+    setProjectMetadata (projectId: string | null | undefined): void {
         const {RequestMetadata, setMetadata, unsetMetadata} = this.scratchStorage.scratchFetch;
 
         // If project ID is '0' or zero, it's not a real project ID. In that case, remove the project ID metadata.
@@ -39,18 +39,18 @@ export class LegacyStorage implements GUIStorage {
         }
     }
 
-    setAssetHost(host: string): void {
+    setAssetHost (host: string): void {
         this.assetHost = host;
     }
 
-    setTranslatorFunction(translator: TranslatorFunction): void {
+    setTranslatorFunction (translator: TranslatorFunction): void {
         this.translator = translator;
 
         // TODO: Verify that this is correct
         this.cacheDefaultProject(this.scratchStorage);
     }
 
-    setBackpackHost(host: string): void {
+    setBackpackHost (host: string): void {
         const shouldAddSource = !this.backpackHost;
         if (shouldAddSource) {
             const AssetType = this.scratchStorage.AssetType;
@@ -64,13 +64,12 @@ export class LegacyStorage implements GUIStorage {
         this.backpackHost = host;
     }
 
-    // TODO: Figure out why this exists if the ScratchStorage class supports AssetType.Project
-    saveProject(
+    saveProject (
         projectId: number,
-        vmState: any,
+        vmState: string,
         params: { originalId: string; isCopy: boolean; isRemix: boolean; title: string; }
     ): Promise<{ id: string | number; }> {
-        // TODO: Move the implementation here
+        // Haven't inlined the code here so that we can keep Git history on the implementation, just in case
         return saveProjectToServer(this.projectHost, projectId, vmState, params);
     }
 

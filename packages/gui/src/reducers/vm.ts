@@ -1,5 +1,5 @@
-import VM from '@scratch/scratch-vm';
-import { GUIConfig } from '../gui-config';
+import VM from 'clipcc-vm';
+import {GUIConfig} from '../gui-config';
 
 const SET_VM = 'scratch-gui/vm/SET_VM';
 
@@ -19,7 +19,7 @@ const reducer = function (state, action) {
         return state;
     }
 };
-const setVM = function (vm) {
+const setVM = function (vm: VM) {
     return {
         type: SET_VM,
         vm: vm

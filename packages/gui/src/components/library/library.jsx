@@ -9,7 +9,7 @@ import Modal from '../../containers/modal.jsx';
 import Divider from '../divider/divider.jsx';
 import Filter from '../filter/filter.jsx';
 import TagButton from '../../containers/tag-button.jsx';
-import storage from '../../lib/storage';
+import {legacyConfig} from '../../legacy-config';
 import Spinner from '../spinner/spinner.jsx';
 
 import styles from './library.css';
@@ -36,6 +36,7 @@ const tagListPrefix = [ALL_TAG];
  * @returns {AssetType} - the AssetType corresponding to the extension, if any.
  */
 const getAssetTypeForFileExtension = function (fileExtension) {
+    const storage = legacyConfig.storage.scratchStorage;
     const compareOptions = {
         sensitivity: 'accent',
         usage: 'search'

@@ -13,6 +13,7 @@ import {
 } from '../lib/backpack-api';
 import DragConstants from '../lib/drag-constants';
 import DropAreaHOC from '../lib/drop-area-hoc.jsx';
+import {GUIStoragePropType} from '../gui-config';
 
 import {connect} from 'react-redux';
 import VM from 'clipcc-vm';
@@ -71,11 +72,13 @@ class Backpack extends React.Component {
         }
     }
     handleDrop (dragInfo) {
+        const scratchStorage = this.props.storage.scratchStorage;
+
         let payloader = null;
         let presaveAsset = null;
         switch (dragInfo.dragType) {
         case DragConstants.COSTUME:
-            payloader = costume => costumePayload(this.props.storage.scratchStorage, costume);
+            payloader = costume => costumePayload(scratchStorage, costume);
             presaveAsset = dragInfo.payload.asset;
             break;
         case DragConstants.SOUND:
@@ -98,7 +101,7 @@ class Backpack extends React.Component {
                     // Force the asset to save to the asset server before storing in backpack
                     // Ensures any asset present in the backpack is also on the asset server
                     if (presaveAsset && !presaveAsset.clean) {
-                        return storage.store(
+                        return scratchStorage.store(
                             presaveAsset.assetType,
                             presaveAsset.dataFormat,
                             presaveAsset.data,
@@ -225,6 +228,7 @@ class Backpack extends React.Component {
 }
 
 Backpack.propTypes = {
+    storage: GUIStoragePropType,
     host: PropTypes.string,
     token: PropTypes.string,
     username: PropTypes.string,

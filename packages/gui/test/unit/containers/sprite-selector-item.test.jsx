@@ -5,6 +5,7 @@ import {Provider} from 'react-redux';
 
 import SpriteSelectorItem from '../../../src/containers/sprite-selector-item';
 import DeleteButton from '../../../src/components/delete-button/delete-button';
+import {legacyConfig} from '../../../src/legacy-config';
 
 describe('SpriteSelectorItem Container', () => {
     const mockStore = configureStore();
@@ -37,6 +38,7 @@ describe('SpriteSelectorItem Container', () => {
 
     beforeEach(() => {
         store = mockStore({scratchGui: {
+            config: legacyConfig,
             hoveredTarget: {receivedBlocks: false, sprite: null},
             assetDrag: {dragging: false}
         }});

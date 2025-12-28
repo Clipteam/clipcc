@@ -42,6 +42,7 @@ import themeManagerHOC from '../lib/theme-manager-hoc.jsx';
 import {PLATFORM} from '../lib/platform.js';
 
 import GUIComponent from '../components/gui/gui.jsx';
+import {GUIStoragePropType} from '../gui-config';
 
 class GUI extends React.Component {
     componentDidMount () {
@@ -103,6 +104,7 @@ class GUI extends React.Component {
 
 GUI.propTypes = {
     theme: PropTypes.string,
+    storage: GUIStoragePropType,
     assetHost: PropTypes.string,
     children: PropTypes.node,
     cloudHost: PropTypes.string,

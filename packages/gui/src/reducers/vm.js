@@ -1,9 +1,9 @@
 import VM from 'clipcc-vm';
-import storage from '../lib/storage';
+import {legacyConfig} from '../legacy-config';
 
 const SET_VM = 'scratch-gui/vm/SET_VM';
 const defaultVM = new VM();
-defaultVM.attachStorage(storage);
+defaultVM.attachStorage(legacyConfig.storage.scratchStorage);
 const initialState = defaultVM;
 
 const reducer = function (state, action) {

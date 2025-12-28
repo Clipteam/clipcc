@@ -32,7 +32,7 @@ import {
     projectError
 } from '../reducers/project-state';
 import {getProjectThumbnail, storeProjectThumbnail} from './store-project-thumbnail';
-import storage from './storage';
+import {GUIStoragePropType} from '../gui-config';
 
 /**
  * Higher Order Component to provide behavior for saving projects.
@@ -245,7 +245,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
             const scratchStorage = this.props.storage.scratchStorage;
 
             const saveProject = this.props.onUpdateProjectData ||
-                ((projectId, vmState, params) => this.props.storage.saveProject(projectId, vmState, params));
+                ((id, vmState, params) => this.props.storage.saveProject(id, vmState, params));
 
             return Promise.all(this.props.vm.assets
                 .filter(asset => !asset.clean)
@@ -399,6 +399,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
         projectChanged: PropTypes.bool,
         reduxProjectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         reduxProjectTitle: PropTypes.string,
+        storage: GUIStoragePropType,
         saveThumbnailOnLoad: PropTypes.bool,
         setAutoSaveTimeoutId: PropTypes.func.isRequired,
         manuallySaveThumbnails: PropTypes.bool,
@@ -415,8 +416,9 @@ const ProjectSaverHOC = function (WrappedComponent) {
     const mapStateToProps = (state, ownProps) => {
         const loadingState = state.scratchGui.projectState.loadingState;
         const isShowingWithId = getIsShowingWithId(loadingState);
+        const storage = state.scratchGui.config.storage;
         return {
-            storage: state.scratchGui.config.storage,
+            storage,
             autoSaveTimeoutId: state.scratchGui.timeout.autoSaveTimeoutId,
             isAnyCreatingNewState: getIsAnyCreatingNewState(loadingState),
             isLoading: getIsLoading(loadingState),
@@ -430,6 +432,7 @@ const ProjectSaverHOC = function (WrappedComponent) {
             isManualUpdating: getIsManualUpdating(loadingState),
             loadingState: loadingState,
             locale: state.locales.locale,
+            onUpdateProjectThumbnail: ownProps.onUpdateProjectThumbnail ?? storage.saveProjectThumbnail,
             projectChanged: state.scratchGui.projectChanged,
             reduxProjectId: state.scratchGui.projectState.projectId,
             reduxProjectTitle: state.scratchGui.projectTitle,

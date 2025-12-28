@@ -30,7 +30,7 @@ import vmStatusReducer, {vmStatusInitialState} from './vm-status';
 import workspaceMetricsReducer, {workspaceMetricsInitialState} from './workspace-metrics';
 import throttle from 'redux-throttle';
 
-import { GUIConfig } from '../gui-config.js';
+import {GUIConfig} from '../gui-config';
 
 const guiMiddleware = compose(applyMiddleware(throttle(300, {leading: true, trailing: true})));
 
@@ -118,7 +118,7 @@ const initTelemetryModal = function (currentState) {
     );
 };
 
-const configReducer = function (state: GUIConfig, _action: unknown) {
+const configReducer = function (state: GUIConfig) {
     if (typeof state === 'undefined') return null;
 
     return state;

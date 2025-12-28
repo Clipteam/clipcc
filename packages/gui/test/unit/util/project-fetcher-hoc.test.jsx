@@ -5,18 +5,21 @@ import {mountWithIntl} from '../../helpers/intl-helpers.jsx';
 
 import ProjectFetcherHOC from '../../../src/lib/project-fetcher-hoc.jsx';
 import {LoadingState} from '../../../src/reducers/project-state';
+import {LegacyStorage} from '../../../src/lib/legacy-storage';
 
 jest.mock('react-ga');
 
 describe('ProjectFetcherHOC', () => {
     const mockStore = configureStore();
     let store;
+    let storage;
 
     beforeEach(() => {
+        const storageConfig = new LegacyStorage();
+        storage = storageConfig.scratchStorage;
         store = mockStore({
-            // TODO: Provide storage
-            // config:
             scratchGui: {
+                config: {storage: storageConfig},
                 projectState: {}
             }
         });

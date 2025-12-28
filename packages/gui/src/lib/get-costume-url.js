@@ -4,7 +4,8 @@ import {inlineSvgFonts} from 'clipcc-svg-renderer';
 const HAS_FONT_REGEXP = 'font-family(?!="none")';
 
 const getCostumeUrl = (function () {
-    // This caching looks very weird
+    // The caching here assumes the scratchStorage instance doesn't change.
+    // Which it shouldn't but it's good to keep that in mind anyway.
     let cachedAssetId;
     let cachedUrl;
 

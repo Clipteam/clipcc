@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import VisibilitySensor from 'react-visibility-sensor';
-import storage from '../../lib/storage';
+import {legacyConfig} from '../../legacy-config';
 
 class ScratchImage extends React.PureComponent {
     static init () {
@@ -131,7 +131,7 @@ ScratchImage.ImageSourcePropType = PropTypes.oneOfType([
         assetId: PropTypes.string.isRequired,
         assetType: PropTypes.oneOf(
             Object.values(
-                storage.AssetType
+                legacyConfig.storage.scratchStorage.AssetType
             )
         ).isRequired,
         assetServiceUri: PropTypes.string.isRequired

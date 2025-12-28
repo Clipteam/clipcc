@@ -4,6 +4,7 @@ import xhr from 'xhr';
 /**
  * Save a project JSON to the project server.
  * This should eventually live in scratch-www.
+ * @param {string} projectHost the hostname of the project service.
  * @param {number} projectId the ID of the project, null if a new project.
  * @param {object} vmState the JSON project representation.
  * @param {object} params the request params.

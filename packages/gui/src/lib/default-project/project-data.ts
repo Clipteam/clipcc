@@ -1,6 +1,6 @@
 import projectDataMessages from './messages';
 import sharedMessages from '../shared-messages';
-import { MessageObject, TranslatorFunction } from '../../gui-config';
+import {MessageObject, TranslatorFunction} from '../../gui-config';
 
 const messages = {...projectDataMessages, ...sharedMessages};
 

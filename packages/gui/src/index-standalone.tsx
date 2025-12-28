@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {setAppElement} from 'react-modal';
 import GUI from './containers/gui';
-import { GUIConfig } from './gui-config';
+import {GUIConfig} from './gui-config';
 import AppStateHOC from './lib/app-state-hoc';
 
 export {setAppElement} from 'react-modal';
@@ -10,8 +10,6 @@ export {setAppElement} from 'react-modal';
 export * from './gui-config';
 export * from './exported-reducers';
 
-// TODO: Export this from 'scratch-storage'
-export { default as ScratchStorage } from 'clipcc-storage';
 export * from 'clipcc-storage';
 
 export { default as defaultProject } from './lib/default-project';
@@ -32,7 +30,7 @@ export type GUIProps = any; // ComponentPropsWithoutRef<typeof ScratchGUI>;
 export const createStandaloneRoot = (
     config: GUIConfig,
     rootAppElement: HTMLElement,
-    container: HTMLElement,
+    container: HTMLElement
 ) => {
     setAppElement(rootAppElement);
 

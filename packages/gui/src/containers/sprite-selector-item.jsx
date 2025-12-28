@@ -9,6 +9,7 @@ import VM from 'clipcc-vm';
 import getCostumeUrl from '../lib/get-costume-url';
 import DragRecognizer from '../lib/drag-recognizer';
 import {getEventXY} from '../lib/touch-utils';
+import {GUIStoragePropType} from '../gui-config';
 
 import SpriteSelectorItemComponent from '../components/sprite-selector-item/sprite-selector-item.jsx';
 
@@ -147,7 +148,7 @@ class SpriteSelectorItem extends React.PureComponent {
 }
 
 SpriteSelectorItem.propTypes = {
-    // TODO: Provide better type here without relying on a specific storage
+    storage: GUIStoragePropType,
     asset: PropTypes.object,
     costumeURL: PropTypes.string,
     dispatchSetHoveredSprite: PropTypes.func.isRequired,
