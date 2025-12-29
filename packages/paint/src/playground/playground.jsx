@@ -1,4 +1,4 @@
-/* eslint-disable no-console, no-alert */
+/* eslint-disable no-alert */
 import bindAll from 'lodash.bindall';
 import React from 'react';
 import ReactDOM from 'react-dom';

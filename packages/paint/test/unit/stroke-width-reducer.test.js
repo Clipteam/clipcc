@@ -1,4 +1,3 @@
-
 import strokeWidthReducer, {
     MAX_STROKE_WIDTH, changeStrokeWidth
 } from '../../src/reducers/stroke-width';

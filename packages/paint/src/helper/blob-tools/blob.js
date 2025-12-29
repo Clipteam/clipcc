@@ -28,8 +28,8 @@ class Blobbiness {
     }
 
     /**
-     * @param {function} onUpdateImage call when the drawing has changed to let listeners know
-     * @param {function} clearSelectedItems Callback to clear the set of selected items in the Redux state
+     * @param {Function} onUpdateImage call when the drawing has changed to let listeners know
+     * @param {Function} clearSelectedItems Callback to clear the set of selected items in the Redux state
      */
     constructor (onUpdateImage, clearSelectedItems) {
         this.broadBrushHelper = new BroadBrushHelper();

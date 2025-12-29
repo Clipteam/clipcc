@@ -12,7 +12,7 @@ const NUDGE_MORE_MULTIPLIER = 15;
 class NudgeTool {
     /**
      * @param {Mode} mode Paint editor mode
-     * @param {function} boundingBoxTool to control the bounding box
+     * @param {Function} boundingBoxTool to control the bounding box
      * @param {!Function} onUpdateImage A callback to call when the image visibly changes
      */
     constructor (mode, boundingBoxTool, onUpdateImage) {

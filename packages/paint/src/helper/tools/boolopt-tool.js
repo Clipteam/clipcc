@@ -7,7 +7,7 @@ import SelectionBoxTool from '../selection-tools/selection-box-tool';
 import NudgeTool from '../selection-tools/nudge-tool';
 
 class BooleanOperationTool extends paper.Tool {
-    constructor(setSelectedItems, clearSelectedItems, setCursor, onUpdateImage, operation) {
+    constructor (setSelectedItems, clearSelectedItems, setCursor, onUpdateImage, operation) {
         super();
 
         this.setSelectedItems = setSelectedItems;
@@ -44,7 +44,7 @@ class BooleanOperationTool extends paper.Tool {
      * Should be called if the selection changes to update the bounds of the bounding box.
      * @param {Array<paper.Item>} selectedItems Array of selected items.
      */
-    onSelectionChanged(selectedItems) {
+    onSelectionChanged (selectedItems) {
         this.boundingBoxTool.onSelectionChanged(selectedItems);
     }
 
@@ -52,7 +52,7 @@ class BooleanOperationTool extends paper.Tool {
         this.operation = operation;
     }
 
-    handleMouseDown(event) {
+    handleMouseDown (event) {
         this.selectionBoxMode = true;
         this.selectionBoxTool.onMouseDown(event.modifiers.shift);
 
@@ -82,31 +82,31 @@ class BooleanOperationTool extends paper.Tool {
         }
     }
 
-    handleMouseUp(event) {
+    handleMouseUp (event) {
         this.boundingBoxTool.onMouseUp(event);
         if (this.selectedItems.length === 2) {
             const [item1, item2] = this.selectedItems;
             let result;
             try {
                 switch (this.operation) {
-                    case 'unite':
-                        result = item1.unite(item2);
-                        break;
-                    case 'intersect':
-                        result = item1.intersect(item2);
-                        break;
-                    case 'subtract':
-                        result = item1.subtract(item2);
-                        break;
-                    case 'exclude':
-                        result = item1.exclude(item2);
-                        break;
-                    case 'divide':
-                        result = item1.divide(item2);
-                        break;
-                    default:
-                        console.warn('Unknown boolean operation');
-                        return;
+                case 'unite':
+                    result = item1.unite(item2);
+                    break;
+                case 'intersect':
+                    result = item1.intersect(item2);
+                    break;
+                case 'subtract':
+                    result = item1.subtract(item2);
+                    break;
+                case 'exclude':
+                    result = item1.exclude(item2);
+                    break;
+                case 'divide':
+                    result = item1.divide(item2);
+                    break;
+                default:
+                    console.warn('Unknown boolean operation');
+                    return;
                 }
             } catch (e) {
                 item1.selected = false;
@@ -114,7 +114,7 @@ class BooleanOperationTool extends paper.Tool {
                 this.setSelectedItems([]);
                 this.boundingBoxTool.onSelectionChanged([]);
                 console.error(e);
-                alert('Failed to apply boolean operation: ' + e.message);
+                alert(`Failed to apply boolean operation: ${e.message}`);
                 return;
             }
 

@@ -1,4 +1,3 @@
-
 import undoReducer, {
     undoSnapshot, undo, redo, clearUndoState, MAX_STACK_SIZE
 } from '../../src/reducers/undo';

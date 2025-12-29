@@ -3,8 +3,8 @@ import {clearSelection, getSelectedLeafItems} from '../selection';
 /** Sub tool of the Reshape tool for moving handles, which adjust bezier curves. */
 class HandleTool {
     /**
-     * @param {function} setSelectedItems Callback to set the set of selected items in the Redux state
-     * @param {function} clearSelectedItems Callback to clear the set of selected items in the Redux state
+     * @param {Function} setSelectedItems Callback to set the set of selected items in the Redux state
+     * @param {Function} clearSelectedItems Callback to clear the set of selected items in the Redux state
      * @param {!Function} onUpdateImage A callback to call when the image visibly changes
      */
     constructor (setSelectedItems, clearSelectedItems, onUpdateImage) {
