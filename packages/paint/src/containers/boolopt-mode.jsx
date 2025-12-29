@@ -26,22 +26,18 @@ class BoolOptMode extends React.Component {
             this.activateTool(this.props);
         }
     }
-    componentWillReceiveProps (nextProps) {
-        if (nextProps.isBoolOptModeActive && !this.props.isBoolOptModeActive) {
+    componentDidUpdate (prevProps) {
+        if (this.props.isBoolOptModeActive && !prevProps.isBoolOptModeActive) {
             this.activateTool();
-        } else if (!nextProps.isBoolOptModeActive && this.props.isBoolOptModeActive) {
+        } else if (!this.props.isBoolOptModeActive && prevProps.isBoolOptModeActive) {
             this.deactivateTool();
         }
-        if (nextProps.selectedItems !== this.props.selectedItems && this.tool) {
-            this.tool.onSelectionChanged(nextProps.selectedItems);
+        if (this.props.selectedItems !== prevProps.selectedItems && this.tool) {
+            this.tool.onSelectionChanged(this.props.selectedItems);
         }
-        if (nextProps.boolOptMode !== this.props.boolOptMode && this.tool) {
-            this.tool.setOperation(nextProps.boolOptMode);
+        if (this.props.boolOptMode !== prevProps.boolOptMode && this.tool) {
+            this.tool.setOperation(this.props.boolOptMode);
         }
-    }
-    shouldComponentUpdate (nextProps) {
-        return nextProps.isBoolOptModeActive !== this.props.isBoolOptModeActive ||
-            nextProps.boolOptMode !== this.props.boolOptMode;
     }
     componentWillUnmount () {
         if (this.tool) {

@@ -3,7 +3,7 @@ import React from 'react';
 import bindAll from 'lodash.bindall';
 import parseColor from 'parse-color';
 import {injectIntl} from 'react-intl';
-import intlShape from '../lib/intl-shape.js';
+import intlShape from '../lib/intl-shape';
 
 import {getSelectedLeafItems} from '../helper/selection';
 import Formats, {isBitmap} from '../lib/format';
@@ -31,11 +31,10 @@ const makeColorIndicator = (label, isStroke) => {
             // Flag to track whether an svg-update-worthy change has been made
             this._hasChanged = false;
         }
-        componentWillReceiveProps (newProps) {
-            const {colorModalVisible, onUpdateImage} = this.props;
-            if (colorModalVisible && !newProps.colorModalVisible) {
+        componentDidUpdate (prevProps) {
+            if (prevProps.colorModalVisible && !this.props.colorModalVisible) {
                 // Submit the new SVG, which also stores a single undo/redo action.
-                if (this._hasChanged) onUpdateImage();
+                if (this._hasChanged) this.props.onUpdateImage();
                 this._hasChanged = false;
             }
         }
