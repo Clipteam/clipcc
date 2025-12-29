@@ -1,7 +1,7 @@
 #!/usr/bin/env babel-node
 
 /**
- * @fileoverview
+ * @file
  * Utilities for interfacing with Transifex API 3.
  */
 
@@ -86,7 +86,7 @@ const txPull = async function (project, resource, locale, mode = 'default') {
 /**
  * Given a project, returns a list of the slugs of all resources in the project
  * @param {string} project - project slug (for example,  "scratch-website")
- * @returns {Promise<array>} - array of strings, slugs identifying each resource in the project
+ * @returns {Promise<Array>} - array of strings, slugs identifying each resource in the project
  */
 const txResources = async function (project) {
     const resources = await transifexApi.Resource.filter({
@@ -104,6 +104,7 @@ const txResources = async function (project) {
 };
 
 /**
+ * Given a project, returns a list of resource objects in the project
  * @param {string} project - project slug (for example)
  * @returns {object[]} - array of resource objects
  */
