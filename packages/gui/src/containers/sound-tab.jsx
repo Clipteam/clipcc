@@ -174,7 +174,9 @@ class SoundTab extends React.Component {
 
     render () {
         const {
-            dispatchUpdateRestore, // eslint-disable-line no-unused-vars
+            ariaLabel,
+            ariaRole,
+            dispatchUpdateRestore, // eslint-disable-line @typescript-eslint/no-unused-vars
             intl,
             isRtl,
             vm,
@@ -222,6 +224,8 @@ class SoundTab extends React.Component {
 
         return (
             <AssetPanel
+                ariaLabel={ariaLabel}
+                ariaRole={ariaRole}
                 buttons={[{
                     title: intl.formatMessage(messages.addSound),
                     img: addSoundFromLibraryIcon,
@@ -278,6 +282,8 @@ class SoundTab extends React.Component {
 }
 
 SoundTab.propTypes = {
+    ariaLabel: PropTypes.string,
+    ariaRole: PropTypes.string,
     dispatchUpdateRestore: PropTypes.func,
     editingTarget: PropTypes.string,
     intl: intlShape,

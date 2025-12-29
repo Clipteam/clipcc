@@ -260,7 +260,9 @@ class CostumeTab extends React.Component {
     }
     render () {
         const {
-            dispatchUpdateRestore, // eslint-disable-line no-unused-vars
+            ariaLabel,
+            ariaRole,
+            dispatchUpdateRestore, // eslint-disable-line @typescript-eslint/no-unused-vars
             intl,
             isRtl,
             vm
@@ -287,6 +289,8 @@ class CostumeTab extends React.Component {
         })) : [];
         return (
             <AssetPanel
+                ariaLabel={ariaLabel}
+                ariaRole={ariaRole}
                 buttons={[
                     {
                         title: intl.formatMessage(addLibraryMessage),
@@ -341,6 +345,8 @@ class CostumeTab extends React.Component {
 }
 
 CostumeTab.propTypes = {
+    ariaLabel: PropTypes.string,
+    ariaRole: PropTypes.string,
     dispatchUpdateRestore: PropTypes.func,
     editingTarget: PropTypes.string,
     intl: intlShape,

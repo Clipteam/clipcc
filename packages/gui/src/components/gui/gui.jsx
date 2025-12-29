@@ -77,7 +77,7 @@ const GUIComponent = props => {
         costumeLibraryVisible,
         costumesTabVisible,
         enableCommunity,
-        framerate,
+        framerate, // eslint-disable-line @typescript-eslint/no-unused-vars
         isCreating,
         isFullScreen,
         isPlayerOnly,
@@ -106,7 +106,7 @@ const GUIComponent = props => {
         onProjectTelemetryEvent,
         onRequestCloseBackdropLibrary,
         onRequestCloseCostumeLibrary,
-        onRequestCloseSettingsModal,
+        onRequestCloseSettingsModal, // eslint-disable-line @typescript-eslint/no-unused-vars
         onRequestCloseTelemetryModal,
         onSeeCommunity,
         onShare,
@@ -126,12 +126,12 @@ const GUIComponent = props => {
         theme,
         username,
         userOwnsProject,
-        hideTutorialProjects,
+        hideTutorialProjects, // eslint-disable-line @typescript-eslint/no-unused-vars
         useExternalPeripheralList,
         vm,
         stageWidth,
         stageHeight,
-        storage,
+        storage, // eslint-disable-line @typescript-eslint/no-unused-vars
         ...componentProps
     } = omit(props, 'dispatch', 'setPlatform', 'intl');
     if (children) {
@@ -169,6 +169,10 @@ const GUIComponent = props => {
                 isRendererSupported={isRendererSupported}
                 isRtl={isRtl}
                 loading={loading}
+                manuallySaveThumbnails={
+                    manuallySaveThumbnails &&
+                    userOwnsProject
+                }
                 onUpdateProjectThumbnail={onUpdateProjectThumbnail}
                 stageSize={STAGE_SIZE_MODES.large}
                 vm={vm}
@@ -230,6 +234,12 @@ const GUIComponent = props => {
                     />
                 ) : null}
                 {!menuBarHidden && <MenuBar
+                    ariaRole="banner"
+                    ariaLabel={intl.formatMessage({
+                        defaultMessage: 'Menu topbar',
+                        description: 'ARIA label for the menu topbar',
+                        id: 'gui.aria.menuTopbar'
+                    })}
                     accountNavOpen={accountNavOpen}
                     authorId={authorId}
                     authorThumbnailUrl={authorThumbnailUrl}
@@ -266,7 +276,15 @@ const GUIComponent = props => {
                 />}
                 <Box className={boxStyles}>
                     <Box className={styles.flexWrapper}>
-                        <Box className={styles.editorWrapper}>
+                        <Box
+                            role="main"
+                            aria-label={intl.formatMessage({
+                                defaultMessage: 'Editor',
+                                description: 'ARIA label for the main coding area',
+                                id: 'gui.aria.editorWrapper'
+                            })}
+                            className={styles.editorWrapper}
+                        >
                             <Tabs
                                 forceRenderTabPanel
                                 className={tabClassNames.tabs}
@@ -336,7 +354,16 @@ const GUIComponent = props => {
                                     </Tab>
                                 </TabList>
                                 <TabPanel className={tabClassNames.tabPanel}>
-                                    <Box className={styles.blocksWrapper}>
+                                    <Box
+
+                                        className={styles.blocksWrapper}
+                                        role="region"
+                                        aria-label={intl.formatMessage({
+                                            defaultMessage: 'Code Editor Panel',
+                                            description: 'ARIA label for the code editor panel',
+                                            id: 'gui.aria.blocksPalette'
+                                        })}
+                                    >
                                         <Blocks
                                             key={theme}
                                             canUseCloud={canUseCloud}
@@ -365,21 +392,59 @@ const GUIComponent = props => {
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     {costumesTabVisible ? <CostumeTab
+                                        ariaLabel={targetIsStage ?
+                                            intl.formatMessage({
+                                                defaultMessage: 'Backdrops Editor Panel',
+                                                description: 'ARIA label for the backdrops editor panel',
+                                                id: 'gui.aria.backdropsEditorPanel'
+                                            }) :
+                                            intl.formatMessage({
+                                                defaultMessage: 'Costumes Editor Panel',
+                                                description: 'ARIA label for the costumes editor panel',
+                                                id: 'gui.aria.costumesEditorPanel'
+                                            })
+                                        }
+                                        ariaRole="region"
                                         vm={vm}
                                         onNewLibraryBackdropClick={onNewLibraryBackdropClick}
                                         onNewLibraryCostumeClick={onNewLibraryCostumeClick}
                                     /> : null}
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
-                                    {soundsTabVisible ? <SoundTab vm={vm} /> : null}
+                                    {soundsTabVisible ?
+                                        <SoundTab
+                                            ariaLabel={intl.formatMessage({
+                                                defaultMessage: 'Sounds Editor Panel',
+                                                description: 'ARIA label for the sounds editor panel',
+                                                id: 'gui.aria.soundsEditorPanel'
+                                            })}
+                                            ariaRole="region"
+                                            vm={vm}
+                                        /> : null}
                                 </TabPanel>
                             </Tabs>
                             {backpackVisible ? (
-                                <Backpack host={backpackHost} />
+                                <Backpack
+                                    ariaRole="region"
+                                    ariaLabel={intl.formatMessage({
+                                        defaultMessage: 'Backpack',
+                                        description: 'ARIA label for the backpack',
+                                        id: 'gui.aria.backpack'
+                                    })}
+                                    host={backpackHost}
+                                />
                             ) : null}
                         </Box>
 
-                        <Box className={classNames(styles.stageAndTargetWrapper, styles[stageSize])}>
+                        <Box
+                            role="complementary"
+                            aria-label={intl.formatMessage({
+                                defaultMessage: 'Stage and Target',
+                                description: 'ARIA label for the stage and target pane',
+                                id: 'gui.aria.stageAndTarget'
+                            })}
+                            className={classNames(styles.stageAndTargetWrapper, styles[stageSize])}
+                        >
                             <StageWrapper
                                 isFullScreen={isFullScreen}
                                 isRendererSupported={isRendererSupported}
@@ -388,8 +453,22 @@ const GUIComponent = props => {
                                 vm={vm}
                                 stageWidth={stageWidth}
                                 stageHeight={stageHeight}
+                                ariaRole="region"
+                                ariaLabel={intl.formatMessage({
+                                    defaultMessage: 'Stage',
+                                    description: 'ARIA label for the stage',
+                                    id: 'gui.aria.stage'
+                                })}
                             />
-                            <Box className={styles.targetWrapper}>
+                            <Box
+                                className={styles.targetWrapper}
+                                ariaRole="region"
+                                ariaLabel={intl.formatMessage({
+                                    defaultMessage: 'Target Pane',
+                                    description: 'ARIA label for the target pane',
+                                    id: 'gui.aria.targetPane'
+                                })}
+                            >
                                 <TargetPane
                                     stageSize={stageSize}
                                     vm={vm}
