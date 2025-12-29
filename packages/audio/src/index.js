@@ -1,5 +1,5 @@
 /**
- * @fileOverview Scratch Audio is divided into a single AudioEngine, that
+ * @file Scratch Audio is divided into a single AudioEngine, that
  * handles global functionality, and AudioPlayers, belonging to individual
  * sprites and clones.
  */

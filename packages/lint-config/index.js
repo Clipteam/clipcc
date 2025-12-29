@@ -40,14 +40,9 @@ module.exports = [
             'jsdoc/require-param': 'error',
             'jsdoc/require-param-description': 'error',
             'jsdoc/require-param-type': 'error',
-            'jsdoc/require-returns': ['error', {
-                exemptedBy: ['constructor', 'class']
-            }],
-            'jsdoc/require-returns-description': 'error',
-            'jsdoc/require-returns-type': 'error',
+            'jsdoc/require-returns': 'off',
             'jsdoc/require-jsdoc': ['error', {
                 require: {
-                    FunctionDeclaration: true,
                     MethodDefinition: true,
                     ClassDeclaration: true,
                     ArrowFunctionExpression: false,
@@ -139,7 +134,19 @@ module.exports = [
             'new-parens': [2],
             'newline-per-chained-call': [2],
             'no-lonely-if': [2],
-            'no-mixed-operators': [2],
+            'no-mixed-operators': [
+                'error',
+                {
+                    groups: [
+                        ['+', '-', '*', '/', '%', '**'],
+                        ['&', '|', '^', '~', '<<', '>>', '>>>'],
+                        ['==', '!=', '===', '!==', '>', '>=', '<', '<='],
+                        ['&&', '||'],
+                        ['in', 'instanceof']
+                    ],
+                    allowSamePrecedence: true
+                }
+            ],
             'no-multiple-empty-lines': [2, {
                 max: 2,
                 maxBOF: 0,

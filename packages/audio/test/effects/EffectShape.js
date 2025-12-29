@@ -59,8 +59,8 @@ const testEffect = (EffectClass, effectDepth) => {
 
             const engine = new AudioEngine();
             const target = new AudioTarget();
-            let effect = new EffectClass(engine, target, null);
-            let effect2 = new EffectClass(engine, target, effect);
+            const effect = new EffectClass(engine, target, null);
+            const effect2 = new EffectClass(engine, target, effect);
 
             target.inputNode._test('stall', 'message does not move');
             t2.equal(target.inputNode._result().depth, 0, 'message not sent');

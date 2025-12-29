@@ -11541,7 +11541,7 @@ eslint-plugin-react@7.37.2:
     string.prototype.matchall "^4.0.11"
     string.prototype.repeat "^1.0.0"
 
-eslint-plugin-react@7.37.5, eslint-plugin-react@^7.37.5, eslint-plugin-react@^7.5.1:
+eslint-plugin-react@7.37.5, eslint-plugin-react@>=7.27.0, eslint-plugin-react@^7.5.1:
   version "7.37.5"
   resolved "https://registry.yarnpkg.com/eslint-plugin-react/-/eslint-plugin-react-7.37.5.tgz#2975511472bdda1b272b34d779335c9b0e877065"
   integrity sha512-Qteup0SqU15kdocexFNAJMvCJEfa2xUKNV4CC1xsVMrIIqEy3SQ/rqyxCWNzfrd3/ldy6HMlD2e0JDVpDg2qIA==
