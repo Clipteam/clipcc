@@ -66,7 +66,7 @@ class ColorPicker extends React.Component {
         const colorSetByEyedropper = prevProps.isEyeDropping && prevColor !== newColor;
         if (colorSetByEyedropper || this.props.colorIndex !== prevProps.colorIndex) {
             const hsv = this.getHsv(newColor);
-            // eslint-disable-next-line react/no-did-update-set-state
+             
             this.setState({
                 hue: hsv[0],
                 saturation: hsv[1],

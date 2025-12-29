@@ -9,8 +9,8 @@ class FillTool extends paper.Tool {
         return 2;
     }
     /**
-     * @param {function} setHoveredItem Callback to set the hovered item
-     * @param {function} clearHoveredItem Callback to clear the hovered item
+     * @param {Function} setHoveredItem Callback to set the hovered item
+     * @param {Function} clearHoveredItem Callback to clear the hovered item
      * @param {!Function} onUpdateImage A callback to call when the image visibly changes
      */
     constructor (setHoveredItem, clearHoveredItem, onUpdateImage) {

@@ -55,7 +55,7 @@ const messages = defineMessages({
         defaultMessage: 'Boolean Operation',
         description: 'Label for the boolean operation tool',
         id: 'paint.boolOptMode.boolOpt'
-    },
+    }
 });
 
 export default messages;

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 /*
     https://github.com/import-js/eslint-plugin-import/issues/1810
     eslint-plugin-import is not aware of exports definition in package.json

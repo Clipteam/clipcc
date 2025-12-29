@@ -77,7 +77,7 @@ const GUIComponent = props => {
         costumeLibraryVisible,
         costumesTabVisible,
         enableCommunity,
-        framerate, // eslint-disable-line @typescript-eslint/no-unused-vars
+        framerate,
         isCreating,
         isFullScreen,
         isPlayerOnly,

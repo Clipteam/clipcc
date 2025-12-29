@@ -80,7 +80,7 @@ const fudgePropertyInput = document.getElementById('fudgeproperty');
 const fudgeMinInput = document.getElementById('fudgeMin');
 const fudgeMaxInput = document.getElementById('fudgeMax');
 
-/* eslint require-jsdoc: 0 */
+/* eslint jsdoc/require-jsdoc: 0 */
 const updateFudgeProperty = event => {
     fudgeProperty = event.target.value;
 };

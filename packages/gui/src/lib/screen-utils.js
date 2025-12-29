@@ -23,7 +23,7 @@ const STAGE_DIMENSION_DEFAULTS = {
  * Resolve the current GUI and browser state to an actual stage size enum value.
  * @param {STAGE_SIZE_MODES} stageSizeMode - the state of the stage size toggle button.
  * @param {boolean} isFullSize - true if the window is large enough for the large stage at its full size.
- * @return {STAGE_DISPLAY_SIZES} - the stage size enum value we should use in this situation.
+ * @returns {STAGE_DISPLAY_SIZES} - the stage size enum value we should use in this situation.
  */
 const resolveStageSize = (stageSizeMode, isFullSize) => {
     if (stageSizeMode === STAGE_SIZE_MODES.small) {
@@ -41,7 +41,7 @@ const resolveStageSize = (stageSizeMode, isFullSize) => {
  * @param {boolean} isFullScreen - true if full-screen mode is enabled.
  * @param {number} resolutionX - custom stage width.
  * @param {number} resolutionY - custom stage height.
- * @return {StageDimensions} - an object describing the dimensions of the stage.
+ * @returns {StageDimensions} - an object describing the dimensions of the stage.
  */
 const getStageDimensions = (stageSize, isFullScreen, resolutionX, resolutionY) => {
     const stageDimensions = {
@@ -86,7 +86,7 @@ const getStageDimensions = (stageSize, isFullScreen, resolutionX, resolutionY) =
  * @param {number} sizeInfo.height The target height
  * @param {number} sizeInfo.widthDefault The default width
  * @param {number} sizeInfo.heightDefault The default height
- * @returns {object} the CSS transform
+ * @returns {object | undefined} the CSS transform
  */
 const stageSizeToTransform = ({width, height, widthDefault, heightDefault}) => {
     const scaleX = width / widthDefault;

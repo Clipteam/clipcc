@@ -2,7 +2,8 @@ const ExampleExtension = function () {
 };
 
 /**
- * @return {object} This extension's metadata.
+ * Get this extension's metadata.
+ * @returns {object} This extension's metadata.
  */
 ExampleExtension.prototype.getInfo = function () {
     return {

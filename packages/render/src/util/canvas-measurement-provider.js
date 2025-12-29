@@ -1,5 +1,9 @@
+/**
+ * A measurement provider that uses a CanvasRenderingContext2D to measure text.
+ */
 class CanvasMeasurementProvider {
     /**
+     * Create a CanvasMeasurementProvider.
      * @param {CanvasRenderingContext2D} ctx - provides a canvas rendering context
      * with 'font' set to the text style of the text to be wrapped.
      */
@@ -15,14 +19,14 @@ class CanvasMeasurementProvider {
      * Called by the TextWrapper before a batch of zero or more calls to measureText().
      */
     beginMeasurementSession () {
-        
+
     }
 
     /**
      * Called by the TextWrapper after a batch of zero or more calls to measureText().
      */
     endMeasurementSession () {
-        
+
     }
 
     /**

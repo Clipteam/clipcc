@@ -1,3 +1,6 @@
+/**
+ * Chain of effects that can be applied to a group of SoundPlayers.
+ */
 class EffectChain {
     /**
      * Chain of effects that can be applied to a group of SoundPlayers.

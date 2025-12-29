@@ -45,15 +45,15 @@ const themeManagerHOC = function (WrappedComponent) {
                 this.darkModeMatchMedia.removeListener('change', this.onMediaQueryChange);
             }
         }
-        onMediaQueryChange (event) {
+        onMediaQueryChange () {
             switch (this.props.userTheme) {
             case 'system':
-                  if (matchMedia('(prefers-color-scheme: dark)').matches) {
-                      this.props.onSetTheme('dark');
-                  } else {
-                      this.props.onSetTheme('default');
-                  }
-                  break;
+                if (matchMedia('(prefers-color-scheme: dark)').matches) {
+                    this.props.onSetTheme('dark');
+                } else {
+                    this.props.onSetTheme('default');
+                }
+                break;
             case 'dark':
                 this.props.onSetTheme('dark');
                 break;
@@ -78,6 +78,7 @@ const themeManagerHOC = function (WrappedComponent) {
 
     SystemPreferences.propTypes = {
         userTheme: PropTypes.string,
+        theme: PropTypes.string,
         onSetTheme: PropTypes.func
     };
 

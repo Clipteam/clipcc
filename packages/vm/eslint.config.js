@@ -1,4 +1,3 @@
-// ESLint 9 flat config for clipcc-vm
 const clipccConfig = require('eslint-config-clipcc');
 const clipccNode = require('eslint-config-clipcc/node');
 const clipccES6 = require('eslint-config-clipcc/es6');
@@ -14,6 +13,9 @@ module.exports = [
             globals: {
                 ...globals.browser
             }
+        },
+        rules: {
+            'jsdoc/require-jsdoc': 'off'
         }
     },
     {

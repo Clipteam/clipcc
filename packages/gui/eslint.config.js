@@ -9,24 +9,17 @@ const importPlugin = require('eslint-plugin-import');
 const reactPlugin = require('eslint-plugin-react');
 
 module.exports = [
-    // Base config for all files
     ...clipccConfig,
     clipccNode,
     clipccES6,
-
-    // Apply React config first to make the plugin available
     ...clipccReact.map(config => ({
         ...config,
         files: ['src/**/*.{js,jsx}']
     })),
-
-    // Apply TypeScript config to TypeScript files
     ...clipccTS.map(config => ({
         ...config,
         files: ['src/**/*.{ts,tsx}']
     })),
-
-    // Source files configuration (browser environment + import plugin + React rules)
     {
         files: ['src/**/*.{js,jsx,ts,tsx}'],
         languageOptions: {
@@ -52,13 +45,12 @@ module.exports = [
             'import/no-amd': 'error',
             'import/no-nodejs-modules': 'error',
             'react/jsx-no-literals': 'error',
+            'jsdoc/require-jsdoc': 'off',
             'no-confusing-arrow': ['error', {
                 allowParens: true
             }]
         }
     },
-
-    // Extension examples - worker environment, no ES6
     {
         files: ['src/examples/extensions/**/*.js'],
         languageOptions: {
@@ -70,16 +62,28 @@ module.exports = [
             }
         }
     },
-
-    // Library manifests - allow duplicate imports
     {
         files: ['src/lib/libraries/**/*.js'],
         rules: {
             'no-duplicate-imports': 'off'
         }
     },
-
-    // Global ignores
+    {
+        files: ['test/**/*.{js,jsx,ts,tsx}'],
+        languageOptions: {
+            globals: {
+                ...globals.jest,
+                ...globals.browser
+            }
+        },
+        rules: {
+            'no-undefined': 'off',
+            'jsdoc/require-jsdoc': 'off',
+            'jsdoc/require-description': 'off',
+            'jsdoc/require-param-description': 'off',
+            'jsdoc/require-returns-description': 'off'
+        }
+    },
     {
         ignores: [
             'node_modules/**',

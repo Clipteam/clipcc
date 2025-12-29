@@ -127,9 +127,7 @@ DirectionPicker.defaultProps = {
     labelAbove: false
 };
 
-const WrappedDirectionPicker = injectIntl(DirectionPicker);
-
 export {
-    WrappedDirectionPicker as default,
+    DirectionPicker as default,
     RotationStyles
 };

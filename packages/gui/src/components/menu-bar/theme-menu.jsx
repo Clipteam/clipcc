@@ -76,7 +76,7 @@ const ThemeMenu = ({
                     <ThemeMenuItem
                         key={enabledTheme}
                         isSelected={theme === enabledTheme}
-                        // eslint-disable-next-line react/jsx-no-bind
+                         
                         onClick={() => onChangeTheme(enabledTheme)}
                         theme={enabledTheme}
                     />)

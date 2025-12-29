@@ -52,7 +52,7 @@ const TILT = {
 /**
  * Class for the Face sensing blocks in Scratch 3.0
  * @param {Runtime} runtime - the runtime instantiating this block package.
- * @constructor
+ * @class
  */
 class Scratch3FaceSensingBlocks {
     constructor (runtime) {

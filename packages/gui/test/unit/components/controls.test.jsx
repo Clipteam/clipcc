@@ -17,13 +17,15 @@ describe('Controls component', () => {
             {...defaultProps()}
             turbo
         />);
-        const turboMode = [...containerTurbo.querySelectorAll('div')].reverse().find(el => el.textContent.includes('Turbo Mode'));
+        const turboMode = [...containerTurbo.querySelectorAll('div')]
+            .reverse().find(el => el.textContent.includes('Turbo Mode'));
         expect(turboMode).toBeTruthy();
     });
 
     test('does not show turbo mode when not in turbo mode', () => {
         const {container: containerNoTurbo} = renderWithIntl(<Controls {...defaultProps()} />);
-        const noTurboMode = [...containerNoTurbo.querySelectorAll('div')].reverse().find(el => el.textContent.includes('Turbo Mode'));
+        const noTurboMode = [...containerNoTurbo.querySelectorAll('div')]
+            .reverse().find(el => el.textContent.includes('Turbo Mode'));
         expect(noTurboMode).toBeFalsy();
     });
 

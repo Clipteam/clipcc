@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import selectedItemsReducer, {
     setSelectedItems, clearSelectedItems
 } from '../../src/reducers/selected-items';

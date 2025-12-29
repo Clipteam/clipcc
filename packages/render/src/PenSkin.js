@@ -22,7 +22,7 @@ const ShaderManager = require('./ShaderManager');
  * @type {PenAttributes}
  * @memberof PenSkin
  * @private
- * @const
+ * @constant
  */
 const DefaultPenAttributes = {
     color4f: [0, 0, 1, 1],
@@ -35,12 +35,15 @@ const DefaultPenAttributes = {
  */
 const __premultipliedColor = [0, 0, 0, 0];
 
+/**
+ * A skin which implements a Scratch pen layer.
+ */
 class PenSkin extends Skin {
     /**
      * Create a Skin which implements a Scratch pen layer.
      * @param {int} id - The unique ID for this Skin.
      * @param {RenderWebGL} renderer - The renderer which will use this Skin.
-     * @extends Skin
+     * @augments Skin
      * @listens RenderWebGL#event:NativeSizeChanged
      */
     constructor (id, renderer) {
@@ -115,12 +118,17 @@ class PenSkin extends Skin {
     }
 
     /**
-     * @return {Array<number>} the "native" size, in texels, of this skin. [width, height]
+     * Get the "native" size of this skin, in texels.
+     * @returns {Array<number>} the "native" size, in texels, of this skin. [width, height]
      */
     get size () {
         return this._size;
     }
 
+    /**
+     * Determine whether to use nearest-neighbor interpolation when drawing this skin at the given scale.
+     * @param scale
+     */
     useNearest (scale) {
         // Use nearest-neighbor interpolation when scaling up the pen skin-- this matches Scratch 2.0.
         // When scaling it down, use linear interpolation to avoid giving pen lines a "dashed" appearance.
@@ -128,8 +136,9 @@ class PenSkin extends Skin {
     }
 
     /**
+     * Get the WebGL texture representation of this skin when drawing at the given size.
      * @param {Array<number>} scale The X and Y scaling factors to be used, as percentages of this skin's "native" size.
-     * @return {WebGLTexture} The GL texture representation of this skin when drawing at the given size.
+     * @returns {WebGLTexture} The GL texture representation of this skin when drawing at the given size.
      */
     // eslint-disable-next-line no-unused-vars
     getTexture (scale) {

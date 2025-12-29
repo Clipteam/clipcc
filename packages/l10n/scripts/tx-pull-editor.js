@@ -1,7 +1,7 @@
 #!/usr/bin/env babel-node
 
 /**
- * @fileoverview
+ * @file
  * Script to pull translations from transifex and generate the editor-msgs file.
  * Expects that the project and resource have already been defined in Transifex, and that
  * the person running the script has the the TX_TOKEN environment variable set to an api

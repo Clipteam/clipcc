@@ -220,7 +220,7 @@ const ModeToolsComponent = props => {
                             value={props.radius}
                             onSubmit={props.onRadiusChange}
                         />
-                        </Label>
+                    </Label>
                 </InputGroup>
             </div>
         );

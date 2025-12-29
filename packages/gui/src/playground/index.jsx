@@ -25,9 +25,10 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service-worker.js').then(registration => {
             console.log('SW registered: ', registration);
-        }).catch(registrationError => {
-            console.log('SW registration failed: ', registrationError);
-        });
+        })
+            .catch(registrationError => {
+                console.log('SW registration failed: ', registrationError);
+            });
     });
 }
 
@@ -41,6 +42,6 @@ if (supportedBrowser()) {
     const WrappedBrowserModalComponent = AppStateHOC(BrowserModalComponent, true /* localesOnly */);
     const handleBack = () => {};
     const root = ReactDomClient.createRoot(appTarget);
-    // eslint-disable-next-line react/jsx-no-bind
+     
     root.render(<WrappedBrowserModalComponent onBack={handleBack} />);
 }

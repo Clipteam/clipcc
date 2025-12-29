@@ -1,5 +1,5 @@
 /**
- * @fileOverview Import bitmap data into Scratch 3.0, resizing image as necessary.
+ * @file Import bitmap data into Scratch 3.0, resizing image as necessary.
  */
 import getFonts from 'scratch-render-fonts';
 
@@ -15,7 +15,7 @@ import getFonts from 'scratch-render-fonts';
  *   // Using a <link> or <style>@import</style> to link to font-family
  *   // injected into the document: no effect.
  * @param {string} svgString The string representation of the svg to modify
- * @return {string} The svg with any needed fonts inlined
+ * @returns {string} The svg with any needed fonts inlined
  */
 export default function inlineSvgFonts (svgString: string): string {
     const FONTS = getFonts();

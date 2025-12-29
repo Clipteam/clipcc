@@ -61,7 +61,8 @@ module.exports = [
             'react/jsx-key': [2],
             'react/jsx-max-props-per-line': [2, {maximum: 1}],
             'react/jsx-no-bind': [2, {
-                ignoreRefs: true
+                ignoreRefs: true,
+                allowArrowFunctions: true
             }],
             'react/jsx-no-comment-textnodes': [2],
             'react/jsx-no-duplicate-props': [2],

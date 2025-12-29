@@ -72,30 +72,39 @@ class FPSMenu extends React.PureComponent {
                 <Submenu
                     place={this.props.isRtl ? 'left' : 'right'}
                 >
-                    <MenuItem onClick={() => {
-                        this.props.onChangeFPS(30);
-                    }}>
+                    <MenuItem
+                        onClick={() => {
+                            this.props.onChangeFPS(30);
+                        }}
+                    >
                         <img
                             className={classNames(styles.check, {[styles.selected]: this.props.fps === 30})}
                             src={check}
+                        // eslint-disable-next-line react/jsx-no-literals
                         />
                         30 FPS
                     </MenuItem>
-                    <MenuItem onClick={() => {
-                        this.props.onChangeFPS(60);
-                    }}>
+                    <MenuItem
+                        onClick={() => {
+                            this.props.onChangeFPS(60);
+                        }}
+                    >
                         <img
                             className={classNames(styles.check, {[styles.selected]: this.props.fps === 60})}
                             src={check}
+                        // eslint-disable-next-line react/jsx-no-literals
                         />
                         60 FPS
                     </MenuItem>
-                    <MenuItem onClick={() => {
-                        this.props.onChangeFPS(120);
-                    }}>
+                    <MenuItem
+                        onClick={() => {
+                            this.props.onChangeFPS(120);
+                        }}
+                    >
                         <img
                             className={classNames(styles.check, {[styles.selected]: this.props.fps === 120})}
                             src={check}
+                        // eslint-disable-next-line react/jsx-no-literals
                         />
                         120 FPS
                     </MenuItem>
@@ -107,10 +116,8 @@ class FPSMenu extends React.PureComponent {
 
 FPSMenu.propTypes = {
     isRtl: PropTypes.bool,
-    label: PropTypes.string,
     menuOpen: PropTypes.bool,
     onChangeFPS: PropTypes.func,
-    onRequestCloseSettings: PropTypes.func,
     onRequestOpen: PropTypes.func
 };
 
@@ -122,7 +129,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
     onRequestOpen: () => dispatch(openFpsMenu()),
-    onChangeFPS: (fps) => dispatch(updateSettings({framerate: fps}))
+    onChangeFPS: fps => dispatch(updateSettings({framerate: fps}))
 });
 
 export default connect(

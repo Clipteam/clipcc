@@ -458,6 +458,8 @@ Stage.propTypes = {
     onDeactivateColorPicker: PropTypes.func,
     stageSize: PropTypes.oneOf(Object.keys(STAGE_DISPLAY_SIZES)).isRequired,
     useEditorDragStyle: PropTypes.bool,
+    stageWidth: PropTypes.number.isRequired,
+    stageHeight: PropTypes.number.isRequired,
     vm: PropTypes.instanceOf(VM).isRequired
 };
 

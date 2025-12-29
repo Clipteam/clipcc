@@ -10,17 +10,21 @@ const MAX_TEXTURE_DIMENSION = 2048;
  * All scaled renderings of the SVG are stored in an array. The 1.0 scale of
  * the SVG is stored at the 8th index. The smallest possible 1 / 256 scale
  * rendering is stored at the 0th index.
- * @const {number}
+ * @constant {number}
  */
 const INDEX_OFFSET = 8;
 
+/**
+ * A skin representing a SVG image for rendering.
+ * @class
+ */
 class SVGSkin extends Skin {
     /**
      * Create a new SVG skin.
      * @param {!int} id - The ID for this Skin.
      * @param {!RenderWebGL} renderer - The renderer which will use this skin.
-     * @constructor
-     * @extends Skin
+     * @class
+     * @augments Skin
      */
     constructor (id, renderer) {
         super(id);
@@ -50,9 +54,9 @@ class SVGSkin extends Skin {
         this._largestMIPScale = 0;
 
         /**
-        * Ratio of the size of the SVG and the max size of the WebGL texture
-        * @type {Number}
-        */
+         * Ratio of the size of the SVG and the max size of the WebGL texture
+         * @type {number}
+         */
         this._maxTextureScale = 1;
     }
 
@@ -65,12 +69,20 @@ class SVGSkin extends Skin {
     }
 
     /**
-     * @return {Array<number>} the natural size, in Scratch units, of this skin.
+     * Get the "natural" size of this skin, in Scratch units.
+     * @returns {Array<number>} the natural size, in Scratch units, of this skin.
      */
     get size () {
         return [this._size[0], this._size[1]];
     }
 
+    /**
+     * Determine whether to use nearest neighbor scaling for this skin at the given scale.
+     * @param {Array<number>} scale - The scaling factors to be used.
+     * @param {Drawable} drawable - The drawable that this skin's texture will be applied to.
+     * @returns {boolean} True if this skin's texture, as returned by {@link getTexture}, should be filtered with
+     * nearest-neighbor interpolation.
+     */
     useNearest (scale, drawable) {
         // If the effect bits for mosaic, pixelate, whirl, or fisheye are set, use linear
         if ((drawable.enabledEffects & (
@@ -103,7 +115,7 @@ class SVGSkin extends Skin {
     /**
      * Create a MIP for a given scale.
      * @param {number} scale - The relative size of the MIP
-     * @return {SVGMIP} An object that handles creating and updating SVG textures.
+     * @returns {SVGMIP} An object that handles creating and updating SVG textures.
      */
     createMIP (scale) {
         const [width, height] = this._size;
@@ -146,14 +158,19 @@ class SVGSkin extends Skin {
         return mip;
     }
 
+    /**
+     * Ensure the silhouette is up to date for the given scale.
+     * @param {[number, number]} scale - The scaling factors to be used.
+     */
     updateSilhouette (scale = [100, 100]) {
         // Ensure a silhouette exists.
         this.getTexture(scale);
     }
 
     /**
+     * Get the WebGL texture representation of this skin when drawing at the given scale.
      * @param {Array<number>} scale - The scaling factors to be used, each in the [0,100] range.
-     * @return {WebGLTexture} The GL texture representation of this skin when drawing at the given scale.
+     * @returns {WebGLTexture} The GL texture representation of this skin when drawing at the given scale.
      */
     getTexture (scale) {
         // The texture only ever gets uniform scale. Take the larger of the two axes.

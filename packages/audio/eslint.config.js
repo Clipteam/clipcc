@@ -8,7 +8,6 @@ module.exports = [
     clipccNode,
     clipccES6,
 
-    // Source files - browser environment
     {
         files: ['src/**/*.js'],
         languageOptions: {

@@ -19,7 +19,7 @@ const SoundBank = require('./SoundBank');
  * Wrapper to ensure that audioContext.decodeAudioData is a promise
  * @param {object} audioContext The current AudioContext
  * @param {ArrayBuffer} buffer Audio data buffer to decode
- * @return {Promise} A promise that resolves to the decoded audio
+ * @returns {Promise} A promise that resolves to the decoded audio
  */
 const decodeAudioData = function (audioContext, buffer) {
     // Check for newer promise-based API
@@ -41,6 +41,10 @@ const decodeAudioData = function (audioContext, buffer) {
  * sprites.
  */
 class AudioEngine {
+    /**
+     *
+     * @param audioContext
+     */
     constructor (audioContext = new AudioContext()) {
         /**
          * AudioContext to play and manipulate sounds with a graph of source
@@ -107,7 +111,7 @@ class AudioEngine {
      * same amount of time and avoid clipping.
      *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/AudioParam/setTargetAtTime}
-     * @const {number}
+     * @constant {number}
      */
     get DECAY_DURATION () {
         return 0.025;
@@ -118,7 +122,7 @@ class AudioEngine {
      * a small delay before decaying.
      *
      * @see {@link https://bugzilla.mozilla.org/show_bug.cgi?id=1228207}
-     * @const {number}
+     * @constant {number}
      */
     get DECAY_WAIT () {
         return 0.05;
@@ -126,7 +130,7 @@ class AudioEngine {
 
     /**
      * Get the input node.
-     * @return {AudioNode} - audio node that is the input for this effect
+     * @returns {AudioNode} - audio node that is the input for this effect
      */
     getInputNode () {
         return this.inputNode;
@@ -218,13 +222,13 @@ class AudioEngine {
      */
     decodeSoundPlayer (sound) {
         return this._decodeSound(sound)
-        .then(([id, buffer]) => new SoundPlayer(this, {id, buffer}));
+            .then(([id, buffer]) => new SoundPlayer(this, {id, buffer}));
     }
 
     /**
      * Get the current loudness of sound received by the microphone.
      * Sound is measured in RMS and smoothed.
-     * @return {number} loudness scaled 0 to 100
+     * @returns {number} loudness scaled 0 to 100
      */
     getLoudness () {
         // The microphone has not been set up, so try to connect to it

@@ -28,8 +28,8 @@ export type HigherOrderComponent = (component: ReactComponentLike) => ReactCompo
  * Creates a "root" for the editor to be hosted in.
  * @param {EditorState} state The editor state. Create by new-ing EditorState.
  * @param {HTMLElement} container The container the editor should be hosted under.
- * @param root0
- * @param root0.wrappers
+ * @param root0 Options object.
+ * @param root0.wrappers {HigherOrderComponent[]} Additional HOCs to wrap the GUI in.
  * @returns {{ render: function(props: GUIProps): void, unmount: function(): void }} The mounted root.
  */
 export const createStandaloneRoot = (

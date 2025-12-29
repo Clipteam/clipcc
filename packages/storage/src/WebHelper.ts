@@ -4,8 +4,8 @@ import Asset, {AssetData, AssetId} from './Asset';
 import Helper from './Helper';
 import ProxyTool from './ProxyTool';
 import {ScratchGetRequest, ScratchSendRequest, Tool} from './Tool';
-import {AssetType} from './AssetType';
-import {DataFormat} from './DataFormat';
+import {IAssetType} from './AssetType';
+import {IDataFormat} from './DataFormat';
 
 const ensureRequestConfig = reqConfig => {
     if (typeof reqConfig === 'string') {
@@ -17,7 +17,7 @@ const ensureRequestConfig = reqConfig => {
 };
 
 /**
- * @typedef {function} UrlFunction - A function which computes a URL from asset information.
+ * @typedef {Function} UrlFunction - A function which computes a URL from asset information.
  * @param {Asset} - The asset for which the URL should be computed.
  * @returns {(string|object)} - A string representing the URL for the asset request OR an object with configuration for
  *                              the underlying fetch call (necessary for configuring e.g. authentication)
@@ -69,23 +69,23 @@ export default class WebHelper extends Helper {
     /**
      * Register a web-based source for assets. Sources will be checked in order of registration.
      * @deprecated Please use addStore
-     * @param {Array.<AssetType>} types - The types of asset provided by this source.
+     * @param {Array.<IAssetType>} types - The types of asset provided by this source.
      * @param {UrlFunction} urlFunction - A function which computes a URL from an Asset.
      */
-    addSource (types: AssetType[], urlFunction: UrlFunction): void {
+    addSource (types: IAssetType[], urlFunction: UrlFunction): void {
         log.warn('Deprecation: WebHelper.addSource has been replaced with WebHelper.addStore.');
         this.addStore(types, urlFunction);
     }
 
     /**
      * Register a web-based store for assets. Sources will be checked in order of registration.
-     * @param {Array.<AssetType>} types - The types of asset provided by this store.
+     * @param {Array.<IAssetType>} types - The types of asset provided by this store.
      * @param {UrlFunction} getFunction - A function which computes a GET URL for an Asset
      * @param {UrlFunction} createFunction - A function which computes a POST URL for an Asset
      * @param {UrlFunction} updateFunction - A function which computes a PUT URL for an Asset
      */
     addStore (
-        types: AssetType[],
+        types: IAssetType[],
         getFunction: UrlFunction,
         createFunction?: UrlFunction,
         updateFunction?: UrlFunction
@@ -100,12 +100,12 @@ export default class WebHelper extends Helper {
 
     /**
      * Fetch an asset but don't process dependencies.
-     * @param {AssetType} assetType - The type of asset to fetch.
+     * @param {IAssetType} assetType - The type of asset to fetch.
      * @param {string} assetId - The ID of the asset to fetch: a project ID, MD5, etc.
      * @param {DataFormat} dataFormat - The file format / file extension of the asset to fetch: PNG, JPG, etc.
-     * @return {Promise.<Asset>} A promise for the contents of the asset.
+     * @returns {Promise.<Asset>} A promise for the contents of the asset.
      */
-    load (assetType: AssetType, assetId: AssetId, dataFormat: DataFormat): Promise<Asset | null> {
+    load (assetType: IAssetType, assetId: AssetId, dataFormat: IDataFormat): Promise<Asset | null> {
 
         /** @type {Array.<{url:string, result:*}>} List of URLs attempted & errors encountered. */
         const errors: unknown[] = [];
@@ -158,15 +158,15 @@ export default class WebHelper extends Helper {
 
     /**
      * Create or update an asset with provided data. The create function is called if no asset id is provided
-     * @param {AssetType} assetType - The type of asset to create or update.
-     * @param {?DataFormat} dataFormat - DataFormat of the data for the stored asset.
+     * @param {IAssetType} assetType - The type of asset to create or update.
+     * @param {?IDataFormat} dataFormat - DataFormat of the data for the stored asset.
      * @param {Buffer} data - The data for the cached asset.
      * @param {?string} assetId - The ID of the asset to fetch: a project ID, MD5, etc.
-     * @return {Promise.<object>} A promise for the response from the create or update request
+     * @returns {Promise.<object>} A promise for the response from the create or update request
      */
     store (
-        assetType: AssetType,
-        dataFormat: DataFormat | undefined,
+        assetType: IAssetType,
+        dataFormat: IDataFormat | undefined,
         data: AssetData,
         assetId?: AssetId
     ): Promise<string | {id: string}> {
@@ -208,6 +208,7 @@ export default class WebHelper extends Helper {
                 if (typeof body === 'string') {
                     try {
                         body = JSON.parse(body);
+                    // eslint-disable-next-line @typescript-eslint/no-unused-vars
                     } catch (parseError) {
                         // If it's not parseable, then we can't add the id even
                         // if we want to, so stop here

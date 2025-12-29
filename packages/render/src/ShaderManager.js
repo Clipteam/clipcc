@@ -4,10 +4,14 @@ const twgl = require('twgl.js');
  * @typedef {number} int
  */
 
+/**
+ * The information about a compiled shader program.
+ */
 class ShaderManager {
     /**
+     * Create a Shader Manager.
      * @param {WebGLRenderingContext} gl WebGL rendering context to create shaders for
-     * @constructor
+     * @class
      */
     constructor (gl) {
         this._gl = gl;
@@ -77,11 +81,11 @@ class ShaderManager {
 
 /**
  * @typedef {object} ShaderManager.Effect
- * @prop {int} mask - The bit in 'effectBits' representing the effect.
- * @prop {function} converter - A conversion function which takes a Scratch value (generally in the range
+ * @property {int} mask - The bit in 'effectBits' representing the effect.
+ * @property {Function} converter - A conversion function which takes a Scratch value (generally in the range
  *   0..100 or -100..100) and maps it to a value useful to the shader. This
  *   mapping may not be reversible.
- * @prop {boolean} shapeChanges - Whether the effect could change the drawn shape.
+ * @property {boolean} shapeChanges - Whether the effect could change the drawn shape.
  */
 
 /**
