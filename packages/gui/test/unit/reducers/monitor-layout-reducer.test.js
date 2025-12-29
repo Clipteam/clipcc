@@ -1,4 +1,4 @@
-/* eslint-env jest */
+
 import monitorLayoutReducer, {
     addMonitorRect, moveMonitorRect,
     resizeMonitorRect, removeMonitorRect,

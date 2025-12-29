@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import reducer, {clearHoveredItem, clearRemovedItem, setHoveredItem} from '../../src/reducers/hover';
 
 const defaultState = {hoveredItemId: null, removedItemIds: []};
