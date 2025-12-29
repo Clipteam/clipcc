@@ -1,4 +1,4 @@
-.monitor-container {
+body .monitor-container {
     position: absolute;
     background: var(--clipcc-ui-primary);
     z-index: var(--clipcc-z-index-monitor);

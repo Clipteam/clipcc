@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {defineMessages, injectIntl} from 'react-intl';
 import intlShape from '../../lib/intlShape.js';
+// eslint-disable-next-line import/no-unresolved
+import {driver} from 'driver.js';
+import 'driver.js/dist/driver.css';
 
 import LibraryItem from '../../containers/library-item.jsx';
 import Modal from '../../containers/modal.jsx';
@@ -12,8 +15,12 @@ import Filter from '../filter/filter.jsx';
 import TagButton from '../../containers/tag-button.jsx';
 import {legacyConfig} from '../../legacy-config';
 import Spinner from '../spinner/spinner.jsx';
+import {getLocalStorageValue, setLocalStorageValue} from '../../lib/local-storage.js';
 
 import styles from './library.css';
+
+const localStorageAvailable =
+    'localStorage' in window && window.localStorage !== null;
 
 const messages = defineMessages({
     filterPlaceholder: {
@@ -25,6 +32,12 @@ const messages = defineMessages({
         id: 'gui.library.allTag',
         defaultMessage: 'All',
         description: 'Label for library tag to revert to all items after filtering by tag.'
+    },
+    faceSensingModalCallout: {
+        id: 'gui.library.faceSensingCallout',
+        description: 'Description for Face Sensing callout',
+        // eslint-disable-next-line max-len
+        defaultMessage: 'You can now use your face to control your projects, like making a sprite follow wherever your nose goes!'
     }
 });
 
@@ -37,11 +50,11 @@ const tagListPrefix = [ALL_TAG];
  * @returns {AssetType} - the AssetType corresponding to the extension, if any.
  */
 const getAssetTypeForFileExtension = function (fileExtension) {
-    const storage = legacyConfig.storage.scratchStorage;
     const compareOptions = {
         sensitivity: 'accent',
         usage: 'search'
     };
+    const storage = legacyConfig.storage.scratchStorage;
     for (const assetTypeId in storage.AssetType) {
         const assetType = storage.AssetType[assetTypeId];
         if (fileExtension.localeCompare(assetType.runtimeFormat, compareOptions) === 0) {
@@ -89,6 +102,18 @@ const getItemIcons = function (item) {
     }
 };
 
+// Default to true to make sure we don't end up showing the feature
+// callouts multiple times if localStorage isn't available.
+const hasUsedFaceSensing = (username = 'guest') => {
+    if (!localStorageAvailable) return true;
+    return getLocalStorageValue('hasUsedFaceSensing', username) === true;
+};
+
+const setHasUsedFaceSensing = (username = 'guest') => {
+    if (!localStorageAvailable) return;
+    setLocalStorageValue('hasUsedFaceSensing', username, true);
+};
+
 class LibraryComponent extends React.Component {
     constructor (props) {
         super(props);
@@ -101,14 +126,18 @@ class LibraryComponent extends React.Component {
             'handlePlayingEnd',
             'handleSelect',
             'handleTagClick',
+            'handleScroll',
             'setFilteredDataRef'
         ]);
         this.state = {
             playingItem: null,
             filterQuery: '',
             selectedTag: ALL_TAG.tag,
-            loaded: false
+            loaded: false,
+            shouldShowFaceSensingCallout: props.showNewFeatureCallouts && !hasUsedFaceSensing(props.username)
         };
+
+        this.driver = null;
     }
     componentDidMount () {
         // Allow the spinner to display before loading the content
@@ -122,11 +151,77 @@ class LibraryComponent extends React.Component {
             prevState.selectedTag !== this.state.selectedTag) {
             this.scrollToTop();
         }
+
+        // We need to create the driver when the content is loaded for the target element to exist
+        if (!prevState.loaded && this.state.loaded && this.state.shouldShowFaceSensingCallout) {
+            const onFirstClick = () => {
+                const isExtensionItemVisible = document.getElementById('faceSensing');
+                if (!isExtensionItemVisible) return;
+
+                const tooltip = driver({
+                    allowClose: false,
+                    allowInteraction: true,
+                    overlayColor: 'transparent',
+                    popoverOffset: -2,
+                    steps: [{
+                        element: 'div[id="faceSensing"]',
+                        popover: {
+                            description: this.props.intl.formatMessage(messages.faceSensingModalCallout),
+                            side: 'left',
+                            align: 'start',
+                            popoverClass: 'tooltip-face-sensing-modal',
+                            showButtons: []
+                        }
+                    }]
+                });
+
+                this.driver = tooltip;
+                tooltip.drive();
+            };
+
+            window.addEventListener('click', onFirstClick, {once: true});
+            this.filteredDataRef.addEventListener('scroll', this.handleScroll);
+        }
+    }
+    componentWillUnmount () {
+        if (this.driver) {
+            this.driver.destroy();
+            this.driver = null;
+        }
+
+        if (this.animationFrameId) {
+            window.cancelAnimationFrame(this.animationFrameId);
+        }
+
+        this.filteredDataRef.removeEventListener('scroll', this.handleScroll);
+    }
+    handleScroll () {
+        if (this.animationFrameId) return;
+
+        this.animationFrameId = window.requestAnimationFrame(() => {
+            if (this.driver) {
+                this.driver.refresh();
+            }
+
+            this.animationFrameId = null;
+        });
     }
     handleSelect (id) {
+        const selectedItem = this.getFilteredData().find(item => this.constructKey(item) === id);
+
+        if (this.state.shouldShowFaceSensingCallout && selectedItem.extensionId === 'faceSensing') {
+            if (!this.driver) {
+                return;
+            }
+
+            setHasUsedFaceSensing(this.props.username);
+            this.setState({
+                shouldShowFaceSensingCallout: false
+            });
+        }
+
         this.handleClose();
-        this.props.onItemSelected(this.getFilteredData()
-            .find(item => this.constructKey(item) === id));
+        this.props.onItemSelected(selectedItem);
     }
     handleClose () {
         this.props.onRequestClose();
@@ -247,6 +342,7 @@ class LibraryComponent extends React.Component {
             onMouseEnter={this.handleMouseEnter}
             onMouseLeave={this.handleMouseLeave}
             onSelect={this.handleSelect}
+            showItemCallout={this.state.shouldShowFaceSensingCallout && data.extensionId === 'faceSensing'}
         />);
     }
     renderData (data) {
@@ -349,7 +445,6 @@ class LibraryComponent extends React.Component {
 
 LibraryComponent.propTypes = {
     data: PropTypes.arrayOf(
-        /* eslint-disable react/no-unused-prop-types, lines-around-comment */
         // An item in the library
         PropTypes.shape({
             // @todo remove md5/rawURL prop from library, refactor to use storage
@@ -360,7 +455,6 @@ LibraryComponent.propTypes = {
             ]),
             rawURL: PropTypes.string
         })
-        /* eslint-enable react/no-unused-prop-types, lines-around-comment */
     ),
     filterable: PropTypes.bool,
     withCategories: PropTypes.bool,
@@ -373,7 +467,9 @@ LibraryComponent.propTypes = {
     setStopHandler: PropTypes.func,
     showPlayButton: PropTypes.bool,
     tags: PropTypes.arrayOf(PropTypes.shape(TagButton.propTypes)),
-    title: PropTypes.string.isRequired
+    title: PropTypes.string.isRequired,
+    username: PropTypes.string,
+    showNewFeatureCallouts: PropTypes.bool
 };
 
 LibraryComponent.defaultProps = {

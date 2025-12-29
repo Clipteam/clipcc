@@ -46,6 +46,7 @@
     --clipcc-extensions-light: hsla(163, 57%, 85%, 1); /* opaque version of extensions-transparent, on white bg */
 
     --clipcc-drop-highlight: hsla(215, 100%, 77%, 1); /* lighter than motion-primary */
+    --clipcc-radiate-color: 76, 151, 255; /* var(--clipcc-motion-primary) */
 }
 
 :root[theme='dark'] {

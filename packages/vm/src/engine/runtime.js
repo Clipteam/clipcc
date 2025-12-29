@@ -330,7 +330,7 @@ class Runtime extends EventEmitter {
          * @type {!number}
          */
         this._steppingInterval = null;
-        
+
         /**
          * Configured framerate.
          * @type {!number}
@@ -722,6 +722,10 @@ class Runtime extends EventEmitter {
      */
     static get MIC_LISTENING () {
         return 'MIC_LISTENING';
+    }
+
+    static get EXTENSION_DATA_LOADING () {
+        return 'EXTENSION_DATA_LOADING';
     }
 
     /**
@@ -1624,6 +1628,14 @@ class Runtime extends EventEmitter {
     }
 
     /**
+     * Emit an event to indicate that extension data is loading.
+     * @param {boolean} loading - true if extension data is currently loading.
+     */
+    emitExtensionLoading (loading) {
+        this.emit(Runtime.EXTENSION_DATA_LOADING, loading);
+    }
+
+    /**
      * Retrieve the function associated with the given opcode.
      * @param {!string} opcode The opcode to look up.
      * @return {Function} The function which implements the opcode.
@@ -1654,7 +1666,7 @@ class Runtime extends EventEmitter {
     /**
      * Retrieve the execution order of the given opcode.
      * @param {!string} opcode The opcode to look up.
-     * @return {Array.<string | Object>} The execution order array of given opcode.
+     * @return {Array.<string | object>} The execution order array of given opcode.
      */
     getExecutionOrders (opcode) {
         return Object.prototype.hasOwnProperty.call(this._orders, opcode) && this._orders[opcode];
@@ -2255,7 +2267,7 @@ class Runtime extends EventEmitter {
         this.compatibilityMode = compatibilityModeOn;
         this.setFramerate(compatibilityModeOn ? 30 : 60);
     }
-    
+
     /**
      * Set the framerate (also called TPS in VM).
      * @param {boolean} framerate Frames per seconde

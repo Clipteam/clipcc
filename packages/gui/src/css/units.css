@@ -38,4 +38,8 @@ e.g. STAGE_DIMENSION_DEFAULTS in lib/screen-utils.js */
 
     /* blockly stuff */
     --clipcc-category-width: 85px;
+
+    /* extension button constants */
+    --clipcc-fade-out-distance: 15px;
+    --clipcc-radiate-distance: 20px;
 }

@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import omit from 'lodash.omit';
 import PropTypes from 'prop-types';
 import React, {useEffect} from 'react';
-import {defineMessages, FormattedMessage, useIntl} from 'react-intl';
+import {FormattedMessage, useIntl} from 'react-intl';
 import {connect} from 'react-redux';
 import MediaQuery from 'react-responsive';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
@@ -23,6 +23,7 @@ import BackdropLibrary from '../../containers/backdrop-library.jsx';
 import Watermark from '../../containers/watermark.jsx';
 
 import Backpack from '../../containers/backpack.jsx';
+import ExtensionsButton from '../extension-button/extension-button.jsx';
 import WebGlModal from '../../containers/webgl-modal.jsx';
 import Alerts from '../../containers/alerts.jsx';
 import DragLayer from '../../containers/drag-layer.jsx';
@@ -36,20 +37,11 @@ import {themeMap} from '../../lib/themes';
 import {AccountMenuOptionsPropTypes} from '../../lib/account-menu-options';
 
 import styles from './gui.css';
-import addExtensionIcon from './icon--extensions.svg';
 import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
 import {setPlatform} from '../../reducers/platform.js';
 import {PLATFORM} from '../../lib/platform.js';
-
-const messages = defineMessages({
-    addExtension: {
-        id: 'gui.gui.addExtension',
-        description: 'Button to add an extension in the target pane',
-        defaultMessage: 'Add Extension'
-    }
-});
 
 // Cache this value to only retrieve it once the first time.
 // Assume that it doesn't change for a session.
@@ -124,6 +116,7 @@ const GUIComponent = props => {
         onUpdateProjectThumbnail,
         settingsModalVisible,
         showComingSoon,
+        showNewFeatureCallouts,
         soundsTabVisible,
         stageSizeMode,
         targetIsStage,
@@ -338,21 +331,17 @@ const GUIComponent = props => {
                                             stageSize={stageSize}
                                             theme={theme}
                                             vm={vm}
+                                            showNewFeatureCallouts={showNewFeatureCallouts}
+                                            username={username}
                                         />
                                     </Box>
-                                    <Box className={styles.extensionButtonContainer}>
-                                        <button
-                                            className={styles.extensionButton}
-                                            title={intl.formatMessage(messages.addExtension)}
-                                            onClick={onExtensionButtonClick}
-                                        >
-                                            <img
-                                                className={styles.extensionButtonIcon}
-                                                draggable={false}
-                                                src={addExtensionIcon}
-                                            />
-                                        </button>
-                                    </Box>
+                                    <ExtensionsButton
+                                        activeTabIndex={activeTabIndex}
+                                        intl={intl}
+                                        showNewFeatureCallouts={showNewFeatureCallouts}
+                                        onExtensionButtonClick={onExtensionButtonClick}
+                                        username={username}
+                                    />
                                     <Box className={styles.watermark}>
                                         <Watermark />
                                     </Box>
@@ -462,6 +451,7 @@ GUIComponent.propTypes = {
     renderLogin: PropTypes.func,
     settingsModalVisible: PropTypes.bool,
     showComingSoon: PropTypes.bool,
+    showNewFeatureCallouts: PropTypes.bool,
     soundsTabVisible: PropTypes.bool,
     stageSizeMode: PropTypes.oneOf(Object.keys(STAGE_SIZE_MODES)),
     setPlatform: PropTypes.func,
@@ -490,6 +480,7 @@ GUIComponent.defaultProps = {
     isShared: false,
     loading: false,
     showComingSoon: false,
+    showNewFeatureCallouts: false,
     stageSizeMode: STAGE_SIZE_MODES.large,
     useExternalPeripheralList: false
 };

@@ -78,6 +78,10 @@ const base = {
         },
         {
             test: /\.css$/,
+            exclude: [
+                /\.raw\.css$/, // Allow for overriding CSS classes from libraries
+                /[\\/]driver\.js[\\/].*\.css$/ // driver.js CSS
+            ],
             use: [{
                 loader: 'style-loader'
             }, {
@@ -100,6 +104,26 @@ const base = {
                     }
                 }
             }]
+        }, {
+            test: [
+                /\.raw\.css$/, // Allow for overriding CSS classes from libraries
+                /[\\/]driver\.js[\\/].*\.css$/ // driver.js CSS
+            ],
+            use: [
+                'style-loader',
+                'css-loader',
+                {
+                    loader: 'postcss-loader',
+                    options: {
+                        postcssOptions: {
+                            plugins: [
+                                'postcss-import',
+                                'autoprefixer'
+                            ]
+                        }
+                    }
+                }
+            ]
         }, {
             test: /\.hex$/,
             type: 'asset/inline',
@@ -241,6 +265,9 @@ module.exports = [
                         from: 'chunks/fetch-worker.*.{js,js.map}',
                         context: '../storage/dist/web',
                         noErrorOnMissing: true
+                    }, {
+                        from: '../../node_modules/@mediapipe/face_detection',
+                        to: 'chunks/mediapipe/face_detection'
                     }
                 ]
             })

@@ -141,6 +141,12 @@ class Blocks extends React.Component {
         if (this.props.isVisible) {
             this.setLocale();
         }
+
+        window.addEventListener('load-extension', () => {
+            this.props.vm.extensionManager.loadExtensionURL('faceSensing').then(() => {
+                this.handleCategorySelected('faceSensing');
+            });
+        });
     }
     shouldComponentUpdate (nextProps, nextState) {
         return (
@@ -624,6 +630,8 @@ class Blocks extends React.Component {
                         vm={vm}
                         onCategorySelected={this.handleCategorySelected}
                         onRequestClose={onRequestCloseExtensionLibrary}
+                        showNewFeatureCallouts={this.props.showNewFeatureCallouts}
+                        username={this.props.username}
                     />
                 ) : null}
                 {customProceduresVisible ? (
@@ -672,8 +680,11 @@ Blocks.propTypes = {
     updateToolboxState: PropTypes.func,
     vm: PropTypes.instanceOf(VM).isRequired,
     workspaceMetrics: PropTypes.shape({
+        // eslint-disable-next-line react/forbid-prop-types
         targets: PropTypes.objectOf(PropTypes.object)
-    })
+    }),
+    showNewFeatureCallouts: PropTypes.bool,
+    username: PropTypes.string
 };
 
 Blocks.defaultOptions = {
