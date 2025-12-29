@@ -5,7 +5,7 @@
  * the `JSON.parse` function.
  * @param {string}   input    Stringified JSON object
  * @param {Function} callback Returns error or parsed JSON object
- * @return {void}
+ * @returns {void}
  */
 module.exports = function (input, callback) {
     var result;
