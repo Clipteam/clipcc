@@ -1,4 +1,18 @@
+/**
+ * ES6/ES2024 ESLint configuration for ClipCC projects.
+ * This configuration adds ES6+ specific rules.
+ * Use with ESLint 9 flat config format.
+ *
+ * @returns {import('eslint').Linter.Config} ESLint flat config object
+ */
 module.exports = {
+    languageOptions: {
+        ecmaVersion: 2024,
+        sourceType: 'module',
+        parserOptions: {
+            ecmaVersion: 2024
+        }
+    },
     rules: {
         'arrow-body-style': [2, 'as-needed'],
         'arrow-parens': [2, 'as-needed'],
@@ -26,11 +40,5 @@ module.exports = {
         'rest-spread-spacing': [2, 'never'],
         'symbol-description': [2],
         'template-curly-spacing': [2, 'never']
-    },
-    env: {
-        es6: true
-    },
-    parserOptions: {
-        ecmaVersion: 2018
     }
 };
