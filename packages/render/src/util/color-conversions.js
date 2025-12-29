@@ -9,7 +9,7 @@
  * @param   {number}        rgb.g The green color value
  * @param   {number}        rgb.b The blue color value
  * @param   {Array<number>} dst   The array to store the HSV values in
- * @return  {Array<number>}       The `dst` array passed in
+ * @returns  {Array<number>}       The `dst` array passed in
  */
 const rgbToHsv = ([r, g, b], dst) => {
     let K = 0.0;
@@ -58,7 +58,7 @@ const rgbToHsv = ([r, g, b], dst) => {
  * @param   {number}                       hsv.s     The saturation
  * @param   {number}                       hsv.v     The value
  * @param   {Uint8Array|Uint8ClampedArray} dst The array to store the RGB values in
- * @return  {Uint8Array|Uint8ClampedArray}     The `dst` array passed in
+ * @returns  {Uint8Array|Uint8ClampedArray}     The `dst` array passed in
  */
 const hsvToRgb = ([h, s, v], dst) => {
     if (s === 0) {

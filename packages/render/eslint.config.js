@@ -20,8 +20,6 @@ module.exports = [
             }
         }
     },
-
-    // Playground - browser with console allowed
     {
         files: ['src/playground/**/*.js'],
         languageOptions: {
@@ -35,7 +33,22 @@ module.exports = [
             'no-console': 'off'
         }
     },
-
+    {
+        files: ['test/**/*.js'],
+        languageOptions: {
+            globals: {
+                ...globals.jest,
+                ...globals.browser
+            }
+        },
+        rules: {
+            'no-undefined': 'off',
+            'jsdoc/require-jsdoc': 'off',
+            'jsdoc/require-description': 'off',
+            'jsdoc/require-param-description': 'off',
+            'jsdoc/require-returns-description': 'off'
+        }
+    },
     {
         ignores: [
             'node_modules/**',
