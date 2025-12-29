@@ -4,7 +4,8 @@ import {compose} from 'redux';
 import {connect} from 'react-redux';
 import ReactModal from 'react-modal';
 import VM from 'clipcc-vm';
-import {injectIntl, intlShape} from 'react-intl';
+import {injectIntl} from 'react-intl';
+import intlShape from '../lib/intlShape.js';
 
 import ErrorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
 import {
@@ -43,6 +44,7 @@ import {PLATFORM} from '../lib/platform.js';
 
 import GUIComponent from '../components/gui/gui.jsx';
 import {GUIStoragePropType} from '../gui-config';
+import {AccountMenuOptionsPropTypes} from '../lib/account-menu-options';
 
 class GUI extends React.Component {
     componentDidMount () {
@@ -91,6 +93,7 @@ class GUI extends React.Component {
             loadingStateVisible,
             ...componentProps
         } = this.props;
+
         return (
             <GUIComponent
                 loading={fetchingProject || isLoading || loadingStateVisible}
@@ -105,6 +108,7 @@ class GUI extends React.Component {
 GUI.propTypes = {
     theme: PropTypes.string,
     storage: GUIStoragePropType,
+    accountMenuOptions: AccountMenuOptionsPropTypes,
     assetHost: PropTypes.string,
     children: PropTypes.node,
     cloudHost: PropTypes.string,
@@ -125,6 +129,9 @@ GUI.propTypes = {
     projectHost: PropTypes.string,
     projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     telemetryModalVisible: PropTypes.bool,
+    username: PropTypes.string,
+    userOwnsProject: PropTypes.bool,
+    hideTutorialProjects: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired
 };
 

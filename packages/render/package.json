@@ -15,27 +15,28 @@
   "scripts": {
     "build:types": "tsc --project ./tsconfig.dts.json",
     "build": "yarn build:types && webpack --progress --color",
+    "clean": "rimraf dist playground",
     "docs": "jsdoc -c .jsdoc.json",
     "lint": "eslint .",
     "prepublish": "yarn run build",
     "prepublish-watch": "yarn run watch",
     "start": "webpack-dev-server",
     "tap": "tap test/unit test/integration --allow-incomplete-coverage --allow-empty-coverage",
-    "test": "yarn run lint && yarn run docs && yarn run build && yarn run tap",
+    "test": "yarn run lint && yarn run tap",
     "version": "json -f package.json -I -e \"this.repository.sha = '$(git log -n1 --pretty=format:%H)'\"",
     "watch": "webpack --progress --color --watch --watch-poll"
   },
   "devDependencies": {
+    "@babel/core": "7.26.10",
+    "@babel/eslint-parser": "7.27.0",
+    "@babel/preset-env": "7.26.9",
     "@types/hull.js": "^1.0.4",
-    "babel-core": "6.26.3",
-    "babel-eslint": "10.1.0",
-    "babel-loader": "^9.1.2",
-    "babel-polyfill": "6.26.0",
-    "babel-preset-env": "1.7.0",
+    "babel-core": "7.0.0-bridge.0",
+    "babel-loader": "^9.2.1",
     "clipcc-vm": "3.2.0",
     "copy-webpack-plugin": "^11.0.0",
     "docdash": "0.4.0",
-    "eslint": "7.31.0",
+    "eslint": "^8.57.0",
     "eslint-config-clipcc": "^9.0.9",
     "gh-pages": "1.2.0",
     "jsdoc": "4.0.0",
@@ -53,7 +54,7 @@
     "webpack-dev-server": "^5.2.2"
   },
   "peerDependencies": {
-    "scratch-render-fonts": "1.0.174"
+    "scratch-render-fonts": "1.0.252"
   },
   "dependencies": {
     "@turbowarp/nanolog": "^0.2.0",

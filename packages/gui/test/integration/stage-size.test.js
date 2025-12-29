@@ -30,9 +30,11 @@ describe('Loading scratch gui', () => {
         // Highlight the sprite
         await clickText('Sprite1', scope.spriteTile);
 
+        await new Promise(r => setTimeout(r, 500)); // wait for animation
+
         // Delete it
         await rightClickText('Sprite1', scope.spriteTile);
-        await clickText('delete', scope.spriteTile);
+        await clickText('delete', scope.contextMenu);
 
         // Go to small stage mode
         await clickXpath('//button[@title="Switch to small stage"]');

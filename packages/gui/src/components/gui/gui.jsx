@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import omit from 'lodash.omit';
 import PropTypes from 'prop-types';
 import React, {useEffect} from 'react';
-import {defineMessages, FormattedMessage, injectIntl, intlShape} from 'react-intl';
+import {defineMessages, FormattedMessage, useIntl} from 'react-intl';
 import {connect} from 'react-redux';
 import MediaQuery from 'react-responsive';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
@@ -33,6 +33,7 @@ import SettingsModal from '../../containers/settings-modal.jsx';
 import layout, {STAGE_SIZE_MODES} from '../../lib/layout-constants';
 import {resolveStageSize} from '../../lib/screen-utils';
 import {themeMap} from '../../lib/themes';
+import {AccountMenuOptionsPropTypes} from '../../lib/account-menu-options';
 
 import styles from './gui.css';
 import addExtensionIcon from './icon--extensions.svg';
@@ -55,7 +56,9 @@ const messages = defineMessages({
 let isRendererSupported = null;
 
 const GUIComponent = props => {
+    const intl = useIntl();
     const {
+        accountMenuOptions,
         accountNavOpen,
         activeTabIndex,
         alertsVisible,
@@ -82,7 +85,6 @@ const GUIComponent = props => {
         costumeLibraryVisible,
         costumesTabVisible,
         enableCommunity,
-        intl,
         isCreating,
         isFullScreen,
         isPlayerOnly,
@@ -127,6 +129,9 @@ const GUIComponent = props => {
         targetIsStage,
         telemetryModalVisible,
         theme,
+        username,
+        userOwnsProject,
+        hideTutorialProjects,
         useExternalPeripheralList,
         vm,
         stageWidth,
@@ -256,6 +261,9 @@ const GUIComponent = props => {
                     onShare={onShare}
                     onStartSelectingFileUpload={onStartSelectingFileUpload}
                     onToggleLoginOpen={onToggleLoginOpen}
+                    userOwnsProject={userOwnsProject}
+                    username={username}
+                    accountMenuOptions={accountMenuOptions}
                 />
                 <Box className={styles.bodyWrapper}>
                     <Box className={styles.flexWrapper}>
@@ -394,6 +402,7 @@ const GUIComponent = props => {
 
 GUIComponent.propTypes = {
     accountNavOpen: PropTypes.bool,
+    accountMenuOptions: AccountMenuOptionsPropTypes,
     activeTabIndex: PropTypes.number,
     authorId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]), // can be false
     authorThumbnailUrl: PropTypes.string,
@@ -417,7 +426,6 @@ GUIComponent.propTypes = {
     costumeLibraryVisible: PropTypes.bool,
     costumesTabVisible: PropTypes.bool,
     enableCommunity: PropTypes.bool,
-    intl: intlShape.isRequired,
     isCreating: PropTypes.bool,
     isFullScreen: PropTypes.bool,
     isPlayerOnly: PropTypes.bool,
@@ -498,7 +506,7 @@ const mapDispatchToProps = dispatch => ({
     setPlatform: platform => dispatch(setPlatform(platform))
 });
 
-export default injectIntl(connect(
+export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(GUIComponent));
+)(GUIComponent);

@@ -1,7 +1,8 @@
 import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {injectIntl, intlShape, defineMessages} from 'react-intl';
+import {defineMessages, injectIntl} from 'react-intl';
+import intlShape from '../lib/intlShape.js';
 import VM from 'clipcc-vm';
 
 import spriteLibraryContent from '../lib/libraries/sprites.json';

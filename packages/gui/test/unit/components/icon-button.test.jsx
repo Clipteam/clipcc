@@ -1,37 +1,51 @@
 import React from 'react';
-import {shallow} from 'enzyme';
+import { render, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import IconButton from '../../../src/components/icon-button/icon-button';
-import renderer from 'react-test-renderer';
 
 describe('IconButtonComponent', () => {
-    test('matches snapshot', () => {
-        const onClick = jest.fn();
-        const title = <div>Text</div>;
-        const imgSrc = 'imgSrc';
-        const className = 'custom-class-name';
-        const component = renderer.create(
-            <IconButton
-                className={className}
-                img={imgSrc}
-                title={title}
-                onClick={onClick}
-            />
-        );
-        expect(component.toJSON()).toMatchSnapshot();
+    const defaultProps = {
+        img: 'imgSrc',
+        title: <div>Text</div>,
+        onClick: jest.fn(),
+        className: 'custom-class-name'
+    };
+    test('renders with all props correctly', () => {
+        const { container } = render(<IconButton {...defaultProps} />);
+
+        const button = container.querySelector('div[role="button"]');
+        expect(button).toBeTruthy();
+        expect(button).toHaveClass('custom-class-name');
+
+        const image = container.querySelector('img');
+        expect(image).toBeTruthy();
+        expect(image).toHaveAttribute('src', 'imgSrc');
+        expect(image).toHaveAttribute('draggable', 'false');
+
+        const text = container.querySelector('div div div');
+        expect(text).toHaveTextContent('Text');
     });
 
-    test('triggers callback when clicked', () => {
-        const onClick = jest.fn();
-        const title = <div>Text</div>;
-        const imgSrc = 'imgSrc';
-        const componentShallowWrapper = shallow(
+    test('triggers callback only once when clicked', () => {
+        const handleClick = jest.fn();
+
+        const { container } = render(
             <IconButton
-                img={imgSrc}
-                title={title}
-                onClick={onClick}
+                {...defaultProps}
+                onClick={handleClick}
             />
         );
-        componentShallowWrapper.simulate('click');
-        expect(onClick).toHaveBeenCalled();
+        const button = container.querySelector('div[role="button"]');
+
+        if (!button) {
+            throw new Error('Button not found');
+        }
+        fireEvent.click(button);
+        expect(handleClick).toHaveBeenCalledTimes(1);
+    });
+
+    test('matches snapshot', () => {
+        const { container } = render(<IconButton {...defaultProps} />);
+        expect(container.firstChild).toMatchSnapshot();
     });
 });

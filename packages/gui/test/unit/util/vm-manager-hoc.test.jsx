@@ -2,7 +2,7 @@ import 'lumen5-web-audio-test-api';
 
 import React from 'react';
 import configureStore from 'redux-mock-store';
-import {mount} from 'enzyme';
+import {render} from '@testing-library/react';
 import VM from 'clipcc-vm';
 import {LoadingState} from '../../../src/reducers/project-state';
 
@@ -39,7 +39,7 @@ describe('VMManagerHOC', () => {
     test('when it mounts in player mode, the vm is initialized but not started', () => {
         const Component = () => (<div />);
         const WrappedComponent = vmManagerHOC(Component);
-        mount(
+        render(
             <WrappedComponent
                 isPlayerOnly
                 isStarted={false}
@@ -58,7 +58,7 @@ describe('VMManagerHOC', () => {
     test('when it mounts in editor mode, the vm is initialized and started', () => {
         const Component = () => (<div />);
         const WrappedComponent = vmManagerHOC(Component);
-        mount(
+        render(
             <WrappedComponent
                 isPlayerOnly={false}
                 isStarted={false}
@@ -77,7 +77,7 @@ describe('VMManagerHOC', () => {
         const Component = () => <div />;
         const WrappedComponent = vmManagerHOC(Component);
         vm.initialized = true;
-        mount(
+        render(
             <WrappedComponent
                 isPlayerOnly={false}
                 isStarted={false}
@@ -97,7 +97,7 @@ describe('VMManagerHOC', () => {
         const Component = () => <div />;
         const WrappedComponent = vmManagerHOC(Component);
         vm.initialized = true;
-        const mounted = mount(
+        const { rerender } = render(
             <WrappedComponent
                 isPlayerOnly
                 isStarted={false}
@@ -106,16 +106,21 @@ describe('VMManagerHOC', () => {
             />
         );
         expect(vm.start).not.toHaveBeenCalled();
-        mounted.setProps({
-            isPlayerOnly: false
-        });
+        rerender(
+            <WrappedComponent
+                isPlayerOnly={false}
+                isStarted={false}
+                store={store}
+                vm={vm}
+            />
+        );
         expect(vm.start).toHaveBeenCalled();
     });
     test('if it mounts with an initialized and started VM, it does not start again', () => {
         const Component = () => <div />;
         const WrappedComponent = vmManagerHOC(Component);
         vm.initialized = true;
-        const mounted = mount(
+        const { rerender } = render(
             <WrappedComponent
                 isPlayerOnly
                 isStarted
@@ -124,9 +129,14 @@ describe('VMManagerHOC', () => {
             />
         );
         expect(vm.start).not.toHaveBeenCalled();
-        mounted.setProps({
-            isPlayerOnly: false
-        });
+        rerender(
+            <WrappedComponent
+                isPlayerOnly={false}
+                isStarted
+                store={store}
+                vm={vm}
+            />
+        );
         expect(vm.start).not.toHaveBeenCalled();
     });
     test('if the isLoadingWithId prop becomes true, it loads project data into the vm', () => {
@@ -134,7 +144,7 @@ describe('VMManagerHOC', () => {
         const mockedOnLoadedProject = jest.fn();
         const Component = () => <div />;
         const WrappedComponent = vmManagerHOC(Component);
-        const mounted = mount(
+        const { rerender } = render(
             <WrappedComponent
                 fontsLoaded
                 isLoadingWithId={false}
@@ -143,12 +153,18 @@ describe('VMManagerHOC', () => {
                 onLoadedProject={mockedOnLoadedProject}
             />
         );
-        mounted.setProps({
-            canSave: true,
-            isLoadingWithId: true,
-            loadingState: LoadingState.LOADING_VM_WITH_ID,
-            projectData: '100'
-        });
+        rerender(
+            <WrappedComponent
+                fontsLoaded
+                isLoadingWithId={true}
+                store={store}
+                vm={vm}
+                onLoadedProject={mockedOnLoadedProject}
+                canSave={true}
+                loadingState={LoadingState.LOADING_VM_WITH_ID}
+                projectData='100'
+            />
+        );
         expect(vm.loadProject).toHaveBeenLastCalledWith('100');
         // nextTick needed since vm.loadProject is async, and we have to wait for it :/
         process.nextTick(() => (
@@ -160,7 +176,7 @@ describe('VMManagerHOC', () => {
         const mockedOnLoadedProject = jest.fn();
         const Component = () => <div />;
         const WrappedComponent = vmManagerHOC(Component);
-        const mounted = mount(
+        const { rerender } = render(
             <WrappedComponent
                 isLoadingWithId
                 store={store}
@@ -168,12 +184,18 @@ describe('VMManagerHOC', () => {
                 onLoadedProject={mockedOnLoadedProject}
             />
         );
-        mounted.setProps({
-            canSave: false,
-            fontsLoaded: true,
-            loadingState: LoadingState.LOADING_VM_WITH_ID,
-            projectData: '100'
-        });
+        rerender(
+            <WrappedComponent
+                isLoadingWithId
+                store={store}
+                vm={vm}
+                onLoadedProject={mockedOnLoadedProject}
+                canSave={false}
+                fontsLoaded={true}
+                loadingState={LoadingState.LOADING_VM_WITH_ID}
+                projectData='100'
+            />
+        );
         expect(vm.loadProject).toHaveBeenLastCalledWith('100');
         // nextTick needed since vm.loadProject is async, and we have to wait for it :/
         process.nextTick(() => (
@@ -185,7 +207,7 @@ describe('VMManagerHOC', () => {
         const mockedOnLoadedProject = jest.fn();
         const Component = () => <div />;
         const WrappedComponent = vmManagerHOC(Component);
-        const mounted = mount(
+        const { rerender } = render(
             <WrappedComponent
                 isLoadingWithId
                 store={store}
@@ -193,10 +215,16 @@ describe('VMManagerHOC', () => {
                 onLoadedProject={mockedOnLoadedProject}
             />
         );
-        mounted.setProps({
-            loadingState: LoadingState.LOADING_VM_WITH_ID,
-            projectData: '100'
-        });
+        rerender(
+            <WrappedComponent
+                isLoadingWithId
+                store={store}
+                vm={vm}
+                onLoadedProject={mockedOnLoadedProject}
+                loadingState={LoadingState.LOADING_VM_WITH_ID}
+                projectData='100'
+            />
+        );
         expect(vm.loadProject).toHaveBeenCalledTimes(0);
         process.nextTick(() => expect(mockedOnLoadedProject).toHaveBeenCalledTimes(0));
     });

@@ -75,7 +75,7 @@ describe('Working with costumes', () => {
         await clickText('Costumes');
 
         await rightClickText('costume1', scope.costumesTab);
-        await clickText('duplicate', scope.costumesTab);
+        await clickText('duplicate', scope.contextMenu);
         await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for duplication to finish
 
         // Make sure the duplicated costume is named correctly.

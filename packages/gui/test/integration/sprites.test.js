@@ -65,7 +65,7 @@ describe('Working with sprites', () => {
         await loadUri(uri);
         await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for scroll animation
         await rightClickText('Sprite1', scope.spriteTile);
-        await clickText('delete', scope.spriteTile);
+        await clickText('delete', scope.contextMenu);
         // Confirm that the stage has been switched to
         await findByText('Stage selected: no motion blocks');
         const logs = await getLogs();

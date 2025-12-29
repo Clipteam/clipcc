@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {intlShape, injectIntl} from 'react-intl';
+import {injectIntl} from 'react-intl';
+import intlShape from './intlShape';
 import bindAll from 'lodash.bindall';
 import {connect} from 'react-redux';
 

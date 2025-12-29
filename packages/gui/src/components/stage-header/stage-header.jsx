@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import {FormattedMessage, defineMessages, injectIntl, intlShape} from 'react-intl';
+import {FormattedMessage, defineMessages, useIntl} from 'react-intl';
 import PropTypes from 'prop-types';
 import React, {useCallback} from 'react';
 import {connect} from 'react-redux';
@@ -74,7 +74,7 @@ const StageHeaderComponent = function (props) {
         stageWidth,
         stageHeight
     } = props;
-
+    const intl = useIntl();
     let header = null;
 
     const onUpdateThumbnail = useCallback(
@@ -115,11 +115,11 @@ const StageHeaderComponent = function (props) {
                     onKeyPress={onKeyPress}
                 >
                     <img
-                        alt={props.intl.formatMessage(messages.unFullStageSizeMessage)}
+                        alt={intl.formatMessage(messages.unFullStageSizeMessage)}
                         className={styles.stageButtonIcon}
                         draggable={false}
                         src={unFullScreenIcon}
-                        title={props.intl.formatMessage(messages.fullscreenControl)}
+                        title={intl.formatMessage(messages.fullscreenControl)}
                     />
                 </Button>
             </div>
@@ -148,14 +148,14 @@ const StageHeaderComponent = function (props) {
                                 icon: smallStageIcon,
                                 iconClassName: styles.stageButtonIcon,
                                 isSelected: stageSizeMode === STAGE_SIZE_MODES.small,
-                                title: props.intl.formatMessage(messages.smallStageSizeMessage)
+                                title: intl.formatMessage(messages.smallStageSizeMessage)
                             },
                             {
                                 handleClick: onSetStageLarge,
                                 icon: largeStageIcon,
                                 iconClassName: styles.stageButtonIcon,
                                 isSelected: stageSizeMode === STAGE_SIZE_MODES.large,
-                                title: props.intl.formatMessage(messages.largeStageSizeMessage)
+                                title: intl.formatMessage(messages.largeStageSizeMessage)
                             }
                         ]}
                     />
@@ -170,7 +170,7 @@ const StageHeaderComponent = function (props) {
                         <div className={styles.rightSection}>
                             {manuallySaveThumbnails && (
                                 <Button
-                                    aria-label={props.intl.formatMessage(messages.setThumbnail)}
+                                    aria-label={intl.formatMessage(messages.setThumbnail)}
                                     className={styles.setThumbnailButton}
                                     onClick={onUpdateThumbnail}
                                 >
@@ -182,11 +182,11 @@ const StageHeaderComponent = function (props) {
                                 onClick={onSetStageFull}
                             >
                                 <img
-                                    alt={props.intl.formatMessage(messages.fullStageSizeMessage)}
+                                    alt={intl.formatMessage(messages.fullStageSizeMessage)}
                                     className={classNames(styles.stageButtonIcon, styles.fullscreenButtonIcon)}
                                     draggable={false}
                                     src={fullScreenIcon}
-                                    title={props.intl.formatMessage(messages.fullscreenControl)}
+                                    title={intl.formatMessage(messages.fullscreenControl)}
                                 />
                             </Button>
                         </div>
@@ -206,7 +206,6 @@ const mapStateToProps = state => ({
 });
 
 StageHeaderComponent.propTypes = {
-    intl: intlShape,
     isFullScreen: PropTypes.bool.isRequired,
     isPlayerOnly: PropTypes.bool.isRequired,
     manuallySaveThumbnails: PropTypes.bool,
@@ -226,6 +225,4 @@ StageHeaderComponent.defaultProps = {
     stageSizeMode: STAGE_SIZE_MODES.large
 };
 
-export default injectIntl(connect(
-    mapStateToProps
-)(StageHeaderComponent));
+export default connect(mapStateToProps)(StageHeaderComponent);

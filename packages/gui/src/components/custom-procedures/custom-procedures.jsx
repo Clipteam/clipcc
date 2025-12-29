@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import Modal from '../../containers/modal.jsx';
 import Box from '../box/box.jsx';
-import {defineMessages, injectIntl, intlShape, FormattedMessage} from 'react-intl';
+import {defineMessages, FormattedMessage, useIntl} from 'react-intl';
 
 import booleanInputIcon from './icon--boolean-input.svg';
 import textInputIcon from './icon--text-input.svg';
@@ -18,160 +18,162 @@ const messages = defineMessages({
     }
 });
 
-const CustomProcedures = props => (
-    <Modal
-        className={styles.modalContent}
-        contentLabel={props.intl.formatMessage(messages.myblockModalTitle)}
-        id="customProcedures"
-        onRequestClose={props.onCancel}
-    >
-        <Box
-            className={styles.workspace}
-            componentRef={props.componentRef}
-        />
-        <Box className={styles.body}>
-            <div className={styles.optionsRow}>
-                <div
-                    className={styles.optionCard}
-                    role="button"
-                    tabIndex="0"
-                    onClick={props.onAddTextNumber}
-                >
-                    <img
-                        className={styles.optionIcon}
-                        src={textInputIcon}
-                    />
-                    <div className={styles.optionTitle}>
-                        <FormattedMessage
-                            defaultMessage="Add an input"
-                            description="Label for button to add a number/text input"
-                            id="gui.customProcedures.addAnInputNumberText"
+const CustomProcedures = props => {
+    const intl = useIntl();
+    return (
+        <Modal
+            className={styles.modalContent}
+            contentLabel={intl.formatMessage(messages.myblockModalTitle)}
+            id="customProcedures"
+            onRequestClose={props.onCancel}
+        >
+            <Box
+                className={styles.workspace}
+                componentRef={props.componentRef}
+            />
+            <Box className={styles.body}>
+                <div className={styles.optionsRow}>
+                    <div
+                        className={styles.optionCard}
+                        role="button"
+                        tabIndex="0"
+                        onClick={props.onAddTextNumber}
+                    >
+                        <img
+                            className={styles.optionIcon}
+                            src={textInputIcon}
                         />
+                        <div className={styles.optionTitle}>
+                            <FormattedMessage
+                                defaultMessage="Add an input"
+                                description="Label for button to add a number/text input"
+                                id="gui.customProcedures.addAnInputNumberText"
+                            />
+                        </div>
+                        <div className={styles.optionDescription}>
+                            <FormattedMessage
+                                defaultMessage="number or text"
+                                description="Description of the number/text input type"
+                                id="gui.customProcedures.numberTextType"
+                            />
+                        </div>
                     </div>
-                    <div className={styles.optionDescription}>
-                        <FormattedMessage
-                            defaultMessage="number or text"
-                            description="Description of the number/text input type"
-                            id="gui.customProcedures.numberTextType"
+                    <div
+                        className={styles.optionCard}
+                        role="button"
+                        tabIndex="0"
+                        onClick={props.onAddBoolean}
+                    >
+                        <img
+                            className={styles.optionIcon}
+                            src={booleanInputIcon}
                         />
+                        <div className={styles.optionTitle}>
+                            <FormattedMessage
+                                defaultMessage="Add an input"
+                                description="Label for button to add a boolean input"
+                                id="gui.customProcedures.addAnInputBoolean"
+                            />
+                        </div>
+                        <div className={styles.optionDescription}>
+                            <FormattedMessage
+                                defaultMessage="boolean"
+                                description="Description of the boolean input type"
+                                id="gui.customProcedures.booleanType"
+                            />
+                        </div>
+                    </div>
+                    <div
+                        className={styles.optionCard}
+                        role="button"
+                        tabIndex="0"
+                        onClick={props.onAddLabel}
+                    >
+                        <img
+                            className={styles.optionIcon}
+                            src={labelIcon}
+                        />
+                        <div className={styles.optionTitle}>
+                            <FormattedMessage
+                                defaultMessage="Add a label"
+                                description="Label for button to add a label"
+                                id="gui.customProcedures.addALabel"
+                            />
+                        </div>
                     </div>
                 </div>
-                <div
-                    className={styles.optionCard}
-                    role="button"
-                    tabIndex="0"
-                    onClick={props.onAddBoolean}
-                >
-                    <img
-                        className={styles.optionIcon}
-                        src={booleanInputIcon}
-                    />
-                    <div className={styles.optionTitle}>
-                        <FormattedMessage
-                            defaultMessage="Add an input"
-                            description="Label for button to add a boolean input"
-                            id="gui.customProcedures.addAnInputBoolean"
+                <div className={styles.checkboxRow}>
+                    <label>
+                        <input
+                            checked={props.warp}
+                            type="checkbox"
+                            onChange={props.onToggleWarp}
                         />
-                    </div>
-                    <div className={styles.optionDescription}>
                         <FormattedMessage
-                            defaultMessage="boolean"
-                            description="Description of the boolean input type"
-                            id="gui.customProcedures.booleanType"
+                            defaultMessage="Run without screen refresh"
+                            description="Label for checkbox to run without screen refresh"
+                            id="gui.customProcedures.runWithoutScreenRefresh"
                         />
-                    </div>
+                    </label>
                 </div>
-                <div
-                    className={styles.optionCard}
-                    role="button"
-                    tabIndex="0"
-                    onClick={props.onAddLabel}
-                >
-                    <img
-                        className={styles.optionIcon}
-                        src={labelIcon}
-                    />
-                    <div className={styles.optionTitle}>
-                        <FormattedMessage
-                            defaultMessage="Add a label"
-                            description="Label for button to add a label"
-                            id="gui.customProcedures.addALabel"
+                <div className={styles.checkboxRow}>
+                    <label>
+                        <input
+                            checked={props.return}
+                            type="checkbox"
+                            onChange={props.onToggleReturn}
                         />
-                    </div>
+                        <FormattedMessage
+                            defaultMessage="Has return value"
+                            description="Label for checkbox to has return value"
+                            id="gui.customProcedures.hasReturnValue"
+                        />
+                    </label>
                 </div>
-            </div>
-            <div className={styles.checkboxRow}>
-                <label>
-                    <input
-                        checked={props.warp}
-                        type="checkbox"
-                        onChange={props.onToggleWarp}
-                    />
-                    <FormattedMessage
-                        defaultMessage="Run without screen refresh"
-                        description="Label for checkbox to run without screen refresh"
-                        id="gui.customProcedures.runWithoutScreenRefresh"
-                    />
-                </label>
-            </div>
-            <div className={styles.checkboxRow}>
-                <label>
-                    <input
-                        checked={props.return}
-                        type="checkbox"
-                        onChange={props.onToggleReturn}
-                    />
-                    <FormattedMessage
-                        defaultMessage="Has return value"
-                        description="Label for checkbox to has return value"
-                        id="gui.customProcedures.hasReturnValue"
-                    />
-                </label>
-            </div>
-            <div className={styles.checkboxRow}>
-                <label>
-                    <input
-                        checked={props.global}
-                        type="checkbox"
-                        onChange={props.onToggleGlobal}
-                        disabled={!props.new}
-                    />
-                    <FormattedMessage
-                        defaultMessage="Global function"
-                        description="Label for checkbox to be global "
-                        id="gui.customProcedures.isGlobal"
-                    />
-                </label>
-            </div>
-            <Box className={styles.buttonRow}>
-                <button
-                    className={styles.cancelButton}
-                    onClick={props.onCancel}
-                >
-                    <FormattedMessage
-                        defaultMessage="Cancel"
-                        description="Label for button to cancel custom procedure edits"
-                        id="gui.customProcedures.cancel"
-                    />
-                </button>
-                <button
-                    className={styles.okButton}
-                    onClick={props.onOk}
-                >
-                    <FormattedMessage
-                        defaultMessage="OK"
-                        description="Label for button to save new custom procedure"
-                        id="gui.customProcedures.ok"
-                    />
-                </button>
+                <div className={styles.checkboxRow}>
+                    <label>
+                        <input
+                            checked={props.global}
+                            type="checkbox"
+                            onChange={props.onToggleGlobal}
+                            disabled={!props.new}
+                        />
+                        <FormattedMessage
+                            defaultMessage="Global function"
+                            description="Label for checkbox to be global "
+                            id="gui.customProcedures.isGlobal"
+                        />
+                    </label>
+                </div>
+                <Box className={styles.buttonRow}>
+                    <button
+                        className={styles.cancelButton}
+                        onClick={props.onCancel}
+                    >
+                        <FormattedMessage
+                            defaultMessage="Cancel"
+                            description="Label for button to cancel custom procedure edits"
+                            id="gui.customProcedures.cancel"
+                        />
+                    </button>
+                    <button
+                        className={styles.okButton}
+                        onClick={props.onOk}
+                    >
+                        <FormattedMessage
+                            defaultMessage="OK"
+                            description="Label for button to save new custom procedure"
+                            id="gui.customProcedures.ok"
+                        />
+                    </button>
+                </Box>
             </Box>
-        </Box>
-    </Modal>
-);
+        </Modal>
+    );
+};
 
 CustomProcedures.propTypes = {
     componentRef: PropTypes.func.isRequired,
-    intl: intlShape,
     onAddBoolean: PropTypes.func.isRequired,
     onAddLabel: PropTypes.func.isRequired,
     onAddTextNumber: PropTypes.func.isRequired,
@@ -186,4 +188,4 @@ CustomProcedures.propTypes = {
     warp: PropTypes.bool.isRequired
 };
 
-export default injectIntl(CustomProcedures);
+export default CustomProcedures;

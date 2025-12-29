@@ -113,12 +113,16 @@ const cloudManagerHOC = function (WrappedComponent) {
                 canModifyCloudData,
                 cloudHost,
                 projectId,
-                username,
                 hasCloudPermission,
                 isShowingWithId,
                 onShowCloudInfo,
                 /* eslint-enable no-unused-vars */
+
                 vm,
+
+                // Intentionally propagating this one since it's used in MenuBar
+                // username,
+
                 ...componentProps
             } = this.props;
             return (

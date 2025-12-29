@@ -29,7 +29,9 @@ const base = {
         alias: {
             'clipcc-vm': path.resolve(__dirname, '../vm/src/index.js'),
             'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
-            'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js')
+            'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js'),
+            'clipcc-svg-renderer': path.resolve(__dirname, '../svg-renderer/src/index.ts'),
+            'react-dom': path.resolve(__dirname, '../../node_modules/react-dom')
         },
         symlinks: false
     },

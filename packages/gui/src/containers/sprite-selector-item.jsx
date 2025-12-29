@@ -1,4 +1,5 @@
 import bindAll from 'lodash.bindall';
+import debounce from 'lodash.debounce';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
@@ -10,6 +11,7 @@ import getCostumeUrl from '../lib/get-costume-url';
 import DragRecognizer from '../lib/drag-recognizer';
 import {getEventXY} from '../lib/touch-utils';
 import {GUIStoragePropType} from '../gui-config';
+import DeleteConfirmationPrompt from '../components/delete-confirmation-prompt/delete-confirmation-prompt.jsx';
 
 import SpriteSelectorItemComponent from '../components/sprite-selector-item/sprite-selector-item.jsx';
 
@@ -19,8 +21,8 @@ class SpriteSelectorItem extends React.PureComponent {
         bindAll(this, [
             'getCostumeData',
             'setRef',
+            'setState',
             'handleClick',
-            'handleDelete',
             'handleDuplicate',
             'handleExport',
             'handleMouseEnter',
@@ -28,26 +30,39 @@ class SpriteSelectorItem extends React.PureComponent {
             'handleMouseDown',
             'handleDragEnd',
             'handleDrag',
-            'handleTouchEnd'
+            'handleTouchEnd',
+            'handleDeleteButtonClick',
+            'handleDeleteSpriteModalClose',
+            'handleDeleteSpriteModalConfirm'
         ]);
+
+        this.handleResize = debounce(this.handleResize.bind(this), 50, {leading: true});
 
         this.dragRecognizer = new DragRecognizer({
             onDrag: this.handleDrag,
             onDragEnd: this.handleDragEnd
         });
+
+        this.state = {isDeletePromptOpen: false};
     }
     componentDidMount () {
         document.addEventListener('touchend', this.handleTouchEnd);
+        window.addEventListener('resize', this.handleResize);
     }
     componentWillUnmount () {
         document.removeEventListener('touchend', this.handleTouchEnd);
+        window.removeEventListener('resize', this.handleResize);
         this.dragRecognizer.reset();
+        this.handleResize.cancel();
     }
     getCostumeData () {
         if (this.props.costumeURL) return this.props.costumeURL;
         if (!this.props.asset) return null;
 
         return getCostumeUrl(this.props.storage.scratchStorage, this.props.asset);
+    }
+    handleResize () {
+        this.forceUpdate();
     }
     handleDragEnd () {
         if (this.props.dragging) {
@@ -90,10 +105,6 @@ class SpriteSelectorItem extends React.PureComponent {
             this.props.onClick(this.props.id);
         }
     }
-    handleDelete (e) {
-        e.stopPropagation(); // To prevent from bubbling back to handleClick
-        this.props.onDeleteButtonClick(this.props.id);
-    }
     handleDuplicate (e) {
         e.stopPropagation(); // To prevent from bubbling back to handleClick
         this.props.onDuplicateButtonClick(this.props.id);
@@ -108,13 +119,28 @@ class SpriteSelectorItem extends React.PureComponent {
     handleMouseEnter () {
         this.props.dispatchSetHoveredSprite(this.props.id);
     }
+    handleDeleteButtonClick (e) {
+        e.stopPropagation(); // To prevent from bubbling back to handleClick
+
+        if (this.props.withDeleteConfirmation) {
+            this.setState({isDeletePromptOpen: true});
+        } else {
+            this.props.onDeleteButtonClick(this.props.id);
+        }
+    }
+    handleDeleteSpriteModalClose () {
+        this.setState({isDeletePromptOpen: false});
+    }
+    handleDeleteSpriteModalConfirm () {
+        this.props.onDeleteButtonClick(this.props.id);
+        this.setState({isDeletePromptOpen: false});
+    }
     setRef (component) {
-        // Access the DOM node using .elem because it is going through ContextMenuTrigger
-        this.ref = component && component.elem;
+        this.ref = component;
     }
     render () {
         const {
-            /* eslint-disable no-unused-vars */
+
             asset,
             id,
             index,
@@ -126,27 +152,36 @@ class SpriteSelectorItem extends React.PureComponent {
             receivedBlocks,
             costumeURL,
             vm,
-            /* eslint-enable no-unused-vars */
+            deleteConfirmationModalPosition,
+
             ...props
         } = this.props;
-        return (
+        return (<>
+            {this.state.isDeletePromptOpen ? <DeleteConfirmationPrompt
+                onOk={this.handleDeleteSpriteModalConfirm}
+                onCancel={this.handleDeleteSpriteModalClose}
+                relativeElemRef={this.ref}
+                entityType={this.props.dragType}
+                modalPosition={deleteConfirmationModalPosition}
+            /> : null}
             <SpriteSelectorItemComponent
                 componentRef={this.setRef}
                 costumeURL={this.getCostumeData()}
                 preventContextMenu={this.dragRecognizer.gestureInProgress()}
                 onClick={this.handleClick}
-                onDeleteButtonClick={onDeleteButtonClick ? this.handleDelete : null}
+                onDeleteButtonClick={onDeleteButtonClick ? this.handleDeleteButtonClick : null}
                 onDuplicateButtonClick={onDuplicateButtonClick ? this.handleDuplicate : null}
                 onExportButtonClick={onExportButtonClick ? this.handleExport : null}
                 onMouseDown={this.handleMouseDown}
                 onMouseEnter={this.handleMouseEnter}
                 onMouseLeave={this.handleMouseLeave}
+                isDeleteConfirmationModalOpened={this.state.isDeletePromptOpen}
                 {...props}
             />
+        </>
         );
     }
 }
-
 SpriteSelectorItem.propTypes = {
     storage: GUIStoragePropType,
     asset: PropTypes.object,
@@ -165,6 +200,8 @@ SpriteSelectorItem.propTypes = {
     onExportButtonClick: PropTypes.func,
     receivedBlocks: PropTypes.bool.isRequired,
     selected: PropTypes.bool,
+    withDeleteConfirmation: PropTypes.bool,
+    deleteConfirmationModalPosition: PropTypes.string,
     vm: PropTypes.instanceOf(VM).isRequired
 };
 

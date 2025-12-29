@@ -23,10 +23,10 @@ export interface GUIStorage {
         projectId: ProjectId | null | undefined,
         vmState: string,
         params: {
-            originalId: ProjectId | null | undefined,
-            isCopy: boolean | 1,
-            isRemix: boolean | 1,
-            title: string
+            originalId?: ProjectId | null,
+            isCopy?: boolean | 1,
+            isRemix?: boolean | 1,
+            title?: string
         }
     ): Promise<{ id: ProjectId }>;
 

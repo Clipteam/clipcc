@@ -12,9 +12,20 @@
   "main": "./dist/node/scratch-vm.js",
   "browser": "./dist/web/scratch-vm.min.js",
   "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "node": "./dist/node/scratch-vm.js",
+      "default": "./src/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
     "build:types": "tsc --project ./tsconfig.dts.json",
     "build": "yarn build:types && webpack --progress --color --bail",
+    "clean": "rimraf dist playground",
     "coverage": "tap ./test/{unit,integration}/*.js --coverage --coverage-report=lcov",
     "deploy": "touch playground/.nojekyll && gh-pages -t -d playground -m \"Build for $(git log -n1 --pretty=format:\"%h %s\") [skip ci]\"",
     "docs": "jsdoc -c .jsdoc.json",
@@ -48,7 +59,7 @@
     "format-message": "6.2.1",
     "htmlparser2": "7.2.0",
     "immutable": "3.8.1",
-    "jszip": "^3.1.5",
+    "jszip": "^3.10.1",
     "minilog": "3.1.0",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "scratch-sb1-converter": "2.0.279",
@@ -58,15 +69,15 @@
     "clipcc-svg-renderer": "^3.2.0"
   },
   "devDependencies": {
-    "@babel/core": "7.13.10",
-    "@babel/eslint-parser": "7.18.2",
-    "@babel/preset-env": "7.14.8",
+    "@babel/core": "7.28.5",
+    "@babel/eslint-parser": "7.28.5",
+    "@babel/preset-env": "7.28.5",
     "@commitlint/cli": "17.0.2",
     "@commitlint/config-conventional": "17.0.2",
     "@types/fastestsmallesttextencoderdecoder": "^1.0.2",
     "adm-zip": "0.4.11",
     "babel-eslint": "10.1.0",
-    "babel-loader": "^9.1.2",
+    "babel-loader": "^9.2.1",
     "callsite": "1.0.0",
     "clipcc-audio": "3.2.0",
     "clipcc-block": "3.2.0",
@@ -77,7 +88,7 @@
     "codingclip-worker-loader": "^3.0.10",
     "copy-webpack-plugin": "^11.0.0",
     "docdash": "1.2.0",
-    "eslint": "5.3.0",
+    "eslint": "^8.57.1",
     "eslint-config-clipcc": "^9.0.9",
     "format-message-cli": "6.2.0",
     "gh-pages": "1.2.0",

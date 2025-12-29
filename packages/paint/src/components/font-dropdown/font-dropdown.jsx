@@ -1,7 +1,6 @@
 import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {FormattedMessage, injectIntl} from 'react-intl';
 
 import Button from '../button/button.jsx';
 import Dropdown from '../dropdown/dropdown.jsx';
@@ -141,4 +140,4 @@ ModeToolsComponent.propTypes = {
     onHoverCustomFont: PropTypes.func,
     onOpenDropdown: PropTypes.func
 };
-export default injectIntl(ModeToolsComponent);
+export default ModeToolsComponent;

@@ -7,6 +7,7 @@ import SpriteLibrary from '../../containers/sprite-library.jsx';
 import SpriteSelectorComponent from '../sprite-selector/sprite-selector.jsx';
 import StageSelector from '../../containers/stage-selector.jsx';
 import {STAGE_DISPLAY_SIZES} from '../../lib/layout-constants';
+import {legacyConfig} from '../../legacy-config';
 
 import styles from './target-pane.css';
 
@@ -107,10 +108,9 @@ const TargetPane = ({
 
 const spriteShape = PropTypes.shape({
     costume: PropTypes.shape({
-        // asset is defined in scratch-storage's Asset.js
-        asset: PropTypes.object, // eslint-disable-line react/forbid-prop-types
         url: PropTypes.string,
         name: PropTypes.string.isRequired,
+        asset: PropTypes.instanceOf(legacyConfig.storage.scratchStorage.Asset),
         bitmapResolution: PropTypes.number,
         rotationCenterX: PropTypes.number,
         rotationCenterY: PropTypes.number

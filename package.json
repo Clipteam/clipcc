@@ -1,8 +1,10 @@
 {
   "name": "monorepo",
-  "description": "ClipCC's Workspace",
+  "description": "ClipCC editor mono-repository",
+  "author": "Clipteam",
   "version": "3.2",
   "private": true,
+  "license": "AGPL-3.0-only",
   "engines": {
     "node": ">=22"
   },
