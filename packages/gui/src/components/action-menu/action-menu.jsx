@@ -138,6 +138,7 @@ class ActionMenu extends React.Component {
                     effect="solid"
                     id={this.mainTooltipId}
                     place={tooltipPlace || 'left'}
+                    arrowColor="var(--clipcc-extensions-primary)"
                 />
                 <div className={styles.moreButtonsOuter}>
                     <div className={styles.moreButtons}>
@@ -179,6 +180,7 @@ class ActionMenu extends React.Component {
                                         effect="solid"
                                         id={tooltipId}
                                         place={tooltipPlace || 'left'}
+                                        arrowColor="var(--clipcc-extensions-primary)"
                                     />
                                 </div>
                             );

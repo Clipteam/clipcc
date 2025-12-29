@@ -133,10 +133,6 @@ button::-moz-focus-inner {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
 }
 
-.tooltip:after {
-    background-color: var(--clipcc-extensions-primary);
-}
-
 .coming-soon-tooltip {
     background-color: var(--clipcc-data-primary) !important;
 }
