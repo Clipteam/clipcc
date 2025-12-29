@@ -61,7 +61,7 @@
     "babel-loader": "^9.1.2",
     "babel-plugin-react-intl": "3.0.1",
     "css-loader": "^6.7.3",
-    "eslint": "7.32.0",
+    "eslint": "^9.39.2",
     "eslint-config-clipcc": "^9.0.9",
     "eslint-plugin-import": "2.26.0",
     "eslint-plugin-react": "7.20.3",

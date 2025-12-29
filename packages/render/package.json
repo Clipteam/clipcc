@@ -36,7 +36,7 @@
     "clipcc-vm": "3.2.0",
     "copy-webpack-plugin": "^11.0.0",
     "docdash": "0.4.0",
-    "eslint": "^8.57.0",
+    "eslint": "^9.39.2",
     "eslint-config-clipcc": "^9.0.9",
     "gh-pages": "1.2.0",
     "jsdoc": "4.0.0",
