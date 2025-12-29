@@ -5,7 +5,7 @@ export type GUIConfigFactory = () => GUIConfig;
 export type ProjectId = string | number;
 
 export interface GUIConfig {
-  storage: GUIStorage;
+    storage: GUIStorage;
 }
 
 export interface GUIStorage {
@@ -23,10 +23,10 @@ export interface GUIStorage {
         projectId: ProjectId | null | undefined,
         vmState: string,
         params: {
-            originalId?: ProjectId | null,
-            isCopy?: boolean | 1,
-            isRemix?: boolean | 1,
-            title?: string
+            originalId?: ProjectId;
+            isCopy?: boolean | 1;
+            isRemix?: boolean | 1;
+            title?: string;
         }
     ): Promise<{ id: ProjectId }>;
 
@@ -41,9 +41,9 @@ export type TranslatorFunction = (
 ) => string;
 
 export interface MessageObject {
-  id: string;
-  description: string;
-  defaultMessage: string;
+    id: string;
+    description: string;
+    defaultMessage: string;
 }
 
 export const GUIStoragePropType = PropTypes.shape({

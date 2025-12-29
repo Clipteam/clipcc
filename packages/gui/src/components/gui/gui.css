@@ -11,6 +11,10 @@
     background-color: var(--clipcc-ui-primary);
 }
 
+.body-wrapper-without-menu-bar {
+    height: 100%;
+}
+
 .body-wrapper * {
     box-sizing: border-box;
 }
