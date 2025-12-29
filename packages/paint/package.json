@@ -17,8 +17,8 @@
     "unit": "jest --reporters=default",
     "watch": "webpack --progress --color --watch"
   },
-  "author": "Massachusetts Institute of Technology",
-  "license": "BSD-3-Clause",
+  "author": "Clip Team",
+  "license": "AGPL-3.0-only",
   "homepage": "https://github.com/Clipteam/clipcc#readme",
   "repository": {
     "type": "git",

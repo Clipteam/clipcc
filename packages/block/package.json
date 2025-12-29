@@ -2,8 +2,8 @@
   "name": "clipcc-block",
   "version": "3.2.0",
   "description": "Scratch Blocks is a library for building creative computing interfaces.",
-  "author": "Massachusetts Institute of Technology",
-  "license": "Apache-2.0",
+  "author": "Clip Team",
+  "license": "AGPL-3.0-only",
   "homepage": "https://github.com/Clipteam/clipcc#readme",
   "repository": {
     "type": "git",
