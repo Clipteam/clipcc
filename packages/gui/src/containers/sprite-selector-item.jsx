@@ -11,6 +11,7 @@ import getCostumeUrl from '../lib/get-costume-url';
 import DragRecognizer from '../lib/drag-recognizer';
 import {getEventXY} from '../lib/touch-utils';
 import {GUIStoragePropType} from '../gui-config';
+import {legacyConfig} from '../legacy-config';
 import DeleteConfirmationPrompt from '../components/delete-confirmation-prompt/delete-confirmation-prompt.jsx';
 
 import SpriteSelectorItemComponent from '../components/sprite-selector-item/sprite-selector-item.jsx';
@@ -140,7 +141,6 @@ class SpriteSelectorItem extends React.PureComponent {
     }
     render () {
         const {
-
             asset,
             id,
             index,
@@ -184,7 +184,7 @@ class SpriteSelectorItem extends React.PureComponent {
 }
 SpriteSelectorItem.propTypes = {
     storage: GUIStoragePropType,
-    asset: PropTypes.object,
+    asset: PropTypes.instanceOf(legacyConfig.storage.scratchStorage.Asset),
     costumeURL: PropTypes.string,
     dispatchSetHoveredSprite: PropTypes.func.isRequired,
     dragPayload: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),

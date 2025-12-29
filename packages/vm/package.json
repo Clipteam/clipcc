@@ -15,7 +15,7 @@
   "exports": {
     ".": {
       "node": "./dist/node/scratch-vm.js",
-      "default": "./src/index.js"
+      "browser": "./dist/web/scratch-vm.min.js"
     }
   },
   "files": [

@@ -9,6 +9,7 @@ import ThrottledPropertyHOC from '../lib/throttled-property-hoc.jsx';
 import VM from 'clipcc-vm';
 import getCostumeUrl from '../lib/get-costume-url';
 import {GUIStoragePropType} from '../gui-config';
+import {legacyConfig} from '../legacy-config';
 
 import WatermarkComponent from '../components/watermark/watermark.jsx';
 
@@ -39,7 +40,7 @@ class Watermark extends React.Component {
 
 Watermark.propTypes = {
     storage: GUIStoragePropType,
-    asset: PropTypes.object,
+    asset: PropTypes.instanceOf(legacyConfig.storage.scratchStorage.Asset),
     vm: PropTypes.instanceOf(VM).isRequired
 };
 

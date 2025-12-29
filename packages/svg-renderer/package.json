@@ -8,7 +8,7 @@
   "exports": {
     ".": {
       "node": "./dist/node/index.js",
-      "default": "./src/index.ts"
+      "browser": "./dist/web/scratch-svg-renderer.js"
     }
   },
   "files": [

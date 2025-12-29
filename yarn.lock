@@ -3686,7 +3686,7 @@
   dependencies:
     regenerator-runtime "^0.14.0"
 
-"@babel/runtime@^7.12.1", "@babel/runtime@^7.4.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.12.1", "@babel/runtime@^7.17.9", "@babel/runtime@^7.4.5", "@babel/runtime@^7.7.2", "@babel/runtime@^7.8.7", "@babel/runtime@^7.9.2":
   version "7.28.4"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.28.4.tgz#a70226016fabe25c5783b2f22d3e1c9bc5ca3326"
   integrity sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==
@@ -26185,6 +26185,14 @@ react-ga@^3.3.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/react-ga/-/react-ga-3.3.1.tgz#d8e1f4e05ec55ed6ff944dcb14b99011dfaf9504"
   integrity sha512-4Vc0W5EvXAXUN/wWyxvsAKDLLgtJ3oLmhYYssx+YzphJpejtOst6cbIHCIyF50Fdxuf5DDKqRYny24yJ2y7GFQ==
+
+react-intl-redux@^2.0.0:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/react-intl-redux/-/react-intl-redux-2.4.1.tgz#eadd20bc85ec608bb3172e13535521f4ba594660"
+  integrity sha512-EYTNmHJTnTam4phQj1nTdJvcdVjz+F56nLl6JtpqWsKzG5ZnQh/hoqLLJUjP0dgeNKSESIcjhYsTyBWDUwjo0A==
+  dependencies:
+    "@babel/runtime" "^7.17.9"
+    prop-types "^15.8.1"
 
 react-intl@6.8.9:
   version "6.8.9"
