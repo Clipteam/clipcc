@@ -274,6 +274,17 @@ const GUIComponent = props => {
                                 selectedTabClassName={tabClassNames.tabSelected}
                                 selectedTabPanelClassName={tabClassNames.tabPanelSelected}
                                 onSelect={onActivateTab}
+
+                                // TODO: focusTabOnClick should be true for accessibility, but currently conflicts
+                                // with nudge operations in the paint editor. We'll likely need to manage focus
+                                // differently within the paint editor before we can turn this back on.
+                                // Repro steps:
+                                // 1. Click the Costumes tab
+                                // 2. Select something in the paint editor (say, the cat's face)
+                                // 3. Press the left or right arrow key
+                                // Desired behavior: the face should nudge left or right
+                                // Actual behavior: the Code or Sounds tab is now focused
+                                focusTabOnClick={false}
                             >
                                 <TabList className={tabClassNames.tabList}>
                                     <Tab className={tabClassNames.tab}>

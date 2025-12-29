@@ -40,7 +40,6 @@
     "eslint-config-clipcc": "^9.0.9",
     "gh-pages": "1.2.0",
     "jsdoc": "4.0.0",
-    "json": "9.0.6",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "playwright-chromium": "1.57.0",
     "scratch-render-fonts": "1.0.252",
