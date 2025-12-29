@@ -71,7 +71,7 @@ exports[`Slider Prompt Container matches snapshot 1`] = `
             >
               <input
                 name="Minimum value"
-                pattern="-?[0-9]*(\\\\.[0-9]+)?"
+                pattern="-?[0-9]*(\\.[0-9]+)?"
                 type="text"
                 value="0.00"
               />
@@ -86,7 +86,7 @@ exports[`Slider Prompt Container matches snapshot 1`] = `
             >
               <input
                 name="Maximum value"
-                pattern="-?[0-9]*(\\\\.[0-9]+)?"
+                pattern="-?[0-9]*(\\.[0-9]+)?"
                 type="text"
                 value="100.00"
               />
