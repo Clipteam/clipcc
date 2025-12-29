@@ -77,6 +77,7 @@ const GUIComponent = props => {
         costumeLibraryVisible,
         costumesTabVisible,
         enableCommunity,
+        framerate,
         isCreating,
         isFullScreen,
         isPlayerOnly,
@@ -129,8 +130,9 @@ const GUIComponent = props => {
         vm,
         stageWidth,
         stageHeight,
+        storage,
         ...componentProps
-    } = omit(props, 'dispatch', 'setPlatform');
+    } = omit(props, 'dispatch', 'setPlatform', 'intl');
     if (children) {
         return <Box {...componentProps}>{children}</Box>;
     }
