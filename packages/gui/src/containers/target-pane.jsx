@@ -242,14 +242,14 @@ class TargetPane extends React.Component {
     render () {
         /* eslint-disable no-unused-vars */
         const {
-            dispatchUpdateRestore, // eslint-disable-line no-unused-vars
+            dispatchUpdateRestore,
             isRtl,
-            onActivateTab, // eslint-disable-line no-unused-vars
-            onCloseImporting, // eslint-disable-line no-unused-vars
-            onHighlightTarget, // eslint-disable-line no-unused-vars
-            onNewSpriteClick, // eslint-disable-line no-unused-vars
-            onReceivedBlocks, // eslint-disable-line no-unused-vars
-            onShowImporting, // eslint-disable-line no-unused-vars
+            onActivateTab,
+            onCloseImporting,
+            onHighlightTarget,
+            onNewSpriteClick,
+            onReceivedBlocks,
+            onShowImporting,
             workspaceMetrics,
             ...componentProps
         } = this.props;

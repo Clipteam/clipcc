@@ -1,6 +1,9 @@
 /**
  * Report a telemetry event.
  * @param {string} event - one of `projectWasCreated`, `projectDidLoad`, `projectDidSave`, `projectWasUploaded`
+ * @param vm - the VM instance
+ * @param projectName - the project name
+ * @param locale - the current locale
  */
 // TODO make a telemetry HOC and move this stuff there
 const collectMetadata = function (vm, projectName = '', locale = '') {

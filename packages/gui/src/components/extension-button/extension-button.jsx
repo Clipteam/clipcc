@@ -1,6 +1,6 @@
 import React, {useEffect, useCallback, useState, useRef} from 'react';
 import classNames from 'classnames';
-// eslint-disable-next-line import/no-unresolved
+ 
 import {driver} from 'driver.js';
 import 'driver.js/dist/driver.css';
 import {defineMessages, injectIntl} from 'react-intl';

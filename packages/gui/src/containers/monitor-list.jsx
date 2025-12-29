@@ -20,7 +20,7 @@ class MonitorList extends React.Component {
         ]);
         OpcodeLabels.setTranslatorFunction(props.intl.formatMessage);
     }
-    handleMonitorChange (id, x, y) { // eslint-disable-line no-unused-vars
+    handleMonitorChange (id, x, y) {
         this.props.moveMonitorRect(id, x, y);
     }
     render () {

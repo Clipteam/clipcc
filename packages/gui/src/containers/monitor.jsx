@@ -247,14 +247,14 @@ Monitor.propTypes = {
         savedMonitorPositions: PropTypes.object // eslint-disable-line react/forbid-prop-types
     }).isRequired,
     onDragEnd: PropTypes.func.isRequired,
-    opcode: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-    params: PropTypes.object, // eslint-disable-line react/no-unused-prop-types, react/forbid-prop-types
+    opcode: PropTypes.string.isRequired,
+    params: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     removeMonitorRect: PropTypes.func.isRequired,
     resizeMonitorRect: PropTypes.func.isRequired,
-    spriteName: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+    spriteName: PropTypes.string,
     targetId: PropTypes.string,
     theme: PropTypes.string,
-    toolboxXML: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+    toolboxXML: PropTypes.string,
     value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
@@ -262,7 +262,7 @@ Monitor.propTypes = {
             PropTypes.string,
             PropTypes.number
         ]))
-    ]), // eslint-disable-line react/no-unused-prop-types
+    ]),
     vm: PropTypes.instanceOf(VM),
     width: PropTypes.number,
     x: PropTypes.number,

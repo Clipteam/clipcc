@@ -96,7 +96,6 @@ module.exports = [
             'no-catch-shadow': [2],
             'no-shadow': [2],
             'no-undefined': [2],
-            'no-use-before-define': [2],
 
             // Strict
             'strict': [2, 'never'],

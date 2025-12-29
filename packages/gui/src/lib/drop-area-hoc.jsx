@@ -24,7 +24,7 @@ import {connect} from 'react-redux';
  *     This _does not_ handle drags for blocks coming from the workspace.
  *
  * @param {Array.<string>} dragTypes Types to respond to, from DragConstants
- * @returns {function} The HOC, specialized for those drag types
+ * @returns {Function} The HOC, specialized for those drag types
  */
 const DropAreaHOC = function (dragTypes) {
     /**

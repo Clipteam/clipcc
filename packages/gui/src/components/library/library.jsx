@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {defineMessages, injectIntl} from 'react-intl';
 import intlShape from '../../lib/intlShape.js';
-// eslint-disable-next-line import/no-unresolved
+
 import {driver} from 'driver.js';
 import 'driver.js/dist/driver.css';
 
@@ -18,6 +18,13 @@ import Spinner from '../spinner/spinner.jsx';
 import {getLocalStorageValue, setLocalStorageValue} from '../../lib/local-storage.js';
 
 import styles from './library.css';
+
+const CATEGORIES = {
+    gettingStarted: 'gettingStarted',
+    basics: 'basics',
+    intermediate: 'intermediate',
+    prompts: 'prompts'
+};
 
 const localStorageAvailable =
     'localStorage' in window && window.localStorage !== null;

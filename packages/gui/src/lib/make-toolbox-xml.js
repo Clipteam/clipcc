@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import ScratchBlocks from 'clipcc-block';
 import {defaultColors} from './themes';
 
@@ -5,7 +6,6 @@ const categorySeparator = '<sep gap="36"/>';
 
 const blockSeparator = '<sep gap="36"/>'; // At default scale, about 28px
 
-/* eslint-disable no-unused-vars */
 const motion = function (isInitialSetup, isStage, targetId, colors) {
     const stageSelected = ScratchBlocks.ScratchMsgs.translate(
         'MOTION_STAGE_SELECTED',
@@ -976,12 +976,13 @@ const myBlocks = function (isInitialSetup, isStage, targetId, colors) {
     </category>
     `;
 };
-/* eslint-enable no-unused-vars */
+
 
 const xmlOpen = '<xml style="display: none">';
 const xmlClose = '</xml>';
 
 /**
+ * Generate a ScratchBlocks-style toolbox XML.
  * @param {!boolean} isInitialSetup - Whether the toolbox is for initial setup. If the mode is "initial setup",
  * blocks with localized default parameters (e.g. ask and wait) should not be loaded. (LLK/scratch-gui#5445)
  * @param {?boolean} isStage - Whether the toolbox is for a stage-type target. This is always set to true

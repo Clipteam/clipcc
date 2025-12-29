@@ -153,7 +153,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     onClose: () => dispatch(closeSettingsModal()),
-    updateSettings: (settings) => dispatch(updateSettings(settings))
+    updateSettings: settings => dispatch(updateSettings(settings))
 });
 
 export default connect(
