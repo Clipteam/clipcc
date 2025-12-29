@@ -7,13 +7,13 @@ const cast = require('../util/cast');
 
 /**
  * Single BlockUtility instance reused by execute for every pritimive ran.
- * @const
+ * @constant
  */
 const blockUtility = new BlockUtility();
 
 /**
  * Profiler frame name for block functions.
- * @const {string}
+ * @constant {string}
  */
 const blockFunctionProfilerFrame = 'blockFunction';
 
@@ -26,7 +26,7 @@ let blockFunctionProfilerId = -1;
 /**
  * Utility function to determine if a value is a Promise.
  * @param {*} value Value to check for a Promise.
- * @return {boolean} True if the value appears to be a Promise.
+ * @returns {boolean} True if the value appears to be a Promise.
  */
 const isPromise = function (value) {
     return (
@@ -39,7 +39,7 @@ const isPromise = function (value) {
 /**
  * Utility function to determine if a block is a procedure caller.
  * @param {BlockCached} cached Cached block to check.
- * @return {boolean} True if the block is a procedure.
+ * @returns {boolean} True if the block is a procedure.
  */
 const isProcedureCaller = function (cached) {
     return cached.opcode === 'procedures_call';
@@ -56,6 +56,8 @@ const isProcedureCaller = function (cached) {
  * the primitive.
  * @param {!string} opcode opcode used to identify a block function primitive.
  * @param {!boolean} isHat Is the current block a hat?
+ * @param blockCached {BlockCached} The cached block being executed.
+ * @param lastOperation {boolean} Is this the last operation in the current stack of
  */
 // @todo move this to callback attached to the thread when we have performance
 // metrics (dd)
@@ -223,7 +225,7 @@ class BlockCached {
 
         /**
          * The block opcode's implementation function.
-         * @type {?function}
+         * @type {?Function}
          */
         this._blockFunction = null;
 
@@ -520,7 +522,7 @@ const execute = function (sequencer, thread) {
 
             const inputName = opCached._parentKey;
             const argValues = opCached._parentValues;
-            
+
             // cc - if current call is the last operation, which means that it is called by clicking directly,
             // then call handleReport.
             if (currentStackFrame.waitingReporter && i === length - 1) {

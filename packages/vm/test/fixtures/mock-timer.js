@@ -6,7 +6,7 @@
 class MockTimer {
     /**
      * Creates an instance of MockTimer.
-     * @param {*} [nowObj=null] - alert the caller that this parameter, supported by Timer, is not supported here.
+     * @param {*} [nowObj] - alert the caller that this parameter, supported by Timer, is not supported here.
      * @memberof MockTimer
      */
     constructor (nowObj = null) {
@@ -35,7 +35,7 @@ class MockTimer {
 
         /**
          * Map of timeout ID to pending timeout callback info.
-         * @type {Map.<Object>}
+         * @type {Map.<object>}
          * @property {number} time - the time at/after which this handler should run
          * @property {Function} handler - the handler to call when the time comes
          */
@@ -106,7 +106,7 @@ class MockTimer {
     /**
      * Call a handler function after a specified amount of time has elapsed.
      * Guaranteed to happen in between "ticks" of JavaScript.
-     * @param {function} handler - function to call after the timeout
+     * @param {Function} handler - function to call after the timeout
      * @param {number} timeout - number of milliseconds to delay before calling the handler
      * @returns {number} - the ID of the new timeout.
      * @memberof MockTimer

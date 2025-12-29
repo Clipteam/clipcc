@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @file
  * Migration from legacy ClipCC.
  */
 

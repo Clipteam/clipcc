@@ -9,7 +9,7 @@
  * This is a hook for extracting messages from extension source files.
  * This function simply returns the message descriptor map object that's passed in.
  * @param {Record<string, MessageDescriptor>} messages - the messages to be defined
- * @return {Record<string, MessageDescriptor>} - the input, unprocessed
+ * @returns {Record<string, MessageDescriptor>} - the input, unprocessed
  */
 const defineMessages = function (messages) {
     return messages;

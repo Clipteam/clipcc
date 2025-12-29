@@ -1,5 +1,5 @@
 /**
- * @fileoverview
+ * @file
  * A utility for accurately measuring time.
  * To use:
  * ---
@@ -93,7 +93,7 @@ class Timer {
 
     /**
      * Call a handler function after a specified amount of time has elapsed.
-     * @param {function} handler - function to call after the timeout
+     * @param {Function} handler - function to call after the timeout
      * @param {number} timeout - number of milliseconds to delay before calling the handler
      * @returns {number} - the ID of the new timeout
      */

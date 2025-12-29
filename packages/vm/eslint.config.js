@@ -13,6 +13,9 @@ module.exports = [
             globals: {
                 ...globals.browser
             }
+        },
+        rules: {
+            'jsdoc/require-jsdoc': 'off'
         }
     },
     {

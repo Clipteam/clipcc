@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 const path = require('path');
 const process = require('process');
 
@@ -7,8 +6,8 @@ const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer
 const VirtualMachine = require('../../src/index');
 
 /**
-* @fileoverview Test vm's performance.
-*/
+ * @file Test vm's performance.
+ */
 
 let averageTime = -1;
 
