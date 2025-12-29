@@ -25,14 +25,14 @@ exports[`Slider Prompt Container matches snapshot 1`] = `
       <div
         aria-label="Change slider range"
         aria-modal="true"
-        class="ReactModal__Content"
+        class="ReactModal__Content scratch-editor-modal"
         role="dialog"
-        style="position: absolute; top: 40px; left: 40px; right: 40px; bottom: 40px; border: 1px solid #ccc; background: rgb(255, 255, 255); overflow: auto; border-radius: 4px; outline: none; padding: 20px;"
         tabindex="-1"
       >
         <div
           class=""
           dir="ltr"
+          style="flex-direction: column; flex-grow: 1;"
         >
           <div
             class=""

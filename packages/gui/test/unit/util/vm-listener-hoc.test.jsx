@@ -39,21 +39,21 @@ describe('VMListenerHOC', () => {
     });
 
     test('onGreenFlag is not passed to the children', () => {
-        const Component = ({ onGreenFlag }) => (
-            <div id="onGreenFlag">{`${onGreenFlag
-                ? onGreenFlag()
-                : onGreenFlag
-                }`}</div>
+        const Component = ({onGreenFlag}) => (
+            <div id="onGreenFlag">{`${onGreenFlag ?
+                onGreenFlag() :
+                onGreenFlag
+            }`}</div>
         );
         const WrappedComponent = vmListenerHOC(Component);
-        const { container } = render(
+        const {container} = render(
             <WrappedComponent
                 store={store}
                 vm={vm}
                 onGreenFlag={jest.fn()}
             />
         );
-        const element = container.querySelector('#onGreenFlag')
+        const element = container.querySelector('#onGreenFlag');
         expect(element).toHaveTextContent(/undefined/i);
     });
 
@@ -68,7 +68,7 @@ describe('VMListenerHOC', () => {
         );
         const targetList = [];
         const editingTarget = 'id';
-        vm.emit('targetsUpdate', { targetList, editingTarget });
+        vm.emit('targetsUpdate', {targetList, editingTarget});
         const actions = store.getActions();
         expect(actions[0].type).toEqual('scratch-gui/targets/UPDATE_TARGET_LIST');
         expect(actions[0].targets).toEqual(targetList);
@@ -81,7 +81,7 @@ describe('VMListenerHOC', () => {
         store = mockStore({
             scratchGui: {
                 mode: {},
-                modals: { soundRecorder: true },
+                modals: {soundRecorder: true},
                 vm: vm
             }
         });
@@ -93,7 +93,7 @@ describe('VMListenerHOC', () => {
         );
         const targetList = [];
         const editingTarget = 'id';
-        vm.emit('targetsUpdate', { targetList, editingTarget });
+        vm.emit('targetsUpdate', {targetList, editingTarget});
         const actions = store.getActions();
         expect(actions.length).toEqual(0);
     });
@@ -104,7 +104,7 @@ describe('VMListenerHOC', () => {
         store = mockStore({
             scratchGui: {
                 mode: {},
-                modals: { soundRecorder: true },
+                modals: {soundRecorder: true},
                 vm: vm
             }
         });
@@ -124,8 +124,8 @@ describe('VMListenerHOC', () => {
         const WrappedComponent = vmListenerHOC(Component);
         store = mockStore({
             scratchGui: {
-                mode: { isFullScreen: true },
-                modals: { soundRecorder: true },
+                mode: {isFullScreen: true},
+                modals: {soundRecorder: true},
                 vm: vm
             }
         });
@@ -155,8 +155,8 @@ describe('VMListenerHOC', () => {
 
         store = mockStore({
             scratchGui: {
-                mode: { isFullScreen: true },
-                modals: { soundRecorder: true },
+                mode: {isFullScreen: true},
+                modals: {soundRecorder: true},
                 vm: vm
             }
         });
@@ -169,19 +169,19 @@ describe('VMListenerHOC', () => {
         );
 
         // keyboard events that do not target the document or body are ignored
-        eventTriggers.keydown({ key: 'A', target: null });
-        expect(vm.postIOData).not.toHaveBeenLastCalledWith('keyboard', { key: 'A', isDown: true });
+        eventTriggers.keydown({key: 'A', target: null});
+        expect(vm.postIOData).not.toHaveBeenLastCalledWith('keyboard', {key: 'A', isDown: true});
 
         // keydown/up with target as the document are sent to the vm via postIOData
-        eventTriggers.keydown({ key: 'A', target: document });
-        expect(vm.postIOData).toHaveBeenLastCalledWith('keyboard', { key: 'A', isDown: true });
+        eventTriggers.keydown({key: 'A', target: document});
+        expect(vm.postIOData).toHaveBeenLastCalledWith('keyboard', {key: 'A', isDown: true});
 
-        eventTriggers.keyup({ key: 'A', target: document });
-        expect(vm.postIOData).toHaveBeenLastCalledWith('keyboard', { key: 'A', isDown: false });
+        eventTriggers.keyup({key: 'A', target: document});
+        expect(vm.postIOData).toHaveBeenLastCalledWith('keyboard', {key: 'A', isDown: false});
 
         // When key is 'Dead' e.g. bluetooth keyboards on iOS, it sends keyCode instead
         // because the VM can process both named keys or keyCodes as the `key` property
-        eventTriggers.keyup({ key: 'Dead', keyCode: 10, target: document });
-        expect(vm.postIOData).toHaveBeenLastCalledWith('keyboard', { key: 10, isDown: false });
+        eventTriggers.keyup({key: 'Dead', keyCode: 10, target: document});
+        expect(vm.postIOData).toHaveBeenLastCalledWith('keyboard', {key: 10, isDown: false});
     });
 });

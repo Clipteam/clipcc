@@ -1,6 +1,6 @@
 import React from 'react';
 import ToggleButtons from '../../../src/components/toggle-buttons/toggle-buttons';
-import { fireEvent, render } from '@testing-library/react';
+import {fireEvent, render} from '@testing-library/react';
 
 
 describe('ToggleButtons', () => {

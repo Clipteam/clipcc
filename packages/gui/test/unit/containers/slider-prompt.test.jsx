@@ -1,10 +1,9 @@
 import React from 'react';
 import SliderPrompt from '../../../src/containers/slider-prompt.jsx';
-import { screen, fireEvent } from '@testing-library/react'
-import { renderWithIntl } from '../../helpers/intl-helpers.jsx';
-import { Provider } from 'react-redux';
+import {screen, fireEvent} from '@testing-library/react';
+import {renderWithIntl} from '../../helpers/intl-helpers.jsx';
+import {Provider} from 'react-redux';
 import configureStore from 'redux-mock-store';
-
 
 
 describe('Slider Prompt Container', () => {
@@ -53,7 +52,7 @@ describe('Slider Prompt Container', () => {
             </Provider>
         );
 
-        fireEvent.click(screen.getByRole('button', { name: "OK" }));
+        fireEvent.click(screen.getByRole('button', {name: 'OK'}));
         expect(onOk).toHaveBeenCalled();
     });
 
@@ -70,7 +69,7 @@ describe('Slider Prompt Container', () => {
             </Provider>
         );
 
-        fireEvent.click(screen.getByRole('button', { name: "Cancel" }));
+        fireEvent.click(screen.getByRole('button', {name: 'Cancel'}));
         expect(onCancel).toHaveBeenCalled();
     });
 });

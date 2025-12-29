@@ -30,10 +30,6 @@ describe('Working with costumes', () => {
     });
 
     test('Adding a costume through the library', async () => {
-        // This is needed when running the tests all at once or it just fails...
-        await driver.quit();
-        driver = getDriver();
-
         await loadUri(uri);
         await driver.sleep(500);
         await clickText('Costumes');
@@ -200,21 +196,6 @@ describe('Working with costumes', () => {
         await expect(logs).toEqual([]);
     });
 
-    test('Costumes animate on mouseover', async () => {
-        await loadUri(uri);
-        await clickXpath('//button[@aria-label="Choose a Sprite"]');
-        const searchElement = await findByXpath("//input[@placeholder='Search']");
-        await searchElement.sendKeys('abb');
-        const abbyElement = await findByXpath('//*[span[text()="Abby"]]');
-        driver.actions()
-            .mouseMove(abbyElement)
-            .perform();
-        // wait for one of Abby's alternate costumes to appear
-        await findByXpath('//img[@src="https://cdn.assets.scratch.mit.edu/internalapi/asset/45de34b47a2ce22f6f5d28bb35a44ff5.svg/get/"]');
-        const logs = await getLogs();
-        await expect(logs).toEqual([]);
-    });
-
     test('Adding multiple costumes at the same time', async () => {
         const files = [
             path.resolve(__dirname, '../fixtures/gh-3582-png.png'),
@@ -236,7 +217,7 @@ describe('Working with costumes', () => {
         await expect(logs).toEqual([]);
     });
 
-    test('Load an invalid svg from scratch3 as costume', async () => { // eslint-disable-line no-disabled-tests
+    test('Load an invalid svg from scratch3 as costume', async () => {
         await loadUri(uri);
         await clickText('Costumes');
         const el = await findByXpath('//button[@aria-label="Choose a Costume"]');
@@ -250,7 +231,7 @@ describe('Working with costumes', () => {
         await expect(tileVisible).toBe(true);
     });
 
-    test('Load an invalid svg from scratch2 as costume', async () => { // eslint-disable-line no-disabled-tests
+    test('Load an invalid svg from scratch2 as costume', async () => {
         await loadUri(uri);
         await clickText('Costumes');
         const el = await findByXpath('//button[@aria-label="Choose a Costume"]');

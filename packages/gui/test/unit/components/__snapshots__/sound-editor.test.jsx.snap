@@ -154,6 +154,7 @@ exports[`Sound Editor Component matches snapshot 1`] = `
         <div>
           <div
             class=""
+            style="transform: translateX(50%);"
           />
         </div>
       </div>

@@ -1,11 +1,11 @@
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+import {render, fireEvent} from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ButtonComponent from '../../../src/components/button/button';
 
 describe('ButtonComponent', () => {
     test('matches snapshot', () => {
-        const { container } = render(
+        const {container} = render(
             <ButtonComponent onClick={jest.fn()} />
         );
 
@@ -14,7 +14,7 @@ describe('ButtonComponent', () => {
 
     test('triggers callback when clicked', () => {
         const onClick = jest.fn();
-        const { container } = render(
+        const {container} = render(
             <ButtonComponent onClick={onClick} />
         );
 

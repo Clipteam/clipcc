@@ -81,7 +81,8 @@ module.exports = [
             'scratch-vm.min': './src/index.js'
         },
         output: {
-            path: path.resolve('dist', 'web')
+            path: path.resolve('dist', 'web'),
+            publicPath: ''
         }
     }),
     // Node-compatible

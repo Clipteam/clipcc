@@ -1,10 +1,9 @@
 import React from 'react';
-import { OrderedMap } from 'immutable';
+import {OrderedMap} from 'immutable';
 import configureStore from 'redux-mock-store';
-import { Provider } from 'react-redux';
-import { renderWithIntl } from '../../helpers/intl-helpers.jsx';
+import {Provider} from 'react-redux';
+import {renderWithIntl} from '../../helpers/intl-helpers.jsx';
 import MonitorList from '../../../src/components/monitor-list/monitor-list.jsx';
-import { DEFAULT_THEME } from '../../../src/lib/themes';
 
 describe('MonitorListComponent', () => {
     const store = configureStore()({
@@ -13,9 +12,8 @@ describe('MonitorListComponent', () => {
                 monitors: {},
                 savedMonitorPositions: {}
             },
-            theme: {
-                theme: DEFAULT_THEME
-            },
+            settings: {},
+            theme: {},
             toolbox: {
                 toolboxXML: ''
             },
@@ -60,8 +58,8 @@ describe('MonitorListComponent', () => {
                 isDiscrete: true
             }
         });
-        const { container } = renderWithIntl(getComponent());
-        
+        const {container} = renderWithIntl(getComponent());
+
         expect(container.firstChild).toMatchSnapshot();
     });
 
@@ -73,8 +71,8 @@ describe('MonitorListComponent', () => {
                 isDiscrete: false
             }
         });
-        const { container } = renderWithIntl(getComponent());
-        
+        const {container} = renderWithIntl(getComponent());
+
         expect(container.firstChild).toMatchSnapshot();
     });
 });

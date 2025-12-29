@@ -6,7 +6,7 @@
 npm-*
 
 # Testing
-/.tap
+/test-results
 
 # Build
 /build

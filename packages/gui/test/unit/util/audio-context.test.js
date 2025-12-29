@@ -1,5 +1,5 @@
 /* global WebAudioTestAPI */
-import 'lumen5-web-audio-test-api';
+import 'web-audio-test-api';
 WebAudioTestAPI.setState({
     'AudioContext#resume': 'enabled'
 });

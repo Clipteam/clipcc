@@ -1,7 +1,7 @@
 import React from 'react';
 import configureStore from 'redux-mock-store';
 import MenuBarHOC from '../../../src/containers/menu-bar-hoc.jsx';
-import { render } from '@testing-library/react'
+import {render} from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 // TODO rewrite this test to use react-testing-library
@@ -19,7 +19,7 @@ describe('Menu Bar HOC', () => {
         });
 
         Component = jest.fn(
-            ({ confirmReadyToReplaceProject, shouldSaveBeforeTransition }) => (
+            ({confirmReadyToReplaceProject, shouldSaveBeforeTransition}) => (
                 <>
                     <div id="confirmReadyToReplaceProject">
                         {`${confirmReadyToReplaceProject()}`}
@@ -34,7 +34,7 @@ describe('Menu Bar HOC', () => {
 
     test('Logged in user who IS owner and HAS changed project will NOT be prompted to save', () => {
         const WrappedComponent = MenuBarHOC(Component);
-        const { container } = render(
+        const {container} = render(
             <WrappedComponent
                 canCreateNew
                 canSave
@@ -45,13 +45,13 @@ describe('Menu Bar HOC', () => {
             />
         );
 
-        const element = container.querySelector('#confirmReadyToReplaceProject')
+        const element = container.querySelector('#confirmReadyToReplaceProject');
         expect(element).toHaveTextContent(/true/i);
     });
 
     test('Logged in user who IS owner and has NOT changed project will NOT be prompted to save', () => {
         const WrappedComponent = MenuBarHOC(Component);
-        const { container } = render(
+        const {container} = render(
             <WrappedComponent
                 canCreateNew
                 canSave
@@ -61,13 +61,13 @@ describe('Menu Bar HOC', () => {
             />
         );
 
-        const element = container.querySelector('#confirmReadyToReplaceProject')
+        const element = container.querySelector('#confirmReadyToReplaceProject');
         expect(element).toHaveTextContent(/true/i);
     });
 
     test('Logged in user who is NOT owner and HAS changed project will NOT be prompted to save', () => {
         const WrappedComponent = MenuBarHOC(Component);
-        const { container } = render(
+        const {container} = render(
             <WrappedComponent
                 canCreateNew
                 projectChanged
@@ -77,13 +77,13 @@ describe('Menu Bar HOC', () => {
             />
         );
 
-        const element = container.querySelector('#confirmReadyToReplaceProject')
+        const element = container.querySelector('#confirmReadyToReplaceProject');
         expect(element).toHaveTextContent(/true/i);
     });
 
     test('Logged OUT user who HAS changed project WILL be prompted to save', () => {
         const WrappedComponent = MenuBarHOC(Component);
-        const { container } = render(
+        const {container} = render(
             <WrappedComponent
                 projectChanged
                 canCreateNew={false}
@@ -93,13 +93,13 @@ describe('Menu Bar HOC', () => {
             />
         );
 
-        const element = container.querySelector('#confirmReadyToReplaceProject')
+        const element = container.querySelector('#confirmReadyToReplaceProject');
         expect(element).toHaveTextContent(/false/i);
     });
 
     test('Logged OUT user who has NOT changed project WILL NOT be prompted to save', () => {
         const WrappedComponent = MenuBarHOC(Component);
-        const { container } = render(
+        const {container} = render(
             <WrappedComponent
                 canCreateNew={false}
                 canSave={false}
@@ -108,13 +108,13 @@ describe('Menu Bar HOC', () => {
                 store={store}
             />
         );
-        const element = container.querySelector('#confirmReadyToReplaceProject')
+        const element = container.querySelector('#confirmReadyToReplaceProject');
         expect(element).toHaveTextContent(/true/i);
     });
 
     test('Logged in user who IS owner and HAS changed project SHOULD save before transition to project page', () => {
         const WrappedComponent = MenuBarHOC(Component);
-        const { container } = render(
+        const {container} = render(
             <WrappedComponent
                 canSave
                 projectChanged
@@ -122,13 +122,13 @@ describe('Menu Bar HOC', () => {
             />
         );
 
-        const element = container.querySelector('#shouldSaveBeforeTransition')
+        const element = container.querySelector('#shouldSaveBeforeTransition');
         expect(element).toHaveTextContent(/true/i);
     });
 
     test('Logged in user who IS owner and has NOT changed project should NOT save before transition', () => {
         const WrappedComponent = MenuBarHOC(Component);
-        const { container } = render(
+        const {container} = render(
             <WrappedComponent
                 canSave
                 projectChanged={false}
@@ -136,13 +136,13 @@ describe('Menu Bar HOC', () => {
             />
         );
 
-        const element = container.querySelector('#shouldSaveBeforeTransition')
+        const element = container.querySelector('#shouldSaveBeforeTransition');
         expect(element).toHaveTextContent(/false/i);
     });
 
     test('Logged in user who is NOT owner and HAS changed project should NOT save before transition', () => {
         const WrappedComponent = MenuBarHOC(Component);
-        const { container } = render(
+        const {container} = render(
             <WrappedComponent
                 projectChanged
                 canSave={false}
@@ -150,13 +150,13 @@ describe('Menu Bar HOC', () => {
             />
         );
 
-        const element = container.querySelector('#shouldSaveBeforeTransition')
+        const element = container.querySelector('#shouldSaveBeforeTransition');
         expect(element).toHaveTextContent(/false/i);
     });
 
     test('Logged in user who is NOT owner and has NOT changed project should NOT save before transition', () => {
         const WrappedComponent = MenuBarHOC(Component);
-        const { container } = render(
+        const {container} = render(
             <WrappedComponent
                 canSave={false}
                 projectChanged={false}
@@ -164,7 +164,7 @@ describe('Menu Bar HOC', () => {
             />
         );
 
-        const element = container.querySelector('#shouldSaveBeforeTransition')
+        const element = container.querySelector('#shouldSaveBeforeTransition');
         expect(element).toHaveTextContent(/false/i);
     });
 

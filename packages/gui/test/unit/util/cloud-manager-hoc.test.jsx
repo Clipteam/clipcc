@@ -1,11 +1,11 @@
-import 'lumen5-web-audio-test-api';
+import 'web-audio-test-api';
 
 import React from 'react';
 import configureStore from 'redux-mock-store';
-import {render} from '@testing-library/react';
 import VM from 'clipcc-vm';
 import {LoadingState} from '../../../src/reducers/project-state';
 import CloudProvider from '../../../src/lib/cloud-provider';
+import {render} from '@testing-library/react';
 const mockCloudProviderInstance = {
     connection: true,
     requestCloseConnection: jest.fn()
@@ -167,7 +167,7 @@ describe('CloudManagerHOC', () => {
         const WrappedComponent = cloudManagerHOC(Component);
         vm.extensionManager.isExtensionLoaded = jest.fn(extension => extension === 'faceSensing');
 
-        mount(
+        render(
             <WrappedComponent
                 hasCloudPermission
                 cloudHost="nonEmpty"
@@ -187,7 +187,7 @@ describe('CloudManagerHOC', () => {
         const onShowCloudInfo = jest.fn();
         vm.runtime.hasCloudData = jest.fn(() => false);
 
-        const { rerender } = render(
+        const {rerender} = render(
             <WrappedComponent
                 hasCloudPermission
                 cloudHost="nonEmpty"
@@ -210,7 +210,7 @@ describe('CloudManagerHOC', () => {
                 username="user"
                 vm={vm}
                 onShowCloudInfo={onShowCloudInfo}
-                isShowingWithId={true}
+                isShowingWithId
                 loadingState={LoadingState.SHOWING_WITH_ID}
             />
         );
@@ -223,7 +223,7 @@ describe('CloudManagerHOC', () => {
     test('projectId change should not trigger cloudProvider connection unless isShowingWithId becomes true', () => {
         const Component = () => <div />;
         const WrappedComponent = cloudManagerHOC(Component);
-        const { rerender } = render(
+        const {rerender} = render(
             <WrappedComponent
                 hasCloudPermission
                 cloudHost="nonEmpty"
@@ -240,7 +240,7 @@ describe('CloudManagerHOC', () => {
                 store={stillLoadingStore}
                 username="user"
                 vm={vm}
-                projectId='a different id'
+                projectId="a different id"
             />
         );
 
@@ -254,8 +254,8 @@ describe('CloudManagerHOC', () => {
                 store={stillLoadingStore}
                 username="user"
                 vm={vm}
-                projectId='a different id'
-                isShowingWithId={true}
+                projectId="a different id"
+                isShowingWithId
                 loadingState={LoadingState.SHOWING_WITH_ID}
             />
         );
@@ -268,7 +268,7 @@ describe('CloudManagerHOC', () => {
     test('when it unmounts, the cloud provider is reset to null on the vm', () => {
         const Component = () => (<div />);
         const WrappedComponent = cloudManagerHOC(Component);
-        const { unmount } = render(
+        const {unmount} = render(
             <WrappedComponent
                 hasCloudPermission
                 cloudHost="nonEmpty"
@@ -293,7 +293,7 @@ describe('CloudManagerHOC', () => {
     test('projectId changing should trigger cloudProvider disconnection', () => {
         const Component = () => <div />;
         const WrappedComponent = cloudManagerHOC(Component);
-        const { rerender } = render(
+        const {rerender} = render(
             <WrappedComponent
                 hasCloudPermission
                 cloudHost="nonEmpty"
@@ -313,7 +313,7 @@ describe('CloudManagerHOC', () => {
                 store={store}
                 username="user"
                 vm={vm}
-                projectId='a different id'
+                projectId="a different id"
             />
         );
 
@@ -326,7 +326,7 @@ describe('CloudManagerHOC', () => {
     test('username changing should trigger cloudProvider disconnection', () => {
         const Component = () => <div />;
         const WrappedComponent = cloudManagerHOC(Component);
-        const { rerender } = render(
+        const {rerender} = render(
             <WrappedComponent
                 hasCloudPermission
                 cloudHost="nonEmpty"
@@ -344,7 +344,7 @@ describe('CloudManagerHOC', () => {
                 hasCloudPermission
                 cloudHost="nonEmpty"
                 store={store}
-                username='a different user'
+                username="a different user"
                 vm={vm}
             />
         );
@@ -435,7 +435,7 @@ describe('CloudManagerHOC', () => {
     test('Entering editor mode and can\'t save project should disconnect cloud provider', () => {
         const Component = () => <div />;
         const WrappedComponent = cloudManagerHOC(Component);
-        const { rerender } = render(
+        const {rerender} = render(
             <WrappedComponent
                 hasCloudPermission
                 cloudHost="nonEmpty"

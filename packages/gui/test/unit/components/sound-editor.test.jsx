@@ -1,7 +1,7 @@
 import React from 'react';
-import { renderWithIntl } from '../../helpers/intl-helpers.jsx';
+import {renderWithIntl} from '../../helpers/intl-helpers.jsx';
 import SoundEditor from '../../../src/components/sound-editor/sound-editor';
-import { fireEvent, waitFor } from '@testing-library/react';
+import {fireEvent, waitFor} from '@testing-library/react';
 
 describe('Sound Editor Component', () => {
     let props;
@@ -33,13 +33,13 @@ describe('Sound Editor Component', () => {
     });
 
     test('matches snapshot', () => {
-        const { container } = renderWithIntl(<SoundEditor {...props} />);
+        const {container} = renderWithIntl(<SoundEditor {...props} />);
 
         expect(container.firstChild).toMatchSnapshot();
     });
 
     test('delete button appears when selection is not null', () => {
-        const { container } = renderWithIntl(
+        const {container} = renderWithIntl(
             <SoundEditor
                 {...props}
                 trimEnd={0.75}
@@ -54,7 +54,7 @@ describe('Sound Editor Component', () => {
     });
 
     test('play button appears when playhead is null', () => {
-        const { container } = renderWithIntl(
+        const {container} = renderWithIntl(
             <SoundEditor
                 {...props}
                 playhead={null}
@@ -66,7 +66,7 @@ describe('Sound Editor Component', () => {
     });
 
     test('stop button appears when playhead is not null', () => {
-        const { container } = renderWithIntl(
+        const {container} = renderWithIntl(
             <SoundEditor
                 {...props}
                 playhead={0.5}
@@ -80,17 +80,20 @@ describe('Sound Editor Component', () => {
     test('submitting name calls the callback', async () => {
         if (typeof MutationObserver === 'undefined') {
             global.MutationObserver = class {
-                observe() { }
-                disconnect() { }
+                observe () { }
+                disconnect () { }
             };
         }
         const onChangeName = jest.fn();
-        const { container } = renderWithIntl(<SoundEditor {...props} onChangeName={onChangeName} />);
+        const {container} = renderWithIntl(<SoundEditor
+            {...props}
+            onChangeName={onChangeName}
+        />);
 
         const input = container.querySelector('input');
 
-        fireEvent.change(input, { target: { value: 'hello' } });
-        fireEvent.keyPress(input, { key: 'Enter', code: 'Enter', charCode: 13 });
+        fireEvent.change(input, {target: {value: 'hello'}});
+        fireEvent.blur(input);
         await waitFor(() => expect(onChangeName).toHaveBeenCalled());
     });
 
@@ -98,13 +101,13 @@ describe('Sound Editor Component', () => {
         let getButtonByText;
 
         beforeEach(() => {
-            const { container } = renderWithIntl(
+            const {container} = renderWithIntl(
                 <SoundEditor {...props} />
             );
 
-            const buttons = [...container.querySelectorAll('div[role="button"]')]
-            getButtonByText = (text) => buttons.find(div => div.textContent.trim() === text);
-        })
+            const buttons = [...container.querySelectorAll('div[role="button"]')];
+            getButtonByText = text => buttons.find(div => div.textContent.trim() === text);
+        });
 
         test('clicking reverse button calls correct callback', () => {
             const reverseButton = getButtonByText('Reverse');
@@ -145,8 +148,11 @@ describe('Sound Editor Component', () => {
 
     describe('disbaling undo/redo button', () => {
         test('undo button can be disabled when canUndo equals false', () => {
-            const { container } = renderWithIntl(
-                <SoundEditor {...props} canUndo={false} />
+            const {container} = renderWithIntl(
+                <SoundEditor
+                    {...props}
+                    canUndo={false}
+                />
             );
 
             const undoButtonEnabled = container.querySelector('button[title="Undo"]');
@@ -154,8 +160,11 @@ describe('Sound Editor Component', () => {
         });
 
         test('redo button can be disabled when canRedo equals false', () => {
-            const { container } = renderWithIntl(
-                <SoundEditor {...props} canRedo={false} />
+            const {container} = renderWithIntl(
+                <SoundEditor
+                    {...props}
+                    canRedo={false}
+                />
             );
 
             const redoButtonEnabled = container.querySelector('button[title="Redo"]');
@@ -165,7 +174,7 @@ describe('Sound Editor Component', () => {
 
     describe('undo/redo buttons call the correct callbacks', () => {
         test('when undo button is clicked it calls the correct callback', () => {
-            const { container } = renderWithIntl(
+            const {container} = renderWithIntl(
                 <SoundEditor {...props} />
             );
 
@@ -175,7 +184,7 @@ describe('Sound Editor Component', () => {
         });
 
         test('when redo button is clicked it calls the correct callback', () => {
-            const { container } = renderWithIntl(
+            const {container} = renderWithIntl(
                 <SoundEditor {...props} />
             );
 

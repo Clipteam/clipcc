@@ -1,19 +1,17 @@
-import React from 'react';
-import {renderWithIntl } from '../../helpers/intl-helpers.jsx';
+import React, {act} from 'react';
+import {renderWithIntl} from '../../helpers/intl-helpers.jsx';
 import configureStore from 'redux-mock-store';
 import mockAudioBufferPlayer from '../../__mocks__/audio-buffer-player.js';
 import mockAudioEffects from '../../__mocks__/audio-effects.js';
 
 import SoundEditor from '../../../src/containers/sound-editor';
-import { screen, fireEvent, waitFor } from '@testing-library/react';
-import { act } from 'react';  // Import act
+import {screen, fireEvent, waitFor} from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 
 global.MutationObserver = class {
-    constructor(callback) { }
-    disconnect() { }
-    observe() { }
+    disconnect () { }
+    observe () { }
 };
 
 jest.mock('react-ga');
@@ -25,7 +23,7 @@ describe('Sound Editor Container', () => {
     let store;
     let soundIndex;
     let soundBuffer;
-    const samples = new Float32Array([0, 0, 0]); // eslint-disable-line no-undef
+    const samples = new Float32Array([0, 0, 0]);
     let vm;
 
     beforeEach(() => {
@@ -40,15 +38,15 @@ describe('Sound Editor Container', () => {
             updateSoundBuffer: jest.fn(),
             editingTarget: {
                 sprite: {
-                    sounds: [{ name: 'first name', id: 'first id' }]
+                    sounds: [{name: 'first name', id: 'first id'}]
                 }
             }
         };
-        store = mockStore({ scratchGui: { vm: vm, mode: { isFullScreen: false } } });
+        store = mockStore({scratchGui: {vm: vm, mode: {isFullScreen: false}}});
     });
 
     test('should pass the correct data to the component from the store', () => {
-        const { container } = renderWithIntl(
+        const {container} = renderWithIntl(
             <SoundEditor
                 soundIndex={soundIndex}
                 store={store}
@@ -75,7 +73,7 @@ describe('Sound Editor Container', () => {
         expect(mockAudioBufferPlayer.instance.play).toHaveBeenCalled();
 
         // Mock the audio buffer player calling onUpdate
-        await act(async () => {
+        await act(() => {
             mockAudioBufferPlayer.instance.onUpdate(0.5);
         });
 
@@ -93,8 +91,8 @@ describe('Sound Editor Container', () => {
         );
 
         const nameInput = screen.getByRole('textbox');
-        fireEvent.change(nameInput, { target: { value: 'hello' } });
-        fireEvent.keyPress(nameInput, { key: 'Enter', code: 'Enter', charCode: 13 });
+        fireEvent.change(nameInput, {target: {value: 'hello'}});
+        fireEvent.blur(nameInput);
         expect(vm.renameSound).toHaveBeenCalledWith(soundIndex, 'hello');
     });
 
@@ -105,7 +103,7 @@ describe('Sound Editor Container', () => {
                 store={store}
             />
         );
-        const reverseButton = screen.getByRole('button', { name: "Reverse" });
+        const reverseButton = screen.getByRole('button', {name: 'Reverse'});
         await act(async () => {
             fireEvent.click(reverseButton);
             await mockAudioEffects.instance._finishProcessing(soundBuffer);
@@ -121,7 +119,7 @@ describe('Sound Editor Container', () => {
                 store={store}
             />
         );
-        const reverseButton = screen.getByRole('button', { name: "Reverse" });
+        const reverseButton = screen.getByRole('button', {name: 'Reverse'});
         fireEvent.click(reverseButton);
         expect(mockAudioEffects.instance.name).toEqual(mockAudioEffects.effectTypes.REVERSE);
         expect(mockAudioEffects.instance.process).toHaveBeenCalled();
@@ -134,7 +132,7 @@ describe('Sound Editor Container', () => {
                 store={store}
             />
         );
-        const louderButton = screen.getByRole('button', { name: "Louder" });
+        const louderButton = screen.getByRole('button', {name: 'Louder'});
         fireEvent.click(louderButton);
         expect(mockAudioEffects.instance.name).toEqual(mockAudioEffects.effectTypes.LOUDER);
         expect(mockAudioEffects.instance.process).toHaveBeenCalled();
@@ -147,7 +145,7 @@ describe('Sound Editor Container', () => {
                 store={store}
             />
         );
-        const softerButton = screen.getByRole('button', { name: "Softer" });
+        const softerButton = screen.getByRole('button', {name: 'Softer'});
         fireEvent.click(softerButton);
         expect(mockAudioEffects.instance.name).toEqual(mockAudioEffects.effectTypes.SOFTER);
         expect(mockAudioEffects.instance.process).toHaveBeenCalled();
@@ -160,7 +158,7 @@ describe('Sound Editor Container', () => {
                 store={store}
             />
         );
-        const fasterButton = screen.getByRole('button', { name: "Faster" });
+        const fasterButton = screen.getByRole('button', {name: 'Faster'});
         fireEvent.click(fasterButton);
         expect(mockAudioEffects.instance.name).toEqual(mockAudioEffects.effectTypes.FASTER);
         expect(mockAudioEffects.instance.process).toHaveBeenCalled();
@@ -173,7 +171,7 @@ describe('Sound Editor Container', () => {
                 store={store}
             />
         );
-        const slowerButton = screen.getByRole('button', { name: "Slower" });
+        const slowerButton = screen.getByRole('button', {name: 'Slower'});
         fireEvent.click(slowerButton);
         expect(mockAudioEffects.instance.name).toEqual(mockAudioEffects.effectTypes.SLOWER);
         expect(mockAudioEffects.instance.process).toHaveBeenCalled();
@@ -186,7 +184,7 @@ describe('Sound Editor Container', () => {
                 store={store}
             />
         );
-        const softerButton = screen.getByRole('button', { name: "Robot" });
+        const softerButton = screen.getByRole('button', {name: 'Robot'});
         fireEvent.click(softerButton);
         expect(mockAudioEffects.instance.name).toEqual(mockAudioEffects.effectTypes.ROBOT);
         expect(mockAudioEffects.instance.process).toHaveBeenCalled();
@@ -200,15 +198,15 @@ describe('Sound Editor Container', () => {
             />
         );
 
-        const undoButton = screen.getByRole('button', { name: "Undo" });
-        const redoButton = screen.getByRole('button', { name: "Redo" });
+        const undoButton = screen.getByRole('button', {name: 'Undo'});
+        const redoButton = screen.getByRole('button', {name: 'Redo'});
 
         // Undo and redo should be disabled initially
         expect(undoButton).toBeDisabled();
         expect(redoButton).toBeDisabled();
 
         // Submitting new samples should make it possible to undo
-        const fasterButton = screen.getByRole('button', { name: "Faster" });
+        const fasterButton = screen.getByRole('button', {name: 'Faster'});
         await act(async () => {
             fireEvent.click(fasterButton);
             await mockAudioEffects.instance._finishProcessing(soundBuffer);
@@ -217,21 +215,21 @@ describe('Sound Editor Container', () => {
         expect(redoButton).toBeDisabled();
 
         // Undoing should make it possible to redo and not possible to undo again
-        await act(async () => {
+        await act(() => {
             fireEvent.click(undoButton);
         });
         expect(undoButton).toBeDisabled();
         expect(redoButton).toBeEnabled();
 
         // Redoing should make it possible to undo and not possible to redo again
-        await act(async () => {
+        await act(() => {
             fireEvent.click(redoButton);
         });
         expect(undoButton).toBeEnabled();
         expect(redoButton).toBeDisabled();
 
         // New submission should clear the redo stack
-        await act(async () => {
+        await act(() => {
             fireEvent.click(undoButton);
         });
         expect(redoButton).toBeEnabled();
@@ -252,9 +250,9 @@ describe('Sound Editor Container', () => {
         );
 
         // Set up an undoable state
-        const fasterButton = screen.getByRole('button', { name: "Faster" });
-        const undoButton = screen.getByRole('button', { name: "Undo" });
-        const redoButton = screen.getByRole('button', { name: "Redo" });
+        const fasterButton = screen.getByRole('button', {name: 'Faster'});
+        const undoButton = screen.getByRole('button', {name: 'Undo'});
+        const redoButton = screen.getByRole('button', {name: 'Redo'});
 
         await act(async () => {
             fireEvent.click(fasterButton);
@@ -262,14 +260,14 @@ describe('Sound Editor Container', () => {
         });
 
         // Undo should update the sound buffer and play the new samples
-        await act(async () => {
+        await act(() => {
             fireEvent.click(undoButton);
         });
-        
+
         expect(mockAudioBufferPlayer.instance.play).toHaveBeenCalled();
         expect(vm.updateSoundBuffer).toHaveBeenCalled();
 
-        await act(async () => {
+        await act(() => {
             // Clear the mocks call history to assert again for redo.
             vm.updateSoundBuffer.mockClear();
             mockAudioBufferPlayer.instance.play.mockClear();

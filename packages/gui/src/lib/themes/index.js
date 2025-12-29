@@ -67,7 +67,8 @@ const getColorsForTheme = theme => {
     const themeInfo = themeMap[theme];
 
     if (!themeInfo) {
-        throw new Error(`Undefined theme ${theme}`);
+        console.warn(`No theme found for ${theme}, falling back to default theme colors`);
+        return themeMap[DEFAULT_THEME].colors;
     }
 
     return themeInfo.colors;

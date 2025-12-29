@@ -4,19 +4,17 @@ import configureStore from 'redux-mock-store';
 import {Provider} from 'react-redux';
 import VM from 'clipcc-vm';
 
-import SpriteSelectorItem from '../../../src/containers/sprite-selector-item';
+import SpriteSelectorItemContainer from '../../../src/containers/sprite-selector-item';
 import {legacyConfig} from '../../../src/legacy-config';
 import DeleteConfirmationPrompt from '../../../src/components/delete-confirmation-prompt/delete-confirmation-prompt.jsx';
 import {screen, fireEvent, waitFor} from '@testing-library/react';
 
 global.MutationObserver = class {
-    constructor() { }
-    disconnect() { }
-    observe() { }
+    disconnect () { }
+    observe () { }
 };
 
 jest.mock('../../../src/components/delete-confirmation-prompt/delete-confirmation-prompt.jsx', () => jest.fn(() => null));
-
 describe('SpriteSelectorItem Container', () => {
     const mockStore = configureStore();
     let className;
@@ -33,7 +31,7 @@ describe('SpriteSelectorItem Container', () => {
     const getContainer = function (withDeleteConfirmation) {
         return (
             <Provider store={store}>
-                <SpriteSelectorItem
+                <SpriteSelectorItemContainer
                     className={className}
                     costumeURL={costumeURL}
                     dispatchSetHoveredSprite={dispatchSetHoveredSprite}
@@ -42,6 +40,7 @@ describe('SpriteSelectorItem Container', () => {
                     selected={selected}
                     onClick={onClick}
                     onDeleteButtonClick={onDeleteButtonClick}
+                    vm={vm}
                     withDeleteConfirmation={withDeleteConfirmation}
                 />
             </Provider>
@@ -61,19 +60,19 @@ describe('SpriteSelectorItem Container', () => {
         store = mockStore({
             scratchGui: {
                 config: legacyConfig,
-                hoveredTarget: { receivedBlocks: false, sprite: null },
-                assetDrag: { dragging: false },
+                hoveredTarget: {receivedBlocks: false, sprite: null},
+                assetDrag: {dragging: false},
                 vm
             }
         });
     });
 
-    test('should delete the sprite, when called without `withDeleteConfirmation`', async () => {
+    test('should delete the sprite, when called without `withDeleteConfirmation`', () => {
         onDeleteButtonClick = jest.fn();
 
         renderWithIntl(getContainer());
 
-        const deleteButton = screen.getByRole('button', { name: /delete/i });
+        const deleteButton = screen.getByRole('button', {name: /delete/i});
         fireEvent.click(deleteButton);
         expect(onDeleteButtonClick).toHaveBeenCalledWith(1337);
         expect(DeleteConfirmationPrompt).not.toHaveBeenCalled();
@@ -86,7 +85,7 @@ describe('SpriteSelectorItem Container', () => {
         renderWithIntl(getContainer(true));
 
         expect(DeleteConfirmationPrompt).not.toHaveBeenCalled();
-        const deleteButton = screen.getByRole('button', { name: /delete/i });
+        const deleteButton = screen.getByRole('button', {name: /delete/i});
         fireEvent.click(deleteButton);
         await waitFor(() => expect(DeleteConfirmationPrompt).toHaveBeenCalled());
     });

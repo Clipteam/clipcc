@@ -1,5 +1,7 @@
 import path from 'path';
 import SeleniumHelper from '../helpers/selenium-helper';
+import {StaleElementReferenceError} from 'selenium-webdriver/lib/error';
+import until from 'selenium-webdriver/lib/until';
 
 const {
     clickText,
@@ -61,11 +63,12 @@ describe('Working with sprites', () => {
         await expect(logs).toEqual([]);
     });
 
-    test('Deleting only sprite does not crash', async () => {
+    test('Deleting only sprite does not crash with changed name', async () => {
         await loadUri(uri);
         await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for scroll animation
         await rightClickText('Sprite1', scope.spriteTile);
         await clickText('delete', scope.contextMenu);
+        await clickText('yes', scope.modal);
         // Confirm that the stage has been switched to
         await findByText('Stage selected: no motion blocks');
         const logs = await getLogs();
@@ -76,6 +79,7 @@ describe('Working with sprites', () => {
         await loadUri(uri);
         await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for scroll animation
         await clickXpath('//*[@aria-label="Delete"]'); // Only visible close button is on the sprite
+        await clickText('yes', scope.modal);
         // Confirm that the stage has been switched to
         await findByText('Stage selected: no motion blocks');
         const logs = await getLogs();
@@ -152,20 +156,16 @@ describe('Working with sprites', () => {
     });
 
     test('Use browser back button to close library', async () => {
-        await driver.get('https://www.google.com');
         await loadUri(uri);
         await clickText('Costumes');
         await clickXpath('//button[@aria-label="Choose a Sprite"]');
         const abbyElement = await findByText('Abby'); // Should show editor for new costume
         await elementIsVisible(abbyElement);
         await driver.navigate().back();
-        try {
-            // should throw error because library is no longer visible
-            await elementIsVisible(abbyElement);
-            throw 'ShouldNotGetHere'; // eslint-disable-line no-throw-literal
-        } catch (e) {
-            expect(e.constructor.name).toEqual('StaleElementReferenceError');
-        }
+        // should throw error because library is no longer present
+        await expect(driver.wait(until.elementIsVisible(abbyElement)))
+            .rejects
+            .toBeInstanceOf(StaleElementReferenceError);
         const costumesElement = await findByText('Costumes'); // Should show editor for new costume
         await elementIsVisible(costumesElement);
         const logs = await getLogs();

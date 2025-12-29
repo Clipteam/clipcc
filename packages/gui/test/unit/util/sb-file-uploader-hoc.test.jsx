@@ -1,13 +1,13 @@
-import 'lumen5-web-audio-test-api';
+import 'web-audio-test-api';
 
 import React from 'react';
 import configureStore from 'redux-mock-store';
 import {renderWithIntl} from '../../helpers/intl-helpers.jsx';
 import {LoadingState} from '../../../src/reducers/project-state';
 import VM from 'clipcc-vm';
-import {IntlProvider} from 'react-intl';
 
 import SBFileUploaderHOC from '../../../src/lib/sb-file-uploader-hoc.jsx';
+import {IntlProvider} from 'react-intl';
 
 describe('SBFileUploaderHOC', () => {
     const mockStore = configureStore();
@@ -59,7 +59,7 @@ describe('SBFileUploaderHOC', () => {
     test('if isLoadingUpload becomes true, without fileToUpload set, will call cancelFileUpload', () => {
         const mockedCancelFileUpload = jest.fn();
         const WrappedComponent = getContainer();
-        const { rerender } = renderWithIntl(
+        const {rerender} = renderWithIntl(
             <WrappedComponent
                 projectChanged
                 canSave={false}
@@ -76,21 +76,24 @@ describe('SBFileUploaderHOC', () => {
             />
         );
         rerender(
-            <IntlProvider locale='en' messages={{ }}>
+            <IntlProvider
+                locale="en"
+                messages={{ }}
+            >
                 <WrappedComponent
-                projectChanged
-                canSave={false}
-                cancelFileUpload={mockedCancelFileUpload}
-                closeFileMenu={jest.fn()}
-                isLoadingUpload={true}
-                requestProjectUpload={jest.fn()}
-                store={store}
-                userOwnsProject={false}
-                vm={vm}
-                onLoadingFinished={jest.fn()}
-                onLoadingStarted={jest.fn()}
-                onUpdateProjectTitle={jest.fn()}
-            />
+                    projectChanged
+                    canSave={false}
+                    cancelFileUpload={mockedCancelFileUpload}
+                    closeFileMenu={jest.fn()}
+                    isLoadingUpload
+                    requestProjectUpload={jest.fn()}
+                    store={store}
+                    userOwnsProject={false}
+                    vm={vm}
+                    onLoadingFinished={jest.fn()}
+                    onLoadingStarted={jest.fn()}
+                    onUpdateProjectTitle={jest.fn()}
+                />
             </IntlProvider>
         );
         expect(mockedCancelFileUpload).toHaveBeenCalled();

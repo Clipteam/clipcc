@@ -1,7 +1,7 @@
 import React from 'react';
-import { fireEvent } from '@testing-library/react';
+import {fireEvent} from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { renderWithIntl } from '../../helpers/intl-helpers.jsx';
+import {renderWithIntl} from '../../helpers/intl-helpers.jsx';
 import Controls from '../../../src/components/controls/controls';
 
 describe('Controls component', () => {
@@ -13,13 +13,16 @@ describe('Controls component', () => {
     });
 
     test('shows turbo mode when in turbo mode', () => {
-        const { container: containerTurbo } = renderWithIntl(<Controls {...defaultProps()} turbo={true} />);
+        const {container: containerTurbo} = renderWithIntl(<Controls
+            {...defaultProps()}
+            turbo
+        />);
         const turboMode = [...containerTurbo.querySelectorAll('div')].reverse().find(el => el.textContent.includes('Turbo Mode'));
         expect(turboMode).toBeTruthy();
     });
 
     test('does not show turbo mode when not in turbo mode', () => {
-        const { container: containerNoTurbo } = renderWithIntl(<Controls {...defaultProps()} />);
+        const {container: containerNoTurbo} = renderWithIntl(<Controls {...defaultProps()} />);
         const noTurboMode = [...containerNoTurbo.querySelectorAll('div')].reverse().find(el => el.textContent.includes('Turbo Mode'));
         expect(noTurboMode).toBeFalsy();
     });
@@ -27,7 +30,7 @@ describe('Controls component', () => {
     describe('triggers the right callbacks when clicked', () => {
         test('when green flag button clicked triggers the right callback', () => {
             const props = defaultProps();
-            const { container } = renderWithIntl(<Controls {...props} />);
+            const {container} = renderWithIntl(<Controls {...props} />);
 
             const greenFlagButton = container.querySelector('img[title="Go"]');
 
@@ -37,7 +40,7 @@ describe('Controls component', () => {
 
         test('when stop all button clicked triggers the right callback', () => {
             const props = defaultProps();
-            const { container } = renderWithIntl(<Controls {...props} />);
+            const {container} = renderWithIntl(<Controls {...props} />);
 
             const stopAllButton = container.querySelector('img[title="Stop"]');
 
