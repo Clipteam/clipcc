@@ -7,7 +7,6 @@ module.exports = {
         dist: './src/index.js'
     },
     output: {
-        path: __dirname,
         library: 'AudioEngine',
         libraryTarget: 'umd',
         filename: '[name].js'
