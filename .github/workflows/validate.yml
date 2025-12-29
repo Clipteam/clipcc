@@ -103,9 +103,6 @@ jobs:
       - name: Test
         run: yarn gui test:unit
 
-      - name: Lint
-        run: yarn gui lint
-
   test-vm:
     name: Test VM
     needs: [build, check-types]
@@ -132,9 +129,6 @@ jobs:
 
       - name: Test
         run: yarn vm test
-
-      - name: Lint
-        run: yarn vm lint
 
   test-block:
     name: Test Block

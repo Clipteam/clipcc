@@ -2,6 +2,7 @@ let _TextEncoder;
 if (typeof TextEncoder === 'undefined') {
     _TextEncoder = require('fastestsmallesttextencoderdecoder').TextEncoder;
 } else {
+    // eslint-disable-next-line no-redeclare
     /* global TextEncoder */
     _TextEncoder = TextEncoder;
 }
@@ -611,7 +612,7 @@ class VirtualMachine extends EventEmitter {
                 const sb3 = require('./serialization/sb3');
                 return sb3.deserialize(projectJSON, runtime, zip);
             }
-            return Promise.reject('Unable to verify Scratch Project version.');
+            return Promise.reject(new Error('Unable to verify Scratch Project version.'));
         };
         return deserializePromise()
             .then(({targets, extensions}) => {
@@ -715,7 +716,7 @@ class VirtualMachine extends EventEmitter {
                 if (projectVersion === 3) {
                     return this._addSprite3(validatedInput[0], validatedInput[1]);
                 }
-                return Promise.reject(`${errorPrefix} Unable to verify sprite version.`);
+                return Promise.reject(new Error(`${errorPrefix} Unable to verify sprite version.`));
             })
             .then(() => this.runtime.emitProjectChanged())
             .catch(error => {
@@ -723,7 +724,7 @@ class VirtualMachine extends EventEmitter {
                 if (Object.prototype.hasOwnProperty.call(error, 'validationError')) {
                     return Promise.reject(JSON.stringify(error));
                 }
-                return Promise.reject(`${errorPrefix} ${error}`);
+                return Promise.reject(new Error(`${errorPrefix} ${error}`));
             });
     }
 
@@ -781,7 +782,7 @@ class VirtualMachine extends EventEmitter {
             });
         }
         // If the target cannot be found by id, return a rejected promise
-        return Promise.reject();
+        return Promise.reject(new Error('Target not found'));
     }
 
     /**
@@ -795,7 +796,7 @@ class VirtualMachine extends EventEmitter {
      * @returns {?Promise<void>} - a promise that resolves when the costume has been added
      */
     addCostumeFromLibrary (md5ext, costumeObject) {
-        if (!this.editingTarget) return Promise.reject();
+        if (!this.editingTarget) return Promise.reject(new Error('No editing target'));
         return this.addCostume(md5ext, costumeObject, this.editingTarget.id, 2 /* optVersion */);
     }
 
@@ -874,7 +875,7 @@ class VirtualMachine extends EventEmitter {
             });
         }
         // If the target cannot be found by id, return a rejected promise
-        return new Promise.reject();
+        return Promise.reject(new Error('Target not found'));
     }
 
     /**

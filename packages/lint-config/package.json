@@ -32,12 +32,12 @@
     "eslint": "^8.0.0"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "7.25.1",
+    "@babel/eslint-parser": "7.28.5",
     "@commitlint/cli": "17.8.1",
     "@commitlint/config-conventional": "17.8.1",
-    "@typescript-eslint/eslint-plugin": "^8.4.0",
-    "@typescript-eslint/parser": "^8.4.0",
-    "eslint": "8.57.0",
+    "@typescript-eslint/eslint-plugin": "^8.50.1",
+    "@typescript-eslint/parser": "^8.50.1",
+    "eslint": "^8.57.0",
     "husky": "8.0.3",
     "scratch-semantic-release-config": "1.0.14",
     "semantic-release": "19.0.5"
