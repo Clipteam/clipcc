@@ -18,20 +18,20 @@
  */
 class SvgElement {
     // SVG related namespaces
-    static get svg(): string {
+    static get svg (): string {
         return 'http://www.w3.org/2000/svg';
     }
 
-    static get xmlns(): string {
+    static get xmlns (): string {
         return 'http://www.w3.org/2000/xmlns';
     }
 
-    static get xlink(): string {
+    static get xlink (): string {
         return 'http://www.w3.org/1999/xlink';
     }
 
     // Mapping of attribute names to required namespaces:
-    static attributeNamespace(): Record<string, string> {
+    static attributeNamespace (): Record<string, string> {
         return {
             'href': SvgElement.xlink,
             'xlink': SvgElement.xmlns,
@@ -42,19 +42,27 @@ class SvgElement {
         };
     }
 
-    static create(tag: string, attributes?: Record<string, any>, formatter?: { number: (num: number) => string }): SVGElement {
+    static create (
+        tag: string,
+        attributes?: Record<string, any>,
+        formatter?: { number: (num: number) => string }
+    ): SVGElement {
         return SvgElement.set(document.createElementNS(SvgElement.svg, tag) as SVGElement, attributes, formatter);
     }
 
-    static get(node: SVGElement, name: string): string | null {
+    static get (node: SVGElement, name: string): string | null {
         const namespace = SvgElement.attributeNamespace()[name];
-        const value = namespace
-            ? node.getAttributeNS(namespace, name)
-            : node.getAttribute(name);
+        const value = namespace ?
+            node.getAttributeNS(namespace, name) :
+            node.getAttribute(name);
         return value === 'null' ? null : value;
     }
 
-    static set(node: SVGElement, attributes?: Record<string, string | number>, formatter?: { number: (num: number) => string }): SVGElement {
+    static set (
+        node: SVGElement,
+        attributes?: Record<string, string | number>,
+        formatter?: { number: (num: number) => string }
+    ): SVGElement {
         for (const name in attributes) {
             let value = attributes[name];
             const namespace = SvgElement.attributeNamespace()[name];

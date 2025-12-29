@@ -28,26 +28,26 @@ const _parseTransform = function (domElement: Element): Matrix.Matrix {
         const v = parts[1].split(/[\s,]+/g).map(parseFloat);
 
         switch (command) {
-            case 'matrix':
-                matrix = Matrix.compose(matrix, { a: v[0], b: v[1], c: v[2], d: v[3], e: v[4], f: v[5] });
-                break;
-            case 'rotate':
-                matrix = Matrix.compose(matrix, Matrix.rotateDEG(v[0], v[1] || 0, v[2] || 0));
-                break;
-            case 'translate':
-                matrix = Matrix.compose(matrix, Matrix.translate(v[0], v[1] || 0));
-                break;
-            case 'scale':
-                matrix = Matrix.compose(matrix, Matrix.scale(v[0], v[1] || v[0]));
-                break;
-            case 'skewX':
-                matrix = Matrix.compose(matrix, Matrix.skewDEG(v[0], 0));
-                break;
-            case 'skewY':
-                matrix = Matrix.compose(matrix, Matrix.skewDEG(0, v[0]));
-                break;
-            default:
-                log.error(`Couldn't parse: ${command}`);
+        case 'matrix':
+            matrix = Matrix.compose(matrix, {a: v[0], b: v[1], c: v[2], d: v[3], e: v[4], f: v[5]});
+            break;
+        case 'rotate':
+            matrix = Matrix.compose(matrix, Matrix.rotateDEG(v[0], v[1] || 0, v[2] || 0));
+            break;
+        case 'translate':
+            matrix = Matrix.compose(matrix, Matrix.translate(v[0], v[1] || 0));
+            break;
+        case 'scale':
+            matrix = Matrix.compose(matrix, Matrix.scale(v[0], v[1] || v[0]));
+            break;
+        case 'skewX':
+            matrix = Matrix.compose(matrix, Matrix.skewDEG(v[0], 0));
+            break;
+        case 'skewY':
+            matrix = Matrix.compose(matrix, Matrix.skewDEG(0, v[0]));
+            break;
+        default:
+            log.error(`Couldn't parse: ${command}`);
         }
     }
     return matrix;
@@ -76,7 +76,12 @@ const _getScaleFactor = function (matrix: Matrix.Matrix) {
 
 // Returns null if matrix is not invertible. Otherwise returns given ellipse
 // transformed by transform, an object {radiusX, radiusY, rotation}.
-const _calculateTransformedEllipse = function (radiusX: number, radiusY: number, theta: number, transform: Matrix.Matrix) {
+const _calculateTransformedEllipse = function (
+    radiusX: number,
+    radiusY: number,
+    theta: number,
+    transform: Matrix.Matrix
+) {
     theta = -theta * Math.PI / 180;
     const a = transform.a;
     const b = -transform.c;
@@ -138,10 +143,10 @@ const _transformPath = function (pathString: string, transform: Matrix.Matrix) {
     if (!transform || Matrix.toString(transform) === Matrix.toString(Matrix.identity())) return pathString;
     // First split the path data into parts of command-coordinates pairs
     // Commands are any of these characters: mzlhvcsqta
-    const parts =  pathString?.match(/[mlhvcsqtaz][^mlhvcsqtaz]*/ig)!;
+    const parts = pathString?.match(/[mlhvcsqtaz][^mlhvcsqtaz]*/ig)!;
     let coords: RegExpMatchArray;
     let relative = false;
-    let previous: string | undefined = undefined;
+    let previous: string | undefined;
     let control: PointObjectNotation;
     let current: PointObjectNotation = {x: 0, y: 0};
     let start: PointObjectNotation = {x: 0, y: 0};
@@ -346,9 +351,16 @@ const _createGradient = function (gradientId: string, svgTag: SVGElement, bbox: 
         }
         return res;
     };
-    const getPoint = function (node: SVGElement, x: string, y: string, allowNull?: boolean, allowPercent?: boolean, defaultX?: string, defaultY?: string) {
-        let resultX = Number(getValue(node, x || 'x', false, allowNull, allowPercent, defaultX));
-        let resultY = Number(getValue(node, y || 'y', false, allowNull, allowPercent, defaultY));
+    const getPoint = function (
+        node: SVGElement,
+        x: string,
+        y: string,
+        allowNull?: boolean,
+        allowPercent?: boolean,
+        defaultX?: string,
+        defaultY?: string) {
+        const resultX = Number(getValue(node, x || 'x', false, allowNull, allowPercent, defaultX));
+        const resultY = Number(getValue(node, y || 'y', false, allowNull, allowPercent, defaultY));
         return allowNull && (x === null || y === null) ? null : {x: resultX, y: resultY};
     };
 
@@ -511,7 +523,7 @@ const _parseUrl = (value: string | undefined, windowRef: Window) => {
  * @param {object} bboxForTesting The bounds to use. Need to pass in for
  *     tests only, because getBBox doesn't work in Node. This should
  *     be the bounds of the svgTag without including stroke width or transforms.
- * @return {void}
+ * @returns {void}
  */
 const transformStrokeWidths = function (svgTag: SVGElement, windowRef: Window, bboxForTesting?: BBox) {
     const inherited = Matrix.identity();

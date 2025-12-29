@@ -1,4 +1,4 @@
-import type { Matrix } from "transformation-matrix";
+import type {Matrix} from 'transformation-matrix';
 
 declare global {
     type int = number;

@@ -11,6 +11,7 @@ class BitmapAdapter {
     stageWidth = 480;
     stageHeight = 360;
     /**
+     * Constructor for a BitmapAdapter
      * @param makeImage HTML image constructor. Tests can provide this.
      * @param makeCanvas HTML canvas constructor. Tests can provide this.
      */
@@ -36,7 +37,11 @@ class BitmapAdapter {
      * @param newHeight The desired post-resize height of the image
      * @returns A canvas with the resized image drawn on it.
      */
-    resize (image: Exclude<CanvasImageSource, VideoFrame | SVGImageElement>, newWidth: int, newHeight: int): HTMLCanvasElement {
+    resize (
+        image: Exclude<CanvasImageSource, VideoFrame | SVGImageElement>,
+        newWidth: int,
+        newHeight: int
+    ): HTMLCanvasElement {
         // We want to always resize using nearest-neighbor interpolation. However, canvas implementations are free to
         // use linear interpolation (or other "smooth" interpolation methods) when downscaling:
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1360415
@@ -80,7 +85,7 @@ class BitmapAdapter {
      * to in Scratch 3.0
      * @param oldWidth original width
      * @param oldHeight original height
-     * @return Array of new width, new height
+     * @returns Array of new width, new height
      */
     getResizedWidthHeight (oldWidth: number, oldHeight: number) {
         const STAGE_RATIO = this.stageWidth / this.stageHeight;
