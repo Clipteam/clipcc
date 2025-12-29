@@ -25,7 +25,7 @@
     "test:unit": "tap ./test/*.ts --allow-incomplete-coverage --allow-empty-coverage",
     "watch": "webpack --watch"
   },
-  "author": "Massachusetts Institute of Technology",
+  "author": "Clip Team",
   "license": "AGPL-3.0-only",
   "homepage": "https://github.com/Clipteam/clipcc/packages/svg-renderer#readme",
   "peerDependencies": {

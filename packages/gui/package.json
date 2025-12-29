@@ -2,8 +2,8 @@
   "name": "clipcc-gui",
   "version": "3.2.0",
   "description": "Graphical User Interface for creating and running Scratch 3.0 projects",
-  "author": "Massachusetts Institute of Technology",
-  "license": "BSD-3-Clause",
+  "author": "Clip Team",
+  "license": "AGPL-3.0-only",
   "homepage": "https://github.com/Clipteam/clipcc#readme",
   "repository": {
     "type": "git",

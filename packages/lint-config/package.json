@@ -3,7 +3,6 @@
   "version": "9.0.9",
   "description": "Shareable ESLint config for ClipCC",
   "main": "index.js",
-  "types": "index.d.ts",
   "scripts": {
     "test": "eslint ."
   },
@@ -11,8 +10,8 @@
     "type": "git",
     "url": "https://github.com/Clipteam/clipcc.git"
   },
-  "author": "Massachusetts Institute of Technology",
-  "license": "AGPL-3.0-only",
+  "author": "Clip Team",
+  "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/Clipteam/clipcc/issues"
   },

@@ -21,8 +21,8 @@
         "type": "git",
         "url": "https://github.com/Clipteam/clipcc.git"
     },
-    "author": "Massachusetts Institute of Technology",
-    "license": "BSD-3-Clause",
+    "author": "Clip Team",
+    "license": "AGPL-3.0-only",
     "bugs": {
         "url": "https://github.com/Clipteam/clipcc/issues"
     },

@@ -2,8 +2,8 @@
   "name": "clipcc-vm",
   "version": "3.2.0",
   "description": "Virtual Machine for Scratch 3.0",
-  "author": "Massachusetts Institute of Technology",
-  "license": "BSD-3-Clause",
+  "author": "Clip Team",
+  "license": "AGPL-3.0-only",
   "homepage": "https://github.com/Clipteam/clipcc#readme",
   "repository": {
     "type": "git",
