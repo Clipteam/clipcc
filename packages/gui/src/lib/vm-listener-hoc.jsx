@@ -82,7 +82,7 @@ const vmListenerHOC = function (WrappedComponent) {
             this.props.vm.off('PROJECT_START', this.props.onGreenFlag);
             this.props.vm.off('PERIPHERAL_CONNECTION_LOST_ERROR', this.props.onShowExtensionAlert);
             this.props.vm.off('MIC_LISTENING', this.props.onMicListeningUpdate);
-            this.props.vm.removeListener('EXTENSION_DATA_LOADING', this.props.onExtensionDataLoading);
+            this.props.vm.off('EXTENSION_DATA_LOADING', this.props.onExtensionDataLoading);
             this.props.vm.off('STAGE_SIZE_UPDATE', this.props.onStageSizeUpdate);
             if (this.props.attachKeyboardEvents) {
                 document.removeEventListener('keydown', this.handleKeyDown);
