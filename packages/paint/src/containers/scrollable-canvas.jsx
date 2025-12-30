@@ -93,7 +93,7 @@ class ScrollableCanvas extends React.Component {
     }
     handleWheel (event) {
         // Multiplier variable, so that non-pixel-deltaModes are supported. Needed for Firefox.
-        // See #529 (or LLK/scratch-blocks#1190).
+        // See #529 (or scratchfoundation/scratch-blocks#1190).
         const multiplier = event.deltaMode === 0x1 ? 15 : 1;
         const deltaX = event.deltaX * multiplier;
         const deltaY = event.deltaY * multiplier;

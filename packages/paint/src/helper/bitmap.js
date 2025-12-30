@@ -279,7 +279,7 @@ const drawEllipse = function (options, context) {
     // If drawing a gradient, we need to draw the shape onto a temporary canvas, then draw the gradient atop that canvas
     // only where the shape appears. drawShearedEllipse draws some pixels twice, which would be a problem if the
     // gradient fades to transparent as those pixels would end up looking more opaque. Instead, mask in the gradient.
-    // https://github.com/LLK/scratch-paint/issues/1152
+    // https://github.com/scratchfoundation/scratch-paint/issues/1152
     // Outlines are drawn as a series of brush mark images and as such can't be drawn as gradients in the first place.
     let origContext;
     let tmpCanvas;
@@ -419,7 +419,7 @@ const convertToBitmap = function (clearSelectedItems, onUpdateImage, optFontInli
     showGuideLayers(guideLayers);
 
     // Get rid of anti-aliasing
-    // @todo get crisp text https://github.com/LLK/scratch-paint/issues/508
+    // @todo get crisp text https://github.com/scratchfoundation/scratch-paint/issues/508
     svg.setAttribute('shape-rendering', 'crispEdges');
 
     let svgString = (new XMLSerializer()).serializeToString(svg);

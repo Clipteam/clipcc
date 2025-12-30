@@ -1258,7 +1258,7 @@ WorkspaceSvg.prototype.onMouseWheel_ = function(e) {
   }
 
   // Multiplier variable, so that non-pixel-deltaModes are supported.
-  // See LLK/scratch-blocks#1190.
+  // See scratchfoundation/scratch-blocks#1190.
   const multiplier = e.deltaMode === 0x1 ? constants.LINE_SCROLL_MULTIPLIER : 1;
 
   if (e.ctrlKey) {

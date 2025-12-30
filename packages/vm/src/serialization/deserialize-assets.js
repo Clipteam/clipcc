@@ -1,6 +1,6 @@
 const JSZip = require('jszip');
 const log = require('../util/log');
-const {sanitizeByteStream} = require('clipcc-svg-renderer');
+const {sanitizeSvg} = require('clipcc-svg-renderer');
 
 /**
  * Deserializes sound from file into storage cache so that it can
@@ -142,12 +142,6 @@ const deserializeCostume = function (costume, runtime, zip, assetFileName, textL
             return Promise.resolve(null);
         }
         textLayerFilePromise = textLayerFile.async('uint8array')
-            // eslint-disable-next-line arrow-body-style
-            .then(data => {
-                return (costumeFormat === 'svg' ?
-                    sanitizeByteStream(data) :
-                    data);
-            })
             .then(data => storage.createAsset(
                 storage.AssetType.ImageBitmap,
                 'png',
@@ -163,6 +157,11 @@ const deserializeCostume = function (costume, runtime, zip, assetFileName, textL
 
     return Promise.all([textLayerFilePromise,
         costumeFile.async('uint8array')
+            .then(data =>
+                (costumeFormat === 'svg' ?
+                    sanitizeSvg.sanitizeByteStream(data) :
+                    data)
+            )
             .then(data => storage.createAsset(
                 assetType,
                 // TODO eventually we want to map non-png's to their actual file types?

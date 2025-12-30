@@ -1619,7 +1619,7 @@ class RenderWebGL extends EventEmitter {
      */
     updateDrawableSkinId (drawableID, skinId) {
         const drawable = this._allDrawables[drawableID];
-        // TODO: https://github.com/LLK/scratch-vm/issues/2288
+        // TODO: https://github.com/scratchfoundation/scratch-vm/issues/2288
         if (!drawable) return;
         drawable.skin = this._allSkins[skinId];
     }
@@ -1631,7 +1631,7 @@ class RenderWebGL extends EventEmitter {
      */
     updateDrawablePosition (drawableID, position) {
         const drawable = this._allDrawables[drawableID];
-        // TODO: https://github.com/LLK/scratch-vm/issues/2288
+        // TODO: https://github.com/scratchfoundation/scratch-vm/issues/2288
         if (!drawable) return;
         drawable.updatePosition(position);
     }
@@ -1643,7 +1643,7 @@ class RenderWebGL extends EventEmitter {
      */
     updateDrawableDirection (drawableID, direction) {
         const drawable = this._allDrawables[drawableID];
-        // TODO: https://github.com/LLK/scratch-vm/issues/2288
+        // TODO: https://github.com/scratchfoundation/scratch-vm/issues/2288
         if (!drawable) return;
         drawable.updateDirection(direction);
     }
@@ -1655,7 +1655,7 @@ class RenderWebGL extends EventEmitter {
      */
     updateDrawableScale (drawableID, scale) {
         const drawable = this._allDrawables[drawableID];
-        // TODO: https://github.com/LLK/scratch-vm/issues/2288
+        // TODO: https://github.com/scratchfoundation/scratch-vm/issues/2288
         if (!drawable) return;
         drawable.updateScale(scale);
     }
@@ -1668,7 +1668,7 @@ class RenderWebGL extends EventEmitter {
      */
     updateDrawableDirectionScale (drawableID, direction, scale) {
         const drawable = this._allDrawables[drawableID];
-        // TODO: https://github.com/LLK/scratch-vm/issues/2288
+        // TODO: https://github.com/scratchfoundation/scratch-vm/issues/2288
         if (!drawable) return;
         drawable.updateDirection(direction);
         drawable.updateScale(scale);
@@ -1681,7 +1681,7 @@ class RenderWebGL extends EventEmitter {
      */
     updateDrawableVisible (drawableID, visible) {
         const drawable = this._allDrawables[drawableID];
-        // TODO: https://github.com/LLK/scratch-vm/issues/2288
+        // TODO: https://github.com/scratchfoundation/scratch-vm/issues/2288
         if (!drawable) return;
         drawable.updateVisible(visible);
     }
@@ -1694,7 +1694,7 @@ class RenderWebGL extends EventEmitter {
      */
     updateDrawableEffect (drawableID, effectName, value) {
         const drawable = this._allDrawables[drawableID];
-        // TODO: https://github.com/LLK/scratch-vm/issues/2288
+        // TODO: https://github.com/scratchfoundation/scratch-vm/issues/2288
         if (!drawable) return;
         drawable.updateEffect(effectName, value);
     }
@@ -1709,7 +1709,7 @@ class RenderWebGL extends EventEmitter {
         const drawable = this._allDrawables[drawableID];
         if (!drawable) {
             /**
-             * @todo(https://github.com/LLK/scratch-vm/issues/2288) fix whatever's wrong in the VM which causes this, then add a warning or throw here.
+             * @todo(https://github.com/scratchfoundation/scratch-vm/issues/2288) fix whatever's wrong in the VM which causes this, then add a warning or throw here.
              * Right now this happens so much on some projects that a warning or exception here can hang the browser.
              */
             return;
@@ -1732,7 +1732,7 @@ class RenderWebGL extends EventEmitter {
 
         const drawable = this._allDrawables[drawableID];
         if (!drawable) {
-            // @todo(https://github.com/LLK/scratch-vm/issues/2288) fix whatever's wrong in the VM which causes this, then add a warning or throw here.
+            // @todo(https://github.com/scratchfoundation/scratch-vm/issues/2288) fix whatever's wrong in the VM which causes this, then add a warning or throw here.
             // Right now this happens so much on some projects that a warning or exception here can hang the browser.
             return [x, y];
         }
@@ -2065,7 +2065,7 @@ class RenderWebGL extends EventEmitter {
         // The main difference is that instead of sorting the points by x-coordinate, and y-coordinate in case of ties,
         // it goes through them by y-coordinate in the outer loop and x-coordinate in the inner loop.
         // This gives us "left" and "right" hulls, whereas the monotone chain algorithm gives "top" and "bottom" hulls.
-        // Adapted from https://github.com/LLK/scratch-flash/blob/dcbeeb59d44c3be911545dfe54d46a32404f8e69/src/scratch/ScratchCostume.as#L369-L413
+        // Adapted from https://github.com/scratchfoundation/scratch-flash/blob/dcbeeb59d44c3be911545dfe54d46a32404f8e69/src/scratch/ScratchCostume.as#L369-L413
 
         const leftHull = [];
         const rightHull = [];

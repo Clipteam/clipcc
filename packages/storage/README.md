@@ -1,22 +1,22 @@
 ## scratch-storage
 #### Scratch Storage is a library for loading and storing project and asset files for Scratch 3.0
 
-[![CircleCI](https://circleci.com/gh/LLK/scratch-storage/tree/develop.svg?style=shield&circle-token=171bbb6a82280e98afbfcedd8aa90b95b13b5de3)](https://circleci.com/gh/LLK/scratch-storage?branch=develop)
+[![CircleCI](https://circleci.com/gh/scratchfoundation/scratch-storage/tree/develop.svg?style=shield&circle-token=171bbb6a82280e98afbfcedd8aa90b95b13b5de3)](https://circleci.com/gh/scratchfoundation/scratch-storage?branch=develop)
 
-[![Coverage Status](https://coveralls.io/repos/github/LLK/scratch-storage/badge.svg?branch=develop)](https://coveralls.io/github/LLK/scratch-storage?branch=develop)
-[![Greenkeeper badge](https://badges.greenkeeper.io/LLK/scratch-storage.svg)](https://greenkeeper.io/)
+[![Coverage Status](https://coveralls.io/repos/github/scratchfoundation/scratch-storage/badge.svg?branch=develop)](https://coveralls.io/github/scratchfoundation/scratch-storage?branch=develop)
+[![Greenkeeper badge](https://badges.greenkeeper.io/scratchfoundation/scratch-storage.svg)](https://greenkeeper.io/)
 
 ## Installation
 This requires you to have Node.js installed.
 
 In your own Node.js environment/application:
 ```bash
-npm install https://github.com/LLK/scratch-storage.git
+npm install https://github.com/scratchfoundation/scratch-storage.git
 ```
 
 If you want to edit/play yourself (requires Git):
 ```bash
-git clone https://github.com/LLK/scratch-storage.git
+git clone https://github.com/scratchfoundation/scratch-storage.git
 cd scratch-storage
 npm install
 ```

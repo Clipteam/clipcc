@@ -58,7 +58,7 @@ const deltaTable = function () {
  * This is necessary because, while web browsers have native decoders for many audio
  * formats, ADPCM is a non-standard format used by Scratch since its early days.
  * This decoder is based on code from Scratch-Flash:
- * https://github.com/LLK/scratch-flash/blob/master/src/sound/WAVFile.as
+ * https://github.com/scratchfoundation/scratch-flash/blob/master/src/sound/WAVFile.as
  */
 class ADPCMSoundDecoder {
     /**

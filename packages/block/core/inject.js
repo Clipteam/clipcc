@@ -72,7 +72,7 @@ export const inject = function(container, opt_options) {
   container.appendChild(subContainer);
 
   // Open the Field text cache and leave it open. See this issue for more information
-  // https://github.com/LLK/scratch-blocks/issues/1004
+  // https://github.com/scratchfoundation/scratch-blocks/issues/1004
   utils.startTextWidthCache();
 
   const svg = createDom(subContainer, options);

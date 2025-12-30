@@ -242,7 +242,7 @@ class TextTool extends paper.Tool {
                 font: this.font,
                 fontSize: 40,
                 // TODO: style using gradient
-                // https://github.com/LLK/scratch-paint/issues/1164
+                // https://github.com/scratchfoundation/scratch-paint/issues/1164
                 fillColor: this.colorState.fillColor.primary,
                 // Default leading for both the HTML text area and paper.PointText
                 // is 120%, but for some reason they are slightly off from each other.
@@ -396,7 +396,7 @@ class TextTool extends paper.Tool {
     commitText () {
         if (!this.textBox || !this.textBox.parent) return;
 
-        // @todo get crisp text https://github.com/LLK/scratch-paint/issues/508
+        // @todo get crisp text https://github.com/scratchfoundation/scratch-paint/issues/508
         const textRaster = this.textBox.rasterize(72, false /* insert */, this.textBox.drawnBounds);
         this.textBox.remove();
         this.textBox = null;

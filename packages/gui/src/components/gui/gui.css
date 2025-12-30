@@ -32,7 +32,7 @@
 
     /*
         Stop scrollbar popping in and out from scratch-blocks border issue
-        https://github.com/LLK/scratch-gui/issues/318
+        https://github.com/scratchfoundation/scratch-gui/issues/318
     */
     overflow-y: hidden;
 }

@@ -1,5 +1,6 @@
 const EventEmitter = require('events');
 const {OrderedMap} = require('immutable');
+const uuid = require('uuid');
 
 const ArgumentType = require('../extension-support/argument-type');
 const Blocks = require('./blocks');
@@ -17,6 +18,7 @@ const StageLayering = require('./stage-layering');
 const Variable = require('./variable');
 const xmlEscape = require('../util/xml-escape');
 const ScratchLinkWebSocket = require('../util/scratch-link-websocket');
+const fetchWithTimeout = require('../util/fetch-with-timeout');
 
 // Virtual I/O devices.
 const Clock = require('../io/clock');
@@ -1507,7 +1509,6 @@ class Runtime extends EventEmitter {
      * One-time initialization for Scratch Link support.
      */
     _initScratchLink () {
-        /* global globalThis */
         // Check that we're actually in a real browser, not Node.js or JSDOM, and we have a valid-looking origin.
         if (globalThis.document &&
             globalThis.document.getElementById &&
@@ -1707,6 +1708,8 @@ class Runtime extends EventEmitter {
      */
     attachStorage (storage) {
         this.storage = storage;
+        fetchWithTimeout.setFetch(storage.scratchFetch.scratchFetch);
+        this.resetRunId();
     }
 
     // -----------------------------------------------------------------------------
@@ -2105,6 +2108,19 @@ class Runtime extends EventEmitter {
     }
 
     /**
+     * Reset the Run ID. Call this any time the project logically starts, stops, or changes identity.
+     */
+    resetRunId () {
+        if (!this.storage) {
+            // see also: attachStorage
+            return;
+        }
+
+        const newRunId = uuid.v1();
+        this.storage.scratchFetch.setMetadata(this.storage.scratchFetch.RequestMetadata.RunId, newRunId);
+    }
+
+    /**
      * Start all threads that start with the green flag.
      */
     greenFlag () {
@@ -2130,7 +2146,7 @@ class Runtime extends EventEmitter {
         const newTargets = [];
         for (let i = 0; i < this.targets.length; i++) {
             this.targets[i].onStopAll();
-            if (Object.hasOwnProperty.call(this.targets[i], 'isOriginal') &&
+            if (Object.prototype.hasOwnProperty.call(this.targets[i], 'isOriginal') &&
                 !this.targets[i].isOriginal) {
                 this.targets[i].dispose();
             } else {
@@ -2144,6 +2160,8 @@ class Runtime extends EventEmitter {
         }
         // Remove all remaining threads from executing in the next tick.
         this.threads = [];
+
+        this.resetRunId();
     }
 
     /**
@@ -2562,6 +2580,7 @@ class Runtime extends EventEmitter {
      */
     emitProjectLoaded () {
         this.emit(Runtime.PROJECT_LOADED);
+        this.resetRunId();
     }
 
     /**
@@ -2788,7 +2807,6 @@ class Runtime extends EventEmitter {
 
 /**
  * Event fired after a new target has been created, possibly by cloning an existing target.
- *
  * @event Runtime#targetWasCreated
  * @param {Target} newTarget - the newly created target.
  * @param {Target} [sourceTarget] - the target used as a source for the new clone, if any.

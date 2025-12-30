@@ -78,7 +78,7 @@ class EyeDropperTool extends paper.Tool {
             const g = colorInfo.color[1];
             const b = colorInfo.color[2];
 
-            // from https://github.com/LLK/scratch-gui/blob/77e54a80a31b6cd4684d4b2a70f1aeec671f229e/src/containers/stage.jsx#L218-L222
+            // from https://github.com/scratchfoundation/scratch-gui/blob/77e54a80a31b6cd4684d4b2a70f1aeec671f229e/src/containers/stage.jsx#L218-L222
             // formats the color info from the canvas into hex for parsing by the color picker
             const componentToString = c => {
                 const hex = c.toString(16);

@@ -3,7 +3,7 @@ The development of scratch-audioengine is an ongoing process,
 and we love to have people in the Scratch and open source communities help us along the way.
 
 If you're interested in contributing, please take a look at the
-[issues](https://github.com/LLK/scratch-audioengine/issues) on this repository.
+[issues](https://github.com/scratchfoundation/scratch-audioengine/issues) on this repository.
 Two great ways of helping are by identifying bugs and documenting them as issues,
 or fixing issues and creating pull requests. When submitting pull requests please be patient
 -- it can take a while to find time to review them.
@@ -19,7 +19,7 @@ see [the Scratch Developers page](https://scratch.mit.edu/developers), or
 [this paper](http://web.media.mit.edu/~mres/papers/Scratch-CACM-final.pdf).
 
 Beyond this repo, there are also some other resources that you might want to take a look at:
-* [Community Guidelines](https://github.com/LLK/scratch-www/wiki/Community-Guidelines) (we find it important to maintain a constructive and welcoming community, just like on Scratch)
+* [Community Guidelines](https://github.com/scratchfoundation/scratch-www/wiki/Community-Guidelines) (we find it important to maintain a constructive and welcoming community, just like on Scratch)
 * [Open Source forum](https://scratch.mit.edu/discuss/49/) on Scratch
 * [Suggestions forum](https://scratch.mit.edu/discuss/1/) on Scratch
 * [Bugs & Glitches forum](https://scratch.mit.edu/discuss/3/) on Scratch

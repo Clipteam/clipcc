@@ -57,7 +57,7 @@ const _moveMonitorRect = function (state, action) {
         log.error(`Monitor rectangle not formatted correctly`);
         return state;
     }
-    
+
     const oldMonitor = state.monitors[action.monitorId];
     if (oldMonitor.upperStart.x === action.newX &&
             oldMonitor.upperStart.y === action.newY) {
@@ -144,7 +144,7 @@ const reducer = function (state, action) {
 
 // Init position --------------------------
 const PADDING = 5;
-// @todo fix these numbers when we fix https://github.com/LLK/scratch-gui/issues/980
+// @todo fix these numbers when we fix https://github.com/scratchfoundation/scratch-gui/issues/980
 const SCREEN_WIDTH = 400;
 const SCREEN_HEIGHT = 300;
 const SCREEN_EDGE_BUFFER = 40;

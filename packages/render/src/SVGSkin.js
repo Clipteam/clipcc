@@ -239,7 +239,7 @@ class SVGSkin extends Skin {
 
             if (typeof rotationCenter === 'undefined') rotationCenter = this.calculateRotationCenter();
             // Compensate for viewbox offset.
-            // See https://github.com/LLK/scratch-render/pull/90.
+            // See https://github.com/scratchfoundation/scratch-render/pull/90.
             this._rotationCenter[0] = rotationCenter[0] - x;
             this._rotationCenter[1] = rotationCenter[1] - y;
 
