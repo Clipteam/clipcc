@@ -28,10 +28,13 @@ export const AppStateProviderHOC = function (WrappedComponent) {
         render () {
             const {
                 appState,
+                /* eslint-disable no-unused-vars */
                 isFullScreen,
                 isPlayerOnly,
+                localesOnly,
                 showTelemetryModal,
                 isEmbedded,
+                /* eslint-enable no-unused-vars */
                 ...componentProps
             } = this.props;
             return (

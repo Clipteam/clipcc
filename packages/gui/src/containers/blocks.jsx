@@ -528,7 +528,8 @@ class Blocks extends React.Component {
             optVarType !== this.ScratchBlocks.constants.BROADCAST_MESSAGE_VARIABLE_TYPE &&
             p.prompt.title !== this.ScratchBlocks.Msg.RENAME_VARIABLE_MODAL_TITLE &&
             p.prompt.title !== this.ScratchBlocks.Msg.RENAME_LIST_MODAL_TITLE;
-        p.prompt.showCloudOption = (optVarType === this.ScratchBlocks.constants.SCALAR_VARIABLE_TYPE) && this.props.canUseCloud;
+        p.prompt.showCloudOption =
+            (optVarType === this.ScratchBlocks.constants.SCALAR_VARIABLE_TYPE) && this.props.canUseCloud;
         this.setState(p);
     }
     handleConnectionModalStart (extensionId) {
@@ -601,6 +602,7 @@ class Blocks extends React.Component {
             toolboxXML,
             updateMetrics: updateMetricsProp,
             workspaceMetrics,
+            showNewFeatureCallouts,
             ...props
         } = this.props;
         /* eslint-enable no-unused-vars */
