@@ -51,6 +51,8 @@ class Stage extends React.Component {
             colorInfo: null,
             question: null
         };
+        // (React setState is asynchronous, but onStartDrag can be called multiple times in the same frame)
+        this._dragInProgress = false;
         if (this.props.vm.renderer) {
             this.renderer = this.props.vm.renderer;
             this.canvas = this.renderer.canvas;
@@ -351,7 +353,9 @@ class Stage extends React.Component {
         this.dragCanvas.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
     }
     onStartDrag (x, y) {
-        if (this.state.dragId) return;
+        if (this.state.dragId || this._dragInProgress) return;
+        this._dragInProgress = true;
+
         // Targets with no attached drawable cannot be dragged.
         let draggableTargets = this.props.vm.runtime.targets.filter(
             target => Number.isFinite(target.drawableID)
@@ -364,13 +368,24 @@ class Stage extends React.Component {
                 target => target.draggable
             );
         }
-        if (draggableTargets.length === 0) return;
+        if (draggableTargets.length === 0) {
+            this._dragInProgress = false;
+            return;
+        }
 
-        const draggableIDs = draggableTargets.map(target => target.drawableID);
+        const draggableIDs = draggableTargets
+            .map(target => target.drawableID)
+            .sort((a, b) => this.renderer.getDrawableOrder(a) - this.renderer.getDrawableOrder(b));
         const drawableId = this.renderer.pick(x, y, 1, 1, draggableIDs);
-        if (drawableId === null) return;
+        if (drawableId === null) {
+            this._dragInProgress = false;
+            return;
+        }
         const targetId = this.props.vm.getTargetIdForDrawableId(drawableId);
-        if (targetId === null) return;
+        if (targetId === null) {
+            this._dragInProgress = false;
+            return;
+        }
 
         const target = this.props.vm.runtime.getTargetById(targetId);
 
@@ -399,6 +414,7 @@ class Stage extends React.Component {
     onStopDrag (mouseX, mouseY) {
         const dragId = this.state.dragId;
         const commonStopDragActions = () => {
+            this._dragInProgress = false;
             this.props.vm.stopDrag(dragId);
             this.setState({
                 isDragging: false,
