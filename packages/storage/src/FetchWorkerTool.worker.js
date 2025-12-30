@@ -1,5 +1,3 @@
-/* eslint-env worker */
-
 const crossFetch = require('cross-fetch').default;
 
 let jobsActive = 0;
@@ -42,8 +40,6 @@ const registerStep = function () {
 /**
  * Receive a job from the parent and fetch the requested data.
  * @param {object} options.job A job id, url, and options descriptor to perform.
- * @param root0
- * @param root0.data
  */
 const onMessage = ({data: job}) => {
     if (jobsActive === 0 && !intervalId) {

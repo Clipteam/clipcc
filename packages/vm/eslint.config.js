@@ -19,6 +19,15 @@ module.exports = [
         }
     },
     {
+        files: ['src/extension-support/extension-worker.js'],
+        languageOptions: {
+            globals: {
+                ...globals.worker
+            }
+
+        }
+    },
+    {
         files: ['test/**/*.js'],
         rules: {
             'no-undefined': 'off',
