@@ -36,7 +36,9 @@ module.exports = [
             'jsdoc/check-param-names': 'error',
             'jsdoc/check-tag-names': 'error',
             'jsdoc/check-types': 'error',
-            'jsdoc/require-description': 'error',
+            'jsdoc/require-description': ['error', {
+                checkConstructors: false
+            }],
             'jsdoc/require-param': 'error',
             'jsdoc/require-param-description': 'error',
             'jsdoc/require-param-type': 'error',
