@@ -84,7 +84,6 @@ class MathUtil {
      *
      * For instance, (1, 5, 3) will only pick 1, 2, 4, or 5 (with equal
      * probability)
-     *
      * @param {number} lower - The lower bound (inlcusive)
      * @param {number} upper - The upper bound (inclusive), such that lower <= upper
      * @param {number} excluded - The number to exclude (MUST be in the range)
@@ -103,7 +102,7 @@ class MathUtil {
 
         return randInt;
     }
- 
+
     /**
      * Scales a number from one range to another.
      * @param {number} i number to be scaled
