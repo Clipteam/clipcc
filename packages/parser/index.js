@@ -1,8 +1,8 @@
-var pify = require('pify');
+const pify = require('pify').default;
 
-var unpack = pify(require('./lib/unpack'));
-var parse = pify(require('./lib/parse'));
-var validate = pify(require('./lib/validate'));
+const unpack = pify(require('./lib/unpack'));
+const parse = pify(require('./lib/parse'));
+const validate = pify(require('./lib/validate'));
 
 /**
  * Unpacks, parses, validates, and analyzes Scratch projects. If successful,
@@ -15,12 +15,8 @@ module.exports = function (input, isSprite, callback) {
     // Unpack the input and further transform the json portion by parsing and
     // validating it.
     unpack(input, isSprite)
-        .then(function (unpackedProject) {
-            return parse(unpackedProject[0])
-                .then(validate.bind(null, isSprite))
-                .then(function (validatedProject) {
-                    return [validatedProject, unpackedProject[1]];
-                });
-        })
+        .then(unpackedProject => parse(unpackedProject[0])
+            .then(validate.bind(null, isSprite))
+            .then(validatedProject => [validatedProject, unpackedProject[1]]))
         .then(callback.bind(null, null), callback);
 };

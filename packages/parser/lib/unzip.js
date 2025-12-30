@@ -1,4 +1,4 @@
-var JSZip = require('jszip');
+const JSZip = require('jszip');
 
 /**
  * Unpacks a zip file.
@@ -9,10 +9,10 @@ var JSZip = require('jszip');
  * @returns {void}
  */
 module.exports = function (input, isSprite, callback) {
-    var msg = 'Failed to unzip and extract project.json, with error: ';
+    const msg = 'Failed to unzip and extract project.json, with error: ';
 
     return JSZip.loadAsync(input)
-        .then(function (zip) {
+        .then(zip => {
             // look for json in the list of files, or in a subdirectory
             // assumes there is only one sprite or project json in the zipfile
             const file = isSprite ?
@@ -20,14 +20,10 @@ module.exports = function (input, isSprite, callback) {
                 zip.file(/^([^/]*\/)?project\.json$/)[0];
             if (file) {
                 return file.async('string')
-                    .then(function (project) {
-                        return callback(null, [project, zip]);
-                    });
+                    .then(project => callback(null, [project, zip]));
             }
-            return callback(msg + 'missing project or sprite json');
+            return callback(`${msg}missing project or sprite json`);
         })
-        .catch(function (err) {
-            return callback(msg + JSON.stringify(err));
-        });
+        .catch(err => callback(msg + JSON.stringify(err)));
 
 };
