@@ -14,7 +14,6 @@
   "scripts": {
     "start": "gulp startCompressed",
     "start:uncompressed": "gulp startUncompressed",
-    "deploy": "rimraf gh-pages/closure-library/scripts/ci/CloseAdobeDialog.exe && gh-pages -t -d gh-pages -m \"Build for $(git log --pretty=format:%H -n1) [skip ci]\"",
     "build": "gulp buildCompressed && webpack",
     "build:uncompressed": "gulp buildUncompressed",
     "build:compressed": "gulp buildCompressed",
@@ -43,7 +42,6 @@
     "eslint": "^9.39.2",
     "globals": "^16.5.0",
     "event-stream": "3.3.5",
-    "gh-pages": "0.12.0",
     "glob": "^10.3.3",
     "google-closure-compiler": "20230802.0.0",
     "google-closure-deps": "20230802.0.0",

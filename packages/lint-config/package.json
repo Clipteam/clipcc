@@ -33,25 +33,12 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "7.28.5",
-    "@commitlint/cli": "17.8.1",
-    "@commitlint/config-conventional": "17.8.1",
     "@eslint/js": "^9.39.2",
     "@typescript-eslint/eslint-plugin": "^8.50.1",
     "@typescript-eslint/parser": "^8.50.1",
     "eslint": "^9.39.2",
     "eslint-plugin-jsdoc": "^61.5.0",
     "eslint-plugin-react": "^7.37.5",
-    "globals": "^16.5.0",
-    "husky": "8.0.3",
-    "scratch-semantic-release-config": "1.0.14",
-    "semantic-release": "19.0.5"
-  },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
-  },
-  "dependencies": {
-    "eslint-plugin-jsdoc": "^50"
+    "globals": "^16.5.0"
   }
 }
