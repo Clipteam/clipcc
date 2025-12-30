@@ -12,6 +12,13 @@
   "main": "./dist/node/scratch-storage.js",
   "browser": "./dist/web/scratch-storage.js",
   "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "browser": "./dist/web/scratch-storage.js",
+      "node": "./dist/node/scratch-storage.js",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
   "scripts": {
     "build": "rimraf dist && webpack --mode=production",
     "coverage": "tap ./test/{unit,integration}/*.js --coverage --coverage-report=lcov",

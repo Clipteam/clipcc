@@ -12,6 +12,13 @@
   "main": "./src/index.js",
   "types": "./dist/types/index.d.ts",
   "browser": "./dist/web/scratch-render.js",
+  "exports": {
+    ".": {
+      "node": "./src/index.js",
+      "browser": "./dist/web/scratch-render.js",
+      "types": "./dist/types/index.d.ts"
+    }
+  },
   "scripts": {
     "build:types": "tsc --project ./tsconfig.dts.json",
     "build": "yarn build:types && webpack --progress --color",
