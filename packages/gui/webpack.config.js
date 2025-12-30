@@ -262,7 +262,7 @@ module.exports = [
                         context: '../vm/dist/web',
                         noErrorOnMissing: true
                     }, {
-                        from: 'chunks/fetch-worker.*.{js,js.map}',
+                        from: 'fetch-worker.{js,js.map}',
                         context: '../storage/dist/web',
                         noErrorOnMissing: true
                     }, {
