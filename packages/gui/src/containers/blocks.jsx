@@ -594,6 +594,7 @@ class Blocks extends React.Component {
         /* eslint-disable no-unused-vars */
         const {
             anyModalVisible,
+            blockMessages,
             hideNonVanillaBlocks,
             canUseCloud,
             customProceduresVisible,
