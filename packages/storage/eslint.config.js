@@ -45,6 +45,14 @@ module.exports = [
         }
     },
     {
+        files: ['src/**/*.worker.js'],
+        languageOptions: {
+            globals: {
+                ...globals.worker
+            }
+        }
+    },
+    {
         ignores: [
             'node_modules/**',
             'dist/**',

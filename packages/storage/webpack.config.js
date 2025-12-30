@@ -80,6 +80,7 @@ const webNonMinConfig = {
         'scratch-storage': path.join(__dirname, './src/index.ts')
     },
     optimization: {
+        ...baseConfig.optimization,
         minimize: false
     }
 };
@@ -90,6 +91,7 @@ const webMinConfig = {
         'scratch-storage.min': path.join(__dirname, './src/index.ts')
     },
     optimization: {
+        ...baseConfig.optimization,
         minimize: true
     }
 };
