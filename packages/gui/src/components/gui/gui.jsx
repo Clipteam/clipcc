@@ -125,12 +125,12 @@ const GUIComponent = props => {
         theme,
         username,
         userOwnsProject,
-        hideTutorialProjects, // eslint-disable-line @typescript-eslint/no-unused-vars
+        hideTutorialProjects, // eslint-disable-line no-unused-vars
         useExternalPeripheralList,
         vm,
         stageWidth,
         stageHeight,
-        storage, // eslint-disable-line @typescript-eslint/no-unused-vars
+        storage, // eslint-disable-line no-unused-vars
         ...componentProps
     } = omit(props, 'dispatch', 'setPlatform', 'intl');
     if (children) {

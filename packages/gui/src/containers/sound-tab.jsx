@@ -176,7 +176,7 @@ class SoundTab extends React.Component {
         const {
             ariaLabel,
             ariaRole,
-            dispatchUpdateRestore,
+            dispatchUpdateRestore, // eslint-disable-line no-unused-vars
             intl,
             isRtl,
             vm,

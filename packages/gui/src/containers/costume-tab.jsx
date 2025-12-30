@@ -262,7 +262,7 @@ class CostumeTab extends React.Component {
         const {
             ariaLabel,
             ariaRole,
-            dispatchUpdateRestore, // eslint-disable-line @typescript-eslint/no-unused-vars
+            dispatchUpdateRestore, // eslint-disable-line no-unused-vars
             intl,
             isRtl,
             vm

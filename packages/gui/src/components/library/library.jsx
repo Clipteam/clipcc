@@ -54,7 +54,7 @@ const tagListPrefix = [ALL_TAG];
 /**
  * Find the AssetType which corresponds to a particular file extension. For example, 'png' => AssetType.ImageBitmap.
  * @param {string} fileExtension - the file extension to look up.
- * @returns {AssetType} - the AssetType corresponding to the extension, if any.
+ * @returns {AssetType | undefined} - the AssetType corresponding to the extension, if any.
  */
 const getAssetTypeForFileExtension = function (fileExtension) {
     const compareOptions = {
@@ -76,7 +76,7 @@ const getAssetTypeForFileExtension = function (fileExtension) {
  * Otherwise it'll return just one `imageSource`.
  * @param {object} item - either a library item or one of a library item's costumes.
  *   The latter is used internally as part of processing an animated thumbnail.
- * @returns {LibraryItem.PropTypes.icons} - an `imageSource` or array of them
+ * @returns {LibraryItem.PropTypes.icons | undefined} - an `imageSource` or array of them
  */
 const getItemIcons = function (item) {
     const costumes = (item.json && item.json.costumes) || item.costumes;
