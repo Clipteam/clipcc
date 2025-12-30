@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import {setFontsLoaded} from '../reducers/fonts-loaded';
 
 // This list is from scratch-render-fonts:
-// https://github.com/LLK/scratch-render-fonts/blob/master/src/index.js#L4
+// https://github.com/scratchfoundation/scratch-render-fonts/blob/master/src/index.js#L4
 const FONTS = [
     'Sans Serif',
     'Serif',

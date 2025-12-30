@@ -231,7 +231,7 @@ Comment.prototype.textareaFocus_ = function(_e) {
   // Ideally this would be hooked to the focus event for the comment.
   // This is tied to mousedown, however doing so in Firefox swallows the cursor
   // for unknown reasons.
-  // See https://github.com/LLK/scratch-blocks/issues/1631 for more history.
+  // See https://github.com/scratchfoundation/scratch-blocks/issues/1631 for more history.
   if (this.bubble_.promote_()) {
     // Since the act of moving this node within the DOM causes a loss of focus,
     // we need to reapply the focus.

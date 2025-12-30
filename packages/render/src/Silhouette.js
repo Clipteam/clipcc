@@ -53,7 +53,7 @@ const __cornerWork = [
  */
 const getColor4b = ({_width: width, _height: height, _colorData: data}, x, y, dst) => {
     // Clamp coords to edge, matching GL_CLAMP_TO_EDGE.
-    // (See github.com/LLK/scratch-render/blob/954cfff02b08069a082cbedd415c1fecd9b1e4fb/src/BitmapSkin.js#L88)
+    // (See github.com/scratchfoundation/scratch-render/blob/954cfff02b08069a082cbedd415c1fecd9b1e4fb/src/BitmapSkin.js#L88)
     x = intMax(0, intMin(x, width - 1));
     y = intMax(0, intMin(y, height - 1));
 

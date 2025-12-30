@@ -11,7 +11,7 @@ module.exports = function (input, callback) {
     let result;
     try {
         // The input is a JSON string, which may contain control characters
-        // that should be removed. See LLK/scratch-vm#1077
+        // that should be removed. See scratchfoundation/scratch-vm#1077
         // So far we've only encountered the backspace control character,
         // so remove that specific one before continuing.
         // SB2 JSONs and SB3 JSONs have different versions of the
@@ -27,7 +27,7 @@ module.exports = function (input, callback) {
                     return match.replace(`\\${code}`, '');
                 }
                 // They are just backslashes followed by b or u0008. (e.g. "\\b")
-                // Don't replace in this case. (LLK/scratch-parser#56)
+                // Don't replace in this case. (scratchfoundation/scratch-parser#56)
                 return match;
             }
         ));

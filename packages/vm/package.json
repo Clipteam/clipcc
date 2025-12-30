@@ -61,7 +61,8 @@
     "minilog": "3.1.0",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "scratch-sb1-converter": "2.0.279",
-    "scratch-translate-extension-languages": "1.0.7"
+    "scratch-translate-extension-languages": "1.0.7",
+    "uuid": "^13.0.0"
   },
   "peerDependencies": {
     "clipcc-svg-renderer": "^3.2.0"
@@ -72,8 +73,8 @@
     "@babel/preset-env": "7.28.5",
     "@commitlint/cli": "17.0.2",
     "@commitlint/config-conventional": "17.0.2",
-    "@types/minimatch": "3.0.5",
     "@types/fastestsmallesttextencoderdecoder": "^1.0.2",
+    "@types/minimatch": "3.0.5",
     "adm-zip": "0.4.11",
     "babel-eslint": "10.1.0",
     "babel-loader": "^9.2.1",
@@ -109,6 +110,6 @@
     "webpack-dev-server": "^4.11.1"
   },
   "resolutions": {
-	"@types/minimatch": "5.1.2"
+    "@types/minimatch": "5.1.2"
   }
 }

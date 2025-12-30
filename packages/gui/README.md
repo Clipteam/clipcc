@@ -6,16 +6,16 @@ This requires you to have Git and Node.js installed.
 
 In your own node environment/application:
 ```bash
-npm install https://github.com/LLK/scratch-gui.git
+npm install https://github.com/scratchfoundation/scratch-gui.git
 ```
 If you want to edit/play yourself:
 ```bash
-git clone https://github.com/LLK/scratch-gui.git
+git clone https://github.com/scratchfoundation/scratch-gui.git
 cd scratch-gui
 npm install
 ```
 
-**You may want to add `--depth=1` to the `git clone` command because there are some [large files in the git repository history](https://github.com/LLK/scratch-gui/issues/5140).**
+**You may want to add `--depth=1` to the `git clone` command because there are some [large files in the git repository history](https://github.com/scratchfoundation/scratch-gui/issues/5140).**
 
 ## Getting started
 Running the project requires Node.js to be installed.
@@ -198,7 +198,7 @@ If you run into npm install errors, try these steps:
 
 ## Publishing to GitHub Pages
 You can publish the GUI to github.io so that others on the Internet can view it.
-[Read the wiki for a step-by-step guide.](https://github.com/LLK/scratch-gui/wiki/Publishing-to-GitHub-Pages)
+[Read the wiki for a step-by-step guide.](https://github.com/scratchfoundation/scratch-gui/wiki/Publishing-to-GitHub-Pages)
 
 ## Understanding the project state machine
 

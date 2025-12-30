@@ -984,7 +984,7 @@ const xmlClose = '</xml>';
 /**
  * Generate a ScratchBlocks-style toolbox XML.
  * @param {!boolean} isInitialSetup - Whether the toolbox is for initial setup. If the mode is "initial setup",
- * blocks with localized default parameters (e.g. ask and wait) should not be loaded. (LLK/scratch-gui#5445)
+ * blocks with localized default parameters (e.g. ask and wait) should not be loaded. (scratchfoundation/scratch-gui#5445)
  * @param {?boolean} isStage - Whether the toolbox is for a stage-type target. This is always set to true
  * when isInitialSetup is true.
  * @param {?string} targetId - The current editing target

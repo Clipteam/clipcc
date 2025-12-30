@@ -88,7 +88,7 @@ const canvasPool = (function () {
  * Return a promise to fetch a bitmap from storage and return it as a canvas
  * If the costume has bitmapResolution 1, it will be converted to bitmapResolution 2 here (the standard for Scratch 3)
  * If the costume has a text layer asset, which is a text part from Scratch 1.4, then this function
- * will merge the two image assets. See the issue LLK/scratch-vm#672 for more information.
+ * will merge the two image assets. See the issue scratchfoundation/scratch-vm#672 for more information.
  * @param {!object} costume - the Scratch costume object.
  * @param {!Runtime} runtime - Scratch runtime, used to access the v2BitmapAdapter
  * @param {?object} rotationCenter - optionally passed in coordinates for the center of rotation for the image. If

@@ -320,7 +320,7 @@ const serializeBlocks = function (blocks) {
         // second pass on connecting primitives to serialized inputs directly
     }
     // Do one last pass and remove any top level shadows (these are caused by
-    // a bug: LLK/scratch-vm#1011, and this pass should be removed once that is
+    // a bug: scratchfoundation/scratch-vm#1011, and this pass should be removed once that is
     // completely fixed)
     for (const blockID in obj) {
         const serializedBlock = obj[blockID];
@@ -1128,7 +1128,7 @@ const deserializeMonitor = function (monitorData, runtime, targets, extensions) 
     // This will be undefined for extension blocks
     const monitorBlockInfo = runtime.monitorBlockInfo[monitorData.opcode];
 
-    // Due to a bug (see https://github.com/LLK/scratch-vm/pull/2322), renamed list monitors may have been serialized
+    // Due to a bug (see https://github.com/scratchfoundation/scratch-vm/pull/2322), renamed list monitors may have been serialized
     // with an outdated/incorrect LIST parameter. Fix it up to use the current name of the actual corresponding list.
     if (monitorData.opcode === 'data_listcontents') {
         const listTarget = monitorData.targetId ?

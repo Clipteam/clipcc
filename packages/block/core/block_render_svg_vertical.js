@@ -355,7 +355,7 @@ BlockSvg.prototype.renderCompute_ = function(iconWidth) {
         lastType && lastType == constants.NEXT_STATEMENT;
     let row;
     // Don't create a new row for the second dummy input on a procedure block.
-    // See github.com/LLK/scratch-blocks/issues/1658
+    // See github.com/scratchfoundation/scratch-blocks/issues/1658
     // In all other cases, statement and value inputs catch all preceding dummy
     // inputs, and cause a line break before following inputs.
     if (!isSecondInputOnProcedure &&
@@ -425,7 +425,7 @@ BlockSvg.prototype.renderCompute_ = function(iconWidth) {
       field.renderWidth = fieldSize.width;
       field.renderSep = (previousFieldEditable && field.EDITABLE) ?
           rendererConstants.SEP_SPACE_X : 0;
-      // See github.com/LLK/scratch-blocks/issues/1658
+      // See github.com/scratchfoundation/scratch-blocks/issues/1658
       if (!isSecondInputOnProcedure) {
         input.fieldWidth += field.renderWidth + field.renderSep;
       }
@@ -640,7 +640,7 @@ BlockSvg.prototype.computeOutputPadding_ = function(inputRows) {
     }
     // Special case for hexagonal output: if the connection is larger height
     // than a standard reporter, add some start padding.
-    // https://github.com/LLK/scratch-blocks/issues/376
+    // https://github.com/scratchfoundation/scratch-blocks/issues/376
     if (shape == constants.OUTPUT_SHAPE_HEXAGONAL &&
         otherShape != constants.OUTPUT_SHAPE_HEXAGONAL) {
       const deltaHeight = firstInput.renderHeight - rendererConstants.MIN_BLOCK_Y_REPORTER;
@@ -666,7 +666,7 @@ BlockSvg.prototype.computeOutputPadding_ = function(inputRows) {
     }
     // Special case for hexagonal output: if the connection is larger height
     // than a standard reporter, add some end padding.
-    // https://github.com/LLK/scratch-blocks/issues/376
+    // https://github.com/scratchfoundation/scratch-blocks/issues/376
     if (shape == constants.OUTPUT_SHAPE_HEXAGONAL &&
         otherShape != constants.OUTPUT_SHAPE_HEXAGONAL) {
       const deltaHeight = lastInput.renderHeight - rendererConstants.MIN_BLOCK_Y_REPORTER;

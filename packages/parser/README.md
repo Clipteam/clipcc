@@ -2,7 +2,7 @@
 
 Parser for Scratch projects
 
-[![CircleCI](https://circleci.com/gh/LLK/scratch-parser.svg?style=shield)](https://app.circleci.com/pipelines/github/LLK/scratch-parser?branch=master)
+[![CircleCI](https://circleci.com/gh/scratchfoundation/scratch-parser.svg?style=shield)](https://app.circleci.com/pipelines/github/scratchfoundation/scratch-parser?branch=master)
 
 ## Overview
 

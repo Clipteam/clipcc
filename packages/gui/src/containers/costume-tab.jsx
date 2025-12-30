@@ -122,7 +122,7 @@ class CostumeTab extends React.Component {
             const oldTarget = this.props.sprites[editingTarget] ?
                 this.props.sprites[editingTarget] : this.props.stage;
             // @todo: Find and switch to the index of the costume that is new. This is blocked by
-            // https://github.com/LLK/scratch-vm/issues/967
+            // https://github.com/scratchfoundation/scratch-vm/issues/967
             // Right now, you can land on the wrong costume if a costume changing script is running.
             if (oldTarget.costumeCount !== target.costumeCount) {
                 this.setState({selectedCostumeIndex: target.currentCostume});
@@ -255,7 +255,7 @@ class CostumeTab extends React.Component {
         const resolution = optResolution ? optResolution : 1;
         // Convert size to stage units by dividing by resolution
         // Round up width and height for scratch-flash compatibility
-        // https://github.com/LLK/scratch-flash/blob/9fbac92ef3d09ceca0c0782f8a08deaa79e4df69/src/ui/media/MediaInfo.as#L224-L237
+        // https://github.com/scratchfoundation/scratch-flash/blob/9fbac92ef3d09ceca0c0782f8a08deaa79e4df69/src/ui/media/MediaInfo.as#L224-L237
         return `${Math.ceil(size[0] / resolution)} x ${Math.ceil(size[1] / resolution)}`;
     }
     render () {
