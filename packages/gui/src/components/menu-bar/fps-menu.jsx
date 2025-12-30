@@ -115,6 +115,7 @@ class FPSMenu extends React.PureComponent {
 }
 
 FPSMenu.propTypes = {
+    fps: PropTypes.number,
     isRtl: PropTypes.bool,
     menuOpen: PropTypes.bool,
     onChangeFPS: PropTypes.func,
@@ -127,7 +128,7 @@ const mapStateToProps = state => ({
     menuOpen: fpsMenuOpen(state)
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
     onRequestOpen: () => dispatch(openFpsMenu()),
     onChangeFPS: fps => dispatch(updateSettings({framerate: fps}))
 });

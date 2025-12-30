@@ -76,7 +76,7 @@ const ThemeMenu = ({
                     <ThemeMenuItem
                         key={enabledTheme}
                         isSelected={theme === enabledTheme}
-                         
+
                         onClick={() => onChangeTheme(enabledTheme)}
                         theme={enabledTheme}
                     />)
@@ -102,7 +102,7 @@ const mapStateToProps = state => ({
     theme: state.scratchGui.theme.theme
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = dispatch => ({
     onChangeTheme: theme => dispatch(updateSettings({theme})),
     onRequestOpen: () => dispatch(openThemeMenu())
 });

@@ -413,6 +413,8 @@ SettingsModal.propTypes = {
     intl: intlShape.isRequired,
     onClose: PropTypes.func.isRequired,
     onChangeAutoSave: PropTypes.func.isRequired,
+    onChangeStageWidth: PropTypes.func.isRequired,
+    onChangeStageHeight: PropTypes.func.isRequired,
     onChangeInfiniteCloning: PropTypes.func.isRequired,
     onChangeEdgelessStage: PropTypes.func.isRequired,
     onChangeUnlimitedListLength: PropTypes.func.isRequired,
