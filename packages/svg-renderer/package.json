@@ -61,8 +61,6 @@
     "mkdirp": "2.1.6",
     "rimraf": "3.0.2",
     "scratch-render-fonts": "1.0.252",
-    "scratch-semantic-release-config": "1.0.14",
-    "semantic-release": "19.0.5",
     "tap": "21.0.1",
     "terser-webpack-plugin": "^5.3.10",
     "ts-loader": "^9.5.1",
@@ -77,10 +75,5 @@
     "Edge >= 15",
     "Firefox >= 57",
     "Safari >= 11"
-  ],
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
-  }
+  ]
 }

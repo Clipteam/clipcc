@@ -31,7 +31,6 @@
     "build": "yarn build:types && webpack --progress --color --bail",
     "clean": "rimraf dist playground",
     "coverage": "tap ./test/{unit,integration}/*.js --coverage --coverage-report=lcov",
-    "deploy": "touch playground/.nojekyll && gh-pages -t -d playground -m \"Build for $(git log -n1 --pretty=format:\"%h %s\") [skip ci]\"",
     "docs": "jsdoc -c .jsdoc.json",
     "i18n:src": "mkdirp translations/core && format-message extract --out-file translations/core/en.json src/extensions/**/index.js",
     "i18n:push": "tx-push-src scratch-editor extensions translations/core/en.json",
@@ -44,11 +43,6 @@
     "performance": "node ./test/extra/performance.js",
     "watch": "webpack --progress --color --watch",
     "version": "json -f package.json -I -e \"this.repository.sha = '$(git log -n1 --pretty=format:%H)'\""
-  },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
   },
   "dependencies": {
     "@vernier/godirect": "1.5.0",
@@ -67,7 +61,7 @@
     "minilog": "3.1.0",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "scratch-sb1-converter": "2.0.279",
-    "scratch-translate-extension-languages": "0.0.20191118205314"
+    "scratch-translate-extension-languages": "1.0.7"
   },
   "peerDependencies": {
     "clipcc-svg-renderer": "^3.2.0"
@@ -96,7 +90,6 @@
     "eslint": "^9.39.2",
     "eslint-config-clipcc": "^9.0.9",
     "format-message-cli": "6.2.0",
-    "gh-pages": "1.2.0",
     "globals": "^16.5.0",
     "in-publish": "2.0.1",
     "js-md5": "0.7.3",
@@ -104,9 +97,7 @@
     "lodash.defaultsdeep": "4.6.1",
     "pngjs": "3.3.3",
     "scratch-render-fonts": "1.0.252",
-    "scratch-semantic-release-config": "1.0.5",
     "script-loader": "0.7.2",
-    "semantic-release": "19.0.5",
     "stats.js": "0.17.0",
     "tap": "21.0.1",
     "terser-webpack-plugin": "^5.3.10",
