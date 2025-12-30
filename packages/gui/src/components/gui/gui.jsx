@@ -77,7 +77,6 @@ const GUIComponent = props => {
         costumeLibraryVisible,
         costumesTabVisible,
         enableCommunity,
-        framerate,
         isCreating,
         isFullScreen,
         isPlayerOnly,
@@ -106,7 +105,7 @@ const GUIComponent = props => {
         onProjectTelemetryEvent,
         onRequestCloseBackdropLibrary,
         onRequestCloseCostumeLibrary,
-        onRequestCloseSettingsModal, // eslint-disable-line @typescript-eslint/no-unused-vars
+        onRequestCloseSettingsModal, // eslint-disable-line no-unused-vars
         onRequestCloseTelemetryModal,
         onSeeCommunity,
         onShare,
@@ -462,8 +461,8 @@ const GUIComponent = props => {
                             />
                             <Box
                                 className={styles.targetWrapper}
-                                ariaRole="region"
-                                ariaLabel={intl.formatMessage({
+                                role="region"
+                                aria-label={intl.formatMessage({
                                     defaultMessage: 'Target Pane',
                                     description: 'ARIA label for the target pane',
                                     id: 'gui.aria.targetPane'
