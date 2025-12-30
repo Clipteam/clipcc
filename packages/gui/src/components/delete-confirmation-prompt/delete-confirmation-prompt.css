@@ -21,7 +21,7 @@
 .body {
     padding: 1rem 1.5rem;
     border-radius: 0.5rem;
-    background: var(--clipcc-motion-secondary);
+    background: var(--clipcc-motion-primary);
 }
 
 .label {
@@ -44,7 +44,7 @@
     padding: 0.75rem 1rem;
     border-radius: 2rem;
     border: 1px solid var(--clipcc-ui-black-transparent);
-    color: var(--clipcc-motion-secondary);
+    color: var(--clipcc-motion-primary);
     background: var(--clipcc-ui-white);
     font-weight: 600;
     font-size: 0.85rem;
