@@ -73,13 +73,13 @@ const BrowserModal = props => {
                         <FormattedMessage
                             defaultMessage="To learn more, go to the <a>{previewFaqLink}</a>."
                             description="Invitation to try 3.0 preview"
-                            id="gui.webglModal.previewfaq"
+                            id="gui.unsupportedBrowser.previewfaq"
                             values={{
                                 previewFaqLink: (
                                     <FormattedMessage
                                         defaultMessage="FAQ"
-                                        description="link to Scratch 3.0 FAQ page"
-                                        id="gui.webglModal.previewfaqlinktext"
+                                        description="link to ClipCC FAQ page"
+                                        id="gui.unsupportedBrowser.previewfaqlinktext"
                                     />
                                 ),
                                 a: previewFaqLink => (

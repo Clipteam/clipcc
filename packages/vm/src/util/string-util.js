@@ -46,7 +46,6 @@ class StringUtil {
      * can lead to serialization producing JSON that isn't valid based on the parser schema.
      * It is also consistent with the behavior of saving 2.0 projects.
      * This is only needed when stringifying an object for saving.
-     *
      * @param {!object} obj - The object to serialize
      * @returns {!string} The JSON.stringified string with Infinity/NaN replaced with 0
      */
