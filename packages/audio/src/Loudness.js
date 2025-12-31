@@ -1,7 +1,7 @@
 const log = require('./log');
 
 /**
- *
+ * Instrument and detect a loudness value from a local microphone.
  */
 class Loudness {
     /**
