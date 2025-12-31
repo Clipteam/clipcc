@@ -61,7 +61,7 @@
     "scratch-render-fonts": "1.0.252"
   },
   "dependencies": {
-    "@turbowarp/nanolog": "^0.2.0",
+    "@turbowarp/nanolog": "^1.0.1",
     "clipcc-storage": "3.2.0",
     "clipcc-svg-renderer": "3.2.0",
     "grapheme-breaker": "0.3.2",

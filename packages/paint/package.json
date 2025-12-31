@@ -24,11 +24,11 @@
   },
   "dependencies": {
     "@scratch/paper": "0.11.20200728195508",
+    "@turbowarp/nanolog": "^1.0.1",
     "classnames": "2.2.5",
     "keymirror": "0.1.1",
     "lodash.bindall": "4.4.0",
     "lodash.omit": "4.5.0",
-    "minilog": "3.1.0",
     "parse-color": "1.0.0",
     "prop-types": "^15.5.10",
     "react-intl-redux": "^2.0.0"
