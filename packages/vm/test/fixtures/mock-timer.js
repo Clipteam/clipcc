@@ -44,7 +44,6 @@ class MockTimer {
 
     /**
      * Advance this MockTimer's idea of "current time", running timeout handlers if appropriate.
-     *
      * @param {number} milliseconds - the amount of time to add to the current mock time value, in milliseconds.
      * @memberof MockTimer
      */
@@ -58,7 +57,6 @@ class MockTimer {
 
     /**
      * Advance this MockTimer's idea of "current time", running timeout handlers if appropriate.
-     *
      * @param {number} milliseconds - the amount of time to add to the current mock time value, in milliseconds.
      * @returns {Promise} - promise which resolves after timeout handlers have had an opportunity to run.
      * @memberof MockTimer
@@ -75,15 +73,6 @@ class MockTimer {
      * @memberof MockTimer
      */
     time () {
-        return this._mockTime;
-    }
-
-    /**
-     * Returns a time accurate relative to other times produced by this function.
-     * @returns {number} ms-scale accurate time relative to other relative times.
-     * @memberof MockTimer
-     */
-    relativeTime () {
         return this._mockTime;
     }
 
