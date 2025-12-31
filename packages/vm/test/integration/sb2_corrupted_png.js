@@ -8,7 +8,7 @@
  */
 const path = require('path');
 const tap = require('tap');
-const md5 = require('js-md5');
+const {md5} = require('js-md5');
 const makeTestStorage = require('../fixtures/make-test-storage');
 const FakeRenderer = require('../fixtures/fake-renderer');
 const FakeBitmapAdapter = require('../fixtures/fake-bitmap-adapter');

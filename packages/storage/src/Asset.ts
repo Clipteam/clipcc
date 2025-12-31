@@ -1,4 +1,4 @@
-import md5 from 'js-md5';
+import {md5} from 'js-md5';
 import {memoizedToString, _TextEncoder, _TextDecoder} from './memoizedToString';
 import {IAssetType} from './AssetType';
 import {IDataFormat} from './DataFormat';
@@ -46,7 +46,7 @@ export default class Asset {
         this.dependencies = [];
     }
 
-    setData (data: AssetData | undefined, dataFormat: IDataFormat | undefined, generateId?: boolean) {
+    setData (data?: AssetData, dataFormat?: IDataFormat, generateId?: boolean) {
         if (data && !dataFormat) {
             throw new Error('Data provided without specifying its format');
         }
@@ -57,7 +57,7 @@ export default class Asset {
         /** @type {Buffer} */
         this.data = data;
 
-        if (generateId) this.assetId = md5(data);
+        if (data && generateId) this.assetId = md5(data);
 
         // Mark as clean only if set is being called without generateId
         // If a new id is being generated, mark this asset as not clean
