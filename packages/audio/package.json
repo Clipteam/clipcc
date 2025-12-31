@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/Clipteam/clipcc#readme",
   "dependencies": {
-    "@turbowarp/nanolog": "^0.2.0",
+    "@turbowarp/nanolog": "^1.0.1",
     "audio-context": "1.0.3",
     "startaudiocontext": "1.2.1"
   },

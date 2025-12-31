@@ -45,6 +45,7 @@
     "version": "json -f package.json -I -e \"this.repository.sha = '$(git log -n1 --pretty=format:%H)'\""
   },
   "dependencies": {
+    "@turbowarp/nanolog": "^1.0.1",
     "@vernier/godirect": "1.5.0",
     "arraybuffer-loader": "1.0.8",
     "atob": "2.1.2",
@@ -58,7 +59,6 @@
     "htmlparser2": "7.2.0",
     "immutable": "3.8.1",
     "jszip": "^3.10.1",
-    "minilog": "3.1.0",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "scratch-sb1-converter": "2.0.279",
     "scratch-translate-extension-languages": "1.0.7",

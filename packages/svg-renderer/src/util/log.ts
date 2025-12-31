@@ -1,4 +1,3 @@
-// @ts-nocheck
 import minilog from '@turbowarp/nanolog';
 minilog.enable();
 

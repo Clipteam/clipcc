@@ -33,7 +33,7 @@
     "scratch-render-fonts": "1.0.252"
   },
   "dependencies": {
-    "@turbowarp/nanolog": "^0.2.0",
+    "@turbowarp/nanolog": "^1.0.1",
     "base64-js": "^1.5.1",
     "base64-loader": "^1.0.0",
     "css-tree": "^1.1.3",

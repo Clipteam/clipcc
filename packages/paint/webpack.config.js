@@ -86,7 +86,7 @@ module.exports = [
     // For use as a library
     defaultsDeep({}, base, {
         externals: {
-            'minilog': 'minilog',
+            '@turbowarp/nanolog': '@turbowarp/nanolog',
             'prop-types': 'prop-types',
             'react': 'react',
             'react-dom': 'react-dom',
