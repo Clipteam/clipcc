@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const md5 = require('js-md5');
+const {md5} = require('js-md5');
 
 const projects = [
     '117504922'

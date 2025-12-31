@@ -1,4 +1,4 @@
-import md5 from 'js-md5';
+import {md5} from 'js-md5';
 
 import log from './log';
 

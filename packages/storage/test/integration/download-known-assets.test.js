@@ -1,4 +1,4 @@
-const md5 = require('js-md5');
+const {md5} = require('js-md5');
 
 const ScratchStorage = require('../../src/index').ScratchStorage;
 

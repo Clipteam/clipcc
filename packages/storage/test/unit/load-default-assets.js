@@ -1,4 +1,4 @@
-const md5 = require('js-md5');
+const {md5} = require('js-md5');
 const test = require('tap').test;
 
 const ScratchStorage = require('../../dist/node/scratch-storage');

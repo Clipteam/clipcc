@@ -24,12 +24,11 @@
     "pify": "^6.1.0"
   },
   "devDependencies": {
-    "babel-eslint": "8.2.2",
-    "benchmark": "^2.1.1",
+    "babel-eslint": "10.1.0",
+    "benchmark": "^2.1.4",
     "eslint": "^9.39.2",
     "eslint-config-clipcc": "^9.0.9",
     "glob": "^7.0.6",
-    "husky": "0.14.3",
     "tap": "^21.0.1"
   },
   "engines": {

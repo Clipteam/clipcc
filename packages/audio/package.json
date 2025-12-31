@@ -25,20 +25,20 @@
   "homepage": "https://github.com/Clipteam/clipcc#readme",
   "dependencies": {
     "@turbowarp/nanolog": "^0.2.0",
-    "audio-context": "1.0.1",
+    "audio-context": "1.0.3",
     "startaudiocontext": "1.2.1"
   },
   "devDependencies": {
-    "@babel/core": "7.14.8",
-    "@babel/eslint-parser": "7.18.2",
-    "@babel/preset-env": "7.14.8",
-    "babel-eslint": "10.0.3",
+    "@babel/core": "7.28.5",
+    "@babel/eslint-parser": "7.28.5",
+    "@babel/preset-env": "7.28.5",
+    "babel-eslint": "10.1.0",
     "eslint": "^9.39.2",
     "eslint-config-clipcc": "^9.0.9",
     "tap": "21.0.1",
-    "typescript": "^5.5.4",
+    "typescript": "^5.9.3",
     "web-audio-test-api": "0.5.2",
-    "webpack": "^5.75.0",
-    "webpack-cli": "^5.0.1"
+    "webpack": "^5.104.1",
+    "webpack-cli": "^6.0.1"
   }
 }
