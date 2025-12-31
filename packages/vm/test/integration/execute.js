@@ -3,7 +3,6 @@ const path = require('path');
 
 const test = require('tap').test;
 
-const log = require('../../src/util/log');
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/index');
@@ -30,8 +29,6 @@ const VirtualMachine = require('../../src/index');
 const whenThreadsComplete = (t, vm, uri, timeLimit = 5000) =>
     // When the number of threads reaches 0 the test is expected to be complete.
     new Promise((resolve, reject) => {
-        let timeoutId = null;
-        
         const intervalId = setInterval(() => {
             let active = 0;
             const threads = vm.runtime.threads;
@@ -41,32 +38,32 @@ const whenThreadsComplete = (t, vm, uri, timeLimit = 5000) =>
                 }
             }
             if (active === 0) {
-                clearInterval(intervalId);
-                if (timeoutId) {
-                    clearTimeout(timeoutId);
-                }
                 resolve();
             }
         }, 50);
 
-        timeoutId = setTimeout(() => {
-            clearInterval(intervalId);
+        const timeoutId = setTimeout(() => {
             t.fail(`Timeout waiting for threads to complete: ${uri}`);
             reject(new Error('time limit reached'));
         }, timeLimit);
+
+        // Clear the interval to allow the process to exit
+        // naturally.
+        t.teardown(() => {
+            clearInterval(intervalId);
+            clearTimeout(timeoutId);
+        });
     });
 
 const executeDir = path.resolve(__dirname, '../fixtures/execute');
 
-fs.readdirSync(executeDir)
-    .filter(uri => uri.endsWith('.sb2') || uri.endsWith('.sb3'))
-    .forEach(uri => {
-        // eslint-disable-next-line require-await
-        test(uri, async t => {
-            // Disable logging during this test.
-            log.suggest.deny('vm', 'error');
-            t.teardown(() => log.suggest.clear());
+// Find files which end in ".sb", ".sb2", or ".sb3"
+const fileFilter = /\.sb[23]?$/i;
 
+fs.readdirSync(executeDir)
+    .filter(uri => fileFilter.test(uri))
+    .forEach(uri => {
+        test(uri, async t => {
             const vm = new VirtualMachine();
 
             // Map string messages to tap reporting methods. This will be used
@@ -75,22 +72,29 @@ fs.readdirSync(executeDir)
             let didEnd;
             const reporters = {
                 comment (message) {
-                    t.comment(`[${path.basename(uri)}] ${message}`);
+                    t.comment(message);
                 },
                 pass (reason) {
-                    t.pass(`[${path.basename(uri)}] ${reason}`);
+                    t.pass(reason);
                 },
                 fail (reason) {
-                    t.fail(`[${path.basename(uri)}] ${reason}`);
+                    t.fail(reason);
                 },
                 plan (count) {
+                    if (didPlan) {
+                        t.fail('tried to set plan more than once');
+                    }
                     didPlan = true;
-                    t.plan(Number(count));
+                    // +1 for t.ok(didEnd) below
+                    t.plan(Number(count) + 1);
                 },
                 end () {
+                    if (didEnd) {
+                        t.fail('tried to end more than once');
+                    }
                     didEnd = true;
                     vm.quit();
-                    t.end();
+                    // don't t.end() here: wait for the t.ok(didEnd) below
                 }
             };
             const reportVmResult = text => {
@@ -107,10 +111,17 @@ fs.readdirSync(executeDir)
             vm.attachStorage(makeTestStorage());
 
             // Start the VM and initialize some vm properties.
+            // complete.
             vm.start();
             vm.clear();
             vm.setCompatibilityMode(false);
             vm.setTurboMode(false);
+
+            // Stop the runtime interval once the test is complete so the test
+            // process may naturally exit.
+            t.teardown(() => {
+                clearInterval(vm.runtime._steppingInterval);
+            });
 
             // Report the text of SAY events as testing instructions.
             vm.runtime.on('SAY', (target, type, text) => reportVmResult(text));
@@ -119,24 +130,23 @@ fs.readdirSync(executeDir)
 
             // Load the project and once all threads are complete ensure that
             // the scratch project sent us a "end" message.
-            return vm.loadProject(project)
-                .then(() => vm.greenFlag())
-                .then(() => whenThreadsComplete(t, vm, uri))
-                .then(() => {
-                    // Setting a plan is not required but is a good idea.
-                    if (!didPlan) {
-                        t.comment('did not say "plan NUMBER_OF_TESTS"');
-                    }
+            await vm.loadProject(project);
+            vm.greenFlag();
+            await whenThreadsComplete(t, vm, uri);
 
-                    // End must be called so that tap knows the test is done. If
-                    // the test has an SAY "end" block but that block did not
-                    // execute, this explicit failure will raise that issue so
-                    // it can be resolved.
-                    if (!didEnd) {
-                        t.fail('did not say "end"');
-                        vm.quit();
-                        t.end();
-                    }
-                });
+            // Setting a plan is not required but is a good idea.
+            if (!didPlan) {
+                t.comment('did not say "plan NUMBER_OF_TESTS"');
+            }
+
+            // End must be called so that tap knows the test is done. If
+            // the test has an SAY "end" block but that block did not
+            // execute, this explicit failure will raise that issue so
+            // it can be resolved.
+            if (!didEnd) {
+                vm.quit();
+            }
+            t.ok(didEnd, 'did say "end"');
+            t.end();
         });
     });
