@@ -11,7 +11,7 @@ test('constructor', t => {
 });
 
 /**
- *
+ * Test assets to download from Scratch servers.
  * @type {AssetTestInfo[]}
  * @typedef {object} AssetTestInfo
  * @property {AssetType} type - The type of the asset.

@@ -9,7 +9,7 @@ const VolumeEffect = require('./effects/VolumeEffect');
 const ON_ENDED = 'ended';
 
 /**
- *
+ * Play sounds that stop without audible clipping.
  */
 class SoundPlayer extends EventEmitter {
     /**

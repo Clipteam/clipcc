@@ -7,7 +7,7 @@ const log = require('./log');
 const ALL_TARGETS = '*';
 
 /**
- *
+ * A bank of sounds that can be played.
  */
 class SoundBank {
     /**
