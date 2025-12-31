@@ -16,6 +16,7 @@ const FakeBitmapAdapter = require('../fixtures/fake-bitmap-adapter');
 const {extractAsset, readFileToBuffer} = require('../fixtures/readProjectFile');
 const VirtualMachine = require('../../src/index');
 const {serializeCostumes} = require('../../src/serialization/serialize-assets');
+const {sanitizeSvg} = require('clipcc-svg-renderer');
 
 const projectUri = path.resolve(__dirname, '../fixtures/default.sb3');
 const project = readFileToBuffer(projectUri);
@@ -28,7 +29,7 @@ const originalCostume = extractAsset(spriteUri, costumeFileName);
 // We need to get the actual md5 because we hand modified the svg to corrupt it
 // after we downloaded the project from Scratch
 // Loading the project back into the VM will correct the assetId and md5
-const brokenCostumeMd5 = md5(originalCostume);
+const brokenCostumeMd5 = md5(sanitizeSvg.sanitizeByteStream(originalCostume));
 
 global.Image = function () {
     const image = {
@@ -61,7 +62,7 @@ tap.beforeEach(() => {
     // Mock renderer breaking on loading a corrupt costume
     FakeRenderer.prototype.createSVGSkin = function (svgString) {
         // Look for text added to costume to make it a corrupt svg
-        if (svgString.includes('<here is some')) {
+        if (svgString.includes('<rect width="100 height=100 fill=">')) {
             throw new Error('mock createSVGSkin broke');
         }
         return FakeRenderer.prototype._nextSkinId++;

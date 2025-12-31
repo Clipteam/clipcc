@@ -70,6 +70,7 @@ const webConfig = {
             type: 'umd'
         },
         path: path.resolve(__dirname, 'dist', 'web'),
+        publicPath: '',
         clean: false
     }
 };
