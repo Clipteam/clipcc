@@ -5,7 +5,7 @@ import log from '../log.js';
  * Video Manager for video extensions.
  */
 class VideoProvider {
-    constructor () {
+    constructor (width = 480, height = 360) {
         /**
          * Default value for mirrored frames.
          * @type boolean
@@ -34,6 +34,16 @@ class VideoProvider {
          * Stores some canvas/frame data per resolution/mirror states
          */
         this._workspace = [];
+        /**
+         * The stage width.
+         * @type {number}
+         */
+        this.width = width;
+        /**
+         * The stage height.
+         * @type {number}
+         */
+        this.height = height;
     }
 
     static get FORMAT_IMAGE_DATA () {
@@ -70,6 +80,19 @@ class VideoProvider {
     }
 
     /**
+     * Set the dimensions the video is captured at.
+     * @param {number} width The width to capture video at.
+     * @param {number} height The height to capture video at.
+     */
+    setDimensions (width, height) {
+        if (this.width === width && this.height === height) return;
+        this.width = width;
+        this.height = height;
+        if (this.enabled) {
+            this.disableVideo().then(() => this.enableVideo());
+        }
+    }
+    /**
      * Request video be enabled.  Sets up video, creates video skin and enables preview.
      *
      * @returns {Promise.<Video>} resolves a promise to this video provider when video is ready.
@@ -81,15 +104,17 @@ class VideoProvider {
 
     /**
      * Disable video stream (turn video off)
+     * @returns {Promise} When video has been disabled
      */
     disableVideo () {
         this.enabled = false;
         // If we have begun a setup process, call _teardown after it completes
         if (this._singleSetup) {
-            this._singleSetup
+            return this._singleSetup
                 .then(this._teardown.bind(this))
                 .catch(err => this.onError(err));
         }
+        return Promise.resolve();
     }
 
     /**
@@ -114,7 +139,8 @@ class VideoProvider {
      * Return frame data from the video feed in a specified dimensions, format, and mirroring.
      *
      * @param {object} frameInfo A descriptor of the frame you would like to receive.
-     * @param {Array.<number>} frameInfo.dimensions [width, height] array of numbers.  Defaults to [480,360]
+     * @param {Array.<number>} frameInfo.dimensions [width, height] array of numbers.
+     *     Defaults to [this.width, this.height]
      * @param {boolean} frameInfo.mirror If you specificly want a mirror/non-mirror frame, defaults to true
      * @param {string} frameInfo.format Requested video format, available formats are 'image-data' and 'canvas'.
      * @param {number} frameInfo.cacheTimeout Will reuse previous image data if the time since capture is less than
@@ -123,7 +149,7 @@ class VideoProvider {
      * @returns {ArrayBuffer|Canvas|string|null} Frame data in requested format, null when errors.
      */
     getFrame ({
-        dimensions = VideoProvider.DIMENSIONS,
+        dimensions = [this.width, this.height],
         mirror = this.mirror,
         format = VideoProvider.FORMAT_IMAGE_DATA,
         cacheTimeout = this._frameCacheTimeout
@@ -207,8 +233,8 @@ class VideoProvider {
         }
 
         this._singleSetup = requestVideoStream({
-            width: {min: 480, ideal: 640},
-            height: {min: 360, ideal: 480}
+            width: {min: this.width, ideal: this.width},
+            height: {min: this.height, ideal: this.height}
         })
             .then(stream => {
                 this._video = document.createElement('video');
