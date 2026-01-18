@@ -10,18 +10,6 @@
 const {motionVector, scratchAtan2} = require('./math');
 
 /**
- * The width of the intended resolution to analyze for motion.
- * @type {number}
- */
-const WIDTH = 480;
-
-/**
- * The height of the intended resolution to analyze for motion.
- * @type {number}
- */
-const HEIGHT = 360;
-
-/**
  * A constant value to scale the magnitude of the x and y components called u
  * and v. This creates the motionAmount value.
  *
@@ -78,7 +66,9 @@ const LOCAL_THRESHOLD = THRESHOLD / 3;
  * @class
  */
 class VideoMotion {
-    constructor () {
+    constructor (width, height) {
+        this.width = width;
+        this.height = height;
         /**
          * The number of frames that have been added from a source.
          * @type {number}
@@ -122,21 +112,36 @@ class VideoMotion {
          * One for the current value. And one for the last value.
          * @type {number}
          */
-        this._arrays = new ArrayBuffer(WIDTH * HEIGHT * 2 * 1);
+        this._arrays = new ArrayBuffer(this.width * this.height * 2 * 1);
 
         /**
          * A clamped uint8 view of _arrays. One component of each index of the
          * curr member is copied into this array.
          * @type {number}
          */
-        this._curr = new Uint8ClampedArray(this._arrays, WIDTH * HEIGHT * 0 * 1, WIDTH * HEIGHT);
+        this._curr = new Uint8ClampedArray(this._arrays, this.width * this.height * 0 * 1, this.width * this.height);
 
         /**
          * A clamped uint8 view of _arrays. One component of each index of the
          * prev member is copied into this array.
          * @type {number}
          */
-        this._prev = new Uint8ClampedArray(this._arrays, WIDTH * HEIGHT * 1 * 1, WIDTH * HEIGHT);
+        this._prev = new Uint8ClampedArray(this._arrays, this.width * this.height * 1 * 1, this.width * this.height);
+    }
+
+    /**
+     * Resize the internal buffers to match a new resolution.
+     * @param {number} width - new width
+     * @param {number} height - new height
+     */
+    resize (width, height) {
+        if (this.width === width && this.height === height) return;
+        this.width = width;
+        this.height = height;
+        this._arrays = new ArrayBuffer(this.width * this.height * 2 * 1);
+        this._curr = new Uint8ClampedArray(this._arrays, this.width * this.height * 0 * 1, this.width * this.height);
+        this._prev = new Uint8ClampedArray(this._arrays, this.width * this.height * 1 * 1, this.width * this.height);
+        this.reset();
     }
 
     /**
@@ -197,8 +202,8 @@ class VideoMotion {
         } = this;
 
         const winStep = (WINSIZE * 2) + 1;
-        const wmax = WIDTH - WINSIZE - 1;
-        const hmax = HEIGHT - WINSIZE - 1;
+        const wmax = this.width - WINSIZE - 1;
+        const hmax = this.height - WINSIZE - 1;
 
         // Accumulate 2d motion vectors from groups of pixels and average it
         // later.
@@ -218,10 +223,10 @@ class VideoMotion {
                 let C2 = 0;
 
                 // This is a performance critical math region.
-                let address = ((i - WINSIZE) * WIDTH) + j - WINSIZE;
+                let address = ((i - WINSIZE) * this.width) + j - WINSIZE;
                 let nextAddress = address + winStep;
-                const maxAddress = ((i + WINSIZE) * WIDTH) + j + WINSIZE;
-                for (; address <= maxAddress; address += WIDTH - winStep, nextAddress += WIDTH) {
+                const maxAddress = ((i + WINSIZE) * this.width) + j + WINSIZE;
+                for (; address <= maxAddress; address += this.width - winStep, nextAddress += this.width) {
                     for (; address <= nextAddress; address += 1) {
                         // The difference in color between the last frame and
                         // the current frame.
@@ -231,7 +236,7 @@ class VideoMotion {
                         const gradX = ((curr[address - 1]) - (curr[address + 1]));
                         // The difference between the pixel above and the pixel
                         // below.
-                        const gradY = ((curr[address - WIDTH]) - (curr[address + WIDTH]));
+                        const gradY = ((curr[address - this.width]) - (curr[address + this.width]));
 
                         // Add the combined values of this pixel to previously
                         // considered pixels.
@@ -299,10 +304,10 @@ class VideoMotion {
             const boundingRect = drawable.getFastBounds();
             // Transform the bounding box from scratch space to a space from 0,
             // 0 to WIDTH, HEIGHT.
-            const xmin = Math.max(Math.floor(boundingRect.left + (WIDTH / 2)), 1);
-            const xmax = Math.min(Math.floor(boundingRect.right + (WIDTH / 2)), WIDTH - 1);
-            const ymin = Math.max(Math.floor((HEIGHT / 2) - boundingRect.top), 1);
-            const ymax = Math.min(Math.floor((HEIGHT / 2) - boundingRect.bottom), HEIGHT - 1);
+            const xmin = Math.max(Math.floor(boundingRect.left + (this.width / 2)), 1);
+            const xmax = Math.min(Math.floor(boundingRect.right + (this.width / 2)), this.width - 1);
+            const ymin = Math.max(Math.floor((this.height / 2) - boundingRect.top), 1);
+            const ymax = Math.min(Math.floor((this.height / 2) - boundingRect.bottom), this.height - 1);
 
             let A2 = 0;
             let A1B2 = 0;
@@ -320,13 +325,13 @@ class VideoMotion {
                     // HEIGHT and 0 to WIDTH. Transform that into Scratch's
                     // range of HEIGHT / 2 to -HEIGHT / 2 and -WIDTH / 2 to
                     // WIDTH / 2;
-                    position[0] = j - (WIDTH / 2);
-                    position[1] = (HEIGHT / 2) - i;
+                    position[0] = j - (this.width / 2);
+                    position[1] = (this.height / 2) - i;
                     // Consider only pixels in the drawable that can touch the
                     // edge or other drawables. Empty space in the current skin
                     // is skipped.
                     if (drawable.isTouching(position)) {
-                        const address = (i * WIDTH) + j;
+                        const address = (i * this.width) + j;
                         // The difference in color between the last frame and
                         // the current frame.
                         const gradT = ((prev[address]) - (curr[address]));
@@ -335,7 +340,7 @@ class VideoMotion {
                         const gradX = ((curr[address - 1]) - (curr[address + 1]));
                         // The difference between the pixel above and the pixel
                         // below.
-                        const gradY = ((curr[address - WIDTH]) - (curr[address + WIDTH]));
+                        const gradY = ((curr[address - this.width]) - (curr[address + this.width]));
 
                         // Add the combined values of this pixel to previously
                         // considered pixels.
