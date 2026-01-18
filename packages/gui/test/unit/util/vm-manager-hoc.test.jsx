@@ -35,6 +35,12 @@ describe('VMManagerHOC', () => {
         vm.setCompatibilityMode = jest.fn();
         vm.setLocale = jest.fn();
         vm.start = jest.fn();
+        vm.runtime.renderer = {
+            setHighQualityPen: jest.fn(),
+            setEdgelessStage: jest.fn(),
+            setAccurateCoordinates: jest.fn(),
+            setStageSize: jest.fn()
+        };
     });
     test('when it mounts in player mode, the vm is initialized but not started', () => {
         const Component = () => (<div />);
