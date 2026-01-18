@@ -44,6 +44,9 @@ const vmManagerHOC = function (WrappedComponent) {
                     unlimitedSoundStuffs: this.props.unlimitedSoundStuffs,
                     accurateCoordinates: this.props.accurateCoordinates
                 });
+                this.props.vm.setStageWidth(this.props.stageWidth);
+                this.props.vm.setStageHeight(this.props.stageHeight);
+                this.props.vm.renderer.setHighQualityPen(this.props.highQualityPen);
             }
             if (!this.props.isPlayerOnly && !this.props.isStarted) {
                 this.props.vm.start();
@@ -93,6 +96,9 @@ const vmManagerHOC = function (WrappedComponent) {
                 this.props.vm.setLimitOptions({
                     accurateCoordinates: this.props.accurateCoordinates
                 });
+            }
+            if (this.props.highQualityPen !== prevProps.highQualityPen) {
+                this.props.vm.renderer.setHighQualityPen(this.props.highQualityPen);
             }
             if (this.props.stageWidth !== prevProps.stageWidth) {
                 this.props.vm.setStageWidth(this.props.stageWidth);
@@ -175,6 +181,7 @@ const vmManagerHOC = function (WrappedComponent) {
         projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         username: PropTypes.string,
         framerate: PropTypes.number.isRequired,
+        highQualityPen: PropTypes.bool.isRequired,
         infiniteCloning: PropTypes.bool.isRequired,
         edgelessStage: PropTypes.bool.isRequired,
         unlimitedListLength: PropTypes.bool.isRequired,
@@ -201,6 +208,7 @@ const vmManagerHOC = function (WrappedComponent) {
             framerate: state.scratchGui.settings.framerate,
             infiniteCloning: state.scratchGui.settings.infiniteCloning,
             edgelessStage: state.scratchGui.settings.edgelessStage,
+            highQualityPen: state.scratchGui.settings.highQualityPen,
             unlimitedListLength: state.scratchGui.settings.unlimitedListLength,
             unlimitedPenSize: state.scratchGui.settings.unlimitedPenSize,
             unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,
