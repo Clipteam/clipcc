@@ -23,8 +23,14 @@ module.exports = {
      */
     Events: {
         /**
-         * NativeSizeChanged event
+         * NativeSizeChanged event, which related to stage size change.
+         * @constant {string}
          */
-        NativeSizeChanged: 'NativeSizeChanged'
+        NativeSizeChanged: 'NativeSizeChanged',
+        /**
+         * CanvasSizeChanged event, which related to actual canvas size change.
+         * @constant {string}
+         */
+        CanvasSizeChanged: 'CanvasSizeChanged'
     }
 };
