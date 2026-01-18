@@ -1742,17 +1742,25 @@ class RenderWebGL extends EventEmitter {
         const gl = this._gl;
         twgl.bindFramebufferInfo(gl, skin._framebuffer);
 
+        // Adjust the viewport to the scaled dimensions of the framebuffer.
+        const scaleX = gl.canvas.width / this._nativeSize[0];
+        const scaleY = gl.canvas.height / this._nativeSize[1];
+
         // Limit size of viewport to the bounds around the stamp Drawable and create the projection matrix for the draw.
         gl.viewport(
-            (this._nativeSize[0] * 0.5) + bounds.left,
-            (this._nativeSize[1] * 0.5) - bounds.top,
-            bounds.width,
-            bounds.height
+            ((this._nativeSize[0] * 0.5) + bounds.left) * scaleX,
+            ((this._nativeSize[1] * 0.5) - bounds.top) * scaleY,
+            bounds.width * scaleX,
+            bounds.height * scaleY
         );
         const projection = twgl.m4.ortho(bounds.left, bounds.right, bounds.top, bounds.bottom, -1, 1);
 
         // Draw the stamped sprite onto the PenSkin's framebuffer.
-        this._drawThese([stampID], ShaderManager.DRAW_MODE.default, projection, {ignoreVisibility: true});
+        this._drawThese([stampID], ShaderManager.DRAW_MODE.default, projection, {
+            ignoreVisibility: true,
+            framebufferWidth: gl.canvas.width,
+            framebufferHeight: gl.canvas.height
+        });
         skin._silhouetteDirty = true;
     }
 
