@@ -304,6 +304,24 @@ class SettingsModal extends React.Component {
                         <div className={styles.item}>
                             <div className={styles.label}>
                                 <FormattedMessage
+                                    defaultMessage="High-Quality Pen"
+                                    description="Label of high-quality pen"
+                                    id="gui.settingsModal.highQualityPen"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Make pen's canvas always follow actual canvas size."
+                                    description="Description of high-quality pen"
+                                    id="gui.settingsModal.highQualityPenDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.highQualityPen}
+                                onChange={this.props.onChangeHighQualityPen}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
                                     defaultMessage="Stage Size"
                                     description="Label of stage size"
                                     id="gui.settingsModal.resolution"
@@ -405,6 +423,7 @@ SettingsModal.propTypes = {
     autoSave: PropTypes.bool.isRequired,
     infiniteCloning: PropTypes.bool.isRequired,
     edgelessStage: PropTypes.bool.isRequired,
+    highQualityPen: PropTypes.bool.isRequired,
     unlimitedListLength: PropTypes.bool.isRequired,
     unlimitedPenSize: PropTypes.bool.isRequired,
     unlimitedSoundStuffs: PropTypes.bool.isRequired,
@@ -421,6 +440,7 @@ SettingsModal.propTypes = {
     onChangeEdgelessStage: PropTypes.func.isRequired,
     onChangeStageWidth: PropTypes.func.isRequired,
     onChangeStageHeight: PropTypes.func.isRequired,
+    onChangeHighQualityPen: PropTypes.func.isRequired,
     onChangeUnlimitedListLength: PropTypes.func.isRequired,
     onChangeUnlimitedPenSize: PropTypes.func.isRequired,
     onChangeUnlimitedSoundStuffs: PropTypes.func.isRequired,

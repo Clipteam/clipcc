@@ -21,6 +21,7 @@ class SettingsModal extends React.Component {
             'handleChangeAutoSaveInterval',
             'handleChangeFramerate',
             'handleChangeTheme',
+            'handleChangeHighQualityPen',
             'handleChangeInfiniteCloning',
             'handleChangeEdgelessStage',
             'handleChangeUnlimitedListLength',
@@ -74,6 +75,9 @@ class SettingsModal extends React.Component {
     handleChangeHideNonVanillaBlocks (value) {
         this.props.updateSettings({hideNonVanillaBlocks: value});
     }
+    handleChangeHighQualityPen (value) {
+        this.props.updateSettings({highQualityPen: value});
+    }
     handleChangeStageWidth (width) {
         if (width >= 480) {
             this.props.updateSettings({stageWidth: Math.round(width)});
@@ -90,6 +94,7 @@ class SettingsModal extends React.Component {
                 autoSaveInterval={this.props.autoSaveInterval}
                 framerate={this.props.framerate}
                 theme={this.props.theme}
+                highQualityPen={this.props.highQualityPen}
                 infiniteCloning={this.props.infiniteCloning}
                 edgelessStage={this.props.edgelessStage}
                 unlimitedListLength={this.props.unlimitedListLength}
@@ -105,6 +110,7 @@ class SettingsModal extends React.Component {
                 onChangeTheme={this.handleChangeTheme}
                 onChangeInfiniteCloning={this.handleChangeInfiniteCloning}
                 onChangeEdgelessStage={this.handleChangeEdgelessStage}
+                onChangeHighQualityPen={this.handleChangeHighQualityPen}
                 onChangeUnlimitedListLength={this.handleChangeUnlimitedListLength}
                 onChangeUnlimitedPenSize={this.handleChangeUnlimitedPenSize}
                 onChangeUnlimitedSoundStuffs={this.handleChangeUnlimitedSoundStuffs}
@@ -120,6 +126,7 @@ class SettingsModal extends React.Component {
 SettingsModal.propTypes = {
     hideNonVanillaBlocks: PropTypes.bool.isRequired,
     autoSave: PropTypes.bool.isRequired,
+    highQualityPen: PropTypes.bool.isRequired,
     infiniteCloning: PropTypes.bool.isRequired,
     edgelessStage: PropTypes.bool.isRequired,
     unlimitedListLength: PropTypes.bool.isRequired,
@@ -140,6 +147,7 @@ const mapStateToProps = state => ({
     autoSave: state.scratchGui.settings.autoSave,
     infiniteCloning: state.scratchGui.settings.infiniteCloning,
     edgelessStage: state.scratchGui.settings.edgelessStage,
+    highQualityPen: state.scratchGui.settings.highQualityPen,
     unlimitedListLength: state.scratchGui.settings.unlimitedListLength,
     unlimitedPenSize: state.scratchGui.settings.unlimitedPenSize,
     unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,

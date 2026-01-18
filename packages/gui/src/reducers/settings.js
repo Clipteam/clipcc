@@ -5,6 +5,7 @@ const defaultState = {
     autoSave: false,
     infiniteCloning: false,
     edgelessStage: false,
+    highQualityPen: false,
     unlimitedListLength: false,
     unlimitedPenSize: false,
     unlimitedSoundStuffs: false,
