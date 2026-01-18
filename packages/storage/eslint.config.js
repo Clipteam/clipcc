@@ -12,7 +12,7 @@ module.exports = [
         languageOptions: {
             ...config.languageOptions,
             globals: {
-                ...globals.node
+                ...globals.browser
             }
         }
     })),

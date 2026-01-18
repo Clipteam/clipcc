@@ -6,7 +6,7 @@
 
 /**
  * <canvas> element used to update Silhouette data from skin bitmap data.
- * @type {CanvasElement}
+ * @type {HTMLCanvasElement}
  */
 let __SilhouetteUpdateCanvas;
 

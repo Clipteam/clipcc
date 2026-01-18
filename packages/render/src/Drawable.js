@@ -84,7 +84,7 @@ class Drawable {
         this._uniforms = {
             /**
              * The model matrix, to concat with projection at draw time.
-             * @type {module:twgl/m4.Mat4}
+             * @type {twgl.m4.Mat4}
              */
             u_modelMatrix: twgl.m4.identity(),
 
