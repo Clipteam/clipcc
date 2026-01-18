@@ -199,9 +199,6 @@ class RenderWebGL extends EventEmitter {
         /** @type {ShaderManager} */
         this._shaderManager = new ShaderManager(gl);
 
-        /** @type {HTMLCanvasElement} */
-        this._tempCanvas = document.createElement('canvas');
-
         /** @type {any} */
         this._regionId = null;
 
@@ -286,6 +283,9 @@ class RenderWebGL extends EventEmitter {
         if (canvas.width !== newWidth || canvas.height !== newHeight) {
             canvas.width = newWidth;
             canvas.height = newHeight;
+            this.emit(RenderConstants.Events.CanvasSizeChanged, {
+                newSize: [newWidth, newHeight]
+            });
             // Resizing the canvas causes it to be cleared, so redraw it.
             this.draw();
         }
