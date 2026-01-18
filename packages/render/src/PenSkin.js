@@ -106,7 +106,15 @@ class PenSkin extends Skin {
 
         this.onCanvasSizeChanged = this.onCanvasSizeChanged.bind(this);
         this._renderer.on(RenderConstants.Events.CanvasSizeChanged, this.onCanvasSizeChanged);
-        this._canvasSize = [this._renderer.gl.canvas.width, this._renderer.gl.canvas.height];
+
+        this.onUseHighQualityPenChanged = this.onUseHighQualityPenChanged.bind(this);
+        this._renderer.on(RenderConstants.Events.UseHighQualityPenChanged, this.onUseHighQualityPenChanged);
+
+        if (this._renderer.useHighQualityPen) {
+            this._canvasSize = [this._renderer.gl.canvas.width, this._renderer.gl.canvas.height];
+        } else {
+            this._canvasSize = [...renderer.getNativeSize()];
+        }
 
         this._setCanvasSize(renderer.getNativeSize());
     }
@@ -117,6 +125,7 @@ class PenSkin extends Skin {
     dispose () {
         this._renderer.removeListener(RenderConstants.Events.NativeSizeChanged, this.onNativeSizeChanged);
         this._renderer.removeListener(RenderConstants.Events.CanvasSizeChanged, this.onCanvasSizeChanged);
+        this._renderer.removeListener(RenderConstants.Events.UseHighQualityPenChanged, this.onUseHighQualityPenChanged);
         this._renderer.gl.deleteTexture(this._texture);
         this._texture = null;
         super.dispose();
@@ -318,11 +327,31 @@ class PenSkin extends Skin {
      * @param {object} event - The change event.
      */
     onCanvasSizeChanged (event) {
+        if (!this._renderer.useHighQualityPen) return;
+
         if (this._canvasSize[0] === event.newSize[0] && this._canvasSize[1] === event.newSize[1]) {
             return;
         }
         this._canvasSize = event.newSize;
         this._resetBufferSize();
+    }
+
+    /**
+     * React to a change in the high quality pen mode.
+     * @param {boolean} enabled - Whether high quality pen is enabled.
+     */
+    onUseHighQualityPenChanged (enabled) {
+        let newSize;
+        if (enabled) {
+            newSize = [this._renderer.gl.canvas.width, this._renderer.gl.canvas.height];
+        } else {
+            newSize = [...this._size];
+        }
+
+        if (this._canvasSize[0] !== newSize[0] || this._canvasSize[1] !== newSize[1]) {
+            this._canvasSize = newSize;
+            this._resetBufferSize();
+        }
     }
 
     /**
@@ -336,6 +365,10 @@ class PenSkin extends Skin {
         this._size = canvasSize;
         this._rotationCenter[0] = width / 2;
         this._rotationCenter[1] = height / 2;
+
+        if (!this._renderer.useHighQualityPen) {
+            this._canvasSize = [...canvasSize];
+        }
 
         this._resetBufferSize();
     }

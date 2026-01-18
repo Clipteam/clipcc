@@ -183,6 +183,9 @@ class RenderWebGL extends EventEmitter {
         /** @type {Array<string>} */
         this._groupOrdering = [];
 
+        /** @type {boolean} */
+        this._useHighQualityPen = false;
+
         // Map of group name to layer group
         /** @type {Record<string, LayerGroup>} */
         this._layerGroups = {};
@@ -264,6 +267,22 @@ class RenderWebGL extends EventEmitter {
      */
     setAccurateCoordinates (value) {
         this.accurateCoordinates = value;
+    }
+
+    /**
+     * Set whether to use high-quality pen.
+     * @param {boolean} value Whether to use high-quality pen.
+     */
+    setHighQualityPen (value) {
+        this._useHighQualityPen = value;
+        this.emit(RenderConstants.Events.UseHighQualityPenChanged, value);
+    }
+
+    /**
+     * @returns {boolean} Whether high-quality pen is enabled.
+     */
+    get useHighQualityPen () {
+        return this._useHighQualityPen;
     }
 
     /**
@@ -1819,8 +1838,12 @@ class RenderWebGL extends EventEmitter {
         twgl.bindFramebufferInfo(gl, skin._framebuffer);
 
         // Adjust the viewport to the scaled dimensions of the framebuffer.
-        const scaleX = gl.canvas.width / this._nativeSize[0];
-        const scaleY = gl.canvas.height / this._nativeSize[1];
+        let scaleX = 1;
+        let scaleY = 1;
+        if (this._useHighQualityPen) {
+            scaleX = gl.canvas.width / this._nativeSize[0];
+            scaleY = gl.canvas.height / this._nativeSize[1];
+        }
 
         // Limit size of viewport to the bounds around the stamp Drawable and create the projection matrix for the draw.
         gl.viewport(
@@ -1832,11 +1855,15 @@ class RenderWebGL extends EventEmitter {
         const projection = twgl.m4.ortho(bounds.left, bounds.right, bounds.top, bounds.bottom, -1, 1);
 
         // Draw the stamped sprite onto the PenSkin's framebuffer.
-        this._drawThese([stampID], ShaderManager.DRAW_MODE.default, projection, {
-            ignoreVisibility: true,
-            framebufferWidth: gl.canvas.width,
-            framebufferHeight: gl.canvas.height
-        });
+        const drawOpts = {
+            ignoreVisibility: true
+        };
+        if (this._useHighQualityPen) {
+            drawOpts.framebufferWidth = gl.canvas.width;
+            drawOpts.framebufferHeight = gl.canvas.height;
+        }
+
+        this._drawThese([stampID], ShaderManager.DRAW_MODE.default, projection, drawOpts);
         skin._silhouetteDirty = true;
     }
 

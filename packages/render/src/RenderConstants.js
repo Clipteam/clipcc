@@ -31,6 +31,11 @@ module.exports = {
          * CanvasSizeChanged event, which related to actual canvas size change.
          * @constant {string}
          */
-        CanvasSizeChanged: 'CanvasSizeChanged'
+        CanvasSizeChanged: 'CanvasSizeChanged',
+        /**
+         * UseHighQualityPenChanged event, which related to high quality pen use change.
+         * @constant {string}
+         */
+        UseHighQualityPenChanged: 'UseHighQualityPenChanged'
     }
 };
