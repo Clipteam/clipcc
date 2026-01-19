@@ -22,10 +22,49 @@
   box-shadow: 0 8px 8px 0 hsla(0, 0%, 0%, 0.15);
 }
 
-.blocklyWidgetDiv .blocklyMenuItem:hover {
-  background-color: #d6e9f8;
+.blocklyWidgetDiv .blocklyMenuItemHighlight {
+  background-color: var(--clipcc-block-menuHover);
 }
 
-.blocklyMenuItemDisabled:hover {
-  background-color: #fff;
+.blocklyWidgetDiv .blocklyMenuItemDisabled .blocklyMenuItemHighlight {
+  background: none;
+}
+
+.blocklyDragging>.blocklyPath {
+  fill-opacity: 1;
+  stroke-opacity: 1;
+}
+
+.blocklyBlockDragSurface :not(.blocklyDragging)>.blocklyDragging {
+  filter: drop-shadow(0 0px 6px hsla(0, 0%, 0%, 0.6));
+}
+
+.blocklyBlockDragSurface .blocklyComment {
+  filter: drop-shadow(0 0px 6px hsla(0, 0%, 0%, 0.6));
+}
+
+.blocklyDisabledPattern>.blocklyPath {
+  fill: revert-layer;
+  fill-opacity: .5;
+  stroke-opacity: .5;
+}
+
+.blocklyDropDownDiv {
+  border-radius: var(--clipcc-block-dropdownRadius);
+  outline: none;
+}
+
+.blocklyZoom>image,
+.blocklyZoom>svg>image {
+  opacity: 0.7;
+}
+
+.blocklyZoom>image:hover,
+.blocklyZoom>svg>image:hover {
+  opacity: 0.9;
+}
+
+.blocklyZoom>image:active,
+.blocklyZoom>svg>image:active {
+  opacity: 1;
 }

@@ -6,7 +6,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {Colours} from './colours';
+import {Colours} from './theme';
 import styles from './styles/report_value.css';
 
 /**

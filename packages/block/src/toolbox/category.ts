@@ -44,7 +44,7 @@ export class ToolboxCategory extends Blockly.ToolboxCategory {
    * @returns The configuration object holding all the CSS classes for a
    *     category.
    */
-  protected makeDefaultCssConfig_(): Blockly.ToolboxCategory.CssConfig {
+  protected override makeDefaultCssConfig_(): Blockly.ToolboxCategory.CssConfig {
     const cssConfig = super.makeDefaultCssConfig_();
     cssConfig.container = 'clipccToolboxCategoryContainer';
     cssConfig.row = 'clipccToolboxCategory';

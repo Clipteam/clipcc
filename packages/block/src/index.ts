@@ -7,7 +7,7 @@
 import * as Blockly from 'blockly/core';
 
 import * as Constants from './constants';
-import {createTheme} from './colours';
+import {injectCssVariables, Scratch} from './theme';
 import {registerScratchContextMenu} from './contextmenu_items';
 import {FieldAngle, registerFieldAngle} from './fields/angle';
 import {FieldButton, registerFieldButton} from './fields/button';
@@ -20,6 +20,7 @@ import {FieldVerticalSeparator, registerFieldVerticalSeparator} from './fields/v
 import {flyoutCategory as variableCategory} from './data_category';
 import {flyoutCategory as procedureCategory} from './procedures_category';
 import {isProcedureCallBlock, isProcedurePrototypeBlock} from './blocks/procedures';
+import {ZoomControls} from './zoom_controls';
 import styles from './styles/blockly.css';
 import commentStyles from './styles/comment.css';
 
@@ -85,7 +86,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerScratchContextMenu();
 
   // Register styles.
-
+  injectCssVariables();
   Blockly.Css.register(styles);
   Blockly.Css.register(commentStyles);
 
@@ -146,10 +147,12 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
 export function injectWorkspace(container: Element | string, options?: Blockly.BlocklyOptions) {
   const defaultOptions: Blockly.BlocklyOptions = {
     renderer: 'scratch',
-    theme: createTheme()
+    theme: Scratch
   };
   options = Object.assign(defaultOptions, options);
-  return Blockly.inject(container, options);
+  const workspace = Blockly.inject(container, options);
+
+  return workspace;
 }
 
 /**
@@ -204,6 +207,12 @@ Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;
 Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(200, 200);
 Blockly.ToolboxCategory.nestedPadding = 6;
 
+Blockly.WorkspaceSvg.prototype.addZoomControls = function () {
+  this.zoomControls_ = new ZoomControls(this) as unknown as Blockly.ZoomControls;
+  const svgZoomControls = this.zoomControls_.createDom();
+  this.svgGroup_.appendChild(svgZoomControls);
+};
+
 // Exports
 export * from 'blockly/core';
 
@@ -213,7 +222,8 @@ export * as scratchBlocksUtils from './scratch_blocks_utils';
 export * as ScratchMsgs from './scratch_msgs';
 
 export {reportValue} from './report_value';
-export {Colours} from './colours';
+export {Colours} from './theme';
+export * as Theme from './theme';
 
 export {
   FieldAngle,

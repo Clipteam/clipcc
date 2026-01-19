@@ -10,6 +10,7 @@ import {FlyoutMetrics} from './flyout_metrics';
 import type {FlyoutButton} from './flyout_button';
 import type {BlockFlyoutInflater} from './inflaters/block';
 import {FlyoutStatusIndicatorLabel} from './flyout_status_indicator_label';
+import styles from '../styles/flyout.css';
 
 /**
  * Class for customized flyout.
@@ -347,3 +348,5 @@ Blockly.registry.register(
   VerticalFlyout,
   true
 );
+
+Blockly.Css.register(styles);
