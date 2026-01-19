@@ -525,7 +525,6 @@ function deleteOptionCallbackFactory(
   return function() {
     const variable = (block.getField(fieldName) as Blockly.FieldVariable).getVariable()!;
     Blockly.Variables.deleteVariable(variable.getWorkspace(), variable, block);
-    (block.workspace as Blockly.WorkspaceSvg).refreshToolboxSelection();
   };
 };
 
