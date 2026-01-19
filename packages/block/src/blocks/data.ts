@@ -548,7 +548,7 @@ const CUSTOM_CONTEXT_MENU_GET_VARIABLE_MIXIN = {
     }
     const currentVarName = (this.getField(fieldName) as Blockly.FieldVariable).getText();
     if (!this.isInFlyout) {
-      const variablesList = this.workspace.getVariableMap().getVariablesOfType('');
+      const variablesList = this.workspace.getVariableMap().getVariablesOfType(Constants.SCALAR_VARIABLE_TYPE);
       variablesList.sort(function(a, b) {
         return compareStrings(a.getName(), b.getName());
       });

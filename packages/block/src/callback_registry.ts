@@ -56,6 +56,32 @@ const callbackRegistry = {
    */
   externalCheckoutWorkspaceCallback(procCode: string) {
     alert('External procedure editor must be override externalCheckoutWorkspaceCallback');
+  },
+
+  /**
+   * Wrapper to window.prompt() that app developers may override via setPrompt to
+   * provide alternatives to the modal browser window. Built-in browser prompts
+   * are often used for better text input experience on mobile device. We strongly
+   * recommend testing mobile when overriding this.
+   * @param message The message to display to the user.
+   * @param defaultValue The value to initialize the prompt with.
+   * @param callback The callback for handling user response.
+   * @param title An optional title for the prompt.
+   * @param varType An optional variable type for variable specific
+   *     prompt behavior.
+   */
+  prompt(
+    message: string,
+    defaultValue: string,
+    callback: (
+      variableName: string,
+      additionalVars: string[],
+      variableOptions?: { scope?: string; isCloud?: boolean }
+    ) => void,
+    title?: string,
+    varType?: string
+  ) {
+    callback(window.prompt(message, defaultValue) ?? '', []);
   }
 };
 
