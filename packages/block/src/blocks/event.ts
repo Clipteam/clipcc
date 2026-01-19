@@ -20,7 +20,7 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
-import {getWorkspaceOptionsFromBlock} from '../utils';
+import {getWorkspaceOptionsFromBlock} from '../scratch_blocks_utils';
 
 /**
  * Block for when a sprite is touching an object.

@@ -80,7 +80,7 @@ class Blocks extends React.Component {
             'setLocale'
         ]);
         this.ScratchBlocks.dialog.setPrompt(this.handlePromptStart);
-        this.ScratchBlocks.common.setStatusButtonCallback(this.handleConnectionModalStart);
+        this.ScratchBlocks.callbackRegistry.register("statusButtonCallback", this.handleConnectionModalStart);
         this.ScratchBlocks.recordSoundCallback = this.handleOpenSoundRecorder;
 
         this.state = {
@@ -90,9 +90,9 @@ class Blocks extends React.Component {
         this.toolboxUpdateQueue = [];
     }
     componentDidMount () {
-        this.ScratchBlocks.FieldColourSlider.activateEyedropper_ = this.props.onActivateColorPicker;
-        this.ScratchBlocks.Procedures.setExternalCheckoutWsCallback(this.checkoutWsByProccode);
-        this.ScratchBlocks.Procedures.setExternalProcedureDefCallback(this.props.onActivateCustomProcedures);
+        this.ScratchBlocks.FieldColourSlider.activateEyedropper = this.props.onActivateColorPicker;
+        this.ScratchBlocks.callbackRegistry.register("externalCheckoutWorkspaceCallback", this.checkoutWsByProccode);
+        this.ScratchBlocks.callbackRegistry.register("externalProcedureDefCallback", this.props.onActivateCustomProcedures);
         this.ScratchBlocks.ScratchMsgs.setLocale(this.props.locale);
 
         const workspaceConfig = defaultsDeep({},
@@ -126,10 +126,7 @@ class Blocks extends React.Component {
         // we actually never want the workspace to enable "refresh toolbox" - this basically re-renders the
         // entire toolbox every time we reset the workspace.  We call updateToolbox as a part of
         // componentDidUpdate so the toolbox will still correctly be updated
-        this.setToolboxRefreshEnabled = this.workspace.setToolboxRefreshEnabled.bind(this.workspace);
-        this.workspace.setToolboxRefreshEnabled = () => {
-            this.setToolboxRefreshEnabled(false);
-        };
+        this.workspace.getToolbox().setRefreshEnabled(false);
 
         // @todo change this when blockly supports UI events
         addFunctionListener(this.workspace, 'translate', this.onWorkspaceMetricsChange);
@@ -396,9 +393,9 @@ class Blocks extends React.Component {
 
         // Remove and reattach the workspace listener (but allow flyout events)
         this.workspace.removeChangeListener(this.props.vm.blockListener);
-        const dom = this.ScratchBlocks.Xml.textToDom(data.xml);
+        const dom = this.ScratchBlocks.utils.xml.textToDom(data.xml);
         try {
-            this.ScratchBlocks.Xml.clearWorkspaceAndLoadFromXml(dom, this.workspace);
+            this.ScratchBlocks.clearWorkspaceAndLoadFromXml(dom, this.workspace);
         } catch (error) {
             // The workspace is likely incomplete. What did update should be
             // functional.
@@ -529,7 +526,7 @@ class Blocks extends React.Component {
         this.props.onOpenConnectionModal(extensionId);
     }
     handleStatusButtonUpdate () {
-        this.ScratchBlocks.refreshStatusButtons(this.workspace);
+        this.workspace.getFlyout().refreshStatusButtons();
     }
     handleOpenSoundRecorder () {
         this.props.onOpenSoundRecorder();

@@ -176,6 +176,27 @@ export function loadWorkspace(
   Blockly.serialization.workspaces.load(state, workspace, {recordUndo});
 }
 
+/**
+ * Clears the workspace and loads the given serialized state.
+ * @param xml XML representation of a Blockly workspace.
+ * @param workspace The workspace to load the serialized data onto.
+ * @returns The block IDs of the blocks that were loaded.
+ */
+export function clearWorkspaceAndLoadFromXml(
+  xml: Element,
+  workspace: Blockly.WorkspaceSvg
+): string[] {
+  workspace.setResizesEnabled(false);
+  Blockly.Events.setGroup(true);
+  workspace.clear();
+
+  // @todo pending Clipteam/clipcc#125 to load scratch variables.
+
+  const blockIds = Blockly.Xml.domToWorkspace(xml, workspace);
+  workspace.setResizesEnabled(true);
+  return blockIds;
+}
+
 // Monkey-patches
 Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
 Blockly.FlyoutButton.TEXT_MARGIN_X = 40;
@@ -188,9 +209,11 @@ export * from 'blockly/core';
 
 export * as callbackRegistry from './callback_registry';
 export * as constants from './constants';
-export * as utils from './utils';
+export * as scratchBlocksUtils from './scratch_blocks_utils';
+export * as ScratchMsgs from './scratch_msgs';
 
 export {reportValue} from './report_value';
+export {Colours} from './colours';
 
 export {
   FieldAngle,

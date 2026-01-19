@@ -25,7 +25,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {getWorkspaceOptions} from '../utils';
+import {getWorkspaceOptions} from '../scratch_blocks_utils';
 import styles from '../styles/matrix.css';
 
 enum LEDState {

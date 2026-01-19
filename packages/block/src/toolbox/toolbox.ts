@@ -19,6 +19,11 @@ export class Toolbox extends Blockly.Toolbox {
 
   /** The list of items in the toolbox. */
   protected contentsList: Blockly.IToolboxItem[] = [];
+  /**
+   * Whether the toolbox should refresh by refreshSelection.
+   * GUI can set this to false to disable auto refresh.
+   */
+  protected refreshEnabled = true;
 
   /**
    * @param workspace The workspace in which to create new blocks.
@@ -211,11 +216,20 @@ export class Toolbox extends Blockly.Toolbox {
   }
 
   /**
+   * Set whether toolbox refresh is enabled.
+   * @param enabled Whether refresh is enabled.
+   */
+  setRefreshEnabled(enabled: boolean): void {
+    this.refreshEnabled = enabled;
+  }
+
+  /**
    * Updates the flyout's content without closing it. Should be used in
    * response to a change in one of the dynamic categories, such as variables or
    * procedures.
    */
   override refreshSelection(): void {
+    if (!this.refreshEnabled) return;
     this.getFlyout()!.show(this.getFlyoutContents());
   }
 
