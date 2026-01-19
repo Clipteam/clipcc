@@ -44,7 +44,7 @@ class CustomProcedures extends React.Component {
         // @todo This is a hack to make there be no toolbox.
         const oldDefaultToolbox = ScratchBlocks.Blocks.defaultToolbox;
         ScratchBlocks.Blocks.defaultToolbox = null;
-        this.workspace = ScratchBlocks.inject(this.blocks, workspaceConfig);
+        this.workspace = ScratchBlocks.injectWorkspace(this.blocks, workspaceConfig);
         ScratchBlocks.Blocks.defaultToolbox = oldDefaultToolbox;
 
         // Create the procedure declaration block for editing the mutation.
