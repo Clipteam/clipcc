@@ -24,7 +24,8 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   static readonly SCROLL_ANIMATION_FRACTION = 0.3;
 
   /** The width of the flyout, if not otherwise specified. */
-  static readonly DEFAULT_WIDTH = 350;
+  /** 375 * 0.675(default scale) ~= 250 (old width) */
+  static readonly DEFAULT_WIDTH = 375;
 
   /** Default vertical gap. */
   override readonly GAP_Y: number = 10;
