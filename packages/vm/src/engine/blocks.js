@@ -357,7 +357,7 @@ class Blocks {
         // Block create/update/destroy
         switch (e.type) {
         case 'create': {
-            const newBlocks = adapter(e);
+            const newBlocks = adapter(e, true);
             // A create event can create many blocks. Add them all.
             for (let i = 0; i < newBlocks.length; i++) {
                 this.createBlock(newBlocks[i]);
@@ -390,7 +390,7 @@ class Blocks {
 
             // Drag blocks onto another sprite
             if (e.isOutside) {
-                const newBlocks = adapter(e);
+                const newBlocks = adapter(e, true);
                 this.runtime.emitBlockEndDrag(newBlocks, e.blockId);
             }
             break;
