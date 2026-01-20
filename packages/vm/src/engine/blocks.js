@@ -17,6 +17,11 @@ const getMonitorIdForBlockWithArgs = require('../util/get-monitor-id');
  */
 
 /**
+ * @typedef {import('./runtime')} Runtime
+ * @typedef {import('clipcc-block')} ClipCCBlock
+ */
+
+/**
  * Create a block container.
  * @param {Runtime} runtime The runtime this block container operates within
  * @param {boolean} optNoGlow Optional flag to indicate that blocks in this container
@@ -24,6 +29,7 @@ const getMonitorIdForBlockWithArgs = require('../util/get-monitor-id');
  */
 class Blocks {
     constructor (runtime, optNoGlow) {
+        /** @type {Runtime} */
         this.runtime = runtime;
 
         /**
@@ -259,7 +265,7 @@ class Blocks {
                     return blockID;
                 }
             }
-            
+
             return null;
         }
 
@@ -275,7 +281,6 @@ class Blocks {
                         return id;
                     }
                     return null;
-                    
                 }
             }
         }
@@ -334,23 +339,20 @@ class Blocks {
      * Create event listener for blocks, variables, and comments. Handles validation and
      * serves as a generic adapter between the blocks, variables, and the
      * runtime interface.
-     * @param {object} e Blockly "block" or "variable" event
+     * @param {ClipCCBlock.Events.Abstract} e Blockly "block" or "variable" event
      */
     blocklyListen (e) {
         // Validate event
         if (typeof e !== 'object') return;
-        if (typeof e.blockId !== 'string' && typeof e.varId !== 'string' &&
-            typeof e.commentId !== 'string' && typeof e.procCode !== 'string') {
+        if (
+            typeof e.blockId !== 'string' &&
+            typeof e.varId !== 'string' &&
+            typeof e.commentId !== 'string'
+        ) {
             return;
         }
         const stage = this.runtime.getTargetForStage();
         const editingTarget = this.runtime.getEditingTarget();
-
-        // UI event: clicked scripts toggle in the runtime.
-        if (e.element === 'stackclick') {
-            this.runtime.toggleScript(e.blockId, {stackClick: true});
-            return;
-        }
 
         // Block create/update/destroy
         switch (e.type) {
@@ -460,11 +462,20 @@ class Blocks {
             this.emitProjectChanged();
             break;
         }
+        case 'block_comment_create':
         case 'comment_create':
             if (this.runtime.getEditingTarget()) {
                 const currTarget = this.runtime.getEditingTarget();
-                currTarget.createComment(e.commentId, e.blockId, e.text,
-                    e.xy.x, e.xy.y, e.width, e.height, e.minimized);
+                currTarget.createComment(
+                    e.commentId,
+                    e.blockId,
+                    '',
+                    e.json.x,
+                    e.json.y,
+                    e.json.width,
+                    e.json.height,
+                    false
+                );
 
                 if (currTarget.comments[e.commentId].x === null &&
                     currTarget.comments[e.commentId].y === null) {
@@ -474,12 +485,13 @@ class Blocks {
                     // comments, then the auto positioning should have taken place.
                     // Update the x and y position of these comments to match the
                     // one from the event.
-                    currTarget.comments[e.commentId].x = e.xy.x;
-                    currTarget.comments[e.commentId].y = e.xy.y;
+                    currTarget.comments[e.commentId].x = e.json.x;
+                    currTarget.comments[e.commentId].y = e.json.y;
                 }
             }
             this.emitProjectChanged();
             break;
+        case 'block_comment_change':
         case 'comment_change':
             if (this.runtime.getEditingTarget()) {
                 const currTarget = this.runtime.getEditingTarget();
@@ -488,23 +500,11 @@ class Blocks {
                     return;
                 }
                 const comment = currTarget.comments[e.commentId];
-                const change = e.newContents_;
-                if (Object.prototype.hasOwnProperty.call(change, 'minimized')) {
-                    comment.minimized = change.minimized;
-                }
-                if (
-                    Object.prototype.hasOwnProperty.call(change, 'width') &&
-                    Object.prototype.hasOwnProperty.call(change, 'height')
-                ) {
-                    comment.width = change.width;
-                    comment.height = change.height;
-                }
-                if (Object.prototype.hasOwnProperty.call(change, 'text')) {
-                    comment.text = change.text;
-                }
+                comment.text = e.newContents_;
                 this.emitProjectChanged();
             }
             break;
+        case 'block_comment_move':
         case 'comment_move':
             if (this.runtime.getEditingTarget()) {
                 const currTarget = this.runtime.getEditingTarget();
@@ -520,6 +520,50 @@ class Blocks {
                 this.emitProjectChanged();
             }
             break;
+        case 'block_comment_collapse':
+        case 'comment_collapse':
+            if (this.runtime.getEditingTarget()) {
+                const currTarget = this.runtime.getEditingTarget();
+                if (
+                    currTarget &&
+                        !Object.prototype.hasOwnProperty.call(
+                            currTarget.comments,
+                            e.commentId
+                        )
+                ) {
+                    log.warn(
+                        `Cannot collapse comment with id ${e.commentId} because it does not exist.`
+                    );
+                    return;
+                }
+                const comment = currTarget.comments[e.commentId];
+                comment.minimized = e.newCollapsed;
+                this.emitProjectChanged();
+            }
+            break;
+        case 'block_comment_resize':
+        case 'comment_resize':
+            if (this.runtime.getEditingTarget()) {
+                const currTarget = this.runtime.getEditingTarget();
+                if (
+                    currTarget &&
+                        !Object.prototype.hasOwnProperty.call(
+                            currTarget.comments,
+                            e.commentId
+                        )
+                ) {
+                    log.warn(
+                        `Cannot resize comment with id ${e.commentId} because it does not exist.`
+                    );
+                    return;
+                }
+                const comment = currTarget.comments[e.commentId];
+                comment.width = e.newSize.width;
+                comment.height = e.newSize.height;
+                this.emitProjectChanged();
+            }
+            break;
+        case 'block_comment_delete':
         case 'comment_delete':
             if (this.runtime.getEditingTarget()) {
                 const currTarget = this.runtime.getEditingTarget();
@@ -543,20 +587,28 @@ class Blocks {
                 this.emitProjectChanged();
             }
             break;
-        case 'func_update': {
-            const oldMutation = mutationAdapter(e.oldMutation);
-            const newMutation = mutationAdapter(e.newMutation);
-            const procCode = oldMutation.proccode;
-            if (oldMutation.global === 'true') {
+        case 'func_change': {
+            const {oldExtraState, newExtraState} = e;
+            const procCode = oldExtraState.proccode;
+            if (oldExtraState.global) {
                 for (const target of this.runtime.targets) {
-                    target.blocks.updateBlocksAfterFuncUpdate(procCode, newMutation);
+                    target.blocks.updateBlocksAfterFuncUpdate(procCode, newExtraState);
                 }
             } else {
-                editingTarget.blocks.updateBlocksAfterFuncUpdate(procCode, newMutation);
+                editingTarget.blocks.updateBlocksAfterFuncUpdate(procCode, newExtraState);
             }
             this.emitProjectChanged();
             break;
         }
+        case 'click':
+            // UI event: clicked scripts toggle in the runtime.
+            if (e.targetType === 'block') {
+                this.runtime.toggleScript(
+                    this.getTopLevelScript(e.blockId),
+                    {stackClick: true}
+                );
+            }
+            break;
         }
     }
 
@@ -771,19 +823,32 @@ class Blocks {
             const oldParent = this._blocks[e.oldParent];
             if (typeof e.oldInput !== 'undefined' &&
                 oldParent.inputs[e.oldInput].block === e.id) {
-                // This block was connected to the old parent's input.
-                oldParent.inputs[e.oldInput].block = null;
+                // This block was connected to an input. We either want to
+                // restore the shadow block that previously occupied
+                // this input, or null out the input's block.
+                const shadow = oldParent.inputs[e.oldInput].shadow;
+                if (shadow && e.id !== shadow) {
+                    oldParent.inputs[e.oldInput].block = shadow;
+                    this._blocks[shadow].parent = oldParent.id;
+                } else {
+                    oldParent.inputs[e.oldInput].block = null;
+                    if (e.id !== shadow) {
+                        this._blocks[e.id].parent = null;
+                    }
+                }
             } else if (oldParent.next === e.id) {
                 // This block was connected to the old parent's next connection.
                 oldParent.next = null;
+                this._blocks[e.id].parent = null;
             }
-            this._blocks[e.id].parent = null;
             didChange = true;
         }
 
         // Is this block a top-level block?
         if (typeof e.newParent === 'undefined') {
-            this._addScript(e.id);
+            if (!this._blocks[e.id].shadow) {
+                this._addScript(e.id);
+            }
         } else {
             // Remove script, if one exists.
             this._deleteScript(e.id);
@@ -817,7 +882,6 @@ class Blocks {
 
         if (didChange) this.emitProjectChanged();
     }
-
 
     /**
      * Block management: run all blocks.
@@ -965,29 +1029,30 @@ class Blocks {
     /**
      * Keep blocks up to date after a procedure gets updated.
      * @param {string} procCode The procCode of procedure to update
-     * @param {object} newMutation The new mutation of procedure
+     * @param {object} newExtraState The new extra state of procedure
      */
-    updateBlocksAfterFuncUpdate (procCode, newMutation) {
+    updateBlocksAfterFuncUpdate (procCode, newExtraState) {
         const blocks = this._blocks;
         for (const blockId in blocks) {
             const block = blocks[blockId];
+            // make all stringify to keep compatibility, though we've migrated to extra state
             if (block.opcode === 'procedures_prototype') {
                 if (block.mutation.proccode === procCode) {
-                    block.mutation.proccode = newMutation.proccode;
-                    block.mutation.argumentids = newMutation.argumentids;
-                    block.mutation.argumentnames = newMutation.argumentnames;
-                    block.mutation.argumentdefaults = newMutation.argumentdefaults;
-                    block.mutation.warp = newMutation.warp;
-                    block.mutation.global = newMutation.global;
-                    block.mutation.return = newMutation.return;
+                    block.mutation.proccode = newExtraState.proccode;
+                    block.mutation.argumentids = JSON.stringify(newExtraState.argumentids);
+                    block.mutation.argumentnames = JSON.stringify(newExtraState.argumentnames);
+                    block.mutation.argumentdefaults = JSON.stringify(newExtraState.argumentdefaults);
+                    block.mutation.warp = JSON.stringify(newExtraState.warp);
+                    block.mutation.global = JSON.stringify(newExtraState.global);
+                    block.mutation.return = JSON.stringify(newExtraState.return);
                 }
             } else if (block.opcode === 'procedures_call') {
                 if (block.mutation.proccode === procCode) {
-                    block.mutation.proccode = newMutation.proccode;
-                    block.mutation.argumentids = newMutation.argumentids;
-                    block.mutation.warp = newMutation.warp;
-                    block.mutation.global = newMutation.global;
-                    block.mutation.return = newMutation.return;
+                    block.mutation.proccode = newExtraState.proccode;
+                    block.mutation.argumentids = JSON.stringify(newExtraState.argumentids);
+                    block.mutation.warp = JSON.stringify(newExtraState.warp);
+                    block.mutation.global = JSON.stringify(newExtraState.global);
+                    block.mutation.return = JSON.stringify(newExtraState.return);
                 }
             }
         }
