@@ -741,7 +741,7 @@ class Blocks {
             }
             break;
         case 'mutation':
-            block.mutation = mutationAdapter(args.value);
+            block.mutation = mutationAdapter.mock(JSON.parse(args.value));
             break;
         case 'checkbox': {
             // A checkbox usually has a one to one correspondence with the monitor

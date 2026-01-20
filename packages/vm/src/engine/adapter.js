@@ -260,9 +260,7 @@ const stateToBlock = function (blockState, blocks, isTopBlock, parent, isShadow)
     // Process mutation
     if (blockState.extraState) {
         block.mutation = blockState.extraState;
-        if (!block.mutation.tagName) {
-            block.mutation.tagName = 'mutation';
-        }
+        mutationAdapter.mock(block.mutation);
     }
 
     // Process comments
@@ -316,7 +314,5 @@ const adapter = function (e, isState) {
     if (typeof e.xml !== 'object') return;
     return domToBlocks(html.parseDOM(e.xml.outerHTML, {decodeEntities: true}));
 };
-
-adapter.stateToBlocks = stateToBlocks;
 
 module.exports = adapter;
