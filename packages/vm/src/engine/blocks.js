@@ -358,9 +358,31 @@ class Blocks {
         switch (e.type) {
         case 'create': {
             const newBlocks = adapter(e, true);
+            /** @type {Record<string, BlockCommentState} */
+            const comments = {};
             // A create event can create many blocks. Add them all.
-            for (let i = 0; i < newBlocks.length; i++) {
-                this.createBlock(newBlocks[i]);
+            for (const block of newBlocks) {
+                if (Object.prototype.hasOwnProperty.call(block, 'commentData')) {
+                    comments[block.id] = block.commentData;
+                    delete block.commentData;
+                }
+                this.createBlock(block);
+            }
+            if (Object.keys(comments).length) {
+                const currTarget = this.runtime.getEditingTarget();
+                for (const blockId in comments) {
+                    const commentData = comments[blockId];
+                    currTarget.createComment(
+                        commentData.id,
+                        blockId,
+                        commentData.text,
+                        commentData.x,
+                        commentData.y,
+                        commentData.width,
+                        commentData.height,
+                        commentData.collapsed
+                    );
+                }
             }
             break;
         }
@@ -470,10 +492,10 @@ class Blocks {
                     e.commentId,
                     e.blockId,
                     '',
-                    e.json.x,
-                    e.json.y,
-                    e.json.width,
-                    e.json.height,
+                    e.x,
+                    e.y,
+                    e.width,
+                    e.height,
                     false
                 );
 

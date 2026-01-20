@@ -28,9 +28,8 @@ export class BlockCommentBase extends Blockly.Events.Abstract {
     if (!icon) return;
 
     const sourceBlock = icon.getSourceBlock();
-    const anchoredComment = icon.getBubble();
 
-    this.commentId = anchoredComment?.commentId; // Comment ID only exists if block is rendered.
+    this.commentId = icon.commentId;
     this.blockId = sourceBlock.id;
     this.workspaceId = sourceBlock.workspace.id;
   }

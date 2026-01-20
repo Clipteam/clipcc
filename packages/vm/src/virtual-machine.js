@@ -23,6 +23,7 @@ const newBlockIds = require('./util/new-block-ids');
 const {loadCostume} = require('./import/load-costume.js');
 const {loadSound} = require('./import/load-sound.js');
 const {serializeSounds, serializeCostumes} = require('./serialization/serialize-assets');
+const uid = require('./util/uid');
 require('canvas-toBlob');
 
 const RESERVED_NAMES = ['_mouse_', '_stage_', '_edge_', '_myself_', '_random_'];
@@ -277,7 +278,7 @@ class VirtualMachine extends EventEmitter {
         }
         this.runtime.stageWidth = width;
         this.runtime.stageHeight = height;
-        
+
         if (this.runtime.renderer) {
             this.runtime.renderer.setStageSize(
                 -width / 2,
@@ -1370,7 +1371,25 @@ class VirtualMachine extends EventEmitter {
 
         return Promise.all(extensionPromises).then(() => {
             copiedBlocks.forEach(block => {
+                let commentData = null;
+                if (block.commentData) {
+                    commentData = block.commentData;
+                    delete block.commentData;
+                    commentData.id = (block.comment = uid());
+                }
                 target.blocks.createBlock(block);
+                if (commentData) {
+                    target.createComment(
+                        commentData.id,
+                        block.id,
+                        commentData.text,
+                        commentData.x,
+                        commentData.y,
+                        commentData.width,
+                        commentData.height,
+                        commentData.collapsed
+                    );
+                }
             });
             target.blocks.updateTargetSpecificBlocks(target.isStage);
         });

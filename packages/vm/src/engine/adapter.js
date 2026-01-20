@@ -264,6 +264,14 @@ const stateToBlock = function (blockState, blocks, isTopBlock, parent, isShadow)
             block.mutation.tagName = 'mutation';
         }
     }
+
+    // Process comments
+    if (blockState.icons?.comment) {
+        const commentState = blockState.icons.comment;
+        block.comment = commentState.id;
+        // This won't belongs to VM representation but need for BlockCreate. should omit further.
+        block.commentData = commentState;
+    }
 };
 
 /**
