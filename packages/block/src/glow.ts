@@ -98,9 +98,20 @@ const glowingBlocks: Set<string> = new Set();
 export function glowStack(
   id: string,
   isGlowingStack: boolean,
-  workspace = Blockly.getMainWorkspace()
+  workspace?: Blockly.WorkspaceSvg
 ): void {
-  const block = workspace.getBlockById(id) as Blockly.BlockSvg;
+  let block: Blockly.BlockSvg | null;
+  if (!workspace) {
+    workspace = Blockly.getMainWorkspace() as Blockly.WorkspaceSvg;
+    block = workspace.getBlockById(id);
+    if (!block) {
+      workspace = workspace.getFlyout()?.getWorkspace();
+      block = workspace?.getBlockById(id) ?? null;
+    }
+  } else {
+    block = workspace.getBlockById(id) as Blockly.BlockSvg;
+  }
+
   if (!block?.rendered) {
     // Scratch throw an error here; but for a visual effect, better to just log it.
     console.error(`Tried to glow stack on block ${id} that does not exist or not rendered.`);
