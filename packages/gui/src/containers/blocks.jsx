@@ -79,6 +79,7 @@ class Blocks extends React.Component {
             'setBlocks',
             'setLocale'
         ]);
+        this.ScratchBlocks.callbackRegistry.register("prompt", this.handlePromptStart);
         this.ScratchBlocks.dialog.setPrompt(this.handlePromptStart);
         this.ScratchBlocks.callbackRegistry.register("statusButtonCallback", this.handleConnectionModalStart);
         this.ScratchBlocks.recordSoundCallback = this.handleOpenSoundRecorder;
@@ -260,12 +261,12 @@ class Blocks extends React.Component {
                         flyoutWs.scrollbar.setY(newViewTop * flyoutWs.scale);
                     }
                 }
+
+                const queue = this.toolboxUpdateQueue;
+                this.toolboxUpdateQueue = [];
+                queue.forEach(fn => fn());
             });
         }
-
-        const queue = this.toolboxUpdateQueue;
-        this.toolboxUpdateQueue = [];
-        queue.forEach(fn => fn());
     }
 
     withToolboxUpdates (fn) {
@@ -517,9 +518,13 @@ class Blocks extends React.Component {
             this.handleConnectionModalStart(categoryId);
         }
 
-        if (!this.workspace.toolbox_.isCollapsed()) {
+        if (this.workspace.getFlyout().isVisible()) {
             this.withToolboxUpdates(() => {
-                this.workspace.toolbox_.setSelectedCategoryById(categoryId);
+                const toolbox = this.workspace.getToolbox();
+                const category = toolbox.getToolboxCategoryById(categoryId);
+                if (category) {
+                    toolbox.setSelectedItem(category);
+                }
             });
         }
     }

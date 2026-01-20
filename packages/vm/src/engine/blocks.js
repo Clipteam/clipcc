@@ -382,10 +382,10 @@ class Blocks {
                 newCoordinate: e.newCoordinate
             });
             break;
-        case 'dragOutside':
+        case 'block_drag_outside':
             this.runtime.emitBlockDragUpdate(e.isOutside);
             break;
-        case 'endDrag':
+        case 'block_drag_end':
             this.runtime.emitBlockDragUpdate(false /* areBlocksOverGui */);
 
             // Drag blocks onto another sprite

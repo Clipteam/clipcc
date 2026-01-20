@@ -36,10 +36,11 @@
     stroke: none;
 }
 
-.blocks :global(.blocklyToolboxDiv) {
+.blocks :global(.blocklyToolbox) {
     border-right: 1px solid var(--clipcc-ui-black-transparent);
     border-bottom: 1px solid var(--clipcc-ui-black-transparent);
     box-sizing: content-box;
+    width: var(--clipcc-category-width);
     height: calc(100% - 3.25rem) !important;
 
     /*
@@ -52,12 +53,12 @@
     scrollbar-width: none;
 }
 
-[dir="rtl"] .blocks :global(.blocklyToolboxDiv) {
+[dir="rtl"] .blocks :global(.blocklyToolbox) {
     border-right: none;
     border-left: 1px solid var(--clipcc-ui-black-transparent);
 }
 
-.blocks :global(.blocklyToolboxDiv::-webkit-scrollbar) {
+.blocks :global(.blocklyToolbox::-webkit-scrollbar) {
     display: none;
 }
 
@@ -86,7 +87,7 @@
     Probably will need different solutions for language support later, so
     make the change here instead of in scratch-blocks.
 */
-.blocks :global(.scratchCategoryMenuItemLabel) {
+.blocks :global(.clipccCategoryItemLabel) {
     font-size: 0.65rem;
 }
 
