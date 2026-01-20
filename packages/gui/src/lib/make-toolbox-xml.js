@@ -13,7 +13,12 @@ const motion = function (isInitialSetup, isStage, targetId, colors) {
     );
     // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
     return `
-    <category name="%{BKY_CATEGORY_MOTION}" id="motion" colour="${colors.primary}" secondaryColour="${colors.tertiary}">
+    <category
+        name="%{BKY_CATEGORY_MOTION}"
+        toolboxitemid="motion"
+        colour="${colors.primary}"
+        secondaryColour="${colors.tertiary}"
+    >
         ${isStage ? `
         <label text="${stageSelected}"></label>
         ` : `
@@ -158,7 +163,7 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
     const hmm = ScratchBlocks.ScratchMsgs.translate('LOOKS_HMM', 'Hmm...');
     // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
     return `
-    <category name="%{BKY_CATEGORY_LOOKS}" id="looks" colour="${colors.primary}" secondaryColour="${colors.tertiary}">
+    <category name="%{BKY_CATEGORY_LOOKS}" toolboxitemid="looks" colour="${colors.primary}" secondaryColour="${colors.tertiary}">
         ${isStage ? '' : `
         <block type="looks_sayforsecs">
             <value name="MESSAGE">
@@ -294,7 +299,7 @@ const looks = function (isInitialSetup, isStage, targetId, costumeName, backdrop
 const sound = function (isInitialSetup, isStage, targetId, soundName, colors) {
     // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
     return `
-    <category name="%{BKY_CATEGORY_SOUND}" id="sound" colour="${colors.primary}" secondaryColour="${colors.tertiary}">
+    <category name="%{BKY_CATEGORY_SOUND}" toolboxitemid="sound" colour="${colors.primary}" secondaryColour="${colors.tertiary}">
         <block id="${targetId}_sound_playuntildone" type="sound_playuntildone">
             <value name="SOUND_MENU">
                 <shadow type="sound_sounds_menu">
@@ -350,7 +355,7 @@ const sound = function (isInitialSetup, isStage, targetId, soundName, colors) {
 const events = function (isInitialSetup, isStage, targetId, colors) {
     // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
     return `
-    <category name="%{BKY_CATEGORY_EVENTS}" id="events" colour="${colors.primary}" secondaryColour="${colors.tertiary}">
+    <category name="%{BKY_CATEGORY_EVENTS}" toolboxitemid="events" colour="${colors.primary}" secondaryColour="${colors.tertiary}">
         <block type="event_whenflagclicked"/>
         <block type="event_whenkeypressed">
         </block>
@@ -392,7 +397,7 @@ const control = function (isInitialSetup, isStage, targetId, colors) {
     return `
     <category
         name="%{BKY_CATEGORY_CONTROL}"
-        id="control"
+        toolboxitemid="control"
         colour="${colors.primary}"
         secondaryColour="${colors.tertiary}">
         <block type="control_wait">
@@ -443,7 +448,7 @@ const sensing = function (isInitialSetup, isStage, targetId, colors, hideNonVani
     const name = ScratchBlocks.ScratchMsgs.translate('SENSING_ASK_TEXT', 'What\'s your name?');
     // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
     return `
-    <category name="%{BKY_CATEGORY_SENSING}" id="sensing" colour="${colors.primary}" secondaryColour="${colors.tertiary}">
+    <category name="%{BKY_CATEGORY_SENSING}" toolboxitemid="sensing" colour="${colors.primary}" secondaryColour="${colors.tertiary}">
         ${hideNonVanillaBlocks ? '' : `
             <block type="sensing_distancebetweenposition">
                 <value name="X1">
@@ -600,7 +605,7 @@ const operators = function (isInitialSetup, isStage, targetId, colors, hideNonVa
     const letter = ScratchBlocks.ScratchMsgs.translate('OPERATORS_LETTEROF_APPLE', 'a');
     // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
     return `
-    <category name="%{BKY_CATEGORY_OPERATORS}" id="operators" colour="${colors.primary}" secondaryColour="#${colors.tertiary}">
+    <category name="%{BKY_CATEGORY_OPERATORS}" toolboxitemid="operators" colour="${colors.primary}" secondaryColour="#${colors.tertiary}">
         <block type="operator_add">
             <value name="NUM1">
                 <shadow type="math_number">
@@ -956,7 +961,7 @@ const variables = function (isInitialSetup, isStage, targetId, colors) {
     return `
     <category
         name="%{BKY_CATEGORY_VARIABLES}"
-        id="variables"
+        toolboxitemid="variables"
         colour="${colors.primary}"
         secondaryColour="${colors.tertiary}"
         custom="VARIABLE">
@@ -969,7 +974,7 @@ const myBlocks = function (isInitialSetup, isStage, targetId, colors) {
     return `
     <category
         name="%{BKY_CATEGORY_MYBLOCKS}"
-        id="myBlocks"
+        toolboxitemid="myBlocks"
         colour="${colors.primary}"
         secondaryColour="${colors.tertiary}"
         custom="PROCEDURE">
@@ -1002,7 +1007,6 @@ const makeToolboxXML = function (isInitialSetup, isStage = true, targetId, categ
     costumeName = '', backdropName = '', soundName = '', colors = defaultColors,
     hideNonVanillaBlocks = false) {
     isStage = isInitialSetup || isStage;
-    const gap = [categorySeparator];
 
     costumeName = xmlEscape(costumeName);
     backdropName = xmlEscape(backdropName);
@@ -1030,19 +1034,19 @@ const makeToolboxXML = function (isInitialSetup, isStage = true, targetId, categ
 
     const everything = [
         xmlOpen,
-        motionXML, gap,
-        looksXML, gap,
-        soundXML, gap,
-        eventsXML, gap,
-        controlXML, gap,
-        sensingXML, gap,
-        operatorsXML, gap,
-        variablesXML, gap,
+        motionXML,
+        looksXML,
+        soundXML,
+        eventsXML,
+        controlXML,
+        sensingXML,
+        operatorsXML,
+        variablesXML,
         myBlocksXML
     ];
 
     for (const extensionCategory of categoriesXML) {
-        everything.push(gap, extensionCategory.xml);
+        everything.push(extensionCategory.xml);
     }
 
     everything.push(xmlClose);

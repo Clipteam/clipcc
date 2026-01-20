@@ -226,25 +226,41 @@ class Blocks extends React.Component {
     updateToolbox () {
         this.toolboxUpdateTimeout = false;
 
-        const isCollapsed = this.workspace.toolbox_.isCollapsed();
-        const categoryId = !isCollapsed && this.workspace.toolbox_.getSelectedCategoryId();
-        const offset = !isCollapsed && this.workspace.toolbox_.getCategoryScrollOffset();
+        const toolbox = this.workspace.getToolbox();
+        const flyout = this.workspace.getFlyout();
+        const flyoutWs = flyout.getWorkspace();
+
+        const selectedItem = toolbox.getSelectedItem();
+        const selectedCategoryId = selectedItem?.getId();
+        let offsetWithinCategory = 0;
+
+        if (selectedCategoryId && flyoutWs) {
+            const categoryPos = flyout.getCategoryScrollPosition(selectedCategoryId);
+            if (typeof categoryPos === 'number') {
+                offsetWithinCategory = flyoutWs.getMetrics().viewTop - categoryPos;
+            }
+        }
+
         this.workspace.updateToolbox(this.props.toolboxXML);
         this._renderedToolboxXML = this.props.toolboxXML;
 
         // In order to catch any changes that mutate the toolbox during "normal runtime"
         // (variable changes/etc), re-enable toolbox refresh.
         // Using the setter function will rerender the entire toolbox which we just rendered.
-        this.workspace.toolboxRefreshEnabled_ = true;
+        if (toolbox.setRefreshEnabled) {
+            toolbox.setRefreshEnabled(true);
+        }
 
-        if (!isCollapsed) {
-            const currentCategoryPos = this.workspace.toolbox_.getCategoryPositionById(categoryId);
-            const currentCategoryLen = this.workspace.toolbox_.getCategoryLengthById(categoryId);
-            if (offset < currentCategoryLen) {
-                this.workspace.toolbox_.setFlyoutScrollPos(currentCategoryPos + offset);
-            } else {
-                this.workspace.toolbox_.setFlyoutScrollPos(currentCategoryPos);
-            }
+        if (selectedCategoryId && flyoutWs) {
+            toolbox.forceRerender().then(() => {
+                const newCategoryPos = flyout.getCategoryScrollPosition(selectedCategoryId);
+                if (typeof newCategoryPos === 'number') {
+                    const newViewTop = newCategoryPos + offsetWithinCategory;
+                    if (flyoutWs.scrollbar) {
+                        flyoutWs.scrollbar.setY(newViewTop * flyoutWs.scale);
+                    }
+                }
+            });
         }
 
         const queue = this.toolboxUpdateQueue;
@@ -339,19 +355,20 @@ class Blocks extends React.Component {
         }
     }
     onScriptGlowOn (data) {
-        this.workspace.glowStack(data.id, true);
+        this.ScratchBlocks.glowStack(data.id, true);
     }
     onScriptGlowOff (data) {
-        this.workspace.glowStack(data.id, false);
+        this.ScratchBlocks.glowStack(data.id, false);
     }
+    // block glow never used and removed in spork, just leave the functions here for potential future use
     onBlockGlowOn (data) {
-        this.workspace.glowBlock(data.id, true);
+        // this.workspace.glowBlock(data.id, true);
     }
     onBlockGlowOff (data) {
-        this.workspace.glowBlock(data.id, false);
+        // this.workspace.glowBlock(data.id, false);
     }
     onVisualReport (data) {
-        this.workspace.reportValue(data.id, data.value);
+        this.ScratchBlocks.reportValue(data.id, data.value);
     }
     getToolboxXML () {
         // Use try/catch because this requires digging pretty deep into the VM
@@ -551,8 +568,8 @@ class Blocks extends React.Component {
         this.props.onRequestCloseCustomProcedures(data);
         if (data) {
             const ws = this.workspace;
-            ws.refreshToolboxSelection_();
-            ws.toolbox_.scrollToCategoryById('myBlocks');
+            ws.refreshToolboxSelection();
+            ws.getFlyout().scrollToCategoryById('myBlocks');
         }
     }
     handleDrop (dragInfo) {
@@ -674,6 +691,10 @@ Blocks.propTypes = {
 };
 
 Blocks.defaultOptions = {
+    move: {
+        scrollbars: true,
+        wheel: true
+    },
     zoom: {
         controls: true,
         wheel: true,
@@ -684,9 +705,13 @@ Blocks.defaultOptions = {
         length: 2,
         colour: '#ddd'
     },
+    toolboxPosition: 'left',
+    disable: false,
+    horizontalLayout: false,
     comments: true,
     collapse: false,
-    sounds: false
+    sounds: false,
+    trashcan: false
 };
 
 Blocks.defaultProps = {

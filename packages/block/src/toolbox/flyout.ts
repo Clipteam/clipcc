@@ -222,6 +222,15 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   }
 
   /**
+   * Get the scroll position of a category by ID.
+   * @param id The category ID.
+   * @returns The scroll position in workspace units, or undefined if not found.
+   */
+  getCategoryScrollPosition(id: string): number | undefined {
+    return this.scrollPositions.get(id);
+  }
+
+  /**
    * Get an item in the toolbox based on the scroll position of the flyout.
    * @param position Current scroll position of the workspace.
    * @returns The category unique ID of scroll position, null if not found.

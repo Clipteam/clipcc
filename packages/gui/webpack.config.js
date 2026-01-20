@@ -82,6 +82,7 @@ const base = {
         },
         {
             test: /\.css$/,
+            exclude: [path.resolve(__dirname, '../block/src')],
             use: [{
                 loader: 'style-loader'
             }, {
@@ -104,6 +105,10 @@ const base = {
                     }
                 }
             }]
+        }, {
+            test: /\.css$/,
+            include: [path.resolve(__dirname, '../block/src')],
+            type: 'asset/source'
         }, {
             test: /\.hex$/,
             type: 'asset/inline',

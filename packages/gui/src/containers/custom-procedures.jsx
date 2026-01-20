@@ -41,11 +41,7 @@ class CustomProcedures extends React.Component {
             {rtl: this.props.isRtl}
         );
 
-        // @todo This is a hack to make there be no toolbox.
-        const oldDefaultToolbox = ScratchBlocks.Blocks.defaultToolbox;
-        ScratchBlocks.Blocks.defaultToolbox = null;
         this.workspace = ScratchBlocks.injectWorkspace(this.blocks, workspaceConfig);
-        ScratchBlocks.Blocks.defaultToolbox = oldDefaultToolbox;
 
         // Create the procedure declaration block for editing the mutation.
         this.mutationRoot = this.workspace.newBlock('procedures_declaration');
@@ -104,7 +100,7 @@ class CustomProcedures extends React.Component {
             }
             this.mutationRoot.moveBy(dx, dy);
         });
-        this.mutationRoot.domToMutation(this.props.mutator);
+        this.mutationRoot.loadExtraState(this.props.mutator);
         this.mutationRoot.initSvg();
         this.mutationRoot.render();
         this.setState({
@@ -185,7 +181,15 @@ class CustomProcedures extends React.Component {
 
 CustomProcedures.propTypes = {
     isRtl: PropTypes.bool,
-    mutator: PropTypes.instanceOf(Element),
+    mutator: PropTypes.shape({
+        proccode: PropTypes.string,
+        argumentids: PropTypes.arrayOf(PropTypes.string),
+        argumentnames: PropTypes.arrayOf(PropTypes.string),
+        argumentdefaults: PropTypes.arrayOf(PropTypes.string),
+        warp: PropTypes.bool,
+        return: PropTypes.bool,
+        global: PropTypes.bool
+    }),
     new: PropTypes.bool,
     onRequestClose: PropTypes.func.isRequired,
     options: PropTypes.shape({
