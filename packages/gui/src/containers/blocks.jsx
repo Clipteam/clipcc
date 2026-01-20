@@ -231,6 +231,7 @@ class Blocks extends React.Component {
         const flyout = this.workspace.getFlyout();
         const flyoutWs = flyout.getWorkspace();
 
+        flyout.setRecyclingEnabled(false);
         const selectedItem = toolbox.getSelectedItem();
         const selectedCategoryId = selectedItem?.getId();
         let offsetWithinCategory = 0;
@@ -248,12 +249,11 @@ class Blocks extends React.Component {
         // In order to catch any changes that mutate the toolbox during "normal runtime"
         // (variable changes/etc), re-enable toolbox refresh.
         // Using the setter function will rerender the entire toolbox which we just rendered.
-        if (toolbox.setRefreshEnabled) {
-            toolbox.setRefreshEnabled(true);
-        }
+        toolbox.setRefreshEnabled(true);
 
         if (selectedCategoryId && flyoutWs) {
             toolbox.forceRerender().then(() => {
+                flyout.setRecyclingEnabled(true);
                 const newCategoryPos = flyout.getCategoryScrollPosition(selectedCategoryId);
                 if (typeof newCategoryPos === 'number') {
                     const newViewTop = newCategoryPos + offsetWithinCategory;
@@ -266,6 +266,8 @@ class Blocks extends React.Component {
                 this.toolboxUpdateQueue = [];
                 queue.forEach(fn => fn());
             });
+        } else {
+            flyout.setRecyclingEnabled(true);
         }
     }
 
