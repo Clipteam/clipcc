@@ -62,4 +62,19 @@ mutationAdpater.mock = function (mutation) {
     }
 }
 
+/**
+ * Unmock a mutation object so that it can be used by the runtime.
+ * @param {object} mutation Mutation data.
+ */
+mutationAdpater.unmock = function (mutation) {
+    for (const key in mutation) {
+        if (typeof mutation[key] !== 'string') continue;
+        try {
+            mutation[key] = JSON.parse(mutation[key]);
+        } catch (e) {
+            // Ignore
+        }
+    }
+};
+
 module.exports = mutationAdpater;

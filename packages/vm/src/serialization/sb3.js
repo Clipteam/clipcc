@@ -21,6 +21,7 @@ const {migrationMap, mergeDeep} = require('./migration');
 const {loadCostume} = require('../import/load-costume.js');
 const {loadSound} = require('../import/load-sound.js');
 const {deserializeCostume, deserializeSound} = require('./deserialize-assets.js');
+const mutationAdpater = require('../engine/mutation-adapter');
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -211,7 +212,8 @@ const serializeBlock = function (block) {
         obj.topLevel = false;
     }
     if (block.mutation) {
-        obj.mutation = block.mutation;
+        // Simulate old mutation structure for compatibility
+        obj.mutation = mutationAdpater.mock(block.mutation);
     }
     if (block.comment) {
         obj.comment = block.comment;
@@ -352,16 +354,16 @@ const serializeCostume = function (costume) {
 
     obj.bitmapResolution = costumeToSerialize.bitmapResolution;
     obj.dataFormat = costumeToSerialize.dataFormat.toLowerCase();
-    
+
     obj.assetId = costumeToSerialize.assetId;
-    
+
     // serialize this property with the name 'md5ext' because that's
     // what it's actually referring to. TODO runtime objects need to be
     // updated to actually refer to this as 'md5ext' instead of 'md5'
     // but that change should be made carefully since it is very
     // pervasive
     obj.md5ext = costumeToSerialize.md5;
-    
+
     obj.rotationCenterX = costumeToSerialize.rotationCenterX;
     obj.rotationCenterY = costumeToSerialize.rotationCenterY;
 
@@ -376,7 +378,7 @@ const serializeCostume = function (costume) {
 const serializeSound = function (sound) {
     const obj = Object.create(null);
     obj.name = sound.name;
-    
+
     const soundToSerialize = sound.broken || sound;
 
     obj.assetId = soundToSerialize.assetId;
@@ -843,6 +845,9 @@ const deserializeBlocks = function (blocks) {
         block.id = blockId; // add id back to block since it wasn't serialized
         block.inputs = deserializeInputs(block.inputs, blockId, blocks);
         block.fields = deserializeFields(block.fields);
+        if (block.mutation) {
+            mutationAdpater.unmock(block.mutation);
+        }
     }
     return blocks;
 };

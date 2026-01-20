@@ -228,25 +228,33 @@ class Blocks {
     /**
      * Get all procedure definitions.
      * @param {?boolean} globalOnly True if only get global procedures.
-     * @return {?Array.<String>} Mutations of procedures. Set "external" if globalOnly is true.
+     * @return {Array<object>} Procedure states.
      */
     getAllProcedureDefinitions (globalOnly) {
         const procedures = [];
-
         for (const id in this._blocks) {
             if (!Object.prototype.hasOwnProperty.call(this._blocks, id)) continue;
             const block = this._blocks[id];
             if (block.opcode === 'procedures_definition') {
                 const internal = this._getCustomBlockInternal(block);
-                if (internal && (!globalOnly || internal.mutation.global === 'true')) {
+                if (internal && (!globalOnly || internal.mutation.global)) {
                     this._cache.procedureDefinitions[internal.mutation.proccode] = id; // The outer define block id
-                    procedures.push(this.mutationToXML(Object.assign({
-                        external: globalOnly // set external if globalOnly is true
-                    }, internal.mutation)));
+
+                    const mutation = internal.mutation;
+
+                    procedures.push({
+                        proccode: mutation.proccode,
+                        argumentids: mutation.argumentids,
+                        argumentnames: mutation.argumentnames,
+                        argumentdefaults: mutation.argumentdefaults,
+                        warp: mutation.warp,
+                        return: mutation.return,
+                        global: mutation.global,
+                        generateshadows: mutation.generateshadows
+                    });
                 }
             }
         }
-
         return procedures;
     }
 
@@ -261,7 +269,7 @@ class Blocks {
         if (typeof blockID !== 'undefined') {
             if (blockID) {
                 const internal = blockID && this._getCustomBlockInternal(this._blocks[blockID]);
-                if (!globalOnly || internal.mutation.global === 'true') {
+                if (!globalOnly || internal.mutation.global) {
                     return blockID;
                 }
             }
@@ -277,7 +285,7 @@ class Blocks {
                 if (internal && internal.mutation.proccode === name) {
                     this._cache.procedureDefinitions[name] = id; // The outer define block id
                     // suppose procedure proccode is unique in one target
-                    if (!globalOnly || internal.mutation.global === 'true') {
+                    if (!globalOnly || internal.mutation.global) {
                         return id;
                     }
                     return null;
@@ -314,9 +322,9 @@ class Blocks {
             const block = this._blocks[id];
             if (block.opcode === 'procedures_prototype' &&
                 block.mutation.proccode === name) {
-                const names = JSON.parse(block.mutation.argumentnames);
-                const ids = JSON.parse(block.mutation.argumentids);
-                const defaults = JSON.parse(block.mutation.argumentdefaults);
+                const names = block.mutation.argumentnames;
+                const ids = block.mutation.argumentids;
+                const defaults = block.mutation.argumentdefaults;
 
                 this._cache.procedureParamNames[name] = [names, ids, defaults];
                 return this._cache.procedureParamNames[name];
@@ -375,12 +383,12 @@ class Blocks {
                     currTarget.createComment(
                         commentData.id,
                         blockId,
-                        commentData.text,
-                        commentData.x,
-                        commentData.y,
-                        commentData.width,
-                        commentData.height,
-                        commentData.collapsed
+                        commentData.text ?? '',
+                        commentData.x ?? 0,
+                        commentData.y ?? 0,
+                        commentData.width ?? 200,
+                        commentData.height ?? 200,
+                        commentData.collapsed ?? false
                     );
                 }
             }
@@ -492,10 +500,10 @@ class Blocks {
                     e.commentId,
                     e.blockId,
                     '',
-                    e.x,
-                    e.y,
-                    e.width,
-                    e.height,
+                    e.x ?? 0,
+                    e.y ?? 0,
+                    e.width ?? 200,
+                    e.height ?? 200,
                     false
                 );
 
@@ -513,7 +521,6 @@ class Blocks {
             }
             this.emitProjectChanged();
             break;
-        case 'block_comment_change':
         case 'comment_change':
             if (this.runtime.getEditingTarget()) {
                 const currTarget = this.runtime.getEditingTarget();
@@ -741,7 +748,7 @@ class Blocks {
             }
             break;
         case 'mutation':
-            block.mutation = mutationAdapter.mock(JSON.parse(args.value));
+            block.mutation = JSON.parse(args.value);
             break;
         case 'checkbox': {
             // A checkbox usually has a one to one correspondence with the monitor
@@ -1057,24 +1064,23 @@ class Blocks {
         const blocks = this._blocks;
         for (const blockId in blocks) {
             const block = blocks[blockId];
-            // make all stringify to keep compatibility, though we've migrated to extra state
             if (block.opcode === 'procedures_prototype') {
                 if (block.mutation.proccode === procCode) {
                     block.mutation.proccode = newExtraState.proccode;
-                    block.mutation.argumentids = JSON.stringify(newExtraState.argumentids);
-                    block.mutation.argumentnames = JSON.stringify(newExtraState.argumentnames);
-                    block.mutation.argumentdefaults = JSON.stringify(newExtraState.argumentdefaults);
-                    block.mutation.warp = JSON.stringify(newExtraState.warp);
-                    block.mutation.global = JSON.stringify(newExtraState.global);
-                    block.mutation.return = JSON.stringify(newExtraState.return);
+                    block.mutation.argumentids = newExtraState.argumentids;
+                    block.mutation.argumentnames = newExtraState.argumentnames;
+                    block.mutation.argumentdefaults = newExtraState.argumentdefaults;
+                    block.mutation.warp = newExtraState.warp;
+                    block.mutation.global = newExtraState.global;
+                    block.mutation.return = newExtraState.return;
                 }
             } else if (block.opcode === 'procedures_call') {
                 if (block.mutation.proccode === procCode) {
                     block.mutation.proccode = newExtraState.proccode;
-                    block.mutation.argumentids = JSON.stringify(newExtraState.argumentids);
-                    block.mutation.warp = JSON.stringify(newExtraState.warp);
-                    block.mutation.global = JSON.stringify(newExtraState.global);
-                    block.mutation.return = JSON.stringify(newExtraState.return);
+                    block.mutation.argumentids = newExtraState.argumentids;
+                    block.mutation.warp = newExtraState.warp;
+                    block.mutation.global = newExtraState.global;
+                    block.mutation.return = newExtraState.return;
                 }
             }
         }
@@ -1314,6 +1320,124 @@ class Blocks {
         }
         xmlString += `</${tagName}>`;
         return xmlString;
+    }
+
+    /**
+     * Encode all of `this._blocks` as a JSON array usable
+     * by a Blockly/scratch-blocks workspace.
+     * @param {Record<string, Comment>} comments Map of comments referenced by id
+     * @return {Array<object>} JSON array representing this object's blocks.
+     */
+    toState (comments) {
+        return this._scripts
+            .map(script => this.blockToState(script, comments))
+            .filter(script => script); // Filter out nulls
+    }
+
+    /**
+     * Recursively encode an individual block and its children
+     * into a Blockly/scratch-blocks JSON object.
+     * @param {!string} blockId ID of block to encode.
+     * @param {Record<string, Comment>} comments Map of comments referenced by id
+     * @return {object} JSON object representing this block and any children.
+     */
+    blockToState (blockId, comments) {
+        const block = this._blocks[blockId];
+        // block should exist, but currently some blocks' next property point
+        // to a blockId for non-existent blocks. Until we track down that behavior,
+        // this early exit allows the project to load.
+        if (!block) return;
+
+        const state = {
+            id: block.id,
+            type: block.opcode
+        };
+
+        if (block.topLevel) {
+            state.x = block.x;
+            state.y = block.y;
+        }
+
+        const commentId = block.comment;
+        if (commentId) {
+            if (comments) {
+                if (Object.prototype.hasOwnProperty.call(comments, commentId)) {
+                    const comment = comments[commentId];
+                    state.icons = {
+                        comment: {
+                            id: comment.id,
+                            text: comment.text,
+                            height: comment.height,
+                            width: comment.width,
+                            x: comment.x,
+                            y: comment.y,
+                            collapsed: comment.minimized
+                        }
+                    };
+                } else {
+                    log.warn(`Could not find comment with id: ${commentId} in provided comment descriptions.`);
+                }
+            } else {
+                log.warn(`Cannot serialize comment with id: ${commentId}; no comment descriptions provided.`);
+            }
+        }
+
+        // Add any mutation.
+        if (block.mutation) {
+            state.extraState = block.mutation;
+        }
+
+        // Processing inputs
+        for (const input in block.inputs) {
+            if (!Object.prototype.hasOwnProperty.call(block.inputs, input)) continue;
+            const blockInput = block.inputs[input];
+            if (blockInput.block || blockInput.shadow) {
+                if (!state.inputs) state.inputs = {};
+                const inputState = {};
+                if (blockInput.block) {
+                    if (blockInput.block === blockInput.shadow) {
+                        inputState.shadow = this.blockToState(blockInput.block, comments);
+                    } else {
+                        inputState.block = this.blockToState(blockInput.block, comments);
+                        if (blockInput.shadow) {
+                            inputState.shadow = this.blockToState(blockInput.shadow, comments);
+                        }
+                    }
+                } else {
+                    inputState.shadow = this.blockToState(blockInput.shadow, comments);
+                }
+                state.inputs[blockInput.name] = inputState;
+            }
+        }
+
+        // Processing fields
+        for (const field in block.fields) {
+            if (!Object.prototype.hasOwnProperty.call(block.fields, field)) continue;
+            const blockField = block.fields[field];
+            if (!state.fields) state.fields = {};
+
+            const fieldId = blockField.id;
+            if (fieldId) {
+                state.fields[blockField.name] = {
+                    id: fieldId,
+                    value: blockField.value
+                };
+                if (blockField.variableType) {
+                    state.fields[blockField.name].variableType = blockField.variableType;
+                }
+            } else {
+                state.fields[blockField.name] = blockField.value;
+            }
+        }
+
+        // Add blocks connected to the next connection.
+        if (block.next) {
+            state.next = {
+                block: this.blockToState(block.next, comments)
+            };
+        }
+
+        return state;
     }
 
     /**

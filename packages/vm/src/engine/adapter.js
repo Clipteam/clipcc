@@ -260,7 +260,6 @@ const stateToBlock = function (blockState, blocks, isTopBlock, parent, isShadow)
     // Process mutation
     if (blockState.extraState) {
         block.mutation = blockState.extraState;
-        mutationAdapter.mock(block.mutation);
     }
 
     // Process comments

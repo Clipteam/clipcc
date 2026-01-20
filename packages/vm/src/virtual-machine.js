@@ -1515,26 +1515,34 @@ class VirtualMachine extends EventEmitter {
 
         const globalVariables = Object.keys(globalVarMap).map(k => globalVarMap[k]);
         const localVariables = Object.keys(localVarMap).map(k => localVarMap[k]);
+
+        const procedures = this.runtime.targets.reduce((acc, target) => {
+            const defs = target.blocks.getAllProcedureDefinitions(target !== this.editingTarget);
+            return acc.concat(defs);
+        }, []);
+
         const workspaceComments = Object.keys(this.editingTarget.comments)
             .map(k => this.editingTarget.comments[k])
-            .filter(c => c.blockId === null);
+            .filter(c => c.blockId === null)
+            .map(c => c.toState());
 
-        const procedures = this.runtime.targets.map(target =>
-            target.blocks.getAllProcedureDefinitions(target !== this.editingTarget));
+        const variables = []
+            .concat(globalVariables.map(v => v.toState(false)))
+            .concat(localVariables.map(v => v.toState(true)));
 
-        const xmlString = `<xml xmlns="http://www.w3.org/1999/xhtml">
-                            <variables>
-                                ${globalVariables.map(v => v.toXML()).join()}
-                                ${localVariables.map(v => v.toXML(true)).join()}
-                            </variables>
-                            <procedures>
-                                ${procedures.join('')}
-                            </procedures>
-                            ${workspaceComments.map(c => c.toXML()).join()}
-                            ${this.editingTarget.blocks.toXML(this.editingTarget.comments)}
-                        </xml>`;
+        const blocks = {
+            languageVersion: 0,
+            blocks: this.editingTarget.blocks.toState(this.editingTarget.comments)
+        };
 
-        this.emit('workspaceUpdate', {xml: xmlString});
+        this.emit('workspaceUpdate', {
+            json: {
+                blocks,
+                variables,
+                procedures,
+                workspaceComments
+            }
+        });
     }
 
     /**

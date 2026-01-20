@@ -411,9 +411,8 @@ class Blocks extends React.Component {
 
         // Remove and reattach the workspace listener (but allow flyout events)
         this.workspace.removeChangeListener(this.props.vm.blockListener);
-        const dom = this.ScratchBlocks.utils.xml.textToDom(data.xml);
         try {
-            this.ScratchBlocks.clearWorkspaceAndLoadFromXml(dom, this.workspace);
+            this.ScratchBlocks.loadWorkspace(data.json, this.workspace);
         } catch (error) {
             // The workspace is likely incomplete. What did update should be
             // functional.

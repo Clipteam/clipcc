@@ -275,7 +275,17 @@ export class BlockCommentIcon
     if (this.shouldAutoAdjust) {
       this.syncBubbleLocationState();
     }
-    if (!this.shouldAutoAdjust) this.shouldAutoAdjust = true;
+    if (!this.shouldAutoAdjust) {
+      this.shouldAutoAdjust = true;
+      const location = this.commentBubble.getRelativeToSurfaceXY();
+      Blockly.Events.fire(
+        new BlockCommentMove(
+          this,
+          location,
+          location
+        )
+      );
+    }
   }
 
   /**

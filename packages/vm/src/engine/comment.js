@@ -34,6 +34,19 @@ class Comment {
             this.blockId !== null}" minimized="${this.minimized}">${xmlEscape(this.text)}</comment>`;
     }
 
+    toState () {
+        return {
+            id: this.id,
+            text: this.text,
+            x: this.x,
+            y: this.y,
+            width: this.width,
+            height: this.height,
+            minimized: this.minimized
+        };
+    }
+
+
     // TODO choose min and defaults for width and height
     static get MIN_WIDTH () {
         return 20;
