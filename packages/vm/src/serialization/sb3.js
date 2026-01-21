@@ -852,7 +852,6 @@ const deserializeBlocks = function (blocks) {
     return blocks;
 };
 
-
 /**
  * Parse the assets of a single "Scratch object" and load them. This
  * preprocesses objects to support loading the data for those assets over a

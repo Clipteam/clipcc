@@ -1278,9 +1278,16 @@ class Blocks {
         if (block.mutation) {
             xmlString += this.mutationToXML(block.mutation);
         }
+        const danglingInputs = this._getDanglingInputs(block);
         // Add any inputs on this block.
         for (const input in block.inputs) {
             if (!Object.prototype.hasOwnProperty.call(block.inputs, input)) continue;
+            /*
+            In Scratch, blocks may have "dangling" inputs that mismatched with Blockly definiton,
+            which leads workspace load error in *modern* Blockly. It usually happens in procedure
+            call/prototype blocks when their arguments are modified.
+            */
+            if (danglingInputs.has(input)) continue;
             const blockInput = block.inputs[input];
             // Only encode a value tag if the value input is occupied.
             if (blockInput.block || blockInput.shadow) {
@@ -1387,9 +1394,16 @@ class Blocks {
             state.extraState = block.mutation;
         }
 
+        const danglingInputs = this._getDanglingInputs(block);
         // Processing inputs
         for (const input in block.inputs) {
             if (!Object.prototype.hasOwnProperty.call(block.inputs, input)) continue;
+            /*
+            In Scratch, blocks may have "dangling" inputs that mismatched with Blockly definiton,
+            which leads workspace load error in *modern* Blockly. It usually happens in procedure
+            call/prototype blocks when their arguments are modified.
+            */
+            if (danglingInputs.has(input)) continue;
             const blockInput = block.inputs[input];
             if (blockInput.block || blockInput.shadow) {
                 if (!state.inputs) state.inputs = {};
@@ -1519,6 +1533,28 @@ class Blocks {
         if (i > -1) this._scripts.splice(i, 1);
         // Update `topLevel` property on the top block.
         if (this._blocks[topBlockId]) this._blocks[topBlockId].topLevel = false;
+    }
+
+    /**
+     * Get dangling inputs in a block.
+     * @param {object} block The block to check
+     * @return {boolean} True if the input is dangling
+     */
+    _getDanglingInputs (block) {
+        const danglingInputs = new Set();
+        // It's most possible to have dangling inputs when mutation exists, other sequences need to read the Blockly
+        // definition to validate inputs. just skip now.
+        const blacklistedBlocks = ['procedures_call', 'procedures_prototype'];
+        if (blacklistedBlocks.includes(block.opcode) && block.mutation && block.mutation.argumentids) {
+            const argumentIds = block.mutation.argumentids;
+            if (!Array.isArray(argumentIds)) return danglingInputs;
+            for (const inputName in block.inputs) {
+                if (!argumentIds.includes(inputName)) {
+                    danglingInputs.add(inputName);
+                }
+            }
+        }
+        return danglingInputs;
     }
 }
 
