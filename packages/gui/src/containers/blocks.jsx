@@ -255,7 +255,7 @@ class Blocks extends React.Component {
         if (selectedCategoryId && flyoutWs) {
             const categoryPos = flyout.getCategoryScrollPosition(selectedCategoryId);
             if (typeof categoryPos === 'number') {
-                offsetWithinCategory = flyoutWs.getMetrics().viewTop - categoryPos;
+                offsetWithinCategory = -flyoutWs.scrollY / flyoutWs.scale - categoryPos;
             }
         }
 
