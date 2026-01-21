@@ -29,6 +29,7 @@
 import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
 import type {ICheckboxInFlyout} from '../interfaces/i_checkbox_in_flyout';
+import {IScratchExtensionBlock} from '../interfaces/i_scratch_extension';
 
 /**
  * Helper function that generates an extension based on a category name.
@@ -116,8 +117,7 @@ const OUTPUT_BOOLEAN = function(this: Blockly.Block) {
 };
 
 const SCRATCH_EXTENSION = function(this: Blockly.Block) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (this as any).isScratchExtension = true;
+  (this as Blockly.Block & IScratchExtensionBlock).isScratchExtension = true;
 };
 
 /**
