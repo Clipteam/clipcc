@@ -77,6 +77,8 @@ const blockColors = {
     flyoutHover: '#2C323A',
     flyoutBorder: '#4B5157',
     textField: '#4C4C4C',
+    menu: '#20252C',
+    menuText: '#E5E5E5',
     menuHover: 'rgba(255, 255, 255, 0.3)',
     grid: '#373F48'
 };

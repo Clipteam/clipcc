@@ -59,6 +59,8 @@ export const Colours = {
   numPadText: 'white', // Do not use hex here, it cannot be inlined with data-uri SVG
   valueReportBackground: '#FFFFFF',
   valueReportBorder: '#AAAAAA',
+  menu: '#FFFFFF',
+  menuText: '#000',
   menuHover: 'rgba(76, 151, 255, 0.2)',
   dropdownRadius: '.2em'
 } as const;

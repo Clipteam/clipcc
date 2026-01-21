@@ -39,6 +39,7 @@ import './events/var_create';
 import './events/var_delete';
 
 import './block_comment_icon';
+import './scratch_msgs';
 
 import './renderer/renderer';
 import './connection_checker';
