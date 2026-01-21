@@ -73,38 +73,20 @@ import './serialization/procedures';
 
 /**
  * Inject a Blockly editor into the specified container element (usually a div).
- * The necessary stuffs and dynamic categories for main workspace will be registered.
- * If there is a need to inject multiple workspaces, use `injectWorkspace` after the
- * first workspace injected.
  * @param container Containing element, or its ID, or a CSS selector.
  * @param options Optional dictionary of options.
  * @returns Newly created main workspace.
  */
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
-  // Register the fields.
-  registerFieldAngle();
-  registerFieldButton();
-  registerFieldColourSlider();
-  registerFieldMatrix();
-  registerFieldNote();
-  registerFieldVariable();
-  registerFieldTextInputRemovable();
-  registerFieldVariableGetter();
-  registerFieldVerticalSeparator();
-  registerScratchContextMenu();
+  const defaultOptions: Blockly.BlocklyOptions = {
+    renderer: 'scratch',
+    theme: Scratch
+  };
+  options = Object.assign(defaultOptions, options);
+  const workspace = Blockly.inject(container, options);
 
   // Register styles.
-  injectCssVariables();
-  Blockly.Css.register(styles);
-  Blockly.Css.register(commentStyles);
-
-  // Add workspace comment options.
-  Blockly.ContextMenuItems.registerCommentOptions();
-
-  // Unregister unused items.
-  Blockly.ContextMenuRegistry.registry.unregister('blockInline');
-
-  const workspace = injectWorkspace(container, options);
+  injectCssVariables(workspace);
 
   // Build glow filter for glowStack.
   buildGlowFilter(workspace);
@@ -146,22 +128,6 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   });
 
   workspace.refreshToolboxSelection();
-  return workspace;
-}
-
-/**
- * Inject a Blockly editor into the specified container element (usually a div).
- * @param container Containing element, or its ID, or a CSS selector.
- * @param options Optional dictionary of options.
- * @returns Newly created main workspace.
- */
-export function injectWorkspace(container: Element | string, options?: Blockly.BlocklyOptions) {
-  const defaultOptions: Blockly.BlocklyOptions = {
-    renderer: 'scratch',
-    theme: Scratch
-  };
-  options = Object.assign(defaultOptions, options);
-  const workspace = Blockly.inject(container, options);
 
   return workspace;
 }
@@ -211,6 +177,27 @@ export function clearWorkspaceAndLoadFromXml(
   return blockIds;
 }
 
+// Register the fields.
+registerFieldAngle();
+registerFieldButton();
+registerFieldColourSlider();
+registerFieldMatrix();
+registerFieldNote();
+registerFieldVariable();
+registerFieldTextInputRemovable();
+registerFieldVariableGetter();
+registerFieldVerticalSeparator();
+registerScratchContextMenu();
+
+Blockly.Css.register(styles);
+Blockly.Css.register(commentStyles);
+
+// Add workspace comment options.
+Blockly.ContextMenuItems.registerCommentOptions();
+
+// Unregister unused items.
+Blockly.ContextMenuRegistry.registry.unregister('blockInline');
+
 // Monkey-patches
 Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
 Blockly.FlyoutButton.TEXT_MARGIN_X = 40;
@@ -218,7 +205,7 @@ Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;
 Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(200, 200);
 Blockly.ToolboxCategory.nestedPadding = 6;
 
-Blockly.WorkspaceSvg.prototype.addZoomControls = function () {
+Blockly.WorkspaceSvg.prototype.addZoomControls = function() {
   this.zoomControls_ = new ZoomControls(this) as unknown as Blockly.ZoomControls;
   const svgZoomControls = this.zoomControls_.createDom();
   this.svgGroup_.appendChild(svgZoomControls);

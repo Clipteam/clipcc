@@ -18,7 +18,8 @@ import {BLOCKS_DEFAULT_SCALE, STAGE_DISPLAY_SIZES} from '../lib/layout-constants
 import DropAreaHOC from '../lib/drop-area-hoc.jsx';
 import DragConstants from '../lib/drag-constants';
 import defineDynamicBlock from '../lib/define-dynamic-block';
-import {DEFAULT_THEME, getColorsForTheme, themeMap} from '../lib/themes';
+import {DEFAULT_THEME, DARK_THEME, HIGH_CONTRAST_THEME, getColorsForTheme, themeMap} from '../lib/themes';
+import {defineBlockThemes} from '../lib/themes/blockThemeHelpers';
 import {injectExtensionBlockTheme, injectExtensionCategoryTheme} from '../lib/themes/blockHelpers';
 
 import {connect} from 'react-redux';
@@ -89,6 +90,12 @@ class Blocks extends React.Component {
         };
         this.onTargetsUpdate = debounce(this.onTargetsUpdate, 100);
         this.toolboxUpdateQueue = [];
+        defineBlockThemes(this.ScratchBlocks);
+        this.themeMapName = {
+            [DEFAULT_THEME]: 'scratch',
+            [DARK_THEME]: 'dark',
+            [HIGH_CONTRAST_THEME]: 'high-contrast'
+        };
     }
     componentDidMount () {
         this.ScratchBlocks.FieldColourSlider.activateEyedropper = this.props.onActivateColorPicker;
@@ -99,7 +106,12 @@ class Blocks extends React.Component {
         const workspaceConfig = defaultsDeep({},
             Blocks.defaultOptions,
             this.props.options,
-            {rtl: this.props.isRtl, toolbox: this.props.toolboxXML, colours: getColorsForTheme(this.props.theme)}
+            {
+                rtl: this.props.isRtl,
+                toolbox: this.props.toolboxXML,
+                colours: getColorsForTheme(this.props.theme),
+                theme: this.themeMapName[this.props.theme] || 'scratch'
+            }
         );
         this.workspace = this.ScratchBlocks.inject(this.blocks, workspaceConfig);
 
@@ -148,6 +160,7 @@ class Blocks extends React.Component {
             this.props.extensionLibraryVisible !== nextProps.extensionLibraryVisible ||
             this.props.customProceduresVisible !== nextProps.customProceduresVisible ||
             this.props.locale !== nextProps.locale ||
+            this.props.theme !== nextProps.theme ||
             this.props.anyModalVisible !== nextProps.anyModalVisible ||
             this.props.hideNonVanillaBlocks !== nextProps.hideNonVanillaBlocks ||
             this.props.stageSize !== nextProps.stageSize
@@ -188,6 +201,9 @@ class Blocks extends React.Component {
                 // vm.getLocale() will be out of sync if locale was changed while not visible
                 this.setLocale();
             } else {
+                if (this.props.theme !== prevProps.theme) {
+                    this.ScratchBlocks.Theme.setTheme(this.themeMapName[this.props.theme] || 'scratch', this.workspace);
+                }
                 this.props.vm.refreshWorkspace();
                 this.requestToolboxUpdate();
             }
@@ -393,7 +409,6 @@ class Blocks extends React.Component {
                 targetCostumes[targetCostumes.length - 1].name,
                 stageCostumes[stageCostumes.length - 1].name,
                 targetSounds.length > 0 ? targetSounds[targetSounds.length - 1].name : '',
-                getColorsForTheme(this.props.theme),
                 this.props.hideNonVanillaBlocks
             );
         } catch {

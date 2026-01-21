@@ -20,7 +20,10 @@
 
 import * as Blockly from 'blockly/core';
 
-export const Colours: Record<string, Record<string, string> | string | number> = {
+/**
+ * Default colours for clipcc-block theme.
+ */
+export const Colours = {
   text: '#FFFFFF',
   workspace: '#F9F9F9',
   toolboxHover: '#4C97FF',
@@ -45,6 +48,8 @@ export const Colours: Record<string, Record<string, string> | string | number> =
   colourPickerStroke: '#FFFFFF',
   // CSS colours: support RGBA
   flyoutBorder: 'hsla(0, 0%, 0%, 0.15)',
+  flyoutText: '#575E75',
+  flyoutHover: 'white',
   toolboxBorder: 'hsla(0, 0%, 0%, 0.15)',
   fieldShadow: 'rgba(0,0,0,0.1)',
   dropDownShadow: 'rgba(0, 0, 0, .3)',
@@ -56,26 +61,32 @@ export const Colours: Record<string, Record<string, string> | string | number> =
   valueReportBorder: '#AAAAAA',
   menuHover: 'rgba(76, 151, 255, 0.2)',
   dropdownRadius: '.2em'
-};
+} as const;
+
+const colorMap: Record<string, Partial<typeof Colours>> = {};
 
 /**
- * Inject CSS variables for clipcc-block colors.
+ * Inject CSS variables for clipcc-block colors to injection div.
+ * @param workspace The workspace to inject CSS variables for.
  */
-export function injectCssVariables(): void {
-  let root = document.querySelector('#clipcc-block-theme');
+export function injectCssVariables(workspace: Blockly.WorkspaceSvg): void {
+  const wsRoot = workspace.getInjectionDiv();
+  let root = wsRoot.querySelector('#clipcc-block-theme');
   if (!root) {
     root = document.createElement('style');
     root.id = 'clipcc-block-theme';
-    document.head.appendChild(root);
+    wsRoot.appendChild(root);
   }
 
   const cssVars: string[] = [];
+  const themeName = workspace.getTheme().name;
+  const mergedColours = themeName ? Object.assign({}, Colours, colorMap[themeName]) : Colours;
   cssVars.push(':root {');
-  for (const prop in Colours) {
-    if (!Object.prototype.hasOwnProperty.call(Colours, prop)) {
+  for (const prop in mergedColours) {
+    if (!Object.prototype.hasOwnProperty.call(mergedColours, prop)) {
       continue;
     }
-    cssVars.push(`  --clipcc-block-${prop}: ${Colours[prop]};`);
+    cssVars.push(`  --clipcc-block-${prop}: ${mergedColours[prop as keyof typeof Colours]};`);
   }
   cssVars.push('}');
 
@@ -90,6 +101,7 @@ export interface ThemeDefinition {
     [key: string]: Blockly.Theme.CategoryStyle;
   };
   componentStyles?: Blockly.Theme.ComponentStyle;
+  colours?: Partial<typeof Colours>;
   fontStyle?: Blockly.Theme.FontStyle;
   startHats?: boolean;
   base?: string | Blockly.Theme;
@@ -198,6 +210,7 @@ const scratchTheme = {
     toolboxBackgroundColour: Colours.toolbox as string,
     toolboxForegroundColour: Colours.toolboxText as string,
     flyoutBackgroundColour: Colours.flyout as string,
+    flyoutForegroundColour: Colours.flyoutText as string,
     workspaceBackgroundColour: Colours.workspace as string
   },
   fontStyle: {
@@ -225,6 +238,7 @@ export function createTheme(name: string, themeDef: ThemeDefinition): Blockly.Th
     themeDef.startHats = true;
   }
 
+  colorMap[name] = themeDef.colours || {};
   const theme = Blockly.Theme.defineTheme(name, themeDef as Required<ThemeDefinition>);
   Blockly.registry.register(Blockly.registry.Type.THEME, name, theme, true);
   return theme;
@@ -252,7 +266,7 @@ export function setTheme(name: string, workspace?: Blockly.WorkspaceSvg) {
   const theme = getTheme(name) ?? getTheme('scratch')!;
   workspace.setTheme(theme);
   // Refresh CSS variables.
-  injectCssVariables();
+  injectCssVariables(workspace);
 }
 
 export type BlockStyle = Blockly.Theme.BlockStyle;
