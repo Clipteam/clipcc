@@ -81,6 +81,7 @@ class VirtualMachine extends EventEmitter {
          * @type {?Target}
          */
         this.editingTarget = null;
+        this.loadingWorkspace = false;
 
         /**
          * The currently dragging target, for redirecting IO data.
@@ -1267,6 +1268,17 @@ class VirtualMachine extends EventEmitter {
      * @param {!Blockly.Event} e Any Blockly event.
      */
     blockListener (e) {
+        if (e.type === 'finished_loading') {
+            this.loadingWorkspace = false;
+            return;
+        }
+
+        // Blockly's state should consistent with the VM's state. If the VM
+        // is loading a workspace, ignore Blockly events.
+        if (this.loadingWorkspace) {
+            return;
+        }
+
         if (this.editingTarget) {
             this.editingTarget.blocks.blocklyListen(e);
         }
@@ -1479,6 +1491,7 @@ class VirtualMachine extends EventEmitter {
      * of the current editing target's blocks.
      */
     emitWorkspaceUpdate () {
+        this.loadingWorkspace = true;
         // Create a list of broadcast message Ids according to the stage variables
         const stageVariables = this.runtime.getTargetForStage().variables;
         let messageIds = [];
