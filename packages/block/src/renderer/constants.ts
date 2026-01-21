@@ -93,7 +93,7 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
       `}`,
       ``,
       `${selector} [id ^= "blocklyGridPattern"] line {`,
-      `stroke: var(--clipcc-block-grid);`,
+      `stroke: var(--clipcc-block-grid, ${Colours.grid});`,
       `}`
     ];
     return css.concat(flyoutButtonStyle);

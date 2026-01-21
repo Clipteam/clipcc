@@ -62,7 +62,8 @@ export const Colours = {
   menu: '#FFFFFF',
   menuText: '#000',
   menuHover: 'rgba(76, 151, 255, 0.2)',
-  dropdownRadius: '.2em'
+  dropdownRadius: '.2em',
+  grid: '#ddd'
 } as const;
 
 const colorMap: Record<string, Partial<typeof Colours>> = {};
