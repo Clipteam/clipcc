@@ -21,7 +21,7 @@ const {migrationMap, mergeDeep} = require('./migration');
 const {loadCostume} = require('../import/load-costume.js');
 const {loadSound} = require('../import/load-sound.js');
 const {deserializeCostume, deserializeSound} = require('./deserialize-assets.js');
-const mutationAdpater = require('../engine/mutation-adapter');
+const mutationAdapter = require('../engine/mutation-adapter');
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -846,7 +846,7 @@ const deserializeBlocks = function (blocks) {
         block.inputs = deserializeInputs(block.inputs, blockId, blocks);
         block.fields = deserializeFields(block.fields);
         if (block.mutation) {
-            mutationAdpater.unmock(block.mutation);
+            mutationAdapter.unmock(block.mutation);
         }
     }
     return blocks;
