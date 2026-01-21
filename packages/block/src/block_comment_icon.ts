@@ -413,6 +413,7 @@ export class BlockCommentIcon
 
     Blockly.Events.setGroup(true);
     if (this.commentBubble) {
+      this.commentId = state.id;
       this.commentBubble.setText(state.text);
       this.commentBubble.setSize(new Blockly.utils.Size(state.width, state.height));
       this.commentBubble.setCollapsed(state.collapsed);

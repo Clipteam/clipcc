@@ -299,15 +299,14 @@ const stateToBlocks = function (blocksState) {
  * Adapter between block creation events and block representation which can be
  * used by the Scratch runtime.
  * @param {object} e `Blockly.events.create` or `Blockly.events.endDrag`
- * @param {boolean} isState Whether the event uses JSON State format.
  * @return {Array.<object>} List of blocks from this CREATE event.
  */
-const adapter = function (e, isState) {
+const adapter = function (e) {
     // Validate input
     if (typeof e !== 'object') return;
 
-    if (isState) {
-        if (typeof e.json !== 'object') return;
+    // Prefer using JSON serialization
+    if (typeof e.json === 'object') {
         return stateToBlocks(e.json);
     }
     if (typeof e.xml !== 'object') return;

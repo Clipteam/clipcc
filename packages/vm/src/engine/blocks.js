@@ -1,5 +1,4 @@
 const adapter = require('./adapter');
-const mutationAdapter = require('./mutation-adapter');
 const xmlEscape = require('../util/xml-escape');
 const MonitorRecord = require('./monitor-record');
 const Clone = require('../util/clone');
@@ -365,7 +364,7 @@ class Blocks {
         // Block create/update/destroy
         switch (e.type) {
         case 'create': {
-            const newBlocks = adapter(e, true);
+            const newBlocks = adapter(e);
             /** @type {Record<string, BlockCommentState} */
             const comments = {};
             // A create event can create many blocks. Add them all.
@@ -420,7 +419,7 @@ class Blocks {
 
             // Drag blocks onto another sprite
             if (e.isOutside) {
-                const newBlocks = adapter(e, true);
+                const newBlocks = adapter(e);
                 this.runtime.emitBlockEndDrag(newBlocks, e.blockId);
             }
             break;
