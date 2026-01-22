@@ -48,7 +48,7 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
    * Create all non-spacer elements that belong on the top row.
    */
   protected override populateTopRow_(): void {
-    if (this.block_.hat === Constants.SHAPE_BOWLER_HAT) {
+    if (this.isBowlerHat()) {
       this.topRow.elements.push(new Blockly.blockRendering.SquareCorner(this.constants_));
       this.topRow.elements.push(new BowlerHat(this.constants_));
       return;
@@ -58,13 +58,23 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
   }
 
   /**
+   * Create all non-spacer elements that belong on the bottom row.
+   */
+  override populateBottomRow_() {
+    super.populateBottomRow_();
+    if (this.isBowlerHat()) {
+      this.bottomRow.minHeight = this.constants_.MEDIUM_PADDING;
+    }
+  }
+
+  /**
    * Figure out where the right edge of the block and right edge of statement
    * inputs should be placed.
    */
   protected override computeBounds_(): void {
     super.computeBounds_();
 
-    if (this.block_.hat === Constants.SHAPE_BOWLER_HAT) {
+    if (this.isBowlerHat()) {
       // Update the width of bowler hat.
       for (const element of this.topRow.elements) {
         if (Blockly.blockRendering.Types.isHat(element)) {
@@ -130,25 +140,21 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
   }
 
   /**
-   * Calculate the width of a spacer element in a row based on the previous and
-   * next elements in that row.  For instance, extra padding is added between
-   * two editable fields.
-   * @param prev The element before the spacer.
-   * @param next The element after the spacer.
-   * @returns The size of the spacing between the two elements.
+   * Calculate the height of a spacer row.
+   * @param prev The row before the spacer.
+   * @param next The row after the spacer.
+   * @returns The desired height of the spacer row between these two rows.
    */
-  override getInRowSpacing_(
-    prev: Blockly.blockRendering.Measurable | null,
-    next: Blockly.blockRendering.Measurable | null
+  override getSpacerRowHeight_(
+    prev: Blockly.blockRendering.Row,
+    next: Blockly.blockRendering.Row
   ): number {
-    // Add more space before and after inline statement.
-    if (prev && next && (next.type & InlineStatementInput.TYPE)) {
-      return this.constants_.LARGE_PADDING;
+    // Bowler hats do not need extra padding at the top.
+    if (this.isBowlerHat() && prev === this.topRow) {
+      return 0;
     }
-    if (prev && (prev.type & InlineStatementInput.TYPE) && !next) {
-      return this.constants_.LARGE_PADDING;
-    }
-    return super.getInRowSpacing_(prev, next);
+
+    return super.getSpacerRowHeight_(prev, next);
   }
 
   /**
@@ -250,6 +256,10 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
       }
     }
     return centerline;
+  }
+
+  protected isBowlerHat(): boolean {
+    return this.block_?.hat === Constants.SHAPE_BOWLER_HAT;
   }
 
   /**
