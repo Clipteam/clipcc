@@ -136,10 +136,10 @@ class Scratch3OperatorsBlocks {
     join (args) {
         return Cast.toString(args.STRING1) + Cast.toString(args.STRING2);
     }
-    
+
     joinMultiple (args) {
         let result = '';
-        const ids = JSON.parse(args.mutation.argumentids);
+        const ids = args.mutation.argumentids;
         for (const id of ids) {
             result += Cast.toString(args[id]);
         }
@@ -245,7 +245,7 @@ class Scratch3OperatorsBlocks {
     nequals (args) {
         return Cast.compare(args.OPERAND1, args.OPERAND2) !== 0;
     }
-    
+
     indexOf (args) {
         const {STRING, SUBSTRING, POS} = args;
         let index = Cast.toString(STRING).indexOf(Cast.toString(SUBSTRING));
