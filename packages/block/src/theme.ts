@@ -217,7 +217,7 @@ const scratchTheme = {
     workspaceBackgroundColour: Colours.workspace as string
   },
   fontStyle: {
-    weight: '500'
+    weight: '600'
   },
   startHats: true
 };
