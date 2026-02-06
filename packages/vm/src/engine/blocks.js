@@ -859,13 +859,15 @@ class Blocks {
                 if (shadow && e.id !== shadow) {
                     oldParent.inputs[e.oldInput].block = shadow;
                     this._blocks[shadow].parent = oldParent.id;
+                    this._blocks[e.id].parent = null;
                 } else {
                     // If the block is being refreshed (e.g. by a mutation), we should keep the connection
-                    // so that the block can be re-created in place and claimed by repair logic in getInputs.
-                    if (e.recordUndo && !shadow) {
+                    // so that the block can be re-created in place.
+                    if (!e.recordUndo) return;
+                    if (!shadow) {
                         oldParent.inputs[e.oldInput].block = null;
                     }
-                    if (e.recordUndo && e.id !== shadow) {
+                    if (e.id !== shadow) {
                         this._blocks[e.id].parent = null;
                     }
                 }
