@@ -245,6 +245,9 @@ class Blocks extends React.Component {
 
         const toolbox = this.workspace.getToolbox();
         const flyout = this.workspace.getFlyout();
+        if (!flyout.isVisible()) {
+            flyout.setVisible(true);
+        }
         const flyoutWs = flyout.getWorkspace();
 
         flyout.setRecyclingEnabled(false);
@@ -252,7 +255,7 @@ class Blocks extends React.Component {
         const selectedCategoryId = selectedItem?.getId();
         let offsetWithinCategory = 0;
 
-        if (selectedCategoryId && flyoutWs) {
+        if (selectedCategoryId) {
             const categoryPos = flyout.getCategoryScrollPosition(selectedCategoryId);
             if (typeof categoryPos === 'number') {
                 offsetWithinCategory = -flyoutWs.scrollY / flyoutWs.scale - categoryPos;
@@ -267,9 +270,9 @@ class Blocks extends React.Component {
         // Using the setter function will rerender the entire toolbox which we just rendered.
         toolbox.setRefreshEnabled(true);
 
-        if (selectedCategoryId && flyoutWs) {
-            toolbox.forceRerender().then(() => {
-                flyout.setRecyclingEnabled(true);
+        toolbox.forceRerender().then(() => {
+            flyout.setRecyclingEnabled(true);
+            if (selectedCategoryId) {
                 const newCategoryPos = flyout.getCategoryScrollPosition(selectedCategoryId);
                 if (typeof newCategoryPos === 'number') {
                     const newViewTop = newCategoryPos + offsetWithinCategory;
@@ -277,14 +280,11 @@ class Blocks extends React.Component {
                         flyoutWs.scrollbar.setY(newViewTop * flyoutWs.scale);
                     }
                 }
-
-                const queue = this.toolboxUpdateQueue;
-                this.toolboxUpdateQueue = [];
-                queue.forEach(fn => fn());
-            });
-        } else {
-            flyout.setRecyclingEnabled(true);
-        }
+            }
+            const queue = this.toolboxUpdateQueue;
+            this.toolboxUpdateQueue = [];
+            queue.forEach(fn => fn());
+        });
     }
 
     withToolboxUpdates (fn) {
@@ -534,15 +534,13 @@ class Blocks extends React.Component {
             this.handleConnectionModalStart(categoryId);
         }
 
-        if (this.workspace.getFlyout().isVisible()) {
-            this.withToolboxUpdates(() => {
-                const toolbox = this.workspace.getToolbox();
-                const category = toolbox.getToolboxCategoryById(categoryId);
-                if (category) {
-                    toolbox.setSelectedItem(category);
-                }
-            });
-        }
+        this.withToolboxUpdates(() => {
+            const toolbox = this.workspace.getToolbox();
+            const category = toolbox.getToolboxCategoryById(categoryId);
+            if (category) {
+                toolbox.setSelectedItem(category);
+            }
+        });
     }
     setBlocks (blocks) {
         this.blocks = blocks;
