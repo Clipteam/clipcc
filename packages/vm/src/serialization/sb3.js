@@ -213,7 +213,7 @@ const serializeBlock = function (block) {
     }
     if (block.mutation) {
         // Simulate old mutation structure for compatibility
-        obj.mutation = mutationAdpater.mock(block.mutation);
+        obj.mutation = mutationAdapter.mock(block.mutation);
     }
     if (block.comment) {
         obj.comment = block.comment;

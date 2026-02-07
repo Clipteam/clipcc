@@ -34,7 +34,7 @@ const mutatorTagToObject = function (dom) {
  * @param {(object|string)} mutation Mutation XML string or DOM.
  * @return {object} Object representing the mutation.
  */
-const mutationAdpater = function (mutation) {
+const mutationAdapter = function (mutation) {
     let mutationParsed;
     // Check if the mutation is already parsed; if not, parse it.
     if (typeof mutation === 'object') {
@@ -49,7 +49,7 @@ const mutationAdpater = function (mutation) {
  * Mock a Blockly extra state that like what mutation adapter would produce.
  * @param {object} mutation Mutation data.
  */
-mutationAdpater.mock = function (mutation) {
+mutationAdapter.mock = function (mutation) {
     for (const key in mutation) {
         if (typeof mutation[key] === 'string') continue;
         mutation[key] = JSON.stringify(mutation[key]);
@@ -66,7 +66,7 @@ mutationAdpater.mock = function (mutation) {
  * Unmock a mutation object so that it can be used by the runtime.
  * @param {object} mutation Mutation data.
  */
-mutationAdpater.unmock = function (mutation) {
+mutationAdapter.unmock = function (mutation) {
     for (const key in mutation) {
         if (typeof mutation[key] !== 'string') continue;
         try {
@@ -77,4 +77,4 @@ mutationAdpater.unmock = function (mutation) {
     }
 };
 
-module.exports = mutationAdpater;
+module.exports = mutationAdapter;
