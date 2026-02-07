@@ -11,16 +11,6 @@
 let myFetch = globalThis.fetch;
 
 /**
- * Tell `fetchWithTimeout` to use a specific `fetch` function.
- * By default, `fetchWithTimeout` will use the global `fetch` function.
- * If there is no global `fetch`, then `fetchWithTimeout` will fail unless provided with an alternative.
- * @param {FetchFunction} newFetch The new `fetch` function to use within fetchWithTimeout.
- */
-const setFetch = newFetch => {
-    myFetch = newFetch;
-};
-
-/**
  * Fetch a remote resource like `fetch` does, but with a time limit.
  * @param {Request|string} resource Remote resource to fetch.
  * @param {?object} init An options object containing any custom settings that you want to apply to the request.
@@ -47,7 +37,14 @@ const fetchWithTimeout = (resource, init, timeout) => {
     ]);
 };
 
-module.exports = {
-    fetchWithTimeout,
-    setFetch
+/**
+ * Tell `fetchWithTimeout` to use a specific `fetch` function.
+ * By default, `fetchWithTimeout` will use the global `fetch` function.
+ * If there is no global `fetch`, then `fetchWithTimeout` will fail unless provided with an alternative.
+ * @param {FetchFunction} newFetch The new `fetch` function to use within fetchWithTimeout.
+ */
+fetchWithTimeout.setFetch = newFetch => {
+    myFetch = newFetch;
 };
+
+module.exports = fetchWithTimeout;
