@@ -42,7 +42,7 @@ class Comment {
             y: this.y,
             width: this.width,
             height: this.height,
-            minimized: this.minimized
+            collapsed: this.minimized
         };
     }
 
