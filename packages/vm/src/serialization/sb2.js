@@ -1257,7 +1257,7 @@ const parseBlock = function (sb2block, addBroadcastMsg, getVariableId, extension
                 proccode: procData[0], // e.g., "abc %n %b %s"
                 argumentnames: procData[1], // e.g. ['arg1', 'arg2']
                 argumentids: parseProcedureArgIds(procData[0]),
-                argumentdefaults: JSON.stringify(procData[2]), // e.g., [1, 'abc']
+                argumentdefaults: procData[2], // e.g., [1, 'abc']
                 warp: procData[3], // Warp mode, e.g., true/false.
                 children: []
             }
