@@ -30,6 +30,10 @@
   background: none;
 }
 
+.injectionDiv.blocklyBlockDragBoundless {
+  overflow: visible;
+}
+
 .blocklyDragging>.blocklyPath {
   fill-opacity: 1;
   stroke-opacity: 1;
