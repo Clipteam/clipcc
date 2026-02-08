@@ -39,7 +39,6 @@
 .blocks :global(.blocklyToolbox) {
     border-right: 1px solid var(--clipcc-ui-black-transparent);
     border-bottom: 1px solid var(--clipcc-ui-black-transparent);
-    box-sizing: content-box;
     width: var(--clipcc-category-width);
     height: calc(100% - 3.25rem) !important;
 

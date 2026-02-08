@@ -731,7 +731,8 @@ Blocks.defaultOptions = {
     comments: true,
     collapse: false,
     sounds: false,
-    trashcan: false
+    trashcan: false,
+    modalInputs: false
 };
 
 Blocks.defaultProps = {
