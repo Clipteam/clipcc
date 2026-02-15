@@ -61,6 +61,7 @@ mutationAdapter.mock = function (mutation) {
     if (!mutation.children) {
         mutation.children = [];
     }
+    return mutation;
 };
 
 /**
