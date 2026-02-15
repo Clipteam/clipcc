@@ -50,6 +50,7 @@ const mutationAdapter = function (mutation) {
  * @param {object} mutation Mutation data.
  */
 mutationAdapter.mock = function (mutation) {
+    mutation = {...mutation};
     for (const key in mutation) {
         if (typeof mutation[key] === 'string') continue;
         mutation[key] = JSON.stringify(mutation[key]);
@@ -60,7 +61,7 @@ mutationAdapter.mock = function (mutation) {
     if (!mutation.children) {
         mutation.children = [];
     }
-}
+};
 
 /**
  * Unmock a mutation object so that it can be used by the runtime.
