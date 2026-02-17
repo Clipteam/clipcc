@@ -514,7 +514,9 @@ Blockly.Blocks['operator_join_multiple'] = {
     this.moveInputBefore('DUMMY_INPUT', null);
 
     // Update the button states.
-    this.buttonMinus.setEnabled(this.argumentids.length > 1);
+    const shouldHideMinusButton = this.argumentids.length > 1;
+    this.buttonMinus.setEnabled(shouldHideMinusButton);
+    this.buttonMinus.setVisible(shouldHideMinusButton);
   }
 } as OperatorJoinMultipleBlock;
 
