@@ -70,7 +70,7 @@ const callbackRegistry = {
    * @param varType An optional variable type for variable specific
    *     prompt behavior.
    */
-  prompt(
+  showVariablePrompt(
     message: string,
     defaultValue: string,
     callback: (
