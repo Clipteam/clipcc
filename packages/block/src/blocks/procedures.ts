@@ -864,7 +864,6 @@ function updateDeclarationProcCode(this: ProcedureDeclarationBlock) {
       procCodeParts.push((input.fieldRow[0] as Blockly.FieldLabel).getValue()?.replace(/%/g, '\\%'));
     } else if (input.type === Constants.INPUT_VALUE || input.type === Constants.NEXT_STATEMENT) {
       // Inspect the argument editor.
-      console.log('input', input);
       const target = input.connection!.targetBlock()!;
       params[currentParamIndex].setName(target.getFieldValue('TEXT'));
       currentParamIndex += 1;
