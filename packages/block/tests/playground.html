@@ -322,6 +322,12 @@
       }
     }
 
+    function addStatement() {
+      if (mutationRoot) {
+        mutationRoot.addStatementExternal();
+      }
+    }
+
     function applyMutation() {
       if (mutationRoot) {
         const state = mutationRoot.saveExtraState();
@@ -465,6 +471,7 @@
     <div class="editorActions">
       <button id="text_number" onclick="addTextNumber()">Add text/number input</button>
       <button id="boolean" onclick="addBoolean()">Add boolean input</button>
+      <button id="label" onclick="addStatement()">Add statement input</button>
       <button id="label" onclick="addLabel()">Add label</button>
       <button id="changeShape" onclick="changeShape()">Change shape</button>
       <button id="changeGlobal" onclick="changeGlobal()">Change global</button>

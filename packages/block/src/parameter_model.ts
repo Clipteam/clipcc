@@ -24,6 +24,10 @@ export class ParameterModel implements Blockly.procedures.IParameterModel {
     this.workspace = workspace;
     this.name = name;
     this.id = id ?? Blockly.utils.idGenerator.genUid();
+    if (name === 'statement') {
+      // In vm, only input names starting with SUBSTACK can be correctly recognized as branch.
+      this.id = 'SUBSTACK' + this.id;
+    }
     this.defaultValue = defaultValue ?? '';
   }
 
