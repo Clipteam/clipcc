@@ -54,7 +54,11 @@ describe('FieldVariableGetter', () => {
       context.block.initModel();
       const json = Blockly.serialization.blocks.save(context.block);
       expect(json?.fields).toEqual({
-        VARIABLE: '<field name="VARIABLE" id="VARIABLE_ID" variabletype="">VARIABLE_NAME</field>'
+        VARIABLE: {
+          id: 'VARIABLE_ID',
+          variabletype: '',
+          name: 'VARIABLE_NAME'
+        }
       });
     });
   });

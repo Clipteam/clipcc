@@ -14,6 +14,7 @@ import {registerFieldButton} from './fields/button';
 import {registerFieldColourSlider} from './fields/colour_slider';
 import {registerFieldMatrix} from './fields/matrix';
 import {registerFieldNote} from './fields/note';
+import {registerFieldVariable} from './fields/variable';
 import {registerFieldTextInputRemovable} from './fields/textinput_removable';
 import {registerFieldVariableGetter} from './fields/variable_getter';
 import {registerFieldVerticalSeparator} from './fields/vertical_separator';
@@ -34,6 +35,8 @@ import './events/block_comment_move';
 import './events/block_comment_resize';
 import './events/block_comment_collapse';
 import './events/block_change';
+import './events/var_create';
+import './events/var_delete';
 
 import './block_comment_icon';
 
@@ -50,6 +53,9 @@ import './toolbox/collapsible_category';
 import './toolbox/inflaters/block';
 import './toolbox/inflaters/label';
 import './toolbox/inflaters/status_indicator_label';
+
+import './variable_model';
+import './variable_map';
 
 import './blocks/extensions';
 import './blocks/common';
@@ -81,6 +87,7 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerFieldColourSlider();
   registerFieldMatrix();
   registerFieldNote();
+  registerFieldVariable();
   registerFieldTextInputRemovable();
   registerFieldVariableGetter();
   registerFieldVerticalSeparator();
