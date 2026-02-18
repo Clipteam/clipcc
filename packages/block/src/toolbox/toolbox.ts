@@ -207,7 +207,7 @@ export class Toolbox extends Blockly.Toolbox {
       }
       this.refreshDebouncer = setTimeout(() => {
         this.getFlyout()!.show(this.getFlyoutContents());
-      }, 100);
+      }, 10);
     }
   }
 
