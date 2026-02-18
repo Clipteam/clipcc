@@ -64,15 +64,10 @@ import './blocks/procedures';
 import './serialization/procedures';
 
 /**
- * Inject a Blockly editor into the specified container element (usually a div).
- * The necessary stuffs and dynamic categories for main workspace will be registered.
- * If there is a need to inject multiple workspaces, use `injectWorkspace` after the
- * first workspace injected.
- * @param container Containing element, or its ID, or a CSS selector.
- * @param options Optional dictionary of options.
- * @returns Newly created main workspace.
+ * Register components for the Blockly. It should be called only once before
+ * creating any workspaces.
  */
-export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
+function setupEnvironment() {
   // Register the fields.
   registerFieldAngle();
   registerFieldButton();
@@ -85,7 +80,6 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   registerScratchContextMenu();
 
   // Register styles.
-
   Blockly.Css.register(styles);
   Blockly.Css.register(commentStyles);
 
@@ -94,7 +88,18 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
 
   // Unregister unused items.
   Blockly.ContextMenuRegistry.registry.unregister('blockInline');
+}
 
+/**
+ * Inject a Blockly editor into the specified container element (usually a div).
+ * The necessary stuffs and dynamic categories for main workspace will be registered.
+ * If there is a need to inject multiple workspaces, use `injectWorkspace` after the
+ * first workspace injected.
+ * @param container Containing element, or its ID, or a CSS selector.
+ * @param options Optional dictionary of options.
+ * @returns Newly created main workspace.
+ */
+export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
   const workspace = injectWorkspace(container, options);
 
   // Dynamic categories.
@@ -182,6 +187,9 @@ Blockly.FlyoutButton.TEXT_MARGIN_X = 40;
 Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;
 Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(200, 200);
 Blockly.ToolboxCategory.nestedPadding = 6;
+
+// Environment Setup
+setupEnvironment();
 
 // Exports
 export * from 'blockly/core';
