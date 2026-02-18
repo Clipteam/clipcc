@@ -1,4 +1,4 @@
-import ScratchBlocks from 'clipcc-block';
+import * as ScratchBlocks from 'clipcc-block';
 import {defaultColors} from './themes';
 
 const categorySeparator = '<sep gap="36"/>';
