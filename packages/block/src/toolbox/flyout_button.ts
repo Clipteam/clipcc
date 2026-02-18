@@ -34,4 +34,8 @@ export class FlyoutButton extends Blockly.FlyoutButton {
   getLabelId(): string | null {
     return this.labelId;
   }
+
+  override onNodeFocus(): void {
+    // No-op, label focus in continuous toolbox leads desync of category selection.
+  }
 }

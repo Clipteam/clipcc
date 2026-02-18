@@ -8,6 +8,7 @@ import * as Blockly from 'blockly/core';
 import {Toolbox} from './toolbox';
 import {FlyoutMetrics} from './flyout_metrics';
 import type {FlyoutButton} from './flyout_button';
+import type {BlockFlyoutInflater} from './inflaters/block';
 import {FlyoutStatusIndicatorLabel} from './flyout_status_indicator_label';
 import styles from '../styles/flyout.css';
 
@@ -37,11 +38,53 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   private scrollTarget: number | null = null;
 
   /**
+   * The starting position for the flyout scroll animation in pixels.
+   * Is a number while animating, null otherwise.
+   */
+  private scrollFrom: number | null = null;
+
+  /**
+   * The start time of the scroll animation.
+   */
+  private scrollStartTime: number | null = null;
+
+  /**
+   * The ID of the current animation frame request.
+   * Used to cancel the previous animation when a new one starts.
+   */
+  private scrollAnimationId: number | null = null;
+
+  /**
    * @param workspaceOptions Dictionary of options for the workspace.
    */
   constructor(workspaceOptions: Blockly.Options) {
     super(workspaceOptions);
     this.workspace_.setMetricsManager(new FlyoutMetrics(this.workspace_, this));
+    this.setRecyclingEnabled(true);
+  }
+
+  /**
+   * Sets the function used to determine whether a block is recyclable.
+   * @param func The function used to determine if a block is recyclable.
+   */
+  setBlockIsRecyclable(func: (block: Blockly.Block) => boolean) {
+    this.getRecyclableInflater().recycleEligibilityChecker = func;
+  }
+
+  /**
+   * Set whether the flyout can recycle blocks.
+   * @param isEnabled True to allow blocks to be recycled, false otherwise.
+   */
+  setRecyclingEnabled(isEnabled: boolean) {
+    this.getRecyclableInflater().recyclingEnabled = isEnabled;
+  }
+
+  /**
+   * Returns the recyclable block flyout inflater.
+   * @returns The recyclable inflater.
+   */
+  protected getRecyclableInflater(): BlockFlyoutInflater {
+    return this.getInflaterForType('block') as BlockFlyoutInflater;
   }
 
   /**
@@ -157,7 +200,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
         position * this.workspace_.scale,
         Math.max(metrics.scrollHeight - metrics.viewHeight, 0)
       );
-      this.stepScrollAnimation();
+      this.startScrollAnimation();
     } else {
       this.workspace_.scrollbar?.setY(position * this.workspace_.scale);
     }
@@ -195,24 +238,41 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   }
 
   /**
-   * Step the scrolling animation by scrolling a fraction of the way to
-   * a scroll target, and request the next frame if necessary.
+   * Start the scrolling animation.
    */
-  private stepScrollAnimation(): void {
+  private startScrollAnimation(): void {
     if (this.scrollTarget === null) {
       return;
     }
 
-    const scrollPos = -this.workspace_.scrollY;
-    const diff = this.scrollTarget - scrollPos;
+    if (this.scrollAnimationId !== null) {
+      cancelAnimationFrame(this.scrollAnimationId);
+    }
+
+    this.scrollStartTime = Date.now();
+    this.scrollFrom = -this.workspace_.scrollY;
+    this.scrollAnimationId = requestAnimationFrame(this.stepScrollAnimation.bind(this));
+  }
+
+  /**
+   * Step the scrolling animation by scrolling a fraction of the way to
+   * a scroll target, and request the next frame if necessary.
+   * Shouldn't be called directly. Use startScrollAnimation instead.
+   */
+  private stepScrollAnimation(): void {
+    this.scrollAnimationId = null;
+    const elapsed = (Date.now() - this.scrollStartTime!) / 60;
+    const totalDistance = this.scrollTarget! - this.scrollFrom!;
+    const scrollPos = this.scrollTarget! - totalDistance * Math.pow(VerticalFlyout.SCROLL_ANIMATION_FRACTION, elapsed);
+    const diff = this.scrollTarget! - scrollPos;
     if (Math.abs(diff) < 1) {
-      this.workspace_.scrollbar?.setY(this.scrollTarget);
+      this.workspace_.scrollbar?.setY(this.scrollTarget!);
       this.scrollTarget = null;
       return;
     }
 
-    this.workspace_.scrollbar?.setY(scrollPos + diff * VerticalFlyout.SCROLL_ANIMATION_FRACTION);
-    requestAnimationFrame(this.stepScrollAnimation.bind(this));
+    this.workspace_.scrollbar?.setY(scrollPos);
+    this.scrollAnimationId = requestAnimationFrame(this.stepScrollAnimation.bind(this));
   }
 
   /**

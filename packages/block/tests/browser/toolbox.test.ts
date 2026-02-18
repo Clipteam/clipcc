@@ -89,8 +89,7 @@ function checkToolboxCategories(toolbox: Toolbox, name: string) {
   const selected = toolbox.getSelectedItem() as Blockly.ToolboxCategory;
   expect(selected.getName()).toBe(name);
 
-  // @ts-expect-error Read private property contentList.
-  const allItems: Blockly.IToolboxItem[] = toolbox.contentsList
+  const allItems: Blockly.IToolboxItem[] = toolbox.getToolboxItems()
     .filter((item) => item instanceof Blockly.ToolboxCategory);
   for (const item of allItems) {
     if (item.isCollapsible()) {
