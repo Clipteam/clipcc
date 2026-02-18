@@ -4,8 +4,8 @@
 }
 
 .checked > .blocklyFlyoutCheckbox {
-  fill: #4C97FF;
-  stroke: #3373CC;
+  fill: var(--clipcc-block-toolboxHover);
+  stroke: var(--clipcc-block-toolboxHoverStroke);
 }
 
 .blocklyFlyoutCheckboxPath {

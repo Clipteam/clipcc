@@ -14,11 +14,14 @@ import styles from '../styles/toolbox.css';
  * Class for customized toolbox.
  */
 export class Toolbox extends Blockly.Toolbox {
+  /**
+   * Timeout ID used to prevent refreshing the flyout during extensive block
+   * changes.
+   */
+  protected refreshDebouncer?: ReturnType<typeof setTimeout>;
+
   /** Gap between categories. */
   static readonly CATEGORY_GAP = 36;
-
-  /** The list of items in the toolbox. */
-  protected contentsList: Blockly.IToolboxItem[] = [];
 
   /**
    * @param workspace The workspace in which to create new blocks.
@@ -41,31 +44,13 @@ export class Toolbox extends Blockly.Toolbox {
   }
 
   /**
-   * Adds an item to the toolbox.
-   * @param toolboxItem The item in the toolbox.
-   */
-  protected override addToolboxItem_(toolboxItem: Blockly.IToolboxItem): void {
-    this.contentsList.push(toolboxItem);
-    super.addToolboxItem_(toolboxItem);
-  }
-
-  /**
-   * Fills the toolbox with new toolbox items and removes any old contents.
-   * Clear the contentsList before calling super.render.
-   * @param toolboxDef Object holding information for creating a toolbox.
-   */
-  override render(toolboxDef: Blockly.utils.toolbox.ToolboxInfo): void {
-    this.contentsList = [];
-    super.render(toolboxDef);
-  }
-
-  /**
    * Get contents to be shown in the flyout, including all categories and its label.
    * @returns The contents of flyout.
    */
   private getFlyoutContents(): Blockly.utils.toolbox.FlyoutItemInfo[] {
     let contents: Blockly.utils.toolbox.FlyoutItemInfo[] = [];
-    for (const toolboxItem of this.contentsList) {
+    const toolboxItems = this.getToolboxItems();
+    for (const toolboxItem of toolboxItems) {
       if (toolboxItem instanceof Blockly.ToolboxCategory) {
         // Add gap between categories.
         if (contents.length !== 0) {
@@ -216,7 +201,14 @@ export class Toolbox extends Blockly.Toolbox {
    * procedures.
    */
   override refreshSelection(): void {
-    this.getFlyout()!.show(this.getFlyoutContents());
+    if (this.getFlyout()!.isVisible()) {
+      if (this.refreshDebouncer) {
+        clearTimeout(this.refreshDebouncer);
+      }
+      this.refreshDebouncer = setTimeout(() => {
+        this.getFlyout()!.show(this.getFlyoutContents());
+      }, 10);
+    }
   }
 
   /**

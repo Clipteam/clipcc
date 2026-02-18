@@ -89,7 +89,7 @@ export class FieldMatrix extends Blockly.Field<string> {
    * are not. Editable fields should also be serializable. This is not the
    * case by default so that SERIALIZABLE is backwards compatible.
    */
-  SERIALIZABLE: boolean = true;
+  override SERIALIZABLE: boolean = true;
 
   /**
    * Array of SVGElement<rect> for matrix thumbnail image on block field.

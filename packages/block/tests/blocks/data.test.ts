@@ -6,10 +6,12 @@
 
 import {jest, describe, expect, test, beforeEach, afterEach} from '@jest/globals';
 import * as Blockly from 'blockly/core';
+import type {VariableModel} from '../../src/variable_model';
+import type {VariableMap} from '../../src/variable_map';
 import {PlaygroundTestContext, setupPlayground} from '../helpers/playground';
 
 interface Context extends PlaygroundTestContext {
-  variable: Blockly.IVariableModel<Blockly.IVariableState>;
+  variable: VariableModel;
 }
 
 /**
@@ -34,13 +36,17 @@ describe('Blocks: Data', () => {
     const json: Blockly.serialization.blocks.State = {
       type: 'data_variable',
       fields: {
-        VARIABLE: '<field name="VARIABLE" id="TEST_ID" variabletype="">TEST_VARIABLE</field>'
+        VARIABLE: {
+          id: 'TEST_ID',
+          name: 'TEST_VARIABLE',
+          variabletype: ''
+        }
       }
     };
 
     beforeEach(() => {
-      context.variable = context.workspace.getVariableMap()
-        .createVariable('TEST_VARIABLE', '', 'TEST_ID');
+      const variableMap = context.workspace.getVariableMap() as VariableMap;
+      context.variable = variableMap.createVariable('TEST_VARIABLE', '', 'TEST_ID');
     });
 
     afterEach(() => {
@@ -131,13 +137,17 @@ describe('Blocks: Data', () => {
     const json: Blockly.serialization.blocks.State = {
       type: 'data_listcontents',
       fields: {
-        LIST: '<field name="LIST" id="TEST_ID" variabletype="list">TEST_LIST</field>'
+        LIST: {
+          id: 'TEST_ID',
+          name: 'TEST_LIST',
+          variabletype: 'list'
+        }
       }
     };
 
     beforeEach(() => {
-      context.variable = context.workspace.getVariableMap()
-        .createVariable('TEST_LIST', 'list', 'TEST_ID');
+      const variableMap = context.workspace.getVariableMap() as VariableMap;
+      context.variable = variableMap.createVariable('TEST_LIST', 'list', 'TEST_ID');
     });
 
     afterEach(() => {

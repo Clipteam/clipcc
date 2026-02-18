@@ -5,6 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
+import {Colours} from '../theme';
 
 /**
  * An object that provides constants for rendering blocks in Scratch mode.
@@ -54,7 +55,7 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
       `}`,
       ``,
       `${selector} .blocklyFlyoutButtonBackground {`,
-      `stroke: #c6c6c6;`,
+      `stroke: var(--clipcc-block-flyoutBorder);`,
       `}`,
       ``,
       `${selector} .blocklyFlyoutButtonShadow {`,
@@ -67,13 +68,28 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
       `}`,
       ``,
       `${selector} .blocklyFlyoutButton .blocklyText {`,
-      `fill: #575E75;`,
+      `fill: var(--clipcc-block-toolboxText, ${Colours.textFieldText});`,
       `font-weight: 500;`,
       `}`,
       ``,
       `${selector} .blocklyCommentText.blocklyText {`,
       `font-weight: 400;`,
-      `color: #575e75;`, // @TODO: Use CSS variable. (same as --clipcc-text-primary)
+      `color: var(--clipcc-block-textFieldText, ${Colours.textFieldText});`,
+      `}`,
+      ``,
+      `${selector} .blocklyHighlightedConnectionPath {`,
+      `stroke: transparent;`,
+      `}`,
+      ``,
+      // Boolean connection highlight override
+      `${selector} .blocklyOutlinePath ~ .blocklyHighlightedConnectionPath,`,
+      `${selector} .blocklyHighlightedConnectionPath:has(~ .blocklyOutlinePath) {`,
+      `stroke: var(--clipcc-block-replacementGlow, ${Colours.replacementGlow});`,
+      `}`,
+      `${selector} .blocklyFlyoutLabelText {`,
+      `font-family: "Helvetica Neue", Helvetica, sans-serif;`,
+      `font-size: 14pt;`,
+      `font-weight: bold;`,
       `}`
     ];
     return css.concat(flyoutButtonStyle);

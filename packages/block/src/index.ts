@@ -7,7 +7,7 @@
 import * as Blockly from 'blockly/core';
 
 import * as Constants from './constants';
-import {createTheme} from './colours';
+import {injectCssVariables, Scratch} from './theme';
 import {registerScratchContextMenu} from './contextmenu_items';
 import {FieldAngle, registerFieldAngle} from './fields/angle';
 import {FieldButton, registerFieldButton} from './fields/button';
@@ -15,11 +15,14 @@ import {FieldColourSlider, registerFieldColourSlider} from './fields/colour_slid
 import {FieldMatrix, registerFieldMatrix} from './fields/matrix';
 import {FieldNote, registerFieldNote} from './fields/note';
 import {FieldTextInputRemovable, registerFieldTextInputRemovable} from './fields/textinput_removable';
+import {FieldVariable, registerFieldVariable} from './fields/variable';
 import {FieldVariableGetter, registerFieldVariableGetter} from './fields/variable_getter';
 import {FieldVerticalSeparator, registerFieldVerticalSeparator} from './fields/vertical_separator';
 import {flyoutCategory as variableCategory} from './data_category';
 import {flyoutCategory as procedureCategory} from './procedures_category';
 import {isProcedureCallBlock, isProcedurePrototypeBlock} from './blocks/procedures';
+import {ZoomControls} from './zoom_controls';
+import {buildGlowFilter} from './glow';
 import styles from './styles/blockly.css';
 import commentStyles from './styles/comment.css';
 
@@ -32,6 +35,8 @@ import './events/block_comment_move';
 import './events/block_comment_resize';
 import './events/block_comment_collapse';
 import './events/block_change';
+import './events/var_create';
+import './events/var_delete';
 
 import './block_comment_icon';
 
@@ -48,6 +53,9 @@ import './toolbox/collapsible_category';
 import './toolbox/inflaters/block';
 import './toolbox/inflaters/label';
 import './toolbox/inflaters/status_indicator_label';
+
+import './variable_model';
+import './variable_map';
 
 import './blocks/extensions';
 import './blocks/common';
@@ -74,12 +82,14 @@ function setupEnvironment() {
   registerFieldColourSlider();
   registerFieldMatrix();
   registerFieldNote();
+  registerFieldVariable();
   registerFieldTextInputRemovable();
   registerFieldVariableGetter();
   registerFieldVerticalSeparator();
   registerScratchContextMenu();
 
   // Register styles.
+  injectCssVariables();
   Blockly.Css.register(styles);
   Blockly.Css.register(commentStyles);
 
@@ -101,6 +111,9 @@ function setupEnvironment() {
  */
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
   const workspace = injectWorkspace(container, options);
+
+  // Build glow filter for glowStack.
+  buildGlowFilter(workspace);
 
   // Dynamic categories.
   workspace.registerToolboxCategoryCallback(
@@ -151,10 +164,12 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
 export function injectWorkspace(container: Element | string, options?: Blockly.BlocklyOptions) {
   const defaultOptions: Blockly.BlocklyOptions = {
     renderer: 'scratch',
-    theme: createTheme()
+    theme: Scratch
   };
   options = Object.assign(defaultOptions, options);
-  return Blockly.inject(container, options);
+  const workspace = Blockly.inject(container, options);
+
+  return workspace;
 }
 
 /**
@@ -188,6 +203,12 @@ Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;
 Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(200, 200);
 Blockly.ToolboxCategory.nestedPadding = 6;
 
+Blockly.WorkspaceSvg.prototype.addZoomControls = function() {
+  this.zoomControls_ = new ZoomControls(this) as unknown as Blockly.ZoomControls;
+  const svgZoomControls = this.zoomControls_.createDom();
+  this.svgGroup_.appendChild(svgZoomControls);
+};
+
 // Environment Setup
 setupEnvironment();
 
@@ -197,8 +218,11 @@ export * from 'blockly/core';
 export * as callbackRegistry from './callback_registry';
 export * as constants from './constants';
 export * as utils from './utils';
+export * as Theme from './theme';
 
 export {reportValue} from './report_value';
+export {glowStack} from './glow';
+export const setLocale = Blockly.setLocale;
 
 export {
   FieldAngle,
@@ -207,6 +231,7 @@ export {
   FieldMatrix,
   FieldNote,
   FieldTextInputRemovable,
+  FieldVariable,
   FieldVariableGetter,
   FieldVerticalSeparator
 };
