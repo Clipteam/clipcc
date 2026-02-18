@@ -20,8 +20,8 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
+import * as callbackRegistry from '../callback_registry';
 import {FlyoutButton} from './flyout_button';
-import {getExtensionState, statusButtonCallback} from '../utils';
 
 /**
  * Class for a category header in the flyout for Scratch extensions which can
@@ -95,7 +95,7 @@ export class FlyoutStatusIndicatorLabel extends FlyoutButton {
    * Set the image on the status button using a status string.
    */
   refreshStatus() {
-    const status = getExtensionState(this.labelId!);
+    const status = (callbackRegistry.get('getExtensionState'))(this.labelId!);
     const basePath = this.getTargetWorkspace().options.pathToMedia;
     if (status == Constants.StatusButtonState.READY) {
       this.setImageSrc(basePath + 'status-ready.svg');
@@ -128,7 +128,7 @@ export class FlyoutStatusIndicatorLabel extends FlyoutButton {
    * @param e The pointer event.
    */
   onStatusIndicatorMouseUp(e: PointerEvent) {
-    statusButtonCallback(this.labelId!);
+    (callbackRegistry.get('statusButtonCallback'))(this.labelId!);
   }
 
   /**

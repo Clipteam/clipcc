@@ -9,7 +9,7 @@ import {LabelFlyoutInflater} from './label';
 import {FlyoutStatusIndicatorLabel} from '../flyout_status_indicator_label';
 
 export class StatusIndicatorLabelFlyoutInflater extends LabelFlyoutInflater {
-  static readonly TYPE: string = 'status_indicator_label';
+  static override readonly TYPE: string = 'status_indicator_label';
 
   /**
    * Inflates a flyout label with a status indicator from the given state and

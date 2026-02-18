@@ -509,3 +509,5 @@ Blockly.registry.register(
   VerticalFlyout,
   true
 );
+
+Blockly.Css.register(styles);
