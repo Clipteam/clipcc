@@ -157,6 +157,10 @@ export function loadWorkspace(
 
 /**
  * Clears the workspace and loads the given serialized state.
+ * @deprecated XML serialization is discouraged to use in Blockly and
+ * lack many essential stuffs like customizing variables and procedures.
+ * The function is just kept for backward compatibility, use
+ * `loadWorkspace()` instead.
  * @param xml XML representation of a Blockly workspace.
  * @param workspace The workspace to load the serialized data onto.
  * @returns The block IDs of the blocks that were loaded.
@@ -169,7 +173,7 @@ export function clearWorkspaceAndLoadFromXml(
   Blockly.Events.setGroup(true);
   workspace.clear();
 
-  // @todo pending Clipteam/clipcc#125 to load scratch variables.
+  console.warn('clearWorkspaceAndLoadFromXml is deprecated and broken. Please use loadWorkspace instead.');
 
   const blockIds = Blockly.Xml.domToWorkspace(xml, workspace);
   workspace.setResizesEnabled(true);
