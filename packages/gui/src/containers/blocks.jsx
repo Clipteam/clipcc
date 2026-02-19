@@ -80,7 +80,6 @@ class Blocks extends React.Component {
             'setBlocks',
             'setLocale'
         ]);
-        this.ScratchBlocks.callbackRegistry.register("prompt", this.handlePromptStart);
         this.ScratchBlocks.callbackRegistry.register('showVariablePrompt', this.handlePromptStart);
         this.ScratchBlocks.callbackRegistry.register("statusButtonCallback", this.handleConnectionModalStart);
         this.ScratchBlocks.recordSoundCallback = this.handleOpenSoundRecorder;
