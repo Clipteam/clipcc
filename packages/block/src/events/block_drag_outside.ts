@@ -19,7 +19,7 @@ export class BlockDragOutside extends Blockly.Events.BlockBase {
    * @param block The moved block.  Null for a blank event.
    * @param isOutside Whether the block is outside of the blocks UI.
    */
-  constructor(block?: Blockly.BlockSvg, isOutside = false) {
+  constructor(block?: Blockly.Block, isOutside = false) {
     super(block);
     this.isOutside = isOutside;
     this.recordUndo = false;

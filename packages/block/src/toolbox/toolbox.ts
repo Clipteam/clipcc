@@ -235,7 +235,7 @@ export class Toolbox extends Blockly.Toolbox {
         this.getFlyout()!.show(this.getFlyoutContents());
         this.renderResolvers.forEach((resolver) => resolver());
         this.renderResolvers.length = 0;
-      }, 100);
+      }, 10);
     }
     return renderPromise;
   }

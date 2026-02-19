@@ -81,7 +81,7 @@ class Blocks extends React.Component {
             'setLocale'
         ]);
         this.ScratchBlocks.callbackRegistry.register("prompt", this.handlePromptStart);
-        this.ScratchBlocks.dialog.setPrompt(this.handlePromptStart);
+        this.ScratchBlocks.callbackRegistry.register('showVariablePrompt', this.handlePromptStart);
         this.ScratchBlocks.callbackRegistry.register("statusButtonCallback", this.handleConnectionModalStart);
         this.ScratchBlocks.recordSoundCallback = this.handleOpenSoundRecorder;
 
@@ -101,7 +101,7 @@ class Blocks extends React.Component {
         this.ScratchBlocks.FieldColourSlider.activateEyedropper = this.props.onActivateColorPicker;
         this.ScratchBlocks.callbackRegistry.register("externalCheckoutWorkspaceCallback", this.checkoutWsByProccode);
         this.ScratchBlocks.callbackRegistry.register("externalProcedureDefCallback", this.props.onActivateCustomProcedures);
-        this.ScratchBlocks.ScratchMsgs.setLocale(this.props.locale);
+        this.ScratchBlocks.setLocale(this.props.blockMessages);
 
         const workspaceConfig = defaultsDeep({},
             Blocks.defaultOptions,
@@ -228,7 +228,7 @@ class Blocks extends React.Component {
         }, 0);
     }
     setLocale () {
-        this.ScratchBlocks.ScratchMsgs.setLocale(this.props.locale);
+        this.ScratchBlocks.setLocale(this.props.blockMessages);
         this.props.vm.setLocale(this.props.locale, this.props.messages)
             .then(() => {
                 this.workspace.getFlyout().setRecyclingEnabled(false);
@@ -682,6 +682,7 @@ Blocks.propTypes = {
     isVisible: PropTypes.bool,
     locale: PropTypes.string.isRequired,
     messages: PropTypes.objectOf(PropTypes.string),
+    blockMessages: PropTypes.objectOf(PropTypes.string),
     onActivateColorPicker: PropTypes.func,
     onActivateCustomProcedures: PropTypes.func,
     onOpenConnectionModal: PropTypes.func,
@@ -750,7 +751,8 @@ const mapStateToProps = state => ({
     extensionLibraryVisible: state.scratchGui.modals.extensionLibrary,
     isRtl: state.locales.isRtl,
     locale: state.locales.locale,
-    messages: state.locales.messages,
+    messages: state.locales.editorMessages,
+    blockMessages: state.locales.blockMessages,
     toolboxXML: state.scratchGui.toolbox.toolboxXML,
     customProceduresVisible: state.scratchGui.customProcedures.active,
     workspaceMetrics: state.scratchGui.workspaceMetrics

@@ -6,10 +6,7 @@ const blockSeparator = '<sep gap="36"/>'; // At default scale, about 28px
 
 /* eslint-disable no-unused-vars */
 const motion = function (isInitialSetup, isStage, targetId) {
-    const stageSelected = ScratchBlocks.ScratchMsgs.translate(
-        'MOTION_STAGE_SELECTED',
-        'Stage selected: no motion blocks'
-    );
+    const stageSelected = ScratchBlocks.Msg.MOTION_STAGE_SELECTED;
     // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
     return `
     <category
@@ -157,8 +154,8 @@ const xmlEscape = function (unsafe) {
 };
 
 const looks = function (isInitialSetup, isStage, targetId, costumeName, backdropName) {
-    const hello = ScratchBlocks.ScratchMsgs.translate('LOOKS_HELLO', 'Hello!');
-    const hmm = ScratchBlocks.ScratchMsgs.translate('LOOKS_HMM', 'Hmm...');
+    const hello = ScratchBlocks.Msg.LOOKS_HELLO;
+    const hmm = ScratchBlocks.Msg.LOOKS_HMM;
     // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
     return `
     <category name="%{BKY_CATEGORY_LOOKS}" toolboxitemid="looks" categorystyle="looks">
@@ -442,7 +439,7 @@ const control = function (isInitialSetup, isStage, targetId) {
 };
 
 const sensing = function (isInitialSetup, isStage, targetId, hideNonVanillaBlocks) {
-    const name = ScratchBlocks.ScratchMsgs.translate('SENSING_ASK_TEXT', 'What\'s your name?');
+    const name = ScratchBlocks.Msg.SENSING_ASK_TEXT;
     // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
     return `
     <category name="%{BKY_CATEGORY_SENSING}" toolboxitemid="sensing" categorystyle="sensing">
@@ -597,9 +594,9 @@ const sensing = function (isInitialSetup, isStage, targetId, hideNonVanillaBlock
 };
 
 const operators = function (isInitialSetup, isStage, targetId, hideNonVanillaBlocks) {
-    const apple = ScratchBlocks.ScratchMsgs.translate('OPERATORS_JOIN_APPLE', 'apple');
-    const banana = ScratchBlocks.ScratchMsgs.translate('OPERATORS_JOIN_BANANA', 'banana');
-    const letter = ScratchBlocks.ScratchMsgs.translate('OPERATORS_LETTEROF_APPLE', 'a');
+    const apple = ScratchBlocks.Msg.OPERATORS_JOIN_APPLE;
+    const banana = ScratchBlocks.Msg.OPERATORS_JOIN_BANANA;
+    const letter = ScratchBlocks.Msg.OPERATORS_LETTEROF_APPLE;
     // Note: the category's secondaryColour matches up with the blocks' tertiary color, both used for border color.
     return `
     <category name="%{BKY_CATEGORY_OPERATORS}" toolboxitemid="operators" categorystyle="operators">

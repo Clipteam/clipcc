@@ -24,7 +24,7 @@
  */
 import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
-import {createVariableVisually, renameVariableVisually} from '../variables';
+import {createVariable, renameVariable} from '../variables';
 import type {VariableModel} from '../variable_model';
 
 export class FieldVariable extends Blockly.FieldVariable {
@@ -128,7 +128,7 @@ export class FieldVariable extends Blockly.FieldVariable {
     if (sourceBlock && !sourceBlock.isDeadOrDying()) {
       const selectedItem = menuItem.getValue();
       if (selectedItem === Constants.NEW_BROADCAST_MESSAGE_ID) {
-        createVariableVisually(
+        createVariable(
           sourceBlock.workspace as Blockly.WorkspaceSvg,
           (varId) => {
             if (varId) {
@@ -139,7 +139,7 @@ export class FieldVariable extends Blockly.FieldVariable {
         );
         return;
       } else if (selectedItem === Blockly.RENAME_VARIABLE_ID) {
-        renameVariableVisually(
+        renameVariable(
           sourceBlock.workspace as Blockly.WorkspaceSvg,
           this.getVariable() as VariableModel
         );

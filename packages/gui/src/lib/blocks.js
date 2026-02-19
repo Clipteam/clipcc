@@ -75,7 +75,7 @@ export default function (vm) {
             menu = vm.editingTarget.sprite.sounds.map(sound => [sound.name, sound.name]);
         }
         menu.push([
-            ScratchBlocks.ScratchMsgs.translate('SOUND_RECORD', 'record...'),
+            ScratchBlocks.Msg.SOUND_RECORD,
             'SOUND_RECORD'
         ]);
         return menu;
@@ -89,9 +89,9 @@ export default function (vm) {
     };
 
     const backdropsMenu = function () {
-        const next = ScratchBlocks.ScratchMsgs.translate('LOOKS_NEXTBACKDROP', 'next backdrop');
-        const previous = ScratchBlocks.ScratchMsgs.translate('LOOKS_PREVIOUSBACKDROP', 'previous backdrop');
-        const random = ScratchBlocks.ScratchMsgs.translate('LOOKS_RANDOMBACKDROP', 'random backdrop');
+        const next = ScratchBlocks.Msg.LOOKS_NEXTBACKDROP;
+        const previous = ScratchBlocks.Msg.LOOKS_PREVIOUSBACKDROP;
+        const random = ScratchBlocks.Msg.LOOKS_RANDOMBACKDROP;
         if (vm.runtime.targets[0] && vm.runtime.targets[0].getCostumes().length > 0) {
             return vm.runtime.targets[0].getCostumes().map(costume => [costume.name, costume.name])
                 .concat([[next, 'next backdrop'],
@@ -133,7 +133,7 @@ export default function (vm) {
             }
             return menu;
         }
-        const myself = ScratchBlocks.ScratchMsgs.translate('CONTROL_CREATECLONEOF_MYSELF', 'myself');
+        const myself = ScratchBlocks.Msg.CONTROL_CREATECLONEOF_MYSELF;
         return [[myself, '_myself_']].concat(spriteMenu());
     };
 
@@ -167,7 +167,7 @@ export default function (vm) {
     };
 
     ScratchBlocks.Blocks.motion_pointtowards_menu.init = function () {
-        const mouse = ScratchBlocks.ScratchMsgs.translate('MOTION_POINTTOWARDS_POINTER', 'mouse-pointer');
+        const mouse = ScratchBlocks.Msg.MOTION_POINTTOWARDS_POINTER;
         const json = jsonForMenuBlock('TOWARDS', spriteMenu, 'motion', [
             [mouse, '_mouse_']
         ]);
@@ -175,8 +175,8 @@ export default function (vm) {
     };
 
     ScratchBlocks.Blocks.motion_goto_menu.init = function () {
-        const random = ScratchBlocks.ScratchMsgs.translate('MOTION_GOTO_RANDOM', 'random position');
-        const mouse = ScratchBlocks.ScratchMsgs.translate('MOTION_GOTO_POINTER', 'mouse-pointer');
+        const random = ScratchBlocks.Msg.MOTION_GOTO_RANDOM;
+        const mouse = ScratchBlocks.Msg.MOTION_GOTO_POINTER;
         const json = jsonForMenuBlock('TO', spriteMenu, 'motion', [
             [random, '_random_'],
             [mouse, '_mouse_']
@@ -185,8 +185,8 @@ export default function (vm) {
     };
 
     ScratchBlocks.Blocks.motion_glideto_menu.init = function () {
-        const random = ScratchBlocks.ScratchMsgs.translate('MOTION_GLIDETO_RANDOM', 'random position');
-        const mouse = ScratchBlocks.ScratchMsgs.translate('MOTION_GLIDETO_POINTER', 'mouse-pointer');
+        const random = ScratchBlocks.Msg.MOTION_GLIDETO_RANDOM;
+        const mouse = ScratchBlocks.Msg.MOTION_GLIDETO_POINTER;
         const json = jsonForMenuBlock('TO', spriteMenu, 'motion', [
             [random, '_random_'],
             [mouse, '_mouse_']
@@ -195,7 +195,7 @@ export default function (vm) {
     };
 
     ScratchBlocks.Blocks.sensing_of_object_menu.init = function () {
-        const stage = ScratchBlocks.ScratchMsgs.translate('SENSING_OF_STAGE', 'Stage');
+        const stage = ScratchBlocks.Msg.SENSING_OF_STAGE;
         const json = jsonForMenuBlock('OBJECT', spriteMenu, 'sensing', [
             [stage, '_stage_']
         ]);
@@ -285,7 +285,7 @@ export default function (vm) {
     };
 
     ScratchBlocks.Blocks.sensing_distancetomenu.init = function () {
-        const mouse = ScratchBlocks.ScratchMsgs.translate('SENSING_DISTANCETO_POINTER', 'mouse-pointer');
+        const mouse = ScratchBlocks.Msg.SENSING_DISTANCETO_POINTER;
         const json = jsonForMenuBlock('DISTANCETOMENU', spriteMenu, 'sensing', [
             [mouse, '_mouse_']
         ]);
@@ -293,8 +293,8 @@ export default function (vm) {
     };
 
     ScratchBlocks.Blocks.sensing_touchingobjectmenu.init = function () {
-        const mouse = ScratchBlocks.ScratchMsgs.translate('SENSING_TOUCHINGOBJECT_POINTER', 'mouse-pointer');
-        const edge = ScratchBlocks.ScratchMsgs.translate('SENSING_TOUCHINGOBJECT_EDGE', 'edge');
+        const mouse = ScratchBlocks.Msg.SENSING_TOUCHINGOBJECT_POINTER;
+        const edge = ScratchBlocks.Msg.SENSING_TOUCHINGOBJECT_EDGE;
         const json = jsonForMenuBlock('TOUCHINGOBJECTMENU', spriteMenu, 'sensing', [
             [mouse, '_mouse_'],
             [edge, '_edge_']

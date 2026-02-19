@@ -47,7 +47,7 @@ export const CLOUD_PREFIX = '☁ ';
  * @param type Optional type of the variable to be created, like 'string' or
  *     'list'.
  */
-export function createVariableVisually(
+export function createVariable(
   workspace: Blockly.WorkspaceSvg,
   callback?: (id?: string) => void,
   type = Constants.SCALAR_VARIABLE_TYPE
@@ -67,7 +67,7 @@ export function createVariableVisually(
     modalTitle = Blockly.Msg.VARIABLE_MODAL_TITLE;
   }
   const validate = nameValidator.bind(null, type);
-  const prompt = callbackRegistry.get('prompt');
+  const prompt = callbackRegistry.get('showVariablePrompt');
 
   // Prompt the user to enter a name for the variable
   prompt(
@@ -278,7 +278,7 @@ function validateScalarVarOrListName(
  *     name, or null if change is to be aborted (cancel button), or undefined if
  *     an existing variable was chosen.
  */
-export function renameVariableVisually(
+export function renameVariable(
   workspace: Blockly.WorkspaceSvg,
   variable: VariableModel,
   callback?: (id?: string) => void
@@ -309,7 +309,7 @@ export function renameVariableVisually(
     promptDefaultText = promptDefaultText.substring(CLOUD_PREFIX.length);
   }
 
-  const promptCallback = callbackRegistry.get('prompt');
+  const promptCallback = callbackRegistry.get('showVariablePrompt');
   promptCallback(
     promptText,
     promptDefaultText,

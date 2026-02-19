@@ -29,16 +29,26 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
   protected override createRows_(): void {
     super.createRows_();
 
-    // Remove comment icons.
+    // Remove elements that won't be rendered.
     for (const row of this.rows) {
       for (let i = 0; i < row.elements.length; ++i) {
         const element = row.elements[i];
+
+        // Remove comment icons.
         if (
           Blockly.blockRendering.Types.isIcon(element) &&
           isInvisibleIcon(element.icon) && element.icon.invisible
         ) {
-          row.elements.splice(i, 1);
+          row.elements.splice(i--, 1);
           this.invisibleIcons.push(element);
+        }
+
+        // Remove invisible fields.
+        if (
+          Blockly.blockRendering.Types.isField(element) &&
+          !element.field.isVisible()
+        ) {
+          row.elements.splice(i--, 1);
         }
       }
     }

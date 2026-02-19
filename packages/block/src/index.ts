@@ -38,11 +38,9 @@ import './events/block_change';
 import './events/var_create';
 import './events/var_delete';
 
-import './block_comment_icon';
-import './scratch_msgs';
-
 import './renderer/renderer';
 import './connection_checker';
+import './block_comment_icon';
 import './dragger';
 import './metrics_manager';
 import './insertion_marker_previewer';
@@ -178,39 +176,48 @@ export function clearWorkspaceAndLoadFromXml(
   return blockIds;
 }
 
-// Register the fields.
-registerFieldAngle();
-registerFieldButton();
-registerFieldColourSlider();
-registerFieldMatrix();
-registerFieldNote();
-registerFieldVariable();
-registerFieldTextInputRemovable();
-registerFieldVariableGetter();
-registerFieldVerticalSeparator();
-registerScratchContextMenu();
+/**
+ * Set up environments for the clipcc-block. It should be called only once before
+ * creating any workspaces.
+ */
+function setupEnvironment() {
+  // Register the fields.
+  registerFieldAngle();
+  registerFieldButton();
+  registerFieldColourSlider();
+  registerFieldMatrix();
+  registerFieldNote();
+  registerFieldVariable();
+  registerFieldTextInputRemovable();
+  registerFieldVariableGetter();
+  registerFieldVerticalSeparator();
+  registerScratchContextMenu();
 
-Blockly.Css.register(styles);
-Blockly.Css.register(commentStyles);
+  Blockly.Css.register(styles);
+  Blockly.Css.register(commentStyles);
 
-// Add workspace comment options.
-Blockly.ContextMenuItems.registerCommentOptions();
+  // Add workspace comment options.
+  Blockly.ContextMenuItems.registerCommentOptions();
 
-// Unregister unused items.
-Blockly.ContextMenuRegistry.registry.unregister('blockInline');
+  // Unregister unused items.
+  Blockly.ContextMenuRegistry.registry.unregister('blockInline');
 
-// Monkey-patches
-Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
-Blockly.FlyoutButton.TEXT_MARGIN_X = 40;
-Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;
-Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(200, 200);
-Blockly.ToolboxCategory.nestedPadding = 6;
+  // Monkey-patches
+  Blockly.Scrollbar.scrollbarThickness = Blockly.Touch.TOUCH_ENABLED ? 14 : 11;
+  Blockly.FlyoutButton.TEXT_MARGIN_X = 40;
+  Blockly.FlyoutButton.TEXT_MARGIN_Y = 10;
+  Blockly.comments.CommentView.defaultCommentSize = new Blockly.utils.Size(200, 200);
+  Blockly.ToolboxCategory.nestedPadding = 6;
 
-Blockly.WorkspaceSvg.prototype.addZoomControls = function() {
-  this.zoomControls_ = new ZoomControls(this) as unknown as Blockly.ZoomControls;
-  const svgZoomControls = this.zoomControls_.createDom();
-  this.svgGroup_.appendChild(svgZoomControls);
-};
+  Blockly.WorkspaceSvg.prototype.addZoomControls = function() {
+    this.zoomControls_ = new ZoomControls(this) as unknown as Blockly.ZoomControls;
+    const svgZoomControls = this.zoomControls_.createDom();
+    this.svgGroup_.appendChild(svgZoomControls);
+  };
+}
+
+// Environment Setup
+setupEnvironment();
 
 // Exports
 export * from 'blockly/core';
@@ -218,7 +225,6 @@ export * from 'blockly/core';
 export * as callbackRegistry from './callback_registry';
 export * as constants from './constants';
 export * as scratchBlocksUtils from './scratch_blocks_utils';
-export * as ScratchMsgs from './scratch_msgs';
 
 export {reportValue} from './report_value';
 export {Colours} from './theme';
