@@ -7966,10 +7966,10 @@ bl@^1.0.0:
     readable-stream "^2.3.5"
     safe-buffer "^5.1.1"
 
-blockly@^12.3.1:
-  version "12.3.1"
-  resolved "https://registry.yarnpkg.com/blockly/-/blockly-12.3.1.tgz#796669a843e8f91c370bc01177485d62f3b864bb"
-  integrity sha512-BbWUcpqroY241XgSxTuAiEMHeIZ6u3+oD2zOATf3Fi+0NMWJ/MdMtuSkOcDCSk6Nc7WR3z5n9GHKqz2L+3kQOQ==
+blockly@^12.4.1:
+  version "12.4.1"
+  resolved "https://registry.yarnpkg.com/blockly/-/blockly-12.4.1.tgz#30b94051184b170661637cef74c389b3866fc953"
+  integrity sha512-OEF0r8cFMGDkQbX+PWTjifWTe9xi2QzpZS4rO2lYeQhZDWW3/eInklLSdoxAyEQCdfJhQqMTpBct13oDoc0GVQ==
   dependencies:
     jsdom "26.1.0"
 
