@@ -199,10 +199,9 @@ class Blocks extends React.Component {
                 // call setLocale if the locale has changed, or changed while the blocks were hidden.
                 // vm.getLocale() will be out of sync if locale was changed while not visible
                 this.setLocale();
+            } else if (this.props.theme !== prevProps.theme) {
+                this.ScratchBlocks.Theme.setTheme(this.themeMapName[this.props.theme] || 'scratch', this.workspace);
             } else {
-                if (this.props.theme !== prevProps.theme) {
-                    this.ScratchBlocks.Theme.setTheme(this.themeMapName[this.props.theme] || 'scratch', this.workspace);
-                }
                 this.props.vm.refreshWorkspace();
                 this.requestToolboxUpdate();
             }
