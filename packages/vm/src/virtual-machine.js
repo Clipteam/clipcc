@@ -1275,6 +1275,7 @@ class VirtualMachine extends EventEmitter {
 
         // Blockly's state should consistent with the VM's state. If the VM
         // is loading a workspace, ignore Blockly events.
+        // This also fix scratchfoundation/scratch-gui#9552
         if (this.loadingWorkspace) {
             return;
         }
