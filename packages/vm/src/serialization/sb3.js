@@ -127,6 +127,48 @@ const serializePrimitiveBlock = function (block) {
 };
 
 /**
+ * Serializes the given runtime mutation into old sb3 mutation format for compatibility.
+ * Since we migrated blocks-vm interoperability way from XML to JSON, the runtime now stores
+ * mutation data with type info (compares to string-only XML attributes). This function
+ * converts the mutation data back to old string-only format that old sb3 deserializer can
+ * understand, and also simulates old mutation structure (e.g. with tag and attributes).
+ * @param {object} mutation The mutation to serialize
+ * @returns {object} An object representing the serialized mutation.
+ */
+const serializeMutation = function (mutation) {
+    // Deep-copy to avoid unintentional modification of the original obj
+    mutation = {...mutation};
+
+    for (const key in mutation) {
+        switch (key) {
+        // proccode is already a string, just keep it as is
+        case 'warp':
+        case 'return':
+            // Expect mutation[key] to be boolean in runtime.
+            mutation[key] = `${!!mutation[key]}`;
+            break;
+        case 'argumentids':
+        case 'argumentnames':
+        case 'argumentdefaults':
+            // Expect mutation[key] to be an array in runtime.
+            mutation[key] = JSON.stringify(mutation[key]);
+            break;
+        }
+        // in other cases, just keep the value as is,
+        // or provide a hook for extension blocks later.
+    }
+
+    if (!Object.hasOwnProperty.call(mutation, 'tagName')) {
+        mutation.tagName = 'mutation';
+    }
+    if (!Object.hasOwnProperty.call(mutation, 'children')) {
+        mutation.children = [];
+    }
+
+    return mutation;
+};
+
+/**
  * Serializes the inputs field of a block in a compact form using
  * constants described above to represent the relationship between the
  * inputs of this block (e.g. if there is an unobscured shadow, an obscured shadow
@@ -213,7 +255,7 @@ const serializeBlock = function (block) {
     }
     if (block.mutation) {
         // Simulate old mutation structure for compatibility
-        obj.mutation = mutationAdapter.mock(block.mutation);
+        obj.mutation = serializeMutation(block.mutation);
     }
     if (block.comment) {
         obj.comment = block.comment;
@@ -750,6 +792,39 @@ const deserializeInputDesc = function (inputDescOrId, parentId, isShadow, blocks
 };
 
 /**
+ * Deserialize the given mutation from the old sb3 format into the new runtime format.
+ * This is the inverse of serializeMutation, and should be able to handle mutations that have
+ * already been deserialized by this function. Since the old sb3's mutation format is
+ * string-only, this function also parses strings into the appropriate types based on the
+ *  keys of the mutation.
+ * @param {object} mutation  The mutation to deserialize.
+ */
+const deserializeMutation = function (mutation) {
+    for (const key in mutation) {
+        switch (key) {
+        case 'warp':
+        case 'return':
+            // Expect mutation[key] to be a string.
+            mutation[key] = (mutation[key] === 'true');
+            break;
+        case 'argumentids':
+        case 'argumentnames':
+        case 'argumentdefaults':
+            // Expect mutation[key] to be a JSON string representing an array.
+            try {
+                mutation[key] = JSON.parse(mutation[key]);
+            } catch (e) {
+                log.error(`Error parsing mutation property ${key}: ${mutation[key]}`);
+                mutation[key] = [];
+            }
+            break;
+        }
+    }
+    // vm still expects tagName and children to be exists (see mutationToXML).
+    // just don't touch them.
+};
+
+/**
  * Deserialize the given block inputs.
  * @param {object} inputs The inputs to deserialize.
  * @param {string} parentId The block id of the parent block
@@ -846,7 +921,7 @@ const deserializeBlocks = function (blocks) {
         block.inputs = deserializeInputs(block.inputs, blockId, blocks);
         block.fields = deserializeFields(block.fields);
         if (block.mutation) {
-            mutationAdapter.unmock(block.mutation);
+            deserializeMutation(block.mutation);
         }
     }
     return blocks;

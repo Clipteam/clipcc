@@ -45,38 +45,4 @@ const mutationAdapter = function (mutation) {
     return mutatorTagToObject(mutationParsed);
 };
 
-/**
- * Mock a Blockly extra state that like what mutation adapter would produce.
- * @param {object} mutation Mutation data.
- */
-mutationAdapter.mock = function (mutation) {
-    mutation = {...mutation};
-    for (const key in mutation) {
-        if (typeof mutation[key] === 'string') continue;
-        mutation[key] = JSON.stringify(mutation[key]);
-    }
-    if (!mutation.tagName) {
-        mutation.tagName = 'mutation';
-    }
-    if (!mutation.children) {
-        mutation.children = [];
-    }
-    return mutation;
-};
-
-/**
- * Unmock a mutation object so that it can be used by the runtime.
- * @param {object} mutation Mutation data.
- */
-mutationAdapter.unmock = function (mutation) {
-    for (const key in mutation) {
-        if (typeof mutation[key] !== 'string') continue;
-        try {
-            mutation[key] = JSON.parse(mutation[key]);
-        } catch (e) {
-            // Ignore
-        }
-    }
-};
-
 module.exports = mutationAdapter;
