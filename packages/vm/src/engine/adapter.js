@@ -3,7 +3,7 @@ const html = require('htmlparser2');
 const uid = require('../util/uid');
 
 /**
- * @typedef {import('clipcc-block')} Blockly
+ * @import * as Blockly from 'blockly';
  * @typedef {Blockly.serialization.blocks.State} BlocksState
  */
 
