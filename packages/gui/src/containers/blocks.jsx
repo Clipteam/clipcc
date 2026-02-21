@@ -711,7 +711,6 @@ Blocks.propTypes = {
 Blocks.defaultOptions = {
     move: {
         scrollbars: true,
-        modalInputs: false,
         wheel: true
     },
     zoom: {
