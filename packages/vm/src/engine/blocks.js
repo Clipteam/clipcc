@@ -863,7 +863,13 @@ class Blocks {
                 } else {
                     // If the block is being refreshed (e.g. by a mutation), we should keep the connection
                     // so that the block can be re-created in place.
-                    if (!e.recordUndo) return;
+                    if (!e.recordUndo) {
+                        if (e.newCoordinate && e.id === shadow) {
+                            // Removing input.
+                            delete oldParent.inputs[e.oldInput];
+                        }
+                        return;
+                    }
                     if (!shadow) {
                         oldParent.inputs[e.oldInput].block = null;
                     }
@@ -902,7 +908,7 @@ class Blocks {
                 // If the block being attached is itself a shadow, make sure to set
                 // both block and shadow to that blocks ID. This happens when adding
                 // inputs to a custom procedure.
-                if (this._blocks[e.id].shadow) oldShadow = e.id;
+                if (this._blocks[e.id].shadow || e.newInput === e.id) oldShadow = e.id;
 
                 this._blocks[e.newParent].inputs[e.newInput] = {
                     name: e.newInput,

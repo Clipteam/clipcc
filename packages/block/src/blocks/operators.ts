@@ -471,6 +471,7 @@ Blockly.Blocks['operator_join_multiple'] = {
           // Create a shadow input.
           oldShadow = {
             type: 'text',
+            id,
             fields: {TEXT: ''}
           };
         }
@@ -480,7 +481,7 @@ Blockly.Blocks['operator_join_multiple'] = {
         Blockly.Events.disable();
         let newBlock;
         try {
-          newBlock = this.workspace.newBlock('text');
+          newBlock = this.workspace.newBlock('text', id);
           newBlock.setFieldValue('', 'TEXT');
           newBlock.setShadow(true);
           if (!this.isInsertionMarker()) {
