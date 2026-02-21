@@ -316,17 +316,19 @@ const GUIComponent = props => {
                                             vm={vm}
                                         />
                                     </Box>
-                                    <button
-                                        className={styles.extensionButton}
-                                        title={intl.formatMessage(messages.addExtension)}
-                                        onClick={onExtensionButtonClick}
-                                    >
-                                        <img
-                                            className={styles.extensionButtonIcon}
-                                            draggable={false}
-                                            src={addExtensionIcon}
-                                        />
-                                    </button>
+                                    <Box className={styles.extensionButtonContainer}>
+                                        <button
+                                            className={styles.extensionButton}
+                                            title={intl.formatMessage(messages.addExtension)}
+                                            onClick={onExtensionButtonClick}
+                                        >
+                                            <img
+                                                className={styles.extensionButtonIcon}
+                                                draggable={false}
+                                                src={addExtensionIcon}
+                                            />
+                                        </button>
+                                    </Box>
                                     <Box className={styles.watermark}>
                                         <Watermark />
                                     </Box>
