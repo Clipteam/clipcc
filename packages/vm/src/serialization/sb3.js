@@ -142,6 +142,7 @@ const serializeMutation = function (mutation) {
         switch (key) {
         // proccode is already a string, just keep it as is
         case 'warp':
+        case 'global':
         case 'return':
             // Expect mutation[key] to be boolean in runtime.
             mutation[key] = `${!!mutation[key]}`;
@@ -802,6 +803,7 @@ const deserializeMutation = function (mutation) {
     for (const key in mutation) {
         switch (key) {
         case 'warp':
+        case 'global':
         case 'return':
             // Expect mutation[key] to be a string.
             mutation[key] = (mutation[key] === 'true');
