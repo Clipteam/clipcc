@@ -996,7 +996,7 @@ const makeToolbox = function (
     const moveCategory = categoryId => {
         const index = categories.findIndex(categoryInfo => categoryInfo.id === categoryId);
         if (index >= 0) {
-            // remove the category from categoriesXML and return its XML
+            // remove the category from categories and return it
             const [categoryInfo] = categories.splice(index, 1);
             return categoryInfo.json;
         }

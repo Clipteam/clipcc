@@ -56,7 +56,7 @@ class Blocks extends React.Component {
             'attachVM',
             'checkoutWsByProccode',
             'detachVM',
-            'getToolboxXML',
+            'getToolbox',
             'handleCategorySelected',
             'handleConnectionModalStart',
             'handleDrop',
@@ -107,7 +107,7 @@ class Blocks extends React.Component {
             this.props.options,
             {
                 rtl: this.props.isRtl,
-                toolbox: this.props.toolboxXML,
+                toolbox: this.props.toolbox,
                 colours: getColorsForTheme(this.props.theme),
                 theme: this.themeMapName[this.props.theme] || 'scratch'
             }
@@ -130,10 +130,10 @@ class Blocks extends React.Component {
         // toolboxWorkspace.registerButtonCallback('MAKE_A_LIST', varListButtonCallback('list'));
         // toolboxWorkspace.registerButtonCallback('MAKE_A_PROCEDURE', procButtonCallback);
 
-        // Store the xml of the toolbox that is actually rendered.
+        // Store the toolbox that is actually rendered.
         // This is used in componentDidUpdate instead of prevProps, because
-        // the xml can change while e.g. on the costumes tab.
-        this._renderedToolboxXML = this.props.toolboxXML;
+        // the toolbox can change while e.g. on the costumes tab.
+        this._renderedToolbox = this.props.toolbox;
 
         // we actually never want the workspace to enable "refresh toolbox" - this basically re-renders the
         // entire toolbox every time we reset the workspace.  We call updateToolbox as a part of
@@ -155,7 +155,7 @@ class Blocks extends React.Component {
         return (
             this.state.prompt !== nextState.prompt ||
             this.props.isVisible !== nextProps.isVisible ||
-            this._renderedToolboxXML !== nextProps.toolboxXML ||
+            this._renderedToolbox !== nextProps.toolbox ||
             this.props.extensionLibraryVisible !== nextProps.extensionLibraryVisible ||
             this.props.customProceduresVisible !== nextProps.customProceduresVisible ||
             this.props.locale !== nextProps.locale ||
@@ -171,16 +171,16 @@ class Blocks extends React.Component {
             this.ScratchBlocks.common.getMainWorkspace().hideChaff();
         }
 
-        // Only rerender the toolbox when the blocks are visible and the xml is
-        // different from the previously rendered toolbox xml.
-        // Do not check against prevProps.toolboxXML because that may not have been rendered.
-        if (this.props.isVisible && this.props.toolboxXML !== this._renderedToolboxXML) {
+        // Only rerender the toolbox when the blocks are visible and the toolbox is
+        // different from the previously rendered toolbox.
+        // Do not check against prevProps.toolbox because that may not have been rendered.
+        if (this.props.isVisible && this.props.toolbox !== this._renderedToolbox) {
             this.requestToolboxUpdate();
         }
         if (this.props.hideNonVanillaBlocks !== prevProps.hideNonVanillaBlocks) {
-            const toolboxXML = this.getToolboxXML();
-            if (toolboxXML) {
-                this.props.updateToolboxState(toolboxXML);
+            const toolbox = this.getToolbox();
+            if (toolbox) {
+                this.props.updateToolboxState(toolbox);
             }
         }
 
@@ -260,8 +260,8 @@ class Blocks extends React.Component {
             }
         }
 
-        this.workspace.updateToolbox(this.props.toolboxXML);
-        this._renderedToolboxXML = this.props.toolboxXML;
+        this.workspace.updateToolbox(this.props.toolbox);
+        this._renderedToolbox = this.props.toolbox;
 
         // In order to catch any changes that mutate the toolbox during "normal runtime"
         // (variable changes/etc), re-enable toolbox refresh.
@@ -387,7 +387,7 @@ class Blocks extends React.Component {
     onVisualReport (data) {
         this.ScratchBlocks.reportValue(data.id, data.value);
     }
-    getToolboxXML () {
+    getToolbox () {
         // Use try/catch because this requires digging pretty deep into the VM
         // Code inside intentionally ignores several error situations (no stage, etc.)
         // Because they would get caught by this try/catch
@@ -415,9 +415,9 @@ class Blocks extends React.Component {
     }
     onWorkspaceUpdate (data) {
         // When we change sprites, update the toolbox to have the new sprite's blocks
-        const toolboxXML = this.getToolboxXML();
-        if (toolboxXML) {
-            this.props.updateToolboxState(toolboxXML);
+        const toolbox = this.getToolbox();
+        if (toolbox) {
+            this.props.updateToolboxState(toolbox);
         }
 
         if (this.props.vm.editingTarget && !this.props.workspaceMetrics.targets[this.props.vm.editingTarget.id]) {
@@ -513,9 +513,9 @@ class Blocks extends React.Component {
         defineBlocks(categoryInfo.blocks);
 
         // Update the toolbox with new blocks if possible
-        const toolboxXML = this.getToolboxXML();
-        if (toolboxXML) {
-            this.props.updateToolboxState(toolboxXML);
+        const toolbox = this.getToolbox();
+        if (toolbox) {
+            this.props.updateToolboxState(toolbox);
         }
     }
     handleBlocksInfoUpdate (categoryInfo) {
@@ -619,7 +619,7 @@ class Blocks extends React.Component {
             onActivateCustomProcedures,
             onRequestCloseExtensionLibrary,
             onRequestCloseCustomProcedures,
-            toolboxXML,
+            toolbox,
             updateMetrics: updateMetricsProp,
             workspaceMetrics,
             ...props
@@ -695,7 +695,7 @@ Blocks.propTypes = {
     }),
     stageSize: PropTypes.oneOf(Object.keys(STAGE_DISPLAY_SIZES)).isRequired,
     theme: PropTypes.oneOf(Object.keys(themeMap)),
-    toolboxXML: PropTypes.string,
+    toolbox: PropTypes.string,
     updateMetrics: PropTypes.func,
     updateToolboxState: PropTypes.func,
     vm: PropTypes.instanceOf(VM).isRequired,
@@ -746,7 +746,7 @@ const mapStateToProps = state => ({
     locale: state.locales.locale,
     messages: state.locales.editorMessages,
     blockMessages: state.locales.blockMessages,
-    toolboxXML: state.scratchGui.toolbox.toolboxXML,
+    toolbox: state.scratchGui.toolbox.toolbox,
     customProceduresVisible: state.scratchGui.customProcedures.active,
     workspaceMetrics: state.scratchGui.workspaceMetrics
 });
@@ -768,8 +768,8 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseCustomProcedures: data => {
         dispatch(deactivateCustomProcedures(data));
     },
-    updateToolboxState: toolboxXML => {
-        dispatch(updateToolbox(toolboxXML));
+    updateToolboxState: toolbox => {
+        dispatch(updateToolbox(toolbox));
     },
     updateMetrics: metrics => {
         dispatch(updateMetrics(metrics));
