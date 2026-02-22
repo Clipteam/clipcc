@@ -72,6 +72,11 @@ module.exports = [
     output: {
       libraryTarget: 'commonjs2',
       path: path.resolve(__dirname, 'dist', 'node')
+    },
+    externals: {
+      bufferutil: true,
+      'utf-8-validate': true,
+      canvas: true
     }
   }),
   // Web-comptible
