@@ -955,9 +955,10 @@ const myBlocks = (isInitialSetup, isStage, targetId) => ({
  * @param {?boolean} isStage - Whether the toolbox is for a stage-type target. This is always set to true
  * when isInitialSetup is true.
  * @param {?string} targetId - The current editing target
- * @param {?Array.<object>} categories - optional array of `{id,json}` for categories. This can include both core
+ * @param {?Array.<object>} categories - optional array of `{id,json,xml}` for categories. This can include both core
  * and other extensions: core extensions will be placed in the normal Scratch order; others will go at the bottom.
  * @property {string} id - the extension / category ID.
+ * @property {string} json - the JSON for this extension / category.
  * @property {string} xml - the `<category>...</category>` XML for this extension / category.
  * @param {?string} costumeName - The name of the default selected costume dropdown.
  * @param {?string} backdropName - The name of the default selected backdrop dropdown.
@@ -977,13 +978,27 @@ const makeToolbox = function (
 ) {
     isStage = isInitialSetup || isStage;
 
+    // Convert xml toolbox to json.
+    for (const category of categories) {
+        if (category.json || !category.xml) continue;
+        const toolbox = ScratchBlocks.utils.toolbox.convertToolboxDefToJson(
+            `<xml style="display: none">${category.xml}</xml>`
+        );
+        if (!toolbox || toolbox.contents.length === 0) {
+            // eslint-disable-next-line no-console
+            console.warn(`Invalid toolbox xml for ${category.id}`);
+            continue;
+        }
+        category.json = toolbox.contents[0];
+    }
+
     categories = categories.slice();
     const moveCategory = categoryId => {
         const index = categories.findIndex(categoryInfo => categoryInfo.id === categoryId);
         if (index >= 0) {
             // remove the category from categoriesXML and return its XML
             const [categoryInfo] = categories.splice(index, 1);
-            return categoryInfo.xml;
+            return categoryInfo.json;
         }
         // return `undefined`
     };
