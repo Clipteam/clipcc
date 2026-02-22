@@ -12,8 +12,7 @@ const motion = function (isInitialSetup, isStage, targetId) {
     <category
         name="%{BKY_CATEGORY_MOTION}"
         toolboxitemid="motion"
-        categorystyle="motion"
-    >
+        categorystyle="motion">
         ${isStage ? `
         <label text="${stageSelected}"></label>
         ` : `
