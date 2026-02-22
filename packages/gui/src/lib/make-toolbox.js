@@ -30,114 +30,124 @@ const createShadow = (type, fields) => {
 };
 
 const motion = (isInitialSetup, isStage, targetId) => {
-    const motionContents = [
-        {
-            kind: 'block',
-            type: 'motion_movesteps',
-            inputs: {
-                STEPS: createShadow('math_number', {NUM: 10})
-            }
-        },
-        {
-            kind: 'block',
-            type: 'motion_turnright',
-            inputs: {
-                DEGREES: createShadow('math_number', {NUM: 15})
-            }
-        },
-        {
-            kind: 'block',
-            type: 'motion_turnleft',
-            inputs: {
-                DEGREES: createShadow('math_number', {NUM: 15})
-            }
-        },
-        blockSeparator,
-        {
-            kind: 'block',
-            type: 'motion_goto',
-            inputs: {
-                TO: {shadow: {type: 'motion_goto_menu'}}
-            }
-        },
-        {
-            kind: 'block',
-            type: 'motion_gotoxy',
-            inputs: {
-                X: createShadow('math_number', {NUM: 0}),
-                Y: createShadow('math_number', {NUM: 0})
-            }
-        },
-        {
-            kind: 'block',
-            type: 'motion_glideto',
-            inputs: {
-                SECS: createShadow('math_number', {NUM: 1}),
-                TO: {shadow: {type: 'motion_glideto_menu'}}
-            }
-        },
-        {
-            kind: 'block',
-            type: 'motion_glidesecstoxy',
-            inputs: {
-                SECS: createShadow('math_number', {NUM: 1}),
-                X: createShadow('math_number', {NUM: 0}),
-                Y: createShadow('math_number', {NUM: 0})
-            }
-        },
-        blockSeparator,
-        {
-            kind: 'block',
-            type: 'motion_pointindirection',
-            inputs: {
-                DIRECTION: createShadow('math_angle', {NUM: 90})
-            }
-        },
-        {
-            kind: 'block',
-            type: 'motion_pointtowards',
-            inputs: {
-                TOWARDS: {shadow: {type: 'motion_pointtowards_menu'}}
-            }
-        },
-        blockSeparator,
-        {
-            kind: 'block',
-            type: 'motion_changexby',
-            inputs: {
-                DX: createShadow('math_number', {NUM: 10})
-            }
-        },
-        {
-            kind: 'block',
-            type: 'motion_setx',
-            inputs: {
-                X: createShadow('math_number', {NUM: 0})
-            }
-        },
-        {
-            kind: 'block',
-            type: 'motion_changeyby',
-            inputs: {
-                DY: createShadow('math_number', {NUM: 10})
-            }
-        },
-        {
-            kind: 'block',
-            type: 'motion_sety',
-            inputs: {
-                Y: createShadow('math_number', {NUM: 0})
-            }
-        },
-        blockSeparator,
-        {kind: 'block', type: 'motion_ifonedgebounce'},
-        blockSeparator,
-        {kind: 'block', type: 'motion_setrotationstyle'},
-        blockSeparator,
-        {kind: 'block', type: 'motion_xposition', id: `${targetId}_xposition`},
-        {kind: 'block', type: 'motion_yposition', id: `${targetId}_yposition`},
-        {kind: 'block', type: 'motion_direction', id: `${targetId}_direction`}
-    ];
+    const stageSelected = ScratchBlocks.Msg.MOTION_STAGE_SELECTED;
+
+    const motionContents = [];
+    if (isStage) {
+        motionContents.push({
+            kind: 'label',
+            text: stageSelected
+        });
+    } else {
+        motionContents.push(
+            {
+                kind: 'block',
+                type: 'motion_movesteps',
+                inputs: {
+                    STEPS: createShadow('math_number', {NUM: 10})
+                }
+            },
+            {
+                kind: 'block',
+                type: 'motion_turnright',
+                inputs: {
+                    DEGREES: createShadow('math_number', {NUM: 15})
+                }
+            },
+            {
+                kind: 'block',
+                type: 'motion_turnleft',
+                inputs: {
+                    DEGREES: createShadow('math_number', {NUM: 15})
+                }
+            },
+            blockSeparator,
+            {
+                kind: 'block',
+                type: 'motion_goto',
+                inputs: {
+                    TO: {shadow: {type: 'motion_goto_menu'}}
+                }
+            },
+            {
+                kind: 'block',
+                type: 'motion_gotoxy',
+                inputs: {
+                    X: createShadow('math_number', {NUM: 0}),
+                    Y: createShadow('math_number', {NUM: 0})
+                }
+            },
+            {
+                kind: 'block',
+                type: 'motion_glideto',
+                inputs: {
+                    SECS: createShadow('math_number', {NUM: 1}),
+                    TO: {shadow: {type: 'motion_glideto_menu'}}
+                }
+            },
+            {
+                kind: 'block',
+                type: 'motion_glidesecstoxy',
+                inputs: {
+                    SECS: createShadow('math_number', {NUM: 1}),
+                    X: createShadow('math_number', {NUM: 0}),
+                    Y: createShadow('math_number', {NUM: 0})
+                }
+            },
+            blockSeparator,
+            {
+                kind: 'block',
+                type: 'motion_pointindirection',
+                inputs: {
+                    DIRECTION: createShadow('math_angle', {NUM: 90})
+                }
+            },
+            {
+                kind: 'block',
+                type: 'motion_pointtowards',
+                inputs: {
+                    TOWARDS: {shadow: {type: 'motion_pointtowards_menu'}}
+                }
+            },
+            blockSeparator,
+            {
+                kind: 'block',
+                type: 'motion_changexby',
+                inputs: {
+                    DX: createShadow('math_number', {NUM: 10})
+                }
+            },
+            {
+                kind: 'block',
+                type: 'motion_setx',
+                inputs: {
+                    X: createShadow('math_number', {NUM: 0})
+                }
+            },
+            {
+                kind: 'block',
+                type: 'motion_changeyby',
+                inputs: {
+                    DY: createShadow('math_number', {NUM: 10})
+                }
+            },
+            {
+                kind: 'block',
+                type: 'motion_sety',
+                inputs: {
+                    Y: createShadow('math_number', {NUM: 0})
+                }
+            },
+            blockSeparator,
+            {kind: 'block', type: 'motion_ifonedgebounce'},
+            blockSeparator,
+            {kind: 'block', type: 'motion_setrotationstyle'},
+            blockSeparator,
+            {kind: 'block', type: 'motion_xposition', id: `${targetId}_xposition`},
+            {kind: 'block', type: 'motion_yposition', id: `${targetId}_yposition`},
+            {kind: 'block', type: 'motion_direction', id: `${targetId}_direction`}
+        );
+    }
 
     return {
         kind: 'category',
