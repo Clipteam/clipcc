@@ -24,7 +24,6 @@ const defaultOptions: Blockly.BlocklyOptions = {
   toolbox: toolbox,
   horizontalLayout: false,
   toolboxPosition: 'left',
-  sounds: false,
   move: {
     scrollbars: true,
     wheel: true
