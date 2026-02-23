@@ -32,7 +32,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: packages/*/dist/**
+          path: | 
+            packages/*/dist/**
+            packages/audio/dist.js
           retention-days: 1
 
   check-types:
