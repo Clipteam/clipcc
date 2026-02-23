@@ -135,11 +135,6 @@ class Blocks extends React.Component {
         // the toolbox can change while e.g. on the costumes tab.
         this._renderedToolbox = this.props.toolbox;
 
-        // we actually never want the workspace to enable "refresh toolbox" - this basically re-renders the
-        // entire toolbox every time we reset the workspace.  We call updateToolbox as a part of
-        // componentDidUpdate so the toolbox will still correctly be updated
-        this.workspace.getToolbox().setRefreshEnabled(false);
-
         // @todo change this when blockly supports UI events
         addFunctionListener(this.workspace, 'translate', this.onWorkspaceMetricsChange);
         addFunctionListener(this.workspace, 'zoom', this.onWorkspaceMetricsChange);
@@ -262,11 +257,6 @@ class Blocks extends React.Component {
 
         this.workspace.updateToolbox(this.props.toolbox);
         this._renderedToolbox = this.props.toolbox;
-
-        // In order to catch any changes that mutate the toolbox during "normal runtime"
-        // (variable changes/etc), re-enable toolbox refresh.
-        // Using the setter function will rerender the entire toolbox which we just rendered.
-        toolbox.setRefreshEnabled(true);
 
         toolbox.forceRerender().then(() => {
             flyout.setRecyclingEnabled(true);
@@ -424,8 +414,6 @@ class Blocks extends React.Component {
             this.onWorkspaceMetricsChange();
         }
 
-        // Remove and reattach the workspace listener (but allow flyout events)
-        this.workspace.removeChangeListener(this.props.vm.blockListener);
         try {
             this.ScratchBlocks.loadWorkspace(data.json, this.workspace);
         } catch (error) {
@@ -443,8 +431,6 @@ class Blocks extends React.Component {
             }
             log.error(error);
         }
-
-        this.workspace.addChangeListener(this.props.vm.blockListener);
 
         if (this.props.vm.editingTarget && this.props.workspaceMetrics.targets[this.props.vm.editingTarget.id]) {
             const {scrollX, scrollY, scale} = this.props.workspaceMetrics.targets[this.props.vm.editingTarget.id];

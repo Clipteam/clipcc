@@ -404,8 +404,7 @@ class BlockCached {
         const input = this._inputs[inputName];
         if (input.block) {
             const inputCached = BlocksExecuteCache.getCached(blockContainer, input.block, BlockCached);
-
-            if (!inputCached || inputCached._isHat) {
+            if (inputCached._isHat) {
                 return;
             }
 

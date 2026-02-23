@@ -81,6 +81,11 @@ class VirtualMachine extends EventEmitter {
          * @type {?Target}
          */
         this.editingTarget = null;
+
+        /**
+         * Whether the VM is currently in the process of loading a workspace.
+         * When true, block events from Blockly will not trigger changes to VM.
+         */
         this.loadingWorkspace = false;
 
         /**
