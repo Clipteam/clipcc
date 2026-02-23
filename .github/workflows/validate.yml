@@ -155,4 +155,4 @@ jobs:
           path: packages/
 
       - name: Test
-        run: yarn block test:unit
+        run: yarn block test
