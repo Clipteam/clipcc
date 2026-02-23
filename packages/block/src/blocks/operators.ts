@@ -466,15 +466,10 @@ Blockly.Blocks['operator_join_multiple'] = {
       if (oldBlock) {
         // Reattach the old block and shadow input.
         delete connectionMap[input.name];
-        oldBlock.outputConnection.connect(input.connection!);
-        if (!oldShadow) {
-          // Create a shadow input.
-          oldShadow = {
-            type: 'text',
-            fields: {TEXT: ''}
-          };
+        if (!oldBlock.isShadow() && oldShadow) {
+          input.connection!.setShadowState(oldShadow);
         }
-        input.connection!.setShadowState(oldShadow);
+        oldBlock.outputConnection.connect(input.connection!);
       } else {
         // Create a new shadow block and attach it to the given input.
         Blockly.Events.disable();
