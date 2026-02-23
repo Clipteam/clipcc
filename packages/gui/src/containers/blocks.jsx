@@ -414,8 +414,6 @@ class Blocks extends React.Component {
             this.onWorkspaceMetricsChange();
         }
 
-        // Remove and reattach the workspace listener (but allow flyout events)
-        this.workspace.removeChangeListener(this.props.vm.blockListener);
         try {
             this.ScratchBlocks.loadWorkspace(data.json, this.workspace);
         } catch (error) {
@@ -433,8 +431,6 @@ class Blocks extends React.Component {
             }
             log.error(error);
         }
-
-        this.workspace.addChangeListener(this.props.vm.blockListener);
 
         if (this.props.vm.editingTarget && this.props.workspaceMetrics.targets[this.props.vm.editingTarget.id]) {
             const {scrollX, scrollY, scale} = this.props.workspaceMetrics.targets[this.props.vm.editingTarget.id];
