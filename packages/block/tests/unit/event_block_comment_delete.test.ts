@@ -22,7 +22,7 @@ describe('Event: BlockCommentDelete', () => {
   });
 
   beforeEach(() => {
-    block = workspace.newBlock('test_block') as Blockly.BlockSvg;
+    block = workspace.newBlock('test_block', 'test_id') as Blockly.BlockSvg;
     icon = new BlockCommentIcon(block);
     block.addIcon(icon);
   });
@@ -53,9 +53,9 @@ describe('Event: BlockCommentDelete', () => {
       const json = event.toJson();
       expect(json).toEqual({
         type: 'block_comment_delete',
+        commentId: 'anchored_comment_test_id',
         blockId: block.id,
-        group: '',
-        commentId: undefined // Comment ID is undefined because the anchored comment is not rendered.
+        group: ''
       });
 
       const newEvent = BlockCommentDelete.fromJson(json, workspace);

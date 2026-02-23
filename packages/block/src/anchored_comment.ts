@@ -36,10 +36,11 @@ export class AnchoredComment
 
   /**
    * @param sourceBlock The block this comment is attached to.
+   * @param id The unique ID of this comment.
    */
-  constructor(sourceBlock: Blockly.BlockSvg) {
-    super(sourceBlock.workspace, `anchored_comment_${sourceBlock.id}`);
-    this.id = this.commentId;
+  constructor(sourceBlock: Blockly.BlockSvg, id: string) {
+    super(sourceBlock.workspace, id);
+    this.id = id;
     this.sourceBlock = sourceBlock;
 
     this.getSvgRoot().setAttribute('data-id', this.id);

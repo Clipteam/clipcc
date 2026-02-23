@@ -41,6 +41,22 @@ class Variable {
     }
 
     /**
+     * Serializes this VariableModel to JSON State.
+     * @param {boolean} isLocal Whether this variable is locally scoped.
+     * @returns {object} a JSON representation of this VariableModel.
+     */
+    toState (isLocal) {
+        isLocal = (isLocal === true);
+        return {
+            id: this.id,
+            name: this.name,
+            type: this.type,
+            isLocal,
+            isCloud: this.isCloud
+        };
+    }
+
+    /**
      * Type representation for scalar variables.
      * This is currently represented as ''
      * for compatibility with blockly.

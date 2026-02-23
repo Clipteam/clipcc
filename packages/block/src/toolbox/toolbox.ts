@@ -24,6 +24,11 @@ export class Toolbox extends Blockly.Toolbox {
   static readonly CATEGORY_GAP = 36;
 
   /**
+   * Resolvers for promises returned by forceRerender.
+   */
+  protected renderResolvers: Array<() => void> = [];
+
+  /**
    * @param workspace The workspace in which to create new blocks.
    */
   constructor(workspace: Blockly.WorkspaceSvg) {
@@ -201,14 +206,28 @@ export class Toolbox extends Blockly.Toolbox {
    * procedures.
    */
   override refreshSelection(): void {
+    this.forceRerender();
+  }
+
+  /**
+   * Force re-rendering the flyout.
+   * @returns A promise that resolves when the re-render is complete.
+   */
+  forceRerender(): Promise<void> {
+    const renderPromise = new Promise<void>((resolve) => {
+      this.renderResolvers.push(resolve);
+    });
     if (this.getFlyout()!.isVisible()) {
       if (this.refreshDebouncer) {
         clearTimeout(this.refreshDebouncer);
       }
       this.refreshDebouncer = setTimeout(() => {
         this.getFlyout()!.show(this.getFlyoutContents());
+        this.renderResolvers.forEach((resolver) => resolver());
+        this.renderResolvers.length = 0;
       }, 10);
     }
+    return renderPromise;
   }
 
   /**

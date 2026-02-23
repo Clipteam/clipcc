@@ -63,12 +63,12 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
       `}`,
       ``,
       `${selector} .blocklyFlyoutButton:hover {`,
-      `fill: white;`,
+      `fill: var(--clipcc-block-flyoutHover);`,
       `cursor: pointer;`,
       `}`,
       ``,
       `${selector} .blocklyFlyoutButton .blocklyText {`,
-      `fill: var(--clipcc-block-toolboxText, ${Colours.textFieldText});`,
+      `fill: var(--clipcc-block-flyoutText, ${Colours.flyoutText});`,
       `font-weight: 500;`,
       `}`,
       ``,
@@ -90,6 +90,10 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
       `font-family: "Helvetica Neue", Helvetica, sans-serif;`,
       `font-size: 14pt;`,
       `font-weight: bold;`,
+      `}`,
+      ``,
+      `${selector} [id ^= "blocklyGridPattern"] line {`,
+      `stroke: var(--clipcc-block-grid, ${Colours.grid});`,
       `}`
     ];
     return css.concat(flyoutButtonStyle);

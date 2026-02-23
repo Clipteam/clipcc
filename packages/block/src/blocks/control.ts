@@ -19,7 +19,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {getWorkspaceOptionsFromBlock} from '../utils';
+import {getWorkspaceOptionsFromBlock} from '../scratch_blocks_utils';
 
 interface ControlStopExtraState {
   hasnext: boolean;

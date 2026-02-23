@@ -57,6 +57,14 @@ export class FlyoutStatusIndicatorLabel extends FlyoutButton {
   ) {
     super(workspace, targetWorkspace, json, true);
 
+    const heightDelta = FlyoutStatusIndicatorLabel.PINNED_HEIGHT - this.height;
+    this.height = FlyoutStatusIndicatorLabel.PINNED_HEIGHT;
+    const text = this.getSvgRoot().querySelector('text');
+    if (text) {
+      const previousY = Number(text.getAttribute('y'));
+      text.setAttribute('y', `${previousY + heightDelta / 2}`);
+    }
+
     this.imageElement = Blockly.utils.dom.createSvgElement(
       Blockly.utils.Svg.IMAGE,
       {

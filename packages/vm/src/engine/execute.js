@@ -404,7 +404,6 @@ class BlockCached {
         const input = this._inputs[inputName];
         if (input.block) {
             const inputCached = BlocksExecuteCache.getCached(blockContainer, input.block, BlockCached);
-
             if (inputCached._isHat) {
                 return;
             }
@@ -520,7 +519,7 @@ const execute = function (sequencer, thread) {
 
             const inputName = opCached._parentKey;
             const argValues = opCached._parentValues;
-            
+
             // cc - if current call is the last operation, which means that it is called by clicking directly,
             // then call handleReport.
             if (currentStackFrame.waitingReporter && i === length - 1) {

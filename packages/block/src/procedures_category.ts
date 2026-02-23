@@ -26,7 +26,7 @@
 import * as Blockly from 'blockly/core';
 import * as Constants from './constants';
 import * as callbackRegistry from './callback_registry';
-import {compareStrings} from './utils';
+import {compareStrings} from './scratch_blocks_utils';
 import {ProcedureModel} from './procedure_model';
 import type {ProcedureExtraState} from './serialization/procedures';
 import {

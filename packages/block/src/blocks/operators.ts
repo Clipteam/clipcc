@@ -21,7 +21,7 @@
 
 import * as Blockly from 'blockly/core';
 import {FieldButton} from '../fields/button';
-import {getWorkspaceOptionsFromBlock} from '../utils';
+import {getWorkspaceOptionsFromBlock} from '../scratch_blocks_utils';
 
 /**
  * Block for adding two numbers.
@@ -412,11 +412,11 @@ Blockly.Blocks['operator_join_multiple'] = {
   changeArgumentsWrapper(callback: () => void): void {
     const oldExtraState = this.saveExtraState();
     callback();
+    this.updateDisplay();
     const newExtraState = this.saveExtraState();
     Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
       this, 'mutation', null, JSON.stringify(oldExtraState), JSON.stringify(newExtraState)
     ));
-    this.updateDisplay();
   },
   /**
    * Update the block's structure and appearance to match the extra states.
