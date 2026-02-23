@@ -408,7 +408,8 @@ class Blocks {
                 oldInput: e.oldInputName,
                 newParent: e.newParentId,
                 newInput: e.newInputName,
-                newCoordinate: e.newCoordinate
+                newCoordinate: e.newCoordinate,
+                recordUndo: e.recordUndo
             });
             break;
         case 'block_drag_outside':
@@ -851,13 +852,36 @@ class Blocks {
             const oldParent = this._blocks[e.oldParent];
             if (typeof e.oldInput !== 'undefined' &&
                 oldParent.inputs[e.oldInput].block === e.id) {
-                // This block was connected to the old parent's input.
-                oldParent.inputs[e.oldInput].block = null;
+                // This block was connected to an input. We either want to
+                // restore the shadow block that previously occupied
+                // this input, or null out the input's block.
+                const shadow = oldParent.inputs[e.oldInput].shadow;
+                if (shadow && e.id !== shadow) {
+                    oldParent.inputs[e.oldInput].block = shadow;
+                    this._blocks[shadow].parent = oldParent.id;
+                    this._blocks[e.id].parent = null;
+                } else {
+                    // If the block is being refreshed (e.g. by a mutation), we should keep the connection
+                    // so that the block can be re-created in place.
+                    if (!e.recordUndo) {
+                        if (e.newCoordinate && e.id === shadow) {
+                            // Removing input.
+                            delete oldParent.inputs[e.oldInput];
+                        }
+                        return;
+                    }
+                    if (!shadow) {
+                        oldParent.inputs[e.oldInput].block = null;
+                    }
+                    if (e.id !== shadow) {
+                        this._blocks[e.id].parent = null;
+                    }
+                }
             } else if (oldParent.next === e.id) {
                 // This block was connected to the old parent's next connection.
                 oldParent.next = null;
+                this._blocks[e.id].parent = null;
             }
-            this._blocks[e.id].parent = null;
             didChange = true;
         }
 
@@ -884,7 +908,7 @@ class Blocks {
                 // If the block being attached is itself a shadow, make sure to set
                 // both block and shadow to that blocks ID. This happens when adding
                 // inputs to a custom procedure.
-                if (this._blocks[e.id].shadow) oldShadow = e.id;
+                if (this._blocks[e.id].shadow || e.newInput === e.id) oldShadow = e.id;
 
                 this._blocks[e.newParent].inputs[e.newInput] = {
                     name: e.newInput,
