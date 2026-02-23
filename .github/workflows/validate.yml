@@ -22,6 +22,16 @@ jobs:
           node-version: 24.x
           cache: 'yarn'
 
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
@@ -32,9 +42,12 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
-          path: | 
-            packages/*/dist/**
+          path: |
+            packages/*/dist
+            packages/*/build
+            packages/*/playground
             packages/audio/dist.js
+            packages/gui/static/microbit
           retention-days: 1
 
   check-types:
@@ -93,6 +106,16 @@ jobs:
           node-version: 24.x
           cache: 'yarn'
 
+      - name: Restore node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
@@ -120,6 +143,16 @@ jobs:
           node-version: 24.x
           cache: 'yarn'
 
+      - name: Restore node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
@@ -146,6 +179,16 @@ jobs:
         with:
           node-version: 24.x
           cache: 'yarn'
+
+      - name: Restore node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
