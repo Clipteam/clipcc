@@ -157,6 +157,21 @@ if (!process.env.CI) {
     base.plugins.push(new webpack.ProgressPlugin());
 }
 
+if (base.mode === 'development') {
+    base.module.rules.push({
+        test: /blocks-msgs\.js$/,
+        include: [
+            /node_modules[\\/]clipcc-l10n[\\/]locales/
+        ],
+        use: [{
+            loader: path.resolve(__dirname, 'scripts/block-message-loader.js')
+        }, {
+            loader: 'babel-loader'
+        }],
+        enforce: 'pre'
+    });
+}
+
 module.exports = [
     // to run editor examples
     defaultsDeep({}, base, {
