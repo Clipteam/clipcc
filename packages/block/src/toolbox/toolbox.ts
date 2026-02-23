@@ -22,7 +22,12 @@ export class Toolbox extends Blockly.Toolbox {
 
   /** Gap between categories. */
   static readonly CATEGORY_GAP = 36;
+
+  /**
+   * Resolvers for promises returned by forceRerender.
+   */
   protected renderResolvers: Array<() => void> = [];
+
   /**
    * @param workspace The workspace in which to create new blocks.
    */
