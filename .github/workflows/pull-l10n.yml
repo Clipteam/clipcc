@@ -9,25 +9,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
-      - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
         with:
-          node-version: 16.x
+          node-version: 24.x
           cache: 'yarn'
-      - name: Setup python
-        uses: actions/setup-python@v4
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
         with:
-          python-version: '3.10'
-      - name: Install and pull
-        run: yarn install --frozen-lockfile && yarn run translation:pull
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Pull Translation
+        run: yarn run translation:pull
         env:
-          POE_TOKEN: ${{ secrets.TX_TOKEN }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_TOKEN }}
+
       - name: Push Commit
         uses: github-actions-x/commit@v2.9
         with:
           github-token: ${{ secrets.GH_TOKEN }}
           commit-message: ':globe_with_meridians: chore(l10n): pull translation from remote'
-          files: packages/l10n/locales/ packages/block/msg/scratch_msgs.js
+          files: packages/l10n/editor/
           name: clipbot
-          email: cuizhihui030925@gmail.com
