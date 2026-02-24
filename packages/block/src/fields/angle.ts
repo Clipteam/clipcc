@@ -360,7 +360,8 @@ export class FieldAngle extends Blockly.FieldNumber {
       angle = Math.round(angle / FieldAngle.ROUND) * FieldAngle.ROUND;
     }
     const oldValue = this.value_;
-    this.setEditorValue_(angle, false);
+    this.setValue(angle, false);
+    this.setEditorValue_(this.getValue(), false);
     if (
       this.sourceBlock_ &&
       Blockly.Events.isEnabled() &&

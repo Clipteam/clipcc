@@ -1,7 +1,7 @@
 import bindAll from 'lodash.bindall';
 import debounce from 'lodash.debounce';
 import defaultsDeep from 'lodash.defaultsdeep';
-import makeToolboxXML from '../lib/make-toolbox-xml';
+import makeToolbox from '../lib/make-toolbox';
 import PropTypes from 'prop-types';
 import React from 'react';
 import VMScratchBlocks from '../lib/blocks';
@@ -56,7 +56,7 @@ class Blocks extends React.Component {
             'attachVM',
             'checkoutWsByProccode',
             'detachVM',
-            'getToolboxXML',
+            'getToolbox',
             'handleCategorySelected',
             'handleConnectionModalStart',
             'handleDrop',
@@ -107,7 +107,7 @@ class Blocks extends React.Component {
             this.props.options,
             {
                 rtl: this.props.isRtl,
-                toolbox: this.props.toolboxXML,
+                toolbox: this.props.toolbox,
                 colours: getColorsForTheme(this.props.theme),
                 theme: this.themeMapName[this.props.theme] || 'scratch'
             }
@@ -130,10 +130,10 @@ class Blocks extends React.Component {
         // toolboxWorkspace.registerButtonCallback('MAKE_A_LIST', varListButtonCallback('list'));
         // toolboxWorkspace.registerButtonCallback('MAKE_A_PROCEDURE', procButtonCallback);
 
-        // Store the xml of the toolbox that is actually rendered.
+        // Store the toolbox that is actually rendered.
         // This is used in componentDidUpdate instead of prevProps, because
-        // the xml can change while e.g. on the costumes tab.
-        this._renderedToolboxXML = this.props.toolboxXML;
+        // the toolbox can change while e.g. on the costumes tab.
+        this._renderedToolbox = this.props.toolbox;
 
         // @todo change this when blockly supports UI events
         addFunctionListener(this.workspace, 'translate', this.onWorkspaceMetricsChange);
@@ -150,7 +150,7 @@ class Blocks extends React.Component {
         return (
             this.state.prompt !== nextState.prompt ||
             this.props.isVisible !== nextProps.isVisible ||
-            this._renderedToolboxXML !== nextProps.toolboxXML ||
+            this._renderedToolbox !== nextProps.toolbox ||
             this.props.extensionLibraryVisible !== nextProps.extensionLibraryVisible ||
             this.props.customProceduresVisible !== nextProps.customProceduresVisible ||
             this.props.locale !== nextProps.locale ||
@@ -166,16 +166,16 @@ class Blocks extends React.Component {
             this.ScratchBlocks.common.getMainWorkspace().hideChaff();
         }
 
-        // Only rerender the toolbox when the blocks are visible and the xml is
-        // different from the previously rendered toolbox xml.
-        // Do not check against prevProps.toolboxXML because that may not have been rendered.
-        if (this.props.isVisible && this.props.toolboxXML !== this._renderedToolboxXML) {
+        // Only rerender the toolbox when the blocks are visible and the toolbox is
+        // different from the previously rendered toolbox.
+        // Do not check against prevProps.toolbox because that may not have been rendered.
+        if (this.props.isVisible && this.props.toolbox !== this._renderedToolbox) {
             this.requestToolboxUpdate();
         }
         if (this.props.hideNonVanillaBlocks !== prevProps.hideNonVanillaBlocks) {
-            const toolboxXML = this.getToolboxXML();
-            if (toolboxXML) {
-                this.props.updateToolboxState(toolboxXML);
+            const toolbox = this.getToolbox();
+            if (toolbox) {
+                this.props.updateToolboxState(toolbox);
             }
         }
 
@@ -255,8 +255,8 @@ class Blocks extends React.Component {
             }
         }
 
-        this.workspace.updateToolbox(this.props.toolboxXML);
-        this._renderedToolboxXML = this.props.toolboxXML;
+        this.workspace.updateToolbox(this.props.toolbox);
+        this._renderedToolbox = this.props.toolbox;
 
         toolbox.forceRerender().then(() => {
             flyout.setRecyclingEnabled(true);
@@ -377,7 +377,7 @@ class Blocks extends React.Component {
     onVisualReport (data) {
         this.ScratchBlocks.reportValue(data.id, data.value);
     }
-    getToolboxXML () {
+    getToolbox () {
         // Use try/catch because this requires digging pretty deep into the VM
         // Code inside intentionally ignores several error situations (no stage, etc.)
         // Because they would get caught by this try/catch
@@ -393,7 +393,7 @@ class Blocks extends React.Component {
                 this.props.vm.runtime.getBlocksXML(target),
                 this.props.theme
             );
-            return makeToolboxXML(false, target.isStage, target.id, dynamicBlocksXML,
+            return makeToolbox(false, target.isStage, target.id, dynamicBlocksXML,
                 targetCostumes[targetCostumes.length - 1].name,
                 stageCostumes[stageCostumes.length - 1].name,
                 targetSounds.length > 0 ? targetSounds[targetSounds.length - 1].name : '',
@@ -405,9 +405,9 @@ class Blocks extends React.Component {
     }
     onWorkspaceUpdate (data) {
         // When we change sprites, update the toolbox to have the new sprite's blocks
-        const toolboxXML = this.getToolboxXML();
-        if (toolboxXML) {
-            this.props.updateToolboxState(toolboxXML);
+        const toolbox = this.getToolbox();
+        if (toolbox) {
+            this.props.updateToolboxState(toolbox);
         }
 
         if (this.props.vm.editingTarget && !this.props.workspaceMetrics.targets[this.props.vm.editingTarget.id]) {
@@ -499,9 +499,9 @@ class Blocks extends React.Component {
         defineBlocks(categoryInfo.blocks);
 
         // Update the toolbox with new blocks if possible
-        const toolboxXML = this.getToolboxXML();
-        if (toolboxXML) {
-            this.props.updateToolboxState(toolboxXML);
+        const toolbox = this.getToolbox();
+        if (toolbox) {
+            this.props.updateToolboxState(toolbox);
         }
     }
     handleBlocksInfoUpdate (categoryInfo) {
@@ -605,7 +605,7 @@ class Blocks extends React.Component {
             onActivateCustomProcedures,
             onRequestCloseExtensionLibrary,
             onRequestCloseCustomProcedures,
-            toolboxXML,
+            toolbox,
             updateMetrics: updateMetricsProp,
             workspaceMetrics,
             ...props
@@ -681,7 +681,7 @@ Blocks.propTypes = {
     }),
     stageSize: PropTypes.oneOf(Object.keys(STAGE_DISPLAY_SIZES)).isRequired,
     theme: PropTypes.oneOf(Object.keys(themeMap)),
-    toolboxXML: PropTypes.string,
+    toolbox: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     updateMetrics: PropTypes.func,
     updateToolboxState: PropTypes.func,
     vm: PropTypes.instanceOf(VM).isRequired,
@@ -732,7 +732,7 @@ const mapStateToProps = state => ({
     locale: state.locales.locale,
     messages: state.locales.editorMessages,
     blockMessages: state.locales.blockMessages,
-    toolboxXML: state.scratchGui.toolbox.toolboxXML,
+    toolbox: state.scratchGui.toolbox.toolbox,
     customProceduresVisible: state.scratchGui.customProcedures.active,
     workspaceMetrics: state.scratchGui.workspaceMetrics
 });
@@ -754,8 +754,8 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseCustomProcedures: data => {
         dispatch(deactivateCustomProcedures(data));
     },
-    updateToolboxState: toolboxXML => {
-        dispatch(updateToolbox(toolboxXML));
+    updateToolboxState: toolbox => {
+        dispatch(updateToolbox(toolbox));
     },
     updateMetrics: metrics => {
         dispatch(updateMetrics(metrics));
