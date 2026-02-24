@@ -253,7 +253,7 @@ Monitor.propTypes = {
     spriteName: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
     targetId: PropTypes.string,
     theme: PropTypes.string,
-    toolbox: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+    toolbox: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
