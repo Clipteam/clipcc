@@ -40,6 +40,14 @@
   background: none;
 }
 
+.blocklyMenuItemCheckbox {
+  display: none;
+}
+
+.blocklyMenuItemSelected .blocklyMenuItemCheckbox {
+  display: block;
+}
+
 .injectionDiv.blocklyBlockDragBoundless {
   overflow: visible;
 }
