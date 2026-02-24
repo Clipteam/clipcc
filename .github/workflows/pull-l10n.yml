@@ -14,7 +14,7 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v3
         with:
-          node-version: 16.x
+          node-version: 24.x
           cache: 'yarn'
 
       - name: Cache node_modules
@@ -40,5 +40,5 @@ jobs:
         with:
           github-token: ${{ secrets.GH_TOKEN }}
           commit-message: ':globe_with_meridians: chore(l10n): pull translation from remote'
-          files: packages/l10n/locales/
+          files: packages/l10n/editor/
           name: clipbot
