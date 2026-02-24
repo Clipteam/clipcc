@@ -1,0 +1,19 @@
+global: &global
+  - '.github/path-filters.yml'
+  - '.github/workflows/validate.yml'
+
+gui:
+  - *global
+  - 'packages/gui/**'
+  - 'packages/l10n/**'
+  - 'packages/paint/**'
+  - 'packages/storage/**'
+
+vm:
+  - *global
+  - 'packages/vm/**'
+  - 'packages/storage/**'
+
+block:
+  - *global
+  - 'packages/block/**'

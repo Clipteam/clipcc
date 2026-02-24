@@ -45,17 +45,7 @@ jobs:
         uses: dorny/paths-filter@v3
         id: changes
         with:
-          filters: |
-            gui:
-              - 'packages/gui/**'
-              - 'packages/l10n/**'
-              - 'packages/paint/**'
-              - 'packages/storage/**'
-            vm:
-              - 'packages/vm/**'
-              - 'packages/storage/**'
-            block:
-              - 'packages/block/**'
+          filters: .github/paths-filter.yml
 
       - name: Cache node_modules
         uses: actions/cache@v4
