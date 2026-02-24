@@ -13,6 +13,11 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    outputs:
+      should-run-all: ${{ steps.check-types.outputs.should-run-all }}
+      gui: ${{ steps.changes.outputs.gui }}
+      vm: ${{ steps.changes.outputs.vm }}
+      block: ${{ steps.changes.outputs.block }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -22,46 +27,6 @@ jobs:
         with:
           node-version: 24.x
           cache: 'yarn'
-
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Build all packages
-        run: yarn run build:full
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-artifacts
-          path: |
-            packages/*/dist
-            packages/*/build
-            packages/*/playground
-            packages/audio/dist.js
-            packages/gui/static/microbit
-          retention-days: 1
-
-  check-types:
-    name: Check Types
-    runs-on: ubuntu-latest
-    outputs:
-      should-run-all: ${{ steps.check-types.outputs.should-run-all }}
-      gui: ${{ steps.changes.outputs.gui }}
-      vm: ${{ steps.changes.outputs.vm }}
-      block: ${{ steps.changes.outputs.block }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
 
       - name: Check types
         id: check-types
@@ -92,11 +57,39 @@ jobs:
             block:
               - 'packages/block/**'
 
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            packages/*/node_modules
+          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            node-modules-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build all packages
+        run: yarn run build:full
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            packages/*/dist
+            packages/*/build
+            packages/*/playground
+            packages/audio/dist.js
+            packages/gui/static/microbit
+          retention-days: 1
+
   test-gui:
     name: Test GUI
-    needs: [build, check-types]
+    needs: [build]
     runs-on: ubuntu-latest
-    if: needs.check-types.outputs.gui == 'true' || needs.check-types.outputs.should-run-all == 'true'
+    if: needs.build.outputs.gui == 'true' || needs.build.outputs.should-run-all == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -131,9 +124,9 @@ jobs:
 
   test-vm:
     name: Test VM
-    needs: [build, check-types]
+    needs: [build]
     runs-on: ubuntu-latest
-    if: needs.check-types.outputs.vm == 'true' || needs.check-types.outputs.should-run-all == 'true'
+    if: needs.build.outputs.vm == 'true' || needs.build.outputs.should-run-all == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -168,9 +161,9 @@ jobs:
 
   test-block:
     name: Test Block
-    needs: [build, check-types]
+    needs: [build]
     runs-on: ubuntu-latest
-    if: needs.check-types.outputs.block == 'true' || needs.check-types.outputs.should-run-all == 'true'
+    if: needs.build.outputs.block == 'true' || needs.build.outputs.should-run-all == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v5
