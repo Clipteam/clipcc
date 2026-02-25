@@ -9,6 +9,9 @@ import * as Blockly from 'blockly/core';
 import {setupPlayground} from '../helpers/playground';
 import {BLOCK_EVENTS, EventHelper} from '../helpers/event';
 
+/** Milliseconds used for stepping the fake timer, which should be greater than the frame interval. */
+const FAKE_TIMER_STEP = 20;
+
 jest.mock('blockly/core', () => {
   const actualModule = jest.requireActual('blockly/core') as typeof Blockly;
   return {
@@ -114,10 +117,10 @@ describe('Blocks: Operators', () => {
 
       const helper = new EventHelper(context.workspace);
 
-      await jest.advanceTimersByTimeAsync(50);
+      await jest.advanceTimersByTimeAsync(FAKE_TIMER_STEP);
       helper.startRecord(BLOCK_EVENTS);
       context.gesture.clickField(block, 'BUTTON_PLUS');
-      await jest.advanceTimersByTimeAsync(50);
+      await jest.advanceTimersByTimeAsync(FAKE_TIMER_STEP);
       helper.stopRecord();
 
       helper.toEqual([
@@ -128,10 +131,10 @@ describe('Blocks: Operators', () => {
         Blockly.Events.BLOCK_CHANGE // update extra state
       ]);
 
-      await jest.advanceTimersByTimeAsync(50);
+      await jest.advanceTimersByTimeAsync(FAKE_TIMER_STEP);
       helper.startRecord(BLOCK_EVENTS);
       context.gesture.clickField(block, 'BUTTON_MINUS');
-      await jest.advanceTimersByTimeAsync(50);
+      await jest.advanceTimersByTimeAsync(FAKE_TIMER_STEP);
       helper.stopRecord();
 
       helper.toEqual([
