@@ -40,7 +40,7 @@ export class EventHelper {
    */
   startRecord(filter: string[] = []): void {
     this.filter = filter;
-    this.events = [];
+    this.events.length = 0;
     this.record = true;
   }
 
