@@ -33,9 +33,6 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   /** Maps from category names to their positions. */
   protected scrollPositions: Map<string, number> = new Map<string, number>();
 
-  /** Maps from block IDs to their checkbox states. should process after flyout.show() called. */
-  protected checkboxUpdateRequests = new Map<string, boolean>();
-
   /**
    * The target position for the flyout scroll animation in pixels.
    * Is a number while animating, null otherwise.
@@ -58,6 +55,12 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
    * Used to cancel the previous animation when a new one starts.
    */
   private scrollAnimationId: number | null = null;
+
+  /**
+   * A map from block IDs to their index in the flyout.
+   * Used to update the checkbox state of blocks in the flyout.
+   */
+  private checkableIndex = new Map<string, number>();
 
   /**
    * @param workspaceOptions Dictionary of options for the workspace.
@@ -102,7 +105,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     super.show(flyoutDef);
     this.recordScrollPositions();
     this.workspace_.resizeContents();
-    this.updateCheckboxState();
+    this.indexCheckableItems();
   }
 
   /**
@@ -359,41 +362,31 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   /**
    * Set the checkbox state for a block in the flyout.
    * @param blockId The block ID.
-   * @param state The new state of the checkbox.
-   * @param immediate True to update immediately, false to wait until the next flyout update.
+   * @param state The new state of the checkbox
    */
-  setCheckboxState(blockId: string, state: boolean, immediate = false) {
-    this.checkboxUpdateRequests.set(blockId, state);
-    if (immediate) {
-      this.updateCheckboxState();
-    }
+  setCheckboxState(blockId: string, state: boolean) {
+    if (!this.checkableIndex.has(blockId)) return;
+    const i = this.checkableIndex.get(blockId)!;
+    const checkbox = this.contents[i].getElement() as FlyoutCheckbox;
+    if (!checkbox || checkbox.isChecked() === state) return;
+    checkbox.setChecked(state);
   }
 
   /**
-   * Update the state of checkboxes in the flyout based on the checkboxUpdateRequests map.
-   * Should be called after flyout.show() is called to ensure all checkboxes are rendered.
+   * Index all checkable items in the flyout for quick access when updating checkbox state.
+   * Should be called after the flyout is rendered and all blocks are created.
    */
-  protected updateCheckboxState() {
-    if (!this.checkboxUpdateRequests.size) return;
-
-    for (const item of this.contents) {
+  protected indexCheckableItems() {
+    this.checkableIndex.clear();
+    for (let i = 0; i < this.contents.length; ++i) {
+      const item = this.contents[i];
       if (item.getElement() instanceof FlyoutCheckbox) {
         const checkbox = item.getElement() as FlyoutCheckbox;
         const block = checkbox.getChildItem()?.getElement() as Blockly.BlockSvg;
-        if (block) {
-          if (!this.checkboxUpdateRequests.has(block.id)) continue;
-          const state = this.checkboxUpdateRequests.get(block.id)!;
-          this.checkboxUpdateRequests.delete(block.id);
-          if (checkbox.isChecked() === state) continue;
-          checkbox.setChecked(state);
-        }
+        if (!block) continue;
+        this.checkableIndex.set(block.id, i);
       }
-      // All requests processed, break the loop
-      if (!this.checkboxUpdateRequests.size) break;
     }
-
-    // Clear any remaining requests that couldn't be processed (e.g. block not found).
-    this.checkboxUpdateRequests.clear();
   }
 }
 

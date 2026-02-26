@@ -231,6 +231,14 @@ export class Toolbox extends Blockly.Toolbox {
   }
 
   /**
+   * Update the checkbox state in flyout. Should be called after forceRerender to make sure the block is rendered.
+   * @param callback Callback function triggered after update.
+   */
+  executeAfterRender(callback: () => void) {
+    this.renderResolvers.push(callback);
+  }
+
+  /**
    * Decides whether to hide or show the flyout depending on the selected item.
    * @param oldItem The previously selected toolbox item.
    * @param newItem The newly selected toolbox item.
