@@ -360,9 +360,13 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
    * Set the checkbox state for a block in the flyout.
    * @param blockId The block ID.
    * @param state The new state of the checkbox.
+   * @param immediate True to update immediately, false to wait until the next flyout update.
    */
-  setCheckboxState(blockId: string, state: boolean) {
+  setCheckboxState(blockId: string, state: boolean, immediate = false) {
     this.checkboxUpdateRequests.set(blockId, state);
+    if (immediate) {
+      this.updateCheckboxState();
+    }
   }
 
   /**
@@ -377,8 +381,8 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
         const checkbox = item.getElement() as FlyoutCheckbox;
         const block = checkbox.getChildItem()?.getElement() as Blockly.BlockSvg;
         if (block) {
-          const state = this.checkboxUpdateRequests.get(block.id);
-          if (!state) continue;
+          if (!this.checkboxUpdateRequests.has(block.id)) continue;
+          const state = this.checkboxUpdateRequests.get(block.id)!;
           this.checkboxUpdateRequests.delete(block.id);
           if (checkbox.isChecked() === state) continue;
           checkbox.setChecked(state);
