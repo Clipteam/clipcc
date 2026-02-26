@@ -201,9 +201,9 @@ export class FieldMatrix extends Blockly.Field<string> {
           Blockly.utils.dom.createSvgElement('rect', attr, thumbnail)
         );
       }
-      thumbnail.style.cursor = 'default';
-      this.updateMatrix();
     }
+    thumbnail.style.cursor = 'default';
+    this.updateMatrix();
 
     if (!this.arrow) {
       const arrowX = FieldMatrix.THUMBNAIL_SIZE + DROPDOWN_ARROW_PADDING * 1.5;
@@ -571,6 +571,7 @@ export class FieldMatrix extends Blockly.Field<string> {
     if (sourceBlock && sourceBlockParent) {
       sourceBlock.pathObject.svgPath.setAttribute('stroke', sourceBlockParent.getColourTertiary());
       sourceBlock.pathObject.svgPath.setAttribute('fill', sourceBlockParent.getColourSecondary());
+      this.updateMatrix();
     }
   }
 
