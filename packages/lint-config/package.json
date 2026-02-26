@@ -25,7 +25,7 @@
     "clipcc"
   ],
   "optionalDependencies": {
-    "eslint-plugin-react": ">=7.27.0"
+    "eslint-plugin-react": ">=7.37.5"
   },
   "peerDependencies": {
     "@babel/eslint-parser": "^7.11.0",
