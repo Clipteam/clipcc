@@ -9,6 +9,7 @@
 .clipccToolboxCategoryContainer {
   font-size: 0.85rem;
   outline: none;
+  cursor: pointer;
 }
 
 .clipccToolboxCategory {
