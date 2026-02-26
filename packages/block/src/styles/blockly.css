@@ -17,6 +17,7 @@
 
 .blocklyDropDownDiv .blocklyMenuItem {
   color: #fff;
+  min-height: 32px;
   transition: 0.25s ease-out;
 }
 
