@@ -85,11 +85,6 @@ export function buildGlowFilter(workspace: Blockly.WorkspaceSvg) {
 }
 
 /**
- * Set of currently glowing blocks.
- */
-const glowingBlocks: Set<string> = new Set();
-
-/**
  * Glow/unglow a stack in the workspace.
  * @param id ID of block which starts the stack.
  * @param isGlowingStack Whether to glow the stack.
@@ -120,11 +115,8 @@ export function glowStack(
 
   const svgRoot = block.getSvgRoot();
   if (isGlowingStack) {
-    if (glowingBlocks.has(id)) return;
-    glowingBlocks.add(id);
     svgRoot!.setAttribute('filter', 'url(#blocklyStackGlowFilter)');
   } else {
-    glowingBlocks.delete(id);
     svgRoot!.removeAttribute('filter');
   }
 }
