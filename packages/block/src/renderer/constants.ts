@@ -7,6 +7,9 @@
 import * as Blockly from 'blockly/core';
 import {Colours} from '../theme';
 
+// blockly/core/renderers/common/constants
+type Shape = Blockly.blockRendering.BaseShape | Blockly.blockRendering.DynamicShape;
+
 /**
  * An object that provides constants for rendering blocks in Scratch mode.
  */
@@ -20,7 +23,7 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
    * @param connection The connection to find a shape object for
    * @returns The shape object for the connection.
    */
-  override shapeFor(connection: Blockly.RenderedConnection) {
+  override shapeFor(connection: Blockly.RenderedConnection): Shape {
     let checks = connection.getCheck();
     if (!checks && connection.targetConnection) {
       checks = connection.targetConnection.getCheck();
