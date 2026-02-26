@@ -128,6 +128,9 @@ class VirtualMachine extends EventEmitter {
         this.runtime.on(Runtime.MONITORS_UPDATE, monitorList => {
             this.emit(Runtime.MONITORS_UPDATE, monitorList);
         });
+        this.runtime.on(Runtime.MONITOR_VISIBILITY_CHANGE, (id, visible) => {
+            this.emit(Runtime.MONITOR_VISIBILITY_CHANGE, id, visible);
+        });
         this.runtime.on(Runtime.BLOCK_DRAG_UPDATE, areBlocksOverGui => {
             this.emit(Runtime.BLOCK_DRAG_UPDATE, areBlocksOverGui);
         });
@@ -280,7 +283,6 @@ class VirtualMachine extends EventEmitter {
                     .set('y', monitor.get('y') + offsetY);
                 this.runtime.requestUpdateMonitor(newMonitor);
             }
-            this.runtime.emit(Runtime.MONITORS_UPDATE, this._monitorState);
         }
         this.runtime.stageWidth = width;
         this.runtime.stageHeight = height;

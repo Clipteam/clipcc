@@ -70,7 +70,7 @@ class Blocks extends React.Component {
             'onScriptGlowOff',
             'onBlockGlowOn',
             'onBlockGlowOff',
-            'handleMonitorsUpdate',
+            'handleMonitorVisibilityUpdate',
             'handleExtensionAdded',
             'handleBlocksInfoUpdate',
             'onTargetsUpdate',
@@ -298,7 +298,7 @@ class Blocks extends React.Component {
         this.props.vm.on('VISUAL_REPORT', this.onVisualReport);
         this.props.vm.on('workspaceUpdate', this.onWorkspaceUpdate);
         this.props.vm.on('targetsUpdate', this.onTargetsUpdate);
-        this.props.vm.on('MONITORS_UPDATE', this.handleMonitorsUpdate);
+        this.props.vm.on('MONITOR_VISIBILITY_CHANGE', this.handleMonitorVisibilityUpdate);
         this.props.vm.on('EXTENSION_ADDED', this.handleExtensionAdded);
         this.props.vm.on('BLOCKSINFO_UPDATE', this.handleBlocksInfoUpdate);
         this.props.vm.on('PERIPHERAL_CONNECTED', this.handleStatusButtonUpdate);
@@ -318,7 +318,7 @@ class Blocks extends React.Component {
         this.props.vm.off('VISUAL_REPORT', this.onVisualReport);
         this.props.vm.off('workspaceUpdate', this.onWorkspaceUpdate);
         this.props.vm.off('targetsUpdate', this.onTargetsUpdate);
-        this.props.vm.off('MONITORS_UPDATE', this.handleMonitorsUpdate);
+        this.props.vm.off('MONITOR_VISIBILITY_CHANGE', this.handleMonitorVisibilityUpdate);
         this.props.vm.off('EXTENSION_ADDED', this.handleExtensionAdded);
         this.props.vm.off('BLOCKSINFO_UPDATE', this.handleBlocksInfoUpdate);
         this.props.vm.off('PERIPHERAL_CONNECTED', this.handleStatusButtonUpdate);
@@ -445,22 +445,21 @@ class Blocks extends React.Component {
         // workspace to be 'undone' here.
         this.workspace.clearUndo();
     }
-    handleMonitorsUpdate (monitors) {
-        // Update the checkboxes of the relevant monitors.
+    handleMonitorVisibilityUpdate (blockId, isVisible) {
+        // Update the checkbox of the relevant monitor.
         // TODO: What about monitors that have fields? See todo in scratch-vm blocks.js changeBlock:
         // https://github.com/LLK/scratch-vm/blob/2373f9483edaf705f11d62662f7bb2a57fbb5e28/src/engine/blocks.js#L569-L576
         const flyout = this.workspace.getFlyout();
-        for (const monitor of monitors.values()) {
-            const blockId = monitor.get('id');
-            const isVisible = monitor.get('visible');
-            flyout.setCheckboxState(blockId, isVisible);
-            // We also need to update the isMonitored flag for this block on the VM, since it's used to determine
-            // whether the checkbox is activated or not when the checkbox is re-displayed (e.g. local variables/blocks
-            // when switching between sprites).
-            const block = this.props.vm.runtime.monitorBlocks.getBlock(blockId);
-            if (block) {
-                block.isMonitored = isVisible;
-            }
+        flyout.setCheckboxState(blockId, isVisible);
+        const toolbox = this.workspace.getToolbox();
+        toolbox.forceRerender();
+
+        // We also need to update the isMonitored flag for this block on the VM, since it's used to determine
+        // whether the checkbox is activated or not when the checkbox is re-displayed (e.g. local variables/blocks
+        // when switching between sprites).
+        const block = this.props.vm.runtime.monitorBlocks.getBlock(blockId);
+        if (block) {
+            block.isMonitored = isVisible;
         }
     }
     handleExtensionAdded (categoryInfo) {

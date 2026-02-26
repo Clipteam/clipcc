@@ -614,10 +614,20 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for monitors update.
+     * This event happens when monitor state gets updated.
      * @const {string}
      */
     static get MONITORS_UPDATE () {
         return 'MONITORS_UPDATE';
+    }
+
+    /**
+     * Event name for monitor visibility change.
+     * This event happens when a monitor's visibility is changed.
+     * @const {string}
+     */
+    static get MONITOR_VISIBILITY_CHANGE () {
+        return 'MONITOR_VISIBILITY_CHANGE';
     }
 
     /**
@@ -1655,7 +1665,7 @@ class Runtime extends EventEmitter {
     /**
      * Retrieve the execution order of the given opcode.
      * @param {!string} opcode The opcode to look up.
-     * @return {Array.<string | Object>} The execution order array of given opcode.
+     * @return {Array.<string | object>} The execution order array of given opcode.
      */
     getExecutionOrders (opcode) {
         return Object.prototype.hasOwnProperty.call(this._orders, opcode) && this._orders[opcode];
@@ -2431,6 +2441,8 @@ class Runtime extends EventEmitter {
     requestUpdateMonitor (monitor) {
         const id = monitor.get('id');
         if (this._monitorState.has(id)) {
+            const visibilityChanged = typeof monitor.get('visible') === 'boolean' &&
+                this._monitorState.get(id).get('visible') !== monitor.get('visible');
             this._monitorState =
                 // Use mergeWith here to prevent undefined values from overwriting existing ones
                 this._monitorState.set(id, this._monitorState.get(id).mergeWith((prev, next) => {
@@ -2439,6 +2451,9 @@ class Runtime extends EventEmitter {
                     }
                     return next;
                 }, monitor));
+            if (visibilityChanged) {
+                this.emit(Runtime.MONITOR_VISIBILITY_CHANGE, id, monitor.get('visible'));
+            }
             return true;
         }
         return false;
