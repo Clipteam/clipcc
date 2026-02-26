@@ -202,7 +202,7 @@ export class FieldMatrix extends Blockly.Field<string> {
         );
       }
       thumbnail.style.cursor = 'default';
-      requestAnimationFrame(this.updateMatrix.bind(this));
+      this.updateMatrix();
     }
 
     if (!this.arrow) {
