@@ -57,6 +57,12 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   private scrollAnimationId: number | null = null;
 
   /**
+   * Map from block ID to checkbox item.
+   * Used to optimize setCheckboxState method.
+   */
+  private flyoutCheckboxMap: Map<string, FlyoutCheckbox> = new Map<string, FlyoutCheckbox>();
+
+  /**
    * @param workspaceOptions Dictionary of options for the workspace.
    */
   constructor(workspaceOptions: Blockly.Options) {
@@ -99,6 +105,15 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     super.show(flyoutDef);
     this.recordScrollPositions();
     this.workspace_.resizeContents();
+  }
+
+  /**
+   * Store the list of elements on the flyout.
+   * @param contents - The array of items for the flyout.
+   */
+  override setContents(contents: Blockly.FlyoutItem[]): void {
+    super.setContents(contents);
+    this.recordFlyoutCheckboxes();
   }
 
   /**
@@ -179,13 +194,30 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
    * The scroll position is determined by the coordinates of each category's
    * label after the entire flyout has been rendered.
    */
-  recordScrollPositions(): void {
+  private recordScrollPositions(): void {
     this.scrollPositions.clear();
     for (const item of this.contents) {
       if (item.getType() === 'label' || item.getType() === 'status_indicator_label') {
         const button = item.getElement() as FlyoutButton;
         const position = button.getPosition();
         this.scrollPositions.set(button.getLabelId()!, position.y - this.MARGIN);
+      }
+    }
+  }
+
+  /**
+   * Records all checkboxes and the relevant block's ID in the toolbox.
+   * Should be called when contents updated.
+   */
+  private recordFlyoutCheckboxes(): void {
+    this.flyoutCheckboxMap.clear();
+    for (const item of this.contents) {
+      const element = item.getElement();
+      if (element instanceof FlyoutCheckbox) {
+        const block = element.getChildItem()?.getElement() as Blockly.BlockSvg | null;
+        if (block) {
+          this.flyoutCheckboxMap.set(block.id, element);
+        }
       }
     }
   }
@@ -358,15 +390,9 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
    * @param state The new state of the checkbox.
    */
   setCheckboxState(blockId: string, state: boolean) {
-    for (const item of this.contents) {
-      if (item instanceof FlyoutCheckbox) {
-        const block = item.getChildItem()?.getElement() as Blockly.BlockSvg;
-        if (block && block.id === blockId) {
-          item.setChecked(state);
-          break;
-        }
-      }
-    }
+    if (!this.flyoutCheckboxMap.has(blockId)) return;
+    const checkbox = this.flyoutCheckboxMap.get(blockId)!;
+    checkbox.setChecked(state);
   }
 }
 

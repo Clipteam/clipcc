@@ -30,6 +30,7 @@ import * as callbackRegistry from './callback_registry';
 import * as Constants from './constants';
 import {VariableModel} from './variable_model';
 import type {VerticalFlyout} from './toolbox/flyout';
+import type {Toolbox} from './toolbox/toolbox';
 
 /**
  * Constant prefix to differentiate cloud variable names from other types
@@ -109,12 +110,16 @@ export function createVariable(
         );
 
         // Refresh checkbox status
-        const toolbox = workspace.getToolbox();
+        const toolbox = workspace.getToolbox() as Toolbox;
         if (!toolbox) return;
         const flyout = toolbox.getFlyout() as VerticalFlyout;
         const variableBlockId = variable.getId();
 
         flyout.setCheckboxState(variableBlockId, true);
+
+        toolbox.afterToolboxRefresh(() => {
+          flyout.setCheckboxState(variableBlockId, true);
+        });
 
         if (callback) {
           callback(variableBlockId);
