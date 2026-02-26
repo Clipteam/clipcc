@@ -33,6 +33,9 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   /** Maps from category names to their positions. */
   protected scrollPositions: Map<string, number> = new Map<string, number>();
 
+  /** Maps from block IDs to their checkbox states. should process after flyout.show() called. */
+  protected checkboxUpdateRequests = new Map<string, boolean>();
+
   /**
    * The target position for the flyout scroll animation in pixels.
    * Is a number while animating, null otherwise.
@@ -99,6 +102,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     super.show(flyoutDef);
     this.recordScrollPositions();
     this.workspace_.resizeContents();
+    this.updateCheckboxState();
   }
 
   /**
@@ -358,15 +362,34 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
    * @param state The new state of the checkbox.
    */
   setCheckboxState(blockId: string, state: boolean) {
+    this.checkboxUpdateRequests.set(blockId, state);
+  }
+
+  /**
+   * Update the state of checkboxes in the flyout based on the checkboxUpdateRequests map.
+   * Should be called after flyout.show() is called to ensure all checkboxes are rendered.
+   */
+  protected updateCheckboxState() {
+    if (!this.checkboxUpdateRequests.size) return;
+
     for (const item of this.contents) {
-      if (item instanceof FlyoutCheckbox) {
-        const block = item.getChildItem()?.getElement() as Blockly.BlockSvg;
-        if (block && block.id === blockId) {
-          item.setChecked(state);
-          break;
+      if (item.getElement() instanceof FlyoutCheckbox) {
+        const checkbox = item.getElement() as FlyoutCheckbox;
+        const block = checkbox.getChildItem()?.getElement() as Blockly.BlockSvg;
+        if (block) {
+          const state = this.checkboxUpdateRequests.get(block.id);
+          if (!state) continue;
+          this.checkboxUpdateRequests.delete(block.id);
+          if (checkbox.isChecked() === state) continue;
+          checkbox.setChecked(state);
         }
       }
+      // All requests processed, break the loop
+      if (!this.checkboxUpdateRequests.size) break;
     }
+
+    // Clear any remaining requests that couldn't be processed (e.g. block not found).
+    this.checkboxUpdateRequests.clear();
   }
 }
 
