@@ -7,7 +7,8 @@
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals';
 import * as Blockly from 'blockly/core';
 import {setupPlayground} from '../helpers/playground';
-import {Toolbox} from '../../src/toolbox/toolbox';
+import type {Toolbox} from '../../src/toolbox/toolbox';
+import type {VerticalFlyout} from '../../src/toolbox/flyout';
 
 const toolboxDefinition: Blockly.utils.toolbox.ToolboxDefinition = {
   kind: 'categoryToolbox',
@@ -110,6 +111,8 @@ describe('Toolbox', () => {
 
   beforeEach(() => {
     const toolbox = context.workspace.getToolbox() as Toolbox;
+    const flyout = toolbox.getFlyout() as VerticalFlyout;
+    flyout.setCollapseAnimationEnabled(false);
     // Spy updateSelectedCategoryById to prevent category selection based on
     // position, since we don't have any contents.
     spy = jest.spyOn(toolbox, 'updateSelectedCategoryById').mockImplementation(() => {});

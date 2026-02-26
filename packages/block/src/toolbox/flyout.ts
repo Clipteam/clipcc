@@ -18,10 +18,10 @@ import styles from '../styles/flyout.css';
  */
 export class VerticalFlyout extends Blockly.VerticalFlyout {
   /**
-   * The percentage of the distance to the scrollTarget that should be
-   * scrolled at a time. Lower values will produce a smoother, slower scroll.
+   * The percentage of the distance to the animation target that should be
+   * processed at a time. Lower values will produce a smoother, slower scroll.
    */
-  static readonly SCROLL_ANIMATION_FRACTION = 0.3;
+  static readonly ANIMATION_FRACTION = 0.3;
 
   /** The width of the flyout, if not otherwise specified. */
   /** 375 * 0.675(default scale) ~= 250 (old width) */
@@ -57,6 +57,34 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   private scrollAnimationId: number | null = null;
 
   /**
+   * The target collapse state for the flyout collapse animation.
+   * Is a boolean while animating, null otherwise.
+   */
+  private collapseTarget: boolean | null = null;
+
+  /**
+   * The start time of the collapse animation.
+   */
+  private collapseStartTime: number | null = null;
+
+  /**
+   * The ID of the current collapse animation frame request.
+   * Used to cancel the previous animation when a new one starts.
+   */
+  private collapseAnimationId: number | null = null;
+
+  /**
+   * Whether to animate the flyout collapse/expand.
+   */
+  private animateCollapse = false;
+
+  /**
+   * The current x offset for collapse animation in pixels.
+   * Used to offset the flyout position during animation.
+   */
+  private collapseAnimationOffset = 0;
+
+  /**
    * Map from block ID to checkbox item.
    * Used to optimize setCheckboxState method.
    */
@@ -69,6 +97,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     super(workspaceOptions);
     this.workspace_.setMetricsManager(new FlyoutMetrics(this.workspace_, this));
     this.setRecyclingEnabled(true);
+    this.setCollapseAnimationEnabled(true);
   }
 
   /**
@@ -96,15 +125,29 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   }
 
   /**
+   * Enable or disable collapse animation.
+   * @param enabled Whether to enable collapse animation.
+   */
+  setCollapseAnimationEnabled(enabled: boolean) {
+    this.animateCollapse = enabled;
+  }
+
+  /**
    * Show and populate the flyout.
    * @param flyoutDef Contents to display
    *     in the flyout. This is either an array of Nodes, a NodeList, a
    *     toolbox definition, or a string with the name of the dynamic category.
    */
   override show(flyoutDef: Blockly.utils.toolbox.FlyoutDefinition | string): void {
+    // Disable collapse animation while populating the flyout to avoid jank.
+    const prevAnimateCollapse = this.animateCollapse;
+    if (prevAnimateCollapse) this.setCollapseAnimationEnabled(false);
+
     super.show(flyoutDef);
     this.recordScrollPositions();
     this.workspace_.resizeContents();
+
+    if (prevAnimateCollapse) this.setCollapseAnimationEnabled(true);
   }
 
   /**
@@ -123,12 +166,128 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
    */
   override setVisible(visible: boolean): void {
     const wasVisible = this.isVisible();
-    super.setVisible(visible);
+    if (wasVisible === visible && this.collapseTarget === null) {
+      return;
+    }
+    const currentOffset = this.collapseAnimationOffset;
+    this.cancelCollapseAnimation();
+    if (this.animateCollapse) {
+      // Let collapse animation decide visibility
+      this.startCollapseAnimation(visible, currentOffset);
+    } else {
+      super.setVisible(visible);
 
-    // Refresh drag targets when flyout becomes visible
-    if (!wasVisible && visible && !this.autoClose) {
-      this.targetWorkspace.recordDragTargets();
-      this.reflow();
+      // Refresh drag targets when flyout becomes visible
+      if (!wasVisible && visible && !this.autoClose) {
+        this.targetWorkspace.recordDragTargets();
+        this.reflow();
+      }
+    }
+  }
+
+  /**
+   * Cancel the current collapse animation if one is in progress.
+   */
+  cancelCollapseAnimation(): void {
+    if (this.collapseAnimationId !== null) {
+      cancelAnimationFrame(this.collapseAnimationId);
+    }
+
+    if (this.collapseTarget !== null) {
+      this.collapseAnimationOffset = 0;
+      this.position();
+    }
+  }
+
+  /**
+   * Start the collapse animation.
+   * @param visible The target collapse state.
+   * @param initialOffset The initial offset for the animation.
+   */
+  private startCollapseAnimation(visible: boolean, initialOffset = 0): void {
+    this.collapseTarget = visible;
+
+    // Calculate elapsed time based on initial offset.
+    let elapsed = 0;
+    const flyoutWidth = this.getWidth();
+    if (initialOffset !== 0) {
+      const fraction = visible ?
+        initialOffset / -flyoutWidth :
+        1 - (initialOffset / -flyoutWidth);
+      if (fraction > 0 && fraction <= 1) {
+        elapsed = Math.log(fraction) / Math.log(VerticalFlyout.ANIMATION_FRACTION);
+      }
+    }
+
+    this.collapseStartTime = Date.now() - elapsed * 60;
+
+    this.workspace_.scrollbar?.setVisible(false);
+    if (visible) {
+      super.setVisible(true);
+      this.collapseAnimationOffset = initialOffset !== 0 ? initialOffset : -this.getWidth();
+      this.position();
+
+      // Refresh drag targets when flyout becomes visible
+      if (!this.autoClose) {
+        this.targetWorkspace.recordDragTargets();
+        this.reflow();
+      }
+    } else {
+      if (initialOffset !== 0) {
+        this.collapseAnimationOffset = initialOffset;
+        this.position();
+      }
+    }
+
+    this.collapseAnimationId = requestAnimationFrame(this.stepCollapseAnimation.bind(this, this.getX(), this.getY()));
+  }
+
+  /**
+   * Step the collapse animation by translating the flyout.
+   *
+   * Should NOT call directly. Use startCollapseAnimation instead.
+   * @param startX The starting x position of the flyout.
+   * @param startY The starting y position of the flyout.
+   */
+  private stepCollapseAnimation(startX: number, startY: number): void {
+    this.collapseAnimationId = null;
+
+    const elapsed = (Date.now() - this.collapseStartTime!) / 60;
+    const flyoutWidth = this.getWidth();
+
+    const offset = this.collapseTarget ?
+      -flyoutWidth * Math.pow(VerticalFlyout.ANIMATION_FRACTION, elapsed) :
+      -flyoutWidth * (1 - Math.pow(VerticalFlyout.ANIMATION_FRACTION, elapsed));
+
+    if (this.collapseTarget && Math.abs(offset) < 1) {
+      this.finishCollapseAnimation();
+      return;
+    } else if (!this.collapseTarget && Math.abs(offset + flyoutWidth) < 1) {
+      this.finishCollapseAnimation();
+      return;
+    }
+
+    this.collapseAnimationOffset = offset;
+    const x = startX + this.collapseAnimationOffset;
+    const y = startY;
+    Blockly.utils.dom.setCssTransform(this.svgGroup_!, 'translate3d(' + x + 'px,' + y + 'px, 0)');
+    this.collapseAnimationId = requestAnimationFrame(this.stepCollapseAnimation.bind(this, startX, startY));
+  }
+
+  /**
+   * Finish the collapse animation.
+   */
+  private finishCollapseAnimation(): void {
+    this.collapseAnimationOffset = 0;
+    this.position();
+
+    const visible = this.collapseTarget;
+    this.collapseTarget = null;
+    this.collapseStartTime = null;
+    if (visible) {
+      this.workspace_.scrollbar?.setVisible(true);
+    } else {
+      super.setVisible(false);
     }
   }
 
@@ -306,7 +465,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     this.scrollAnimationId = null;
     const elapsed = (Date.now() - this.scrollStartTime!) / 60;
     const totalDistance = this.scrollTarget! - this.scrollFrom!;
-    const scrollPos = this.scrollTarget! - totalDistance * Math.pow(VerticalFlyout.SCROLL_ANIMATION_FRACTION, elapsed);
+    const scrollPos = this.scrollTarget! - totalDistance * Math.pow(VerticalFlyout.ANIMATION_FRACTION, elapsed);
     const diff = this.scrollTarget! - scrollPos;
     if (Math.abs(diff) < 1) {
       this.workspace_.scrollbar?.setY(this.scrollTarget!);
@@ -395,6 +554,8 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     checkbox.setChecked(state);
   }
 }
+
+Blockly.Css.register(styles);
 
 Blockly.registry.register(
   Blockly.registry.Type.FLYOUTS_VERTICAL_TOOLBOX,
