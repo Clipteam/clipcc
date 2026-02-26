@@ -283,6 +283,7 @@ class VirtualMachine extends EventEmitter {
                     .set('y', monitor.get('y') + offsetY);
                 this.runtime.requestUpdateMonitor(newMonitor);
             }
+            this.runtime.emit(Runtime.MONITORS_UPDATE, this._monitorState);
         }
         this.runtime.stageWidth = width;
         this.runtime.stageHeight = height;
