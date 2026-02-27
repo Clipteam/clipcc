@@ -1,5 +1,5 @@
 module.exports = {
-    extends: ['scratch'],
+    extends: ['clipcc'],
     env: {
         browser: true
     },
