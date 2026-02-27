@@ -28,7 +28,7 @@
 }
 
 .workspace :global(.blocklySvg) {
-    background-color: var(--clipcc-ui-primary);
+    background-color: var(--clipcc-ui-primary) !important;
 }
 
 /* Row of "card" buttons for modifying custom procedures */

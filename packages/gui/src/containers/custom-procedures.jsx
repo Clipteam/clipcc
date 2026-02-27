@@ -3,7 +3,7 @@ import defaultsDeep from 'lodash.defaultsdeep';
 import PropTypes from 'prop-types';
 import React from 'react';
 import CustomProceduresComponent from '../components/custom-procedures/custom-procedures.jsx';
-import ScratchBlocks from 'clipcc-block';
+import * as ScratchBlocks from 'clipcc-block';
 import {connect} from 'react-redux';
 
 class CustomProcedures extends React.Component {
@@ -29,6 +29,12 @@ class CustomProcedures extends React.Component {
     }
     componentWillUnmount () {
         if (this.workspace) {
+            if (ScratchBlocks.getFocusManager().getFocusedNode()) {
+                // Focus the workspace before destroying the workspace to avoid focusing
+                // the unregistered tree. (Clipteam/clipcc#145)
+                // @TODO This is a temporary fix. It might be fixed by Blockly.
+                ScratchBlocks.getFocusManager().focusNode(this.workspace);
+            }
             this.workspace.dispose();
         }
     }
@@ -41,11 +47,7 @@ class CustomProcedures extends React.Component {
             {rtl: this.props.isRtl}
         );
 
-        // @todo This is a hack to make there be no toolbox.
-        const oldDefaultToolbox = ScratchBlocks.Blocks.defaultToolbox;
-        ScratchBlocks.Blocks.defaultToolbox = null;
         this.workspace = ScratchBlocks.inject(this.blocks, workspaceConfig);
-        ScratchBlocks.Blocks.defaultToolbox = oldDefaultToolbox;
 
         // Create the procedure declaration block for editing the mutation.
         this.mutationRoot = this.workspace.newBlock('procedures_declaration');
@@ -104,7 +106,7 @@ class CustomProcedures extends React.Component {
             }
             this.mutationRoot.moveBy(dx, dy);
         });
-        this.mutationRoot.domToMutation(this.props.mutator);
+        this.mutationRoot.loadExtraState(this.props.mutator);
         this.mutationRoot.initSvg();
         this.mutationRoot.render();
         this.setState({
@@ -121,7 +123,7 @@ class CustomProcedures extends React.Component {
         this.props.onRequestClose();
     }
     handleOk () {
-        const newMutation = this.mutationRoot ? this.mutationRoot.mutationToDom(true) : null;
+        const newMutation = this.mutationRoot ? this.mutationRoot.saveExtraState(true) : null;
         this.props.onRequestClose(newMutation);
     }
     handleAddLabel () {
@@ -185,7 +187,15 @@ class CustomProcedures extends React.Component {
 
 CustomProcedures.propTypes = {
     isRtl: PropTypes.bool,
-    mutator: PropTypes.instanceOf(Element),
+    mutator: PropTypes.shape({
+        proccode: PropTypes.string,
+        argumentids: PropTypes.arrayOf(PropTypes.string),
+        argumentnames: PropTypes.arrayOf(PropTypes.string),
+        argumentdefaults: PropTypes.arrayOf(PropTypes.string),
+        warp: PropTypes.bool,
+        return: PropTypes.bool,
+        global: PropTypes.bool
+    }),
     new: PropTypes.bool,
     onRequestClose: PropTypes.func.isRequired,
     options: PropTypes.shape({
@@ -208,7 +218,9 @@ CustomProcedures.defaultOptions = {
     },
     comments: false,
     collapse: false,
-    scrollbars: true
+    scrollbars: true,
+    modalInputs: false,
+    sounds: false
 };
 
 CustomProcedures.defaultProps = {

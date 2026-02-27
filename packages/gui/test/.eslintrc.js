@@ -1,5 +1,5 @@
 module.exports = {
-    extends: ['scratch/react', 'scratch/es6', 'plugin:jest/recommended'],
+    extends: ['clipcc/react', 'clipcc/es6', 'plugin:jest/recommended'],
     env: {
         browser: true,
         jest: true

@@ -23,6 +23,7 @@ const newBlockIds = require('./util/new-block-ids');
 const {loadCostume} = require('./import/load-costume.js');
 const {loadSound} = require('./import/load-sound.js');
 const {serializeSounds, serializeCostumes} = require('./serialization/serialize-assets');
+const uid = require('./util/uid');
 require('canvas-toBlob');
 
 const RESERVED_NAMES = ['_mouse_', '_stage_', '_edge_', '_myself_', '_random_'];
@@ -80,6 +81,12 @@ class VirtualMachine extends EventEmitter {
          * @type {?Target}
          */
         this.editingTarget = null;
+
+        /**
+         * Whether the VM is currently in the process of loading a workspace.
+         * When true, block events from Blockly will not trigger changes to VM.
+         */
+        this.loadingWorkspace = false;
 
         /**
          * The currently dragging target, for redirecting IO data.
@@ -277,7 +284,7 @@ class VirtualMachine extends EventEmitter {
         }
         this.runtime.stageWidth = width;
         this.runtime.stageHeight = height;
-        
+
         if (this.runtime.renderer) {
             this.runtime.renderer.setStageSize(
                 -width / 2,
@@ -1266,6 +1273,18 @@ class VirtualMachine extends EventEmitter {
      * @param {!Blockly.Event} e Any Blockly event.
      */
     blockListener (e) {
+        if (e.type === 'finished_loading') {
+            this.loadingWorkspace = false;
+            return;
+        }
+
+        // Blockly's state should consistent with the VM's state. If the VM
+        // is loading a workspace, ignore Blockly events.
+        // This also fix scratchfoundation/scratch-gui#9552
+        if (this.loadingWorkspace) {
+            return;
+        }
+
         if (this.editingTarget) {
             this.editingTarget.blocks.blocklyListen(e);
         }
@@ -1370,7 +1389,25 @@ class VirtualMachine extends EventEmitter {
 
         return Promise.all(extensionPromises).then(() => {
             copiedBlocks.forEach(block => {
+                let commentData = null;
+                if (block.commentData) {
+                    commentData = block.commentData;
+                    delete block.commentData;
+                    commentData.id = (block.comment = uid());
+                }
                 target.blocks.createBlock(block);
+                if (commentData) {
+                    target.createComment(
+                        commentData.id,
+                        block.id,
+                        commentData.text,
+                        commentData.x,
+                        commentData.y,
+                        commentData.width,
+                        commentData.height,
+                        commentData.collapsed
+                    );
+                }
             });
             target.blocks.updateTargetSpecificBlocks(target.isStage);
         });
@@ -1460,6 +1497,7 @@ class VirtualMachine extends EventEmitter {
      * of the current editing target's blocks.
      */
     emitWorkspaceUpdate () {
+        this.loadingWorkspace = true;
         // Create a list of broadcast message Ids according to the stage variables
         const stageVariables = this.runtime.getTargetForStage().variables;
         let messageIds = [];
@@ -1496,26 +1534,34 @@ class VirtualMachine extends EventEmitter {
 
         const globalVariables = Object.keys(globalVarMap).map(k => globalVarMap[k]);
         const localVariables = Object.keys(localVarMap).map(k => localVarMap[k]);
+
+        const procedures = this.runtime.targets.reduce((acc, target) => {
+            const defs = target.blocks.getAllProcedureDefinitions(target !== this.editingTarget);
+            return acc.concat(defs);
+        }, []);
+
         const workspaceComments = Object.keys(this.editingTarget.comments)
             .map(k => this.editingTarget.comments[k])
-            .filter(c => c.blockId === null);
+            .filter(c => c.blockId === null)
+            .map(c => c.toState());
 
-        const procedures = this.runtime.targets.map(target =>
-            target.blocks.getAllProcedureDefinitions(target !== this.editingTarget));
+        const variables = []
+            .concat(globalVariables.map(v => v.toState(false)))
+            .concat(localVariables.map(v => v.toState(true)));
 
-        const xmlString = `<xml xmlns="http://www.w3.org/1999/xhtml">
-                            <variables>
-                                ${globalVariables.map(v => v.toXML()).join()}
-                                ${localVariables.map(v => v.toXML(true)).join()}
-                            </variables>
-                            <procedures>
-                                ${procedures.join('')}
-                            </procedures>
-                            ${workspaceComments.map(c => c.toXML()).join()}
-                            ${this.editingTarget.blocks.toXML(this.editingTarget.comments)}
-                        </xml>`;
+        const blocks = {
+            languageVersion: 0,
+            blocks: this.editingTarget.blocks.toState(this.editingTarget.comments)
+        };
 
-        this.emit('workspaceUpdate', {xml: xmlString});
+        this.emit('workspaceUpdate', {
+            json: {
+                blocks,
+                variables,
+                procedures,
+                workspaceComments
+            }
+        });
     }
 
     /**

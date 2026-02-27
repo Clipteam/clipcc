@@ -21,7 +21,7 @@
 
 import * as Blockly from 'blockly/core';
 import {FieldButton} from '../fields/button';
-import {getWorkspaceOptionsFromBlock} from '../utils';
+import {getWorkspaceOptionsFromBlock} from '../scratch_blocks_utils';
 
 /**
  * Block for adding two numbers.
@@ -412,11 +412,11 @@ Blockly.Blocks['operator_join_multiple'] = {
   changeArgumentsWrapper(callback: () => void): void {
     const oldExtraState = this.saveExtraState();
     callback();
+    this.updateDisplay();
     const newExtraState = this.saveExtraState();
     Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
       this, 'mutation', null, JSON.stringify(oldExtraState), JSON.stringify(newExtraState)
     ));
-    this.updateDisplay();
   },
   /**
    * Update the block's structure and appearance to match the extra states.
@@ -466,15 +466,10 @@ Blockly.Blocks['operator_join_multiple'] = {
       if (oldBlock) {
         // Reattach the old block and shadow input.
         delete connectionMap[input.name];
-        oldBlock.outputConnection.connect(input.connection!);
-        if (!oldShadow) {
-          // Create a shadow input.
-          oldShadow = {
-            type: 'text',
-            fields: {TEXT: ''}
-          };
+        if (!oldBlock.isShadow() && oldShadow) {
+          input.connection!.setShadowState(oldShadow);
         }
-        input.connection!.setShadowState(oldShadow);
+        oldBlock.outputConnection.connect(input.connection!);
       } else {
         // Create a new shadow block and attach it to the given input.
         Blockly.Events.disable();

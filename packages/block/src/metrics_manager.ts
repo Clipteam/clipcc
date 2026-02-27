@@ -5,7 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {getCommentBubbleFromBlock} from './utils';
+import {getCommentBubbleFromBlock} from './scratch_blocks_utils';
 
 export class MetricsManager extends Blockly.MetricsManager {
   protected trackedCommentedBlocks = new Set<Blockly.Block>();

@@ -24,6 +24,11 @@ export class Toolbox extends Blockly.Toolbox {
   static readonly CATEGORY_GAP = 36;
 
   /**
+   * Callback functions to call when toolbox has been refreshed.
+   */
+  protected afterToolboxRefreshCallbacks: Array<() => void> = [];
+
+  /**
    * @param workspace The workspace in which to create new blocks.
    */
   constructor(workspace: Blockly.WorkspaceSvg) {
@@ -201,14 +206,36 @@ export class Toolbox extends Blockly.Toolbox {
    * procedures.
    */
   override refreshSelection(): void {
+    this.forceRerender();
+  }
+
+  /**
+   * Force re-rendering the flyout.
+   * @returns A promise that resolves when the re-render is complete.
+   */
+  forceRerender(): Promise<void> {
+    const renderPromise = new Promise<void>((resolve) => {
+      this.afterToolboxRefreshCallbacks.push(resolve);
+    });
     if (this.getFlyout()!.isVisible()) {
       if (this.refreshDebouncer) {
         clearTimeout(this.refreshDebouncer);
       }
       this.refreshDebouncer = setTimeout(() => {
         this.getFlyout()!.show(this.getFlyoutContents());
+        this.afterToolboxRefreshCallbacks.forEach((callback) => callback());
+        this.afterToolboxRefreshCallbacks.length = 0;
       }, 10);
     }
+    return renderPromise;
+  }
+
+  /**
+   * Run the given callback function when the toolbox get refreshed.
+   * @param callback The callback to run after the toolbox get refreshed.
+   */
+  afterToolboxRefresh(callback: () => void) {
+    this.afterToolboxRefreshCallbacks.push(callback);
   }
 
   /**
