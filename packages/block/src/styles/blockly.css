@@ -53,6 +53,10 @@
   overflow: visible;
 }
 
+.blocklyDraggingMouseThrough {
+  pointer-events: none !important;
+}
+
 .blocklyDragging>.blocklyPath {
   fill-opacity: 1;
   stroke-opacity: 1;
