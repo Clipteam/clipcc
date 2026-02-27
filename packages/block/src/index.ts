@@ -46,6 +46,7 @@ import './metrics_manager';
 import './insertion_marker_previewer';
 
 import './toolbox/flyout';
+import type {VerticalFlyout} from './toolbox/flyout';
 import './toolbox/toolbox';
 import './toolbox/category';
 import './toolbox/collapsible_category';
@@ -70,19 +71,38 @@ import './blocks/procedures';
 
 import './serialization/procedures';
 
+export interface ClipCCBlockOptions extends Blockly.BlocklyOptions {
+  animations?: {
+    flyoutCollapse?: boolean;
+    flyoutScroll?: boolean;
+  }
+}
+
 /**
  * Inject a Blockly editor into the specified container element (usually a div).
  * @param container Containing element, or its ID, or a CSS selector.
  * @param options Optional dictionary of options.
  * @returns Newly created main workspace.
  */
-export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
-  const defaultOptions: Blockly.BlocklyOptions = {
+export function inject(container: Element | string, options?: ClipCCBlockOptions) {
+  const defaultOptions = {
     renderer: 'scratch',
-    theme: Scratch
-  };
+    theme: Scratch,
+    animations: {
+      flyoutCollapse: true,
+      flyoutScroll: true
+    }
+  } as const satisfies ClipCCBlockOptions;
+  if (options && Object.prototype.hasOwnProperty.call(options, 'animations')) {
+    options.animations = Object.assign(defaultOptions.animations, options.animations);
+  }
   options = Object.assign(defaultOptions, options);
   const workspace = Blockly.inject(container, options);
+
+  if (options.animations!.flyoutCollapse) {
+    const flyout = workspace.getFlyout() as VerticalFlyout;
+    flyout?.setCollapseAnimationEnabled(true);
+  }
 
   // Register styles.
   injectCssVariables(workspace);

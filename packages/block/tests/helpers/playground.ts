@@ -16,7 +16,7 @@ export interface PlaygroundTestContext {
   gesture: Gesture;
 }
 
-const defaultOptions: Blockly.BlocklyOptions = {
+const defaultOptions: Blocks.ClipCCBlockOptions = {
   media: '../../media',
   collapse: false,
   disable: false,
@@ -35,6 +35,9 @@ const defaultOptions: Blockly.BlocklyOptions = {
     maxScale: 4,
     minScale: 0.25,
     scaleSpeed: 1.1
+  },
+  animations: {
+    flyoutCollapse: false
   }
 };
 
@@ -43,7 +46,7 @@ const defaultOptions: Blockly.BlocklyOptions = {
  * @param options Optional dictionary of options.
  * @returns Context for testing.
  */
-export function setupPlayground(options?: Blockly.BlocklyOptions) {
+export function setupPlayground(options?: Blocks.ClipCCBlockOptions) {
   const context = {} as PlaygroundTestContext;
 
   beforeAll(() => {
