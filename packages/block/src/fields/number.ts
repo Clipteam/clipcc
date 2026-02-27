@@ -21,7 +21,7 @@
 import * as Blockly from 'blockly/core';
 
 import styles from '../styles/number.css';
-import {Colours} from '../colours';
+import {Colours} from '../theme';
 
 /**
  * Class for an editable number field.
