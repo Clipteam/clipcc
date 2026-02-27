@@ -23,6 +23,8 @@ import * as Blockly from 'blockly/core';
 import styles from '../styles/number.css';
 import {Colours} from '../theme';
 
+type AcceptedNumber = string | number | null | undefined;
+
 /**
  * Class for an editable number field.
  * In scratch-blocks, the min/max/precision properties are only used
@@ -149,9 +151,9 @@ export class FieldNumber extends Blockly.FieldTextInput {
    * @param precision Precision for value.
    */
   setConstraints(
-    min: number | string | undefined | null,
-    max: number | string | undefined | null,
-    precision: number | string | undefined | null
+    min: AcceptedNumber,
+    max: AcceptedNumber,
+    precision: AcceptedNumber
   ) {
     this.setMinInternal(min);
     this.setMaxInternal(max);
@@ -164,7 +166,7 @@ export class FieldNumber extends Blockly.FieldTextInput {
    * reflect.
    * @param min Minimum value.
    */
-  setMin(min: number | string | undefined | null) {
+  setMin(min: AcceptedNumber) {
     this.setMinInternal(min);
     this.setValue(this.getValue());
   }
@@ -173,7 +175,7 @@ export class FieldNumber extends Blockly.FieldTextInput {
    * Sets the minimum value this field can contain. Called internally to avoid value updates.
    * @param min Minimum value.
    */
-  private setMinInternal(min: number | string | undefined | null) {
+  private setMinInternal(min: AcceptedNumber) {
     if (min === undefined || min === null) {
       this.min_ = -Infinity;
     } else {
@@ -203,7 +205,7 @@ export class FieldNumber extends Blockly.FieldTextInput {
    * reflect.
    * @param max Maximum value.
    */
-  setMax(max: number | string | undefined | null) {
+  setMax(max: AcceptedNumber) {
     this.setMaxInternal(max);
     this.setValue(this.getValue());
   }
@@ -212,7 +214,7 @@ export class FieldNumber extends Blockly.FieldTextInput {
    * Sets the maximum value this field can contain. Called internally to avoid value updates.
    * @param max Maximum value.
    */
-  private setMaxInternal(max: number | string | undefined | null) {
+  private setMaxInternal(max: AcceptedNumber) {
     if (max === undefined || max === null) {
       this.max_ = Infinity;
     } else {
@@ -239,9 +241,23 @@ export class FieldNumber extends Blockly.FieldTextInput {
    * value is rounded. Updates the field to reflect.
    * @param precision The number to which the field's value is rounded.
    */
-  setPrecision(precision: number | string | undefined | null) {
+  setPrecision(precision: AcceptedNumber) {
     this.setPrecisionInternal(precision);
     this.setValue(this.getValue());
+  }
+
+  /**
+   * Used to change the value of the field. Handles validation and events.
+   * Subclasses should override doClassValidation_ and doValueUpdate_ rather
+   * than this method.
+   * @param newValue New value.
+   * @param fireChangeEvent Whether to fire a change event. Defaults to true.
+   *     Should usually be true unless the change will be reported some other
+   *     way, e.g. an intermediate field change event.
+   */
+  override setValue(newValue: AcceptedNumber, fireChangeEvent?: boolean): void {
+    newValue = (newValue && !isNaN(newValue as number)) ? String(newValue) : '0';
+    super.setValue(newValue, fireChangeEvent);
   }
 
   /**
@@ -249,7 +265,7 @@ export class FieldNumber extends Blockly.FieldTextInput {
    * value updates.
    * @param precision The number to which the field's value is rounded.
    */
-  private setPrecisionInternal(precision: number | string | undefined | null) {
+  private setPrecisionInternal(precision: AcceptedNumber) {
     this.precision_ = Number(precision) || 0;
     let precisionString = String(this.precision_);
     if (precisionString.includes('e')) {
