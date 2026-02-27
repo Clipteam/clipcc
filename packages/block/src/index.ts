@@ -77,10 +77,10 @@ import './serialization/procedures';
  * @returns Newly created main workspace.
  */
 export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
-  const defaultOptions: Blockly.BlocklyOptions = {
+  const defaultOptions = {
     renderer: 'scratch',
     theme: Scratch
-  };
+  } satisfies Blockly.BlocklyOptions;
   options = Object.assign(defaultOptions, options);
   const workspace = Blockly.inject(container, options);
 
