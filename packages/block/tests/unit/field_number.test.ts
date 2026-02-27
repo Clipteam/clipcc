@@ -34,7 +34,6 @@ const constructorTestCases: ConstructorTestCase<typeof FieldNumber>[] = [
   },
   {
     title: 'Null',
-    // @ts-expect-error Pass null as an argument, for test usage.
     args: [null],
     expectedValue: '0',
     invalid: true
