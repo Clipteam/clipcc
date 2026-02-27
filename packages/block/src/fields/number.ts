@@ -360,10 +360,8 @@ export class FieldNumber extends Blockly.FieldTextInput {
    * Show the drop-down menu for editing this field.
    * @param event Optional mouse event that triggered the field to open, or
    *     undefined if triggered programmatically.
-   * @param quietInput True if editor should be created without focus.
-   *     Defaults to false.
    */
-  protected override showEditor_(event?: Event, quietInput?: boolean): void {
+  protected override showEditor_(event?: Event): void {
     const showNumPad = this.shouldUseNumPad(event);
     super.showEditor_(event, showNumPad, false);
     if (showNumPad) {
