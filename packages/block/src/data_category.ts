@@ -25,6 +25,7 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from './constants';
+import {createVariable} from './variables';
 
 /**
  * Construct the elements (blocks and button) required by the flyout for the
@@ -33,81 +34,81 @@ import * as Constants from './constants';
  * @returns Array of XML elements.
  */
 export function flyoutCategory(workspace: Blockly.WorkspaceSvg): Blockly.utils.toolbox.FlyoutDefinition {
-  let variableModelList = workspace.getVariableMap().getVariablesOfType('');
+  let variableModelList = workspace.getVariableMap().getVariablesOfType(Constants.SCALAR_VARIABLE_TYPE);
   variableModelList.sort(Blockly.Variables.compareByName);
-  const xmlList: Element[] = [];
+  const contents: Blockly.utils.toolbox.FlyoutItemInfoArray = [];
 
-  addCreateButton(xmlList, workspace, 'VARIABLE');
+  addCreateButton(contents, workspace, 'VARIABLE');
 
   for (let i = 0; i < variableModelList.length; i++) {
-    addDataVariable(xmlList, variableModelList[i]);
+    addDataVariable(contents, variableModelList[i]);
   }
 
   if (variableModelList.length > 0) {
-    xmlList[xmlList.length - 1].setAttribute('gap', '24');
+    (contents[contents.length - 1] as Blockly.utils.toolbox.SeparatorInfo).gap = 24;
     const firstVariable = variableModelList[0];
 
-    addSetVariableTo(xmlList, firstVariable);
-    addChangeVariableBy(xmlList, firstVariable);
-    addShowVariable(xmlList, firstVariable);
-    addHideVariable(xmlList, firstVariable);
+    addSetVariableTo(contents, firstVariable);
+    addChangeVariableBy(contents, firstVariable);
+    addShowVariable(contents, firstVariable);
+    addHideVariable(contents, firstVariable);
   }
 
   // Now add list variables to the flyout
-  addCreateButton(xmlList, workspace, 'LIST');
+  addCreateButton(contents, workspace, 'LIST');
   variableModelList = workspace.getVariableMap().getVariablesOfType(Constants.LIST_VARIABLE_TYPE);
   variableModelList.sort(Blockly.Variables.compareByName);
   for (let i = 0; i < variableModelList.length; i++) {
-    addDataList(xmlList, variableModelList[i]);
+    addDataList(contents, variableModelList[i]);
   }
 
   if (variableModelList.length > 0) {
-    xmlList[xmlList.length - 1].setAttribute('gap', '24');
+    (contents[contents.length - 1] as Blockly.utils.toolbox.SeparatorInfo).gap = 24;
     const firstVariable = variableModelList[0];
 
-    addAddToList(xmlList, firstVariable);
-    addSep(xmlList);
-    addDeleteOfList(xmlList, firstVariable);
-    addDeleteAllOfList(xmlList, firstVariable);
-    addInsertAtList(xmlList, firstVariable);
-    addReplaceItemOfList(xmlList, firstVariable);
-    addSep(xmlList);
-    addItemOfList(xmlList, firstVariable);
-    addItemNumberOfList(xmlList, firstVariable);
-    addLengthOfList(xmlList, firstVariable);
-    addListContainsItem(xmlList, firstVariable);
-    addSep(xmlList);
-    addShowList(xmlList, firstVariable);
-    addHideList(xmlList, firstVariable);
+    addAddToList(contents, firstVariable);
+    addSep(contents);
+    addDeleteOfList(contents, firstVariable);
+    addDeleteAllOfList(contents, firstVariable);
+    addInsertAtList(contents, firstVariable);
+    addReplaceItemOfList(contents, firstVariable);
+    addSep(contents);
+    addItemOfList(contents, firstVariable);
+    addItemNumberOfList(contents, firstVariable);
+    addLengthOfList(contents, firstVariable);
+    addListContainsItem(contents, firstVariable);
+    addSep(contents);
+    addShowList(contents, firstVariable);
+    addHideList(contents, firstVariable);
   }
 
-  return xmlList;
+  return contents;
 }
 
 /**
  * Construct and add a data_variable block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addDataVariable(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block id="variableId" type="data_variable">
   //    <field name="VARIABLE">variablename</field>
   // </block>
-  addBlock(xmlList, variable, 'data_variable', 'VARIABLE');
+  addBlock(contents, variable, 'data_variable', 'VARIABLE');
   // In the flyout, this ID must match variable ID for monitor syncing reasons
-  xmlList[xmlList.length - 1].setAttribute('id', variable.getId());
+  (contents[contents.length - 1] as Blockly.utils.toolbox.BlockInfo).id = variable.getId();
 }
 
 /**
  * Construct and add a data_setvariableto block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addSetVariableTo(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block type="data_setvariableto" gap="20">
@@ -121,18 +122,18 @@ function addSetVariableTo(
   //   </value>
   // </block>
   addBlock(
-    xmlList, variable, 'data_setvariableto', 'VARIABLE',
+    contents, variable, 'data_setvariableto', 'VARIABLE',
     ['VALUE', 'text', '0']
   );
 }
 
 /**
  * Construct and add a data_changevariableby block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addChangeVariableBy(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block type="data_changevariableby">
@@ -146,18 +147,18 @@ function addChangeVariableBy(
   //   </value>
   // </block>
   addBlock(
-    xmlList, variable, 'data_changevariableby', 'VARIABLE',
+    contents, variable, 'data_changevariableby', 'VARIABLE',
     ['VALUE', 'math_number', '1']
   );
 }
 
 /**
  * Construct and add a data_showVariable block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addShowVariable(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block type="data_showvariable">
@@ -165,16 +166,16 @@ function addShowVariable(
   //     <shadow type="data_variablemenu"></shadow>
   //   </value>
   // </block>
-  addBlock(xmlList, variable, 'data_showvariable', 'VARIABLE');
+  addBlock(contents, variable, 'data_showvariable', 'VARIABLE');
 }
 
 /**
  * Construct and add a data_hideVariable block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addHideVariable(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block type="data_hidevariable">
@@ -182,33 +183,33 @@ function addHideVariable(
   //     <shadow type="data_variablemenu"></shadow>
   //   </value>
   // </block>
-  addBlock(xmlList, variable, 'data_hidevariable', 'VARIABLE');
+  addBlock(contents, variable, 'data_hidevariable', 'VARIABLE');
 }
 
 /**
  * Construct and add a data_listcontents block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addDataList(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block id="variableId" type="data_listcontents">
   //    <field name="LIST">variablename</field>
   // </block>
-  addBlock(xmlList, variable, 'data_listcontents', 'LIST');
+  addBlock(contents, variable, 'data_listcontents', 'LIST');
   // In the flyout, this ID must match variable ID for monitor syncing reasons
-  xmlList[xmlList.length - 1].setAttribute('id', variable.getId());
+  (contents[contents.length - 1] as Blockly.utils.toolbox.BlockInfo).id = variable.getId();
 }
 
 /**
  * Construct and add a data_addtolist block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addAddToList(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block type="data_addtolist">
@@ -220,18 +221,18 @@ function addAddToList(
   //   </value>
   // </block>
   addBlock(
-    xmlList, variable, 'data_addtolist', 'LIST',
+    contents, variable, 'data_addtolist', 'LIST',
     ['ITEM', 'text', Blockly.Msg.DEFAULT_LIST_ITEM]
   );
 }
 
 /**
  * Construct and add a data_deleteoflist block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addDeleteOfList(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block type="data_deleteoflist">
@@ -243,33 +244,33 @@ function addDeleteOfList(
   //   </value>
   // </block>
   addBlock(
-    xmlList, variable, 'data_deleteoflist', 'LIST',
+    contents, variable, 'data_deleteoflist', 'LIST',
     ['INDEX', 'math_integer', '1']
   );
 }
 
 /**
  * Construct and add a data_deleteoflist block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addDeleteAllOfList(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block type="data_deletealloflist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   // </block>
-  addBlock(xmlList, variable, 'data_deletealloflist', 'LIST');
+  addBlock(contents, variable, 'data_deletealloflist', 'LIST');
 }
 
 /**
  * Construct and add a data_insertatlist block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addInsertAtList(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block type="data_insertatlist">
@@ -286,7 +287,7 @@ function addInsertAtList(
   //   </value>
   // </block>
   addBlock(
-    xmlList, variable, 'data_insertatlist', 'LIST',
+    contents, variable, 'data_insertatlist', 'LIST',
     ['INDEX', 'math_integer', '1'],
     ['ITEM', 'text', Blockly.Msg.DEFAULT_LIST_ITEM]
   );
@@ -294,11 +295,11 @@ function addInsertAtList(
 
 /**
  * Construct and add a data_replaceitemoflist block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addReplaceItemOfList(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block type="data_replaceitemoflist">
@@ -315,7 +316,7 @@ function addReplaceItemOfList(
   //   </value>
   // </block>
   addBlock(
-    xmlList, variable, 'data_replaceitemoflist', 'LIST',
+    contents, variable, 'data_replaceitemoflist', 'LIST',
     ['INDEX', 'math_integer', '1'],
     ['ITEM', 'text', Blockly.Msg.DEFAULT_LIST_ITEM]
   );
@@ -323,11 +324,11 @@ function addReplaceItemOfList(
 
 /**
  * Construct and add a data_itemoflist block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addItemOfList(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block type="data_itemoflist">
@@ -339,18 +340,18 @@ function addItemOfList(
   //   </value>
   // </block>
   addBlock(
-    xmlList, variable, 'data_itemoflist', 'LIST',
+    contents, variable, 'data_itemoflist', 'LIST',
     ['INDEX', 'math_integer', '1']
   );
 }
 
 /**
  * Construct and add a data_itemnumoflist block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addItemNumberOfList(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block type="data_itemnumoflist">
@@ -362,33 +363,33 @@ function addItemNumberOfList(
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   // </block>
   addBlock(
-    xmlList, variable, 'data_itemnumoflist', 'LIST',
+    contents, variable, 'data_itemnumoflist', 'LIST',
     ['ITEM', 'text', Blockly.Msg.DEFAULT_LIST_ITEM]
   );
 }
 
 /**
  * Construct and add a data_lengthoflist block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addLengthOfList(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block type="data_lengthoflist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   // </block>
-  addBlock(xmlList, variable, 'data_lengthoflist', 'LIST');
+  addBlock(contents, variable, 'data_lengthoflist', 'LIST');
 }
 
 /**
  * Construct and add a data_listcontainsitem block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addListContainsItem(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block type="data_listcontainsitem">
@@ -400,85 +401,85 @@ function addListContainsItem(
   //   </value>
   // </block>
   addBlock(
-    xmlList, variable, 'data_listcontainsitem', 'LIST',
+    contents, variable, 'data_listcontainsitem', 'LIST',
     ['ITEM', 'text', Blockly.Msg.DEFAULT_LIST_ITEM]
   );
 }
 
 /**
  * Construct and add a data_showlist block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addShowList(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block type="data_showlist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   // </block>
-  addBlock(xmlList, variable, 'data_showlist', 'LIST');
+  addBlock(contents, variable, 'data_showlist', 'LIST');
 }
 
 /**
  * Construct and add a data_hidelist block to xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  */
 function addHideList(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>
 ) {
   // <block type="data_hidelist">
   //   <field name="LIST" variabletype="list" id="">variablename</field>
   // </block>
-  addBlock(xmlList, variable, 'data_hidelist', 'LIST');
+  addBlock(contents, variable, 'data_hidelist', 'LIST');
 }
 
 /**
  * Construct a create variable button and push it to the xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param workspace Workspace to register callback to.
  * @param type Type of variable this is for. For example, 'LIST' or 'VARIABLE'.
  */
 function addCreateButton(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   workspace: Blockly.WorkspaceSvg,
   type: string
 ) {
-  const button = document.createElement('button');
-  // Set default msg, callbackKey, and callback values for type 'VARIABLE'
-  let msg = Blockly.Msg.NEW_VARIABLE;
-  let callbackKey = 'CREATE_VARIABLE';
-  let callback = function(button: Blockly.FlyoutButton) {
-    Blockly.Variables.createVariableButtonHandler(
-      button.getTargetWorkspace(),
-      undefined,
-      ''
-    );
-  };
-
-  if (type === 'LIST') {
-    msg = Blockly.Msg.NEW_LIST;
-    callbackKey = 'CREATE_LIST';
-    callback = function(button) {
-      Blockly.Variables.createVariableButtonHandler(
-        button.getTargetWorkspace(),
-        undefined,
-        Constants.LIST_VARIABLE_TYPE
-      );
-    };
+  let buttonInfo: Blockly.utils.toolbox.ButtonInfo;
+  switch (type) {
+    case 'LIST':
+      workspace.registerButtonCallback('CREATE_LIST', function(button: Blockly.FlyoutButton) {
+        createVariable(
+          button.getTargetWorkspace(), undefined, Constants.LIST_VARIABLE_TYPE
+        );
+      });
+      buttonInfo = {
+        kind: 'button',
+        text: Blockly.Msg.NEW_LIST,
+        callbackkey: 'CREATE_LIST'
+      };
+      break;
+    default:
+      workspace.registerButtonCallback('CREATE_VARIABLE', function(button: Blockly.FlyoutButton) {
+        createVariable(
+          button.getTargetWorkspace(), undefined, Constants.SCALAR_VARIABLE_TYPE
+        );
+      });
+      buttonInfo = {
+        kind: 'button',
+        text: Blockly.Msg.NEW_VARIABLE,
+        callbackkey: 'CREATE_VARIABLE'
+      };
   }
-  button.setAttribute('text', msg);
-  button.setAttribute('callbackKey', callbackKey);
-  workspace.registerButtonCallback(callbackKey, callback);
-  xmlList.push(button);
+  contents.push(buttonInfo);
 }
 
 /**
  * Construct a variable block with the given variable, blockType, and optional
  *     value tags. Add the variable block to the given xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  * @param variable Variable to select in the field.
  * @param blockType Type of block. For example, 'data_hidelist' or
  *     data_showlist'.
@@ -490,7 +491,7 @@ function addCreateButton(
  *     name and shadow type of a second pair of value tags.
  */
 function addBlock(
-  xmlList: Element[],
+  contents: Blockly.utils.toolbox.FlyoutItemInfoArray,
   variable: Blockly.IVariableModel<Blockly.IVariableState>,
   blockType: string,
   fieldName: string,
@@ -507,15 +508,20 @@ function addBlock(
       secondValueField = createValue(secondValue[0], secondValue[1], secondValue[2]);
     }
 
-    const gap = 8;
-    const blockText = '<xml>' +
-        '<block type="' + blockType + '" gap="' + gap + '">' +
-        generateVariableFieldXml(variable, fieldName) +
-        firstValueField + secondValueField +
-        '</block>' +
-        '</xml>';
-    const block = Blockly.utils.xml.textToDom(blockText).firstElementChild!;
-    xmlList.push(block);
+    const blockState: Blockly.utils.toolbox.BlockInfo = {
+      kind: 'block',
+      type: blockType,
+      gap: 10,
+      fields: generateVariableFieldState(variable, fieldName),
+      inputs: {}
+    };
+    if (firstValueField) {
+      blockState.inputs![firstValueField.name] = {shadow: firstValueField.field};
+    }
+    if (secondValueField) {
+      blockState.inputs![secondValueField.name] = {shadow: secondValueField.field};
+    }
+    contents.push(blockState);
   }
 }
 
@@ -527,8 +533,8 @@ function addBlock(
  * @param value The default shadow value.
  * @returns The generated dom element in text.
  */
-function createValue(valueName: string, type: string, value: string | number): string {
-  let fieldName;
+function createValue(valueName: string, type: string, value: string | number) {
+  let fieldName = '';
   switch (valueName) {
     case 'ITEM':
       fieldName = 'TEXT';
@@ -544,26 +550,24 @@ function createValue(valueName: string, type: string, value: string | number): s
       }
       break;
   }
-  const valueField =
-      '<value name="' + valueName + '">' +
-      '<shadow type="' + type + '">' +
-      '<field name="' + fieldName + '">' + value + '</field>' +
-      '</shadow>' +
-      '</value>';
-  return valueField;
+  return {
+    name: valueName,
+    field: {
+      type: type,
+      fields: {[fieldName]: value}
+    }
+  };
 }
 
 /**
  * Construct a block separator. Add the separator to the given xmlList.
- * @param xmlList Array of XML block elements.
+ * @param contents Array of flyout item info.
  */
-function addSep(xmlList: Element[]) {
-  const gap = 36;
-  const sepText = '<xml>' +
-      '<sep gap="' + gap + '"/>' +
-      '</xml>';
-  const sep = Blockly.utils.xml.textToDom(sepText).firstElementChild!;
-  xmlList.push(sep);
+function addSep(contents: Blockly.utils.toolbox.FlyoutItemInfoArray) {
+  contents.push({
+    kind: 'sep',
+    gap: 36
+  });
 }
 
 /**
@@ -574,14 +578,18 @@ function addSep(xmlList: Element[]) {
  *     or "LIST". Defaults to "VARIABLE".
  * @returns The generated XML.
  */
-function generateVariableFieldXml(
+function generateVariableFieldState(
   variableModel: Blockly.IVariableModel<Blockly.IVariableState>,
   name?: string
-): string {
-  const field = Blockly.utils.xml.createElement('field');
-  field.setAttribute('name', name || 'VARIABLE');
-  field.setAttribute('id', variableModel.getId());
-  field.setAttribute('variabletype', variableModel.getType());
-  field.textContent = variableModel.getName();
-  return field.outerHTML;
+) {
+  const typeString = variableModel.getType();
+
+  const fieldName = name || 'VARIABLE';
+  return {
+    [fieldName]: {
+      id: variableModel.getId(),
+      variabletype: typeString,
+      name: variableModel.getName()
+    }
+  };
 }

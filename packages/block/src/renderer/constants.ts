@@ -5,6 +5,10 @@
  */
 
 import * as Blockly from 'blockly/core';
+import {Colours} from '../theme';
+
+// blockly/core/renderers/common/constants
+type Shape = Blockly.blockRendering.BaseShape | Blockly.blockRendering.DynamicShape;
 
 /**
  * An object that provides constants for rendering blocks in Scratch mode.
@@ -19,7 +23,7 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
    * @param connection The connection to find a shape object for
    * @returns The shape object for the connection.
    */
-  override shapeFor(connection: Blockly.RenderedConnection) {
+  override shapeFor(connection: Blockly.RenderedConnection): Shape {
     let checks = connection.getCheck();
     if (!checks && connection.targetConnection) {
       checks = connection.targetConnection.getCheck();
@@ -54,7 +58,7 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
       `}`,
       ``,
       `${selector} .blocklyFlyoutButtonBackground {`,
-      `stroke: #c6c6c6;`,
+      `stroke: var(--clipcc-block-flyoutBorder);`,
       `}`,
       ``,
       `${selector} .blocklyFlyoutButtonShadow {`,
@@ -62,13 +66,37 @@ export class ConstantProvider extends Blockly.zelos.ConstantProvider {
       `}`,
       ``,
       `${selector} .blocklyFlyoutButton:hover {`,
-      `fill: white;`,
+      `fill: var(--clipcc-block-flyoutHover);`,
       `cursor: pointer;`,
       `}`,
       ``,
       `${selector} .blocklyFlyoutButton .blocklyText {`,
-      `fill: #575E75;`,
+      `fill: var(--clipcc-block-flyoutText, ${Colours.flyoutText});`,
       `font-weight: 500;`,
+      `}`,
+      ``,
+      `${selector} .blocklyCommentText.blocklyText {`,
+      `font-weight: 400;`,
+      `color: var(--clipcc-block-textFieldText, ${Colours.textFieldText});`,
+      `}`,
+      ``,
+      `${selector} .blocklyHighlightedConnectionPath {`,
+      `stroke: transparent;`,
+      `}`,
+      ``,
+      // Boolean connection highlight override
+      `${selector} .blocklyOutlinePath ~ .blocklyHighlightedConnectionPath,`,
+      `${selector} .blocklyHighlightedConnectionPath:has(~ .blocklyOutlinePath) {`,
+      `stroke: var(--clipcc-block-replacementGlow, ${Colours.replacementGlow});`,
+      `}`,
+      `${selector} .blocklyFlyoutLabelText {`,
+      `font-family: "Helvetica Neue", Helvetica, sans-serif;`,
+      `font-size: 14pt;`,
+      `font-weight: bold;`,
+      `}`,
+      ``,
+      `${selector} [id ^= "blocklyGridPattern"] line {`,
+      `stroke: var(--clipcc-block-grid, ${Colours.grid});`,
       `}`
     ];
     return css.concat(flyoutButtonStyle);

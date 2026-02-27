@@ -1,0 +1,22 @@
+.blocklyFlyoutCheckbox {
+  fill: white;
+  stroke: #c8c8c8;
+}
+
+.checked > .blocklyFlyoutCheckbox {
+  fill: var(--clipcc-block-toolboxHover);
+  stroke: var(--clipcc-block-toolboxHoverStroke);
+}
+
+.blocklyFlyoutCheckboxPath {
+  fill: transparent;
+  stroke: white;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.blocklyTouchTargetBackground {
+  fill: transparent;
+  cursor: pointer;
+}

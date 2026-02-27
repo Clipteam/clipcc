@@ -10,12 +10,7 @@
         "clean": "rimraf ./dist ./locales && mkdirp dist locales",
         "lint:js": "eslint . --ext .js",
         "lint:json": "jshint -e .json www editor/blocks editor/extensions editor/interface editor/paint-editor",
-        "lint": "yarn lint:js && yarn lint:json",
-        "pull:interface": "babel-node scripts/tx-pull-editor clipcc-editor interface ./editor/interface/",
-        "pull:paint": "babel-node scripts/tx-pull-editor clipcc-editor paint-editor ./editor/paint-editor/",
-        "pull:extensions": "babel-node scripts/tx-pull-editor clipcc-editor extensions ./editor/extensions/",
-        "pull:blocks": "babel-node scripts/tx-pull-editor clipcc-editor blocks ./editor/blocks/",
-        "pull:editor": "yarn pull:blocks && yarn pull:extensions && yarn pull:interface"
+        "lint": "yarn lint:js && yarn lint:json"
     },
     "repository": {
         "type": "git",
@@ -48,7 +43,7 @@
         "eslint": "8.17.0",
         "eslint-config-clipcc": "^9.0.9",
         "eslint-plugin-import": "2.26.0",
-        "eslint-plugin-react": "^7.5.1",
+        "eslint-plugin-react": "7.37.5",
         "format-message-cli": "6.2.1",
         "format-message-parse": "6.2.0",
         "glob": "7.1.3",

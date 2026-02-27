@@ -1,0 +1,16 @@
+.valueReportBox {
+  min-width: 50px;
+  max-width: 300px;
+  max-height: 200px;
+  overflow: auto;
+  word-wrap: break-word;
+  text-align: center;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
+  font-size: .8em;
+}
+
+.valueReportBox img {
+  min-width: 50px;
+  max-width: 300px;
+  max-height: 200px;
+}

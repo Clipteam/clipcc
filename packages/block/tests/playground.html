@@ -17,7 +17,7 @@
 		}
 
 		body {
-			background-color: #fff;
+			background: #fff;
 			font-family: sans-serif;
 			overflow: hidden;
       display: flex;
@@ -83,8 +83,9 @@
     .eventList {
       height: 150px;
       width: 100%;
-      overflow-y: visible;
+      overflow-y: auto;
       overflow-x: hidden;
+      position: relative;
     }
 
     #eventList {
@@ -93,10 +94,16 @@
       padding: 0;
       margin: 0 10px;
       font-size: 90%;
+      position: relative;
     }
 
     #eventList > li {
       padding: 0 5px;
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 20px;
+      line-height: 20px;
     }
 
     #dataContent {
@@ -110,13 +117,92 @@
     let mainWorkspace = null;
     let functionEditor = null;
     let eventListElement = null;
+    let eventListContainer = null;
     let loadTime = 0;
     let events = [];
 
+    const ITEM_HEIGHT = 20;
+    const BUFFER_SIZE = 5;
+    let visibleItems = new Map();
+    let lastScrollTop = 0;
+
     function start() {
+      registerNostalgicTheme();
       fetch('toolbox.json').then(response => response.json()).then(toolbox => {
         injectWorkspaces(toolbox);
       });
+    }
+
+    function registerNostalgicTheme() {
+      const nostalgicThemeDef = {
+        blockStyles: {
+          motion: {
+            colourPrimary: "#4a6cd4",
+            colourSecondary: "#4361bf",
+            colourTertiary: "#3b56aa"
+          },
+          looks: {
+            colourPrimary: "#8a55d7",
+            colourSecondary: "#7c4dc2",
+            colourTertiary: "#6e44ac"
+          },
+          sounds: {
+            colourPrimary: "#bb42c3",
+            colourSecondary: "#a83bb0",
+            colourTertiary: "#96359c"
+          },
+          event: {
+            colourPrimary: "#c88330",
+            colourSecondary: "#b4762b",
+            colourTertiary: "#a06926"
+          },
+          control: {
+            colourPrimary: "#e1a91a",
+            colourSecondary: "#cb9817",
+            colourTertiary: "#b48715"
+          },
+          sensing: {
+            colourPrimary: "#2ca5e2",
+            colourSecondary: "#2895cb",
+            colourTertiary: "#2a85bb"
+          },
+          operators: {
+            colourPrimary: "#5cb712",
+            colourSecondary: "#4a920e",
+            colourTertiary: "#4a920e"
+          },
+          data: {
+            colourPrimary: "#ee7d16",
+            colourSecondary: "#be6412",
+            colourTertiary: "#be6412"
+          },
+          data_lists: {
+            colourPrimary: "#cc5b22",
+            colourSecondary: "#a3491b",
+            colourTertiary: "#a3491b"
+          },
+          more: {
+            colourPrimary: "#632d99",
+            colourSecondary: "#4f247a",
+            colourTertiary: "#4f247a"
+          },
+          pen: {
+            colourPrimary: "#0e9a6c",
+            colourSecondary: "#0c845a",
+            colourTertiary: "#0b7b56"
+          }
+        },
+        componentStyles: {
+          workspaceBackgroundColour: '#e1e1e1',
+          toolboxBackgroundColour: '#d3d3d3',
+          flyoutBackgroundColour: '#d3d3d3'
+        },
+        fontStyle: {
+          weight: '700',
+          size: '12'
+        }
+      };
+      ScratchBlocks.Theme.createTheme('nostalgic', nostalgicThemeDef);
     }
 
 		function injectWorkspaces(toolbox) {
@@ -128,6 +214,7 @@
         media: '../media/',
         collapse: false,
         disable: false,
+        trashcan: false,
         toolbox: toolbox,
         horizontalLayout: false,
         toolboxPosition: 'left',
@@ -142,10 +229,17 @@
           maxScale: 4,
           minScale: 0.25,
           scaleSpeed: 1.1
+        },
+        grid: {
+          spacing: 40,
+          length: 2,
+          colour: '#ddd'
         }
       });
 
       eventListElement = document.getElementById('eventList');
+      eventListContainer = eventListElement.parentElement;
+      eventListContainer.addEventListener('scroll', handleScroll);
 
       let lastGroup = null;
       let lastGroupColor = 0;
@@ -155,24 +249,28 @@
           lastGroupColor = (lastGroupColor + 1) % groupColors.length;
         }
         lastGroup = event.group;
-        const item = document.createElement('li');
-        item.innerText = `${event.type} (${(Number(new Date()) - loadTime) / 1000})`;
-        item.setAttribute('data-index', events.length);
-        item.style.backgroundColor = groupColors[lastGroupColor];
-        item.onclick = () => {
-          console.log(events[item.getAttribute('data-index')]);
-        };
-        eventListElement.appendChild(item);
-        events.push(event);
-        eventListElement.parentElement.scrollTop = eventListElement.scrollHeight;
+
+        events.push({
+          event: event,
+          type: event.type,
+          timestamp: (Number(new Date()) - loadTime) / 1000,
+          backgroundColor: groupColors[lastGroupColor]
+        });
+
+        // Update the event list height and render visible items to improve performance
+        eventListElement.style.height = `${events.length * ITEM_HEIGHT}px`;
+        renderVisibleItems();
+        eventListContainer.scrollTop = eventListContainer.scrollHeight;
       });
 
-      functionEditor = ScratchBlocks.injectWorkspace('functionDiv', {
+      functionEditor = ScratchBlocks.inject('functionDiv', {
         media: '../media/',
         zoom: {
           startScale: 0.75
         }
       });
+
+      registerCheckboxHandler(mainWorkspace.getFlyout().getWorkspace());
 
       function positionDeclarationBlock(workspace, block) {
         // Keep the block centered on the workspace.
@@ -192,7 +290,7 @@
         }
       });
 
-      ScratchBlocks.setExternalProcedureDefCallback((state, cb, isCreate) => {
+      ScratchBlocks.callbackRegistry.register('externalProcedureDefCallback', (state, cb, isCreate) => {
         functionEditor.clear();
         mutationRoot = functionEditor.newBlock('procedures_declaration');
         mutationRoot.loadExtraState(state);
@@ -264,6 +362,86 @@
       const textarea = document.getElementById('dataContent');
       const state = ScratchBlocks.loadWorkspace(JSON.parse(textarea.value), mainWorkspace, true);
     }
+
+    function handleScroll() {
+      const scrollTop = eventListContainer.scrollTop;
+
+      if (Math.abs(scrollTop - lastScrollTop) > ITEM_HEIGHT / 2) {
+        lastScrollTop = scrollTop;
+        renderVisibleItems();
+      }
+    }
+
+    function renderVisibleItems() {
+      if (!eventListContainer || events.length === 0) return;
+
+      const scrollTop = eventListContainer.scrollTop;
+      const containerHeight = eventListContainer.clientHeight;
+
+      const startIndex = Math.max(0, Math.floor(scrollTop / ITEM_HEIGHT) - BUFFER_SIZE);
+      const endIndex = Math.min(
+        events.length - 1,
+        Math.ceil((scrollTop + containerHeight) / ITEM_HEIGHT) + BUFFER_SIZE
+      );
+
+      for (const [index, item] of visibleItems.entries()) {
+        if (index < startIndex || index > endIndex) {
+          eventListElement.removeChild(item);
+          visibleItems.delete(index);
+        }
+      }
+
+      for (let i = startIndex; i <= endIndex; i++) {
+        if (!visibleItems.has(i)) {
+          const eventData = events[i];
+          const item = document.createElement('li');
+          item.innerText = `${eventData.type} (${eventData.timestamp})`;
+          item.setAttribute('data-index', i);
+          item.style.backgroundColor = eventData.backgroundColor;
+          item.style.top = `${i * ITEM_HEIGHT}px`;
+          item.onclick = () => {
+            console.log(events[parseInt(item.getAttribute('data-index'))].event);
+          };
+          eventListElement.appendChild(item);
+          visibleItems.set(i, item);
+        }
+      }
+    }
+
+    /** Helpers to store checkbox state. */
+
+    function getCheckboxKey(blockId) {
+      const workspace = mainWorkspace.getFlyout().getWorkspace();
+      const block = workspace.getBlockById(blockId);
+      if (block.type === 'data_variable') {
+        const varId = block.getField('VARIABLE').getValue();
+        return varId;
+      } else if (block.type === 'data_listcontents') {
+        const varId = block.getField('LIST').getValue();
+        return varId;
+      }
+      return block.type;
+    }
+
+    const checkboxStateMap = new Map();
+
+    function registerCheckboxHandler(workspace) {
+      ScratchBlocks.callbackRegistry.register('getCheckboxState', (workspaceId, blockId) => {
+        const key = getCheckboxKey(blockId);
+        return checkboxStateMap.get(key) ?? false;
+      });
+
+      workspace.addChangeListener(event => {
+        if (event.type === 'change' && event.element === 'checkbox') {
+          const key = getCheckboxKey(event.blockId);
+          checkboxStateMap.set(key, event.newValue);
+        }
+      });
+    }
+
+    function changeTheme(themeName) {
+      ScratchBlocks.Theme.setTheme(themeName, mainWorkspace);
+    }
 	</script>
 </head>
 
@@ -273,6 +451,10 @@
     <div class="controlPanel">
       <button id="save" onclick="saveWorkspace()">Save</button>
       <button id="load" onclick="loadWorkspace()">Load</button>
+      <select id="themeSelect" onchange="changeTheme(this.value)">
+        <option value="scratch">Scratch</option>
+        <option value="nostalgic">Nostalgic</option>
+      </select>
     </div>
     <textarea id="dataContent"></textarea>
     <h1>Events</h1>

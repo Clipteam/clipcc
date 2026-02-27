@@ -25,7 +25,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {getWorkspaceOptions} from '../utils';
+import {getWorkspaceOptions} from '../scratch_blocks_utils';
 import styles from '../styles/matrix.css';
 
 enum LEDState {
@@ -89,7 +89,7 @@ export class FieldMatrix extends Blockly.Field<string> {
    * are not. Editable fields should also be serializable. This is not the
    * case by default so that SERIALIZABLE is backwards compatible.
    */
-  SERIALIZABLE: boolean = true;
+  override SERIALIZABLE: boolean = true;
 
   /**
    * Array of SVGElement<rect> for matrix thumbnail image on block field.
@@ -201,9 +201,9 @@ export class FieldMatrix extends Blockly.Field<string> {
           Blockly.utils.dom.createSvgElement('rect', attr, thumbnail)
         );
       }
-      thumbnail.style.cursor = 'default';
-      this.updateMatrix();
     }
+    thumbnail.style.cursor = 'default';
+    this.updateMatrix();
 
     if (!this.arrow) {
       const arrowX = FieldMatrix.THUMBNAIL_SIZE + DROPDOWN_ARROW_PADDING * 1.5;
@@ -571,6 +571,7 @@ export class FieldMatrix extends Blockly.Field<string> {
     if (sourceBlock && sourceBlockParent) {
       sourceBlock.pathObject.svgPath.setAttribute('stroke', sourceBlockParent.getColourTertiary());
       sourceBlock.pathObject.svgPath.setAttribute('fill', sourceBlockParent.getColourSecondary());
+      this.updateMatrix();
     }
   }
 

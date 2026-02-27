@@ -228,38 +228,26 @@
     /* overflow: hidden; */
 }
 
-.extension-button-container {
-    width: var(--clipcc-category-width);
-    height: 3.25rem;
+.extension-button {
+    width: calc(var(--clipcc-category-width) + 1px);
+    height: calc(3.25rem + 1px);
     position: absolute;
     bottom: 0;
     left: 0;
-    right: 0;
     z-index: var(--clipcc-z-index-extension-button);
     background: var(--clipcc-motion-primary);
 
     border: 1px solid var(--clipcc-motion-primary);
-    box-sizing: content-box; /* To match scratch-block vertical toolbox borders */
-}
+    box-sizing: border-box;
 
-.extension-button-container:before {
-    content: "";
-    position: absolute;
-    top: calc(calc(-1 * 15px) - 1px);
-    left: -1px;
-    background: linear-gradient(rgba(0, 0, 0, 0),rgba(0, 0, 0, 0.15));
-    height: 15px;
-    width: calc(100% + 0.5px);
-}
-
-
-.extension-button {
-    background: none;
-    border: none;
-    outline: none;
-    width: 100%;
-    height: 100%;
+    box-shadow: 0px -5px 16px -2px rgba(0, 0, 0, 0.3);
     cursor: pointer;
+    outline: none;
+}
+
+[dir="rtl"] .extension-button {
+    left: auto;
+    right: 0;
 }
 
 .extension-button-icon {

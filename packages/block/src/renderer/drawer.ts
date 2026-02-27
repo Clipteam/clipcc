@@ -6,11 +6,29 @@
 
 import * as Blockly from 'blockly/core';
 import {BowlerHat} from './measurables/bowler_hat';
+import type {RenderInfo} from './render_info';
 
 /**
  * An object that draws a block based on the given rendering information.
  */
 export class Drawer extends Blockly.zelos.Drawer {
+  protected override drawInternals_(): void {
+    super.drawInternals_();
+
+    // Set block offset for hidden icons.
+    // All icons are placed in the first row after top row.
+    //   <TopRow> (<SpacerRow> <InputRow>) ... <SpacerRow> <BottomRow>
+    const row = this.info_.rows[2];
+    const xPos = this.info_.RTL ? row.xPos : row.xPos;
+    const yPos = row.yPos + row.height / 2;
+    for (const element of (this.info_ as RenderInfo).invisibleIcons) {
+      element.icon.setOffsetInBlock(new Blockly.utils.Coordinate(xPos, yPos));
+      if (this.info_.isInsertionMarker) {
+        element.icon.hideForInsertionMarker();
+      }
+    }
+  }
+
   /**
    * Add steps for the top corner of the block, taking into account
    * details such as hats and rounded corners.

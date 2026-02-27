@@ -256,8 +256,7 @@ Blockly.Blocks['looks_size'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: Blockly.Msg.LOOKS_SIZE,
-      checkboxInFlyout: true,
-      extensions: ['colours_looks', 'output_number']
+      extensions: ['colours_looks', 'output_number', 'monitor_block']
     });
   }
 };
@@ -465,8 +464,7 @@ Blockly.Blocks['looks_backdropnumbername'] = {
           ]
         }
       ],
-      checkboxInFlyout: true,
-      extensions: ['colours_looks', 'output_number']
+      extensions: ['colours_looks', 'output_number', 'monitor_block']
     });
   }
 };
@@ -488,8 +486,7 @@ Blockly.Blocks['looks_costumenumbername'] = {
           ]
         }
       ],
-      checkboxInFlyout: true,
-      extensions: ['colours_looks', 'output_number']
+      extensions: ['colours_looks', 'output_number', 'monitor_block']
     });
   }
 };

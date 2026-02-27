@@ -42,13 +42,13 @@ export class FieldColourSlider extends Blockly.Field<string> {
    * are not. Editable fields should also be serializable. This is not the
    * case by default so that SERIALIZABLE is backwards compatible.
    */
-  SERIALIZABLE: boolean = true;
+  override SERIALIZABLE: boolean = true;
 
   /**
    * Editable fields usually show some sort of UI indicating they are
    * editable. They will also be saved by the serializer.
    */
-  EDITABLE: boolean = false;
+  override EDITABLE: boolean = false;
 
   /**
    * Function to be called if eyedropper can be activated.

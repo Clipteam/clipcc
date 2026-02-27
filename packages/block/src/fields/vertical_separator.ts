@@ -24,6 +24,8 @@
  */
 
 import * as Blockly from 'blockly/core';
+import {isScratchExtensionBlock} from '../interfaces/i_scratch_extension';
+import type {ConstantProvider} from '../renderer/constants';
 
 
 /**
@@ -53,6 +55,7 @@ export class FieldVerticalSeparator extends Blockly.Field {
    * Install this field on a block.
    */
   protected override initView(): void {
+    this.updateSize_();
     this.lineElement = Blockly.utils.dom.createSvgElement('line', {
       stroke: (this.getSourceBlock() as Blockly.BlockSvg).getColourSecondary(),
       'stroke-linecap': 'round',
@@ -85,7 +88,23 @@ export class FieldVerticalSeparator extends Blockly.Field {
    * @param margin margin to use when positioning the text element.
    */
   protected override updateSize_(margin?: number): void {
-    this.size_.height = 9 * this.getConstants()!.NOTCH_HEIGHT;
+    const constants = this.getConstants() as ConstantProvider;
+
+    // Default height is 10 grid units (40px).
+    // Hat blocks have a shorter separator (36px).
+    let height = 10 * constants.GRID_UNIT;
+
+    const block = this.getSourceBlock() as Blockly.BlockSvg;
+    if (
+      isScratchExtensionBlock(block) &&
+      block.isScratchExtension &&
+      !block.previousConnection &&
+      block.nextConnection
+    ) {
+      height -= constants.GRID_UNIT;
+    }
+
+    this.size_.height = height;
     if (this.lineElement) {
       this.lineElement.setAttribute('y2', `${this.size_.height}`);
     }

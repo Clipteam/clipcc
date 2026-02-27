@@ -659,11 +659,11 @@ function populateArgumentOnCaller(
   if (connectionMap && oldBlock) {
     // Reattach the old block and shadow DOM.
     connectionMap[input.name] = null;
-    oldBlock.outputConnection.connect(input.connection!);
-    if (type !== 'b' && this.generateShadows_) {
+    if (type !== 'b' && this.generateShadows_ && !oldBlock.isShadow()) {
       const shadowState = oldShadow || this.buildShadowState_(type);
       input.connection!.setShadowState(shadowState);
     }
+    oldBlock.outputConnection.connect(input.connection!);
   } else if (this.generateShadows_) {
     this.attachShadow_(input, type);
   }
@@ -1117,6 +1117,12 @@ Blockly.Blocks['procedures_definition'] = {
       }],
       extensions: ['colours_more', 'shape_hat', 'procedure_def_contextmenu']
     });
+    this.hat = Constants.SHAPE_BOWLER_HAT;
+  },
+  setStyle: function(blockStyleName: string) {
+    // equivalent to super.setStyle()
+    const proto: Blockly.Block = Object.getPrototypeOf(this);
+    proto.setStyle.call(this, blockStyleName);
     this.hat = Constants.SHAPE_BOWLER_HAT;
   },
   /**

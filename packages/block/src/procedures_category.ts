@@ -25,7 +25,8 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from './constants';
-import {compareStrings} from './utils';
+import * as callbackRegistry from './callback_registry';
+import {compareStrings} from './scratch_blocks_utils';
 import {ProcedureModel} from './procedure_model';
 import type {ProcedureExtraState} from './serialization/procedures';
 import {
@@ -70,8 +71,15 @@ export function flyoutCategory(workspace: Blockly.WorkspaceSvg): Blockly.utils.t
     }
   });
 
-  // Create call blocks for each procedure
+  // Create call blocks for each procedure.
   const states = allProcedureExtraStates(workspace);
+  if (states.length) {
+    // Add gap.
+    toolboxDef.push({
+      kind: 'sep',
+      gap: 36
+    });
+  }
   for (const state of states) {
     toolboxDef.push({
       kind: 'block',
@@ -192,7 +200,7 @@ function newProcedureExtraState(): ProcedureExtraState {
  * @param workspace The workspace to create the new procedure on.
  */
 function createProcedureDefCallback(workspace: Blockly.WorkspaceSvg) {
-  externalProcedureDefCallback(
+  (callbackRegistry.get('externalProcedureDefCallback'))(
     newProcedureExtraState(),
     createProcedureCallbackFactory(workspace),
     true
@@ -275,7 +283,7 @@ function editProcedureCallback(block: ProcedureDefinitionBlock | ProcedureCallBl
 
     // Checkout to workspace of the definition block.
     if (block.model.isGlobal()) {
-      externalCheckoutWorkspaceCallback(block.getProcCode());
+      (callbackRegistry.get('externalCheckoutWorkspaceCallback'))(block.getProcCode());
       workspaceToSearch = Blockly.getMainWorkspace() as Blockly.WorkspaceSvg;
     }
 
@@ -284,7 +292,7 @@ function editProcedureCallback(block: ProcedureDefinitionBlock | ProcedureCallBl
     prototypeBlock = block;
   }
   // Block now refers to the procedure prototype block, it is safe to proceed.
-  externalProcedureDefCallback(
+  (callbackRegistry.get('externalProcedureDefCallback'))(
     prototypeBlock.saveExtraState(),
     editProcedureCallbackFactory(prototypeBlock),
     false
@@ -322,44 +330,6 @@ function editProcedureCallbackFactory(block: ProcedurePrototypeBlock) {
 }
 
 /**
- * Callback to create a new procedure custom command block.
- * @param state The state of prcedure block.
- * @param callback Callback function triggered after edit.
- * @param isCreate True if the procedure is newly created.
- */
-let externalProcedureDefCallback = function(
-  state: ProcedureExtraState,
-  callback: (state?: ProcedureExtraState) => void,
-  isCreate: boolean
-) {
-  alert('External procedure editor must override externalProcedureDefCallback');
-};
-
-/**
- * Set the callback to create a new procedure.
- * @param callback The callback to create a new procedure.
- */
-export function setExternalProcedureDefCallback(callback: typeof externalProcedureDefCallback) {
-  externalProcedureDefCallback = callback;
-}
-
-/**
- * Callback to checkout current workspace for global procedures.
- * @param procCode Procedure proccode.
- */
-let externalCheckoutWorkspaceCallback = function(procCode: string) {
-  alert('External procedure editor must be override externalCheckoutWorkspaceCallback');
-};
-
-/**
- * Set the callback to checkout current workspace for global procedures.
- * @param callback The callback to checkout current workspace.
- */
-export function setExternalCheckoutWorkspaceCallback(callback: typeof externalCheckoutWorkspaceCallback) {
-  externalCheckoutWorkspaceCallback = callback;
-}
-
-/**
  * Make a context menu option for editing a custom procedure.
  * This appears in the context menu for procedure definitions and procedure
  * calls.
@@ -388,7 +358,7 @@ function showProcedureDefCallback(block: ProcedureCallBlock) {
   let workspace = block.workspace.isFlyout ? block.workspace.targetWorkspace! : block.workspace;
   // Checkout to workspace of the definition block.
   if (block.model.isGlobal()) {
-    externalCheckoutWorkspaceCallback(block.getProcCode());
+    (callbackRegistry.get('externalCheckoutWorkspaceCallback'))(block.getProcCode());
     workspace = Blockly.getMainWorkspace() as Blockly.WorkspaceSvg;
   }
 

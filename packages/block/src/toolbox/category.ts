@@ -5,17 +5,23 @@
  */
 
 import * as Blockly from 'blockly/core';
-import styles from '../styles/category.css';
+
+export type CategoryInfo = Blockly.utils.toolbox.CategoryInfo & {
+  showStatusButton?: boolean;
+};
 
 /**
  * Class for scratch category.
  */
-export class ScratchCategory extends Blockly.ToolboxCategory {
+export class ToolboxCategory extends Blockly.ToolboxCategory {
   /** Default color for the category. */
   static readonly DEFAULT_COLOUR = '#575E75';
 
   /** Element of colour bar on the left of category. */
   protected colourBar: HTMLDivElement | null = null;
+
+  /** Whether this toolbox category has a status indicator button. */
+  protected showStatusButton: boolean = false;
 
   /**
    * @param categoryDef The information needed to create a category in the
@@ -25,11 +31,12 @@ export class ScratchCategory extends Blockly.ToolboxCategory {
    *     a parent.
    */
   constructor(
-    categoryDef: Blockly.utils.toolbox.CategoryInfo,
+    categoryDef: CategoryInfo,
     parentToolbox: Blockly.IToolbox,
     parent?: Blockly.ICollapsibleToolboxItem
   ) {
     super(categoryDef, parentToolbox, parent);
+    this.showStatusButton = !!categoryDef.showStatusButton;
   }
 
   /**
@@ -37,7 +44,7 @@ export class ScratchCategory extends Blockly.ToolboxCategory {
    * @returns The configuration object holding all the CSS classes for a
    *     category.
    */
-  protected makeDefaultCssConfig_(): Blockly.ToolboxCategory.CssConfig {
+  protected override makeDefaultCssConfig_(): Blockly.ToolboxCategory.CssConfig {
     const cssConfig = super.makeDefaultCssConfig_();
     cssConfig.container = 'clipccToolboxCategoryContainer';
     cssConfig.row = 'clipccToolboxCategory';
@@ -55,7 +62,7 @@ export class ScratchCategory extends Blockly.ToolboxCategory {
     if (colour) {
       this.colourBar!.style.backgroundColor = colour;
     } else {
-      this.colourBar!.style.backgroundColor = ScratchCategory.DEFAULT_COLOUR;
+      this.colourBar!.style.backgroundColor = ToolboxCategory.DEFAULT_COLOUR;
     }
   }
 
@@ -68,6 +75,14 @@ export class ScratchCategory extends Blockly.ToolboxCategory {
     this.colourBar = document.createElement('div');
     this.colourBar.className = this.cssConfig_['icon']!;
     return this.colourBar;
+  }
+
+  /**
+   * Get whether this category is selectable.
+   * @returns True if this category is not disabled.
+   */
+  override isSelectable(): boolean {
+    return !this.isDisabled_;
   }
 
   /**
@@ -94,17 +109,21 @@ export class ScratchCategory extends Blockly.ToolboxCategory {
       isSelected
     );
   }
+
+  /**
+   * Returns whether or not this category's label in the flyout should display
+   * status indicators.
+   * @returns True if status indicator should be shown.
+   */
+  shouldShowStatusButton() {
+    return this.showStatusButton;
+  }
 }
 
-/**
- * Register the toolbox item class and any dependencies.
- */
-export function registerScratchCategory() {
-  Blockly.registry.register(
-    Blockly.registry.Type.TOOLBOX_ITEM,
-    Blockly.ToolboxCategory.registrationName,
-    ScratchCategory,
-    true
-  );
-  Blockly.Css.register(styles);
-}
+
+Blockly.registry.register(
+  Blockly.registry.Type.TOOLBOX_ITEM,
+  Blockly.ToolboxCategory.registrationName,
+  ToolboxCategory,
+  true
+);
