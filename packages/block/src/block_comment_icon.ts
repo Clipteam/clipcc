@@ -101,7 +101,7 @@ export class BlockCommentIcon
       new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
         this.sourceBlock,
         'comment',
-        null,
+        this.commentId,
         oldText,
         newText
       )
