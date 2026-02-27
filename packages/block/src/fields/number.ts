@@ -176,19 +176,10 @@ export class FieldNumber extends Blockly.FieldTextInput {
    * @param min Minimum value.
    */
   private setMinInternal(min: AcceptedNumber) {
-    if (min === undefined || min === null) {
-      this.min_ = -Infinity;
-    } else {
-      min = Number(min);
-      if (!isNaN(min)) {
-        this.min_ = min;
-      } else {
-        this.min_ = -Infinity;
-      }
-    }
-
     this.negativeAllowed = (typeof min === 'undefined') || isNaN(min as number) ||
       (min as number) < 0;
+
+    this.min_ = this.negativeAllowed ? Number(min) || -Infinity : 0;
   }
 
   /**
