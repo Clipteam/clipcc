@@ -397,7 +397,7 @@ class Blocks {
             if (e.element === 'comment') {
                 const commentId = e.name;
                 if (!commentId) break;
-                this.changeComment(commentId, e.newValue);
+                this.changeCommentText(commentId, e.newValue);
                 break;
             }
             this.changeBlock({
@@ -527,7 +527,7 @@ class Blocks {
             this.emitProjectChanged();
             break;
         case 'comment_change':
-            this.changeComment(e.commentId, e.newContents_);
+            this.changeCommentText(e.commentId, e.newContents_);
             break;
         case 'block_comment_move':
         case 'comment_move':
@@ -983,7 +983,12 @@ class Blocks {
         blockIds.forEach(blockId => this.deleteBlock(blockId));
     }
 
-    changeComment (commentId, newText) {
+    /**
+     * Change comment text based on id and text.
+     * @param {string} commentId Id of comment to change
+     * @param {string} newText New text for comment
+     */
+    changeCommentText (commentId, newText) {
         const currTarget = this.runtime.getEditingTarget();
         if (!currTarget) return;
         if (!Object.prototype.hasOwnProperty.call(currTarget.comments, commentId)) {
