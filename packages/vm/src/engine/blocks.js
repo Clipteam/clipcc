@@ -17,7 +17,7 @@ const getMonitorIdForBlockWithArgs = require('../util/get-monitor-id');
 
 /**
  * @typedef {import('./runtime')} Runtime
- * @typedef {import('clipcc-block')} ClipCCBlock
+ * @import * as ClipCCBlock from 'clipcc-block'
  */
 
 /**
@@ -394,6 +394,12 @@ class Blocks {
             break;
         }
         case 'change':
+            if (e.element === 'comment') {
+                const commentId = e.name;
+                if (!commentId) break;
+                this.changeCommentText(commentId, e.newValue);
+                break;
+            }
             this.changeBlock({
                 id: e.blockId,
                 element: e.element,
@@ -521,16 +527,7 @@ class Blocks {
             this.emitProjectChanged();
             break;
         case 'comment_change':
-            if (this.runtime.getEditingTarget()) {
-                const currTarget = this.runtime.getEditingTarget();
-                if (!Object.prototype.hasOwnProperty.call(currTarget.comments, e.commentId)) {
-                    log.warn(`Cannot change comment with id ${e.commentId} because it does not exist.`);
-                    return;
-                }
-                const comment = currTarget.comments[e.commentId];
-                comment.text = e.newContents_;
-                this.emitProjectChanged();
-            }
+            this.changeCommentText(e.commentId, e.newContents_);
             break;
         case 'block_comment_move':
         case 'comment_move':
@@ -984,6 +981,23 @@ class Blocks {
     deleteAllBlocks () {
         const blockIds = Object.keys(this._blocks);
         blockIds.forEach(blockId => this.deleteBlock(blockId));
+    }
+
+    /**
+     * Change comment text based on id and text.
+     * @param {string} commentId Id of comment to change
+     * @param {string} newText New text for comment
+     */
+    changeCommentText (commentId, newText) {
+        const currTarget = this.runtime.getEditingTarget();
+        if (!currTarget) return;
+        if (!Object.prototype.hasOwnProperty.call(currTarget.comments, commentId)) {
+            log.warn(`Cannot change comment with id ${commentId} because it does not exist.`);
+            return;
+        }
+        const comment = currTarget.comments[commentId];
+        comment.text = newText;
+        this.emitProjectChanged();
     }
 
     /**
