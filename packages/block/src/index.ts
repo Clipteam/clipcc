@@ -14,6 +14,7 @@ import {FieldButton, registerFieldButton} from './fields/button';
 import {FieldColourSlider, registerFieldColourSlider} from './fields/colour_slider';
 import {FieldMatrix, registerFieldMatrix} from './fields/matrix';
 import {FieldNote, registerFieldNote} from './fields/note';
+import {FieldNumber, registerFieldNumber} from './fields/number';
 import {FieldVariable, registerFieldVariable} from './fields/variable';
 import {FieldTextInputRemovable, registerFieldTextInputRemovable} from './fields/textinput_removable';
 import {FieldVariableGetter, registerFieldVariableGetter} from './fields/variable_getter';
@@ -191,6 +192,7 @@ function setupEnvironment() {
   registerFieldColourSlider();
   registerFieldMatrix();
   registerFieldNote();
+  registerFieldNumber();
   registerFieldVariable();
   registerFieldTextInputRemovable();
   registerFieldVariableGetter();
@@ -241,6 +243,7 @@ export {
   FieldColourSlider,
   FieldMatrix,
   FieldNote,
+  FieldNumber,
   FieldVariable,
   FieldTextInputRemovable,
   FieldVariableGetter,

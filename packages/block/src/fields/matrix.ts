@@ -157,7 +157,7 @@ export class FieldMatrix extends Blockly.Field<string> {
    *     abort the change.
    */
   constructor(
-    value: string,
+    value: string | typeof Blockly.Field.SKIP_SETUP,
     validator?: Blockly.FieldValidator | null
   ) {
     super(value, validator);
