@@ -105,10 +105,10 @@ export class FieldNumber extends Blockly.FieldTextInput {
    * for a list of properties this parameter supports.
    */
   constructor(
-    value?: string | number | typeof Blockly.Field.SKIP_SETUP,
-    min?: string | number | null,
-    max?: string | number | null,
-    precision?: string | number | null,
+    value?: AcceptedNumber | typeof Blockly.Field.SKIP_SETUP,
+    min?: AcceptedNumber,
+    max?: AcceptedNumber,
+    precision?: AcceptedNumber,
     validator?: Blockly.FieldTextInputValidator | null,
     config?: Blockly.FieldNumberConfig
   ) {
