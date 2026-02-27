@@ -706,7 +706,7 @@ Blocks.defaultOptions = {
         colour: '#ddd'
     },
     rendererOverrides: {
-        flyoutCollapse: true
+        flyoutCollapseAnimation: true
     },
     toolboxPosition: 'left',
     disable: false,

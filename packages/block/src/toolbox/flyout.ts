@@ -97,7 +97,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     super(workspaceOptions);
     this.workspace_.setMetricsManager(new FlyoutMetrics(this.workspace_, this));
     this.setRecyclingEnabled(true);
-    if (workspaceOptions.rendererOverrides?.flyoutCollapse) {
+    if (workspaceOptions.rendererOverrides?.flyoutCollapseAnimation) {
       this.setCollapseAnimationEnabled(true);
     }
   }
