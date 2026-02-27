@@ -16,6 +16,8 @@ import {BlockDragEnd} from './events/block_drag_end';
 export class Dragger extends Blockly.dragging.Dragger {
   static readonly BOUNDLESS_CLASS = 'blocklyBlockDragBoundless';
 
+  static readonly MOUSE_THROUGH_CLASS = 'blocklyDraggingMouseThrough';
+
   /** Whether the drag originated from the flyout. */
   protected originatedFromFlyout = false;
   /** Whether the block was outside of the blocks UI during the drag. */
@@ -93,12 +95,31 @@ export class Dragger extends Blockly.dragging.Dragger {
 
     const isOutside = !this.isInsideWorkspace(event);
     if (isOutside !== this.wasOutside) {
-      const event = new BlockDragOutside(
-        this.getDragRoot(this.draggable),
-        isOutside
-      );
+      const block = this.getDragRoot(this.draggable);
+      const event = new BlockDragOutside(block, isOutside);
       Blockly.Events.fire(event);
       this.wasOutside = isOutside;
+
+      // Set pointer-events on dragging block to allow mouse events to pass through
+      // to GUI elements when dragging outside workspace.
+      this.setMouseThroughStyle(block, isOutside);
+    }
+  }
+
+  /**
+   * Sets or removes the mouse-through style on a block and its descendants.
+   * When enabled, mouse events will pass through the block to elements below.
+   * @param block The block to modify.
+   * @param enable Whether to enable mouse-through style.
+   */
+  protected setMouseThroughStyle(block: Blockly.BlockSvg, enable: boolean) {
+    const svgGroup = block.getSvgRoot();
+    if (!svgGroup) return;
+
+    if (enable) {
+      Blockly.utils.dom.addClass(svgGroup, Dragger.MOUSE_THROUGH_CLASS);
+    } else {
+      Blockly.utils.dom.removeClass(svgGroup, Dragger.MOUSE_THROUGH_CLASS);
     }
   }
 
@@ -167,11 +188,12 @@ export class Dragger extends Blockly.dragging.Dragger {
 
     if (this.draggable instanceof Blockly.BlockSvg) {
       this.maybeFireDragOutsideEvent(e);
-      const event = new BlockDragEnd(
-        this.getDragRoot(this.draggable),
-        this.wasOutside
-      );
+      const block = this.getDragRoot(this.draggable);
+      const event = new BlockDragEnd(block, this.wasOutside);
       Blockly.Events.fire(event);
+
+      // Always remove the mouse-through style at drag end
+      this.setMouseThroughStyle(block, false);
 
       // If this block was dragged out of the flyout and dropped outside of
       // the workspace (e.g. on a different sprite), the block that was created
