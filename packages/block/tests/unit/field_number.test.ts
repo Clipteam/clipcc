@@ -27,6 +27,11 @@ const constructorTestCases: ConstructorTestCase<typeof FieldNumber>[] = [
     invalid: true
   },
   {
+    title: 'Empty String',
+    args: [''],
+    expectedValue: ''
+  },
+  {
     title: 'Undefined',
     args: [undefined],
     expectedValue: '0',

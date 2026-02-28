@@ -655,32 +655,32 @@ const operators = (isInitialSetup, isStage, targetId, hideNonVanillaBlocks) => {
             kind: 'block',
             type: 'operator_add',
             inputs: {
-                NUM1: createShadow('math_number'),
-                NUM2: createShadow('math_number')
+                NUM1: createShadow('math_number', {NUM: ''}),
+                NUM2: createShadow('math_number', {NUM: ''})
             }
         },
         {
             kind: 'block',
             type: 'operator_subtract',
             inputs: {
-                NUM1: createShadow('math_number'),
-                NUM2: createShadow('math_number')
+                NUM1: createShadow('math_number', {NUM: ''}),
+                NUM2: createShadow('math_number', {NUM: ''})
             }
         },
         {
             kind: 'block',
             type: 'operator_multiply',
             inputs: {
-                NUM1: createShadow('math_number'),
-                NUM2: createShadow('math_number')
+                NUM1: createShadow('math_number', {NUM: ''}),
+                NUM2: createShadow('math_number', {NUM: ''})
             }
         },
         {
             kind: 'block',
             type: 'operator_divide',
             inputs: {
-                NUM1: createShadow('math_number'),
-                NUM2: createShadow('math_number')
+                NUM1: createShadow('math_number', {NUM: ''}),
+                NUM2: createShadow('math_number', {NUM: ''})
             }
         }
     ];
@@ -691,63 +691,63 @@ const operators = (isInitialSetup, isStage, targetId, hideNonVanillaBlocks) => {
                 kind: 'block',
                 type: 'operator_power',
                 inputs: {
-                    NUM1: createShadow('math_number'),
-                    NUM2: createShadow('math_number')
+                    NUM1: createShadow('math_number', {NUM: ''}),
+                    NUM2: createShadow('math_number', {NUM: ''})
                 }
             },
             {
                 kind: 'block',
                 type: 'operator_bitand',
                 inputs: {
-                    NUM1: createShadow('math_number'),
-                    NUM2: createShadow('math_number')
+                    NUM1: createShadow('math_number', {NUM: ''}),
+                    NUM2: createShadow('math_number', {NUM: ''})
                 }
             },
             {
                 kind: 'block',
                 type: 'operator_bitor',
                 inputs: {
-                    NUM1: createShadow('math_number'),
-                    NUM2: createShadow('math_number')
+                    NUM1: createShadow('math_number', {NUM: ''}),
+                    NUM2: createShadow('math_number', {NUM: ''})
                 }
             },
             {
                 kind: 'block',
                 type: 'operator_bitxor',
                 inputs: {
-                    NUM1: createShadow('math_number'),
-                    NUM2: createShadow('math_number')
+                    NUM1: createShadow('math_number', {NUM: ''}),
+                    NUM2: createShadow('math_number', {NUM: ''})
                 }
             },
             {
                 kind: 'block',
                 type: 'operator_bitnot',
                 inputs: {
-                    NUM1: createShadow('math_number')
+                    NUM1: createShadow('math_number', {NUM: ''})
                 }
             },
             {
                 kind: 'block',
                 type: 'operator_bitlsh',
                 inputs: {
-                    NUM1: createShadow('math_number'),
-                    NUM2: createShadow('math_number')
+                    NUM1: createShadow('math_number', {NUM: ''}),
+                    NUM2: createShadow('math_number', {NUM: ''})
                 }
             },
             {
                 kind: 'block',
                 type: 'operator_bitrsh',
                 inputs: {
-                    NUM1: createShadow('math_number'),
-                    NUM2: createShadow('math_number')
+                    NUM1: createShadow('math_number', {NUM: ''}),
+                    NUM2: createShadow('math_number', {NUM: ''})
                 }
             },
             {
                 kind: 'block',
                 type: 'operator_bitursh',
                 inputs: {
-                    NUM1: createShadow('math_number'),
-                    NUM2: createShadow('math_number')
+                    NUM1: createShadow('math_number', {NUM: ''}),
+                    NUM2: createShadow('math_number', {NUM: ''})
                 }
             }
         );
@@ -906,15 +906,15 @@ const operators = (isInitialSetup, isStage, targetId, hideNonVanillaBlocks) => {
             kind: 'block',
             type: 'operator_mod',
             inputs: {
-                NUM1: createShadow('math_number'),
-                NUM2: createShadow('math_number')
+                NUM1: createShadow('math_number', {NUM: ''}),
+                NUM2: createShadow('math_number', {NUM: ''})
             }
         },
         {
             kind: 'block',
             type: 'operator_round',
             inputs: {
-                NUM: createShadow('math_number')
+                NUM: createShadow('math_number', {NUM: ''})
             }
         },
         blockSeparator,
@@ -922,7 +922,7 @@ const operators = (isInitialSetup, isStage, targetId, hideNonVanillaBlocks) => {
             kind: 'block',
             type: 'operator_mathop',
             inputs: {
-                NUM: createShadow('math_number')
+                NUM: createShadow('math_number', {NUM: ''})
             }
         }
     );
