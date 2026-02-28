@@ -247,7 +247,10 @@ export class FieldNumber extends Blockly.FieldTextInput {
    *     way, e.g. an intermediate field change event.
    */
   override setValue(newValue: AcceptedNumber, fireChangeEvent?: boolean): void {
-    newValue = (newValue && !isNaN(newValue as number)) ? String(newValue) : '0';
+    // Scratch allows empty string as initial placeholder.
+    if (newValue !== '') {
+      newValue = (newValue && !isNaN(newValue as number)) ? String(newValue) : '0';
+    }
     super.setValue(newValue, fireChangeEvent);
   }
 
