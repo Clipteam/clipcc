@@ -16,10 +16,10 @@ export class BlockCommentMove extends BlockCommentBase {
   override type = 'block_comment_move';
 
   /** The previous coordinate before move. */
-  oldCoordinate?: Blockly.utils.Coordinate;
+  oldCoordinate_?: Blockly.utils.Coordinate;
 
   /** The new coordinate after move. */
-  newCoordinate?: Blockly.utils.Coordinate;
+  newCoordinate_?: Blockly.utils.Coordinate;
 
   /**
    * @param icon The comment icon this event corresponds to.
@@ -33,8 +33,8 @@ export class BlockCommentMove extends BlockCommentBase {
   ) {
     super(icon);
     if (!icon) return;
-    this.oldCoordinate = oldCoordinate;
-    this.newCoordinate = newCoordinate;
+    this.oldCoordinate_ = oldCoordinate;
+    this.newCoordinate_ = newCoordinate;
   }
 
   /**
@@ -42,15 +42,15 @@ export class BlockCommentMove extends BlockCommentBase {
    * @returns JSON representation.
    */
   override toJson(): BlockCommentMoveJson {
-    if (!this.newCoordinate || !this.oldCoordinate) {
+    if (!this.newCoordinate_ || !this.oldCoordinate_) {
       throw new Error('The event is incomplete. Either pass a comment to the constructor, or call fromJson.');
     }
 
     const json = super.toJson() as BlockCommentMoveJson;
-    json.newX = this.newCoordinate.x;
-    json.newY = this.newCoordinate.y;
-    json.oldX = this.oldCoordinate.x;
-    json.oldY = this.oldCoordinate.y;
+    json.newX = this.newCoordinate_.x;
+    json.newY = this.newCoordinate_.y;
+    json.oldX = this.oldCoordinate_.x;
+    json.oldY = this.oldCoordinate_.y;
     return json;
   }
 
@@ -74,8 +74,8 @@ export class BlockCommentMove extends BlockCommentBase {
       workspace,
       event ?? new BlockCommentMove()
     ) as BlockCommentMove;
-    newEvent.newCoordinate = new Blockly.utils.Coordinate(json.newX, json.newY);
-    newEvent.oldCoordinate = new Blockly.utils.Coordinate(json.oldX, json.oldY);
+    newEvent.newCoordinate_ = new Blockly.utils.Coordinate(json.newX, json.newY);
+    newEvent.oldCoordinate_ = new Blockly.utils.Coordinate(json.oldX, json.oldY);
     return newEvent;
   }
 
@@ -84,7 +84,7 @@ export class BlockCommentMove extends BlockCommentBase {
    * @param forward True if run forward, false if run backward (undo).
    */
   override run(forward: boolean) {
-    if (!this.oldCoordinate || !this.newCoordinate) {
+    if (!this.oldCoordinate_ || !this.newCoordinate_) {
       throw new Error('The event is incomplete. Either pass a comment to the constructor, or call fromJson.');
     }
 
@@ -105,7 +105,7 @@ export class BlockCommentMove extends BlockCommentBase {
     }
 
     comment.setBubbleLocation(
-      forward ? this.newCoordinate : this.oldCoordinate
+      forward ? this.newCoordinate_ : this.oldCoordinate_
     );
   }
 }

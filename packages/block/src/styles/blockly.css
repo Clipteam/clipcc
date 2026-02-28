@@ -1,12 +1,23 @@
 .blocklyWidgetDiv .blocklyMenu {
+  background: var(--clipcc-block-menu);
   box-shadow: 0 8px 8px 0 hsla(0, 0%, 0%, 0.15);
   transition: 0.25s ease-out;
   border: none;
   outline: none;
 }
 
+.blocklyMenuItem {
+  color: var(--clipcc-block-menuText);
+}
+
+.blocklyMenuItemDisabled {
+  color: var(--clipcc-block-menuText);
+  opacity: 0.5;
+}
+
 .blocklyDropDownDiv .blocklyMenuItem {
   color: #fff;
+  min-height: 32px;
   transition: 0.25s ease-out;
 }
 
@@ -28,6 +39,22 @@
 
 .blocklyWidgetDiv .blocklyMenuItemDisabled .blocklyMenuItemHighlight {
   background: none;
+}
+
+.blocklyMenuItemCheckbox {
+  display: none;
+}
+
+.blocklyMenuItemSelected .blocklyMenuItemCheckbox {
+  display: block;
+}
+
+.injectionDiv.blocklyBlockDragBoundless {
+  overflow: visible;
+}
+
+.blocklyDraggingMouseThrough {
+  pointer-events: none !important;
 }
 
 .blocklyDragging>.blocklyPath {
@@ -52,6 +79,10 @@
 .blocklyDropDownDiv {
   border-radius: var(--clipcc-block-dropdownRadius);
   outline: none;
+}
+
+.blocklyZoom {
+  cursor: pointer;
 }
 
 .blocklyZoom>image,

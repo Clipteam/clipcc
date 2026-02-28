@@ -20,7 +20,7 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
-import {compareStrings} from '../utils';
+import {compareStrings} from '../scratch_blocks_utils';
 
 /**
  * Block of Variables
@@ -525,7 +525,6 @@ function deleteOptionCallbackFactory(
   return function() {
     const variable = (block.getField(fieldName) as Blockly.FieldVariable).getVariable()!;
     Blockly.Variables.deleteVariable(variable.getWorkspace(), variable, block);
-    (block.workspace as Blockly.WorkspaceSvg).refreshToolboxSelection();
   };
 };
 
@@ -549,7 +548,7 @@ const CUSTOM_CONTEXT_MENU_GET_VARIABLE_MIXIN = {
     }
     const currentVarName = (this.getField(fieldName) as Blockly.FieldVariable).getText();
     if (!this.isInFlyout) {
-      const variablesList = this.workspace.getVariableMap().getVariablesOfType('');
+      const variablesList = this.workspace.getVariableMap().getVariablesOfType(Constants.SCALAR_VARIABLE_TYPE);
       variablesList.sort(function(a, b) {
         return compareStrings(a.getName(), b.getName());
       });

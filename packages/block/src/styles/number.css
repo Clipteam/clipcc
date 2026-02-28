@@ -1,0 +1,29 @@
+.blocklyNumPadButton {
+  display: block;
+  float: left;
+  padding: 0;
+  width: 48px;
+  height: 48px;
+  margin: 4px;
+  border-radius: 4px;
+  background: #547AB2;
+  color: white;
+  outline: none;
+  border: 1px solid #435F91;
+  cursor: pointer;
+  font-weight: 600;
+  font-family: "Helvetica Neue", Helvetica, sans-serif;
+  font-size: 12pt;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+
+.blocklyNumPadButton > img {
+  margin-top: 10%;
+  width: 80%;
+  height: 80%;
+}
+
+.blocklyNumPadButton:active {
+  background: #435F91;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}

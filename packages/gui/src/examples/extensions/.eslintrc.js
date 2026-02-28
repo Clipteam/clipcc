@@ -1,5 +1,5 @@
 module.exports = {
-    extends: ['scratch'], // no ES6
+    extends: ['clipcc'], // no ES6
     env: {
         worker: true
     },

@@ -9,7 +9,9 @@
     "type": "git",
     "url": "https://github.com/Clipteam/clipcc.git"
   },
-  "main": "./dist/main.js",
+  "main": "./dist/node/main.js",
+  "browser": "./dist/web/main.js",
+  "types": "./dist/types",
   "scripts": {
     "start": "webpack serve",
     "build": "webpack --progress --color --bail",
@@ -20,7 +22,7 @@
     "i18n:src": "node scripts/build-i18n-src.js --input_file msg/messages.js --output_dir msg/json --quiet"
   },
   "dependencies": {
-    "blockly": "^12.3.1"
+    "blockly": "^12.4.1"
   },
   "devDependencies": {
     "@jest/environment-jsdom-abstract": "^30.2.0",

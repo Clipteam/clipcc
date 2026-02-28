@@ -20,6 +20,7 @@ const defaultOptions: Blocks.ClipCCBlockOptions = {
   media: '../../media',
   collapse: false,
   disable: false,
+  sounds: false, // @todo should fix fetch api for jest
   toolbox: toolbox,
   horizontalLayout: false,
   toolboxPosition: 'left',

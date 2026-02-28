@@ -22,7 +22,7 @@ describe('Event: BlockCommentResize', () => {
   });
 
   beforeEach(() => {
-    block = workspace.newBlock('test_block') as Blockly.BlockSvg;
+    block = workspace.newBlock('test_block', 'test_id') as Blockly.BlockSvg;
     icon = new BlockCommentIcon(block);
     block.addIcon(icon);
   });
@@ -81,13 +81,13 @@ describe('Event: BlockCommentResize', () => {
       const json = event.toJson();
       expect(json).toEqual({
         type: 'block_comment_resize',
+        commentId: 'anchored_comment_test_id',
         blockId: block.id,
         oldWidth: 100,
         oldHeight: 200,
         newWidth: 150,
         newHeight: 250,
-        group: '',
-        commentId: undefined // Comment ID is undefined because the anchored comment is not rendered.
+        group: ''
       });
 
       const newEvent = BlockCommentResize.fromJson(json, workspace);

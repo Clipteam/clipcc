@@ -7,6 +7,10 @@
 import {jest, describe, expect, test} from '@jest/globals';
 import * as Blockly from 'blockly/core';
 import {setupPlayground} from '../helpers/playground';
+import {BLOCK_EVENTS, EventHelper} from '../helpers/event';
+
+/** Milliseconds used for stepping the fake timer, which should be greater than the frame interval. */
+const FAKE_TIMER_STEP = 20;
 
 jest.mock('blockly/core', () => {
   const actualModule = jest.requireActual('blockly/core') as typeof Blockly;
@@ -100,6 +104,46 @@ describe('Blocks: Operators', () => {
 
       const state = block.saveExtraState!();
       expect(state.argumentids).toStrictEqual(['STRING1']);
+    });
+
+    test('Shadow Blocks Update', async () => {
+      jest.useFakeTimers();
+
+      const block = context.workspace.newBlock('operator_join_multiple');
+      block.initSvg();
+      block.loadExtraState!({
+        argumentids: ['STRING1']
+      });
+
+      const helper = new EventHelper(context.workspace);
+
+      await jest.advanceTimersByTimeAsync(FAKE_TIMER_STEP);
+      helper.startRecord(BLOCK_EVENTS);
+      context.gesture.clickField(block, 'BUTTON_PLUS');
+      await jest.advanceTimersByTimeAsync(FAKE_TIMER_STEP);
+      helper.stopRecord();
+
+      helper.toEqual([
+        Blockly.Events.BLOCK_MOVE, // move out STRING1
+        Blockly.Events.BLOCK_MOVE, // move back STRING1
+        Blockly.Events.BLOCK_CREATE, // new CUSTOM_ID
+        Blockly.Events.BLOCK_MOVE, // move CUSTOM_ID
+        Blockly.Events.BLOCK_CHANGE // update extra state
+      ]);
+
+      await jest.advanceTimersByTimeAsync(FAKE_TIMER_STEP);
+      helper.startRecord(BLOCK_EVENTS);
+      context.gesture.clickField(block, 'BUTTON_MINUS');
+      await jest.advanceTimersByTimeAsync(FAKE_TIMER_STEP);
+      helper.stopRecord();
+
+      helper.toEqual([
+        Blockly.Events.BLOCK_MOVE, // move out STRING1
+        Blockly.Events.BLOCK_MOVE, // move out CUSTOM_ID
+        Blockly.Events.BLOCK_MOVE, // move back STRING1
+        Blockly.Events.BLOCK_DELETE, // delete CUSTOM_ID
+        Blockly.Events.BLOCK_CHANGE // update extra state
+      ]);
     });
   });
 });

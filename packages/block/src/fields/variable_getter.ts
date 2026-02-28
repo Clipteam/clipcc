@@ -26,6 +26,12 @@
 
 import * as Blockly from 'blockly/core';
 
+export interface VariableState {
+  id: string;
+  variabletype?: string;
+  name?: string;
+}
+
 /**
  * Class for a variable getter field.
  */
@@ -82,6 +88,16 @@ export class FieldVariableGetter extends Blockly.FieldLabel {
   }
 
   /**
+   * Loads this field's value from the given state object.
+   * @param state The state object containing info about the field's state.
+   */
+  override loadState(state: VariableState): void {
+    this.variableName = state.name ?? '';
+    this.variableType = state.variabletype ?? '';
+    this.setValue(state.id);
+  }
+
+  /**
    * Serializes this field's value to XML. Should only be called by Blockly.Xml.
    * @param fieldElement The element to populate with info about the field's
    *     state.
@@ -92,6 +108,17 @@ export class FieldVariableGetter extends Blockly.FieldLabel {
     fieldElement.setAttribute('variabletype', this.variable!.getType());
     fieldElement.textContent = this.variable!.getName();
     return fieldElement;
+  }
+
+  override saveState(doFullSerialization?: boolean): VariableState {
+    const state: VariableState = {
+      id: this.variable!.getId()
+    };
+    if (doFullSerialization) {
+      state.name = this.variable!.getName();
+      state.variabletype = this.variable!.getType();
+    }
+    return state;
   }
 
   /**

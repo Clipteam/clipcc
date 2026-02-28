@@ -19,7 +19,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {getWorkspaceOptionsFromBlock} from '../utils';
+import {getWorkspaceOptionsFromBlock} from '../scratch_blocks_utils';
 
 /**
  * Block to move steps.

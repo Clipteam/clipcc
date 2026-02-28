@@ -7,7 +7,7 @@
 import {afterEach, beforeEach, describe, expect, jest, test} from '@jest/globals';
 import * as Blockly from 'blockly/core';
 import {setupPlayground} from '../helpers/playground';
-import {Toolbox} from '../../src/toolbox/toolbox';
+import type {Toolbox} from '../../src/toolbox/toolbox';
 
 const toolboxDefinition: Blockly.utils.toolbox.ToolboxDefinition = {
   kind: 'categoryToolbox',
@@ -89,8 +89,7 @@ function checkToolboxCategories(toolbox: Toolbox, name: string) {
   const selected = toolbox.getSelectedItem() as Blockly.ToolboxCategory;
   expect(selected.getName()).toBe(name);
 
-  // @ts-expect-error Read private property contentList.
-  const allItems: Blockly.IToolboxItem[] = toolbox.contentsList
+  const allItems: Blockly.IToolboxItem[] = toolbox.getToolboxItems()
     .filter((item) => item instanceof Blockly.ToolboxCategory);
   for (const item of allItems) {
     if (item.isCollapsible()) {

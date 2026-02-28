@@ -659,11 +659,11 @@ function populateArgumentOnCaller(
   if (connectionMap && oldBlock) {
     // Reattach the old block and shadow DOM.
     connectionMap[input.name] = null;
-    oldBlock.outputConnection.connect(input.connection!);
-    if (type !== 'b' && this.generateShadows_) {
+    if (type !== 'b' && this.generateShadows_ && !oldBlock.isShadow()) {
       const shadowState = oldShadow || this.buildShadowState_(type);
       input.connection!.setShadowState(shadowState);
     }
+    oldBlock.outputConnection.connect(input.connection!);
   } else if (this.generateShadows_) {
     this.attachShadow_(input, type);
   }

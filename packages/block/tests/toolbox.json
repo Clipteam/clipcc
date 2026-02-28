@@ -56,7 +56,7 @@
               "shadow": {
                 "type": "math_angle",
                 "fields": {
-                  "ANGLE": 90
+                  "NUM": 90
                 }
               }
             }

@@ -17,6 +17,7 @@ import {IInvisibleIcon} from './interfaces/i_invisible_icon';
  * State interface for block comment icon serialization.
  */
 export interface BlockCommentState {
+  id: string;
   text: string;
   height: number;
   width: number;
@@ -65,11 +66,15 @@ export class BlockCommentIcon
   protected shouldAutoAdjust: boolean = true;
   protected rendered: boolean = false;
 
+  /** The unique ID of the comment associated with this icon. */
+  commentId: string;
+
   /**
    * Internal state maintained by the icon.
    * This state is dispatched to the anchored comment when it's created.
    */
   protected state: BlockCommentState = {
+    id: '',
     text: '',
     width: AnchoredComment.defaultCommentSize.width,
     height: AnchoredComment.defaultCommentSize.height,
@@ -83,6 +88,7 @@ export class BlockCommentIcon
    */
   constructor(sourceBlock: Blockly.Block) {
     super(sourceBlock);
+    this.state.id = (this.commentId = `anchored_comment_${this.sourceBlock.id}`);
 
     Blockly.Events.fire(new BlockCommentCreate(this));
   }
@@ -95,7 +101,7 @@ export class BlockCommentIcon
       new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
         this.sourceBlock,
         'comment',
-        null,
+        this.commentId,
         oldText,
         newText
       )
@@ -189,7 +195,7 @@ export class BlockCommentIcon
   override initView(pointerdownListener: (e: PointerEvent) => void): void {
     if (this.commentBubble) return;
 
-    this.commentBubble = new AnchoredComment(this.sourceBlock as Blockly.BlockSvg);
+    this.commentBubble = new AnchoredComment(this.sourceBlock as Blockly.BlockSvg, this.commentId);
 
     this.commentBubble.setText(this.state.text);
     this.commentBubble.setSize(new Blockly.utils.Size(this.state.width, this.state.height));
@@ -269,7 +275,17 @@ export class BlockCommentIcon
     if (this.shouldAutoAdjust) {
       this.syncBubbleLocationState();
     }
-    if (!this.shouldAutoAdjust) this.shouldAutoAdjust = true;
+    if (!this.shouldAutoAdjust) {
+      this.shouldAutoAdjust = true;
+      const location = this.commentBubble.getRelativeToSurfaceXY();
+      Blockly.Events.fire(
+        new BlockCommentMove(
+          this,
+          location,
+          location
+        )
+      );
+    }
   }
 
   /**
@@ -397,6 +413,7 @@ export class BlockCommentIcon
 
     Blockly.Events.setGroup(true);
     if (this.commentBubble) {
+      this.commentId = state.id;
       this.commentBubble.setText(state.text);
       this.commentBubble.setSize(new Blockly.utils.Size(state.width, state.height));
       this.commentBubble.setCollapsed(state.collapsed);
