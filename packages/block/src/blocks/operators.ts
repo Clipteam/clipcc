@@ -21,7 +21,7 @@
 
 import * as Blockly from 'blockly/core';
 import {FieldButton} from '../fields/button';
-import {getWorkspaceOptionsFromBlock} from '../scratch_blocks_utils';
+import {getWorkspaceOptionsFromBlock} from '../utils';
 
 /**
  * Block for adding two numbers.

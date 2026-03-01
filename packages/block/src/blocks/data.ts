@@ -20,7 +20,7 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
-import {compareStrings} from '../scratch_blocks_utils';
+import {compareStrings} from '../utils';
 
 /**
  * Block of Variables
