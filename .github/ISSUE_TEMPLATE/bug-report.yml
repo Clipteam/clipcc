@@ -1,0 +1,51 @@
+name: Bug Report
+description: Create a report to help us improve.
+title: ''
+labels: ['bug']
+type: bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+  - type: checkboxes
+    id: duplicates
+    attributes:
+      label: Check for Duplicates
+      options:
+        - label: I have searched for similar issues before opening a new one.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Please provide a clear and concise description of the bug. Screenshots and stack traces can be given if necessary.
+      placeholder: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to Reproduce
+      description: What steps should we take to reproduce the issue? If applicable, add screenshots to help explain your problem.
+      value: |
+        1.
+        2.
+        3.
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Please give your environment where you have observed this behavior on.
+      value: |
+         - Device:
+         - OS:
+         - Browser:
+         - Version:
+  - type: markdown
+    attributes:
+      value: |
+        **Example**
+         - Device: [e.g. iPhone6] (This is not necessary on non-UI issues.)
+         - OS: [e.g. iOS 10]
+         - Browser: [e.g. Chrome 107, Safari] (You can leave this blank if )
+         - Version: [e.g. 3.1] (Or a specific commit hash, e.g abcdefg on dev/3.2)
