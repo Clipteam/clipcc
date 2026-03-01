@@ -198,12 +198,12 @@ Blockly.Blocks['control_stop'] = {
   mutationToDom: function(): Element {
     const extraState = this.saveExtraState() as ControlStopExtraState;
     const container = document.createElement('mutation');
-    container.setAttribute('hasnext', JSON.stringify(extraState.hasnext));
+    container.setAttribute('hasnext', extraState.hasnext.toString());
     return container;
   },
   domToMutation: function(xmlElement: Element) {
     this.loadExtraState({
-      hasnext: JSON.parse(xmlElement.getAttribute('hasnext') || 'false')
+      hasnext: xmlElement.getAttribute('hasnext') === 'true'
     });
   },
   saveExtraState: function(): ControlStopExtraState {
