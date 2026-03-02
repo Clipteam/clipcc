@@ -1,0 +1,36 @@
+name: Feature Request
+description: Suggest an idea for this project.
+title: ''
+labels: ['feature']
+type: feature
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this feature report!
+  - type: checkboxes
+    id: duplicates
+    attributes:
+      label: Check for Duplicates
+      options:
+        - label: I have searched for similar issues before opening a new one.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of what the feature you want. You can list related issues if exists.
+      placeholder: A clear and concise description of what the feature is.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed Changes
+      description: Describe the feature you request and your solution in detail. Screenshots can be given if necessary.
+      placeholder: Details to your request.
+  - type: textarea
+    id: environment
+    attributes:
+      label: Additional Context
+      description: If there is any alternative solutions or features you've considered, describe here. If there are some problems or things need to be discussed, also list here.
+      placeholder: Additional things to your request.
