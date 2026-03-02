@@ -1,0 +1,62 @@
+.blocklyToolbox {
+  width: 100px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  border-right: 1px solid var(--clipcc-block-toolboxBorder);
+  box-sizing: content-box;
+}
+
+.clipccToolboxCategoryContainer {
+  font-size: 0.85rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.clipccToolboxCategory {
+  margin: 0.1em 0.2em;
+}
+
+.clipccCategoryItem {
+  position: relative;
+  cursor: pointer;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  height: 2em;
+}
+
+.clipccCategoryItemColorBar {
+  width: 0.4em;
+  height: 2em;
+  display: inline-block;
+  border-radius: 0.2em;
+  position: absolute;
+  transition: 0.25s ease-out;
+}
+
+.blocklyToolboxSelected .clipccCategoryItemColorBar {
+  width: 100%;
+  border-radius: 0.4em;
+}
+
+.clipccCategoryItemLabel {
+  position: relative;
+  display: inline-block;
+  margin-left: 0.8em;
+  margin-right: 0.4em;
+}
+
+.blocklyToolboxSelected .clipccCategoryItemLabel {
+  color: #fff;
+  font-weight: bold;
+}
+
+.clipccToolboxCategoryGroup {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+.clipccToolboxCategoryGroup:focus {
+  outline: none;
+}

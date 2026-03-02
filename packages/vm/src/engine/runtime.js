@@ -330,7 +330,7 @@ class Runtime extends EventEmitter {
          * @type {!number}
          */
         this._steppingInterval = null;
-        
+
         /**
          * Configured framerate.
          * @type {!number}
@@ -1485,7 +1485,8 @@ class Runtime extends EventEmitter {
 
             return {
                 id: categoryInfo.id,
-                xml: `<category name="${name}" id="${categoryInfo.id}" ${statusButtonXML} ${colorXML} ${menuIconXML}>${
+                // eslint-disable-next-line max-len
+                xml: `<category name="${name}" toolboxitemid="${categoryInfo.id}" ${statusButtonXML} ${colorXML} ${menuIconXML}>${
                     paletteBlocks.map(block => block.xml).join('')}</category>`
             };
         });
@@ -2255,7 +2256,7 @@ class Runtime extends EventEmitter {
         this.compatibilityMode = compatibilityModeOn;
         this.setFramerate(compatibilityModeOn ? 30 : 60);
     }
-    
+
     /**
      * Set the framerate (also called TPS in VM).
      * @param {boolean} framerate Frames per seconde

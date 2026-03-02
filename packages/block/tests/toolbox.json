@@ -1,0 +1,1772 @@
+{
+  "kind": "categoryToolbox",
+  "contents": [
+    {
+      "kind": "category",
+      "name": "Motion",
+      "categorystyle": "motion",
+      "contents": [
+        {
+          "kind": "block",
+          "type": "motion_movesteps",
+          "inputs": {
+            "STEPS": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 10
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_turnright",
+          "inputs": {
+            "DEGREES": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 15
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_turnleft",
+          "inputs": {
+            "DEGREES": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 15
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_pointindirection",
+          "inputs": {
+            "DIRECTION": {
+              "shadow": {
+                "type": "math_angle",
+                "fields": {
+                  "NUM": 90
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_pointtowards",
+          "inputs": {
+            "TOWARDS": {
+              "shadow": {
+                "type": "motion_pointtowards_menu"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_gotoxy",
+          "inputs": {
+            "X": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "Y": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_goto",
+          "inputs": {
+            "TO": {
+              "shadow": {
+                "type": "motion_goto_menu"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_glidesecstoxy",
+          "inputs": {
+            "SECS": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 1
+                }
+              }
+            },
+            "X": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "Y": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_glideto",
+          "inputs": {
+            "SECS": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 1
+                }
+              }
+            },
+            "TO": {
+              "shadow": {
+                "type": "motion_glideto_menu"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_changexby",
+          "inputs": {
+            "DX": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 10
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_setx",
+          "inputs": {
+            "X": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_changeyby",
+          "inputs": {
+            "DY": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 10
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_sety",
+          "inputs": {
+            "Y": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_ifonedgebounce"
+        },
+        {
+          "kind": "block",
+          "type": "motion_setrotationstyle",
+          "fields": {
+            "STYLE": "left-right"
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_xposition"
+        },
+        {
+          "kind": "block",
+          "type": "motion_yposition"
+        },
+        {
+          "kind": "block",
+          "type": "motion_direction"
+        },
+        {
+          "kind": "block",
+          "type": "motion_scroll_right",
+          "inputs": {
+            "DISTANCE": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 10
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_scroll_up",
+          "inputs": {
+            "DISTANCE": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 10
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_align_scene",
+          "fields": {
+            "ALIGNMENT": "middle"
+          }
+        },
+        {
+          "kind": "block",
+          "type": "motion_xscroll"
+        },
+        {
+          "kind": "block",
+          "type": "motion_yscroll"
+        }
+      ]
+    },
+    {
+      "kind": "category",
+      "name": "Looks",
+      "categorystyle": "looks",
+      "contents": [
+        {
+          "kind": "block",
+          "type": "looks_sayforsecs",
+          "inputs": {
+            "MESSAGE": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "Hello!"
+                }
+              }
+            },
+            "SECS": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 2
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_say",
+          "inputs": {
+            "MESSAGE": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "Hello!"
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_thinkforsecs",
+          "inputs": {
+            "MESSAGE": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "Hmm..."
+                }
+              }
+            },
+            "SECS": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 2
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_think",
+          "inputs": {
+            "MESSAGE": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "Hmm..."
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_show"
+        },
+        {
+          "kind": "block",
+          "type": "looks_hide"
+        },
+        {
+          "kind": "block",
+          "type": "looks_hideallsprites"
+        },
+        {
+          "kind": "block",
+          "type": "looks_changeeffectby",
+          "inputs": {
+            "CHANGE": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 25
+                }
+              }
+            }
+          },
+          "fields": {
+            "EFFECT": "COLOR"
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_seteffectto",
+          "inputs": {
+            "VALUE": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          },
+          "fields": {
+            "EFFECT": "COLOR"
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_cleargraphiceffects"
+        },
+        {
+          "kind": "block",
+          "type": "looks_changesizeby",
+          "inputs": {
+            "CHANGE": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 10
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_setsizeto",
+          "inputs": {
+            "SIZE": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 100
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_size"
+        },
+        {
+          "kind": "block",
+          "type": "looks_changestretchby",
+          "inputs": {
+            "CHANGE": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 10
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_setstretchto",
+          "inputs": {
+            "STRETCH": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 100
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_costume",
+          "fields": {
+            "COSTUME": "COSTUME1"
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_switchcostumeto",
+          "inputs": {
+            "COSTUME": {
+              "shadow": {
+                "type": "looks_costume"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_nextcostume"
+        },
+        {
+          "kind": "block",
+          "type": "looks_switchbackdropto",
+          "inputs": {
+            "BACKDROP": {
+              "shadow": {
+                "type": "looks_backdrops"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_backdrops",
+          "fields": {
+            "BACKDROP": "BACKDROP1"
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_gotofrontback",
+          "fields": {
+            "FRONT_BACK": "front"
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_goforwardbackwardlayers",
+          "inputs": {
+            "NUM": {
+              "shadow": {
+                "type": "math_integer",
+                "fields": {
+                  "NUM": 1
+                }
+              }
+            }
+          },
+          "fields": {
+            "FORWARD_BACKWARD": "forward"
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_backdropnumbername",
+          "fields": {
+            "NUMBER_NAME": "number"
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_costumenumbername",
+          "fields": {
+            "NUMBER_NAME": "number"
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_switchbackdroptoandwait",
+          "inputs": {
+            "BACKDROP": {
+              "shadow": {
+                "type": "looks_backdrops"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "looks_nextbackdrop"
+        }
+      ]
+    },
+    {
+      "kind": "category",
+      "name": "Sound",
+      "categorystyle": "sounds",
+      "contents": [
+        {
+          "kind": "block",
+          "type": "sound_play",
+          "inputs": {
+            "SOUND_MENU": {
+              "shadow": {
+                "type": "sound_sounds_menu"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sound_playuntildone",
+          "inputs": {
+            "SOUND_MENU": {
+              "shadow": {
+                "type": "sound_sounds_menu"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sound_stopallsounds"
+        },
+        {
+          "kind": "block",
+          "type": "sound_seteffectto",
+          "inputs": {
+            "VALUE": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sound_changeeffectby",
+          "inputs": {
+            "VALUE": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 10
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sound_cleareffects"
+        },
+        {
+          "kind": "block",
+          "type": "sound_changevolumeby",
+          "inputs": {
+            "VOLUME": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": -10
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sound_setvolumeto",
+          "inputs": {
+            "VOLUME": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 100
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sound_volume"
+        }
+      ]
+    },
+    {
+      "kind": "category",
+      "name": "Events",
+      "categorystyle": "event",
+      "contents": [
+        {
+          "kind": "block",
+          "type": "event_whentouchingobject",
+          "inputs": {
+            "TOUCHINGOBJECTMENU": {
+              "shadow": {
+                "type": "event_touchingobjectmenu"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "event_whenflagclicked"
+        },
+        {
+          "kind": "block",
+          "type": "event_whenthisspriteclicked"
+        },
+        {
+          "kind": "block",
+          "type": "event_whenstageclicked"
+        },
+        {
+          "kind": "block",
+          "type": "event_whenbroadcastreceived"
+        },
+        {
+          "kind": "block",
+          "type": "event_whenbackdropswitchesto"
+        },
+        {
+          "kind": "block",
+          "type": "event_whengreaterthan",
+          "inputs": {
+            "VALUE": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 10
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "event_broadcast",
+          "inputs": {
+            "BROADCAST_INPUT": {
+              "shadow": {
+                "type": "event_broadcast_menu"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "event_broadcastandwait",
+          "inputs": {
+            "BROADCAST_INPUT": {
+              "shadow": {
+                "type": "event_broadcast_menu"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "event_whenkeypressed"
+        }
+      ]
+    },
+    {
+      "kind": "category",
+      "name": "Control",
+      "categorystyle": "control",
+      "contents": [
+        {
+          "kind": "block",
+          "type": "control_forever"
+        },
+        {
+          "kind": "block",
+          "type": "control_repeat",
+          "inputs": {
+            "TIMES": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 10
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "control_if"
+        },
+        {
+          "kind": "block",
+          "type": "control_if_else"
+        },
+        {
+          "kind": "block",
+          "type": "control_stop"
+        },
+        {
+          "kind": "block",
+          "type": "control_wait",
+          "inputs": {
+            "DURATION": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 1
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "control_wait_until"
+        },
+        {
+          "kind": "block",
+          "type": "control_repeat_until"
+        },
+        {
+          "kind": "block",
+          "type": "control_while"
+        },
+        {
+          "kind": "block",
+          "type": "control_for_each",
+          "inputs": {
+            "VALUE": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 10
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "control_start_as_clone"
+        },
+        {
+          "kind": "block",
+          "type": "control_create_clone_of",
+          "inputs": {
+            "CLONE_OPTION": {
+              "shadow": {
+                "type": "control_create_clone_of_menu"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "control_delete_this_clone"
+        },
+        {
+          "kind": "block",
+          "type": "control_get_counter"
+        },
+        {
+          "kind": "block",
+          "type": "control_incr_counter"
+        },
+        {
+          "kind": "block",
+          "type": "control_clear_counter"
+        },
+        {
+          "kind": "block",
+          "type": "control_all_at_once"
+        }
+      ]
+    },
+    {
+      "kind": "category",
+      "name": "Sensing",
+      "categorystyle": "sensing",
+      "contents": [
+        {
+          "kind": "block",
+          "type": "sensing_touchingobject",
+          "inputs": {
+            "TOUCHINGOBJECTMENU": {
+              "shadow": {
+                "type": "sensing_touchingobjectmenu"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sensing_touchingcolor",
+          "inputs": {
+            "COLOR": {
+              "shadow": {
+                "type": "colour_picker",
+                "fields": {
+                  "COLOUR": "#FF0000"
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sensing_coloristouchingcolor",
+          "inputs": {
+            "COLOR": {
+              "shadow": {
+                "type": "colour_picker",
+                "fields": {
+                  "COLOUR": "#FF0000"
+                }
+              }
+            },
+            "COLOR2": {
+              "shadow": {
+                "type": "colour_picker",
+                "fields": {
+                  "COLOUR": "#0000FF"
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sensing_distanceto",
+          "inputs": {
+            "DISTANCETOMENU": {
+              "shadow": {
+                "type": "sensing_distancetomenu"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sensing_distancebetweenposition",
+          "inputs": {
+            "X1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "Y1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "X2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "Y2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sensing_directionbetweenposition",
+          "inputs": {
+            "X1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "Y1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "X2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "Y2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sensing_askandwait",
+          "inputs": {
+            "QUESTION": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sensing_answer"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_keypressed",
+          "inputs": {
+            "KEY_OPTION": {
+              "shadow": {
+                "type": "sensing_keyoptions"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sensing_mousedown"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_mousepressed",
+          "inputs": {
+            "MOUSE_OPTION": {
+              "shadow": {
+                "type": "sensing_mouseoptions"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sensing_mousex"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_mousey"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_setdragmode"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_loudness"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_loud"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_timer"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_resettimer"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_of",
+          "inputs": {
+            "OBJECT": {
+              "shadow": {
+                "type": "sensing_of_object_menu"
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sensing_current"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_dayssince2000"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_username"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_userid"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_operatingsystem"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_clipcc_version"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_joystickx"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_joysticky"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_joystick_distance"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_colorat",
+          "inputs": {
+            "X": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "Y": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "sensing_isturbomode"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_turnonturbomode"
+        },
+        {
+          "kind": "block",
+          "type": "sensing_turnoffturbomode"
+        }
+      ]
+    },
+    {
+      "kind": "category",
+      "name": "Operators",
+      "categorystyle": "operators",
+      "contents": [
+        {
+          "kind": "block",
+          "type": "operator_add",
+          "inputs": {
+            "NUM1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "NUM2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_subtract",
+          "inputs": {
+            "NUM1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "NUM2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_multiply",
+          "inputs": {
+            "NUM1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "NUM2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_divide",
+          "inputs": {
+            "NUM1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "NUM2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_random",
+          "inputs": {
+            "FROM": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 1
+                }
+              }
+            },
+            "TO": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 10
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_lt",
+          "inputs": {
+            "OPERAND1": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": ""
+                }
+              }
+            },
+            "OPERAND2": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_equals",
+          "inputs": {
+            "OPERAND1": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": ""
+                }
+              }
+            },
+            "OPERAND2": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_gt",
+          "inputs": {
+            "OPERAND1": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": ""
+                }
+              }
+            },
+            "OPERAND2": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_and"
+        },
+        {
+          "kind": "block",
+          "type": "operator_or"
+        },
+        {
+          "kind": "block",
+          "type": "operator_not"
+        },
+        {
+          "kind": "block",
+          "type": "operator_join",
+          "inputs": {
+            "STRING1": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "apple"
+                }
+              }
+            },
+            "STRING2": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "banana"
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_join_multiple",
+          "inputs": {
+            "STRING1": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "apple"
+                }
+              }
+            },
+            "STRING2": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "banana"
+                }
+              }
+            }
+          },
+          "extraState": {
+            "argumentids": ["STRING1", "STRING2"]
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_letter_of",
+          "inputs": {
+            "LETTER": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 1
+                }
+              }
+            },
+            "STRING": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "apple"
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_length",
+          "inputs": {
+            "STRING": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "apple"
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_contains",
+          "inputs": {
+            "STRING1": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "apple"
+                }
+              }
+            },
+            "STRING2": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "a"
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_mod",
+          "inputs": {
+            "NUM1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "NUM2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_round",
+          "inputs": {
+            "NUM": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_mathop",
+          "inputs": {
+            "NUM": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_power",
+          "inputs": {
+            "NUM1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "NUM2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_bitand",
+          "inputs": {
+            "NUM1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "NUM2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_bitor",
+          "inputs": {
+            "NUM1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "NUM2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_bitxor",
+          "inputs": {
+            "NUM1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "NUM2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_bitnot",
+          "inputs": {
+            "NUM1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_bitlsh",
+          "inputs": {
+            "NUM1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "NUM2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_bitrsh",
+          "inputs": {
+            "NUM1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "NUM2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_bitursh",
+          "inputs": {
+            "NUM1": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            },
+            "NUM2": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_ge",
+          "inputs": {
+            "OPERAND1": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": ""
+                }
+              }
+            },
+            "OPERAND2": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_le",
+          "inputs": {
+            "OPERAND1": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": ""
+                }
+              }
+            },
+            "OPERAND2": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_nequals",
+          "inputs": {
+            "OPERAND1": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": ""
+                }
+              }
+            },
+            "OPERAND2": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": ""
+                }
+              }
+            }
+          }
+        },
+        {
+          "kind": "block",
+          "type": "operator_indexof",
+          "inputs": {
+            "POS": {
+              "shadow": {
+                "type": "math_number",
+                "fields": {
+                  "NUM": 1
+                }
+              }
+            },
+            "STRING": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "apple"
+                }
+              }
+            },
+            "SUBSTRING": {
+              "shadow": {
+                "type": "text",
+                "fields": {
+                  "TEXT": "a"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "kind": "category",
+      "name": "Variables",
+      "categorystyle": "data",
+      "custom": "VARIABLE"
+    },
+    {
+      "kind": "category",
+      "name": "Functions",
+      "categorystyle": "more",
+      "custom": "PROCEDURE"
+    }
+  ]
+}

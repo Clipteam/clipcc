@@ -1,7 +1,8 @@
 import {addLocaleData} from 'react-intl';
 
-import {localeData, isRtl} from 'clipcc-l10n';
+import locales, {localeData, isRtl} from 'clipcc-l10n';
 import editorMessages from 'clipcc-l10n/locales/editor-msgs';
+import blockMessages from 'clipcc-l10n/locales/blocks-msgs';
 
 addLocaleData(localeData);
 
@@ -11,8 +12,15 @@ const SELECT_LOCALE = 'scratch-gui/locales/SELECT_LOCALE';
 const initialState = {
     isRtl: false,
     locale: 'en',
-    messagesByLocale: editorMessages,
-    messages: editorMessages.en
+    messagesByLocale: Object.fromEntries(Object.keys(locales).map(lang => [
+        lang,
+        Object.assign({}, {
+            editor: editorMessages[lang],
+            block: blockMessages[lang]
+        })
+    ])),
+    editorMessages: editorMessages.en,
+    blockMessages: blockMessages.en
 };
 
 const reducer = function (state, action) {
@@ -23,14 +31,16 @@ const reducer = function (state, action) {
             isRtl: isRtl(action.locale),
             locale: action.locale,
             messagesByLocale: state.messagesByLocale,
-            messages: state.messagesByLocale[action.locale]
+            editorMessages: state.messagesByLocale[action.locale].editor,
+            blockMessages: state.messagesByLocale[action.locale].block
         });
     case UPDATE_LOCALES:
         return Object.assign({}, state, {
             isRtl: state.isRtl,
             locale: state.locale,
             messagesByLocale: action.messagesByLocale,
-            messages: action.messagesByLocale[state.locale]
+            editorMessages: action.messagesByLocale[state.locale].editor,
+            blockMessages: action.messagesByLocale[state.locale].block
         });
     default:
         return state;
@@ -59,7 +69,8 @@ const initLocale = function (currentState, locale) {
                 isRtl: isRtl(locale),
                 locale: locale,
                 messagesByLocale: currentState.messagesByLocale,
-                messages: currentState.messagesByLocale[locale]
+                editorMessages: currentState.messagesByLocale[locale].editor,
+                blockMessages: currentState.messagesByLocale[locale].block
             }
         );
     }

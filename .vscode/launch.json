@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug ClipCC GUI",
+            "name": "Debug: GUI",
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceFolder}",
@@ -40,24 +40,42 @@
             "outputCapture": "std"
         },
         {
-            "name": "Debug Chrome",
-            "type": "chrome",
+            "name": "Debug: Block",
+            "type": "node",
             "request": "launch",
-            "url": "http://localhost:8601",
-            "webRoot": "${workspaceFolder}/packages/gui",
-            "sourceMapPathOverrides": {
-                "webpack://clipcc-gui/./*": "${webRoot}/*",
-                "webpack:///./*": "${workspaceFolder}/*",
-                "webpack:///./~/*": "${workspaceFolder}/node_modules/*",
-                "webpack:///*": "*",
-                "../[resource-path]": "${workspaceFolder}/packages/*"
-            }
-        }
-    ],
-    "compounds": [
-        {
-            "name": "Debug",
-            "configurations": ["Debug ClipCC GUI", "Debug Chrome"]
+            "cwd": "${workspaceFolder}",
+            "runtimeExecutable": "yarn",
+            "restart": true,
+            "timeout": 30000,
+            "runtimeArgs": [
+                "block",
+                "start"
+            ],
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "outFiles": [
+                "${workspaceFolder}/packages/block/build/**/*.js",
+                "${workspaceFolder}/packages/*/dist/**/*.js"
+            ],
+            "resolveSourceMapLocations": [
+                "${workspaceFolder}/**",
+                "!**/node_modules/**"
+            ],
+            "sourceMaps": true,
+            "serverReadyAction": {
+                "pattern": "Project is running at:",
+                "uriFormat": "http://localhost:8071",
+                "action": "debugWithChrome",
+                "killOnServerStop": true,
+                "webRoot": "${workspaceFolder}/packages/block"
+            },
+            "env": {
+                "BROWSER": "none",
+                "NODE_ENV": "development"
+            },
+            "console": "integratedTerminal",
+            "outputCapture": "std"
         }
     ]
 }

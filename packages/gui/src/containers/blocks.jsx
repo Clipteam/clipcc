@@ -1,7 +1,7 @@
 import bindAll from 'lodash.bindall';
 import debounce from 'lodash.debounce';
 import defaultsDeep from 'lodash.defaultsdeep';
-import makeToolboxXML from '../lib/make-toolbox-xml';
+import makeToolbox from '../lib/make-toolbox';
 import PropTypes from 'prop-types';
 import React from 'react';
 import VMScratchBlocks from '../lib/blocks';
@@ -18,7 +18,8 @@ import {BLOCKS_DEFAULT_SCALE, STAGE_DISPLAY_SIZES} from '../lib/layout-constants
 import DropAreaHOC from '../lib/drop-area-hoc.jsx';
 import DragConstants from '../lib/drag-constants';
 import defineDynamicBlock from '../lib/define-dynamic-block';
-import {DEFAULT_THEME, getColorsForTheme, themeMap} from '../lib/themes';
+import {DEFAULT_THEME, DARK_THEME, HIGH_CONTRAST_THEME, getColorsForTheme, themeMap} from '../lib/themes';
+import {defineBlockThemes} from '../lib/themes/blockThemeHelpers';
 import {injectExtensionBlockTheme, injectExtensionCategoryTheme} from '../lib/themes/blockHelpers';
 
 import {connect} from 'react-redux';
@@ -55,7 +56,7 @@ class Blocks extends React.Component {
             'attachVM',
             'checkoutWsByProccode',
             'detachVM',
-            'getToolboxXML',
+            'getToolbox',
             'handleCategorySelected',
             'handleConnectionModalStart',
             'handleDrop',
@@ -79,8 +80,8 @@ class Blocks extends React.Component {
             'setBlocks',
             'setLocale'
         ]);
-        this.ScratchBlocks.dialog.setPrompt(this.handlePromptStart);
-        this.ScratchBlocks.common.setStatusButtonCallback(this.handleConnectionModalStart);
+        this.ScratchBlocks.callbackRegistry.register('showVariablePrompt', this.handlePromptStart);
+        this.ScratchBlocks.callbackRegistry.register("statusButtonCallback", this.handleConnectionModalStart);
         this.ScratchBlocks.recordSoundCallback = this.handleOpenSoundRecorder;
 
         this.state = {
@@ -88,17 +89,28 @@ class Blocks extends React.Component {
         };
         this.onTargetsUpdate = debounce(this.onTargetsUpdate, 100);
         this.toolboxUpdateQueue = [];
+        defineBlockThemes(this.ScratchBlocks);
+        this.themeMapName = {
+            [DEFAULT_THEME]: 'scratch',
+            [DARK_THEME]: 'dark',
+            [HIGH_CONTRAST_THEME]: 'high-contrast'
+        };
     }
     componentDidMount () {
-        this.ScratchBlocks.FieldColourSlider.activateEyedropper_ = this.props.onActivateColorPicker;
-        this.ScratchBlocks.Procedures.setExternalCheckoutWsCallback(this.checkoutWsByProccode);
-        this.ScratchBlocks.Procedures.setExternalProcedureDefCallback(this.props.onActivateCustomProcedures);
-        this.ScratchBlocks.ScratchMsgs.setLocale(this.props.locale);
+        this.ScratchBlocks.FieldColourSlider.activateEyedropper = this.props.onActivateColorPicker;
+        this.ScratchBlocks.callbackRegistry.register("externalCheckoutWorkspaceCallback", this.checkoutWsByProccode);
+        this.ScratchBlocks.callbackRegistry.register("externalProcedureDefCallback", this.props.onActivateCustomProcedures);
+        this.ScratchBlocks.setLocale(this.props.blockMessages);
 
         const workspaceConfig = defaultsDeep({},
             Blocks.defaultOptions,
             this.props.options,
-            {rtl: this.props.isRtl, toolbox: this.props.toolboxXML, colours: getColorsForTheme(this.props.theme)}
+            {
+                rtl: this.props.isRtl,
+                toolbox: this.props.toolbox,
+                colours: getColorsForTheme(this.props.theme),
+                theme: this.themeMapName[this.props.theme] || 'scratch'
+            }
         );
         this.workspace = this.ScratchBlocks.inject(this.blocks, workspaceConfig);
 
@@ -118,18 +130,10 @@ class Blocks extends React.Component {
         // toolboxWorkspace.registerButtonCallback('MAKE_A_LIST', varListButtonCallback('list'));
         // toolboxWorkspace.registerButtonCallback('MAKE_A_PROCEDURE', procButtonCallback);
 
-        // Store the xml of the toolbox that is actually rendered.
+        // Store the toolbox that is actually rendered.
         // This is used in componentDidUpdate instead of prevProps, because
-        // the xml can change while e.g. on the costumes tab.
-        this._renderedToolboxXML = this.props.toolboxXML;
-
-        // we actually never want the workspace to enable "refresh toolbox" - this basically re-renders the
-        // entire toolbox every time we reset the workspace.  We call updateToolbox as a part of
-        // componentDidUpdate so the toolbox will still correctly be updated
-        this.setToolboxRefreshEnabled = this.workspace.setToolboxRefreshEnabled.bind(this.workspace);
-        this.workspace.setToolboxRefreshEnabled = () => {
-            this.setToolboxRefreshEnabled(false);
-        };
+        // the toolbox can change while e.g. on the costumes tab.
+        this._renderedToolbox = this.props.toolbox;
 
         // @todo change this when blockly supports UI events
         addFunctionListener(this.workspace, 'translate', this.onWorkspaceMetricsChange);
@@ -146,10 +150,11 @@ class Blocks extends React.Component {
         return (
             this.state.prompt !== nextState.prompt ||
             this.props.isVisible !== nextProps.isVisible ||
-            this._renderedToolboxXML !== nextProps.toolboxXML ||
+            this._renderedToolbox !== nextProps.toolbox ||
             this.props.extensionLibraryVisible !== nextProps.extensionLibraryVisible ||
             this.props.customProceduresVisible !== nextProps.customProceduresVisible ||
             this.props.locale !== nextProps.locale ||
+            this.props.theme !== nextProps.theme ||
             this.props.anyModalVisible !== nextProps.anyModalVisible ||
             this.props.hideNonVanillaBlocks !== nextProps.hideNonVanillaBlocks ||
             this.props.stageSize !== nextProps.stageSize
@@ -161,16 +166,16 @@ class Blocks extends React.Component {
             this.ScratchBlocks.common.getMainWorkspace().hideChaff();
         }
 
-        // Only rerender the toolbox when the blocks are visible and the xml is
-        // different from the previously rendered toolbox xml.
-        // Do not check against prevProps.toolboxXML because that may not have been rendered.
-        if (this.props.isVisible && this.props.toolboxXML !== this._renderedToolboxXML) {
+        // Only rerender the toolbox when the blocks are visible and the toolbox is
+        // different from the previously rendered toolbox.
+        // Do not check against prevProps.toolbox because that may not have been rendered.
+        if (this.props.isVisible && this.props.toolbox !== this._renderedToolbox) {
             this.requestToolboxUpdate();
         }
         if (this.props.hideNonVanillaBlocks !== prevProps.hideNonVanillaBlocks) {
-            const toolboxXML = this.getToolboxXML();
-            if (toolboxXML) {
-                this.props.updateToolboxState(toolboxXML);
+            const toolbox = this.getToolbox();
+            if (toolbox) {
+                this.props.updateToolboxState(toolbox);
             }
         }
 
@@ -189,6 +194,8 @@ class Blocks extends React.Component {
                 // call setLocale if the locale has changed, or changed while the blocks were hidden.
                 // vm.getLocale() will be out of sync if locale was changed while not visible
                 this.setLocale();
+            } else if (this.props.theme !== prevProps.theme) {
+                this.ScratchBlocks.Theme.setTheme(this.themeMapName[this.props.theme] || 'scratch', this.workspace);
             } else {
                 this.props.vm.refreshWorkspace();
                 this.requestToolboxUpdate();
@@ -214,7 +221,7 @@ class Blocks extends React.Component {
         }, 0);
     }
     setLocale () {
-        this.ScratchBlocks.ScratchMsgs.setLocale(this.props.locale);
+        this.ScratchBlocks.setLocale(this.props.blockMessages);
         this.props.vm.setLocale(this.props.locale, this.props.messages)
             .then(() => {
                 this.workspace.getFlyout().setRecyclingEnabled(false);
@@ -229,30 +236,43 @@ class Blocks extends React.Component {
     updateToolbox () {
         this.toolboxUpdateTimeout = false;
 
-        const isCollapsed = this.workspace.toolbox_.isCollapsed();
-        const categoryId = !isCollapsed && this.workspace.toolbox_.getSelectedCategoryId();
-        const offset = !isCollapsed && this.workspace.toolbox_.getCategoryScrollOffset();
-        this.workspace.updateToolbox(this.props.toolboxXML);
-        this._renderedToolboxXML = this.props.toolboxXML;
+        const toolbox = this.workspace.getToolbox();
+        const flyout = this.workspace.getFlyout();
+        if (!flyout.isVisible()) {
+            flyout.setVisible(true);
+        }
+        const flyoutWs = flyout.getWorkspace();
 
-        // In order to catch any changes that mutate the toolbox during "normal runtime"
-        // (variable changes/etc), re-enable toolbox refresh.
-        // Using the setter function will rerender the entire toolbox which we just rendered.
-        this.workspace.toolboxRefreshEnabled_ = true;
+        flyout.setRecyclingEnabled(false);
+        const selectedItem = toolbox.getSelectedItem();
+        const selectedCategoryId = selectedItem?.getId();
+        let offsetWithinCategory = 0;
 
-        if (!isCollapsed) {
-            const currentCategoryPos = this.workspace.toolbox_.getCategoryPositionById(categoryId);
-            const currentCategoryLen = this.workspace.toolbox_.getCategoryLengthById(categoryId);
-            if (offset < currentCategoryLen) {
-                this.workspace.toolbox_.setFlyoutScrollPos(currentCategoryPos + offset);
-            } else {
-                this.workspace.toolbox_.setFlyoutScrollPos(currentCategoryPos);
+        if (selectedCategoryId) {
+            const categoryPos = flyout.getCategoryScrollPosition(selectedCategoryId);
+            if (typeof categoryPos === 'number') {
+                offsetWithinCategory = -flyoutWs.scrollY / flyoutWs.scale - categoryPos;
             }
         }
 
-        const queue = this.toolboxUpdateQueue;
-        this.toolboxUpdateQueue = [];
-        queue.forEach(fn => fn());
+        this.workspace.updateToolbox(this.props.toolbox);
+        this._renderedToolbox = this.props.toolbox;
+
+        toolbox.forceRerender().then(() => {
+            flyout.setRecyclingEnabled(true);
+            if (selectedCategoryId) {
+                const newCategoryPos = flyout.getCategoryScrollPosition(selectedCategoryId);
+                if (typeof newCategoryPos === 'number') {
+                    const newViewTop = newCategoryPos + offsetWithinCategory;
+                    if (flyoutWs.scrollbar) {
+                        flyoutWs.scrollbar.setY(newViewTop * flyoutWs.scale);
+                    }
+                }
+            }
+            const queue = this.toolboxUpdateQueue;
+            this.toolboxUpdateQueue = [];
+            queue.forEach(fn => fn());
+        });
     }
 
     withToolboxUpdates (fn) {
@@ -342,21 +362,22 @@ class Blocks extends React.Component {
         }
     }
     onScriptGlowOn (data) {
-        this.workspace.glowStack(data.id, true);
+        this.ScratchBlocks.glowStack(data.id, true);
     }
     onScriptGlowOff (data) {
-        this.workspace.glowStack(data.id, false);
+        this.ScratchBlocks.glowStack(data.id, false);
     }
+    // block glow never used and removed in spork, just leave the functions here for potential future use
     onBlockGlowOn (data) {
-        this.workspace.glowBlock(data.id, true);
+        // this.workspace.glowBlock(data.id, true);
     }
     onBlockGlowOff (data) {
-        this.workspace.glowBlock(data.id, false);
+        // this.workspace.glowBlock(data.id, false);
     }
     onVisualReport (data) {
-        this.workspace.reportValue(data.id, data.value);
+        this.ScratchBlocks.reportValue(data.id, data.value);
     }
-    getToolboxXML () {
+    getToolbox () {
         // Use try/catch because this requires digging pretty deep into the VM
         // Code inside intentionally ignores several error situations (no stage, etc.)
         // Because they would get caught by this try/catch
@@ -372,11 +393,10 @@ class Blocks extends React.Component {
                 this.props.vm.runtime.getBlocksXML(target),
                 this.props.theme
             );
-            return makeToolboxXML(false, target.isStage, target.id, dynamicBlocksXML,
+            return makeToolbox(false, target.isStage, target.id, dynamicBlocksXML,
                 targetCostumes[targetCostumes.length - 1].name,
                 stageCostumes[stageCostumes.length - 1].name,
                 targetSounds.length > 0 ? targetSounds[targetSounds.length - 1].name : '',
-                getColorsForTheme(this.props.theme),
                 this.props.hideNonVanillaBlocks
             );
         } catch {
@@ -385,20 +405,17 @@ class Blocks extends React.Component {
     }
     onWorkspaceUpdate (data) {
         // When we change sprites, update the toolbox to have the new sprite's blocks
-        const toolboxXML = this.getToolboxXML();
-        if (toolboxXML) {
-            this.props.updateToolboxState(toolboxXML);
+        const toolbox = this.getToolbox();
+        if (toolbox) {
+            this.props.updateToolboxState(toolbox);
         }
 
         if (this.props.vm.editingTarget && !this.props.workspaceMetrics.targets[this.props.vm.editingTarget.id]) {
             this.onWorkspaceMetricsChange();
         }
 
-        // Remove and reattach the workspace listener (but allow flyout events)
-        this.workspace.removeChangeListener(this.props.vm.blockListener);
-        const dom = this.ScratchBlocks.Xml.textToDom(data.xml);
         try {
-            this.ScratchBlocks.Xml.clearWorkspaceAndLoadFromXml(dom, this.workspace);
+            this.ScratchBlocks.loadWorkspace(data.json, this.workspace);
         } catch (error) {
             // The workspace is likely incomplete. What did update should be
             // functional.
@@ -414,12 +431,6 @@ class Blocks extends React.Component {
             }
             log.error(error);
         }
-
-        // cc - make sure the VM's blockListener is not triggered when updating the workspace
-        // fix scratchfoundation/scratch-gui#9552
-        setTimeout(() => {
-            this.workspace.addChangeListener(this.props.vm.blockListener);
-        }, 0);
 
         if (this.props.vm.editingTarget && this.props.workspaceMetrics.targets[this.props.vm.editingTarget.id]) {
             const {scrollX, scrollY, scale} = this.props.workspaceMetrics.targets[this.props.vm.editingTarget.id];
@@ -488,9 +499,9 @@ class Blocks extends React.Component {
         defineBlocks(categoryInfo.blocks);
 
         // Update the toolbox with new blocks if possible
-        const toolboxXML = this.getToolboxXML();
-        if (toolboxXML) {
-            this.props.updateToolboxState(toolboxXML);
+        const toolbox = this.getToolbox();
+        if (toolbox) {
+            this.props.updateToolboxState(toolbox);
         }
     }
     handleBlocksInfoUpdate (categoryInfo) {
@@ -503,11 +514,13 @@ class Blocks extends React.Component {
             this.handleConnectionModalStart(categoryId);
         }
 
-        if (!this.workspace.toolbox_.isCollapsed()) {
-            this.withToolboxUpdates(() => {
-                this.workspace.toolbox_.setSelectedCategoryById(categoryId);
-            });
-        }
+        this.withToolboxUpdates(() => {
+            const toolbox = this.workspace.getToolbox();
+            const category = toolbox.getToolboxCategoryById(categoryId);
+            if (category) {
+                toolbox.setSelectedItem(category);
+            }
+        });
     }
     setBlocks (blocks) {
         this.blocks = blocks;
@@ -529,7 +542,7 @@ class Blocks extends React.Component {
         this.props.onOpenConnectionModal(extensionId);
     }
     handleStatusButtonUpdate () {
-        this.ScratchBlocks.refreshStatusButtons(this.workspace);
+        this.workspace.getFlyout().refreshStatusButtons();
     }
     handleOpenSoundRecorder () {
         this.props.onOpenSoundRecorder();
@@ -554,8 +567,8 @@ class Blocks extends React.Component {
         this.props.onRequestCloseCustomProcedures(data);
         if (data) {
             const ws = this.workspace;
-            ws.refreshToolboxSelection_();
-            ws.toolbox_.scrollToCategoryById('myBlocks');
+            ws.refreshToolboxSelection();
+            ws.getFlyout().scrollToCategoryById('myBlocks');
         }
     }
     handleDrop (dragInfo) {
@@ -592,7 +605,7 @@ class Blocks extends React.Component {
             onActivateCustomProcedures,
             onRequestCloseExtensionLibrary,
             onRequestCloseCustomProcedures,
-            toolboxXML,
+            toolbox,
             updateMetrics: updateMetricsProp,
             workspaceMetrics,
             ...props
@@ -649,6 +662,7 @@ Blocks.propTypes = {
     isVisible: PropTypes.bool,
     locale: PropTypes.string.isRequired,
     messages: PropTypes.objectOf(PropTypes.string),
+    blockMessages: PropTypes.objectOf(PropTypes.string),
     onActivateColorPicker: PropTypes.func,
     onActivateCustomProcedures: PropTypes.func,
     onOpenConnectionModal: PropTypes.func,
@@ -667,7 +681,7 @@ Blocks.propTypes = {
     }),
     stageSize: PropTypes.oneOf(Object.keys(STAGE_DISPLAY_SIZES)).isRequired,
     theme: PropTypes.oneOf(Object.keys(themeMap)),
-    toolboxXML: PropTypes.string,
+    toolbox: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     updateMetrics: PropTypes.func,
     updateToolboxState: PropTypes.func,
     vm: PropTypes.instanceOf(VM).isRequired,
@@ -677,6 +691,10 @@ Blocks.propTypes = {
 };
 
 Blocks.defaultOptions = {
+    move: {
+        scrollbars: true,
+        wheel: true
+    },
     zoom: {
         controls: true,
         wheel: true,
@@ -687,9 +705,17 @@ Blocks.defaultOptions = {
         length: 2,
         colour: '#ddd'
     },
+    rendererOverrides: {
+        flyoutCollapseAnimation: true
+    },
+    toolboxPosition: 'left',
+    disable: false,
+    horizontalLayout: false,
     comments: true,
     collapse: false,
-    sounds: false
+    sounds: false,
+    trashcan: false,
+    modalInputs: false
 };
 
 Blocks.defaultProps = {
@@ -707,8 +733,9 @@ const mapStateToProps = state => ({
     extensionLibraryVisible: state.scratchGui.modals.extensionLibrary,
     isRtl: state.locales.isRtl,
     locale: state.locales.locale,
-    messages: state.locales.messages,
-    toolboxXML: state.scratchGui.toolbox.toolboxXML,
+    messages: state.locales.editorMessages,
+    blockMessages: state.locales.blockMessages,
+    toolbox: state.scratchGui.toolbox.toolbox,
     customProceduresVisible: state.scratchGui.customProcedures.active,
     workspaceMetrics: state.scratchGui.workspaceMetrics
 });
@@ -730,8 +757,8 @@ const mapDispatchToProps = dispatch => ({
     onRequestCloseCustomProcedures: data => {
         dispatch(deactivateCustomProcedures(data));
     },
-    updateToolboxState: toolboxXML => {
-        dispatch(updateToolbox(toolboxXML));
+    updateToolboxState: toolbox => {
+        dispatch(updateToolbox(toolbox));
     },
     updateMetrics: metrics => {
         dispatch(updateMetrics(metrics));

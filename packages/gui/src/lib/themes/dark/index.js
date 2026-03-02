@@ -67,13 +67,20 @@ const blockColors = {
     },
     text: 'rgba(255, 255, 255, .7)',
     textFieldText: '#E5E5E5',
-    workspace: '#121212',
+    scrollbar: '#373F48',
+    workspace: '#2C323A',
     toolboxSelected: '#4C4C4C',
     toolboxText: '#E5E5E5',
-    toolbox: '#121212',
-    flyout: '#121212',
+    toolbox: '#20252C',
+    flyout: '#20252C',
+    flyoutText: '#E5E5E5',
+    flyoutHover: '#2C323A',
+    flyoutBorder: '#4B5157',
     textField: '#4C4C4C',
-    menuHover: 'rgba(255, 255, 255, 0.3)'
+    menu: '#20252C',
+    menuText: '#E5E5E5',
+    menuHover: 'rgba(255, 255, 255, 0.3)',
+    grid: '#373F48'
 };
 
 const extensions = {};
