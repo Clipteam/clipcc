@@ -1,0 +1,86 @@
+.blocklyWorkspace,
+.blocklyBlockDragSurface {
+  --commentFillColour: #fef49c;
+  --commentTopBarColour: #e4db8c;
+  --commentBorderColour: #bca903;
+}
+
+.blocklyCollapsed.blocklyComment .blocklyFoldoutIcon {
+  transform: rotate(-180deg);
+}
+
+.blocklyCommentText::placeholder {
+  font-style: italic;
+}
+
+.blocklyComment .blocklyCommentTopbarBackground {
+  height: 32px;
+  fill: none;
+}
+
+.blocklyCollapsed .blocklyCommentTopbarBackground,
+.blocklySelected.blocklyCollapsed .blocklyCommentTopbarBackground {
+  rx: 4px;
+  ry: 4px;
+  stroke: var(--commentBorderColour);
+  stroke-width: 1px;
+  fill: var(--commentTopBarColour);
+}
+
+.blocklyDragging.blocklyComment {
+  filter: drop-shadow(0 0px 6px hsla(0, 0%, 0%, 0.6));
+}
+
+.blocklyCommentHighlight {
+  rx: 4px;
+  ry: 4px;
+  stroke: var(--commentBorderColour);
+  stroke-width: 1px;
+  fill: var(--commentTopBarColour);
+}
+
+.blocklySelected .blocklyCommentHighlight {
+  stroke: var(--commentBorderColour);
+  stroke-width: 1px;
+}
+
+.blocklyCollapsed .blocklyCommentHighlight {
+  stroke: none;
+  fill: none;
+}
+
+.blocklyCollapsed.blocklySelected .blocklyCommentHighlight {
+  stroke: none;
+  fill: none;
+}
+
+.blocklyComment .blocklyTextarea {
+  border: none;
+  border-radius: 0px 0px 4px 4px;
+  padding: 12px;
+}
+
+.blocklyDeleteIcon {
+  display: block;
+  width: 32px;
+  height: 32px;
+}
+
+.blocklyResizeHandle {
+  height: 20px;
+  width: 20px;
+}
+
+.blocklyFoldoutIcon {
+  width: 32px;
+  height: 32px;
+  transform-origin: 16px 16px;
+}
+
+.blocklyCommentForeignObject {
+  padding: 1px;
+}
+
+.blocklyCommentForeignObject>body {
+  background: none;
+}

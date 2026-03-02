@@ -1227,7 +1227,7 @@ const parseBlock = function (sb2block, addBroadcastMsg, getVariableId, extension
             sb2block[1] === 'other scripts in stage') {
             activeBlock.mutation = {
                 tagName: 'mutation',
-                hasnext: 'true',
+                hasnext: true,
                 children: []
             };
         }
@@ -1254,9 +1254,9 @@ const parseBlock = function (sb2block, addBroadcastMsg, getVariableId, extension
             mutation: {
                 tagName: 'mutation',
                 proccode: procData[0], // e.g., "abc %n %b %s"
-                argumentnames: JSON.stringify(procData[1]), // e.g. ['arg1', 'arg2']
-                argumentids: JSON.stringify(parseProcedureArgIds(procData[0])),
-                argumentdefaults: JSON.stringify(procData[2]), // e.g., [1, 'abc']
+                argumentnames: procData[1], // e.g. ['arg1', 'arg2']
+                argumentids: parseProcedureArgIds(procData[0]),
+                argumentdefaults: procData[2], // e.g., [1, 'abc']
                 warp: procData[3], // Warp mode, e.g., true/false.
                 children: []
             }
@@ -1268,7 +1268,7 @@ const parseBlock = function (sb2block, addBroadcastMsg, getVariableId, extension
             tagName: 'mutation',
             children: [],
             proccode: sb2block[1],
-            argumentids: JSON.stringify(parseProcedureArgIds(sb2block[1]))
+            argumentids: parseProcedureArgIds(sb2block[1])
         };
     } else if (oldOpcode === 'getParam') {
         let returnCode = sb2block[2];

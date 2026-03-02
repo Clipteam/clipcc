@@ -3,6 +3,11 @@ const html = require('htmlparser2');
 const uid = require('../util/uid');
 
 /**
+ * @import * as Blockly from 'blockly';
+ * @typedef {Blockly.serialization.blocks.State} BlocksState
+ */
+
+/**
  * Convert and an individual block DOM to the representation tree.
  * Based on Blockly's `domToBlockHeadless_`.
  * @param {Element} blockDOM DOM tree for an individual block.
@@ -160,6 +165,137 @@ const domToBlocks = function (blocksDOM) {
 };
 
 /**
+ * Convert an individual block State to the representation tree.
+ * @param {object} blockState JSON State for an individual block.
+ * @param {object} blocks Collection of blocks to add to.
+ * @param {boolean} isTopBlock Whether blocks at this level are "top blocks."
+ * @param {?string} parent Parent block ID.
+ * @param {boolean} [isShadow] Whether this block is a shadow.
+ * @return {undefined}
+ */
+const stateToBlock = function (blockState, blocks, isTopBlock, parent, isShadow) {
+    if (!blockState.id) {
+        blockState.id = uid();
+    }
+
+    // Block skeleton.
+    const block = {
+        id: blockState.id, // Block ID
+        opcode: blockState.type, // For execution, "event_whengreenflag".
+        inputs: {}, // Inputs to this block and the blocks they point to.
+        fields: {}, // Fields on this block and their values.
+        next: null, // Next block in the stack, if one exists.
+        topLevel: isTopBlock, // If this block starts a stack.
+        parent: parent, // Parent block ID, if available.
+        shadow: isShadow || false, // If this represents a shadow/slot.
+        x: blockState.x, // X position of script, if top-level.
+        y: blockState.y // Y position of script, if top-level.
+    };
+
+    // Add the block to the representation tree.
+    blocks[block.id] = block;
+
+    // Process fields
+    if (blockState.fields) {
+        for (const fieldName in blockState.fields) {
+            if (!Object.prototype.hasOwnProperty.call(blockState.fields, fieldName)) continue;
+            const fieldData = blockState.fields[fieldName];
+            const field = {
+                name: fieldName
+            };
+            if (typeof fieldData === 'object' && fieldData !== null && fieldData.id) {
+                field.value = fieldData.name || fieldData.id;
+                field.id = fieldData.id;
+                if (fieldData.variableType) {
+                    field.variableType = fieldData.variableType;
+                }
+            } else {
+                field.value = fieldData;
+            }
+            block.fields[fieldName] = field;
+        }
+    }
+
+    // Process inputs
+    if (blockState.inputs) {
+        for (const inputName in blockState.inputs) {
+            if (!Object.prototype.hasOwnProperty.call(blockState.inputs, inputName)) continue;
+            const connection = blockState.inputs[inputName];
+            let childBlockId = null;
+            let childShadowId = null;
+
+            if (connection.block) {
+                stateToBlock(connection.block, blocks, false, block.id, false);
+                childBlockId = connection.block.id;
+            }
+            if (connection.shadow) {
+                stateToBlock(connection.shadow, blocks, false, block.id, true);
+                childShadowId = connection.shadow.id;
+            }
+
+            // Link this block's input to the child block.
+            let targetBlockId = childBlockId;
+            // Use shadow block only if there's no real block node.
+            if (!targetBlockId && childShadowId) {
+                targetBlockId = childShadowId;
+            }
+
+            block.inputs[inputName] = {
+                name: inputName,
+                block: targetBlockId,
+                shadow: childShadowId
+            };
+        }
+    }
+
+    // Process next
+    if (blockState.next) {
+        const nextConnection = blockState.next;
+        if (nextConnection.block) {
+            stateToBlock(nextConnection.block, blocks, false, block.id, false);
+            block.next = nextConnection.block.id;
+        }
+    }
+
+    // Process mutation
+    if (blockState.extraState) {
+        block.mutation = blockState.extraState;
+    }
+
+    // Process comments
+    if (blockState.icons?.comment) {
+        const commentState = blockState.icons.comment;
+        block.comment = commentState.id;
+        // This won't belongs to VM representation but need for BlockCreate. should omit further.
+        block.commentData = commentState;
+    }
+};
+
+/**
+ * Blockly blocks JSON state to Scratch VM blocks representation.
+ * @param {BlocksState} blocksState The JSON state of the blocks to convert.
+ * @return {Array.<object>} Usable list of blocks from this CREATE event.
+ */
+const stateToBlocks = function (blocksState) {
+    const blocks = {};
+    if (Array.isArray(blocksState)) {
+        blocksState.forEach(blockState => {
+            stateToBlock(blockState, blocks, true, null);
+        });
+    } else {
+        stateToBlock(blocksState, blocks, true, null);
+    }
+
+    // Flatten blocks object into a list.
+    const blocksList = [];
+    for (const b in blocks) {
+        if (!Object.prototype.hasOwnProperty.call(blocks, b)) continue;
+        blocksList.push(blocks[b]);
+    }
+    return blocksList;
+};
+
+/**
  * Adapter between block creation events and block representation which can be
  * used by the Scratch runtime.
  * @param {object} e `Blockly.events.create` or `Blockly.events.endDrag`
@@ -168,8 +304,12 @@ const domToBlocks = function (blocksDOM) {
 const adapter = function (e) {
     // Validate input
     if (typeof e !== 'object') return;
-    if (typeof e.xml !== 'object') return;
 
+    // Prefer using JSON serialization
+    if (typeof e.json === 'object') {
+        return stateToBlocks(e.json);
+    }
+    if (typeof e.xml !== 'object') return;
     return domToBlocks(html.parseDOM(e.xml.outerHTML, {decodeEntities: true}));
 };
 

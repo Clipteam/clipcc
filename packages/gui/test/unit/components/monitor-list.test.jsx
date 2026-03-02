@@ -15,7 +15,7 @@ describe('MonitorListComponent', () => {
             settings: {},
             theme: {},
             toolbox: {
-                toolboxXML: ''
+                toolbox: {}
             },
             vm: {
                 runtime: {

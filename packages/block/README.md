@@ -1,21 +1,65 @@
-# scratch-blocks
-#### Scratch Blocks is a library for building creative computing interfaces.
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/scratchfoundation/scratch-blocks/tree/develop.svg?style=shield)](https://dl.circleci.com/status-badge/redirect/gh/scratchfoundation/scratch-blocks/tree/develop)
+# ClipCC Blocks (clipcc-block)
 
-![](https://cloud.githubusercontent.com/assets/747641/15227351/c37c09da-1854-11e6-8dc7-9a298f2b1f01.jpg)
+[README.md for Scratch Blocks](https://github.com/scratchfoundation/scratch-blocks/blob/develop/README.md)
 
 ## Introduction
-Scratch Blocks is a fork of Google's [Blockly](https://github.com/google/blockly) project that provides a design specification and codebase for building creative computing interfaces. Together with the [Scratch Virtual Machine (VM)](https://github.com/scratchfoundation/scratch-vm) this codebase allows for the rapid design and development of visual programming interfaces. Unlike [Blockly](https://github.com/google/blockly), Scratch Blocks does not use [code generators](https://developers.google.com/blockly/guides/configure/web/code-generators), but rather leverages the [Scratch Virtual Machine](https://github.com/scratchfoundation/scratch-vm) to create highly dynamic, interactive programming environments.
+
+ClipCC Blocks is a project based on [Blockly](https://github.com/RaspberryPiFoundation/blockly) and [Scratch Blocks](https://github.com/scratchfoundation/scratch-blocks) that provides a design specification and codebase for building creative computing interfaces. Together with the [ClipCC Virtual Machine (VM)](https://github.com/scratchfoundation/scratch-vm) (a fork of [Scratch VM](https://github.com/scratchfoundation/scratch-editor/tree/develop/packages/scratch-vm)) this codebase allows for the rapid design and development of visual programming interface. ClipCC Blocks uses Blockly in an unforked way that most custom functionalities are developed with public Blockly API, and some are implemented with monkey-patching. Unlike [Blockly](https://github.com/RaspberryPiFoundation/blockly), Scratch Blocks does not use [code generators](https://developers.google.com/blockly/guides/create-custom-blocks/code-generation/overview), but rather leverages the VM to create highly dynamic, interactive programming environments.
 
 *This project is in active development and should be considered a "developer preview" at this time.*
 
-## Two Types of Blocks
-![](https://cloud.githubusercontent.com/assets/747641/15255731/dad4d028-190b-11e6-9c16-8df7445adc96.png)
+## Getting Started
 
-Scratch Blocks brings together two different programming "grammars" that the Scratch Team has designed and continued to refine over the past decade. The standard [Scratch](https://scratch.mit.edu) grammar uses blocks that snap together vertically, much like LEGO bricks. For our [ScratchJr](https://scratchjr.org) software, intended for younger children, we developed blocks that are labelled with icons rather than words, and snap together horizontally rather than vertically. We have found that the horizontal grammar is not only friendlier for beginning programmers but also better suited for devices with small screens.
+This requires you to have Git and Node.js installed. We recommend you to have Node.js >= 18.0.
 
-## Documentation
-The "getting started" guide including [FAQ](https://scratch.mit.edu/developers#faq) and [design documentation](https://github.com/scratchfoundation/scratch-blocks/wiki/Design) can be found in the [wiki](https://github.com/scratchfoundation/scratch-blocks/wiki).
+```bash
+git clone https://github.com/Clipteam/clipcc.git
+yarn install
+cd packages/block
+```
 
-## Donate
-We provide [Scratch](https://scratch.mit.edu) free of charge, and want to keep it that way! Please consider making a [donation](https://secure.donationpay.org/scratchfoundation/) to support our continued engineering, design, community, and resource development efforts. Donations of any size are appreciated. Thank you!
+Open a Command Prompt or Terminal in the repository and run:
+
+```bash
+yarn start
+```
+
+Then go to [http://localhost:8071/](http://localhost:8071/) (or specifying it with environment variable `PORT`) to debug with the playground.
+
+## Testing
+
+Tests are written in [Jest](https://jestjs.io/docs/api). Run:
+
+```bash
+yarn test
+```
+
+To get the test coverage, run:
+
+```bash
+yarn coverage
+```
+
+## Internationalization
+
+All translation messages are in `msg/messages.js`. Translation strings should be given in one of the following format:
+
+- A message should begin with `Blockly.XXX =`. A description message begin with `///` can exist before it.
+- If the description contains `{{Notranslate}}`, it will be treated as a constant value and won't be translated.
+- If the message is assigned from another message, it will be an alias of that message.
+
+```js
+/// Here is a description of the following message.
+Blockly.SOME_KEY = 'Some value';
+
+Blockly.ANOTHER_KEY = Blockly.SOME_KEY;
+
+/// {{Notranslate}} Constants
+Blockly.CONSTANT = '20';
+```
+
+Run the following command to generate JSON file:
+
+```bash
+yarn i18n:src
+```

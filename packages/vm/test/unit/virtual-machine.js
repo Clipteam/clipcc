@@ -498,68 +498,74 @@ test('reorderTarget', t => {
 
 test('emitWorkspaceUpdate', t => {
     const vm = new VirtualMachine();
-    const blocksToXML = comments => {
-        let blockString = 'blocks\n';
-        if (comments) {
-            for (const commentId in comments) {
-                const comment = comments[commentId];
-                blockString += `A Block Comment: ${comment.toXML()}`;
-            }
-
+    const blocksToState = comments => {
+        const block = {};
+        for (const comment in comments) {
+            block.icons = {
+                comment: {
+                    id: comment.id,
+                    text: comment.text,
+                    height: comment.height,
+                    width: comment.width,
+                    x: comment.x,
+                    y: comment.y,
+                    collapsed: comment.minimized
+                }
+            };
         }
-        return blockString;
+        return [block];
     };
     vm.runtime.targets = [
         {
             isStage: true,
             variables: {
                 global: {
-                    toXML: () => 'global'
+                    toState: () => ({isLocal: false})
                 }
             },
             blocks: {
-                toXML: blocksToXML,
+                toState: blocksToState,
                 getAllProcedureDefinitions: () => []
             },
             comments: {
                 aStageComment: {
-                    toXML: () => 'aStageComment',
+                    toState: () => ({text: 'a stage comment'}),
                     blockId: null
                 }
             }
         }, {
             variables: {
                 unused: {
-                    toXML: () => 'unused'
+                    toState: () => ({id: 'unused'})
                 }
             },
             blocks: {
-                toXML: blocksToXML,
+                toState: blocksToState,
                 getAllProcedureDefinitions: () => []
             },
             comments: {
                 someBlockComment: {
-                    toXML: () => 'someBlockComment',
+                    toState: () => ({text: 'someBlockComment'}),
                     blockId: 'someBlockId'
                 }
             }
         }, {
             variables: {
                 local: {
-                    toXML: () => 'local'
+                    toState: () => ({isLocal: true})
                 }
             },
             blocks: {
-                toXML: blocksToXML,
+                toState: blocksToState,
                 getAllProcedureDefinitions: () => []
             },
             comments: {
                 someOtherComment: {
-                    toXML: () => 'someOtherComment',
+                    toState: () => ({text: 'someOtherComment'}),
                     blockId: null
                 },
                 aBlockComment: {
-                    toXML: () => 'aBlockComment',
+                    toState: () => ({text: 'aBlockComment'}),
                     blockId: 'a block'
                 }
             }
@@ -567,17 +573,27 @@ test('emitWorkspaceUpdate', t => {
     ];
     vm.editingTarget = vm.runtime.targets[2];
 
-    let xml = null;
-    vm.emit = (event, data) => (xml = data.xml);
+    let json = null;
+    vm.emit = (event, data) => (json = data.json);
     vm.emitWorkspaceUpdate();
-    t.not(xml.indexOf('global'), -1);
-    t.not(xml.indexOf('local'), -1);
-    t.equal(xml.indexOf('unused'), -1);
-    t.not(xml.indexOf('blocks'), -1);
-    t.equal(xml.indexOf('aStageComment'), -1);
-    t.equal(xml.indexOf('someBlockComment'), -1);
-    t.not(xml.indexOf('someOtherComment'), -1);
-    t.not(xml.indexOf('A Block Comment: aBlockComment'), -1);
+
+    const variables = json.variables;
+    t.type(variables, 'object');
+    t.ok(variables.find(v => v.isLocal === false));
+    t.ok(variables.find(v => v.isLocal === true));
+    t.equal(variables.find(v => v.id === 'unused'), undefined);
+
+    const blocks = json.blocks;
+    t.type(blocks, 'object');
+    t.type(blocks.blocks, 'object');
+
+    const workspaceComments = json.workspaceComments;
+    t.type(workspaceComments, 'object');
+    t.ok(workspaceComments.find(c => c.text === 'someOtherComment'));
+    t.equal(workspaceComments.find(c => c.text === 'aStageComment'), undefined);
+    t.equal(workspaceComments.find(c => c.text === 'someBlockComment'), undefined);
+    t.equal(workspaceComments.find(c => c.text === 'aBlockComment'), undefined);
+
     t.end();
 });
 

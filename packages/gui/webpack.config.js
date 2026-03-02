@@ -28,6 +28,7 @@ const base = {
         extensions: ['.ts', '.js', '.tsx', '.jsx'],
         alias: {
             'clipcc-vm': path.resolve(__dirname, '../vm/src/index.js'),
+            'clipcc-block': path.resolve(__dirname, '../block/src/index.ts'),
             'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
             'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js'),
             'clipcc-svg-renderer': path.resolve(__dirname, '../svg-renderer/src/index.ts'),
@@ -45,6 +46,7 @@ const base = {
             include: [
                 path.resolve(__dirname, 'src'),
                 path.resolve(__dirname, '../vm/src'),
+                path.resolve(__dirname, '../block/src'),
                 path.resolve(__dirname, '../audio/src'),
                 path.resolve(__dirname, '../svg-renderer/src')
             ],
@@ -80,7 +82,8 @@ const base = {
             test: /\.css$/,
             exclude: [
                 /\.raw\.css$/, // Allow for overriding CSS classes from libraries
-                /[\\/]driver\.js[\\/].*\.css$/ // driver.js CSS
+                /[\\/]driver\.js[\\/].*\.css$/, // driver.js CSS,
+                path.resolve(__dirname, '../block/src') // clipcc-block treat CSS as source assets
             ],
             use: [{
                 loader: 'style-loader'
@@ -124,6 +127,10 @@ const base = {
                     }
                 }
             ]
+        }, {
+            test: /\.css$/,
+            include: path.resolve(__dirname, '../block/src'),
+            type: 'asset/source'
         }, {
             test: /\.hex$/,
             type: 'asset/inline',
@@ -171,6 +178,21 @@ const base = {
 
 if (!process.env.CI) {
     base.plugins.push(new webpack.ProgressPlugin());
+}
+
+if (base.mode === 'development') {
+    base.module.rules.push({
+        test: /blocks-msgs\.js$/,
+        include: [
+            /node_modules[\\/]clipcc-l10n[\\/]locales/
+        ],
+        use: [{
+            loader: path.resolve(__dirname, 'scripts/block-message-loader.js')
+        }, {
+            loader: 'babel-loader'
+        }],
+        enforce: 'pre'
+    });
 }
 
 module.exports = [

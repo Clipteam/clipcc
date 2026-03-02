@@ -16,7 +16,7 @@ const uid = require('../util/uid');
 const MathUtil = require('../util/math-util');
 const StringUtil = require('../util/string-util');
 const VariableUtil = require('../util/variable-util');
-const {migrationMap, mergeDeep} = require('./migration');
+const {migrationMap, mergeDeep, migrateMutation} = require('./migration');
 
 const {loadCostume} = require('../import/load-costume.js');
 const {loadSound} = require('../import/load-sound.js');
@@ -210,9 +210,8 @@ const serializeBlock = function (block) {
     } else {
         obj.topLevel = false;
     }
-    if (block.mutation) {
-        obj.mutation = block.mutation;
-    }
+    // Simulate old mutation structure for compatibility
+    obj.mutation = migrateMutation(block, true);
     if (block.comment) {
         obj.comment = block.comment;
     }
@@ -843,10 +842,10 @@ const deserializeBlocks = function (blocks) {
         block.id = blockId; // add id back to block since it wasn't serialized
         block.inputs = deserializeInputs(block.inputs, blockId, blocks);
         block.fields = deserializeFields(block.fields);
+        migrateMutation(block);
     }
     return blocks;
 };
-
 
 /**
  * Parse the assets of a single "Scratch object" and load them. This

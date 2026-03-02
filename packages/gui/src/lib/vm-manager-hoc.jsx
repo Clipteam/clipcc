@@ -192,7 +192,7 @@ const vmManagerHOC = function (WrappedComponent) {
             fontsLoaded: state.scratchGui.fontsLoaded,
             isLoadingWithId: getIsLoadingWithId(loadingState),
             locale: state.locales.locale,
-            messages: state.locales.messages,
+            messages: state.locales.editorMessages,
             projectData: state.scratchGui.projectState.projectData,
             projectId: state.scratchGui.projectState.projectId,
             loadingState: loadingState,

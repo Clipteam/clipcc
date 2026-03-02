@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 const mapStateToProps = state => ({
     key: state.locales.locale,
     locale: state.locales.locale,
-    messages: state.locales.messages,
+    messages: state.locales.editorMessages,
     textComponent: 'span'
 });
 

@@ -1,99 +1,90 @@
-// patch 'fs' to fix EMFILE errors, for example on WSL
-var realFs = require('fs');
-var gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(realFs);
+const path = require('path');
+const defaultsDeep = require('lodash.defaultsdeep');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-var CopyWebpackPlugin = require('copy-webpack-plugin');
-var path = require('path');
-var TerserPlugin = require('terser-webpack-plugin');
-
-module.exports = [{
+const baseConfig = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  entry: {
-    // horizontal: './shim/horizontal.js',
-    vertical: './shim/vertical.js'
-  },
+  devtool: process.env.NODE_ENV === 'production' ? false : 'eval-cheap-module-source-map',
+  entry: './src/index.ts',
   output: {
     library: 'ScratchBlocks',
-    libraryTarget: 'commonjs2',
-    path: path.resolve(__dirname, 'dist'),
     filename: '[name].js'
   },
-  optimization: {
-    minimize: false
+  resolve: {
+    extensions: ['.ts', '.js']
   },
-  performance: {
-    hints: false
-  }
-}, {
-  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  entry: {
-    // horizontal: './shim/horizontal.js',
-    vertical: './shim/vertical.js'
+  module: {
+    rules: [{
+      test: /\.css$/,
+      use: 'raw-loader',
+      include: path.resolve(__dirname, 'src')
+    }, {
+      test: /\.ts$/,
+      use: 'ts-loader',
+      exclude: /node_modules/
+    }, {
+      test: /_compressed\.js$/,
+      enforce: 'pre',
+      use: 'source-map-loader',
+      include: /blockly/
+    }]
   },
-  output: {
-    library: 'Blockly',
-    libraryTarget: 'umd',
-    path: path.resolve(__dirname, 'dist', 'web'),
-    filename: '[name].js'
-  },
-  optimization: {
-    minimizer: [
-      new TerserPlugin({
-        terserOptions: {
-          mangle: false
-        }
+  ignoreWarnings: [/Failed to parse source map/]
+};
+
+module.exports = [
+  // Playground
+  defaultsDeep({}, baseConfig, {
+    target: 'web',
+    devServer: {
+      static: false,
+      host: '0.0.0.0',
+      port: process.env.PORT || 8071
+    },
+    output: {
+      libraryTarget: 'umd',
+      path: path.resolve(__dirname, 'build')
+    },
+    plugins: [
+      new CopyWebpackPlugin({
+        patterns: [{
+          from: path.resolve(require.resolve('blockly'), '../media'),
+          to: 'media'
+        }, {
+          from: 'media',
+          to: 'media',
+          force: true
+        }, {
+          from: 'tests/playground.html',
+          to: 'index.html'
+        }, {
+          from: 'tests/toolbox.json',
+          to: 'toolbox.json'
+        }, {
+          from: 'msg/messages.js'
+        }]
       })
     ]
-  },
-  plugins: []
-},
-{
-  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  entry: './shim/gh-pages.js',
-  output: {
-    filename: '[name].js',
-    path: path.resolve(__dirname, 'gh-pages')
-  },
-  optimization: {
-    minimize: false
-  },
-  performance: {
-    hints: false
-  },
-  plugins: [
-    new CopyWebpackPlugin({
-      patterns: [{
-        from: 'node_modules/google-closure-library',
-        to: 'closure-library'
-      }, {
-        from: 'blocks_common',
-        to: 'playgrounds/blocks_common',
-      }, /*{
-        from: 'blocks_horizontal',
-        to: 'playgrounds/blocks_horizontal',
-      }, */{
-        from: 'blocks_vertical',
-        to: 'playgrounds/blocks_vertical',
-      }, {
-        from: 'core',
-        to: 'playgrounds/core'
-      }, {
-        from: 'media',
-        to: 'playgrounds/media'
-      }, {
-        from: 'msg',
-        to: 'playgrounds/msg'
-      }, {
-        from: 'tests',
-        to: 'playgrounds/tests'
-      }, {
-        from: '*.js',
-        to: 'playgrounds',
-        globOptions: {
-          ignore: 'webpack.config.js'
-        }
-      }]
-    })
-  ]
-}];
+  }),
+  // Node-compatible
+  defaultsDeep({}, baseConfig, {
+    target: 'node',
+    output: {
+      libraryTarget: 'commonjs2',
+      path: path.resolve(__dirname, 'dist', 'node')
+    },
+    externals: {
+      bufferutil: true,
+      'utf-8-validate': true,
+      canvas: true
+    }
+  }),
+  // Web-comptible
+  defaultsDeep({}, baseConfig, {
+    target: 'web',
+    output: {
+      libraryTarget: 'umd',
+      path: path.resolve(__dirname, 'dist', 'web')
+    }
+  })
+];

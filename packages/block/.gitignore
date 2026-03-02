@@ -25,10 +25,11 @@ python_compressed.js
 
 /accessible/*
 /dist
+/build
 /msg/js/*
-!/msg/js/en.js
 /msg/json/*
-!/msg/json/en.json
+!/msg/json/constants.json
+!/msg/json/synonyms.json
 /blockly_compressed_horizontal.js
 /blockly_compressed_vertical.js
 /blockly_uncompressed_horizontal.js
@@ -47,3 +48,6 @@ python_compressed.js
 
 # Closure Flags
 /closureflags
+
+# Test Coverage
+/coverage

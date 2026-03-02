@@ -37,7 +37,7 @@ e.g. STAGE_DIMENSION_DEFAULTS in lib/screen-utils.js */
     --clipcc-scrollbar-color-hover: #aaa;
 
     /* blockly stuff */
-    --clipcc-category-width: 85px;
+    --clipcc-category-width: 90px;
 
     /* extension button constants */
     --clipcc-fade-out-distance: 15px;
