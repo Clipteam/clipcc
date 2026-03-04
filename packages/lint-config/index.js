@@ -31,11 +31,13 @@ module.exports = [
         },
         rules: {
             // Most packaages uses JSDoc to generate declaration files, which has lots of undefined types.
-            'jsdoc/no-undefined-types': 'off',
+            'jsdoc/no-undefined-types': 'warn',
+            'jsdoc/reject-function-type': 'warn',
             'jsdoc/check-param-names': 'error',
             'jsdoc/check-tag-names': 'error',
             'jsdoc/check-types': 'error',
-            'jsdoc/require-description': ['error', {
+            'jsdoc/no-defaults': 'off',
+            'jsdoc/require-description': ['warn', {
                 checkConstructors: false
             }],
             'jsdoc/require-param': 'error',

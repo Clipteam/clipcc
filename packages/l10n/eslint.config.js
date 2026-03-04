@@ -3,7 +3,7 @@ const clipccNode = require('eslint-config-clipcc/node');
 
 module.exports = [
     ...clipccConfig,
-    clipccNode,
+    ...clipccNode,
     {
         languageOptions: {
             ecmaVersion: 2015

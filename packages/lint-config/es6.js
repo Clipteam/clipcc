@@ -39,7 +39,8 @@ module.exports = [
             'require-await': [2],
             'rest-spread-spacing': [2, 'never'],
             'symbol-description': [2],
-            'template-curly-spacing': [2, 'never']
+            'template-curly-spacing': [2, 'never'],
+            'jsdoc/no-defaults': 'error' // JSDoc default param is rebundant for ES6 default param
         }
     }
 ];
