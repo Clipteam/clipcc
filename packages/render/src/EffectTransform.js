@@ -15,13 +15,13 @@ const ShaderManager = require('./ShaderManager');
 
 /**
  * A texture coordinate is between 0 and 1. 0.5 is the center position.
- * @const {number}
+ * @constant {number}
  */
 const CENTER_X = 0.5;
 
 /**
  * A texture coordinate is between 0 and 1. 0.5 is the center position.
- * @const {number}
+ * @constant {number}
  */
 const CENTER_Y = 0.5;
 

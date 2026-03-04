@@ -5,7 +5,7 @@ const Skin = require('./Skin');
 class BitmapSkin extends Skin {
     /**
      * Create a new Bitmap Skin.
-     * @extends Skin
+     * @augments Skin
      * @param {!int} id - The ID for this Skin.
      * @param {!RenderWebGL} renderer - The renderer which will use this skin.
      */
@@ -52,7 +52,7 @@ class BitmapSkin extends Skin {
     /**
      * Set the contents of this skin to a snapshot of the provided bitmap data.
      * @param {ImageData|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} bitmapData - new contents for this skin.
-     * @param {int} [costumeResolution=1] - The resolution to use for this bitmap.
+     * @param {int} [costumeResolution] - The resolution to use for this bitmap.
      * @param {Array<number>} [rotationCenter] - Optional rotation center for the bitmap. If not supplied, it will be
      * calculated from the bounding box
      * @fires Skin.event:WasAltered

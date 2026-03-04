@@ -1,4 +1,4 @@
-/* global render, ImageData */
+/* global render */
 const {chromium} = require('playwright-chromium');
 const test = require('tap').test;
 const path = require('path');

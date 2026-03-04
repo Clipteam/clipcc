@@ -113,7 +113,7 @@ class RenderWebGL extends EventEmitter {
         try {
             // Create the context the same way that the constructor will: attributes may make the difference.
             return !!RenderWebGL._getContext(optCanvas || document.createElement('canvas'));
-        } catch (e) {
+        } catch {
             return false;
         }
     }
@@ -141,11 +141,11 @@ class RenderWebGL extends EventEmitter {
      * @see RenderWebGL#setStageSize
      * @see RenderWebGL#resize
      * @param {HTMLCanvasElement} canvas The canvas to draw onto.
-     * @param {int} [xLeft=-240] The x-coordinate of the left edge.
-     * @param {int} [xRight=240] The x-coordinate of the right edge.
-     * @param {int} [yBottom=-180] The y-coordinate of the bottom edge.
-     * @param {int} [yTop=180] The y-coordinate of the top edge.
-     * @constructor
+     * @param {int} [xLeft] The x-coordinate of the left edge.
+     * @param {int} [xRight] The x-coordinate of the right edge.
+     * @param {int} [yBottom] The y-coordinate of the bottom edge.
+     * @param {int} [yTop] The y-coordinate of the top edge.
+     * @class
      * @listens RenderWebGL#event:NativeSizeChanged
      */
     constructor (canvas, xLeft, xRight, yBottom, yTop) {
@@ -177,7 +177,7 @@ class RenderWebGL extends EventEmitter {
 
         // A list of layer group names in the order they should appear
         // from furthest back to furthest in front.
-        /** @type {Array<String>} */
+        /** @type {Array<string>} */
         this._groupOrdering = [];
 
         // Map of group name to layer group
@@ -202,7 +202,7 @@ class RenderWebGL extends EventEmitter {
         /** @type {any} */
         this._regionId = null;
 
-        /** @type {?function} */
+        /** @type {?Function} */
         this._exitRegion = null;
 
         /** @type {object} */
@@ -365,7 +365,7 @@ class RenderWebGL extends EventEmitter {
     /**
      * Create a new bitmap skin from a snapshot of the provided bitmap data.
      * @param {ImageData|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} bitmapData - new contents for this skin.
-     * @param {!int} [costumeResolution=1] - The resolution to use for this bitmap.
+     * @param {!int} [costumeResolution] - The resolution to use for this bitmap.
      * @param {?Array<number>} [rotationCenter] Optional: rotation center of the skin. If not supplied, the center of
      * the skin will be used.
      * @returns {!int} the ID for the new skin.
@@ -578,7 +578,8 @@ class RenderWebGL extends EventEmitter {
         return this._drawList.filter(id => this._allDrawables[id]._visible);
     }
 
-    /** e.g. the returned index does not have a drawable from this layer group in it)
+    /**
+     * e.g. the returned index does not have a drawable from this layer group in it)
      * Given a layer group, return the index where it ends (non-inclusive).
      * @private
      * @param {LayerGroup} layerGroup The layer group.
@@ -1631,7 +1632,8 @@ class RenderWebGL extends EventEmitter {
         const drawable = this._allDrawables[drawableID];
         if (!drawable) {
             /**
-             * @todo(https://github.com/LLK/scratch-vm/issues/2288) fix whatever's wrong in the VM which causes this, then add a warning or throw here.
+             * @todo https://github.com/scratchfoundation/scratch-vm/issues/2288
+             * fix whatever's wrong in the VM which causes this, then add a warning or throw here.
              * Right now this happens so much on some projects that a warning or exception here can hang the browser.
              */
             return;

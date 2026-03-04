@@ -10,7 +10,7 @@ const MAX_TEXTURE_DIMENSION = 2048;
  * All scaled renderings of the SVG are stored in an array. The 1.0 scale of
  * the SVG is stored at the 8th index. The smallest possible 1 / 256 scale
  * rendering is stored at the 0th index.
- * @const {number}
+ * @constant {number}
  */
 const INDEX_OFFSET = 8;
 
@@ -19,8 +19,8 @@ class SVGSkin extends Skin {
      * Create a new SVG skin.
      * @param {!int} id - The ID for this Skin.
      * @param {!RenderWebGL} renderer - The renderer which will use this skin.
-     * @constructor
-     * @extends Skin
+     * @class
+     * @augments Skin
      */
     constructor (id, renderer) {
         super(id);
@@ -50,9 +50,9 @@ class SVGSkin extends Skin {
         this._largestMIPScale = 0;
 
         /**
-        * Ratio of the size of the SVG and the max size of the WebGL texture
-        * @type {Number}
-        */
+         * Ratio of the size of the SVG and the max size of the WebGL texture
+         * @type {number}
+         */
         this._maxTextureScale = 1;
     }
 

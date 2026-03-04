@@ -22,7 +22,7 @@ const ShaderManager = require('./ShaderManager');
  * @type {PenAttributes}
  * @memberof PenSkin
  * @private
- * @const
+ * @constant
  */
 const DefaultPenAttributes = {
     color4f: [0, 0, 1, 1],
@@ -40,7 +40,7 @@ class PenSkin extends Skin {
      * Create a Skin which implements a Scratch pen layer.
      * @param {int} id - The unique ID for this Skin.
      * @param {RenderWebGL} renderer - The renderer which will use this Skin.
-     * @extends Skin
+     * @augments Skin
      * @listens RenderWebGL#event:NativeSizeChanged
      */
     constructor (id, renderer) {

@@ -63,7 +63,7 @@ class Drawable {
      * An object which can be drawn by the renderer.
      * @todo double-buffer all rendering state (position, skin, effects, etc.)
      * @param {!int} id - This Drawable's unique ID.
-     * @constructor
+     * @class
      */
     constructor (id) {
         /** @type {!int} */
@@ -115,9 +115,10 @@ class Drawable {
         this._inverseTransformDirty = true;
         this._visible = true;
 
-        /** A bitmask identifying which effects are currently in use.
+        /**
+         * A bitmask identifying which effects are currently in use.
          * @readonly
-         * @type {int} */
+          @type {int} */
         this.enabledEffects = 0;
 
         /** @todo move convex hull functionality, maybe bounds functionality overall, to Skin classes */
@@ -516,19 +517,19 @@ class Drawable {
     }
 
     /**
-      * @private
-      * @param {twgl.v3.Vec3} vec The Vec3 object
-      * @returns {boolean} Whether is touching nearest.
-      */
+     * @private
+     * @param {twgl.v3.Vec3} vec The Vec3 object
+     * @returns {boolean} Whether is touching nearest.
+     */
     _isTouchingNearest (vec) {
         return this.skin.isTouchingNearest(getLocalPosition(this, vec));
     }
 
     /**
-      * @private
-      * @param {twgl.v3.Vec3} vec The Vec3 object
-      * @returns {boolean} Whether is touching linear.
-      */
+     * @private
+     * @param {twgl.v3.Vec3} vec The Vec3 object
+     * @returns {boolean} Whether is touching linear.
+     */
     _isTouchingLinear (vec) {
         return this.skin.isTouchingLinear(getLocalPosition(this, vec));
     }

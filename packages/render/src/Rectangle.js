@@ -3,7 +3,7 @@ class Rectangle {
      * A utility for creating and comparing axis-aligned rectangles.
      * Rectangles are always initialized to the "largest possible rectangle";
      * use one of the init* methods below to set up a particular rectangle.
-     * @constructor
+     * @class
      */
     constructor () {
         this.left = -Infinity;
