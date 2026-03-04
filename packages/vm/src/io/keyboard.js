@@ -28,13 +28,13 @@ class Keyboard {
          * An uppercase string of length one;
          *     except for special key names for arrow keys and space (e.g. 'left arrow').
          * Can be a non-english unicode letter like: æ ø ש נ 手 廿.
-         * @type{Array.<string>}
+         * @type {Array.<string>}
          */
         this._keysPressed = [];
         /**
          * Reference to the owning Runtime.
          * Can be used, for example, to activate hats.
-         * @type{!Runtime}
+         * @type {!Runtime}
          */
         this.runtime = runtime;
     }

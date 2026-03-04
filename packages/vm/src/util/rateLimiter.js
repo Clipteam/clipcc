@@ -7,7 +7,7 @@ class RateLimiter {
      * strategy: a counter accumulates tokens at a steady rate, and each send costs
      * a token. If no tokens remain, it's not okay to send.
      * @param {number} maxRate the maximum number of sends allowed per second
-     * @constructor
+     * @class
      */
     constructor (maxRate) {
         /**

@@ -12,7 +12,7 @@ class RenderedTarget extends Target {
     /**
      * @param {!Sprite} sprite Reference to the parent sprite.
      * @param {Runtime} runtime Reference to the runtime.
-     * @constructor
+     * @class
      */
     constructor (sprite, runtime) {
         super(runtime, sprite.blocks);
@@ -33,7 +33,7 @@ class RenderedTarget extends Target {
         /**
          * ID of the drawable for this rendered target,
          * returned by the renderer, if rendered.
-         * @type {?Number}
+         * @type {?number}
          */
         this.drawableID = null;
 
@@ -73,7 +73,7 @@ class RenderedTarget extends Target {
 
         /**
          * Scratch X coordinate. Currently should range from -240 to 240.
-         * @type {Number}
+         * @type {number}
          */
         this.x = 0;
 
@@ -180,10 +180,10 @@ class RenderedTarget extends Target {
     }
 
     get audioPlayer () {
-        /* eslint-disable no-console */
+
         console.warn('get audioPlayer deprecated, please update to use .sprite.soundBank methods');
         console.warn(new Error('stack for debug').stack);
-        /* eslint-enable no-console */
+
         const bank = this.sprite.soundBank;
         const audioPlayerProxy = {
             playSound: soundId => bank.play(this, soundId)
@@ -247,7 +247,7 @@ class RenderedTarget extends Target {
 
     /**
      * Available states for video input.
-     * @enum {string}
+     * @returns An object mapping video state names to their string values.
      */
     static get VIDEO_STATE () {
         return {

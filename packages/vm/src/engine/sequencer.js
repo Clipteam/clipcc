@@ -8,19 +8,19 @@ const execute = require('./execute.js');
 
 /**
  * Profiler frame name for stepping a single thread.
- * @const {string}
+ * @constant {string}
  */
 const stepThreadProfilerFrame = 'Sequencer.stepThread';
 
 /**
  * Profiler frame name for the inner loop of stepThreads.
- * @const {string}
+ * @constant {string}
  */
 const stepThreadsInnerProfilerFrame = 'Sequencer.stepThreads#inner';
 
 /**
  * Profiler frame name for execute.
- * @const {string}
+ * @constant {string}
  */
 const executeProfilerFrame = 'execute';
 

@@ -8,7 +8,7 @@ const MathUtil = require('../util/math-util');
 
 /**
  * @typedef {object} BubbleState - the bubble state associated with a particular target.
- * @property {Boolean} onSpriteRight - tracks whether the bubble is right or left of the sprite.
+ * @property {boolean} onSpriteRight - tracks whether the bubble is right or left of the sprite.
  * @property {?int} drawableId - the ID of the associated bubble Drawable, null if none.
  * @property {string} text - the text of the bubble.
  * @property {string} type - the type of the bubble, "say" or "think"
@@ -62,7 +62,7 @@ class Scratch3LooksBlocks {
 
     /**
      * Event name for a text bubble being created or updated.
-     * @const {string}
+     * @returns {string}
      */
     static get SAY_OR_THINK () {
         // There are currently many places in the codebase which explicitly refer to this event by the string 'SAY',
@@ -72,7 +72,7 @@ class Scratch3LooksBlocks {
 
     /**
      * Limit for say bubble string.
-     * @const {string}
+     * @returns {number}
      */
     static get SAY_BUBBLE_LIMIT () {
         return 330;
@@ -80,7 +80,7 @@ class Scratch3LooksBlocks {
 
     /**
      * Limit for ghost effect
-     * @const {object}
+     * @returns {object}
      */
     static get EFFECT_GHOST_LIMIT (){
         return {min: 0, max: 100};
@@ -88,7 +88,7 @@ class Scratch3LooksBlocks {
 
     /**
      * Limit for brightness effect
-     * @const {object}
+     * @returns {object}
      */
     static get EFFECT_BRIGHTNESS_LIMIT (){
         return {min: -100, max: 100};
@@ -162,7 +162,7 @@ class Scratch3LooksBlocks {
         let targetBounds;
         try {
             targetBounds = target.getBoundsForBubble();
-        } catch (error_) {
+        } catch {
             // Bounds calculation could fail (e.g. on empty costumes), in that case
             // use the x/y position of the target.
             targetBounds = {

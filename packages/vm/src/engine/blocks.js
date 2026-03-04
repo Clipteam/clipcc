@@ -34,14 +34,14 @@ class Blocks {
         /**
          * All blocks in the workspace.
          * Keys are block IDs, values are metadata about the block.
-         * @type {Record<string, Object>}
+         * @type {Record<string, object>}
          */
         this._blocks = {};
 
         /**
          * All top-level scripts in the workspace.
          * A list of block IDs that represent scripts (i.e., first block in script).
-         * @type {Array.<String>}
+         * @type {Array.<string>}
          */
         this._scripts = [];
 
@@ -104,7 +104,7 @@ class Blocks {
     /**
      * Blockly inputs that represent statements/branch.
      * are prefixed with this string.
-     * @const{string}
+     * @returns {string}
      */
     static get BRANCH_INPUT_PREFIX () {
         return 'SUBSTACK';
@@ -128,10 +128,10 @@ class Blocks {
     }
 
     /**
-      * Get the next block for a particular block
-      * @param {?string} id ID of block to get the next block for
-      * @returns {?string} ID of next block in the sequence
-      */
+     * Get the next block for a particular block
+     * @param {?string} id ID of block to get the next block for
+     * @returns {?string} ID of next block in the sequence
+     */
     getNextBlock (id) {
         const block = this._blocks[id];
         return (typeof block === 'undefined') ? null : block.next;

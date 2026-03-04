@@ -185,7 +185,7 @@ const serializeFields = function (fields) {
  * Serialize the given block in the SB3 format with some compression of inputs,
  * fields, and primitives.
  * @param {object} block The block to serialize
- * @returns {object | array} A serialized representation of the block. This is an
+ * @returns {object | Array} A serialized representation of the block. This is an
  * array if the block is one of the primitive types described above or an object,
  * if not.
  */
@@ -596,7 +596,7 @@ const serialize = function (runtime, targetId) {
  * Deserialize a block input descriptors. This is either a
  * block id or a serialized primitive, e.g. an array
  * (see serializePrimitiveBlock function).
- * @param {string | array} inputDescOrId The block input descriptor to be serialized.
+ * @param {string | Array} inputDescOrId The block input descriptor to be serialized.
  * @param {string} parentId The id of the parent block for this input block.
  * @param {boolean} isShadow Whether or not this input block is a shadow.
  * @param {object} blocks The entire blocks object currently in the process of getting serialized.

@@ -21,37 +21,37 @@ let nextId = 0;
 
 /**
  * The mapping of names to ids.
- * @const {Record<string, number>}
+ * @constant {Record<string, number>}
  */
 const profilerNames = {};
 
 /**
  * The START event identifier in Profiler records.
- * @const {number}
+ * @constant {number}
  */
 const START = 0;
 
 /**
  * The STOP event identifier in Profiler records.
- * @const {number}
+ * @constant {number}
  */
 const STOP = 1;
 
 /**
  * The number of cells used in the records array by a START event.
- * @const {number}
+ * @constant {number}
  */
 const START_SIZE = 4;
 
 /**
  * The number of cells used in the records array by a STOP event.
- * @const {number}
+ * @constant {number}
  */
 const STOP_SIZE = 2;
 
 /**
  * Stored reference to Performance instance provided by the Browser.
- * @const {Performance}
+ * @constant {Performance}
  */
 const performance = typeof window === 'object' && window.performance;
 
@@ -169,13 +169,13 @@ class Profiler {
 
         /**
          * A reference to the START record id constant.
-         * @const {number}
+         * @constant {number}
          */
         this.START = START;
 
         /**
          * A reference to the STOP record id constant.
-         * @const {number}
+         * @constant {number}
          */
         this.STOP = STOP;
     }
@@ -377,13 +377,13 @@ class Profiler {
 
 /**
  * A reference to the START record id constant.
- * @const {number}
+ * @constant {number}
  */
 Profiler.START = START;
 
 /**
  * A reference to the STOP record id constant.
- * @const {number}
+ * @constant {number}
  */
 Profiler.STOP = STOP;
 

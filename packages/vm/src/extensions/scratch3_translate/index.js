@@ -34,7 +34,7 @@ const serverTimeoutMs = 10000; // 10 seconds (chosen arbitrarily).
 
 /**
  * Class for the translate block in Scratch 3.0.
- * @constructor
+ * @class
  */
 class Scratch3TranslateBlocks {
     constructor () {

@@ -110,7 +110,7 @@ const migrateMutation = (block, backward) => {
                     // Expect mutation[key] to be a JSON string representing an array.
                     try {
                         mutation[key] = JSON.parse(mutation[key]);
-                    } catch (e) {
+                    } catch {
                         log.error(`Error parsing mutation property ${key}: ${mutation[key]}`);
                         mutation[key] = [];
                     }

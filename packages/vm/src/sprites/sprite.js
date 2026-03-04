@@ -13,7 +13,7 @@ class Sprite {
      * shared sounds, etc.
      * @param {?Blocks} blocks Shared blocks object for all clones of sprite.
      * @param {Runtime} runtime Reference to the runtime.
-     * @constructor
+     * @class
      */
     constructor (blocks, runtime) {
         this.runtime = runtime;
@@ -37,12 +37,12 @@ class Sprite {
          *      rotationCenterX: 0,
          *      rotationCenterY: 0
          * }
-         * @type {Array.<!Object>}
+         * @type {Array.<!object>}
          */
         this.costumes_ = [];
         /**
          * List of sounds for this sprite.
-        */
+         */
         this.sounds = [];
         /**
          * List of clones for this sprite, including the original.

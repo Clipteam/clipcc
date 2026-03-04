@@ -11,7 +11,7 @@
  * @param {Blocks} blocks Blocks containing the expected blockId
  * @param {string} blockId blockId for the desired execute cache
  */
-exports.getCached = function () {
+exports.getCached = function (blocks, blockId) { // eslint-disable-line no-unused-vars
     throw new Error('blocks.js has not initialized BlocksExecuteCache');
 };
 

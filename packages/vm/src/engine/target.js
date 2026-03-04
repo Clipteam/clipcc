@@ -24,7 +24,7 @@ class Target extends EventEmitter {
     /**
      * @param {Runtime} runtime Reference to the runtime.
      * @param {?Blocks} blocks Blocks instance for the blocks owned by this target.
-     * @constructor
+     * @class
      */
     constructor (runtime, blocks) {
         super();
@@ -243,11 +243,11 @@ class Target extends EventEmitter {
     }
 
     /**
-    * Look up a list object for this target, and create it if one doesn't exist.
-    * Search begins for local lists; then look for globals.
-    * @param {!string} id Id of the list.
-    * @param {!string} name Name of the list.
-    * @returns {Variable} Variable object representing the found/created list.
+     * Look up a list object for this target, and create it if one doesn't exist.
+     * Search begins for local lists; then look for globals.
+     * @param {!string} id Id of the list.
+     * @param {!string} name Name of the list.
+     * @returns {Variable} Variable object representing the found/created list.
      */
     lookupOrCreateList (id, name) {
         let list = this.lookupVariableById(id);
@@ -465,7 +465,8 @@ class Target extends EventEmitter {
      * @param {object} data An object with sprite info data to set.
      * @abstract
      */
-    postSpriteInfo () {}
+    // eslint-disable-next-line no-unused-vars
+    postSpriteInfo (data) {}
 
     /**
      * Retrieve custom state associated with this target and the provided state ID.
@@ -526,7 +527,7 @@ class Target extends EventEmitter {
      * Merge variable references with another variable.
      * @param {string} idToBeMerged ID of the variable whose references need to be updated
      * @param {string} idToMergeWith ID of the variable that the old references should be replaced with
-     * @param {?Array<Object>} optReferencesToUpdate Optional context of the change.
+     * @param {?Array<object>} optReferencesToUpdate Optional context of the change.
      * Defaults to all the blocks in this target.
      * @param {?string} optNewName New variable name to merge with. The old
      * variable name in the references being updated should be replaced with this new name.

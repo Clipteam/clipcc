@@ -113,7 +113,7 @@ const WELSH_ID = 'cy';
 
 /**
  * Class for the text2speech blocks.
- * @constructor
+ * @class
  */
 class Scratch3Text2SpeechBlocks {
     constructor (runtime) {
@@ -148,6 +148,7 @@ class Scratch3Text2SpeechBlocks {
 
     /**
      * An object with info for each voice.
+     * @returns The voice info object.
      */
     get VOICE_INFO () {
         return {
@@ -218,6 +219,7 @@ class Scratch3Text2SpeechBlocks {
      * SPEECH SYNTH LOCALE
      *      A different locale code system, used by our speech synthesis service.
      *      Each extension locale has a speech synth locale.
+     * @returns The language info object.
      */
     get LANGUAGE_INFO () {
         return {

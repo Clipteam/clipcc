@@ -61,7 +61,7 @@ const SCRATCH_KEY_NAME = {
 
 /**
  * Class for the makey makey blocks in Scratch 3.0
- * @constructor
+ * @class
  */
 class Scratch3MakeyMakeyBlocks {
     constructor (runtime) {
@@ -110,10 +110,10 @@ class Scratch3MakeyMakeyBlocks {
     }
 
     /**
-    * Localized short-form names of the space bar and arrow keys, for use in the
-    * displayed menu items of the "when keys pressed in order" block.
-    * @type {object}
-    */
+     * Localized short-form names of the space bar and arrow keys, for use in the
+     * displayed menu items of the "when keys pressed in order" block.
+     * @type {object}
+     */
     get KEY_TEXT_SHORT () {
         return {
             [KEY_ID_SPACE]: formatMessage({
@@ -147,7 +147,7 @@ class Scratch3MakeyMakeyBlocks {
     /**
      * An array of strings of KEY_IDs representing the default set of
      * key sequences for use by the "when keys pressed in order" block.
-     * @type {array}
+     * @type {Array}
      */
     get DEFAULT_SEQUENCES () {
         return [

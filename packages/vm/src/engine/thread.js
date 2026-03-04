@@ -14,7 +14,7 @@ const _stackFrameFreeList = [];
  * A frame used for each level of the stack. A general purpose
  * place to store a bunch of execution context and parameters
  * @param {boolean} warpMode Whether this level of the stack is warping
- * @constructor
+ * @class
  * @private
  */
 class _StackFrame {
@@ -49,7 +49,7 @@ class _StackFrame {
 
         /**
          * Persists reported inputs during async block.
-         * @type {?Object}
+         * @type {?object}
          */
         this.reported = null;
 
@@ -61,13 +61,13 @@ class _StackFrame {
 
         /**
          * Procedure parameters.
-         * @type {?Object}
+         * @type {?object}
          */
         this.params = null;
 
         /**
          * A context passed to block implementations.
-         * @type {?Object}
+         * @type {?object}
          */
         this.executionContext = null;
 
@@ -215,7 +215,7 @@ class Thread {
      * Thread status for initialized or running thread.
      * This is the default state for a thread - execution should run normally,
      * stepping from block to block.
-     * @const
+     * @returns {number}
      */
     static get STATUS_RUNNING () {
         return 0;
@@ -224,7 +224,7 @@ class Thread {
     /**
      * Threads are in this state when a primitive is waiting on a promise;
      * execution is paused until the promise changes thread status.
-     * @const
+     * @returns {number}
      */
     static get STATUS_PROMISE_WAIT () {
         return 1;
@@ -232,7 +232,7 @@ class Thread {
 
     /**
      * Thread status for yield.
-     * @const
+     * @returns {number}
      */
     static get STATUS_YIELD () {
         return 2;
@@ -241,7 +241,7 @@ class Thread {
     /**
      * Thread status for a single-tick yield. This will be cleared when the
      * thread is resumed.
-     * @const
+     * @returns {number}
      */
     static get STATUS_YIELD_TICK () {
         return 3;
@@ -250,7 +250,7 @@ class Thread {
     /**
      * Thread status for a finished/done thread.
      * Thread is in this state when there are no more blocks to execute.
-     * @const
+     * @returns {number}
      */
     static get STATUS_DONE () {
         return 4;

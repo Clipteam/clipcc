@@ -12,8 +12,9 @@ const Timer = require('../../util/timer');
  */
 let assetData = {};
 try {
+    // eslint-disable-next-line global-require
     assetData = require('./manifest');
-} catch (e) {
+} catch {
     // Non-webpack environment, don't worry about assets.
 }
 
@@ -34,7 +35,7 @@ const menuIconURI = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iM
 /**
  * Class for the music-related blocks in Scratch 3.0
  * @param {Runtime} runtime - the runtime instantiating this block package.
- * @constructor
+ * @class
  */
 class Scratch3MusicBlocks {
     constructor (runtime) {
@@ -168,9 +169,7 @@ class Scratch3MusicBlocks {
 
     /**
      * An array of info about each drum.
-     * @type {object[]}
-     * @param {string} name - the translatable name to display in the drums menu.
-     * @param {string} fileName - the name of the audio file containing the drum sound.
+     * @returns The drum info array.
      */
     get DRUM_INFO () {
         return [
@@ -322,13 +321,17 @@ class Scratch3MusicBlocks {
     }
 
     /**
-     * An array of info about each instrument.
-     * @type {object[]}
-     * @param {string} name - the translatable name to display in the instruments menu.
-     * @param {string} dirName - the name of the directory containing audio samples for this instrument.
-     * @param {number} [releaseTime] - an optional duration for the release portion of each note.
-     * @param {number[]} samples - an array of numbers representing the MIDI note number for each
+     * @typedef {object} InstrumentInfo
+     * @property {string} name - the translatable name to display in the instruments menu.
+     * @property {string} dirName - the name of the directory containing audio samples for this instrument.
+     * @property {number} [releaseTime] - an optional duration for the release portion of each note.
+     * @property {number[]} samples - an array of numbers representing the MIDI note number for each
      *                           sampled sound used to play this instrument.
+     */
+
+    /**
+     * An array of info about each instrument.
+     * @returns {InstrumentInfo[]} the instrument info array.
      */
     get INSTRUMENT_INFO () {
         return [
@@ -704,7 +707,8 @@ class Scratch3MusicBlocks {
         return {min: 0, max: 100};
     }
 
-    /** The minimum and maximum tempo values, in bpm.
+    /**
+     * The minimum and maximum tempo values, in bpm.
      * @type {{min: number, max: number}}
      */
     static get TEMPO_RANGE () {

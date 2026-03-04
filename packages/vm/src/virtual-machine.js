@@ -53,14 +53,14 @@ const CORE_EXTENSIONS = [
  */
 
 /**
- * @typedef {Object} FileDesc
+ * @typedef {object} FileDesc
  * @property {string} fileName
  * @property {string} fileContent
  */
 
 /**
  * Handles connections between blocks, stage, and extensions.
- * @constructor
+ * @class
  */
 class VirtualMachine extends EventEmitter {
     constructor () {
@@ -307,7 +307,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Set stage height.
      * @param {number} height Height of the stage in pixels.
-    */
+     */
     setStageHeight (height) {
         this.setStageSize(this.runtime.stageWidth, height);
     }
@@ -425,6 +425,7 @@ class VirtualMachine extends EventEmitter {
         }
 
         const validationPromise = new Promise((resolve, reject) => {
+            // eslint-disable-next-line global-require
             const validate = require('clipcc-parser');
             // The second argument of false below indicates to the validator that the
             // input should be parsed/validated as an entire project (and not a single sprite)
@@ -434,6 +435,7 @@ class VirtualMachine extends EventEmitter {
             });
         })
             .catch(error => {
+                // eslint-disable-next-line global-require
                 const {SB1File, ValidationError} = require('scratch-sb1-converter');
 
                 try {
@@ -575,6 +577,7 @@ class VirtualMachine extends EventEmitter {
      * @returns {string} Serialized state of the runtime.
      */
     toJSON (optTargetId) {
+        // eslint-disable-next-line global-require
         const sb3 = require('./serialization/sb3');
         return StringUtil.stringify(sb3.serialize(this.runtime, optTargetId));
     }
@@ -608,10 +611,12 @@ class VirtualMachine extends EventEmitter {
         const deserializePromise = function () {
             const projectVersion = projectJSON.projectVersion;
             if (projectVersion === 2) {
+                // eslint-disable-next-line global-require
                 const sb2 = require('./serialization/sb2');
                 return sb2.deserialize(projectJSON, runtime, false, zip);
             }
             if (projectVersion === 3) {
+                // eslint-disable-next-line global-require
                 const sb3 = require('./serialization/sb3');
                 return sb3.deserialize(projectJSON, runtime, zip);
             }
@@ -700,6 +705,7 @@ class VirtualMachine extends EventEmitter {
         }
 
         const validationPromise = new Promise((resolve, reject) => {
+            // eslint-disable-next-line global-require
             const validate = require('clipcc-parser');
             // The second argument of true below indicates to the parser/validator
             // that the given input should be treated as a single sprite and not
@@ -740,6 +746,7 @@ class VirtualMachine extends EventEmitter {
     _addSprite2 (sprite, zip) {
         // Validate & parse
 
+        // eslint-disable-next-line global-require
         const sb2 = require('./serialization/sb2');
         return sb2.deserialize(sprite, this.runtime, true, zip)
             .then(({targets, extensions}) =>
@@ -754,6 +761,7 @@ class VirtualMachine extends EventEmitter {
      */
     _addSprite3 (sprite, zip) {
         // Validate & parse
+        // eslint-disable-next-line global-require
         const sb3 = require('./serialization/sb3');
         return sb3
             .deserialize(sprite, this.runtime, zip, true)
@@ -1232,7 +1240,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Set the bitmap adapter for the VM/runtime, which converts scratch 2
      * bitmaps to scratch 3 bitmaps. (Scratch 3 bitmaps are all bitmap resolution 2)
-     * @param {!function} bitmapAdapter The adapter to attach
+     * @param {!Function} bitmapAdapter The adapter to attach
      */
     attachV2BitmapAdapter (bitmapAdapter) {
         this.runtime.attachV2BitmapAdapter(bitmapAdapter);
@@ -1362,6 +1370,7 @@ class VirtualMachine extends EventEmitter {
      * @returns {!Promise<void>} Promise that resolves when the extensions and blocks have been added.
      */
     shareBlocksToTarget (blocks, targetId, optFromTargetId) {
+        // eslint-disable-next-line global-require
         const sb3 = require('./serialization/sb3');
 
         const copiedBlocks = JSON.parse(JSON.stringify(blocks));

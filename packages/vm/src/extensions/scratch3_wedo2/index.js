@@ -198,7 +198,7 @@ class WeDo2Motor {
 
     /**
      * @returns {number} - the duration of active braking after a call to startBraking(). Afterward, turn the motor off.
-     * @constructor
+     * @class
      */
     static get BRAKE_TIME_MS () {
         return 1000;
@@ -315,7 +315,7 @@ class WeDo2Motor {
 
     /**
      * Turn this motor off.
-     * @param {boolean} [useLimiter=true] - if true, use the rate limiter
+     * @param {boolean} [useLimiter] - if true, use the rate limiter
      */
     turnOff (useLimiter = true) {
         if (this._power === 0) return;
@@ -651,7 +651,7 @@ class WeDo2 {
      * Write a message to the WeDo 2.0 peripheral BLE socket.
      * @param {number} uuid - the UUID of the characteristic to write to
      * @param {Array} message - the message to write.
-     * @param {boolean} [useLimiter=true] - if true, use the rate limiter
+     * @param {boolean} [useLimiter] - if true, use the rate limiter
      * @returns {Promise} - a promise result of the write operation
      */
     send (uuid, message, useLimiter = true) {
@@ -677,7 +677,7 @@ class WeDo2 {
      *
      * @param  {number} connectID - the port (Connect ID) to send a command to.
      * @param  {number} commandID - the id of the byte command.
-     * @param  {array}  values    - the list of values to write to the command.
+     * @param  {Array}  values    - the list of values to write to the command.
      * @returns {Array}            - a generated output command.
      */
     generateOutputCommand (connectID, commandID, values = null) {
@@ -704,7 +704,7 @@ class WeDo2 {
      * @param  {number}  type                - the type of input sensor.
      * @param  {number}  mode                - the mode of the input sensor.
      * @param  {number}  delta               - the delta change needed to trigger notification.
-     * @param  {array}   units               - the unit of the input sensor value.
+     * @param  {Array}   units               - the unit of the input sensor value.
      * @param  {boolean} enableNotifications - whether to enable notifications.
      * @returns {Array}                       - a generated input command.
      */

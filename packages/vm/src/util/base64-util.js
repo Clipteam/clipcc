@@ -29,10 +29,10 @@ class Base64Util {
     }
 
     /**
-    * Convert an array buffer to a base64 encoded string.
-    * @param {Array} buffer - an array buffer to convert.
-    * @returns {string} - the base64 encoded string.
-    */
+     * Convert an array buffer to a base64 encoded string.
+     * @param {Array} buffer - an array buffer to convert.
+     * @returns {string} - the base64 encoded string.
+     */
     static arrayBufferToBase64 (buffer) {
         let binary = '';
         const bytes = new Uint8Array(buffer);

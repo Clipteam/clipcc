@@ -105,7 +105,7 @@ class MicroBit {
 
         /**
          * The most recently received value for each gesture.
-         * @type {Record<string, Object>}
+         * @type {Record<string, object>}
          * @private
          */
         this._gestures = {

@@ -139,7 +139,7 @@ const parseBlockList = function (blockList, addBroadcastMsg, getVariableId, exte
     let previousBlock = null; // For setting next.
     for (let i = 0; i < blockList.length; i++) {
         const block = blockList[i];
-        // eslint-disable-next-line no-use-before-define
+         
         const parsedBlockAndComments = parseBlock(block, addBroadcastMsg, getVariableId,
             extensions, parseState, comments, commentIndex);
         const parsedBlock = parsedBlockAndComments[0];
@@ -312,7 +312,7 @@ const parseMonitorObject = (object, runtime, targets, extensions) => {
 
     // Create var id getter to make block naming/parsing easier, variables already created.
     const getVariableId = generateVariableIdGetter(target.id, false);
-    // eslint-disable-next-line no-use-before-define
+     
     const [block, _] = parseBlock(
         [object.cmd, object.param], // Scratch 2 monitor blocks only have one param.
         null, // `addBroadcastMsg`, not needed for monitor blocks.

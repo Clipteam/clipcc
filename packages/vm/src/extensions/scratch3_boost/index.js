@@ -254,7 +254,7 @@ const BoostMotorEndState = {
 
 /**
  * Enum for Boost Motor acceleration/deceleration profiles
- * @readyonly
+ * @readonly
  * @enum {number}
  */
 const BoostMotorProfile = {
@@ -587,7 +587,7 @@ class BoostMotor {
 
     /**
      * Turn this motor off.
-     * @param {boolean} [useLimiter=true] - if true, use the rate limiter
+     * @param {boolean} [useLimiter] - if true, use the rate limiter
      */
     turnOff (useLimiter = true) {
         const cmd = this._parent.generateOutputCommand(
@@ -917,7 +917,7 @@ class Boost {
      * Write a message to the Boost peripheral BLE socket.
      * @param {number} uuid - the UUID of the characteristic to write to
      * @param {Array} message - the message to write.
-     * @param {boolean} [useLimiter=true] - if true, use the rate limiter
+     * @param {boolean} [useLimiter] - if true, use the rate limiter
      * @returns {Promise} - a promise result of the write operation
      */
     send (uuid, message, useLimiter = true) {
@@ -944,7 +944,7 @@ class Boost {
      * @param  {number} portID - the port (Connect ID) to send a command to.
      * @param  {number} execution - Byte containing startup/completion information
      * @param  {number} subCommand - the id of the subcommand byte.
-     * @param  {array}  payload    - the list of bytes to send as subcommand payload
+     * @param  {Array}  payload    - the list of bytes to send as subcommand payload
      * @returns {Array}            - a generated output command.
      */
     generateOutputCommand (portID, execution, subCommand, payload) {

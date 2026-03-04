@@ -66,7 +66,7 @@ class Scratch3Speech2TextBlocks {
         /**
          * The most recent transcription result received from the speech API that we decided to keep.
          * This is the value returned by the reporter block.
-         * @type {String}
+         * @type {string}
          * @private
          */
         this._currentUtterance = '';
@@ -212,7 +212,7 @@ class Scratch3Speech2TextBlocks {
      *   - suspends audio processing
      *   - closes socket with speech socket server
      *   - clears out any remaining speech blocks that are waiting.
-     * @private.
+     * @private
      */
     _resetListening () {
         this.runtime.emitMicListening(false);
@@ -362,7 +362,7 @@ class Scratch3Speech2TextBlocks {
         try {
             // Look for the text in the pattern starting at position 0.
             match = this._dmp.match_main(text, pattern, 0);
-        } catch (e) {
+        } catch {
             // This can happen inf the text or pattern gets too long.  If so just substring match.
             return pattern.indexOf(text);
         }

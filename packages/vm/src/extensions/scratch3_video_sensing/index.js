@@ -67,7 +67,7 @@ const VideoState = {
 /**
  * Class for the motion-related blocks in Scratch 3.0
  * @param {Runtime} runtime - the runtime instantiating this block package.
- * @constructor
+ * @class
  */
 class Scratch3VideoSensingBlocks {
     constructor (runtime) {
@@ -166,7 +166,6 @@ class Scratch3VideoSensingBlocks {
         if (stage) {
             stage.videoTransparency = transparency;
         }
-        return transparency;
     }
 
     /**
@@ -190,7 +189,6 @@ class Scratch3VideoSensingBlocks {
         if (stage) {
             stage.videoState = state;
         }
-        return state;
     }
 
     /**
@@ -296,12 +294,15 @@ class Scratch3VideoSensingBlocks {
     }
 
     /**
+     * @typedef {object} AttributeInfo
+     * @property {string} name - the translatable name to display in the sensor attribute menu
+     * @property {string} value - the serializable value of the attribute
+     */
+
+    /**
      * An array of choices of whether a reporter should return the frame's
      * motion amount or direction.
-     * @type {object[]}
-     * @param {string} name - the translatable name to display in sensor
-     *   attribute menu
-     * @param {string} value - the serializable value of the attribute
+     * @returns {AttributeInfo[]}
      */
     get ATTRIBUTE_INFO () {
         return [
@@ -329,10 +330,14 @@ class Scratch3VideoSensingBlocks {
     }
 
     /**
+     * @typedef {object} SubjectInfo
+     * @property {string} name - the translatable name to display in the subject menu
+     * @property {string} value - the serializable value of the subject
+     */
+
+    /**
      * An array of info about the subject choices.
-     * @type {object[]}
-     * @param {string} name - the translatable name to display in the subject menu
-     * @param {string} value - the serializable value of the subject
+     * @returns {SubjectInfo[]}
      */
     get SUBJECT_INFO () {
         return [
@@ -359,16 +364,21 @@ class Scratch3VideoSensingBlocks {
      * States the video sensing activity can be set to.
      * @readonly
      * @enum {string}
+     * @returns The video state enum.
      */
     static get VideoState () {
         return VideoState;
     }
 
     /**
+     * @typedef {object} VideoStateInfo
+     * @property {string} name - the translatable name to display in the video state menu
+     * @property {string} value - the serializable value stored in the block
+     */
+
+    /**
      * An array of info on video state options for the "turn video [STATE]" block.
-     * @type {object[]}
-     * @param {string} name - the translatable name to display in the video state menu
-     * @param {string} value - the serializable value stored in the block
+     * @returns {VideoStateInfo[]}
      */
     get VIDEO_STATE_INFO () {
         return [

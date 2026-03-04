@@ -247,7 +247,7 @@ class Scratch3DataBlocks {
 
     /**
      * Type representation for list variables.
-     * @const {number}
+     * @returns {number}
      */
     get LIST_ITEM_LIMIT () {
         return this.runtime.limitOptions.unlimitedListLength ?

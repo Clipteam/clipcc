@@ -195,6 +195,7 @@ class Video {
      * The only change available externally is hiding the preview, used e.g. to
      * prevent drawing the preview into project thumbnails.
      * @param {object} data passed to this IO device.
+     * @param {boolean} data.forceTransparentPreview - whether the preview should be forced transparent.
      * @property {boolean} forceTransparentPreview - whether the preview should be forced transparent.
      */
     postData ({forceTransparentPreview}) {

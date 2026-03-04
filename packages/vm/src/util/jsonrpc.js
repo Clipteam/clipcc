@@ -36,11 +36,11 @@ class JSONRPC {
      * @param {string} method - the method requested by the remote caller.
      * @param {object} params - the parameters sent with the remote caller's request.
      */
-    didReceiveCall (/* method , params */) {
+    didReceiveCall (method, params) { // eslint-disable-line no-unused-vars
         throw new Error('Must override didReceiveCall');
     }
 
-    _sendMessage (/* jsonMessageObject */) {
+    _sendMessage (jsonMessageObject) { // eslint-disable-line no-unused-vars
         throw new Error('Must override _sendMessage');
     }
 

@@ -659,7 +659,7 @@ class EV3 {
     /**
      * Send a message to the peripheral BT socket.
      * @param {Uint8Array} message - the message to send.
-     * @param {boolean} [useLimiter=true] - if true, use the rate limiter
+     * @param {boolean} [useLimiter] - if true, use the rate limiter
      * @returns {Promise} - a promise result of the send operation.
      */
     send (message, useLimiter = true) {
@@ -937,7 +937,7 @@ class Scratch3Ev3Blocks {
     /**
      * Creates a new instance of the EV3 extension.
      * @param  {object} runtime VM runtime
-     * @constructor
+     * @class
      */
     constructor (runtime) {
         /**

@@ -7,13 +7,13 @@ const cast = require('../util/cast');
 
 /**
  * Single BlockUtility instance reused by execute for every pritimive ran.
- * @const
+ * @constant
  */
 const blockUtility = new BlockUtility();
 
 /**
  * Profiler frame name for block functions.
- * @const {string}
+ * @constant {string}
  */
 const blockFunctionProfilerFrame = 'blockFunction';
 
@@ -52,10 +52,8 @@ const isProcedureCaller = function (cached) {
  * @param {!Sequencer} sequencer Sequencer stepping the thread for the ran
  * primitive.
  * @param {!Thread} thread Thread containing the primitive.
- * @param {!string} currentBlockId Id of the block in its thread for value from
- * the primitive.
- * @param {!string} opcode opcode used to identify a block function primitive.
- * @param {!boolean} isHat Is the current block a hat?
+ * @param {!BlockCached} blockCached Cached block metadata.
+ * @param {boolean} lastOperation True if this is the last operation in a stack.
  */
 // @todo move this to callback attached to the thread when we have performance
 // metrics (dd)
@@ -223,7 +221,7 @@ class BlockCached {
 
         /**
          * The block opcode's implementation function.
-         * @type {?function}
+         * @type {?Function}
          */
         this._blockFunction = null;
 
