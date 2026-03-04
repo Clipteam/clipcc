@@ -41,7 +41,8 @@
     "storage": "yarn workspace clipcc-storage",
     "paint": "yarn workspace clipcc-paint",
     "parser": "yarn workspace clipcc-parser",
-    "audio": "yarn workspace clipcc-audio"
+    "audio": "yarn workspace clipcc-audio",
+    "extension": "yarn workspace clipcc-extension"
   },
   "devDependencies": {
     "@changesets/changelog-git": "^0.1.14",

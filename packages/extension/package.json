@@ -1,0 +1,26 @@
+{
+  "name": "clipcc-extension",
+  "version": "3.2.0",
+  "description": "Extension manager and interfaces for ClipCC",
+  "author": "Clip Team",
+  "license": "MIT",
+  "main": "./dist/clipcc-extension.js",
+  "types": "./dist/clipcc-extension.d.ts",
+  "repository": "https://github.com/Clipteam/clipcc.git",
+  "scripts": {
+    "build": "rimraf dist && mkdirp dist && webpack --progress --color --bail",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "eslint": "^10.0.2",
+    "lodash.defaultsdeep": "^4.6.1",
+    "terser-webpack-plugin": "^5.3.16",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
+    "webpack": "^5.105.3",
+    "webpack-cli": "^6.0.1"
+  },
+  "dependencies": {
+    "eslint-config-clipcc": "^9.0.9"
+  }
+}
