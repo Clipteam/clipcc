@@ -38,7 +38,7 @@ class SvgRenderer {
      * Create a quirks-mode SVG renderer for a particular canvas.
      * @param {HTMLCanvasElement} [canvas] An optional canvas element to draw to. If this is not provided, the renderer
      * will create a new canvas.
-     * @constructor
+     * @class
      */
     constructor (canvas: HTMLCanvasElement) {
         /**
@@ -157,7 +157,7 @@ class SvgRenderer {
     /**
      * Draw to the canvas from a loaded image element.
      * @param {number} [scale] - Optionally, also scale the image by this factor.
-     **/
+     */
     _drawFromImage (scale: number) {
         if (this._cachedImage === null) return;
 

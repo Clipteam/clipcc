@@ -36,7 +36,11 @@ class BitmapAdapter {
      * @param newHeight The desired post-resize height of the image
      * @returns A canvas with the resized image drawn on it.
      */
-    resize (image: Exclude<CanvasImageSource, VideoFrame | SVGImageElement>, newWidth: int, newHeight: int): HTMLCanvasElement {
+    resize (
+        image: Exclude<CanvasImageSource, VideoFrame | SVGImageElement>,
+        newWidth: int,
+        newHeight: int
+    ): HTMLCanvasElement {
         // We want to always resize using nearest-neighbor interpolation. However, canvas implementations are free to
         // use linear interpolation (or other "smooth" interpolation methods) when downscaling:
         // https://bugzilla.mozilla.org/show_bug.cgi?id=1360415

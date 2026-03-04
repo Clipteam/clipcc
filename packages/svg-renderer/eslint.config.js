@@ -22,6 +22,12 @@ module.exports = [
         }
     },
     {
+        files: ['src/**/*.ts', 'test/**/*.ts'],
+        rules: {
+            '@typescript-eslint/ban-ts-comment': 'off'
+        }
+    },
+    {
         ignores: [
             'node_modules/**',
             'dist/**',

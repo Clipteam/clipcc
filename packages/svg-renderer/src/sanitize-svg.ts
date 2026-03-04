@@ -57,7 +57,7 @@ let _TextDecoder;
 let _TextEncoder;
 if (typeof TextDecoder === 'undefined' || typeof TextEncoder === 'undefined') {
     // Wait to require the text encoding polyfill until we know it's needed.
-    // eslint-disable-next-line global-require
+    // eslint-disable-next-line global-require, @typescript-eslint/no-require-imports
     const encoding = require('fastestsmallesttextencoderdecoder');
     _TextDecoder = encoding.TextDecoder;
     _TextEncoder = encoding.TextEncoder;
@@ -87,7 +87,7 @@ const sanitizeSvg = {
      */
     sanitizeSvgText (rawSvgText: string): string {
         let sanitizedText = DOMPurify.sanitize(rawSvgText, {
-            USE_PROFILES: { svg: true }
+            USE_PROFILES: {svg: true}
         });
 
         // Remove partial XML comment that is sometimes left in the HTML
