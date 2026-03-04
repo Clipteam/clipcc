@@ -44,10 +44,10 @@ module.exports = [
     },
     {
         files: ['test/**/*.{js,jsx,ts,tsx}'],
+        plugins: {
+            react: reactPlugin
+        },
         languageOptions: {
-            plugins: {
-                react: reactPlugin
-            },
             globals: {
                 ...globals.jest,
                 ...globals.browser
