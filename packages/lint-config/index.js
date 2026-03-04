@@ -52,6 +52,7 @@ module.exports = [
             'dot-notation': [2],
             'eqeqeq': [2],
             'no-alert': [2],
+            'no-console': ['error', {allow: ['warn', 'error']}],
             'no-div-regex': [2],
             'no-else-return': [2],
             'no-eq-null': [2],
