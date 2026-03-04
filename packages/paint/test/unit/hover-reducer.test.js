@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import reducer, {clearHoveredItem, setHoveredItem} from '../../src/reducers/hover';
 
 test('initialState', () => {

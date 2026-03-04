@@ -24,22 +24,26 @@ document.body.appendChild(appTarget);
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('/service-worker.js').then(registration => {
+            // eslint-disable-next-line no-console
             console.log('SW registered: ', registration);
-        }).catch(registrationError => {
-            console.log('SW registration failed: ', registrationError);
-        });
+        })
+            .catch(registrationError => {
+            // eslint-disable-next-line no-console
+                console.log('SW registration failed: ', registrationError);
+            });
     });
 }
 
 if (supportedBrowser()) {
     // require needed here to avoid importing unsupported browser-crashing code
     // at the top level
+    // eslint-disable-next-line global-require
     require('./render-gui.jsx').default(appTarget);
 
 } else {
     BrowserModalComponent.setAppElement(appTarget);
     const WrappedBrowserModalComponent = AppStateHOC(BrowserModalComponent, true /* localesOnly */);
     const handleBack = () => {};
-    // eslint-disable-next-line react/jsx-no-bind
+
     ReactDOM.render(<WrappedBrowserModalComponent onBack={handleBack} />, appTarget);
 }

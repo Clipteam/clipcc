@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import brushReducer, {changeBrushSize} from '../../src/reducers/brush-mode';
 import eraserReducer, {changeBrushSize as changeEraserSize} from '../../src/reducers/eraser-mode';
 
@@ -14,7 +13,7 @@ test('initialState', () => {
 
 test('changeBrushSize', () => {
     let defaultState;
-    
+
     const newBrushSize = 8078;
 
     expect(brushReducer(defaultState /* state */, changeBrushSize(newBrushSize) /* action */))

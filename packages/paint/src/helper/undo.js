@@ -8,7 +8,7 @@ import log from '../log/log';
 
 /**
  * Take an undo snapshot
- * @param {function} dispatchPerformSnapshot Callback to dispatch a state update
+ * @param {Function} dispatchPerformSnapshot Callback to dispatch a state update
  * @param {Formats} format Either Formats.BITMAP or Formats.VECTOR
  */
 const performSnapshot = function (dispatchPerformSnapshot, format) {

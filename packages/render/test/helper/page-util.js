@@ -1,5 +1,4 @@
 /* global VirtualMachine, ScratchStorage, ScratchSVGRenderer */
-/* eslint-env browser */
 
 // Wait for all SVG skins to be loaded.
 // TODO: this is extremely janky and should be removed once vm.loadProject waits for SVG skins to load

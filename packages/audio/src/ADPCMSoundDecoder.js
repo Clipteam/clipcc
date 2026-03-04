@@ -27,7 +27,7 @@ let _deltaTable = null;
 
 /**
  * Build a table of deltas from the 89 possible steps and 16 codes.
- * @return {Array<number>} computed delta values
+ * @returns {Array<number>} computed delta values
  */
 const deltaTable = function () {
     if (_deltaTable === null) {
@@ -63,7 +63,7 @@ const deltaTable = function () {
 class ADPCMSoundDecoder {
     /**
      * @param {AudioContext} audioContext - a webAudio context
-     * @constructor
+     * @class
      */
     constructor (audioContext) {
         this.audioContext = audioContext;
@@ -89,7 +89,7 @@ class ADPCMSoundDecoder {
      * Decode an ADPCM sound stored in an ArrayBuffer and return a promise
      * with the decoded audio buffer.
      * @param  {ArrayBuffer} audioData - containing ADPCM encoded wav audio
-     * @return {AudioBuffer} the decoded audio buffer
+     * @returns {AudioBuffer} the decoded audio buffer
      */
     decode (audioData) {
 
@@ -120,7 +120,7 @@ class ADPCMSoundDecoder {
             this.bytesPerSecond = formatChunk.readUint32();
             this.blockAlignment = formatChunk.readUint16();
             this.bitsPerSample = formatChunk.readUint16();
-            formatChunk.position += 2;  // skip extra header byte count
+            formatChunk.position += 2; // skip extra header byte count
             this.samplesPerBlock = formatChunk.readUint16();
             this.adpcmBlockSize = ((this.samplesPerBlock - 1) / 2) + 4; // block size in bytes
 
@@ -138,7 +138,7 @@ class ADPCMSoundDecoder {
      * Extract a chunk of audio data from the stream, consisting of a set of audio data bytes
      * @param  {string} chunkType - the type of chunk to extract. 'data' or 'fmt' (format)
      * @param  {ArrayBufferStream} stream - an stream containing the audio data
-     * @return {ArrayBufferStream} a stream containing the desired chunk
+     * @returns {ArrayBufferStream | undefined} a stream containing the desired chunk
      */
     extractChunk (chunkType, stream) {
         stream.position = 12;
@@ -158,7 +158,7 @@ class ADPCMSoundDecoder {
      * Count the exact number of samples in the compressed data.
      * @param {ArrayBufferStream} compressedData - the compressed data
      * @param {number} blockSize - size of each block in the data in bytes
-     * @return {number} number of samples in the compressed data
+     * @returns {number} number of samples in the compressed data
      */
     numberOfSamples (compressedData, blockSize) {
         if (!compressedData) return 0;

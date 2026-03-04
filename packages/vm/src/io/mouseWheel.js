@@ -2,7 +2,7 @@ class MouseWheel {
     constructor (runtime) {
         /**
          * Reference to the owning Runtime.
-         * @type{!Runtime}
+         * @type {!Runtime}
          */
         this.runtime = runtime;
     }

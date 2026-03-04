@@ -5,7 +5,7 @@ import ErrorBoundary from '../containers/error-boundary.jsx';
  * Higher Order Component to provide error boundary for wrapped component.
  * A curried function, call like errorHOC(<tracking label>)(<Component>).
  * @param {string} action - Label for GA tracking of errors.
- * @returns {function} a function that accepts a component to wrap.
+ * @returns {Function} a function that accepts a component to wrap.
  */
 const ErrorBoundaryHOC = function (action){
     /**

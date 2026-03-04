@@ -40,6 +40,7 @@ const InlineMessages = ({
 };
 
 InlineMessages.propTypes = {
+    // eslint-disable-next-line react/forbid-prop-types
     alertsList: PropTypes.arrayOf(PropTypes.object),
     className: PropTypes.string
 };

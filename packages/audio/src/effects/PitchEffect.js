@@ -23,14 +23,14 @@ class PitchEffect extends Effect {
      * @param {AudioEngine} audioEngine - audio engine this runs with
      * @param {AudioPlayer} audioPlayer - audio player this affects
      * @param {Effect} lastEffect - effect in the chain before this one
-     * @constructor
+     * @class
      */
     constructor (audioEngine, audioPlayer, lastEffect) {
         super(audioEngine, audioPlayer, lastEffect);
 
         /**
          * The playback rate ratio
-         * @type {Number}
+         * @type {number}
          */
         this.ratio = 1;
     }
@@ -45,7 +45,7 @@ class PitchEffect extends Effect {
 
     /**
      * Should the effect be connected to the audio graph?
-     * @return {boolean} is the effect affecting the graph?
+     * @returns {boolean} is the effect affecting the graph?
      */
     get _isPatch () {
         return false;
@@ -53,7 +53,7 @@ class PitchEffect extends Effect {
 
     /**
      * Get the input node.
-     * @return {AudioNode} - audio node that is the input for this effect
+     * @returns {AudioNode} - audio node that is the input for this effect
      */
     getInputNode () {
         return this.target.getInputNode();

@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import modeReducer from '../../../src/reducers/mode';
 
 const SET_FULL_SCREEN = 'scratch-gui/mode/SET_FULL_SCREEN';

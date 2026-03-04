@@ -20,11 +20,17 @@ class TextTool extends paper.Tool {
     static get SELECT_MODE () {
         return 'SELECT_MODE';
     }
-    /** Clicks registered within this amount of time are registered as double clicks */
+    /**
+     * Clicks registered within this amount of time are registered as double clicks
+     * @returns {number} The time in milliseconds for distinguishing double clicks
+     */
     static get DOUBLE_CLICK_MILLIS () {
         return 250;
     }
-    /** Typing with no pauses longer than this amount of type will count as 1 action */
+    /**
+     * Typing with no pauses longer than this amount of type will count as 1 action
+     * @returns {number} The time in milliseconds for distinguishing separate typing actions
+     */
     static get TYPING_TIMEOUT_MILLIS () {
         return 1000;
     }
@@ -33,12 +39,12 @@ class TextTool extends paper.Tool {
     }
     /**
      * @param {HTMLTextAreaElement} textAreaElement dom element for the editable text field
-     * @param {function} setSelectedItems Callback to set the set of selected items in the Redux state
-     * @param {function} clearSelectedItems Callback to clear the set of selected items in the Redux state
-     * @param {function} setCursor Callback to set the visible mouse cursor
-     * @param {!function} onUpdateImage A callback to call when the image visibly changes
-     * @param {!function} setTextEditTarget Call to set text editing target whenever text editing is active
-     * @param {!function} changeFont Call to change the font in the dropdown
+     * @param {Function} setSelectedItems Callback to set the set of selected items in the Redux state
+     * @param {Function} clearSelectedItems Callback to clear the set of selected items in the Redux state
+     * @param {Function} setCursor Callback to set the visible mouse cursor
+     * @param {!Function} onUpdateImage A callback to call when the image visibly changes
+     * @param {!Function} setTextEditTarget Call to set text editing target whenever text editing is active
+     * @param {!Function} changeFont Call to change the font in the dropdown
      * @param {?boolean} isBitmap True if text should be rasterized once it's deselected
      */
     constructor (textAreaElement, setSelectedItems, clearSelectedItems, setCursor, onUpdateImage, setTextEditTarget,

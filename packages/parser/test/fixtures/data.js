@@ -1,23 +1,23 @@
-var fs = require('fs');
-var glob = require('glob');
-var path = require('path');
+const fs = require('fs');
+const glob = require('glob');
+const path = require('path');
 
 // Build file listings
-var sb = glob.sync(path.resolve(__dirname, './data/*.sb'));
-var sb2 = glob.sync(path.resolve(__dirname, './data/*.sb2'));
-var sb3 = glob.sync(path.resolve(__dirname, './data/*.sb3'));
-var sprite2 = glob.sync(path.resolve(__dirname, './data/*.sprite2'));
+const sb = glob.sync(path.resolve(__dirname, './data/*.sb'));
+const sb2 = glob.sync(path.resolve(__dirname, './data/*.sb2'));
+const sb3 = glob.sync(path.resolve(__dirname, './data/*.sb3'));
+const sprite2 = glob.sync(path.resolve(__dirname, './data/*.sprite2'));
 // Sprite2 and Sprite3 jsons have modified file extensions
 // so that they don't get caught here but can still be used by the
 // validate unit tests
-var json = glob.sync(path.resolve(__dirname, './data/*.json'));
+const json = glob.sync(path.resolve(__dirname, './data/*.json'));
 
 // Read files and convert to buffers
-for (var a in sb) sb[a] = fs.readFileSync(sb[a]);
-for (var b in sb2) sb2[b] = fs.readFileSync(sb2[b]);
-for (var c in sb3) sb3[c] = fs.readFileSync(sb3[c]);
-for (var d in json) json[d] = fs.readFileSync(json[d]);
-for (var f in sprite2) sprite2[f] = fs.readFileSync(sprite2[f]);
+for (const a in sb) sb[a] = fs.readFileSync(sb[a]);
+for (const b in sb2) sb2[b] = fs.readFileSync(sb2[b]);
+for (const c in sb3) sb3[c] = fs.readFileSync(sb3[c]);
+for (const d in json) json[d] = fs.readFileSync(json[d]);
+for (const f in sprite2) sprite2[f] = fs.readFileSync(sprite2[f]);
 
 // Return listings
 module.exports = {

@@ -5,7 +5,7 @@ class Loudness {
      * Instrument and detect a loudness value from a local microphone.
      * @param {AudioContext} audioContext - context to create nodes from for
      *     detecting loudness
-     * @constructor
+     * @class
      */
     constructor (audioContext) {
         /**
@@ -16,7 +16,7 @@ class Loudness {
 
         /**
          * Are we connecting to the mic yet?
-         * @type {Boolean}
+         * @type {boolean}
          */
         this.connectingToMic = false;
 
@@ -31,7 +31,7 @@ class Loudness {
      * Get the current loudness of sound received by the microphone.
      * Sound is measured in RMS and smoothed.
      * Some code adapted from Tone.js: https://github.com/Tonejs/Tone.js
-     * @return {number} loudness scaled 0 to 100
+     * @returns {number} loudness scaled 0 to 100
      */
     getLoudness () {
         // The microphone has not been set up, so try to connect to it
@@ -44,9 +44,9 @@ class Loudness {
                 this.mic.connect(this.analyser);
                 this.micDataArray = new Float32Array(this.analyser.fftSize);
             })
-            .catch(err => {
-                log.warn(err);
-            });
+                .catch(err => {
+                    log.warn(err);
+                });
         }
 
         // If the microphone is set up and active, measure the loudness

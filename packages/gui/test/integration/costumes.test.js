@@ -32,6 +32,7 @@ describe('Working with costumes', () => {
     test('Adding a costume through the library', async () => {
         // This is needed when running the tests all at once or it just fails...
         await driver.quit();
+        // eslint-disable-next-line require-atomic-updates
         driver = getDriver();
 
         await loadUri(uri);
@@ -236,7 +237,7 @@ describe('Working with costumes', () => {
         await expect(logs).toEqual([]);
     });
 
-    test('Load an invalid svg from scratch3 as costume', async () => { // eslint-disable-line no-disabled-tests
+    test('Load an invalid svg from scratch3 as costume', async () => {
         await loadUri(uri);
         await clickText('Costumes');
         const el = await findByXpath('//button[@aria-label="Choose a Costume"]');
@@ -250,7 +251,7 @@ describe('Working with costumes', () => {
         await expect(tileVisible).toBe(true);
     });
 
-    test('Load an invalid svg from scratch2 as costume', async () => { // eslint-disable-line no-disabled-tests
+    test('Load an invalid svg from scratch2 as costume', async () => {
         await loadUri(uri);
         await clickText('Costumes');
         const el = await findByXpath('//button[@aria-label="Choose a Costume"]');

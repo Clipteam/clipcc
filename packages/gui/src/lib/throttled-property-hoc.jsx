@@ -6,7 +6,7 @@ import React from 'react';
  * rendered value of a prop for comparison.
  * @param {string} propName the name of the prop to throttle updates from.
  * @param {string} throttleTime the minimum time between updates to that specific property.
- * @returns {function} a function that accepts a component to wrap.
+ * @returns {Function} a function that accepts a component to wrap.
  */
 const ThrottledPropertyHOC = function (propName, throttleTime) {
     /**

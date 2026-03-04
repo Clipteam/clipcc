@@ -299,7 +299,7 @@ class SomeBlocks {
     }
 
     /**
-     * @return {object} This extension's metadata.
+     * @returns {object} This extension's metadata.
      */
     getInfo () {
         return {

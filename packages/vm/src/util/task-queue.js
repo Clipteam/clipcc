@@ -38,6 +38,7 @@ class TaskQueue {
      *
      * @readonly
      * @memberof TaskQueue
+     * @returns {number} the number of pending tasks.
      */
     get length () {
         return this._pendingTaskRecords.length;
@@ -47,7 +48,7 @@ class TaskQueue {
      * Wait until the token bucket is full enough, then run the provided task.
      *
      * @param {Function} task - the task to run.
-     * @param {number} [cost=1] - the number of tokens this task consumes from the bucket.
+     * @param {number} [cost] - the number of tokens this task consumes from the bucket.
      * @returns {Promise} - a promise for the task's return value.
      * @memberof TaskQueue
      */

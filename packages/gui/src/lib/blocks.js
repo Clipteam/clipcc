@@ -7,7 +7,7 @@ import * as ScratchBlocks from 'clipcc-block';
 /**
  * Connect scratch blocks with the vm
  * @param {VirtualMachine} vm - The scratch vm
- * @return {ScratchBlocks} ScratchBlocks connected with the vm
+ * @returns {ScratchBlocks} ScratchBlocks connected with the vm
  */
 export default function (vm) {
 

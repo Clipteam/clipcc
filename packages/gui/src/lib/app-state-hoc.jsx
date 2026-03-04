@@ -44,6 +44,7 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
             } else {
                 // You are right, this is gross. But it's necessary to avoid
                 // importing unneeded code that will crash unsupported browsers.
+                // eslint-disable-next-line global-require
                 const guiRedux = require('../reducers/gui');
                 const guiReducer = guiRedux.default;
                 const {
@@ -53,6 +54,7 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
                     initPlayer,
                     initTelemetryModal
                 } = guiRedux;
+                // eslint-disable-next-line global-require
                 const {ScratchPaintReducer} = require('clipcc-paint');
 
                 let initializedGui = guiInitialState;

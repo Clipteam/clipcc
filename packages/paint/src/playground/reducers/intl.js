@@ -1,6 +1,5 @@
 import {addLocaleData} from 'react-intl';
-import {updateIntl as superUpdateIntl} from 'react-intl-redux';
-import {IntlProvider, intlReducer} from 'react-intl-redux';
+import {updateIntl as superUpdateIntl, IntlProvider, intlReducer} from 'react-intl-redux';
 
 import localeData from 'clipcc-l10n';
 import paintMessages from 'clipcc-l10n/locales/paint-editor-msgs';
