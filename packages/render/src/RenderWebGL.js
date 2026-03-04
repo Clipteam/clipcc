@@ -1831,8 +1831,8 @@ class RenderWebGL extends EventEmitter {
      * to be entered to restore a common inbetween state.
      *
      * @param {any} regionId - id of the region to enter
-     * @param {function} enter - handle to call when first entering a region
-     * @param {function} exit - handle to call when leaving a region
+     * @param {Function} enter - handle to call when first entering a region
+     * @param {Function} exit - handle to call when leaving a region
      */
     enterDrawRegion (regionId, enter = regionId.enter, exit = regionId.exit) {
         if (this._regionId !== regionId) {

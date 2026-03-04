@@ -1577,7 +1577,7 @@ class Blocks {
  * reset.
  * @param {Blocks} blocks Blocks containing the expected blockId
  * @param {string} blockId blockId for the desired execute cache
- * @param {function} CacheType constructor for cached block information
+ * @param {Function} CacheType constructor for cached block information
  * @returns {object} execute cache object
  */
 BlocksExecuteCache.getCached = function (blocks, blockId, CacheType) {
@@ -1614,7 +1614,7 @@ BlocksExecuteCache.getCached = function (blocks, blockId, CacheType) {
 /**
  * Cache class constructor for runtime. Used to consider what threads should
  * start based on hat data.
- * @type {function}
+ * @type {Function}
  */
 const RuntimeScriptCache = BlocksRuntimeCache._RuntimeScriptCache;
 

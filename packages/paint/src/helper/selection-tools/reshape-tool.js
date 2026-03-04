@@ -31,33 +31,41 @@ const ReshapeModes = keyMirror({
  * - Handle tool, which translates handles, changing the shape of curves
  */
 class ReshapeTool extends paper.Tool {
-    /** Distance within which mouse is considered to be hitting an item */
+    /**
+     * Distance within which mouse is considered to be hitting an item
+     * @returns {number} The tolerance in points for hit testing
+     */
     static get TOLERANCE () {
         return ReshapeTool.HANDLE_RADIUS + ReshapeTool.HANDLE_PADDING;
     }
     /**
      * Units of padding around the visible handle area that will still register clicks as "touching the handle"
+     * @returns {number} The padding in points around the handle that will count as hitting the handle
      */
     static get HANDLE_PADDING () {
         return 1;
     }
     /**
      * Handles' radius, including the stroke
+     * @returns {number} The radius in points of the handle, including the stroke
      */
     static get HANDLE_RADIUS () {
         return 5.25;
     }
-    /** Clicks registered within this amount of time are registered as double clicks */
+    /**
+     * Clicks registered within this amount of time are registered as double clicks
+     * @returns {number} The time in milliseconds within which clicks are considered double clicks
+     */
     static get DOUBLE_CLICK_MILLIS () {
         return 250;
     }
     /**
-     * @param {function} setHoveredItem Callback to set the hovered item
-     * @param {function} clearHoveredItem Callback to clear the hovered item
-     * @param {function} setSelectedItems Callback to set the set of selected items in the Redux state
-     * @param {function} clearSelectedItems Callback to clear the set of selected items in the Redux state
-     * @param {!function} onUpdateImage A callback to call when the image visibly changes
-     * @param {!function} switchToTextTool A callback to call to switch to the text tool
+     * @param {Function} setHoveredItem Callback to set the hovered item
+     * @param {Function} clearHoveredItem Callback to clear the hovered item
+     * @param {Function} setSelectedItems Callback to set the set of selected items in the Redux state
+     * @param {Function} clearSelectedItems Callback to clear the set of selected items in the Redux state
+     * @param {!Function} onUpdateImage A callback to call when the image visibly changes
+     * @param {!Function} switchToTextTool A callback to call to switch to the text tool
      */
     constructor (setHoveredItem, clearHoveredItem, setSelectedItems, clearSelectedItems, onUpdateImage,
         switchToTextTool) {
@@ -157,8 +165,6 @@ class ReshapeTool extends paper.Tool {
     }
     /**
      * Returns the hit options for fills and unselected strokes/curves to use when conducting hit tests.
-     * @param {boolean} preselectedOnly True if we should only return results that are already
-     *     selected.
      * @returns {object} See paper.Item.hitTest for definition of options
      */
     getUnselectedAndFillHitOptions () {

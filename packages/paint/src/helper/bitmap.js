@@ -54,7 +54,7 @@ const solveQuadratic_ = function (a, b, c) {
  * @param {!number} options.radiusY minor radius of ellipse
  * @param {!number} options.shearSlope slope of the sheared x axis
  * @param {?boolean} options.isFilled true if isFilled
- * @param {?function} options.drawFn The function called on each point in the outline, used only
+ * @param {?Function} options.drawFn The function called on each point in the outline, used only
  *     if isFilled is false.
  * @param {!CanvasRenderingContext2D} context for drawing
  * @returns {boolean} true if anything was drawn, false if not
@@ -83,7 +83,7 @@ const drawShearedEllipse_ = function (options, context) {
     /**
      * Vertical stepping portion of ellipse drawing algorithm
      * @param {!number} startY y to start drawing from
-     * @param {!function} conditionFn function which should become true when we should stop stepping
+     * @param {!Function} conditionFn function which should become true when we should stop stepping
      * @returns {object} last point drawn to the canvas, or null if no points drawn
      */
     const drawEllipseStepVertical_ = function (startY, conditionFn) {
@@ -114,7 +114,7 @@ const drawShearedEllipse_ = function (options, context) {
     /**
      * Horizontal stepping portion of ellipse drawing algorithm
      * @param {!number} startX x to start drawing from
-     * @param {!function} conditionFn function which should become false when we should stop stepping
+     * @param {!Function} conditionFn function which should become false when we should stop stepping
      * @returns {object} last point drawn to the canvas, or null if no points drawn
      */
     const drawEllipseStepHorizontal_ = function (startX, conditionFn) {

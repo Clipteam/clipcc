@@ -136,7 +136,7 @@ const selectAllSegments = function () {
     return true;
 };
 
-/** @param {!function} dispatchClearSelect Function to update the Redux select state */
+/** @param {!Function} dispatchClearSelect Function to update the Redux select state */
 const clearSelection = function (dispatchClearSelect) {
     paper.project.deselectAll();
     dispatchClearSelect();

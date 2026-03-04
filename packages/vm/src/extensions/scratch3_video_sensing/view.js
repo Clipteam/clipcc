@@ -200,7 +200,7 @@ class VideoMotionView {
      * @param {number} yStart - start location on the y axis of the output pixel buffer
      * @param {nubmer} xStop - location to stop at on the x axis
      * @param {number} yStop - location to stop at on the y axis
-     * @param {function} fn - handle to call with each iterated address
+     * @param {Function} fn - handle to call with each iterated address
      */
     _eachAddress (xStart, yStart, xStop, yStop, fn) {
         for (let i = yStart; i < yStop; i++) {
@@ -220,7 +220,7 @@ class VideoMotionView {
      * @param {number} yStop - location to stop at on the y axis
      * @param {number} xStep - width of the cells
      * @param {number} yStep - height of the cells
-     * @param {function} fn - function to call with a bound handle to _eachAddress
+     * @param {Function} fn - function to call with a bound handle to _eachAddress
      */
     _eachCell (xStart, yStart, xStop, yStop, xStep, yStep, fn) {
         const xStep2 = (xStep / 2) | 0;
@@ -254,7 +254,7 @@ class VideoMotionView {
     /**
      * Build component values used in determining a motion vector for a pixel
      * address.
-     * @param {function} eachAddress - a bound handle to _eachAddress to build
+     * @param {Function} eachAddress - a bound handle to _eachAddress to build
      *   component values for
      * @returns {object} a object with a A2, A1B2, B1, C2, C1 value
      */

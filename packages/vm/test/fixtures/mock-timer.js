@@ -106,7 +106,7 @@ class MockTimer {
     /**
      * Call a handler function after a specified amount of time has elapsed.
      * Guaranteed to happen in between "ticks" of JavaScript.
-     * @param {function} handler - function to call after the timeout
+     * @param {Function} handler - function to call after the timeout
      * @param {number} timeout - number of milliseconds to delay before calling the handler
      * @returns {number} - the ID of the new timeout.
      * @memberof MockTimer

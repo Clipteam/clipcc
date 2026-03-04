@@ -109,13 +109,13 @@ const ArgumentTypeMap = (() => {
  * A pair of functions used to manage the cloud variable limit,
  * to be used when adding (or attempting to add) or removing a cloud variable.
  * @typedef {object} CloudDataManager
- * @property {function} canAddCloudVariable A function to call to check that
+ * @property {Function} canAddCloudVariable A function to call to check that
  * a cloud variable can be added.
- * @property {function} addCloudVariable A function to call to track a new
+ * @property {Function} addCloudVariable A function to call to track a new
  * cloud variable on the runtime.
- * @property {function} removeCloudVariable A function to call when
+ * @property {Function} removeCloudVariable A function to call when
  * removing an existing cloud variable.
- * @property {function} hasCloudVariables A function to call to check that
+ * @property {Function} hasCloudVariables A function to call to check that
  * the runtime has any cloud variables.
  */
 
@@ -402,7 +402,7 @@ class Runtime extends EventEmitter {
 
         /**
          * Check wether the runtime has any cloud data.
-         * @type {function}
+         * @type {Function}
          * @returns {boolean} Whether or not the runtime currently has any
          * cloud variables.
          */
@@ -411,7 +411,7 @@ class Runtime extends EventEmitter {
         /**
          * A function which checks whether a new cloud variable can be added
          * to the runtime.
-         * @type {function}
+         * @type {Function}
          * @returns {boolean} Whether or not a new cloud variable can be added
          * to the runtime.
          */
@@ -422,7 +422,7 @@ class Runtime extends EventEmitter {
          * updating the cloud variable limit. Calling this function will
          * emit a cloud data update event if this is the first cloud variable
          * being added.
-         * @type {function}
+         * @type {Function}
          */
         this.addCloudVariable = this._initializeAddCloudVariable(newCloudDataManager);
 
@@ -430,7 +430,7 @@ class Runtime extends EventEmitter {
          * A function which updates the runtime's cloud variable limit
          * when removing a cloud variable and emits a cloud update event
          * if the last of the cloud variables is being removed.
-         * @type {function}
+         * @type {Function}
          */
         this.removeCloudVariable = this._initializeRemoveCloudVariable(newCloudDataManager);
 

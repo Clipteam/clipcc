@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
-import Fonts from '../lib/fonts';
 import Modes from '../lib/modes';
 import ColorStyleProptype from '../lib/color-style-proptype';
 import {MIXED} from '../helper/style-path';
@@ -96,12 +95,6 @@ class TextMode extends React.Component {
         } else if (fillColorPresent && !strokeColorPresent) {
             this.props.onChangeStrokeColor(null);
         }
-        /*
-        if (!nextProps.font || Object.keys(Fonts).map(key => Fonts[key])
-            .indexOf(nextProps.font) < 0) {
-            this.props.changeFont(Fonts.SANS_SERIF);
-        }
-        */
 
         this.tool = new TextTool(
             this.props.textArea,

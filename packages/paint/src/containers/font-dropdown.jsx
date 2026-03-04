@@ -124,6 +124,7 @@ class FontDropdown extends React.Component {
     handleChoose () {
         if (this.dropDown.isOpen()) {
             if (this.isCustomFont) {
+                // eslint-disable-next-line no-alert
                 this.props.changeFont(prompt('Font name'));
                 this.isCustomFont = false;
             }

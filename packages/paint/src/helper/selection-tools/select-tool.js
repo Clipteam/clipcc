@@ -15,22 +15,28 @@ import paper from '@scratch/paper';
  *   reshaping the item that was clicked.
  */
 class SelectTool extends paper.Tool {
-    /** The distance within which mouse events count as a hit against an item */
+    /**
+     * The distance within which mouse events count as a hit against an item
+     * @returns {number} The tolerance in points for hit testing
+     */
     static get TOLERANCE () {
         return 2;
     }
-    /** Clicks registered within this amount of time are registered as double clicks */
+    /**
+     * Clicks registered within this amount of time are registered as double clicks
+     * @returns {number} The time in milliseconds for distinguishing double clicks
+     */
     static get DOUBLE_CLICK_MILLIS () {
         return 250;
     }
     /**
-     * @param {function} setHoveredItem Callback to set the hovered item
-     * @param {function} clearHoveredItem Callback to clear the hovered item
-     * @param {function} setSelectedItems Callback to set the set of selected items in the Redux state
-     * @param {function} clearSelectedItems Callback to clear the set of selected items in the Redux state
-     * @param {function} setCursor Callback to set the visible mouse cursor
-     * @param {!function} onUpdateImage A callback to call when the image visibly changes
-     * @param {!function} switchToTextTool A callback to call to switch to the text tool
+     * @param {Function} setHoveredItem Callback to set the hovered item
+     * @param {Function} clearHoveredItem Callback to clear the hovered item
+     * @param {Function} setSelectedItems Callback to set the set of selected items in the Redux state
+     * @param {Function} clearSelectedItems Callback to clear the set of selected items in the Redux state
+     * @param {Function} setCursor Callback to set the visible mouse cursor
+     * @param {!Function} onUpdateImage A callback to call when the image visibly changes
+     * @param {!Function} switchToTextTool A callback to call to switch to the text tool
      */
     constructor (setHoveredItem, clearHoveredItem, setSelectedItems, clearSelectedItems, setCursor, onUpdateImage,
         switchToTextTool) {
