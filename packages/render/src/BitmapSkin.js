@@ -34,7 +34,7 @@ class BitmapSkin extends Skin {
     }
 
     /**
-     * @return {Array<number>} the "native" size, in texels, of this skin.
+     * @returns {Array<number>} the "native" size, in texels, of this skin.
      */
     get size () {
         return [this._textureSize[0] / this._costumeResolution, this._textureSize[1] / this._costumeResolution];
@@ -42,7 +42,7 @@ class BitmapSkin extends Skin {
 
     /**
      * @param {Array<number>} scale - The scaling factors to be used.
-     * @return {WebGLTexture} The GL texture representation of this skin when drawing at the given scale.
+     * @returns {WebGLTexture} The GL texture representation of this skin when drawing at the given scale.
      */
     // eslint-disable-next-line no-unused-vars
     getTexture (scale) {

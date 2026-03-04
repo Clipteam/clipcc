@@ -70,14 +70,14 @@ class SvgRenderer {
     }
 
     /**
-     * @return the natural size, in Scratch units, of this SVG.
+     * @returns the natural size, in Scratch units, of this SVG.
      */
     get size (): [number, number] {
         return [this._measurements.width, this._measurements.height];
     }
 
     /**
-     * @return {Array<number>} the offset (upper left corner) of the SVG's view box.
+     * @returns {Array<number>} the offset (upper left corner) of the SVG's view box.
      */
     get viewOffset () {
         return [this._measurements.x, this._measurements.y];

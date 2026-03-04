@@ -201,7 +201,7 @@ class Scratch3Speech2TextBlocks {
 
     /**
      * Get the viewer's language code.
-     * @return {string} the language code.
+     * @returns {string} the language code.
      */
     _getViewerLanguageCode () {
         return formatMessage.setup().locale || navigator.language || navigator.userLanguage || 'en-US';
@@ -664,7 +664,7 @@ class Scratch3Speech2TextBlocks {
 
     /**
      * Start the listening process if it isn't already in progress.
-     * @return {Promise} A promise that will resolve when listening is complete.
+     * @returns {Promise} A promise that will resolve when listening is complete.
      */
     listenAndWait () {
         this._phraseList = this._scanBlocksForPhraseList();
@@ -683,7 +683,7 @@ class Scratch3Speech2TextBlocks {
     /**
      * An edge triggered hat block to listen for a specific phrase.
      * @param {object} args - the block arguments.
-     * @return {boolean} true if the phrase matches what was transcribed.
+     * @returns {boolean} true if the phrase matches what was transcribed.
      */
     whenIHearHat (args) {
         return this._speechMatches(args.PHRASE, this._utteranceForEdgeTrigger);
@@ -691,7 +691,7 @@ class Scratch3Speech2TextBlocks {
 
     /**
      * Reporter for the last heard phrase/utterance.
-     * @return {string} The lastest thing we heard from a listen and wait block.
+     * @returns {string} The lastest thing we heard from a listen and wait block.
      */
     getSpeech () {
         return this._currentUtterance;

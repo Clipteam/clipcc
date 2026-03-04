@@ -71,7 +71,7 @@ class VideoProvider {
     /**
      * Request video be enabled.  Sets up video, creates video skin and enables preview.
      *
-     * @return {Promise.<Video>} resolves a promise to this video provider when video is ready.
+     * @returns {Promise.<Video>} resolves a promise to this video provider when video is ready.
      */
     enableVideo () {
         this.enabled = true;
@@ -119,7 +119,7 @@ class VideoProvider {
      * @param {number} frameInfo.cacheTimeout Will reuse previous image data if the time since capture is less than
      *                                        the cacheTimeout.  Defaults to 16ms.
      *
-     * @return {ArrayBuffer|Canvas|string|null} Frame data in requested format, null when errors.
+     * @returns {ArrayBuffer|Canvas|string|null} Frame data in requested format, null when errors.
      */
     getFrame ({
         dimensions = VideoProvider.DIMENSIONS,
@@ -196,7 +196,7 @@ class VideoProvider {
     /**
      * Create a video stream.
      * @private
-     * @return {Promise} When video has been received, rejected if video is not received
+     * @returns {Promise} When video has been received, rejected if video is not received
      */
     _setupVideo () {
         // We cache the result of this setup so that we can only ever have a single
@@ -260,7 +260,7 @@ class VideoProvider {
      * this uses some document stuff to create a canvas and what not, probably needs abstraction
      * into the renderer layer?
      * @private
-     * @return {object} A workspace for canvas/data storage.  Internal format not documented intentionally
+     * @returns {object} A workspace for canvas/data storage.  Internal format not documented intentionally
      */
     _getWorkspace ({dimensions, mirror}) {
         let workspace = this._workspace.find(space => (

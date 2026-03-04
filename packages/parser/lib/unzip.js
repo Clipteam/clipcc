@@ -5,8 +5,8 @@ var JSZip = require('jszip');
  * @param {string}  input    Zip file provided as a string
  * @param {boolean} isSprite Whether the input should be treated as
  * a sprite (true) or whole project (false)
- * @param {array}   callback Array including both the project and zip archive
- * @return {void}
+ * @param {Array}   callback Array including both the project and zip archive
+ * @returns {void}
  */
 module.exports = function (input, isSprite, callback) {
     var msg = 'Failed to unzip and extract project.json, with error: ';

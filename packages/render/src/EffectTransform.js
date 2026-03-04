@@ -127,7 +127,7 @@ class EffectTransform {
      * @param {Drawable} drawable The drawable whose effects to emulate.
      * @param {twgl.v3} vec The texture coordinate to transform.
      * @param {twgl.v3} dst A place to store the output coordinate.
-     * @return {twgl.v3} dst - The coordinate after being transform by effects.
+     * @returns {twgl.v3} dst - The coordinate after being transform by effects.
      */
     static transformPoint (drawable, vec, dst) {
         twgl.v3.copy(vec, dst);

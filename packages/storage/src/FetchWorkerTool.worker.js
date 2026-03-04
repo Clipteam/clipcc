@@ -1,5 +1,3 @@
-/* eslint-env worker */
-
 const crossFetch = require('cross-fetch').default;
 
 let jobsActive = 0;

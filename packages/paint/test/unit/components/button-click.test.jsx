@@ -1,7 +1,6 @@
-/* eslint-env jest */
 import React from 'react'; // eslint-disable-line no-unused-vars
 import {shallow} from 'enzyme';
-import Button from '../../../src/components/button/button.jsx'; // eslint-disable-line no-unused-vars, max-len
+import Button from '../../../src/components/button/button.jsx';
 
 describe('Button', () => {
     test('triggers callback when clicked', () => {

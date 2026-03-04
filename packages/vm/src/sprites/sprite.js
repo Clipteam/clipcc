@@ -69,7 +69,7 @@ class Sprite {
 
     /**
      * Get full costume list
-     * @return {object[]} list of costumes. Note that mutating the returned list will not
+     * @returns {object[]} list of costumes. Note that mutating the returned list will not
      *     mutate the list on the sprite. The sprite list should be mutated by calling
      *     addCostumeAt, deleteCostumeAt, or setting costumes.
      */
@@ -94,7 +94,7 @@ class Sprite {
     /**
      * Delete a costume by index.
      * @param {number} index Costume index to be deleted
-     * @return {?object} The deleted costume
+     * @returns {?object} The deleted costume
      */
     deleteCostumeAt (index) {
         return this.costumes.splice(index, 1)[0];

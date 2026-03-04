@@ -8,7 +8,7 @@ var unzip = require('./unzip');
  * @param {boolean}         isSprite Whether the input should be treated as
  * a sprite (true) or a whole project (false)
  * @param {Function}        callback Error or stringified project data
- * @return {void}
+ * @returns {void}
  */
 module.exports = function (input, isSprite, callback) {
     if (typeof input === 'string') {

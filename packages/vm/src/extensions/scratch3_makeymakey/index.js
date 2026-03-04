@@ -89,7 +89,7 @@ class Scratch3MakeyMakeyBlocks {
         this._clearkeyPressBuffer = this._clearkeyPressBuffer.bind(this);
         this.runtime.on('PROJECT_STOP_ALL', this._clearkeyPressBuffer);
 
-        /*
+        /**
          * An object containing a set of sequence objects.
          * These are the key sequences currently being detected by the "when
          * keys pressed in order" hat block. Each sequence is keyed by its
@@ -102,14 +102,14 @@ class Scratch3MakeyMakeyBlocks {
          */
         this.sequences = {};
 
-        /*
+        /**
          * An array of the key codes of recently pressed keys.
-         * @type {array}
+         * @type {Array}
          */
         this.keyPressBuffer = [];
     }
 
-    /*
+    /**
     * Localized short-form names of the space bar and arrow keys, for use in the
     * displayed menu items of the "when keys pressed in order" block.
     * @type {object}
@@ -144,7 +144,7 @@ class Scratch3MakeyMakeyBlocks {
         };
     }
 
-    /*
+    /**
      * An array of strings of KEY_IDs representing the default set of
      * key sequences for use by the "when keys pressed in order" block.
      * @type {array}
@@ -266,10 +266,10 @@ class Scratch3MakeyMakeyBlocks {
         };
     }
 
-    /*
+    /**
      * Build the menu of key sequences.
-     * @param {array} sequencesArray an array of strings of KEY_IDs.
-     * @returns {array} an array of objects with text and value properties.
+     * @param {Array} sequencesArray an array of strings of KEY_IDs.
+     * @returns {Array} an array of objects with text and value properties.
      */
     buildSequenceMenu (sequencesArray) {
         return sequencesArray.map(
@@ -277,10 +277,10 @@ class Scratch3MakeyMakeyBlocks {
         );
     }
 
-    /*
+    /**
      * Create a menu item for a sequence string.
      * @param {string} sequenceString a string of KEY_IDs.
-     * @return {object} an object with text and value properties.
+     * @returns {object} an object with text and value properties.
      */
     getMenuItemForSequenceString (sequenceString) {
         let sequenceArray = sequenceString.split(' ');
@@ -291,13 +291,14 @@ class Scratch3MakeyMakeyBlocks {
         };
     }
 
-    /*
+    /**
      * Check whether a keyboard key is currently pressed.
      * Also, toggle the results of the test on alternate frames, so that the
      * hat block fires repeatedly.
      * @param {object} args - the block arguments.
      * @property {number} KEY - a key code.
      * @param {object} util - utility object provided by the runtime.
+     * @returns {boolean} true if the key is currently pressed, toggled on
      */
     whenMakeyKeyPressed (args, util) {
         let key = args.KEY;
@@ -310,7 +311,7 @@ class Scratch3MakeyMakeyBlocks {
         return (isDown && this.frameToggle);
     }
 
-    /*
+    /**
      * A function called on the KEY_PRESSED event, to update the key press
      * buffer and check if any of the key sequences have been completed.
      * @param {string} key A scratch key name.
@@ -361,10 +362,10 @@ class Scratch3MakeyMakeyBlocks {
         this.keyPressBuffer = [];
     }
 
-    /*
+    /**
      * Add a key sequence to the set currently being checked on each key press.
      * @param {string} sequenceString a string of space-separated KEY_IDs.
-     * @param {array} sequenceArray an array of KEY_IDs.
+     * @param {Array} sequenceArray an array of KEY_IDs.
      */
     addSequence (sequenceString, sequenceArray) {
         // If we already have this sequence string, return.
@@ -377,16 +378,17 @@ class Scratch3MakeyMakeyBlocks {
         };
     }
 
-    /*
+    /**
      * Check whether a key sequence was recently completed.
      * @param {object} args The block arguments.
      * @property {number} SEQUENCE A string of KEY_IDs.
+     * @returns {boolean} true if the sequence was recently completed.
      */
     whenCodePressed (args) {
         const sequenceString = Cast.toString(args.SEQUENCE).toUpperCase();
         const sequenceArray = sequenceString.split(' ');
         if (sequenceArray.length < 2) {
-            return;
+            return false;
         }
         this.addSequence(sequenceString, sequenceArray);
 

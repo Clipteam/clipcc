@@ -13,7 +13,7 @@ class ArrayBufferStream {
      * bytes available will be relative to the end value.
      * @param {ArrayBufferStream} parent - if passed reuses the parent's
      * internal objects
-     * @constructor
+     * @class
      */
     constructor (
         arrayBuffer, start = 0, end = arrayBuffer.byteLength,
@@ -59,21 +59,23 @@ class ArrayBufferStream {
     /**
      * Return a new ArrayBufferStream that is a slice of the existing one
      * @param  {number} length - the number of bytes of extract
-     * @return {ArrayBufferStream} the extracted stream
+     * @returns {ArrayBufferStream} the extracted stream
      */
     extract (length) {
         return new ArrayBufferStream(this.arrayBuffer, this._position, this._position + length, this);
     }
 
     /**
-     * @return {number} the length of the stream in bytes
+     * Return the length of the stream in bytes
+     * @returns {number} the length of the stream in bytes
      */
     getLength () {
         return this.end - this.start;
     }
 
     /**
-     * @return {number} the number of bytes available after the current position in the stream
+     * Return the number of bytes available after the current position in the stream
+     * @returns {number} the number of bytes available after the current position in the stream
      */
     getBytesAvailable () {
         return this.end - this._position;
@@ -95,12 +97,11 @@ class ArrayBufferStream {
      */
     set position (value) {
         this._position = value + this.start;
-        return value;
     }
 
     /**
      * Read an unsigned 8 bit integer from the stream
-     * @return {number} the next 8 bit integer in the stream
+     * @returns {number} the next 8 bit integer in the stream
      */
     readUint8 () {
         const val = this._uint8View[this._position];
@@ -112,7 +113,7 @@ class ArrayBufferStream {
      * Read a sequence of bytes of the given length and convert to a string.
      * This is a convenience method for use with short strings.
      * @param {number} length - the number of bytes to convert
-     * @return {string} a String made by concatenating the chars in the input
+     * @returns {string} a String made by concatenating the chars in the input
      */
     readUint8String (length) {
         const arr = this._uint8View;
@@ -127,7 +128,7 @@ class ArrayBufferStream {
 
     /**
      * Read a 16 bit integer from the stream
-     * @return {number} the next 16 bit integer in the stream
+     * @returns {number} the next 16 bit integer in the stream
      */
     readInt16 () {
         const val = new Int16Array(this.arrayBuffer, this._position, 1)[0];
@@ -137,7 +138,7 @@ class ArrayBufferStream {
 
     /**
      * Read an unsigned 16 bit integer from the stream
-     * @return {number} the next unsigned 16 bit integer in the stream
+     * @returns {number} the next unsigned 16 bit integer in the stream
      */
     readUint16 () {
         const val = new Uint16Array(this.arrayBuffer, this._position, 1)[0];
@@ -147,7 +148,7 @@ class ArrayBufferStream {
 
     /**
      * Read a 32 bit integer from the stream
-     * @return {number} the next 32 bit integer in the stream
+     * @returns {number} the next 32 bit integer in the stream
      */
     readInt32 () {
         let val;
@@ -166,7 +167,7 @@ class ArrayBufferStream {
 
     /**
      * Read an unsigned 32 bit integer from the stream
-     * @return {number} the next unsigned 32 bit integer in the stream
+     * @returns {number} the next unsigned 32 bit integer in the stream
      */
     readUint32 () {
         const val = new Uint32Array(this.arrayBuffer, this._position, 1)[0];

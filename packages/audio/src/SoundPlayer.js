@@ -4,7 +4,7 @@ const VolumeEffect = require('./effects/VolumeEffect');
 
 /**
  * Name of event that indicates playback has ended.
- * @const {string}
+ * @constant {string}
  */
 const ON_ENDED = 'ended';
 
@@ -16,7 +16,7 @@ class SoundPlayer extends EventEmitter {
      * @param {object} data - required data for sound playback
      * @param {string} data.id - a unique id for this sound
      * @param {ArrayBuffer} data.buffer - buffer of the sound's waveform to play
-     * @constructor
+     * @class
      */
     constructor (audioEngine, {id, buffer}) {
         super();
@@ -153,7 +153,7 @@ class SoundPlayer extends EventEmitter {
     /**
      * Connect the player to the engine or an effect chain.
      * @param {object} target - object to connect to
-     * @returns {object} - return this sound player
+     * @returns {object | undefined} - return this sound player
      */
     connect (target) {
         if (target === this.volumeEffect) {

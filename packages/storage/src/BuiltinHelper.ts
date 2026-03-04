@@ -97,7 +97,7 @@ export default class BuiltinHelper extends Helper {
     get (assetId: AssetId): Asset | null {
         let asset: Asset | null = null;
         if (Object.prototype.hasOwnProperty.call(this.assets, assetId)) {
-            /** @type{BuiltinAssetRecord} */
+            /** @type {BuiltinAssetRecord} */
             const assetRecord = this.assets[assetId];
             asset = new Asset(assetRecord.type, assetRecord.id!, assetRecord.format, assetRecord.data);
         }
@@ -163,7 +163,7 @@ export default class BuiltinHelper extends Helper {
      * Fetch an asset but don't process dependencies.
      * @param {AssetType} assetType - The type of asset to fetch.
      * @param {string} assetId - The ID of the asset to fetch: a project ID, MD5, etc.
-     * @return {?Promise.<Asset>} A promise for the contents of the asset.
+     * @returns {?Promise.<Asset>} A promise for the contents of the asset.
      */
     load (assetType: AssetType, assetId: AssetId): Promise<Asset | null> | null {
         if (!this.get(assetId)) {

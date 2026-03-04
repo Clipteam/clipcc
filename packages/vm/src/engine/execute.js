@@ -26,7 +26,7 @@ let blockFunctionProfilerId = -1;
 /**
  * Utility function to determine if a value is a Promise.
  * @param {*} value Value to check for a Promise.
- * @return {boolean} True if the value appears to be a Promise.
+ * @returns {boolean} True if the value appears to be a Promise.
  */
 const isPromise = function (value) {
     return (
@@ -39,7 +39,7 @@ const isPromise = function (value) {
 /**
  * Utility function to determine if a block is a procedure caller.
  * @param {BlockCached} cached Cached block to check.
- * @return {boolean} True if the block is a procedure.
+ * @returns {boolean} True if the block is a procedure.
  */
 const isProcedureCaller = function (cached) {
     return cached.opcode === 'procedures_call';

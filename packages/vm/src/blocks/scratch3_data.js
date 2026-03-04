@@ -11,7 +11,7 @@ class Scratch3DataBlocks {
 
     /**
      * Retrieve the block primitives implemented by this package.
-     * @return {Record<string, Function>} Mapping of opcode to Function.
+     * @returns {Record<string, Function>} Mapping of opcode to Function.
      */
     getPrimitives () {
         return {

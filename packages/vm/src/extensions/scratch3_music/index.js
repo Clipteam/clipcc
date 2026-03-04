@@ -118,8 +118,8 @@ class Scratch3MusicBlocks {
      * Decode a sound and store the player in an array.
      * @param {string} filePath - the audio file name.
      * @param {number} index - the index at which to store the audio player.
-     * @param {array} playerArray - the array of players in which to store it.
-     * @return {Promise} - a promise which will resolve once the sound has been stored.
+     * @param {Array} playerArray - the array of players in which to store it.
+     * @returns {Promise} - a promise which will resolve once the sound has been stored.
      */
     _storeSound (filePath, index, playerArray) {
         const fullPath = `${filePath}.mp3`;
@@ -137,7 +137,7 @@ class Scratch3MusicBlocks {
     /**
      * Decode a sound and return a promise with the audio buffer.
      * @param  {ArrayBuffer} soundBuffer - a buffer containing the encoded audio.
-     * @return {Promise} - a promise which will resolve once the sound has decoded.
+     * @returns {Promise} - a promise which will resolve once the sound has decoded.
      */
     _decodeSound (soundBuffer) {
         const engine = this.runtime.audioEngine;
@@ -154,7 +154,7 @@ class Scratch3MusicBlocks {
      * Create data for a menu in scratch-blocks format, consisting of an array of objects with text and
      * value properties. The text is a translated string, and the value is one-indexed.
      * @param  {object[]} info - An array of info objects each having a name property.
-     * @return {array} - An array of objects with text and value properties.
+     * @returns {Array} - An array of objects with text and value properties.
      * @private
      */
     _buildMenu (info) {
@@ -1165,7 +1165,7 @@ class Scratch3MusicBlocks {
      * in the samples array.
      * @param  {number} note - the input note to select a sample for.
      * @param  {number[]} samples - an array of the pitches of the available samples.
-     * @return {index} the index of the selected sample in the samples array.
+     * @returns {index} the index of the selected sample in the samples array.
      * @private
      */
     _selectSampleIndexForNote (note, samples) {
@@ -1182,7 +1182,7 @@ class Scratch3MusicBlocks {
     /**
      * Calcuate the frequency ratio for a given musical interval.
      * @param  {number} interval - the pitch interval to convert.
-     * @return {number} a ratio corresponding to the input interval.
+     * @returns {number} a ratio corresponding to the input interval.
      * @private
      */
     _ratioForPitchInterval (interval) {
@@ -1192,7 +1192,7 @@ class Scratch3MusicBlocks {
     /**
      * Clamp a duration in beats to the allowed min and max duration.
      * @param  {number} beats - a duration in beats.
-     * @return {number} - the clamped duration.
+     * @returns {number} - the clamped duration.
      * @private
      */
     _clampBeats (beats) {
@@ -1203,7 +1203,7 @@ class Scratch3MusicBlocks {
     /**
      * Convert a number of beats to a number of seconds, using the current tempo.
      * @param  {number} beats - number of beats to convert to secs.
-     * @return {number} seconds - number of seconds `beats` will last.
+     * @returns {number} seconds - number of seconds `beats` will last.
      * @private
      */
     _beatsToSec (beats) {
@@ -1213,7 +1213,7 @@ class Scratch3MusicBlocks {
     /**
      * Check if the stack timer needs initialization.
      * @param {object} util - utility object provided by the runtime.
-     * @return {boolean} - true if the stack timer needs to be initialized.
+     * @returns {boolean} - true if the stack timer needs to be initialized.
      * @private
      */
     _stackTimerNeedsInit (util) {
@@ -1322,7 +1322,7 @@ class Scratch3MusicBlocks {
 
     /**
      * Get the current tempo.
-     * @return {number} - the current tempo, in beats per minute.
+     * @returns {number} - the current tempo, in beats per minute.
      */
     getTempo () {
         const stage = this.runtime.getTargetForStage();

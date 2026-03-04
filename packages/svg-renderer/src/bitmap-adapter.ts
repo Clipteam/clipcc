@@ -80,7 +80,7 @@ class BitmapAdapter {
      * to in Scratch 3.0
      * @param oldWidth original width
      * @param oldHeight original height
-     * @return Array of new width, new height
+     * @returns Array of new width, new height
      */
     getResizedWidthHeight (oldWidth: number, oldHeight: number) {
         const STAGE_RATIO = this.stageWidth / this.stageHeight;

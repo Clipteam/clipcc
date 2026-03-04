@@ -65,7 +65,7 @@ class SVGSkin extends Skin {
     }
 
     /**
-     * @return {Array<number>} the natural size, in Scratch units, of this skin.
+     * @returns {Array<number>} the natural size, in Scratch units, of this skin.
      */
     get size () {
         return [this._size[0], this._size[1]];
@@ -103,7 +103,7 @@ class SVGSkin extends Skin {
     /**
      * Create a MIP for a given scale.
      * @param {number} scale - The relative size of the MIP
-     * @return {SVGMIP} An object that handles creating and updating SVG textures.
+     * @returns {SVGMIP} An object that handles creating and updating SVG textures.
      */
     createMIP (scale) {
         const [width, height] = this._size;
@@ -153,7 +153,7 @@ class SVGSkin extends Skin {
 
     /**
      * @param {Array<number>} scale - The scaling factors to be used, each in the [0,100] range.
-     * @return {WebGLTexture} The GL texture representation of this skin when drawing at the given scale.
+     * @returns {WebGLTexture} The GL texture representation of this skin when drawing at the given scale.
      */
     getTexture (scale) {
         // The texture only ever gets uniform scale. Take the larger of the two axes.

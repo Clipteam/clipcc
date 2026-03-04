@@ -217,7 +217,7 @@ class EV3Motor {
     }
 
     /**
-     * @return {string} - this motor's type: 'largeMotor' or 'mediumMotor'
+     * @returns {string} - this motor's type: 'largeMotor' or 'mediumMotor'
      */
     get type () {
         return this._type;
@@ -231,7 +231,7 @@ class EV3Motor {
     }
 
     /**
-     * @return {int} - this motor's current direction: 1 for "clockwise" or -1 for "counterclockwise"
+     * @returns {int} - this motor's current direction: 1 for "clockwise" or -1 for "counterclockwise"
      */
     get direction () {
         return this._direction;
@@ -249,7 +249,7 @@ class EV3Motor {
     }
 
     /**
-     * @return {int} - this motor's current power level, in the range [0,100].
+     * @returns {int} - this motor's current power level, in the range [0,100].
      */
     get power () {
         return this._power;
@@ -263,7 +263,7 @@ class EV3Motor {
     }
 
     /**
-     * @return {int} - this motor's current position, in the range [-inf,inf].
+     * @returns {int} - this motor's current position, in the range [-inf,inf].
      */
     get position () {
         return this._position;
@@ -394,7 +394,7 @@ class EV3Motor {
     /**
      * Generate motor run values for a given input.
      * @param  {number} run - run input.
-     * @return {array} - run values as a byte array.
+     * @returns {Array} - run values as a byte array.
      */
     _runValues (run) {
         // If run duration is less than max 16-bit integer
@@ -422,7 +422,7 @@ class EV3Motor {
      * The documentation in the 'EV3 Firmware Developer Kit' for motor port arguments
      * is sometimes mistaken, but we believe motor ports are mostly addressed this way.
      * @param {number} port - the port number to convert to an 'output bit field'.
-     * @return {number} - the converted port number.
+     * @returns {number} - the converted port number.
      */
     _portMask (port) {
         return Math.pow(2, port);
@@ -536,7 +536,7 @@ class EV3 {
     /**
      * Access a particular motor on this peripheral.
      * @param {int} index - the zero-based index of the desired motor.
-     * @return {EV3Motor} - the EV3Motor instance, if any, at that index.
+     * @returns {EV3Motor} - the EV3Motor instance, if any, at that index.
      */
     motor (index) {
         return this._motors[index];
@@ -646,7 +646,7 @@ class EV3 {
 
     /**
      * Called by the runtime to detect whether the EV3 peripheral is connected.
-     * @return {boolean} - the connected state.
+     * @returns {boolean} - the connected state.
      */
     isConnected () {
         let connected = false;
@@ -660,7 +660,7 @@ class EV3 {
      * Send a message to the peripheral BT socket.
      * @param {Uint8Array} message - the message to send.
      * @param {boolean} [useLimiter=true] - if true, use the rate limiter
-     * @return {Promise} - a promise result of the send operation.
+     * @returns {Promise} - a promise result of the send operation.
      */
     send (message, useLimiter = true) {
         if (!this.isConnected()) return Promise.resolve();
@@ -698,7 +698,7 @@ class EV3 {
      * @param {number} type - the direct command type.
      * @param {string} byteCommands - a compound array of EV3 Opcode + arguments.
      * @param {number} allocation - the allocation of global and local vars needed for replies.
-     * @return {array} - generated complete command byte array, with header and compounded commands.
+     * @returns {Array} - generated complete command byte array, with header and compounded commands.
      */
     generateCommand (type, byteCommands, allocation = 0) {
 
@@ -928,7 +928,7 @@ class Scratch3Ev3Blocks {
 
     /**
      * The ID of the extension.
-     * @return {string} the id
+     * @returns {string} the id
      */
     static get EXTENSION_ID () {
         return 'ev3';
@@ -955,7 +955,7 @@ class Scratch3Ev3Blocks {
 
     /**
      * Define the EV3 extension.
-     * @return {object} Extension description.
+     * @returns {object} Extension description.
      */
     getInfo () {
         return {
@@ -1336,8 +1336,8 @@ class Scratch3Ev3Blocks {
      *   etc...
      * ]
      *
-     * @param {array} menu - a menu to format.
-     * @return {object} - a formatted menu as an object.
+     * @param {Array} menu - a menu to format.
+     * @returns {object} - a formatted menu as an object.
      * @private
      */
     _formatMenu (menu) {

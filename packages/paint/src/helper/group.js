@@ -12,7 +12,7 @@ const isGroup = function (item) {
  * @param {!function} clearSelectedItems Function to clear Redux state's selected items
  * @param {!function} setSelectedItems Function to set Redux state with new list of selected items
  * @param {!function} onUpdateImage Function to let listeners know that SVG has changed.
- * @return {paper.Group} the group if one is created, otherwise false.
+ * @returns {paper.Group} the group if one is created, otherwise false.
  */
 const groupItems = function (items, clearSelectedItems, setSelectedItems, onUpdateImage) {
     if (items.length > 0) {
@@ -34,7 +34,7 @@ const groupItems = function (items, clearSelectedItems, setSelectedItems, onUpda
  * @param {!function} clearSelectedItems Function to clear Redux state's selected items
  * @param {!function} setSelectedItems Function to set Redux state with new list of selected items
  * @param {!function} onUpdateImage Function to let listeners know that SVG has changed.
- * @return {paper.Group} the group if one is created, otherwise false.
+ * @returns {paper.Group} the group if one is created, otherwise false.
  */
 const groupSelection = function (clearSelectedItems, setSelectedItems, onUpdateImage) {
     const items = getSelectedRootItems();
@@ -44,7 +44,7 @@ const groupSelection = function (clearSelectedItems, setSelectedItems, onUpdateI
 const _ungroupLoop = function (group, recursive, setSelectedItems) {
     // Can't ungroup items that are not groups
     if (!group || !group.children || !isGroup(group)) return;
-            
+
     group.applyMatrix = true;
     // iterate over group children recursively
     for (let i = 0; i < group.children.length; i++) {

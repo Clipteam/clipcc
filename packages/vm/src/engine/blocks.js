@@ -113,7 +113,7 @@ class Blocks {
     /**
      * Provide an object with metadata for the requested block ID.
      * @param {!string} blockId ID of block we have stored.
-     * @return {?object} Metadata about the block, if it exists.
+     * @returns {?object} Metadata about the block, if it exists.
      */
     getBlock (blockId) {
         return this._blocks[blockId];
@@ -121,7 +121,7 @@ class Blocks {
 
     /**
      * Get all known top-level blocks that start scripts.
-     * @return {Array.<string>} List of block IDs.
+     * @returns {Array.<string>} List of block IDs.
      */
     getScripts () {
         return this._scripts;
@@ -130,7 +130,7 @@ class Blocks {
     /**
       * Get the next block for a particular block
       * @param {?string} id ID of block to get the next block for
-      * @return {?string} ID of next block in the sequence
+      * @returns {?string} ID of next block in the sequence
       */
     getNextBlock (id) {
         const block = this._blocks[id];
@@ -141,7 +141,7 @@ class Blocks {
      * Get the branch for a particular C-shaped block.
      * @param {?string} id ID for block to get the branch for.
      * @param {?number} branchNum Which branch to select (e.g. for if-else).
-     * @return {?string} ID of block in the branch.
+     * @returns {?string} ID of block in the branch.
      */
     getBranch (id, branchNum) {
         const block = this._blocks[id];
@@ -161,7 +161,7 @@ class Blocks {
     /**
      * Get the opcode for a particular block
      * @param {?object} block The block to query
-     * @return {?string} the opcode corresponding to that block
+     * @returns {?string} the opcode corresponding to that block
      */
     getOpcode (block) {
         return (typeof block === 'undefined') ? null : block.opcode;
@@ -170,7 +170,7 @@ class Blocks {
     /**
      * Get all fields and their values for a block.
      * @param {?object} block The block to query.
-     * @return {?object} All fields and their values.
+     * @returns {?object} All fields and their values.
      */
     getFields (block) {
         return (typeof block === 'undefined') ? null : block.fields;
@@ -179,7 +179,7 @@ class Blocks {
     /**
      * Get all non-branch inputs for a block.
      * @param {?object} block the block to query.
-     * @return {?Array.<object>} All non-branch inputs and their associated blocks.
+     * @returns {?Array.<object>} All non-branch inputs and their associated blocks.
      */
     getInputs (block) {
         if (typeof block === 'undefined') return null;
@@ -204,7 +204,7 @@ class Blocks {
     /**
      * Get mutation data for a block.
      * @param {?object} block The block to query.
-     * @return {?object} Mutation for the block.
+     * @returns {?object} Mutation for the block.
      */
     getMutation (block) {
         return (typeof block === 'undefined') ? null : block.mutation;
@@ -213,7 +213,7 @@ class Blocks {
     /**
      * Get the top-level script for a given block.
      * @param {?string} id ID of block to query.
-     * @return {?string} ID of top-level script block.
+     * @returns {?string} ID of top-level script block.
      */
     getTopLevelScript (id) {
         let block = this._blocks[id];
@@ -227,7 +227,7 @@ class Blocks {
     /**
      * Get all procedure definitions.
      * @param {?boolean} globalOnly True if only get global procedures.
-     * @return {Array<object>} Procedure states.
+     * @returns {Array<object>} Procedure states.
      */
     getAllProcedureDefinitions (globalOnly) {
         const procedures = [];
@@ -261,7 +261,7 @@ class Blocks {
      * Get the procedure definition for a given name.
      * @param {?string} name Name of procedure to query.
      * @param {?boolean} globalOnly True if only find global procedures.
-     * @return {?string} ID of procedure definition.
+     * @returns {?string} ID of procedure definition.
      */
     getProcedureDefinition (name, globalOnly) {
         const blockID = this._cache.procedureDefinitions[name];
@@ -299,7 +299,7 @@ class Blocks {
     /**
      * Get names and ids of parameters for the given procedure.
      * @param {?string} name Name of procedure to query.
-     * @return {?Array.<string>} List of param names for a procedure.
+     * @returns {?Array.<string>} List of param names for a procedure.
      */
     getProcedureParamNamesAndIds (name) {
         return this.getProcedureParamNamesIdsAndDefaults(name).slice(0, 2);
@@ -308,7 +308,7 @@ class Blocks {
     /**
      * Get names, ids, and defaults of parameters for the given procedure.
      * @param {?string} name Name of procedure to query.
-     * @return {?Array.<string>} List of param names for a procedure.
+     * @returns {?Array.<string>} List of param names for a procedure.
      */
     getProcedureParamNamesIdsAndDefaults (name) {
         const cachedNames = this._cache.procedureParamNames[name];
@@ -1007,7 +1007,7 @@ class Blocks {
      * This is useful for getting variable/list references for a stack of blocks instead
      * of all blocks on the workspace
      * @param {boolean=} optIncludeBroadcast Optional whether to include broadcast fields.
-     * @return {object} A map of variable ID to a list of all variable references
+     * @returns {object} A map of variable ID to a list of all variable references
      * for that ID. A variable reference contains the field referencing that variable
      * and also the type of the variable being referenced.
      */
@@ -1152,7 +1152,7 @@ class Blocks {
      * @param {string} oldName The old name of the variable that was renamed.
      * @param {string} newName The new name of the variable that was renamed.
      * @param {string} targetName The name of the target the variable belongs to.
-     * @return {boolean} Returns true if any of the blocks were updated.
+     * @returns {boolean} Returns true if any of the blocks were updated.
      */
     updateSensingOfReference (oldName, newName, targetName) {
         const blocks = this._blocks;
@@ -1177,7 +1177,7 @@ class Blocks {
     /**
      * Helper function to retrieve a costume menu field from a block given its id.
      * @param {string} blockId A unique identifier for a block
-     * @return {?object} The costume menu field of the block with the given block id.
+     * @returns {?object} The costume menu field of the block with the given block id.
      * Null if either a block with the given id doesn't exist or if a costume menu field
      * does not exist on the block with the given id.
      */
@@ -1192,7 +1192,7 @@ class Blocks {
     /**
      * Helper function to retrieve a sound menu field from a block given its id.
      * @param {string} blockId A unique identifier for a block
-     * @return {?object} The sound menu field of the block with the given block id.
+     * @returns {?object} The sound menu field of the block with the given block id.
      * Null, if either a block with the given id doesn't exist or if a sound menu field
      * does not exist on the block with the given id.
      */
@@ -1207,7 +1207,7 @@ class Blocks {
     /**
      * Helper function to retrieve a backdrop menu field from a block given its id.
      * @param {string} blockId A unique identifier for a block
-     * @return {?object} The backdrop menu field of the block with the given block id.
+     * @returns {?object} The backdrop menu field of the block with the given block id.
      * Null, if either a block with the given id doesn't exist or if a backdrop menu field
      * does not exist on the block with the given id.
      */
@@ -1222,7 +1222,7 @@ class Blocks {
     /**
      * Helper function to retrieve a sprite menu field from a block given its id.
      * @param {string} blockId A unique identifier for a block
-     * @return {?object} The sprite menu field of the block with the given block id.
+     * @returns {?object} The sprite menu field of the block with the given block id.
      * Null, if either a block with the given id doesn't exist or if a sprite menu field
      * does not exist on the block with the given id.
      */
@@ -1248,7 +1248,7 @@ class Blocks {
      * Encode all of `this._blocks` as an XML string usable
      * by a Blockly/scratch-blocks workspace.
      * @param {Record<string, Comment>} comments Map of comments referenced by id
-     * @return {string} String of XML representing this object's blocks.
+     * @returns {string} String of XML representing this object's blocks.
      */
     toXML (comments) {
         return this._scripts.map(script => this.blockToXML(script, comments)).join();
@@ -1259,7 +1259,7 @@ class Blocks {
      * into a Blockly/scratch-blocks XML string.
      * @param {!string} blockId ID of block to encode.
      * @param {Record<string, Comment>} comments Map of comments referenced by id
-     * @return {string} String of XML representing this block and any children.
+     * @returns {string} String of XML representing this block and any children.
      */
     blockToXML (blockId, comments) {
         const block = this._blocks[blockId];
@@ -1346,7 +1346,7 @@ class Blocks {
      * Encode all of `this._blocks` as a JSON array usable
      * by a Blockly/scratch-blocks workspace.
      * @param {Record<string, Comment>} comments Map of comments referenced by id
-     * @return {Array<object>} JSON array representing this object's blocks.
+     * @returns {Array<object>} JSON array representing this object's blocks.
      */
     toState (comments) {
         return this._scripts
@@ -1359,7 +1359,7 @@ class Blocks {
      * into a Blockly/scratch-blocks JSON object.
      * @param {!string} blockId ID of block to encode.
      * @param {Record<string, Comment>} comments Map of comments referenced by id
-     * @return {object} JSON object representing this block and any children.
+     * @returns {object} JSON object representing this block and any children.
      */
     blockToState (blockId, comments) {
         const block = this._blocks[blockId];
@@ -1470,7 +1470,7 @@ class Blocks {
     /**
      * Recursively encode a mutation object to XML.
      * @param {!object} mutation Object representing a mutation.
-     * @return {string} XML string representing a mutation.
+     * @returns {string} XML string representing a mutation.
      */
     mutationToXML (mutation) {
         let mutationString = `<${mutation.tagName}`;
@@ -1498,7 +1498,7 @@ class Blocks {
     /**
      * Helper to serialize block fields and input fields for reporting new monitors
      * @param {!object} block Block to be paramified.
-     * @return {!object} object of param key/values.
+     * @returns {!object} object of param key/values.
      */
     _getBlockParams (block) {
         const params = {};
@@ -1517,7 +1517,7 @@ class Blocks {
     /**
      * Helper to get the corresponding internal procedure definition block
      * @param {!object} defineBlock Outer define block.
-     * @return {!object} internal definition block which has the mutation.
+     * @returns {!object} internal definition block which has the mutation.
      */
     _getCustomBlockInternal (defineBlock) {
         if (defineBlock.inputs && defineBlock.inputs.custom_block) {
@@ -1551,7 +1551,7 @@ class Blocks {
     /**
      * Get dangling inputs in a block.
      * @param {object} block The block to check
-     * @return {boolean} True if the input is dangling
+     * @returns {boolean} True if the input is dangling
      */
     _getDanglingInputs (block) {
         const danglingInputs = new Set();
@@ -1578,7 +1578,7 @@ class Blocks {
  * @param {Blocks} blocks Blocks containing the expected blockId
  * @param {string} blockId blockId for the desired execute cache
  * @param {function} CacheType constructor for cached block information
- * @return {object} execute cache object
+ * @returns {object} execute cache object
  */
 BlocksExecuteCache.getCached = function (blocks, blockId, CacheType) {
     let cached = blocks._cache._executeCached[blockId];

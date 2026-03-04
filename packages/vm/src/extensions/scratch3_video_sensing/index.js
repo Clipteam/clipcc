@@ -264,7 +264,7 @@ class Scratch3VideoSensingBlocks {
      * string, and the value is one-indexed.
      * @param {object[]} info - An array of info objects each having a name
      *   property.
-     * @return {array} - An array of objects with text and value properties.
+     * @returns {Array} - An array of objects with text and value properties.
      * @private
      */
     _buildMenu (info) {

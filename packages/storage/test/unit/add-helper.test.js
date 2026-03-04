@@ -24,7 +24,7 @@ class LoggingHelper {
      * @param {AssetType} assetType - The type of asset to fetch.
      * @param {string} assetId - The ID of the asset to fetch: a project ID, MD5, etc.
      * @param {DataFormat} dataFormat - The file format / file extension of the asset to fetch: PNG, JPG, etc.
-     * @return {Promise.<Asset>} A promise for the contents of the asset.
+     * @returns {Promise.<Asset>} A promise for the contents of the asset.
      */
     load (assetType, assetId, dataFormat) {
         this.logContainer.push(this.label);

@@ -19,7 +19,7 @@ class Skin extends EventEmitter {
     /**
      * Create a Skin, which stores and/or generates textures for use in rendering.
      * @param {int} id - The unique ID for this Skin.
-     * @constructor
+     * @class
      */
     constructor (id) {
         super();
@@ -70,7 +70,7 @@ class Skin extends EventEmitter {
     }
 
     /**
-     * @return {int} the unique ID for this Skin.
+     * @returns {int} the unique ID for this Skin.
      */
     get id () {
         return this._id;
@@ -85,7 +85,7 @@ class Skin extends EventEmitter {
 
     /**
      * @abstract
-     * @return {Array<number>} the "native" size, in texels, of this skin.
+     * @returns {Array<number>} the "native" size, in texels, of this skin.
      */
     get size () {
         return [0, 0];
@@ -96,7 +96,7 @@ class Skin extends EventEmitter {
      * @param {?Array<Number>} scale The screen-space X and Y scaling factors at which this skin's texture will be
      * displayed, as percentages (100 means 1 "native size" unit is 1 screen pixel; 200 means 2 screen pixels, etc).
      * @param {Drawable} drawable The drawable that this skin's texture will be applied to.
-     * @return {boolean} True if this skin's texture, as returned by {@link getTexture}, should be filtered with
+     * @returns {boolean} True if this skin's texture, as returned by {@link getTexture}, should be filtered with
      * nearest-neighbor interpolation.
      */
     // eslint-disable-next-line no-unused-vars
@@ -106,7 +106,7 @@ class Skin extends EventEmitter {
 
     /**
      * Get the center of the current bounding box
-     * @return {Array<number>} the center of the current bounding box
+     * @returns {Array<number>} the center of the current bounding box
      */
     calculateRotationCenter () {
         return [this.size[0] / 2, this.size[1] / 2];
@@ -115,7 +115,7 @@ class Skin extends EventEmitter {
     /**
      * @abstract
      * @param {Array<number>} scale - The scaling factors to be used.
-     * @return {WebGLTexture} The GL texture representation of this skin when drawing at the given size.
+     * @returns {WebGLTexture} The GL texture representation of this skin when drawing at the given size.
      */
     // eslint-disable-next-line no-unused-vars
     getTexture (scale) {
@@ -126,7 +126,7 @@ class Skin extends EventEmitter {
      * Get the bounds of the drawable for determining its fenced position.
      * @param {Drawable} drawable - The Drawable instance this skin is using.
      * @param {?Rectangle} result - Optional destination for bounds calculation.
-     * @return {!Rectangle} The drawable's bounds. For compatibility with Scratch 2, we always use getAABB.
+     * @returns {!Rectangle} The drawable's bounds. For compatibility with Scratch 2, we always use getAABB.
      */
     getFenceBounds (drawable, result) {
         return drawable.getAABB(result);
@@ -209,7 +209,7 @@ class Skin extends EventEmitter {
      * @see updateSilhouette
      * @see Drawable.updateCPURenderAttributes
      * @param {twgl.v3} vec A texture coordinate.
-     * @return {boolean} Did it touch?
+     * @returns {boolean} Did it touch?
      */
     isTouchingNearest (vec) {
         return this._silhouette.isTouchingNearest(vec);
@@ -222,7 +222,7 @@ class Skin extends EventEmitter {
      * @see updateSilhouette
      * @see Drawable.updateCPURenderAttributes
      * @param {twgl.v3} vec A texture coordinate.
-     * @return {boolean} Did it touch?
+     * @returns {boolean} Did it touch?
      */
     isTouchingLinear (vec) {
         return this._silhouette.isTouchingLinear(vec);

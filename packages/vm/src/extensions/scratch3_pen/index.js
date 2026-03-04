@@ -204,7 +204,7 @@ class Scratch3PenBlocks {
 
     /**
      * Initialize color parameters menu with localized strings
-     * @returns {array} of the localized text and values for each menu element
+     * @returns {Array} of the localized text and values for each menu element
      * @private
      */
     _initColorParam () {

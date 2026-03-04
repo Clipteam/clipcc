@@ -91,7 +91,7 @@ describe('Menu Bar HOC', () => {
             <WrappedComponent
                 canCreateNew={false}
                 canSave={false}
-                confirmWithMessage={() => (false)} // eslint-disable-line react/jsx-no-bind
+                confirmWithMessage={() => (false)}
                 projectChanged={false}
                 store={store}
             />

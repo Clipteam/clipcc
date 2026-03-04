@@ -84,7 +84,7 @@ class Rectangle {
      * Note that this is a comparison assuming the Rectangle was
      * initialized with Scratch-space bounds or points.
      * @param {!Rectangle} other Rectangle to check if intersecting.
-     * @return {boolean} True if this Rectangle intersects other.
+     * @returns {boolean} True if this Rectangle intersects other.
      */
     intersects (other) {
         return (
@@ -100,7 +100,7 @@ class Rectangle {
      * Note that this is a comparison assuming the Rectangle was
      * initialized with Scratch-space bounds or points.
      * @param {!Rectangle} other Rectangle to check if fully contained.
-     * @return {boolean} True if this Rectangle fully contains other.
+     * @returns {boolean} True if this Rectangle fully contains other.
      */
     contains (other) {
         return (
@@ -123,7 +123,7 @@ class Rectangle {
         this.right = Math.min(this.right, right);
         this.bottom = Math.max(this.bottom, bottom);
         this.top = Math.min(this.top, top);
-        
+
         this.left = Math.min(this.left, right);
         this.right = Math.max(this.right, left);
         this.bottom = Math.min(this.bottom, top);
@@ -177,7 +177,7 @@ class Rectangle {
 
     /**
      * Width of the Rectangle.
-     * @return {number} Width of rectangle.
+     * @returns {number} Width of rectangle.
      */
     get width () {
         return Math.abs(this.left - this.right);
@@ -185,7 +185,7 @@ class Rectangle {
 
     /**
      * Height of the Rectangle.
-     * @return {number} Height of rectangle.
+     * @returns {number} Height of rectangle.
      */
     get height () {
         return Math.abs(this.top - this.bottom);

@@ -39,6 +39,7 @@ describe('Loading scratch gui', () => {
         // of loading projects that we are not actively using anymore
         test.skip('Load a project by ID directly through url', async () => {
             await driver.quit(); // Reset driver to test hitting # url directly
+            // eslint-disable-next-line require-atomic-updates
             driver = getDriver();
 
             const projectId = '96708228';
@@ -54,6 +55,7 @@ describe('Loading scratch gui', () => {
         // of loading projects that we are not actively using anymore
         test.skip('Load a project by ID (fullscreen)', async () => {
             await driver.quit(); // Reset driver to test hitting # url directly
+            // eslint-disable-next-line require-atomic-updates
             driver = getDriver();
 
             const prevSize = driver.manage()

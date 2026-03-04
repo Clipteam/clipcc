@@ -126,7 +126,7 @@ const ArgumentTypeMap = (() => {
  * and remove an existing cloud variable.
  * These are to be called whenever attempting to create or delete
  * a cloud variable.
- * @return {CloudDataManager} The functions to be used when adding or removing a
+ * @returns {CloudDataManager} The functions to be used when adding or removing a
  * cloud variable.
  */
 const cloudDataManager = () => {
@@ -403,7 +403,7 @@ class Runtime extends EventEmitter {
         /**
          * Check wether the runtime has any cloud data.
          * @type {function}
-         * @return {boolean} Whether or not the runtime currently has any
+         * @returns {boolean} Whether or not the runtime currently has any
          * cloud variables.
          */
         this.hasCloudData = newCloudDataManager.hasCloudVariables;
@@ -412,7 +412,7 @@ class Runtime extends EventEmitter {
          * A function which checks whether a new cloud variable can be added
          * to the runtime.
          * @type {function}
-         * @return {boolean} Whether or not a new cloud variable can be added
+         * @returns {boolean} Whether or not a new cloud variable can be added
          * to the runtime.
          */
         this.canAddCloudVariable = newCloudDataManager.canAddCloudVariable;
@@ -1314,7 +1314,7 @@ class Runtime extends EventEmitter {
     /**
      * Helper for _convertPlaceholdes which handles inline images which are a specialized case of block "arguments".
      * @param {object} argInfo Metadata about the inline image as specified by the extension
-     * @return {object} JSON blob for a scratch-blocks image field.
+     * @returns {object} JSON blob for a scratch-blocks image field.
      * @private
      */
     _constructInlineImageJson (argInfo) {
@@ -1340,7 +1340,7 @@ class Runtime extends EventEmitter {
      * @param {object} context - information shared with _convertForScratchBlocks about the block, etc.
      * @param {string} match - the overall string matched by the placeholder regex, including brackets: '[FOO]'.
      * @param {string} placeholder - the name of the placeholder being matched: 'FOO'.
-     * @return {string} scratch-blocks placeholder for the argument: '%1'.
+     * @returns {string} scratch-blocks placeholder for the argument: '%1'.
      * @private
      */
     _convertPlaceholders (context, match, placeholder) {
@@ -1606,7 +1606,7 @@ class Runtime extends EventEmitter {
     /**
      * Returns whether the extension has a currently connected peripheral.
      * @param {string} extensionId - the id of the extension.
-     * @return {boolean} - whether the extension has a connected peripheral.
+     * @returns {boolean} - whether the extension has a connected peripheral.
      */
     getPeripheralIsConnected (extensionId) {
         let isConnected = false;
@@ -1627,7 +1627,7 @@ class Runtime extends EventEmitter {
     /**
      * Retrieve the function associated with the given opcode.
      * @param {!string} opcode The opcode to look up.
-     * @return {Function} The function which implements the opcode.
+     * @returns {Function} The function which implements the opcode.
      */
     getOpcodeFunction (opcode) {
         return this._primitives[opcode];
@@ -1636,7 +1636,7 @@ class Runtime extends EventEmitter {
     /**
      * Return whether an opcode represents a hat block.
      * @param {!string} opcode The opcode to look up.
-     * @return {boolean} True if the op is known to be a hat.
+     * @returns {boolean} True if the op is known to be a hat.
      */
     getIsHat (opcode) {
         return Object.prototype.hasOwnProperty.call(this._hats, opcode);
@@ -1645,7 +1645,7 @@ class Runtime extends EventEmitter {
     /**
      * Return whether an opcode represents an edge-activated hat block.
      * @param {!string} opcode The opcode to look up.
-     * @return {boolean} True if the op is known to be a edge-activated hat.
+     * @returns {boolean} True if the op is known to be a edge-activated hat.
      */
     getIsEdgeActivatedHat (opcode) {
         return Object.prototype.hasOwnProperty.call(this._hats, opcode) &&
@@ -1655,7 +1655,7 @@ class Runtime extends EventEmitter {
     /**
      * Retrieve the execution order of the given opcode.
      * @param {!string} opcode The opcode to look up.
-     * @return {Array.<string | Object>} The execution order array of given opcode.
+     * @returns {Array.<string | Object>} The execution order array of given opcode.
      */
     getExecutionOrders (opcode) {
         return Object.prototype.hasOwnProperty.call(this._orders, opcode) && this._orders[opcode];
@@ -1708,7 +1708,7 @@ class Runtime extends EventEmitter {
      * @param {?object} opts optional arguments
      * @param {?boolean} opts.stackClick true if the script was activated by clicking on the stack
      * @param {?boolean} opts.updateMonitor true if the script should update a monitor value
-     * @return {!Thread} The newly created thread.
+     * @returns {!Thread} The newly created thread.
      */
     _pushThread (id, target, opts) {
         const thread = new Thread(id);
@@ -1740,7 +1740,7 @@ class Runtime extends EventEmitter {
      * This is used by `startHats` to and is necessary to ensure 2.0-like execution order.
      * Test project: https://scratch.mit.edu/projects/130183108/
      * @param {!Thread} thread Thread object to restart.
-     * @return {Thread} The restarted thread.
+     * @returns {Thread} The restarted thread.
      */
     _restartThread (thread) {
         const newThread = new Thread(thread.topBlock);
@@ -1761,7 +1761,7 @@ class Runtime extends EventEmitter {
     /**
      * Return whether a thread is currently active/running.
      * @param {?Thread} thread Thread object to check.
-     * @return {boolean} True if the thread is active/running.
+     * @returns {boolean} True if the thread is active/running.
      */
     isActiveThread (thread) {
         return (
@@ -1774,7 +1774,7 @@ class Runtime extends EventEmitter {
     /**
      * Return whether a thread is waiting for more information or done.
      * @param {?Thread} thread Thread object to check.
-     * @return {boolean} True if the thread is waiting
+     * @returns {boolean} True if the thread is waiting
      */
     isWaitingThread (thread) {
         return (
@@ -1877,7 +1877,7 @@ class Runtime extends EventEmitter {
      * @param {!string} requestedHatOpcode Opcode of hats to start.
      * @param {object=} optMatchFields Optionally, fields to match on the hat.
      * @param {Target=} optTarget Optionally, a target to restrict to.
-     * @return {Array.<Thread>} List of threads started by this function.
+     * @returns {Array.<Thread>} List of threads started by this function.
      */
     startHats (requestedHatOpcode,
         optMatchFields, optTarget) {
@@ -2213,7 +2213,7 @@ class Runtime extends EventEmitter {
      * Get the number of threads in the given array that are monitor threads (threads
      * that update monitor values, and don't count as running a script).
      * @param {!Array.<Thread>} threads The set of threads to look through.
-     * @return {number} The number of monitor threads in threads.
+     * @returns {number} The number of monitor threads in threads.
      */
     _getMonitorThreadCount (threads) {
         let count = 0;
@@ -2426,7 +2426,7 @@ class Runtime extends EventEmitter {
      * @param {!Map} monitor Monitor values to update. Values on the monitor with overwrite
      *     values on the old monitor with the same ID. If a value isn't defined on the new monitor,
      *     the old monitor will keep its old value.
-     * @return {boolean} true if monitor exists in the state and was updated, false if it did not exist.
+     * @returns {boolean} true if monitor exists in the state and was updated, false if it did not exist.
      */
     requestUpdateMonitor (monitor) {
         const id = monitor.get('id');
@@ -2456,7 +2456,7 @@ class Runtime extends EventEmitter {
     /**
      * Hides a monitor and returns success/failure of action.
      * @param {!string} monitorId ID of the monitor to hide.
-     * @return {boolean} true if monitor exists and was updated, false otherwise
+     * @returns {boolean} true if monitor exists and was updated, false otherwise
      */
     requestHideMonitor (monitorId) {
         return this.requestUpdateMonitor(new Map([
@@ -2469,7 +2469,7 @@ class Runtime extends EventEmitter {
      * Shows a monitor and returns success/failure of action.
      * not exist in the state.
      * @param {!string} monitorId ID of the monitor to show.
-     * @return {boolean} true if monitor exists and was updated, false otherwise
+     * @returns {boolean} true if monitor exists and was updated, false otherwise
      */
     requestShowMonitor (monitorId) {
         return this.requestUpdateMonitor(new Map([
@@ -2490,7 +2490,7 @@ class Runtime extends EventEmitter {
     /**
      * Get a target by its id.
      * @param {string} targetId Id of target to find.
-     * @return {?Target} The target, if found.
+     * @returns {?Target} The target, if found.
      */
     getTargetById (targetId) {
         for (let i = 0; i < this.targets.length; i++) {
@@ -2504,7 +2504,7 @@ class Runtime extends EventEmitter {
     /**
      * Get the first original (non-clone-block-created) sprite given a name.
      * @param {string} spriteName Name of sprite to look for.
-     * @return {?Target} Target representing a sprite of the given name.
+     * @returns {?Target} Target representing a sprite of the given name.
      */
     getSpriteTargetByName (spriteName) {
         for (let i = 0; i < this.targets.length; i++) {
@@ -2521,7 +2521,7 @@ class Runtime extends EventEmitter {
     /**
      * Get a target by its drawable id.
      * @param {number} drawableID drawable id of target to find
-     * @return {?Target} The target, if found
+     * @returns {?Target} The target, if found
      */
     getTargetByDrawableId (drawableID) {
         for (let i = 0; i < this.targets.length; i++) {
@@ -2540,7 +2540,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Return whether there are clones available.
-     * @return {boolean} True until the number of clones hits Runtime.MAX_CLONES.
+     * @returns {boolean} True until the number of clones hits Runtime.MAX_CLONES.
      */
     clonesAvailable () {
         return this._cloneCounter < this.MAX_CLONES;
@@ -2581,7 +2581,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Get a target representing the Scratch stage, if one exists.
-     * @return {?Target} The target, if found.
+     * @returns {?Target} The target, if found.
      */
     getTargetForStage () {
         for (let i = 0; i < this.targets.length; i++) {
@@ -2594,7 +2594,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Get the editing target.
-     * @return {?Target} The editing target.
+     * @returns {?Target} The editing target.
      */
     getEditingTarget () {
         return this._editingTarget;
@@ -2612,7 +2612,7 @@ class Runtime extends EventEmitter {
     /**
      * Get the label or label function for an opcode
      * @param {string} extendedOpcode - the opcode you want a label for
-     * @return {object} - object with label and category
+     * @returns {object} - object with label and category
      * @property {string} category - the category for this opcode
      * @property {Function} [labelFn] - function to generate the label for this opcode
      * @property {string} [label] - the label for this opcode if `labelFn` is absent
@@ -2641,7 +2641,7 @@ class Runtime extends EventEmitter {
      * @param {string} optVarId An optional ID to use for the variable. A new one will be generated
      * if a falsey value for this parameter is provided.
      * @param {string} optVarType The type of the variable to create. Defaults to Variable.SCALAR_TYPE.
-     * @return {Variable} The new variable that was created.
+     * @returns {Variable} The new variable that was created.
      */
     createNewGlobalVariable (variableName, optVarId, optVarType) {
         const varType = (typeof optVarType === 'string') ? optVarType : Variable.SCALAR_TYPE;
@@ -2656,7 +2656,7 @@ class Runtime extends EventEmitter {
     /**
      * Get names and ids of parameters for the given procedure.
      * @param {string} procedureCode Procedure code for procedure to query.
-     * @return {Array.<string>} List of param names for a procedure.
+     * @returns {Array.<string>} List of param names for a procedure.
      */
     getProcedureParamNamesAndIds (procedureCode) {
         return this.getProcedureParamNamesIdsAndDefaults(procedureCode).slice(0, 2);
@@ -2665,7 +2665,7 @@ class Runtime extends EventEmitter {
     /**
      * Get names, ids, and defaults of parameters for the given procedure.
      * @param {?string} name Name of procedure to query.
-     * @return {?Array.<string>} List of param names for a procedure.
+     * @returns {?Array.<string>} List of param names for a procedure.
      */
     getProcedureParamNamesIdsAndDefaults (name) {
         for (const target of this.targets) {
@@ -2680,7 +2680,7 @@ class Runtime extends EventEmitter {
     /**
      * Get the global procedure definition for a given name.
      * @param {?string} name Name of procedure to query.
-     * @return {[?Target, ?string]} ID of procedure definition.
+     * @returns {[?Target, ?string]} ID of procedure definition.
      */
     getProcedureDefinition (name) {
         for (const target of this.targets) {

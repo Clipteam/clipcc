@@ -8,6 +8,7 @@ import {LoadingState} from '../../../src/reducers/project-state';
 
 import vmManagerHOC from '../../../src/lib/vm-manager-hoc.jsx';
 
+// eslint-disable-next-line no-undef
 WebAudioTestAPI.setState({
     'AudioContext#resume': 'enabled'
 });

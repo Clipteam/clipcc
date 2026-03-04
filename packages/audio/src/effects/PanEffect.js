@@ -10,7 +10,7 @@ class PanEffect extends Effect {
      * @param {AudioEngine} audioEngine - audio engine this runs with
      * @param {AudioPlayer} audioPlayer - audio player this affects
      * @param {Effect} lastEffect - effect in the chain before this one
-     * @constructor
+     * @class
      */
     constructor (audioEngine, audioPlayer, lastEffect) {
         super(audioEngine, audioPlayer, lastEffect);

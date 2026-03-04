@@ -1,5 +1,5 @@
 /**
- * @fileOverview Convert 2.0 fonts to 3.0 fonts.
+ * @fileoverview Convert 2.0 fonts to 3.0 fonts.
  */
 
 /**

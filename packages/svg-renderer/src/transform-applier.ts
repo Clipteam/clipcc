@@ -10,7 +10,7 @@ interface BBox {
 }
 
 /**
- * @fileOverview Apply transforms to match stroke width appearance in 2.0 and 3.0
+ * @fileoverview Apply transforms to match stroke width appearance in 2.0 and 3.0
  */
 
 // Adapted from paper.js's Path.applyTransform
@@ -511,7 +511,7 @@ const _parseUrl = (value: string | undefined, windowRef: Window) => {
  * @param {object} bboxForTesting The bounds to use. Need to pass in for
  *     tests only, because getBBox doesn't work in Node. This should
  *     be the bounds of the svgTag without including stroke width or transforms.
- * @return {void}
+ * @returns {void}
  */
 const transformStrokeWidths = function (svgTag: SVGElement, windowRef: Window, bboxForTesting?: BBox) {
     const inherited = Matrix.identity();

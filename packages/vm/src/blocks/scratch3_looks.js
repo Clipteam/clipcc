@@ -212,7 +212,7 @@ class Scratch3LooksBlocks {
      * just set it to visible and update the type/text. Otherwise create a new
      * bubble and update the relevant custom state.
      * @param {!Target} target Target who needs a bubble.
-     * @return {undefined} Early return if text is empty string.
+     * @returns {undefined} Early return if text is empty string.
      * @private
      */
     _renderBubble (target) {
@@ -242,7 +242,7 @@ class Scratch3LooksBlocks {
     /**
      * Properly format text for a text bubble.
      * @param {string} text The text to be formatted
-     * @return {string} The formatted text
+     * @returns {string} The formatted text
      * @private
      */
     _formatBubbleText (text) {
@@ -280,7 +280,7 @@ class Scratch3LooksBlocks {
 
     /**
      * Retrieve the block primitives implemented by this package.
-     * @return {Record<string, Function>} Mapping of opcode to Function.
+     * @returns {Record<string, Function>} Mapping of opcode to Function.
      */
     getPrimitives () {
         return {
@@ -384,7 +384,7 @@ class Scratch3LooksBlocks {
      * @param {!Target} target Target to set costume to.
      * @param {any} requestedCostume Costume requested, e.g., 0, 'name', etc.
      * @param {boolean=} optZeroIndex Set to zero-index the requestedCostume.
-     * @return {Array.<!Thread>} Any threads started by this switch.
+     * @returns {Array.<!Thread>} Any threads started by this switch.
      */
     _setCostume (target, requestedCostume, optZeroIndex) {
         if (typeof requestedCostume === 'number') {
@@ -418,7 +418,7 @@ class Scratch3LooksBlocks {
      * @param {!Target} stage Target to set backdrop to.
      * @param {any} requestedBackdrop Backdrop requested, e.g., 0, 'name', etc.
      * @param {boolean=} optZeroIndex Set to zero-index the requestedBackdrop.
-     * @return {Array.<!Thread>} Any threads started by this switch.
+     * @returns {Array.<!Thread>} Any threads started by this switch.
      */
     _setBackdrop (stage, requestedBackdrop, optZeroIndex) {
         if (typeof requestedBackdrop === 'number') {

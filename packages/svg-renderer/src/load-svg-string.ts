@@ -7,7 +7,7 @@ import transformStrokeWidths from './transform-applier';
 /**
  * @param svgTag the tag to search within
  * @param tagName svg tag to search for (or collect all elements if not given)
- * @return a list of elements with the given tagname
+ * @returns a list of elements with the given tagname
  */
 const collectElements = (svgTag: SVGElement, tagName?: string) => {
     const elts: Element[] = [];
@@ -163,7 +163,7 @@ const transformText = (svgTag: SVGSVGElement) => {
  * This is used to enlarge the computed bounding box, which doesn't take
  * stroke width into account.
  * @param {SVGSVGElement} rootNode The root SVG node to traverse.
- * @return {number} The largest stroke width in the SVG.
+ * @returns {number} The largest stroke width in the SVG.
  */
 const findLargestStrokeWidth = (rootNode: SVGSVGElement) => {
     let largestStrokeWidth = 0;
@@ -317,7 +317,7 @@ const normalizeSvg = (svgTag: SVGSVGElement, fromVersion2?: boolean) => {
  * mimic Scratch 2.0's SVG rendering.
  * @param {!string} svgString String of SVG data to draw in quirks-mode.
  * @param {boolean} [fromVersion2] True if we should perform conversion from version 2 to version 3 svg.
- * @return {SVGSVGElement} The normalized SVG element.
+ * @returns {SVGSVGElement} The normalized SVG element.
  */
 const loadSvgString = (svgString: string, fromVersion2?: boolean) => {
     // Parse string into SVG XML.

@@ -71,7 +71,7 @@ class SelectTool extends paper.Tool {
     }
     /**
      * Returns the hit options to use when conducting hit tests.
-     * @return {object} See paper.Item.hitTest for definition of options
+     * @returns {object} See paper.Item.hitTest for definition of options
      */
     getHitOptions () {
         // Tolerance needs to be scaled when the view is zoomed in in order to represent the same

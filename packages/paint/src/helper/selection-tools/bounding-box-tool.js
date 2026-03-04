@@ -75,7 +75,7 @@ class BoundingBoxTool {
      * @param {?boolean} doubleClicked True if this is the second click in a short amout of time
      * @param {paper.hitOptions} hitOptions The options with which to detect whether mouse down has hit
      *     anything editable
-     * @return {boolean} True if there was a hit, false otherwise
+     * @returns {boolean} True if there was a hit, false otherwise
      */
     onMouseDown (event, clone, multiselect, doubleClicked, hitOptions) {
         if (event.event.button > 0) return; // only first mouse button
