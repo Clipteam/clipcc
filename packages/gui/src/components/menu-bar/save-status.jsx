@@ -41,6 +41,7 @@ const SaveStatus = ({
     ));
 
 SaveStatus.propTypes = {
+    // eslint-disable-next-line react/forbid-prop-types
     alertsList: PropTypes.arrayOf(PropTypes.object),
     onClickSave: PropTypes.func,
     projectChanged: PropTypes.bool

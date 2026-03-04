@@ -24,7 +24,7 @@ describe('Menu Bar HOC', () => {
                 canSave
                 projectChanged
                 // assume the user will click "cancel" on the confirm dialog
-                confirmWithMessage={() => (false)} // eslint-disable-line react/jsx-no-bind
+                confirmWithMessage={() => (false)}
                 store={store}
             />
         );
@@ -40,7 +40,7 @@ describe('Menu Bar HOC', () => {
             <WrappedComponent
                 canCreateNew
                 canSave
-                confirmWithMessage={() => (false)} // eslint-disable-line react/jsx-no-bind
+                confirmWithMessage={() => (false)}
                 projectChanged={false}
                 store={store}
             />
@@ -58,7 +58,7 @@ describe('Menu Bar HOC', () => {
                 canCreateNew
                 projectChanged
                 canSave={false}
-                confirmWithMessage={() => (false)} // eslint-disable-line react/jsx-no-bind
+                confirmWithMessage={() => (false)}
                 store={store}
             />
         );
@@ -75,7 +75,7 @@ describe('Menu Bar HOC', () => {
                 projectChanged
                 canCreateNew={false}
                 canSave={false}
-                confirmWithMessage={() => (false)} // eslint-disable-line react/jsx-no-bind
+                confirmWithMessage={() => (false)}
                 store={store}
             />
         );

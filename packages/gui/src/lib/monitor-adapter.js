@@ -3,15 +3,20 @@ import OpcodeLabels from './opcode-labels.js';
 const isUndefined = a => typeof a === 'undefined';
 
 /**
+ * @import * as VirtualMachine from 'clipcc-vm';
+ */
+
+/**
  * Convert monitors from VM format to what the GUI needs to render.
  * - Convert opcode to a label and a category
- * @param {string} block.id - The id of the monitor block
- * @param {string} block.spriteName - Present only if the monitor applies only to the sprite
+ * @param {object} root0 - The monitor block in VM format
+ * @param {string} root0.id - The id of the monitor block
+ * @param {string} root0.spriteName - Present only if the monitor applies only to the sprite
  *     with given target ID. The name of the target sprite when the monitor was created
- * @param {string} block.opcode - The opcode of the monitor
- * @param {object} block.params - Extra params to the monitor block
- * @param {string|number|Array} block.value - The monitor value
- * @param {VirtualMachine} block.vm - the VM instance which owns the block
+ * @param {string} root0.opcode - The opcode of the monitor
+ * @param {object} root0.params - Extra params to the monitor block
+ * @param {string|number|Array} root0.value - The monitor value
+ * @param {VirtualMachine} root0.vm - The VM instance, used to get labels for extension monitors
  * @returns {object} The adapted monitor with label and category
  */
 export default function ({id, spriteName, opcode, params, value, vm}) {

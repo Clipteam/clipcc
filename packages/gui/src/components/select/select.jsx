@@ -123,6 +123,7 @@ class Select extends React.Component {
         return (
             <div
                 className={styles.menu}
+                // eslint-disable-next-line no-return-assign
                 ref={ref => this.menuRef = ref}
             >
                 {this.props.options.map((option, index) => (
@@ -170,6 +171,7 @@ class Select extends React.Component {
                     </div>
                     <input
                         className={styles.dummyInput}
+                        // eslint-disable-next-line no-return-assign
                         ref={ref => this.inputRef = ref}
                         onBlur={this.handleInputBlur}
                         onFocus={this.handleInputFocus}

@@ -37,8 +37,8 @@ describe('SpriteSelectorItemComponent', () => {
         onDeleteButtonClick = jest.fn();
         selected = true;
         // Reset to undefined since they are optional props
-        number = undefined; // eslint-disable-line no-undefined
-        details = undefined; // eslint-disable-line no-undefined
+        number = undefined;
+        details = undefined;
     });
 
     test('matches snapshot when selected', () => {

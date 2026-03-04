@@ -59,7 +59,7 @@ class Stage extends React.Component {
             const width = this.props.stageWidth;
             const height = this.props.stageHeight;
             this.renderer = new Renderer(
-                this.canvas, 
+                this.canvas,
                 -width / 2,
                 width / 2,
                 -height / 2,
@@ -445,6 +445,8 @@ Stage.propTypes = {
     onActivateColorPicker: PropTypes.func,
     onDeactivateColorPicker: PropTypes.func,
     stageSize: PropTypes.oneOf(Object.keys(STAGE_DISPLAY_SIZES)).isRequired,
+    stageWidth: PropTypes.number.isRequired,
+    stageHeight: PropTypes.number.isRequired,
     useEditorDragStyle: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired
 };

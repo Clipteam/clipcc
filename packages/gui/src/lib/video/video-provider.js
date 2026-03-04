@@ -63,6 +63,7 @@ class VideoProvider {
 
     /**
      * Get the HTML video element containing the stream
+     * @returns {HTMLVideoElement | null} video element, null if not ready
      */
     get video () {
         return this._video;
@@ -215,7 +216,7 @@ class VideoProvider {
                 // Use the new srcObject API, falling back to createObjectURL
                 try {
                     this._video.srcObject = stream;
-                } catch (error) {
+                } catch {
                     this._video.src = window.URL.createObjectURL(stream);
                 }
                 // Hint to the stream that it should load. A standard way to do this
@@ -259,8 +260,11 @@ class VideoProvider {
      * get an internal workspace for canvas/context/caches
      * this uses some document stuff to create a canvas and what not, probably needs abstraction
      * into the renderer layer?
+     * @param {object} root0 A workspace for canvas/data storage.  Internal format not documented intentionally
+     * @param {[number, number]} root0.dimensions The dimensions of the workspace, used to key the workspace cache
+     * @param  {object} root0.mirror Whether the workspace is for mirrored frames, used to key the workspace cache
+     * @returns {object} A workspace with a canvas, context, and data cache for the given dimensions/mirror settings
      * @private
-     * @returns {object} A workspace for canvas/data storage.  Internal format not documented intentionally
      */
     _getWorkspace ({dimensions, mirror}) {
         let workspace = this._workspace.find(space => (

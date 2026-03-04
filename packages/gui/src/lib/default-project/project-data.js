@@ -21,7 +21,7 @@ const defaultTranslator = msgObj => msgObj.defaultMessage;
 
 /**
  * Generate a localized version of the default project
- * @param {function} translateFunction a function to use for translating the default names
+ * @param {Function} translateFunction a function to use for translating the default names
  * @returns {object} the project data json for the default project
  */
 const projectData = translateFunction => {
