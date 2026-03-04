@@ -2,6 +2,7 @@ const clipccConfig = require('eslint-config-clipcc');
 const clipccES6 = require('eslint-config-clipcc/es6');
 const clipccNode = require('eslint-config-clipcc/node');
 const clipccReact = require('eslint-config-clipcc/react');
+const reactPlugin = require('eslint-plugin-react');
 const clipccTS = require('eslint-config-clipcc/ts');
 const globals = require('globals');
 
@@ -44,6 +45,9 @@ module.exports = [
     {
         files: ['test/**/*.{js,jsx,ts,tsx}'],
         languageOptions: {
+            plugins: {
+                react: reactPlugin
+            },
             globals: {
                 ...globals.jest,
                 ...globals.browser
@@ -54,7 +58,9 @@ module.exports = [
             'jsdoc/require-jsdoc': 'off',
             'jsdoc/require-description': 'off',
             'jsdoc/require-param-description': 'off',
-            'jsdoc/require-returns-description': 'off'
+            'jsdoc/require-returns-description': 'off',
+            'react/jsx-uses-vars': [2],
+            'react/jsx-uses-react': [2]
         }
     }
 ];

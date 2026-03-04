@@ -76,12 +76,17 @@ module.exports = [
                 ...globals.browser
             }
         },
+        plugins: {
+            react: reactPlugin
+        },
         rules: {
             'no-undefined': 'off',
             'jsdoc/require-jsdoc': 'off',
             'jsdoc/require-description': 'off',
             'jsdoc/require-param-description': 'off',
-            'jsdoc/require-returns-description': 'off'
+            'jsdoc/require-returns-description': 'off',
+            'react/jsx-uses-vars': [2],
+            'react/jsx-uses-react': [2]
         }
     },
     {
