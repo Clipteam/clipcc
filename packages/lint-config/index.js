@@ -41,15 +41,7 @@ module.exports = [
             'jsdoc/require-param': 'error',
             'jsdoc/require-param-description': 'error',
             'jsdoc/require-param-type': 'error',
-            'jsdoc/require-returns': 'off',
-            'jsdoc/require-jsdoc': ['error', {
-                require: {
-                    MethodDefinition: true,
-                    ClassDeclaration: true,
-                    ArrowFunctionExpression: false,
-                    FunctionExpression: false
-                }
-            }],
+            'jsdoc/require-returns': 'error',
             'jsdoc/tag-lines': 'off',
 
             // Best practices
@@ -138,7 +130,6 @@ module.exports = [
                 'error',
                 {
                     groups: [
-                        ['+', '-', '*', '/', '%', '**'],
                         ['&', '|', '^', '~', '<<', '>>', '>>>'],
                         ['==', '!=', '===', '!==', '>', '>=', '<', '<='],
                         ['&&', '||'],

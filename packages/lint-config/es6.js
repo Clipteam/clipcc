@@ -1,7 +1,6 @@
 /**
  * ES6/ES2024 ESLint configuration for ClipCC projects.
  * This configuration adds ES6+ specific rules.
- * Use with ESLint 9 flat config format.
  *
  * @returns {import('eslint').Linter.Config} ESLint flat config object
  */
@@ -31,7 +30,7 @@ module.exports = {
         'no-var': [2],
         'prefer-arrow-callback': [2],
         'prefer-const': [2, {destructuring: 'all'}],
-        'prefer-promise-reject-errors': [2],
+        'prefer-promise-reject-errors': [1],
         'prefer-rest-params': [2],
         'prefer-spread': [2],
         'prefer-template': [2],
