@@ -4,8 +4,8 @@ const clipccES6 = require('eslint-config-clipcc/es6');
 
 module.exports = [
     ...clipccConfig,
-    clipccNode,
-    clipccES6,
+    ...clipccNode,
+    ...clipccES6,
     {
         files: ['test/**/*.js'],
         rules: {

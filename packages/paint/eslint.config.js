@@ -7,8 +7,8 @@ const globals = require('globals');
 
 module.exports = [
     ...clipccConfig,
-    clipccES6,
-    clipccNode,
+    ...clipccES6,
+    ...clipccNode,
     {
         ignores: [
             'node_modules/**',

@@ -10,8 +10,8 @@ const reactPlugin = require('eslint-plugin-react');
 
 module.exports = [
     ...clipccConfig,
-    clipccNode,
-    clipccES6,
+    ...clipccNode,
+    ...clipccES6,
     ...clipccReact.map(config => ({
         ...config,
         files: ['src/**/*.{js,jsx}']

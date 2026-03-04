@@ -5,8 +5,8 @@ const globals = require('globals');
 
 module.exports = [
     ...clipccConfig,
-    clipccNode,
-    clipccES6,
+    ...clipccNode,
+    ...clipccES6,
     {
         files: ['src/**/*.js'],
         languageOptions: {

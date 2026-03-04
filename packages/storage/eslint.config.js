@@ -5,7 +5,7 @@ const globals = require('globals');
 
 module.exports = [
     ...clipccConfig,
-    clipccNode,
+    ...clipccNode,
     ...clipccTS.map(config => ({
         ...config,
         files: ['src/**/*.ts'],
