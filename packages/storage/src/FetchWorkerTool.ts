@@ -95,8 +95,8 @@ class PrivateFetchWorkerTool implements Tool {
 
     /**
      * Request data from a server with a worker using fetch.
-     * @param {{url:string}} reqConfig - Request configuration for data to get.
-     * @param {{method:string}} options - Additional options to configure fetch.
+     * @param {ScratchGetRequest} reqConfig
+     * Request configuration for data to get, including url and additional fetch options.
      * @returns {Promise.<Buffer|Uint8Array|null>} Resolve to Buffer of data from server.
      */
     get ({url, ...options}: ScratchGetRequest): Promise<Uint8Array | null> {

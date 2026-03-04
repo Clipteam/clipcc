@@ -12,7 +12,7 @@ class LoggingHelper {
      * @param {string} label - A label for this instance.
      * @param {boolean} shouldSucceed - set to true to make `load` always succeed, or false to make `load` always fail.
      * @param {Array.<string>} logContainer - an array in which log messages will be stored.
-     * @constructor
+     * @class
      */
     constructor (storage, label, shouldSucceed, logContainer) {
         this.storage = storage;

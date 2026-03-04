@@ -1,15 +1,15 @@
 import {DataFormat} from './DataFormat';
 
-export interface AssetType {
+export interface IAssetType {
     contentType: string,
     name: string,
-    runtimeFormat: DataFormat,
+    runtimeFormat: typeof DataFormat,
     immutable: boolean
 }
 
 /**
  * Enumeration of the supported asset types.
- * @type {Record<string, AssetType>}
+ * @type {Record<string, IAssetType>}
  * @typedef {object} AssetType - Information about a supported asset type.
  * @property {string} contentType - the MIME type associated with this kind of data. Useful for data URIs, etc.
  * @property {string} name - The human-readable name of this asset type.
@@ -49,3 +49,5 @@ export const AssetType = {
         immutable: true
     }
 } as const;
+
+export type AssetTypeValue = (typeof AssetType)[keyof typeof AssetType];

@@ -39,7 +39,8 @@ const registerStep = function () {
 
 /**
  * Receive a job from the parent and fetch the requested data.
- * @param {object} options.job A job id, url, and options descriptor to perform.
+ * @param {object} root0 The message event from the parent.
+ * @param {object} root0.data A job id, url, and options descriptor to perform.
  */
 const onMessage = ({data: job}) => {
     if (jobsActive === 0 && !intervalId) {

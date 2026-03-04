@@ -4,8 +4,8 @@ import BuiltinHelper from './BuiltinHelper';
 import WebHelper, {UrlFunction} from './WebHelper';
 
 import _Asset, {AssetData, AssetId} from './Asset';
-import {AssetType as _AssetType, AssetType} from './AssetType';
-import {DataFormat as _DataFormat, DataFormat} from './DataFormat';
+import {AssetType, AssetTypeValue, type IAssetType} from './AssetType';
+import {DataFormat, IDataFormat} from './DataFormat';
 import _scratchFetch from './scratchFetch';
 import Helper from './Helper';
 
@@ -15,7 +15,7 @@ interface HelperWithPriority {
 }
 
 export class ScratchStorage {
-    public defaultAssetId: Record<AssetType['name'], AssetId>;
+    public defaultAssetId: Record<IAssetType['name'], AssetId>;
     public builtinHelper: BuiltinHelper;
     public webHelper: WebHelper;
 
@@ -42,7 +42,7 @@ export class ScratchStorage {
 
     /**
      * @returns {Asset} - the `Asset` class constructor.
-     * @constructor
+     * @class
      */
     get Asset () {
         return _Asset;
@@ -50,18 +50,18 @@ export class ScratchStorage {
 
     /**
      * @returns {AssetType} - the list of supported asset types.
-     * @constructor
+     * @class
      */
     get AssetType () {
-        return _AssetType;
+        return AssetType;
     }
 
     /**
      * @returns {DataFormat} - the list of supported data formats.
-     * @constructor
+     * @class
      */
     get DataFormat () {
-        return _DataFormat;
+        return DataFormat;
     }
 
     /**
@@ -75,7 +75,7 @@ export class ScratchStorage {
     /**
      * @deprecated Please use the `Asset` member of a storage instance instead.
      * @returns {Asset} - the `Asset` class constructor.
-     * @constructor
+     * @class
      */
     static get Asset () {
         return _Asset;
@@ -84,10 +84,10 @@ export class ScratchStorage {
     /**
      * @deprecated Please use the `AssetType` member of a storage instance instead.
      * @returns {AssetType} - the list of supported asset types.
-     * @constructor
+     * @class
      */
     static get AssetType () {
-        return _AssetType;
+        return AssetType;
     }
 
     /**
@@ -113,20 +113,20 @@ export class ScratchStorage {
 
     /**
      * Deprecated API for caching built-in assets. Use createAsset.
-     * @param {AssetType} assetType - The type of the asset to cache.
-     * @param {DataFormat} dataFormat - The dataFormat of the data for the cached asset.
+     * @param {AssetTypeValue} assetType - The type of the asset to cache.
+     * @param {IDataFormat} dataFormat - The dataFormat of the data for the cached asset.
      * @param {Buffer} data - The data for the cached asset.
      * @param {string} id - The id for the cached asset.
      * @returns {string} The calculated id of the cached asset, or the supplied id if the asset is mutable.
      */
-    cache (assetType: AssetType, dataFormat: DataFormat, data: AssetData, id: AssetId): AssetId {
+    cache (assetType: AssetTypeValue, dataFormat: IDataFormat, data: AssetData, id: AssetId): AssetId {
         log.warn('Deprecation: Storage.cache is deprecated. Use Storage.createAsset, and store assets externally.');
         return this.builtinHelper._store(assetType, dataFormat, data, id);
     }
 
     /**
      * Construct an Asset, and optionally generate an md5 hash of its data to create an id
-     * @param {AssetType} assetType - The type of the asset to cache.
+     * @param {IAssetType} assetType - The type of the asset to cache.
      * @param {DataFormat} dataFormat - The dataFormat of the data for the cached asset.
      * @param {Buffer} data - The data for the cached asset.
      * @param {string} [id] - The id for the cached asset.
@@ -134,8 +134,8 @@ export class ScratchStorage {
      * @returns {Asset} generated Asset with `id` attribute set if not supplied
      */
     createAsset (
-        assetType: AssetType,
-        dataFormat: DataFormat,
+        assetType: AssetTypeValue,
+        dataFormat: IDataFormat,
         data: AssetData,
         id: AssetId,
         generateId: boolean
@@ -152,7 +152,7 @@ export class ScratchStorage {
      * @param {UrlFunction} updateFunction - A function which computes a PUT URL for asset data.
      */
     addWebStore (
-        types: AssetType[],
+        types: IAssetType[],
         getFunction: UrlFunction,
         createFunction?: UrlFunction,
         updateFunction?: UrlFunction
@@ -163,20 +163,20 @@ export class ScratchStorage {
     /**
      * Register a web-based source for assets. Sources will be checked in order of registration.
      * @deprecated Please use addWebStore
-     * @param {Array.<AssetType>} types - The types of asset provided by this source.
+     * @param {Array.<IAssetType>} types - The types of asset provided by this source.
      * @param {UrlFunction} urlFunction - A function which computes a GET URL from an Asset.
      */
-    addWebSource (types: AssetType[], urlFunction: UrlFunction): void {
+    addWebSource (types: IAssetType[], urlFunction: UrlFunction): void {
         log.warn('Deprecation: Storage.addWebSource has been replaced by addWebStore.');
         this.addWebStore(types, urlFunction);
     }
 
     /**
      * TODO: Should this be removed in favor of requesting an asset with `null` as the ID?
-     * @param {AssetType} type - Get the default ID for assets of this type.
+     * @param {IAssetType} type - Get the default ID for assets of this type.
      * @returns {?string} The ID of the default asset of the given type, if any.
      */
-    getDefaultAssetId (type: AssetType): AssetId | undefined {
+    getDefaultAssetId (type: IAssetType): AssetId | undefined {
         if (Object.prototype.hasOwnProperty.call(this.defaultAssetId, type.name)) {
             return this.defaultAssetId[type.name];
         }
@@ -187,25 +187,25 @@ export class ScratchStorage {
      * be found and automatic fallback is enabled. Ideally this should be an asset that is available locally or even
      * one built into this module.
      * TODO: Should this be removed in favor of requesting an asset with `null` as the ID?
-     * @param {AssetType} type - The type of asset for which the default will be set.
+     * @param {IAssetType} type - The type of asset for which the default will be set.
      * @param {string} id - The default ID to use for this type of asset.
      */
-    setDefaultAssetId (type: AssetType, id: AssetId): void {
+    setDefaultAssetId (type: AssetTypeValue, id: AssetId): void {
         this.defaultAssetId[type.name] = id;
     }
 
     /**
      * Fetch an asset by type & ID.
-     * @param {AssetType} assetType - The type of asset to fetch. This also determines which asset store to use.
+     * @param {AssetTypeValue} assetType - The type of asset to fetch. This also determines which asset store to use.
      * @param {string} assetId - The ID of the asset to fetch: a project ID, MD5, etc.
-     * @param {DataFormat} [dataFormat] - Optional: load this format instead of the AssetType's default.
+     * @param {IDataFormat} [dataFormat] - Optional: load this format instead of the AssetType's default.
      * @returns {Promise.<Asset>} A promise for the requested Asset.
      *   If the promise is resolved with non-null, the value is the requested asset.
      *   If the promise is resolved with null, the desired asset could not be found with the current asset sources.
      *   If the promise is rejected, there was an error on at least one asset source. HTTP 404 does not count as an
      *   error here, but (for example) HTTP 403 does.
      */
-    load (assetType: AssetType, assetId: AssetId, dataFormat: DataFormat): Promise<_Asset | null> {
+    load (assetType: AssetTypeValue, assetId: AssetId, dataFormat: IDataFormat): Promise<_Asset | null> {
         const helpers = this._helpers.map(x => x.helper);
         const errors: unknown[] = [];
         dataFormat = dataFormat || assetType.runtimeFormat;
@@ -243,13 +243,13 @@ export class ScratchStorage {
 
     /**
      * Store an asset by type & ID.
-     * @param {AssetType} assetType - The type of asset to fetch. This also determines which asset store to use.
-     * @param {?DataFormat} [dataFormat] - Optional: load this format instead of the AssetType's default.
+     * @param {AssetTypeValue} assetType - The type of asset to fetch. This also determines which asset store to use.
+     * @param {?IDataFormat} [dataFormat] - Optional: load this format instead of the AssetType's default.
      * @param {Buffer} data - Data to store for the asset
      * @param {?string} [assetId] - The ID of the asset to fetch: a project ID, MD5, etc.
      * @returns {Promise.<object>} A promise for asset metadata
      */
-    store (assetType: AssetType, dataFormat: DataFormat | null | undefined, data: AssetData, assetId?: AssetId) {
+    store (assetType: AssetTypeValue, dataFormat: IDataFormat | null | undefined, data: AssetData, assetId?: AssetId) {
         dataFormat = dataFormat || assetType.runtimeFormat;
 
         return this.webHelper.store(assetType, dataFormat, data, assetId)
