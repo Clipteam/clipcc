@@ -174,6 +174,14 @@ module.exports = [
             'space-infix-ops': [2],
             'space-unary-ops': [2],
             'spaced-comment': [2]
+        },
+        settings: {
+            // Allowlist some JSDoc tag aliases we use.
+            jsdoc: {
+                tagNamePreference: {
+                    fileoverview: 'fileoverview'
+                }
+            }
         }
     }
 ];
