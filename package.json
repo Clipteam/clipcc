@@ -52,5 +52,6 @@
     "cross-env": "^7.0.3",
     "glob": "^11.0.0",
     "husky": "^8.0.3"
-  }
+  },
+  "packageManager": "yarn@4.13.0"
 }

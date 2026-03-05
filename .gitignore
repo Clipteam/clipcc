@@ -10,3 +10,12 @@ yarn-error.log
 # Dist
 dist
 build
+
+# yarn
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
