@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // From the NPM docs:
 // "If you need to perform operations on your package before it is used, in a way that is not dependent on the
 // operating system or architecture of the target system, use a prepublish script."

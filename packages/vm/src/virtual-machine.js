@@ -1,8 +1,8 @@
 let _TextEncoder;
 if (typeof TextEncoder === 'undefined') {
+    // eslint-disable-next-line global-require
     _TextEncoder = require('fastestsmallesttextencoderdecoder').TextEncoder;
 } else {
-    /* global TextEncoder */
     _TextEncoder = TextEncoder;
 }
 const EventEmitter = require('events');
@@ -53,14 +53,14 @@ const CORE_EXTENSIONS = [
  */
 
 /**
- * @typedef {Object} FileDesc
+ * @typedef {object} FileDesc
  * @property {string} fileName
  * @property {string} fileContent
  */
 
 /**
  * Handles connections between blocks, stage, and extensions.
- * @constructor
+ * @class
  */
 class VirtualMachine extends EventEmitter {
     constructor () {
@@ -307,7 +307,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Set stage height.
      * @param {number} height Height of the stage in pixels.
-    */
+     */
     setStageHeight (height) {
         this.setStageSize(this.runtime.stageWidth, height);
     }
@@ -401,7 +401,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Returns whether the extension has a currently connected peripheral.
      * @param {string} extensionId - the id of the extension.
-     * @return {boolean} - whether the extension has a connected peripheral.
+     * @returns {boolean} - whether the extension has a connected peripheral.
      */
     getPeripheralIsConnected (extensionId) {
         return this.runtime.getPeripheralIsConnected(extensionId);
@@ -410,7 +410,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Load a Scratch project from a .sb, .sb2, .sb3 or json string.
      * @param {string | object} input A json string, object, or ArrayBuffer representing the project to load.
-     * @return {!Promise<void>} Promise that resolves after targets are installed.
+     * @returns {!Promise<void>} Promise that resolves after targets are installed.
      */
     loadProject (input) {
         if (typeof input === 'object' && !(input instanceof ArrayBuffer) &&
@@ -425,6 +425,7 @@ class VirtualMachine extends EventEmitter {
         }
 
         const validationPromise = new Promise((resolve, reject) => {
+            // eslint-disable-next-line global-require
             const validate = require('clipcc-parser');
             // The second argument of false below indicates to the validator that the
             // input should be parsed/validated as an entire project (and not a single sprite)
@@ -434,6 +435,7 @@ class VirtualMachine extends EventEmitter {
             });
         })
             .catch(error => {
+                // eslint-disable-next-line global-require
                 const {SB1File, ValidationError} = require('scratch-sb1-converter');
 
                 try {
@@ -547,7 +549,7 @@ class VirtualMachine extends EventEmitter {
      * blob if argument not provided.
      * See https://stuk.github.io/jszip/documentation/api_jszip/generate_async.html#type-option
      * for more information about these options.
-     * @return {object} A generated zip of the sprite and its assets in the format
+     * @returns {object} A generated zip of the sprite and its assets in the format
      * specified by optZipType or blob by default.
      */
     exportSprite (targetId, optZipType) {
@@ -572,9 +574,10 @@ class VirtualMachine extends EventEmitter {
     /**
      * Export project or sprite as a Scratch 3.0 JSON representation.
      * @param {string=} optTargetId - Optional id of a sprite to serialize
-     * @return {string} Serialized state of the runtime.
+     * @returns {string} Serialized state of the runtime.
      */
     toJSON (optTargetId) {
+        // eslint-disable-next-line global-require
         const sb3 = require('./serialization/sb3');
         return StringUtil.stringify(sb3.serialize(this.runtime, optTargetId));
     }
@@ -608,10 +611,12 @@ class VirtualMachine extends EventEmitter {
         const deserializePromise = function () {
             const projectVersion = projectJSON.projectVersion;
             if (projectVersion === 2) {
+                // eslint-disable-next-line global-require
                 const sb2 = require('./serialization/sb2');
                 return sb2.deserialize(projectJSON, runtime, false, zip);
             }
             if (projectVersion === 3) {
+                // eslint-disable-next-line global-require
                 const sb3 = require('./serialization/sb3');
                 return sb3.deserialize(projectJSON, runtime, zip);
             }
@@ -684,7 +689,7 @@ class VirtualMachine extends EventEmitter {
      * Add a sprite, this could be .sprite2 or .sprite3. Unpack and validate
      * such a file first.
      * @param {string | object} input A json string, object, or ArrayBuffer representing the project to load.
-     * @return {!Promise<void>} Promise that resolves after targets are installed.
+     * @returns {!Promise<void>} Promise that resolves after targets are installed.
      */
     addSprite (input) {
         const errorPrefix = 'Sprite Upload Error:';
@@ -700,6 +705,7 @@ class VirtualMachine extends EventEmitter {
         }
 
         const validationPromise = new Promise((resolve, reject) => {
+            // eslint-disable-next-line global-require
             const validate = require('clipcc-parser');
             // The second argument of true below indicates to the parser/validator
             // that the given input should be treated as a single sprite and not
@@ -740,6 +746,7 @@ class VirtualMachine extends EventEmitter {
     _addSprite2 (sprite, zip) {
         // Validate & parse
 
+        // eslint-disable-next-line global-require
         const sb2 = require('./serialization/sb2');
         return sb2.deserialize(sprite, this.runtime, true, zip)
             .then(({targets, extensions}) =>
@@ -754,6 +761,7 @@ class VirtualMachine extends EventEmitter {
      */
     _addSprite3 (sprite, zip) {
         // Validate & parse
+        // eslint-disable-next-line global-require
         const sb3 = require('./serialization/sb3');
         return sb3
             .deserialize(sprite, this.runtime, zip, true)
@@ -846,7 +854,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Delete a costume from the current editing target.
      * @param {int} costumeIndex - the index of the costume to be removed.
-     * @return {?Function} A function to restore the deleted costume, or null,
+     * @returns {?Function} A function to restore the deleted costume, or null,
      * if no costume was deleted.
      */
     deleteCostume (costumeIndex) {
@@ -894,7 +902,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Get a sound buffer from the audio engine.
      * @param {int} soundIndex - the index of the sound to be got.
-     * @return {AudioBuffer} the sound's audio buffer.
+     * @returns {AudioBuffer} the sound's audio buffer.
      */
     getSoundBuffer (soundIndex) {
         const id = this.editingTarget.sprite.sounds[soundIndex].soundId;
@@ -949,7 +957,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Delete a sound from the current editing target.
      * @param {int} soundIndex - the index of the sound to be removed.
-     * @return {?Function} A function to restore the sound that was deleted,
+     * @returns {?Function} A function to restore the sound that was deleted,
      * or null, if no sound was deleted.
      */
     deleteSound (soundIndex) {
@@ -969,7 +977,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Get a string representation of the image from storage.
      * @param {int} costumeIndex - the index of the costume to be got.
-     * @return {string} the costume's SVG string if it's SVG,
+     * @returns {string} the costume's SVG string if it's SVG,
      *     a dataURI if it's a PNG or JPG, or null if it couldn't be found or decoded.
      */
     getCostume (costumeIndex) {
@@ -1138,7 +1146,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Delete a sprite and all its clones.
      * @param {string} targetId ID of a target whose sprite to delete.
-     * @return {Function} Returns a function to restore the sprite that was deleted
+     * @returns {Function} Returns a function to restore the sprite that was deleted
      */
     deleteSprite (targetId) {
         const target = this.runtime.getTargetById(targetId);
@@ -1232,7 +1240,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * Set the bitmap adapter for the VM/runtime, which converts scratch 2
      * bitmaps to scratch 3 bitmaps. (Scratch 3 bitmaps are all bitmap resolution 2)
-     * @param {!function} bitmapAdapter The adapter to attach
+     * @param {!Function} bitmapAdapter The adapter to attach
      */
     attachV2BitmapAdapter (bitmapAdapter) {
         this.runtime.attachV2BitmapAdapter(bitmapAdapter);
@@ -1359,9 +1367,10 @@ class VirtualMachine extends EventEmitter {
      * @param {!string} targetId Id of target to add blocks to.
      * @param {?string} optFromTargetId Optional target id indicating that blocks are being
      * shared from that target. This is needed for resolving any potential variable conflicts.
-     * @return {!Promise<void>} Promise that resolves when the extensions and blocks have been added.
+     * @returns {!Promise<void>} Promise that resolves when the extensions and blocks have been added.
      */
     shareBlocksToTarget (blocks, targetId, optFromTargetId) {
+        // eslint-disable-next-line global-require
         const sb3 = require('./serialization/sb3');
 
         const copiedBlocks = JSON.parse(JSON.stringify(blocks));
@@ -1418,7 +1427,7 @@ class VirtualMachine extends EventEmitter {
      * Sets the newly added costume as the current costume.
      * @param {!number} costumeIndex Index of the costume of the editing target to share.
      * @param {!string} targetId Id of target to add the costume.
-     * @return {Promise<void>} Promise that resolves when the new costume has been loaded.
+     * @returns {Promise<void>} Promise that resolves when the new costume has been loaded.
      */
     shareCostumeToTarget (costumeIndex, targetId) {
         const originalCostume = this.editingTarget.getCostumes()[costumeIndex];
@@ -1439,7 +1448,7 @@ class VirtualMachine extends EventEmitter {
      * Called when sounds are dragged from editing target to another target.
      * @param {!number} soundIndex Index of the sound of the editing target to share.
      * @param {!string} targetId Id of target to add the sound.
-     * @return {Promise<void>} Promise that resolves when the new sound has been loaded.
+     * @returns {Promise<void>} Promise that resolves when the new sound has been loaded.
      */
     shareSoundToTarget (soundIndex, targetId) {
         const originalSound = this.editingTarget.getSounds()[soundIndex];

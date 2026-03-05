@@ -1,28 +1,28 @@
-var test = require('tap').test;
-var JSZip = require('jszip');
-var data = require('../fixtures/data');
-var parser = require('../../index');
+const test = require('tap').test;
+const JSZip = require('jszip');
+const data = require('../fixtures/data');
+const parser = require('../../index');
 
-test('sb', function (t) {
-    var set = data.sb;
+test('sb', t => {
+    const set = data.sb;
     t.plan(set.length * 2);
-    for (var i in data.sb) {
-        parser(data.sb[i], false, function (err, res) {
+    for (const i in data.sb) {
+        parser(data.sb[i], false, (err, res) => {
             t.type(err, 'string');
             t.type(res, 'undefined');
         });
     }
 });
 
-test('sb2', function (t) {
-    var set = data.sb2;
+test('sb2', t => {
+    const set = data.sb2;
     t.plan(set.length * 5);
-    for (var i in data.sb2) {
-        parser(data.sb2[i], false, function (err, result) {
+    for (const i in data.sb2) {
+        parser(data.sb2[i], false, (err, result) => {
             t.equal(err, null);
             t.equal(Array.isArray(result), true);
-            var res = result[0];
-            var possibleZip = result[1];
+            const res = result[0];
+            const possibleZip = result[1];
             t.type(res, 'object');
             t.type(res.info, 'object');
             t.equal(possibleZip instanceof JSZip, true);
@@ -30,15 +30,15 @@ test('sb2', function (t) {
     }
 });
 
-test('sb3', function (t) {
-    var set = data.sb3;
+test('sb3', t => {
+    const set = data.sb3;
     t.plan(set.length * 5);
-    for (var i in data.sb3) {
-        parser(data.sb3[i], false, function (err, result) {
+    for (const i in data.sb3) {
+        parser(data.sb3[i], false, (err, result) => {
             t.equal(err, null);
             t.equal(Array.isArray(result), true);
-            var res = result[0];
-            var possibleZip = result[1];
+            const res = result[0];
+            const possibleZip = result[1];
             t.type(res, 'object');
             t.type(res.targets, 'object');
             t.equal(possibleZip instanceof JSZip, true);
@@ -46,15 +46,15 @@ test('sb3', function (t) {
     }
 });
 
-test('json', function (t) {
-    var set = data.json;
+test('json', t => {
+    const set = data.json;
     t.plan(set.length * 6);
-    for (var i in data.json) {
-        parser(data.json[i], false, function (err, result) {
+    for (const i in data.json) {
+        parser(data.json[i], false, (err, result) => {
             t.equal(err, null);
             t.equal(Array.isArray(result), true);
-            var res = result[0];
-            var possibleZip = result[1];
+            const res = result[0];
+            const possibleZip = result[1];
             t.type(res, 'object');
             t.type(res.projectVersion, 'number');
             if (res.projectVersion === 2) {
@@ -67,15 +67,15 @@ test('json', function (t) {
     }
 });
 
-test('json string', function (t) {
-    var set = data.json;
+test('json string', t => {
+    const set = data.json;
     t.plan(set.length * 6);
-    for (var i in data.json) {
-        parser(data.json[i].toString('utf-8'), false, function (err, result) {
+    for (const i in data.json) {
+        parser(data.json[i].toString('utf-8'), false, (err, result) => {
             t.equal(err, null);
             t.equal(Array.isArray(result), true);
-            var res = result[0];
-            var possibleZip = result[1];
+            const res = result[0];
+            const possibleZip = result[1];
             t.type(res, 'object');
             t.type(res.projectVersion, 'number');
             if (res.projectVersion === 2) {

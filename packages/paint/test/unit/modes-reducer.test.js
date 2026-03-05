@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import Modes from '../../src/lib/modes';
 import reducer, {changeMode} from '../../src/reducers/modes';
 

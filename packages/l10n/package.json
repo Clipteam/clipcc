@@ -40,7 +40,7 @@
         "async": "3.2.3",
         "babel-eslint": "^10.0.1",
         "babel-loader": "^9.1.2",
-        "eslint": "8.17.0",
+        "eslint": "^9.39.2",
         "eslint-config-clipcc": "^9.0.9",
         "eslint-plugin-import": "2.26.0",
         "eslint-plugin-react": "7.37.5",

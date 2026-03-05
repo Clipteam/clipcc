@@ -6,7 +6,7 @@ const Effect = require('./Effect');
 class VolumeEffect extends Effect {
     /**
      * Default value to set the Effect to when constructed and when clear'ed.
-     * @const {number}
+     * @returns {number}
      */
     get DEFAULT_VALUE () {
         return 100;

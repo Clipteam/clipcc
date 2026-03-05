@@ -22,28 +22,33 @@ import makeymakeyInsetIconURL from './makeymakey/makeymakey-small.svg';
 import microbitIconURL from './microbit/microbit.png';
 import microbitInsetIconURL from './microbit/microbit-small.svg';
 import microbitConnectionIconURL from './microbit/microbit-illustration.svg';
+// eslint-disable-next-line no-duplicate-imports
 import microbitConnectionSmallIconURL from './microbit/microbit-small.svg';
 
 import ev3IconURL from './ev3/ev3.png';
 import ev3InsetIconURL from './ev3/ev3-small.svg';
 import ev3ConnectionIconURL from './ev3/ev3-hub-illustration.svg';
+// eslint-disable-next-line no-duplicate-imports
 import ev3ConnectionSmallIconURL from './ev3/ev3-small.svg';
 
 import wedo2IconURL from './wedo2/wedo.png'; // TODO: Rename file names to match variable/prop names?
 import wedo2InsetIconURL from './wedo2/wedo-small.svg';
 import wedo2ConnectionIconURL from './wedo2/wedo-illustration.svg';
+// eslint-disable-next-line no-duplicate-imports
 import wedo2ConnectionSmallIconURL from './wedo2/wedo-small.svg';
 import wedo2ConnectionTipIconURL from './wedo2/wedo-button-illustration.svg';
 
 import boostIconURL from './boost/boost.png';
 import boostInsetIconURL from './boost/boost-small.svg';
 import boostConnectionIconURL from './boost/boost-illustration.svg';
+// eslint-disable-next-line no-duplicate-imports
 import boostConnectionSmallIconURL from './boost/boost-small.svg';
 import boostConnectionTipIconURL from './boost/boost-button-illustration.svg';
 
 import gdxforIconURL from './gdxfor/gdxfor.png';
 import gdxforInsetIconURL from './gdxfor/gdxfor-small.svg';
 import gdxforConnectionIconURL from './gdxfor/gdxfor-illustration.svg';
+// eslint-disable-next-line no-duplicate-imports
 import gdxforConnectionSmallIconURL from './gdxfor/gdxfor-small.svg';
 
 export default [

@@ -65,7 +65,7 @@ class RuntimeScriptCache {
  * @param {Blocks} container - Container of blocks
  * @param {string} opcode - Opcode to filter top blocks by
  */
-exports.getScripts = function () {
+exports.getScripts = function (container, opcode) { // eslint-disable-line no-unused-vars
     throw new Error('blocks.js has not initialized BlocksRuntimeCache');
 };
 

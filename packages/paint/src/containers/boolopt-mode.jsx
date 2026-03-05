@@ -74,6 +74,7 @@ class BoolOptMode extends React.Component {
 }
 
 BoolOptMode.propTypes = {
+    clearSelectedItems: PropTypes.func.isRequired,
     handleMouseDown: PropTypes.func.isRequired,
     boolOptMode: PropTypes.string,
     isBoolOptModeActive: PropTypes.bool.isRequired,

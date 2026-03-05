@@ -30,16 +30,16 @@ const BoundingBoxModes = keyMirror({
  * On mouse down, the type of function (move, scale, rotate) is determined based on what is clicked
  * (scale handle, rotate handle, the object itself). This determines the mode of the tool, which then
  * delegates actions to the MoveTool, RotateTool or ScaleTool accordingly.
- * @param {!function} onUpdateImage A callback to call when the image visibly changes
+ * @param {!Function} onUpdateImage A callback to call when the image visibly changes
  */
 class BoundingBoxTool {
     /**
      * @param {Modes} mode Paint editor mode
-     * @param {function} setSelectedItems Callback to set the set of selected items in the Redux state
-     * @param {function} clearSelectedItems Callback to clear the set of selected items in the Redux state
-     * @param {function} setCursor Callback to set the visible mouse cursor
-     * @param {!function} onUpdateImage A callback to call when the image visibly changes
-     * @param {?function} switchToTextTool A callback to call to switch to the text tool
+     * @param {Function} setSelectedItems Callback to set the set of selected items in the Redux state
+     * @param {Function} clearSelectedItems Callback to clear the set of selected items in the Redux state
+     * @param {Function} setCursor Callback to set the visible mouse cursor
+     * @param {!Function} onUpdateImage A callback to call when the image visibly changes
+     * @param {?Function} switchToTextTool A callback to call to switch to the text tool
      */
     constructor (mode, setSelectedItems, clearSelectedItems, setCursor, onUpdateImage, switchToTextTool) {
         this.dispatchSetCursor = setCursor;
@@ -75,7 +75,7 @@ class BoundingBoxTool {
      * @param {?boolean} doubleClicked True if this is the second click in a short amout of time
      * @param {paper.hitOptions} hitOptions The options with which to detect whether mouse down has hit
      *     anything editable
-     * @return {boolean} True if there was a hit, false otherwise
+     * @returns {boolean} True if there was a hit, false otherwise
      */
     onMouseDown (event, clone, multiselect, doubleClicked, hitOptions) {
         if (event.event.button > 0) return; // only first mouse button

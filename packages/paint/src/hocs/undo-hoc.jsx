@@ -66,6 +66,7 @@ const UndoHOC = function (WrappedComponent) {
         onUpdateImage: PropTypes.func.isRequired,
         setSelectedItems: PropTypes.func.isRequired,
         undoState: PropTypes.shape({
+            // eslint-disable-next-line react/forbid-prop-types
             stack: PropTypes.arrayOf(PropTypes.object).isRequired,
             pointer: PropTypes.number.isRequired
         })

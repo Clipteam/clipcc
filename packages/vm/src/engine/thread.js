@@ -14,7 +14,7 @@ const _stackFrameFreeList = [];
  * A frame used for each level of the stack. A general purpose
  * place to store a bunch of execution context and parameters
  * @param {boolean} warpMode Whether this level of the stack is warping
- * @constructor
+ * @class
  * @private
  */
 class _StackFrame {
@@ -49,7 +49,7 @@ class _StackFrame {
 
         /**
          * Persists reported inputs during async block.
-         * @type {?Object}
+         * @type {?object}
          */
         this.reported = null;
 
@@ -61,13 +61,13 @@ class _StackFrame {
 
         /**
          * Procedure parameters.
-         * @type {?Object}
+         * @type {?object}
          */
         this.params = null;
 
         /**
          * A context passed to block implementations.
-         * @type {?Object}
+         * @type {?object}
          */
         this.executionContext = null;
 
@@ -81,7 +81,7 @@ class _StackFrame {
     /**
      * Reset all properties of the frame to pristine null and false states.
      * Used to recycle.
-     * @return {_StackFrame} this
+     * @returns {_StackFrame} this
      */
     reset () {
 
@@ -215,7 +215,7 @@ class Thread {
      * Thread status for initialized or running thread.
      * This is the default state for a thread - execution should run normally,
      * stepping from block to block.
-     * @const
+     * @returns {number}
      */
     static get STATUS_RUNNING () {
         return 0;
@@ -224,7 +224,7 @@ class Thread {
     /**
      * Threads are in this state when a primitive is waiting on a promise;
      * execution is paused until the promise changes thread status.
-     * @const
+     * @returns {number}
      */
     static get STATUS_PROMISE_WAIT () {
         return 1;
@@ -232,7 +232,7 @@ class Thread {
 
     /**
      * Thread status for yield.
-     * @const
+     * @returns {number}
      */
     static get STATUS_YIELD () {
         return 2;
@@ -241,7 +241,7 @@ class Thread {
     /**
      * Thread status for a single-tick yield. This will be cleared when the
      * thread is resumed.
-     * @const
+     * @returns {number}
      */
     static get STATUS_YIELD_TICK () {
         return 3;
@@ -250,7 +250,7 @@ class Thread {
     /**
      * Thread status for a finished/done thread.
      * Thread is in this state when there are no more blocks to execute.
-     * @const
+     * @returns {number}
      */
     static get STATUS_DONE () {
         return 4;
@@ -292,7 +292,7 @@ class Thread {
 
     /**
      * Pop last block on the stack and its stack frame.
-     * @return {string} Block ID popped from the stack.
+     * @returns {string} Block ID popped from the stack.
      */
     popStack () {
         _StackFrame.release(this.stackFrames.pop());
@@ -321,7 +321,7 @@ class Thread {
             this.popStack();
             blockID = this.peekStack();
         }
-        
+
         this.controlFlowed = true;
 
         if (this.stack.length === 0) {
@@ -333,7 +333,7 @@ class Thread {
 
     /**
      * Get top stack item.
-     * @return {?string} Block ID on top of stack.
+     * @returns {?string} Block ID on top of stack.
      */
     peekStack () {
         return this.stack.length > 0 ? this.stack[this.stack.length - 1] : null;
@@ -342,7 +342,7 @@ class Thread {
 
     /**
      * Get top stack frame.
-     * @return {?object} Last stack frame stored on this thread.
+     * @returns {?object} Last stack frame stored on this thread.
      */
     peekStackFrame () {
         return this.stackFrames.length > 0 ? this.stackFrames[this.stackFrames.length - 1] : null;
@@ -350,7 +350,7 @@ class Thread {
 
     /**
      * Get stack frame above the current top.
-     * @return {?object} Second to last stack frame stored on this thread.
+     * @returns {?object} Second to last stack frame stored on this thread.
      */
     peekParentStackFrame () {
         return this.stackFrames.length > 1 ? this.stackFrames[this.stackFrames.length - 2] : null;
@@ -388,7 +388,7 @@ class Thread {
     /**
      * Get a parameter at the lowest possible level of the stack.
      * @param {!string} paramName Name of parameter.
-     * @return {*} value Value for parameter.
+     * @returns {*} value Value for parameter.
      */
     getParam (paramName) {
         // cc - ignore the top stack's param, it's not used by current stack
@@ -407,7 +407,7 @@ class Thread {
 
     /**
      * Whether the current execution of a thread is at the top of the stack.
-     * @return {boolean} True if execution is at top of the stack.
+     * @returns {boolean} True if execution is at top of the stack.
      */
     atStackTop () {
         return this.peekStack() === this.topBlock;
@@ -428,7 +428,7 @@ class Thread {
      * Attempt to determine whether a procedure call is recursive,
      * by examining the stack.
      * @param {!string} procedureCode Procedure code of procedure being called.
-     * @return {boolean} True if the call appears recursive.
+     * @returns {boolean} True if the call appears recursive.
      */
     isRecursiveCall (procedureCode) {
         let callCount = 5; // Max number of enclosing procedure calls to examine.

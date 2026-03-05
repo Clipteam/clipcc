@@ -22,11 +22,7 @@ export default [
       'shim/*',
       'dist/*',
       'gh-pages/*',
-      'build/*',
-      // old sources
-      'core/*',
-      'blocks_*/*',
-      'msg/*.js'
+      'build/*'
     ]
   },
   eslint.configs.recommended,

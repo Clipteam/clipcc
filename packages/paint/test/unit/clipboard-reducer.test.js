@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import clipboardReducer, {
     clearPasteOffset, incrementPasteOffset, setClipboardItems
 } from '../../src/reducers/clipboard';

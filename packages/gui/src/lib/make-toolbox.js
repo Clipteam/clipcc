@@ -985,7 +985,6 @@ const makeToolbox = function (
             `<xml style="display: none">${category.xml}</xml>`
         );
         if (!toolbox || toolbox.contents.length === 0) {
-            // eslint-disable-next-line no-console
             console.warn(`Invalid toolbox xml for ${category.id}`);
             continue;
         }

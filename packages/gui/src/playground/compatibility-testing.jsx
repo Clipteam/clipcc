@@ -39,6 +39,7 @@ class Player extends React.Component {
                 />
                 <iframe
                     allowFullScreen
+                    // eslint-disable-next-line react/no-unknown-property
                     allowTransparency
                     frameBorder="0"
                     height="402"

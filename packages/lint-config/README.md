@@ -6,10 +6,10 @@
 
 ## Installation
 
-Install the config along with its peer dependencies, eslint and babel-eslint.
+Install the config along with its peer dependencies, eslint, @eslint/js, globals, eslint-plugin-jsdoc, and @babel/eslint-parser.
 
 ```bash
-npm install -DE eslint-config-scratch eslint@^8 @babel/eslint-parser@^7
+npm install -DE eslint-config-clipcc eslint@^9 @eslint/js@^9 globals@^15 eslint-plugin-jsdoc@^50 @babel/eslint-parser@^7
 ```
 
 If you're using the React config, also install the dependency for that
@@ -18,51 +18,203 @@ If you're using the React config, also install the dependency for that
 npm install -DE eslint-plugin-react@^7
 ```
 
-## Usage
-The configuration is split up into several modules:
-* `clipcc`: The base configuration. Always extend this.
-* `clipcc/node`: Rules for node, e.g., server-side code, tests, and scripts
-* `clipcc/es6`: Rules for ES6, for use when you're transpiling with webpack
-* `clipcc/react`: Rules for React projects
-* `clipcc/ts` Rules for TypeScript
+If you're using the TypeScript config, also install the dependencies for that
 
-Usually web projects have a mix of node and web environment files. To lint both
-with the appropriate rules, set up a base `.eslintrc.js` with the rules for node
-and then override the node configuration in `src` (where web code usually lives).
-E.g., with a file structure like this:
+```bash
+npm install -DE @typescript-eslint/eslint-plugin@^8 @typescript-eslint/parser@^8
 ```
-scratch-project
-- .eslintrc.js
-- package.json
-- src
-  - .eslintrc.js
-  - index.js
-```
-Your config files should be set up like
+
+## Usage (ESLint 9 Flat Config)
+
+> **Note**: This package now uses ESLint 9's flat config format. For the old eslintrc format, see the Migration Guide below.
+
+The configuration is split up into several modules:
+* `eslint-config-clipcc`: The base configuration. Always extend this.
+* `eslint-config-clipcc/node`: Rules for node, e.g., server-side code, tests, and scripts
+* `eslint-config-clipcc/es6`: Rules for ES6, for use when you're transpiling with webpack
+* `eslint-config-clipcc/react`: Rules for React projects
+* `eslint-config-clipcc/ts`: Rules for TypeScript
+
+### Flat Config Setup
+
+With ESLint 9, you create an `eslint.config.js` file in your project root. Here are examples:
+
+#### Basic Node.js project
 ```javascript
-// scratch-project/.eslintrc.js
+// eslint.config.js
+const clipccConfig = require('eslint-config-clipcc');
+const clipccNode = require('eslint-config-clipcc/node');
+
+module.exports = [
+    ...clipccConfig,
+    clipccNode
+];
+```
+
+#### ES6 + Node.js project
+```javascript
+// eslint.config.js
+const clipccConfig = require('eslint-config-clipcc');
+const clipccES6 = require('eslint-config-clipcc/es6');
+const clipccNode = require('eslint-config-clipcc/node');
+
+module.exports = [
+    ...clipccConfig,
+    clipccES6,
+    clipccNode
+];
+```
+
+#### React project with separate source directory
+```javascript
+// eslint.config.js
+const clipccConfig = require('eslint-config-clipcc');
+const clipccES6 = require('eslint-config-clipcc/es6');
+const clipccNode = require('eslint-config-clipcc/node');
+const clipccReact = require('eslint-config-clipcc/react');
+const globals = require('globals');
+
+module.exports = [
+    // Base config for all files
+    ...clipccConfig,
+    clipccES6,
+    clipccNode,
+    
+    // React config for source files
+    {
+        files: ['src/**/*.{js,jsx}'],
+        languageOptions: {
+            globals: {
+                ...globals.browser
+            }
+        }
+    },
+    ...clipccReact.map(config => ({
+        ...config,
+        files: ['src/**/*.{js,jsx}']
+    })),
+    
+    // Global ignores
+    {
+        ignores: ['node_modules/**', 'build/**', 'dist/**']
+    }
+];
+```
+
+#### TypeScript project
+```javascript
+// eslint.config.js
+const clipccConfig = require('eslint-config-clipcc');
+const clipccTS = require('eslint-config-clipcc/ts');
+
+module.exports = [
+    ...clipccConfig,
+    ...clipccTS,
+    {
+        ignores: ['node_modules/**', 'build/**', 'dist/**']
+    }
+];
+```
+
+### Linting React Files
+
+If you're linting React, your lint script will automatically lint `.jsx` files with the flat config:
+```json
+"scripts": {
+    "lint": "eslint ."
+}
+```
+
+## Migration Guide from ESLint 8 to ESLint 9
+
+### Key Changes
+
+1. **Config Format**: ESLint 9 uses flat config (`eslint.config.js`) instead of `.eslintrc` files
+2. **No More `.eslintignore`**: Use the `ignores` property in your config instead
+3. **Environment Variables**: Use `languageOptions.globals` from the `globals` package instead of `env`
+4. **Plugins**: Import plugins directly as objects instead of using strings
+
+### Migration Steps
+
+#### 1. Update Dependencies
+
+```bash
+# Remove old dependencies
+npm uninstall eslint
+
+# Install new dependencies
+npm install -DE eslint@^9 @eslint/js@^9 globals@^15 eslint-plugin-jsdoc@^50 @babel/eslint-parser@^7
+npm install -DE eslint-config-clipcc@latest
+```
+
+#### 2. Convert Your Config File
+
+**Old `.eslintrc.js`:**
+```javascript
 module.exports = {
     extends: ['clipcc', 'clipcc/es6', 'clipcc/node']
 };
-
-// scratch-project/src/.eslintrc.js
-module.exports = {
-    root: true,
-    extends: ['clipcc', 'clipcc/es6', 'clipcc/react'],
-    env: {
-        browser: true
-    }
-};
 ```
-This will set up all the files in the project for linting as Node.js by default,
-except for those in `src/`, which will be linted as ES6 and React files.
 
-If you're linting React, also make sure your lint script lints `.jsx` files:
-```json
-"scripts": {
-    "lint": "eslint . --ext .js,.jsx"
+**New `eslint.config.js`:**
+```javascript
+const clipccConfig = require('eslint-config-clipcc');
+const clipccES6 = require('eslint-config-clipcc/es6');
+const clipccNode = require('eslint-config-clipcc/node');
+
+module.exports = [
+    ...clipccConfig,
+    clipccES6,
+    clipccNode
+];
+```
+
+#### 3. Convert Environment Variables
+
+**Old:**
+```javascript
+env: {
+    browser: true,
+    node: true
 }
 ```
+
+**New:**
+```javascript
+const globals = require('globals');
+
+{
+    languageOptions: {
+        globals: {
+            ...globals.browser,
+            ...globals.node
+        }
+    }
+}
+```
+
+#### 4. Convert Ignore Patterns
+
+**Old `.eslintignore`:**
+```
+node_modules
+build
+dist
+```
+
+**New (in `eslint.config.js`):**
+```javascript
+{
+    ignores: ['node_modules/**', 'build/**', 'dist/**']
+}
+```
+
+#### 5. Remove Old Config Files
+
+After migrating, remove these files:
+- `.eslintrc.js` (or `.eslintrc`, `.eslintrc.json`, etc.)
+- `.eslintignore`
+- Any `eslintConfig` entries in `package.json`
 
 ## Committing
 This project uses [semantic release](https://github.com/semantic-release/semantic-release)

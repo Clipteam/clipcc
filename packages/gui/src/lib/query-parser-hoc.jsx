@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
 
 
 /* Higher Order Component to get parameters from the URL query string and initialize redux state
@@ -8,10 +7,8 @@ import {connect} from 'react-redux';
  * @returns {React.Component} component with query parsing behavior
  */
 const QueryParserHOC = function (WrappedComponent) {
+    // eslint-disable-next-line react/prefer-stateless-function
     class QueryParserComponent extends React.Component {
-        constructor (props) {
-            super(props);
-        }
         render () {
             const {
                 onUpdateReduxDeck, // eslint-disable-line no-unused-vars
@@ -27,12 +24,7 @@ const QueryParserHOC = function (WrappedComponent) {
     QueryParserComponent.propTypes = {
         onUpdateReduxDeck: PropTypes.func
     };
-    const mapDispatchToProps = dispatch => ({
-    });
-    return connect(
-        null,
-        mapDispatchToProps
-    )(QueryParserComponent);
+    return QueryParserComponent;
 };
 
 export {

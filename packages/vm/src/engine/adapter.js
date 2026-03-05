@@ -14,7 +14,7 @@ const uid = require('../util/uid');
  * @param {object} blocks Collection of blocks to add to.
  * @param {boolean} isTopBlock Whether blocks at this level are "top blocks."
  * @param {?string} parent Parent block ID.
- * @return {undefined}
+ * @returns {undefined}
  */
 const domToBlock = function (blockDOM, blocks, isTopBlock, parent) {
     if (!blockDOM.attribs.id) {
@@ -140,7 +140,7 @@ const domToBlock = function (blockDOM, blocks, isTopBlock, parent) {
  * to a usable form for the Scratch runtime.
  * This structure is based on Blockly xml.js:`domToWorkspace` and `domToBlock`.
  * @param {Element} blocksDOM DOM tree for this event.
- * @return {Array.<object>} Usable list of blocks from this CREATE event.
+ * @returns {Array.<object>} Usable list of blocks from this CREATE event.
  */
 const domToBlocks = function (blocksDOM) {
     // At this level, there could be multiple blocks adjacent in the DOM tree.
@@ -171,7 +171,7 @@ const domToBlocks = function (blocksDOM) {
  * @param {boolean} isTopBlock Whether blocks at this level are "top blocks."
  * @param {?string} parent Parent block ID.
  * @param {boolean} [isShadow] Whether this block is a shadow.
- * @return {undefined}
+ * @returns {undefined}
  */
 const stateToBlock = function (blockState, blocks, isTopBlock, parent, isShadow) {
     if (!blockState.id) {
@@ -274,7 +274,7 @@ const stateToBlock = function (blockState, blocks, isTopBlock, parent, isShadow)
 /**
  * Blockly blocks JSON state to Scratch VM blocks representation.
  * @param {BlocksState} blocksState The JSON state of the blocks to convert.
- * @return {Array.<object>} Usable list of blocks from this CREATE event.
+ * @returns {Array.<object>} Usable list of blocks from this CREATE event.
  */
 const stateToBlocks = function (blocksState) {
     const blocks = {};
@@ -299,7 +299,7 @@ const stateToBlocks = function (blocksState) {
  * Adapter between block creation events and block representation which can be
  * used by the Scratch runtime.
  * @param {object} e `Blockly.events.create` or `Blockly.events.endDrag`
- * @return {Array.<object>} List of blocks from this CREATE event.
+ * @returns {Array.<object>} List of blocks from this CREATE event.
  */
 const adapter = function (e) {
     // Validate input

@@ -33,7 +33,7 @@
     "@babel/eslint-parser": "7.18.2",
     "@babel/preset-env": "7.14.8",
     "babel-eslint": "10.0.3",
-    "eslint": "3.19.0",
+    "eslint": "^9.39.2",
     "eslint-config-clipcc": "^9.0.9",
     "json": "9.0.6",
     "tap": "21.0.1",

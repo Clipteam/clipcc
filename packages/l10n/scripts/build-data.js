@@ -55,7 +55,7 @@ const combineJson = (component) => {
                 fs.readFileSync(path.resolve('editor', component, lang + '.json'), 'utf8')
             );
             collection[lang] = langData;
-        } catch (e) {
+        } catch {
             missingLocales.push(component + ':' + lang + '\n');
         }
         return collection;

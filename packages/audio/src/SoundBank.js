@@ -2,14 +2,14 @@ const log = require('./log');
 
 /**
  * A symbol indicating all targets are to be effected.
- * @const {string}
+ * @constant {string}
  */
 const ALL_TARGETS = '*';
 
 class SoundBank {
     /**
      * A bank of sounds that can be played.
-     * @constructor
+     * @class
      * @param {AudioEngine} audioEngine - related AudioEngine
      * @param {EffectChain} effectChainPrime - original EffectChain cloned for
      *     playing sounds
@@ -23,7 +23,7 @@ class SoundBank {
 
         /**
          * Map of ids to soundPlayers.
-         * @type {object<SoundPlayer>}
+         * @type {Record<string, SoundPlayer>}
          */
         this.soundPlayers = {};
 
@@ -35,7 +35,7 @@ class SoundBank {
 
         /**
          * Map of effect chains by sound id.
-         * @type {Map<string, EffectChain}
+         * @type {Map<string, EffectChain>}
          */
         this.soundEffects = new Map();
 

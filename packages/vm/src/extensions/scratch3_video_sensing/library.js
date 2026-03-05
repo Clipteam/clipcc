@@ -75,7 +75,7 @@ const LOCAL_THRESHOLD = THRESHOLD / 3;
  * Store the necessary image pixel data to compares frames of a video and
  * detect an amount and direction of motion in the full sample or in a
  * specified area.
- * @constructor
+ * @class
  */
 class VideoMotion {
     constructor () {
