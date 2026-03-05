@@ -48,7 +48,7 @@
     "format-message": "6.2.1",
     "htmlparser2": "7.2.0",
     "immutable": "3.8.1",
-    "jszip": "^3.1.5",
+    "jszip": "^3.10.1",
     "minilog": "3.1.0",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "scratch-sb1-converter": "0.2.7",
