@@ -89,7 +89,7 @@
     "lodash.defaultsdeep": "4.6.1",
     "pngjs": "3.3.3",
     "scratch-render-fonts": "1.0.0-prerelease.20221102164332",
-    "scratch-semantic-release-config": "1.0.5",
+    "scratch-semantic-release-config": "4.0.1",
     "script-loader": "0.7.2",
     "semantic-release": "19.0.5",
     "stats.js": "0.17.0",

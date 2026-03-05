@@ -51,7 +51,7 @@
     "mkdirp": "2.1.6",
     "rimraf": "3.0.2",
     "scratch-render-fonts": "1.0.73",
-    "scratch-semantic-release-config": "1.0.14",
+    "scratch-semantic-release-config": "4.0.1",
     "semantic-release": "19.0.5",
     "tap": "21.0.1",
     "terser-webpack-plugin": "^5.3.10",
