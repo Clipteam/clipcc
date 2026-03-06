@@ -3,7 +3,6 @@
   "version": "9.0.9",
   "description": "Shareable ESLint config for ClipCC",
   "main": "index.js",
-  "types": "index.d.ts",
   "scripts": {
     "test": "eslint ."
   },
