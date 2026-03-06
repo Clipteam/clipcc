@@ -35,13 +35,13 @@
     "js-md5": "^0.7.3"
   },
   "devDependencies": {
-    "@babel/core": "7.26.0",
-    "@babel/plugin-transform-runtime": "7.25.9",
+    "@babel/core": "7.29.0",
+    "@babel/plugin-transform-runtime": "7.29.0",
     "@babel/polyfill": "7.12.1",
-    "@babel/preset-env": "7.26.0",
+    "@babel/preset-env": "7.29.0",
     "@types/jest": "29.5.14",
     "@typescript-eslint/eslint-plugin": "7.18.0",
-    "babel-loader": "9.2.1",
+    "babel-loader": "10.1.0",
     "buffer": "6.0.3",
     "eslint": "^9.39.2",
     "eslint-config-clipcc": "9.0.9",
@@ -53,9 +53,9 @@
     "rimraf": "6.0.1",
     "ts-jest": "29.2.5",
     "ts-jest-mock-import-meta": "1.2.1",
-    "ts-loader": "9.5.1",
-    "typescript": "^5.7.2",
-    "webpack": "5.96.1",
-    "webpack-cli": "5.1.4"
+    "ts-loader": "9.5.4",
+    "typescript": "^5.9.3",
+    "webpack": "5.105.4",
+    "webpack-cli": "6.0.1"
   }
 }

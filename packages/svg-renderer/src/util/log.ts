@@ -1,5 +1,4 @@
-// @ts-nocheck
-import minilog from '@turbowarp/nanolog';
-minilog.enable();
+import nanolog from '@turbowarp/nanolog';
+nanolog.enable();
 
-export default minilog('scratch-svg-render');
+export default nanolog('scratch-svg-render');

@@ -29,17 +29,17 @@
     "startaudiocontext": "1.2.1"
   },
   "devDependencies": {
-    "@babel/core": "7.14.8",
-    "@babel/eslint-parser": "7.18.2",
-    "@babel/preset-env": "7.14.8",
+    "@babel/core": "7.29.0",
+    "@babel/eslint-parser": "7.28.6",
+    "@babel/preset-env": "7.29.0",
     "babel-eslint": "10.0.3",
     "eslint": "^9.39.2",
     "eslint-config-clipcc": "^9.0.9",
     "json": "9.0.6",
     "tap": "21.0.1",
-    "typescript": "^5.5.4",
+    "typescript": "^5.9.3",
     "web-audio-test-api": "0.5.2",
-    "webpack": "^5.75.0",
+    "webpack": "^5.105.4",
     "webpack-cli": "^5.0.1"
   }
 }
