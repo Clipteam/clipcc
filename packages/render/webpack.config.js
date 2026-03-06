@@ -5,11 +5,6 @@ const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-    devServer: {
-        static: false,
-        host: '0.0.0.0',
-        port: process.env.PORT || 8361
-    },
     resolve: {
         extensions: ['.ts', '.js']
     },
@@ -62,6 +57,11 @@ module.exports = [
     // Playground
     Object.assign({}, base, {
         target: 'web',
+        devServer: {
+            static: false,
+            host: '0.0.0.0',
+            port: process.env.PORT || 8361
+        },
         entry: {
             playground: './src/playground/playground.js',
             queryPlayground: './src/playground/queryPlayground.js'

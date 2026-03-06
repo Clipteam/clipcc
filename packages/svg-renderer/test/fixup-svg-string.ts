@@ -1,7 +1,7 @@
 import {test} from 'tap';
 import fs from 'fs';
 import path from 'path';
-import {DOMParser} from 'xmldom';
+import {DOMParser} from '@xmldom/xmldom';
 import fixupSvgString from '../src/fixup-svg-string';
 
 // The browser DOMParser throws on errors by default, replicate that here

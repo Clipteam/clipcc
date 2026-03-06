@@ -99,7 +99,7 @@ module.exports = [
             'htmlparser2': true,
             'immutable': true,
             'jszip': true,
-            'minilog': true,
+            '@turbowarp/nanolog': true,
             'clipcc-parser': true,
             'socket.io-client': true
         }

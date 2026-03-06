@@ -31,7 +31,7 @@ const whenThreadsComplete = (t, vm, uri, timeLimit = 5000) =>
     // When the number of threads reaches 0 the test is expected to be complete.
     new Promise((resolve, reject) => {
         let timeoutId = null;
-        
+
         const intervalId = setInterval(() => {
             let active = 0;
             const threads = vm.runtime.threads;
@@ -63,10 +63,6 @@ fs.readdirSync(executeDir)
     .forEach(uri => {
         // eslint-disable-next-line require-await
         test(uri, async t => {
-            // Disable logging during this test.
-            log.suggest.deny('vm', 'error');
-            t.teardown(() => log.suggest.clear());
-
             const vm = new VirtualMachine();
 
             // Map string messages to tap reporting methods. This will be used

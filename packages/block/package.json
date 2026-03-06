@@ -40,11 +40,11 @@
     "raw-loader": "^4.0.2",
     "source-map-loader": "^5.0.0",
     "ts-jest": "^29.4.5",
-    "ts-loader": "^9.5.2",
-    "typescript": "^5.7.3",
+    "ts-loader": "^9.5.4",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.25.0",
-    "webpack": "^5.98.0",
+    "webpack": "^5.105.4",
     "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.0"
+    "webpack-dev-server": "^5.2.3"
   }
 }

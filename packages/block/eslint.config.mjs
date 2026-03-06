@@ -19,9 +19,7 @@ export default [
       // build artifacts
       'msg/{js,json}/**',
       'i18n/*',
-      'shim/*',
       'dist/*',
-      'gh-pages/*',
       'build/*'
     ]
   },
