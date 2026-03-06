@@ -75,7 +75,7 @@
     "js-md5": "0.7.3",
     "json": "^9.0.4",
     "lodash.defaultsdeep": "4.6.1",
-    "pngjs": "3.3.3",
+    "pngjs": "7.0.0",
     "scratch-render-fonts": "1.0.252",
     "script-loader": "0.7.2",
     "stats.js": "0.17.0",
