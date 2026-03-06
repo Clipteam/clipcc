@@ -22,8 +22,8 @@
     "url": "https://github.com/Clipteam/clipcc.git"
   },
   "dependencies": {
-    "@scratch/paper": "0.11.20200728195508",
-    "classnames": "2.2.5",
+    "@scratch/paper": "0.11.20221201200345",
+    "classnames": "2.5.1",
     "keymirror": "0.1.1",
     "lodash.bindall": "4.4.0",
     "lodash.omit": "4.5.0",
