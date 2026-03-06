@@ -45,14 +45,11 @@
     "eslint-config-clipcc": "9.0.9",
     "eslint-plugin-import": "2.29.1",
     "globals": "^16.5.0",
-    "husky": "8.0.3",
     "jsdom": "13.2.0",
     "json": "9.0.6",
     "mkdirp": "2.1.6",
     "rimraf": "3.0.2",
     "scratch-render-fonts": "1.0.73",
-    "scratch-semantic-release-config": "1.0.14",
-    "semantic-release": "19.0.5",
     "tap": "21.0.1",
     "terser-webpack-plugin": "^5.3.10",
     "ts-loader": "^9.5.1",
@@ -67,10 +64,5 @@
     "Edge >= 15",
     "Firefox >= 57",
     "Safari >= 11"
-  ],
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
-  }
+  ]
 }

@@ -13,8 +13,6 @@
   "scripts": {
     "build": "yarn run clean && webpack --color --bail",
     "clean": "rimraf ./build && mkdirp build && rimraf ./dist && mkdirp dist",
-    "deploy": "touch build/.nojekyll && gh-pages -t -d build -m \"[skip ci] Build for $(git log --pretty=format:%H -n1)\"",
-    "prune": "./prune-gh-pages.sh",
     "i18n:src": "rimraf ./translations/messages/src && babel src > tmp.js && rimraf tmp.js && node ./scripts/build-i18n-src.js ./translations/messages/src ./translations/",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "start": "webpack-dev-server",
@@ -23,11 +21,6 @@
     "test:unit": "jest test[\\\\/]unit",
     "test:smoke": "jest --runInBand test[\\\\/]smoke",
     "watch": "webpack --color --watch"
-  },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
   },
   "dependencies": {
     "@microbit/microbit-universal-hex": "0.2.2",
@@ -108,8 +101,6 @@
     "@babel/preset-env": "7.14.8",
     "@babel/preset-react": "7.14.5",
     "@babel/preset-typescript": "^7.24.7",
-    "@commitlint/cli": "17.1.2",
-    "@commitlint/config-conventional": "17.1.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.3",
     "babel-jest": "23.6.0",
@@ -124,7 +115,6 @@
     "globals": "^16.5.0",
     "eslint-plugin-jest": "22.17.0",
     "eslint-plugin-react": "7.37.5",
-    "gh-pages": "3.2.3",
     "html-webpack-plugin": "^5.5.0",
     "jest": "21.2.1",
     "jest-junit": "7.0.0",
@@ -135,16 +125,13 @@
     "react-test-renderer": "16.2.0",
     "redux-mock-store": "1.5.3",
     "rimraf": "2.7.1",
-    "scratch-semantic-release-config": "1.0.5",
     "selenium-webdriver": "3.6.0",
-    "semantic-release": "19.0.5",
     "terser-webpack-plugin": "^5.3.10",
     "ts-loader": "^9.5.1",
     "typescript": "^5.5.4",
     "webpack": "^5.75.0",
     "webpack-cli": "^5.0.1",
     "webpack-dev-server": "^4.11.1",
-    "workbox-webpack-plugin": "^7.0.0",
     "yauzl": "2.10.0"
   },
   "jest": {

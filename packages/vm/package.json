@@ -30,11 +30,6 @@
     "watch": "webpack --progress --color --watch",
     "version": "json -f package.json -I -e \"this.repository.sha = '$(git log -n1 --pretty=format:%H)'\""
   },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
-  },
   "dependencies": {
     "@vernier/godirect": "1.5.0",
     "arraybuffer-loader": "1.0.8",
@@ -61,8 +56,6 @@
     "@babel/core": "7.13.10",
     "@babel/eslint-parser": "7.18.2",
     "@babel/preset-env": "7.14.8",
-    "@commitlint/cli": "17.0.2",
-    "@commitlint/config-conventional": "17.0.2",
     "@types/fastestsmallesttextencoderdecoder": "^1.0.2",
     "adm-zip": "0.4.11",
     "babel-eslint": "10.1.0",
@@ -80,7 +73,6 @@
     "eslint": "^9.39.2",
     "eslint-config-clipcc": "^9.0.9",
     "format-message-cli": "6.2.0",
-    "gh-pages": "1.2.0",
     "globals": "^16.5.0",
     "in-publish": "2.0.1",
     "js-md5": "0.7.3",
@@ -89,9 +81,7 @@
     "lodash.defaultsdeep": "4.6.1",
     "pngjs": "3.3.3",
     "scratch-render-fonts": "1.0.0-prerelease.20221102164332",
-    "scratch-semantic-release-config": "1.0.5",
     "script-loader": "0.7.2",
-    "semantic-release": "19.0.5",
     "stats.js": "0.17.0",
     "tap": "21.0.1",
     "terser-webpack-plugin": "^5.3.10",
