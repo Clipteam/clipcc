@@ -43,6 +43,7 @@ import './renderer/renderer';
 import './connection_checker';
 import './block_comment_icon';
 import './dragger';
+import {Gesture} from './gesture';
 import './metrics_manager';
 import './insertion_marker_previewer';
 
@@ -219,6 +220,34 @@ function setupEnvironment() {
     this.zoomControls_ = new ZoomControls(this) as unknown as Blockly.ZoomControls;
     const svgZoomControls = this.zoomControls_.createDom();
     this.svgGroup_.appendChild(svgZoomControls);
+  };
+
+  // Workaround for RaspberryPiFoundation/blockly#9538
+  // Should be removed after RaspberryPiFoundation/blockly#9626 get resolved
+  Blockly.WorkspaceSvg.prototype.getGesture = function(e) {
+    // TODO(#8960): Query Mover.isMoving to see if move is in progress
+    // rather than relying on .keyboardMoveInProgress status flag.
+    if (this.keyboardMoveInProgress) {
+      // Normally these would be called from Gesture.doStart.
+      e?.preventDefault();
+      e?.stopPropagation();
+      return null;
+    }
+
+    const isStart = e?.type === 'pointerdown';
+    if (isStart && this.currentGesture_?.hasStarted()) {
+      console.warn('Tried to start the same gesture twice.');
+      // That's funny.  We must have missed a mouse up.
+      // Cancel it, rather than try to retrieve all of the state we need.
+      this.currentGesture_.cancel(); // Sets this.currentGesture_ to null.
+    }
+    if (!this.currentGesture_ && isStart) {
+      // No gesture existed on this workspace, but this looks like the
+      // start of a new gesture.
+      this.currentGesture_ = new Gesture(e, this);
+    }
+
+    return this.currentGesture_;
   };
 }
 
