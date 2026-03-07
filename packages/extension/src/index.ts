@@ -1,7 +1,7 @@
 /**
  * @license
  * Copyright 2026 Clip Team
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: MPL-2.0
  */
 
 export {ExtensionManager} from './extension-manager';

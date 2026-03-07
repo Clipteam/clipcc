@@ -3,9 +3,10 @@
   "version": "3.2.0",
   "description": "Extension manager and interfaces for ClipCC",
   "author": "Clip Team",
-  "license": "MIT",
-  "main": "./dist/clipcc-extension.js",
-  "types": "./dist/clipcc-extension.d.ts",
+  "license": "MPL-2.0",
+  "main": "./dist/node/clipcc-extension.js",
+  "browser": "./dist/web/clipcc-extension.js",
+  "types": "./dist/types/index.d.ts",
   "repository": "https://github.com/Clipteam/clipcc.git",
   "scripts": {
     "build": "rimraf dist && mkdirp dist && webpack --progress --color --bail",
@@ -21,6 +22,8 @@
     "webpack-cli": "^6.0.1"
   },
   "dependencies": {
-    "eslint-config-clipcc": "^9.0.9"
+    "eslint-config-clipcc": "^9.0.9",
+    "format-message": "^6.2.4",
+    "tslog": "^4.10.2"
   }
 }
