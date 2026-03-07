@@ -1,10 +1,10 @@
-var fs = require('fs');
-var path = require('path');
-var test = require('tap').test;
-var JSZip = require('jszip');
-var unzip = require('../../lib/unzip');
+const fs = require('fs');
+const path = require('path');
+const test = require('tap').test;
+const JSZip = require('jszip');
+const unzip = require('../../lib/unzip');
 
-var fixtures = {
+const fixtures = {
     sb: path.resolve(__dirname, '../fixtures/data/_example.sb'),
     sb2: path.resolve(__dirname, '../fixtures/data/_example.sb2'),
     zipFakeProjectJSON:
@@ -14,20 +14,20 @@ var fixtures = {
     sb2Nested: path.resolve(__dirname, '../fixtures/data/_nestedFolder.sb2')
 };
 
-for (var i in fixtures) {
+for (const i in fixtures) {
     fixtures[i] = fs.readFileSync(fixtures[i]);
 }
 
-var errorMessage = 'Failed to unzip and extract project.json';
+const errorMessage = 'Failed to unzip and extract project.json';
 
-test('spec', function (t) {
+test('spec', t => {
     t.type(unzip, 'function');
     t.end();
 });
 
-test('sb', function (t) {
-    var buffer = new Buffer(fixtures.sb);
-    unzip(buffer, false, function (err, res) {
+test('sb', t => {
+    const buffer = new Buffer(fixtures.sb);
+    unzip(buffer, false, (err, res) => {
         t.type(err, 'string');
         t.equal(err.startsWith(errorMessage), true);
         t.type(res, 'undefined');
@@ -35,13 +35,13 @@ test('sb', function (t) {
     });
 });
 
-test('sb2', function (t) {
-    var buffer = new Buffer(fixtures.sb2);
-    unzip(buffer, false, function (err, res) {
+test('sb2', t => {
+    const buffer = new Buffer(fixtures.sb2);
+    unzip(buffer, false, (err, res) => {
         t.equal(err, null);
         t.equal(Array.isArray(res), true);
         t.type(res[0], 'string');
-        t.doesNotThrow(function () {
+        t.doesNotThrow(() => {
             JSON.parse(res[0]);
         });
         t.equal(res[1] instanceof JSZip, true);
@@ -49,13 +49,13 @@ test('sb2', function (t) {
     });
 });
 
-test('sb2 with nested folder', function (t) {
-    var buffer = new Buffer(fixtures.sb2Nested);
-    unzip(buffer, false, function (err, res) {
+test('sb2 with nested folder', t => {
+    const buffer = new Buffer(fixtures.sb2Nested);
+    unzip(buffer, false, (err, res) => {
         t.equal(err, null);
         t.equal(Array.isArray(res), true);
         t.type(res[0], 'string');
-        t.doesNotThrow(function () {
+        t.doesNotThrow(() => {
             JSON.parse(res[0]);
         });
         t.equal(res[1] instanceof JSZip, true);
@@ -63,9 +63,9 @@ test('sb2 with nested folder', function (t) {
     });
 });
 
-test('zip without project json', function (t) {
-    var buffer = new Buffer(fixtures.zipNoProjectJSON);
-    unzip(buffer, false, function (err, res) {
+test('zip without project json', t => {
+    const buffer = new Buffer(fixtures.zipNoProjectJSON);
+    unzip(buffer, false, (err, res) => {
         t.type(err, 'string');
         t.equal(err.startsWith(errorMessage), true);
         t.type(res, 'undefined');
@@ -73,14 +73,14 @@ test('zip without project json', function (t) {
     });
 });
 
-test('zip with fake project json', function (t) {
-    var buffer = new Buffer(fixtures.zipFakeProjectJSON);
-    unzip(buffer, false, function (err, res) {
+test('zip with fake project json', t => {
+    const buffer = new Buffer(fixtures.zipFakeProjectJSON);
+    unzip(buffer, false, (err, res) => {
         t.equal(err, null);
         t.equal(Array.isArray(res), true);
         t.type(res[0], 'string');
         t.equal(res[0], 'this is not json\n');
-        t.throws(function () {
+        t.throws(() => {
             JSON.parse(res[0]);
         });
         t.equal(res[1] instanceof JSZip, true);
@@ -88,10 +88,10 @@ test('zip with fake project json', function (t) {
     });
 });
 
-var randomString = 'this is not a zip';
+const randomString = 'this is not a zip';
 
-test('random string instead of zip, whole project', function (t) {
-    unzip(randomString, false, function (err, res) {
+test('random string instead of zip, whole project', t => {
+    unzip(randomString, false, (err, res) => {
         t.type(err, 'string');
         t.equal(err.startsWith(errorMessage), true);
         t.type(res, 'undefined');
@@ -99,8 +99,8 @@ test('random string instead of zip, whole project', function (t) {
     });
 });
 
-test('random string instead of zip, sprite', function (t) {
-    unzip(randomString, true, function (err, res) {
+test('random string instead of zip, sprite', t => {
+    unzip(randomString, true, (err, res) => {
         t.type(err, 'string');
         t.equal(err.startsWith(errorMessage), true);
         t.type(res, 'undefined');
@@ -108,9 +108,9 @@ test('random string instead of zip, sprite', function (t) {
     });
 });
 
-test('undefined', function (t) {
-    var foo;
-    unzip(foo, false, function (err, obj) {
+test('undefined', t => {
+    let foo;
+    unzip(foo, false, (err, obj) => {
         t.type(err, 'string');
         t.equal(err.startsWith(errorMessage), true);
         t.type(obj, 'undefined');
@@ -118,8 +118,8 @@ test('undefined', function (t) {
     });
 });
 
-test('null instead of zip, whole project', function (t) {
-    unzip(null, false, function (err, obj) {
+test('null instead of zip, whole project', t => {
+    unzip(null, false, (err, obj) => {
         t.type(err, 'string');
         t.equal(err.startsWith(errorMessage), true);
         t.type(obj, 'undefined');
@@ -127,8 +127,8 @@ test('null instead of zip, whole project', function (t) {
     });
 });
 
-test('null instead of zip, sprite', function (t) {
-    unzip(null, true, function (err, obj) {
+test('null instead of zip, sprite', t => {
+    unzip(null, true, (err, obj) => {
         t.type(err, 'string');
         t.equal(err.startsWith(errorMessage), true);
         t.type(obj, 'undefined');
@@ -136,8 +136,8 @@ test('null instead of zip, sprite', function (t) {
     });
 });
 
-test('object instead of zip, whole project', function (t) {
-    unzip({}, false, function (err, obj) {
+test('object instead of zip, whole project', t => {
+    unzip({}, false, (err, obj) => {
         t.type(err, 'string');
         t.equal(err.startsWith(errorMessage), true);
         t.type(obj, 'undefined');
@@ -145,8 +145,8 @@ test('object instead of zip, whole project', function (t) {
     });
 });
 
-test('object instead of zip, sprite', function (t) {
-    unzip({}, true, function (err, obj) {
+test('object instead of zip, sprite', t => {
+    unzip({}, true, (err, obj) => {
         t.type(err, 'string');
         t.equal(err.startsWith(errorMessage), true);
         t.type(obj, 'undefined');

@@ -85,11 +85,6 @@ export function buildGlowFilter(workspace: Blockly.WorkspaceSvg) {
 }
 
 /**
- * Set of currently glowing blocks.
- */
-const glowingBlocks: Set<string> = new Set();
-
-/**
  * Glow/unglow a stack in the workspace.
  * @param id ID of block which starts the stack.
  * @param isGlowingStack Whether to glow the stack.
@@ -98,9 +93,20 @@ const glowingBlocks: Set<string> = new Set();
 export function glowStack(
   id: string,
   isGlowingStack: boolean,
-  workspace = Blockly.getMainWorkspace()
+  workspace?: Blockly.WorkspaceSvg
 ): void {
-  const block = workspace.getBlockById(id) as Blockly.BlockSvg;
+  let block: Blockly.BlockSvg | null;
+  if (!workspace) {
+    workspace = Blockly.getMainWorkspace() as Blockly.WorkspaceSvg;
+    block = workspace.getBlockById(id);
+    if (!block) {
+      workspace = workspace.getFlyout()?.getWorkspace();
+      block = workspace?.getBlockById(id) ?? null;
+    }
+  } else {
+    block = workspace.getBlockById(id) as Blockly.BlockSvg;
+  }
+
   if (!block?.rendered) {
     // Scratch throw an error here; but for a visual effect, better to just log it.
     console.error(`Tried to glow stack on block ${id} that does not exist or not rendered.`);
@@ -109,11 +115,8 @@ export function glowStack(
 
   const svgRoot = block.getSvgRoot();
   if (isGlowingStack) {
-    if (glowingBlocks.has(id)) return;
-    glowingBlocks.add(id);
     svgRoot!.setAttribute('filter', 'url(#blocklyStackGlowFilter)');
   } else {
-    glowingBlocks.delete(id);
     svgRoot!.removeAttribute('filter');
   }
 }

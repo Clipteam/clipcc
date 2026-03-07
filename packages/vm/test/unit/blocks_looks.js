@@ -34,9 +34,9 @@ const blocks = new Looks(fakeRuntime);
  *
  * @param {string[]} costumes List of costume names as strings
  * @param {string|number|boolean} arg The argument to provide to the block.
- * @param {number} [currentCostume=1] The 1-indexed default costume for the sprite to start at.
- * @param {boolean} [isStage=false] Whether the sprite is the stage
- * @return {number} The 1-indexed costume index on which the sprite lands.
+ * @param {number} [currentCostume] The 1-indexed default costume for the sprite to start at.
+ * @param {boolean} [isStage] Whether the sprite is the stage
+ * @returns {number} The 1-indexed costume index on which the sprite lands.
  */
 const testCostume = (costumes, arg, currentCostume = 1, isStage = false) => {
     const rt = new Runtime();
@@ -67,8 +67,8 @@ const testCostume = (costumes, arg, currentCostume = 1, isStage = false) => {
  *
  * @param {string[]} backdrops List of backdrop names as strings
  * @param {string|number|boolean} arg The argument to provide to the block.
- * @param {number} [currentCostume=1] The 1-indexed default backdrop for the stage to start at.
- * @return {number} The 1-indexed backdrop index on which the stage lands.
+ * @param {number} [currentCostume] The 1-indexed default backdrop for the stage to start at.
+ * @returns {number} The 1-indexed backdrop index on which the stage lands.
  */
 const testBackdrop = (backdrops, arg, currentCostume = 1) => testCostume(backdrops, arg, currentCostume, true);
 

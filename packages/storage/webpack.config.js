@@ -105,6 +105,9 @@ const nodeConfig = {
         library: {
             type: 'commonjs2'
         },
+        environment: {
+            nodePrefixForCoreModules: false
+        },
         chunkFormat: 'commonjs',
         path: path.resolve(__dirname, 'dist', 'node'),
         clean: false

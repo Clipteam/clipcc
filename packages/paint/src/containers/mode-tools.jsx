@@ -236,7 +236,7 @@ ModeTools.propTypes = {
     onUpdateImage: PropTypes.func.isRequired,
     // Listen on selected items to update hasSelectedPoints
     selectedItems:
-        PropTypes.arrayOf(PropTypes.instanceOf(paper.Item)), // eslint-disable-line react/no-unused-prop-types
+        PropTypes.arrayOf(PropTypes.instanceOf(paper.Item)),
     setSelectedItems: PropTypes.func.isRequired
 };
 

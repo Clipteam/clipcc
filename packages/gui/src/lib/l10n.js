@@ -23,7 +23,7 @@ export default defineMessages({
     },
     'old': {
         defaultMessage: 'Old timey mode',
-        description: 'April fools: Makes the editor look like an old movie projector', // eslint-disable-line max-len
+        description: 'April fools: Makes the editor look like an old movie projector',
         id: 'gui.menuBar.oldTimeyMode'
     },
     'prehistoric': {

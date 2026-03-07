@@ -6,7 +6,7 @@
 /**
  * Generate a blank costume object for vm.addCostume with the provided name.
  * @param {string} name the name to use for the costume, caller should localize
- * @return {object} vm costume object
+ * @returns {object} vm costume object
  */
 const emptyCostume = name => ({
     name: name,
@@ -23,20 +23,11 @@ const emptyCostume = name => ({
  * @param {string} name the name to use for the sprite
  * @param {string} soundName the name to use for the default sound
  * @param {string} costumeName the name to use for the default costume
- * @return {object} object expected by vm.addSprite
+ * @returns {object} object expected by vm.addSprite
  */
 const emptySprite = (name, soundName, costumeName) => ({
     objName: name,
-    sounds: [
-        {
-            soundName: soundName,
-            soundID: -1,
-            md5: '83a9787d4cb6f3b7632b4ddfebf74367.wav',
-            sampleCount: 258,
-            rate: 11025,
-            format: ''
-        }
-    ],
+    sounds: [],
     costumes: [
         {
             costumeName: costumeName,

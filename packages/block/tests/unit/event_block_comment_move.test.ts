@@ -22,7 +22,7 @@ describe('Event: BlockCommentMove', () => {
   });
 
   beforeEach(() => {
-    block = workspace.newBlock('test_block') as Blockly.BlockSvg;
+    block = workspace.newBlock('test_block', 'test_id') as Blockly.BlockSvg;
     icon = new BlockCommentIcon(block);
     block.addIcon(icon);
   });
@@ -40,8 +40,8 @@ describe('Event: BlockCommentMove', () => {
       const oldCoord = new Blockly.utils.Coordinate(10, 20);
       const newCoord = new Blockly.utils.Coordinate(30, 40);
       const event = new BlockCommentMove(icon, oldCoord, newCoord);
-      expect(event.oldCoordinate).toEqual(oldCoord);
-      expect(event.newCoordinate).toEqual(newCoord);
+      expect(event.oldCoordinate_).toEqual(oldCoord);
+      expect(event.newCoordinate_).toEqual(newCoord);
     });
   });
 
@@ -83,18 +83,18 @@ describe('Event: BlockCommentMove', () => {
       const json = event.toJson();
       expect(json).toEqual({
         type: 'block_comment_move',
+        commentId: 'anchored_comment_test_id',
         blockId: block.id,
         newX: 30,
         newY: 40,
         oldX: 10,
         oldY: 20,
-        group: '',
-        commentId: undefined // Comment ID is undefined because the anchored comment is not rendered.
+        group: ''
       });
 
       const newEvent = BlockCommentMove.fromJson(json, workspace);
-      expect(newEvent.oldCoordinate).toEqual(oldCoord);
-      expect(newEvent.newCoordinate).toEqual(newCoord);
+      expect(newEvent.oldCoordinate_).toEqual(oldCoord);
+      expect(newEvent.newCoordinate_).toEqual(newCoord);
       expect(newEvent.blockId).toEqual(event.blockId);
     });
 

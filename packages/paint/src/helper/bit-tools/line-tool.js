@@ -8,7 +8,7 @@ import {ART_BOARD_WIDTH, ART_BOARD_HEIGHT} from '../view';
  */
 class LineTool extends paper.Tool {
     /**
-     * @param {!function} onUpdateImage A callback to call when the image visibly changes
+     * @param {!Function} onUpdateImage A callback to call when the image visibly changes
      */
     constructor (onUpdateImage) {
         super();

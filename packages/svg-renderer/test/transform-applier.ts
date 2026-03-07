@@ -40,6 +40,7 @@ const trickyBoundsPathBounds = {
 
 const {window} = new JSDOM();
 const parser = new window.DOMParser();
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const fs = require('fs');
 const OUTPUT_COMPARISON_FILES = false;
 let comparisonFileString = '';

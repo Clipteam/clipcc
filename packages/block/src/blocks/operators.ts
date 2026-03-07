@@ -412,11 +412,11 @@ Blockly.Blocks['operator_join_multiple'] = {
   changeArgumentsWrapper(callback: () => void): void {
     const oldExtraState = this.saveExtraState();
     callback();
+    this.updateDisplay();
     const newExtraState = this.saveExtraState();
     Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.BLOCK_CHANGE))(
       this, 'mutation', null, JSON.stringify(oldExtraState), JSON.stringify(newExtraState)
     ));
-    this.updateDisplay();
   },
   /**
    * Update the block's structure and appearance to match the extra states.
@@ -466,15 +466,10 @@ Blockly.Blocks['operator_join_multiple'] = {
       if (oldBlock) {
         // Reattach the old block and shadow input.
         delete connectionMap[input.name];
-        oldBlock.outputConnection.connect(input.connection!);
-        if (!oldShadow) {
-          // Create a shadow input.
-          oldShadow = {
-            type: 'text',
-            fields: {TEXT: ''}
-          };
+        if (!oldBlock.isShadow() && oldShadow) {
+          input.connection!.setShadowState(oldShadow);
         }
-        input.connection!.setShadowState(oldShadow);
+        oldBlock.outputConnection.connect(input.connection!);
       } else {
         // Create a new shadow block and attach it to the given input.
         Blockly.Events.disable();
@@ -514,7 +509,9 @@ Blockly.Blocks['operator_join_multiple'] = {
     this.moveInputBefore('DUMMY_INPUT', null);
 
     // Update the button states.
-    this.buttonMinus.setEnabled(this.argumentids.length > 1);
+    const shouldHideMinusButton = this.argumentids.length > 1;
+    this.buttonMinus.setEnabled(shouldHideMinusButton);
+    this.buttonMinus.setVisible(shouldHideMinusButton);
   }
 } as OperatorJoinMultipleBlock;
 

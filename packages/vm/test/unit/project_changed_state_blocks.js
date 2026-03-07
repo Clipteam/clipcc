@@ -96,7 +96,7 @@ test('Changing a block should emit a project changed event', t => {
     blockContainer.changeBlock({
         element: 'mutation',
         id: 'a new block',
-        value: '<mutation></mutation>'
+        value: '{"someMutationAttribute": "someValue"}'
     });
 
     t.equal(projectChanged, true);
@@ -257,11 +257,9 @@ test('Creating a block comment should emit a project changed event', t => {
         commentId: 'a new comment',
         height: 250,
         width: 400,
-        xy: {
-            x: -40,
-            y: 27
-        },
-        minimized: false,
+        x: -40,
+        y: 27,
+        collapsed: false,
         text: 'comment'
     });
 
@@ -276,11 +274,9 @@ test('Creating a workspace comment should emit a project changed event', t => {
         commentId: 'a new comment',
         height: 250,
         width: 400,
-        xy: {
-            x: -40,
-            y: 27
-        },
-        minimized: false,
+        x: -40,
+        y: 27,
+        collapsed: false,
         text: 'comment'
     });
 
@@ -295,11 +291,9 @@ test('Changing a comment should emit a project changed event', t => {
         commentId: 'a new comment',
         height: 250,
         width: 400,
-        xy: {
-            x: -40,
-            y: 27
-        },
-        minimized: false,
+        x: -40,
+        y: 27,
+        collapsed: false,
         text: 'comment'
     });
 
@@ -310,10 +304,10 @@ test('Changing a comment should emit a project changed event', t => {
         blockId: null,
         commentId: 'a new comment',
         newContents_: {
-            minimized: true
+            collapsed: true
         },
         oldContents_: {
-            minimized: false
+            collapsed: false
         }
     });
 
@@ -327,10 +321,10 @@ test('Attempting to change a comment that does not exist should not emit a proje
         blockId: null,
         commentId: 'a new comment',
         newContents_: {
-            minimized: true
+            collapsed: true
         },
         oldContents_: {
-            minimized: false
+            collapsed: false
         }
     });
 
@@ -345,11 +339,9 @@ test('Deleting a block comment should emit a project changed event', t => {
         commentId: 'a new comment',
         height: 250,
         width: 400,
-        xy: {
-            x: -40,
-            y: 27
-        },
-        minimized: false,
+        x: -40,
+        y: 27,
+        collapsed: false,
         text: 'comment'
     });
 
@@ -361,11 +353,9 @@ test('Deleting a block comment should emit a project changed event', t => {
         commentId: 'a new comment',
         height: 250,
         width: 400,
-        xy: {
-            x: -40,
-            y: 27
-        },
-        minimized: false,
+        x: -40,
+        y: 27,
+        collapsed: false,
         text: 'comment'
     });
 
@@ -380,11 +370,9 @@ test('Deleting a workspace comment should emit a project changed event', t => {
         commentId: 'a new comment',
         height: 250,
         width: 400,
-        xy: {
-            x: -40,
-            y: 27
-        },
-        minimized: false,
+        x: -40,
+        y: 27,
+        collapsed: false,
         text: 'comment'
     });
 
@@ -396,11 +384,9 @@ test('Deleting a workspace comment should emit a project changed event', t => {
         commentId: 'a new comment',
         height: 250,
         width: 400,
-        xy: {
-            x: -40,
-            y: 27
-        },
-        minimized: false,
+        x: -40,
+        y: 27,
+        collapsed: false,
         text: 'comment'
     });
 
@@ -415,11 +401,9 @@ test('Deleting a comment that does not exist should not emit a project changed e
         commentId: 'a new comment',
         height: 250,
         width: 400,
-        xy: {
-            x: -40,
-            y: 27
-        },
-        minimized: false,
+        x: -40,
+        y: 27,
+        collapsed: false,
         text: 'comment'
     });
 
@@ -434,11 +418,9 @@ test('Moving a comment should emit a project changed event', t => {
         commentId: 'a new comment',
         height: 250,
         width: 400,
-        xy: {
-            x: -40,
-            y: 27
-        },
-        minimized: false,
+        x: -40,
+        y: 27,
+        collapsed: false,
         text: 'comment'
     });
 

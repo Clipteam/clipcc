@@ -64,6 +64,7 @@ export default function (Input) {
     }
 
     LiveInput.propTypes = {
+        type: PropTypes.string,
         max: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         min: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         onSubmit: PropTypes.func.isRequired,

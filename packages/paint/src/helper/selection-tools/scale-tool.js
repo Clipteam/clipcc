@@ -12,7 +12,7 @@ const MIN_SCALE_FACTOR = 0.0001;
 class ScaleTool {
     /**
      * @param {Mode} mode Paint editor mode
-     * @param {!function} onUpdateImage A callback to call when the image visibly changes
+     * @param {!Function} onUpdateImage A callback to call when the image visibly changes
      */
     constructor (mode, onUpdateImage) {
         this.isBitmap = mode in BitmapModes;

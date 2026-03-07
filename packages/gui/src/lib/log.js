@@ -1,4 +1,4 @@
-import minilog from 'minilog';
-minilog.enable();
+import nanolog from '@turbowarp/nanolog';
+nanolog.enable();
 
-export default minilog('gui');
+export default nanolog('gui');

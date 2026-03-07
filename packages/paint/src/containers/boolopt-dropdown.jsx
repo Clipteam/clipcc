@@ -1,4 +1,3 @@
-import paper from '@scratch/paper';
 import {connect} from 'react-redux';
 import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
@@ -6,7 +5,7 @@ import React from 'react';
 
 import BoolOptDropdownComponent from '../components/boolopt-dropdown/boolopt-dropdown.jsx';
 import {changeBoolOptMode} from '../reducers/boolopt-mode';
-import styles from '../components/boolopt-dropdown/boolopt-dropdown.css';
+import '../components/boolopt-dropdown/boolopt-dropdown.css';
 
 class BoolOptDropdown extends React.Component {
     constructor (props) {

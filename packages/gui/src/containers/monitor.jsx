@@ -246,14 +246,14 @@ Monitor.propTypes = {
         savedMonitorPositions: PropTypes.object // eslint-disable-line react/forbid-prop-types
     }).isRequired,
     onDragEnd: PropTypes.func.isRequired,
-    opcode: PropTypes.string.isRequired, // eslint-disable-line react/no-unused-prop-types
-    params: PropTypes.object, // eslint-disable-line react/no-unused-prop-types, react/forbid-prop-types
+    opcode: PropTypes.string.isRequired,
+    params: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     removeMonitorRect: PropTypes.func.isRequired,
     resizeMonitorRect: PropTypes.func.isRequired,
-    spriteName: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+    spriteName: PropTypes.string,
     targetId: PropTypes.string,
     theme: PropTypes.string,
-    toolboxXML: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+    toolbox: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
@@ -261,7 +261,7 @@ Monitor.propTypes = {
             PropTypes.string,
             PropTypes.number
         ]))
-    ]), // eslint-disable-line react/no-unused-prop-types
+    ]),
     vm: PropTypes.instanceOf(VM),
     width: PropTypes.number,
     x: PropTypes.number,
@@ -274,7 +274,7 @@ const mapStateToProps = state => ({
     monitorLayout: state.scratchGui.monitorLayout,
     theme: state.scratchGui.theme.theme,
     // render on toolbox updates since changes to the blocks could affect monitor labels, i.e. updated locale
-    toolboxXML: state.scratchGui.toolbox.toolboxXML,
+    toolbox: state.scratchGui.toolbox.toolbox,
     vm: state.scratchGui.vm
 });
 const mapDispatchToProps = dispatch => ({

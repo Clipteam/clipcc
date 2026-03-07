@@ -16,15 +16,18 @@ import SelectionBoxTool from '../selection-tools/selection-box-tool';
  *   reshaping the selection.
  */
 class SelectTool extends paper.Tool {
-    /** The distance within which mouse events count as a hit against an item */
+    /**
+     * The distance within which mouse events count as a hit against an item.
+     * @returns {number} The tolerance in points for hit testing.
+     */
     static get TOLERANCE () {
         return 2;
     }
     /**
-     * @param {function} setSelectedItems Callback to set the set of selected items in the Redux state
-     * @param {function} clearSelectedItems Callback to clear the set of selected items in the Redux state
-     * @param {function} setCursor Callback to set the visible mouse cursor
-     * @param {!function} onUpdateImage A callback to call when the image visibly changes
+     * @param {Function} setSelectedItems Callback to set the set of selected items in the Redux state
+     * @param {Function} clearSelectedItems Callback to clear the set of selected items in the Redux state
+     * @param {Function} setCursor Callback to set the visible mouse cursor
+     * @param {!Function} onUpdateImage A callback to call when the image visibly changes
      */
     constructor (setSelectedItems, clearSelectedItems, setCursor, onUpdateImage) {
         super();
@@ -71,7 +74,7 @@ class SelectTool extends paper.Tool {
     }
     /**
      * Returns the hit options to use when conducting hit tests.
-     * @return {object} See paper.Item.hitTest for definition of options
+     * @returns {object} See paper.Item.hitTest for definition of options
      */
     getHitOptions () {
         // Tolerance needs to be scaled when the view is zoomed in in order to represent the same

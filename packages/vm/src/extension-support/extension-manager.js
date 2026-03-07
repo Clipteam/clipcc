@@ -8,6 +8,7 @@ const BlockType = require('./block-type');
 // TODO: move these out into a separate repository?
 // TODO: change extension spec so that library info, including extension ID, can be collected through static methods
 
+/* eslint-disable global-require */
 const builtinExtensions = {
     // This is an example that isn't loaded with the other core blocks,
     // but serves as a reference for loading core blocks as extensions.
@@ -25,6 +26,7 @@ const builtinExtensions = {
     boost: () => require('../extensions/scratch3_boost'),
     gdxfor: () => require('../extensions/scratch3_gdx_for')
 };
+/* eslint-enable global-require */
 
 /**
  * @typedef {object} ArgumentInfo - Information about an extension block argument
@@ -121,7 +123,7 @@ class ExtensionManager {
             return;
         }
 
-        /** @TODO dupe handling for non-builtin extensions. See commit 670e51d33580e8a2e852b3b038bb3afc282f81b9 */
+        /** @todo dupe handling for non-builtin extensions. See commit 670e51d33580e8a2e852b3b038bb3afc282f81b9 */
         if (this.isExtensionLoaded(extensionId)) {
             const message = `Rejecting attempt to load a second extension with ID ${extensionId}`;
             log.warn(message);
@@ -141,7 +143,7 @@ class ExtensionManager {
      */
     loadExtensionURL (extensionURL) {
         if (Object.prototype.hasOwnProperty.call(builtinExtensions, extensionURL)) {
-            /** @TODO dupe handling for non-builtin extensions. See commit 670e51d33580e8a2e852b3b038bb3afc282f81b9 */
+            /** @todo dupe handling for non-builtin extensions. See commit 670e51d33580e8a2e852b3b038bb3afc282f81b9 */
             if (this.isExtensionLoaded(extensionURL)) {
                 const message = `Rejecting attempt to load a second extension with ID ${extensionURL}`;
                 log.warn(message);
@@ -157,10 +159,11 @@ class ExtensionManager {
 
         return new Promise((resolve, reject) => {
             /**
-            * If we `require` this at the global level it breaks non-webpack targets, including tests
-            * Also, webpack 5's implementation will break non-webpack targets since VM is not a ESModule.
-            * Before VM migration to ESM, we still need to use worker-loader to solve this problem.
-            */
+             * If we `require` this at the global level it breaks non-webpack targets, including tests
+             * Also, webpack 5's implementation will break non-webpack targets since VM is not a ESModule.
+             * Before VM migration to ESM, we still need to use worker-loader to solve this problem.
+             */
+            // eslint-disable-next-line global-require
             const ExtensionWorker = require('codingclip-worker-loader?filename=extension-worker.js!./extension-worker');
 
             this.pendingExtensions.push({extensionURL, resolve, reject});

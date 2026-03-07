@@ -39,6 +39,7 @@ class Timer {
     /**
      * Legacy object to allow for us to call now to get the old style date time (for backwards compatibility)
      * @deprecated This is only called via the nowObj.now() if no other means is possible...
+     * @returns An object with a now function that returns the current time in ms since 1 January 1970 00:00:00 UTC.
      */
     static get legacyDateCode () {
         return {
@@ -50,6 +51,7 @@ class Timer {
 
     /**
      * Use this object to route all time functions through single access points.
+     * @returns An object with a now function that returns timestamp.
      */
     static get nowObj () {
         if (Timer.USE_PERFORMANCE && typeof self !== 'undefined' && self.performance && 'now' in self.performance) {
@@ -93,7 +95,7 @@ class Timer {
 
     /**
      * Call a handler function after a specified amount of time has elapsed.
-     * @param {function} handler - function to call after the timeout
+     * @param {Function} handler - function to call after the timeout
      * @param {number} timeout - number of milliseconds to delay before calling the handler
      * @returns {number} - the ID of the new timeout
      */

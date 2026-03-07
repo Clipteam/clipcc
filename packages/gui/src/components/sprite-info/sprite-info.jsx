@@ -196,7 +196,7 @@ class SpriteInfo extends React.Component {
                                 /> :
                                 null
                         }
-                                                <ToggleButtons
+                        <ToggleButtons
                             buttons={[
                                 {
                                     handleClick: this.props.onClickVisible,

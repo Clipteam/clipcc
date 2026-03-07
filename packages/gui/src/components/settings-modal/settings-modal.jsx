@@ -104,6 +104,7 @@ class SettingsModal extends React.Component {
                     >
                         <p
                             className={styles.category}
+                            // eslint-disable-next-line no-return-assign
                             ref={ref => this.categoryRef.appearance = ref}
                         >
                             {this.props.intl.formatMessage(messages.appearance)}
@@ -160,6 +161,7 @@ class SettingsModal extends React.Component {
                         </div>
                         <p
                             className={styles.category}
+                            // eslint-disable-next-line no-return-assign
                             ref={ref => this.categoryRef.player = ref}
                         >
                             {this.props.intl.formatMessage(messages.player)}
@@ -172,6 +174,7 @@ class SettingsModal extends React.Component {
                                     id="gui.settingsModal.framerate"
                                 />
                                 <FormattedMessage
+                                    // eslint-disable-next-line max-len
                                     defaultMessage="Set the framerate of the project. Some projects depends on framerate will not work properly without 30 fps."
                                     description="Description of framerate"
                                     id="gui.settingsModal.framerateDescription"
@@ -339,6 +342,7 @@ class SettingsModal extends React.Component {
                         </div>
                         <p
                             className={styles.category}
+                            // eslint-disable-next-line no-return-assign
                             ref={ref => this.categoryRef.project = ref}
                         >
                             {this.props.intl.formatMessage(messages.project)}
@@ -369,6 +373,7 @@ class SettingsModal extends React.Component {
                                     id="gui.settingsModal.autoSaveInterval"
                                 />
                                 <FormattedMessage
+                                    // eslint-disable-next-line max-len
                                     defaultMessage="Control the time interval of saving your project automatically. Only applies when Auto Save is enabled."
                                     description="Description of auto save interval"
                                     id="gui.settingsModal.autoSaveIntervalDescription"
@@ -414,6 +419,8 @@ SettingsModal.propTypes = {
     onChangeAutoSave: PropTypes.func.isRequired,
     onChangeInfiniteCloning: PropTypes.func.isRequired,
     onChangeEdgelessStage: PropTypes.func.isRequired,
+    onChangeStageWidth: PropTypes.func.isRequired,
+    onChangeStageHeight: PropTypes.func.isRequired,
     onChangeUnlimitedListLength: PropTypes.func.isRequired,
     onChangeUnlimitedPenSize: PropTypes.func.isRequired,
     onChangeUnlimitedSoundStuffs: PropTypes.func.isRequired,

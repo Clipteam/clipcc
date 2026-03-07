@@ -123,7 +123,7 @@
             }
             views.forEach(_view => _view.active && _view.draw());
         } catch (error) {
-            // eslint-disable-next-line no-console
+             
             console.error(error.stack || error);
             clearTimeout(timeoutId);
         }

@@ -40,7 +40,7 @@ class ListMonitorScroller extends React.Component {
                 <div className={styles.listIndex}>{index + 1 /* one indexed */}</div>
                 <div
                     className={styles.listValue}
-                    dataIndex={index}
+                    data-index={index}
                     style={{
                         background: this.props.categoryColor.background,
                         color: this.props.categoryColor.text
@@ -90,7 +90,7 @@ class ListMonitorScroller extends React.Component {
                 rowCount={values.length}
                 rowHeight={24 /* Row size is same for all rows */}
                 rowRenderer={this.rowRenderer}
-                scrollToIndex={scrollToIndex} /* eslint-disable-line no-undefined */
+                scrollToIndex={scrollToIndex}
                 values={values}
                 width={width}
             />

@@ -80,7 +80,7 @@ class Video {
      *
      * ioDevices.video.requestVideo()
      *
-     * @return {Promise.<Video>} resolves a promise to this IO device when video is ready.
+     * @returns {Promise.<Video>} resolves a promise to this IO device when video is ready.
      */
     enableVideo () {
         if (!this.provider) return null;
@@ -89,7 +89,7 @@ class Video {
 
     /**
      * Disable video stream (turn video off)
-     * @return {void}
+     * @returns {void}
      */
     disableVideo () {
         this._disablePreview();
@@ -108,7 +108,7 @@ class Video {
      * @param {number} frameInfo.cacheTimeout Will reuse previous image data if the time since capture is less than
      *                                        the cacheTimeout.  Defaults to 16ms.
      *
-     * @return {ArrayBuffer|Canvas|string|null} Frame data in requested format, null when errors.
+     * @returns {ArrayBuffer|Canvas|string|null} Frame data in requested format, null when errors.
      */
     getFrame ({
         dimensions = Video.DIMENSIONS,
@@ -194,7 +194,8 @@ class Video {
      * Method implemented by all IO devices to allow external changes.
      * The only change available externally is hiding the preview, used e.g. to
      * prevent drawing the preview into project thumbnails.
-     * @param {object} - data passed to this IO device.
+     * @param {object} data passed to this IO device.
+     * @param {boolean} data.forceTransparentPreview - whether the preview should be forced transparent.
      * @property {boolean} forceTransparentPreview - whether the preview should be forced transparent.
      */
     postData ({forceTransparentPreview}) {

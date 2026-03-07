@@ -10,6 +10,7 @@ import {InlineStatementInput} from './measurables/inline_statement_input';
 import {BowlerHat} from './measurables/bowler_hat';
 import {isInvisibleIcon} from '../interfaces/i_invisible_icon';
 import {isShadowTemplate} from '../interfaces/i_shadow_template';
+import {isScratchExtensionBlock} from '../interfaces/i_scratch_extension';
 
 /**
  * An object containing all sizing information needed to draw this block.
@@ -28,16 +29,26 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
   protected override createRows_(): void {
     super.createRows_();
 
-    // Remove comment icons.
+    // Remove elements that won't be rendered.
     for (const row of this.rows) {
       for (let i = 0; i < row.elements.length; ++i) {
         const element = row.elements[i];
+
+        // Remove comment icons.
         if (
           Blockly.blockRendering.Types.isIcon(element) &&
           isInvisibleIcon(element.icon) && element.icon.invisible
         ) {
-          row.elements.splice(i, 1);
+          row.elements.splice(i--, 1);
           this.invisibleIcons.push(element);
+        }
+
+        // Remove invisible fields.
+        if (
+          Blockly.blockRendering.Types.isField(element) &&
+          !element.field.isVisible()
+        ) {
+          row.elements.splice(i--, 1);
         }
       }
     }
@@ -47,7 +58,7 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
    * Create all non-spacer elements that belong on the top row.
    */
   protected override populateTopRow_(): void {
-    if (this.block_.hat === Constants.SHAPE_BOWLER_HAT) {
+    if (this.isBowlerHat()) {
       this.topRow.elements.push(new Blockly.blockRendering.SquareCorner(this.constants_));
       this.topRow.elements.push(new BowlerHat(this.constants_));
       return;
@@ -57,13 +68,23 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
   }
 
   /**
+   * Create all non-spacer elements that belong on the bottom row.
+   */
+  override populateBottomRow_() {
+    super.populateBottomRow_();
+    if (this.isBowlerHat()) {
+      this.bottomRow.minHeight = this.constants_.MEDIUM_PADDING;
+    }
+  }
+
+  /**
    * Figure out where the right edge of the block and right edge of statement
    * inputs should be placed.
    */
   protected override computeBounds_(): void {
     super.computeBounds_();
 
-    if (this.block_.hat === Constants.SHAPE_BOWLER_HAT) {
+    if (this.isBowlerHat()) {
       // Update the width of bowler hat.
       for (const element of this.topRow.elements) {
         if (Blockly.blockRendering.Types.isHat(element)) {
@@ -108,29 +129,42 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
           this.constants_.DUMMY_INPUT_MIN_HEIGHT
         );
       }
+
+      if (isScratchExtensionBlock(sourceBlock) && sourceBlock.isScratchExtension) {
+        if (sourceBlock.outputConnection) {
+          // If this is an extension reporter block, make it taller.
+          activeRow.minHeight = Math.max(
+            activeRow.minHeight,
+            this.constants_.DUMMY_INPUT_MIN_HEIGHT
+          );
+        } else if (sourceBlock.previousConnection) {
+          // If this is an extension block, and it has a previous connection,
+          // make it taller.
+          activeRow.minHeight = Math.max(
+            activeRow.minHeight,
+            this.constants_.DUMMY_INPUT_MIN_HEIGHT + this.constants_.GRID_UNIT * 2
+          );
+        }
+      }
     }
   }
 
   /**
-   * Calculate the width of a spacer element in a row based on the previous and
-   * next elements in that row.  For instance, extra padding is added between
-   * two editable fields.
-   * @param prev The element before the spacer.
-   * @param next The element after the spacer.
-   * @returns The size of the spacing between the two elements.
+   * Calculate the height of a spacer row.
+   * @param prev The row before the spacer.
+   * @param next The row after the spacer.
+   * @returns The desired height of the spacer row between these two rows.
    */
-  override getInRowSpacing_(
-    prev: Blockly.blockRendering.Measurable | null,
-    next: Blockly.blockRendering.Measurable | null
+  override getSpacerRowHeight_(
+    prev: Blockly.blockRendering.Row,
+    next: Blockly.blockRendering.Row
   ): number {
-    // Add more space before and after inline statement.
-    if (prev && next && (next.type & InlineStatementInput.TYPE)) {
-      return this.constants_.LARGE_PADDING;
+    // Bowler hats do not need extra padding at the top.
+    if (this.isBowlerHat() && prev === this.topRow) {
+      return 0;
     }
-    if (prev && (prev.type & InlineStatementInput.TYPE) && !next) {
-      return this.constants_.LARGE_PADDING;
-    }
-    return super.getInRowSpacing_(prev, next);
+
+    return super.getSpacerRowHeight_(prev, next);
   }
 
   /**
@@ -198,6 +232,44 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
         }
       }
     }
+  }
+
+  /**
+   * Calculate the centerline of an element in a row.
+   * @param row The row that the element is in.
+   * @param elem The element to calculate the centerline of.
+   * @returns The centerline of the element.
+   */
+  override getElemCenterline_(
+    row: Blockly.blockRendering.Row,
+    elem: Blockly.blockRendering.Measurable
+  ): number {
+    let centerline = super.getElemCenterline_(row, elem);
+    if (
+      isScratchExtensionBlock(this.block_) &&
+      this.block_.isScratchExtension &&
+      this.block_.previousConnection
+    ) {
+      if (
+        Blockly.blockRendering.Types.isField(elem) &&
+        elem instanceof Blockly.blockRendering.Field &&
+        elem.field instanceof Blockly.FieldImage
+      ) {
+        const firstInput = this.block_.inputList[0];
+        if (
+          firstInput &&
+          firstInput.fieldRow.length > 0 &&
+          firstInput.fieldRow[0] === elem.field
+        ) {
+          centerline += this.constants_.GRID_UNIT;
+        }
+      }
+    }
+    return centerline;
+  }
+
+  protected isBowlerHat(): boolean {
+    return this.block_?.hat === Constants.SHAPE_BOWLER_HAT;
   }
 
   /**

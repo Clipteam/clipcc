@@ -5,10 +5,10 @@
  * the `JSON.parse` function.
  * @param {string}   input    Stringified JSON object
  * @param {Function} callback Returns error or parsed JSON object
- * @return {void}
+ * @returns {void}
  */
 module.exports = function (input, callback) {
-    var result;
+    let result;
     try {
         // The input is a JSON string, which may contain control characters
         // that should be removed. See LLK/scratch-vm#1077
@@ -24,7 +24,7 @@ module.exports = function (input, callback) {
                     // The match contains an actual backspace, instead of backslashes followed by b.
                     // Remove backspace and keep backslashes that are not part of
                     // the control character representation.
-                    return match.replace('\\' + code, '');
+                    return match.replace(`\\${code}`, '');
                 }
                 // They are just backslashes followed by b or u0008. (e.g. "\\b")
                 // Don't replace in this case. (LLK/scratch-parser#56)

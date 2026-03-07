@@ -1,6 +1,5 @@
 // TODO: add tests of extension alerts
 
-/* eslint-env jest */
 import {AlertTypes, AlertLevels} from '../../../src/lib/alerts/index.jsx';
 import alertsReducer, {
     closeAlert,

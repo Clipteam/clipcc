@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import Formats from '../../src/lib/format';
 import reducer, {changeFormat} from '../../src/reducers/format';
 import {undo, redo} from '../../src/reducers/undo';

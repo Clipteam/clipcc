@@ -9,8 +9,8 @@ import {getHitBounds} from '../../helper/bitmap';
 class SelectionBoxTool {
     /**
      * @param {!Modes} mode Current paint editor mode
-     * @param {function} setSelectedItems Callback to set the set of selected items in the Redux state
-     * @param {function} clearSelectedItems Callback to clear the set of selected items in the Redux state
+     * @param {Function} setSelectedItems Callback to set the set of selected items in the Redux state
+     * @param {Function} clearSelectedItems Callback to clear the set of selected items in the Redux state
      */
     constructor (mode, setSelectedItems, clearSelectedItems) {
         this.selectionRect = null;

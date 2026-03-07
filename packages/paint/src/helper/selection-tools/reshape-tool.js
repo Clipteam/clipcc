@@ -31,33 +31,41 @@ const ReshapeModes = keyMirror({
  * - Handle tool, which translates handles, changing the shape of curves
  */
 class ReshapeTool extends paper.Tool {
-    /** Distance within which mouse is considered to be hitting an item */
+    /**
+     * Distance within which mouse is considered to be hitting an item
+     * @returns {number} The tolerance in points for hit testing
+     */
     static get TOLERANCE () {
         return ReshapeTool.HANDLE_RADIUS + ReshapeTool.HANDLE_PADDING;
     }
     /**
      * Units of padding around the visible handle area that will still register clicks as "touching the handle"
+     * @returns {number} The padding in points around the handle that will count as hitting the handle
      */
     static get HANDLE_PADDING () {
         return 1;
     }
     /**
      * Handles' radius, including the stroke
+     * @returns {number} The radius in points of the handle, including the stroke
      */
     static get HANDLE_RADIUS () {
         return 5.25;
     }
-    /** Clicks registered within this amount of time are registered as double clicks */
+    /**
+     * Clicks registered within this amount of time are registered as double clicks
+     * @returns {number} The time in milliseconds within which clicks are considered double clicks
+     */
     static get DOUBLE_CLICK_MILLIS () {
         return 250;
     }
     /**
-     * @param {function} setHoveredItem Callback to set the hovered item
-     * @param {function} clearHoveredItem Callback to clear the hovered item
-     * @param {function} setSelectedItems Callback to set the set of selected items in the Redux state
-     * @param {function} clearSelectedItems Callback to clear the set of selected items in the Redux state
-     * @param {!function} onUpdateImage A callback to call when the image visibly changes
-     * @param {!function} switchToTextTool A callback to call to switch to the text tool
+     * @param {Function} setHoveredItem Callback to set the hovered item
+     * @param {Function} clearHoveredItem Callback to clear the hovered item
+     * @param {Function} setSelectedItems Callback to set the set of selected items in the Redux state
+     * @param {Function} clearSelectedItems Callback to clear the set of selected items in the Redux state
+     * @param {!Function} onUpdateImage A callback to call when the image visibly changes
+     * @param {!Function} switchToTextTool A callback to call to switch to the text tool
      */
     constructor (setHoveredItem, clearHoveredItem, setSelectedItems, clearSelectedItems, onUpdateImage,
         switchToTextTool) {
@@ -95,7 +103,7 @@ class ReshapeTool extends paper.Tool {
      * Returns the hit options for segments to use when conducting hit tests. Segments are only visible
      * when the shape is selected. Segments take precedence, since they are always over curves and need
      * to be grabbable. (Segments are the little circles)
-     * @return {object} See paper.Item.hitTest for definition of options
+     * @returns {object} See paper.Item.hitTest for definition of options
      */
     getSelectedSegmentHitOptions () {
         const hitOptions = {
@@ -114,7 +122,7 @@ class ReshapeTool extends paper.Tool {
      * Returns the hit options for handles to use when conducting hit tests. Handles need to be done
      * separately because we want to ignore hidden handles, but we don't want hidden handles to negate
      * legitimate hits on other things (like if the handle is over part of the fill). (Handles are the diamonds)
-     * @return {object} See paper.Item.hitTest for definition of options
+     * @returns {object} See paper.Item.hitTest for definition of options
      */
     getHandleHitOptions () {
         const hitOptions = {
@@ -135,7 +143,7 @@ class ReshapeTool extends paper.Tool {
     /**
      * Returns the hit options for curves of selected objects, which take precedence over
      * unselected things and fills.
-     * @return {object} See paper.Item.hitTest for definition of options
+     * @returns {object} See paper.Item.hitTest for definition of options
      */
     getSelectedStrokeHitOptions () {
         const hitOptions = {
@@ -157,9 +165,7 @@ class ReshapeTool extends paper.Tool {
     }
     /**
      * Returns the hit options for fills and unselected strokes/curves to use when conducting hit tests.
-     * @param {boolean} preselectedOnly True if we should only return results that are already
-     *     selected.
-     * @return {object} See paper.Item.hitTest for definition of options
+     * @returns {object} See paper.Item.hitTest for definition of options
      */
     getUnselectedAndFillHitOptions () {
         const hitOptions = {
@@ -187,7 +193,7 @@ class ReshapeTool extends paper.Tool {
     /**
      * Given the point at which the mouse is, return the prioritized hit result, or null if nothing was hit.
      * @param {paper.Point} point Point to hit test on canvas
-     * @return {?paper.HitResult} hitResult
+     * @returns {?paper.HitResult} hitResult
      */
     getHitResult (point) {
         // Prefer hits on segments to other types of hits, since segments always overlap curves.

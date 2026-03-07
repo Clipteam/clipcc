@@ -6,7 +6,7 @@ class Joystick {
         /**
          * Reference to the owning Runtime.
          * Can be used, for example, to activate hats.
-         * @type{!Runtime}
+         * @type {!Runtime}
          */
         this.runtime = runtime;
     }

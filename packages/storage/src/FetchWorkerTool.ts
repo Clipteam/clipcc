@@ -48,7 +48,6 @@ class PrivateFetchWorkerTool implements Tool {
                 // Yes, this is a browser API and we've specified `browser: false` in the eslint env,
                 // but `isGetSupported` checks for the presence of Worker and uses it only if present.
                 // Also see https://webpack.js.org/guides/web-workers/
-                // eslint-disable-next-line no-undef
                 const worker = new Worker(
                     /* webpackChunkName: "fetch-worker" */ new URL('./FetchWorkerTool.worker', import.meta.url)
                 );
@@ -96,8 +95,8 @@ class PrivateFetchWorkerTool implements Tool {
 
     /**
      * Request data from a server with a worker using fetch.
-     * @param {{url:string}} reqConfig - Request configuration for data to get.
-     * @param {{method:string}} options - Additional options to configure fetch.
+     * @param {ScratchGetRequest} reqConfig
+     * Request configuration for data to get, including url and additional fetch options.
      * @returns {Promise.<Buffer|Uint8Array|null>} Resolve to Buffer of data from server.
      */
     get ({url, ...options}: ScratchGetRequest): Promise<Uint8Array | null> {

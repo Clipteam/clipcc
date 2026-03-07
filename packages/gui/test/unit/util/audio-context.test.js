@@ -1,6 +1,7 @@
 import 'lumen5-web-audio-test-api';
 import SharedAudioContext from '../../../src/lib/audio/shared-audio-context';
 
+// eslint-disable-next-line no-undef
 WebAudioTestAPI.setState({
     'AudioContext#resume': 'enabled'
 });

@@ -6,15 +6,12 @@
   "scripts": {
     "test": "eslint ."
   },
-  "eslintConfig": {
-    "extends": "./index.js"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Clipteam/clipcc.git"
   },
-  "author": "Massachusetts Institute of Technology",
-  "license": "AGPL-3.0-only",
+  "author": "Clip Team",
+  "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/Clipteam/clipcc/issues"
   },
@@ -25,26 +22,23 @@
     "clipcc"
   ],
   "optionalDependencies": {
-    "eslint-plugin-react": ">=7.27.0"
+    "eslint-plugin-react": ">=7.37.5"
   },
   "peerDependencies": {
     "@babel/eslint-parser": "^7.11.0",
-    "eslint": "^8.0.0"
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-jsdoc": "^61.5.0",
+    "globals": "^15.0.0"
   },
   "devDependencies": {
-    "@babel/eslint-parser": "7.25.1",
-    "@commitlint/cli": "17.8.1",
-    "@commitlint/config-conventional": "17.8.1",
-    "@typescript-eslint/eslint-plugin": "^8.4.0",
-    "@typescript-eslint/parser": "^8.4.0",
-    "eslint": "8.57.0",
-    "husky": "8.0.3",
-    "scratch-semantic-release-config": "1.0.14",
-    "semantic-release": "19.0.5"
-  },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
+    "@babel/eslint-parser": "7.28.6",
+    "@eslint/js": "^9.39.2",
+    "@typescript-eslint/eslint-plugin": "^8.50.1",
+    "@typescript-eslint/parser": "^8.50.1",
+    "eslint": "^9.39.2",
+    "eslint-plugin-jsdoc": "^61.5.0",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.5.0"
   }
 }

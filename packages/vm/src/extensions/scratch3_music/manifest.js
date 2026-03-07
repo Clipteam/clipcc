@@ -1,3 +1,4 @@
+/* eslint-disable global-require */
 module.exports = {
     'drums/1-snare.mp3': require('!arraybuffer-loader!./assets/drums/1-snare.mp3'),
     'drums/2-bass-drum.mp3': require('!arraybuffer-loader!./assets/drums/2-bass-drum.mp3'),

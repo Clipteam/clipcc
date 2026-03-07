@@ -678,14 +678,14 @@ function populateArgumentOnCaller(
   if (connectionMap && oldBlock) {
     // Reattach the old block and shadow DOM.
     connectionMap[input.name] = null;
+    if (type !== 'b' && type !== 'c' && this.generateShadows_ && !oldBlock.isShadow()) {
+      const shadowState = oldShadow || this.buildShadowState_(type);
+      input.connection!.setShadowState(shadowState);
+    }
     if (type === 'c') {
       oldBlock.previousConnection.connect(input.connection!);
     } else {
       oldBlock.outputConnection.connect(input.connection!);
-    }
-    if (type !== 'b' && type !== 'c' && this.generateShadows_) {
-      const shadowState = oldShadow || this.buildShadowState_(type);
-      input.connection!.setShadowState(shadowState);
     }
   } else if (this.generateShadows_) {
     this.attachShadow_(input, type);

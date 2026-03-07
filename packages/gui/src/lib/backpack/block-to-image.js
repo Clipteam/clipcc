@@ -1,10 +1,10 @@
 import computedStyleToInlineStyle from 'computed-style-to-inline-style';
-import ScratchBlocks from 'clipcc-block';
+import * as ScratchBlocks from 'clipcc-block';
 
 /**
  * Given a blockId, return a data-uri image that can be used to create a thumbnail.
  * @param {string} blockId the ID of the block to imagify
- * @return {Promise} resolves to a data-url of a picture of the blocks
+ * @returns {Promise} resolves to a data-url of a picture of the blocks
  */
 export default function (blockId) {
     // Not sure any better way to access the scratch-blocks workspace than this...

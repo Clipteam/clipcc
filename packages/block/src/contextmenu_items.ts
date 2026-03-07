@@ -192,7 +192,7 @@ export function registerCopyToPasteboard() {
   const copyOption: Blockly.ContextMenuRegistry.RegistryItem = {
     id: 'blockCopyToClipboard',
     weight: 4,
-    displayText: Blockly.Msg['COPY'],
+    displayText: () => Blockly.Msg['COPY'],
     scopeType: Blockly.ContextMenuRegistry.ScopeType.BLOCK,
     preconditionFn(scope: Blockly.ContextMenuRegistry.Scope) {
       return scope.block && !scope.block.isInFlyout ? 'enabled' : 'hidden';
@@ -218,7 +218,7 @@ export function registerPasteFromPasteboard() {
   const pasteOption: Blockly.ContextMenuRegistry.RegistryItem = {
     id: 'blockPasteFromClipboard',
     weight: 4,
-    displayText: Blockly.Msg['PASTE'],
+    displayText: () => Blockly.Msg['PASTE'],
     scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
     preconditionFn(scope: Blockly.ContextMenuRegistry.Scope) {
       return scope.workspace?.isMutator ? 'hidden' : 'enabled';

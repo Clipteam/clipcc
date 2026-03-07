@@ -40,7 +40,7 @@ Missing locales are ignored, react-intl will use the default messages for them.
  */
 import * as fs from 'fs';
 import * as path from 'path';
-import {sync as mkdirpSync} from 'mkdirp';
+import {mkdirpSync} from 'mkdirp';
 import defaultsDeep from 'lodash.defaultsdeep';
 import locales from '../src/supported-locales.js';
 
@@ -55,7 +55,7 @@ const combineJson = (component) => {
                 fs.readFileSync(path.resolve('editor', component, lang + '.json'), 'utf8')
             );
             collection[lang] = langData;
-        } catch (e) {
+        } catch {
             missingLocales.push(component + ':' + lang + '\n');
         }
         return collection;

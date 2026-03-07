@@ -12,7 +12,7 @@ class Variable {
      * @param {string} name Name of the variable.
      * @param {string} type Type of the variable, one of '' or 'list'
      * @param {boolean} isCloud Whether the variable is stored in the cloud.
-     * @constructor
+     * @class
      */
     constructor (id, name, type, isCloud) {
         this.id = id || uid();
@@ -41,10 +41,26 @@ class Variable {
     }
 
     /**
+     * Serializes this VariableModel to JSON State.
+     * @param {boolean} isLocal Whether this variable is locally scoped.
+     * @returns {object} a JSON representation of this VariableModel.
+     */
+    toState (isLocal) {
+        isLocal = (isLocal === true);
+        return {
+            id: this.id,
+            name: this.name,
+            type: this.type,
+            isLocal,
+            isCloud: this.isCloud
+        };
+    }
+
+    /**
      * Type representation for scalar variables.
      * This is currently represented as ''
      * for compatibility with blockly.
-     * @const {string}
+     * @returns {string}
      */
     static get SCALAR_TYPE () {
         return '';
@@ -52,7 +68,7 @@ class Variable {
 
     /**
      * Type representation for list variables.
-     * @const {string}
+     * @returns {string}
      */
     static get LIST_TYPE () {
         return 'list';
@@ -60,7 +76,7 @@ class Variable {
 
     /**
      * Type representation for list variables.
-     * @const {string}
+     * @returns {string}
      */
     static get BROADCAST_MESSAGE_TYPE () {
         return 'broadcast_msg';

@@ -16,7 +16,7 @@ describe('Sound Editor Container', () => {
     let store;
     let soundIndex;
     let soundBuffer;
-    const samples = new Float32Array([0, 0, 0]); // eslint-disable-line no-undef
+    const samples = new Float32Array([0, 0, 0]);
     let vm;
 
     beforeEach(() => {

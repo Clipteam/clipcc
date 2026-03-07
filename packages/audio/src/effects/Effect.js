@@ -2,12 +2,12 @@
  * An effect on an AudioPlayer and all its SoundPlayers.
  */
 class Effect {
-     /**
-      * @param {AudioEngine} audioEngine - audio engine this runs with
-      * @param {AudioPlayer} audioPlayer - audio player this affects
-      * @param {Effect} lastEffect - effect in the chain before this one
-      * @constructor
-      */
+    /**
+     * @param {AudioEngine} audioEngine - audio engine this runs with
+     * @param {AudioPlayer} audioPlayer - audio player this affects
+     * @param {Effect} lastEffect - effect in the chain before this one
+     * @class
+     */
     constructor (audioEngine, audioPlayer, lastEffect) {
         this.audioEngine = audioEngine;
         this.audioPlayer = audioPlayer;
@@ -33,7 +33,7 @@ class Effect {
 
     /**
      * Default value to set the Effect to when constructed and when clear'ed.
-     * @const {number}
+     * @returns {number}
      */
     get DEFAULT_VALUE () {
         return 0;
@@ -43,7 +43,7 @@ class Effect {
      * Should the effect be connected to the audio graph?
      * The pitch effect is an example that does not need to be patched in.
      * Instead of affecting the graph it affects the player directly.
-     * @return {boolean} is the effect affecting the graph?
+     * @returns {boolean} is the effect affecting the graph?
      */
     get _isPatch () {
         return this.initialized && (this.value !== this.DEFAULT_VALUE || this.audioPlayer === null);
@@ -51,7 +51,7 @@ class Effect {
 
     /**
      * Get the input node.
-     * @return {AudioNode} - audio node that is the input for this effect
+     * @returns {AudioNode} - audio node that is the input for this effect
      */
     getInputNode () {
         if (this._isPatch) {
@@ -75,7 +75,7 @@ class Effect {
      * @private
      * @param {number} value - new value to set effect to
      */
-    _set () {
+    _set (value) { // eslint-disable-line no-unused-vars
         throw new Error(`${this.constructor.name}._set is not implemented.`);
     }
 

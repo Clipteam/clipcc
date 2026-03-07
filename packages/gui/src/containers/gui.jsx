@@ -21,7 +21,6 @@ import {
 import {
     closeCostumeLibrary,
     closeBackdropLibrary,
-    closeSettingsModal,
     closeTelemetryModal,
     openExtensionLibrary
 } from '../reducers/modals';
@@ -163,13 +162,12 @@ const mapDispatchToProps = dispatch => ({
     onActivateSoundsTab: () => dispatch(activateTab(SOUNDS_TAB_INDEX)),
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
     onRequestCloseCostumeLibrary: () => dispatch(closeCostumeLibrary()),
-    onRequestCloseSettingsModal: () => dispatch(closeSettingsModal()),
     onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal())
 });
 
 const ConnectedGUI = injectIntl(connect(
     mapStateToProps,
-    mapDispatchToProps,
+    mapDispatchToProps
 )(GUI));
 
 // note that redux's 'compose' function is just being used as a general utility to make
