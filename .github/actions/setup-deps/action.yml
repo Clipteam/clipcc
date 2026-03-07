@@ -1,0 +1,30 @@
+name: Setup dependencies
+description: Setup Node.js, restore node_modules from cache, and install dependencies.
+
+inputs:
+  node-version:
+    description: Node.js version to use.
+    default: '24.x'
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: yarn
+
+    - name: Cache node_modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          node_modules
+          packages/*/node_modules
+        key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+        restore-keys: |
+          node-modules-${{ runner.os }}-
+
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+      shell: bash
