@@ -52,7 +52,6 @@ export class Dragger extends Blockly.dragging.Dragger {
         if (!Blockly.Events.getGroup()) {
           Blockly.Events.setGroup(true);
         }
-
         this.draggable = this.duplicateBlock(this.draggable);
         Blockly.getFocusManager().focusNode(this.draggable as Blockly.BlockSvg);
       }

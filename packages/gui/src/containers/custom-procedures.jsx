@@ -208,6 +208,7 @@ CustomProcedures.propTypes = {
     })
 };
 
+/** @type {ScratchBlocks.BlocklyOptions} */
 CustomProcedures.defaultOptions = {
     zoom: {
         controls: false,
