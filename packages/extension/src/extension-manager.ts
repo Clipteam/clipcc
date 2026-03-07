@@ -6,6 +6,7 @@
 
 import {EventEmitter} from 'events';
 import {IExtension} from './interfaces/i_extension';
+import {ScratchExtensionAdapter} from './adapter/scratch/adapter';
 
 /**
  * Class to manage all of the extensions.
@@ -59,7 +60,7 @@ export class ExtensionManager {
             throw new Error(`Extension ${extensionId} is already enabled.`);
         }
 
-        // @TODO
+        extension.enable();
     }
 
     /**
@@ -77,7 +78,7 @@ export class ExtensionManager {
             throw new Error(`Extension ${extensionId} is not enabled.`);
         }
 
-        // @TODO
+        extension.disable();
     }
 
     /**
@@ -95,8 +96,17 @@ export class ExtensionManager {
      * @param extensionId ID of the extension.
      * @returns The extension object.
      */
-    protected getExtensionById(extensionId: string): IExtension | null {
+    private getExtensionById(extensionId: string): IExtension | null {
         return this.loadedExtensions.get(extensionId) ?? null;
+    }
+
+    refreshBlocks() {
+        // @todo test only, should be replaced later.
+        for (const extension of this.loadedExtensions.values()) {
+            if (!extension.isEnabled()) continue;
+
+            (extension as ScratchExtensionAdapter).refreshPrimitives();
+        }
     }
 
     /**

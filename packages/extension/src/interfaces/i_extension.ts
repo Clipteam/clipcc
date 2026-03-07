@@ -19,4 +19,14 @@ export interface IExtension {
      * @returns True if the extension is enabled.
      */
     isEnabled(): boolean;
+
+    /**
+     * Enable the extension.
+     */
+    enable(): void;
+
+    /**
+     * Disable the extension.
+     */
+    disable(): void;
 }

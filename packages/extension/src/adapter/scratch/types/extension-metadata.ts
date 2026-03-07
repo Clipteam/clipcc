@@ -27,6 +27,8 @@ export interface ExtensionMetadata {
     blocks: Array<ExtensionBlockMetadata | string>;
     /** Map of menu name to metadata for each of this extension's menus. */
     menus?: Record<string, ExtensionMenuMetadata>;
+    /** List new target type(s) provided by this extension. */
+    targetTypes?: string[];
 }
 
 /**
@@ -36,7 +38,7 @@ export interface ExtensionBlockMetadata {
     /** A unique alphanumeric identifier for this block. No special characters allowed. */
     opcode: string;
     /** The name of the function implementing this block. Can be shared by other blocks/opcodes. */
-    func?: string;
+    func?: string | ((...args: any) => any);
     /** The type of block (command, reporter, etc.) being described. */
     blockType: BlockType;
     /** The text on the block, with [PLACEHOLDERS] for arguments. */
@@ -57,6 +59,8 @@ export interface ExtensionBlockMetadata {
     branchCount?: number;
     /** Map of argument placeholder to metadata about each arg. */
     arguments?: Record<string, ExtensionArgumentMetadata>;
+    /** True if creating a block factory / constructor. */
+    isDynamic?: boolean;
 }
 
 /**
@@ -74,7 +78,10 @@ export interface ExtensionArgumentMetadata {
 /**
  * All the metadata needed to register an extension drop-down menu.
  */
-export type ExtensionMenuMetadata = ExtensionDynamicMenu | ExtensionMenuItems;
+export type ExtensionMenuMetadata = {
+    acceptReporters?: boolean;
+    items: ExtensionDynamicMenu | ExtensionMenuItems | (() => [string, string][]);
+} | ExtensionDynamicMenu | ExtensionMenuItems;
 
 /**
  * The string name of a function which returns menu items.
@@ -99,4 +106,11 @@ export interface ExtensionMenuItemComplex {
     value: any;
     /** The human-readable label of this menu item in the menu. */
     text: string;
+}
+
+/**
+ * Check if the menu description is in short form (items only).
+ */
+export function isSimpleMenuMetadata(menu: ExtensionMenuMetadata): menu is ExtensionDynamicMenu | ExtensionMenuItems {
+    return !(menu as any).items;
 }
