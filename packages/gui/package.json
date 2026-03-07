@@ -39,6 +39,7 @@
     "classnames": "2.2.6",
     "clipcc-audio": "3.2.0",
     "clipcc-block": "3.2.0",
+    "clipcc-extension": "3.2.0",
     "clipcc-l10n": "3.2.0",
     "clipcc-paint": "3.2.0",
     "clipcc-render": "3.2.0",
