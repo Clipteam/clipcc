@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import VMScratchBlocks from '../lib/blocks';
 import VM from 'clipcc-vm';
+import {ExtensionManager} from 'clipcc-extension';
 
 import log from '../lib/log.js';
 import Prompt from './prompt.jsx';
@@ -66,6 +67,7 @@ class Blocks extends React.Component {
             'handlePromptCallback',
             'handlePromptClose',
             'handleCustomProceduresClose',
+            'handleExtensionUpdateBlocks',
             'onScriptGlowOn',
             'onScriptGlowOff',
             'onBlockGlowOn',
@@ -139,6 +141,9 @@ class Blocks extends React.Component {
         addFunctionListener(this.workspace, 'translate', this.onWorkspaceMetricsChange);
         addFunctionListener(this.workspace, 'zoom', this.onWorkspaceMetricsChange);
 
+        // Handle events from extension manager to modify clipcc-block.
+        this.props.extensionManager.addEventListener('UPDATE_BLOCKS', this.handleExtensionUpdateBlocks);
+
         this.attachVM();
         // Only update blocks/vm locale when visible to avoid sizing issues
         // If locale changes while not visible it will get handled in didUpdate
@@ -210,6 +215,9 @@ class Blocks extends React.Component {
         this.detachVM();
         this.workspace.dispose();
         clearTimeout(this.toolboxUpdateTimeout);
+
+        // Remove event listeners for extension manager.
+        this.props.extensionManager.addEventListener('UPDATE_BLOCKS', this.handleExtensionUpdateBlocks);
 
         // Clear the flyout blocks so that they can be recreated on mount.
         this.props.vm.clearFlyoutBlocks();
@@ -390,7 +398,7 @@ class Blocks extends React.Component {
             const targetCostumes = target.getCostumes();
             const targetSounds = target.getSounds();
             const dynamicBlocksXML = injectExtensionCategoryTheme(
-                this.props.vm.runtime.getBlocksXML(target),
+                this.props.vm.extensionManager.getToolboxContents(target.isStage),
                 this.props.theme
             );
             return makeToolbox(false, target.isStage, target.id, dynamicBlocksXML,
@@ -585,6 +593,18 @@ class Blocks extends React.Component {
         if (!target) return;
         this.props.vm.setEditingTarget(target.id);
     }
+
+    handleExtensionUpdateBlocks (event) {
+        this.ScratchBlocks.defineBlocksWithJsonArray(event.blocks);
+
+        // Update the toolbox.
+        const toolbox = this.getToolbox();
+        if (toolbox) {
+            this.props.updateToolboxState(toolbox);
+        }
+        this.requestToolboxUpdate();
+    }
+
     render () {
         /* eslint-disable no-unused-vars */
         const {
@@ -608,6 +628,7 @@ class Blocks extends React.Component {
             toolbox,
             updateMetrics: updateMetricsProp,
             workspaceMetrics,
+            extensionManager,
             ...props
         } = this.props;
         /* eslint-enable no-unused-vars */
@@ -634,7 +655,7 @@ class Blocks extends React.Component {
                 ) : null}
                 {extensionLibraryVisible ? (
                     <ExtensionLibrary
-                        vm={vm}
+                        extensionManager={extensionManager}
                         onCategorySelected={this.handleCategorySelected}
                         onRequestClose={onRequestCloseExtensionLibrary}
                     />
@@ -687,7 +708,8 @@ Blocks.propTypes = {
     vm: PropTypes.instanceOf(VM).isRequired,
     workspaceMetrics: PropTypes.shape({
         targets: PropTypes.objectOf(PropTypes.object)
-    })
+    }),
+    extensionManager: PropTypes.instanceOf(ExtensionManager).isRequired
 };
 
 Blocks.defaultOptions = {
@@ -737,7 +759,8 @@ const mapStateToProps = state => ({
     blockMessages: state.locales.blockMessages,
     toolbox: state.scratchGui.toolbox.toolbox,
     customProceduresVisible: state.scratchGui.customProcedures.active,
-    workspaceMetrics: state.scratchGui.workspaceMetrics
+    workspaceMetrics: state.scratchGui.workspaceMetrics,
+    extensionManager: state.scratchGui.extensionManager
 });
 
 const mapDispatchToProps = dispatch => ({

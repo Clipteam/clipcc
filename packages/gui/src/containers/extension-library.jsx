@@ -1,7 +1,7 @@
 import bindAll from 'lodash.bindall';
 import PropTypes from 'prop-types';
 import React from 'react';
-import VM from 'clipcc-vm';
+import {ExtensionManager} from 'clipcc-extension';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
 
 import extensionLibraryContent from '../lib/libraries/extensions/index.jsx';
@@ -37,13 +37,10 @@ class ExtensionLibrary extends React.PureComponent {
             url = prompt(this.props.intl.formatMessage(messages.extensionUrl));
         }
         if (id && !item.disabled) {
-            if (this.props.vm.extensionManager.isExtensionLoaded(url)) {
-                this.props.onCategorySelected(id);
-            } else {
-                this.props.vm.extensionManager.loadExtensionURL(url).then(() => {
-                    this.props.onCategorySelected(id);
-                });
+            if (!this.props.extensionManager.isExtensionEnabled(url)) {
+                this.props.extensionManager.enableExtension(url);
             }
+            this.props.onCategorySelected(id);
         }
     }
     render () {
@@ -70,7 +67,7 @@ ExtensionLibrary.propTypes = {
     onCategorySelected: PropTypes.func,
     onRequestClose: PropTypes.func,
     visible: PropTypes.bool,
-    vm: PropTypes.instanceOf(VM).isRequired // eslint-disable-line react/no-unused-prop-types
+    extensionManager: PropTypes.instanceOf(ExtensionManager).isRequired
 };
 
 export default injectIntl(ExtensionLibrary);

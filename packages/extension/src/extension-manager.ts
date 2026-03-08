@@ -101,16 +101,9 @@ export class ExtensionManager {
         return this.loadedExtensions.get(extensionId) ?? null;
     }
 
-    refreshBlocks() {
-        // @todo test only, should be replaced later.
-        for (const extension of this.loadedExtensions.values()) {
-            if (!extension.isEnabled()) continue;
-            console.log('REFRESH BLOCKS');
-        }
-    }
-
     /**
      * Get toolbox contents for Blockly.
+     * @param isStage True if current target is stage.
      * @returns Toolbox contents.
      */
     getToolboxContents(isStage: boolean): any {
@@ -145,7 +138,6 @@ export class ExtensionManager {
      * @param event Payload of event.
      */
     emitEvent<T extends AbstractEvent>(event: T): void {
-        console.log(event);
         this.eventEmitter.emit(event.type, event);
     }
 }

@@ -5,6 +5,7 @@ import {connect} from 'react-redux';
 
 import VM from 'clipcc-vm';
 import AudioEngine from 'clipcc-audio';
+import {ExtensionManager} from 'clipcc-extension';
 
 import {setProjectUnchanged} from '../reducers/project-changed';
 import {
@@ -31,6 +32,7 @@ const vmManagerHOC = function (WrappedComponent) {
             if (!this.props.vm.initialized) {
                 this.audioEngine = new AudioEngine();
                 this.props.vm.attachAudioEngine(this.audioEngine);
+                this.props.vm.attachExtensionManager(this.props.extensionManager);
                 this.props.vm.setCompatibilityMode(true);
                 this.props.vm.initialized = true;
                 this.props.vm.setLocale(this.props.locale, this.props.messages);
@@ -176,7 +178,8 @@ const vmManagerHOC = function (WrappedComponent) {
         accurateCoordinates: PropTypes.bool.isRequired,
         stageWidth: PropTypes.number.isRequired,
         stageHeight: PropTypes.number.isRequired,
-        vm: PropTypes.instanceOf(VM).isRequired
+        vm: PropTypes.instanceOf(VM).isRequired,
+        extensionManager: PropTypes.instanceOf(ExtensionManager).isRequired
     };
 
     const mapStateToProps = state => {
@@ -199,7 +202,8 @@ const vmManagerHOC = function (WrappedComponent) {
             unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,
             accurateCoordinates: state.scratchGui.settings.accurateCoordinates,
             stageWidth: state.scratchGui.settings.stageWidth,
-            stageHeight: state.scratchGui.settings.stageHeight
+            stageHeight: state.scratchGui.settings.stageHeight,
+            extensionManager: state.scratchGui.extensionManager
         };
     };
 

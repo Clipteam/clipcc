@@ -6,5 +6,7 @@
 
 export {ScratchExtensionAdapter} from './adapter/scratch/adapter';
 
+export {AbstractEvent, UpdateBlocksEvent, UpdatePrimitivesEvent} from './events';
+
 export {ExtensionManager} from './extension-manager';
 export {IExtension} from './interfaces/i_extension';

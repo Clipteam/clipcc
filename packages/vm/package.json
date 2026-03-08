@@ -69,6 +69,7 @@
     "callsite": "1.0.0",
     "clipcc-audio": "3.2.0",
     "clipcc-block": "3.2.0",
+    "clipcc-extension": "3.2.0",
     "clipcc-l10n": "3.2.0",
     "clipcc-render": "3.2.0",
     "clipcc-storage": "3.2.0",

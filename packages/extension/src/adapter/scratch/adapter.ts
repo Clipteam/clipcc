@@ -176,7 +176,6 @@ export class ScratchExtensionAdapter implements IExtension {
      * The method should only be called when extension is enabled.
      */
     getToolboxContents(isStage: boolean): any {
-        console.log(isStage);
         const extensionInfo = this.prepareExtensionInfo(this.instance!.getInfo());
         const categoryInfo = this.buildCategoryInfo(extensionInfo);
         return {
