@@ -187,7 +187,7 @@ export class ScratchExtensionAdapter implements IExtension {
 
     private callExtensionMethod(method: string, ...args: any[]): any {
         if (this.instance && method in this.instance && typeof this.instance[method] === 'function') {
-            return this.instance[method](args);
+            return this.instance[method](...args);
         }
 
         logger.warn(`Could not find extension block function called ${method}`);
