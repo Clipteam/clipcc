@@ -6364,10 +6364,10 @@ cli@~1.0.0:
     exit "0.1.2"
     glob "^7.1.1"
 
-clipcc-sb1-converter@1.0.324:
-  version "1.0.324"
-  resolved "https://registry.yarnpkg.com/clipcc-sb1-converter/-/clipcc-sb1-converter-1.0.324.tgz#79a3a416ac40dabb631912bc6ff23826159f2dc0"
-  integrity sha512-cg8ZAjtQJngQzWD9DY3l0fG7U2+4pkgY4a1GxL1NKJA4t2vsvo4q4MtrmLr5Lmb1FNv+Pb6Ge2j/hk4tYQ3X2g==
+clipcc-sb1-converter@1.0.325:
+  version "1.0.325"
+  resolved "https://registry.yarnpkg.com/clipcc-sb1-converter/-/clipcc-sb1-converter-1.0.325.tgz#165bf218fab2b09f31c1c230c954df59b5368fe5"
+  integrity sha512-fdiq48lVKp7MvKhBOGFGi2T9XmQW/bl7oLonpHK3Jk137niaJlbtd+/SFR0WY3zghOHry9u0CkuGpZCPVWkUZQ==
   dependencies:
     "@turbowarp/nanolog" "^1.0.1"
     fastestsmallesttextencoderdecoder "^1.0.22"
@@ -16483,10 +16483,10 @@ scratch-render-fonts@1.0.252:
   dependencies:
     base64-loader "^1.0.0"
 
-scratch-svg-renderer@3.1.19:
-  version "3.1.19"
-  resolved "https://registry.yarnpkg.com/scratch-svg-renderer/-/scratch-svg-renderer-3.1.19.tgz#c9259bd72560f6c8d29220a19dd82c26d624bec7"
-  integrity sha512-No4QMjxMb78LDfrOY+j22pMT94ypP0dGGAX9D2RDAhqx+l1uDlp4a5m5TmZJp/8lZ81bchejQhK1n4lOmfbI0A==
+scratch-svg-renderer@2.5.46:
+  version "2.5.46"
+  resolved "https://registry.yarnpkg.com/scratch-svg-renderer/-/scratch-svg-renderer-2.5.46.tgz#47b6d9df4b04870a0f4b9337a289e4d20952f258"
+  integrity sha512-SrQgHZdqnu3DX6UuJNJPg/kpJTQT/mIVbQZvm5uTE/B47U5mSaVfgoGlNFhoNUWZlbHucqySyG4KMe+ThDUR/A==
   dependencies:
     base64-js "^1.2.1"
     base64-loader "^1.0.0"
