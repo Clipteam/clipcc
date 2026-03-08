@@ -6,7 +6,7 @@
 
 import {EventEmitter} from 'events';
 import {IExtension} from './interfaces/i_extension';
-import {ScratchExtensionAdapter} from './adapter/scratch/adapter';
+import {AbstractEvent} from './events';
 
 /**
  * Class to manage all of the extensions.
@@ -33,6 +33,7 @@ export class ExtensionManager {
             throw new Error(`Extension with id ${extensionId} already exists.`);
         }
 
+        extension.attachManager(this);
         this.loadedExtensions.set(extensionId, extension);
     }
 
@@ -104,9 +105,21 @@ export class ExtensionManager {
         // @todo test only, should be replaced later.
         for (const extension of this.loadedExtensions.values()) {
             if (!extension.isEnabled()) continue;
-
-            (extension as ScratchExtensionAdapter).refreshPrimitives();
+            console.log('REFRESH BLOCKS');
         }
+    }
+
+    /**
+     * Get toolbox contents for Blockly.
+     * @returns Toolbox contents.
+     */
+    getToolboxContents(isStage: boolean): any {
+        const toolboxContents = [];
+        for (const extension of this.loadedExtensions.values()) {
+            if (!extension.isEnabled()) continue;
+            toolboxContents.push(extension.getToolboxContents(isStage));
+        }
+        return toolboxContents;
     }
 
     /**
@@ -125,5 +138,14 @@ export class ExtensionManager {
      */
     removeEventListener(event: string, listener: (...args: any[]) => void): void {
         this.eventEmitter.removeListener(event, listener);
+    }
+
+    /**
+     * Emit a event.
+     * @param event Payload of event.
+     */
+    emitEvent<T extends AbstractEvent>(event: T): void {
+        console.log(event);
+        this.eventEmitter.emit(event.type, event);
     }
 }

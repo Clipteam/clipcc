@@ -17,6 +17,9 @@ import {
 } from './types/extension-metadata';
 import type ExtensionManifest from './types/manifest';
 import type ArgumentType from './types/argument-type';
+import type {ExtensionManager} from '../../extension-manager';
+import TargetType from './types/target-type';
+import {UpdateBlocksEvent, UpdatePrimitivesEvent} from '../../events';
 
 interface ScratchExtension {
     /**
@@ -48,7 +51,7 @@ interface ConvertedBlockInfo {
     /** The raw block info. */
     info: ExtensionBlockMetadata;
     /** The scratch-blocks JSON definition for this block. */
-    json: object;
+    json: Record<string, any>;
     /** The scratch-blocks XML definition for this block. */
     xml: string;
 }
@@ -73,7 +76,14 @@ interface CategoryInfo {
     blocks: ConvertedBlockInfo[];
     /** The menus provided by this category. */
     menus: any[];
+
+    showStatusButton?: boolean;
+    menuIconURI?: string;
+    customFieldTypes?: any;
+    menuInfo?: Record<string, ExtensionMenuMetadata>;
 }
+
+const DEFAULT_COLORS = ['#0FBD8C', '#0DA57A', '#0B8E69'];
 
 /**
  * Check if `maybeMessage` looks like a message object, and if so pass it to `formatMessage`.
@@ -94,9 +104,13 @@ function maybeFormatMessage(maybeMessage: any, args?: object, locale?: string): 
  * Adapter to load scratch extension.
  */
 export class ScratchExtensionAdapter implements IExtension {
+    /** Extension manager. */
+    private manager: ExtensionManager | null = null;
+
     /** Whether the extension is enabled. */
     private enabled: boolean = false;
 
+    /** Instance of extension object. */
     private instance: ScratchExtension | null = null;
 
     constructor(
@@ -104,6 +118,16 @@ export class ScratchExtensionAdapter implements IExtension {
         private extensionModule: () => ScratchExtensionClass,
         private runtime: any
     ) {}
+
+    /**
+     * Attach the extension to given manager.
+     * The method will be called when loading the extension.
+     * @param manager Extension manager instance.
+     * @internal
+     */
+    attachManager(manager: ExtensionManager): void {
+        this.manager = manager;
+    }
 
     /**
      * Get ID of the extension.
@@ -127,14 +151,16 @@ export class ScratchExtensionAdapter implements IExtension {
     enable(): void {
         const ExtensionClass = this.extensionModule();
         this.instance = new ExtensionClass(this.runtime);
+        this.enabled = true;
+
         try {
-            const info = this.prepareExtensionInfo(this.instance.getInfo());
-            this.runtime._registerExtensionPrimitives(info);
+            const extensionInfo = this.prepareExtensionInfo(this.instance.getInfo());
+            const categoryInfo = this.buildCategoryInfo(extensionInfo);
+            this.registerExtensionPrimitives(extensionInfo, categoryInfo);
+            this.registerBlocks(categoryInfo);
         } catch (e) {
             logger.error(`Failed to register primitives for extension ${this.getId()}:`, e);
         }
-
-        this.enabled = true;
     }
 
     /**
@@ -147,15 +173,16 @@ export class ScratchExtensionAdapter implements IExtension {
 
     /**
      * Get toolbox content for Blockly.
+     * The method should only be called when extension is enabled.
      */
-    refreshPrimitives(): void {
-        // @todo test only, should be replaced later.
-        try {
-            const info = this.instance!.getInfo();
-            this.runtime._refreshExtensionPrimitives(this.prepareExtensionInfo(info));
-        } catch (e) {
-            logger.error(`Failed to refresh built-in extension primitives: ${e}`);
-        }
+    getToolboxContents(isStage: boolean): any {
+        console.log(isStage);
+        const extensionInfo = this.prepareExtensionInfo(this.instance!.getInfo());
+        const categoryInfo = this.buildCategoryInfo(extensionInfo);
+        return {
+            id: this.getId(),
+            xml: this.buildToolboxXML(categoryInfo, isStage)
+        };
     }
 
     private callExtensionMethod(method: string, ...args: any[]): any {
@@ -165,6 +192,170 @@ export class ScratchExtensionAdapter implements IExtension {
 
         logger.warn(`Could not find extension block function called ${method}`);
         return undefined;
+    }
+
+    private buildCategoryInfo(extensionInfo: any): CategoryInfo {
+        const categoryInfo: CategoryInfo = {
+            id: extensionInfo.id,
+            name: maybeFormatMessage(extensionInfo.name),
+            showStatusButton: extensionInfo.showStatusButton,
+            blockIconURI: extensionInfo.blockIconURI,
+            menuIconURI: extensionInfo.menuIconURI,
+            color1: extensionInfo.color1 ? extensionInfo.color1 : DEFAULT_COLORS[0],
+            color2: extensionInfo.color1 ? extensionInfo.color2 : DEFAULT_COLORS[1],
+            color3: extensionInfo.color1 ? extensionInfo.color3 : DEFAULT_COLORS[2],
+            blocks: [],
+            menus: [],
+            customFieldTypes: {},
+            menuInfo: {}
+        };
+
+        // Menus.
+        for (const menuName in extensionInfo.menus) {
+            if (Object.prototype.hasOwnProperty.call(extensionInfo.menus, menuName)) {
+                const menuInfo = extensionInfo.menus[menuName];
+                const convertedMenu = this.runtime._buildMenuForScratchBlocks(menuName, menuInfo, categoryInfo);
+                categoryInfo.menus.push(convertedMenu);
+                categoryInfo.menuInfo![menuName] = menuInfo;
+            }
+        }
+
+        // Custom field types.
+        for (const fieldTypeName in extensionInfo.customFieldTypes) {
+            if (Object.prototype.hasOwnProperty.call(extensionInfo.customFieldTypes, fieldTypeName)) {
+                const fieldType = extensionInfo.customFieldTypes[fieldTypeName];
+                const fieldTypeInfo = this.runtime._buildCustomFieldInfo(
+                    fieldTypeName,
+                    fieldType,
+                    extensionInfo.id,
+                    categoryInfo
+                );
+
+                categoryInfo.customFieldTypes[fieldTypeName] = fieldTypeInfo;
+            }
+        }
+
+        // Blocks.
+        for (const blockInfo of extensionInfo.blocks) {
+            try {
+                const convertedBlock = this.runtime._convertForScratchBlocks(blockInfo, categoryInfo);
+                categoryInfo.blocks.push(convertedBlock);
+            } catch (e) {
+                logger.error('Error parsing block: ', {block: blockInfo, error: e});
+            }
+        }
+
+        return categoryInfo;
+    }
+
+    private registerExtensionPrimitives(extensionInfo: any, categoryInfo: CategoryInfo): void {
+        const updatePrimitivesPayload: Required<UpdatePrimitivesEvent> = {
+            type: 'UPDATE_PRIMITIVES',
+            primitives: Object.create(null),
+            hats: Object.create(null)
+        };
+
+        for (const blockInfo of extensionInfo.blocks) {
+            try {
+                const convertedBlock = this.runtime._convertForScratchBlocks(blockInfo, categoryInfo);
+                if (convertedBlock.json) {
+                    const opcode = convertedBlock.json.type;
+                    const block = blockInfo as ExtensionBlockMetadata;
+                    const blockType = block.blockType;
+
+                    if (blockType !== BlockType.EVENT) {
+                        updatePrimitivesPayload.primitives[opcode] = convertedBlock.info.func;
+                    }
+
+                    if (blockType === BlockType.EVENT || blockType === BlockType.HAT) {
+                        updatePrimitivesPayload.hats[opcode] = {
+                            edgeActivated: block.isEdgeActivated,
+                            restartExistingThreads: block.shouldRestartExistingThreads
+                        };
+                    }
+                }
+            } catch (e) {
+                logger.error('Error parsing block: ', {block: blockInfo, error: e});
+            }
+        }
+
+        this.manager!.emitEvent(updatePrimitivesPayload);
+    }
+
+    private registerBlocks(categoryInfo: CategoryInfo): void {
+        // scratch-blocks implements a menu or custom field as a special kind of block ("shadow" block)
+        // these actually define blocks and MUST run regardless of the UI state
+        const blockInfoArray = categoryInfo.blocks.concat(categoryInfo.menus).concat(
+            Object.getOwnPropertyNames(categoryInfo.customFieldTypes).map(
+                fieldTypeName => categoryInfo.customFieldTypes[fieldTypeName].scratchBlocksDefinition
+            )
+        );
+
+        const updateBlocksPayload: UpdateBlocksEvent = {
+            type: 'UPDATE_BLOCKS',
+            blocks: [],
+            fields: []
+        };
+
+        if (blockInfoArray.length > 0) {
+            blockInfoArray.forEach(blockInfo => {
+                if (blockInfo.info && blockInfo.info.isDynamic) {
+                    // This is creating the block factory / constructor -- NOT a specific instance of the block.
+                    // The factory should only know static info about the block: the category info and the opcode.
+                    // Anything else will be picked up from the XML attached to the block instance.
+                    // const extendedOpcode = `${categoryInfo.id}_${blockInfo.info.opcode}`;
+                    // const blockDefinition =
+                    //     defineDynamicBlock(this.ScratchBlocks, categoryInfo, blockInfo, extendedOpcode);
+                    // this.ScratchBlocks.Blocks[extendedOpcode] = blockDefinition;
+                } else if (blockInfo.json) {
+                    // Static blocks.
+                    updateBlocksPayload.blocks.push(blockInfo.json);
+                }
+                // otherwise it's a non-block entry such as '---'
+            });
+        }
+
+        this.manager!.emitEvent(updateBlocksPayload);
+    }
+
+    private buildToolboxXML(categoryInfo: CategoryInfo, isStage: boolean): string {
+        const {name, color1, color2} = categoryInfo;
+        // Filter out blocks that aren't supposed to be shown on this target, as determined by the block info's
+        // `hideFromPalette` and `filter` properties.
+        const paletteBlocks = categoryInfo.blocks.filter(block => {
+            let blockFilterIncludesTarget = true;
+            // If the block info doesn't include a `filter` property, always include it
+            if (block.info.filter) {
+                blockFilterIncludesTarget = block.info.filter.includes(
+                    isStage ? TargetType.STAGE : TargetType.SPRITE
+                );
+            }
+            // If the block info's `hideFromPalette` is true, then filter out this block
+            return blockFilterIncludesTarget && !block.info.hideFromPalette;
+        });
+
+        const colorXML = `colour="${color1}" secondaryColour="${color2}"`;
+
+        // Use a menu icon if there is one. Otherwise, use the block icon. If there's no icon,
+        // the category menu will show its default colored circle.
+        let menuIconURI = '';
+        if (categoryInfo.menuIconURI) {
+            menuIconURI = categoryInfo.menuIconURI;
+        } else if (categoryInfo.blockIconURI) {
+            menuIconURI = categoryInfo.blockIconURI;
+        }
+        const menuIconXML = menuIconURI ?
+            `iconURI="${menuIconURI}"` : '';
+
+        let statusButtonXML = '';
+        if (categoryInfo.showStatusButton) {
+            statusButtonXML = 'showStatusButton="true"';
+        }
+
+        const xml = `<category name="${name}" toolboxitemid="${categoryInfo.id}" ` +
+            `${statusButtonXML} ${colorXML} ${menuIconXML}>` +
+            `${paletteBlocks.map(block => block.xml).join('')}</category>`;
+        return xml;
     }
 
     /// Methods from scratch-vm/src/extension-support/extension-manager.js

@@ -61,6 +61,8 @@ export interface ExtensionBlockMetadata {
     arguments?: Record<string, ExtensionArgumentMetadata>;
     /** True if creating a block factory / constructor. */
     isDynamic?: boolean;
+    /** Optional list of target types for which this block should appear. */
+    filter?: TargetType[];
 }
 
 /**
