@@ -53,9 +53,13 @@ const CORE_EXTENSIONS = [
  */
 
 /**
- * @typedef {object} FileDesc
- * @property {string} fileName
- * @property {string} fileContent
+ * @import * as Blockly from 'clipcc-block';
+ */
+
+/**
+ * @typedef {object} FileDesc A file descriptor, representing a file to be written.
+ * @property {string} fileName The name of the file, including extension.
+ * @property {string} fileContent The content of the file, as a string.
  */
 
 /**
@@ -449,16 +453,16 @@ class VirtualMachine extends EventEmitter {
                 } catch (sb1Error) {
                     if (sb1Error instanceof ValidationError) {
                         // The input does not validate as a Scratch 1 file.
-                    } else {
-                        // The project appears to be a Scratch 1 file but it
-                        // could not be successfully translated into a Scratch 2
-                        // project.
-                        return Promise.reject(sb1Error);
+                        // Throw original error since the input does not appear to be
+                        // an SB1File.
+                        return Promise.reject(error);
                     }
+                    // The project appears to be a Scratch 1 file but it
+                    // could not be successfully translated into a Scratch 2
+                    // project.
+                    console.error(error);
+                    return Promise.reject(sb1Error);
                 }
-                // Throw original error since the input does not appear to be
-                // an SB1File.
-                return Promise.reject(error);
             });
 
         return validationPromise
@@ -495,6 +499,7 @@ class VirtualMachine extends EventEmitter {
     }
 
     /**
+     * Export the current project as a .sb3 file.
      * @returns {Promise<Blob>} Project in a Scratch 3.0 JSON representation.
      */
     saveProjectSb3 () {
@@ -1281,7 +1286,7 @@ class VirtualMachine extends EventEmitter {
 
     /**
      * Handle a Blockly event for the current editing target.
-     * @param {!Blockly.Event} e Any Blockly event.
+     * @param {Blockly.Events.Abstract} e Any Blockly event.
      */
     blockListener (e) {
         if (e.type === 'finished_loading') {
@@ -1303,7 +1308,7 @@ class VirtualMachine extends EventEmitter {
 
     /**
      * Handle a Blockly event for the flyout.
-     * @param {!Blockly.Event} e Any Blockly event.
+     * @param {Blockly.Events.Abstract} e Any Blockly event.
      */
     flyoutBlockListener (e) {
         this.runtime.flyoutBlocks.blocklyListen(e);
@@ -1311,7 +1316,7 @@ class VirtualMachine extends EventEmitter {
 
     /**
      * Handle a Blockly event for the flyout to be passed to the monitor container.
-     * @param {!Blockly.Event} e Any Blockly event.
+     * @param {Blockly.Events.Abstract} e Any Blockly event.
      */
     monitorBlockListener (e) {
         // Filter events by type, since monitor blocks only need to listen to these events.
@@ -1323,7 +1328,7 @@ class VirtualMachine extends EventEmitter {
 
     /**
      * Handle a Blockly event for the variable map.
-     * @param {!Blockly.Event} e Any Blockly event.
+     * @param {Blockly.Events.Abstract} e Any Blockly event.
      */
     variableListener (e) {
         // Filter events by type, since blocks only needs to listen to these
