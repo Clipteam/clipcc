@@ -42,7 +42,7 @@
     "react-style-proptype": "^3",
     "react-tooltip": "^3",
     "redux": "^3",
-    "scratch-render-fonts": "^1.0.252"
+    "clipcc-render-fonts": "^1.0.254"
   },
   "devDependencies": {
     "@babel/cli": "7.28.6",
@@ -89,7 +89,7 @@
     "regenerator-runtime": "0.14.1",
     "rimraf": "2.7.1",
     "clipcc-l10n": "3.2.0",
-    "scratch-render-fonts": "1.0.252",
+    "clipcc-render-fonts": "1.0.254",
     "style-loader": "^4.0.0",
     "svg-url-loader": "^8.0.0",
     "terser-webpack-plugin": "^5.3.17",

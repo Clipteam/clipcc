@@ -16,7 +16,7 @@
 
 
 .scoped-loader {
-    z-index: var(--clipcc-z-index-stage-wrapper-overlay);
+    z-index: calc(var(--clipcc-z-index-loader) - 1);
     border-radius: 0.5rem;
 }
 

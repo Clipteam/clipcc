@@ -49,7 +49,7 @@ const Runtime = require('../engine/runtime');
 
 const ScratchRender = require('clipcc-render');
 const AudioEngine = require('clipcc-audio');
-const ScratchSVGRenderer = require('scratch-svg-renderer');
+const ScratchSVGRenderer = require('clipcc-svg-renderer');
 
 const Scratch = window.Scratch = window.Scratch || {};
 

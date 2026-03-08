@@ -155,6 +155,12 @@ if (!process.env.CI) {
     base.plugins.push(new webpack.ProgressPlugin());
 }
 
+if (process.env.ANALYZE === '1') {
+    // eslint-disable-next-line global-require
+    const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
+    base.plugins.push(new BundleAnalyzerPlugin());
+}
+
 if (base.mode === 'development') {
     base.module.rules.push({
         test: /blocks-msgs\.js$/,
