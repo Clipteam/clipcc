@@ -51,10 +51,7 @@ const base = {
             loader: 'ts-loader',
             options: {
                 transpileOnly: true,
-                allowTsInNodeModules: true,
-                compilerOptions: {
-                    module: 'preserve'
-                }
+                allowTsInNodeModules: true
             }
         },
         {

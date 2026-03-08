@@ -10,6 +10,7 @@ import {setPlayer, setFullScreen} from '../reducers/mode.js';
 
 import locales from 'clipcc-l10n';
 import {detectLocale} from './detect-locale';
+import {setInitialReducers} from '../reducers/utils';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -54,9 +55,6 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
                     initPlayer,
                     initTelemetryModal
                 } = guiRedux;
-                // eslint-disable-next-line global-require
-                const {ScratchPaintReducer} = require('clipcc-paint');
-
                 let initializedGui = guiInitialState;
                 if (props.isFullScreen || props.isPlayerOnly) {
                     if (props.isFullScreen) {
@@ -70,8 +68,7 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
                 }
                 reducers = {
                     locales: localesReducer,
-                    scratchGui: guiReducer,
-                    scratchPaint: ScratchPaintReducer
+                    scratchGui: guiReducer
                 };
                 initialState = {
                     locales: initializedLocales,
@@ -79,6 +76,7 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
                 };
                 enhancer = composeEnhancers(guiMiddleware);
             }
+            setInitialReducers(reducers);
             const reducer = combineReducers(reducers);
             this.store = createStore(
                 reducer,
