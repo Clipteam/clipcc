@@ -51,7 +51,10 @@ const base = {
             loader: 'ts-loader',
             options: {
                 transpileOnly: true,
-                allowTsInNodeModules: true
+                allowTsInNodeModules: true,
+                compilerOptions: {
+                    module: 'preserve'
+                }
             }
         },
         {
@@ -192,10 +195,21 @@ module.exports = [
         },
         optimization: {
             splitChunks: {
-                name: 'lib.min',
-                chunks: 'all',
+                chunks: 'async',
                 minChunks: 2,
-                maxInitialRequests: 5
+                maxInitialRequests: 5,
+                cacheGroups: {
+                    default: false,
+                    defaultVendors: false,
+                    lib: {
+                        test: /[\\/]node_modules[\\/]/,
+                        name: 'lib.min',
+                        chunks: 'initial',
+                        priority: 10,
+                        reuseExistingChunk: true,
+                        enforce: true
+                    }
+                }
             },
             runtimeChunk: {
                 name: 'lib.min'

@@ -15,7 +15,10 @@ export function isScratchBlocksLoaded () {
 export async function getScratchBlocks () {
     if (!ScratchBlocksModule) {
         // eslint-disable-next-line require-atomic-updates
-        ScratchBlocksModule = await import(/* webpackChunkName: "clipcc-block" */'clipcc-block');
+        ScratchBlocksModule = await import(
+            /* webpackChunkName: "clipcc-block" */
+            'clipcc-block'
+        );
     }
     return ScratchBlocksModule;
 }
