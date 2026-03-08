@@ -14,6 +14,18 @@
     color: white;
 }
 
+
+.scoped-loader {
+    z-index: var(--clipcc-z-index-stage-wrapper-overlay);
+    border-radius: 0.5rem;
+}
+
+.scoped-loader .title {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+
 .fullscreen {
     /* Break out of the layout using position: fixed to cover the whole screen */
     position: fixed;

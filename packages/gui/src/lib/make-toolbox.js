@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import * as ScratchBlocks from 'clipcc-block';
+import {getScratchBlocks, isScratchBlocksLoaded} from './blocks-loader';
 
 const blockSeparator = {
     kind: 'sep',
@@ -29,8 +29,23 @@ const createShadow = (type, fields) => {
     };
 };
 
+/**
+ * Translate a message ID into a message, using the ScratchBlocks message system if possible.
+ * @param {string} id - The message ID to translate
+ * @param {string} defaultMessage - The default message to use if the ScratchBlocks isn't available
+ * @returns {string} The translated message, or the default message if the ScratchBlocks isn't available
+ *  or missing that message.
+ */
+const translate = (id, defaultMessage) => {
+    if (!isScratchBlocksLoaded()) {
+        return defaultMessage;
+    }
+    const ScratchBlocks = getScratchBlocks();
+    return ScratchBlocks.Msg[id] ?? defaultMessage;
+};
+
 const motion = (isInitialSetup, isStage, targetId) => {
-    const stageSelected = ScratchBlocks.Msg.MOTION_STAGE_SELECTED;
+    const stageSelected = translate('MOTION_STAGE_SELECTED', 'Stage selected: no motion blocks');
 
     const motionContents = [];
     if (isStage) {
@@ -158,8 +173,8 @@ const motion = (isInitialSetup, isStage, targetId) => {
 };
 
 const looks = (isInitialSetup, isStage, targetId, costumeName, backdropName) => {
-    const hello = ScratchBlocks.Msg.LOOKS_HELLO;
-    const hmm = ScratchBlocks.Msg.LOOKS_HMM;
+    const hello = translate('LOOKS_HELLO', 'Hello!');
+    const hmm = translate('LOOKS_HMM', 'Hmm...');
 
     const looksContents = [];
 
@@ -474,7 +489,7 @@ const control = (isInitialSetup, isStage, targetId) => {
 };
 
 const sensing = (isInitialSetup, isStage, targetId, hideNonVanillaBlocks) => {
-    const name = ScratchBlocks.Msg.SENSING_ASK_TEXT;
+    const name = translate('SENSING_ASK_TEXT', `What's your name?`);
 
     const sensingContents = [];
 
@@ -646,9 +661,9 @@ const sensing = (isInitialSetup, isStage, targetId, hideNonVanillaBlocks) => {
 };
 
 const operators = (isInitialSetup, isStage, targetId, hideNonVanillaBlocks) => {
-    const apple = ScratchBlocks.Msg.OPERATORS_JOIN_APPLE;
-    const banana = ScratchBlocks.Msg.OPERATORS_JOIN_BANANA;
-    const letter = ScratchBlocks.Msg.OPERATORS_LETTEROF_APPLE;
+    const apple = translate('OPERATORS_JOIN_APPLE', 'apple');
+    const banana = translate('OPERATORS_JOIN_BANANA', 'banana');
+    const letter = translate('OPERATORS_LETTEROF_APPLE', 'a');
 
     const operatorsContents = [
         {
@@ -980,7 +995,8 @@ const makeToolbox = function (
 
     // Convert xml toolbox to json.
     for (const category of categories) {
-        if (category.json || !category.xml) continue;
+        if (category.json || !category.xml || !isScratchBlocksLoaded() ) continue;
+        const ScratchBlocks = getScratchBlocks();
         const toolbox = ScratchBlocks.utils.toolbox.convertToolboxDefToJson(
             `<xml style="display: none">${category.xml}</xml>`
         );

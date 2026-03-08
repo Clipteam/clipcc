@@ -8,7 +8,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
 
@@ -70,9 +69,6 @@ const base = {
                 // in much lower dependencies.
                 babelrc: false,
                 plugins: [
-                    '@babel/plugin-syntax-dynamic-import',
-                    '@babel/plugin-transform-async-to-generator',
-                    '@babel/plugin-proposal-object-rest-spread',
                     ['react-intl', {
                         messagesDir: './translations/messages/'
                     }]],
@@ -196,7 +192,12 @@ module.exports = [
         },
         optimization: {
             splitChunks: {
+                name: 'lib.min',
                 chunks: 'all',
+                minChunks: 2,
+                maxInitialRequests: 5
+            },
+            runtimeChunk: {
                 name: 'lib.min'
             }
         },
@@ -260,8 +261,7 @@ module.exports = [
                         context: '../vm/dist/web'
                     }
                 ]
-            }),
-            new BundleAnalyzerPlugin()
+            })
         ])
     })
 ].concat(
