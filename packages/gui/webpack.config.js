@@ -8,6 +8,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
 
@@ -45,8 +46,7 @@ const base = {
                 path.resolve(__dirname, 'src'),
                 path.resolve(__dirname, '../vm/src'),
                 path.resolve(__dirname, '../block/src'),
-                path.resolve(__dirname, '../audio/src'),
-                path.resolve(__dirname, '../svg-renderer/src')
+                path.resolve(__dirname, '../audio/src')
             ],
             test: /\.([cm]?ts|tsx)$/,
             loader: 'ts-loader',
@@ -260,7 +260,8 @@ module.exports = [
                         context: '../vm/dist/web'
                     }
                 ]
-            })
+            }),
+            new BundleAnalyzerPlugin()
         ])
     })
 ].concat(

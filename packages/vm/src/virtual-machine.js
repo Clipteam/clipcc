@@ -440,7 +440,7 @@ class VirtualMachine extends EventEmitter {
         })
             .catch(error => {
                 // eslint-disable-next-line global-require
-                const {SB1File, ValidationError} = require('scratch-sb1-converter');
+                const {SB1File, ValidationError} = require('clipcc-sb1-converter');
 
                 try {
                     const sb1 = new SB1File(input);

@@ -141,8 +141,6 @@ module.exports = [
                 }, {
                     from: '../render/dist/web'
                 }, {
-                    from: '../svg-renderer/dist/web'
-                }, {
                     from: 'src/playground'
                 }]
             })

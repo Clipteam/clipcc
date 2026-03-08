@@ -110,7 +110,7 @@ module.exports = [
             '!ify-loader!grapheme-breaker': 'grapheme-breaker',
             '!ify-loader!linebreak': 'linebreak',
             'hull.js': true,
-            'clipcc-svg-renderer': true,
+            'scratch-svg-renderer': true,
             'twgl.js': true,
             'xml-escape': true
         }
