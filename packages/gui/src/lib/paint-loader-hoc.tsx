@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import React from 'react';
 import {getScratchPaint} from './paint-loader';
 import ScopedLoaderComponent from '../components/loader/scoped-loader';
@@ -10,14 +9,6 @@ interface PaintLoaderProps {
 
 export function injectPaint<Component extends React.ComponentType<PaintLoaderProps>> (WrappedComponent: Component) {
     class PaintLoaderHOC extends React.Component {
-        static contextTypes = {
-            store: PropTypes.shape({
-                subscribe: PropTypes.func.isRequired,
-                dispatch: PropTypes.func.isRequired,
-                getState: PropTypes.func.isRequired
-            })
-        };
-
         state = {
             loaded: false
         };
