@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 
-import {getScratchBlocks, isScratchBlocksLoaded} from './blocks-loader';
+import {ScratchBlocksModule as ScratchBlocks, isScratchBlocksLoaded} from './blocks-loader';
 
 const blockSeparator = {
     kind: 'sep',
@@ -40,7 +40,6 @@ const translate = (id, defaultMessage) => {
     if (!isScratchBlocksLoaded()) {
         return defaultMessage;
     }
-    const ScratchBlocks = getScratchBlocks();
     return ScratchBlocks.Msg[id] ?? defaultMessage;
 };
 

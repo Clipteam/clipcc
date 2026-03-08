@@ -1,4 +1,5 @@
-let ScratchBlocksModule: typeof import('clipcc-block') | null = null;
+// eslint-disable-next-line import/no-mutable-exports
+export let ScratchBlocksModule: typeof import('clipcc-block') | null = null;
 
 /**
  * Check if the ScratchBlocks module is loaded.

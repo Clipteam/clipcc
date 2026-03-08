@@ -404,7 +404,8 @@ class Blocks extends React.Component {
                 targetSounds.length > 0 ? targetSounds[targetSounds.length - 1].name : '',
                 this.props.hideNonVanillaBlocks
             );
-        } catch {
+        } catch (e) {
+            console.error(`Error making toolbox:`, e);
             return null;
         }
     }

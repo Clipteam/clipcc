@@ -323,16 +323,5 @@ export default function (vm, ScratchBlocks) {
         vm.runtime.emit('PLAY_NOTE', noteNum, extensionId);
     };
 
-    // Use a collator's compare instead of localeCompare which internally
-    // creates a collator. Using this is a lot faster in browsers that create a
-    // collator for every localeCompare call.
-    const collator = new Intl.Collator([], {
-        sensitivity: 'base',
-        numeric: true
-    });
-    ScratchBlocks.scratchBlocksUtils.compareStrings = function (str1, str2) {
-        return collator.compare(str1, str2);
-    };
-
     return ScratchBlocks;
 }
