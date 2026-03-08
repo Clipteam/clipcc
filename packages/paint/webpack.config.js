@@ -14,7 +14,6 @@ const base = {
             loader: 'babel-loader',
             include: path.resolve(__dirname, 'src'),
             options: {
-                plugins: ['@babel/plugin-proposal-object-rest-spread'],
                 presets: ['@babel/preset-env', '@babel/preset-react']
             }
         },
