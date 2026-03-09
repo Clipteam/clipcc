@@ -54,9 +54,19 @@ interface ConvertedBlockInfo {
     /** The raw block info. */
     info: ExtensionBlockMetadata;
     /** The scratch-blocks JSON definition for this block. */
-    json: Record<string, any>;
+    json: object;
     /** The scratch-blocks XML definition for this block. */
     xml: string;
+}
+
+interface CustomFieldInfo {
+    fieldName: string;
+    extendedName: string;
+    argumentTypeInfo: object;
+    scratchBlocksDefinition: {
+        json: object;
+    };
+    fieldImplementation: object;
 }
 
 /**
@@ -83,7 +93,7 @@ interface CategoryInfo {
     showStatusButton?: boolean;
     menuIconURI?: string;
     customFieldTypes?: any;
-    menuInfo?: Record<string, ExtensionMenuMetadata>;
+    menuInfo?: Record<string, object>;
 }
 
 const DEFAULT_COLORS = ['#0FBD8C', '#0DA57A', '#0B8E69'];
@@ -196,21 +206,21 @@ export class ScratchExtensionAdapter implements IExtension {
         return undefined;
     }
 
-    private buildCategoryInfo(extensionInfo: any): CategoryInfo {
-        const categoryInfo: CategoryInfo = {
+    private buildCategoryInfo(extensionInfo: ProcessedExtensionMetadata): CategoryInfo {
+        const categoryInfo = {
             id: extensionInfo.id,
             name: maybeFormatMessage(extensionInfo.name),
             showStatusButton: extensionInfo.showStatusButton,
             blockIconURI: extensionInfo.blockIconURI,
             menuIconURI: extensionInfo.menuIconURI,
-            color1: extensionInfo.color1 ? extensionInfo.color1 : DEFAULT_COLORS[0],
-            color2: extensionInfo.color1 ? extensionInfo.color2 : DEFAULT_COLORS[1],
-            color3: extensionInfo.color1 ? extensionInfo.color3 : DEFAULT_COLORS[2],
-            blocks: [],
-            menus: [],
-            customFieldTypes: {},
-            menuInfo: {}
-        };
+            color1: extensionInfo.color1 ? extensionInfo.color1! : DEFAULT_COLORS[0],
+            color2: extensionInfo.color1 ? extensionInfo.color2! : DEFAULT_COLORS[1],
+            color3: extensionInfo.color1 ? extensionInfo.color3! : DEFAULT_COLORS[2],
+            blocks: [] as ConvertedBlockInfo[],
+            menus: [] as object[],
+            customFieldTypes: {} as Record<string, CustomFieldInfo>,
+            menuInfo: {} as Record<string, object>
+        } satisfies CategoryInfo;
 
         // Menus.
         for (const menuName in extensionInfo.menus) {
@@ -218,7 +228,7 @@ export class ScratchExtensionAdapter implements IExtension {
                 const menuInfo = extensionInfo.menus[menuName];
                 const convertedMenu = this.runtime._buildMenuForScratchBlocks(menuName, menuInfo, categoryInfo);
                 categoryInfo.menus.push(convertedMenu);
-                categoryInfo.menuInfo![menuName] = menuInfo;
+                categoryInfo.menuInfo[menuName] = menuInfo;
             }
         }
 
@@ -250,7 +260,7 @@ export class ScratchExtensionAdapter implements IExtension {
         return categoryInfo;
     }
 
-    private registerExtensionPrimitives(extensionInfo: any, categoryInfo: CategoryInfo): void {
+    private registerExtensionPrimitives(extensionInfo: ProcessedExtensionMetadata, categoryInfo: CategoryInfo): void {
         const updatePrimitivesPayload: Required<UpdatePrimitivesEvent> = {
             type: 'UPDATE_PRIMITIVES',
             primitives: Object.create(null),

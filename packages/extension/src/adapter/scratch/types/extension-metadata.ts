@@ -31,6 +31,14 @@ export interface ExtensionMetadata {
     menus?: Record<string, ExtensionMenuMetadata>;
     /** List new target type(s) provided by this extension. */
     targetTypes?: string[];
+    /** True if show status button for the category. */
+    showStatusButton?: boolean;
+    /** Override the default extension block colors. */
+    color1?: string;
+    color2?: string;
+    color3?: string;
+    /** Custom fields for scratch-blocks. */
+    customFieldTypes?: Record<string, ExtensionCustomFieldMetadata>;
 }
 
 export type ProcessedExtensionMetadata = Modify<ExtensionMetadata, {
@@ -134,4 +142,13 @@ export interface ExtensionMenuItemComplex {
  */
 export function isSimpleMenuMetadata(menu: ExtensionMenuMetadata): menu is ExtensionDynamicMenu | ExtensionMenuItems {
     return !(menu as any).items;
+}
+
+/**
+ * Metadata needed for custom field types.
+ */
+export interface ExtensionCustomFieldMetadata {
+    output: string;
+    outputShape: number;
+    implementation: object;
 }
