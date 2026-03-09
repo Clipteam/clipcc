@@ -166,7 +166,7 @@ if (!process.env.CI) {
     base.plugins.push(new webpack.ProgressPlugin());
 }
 
-if (process.env.ANALYZE === '1') {
+if (process.env.ANALYZE) {
     // eslint-disable-next-line global-require
     const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
     base.plugins.push(new BundleAnalyzerPlugin());
