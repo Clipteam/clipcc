@@ -7,6 +7,8 @@ import VM from 'clipcc-vm';
 import AudioEngine from 'clipcc-audio';
 import {ExtensionManager} from 'clipcc-extension';
 
+import extensionLibraryContent from '../lib/libraries/extensions/index.jsx';
+
 import {setProjectUnchanged} from '../reducers/project-changed';
 import {
     LoadingStates,
@@ -32,7 +34,7 @@ const vmManagerHOC = function (WrappedComponent) {
             if (!this.props.vm.initialized) {
                 this.audioEngine = new AudioEngine();
                 this.props.vm.attachAudioEngine(this.audioEngine);
-                this.props.vm.attachExtensionManager(this.props.extensionManager);
+                this.props.vm.attachExtensionManager(this.props.extensionManager, extensionLibraryContent);
                 this.props.vm.setCompatibilityMode(true);
                 this.props.vm.initialized = true;
                 this.props.vm.setLocale(this.props.locale, this.props.messages);
@@ -138,6 +140,7 @@ const vmManagerHOC = function (WrappedComponent) {
                 onLoadedProject: onLoadedProjectProp,
                 onSetProjectUnchanged,
                 projectData,
+                extensionManager,
                 /* eslint-enable no-unused-vars */
                 isLoadingWithId: isLoadingWithIdProp,
                 vm,

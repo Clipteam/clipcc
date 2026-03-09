@@ -18,7 +18,7 @@ import {
     type ExtensionMenuMetadata,
     type ExtensionMetadata
 } from './types/extension-metadata';
-import type ExtensionManifest from './types/manifest';
+import type ExtensionManifest from '../../interfaces/extension-manifest';
 import type ArgumentType from './types/argument-type';
 import type {ExtensionManager} from '../../extension-manager';
 import TargetType from './types/target-type';
@@ -126,6 +126,11 @@ export class ScratchExtensionAdapter implements IExtension {
     /** Instance of extension object. */
     private instance: ScratchExtension | null = null;
 
+    /**
+     * @param manifest Manifest for extension library to display info.
+     * @param extensionModule Extension module that returns the extension class.
+     * @param runtime Runtime object of virtual machine.
+     */
     constructor(
         private manifest: ExtensionManifest,
         private extensionModule: () => ScratchExtensionClass,
@@ -148,6 +153,14 @@ export class ScratchExtensionAdapter implements IExtension {
      */
     getId(): string {
         return this.manifest.extensionId;
+    }
+
+    /**
+     * Get info to display in extension library.
+     * @returns Manifest of the extension.
+     */
+    getManifest(): ExtensionManifest {
+        return this.manifest;
     }
 
     /**

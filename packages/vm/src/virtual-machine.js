@@ -1229,8 +1229,10 @@ class VirtualMachine extends EventEmitter {
     /**
      * Attach the extension manager.
      * @param {!ExtensionManager} extensionManager The extension manager to attach
+     * @param {!Array<object>} extensionLibraryContent Content for extension library
+     *      (for test only, should be replace later)
      */
-    attachExtensionManager (extensionManager) {
+    attachExtensionManager (extensionManager, extensionLibraryContent) {
         this.extensionManager = extensionManager;
 
         this.extensionManager.addEventListener('UPDATE_PRIMITIVES', this.extensionListener);
@@ -1255,18 +1257,21 @@ class VirtualMachine extends EventEmitter {
 
         // Register builtin extensions.
         // @todo should be removed later to make builtin extension external.
-        for (const extensionId in builtinExtensions) {
+        for (const content of extensionLibraryContent) {
+            const extensionId = content.extensionId;
+
             if (this.extensionManager.isExtensionLoaded(extensionId)) {
                 log.error(`Duplicated builtin extension: ${extensionId}`);
                 continue;
             }
 
-            const manifest = {
-                extensionId: extensionId
-            };
+            if (!Object.hasOwnProperty.call(builtinExtensions, extensionId)) {
+                log.error(`Unexpected builtin extension: ${extensionId}`);
+                continue;
+            }
 
             this.extensionManager.loadExtension(new ScratchExtensionAdapter(
-                manifest, builtinExtensions[extensionId], this.runtime
+                content, builtinExtensions[extensionId], this.runtime
             ));
         }
     }

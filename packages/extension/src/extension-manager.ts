@@ -7,6 +7,7 @@
 import {EventEmitter} from 'events';
 import {IExtension} from './interfaces/i_extension';
 import {AbstractEvent} from './events';
+import ExtensionManifest from './interfaces/extension-manifest';
 
 /**
  * Class to manage all of the extensions.
@@ -113,6 +114,18 @@ export class ExtensionManager {
             toolboxContents.push(extension.getToolboxContents(isStage));
         }
         return toolboxContents;
+    }
+
+    /**
+     * Get data needed to list all extensions in extension library.
+     * @returns Manifest of all extensions.
+     */
+    getManifest(): ExtensionManifest[] {
+        const result: ExtensionManifest[] = [];
+        this.loadedExtensions.forEach((extension) => {
+            result.push(extension.getManifest());
+        });
+        return result;
     }
 
     /**

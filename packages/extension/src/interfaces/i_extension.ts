@@ -5,6 +5,7 @@
  */
 
 import type {ExtensionManager} from '../extension-manager';
+import type ExtensionManifest from './extension-manifest';
 
 /**
  * Interface of extension object.
@@ -23,6 +24,12 @@ export interface IExtension {
      * @returns ID of the extension.
      */
     getId(): string;
+
+    /**
+     * Get info to display in extension library.
+     * @returns Manifest of the extension.
+     */
+    getManifest(): ExtensionManifest;
 
     /**
      * Check whether the extension is enabled.

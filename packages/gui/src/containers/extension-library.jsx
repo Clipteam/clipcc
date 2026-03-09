@@ -4,8 +4,6 @@ import React from 'react';
 import {ExtensionManager} from 'clipcc-extension';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
 
-import extensionLibraryContent from '../lib/libraries/extensions/index.jsx';
-
 import LibraryComponent from '../components/library/library.jsx';
 import extensionIcon from '../components/action-menu/icon--sprite.svg';
 
@@ -44,7 +42,7 @@ class ExtensionLibrary extends React.PureComponent {
         }
     }
     render () {
-        const extensionLibraryThumbnailData = extensionLibraryContent.map(extension => ({
+        const extensionLibraryThumbnailData = this.props.extensionManager.getManifest().map(extension => ({
             rawURL: extension.iconURL || extensionIcon,
             ...extension
         }));
