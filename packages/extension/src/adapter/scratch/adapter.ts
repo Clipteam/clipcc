@@ -10,6 +10,9 @@ import logger from '../../utils/logger';
 import BlockType from './types/block-type';
 import {
     isSimpleMenuMetadata,
+    type ProcessedExtensionBlockMetadata,
+    type ProcessedExtensionMenuMetadata,
+    type ProcessedExtensionMetadata,
     type ExtensionBlockMetadata,
     type ExtensionMenuItems,
     type ExtensionMenuMetadata,
@@ -374,23 +377,22 @@ export class ScratchExtensionAdapter implements IExtension {
      * @param extensionInfo The extension info to be sanitized.
      * @returns A new extension info object with cleaned-up values.
      */
-    private prepareExtensionInfo(extensionInfo: ExtensionMetadata): ExtensionMetadata {
-        extensionInfo = Object.assign({}, extensionInfo);
-        if (!/^[a-z0-9]+$/i.test(extensionInfo.id)) {
+    private prepareExtensionInfo(extensionInfo: ExtensionMetadata): ProcessedExtensionMetadata {
+        const info = Object.assign({}, extensionInfo) as unknown as ProcessedExtensionMetadata;
+        if (!/^[a-z0-9]+$/i.test(info.id)) {
             throw new Error('Invalid extension id');
         }
-        extensionInfo.name = extensionInfo.name || extensionInfo.id;
-        extensionInfo.blocks = extensionInfo.blocks || [];
-        extensionInfo.targetTypes = extensionInfo.targetTypes || [];
-        extensionInfo.blocks = extensionInfo.blocks.reduce<typeof extensionInfo.blocks>((results, blockInfo) => {
+        info.name = extensionInfo.name || extensionInfo.id;
+        info.targetTypes = extensionInfo.targetTypes || [];
+        info.blocks = extensionInfo.blocks.reduce<typeof info.blocks>((results, blockInfo) => {
             try {
-                let result;
+                let result: '---' | ProcessedExtensionBlockMetadata;
                 switch (blockInfo) {
                 case '---': // separator
-                    result = '---';
+                    result = '---' as '---';
                     break;
                 default: // an ExtensionBlockMetadata object
-                    result = this.prepareBlockInfo(blockInfo as ExtensionBlockMetadata);
+                    result = this.prepareBlockInfo(blockInfo);
                     break;
                 }
                 results.push(result);
@@ -400,9 +402,8 @@ export class ScratchExtensionAdapter implements IExtension {
             }
             return results;
         }, []);
-        extensionInfo.menus = extensionInfo.menus || {};
-        extensionInfo.menus = this.prepareMenuInfo(extensionInfo.menus);
-        return extensionInfo;
+        info.menus = this.prepareMenuInfo(extensionInfo.menus || {});
+        return info;
     }
 
     /**
@@ -412,7 +413,7 @@ export class ScratchExtensionAdapter implements IExtension {
      */
     private prepareMenuInfo(
         menus: Record<string, ExtensionMenuMetadata>
-    ): Record<string, ExtensionMenuMetadata> {
+    ): Record<string, ProcessedExtensionMenuMetadata> {
         const menuNames = Object.getOwnPropertyNames(menus);
         for (const menuName of menuNames) {
             let menuInfo = menus[menuName];
@@ -431,10 +432,10 @@ export class ScratchExtensionAdapter implements IExtension {
             if (typeof menuInfo.items === 'string') {
                 const menuItemFunctionName = menuInfo.items;
                 // Bind the function here so we can pass a simple item generation function to Scratch Blocks later.
-                menuInfo.items = this.getExtensionMenuItems.bind(this, menuItemFunctionName);
+                (menuInfo as unknown as ProcessedExtensionMenuMetadata).items = this.getExtensionMenuItems.bind(this, menuItemFunctionName);
             }
         }
-        return menus;
+        return menus as unknown as Record<string, ProcessedExtensionMenuMetadata>;
     }
 
     /**
@@ -481,7 +482,7 @@ export class ScratchExtensionAdapter implements IExtension {
      * @returns A new block info object which has values for all relevant optional fields.
      * @private
      */
-    private prepareBlockInfo(blockInfo: ExtensionBlockMetadata): ExtensionBlockMetadata {
+    private prepareBlockInfo(blockInfo: ExtensionBlockMetadata): ProcessedExtensionBlockMetadata {
         blockInfo = Object.assign({}, {
             blockType: BlockType.COMMAND,
             terminal: false,
@@ -516,7 +517,7 @@ export class ScratchExtensionAdapter implements IExtension {
                 return this.callExtensionMethod(funcName, args, util, realBlockInfo);
             };
 
-            blockInfo.func = (args: Record<string, any>, util: any) => {
+            (blockInfo as ProcessedExtensionBlockMetadata).func = (args: Record<string, any>, util: any) => {
                 const realBlockInfo = getBlockInfo(args);
                 // TODO: filter args using the keys of realBlockInfo.arguments? maybe only if sandboxed?
                 return callBlockFunc(args, util, realBlockInfo);
@@ -525,6 +526,6 @@ export class ScratchExtensionAdapter implements IExtension {
         }
         }
 
-        return blockInfo;
+        return blockInfo as ProcessedExtensionBlockMetadata;
     }
 }

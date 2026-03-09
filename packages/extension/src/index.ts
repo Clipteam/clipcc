@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-export {ScratchExtensionAdapter} from './adapter/scratch/adapter';
-
-export {AbstractEvent, UpdateBlocksEvent, UpdatePrimitivesEvent} from './events';
+export * from './events';
+export * from './interfaces/i_extension';
 
 export {ExtensionManager} from './extension-manager';
-export {IExtension} from './interfaces/i_extension';
+
+export {ScratchExtensionAdapter} from './adapter/scratch/adapter';
