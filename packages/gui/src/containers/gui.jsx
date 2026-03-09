@@ -40,12 +40,17 @@ import themeManagerHOC from '../lib/theme-manager-hoc.jsx';
 
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
+import {isScratchPaintLoaded, getScratchPaint} from '../lib/paint-loader.ts';
 
 class GUI extends React.Component {
     componentDidMount () {
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.props.onStorageInit(storage);
         this.props.onVmInit(this.props.vm);
+        // Preload paint editor when main editor get ready
+        if (!isScratchPaintLoaded()) {
+            getScratchPaint();
+        }
     }
     componentDidUpdate (prevProps) {
         if (this.props.projectId !== prevProps.projectId && this.props.projectId !== null) {
