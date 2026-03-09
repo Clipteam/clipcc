@@ -8,6 +8,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
 
@@ -124,6 +125,18 @@ const base = {
         minimizer: [
             new TerserPlugin({
                 include: /\.min\.js$/
+            }),
+            new ImageMinimizerPlugin({
+                minimizer: {
+                    implementation: ImageMinimizerPlugin.imageminMinify,
+                    options: {
+                        plugins: [
+                            ['gifsicle', {interlaced: true}],
+                            ['jpegtran', {progressive: true}],
+                            ['optipng', {optimizationLevel: 5}]
+                        ]
+                    }
+                }
             })
         ]
     },
