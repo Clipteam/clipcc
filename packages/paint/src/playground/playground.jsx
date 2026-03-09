@@ -1,3 +1,5 @@
+/* eslint-disable no-alert */
+/* eslint-disable no-console */
 import bindAll from 'lodash.bindall';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -9,7 +11,7 @@ import {intlInitialState, IntlProvider} from './reducers/intl.js';
 import styles from './playground.css';
 // scratch-render-fonts is a playground-only dep. Fonts are expected to be imported
 // as a peer dependency, otherwise there will be two copies of them.
-import {FONTS} from 'scratch-render-fonts';
+import 'scratch-render-fonts';
 
 const appTarget = document.createElement('div');
 appTarget.setAttribute('class', styles.playgroundContainer);
@@ -39,7 +41,7 @@ class Playground extends React.Component {
         ]);
         // Append ?dir=rtl to URL to get RTL layout
         const match = location.search.match(/dir=([^&]+)/);
-        const rtl = match && match[1] == 'rtl';
+        const rtl = match && match[1] === 'rtl';
         this.id = 0;
         this.state = {
             name: 'meow',
@@ -48,7 +50,7 @@ class Playground extends React.Component {
             imageFormat: 'svg', // 'svg', 'png', or 'jpg'
             image: svgString, // svg string or data URI
             imageId: this.id, // If this changes, the paint editor will reload
-            rtl: rtl,
+            rtl: rtl
         };
         this.reusableCanvas = document.createElement('canvas');
     }
@@ -111,7 +113,7 @@ class Playground extends React.Component {
         }
         document.body.removeChild(downloadLink);
     }
-    b64toByteArray (b64Data, sliceSize=512) {
+    b64toByteArray (b64Data, sliceSize = 512) {
         // Remove header
         b64Data = b64Data.substring(b64Data.indexOf('base64,') + 7);
 
@@ -126,45 +128,44 @@ class Playground extends React.Component {
                 byteNumbers[i] = slice.charCodeAt(i);
             }
 
-        const byteArray = new Uint8Array(byteNumbers);
-        byteArrays.push(byteArray);
-      }
+            const byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
 
-      return byteArrays;
+        return byteArrays;
     }
-    uploadImage() {
+    uploadImage () {
         document.getElementById(styles.fileInput).click();
     }
-    onUploadImage(event) {
-        var file = event.target.files[0];
-        var type = file.type === 'image/svg+xml' ? 'svg' :
+    onUploadImage (event) {
+        const file = event.target.files[0];
+        const type = file.type === 'image/svg+xml' ? 'svg' :
             file.type === 'image/png' ? 'png' :
-            file.type === 'image/jpg' ? 'jpg' :
-            file.type === 'image/jpeg' ? 'jpg' :
-            null;
+                file.type === 'image/jpg' ? 'jpg' :
+                    file.type === 'image/jpeg' ? 'jpg' :
+                        null;
 
-        var reader = new FileReader();
+        const reader = new FileReader();
         if (type === 'svg') {
-            reader.readAsText(file,'UTF-8');
+            reader.readAsText(file, 'UTF-8');
         } else if (type === 'png' || type === 'jpg'){
             reader.readAsDataURL(file);
         } else {
-            alert("Couldn't read file type: " + file.type);
+            alert(`Couldn't read file type: ${file.type}`);
         }
 
         const that = this;
         reader.onload = readerEvent => {
-            var content = readerEvent.target.result; // this is the content!
+            const content = readerEvent.target.result; // this is the content!
 
             that.setState({
                 image: content,
-                name: file.name.split('.').slice(0, -1).join('.'),
+                name: file.name.split('.').slice(0, -1)
+                    .join('.'),
                 imageId: ++that.id,
-                imageFormat: type,
-                rotationCenterX: undefined,
-                rotationCenterY: undefined,
+                imageFormat: type
             });
-       }
+        };
     }
     render () {
         return (
@@ -174,9 +175,23 @@ class Playground extends React.Component {
                     onUpdateName={this.handleUpdateName}
                     onUpdateImage={this.handleUpdateImage}
                 />
-                <button className={styles.playgroundButton}  onClick={this.uploadImage}>Upload</button>
-                <input id={styles.fileInput} type="file" name="name" onChange={this.onUploadImage} />
-                <button className={styles.playgroundButton} onClick={this.downloadImage}>Download</button>
+                <button
+                    className={styles.playgroundButton}
+                    // eslint-disable-next-line react/jsx-handler-names
+                    onClick={this.uploadImage}
+                >Upload</button>
+                <input
+                    id={styles.fileInput}
+                    type="file"
+                    name="name"
+                    // eslint-disable-next-line react/jsx-handler-names
+                    onChange={this.onUploadImage}
+                />
+                <button
+                    className={styles.playgroundButton}
+                    // eslint-disable-next-line react/jsx-handler-names
+                    onClick={this.downloadImage}
+                >Download</button>
             </div>
         );
     }

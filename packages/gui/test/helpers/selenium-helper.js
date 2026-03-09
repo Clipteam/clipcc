@@ -1,4 +1,4 @@
-jest.setTimeout(30000); // eslint-disable-line no-undef
+jest.setTimeout(30000);
 
 import bindAll from 'lodash.bindall';
 import 'chromedriver'; // register path

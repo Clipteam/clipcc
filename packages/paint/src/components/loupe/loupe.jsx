@@ -48,7 +48,7 @@ class LoupeComponent extends React.Component {
         if (this.props.colorInfo.data.length === imageData.data.length) {
             imageData.data.set(this.props.colorInfo.data);
         } else {
-            console.warn('Image data size mismatch drawing loupe'); // eslint-disable-line no-console
+            console.warn('Image data size mismatch drawing loupe');
         }
 
         tmpCtx.putImageData(imageData, 0, 0);

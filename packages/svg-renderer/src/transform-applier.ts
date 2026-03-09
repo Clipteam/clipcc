@@ -10,7 +10,7 @@ interface BBox {
 }
 
 /**
- * @fileOverview Apply transforms to match stroke width appearance in 2.0 and 3.0
+ * @fileoverview Apply transforms to match stroke width appearance in 2.0 and 3.0
  */
 
 // Adapted from paper.js's Path.applyTransform
@@ -28,26 +28,26 @@ const _parseTransform = function (domElement: Element): Matrix.Matrix {
         const v = parts[1].split(/[\s,]+/g).map(parseFloat);
 
         switch (command) {
-            case 'matrix':
-                matrix = Matrix.compose(matrix, { a: v[0], b: v[1], c: v[2], d: v[3], e: v[4], f: v[5] });
-                break;
-            case 'rotate':
-                matrix = Matrix.compose(matrix, Matrix.rotateDEG(v[0], v[1] || 0, v[2] || 0));
-                break;
-            case 'translate':
-                matrix = Matrix.compose(matrix, Matrix.translate(v[0], v[1] || 0));
-                break;
-            case 'scale':
-                matrix = Matrix.compose(matrix, Matrix.scale(v[0], v[1] || v[0]));
-                break;
-            case 'skewX':
-                matrix = Matrix.compose(matrix, Matrix.skewDEG(v[0], 0));
-                break;
-            case 'skewY':
-                matrix = Matrix.compose(matrix, Matrix.skewDEG(0, v[0]));
-                break;
-            default:
-                log.error(`Couldn't parse: ${command}`);
+        case 'matrix':
+            matrix = Matrix.compose(matrix, {a: v[0], b: v[1], c: v[2], d: v[3], e: v[4], f: v[5]});
+            break;
+        case 'rotate':
+            matrix = Matrix.compose(matrix, Matrix.rotateDEG(v[0], v[1] || 0, v[2] || 0));
+            break;
+        case 'translate':
+            matrix = Matrix.compose(matrix, Matrix.translate(v[0], v[1] || 0));
+            break;
+        case 'scale':
+            matrix = Matrix.compose(matrix, Matrix.scale(v[0], v[1] || v[0]));
+            break;
+        case 'skewX':
+            matrix = Matrix.compose(matrix, Matrix.skewDEG(v[0], 0));
+            break;
+        case 'skewY':
+            matrix = Matrix.compose(matrix, Matrix.skewDEG(0, v[0]));
+            break;
+        default:
+            log.error(`Couldn't parse: ${command}`);
         }
     }
     return matrix;
@@ -76,7 +76,9 @@ const _getScaleFactor = function (matrix: Matrix.Matrix) {
 
 // Returns null if matrix is not invertible. Otherwise returns given ellipse
 // transformed by transform, an object {radiusX, radiusY, rotation}.
-const _calculateTransformedEllipse = function (radiusX: number, radiusY: number, theta: number, transform: Matrix.Matrix) {
+const _calculateTransformedEllipse = function (
+    radiusX: number, radiusY: number, theta: number, transform: Matrix.Matrix
+) {
     theta = -theta * Math.PI / 180;
     const a = transform.a;
     const b = -transform.c;
@@ -138,7 +140,8 @@ const _transformPath = function (pathString: string, transform: Matrix.Matrix) {
     if (!transform || Matrix.toString(transform) === Matrix.toString(Matrix.identity())) return pathString;
     // First split the path data into parts of command-coordinates pairs
     // Commands are any of these characters: mzlhvcsqta
-    const parts =  pathString?.match(/[mlhvcsqtaz][^mlhvcsqtaz]*/ig)!;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+    const parts = pathString?.match(/[mlhvcsqtaz][^mlhvcsqtaz]*/ig)!;
     let coords: RegExpMatchArray;
     let relative = false;
     let previous: string | undefined = undefined;
@@ -298,6 +301,7 @@ const _isContainerElement = function (element: Element) {
 const _isGraphicsElement = function (element: Element) {
     return element.tagName && GRAPHICS_ELEMENTS.includes(element.tagName.toLowerCase());
 };
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const _isPathWithTransformAndStroke = function (element: any, strokeWidth: number) {
     if (!element.attributes) return false;
     strokeWidth = element.attributes['stroke-width'] ?
@@ -312,7 +316,14 @@ const _quadraticMean = function (a: number, b: number) {
 
 const _createGradient = function (gradientId: string, svgTag: SVGElement, bbox: BBox, matrix: Matrix.Matrix) {
     // Adapted from Paper.js's SvgImport.getValue
-    const getValue = function (node: SVGElement, name: string, isString?: boolean, allowNull?: boolean, allowPercent?: boolean, defaultValue?: string) {
+    const getValue = function (
+        node: SVGElement,
+        name: string,
+        isString?: boolean,
+        allowNull?: boolean,
+        allowPercent?: boolean,
+        defaultValue?: string
+    ) {
         // Interpret value as number. Never return NaN, but 0 instead.
         // If the value is a sequence of numbers, parseFloat will
         // return the first occurring number, which is enough for now.
@@ -346,9 +357,17 @@ const _createGradient = function (gradientId: string, svgTag: SVGElement, bbox: 
         }
         return res;
     };
-    const getPoint = function (node: SVGElement, x: string, y: string, allowNull?: boolean, allowPercent?: boolean, defaultX?: string, defaultY?: string) {
-        let resultX = Number(getValue(node, x || 'x', false, allowNull, allowPercent, defaultX));
-        let resultY = Number(getValue(node, y || 'y', false, allowNull, allowPercent, defaultY));
+    const getPoint = function (
+        node: SVGElement,
+        x: string,
+        y: string,
+        allowNull?: boolean,
+        allowPercent?: boolean,
+        defaultX?: string,
+        defaultY?: string
+    ) {
+        const resultX = Number(getValue(node, x || 'x', false, allowNull, allowPercent, defaultX));
+        const resultY = Number(getValue(node, y || 'y', false, allowNull, allowPercent, defaultY));
         return allowNull && (x === null || y === null) ? null : {x: resultX, y: resultY};
     };
 
@@ -426,7 +445,8 @@ const _createGradient = function (gradientId: string, svgTag: SVGElement, bbox: 
         if (focal) focal = Matrix.applyToPoint(matrix, focal);
     } else {
         const dot = (a: PointObjectNotation, b: PointObjectNotation) => (a.x * b.x) + (a.y * b.y);
-        const multiply = (coefficient: number, v: PointObjectNotation) => ({x: coefficient * v.x, y: coefficient * v.y});
+        const multiply =
+            (coefficient: number, v: PointObjectNotation) => ({x: coefficient * v.x, y: coefficient * v.y});
         const add = (a: PointObjectNotation, b: PointObjectNotation) => ({x: a.x + b.x, y: a.y + b.y});
         const subtract = (a: PointObjectNotation, b: PointObjectNotation) => ({x: a.x - b.x, y: a.y - b.y});
 
@@ -511,12 +531,14 @@ const _parseUrl = (value: string | undefined, windowRef: Window) => {
  * @param {object} bboxForTesting The bounds to use. Need to pass in for
  *     tests only, because getBBox doesn't work in Node. This should
  *     be the bounds of the svgTag without including stroke width or transforms.
- * @return {void}
+ * @returns {void}
  */
 const transformStrokeWidths = function (svgTag: SVGElement, windowRef: Window, bboxForTesting?: BBox) {
     const inherited = Matrix.identity();
 
-    const applyTransforms = (element: Element, matrix: Matrix.Matrix, strokeWidth: number, fill?: string, stroke?: string) => {
+    const applyTransforms = (
+        element: Element, matrix: Matrix.Matrix, strokeWidth: number, fill?: string, stroke?: string
+    ) => {
         if (_isContainerElement(element)) {
             // Push fills and stroke width down to leaves
             // @ts-expect-error ignore it

@@ -34,7 +34,6 @@ class CloudProvider {
 
     /**
      * Open a new websocket connection to the clouddata server.
-     * @param {string} cloudHost The cloud data server to connect to.
      */
     openConnection () {
         this.connectionAttempts += 1;

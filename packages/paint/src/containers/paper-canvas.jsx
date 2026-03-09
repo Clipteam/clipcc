@@ -340,6 +340,7 @@ class PaperCanvas extends React.Component {
                 className={styles.paperCanvas}
                 ref={this.setCanvas}
                 style={{cursor: this.props.cursor}}
+                // eslint-disable-next-line react/no-unknown-property
                 resize="true"
             />
         );

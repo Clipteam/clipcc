@@ -218,7 +218,7 @@ const ModeToolsComponent = props => {
                             value={props.radius}
                             onSubmit={props.onRadiusChange}
                         />
-                        </Label>
+                    </Label>
                 </InputGroup>
             </div>
         );
@@ -342,6 +342,7 @@ ModeToolsComponent.propTypes = {
     brushValue: PropTypes.number,
     radius: PropTypes.number,
     className: PropTypes.string,
+    // eslint-disable-next-line react/forbid-prop-types
     clipboardItems: PropTypes.arrayOf(PropTypes.array),
     eraserValue: PropTypes.number,
     fillBitmapShapes: PropTypes.bool,

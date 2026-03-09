@@ -141,6 +141,13 @@ const vmManagerHOC = function (WrappedComponent) {
                 onSetProjectUnchanged,
                 projectData,
                 extensionManager,
+                framerate,
+                infiniteCloning,
+                edgelessStage,
+                unlimitedListLength,
+                unlimitedPenSize,
+                unlimitedSoundStuffs,
+                accurateCoordinates,
                 /* eslint-enable no-unused-vars */
                 isLoadingWithId: isLoadingWithIdProp,
                 vm,

@@ -3,7 +3,7 @@
 const fs = require('fs');
 const glob = require('glob');
 const path = require('path');
-const mkdirp = require('mkdirp');
+const {mkdirpSync} = require('mkdirp');
 
 const args = process.argv.slice(2);
 
@@ -41,5 +41,5 @@ const defaultMessages = glob.sync(MESSAGES_PATTERN)
         return collection;
     }, {});
 
-mkdirp.sync(LANG_DIR);
+mkdirpSync(LANG_DIR);
 fs.writeFileSync(path.join(LANG_DIR, 'en.json'), JSON.stringify(defaultMessages, null, 2));

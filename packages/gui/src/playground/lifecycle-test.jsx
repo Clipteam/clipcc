@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-no-bind */
 import PropTypes from 'prop-types';
 import React from 'react';
 import ReactDOM from 'react-dom';

@@ -1,5 +1,5 @@
 import React from 'react';
-import "jest-localstorage-mock";
+import 'jest-localstorage-mock';
 import {mountWithIntl} from '../../helpers/intl-helpers';
 import MenuBar from '../../../src/components/menu-bar/menu-bar';
 import {menuInitialState} from '../../../src/reducers/menus';

@@ -11,6 +11,7 @@ import {BlockType, ArgumentType} from 'clipcc-vm';
  * @param {object} categoryInfo - Information about this block's extension category, including any menus and icons.
  * @param {object} staticBlockInfo - The base block information before any dynamic changes.
  * @param {string} extendedOpcode - The opcode for the block (including the extension ID).
+ * @returns {object} An object containing the block definition functions to be passed to ScratchBlocks.Blocks[opcode].
  */
 // TODO: grow this until it can fully replace `_convertForScratchBlocks` in the VM runtime
 const defineDynamicBlock = (ScratchBlocks, categoryInfo, staticBlockInfo, extendedOpcode) => ({

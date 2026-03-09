@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import workspaceMetricsReducer, {updateMetrics} from '../../../src/reducers/workspace-metrics';
 
 test('initialState', () => {

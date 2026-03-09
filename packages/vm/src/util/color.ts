@@ -23,7 +23,7 @@ class Color {
     /**
      * Convert a Scratch decimal color to a hex string, #RRGGBB.
      * @param decimal RGB color as a decimal.
-     * @return RGB color as #RRGGBB hex string.
+     * @returns RGB color as #RRGGBB hex string.
      */
     static decimalToHex (decimal: number): string {
         if (decimal < 0) {
@@ -37,7 +37,7 @@ class Color {
     /**
      * Convert a Scratch decimal color to an RGB color object.
      * @param decimal RGB color as decimal.
-     * @return rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
+     * @returns rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
      */
     static decimalToRgb (decimal: number): RGBObject {
         const a = (decimal >> 24) & 0xFF;
@@ -52,7 +52,7 @@ class Color {
      * CC-BY-SA Tim Down:
      * https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
      * @param hex Hex representation of the color.
-     * @return null on failure, or rgb: {r: red [0,255], g: green [0,255], b: blue [0,255]}.
+     * @returns null on failure, or rgb: {r: red [0,255], g: green [0,255], b: blue [0,255]}.
      */
     static hexToRgb (hex: string): RGBObject | null {
         const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
@@ -68,7 +68,7 @@ class Color {
     /**
      * Convert an RGB color object to a hex color.
      * @param rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
-     * @return Hex representation of the color.
+     * @returns Hex representation of the color.
      */
     static rgbToHex (rgb: RGBObject): string {
         return Color.decimalToHex(Color.rgbToDecimal(rgb));
@@ -77,7 +77,7 @@ class Color {
     /**
      * Convert an RGB color object to a Scratch decimal color.
      * @param rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
-     * @return Number representing the color.
+     * @returns Number representing the color.
      */
     static rgbToDecimal (rgb: RGBObject): number {
         return (rgb.r << 16) + (rgb.g << 8) + rgb.b;
@@ -86,7 +86,7 @@ class Color {
     /**
     * Convert a hex color (e.g., F00, #03F, #0033FF) to a decimal color number.
     * @param hex Hex representation of the color.
-    * @return Number representing the color.
+    * @returns Number representing the color.
     */
     static hexToDecimal (hex: string): number {
         const rgb = Color.hexToRgb(hex);
@@ -96,7 +96,7 @@ class Color {
     /**
      * Convert an HSV color to RGB format.
      * @param hsv - {h: hue [0,360), s: saturation [0,1], v: value [0,1]}
-     * @return rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
+     * @returns rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
      */
     static hsvToRgb (hsv: HSVObject): RGBObject {
         let h = hsv.h % 360;
@@ -158,7 +158,7 @@ class Color {
     /**
      * Convert an RGB color to HSV format.
      * @param rgb - {r: red [0,255], g: green [0,255], b: blue [0,255]}.
-     * @return hsv - {h: hue [0,360), s: saturation [0,1], v: value [0,1]}
+     * @returns hsv - {h: hue [0,360), s: saturation [0,1], v: value [0,1]}
      */
     static rgbToHsv (rgb: RGBObject): HSVObject {
         const r = rgb.r / 255;
@@ -185,7 +185,7 @@ class Color {
      * @param rgb0 - the color corresponding to fraction1 <= 0.
      * @param rgb1 - the color corresponding to fraction1 >= 1.
      * @param fraction1 - the interpolation parameter. If this is 0.5, for example, mix the two colors equally.
-     * @return the interpolated color.
+     * @returns the interpolated color.
      */
     static mixRgb (rgb0: RGBObject, rgb1: RGBObject, fraction1: number): RGBObject {
         if (fraction1 <= 0) return rgb0;

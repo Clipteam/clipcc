@@ -7,8 +7,8 @@ const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer
 const VirtualMachine = require('../../src/index');
 
 /**
-* @fileoverview Test vm's performance.
-*/
+ * @fileoverview Test vm's performance.
+ */
 
 let averageTime = -1;
 

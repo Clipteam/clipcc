@@ -109,6 +109,7 @@ const CopyPasteHOC = function (WrappedComponent) {
 
     CopyPasteWrapper.propTypes = {
         clearSelectedItems: PropTypes.func.isRequired,
+        // eslint-disable-next-line react/forbid-prop-types
         clipboardItems: PropTypes.arrayOf(PropTypes.array),
         format: PropTypes.oneOf(Object.keys(Formats)),
         incrementPasteOffset: PropTypes.func.isRequired,

@@ -1,8 +1,8 @@
-var Benchmark = require('benchmark');
-var suite = new Benchmark.Suite();
+const Benchmark = require('benchmark');
+const suite = new Benchmark.Suite();
 
-var data = require('../fixtures/data');
-var parser = require('../../index');
+const data = require('../fixtures/data');
+const parser = require('../../index');
 
 // Run suite
 suite
@@ -10,7 +10,7 @@ suite
         name: 'JSON - Empty',
         defer: true,
         fn: function (deferred) {
-            parser(data.empty.json, function () {
+            parser(data.empty.json, () => {
                 deferred.resolve();
             });
         }
@@ -19,7 +19,7 @@ suite
         name: 'SB2 - Empty',
         defer: true,
         fn: function (deferred) {
-            parser(data.empty.sb2, function () {
+            parser(data.empty.sb2, () => {
                 deferred.resolve();
             });
         }
@@ -28,7 +28,7 @@ suite
         name: 'JSON - Example',
         defer: true,
         fn: function (deferred) {
-            parser(data.example.json, function () {
+            parser(data.example.json, () => {
                 deferred.resolve();
             });
         }
@@ -37,13 +37,13 @@ suite
         name: 'SB2 - Example',
         defer: true,
         fn: function (deferred) {
-            parser(data.example.sb2, function () {
+            parser(data.example.sb2, () => {
                 deferred.resolve();
             });
         }
     })
-    .on('cycle', function (event) {
-        process.stdout.write(String(event.target) + '\n');
+    .on('cycle', event => {
+        process.stdout.write(`${String(event.target)}\n`);
     })
     .run({
         async: false,

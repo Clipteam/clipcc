@@ -1,14 +1,14 @@
-var test = require('tap').test;
-var JSZip = require('jszip');
-var data = require('../fixtures/data');
-var parser = require('../../index');
+const test = require('tap').test;
+const JSZip = require('jszip');
+const data = require('../fixtures/data');
+const parser = require('../../index');
 
-test('default cat sprite2', function (t) {
-    parser(data.sprites.default_cat_sprite2, true, function (err, result) {
+test('default cat sprite2', t => {
+    parser(data.sprites.default_cat_sprite2, true, (err, result) => {
         t.equal(err, null);
         t.equal(Array.isArray(result), true);
-        var res = result[0];
-        var possibleZip = result[1];
+        const res = result[0];
+        const possibleZip = result[1];
         t.type(res, 'object');
         t.equal(res.projectVersion, 2);
         t.equal(possibleZip instanceof JSZip, true);
@@ -16,12 +16,12 @@ test('default cat sprite2', function (t) {
     });
 });
 
-test('example sprite2', function (t) {
-    parser(data.sprites.example_sprite2, true, function (err, result) {
+test('example sprite2', t => {
+    parser(data.sprites.example_sprite2, true, (err, result) => {
         t.equal(err, null);
         t.equal(Array.isArray(result), true);
-        var res = result[0];
-        var possibleZip = result[1];
+        const res = result[0];
+        const possibleZip = result[1];
         t.type(res, 'object');
         t.equal(res.projectVersion, 2);
         t.equal(possibleZip instanceof JSZip, true);
@@ -29,12 +29,12 @@ test('example sprite2', function (t) {
     });
 });
 
-test('banana sprite2, no sounds', function (t) {
-    parser(data.sprites.bananas_sprite2, true, function (err, result) {
+test('banana sprite2, no sounds', t => {
+    parser(data.sprites.bananas_sprite2, true, (err, result) => {
         t.equal(err, null);
         t.equal(Array.isArray(result), true);
-        var res = result[0];
-        var possibleZip = result[1];
+        const res = result[0];
+        const possibleZip = result[1];
         t.type(res, 'object');
         t.equal(res.projectVersion, 2);
         t.equal(possibleZip instanceof JSZip, true);
@@ -42,12 +42,12 @@ test('banana sprite2, no sounds', function (t) {
     });
 });
 
-test('nested banana sprite2', function (t) {
-    parser(data.sprites.bananas_nested_sprite2, true, function (err, result) {
+test('nested banana sprite2', t => {
+    parser(data.sprites.bananas_nested_sprite2, true, (err, result) => {
         t.equal(err, null);
         t.equal(Array.isArray(result), true);
-        var res = result[0];
-        var possibleZip = result[1];
+        const res = result[0];
+        const possibleZip = result[1];
         t.type(res, 'object');
         t.equal(res.projectVersion, 2);
         t.equal(possibleZip instanceof JSZip, true);
@@ -55,12 +55,12 @@ test('nested banana sprite2', function (t) {
     });
 });
 
-test('default cat sprite2 json', function (t) {
-    parser(data.sprites.default_cat_sprite2_json, true, function (err, result) {
+test('default cat sprite2 json', t => {
+    parser(data.sprites.default_cat_sprite2_json, true, (err, result) => {
         t.equal(err, null);
         t.equal(Array.isArray(result), true);
-        var res = result[0];
-        var possibleZip = result[1];
+        const res = result[0];
+        const possibleZip = result[1];
         t.type(res, 'object');
         t.equal(res.projectVersion, 2);
         t.equal(possibleZip, null);
@@ -68,12 +68,12 @@ test('default cat sprite2 json', function (t) {
     });
 });
 
-test('default cat sprite2 json', function (t) {
-    parser(data.sprites.example_sprite2_json, true, function (err, result) {
+test('default cat sprite2 json', t => {
+    parser(data.sprites.example_sprite2_json, true, (err, result) => {
         t.equal(err, null);
         t.equal(Array.isArray(result), true);
-        var res = result[0];
-        var possibleZip = result[1];
+        const res = result[0];
+        const possibleZip = result[1];
         t.type(res, 'object');
         t.equal(res.projectVersion, 2);
         t.equal(possibleZip, null);

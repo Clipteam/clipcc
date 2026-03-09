@@ -83,7 +83,7 @@ class Blocks extends React.Component {
             'setLocale'
         ]);
         this.ScratchBlocks.callbackRegistry.register('showVariablePrompt', this.handlePromptStart);
-        this.ScratchBlocks.callbackRegistry.register("statusButtonCallback", this.handleConnectionModalStart);
+        this.ScratchBlocks.callbackRegistry.register('statusButtonCallback', this.handleConnectionModalStart);
         this.ScratchBlocks.recordSoundCallback = this.handleOpenSoundRecorder;
 
         this.state = {
@@ -100,8 +100,9 @@ class Blocks extends React.Component {
     }
     componentDidMount () {
         this.ScratchBlocks.FieldColourSlider.activateEyedropper = this.props.onActivateColorPicker;
-        this.ScratchBlocks.callbackRegistry.register("externalCheckoutWorkspaceCallback", this.checkoutWsByProccode);
-        this.ScratchBlocks.callbackRegistry.register("externalProcedureDefCallback", this.props.onActivateCustomProcedures);
+        this.ScratchBlocks.callbackRegistry.register('externalCheckoutWorkspaceCallback', this.checkoutWsByProccode);
+        this.ScratchBlocks.callbackRegistry.register(
+            'externalProcedureDefCallback', this.props.onActivateCustomProcedures);
         this.ScratchBlocks.setLocale(this.props.blockMessages);
 
         const workspaceConfig = defaultsDeep({},
@@ -199,6 +200,7 @@ class Blocks extends React.Component {
                 // call setLocale if the locale has changed, or changed while the blocks were hidden.
                 // vm.getLocale() will be out of sync if locale was changed while not visible
                 this.setLocale();
+            // eslint-disable-next-line no-negated-condition
             } else if (this.props.theme !== prevProps.theme) {
                 this.ScratchBlocks.Theme.setTheme(this.themeMapName[this.props.theme] || 'scratch', this.workspace);
             } else {
@@ -376,9 +378,11 @@ class Blocks extends React.Component {
         this.ScratchBlocks.glowStack(data.id, false);
     }
     // block glow never used and removed in spork, just leave the functions here for potential future use
+    // eslint-disable-next-line no-unused-vars
     onBlockGlowOn (data) {
         // this.workspace.glowBlock(data.id, true);
     }
+    // eslint-disable-next-line no-unused-vars
     onBlockGlowOff (data) {
         // this.workspace.glowBlock(data.id, false);
     }
@@ -543,7 +547,8 @@ class Blocks extends React.Component {
             optVarType !== this.ScratchBlocks.constants.BROADCAST_MESSAGE_VARIABLE_TYPE &&
             p.prompt.title !== this.ScratchBlocks.Msg.RENAME_VARIABLE_MODAL_TITLE &&
             p.prompt.title !== this.ScratchBlocks.Msg.RENAME_LIST_MODAL_TITLE;
-        p.prompt.showCloudOption = (optVarType === this.ScratchBlocks.constants.SCALAR_VARIABLE_TYPE) && this.props.canUseCloud;
+        p.prompt.showCloudOption =
+            (optVarType === this.ScratchBlocks.constants.SCALAR_VARIABLE_TYPE) && this.props.canUseCloud;
         this.setState(p);
     }
     handleConnectionModalStart (extensionId) {
@@ -613,6 +618,7 @@ class Blocks extends React.Component {
         /* eslint-disable no-unused-vars */
         const {
             anyModalVisible,
+            blockMessages,
             hideNonVanillaBlocks,
             canUseCloud,
             customProceduresVisible,
@@ -711,6 +717,7 @@ Blocks.propTypes = {
     updateToolboxState: PropTypes.func,
     vm: PropTypes.instanceOf(VM).isRequired,
     workspaceMetrics: PropTypes.shape({
+        // eslint-disable-next-line react/forbid-prop-types
         targets: PropTypes.objectOf(PropTypes.object)
     }),
     extensionManager: PropTypes.instanceOf(ExtensionManager).isRequired

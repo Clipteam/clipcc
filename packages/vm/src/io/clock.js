@@ -8,7 +8,7 @@ class Clock {
         this._paused = false;
         /**
          * Reference to the owning Runtime.
-         * @type{!Runtime}
+         * @type {!Runtime}
          */
         this.runtime = runtime;
     }

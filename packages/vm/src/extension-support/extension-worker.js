@@ -1,5 +1,3 @@
-/* eslint-env worker */
-
 const ArgumentType = require('../extension-support/argument-type');
 const BlockType = require('../extension-support/block-type');
 const dispatch = require('../dispatch/worker-dispatch');

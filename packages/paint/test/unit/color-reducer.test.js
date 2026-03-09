@@ -1,4 +1,3 @@
-/* eslint-env jest */
 import fillColorReducer, {changeFillColor} from '../../src/reducers/fill-style';
 import strokeColorReducer, {changeStrokeColor} from '../../src/reducers/stroke-style';
 import {setSelectedItems} from '../../src/reducers/selected-items';
