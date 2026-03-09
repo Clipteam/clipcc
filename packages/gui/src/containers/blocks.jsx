@@ -117,19 +117,14 @@ class Blocks extends React.Component {
 
         // Register buttons under new callback keys for creating variables,
         // lists, and procedures from extensions.
-        // cc - These callbacks are the same as those in blockly, maybe unnecessary to register.
-
-        // const toolboxWorkspace = this.workspace.getFlyout().getWorkspace();
-
-        // const varListButtonCallback = type =>
-        //     (() => this.ScratchBlocks.Variables.createVariable(this.workspace, null, type));
-        // const procButtonCallback = () => {
-        //     this.ScratchBlocks.Procedures.createProcedureDefCallback(this.workspace);
-        // };
-
-        // toolboxWorkspace.registerButtonCallback('MAKE_A_VARIABLE', varListButtonCallback(''));
-        // toolboxWorkspace.registerButtonCallback('MAKE_A_LIST', varListButtonCallback('list'));
-        // toolboxWorkspace.registerButtonCallback('MAKE_A_PROCEDURE', procButtonCallback);
+        const varListButtonCallback = type =>
+            (() => this.ScratchBlocks.DataCatagory.createVariable(this.workspace, null, type));
+        const procButtonCallback = () => {
+            this.ScratchBlocks.ProceduresCategory.createProcedureDefCallback(this.workspace);
+        };
+        this.workspace.registerButtonCallback('MAKE_A_VARIABLE', varListButtonCallback(''));
+        this.workspace.registerButtonCallback('MAKE_A_LIST', varListButtonCallback('list'));
+        this.workspace.registerButtonCallback('MAKE_A_PROCEDURE', procButtonCallback);
 
         // Store the toolbox that is actually rendered.
         // This is used in componentDidUpdate instead of prevProps, because
