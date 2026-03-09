@@ -23,6 +23,7 @@ import type ArgumentType from './types/argument-type';
 import type {ExtensionManager} from '../../extension-manager';
 import TargetType from './types/target-type';
 import {UpdateBlocksEvent, UpdatePrimitivesEvent} from '../../events';
+import defineDynamicBlock from './define-dynamic-block';
 
 interface ScratchExtension {
     /**
@@ -54,7 +55,7 @@ interface ConvertedBlockInfo {
     /** The raw block info. */
     info: ExtensionBlockMetadata;
     /** The scratch-blocks JSON definition for this block. */
-    json: object;
+    json: any;
     /** The scratch-blocks XML definition for this block. */
     xml: string;
 }
@@ -111,6 +112,19 @@ function maybeFormatMessage(maybeMessage: any, args?: object, locale?: string): 
         return formatMessage(maybeMessage, args, locale);
     }
     return maybeMessage;
+}
+
+/**
+ * Define a block with given JSON content.
+ * @param json JSON content of block.
+ * @returns Block definition.
+ */
+function defineStaticBlock(json: any) {
+    return {
+        init(this: any) {
+            this.jsonInit(json);
+        }
+    };
 }
 
 /**
@@ -316,9 +330,9 @@ export class ScratchExtensionAdapter implements IExtension {
             )
         );
 
-        const updateBlocksPayload: UpdateBlocksEvent = {
+        const payload: UpdateBlocksEvent = {
             type: 'UPDATE_BLOCKS',
-            blocks: [],
+            blocks: Object.create(null),
             fields: []
         };
 
@@ -328,19 +342,17 @@ export class ScratchExtensionAdapter implements IExtension {
                     // This is creating the block factory / constructor -- NOT a specific instance of the block.
                     // The factory should only know static info about the block: the category info and the opcode.
                     // Anything else will be picked up from the XML attached to the block instance.
-                    // const extendedOpcode = `${categoryInfo.id}_${blockInfo.info.opcode}`;
-                    // const blockDefinition =
-                    //     defineDynamicBlock(this.ScratchBlocks, categoryInfo, blockInfo, extendedOpcode);
-                    // this.ScratchBlocks.Blocks[extendedOpcode] = blockDefinition;
+                    const extendedOpcode = `${categoryInfo.id}_${blockInfo.info.opcode}`;
+                    payload.blocks[extendedOpcode] = defineDynamicBlock(categoryInfo, blockInfo, extendedOpcode);
                 } else if (blockInfo.json) {
                     // Static blocks.
-                    updateBlocksPayload.blocks.push(blockInfo.json);
+                    payload.blocks[blockInfo.json.type] = defineStaticBlock(blockInfo.json);
                 }
                 // otherwise it's a non-block entry such as '---'
             });
         }
 
-        this.manager!.emitEvent(updateBlocksPayload);
+        this.manager!.emitEvent(payload);
     }
 
     private buildToolboxXML(categoryInfo: CategoryInfo, isStage: boolean): string {

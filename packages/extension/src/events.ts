@@ -21,6 +21,7 @@ export interface UpdatePrimitivesEvent extends AbstractEvent {
 
 export interface UpdateBlocksEvent extends AbstractEvent {
     type: 'UPDATE_BLOCKS';
-    blocks: any[];
+    /** Map of block definitions. */
+    blocks: Record<string, any>;
     fields: any[];
 }

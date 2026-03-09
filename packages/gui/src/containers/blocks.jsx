@@ -594,8 +594,12 @@ class Blocks extends React.Component {
         this.props.vm.setEditingTarget(target.id);
     }
 
+    /**
+     * Event handler for updating block definitions.
+     * @param {import('clipcc-extension').UpdateBlocksEvent} event Event payload.
+     */
     handleExtensionUpdateBlocks (event) {
-        this.ScratchBlocks.defineBlocksWithJsonArray(event.blocks);
+        this.ScratchBlocks.common.defineBlocks(event.blocks);
 
         // Update the toolbox.
         const toolbox = this.getToolbox();
