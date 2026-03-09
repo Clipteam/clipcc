@@ -994,8 +994,7 @@ const makeToolbox = function (
 
     // Convert xml toolbox to json.
     for (const category of categories) {
-        if (category.json || !category.xml || !isScratchBlocksLoaded() ) continue;
-        const ScratchBlocks = getScratchBlocks();
+        if (category.json || !category.xml || !isScratchBlocksLoaded()) continue;
         const toolbox = ScratchBlocks.utils.toolbox.convertToolboxDefToJson(
             `<xml style="display: none">${category.xml}</xml>`
         );

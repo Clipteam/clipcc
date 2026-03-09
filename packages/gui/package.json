@@ -11,7 +11,7 @@
   },
   "main": "./dist/scratch-gui.js",
   "scripts": {
-    "analyze": "cross-env ANALYZE=1 yarn start",
+    "analyze": "cross-env ANALYZE=1 yarn build",
     "build": "yarn run clean && webpack --color --bail",
     "clean": "rimraf ./build && mkdirp build && rimraf ./dist && mkdirp dist",
     "i18n:src": "rimraf ./translations/messages/src && babel src > tmp.js && rimraf tmp.js && node ./scripts/build-i18n-src.js ./translations/messages/src ./translations/",

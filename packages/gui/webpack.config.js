@@ -27,6 +27,7 @@ const base = {
     resolve: {
         extensions: ['.ts', '.js', '.tsx', '.jsx'],
         alias: {
+            'text-encoding': 'fastestsmallesttextencoderdecoder',
             'clipcc-vm': path.resolve(__dirname, '../vm/src/index.js'),
             'clipcc-block': path.resolve(__dirname, '../block/src/index.ts'),
             'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),

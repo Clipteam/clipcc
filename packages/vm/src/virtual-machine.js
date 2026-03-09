@@ -29,21 +29,6 @@ require('canvas-toBlob');
 const RESERVED_NAMES = ['_mouse_', '_stage_', '_edge_', '_myself_', '_random_'];
 
 /**
- * @type {string[]}
- */
-const CORE_EXTENSIONS = [
-    // 'motion',
-    // 'looks',
-    // 'sound',
-    // 'events',
-    // 'control',
-    // 'sensing',
-    // 'operators',
-    // 'variables',
-    // 'myBlocks'
-];
-
-/**
  * @typedef {number} int
  * @typedef {import('./engine/target')} Target
  * @typedef {import('./serialization/sb3').ImportedExtensionsInfo} ImportedExtensionsInfo
@@ -188,11 +173,6 @@ class VirtualMachine extends EventEmitter {
         });
 
         this.extensionManager = new ExtensionManager(this.runtime);
-
-        // Load core extensions
-        for (const id of CORE_EXTENSIONS) {
-            this.extensionManager.loadExtensionIdSync(id);
-        }
 
         this.blockListener = this.blockListener.bind(this);
         this.flyoutBlockListener = this.flyoutBlockListener.bind(this);

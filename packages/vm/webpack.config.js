@@ -16,6 +16,7 @@ const base = {
     },
     resolve: {
         alias: {
+            'text-encoding': 'fastestsmallesttextencoderdecoder',
             'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
             'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js')
         },
