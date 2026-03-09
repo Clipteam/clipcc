@@ -23,17 +23,20 @@ const builtinExtensions = {
     // This is an example that isn't loaded with the other core blocks,
     // but serves as a reference for loading core blocks as extensions.
     // These are the non-core built-in extensions.
-    pen: () => import(/* webpackChunkName: "ext_pen" */ '../extensions/scratch3_pen'),
-    wedo2: () => import(/* webpackChunkName: "ext_wedo2" */ '../extensions/scratch3_wedo2'),
-    music: () => import(/* webpackChunkName: "ext_music" */ '../extensions/scratch3_music'),
-    microbit: () => import(/* webpackChunkName: "ext_microbit" */ '../extensions/scratch3_microbit'),
-    text2speech: () => import(/* webpackChunkName: "ext_text2speech" */ '../extensions/scratch3_text2speech'),
-    translate: () => import(/* webpackChunkName: "ext_translate" */ '../extensions/scratch3_translate'),
-    videoSensing: () => import(/* webpackChunkName: "ext_videoSensing" */ '../extensions/scratch3_video_sensing'),
-    ev3: () => import(/* webpackChunkName: "ext_ev3" */ '../extensions/scratch3_ev3'),
-    makeymakey: () => import(/* webpackChunkName: "ext_makeymakey" */ '../extensions/scratch3_makeymakey'),
-    boost: () => import(/* webpackChunkName: "ext_boost" */ '../extensions/scratch3_boost'),
-    gdxfor: () => import(/* webpackChunkName: "ext_gdxfor" */ '../extensions/scratch3_gdx_for')
+    pen: () => import(/* webpackChunkName: "ext_pen" */ '../extensions/scratch3_pen/index.js'),
+    wedo2: () => import(/* webpackChunkName: "ext_wedo2" */ '../extensions/scratch3_wedo2/index.js'),
+    music: () => import(/* webpackChunkName: "ext_music" */ '../extensions/scratch3_music/index.js'),
+    microbit: () => import(/* webpackChunkName: "ext_microbit" */ '../extensions/scratch3_microbit/index.js'),
+    text2speech: () => import(/* webpackChunkName: "ext_text2speech" */ '../extensions/scratch3_text2speech/index.js'),
+    translate: () => import(/* webpackChunkName: "ext_translate" */ '../extensions/scratch3_translate/index.js'),
+    videoSensing: () => import(
+        /* webpackChunkName: "ext_videoSensing" */
+        '../extensions/scratch3_video_sensing/index.js'
+    ),
+    ev3: () => import(/* webpackChunkName: "ext_ev3" */ '../extensions/scratch3_ev3/index.js'),
+    makeymakey: () => import(/* webpackChunkName: "ext_makeymakey" */ '../extensions/scratch3_makeymakey/index.js'),
+    boost: () => import(/* webpackChunkName: "ext_boost" */ '../extensions/scratch3_boost/index.js'),
+    gdxfor: () => import(/* webpackChunkName: "ext_gdxfor" */ '../extensions/scratch3_gdx_for/index.js')
 };
 
 /**
