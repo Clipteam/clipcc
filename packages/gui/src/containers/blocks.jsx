@@ -606,6 +606,8 @@ class Blocks extends React.Component {
     handleExtensionUpdateBlocks (event) {
         this.ScratchBlocks.common.defineBlocks(event.blocks);
 
+        // @todo support for custom field type
+
         // Update the toolbox.
         const toolbox = this.getToolbox();
         if (toolbox) {

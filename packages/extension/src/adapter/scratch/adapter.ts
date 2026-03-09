@@ -333,7 +333,7 @@ export class ScratchExtensionAdapter implements IExtension {
         const payload: UpdateBlocksEvent = {
             type: 'UPDATE_BLOCKS',
             blocks: Object.create(null),
-            fields: []
+            fields: Object.create(null)
         };
 
         if (blockInfoArray.length > 0) {
@@ -350,6 +350,12 @@ export class ScratchExtensionAdapter implements IExtension {
                 }
                 // otherwise it's a non-block entry such as '---'
             });
+        }
+
+        for (const fieldTypeName in categoryInfo.customFieldTypes) {
+            const fieldTypeInfo: CustomFieldInfo = categoryInfo.customFieldTypes[fieldTypeName];
+            const fieldName = `field_${fieldTypeInfo.extendedName}`;
+            payload.fields[fieldName] = fieldTypeInfo.fieldImplementation;
         }
 
         this.manager!.emitEvent(payload);
