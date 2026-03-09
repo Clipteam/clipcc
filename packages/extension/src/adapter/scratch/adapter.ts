@@ -389,7 +389,7 @@ export class ScratchExtensionAdapter implements IExtension {
                 let result: '---' | ProcessedExtensionBlockMetadata;
                 switch (blockInfo) {
                 case '---': // separator
-                    result = '---' as '---';
+                    result = '---';
                     break;
                 default: // an ExtensionBlockMetadata object
                     result = this.prepareBlockInfo(blockInfo);
