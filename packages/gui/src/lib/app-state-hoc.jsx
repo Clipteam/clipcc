@@ -10,7 +10,7 @@ import {setPlayer, setFullScreen} from '../reducers/mode.js';
 
 import locales from 'clipcc-l10n';
 import {detectLocale} from './detect-locale';
-import {setInitialReducers} from '../reducers/utils';
+import {setInitialReducers, setStore} from '../reducers/utils';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -83,6 +83,7 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
                 initialState,
                 enhancer
             );
+            setStore(this.store);
         }
         componentDidUpdate (prevProps) {
             if (localesOnly) return;
