@@ -128,6 +128,7 @@ class Scratch3VideoSensingBlocks {
      * Dimensions the video stream is analyzed at after its rendered to the
      * sample canvas.
      * @type {Array.<number>}
+     * @deprecated Now follows actual stage size
      */
     static get DIMENSIONS () {
         return [480, 360];
