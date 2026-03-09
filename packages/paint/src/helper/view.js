@@ -4,29 +4,51 @@ import {getAllRootItems, getSelectedRootItems} from './selection';
 import {getHitBounds} from './bitmap';
 import log from '../log/log';
 
+/**
+ * The artboard is the area that costumes are designed on.
+ * Used for layout.
+ * @constant
+ */
+export const REFERENCED_ART_BOARD_WIDTH = 480;
+
 // Vectors are imported and exported at SVG_ART_BOARD size.
 // Once they are imported however, both SVGs and bitmaps are on
 // canvases of ART_BOARD size.
 // (This is for backwards compatibility, to handle both assets
 // designed for 480 x 360, and bitmap resolution 2 bitmaps)
-const SVG_ART_BOARD_WIDTH = 480;
-const SVG_ART_BOARD_HEIGHT = 360;
-const ART_BOARD_WIDTH = SVG_ART_BOARD_WIDTH * 2;
-const ART_BOARD_HEIGHT = SVG_ART_BOARD_HEIGHT * 2;
-const CENTER = new paper.Point(ART_BOARD_WIDTH / 2, ART_BOARD_HEIGHT / 2);
+let SVG_ART_BOARD_WIDTH = 480;
+let SVG_ART_BOARD_HEIGHT = 360;
+let ART_BOARD_WIDTH = SVG_ART_BOARD_WIDTH * 2;
+let ART_BOARD_HEIGHT = SVG_ART_BOARD_HEIGHT * 2;
+let CENTER = new paper.Point(ART_BOARD_WIDTH / 2, ART_BOARD_HEIGHT / 2);
 const PADDING_PERCENT = 25; // Padding as a percent of the max of width/height of the sprite
 const BUFFER = 50; // Number of pixels of allowance around objects at the edges of the workspace
 const MIN_RATIO = .125; // Zoom in to at least 1/8 of the screen. This way you don't end up incredibly
 //                         zoomed in for tiny costumes.
 const OUTERMOST_ZOOM_LEVEL = 0.333;
-const ART_BOARD_BOUNDS = new paper.Rectangle(0, 0, ART_BOARD_WIDTH, ART_BOARD_HEIGHT);
-const MAX_WORKSPACE_BOUNDS = new paper.Rectangle(
+let ART_BOARD_BOUNDS = new paper.Rectangle(0, 0, ART_BOARD_WIDTH, ART_BOARD_HEIGHT);
+let MAX_WORKSPACE_BOUNDS = new paper.Rectangle(
     -ART_BOARD_WIDTH / 4,
     -ART_BOARD_HEIGHT / 4,
     ART_BOARD_WIDTH * 1.5,
     ART_BOARD_HEIGHT * 1.5);
 
 let _workspaceBounds = ART_BOARD_BOUNDS;
+
+const updateViewRect = (width = 480, height = 360) => {
+    SVG_ART_BOARD_WIDTH = width;
+    SVG_ART_BOARD_HEIGHT = height;
+    ART_BOARD_WIDTH = SVG_ART_BOARD_WIDTH * 2;
+    ART_BOARD_HEIGHT = SVG_ART_BOARD_HEIGHT * 2;
+    CENTER = new paper.Point(ART_BOARD_WIDTH / 2, ART_BOARD_HEIGHT / 2);
+    ART_BOARD_BOUNDS = new paper.Rectangle(0, 0, ART_BOARD_WIDTH, ART_BOARD_HEIGHT);
+    MAX_WORKSPACE_BOUNDS = new paper.Rectangle(
+        -ART_BOARD_WIDTH / 4,
+        -ART_BOARD_HEIGHT / 4,
+        ART_BOARD_WIDTH * 1.5,
+        ART_BOARD_HEIGHT * 1.5);
+    _workspaceBounds = ART_BOARD_BOUNDS;
+};
 
 const getWorkspaceBounds = () => _workspaceBounds;
 
@@ -217,6 +239,7 @@ export {
     setWorkspaceBounds,
     getWorkspaceBounds,
     resizeCrosshair,
+    updateViewRect,
     zoomOnSelection,
     zoomOnFixedPoint,
     zoomToFit

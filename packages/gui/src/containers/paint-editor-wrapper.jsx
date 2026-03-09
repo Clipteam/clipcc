@@ -18,7 +18,9 @@ class PaintEditorWrapper extends React.Component {
     shouldComponentUpdate (nextProps) {
         return this.props.imageId !== nextProps.imageId ||
             this.props.rtl !== nextProps.rtl ||
-            this.props.name !== nextProps.name;
+            this.props.name !== nextProps.name ||
+            this.props.stageWidth !== nextProps.stageWidth ||
+            this.props.stageHeight !== nextProps.stageHeight;
     }
     handleUpdateName (name) {
         this.props.vm.renameCostume(this.props.selectedCostumeIndex, name);
@@ -67,6 +69,8 @@ PaintEditorWrapper.propTypes = {
     rotationCenterY: PropTypes.number,
     rtl: PropTypes.bool,
     selectedCostumeIndex: PropTypes.number.isRequired,
+    stageHeight: PropTypes.number.isRequired,
+    stageWidth: PropTypes.number.isRequired,
     vm: PropTypes.instanceOf(VM)
 };
 
@@ -86,7 +90,9 @@ const mapStateToProps = (state, {selectedCostumeIndex}) => {
         rtl: state.locales.isRtl,
         selectedCostumeIndex: index,
         vm: state.scratchGui.vm,
-        zoomLevelId: targetId
+        zoomLevelId: targetId,
+        stageWidth: state.scratchGui.settings.stageWidth,
+        stageHeight: state.scratchGui.settings.stageHeight
     };
 };
 

@@ -20,7 +20,7 @@ import {setLayout} from '../reducers/layout';
 
 import {getSelectedLeafItems} from '../helper/selection';
 import {convertToBitmap, convertToVector} from '../helper/bitmap';
-import {resetZoom, zoomOnSelection, OUTERMOST_ZOOM_LEVEL} from '../helper/view';
+import {resetZoom, zoomOnSelection, OUTERMOST_ZOOM_LEVEL, updateViewRect} from '../helper/view';
 import EyeDropperTool from '../helper/tools/eye-dropper';
 
 import Modes, {BitmapModes, VectorModes} from '../lib/modes';
@@ -92,6 +92,9 @@ class PaintEditor extends React.Component {
             colorInfo: null
         };
         this.props.setLayout(this.props.rtl ? 'rtl' : 'ltr');
+        if (this.props.stageWidth && this.props.stageHeight) {
+            updateViewRect(this.props.stageWidth, this.props.stageHeight);
+        }
     }
     componentDidMount () {
         document.addEventListener('keydown', this.props.onKeyPress);
@@ -104,6 +107,9 @@ class PaintEditor extends React.Component {
         document.addEventListener('touchend', this.onMouseUp);
     }
     componentWillReceiveProps (newProps) {
+        if (newProps.stageWidth !== this.props.stageWidth || newProps.stageHeight !== this.props.stageHeight) {
+            updateViewRect(newProps.stageWidth, newProps.stageHeight);
+        }
         if (!isBitmap(this.props.format) && isBitmap(newProps.format)) {
             this.switchModeForFormat(Formats.BITMAP);
         } else if (!isVector(this.props.format) && isVector(newProps.format)) {
@@ -332,6 +338,8 @@ class PaintEditor extends React.Component {
                 onZoomIn={this.handleZoomIn}
                 onZoomOut={this.handleZoomOut}
                 onZoomReset={this.handleZoomReset}
+                stageHeight={this.props.stageHeight}
+                stageWidth={this.props.stageWidth}
             />
         );
     }
@@ -372,9 +380,16 @@ PaintEditor.propTypes = {
     setSelectedItems: PropTypes.func.isRequired,
     shouldShowRedo: PropTypes.func.isRequired,
     shouldShowUndo: PropTypes.func.isRequired,
+    stageHeight: PropTypes.number,
+    stageWidth: PropTypes.number,
     updateViewBounds: PropTypes.func.isRequired,
     viewBounds: PropTypes.instanceOf(paper.Matrix).isRequired,
     zoomLevelId: PropTypes.string
+};
+
+PaintEditor.defaultProps = {
+    stageHeight: 360,
+    stageWidth: 480
 };
 
 const mapStateToProps = state => ({
