@@ -4365,10 +4365,10 @@
   resolved "https://registry.yarnpkg.com/@unrs/resolver-binding-win32-x64-msvc/-/resolver-binding-win32-x64-msvc-1.11.1.tgz#538b1e103bf8d9864e7b85cc96fa8d6fb6c40777"
   integrity sha512-lrW200hZdbfRtztbygyaq/6jP6AKE8qQN2KvPcJ+x7wiD038YtnYtZ82IMNJ69GJibV7bwL3y9FgK+5w/pYt6g==
 
-"@vernier/godirect@1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@vernier/godirect/-/godirect-1.5.0.tgz#0c6f08dcf8ab90abda96c219b4f2dcbbcd29f778"
-  integrity sha512-vMS0fQubI3WSSLg1Ry3aey/qWCl9XoCsFzgwOWYkeJs45YxjPel+42pLh5pO7uP6oF47sjZUKx8kGOoTiiiirA==
+"@vernier/godirect@1.8.3":
+  version "1.8.3"
+  resolved "https://registry.yarnpkg.com/@vernier/godirect/-/godirect-1.8.3.tgz#3621c3238d50cb70ddff1bcdb3b59c27b86c86c8"
+  integrity sha512-poS0LZ3jAjH36gIAI0aNBBdsGGbmt11VFbLO+eGDJ/JDSPtMu1iUStvOi0UM/ZH6Jyh34SjVd8Cnxu/Wmcb8iQ==
 
 "@webassemblyjs/ast@1.14.1", "@webassemblyjs/ast@^1.14.1":
   version "1.14.1"
