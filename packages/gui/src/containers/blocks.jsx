@@ -73,8 +73,6 @@ class Blocks extends React.Component {
             'onBlockGlowOn',
             'onBlockGlowOff',
             'handleMonitorsUpdate',
-            'handleExtensionAdded',
-            'handleBlocksInfoUpdate',
             'onTargetsUpdate',
             'onVisualReport',
             'onWorkspaceUpdate',
@@ -309,8 +307,6 @@ class Blocks extends React.Component {
         this.props.vm.on('workspaceUpdate', this.onWorkspaceUpdate);
         this.props.vm.on('targetsUpdate', this.onTargetsUpdate);
         this.props.vm.on('MONITORS_UPDATE', this.handleMonitorsUpdate);
-        this.props.vm.on('EXTENSION_ADDED', this.handleExtensionAdded);
-        this.props.vm.on('BLOCKSINFO_UPDATE', this.handleBlocksInfoUpdate);
         this.props.vm.on('PERIPHERAL_CONNECTED', this.handleStatusButtonUpdate);
         this.props.vm.on('PERIPHERAL_DISCONNECTED', this.handleStatusButtonUpdate);
     }
@@ -329,8 +325,6 @@ class Blocks extends React.Component {
         this.props.vm.off('workspaceUpdate', this.onWorkspaceUpdate);
         this.props.vm.off('targetsUpdate', this.onTargetsUpdate);
         this.props.vm.off('MONITORS_UPDATE', this.handleMonitorsUpdate);
-        this.props.vm.off('EXTENSION_ADDED', this.handleExtensionAdded);
-        this.props.vm.off('BLOCKSINFO_UPDATE', this.handleBlocksInfoUpdate);
         this.props.vm.off('PERIPHERAL_CONNECTED', this.handleStatusButtonUpdate);
         this.props.vm.off('PERIPHERAL_DISCONNECTED', this.handleStatusButtonUpdate);
     }
@@ -474,51 +468,6 @@ class Blocks extends React.Component {
                 block.isMonitored = isVisible;
             }
         }
-    }
-    handleExtensionAdded (categoryInfo) {
-        const defineBlocks = blockInfoArray => {
-            if (blockInfoArray && blockInfoArray.length > 0) {
-                const staticBlocksJson = [];
-                const dynamicBlocksInfo = [];
-                blockInfoArray.forEach(blockInfo => {
-                    if (blockInfo.info && blockInfo.info.isDynamic) {
-                        dynamicBlocksInfo.push(blockInfo);
-                    } else if (blockInfo.json) {
-                        staticBlocksJson.push(injectExtensionBlockTheme(blockInfo.json, this.props.theme));
-                    }
-                    // otherwise it's a non-block entry such as '---'
-                });
-
-                this.ScratchBlocks.defineBlocksWithJsonArray(staticBlocksJson);
-                dynamicBlocksInfo.forEach(blockInfo => {
-                    // This is creating the block factory / constructor -- NOT a specific instance of the block.
-                    // The factory should only know static info about the block: the category info and the opcode.
-                    // Anything else will be picked up from the XML attached to the block instance.
-                    const extendedOpcode = `${categoryInfo.id}_${blockInfo.info.opcode}`;
-                    const blockDefinition =
-                        defineDynamicBlock(this.ScratchBlocks, categoryInfo, blockInfo, extendedOpcode);
-                    this.ScratchBlocks.Blocks[extendedOpcode] = blockDefinition;
-                });
-            }
-        };
-
-        // scratch-blocks implements a menu or custom field as a special kind of block ("shadow" block)
-        // these actually define blocks and MUST run regardless of the UI state
-        defineBlocks(
-            Object.getOwnPropertyNames(categoryInfo.customFieldTypes)
-                .map(fieldTypeName => categoryInfo.customFieldTypes[fieldTypeName].scratchBlocksDefinition));
-        defineBlocks(categoryInfo.menus);
-        defineBlocks(categoryInfo.blocks);
-
-        // Update the toolbox with new blocks if possible
-        const toolbox = this.getToolbox();
-        if (toolbox) {
-            this.props.updateToolboxState(toolbox);
-        }
-    }
-    handleBlocksInfoUpdate (categoryInfo) {
-        // @todo Later we should replace this to avoid all the warnings from redefining blocks.
-        this.handleExtensionAdded(categoryInfo);
     }
     handleCategorySelected (categoryId) {
         const extension = extensionData.find(ext => ext.extensionId === categoryId);
