@@ -6379,10 +6379,10 @@ cli@~1.0.0:
     exit "0.1.2"
     glob "^7.1.1"
 
-clipcc-render-fonts@1.0.254:
-  version "1.0.254"
-  resolved "https://registry.yarnpkg.com/clipcc-render-fonts/-/clipcc-render-fonts-1.0.254.tgz#a4be42f96d6816a65c1a9377c50f12495b244245"
-  integrity sha512-InyRDUNkZ5NIZXjBXR42zezu9ZgBpKAzl0HvaRTajIGp/C5v40f7JdkvJiHT/P82M/s7qEi0ayi96mBNnVlm9Q==
+clipcc-render-fonts@1.0.256:
+  version "1.0.256"
+  resolved "https://registry.yarnpkg.com/clipcc-render-fonts/-/clipcc-render-fonts-1.0.256.tgz#c7c789aefbab202c5a597e0bc8686d8f9dd5f36e"
+  integrity sha512-BUkYYtOs7Qo5biLgsFugxr0rzhDquC4q2wuraGCp7vl/6m6Vx9fg9gY5raKJz/+XSeBgj3Q7czV5FsrF8Z3mGg==
   dependencies:
     base64-loader "^1.0.0"
 
@@ -6395,10 +6395,10 @@ clipcc-sb1-converter@1.0.326:
     fastestsmallesttextencoderdecoder "^1.0.22"
     js-md5 "^0.8.3"
 
-clipcc-svg-renderer@2.5.47:
-  version "2.5.47"
-  resolved "https://registry.yarnpkg.com/clipcc-svg-renderer/-/clipcc-svg-renderer-2.5.47.tgz#0c3d688bcf3440ce03ce5097e9abd0ffb5b7692c"
-  integrity sha512-uRoadqG/oia8+1Xz5FurN0OTZOPbHEsXY8G6K5ZAn98E21mKqOK98AtSTk9NU38BCsGjTbbF80x4AVJOYZQM2w==
+clipcc-svg-renderer@2.5.48:
+  version "2.5.48"
+  resolved "https://registry.yarnpkg.com/clipcc-svg-renderer/-/clipcc-svg-renderer-2.5.48.tgz#799fe871623ded51cd33aea2e075219277e4dde1"
+  integrity sha512-0B/bo7c2vTnlXGfawyUz1GbnKAFf9ubzeU9PIzhFO9zA4X4SWqWYAMY7sQmoyBx4iQh0rgyIBtXXUP31Jlwd0g==
   dependencies:
     "@turbowarp/nanolog" "^1.0.1"
     base64-js "^1.2.1"

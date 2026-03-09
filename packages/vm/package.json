@@ -48,7 +48,7 @@
     "scratch-translate-extension-languages": "1.0.7"
   },
   "peerDependencies": {
-    "clipcc-svg-renderer": "2.5.47"
+    "clipcc-svg-renderer": "2.5.48"
   },
   "devDependencies": {
     "@babel/core": "7.29.0",
@@ -64,7 +64,7 @@
     "clipcc-l10n": "3.2.0",
     "clipcc-render": "3.2.0",
     "clipcc-storage": "3.2.0",
-    "clipcc-svg-renderer": "2.5.47",
+    "clipcc-svg-renderer": "2.5.48",
     "codingclip-worker-loader": "^3.0.10",
     "copy-webpack-plugin": "^14.0.0",
     "eslint": "^9.39.2",
@@ -76,7 +76,7 @@
     "json": "^9.0.6",
     "lodash.defaultsdeep": "4.6.1",
     "pngjs": "7.0.0",
-    "clipcc-render-fonts": "1.0.254",
+    "clipcc-render-fonts": "1.0.256",
     "script-loader": "0.7.2",
     "stats.js": "0.17.0",
     "tap": "21.0.1",

@@ -39,7 +39,7 @@
     "json": "9.0.6",
     "node-polyfill-webpack-plugin": "^3.0.0",
     "playwright-chromium": "1.13.0",
-    "clipcc-render-fonts": "1.0.254",
+    "clipcc-render-fonts": "1.0.256",
     "tap": "21.0.1",
     "terser-webpack-plugin": "^5.3.17",
     "travis-after-all": "1.4.5",
@@ -50,12 +50,12 @@
     "webpack-dev-server": "^5.2.3"
   },
   "peerDependencies": {
-    "clipcc-render-fonts": "^1.0.254"
+    "clipcc-render-fonts": "^1.0.256"
   },
   "dependencies": {
     "@turbowarp/nanolog": "^0.2.0",
     "clipcc-storage": "3.2.0",
-    "clipcc-svg-renderer": "2.5.47",
+    "clipcc-svg-renderer": "2.5.48",
     "grapheme-breaker": "0.3.2",
     "hull.js": "1.0.6",
     "ify-loader": "1.1.0",
