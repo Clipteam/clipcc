@@ -66,7 +66,7 @@ const LOCAL_THRESHOLD = THRESHOLD / 3;
  * @class
  */
 class VideoMotion {
-    constructor (width, height) {
+    constructor (width = 480, height = 360) {
         this.width = width;
         this.height = height;
         /**
