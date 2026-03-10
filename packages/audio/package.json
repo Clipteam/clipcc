@@ -6,9 +6,9 @@
   "browser": "./src/index.js",
   "types": "./dist/types/index.d.ts",
   "scripts": {
-    "test": "yarn run lint && yarn run tap && yarn run build",
+    "test": "pnpm run lint && pnpm run tap && pnpm run build",
     "build:types": "tsc --project ./tsconfig.dts.json",
-    "build": "yarn build:types && webpack --bail",
+    "build": "pnpm run build:types && webpack --bail",
     "watch": "webpack --watch",
     "lint": "eslint .",
     "tap": "tap test/effects/*.js test/*.js --allow-incomplete-coverage --allow-empty-coverage"
@@ -34,7 +34,7 @@
     "@babel/preset-env": "7.29.0",
     "babel-eslint": "10.0.3",
     "eslint": "^9.39.2",
-    "eslint-config-clipcc": "^9.0.9",
+    "eslint-config-clipcc": "workspace:*",
     "tap": "21.0.1",
     "typescript": "^5.9.3",
     "web-audio-test-api": "0.5.2",
