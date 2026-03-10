@@ -297,7 +297,7 @@ class VirtualMachine extends EventEmitter {
                 height / 2
             );
         }
-        this.emit(Runtime.STAGE_SIZE_UPDATE, width, height);
+        this.runtime.emit(Runtime.STAGE_SIZE_UPDATE, width, height);
     }
 
     /**
@@ -367,6 +367,9 @@ class VirtualMachine extends EventEmitter {
      */
     setVideoProvider (videoProvider) {
         this.runtime.ioDevices.video.setProvider(videoProvider);
+        this.runtime.on(Runtime.STAGE_SIZE_UPDATE, (width, height) => {
+            videoProvider.setDimensions(width, height);
+        });
     }
 
     /**

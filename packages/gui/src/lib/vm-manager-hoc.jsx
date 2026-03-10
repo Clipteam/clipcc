@@ -44,6 +44,8 @@ const vmManagerHOC = function (WrappedComponent) {
                     unlimitedSoundStuffs: this.props.unlimitedSoundStuffs,
                     accurateCoordinates: this.props.accurateCoordinates
                 });
+                this.props.vm.setStageWidth(this.props.stageWidth);
+                this.props.vm.setStageHeight(this.props.stageHeight);
             }
             if (!this.props.isPlayerOnly && !this.props.isStarted) {
                 this.props.vm.start();
