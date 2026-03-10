@@ -107,9 +107,6 @@ class PaintEditor extends React.Component {
         document.addEventListener('touchend', this.onMouseUp);
     }
     componentWillReceiveProps (newProps) {
-        if (newProps.stageWidth !== this.props.stageWidth || newProps.stageHeight !== this.props.stageHeight) {
-            updateViewRect(newProps.stageWidth, newProps.stageHeight);
-        }
         if (!isBitmap(this.props.format) && isBitmap(newProps.format)) {
             this.switchModeForFormat(Formats.BITMAP);
         } else if (!isVector(this.props.format) && isVector(newProps.format)) {

@@ -14,6 +14,16 @@ class PaintEditorWrapper extends React.Component {
             'handleUpdateImage',
             'handleUpdateName'
         ]);
+        this.state = {
+            paintKey: 0 // Used to force the paint editor to re-mount when the stage size changes.
+        };
+    }
+    componentWillReceiveProps (nextProps) {
+        if (this.props.stageWidth !== nextProps.stageWidth ||
+            this.props.stageHeight !== nextProps.stageHeight) {
+            // Force the paint editor to re-mount so that it picks up the new stage size.
+            this.setState(prevState => ({paintKey: prevState.paintKey + 1}));
+        }
     }
     shouldComponentUpdate (nextProps) {
         return this.props.imageId !== nextProps.imageId ||
@@ -56,6 +66,7 @@ class PaintEditorWrapper extends React.Component {
                 onUpdateImage={this.handleUpdateImage}
                 onUpdateName={this.handleUpdateName}
                 fontInlineFn={inlineSvgFonts}
+                key={this.state.paintKey}
             />
         );
     }
