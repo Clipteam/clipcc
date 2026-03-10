@@ -418,9 +418,11 @@ class VirtualMachine extends EventEmitter {
                 resolve(res);
             });
         })
-            .catch(error => {
-                // eslint-disable-next-line global-require
-                const {SB1File, ValidationError} = require('clipcc-sb1-converter');
+            .catch(async error => {
+                const {SB1File, ValidationError} = await import(
+                    /* webpackChunkName: "clipcc-sb1-convertor" */
+                    'clipcc-sb1-converter'
+                );
 
                 try {
                     const sb1 = new SB1File(input);
