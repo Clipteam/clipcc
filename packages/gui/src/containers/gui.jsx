@@ -47,10 +47,10 @@ class GUI extends React.Component {
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.props.onStorageInit(storage);
         this.props.onVmInit(this.props.vm);
-        // Preload paint editor when main editor get ready
-        if (!isScratchPaintLoaded()) {
-            getScratchPaint();
+        if (!this.props.isPlayerOnly) {
+            this.preloadPaint();
         }
+
     }
     componentDidUpdate (prevProps) {
         if (this.props.projectId !== prevProps.projectId && this.props.projectId !== null) {
@@ -60,6 +60,15 @@ class GUI extends React.Component {
             // this only notifies container when a project changes from not yet loaded to loaded
             // At this time the project view in www doesn't need to know when a project is unloaded
             this.props.onProjectLoaded();
+        }
+        if (!this.props.isPlayerOnly && prevProps.isPlayerOnly) {
+            this.preloadPaint();
+        }
+    }
+    preloadPaint () {
+        // Preload paint editor when main editor get ready
+        if (!isScratchPaintLoaded()) {
+            getScratchPaint();
         }
     }
     render () {
@@ -109,6 +118,7 @@ GUI.propTypes = {
     intl: intlShape,
     isError: PropTypes.bool,
     isLoading: PropTypes.bool,
+    isPlayerOnly: PropTypes.bool,
     isScratchDesktop: PropTypes.bool,
     isShowingProject: PropTypes.bool,
     loadingStateVisible: PropTypes.bool,
