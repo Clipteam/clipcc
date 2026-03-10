@@ -40,7 +40,8 @@
     "storage": "yarn workspace clipcc-storage",
     "paint": "yarn workspace clipcc-paint",
     "parser": "yarn workspace clipcc-parser",
-    "audio": "yarn workspace clipcc-audio"
+    "audio": "yarn workspace clipcc-audio",
+    "infra": "yarn workspace clipcc-webpack-configuration"
   },
   "devDependencies": {
     "@changesets/changelog-git": "^0.2.1",
