@@ -54,7 +54,7 @@ const base = {
     ],
 };
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV !== 'production') {
     base.rules.push({
         test: /blocks-msgs\.js$/,
         include: [

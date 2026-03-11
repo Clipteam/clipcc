@@ -17,10 +17,7 @@ const manifest = {
     'text-encoding': 'fastestsmallesttextencoderdecoder'
   },
   workspacePackages: ['clipcc-render', 'clipcc-audio'],
-  rules: [{
-    test: /\.mp3$/,
-    type: 'asset/resource'
-  }],
+  rules: [],
   plugins: [
     new NodePolyfillPlugin(),
     new webpack.DefinePlugin({

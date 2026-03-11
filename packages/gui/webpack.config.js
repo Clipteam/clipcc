@@ -190,6 +190,4 @@ if (process.env.NODE_ENV === 'production' || process.env.BUILD_MODE === 'dist') 
     configs.push(lib);
 }
 
-console.dir(playground, {depth: 20});
-
 module.exports = configs;

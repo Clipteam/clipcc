@@ -16,7 +16,7 @@ const manifest = {
     },
     {
         test: /\.svg$/,
-        loader: 'svg-url-loader'
+        type: 'asset/inline'
     }]
 };
 

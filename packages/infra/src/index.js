@@ -608,7 +608,6 @@ class WebpackConfigBuilder {
         if (targetingNode) {
             configuration.externalsPresets = {node: true};
             configuration.externals = [nodeExternals()];
-            // @ts-expect-error output must be definied
             configuration.output.environment = {
                 nodePrefixForCoreModules: false // Backwards compatibility
             };
