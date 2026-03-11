@@ -62,6 +62,7 @@ export default [
       'scripts/**/*.js',
       'tests/**/*.js',
       'webpack.config.js',
+      'webpack.manifest.js',
       'jest.config.js'
     ],
     languageOptions: {

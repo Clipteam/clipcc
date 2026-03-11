@@ -1,90 +1,69 @@
 const path = require('path');
-const defaultsDeep = require('lodash.defaultsdeep');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const WebpackConfigBuilder = require('../infra');
+const manifest = require('./webpack.manifest');
 
-const baseConfig = {
-  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  devtool: process.env.NODE_ENV === 'production' ? false : 'eval-cheap-module-source-map',
-  entry: './src/index.ts',
-  output: {
-    library: 'ScratchBlocks',
-    filename: '[name].js'
-  },
-  resolve: {
-    extensions: ['.ts', '.js']
-  },
-  module: {
-    rules: [{
-      test: /\.css$/,
-      use: 'raw-loader',
-      include: path.resolve(__dirname, 'src')
-    }, {
-      test: /\.ts$/,
-      use: 'ts-loader',
-      exclude: /node_modules/
-    }, {
-      test: /_compressed\.js$/,
-      enforce: 'pre',
-      use: 'source-map-loader',
-      include: /blockly/
-    }]
-  },
-  ignoreWarnings: [/Failed to parse source map/]
+
+const createConfig = (overrideManifest) => {
+  const config = new WebpackConfigBuilder({
+    ...manifest,
+    ...overrideManifest
+  }).get();
+
+  config.devtool = process.env.NODE_ENV === 'production' ? false : 'eval-cheap-module-source-map';
+  config.ignoreWarnings = [/Failed to parse source map/];
+
+  return config;
 };
 
+// Playground
+const playground = createConfig({
+  distPath: './build',
+  playground: 8071,
+  target: 'web',
+  plugins: [
+    new CopyWebpackPlugin({
+      patterns: [{
+        from: path.resolve(require.resolve('blockly'), '../media'),
+        to: 'media'
+      }, {
+        from: 'media',
+        to: 'media',
+        force: true
+      }, {
+        from: 'tests/playground.html',
+        to: 'index.html'
+      }, {
+        from: 'tests/toolbox.json',
+        to: 'toolbox.json'
+      }, {
+        from: 'msg/messages.js'
+      }]
+    })
+  ]
+});
+playground.devServer.static = false;
+
+// Node-compatible
+const node = createConfig({
+  distPath: './dist/node',
+  target: 'node'
+});
+
+node.externals = {
+  bufferutil: true,
+  'utf-8-validate': true,
+  canvas: true
+};
+
+// Web-comptible
+const web = createConfig({
+  distPath: './dist/web',
+  target: 'web'
+});
+
 module.exports = [
-  // Playground
-  defaultsDeep({}, baseConfig, {
-    target: 'web',
-    devServer: {
-      static: false,
-      host: '0.0.0.0',
-      port: process.env.PORT || 8071
-    },
-    output: {
-      libraryTarget: 'umd',
-      path: path.resolve(__dirname, 'build')
-    },
-    plugins: [
-      new CopyWebpackPlugin({
-        patterns: [{
-          from: path.resolve(require.resolve('blockly'), '../media'),
-          to: 'media'
-        }, {
-          from: 'media',
-          to: 'media',
-          force: true
-        }, {
-          from: 'tests/playground.html',
-          to: 'index.html'
-        }, {
-          from: 'tests/toolbox.json',
-          to: 'toolbox.json'
-        }, {
-          from: 'msg/messages.js'
-        }]
-      })
-    ]
-  }),
-  // Node-compatible
-  defaultsDeep({}, baseConfig, {
-    target: 'node',
-    output: {
-      libraryTarget: 'commonjs2',
-      path: path.resolve(__dirname, 'dist', 'node')
-    },
-    externals: {
-      bufferutil: true,
-      'utf-8-validate': true,
-      canvas: true
-    }
-  }),
-  // Web-comptible
-  defaultsDeep({}, baseConfig, {
-    target: 'web',
-    output: {
-      libraryTarget: 'umd',
-      path: path.resolve(__dirname, 'dist', 'web')
-    }
-  })
+  playground,
+  node,
+  web
 ];

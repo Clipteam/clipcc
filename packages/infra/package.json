@@ -2,14 +2,17 @@
   "name": "clipcc-webpack-configuration",
   "version": "3.1.2",
   "description": "Shared configuration for ClipCC's use of webpack",
-  "main": "src/index.cjs",
+  "main": "src/index.js",
+  "types": "./dist/types/index.d.ts",
   "type": "commonjs",
   "scripts": {
+    "prepublish": "yarn build",
+    "build": "tsc --project ./tsconfig.dts.json",
     "test": "jest"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/clipcc/clipcc/packages/infra"
+    "url": "https://github.com/Clipteam/clipcc/packages/infra"
   },
   "keywords": [
     "ClipCC",
@@ -18,9 +21,9 @@
   "author": "Clipteam",
   "license": "BSD-3-Clause",
   "bugs": {
-    "url": "https://github.com/clipcc/clipcc/issues"
+    "url": "https://github.com/Clipteam/clipcc/issues"
   },
-  "homepage": "https://github.com/clipcc/clipcc#readme",
+  "homepage": "https://github.com/Clipteamclipcc#readme",
   "dependencies": {
     "lodash.merge": "^4.6.2",
     "webpack-node-externals": "^3.0.0"
@@ -28,7 +31,8 @@
   "devDependencies": {
     "@types/jest": "29.5.14",
     "jest": "29.7.0",
-    "webpack": "5.105.4"
+    "typescript": "^5.9.3",
+    "webpack": "^5.105.4"
   },
   "peerDependencies": {
     "@babel/preset-env": "^7.29.0",
@@ -40,7 +44,6 @@
     "postcss-loader": "7.0.2",
     "style-loader": "4.0.0",
     "ts-loader": "^9.5.4",
-    "url-loader": "8.0.0",
-    "webpack": "^5.105.4"
+    "url-loader": "8.0.0"
   }
 }
