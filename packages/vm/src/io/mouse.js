@@ -60,20 +60,22 @@ class Mouse {
      * @param  {object} data Data from DOM event.
      */
     postData (data) {
+        const halfWidth = this.runtime.stageWidth / 2;
+        const halfHeight = this.runtime.stageHeight / 2;
         if (data.x) {
             this._clientX = data.x;
             this._scratchX = MathUtil.clamp(
-                480 * ((data.x / data.canvasWidth) - 0.5),
-                -240,
-                240
+                this.runtime.stageWidth * ((data.x / data.canvasWidth) - 0.5),
+                -halfWidth,
+                halfWidth
             );
         }
         if (data.y) {
             this._clientY = data.y;
             this._scratchY = MathUtil.clamp(
-                -360 * ((data.y / data.canvasHeight) - 0.5),
-                -180,
-                180
+                -this.runtime.stageHeight * ((data.y / data.canvasHeight) - 0.5),
+                -halfHeight,
+                halfHeight
             );
         }
         if (typeof data.isDown !== 'undefined') {

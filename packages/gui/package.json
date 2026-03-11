@@ -102,7 +102,7 @@
     "@babel/preset-env": "7.29.0",
     "@babel/preset-react": "7.14.5",
     "@babel/preset-typescript": "^7.24.7",
-    "@eslint/js": "^9.39.2",
+    "@eslint/js": "^9.39.4",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.3",
     "babel-jest": "23.6.0",
