@@ -118,7 +118,8 @@
     "eslint-plugin-react": "7.37.5",
     "globals": "^16.5.0",
     "html-webpack-plugin": "^5.6.6",
-    "jest": "21.2.1",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0",
     "jest-junit": "7.0.0",
     "jest-localstorage-mock": "^2.4.26",
     "lumen5-web-audio-test-api": "0.5.2",
@@ -136,20 +137,5 @@
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.3",
     "yauzl": "2.10.0"
-  },
-  "jest": {
-    "setupFiles": [
-      "raf/polyfill",
-      "<rootDir>/test/helpers/enzyme-setup.js"
-    ],
-    "testPathIgnorePatterns": [
-      "src/test.js"
-    ],
-    "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/test/__mocks__/fileMock.js",
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)?\\?raw$": "<rootDir>/test/__mocks__/fileMock.js",
-      "\\.(css|less)$": "<rootDir>/test/__mocks__/styleMock.js",
-      "(blocks|editor)-msgs(\\.js)?$": "<rootDir>/test/__mocks__/editor-msgs-mock.js"
-    }
   }
 }
