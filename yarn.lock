@@ -9198,7 +9198,7 @@ format-message-estree-util@^6.2.4:
   resolved "https://registry.yarnpkg.com/format-message-estree-util/-/format-message-estree-util-6.2.4.tgz#8e61e555c55d1d0e8d761142d15eb407c4c7c1bf"
   integrity sha512-GymGOfLzVnuDiBONl7Bq00L3ff7kk6qoX2x90V1ZNyjjQMZdexS/4YXxSS00VicDpEMOCxvuO8oUNB/o1o0avA==
 
-format-message-formats@^6.2.0, format-message-formats@^6.2.4:
+format-message-formats@^6.2.4:
   version "6.2.4"
   resolved "https://registry.yarnpkg.com/format-message-formats/-/format-message-formats-6.2.4.tgz#68b782e70c3c15f017377848c3225731e52ac4ea"
   integrity sha512-smT/fAqBLqusWfWCKRAx6QBDAAbmYznWsIyTyk66COmvwt2Byiqd7SJe2ma9a5oV0kwRaOJpN/F4lr4YK/n6qQ==
@@ -9212,7 +9212,7 @@ format-message-generate-id@^6.2.4:
     format-message-parse "^6.2.4"
     format-message-print "^6.2.4"
 
-format-message-interpret@^6.2.0, format-message-interpret@^6.2.4:
+format-message-interpret@^6.2.4:
   version "6.2.4"
   resolved "https://registry.yarnpkg.com/format-message-interpret/-/format-message-interpret-6.2.4.tgz#28f579b9cd4b57f3de2ec2a4d9623f9870e9ed03"
   integrity sha512-dRvz9mXhITApyOtfuFEb/XqvCe1u6RMkQW49UJHXS8w2S8cAHCqq5LNDFK+QK6XVzcofROycLb/k1uybTAKt2w==
@@ -9225,7 +9225,7 @@ format-message-parse@6.2.0:
   resolved "https://registry.yarnpkg.com/format-message-parse/-/format-message-parse-6.2.0.tgz#d84c008efb9828b234cf9f7e59a8e966a09c0f27"
   integrity sha512-j7MAUobWTufhdcCsLbqhH2f/qFGlH5vEtw1dEsiWeoSB6hnkopo03YTQZ6+atSbQecMH11cDQ2oE0mu3aoDbuA==
 
-format-message-parse@^6.2.0, format-message-parse@^6.2.4:
+format-message-parse@^6.2.4:
   version "6.2.4"
   resolved "https://registry.yarnpkg.com/format-message-parse/-/format-message-parse-6.2.4.tgz#2c9b39a32665bd247cb1c31ba2723932d9edf3f9"
   integrity sha512-k7WqXkEzgXkW4wkHdS6Cv2Ou0rIFtiDelZjgoe1saW4p7FT7zS8OeAUpAekhormqzpeecR97e4vBft1zMsfFOQ==
@@ -9235,17 +9235,7 @@ format-message-print@^6.2.4:
   resolved "https://registry.yarnpkg.com/format-message-print/-/format-message-print-6.2.4.tgz#5f5d880d3a45f91d44ff0ee266fcef53d1ad8a98"
   integrity sha512-72j+ATEN13NFJ1hYaPcDVJEE37BD1P29plLIdCqEMwezVa1c7VSPgRB1eZnkoWxm4YKFgS770pJlE1ZczACqgQ==
 
-format-message@6.2.1:
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/format-message/-/format-message-6.2.1.tgz#90a27d28960d4114f99912fd51cda1789bdd3ff0"
-  integrity sha512-6gBXI+MOE9pu9QNeZf95V87GKYiLCdUvhisjts75xonaPAshtBu20NTZt2l8kbYcoMtxNyH9E9af+aieIRfVmw==
-  dependencies:
-    format-message-formats "^6.2.0"
-    format-message-interpret "^6.2.0"
-    format-message-parse "^6.2.0"
-    lookup-closest-locale "^6.2.0"
-
-format-message@^6.2.4:
+format-message@6.2.4, format-message@^6.2.4:
   version "6.2.4"
   resolved "https://registry.yarnpkg.com/format-message/-/format-message-6.2.4.tgz#0bd4b6161b036e3fbcf3207dce14a62e318b4c48"
   integrity sha512-/24zYeSRy2ZlEO2OIctm7jOHvMpoWf+uhqFCaqqyZKi1C229zAAy2E5vF4lSSaMH0a2kewPrOzq6xN4Yy7cQrw==
