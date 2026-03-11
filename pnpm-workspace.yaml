@@ -9,3 +9,6 @@ onlyBuiltDependencies:
 
 overrides:
   cheerio: 1.0.0-rc.12
+
+patchedDependencies:
+  jsdom@26.1.0: patches/jsdom@26.1.0.patch

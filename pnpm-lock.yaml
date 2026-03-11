@@ -7,6 +7,11 @@ settings:
 overrides:
   cheerio: 1.0.0-rc.12
 
+patchedDependencies:
+  jsdom@26.1.0:
+    hash: 4725214219761e272bac827780047d8a6effa8b02b2c8516a14e1363bb08948b
+    path: patches/jsdom@26.1.0.patch
+
 importers:
 
   .:
@@ -12161,7 +12166,7 @@ snapshots:
 
   '@jest/diff-sequences@30.3.0': {}
 
-  '@jest/environment-jsdom-abstract@30.3.0(jsdom@26.1.0)':
+  '@jest/environment-jsdom-abstract@30.3.0(jsdom@26.1.0(patch_hash=4725214219761e272bac827780047d8a6effa8b02b2c8516a14e1363bb08948b))':
     dependencies:
       '@jest/environment': 30.3.0
       '@jest/fake-timers': 30.3.0
@@ -12170,7 +12175,7 @@ snapshots:
       '@types/node': 12.20.55
       jest-mock: 30.3.0
       jest-util: 30.3.0
-      jsdom: 26.1.0
+      jsdom: 26.1.0(patch_hash=4725214219761e272bac827780047d8a6effa8b02b2c8516a14e1363bb08948b)
 
   '@jest/environment-jsdom-abstract@30.3.0(jsdom@28.1.0)':
     dependencies:
@@ -14544,7 +14549,7 @@ snapshots:
 
   blockly@12.4.1:
     dependencies:
-      jsdom: 26.1.0
+      jsdom: 26.1.0(patch_hash=4725214219761e272bac827780047d8a6effa8b02b2c8516a14e1363bb08948b)
     transitivePeerDependencies:
       - bufferutil
       - canvas
@@ -18120,8 +18125,8 @@ snapshots:
   jest-environment-jsdom@30.3.0:
     dependencies:
       '@jest/environment': 30.3.0
-      '@jest/environment-jsdom-abstract': 30.3.0(jsdom@26.1.0)
-      jsdom: 26.1.0
+      '@jest/environment-jsdom-abstract': 30.3.0(jsdom@26.1.0(patch_hash=4725214219761e272bac827780047d8a6effa8b02b2c8516a14e1363bb08948b))
+      jsdom: 26.1.0(patch_hash=4725214219761e272bac827780047d8a6effa8b02b2c8516a14e1363bb08948b)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -18792,7 +18797,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  jsdom@26.1.0:
+  jsdom@26.1.0(patch_hash=4725214219761e272bac827780047d8a6effa8b02b2c8516a14e1363bb08948b):
     dependencies:
       cssstyle: 4.6.0
       data-urls: 5.0.0
