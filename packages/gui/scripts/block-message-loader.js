@@ -8,6 +8,8 @@ const path = require('node:path');
 module.exports = function (/** @type {string} */ source) {
     if (!source.includes('export default')) return source;
 
+    console.log(123);
+
     const messagePath = path.resolve(__dirname, '../../block/msg/messages.js');
     const content = fs.readFileSync(messagePath, {encoding: 'utf-8'});
     this.addDependency(messagePath);

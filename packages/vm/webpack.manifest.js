@@ -6,7 +6,7 @@ const webpack = require('webpack');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const {version} = require('../../package.json');
 
-/** @type {WebpackManifest} */
+/** @satisfies {WebpackManifest} */
 const manifest = {
   libraryName: 'VirtualMachine',
   rootPath: __dirname,
@@ -14,10 +14,9 @@ const manifest = {
   enableTs: true,
   sourcePaths: ['../render/src'],
   alias: {
-    'text-encoding': 'fastestsmallesttextencoderdecoder',
-    'clipcc-render': '../render/src/index.js', // @todo should move to workspacePackages when it gets migrated.
-    'clipcc-audio': '../audio/src/index.js' // @todo should move to workspacePackages when it gets migrated.
+    'text-encoding': 'fastestsmallesttextencoderdecoder'
   },
+  workspacePackages: ['clipcc-render', 'clipcc-audio'],
   rules: [{
     test: /\.mp3$/,
     type: 'asset/resource'

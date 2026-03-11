@@ -5,12 +5,12 @@ const config = new WebpackConfigBuilder({
     ...manifest,
     entry: {
         dist: manifest.entry
+    },
+    externals: {
+        'audio-context': true,
+        '@turbowarp/nanolog': true,
+        'startaudiocontext': true
     }
 }).get();
-config.externals = {
-    'audio-context': true,
-    '@turbowarp/nanolog': true,
-    'startaudiocontext': true
-};
 
 module.exports = config;

@@ -2,6 +2,7 @@
 
 const path = require('path');
 const fs = require('fs');
+const webpack = require('webpack');
 
 const TerserPlugin = require('terser-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
@@ -46,6 +47,7 @@ const nodeExternals = require('webpack-node-externals');
  *     alias?: Record<string, string>,
  *     snapshot?: SnapshotConfig,
  *     playground?: boolean | number,
+ *     externals?: Configuration['externals'],
  *     workspacePackages?: string[]
  * }} WebpackManifest
  */
@@ -306,7 +308,8 @@ const normalizeManifest = manifest => {
         snapshot: normalizeSnapshot(rootPath, manifest.snapshot) ?? {},
         target: manifest.target ?? 'web',
         playground: manifest.playground ?? false,
-        workspacePackages: manifest.workspacePackages ?? []
+        workspacePackages: manifest.workspacePackages ?? [],
+        externals: manifest.externals ?? {}
     };
 };
 
@@ -325,6 +328,15 @@ const createWorkspaceAliases = (packageName, manifest) => ({
     [packageName]: manifest.srcPath,
     [`${packageName}$`]: getEntryPath(manifest)
 });
+
+/**
+ * @param {Required<WebpackManifest>} manifest
+ * @returns {string[]}
+ */
+const getManifestSourcePaths = manifest => unique([
+    manifest.srcPath,
+    ...manifest.sourcePaths
+]);
 
 /**
  * @param {Required<WebpackManifest>} manifest
@@ -438,10 +450,9 @@ class WebpackConfigBuilder {
         /** @type {Required<WebpackManifest>} */
         this.manifest = normalizeManifest(manifest);
         /** @readonly @private @type {string[]} */
-        this.localSourcePaths = unique([
-            this.manifest.srcPath,
-            ...this.manifest.sourcePaths
-        ]);
+        this.localSourcePaths = getManifestSourcePaths(this.manifest);
+        /** @private @type {string[]} */
+        this.reactSourcePaths = this.manifest.enableReact ? [...this.localSourcePaths] : [];
 
         for (const packageName of this.manifest.workspacePackages) {
             this.addWorkspacePackage(packageName);
@@ -479,6 +490,13 @@ class WebpackConfigBuilder {
             normalizedManifest.srcPath,
             ...normalizedManifest.sourcePaths
         ]);
+
+        if (normalizedManifest.enableReact) {
+            this.reactSourcePaths = unique([
+                ...this.reactSourcePaths,
+                ...getManifestSourcePaths(normalizedManifest)
+            ]);
+        }
 
         this.manifest.alias = {
             ...createWorkspaceAliases(packageName, normalizedManifest),
@@ -543,11 +561,17 @@ class WebpackConfigBuilder {
             },
             module: {
                 rules: [
-                    ...createDefaultRules(this.manifest, sourcePaths, this.localSourcePaths),
+                    ...createDefaultRules(this.manifest, sourcePaths, this.reactSourcePaths),
                     ...this.manifest.rules
                 ]
             },
-            plugins: [...this.manifest.plugins]
+            plugins: [
+                new webpack.ProvidePlugin({
+                    Buffer: ['buffer', 'Buffer']
+                }),
+                ...this.manifest.plugins
+            ],
+            externals: this.manifest.externals
         };
 
         if (Object.keys(this.manifest.snapshot).length > 0) {
@@ -572,8 +596,8 @@ class WebpackConfigBuilder {
         }
 
         configuration.optimization = {
-            ...(configuration.optimization ?? {}),
             minimize: process.env.NODE_ENV === 'production',
+            ...(configuration.optimization ?? {}),
             minimizer: [
                 new TerserPlugin({
                     include: /\.min\.js$/
@@ -584,6 +608,10 @@ class WebpackConfigBuilder {
         if (targetingNode) {
             configuration.externalsPresets = {node: true};
             configuration.externals = [nodeExternals()];
+            // @ts-expect-error output must be definied
+            configuration.output.environment = {
+                nodePrefixForCoreModules: false // Backwards compatibility
+            };
         }
 
         return configuration;

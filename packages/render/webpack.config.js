@@ -1,13 +1,13 @@
-const CopyWebpackPlugin = require('copy-webpack-plugin');
 const manifest = require('./webpack.manifest');
 const WebpackConfigBuilder = require('../infra');
+
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const createConfig = overrideManifest => {
     const config = new WebpackConfigBuilder({
         ...manifest,
         ...overrideManifest
     }).get();
-    config.devtool = 'cheap-module-source-map';
 
     return config;
 };

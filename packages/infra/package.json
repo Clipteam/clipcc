@@ -25,7 +25,6 @@
   },
   "homepage": "https://github.com/Clipteamclipcc#readme",
   "dependencies": {
-    "lodash.merge": "^4.6.2",
     "webpack-node-externals": "^3.0.0"
   },
   "devDependencies": {

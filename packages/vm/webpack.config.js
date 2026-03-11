@@ -27,18 +27,18 @@ const node = createConfig({
     distPath: './dist/node',
     entry: {
         'scratch-vm': './src/index.js'
+    },
+    externals: {
+        'decode-html': true,
+        'format-message': true,
+        'htmlparser2': true,
+        'immutable': true,
+        'jszip': true,
+        '@turbowarp/nanolog': true,
+        'clipcc-parser': true,
+        'socket.io-client': true
     }
 });
-node.externals = {
-    'decode-html': true,
-    'format-message': true,
-    'htmlparser2': true,
-    'immutable': true,
-    'jszip': true,
-    '@turbowarp/nanolog': true,
-    'clipcc-parser': true,
-    'socket.io-client': true
-};
 
 // Playground
 const playground = createConfig({

@@ -46,14 +46,13 @@ playground.devServer.static = false;
 // Node-compatible
 const node = createConfig({
   distPath: './dist/node',
-  target: 'node'
+  target: 'node',
+  externals: {
+    bufferutil: true,
+    'utf-8-validate': true,
+    canvas: true
+  }
 });
-
-node.externals = {
-  bufferutil: true,
-  'utf-8-validate': true,
-  canvas: true
-};
 
 // Web-comptible
 const web = createConfig({

@@ -3,7 +3,7 @@
  * @import { WebpackManifest } from '../infra';
  */
 
-/** @type {WebpackManifest} */
+/** @satisfies {WebpackManifest} */
 const manifest = {
   libraryName: 'ScratchBlocks',
   rootPath: __dirname,

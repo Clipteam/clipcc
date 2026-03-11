@@ -8,6 +8,5 @@ const config = new WebpackConfigBuilder(Object.assign(manifest, {
         localeData: './src/locale-data.js'
     }
 })).get();
-config.devtool = 'cheap-module-source-map';
 
 module.exports = config;

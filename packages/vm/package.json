@@ -29,12 +29,14 @@
     "version": "json -f package.json -I -e \"this.repository.sha = '$(git log -n1 --pretty=format:%H)'\""
   },
   "dependencies": {
+    "@turbowarp/nanolog": "^1.0.1",
     "@vernier/godirect": "1.8.3",
     "arraybuffer-loader": "1.0.8",
     "atob": "2.1.2",
     "btoa": "1.2.1",
     "canvas-toBlob": "1.0.0",
     "clipcc-parser": "3.2.0",
+    "clipcc-sb1-converter": "1.0.326",
     "decode-html": "2.0.0",
     "diff-match-patch": "1.0.4",
     "fastestsmallesttextencoderdecoder": "^1.0.22",
@@ -42,9 +44,7 @@
     "htmlparser2": "10.1.0",
     "immutable": "5.1.5",
     "jszip": "^3.10.1",
-    "@turbowarp/nanolog": "^1.0.1",
     "node-polyfill-webpack-plugin": "^3.0.0",
-    "clipcc-sb1-converter": "1.0.326",
     "scratch-translate-extension-languages": "1.0.7"
   },
   "peerDependencies": {
@@ -63,6 +63,7 @@
     "clipcc-block": "3.2.0",
     "clipcc-l10n": "3.2.0",
     "clipcc-render": "3.2.0",
+    "clipcc-render-fonts": "1.0.256",
     "clipcc-storage": "3.2.0",
     "clipcc-svg-renderer": "2.5.48",
     "codingclip-worker-loader": "^3.0.10",
@@ -76,7 +77,6 @@
     "json": "^9.0.6",
     "lodash.defaultsdeep": "4.6.1",
     "pngjs": "7.0.0",
-    "clipcc-render-fonts": "1.0.256",
     "script-loader": "0.7.2",
     "stats.js": "0.17.0",
     "tap": "21.0.1",

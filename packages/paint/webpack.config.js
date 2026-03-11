@@ -26,21 +26,21 @@ const library = new WebpackConfigBuilder({
     entry: {
         'scratch-paint': manifest.entry
     },
-    distPath: path.resolve(__dirname, 'dist')
+    distPath: path.resolve(__dirname, 'dist'),
+    externals: {
+        '@turbowarp/nanolog': '@turbowarp/nanolog',
+        'prop-types': 'prop-types',
+        'react': 'react',
+        'react-dom': 'react-dom',
+        'react-intl': 'react-intl',
+        'react-intl-redux': 'react-intl-redux',
+        'react-popover': 'react-popover',
+        'react-redux': 'react-redux',
+        'react-responsive': 'react-responsive',
+        'react-style-proptype': 'react-style-proptype',
+        'react-tooltip': 'react-tooltip',
+        'redux': 'redux'
+    }
 }).get();
-library.externals = {
-    '@turbowarp/nanolog': '@turbowarp/nanolog',
-    'prop-types': 'prop-types',
-    'react': 'react',
-    'react-dom': 'react-dom',
-    'react-intl': 'react-intl',
-    'react-intl-redux': 'react-intl-redux',
-    'react-popover': 'react-popover',
-    'react-redux': 'react-redux',
-    'react-responsive': 'react-responsive',
-    'react-style-proptype': 'react-style-proptype',
-    'react-tooltip': 'react-tooltip',
-    'redux': 'redux'
-};
 
 module.exports = [playground, library];
