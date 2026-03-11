@@ -9,6 +9,7 @@ const nodeExternals = require('webpack-node-externals');
 /** @typedef {import('webpack').Configuration} Configuration */
 /** @typedef {import('webpack').RuleSetRule} RuleSetRule */
 /** @typedef {NonNullable<Configuration['snapshot']>} SnapshotConfig */
+/** @typedef {NonNullable<Configuration['entry']>} EntryConfig */
 /**
  * @typedef {Configuration & {
  *     devServer?: {
@@ -28,9 +29,10 @@ const nodeExternals = require('webpack-node-externals');
  */
 /**
  * @typedef {{
- *     entry: string,
+ *     entry: EntryConfig,
  *     libraryName: string,
  *     target?: Configuration['target'],
+ *     devTool?: Configuration['devtool'],
  *     rootPath: string,
  *     srcPath?: string,
  *     distPath?: string,
@@ -108,6 +110,76 @@ const maybeResolvePath = (rootPath, value) => {
 
     const resolvedPath = path.resolve(rootPath, value);
     return fs.existsSync(resolvedPath) ? resolvedPath : value;
+};
+
+/**
+ * @param {string} rootPath
+ * @param {EntryConfig} entry
+ * @returns {EntryConfig}
+ */
+const normalizeEntry = (rootPath, entry) => {
+    if (typeof entry === 'string') {
+        return maybeResolvePath(rootPath, entry);
+    }
+
+    if (Array.isArray(entry)) {
+        return entry.map(value => maybeResolvePath(rootPath, value));
+    }
+
+    return Object.fromEntries(
+        Object.entries(entry).map(([key, value]) => {
+            if (typeof value === 'string' || Array.isArray(value)) {
+                return [key, normalizeEntry(rootPath, value)];
+            }
+
+            if (value && typeof value === 'object' && 'import' in value) {
+                return [key, {
+                    ...value,
+                    ...(value.import ? {import: normalizeEntry(rootPath, value.import)} : {})
+                }];
+            }
+
+            return [key, value];
+        })
+    );
+};
+
+/**
+ * @param {EntryConfig} entry
+ * @returns {string | undefined}
+ */
+const findFirstEntryPath = entry => {
+    if (typeof entry === 'string') {
+        return entry;
+    }
+
+    if (Array.isArray(entry)) {
+        return entry[0];
+    }
+
+    for (const value of Object.values(entry)) {
+        if (typeof value === 'string') {
+            return value;
+        }
+
+        if (Array.isArray(value)) {
+            return value[0];
+        }
+
+        if (value && typeof value === 'object' && 'import' in value) {
+            const entryPath = value.import;
+
+            if (typeof entryPath === 'string') {
+                return entryPath;
+            }
+
+            if (Array.isArray(entryPath)) {
+                return entryPath[0];
+            }
+        }
+    }
+
+    return undefined;
 };
 
 /**
@@ -217,8 +289,9 @@ const normalizeManifest = manifest => {
     const distPath = path.resolve(rootPath, manifest.distPath ?? 'dist');
 
     return {
-        entry: manifest.entry,
+        entry: normalizeEntry(rootPath, manifest.entry),
         libraryName: manifest.libraryName,
+        devTool: manifest.devTool ?? 'cheap-module-source-map',
         rootPath,
         srcPath,
         distPath,
@@ -241,7 +314,7 @@ const normalizeManifest = manifest => {
  * @param {Required<WebpackManifest>} manifest
  * @returns {string}
  */
-const getEntryPath = manifest => maybeResolvePath(manifest.rootPath, manifest.entry);
+const getEntryPath = manifest => findFirstEntryPath(manifest.entry) ?? manifest.srcPath;
 
 /**
  * @param {string} packageName

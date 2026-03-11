@@ -1,40 +1,16 @@
-const path = require('path');
+const manifest = require('./webpack.manifest');
+const WebpackConfigBuilder = require('../infra');
 
-module.exports = {
-    mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-    devtool: 'cheap-module-source-map',
+const config = new WebpackConfigBuilder({
+    ...manifest,
     entry: {
-        dist: './src/index.js'
-    },
-    output: {
-        path: __dirname,
-        library: 'AudioEngine',
-        libraryTarget: 'umd',
-        filename: '[name].js'
-    },
-    module: {
-        rules: [{
-            include: [
-                path.resolve('src')
-            ],
-            test: /\.([cm]?ts|tsx)$/,
-            loader: 'ts-loader',
-            options: {
-                transpileOnly: true,
-                allowTsInNodeModules: true
-            }
-        }, {
-            test: /\.js$/,
-            include: path.resolve(__dirname, 'src'),
-            loader: 'babel-loader',
-            options: {
-                presets: [['@babel/preset-env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}]]
-            }
-        }]
-    },
-    externals: {
-        'audio-context': true,
-        '@turbowarp/nanolog': true,
-        'startaudiocontext': true
+        dist: manifest.entry
     }
+}).get();
+config.externals = {
+    'audio-context': true,
+    '@turbowarp/nanolog': true,
+    'startaudiocontext': true
 };
+
+module.exports = config;

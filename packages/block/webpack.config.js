@@ -10,7 +10,6 @@ const createConfig = (overrideManifest) => {
     ...overrideManifest
   }).get();
 
-  config.devtool = process.env.NODE_ENV === 'production' ? false : 'eval-cheap-module-source-map';
   config.ignoreWarnings = [/Failed to parse source map/];
 
   return config;
