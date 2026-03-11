@@ -26,6 +26,8 @@
   "dependencies": {
     "@turbowarp/nanolog": "^1.0.1",
     "audio-context": "1.0.3",
+    "babel-loader": "10.1.0",
+    "node-polyfill-webpack-plugin": "3.0.0",
     "startaudiocontext": "1.2.1"
   },
   "devDependencies": {

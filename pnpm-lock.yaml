@@ -41,6 +41,12 @@ importers:
       audio-context:
         specifier: 1.0.3
         version: 1.0.3
+      babel-loader:
+        specifier: 10.1.0
+        version: 10.1.0(@babel/core@7.29.0)(webpack@5.105.4)
+      node-polyfill-webpack-plugin:
+        specifier: 3.0.0
+        version: 3.0.0(webpack@5.105.4)
       startaudiocontext:
         specifier: 1.2.1
         version: 1.2.1
@@ -383,6 +389,9 @@ importers:
       babel-jest:
         specifier: 23.6.0
         version: 23.6.0(babel-core@7.0.0-bridge.0(@babel/core@7.29.0))
+      babel-loader:
+        specifier: 10.1.0
+        version: 10.1.0(@babel/core@7.29.0)(webpack@5.105.4)
       chromedriver:
         specifier: 146.0.1
         version: 146.0.1
@@ -440,6 +449,9 @@ importers:
       redux-mock-store:
         specifier: 1.5.3
         version: 1.5.3
+      regenerator-runtime:
+        specifier: 0.14.1
+        version: 0.14.1
       rimraf:
         specifier: 2.7.1
         version: 2.7.1
@@ -968,6 +980,9 @@ importers:
       json:
         specifier: ^9.0.6
         version: 9.0.6
+      node-fetch:
+        specifier: ^3.3.2
+        version: 3.3.2
       rimraf:
         specifier: 6.0.1
         version: 6.0.1
@@ -993,8 +1008,8 @@ importers:
   packages/svg-renderer:
     dependencies:
       '@turbowarp/nanolog':
-        specifier: ^0.2.0
-        version: 0.2.0
+        specifier: ^1.0.1
+        version: 1.0.1
       base64-js:
         specifier: ^1.5.1
         version: 1.5.1
@@ -4791,6 +4806,10 @@ packages:
     resolution: {integrity: sha512-jRFi8UDGo6j+odZiEpjazZaWqEal3w/basFjQHQEwVtZJGDpxbH1MeYluwCS8Xq5wmLJooDlMgvVarmWfGM44g==}
     engines: {node: '>=0.10'}
 
+  data-uri-to-buffer@4.0.1:
+    resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
+    engines: {node: '>= 12'}
+
   data-uri-to-buffer@6.0.2:
     resolution: {integrity: sha512-7hvf7/GW8e86rW0ptuwS3OcBGDjIi6SZva7hCyWC0yYry2cOPmLIjXAUHI6DK2HsnwJd9ifmt57i8eV2n4YNpw==}
     engines: {node: '>= 14'}
@@ -5669,6 +5688,10 @@ packages:
       picomatch:
         optional: true
 
+  fetch-blob@3.2.0:
+    resolution: {integrity: sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==}
+    engines: {node: ^12.20 || >= 14.13}
+
   figures@3.2.0:
     resolution: {integrity: sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==}
     engines: {node: '>=8'}
@@ -5836,6 +5859,10 @@ packages:
 
   format-message@6.2.4:
     resolution: {integrity: sha512-/24zYeSRy2ZlEO2OIctm7jOHvMpoWf+uhqFCaqqyZKi1C229zAAy2E5vF4lSSaMH0a2kewPrOzq6xN4Yy7cQrw==}
+
+  formdata-polyfill@4.0.10:
+    resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
+    engines: {node: '>=12.20.0'}
 
   forwarded@0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
@@ -7996,6 +8023,11 @@ packages:
   no-case@3.0.4:
     resolution: {integrity: sha512-fgAN3jGAh+RoxUGZHTSOLJIqUc2wmoBwGR4tbpNAKmmovFoWq0OdRkb0VkldReO2a2iBT/OEulG9XSUc10r3zg==}
 
+  node-domexception@1.0.0:
+    resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
+    engines: {node: '>=10.5.0'}
+    deprecated: Use your platform's native DOMException instead
+
   node-environment-flags@1.0.6:
     resolution: {integrity: sha512-5Evy2epuL+6TM0lCQGpFIj6KwiEsGh1SrHUhTbNX+sLbBtjidPZFAnVK9y5yU1+h//RitLbRHTIMyxQPtxMdHw==}
 
@@ -8014,6 +8046,10 @@ packages:
     peerDependenciesMeta:
       encoding:
         optional: true
+
+  node-fetch@3.3.2:
+    resolution: {integrity: sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   node-gyp@10.3.1:
     resolution: {integrity: sha512-Pp3nFHBThHzVtNY7U6JfPjvT/DTE8+o/4xKsLQtBoU+j2HLsGlhcfzflAoUreaJbNmYnX+LlLi0qjV8kpyO6xQ==}
@@ -10429,6 +10465,10 @@ packages:
 
   web-audio-test-api@0.5.2:
     resolution: {integrity: sha512-RevLfVjp+wwe/dBPe361IpmNpeXXW6JVmlp8dk0YIxLwAh7evn6JpEQQalVgX4PH/jA8tpLpjD/8tFNUYTf88w==}
+
+  web-streams-polyfill@3.3.3:
+    resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
+    engines: {node: '>= 8'}
 
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
@@ -15469,6 +15509,8 @@ snapshots:
     dependencies:
       assert-plus: 1.0.0
 
+  data-uri-to-buffer@4.0.1: {}
+
   data-uri-to-buffer@6.0.2: {}
 
   data-urls@1.1.0:
@@ -16647,6 +16689,11 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.3
 
+  fetch-blob@3.2.0:
+    dependencies:
+      node-domexception: 1.0.0
+      web-streams-polyfill: 3.3.3
+
   figures@3.2.0:
     dependencies:
       escape-string-regexp: 1.0.5
@@ -16850,6 +16897,10 @@ snapshots:
       format-message-interpret: 6.2.4
       format-message-parse: 6.2.4
       lookup-closest-locale: 6.2.0
+
+  formdata-polyfill@4.0.10:
+    dependencies:
+      fetch-blob: 3.2.0
 
   forwarded@0.2.0: {}
 
@@ -19526,7 +19577,7 @@ snapshots:
 
   md5.js@1.3.5:
     dependencies:
-      hash-base: 3.0.5
+      hash-base: 3.1.2
       inherits: 2.0.4
       safe-buffer: 5.2.1
 
@@ -19807,6 +19858,8 @@ snapshots:
       lower-case: 2.0.2
       tslib: 2.8.1
 
+  node-domexception@1.0.0: {}
+
   node-environment-flags@1.0.6:
     dependencies:
       object.getownpropertydescriptors: 2.1.9
@@ -19829,6 +19882,12 @@ snapshots:
       whatwg-url: 5.0.0
     optionalDependencies:
       encoding: 0.1.13
+
+  node-fetch@3.3.2:
+    dependencies:
+      data-uri-to-buffer: 4.0.1
+      fetch-blob: 3.2.0
+      formdata-polyfill: 4.0.10
 
   node-gyp@10.3.1:
     dependencies:
@@ -22609,6 +22668,8 @@ snapshots:
       minimalistic-assert: 1.0.1
 
   web-audio-test-api@0.5.2: {}
+
+  web-streams-polyfill@3.3.3: {}
 
   webidl-conversions@3.0.1: {}
 

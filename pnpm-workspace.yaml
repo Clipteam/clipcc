@@ -6,6 +6,3 @@ onlyBuiltDependencies:
   - core-js
   - playwright-chromium
   - unrs-resolver
-
-# Should be removed when dependency issues are solved.
-shamefullyHoist: true
