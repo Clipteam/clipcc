@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * @import { WebpackManifest } from '../infra';
+ * @import { WebpackManifest } from 'clipcc-infra';
  */
 const webpack = require('webpack');
 

@@ -12,7 +12,7 @@ const manifest = {
   enableTs: true,
   rules: [{
     test: /\.css$/,
-    use: 'raw-loader',
+    type: 'asset/source',
     include: 'src'
   }, {
     test: /_compressed\.js$/,

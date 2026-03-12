@@ -80,8 +80,7 @@ describe('WebpackConfigBuilder targets', () => {
 			extensions: ['.ts', '.js', '.tsx', '.jsx'],
 			alias: {
 				'@shared': path.join(rootPath, 'shared')
-			},
-			symlinks: false
+			}
 		});
 
 		const tsRule = getRuleByLoader(config.module.rules, 'ts-loader');

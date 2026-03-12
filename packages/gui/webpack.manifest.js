@@ -1,10 +1,11 @@
 // @ts-check
 /**
- * @import { WebpackManifest } from '../infra';
+ * @import { WebpackManifest } from 'clipcc-infra';
  */
 const webpack = require('webpack');
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 /** @satisfies {WebpackManifest} */
 const base = {
@@ -17,7 +18,7 @@ const base = {
     enableTs: true,
 
     sourcePaths: [
-        '../../node_modules/react-tabs' // for react-tabs' CSS
+        path.dirname(require.resolve('react-tabs/package.json')) // for react-tabs' stylesheets
     ],
     workspacePackages: [
         'clipcc-vm',
@@ -34,6 +35,9 @@ const base = {
     rules: [],
     /** @type {NonNullable<WebpackManifest['plugins']>} */
     plugins: [
+        new NodePolyfillPlugin({
+            includeAliases: ['events', 'buffer']
+        }),
         new CopyWebpackPlugin({
             patterns: [
                 {
@@ -51,14 +55,14 @@ const base = {
                 }
             ]
         })
-    ],
+    ]
 };
 
 if (process.env.NODE_ENV !== 'production') {
     base.rules.push({
         test: /blocks-msgs\.js$/,
         include: [
-            /node_modules[\\/]clipcc-l10n[\\/]locales/
+            path.resolve(__dirname, '../l10n/locales')
         ],
         use: [{
             loader: path.resolve(__dirname, 'scripts/block-message-loader.js')

@@ -6,42 +6,34 @@
   "engines": {
     "node": ">=22"
   },
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ],
-    "nohoist": [
-      "**/google-closure-library",
-      "**/google-closure-compiler",
-      "**/google-closure-deps",
-      "**/google-closure-cmd"
-    ]
-  },
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "start": "yarn gui start",
+    "start": "pnpm run gui start",
     "prepare": "husky",
-    "build:dist": "cross-env NODE_ENV=production yarn build:full",
-    "build:full": "yarn infra build && yarn l10n build && yarn audio build && yarn storage build && yarn render build && yarn block build && yarn vm build && yarn paint build && node packages/gui/scripts/prepublish.mjs && yarn gui build",
-    "build": "yarn block build && yarn gui build",
-    "test": "yarn gui test:unit && yarn block test && yarn vm test",
-    "performance": "yarn vm performance",
-    "translation:build": "yarn gui i18n:src && yarn paint i18n:src && yarn vm i18n:src && yarn block i18n:src",
-    "translation:push": "yarn translation:build && crowdin push sources --config crowdin.yml",
+    "build:dist": "cross-env NODE_ENV=production pnpm run build:full",
+    "build:full": "pnpm infra build && pnpm l10n build && pnpm audio build && pnpm storage build && pnpm render build && pnpm block build && pnpm vm build && pnpm paint build && node packages/gui/scripts/prepublish.mjs && pnpm gui build",
+    "build": "pnpm block build && pnpm gui build",
+    "test": "pnpm gui test:unit && pnpm block test && pnpm vm test",
+    "performance": "pnpm vm performance",
+    "translation:build": "pnpm gui i18n:src && pnpm paint i18n:src && pnpm vm i18n:src && pnpm block i18n:src",
+    "translation:push": "pnpm run translation:build && crowdin push sources --config crowdin.yml",
     "translation:pull": "crowdin bundle download 2 --config crowdin.yml --base-path ./packages/l10n",
-    "bump": "yarn changeset version",
-    "release-all": "yarn changeset publish",
+    "bump": "pnpm changeset version",
+    "release-all": "pnpm changeset publish",
     "patch:convert": "node ./scripts/convert-patch.mjs",
-    "gui": "yarn workspace clipcc-gui",
-    "vm": "yarn workspace clipcc-vm",
-    "block": "yarn workspace clipcc-block",
-    "l10n": "yarn workspace clipcc-l10n",
-    "render": "yarn workspace clipcc-render",
-    "lint-config": "yarn workspace eslint-config-clipcc",
-    "storage": "yarn workspace clipcc-storage",
-    "paint": "yarn workspace clipcc-paint",
-    "parser": "yarn workspace clipcc-parser",
-    "audio": "yarn workspace clipcc-audio",
-    "infra": "yarn workspace clipcc-webpack-configuration"
+    "gui": "pnpm --filter clipcc-gui",
+    "vm": "pnpm --filter clipcc-vm",
+    "block": "pnpm --filter clipcc-block",
+    "l10n": "pnpm --filter clipcc-l10n",
+    "render": "pnpm --filter clipcc-render",
+    "lint-config": "pnpm --filter eslint-config-clipcc",
+    "storage": "pnpm --filter clipcc-storage",
+    "paint": "pnpm --filter clipcc-paint",
+    "parser": "pnpm --filter clipcc-parser",
+    "audio": "pnpm --filter clipcc-audio",
+    "infra": "pnpm --filter clipcc-infra"
   },
   "devDependencies": {
     "@changesets/changelog-git": "^0.2.1",
@@ -52,5 +44,6 @@
     "cross-env": "^10.1.0",
     "glob": "^13.0.6",
     "husky": "^9.1.7"
-  }
+  },
+  "packageManager": "pnpm@10.22.0"
 }

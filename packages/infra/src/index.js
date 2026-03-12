@@ -557,8 +557,7 @@ class WebpackConfigBuilder {
             output,
             resolve: {
                 extensions: this.manifest.enableReact ? ['.ts', '.js', '.tsx', '.jsx'] : (this.manifest.enableTs ? ['.ts', '.js'] : ['.js']),
-                alias: this.manifest.alias,
-                symlinks: false
+                alias: this.manifest.alias
             },
             module: {
                 rules: [
