@@ -25,7 +25,7 @@
   "devDependencies": {
     "babel-eslint": "8.2.2",
     "benchmark": "^2.1.1",
-    "eslint": "^9.39.2",
+    "eslint": "^10.0.3",
     "eslint-config-clipcc": "^9.0.9",
     "glob": "^13.0.6",
     "tap": "^21.0.1"

@@ -43,7 +43,7 @@
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "babel-loader": "10.1.0",
     "buffer": "6.0.3",
-    "eslint": "^9.39.2",
+    "eslint": "^10.0.3",
     "eslint-config-clipcc": "9.0.9",
     "eslint-plugin-jest": "27.9.0",
     "eslint-plugin-react": "7.37.5",
