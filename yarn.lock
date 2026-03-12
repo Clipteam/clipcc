@@ -3585,11 +3585,6 @@
     "@tufjs/canonical-json" "2.0.0"
     minimatch "^10.1.1"
 
-"@turbowarp/nanolog@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@turbowarp/nanolog/-/nanolog-0.2.0.tgz#c71e096865c34f94ec9c1c060b6dfd07781acfc0"
-  integrity sha512-texcM9oxfEsADVlVDR5UhLkYclPKsV9mytJh+9pHHonNcUrxRVGF6FkJTzWO/Hl5NafU1crSdw737nqKE3atSA==
-
 "@turbowarp/nanolog@^1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@turbowarp/nanolog/-/nanolog-1.0.1.tgz#c84ba9f861e4b96113b93cca935d218e1fb93ec4"
