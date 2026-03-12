@@ -53,6 +53,7 @@ class Video {
      * Dimensions the video stream is analyzed at after its rendered to the
      * sample canvas.
      * @type {Array.<number>}
+     * @deprecated Now follows actual stage size
      */
     static get DIMENSIONS () {
         return [480, 360];
@@ -111,7 +112,7 @@ class Video {
      * @returns {ArrayBuffer|Canvas|string|null} Frame data in requested format, null when errors.
      */
     getFrame ({
-        dimensions = Video.DIMENSIONS,
+        dimensions = [this.runtime.stageWidth, this.runtime.stageHeight],
         mirror = this.mirror,
         format = Video.FORMAT_IMAGE_DATA,
         cacheTimeout = this._frameCacheTimeout
@@ -138,7 +139,11 @@ class Video {
 
     _disablePreview () {
         if (this._skinId !== -1) {
-            this.runtime.renderer.updateBitmapSkin(this._skinId, new ImageData(...Video.DIMENSIONS), 1);
+            this.runtime.renderer.updateBitmapSkin(
+                this._skinId,
+                new ImageData(this.runtime.stageWidth, this.runtime.stageHeight),
+                1
+            );
             this.runtime.renderer.updateDrawableVisible(this._drawable, false);
         }
         this._renderPreviewFrame = null;
@@ -149,7 +154,10 @@ class Video {
         if (!renderer) return;
 
         if (this._skinId === -1 && this._drawable === -1) {
-            this._skinId = renderer.createBitmapSkin(new ImageData(...Video.DIMENSIONS), 1);
+            this._skinId = renderer.createBitmapSkin(
+                new ImageData(this.runtime.stageWidth, this.runtime.stageHeight),
+                1
+            );
             this._drawable = renderer.createDrawable(StageLayering.VIDEO_LAYER);
             renderer.updateDrawableSkinId(this._drawable, this._skinId);
         }
@@ -173,7 +181,11 @@ class Video {
                 });
 
                 if (!imageData) {
-                    renderer.updateBitmapSkin(this._skinId, new ImageData(...Video.DIMENSIONS), 1);
+                    renderer.updateBitmapSkin(
+                        this._skinId,
+                        new ImageData(this.runtime.stageWidth, this.runtime.stageHeight),
+                        1
+                    );
                     return;
                 }
 

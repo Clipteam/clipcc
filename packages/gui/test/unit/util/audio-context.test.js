@@ -18,13 +18,15 @@ describe('Shared Audio Context', () => {
         const sharedAudioContext = new SharedAudioContext();
         const event = new Event('mousedown');
         document.dispatchEvent(event);
-        expect(sharedAudioContext).toMatchObject(audioContext);
+        const sharedAudioContextAfter = new SharedAudioContext();
+        expect(sharedAudioContextAfter).toMatchObject(audioContext);
     });
 
     test('returns AudioContext when touchstart is triggered', () => {
         const sharedAudioContext = new SharedAudioContext();
         const event = new Event('touchstart');
         document.dispatchEvent(event);
-        expect(sharedAudioContext).toMatchObject(audioContext);
+        const sharedAudioContextAfter = new SharedAudioContext();
+        expect(sharedAudioContextAfter).toMatchObject(audioContext);
     });
 });

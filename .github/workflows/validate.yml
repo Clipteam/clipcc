@@ -22,12 +22,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
-
       - name: Check types
         id: check-types
         run: |
@@ -47,33 +41,22 @@ jobs:
         with:
           filters: .github/paths-filter.yml
 
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
       - name: Build all packages
-        run: yarn run build:full
+        run: pnpm run build:full
 
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+      - name: Cache build artifacts
+        uses: actions/cache/save@v4
         with:
-          name: build-artifacts
           path: |
             packages/*/dist
             packages/*/build
             packages/*/playground
             packages/audio/dist.js
             packages/gui/static/microbit
-          retention-days: 1
+          key: build-artifacts-${{ github.run_id }}-${{ github.run_attempt }}
 
   test-gui:
     name: Test GUI
@@ -84,33 +67,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
-      - name: Restore node_modules
-        uses: actions/cache@v4
+      - name: Restore build artifacts
+        uses: ./.github/actions/restore-build
         with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: packages/
+          run-id: ${{ github.run_id }}
+          run-attempt: ${{ github.run_attempt }}
 
       - name: Test
-        run: yarn gui test:unit
+        run: pnpm gui test:unit
 
   test-vm:
     name: Test VM
@@ -121,33 +88,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
-      - name: Restore node_modules
-        uses: actions/cache@v4
+      - name: Restore build artifacts
+        uses: ./.github/actions/restore-build
         with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: packages/
+          run-id: ${{ github.run_id }}
+          run-attempt: ${{ github.run_attempt }}
 
       - name: Test
-        run: yarn vm test
+        run: pnpm vm test
 
   test-block:
     name: Test Block
@@ -158,30 +109,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
-      - name: Restore node_modules
-        uses: actions/cache@v4
+      - name: Restore build artifacts
+        uses: ./.github/actions/restore-build
         with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
-          path: packages/
+          run-id: ${{ github.run_id }}
+          run-attempt: ${{ github.run_attempt }}
 
       - name: Test
-        run: yarn block test
+        run: pnpm block test
+
+  cleanup:
+    name: Cleanup build cache
+    needs: [test-gui, test-vm, test-block]
+    runs-on: ubuntu-latest
+    # Always run so the cache is cleaned even when tests fail or are skipped.
+    if: always()
+    permissions:
+      actions: write
+    steps:
+      - name: Delete build artifacts cache
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh cache delete "build-artifacts-${{ github.run_id }}-${{ github.run_attempt }}" \
+            --repo "${{ github.repository }}" || true

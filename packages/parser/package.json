@@ -15,7 +15,7 @@
     "test:integration": "tap test/integration/*.js --allow-incomplete-coverage --allow-empty-coverage",
     "test:coverage": "tap test/{unit,integration}/*.js --coverage --coverage-report=lcov",
     "test:benchmark": "node test/benchmark/performance.js",
-    "test": "yarn run test:lint && yarn run test:unit && yarn run test:integration"
+    "test": "pnpm run test:lint && pnpm run test:unit && pnpm run test:integration"
   },
   "dependencies": {
     "ajv": "6.3.0",
@@ -26,7 +26,7 @@
     "babel-eslint": "8.2.2",
     "benchmark": "^2.1.1",
     "eslint": "^9.39.2",
-    "eslint-config-clipcc": "^9.0.9",
+    "eslint-config-clipcc": "workspace:*",
     "glob": "^13.0.6",
     "tap": "^21.0.1"
   },

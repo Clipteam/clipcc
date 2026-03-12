@@ -6,7 +6,7 @@
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "runtimeExecutable": "yarn",
+            "runtimeExecutable": "pnpm",
             "restart": true,
             "timeout": 30000,
             "runtimeArgs": [
@@ -44,7 +44,7 @@
             "type": "node",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "runtimeExecutable": "yarn",
+            "runtimeExecutable": "pnpm",
             "restart": true,
             "timeout": 30000,
             "runtimeArgs": [

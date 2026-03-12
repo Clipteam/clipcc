@@ -11,24 +11,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
-
-      - name: Cache node_modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
   gui:
     name: Lint GUI
@@ -38,27 +22,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
-
-      - name: Restore node_modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn gui lint
+        run: pnpm gui lint
 
   vm:
     name: Lint VM
@@ -68,27 +36,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
-
-      - name: Restore node_modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn vm lint:js
+        run: pnpm vm lint:js
 
   block:
     name: Lint Block
@@ -98,27 +50,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
-
-      - name: Restore node_modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn block lint
+        run: pnpm block lint
 
   audio:
     name: Lint Audio
@@ -128,27 +64,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
-
-      - name: Restore node_modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn audio lint
+        run: pnpm audio lint
 
   l10n:
     name: Lint l10n
@@ -158,28 +78,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
-
-      - name: Restore node_modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn l10n lint:js
-    
+        run: pnpm l10n lint:js
+
   lint-config:
     name: Lint Lint Config
     needs: [build]
@@ -188,27 +92,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
-
-      - name: Restore node_modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn lint-config test
+        run: pnpm lint-config test
 
   paint:
     name: Lint Paint
@@ -218,27 +106,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
-
-      - name: Restore node_modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn paint lint
+        run: pnpm paint lint
 
   parser:
     name: Lint Parser
@@ -248,28 +120,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
-
-      - name: Restore node_modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn parser test:lint
-  
+        run: pnpm parser test:lint
+
   render:
     name: Lint Render
     needs: [build]
@@ -278,27 +134,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
-
-      - name: Restore node_modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn render lint
+        run: pnpm render lint
 
   storage:
     name: Lint Storage
@@ -308,27 +148,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
-
-      - name: Restore node_modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn storage test:lint
+        run: pnpm storage test:lint
 
   svg-renderer:
     name: Lint SVG Renderer
@@ -338,24 +162,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24.x
-          cache: 'yarn'
-
-      - name: Restore node_modules
-        uses: actions/cache@v4
-        with:
-          path: |
-            node_modules
-            packages/*/node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            node-modules-${{ runner.os }}-
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn svg-renderer test:lint
+        run: pnpm svg-renderer test:lint

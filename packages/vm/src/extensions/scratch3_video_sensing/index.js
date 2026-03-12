@@ -82,7 +82,7 @@ class Scratch3VideoSensingBlocks {
          * direction values.
          * @type {VideoMotion}
          */
-        this.detect = new VideoMotion();
+        this.detect = new VideoMotion(runtime.stageWidth, runtime.stageHeight);
 
         /**
          * The last millisecond epoch timestamp that the video stream was
@@ -105,6 +105,11 @@ class Scratch3VideoSensingBlocks {
             // Clear target motion state values when the project starts.
             this.runtime.on(Runtime.PROJECT_RUN_START, this.reset.bind(this));
 
+            // Reset the motion detection algorithm when the stage size changes.
+            this.runtime.on(Runtime.STAGE_SIZE_UPDATE, (width, height) => {
+                this.detect.resize(width, height);
+            });
+
             // Kick off looping the analysis logic.
             this._loop();
         }
@@ -123,6 +128,7 @@ class Scratch3VideoSensingBlocks {
      * Dimensions the video stream is analyzed at after its rendered to the
      * sample canvas.
      * @type {Array.<number>}
+     * @deprecated Now follows actual stage size
      */
     static get DIMENSIONS () {
         return [480, 360];
@@ -238,9 +244,10 @@ class Scratch3VideoSensingBlocks {
         }
         const offset = time - this._lastUpdate;
         if (offset > Scratch3VideoSensingBlocks.INTERVAL) {
+            this.detect.resize(this.runtime.stageWidth, this.runtime.stageHeight);
             const frame = this.runtime.ioDevices.video.getFrame({
                 format: Video.FORMAT_IMAGE_DATA,
-                dimensions: Scratch3VideoSensingBlocks.DIMENSIONS
+                dimensions: [this.detect.width, this.detect.height]
             });
             if (frame) {
                 this._lastUpdate = time;

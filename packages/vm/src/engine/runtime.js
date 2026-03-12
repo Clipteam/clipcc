@@ -48,8 +48,214 @@ const defaultBlockPackages = {
 const defaultExtensionColors = ['#0FBD8C', '#0DA57A', '#0B8E69'];
 
 /**
+ * @typedef {import('./target')} Target
+ * @typedef {import('clipcc-audio')} AudioEngine
+ * @typedef {import('clipcc-render')} RenderWebGL
+ * @typedef {import('clipcc-storage').ScratchStorage} ScratchStorage
+ */
+
+/**
+ * @callback PrimitiveHandler
+ * @param {...unknown} args
+ * @returns {unknown}
+ */
+
+/**
+ * @callback BooleanFunction
+ * @returns {boolean}
+ */
+
+/**
+ * @callback VoidFunction
+ * @returns {void}
+ */
+
+/**
+ * @callback ScriptCallback
+ * @param {string} script
+ * @param {Target} target
+ * @returns {void}
+ */
+
+/**
+ * @callback ScratchLinkSocketFactory
+ * @param {string} type
+ * @returns {ScratchLinkSocket}
+ */
+
+/**
+ * @callback ProfilerFrameHandler
+ * @param {Record<string, unknown>} frame
+ * @returns {void}
+ */
+
+/**
+ * @typedef {{send?: (...args: unknown[]) => void, close?: () => void}} ScratchLinkSocket
+ */
+
+/**
+ * @typedef {Record<string, unknown>} ScratchBlocksJson
+ */
+
+/**
+ * @typedef {{json: ScratchBlocksJson}} ScratchBlocksDefinition
+ */
+
+/**
+ * @typedef {string|{text: string|Record<string, unknown>, value: string}} MenuItem
+ */
+
+/**
+ * @typedef {{
+ *   items: Array<MenuItem>|(() => Array<MenuItem>),
+ *   acceptReporters?: boolean
+ * }} ExtensionMenuInfo
+ */
+
+/**
+ * @typedef {{
+ *   type?: string,
+ *   defaultValue?: unknown,
+ *   menu?: string,
+ *   dataURI?: string,
+ *   flipRTL?: boolean
+ * }} ExtensionArgumentInfo
+ */
+
+/**
+ * @typedef {{
+ *   opcode: string,
+ *   text: string|Array<string>,
+ *   func: PrimitiveHandler|string,
+ *   blockIconURI?: string,
+ *   arguments?: Record<string, ExtensionArgumentInfo>,
+ *   branchCount?: number,
+ *   disableMonitor?: boolean,
+ *   isDynamic?: boolean,
+ *   isEdgeActivated?: boolean,
+ *   isTerminal?: boolean,
+ *   hideFromPalette?: boolean,
+ *   shouldRestartExistingThreads?: boolean,
+ *   filter?: Array<string>,
+ *   blockType: string|number
+ * }} ExtensionBlockMetadata
+ */
+
+/**
+ * @typedef {{info: ExtensionBlockMetadata|string, json?: ScratchBlocksJson, xml: string}} ConvertedBlockInfo
+ */
+
+/**
+ * @typedef {ExtensionBlockMetadata & {func: string}} ExtensionButtonMetadata
+ */
+
+/**
+ * @typedef {{
+ *   output: string,
+ *   outputShape: number,
+ *   implementation: unknown
+ * }} ExtensionCustomFieldTypeMetadata
+ */
+
+/**
+ * @typedef {{
+ *   fieldName: string,
+ *   extendedName: string,
+ *   argumentTypeInfo: {shadow: {type: string, fieldName: string}},
+ *   scratchBlocksDefinition: ScratchBlocksDefinition,
+ *   fieldImplementation: unknown
+ * }} ExtensionCustomFieldTypeInfo
+ */
+
+/**
+ * @typedef {{
+ *   edgeActivated?: boolean,
+ *   restartExistingThreads?: boolean
+ * }} HatMetadata
+ */
+
+/**
+ * @typedef {{
+ *   isSpriteSpecific?: boolean,
+ *   getId: (targetId?: string, fields?: Record<string, unknown>) => string
+ * }} MonitorBlockInfo
+ */
+
+/**
+ * @typedef {{
+ *   infiniteCloning: boolean,
+ *   edgelessStage: boolean,
+ *   unlimitedListLength: boolean,
+ *   unlimitedPenSize: boolean,
+ *   accurateCoordinates: boolean,
+ *   unlimitedSoundStuffs: boolean
+ * }} RuntimeLimitOptions
+ */
+
+/**
+ * @typedef {{
+ *   id: string,
+ *   name: string,
+ *   showStatusButton?: boolean,
+ *   blockIconURI?: string,
+ *   menuIconURI?: string,
+ *   color1: string,
+ *   color2: string,
+ *   color3: string,
+ *   blocks: Array<ConvertedBlockInfo>,
+ *   customFieldTypes: Record<string, ExtensionCustomFieldTypeInfo>,
+ *   menus: Array<ScratchBlocksDefinition>,
+ *   menuInfo: Record<string, ExtensionMenuInfo>
+ * }} CategoryInfo
+ */
+
+/**
+ * @typedef {{
+ *   id: string,
+ *   name: string|Record<string, unknown>,
+ *   showStatusButton?: boolean,
+ *   blockIconURI?: string,
+ *   menuIconURI?: string,
+ *   color1?: string,
+ *   color2?: string,
+ *   color3?: string,
+ *   menus: Record<string, ExtensionMenuInfo>,
+ *   customFieldTypes: Record<string, ExtensionCustomFieldTypeMetadata>,
+ *   blocks: Array<ExtensionBlockMetadata|string>
+ * }} ExtensionMetadata
+ */
+
+/**
+ * @typedef {{
+ *   scan: () => void,
+ *   connect: (peripheralId: number) => void,
+ *   disconnect: () => void,
+ *   isConnected: () => boolean
+ * }} PeripheralExtension
+ */
+
+/**
+ * @typedef {{id: string, xml: string}} BlockCategoryXml
+ */
+
+/**
+ * @typedef {{category: string, label?: string, labelFn?: PrimitiveHandler}} OpcodeLabelInfo
+ */
+
+/**
+ * @typedef {{
+ *   outLineNum: number,
+ *   blockInfo: ExtensionBlockMetadata,
+ *   categoryInfo: CategoryInfo,
+ *   blockJSON: ScratchBlocksJson,
+ *   inputList: Array<string>,
+ *   argsMap: Record<string, number>
+ * }} PlaceholderContext
+ */
+
+/**
  * Information used for converting Scratch argument types into scratch-blocks data.
- * @type {Record<ArgumentType, {shadowType: string, fieldType: string}>}
+ * @type {Record<string, {shadow?: {type: string, fieldName: string}, check?: string, fieldType?: string}>}
  */
 const ArgumentTypeMap = (() => {
     const map = {};
@@ -110,15 +316,12 @@ const ArgumentTypeMap = (() => {
 /**
  * A pair of functions used to manage the cloud variable limit,
  * to be used when adding (or attempting to add) or removing a cloud variable.
- * @typedef {object} CloudDataManager
- * @property {Function} canAddCloudVariable A function to call to check that
- * a cloud variable can be added.
- * @property {Function} addCloudVariable A function to call to track a new
- * cloud variable on the runtime.
- * @property {Function} removeCloudVariable A function to call when
- * removing an existing cloud variable.
- * @property {Function} hasCloudVariables A function to call to check that
- * the runtime has any cloud variables.
+ * @typedef {{
+ *   canAddCloudVariable: BooleanFunction,
+ *   addCloudVariable: VoidFunction,
+ *   removeCloudVariable: VoidFunction,
+ *   hasCloudVariables: BooleanFunction
+ * }} CloudDataManager
  */
 
 /**
@@ -226,7 +429,7 @@ class Runtime extends EventEmitter {
         /**
          * Map to look up a block primitive's implementation function by its opcode.
          * This is a two-step lookup: package name first, then primitive name.
-         * @type {Record<string, Function>}
+         * @type {Record<string, PrimitiveHandler>}
          */
         this._primitives = {};
 
@@ -240,7 +443,7 @@ class Runtime extends EventEmitter {
         /**
          * Map to look up hat blocks' metadata.
          * Keys are opcode for hat, values are metadata objects.
-         * @type {Record<string, object>}
+         * @type {Record<string, HatMetadata>}
          */
         this._hats = {};
 
@@ -285,7 +488,7 @@ class Runtime extends EventEmitter {
 
         /**
          * Map to look up all monitor block information by opcode.
-         * @type {object}
+         * @type {Record<string, MonitorBlockInfo>}
          * @private
          */
         this.monitorBlockInfo = {};
@@ -315,7 +518,7 @@ class Runtime extends EventEmitter {
 
         /**
          * The limit options.
-         * @type {object}
+         * @type {RuntimeLimitOptions}
          */
         this.limitOptions = {
             infiniteCloning: false,
@@ -390,6 +593,7 @@ class Runtime extends EventEmitter {
 
         /**
          * A list of extensions, used to manage hardware connection.
+         * @type {Record<string, PeripheralExtension>}
          */
         this.peripheralExtensions = {};
 
@@ -404,7 +608,7 @@ class Runtime extends EventEmitter {
 
         /**
          * Check wether the runtime has any cloud data.
-         * @type {Function}
+         * @type {BooleanFunction}
          * @returns {boolean} Whether or not the runtime currently has any
          * cloud variables.
          */
@@ -413,7 +617,7 @@ class Runtime extends EventEmitter {
         /**
          * A function which checks whether a new cloud variable can be added
          * to the runtime.
-         * @type {Function}
+         * @type {BooleanFunction}
          * @returns {boolean} Whether or not a new cloud variable can be added
          * to the runtime.
          */
@@ -424,7 +628,7 @@ class Runtime extends EventEmitter {
          * updating the cloud variable limit. Calling this function will
          * emit a cloud data update event if this is the first cloud variable
          * being added.
-         * @type {Function}
+         * @type {VoidFunction}
          */
         this.addCloudVariable = this._initializeAddCloudVariable(newCloudDataManager);
 
@@ -432,7 +636,7 @@ class Runtime extends EventEmitter {
          * A function which updates the runtime's cloud variable limit
          * when removing a cloud variable and emits a cloud update event
          * if the last of the cloud variables is being removed.
-         * @type {Function}
+         * @type {VoidFunction}
          */
         this.removeCloudVariable = this._initializeRemoveCloudVariable(newCloudDataManager);
 
@@ -447,18 +651,18 @@ class Runtime extends EventEmitter {
     }
 
     /**
+     * Stage width in pixels.
      * @deprecated Use `runtime.stageWidth` instead.
-     * Width of the stage, in pixels.
-     * @returns {number}
+     * @returns {number} The stage width in pixels.
      */
     static get STAGE_WIDTH () {
         return 480;
     }
 
     /**
+     * Stage height in pixels.
      * @deprecated Use `runtime.stageHeight` instead.
-     * Height of the stage, in pixels.
-     * @returns {number}
+     * @returns {number} The stage height in pixels.
      */
     static get STAGE_HEIGHT () {
         return 360;
@@ -466,7 +670,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for stage size update.
-     * @returns {string}
+     * @returns {'STAGE_SIZE_UPDATE'} The event name.
      */
     static get STAGE_SIZE_UPDATE () {
         return 'STAGE_SIZE_UPDATE';
@@ -474,7 +678,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for glowing a script.
-     * @returns {string}
+     * @returns {'SCRIPT_GLOW_ON'} The event name.
      */
     static get SCRIPT_GLOW_ON () {
         return 'SCRIPT_GLOW_ON';
@@ -482,7 +686,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for unglowing a script.
-     * @returns {string}
+     * @returns {'SCRIPT_GLOW_OFF'} The event name.
      */
     static get SCRIPT_GLOW_OFF () {
         return 'SCRIPT_GLOW_OFF';
@@ -490,7 +694,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for glowing a block.
-     * @returns {string}
+     * @returns {'BLOCK_GLOW_ON'} The event name.
      */
     static get BLOCK_GLOW_ON () {
         return 'BLOCK_GLOW_ON';
@@ -498,7 +702,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for unglowing a block.
-     * @returns {string}
+     * @returns {'BLOCK_GLOW_OFF'} The event name.
      */
     static get BLOCK_GLOW_OFF () {
         return 'BLOCK_GLOW_OFF';
@@ -507,7 +711,7 @@ class Runtime extends EventEmitter {
     /**
      * Event name for a cloud data update
      * to this project.
-     * @returns {string}
+     * @returns {'HAS_CLOUD_DATA_UPDATE'} The event name.
      */
     static get HAS_CLOUD_DATA_UPDATE () {
         return 'HAS_CLOUD_DATA_UPDATE';
@@ -515,7 +719,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for turning on turbo mode.
-     * @returns {string}
+     * @returns {'TURBO_MODE_ON'} The event name.
      */
     static get TURBO_MODE_ON () {
         return 'TURBO_MODE_ON';
@@ -523,7 +727,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for turning off turbo mode.
-     * @returns {string}
+     * @returns {'TURBO_MODE_OFF'} The event name.
      */
     static get TURBO_MODE_OFF () {
         return 'TURBO_MODE_OFF';
@@ -532,7 +736,7 @@ class Runtime extends EventEmitter {
     /**
      * Event name when the project is started (threads may not necessarily be
      * running).
-     * @returns {string}
+     * @returns {'PROJECT_START'} The event name.
      */
     static get PROJECT_START () {
         return 'PROJECT_START';
@@ -541,7 +745,7 @@ class Runtime extends EventEmitter {
     /**
      * Event name when threads start running.
      * Used by the UI to indicate running status.
-     * @returns {string}
+     * @returns {'PROJECT_RUN_START'} The event name.
      */
     static get PROJECT_RUN_START () {
         return 'PROJECT_RUN_START';
@@ -550,7 +754,7 @@ class Runtime extends EventEmitter {
     /**
      * Event name when threads stop running
      * Used by the UI to indicate not-running status.
-     * @returns {string}
+     * @returns {'PROJECT_RUN_STOP'} The event name.
      */
     static get PROJECT_RUN_STOP () {
         return 'PROJECT_RUN_STOP';
@@ -559,7 +763,7 @@ class Runtime extends EventEmitter {
     /**
      * Event name for project being stopped or restarted by the user.
      * Used by blocks that need to reset state.
-     * @returns {string}
+     * @returns {'PROJECT_STOP_ALL'} The event name.
      */
     static get PROJECT_STOP_ALL () {
         return 'PROJECT_STOP_ALL';
@@ -568,7 +772,7 @@ class Runtime extends EventEmitter {
     /**
      * Event name for target being stopped by a stop for target call.
      * Used by blocks that need to stop individual targets.
-     * @returns {string}
+     * @returns {'STOP_FOR_TARGET'} The event name.
      */
     static get STOP_FOR_TARGET () {
         return 'STOP_FOR_TARGET';
@@ -576,7 +780,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for visual value report.
-     * @returns {string}
+     * @returns {'VISUAL_REPORT'} The event name.
      */
     static get VISUAL_REPORT () {
         return 'VISUAL_REPORT';
@@ -584,7 +788,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for project loaded report.
-     * @returns {string}
+     * @returns {'PROJECT_LOADED'} The event name.
      */
     static get PROJECT_LOADED () {
         return 'PROJECT_LOADED';
@@ -592,7 +796,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for report that a change was made that can be saved
-     * @returns {string}
+     * @returns {'PROJECT_CHANGED'} The event name.
      */
     static get PROJECT_CHANGED () {
         return 'PROJECT_CHANGED';
@@ -600,7 +804,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for report that a change was made to an extension in the toolbox.
-     * @returns {string}
+     * @returns {'TOOLBOX_EXTENSIONS_NEED_UPDATE'} The event name.
      */
     static get TOOLBOX_EXTENSIONS_NEED_UPDATE () {
         return 'TOOLBOX_EXTENSIONS_NEED_UPDATE';
@@ -608,7 +812,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for targets update report.
-     * @returns {string}
+     * @returns {'TARGETS_UPDATE'} The event name.
      */
     static get TARGETS_UPDATE () {
         return 'TARGETS_UPDATE';
@@ -616,7 +820,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for monitors update.
-     * @returns {string}
+     * @returns {'MONITORS_UPDATE'} The event name.
      */
     static get MONITORS_UPDATE () {
         return 'MONITORS_UPDATE';
@@ -624,7 +828,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for block drag update.
-     * @returns {string}
+     * @returns {'BLOCK_DRAG_UPDATE'} The event name.
      */
     static get BLOCK_DRAG_UPDATE () {
         return 'BLOCK_DRAG_UPDATE';
@@ -632,7 +836,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for block drag end.
-     * @returns {string}
+     * @returns {'BLOCK_DRAG_END'} The event name.
      */
     static get BLOCK_DRAG_END () {
         return 'BLOCK_DRAG_END';
@@ -640,7 +844,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for reporting that an extension was added.
-     * @returns {string}
+     * @returns {'EXTENSION_ADDED'} The event name.
      */
     static get EXTENSION_ADDED () {
         return 'EXTENSION_ADDED';
@@ -648,7 +852,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for reporting that an extension as asked for a custom field to be added
-     * @returns {string}
+     * @returns {'EXTENSION_FIELD_ADDED'} The event name.
      */
     static get EXTENSION_FIELD_ADDED () {
         return 'EXTENSION_FIELD_ADDED';
@@ -658,7 +862,7 @@ class Runtime extends EventEmitter {
      * Event name for updating the available set of peripheral devices.
      * This causes the peripheral connection modal to update a list of
      * available peripherals.
-     * @returns {string}
+     * @returns {'PERIPHERAL_LIST_UPDATE'} The event name.
      */
     static get PERIPHERAL_LIST_UPDATE () {
         return 'PERIPHERAL_LIST_UPDATE';
@@ -667,7 +871,7 @@ class Runtime extends EventEmitter {
     /**
      * Event name for when the user picks a bluetooth device to connect to
      * via Companion Device Manager (CDM)
-     * @returns {string}
+     * @returns {'USER_PICKED_PERIPHERAL'} The event name.
      */
     static get USER_PICKED_PERIPHERAL () {
         return 'USER_PICKED_PERIPHERAL';
@@ -676,7 +880,7 @@ class Runtime extends EventEmitter {
     /**
      * Event name for reporting that a peripheral has connected.
      * This causes the status button in the blocks menu to indicate 'connected'.
-     * @returns {string}
+     * @returns {'PERIPHERAL_CONNECTED'} The event name.
      */
     static get PERIPHERAL_CONNECTED () {
         return 'PERIPHERAL_CONNECTED';
@@ -685,7 +889,7 @@ class Runtime extends EventEmitter {
     /**
      * Event name for reporting that a peripheral has been intentionally disconnected.
      * This causes the status button in the blocks menu to indicate 'disconnected'.
-     * @returns {string}
+     * @returns {'PERIPHERAL_DISCONNECTED'} The event name.
      */
     static get PERIPHERAL_DISCONNECTED () {
         return 'PERIPHERAL_DISCONNECTED';
@@ -694,7 +898,7 @@ class Runtime extends EventEmitter {
     /**
      * Event name for reporting that a peripheral has encountered a request error.
      * This causes the peripheral connection modal to switch to an error state.
-     * @returns {string}
+     * @returns {'PERIPHERAL_REQUEST_ERROR'} The event name.
      */
     static get PERIPHERAL_REQUEST_ERROR () {
         return 'PERIPHERAL_REQUEST_ERROR';
@@ -703,7 +907,7 @@ class Runtime extends EventEmitter {
     /**
      * Event name for reporting that a peripheral connection has been lost.
      * This causes a 'peripheral connection lost' error alert to display.
-     * @returns {string}
+     * @returns {'PERIPHERAL_CONNECTION_LOST_ERROR'} The event name.
      */
     static get PERIPHERAL_CONNECTION_LOST_ERROR () {
         return 'PERIPHERAL_CONNECTION_LOST_ERROR';
@@ -712,7 +916,7 @@ class Runtime extends EventEmitter {
     /**
      * Event name for reporting that a peripheral has not been discovered.
      * This causes the peripheral connection modal to show a timeout state.
-     * @returns {string}
+     * @returns {'PERIPHERAL_SCAN_TIMEOUT'} The event name.
      */
     static get PERIPHERAL_SCAN_TIMEOUT () {
         return 'PERIPHERAL_SCAN_TIMEOUT';
@@ -720,7 +924,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name to indicate that the microphone is being used to stream audio.
-     * @returns {string}
+     * @returns {'MIC_LISTENING'} The event name.
      */
     static get MIC_LISTENING () {
         return 'MIC_LISTENING';
@@ -728,7 +932,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for reporting that blocksInfo was updated.
-     * @returns {string}
+     * @returns {'BLOCKSINFO_UPDATE'} The event name.
      */
     static get BLOCKSINFO_UPDATE () {
         return 'BLOCKSINFO_UPDATE';
@@ -736,7 +940,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name when the runtime tick loop has been started.
-     * @returns {string}
+     * @returns {'RUNTIME_STARTED'} The event name.
      */
     static get RUNTIME_STARTED () {
         return 'RUNTIME_STARTED';
@@ -744,7 +948,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name when the runtime dispose has been called.
-     * @returns {string}
+     * @returns {'RUNTIME_DISPOSED'} The event name.
      */
     static get RUNTIME_DISPOSED () {
         return 'RUNTIME_DISPOSED';
@@ -752,7 +956,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Event name for reporting that a block was updated and needs to be rerendered.
-     * @returns {string}
+     * @returns {'BLOCKS_NEED_UPDATE'} The event name.
      */
     static get BLOCKS_NEED_UPDATE () {
         return 'BLOCKS_NEED_UPDATE';
@@ -760,7 +964,7 @@ class Runtime extends EventEmitter {
 
     /**
      * How rapidly we try to step threads by default, in ms.
-     * @returns {number}
+     * @returns {number} The default thread step interval in milliseconds.
      */
     static get THREAD_STEP_INTERVAL () {
         return 1000 / 60;
@@ -768,7 +972,7 @@ class Runtime extends EventEmitter {
 
     /**
      * In compatibility mode, how rapidly we try to step threads, in ms.
-     * @returns {number}
+     * @returns {number} The compatibility thread step interval in milliseconds.
      */
     static get THREAD_STEP_INTERVAL_COMPATIBILITY () {
         return 1000 / 30;
@@ -776,7 +980,7 @@ class Runtime extends EventEmitter {
 
     /**
      * How many clones can be created at a time.
-     * @returns {number}
+     * @returns {number} The maximum number of clones allowed.
      */
     get MAX_CLONES () {
         return this.limitOptions.infiniteCloning ? Infinity : 300;
@@ -1000,8 +1204,9 @@ class Runtime extends EventEmitter {
     /**
      * Convert the given extension menu items into the scratch-blocks style of list of pairs.
      * If the menu is dynamic (e.g. the passed in argument is a function), return the input unmodified.
-     * @param {object} menuItems - an array of menu items or a function to retrieve such an array
-     * @returns {object} - an array of 2 element arrays or the original input function
+     * @param {Array<MenuItem>|(() => Array<MenuItem>)} menuItems - An array of menu items or a function
+     *     to retrieve them.
+     * @returns {Array<[string, unknown]>|(() => Array<MenuItem>)} An array of pairs or the original input function.
      * @private
      */
     _convertMenuItems (menuItems) {
@@ -1025,11 +1230,9 @@ class Runtime extends EventEmitter {
     /**
      * Build the scratch-blocks JSON for a menu. Note that scratch-blocks treats menus as a special kind of block.
      * @param {string} menuName - the name of the menu
-     * @param {object} menuInfo - a description of this menu and its items
-     * @property {*} items - an array of menu items or a function to retrieve such an array
-     * @property {boolean} [acceptReporters] - if true, allow dropping reporters onto this menu
+     * @param {ExtensionMenuInfo} menuInfo - a description of this menu and its items
      * @param {CategoryInfo} categoryInfo - the category for this block
-     * @returns {object} - a JSON-esque object ready for scratch-blocks' consumption
+     * @returns {ScratchBlocksDefinition} The menu block definition for scratch-blocks.
      * @private
      */
     _buildMenuForScratchBlocks (menuName, menuInfo, categoryInfo) {
@@ -1057,6 +1260,14 @@ class Runtime extends EventEmitter {
         };
     }
 
+    /**
+     * Build the runtime metadata for an extension-defined custom field type.
+     * @param {string} fieldName - The field name from the extension metadata.
+     * @param {ExtensionCustomFieldTypeMetadata} fieldInfo - The extension-defined custom field metadata.
+     * @param {string} extensionId - The ID of the extension providing the field.
+     * @param {CategoryInfo} categoryInfo - The category the field belongs to.
+     * @returns {ExtensionCustomFieldTypeInfo} The runtime metadata for the custom field type.
+     */
     _buildCustomFieldInfo (fieldName, fieldInfo, extensionId, categoryInfo) {
         const extendedName = `${extensionId}_${fieldName}`;
         return {
@@ -1084,8 +1295,8 @@ class Runtime extends EventEmitter {
      * @param  {string} fieldName - The name of the field
      * @param {string} output - The output of the field
      * @param {number} outputShape - Shape of the field (from ScratchBlocksConstants)
-     * @param {object} categoryInfo - The category the field belongs to (Used to set its colors)
-     * @returns {object} - Object to be inserted into scratch-blocks
+     * @param {CategoryInfo} categoryInfo - The category the field belongs to.
+     * @returns {ScratchBlocksDefinition} The scratch-blocks definition for the custom field.
      */
     _buildCustomFieldTypeForScratchBlocks (fieldName, output, outputShape, categoryInfo) {
         return {
@@ -1110,7 +1321,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Convert ExtensionBlockMetadata into data ready for scratch-blocks.
-     * @param {ExtensionBlockMetadata} blockInfo - the block info to convert
+     * @param {ExtensionBlockMetadata|string} blockInfo - the block info to convert
      * @param {CategoryInfo} categoryInfo - the category for this block
      * @returns {ConvertedBlockInfo} - the converted & original block information
      * @private
@@ -1280,7 +1491,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Generate a separator between blocks categories or sub-categories.
-     * @param {ExtensionBlockMetadata} blockInfo - the block to convert
+     * @param {string} blockInfo - the separator marker to convert
      * @returns {ConvertedBlockInfo} - the converted & original block information
      * @private
      */
@@ -1293,8 +1504,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Convert a button for scratch-blocks. A button has no opcode but specifies a callback name in the `func` field.
-     * @param {ExtensionBlockMetadata} buttonInfo - the button to convert
-     * @property {string} func - the callback name
+     * @param {ExtensionButtonMetadata} buttonInfo - the button to convert
      * @returns {ConvertedBlockInfo} - the converted & original button information
      * @private
      */
@@ -1315,8 +1525,8 @@ class Runtime extends EventEmitter {
 
     /**
      * Helper for _convertPlaceholdes which handles inline images which are a specialized case of block "arguments".
-     * @param {object} argInfo Metadata about the inline image as specified by the extension
-     * @returns {object} JSON blob for a scratch-blocks image field.
+     * @param {ExtensionArgumentInfo} argInfo Metadata about the inline image as specified by the extension.
+     * @returns {ScratchBlocksJson} The scratch-blocks JSON for the inline image field.
      * @private
      */
     _constructInlineImageJson (argInfo) {
@@ -1339,10 +1549,10 @@ class Runtime extends EventEmitter {
     /**
      * Helper for _convertForScratchBlocks which handles linearization of argument placeholders. Called as a callback
      * from string#replace. In addition to the return value the JSON and XML items in the context will be filled.
-     * @param {object} context - information shared with _convertForScratchBlocks about the block, etc.
+     * @param {PlaceholderContext} context - Information shared with _convertForScratchBlocks about the block.
      * @param {string} match - the overall string matched by the placeholder regex, including brackets: '[FOO]'.
      * @param {string} placeholder - the name of the placeholder being matched: 'FOO'.
-     * @returns {string} scratch-blocks placeholder for the argument: '%1'.
+     * @returns {string} The scratch-blocks placeholder for the argument, such as '%1'.
      * @private
      */
     _convertPlaceholders (context, match, placeholder) {
@@ -1444,10 +1654,9 @@ class Runtime extends EventEmitter {
     }
 
     /**
-     * @returns {Array.<object>} scratch-blocks XML for each category of extension blocks, in category order.
-     * @param {?Target} [target] - the active editing target (optional)
-     * @property {string} id - the category / extension ID
-     * @property {string} xml - the XML text for this category, starting with `<category>` and ending with `</category>`
+     * Get scratch-blocks XML for each extension category.
+     * @param {Target|undefined} target - the active editing target, if any.
+     * @returns {Array<BlockCategoryXml>} Scratch-blocks XML for each category of extension blocks.
      */
     getBlocksXML (target) {
         return this._blockInfo.map(categoryInfo => {
@@ -1495,7 +1704,8 @@ class Runtime extends EventEmitter {
     }
 
     /**
-     * @returns {Array.<string>} - an array containing the scratch-blocks JSON information for each dynamic block.
+     * Get scratch-blocks JSON for each dynamic block.
+     * @returns {Array<ScratchBlocksJson|undefined>} The scratch-blocks JSON information for each dynamic block.
      */
     getBlocksJSON () {
         return this._blockInfo.reduce(
@@ -1544,7 +1754,7 @@ class Runtime extends EventEmitter {
     /**
      * Configure how ScratchLink sockets are created. Factory must consume a "type" parameter
      * either BT or BLE.
-     * @param {Function} factory The new factory for creating ScratchLink sockets.
+     * @param {ScratchLinkSocketFactory} factory The new factory for creating ScratchLink sockets.
      */
     configureScratchLinkSocketFactory (factory) {
         this._linkSocketFactory = factory;
@@ -1553,7 +1763,7 @@ class Runtime extends EventEmitter {
     /**
      * The default scratch link socket creator, using websockets to the installed device manager.
      * @param {string} type Either BLE or BT
-     * @returns {ScratchLinkSocket} The new scratch link socket (a WebSocket object)
+     * @returns {ScratchLinkSocket} The new scratch link socket.
      */
     _defaultScratchLinkSocketFactory (type) {
         const Scratch = self.Scratch;
@@ -1567,7 +1777,7 @@ class Runtime extends EventEmitter {
      * Register an extension that communications with a hardware peripheral by id,
      * to have access to it and its peripheral functions in the future.
      * @param {string} extensionId - the id of the extension.
-     * @param {object} extension - the extension to register.
+     * @param {PeripheralExtension} extension - the extension to register.
      */
     registerPeripheralExtension (extensionId, extension) {
         this.peripheralExtensions[extensionId] = extension;
@@ -1628,7 +1838,7 @@ class Runtime extends EventEmitter {
     /**
      * Retrieve the function associated with the given opcode.
      * @param {!string} opcode The opcode to look up.
-     * @returns {Function} The function which implements the opcode.
+     * @returns {PrimitiveHandler|undefined} The function which implements the opcode.
      */
     getOpcodeFunction (opcode) {
         return this._primitives[opcode];
@@ -1685,7 +1895,7 @@ class Runtime extends EventEmitter {
     /**
      * Set the bitmap adapter for the VM/runtime, which converts scratch 2
      * bitmaps to scratch 3 bitmaps. (Scratch 3 bitmaps are all bitmap resolution 2)
-     * @param {!Function} bitmapAdapter The adapter to attach
+     * @param {PrimitiveHandler} bitmapAdapter The adapter to attach.
      */
     attachV2BitmapAdapter (bitmapAdapter) {
         this.v2BitmapAdapter = bitmapAdapter;
@@ -1706,7 +1916,7 @@ class Runtime extends EventEmitter {
      * Create a thread and push it to the list of threads.
      * @param {!string} id ID of block that starts the stack.
      * @param {!Target} target Target to run thread on.
-     * @param {?object} opts optional arguments
+     * @param {{stackClick?: boolean, updateMonitor?: boolean}|undefined} opts Optional arguments.
      * @param {?boolean} opts.stackClick true if the script was activated by clicking on the stack
      * @param {?boolean} opts.updateMonitor true if the script should update a monitor value
      * @returns {!Thread} The newly created thread.
@@ -1788,8 +1998,8 @@ class Runtime extends EventEmitter {
     /**
      * Toggle a script.
      * @param {!string} topBlockId ID of block that starts the script.
-     * @param {?object} opts optional arguments to toggle script
-     * @param {?string} opts.target target ID for target to run script on. If not supplied, uses editing target.
+     * @param {{target?: Target, stackClick?: boolean}|undefined} opts Optional arguments to toggle the script.
+     * @param {?Target} opts.target Target to run the script on. If not supplied, uses the editing target.
      * @param {?boolean} opts.stackClick true if the user activated the stack by clicking, false if not. This
      *     determines whether we show a visual report when turning on the script.
      */
@@ -1841,7 +2051,7 @@ class Runtime extends EventEmitter {
      * `f` will be called with two parameters:
      *  - the top block ID of the script.
      *  - the target that owns the script.
-     * @param {!Function} f Function to call for each script.
+     * @param {ScriptCallback} f Function to call for each script.
      * @param {Target=} optTarget Optionally, a target to restrict to.
      */
     allScriptsDo (f, optTarget) {
@@ -1878,7 +2088,7 @@ class Runtime extends EventEmitter {
      * @param {!string} requestedHatOpcode Opcode of hats to start.
      * @param {object=} optMatchFields Optionally, fields to match on the hat.
      * @param {Target=} optTarget Optionally, a target to restrict to.
-     * @returns {Array.<Thread>} List of threads started by this function.
+     * @returns {Array.<Thread>|undefined} List of threads started by this function.
      */
     startHats (requestedHatOpcode,
         optMatchFields, optTarget) {
@@ -2260,7 +2470,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Set the framerate (also called TPS in VM).
-     * @param {boolean} framerate Frames per seconde
+     * @param {number} framerate Frames per second.
      */
     setFramerate (framerate) {
         this.framerate = framerate;
@@ -2412,7 +2622,7 @@ class Runtime extends EventEmitter {
     /**
      * Add a monitor to the state. If the monitor already exists in the state,
      * updates those properties that are defined in the given monitor record.
-     * @param {!MonitorRecord} monitor Monitor to add.
+     * @param {{get: (key: string) => unknown}} monitor Monitor to add.
      */
     requestAddMonitor (monitor) {
         const id = monitor.get('id');
@@ -2424,7 +2634,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Update a monitor in the state and report success/failure of update.
-     * @param {!Map} monitor Monitor values to update. Values on the monitor with overwrite
+     * @param {{get: (key: string) => unknown}} monitor Monitor values to update.
      *     values on the old monitor with the same ID. If a value isn't defined on the new monitor,
      *     the old monitor will keep its old value.
      * @returns {boolean} true if monitor exists in the state and was updated, false if it did not exist.
@@ -2491,7 +2701,7 @@ class Runtime extends EventEmitter {
     /**
      * Get a target by its id.
      * @param {string} targetId Id of target to find.
-     * @returns {?Target} The target, if found.
+     * @returns {Target|undefined} The target, if found.
      */
     getTargetById (targetId) {
         for (let i = 0; i < this.targets.length; i++) {
@@ -2505,7 +2715,7 @@ class Runtime extends EventEmitter {
     /**
      * Get the first original (non-clone-block-created) sprite given a name.
      * @param {string} spriteName Name of sprite to look for.
-     * @returns {?Target} Target representing a sprite of the given name.
+     * @returns {Target|undefined} Target representing a sprite of the given name.
      */
     getSpriteTargetByName (spriteName) {
         for (let i = 0; i < this.targets.length; i++) {
@@ -2522,7 +2732,7 @@ class Runtime extends EventEmitter {
     /**
      * Get a target by its drawable id.
      * @param {number} drawableID drawable id of target to find
-     * @returns {?Target} The target, if found
+     * @returns {Target|undefined} The target, if found.
      */
     getTargetByDrawableId (drawableID) {
         for (let i = 0; i < this.targets.length; i++) {
@@ -2582,7 +2792,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Get a target representing the Scratch stage, if one exists.
-     * @returns {?Target} The target, if found.
+     * @returns {Target|undefined} The target, if found.
      */
     getTargetForStage () {
         for (let i = 0; i < this.targets.length; i++) {
@@ -2613,10 +2823,7 @@ class Runtime extends EventEmitter {
     /**
      * Get the label or label function for an opcode
      * @param {string} extendedOpcode - the opcode you want a label for
-     * @returns {object} - object with label and category
-     * @property {string} category - the category for this opcode
-     * @property {Function} [labelFn] - function to generate the label for this opcode
-     * @property {string} [label] - the label for this opcode if `labelFn` is absent
+     * @returns {OpcodeLabelInfo|undefined} The label metadata for this opcode.
      */
     getLabelForOpcode (extendedOpcode) {
         const [category, opcode] = StringUtil.splitFirst(extendedOpcode, '_');
@@ -2750,8 +2957,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Turn on profiling.
-     * @param {Profiler/FrameCallback} onFrame A callback handle passed a
-     * profiling frame when the profiler reports its collected data.
+     * @param {ProfilerFrameHandler} onFrame A callback for profiling frames.
      */
     enableProfiling (onFrame) {
         if (Profiler.available()) {

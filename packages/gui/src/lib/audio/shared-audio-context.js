@@ -7,20 +7,17 @@ if (!bowser.msie) {
     /**
      * AudioContext can be initialized only when user interaction event happens
      */
-    const event =
-        typeof document.ontouchstart === 'undefined' ?
-            'mousedown' :
-            'touchstart';
-    const keyEvent = 'keydown';
     const initAudioContext = () => {
-        document.removeEventListener(event, initAudioContext);
+        document.removeEventListener('touchstart', initAudioContext);
+        document.removeEventListener('mousedown', initAudioContext);
+        document.removeEventListener('keydown', initAudioContext);
         AUDIO_CONTEXT = new (window.AudioContext ||
             window.webkitAudioContext)();
-        document.removeEventListener(keyEvent, initAudioContext);
         StartAudioContext(AUDIO_CONTEXT);
     };
-    document.addEventListener(event, initAudioContext);
-    document.addEventListener(keyEvent, initAudioContext);
+    document.addEventListener('touchstart', initAudioContext);
+    document.addEventListener('mousedown', initAudioContext);
+    document.addEventListener('keydown', initAudioContext);
 }
 
 /**
