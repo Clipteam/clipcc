@@ -33,8 +33,7 @@ const base = {
             'clipcc-block': path.resolve(__dirname, '../block/src/index.ts'),
             'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
             'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js')
-        },
-        symlinks: false
+        }
     },
     snapshot: {
         managedPaths: [
@@ -59,13 +58,12 @@ const base = {
         {
             test: /\.jsx?$/,
             loader: 'babel-loader',
-            include: [
-                path.resolve(__dirname, 'src'),
-                /node_modules[\\/]scratch-[^\\/]+[\\/]src/,
-                /node_modules[\\/]clipcc-[^\\/]+[\\/]src/,
-                /node_modules[\\/]pify/,
-                /node_modules[\\/]@vernier[\\/]godirect/
-            ],
+            exclude: {
+                and: [/node_modules/],
+                not: [
+                    /node_modules[\\/](scratch|clipcc)-[^\\/]+[\\/]src/
+                ]
+            },
             options: {
                 // Explicitly disable babelrc so we don't catch various config
                 // in much lower dependencies.
@@ -176,7 +174,7 @@ if (base.mode === 'development') {
     base.module.rules.push({
         test: /blocks-msgs\.js$/,
         include: [
-            /node_modules[\\/]clipcc-l10n[\\/]locales/
+            path.resolve(__dirname, '../l10n/locales')
         ],
         use: [{
             loader: path.resolve(__dirname, 'scripts/block-message-loader.js')

@@ -1,5 +1,7 @@
 const path = require('path');
 
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+
 module.exports = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devtool: 'cheap-module-source-map',
@@ -36,5 +38,8 @@ module.exports = {
         'audio-context': true,
         '@turbowarp/nanolog': true,
         'startaudiocontext': true
-    }
+    },
+    plugins: [
+        new NodePolyfillPlugin()
+    ]
 };

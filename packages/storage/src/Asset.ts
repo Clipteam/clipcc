@@ -1,4 +1,4 @@
-import md5 from 'js-md5';
+import {md5} from 'js-md5';
 import {memoizedToString, _TextEncoder, _TextDecoder} from './memoizedToString';
 import type {AssetTypeValue} from './AssetType';
 import type {IDataFormat} from './DataFormat';
@@ -57,7 +57,7 @@ export default class Asset {
         /** @type {Buffer} */
         this.data = data;
 
-        if (generateId) this.assetId = md5(data);
+        if (generateId && data !== undefined) this.assetId = md5(data);
 
         // Mark as clean only if set is being called without generateId
         // If a new id is being generated, mark this asset as not clean

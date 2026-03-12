@@ -43,7 +43,7 @@ module.exports = [
             'jsdoc/require-param': 'error',
             'jsdoc/require-param-description': 'error',
             'jsdoc/require-param-type': 'error',
-            'jsdoc/require-returns': 'error',
+            'jsdoc/require-returns': 'off', /** tsc can infer return types */
             'jsdoc/tag-lines': 'off',
 
             // Best practices

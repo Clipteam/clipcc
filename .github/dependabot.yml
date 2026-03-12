@@ -1,12 +1,17 @@
 version: 2
 updates:
-  # This configures updates for the root package.json
+  # This configures npm updates for the root package and all workspace packages.
   - package-ecosystem: "npm"
-    directory: "/"
+    directories:
+      - "/"
+      - "/packages/*"
     schedule:
       interval: "daily"
-  # This configures updates for each workspace in the packages directory
-  - package-ecosystem: "npm"
-    directory: "/packages/*"
-    schedule:
-      interval: "daily"
+    commit-message:
+      prefix: ":arrow_up: chore"
+      include: "scope"
+    groups:
+      npm-monorepo:
+        patterns:
+          - "*"
+        group-by: "dependency-name"

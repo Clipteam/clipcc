@@ -22,12 +22,12 @@ jobs:
           python-version: '3.10'
 
       - name: Build
-        run: yarn run build:dist
+        run: pnpm run build:dist
 
       - name: Create versions or publish to npm registry
         uses: changesets/action@v1
         with:
-          publish: yarn release-all
+          publish: pnpm run release-all
           commit: ':bookmark: ci: release clipcc'
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

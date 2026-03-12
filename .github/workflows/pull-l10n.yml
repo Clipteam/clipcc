@@ -15,7 +15,7 @@ jobs:
         uses: ./.github/actions/setup-deps
 
       - name: Pull Translation
-        run: yarn run translation:pull
+        run: pnpm run translation:pull
         env:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_TOKEN }}
 
