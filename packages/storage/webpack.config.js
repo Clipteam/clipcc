@@ -14,7 +14,7 @@ const createConfig = overrideManifest => {
 
 // Web-compatible
 const webNonMin = createConfig({
-    target: 'web',
+    target: 'browserslist',
     distPath: './dist/web',
     entry: {
         'scratch-storage': './src/index.ts'

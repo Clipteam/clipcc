@@ -1,0 +1,5 @@
+{
+  "name": "test-workspace-beta",
+  "version": "1.0.0",
+  "main": "src/beta-entry.js"
+}

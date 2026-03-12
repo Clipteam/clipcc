@@ -32,7 +32,7 @@ const configs = [];
 
 const fallbackAssetRule = {
     test: /\.(svg|png|wav|gif|jpg)$/,
-    resourceQuery: { not: [/raw/] },
+    resourceQuery: {not: [/raw/]},
     type: 'asset/inline'
 };
 
@@ -139,7 +139,7 @@ configs.push(playground);
 if (process.env.NODE_ENV === 'production' || process.env.BUILD_MODE === 'dist') {
     const lib = createConfig({
         target: 'web',
-        publicPath: STATIC_PATH,
+        publicPath: `${STATIC_PATH}/`,
         entry: {
             'scratch-gui': './src/index.js'
         },
@@ -169,17 +169,14 @@ if (process.env.NODE_ENV === 'production' || process.env.BUILD_MODE === 'dist') 
         ],
         optimization: {
             minimizer: [
-                new TerserPlugin({
-                    include: /\.min\.js$/
-                }),
                 new ImageMinimizerPlugin({
                     minimizer: {
                         implementation: ImageMinimizerPlugin.imageminMinify,
                         options: {
                             plugins: [
-                                ['gifsicle', { interlaced: true }],
-                                ['jpegtran', { progressive: true }],
-                                ['optipng', { optimizationLevel: 5 }]
+                                ['gifsicle', {interlaced: true}],
+                                ['jpegtran', {progressive: true}],
+                                ['optipng', {optimizationLevel: 5}]
                             ]
                         }
                     }

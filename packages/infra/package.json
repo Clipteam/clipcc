@@ -23,7 +23,7 @@
   "bugs": {
     "url": "https://github.com/Clipteam/clipcc/issues"
   },
-  "homepage": "https://github.com/Clipteamclipcc#readme",
+  "homepage": "https://github.com/Clipteam/clipcc#readme",
   "dependencies": {
     "webpack-node-externals": "^3.0.0"
   },

@@ -54,7 +54,7 @@ const node = createConfig({
   }
 });
 
-// Web-comptible
+// Web-compatible
 const web = createConfig({
   distPath: './dist/web',
   target: 'web'

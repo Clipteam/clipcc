@@ -5,7 +5,6 @@ const fs = require('fs');
 const webpack = require('webpack');
 
 const TerserPlugin = require('terser-webpack-plugin');
-const nodeExternals = require('webpack-node-externals');
 
 /** @typedef {import('webpack').Configuration} Configuration */
 /** @typedef {import('webpack').RuleSetRule} RuleSetRule */
@@ -29,33 +28,34 @@ const nodeExternals = require('webpack-node-externals');
  * }} ManifestRule
  */
 /**
- * @typedef {{
- *     entry: EntryConfig,
- *     libraryName: string,
- *     target?: Configuration['target'],
- *     devTool?: Configuration['devtool'],
- *     rootPath: string,
- *     srcPath?: string,
- *     distPath?: string,
- *     publicPath?: string,
- *     sourcePaths?: string[],
- *     enableReact?: boolean,
- *     enableTs?: boolean,
- *     shouldSplitChunks?: boolean,
- *     rules?: ManifestRule[],
- *     plugins?: Configuration['plugins'],
- *     alias?: Record<string, string>,
- *     snapshot?: SnapshotConfig,
- *     playground?: boolean | number,
- *     externals?: Configuration['externals'],
- *     workspacePackages?: string[]
- * }} WebpackManifest
+ * Manifest consumed by {@link WebpackConfigBuilder} to generate the final webpack configuration.
+ *
+ * @typedef {object} WebpackManifest
+ * @property {EntryConfig} entry Webpack entry definition. Relative string and array entries are resolved from `rootPath`. The first resolved entry is also used as the exact-match alias target when this package is consumed through `workspacePackages`.
+ * @property {string} libraryName Library name for non-node targets. It becomes `output.library.name` when the generated artifact is emitted as UMD.
+ * @property {Configuration['target']=} target Webpack target. Node-like targets emit `commonjs2` output and enable `externalsPresets.node`; other targets emit UMD bundles.
+ * @property {Configuration['devtool']=} devTool Source map mode for the generated config. Defaults to `cheap-module-source-map`.
+ * @property {string} rootPath Base path used to resolve relative entries, source paths, rule conditions, aliases, and snapshot paths.
+ * @property {string=} srcPath Main source directory for the package. Defaults to `src` and is included in the default transpilation rules.
+ * @property {string=} distPath Output directory for the generated bundle. Defaults to `dist` and becomes `output.path`.
+ * @property {string=} publicPath Runtime base URL for emitted assets and chunks. Defaults to `/` and becomes `output.publicPath`.
+ * @property {string[]=} sourcePaths Additional source directories that should be processed by the default JS and TS rules alongside `srcPath`.
+ * @property {boolean=} enableReact Enables React support. This adds `@babel/preset-react` and enables CSS module handling for React source paths.
+ * @property {boolean=} enableTs Enables TypeScript support. This adds `ts-loader` with `transpileOnly: true` for `.ts` and `.tsx` files under the configured source paths.
+ * @property {boolean=} shouldSplitChunks Enables async chunk splitting by setting `optimization.splitChunks.chunks` to `async`.
+ * @property {ManifestRule[]=} rules Additional webpack rules appended after the built-in rules. Nested `rules`, `oneOf`, `include`, and `exclude` paths are normalized from `rootPath`.
+ * @property {Configuration['plugins']=} plugins Additional webpack plugins appended after the built-in `webpack.ProvidePlugin` that injects `Buffer`.
+ * @property {Record<string, string>=} alias Extra `resolve.alias` entries. Relative paths are resolved from `rootPath`; explicit aliases in the current manifest override inherited workspace-package aliases.
+ * @property {SnapshotConfig=} snapshot Webpack snapshot configuration merged into the final config. Path arrays are normalized from `rootPath` and merged across workspace packages.
+ * @property {boolean | number=} playground Enables `devServer` output for local playground builds. `true` uses `process.env.PORT` or `auto`; a number forces a specific port.
+ * @property {Configuration['externals']=} externals Webpack externals passed through to the final config. This changes which dependencies are bundled into the emitted artifact.
+ * @property {Configuration['optimization']=} optimization Extra optimization settings merged into the generated config before the default `.min.js` terser minimizer is appended.
+ * @property {string[]=} workspacePackages Package names to resolve through `packageName/webpack.manifest.js`. Their source paths, aliases, rules, and snapshot settings are merged so they can be consumed directly from source.
  */
 
 const DEFAULT_CHUNK_FILENAME = 'chunks/[name].js';
 const DEFAULT_TS_LOADER_OPTIONS = {
-    transpileOnly: true,
-    allowTsInNodeModules: true
+    transpileOnly: true
 };
 
 /**
@@ -309,7 +309,8 @@ const normalizeManifest = manifest => {
         target: manifest.target ?? 'web',
         playground: manifest.playground ?? false,
         workspacePackages: manifest.workspacePackages ?? [],
-        externals: manifest.externals ?? {}
+        externals: manifest.externals ?? {},
+        optimization: manifest.optimization ?? {}
     };
 };
 
@@ -550,7 +551,7 @@ class WebpackConfigBuilder {
         const configuration = {
             context: this.manifest.rootPath,
             mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-            devtool: 'cheap-module-source-map',
+            devtool: this.manifest.devTool,
             target: this.manifest.target,
             entry: this.manifest.entry,
             output,
@@ -571,6 +572,7 @@ class WebpackConfigBuilder {
                 }),
                 ...this.manifest.plugins
             ],
+            optimization: this.manifest.optimization,
             externals: this.manifest.externals
         };
 
@@ -580,7 +582,7 @@ class WebpackConfigBuilder {
 
         if (this.manifest.shouldSplitChunks) {
             configuration.optimization = {
-                ...(configuration.optimization ?? {}),
+                ...configuration.optimization,
                 splitChunks: {
                     chunks: 'async'
                 }
@@ -597,8 +599,9 @@ class WebpackConfigBuilder {
 
         configuration.optimization = {
             minimize: process.env.NODE_ENV === 'production',
-            ...(configuration.optimization ?? {}),
+            ...configuration.optimization,
             minimizer: [
+                ...configuration.optimization?.minimizer ?? [],
                 new TerserPlugin({
                     include: /\.min\.js$/
                 })
@@ -607,7 +610,6 @@ class WebpackConfigBuilder {
 
         if (targetingNode) {
             configuration.externalsPresets = {node: true};
-            configuration.externals = [nodeExternals()];
             configuration.output.environment = {
                 nodePrefixForCoreModules: false // Backwards compatibility
             };

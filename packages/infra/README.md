@@ -1,202 +1,235 @@
-# scratch-webpack-configuration
+# clipcc-infra
 
-Shared configuration for Scratch's use of webpack
+Provides shared infrastructure for other clipcc packages. Right now that mainly means a webpack configuration builder with a consistent set of defaults for JS, TypeScript, React, CSS modules, playground builds, and source-linked workspace packages.
 
-## Usage
+## Webpack
 
-Add something like this to your `webpack.config.*js` file:
+### Basic Usage
+
+Add something like this to your `webpack.config.js` file:
 
 ```javascript
-import ScratchWebpackConfigBuilder from 'scratch-webpack-configuration';
+// @ts-check
+/**
+ * @import { WebpackManifest } from 'clipcc-infra';
+ */
 
-const builder = new ScratchWebpackConfigBuilder(
-    {
-        rootPath: __dirname,
-        enableReact: true
-    })
-    .setTarget('browserslist')
-    .addModuleRule({
-        test: /\.css$/,
-        use: [/* CSS loaders */]
-    })
-    .addPlugin(new CopyWebpackPlugin({
-        patterns: [/* CopyWebpackPlugin patterns */]
-    });
+const WebpackConfigBuilder = require('clipcc-infra');
+
+/** @type {WebpackManifest} */
+const manifest = {
+    rootPath: __dirname,
+    libraryName: 'my-library',
+    entry: './src/index.js',
+    enableReact: true,
+    enableTs: true,
+    plugins: [],
+    rules: []
+};
 
 if (process.env.FOO === 'bar') {
-    builder.addPlugin(new MyCustomPlugin());
+    manifest.plugins.push(new MyCustomPlugin());
+    manifest.rules.push({
+        test: /\.foo$/,
+        use: [/* FOO loaders */]
+    });
 }
+
+const builder = new WebpackConfigBuilder(manifest);
 
 module.exports = builder.get();
 ```
 
-Call `addModuleRule` and `addPlugin` as few or as many times as needed. If you need multiple configurations, you can
-use `clone()` to share a base configuration and then add or override settings:
+This produces a webpack 5 configuration with sensible defaults for clipcc packages. Custom plugins, aliases, optimization settings, snapshot settings, and module rules are merged into that generated configuration instead of replacing it wholesale.
+
+### Workspace Packages
+
+If your project is part of a monorepo, add package names to `workspacePackages` so other workspace packages can be consumed from source safely. This is useful when related packages are under active development and you want webpack to compile them directly instead of relying on a prebuilt local install.
+
+To make a package consumable from source, add a `webpack.manifest.js` file at the package root:
 
 ```javascript
-const baseConfig = new ScratchWebpackConfigBuilder({rootPath: __dirname, libraryName: 'my-library'})
-    .addModuleRule({
-        test: /\.foo$/,
-        use: [/* FOO loaders */]
-    });
+// @ts-check
+/**
+ * @import { WebpackManifest } from '../infra';
+ */
 
-const config1 = baseConfig.clone()
-    .setTarget('browserslist')
-    .merge({/* arbitrary configuration */})
-    .addPlugin(new MyCustomPlugin('hi'));
+/** @satisfies {WebpackManifest} */
+const manifest = {
+    libraryName: 'ClipCCRender',
+    entry: './src/index.js',
+    rootPath: __dirname,
+    enableTs: true
+};
 
-const config2 = baseConfig.clone()
-    .setTarget('node')
-    .addPlugin(new MyCustomPlugin('hello'));
-
-module.exports = [
-    config1.get(),
-    config2.get()
-];
+module.exports = manifest;
 ```
 
-To load another workspace package from source without leaking that package's
-loader rules into the current package, register it explicitly:
+That manifest is what downstream packages read, so keep `entry` aligned with the public source entry for the package.
+
+Then make the package's `webpack.config.js` build from that manifest so it still works when built on its own:
 
 ```javascript
-const builder = new ScratchWebpackConfigBuilder({
-  rootPath: __dirname,
-  enableReact: true,
-  enableTs: true
-})
-  .addWorkspacePackage({
-    name: 'clipcc-block',
-    rootPath: path.resolve(__dirname, '../block'),
-    moduleRules: [{
-      test: /\.css$/,
-      use: 'raw-loader'
-    }]
-  })
-  .setTarget('browserslist');
+const manifest = require('./webpack.manifest');
+const WebpackConfigBuilder = require('../infra');
+
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
+const createConfig = overrideManifest => new WebpackConfigBuilder({
+    ...manifest,
+    ...overrideManifest
+}).get();
+
+// Playground
+const playground = createConfig({
+    target: 'web',
+    distPath: './playground',
+    entry: {
+        playground: './src/playground/playground.js',
+        queryPlayground: './src/playground/queryPlayground.js'
+    },
+    playground: 8361
+});
+
+playground.plugins.push(
+    new CopyWebpackPlugin({
+        patterns: [{
+            context: 'src/playground',
+            from: '*.+(html|css)'
+        }]
+    })
+);
+
+// Web-compatible
+const web = createConfig({
+    target: 'web',
+    distPath: './dist/web',
+    entry: {
+        'scratch-render': './src/index.js',
+        'scratch-render.min': './src/index.js'
+    }
+});
+
+// Node-compatible
+const node = createConfig({
+    target: 'node'
+});
+
+module.exports = [playground, web, node];
 ```
 
-The builder will:
+Other packages can then consume that package from source by listing it in `workspacePackages`:
 
-- resolve `clipcc-block` from the package `src/` directory
-- include that source tree in the default JS/TS transpilation rules
-- wrap its extra `module.rules` so they only apply to files inside that package
+```javascript
+// @ts-check
+/**
+ * @import { WebpackManifest } from '../infra';
+ */
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-## What it does
+/** @satisfies {WebpackManifest} */
+const base = {
+    libraryName: 'Consumer',
+    entry: './src/index.js',
+    rootPath: __dirname,
+    enableReact: true,
+    enableTs: true,
+    workspacePackages: [
+        'clipcc-render'
+    ],
+    plugins: [
+        new CopyWebpackPlugin({
+            /* ... */
+        })
+    ]
+};
 
-- Sets up a default configuration that is suitable for most Scratch projects
-  - Use `enableReact` to enable React support
-  - Target `node` or `browserslist` (more targets will be added as needed)
-- Adds `babel-loader` with the `@babel/preset-env` preset
-  - Adds `@babel/preset-react` if React support is enabled
-- Adds `ts-loader` when TypeScript support is enabled
-  - By default it uses `transpileOnly: true` and `allowTsInNodeModules: true`
-  - Override this with `tsLoaderOptions`, or disable the defaults with `useDefaultTsLoaderOptions: false`
-- Adds target-specific presets for `webpack` 5's `externals` and `externalsPresets` settings
-- Target-specific output directory under `dist/`
-  - `browserslist` builds to `dist/web/`
-  - `node` builds to `dist/node/`
-- Supports merging in arbitrary configuration with `merge({...})`
-- Can register workspace packages from source with package-scoped webpack rules
+module.exports = base;
+```
 
-### Asset Modules
+When a package is listed in `workspacePackages`, the builder will:
 
-This configuration makes webpack 5's [Asset Modules](https://webpack.js.org/guides/asset-modules/) available through
-resource queries parameters:
+1. Add an exact-match alias from `package-name$` to that package's entry file, so `import 'package-name'` resolves to its declared source entry.
+2. Add a prefix alias from `package-name` to that package's source directory, so `import 'package-name/foo'` resolves inside its source tree.
+3. Expand the default JS, TS, and React CSS handling to include that package's source paths.
+4. Merge the package's own aliases, rules, and snapshot configuration into the generated config.
+5. Recursively load its own `workspacePackages`, so nested source dependencies can also be compiled from source.
+
+### Default Behavior
+
+The builder currently does these things:
+
+- Resolves `entry`, `srcPath`, `distPath`, rule `include` and `exclude` paths, alias values, and snapshot paths relative to `rootPath`.
+- Uses `cheap-module-source-map` by default for `devtool`.
+- Uses `target: 'web'` by default.
+- Emits UMD output for non-node targets and CommonJS output for node-like targets.
+- Adds `babel-loader` with `@babel/preset-env` for JS sources.
+- Adds `@babel/preset-react` when `enableReact` is enabled.
+- Adds `ts-loader` with `transpileOnly: true` when `enableTs` is enabled.
+- Adds CSS module handling for `.css` files under React source paths when `enableReact` is enabled.
+- Injects `Buffer` through `webpack.ProvidePlugin`.
+- Enables `devServer` when `playground` is set.
+- Preserves user-supplied `optimization` and appends a terser pass for files that end with `.min.js`.
+- Enables `splitChunks.chunks = 'async'` when `shouldSplitChunks` is enabled.
+- Sets `externalsPresets.node = true` and disables `nodePrefixForCoreModules` for node-like targets.
+
+### Asset Handling
+
+The built-in rules currently add only a few asset-oriented behaviors:
 
 ```js
-import myImage from './my-image.png?asset'; // Use `asset` (let webpack decide)
-import myImage from './my-image.png?resource'; // Use `asset/resource`, similar to `file-loader`
-import myImage from './my-image.png?inline'; // Use `asset/inline`, similar to `url-loader`
-import myImage from './my-image.png?source'; // Use `asset/source`, similar to `raw-loader`
+import firmware from './firmware.hex';
+import bytes from './sound.wav?arrayBuffer';
+import text from './template.svg?raw';
 ```
 
-You can also use `file` for `asset/resource`, `url` for `asset/inline`, and `raw` for `asset/source`, to make it clear
-which loader you're replacing.
+- `.hex` files are emitted as inline `data:` URLs using base64 text content.
+- `?arrayBuffer` uses `arraybuffer-loader`.
+- `?raw` uses webpack's `asset/source` behavior.
 
-## API
+If you need additional asset module behavior such as `asset/resource` or `asset/inline` for other file types, add a custom rule in your manifest.
 
-### `new ScratchWebpackConfigBuilder(options)`
+### API
 
-Creates a new `ScratchWebpackConfigBuilder` instance.
+#### `new WebpackConfigBuilder(manifest: WebpackManifest)`
 
-#### `options`
+Creates a builder instance and normalizes the manifest immediately. Any packages listed in `workspacePackages` are resolved and merged during construction.
 
-Required:
+Required manifest fields:
 
-- `rootPath` (string, required): The root path of the project. This is used to establish defaults for other paths.
+- `entry`: The webpack entry definition for the package.
+- `libraryName`: The UMD global name used for non-node targets.
+- `rootPath`: The base directory used to resolve relative paths in the manifest.
 
-Optional:
+Optional manifest fields:
 
-- `distPath` (string, default: `path.join(rootPath, 'dist')`): The path to the output directory. Defaults to `dist`
-- `enableReact` (boolean, default: `false`): Whether to enable React support. Adds `.jsx` to the list of extensions
-  to process, and adjusts Babel settings.
-- `libraryName` (string, default: `undefined`): If set, configures a default entry point and output library name.
-  under the root path.
-- `srcPath` (string, default: `path.join(rootPath, 'src')`): The path to the source directory. Defaults to `src`
-  under the root path.
-- `enableTs` (boolean, default: `false`): Whether to enable TypeScript support.
-- `sourcePaths` (`Array<string>`, default: `[]`): Additional source roots to process with the default JS/TS rules.
-- `tsLoaderOptions` (object, default: ClipCC defaults): Extra options to merge into `ts-loader`.
-- `useDefaultTsLoaderOptions` (boolean, default: `true`): Whether to keep ClipCC's default `ts-loader` options.
+- `target`: Webpack target. Node-like targets switch output to CommonJS and enable `externalsPresets.node`.
+- `devTool`: Source map mode for the generated config. Defaults to `cheap-module-source-map`.
+- `srcPath`: Main source directory. Defaults to `./src`.
+- `distPath`: Output directory for the bundle. Defaults to `./dist`.
+- `publicPath`: Runtime base URL for emitted assets. Defaults to `/`.
+- `sourcePaths`: Additional source directories that should go through the default JS and TS pipeline.
+- `enableReact`: Enables React JS transpilation and CSS module handling for React source paths.
+- `enableTs`: Enables `ts-loader` for TypeScript and TSX entries.
+- `shouldSplitChunks`: Enables async chunk splitting under `optimization.splitChunks`.
+- `rules`: Additional webpack rules appended after the built-in rules.
+- `plugins`: Additional webpack plugins appended after the built-in `Buffer` provider.
+- `alias`: Extra `resolve.alias` entries. These can override aliases inherited from workspace packages.
+- `snapshot`: Snapshot configuration merged into the final webpack config.
+- `playground`: Enables `devServer`; pass `true` to use `PORT` or `auto`, or pass a number to force a port.
+- `externals`: Webpack externals passed through to the final config.
+- `optimization`: Extra optimization settings merged into the final config before the default `.min.js` terser entry is appended.
+- `workspacePackages`: Package names to consume from source through `webpack.manifest.js`.
 
-### `builder.addWorkspacePackage(options)`
+#### `builder.addWorkspacePackage(packageName: string)`
 
-Registers a workspace package so it can be consumed from source safely.
+Loads a package manifest from `packageName/webpack.manifest.js` and merges its source-aware aliases, rules, snapshot settings, and recursive workspace package dependencies into the current builder.
 
-- `name` or `alias`: The resolve alias to register.
-- `rootPath`: The package root. Defaults `srcPath` to `path.join(rootPath, 'src')`.
-- `srcPath`: The package source directory if it is not under `src/`.
-- `aliasTarget`: Custom alias target. Defaults to `srcPath`.
-- `config`: Existing webpack config for the package. The builder selectively merges `module.rules`, `resolve`, and `snapshot`.
-- `moduleRules`: Extra rules for the package. These are scoped to the package source path.
-- `includeInDefaultLoaders` (boolean, default: `true`): Whether the builder's JS/TS rules should process this package.
+#### `builder.get(): Configuration`
 
-## Recommended Configuration
+Builds and returns the final webpack configuration object.
 
-### Package exports
+#### Browser Targets
 
-_The `exports` field in `package.json`_
+This package does not manage a shared `browserslist` definition. If your Babel and other tooling need browser targeting, configure `browserslist` in your package's `package.json` or a top-level `.browserslistrc` file so the same target matrix can be reused everywhere.
 
-Most `project.json` files specify a `main` entry point, and some specify `browser` as well. Newer versions of Node
-support the `exports` field as well. If both are present, `exports` will take precedence.
-
-For more information about `exports`, see: <https://webpack.js.org/guides/package-exports/>, especially the "Target
-environment" section.
-
-Unfortunately, plenty of tools don't support `exports` yet, and some that do exhibit some surprising quirks.
-
-Here's what I currently recommend for a project with only one entry point:
-
-```json
-{
-  "main": "./dist/node/foo.js",
-  "browser": "./dist/web/foo.js",
-  "exports": {
-    "webpack": "./src/index.js",
-    "browser": "./dist/web/foo.js",
-    "node": "./dist/node/foo.js",
-    "default": "./src/index.js"
-  },
-}
-```
-
-- `main` supports older Node as well as `jest`
-- `browser` is present for completeness; I haven't found it strictly necessary
-- `exports.webpack` is the entry point for Webpack
-  - `webpack` will grab the first item under `exports` matching its conditions, including `browser`, so I recommend
-    listing `exports.webpack` first in the `exports` object
-  - this allows (for example) `scratch-gui` to build `scratch-vm` from source rather than using the prebuilt version,
-    resulting in more optimal output and preventing version conflicts due to bundled dependencies
-- `exports.default` makes `eslint` happy
-- `exports.browser` and `exports.node` prevent `exports`-aware tools from using `exports.default` for all contexts
-
-Note that using `src/index.js` for the `webpack` and `default` exports means that the NPM package must include `src`.
-
-### `browserslist` target
-
-While it could be handy to include `browserslist` configuration in this package, there are tools other than `webpack`
-that should use the same `browserslist` configuration. For that reason, I recommend configuring `browserslist` in
-your `package.json` file or in a top-level `.browserslistrc` file.
-
-The Scratch system requirements determine the browsers we should target. That information can be found here:
-<https://scratch.mit.edu/faq>
