@@ -2,7 +2,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const WebpackConfigBuilder = require('../infra');
 const manifest = require('./webpack.manifest');
 
-const createConfig = (overrideManifest) => {
+const createConfig = overrideManifest => {
     const config = new WebpackConfigBuilder({
         ...manifest,
         ...overrideManifest
@@ -36,7 +36,8 @@ const node = createConfig({
         'jszip': true,
         '@turbowarp/nanolog': true,
         'clipcc-parser': true,
-        'socket.io-client': true
+        'socket.io-client': true,
+        'canvas': true
     }
 });
 
