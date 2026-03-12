@@ -253,7 +253,7 @@
   resolved "https://registry.yarnpkg.com/@babel/helper-validator-identifier/-/helper-validator-identifier-7.28.5.tgz#010b6938fab7cb7df74aa2bbc06aa503b8fe5fb4"
   integrity sha512-qSs4ifwzKJSV39ucNjsvc6WVHs6b7S03sOh2OcHF9UHfVPqWWALUsNUVzhSBiItjRZoLHx7nIarVjqKVusUZ1Q==
 
-"@babel/helper-validator-option@^7.14.5", "@babel/helper-validator-option@^7.27.1":
+"@babel/helper-validator-option@^7.27.1":
   version "7.27.1"
   resolved "https://registry.yarnpkg.com/@babel/helper-validator-option/-/helper-validator-option-7.27.1.tgz#fa52f5b1e7db1ab049445b421c4471303897702f"
   integrity sha512-YvjJow9FxbhFFKDSuFnVCe2WxXk1zWc22fFePVNEaWJEu8IrZVlda6N0uHwzZrUM1il7NC9Mlp4MaJYbYd9JSg==
@@ -825,21 +825,21 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-react-display-name@^7.14.5", "@babel/plugin-transform-react-display-name@^7.28.0":
+"@babel/plugin-transform-react-display-name@^7.28.0":
   version "7.28.0"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-display-name/-/plugin-transform-react-display-name-7.28.0.tgz#6f20a7295fea7df42eb42fed8f896813f5b934de"
   integrity sha512-D6Eujc2zMxKjfa4Zxl4GHMsmhKKZ9VpcqIchJLvwTxad9zWIYulwYItBovpDOoNLISpcZSXoDJ5gaGbQUDqViA==
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/plugin-transform-react-jsx-development@^7.14.5", "@babel/plugin-transform-react-jsx-development@^7.27.1":
+"@babel/plugin-transform-react-jsx-development@^7.27.1":
   version "7.27.1"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-development/-/plugin-transform-react-jsx-development-7.27.1.tgz#47ff95940e20a3a70e68ad3d4fcb657b647f6c98"
   integrity sha512-ykDdF5yI4f1WrAolLqeF3hmYU12j9ntLQl/AOG1HAS21jxyg1Q0/J/tpREuYLfatGdGmXp/3yS0ZA76kOlVq9Q==
   dependencies:
     "@babel/plugin-transform-react-jsx" "^7.27.1"
 
-"@babel/plugin-transform-react-jsx@^7.14.5", "@babel/plugin-transform-react-jsx@^7.27.1":
+"@babel/plugin-transform-react-jsx@^7.27.1":
   version "7.28.6"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx/-/plugin-transform-react-jsx-7.28.6.tgz#f51cb70a90b9529fbb71ee1f75ea27b7078eed62"
   integrity sha512-61bxqhiRfAACulXSLd/GxqmAedUSrRZIu/cbaT18T1CetkTmtDN15it7i80ru4DVqRK1WMxQhXs+Lf9kajm5Ow==
@@ -850,7 +850,7 @@
     "@babel/plugin-syntax-jsx" "^7.28.6"
     "@babel/types" "^7.28.6"
 
-"@babel/plugin-transform-react-pure-annotations@^7.14.5", "@babel/plugin-transform-react-pure-annotations@^7.27.1":
+"@babel/plugin-transform-react-pure-annotations@^7.27.1":
   version "7.27.1"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-pure-annotations/-/plugin-transform-react-pure-annotations-7.27.1.tgz#339f1ce355eae242e0649f232b1c68907c02e879"
   integrity sha512-JfuinvDOsD9FVMTHpzA/pBLisxpv1aSf+OIV8lgH3MuWrks19R27e6a6DipIg4aX1Zm9Wpb04p8wljfKrVSnPA==
@@ -1063,19 +1063,7 @@
     "@babel/types" "^7.4.4"
     esutils "^2.0.2"
 
-"@babel/preset-react@7.14.5":
-  version "7.14.5"
-  resolved "https://registry.yarnpkg.com/@babel/preset-react/-/preset-react-7.14.5.tgz#0fbb769513f899c2c56f3a882fa79673c2d4ab3c"
-  integrity sha512-XFxBkjyObLvBaAvkx1Ie95Iaq4S/GUEIrejyrntQ/VCMKUYvKLoyKxOBzJ2kjA3b6rC9/KL6KXfDC2GqvLiNqQ==
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.14.5"
-    "@babel/helper-validator-option" "^7.14.5"
-    "@babel/plugin-transform-react-display-name" "^7.14.5"
-    "@babel/plugin-transform-react-jsx" "^7.14.5"
-    "@babel/plugin-transform-react-jsx-development" "^7.14.5"
-    "@babel/plugin-transform-react-pure-annotations" "^7.14.5"
-
-"@babel/preset-react@^7.0.0", "@babel/preset-react@^7.14.5":
+"@babel/preset-react@7.28.5", "@babel/preset-react@^7.28.5":
   version "7.28.5"
   resolved "https://registry.yarnpkg.com/@babel/preset-react/-/preset-react-7.28.5.tgz#6fcc0400fa79698433d653092c3919bb4b0878d9"
   integrity sha512-Z3J8vhRq7CeLjdC58jLv4lnZ5RKFUJWqH5emvxmv9Hv3BD1T9R/Im713R4MTKwvFaV74ejZ3sM01LyEKk4ugNQ==
