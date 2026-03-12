@@ -6506,10 +6506,10 @@ clipcc-render-fonts@1.0.256:
   dependencies:
     base64-loader "^1.0.0"
 
-clipcc-sb1-converter@1.0.326:
-  version "1.0.326"
-  resolved "https://registry.yarnpkg.com/clipcc-sb1-converter/-/clipcc-sb1-converter-1.0.326.tgz#b370eed171fc5c7644e4a1a40e48a6bd6463d5f6"
-  integrity sha512-t7qPJhHXtGw8+Z82msjNqfM7tzO/u9sdqgI8EQ7nVpqS+/q66tbbni8ff4EM6VFHlH6Yc3FfpM5FyH1chdu1Iw==
+clipcc-sb1-converter@1.0.327:
+  version "1.0.327"
+  resolved "https://registry.yarnpkg.com/clipcc-sb1-converter/-/clipcc-sb1-converter-1.0.327.tgz#7d1567a8b636e4598eaee5a000f3d39902066d1b"
+  integrity sha512-OnmnpRWKImSKTA28gfxkdFVkZnGECFxGOJIFS0u3GJngG+QWTGYajA8J9eeRie9uXghj7QjRRdW818pNczofmg==
   dependencies:
     "@turbowarp/nanolog" "^1.0.1"
     fastestsmallesttextencoderdecoder "^1.0.22"

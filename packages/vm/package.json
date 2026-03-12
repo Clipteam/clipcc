@@ -36,7 +36,7 @@
     "btoa": "1.2.1",
     "canvas-toBlob": "1.0.0",
     "clipcc-parser": "3.2.0",
-    "clipcc-sb1-converter": "1.0.326",
+    "clipcc-sb1-converter": "1.0.327",
     "decode-html": "2.0.0",
     "diff-match-patch": "1.0.4",
     "fastestsmallesttextencoderdecoder": "^1.0.22",
