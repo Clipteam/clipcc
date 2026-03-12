@@ -12,7 +12,6 @@ const manifest = {
   rootPath: __dirname,
   entry: './src/index.js',
   enableTs: true,
-  sourcePaths: ['../render/src'],
   alias: {
     'text-encoding': 'fastestsmallesttextencoderdecoder'
   },
