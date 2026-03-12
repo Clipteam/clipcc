@@ -35,7 +35,7 @@
     "babel-eslint": "10.0.3",
     "eslint": "^9.39.2",
     "eslint-config-clipcc": "^9.0.9",
-    "tap": "21.0.1",
+    "tap": "21.6.2",
     "typescript": "^5.9.3",
     "web-audio-test-api": "0.5.2",
     "webpack": "^5.105.4",

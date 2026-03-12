@@ -28,7 +28,7 @@
     "eslint": "^9.39.2",
     "eslint-config-clipcc": "^9.0.9",
     "glob": "^13.0.6",
-    "tap": "^21.0.1"
+    "tap": "^21.6.2"
   },
   "engines": {
     "node": ">=22.0"
