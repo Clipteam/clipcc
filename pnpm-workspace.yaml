@@ -1,0 +1,11 @@
+packages:
+  - packages/*
+
+onlyBuiltDependencies:
+  - chromedriver
+  - core-js
+  - playwright-chromium
+  - unrs-resolver
+
+overrides:
+  cheerio: 1.0.0-rc.12
