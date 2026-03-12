@@ -158,7 +158,7 @@ if (base.mode === 'development') {
     base.module.rules.push({
         test: /blocks-msgs\.js$/,
         include: [
-            /node_modules[\\/]clipcc-l10n[\\/]locales/
+            path.resolve(__dirname, '../l10n/locales')
         ],
         use: [{
             loader: path.resolve(__dirname, 'scripts/block-message-loader.js')
