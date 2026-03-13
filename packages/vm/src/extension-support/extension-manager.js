@@ -153,6 +153,10 @@ class ExtensionManager {
      * @returns {Promise} resolved once the extension is loaded and initialized or rejected on failure
      */
     async loadExtensionURL (extensionURL) {
+        if (Object.prototype.hasOwnProperty.call(coreExtensions, extensionURL)) {
+            this.loadExtensionIdSync(extensionURL);
+            return;
+        }
         if (Object.prototype.hasOwnProperty.call(builtinExtensions, extensionURL)) {
             /** @todo dupe handling for non-builtin extensions. See commit 670e51d33580e8a2e852b3b038bb3afc282f81b9 */
             if (this.isExtensionLoaded(extensionURL)) {
