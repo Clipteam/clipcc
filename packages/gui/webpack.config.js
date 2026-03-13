@@ -9,6 +9,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
 
@@ -137,16 +138,13 @@ const base = {
                 },
                 lib: {
                     test: /[\\/]node_modules[\\/]/,
-                    name: 'runtime',
+                    name: 'lib.min',
                     chunks: 'initial',
                     priority: 10,
                     reuseExistingChunk: true,
                     enforce: true
                 }
             }
-        },
-        runtimeChunk: {
-            name: 'runtime'
         },
         minimizer: [
             new TerserPlugin({
@@ -159,10 +157,14 @@ const base = {
                         plugins: [
                             ['gifsicle', {interlaced: true}],
                             ['jpegtran', {progressive: true}],
-                            ['optipng', {optimizationLevel: 5}]
+                            ['optipng', {optimizationLevel: 5}],
+                            ['svgo']
                         ]
                     }
                 }
+            }),
+            new CssMinimizerPlugin({
+                minify: CssMinimizerPlugin.lightningCssMinify
             })
         ]
     },
