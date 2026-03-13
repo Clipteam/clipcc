@@ -23,7 +23,8 @@ const base = {
     output: {
         library: 'GUI',
         filename: '[name].js',
-        chunkFilename: 'chunks/[name].js'
+        chunkFilename: 'chunks/[name].js',
+        assetModuleFilename: 'assets/[hash][ext][query]',
     },
     resolve: {
         extensions: ['.ts', '.js', '.tsx', '.jsx'],
@@ -231,7 +232,7 @@ module.exports = [
                 {
                     test: /\.(svg|png|wav|gif|jpg)$/,
                     resourceQuery: {not: [/raw/]},
-                    type: 'asset/inline'
+                    type: 'asset'
                 }
             ])
         },
@@ -320,7 +321,7 @@ module.exports = [
                     {
                         test: /\.(svg|png|wav|gif|jpg)$/,
                         resourceQuery: {not: [/raw/]},
-                        type: 'asset/inline'
+                        type: 'asset'
                     }
                 ])
             },
