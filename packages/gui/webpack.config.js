@@ -32,12 +32,13 @@ const base = {
             'clipcc-vm': path.resolve(__dirname, '../vm/src/index.js'),
             'clipcc-block': path.resolve(__dirname, '../block/src/index.ts'),
             'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
-            'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js')
+            'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js'),
+            'clipcc-storage': path.resolve(__dirname, '../storage/src/index.ts'),
         }
     },
     snapshot: {
         managedPaths: [
-            /^.+?[\\/]node_modules[\\/](?!scratch-(blocks|l10n|paint|render|storage|vm))[\\/]/
+            /^.+?[\\/]node_modules[\\/](?!scratch-(blocks|l10n|paint|storage|render|storage|vm))[\\/]/
         ]
     },
     module: {
@@ -46,7 +47,8 @@ const base = {
                 path.resolve(__dirname, 'src'),
                 path.resolve(__dirname, '../vm/src'),
                 path.resolve(__dirname, '../block/src'),
-                path.resolve(__dirname, '../audio/src')
+                path.resolve(__dirname, '../audio/src'),
+                path.resolve(__dirname, '../storage/src')
             ],
             test: /\.([cm]?ts|tsx)$/,
             loader: 'ts-loader',
@@ -106,10 +108,7 @@ const base = {
             type: 'asset/source'
         }, {
             test: /\.hex$/,
-            type: 'asset/inline',
-            generator: {
-                dataUrl: content => `data:text/plain;base64,${content.toString('base64')}`
-            }
+            type: 'asset'
         }, {
             resourceQuery: '?arrayBuffer',
             type: 'javascript/auto',
@@ -120,6 +119,34 @@ const base = {
         }]
     },
     optimization: {
+        splitChunks: {
+            chunks: 'async',
+            minChunks: 2,
+            maxInitialRequests: 5,
+            cacheGroups: {
+                default: false,
+                defaultVendors: false,
+                metadata: {
+                    test: module => module.type === 'json' && module.size() > 128 * 1024,
+                    name: 'metadata',
+                    chunks: 'all',
+                    priority: 20,
+                    reuseExistingChunk: true,
+                    enforce: true
+                },
+                lib: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'runtime',
+                    chunks: 'initial',
+                    priority: 10,
+                    reuseExistingChunk: true,
+                    enforce: true
+                }
+            }
+        },
+        runtimeChunk: {
+            name: 'runtime'
+        },
         minimizer: [
             new TerserPlugin({
                 include: /\.min\.js$/
@@ -208,28 +235,6 @@ module.exports = [
                 }
             ])
         },
-        optimization: {
-            splitChunks: {
-                chunks: 'async',
-                minChunks: 2,
-                maxInitialRequests: 5,
-                cacheGroups: {
-                    default: false,
-                    defaultVendors: false,
-                    lib: {
-                        test: /[\\/]node_modules[\\/]/,
-                        name: 'lib.min',
-                        chunks: 'initial',
-                        priority: 10,
-                        reuseExistingChunk: true,
-                        enforce: true
-                    }
-                }
-            },
-            runtimeChunk: {
-                name: 'lib.min'
-            }
-        },
         plugins: base.plugins.concat([
             new webpack.DefinePlugin({
                 'process.env.DEBUG': Boolean(process.env.DEBUG),
@@ -238,30 +243,30 @@ module.exports = [
                 'clipcc.BUILD_TIME': Date.now()
             }),
             new HtmlWebpackPlugin({
-                chunks: ['lib.min', 'gui'],
+                chunks: ['runtime.min', 'lib.min', 'gui'],
                 template: 'src/playground/index.ejs',
                 title: 'ClipCC GUI'
             }),
             new HtmlWebpackPlugin({
-                chunks: ['lib.min', 'blocksonly'],
+                chunks: ['runtime.min', 'lib.min', 'blocksonly'],
                 template: 'src/playground/index.ejs',
                 filename: 'blocks-only.html',
                 title: 'ClipCC GUI: Blocks Only Example'
             }),
             new HtmlWebpackPlugin({
-                chunks: ['lib.min', 'compatibilitytesting'],
+                chunks: ['runtime.min', 'lib.min', 'compatibilitytesting'],
                 template: 'src/playground/index.ejs',
                 filename: 'compatibility-testing.html',
                 title: 'ClipCC GUI: Compatibility Testing'
             }),
             new HtmlWebpackPlugin({
-                chunks: ['lib.min', 'player'],
+                chunks: ['runtime.min', 'lib.min', 'player'],
                 template: 'src/playground/index.ejs',
                 filename: 'player.html',
                 title: 'ClipCC GUI: Player Example'
             }),
             new HtmlWebpackPlugin({
-                chunks: ['lib.min', 'lifecycle'],
+                chunks: ['runtime.min', 'lib.min', 'lifecycle'],
                 template: 'src/playground/index.ejs',
                 filename: 'lifecycle.html',
                 title: 'ClipCC GUI: Lifecycle Test'

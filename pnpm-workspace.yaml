@@ -4,6 +4,9 @@ packages:
 onlyBuiltDependencies:
   - chromedriver
   - core-js
+  - gifsicle
+  - jpegtran-bin
+  - optipng-bin
   - playwright-chromium
   - unrs-resolver
 

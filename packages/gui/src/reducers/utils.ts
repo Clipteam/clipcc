@@ -1,7 +1,7 @@
 import {combineReducers, type Reducer, type Store} from 'redux';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let initialReducers: Record<string, Reducer<any>> | null = null;
+let initialReducers: Record<string, Reducer<any>> = {};
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let storeInstance: Store<any> | null = null;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
