@@ -834,8 +834,8 @@ importers:
   packages/render:
     dependencies:
       '@turbowarp/nanolog':
-        specifier: ^0.2.0
-        version: 0.2.0
+        specifier: ^1.0.1
+        version: 1.0.1
       clipcc-storage:
         specifier: workspace:~
         version: link:../storage
@@ -934,8 +934,8 @@ importers:
         specifier: ^7.21.0
         version: 7.28.6
       '@turbowarp/nanolog':
-        specifier: ^0.2.0
-        version: 0.2.0
+        specifier: ^1.0.1
+        version: 1.0.1
       arraybuffer-loader:
         specifier: ^1.0.3
         version: 1.0.8
@@ -2934,9 +2934,6 @@ packages:
   '@tufjs/models@2.0.1':
     resolution: {integrity: sha512-92F7/SFyufn4DXsha9+QfKnN03JGqtMFMXgSHbZOo8JG59WkTni7UzAouNQDf7AuP9OAMxVOPQcqG3sB7w+kkg==}
     engines: {node: ^16.14.0 || >=18.0.0}
-
-  '@turbowarp/nanolog@0.2.0':
-    resolution: {integrity: sha512-texcM9oxfEsADVlVDR5UhLkYclPKsV9mytJh+9pHHonNcUrxRVGF6FkJTzWO/Hl5NafU1crSdw737nqKE3atSA==}
 
   '@turbowarp/nanolog@1.0.1':
     resolution: {integrity: sha512-jdkH5MMdEo81Z9CJDDKsUqnTD5W3oeVt9SWyRSPLT3Q5NPGD6E4SnffD5pXWIZbjF052u2SamDxp/awW7W7cVQ==}
@@ -11846,8 +11843,6 @@ snapshots:
     dependencies:
       '@tufjs/canonical-json': 2.0.0
       minimatch: 9.0.9
-
-  '@turbowarp/nanolog@0.2.0': {}
 
   '@turbowarp/nanolog@1.0.1': {}
 
