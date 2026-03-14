@@ -30,7 +30,7 @@
     "@types/hull.js": "^1.0.4",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.1.0",
-    "babel-loader": "^10.1.0",
+    "babel-loader": "^10.1.1",
     "clipcc-vm": "workspace:~",
     "copy-webpack-plugin": "^14.0.0",
     "eslint": "^9.39.2",
