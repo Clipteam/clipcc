@@ -10,7 +10,7 @@ import {globSync} from 'glob';
 
 const args = process.argv.slice(2);
 if (args.length < 2) {
-    console.log(`Usage: yarn patch:convert [GLOB_PATTERN] [PACKAGE_NAME]`);
+    console.log(`Usage: pnpm patch:convert [GLOB_PATTERN] [PACKAGE_NAME]`);
     process.exit(1);
 }
 const globPattern = args[0];

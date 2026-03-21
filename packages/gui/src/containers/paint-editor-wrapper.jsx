@@ -14,11 +14,23 @@ class PaintEditorWrapper extends React.Component {
             'handleUpdateImage',
             'handleUpdateName'
         ]);
+        this.state = {
+            paintKey: 0 // Used to force the paint editor to re-mount when the stage size changes.
+        };
+    }
+    componentWillReceiveProps (nextProps) {
+        if (this.props.stageWidth !== nextProps.stageWidth ||
+            this.props.stageHeight !== nextProps.stageHeight) {
+            // Force the paint editor to re-mount so that it picks up the new stage size.
+            this.setState(prevState => ({paintKey: prevState.paintKey + 1}));
+        }
     }
     shouldComponentUpdate (nextProps) {
         return this.props.imageId !== nextProps.imageId ||
             this.props.rtl !== nextProps.rtl ||
-            this.props.name !== nextProps.name;
+            this.props.name !== nextProps.name ||
+            this.props.stageWidth !== nextProps.stageWidth ||
+            this.props.stageHeight !== nextProps.stageHeight;
     }
     handleUpdateName (name) {
         this.props.vm.renameCostume(this.props.selectedCostumeIndex, name);
@@ -54,6 +66,7 @@ class PaintEditorWrapper extends React.Component {
                 onUpdateImage={this.handleUpdateImage}
                 onUpdateName={this.handleUpdateName}
                 fontInlineFn={inlineSvgFonts}
+                key={this.state.paintKey}
             />
         );
     }
@@ -67,6 +80,8 @@ PaintEditorWrapper.propTypes = {
     rotationCenterY: PropTypes.number,
     rtl: PropTypes.bool,
     selectedCostumeIndex: PropTypes.number.isRequired,
+    stageHeight: PropTypes.number.isRequired,
+    stageWidth: PropTypes.number.isRequired,
     vm: PropTypes.instanceOf(VM)
 };
 
@@ -86,7 +101,9 @@ const mapStateToProps = (state, {selectedCostumeIndex}) => {
         rtl: state.locales.isRtl,
         selectedCostumeIndex: index,
         vm: state.scratchGui.vm,
-        zoomLevelId: targetId
+        zoomLevelId: targetId,
+        stageWidth: state.scratchGui.settings.stageWidth,
+        stageHeight: state.scratchGui.settings.stageHeight
     };
 };
 

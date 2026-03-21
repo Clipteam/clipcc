@@ -26,7 +26,7 @@ jobs:
         uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn gui lint
+        run: pnpm gui lint
 
   vm:
     name: Lint VM
@@ -40,7 +40,7 @@ jobs:
         uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn vm lint:js
+        run: pnpm vm lint:js
 
   block:
     name: Lint Block
@@ -54,7 +54,7 @@ jobs:
         uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn block lint
+        run: pnpm block lint
 
   audio:
     name: Lint Audio
@@ -68,7 +68,7 @@ jobs:
         uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn audio lint
+        run: pnpm audio lint
 
   l10n:
     name: Lint l10n
@@ -82,7 +82,7 @@ jobs:
         uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn l10n lint:js
+        run: pnpm l10n lint:js
 
   lint-config:
     name: Lint Lint Config
@@ -96,7 +96,7 @@ jobs:
         uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn lint-config test
+        run: pnpm lint-config test
 
   paint:
     name: Lint Paint
@@ -110,7 +110,7 @@ jobs:
         uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn paint lint
+        run: pnpm paint lint
 
   parser:
     name: Lint Parser
@@ -124,7 +124,7 @@ jobs:
         uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn parser test:lint
+        run: pnpm parser test:lint
 
   render:
     name: Lint Render
@@ -138,7 +138,7 @@ jobs:
         uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn render lint
+        run: pnpm render lint
 
   storage:
     name: Lint Storage
@@ -152,7 +152,7 @@ jobs:
         uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn storage test:lint
+        run: pnpm storage test:lint
 
   svg-renderer:
     name: Lint SVG Renderer
@@ -166,4 +166,4 @@ jobs:
         uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: yarn svg-renderer test:lint
+        run: pnpm svg-renderer test:lint

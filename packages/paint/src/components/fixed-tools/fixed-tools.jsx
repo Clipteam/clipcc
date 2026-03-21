@@ -30,6 +30,8 @@ import sendFrontIcon from './icons/send-front.svg';
 import undoIcon from './icons/undo.svg';
 import ungroupIcon from './icons/ungroup.svg';
 
+import {REFERENCED_ART_BOARD_WIDTH} from '../../helper/view';
+
 const BufferedInput = BufferedInputHOC(Input);
 const messages = defineMessages({
     costume: {
@@ -92,7 +94,7 @@ const FixedToolsComponent = props => {
         <div className={styles.row}>
             {/* Name field */}
             <InputGroup>
-                <MediaQuery minWidth={layout.fullSizeEditorMinWidth}>
+                <MediaQuery minWidth={layout.fullSizeEditorMinWidth + props.width - REFERENCED_ART_BOARD_WIDTH}>
                     <Label text={props.intl.formatMessage(messages.costume)}>
                         <BufferedInput
                             className={styles.costumeInput}
@@ -102,7 +104,7 @@ const FixedToolsComponent = props => {
                         />
                     </Label>
                 </MediaQuery>
-                <MediaQuery maxWidth={layout.fullSizeEditorMinWidth - 1}>
+                <MediaQuery maxWidth={layout.fullSizeEditorMinWidth + props.width - REFERENCED_ART_BOARD_WIDTH - 1}>
                     <BufferedInput
                         className={styles.costumeInput}
                         type="text"
@@ -309,7 +311,8 @@ FixedToolsComponent.propTypes = {
     onUndo: PropTypes.func.isRequired,
     onUngroup: PropTypes.func.isRequired,
     onUpdateName: PropTypes.func.isRequired,
-    rtl: PropTypes.bool.isRequired
+    rtl: PropTypes.bool.isRequired,
+    width: PropTypes.number.isRequired
 };
 
 const mapStateToProps = state => ({

@@ -6,11 +6,11 @@
     "browser": "./src/index.js",
     "scripts": {
         "build:data": "babel-node scripts/build-data",
-        "build": "yarn clean && yarn build:data && webpack --progress --color --bail",
+        "build": "pnpm run clean && pnpm run build:data && webpack --progress --color --bail",
         "clean": "rimraf ./dist ./locales && mkdirp dist locales",
         "lint:js": "eslint . --ext .js",
         "lint:json": "jshint -e .json www editor/blocks editor/extensions editor/interface editor/paint-editor",
-        "lint": "yarn lint:js && yarn lint:json"
+        "lint": "pnpm run lint:js && pnpm run lint:json"
     },
     "repository": {
         "type": "git",
@@ -29,7 +29,7 @@
     },
     "devDependencies": {
         "@babel/eslint-parser": "7.28.6",
-        "@babel/node": "7.2.2",
+        "@babel/node": "7.29.0",
         "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
         "@babel/plugin-syntax-dynamic-import": "^7.0.0",
         "@babel/plugin-transform-async-to-generator": "^7.1.0",
@@ -37,12 +37,12 @@
         "@babel/preset-react": "^7.0.0",
         "async": "3.2.3",
         "babel-eslint": "^10.0.1",
-        "babel-loader": "^10.1.0",
+        "babel-loader": "^10.1.1",
         "eslint": "^9.39.2",
-        "eslint-config-clipcc": "^9.0.9",
+        "eslint-config-clipcc": "workspace:*",
         "eslint-plugin-import": "2.26.0",
         "eslint-plugin-react": "7.37.5",
-        "format-message-cli": "6.2.1",
+        "format-message-cli": "6.2.4",
         "format-message-parse": "6.2.0",
         "glob": "13.0.6",
         "jshint": "2.9.7",

@@ -73,6 +73,7 @@ const PaintEditorComponent = props => (
                         onUndo={props.onUndo}
                         onUpdateImage={props.onUpdateImage}
                         onUpdateName={props.onUpdateName}
+                        width={props.stageWidth}
                     />
                 </div>
                 {/* Second Row */}
@@ -336,6 +337,7 @@ PaintEditorComponent.propTypes = {
     rtl: PropTypes.bool,
     setCanvas: PropTypes.func.isRequired,
     setTextArea: PropTypes.func.isRequired,
+    stageWidth: PropTypes.number.isRequired,
     textArea: PropTypes.instanceOf(Element),
     zoomLevelId: PropTypes.string
 };
