@@ -9,9 +9,13 @@
     "type": "git",
     "url": "https://github.com/Clipteam/clipcc.git"
   },
-  "main": "./dist/node/main.js",
-  "browser": "./dist/web/main.js",
-  "types": "./dist/types",
+  "exports": {
+    "types": "./dist/types/index.d.ts",
+    "webpack": "./src/index.ts",
+    "node": "./dist/node/main.js",
+    "browser": "./dist/web/main.js",
+    "default": "./dist/node/main.js"
+  },
   "scripts": {
     "start": "webpack serve",
     "build": "webpack --progress --color --bail",

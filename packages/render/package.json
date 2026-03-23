@@ -9,9 +9,13 @@
     "type": "git",
     "url": "https://github.com/Clipteam/clipcc.git"
   },
-  "main": "./src/index.js",
-  "types": "./dist/types/index.d.ts",
-  "browser": "./dist/web/scratch-render.js",
+  "exports": {
+    "types": "./dist/types/index.d.ts",
+    "webpack": "./src/index.js",
+    "node": "./dist/node/scratch-render.js",
+    "browser": "./dist/web/scratch-render.js",
+    "default": "./src/index.js"
+  },
   "scripts": {
     "build:types": "tsc --project ./tsconfig.dts.json",
     "build": "pnpm run build:types && webpack --progress --color",

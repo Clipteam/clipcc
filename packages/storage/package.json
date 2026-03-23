@@ -8,9 +8,13 @@
     "type": "git",
     "url": "https://github.com/Clipteam/clipcc.git"
   },
-  "main": "./dist/node/scratch-storage.js",
-  "browser": "./dist/web/scratch-storage.js",
-  "types": "./dist/types/index.d.ts",
+  "exports": {
+    "types": "./dist/types/index.d.ts",
+    "webpack": "./src/index.ts",
+    "node": "./dist/node/scratch-storage.js",
+    "browser": "./dist/web/scratch-storage.js",
+    "default": "./dist/node/scratch-storage.js"
+  },
   "scripts": {
     "build": "rimraf dist && webpack --mode=production",
     "coverage": "tap ./test/{unit,integration}/*.js --coverage --coverage-report=lcov",
