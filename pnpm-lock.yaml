@@ -53,8 +53,8 @@ importers:
         specifier: ^10.1.1
         version: 10.1.1(@babel/core@7.29.0)(webpack@5.105.4)
       node-polyfill-webpack-plugin:
-        specifier: ^3.0.0
-        version: 3.0.0(webpack@5.105.4)
+        specifier: ^4.1.0
+        version: 4.1.0(webpack@5.105.4)
       startaudiocontext:
         specifier: 1.2.1
         version: 1.2.1
@@ -274,8 +274,8 @@ importers:
         specifier: 4.0.1
         version: 4.0.1
       node-polyfill-webpack-plugin:
-        specifier: ^3.0.0
-        version: 3.0.0(webpack@5.105.4)
+        specifier: ^4.1.0
+        version: 4.1.0(webpack@5.105.4)
       omggif:
         specifier: 1.0.9
         version: 1.0.9
@@ -895,8 +895,8 @@ importers:
         specifier: 9.0.6
         version: 9.0.6
       node-polyfill-webpack-plugin:
-        specifier: ^3.0.0
-        version: 3.0.0(webpack@5.105.4)
+        specifier: ^4.1.0
+        version: 4.1.0(webpack@5.105.4)
       playwright-chromium:
         specifier: 1.13.0
         version: 1.13.0
@@ -1170,8 +1170,8 @@ importers:
         specifier: ^3.10.1
         version: 3.10.1
       node-polyfill-webpack-plugin:
-        specifier: ^3.0.0
-        version: 3.0.0(webpack@5.105.4)
+        specifier: ^4.1.0
+        version: 4.1.0(webpack@5.105.4)
       scratch-sb1-converter:
         specifier: 1.0.324
         version: 1.0.324
@@ -3482,10 +3482,6 @@ packages:
     resolution: {integrity: sha512-6/mh1E2u2YgEsCHdY0Yx5oW+61gZU+1vXaoiHHrpKeuRNNgFvS+/jrwHiQhB5apAf5oB7UB7E19ol2R2LKH8hQ==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
-  abort-controller@3.0.0:
-    resolution: {integrity: sha512-h8lQ8tacZYnR3vNQTgibj+tODHI5/+l06Au2Pcriv/Gmet0eaj4TwWH41sO9wnHDiQsEj19q0drzdWdeAHtweg==}
-    engines: {node: '>=6.5'}
-
   accepts@1.3.8:
     resolution: {integrity: sha512-PYAthTa2m2VKxuvSD3DPC/Gy+U+sOA1LAuT8mkmRuvw+NACSaeXEQ+NHcVF7rONl6qcaxV3Uuemwawk+7+SJLw==}
     engines: {node: '>= 0.6'}
@@ -4015,6 +4011,9 @@ packages:
   brorand@1.1.0:
     resolution: {integrity: sha512-cKV8tMCEpQs4hK/ik71d6LrPOnpkpGBR0wzxqr68g2m/LB2GxVYQroAjMJZRVM1Y4BCjCKc3vAamxSzOY2RP+w==}
 
+  browser-resolve@2.0.0:
+    resolution: {integrity: sha512-7sWsQlYL2rGLy2IWm8WL8DCTJvYLc/qlOnsakDac87SOoCd16WLsaAMdCiAqsTNHIe+SXfaqyxyo6THoWqs8WQ==}
+
   browserify-aes@1.2.0:
     resolution: {integrity: sha512-+7CHXqGuspUn/Sl5aO7Ea0xWGAtETPXNSAjHo48JfLdPWcMng33Xe4znFvQweqc/uzk5zSOI3H52CYnjCfb5hA==}
 
@@ -4064,6 +4063,9 @@ packages:
 
   buffer-xor@1.0.3:
     resolution: {integrity: sha512-571s0T7nZWK6vB67HI5dyUF7wXiNcfaPPPTl6zYCNApANjIvYJTg7hlud/+cJpdAhS7dVzqMLmfhfHR3rAcOjQ==}
+
+  buffer@5.7.1:
+    resolution: {integrity: sha512-EHcyIPBQ4BSGlvjB16k5KgAJ27CIsHY/2JBmCRReo48y9rQ3MaUzWX3KVlBa4U7MyX02HdVj0K7C3WaB3ju7FQ==}
 
   buffer@6.0.3:
     resolution: {integrity: sha512-FTiCpNxtwiZZHEZbcbTIcZjERVICn9yq/pDFkTl95/AxzD1naBctN7YO68riM/gLSDY7sdrMby8hofADYuuqOA==}
@@ -4462,6 +4464,9 @@ packages:
   create-hmac@1.1.7:
     resolution: {integrity: sha512-MJG9liiZ+ogc4TzUwuvbER1JRdgvUFSB5+VR/g5h82fGaIRWMWddtKBHi7/sVhfjQZ6SehlyhvQYrcYkaUIpLg==}
 
+  create-require@1.1.1:
+    resolution: {integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==}
+
   cross-env@10.1.0:
     resolution: {integrity: sha512-GsYosgnACZTADcmEyJctkJIoqAhHjttw7RsFrVoJNXbsWWqaq6Ym+7kZjq6mS45O0jij6vtiReppKQEtqWy6Dw==}
     engines: {node: '>=20'}
@@ -4738,8 +4743,8 @@ packages:
   dom-walk@0.1.2:
     resolution: {integrity: sha512-6QvTW9mrGeIegrFXdtQi9pk7O/nSK6lSdXW2eqUspN5LWD7UTji2Fqw5V2YLjBpHEoU9Xl/eUWNpDeZvoyOv2w==}
 
-  domain-browser@4.23.0:
-    resolution: {integrity: sha512-ArzcM/II1wCCujdCNyQjXrAFwS4mrLh4C7DZWlaI8mdh7h3BfKdNd3bKXITfl2PT9FtfQqaGvhi1vPRQPimjGA==}
+  domain-browser@4.22.0:
+    resolution: {integrity: sha512-IGBwjF7tNk3cwypFNH/7bfzBcgSCbaMOD3GsaY1AU/JRrnHnYgEM0+9kQt52iZxjNsjBtJYtao146V+f8jFZNw==}
     engines: {node: '>=10'}
 
   domelementtype@1.3.1:
@@ -5198,10 +5203,6 @@ packages:
   etag@1.8.1:
     resolution: {integrity: sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==}
     engines: {node: '>= 0.6'}
-
-  event-target-shim@5.0.1:
-    resolution: {integrity: sha512-i/2XbnSz/uxRCU6+NdVJgKWDTM427+MqYbkQzD321DuCQJUqOuJKIA0IM2+W2xtYHdKOmZ4dR6fExsd4SXL+WQ==}
-    engines: {node: '>=6'}
 
   eventemitter3@4.0.7:
     resolution: {integrity: sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==}
@@ -6353,6 +6354,10 @@ packages:
   isomorphic-fetch@2.2.1:
     resolution: {integrity: sha512-9c4TNAKYXM5PRyVcwUZrF3W09nQ+sO7+jydgs4ZGW9dhsLG2VOlISJABombdQqQRXCwuYG3sYV/puGf5rp0qmA==}
 
+  isomorphic-timers-promises@1.0.1:
+    resolution: {integrity: sha512-u4sej9B1LPSxTGKB/HiuzvEQnXH0ECYkSVQU39koSwmFAxhlEAFl9RdTvLv4TOTQUgBS5O3O5fwUxk6byBZ+IQ==}
+    engines: {node: '>=10'}
+
   istanbul-lib-coverage@1.2.1:
     resolution: {integrity: sha512-PzITeunAgyGbtY1ibVIUiV679EFChHjoMNRibEIobvmrCRaIgwLxNucOSimtNWUhEib/oO7QY2imD75JVgCJWQ==}
 
@@ -7181,14 +7186,18 @@ packages:
   node-options-to-argv@1.0.0:
     resolution: {integrity: sha512-99rLlP+Cn/FsSV9kjpk2UmF2Ltmrpv/L9U7fUfws/MVXkeZWPpPDsQkMr79qCvSF/oTKVVJBTm5sHzmK2j6IIg==}
 
-  node-polyfill-webpack-plugin@3.0.0:
-    resolution: {integrity: sha512-QpG496dDBiaelQZu9wDcVvpLbtk7h9Ctz693RaUMZBgl8DUoFToO90ZTLKq57gP7rwKqYtGbMBXkcEgLSag2jQ==}
+  node-polyfill-webpack-plugin@4.1.0:
+    resolution: {integrity: sha512-b4ei444EKkOagG/yFqojrD3QTYM5IOU1f8tn9o6uwrG4qL+brI7oVhjPVd0ZL2xy+Z6CP5bu9w8XTvlWgiXHcw==}
     engines: {node: '>=14'}
     peerDependencies:
       webpack: '>=5'
 
   node-releases@2.0.36:
     resolution: {integrity: sha512-TdC8FSgHz8Mwtw9g5L4gR/Sh9XhSP/0DEkQxfEFXOpiul5IiHgHan2VhYYb6agDSfp4KuvltmGApc8HMgUrIkA==}
+
+  node-stdlib-browser@1.3.1:
+    resolution: {integrity: sha512-X75ZN8DCLftGM5iKwoYLA3rjnrAEs97MkzvSd4q2746Tgpg8b8XWiBGiBG4ZpgcAqBgtgPHTiAc8ZMCvZuikDw==}
+    engines: {node: '>=10'}
 
   nopt@7.2.1:
     resolution: {integrity: sha512-taM24ViiimT/XntxbPyJQzCG+p4EKOpgD3mxFwW38mGjVUrfERQOeY4EDHjdnptttfHuHQXFx+lTP08Q+mLa/w==}
@@ -7609,6 +7618,10 @@ packages:
   pkg-dir@4.2.0:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
     engines: {node: '>=8'}
+
+  pkg-dir@5.0.0:
+    resolution: {integrity: sha512-NPE8TDbzl/3YQYY7CSS228s3g2ollTFnc+Qi3tqmqJp9Vg2ovUpixcJEo2HJScN2Ez+kEaal6y70c0ehqJBJeA==}
+    engines: {node: '>=10'}
 
   pkijs@3.3.3:
     resolution: {integrity: sha512-+KD8hJtqQMYoTuL1bbGOqxb4z+nZkTAwVdNtWwe8Tc2xNbEmdJYIYoc6Qt0uF55e6YW6KuTHw1DjQ18gMhzepw==}
@@ -8043,10 +8056,6 @@ packages:
   readable-stream@3.6.2:
     resolution: {integrity: sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA==}
     engines: {node: '>= 6'}
-
-  readable-stream@4.7.0:
-    resolution: {integrity: sha512-oIGGmcpTLwPga8Bn6/Z75SVaH1z5dUut2ibSyAMVhmUggWpmDn2dapB0n7f8nwaSiRtepAsfJyfXIO5DCVAODg==}
-    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
 
   readdirp@3.6.0:
     resolution: {integrity: sha512-hOS089on8RduqdbhvQ5Z37A0ESjsqz6qnRcffsMU3495FuTdqSm+7bhJ29JvIOsBDEEnan5DPu9t3To9VRlMzA==}
@@ -12476,10 +12485,6 @@ snapshots:
 
   abbrev@2.0.0: {}
 
-  abort-controller@3.0.0:
-    dependencies:
-      event-target-shim: 5.0.1
-
   accepts@1.3.8:
     dependencies:
       mime-types: 2.1.35
@@ -13166,6 +13171,10 @@ snapshots:
 
   brorand@1.1.0: {}
 
+  browser-resolve@2.0.0:
+    dependencies:
+      resolve: 1.22.11
+
   browserify-aes@1.2.0:
     dependencies:
       buffer-xor: 1.0.3
@@ -13235,6 +13244,11 @@ snapshots:
   buffer-from@1.1.2: {}
 
   buffer-xor@1.0.3: {}
+
+  buffer@5.7.1:
+    dependencies:
+      base64-js: 1.5.1
+      ieee754: 1.2.1
 
   buffer@6.0.3:
     dependencies:
@@ -13654,6 +13668,8 @@ snapshots:
       safe-buffer: 5.2.1
       sha.js: 2.4.12
 
+  create-require@1.1.1: {}
+
   cross-env@10.1.0:
     dependencies:
       '@epic-web/invariant': 1.0.0
@@ -13941,7 +13957,7 @@ snapshots:
 
   dom-walk@0.1.2: {}
 
-  domain-browser@4.23.0: {}
+  domain-browser@4.22.0: {}
 
   domelementtype@1.3.1: {}
 
@@ -14644,8 +14660,6 @@ snapshots:
   esutils@2.0.3: {}
 
   etag@1.8.1: {}
-
-  event-target-shim@5.0.1: {}
 
   eventemitter3@4.0.7: {}
 
@@ -15891,6 +15905,8 @@ snapshots:
       node-fetch: 1.7.3
       whatwg-fetch: 3.6.20
 
+  isomorphic-timers-promises@1.0.1: {}
+
   istanbul-lib-coverage@1.2.1: {}
 
   istanbul-lib-coverage@3.2.2: {}
@@ -16975,35 +16991,43 @@ snapshots:
 
   node-options-to-argv@1.0.0: {}
 
-  node-polyfill-webpack-plugin@3.0.0(webpack@5.105.4):
+  node-polyfill-webpack-plugin@4.1.0(webpack@5.105.4):
+    dependencies:
+      node-stdlib-browser: 1.3.1
+      type-fest: 4.41.0
+      webpack: 5.105.4(webpack-cli@6.0.1)
+
+  node-releases@2.0.36: {}
+
+  node-stdlib-browser@1.3.1:
     dependencies:
       assert: 2.1.0
+      browser-resolve: 2.0.0
       browserify-zlib: 0.2.0
-      buffer: 6.0.3
+      buffer: 5.7.1
       console-browserify: 1.2.0
       constants-browserify: 1.0.0
+      create-require: 1.1.1
       crypto-browserify: 3.12.1
-      domain-browser: 4.23.0
+      domain-browser: 4.22.0
       events: 3.3.0
       https-browserify: 1.0.0
+      isomorphic-timers-promises: 1.0.1
       os-browserify: 0.3.0
       path-browserify: 1.0.1
+      pkg-dir: 5.0.0
       process: 0.11.10
-      punycode: 2.3.1
+      punycode: 1.4.1
       querystring-es3: 0.2.1
-      readable-stream: 4.7.0
+      readable-stream: 3.6.2
       stream-browserify: 3.0.0
       stream-http: 3.2.0
       string_decoder: 1.3.0
       timers-browserify: 2.0.12
       tty-browserify: 0.0.1
-      type-fest: 4.41.0
       url: 0.11.4
       util: 0.12.5
       vm-browserify: 1.1.2
-      webpack: 5.105.4(webpack-cli@6.0.1)
-
-  node-releases@2.0.36: {}
 
   nopt@7.2.1:
     dependencies:
@@ -17468,6 +17492,10 @@ snapshots:
   pkg-dir@4.2.0:
     dependencies:
       find-up: 4.1.0
+
+  pkg-dir@5.0.0:
+    dependencies:
+      find-up: 5.0.0
 
   pkijs@3.3.3:
     dependencies:
@@ -18011,14 +18039,6 @@ snapshots:
       inherits: 2.0.4
       string_decoder: 1.3.0
       util-deprecate: 1.0.2
-
-  readable-stream@4.7.0:
-    dependencies:
-      abort-controller: 3.0.0
-      buffer: 6.0.3
-      events: 3.3.0
-      process: 0.11.10
-      string_decoder: 1.3.0
 
   readdirp@3.6.0:
     dependencies:
