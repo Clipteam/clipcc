@@ -53,7 +53,7 @@
   "devDependencies": {
     "@babel/core": "7.29.0",
     "@babel/eslint-parser": "7.28.6",
-    "@babel/preset-env": "7.29.0",
+    "@babel/preset-env": "7.29.2",
     "@types/fastestsmallesttextencoderdecoder": "^1.0.2",
     "adm-zip": "0.4.11",
     "babel-eslint": "10.1.0",

@@ -25,7 +25,7 @@
     "watch": "webpack --progress --color --watch --watch-poll"
   },
   "devDependencies": {
-    "@babel/preset-env": "7.29.0",
+    "@babel/preset-env": "7.29.2",
     "@babel/polyfill": "7.12.1",
     "@types/hull.js": "^1.0.4",
     "babel-core": "7.0.0-bridge.0",
