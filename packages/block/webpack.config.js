@@ -20,8 +20,13 @@ const baseConfig = {
       include: path.resolve(__dirname, 'src')
     }, {
       test: /\.ts$/,
-      use: 'ts-loader',
-      exclude: /node_modules/
+      exclude: /node_modules/,
+      use: {
+        loader: 'ts-loader',
+        options: {
+          configFile: path.resolve(__dirname, 'tsconfig.json')
+        }
+      }
     }, {
       test: /_compressed\.js$/,
       enforce: 'pre',

@@ -33,11 +33,12 @@ const base = {
                 }]]
             }
         }, {
-            include: [
-                path.resolve('src')
-            ],
-            test: /\.([cm]?ts|tsx)$/,
-            loader: 'ts-loader'
+            include: path.resolve(__dirname, 'src'),
+            test: /\.[cm]?tsx?$/,
+            loader: 'ts-loader',
+            options: {
+                configFile: path.resolve(__dirname, 'tsconfig.json')
+            }
         }]
     },
     optimization: {

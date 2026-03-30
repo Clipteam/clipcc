@@ -15,19 +15,12 @@ const base = {
         filename: '[name].js'
     },
     resolve: {
-        alias: {
-            'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
-            'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js')
-        },
         extensions: ['.ts', '.js']
     },
     module: {
         rules: [{
-            include: [
-                path.resolve('src'),
-                path.resolve('../render/src')
-            ],
-            test: /\.([cm]?ts|tsx)$/,
+            include: path.resolve(__dirname, 'src'),
+            test: /\.[cm]?tsx?$/,
             loader: 'ts-loader',
             options: {
                 transpileOnly: true,
