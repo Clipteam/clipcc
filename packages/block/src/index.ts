@@ -9,6 +9,7 @@ import * as Blockly from 'blockly/core';
 import * as Constants from './constants';
 import {injectCssVariables, Scratch} from './theme';
 import {registerScratchContextMenu} from './contextmenu_items';
+import {registerScratchShortcuts} from './shortcut_items';
 import {FieldAngle, registerFieldAngle} from './fields/angle';
 import {FieldButton, registerFieldButton} from './fields/button';
 import {FieldColourSlider, registerFieldColourSlider} from './fields/colour_slider';
@@ -198,6 +199,7 @@ function setupEnvironment() {
   registerFieldVariableGetter();
   registerFieldVerticalSeparator();
   registerScratchContextMenu();
+  registerScratchShortcuts();
 
   Blockly.Css.register(styles);
   Blockly.Css.register(commentStyles);
