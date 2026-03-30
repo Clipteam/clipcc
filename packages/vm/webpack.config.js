@@ -4,6 +4,7 @@ const defaultsDeep = require('lodash.defaultsdeep');
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const RuleInheritancePlugin = require('rule-inheritance-webpack-plugin');
 const {version} = require('../../package.json');
 
 const base = {
@@ -57,10 +58,20 @@ const base = {
         ]
     },
     plugins: [
+        new RuleInheritancePlugin({
+            packages: [
+                path.resolve(__dirname, '../svg-renderer'),
+                path.resolve(__dirname, '../storage') // Only used in playground
+            ]
+        }),
         new NodePolyfillPlugin(),
         new webpack.DefinePlugin({
             'clipcc.VERSION': version,
             'clipcc.BUILD_TIME': Date.now()
+        }),
+        new webpack.IgnorePlugin({
+            resourceRegExp: /canvas/,
+            contextRegExp: /jsdom$/
         })
     ]
 };
@@ -129,12 +140,6 @@ module.exports = [
                 patterns: [{
                     from: '../block/media',
                     to: 'media'
-                }, {
-                    from: '../storage/dist/web'
-                }, {
-                    from: '../render/dist/web'
-                }, {
-                    from: '../svg-renderer/dist/web'
                 }, {
                     from: 'src/playground'
                 }]

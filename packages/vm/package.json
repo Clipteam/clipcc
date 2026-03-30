@@ -33,6 +33,7 @@
     "version": "json -f package.json -I -e \"this.repository.sha = '$(git log -n1 --pretty=format:%H)'\""
   },
   "dependencies": {
+    "@turbowarp/nanolog": "^1.0.1",
     "@vernier/godirect": "1.5.0",
     "arraybuffer-loader": "1.0.8",
     "atob": "2.1.2",
@@ -46,7 +47,6 @@
     "htmlparser2": "10.1.0",
     "immutable": "5.1.5",
     "jszip": "^3.10.1",
-    "@turbowarp/nanolog": "^1.0.1",
     "node-polyfill-webpack-plugin": "^3.0.0",
     "scratch-sb1-converter": "1.0.324",
     "scratch-translate-extension-languages": "1.0.7"
@@ -80,6 +80,7 @@
     "json": "^9.0.6",
     "lodash.defaultsdeep": "4.6.1",
     "pngjs": "7.0.0",
+    "rule-inheritance-webpack-plugin": "^0.2.0",
     "scratch-render-fonts": "1.0.252",
     "script-loader": "0.7.2",
     "stats.js": "0.17.0",
