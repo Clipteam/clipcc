@@ -29,6 +29,7 @@
     "version": "json -f package.json -I -e \"this.repository.sha = '$(git log -n1 --pretty=format:%H)'\""
   },
   "dependencies": {
+    "@turbowarp/nanolog": "^1.0.1",
     "@vernier/godirect": "1.5.0",
     "arraybuffer-loader": "1.0.8",
     "atob": "2.1.2",
@@ -42,7 +43,6 @@
     "htmlparser2": "10.1.0",
     "immutable": "5.1.5",
     "jszip": "^3.10.1",
-    "@turbowarp/nanolog": "^1.0.1",
     "node-polyfill-webpack-plugin": "^3.0.0",
     "scratch-sb1-converter": "1.0.324",
     "scratch-translate-extension-languages": "1.0.7"
@@ -55,6 +55,7 @@
     "@babel/eslint-parser": "7.28.6",
     "@babel/preset-env": "7.29.2",
     "@types/fastestsmallesttextencoderdecoder": "^1.0.2",
+    "@types/node": "^25.5.2",
     "adm-zip": "0.4.11",
     "babel-eslint": "10.1.0",
     "babel-loader": "^10.1.1",
@@ -83,8 +84,8 @@
     "terser-webpack-plugin": "^5.3.17",
     "tiny-worker": "2.3.0",
     "ts-loader": "^9.5.4",
-    "typescript": "^5.9.3",
-    "webpack": "^5.105.4",
+    "typescript": "catalog:",
+    "webpack": "catalog:",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.3"
   },
