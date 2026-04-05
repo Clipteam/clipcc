@@ -44,8 +44,8 @@
     "terser-webpack-plugin": "^5.3.17",
     "travis-after-all": "1.4.5",
     "ts-loader": "^9.5.4",
-    "typescript": "^5.9.3",
-    "webpack": "^5.105.4",
+    "typescript": "catalog:",
+    "webpack": "catalog:",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.3"
   },
