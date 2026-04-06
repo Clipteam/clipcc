@@ -473,8 +473,8 @@ importers:
         specifier: 2.7.1
         version: 2.7.1
       rule-inheritance-webpack-plugin:
-        specifier: ^0.2.0
-        version: 0.2.0(webpack@5.105.4)
+        specifier: ^0.3.0
+        version: 0.3.0(webpack@5.105.4)
       selenium-webdriver:
         specifier: 3.6.0
         version: 3.6.0
@@ -907,8 +907,8 @@ importers:
         specifier: 1.13.0
         version: 1.13.0
       rule-inheritance-webpack-plugin:
-        specifier: ^0.2.0
-        version: 0.2.0(webpack@5.105.4)
+        specifier: ^0.3.0
+        version: 0.3.0(webpack@5.105.4)
       scratch-render-fonts:
         specifier: 1.0.252
         version: 1.0.252
@@ -1264,8 +1264,8 @@ importers:
         specifier: 7.0.0
         version: 7.0.0
       rule-inheritance-webpack-plugin:
-        specifier: ^0.2.0
-        version: 0.2.0(webpack@5.105.4)
+        specifier: ^0.3.0
+        version: 0.3.0(webpack@5.105.4)
       scratch-render-fonts:
         specifier: 1.0.252
         version: 1.0.252
@@ -8264,8 +8264,8 @@ packages:
   rst-selector-parser@2.2.3:
     resolution: {integrity: sha512-nDG1rZeP6oFTLN6yNDV/uiAvs1+FS/KlrEwh7+y7dpuApDBy6bI2HTBcc0/V8lv9OTqfyD34eF7au2pm8aBbhA==}
 
-  rule-inheritance-webpack-plugin@0.2.0:
-    resolution: {integrity: sha512-YCutFnxL0WzSYaLgCxh4T18IEFoczCFFudZyBzxG0IfC7xwiT/yJsyzfjkeRgXqyDgaSf7R2Yo4vCh2JQP17yQ==}
+  rule-inheritance-webpack-plugin@0.3.0:
+    resolution: {integrity: sha512-Wd41HyDRE5+hEQ++WEKSk1mb7l/Ivlg8OnGtGsR+iqVI9EcZVr39wYP5LvFlyLutmv5txAejIpd21Bxhoutmng==}
     peerDependencies:
       webpack: ^5.0.0
 
@@ -12476,12 +12476,12 @@ snapshots:
   '@webpack-cli/configtest@3.0.1(webpack-cli@6.0.1)(webpack@5.105.4)':
     dependencies:
       webpack: 5.105.4(webpack-cli@6.0.1)
-      webpack-cli: 6.0.1(webpack-dev-server@5.2.3)(webpack@5.105.4)
+      webpack-cli: 6.0.1(webpack@5.105.4)
 
   '@webpack-cli/info@3.0.1(webpack-cli@6.0.1)(webpack@5.105.4)':
     dependencies:
       webpack: 5.105.4(webpack-cli@6.0.1)
-      webpack-cli: 6.0.1(webpack-dev-server@5.2.3)(webpack@5.105.4)
+      webpack-cli: 6.0.1(webpack@5.105.4)
 
   '@webpack-cli/serve@3.0.1(webpack-cli@6.0.1)(webpack-dev-server@5.2.3)(webpack@5.105.4)':
     dependencies:
@@ -18245,7 +18245,7 @@ snapshots:
       lodash.flattendeep: 4.4.0
       nearley: 2.20.1
 
-  rule-inheritance-webpack-plugin@0.2.0(webpack@5.105.4):
+  rule-inheritance-webpack-plugin@0.3.0(webpack@5.105.4):
     dependencies:
       webpack: 5.105.4(webpack-cli@6.0.1)
 
@@ -19514,7 +19514,7 @@ snapshots:
       watchpack: 2.5.1
       webpack-sources: 3.3.4
     optionalDependencies:
-      webpack-cli: 6.0.1(webpack-dev-server@5.2.3)(webpack@5.105.4)
+      webpack-cli: 6.0.1(webpack@5.105.4)
     transitivePeerDependencies:
       - '@swc/core'
       - esbuild
