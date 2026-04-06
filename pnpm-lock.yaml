@@ -906,6 +906,9 @@ importers:
       playwright-chromium:
         specifier: 1.13.0
         version: 1.13.0
+      rule-inheritance-webpack-plugin:
+        specifier: ^0.2.0
+        version: 0.2.0(webpack@5.105.4)
       scratch-render-fonts:
         specifier: 1.0.252
         version: 1.0.252

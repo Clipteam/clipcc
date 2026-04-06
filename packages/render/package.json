@@ -29,8 +29,8 @@
     "watch": "webpack --progress --color --watch --watch-poll"
   },
   "devDependencies": {
-    "@babel/preset-env": "7.29.0",
     "@babel/polyfill": "7.12.1",
+    "@babel/preset-env": "7.29.0",
     "@types/hull.js": "^1.0.4",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.1.0",
@@ -43,6 +43,7 @@
     "json": "9.0.6",
     "node-polyfill-webpack-plugin": "^3.0.0",
     "playwright-chromium": "1.13.0",
+    "rule-inheritance-webpack-plugin": "^0.2.0",
     "scratch-render-fonts": "1.0.252",
     "tap": "21.0.1",
     "terser-webpack-plugin": "^5.3.17",
