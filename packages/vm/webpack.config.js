@@ -60,8 +60,7 @@ const base = {
     plugins: [
         new RuleInheritancePlugin({
             packages: [
-                path.resolve(__dirname, '../svg-renderer'),
-                path.resolve(__dirname, '../storage') // Only used in playground
+                path.resolve(__dirname, '../svg-renderer')
             ]
         }),
         new NodePolyfillPlugin(),
@@ -136,6 +135,11 @@ module.exports = [
             hints: false
         },
         plugins: base.plugins.concat([
+            new RuleInheritancePlugin({
+                packages: [
+                    path.resolve(__dirname, '../storage')
+                ]
+            }),
             new CopyWebpackPlugin({
                 patterns: [{
                     from: '../block/media',
