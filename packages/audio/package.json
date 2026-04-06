@@ -5,7 +5,7 @@
   "exports": {
     "types": "./dist/types/index.d.ts",
     "webpack": "./src/index.js",
-    "default": "./dist.js"
+    "default": "./dist/main.js"
   },
   "scripts": {
     "test": "pnpm run lint && pnpm run tap && pnpm run build",

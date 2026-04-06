@@ -5,27 +5,15 @@ const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 module.exports = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devtool: 'cheap-module-source-map',
-    entry: {
-        dist: './src/index.js'
-    },
+    entry: './src/index.js',
     output: {
-        path: __dirname,
+        path: path.resolve(__dirname, 'dist'),
         library: 'AudioEngine',
         libraryTarget: 'umd',
         filename: '[name].js'
     },
     module: {
         rules: [{
-            include: [
-                path.resolve('src')
-            ],
-            test: /\.([cm]?ts|tsx)$/,
-            loader: 'ts-loader',
-            options: {
-                transpileOnly: true,
-                allowTsInNodeModules: true
-            }
-        }, {
             test: /\.js$/,
             include: path.resolve(__dirname, 'src'),
             loader: 'babel-loader',
