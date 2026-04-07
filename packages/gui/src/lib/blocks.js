@@ -5,6 +5,19 @@ import * as ScratchBlocks from 'clipcc-block';
  */
 
 /**
+ * @type {() => void | null}
+ */
+let recordSoundCallback = null;
+
+/**
+ * Set the callback to be called when the "Record Sound" option is selected in the sound menu.
+ * @param {() => void | null} callback
+ */
+export function setRecordSoundCallback(callback) {
+    recordSoundCallback = callback;
+}
+
+/**
  * Connect scratch blocks with the vm
  * @param {VirtualMachine} vm - The scratch vm
  * @returns {ScratchBlocks} ScratchBlocks connected with the vm
@@ -64,7 +77,7 @@ export default function (vm) {
                 }
             ],
             output: true,
-            outputShape: ScratchBlocks.OUTPUT_SHAPE_ROUND,
+            outputShape: ScratchBlocks.constants.OUTPUT_SHAPE_ROUND,
             extensions: ['colours_sensing']
         };
     };
@@ -141,8 +154,8 @@ export default function (vm) {
         const json = jsonForMenuBlock('SOUND_MENU', soundsMenu, 'sounds', []);
         this.jsonInit(json);
         this.getField('SOUND_MENU').setValidator(newValue => {
-            if (newValue === 'SOUND_RECORD') {
-                ScratchBlocks.recordSoundCallback();
+            if (newValue === 'SOUND_RECORD' && recordSoundCallback) {
+                recordSoundCallback();
                 return null;
             }
             return newValue;
@@ -321,17 +334,6 @@ export default function (vm) {
 
     ScratchBlocks.FieldNote.playNote = function (noteNum, extensionId) {
         vm.runtime.emit('PLAY_NOTE', noteNum, extensionId);
-    };
-
-    // Use a collator's compare instead of localeCompare which internally
-    // creates a collator. Using this is a lot faster in browsers that create a
-    // collator for every localeCompare call.
-    const collator = new Intl.Collator([], {
-        sensitivity: 'base',
-        numeric: true
-    });
-    ScratchBlocks.scratchBlocksUtils.compareStrings = function (str1, str2) {
-        return collator.compare(str1, str2);
     };
 
     return ScratchBlocks;
