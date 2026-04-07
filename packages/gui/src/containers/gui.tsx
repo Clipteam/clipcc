@@ -127,12 +127,12 @@ class GUI extends React.Component<GUIProps> {
         onVmInit: () => {}
     };
 
-    componentDidMount () {
+    override componentDidMount () {
         setIsScratchDesktop(!!this.props.isScratchDesktop);
         this.props.onStorageInit!(storage);
         this.props.onVmInit!(this.props.vm);
     }
-    componentDidUpdate (prevProps: GUIProps) {
+    override componentDidUpdate (prevProps: GUIProps) {
         if (this.props.projectId !== prevProps.projectId && this.props.projectId !== null) {
             this.props.onUpdateProjectId!(this.props.projectId);
         }
@@ -142,7 +142,7 @@ class GUI extends React.Component<GUIProps> {
             this.props.onProjectLoaded!();
         }
     }
-    render () {
+    override render () {
         if (this.props.isError) {
             throw new Error(
                 `Error in Scratch GUI [location=${window.location}]: ${this.props.error}`);

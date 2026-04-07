@@ -110,7 +110,7 @@ const AppStateHOC = function <P extends Record<string, unknown>> (
                 );
             }
         }
-        componentDidUpdate (prevProps: Readonly<P & AppStateProps>): void {
+        override componentDidUpdate (prevProps: Readonly<P & AppStateProps>) {
             if (localesOnly) return;
             if (
                 prevProps.isPlayerOnly !== this.props.isPlayerOnly &&
@@ -125,7 +125,7 @@ const AppStateHOC = function <P extends Record<string, unknown>> (
                 this.store.dispatch(setFullScreen(this.props.isFullScreen));
             }
         }
-        render (): JSX.Element {
+        override render () {
             const {
                 /* eslint-disable @typescript-eslint/no-unused-vars */
                 isFullScreen,

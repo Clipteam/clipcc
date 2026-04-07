@@ -49,12 +49,12 @@ const HashParserHOC = function (
             ]);
         }
 
-        componentDidMount () {
+        override componentDidMount () {
             window.addEventListener('hashchange', this.handleHashChange);
             this.handleHashChange();
         }
 
-        componentDidUpdate (prevProps: Readonly<HashParserComponentProps>) {
+        override componentDidUpdate (prevProps: Readonly<HashParserComponentProps>) {
             // if we are newly fetching a non-hash project...
             if (this.props.isFetchingWithoutId && !prevProps.isFetchingWithoutId) {
                 // ...clear the hash from the url
@@ -66,7 +66,7 @@ const HashParserHOC = function (
             }
         }
 
-        componentWillUnmount () {
+        override componentWillUnmount () {
             window.removeEventListener('hashchange', this.handleHashChange);
         }
 
@@ -76,7 +76,7 @@ const HashParserHOC = function (
             this.props.setProjectId(hashProjectId);
         }
 
-        render () {
+        override render () {
             const {
                 /* eslint-disable @typescript-eslint/no-unused-vars */
                 isFetchingWithoutId: _isFetchingWithoutId,
