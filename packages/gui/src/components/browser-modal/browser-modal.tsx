@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactModal from 'react-modal';
-import {FormattedMessage, injectIntl} from 'react-intl';
+import {defineMessages, FormattedMessage, injectIntl} from 'react-intl';
 import type {IntlShape} from 'react-intl';
 
 import Box from '../box/box.jsx';
@@ -8,7 +8,7 @@ import Box from '../box/box.jsx';
 import styles from './browser-modal.css';
 import unhappyBrowser from './unsupported-browser.svg';
 
-const messages = {
+const messages = defineMessages({
     label: {
         id: 'gui.unsupportedBrowser.label',
         defaultMessage: 'Browser is not supported',
@@ -19,7 +19,7 @@ const messages = {
         defaultMessage: 'An Error Occurred',
         description: 'Heading shown when there is an unhandled exception in an unsupported browser'
     }
-};
+});
 
 interface BrowserModalProps {
     error?: boolean;
