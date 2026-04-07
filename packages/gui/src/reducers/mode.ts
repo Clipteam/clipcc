@@ -1,15 +1,32 @@
+import type {AnyAction} from 'redux';
+import type {BaseAction} from './common';
+
 const SET_FULL_SCREEN = 'scratch-gui/mode/SET_FULL_SCREEN';
 const SET_PLAYER = 'scratch-gui/mode/SET_PLAYER';
 
-const initialState = {
+export interface ModeState {
+    showBranding: boolean;
+    isFullScreen: boolean;
+    isPlayerOnly: boolean;
+    hasEverEnteredEditor: boolean;
+};
+
+const initialState: ModeState = {
     showBranding: false,
     isFullScreen: false,
     isPlayerOnly: false,
     hasEverEnteredEditor: true
 };
 
-const reducer = function (state, action) {
-    if (typeof state === 'undefined') state = initialState;
+interface SetFullScreenAction extends BaseAction<typeof SET_FULL_SCREEN> {
+    isFullScreen: boolean;
+};
+
+interface SetPlayerAction extends BaseAction<typeof SET_PLAYER> {
+    isPlayerOnly: boolean;
+};
+
+const reducer = function (state = initialState, action: AnyAction): ModeState {
     switch (action.type) {
     case SET_FULL_SCREEN:
         return Object.assign({}, state, {
@@ -25,13 +42,13 @@ const reducer = function (state, action) {
     }
 };
 
-const setFullScreen = function (isFullScreen) {
+const setFullScreen = function (isFullScreen: boolean): SetFullScreenAction {
     return {
         type: SET_FULL_SCREEN,
         isFullScreen: isFullScreen
     };
 };
-const setPlayer = function (isPlayerOnly) {
+const setPlayer = function (isPlayerOnly: boolean): SetPlayerAction {
     return {
         type: SET_PLAYER,
         isPlayerOnly: isPlayerOnly

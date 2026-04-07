@@ -63,7 +63,9 @@ const guiInitialState = {
     workspaceMetrics: workspaceMetricsInitialState
 };
 
-const initPlayer = function (currentState) {
+export type GuiState = typeof guiInitialState;
+
+const initPlayer = function (currentState: GuiState): GuiState {
     return Object.assign(
         {},
         currentState,
@@ -72,23 +74,25 @@ const initPlayer = function (currentState) {
             isPlayerOnly: true,
             // When initializing in player mode, make sure to reset
             // hasEverEnteredEditorMode
-            hasEverEnteredEditor: false
+            hasEverEnteredEditor: false,
+            showBranding: currentState.mode.showBranding
         }}
     );
 };
-const initFullScreen = function (currentState) {
+const initFullScreen = function (currentState: GuiState): GuiState {
     return Object.assign(
         {},
         currentState,
         {mode: {
             isFullScreen: true,
             isPlayerOnly: currentState.mode.isPlayerOnly,
-            hasEverEnteredEditor: currentState.mode.hasEverEnteredEditor
+            hasEverEnteredEditor: currentState.mode.hasEverEnteredEditor,
+            showBranding: currentState.mode.showBranding
         }}
     );
 };
 
-const initEmbedded = function (currentState) {
+const initEmbedded = function (currentState: GuiState): GuiState {
     return Object.assign(
         {},
         currentState,
@@ -102,7 +106,7 @@ const initEmbedded = function (currentState) {
 };
 
 
-const initTelemetryModal = function (currentState) {
+const initTelemetryModal = function (currentState: GuiState): GuiState {
     return Object.assign(
         {},
         currentState,
@@ -114,7 +118,7 @@ const initTelemetryModal = function (currentState) {
     );
 };
 
-const guiReducer = combineReducers({
+const guiReducer = combineReducers<GuiState>({
     alerts: alertsReducer,
     assetDrag: assetDragReducer,
     blockDrag: blockDragReducer,

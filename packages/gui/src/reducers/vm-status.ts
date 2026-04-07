@@ -1,15 +1,35 @@
+import type {AnyAction} from 'redux';
+import type {BaseAction} from './common';
+
 const SET_RUNNING_STATE = 'scratch-gui/vm-status/SET_RUNNING_STATE';
 const SET_TURBO_STATE = 'scratch-gui/vm-status/SET_TURBO_STATE';
 const SET_STARTED_STATE = 'scratch-gui/vm-status/SET_STARTED_STATE';
 
-const initialState = {
+export interface VmStatusState {
+    running: boolean;
+    started: boolean;
+    turbo: boolean;
+};
+
+const initialState: VmStatusState = {
     running: false,
     started: false,
     turbo: false
 };
 
-const reducer = function (state, action) {
-    if (typeof state === 'undefined') state = initialState;
+interface SetStartedStateAction extends BaseAction<typeof SET_STARTED_STATE> {
+    started: boolean;
+};
+
+interface SetRunningStateAction extends BaseAction<typeof SET_RUNNING_STATE> {
+    running: boolean;
+};
+
+interface SetTurboStateAction extends BaseAction<typeof SET_TURBO_STATE> {
+    turbo: boolean;
+};
+
+const reducer = function (state = initialState, action: AnyAction): VmStatusState {
     switch (action.type) {
     case SET_STARTED_STATE:
         return Object.assign({}, state, {
@@ -28,7 +48,7 @@ const reducer = function (state, action) {
     }
 };
 
-const setStartedState = function (started) {
+const setStartedState = function (started: boolean): SetStartedStateAction {
     return {
         type: SET_STARTED_STATE,
         started: started
@@ -36,14 +56,14 @@ const setStartedState = function (started) {
 };
 
 
-const setRunningState = function (running) {
+const setRunningState = function (running: boolean): SetRunningStateAction {
     return {
         type: SET_RUNNING_STATE,
         running: running
     };
 };
 
-const setTurboState = function (turbo) {
+const setTurboState = function (turbo: boolean): SetTurboStateAction {
     return {
         type: SET_TURBO_STATE,
         turbo: turbo

@@ -1,3 +1,6 @@
+import type {AnyAction} from 'redux';
+import type {BaseAction} from './common';
+
 const ACTIVATE_TAB = 'scratch-gui/navigation/ACTIVATE_TAB';
 
 // Constants use numbers to make it easier to work with react-tabs
@@ -5,12 +8,21 @@ const BLOCKS_TAB_INDEX = 0;
 const COSTUMES_TAB_INDEX = 1;
 const SOUNDS_TAB_INDEX = 2;
 
-const initialState = {
+type TabIndex = typeof BLOCKS_TAB_INDEX | typeof COSTUMES_TAB_INDEX | typeof SOUNDS_TAB_INDEX;
+
+export interface EditorTabState {
+    activeTabIndex: TabIndex;
+};
+
+const initialState: EditorTabState = {
     activeTabIndex: BLOCKS_TAB_INDEX
 };
 
-const reducer = function (state, action) {
-    if (typeof state === 'undefined') state = initialState;
+interface ActivateTabAction extends BaseAction<typeof ACTIVATE_TAB> {
+    activeTabIndex: TabIndex;
+};
+
+const reducer = function (state: EditorTabState = initialState, action: AnyAction): EditorTabState {
     switch (action.type) {
     case ACTIVATE_TAB:
         return Object.assign({}, state, {
@@ -21,7 +33,7 @@ const reducer = function (state, action) {
     }
 };
 
-const activateTab = function (tab) {
+const activateTab = function (tab: TabIndex): ActivateTabAction {
     return {
         type: ACTIVATE_TAB,
         activeTabIndex: tab

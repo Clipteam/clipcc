@@ -17,3 +17,16 @@ declare module '*.css' {
     declare const value: { [className: string]: string };
     export default value;
 }
+
+declare module 'redux-throttle' {
+    import type {Middleware} from 'redux';
+
+    interface ThrottleOptions {
+        leading?: boolean;
+        trailing?: boolean;
+    }
+
+    const throttle: (delay: number, options?: ThrottleOptions) => Middleware;
+
+    export default throttle;
+}

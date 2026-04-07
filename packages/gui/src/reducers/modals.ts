@@ -1,3 +1,6 @@
+import type {AnyAction} from 'redux';
+import type {BaseAction} from './common';
+
 const OPEN_MODAL = 'scratch-gui/modals/OPEN_MODAL';
 const CLOSE_MODAL = 'scratch-gui/modals/CLOSE_MODAL';
 
@@ -12,7 +15,21 @@ const MODAL_SOUND_RECORDER = 'soundRecorder';
 const MODAL_CONNECTION = 'connectionModal';
 const MODAL_SETTINGS = 'settingsModal';
 
-const initialState = {
+type ModalName =
+    | typeof MODAL_BACKDROP_LIBRARY
+    | typeof MODAL_COSTUME_LIBRARY
+    | typeof MODAL_EXTENSION_LIBRARY
+    | typeof MODAL_LOADING_PROJECT
+    | typeof MODAL_TELEMETRY
+    | typeof MODAL_SOUND_LIBRARY
+    | typeof MODAL_SPRITE_LIBRARY
+    | typeof MODAL_SOUND_RECORDER
+    | typeof MODAL_CONNECTION
+    | typeof MODAL_SETTINGS;
+
+export type ModalsState = Record<ModalName, boolean>;
+
+const initialState: ModalsState = {
     [MODAL_BACKDROP_LIBRARY]: false,
     [MODAL_COSTUME_LIBRARY]: false,
     [MODAL_EXTENSION_LIBRARY]: false,
@@ -25,8 +42,15 @@ const initialState = {
     [MODAL_SETTINGS]: false
 };
 
-const reducer = function (state, action) {
-    if (typeof state === 'undefined') state = initialState;
+interface OpenModalAction extends BaseAction<typeof OPEN_MODAL> {
+    modal: ModalName;
+};
+
+interface CloseModalAction extends BaseAction<typeof CLOSE_MODAL> {
+    modal: ModalName;
+};
+
+const reducer = function (state: ModalsState = initialState, action: AnyAction): ModalsState {
     switch (action.type) {
     case OPEN_MODAL:
         return Object.assign({}, state, {
@@ -40,76 +64,76 @@ const reducer = function (state, action) {
         return state;
     }
 };
-const openModal = function (modal) {
+const openModal = function (modal: ModalName): OpenModalAction {
     return {
         type: OPEN_MODAL,
         modal: modal
     };
 };
-const closeModal = function (modal) {
+const closeModal = function (modal: ModalName): CloseModalAction {
     return {
         type: CLOSE_MODAL,
         modal: modal
     };
 };
-const openBackdropLibrary = function () {
+const openBackdropLibrary = function (): OpenModalAction {
     return openModal(MODAL_BACKDROP_LIBRARY);
 };
-const openCostumeLibrary = function () {
+const openCostumeLibrary = function (): OpenModalAction {
     return openModal(MODAL_COSTUME_LIBRARY);
 };
-const openExtensionLibrary = function () {
+const openExtensionLibrary = function (): OpenModalAction {
     return openModal(MODAL_EXTENSION_LIBRARY);
 };
-const openLoadingProject = function () {
+const openLoadingProject = function (): OpenModalAction {
     return openModal(MODAL_LOADING_PROJECT);
 };
-const openTelemetryModal = function () {
+const openTelemetryModal = function (): OpenModalAction {
     return openModal(MODAL_TELEMETRY);
 };
-const openSoundLibrary = function () {
+const openSoundLibrary = function (): OpenModalAction {
     return openModal(MODAL_SOUND_LIBRARY);
 };
-const openSpriteLibrary = function () {
+const openSpriteLibrary = function (): OpenModalAction {
     return openModal(MODAL_SPRITE_LIBRARY);
 };
-const openSoundRecorder = function () {
+const openSoundRecorder = function (): OpenModalAction {
     return openModal(MODAL_SOUND_RECORDER);
 };
-const openConnectionModal = function () {
+const openConnectionModal = function (): OpenModalAction {
     return openModal(MODAL_CONNECTION);
 };
-const openSettingsModal = function () {
+const openSettingsModal = function (): OpenModalAction {
     return openModal(MODAL_SETTINGS);
 };
-const closeBackdropLibrary = function () {
+const closeBackdropLibrary = function (): CloseModalAction {
     return closeModal(MODAL_BACKDROP_LIBRARY);
 };
-const closeCostumeLibrary = function () {
+const closeCostumeLibrary = function (): CloseModalAction {
     return closeModal(MODAL_COSTUME_LIBRARY);
 };
-const closeExtensionLibrary = function () {
+const closeExtensionLibrary = function (): CloseModalAction {
     return closeModal(MODAL_EXTENSION_LIBRARY);
 };
-const closeLoadingProject = function () {
+const closeLoadingProject = function (): CloseModalAction {
     return closeModal(MODAL_LOADING_PROJECT);
 };
-const closeTelemetryModal = function () {
+const closeTelemetryModal = function (): CloseModalAction {
     return closeModal(MODAL_TELEMETRY);
 };
-const closeSpriteLibrary = function () {
+const closeSpriteLibrary = function (): CloseModalAction {
     return closeModal(MODAL_SPRITE_LIBRARY);
 };
-const closeSoundLibrary = function () {
+const closeSoundLibrary = function (): CloseModalAction {
     return closeModal(MODAL_SOUND_LIBRARY);
 };
-const closeSoundRecorder = function () {
+const closeSoundRecorder = function (): CloseModalAction {
     return closeModal(MODAL_SOUND_RECORDER);
 };
-const closeConnectionModal = function () {
+const closeConnectionModal = function (): CloseModalAction {
     return closeModal(MODAL_CONNECTION);
 };
-const closeSettingsModal = function () {
+const closeSettingsModal = function (): CloseModalAction {
     return closeModal(MODAL_SETTINGS);
 };
 export {

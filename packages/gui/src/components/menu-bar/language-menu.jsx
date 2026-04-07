@@ -9,8 +9,8 @@ import locales from 'clipcc-l10n';
 import check from './check.svg';
 import {MenuItem, Submenu} from '../menu/menu.jsx';
 import languageIcon from '../language-selector/language-icon.svg';
-import {languageMenuOpen, openLanguageMenu} from '../../reducers/menus.js';
-import {selectLocale} from '../../reducers/locales.js';
+import {languageMenuOpen, openLanguageMenu} from '../../reducers/menus';
+import {selectLocale} from '../../reducers/locales';
 
 import styles from './settings-menu.css';
 

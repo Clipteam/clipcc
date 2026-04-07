@@ -4,9 +4,11 @@
     "description": "Localization for the Scratch 3.0 components",
     "main": "./dist/l10n.js",
     "browser": "./src/index.js",
+    "types": "./dist/types/index.d.ts",
     "scripts": {
+        "build:types": "tsc --project ./tsconfig.dts.json",
         "build:data": "babel-node scripts/build-data",
-        "build": "pnpm run clean && pnpm run build:data && webpack --progress --color --bail",
+        "build": "pnpm run clean &&  pnpm run build:types && pnpm run build:data && webpack --progress --color --bail",
         "clean": "rimraf ./dist ./locales && mkdirp dist locales",
         "lint:js": "eslint . --ext .js",
         "lint:json": "jshint -e .json www editor/blocks editor/extensions editor/interface editor/paint-editor",
@@ -52,6 +54,7 @@
         "p-limit": "2.1.0",
         "p-queue": "3.0.0",
         "rimraf": "^2.6.2",
+        "typescript": "catalog:",
         "webpack": "catalog:",
         "webpack-cli": "^6.0.1"
     }

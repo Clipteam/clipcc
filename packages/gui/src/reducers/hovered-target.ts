@@ -1,13 +1,31 @@
+import type {AnyAction} from 'redux';
+import type {BaseAction} from './common';
+
 const SET_HOVERED_SPRITE = 'scratch-gui/hovered-target/SET_HOVERED_SPRITE';
 const SET_RECEIVED_BLOCKS = 'scratch-gui/hovered-target/SET_RECEIVED_BLOCKS';
 
-const initialState = {
+export interface HoveredTargetState {
+    sprite: string | null;
+    receivedBlocks: boolean;
+};
+
+const initialState: HoveredTargetState = {
     sprite: null,
     receivedBlocks: false
 };
 
-const reducer = function (state, action) {
-    if (typeof state === 'undefined') state = initialState;
+interface SetHoveredSpriteAction extends BaseAction<typeof SET_HOVERED_SPRITE> {
+    spriteId: string | null;
+    meta: {
+        throttle: number;
+    };
+};
+
+interface SetReceivedBlocksAction extends BaseAction<typeof SET_RECEIVED_BLOCKS> {
+    receivedBlocks: boolean;
+};
+
+const reducer = function (state: HoveredTargetState = initialState, action: AnyAction): HoveredTargetState {
     switch (action.type) {
     case SET_HOVERED_SPRITE:
         return {
@@ -24,7 +42,7 @@ const reducer = function (state, action) {
     }
 };
 
-const setHoveredSprite = function (spriteId) {
+const setHoveredSprite = function (spriteId: string | null): SetHoveredSpriteAction {
     return {
         type: SET_HOVERED_SPRITE,
         spriteId: spriteId,
@@ -34,7 +52,7 @@ const setHoveredSprite = function (spriteId) {
     };
 };
 
-const setReceivedBlocks = function (receivedBlocks) {
+const setReceivedBlocks = function (receivedBlocks: boolean): SetReceivedBlocksAction {
     return {
         type: SET_RECEIVED_BLOCKS,
         receivedBlocks: receivedBlocks

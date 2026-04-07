@@ -1,11 +1,32 @@
+import type {AnyAction} from 'redux';
 import alertsData, {AlertTypes, AlertLevels} from '../lib/alerts/index.jsx';
 import extensionData from '../lib/libraries/extensions/index.jsx';
+import type {BaseAction} from './common';
 
 const SHOW_ALERT = 'scratch-gui/alerts/SHOW_ALERT';
 const SHOW_EXTENSION_ALERT = 'scratch-gui/alerts/SHOW_EXTENSION_ALERT';
 const CLOSE_ALERT = 'scratch-gui/alerts/CLOSE_ALERT';
 const CLOSE_ALERTS_WITH_ID = 'scratch-gui/alerts/CLOSE_ALERTS_WITH_ID';
 const CLOSE_ALERT_WITH_ID = 'scratch-gui/alerts/CLOSE_ALERT_WITH_ID';
+
+type AlertType = string;
+type AlertLevel = string;
+
+interface AlertItem {
+    alertType?: AlertType;
+    alertId?: string;
+    closeButton?: boolean;
+    content?: unknown;
+    extensionId?: string;
+    extensionName?: string | JSX.Element;
+    iconURL?: string;
+    iconSpinner?: boolean;
+    level?: AlertLevel;
+    message?: string;
+    showDownload?: boolean;
+    showReconnect?: boolean;
+    showSaveNow?: boolean;
+};
 
 /**
  * Initial state of alerts reducer
@@ -21,38 +42,75 @@ const CLOSE_ALERT_WITH_ID = 'scratch-gui/alerts/CLOSE_ALERT_WITH_ID';
  *  message (optional): string
  *  showReconnect (optional): bool
  */
-const initialState = {
+export interface AlertsState {
+    visible: boolean;
+    alertsList: AlertItem[];
+};
+
+const initialState: AlertsState = {
     visible: true,
     alertsList: []
 };
 
-const filterPopupAlerts = alertsList => (
+const filterPopupAlerts = (alertsList: AlertItem[]): AlertItem[] => (
     alertsList.filter(curAlert => (
         curAlert.alertType === AlertTypes.STANDARD ||
         curAlert.alertType === AlertTypes.EXTENSION
     ))
 );
 
-const filterInlineAlerts = alertsList => (
+const filterInlineAlerts = (alertsList: AlertItem[]): AlertItem[] => (
     alertsList.filter(curAlert => (
         curAlert.alertType === AlertTypes.INLINE
     ))
 );
 
-const reducer = function (state, action) {
-    if (typeof state === 'undefined') state = initialState;
+interface ShowAlertAction extends BaseAction<typeof SHOW_ALERT> {
+    alertId: string;
+    data?: {
+        message?: string;
+    };
+};
+
+interface ShowExtensionAlertAction extends BaseAction<typeof SHOW_EXTENSION_ALERT> {
+    data: {
+        extensionId?: string;
+    };
+};
+
+interface CloseAlertAction extends BaseAction<typeof CLOSE_ALERT> {
+    index: number;
+    alertId?: string;
+};
+
+interface CloseAlertWithIdAction extends BaseAction<typeof CLOSE_ALERT_WITH_ID> {
+    alertId: string;
+};
+
+interface CloseAlertsWithIdAction extends BaseAction<typeof CLOSE_ALERTS_WITH_ID> {
+    alertId: string;
+};
+
+type AlertsAction =
+    | ShowAlertAction
+    | ShowExtensionAlertAction
+    | CloseAlertAction
+    | CloseAlertWithIdAction
+    | CloseAlertsWithIdAction;
+
+const reducer = function (state: AlertsState = initialState, action: AnyAction): AlertsState {
     switch (action.type) {
     case SHOW_ALERT: { // intended to show standard and inline alerts, but not extensions
         const alertId = action.alertId;
         if (alertId) {
-            const newAlert = {
+            const newAlert: AlertItem = {
                 alertId: alertId,
                 level: AlertLevels.WARN // default level
             };
             const alertData = alertsData.find(thisAlertData => thisAlertData.alertId === alertId);
             if (alertData) {
                 const newList = state.alertsList.filter(curAlert => (
-                    !alertData.clearList || alertData.clearList.indexOf(curAlert.alertId) === -1
+                    !alertData.clearList || alertData.clearList.indexOf(curAlert.alertId!) === -1
                 ));
                 if (action.data && action.data.message) {
                     newAlert.message = action.data.message;
@@ -81,7 +139,7 @@ const reducer = function (state, action) {
             const extension = extensionData.find(ext => ext.extensionId === extensionId);
             if (extension) {
                 const newList = state.alertsList.slice();
-                const newAlert = {
+                const newAlert: AlertItem = {
                     alertType: AlertTypes.EXTENSION,
                     closeButton: true,
                     extensionId: extensionId,
@@ -101,12 +159,10 @@ const reducer = function (state, action) {
     }
     case CLOSE_ALERT_WITH_ID:
     case CLOSE_ALERT: {
-        if (action.alertId) {
-            action.index = state.alertsList.findIndex(a => a.alertId === action.alertId);
-            if (action.index === -1) return state;
-        }
+        const index = 'alertId' in action ? state.alertsList.findIndex(a => a.alertId === action.alertId) : action.index;
+        if (index === -1) return state;
         const newList = state.alertsList.slice();
-        newList.splice(action.index, 1);
+        newList.splice(index, 1);
         return Object.assign({}, state, {
             alertsList: newList
         });
@@ -126,10 +182,10 @@ const reducer = function (state, action) {
 /**
  * Action creator to close an alert with the given index.
  *
- * @param {object} index - the index of the alert to close.
- * @returns {object} - an object to be passed to the reducer.
+ * @param index - the index of the alert to close.
+ * @returns - an object to be passed to the reducer.
  */
-const closeAlert = function (index) {
+const closeAlert = function (index: number): CloseAlertAction {
     return {
         type: CLOSE_ALERT,
         index
@@ -139,10 +195,10 @@ const closeAlert = function (index) {
 /**
  * Action creator to close all alerts with a given ID.
  *
- * @param {string} alertId - id string of the alert to close
- * @returns {object} - an object to be passed to the reducer.
+ * @param alertId id string of the alert to close
+ * @returns an object to be passed to the reducer.
  */
-const closeAlertsWithId = function (alertId) {
+const closeAlertsWithId = function (alertId: string): CloseAlertsWithIdAction {
     return {
         type: CLOSE_ALERTS_WITH_ID,
         alertId
@@ -152,10 +208,10 @@ const closeAlertsWithId = function (alertId) {
 /**
  * Action creator to close a single alert with a given ID.
  *
- * @param {string} alertId - id string of the alert to close
- * @returns {object} - an object to be passed to the reducer.
+ * @param alertId - id string of the alert to close
+ * @returns an object to be passed to the reducer.
  */
-const closeAlertWithId = function (alertId) {
+const closeAlertWithId = function (alertId: string): CloseAlertWithIdAction {
     return {
         type: CLOSE_ALERT_WITH_ID,
         alertId
@@ -165,10 +221,10 @@ const closeAlertWithId = function (alertId) {
 /**
  * Action creator to show an alert with the given alertId.
  *
- * @param {string} alertId - id string of the alert to show
- * @returns {object} - an object to be passed to the reducer.
+ * @param alertId - id string of the alert to show
+ * @returns an object to be passed to the reducer.
  */
-const showStandardAlert = function (alertId) {
+const showStandardAlert = function (alertId: string): ShowAlertAction {
     return {
         type: SHOW_ALERT,
         alertId
@@ -178,12 +234,12 @@ const showStandardAlert = function (alertId) {
 /**
  * Action creator to show an alert with the given input data.
  *
- * @param {object} data - data for the alert
- * @param {string} data.message - message for the alert
- * @param {string} data.extensionId - extension ID for the alert
- * @returns {object} - an object to be passed to the reducer.
+ * @param data - data for the alert
+ * @param data.message - message for the alert
+ * @param data.extensionId - extension ID for the alert
+ * @returns an object to be passed to the reducer.
  */
-const showExtensionAlert = function (data) {
+const showExtensionAlert = function (data: {message?: string; extensionId?: string}): ShowExtensionAlertAction {
     return {
         type: SHOW_EXTENSION_ALERT,
         data
@@ -194,10 +250,10 @@ const showExtensionAlert = function (data) {
  * Function to dispatch showing an alert, with optional
  * timeout to make it close/go away.
  *
- * @param {object} dispatch - dispatch function
- * @param {string} alertId - the ID of the alert
+ * @param dispatch - dispatch function
+ * @param alertId - the ID of the alert
  */
-const showAlertWithTimeout = function (dispatch, alertId) {
+const showAlertWithTimeout = function (dispatch: (action: AlertsAction) => void, alertId: string): void {
     const alertData = alertsData.find(thisAlertData => thisAlertData.alertId === alertId);
     if (alertData) {
         dispatch(showStandardAlert(alertId));

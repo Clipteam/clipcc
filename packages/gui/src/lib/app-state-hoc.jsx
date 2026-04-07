@@ -6,7 +6,7 @@ import ConnectedIntlProvider from './connected-intl-provider.jsx';
 
 import localesReducer, {initLocale, localesInitialState} from '../reducers/locales';
 
-import {setPlayer, setFullScreen} from '../reducers/mode.js';
+import {setPlayer, setFullScreen} from '../reducers/mode';
 
 import locales from 'clipcc-l10n';
 import {detectLocale} from './detect-locale';

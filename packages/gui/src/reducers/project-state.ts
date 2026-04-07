@@ -1,4 +1,5 @@
-import keyMirror from 'keymirror';
+import type {AnyAction} from 'redux';
+import type {BaseAction} from './common';
 
 const DONE_CREATING_COPY = 'scratch-gui/project-state/DONE_CREATING_COPY';
 const DONE_CREATING_NEW = 'scratch-gui/project-state/DONE_CREATING_NEW';
@@ -25,95 +26,149 @@ const START_UPDATING_BEFORE_CREATING_NEW = 'scratch-gui/project-state/START_UPDA
 
 const defaultProjectId = '0'; // hardcoded id of default project
 
-const LoadingState = keyMirror({
-    NOT_LOADED: null,
-    ERROR: null,
-    AUTO_UPDATING: null,
-    CREATING_COPY: null,
-    CREATING_NEW: null,
-    FETCHING_NEW_DEFAULT: null,
-    FETCHING_WITH_ID: null,
-    LOADING_VM_FILE_UPLOAD: null,
-    LOADING_VM_NEW_DEFAULT: null,
-    LOADING_VM_WITH_ID: null,
-    MANUAL_UPDATING: null,
-    REMIXING: null,
-    SHOWING_WITH_ID: null,
-    SHOWING_WITHOUT_ID: null,
-    UPDATING_BEFORE_COPY: null,
-    UPDATING_BEFORE_NEW: null
-});
+const LoadingState = {
+    NOT_LOADED: 'NOT_LOADED',
+    ERROR: 'ERROR',
+    AUTO_UPDATING: 'AUTO_UPDATING',
+    CREATING_COPY: 'CREATING_COPY',
+    CREATING_NEW: 'CREATING_NEW',
+    FETCHING_NEW_DEFAULT: 'FETCHING_NEW_DEFAULT',
+    FETCHING_WITH_ID: 'FETCHING_WITH_ID',
+    LOADING_VM_FILE_UPLOAD: 'LOADING_VM_FILE_UPLOAD',
+    LOADING_VM_NEW_DEFAULT: 'LOADING_VM_NEW_DEFAULT',
+    LOADING_VM_WITH_ID: 'LOADING_VM_WITH_ID',
+    MANUAL_UPDATING: 'MANUAL_UPDATING',
+    REMIXING: 'REMIXING',
+    SHOWING_WITH_ID: 'SHOWING_WITH_ID',
+    SHOWING_WITHOUT_ID: 'SHOWING_WITHOUT_ID',
+    UPDATING_BEFORE_COPY: 'UPDATING_BEFORE_COPY',
+    UPDATING_BEFORE_NEW: 'UPDATING_BEFORE_NEW'
+};
 
 const LoadingStates = Object.keys(LoadingState);
 
-const getIsFetchingWithoutId = loadingState => (
+type LoadingStateValue = string;
+
+export interface ProjectState {
+    error: unknown;
+    projectData: unknown;
+    projectId: string | null;
+    loadingState: LoadingStateValue;
+};
+
+const getIsFetchingWithoutId = (loadingState: LoadingStateValue): boolean => (
     // LOADING_VM_FILE_UPLOAD is an honorary fetch, since there is no fetching step for file uploads
     loadingState === LoadingState.LOADING_VM_FILE_UPLOAD ||
     loadingState === LoadingState.FETCHING_NEW_DEFAULT
 );
-const getIsFetchingWithId = loadingState => (
+const getIsFetchingWithId = (loadingState: LoadingStateValue): boolean => (
     loadingState === LoadingState.FETCHING_WITH_ID ||
     loadingState === LoadingState.FETCHING_NEW_DEFAULT
 );
-const getIsLoadingWithId = loadingState => (
+const getIsLoadingWithId = (loadingState: LoadingStateValue): boolean => (
     loadingState === LoadingState.LOADING_VM_WITH_ID ||
     loadingState === LoadingState.LOADING_VM_NEW_DEFAULT
 );
-const getIsLoading = loadingState => (
+const getIsLoading = (loadingState: LoadingStateValue): boolean => (
     loadingState === LoadingState.LOADING_VM_FILE_UPLOAD ||
     loadingState === LoadingState.LOADING_VM_WITH_ID ||
     loadingState === LoadingState.LOADING_VM_NEW_DEFAULT
 );
-const getIsLoadingUpload = loadingState => (
+const getIsLoadingUpload = (loadingState: LoadingStateValue): boolean => (
     loadingState === LoadingState.LOADING_VM_FILE_UPLOAD
 );
-const getIsCreatingNew = loadingState => (
+const getIsCreatingNew = (loadingState: LoadingStateValue): boolean => (
     loadingState === LoadingState.CREATING_NEW
 );
-const getIsAnyCreatingNewState = loadingState => (
+const getIsAnyCreatingNewState = (loadingState: LoadingStateValue): boolean => (
     loadingState === LoadingState.FETCHING_NEW_DEFAULT ||
     loadingState === LoadingState.LOADING_VM_NEW_DEFAULT ||
     loadingState === LoadingState.CREATING_NEW
 );
-const getIsCreatingCopy = loadingState => (
+const getIsCreatingCopy = (loadingState: LoadingStateValue): boolean => (
     loadingState === LoadingState.CREATING_COPY
 );
-const getIsManualUpdating = loadingState => (
+const getIsManualUpdating = (loadingState: LoadingStateValue): boolean => (
     loadingState === LoadingState.MANUAL_UPDATING
 );
-const getIsRemixing = loadingState => (
+const getIsRemixing = (loadingState: LoadingStateValue): boolean => (
     loadingState === LoadingState.REMIXING
 );
-const getIsUpdating = loadingState => (
+const getIsUpdating = (loadingState: LoadingStateValue): boolean => (
     loadingState === LoadingState.AUTO_UPDATING ||
     loadingState === LoadingState.MANUAL_UPDATING ||
     loadingState === LoadingState.UPDATING_BEFORE_COPY ||
     loadingState === LoadingState.UPDATING_BEFORE_NEW
 );
-const getIsShowingProject = loadingState => (
+const getIsShowingProject = (loadingState: LoadingStateValue): boolean => (
     loadingState === LoadingState.SHOWING_WITH_ID ||
     loadingState === LoadingState.SHOWING_WITHOUT_ID
 );
-const getIsShowingWithId = loadingState => (
+const getIsShowingWithId = (loadingState: LoadingStateValue): boolean => (
     loadingState === LoadingState.SHOWING_WITH_ID
 );
-const getIsShowingWithoutId = loadingState => (
+const getIsShowingWithoutId = (loadingState: LoadingStateValue): boolean => (
     loadingState === LoadingState.SHOWING_WITHOUT_ID
 );
-const getIsError = loadingState => (
+const getIsError = (loadingState: LoadingStateValue): boolean => (
     loadingState === LoadingState.ERROR
 );
 
-const initialState = {
+const initialState: ProjectState = {
     error: null,
     projectData: null,
     projectId: null,
     loadingState: LoadingState.NOT_LOADED
 };
 
-const reducer = function (state, action) {
-    if (typeof state === 'undefined') state = initialState;
+type DoneCreatingNewAction = BaseAction<typeof DONE_CREATING_NEW> & {projectId: string};
+type DoneCreatingCopyAction = BaseAction<typeof DONE_CREATING_COPY> & {projectId: string};
+type DoneRemixingAction = BaseAction<typeof DONE_REMIXING> & {projectId: string};
+type DoneFetchingWithIdAction = BaseAction<typeof DONE_FETCHING_WITH_ID> & {projectData: unknown};
+type DoneFetchingDefaultAction = BaseAction<typeof DONE_FETCHING_DEFAULT> & {projectData: unknown};
+type DoneLoadingVmWithoutIdAction = BaseAction<typeof DONE_LOADING_VM_WITHOUT_ID>;
+type DoneLoadingVmWithIdAction = BaseAction<typeof DONE_LOADING_VM_WITH_ID>;
+type DoneLoadingVmToSaveAction = BaseAction<typeof DONE_LOADING_VM_TO_SAVE>;
+type DoneUpdatingAction = BaseAction<typeof DONE_UPDATING>;
+type DoneUpdatingBeforeCopyAction = BaseAction<typeof DONE_UPDATING_BEFORE_COPY>;
+type DoneUpdatingBeforeNewAction = BaseAction<typeof DONE_UPDATING_BEFORE_NEW>;
+type ReturnToShowingAction = BaseAction<typeof RETURN_TO_SHOWING>;
+type SetProjectIdAction = BaseAction<typeof SET_PROJECT_ID> & {projectId: string | null};
+type StartAutoUpdatingAction = BaseAction<typeof START_AUTO_UPDATING>;
+type StartCreatingNewAction = BaseAction<typeof START_CREATING_NEW>;
+type StartErrorAction = BaseAction<typeof START_ERROR> & {error?: unknown};
+type StartFetchingNewAction = BaseAction<typeof START_FETCHING_NEW>;
+type StartLoadingVmFileUploadAction = BaseAction<typeof START_LOADING_VM_FILE_UPLOAD>;
+type StartManualUpdatingAction = BaseAction<typeof START_MANUAL_UPDATING>;
+type StartRemixingAction = BaseAction<typeof START_REMIXING>;
+type StartUpdatingBeforeCreatingCopyAction = BaseAction<typeof START_UPDATING_BEFORE_CREATING_COPY>;
+type StartUpdatingBeforeCreatingNewAction = BaseAction<typeof START_UPDATING_BEFORE_CREATING_NEW>;
 
+type ProjectStateAction =
+    | DoneCreatingNewAction
+    | DoneCreatingCopyAction
+    | DoneRemixingAction
+    | DoneFetchingWithIdAction
+    | DoneFetchingDefaultAction
+    | DoneLoadingVmWithoutIdAction
+    | DoneLoadingVmWithIdAction
+    | DoneLoadingVmToSaveAction
+    | DoneUpdatingAction
+    | DoneUpdatingBeforeCopyAction
+    | DoneUpdatingBeforeNewAction
+    | ReturnToShowingAction
+    | SetProjectIdAction
+    | StartAutoUpdatingAction
+    | StartCreatingNewAction
+    | StartErrorAction
+    | StartFetchingNewAction
+    | StartLoadingVmFileUploadAction
+    | StartManualUpdatingAction
+    | StartRemixingAction
+    | StartUpdatingBeforeCreatingCopyAction
+    | StartUpdatingBeforeCreatingNewAction;
+
+const reducer = function (state: ProjectState = initialState, action: AnyAction): ProjectState {
     switch (action.type) {
     case DONE_CREATING_NEW:
         // We need to set project id since we just created new project on the server.
@@ -369,11 +424,11 @@ const reducer = function (state, action) {
     }
 };
 
-const createProject = () => ({
+const createProject = (): StartCreatingNewAction => ({
     type: START_CREATING_NEW
 });
 
-const doneCreatingProject = (id, loadingState) => {
+const doneCreatingProject = (id: string, loadingState: LoadingStateValue): ProjectStateAction | undefined => {
     switch (loadingState) {
     case LoadingState.CREATING_NEW:
         return {
@@ -395,7 +450,7 @@ const doneCreatingProject = (id, loadingState) => {
     }
 };
 
-const onFetchedProjectData = (projectData, loadingState) => {
+const onFetchedProjectData = (projectData: unknown, loadingState: LoadingStateValue): ProjectStateAction | undefined => {
     switch (loadingState) {
     case LoadingState.FETCHING_WITH_ID:
         return {
@@ -412,7 +467,7 @@ const onFetchedProjectData = (projectData, loadingState) => {
     }
 };
 
-const onLoadedProject = (loadingState, canSave, success) => {
+const onLoadedProject = (loadingState: LoadingStateValue, canSave: boolean, success: boolean): ProjectStateAction | undefined => {
     switch (loadingState) {
     case LoadingState.LOADING_VM_WITH_ID:
         if (success) {
@@ -440,7 +495,7 @@ const onLoadedProject = (loadingState, canSave, success) => {
     }
 };
 
-const doneUpdatingProject = loadingState => {
+const doneUpdatingProject = (loadingState: LoadingStateValue): ProjectStateAction | undefined => {
     switch (loadingState) {
     case LoadingState.AUTO_UPDATING:
     case LoadingState.MANUAL_UPDATING:
@@ -460,22 +515,22 @@ const doneUpdatingProject = loadingState => {
     }
 };
 
-const projectError = error => ({
+const projectError = (error: unknown): StartErrorAction => ({
     type: START_ERROR,
     error: error
 });
 
-const setProjectId = id => ({
+const setProjectId = (id: string | null): SetProjectIdAction => ({
     type: SET_PROJECT_ID,
     projectId: id
 });
 
-const requestNewProject = needSave => {
+const requestNewProject = (needSave: boolean): StartUpdatingBeforeCreatingNewAction | StartFetchingNewAction => {
     if (needSave) return {type: START_UPDATING_BEFORE_CREATING_NEW};
     return {type: START_FETCHING_NEW};
 };
 
-const requestProjectUpload = loadingState => {
+const requestProjectUpload = (loadingState: LoadingStateValue): StartLoadingVmFileUploadAction | undefined => {
     switch (loadingState) {
     case LoadingState.NOT_LOADED:
     case LoadingState.SHOWING_WITH_ID:
@@ -488,19 +543,19 @@ const requestProjectUpload = loadingState => {
     }
 };
 
-const autoUpdateProject = () => ({
+const autoUpdateProject = (): StartAutoUpdatingAction => ({
     type: START_AUTO_UPDATING
 });
 
-const manualUpdateProject = () => ({
+const manualUpdateProject = (): StartManualUpdatingAction => ({
     type: START_MANUAL_UPDATING
 });
 
-const saveProjectAsCopy = () => ({
+const saveProjectAsCopy = (): StartUpdatingBeforeCreatingCopyAction => ({
     type: START_UPDATING_BEFORE_CREATING_COPY
 });
 
-const remixProject = () => ({
+const remixProject = (): StartRemixingAction => ({
     type: START_REMIXING
 });
 

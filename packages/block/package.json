@@ -12,6 +12,14 @@
   "main": "./dist/node/main.js",
   "browser": "./dist/web/main.js",
   "types": "./dist/types",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "dist/types/*",
+        "dist/types/index.d.ts"
+      ]
+    }
+  },
   "scripts": {
     "start": "webpack serve",
     "build": "webpack --progress --color --bail",

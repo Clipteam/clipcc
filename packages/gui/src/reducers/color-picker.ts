@@ -1,16 +1,37 @@
+import type {AnyAction} from 'redux';
+import type {BaseAction} from './common';
+
 const ACTIVATE_COLOR_PICKER = 'scratch-gui/color-picker/ACTIVATE_COLOR_PICKER';
 const DEACTIVATE_COLOR_PICKER = 'scratch-gui/color-picker/DEACTIVATE_COLOR_PICKER';
 const SET_CALLBACK = 'scratch-gui/color-picker/SET_CALLBACK';
 
-const initialState = {
+type ColorPickerCallback = (color: string) => void;
+
+export interface ColorPickerState {
+    active: boolean;
+    callback: ColorPickerCallback;
+};
+
+const initialState: ColorPickerState = {
     active: false,
     callback: () => {
         throw new Error('Color picker callback not initialized');
     }
 };
 
-const reducer = function (state, action) {
-    if (typeof state === 'undefined') state = initialState;
+interface ActivateColorPickerAction extends BaseAction<typeof ACTIVATE_COLOR_PICKER> {
+    callback: ColorPickerCallback;
+};
+
+interface DeactivateColorPickerAction extends BaseAction<typeof DEACTIVATE_COLOR_PICKER> {
+    color?: string;
+};
+
+interface SetCallbackAction extends BaseAction<typeof SET_CALLBACK> {
+    callback: ColorPickerCallback;
+};
+
+const reducer = function (state: ColorPickerState = initialState, action: AnyAction): ColorPickerState {
     switch (action.type) {
     case ACTIVATE_COLOR_PICKER:
         return Object.assign({}, state, {active: true, callback: action.callback});
@@ -28,9 +49,9 @@ const reducer = function (state, action) {
     }
 };
 
-const activateColorPicker = callback => ({type: ACTIVATE_COLOR_PICKER, callback: callback});
-const deactivateColorPicker = color => ({type: DEACTIVATE_COLOR_PICKER, color: color});
-const setCallback = callback => ({type: SET_CALLBACK, callback: callback});
+const activateColorPicker = (callback: ColorPickerCallback): ActivateColorPickerAction => ({type: ACTIVATE_COLOR_PICKER, callback});
+const deactivateColorPicker = (color?: string): DeactivateColorPickerAction => ({type: DEACTIVATE_COLOR_PICKER, color});
+const setCallback = (callback: ColorPickerCallback): SetCallbackAction => ({type: SET_CALLBACK, callback});
 
 export {
     reducer as default,

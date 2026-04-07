@@ -1,17 +1,68 @@
 import log from '../lib/log';
+import type {AnyAction} from 'redux';
+import type {BaseAction, Point} from './common';
 
 const ADD_MONITOR_RECT = 'scratch-gui/monitors/ADD_MONITOR_RECT';
 const MOVE_MONITOR_RECT = 'scratch-gui/monitors/MOVE_MONITOR_RECT';
 const RESIZE_MONITOR_RECT = 'scratch-gui/monitors/RESIZE_MONITOR_RECT';
 const REMOVE_MONITOR_RECT = 'scratch-gui/monitors/REMOVE_MONITOR_RECT';
 
-const initialState = {
+interface Rect {
+    upperStart: Point;
+    lowerEnd: Point;
+};
+
+export interface MonitorLayoutState {
+    monitors: Record<string, Rect>;
+    savedMonitorPositions: Record<string, Point>;
+};
+
+const initialState: MonitorLayoutState = {
     monitors: {},
     savedMonitorPositions: {}
 };
 
+interface AddMonitorRectAction extends BaseAction<typeof ADD_MONITOR_RECT> {
+    monitorId: string;
+    upperStart: Point;
+    lowerEnd: Point;
+    savePosition?: boolean;
+};
+
+interface MoveMonitorRectAction extends BaseAction<typeof MOVE_MONITOR_RECT> {
+    monitorId: string;
+    newX: number;
+    newY: number;
+};
+
+interface ResizeMonitorRectAction extends BaseAction<typeof RESIZE_MONITOR_RECT> {
+    monitorId: string;
+    newWidth: number;
+    newHeight: number;
+};
+
+interface RemoveMonitorRectAction extends BaseAction<typeof REMOVE_MONITOR_RECT> {
+    monitorId: string;
+};
+
+const isAddMonitorRectAction = function (action: AnyAction): action is AddMonitorRectAction {
+    return action.type === ADD_MONITOR_RECT;
+};
+
+const isMoveMonitorRectAction = function (action: AnyAction): action is MoveMonitorRectAction {
+    return action.type === MOVE_MONITOR_RECT;
+};
+
+const isResizeMonitorRectAction = function (action: AnyAction): action is ResizeMonitorRectAction {
+    return action.type === RESIZE_MONITOR_RECT;
+};
+
+const isRemoveMonitorRectAction = function (action: AnyAction): action is RemoveMonitorRectAction {
+    return action.type === REMOVE_MONITOR_RECT;
+};
+
 // Verify that the rectangle formed by the 2 points is well-formed
-const _verifyRect = function (upperStart, lowerEnd) {
+const _verifyRect = function (upperStart: Point, lowerEnd: Point): boolean {
     if (isNaN(upperStart.x) || isNaN(upperStart.y) || isNaN(lowerEnd.x) || isNaN(lowerEnd.y)) {
         return false;
     }
@@ -24,13 +75,13 @@ const _verifyRect = function (upperStart, lowerEnd) {
     return true;
 };
 
-const _addMonitorRect = function (state, action) {
+const _addMonitorRect = function (state: MonitorLayoutState, action: AddMonitorRectAction): MonitorLayoutState {
     if (Object.prototype.hasOwnProperty.call(state.monitors, action.monitorId)) {
         log.error(`Can't add monitor, monitor with id ${action.monitorId} already exists.`);
         return state;
     }
     if (!_verifyRect(action.upperStart, action.lowerEnd)) {
-        log.error(`Monitor rectangle not formatted correctly`);
+        log.error('Monitor rectangle not formatted correctly');
         return state;
     }
     return {
@@ -48,16 +99,16 @@ const _addMonitorRect = function (state, action) {
     };
 };
 
-const _moveMonitorRect = function (state, action) {
+const _moveMonitorRect = function (state: MonitorLayoutState, action: MoveMonitorRectAction): MonitorLayoutState {
     if (!Object.prototype.hasOwnProperty.call(state.monitors, action.monitorId)) {
         log.error(`Can't move monitor, monitor with id ${action.monitorId} does not exist.`);
         return state;
     }
     if (isNaN(action.newX) || isNaN(action.newY)) {
-        log.error(`Monitor rectangle not formatted correctly`);
+        log.error('Monitor rectangle not formatted correctly');
         return state;
     }
-    
+
     const oldMonitor = state.monitors[action.monitorId];
     if (oldMonitor.upperStart.x === action.newX &&
             oldMonitor.upperStart.y === action.newY) {
@@ -80,19 +131,19 @@ const _moveMonitorRect = function (state, action) {
     };
 };
 
-const _resizeMonitorRect = function (state, action) {
+const _resizeMonitorRect = function (state: MonitorLayoutState, action: ResizeMonitorRectAction): MonitorLayoutState {
     if (!Object.prototype.hasOwnProperty.call(state.monitors, action.monitorId)) {
         log.error(`Can't resize monitor, monitor with id ${action.monitorId} does not exist.`);
         return state;
     }
     if (isNaN(action.newWidth) || isNaN(action.newHeight) ||
             action.newWidth <= 0 || action.newHeight <= 0) {
-        log.error(`Monitor rectangle not formatted correctly`);
+        log.error('Monitor rectangle not formatted correctly');
         return state;
     }
 
     const oldMonitor = state.monitors[action.monitorId];
-    const newMonitor = {
+    const newMonitor: Rect = {
         upperStart: oldMonitor.upperStart,
         lowerEnd: {
             x: oldMonitor.upperStart.x + action.newWidth,
@@ -112,7 +163,7 @@ const _resizeMonitorRect = function (state, action) {
 
 };
 
-const _removeMonitorRect = function (state, action) {
+const _removeMonitorRect = function (state: MonitorLayoutState, action: RemoveMonitorRectAction): MonitorLayoutState {
     if (!Object.prototype.hasOwnProperty.call(state.monitors, action.monitorId)) {
         log.error(`Can't remove monitor, monitor with id ${action.monitorId} does not exist.`);
         return state;
@@ -126,17 +177,28 @@ const _removeMonitorRect = function (state, action) {
     };
 };
 
-const reducer = function (state, action) {
-    if (typeof state === 'undefined') state = initialState;
+const reducer = function (state: MonitorLayoutState = initialState, action: AnyAction): MonitorLayoutState {
     switch (action.type) {
     case ADD_MONITOR_RECT:
-        return _addMonitorRect(state, action);
+        if (isAddMonitorRectAction(action)) {
+            return _addMonitorRect(state, action);
+        }
+        return state;
     case MOVE_MONITOR_RECT:
-        return _moveMonitorRect(state, action);
+        if (isMoveMonitorRectAction(action)) {
+            return _moveMonitorRect(state, action);
+        }
+        return state;
     case RESIZE_MONITOR_RECT:
-        return _resizeMonitorRect(state, action);
+        if (isResizeMonitorRectAction(action)) {
+            return _resizeMonitorRect(state, action);
+        }
+        return state;
     case REMOVE_MONITOR_RECT:
-        return _removeMonitorRect(state, action);
+        if (isRemoveMonitorRectAction(action)) {
+            return _removeMonitorRect(state, action);
+        }
+        return state;
     default:
         return state;
     }
@@ -149,7 +211,7 @@ const SCREEN_WIDTH = 400;
 const SCREEN_HEIGHT = 300;
 const SCREEN_EDGE_BUFFER = 40;
 
-const _rectsIntersect = function (rect1, rect2) {
+const _rectsIntersect = function (rect1: Rect, rect2: Rect): boolean {
     // If one rectangle is on left side of other
     if (rect1.upperStart.x >= rect2.lowerEnd.x || rect2.upperStart.x >= rect1.lowerEnd.x) return false;
     // If one rectangle is above other
@@ -158,7 +220,7 @@ const _rectsIntersect = function (rect1, rect2) {
 };
 
 // We need to place a monitor with the given width and height. Return a rect defining where it should be placed.
-const getInitialPosition = function (state, monitorId, eltWidth, eltHeight) {
+const getInitialPosition = function (state: MonitorLayoutState, monitorId: string, eltWidth: number, eltHeight: number): Rect {
     // If this monitor was purposefully moved to a certain position before, put it back in that position
     if (Object.prototype.hasOwnProperty.call(state.savedMonitorPositions, monitorId)) {
         const saved = state.savedMonitorPositions[monitorId];
@@ -171,8 +233,8 @@ const getInitialPosition = function (state, monitorId, eltWidth, eltHeight) {
     // Try all starting positions for the new monitor to find one that doesn't intersect others
     const endXs = [0];
     const endYs = [0];
-    let lastX = null;
-    let lastY = null;
+    let lastX: number | null = null;
+    let lastY: number | null = null;
     for (const monitor in state.monitors) {
         let x = state.monitors[monitor].lowerEnd.x;
         x = Math.ceil(x / 50) * 50; // Try to choose a sensible "tab width" so more monitors line up
@@ -182,7 +244,7 @@ const getInitialPosition = function (state, monitorId, eltWidth, eltHeight) {
     endXs.sort((a, b) => a - b);
     endYs.sort((a, b) => a - b);
     // We'll use plan B if the monitor doesn't fit anywhere (too long or tall)
-    let planB = null;
+    let planB: Rect | null = null;
     for (const x of endXs) {
         if (x === lastX) {
             continue;
@@ -244,17 +306,17 @@ const getInitialPosition = function (state, monitorId, eltWidth, eltHeight) {
 
 // Action creators ------------------------
 /**
- * @param {!string} monitorId Id to add
- * @param {!object} upperStart upper point defining the rectangle
- * @param {!number} upperStart.x X of top point that defines the monitor location
- * @param {!number} upperStart.y Y of top point that defines the monitor location
- * @param {!object} lowerEnd lower point defining the rectangle
- * @param {!number} lowerEnd.x X of bottom point that defines the monitor location
- * @param {!number} lowerEnd.y Y of bottom point that defines the monitor location
- * @param {?boolean} savePosition True if the placement should be saved when adding the monitor
- * @returns {object} action to add a new monitor at the location
+ * @param monitorId Id to add
+ * @param upperStart upper point defining the rectangle
+ * @param upperStart.x X of top point that defines the monitor location
+ * @param upperStart.y Y of top point that defines the monitor location
+ * @param lowerEnd lower point defining the rectangle
+ * @param lowerEnd.x X of bottom point that defines the monitor location
+ * @param lowerEnd.y Y of bottom point that defines the monitor location
+ * @param savePosition True if the placement should be saved when adding the monitor
+ * @returns action to add a new monitor at the location
  */
-const addMonitorRect = function (monitorId, upperStart, lowerEnd, savePosition) {
+const addMonitorRect = function (monitorId: string, upperStart: Point, lowerEnd: Point, savePosition?: boolean): AddMonitorRectAction {
     return {
         type: ADD_MONITOR_RECT,
         monitorId: monitorId,
@@ -265,12 +327,12 @@ const addMonitorRect = function (monitorId, upperStart, lowerEnd, savePosition) 
 };
 
 /**
- * @param {!string} monitorId Id for monitor to move
- * @param {!number} newX X of top point that defines the monitor location
- * @param {!number} newY Y of top point that defines the monitor location
- * @returns {object} action to move an existing monitor to the location
+ * @param monitorId Id for monitor to move
+ * @param newX X of top point that defines the monitor location
+ * @param newY Y of top point that defines the monitor location
+ * @returns action to move an existing monitor to the location
  */
-const moveMonitorRect = function (monitorId, newX, newY) {
+const moveMonitorRect = function (monitorId: string, newX: number, newY: number): MoveMonitorRectAction {
     return {
         type: MOVE_MONITOR_RECT,
         monitorId: monitorId,
@@ -280,12 +342,12 @@ const moveMonitorRect = function (monitorId, newX, newY) {
 };
 
 /**
- * @param {!string} monitorId Id for monitor to resize
- * @param {!number} newWidth Width to set monitor to
- * @param {!number} newHeight Height to set monitor to
- * @returns {object} action to resize an existing monitor to the given dimensions
+ * @param monitorId Id for monitor to resize
+ * @param newWidth Width to set monitor to
+ * @param newHeight Height to set monitor to
+ * @returns action to resize an existing monitor to the given dimensions
  */
-const resizeMonitorRect = function (monitorId, newWidth, newHeight) {
+const resizeMonitorRect = function (monitorId: string, newWidth: number, newHeight: number): ResizeMonitorRectAction {
     return {
         type: RESIZE_MONITOR_RECT,
         monitorId: monitorId,
@@ -295,10 +357,10 @@ const resizeMonitorRect = function (monitorId, newWidth, newHeight) {
 };
 
 /**
- * @param {!string} monitorId Id for monitor to remove
- * @returns {object} action to remove an existing monitor
+ * @param monitorId Id for monitor to remove
+ * @returns action to remove an existing monitor
  */
-const removeMonitorRect = function (monitorId) {
+const removeMonitorRect = function (monitorId: string): RemoveMonitorRectAction {
     return {
         type: REMOVE_MONITOR_RECT,
         monitorId: monitorId
