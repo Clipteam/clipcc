@@ -1,6 +1,6 @@
 import log from '../lib/log';
 import type {AnyAction} from 'redux';
-import type {BaseAction, Point} from './common';
+import {isAction, type BaseAction, type Point} from './common';
 
 const ADD_MONITOR_RECT = 'scratch-gui/monitors/ADD_MONITOR_RECT';
 const MOVE_MONITOR_RECT = 'scratch-gui/monitors/MOVE_MONITOR_RECT';
@@ -43,22 +43,6 @@ interface ResizeMonitorRectAction extends BaseAction<typeof RESIZE_MONITOR_RECT>
 
 interface RemoveMonitorRectAction extends BaseAction<typeof REMOVE_MONITOR_RECT> {
     monitorId: string;
-};
-
-const isAddMonitorRectAction = function (action: AnyAction): action is AddMonitorRectAction {
-    return action.type === ADD_MONITOR_RECT;
-};
-
-const isMoveMonitorRectAction = function (action: AnyAction): action is MoveMonitorRectAction {
-    return action.type === MOVE_MONITOR_RECT;
-};
-
-const isResizeMonitorRectAction = function (action: AnyAction): action is ResizeMonitorRectAction {
-    return action.type === RESIZE_MONITOR_RECT;
-};
-
-const isRemoveMonitorRectAction = function (action: AnyAction): action is RemoveMonitorRectAction {
-    return action.type === REMOVE_MONITOR_RECT;
 };
 
 // Verify that the rectangle formed by the 2 points is well-formed
@@ -178,30 +162,11 @@ const _removeMonitorRect = function (state: MonitorLayoutState, action: RemoveMo
 };
 
 const reducer = function (state: MonitorLayoutState = initialState, action: AnyAction): MonitorLayoutState {
-    switch (action.type) {
-    case ADD_MONITOR_RECT:
-        if (isAddMonitorRectAction(action)) {
-            return _addMonitorRect(state, action);
-        }
-        return state;
-    case MOVE_MONITOR_RECT:
-        if (isMoveMonitorRectAction(action)) {
-            return _moveMonitorRect(state, action);
-        }
-        return state;
-    case RESIZE_MONITOR_RECT:
-        if (isResizeMonitorRectAction(action)) {
-            return _resizeMonitorRect(state, action);
-        }
-        return state;
-    case REMOVE_MONITOR_RECT:
-        if (isRemoveMonitorRectAction(action)) {
-            return _removeMonitorRect(state, action);
-        }
-        return state;
-    default:
-        return state;
-    }
+    if (isAction<AddMonitorRectAction>(action, ADD_MONITOR_RECT)) return _addMonitorRect(state, action);
+    if (isAction<MoveMonitorRectAction>(action, MOVE_MONITOR_RECT)) return _moveMonitorRect(state, action);
+    if (isAction<ResizeMonitorRectAction>(action, RESIZE_MONITOR_RECT)) return _resizeMonitorRect(state, action);
+    if (isAction<RemoveMonitorRectAction>(action, REMOVE_MONITOR_RECT)) return _removeMonitorRect(state, action);
+    return state;
 };
 
 // Init position --------------------------
@@ -220,7 +185,7 @@ const _rectsIntersect = function (rect1: Rect, rect2: Rect): boolean {
 };
 
 // We need to place a monitor with the given width and height. Return a rect defining where it should be placed.
-const getInitialPosition = function (state: MonitorLayoutState, monitorId: string, eltWidth: number, eltHeight: number): Rect {
+function getInitialPosition (state: MonitorLayoutState, monitorId: string, eltWidth: number, eltHeight: number): Rect {
     // If this monitor was purposefully moved to a certain position before, put it back in that position
     if (Object.prototype.hasOwnProperty.call(state.savedMonitorPositions, monitorId)) {
         const saved = state.savedMonitorPositions[monitorId];
@@ -306,6 +271,9 @@ const getInitialPosition = function (state: MonitorLayoutState, monitorId: strin
 
 // Action creators ------------------------
 /**
+ * Add a monitor with the given id and rectangle. If savePosition is true,
+ * this position will be saved as the default for this monitor id and used as the initial position when
+ * adding monitors with this id in the future.
  * @param monitorId Id to add
  * @param upperStart upper point defining the rectangle
  * @param upperStart.x X of top point that defines the monitor location
@@ -316,7 +284,12 @@ const getInitialPosition = function (state: MonitorLayoutState, monitorId: strin
  * @param savePosition True if the placement should be saved when adding the monitor
  * @returns action to add a new monitor at the location
  */
-const addMonitorRect = function (monitorId: string, upperStart: Point, lowerEnd: Point, savePosition?: boolean): AddMonitorRectAction {
+function addMonitorRect (
+    monitorId: string,
+    upperStart: Point,
+    lowerEnd: Point,
+    savePosition?: boolean
+): AddMonitorRectAction {
     return {
         type: ADD_MONITOR_RECT,
         monitorId: monitorId,
@@ -327,6 +300,9 @@ const addMonitorRect = function (monitorId: string, upperStart: Point, lowerEnd:
 };
 
 /**
+ * Get the initial position for a monitor with the given id and dimensions. If the monitor has been placed before and
+ * savePosition was true, this will return the saved position. Otherwise, it will return a position that doesn't
+ * intersect with any existing monitors if possible, or a random position if not.
  * @param monitorId Id for monitor to move
  * @param newX X of top point that defines the monitor location
  * @param newY Y of top point that defines the monitor location
@@ -342,6 +318,7 @@ const moveMonitorRect = function (monitorId: string, newX: number, newY: number)
 };
 
 /**
+ * Get the initial position for a monitor with the given id and dimensions. If the monitor has been placed before and
  * @param monitorId Id for monitor to resize
  * @param newWidth Width to set monitor to
  * @param newHeight Height to set monitor to
@@ -357,6 +334,7 @@ const resizeMonitorRect = function (monitorId: string, newWidth: number, newHeig
 };
 
 /**
+ * Remove the monitor with the given id.
  * @param monitorId Id for monitor to remove
  * @returns action to remove an existing monitor
  */
