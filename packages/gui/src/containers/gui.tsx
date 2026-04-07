@@ -43,10 +43,9 @@ import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 import type {GuiState} from '../reducers/gui';
 import type {LocalesState} from '../reducers/locales';
 
-const TypedGUIComponent = GUIComponent as React.ComponentType<{
-    loading: boolean;
-    children?: React.ReactNode;
-} & Record<string, unknown>>;
+// Now we only cares about the incremental ts usage and external type safe, just ignore the internal type checking of
+// GUIComponent now.
+const UnsafeGUIComponent = GUIComponent as React.ComponentType<Record<string, unknown>>;
 
 interface RootState {
     scratchGui: GuiState;
@@ -122,39 +121,31 @@ class GUI extends React.Component<GUIProps> {
     static defaultProps = {
         isScratchDesktop: false,
         onStorageInit:
-            (storageInstance: StorageWithOfficialStores): void => storageInstance.addOfficialScratchWebStores(),
-        onProjectLoaded: (): void => {},
-        onUpdateProjectId: (): void => {},
-        onVmInit: (): void => {}
+            (storageInstance: StorageWithOfficialStores) => storageInstance.addOfficialScratchWebStores(),
+        onProjectLoaded: () => {},
+        onUpdateProjectId: () => {},
+        onVmInit: () => {}
     };
 
     componentDidMount () {
         setIsScratchDesktop(!!this.props.isScratchDesktop);
-        if (this.props.onStorageInit) {
-            this.props.onStorageInit(storage as StorageWithOfficialStores);
-        }
-        if (this.props.onVmInit) {
-            this.props.onVmInit(this.props.vm);
-        }
+        this.props.onStorageInit!(storage);
+        this.props.onVmInit!(this.props.vm);
     }
     componentDidUpdate (prevProps: GUIProps) {
         if (this.props.projectId !== prevProps.projectId && this.props.projectId !== null) {
-            if (this.props.onUpdateProjectId) {
-                this.props.onUpdateProjectId(this.props.projectId);
-            }
+            this.props.onUpdateProjectId!(this.props.projectId);
         }
         if (this.props.isShowingProject && !prevProps.isShowingProject) {
             // this only notifies container when a project changes from not yet loaded to loaded
             // At this time the project view in www doesn't need to know when a project is unloaded
-            if (this.props.onProjectLoaded) {
-                this.props.onProjectLoaded();
-            }
+            this.props.onProjectLoaded!();
         }
     }
     render () {
         if (this.props.isError) {
             throw new Error(
-                `Error in Scratch GUI [location=${window.location}]: ${String(this.props.error)}`);
+                `Error in Scratch GUI [location=${window.location}]: ${this.props.error}`);
         }
         const {
             /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -178,12 +169,12 @@ class GUI extends React.Component<GUIProps> {
             ...componentProps
         } = this.props;
         return (
-            <TypedGUIComponent
+            <UnsafeGUIComponent
                 loading={fetchingProject || isLoading || loadingStateVisible}
                 {...componentProps}
             >
                 {children}
-            </TypedGUIComponent>
+            </UnsafeGUIComponent>
         );
     }
 }
