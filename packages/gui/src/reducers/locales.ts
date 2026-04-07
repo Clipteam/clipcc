@@ -1,4 +1,5 @@
 import {addLocaleData} from 'react-intl';
+import type {AnyAction} from 'redux';
 
 import locales, {localeData, isRtl} from 'clipcc-l10n';
 import editorMessages from 'clipcc-l10n/locales/editor-msgs';
@@ -51,7 +52,7 @@ interface UpdateLocalesAction extends BaseAction<typeof UPDATE_LOCALES> {
 
 type LocalesAction = SelectLocaleAction | UpdateLocalesAction;
 
-const reducer = function (state: LocalesState = initialState, action: LocalesAction): LocalesState {
+const reducer = function (state: LocalesState = initialState, action: AnyAction): LocalesState {
     switch (action.type) {
     case SELECT_LOCALE: {
         const localeMessages = state.messagesByLocale[action.locale];

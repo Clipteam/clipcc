@@ -1,17 +1,34 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {Provider} from 'react-redux';
 import {createStore, combineReducers, compose} from 'redux';
+import type {Reducer, Store, StoreEnhancer} from 'redux';
 import ConnectedIntlProvider from './connected-intl-provider.jsx';
 
 import localesReducer, {initLocale, localesInitialState} from '../reducers/locales';
+import type {LocalesState} from '../reducers/locales';
 
 import {setPlayer, setFullScreen} from '../reducers/mode';
 
 import locales from 'clipcc-l10n';
 import {detectLocale} from './detect-locale';
+import type {GuiState} from '../reducers/gui';
 
-const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+type ComposeEnhancers = typeof compose;
+
+declare global {
+    interface Window {
+        __REDUX_DEVTOOLS_EXTENSION_COMPOSE__?: ComposeEnhancers;
+    }
+}
+
+const composeEnhancers: ComposeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+interface AppStateProps {
+    isFullScreen?: boolean;
+    isPlayerOnly?: boolean;
+    isTelemetryEnabled?: boolean;
+    showTelemetryModal?: boolean;
+}
 
 /*
  * Higher Order Component to provide redux state. If an `intl` prop is provided
@@ -22,15 +39,16 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
                         only rendering modals, not the GUI.
  * @returns {React.Component} component with redux and intl state provided
  */
-const AppStateHOC = function (WrappedComponent, localesOnly) {
-    class AppStateWrapper extends React.Component {
-        constructor (props) {
-            super(props);
-            let initialState = {};
-            let reducers = {};
-            let enhancer;
+const AppStateHOC = function <P extends Record<string, unknown>>(
+    WrappedComponent: React.ComponentType<P>,
+    localesOnly?: boolean
+): React.ComponentType<P & AppStateProps> {
+    class AppStateWrapper extends React.Component<P & AppStateProps> {
+        private store!: Store<unknown>;
 
-            let initializedLocales = localesInitialState;
+        constructor (props: P & AppStateProps) {
+            super(props);
+            let initializedLocales: LocalesState = localesInitialState;
             const locale = detectLocale(Object.keys(locales));
             if (locale !== 'en') {
                 initializedLocales = initLocale(initializedLocales, locale);
@@ -38,14 +56,20 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
             if (localesOnly) {
                 // Used for instantiating minimal state for the unsupported
                 // browser modal
-                reducers = {locales: localesReducer};
-                initialState = {locales: initializedLocales};
-                enhancer = composeEnhancers();
+                const reducers = {locales: localesReducer};
+                const initialState = {locales: initializedLocales};
+                const enhancer: StoreEnhancer<unknown> = composeEnhancers();
+                const reducer = combineReducers(reducers);
+                this.store = createStore(
+                    reducer,
+                    initialState,
+                    enhancer
+                );
             } else {
                 // You are right, this is gross. But it's necessary to avoid
                 // importing unneeded code that will crash unsupported browsers.
                 // eslint-disable-next-line global-require
-                const guiRedux = require('../reducers/gui');
+                const guiRedux: typeof import('../reducers/gui') = require('../reducers/gui');
                 const guiReducer = guiRedux.default;
                 const {
                     guiInitialState,
@@ -55,9 +79,9 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
                     initTelemetryModal
                 } = guiRedux;
                 // eslint-disable-next-line global-require
-                const {ScratchPaintReducer} = require('clipcc-paint');
+                const {ScratchPaintReducer}: {ScratchPaintReducer: Reducer<unknown>} = require('clipcc-paint');
 
-                let initializedGui = guiInitialState;
+                let initializedGui: GuiState = guiInitialState;
                 if (props.isFullScreen || props.isPlayerOnly) {
                     if (props.isFullScreen) {
                         initializedGui = initFullScreen(initializedGui);
@@ -68,34 +92,40 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
                 } else if (props.showTelemetryModal) {
                     initializedGui = initTelemetryModal(initializedGui);
                 }
-                reducers = {
+                const reducers = {
                     locales: localesReducer,
                     scratchGui: guiReducer,
                     scratchPaint: ScratchPaintReducer
                 };
-                initialState = {
+                const initialState = {
                     locales: initializedLocales,
                     scratchGui: initializedGui
                 };
-                enhancer = composeEnhancers(guiMiddleware);
+                const enhancer: StoreEnhancer<unknown> = composeEnhancers(guiMiddleware);
+                const reducer = combineReducers(reducers);
+                this.store = createStore(
+                    reducer,
+                    initialState,
+                    enhancer
+                );
             }
-            const reducer = combineReducers(reducers);
-            this.store = createStore(
-                reducer,
-                initialState,
-                enhancer
-            );
         }
-        componentDidUpdate (prevProps) {
+        componentDidUpdate (prevProps: Readonly<P & AppStateProps>): void {
             if (localesOnly) return;
-            if (prevProps.isPlayerOnly !== this.props.isPlayerOnly) {
+            if (
+                prevProps.isPlayerOnly !== this.props.isPlayerOnly &&
+                typeof this.props.isPlayerOnly === 'boolean'
+            ) {
                 this.store.dispatch(setPlayer(this.props.isPlayerOnly));
             }
-            if (prevProps.isFullScreen !== this.props.isFullScreen) {
+            if (
+                prevProps.isFullScreen !== this.props.isFullScreen &&
+                typeof this.props.isFullScreen === 'boolean'
+            ) {
                 this.store.dispatch(setFullScreen(this.props.isFullScreen));
             }
         }
-        render () {
+        render (): JSX.Element {
             const {
                 isFullScreen, // eslint-disable-line no-unused-vars
                 isPlayerOnly, // eslint-disable-line no-unused-vars
@@ -106,19 +136,13 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
                 <Provider store={this.store}>
                     <ConnectedIntlProvider>
                         <WrappedComponent
-                            {...componentProps}
+                            {...(componentProps as P)}
                         />
                     </ConnectedIntlProvider>
                 </Provider>
             );
         }
     }
-    AppStateWrapper.propTypes = {
-        isFullScreen: PropTypes.bool,
-        isPlayerOnly: PropTypes.bool,
-        isTelemetryEnabled: PropTypes.bool,
-        showTelemetryModal: PropTypes.bool
-    };
     return AppStateWrapper;
 };
 

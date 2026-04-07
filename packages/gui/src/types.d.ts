@@ -30,3 +30,18 @@ declare module 'redux-throttle' {
 
     export default throttle;
 }
+
+declare module 'react-intl' {
+    import type React from 'react';
+
+    interface InjectIntlOptions {
+        intlPropName?: string;
+        withRef?: boolean;
+    }
+
+    export function addLocaleData(localeData: unknown): void;
+    export function injectIntl<P>(
+        component: React.ComponentType<P>,
+        options?: InjectIntlOptions
+    ): React.ComponentType<P>;
+}

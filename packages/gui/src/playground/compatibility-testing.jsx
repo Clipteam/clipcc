@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import GUI from '../containers/gui.jsx';
+import GUI from '../containers/gui.tsx';
 import HashParserHOC from '../lib/hash-parser-hoc.jsx';
-import AppStateHOC from '../lib/app-state-hoc.jsx';
+import AppStateHOC from '../lib/app-state-hoc.tsx';
 const WrappedGui = AppStateHOC(HashParserHOC(GUI));
 
 
