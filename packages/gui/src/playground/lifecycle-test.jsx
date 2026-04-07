@@ -5,7 +5,7 @@ import {compose} from 'redux';
 
 import Box from '../components/box/box.jsx';
 import GUI from '../containers/gui.tsx';
-import HashParserHOC from '../lib/hash-parser-hoc.jsx';
+import HashParserHOC from '../lib/hash-parser-hoc.tsx';
 import AppStateHOC from '../lib/app-state-hoc.tsx';
 
 if (process.env.NODE_ENV === 'production' && typeof window === 'object') {

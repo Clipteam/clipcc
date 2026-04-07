@@ -7,7 +7,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     small?: boolean;
 }
 
-const Input =({small = false, className, ...componentProps}: InputProps) => (
+const Input = ({small = false, className, ...componentProps}: InputProps) => (
     <input
         {...componentProps}
         className={classNames(

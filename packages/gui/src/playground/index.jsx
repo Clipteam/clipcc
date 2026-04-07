@@ -9,7 +9,7 @@ import ReactDOM from 'react-dom';
 
 import analytics from '../lib/analytics';
 import AppStateHOC from '../lib/app-state-hoc.tsx';
-import BrowserModalComponent from '../components/browser-modal/browser-modal.jsx';
+import BrowserModalComponent from '../components/browser-modal/browser-modal.tsx';
 import supportedBrowser from '../lib/supported-browser';
 
 import styles from './index.css';

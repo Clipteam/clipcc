@@ -4,6 +4,7 @@ import {connect} from 'react-redux';
 import ReactModal from 'react-modal';
 import VM from 'clipcc-vm';
 import {injectIntl} from 'react-intl';
+import type {IntlShape} from 'react-intl';
 
 import ErrorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
 import {
@@ -66,7 +67,7 @@ interface OwnProps {
     isScratchDesktop?: boolean;
     onSeeCommunity?: () => void;
     projectHost?: string;
-    intl?: unknown;
+    intl: IntlShape;
 }
 
 const mapStateToProps = (state: RootState) => {
@@ -91,8 +92,7 @@ const mapStateToProps = (state: RootState) => {
         soundsTabVisible: state.scratchGui.editorTab.activeTabIndex === SOUNDS_TAB_INDEX,
         targetIsStage:
             state.scratchGui.targets.stage &&
-            state.scratchGui.targets.stage.id === state.scratchGui.targets.editingTarget
-        ,
+            state.scratchGui.targets.stage.id === state.scratchGui.targets.editingTarget,
         telemetryModalVisible: state.scratchGui.modals.telemetryModal,
         vm: state.scratchGui.vm
     };
@@ -100,7 +100,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
     onExtensionButtonClick: () => dispatch(openExtensionLibrary()),
-    onActivateTab: (tab: typeof BLOCKS_TAB_INDEX | typeof COSTUMES_TAB_INDEX | typeof SOUNDS_TAB_INDEX) => dispatch(activateTab(tab)),
+    onActivateTab: (tab: 0 | 1 | 2) => dispatch(activateTab(tab)),
     onActivateCostumesTab: () => dispatch(activateTab(COSTUMES_TAB_INDEX)),
     onActivateSoundsTab: () => dispatch(activateTab(SOUNDS_TAB_INDEX)),
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
@@ -121,7 +121,8 @@ interface GUIProps extends OwnProps, StateProps, DispatchProps {
 class GUI extends React.Component<GUIProps> {
     static defaultProps = {
         isScratchDesktop: false,
-        onStorageInit: (storageInstance: StorageWithOfficialStores): void => storageInstance.addOfficialScratchWebStores(),
+        onStorageInit:
+            (storageInstance: StorageWithOfficialStores): void => storageInstance.addOfficialScratchWebStores(),
         onProjectLoaded: (): void => {},
         onUpdateProjectId: (): void => {},
         onVmInit: (): void => {}
@@ -156,7 +157,7 @@ class GUI extends React.Component<GUIProps> {
                 `Error in Scratch GUI [location=${window.location}]: ${String(this.props.error)}`);
         }
         const {
-            /* eslint-disable no-unused-vars */
+            /* eslint-disable @typescript-eslint/no-unused-vars */
             assetHost,
             cloudHost,
             error,
@@ -169,7 +170,7 @@ class GUI extends React.Component<GUIProps> {
             onVmInit,
             projectHost,
             projectId,
-            /* eslint-enable no-unused-vars */
+            /* eslint-enable @typescript-eslint/no-unused-vars */
             children,
             fetchingProject,
             isLoading,
@@ -210,5 +211,7 @@ const WrappedGui = compose(
     themeManagerHOC
 )(ConnectedGUI);
 
-(WrappedGui as typeof WrappedGui & {setAppElement: typeof ReactModal.setAppElement}).setAppElement = ReactModal.setAppElement;
-export default WrappedGui as typeof WrappedGui & {setAppElement: typeof ReactModal.setAppElement};
+type PublicGUI = typeof WrappedGui & { setAppElement: typeof ReactModal.setAppElement };
+
+(WrappedGui as PublicGUI).setAppElement = ReactModal.setAppElement;
+export default WrappedGui as PublicGUI;

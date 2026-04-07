@@ -4,7 +4,7 @@ import {compose} from 'redux';
 
 import AppStateHOC from '../lib/app-state-hoc.tsx';
 import GUI from '../containers/gui.tsx';
-import HashParserHOC from '../lib/hash-parser-hoc.jsx';
+import HashParserHOC from '../lib/hash-parser-hoc.tsx';
 import log from '../lib/log.js';
 
 const onClickLogo = () => {

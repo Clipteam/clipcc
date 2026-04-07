@@ -415,6 +415,9 @@ importers:
       '@types/react':
         specifier: 16.1.0
         version: 16.1.0
+      '@types/react-dom':
+        specifier: 16.0.11
+        version: 16.0.11
       '@types/react-modal':
         specifier: 3.10.0
         version: 3.10.0
@@ -448,6 +451,9 @@ importers:
       eslint:
         specifier: ^9.39.2
         version: 9.39.2(jiti@2.6.1)
+      eslint-config-clipcc:
+        specifier: workspace:~
+        version: link:../lint-config
       eslint-import-resolver-webpack:
         specifier: 0.13.10
         version: 0.13.10(eslint-plugin-import@2.32.0)(webpack@5.105.4)
@@ -3111,6 +3117,9 @@ packages:
 
   '@types/range-parser@1.2.7':
     resolution: {integrity: sha512-hKormJbkJqzQGhziax5PItDUTMAM9uE2XXQmM37dyd4hVM+5aVl7oVxMVUiVQn2oCQFN/LKCZdvSM0pFRqbSmQ==}
+
+  '@types/react-dom@16.0.11':
+    resolution: {integrity: sha512-x6zUx9/42B5Kl2Vl9HlopV8JF64wLpX3c+Pst9kc1HgzrsH+mkehe/zmHMQTplIrR48H2gpU7ZqurQolYu8XBA==}
 
   '@types/react-modal@3.10.0':
     resolution: {integrity: sha512-HOBSGwtaZXACvYI2kdhOiAG+CtwCxq62TwayFxtsGDtOvBxE4vxKCQI7LnhrihoDchVarqvnH7GKZ8xXHjs+yg==}
@@ -12099,6 +12108,10 @@ snapshots:
   '@types/qs@6.15.0': {}
 
   '@types/range-parser@1.2.7': {}
+
+  '@types/react-dom@16.0.11':
+    dependencies:
+      '@types/react': 16.1.0
 
   '@types/react-modal@3.10.0':
     dependencies:

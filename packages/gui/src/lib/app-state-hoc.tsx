@@ -39,7 +39,7 @@ interface AppStateProps {
                         only rendering modals, not the GUI.
  * @returns {React.Component} component with redux and intl state provided
  */
-const AppStateHOC = function <P extends Record<string, unknown>>(
+const AppStateHOC = function <P extends Record<string, unknown>> (
     WrappedComponent: React.ComponentType<P>,
     localesOnly?: boolean
 ): React.ComponentType<P & AppStateProps> {
@@ -68,7 +68,7 @@ const AppStateHOC = function <P extends Record<string, unknown>>(
             } else {
                 // You are right, this is gross. But it's necessary to avoid
                 // importing unneeded code that will crash unsupported browsers.
-                // eslint-disable-next-line global-require
+                // eslint-disable-next-line global-require, @typescript-eslint/no-require-imports
                 const guiRedux: typeof import('../reducers/gui') = require('../reducers/gui');
                 const guiReducer = guiRedux.default;
                 const {
@@ -78,7 +78,7 @@ const AppStateHOC = function <P extends Record<string, unknown>>(
                     initPlayer,
                     initTelemetryModal
                 } = guiRedux;
-                // eslint-disable-next-line global-require
+                // eslint-disable-next-line global-require, @typescript-eslint/no-require-imports
                 const {ScratchPaintReducer}: {ScratchPaintReducer: Reducer<unknown>} = require('clipcc-paint');
 
                 let initializedGui: GuiState = guiInitialState;
@@ -127,9 +127,11 @@ const AppStateHOC = function <P extends Record<string, unknown>>(
         }
         render (): JSX.Element {
             const {
-                isFullScreen, // eslint-disable-line no-unused-vars
-                isPlayerOnly, // eslint-disable-line no-unused-vars
-                showTelemetryModal, // eslint-disable-line no-unused-vars
+                /* eslint-disable @typescript-eslint/no-unused-vars */
+                isFullScreen,
+                isPlayerOnly,
+                showTelemetryModal,
+                /* eslint-enable @typescript-eslint/no-unused-vars */
                 ...componentProps
             } = this.props;
             return (
