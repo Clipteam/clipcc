@@ -1,15 +1,29 @@
 import bindAll from 'lodash.bindall';
-import PropTypes from 'prop-types';
 import React from 'react';
+
+type BufferedValue = string | number;
+
+interface BufferedInputProps {
+    onBlur?: React.FocusEventHandler<HTMLInputElement>;
+    onChange?: React.ChangeEventHandler<HTMLInputElement>;
+    onKeyPress?: React.KeyboardEventHandler<HTMLInputElement>;
+    onSubmit: (value: BufferedValue) => void;
+    value?: BufferedValue;
+}
+
+
+interface BufferedInputState {
+    value: string | null;
+}
 
 /**
  * Higher Order Component to manage inputs that submit on blur and <enter>
  * @param {React.Component} Input text input that consumes onChange, onBlur, onKeyPress
  * @returns {React.Component} Buffered input that calls onSubmit on blur and <enter>
  */
-export default function (Input) {
-    class BufferedInput extends React.Component {
-        constructor (props) {
+export default function <P extends BufferedInputProps> (Input: React.ComponentType<P>): React.ComponentType<P> {
+    class BufferedInput extends React.Component<P, BufferedInputState> {
+        constructor (props: P) {
             super(props);
             bindAll(this, [
                 'handleChange',
@@ -20,21 +34,21 @@ export default function (Input) {
                 value: null
             };
         }
-        handleKeyPress (e) {
+        handleKeyPress (e: React.KeyboardEvent<HTMLInputElement>) {
             if (e.key === 'Enter') {
                 // handleFlush will be called when blur
-                e.target.blur();
+                e.currentTarget.blur();
             }
         }
         handleFlush () {
             const isNumeric = typeof this.props.value === 'number';
-            const validatesNumeric = isNumeric ? !isNaN(this.state.value) : true;
+            const validatesNumeric = isNumeric ? !Number.isNaN(Number(this.state.value)) : true;
             if (this.state.value !== null && validatesNumeric) {
                 this.props.onSubmit(isNumeric ? Number(this.state.value) : this.state.value);
             }
             this.setState({value: null});
         }
-        handleChange (e) {
+        handleChange (e: React.ChangeEvent<HTMLInputElement>) {
             this.setState({value: e.target.value});
         }
         render () {
@@ -50,11 +64,6 @@ export default function (Input) {
             );
         }
     }
-
-    BufferedInput.propTypes = {
-        onSubmit: PropTypes.func.isRequired,
-        value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
-    };
 
     return BufferedInput;
 }
