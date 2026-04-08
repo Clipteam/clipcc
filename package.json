@@ -23,6 +23,7 @@
     "bump": "pnpm changeset version",
     "release-all": "pnpm changeset publish",
     "patch:convert": "node ./scripts/convert-patch.mjs",
+    "desktop": "pnpm --filter clipcc-desktop",
     "gui": "pnpm --filter clipcc-gui",
     "vm": "pnpm --filter clipcc-vm",
     "block": "pnpm --filter clipcc-block",

@@ -23,7 +23,7 @@ declare global {
 
 const composeEnhancers: ComposeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-interface AppStateProps {
+export interface AppStateProps {
     isFullScreen?: boolean;
     isPlayerOnly?: boolean;
     isTelemetryEnabled?: boolean;

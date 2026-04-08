@@ -1,0 +1,44 @@
+{
+    "name": "clipcc-desktop",
+    "displayName": "ClipCC",
+    "version": "3.2.0",
+    "description": "ClipCC as a self-contained desktop application.",
+    "author": {
+        "name": "Clip Team",
+        "email": "sinangentoo@gmail.com"
+    },
+    "license": "AGPL-3.0",
+    "homepage": "https://github.com/Clipteam/clipcc",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Clipteam/clipcc.git"
+    },
+    "main": "dist/main/index.js",
+    "scripts": {
+        "lint": "eslint ."
+    },
+    "devDependencies": {
+        "@types/node": "^22.15.30",
+        "@types/lodash.bindall": "^4.4.9",
+        "@types/react": "16.1.0",
+        "@types/react-dom": "16.0.11",
+        "clipcc-gui": "workspace:~",
+        "copy-webpack-plugin": "^14.0.0",
+        "electron": "^41.2.0",
+        "electron-builder": "^26.0.12",
+        "esbuild-loader": "^4.4.3",
+        "eslint": "^9.39.2",
+        "eslint-config-clipcc": "workspace:~",
+        "globals": "^16.5.0",
+        "lodash.bindall": "4.4.0",
+        "react": "catalog:",
+        "react-dom": "16.2.1",
+        "redux": "3.7.2",
+        "style-loader": "^4.0.0",
+        "ts-loader": "^9.5.4",
+        "typescript": "catalog:",
+        "webpack": "catalog:",
+        "webpack-cli": "^6.0.1",
+        "webpack-dev-server": "^5.2.3"
+    }
+}

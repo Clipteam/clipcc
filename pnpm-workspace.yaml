@@ -1,5 +1,6 @@
 packages:
   - packages/*
+  - app/*
 
 catalog:
   jest: ^30.3.0
@@ -10,6 +11,8 @@ catalog:
 onlyBuiltDependencies:
   - chromedriver
   - core-js
+  - electron
+  - electron-winstaller
   - playwright-chromium
   - unrs-resolver
 
