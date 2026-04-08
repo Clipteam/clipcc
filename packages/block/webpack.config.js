@@ -21,12 +21,7 @@ const baseConfig = {
     }, {
       test: /\.ts$/,
       exclude: /node_modules/,
-      use: {
-        loader: 'ts-loader',
-        options: {
-          configFile: path.resolve(__dirname, 'tsconfig.json')
-        }
-      }
+      use: 'ts-loader'
     }, {
       test: /_compressed\.js$/,
       enforce: 'pre',

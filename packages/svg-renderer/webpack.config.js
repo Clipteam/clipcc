@@ -35,10 +35,7 @@ const base = {
         }, {
             include: path.resolve(__dirname, 'src'),
             test: /\.[cm]?tsx?$/,
-            loader: 'ts-loader',
-            options: {
-                configFile: path.resolve(__dirname, 'tsconfig.json')
-            }
+            loader: 'ts-loader'
         }]
     },
     optimization: {

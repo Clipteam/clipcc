@@ -20,8 +20,7 @@ const base = {
                 loader: 'ts-loader',
                 options: {
                     transpileOnly: true,
-                    allowTsInNodeModules: true,
-                    configFile: path.resolve(__dirname, 'tsconfig.json')
+                    allowTsInNodeModules: true
                 }
             },
             {

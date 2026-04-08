@@ -26,10 +26,7 @@ const baseConfig = {
                     path.resolve(__dirname, 'src')
                 ],
                 test: /\.([cm]?ts|tsx)$/,
-                loader: 'ts-loader',
-                options: {
-                    configFile: path.resolve(__dirname, 'tsconfig.json')
-                }
+                loader: 'ts-loader'
             },
             {
                 resourceQuery: '?arrayBuffer',
