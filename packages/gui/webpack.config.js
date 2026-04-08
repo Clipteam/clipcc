@@ -10,6 +10,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
+const LIBRARY_ONLY = typeof process.env.GUI_ONLY_LIBRARY !== 'undefined';
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -169,142 +170,146 @@ if (base.mode === 'development') {
     });
 }
 
-module.exports = [
+const playgroundConfig = defaultsDeep({}, base, {
     // to run editor examples
-    defaultsDeep({}, base, {
-        entry: {
-            gui: './src/playground/index.jsx',
-            blocksonly: './src/playground/blocks-only.jsx',
-            lifecycle: './src/playground/lifecycle-test.jsx',
-            compatibilitytesting: './src/playground/compatibility-testing.jsx',
-            player: './src/playground/player.jsx'
-        },
-        output: {
-            path: path.resolve(__dirname, 'build'),
-            filename: '[name].js'
-        },
-        module: {
-            rules: base.module.rules.concat([
-                {
-                    test: /\.(svg|png|wav|gif|jpg)$/,
-                    resourceQuery: {not: [/raw/]},
-                    type: 'asset/inline'
-                }
-            ])
-        },
-        optimization: {
-            splitChunks: {
-                chunks: 'all',
-                name: 'lib.min'
+    entry: {
+        gui: './src/playground/index.jsx',
+        blocksonly: './src/playground/blocks-only.jsx',
+        lifecycle: './src/playground/lifecycle-test.jsx',
+        compatibilitytesting: './src/playground/compatibility-testing.jsx',
+        player: './src/playground/player.jsx'
+    },
+    output: {
+        path: path.resolve(__dirname, 'build'),
+        filename: '[name].js'
+    },
+    module: {
+        rules: base.module.rules.concat([
+            {
+                test: /\.(svg|png|wav|gif|jpg)$/,
+                resourceQuery: {not: [/raw/]},
+                type: 'asset/inline'
             }
-        },
-        plugins: base.plugins.concat([
-            new webpack.DefinePlugin({
-                'process.env.DEBUG': Boolean(process.env.DEBUG),
-                'process.env.GA_ID': `"${process.env.GA_ID || 'UA-000000-01'}"`,
-                'clipcc.VERSION': version,
-                'clipcc.BUILD_TIME': Date.now()
-            }),
-            new HtmlWebpackPlugin({
-                chunks: ['lib.min', 'gui'],
-                template: 'src/playground/index.ejs',
-                title: 'ClipCC GUI'
-            }),
-            new HtmlWebpackPlugin({
-                chunks: ['lib.min', 'blocksonly'],
-                template: 'src/playground/index.ejs',
-                filename: 'blocks-only.html',
-                title: 'ClipCC GUI: Blocks Only Example'
-            }),
-            new HtmlWebpackPlugin({
-                chunks: ['lib.min', 'compatibilitytesting'],
-                template: 'src/playground/index.ejs',
-                filename: 'compatibility-testing.html',
-                title: 'ClipCC GUI: Compatibility Testing'
-            }),
-            new HtmlWebpackPlugin({
-                chunks: ['lib.min', 'player'],
-                template: 'src/playground/index.ejs',
-                filename: 'player.html',
-                title: 'ClipCC GUI: Player Example'
-            }),
-            new HtmlWebpackPlugin({
-                chunks: ['lib.min', 'lifecycle'],
-                template: 'src/playground/index.ejs',
-                filename: 'lifecycle.html',
-                title: 'ClipCC GUI: Lifecycle Test'
-            }),
-            new CopyWebpackPlugin({
-                patterns: [
-                    {
-                        from: 'static',
-                        to: 'static'
-                    }
-                ]
-            }),
-            new CopyWebpackPlugin({
-                patterns: [
-                    {
-                        from: 'extensions/**',
-                        to: 'static',
-                        context: 'src/examples'
-                    }
-                ]
-            }),
-            new CopyWebpackPlugin({
-                patterns: [
-                    {
-                        from: 'extension-worker.{js,js.map}',
-                        context: '../vm/dist/web'
-                    }
-                ]
-            })
         ])
-    })
-].concat(
-    process.env.NODE_ENV === 'production' || process.env.BUILD_MODE === 'dist' ? (
-        // export as library
-        defaultsDeep({}, base, {
-            target: 'web',
-            entry: {
-                'scratch-gui': './src/index.js'
-            },
-            output: {
-                libraryTarget: 'umd',
-                path: path.resolve('dist'),
-                publicPath: `${STATIC_PATH}/`
-            },
-            externals: {
-                'react': 'react',
-                'react-dom': 'react-dom'
-            },
-            module: {
-                rules: base.module.rules.concat([
-                    {
-                        test: /\.(svg|png|wav|gif|jpg)$/,
-                        resourceQuery: {not: [/raw/]},
-                        type: 'asset/inline'
-                    }
-                ])
-            },
-            plugins: base.plugins.concat([
-                new CopyWebpackPlugin({
-                    patterns: [
-                        {
-                            from: 'extension-worker.{js,js.map}',
-                            context: '../vm/dist/web'
-                        }
-                    ]
-                }),
-                // Include library JSON files for scratch-desktop to use for downloading
-                new CopyWebpackPlugin({
-                    patterns: [
-                        {
-                            from: 'src/lib/libraries/*.json',
-                            to: 'libraries/[name][ext]'
-                        }
-                    ]
-                })
-            ])
-        })) : []
-);
+    },
+    optimization: {
+        splitChunks: {
+            chunks: 'all',
+            name: 'lib.min'
+        }
+    },
+    plugins: base.plugins.concat([
+        new webpack.DefinePlugin({
+            'process.env.DEBUG': Boolean(process.env.DEBUG),
+            'process.env.GA_ID': `"${process.env.GA_ID || 'UA-000000-01'}"`,
+            'clipcc.VERSION': version,
+            'clipcc.BUILD_TIME': Date.now()
+        }),
+        new HtmlWebpackPlugin({
+            chunks: ['lib.min', 'gui'],
+            template: 'src/playground/index.ejs',
+            title: 'ClipCC GUI'
+        }),
+        new HtmlWebpackPlugin({
+            chunks: ['lib.min', 'blocksonly'],
+            template: 'src/playground/index.ejs',
+            filename: 'blocks-only.html',
+            title: 'ClipCC GUI: Blocks Only Example'
+        }),
+        new HtmlWebpackPlugin({
+            chunks: ['lib.min', 'compatibilitytesting'],
+            template: 'src/playground/index.ejs',
+            filename: 'compatibility-testing.html',
+            title: 'ClipCC GUI: Compatibility Testing'
+        }),
+        new HtmlWebpackPlugin({
+            chunks: ['lib.min', 'player'],
+            template: 'src/playground/index.ejs',
+            filename: 'player.html',
+            title: 'ClipCC GUI: Player Example'
+        }),
+        new HtmlWebpackPlugin({
+            chunks: ['lib.min', 'lifecycle'],
+            template: 'src/playground/index.ejs',
+            filename: 'lifecycle.html',
+            title: 'ClipCC GUI: Lifecycle Test'
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: 'static',
+                    to: 'static'
+                }
+            ]
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: 'extensions/**',
+                    to: 'static',
+                    context: 'src/examples'
+                }
+            ]
+        }),
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: 'extension-worker.{js,js.map}',
+                    context: '../vm/dist/web'
+                }
+            ]
+        })
+    ])
+});
+
+const libraryConfig = defaultsDeep({}, base, {
+    // export as library
+    target: 'web',
+    entry: {
+        'scratch-gui': './src/index.js'
+    },
+    output: {
+        libraryTarget: 'umd',
+        path: path.resolve('dist'),
+        publicPath: `${STATIC_PATH}/`
+    },
+    externals: {
+        'react': 'react',
+        'react-dom': 'react-dom'
+    },
+    module: {
+        rules: base.module.rules.concat([
+            {
+                test: /\.(svg|png|wav|gif|jpg)$/,
+                resourceQuery: {not: [/raw/]},
+                type: 'asset/inline'
+            }
+        ])
+    },
+    plugins: base.plugins.concat([
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: 'extension-worker.{js,js.map}',
+                    context: '../vm/dist/web'
+                }
+            ]
+        }),
+        // Include library JSON files for scratch-desktop to use for downloading
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: 'src/lib/libraries/*.json',
+                    to: 'libraries/[name][ext]'
+                }
+            ]
+        })
+    ])
+});
+
+const includeLibraryConfig = LIBRARY_ONLY || process.env.NODE_ENV === 'production' || process.env.BUILD_MODE === 'dist';
+
+module.exports = [
+    ...(LIBRARY_ONLY ? [] : [playgroundConfig]),
+    ...(includeLibraryConfig ? [libraryConfig] : [])
+];

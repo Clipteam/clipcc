@@ -40,3 +40,11 @@ declare module 'react-intl' {
         options?: InjectIntlOptions
     ): React.ComponentType<Omit<P, 'intl'>>;
 }
+
+interface ClipCCDesktopApi {
+    onReadyToShow(listener: () => void): void;
+}
+
+interface Window {
+    desktop?: ClipCCDesktopApi;
+}

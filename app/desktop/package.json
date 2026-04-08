@@ -15,7 +15,15 @@
     },
     "main": "dist/main/index.js",
     "scripts": {
-        "lint": "eslint ."
+        "lint": "eslint .",
+        "build:main": "webpack --config webpack.config.mjs --env target=main",
+        "build:preload": "webpack --config webpack.config.mjs --env target=preload",
+        "build:renderer": "pnpm --filter clipcc-gui build:library && webpack --config webpack.config.mjs --env target=renderer",
+        "build:desktop": "pnpm run build:main && pnpm run build:preload && pnpm run build:renderer",
+        "build": "pnpm run build:desktop",
+        "start": "pnpm run build:desktop && electron .",
+        "start:renderer": "webpack serve --config webpack.config.mjs --env target=renderer",
+        "start:desktop": "electron ."
     },
     "devDependencies": {
         "@types/node": "^22.15.30",
@@ -25,7 +33,7 @@
         "clipcc-gui": "workspace:~",
         "copy-webpack-plugin": "^14.0.0",
         "electron": "^41.2.0",
-        "electron-builder": "^26.0.12",
+        "electron-builder": "^26.8.1",
         "esbuild-loader": "^4.4.3",
         "eslint": "^9.39.2",
         "eslint-config-clipcc": "workspace:~",

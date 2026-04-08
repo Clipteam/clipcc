@@ -1,14 +1,12 @@
 import {compose} from 'redux';
 
-import GUI, {setAppElement} from 'clipcc-gui/src/index';
-import AppStateHOC from 'clipcc-gui/src/lib/app-state-hoc';
+import GUI, {AppStateHOC, setAppElement} from 'clipcc-gui';
 
 import ScratchDesktopAppStateHOC from './DesktopAppStateHOC';
 // import ScratchDesktopGUIHOC from './DesktopGUIHOC';
-import './app.css';
 import React from 'react';
 
-const appTarget = document.getElementById('app');
+const appTarget = document.getElementById('app')!;
 
 setAppElement(appTarget);
 
@@ -18,7 +16,7 @@ setAppElement(appTarget);
 const WrappedGui = compose(
     ScratchDesktopAppStateHOC,
     AppStateHOC,
-    ScratchDesktopGUIHOC
-)(GUI);
+    // ScratchDesktopGUIHOC
+)(GUI) as React.ComponentType;
 
 export default <WrappedGui />;

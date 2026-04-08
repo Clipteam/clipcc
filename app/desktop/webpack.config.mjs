@@ -3,9 +3,15 @@
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import path from 'path';
 import fs from 'fs';
-import {DefinePlugin} from 'webpack';
+import {createRequire} from 'module';
+import {fileURLToPath} from 'url';
+import webpack from 'webpack';
 
-import {version} from '../../package.json';
+const require = createRequire(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const {version} = require('../../package.json');
 
 /**
  * Get module's root path from its name.
@@ -36,20 +42,43 @@ class CleanSourceMapWebpackPlugin {
     }
 }
 
+/**
+ * @returns {import('webpack').RuleSetRule[]}
+ */
+const getScriptLoaders = () => [
+    {
+        test: /\.tsx?$/,
+        loader: 'esbuild-loader',
+        options: {
+            loader: 'tsx',
+            tsconfigRaw: require('./tsconfig.json')
+        }
+    },
+    {
+        test: /\.jsx?$/,
+        loader: 'esbuild-loader',
+        options: {
+            loader: 'jsx'
+        }
+    }
+];
+
 /** @type {import('webpack').Configuration} */
-export default {
+const rendererConfig = {
+    name: 'renderer',
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     target: 'web',
     entry: {
-        index: './src/main/index.ts'
+        index: './src/renderer/index.ts'
     },
     output: {
+        path: path.resolve(__dirname, 'dist', 'renderer'),
         filename: '[name].js'
     },
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
     },
-    devtool: process.env.NODE_ENV === 'production' ? undefined : 'source-map',
+    devtool: process.env.NODE_ENV === 'production' ? false : 'cheap-module-source-map',
     devServer: {
         static: [
             {
@@ -77,22 +106,7 @@ export default {
     },
     module: {
         rules: [
-            {
-                test: /\.tsx?$/,
-                loader: 'esbuild-loader',
-                options: {
-                    loader: 'tsx',
-                    // eslint-disable-next-line global-require
-                    tsconfigRaw: require('./tsconfig.json')
-                }
-            },
-            {
-                test: /\.jsx?$/,
-                loader: 'esbuild-loader',
-                options: {
-                    loader: 'jsx'
-                }
-            },
+            ...getScriptLoaders(),
             {
                 test: /\.css$/,
                 use: [{
@@ -131,18 +145,19 @@ export default {
             patterns: [
                 {
                     from: path.resolve(__dirname, 'static'),
-                    to: './static'
+                    to: './static',
+                    noErrorOnMissing: true
                 },
                 {
                     from: path.resolve(getModulePath('clipcc-gui'), 'static'),
                     to: './static'
                 },
                 {
-                    from: path.resolve(__dirname, 'src', 'index.html'),
+                    from: path.resolve(__dirname, 'src', 'renderer', 'index.html'),
                     to: '.'
                 },
                 {
-                    from: path.resolve(__dirname, 'src', 'index.css'),
+                    from: path.resolve(__dirname, 'src', 'renderer', 'loading.html'),
                     to: '.'
                 },
                 {
@@ -157,9 +172,10 @@ export default {
                     from: path.resolve(getModulePath('clipcc-gui'), 'src/lib/themes/high-contrast/blocks-media'),
                     to: 'static/blocks-media/high-contrast',
                     force: true
-                }]
+                }
+            ]
         }),
-        new DefinePlugin({
+        new webpack.DefinePlugin({
             'process.env.DEBUG': Boolean(process.env.DEBUG),
             'process.env.GA_ID': `"${process.env.GA_ID || 'UA-000000-01'}"`,
             'clipcc.VERSION': version,
@@ -167,4 +183,70 @@ export default {
         }),
         new CleanSourceMapWebpackPlugin()
     ]
+};
+
+/** @type {import('webpack').Configuration} */
+const mainConfig = {
+    name: 'main',
+    mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+    target: 'electron-main',
+    entry: {
+        index: './src/main/index.ts'
+    },
+    output: {
+        path: path.resolve(__dirname, 'dist', 'main'),
+        filename: '[name].js'
+    },
+    resolve: {
+        extensions: ['.ts', '.js', '.json']
+    },
+    devtool: process.env.NODE_ENV === 'production' ? false : 'cheap-module-source-map',
+    module: {
+        rules: [
+            ...getScriptLoaders()
+        ]
+    },
+    plugins: [
+        new CleanSourceMapWebpackPlugin()
+    ]
+};
+
+/** @type {import('webpack').Configuration} */
+const preloadConfig = {
+    name: 'preload',
+    mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+    target: 'electron-preload',
+    entry: {
+        preload: './src/main/preload.ts'
+    },
+    output: {
+        path: path.resolve(__dirname, 'dist', 'main'),
+        filename: '[name].js'
+    },
+    resolve: {
+        extensions: ['.ts', '.js', '.json']
+    },
+    devtool: process.env.NODE_ENV === 'production' ? false : 'cheap-module-source-map',
+    module: {
+        rules: [
+            ...getScriptLoaders()
+        ]
+    },
+    plugins: [
+        new CleanSourceMapWebpackPlugin()
+    ]
+};
+
+/**
+ * @param {{target?: string}} env
+ * @returns {import('webpack').Configuration | import('webpack').Configuration[]}
+ */
+export default env => {
+    const target = env?.target;
+
+    if (target === 'main') return mainConfig;
+    if (target === 'preload') return preloadConfig;
+    if (target === 'renderer') return rendererConfig;
+
+    return [mainConfig, preloadConfig, rendererConfig];
 };

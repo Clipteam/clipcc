@@ -1111,6 +1111,9 @@ importers:
       rimraf:
         specifier: 6.0.1
         version: 6.0.1
+      terser-webpack-plugin:
+        specifier: ^5.3.17
+        version: 5.3.17(webpack@5.105.4)
       ts-jest:
         specifier: ^29.4.5
         version: 29.4.6(@babel/core@7.29.0)(@jest/transform@30.3.0)(@jest/types@30.3.0)(babel-jest@30.3.0(@babel/core@7.29.0))(jest-util@30.3.0)(jest@30.3.0(@types/node@25.5.2))(typescript@5.9.3)
@@ -1150,6 +1153,9 @@ importers:
       isomorphic-dompurify:
         specifier: ^2.14.0
         version: 2.36.0
+      lodash.defaultsdeep:
+        specifier: ^4.6.1
+        version: 4.6.1
       transformation-matrix:
         specifier: ^2.16.1
         version: 2.16.1

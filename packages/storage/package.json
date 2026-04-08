@@ -52,6 +52,7 @@
     "json": "^9.0.6",
     "node-fetch": "^3.3.2",
     "rimraf": "6.0.1",
+    "terser-webpack-plugin": "^5.3.17",
     "ts-jest": "^29.4.5",
     "ts-jest-mock-import-meta": "1.2.1",
     "ts-loader": "9.5.4",
