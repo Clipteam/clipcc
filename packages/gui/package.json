@@ -10,6 +10,7 @@
     "url": "https://github.com/Clipteam/clipcc.git"
   },
   "main": "./dist/scratch-gui.js",
+  "types": "./dist/types/index.d.ts",
   "scripts": {
     "build:types": "tsc --project ./tsconfig.dts.json",
     "build": "pnpm run clean && pnpm run build:types && webpack --color --bail",
