@@ -57,8 +57,9 @@
   "devDependencies": {
     "@babel/core": "7.29.0",
     "@babel/eslint-parser": "7.28.6",
-    "@babel/preset-env": "7.29.0",
+    "@babel/preset-env": "7.29.2",
     "@types/fastestsmallesttextencoderdecoder": "^1.0.2",
+    "@types/node": "^25.5.2",
     "adm-zip": "0.4.11",
     "babel-eslint": "10.1.0",
     "babel-loader": "^10.1.1",
@@ -88,8 +89,8 @@
     "terser-webpack-plugin": "^5.3.17",
     "tiny-worker": "2.3.0",
     "ts-loader": "^9.5.4",
-    "typescript": "^5.9.3",
-    "webpack": "^5.105.4",
+    "typescript": "catalog:",
+    "webpack": "catalog:",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.3"
   },

@@ -29,8 +29,8 @@
     "watch": "webpack --progress --color --watch --watch-poll"
   },
   "devDependencies": {
+    "@babel/preset-env": "7.29.2",
     "@babel/polyfill": "7.12.1",
-    "@babel/preset-env": "7.29.0",
     "@types/hull.js": "^1.0.4",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.1.0",
@@ -49,8 +49,8 @@
     "terser-webpack-plugin": "^5.3.17",
     "travis-after-all": "1.4.5",
     "ts-loader": "^9.5.4",
-    "typescript": "^5.9.3",
-    "webpack": "^5.105.4",
+    "typescript": "catalog:",
+    "webpack": "catalog:",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.3"
   },
