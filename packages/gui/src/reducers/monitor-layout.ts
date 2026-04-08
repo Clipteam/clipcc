@@ -162,6 +162,7 @@ const _removeMonitorRect = function (state: MonitorLayoutState, action: RemoveMo
 };
 
 const reducer = function (state: MonitorLayoutState = initialState, action: AnyAction): MonitorLayoutState {
+    if (typeof state === 'undefined') state = initialState;
     if (isAction<AddMonitorRectAction>(action, ADD_MONITOR_RECT)) return _addMonitorRect(state, action);
     if (isAction<MoveMonitorRectAction>(action, MOVE_MONITOR_RECT)) return _moveMonitorRect(state, action);
     if (isAction<ResizeMonitorRectAction>(action, RESIZE_MONITOR_RECT)) return _resizeMonitorRect(state, action);

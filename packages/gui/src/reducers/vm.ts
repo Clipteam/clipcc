@@ -6,15 +6,13 @@ import type {BaseAction} from './common';
 const SET_VM = 'scratch-gui/vm/SET_VM';
 const defaultVM = new VM();
 defaultVM.attachStorage(storage);
-export type VmState = VM;
+const initialState = defaultVM;
 
-const initialState: VmState = defaultVM;
-
-type SetVmAction = BaseAction<typeof SET_VM> & {
+interface SetVmAction extends BaseAction<typeof SET_VM> {
     vm: VM;
 };
 
-const reducer = function (state = initialState, action: AnyAction): VmState {
+const reducer = function (state = initialState, action: AnyAction): VM {
     switch (action.type) {
     case SET_VM:
         return action.vm;
