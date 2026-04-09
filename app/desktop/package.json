@@ -16,12 +16,11 @@
     "main": "dist/main/index.js",
     "scripts": {
         "lint": "eslint .",
-        "build:main": "webpack --config webpack.config.mjs --env target=main",
-        "build:preload": "webpack --config webpack.config.mjs --env target=preload",
-        "build:renderer": "pnpm --filter clipcc-gui build:library && webpack --config webpack.config.mjs --env target=renderer",
+        "build:main": "webpack --env target=main",
+        "build:preload": "webpack --env target=preload",
+        "build:renderer": "pnpm --filter clipcc-gui build:library && webpack --env target=renderer",
         "build": "pnpm run build:main && pnpm run build:preload && pnpm run build:renderer",
-        "start": "node ./scripts/dev.mjs",
-        "start:renderer": "webpack serve --config webpack.config.mjs --env target=renderer"
+        "start": "node ./scripts/dev.mjs"
     },
     "devDependencies": {
         "@types/node": "^22.15.30",

@@ -38,9 +38,9 @@ const createMainWindow = () => {
 
     const rendererUrl = getRendererUrl();
     if (rendererUrl) {
-        void window.loadURL(rendererUrl);
+        window.loadURL(rendererUrl);
     } else {
-        void window.loadFile(path.resolve(__dirname, '..', 'renderer', 'index.html'), {
+        window.loadFile(path.resolve(__dirname, '..', 'renderer', 'index.html'), {
             query: {
                 route: 'app'
             }
@@ -71,7 +71,7 @@ const ensureMainWindow = () => {
     return mainWindow;
 };
 
-void app.whenReady().then(() => {
+app.whenReady().then(() => {
     ensureMainWindow();
 
     app.on('activate', () => {

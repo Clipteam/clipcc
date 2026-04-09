@@ -1,269 +1,383 @@
-import {spawn} from 'child_process';
-import path from 'path';
-import {fileURLToPath} from 'url';
+import {spawn} from 'node:child_process';
+import path from 'node:path';
+import process from 'node:process';
+import {fileURLToPath} from 'node:url';
+import electronPath from 'electron';
 import webpack from 'webpack';
-import createWebpackConfig from '../webpack.config.mjs';
+import WebpackDevServer from 'webpack-dev-server';
+import configFactory from '../webpack.config.mjs';
+
+/** @typedef {'main' | 'preload' | 'renderer'} Target */
+/** @typedef {'main' | 'preload'} NodeTarget */
+/** @typedef {import('node:child_process').ChildProcess} ChildProcess */
+/** @typedef {import('webpack').Compiler} Compiler */
+/** @typedef {import('webpack').Configuration} WebpackConfiguration */
+/** @typedef {import('webpack').Stats} Stats */
+/** @typedef {import('webpack').Watching} Watching */
+/** @typedef {import('webpack-dev-server').Configuration} DevServerConfiguration */
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const desktopRoot = path.resolve(__dirname, '..');
+const scriptsDir = path.dirname(__filename);
+const desktopDir = path.resolve(scriptsDir, '..');
+const rendererUrl = 'http://127.0.0.1:8386';
+const nodeTargets = /** @type {const} */ (['main', 'preload']);
 
-const rendererUrl = `http://127.0.0.1:8386/`;
-
-const managedProcesses = new Set();
-const compilerWatchers = new Map();
-
-/** @type {import('child_process').ChildProcessWithoutNullStreams | null} */
+/** @type {ChildProcess | null} */
 let electronProcess = null;
-let shutdownRequested = false;
-let restartTimeout = null;
-let restartPromise = null;
+/** @type {WebpackDevServer | null} */
+let rendererServer = null;
+/** @type {Compiler | null} */
+let rendererCompiler = null;
+/** @type {Watching[]} */
+const nodeWatchers = [];
+/** @type {Compiler[]} */
+const nodeCompilers = [];
+/** @type {Set<NodeTarget>} */
+const readyNodeTargets = new Set();
+/** @type {ReturnType<typeof setTimeout> | null} */
+let restartTimer = null;
+let rendererReady = false;
+let isRestartingElectron = false;
+let isShuttingDown = false;
 
-const buildState = {
-    main: 0,
-    preload: 0,
-    rendererReady: false
+if (process.cwd() !== desktopDir) {
+    process.chdir(desktopDir);
+}
+
+/**
+ * Print a simple scoped log message.
+ * @param {string} scope - Short log prefix.
+ * @param {string} message - Message to print.
+ */
+const log = (scope, message) => {
+    console.log(`[${scope}] ${message}`);
 };
 
-const COMPILER_SUCCESS_PATTERN = /compiled successfully|compiled with (?:\d+ )?warnings?/i;
+/**
+ * Normalize a config from the shared webpack factory.
+ * @param {Target} target - Requested webpack target.
+ * @returns {WebpackConfiguration} Normalized single-target config.
+ */
+const getConfig = target => {
+    const config = configFactory({target});
+    if (!config || Array.isArray(config)) {
+        throw new Error(`Expected a single webpack config for ${target}`);
+    }
 
-const prefixLog = (prefix, message) => {
-    if (!message.length) return;
-    console.log(`[${prefix}] ${message}`);
-};
-
-const attachProcessOutput = (processLabel, child, onLine) => {
-    const bindStream = streamName => {
-        const stream = child[streamName];
-        let buffer = '';
-        stream.setEncoding('utf8');
-        stream.on('data', chunk => {
-            buffer += chunk;
-            const lines = buffer.split(/\r?\n/u);
-            buffer = lines.pop() ?? '';
-            for (const line of lines) {
-                prefixLog(processLabel, line);
-                onLine?.(line);
-            }
-        });
-        stream.on('end', () => {
-            if (!buffer) return;
-            prefixLog(processLabel, buffer);
-            onLine?.(buffer);
-        });
+    return {
+        ...config,
+        context: config.context ?? desktopDir
     };
-
-    bindStream('stdout');
-    bindStream('stderr');
 };
 
-const spawnManagedPnpmProcess = (processLabel, args, {
-    onLine,
-    failOnExit = true,
-    env = process.env
-} = {}) => {
-    const child = spawn('pnpm', args, {
-        cwd: desktopRoot,
-        env,
-        stdio: ['ignore', 'pipe', 'pipe']
+/**
+ * Print warnings and errors from a webpack build.
+ * @param {NodeTarget} target - Node-side target that finished building.
+ * @param {Stats} stats - Webpack stats for that build.
+ * @returns {boolean} True when the build succeeded.
+ */
+const handleNodeBuildResult = (target, stats) => {
+    const output = stats.toString({
+        colors: true,
+        preset: 'errors-warnings',
+        timings: true
     });
 
-    managedProcesses.add(child);
-    attachProcessOutput(processLabel, child, onLine);
+    if (output) {
+        console.log(output);
+    }
 
-    child.on('exit', (code, signal) => {
-        managedProcesses.delete(child);
-        if (shutdownRequested || !failOnExit) return;
-        const exitMessage =
-            `[dev] ${processLabel} exited unexpectedly ` +
-            `(code: ${code ?? 'null'}, signal: ${signal ?? 'null'}).`;
-        console.error(exitMessage);
-        shutdown(1);
-    });
+    if (stats.hasErrors()) {
+        log(target, 'build failed; keeping the current Electron process running');
+        return false;
+    }
 
-    return child;
+    const buildTime = typeof stats.endTime === 'number' && typeof stats.startTime === 'number' ?
+        ` in ${stats.endTime - stats.startTime} ms` :
+        '';
+
+    log(target, `built successfully${buildTime}`);
+    return true;
 };
 
-const terminateChild = child => new Promise(resolve => {
-    if (child.exitCode !== null || child.killed) {
-        resolve();
+/**
+ * Launch the Electron app against the renderer dev server.
+ * @param {string} reason - Why Electron is being launched.
+ */
+const startElectron = reason => {
+    if (electronProcess || isShuttingDown) {
         return;
     }
 
-    const timeout = setTimeout(() => {
-        if (child.exitCode === null) {
-            child.kill('SIGKILL');
-        }
-    }, 5000);
-
-    child.once('exit', () => {
-        clearTimeout(timeout);
-        resolve();
-    });
-
-    child.kill('SIGTERM');
-});
-
-const closeCompilerWatcher = watcher => new Promise(resolve => {
-    watcher.close(() => {
-        resolve();
-    });
-});
-
-const isReadyToLaunchElectron = () => (
-    buildState.rendererReady &&
-    buildState.main > 0 &&
-    buildState.preload > 0
-);
-
-const stopElectron = async () => {
-    if (!electronProcess) return;
-
-    const child = electronProcess;
-    electronProcess = null;
-    await terminateChild(child);
-};
-
-const startElectron = () => {
-    if (shutdownRequested || electronProcess || !isReadyToLaunchElectron()) return;
-
-    console.log(`[dev] launching electron with renderer URL ${rendererUrl}`);
-    electronProcess = spawnManagedPnpmProcess('electron', ['exec', 'electron', '.'], {
-        failOnExit: false,
+    log('electron', reason);
+    electronProcess = spawn(electronPath, [desktopDir], {
+        cwd: desktopDir,
         env: {
             ...process.env,
             CLIPCC_DESKTOP_RENDERER_URL: rendererUrl
-        }
+        },
+        stdio: 'inherit'
     });
 
-    electronProcess.on('exit', (code, signal) => {
+    electronProcess.once('error', error => {
+        console.error(error);
         electronProcess = null;
-        if (shutdownRequested) return;
-        console.log(`[dev] electron exited (code: ${code ?? 'null'}, signal: ${signal ?? 'null'}).`);
+        shutdown(1);
     });
-};
 
-const restartElectron = reason => {
-    if (shutdownRequested || !isReadyToLaunchElectron()) return;
-    if (restartPromise) return;
+    electronProcess.once('exit', (code, signal) => {
+        const wasRestarting = isRestartingElectron;
+        electronProcess = null;
 
-    console.log(`[dev] restarting electron after ${reason} rebuild.`);
-    restartPromise = stopElectron()
-        .then(() => {
-            startElectron();
-        })
-        .finally(() => {
-            restartPromise = null;
-        });
-};
-
-const scheduleElectronRestart = reason => {
-    if (!isReadyToLaunchElectron()) return;
-
-    if (!electronProcess) {
-        startElectron();
-        return;
-    }
-
-    if (restartTimeout) {
-        clearTimeout(restartTimeout);
-    }
-
-    restartTimeout = setTimeout(() => {
-        restartElectron(reason);
-    }, 150);
-};
-
-const onCompilerBuilt = target => {
-    buildState[target] += 1;
-
-    if (buildState[target] === 1) {
-        console.log(`[dev] ${target} first build finished.`);
-        startElectron();
-        return;
-    }
-
-    scheduleElectronRestart(target);
-};
-
-const startCompilerWatch = target => {
-    const compiler = webpack(createWebpackConfig({target}));
-    const watcher = compiler.watch({}, (error, stats) => {
-        if (shutdownRequested) return;
-
-        if (error) {
-            console.error(`[${target}] webpack watcher failed:`, error);
-            shutdown(1);
+        if (isShuttingDown || wasRestarting) {
             return;
         }
 
-        if (!stats) return;
-
-        const statsText = stats.toString({
-            all: false,
-            errors: true,
-            warnings: true,
-            timings: true,
-            colors: true
-        });
-
-        if (statsText) {
-            for (const line of statsText.split(/\r?\n/u)) {
-                prefixLog(target, line);
-            }
-        }
-
-        if (stats.hasErrors()) return;
-        onCompilerBuilt(target);
+        const detail = signal ? `signal ${signal}` : `code ${code ?? 0}`;
+        log('electron', `exited with ${detail}`);
+        shutdown(code ?? 0);
     });
-
-    compilerWatchers.set(target, watcher);
 };
 
-const shutdown = async code => {
-    if (shutdownRequested) return;
-    shutdownRequested = true;
-    process.exitCode = code;
+/**
+ * Stop the running Electron process, if any.
+ * @returns {Promise<void>}
+ */
+const stopElectron = async () => {
+    if (!electronProcess) {
+        return;
+    }
 
-    if (restartTimeout) {
-        clearTimeout(restartTimeout);
-        restartTimeout = null;
+    const processToStop = electronProcess;
+    electronProcess = null;
+
+    await new Promise(resolve => {
+        const killTimer = setTimeout(() => {
+            if (processToStop.exitCode === null && processToStop.signalCode === null) {
+                processToStop.kill('SIGKILL');
+            }
+        }, 5000);
+
+        killTimer.unref();
+
+        processToStop.once('exit', () => {
+            clearTimeout(killTimer);
+            resolve();
+        });
+
+        processToStop.kill();
+    });
+};
+
+/**
+ * Start Electron after the first successful main + preload builds.
+ */
+const maybeStartElectron = () => {
+    if (!rendererReady || electronProcess || isShuttingDown) {
+        return;
+    }
+
+    if (readyNodeTargets.size !== nodeTargets.length) {
+        return;
+    }
+
+    startElectron('launching Electron');
+};
+
+/**
+ * Debounce restarts so a main+preload change only restarts Electron once.
+ * @param {NodeTarget} target - Target that triggered the restart.
+ */
+const scheduleElectronRestart = target => {
+    if (!rendererReady || isShuttingDown) {
+        return;
+    }
+
+    if (restartTimer) {
+        clearTimeout(restartTimer);
+    }
+
+    restartTimer = setTimeout(() => {
+        restartTimer = null;
+        restartElectron(`${target} changed; restarting Electron`);
+    }, 150);
+};
+
+/**
+ * Restart Electron after a successful node-side rebuild.
+ * @param {string} reason - Why Electron is being restarted.
+ * @returns {Promise<void>} Resolves after the restart completes.
+ */
+const restartElectron = async reason => {
+    if (isShuttingDown) {
+        return;
+    }
+
+    isRestartingElectron = true;
+    try {
+        await stopElectron();
+        startElectron(reason);
+    } finally {
+        isRestartingElectron = false;
+    }
+};
+
+/**
+ * Watch one node-side webpack target and restart Electron after successful rebuilds.
+ * @param {NodeTarget} target - Node-side webpack target to watch.
+ */
+const watchNodeTarget = target => {
+    const compiler = webpack(getConfig(target));
+    nodeCompilers.push(compiler);
+
+    const watching = compiler.watch({}, (error, stats) => {
+        if (error) {
+            console.error(error);
+            log(target, 'build failed before stats were available');
+            return;
+        }
+
+        if (!stats) {
+            log(target, 'build finished without stats output');
+            return;
+        }
+
+        const succeeded = handleNodeBuildResult(target, stats);
+        if (!succeeded) {
+            return;
+        }
+
+        const isFirstSuccessfulBuild = !readyNodeTargets.has(target);
+        readyNodeTargets.add(target);
+
+        if (isFirstSuccessfulBuild) {
+            maybeStartElectron();
+            return;
+        }
+
+        scheduleElectronRestart(target);
+    });
+
+    nodeWatchers.push(watching);
+    log(target, 'watching for changes');
+};
+
+/**
+ * Start the renderer dev server so BrowserWindow can use live reload.
+ * @returns {Promise<void>}
+ */
+const startRendererServer = async () => {
+    const rendererConfig = getConfig('renderer');
+    if (!rendererConfig.devServer) {
+        throw new Error('Renderer webpack config is missing devServer settings');
+    }
+
+    rendererCompiler = webpack(rendererConfig);
+    rendererServer = new WebpackDevServer(
+        /** @type {DevServerConfiguration} */ (rendererConfig.devServer),
+        rendererCompiler
+    );
+
+    await rendererServer.start();
+    rendererReady = true;
+    log('renderer', `dev server listening on ${rendererUrl}`);
+    maybeStartElectron();
+};
+
+/**
+ * Close webpack's watch handle.
+ * @param {Watching} watching - Active webpack watch handle.
+ * @returns {Promise<void>} Resolves once the watcher closes.
+ */
+const closeWatching = watching => new Promise((resolve, reject) => {
+    watching.close(error => {
+        if (error) {
+            reject(error);
+            return;
+        }
+        resolve();
+    });
+});
+
+/**
+ * Close a webpack compiler after its watcher is stopped.
+ * @param {Compiler} compiler - Compiler to dispose.
+ * @returns {Promise<void>} Resolves once the compiler closes.
+ */
+const closeCompiler = compiler => new Promise((resolve, reject) => {
+    compiler.close(error => {
+        if (error) {
+            reject(error);
+            return;
+        }
+        resolve();
+    });
+});
+
+/**
+ * Shut the dev runner down in a controlled order.
+ * @param {number} exitCode - Process exit code to keep.
+ * @returns {Promise<void>} Resolves after shutdown work finishes.
+ */
+const shutdown = async exitCode => {
+    if (isShuttingDown) {
+        process.exitCode = exitCode;
+        return;
+    }
+
+    isShuttingDown = true;
+    process.exitCode = exitCode;
+
+    if (restartTimer) {
+        clearTimeout(restartTimer);
+        restartTimer = null;
     }
 
     await stopElectron();
-    await Promise.all(Array.from(compilerWatchers.values(), watcher => closeCompilerWatcher(watcher)));
-    compilerWatchers.clear();
-    await Promise.all(Array.from(managedProcesses, child => terminateChild(child)));
+
+    const watcherResults = await Promise.allSettled(nodeWatchers.map(closeWatching));
+    watcherResults.forEach(result => {
+        if (result.status === 'rejected') {
+            console.error(result.reason);
+        }
+    });
+
+    const compilerResults = await Promise.allSettled(nodeCompilers.map(closeCompiler));
+    compilerResults.forEach(result => {
+        if (result.status === 'rejected') {
+            console.error(result.reason);
+        }
+    });
+
+    if (rendererServer) {
+        await rendererServer.stop();
+    }
+
+    if (rendererCompiler) {
+        await closeCompiler(rendererCompiler);
+    }
 };
 
-process.on('SIGINT', () => {
+/**
+ * Surface fatal runner errors and stop everything.
+ * @param {unknown} error - Fatal error thrown by the dev runner.
+ */
+const handleFatalError = error => {
+    console.error(error);
+    shutdown(1);
+};
+
+process.once('SIGINT', () => {
     shutdown(0);
 });
 
-process.on('SIGTERM', () => {
+process.once('SIGTERM', () => {
     shutdown(0);
 });
 
-process.on('uncaughtException', error => {
-    console.error('[dev] uncaught exception', error);
-    shutdown(1);
-});
+process.once('uncaughtException', handleFatalError);
+process.once('unhandledRejection', handleFatalError);
 
-process.on('unhandledRejection', reason => {
-    console.error('[dev] unhandled rejection', reason);
-    shutdown(1);
-});
-
-console.log('[dev] starting desktop development services...');
-
-spawnManagedPnpmProcess('renderer', ['run', 'start:renderer'], {
-    onLine: line => {
-        if (!COMPILER_SUCCESS_PATTERN.test(line)) return;
-        if (buildState.rendererReady) return;
-        buildState.rendererReady = true;
-        console.log(`[dev] renderer compilation reported ready at ${rendererUrl}`);
-        startElectron();
-    }
-});
-startCompilerWatch('main');
-startCompilerWatch('preload');
+await startRendererServer();
+watchNodeTarget('main');
+watchNodeTarget('preload');

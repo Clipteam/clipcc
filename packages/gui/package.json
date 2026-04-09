@@ -13,7 +13,7 @@
   "types": "./dist/types/index.d.ts",
   "scripts": {
     "build:types": "tsc --project ./tsconfig.dts.json",
-    "build:library": "pnpm run clean && pnpm run build:types && GUI_ONLY_LIBRARY=1 webpack --color --bail",
+    "build:library": "pnpm run clean && pnpm run build:types && cross-env GUI_LIBRARY_ONLY=1 webpack --color --bail",
     "build": "pnpm run clean && pnpm run build:types && webpack --color --bail",
     "clean": "rimraf ./build && mkdirp build && rimraf ./dist && mkdirp dist",
     "i18n:src": "rimraf ./translations/messages/src && babel src > tmp.js && rimraf tmp.js && node ./scripts/build-i18n-src.js ./translations/messages/src ./translations/",

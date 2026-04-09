@@ -10,7 +10,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
-const LIBRARY_ONLY = typeof process.env.GUI_ONLY_LIBRARY !== 'undefined';
+const LIBRARY_ONLY = typeof process.env.GUI_LIBRARY_ONLY !== 'undefined';
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
