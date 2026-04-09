@@ -43,12 +43,11 @@ const LoadingState = {
     SHOWING_WITHOUT_ID: 'SHOWING_WITHOUT_ID',
     UPDATING_BEFORE_COPY: 'UPDATING_BEFORE_COPY',
     UPDATING_BEFORE_NEW: 'UPDATING_BEFORE_NEW'
-};
+} as const;
 
 const LoadingStates = Object.keys(LoadingState);
 
-type LoadingStateValue = string;
-
+export type LoadingStateValue = typeof LoadingState[keyof typeof LoadingState];
 export interface ProjectState {
     error: unknown;
     projectData: unknown;
@@ -328,10 +327,10 @@ const reducer = function (state: ProjectState = initialState, action: AnyAction)
         }
         return state;
     case START_FETCHING_NEW:
-        if ([
+        if (([
             LoadingState.SHOWING_WITH_ID,
             LoadingState.SHOWING_WITHOUT_ID
-        ].includes(state.loadingState)) {
+        ] as LoadingStateValue[]).includes(state.loadingState)) {
             return Object.assign({}, state, {
                 loadingState: LoadingState.FETCHING_NEW_DEFAULT,
                 projectId: defaultProjectId
@@ -339,11 +338,11 @@ const reducer = function (state: ProjectState = initialState, action: AnyAction)
         }
         return state;
     case START_LOADING_VM_FILE_UPLOAD:
-        if ([
+        if (([
             LoadingState.NOT_LOADED,
             LoadingState.SHOWING_WITH_ID,
             LoadingState.SHOWING_WITHOUT_ID
-        ].includes(state.loadingState)) {
+        ] as LoadingStateValue[]).includes(state.loadingState)) {
             return Object.assign({}, state, {
                 loadingState: LoadingState.LOADING_VM_FILE_UPLOAD
             });
@@ -379,26 +378,26 @@ const reducer = function (state: ProjectState = initialState, action: AnyAction)
         return state;
     case START_ERROR:
         // fatal errors: there's no correct editor state for us to show
-        if ([
+        if (([
             LoadingState.FETCHING_NEW_DEFAULT,
             LoadingState.FETCHING_WITH_ID,
             LoadingState.LOADING_VM_NEW_DEFAULT,
             LoadingState.LOADING_VM_WITH_ID
-        ].includes(state.loadingState)) {
+        ] as LoadingStateValue[]).includes(state.loadingState)) {
             return Object.assign({}, state, {
                 loadingState: LoadingState.ERROR,
                 error: action.error
             });
         }
         // non-fatal errors: can keep showing editor state fine
-        if ([
+        if (([
             LoadingState.AUTO_UPDATING,
             LoadingState.CREATING_COPY,
             LoadingState.MANUAL_UPDATING,
             LoadingState.REMIXING,
             LoadingState.UPDATING_BEFORE_COPY,
             LoadingState.UPDATING_BEFORE_NEW
-        ].includes(state.loadingState)) {
+        ] as LoadingStateValue[]).includes(state.loadingState)) {
             return Object.assign({}, state, {
                 loadingState: LoadingState.SHOWING_WITH_ID,
                 error: action.error
@@ -450,7 +449,10 @@ const doneCreatingProject = (id: string, loadingState: LoadingStateValue): Proje
     }
 };
 
-const onFetchedProjectData = (projectData: unknown, loadingState: LoadingStateValue): ProjectStateAction | undefined => {
+const onFetchedProjectData = (
+    projectData: unknown,
+    loadingState: LoadingStateValue
+): ProjectStateAction | undefined => {
     switch (loadingState) {
     case LoadingState.FETCHING_WITH_ID:
         return {
@@ -467,7 +469,11 @@ const onFetchedProjectData = (projectData: unknown, loadingState: LoadingStateVa
     }
 };
 
-const onLoadedProject = (loadingState: LoadingStateValue, canSave: boolean, success: boolean): ProjectStateAction | undefined => {
+const onLoadedProject = (
+    loadingState: LoadingStateValue,
+    canSave: boolean,
+    success: boolean
+): ProjectStateAction | undefined => {
     switch (loadingState) {
     case LoadingState.LOADING_VM_WITH_ID:
         if (success) {

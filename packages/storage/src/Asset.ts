@@ -1,6 +1,6 @@
 import {md5} from 'js-md5';
 import {memoizedToString, _TextEncoder, _TextDecoder} from './memoizedToString';
-import type {AssetTypeValue} from './AssetType';
+import type {IAssetType} from './AssetType';
 import type {IDataFormat} from './DataFormat';
 
 // TODO: The comments in this file indicate that the asset id is a string only, but
@@ -12,38 +12,27 @@ export type AssetId = string | number;
 export type AssetData = string | Uint8Array;
 
 export default class Asset {
-    public assetType: AssetTypeValue;
-    public assetId?: AssetId;
     public data?: AssetData;
+    public dependencies: Asset[] = [];
     public dataFormat?: IDataFormat;
-    public dependencies: Asset[];
     public clean?: boolean;
 
     /**
      * Construct an Asset.
-     * @param {AssetTypeValue} assetType - The type of this asset (sound, image, etc.)
-     * @param {string} assetId - The ID of this asset.
-     * @param {IDataFormat} [dataFormat] - The format of the data (WAV, PNG, etc.); required iff `data` is present.
-     * @param {Buffer} [data] - The in-memory data for this asset; optional.
-     * @param {bool} [generateId] - Whether to create id from an md5 hash of data
+     * @param assetType - The type of this asset (sound, image, etc.)
+     * @param assetId - The ID of this asset.
+     * @param dataFormat - The format of the data (WAV, PNG, etc.); required iff `data` is present.
+     * @param data - The in-memory data for this asset; optional.
+     * @param generateId - Whether to create id from an md5 hash of data
      */
     constructor (
-        assetType: AssetTypeValue,
-        assetId?: AssetId,
+        public assetType: IAssetType,
+        public assetId?: AssetId,
         dataFormat?: IDataFormat,
         data?: AssetData,
         generateId?: boolean
     ) {
-        /** @type {AssetTypeValue} */
-        this.assetType = assetType;
-
-        /** @type {string} */
-        this.assetId = assetId;
-
         this.setData(data, dataFormat || assetType.runtimeFormat, generateId);
-
-        /** @type {Asset[]} */
-        this.dependencies = [];
     }
 
     setData (data: AssetData | undefined, dataFormat: IDataFormat | undefined, generateId?: boolean) {
@@ -51,10 +40,8 @@ export default class Asset {
             throw new Error('Data provided without specifying its format');
         }
 
-        /** @type {IDataFormat} */
         this.dataFormat = dataFormat;
 
-        /** @type {Buffer} */
         this.data = data;
 
         if (generateId && data !== undefined) this.assetId = md5(data);
@@ -65,7 +52,8 @@ export default class Asset {
     }
 
     /**
-     * @returns {string} - This asset's data, decoded as text.
+     * Decode this asset's data as text.
+     * @returns - This asset's data, decoded as text.
      */
     decodeText (): string {
         const decoder = new _TextDecoder();
@@ -77,9 +65,9 @@ export default class Asset {
 
     /**
      * Same as `setData` but encodes text first.
-     * @param {string} data - the text data to encode and store.
-     * @param {IDataFormat} dataFormat - the format of the data (DataFormat.SVG for example).
-     * @param {bool} generateId - after setting data, set the id to an md5 of the data?
+     * @param data - the text data to encode and store.
+     * @param dataFormat - the format of the data (DataFormat.SVG for example).
+     * @param generateId - after setting data, set the id to an md5 of the data?
      */
     encodeTextData (data: string, dataFormat: IDataFormat, generateId: boolean): void {
         const encoder = new _TextEncoder();
@@ -87,8 +75,9 @@ export default class Asset {
     }
 
     /**
-     * @param {string} contentType - Optionally override the content type to be included in the data URI.
-     * @returns {string} - A data URI representing the asset's data.
+     * Encode this asset's data as a data URI.
+     * @param contentType - Optionally override the content type to be included in the data URI.
+     * @returns - A data URI representing the asset's data.
      */
     encodeDataURI (contentType = this.assetType.contentType): string {
 
