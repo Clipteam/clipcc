@@ -61,6 +61,9 @@ importers:
       '@types/lodash.bindall':
         specifier: ^4.4.9
         version: 4.4.9
+      '@types/lodash.omit':
+        specifier: ^4.5.9
+        version: 4.5.9
       '@types/node':
         specifier: ^22.15.30
         version: 22.19.17
@@ -73,6 +76,12 @@ importers:
       clipcc-gui:
         specifier: workspace:~
         version: link:../../packages/gui
+      clipcc-storage:
+        specifier: workspace:~
+        version: link:../../packages/storage
+      clipcc-vm:
+        specifier: workspace:~
+        version: link:../../packages/vm
       copy-webpack-plugin:
         specifier: ^14.0.0
         version: 14.0.0(webpack@5.105.4)
@@ -3408,6 +3417,9 @@ packages:
   '@types/lodash.bindall@4.4.9':
     resolution: {integrity: sha512-sG6V5+T3JcB39nXfORM+kHRH6DiCB+95DfGrH2YpPMXRpt6q3rn7VrW3dItiOLasJYeHq1jxc+tOW1ijT+d1wg==}
 
+  '@types/lodash.omit@4.5.9':
+    resolution: {integrity: sha512-zuAVFLUPJMOzsw6yawshsYGgq2hWUHtsZgeXHZmSFhaQQFC6EQ021uDKHkSjOpNhSvtNSU9165/o3o/Q51GpTw==}
+
   '@types/lodash@4.17.24':
     resolution: {integrity: sha512-gIW7lQLZbue7lRSWEFql49QJJWThrTFFeIMJdp3eH4tKoxm1OvEPg02rm4wCCSHS0cL3/Fizimb35b7k8atwsQ==}
 
@@ -4393,6 +4405,7 @@ packages:
   basic-ftp@5.2.0:
     resolution: {integrity: sha512-VoMINM2rqJwJgfdHq6RiUudKt2BV+FY5ZFezP/ypmwayk68+NzzAQy4XXLlqsGD4MCzq3DrmNFD/uUmBJuGoXw==}
     engines: {node: '>=10.0.0'}
+    deprecated: Security vulnerability fixed in 5.2.1, please upgrade
 
   batch@0.6.1:
     resolution: {integrity: sha512-x+VAiMRL6UPkx+kudNvxTl6hB2XNNCG2r+7wixVfIYwu/2HKRXimwQyaumLjMveWvT2Hkd/cAJw+QBMfJ/EKVw==}
@@ -13121,6 +13134,10 @@ snapshots:
       '@types/node': 25.5.2
 
   '@types/lodash.bindall@4.4.9':
+    dependencies:
+      '@types/lodash': 4.17.24
+
+  '@types/lodash.omit@4.5.9':
     dependencies:
       '@types/lodash': 4.17.24
 
