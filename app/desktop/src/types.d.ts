@@ -43,6 +43,13 @@ declare module 'react-intl' {
 
 interface ClipCCDesktopApi {
     onReadyToShow(listener: () => void): void;
+    openAboutWindow(): void;
+    openPrivacyWindow(): void;
+    getRuntimeVersions(): {
+        electron?: string;
+        chrome?: string;
+        node?: string;
+    };
 }
 
 interface Window {

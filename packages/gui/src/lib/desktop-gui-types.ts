@@ -18,7 +18,7 @@ export interface DesktopGuiInjectionProps {
     isScratchDesktop?: boolean;
     onClickAbout?: DesktopAboutMenu;
     onProjectTelemetryEvent?: DesktopProjectTelemetryHandler;
-    onShowPrivacyPolicy?: () => Promise<void>;
+    onShowPrivacyPolicy?: () => void;
     onStorageInit?: (storageInstance: ScratchStorage) => void;
     onUpdateProjectTitle?: (newTitle: string) => void;
 }

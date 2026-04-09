@@ -5,8 +5,10 @@ import GUI, {AppStateHOC, setAppElement} from 'clipcc-gui';
 import ScratchDesktopAppStateHOC from './DesktopAppStateHOC';
 import ScratchDesktopGUIHOC from './DesktopGUIHOC';
 import React from 'react';
+import styles from './app.css';
 
 const appTarget = document.getElementById('app')!;
+appTarget.classList.add(styles.app);
 
 setAppElement(appTarget);
 

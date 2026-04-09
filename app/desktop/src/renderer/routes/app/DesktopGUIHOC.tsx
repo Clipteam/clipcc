@@ -1,7 +1,7 @@
 import omit from 'lodash.omit';
 import {connect} from 'react-redux';
 import type {AnyAction, Dispatch} from 'redux';
-import ElectronStorageHelper from './ElectronStorageHelper';
+import ElectronStorageHelper from '../../lib/ElectronStorageHelper';
 import React from 'react';
 import type VM from 'clipcc-vm';
 import type {RootState} from 'clipcc-gui/src/containers/gui';
@@ -28,7 +28,6 @@ import {
 type InitialProjectData = Parameters<VM['loadProject']>[0];
 
 const getInitialProjectData = (): Promise<InitialProjectData | null> => Promise.resolve(null);
-const showPrivacyPolicy = (): Promise<void> => Promise.resolve();
 
 const hasInitialProjectData = (projectData: InitialProjectData | null): projectData is InitialProjectData => {
     if (projectData === null) {
@@ -158,8 +157,12 @@ const ScratchDesktopGUIHOC = function (
         }
 
         handleClickAbout = () => {
-            // ipcRenderer.send('open-about-window');
+            window.desktop?.openAboutWindow();
         };
+
+        handleShowPrivacyPolicy = () => {
+            window.desktop?.openPrivacyWindow();
+        }
 
         handleProjectTelemetryEvent: DesktopProjectTelemetryHandler = () => {
             // ipcRenderer.send(event, metadata);
@@ -199,7 +202,7 @@ const ScratchDesktopGUIHOC = function (
                     },
                     {
                         title: 'Privacy Policy',
-                        onClick: () => showPrivacyPolicy()
+                        onClick: () => this.handleShowPrivacyPolicy()
                     },
                     {
                         title: 'Data Settings',
@@ -207,7 +210,7 @@ const ScratchDesktopGUIHOC = function (
                     }
                 ],
                 onProjectTelemetryEvent: this.handleProjectTelemetryEvent,
-                onShowPrivacyPolicy: showPrivacyPolicy,
+                onShowPrivacyPolicy: this.handleShowPrivacyPolicy,
                 onStorageInit: this.handleStorageInit,
                 onUpdateProjectTitle: this.handleUpdateProjectTitle
             };

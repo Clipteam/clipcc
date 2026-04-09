@@ -1,6 +1,7 @@
 {
     "name": "clipcc-desktop",
     "displayName": "ClipCC",
+    "productName": "ClipCC",
     "version": "3.2.0",
     "description": "ClipCC as a self-contained desktop application.",
     "author": {

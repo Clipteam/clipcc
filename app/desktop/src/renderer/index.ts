@@ -14,16 +14,14 @@ const route = new URLSearchParams(window.location.search).get('route') || 'app';
 let routeModulePromise;
 switch (route) {
 case 'app':
-    routeModulePromise = import('./App');
+    routeModulePromise = import('./routes/app/app');
     break;
-/*
 case 'about':
-    routeModulePromise = import('./about.jsx');
+    routeModulePromise = import('./routes/about/about');
     break;
 case 'privacy':
-    routeModulePromise = import('./privacy.jsx');
+    routeModulePromise = import('./routes/privacy/privacy');
     break;
-*/
 }
 
 routeModulePromise?.then(routeModule => {
