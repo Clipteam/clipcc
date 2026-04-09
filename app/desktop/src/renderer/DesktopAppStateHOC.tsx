@@ -8,7 +8,7 @@ import type {AppStateProps} from 'clipcc-gui/src/lib/app-state-hoc';
  */
 const ScratchDesktopAppStateHOC = function <P extends AppStateProps> (WrappedComponent: React.ComponentType<P>) {
     class ScratchDesktopAppStateComponent extends React.Component<P, { telemetryDidOptIn: boolean }> {
-        constructor(props: P) {
+        constructor (props: P) {
             super(props);
             bindAll(this, [
                 'handleTelemetryModalOptIn',
@@ -19,11 +19,11 @@ const ScratchDesktopAppStateHOC = function <P extends AppStateProps> (WrappedCom
                 telemetryDidOptIn: false
             };
         }
-        handleTelemetryModalOptIn() {
+        handleTelemetryModalOptIn () {
         }
-        handleTelemetryModalOptOut() {
+        handleTelemetryModalOptOut () {
         }
-        render() {
+        render () {
             const shouldShowTelemetryModal = false;
 
             return (

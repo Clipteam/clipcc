@@ -19,11 +19,9 @@
         "build:main": "webpack --config webpack.config.mjs --env target=main",
         "build:preload": "webpack --config webpack.config.mjs --env target=preload",
         "build:renderer": "pnpm --filter clipcc-gui build:library && webpack --config webpack.config.mjs --env target=renderer",
-        "build:desktop": "pnpm run build:main && pnpm run build:preload && pnpm run build:renderer",
-        "build": "pnpm run build:desktop",
-        "start": "pnpm run build:desktop && electron .",
-        "start:renderer": "webpack serve --config webpack.config.mjs --env target=renderer",
-        "start:desktop": "electron ."
+        "build": "pnpm run build:main && pnpm run build:preload && pnpm run build:renderer",
+        "start": "node ./scripts/dev.mjs",
+        "start:renderer": "webpack serve --config webpack.config.mjs --env target=renderer"
     },
     "devDependencies": {
         "@types/node": "^22.15.30",

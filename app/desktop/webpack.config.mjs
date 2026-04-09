@@ -18,14 +18,28 @@ const {version} = require('../../package.json');
  * @param {string} moduleName - the name of the module to get the path of
  * @returns {string} the path to the module's root directory
  */
-const getModulePath = moduleName => path.dirname(require.resolve(`${moduleName}/package.json`));
+const getModulePath = moduleName => {
+    try {
+        return path.dirname(require.resolve(`${moduleName}/package.json`));
+    } catch {
+        const fallbackModuleName = moduleName.replace(/^clipcc-/, '');
+        const fallbackPath = path.resolve(__dirname, '..', '..', 'packages', fallbackModuleName);
+        if (fs.existsSync(path.resolve(fallbackPath, 'package.json'))) {
+            return fallbackPath;
+        }
+
+        throw new Error(`Unable to resolve module path for ${moduleName}`);
+    }
+};
 
 class CleanSourceMapWebpackPlugin {
-    /**
-     * @param {import('webpack').Compiler} compiler the compiler instance
-     */
+/**
+ * Apply plugin hook.
+ * @param {import('webpack').Compiler} compiler Webpack compiler instance.
+ */
     apply (compiler) {
-        compiler.hooks.done.tapAsync('CleanSourceMapWebpackPlugin', async ({compilation}) => {
+        compiler.hooks.done.tapPromise('CleanSourceMapWebpackPlugin', async stats => {
+            const {compilation} = /** @type {{compilation: import('webpack').Compilation}} */ (stats);
             // if (process.env.NODE_ENV !== 'production') return;
             const outputPath = compilation.outputOptions.path;
             if (!outputPath) return;
@@ -35,16 +49,17 @@ class CleanSourceMapWebpackPlugin {
                 .filter(filename => /[a-zA-Z0-9]\.(js|css)\.map$/.test(filename))
                 .forEach(filename => {
                     const filePath = path.resolve(outputPath, filename);
-                    threads.push(fs.promises.unlink(filePath));
+                    threads.push(fs.promises.unlink(filePath).catch(error => {
+                        if (error?.code !== 'ENOENT') {
+                            throw error;
+                        }
+                    }));
                 });
             await Promise.all(threads);
         });
     }
 }
 
-/**
- * @returns {import('webpack').RuleSetRule[]}
- */
 const getScriptLoaders = () => [
     {
         test: /\.tsx?$/,
@@ -80,6 +95,10 @@ const rendererConfig = {
     },
     devtool: process.env.NODE_ENV === 'production' ? false : 'cheap-module-source-map',
     devServer: {
+        host: '127.0.0.1',
+        port: 8386,
+        hot: false,
+        liveReload: true,
         static: [
             {
                 directory: path.join(__dirname, 'static'),
@@ -154,6 +173,10 @@ const rendererConfig = {
                 },
                 {
                     from: path.resolve(__dirname, 'src', 'renderer', 'index.html'),
+                    to: '.'
+                },
+                {
+                    from: path.resolve(__dirname, 'src', 'renderer', 'index.css'),
                     to: '.'
                 },
                 {
@@ -238,8 +261,9 @@ const preloadConfig = {
 };
 
 /**
- * @param {{target?: string}} env
- * @returns {import('webpack').Configuration | import('webpack').Configuration[]}
+ * Select configs by target.
+ * @param {{target?: string}} env Build environment flags.
+ * @returns {import('webpack').Configuration | import('webpack').Configuration[]} Target-specific config or all configs.
  */
 export default env => {
     const target = env?.target;

@@ -15,7 +15,7 @@ setAppElement(appTarget);
 // ability to compose reducers.
 const WrappedGui = compose(
     ScratchDesktopAppStateHOC,
-    AppStateHOC,
+    AppStateHOC
     // ScratchDesktopGUIHOC
 )(GUI) as React.ComponentType;
 
