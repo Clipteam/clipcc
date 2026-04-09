@@ -17,3 +17,8 @@ export {
     DataFormat,
     Helper
 };
+
+export type * from './Asset';
+export type * from './AssetType';
+export type * from './DataFormat';
+export type * from './Helper';

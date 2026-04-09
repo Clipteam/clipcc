@@ -4,7 +4,7 @@ import BuiltinHelper from './BuiltinHelper';
 import WebHelper, {UrlFunction} from './WebHelper';
 
 import _Asset, {AssetData, AssetId} from './Asset';
-import {AssetType, AssetTypeValue, type IAssetType} from './AssetType';
+import {AssetType, BuiltinAssetType, type IAssetType} from './AssetType';
 import {DataFormat, IDataFormat} from './DataFormat';
 import _scratchFetch from './scratchFetch';
 import Helper from './Helper';
@@ -113,28 +113,28 @@ export class ScratchStorage {
 
     /**
      * Deprecated API for caching built-in assets. Use createAsset.
-     * @param {AssetTypeValue} assetType - The type of the asset to cache.
+     * @param {IAssetType} assetType - The type of the asset to cache.
      * @param {IDataFormat} dataFormat - The dataFormat of the data for the cached asset.
      * @param {Buffer} data - The data for the cached asset.
      * @param {string} id - The id for the cached asset.
      * @returns {string} The calculated id of the cached asset, or the supplied id if the asset is mutable.
      */
-    cache (assetType: AssetTypeValue, dataFormat: IDataFormat, data: AssetData, id: AssetId): AssetId {
+    cache (assetType: IAssetType, dataFormat: IDataFormat, data: AssetData, id: AssetId): AssetId {
         log.warn('Deprecation: Storage.cache is deprecated. Use Storage.createAsset, and store assets externally.');
-        return this.builtinHelper._store(assetType, dataFormat, data, id);
+        return this.builtinHelper._store(assetType as BuiltinAssetType, dataFormat, data, id);
     }
 
     /**
      * Construct an Asset, and optionally generate an md5 hash of its data to create an id
-     * @param {IAssetType} assetType - The type of the asset to cache.
-     * @param {DataFormat} dataFormat - The dataFormat of the data for the cached asset.
-     * @param {Buffer} data - The data for the cached asset.
-     * @param {string} [id] - The id for the cached asset.
-     * @param {bool} [generateId] - flag to set id to an md5 hash of data if `id` isn't supplied
+     * @param assetType - The type of the asset to cache.
+     * @param dataFormat - The dataFormat of the data for the cached asset.
+     * @param data - The data for the cached asset.
+     * @param id - The id for the cached asset.
+     * @param generateId - flag to set id to an md5 hash of data if `id` isn't supplied
      * @returns {Asset} generated Asset with `id` attribute set if not supplied
      */
     createAsset (
-        assetType: AssetTypeValue,
+        assetType: IAssetType,
         dataFormat: IDataFormat,
         data: AssetData,
         id: AssetId,
@@ -190,13 +190,13 @@ export class ScratchStorage {
      * @param {IAssetType} type - The type of asset for which the default will be set.
      * @param {string} id - The default ID to use for this type of asset.
      */
-    setDefaultAssetId (type: AssetTypeValue, id: AssetId): void {
+    setDefaultAssetId (type: IAssetType, id: AssetId): void {
         this.defaultAssetId[type.name] = id;
     }
 
     /**
      * Fetch an asset by type & ID.
-     * @param {AssetTypeValue} assetType - The type of asset to fetch. This also determines which asset store to use.
+     * @param {IAssetType} assetType - The type of asset to fetch. This also determines which asset store to use.
      * @param {string} assetId - The ID of the asset to fetch: a project ID, MD5, etc.
      * @param {IDataFormat} [dataFormat] - Optional: load this format instead of the AssetType's default.
      * @returns {Promise.<Asset>} A promise for the requested Asset.
@@ -205,7 +205,7 @@ export class ScratchStorage {
      *   If the promise is rejected, there was an error on at least one asset source. HTTP 404 does not count as an
      *   error here, but (for example) HTTP 403 does.
      */
-    load (assetType: AssetTypeValue, assetId: AssetId, dataFormat: IDataFormat): Promise<_Asset | null> {
+    load (assetType: IAssetType, assetId: AssetId, dataFormat: IDataFormat): Promise<_Asset | null> {
         const helpers = this._helpers.map(x => x.helper);
         const errors: unknown[] = [];
         dataFormat = dataFormat || assetType.runtimeFormat;
@@ -243,13 +243,13 @@ export class ScratchStorage {
 
     /**
      * Store an asset by type & ID.
-     * @param {AssetTypeValue} assetType - The type of asset to fetch. This also determines which asset store to use.
+     * @param {IAssetType} assetType - The type of asset to fetch. This also determines which asset store to use.
      * @param {?IDataFormat} [dataFormat] - Optional: load this format instead of the AssetType's default.
      * @param {Buffer} data - Data to store for the asset
      * @param {?string} [assetId] - The ID of the asset to fetch: a project ID, MD5, etc.
      * @returns {Promise.<object>} A promise for asset metadata
      */
-    store (assetType: AssetTypeValue, dataFormat: IDataFormat | null | undefined, data: AssetData, assetId?: AssetId) {
+    store (assetType: IAssetType, dataFormat: IDataFormat | null | undefined, data: AssetData, assetId?: AssetId) {
         dataFormat = dataFormat || assetType.runtimeFormat;
 
         return this.webHelper.store(assetType, dataFormat, data, assetId)
@@ -259,7 +259,7 @@ export class ScratchStorage {
                 // Also, having undefined was the previous behavior
                 const id = typeof body === 'string' ? undefined : body.id;
 
-                this.builtinHelper._store(assetType, dataFormat, data, id);
+                this.builtinHelper._store(assetType as BuiltinAssetType, dataFormat, data, id);
                 return body;
             });
     }

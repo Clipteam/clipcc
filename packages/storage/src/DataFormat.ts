@@ -1,6 +1,5 @@
 /**
  * Enumeration of the supported data formats.
- * @enum {string}
  */
 export const DataFormat = {
     JPG: 'jpg',
