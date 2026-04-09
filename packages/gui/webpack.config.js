@@ -11,12 +11,12 @@ const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const RuleInheritancePlugin = require('rule-inheritance-webpack-plugin');
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
-const PRODUCTION_MODE = process.env.NODE_ENV === 'production';
-const BUILD_DIST = PRODUCTION_MODE || process.env.BUILD_MODE === 'dist';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const BUILD_DIST = IS_PRODUCTION || process.env.BUILD_MODE === 'dist';
 const IS_CI = process.env.CI;
 
 const base = {
-    mode: PRODUCTION_MODE ? 'production' : 'development',
+    mode: IS_PRODUCTION ? 'production' : 'development',
     devtool: 'cheap-module-source-map',
     devServer: {
         static: path.resolve(__dirname, 'build'),
@@ -141,7 +141,7 @@ if (!IS_CI) {
     base.plugins.push(new webpack.ProgressPlugin());
 }
 
-if (!PRODUCTION_MODE) {
+if (!IS_PRODUCTION) {
     base.module.rules.push({
         test: /blocks-msgs\.js$/,
         include: [
