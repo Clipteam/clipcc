@@ -47,7 +47,7 @@ import type {LocalesState} from '../reducers/locales';
 // GUIComponent now.
 const UnsafeGUIComponent = GUIComponent as React.ComponentType<Record<string, unknown>>;
 
-interface RootState {
+export interface RootState {
     scratchGui: GuiState;
     locales: LocalesState;
 }

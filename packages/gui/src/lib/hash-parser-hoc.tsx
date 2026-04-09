@@ -8,18 +8,7 @@ import {
     getIsFetchingWithoutId,
     setProjectId
 } from '../reducers/project-state';
-
-interface ProjectStateSlice {
-    loadingState: string;
-    projectId: string | null;
-}
-
-interface RootState {
-    scratchGui: {
-        projectState: ProjectStateSlice;
-    };
-}
-
+import type {RootState} from '../containers/gui';
 interface StateProps {
     isFetchingWithoutId: boolean;
     reduxProjectId: string | null;
