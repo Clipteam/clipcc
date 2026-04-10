@@ -406,6 +406,9 @@ importers:
       '@eslint/js':
         specifier: ^9.39.4
         version: 9.39.4
+      '@types/keymirror':
+        specifier: ^0.1.4
+        version: 0.1.4
       '@types/lodash.bindall':
         specifier: ^4.4.9
         version: 4.4.9
@@ -3088,6 +3091,9 @@ packages:
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
 
+  '@types/keymirror@0.1.4':
+    resolution: {integrity: sha512-EPlgLrh8Z9OLtGmJRqRIar19Apg7a7xLckaOs16WGraEUuEM4sVdoKBA9MOIQsSbrW+yH1F4QD7WpIlCIy0V0A==}
+
   '@types/lodash.bindall@4.4.9':
     resolution: {integrity: sha512-sG6V5+T3JcB39nXfORM+kHRH6DiCB+95DfGrH2YpPMXRpt6q3rn7VrW3dItiOLasJYeHq1jxc+tOW1ijT+d1wg==}
 
@@ -4025,6 +4031,7 @@ packages:
   basic-ftp@5.2.0:
     resolution: {integrity: sha512-VoMINM2rqJwJgfdHq6RiUudKt2BV+FY5ZFezP/ypmwayk68+NzzAQy4XXLlqsGD4MCzq3DrmNFD/uUmBJuGoXw==}
     engines: {node: '>=10.0.0'}
+    deprecated: Security vulnerability fixed in 5.2.1, please upgrade
 
   batch@0.6.1:
     resolution: {integrity: sha512-x+VAiMRL6UPkx+kudNvxTl6hB2XNNCG2r+7wixVfIYwu/2HKRXimwQyaumLjMveWvT2Hkd/cAJw+QBMfJ/EKVw==}
@@ -12082,6 +12089,8 @@ snapshots:
   '@types/json-schema@7.0.15': {}
 
   '@types/json5@0.0.29': {}
+
+  '@types/keymirror@0.1.4': {}
 
   '@types/lodash.bindall@4.4.9':
     dependencies:

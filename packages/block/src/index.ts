@@ -233,6 +233,7 @@ export * from 'blockly/core';
 export * as callbackRegistry from './callback_registry';
 export * as constants from './constants';
 export * as scratchBlocksUtils from './utils';
+export type * as proceduresSerializer from './serialization/procedures';
 
 export {reportValue} from './report_value';
 export {Colours} from './theme';

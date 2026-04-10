@@ -1,4 +1,4 @@
-import type {ProcedureExtraState} from 'clipcc-block/serialization/procedures';
+import type * as ClipCCBlock from 'clipcc-block';
 import type {AnyAction} from 'redux';
 import type {BaseAction} from './common';
 
@@ -6,6 +6,7 @@ const ACTIVATE_CUSTOM_PROCEDURES = 'scratch-gui/custom-procedures/ACTIVATE_CUSTO
 const DEACTIVATE_CUSTOM_PROCEDURES = 'scratch-gui/custom-procedures/DEACTIVATE_CUSTOM_PROCEDURES';
 const SET_CALLBACK = 'scratch-gui/custom-procedures/SET_CALLBACK';
 
+type ProcedureExtraState = ClipCCBlock.proceduresSerializer.ProcedureExtraState;
 type MutatorCallback = (state: ProcedureExtraState) => void;
 
 export interface CustomProceduresState {
@@ -30,10 +31,6 @@ interface ActivateCustomProceduresAction extends BaseAction<typeof ACTIVATE_CUST
 
 interface DeactivateCustomProceduresAction extends BaseAction<typeof DEACTIVATE_CUSTOM_PROCEDURES> {
     state: ProcedureExtraState | null;
-};
-
-interface SetCallbackAction extends BaseAction<typeof SET_CALLBACK> {
-    callback: MutatorCallback;
 };
 
 const reducer = function (state: CustomProceduresState = initialState, action: AnyAction): CustomProceduresState {
@@ -73,7 +70,11 @@ const reducer = function (state: CustomProceduresState = initialState, action: A
  * @param isNew True if the procedure is newly created.
  * @returns An action object with type ACTIVATE_CUSTOM_PROCEDURES.
  */
-const activateCustomProcedures = (state: ProcedureExtraState, callback: MutatorCallback, isNew: boolean): ActivateCustomProceduresAction => ({
+const activateCustomProcedures = (
+    state: ProcedureExtraState,
+    callback: MutatorCallback,
+    isNew: boolean
+): ActivateCustomProceduresAction => ({
     type: ACTIVATE_CUSTOM_PROCEDURES,
     state,
     callback: callback,
