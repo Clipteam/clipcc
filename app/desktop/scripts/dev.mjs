@@ -19,7 +19,6 @@ import configFactory from '../webpack.config.mjs';
 const __filename = fileURLToPath(import.meta.url);
 const scriptsDir = path.dirname(__filename);
 const desktopDir = path.resolve(scriptsDir, '..');
-const rendererUrl = 'http://127.0.0.1:8386';
 const nodeTargets = /** @type {const} */ (['main', 'preload']);
 
 /** @type {ChildProcess | null} */
@@ -109,12 +108,17 @@ const startElectron = reason => {
         return;
     }
 
+    const port = getConfig('renderer').devServer?.port;
+    if (!port) {
+        throw new Error('Renderer webpack config is missing devServer.port setting');
+    }
+
     log('electron', reason);
     electronProcess = spawn(electronPath, [desktopDir], {
         cwd: desktopDir,
         env: {
             ...process.env,
-            CLIPCC_DESKTOP_RENDERER_URL: rendererUrl
+            WEBPACK_WDS_PORT: port
         },
         stdio: 'inherit'
     });
@@ -280,7 +284,7 @@ const startRendererServer = async () => {
 
     await rendererServer.start();
     rendererReady = true;
-    log('renderer', `dev server listening on ${rendererUrl}`);
+    log('renderer', `dev server listening on http://localhost:${rendererConfig.devServer.port}`);
     maybeStartElectron();
 };
 
