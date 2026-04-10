@@ -1,4 +1,4 @@
-import {BrowserWindow, type BrowserWindowConstructorOptions, shell} from 'electron';
+import {BrowserWindow, type BrowserWindowConstructorOptions, dialog, shell} from 'electron';
 import path from 'path';
 
 interface CreateWindowOptions extends BrowserWindowConstructorOptions {
@@ -84,9 +84,24 @@ const createMainWindow = () => {
         window.show();
     });
 
+    window.webContents.on('will-prevent-unload', ev => {
+        const choice = dialog.showMessageBoxSync(window, {
+            type: 'question',
+            message: 'Leave ClipCC?',
+            detail: 'Any unsaved changes will be lost.',
+            buttons: ['Stay', 'Leave'],
+            cancelId: 0, // closing the dialog means "stay"
+            defaultId: 0 // pressing enter or space without explicitly selecting something means "stay"
+        });
+        const shouldQuit = (choice === 1);
+        if (shouldQuit) {
+            ev.preventDefault();
+        }
+    });
+
     window.on('closed', () => {
         if (windows.main === window) {
-            windows.main = undefined;
+            delete windows.main;
         }
 
         windows.about?.close();
@@ -111,7 +126,7 @@ const createAboutWindow = () => {
 
     window.on('closed', () => {
         if (windows.about === window) {
-            windows.about = undefined;
+            delete windows.about;
         }
     });
 
@@ -132,7 +147,7 @@ const createPrivacyWindow = () => {
 
     window.on('closed', () => {
         if (windows.privacy === window) {
-            windows.privacy = undefined;
+            delete windows.privacy;
         }
     });
 
@@ -155,7 +170,7 @@ const createLoadingWindow = () => {
 
     window.on('closed', () => {
         if (windows.loading === window) {
-            windows.loading = undefined;
+            delete windows.loading;
         }
     });
 
@@ -163,11 +178,6 @@ const createLoadingWindow = () => {
 };
 
 const ensureWindow = (name: WindowName) => {
-    const currentWindow = windows[name];
-    if (currentWindow?.isDestroyed()) {
-        windows[name] = undefined;
-    }
-
     if (!windows[name]) {
         switch (name) {
         case 'main':
@@ -192,8 +202,6 @@ export const initializeWindows = () => {
     ensureWindow('loading');
     ensureWindow('main');
 };
-
-export const ensureMainWindow = () => ensureWindow('main');
 
 export const openAboutWindow = () => {
     ensureWindow('about').show();
