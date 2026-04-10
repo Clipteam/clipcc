@@ -1,0 +1,63 @@
+appId: com.codingclip.clipcc3
+productName: ClipCC
+electronVersion: 41.2.0
+artifactName: clipcc-${version}-${os}-${arch}.${ext}
+copyright: Copyright © 2019-2026 Clip Team.
+compression: maximum
+publish: null
+
+directories:
+  buildResources: buildResources
+  output: dist
+
+files:
+  - dist/**/*
+  - package.json
+
+extraResources:
+  - from: buildResources/icon
+    to: icon
+
+mac:
+  category: public.app-category.education
+  icon: buildResources/app.icns
+  entitlements: buildResources/entitlements.mac.plist
+  entitlementsInherit: buildResources/entitlements.mas.inherit.plist
+  hardenedRuntime: true
+  target:
+    - target: dmg
+  extendInfo:
+    NSCameraUsageDescription: >-
+      This app requires camera access when using the video sensing blocks.
+    NSMicrophoneUsageDescription: >-
+      This app requires microphone access when recording sounds or detecting loudness.
+
+dmg:
+  title: ClipCC ${version}
+
+win:
+  icon: buildResources/app.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - ia32
+    - target: zip
+      arch:
+        - x64
+
+nsis:
+  oneClick: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  license: ../../LICENSE
+  include: buildResources/install.nsh
+
+linux:
+  category: Education
+  target:
+    - target: AppImage
+    - target: deb
+    - target: rpm

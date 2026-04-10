@@ -22,6 +22,9 @@
         "build:preload": "webpack --env target=preload",
         "build:renderer": "webpack --env target=renderer",
         "build": "pnpm run build:main && pnpm run build:preload && pnpm run build:renderer",
+        "bundle:dir": "pnpm run build && node ./scripts/electron-builder-wrapper.mjs --mode=dir",
+        "bundle:dev": "pnpm run build && node ./scripts/electron-builder-wrapper.mjs --mode=dev",
+        "bundle:dist": "pnpm run build && node ./scripts/electron-builder-wrapper.mjs --mode=dist",
         "start": "node ./scripts/dev.mjs"
     },
     "devDependencies": {
