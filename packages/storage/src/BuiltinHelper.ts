@@ -49,6 +49,10 @@ const DefaultAssets: BuiltinAssetRecord[] = [
 const BuiltinAssets = DefaultAssets.concat([]);
 
 export default class BuiltinHelper extends Helper {
+    /**
+     * In-memory storage for all built-in assets.
+     * It maps asset type to a map of asset ID to actual assets.
+     */
     public assets: Record<string, BuiltinAssetRecord> = {};
 
     constructor (parent: ScratchStorage) {

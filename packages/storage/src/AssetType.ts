@@ -1,12 +1,22 @@
 import {DataFormat, type IDataFormat} from './DataFormat';
 
 export interface IAssetType {
+    /** the MIME type associated with this kind of data. Useful for data URIs, etc. */
     contentType: string,
+    /** The human-readable name of this asset type. */
     name: string,
+    /**
+     * The default format used for runtime, in-memory storage of this asset. For
+     * example, a project stored in SB2 format on disk will be returned as JSON when loaded into memory.
+     */
     runtimeFormat: IDataFormat,
+    /** Indicates if the asset id is determined by the asset content. */
     immutable: boolean
 }
 
+/**
+ * Enumeration of the supported asset types.
+ */
 export const AssetType = {
     ImageBitmap: {
         contentType: 'image/png',
@@ -38,7 +48,7 @@ export const AssetType = {
         runtimeFormat: DataFormat.JSON,
         immutable: true
     }
-} as const;
+} as const satisfies Record<string, IAssetType>;
 
 export type BuiltinAssetType = (typeof AssetType)[keyof typeof AssetType];
 export type BuiltinAssetTypeContentType = BuiltinAssetType['contentType'];
