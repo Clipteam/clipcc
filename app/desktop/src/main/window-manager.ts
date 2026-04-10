@@ -39,7 +39,6 @@ export const createWindow = ({
 type WindowName = 'main' | 'about' | 'privacy' | 'loading';
 
 const windows: Partial<Record<WindowName, BrowserWindow>> = {};
-let isQuitting = false;
 
 const getRendererUrl = (route = 'app') => {
     const rendererUrlFromEnv = process.env.CLIPCC_DESKTOP_RENDERER_URL;
@@ -90,11 +89,9 @@ const createMainWindow = () => {
             windows.main = undefined;
         }
 
-        if (!isQuitting) {
-            windows.about?.close();
-            windows.privacy?.close();
-            windows.loading?.close();
-        }
+        windows.about?.close();
+        windows.privacy?.close();
+        windows.loading?.close();
     });
 
     return window;
@@ -111,13 +108,6 @@ const createAboutWindow = () => {
     });
 
     loadRendererRoute(window, 'about');
-
-    window.on('close', event => {
-        if (!isQuitting) {
-            event.preventDefault();
-            window.hide();
-        }
-    });
 
     window.on('closed', () => {
         if (windows.about === window) {
@@ -139,13 +129,6 @@ const createPrivacyWindow = () => {
     });
 
     loadRendererRoute(window, 'privacy');
-
-    window.on('close', event => {
-        if (!isQuitting) {
-            event.preventDefault();
-            window.hide();
-        }
-    });
 
     window.on('closed', () => {
         if (windows.privacy === window) {
@@ -218,8 +201,4 @@ export const openAboutWindow = () => {
 
 export const openPrivacyWindow = () => {
     ensureWindow('privacy').show();
-};
-
-export const setAppQuitting = () => {
-    isQuitting = true;
 };

@@ -1,7 +1,7 @@
 import {app} from 'electron';
 
 import {registerIpcListeners} from './ipc';
-import {ensureMainWindow, initializeWindows, setAppQuitting} from './window-manager';
+import {ensureMainWindow, initializeWindows} from './window-manager';
 
 app.whenReady().then(() => {
     initializeWindows();
@@ -10,10 +10,6 @@ app.whenReady().then(() => {
     app.on('activate', () => {
         ensureMainWindow();
     });
-});
-
-app.on('before-quit', () => {
-    setAppQuitting();
 });
 
 app.on('window-all-closed', () => {
