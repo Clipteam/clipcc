@@ -5,7 +5,7 @@ import {
 import {WebUSB, DAPLink} from 'dapjs';
 import keyMirror from 'keymirror';
 
-import log from './log.js';
+import log from './log';
 
 import hexUrl from '../generated/microbit-hex-url.cjs';
 

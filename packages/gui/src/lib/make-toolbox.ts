@@ -1,19 +1,31 @@
-/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
-import * as ScratchBlocks from 'clipcc-block';
+import * as ClipCCBlocks from 'clipcc-block';
 
-const blockSeparator = {
+type ShadowFields = Record<string, string | number>;
+
+type ShadowInput = ClipCCBlocks.serialization.blocks.ConnectionState;
+type ToolboxInfo = ClipCCBlocks.utils.toolbox.ToolboxInfo;
+type ToolboxItem = ClipCCBlocks.utils.toolbox.ToolboxItemInfo;
+
+interface ExtensionCategory {
+    id: string;
+    json?: ToolboxItem;
+    xml?: string;
+}
+
+const blockSeparator: ToolboxItem = {
     kind: 'sep',
     gap: 36
 };
 
 /**
  * Create shadow input object for JSON toolbox
- * @param {string} type - The type of the shadow block
- * @param {object} [fields] - Field definitions
- * @returns {object} Shadow object
+ * @param type - The type of the shadow block
+ * @param fields - Field definitions
+ * @returns Shadow object
  */
-const createShadow = (type, fields) => {
+const createShadow = (type: string, fields?: ShadowFields): ShadowInput => {
     if (fields) {
         return {
             shadow: {
@@ -29,10 +41,10 @@ const createShadow = (type, fields) => {
     };
 };
 
-const motion = (isInitialSetup, isStage, targetId) => {
-    const stageSelected = ScratchBlocks.Msg.MOTION_STAGE_SELECTED;
+const motion = (isInitialSetup: boolean, isStage: boolean, targetId: string | null | undefined): ToolboxItem => {
+    const stageSelected = ClipCCBlocks.Msg.MOTION_STAGE_SELECTED;
 
-    const motionContents = [];
+    const motionContents: ToolboxItem[] = [];
     if (isStage) {
         motionContents.push({
             kind: 'label',
@@ -157,11 +169,17 @@ const motion = (isInitialSetup, isStage, targetId) => {
     };
 };
 
-const looks = (isInitialSetup, isStage, targetId, costumeName, backdropName) => {
-    const hello = ScratchBlocks.Msg.LOOKS_HELLO;
-    const hmm = ScratchBlocks.Msg.LOOKS_HMM;
+const looks = (
+    isInitialSetup: boolean,
+    isStage: boolean,
+    targetId: string | null | undefined,
+    costumeName: string,
+    backdropName: string
+): ToolboxItem => {
+    const hello = ClipCCBlocks.Msg.LOOKS_HELLO;
+    const hmm = ClipCCBlocks.Msg.LOOKS_HMM;
 
-    const looksContents = [];
+    const looksContents: ToolboxItem[] = [];
 
     if (!isStage) {
         looksContents.push(
@@ -310,7 +328,12 @@ const looks = (isInitialSetup, isStage, targetId, costumeName, backdropName) => 
     };
 };
 
-const sound = (isInitialSetup, isStage, targetId, soundName) => ({
+const sound = (
+    isInitialSetup: boolean,
+    isStage: boolean,
+    targetId: string | null | undefined,
+    soundName: string
+): ToolboxItem => ({
     kind: 'category',
     name: '%{BKY_CATEGORY_SOUND}',
     categorystyle: 'sounds',
@@ -367,8 +390,8 @@ const sound = (isInitialSetup, isStage, targetId, soundName) => ({
     ]
 });
 
-const events = (isInitialSetup, isStage, targetId) => {
-    const eventsContents = [
+const events = (isInitialSetup: boolean, isStage: boolean, targetId: string | null | undefined): ToolboxItem => {
+    const eventsContents: ToolboxItem[] = [
         {kind: 'block', type: 'event_whenflagclicked'},
         {kind: 'block', type: 'event_whenkeypressed'}
     ];
@@ -415,8 +438,8 @@ const events = (isInitialSetup, isStage, targetId) => {
     };
 };
 
-const control = (isInitialSetup, isStage, targetId) => {
-    const controlContents = [
+const control = (isInitialSetup: boolean, isStage: boolean, targetId: string | null | undefined): ToolboxItem => {
+    const controlContents: ToolboxItem[] = [
         {
             kind: 'block',
             type: 'control_wait',
@@ -473,10 +496,15 @@ const control = (isInitialSetup, isStage, targetId) => {
     };
 };
 
-const sensing = (isInitialSetup, isStage, targetId, hideNonVanillaBlocks) => {
-    const name = ScratchBlocks.Msg.SENSING_ASK_TEXT;
+const sensing = (
+    isInitialSetup: boolean,
+    isStage: boolean,
+    targetId: string | null | undefined,
+    hideNonVanillaBlocks: boolean
+): ToolboxItem => {
+    const name = ClipCCBlocks.Msg.SENSING_ASK_TEXT;
 
-    const sensingContents = [];
+    const sensingContents: ToolboxItem[] = [];
 
     if (!isStage) {
         sensingContents.push(
@@ -645,12 +673,17 @@ const sensing = (isInitialSetup, isStage, targetId, hideNonVanillaBlocks) => {
     };
 };
 
-const operators = (isInitialSetup, isStage, targetId, hideNonVanillaBlocks) => {
-    const apple = ScratchBlocks.Msg.OPERATORS_JOIN_APPLE;
-    const banana = ScratchBlocks.Msg.OPERATORS_JOIN_BANANA;
-    const letter = ScratchBlocks.Msg.OPERATORS_LETTEROF_APPLE;
+const operators = (
+    isInitialSetup: boolean,
+    isStage: boolean,
+    targetId: string | null | undefined,
+    hideNonVanillaBlocks: boolean
+): ToolboxItem => {
+    const apple = ClipCCBlocks.Msg.OPERATORS_JOIN_APPLE;
+    const banana = ClipCCBlocks.Msg.OPERATORS_JOIN_BANANA;
+    const letter = ClipCCBlocks.Msg.OPERATORS_LETTEROF_APPLE;
 
-    const operatorsContents = [
+    const operatorsContents: ToolboxItem[] = [
         {
             kind: 'block',
             type: 'operator_add',
@@ -935,14 +968,14 @@ const operators = (isInitialSetup, isStage, targetId, hideNonVanillaBlocks) => {
     };
 };
 
-const variables = (isInitialSetup, isStage, targetId) => ({
+const variables = (isInitialSetup: boolean, isStage: boolean, targetId: string | null | undefined): ToolboxItem => ({
     kind: 'category',
     name: '%{BKY_CATEGORY_VARIABLES}',
     categorystyle: 'data',
     custom: 'VARIABLE'
 });
 
-const myBlocks = (isInitialSetup, isStage, targetId) => ({
+const myBlocks = (isInitialSetup: boolean, isStage: boolean, targetId: string | null | undefined): ToolboxItem => ({
     kind: 'category',
     name: '%{BKY_CATEGORY_MYBLOCKS}',
     categorystyle: 'more',
@@ -950,38 +983,36 @@ const myBlocks = (isInitialSetup, isStage, targetId) => ({
 });
 
 /**
- * @param {!boolean} isInitialSetup - Whether the toolbox is for initial setup. If the mode is "initial setup",
+ * Build a Blockly JSON toolbox definition for the current editing context.
+ * @param isInitialSetup - Whether the toolbox is for initial setup. If the mode is "initial setup",
  * blocks with localized default parameters (e.g. ask and wait) should not be loaded. (LLK/scratch-gui#5445)
- * @param {?boolean} isStage - Whether the toolbox is for a stage-type target. This is always set to true
+ * @param isStage - Whether the toolbox is for a stage-type target. This is always set to true
  * when isInitialSetup is true.
- * @param {?string} targetId - The current editing target
- * @param {?Array.<object>} categories - optional array of `{id,json,xml}` for categories. This can include both core
+ * @param targetId - The current editing target
+ * @param categories - optional array of `{id,json,xml}` for categories. This can include both core
  * and other extensions: core extensions will be placed in the normal Scratch order; others will go at the bottom.
- * @property {string} id - the extension / category ID.
- * @property {string} json - the JSON for this extension / category.
- * @property {string} xml - the `<category>...</category>` XML for this extension / category.
- * @param {?string} costumeName - The name of the default selected costume dropdown.
- * @param {?string} backdropName - The name of the default selected backdrop dropdown.
- * @param {?string} soundName -  The name of the default selected sound dropdown.
- * @param {?boolean} hideNonVanillaBlocks - hide non-vanilla blocks.
- * @returns {string} - a Blockly-style JSON document for the contents of the toolbox.
+ * @param costumeName - The name of the default selected costume dropdown.
+ * @param backdropName - The name of the default selected backdrop dropdown.
+ * @param soundName - The name of the default selected sound dropdown.
+ * @param hideNonVanillaBlocks - hide non-vanilla blocks.
+ * @returns a Blockly-style JSON document for the contents of the toolbox.
  */
 const makeToolbox = function (
-    isInitialSetup,
-    isStage = true,
-    targetId,
-    categories = [],
+    isInitialSetup: boolean,
+    isStage: boolean = true,
+    targetId?: string | null,
+    categories: ExtensionCategory[] = [],
     costumeName = '',
     backdropName = '',
     soundName = '',
     hideNonVanillaBlocks = false
-) {
+): ToolboxInfo {
     isStage = isInitialSetup || isStage;
 
     // Convert xml toolbox to json.
     for (const category of categories) {
         if (category.json || !category.xml) continue;
-        const toolbox = ScratchBlocks.utils.toolbox.convertToolboxDefToJson(
+        const toolbox = ClipCCBlocks.utils.toolbox.convertToolboxDefToJson(
             `<xml style="display: none">${category.xml}</xml>`
         );
         if (!toolbox || toolbox.contents.length === 0) {
@@ -992,7 +1023,7 @@ const makeToolbox = function (
     }
 
     categories = categories.slice();
-    const moveCategory = categoryId => {
+    const moveCategory = (categoryId: string): ToolboxItem | undefined => {
         const index = categories.findIndex(categoryInfo => categoryInfo.id === categoryId);
         if (index >= 0) {
             // remove the category from categories and return it
@@ -1002,7 +1033,7 @@ const makeToolbox = function (
         // return `undefined`
     };
 
-    const contents = [
+    const contents: ToolboxItem[] = [
         moveCategory('motion') || motion(isInitialSetup, isStage, targetId),
         moveCategory('looks') || looks(isInitialSetup, isStage, targetId, costumeName, backdropName),
         moveCategory('sound') || sound(isInitialSetup, isStage, targetId, soundName),
@@ -1016,12 +1047,13 @@ const makeToolbox = function (
 
     // Add remaining extension categories
     for (const extensionCategory of categories) {
+        if (!extensionCategory.json) continue;
         contents.push(extensionCategory.json);
     }
 
     return {
         kind: 'categoryToolbox',
-        contents
+        contents: contents
     };
 };
 

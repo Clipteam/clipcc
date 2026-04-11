@@ -38,7 +38,7 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 import themeManagerHOC from '../lib/theme-manager-hoc.jsx';
 
 import GUIComponent from '../components/gui/gui';
-import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
+import {setIsScratchDesktop} from '../lib/isScratchDesktop';
 import type {RootState} from '../lib/app-state-hoc';
 import type {PropsOf} from '../lib/type-traits';
 
