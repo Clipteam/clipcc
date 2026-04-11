@@ -4,7 +4,7 @@ import log from './log';
 
 import Asset, {AssetData, AssetId} from './Asset';
 import {AssetType, type BuiltinAssetType} from './AssetType';
-import {DataFormat, type IDataFormat} from './DataFormat';
+import {DataFormat, type AcceptedDataFormats} from './DataFormat';
 import Helper from './Helper';
 
 import defaultImageBitmap from './builtins/defaultBitmap.png?arrayBuffer';
@@ -18,7 +18,7 @@ interface BuiltinAssetRecord {
     /** The type of the asset */
     type: BuiltinAssetType,
     /** The format of the asset's data */
-    format: IDataFormat,
+    format: AcceptedDataFormats,
     /** The asset's unique ID */
     id: AssetId | null,
     /** The asset's data */
@@ -99,7 +99,7 @@ export default class BuiltinHelper extends Helper {
      * @param id - The id for the cached asset.
      * @returns The calculated id of the cached asset, or the supplied id if the asset is mutable.
      */
-    cache (assetType: BuiltinAssetType, dataFormat: IDataFormat, data: AssetData, id: AssetId): AssetId {
+    cache (assetType: BuiltinAssetType, dataFormat: AcceptedDataFormats, data: AssetData, id: AssetId): AssetId {
         log.warn('Deprecation: BuiltinHelper.cache has been replaced with BuiltinHelper.store.');
         return this.store(assetType, dataFormat, data, id);
     }
@@ -113,7 +113,7 @@ export default class BuiltinHelper extends Helper {
      * @param id - The id for the cached asset.
      * @returns The calculated id of the cached asset, or the supplied id if the asset is mutable.
      */
-    store (assetType: BuiltinAssetType, dataFormat: IDataFormat, data: AssetData, id: AssetId): AssetId {
+    store (assetType: BuiltinAssetType, dataFormat: AcceptedDataFormats, data: AssetData, id: AssetId): AssetId {
         log.warn('Deprecation: use Storage.createAsset. BuiltinHelper is for internal use only.');
         return this._store(assetType, dataFormat, data, id);
     }
@@ -126,7 +126,12 @@ export default class BuiltinHelper extends Helper {
      * @param id - The id for the cached asset.
      * @returns The calculated id of the cached asset, or the supplied id if the asset is mutable.
      */
-    _store (assetType: BuiltinAssetType, dataFormat: IDataFormat, data: AssetData, id?: AssetId | null): AssetId {
+    _store (
+        assetType: BuiltinAssetType,
+        dataFormat: AcceptedDataFormats,
+        data: AssetData,
+        id?: AssetId | null
+    ): AssetId {
         let assetId = id;
         if (!dataFormat) throw new Error('Data cached without specifying its format');
         if (assetId !== '' && assetId !== null && typeof assetId !== 'undefined') {

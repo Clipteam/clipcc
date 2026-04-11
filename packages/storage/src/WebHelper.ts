@@ -5,7 +5,7 @@ import Helper from './Helper';
 import ProxyTool from './ProxyTool';
 import {ScratchGetRequest, ScratchSendRequest, Tool} from './Tool';
 import type {IAssetType} from './AssetType';
-import type {IDataFormat} from './DataFormat';
+import type {AcceptedDataFormats} from './DataFormat';
 
 const ensureRequestConfig = reqConfig => {
     if (typeof reqConfig === 'string') {
@@ -83,12 +83,12 @@ export default class WebHelper extends Helper {
 
     /**
      * Fetch an asset but don't process dependencies.
-     * @param {IAssetType} assetType - The type of asset to fetch.
-     * @param {string} assetId - The ID of the asset to fetch: a project ID, MD5, etc.
-     * @param {IDataFormat} dataFormat - The file format / file extension of the asset to fetch: PNG, JPG, etc.
+     * @param assetType - The type of asset to fetch.
+     * @param assetId - The ID of the asset to fetch: a project ID, MD5, etc.
+     * @param dataFormat - The file format / file extension of the asset to fetch: PNG, JPG, etc.
      * @returns {Promise.<Asset>} A promise for the contents of the asset.
      */
-    load (assetType: IAssetType, assetId: AssetId, dataFormat: IDataFormat): Promise<Asset | null> {
+    load (assetType: IAssetType, assetId: AssetId, dataFormat: AcceptedDataFormats): Promise<Asset | null> {
 
         const errors: unknown[] = [];
         const stores = this.stores.slice()
@@ -141,14 +141,14 @@ export default class WebHelper extends Helper {
     /**
      * Create or update an asset with provided data. The create function is called if no asset id is provided
      * @param assetType - The type of asset to create or update.
-     * @param dataFormat - IDataFormat of the data for the stored asset.
+     * @param dataFormat - AcceptedDataFormats of the data for the stored asset.
      * @param data - The data for the cached asset.
      * @param assetId - The ID of the asset to fetch: a project ID, MD5, etc.
      * @returns A promise for the response from the create or update request
      */
     store (
         assetType: IAssetType,
-        dataFormat: IDataFormat | undefined,
+        dataFormat: AcceptedDataFormats | undefined,
         data: AssetData,
         assetId?: AssetId
     ): Promise<string | {id: string}> {
