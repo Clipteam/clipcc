@@ -113,16 +113,14 @@ const AppStateHOC = function <P extends Record<string, unknown>> (
         override componentDidUpdate (prevProps: Readonly<P & AppStateProps>) {
             if (localesOnly) return;
             if (
-                prevProps.isPlayerOnly !== this.props.isPlayerOnly &&
-                typeof this.props.isPlayerOnly === 'boolean'
+                prevProps.isPlayerOnly !== this.props.isPlayerOnly
             ) {
-                this.store.dispatch(setPlayer(this.props.isPlayerOnly));
+                this.store.dispatch(setPlayer(!!this.props.isPlayerOnly));
             }
             if (
-                prevProps.isFullScreen !== this.props.isFullScreen &&
-                typeof this.props.isFullScreen === 'boolean'
+                prevProps.isFullScreen !== this.props.isFullScreen
             ) {
-                this.store.dispatch(setFullScreen(this.props.isFullScreen));
+                this.store.dispatch(setFullScreen(!!this.props.isFullScreen));
             }
         }
         override render () {

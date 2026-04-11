@@ -9,7 +9,7 @@ import ReactDOM from 'react-dom';
 
 import analytics from '../lib/analytics';
 import AppStateHOC from '../lib/app-state-hoc.tsx';
-import BrowserModalComponent from '../components/browser-modal/browser-modal.tsx';
+import BrowserModalComponent, {setAppElement} from '../components/browser-modal/browser-modal.tsx';
 import supportedBrowser from '../lib/supported-browser';
 
 import styles from './index.css';
@@ -41,7 +41,7 @@ if (supportedBrowser()) {
     require('./render-gui.jsx').default(appTarget);
 
 } else {
-    BrowserModalComponent.setAppElement(appTarget);
+    setAppElement(appTarget);
     const WrappedBrowserModalComponent = AppStateHOC(BrowserModalComponent, true /* localesOnly */);
     const handleBack = () => {};
 

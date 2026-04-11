@@ -67,6 +67,10 @@ interface OwnProps {
     onSeeCommunity?: () => void;
     projectHost?: string;
     intl: IntlShape;
+    onProjectLoaded?: () => void;
+    onStorageInit?: (storageInstance: StorageWithOfficialStores) => void;
+    onUpdateProjectId?: (projectId: string | number) => void;
+    onVmInit?: (vm: VM) => void;
 }
 
 const mapStateToProps = (state: RootState) => {
@@ -110,12 +114,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
-interface GUIProps extends OwnProps, StateProps, DispatchProps {
-    onProjectLoaded?: () => void;
-    onStorageInit?: (storageInstance: StorageWithOfficialStores) => void;
-    onUpdateProjectId?: (projectId: string | number) => void;
-    onVmInit?: (vm: VM) => void;
-}
+interface GUIProps extends OwnProps, StateProps, DispatchProps {}
 
 class GUI extends React.Component<GUIProps> {
     static defaultProps = {
@@ -202,7 +201,6 @@ const WrappedGui = compose(
     themeManagerHOC
 )(ConnectedGUI);
 
-type PublicGUI = typeof WrappedGui & { setAppElement: typeof ReactModal.setAppElement };
 
-(WrappedGui as PublicGUI).setAppElement = ReactModal.setAppElement;
-export default WrappedGui as PublicGUI;
+export default WrappedGui;
+export const setAppElement = ReactModal.setAppElement;

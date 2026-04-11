@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import {compose} from 'redux';
 
 import AppStateHOC from '../lib/app-state-hoc.tsx';
-import GUI from '../containers/gui.tsx';
+import GUI, {setAppElement} from '../containers/gui.tsx';
 import HashParserHOC from '../lib/hash-parser-hoc.tsx';
 import log from '../lib/log.js';
 
@@ -29,7 +29,7 @@ const handleTelemetryModalOptOut = () => {
  * {object} appTarget - the DOM element to render to
  */
 export default appTarget => {
-    GUI.setAppElement(appTarget);
+    setAppElement(appTarget);
 
     // note that redux's 'compose' function is just being used as a general utility to make
     // the hierarchy of HOC constructor calls clearer here; it has nothing to do with redux's
