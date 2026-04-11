@@ -8,6 +8,10 @@
  */
 
 /**
+ * @typedef {import('./blocks')} Blocks
+ */
+
+/**
  * A set of cached data about the top block of a script.
  * @param {Blocks} container - Container holding the block and related data
  * @param {string} blockId - Id for whose block data is cached in this instance
@@ -65,14 +69,27 @@ class RuntimeScriptCache {
  * @param {Blocks} container - Container of blocks
  * @param {string} opcode - Opcode to filter top blocks by
  */
-exports.getScripts = function (container, opcode) { // eslint-disable-line no-unused-vars
-    throw new Error('blocks.js has not initialized BlocksRuntimeCache');
+const getScripts = function (container, opcode) {
+    const runtimeCache = container._cache.runtime;
+
+    let scripts = runtimeCache.scriptsByOpcode[opcode];
+    if (!scripts) {
+        scripts = runtimeCache.scriptsByOpcode[opcode] = [];
+
+        const allScripts = container.getScripts();
+        for (let i = 0; i < allScripts.length; i++) {
+            const topBlockId = allScripts[i];
+            const block = container.getBlock(topBlockId);
+            if (block.opcode === opcode) {
+                scripts.push(new RuntimeScriptCache(container, topBlockId));
+            }
+        }
+    }
+
+    return scripts;
 };
 
-/**
- * Exposed RuntimeScriptCache class used by integration in blocks.js.
- * @private
- */
-exports._RuntimeScriptCache = RuntimeScriptCache;
-
-require('./blocks');
+module.exports = {
+    getScripts,
+    RuntimeScriptCache
+};
