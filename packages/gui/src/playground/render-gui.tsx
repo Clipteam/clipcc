@@ -45,7 +45,7 @@ const renderGui = (appTarget: HTMLElement) => {
     const backpackHost = backpackHostMatches ? backpackHostMatches[1] : null;
 
     const scratchDesktopMatches = window.location.href.match(/[?&]isScratchDesktop=([^&]+)/);
-    let simulateScratchDesktop: boolean | string | number | object | null | undefined;
+    let simulateScratchDesktop = false;
     if (scratchDesktopMatches) {
         try {
             // parse 'true' into `true`, 'false' into `false`, etc.
@@ -53,7 +53,7 @@ const renderGui = (appTarget: HTMLElement) => {
         } catch {
             // it's not JSON so just use the string
             // note that a typo like "falsy" will be treated as true
-            simulateScratchDesktop = scratchDesktopMatches[1];
+            simulateScratchDesktop = !!scratchDesktopMatches[1];
         }
     }
 
