@@ -1,5 +1,8 @@
 import {DataFormat, type AcceptedDataFormats} from './DataFormat';
 
+/**
+ * Information about a supported asset type.
+ */
 export interface IAssetType {
     /** the MIME type associated with this kind of data. Useful for data URIs, etc. */
     contentType: string,
