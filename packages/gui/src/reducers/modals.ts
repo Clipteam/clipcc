@@ -42,11 +42,11 @@ const initialState: ModalsState = {
     [MODAL_SETTINGS]: false
 };
 
-interface OpenModalAction extends BaseAction<typeof OPEN_MODAL> {
+export interface OpenModalAction extends BaseAction<typeof OPEN_MODAL> {
     modal: ModalName;
 };
 
-interface CloseModalAction extends BaseAction<typeof CLOSE_MODAL> {
+export interface CloseModalAction extends BaseAction<typeof CLOSE_MODAL> {
     modal: ModalName;
 };
 

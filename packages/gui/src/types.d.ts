@@ -63,3 +63,41 @@ declare module 'react-intl' {
         options?: InjectIntlOptions
     ): React.ComponentType<Omit<P, 'intl'>>;
 }
+
+declare module 'react-responsive' {
+    import type React from 'react';
+
+    interface MediaQueryProps {
+        children?: React.ReactNode | ((matches: boolean) => React.ReactNode);
+        minWidth?: number | string;
+    }
+
+    const MediaQuery: React.ComponentType<MediaQueryProps>;
+    export default MediaQuery;
+}
+
+declare module 'react-tabs' {
+    import type React from 'react';
+
+    interface CommonProps {
+        className?: string;
+        children?: React.ReactNode;
+    }
+
+    interface TabsProps extends CommonProps {
+        forceRenderTabPanel?: boolean;
+        selectedIndex?: number;
+        selectedTabClassName?: string;
+        selectedTabPanelClassName?: string;
+        onSelect?: (index: number, lastIndex: number, event: Event) => void | boolean;
+    }
+
+    interface TabProps extends CommonProps {
+        onClick?: () => void;
+    }
+
+    export const Tabs: React.ComponentType<TabsProps>;
+    export const TabList: React.ComponentType<CommonProps>;
+    export const Tab: React.ComponentType<TabProps>;
+    export const TabPanel: React.ComponentType<CommonProps>;
+}

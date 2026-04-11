@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import omit from 'lodash.omit';
-import PropTypes from 'prop-types';
 import React from 'react';
-import {defineMessages, FormattedMessage, injectIntl, intlShape} from 'react-intl';
+import {defineMessages, FormattedMessage, injectIntl} from 'react-intl';
+import type {IntlShape} from 'react-intl';
 import {connect} from 'react-redux';
 import MediaQuery from 'react-responsive';
 import {Tab, Tabs, TabList, TabPanel} from 'react-tabs';
@@ -10,23 +10,23 @@ import tabStyles from 'react-tabs/style/react-tabs.css';
 import VM from 'clipcc-vm';
 import Renderer from 'clipcc-render';
 
-import Blocks from '../../containers/blocks.jsx';
-import CostumeTab from '../../containers/costume-tab.jsx';
-import TargetPane from '../../containers/target-pane.jsx';
-import SoundTab from '../../containers/sound-tab.jsx';
+import Blocks from '../../containers/blocks';
+import CostumeTab from '../../containers/costume-tab';
+import TargetPane from '../../containers/target-pane';
+import SoundTab from '../../containers/sound-tab';
 import StageWrapper from '../../containers/stage-wrapper.jsx';
 import Loader from '../loader/loader.jsx';
 import Box from '../box/box.jsx';
-import MenuBar from '../menu-bar/menu-bar.jsx';
+import MenuBar from '../menu-bar/menu-bar';
 import CostumeLibrary from '../../containers/costume-library.jsx';
 import BackdropLibrary from '../../containers/backdrop-library.jsx';
 import Watermark from '../../containers/watermark.jsx';
 
-import Backpack from '../../containers/backpack.jsx';
+import Backpack from '../../containers/backpack';
 import WebGlModal from '../../containers/webgl-modal.jsx';
 import Alerts from '../../containers/alerts.jsx';
 import DragLayer from '../../containers/drag-layer.jsx';
-import ConnectionModal from '../../containers/connection-modal.jsx';
+import ConnectionModal from '../../containers/connection-modal';
 import TelemetryModal from '../telemetry-modal/telemetry-modal.jsx';
 import SettingsModal from '../../containers/settings-modal.jsx';
 
@@ -39,6 +39,8 @@ import addExtensionIcon from './icon--extensions.svg';
 import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
+import type {RootState} from '../../lib/app-state-hoc';
+import type {TabIndex} from '../../reducers/editor-tab';
 
 const messages = defineMessages({
     addExtension: {
@@ -50,9 +52,91 @@ const messages = defineMessages({
 
 // Cache this value to only retrieve it once the first time.
 // Assume that it doesn't change for a session.
-let isRendererSupported = null;
+let isRendererSupported: boolean | null = null;
 
-const GUIComponent = props => {
+export interface OwnProps {
+    accountNavOpen?: boolean;
+    activeTabIndex?: TabIndex;
+    alertsVisible?: boolean;
+    authorId?: string | boolean;
+    authorThumbnailUrl?: string;
+    authorUsername?: string | boolean;
+    backdropLibraryVisible?: boolean;
+    backpackHost?: string | null;
+    backpackVisible?: boolean;
+    basePath?: string;
+    blocksTabVisible?: boolean;
+    canChangeLanguage?: boolean;
+    canChangeTheme?: boolean;
+    canCreateCopy?: boolean;
+    canCreateNew?: boolean;
+    canEditTitle?: boolean;
+    canManageFiles?: boolean;
+    canRemix?: boolean;
+    canSave?: boolean;
+    canShare?: boolean;
+    canUseCloud?: boolean;
+    children?: React.ReactNode;
+    connectionModalVisible?: boolean;
+    costumeLibraryVisible?: boolean;
+    costumesTabVisible?: boolean;
+    enableCommunity?: boolean;
+    intl: IntlShape;
+    isCreating?: boolean;
+    isFullScreen?: boolean;
+    isPlayerOnly?: boolean;
+    isRtl?: boolean;
+    isShared?: boolean;
+    isTelemetryEnabled?: boolean;
+    loading?: boolean;
+    logo?: string;
+    onClickAbout?: () => void;
+    onClickAccountNav?: () => void;
+    onCloseAccountNav?: () => void;
+    onLogOut?: () => void;
+    onOpenRegistration?: () => void;
+    onToggleLoginOpen?: () => void;
+    onActivateCostumesTab?: () => void;
+    onActivateSoundsTab?: () => void;
+    onActivateTab?: (tab: TabIndex) => void;
+    onClickLogo?: () => void;
+    onExtensionButtonClick?: () => void;
+    onProjectTelemetryEvent?: () => void;
+    onRequestCloseBackdropLibrary?: () => void;
+    onRequestCloseCostumeLibrary?: () => void;
+    onRequestCloseTelemetryModal?: () => void;
+    onSeeCommunity?: () => void;
+    onShare?: () => void;
+    onShowPrivacyPolicy?: () => void;
+    onStartSelectingFileUpload?: () => void;
+    onTelemetryModalCancel?: () => void;
+    onTelemetryModalOptIn?: () => void;
+    onTelemetryModalOptOut?: () => void;
+    renderLogin?: () => React.ReactNode;
+    settingsModalVisible?: boolean;
+    showComingSoon?: boolean;
+    soundsTabVisible?: boolean;
+    stageSizeMode?: keyof typeof STAGE_SIZE_MODES;
+    targetIsStage?: boolean;
+    telemetryModalVisible?: boolean;
+    theme?: keyof typeof themeMap;
+    vm: VM;
+    stageWidth?: number;
+    stageHeight?: number;
+}
+
+const mapStateToProps = (state: RootState) => ({
+    // This is the button's mode, as opposed to the actual current state
+    theme: state.scratchGui.theme.theme,
+    stageSizeMode: state.scratchGui.stageSize.stageSize,
+    stageWidth: state.scratchGui.settings.stageWidth,
+    stageHeight: state.scratchGui.settings.stageHeight
+});
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+type GUIProps = OwnProps & StateProps;
+
+const GUIComponent = (props: GUIProps) => {
     const {
         accountNavOpen,
         activeTabIndex,
@@ -60,34 +144,34 @@ const GUIComponent = props => {
         authorId,
         authorThumbnailUrl,
         authorUsername,
-        basePath,
+        basePath = './',
         backdropLibraryVisible,
-        backpackHost,
-        backpackVisible,
+        backpackHost = null,
+        backpackVisible = false,
         blocksTabVisible,
-        canChangeLanguage,
-        canChangeTheme,
-        canCreateNew,
-        canEditTitle,
-        canManageFiles,
-        canRemix,
-        canSave,
-        canCreateCopy,
-        canShare,
-        canUseCloud,
+        canChangeLanguage = true,
+        canChangeTheme = true,
+        canCreateNew = false,
+        canEditTitle = false,
+        canManageFiles = true,
+        canRemix = false,
+        canSave = false,
+        canCreateCopy = false,
+        canShare = false,
+        canUseCloud = false,
         children,
         connectionModalVisible,
         costumeLibraryVisible,
         costumesTabVisible,
-        enableCommunity,
+        enableCommunity = false,
         intl,
-        isCreating,
+        isCreating = false,
         isFullScreen,
         isPlayerOnly,
         isRtl,
-        isShared,
+        isShared = false,
         isTelemetryEnabled,
-        loading,
+        loading = false,
         logo,
         renderLogin,
         onClickAbout,
@@ -113,9 +197,9 @@ const GUIComponent = props => {
         onTelemetryModalOptIn,
         onTelemetryModalOptOut,
         settingsModalVisible,
-        showComingSoon,
+        showComingSoon = false,
         soundsTabVisible,
-        stageSizeMode,
+        stageSizeMode = STAGE_SIZE_MODES.large,
         targetIsStage,
         telemetryModalVisible,
         theme,
@@ -124,6 +208,7 @@ const GUIComponent = props => {
         stageHeight,
         ...componentProps
     } = omit(props, 'dispatch');
+
     if (children) {
         return <Box {...componentProps}>{children}</Box>;
     }
@@ -193,6 +278,7 @@ const GUIComponent = props => {
                 ) : null}
                 {connectionModalVisible ? (
                     <ConnectionModal
+                        // @ts-expect-error legacy jsx typing
                         vm={vm}
                     />
                 ) : null}
@@ -209,6 +295,7 @@ const GUIComponent = props => {
                     />
                 ) : null}
                 <MenuBar
+                    // @ts-expect-error legacy jsx typing
                     accountNavOpen={accountNavOpen}
                     authorId={authorId}
                     authorThumbnailUrl={authorThumbnailUrl}
@@ -249,7 +336,7 @@ const GUIComponent = props => {
                                 selectedIndex={activeTabIndex}
                                 selectedTabClassName={tabClassNames.tabSelected}
                                 selectedTabPanelClassName={tabClassNames.tabPanelSelected}
-                                onSelect={onActivateTab}
+                                onSelect={onActivateTab as (index: number) => void}
                             >
                                 <TabList className={tabClassNames.tabList}>
                                     <Tab className={tabClassNames.tab}>
@@ -304,6 +391,7 @@ const GUIComponent = props => {
                                     <Box className={styles.blocksWrapper}>
                                         <Blocks
                                             key={theme}
+                                            // @ts-expect-error legacy jsx typing
                                             canUseCloud={canUseCloud}
                                             grow={1}
                                             isVisible={blocksTabVisible}
@@ -333,13 +421,20 @@ const GUIComponent = props => {
                                     </Box>
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
-                                    {costumesTabVisible ? <CostumeTab vm={vm} /> : null}
+                                    {costumesTabVisible ? (
+                                        // @ts-expect-error legacy jsx typing
+                                        <CostumeTab vm={vm} />
+                                    ) : null}
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
-                                    {soundsTabVisible ? <SoundTab vm={vm} /> : null}
+                                    {soundsTabVisible ? (
+                                        // @ts-expect-error legacy jsx typing
+                                        <SoundTab vm={vm} />
+                                    ) : null}
                                 </TabPanel>
                             </Tabs>
                             {backpackVisible ? (
+                                // @ts-expect-error legacy jsx typing
                                 <Backpack host={backpackHost} />
                             ) : null}
                         </Box>
@@ -356,6 +451,7 @@ const GUIComponent = props => {
                             />
                             <Box className={styles.targetWrapper}>
                                 <TargetPane
+                                    // @ts-expect-error legacy jsx typing
                                     stageSize={stageSize}
                                     vm={vm}
                                 />
@@ -368,100 +464,6 @@ const GUIComponent = props => {
         );
     }}</MediaQuery>);
 };
-
-GUIComponent.propTypes = {
-    accountNavOpen: PropTypes.bool,
-    activeTabIndex: PropTypes.number,
-    authorId: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]), // can be false
-    authorThumbnailUrl: PropTypes.string,
-    authorUsername: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]), // can be false
-    backdropLibraryVisible: PropTypes.bool,
-    backpackHost: PropTypes.string,
-    backpackVisible: PropTypes.bool,
-    basePath: PropTypes.string,
-    blocksTabVisible: PropTypes.bool,
-    canChangeLanguage: PropTypes.bool,
-    canChangeTheme: PropTypes.bool,
-    canCreateCopy: PropTypes.bool,
-    canCreateNew: PropTypes.bool,
-    canEditTitle: PropTypes.bool,
-    canManageFiles: PropTypes.bool,
-    canRemix: PropTypes.bool,
-    canSave: PropTypes.bool,
-    canShare: PropTypes.bool,
-    canUseCloud: PropTypes.bool,
-    children: PropTypes.node,
-    costumeLibraryVisible: PropTypes.bool,
-    costumesTabVisible: PropTypes.bool,
-    enableCommunity: PropTypes.bool,
-    intl: intlShape.isRequired,
-    isCreating: PropTypes.bool,
-    isFullScreen: PropTypes.bool,
-    isPlayerOnly: PropTypes.bool,
-    isRtl: PropTypes.bool,
-    isShared: PropTypes.bool,
-    loading: PropTypes.bool,
-    logo: PropTypes.string,
-    onActivateCostumesTab: PropTypes.func,
-    onActivateSoundsTab: PropTypes.func,
-    onActivateTab: PropTypes.func,
-    onClickAccountNav: PropTypes.func,
-    onClickLogo: PropTypes.func,
-    onCloseAccountNav: PropTypes.func,
-    onExtensionButtonClick: PropTypes.func,
-    onLogOut: PropTypes.func,
-    onOpenRegistration: PropTypes.func,
-    onRequestCloseBackdropLibrary: PropTypes.func,
-    onRequestCloseCostumeLibrary: PropTypes.func,
-    onRequestCloseTelemetryModal: PropTypes.func,
-    onSeeCommunity: PropTypes.func,
-    onShare: PropTypes.func,
-    onShowPrivacyPolicy: PropTypes.func,
-    onStartSelectingFileUpload: PropTypes.func,
-    onTabSelect: PropTypes.func,
-    onTelemetryModalCancel: PropTypes.func,
-    onTelemetryModalOptIn: PropTypes.func,
-    onTelemetryModalOptOut: PropTypes.func,
-    onToggleLoginOpen: PropTypes.func,
-    renderLogin: PropTypes.func,
-    settingsModalVisible: PropTypes.bool,
-    showComingSoon: PropTypes.bool,
-    soundsTabVisible: PropTypes.bool,
-    stageSizeMode: PropTypes.oneOf(Object.keys(STAGE_SIZE_MODES)),
-    targetIsStage: PropTypes.bool,
-    telemetryModalVisible: PropTypes.bool,
-    theme: PropTypes.string,
-    vm: PropTypes.instanceOf(VM).isRequired
-};
-GUIComponent.defaultProps = {
-    backpackHost: null,
-    backpackVisible: false,
-    basePath: './',
-    canChangeLanguage: true,
-    canChangeTheme: true,
-    canCreateNew: false,
-    canEditTitle: false,
-    canManageFiles: true,
-    canRemix: false,
-    canSave: false,
-    canCreateCopy: false,
-    canShare: false,
-    canUseCloud: false,
-    enableCommunity: false,
-    isCreating: false,
-    isShared: false,
-    loading: false,
-    showComingSoon: false,
-    stageSizeMode: STAGE_SIZE_MODES.large
-};
-
-const mapStateToProps = state => ({
-    // This is the button's mode, as opposed to the actual current state
-    theme: state.scratchGui.theme.theme,
-    stageSizeMode: state.scratchGui.stageSize.stageSize,
-    stageWidth: state.scratchGui.settings.stageWidth,
-    stageHeight: state.scratchGui.settings.stageHeight
-});
 
 export default injectIntl(connect(
     mapStateToProps

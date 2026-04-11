@@ -412,6 +412,9 @@ importers:
       '@types/lodash.bindall':
         specifier: ^4.4.9
         version: 4.4.9
+      '@types/lodash.omit':
+        specifier: ^4.5.9
+        version: 4.5.9
       '@types/prop-types':
         specifier: 15.5.9
         version: 15.5.9
@@ -3096,6 +3099,9 @@ packages:
 
   '@types/lodash.bindall@4.4.9':
     resolution: {integrity: sha512-sG6V5+T3JcB39nXfORM+kHRH6DiCB+95DfGrH2YpPMXRpt6q3rn7VrW3dItiOLasJYeHq1jxc+tOW1ijT+d1wg==}
+
+  '@types/lodash.omit@4.5.9':
+    resolution: {integrity: sha512-zuAVFLUPJMOzsw6yawshsYGgq2hWUHtsZgeXHZmSFhaQQFC6EQ021uDKHkSjOpNhSvtNSU9165/o3o/Q51GpTw==}
 
   '@types/lodash@4.17.24':
     resolution: {integrity: sha512-gIW7lQLZbue7lRSWEFql49QJJWThrTFFeIMJdp3eH4tKoxm1OvEPg02rm4wCCSHS0cL3/Fizimb35b7k8atwsQ==}
@@ -12093,6 +12099,10 @@ snapshots:
   '@types/keymirror@0.1.4': {}
 
   '@types/lodash.bindall@4.4.9':
+    dependencies:
+      '@types/lodash': 4.17.24
+
+  '@types/lodash.omit@4.5.9':
     dependencies:
       '@types/lodash': 4.17.24
 

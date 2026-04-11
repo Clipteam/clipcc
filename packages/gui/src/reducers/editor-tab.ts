@@ -8,7 +8,7 @@ const BLOCKS_TAB_INDEX = 0;
 const COSTUMES_TAB_INDEX = 1;
 const SOUNDS_TAB_INDEX = 2;
 
-type TabIndex = typeof BLOCKS_TAB_INDEX | typeof COSTUMES_TAB_INDEX | typeof SOUNDS_TAB_INDEX;
+export type TabIndex = typeof BLOCKS_TAB_INDEX | typeof COSTUMES_TAB_INDEX | typeof SOUNDS_TAB_INDEX;
 
 export interface EditorTabState {
     activeTabIndex: TabIndex;
@@ -18,7 +18,7 @@ const initialState: EditorTabState = {
     activeTabIndex: BLOCKS_TAB_INDEX
 };
 
-interface ActivateTabAction extends BaseAction<typeof ACTIVATE_TAB> {
+export interface ActivateTabAction extends BaseAction<typeof ACTIVATE_TAB> {
     activeTabIndex: TabIndex;
 };
 

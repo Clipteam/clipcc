@@ -8,27 +8,38 @@ import {
     getIsFetchingWithoutId,
     setProjectId
 } from '../reducers/project-state';
-import type {RootState} from '../containers/gui';
-interface StateProps {
-    isFetchingWithoutId: boolean;
-    reduxProjectId: string | null;
-}
+import type AppStateHOC from './app-state-hoc';
+import type {RootState} from './app-state-hoc';
+import type {PropsOf} from './type-traits';
 
-interface DispatchProps {
-    setProjectId: (projectId: string) => void;
-}
+const mapStateToProps = (state: RootState) => {
+    const loadingState = state.scratchGui.projectState.loadingState;
+    return {
+        isFetchingWithoutId: getIsFetchingWithoutId(loadingState),
+        reduxProjectId: state.scratchGui.projectState.projectId
+    };
+};
 
-type InjectedProps = StateProps & DispatchProps;
-type WrappedComponentProps = Record<string, unknown>;
-type HashParserComponentProps = WrappedComponentProps & InjectedProps;
+const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
+    setProjectId: (projectId: string): void => {
+        dispatch(setProjectId(projectId));
+    }
+});
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = ReturnType<typeof mapDispatchToProps>;
+
+type StatedGUILikeProps = PropsOf<ReturnType<typeof AppStateHOC>>;
+type HashParserComponentProps = StatedGUILikeProps & StateProps & DispatchProps;
+
 
 /* Higher Order Component to get the project id from location.hash
  * @param {React.Component} WrappedComponent: component to render
  * @returns {React.Component} component with hash parsing behavior
  */
-const HashParserHOC = function (
-    WrappedComponent: React.ComponentType<WrappedComponentProps>
-): React.ComponentType<WrappedComponentProps> {
+const HashParserHOC = function <P extends StatedGUILikeProps> (
+    WrappedComponent: React.ComponentType<P>
+): React.ComponentType<HashParserComponentProps> {
 
     class HashParserComponent extends React.Component<HashParserComponentProps> {
         constructor (props: HashParserComponentProps) {
@@ -74,34 +85,20 @@ const HashParserHOC = function (
                 /* eslint-enable @typescript-eslint/no-unused-vars */
                 ...componentProps
             } = this.props;
-            const wrappedComponentProps: WrappedComponentProps = componentProps;
+            const wrappedComponentProps = componentProps;
             return (
                 <WrappedComponent
-                    {...wrappedComponentProps}
+                    {...(wrappedComponentProps as P)}
                 />
             );
         }
     }
 
-    const mapStateToProps = (state: RootState): StateProps => {
-        const loadingState = state.scratchGui.projectState.loadingState;
-        return {
-            isFetchingWithoutId: getIsFetchingWithoutId(loadingState),
-            reduxProjectId: state.scratchGui.projectState.projectId
-        };
-    };
-
-    const mapDispatchToProps = (dispatch: Dispatch<AnyAction>): DispatchProps => ({
-        setProjectId: (projectId: string): void => {
-            dispatch(setProjectId(projectId));
-        }
-    });
-
     // Allow incoming props to override redux-provided props. Used to mock in tests.
     const mergeProps = (
         stateProps: StateProps,
         dispatchProps: DispatchProps,
-        ownProps: WrappedComponentProps
+        ownProps: PropsOf<typeof HashParserComponent>
     ): HashParserComponentProps => Object.assign(
         {}, stateProps, dispatchProps, ownProps
     );

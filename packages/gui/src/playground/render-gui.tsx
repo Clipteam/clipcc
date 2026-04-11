@@ -2,10 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {compose} from 'redux';
 
-import AppStateHOC from '../lib/app-state-hoc.tsx';
-import GUI, {setAppElement} from '../containers/gui.tsx';
-import HashParserHOC from '../lib/hash-parser-hoc.tsx';
+import AppStateHOC from '../lib/app-state-hoc';
+import GUI, {setAppElement} from '../containers/gui';
+import HashParserHOC from '../lib/hash-parser-hoc';
 import log from '../lib/log.js';
+import type {PropsOf} from '../lib/type-traits';
 
 const onClickLogo = () => {
     // window.location = 'https://scratch.mit.edu';
@@ -28,13 +29,13 @@ const handleTelemetryModalOptOut = () => {
  * that instantiates the VM causes unsupported browsers to crash
  * {object} appTarget - the DOM element to render to
  */
-export default appTarget => {
+const renderGui = (appTarget: HTMLElement) => {
     setAppElement(appTarget);
 
     // note that redux's 'compose' function is just being used as a general utility to make
     // the hierarchy of HOC constructor calls clearer here; it has nothing to do with redux's
     // ability to compose reducers.
-    const WrappedGui = compose(
+    const WrappedGui = compose<React.ComponentType<PropsOf<typeof GUI>>>(
         AppStateHOC,
         HashParserHOC
     )(GUI);
@@ -44,7 +45,7 @@ export default appTarget => {
     const backpackHost = backpackHostMatches ? backpackHostMatches[1] : null;
 
     const scratchDesktopMatches = window.location.href.match(/[?&]isScratchDesktop=([^&]+)/);
-    let simulateScratchDesktop;
+    let simulateScratchDesktop: boolean | string | number | object | null | undefined;
     if (scratchDesktopMatches) {
         try {
             // parse 'true' into `true`, 'false' into `false`, etc.
@@ -79,5 +80,8 @@ export default appTarget => {
                 canSave={false}
                 onClickLogo={onClickLogo}
             />,
-        appTarget);
+        appTarget
+    );
 };
+
+export default renderGui;

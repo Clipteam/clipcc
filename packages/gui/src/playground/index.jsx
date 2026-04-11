@@ -38,7 +38,7 @@ if (supportedBrowser()) {
     // require needed here to avoid importing unsupported browser-crashing code
     // at the top level
     // eslint-disable-next-line global-require
-    require('./render-gui.jsx').default(appTarget);
+    require('./render-gui').default(appTarget);
 
 } else {
     setAppElement(appTarget);
