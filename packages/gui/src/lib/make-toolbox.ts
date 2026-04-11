@@ -1023,7 +1023,7 @@ const makeToolbox = function (
     }
 
     categories = categories.slice();
-    const moveCategory = (categoryId: string): ToolboxItem | undefined => {
+    const moveCategory = (categoryId: string) => {
         const index = categories.findIndex(categoryInfo => categoryInfo.id === categoryId);
         if (index >= 0) {
             // remove the category from categories and return it
@@ -1053,7 +1053,7 @@ const makeToolbox = function (
 
     return {
         kind: 'categoryToolbox',
-        contents: contents
+        contents
     };
 };
 
