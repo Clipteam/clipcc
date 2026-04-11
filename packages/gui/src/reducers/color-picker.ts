@@ -49,7 +49,9 @@ const reducer = function (state: ColorPickerState = initialState, action: AnyAct
     }
 };
 
-const activateColorPicker = (callback: ColorPickerCallback): ActivateColorPickerAction => ({type: ACTIVATE_COLOR_PICKER, callback});
+const activateColorPicker = (callback: ColorPickerCallback): ActivateColorPickerAction => (
+    {type: ACTIVATE_COLOR_PICKER, callback}
+);
 const deactivateColorPicker = (color?: string): DeactivateColorPickerAction => ({type: DEACTIVATE_COLOR_PICKER, color});
 const setCallback = (callback: ColorPickerCallback): SetCallbackAction => ({type: SET_CALLBACK, callback});
 

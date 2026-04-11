@@ -11,11 +11,11 @@ let recordSoundCallback = null;
 
 /**
  * Set the callback to be called when the "Record Sound" option is selected in the sound menu.
- * @param {() => void | null} callback
+ * @param {() => void | null} callback The callback function to call when "Record Sound" is selected.
  */
-export function setRecordSoundCallback(callback) {
+export const setRecordSoundCallback = callback => {
     recordSoundCallback = callback;
-}
+};
 
 /**
  * Connect scratch blocks with the vm
