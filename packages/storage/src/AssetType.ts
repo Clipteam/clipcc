@@ -15,7 +15,7 @@ export interface IAssetType {
 }
 
 /**
- * Enumeration of the supported asset types.
+ * Enumeration of the builtin helper supported asset types.
  */
 export const AssetType = {
     ImageBitmap: {
@@ -50,5 +50,7 @@ export const AssetType = {
     }
 } as const satisfies Record<string, IAssetType>;
 
+/**
+ * Builtin helper supported asset types.
+ */
 export type BuiltinAssetType = (typeof AssetType)[keyof typeof AssetType];
-export type BuiltinAssetTypeContentType = BuiltinAssetType['contentType'];

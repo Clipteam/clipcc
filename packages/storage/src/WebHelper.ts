@@ -1,9 +1,9 @@
 import log from './log';
 
-import Asset, {AssetData, AssetId} from './Asset';
+import Asset, {type AssetData, type AssetId} from './Asset';
 import Helper from './Helper';
 import ProxyTool from './ProxyTool';
-import {ScratchGetRequest, ScratchSendRequest, Tool} from './Tool';
+import type {ScratchGetRequest, ScratchSendRequest} from './Tool';
 import type {IAssetType} from './AssetType';
 import type {AcceptedDataFormats} from './DataFormat';
 
@@ -26,28 +26,18 @@ interface StoreRecord {
 }
 
 export default class WebHelper extends Helper {
-    public stores: StoreRecord[];
-    public assetTool: Tool;
-    public projectTool: Tool;
-
-    constructor (parent) {
-        super(parent);
-
-        this.stores = [];
-
-        /**
-         * Set of tools to best load many assets in parallel. If one tool
-         * cannot be used, it will use the next.
-         */
-        this.assetTool = new ProxyTool();
-
-        /**
-         * Set of tools to best load project data in parallel with assets. This
-         * tool set prefers tools that are immediately ready. Some tools have
-         * to initialize before they can load files.
-         */
-        this.projectTool = new ProxyTool(ProxyTool.TOOL_FILTER.READY);
-    }
+    public stores: StoreRecord[] = [];
+    /**
+     * Set of tools to best load many assets in parallel. If one tool
+     * cannot be used, it will use the next.
+     */
+    public assetTool = new ProxyTool();
+    /**
+     * Set of tools to best load project data in parallel with assets. This
+     * tool set prefers tools that are immediately ready. Some tools have
+     * to initialize before they can load files.
+     */
+    public projectTool = new ProxyTool(ProxyTool.TOOL_FILTER.READY);
 
     /**
      * Register a web-based source for assets. Sources will be checked in order of registration.
@@ -86,7 +76,7 @@ export default class WebHelper extends Helper {
      * @param assetType - The type of asset to fetch.
      * @param assetId - The ID of the asset to fetch: a project ID, MD5, etc.
      * @param dataFormat - The file format / file extension of the asset to fetch: PNG, JPG, etc.
-     * @returns {Promise.<Asset>} A promise for the contents of the asset.
+     * @returns A promise for the contents of the asset.
      */
     load (assetType: IAssetType, assetId: AssetId, dataFormat: AcceptedDataFormats): Promise<Asset | null> {
 
