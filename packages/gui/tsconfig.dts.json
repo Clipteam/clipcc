@@ -8,6 +8,9 @@
         "./test/**/*"
     ],
     "compilerOptions": {
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "bundler",
         "allowJs": true,
         "checkJs": false,
         "declaration": true,

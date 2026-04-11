@@ -105,8 +105,5 @@ const BrowserModal = ({intl, error = false, ...props}: BrowserModalProps) => {
 
 const WrappedBrowserModal = injectIntl(BrowserModal);
 
-type PublicBrowserModal = typeof WrappedBrowserModal & { setAppElement: typeof ReactModal.setAppElement };
-
-(WrappedBrowserModal as PublicBrowserModal).setAppElement = ReactModal.setAppElement;
-
-export default WrappedBrowserModal as PublicBrowserModal;
+export default WrappedBrowserModal;
+export const setAppElement = ReactModal.setAppElement;

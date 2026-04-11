@@ -484,9 +484,15 @@ importers:
       '@eslint/js':
         specifier: ^9.39.4
         version: 9.39.4
+      '@types/keymirror':
+        specifier: ^0.1.4
+        version: 0.1.4
       '@types/lodash.bindall':
         specifier: ^4.4.9
         version: 4.4.9
+      '@types/lodash.omit':
+        specifier: ^4.5.9
+        version: 4.5.9
       '@types/prop-types':
         specifier: 15.5.9
         version: 15.5.9
@@ -3410,6 +3416,9 @@ packages:
 
   '@types/json5@0.0.29':
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+
+  '@types/keymirror@0.1.4':
+    resolution: {integrity: sha512-EPlgLrh8Z9OLtGmJRqRIar19Apg7a7xLckaOs16WGraEUuEM4sVdoKBA9MOIQsSbrW+yH1F4QD7WpIlCIy0V0A==}
 
   '@types/keyv@3.1.4':
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
@@ -13129,6 +13138,8 @@ snapshots:
 
   '@types/json5@0.0.29': {}
 
+  '@types/keymirror@0.1.4': {}
+
   '@types/keyv@3.1.4':
     dependencies:
       '@types/node': 25.5.2
@@ -13202,7 +13213,7 @@ snapshots:
 
   '@types/schema-utils@2.4.0':
     dependencies:
-      schema-utils: 3.3.0
+      schema-utils: 4.3.3
 
   '@types/semver@7.7.1': {}
 

@@ -12,13 +12,16 @@ appTarget.classList.add(styles.app);
 
 setAppElement(appTarget);
 
+type PropsOf<C> = C extends React.ComponentType<infer P> ? P : never;
+
+
 // note that redux's 'compose' function is just being used as a general utility to make
 // the hierarchy of HOC constructor calls clearer here; it has nothing to do with redux's
 // ability to compose reducers.
-const WrappedGui = compose(
+const WrappedGui = compose<React.ComponentType<PropsOf<typeof GUI>>>(
     ScratchDesktopAppStateHOC,
     AppStateHOC,
     ScratchDesktopGUIHOC
-)(GUI) as React.ComponentType;
+)(GUI);
 
 export default <WrappedGui />;

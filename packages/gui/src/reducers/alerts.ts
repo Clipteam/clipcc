@@ -159,7 +159,9 @@ const reducer = function (state: AlertsState = initialState, action: AnyAction):
     }
     case CLOSE_ALERT_WITH_ID:
     case CLOSE_ALERT: {
-        const index = 'alertId' in action ? state.alertsList.findIndex(a => a.alertId === action.alertId) : action.index;
+        const index = 'alertId' in action ?
+            state.alertsList.findIndex(a => a.alertId === action.alertId) :
+            action.index;
         if (index === -1) return state;
         const newList = state.alertsList.slice();
         newList.splice(index, 1);

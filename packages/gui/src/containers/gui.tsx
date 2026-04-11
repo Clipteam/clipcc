@@ -3,8 +3,6 @@ import {compose, type AnyAction, type Dispatch} from 'redux';
 import {connect} from 'react-redux';
 import ReactModal from 'react-modal';
 import VM from 'clipcc-vm';
-import {injectIntl} from 'react-intl';
-import type {IntlShape} from 'react-intl';
 
 import ErrorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
 import {
@@ -15,7 +13,8 @@ import {
     activateTab,
     BLOCKS_TAB_INDEX,
     COSTUMES_TAB_INDEX,
-    SOUNDS_TAB_INDEX
+    SOUNDS_TAB_INDEX,
+    type TabIndex
 } from '../reducers/editor-tab';
 
 import {
@@ -38,35 +37,29 @@ import vmManagerHOC from '../lib/vm-manager-hoc.jsx';
 import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 import themeManagerHOC from '../lib/theme-manager-hoc.jsx';
 
-import GUIComponent from '../components/gui/gui.jsx';
+import GUIComponent from '../components/gui/gui';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
-import type {GuiState} from '../reducers/gui';
-import type {LocalesState} from '../reducers/locales';
+import type {RootState} from '../lib/app-state-hoc';
+import type {PropsOf} from '../lib/type-traits';
 
-// Now we only cares about the incremental ts usage and external type safe, just ignore the internal type checking of
-// GUIComponent now.
-const UnsafeGUIComponent = GUIComponent as React.ComponentType<Record<string, unknown>>;
-
-export interface RootState {
-    scratchGui: GuiState;
-    locales: LocalesState;
-}
+type ComponentProps = PropsOf<typeof GUIComponent>;
 
 interface StorageWithOfficialStores {
     addOfficialScratchWebStores: () => void;
 }
 
-interface OwnProps {
-    theme?: string;
+interface OwnProps extends ComponentProps {
     assetHost?: string;
-    children?: React.ReactNode;
     cloudHost?: string;
     fetchingProject?: boolean;
     isLoading?: boolean;
     isScratchDesktop?: boolean;
-    onSeeCommunity?: () => void;
     projectHost?: string;
-    intl: IntlShape;
+    showTelemetryModal?: boolean;
+    onProjectLoaded?: () => void;
+    onStorageInit?: (storageInstance: StorageWithOfficialStores) => void;
+    onUpdateProjectId?: (projectId: string | number) => void;
+    onVmInit?: (vm: VM) => void;
 }
 
 const mapStateToProps = (state: RootState) => {
@@ -99,7 +92,7 @@ const mapStateToProps = (state: RootState) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
     onExtensionButtonClick: () => dispatch(openExtensionLibrary()),
-    onActivateTab: (tab: 0 | 1 | 2) => dispatch(activateTab(tab)),
+    onActivateTab: (tab: TabIndex) => dispatch(activateTab(tab)),
     onActivateCostumesTab: () => dispatch(activateTab(COSTUMES_TAB_INDEX)),
     onActivateSoundsTab: () => dispatch(activateTab(SOUNDS_TAB_INDEX)),
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
@@ -110,12 +103,7 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
-interface GUIProps extends OwnProps, StateProps, DispatchProps {
-    onProjectLoaded?: () => void;
-    onStorageInit?: (storageInstance: StorageWithOfficialStores) => void;
-    onUpdateProjectId?: (projectId: string | number) => void;
-    onVmInit?: (vm: VM) => void;
-}
+type GUIProps = OwnProps & StateProps & DispatchProps;
 
 class GUI extends React.Component<GUIProps> {
     static defaultProps = {
@@ -169,20 +157,20 @@ class GUI extends React.Component<GUIProps> {
             ...componentProps
         } = this.props;
         return (
-            <UnsafeGUIComponent
+            <GUIComponent
                 loading={fetchingProject || isLoading || loadingStateVisible}
                 {...componentProps}
             >
                 {children}
-            </UnsafeGUIComponent>
+            </GUIComponent>
         );
     }
 }
 
-const ConnectedGUI = injectIntl(connect(
+const ConnectedGUI = connect(
     mapStateToProps,
     mapDispatchToProps
-)(GUI));
+)(GUI);
 
 // note that redux's 'compose' function is just being used as a general utility to make
 // the hierarchy of HOC constructor calls clearer here; it has nothing to do with redux's
@@ -200,9 +188,8 @@ const WrappedGui = compose(
     SBFileUploaderHOC,
     cloudManagerHOC,
     themeManagerHOC
-)(ConnectedGUI);
+)(ConnectedGUI) as React.ComponentType<PropsOf<typeof ConnectedGUI>>;
 
-type PublicGUI = typeof WrappedGui & { setAppElement: typeof ReactModal.setAppElement };
 
-(WrappedGui as PublicGUI).setAppElement = ReactModal.setAppElement;
-export default WrappedGui as PublicGUI;
+export default WrappedGui;
+export const setAppElement = ReactModal.setAppElement;

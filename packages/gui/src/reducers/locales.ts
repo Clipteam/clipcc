@@ -50,8 +50,6 @@ interface UpdateLocalesAction extends BaseAction<typeof UPDATE_LOCALES> {
     messagesByLocale: MessagesByLocale;
 };
 
-type LocalesAction = SelectLocaleAction | UpdateLocalesAction;
-
 const reducer = function (state: LocalesState = initialState, action: AnyAction): LocalesState {
     switch (action.type) {
     case SELECT_LOCALE: {

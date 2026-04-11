@@ -1,15 +1,11 @@
-import omit from 'lodash.omit';
 import {connect} from 'react-redux';
 import type {AnyAction, Dispatch} from 'redux';
 import ElectronStorageHelper from '../../lib/ElectronStorageHelper';
 import React from 'react';
 import type VM from 'clipcc-vm';
-import type {RootState} from 'clipcc-gui/src/containers/gui';
+import type {RootState} from 'clipcc-gui/src/lib/app-state-hoc';
+import type {PropsOf} from 'clipcc-gui/src/lib/type-traits';
 import type {LoadingStateValue} from 'clipcc-gui/src/reducers/project-state';
-import type {
-    DesktopGuiInjectionProps,
-    DesktopProjectTelemetryHandler
-} from 'clipcc-gui/src/lib/desktop-gui-types';
 import type {ScratchStorage} from 'clipcc-storage';
 
 import {
@@ -24,6 +20,7 @@ import {
     closeLoadingProject,
     openTelemetryModal
 } from 'clipcc-gui/src/reducers/modals';
+import type AppStateHOC from 'clipcc-gui/src/lib/app-state-hoc';
 
 type InitialProjectData = Parameters<VM['loadProject']>[0];
 
@@ -45,12 +42,7 @@ const hasInitialProjectData = (projectData: InitialProjectData | null): projectD
     return true;
 };
 
-const getErrorMessage = (error: unknown): string => {
-    if (error instanceof Error) {
-        return error.message;
-    }
-    return String(error);
-};
+const getErrorMessage = (error: Error | string): string => (error instanceof Error ? error.message : error);
 
 const mapStateToProps = (state: RootState) => {
     const loadingState = state.scratchGui.projectState.loadingState;
@@ -96,32 +88,28 @@ const mapDispatchToProps = (dispatch: Dispatch<AnyAction>) => ({
     }
 });
 
+type StatedGUILikeProps = PropsOf<ReturnType<typeof AppStateHOC>>;
+type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = ReturnType<typeof mapDispatchToProps>;
+type DesktopGUIComponentProps = StatedGUILikeProps & StateProps & DispatchProps;
+type WrappedComponentProps = Omit<DesktopGUIComponentProps, keyof StateProps | keyof DispatchProps>;
+
 /**
  * Higher-order component to add desktop logic to the GUI.
  * @param WrappedComponent - a GUI-like component to wrap.
  * @returns A component similar to GUI with desktop-specific logic added.
  */
-type OuterProps = Record<string, unknown>;
-type WrappedComponentProps = OuterProps & DesktopGuiInjectionProps;
-
 const ScratchDesktopGUIHOC = function (
     WrappedComponent: React.ComponentType<WrappedComponentProps>
-): React.ComponentType<OuterProps> {
-    const connector = connect(mapStateToProps, mapDispatchToProps);
-
-    type ReduxProps = ReturnType<typeof mapStateToProps> & ReturnType<typeof mapDispatchToProps>;
-    type Props = OuterProps & ReduxProps;
-    type LocalState = {
+): React.ComponentType<WrappedComponentProps> {
+    interface State {
         projectTitle: string;
     };
 
-    class ScratchDesktopGUIComponent extends React.Component<Props, LocalState> {
-        constructor (props: Props) {
-            super(props);
-            this.state = {
-                projectTitle: ''
-            };
-        }
+    class ScratchDesktopGUIComponent extends React.Component<DesktopGUIComponentProps, State> {
+        state = {
+            projectTitle: ''
+        };
 
         override componentDidMount () {
             this.props.onLoadingStarted();
@@ -137,7 +125,7 @@ const ScratchDesktopGUIHOC = function (
                         this.props.onLoadingCompleted();
                         this.props.onLoadedProject(this.props.loadingState, true);
                     },
-                    (e: unknown) => {
+                    (e: Error | string) => {
                         this.props.onLoadingCompleted();
                         this.props.onLoadedProject(this.props.loadingState, false);
                         console.error(
@@ -162,9 +150,9 @@ const ScratchDesktopGUIHOC = function (
 
         handleShowPrivacyPolicy = () => {
             window.desktop?.openPrivacyWindow();
-        }
+        };
 
-        handleProjectTelemetryEvent: DesktopProjectTelemetryHandler = () => {
+        handleProjectTelemetryEvent = () => {
             // ipcRenderer.send(event, metadata);
         };
 
@@ -177,19 +165,21 @@ const ScratchDesktopGUIHOC = function (
         };
 
         override render () {
-            const childProps = omit(
-                this.props,
-                'loadingState',
-                'vm',
-                'onLoadingStarted',
-                'onLoadingCompleted',
-                'onHasInitialProject',
-                'onLoadedProject',
-                'onRequestNewProject',
-                'onTelemetrySettingsClicked'
-            ) as OuterProps;
+            const {
+                /* eslint-disable @typescript-eslint/no-unused-vars */
+                loadingState: _loadingState,
+                vm: _vm,
+                onLoadingStarted: _onLoadingStarted,
+                onLoadingCompleted: _onLoadingCompleted,
+                onHasInitialProject: _onHasInitialProject,
+                onLoadedProject: _onLoadedProject,
+                onRequestNewProject: _onRequestNewProject,
+                onTelemetrySettingsClicked: _onTelemetrySettingsClicked,
+                /* eslint-enable @typescript-eslint/no-unused-vars */
+                ...componentProps
+            } = this.props;
 
-            const desktopProps: DesktopGuiInjectionProps = {
+            const desktopProps = {
                 canEditTitle: true,
                 canModifyCloudData: false,
                 canSave: false,
@@ -215,18 +205,18 @@ const ScratchDesktopGUIHOC = function (
                 onUpdateProjectTitle: this.handleUpdateProjectTitle
             };
 
-            const wrappedProps: WrappedComponentProps = {
-                ...childProps,
+            const wrappedComponentProps = {
+                ...componentProps,
                 ...desktopProps
             };
 
             return (<WrappedComponent
-                {...wrappedProps}
+                {...wrappedComponentProps}
             />);
         }
     }
 
-    return connector(ScratchDesktopGUIComponent);
+    return connect(mapStateToProps, mapDispatchToProps)(ScratchDesktopGUIComponent);
 };
 
 export default ScratchDesktopGUIHOC;

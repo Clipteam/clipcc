@@ -1,5 +1,6 @@
 import type {AnyAction} from 'redux';
 import type {BaseAction} from './common';
+import keyMirror from 'keymirror';
 
 const DONE_CREATING_COPY = 'scratch-gui/project-state/DONE_CREATING_COPY';
 const DONE_CREATING_NEW = 'scratch-gui/project-state/DONE_CREATING_NEW';
@@ -26,24 +27,24 @@ const START_UPDATING_BEFORE_CREATING_NEW = 'scratch-gui/project-state/START_UPDA
 
 const defaultProjectId = '0'; // hardcoded id of default project
 
-const LoadingState = {
-    NOT_LOADED: 'NOT_LOADED',
-    ERROR: 'ERROR',
-    AUTO_UPDATING: 'AUTO_UPDATING',
-    CREATING_COPY: 'CREATING_COPY',
-    CREATING_NEW: 'CREATING_NEW',
-    FETCHING_NEW_DEFAULT: 'FETCHING_NEW_DEFAULT',
-    FETCHING_WITH_ID: 'FETCHING_WITH_ID',
-    LOADING_VM_FILE_UPLOAD: 'LOADING_VM_FILE_UPLOAD',
-    LOADING_VM_NEW_DEFAULT: 'LOADING_VM_NEW_DEFAULT',
-    LOADING_VM_WITH_ID: 'LOADING_VM_WITH_ID',
-    MANUAL_UPDATING: 'MANUAL_UPDATING',
-    REMIXING: 'REMIXING',
-    SHOWING_WITH_ID: 'SHOWING_WITH_ID',
-    SHOWING_WITHOUT_ID: 'SHOWING_WITHOUT_ID',
-    UPDATING_BEFORE_COPY: 'UPDATING_BEFORE_COPY',
-    UPDATING_BEFORE_NEW: 'UPDATING_BEFORE_NEW'
-} as const;
+const LoadingState = keyMirror({
+    NOT_LOADED: null,
+    ERROR: null,
+    AUTO_UPDATING: null,
+    CREATING_COPY: null,
+    CREATING_NEW: null,
+    FETCHING_NEW_DEFAULT: null,
+    FETCHING_WITH_ID: null,
+    LOADING_VM_FILE_UPLOAD: null,
+    LOADING_VM_NEW_DEFAULT: null,
+    LOADING_VM_WITH_ID: null,
+    MANUAL_UPDATING: null,
+    REMIXING: null,
+    SHOWING_WITH_ID: null,
+    SHOWING_WITHOUT_ID: null,
+    UPDATING_BEFORE_COPY: null,
+    UPDATING_BEFORE_NEW: null
+});
 
 const LoadingStates = Object.keys(LoadingState);
 

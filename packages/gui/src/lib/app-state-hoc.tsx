@@ -12,6 +12,8 @@ import {setPlayer, setFullScreen} from '../reducers/mode';
 import locales from 'clipcc-l10n';
 import {detectLocale} from './detect-locale';
 import type {GuiState} from '../reducers/gui';
+import type {PropsOf} from './type-traits.js';
+import type GUI from '../components/gui/gui';
 
 type ComposeEnhancers = typeof compose;
 
@@ -23,30 +25,32 @@ declare global {
 
 const composeEnhancers: ComposeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-export interface AppStateProps {
-    isFullScreen?: boolean;
-    isPlayerOnly?: boolean;
-    isTelemetryEnabled?: boolean;
-    showTelemetryModal?: boolean;
+export interface RootState {
+    scratchGui: GuiState;
+    locales: LocalesState;
 }
 
-/*
+interface GUILikeProps extends PropsOf<typeof GUI> {
+    [key: string]: unknown;
+}
+
+/**
  * Higher Order Component to provide redux state. If an `intl` prop is provided
  * it will override the internal `intl` redux state
- * @param {React.Component} WrappedComponent - component to provide state for
- * @param {boolean} localesOnly - only provide the locale state, not everything
+ * @param WrappedComponent - component to provide state for
+ * @param  localesOnly - only provide the locale state, not everything
  *                      required by the GUI. Used to exclude excess state when
                         only rendering modals, not the GUI.
- * @returns {React.Component} component with redux and intl state provided
+ * @returns component with redux and intl state provided
  */
-const AppStateHOC = function <P extends Record<string, unknown>> (
+const AppStateHOC = function <P extends GUILikeProps> (
     WrappedComponent: React.ComponentType<P>,
     localesOnly?: boolean
-): React.ComponentType<P & AppStateProps> {
-    class AppStateWrapper extends React.Component<P & AppStateProps> {
+): React.ComponentType<P> {
+    class AppStateWrapper extends React.Component<P> {
         private store!: Store<unknown>;
 
-        constructor (props: P & AppStateProps) {
+        constructor (props: P) {
             super(props);
             let initializedLocales: LocalesState = localesInitialState;
             const locale = detectLocale(Object.keys(locales));
@@ -110,19 +114,17 @@ const AppStateHOC = function <P extends Record<string, unknown>> (
                 );
             }
         }
-        override componentDidUpdate (prevProps: Readonly<P & AppStateProps>) {
+        override componentDidUpdate (prevProps: Readonly<P>) {
             if (localesOnly) return;
             if (
-                prevProps.isPlayerOnly !== this.props.isPlayerOnly &&
-                typeof this.props.isPlayerOnly === 'boolean'
+                prevProps.isPlayerOnly !== this.props.isPlayerOnly
             ) {
-                this.store.dispatch(setPlayer(this.props.isPlayerOnly));
+                this.store.dispatch(setPlayer(!!this.props.isPlayerOnly));
             }
             if (
-                prevProps.isFullScreen !== this.props.isFullScreen &&
-                typeof this.props.isFullScreen === 'boolean'
+                prevProps.isFullScreen !== this.props.isFullScreen
             ) {
-                this.store.dispatch(setFullScreen(this.props.isFullScreen));
+                this.store.dispatch(setFullScreen(!!this.props.isFullScreen));
             }
         }
         override render () {

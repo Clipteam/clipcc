@@ -50,13 +50,15 @@ const parseSavedSettings = (): Partial<SettingsState> => {
     }
 
     return {
-        hideNonVanillaBlocks: typeof parsed.hideNonVanillaBlocks === 'boolean' ? parsed.hideNonVanillaBlocks : undefined,
+        hideNonVanillaBlocks:
+            typeof parsed.hideNonVanillaBlocks === 'boolean' ? parsed.hideNonVanillaBlocks : undefined,
         autoSave: typeof parsed.autoSave === 'boolean' ? parsed.autoSave : undefined,
         infiniteCloning: typeof parsed.infiniteCloning === 'boolean' ? parsed.infiniteCloning : undefined,
         edgelessStage: typeof parsed.edgelessStage === 'boolean' ? parsed.edgelessStage : undefined,
         unlimitedListLength: typeof parsed.unlimitedListLength === 'boolean' ? parsed.unlimitedListLength : undefined,
         unlimitedPenSize: typeof parsed.unlimitedPenSize === 'boolean' ? parsed.unlimitedPenSize : undefined,
-        unlimitedSoundStuffs: typeof parsed.unlimitedSoundStuffs === 'boolean' ? parsed.unlimitedSoundStuffs : undefined,
+        unlimitedSoundStuffs:
+            typeof parsed.unlimitedSoundStuffs === 'boolean' ? parsed.unlimitedSoundStuffs : undefined,
         accurateCoordinates: typeof parsed.accurateCoordinates === 'boolean' ? parsed.accurateCoordinates : undefined,
         autoSaveInterval: typeof parsed.autoSaveInterval === 'number' ? parsed.autoSaveInterval : undefined,
         compression: typeof parsed.compression === 'number' ? parsed.compression : undefined,

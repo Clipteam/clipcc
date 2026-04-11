@@ -12,4 +12,4 @@ export const DataFormat = {
     WAV: 'wav'
 } as const;
 
-export type IDataFormat = typeof DataFormat[keyof typeof DataFormat];
+export type AcceptedDataFormats = typeof DataFormat[keyof typeof DataFormat];
