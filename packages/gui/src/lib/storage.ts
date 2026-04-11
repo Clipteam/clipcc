@@ -4,8 +4,7 @@ import {
     type Asset,
     type AssetData,
     type AssetId,
-    type AcceptedDataFormats,
-    type IAssetType
+    type AcceptedDataFormats
 } from 'clipcc-storage';
 
 import defaultProject from './default-project';
@@ -128,9 +127,6 @@ class Storage extends ScratchStorage {
 
     cacheDefaultProject (): void {
         const defaultProjectAssets = defaultProject(this.translator);
-        if (!Array.isArray(defaultProjectAssets)) {
-            return;
-        }
 
         defaultProjectAssets.forEach(asset => {
             if (!isDefaultProjectAsset(asset)) {
