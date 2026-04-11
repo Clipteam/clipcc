@@ -9,7 +9,9 @@
     "type": "git",
     "url": "https://github.com/Clipteam/clipcc.git"
   },
-  "main": "./dist/scratch-gui.js",
+  "exports": {
+    "default": "./dist/scratch-gui.js"
+  },
   "scripts": {
     "build": "pnpm run clean && webpack --color --bail",
     "clean": "rimraf ./build && mkdirp build && rimraf ./dist && mkdirp dist",
@@ -129,6 +131,7 @@
     "redux-mock-store": "1.5.3",
     "regenerator-runtime": "0.14.1",
     "rimraf": "2.7.1",
+    "rule-inheritance-webpack-plugin": "^0.4.0",
     "selenium-webdriver": "3.6.0",
     "terser-webpack-plugin": "^5.3.17",
     "ts-loader": "^9.5.4",

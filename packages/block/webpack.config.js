@@ -20,8 +20,8 @@ const baseConfig = {
       include: path.resolve(__dirname, 'src')
     }, {
       test: /\.ts$/,
-      use: 'ts-loader',
-      exclude: /node_modules/
+      exclude: /node_modules/,
+      use: 'ts-loader'
     }, {
       test: /_compressed\.js$/,
       enforce: 'pre',

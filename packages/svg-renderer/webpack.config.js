@@ -33,10 +33,8 @@ const base = {
                 }]]
             }
         }, {
-            include: [
-                path.resolve('src')
-            ],
-            test: /\.([cm]?ts|tsx)$/,
+            include: path.resolve(__dirname, 'src'),
+            test: /\.[cm]?tsx?$/,
             loader: 'ts-loader'
         }]
     },
