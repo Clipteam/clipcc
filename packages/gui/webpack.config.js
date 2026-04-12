@@ -78,10 +78,6 @@ const base = {
                 }
             }]
         }, {
-            test: /\.css$/,
-            include: path.resolve(__dirname, '../block/src'),
-            type: 'asset/source'
-        }, {
             test: /\.hex$/,
             type: 'asset/inline',
             generator: {

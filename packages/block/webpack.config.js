@@ -16,7 +16,7 @@ const baseConfig = {
   module: {
     rules: [{
       test: /\.css$/,
-      use: 'raw-loader',
+      type: 'asset/source',
       include: path.resolve(__dirname, 'src')
     }, {
       test: /\.ts$/,

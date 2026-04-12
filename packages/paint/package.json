@@ -95,7 +95,6 @@
     "clipcc-l10n": "workspace:~",
     "scratch-render-fonts": "1.0.252",
     "style-loader": "^4.0.0",
-    "svg-url-loader": "^8.0.0",
     "terser-webpack-plugin": "^5.3.17",
     "webpack": "catalog:",
     "webpack-cli": "^6.0.1",

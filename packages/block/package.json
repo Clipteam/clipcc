@@ -43,7 +43,6 @@
     "jest-canvas-mock": "^2.5.2",
     "jsdom": "^28.1.0",
     "lodash.defaultsdeep": "^4.6.1",
-    "raw-loader": "^4.0.2",
     "source-map-loader": "^5.0.0",
     "ts-jest": "^29.4.5",
     "ts-loader": "^9.5.4",
