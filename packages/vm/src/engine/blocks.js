@@ -15,6 +15,7 @@ const getMonitorIdForBlockWithArgs = require('../util/get-monitor-id');
 
 /**
  * @typedef {import('./runtime')} Runtime
+ * @typedef {import('./blocks-runtime-cache').RuntimeScriptCache} RuntimeScriptCache
  * @import * as ClipCCBlock from 'clipcc-block'
  */
 
@@ -22,7 +23,7 @@ const getMonitorIdForBlockWithArgs = require('../util/get-monitor-id');
  * Create a fresh set of derived block caches.
  * Execute and runtime caches live under their own namespaces so they can be
  * managed by their own modules without relying on module side effects.
- * @returns {object} Newly initialized cache state
+ * @returns Newly initialized cache state
  */
 const createCacheState = function () {
     return {
@@ -45,27 +46,23 @@ const createCacheState = function () {
         procedureDefinitions: {},
 
         /**
-         * A cache for execute to use and store on.
-         * @type {{blocksById: Record<string, object>}}
+         * A cache for execute to use and store on by block id.
+         * @type {Record<string, object>}
          */
-        execute: {
-            blocksById: {}
-        },
+        _executeCached: {},
 
         /**
          * A cache of block IDs and targets to start threads on as they are
          * actively monitored.
          * @type {?Array<{blockId: string, target: Target}>}
          */
-        monitored: null,
+        _monitored: null,
 
         /**
-         * Caches derived runtime data used when scanning scripts by opcode.
-         * @type {{scriptsByOpcode: Record<string, Array<object>>}}
+         * A cache of hat opcodes to collection of threads to execute
+         * @type {Record<string, Array<RuntimeScriptCache>>}
          */
-        runtime: {
-            scriptsByOpcode: {}
-        }
+        scripts: {}
     };
 };
 
@@ -921,8 +918,8 @@ class Blocks {
      * @param {!object} runtime Runtime to run all blocks in.
      */
     runAllMonitored (runtime) {
-        if (this._cache.monitored === null) {
-            this._cache.monitored = Object.keys(this._blocks)
+        if (this._cache._monitored === null) {
+            this._cache._monitored = Object.keys(this._blocks)
                 .filter(blockId => this.getBlock(blockId).isMonitored)
                 .map(blockId => {
                     const targetId = this.getBlock(blockId).targetId;
@@ -933,7 +930,7 @@ class Blocks {
                 });
         }
 
-        const monitored = this._cache.monitored;
+        const monitored = this._cache._monitored;
         for (let i = 0; i < monitored.length; i++) {
             const {blockId, target} = monitored[i];
             runtime.addMonitorScript(blockId, target);
