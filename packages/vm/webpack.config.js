@@ -4,6 +4,7 @@ const defaultsDeep = require('lodash.defaultsdeep');
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const RuleInheritancePlugin = require('rule-inheritance-webpack-plugin');
 const {version} = require('../../package.json');
 
 const base = {
@@ -15,19 +16,12 @@ const base = {
         filename: '[name].js'
     },
     resolve: {
-        alias: {
-            'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
-            'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js')
-        },
         extensions: ['.ts', '.js']
     },
     module: {
         rules: [{
-            include: [
-                path.resolve('src'),
-                path.resolve('../render/src')
-            ],
-            test: /\.([cm]?ts|tsx)$/,
+            include: path.resolve(__dirname, 'src'),
+            test: /\.[cm]?tsx?$/,
             loader: 'ts-loader',
             options: {
                 transpileOnly: true,
@@ -64,10 +58,19 @@ const base = {
         ]
     },
     plugins: [
+        new RuleInheritancePlugin({
+            packages: [
+                path.resolve(__dirname, '../svg-renderer')
+            ]
+        }),
         new NodePolyfillPlugin(),
         new webpack.DefinePlugin({
             'clipcc.VERSION': version,
             'clipcc.BUILD_TIME': Date.now()
+        }),
+        new webpack.IgnorePlugin({
+            resourceRegExp: /canvas/,
+            contextRegExp: /jsdom$/
         })
     ]
 };
@@ -132,16 +135,15 @@ module.exports = [
             hints: false
         },
         plugins: base.plugins.concat([
+            new RuleInheritancePlugin({
+                packages: [
+                    path.resolve(__dirname, '../storage')
+                ]
+            }),
             new CopyWebpackPlugin({
                 patterns: [{
                     from: '../block/media',
                     to: 'media'
-                }, {
-                    from: '../storage/dist/web'
-                }, {
-                    from: '../render/dist/web'
-                }, {
-                    from: '../svg-renderer/dist/web'
                 }, {
                     from: 'src/playground'
                 }]

@@ -389,7 +389,6 @@ const GUIComponent = (props: GUIProps) => {
                                     <Box className={styles.blocksWrapper}>
                                         <Blocks
                                             key={theme}
-                                            // @ts-expect-error no typing now
                                             canUseCloud={canUseCloud}
                                             grow={1}
                                             isVisible={blocksTabVisible}
@@ -420,13 +419,11 @@ const GUIComponent = (props: GUIProps) => {
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     {costumesTabVisible ? (
-                                        // @ts-expect-error no typing now
                                         <CostumeTab vm={vm} />
                                     ) : null}
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     {soundsTabVisible ? (
-                                        // @ts-expect-error no typing now
                                         <SoundTab vm={vm} />
                                     ) : null}
                                 </TabPanel>

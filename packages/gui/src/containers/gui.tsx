@@ -175,7 +175,7 @@ const ConnectedGUI = connect(
 // note that redux's 'compose' function is just being used as a general utility to make
 // the hierarchy of HOC constructor calls clearer here; it has nothing to do with redux's
 // ability to compose reducers.
-const WrappedGui = compose(
+const WrappedGui = compose<React.ComponentType<PropsOf<typeof ConnectedGUI>>>(
     LocalizationHOC,
     ErrorBoundaryHOC('Top Level App'),
     FontLoaderHOC,
@@ -188,7 +188,7 @@ const WrappedGui = compose(
     SBFileUploaderHOC,
     cloudManagerHOC,
     themeManagerHOC
-)(ConnectedGUI) as React.ComponentType<PropsOf<typeof ConnectedGUI>>;
+)(ConnectedGUI);
 
 
 export default WrappedGui;
