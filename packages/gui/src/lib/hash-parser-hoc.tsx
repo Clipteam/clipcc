@@ -80,9 +80,9 @@ const HashParserHOC = function <P extends StatedGUILikeProps> (
         override render () {
             const {
                 /* eslint-disable @typescript-eslint/no-unused-vars */
-                isFetchingWithoutId: _isFetchingWithoutId,
-                reduxProjectId: _reduxProjectId,
-                setProjectId: _setProjectId,
+                isFetchingWithoutId,
+                reduxProjectId,
+                setProjectId: _,
                 /* eslint-enable @typescript-eslint/no-unused-vars */
                 ...componentProps
             } = this.props;
