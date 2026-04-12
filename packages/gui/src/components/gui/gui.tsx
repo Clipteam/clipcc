@@ -121,8 +121,6 @@ export interface OwnProps {
     telemetryModalVisible?: boolean;
     theme?: keyof typeof themeMap;
     vm: VM;
-    stageWidth?: number;
-    stageHeight?: number;
 }
 
 const mapStateToProps = (state: RootState) => ({
@@ -278,7 +276,7 @@ const GUIComponent = (props: GUIProps) => {
                 ) : null}
                 {connectionModalVisible ? (
                     <ConnectionModal
-                        // @ts-expect-error legacy jsx typing
+                        // @ts-expect-error no typing now
                         vm={vm}
                     />
                 ) : null}
@@ -295,7 +293,7 @@ const GUIComponent = (props: GUIProps) => {
                     />
                 ) : null}
                 <MenuBar
-                    // @ts-expect-error legacy jsx typing
+                    // @ts-expect-error no typing now
                     accountNavOpen={accountNavOpen}
                     authorId={authorId}
                     authorThumbnailUrl={authorThumbnailUrl}
@@ -391,7 +389,7 @@ const GUIComponent = (props: GUIProps) => {
                                     <Box className={styles.blocksWrapper}>
                                         <Blocks
                                             key={theme}
-                                            // @ts-expect-error legacy jsx typing
+                                            // @ts-expect-error no typing now
                                             canUseCloud={canUseCloud}
                                             grow={1}
                                             isVisible={blocksTabVisible}
@@ -422,19 +420,19 @@ const GUIComponent = (props: GUIProps) => {
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     {costumesTabVisible ? (
-                                        // @ts-expect-error legacy jsx typing
+                                        // @ts-expect-error no typing now
                                         <CostumeTab vm={vm} />
                                     ) : null}
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
                                     {soundsTabVisible ? (
-                                        // @ts-expect-error legacy jsx typing
+                                        // @ts-expect-error no typing now
                                         <SoundTab vm={vm} />
                                     ) : null}
                                 </TabPanel>
                             </Tabs>
                             {backpackVisible ? (
-                                // @ts-expect-error legacy jsx typing
+                                // @ts-expect-error no typing now
                                 <Backpack host={backpackHost} />
                             ) : null}
                         </Box>
@@ -451,7 +449,7 @@ const GUIComponent = (props: GUIProps) => {
                             />
                             <Box className={styles.targetWrapper}>
                                 <TargetPane
-                                    // @ts-expect-error legacy jsx typing
+                                    // @ts-expect-error no typing now
                                     stageSize={stageSize}
                                     vm={vm}
                                 />

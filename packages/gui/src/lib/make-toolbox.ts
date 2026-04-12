@@ -41,7 +41,7 @@ const createShadow = (type: string, fields?: ShadowFields): ShadowInput => {
     };
 };
 
-const motion = (isInitialSetup: boolean, isStage: boolean, targetId: string | null | undefined): ToolboxItem => {
+const motion = (isInitialSetup: boolean, isStage: boolean, targetId?: string | null): ToolboxItem => {
     const stageSelected = ClipCCBlocks.Msg.MOTION_STAGE_SELECTED;
 
     const motionContents: ToolboxItem[] = [];
@@ -390,7 +390,7 @@ const sound = (
     ]
 });
 
-const events = (isInitialSetup: boolean, isStage: boolean, targetId: string | null | undefined): ToolboxItem => {
+const events = (isInitialSetup: boolean, isStage: boolean, targetId?: string | null): ToolboxItem => {
     const eventsContents: ToolboxItem[] = [
         {kind: 'block', type: 'event_whenflagclicked'},
         {kind: 'block', type: 'event_whenkeypressed'}
@@ -438,7 +438,7 @@ const events = (isInitialSetup: boolean, isStage: boolean, targetId: string | nu
     };
 };
 
-const control = (isInitialSetup: boolean, isStage: boolean, targetId: string | null | undefined): ToolboxItem => {
+const control = (isInitialSetup: boolean, isStage: boolean, targetId?: string | null): ToolboxItem => {
     const controlContents: ToolboxItem[] = [
         {
             kind: 'block',
@@ -968,14 +968,14 @@ const operators = (
     };
 };
 
-const variables = (isInitialSetup: boolean, isStage: boolean, targetId: string | null | undefined): ToolboxItem => ({
+const variables = (isInitialSetup: boolean, isStage: boolean, targetId?: string | null): ToolboxItem => ({
     kind: 'category',
     name: '%{BKY_CATEGORY_VARIABLES}',
     categorystyle: 'data',
     custom: 'VARIABLE'
 });
 
-const myBlocks = (isInitialSetup: boolean, isStage: boolean, targetId: string | null | undefined): ToolboxItem => ({
+const myBlocks = (isInitialSetup: boolean, isStage: boolean, targetId?: string | null): ToolboxItem => ({
     kind: 'category',
     name: '%{BKY_CATEGORY_MYBLOCKS}',
     categorystyle: 'more',
