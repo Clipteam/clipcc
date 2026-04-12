@@ -14,7 +14,7 @@ import {
     showAlertWithTimeout
 } from '../reducers/alerts';
 
-/*
+/**
  * Higher Order Component to manage the connection to the cloud server.
  * @param {React.Component} WrappedComponent component to manage VM events for
  * @returns {React.Component} connected component with vm events bound to redux

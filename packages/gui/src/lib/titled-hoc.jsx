@@ -17,7 +17,8 @@ const messages = defineMessages({
     }
 });
 
-/* Higher Order Component to get and set the project title
+/**
+ * Higher Order Component to get and set the project title
  * @param {React.Component} WrappedComponent component to receive project title related props
  * @returns {React.Component} component with project loading behavior
  */
