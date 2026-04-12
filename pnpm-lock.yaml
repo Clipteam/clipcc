@@ -404,7 +404,7 @@ importers:
         specifier: 7.14.5
         version: 7.14.5(@babel/core@7.29.0)
       '@babel/preset-typescript':
-        specifier: ^7.24.7
+        specifier: ^7.28.5
         version: 7.28.5(@babel/core@7.29.0)
       '@eslint/js':
         specifier: ^9.39.4
@@ -523,9 +523,6 @@ importers:
       terser-webpack-plugin:
         specifier: ^5.3.17
         version: 5.3.17(webpack@5.105.4)
-      ts-loader:
-        specifier: ^9.5.4
-        version: 9.5.4(typescript@5.9.3)(webpack@5.105.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
