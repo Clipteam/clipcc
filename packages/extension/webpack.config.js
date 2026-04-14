@@ -1,6 +1,7 @@
 const defaultsDeep = require('lodash.defaultsdeep');
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const baseConfig = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -28,7 +29,10 @@ const baseConfig = {
                 include: /\.min\.js$/
             })
         ]
-    }
+    },
+    plugins: [
+        new NodePolyfillPlugin()
+    ]
 };
 
 module.exports = [
