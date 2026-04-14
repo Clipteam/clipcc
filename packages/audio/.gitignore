@@ -9,5 +9,3 @@ npm-*
 /.tap
 
 /dist
-/dist.js
-/dist.js.map

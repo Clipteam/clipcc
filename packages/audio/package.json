@@ -2,9 +2,11 @@
   "name": "clipcc-audio",
   "version": "3.2.0",
   "description": "audio engine for scratch 3.0",
-  "main": "dist.js",
-  "browser": "./src/index.js",
-  "types": "./dist/types/index.d.ts",
+  "exports": {
+    "types": "./dist/types/index.d.ts",
+    "webpack": "./src/index.js",
+    "default": "./dist/main.js"
+  },
   "scripts": {
     "test": "pnpm run lint && pnpm run tap && pnpm run build",
     "build:types": "tsc --project ./tsconfig.dts.json",
@@ -33,14 +35,14 @@
   "devDependencies": {
     "@babel/core": "7.29.0",
     "@babel/eslint-parser": "7.28.6",
-    "@babel/preset-env": "7.29.0",
+    "@babel/preset-env": "7.29.2",
     "babel-eslint": "10.0.3",
     "eslint": "^9.39.2",
     "eslint-config-clipcc": "workspace:*",
     "tap": "21.0.1",
-    "typescript": "^5.9.3",
+    "typescript": "catalog:",
     "web-audio-test-api": "0.5.2",
-    "webpack": "^5.105.4",
+    "webpack": "catalog:",
     "webpack-cli": "^6.0.1"
   }
 }
