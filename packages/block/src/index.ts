@@ -253,3 +253,9 @@ export {
   FieldVariableGetter,
   FieldVerticalSeparator
 };
+
+export {ICheckboxInFlyout, isCheckboxInFlyout} from './interfaces/i_checkbox_in_flyout';
+export {IDynamicDeletable, isDynamicDeletable} from './interfaces/i_dynamic_deletable';
+export {IInvisibleIcon, isInvisibleIcon} from './interfaces/i_invisible_icon';
+export {IScratchExtensionBlock, isScratchExtensionBlock} from './interfaces/i_scratch_extension';
+export {IShadowTemplate, isShadowTemplate} from './interfaces/i_shadow_template';
