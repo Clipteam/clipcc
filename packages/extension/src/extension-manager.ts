@@ -52,7 +52,7 @@ export class ExtensionManager {
      * @throws Will throw an error if extension is not found or has been enabled.
      * @param extensionId ID of the extension to enable.
      */
-    enableExtension(extensionId: string): void {
+    enableExtension(extensionId: string): Promise<void> {
         const extension = this.getExtensionById(extensionId);
         if (!extension) {
             throw new Error(`Extension ${extensionId} is not found.`);
@@ -62,7 +62,7 @@ export class ExtensionManager {
             throw new Error(`Extension ${extensionId} is already enabled.`);
         }
 
-        extension.enable();
+        return extension.enable();
     }
 
     /**
@@ -70,7 +70,7 @@ export class ExtensionManager {
      * @throws Will throw an error if extension is not found or not enabled.
      * @param extensionId ID of the extension to disable.
      */
-    disableExtension(extensionId: string): void {
+    disableExtension(extensionId: string): Promise<void> {
         const extension = this.getExtensionById(extensionId);
         if (!extension) {
             throw new Error(`Extension ${extensionId} is not found.`);
@@ -80,7 +80,7 @@ export class ExtensionManager {
             throw new Error(`Extension ${extensionId} is not enabled.`);
         }
 
-        extension.disable();
+        return extension.disable();
     }
 
     /**
@@ -126,6 +126,19 @@ export class ExtensionManager {
             result.push(extension.getManifest());
         });
         return result;
+    }
+
+    /**
+     * Regenerate blockinfo for any enabled extensions.
+     */
+    async refreshInfo(): Promise<void[]> {
+        const promises: Promise<void>[] = [];
+        this.loadedExtensions.forEach((extension) => {
+            if (extension.isEnabled()) {
+                promises.push(extension.refreshInfo());
+            }
+        });
+        return Promise.all(promises);
     }
 
     /**

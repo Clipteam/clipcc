@@ -40,12 +40,17 @@ export interface IExtension {
     /**
      * Enable the extension.
      */
-    enable(): void;
+    enable(): Promise<void>;
 
     /**
      * Disable the extension.
      */
-    disable(): void;
+    disable(): Promise<void>;
+
+    /**
+     * Refresh and cache the category info.
+     */
+    refreshInfo(): Promise<void>;
 
     /**
      * Get toolbox content for Blockly.

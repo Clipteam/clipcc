@@ -28,17 +28,29 @@ export class ScratchBuiltinAdapter extends ScratchBaseAdapter {
         super(manifest, runtime);
     }
 
-    override enable(): void {
+    override enable(): Promise<void> {
         const ExtensionClass = this.module();
         this.instance = new ExtensionClass(this.runtime);
-
-        super.enable();
+        return super.enable();
     }
 
-    protected override getInfo(): ExtensionMetadata {
-        return this.instance.getInfo();
+    /**
+     * Refresh and cache the category info.
+     */
+    async refreshInfo(): Promise<void> {
+        try {
+            this.processInfo(this.instance.getInfo());
+        } catch (err) {
+            logger.error(`Failed to register extension ${this.getId()}:`, err);
+        }
     }
 
+    /**
+     * Call method by name and given arguments. Will only be called after instantiated.
+     * @param method Method name.
+     * @param args Arguments passed to method.
+     * @returns Result of calling the method, or undefined if no valid method is found.
+     */
     protected override callMethod<R, Args extends any[]>(method: string, ...args: Args): R | undefined {
         if (
             method in this.instance &&

@@ -124,6 +124,9 @@ export abstract class ScratchBaseAdapter implements IExtension {
     /** Whether the extension is enabled. */
     private enabled: boolean = false;
 
+    /** Cache for CategoryInfo. */
+    private cachedCategoryInfo: CategoryInfo | null = null;
+
     /**
      * @param manifest Manifest for extension library to display info.
      * @param runtime Runtime object of virtual machine.
@@ -171,45 +174,35 @@ export abstract class ScratchBaseAdapter implements IExtension {
      * Enable the extension.
      * Derived adapters should override this function to instantiate the extension.
      */
-    enable(): void {
+    enable(): Promise<void> {
         this.enabled = true;
-
-        try {
-            const extensionInfo = this.prepareExtensionInfo(this.getInfo());
-            const categoryInfo = this.buildCategoryInfo(extensionInfo);
-            this.registerExtensionPrimitives(extensionInfo, categoryInfo);
-            this.registerBlocks(categoryInfo);
-        } catch (e) {
-            logger.error(`Failed to register primitives for extension ${this.getId()}:`, e);
-        }
+        return this.refreshInfo();
     }
 
     /**
      * Disable the extension.
      */
-    disable(): void {
+    async disable(): Promise<void> {
         // @todo support disable extension.
         this.enabled = false;
     }
+
+    /**
+     * Refresh and cache the category info.
+     */
+    abstract refreshInfo(): Promise<void>;
 
     /**
      * Get toolbox content for Blockly.
      * The method should only be called when extension is enabled.
      */
     getToolboxContents(isStage: boolean): any {
-        const extensionInfo = this.prepareExtensionInfo(this.getInfo());
-        const categoryInfo = this.buildCategoryInfo(extensionInfo);
+        const categoryInfo = this.cachedCategoryInfo;
         return {
             id: this.getId(),
-            xml: this.buildToolboxXML(categoryInfo, isStage)
+            xml: categoryInfo ? this.buildToolboxXML(categoryInfo, isStage) : ''
         };
     }
-
-    /**
-     * Call getInfo from extension instance. Will only be called after instantiated.
-     * Should be implemented by derived adapters.
-     */
-    protected abstract getInfo(): ExtensionMetadata;
 
     /**
      * Call method by name and given arguments. Will only be called after instantiated.
@@ -219,6 +212,19 @@ export abstract class ScratchBaseAdapter implements IExtension {
      * @returns Result of calling the method, or undefined if no valid method is found.
      */
     protected abstract callMethod<R, Args extends any[]>(method: string, ...args: Args): R | undefined;
+
+    /**
+     * Refresh and cache the category info. Should be called after calling getInfo.
+     * An error might be thrown if info is invalid.
+     * @param info Object returned from getInfo.
+     */
+    protected processInfo(info: ExtensionMetadata) {
+        const extensionInfo = this.prepareExtensionInfo(info);
+        const categoryInfo = this.buildCategoryInfo(extensionInfo);
+        this.cachedCategoryInfo = categoryInfo;
+        this.registerExtensionPrimitives(extensionInfo, categoryInfo);
+        this.registerBlocks(categoryInfo);
+    }
 
     private buildCategoryInfo(extensionInfo: ProcessedExtensionMetadata): CategoryInfo {
         const categoryInfo = {
