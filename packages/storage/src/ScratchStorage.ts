@@ -5,7 +5,7 @@ import WebHelper, {UrlFunction} from './WebHelper';
 
 import Asset, {AssetData, AssetId} from './Asset';
 import {AssetType, type IAssetType} from './AssetType';
-import {DataFormat, AcceptedDataFormats} from './DataFormat';
+import {DataFormat} from './DataFormat';
 import scratchFetch from './scratchFetch';
 import Helper from './Helper';
 
@@ -116,7 +116,7 @@ export class ScratchStorage {
      * @param id - The id for the cached asset.
      * @returns The calculated id of the cached asset, or the supplied id if the asset is mutable.
      */
-    cache (assetType: IAssetType, dataFormat: AcceptedDataFormats, data: AssetData, id: AssetId): AssetId {
+    cache (assetType: IAssetType, dataFormat: DataFormat, data: AssetData, id: AssetId): AssetId {
         log.warn('Deprecation: Storage.cache is deprecated. Use Storage.createAsset, and store assets externally.');
         return this.builtinHelper._store(assetType, dataFormat, data, id);
     }
@@ -132,7 +132,7 @@ export class ScratchStorage {
      */
     createAsset (
         assetType: IAssetType,
-        dataFormat: AcceptedDataFormats,
+        dataFormat: DataFormat,
         data: AssetData,
         id: AssetId,
         generateId: boolean
@@ -202,7 +202,7 @@ export class ScratchStorage {
      *   If the promise is rejected, there was an error on at least one asset source. HTTP 404 does not count as an
      *   error here, but (for example) HTTP 403 does.
      */
-    load (assetType: IAssetType, assetId: AssetId, dataFormat: AcceptedDataFormats): Promise<Asset | null> {
+    load (assetType: IAssetType, assetId: AssetId, dataFormat: DataFormat): Promise<Asset | null> {
         const helpers = this._helpers.map(x => x.helper);
         const errors: unknown[] = [];
         dataFormat = dataFormat || assetType.runtimeFormat;

@@ -2,8 +2,7 @@ import {
     ScratchStorage,
     type Asset,
     type AssetData,
-    type AssetId,
-    type AcceptedDataFormats
+    type AssetId
 } from 'clipcc-storage';
 
 import defaultProject from './default-project';
@@ -133,7 +132,7 @@ class Storage extends ScratchStorage {
             }
 
             const assetType = this.AssetType[asset.assetType as keyof typeof this.AssetType];
-            const dataFormat = this.DataFormat[asset.dataFormat as keyof typeof this.DataFormat] as AcceptedDataFormats;
+            const dataFormat = this.DataFormat[asset.dataFormat as keyof typeof this.DataFormat];
             if (!assetType || !dataFormat) {
                 return;
             }

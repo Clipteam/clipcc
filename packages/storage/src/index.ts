@@ -9,5 +9,5 @@ export {
     AssetType,
     type IAssetType
 } from './AssetType';
-export {DataFormat, type AcceptedDataFormats} from './DataFormat';
+export {DataFormat} from './DataFormat';
 export {default as Helper} from './Helper';

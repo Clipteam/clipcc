@@ -5,7 +5,7 @@ import Helper from './Helper';
 import ProxyTool from './ProxyTool';
 import type {ScratchGetRequest, ScratchSendRequest} from './Tool';
 import type {IAssetType} from './AssetType';
-import type {AcceptedDataFormats} from './DataFormat';
+import type {DataFormat} from './DataFormat';
 
 const ensureRequestConfig = reqConfig => {
     if (typeof reqConfig === 'string') {
@@ -78,7 +78,7 @@ export default class WebHelper extends Helper {
      * @param dataFormat - The file format / file extension of the asset to fetch: PNG, JPG, etc.
      * @returns A promise for the contents of the asset.
      */
-    load (assetType: IAssetType, assetId: AssetId, dataFormat: AcceptedDataFormats): Promise<Asset | null> {
+    load (assetType: IAssetType, assetId: AssetId, dataFormat: DataFormat): Promise<Asset | null> {
 
         const errors: unknown[] = [];
         const stores = this.stores.slice()
@@ -131,14 +131,14 @@ export default class WebHelper extends Helper {
     /**
      * Create or update an asset with provided data. The create function is called if no asset id is provided
      * @param assetType - The type of asset to create or update.
-     * @param dataFormat - AcceptedDataFormats of the data for the stored asset.
+     * @param dataFormat - Data format of the data for the stored asset.
      * @param data - The data for the cached asset.
      * @param assetId - The ID of the asset to fetch: a project ID, MD5, etc.
      * @returns A promise for the response from the create or update request
      */
     store (
         assetType: IAssetType,
-        dataFormat: AcceptedDataFormats | undefined,
+        dataFormat: DataFormat | undefined,
         data: AssetData,
         assetId?: AssetId
     ): Promise<string | {id: string}> {
