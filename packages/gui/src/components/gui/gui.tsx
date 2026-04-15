@@ -33,14 +33,14 @@ import SettingsModal from '../../containers/settings-modal.jsx';
 import layout, {STAGE_SIZE_MODES} from '../../lib/layout-constants';
 import {resolveStageSize} from '../../lib/screen-utils';
 import {themeMap} from '../../lib/themes';
+import type {RootState} from '../../lib/app-state-hoc';
+import type {TabIndex} from '../../reducers/editor-tab';
 
 import styles from './gui.css';
 import addExtensionIcon from './icon--extensions.svg';
 import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
-import type {RootState} from '../../lib/app-state-hoc';
-import type {TabIndex} from '../../reducers/editor-tab';
 
 const messages = defineMessages({
     addExtension: {
