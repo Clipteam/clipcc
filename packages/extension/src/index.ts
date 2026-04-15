@@ -9,4 +9,4 @@ export * from './interfaces/i_extension';
 
 export {ExtensionManager} from './extension-manager';
 
-export {ScratchExtensionAdapter} from './adapter/scratch/adapter';
+export {ScratchBuiltinAdapter} from './adapter/scratch/builtin-adapter';

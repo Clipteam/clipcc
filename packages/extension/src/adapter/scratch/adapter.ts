@@ -25,19 +25,6 @@ import TargetType from './types/target-type';
 import {UpdateBlocksEvent, UpdatePrimitivesEvent} from '../../events';
 import defineDynamicBlock from './define-dynamic-block';
 
-interface ScratchExtension {
-    /**
-     * Get metadata of the extension.
-     * @returns Metadata for this extension and its blocks.
-     */
-    getInfo(): ExtensionMetadata;
-
-    /** Other methods and properties. */
-    [key: string]: unknown;
-}
-
-type ScratchExtensionClass = new (runtime: any) => ScratchExtension;
-
 /**
  * Information about an extension block argument.
  */
@@ -130,25 +117,20 @@ function defineStaticBlock(json: any) {
 /**
  * Adapter to load scratch extension.
  */
-export class ScratchExtensionAdapter implements IExtension {
+export abstract class ScratchBaseAdapter implements IExtension {
     /** Extension manager. */
-    private manager: ExtensionManager | null = null;
+    private manager!: ExtensionManager;
 
     /** Whether the extension is enabled. */
     private enabled: boolean = false;
 
-    /** Instance of extension object. */
-    private instance: ScratchExtension | null = null;
-
     /**
      * @param manifest Manifest for extension library to display info.
-     * @param extensionModule Extension module that returns the extension class.
      * @param runtime Runtime object of virtual machine.
      */
     constructor(
-        private manifest: ExtensionManifest,
-        private extensionModule: () => ScratchExtensionClass,
-        private runtime: any
+        protected manifest: ExtensionManifest,
+        protected runtime: any
     ) {}
 
     /**
@@ -187,14 +169,13 @@ export class ScratchExtensionAdapter implements IExtension {
 
     /**
      * Enable the extension.
+     * Derived adapters should override this function to instantiate the extension.
      */
     enable(): void {
-        const ExtensionClass = this.extensionModule();
-        this.instance = new ExtensionClass(this.runtime);
         this.enabled = true;
 
         try {
-            const extensionInfo = this.prepareExtensionInfo(this.instance.getInfo());
+            const extensionInfo = this.prepareExtensionInfo(this.getInfo());
             const categoryInfo = this.buildCategoryInfo(extensionInfo);
             this.registerExtensionPrimitives(extensionInfo, categoryInfo);
             this.registerBlocks(categoryInfo);
@@ -216,7 +197,7 @@ export class ScratchExtensionAdapter implements IExtension {
      * The method should only be called when extension is enabled.
      */
     getToolboxContents(isStage: boolean): any {
-        const extensionInfo = this.prepareExtensionInfo(this.instance!.getInfo());
+        const extensionInfo = this.prepareExtensionInfo(this.getInfo());
         const categoryInfo = this.buildCategoryInfo(extensionInfo);
         return {
             id: this.getId(),
@@ -224,14 +205,20 @@ export class ScratchExtensionAdapter implements IExtension {
         };
     }
 
-    private callExtensionMethod(method: string, ...args: any[]): any {
-        if (this.instance && method in this.instance && typeof this.instance[method] === 'function') {
-            return this.instance[method](...args);
-        }
+    /**
+     * Call getInfo from extension instance. Will only be called after instantiated.
+     * Should be implemented by derived adapters.
+     */
+    protected abstract getInfo(): ExtensionMetadata;
 
-        logger.warn(`Could not find extension block function called ${method}`);
-        return undefined;
-    }
+    /**
+     * Call method by name and given arguments. Will only be called after instantiated.
+     * Should be implemented by derived adapters.
+     * @param method Method name.
+     * @param args Arguments passed to method.
+     * @returns Result of calling the method, or undefined if no valid method is found.
+     */
+    protected abstract callMethod<R, Args extends any[]>(method: string, ...args: Args): R | undefined;
 
     private buildCategoryInfo(extensionInfo: ProcessedExtensionMetadata): CategoryInfo {
         const categoryInfo = {
@@ -318,7 +305,7 @@ export class ScratchExtensionAdapter implements IExtension {
             }
         }
 
-        this.manager!.emitEvent(updatePrimitivesPayload);
+        this.manager.emitEvent(updatePrimitivesPayload);
     }
 
     private registerBlocks(categoryInfo: CategoryInfo): void {
@@ -358,7 +345,7 @@ export class ScratchExtensionAdapter implements IExtension {
             payload.fields[fieldName] = fieldTypeInfo.fieldImplementation;
         }
 
-        this.manager!.emitEvent(payload);
+        this.manager.emitEvent(payload);
     }
 
     private buildToolboxXML(categoryInfo: CategoryInfo, isStage: boolean): string {
@@ -493,10 +480,8 @@ export class ScratchExtensionAdapter implements IExtension {
         const editingTargetID = editingTarget ? editingTarget.id : null;
         const extensionMessageContext = this.runtime.makeMessageContextForTarget(editingTarget);
 
-        // TODO: Fix this to use dispatch.call when extensions are running in workers.
-        const menuFunc = this.instance![menuItemFunctionName] as (...args: any) => ExtensionMenuItems;
-        const menuItems = menuFunc.call(this.instance, editingTargetID).map<[string, string]>(
-            (item) => {
+        const menuItems = this.callMethod<ExtensionMenuItems, [any]>(menuItemFunctionName, editingTargetID)!
+            .map<[string, string]>((item) => {
                 item = maybeFormatMessage(item, extensionMessageContext);
                 switch (typeof item) {
                 case 'object':
@@ -555,7 +540,7 @@ export class ScratchExtensionAdapter implements IExtension {
                 (args: Record<string, any>) => args && args.mutation && args.mutation.blockInfo :
                 () => blockInfo;
             const callBlockFunc = (args: Record<string, any>, util: any, realBlockInfo: ExtensionBlockMetadata) => {
-                return this.callExtensionMethod(funcName, args, util, realBlockInfo);
+                return this.callMethod(funcName, args, util, realBlockInfo);
             };
 
             (blockInfo as ProcessedExtensionBlockMetadata).func = (args: Record<string, any>, util: any) => {

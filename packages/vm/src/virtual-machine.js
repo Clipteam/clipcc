@@ -7,7 +7,7 @@ if (typeof TextEncoder === 'undefined') {
 }
 const EventEmitter = require('events');
 const JSZip = require('jszip');
-const {ScratchExtensionAdapter} = require('clipcc-extension');
+const {ScratchBuiltinAdapter} = require('clipcc-extension');
 
 const Buffer = require('buffer').Buffer;
 const centralDispatch = require('./dispatch/central-dispatch');
@@ -1286,7 +1286,7 @@ class VirtualMachine extends EventEmitter {
                 continue;
             }
 
-            this.extensionManager.loadExtension(new ScratchExtensionAdapter(
+            this.extensionManager.loadExtension(new ScratchBuiltinAdapter(
                 content, builtinExtensions[extensionId], this.runtime
             ));
         }
