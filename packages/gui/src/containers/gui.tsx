@@ -191,4 +191,3 @@ const WrappedGui = compose<React.ComponentType<PropsOf<typeof ConnectedGUI>>>(
 
 
 export default WrappedGui;
-export {setAppElement} from 'react-modal';
