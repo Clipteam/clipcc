@@ -6,9 +6,9 @@ import {connect} from 'react-redux';
 import {compose} from 'redux';
 
 import Box from '../components/box/box.jsx';
-import GUI from '../containers/gui.jsx';
-import HashParserHOC from '../lib/hash-parser-hoc.jsx';
-import AppStateHOC from '../lib/app-state-hoc.jsx';
+import GUI from '../containers/gui.tsx';
+import HashParserHOC from '../lib/hash-parser-hoc.tsx';
+import AppStateHOC from '../lib/app-state-hoc.tsx';
 
 import {setPlayer} from '../reducers/mode';
 

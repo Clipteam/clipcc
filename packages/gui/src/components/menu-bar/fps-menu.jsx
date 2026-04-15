@@ -9,7 +9,7 @@ import {connect} from 'react-redux';
 import check from './check.svg';
 import fpsIcon from './icon--fps.svg';
 import {MenuItem, Submenu} from '../menu/menu.jsx';
-import {fpsMenuOpen, openFpsMenu} from '../../reducers/menus.js';
+import {fpsMenuOpen, openFpsMenu} from '../../reducers/menus';
 import {updateSettings} from '../../reducers/settings';
 
 import styles from './settings-menu.css';

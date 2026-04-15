@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import styles from './question.css';
-import Input from '../forms/input.jsx';
+import Input from '../forms/input';
 import enterIcon from './icon--enter.svg';
 
 const QuestionComponent = props => {

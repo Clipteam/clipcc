@@ -2,7 +2,7 @@ import React from 'react';
 import configureStore from 'redux-mock-store';
 import {mount} from 'enzyme';
 
-import HashParserHOC from '../../../src/lib/hash-parser-hoc.jsx';
+import HashParserHOC from '../../../src/lib/hash-parser-hoc';
 
 jest.mock('react-ga');
 

@@ -1,19 +1,13 @@
-import {ScratchStorage} from './ScratchStorage';
-import Asset, {AssetId} from './Asset';
-import {AssetType} from './AssetType';
-import {DataFormat} from './DataFormat';
-import Helper from './Helper';
-
+// Export for use with NPM & Node.js.
+export {ScratchStorage} from './ScratchStorage';
 export {
-    /**
-     * Export for use with NPM & Node.js.
-     * @type {ScratchStorage}
-     */
-    ScratchStorage,
-
-    Asset,
-    AssetId,
+    default as Asset,
+    type AssetId,
+    type AssetData
+} from './Asset';
+export {
     AssetType,
-    DataFormat,
-    Helper
-};
+    type IAssetType
+} from './AssetType';
+export {DataFormat} from './DataFormat';
+export {default as Helper} from './Helper';

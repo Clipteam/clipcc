@@ -5,8 +5,8 @@ import React from 'react';
 import {defineMessages, intlShape, injectIntl} from 'react-intl';
 import {setProjectTitle} from '../../reducers/project-title';
 
-import BufferedInputHOC from '../forms/buffered-input-hoc.jsx';
-import Input from '../forms/input.jsx';
+import BufferedInputHOC from '../forms/buffered-input-hoc';
+import Input from '../forms/input';
 const BufferedInput = BufferedInputHOC(Input);
 
 import styles from './project-title-input.css';

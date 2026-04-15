@@ -7,8 +7,8 @@ import {connect} from 'react-redux';
 import check from './check.svg';
 import {MenuItem, Submenu} from '../menu/menu.jsx';
 import {DEFAULT_THEME, HIGH_CONTRAST_THEME, DARK_THEME, themeMap} from '../../lib/themes';
-import {openThemeMenu, themeMenuOpen} from '../../reducers/menus.js';
-import {updateSettings} from '../../reducers/settings.js';
+import {openThemeMenu, themeMenuOpen} from '../../reducers/menus';
+import {updateSettings} from '../../reducers/settings';
 
 import styles from './settings-menu.css';
 

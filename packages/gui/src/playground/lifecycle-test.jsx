@@ -4,9 +4,9 @@ import ReactDOM from 'react-dom';
 import {compose} from 'redux';
 
 import Box from '../components/box/box.jsx';
-import GUI from '../containers/gui.jsx';
-import HashParserHOC from '../lib/hash-parser-hoc.jsx';
-import AppStateHOC from '../lib/app-state-hoc.jsx';
+import GUI from '../containers/gui.tsx';
+import HashParserHOC from '../lib/hash-parser-hoc.tsx';
+import AppStateHOC from '../lib/app-state-hoc.tsx';
 
 if (process.env.NODE_ENV === 'production' && typeof window === 'object') {
     // Warn before navigating away
