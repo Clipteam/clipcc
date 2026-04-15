@@ -4,10 +4,10 @@ import classNames from 'classnames';
 import {defineMessages, FormattedMessage, injectIntl, intlShape} from 'react-intl';
 
 import Waveform from '../waveform/waveform.jsx';
-import Label from '../forms/label.jsx';
-import Input from '../forms/input.jsx';
+import Label from '../forms/label';
+import Input from '../forms/input';
 
-import BufferedInputHOC from '../forms/buffered-input-hoc.jsx';
+import BufferedInputHOC from '../forms/buffered-input-hoc';
 import AudioSelector from '../../containers/audio-selector.jsx';
 import IconButton from '../icon-button/icon-button.jsx';
 

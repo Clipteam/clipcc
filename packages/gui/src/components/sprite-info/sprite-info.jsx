@@ -4,9 +4,9 @@ import React from 'react';
 
 import ToggleButtons from '../toggle-buttons/toggle-buttons.jsx';
 import Box from '../box/box.jsx';
-import Label from '../forms/label.jsx';
-import Input from '../forms/input.jsx';
-import BufferedInputHOC from '../forms/buffered-input-hoc.jsx';
+import Label from '../forms/label';
+import Input from '../forms/input';
+import BufferedInputHOC from '../forms/buffered-input-hoc';
 import DirectionPicker from '../../containers/direction-picker.jsx';
 
 import {injectIntl, intlShape, defineMessages, FormattedMessage} from 'react-intl';

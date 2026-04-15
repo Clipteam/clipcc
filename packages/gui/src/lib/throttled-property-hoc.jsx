@@ -1,6 +1,7 @@
 import React from 'react';
 
-/* Higher Order Component to throttle updates to specific props.
+/**
+ * Higher Order Component to throttle updates to specific props.
  * Why? Because certain prop updates are expensive, and need to be throttled.
  * This allows renders when other properties change, and will use the last
  * rendered value of a prop for comparison.

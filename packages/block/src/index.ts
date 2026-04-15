@@ -235,6 +235,7 @@ export * as constants from './constants';
 export * as scratchBlocksUtils from './utils';
 export * as DataCatagory from './variables';
 export * as ProceduresCategory from './procedures_category';
+export type * as proceduresSerializer from './serialization/procedures';
 
 export {reportValue} from './report_value';
 export {Colours} from './theme';
