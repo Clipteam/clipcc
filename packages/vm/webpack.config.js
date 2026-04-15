@@ -60,7 +60,8 @@ const base = {
     plugins: [
         new RuleInheritancePlugin({
             packages: [
-                path.resolve(__dirname, '../svg-renderer')
+                path.resolve(__dirname, '../svg-renderer'),
+                path.resolve(__dirname, '../extension')
             ]
         }),
         new NodePolyfillPlugin(),
