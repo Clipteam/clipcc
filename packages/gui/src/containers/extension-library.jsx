@@ -35,10 +35,13 @@ class ExtensionLibrary extends React.PureComponent {
             url = prompt(this.props.intl.formatMessage(messages.extensionUrl));
         }
         if (id && !item.disabled) {
-            if (!this.props.extensionManager.isExtensionEnabled(url)) {
-                this.props.extensionManager.enableExtension(url);
+            if (this.props.extensionManager.isExtensionEnabled(url)) {
+                this.props.onCategorySelected(id);
+            } else {
+                this.props.extensionManager.enableExtension(url).then(() => {
+                    this.props.onCategorySelected(id);
+                });
             }
-            this.props.onCategorySelected(id);
         }
     }
     render () {
