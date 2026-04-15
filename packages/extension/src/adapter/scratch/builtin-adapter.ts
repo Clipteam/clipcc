@@ -1,16 +1,17 @@
 /**
  * @license
- * Copyright 2017 Massachusetts Institute of Technology
- * SPDX-License-Identifier: BSD-3-Clause
+ * Copyright 2026 Clip Team
+ * SPDX-License-Identifier: MPL-2.0
  */
 
 import logger from '../../utils/logger';
-import ExtensionManifest from '../../interfaces/extension-manifest';
-import {IExtension} from '../../interfaces/i_extension';
 import {ScratchBaseAdapter} from './adapter';
-import {ExtensionMetadata} from './types/extension-metadata';
-import {ScratchExtension, ScratchExtensionClass} from './types/scratch-extension';
+import type ExtensionManifest from '../../interfaces/extension-manifest';
+import type {ScratchExtension, ScratchExtensionClass} from './types/scratch-extension';
 
+/**
+ * Scratch extension adapter for builtin extensions provided by Scratch VM.
+ */
 export class ScratchBuiltinAdapter extends ScratchBaseAdapter {
     /** Instance of extension object. */
     protected instance!: ScratchExtension;

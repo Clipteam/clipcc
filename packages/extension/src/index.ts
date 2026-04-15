@@ -10,3 +10,4 @@ export * from './interfaces/i_extension';
 export {ExtensionManager} from './extension-manager';
 
 export {ScratchBuiltinAdapter} from './adapter/scratch/builtin-adapter';
+export {ScratchWorkerAdapter} from './adapter/scratch/worker-adapter';
