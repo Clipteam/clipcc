@@ -1,7 +1,6 @@
 import React from 'react';
 import {compose, type AnyAction, type Dispatch} from 'redux';
 import {connect} from 'react-redux';
-import ReactModal from 'react-modal';
 import VM from 'clipcc-vm';
 
 import ErrorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
@@ -192,4 +191,4 @@ const WrappedGui = compose<React.ComponentType<PropsOf<typeof ConnectedGUI>>>(
 
 
 export default WrappedGui;
-export const setAppElement = ReactModal.setAppElement;
+export {setAppElement} from 'react-modal';
