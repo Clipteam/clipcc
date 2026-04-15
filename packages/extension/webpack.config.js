@@ -31,7 +31,9 @@ const baseConfig = {
         ]
     },
     plugins: [
-        new NodePolyfillPlugin()
+        new NodePolyfillPlugin({
+            includeAliases: ['events']
+        })
     ]
 };
 
