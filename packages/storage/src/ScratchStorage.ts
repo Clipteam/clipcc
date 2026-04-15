@@ -4,7 +4,7 @@ import BuiltinHelper from './BuiltinHelper';
 import WebHelper, {UrlFunction} from './WebHelper';
 
 import Asset, {AssetData, AssetId} from './Asset';
-import {AssetType, BuiltinAssetType, type IAssetType} from './AssetType';
+import {AssetType, type IAssetType} from './AssetType';
 import {DataFormat, AcceptedDataFormats} from './DataFormat';
 import scratchFetch from './scratchFetch';
 import Helper from './Helper';
@@ -116,7 +116,7 @@ export class ScratchStorage {
      * @param id - The id for the cached asset.
      * @returns The calculated id of the cached asset, or the supplied id if the asset is mutable.
      */
-    cache (assetType: BuiltinAssetType, dataFormat: AcceptedDataFormats, data: AssetData, id: AssetId): AssetId {
+    cache (assetType: IAssetType, dataFormat: AcceptedDataFormats, data: AssetData, id: AssetId): AssetId {
         log.warn('Deprecation: Storage.cache is deprecated. Use Storage.createAsset, and store assets externally.');
         return this.builtinHelper._store(assetType, dataFormat, data, id);
     }
@@ -254,7 +254,7 @@ export class ScratchStorage {
                 // Also, having undefined was the previous behavior
                 const id = typeof body === 'string' ? undefined : body.id;
 
-                this.builtinHelper._store(assetType as BuiltinAssetType, dataFormat, data, id);
+                this.builtinHelper._store(assetType, dataFormat, data, id);
                 return body;
             });
     }

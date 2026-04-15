@@ -1,5 +1,4 @@
 import {
-    type BuiltinAssetType,
     ScratchStorage,
     type Asset,
     type AssetData,
@@ -140,7 +139,7 @@ class Storage extends ScratchStorage {
             }
 
             this.builtinHelper._store(
-                assetType as BuiltinAssetType,
+                assetType,
                 dataFormat,
                 asset.data,
                 asset.id

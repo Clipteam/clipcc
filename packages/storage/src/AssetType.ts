@@ -52,8 +52,3 @@ export const AssetType = {
         immutable: true
     }
 } as const satisfies Record<string, IAssetType>;
-
-/**
- * Builtin helper supported asset types.
- */
-export type BuiltinAssetType = (typeof AssetType)[keyof typeof AssetType];

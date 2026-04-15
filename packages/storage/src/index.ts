@@ -7,8 +7,7 @@ export {
 } from './Asset';
 export {
     AssetType,
-    type IAssetType,
-    type BuiltinAssetType
+    type IAssetType
 } from './AssetType';
 export {DataFormat, type AcceptedDataFormats} from './DataFormat';
 export {default as Helper} from './Helper';
