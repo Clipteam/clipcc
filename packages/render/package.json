@@ -9,9 +9,13 @@
     "type": "git",
     "url": "https://github.com/Clipteam/clipcc.git"
   },
-  "main": "./src/index.js",
-  "types": "./dist/types/index.d.ts",
-  "browser": "./dist/web/scratch-render.js",
+  "exports": {
+    "types": "./dist/types/index.d.ts",
+    "webpack": "./src/index.js",
+    "node": "./dist/node/scratch-render.js",
+    "browser": "./dist/web/scratch-render.js",
+    "default": "./src/index.js"
+  },
   "scripts": {
     "build:types": "tsc --project ./tsconfig.dts.json",
     "build": "pnpm run build:types && webpack --progress --color",
@@ -25,8 +29,8 @@
     "watch": "webpack --progress --color --watch --watch-poll"
   },
   "devDependencies": {
-    "@babel/preset-env": "7.29.2",
     "@babel/polyfill": "7.12.1",
+    "@babel/preset-env": "7.29.2",
     "@types/hull.js": "^1.0.4",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.1.0",
@@ -39,6 +43,7 @@
     "json": "9.0.6",
     "node-polyfill-webpack-plugin": "^3.0.0",
     "playwright-chromium": "1.13.0",
+    "rule-inheritance-webpack-plugin": "^0.4.0",
     "scratch-render-fonts": "1.0.252",
     "tap": "21.0.1",
     "terser-webpack-plugin": "^5.3.17",

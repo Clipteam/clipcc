@@ -12,8 +12,6 @@ import {setPlayer, setFullScreen} from '../reducers/mode';
 import locales from 'clipcc-l10n';
 import {detectLocale} from './detect-locale';
 import type {GuiState} from '../reducers/gui';
-import type {PropsOf} from './type-traits.js';
-import type GUI from '../components/gui/gui';
 
 type ComposeEnhancers = typeof compose;
 
@@ -30,8 +28,10 @@ export interface RootState {
     locales: LocalesState;
 }
 
-interface GUILikeProps extends PropsOf<typeof GUI> {
-    [key: string]: unknown;
+interface OwnProps {
+    isFullScreen?: boolean;
+    isPlayerOnly?: boolean;
+    showTelemetryModal?: boolean;
 }
 
 /**
@@ -43,7 +43,7 @@ interface GUILikeProps extends PropsOf<typeof GUI> {
                         only rendering modals, not the GUI.
  * @returns component with redux and intl state provided
  */
-const AppStateHOC = function <P extends GUILikeProps> (
+const AppStateHOC = function <P extends OwnProps> (
     WrappedComponent: React.ComponentType<P>,
     localesOnly?: boolean
 ): React.ComponentType<P> {

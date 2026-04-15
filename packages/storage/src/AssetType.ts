@@ -1,5 +1,8 @@
-import {DataFormat, type AcceptedDataFormats} from './DataFormat';
+import {DataFormat} from './DataFormat';
 
+/**
+ * Information about a supported asset type.
+ */
 export interface IAssetType {
     /** the MIME type associated with this kind of data. Useful for data URIs, etc. */
     contentType: string,
@@ -9,7 +12,7 @@ export interface IAssetType {
      * The default format used for runtime, in-memory storage of this asset. For
      * example, a project stored in SB2 format on disk will be returned as JSON when loaded into memory.
      */
-    runtimeFormat: AcceptedDataFormats,
+    runtimeFormat: DataFormat,
     /** Indicates if the asset id is determined by the asset content. */
     immutable: boolean
 }
@@ -49,8 +52,3 @@ export const AssetType = {
         immutable: true
     }
 } as const satisfies Record<string, IAssetType>;
-
-/**
- * Builtin helper supported asset types.
- */
-export type BuiltinAssetType = (typeof AssetType)[keyof typeof AssetType];

@@ -3,8 +3,6 @@ const xmlEscape = require('../util/xml-escape');
 const MonitorRecord = require('./monitor-record');
 const Clone = require('../util/clone');
 const {Map} = require('immutable');
-const BlocksExecuteCache = require('./blocks-execute-cache');
-const BlocksRuntimeCache = require('./blocks-runtime-cache');
 const log = require('../util/log');
 const Variable = require('./variable');
 const getMonitorIdForBlockWithArgs = require('../util/get-monitor-id');
@@ -17,8 +15,56 @@ const getMonitorIdForBlockWithArgs = require('../util/get-monitor-id');
 
 /**
  * @typedef {import('./runtime')} Runtime
+ * @typedef {import('./blocks-runtime-cache').RuntimeScriptCache} RuntimeScriptCache
  * @import * as ClipCCBlock from 'clipcc-block'
  */
+
+/**
+ * Create a fresh set of derived block caches.
+ * Execute and runtime caches live under their own namespaces so they can be
+ * managed by their own modules without relying on module side effects.
+ * @returns Newly initialized cache state
+ */
+const createCacheState = function () {
+    return {
+        /**
+         * Cache block inputs by block id
+         * @type {Record<string, !Array.<object>>}
+         */
+        inputs: {},
+
+        /**
+         * Cache procedure Param Names by block id
+         * @type {Record<string, ?Array.<string>>}
+         */
+        procedureParamNames: {},
+
+        /**
+         * Cache procedure definitions by block id
+         * @type {Record<string, ?string>}
+         */
+        procedureDefinitions: {},
+
+        /**
+         * A cache for execute to use and store on by block id.
+         * @type {Record<string, object>}
+         */
+        _executeCached: {},
+
+        /**
+         * A cache of block IDs and targets to start threads on as they are
+         * actively monitored.
+         * @type {?Array<{blockId: string, target: Target}>}
+         */
+        _monitored: null,
+
+        /**
+         * A cache of hat opcodes to collection of threads to execute
+         * @type {Record<string, Array<RuntimeScriptCache>>}
+         */
+        scripts: {}
+    };
+};
 
 /**
  * Create a block container.
@@ -46,48 +92,12 @@ class Blocks {
         this._scripts = [];
 
         /**
-         * Runtime Cache
-         * @type {{inputs: {}, procedureParamNames: {}, procedureDefinitions: {}}}
+         * Derived block caches invalidated together when block state changes.
+         * @type {object}
          * @private
          */
         Object.defineProperty(this, '_cache', {writable: true, enumerable: false});
-        this._cache = {
-            /**
-             * Cache block inputs by block id
-             * @type {Record<string, !Array.<object>>}
-             */
-            inputs: {},
-            /**
-             * Cache procedure Param Names by block id
-             * @type {Record<string, ?Array.<string>>}
-             */
-            procedureParamNames: {},
-            /**
-             * Cache procedure definitions by block id
-             * @type {Record<string, ?string>}
-             */
-            procedureDefinitions: {},
-
-            /**
-             * A cache for execute to use and store on. Only available to
-             * execute.
-             * @type {Record<string, object>}
-             */
-            _executeCached: {},
-
-            /**
-             * A cache of block IDs and targets to start threads on as they are
-             * actively monitored.
-             * @type {Array<{blockId: string, target: Target}>}
-             */
-            _monitored: null,
-
-            /**
-             * A cache of hat opcodes to collection of theads to execute.
-             * @type {Record<string, object>}
-             */
-            scripts: {}
-        };
+        this._cache = createCacheState();
 
         /**
          * Flag which indicates that blocks in this container should not glow.
@@ -643,12 +653,7 @@ class Blocks {
      * Reset all runtime caches.
      */
     resetCache () {
-        this._cache.inputs = {};
-        this._cache.procedureParamNames = {};
-        this._cache.procedureDefinitions = {};
-        this._cache._executeCached = {};
-        this._cache._monitored = null;
-        this._cache.scripts = {};
+        this._cache = createCacheState();
     }
 
     /**
@@ -1570,76 +1575,5 @@ class Blocks {
         return danglingInputs;
     }
 }
-
-/**
- * A private method shared with execute to build an object containing the block
- * information execute needs and that is reset when other cached Blocks info is
- * reset.
- * @param {Blocks} blocks Blocks containing the expected blockId
- * @param {string} blockId blockId for the desired execute cache
- * @param {Function} CacheType constructor for cached block information
- * @returns {object} execute cache object
- */
-BlocksExecuteCache.getCached = function (blocks, blockId, CacheType) {
-    let cached = blocks._cache._executeCached[blockId];
-    if (typeof cached !== 'undefined') {
-        return cached;
-    }
-
-    const block = blocks.getBlock(blockId);
-    if (typeof block === 'undefined') return null;
-
-    if (typeof CacheType === 'undefined') {
-        cached = {
-            id: blockId,
-            opcode: blocks.getOpcode(block),
-            fields: blocks.getFields(block),
-            inputs: blocks.getInputs(block),
-            mutation: blocks.getMutation(block)
-        };
-    } else {
-        cached = new CacheType(blocks, {
-            id: blockId,
-            opcode: blocks.getOpcode(block),
-            fields: blocks.getFields(block),
-            inputs: blocks.getInputs(block),
-            mutation: blocks.getMutation(block)
-        });
-    }
-
-    blocks._cache._executeCached[blockId] = cached;
-    return cached;
-};
-
-/**
- * Cache class constructor for runtime. Used to consider what threads should
- * start based on hat data.
- * @type {Function}
- */
-const RuntimeScriptCache = BlocksRuntimeCache._RuntimeScriptCache;
-
-/**
- * Get an array of scripts from a block container prefiltered to match opcode.
- * @param {Blocks} blocks - Container of blocks
- * @param {string} opcode - Opcode to filter top blocks by
- * @returns {Array.<RuntimeScriptCache>} - Array of RuntimeScriptCache cache
- *   objects
- */
-BlocksRuntimeCache.getScripts = function (blocks, opcode) {
-    let scripts = blocks._cache.scripts[opcode];
-    if (!scripts) {
-        scripts = blocks._cache.scripts[opcode] = [];
-
-        const allScripts = blocks._scripts;
-        for (let i = 0; i < allScripts.length; i++) {
-            const topBlockId = allScripts[i];
-            const block = blocks.getBlock(topBlockId);
-            if (block.opcode === opcode) {
-                scripts.push(new RuntimeScriptCache(blocks, topBlockId));
-            }
-        }
-    }
-    return scripts;
-};
 
 module.exports = Blocks;

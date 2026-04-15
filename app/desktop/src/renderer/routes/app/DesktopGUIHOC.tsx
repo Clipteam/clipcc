@@ -3,24 +3,31 @@ import type {AnyAction, Dispatch} from 'redux';
 import ElectronStorageHelper from '../../lib/ElectronStorageHelper';
 import React from 'react';
 import type VM from 'clipcc-vm';
-import type {RootState} from 'clipcc-gui/src/lib/app-state-hoc';
-import type {PropsOf} from 'clipcc-gui/src/lib/type-traits';
-import type {LoadingStateValue} from 'clipcc-gui/src/reducers/project-state';
 import type {ScratchStorage} from 'clipcc-storage';
 
 import {
-    onLoadedProject,
+    type AppStateHOC,
+    type LoadingState,
+    closeLoadingProject,
     defaultProjectId,
+    openLoadingProject,
+    openTelemetryModal,
+    onLoadedProject,
     requestNewProject,
     requestProjectUpload,
     setProjectId
-} from 'clipcc-gui/src/reducers/project-state';
-import {
-    openLoadingProject,
-    closeLoadingProject,
-    openTelemetryModal
-} from 'clipcc-gui/src/reducers/modals';
-import type AppStateHOC from 'clipcc-gui/src/lib/app-state-hoc';
+} from 'clipcc-gui';
+
+type PropsOf<C> = C extends React.ComponentType<infer P> ? P : never;
+type LoadingStateValue = typeof LoadingState[keyof typeof LoadingState];
+type RootState = {
+    scratchGui: {
+        projectState: {
+            loadingState: LoadingStateValue;
+        };
+        vm: VM;
+    };
+};
 
 type InitialProjectData = Parameters<VM['loadProject']>[0];
 

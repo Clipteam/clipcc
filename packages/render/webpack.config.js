@@ -2,6 +2,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const RuleInheritancePlugin = require('rule-inheritance-webpack-plugin');
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -13,9 +14,9 @@ const base = {
         rules: [
             {
                 include: [
-                    path.resolve('src')
+                    path.resolve(__dirname, 'src')
                 ],
-                test: /\.([cm]?ts|tsx)$/,
+                test: /\.[cm]?tsx?$/,
                 loader: 'ts-loader',
                 options: {
                     transpileOnly: true,
@@ -24,7 +25,7 @@ const base = {
             },
             {
                 include: [
-                    path.resolve('src')
+                    path.resolve(__dirname, 'src')
                 ],
                 test: /\.js$/,
                 loader: 'babel-loader',
@@ -49,7 +50,14 @@ const base = {
         ]
     },
     plugins: [
-        new NodePolyfillPlugin()
+        new RuleInheritancePlugin({
+            packages: [
+                path.resolve(__dirname, '../svg-renderer')
+            ]
+        }),
+        new NodePolyfillPlugin({
+            includeAliases: ['Buffer']
+        })
     ]
 };
 

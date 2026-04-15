@@ -1,7 +1,7 @@
 import {md5} from 'js-md5';
 import {memoizedToString, _TextEncoder, _TextDecoder} from './memoizedToString';
 import type {IAssetType} from './AssetType';
-import type {AcceptedDataFormats} from './DataFormat';
+import type {DataFormat} from './DataFormat';
 
 // TODO: The comments in this file indicate that the asset id is a string only, but
 // the types in BuiltinHelper and the default project builder in scratch-gui
@@ -16,7 +16,7 @@ export default class Asset {
     public data?: AssetData;
     public dependencies: Asset[] = [];
     /** The format of the data (WAV, PNG, etc.); required if `data` is present. */
-    public dataFormat?: AcceptedDataFormats;
+    public dataFormat?: DataFormat;
     /**
      * true if setData is being called without generateId
      */
@@ -33,14 +33,14 @@ export default class Asset {
     constructor (
         public assetType: IAssetType,
         public assetId?: AssetId,
-        dataFormat?: AcceptedDataFormats,
+        dataFormat?: DataFormat,
         data?: AssetData,
         generateId?: boolean
     ) {
         this.setData(data, dataFormat || assetType.runtimeFormat, generateId);
     }
 
-    setData (data: AssetData | undefined, dataFormat: AcceptedDataFormats | undefined, generateId?: boolean) {
+    setData (data: AssetData | undefined, dataFormat: DataFormat | undefined, generateId?: boolean) {
         if (data && !dataFormat) {
             throw new Error('Data provided without specifying its format');
         }
@@ -74,7 +74,7 @@ export default class Asset {
      * @param dataFormat - the format of the data (DataFormat.SVG for example).
      * @param generateId - after setting data, set the id to an md5 of the data?
      */
-    encodeTextData (data: string, dataFormat: AcceptedDataFormats, generateId: boolean): void {
+    encodeTextData (data: string, dataFormat: DataFormat, generateId: boolean): void {
         const encoder = new _TextEncoder();
         this.setData(encoder.encode(data), dataFormat, generateId);
     }

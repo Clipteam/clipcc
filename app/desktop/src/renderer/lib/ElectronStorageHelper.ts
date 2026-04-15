@@ -1,4 +1,4 @@
-import type {Asset, BuiltinAssetType, IDataFormat, ScratchStorage} from 'clipcc-storage';
+import type {Asset, DataFormat, IAssetType, ScratchStorage} from 'clipcc-storage';
 
 const staticAssets = new URL('./static/assets/', window.location.href);
 
@@ -22,9 +22,9 @@ class ElectronStorageHelper {
      * @param dataFormat - The file format / file extension of the asset to fetch: PNG, JPG, etc.
      * @returns A promise for the contents of the asset.
      */
-    load (assetType: BuiltinAssetType, assetId: string, dataFormat: IDataFormat): Promise<Asset | null> {
+    load (assetType: IAssetType, assetId: string, dataFormat: DataFormat): Promise<Asset | null> {
         assetId = basename(assetId);
-        dataFormat = basename(dataFormat) as IDataFormat;
+        dataFormat = basename(dataFormat) as DataFormat;
 
         const assetUrl = new URL(`${assetId}.${dataFormat}`, staticAssets);
         return fetch(assetUrl.toString())

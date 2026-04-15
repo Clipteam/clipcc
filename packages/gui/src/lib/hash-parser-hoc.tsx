@@ -33,9 +33,10 @@ type StatedGUILikeProps = PropsOf<ReturnType<typeof AppStateHOC>>;
 type HashParserComponentProps = StatedGUILikeProps & StateProps & DispatchProps;
 
 
-/* Higher Order Component to get the project id from location.hash
- * @param {React.Component} WrappedComponent: component to render
- * @returns {React.Component} component with hash parsing behavior
+/**
+ * Higher Order Component to get the project id from location.hash
+ * @param WrappedComponent component to render
+ * @returns component with hash parsing behavior
  */
 const HashParserHOC = function <P extends StatedGUILikeProps> (
     WrappedComponent: React.ComponentType<P>
@@ -79,9 +80,9 @@ const HashParserHOC = function <P extends StatedGUILikeProps> (
         override render () {
             const {
                 /* eslint-disable @typescript-eslint/no-unused-vars */
-                isFetchingWithoutId: _isFetchingWithoutId,
-                reduxProjectId: _reduxProjectId,
-                setProjectId: _setProjectId,
+                isFetchingWithoutId,
+                reduxProjectId,
+                setProjectId: _,
                 /* eslint-enable @typescript-eslint/no-unused-vars */
                 ...componentProps
             } = this.props;

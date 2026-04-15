@@ -1,7 +1,6 @@
 import React from 'react';
 import {compose, type AnyAction, type Dispatch} from 'redux';
 import {connect} from 'react-redux';
-import ReactModal from 'react-modal';
 import VM from 'clipcc-vm';
 
 import ErrorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
@@ -38,7 +37,7 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 import themeManagerHOC from '../lib/theme-manager-hoc.jsx';
 
 import GUIComponent from '../components/gui/gui';
-import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
+import {setIsScratchDesktop} from '../lib/isScratchDesktop';
 import type {RootState} from '../lib/app-state-hoc';
 import type {PropsOf} from '../lib/type-traits';
 
@@ -175,7 +174,7 @@ const ConnectedGUI = connect(
 // note that redux's 'compose' function is just being used as a general utility to make
 // the hierarchy of HOC constructor calls clearer here; it has nothing to do with redux's
 // ability to compose reducers.
-const WrappedGui = compose(
+const WrappedGui = compose<React.ComponentType<PropsOf<typeof ConnectedGUI>>>(
     LocalizationHOC,
     ErrorBoundaryHOC('Top Level App'),
     FontLoaderHOC,
@@ -188,8 +187,7 @@ const WrappedGui = compose(
     SBFileUploaderHOC,
     cloudManagerHOC,
     themeManagerHOC
-)(ConnectedGUI) as React.ComponentType<PropsOf<typeof ConnectedGUI>>;
+)(ConnectedGUI);
 
 
 export default WrappedGui;
-export const setAppElement = ReactModal.setAppElement;

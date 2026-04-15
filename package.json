@@ -13,7 +13,7 @@
     "start": "pnpm run gui start",
     "prepare": "husky",
     "build:dist": "cross-env NODE_ENV=production pnpm run build:full",
-    "build:full": "pnpm l10n build && pnpm audio build && pnpm storage build && pnpm svg-renderer build && pnpm render build && pnpm block build && pnpm vm build && pnpm paint build && node packages/gui/scripts/prepublish.mjs && pnpm gui build && pnpm gui build:library",
+    "build:full": "pnpm l10n build && pnpm audio build && pnpm storage build && pnpm svg-renderer build && pnpm render build && pnpm block build && pnpm vm build && pnpm paint build && node packages/gui/scripts/prepublish.mjs && pnpm gui build && cross-env LIBRARY_ONLY=1 pnpm gui build",
     "build": "pnpm block build && pnpm gui build",
     "test": "pnpm gui test:unit && pnpm block test && pnpm vm test",
     "performance": "pnpm vm performance",

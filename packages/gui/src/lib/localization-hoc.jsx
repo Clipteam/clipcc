@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 
 import ConnectedIntlProvider from './connected-intl-provider.jsx';
 
-/*
+/**
  * Higher Order Component to provide localiztion state. Creates a nested IntlProvider
  * to handle Gui intl context. The component accepts an onSetLanguage callback that is
  * called when the locale chagnes.

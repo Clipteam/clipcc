@@ -9,11 +9,18 @@
     "type": "git",
     "url": "https://github.com/Clipteam/clipcc.git"
   },
-  "main": "./dist/scratch-gui.js",
-  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/scratch-gui.js"
+    },
+    "./libraries/backdrops.json": "./dist/libraries/backdrops.json",
+    "./libraries/costumes.json": "./dist/libraries/costumes.json",
+    "./libraries/sounds.json": "./dist/libraries/sounds.json",
+    "./libraries/sprites.json": "./dist/libraries/sprites.json"
+  },
   "scripts": {
     "build:types": "tsc --project ./tsconfig.dts.json",
-    "build:library": "pnpm run clean && pnpm run build:types && cross-env GUI_LIBRARY_ONLY=1 webpack --color --bail",
     "build": "pnpm run clean && pnpm run build:types && webpack --color --bail",
     "clean": "rimraf ./build && mkdirp build && rimraf ./dist && mkdirp dist",
     "i18n:src": "rimraf ./translations/messages/src && babel src > tmp.js && rimraf tmp.js && node ./scripts/build-i18n-src.js ./translations/messages/src ./translations/",
@@ -104,7 +111,7 @@
     "@babel/plugin-transform-async-to-generator": "7.14.5",
     "@babel/preset-env": "7.29.2",
     "@babel/preset-react": "7.14.5",
-    "@babel/preset-typescript": "^7.24.7",
+    "@babel/preset-typescript": "^7.28.5",
     "@eslint/js": "^9.39.4",
     "@types/keymirror": "^0.1.4",
     "@types/lodash.bindall": "^4.4.9",
@@ -141,9 +148,9 @@
     "redux-mock-store": "1.5.3",
     "regenerator-runtime": "0.14.1",
     "rimraf": "2.7.1",
+    "rule-inheritance-webpack-plugin": "^0.4.0",
     "selenium-webdriver": "3.6.0",
     "terser-webpack-plugin": "^5.3.17",
-    "ts-loader": "^9.5.4",
     "typescript": "catalog:",
     "webpack": "catalog:",
     "webpack-cli": "^6.0.1",

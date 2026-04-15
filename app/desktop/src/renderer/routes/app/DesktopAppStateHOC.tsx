@@ -1,6 +1,6 @@
 import bindAll from 'lodash.bindall';
 import React from 'react';
-import type AppStateHOC from 'clipcc-gui/src/lib/app-state-hoc';
+import type {AppStateHOC} from 'clipcc-gui';
 
 type PropsOf<C> = C extends React.ComponentType<infer P> ? P : never;
 
