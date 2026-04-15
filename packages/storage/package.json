@@ -43,6 +43,7 @@
     "@babel/plugin-transform-runtime": "7.29.0",
     "@babel/polyfill": "7.12.1",
     "@babel/preset-env": "7.29.2",
+    "@babel/preset-typescript": "^7.28.5",
     "@types/jest": "29.5.14",
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "babel-loader": "^10.1.1",
@@ -57,7 +58,6 @@
     "rimraf": "6.0.1",
     "ts-jest": "^29.4.5",
     "ts-jest-mock-import-meta": "1.2.1",
-    "ts-loader": "9.5.4",
     "typescript": "catalog:",
     "webpack": "catalog:",
     "webpack-cli": "6.0.1"

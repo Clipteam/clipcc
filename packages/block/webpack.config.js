@@ -21,7 +21,10 @@ const baseConfig = {
     }, {
       test: /\.ts$/,
       exclude: /node_modules/,
-      use: 'ts-loader'
+      loader: 'ts-loader',
+      options: {
+        transpileOnly: true
+      }
     }, {
       test: /_compressed\.js$/,
       enforce: 'pre',

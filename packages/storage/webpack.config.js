@@ -13,20 +13,14 @@ const baseConfig = {
                 include: [
                     path.resolve(__dirname, 'src')
                 ],
-                test: /\.js$/,
+                test: /\.[j|t]s$/,
                 loader: 'babel-loader',
                 options: {
                     presets: [
-                        ['@babel/preset-env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}]
+                        ['@babel/preset-env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}],
+                        '@babel/preset-typescript'
                     ]
                 }
-            },
-            {
-                include: [
-                    path.resolve(__dirname, 'src')
-                ],
-                test: /\.([cm]?ts|tsx)$/,
-                loader: 'ts-loader'
             },
             {
                 resourceQuery: '?arrayBuffer',
