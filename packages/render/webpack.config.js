@@ -45,7 +45,7 @@ const base = {
             ]
         }),
         new NodePolyfillPlugin({
-            includeAliases: ['Buffer']
+            includeAliases: ['Buffer', 'events']
         })
     ]
 };
