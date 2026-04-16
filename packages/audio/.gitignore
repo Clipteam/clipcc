@@ -9,6 +9,3 @@ npm-*
 /.tap
 
 /dist
-/dist.js
-/dist.js.LICENSE.txt
-/dist.js.map

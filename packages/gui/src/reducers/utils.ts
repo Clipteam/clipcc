@@ -1,4 +1,5 @@
 import {combineReducers, type Reducer, type Store} from 'redux';
+import type {ReducerMap} from '../lib/type-traits';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let initialReducers: Record<string, Reducer<any>> = {};
@@ -12,7 +13,7 @@ const dynamicReducers: Record<string, Reducer<any>> = {};
  * and the reducers passed here will be combined with any dynamically injected reducers.
  * @param reducers The initial reducers to set for the store.
  */
-export function setInitialReducers<StoreState> (reducers: Record<string, Reducer<StoreState>>) {
+export function setInitialReducers<S extends object> (reducers: ReducerMap<S>) {
     initialReducers = reducers;
 }
 

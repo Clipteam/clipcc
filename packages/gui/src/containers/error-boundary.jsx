@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import BrowserModalComponent from '../components/browser-modal/browser-modal.jsx';
+import BrowserModalComponent from '../components/browser-modal/browser-modal.tsx';
 import CrashMessageComponent from '../components/crash-message/crash-message.jsx';
-import log from '../lib/log.js';
+import log from '../lib/log';
 import {recommendedBrowser} from '../lib/supported-browser';
 
 class ErrorBoundary extends React.Component {

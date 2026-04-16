@@ -26,7 +26,6 @@ import type {AnchoredComment} from './anchored_comment';
  * @author fenichel@google.com (Rachel Fenichel)
  */
 
-
 // Use a collator's compare instead of localeCompare which internally
 // creates a collator. Using this is a lot faster in browsers that create a
 // collator for every localeCompare call.
@@ -34,6 +33,7 @@ const collator = new Intl.Collator([], {
   sensitivity: 'base',
   numeric: true
 });
+
 /**
  * Compare strings with natural number sorting.
  * @param str1 First input.

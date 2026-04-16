@@ -17,7 +17,6 @@ export function injectPaint<Component extends React.ComponentType<PaintLoaderPro
         override async componentDidMount () {
             if (!this.state.loaded) {
                 this.paint = await getScratchPaint();
-                // @ts-expect-error paint lack types
                 injectReducer('scratchPaint', this.paint.ScratchPaintReducer);
                 this.setState({loaded: true});
             }

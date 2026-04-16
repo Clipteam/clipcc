@@ -5,10 +5,10 @@ import makeToolbox from '../lib/make-toolbox';
 import PropTypes from 'prop-types';
 import React from 'react';
 import {injectBlock} from '../lib/blocks-loader-hoc.tsx';
-import VMScratchBlocks from '../lib/blocks';
+import VMScratchBlocks, {setRecordSoundCallback} from '../lib/blocks';
 import VM from 'clipcc-vm';
 
-import log from '../lib/log.js';
+import log from '../lib/log';
 import Prompt from './prompt.jsx';
 import BlocksComponent from '../components/blocks/blocks.jsx';
 import ExtensionLibrary from './extension-library.jsx';
@@ -83,7 +83,7 @@ class Blocks extends React.Component {
         ]);
         this.ScratchBlocks.callbackRegistry.register('showVariablePrompt', this.handlePromptStart);
         this.ScratchBlocks.callbackRegistry.register('statusButtonCallback', this.handleConnectionModalStart);
-        this.ScratchBlocks.recordSoundCallback = this.handleOpenSoundRecorder;
+        setRecordSoundCallback(this.handleOpenSoundRecorder);
 
         this.state = {
             prompt: null

@@ -4,6 +4,19 @@
  */
 
 /**
+ * @type {() => void | null}
+ */
+let recordSoundCallback = null;
+
+/**
+ * Set the callback to be called when the "Record Sound" option is selected in the sound menu.
+ * @param {() => void | null} callback The callback function to call when "Record Sound" is selected.
+ */
+export const setRecordSoundCallback = callback => {
+    recordSoundCallback = callback;
+};
+
+/**
  * Connect scratch blocks with the vm
  * @param {VirtualMachine} vm - The scratch vm
  * @param {ScratchBlocks} ScratchBlocks - The scratch blocks to connect
@@ -64,7 +77,7 @@ export default function (vm, ScratchBlocks) {
                 }
             ],
             output: true,
-            outputShape: ScratchBlocks.OUTPUT_SHAPE_ROUND,
+            outputShape: ScratchBlocks.constants.OUTPUT_SHAPE_ROUND,
             extensions: ['colours_sensing']
         };
     };
@@ -141,8 +154,8 @@ export default function (vm, ScratchBlocks) {
         const json = jsonForMenuBlock('SOUND_MENU', soundsMenu, 'sounds', []);
         this.jsonInit(json);
         this.getField('SOUND_MENU').setValidator(newValue => {
-            if (newValue === 'SOUND_RECORD') {
-                ScratchBlocks.recordSoundCallback();
+            if (newValue === 'SOUND_RECORD' && recordSoundCallback) {
+                recordSoundCallback();
                 return null;
             }
             return newValue;

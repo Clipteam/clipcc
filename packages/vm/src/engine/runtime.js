@@ -3,7 +3,7 @@ const {OrderedMap} = require('immutable');
 
 const ArgumentType = require('../extension-support/argument-type');
 const Blocks = require('./blocks');
-const BlocksRuntimeCache = require('./blocks-runtime-cache');
+const {getScripts: getCachedScriptsByOpcode} = require('./blocks-runtime-cache');
 const BlockType = require('../extension-support/block-type');
 const Profiler = require('./profiler');
 const Sequencer = require('./sequencer');
@@ -2076,7 +2076,7 @@ class Runtime extends EventEmitter {
         }
         for (let t = targets.length - 1; t >= 0; t--) {
             const target = targets[t];
-            const scripts = BlocksRuntimeCache.getScripts(target.blocks, opcode);
+            const scripts = getCachedScriptsByOpcode(target.blocks, opcode);
             for (let j = 0; j < scripts.length; j++) {
                 f(scripts[j], target);
             }

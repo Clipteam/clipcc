@@ -43,12 +43,8 @@ const base = {
             }]
         },
         {
-            test: /\.png$/i,
+            test: /\.(svg|png)$/,
             type: 'asset/inline'
-        },
-        {
-            test: /\.svg$/,
-            loader: 'svg-url-loader'
         }]
     },
     optimization: {

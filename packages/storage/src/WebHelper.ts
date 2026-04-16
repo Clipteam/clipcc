@@ -1,11 +1,11 @@
 import log from './log';
 
-import Asset, {AssetData, AssetId} from './Asset';
+import Asset, {type AssetData, type AssetId} from './Asset';
 import Helper from './Helper';
 import ProxyTool from './ProxyTool';
-import {ScratchGetRequest, ScratchSendRequest, Tool} from './Tool';
-import type {AssetTypeValue, IAssetType} from './AssetType';
-import type {IDataFormat} from './DataFormat';
+import type {ScratchGetRequest, ScratchSendRequest} from './Tool';
+import type {IAssetType} from './AssetType';
+import type {DataFormat} from './DataFormat';
 
 const ensureRequestConfig = reqConfig => {
     if (typeof reqConfig === 'string') {
@@ -15,13 +15,6 @@ const ensureRequestConfig = reqConfig => {
     }
     return reqConfig;
 };
-
-/**
- * @typedef {Function} UrlFunction - A function which computes a URL from asset information.
- * @param {Asset} - The asset for which the URL should be computed.
- * @returns {(string|object)} - A string representing the URL for the asset request OR an object with configuration for
- *                              the underlying fetch call (necessary for configuring e.g. authentication)
- */
 
 export type UrlFunction = (asset: Asset) => string | ScratchGetRequest | ScratchSendRequest;
 
@@ -33,44 +26,24 @@ interface StoreRecord {
 }
 
 export default class WebHelper extends Helper {
-    public stores: StoreRecord[];
-    public assetTool: Tool;
-    public projectTool: Tool;
-
-    constructor (parent) {
-        super(parent);
-
-        /**
-         * @type {Array.<StoreRecord>}
-         * @typedef {object} StoreRecord
-         * @property {Array.<string>} types - The types of asset provided by this store, from AssetType's name field.
-         * @property {UrlFunction} getFunction - A function which computes a URL from an Asset.
-         * @property {UrlFunction} createFunction - A function which computes a URL from an Asset.
-         * @property {UrlFunction} updateFunction - A function which computes a URL from an Asset.
-         */
-        this.stores = [];
-
-        /**
-         * Set of tools to best load many assets in parallel. If one tool
-         * cannot be used, it will use the next.
-         * @type {ProxyTool}
-         */
-        this.assetTool = new ProxyTool();
-
-        /**
-         * Set of tools to best load project data in parallel with assets. This
-         * tool set prefers tools that are immediately ready. Some tools have
-         * to initialize before they can load files.
-         * @type {ProxyTool}
-         */
-        this.projectTool = new ProxyTool(ProxyTool.TOOL_FILTER.READY);
-    }
+    public stores: StoreRecord[] = [];
+    /**
+     * Set of tools to best load many assets in parallel. If one tool
+     * cannot be used, it will use the next.
+     */
+    public assetTool = new ProxyTool();
+    /**
+     * Set of tools to best load project data in parallel with assets. This
+     * tool set prefers tools that are immediately ready. Some tools have
+     * to initialize before they can load files.
+     */
+    public projectTool = new ProxyTool(ProxyTool.TOOL_FILTER.READY);
 
     /**
      * Register a web-based source for assets. Sources will be checked in order of registration.
      * @deprecated Please use addStore
-     * @param {Array.<IAssetType>} types - The types of asset provided by this source.
-     * @param {UrlFunction} urlFunction - A function which computes a URL from an Asset.
+     * @param types - The types of asset provided by this source.
+     * @param urlFunction - A function which computes a URL from an Asset.
      */
     addSource (types: IAssetType[], urlFunction: UrlFunction): void {
         log.warn('Deprecation: WebHelper.addSource has been replaced with WebHelper.addStore.');
@@ -79,10 +52,10 @@ export default class WebHelper extends Helper {
 
     /**
      * Register a web-based store for assets. Sources will be checked in order of registration.
-     * @param {Array.<IAssetType>} types - The types of asset provided by this store.
-     * @param {UrlFunction} getFunction - A function which computes a GET URL for an Asset
-     * @param {UrlFunction} createFunction - A function which computes a POST URL for an Asset
-     * @param {UrlFunction} updateFunction - A function which computes a PUT URL for an Asset
+     * @param types - The types of asset provided by this store.
+     * @param getFunction - A function which computes a GET URL for an Asset
+     * @param createFunction - A function which computes a POST URL for an Asset
+     * @param updateFunction - A function which computes a PUT URL for an Asset
      */
     addStore (
         types: IAssetType[],
@@ -100,14 +73,13 @@ export default class WebHelper extends Helper {
 
     /**
      * Fetch an asset but don't process dependencies.
-     * @param {AssetTypeValue} assetType - The type of asset to fetch.
-     * @param {string} assetId - The ID of the asset to fetch: a project ID, MD5, etc.
-     * @param {IDataFormat} dataFormat - The file format / file extension of the asset to fetch: PNG, JPG, etc.
-     * @returns {Promise.<Asset>} A promise for the contents of the asset.
+     * @param assetType - The type of asset to fetch.
+     * @param assetId - The ID of the asset to fetch: a project ID, MD5, etc.
+     * @param dataFormat - The file format / file extension of the asset to fetch: PNG, JPG, etc.
+     * @returns A promise for the contents of the asset.
      */
-    load (assetType: AssetTypeValue, assetId: AssetId, dataFormat: IDataFormat): Promise<Asset | null> {
+    load (assetType: IAssetType, assetId: AssetId, dataFormat: DataFormat): Promise<Asset | null> {
 
-        /** @type {Array.<{url:string, result:*}>} List of URLs attempted & errors encountered. */
         const errors: unknown[] = [];
         const stores = this.stores.slice()
             .filter(store => store.types.indexOf(assetType.name) >= 0);
@@ -158,15 +130,15 @@ export default class WebHelper extends Helper {
 
     /**
      * Create or update an asset with provided data. The create function is called if no asset id is provided
-     * @param {AssetTypeValue} assetType - The type of asset to create or update.
-     * @param {?IDataFormat} dataFormat - IDataFormat of the data for the stored asset.
-     * @param {Buffer} data - The data for the cached asset.
-     * @param {?string} assetId - The ID of the asset to fetch: a project ID, MD5, etc.
-     * @returns {Promise.<object>} A promise for the response from the create or update request
+     * @param assetType - The type of asset to create or update.
+     * @param dataFormat - Data format of the data for the stored asset.
+     * @param data - The data for the cached asset.
+     * @param assetId - The ID of the asset to fetch: a project ID, MD5, etc.
+     * @returns A promise for the response from the create or update request
      */
     store (
-        assetType: AssetTypeValue,
-        dataFormat: IDataFormat | undefined,
+        assetType: IAssetType,
+        dataFormat: DataFormat | undefined,
         data: AssetData,
         assetId?: AssetId
     ): Promise<string | {id: string}> {

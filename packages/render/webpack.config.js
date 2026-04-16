@@ -13,9 +13,9 @@ const base = {
         rules: [
             {
                 include: [
-                    path.resolve('src')
+                    path.resolve(__dirname, 'src')
                 ],
-                test: /\.([cm]?ts|tsx)$/,
+                test: /\.[cm]?tsx?$/,
                 loader: 'ts-loader',
                 options: {
                     transpileOnly: true,
@@ -24,7 +24,7 @@ const base = {
             },
             {
                 include: [
-                    path.resolve('src')
+                    path.resolve(__dirname, 'src')
                 ],
                 test: /\.js$/,
                 loader: 'babel-loader',
