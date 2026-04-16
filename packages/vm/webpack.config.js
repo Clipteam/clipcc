@@ -20,20 +20,14 @@ const base = {
     },
     module: {
         rules: [{
-            include: path.resolve(__dirname, 'src'),
-            test: /\.[cm]?tsx?$/,
-            loader: 'ts-loader',
-            options: {
-                transpileOnly: true,
-                allowTsInNodeModules: true
-            }
-        },
-        {
-            test: /\.js$/,
+            test: /\.[jt]s$/,
             loader: 'babel-loader',
             include: path.resolve(__dirname, 'src'),
             options: {
-                presets: [['@babel/preset-env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}]]
+                presets: [
+                    ['@babel/preset-env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}],
+                    '@babel/preset-typescript'
+                ]
             }
         },
         {
