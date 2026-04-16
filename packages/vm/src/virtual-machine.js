@@ -10,7 +10,6 @@ const JSZip = require('jszip');
 const {ScratchBuiltinAdapter} = require('clipcc-extension');
 
 const Buffer = require('buffer').Buffer;
-const centralDispatch = require('./dispatch/central-dispatch');
 const log = require('./util/log');
 const MathUtil = require('./util/math-util');
 const Runtime = require('./engine/runtime');
@@ -62,9 +61,6 @@ class VirtualMachine extends EventEmitter {
          * @type {!Runtime}
          */
         this.runtime = new Runtime();
-        centralDispatch.setService('runtime', this.runtime).catch(e => {
-            log.error(`Failed to register runtime service: ${JSON.stringify(e)}`);
-        });
 
         /**
          * The "currently editing"/selected target ID for the VM.
