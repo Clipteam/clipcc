@@ -20,7 +20,7 @@ const base = {
     },
     module: {
         rules: [{
-            test: /\.[j|t]s$/,
+            test: /\.[jt]s$/,
             loader: 'babel-loader',
             include: path.resolve(__dirname, 'src'),
             options: {

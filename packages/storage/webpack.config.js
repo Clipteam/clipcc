@@ -13,7 +13,7 @@ const baseConfig = {
                 include: [
                     path.resolve(__dirname, 'src')
                 ],
-                test: /\.[j|t]s$/,
+                test: /\.[jt]s$/,
                 loader: 'babel-loader',
                 options: {
                     presets: [

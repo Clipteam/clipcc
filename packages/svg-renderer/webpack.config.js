@@ -24,7 +24,7 @@ const base = {
                 path.resolve('node_modules', 'scratch-render-fonts'),
                 path.resolve(__dirname, 'src')
             ],
-            test: /\.[j|t]s$/,
+            test: /\.[jt]s$/,
             loader: 'babel-loader',
             options: {
                 presets: [

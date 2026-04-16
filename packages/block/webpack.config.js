@@ -21,7 +21,7 @@ const baseConfig = {
     }, {
       test: /\.ts$/,
       exclude: /node_modules/,
-      loader: 'ts-loader'
+      use: 'ts-loader'
     }, {
       test: /_compressed\.js$/,
       enforce: 'pre',
