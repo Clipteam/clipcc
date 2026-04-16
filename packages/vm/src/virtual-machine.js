@@ -629,8 +629,8 @@ class VirtualMachine extends EventEmitter {
         const extensionPromises = [];
 
         extensions.extensionIDs.forEach(extensionID => {
-            if (!this.extensionManager.isExtensionLoaded(extensionID)) {
-                this.extensionManager.enableExtension(extensionID);
+            if (!this.extensionManager.isExtensionEnabled(extensionID)) {
+                extensionPromises.push(this.extensionManager.enableExtension(extensionID));
             }
         });
 
@@ -1449,10 +1449,7 @@ class VirtualMachine extends EventEmitter {
 
         // Create an array promises for extensions to load
         const extensionPromises = Array.from(extensionIDs,
-            id => {
-                this.extensionManager.enableExtension(id);
-                return Promise.resolve();
-            }
+            id => this.extensionManager.enableExtension(id)
         );
 
         return Promise.all(extensionPromises).then(() => {
