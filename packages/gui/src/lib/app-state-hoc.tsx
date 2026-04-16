@@ -83,7 +83,7 @@ const AppStateHOC = function <P extends OwnProps> (
                     initTelemetryModal
                 } = guiRedux;
                 // eslint-disable-next-line global-require, @typescript-eslint/no-require-imports
-                const {ScratchPaintReducer}: { ScratchPaintReducer: Reducer<unknown> } = require('clipcc-paint');
+                const {ScratchPaintReducer}: {ScratchPaintReducer: Reducer<unknown>} = require('clipcc-paint');
 
                 let initializedGui: GuiState = guiInitialState;
                 if (props.isFullScreen || props.isPlayerOnly) {
