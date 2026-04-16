@@ -1444,7 +1444,7 @@ class VirtualMachine extends EventEmitter {
         const extensionIDs = new Set(copiedBlocks
             .map(b => sb3.getExtensionIdForOpcode(b.opcode))
             .filter(id => !!id) // Remove ids that do not exist
-            .filter(id => !this.extensionManager.isExtensionLoaded(id)) // and remove loaded extensions
+            .filter(id => !this.extensionManager.isExtensionEnabled(id)) // and remove loaded extensions
         );
 
         // Create an array promises for extensions to load
