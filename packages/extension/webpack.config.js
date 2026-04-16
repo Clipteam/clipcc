@@ -10,7 +10,6 @@ const baseConfig = {
         'clipcc-extension': './src/index.ts'
     },
     output: {
-        library: 'Extension',
         filename: '[name].js'
     },
     resolve: {
@@ -42,7 +41,10 @@ module.exports = [
     defaultsDeep({}, baseConfig, {
         target: 'web',
         output: {
-            libraryTarget: 'umd',
+            library: {
+                name: 'Extension',
+                type: 'umd'
+            },
             path: path.resolve(__dirname, 'dist', 'web')
         }
     }),
@@ -50,7 +52,9 @@ module.exports = [
     defaultsDeep({}, baseConfig, {
         target: 'node',
         output: {
-            libraryTarget: 'commonjs2',
+            library: {
+                type: 'commonjs2'
+            },
             path: path.resolve(__dirname, 'dist', 'node')
         }
     }),
