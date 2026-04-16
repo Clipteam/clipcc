@@ -106,7 +106,7 @@ class CustomProcedures extends React.Component {
             }
             this.mutationRoot.moveBy(dx, dy);
         });
-        this.mutationRoot.loadExtraState(this.props.mutator);
+        this.mutationRoot.loadExtraState(this.props.state);
         this.mutationRoot.initSvg();
         this.mutationRoot.render();
         this.setState({
@@ -185,7 +185,7 @@ class CustomProcedures extends React.Component {
 
 CustomProcedures.propTypes = {
     isRtl: PropTypes.bool,
-    mutator: PropTypes.shape({
+    state: PropTypes.shape({
         proccode: PropTypes.string,
         argumentids: PropTypes.arrayOf(PropTypes.string),
         argumentnames: PropTypes.arrayOf(PropTypes.string),
@@ -228,7 +228,7 @@ CustomProcedures.defaultProps = {
 
 const mapStateToProps = state => ({
     isRtl: state.locales.isRtl,
-    mutator: state.scratchGui.customProcedures.mutator,
+    state: state.scratchGui.customProcedures.state,
     new: state.scratchGui.customProcedures.new
 });
 
