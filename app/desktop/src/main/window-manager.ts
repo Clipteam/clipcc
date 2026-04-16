@@ -307,8 +307,13 @@ const createLoadingWindow = () => {
         titleBarStyle: 'hiddenInset'
     });
 
-    const loadingFilePath = path.resolve(__dirname, '..', 'renderer', 'loading.html');
-    window.loadFile(loadingFilePath);
+    if (process.env.ELECTRON_WEBPACK_WDS_PORT) {
+        const loadingUrl = new URL(`http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}/loading.html`);
+        window.loadURL(loadingUrl.toString());
+    } else {
+        const loadingFilePath = path.resolve(__dirname, '..', 'renderer', 'loading.html');
+        window.loadFile(loadingFilePath);
+    }
 
     window.on('closed', () => {
         if (windows.loading === window) {

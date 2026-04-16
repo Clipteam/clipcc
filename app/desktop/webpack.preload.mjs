@@ -29,6 +29,7 @@ export default {
             {
                 test: /\.tsx?$/,
                 loader: 'esbuild-loader',
+                include: path.resolve(__dirname, 'src', 'preload'),
                 options: {
                     loader: 'tsx',
                     tsconfigRaw: require('./tsconfig.json')
@@ -37,6 +38,7 @@ export default {
             {
                 test: /\.jsx?$/,
                 loader: 'esbuild-loader',
+                include: path.resolve(__dirname, 'src', 'preload'),
                 options: {
                     loader: 'jsx'
                 }

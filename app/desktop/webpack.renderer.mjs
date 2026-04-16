@@ -3,13 +3,16 @@
 import path from 'path';
 
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import {createRequire} from 'module';
 import {fileURLToPath} from 'url';
+import RuleInheritancePlugin from 'rule-inheritance-webpack-plugin';
 import webpack from 'webpack';
 const require = createRequire(import.meta.url);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const {version} = require('../../package.json');
 
 /**
@@ -17,10 +20,10 @@ const {version} = require('../../package.json');
  */
 
 
-/** @type {webpack.Configuration} */
-export default {
+/** @satisfies {webpack.Configuration} */
+const rendererConfig = {
     name: 'renderer',
-    mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+    mode: IS_PRODUCTION ? 'production' : 'development',
     target: 'web',
     entry: {
         index: './src/renderer/index.ts'
@@ -32,7 +35,7 @@ export default {
     resolve: {
         extensions: ['.ts', '.tsx', '.js', '.jsx', '.json']
     },
-    devtool: process.env.NODE_ENV === 'production' ? false : 'cheap-module-source-map',
+    devtool: IS_PRODUCTION ? false : 'cheap-module-source-map',
     devServer: {
         host: '127.0.0.1',
         port: 8386,
@@ -67,6 +70,7 @@ export default {
             {
                 test: /\.tsx?$/,
                 loader: 'esbuild-loader',
+                include: path.resolve(__dirname, 'src', 'renderer'),
                 options: {
                     loader: 'tsx',
                     tsconfigRaw: require('./tsconfig.json')
@@ -75,12 +79,17 @@ export default {
             {
                 test: /\.jsx?$/,
                 loader: 'esbuild-loader',
+                include: path.resolve(__dirname, 'src', 'renderer'),
                 options: {
                     loader: 'jsx'
                 }
             },
             {
                 test: /\.css$/,
+                include: [
+                    path.resolve(__dirname, 'src', 'renderer'),
+                    require.resolve('react-tabs/style/react-tabs.css')
+                ],
                 use: [{
                     loader: 'style-loader'
                 }, {
@@ -105,6 +114,7 @@ export default {
             },
             {
                 test: /\.(svg|png|wav|gif|jpg)$/,
+                include: path.resolve(__dirname, 'src'),
                 type: 'asset/resource',
                 generator: {
                     filename: 'static/assets/[hash][ext][query]'
@@ -113,6 +123,11 @@ export default {
         ]
     },
     plugins: [
+        new RuleInheritancePlugin({
+            packages: [
+                path.resolve(__dirname, '../../packages/gui')
+            ]
+        }),
         new CopyWebpackPlugin({
             patterns: [
                 {
@@ -156,6 +171,23 @@ export default {
             'process.env.GA_ID': `"${process.env.GA_ID || 'UA-000000-01'}"`,
             'clipcc.VERSION': version,
             'clipcc.BUILD_TIME': Date.now()
+        }),
+        new NodePolyfillPlugin({
+            includeAliases: ['Buffer']
         })
     ]
 };
+
+if (!IS_PRODUCTION) {
+    rendererConfig.module.rules.push({
+        test: /blocks-msgs\.js$/,
+        include: [
+            path.resolve(__dirname, '../../packages/l10n/locales')
+        ],
+        use: [{
+            loader: path.resolve(__dirname, '../../packages/gui/scripts/block-message-loader.js')
+        }]
+    });
+}
+
+export default rendererConfig;

@@ -100,6 +100,35 @@ const handleNodeBuildResult = (target, stats) => {
 };
 
 /**
+ * Print warnings and errors from renderer builds.
+ * @param {Stats} stats - Webpack stats for the renderer build.
+ * @returns {boolean} True when the build succeeded.
+ */
+const handleRendererBuildResult = stats => {
+    const output = stats.toString({
+        colors: true,
+        preset: 'errors-warnings',
+        timings: true
+    });
+
+    if (output) {
+        console.log(output);
+    }
+
+    if (stats.hasErrors()) {
+        log('renderer', 'build failed; waiting for a successful rebuild before launching Electron');
+        return false;
+    }
+
+    const buildTime = typeof stats.endTime === 'number' && typeof stats.startTime === 'number' ?
+        ` in ${stats.endTime - stats.startTime} ms` :
+        '';
+
+    log('renderer', `built successfully${buildTime}`);
+    return true;
+};
+
+/**
  * Launch the Electron app against the renderer dev server.
  * @param {string} reason - Why Electron is being launched.
  */
@@ -118,7 +147,7 @@ const startElectron = reason => {
         cwd: desktopDir,
         env: {
             ...process.env,
-            WEBPACK_WDS_PORT: port
+            ELECTRON_WEBPACK_WDS_PORT: port
         },
         stdio: 'inherit'
     });
@@ -277,15 +306,26 @@ const startRendererServer = async () => {
     }
 
     rendererCompiler = webpack(rendererConfig);
+    rendererCompiler.hooks.done.tap('clipcc-desktop-dev-runner-renderer', stats => {
+        const succeeded = handleRendererBuildResult(stats);
+        if (!succeeded) {
+            return;
+        }
+
+        const isFirstSuccessfulBuild = !rendererReady;
+        rendererReady = true;
+
+        if (isFirstSuccessfulBuild) {
+            maybeStartElectron();
+        }
+    });
+
     rendererServer = new WebpackDevServer(
         /** @type {DevServerConfiguration} */ (rendererConfig.devServer),
         rendererCompiler
     );
 
     await rendererServer.start();
-    rendererReady = true;
-    log('renderer', `dev server listening on http://localhost:${rendererConfig.devServer.port}`);
-    maybeStartElectron();
 };
 
 /**

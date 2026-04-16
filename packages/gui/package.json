@@ -12,6 +12,7 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
+      "webpack": "./src/index.js",
       "default": "./dist/scratch-gui.js"
     },
     "./libraries/backdrops.json": "./dist/libraries/backdrops.json",

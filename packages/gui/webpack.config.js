@@ -80,10 +80,7 @@ const base = {
             }]
         }, {
             test: /\.hex$/,
-            type: 'asset/inline',
-            generator: {
-                dataUrl: content => `data:text/plain;base64,${content.toString('base64')}`
-            }
+            type: 'asset'
         }, {
             resourceQuery: '?arrayBuffer',
             type: 'javascript/auto',
