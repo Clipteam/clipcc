@@ -24,7 +24,6 @@ const base = {
         port: process.env.PORT || 8601
     },
     output: {
-        library: 'GUI',
         filename: '[name].js',
         chunkFilename: 'chunks/[name].js'
     },
@@ -253,7 +252,10 @@ module.exports = [
                 'scratch-gui': './src/index.js'
             },
             output: {
-                libraryTarget: 'umd',
+                library: {
+                    name: 'GUI',
+                    type: 'umd'
+                },
                 path: path.resolve('dist'),
                 publicPath: `${STATIC_PATH}/`
             },

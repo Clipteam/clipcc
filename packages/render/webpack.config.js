@@ -62,7 +62,9 @@ module.exports = [
             queryPlayground: './src/playground/queryPlayground.js'
         },
         output: {
-            libraryTarget: 'umd',
+            library: {
+                type: 'umd'
+            },
             path: path.resolve('playground'),
             filename: '[name].js'
         },
@@ -83,8 +85,10 @@ module.exports = [
             'scratch-render.min': './src/index.js'
         },
         output: {
-            library: 'ScratchRender',
-            libraryTarget: 'umd',
+            library: {
+                name: 'ScratchRender',
+                type: 'umd'
+            },
             path: path.resolve('dist', 'web'),
             filename: '[name].js'
         }
@@ -96,8 +100,9 @@ module.exports = [
             'scratch-render': './src/index.js'
         },
         output: {
-            library: 'ScratchRender',
-            libraryTarget: 'commonjs2',
+            library: {
+                type: 'commonjs2'
+            },
             path: path.resolve('dist', 'node'),
             filename: '[name].js'
         },
