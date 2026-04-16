@@ -110,7 +110,10 @@ export class ScratchWorkerAdapter extends ScratchBaseAdapter {
     override enable(): Promise<void> {
         return new Promise<string>((resolve, reject) => {
             extensionService!.addPendingExtension(this.url, resolve, reject);
-            dispatch.addWorker(new Worker(new URL('./extension-worker.ts', import.meta.url)));
+            dispatch.addWorker(new Worker(new URL(
+                /* webpackChunkName: "extension-worker" */ './extension-worker.ts',
+                import.meta.url
+            )));
         }).then((serviceName: string) => {
             this.serviceName = serviceName;
             return super.enable();
