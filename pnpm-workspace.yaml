@@ -13,7 +13,6 @@ onlyBuiltDependencies:
   - core-js
   - electron
   - electron-winstaller
-  - esbuild
   - playwright-chromium
   - unrs-resolver
 
