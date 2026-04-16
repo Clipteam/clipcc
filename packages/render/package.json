@@ -31,6 +31,7 @@
   "devDependencies": {
     "@babel/polyfill": "7.12.1",
     "@babel/preset-env": "7.29.2",
+    "@babel/preset-typescript": "^7.28.5",
     "@types/hull.js": "^1.0.4",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.1.0",
@@ -46,7 +47,6 @@
     "clipcc-render-fonts": "1.0.256",
     "tap": "21.0.1",
     "terser-webpack-plugin": "^5.3.17",
-    "ts-loader": "^9.5.4",
     "typescript": "catalog:",
     "webpack": "catalog:",
     "webpack-cli": "^6.0.1",
