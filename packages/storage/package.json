@@ -16,7 +16,8 @@
     "default": "./dist/node/scratch-storage.js"
   },
   "scripts": {
-    "build": "rimraf dist && webpack --mode=production",
+    "build:types": "tsc --project ./tsconfig.dts.json",
+    "build": "rimraf dist && pnpm build:types && webpack --mode=production",
     "coverage": "tap ./test/{unit,integration}/*.js --coverage --coverage-report=lcov",
     "test": "pnpm run test:lint && jest \"test[\\\\/](unit|integration)\"",
     "test:clearCache": "jest --clearCache",
@@ -43,6 +44,7 @@
     "@babel/plugin-transform-runtime": "7.29.0",
     "@babel/polyfill": "7.12.1",
     "@babel/preset-env": "7.29.2",
+    "@babel/preset-typescript": "^7.28.5",
     "@types/jest": "29.5.14",
     "@typescript-eslint/eslint-plugin": "7.18.0",
     "babel-loader": "^10.1.1",
@@ -58,7 +60,6 @@
     "terser-webpack-plugin": "^5.3.17",
     "ts-jest": "^29.4.5",
     "ts-jest-mock-import-meta": "1.2.1",
-    "ts-loader": "9.5.4",
     "typescript": "catalog:",
     "webpack": "catalog:",
     "webpack-cli": "6.0.1"

@@ -987,6 +987,9 @@ importers:
       '@babel/preset-env':
         specifier: 7.29.2
         version: 7.29.2(@babel/core@7.29.0)
+      '@babel/preset-typescript':
+        specifier: ^7.28.5
+        version: 7.28.5(@babel/core@7.29.0)
       '@types/hull.js':
         specifier: ^1.0.4
         version: 1.0.4
@@ -1038,9 +1041,6 @@ importers:
       travis-after-all:
         specifier: 1.4.5
         version: 1.4.5
-      ts-loader:
-        specifier: ^9.5.4
-        version: 9.5.4(typescript@5.9.3)(webpack@5.105.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1090,6 +1090,9 @@ importers:
       '@babel/preset-env':
         specifier: 7.29.2
         version: 7.29.2(@babel/core@7.29.0)
+      '@babel/preset-typescript':
+        specifier: ^7.28.5
+        version: 7.28.5(@babel/core@7.29.0)
       '@types/jest':
         specifier: 29.5.14
         version: 29.5.14
@@ -1135,9 +1138,6 @@ importers:
       ts-jest-mock-import-meta:
         specifier: 1.2.1
         version: 1.2.1(ts-jest@29.4.6(@babel/core@7.29.0)(@jest/transform@30.3.0)(@jest/types@30.3.0)(babel-jest@30.3.0(@babel/core@7.29.0))(jest-util@30.3.0)(jest@30.3.0(@types/node@25.5.2))(typescript@5.9.3))
-      ts-loader:
-        specifier: 9.5.4
-        version: 9.5.4(typescript@5.9.3)(webpack@5.105.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1187,6 +1187,9 @@ importers:
       '@babel/preset-env':
         specifier: 7.29.2
         version: 7.29.2(@babel/core@7.29.0)
+      '@babel/preset-typescript':
+        specifier: ^7.28.5
+        version: 7.28.5(@babel/core@7.29.0)
       '@types/css-tree':
         specifier: ^2.3.8
         version: 2.3.11
@@ -1238,9 +1241,6 @@ importers:
       terser-webpack-plugin:
         specifier: ^5.3.17
         version: 5.3.17(webpack@5.105.4)
-      ts-loader:
-        specifier: ^9.5.4
-        version: 9.5.4(typescript@5.9.3)(webpack@5.105.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -1317,6 +1317,9 @@ importers:
       '@babel/preset-env':
         specifier: 7.29.2
         version: 7.29.2(@babel/core@7.29.0)
+      '@babel/preset-typescript':
+        specifier: ^7.28.5
+        version: 7.28.5(@babel/core@7.29.0)
       '@types/fastestsmallesttextencoderdecoder':
         specifier: ^1.0.2
         version: 1.0.2
@@ -1407,9 +1410,6 @@ importers:
       tiny-worker:
         specifier: 2.3.0
         version: 2.3.0
-      ts-loader:
-        specifier: ^9.5.4
-        version: 9.5.4(typescript@5.9.3)(webpack@5.105.4)
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
