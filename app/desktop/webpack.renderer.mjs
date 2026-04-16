@@ -5,12 +5,9 @@ import path from 'path';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import NodePolyfillPlugin from 'node-polyfill-webpack-plugin';
 import {createRequire} from 'module';
-import {fileURLToPath} from 'url';
 import RuleInheritancePlugin from 'rule-inheritance-webpack-plugin';
 import webpack from 'webpack';
 const require = createRequire(import.meta.url);
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const {version} = require('../../package.json');
@@ -29,7 +26,7 @@ const rendererConfig = {
         index: './src/renderer/index.ts'
     },
     output: {
-        path: path.resolve(__dirname, 'dist', 'renderer'),
+        path: path.resolve(import.meta.dirname, 'dist', 'renderer'),
         filename: '[name].js'
     },
     resolve: {
@@ -43,23 +40,26 @@ const rendererConfig = {
         liveReload: true,
         static: [
             {
-                directory: path.resolve(__dirname, 'static'),
+                directory: path.resolve(import.meta.dirname, 'static'),
                 publicPath: '/static'
             },
             {
-                directory: path.resolve(__dirname, '../../packages/gui/static'),
+                directory: path.resolve(import.meta.dirname, '../../packages/gui/static'),
                 publicPath: '/static'
             },
             {
-                directory: path.resolve(__dirname, '../../packages/block/media'),
+                directory: path.resolve(import.meta.dirname, '../../packages/block/media'),
                 publicPath: '/static/blocks-media/default'
             },
             {
-                directory: path.resolve(__dirname, '../../packages/block/media'),
+                directory: path.resolve(import.meta.dirname, '../../packages/block/media'),
                 publicPath: '/static/blocks-media/high-contrast'
             },
             {
-                directory: path.resolve(__dirname, '../../packages/gui/src/lib/themes/high-contrast/blocks-media'),
+                directory: path.resolve(
+                    import.meta.dirname,
+                    '../../packages/gui/src/lib/themes/high-contrast/blocks-media'
+                ),
                 publicPath: '/static/blocks-media/high-contrast'
             }
         ],
@@ -70,7 +70,7 @@ const rendererConfig = {
             {
                 test: /\.tsx?$/,
                 loader: 'esbuild-loader',
-                include: path.resolve(__dirname, 'src', 'renderer'),
+                include: path.resolve(import.meta.dirname, 'src', 'renderer'),
                 options: {
                     loader: 'tsx',
                     tsconfigRaw: require('./tsconfig.json')
@@ -79,7 +79,7 @@ const rendererConfig = {
             {
                 test: /\.jsx?$/,
                 loader: 'esbuild-loader',
-                include: path.resolve(__dirname, 'src', 'renderer'),
+                include: path.resolve(import.meta.dirname, 'src', 'renderer'),
                 options: {
                     loader: 'jsx'
                 }
@@ -87,7 +87,7 @@ const rendererConfig = {
             {
                 test: /\.css$/,
                 include: [
-                    path.resolve(__dirname, 'src', 'renderer'),
+                    path.resolve(import.meta.dirname, 'src', 'renderer'),
                     require.resolve('react-tabs/style/react-tabs.css')
                 ],
                 use: [{
@@ -114,7 +114,7 @@ const rendererConfig = {
             },
             {
                 test: /\.(svg|png|wav|gif|jpg)$/,
-                include: path.resolve(__dirname, 'src'),
+                include: path.resolve(import.meta.dirname, 'src'),
                 type: 'asset/resource',
                 generator: {
                     filename: 'static/assets/[hash][ext][query]'
@@ -125,42 +125,45 @@ const rendererConfig = {
     plugins: [
         new RuleInheritancePlugin({
             packages: [
-                path.resolve(__dirname, '../../packages/gui')
+                path.resolve(import.meta.dirname, '../../packages/gui')
             ]
         }),
         new CopyWebpackPlugin({
             patterns: [
                 {
-                    from: path.resolve(__dirname, 'static'),
+                    from: path.resolve(import.meta.dirname, 'static'),
                     to: './static',
                     noErrorOnMissing: true
                 },
                 {
-                    from: path.resolve(__dirname, '../../packages/gui/static'),
+                    from: path.resolve(import.meta.dirname, '../../packages/gui/static'),
                     to: './static'
                 },
                 {
-                    from: path.resolve(__dirname, 'src', 'renderer', 'index.html'),
+                    from: path.resolve(import.meta.dirname, 'src', 'renderer', 'index.html'),
                     to: '.'
                 },
                 {
-                    from: path.resolve(__dirname, 'src', 'renderer', 'index.css'),
+                    from: path.resolve(import.meta.dirname, 'src', 'renderer', 'index.css'),
                     to: '.'
                 },
                 {
-                    from: path.resolve(__dirname, 'src', 'renderer', 'loading.html'),
+                    from: path.resolve(import.meta.dirname, 'src', 'renderer', 'loading.html'),
                     to: '.'
                 },
                 {
-                    from: path.resolve(__dirname, '../../packages/block/media'),
+                    from: path.resolve(import.meta.dirname, '../../packages/block/media'),
                     to: 'static/blocks-media/default'
                 },
                 {
-                    from: path.resolve(__dirname, '../../packages/block/media'),
+                    from: path.resolve(import.meta.dirname, '../../packages/block/media'),
                     to: 'static/blocks-media/high-contrast'
                 },
                 {
-                    from: path.resolve(__dirname, '../../packages/gui/src/lib/themes/high-contrast/blocks-media'),
+                    from: path.resolve(
+                        import.meta.dirname,
+                        '../../packages/gui/src/lib/themes/high-contrast/blocks-media'
+                    ),
                     to: 'static/blocks-media/high-contrast',
                     force: true
                 }
@@ -182,10 +185,10 @@ if (!IS_PRODUCTION) {
     rendererConfig.module.rules.push({
         test: /blocks-msgs\.js$/,
         include: [
-            path.resolve(__dirname, '../../packages/l10n/locales')
+            path.resolve(import.meta.dirname, '../../packages/l10n/locales')
         ],
         use: [{
-            loader: path.resolve(__dirname, '../../packages/gui/scripts/block-message-loader.js')
+            loader: path.resolve(import.meta.dirname, '../../packages/gui/scripts/block-message-loader.js')
         }]
     });
 }
