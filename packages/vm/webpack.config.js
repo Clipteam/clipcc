@@ -11,8 +11,6 @@ const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devtool: 'cheap-module-source-map',
     output: {
-        library: 'VirtualMachine',
-        libraryTarget: 'umd',
         filename: '[name].js'
     },
     resolve: {
@@ -76,6 +74,10 @@ module.exports = [
             'scratch-vm.min': './src/index.js'
         },
         output: {
+            library: {
+                name: 'VirtualMachine',
+                type: 'umd'
+            },
             path: path.resolve('dist', 'web')
         }
     }),
@@ -86,6 +88,9 @@ module.exports = [
             'scratch-vm': './src/index.js'
         },
         output: {
+            library: {
+                type: 'commonjs2'
+            },
             path: path.resolve('dist', 'node')
         },
         externals: {
