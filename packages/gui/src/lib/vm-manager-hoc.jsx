@@ -14,7 +14,7 @@ import {
     projectError
 } from '../reducers/project-state';
 
-/*
+/**
  * Higher Order Component to manage events emitted by the VM
  * @param {React.Component} WrappedComponent component to manage VM events for
  * @returns {React.Component} connected component with vm events bound to redux

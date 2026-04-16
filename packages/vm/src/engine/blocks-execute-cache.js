@@ -1,7 +1,12 @@
 /**
  * @fileoverview
- * Access point for private method shared between blocks.js and execute.js for
- * caching execute information.
+ * Helpers shared between blocks.js and execute.js for caching execute
+ * information.
+ */
+
+/**
+ * @typedef {import('./blocks')} Blocks
+ * @typedef {new (blocks: Blocks, cached: object) => object} CacheType
  */
 
 /**
@@ -10,10 +15,38 @@
  * reset.
  * @param {Blocks} blocks Blocks containing the expected blockId
  * @param {string} blockId blockId for the desired execute cache
+ * @param {CacheType} [CacheType] constructor for cached block information
+ * @returns {?object} execute cache object
  */
-exports.getCached = function (blocks, blockId) { // eslint-disable-line no-unused-vars
-    throw new Error('blocks.js has not initialized BlocksExecuteCache');
+const getCached = function (blocks, blockId, CacheType) {
+    const executeCache = blocks._cache._executeCached;
+
+    let cached = executeCache[blockId];
+    if (typeof cached !== 'undefined') {
+        return cached;
+    }
+
+    const block = blocks.getBlock(blockId);
+    if (typeof block === 'undefined') {
+        return null;
+    }
+
+    const cachedBlockData = {
+        id: blockId,
+        opcode: blocks.getOpcode(block),
+        fields: blocks.getFields(block),
+        inputs: blocks.getInputs(block),
+        mutation: blocks.getMutation(block)
+    };
+
+    cached = typeof CacheType === 'undefined' ?
+        cachedBlockData :
+        new CacheType(blocks, cachedBlockData);
+
+    executeCache[blockId] = cached;
+    return cached;
 };
 
-// Call after the default throwing getCached is assigned for Blocks to replace.
-require('./blocks');
+module.exports = {
+    getCached
+};

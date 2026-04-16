@@ -1,5 +1,5 @@
-import GUI from './containers/gui.jsx';
-import AppStateHOC from './lib/app-state-hoc.jsx';
+import GUI from './containers/gui.tsx';
+import AppStateHOC from './lib/app-state-hoc.tsx';
 import GuiReducer, {guiInitialState, guiMiddleware, initEmbedded, initFullScreen, initPlayer} from './reducers/gui';
 import LocalesReducer, {localesInitialState, initLocale} from './reducers/locales';
 import {ScratchPaintReducer} from 'clipcc-paint';

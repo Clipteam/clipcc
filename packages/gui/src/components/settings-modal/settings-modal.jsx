@@ -5,9 +5,9 @@ import bindAll from 'lodash.bindall';
 import {defineMessages, injectIntl, intlShape, FormattedMessage} from 'react-intl';
 import Box from '../box/box.jsx';
 import Modal from '../../containers/modal.jsx';
-import Input from '../forms/input.jsx';
+import Input from '../forms/input';
 import Select from '../select/select.jsx';
-import BufferedInputHOC from '../forms/buffered-input-hoc.jsx';
+import BufferedInputHOC from '../forms/buffered-input-hoc';
 import Switch from '../switch/switch.jsx';
 import styles from './settings-modal.css';
 

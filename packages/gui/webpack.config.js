@@ -8,11 +8,15 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const RuleInheritancePlugin = require('rule-inheritance-webpack-plugin');
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const BUILD_DIST = IS_PRODUCTION || process.env.BUILD_MODE === 'dist';
+const IS_CI = process.env.CI;
 
 const base = {
-    mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+    mode: IS_PRODUCTION ? 'production' : 'development',
     devtool: 'cheap-module-source-map',
     devServer: {
         static: path.resolve(__dirname, 'build'),
@@ -25,44 +29,13 @@ const base = {
         chunkFilename: 'chunks/[name].js'
     },
     resolve: {
-        extensions: ['.ts', '.js', '.tsx', '.jsx'],
-        alias: {
-            'clipcc-vm': path.resolve(__dirname, '../vm/src/index.js'),
-            'clipcc-block': path.resolve(__dirname, '../block/src/index.ts'),
-            'clipcc-render': path.resolve(__dirname, '../render/src/index.js'),
-            'clipcc-audio': path.resolve(__dirname, '../audio/src/index.js')
-        }
-    },
-    snapshot: {
-        managedPaths: [
-            /^.+?[\\/]node_modules[\\/](?!scratch-(blocks|l10n|paint|render|storage|vm))[\\/]/
-        ]
+        extensions: ['.ts', '.js', '.tsx', '.jsx']
     },
     module: {
         rules: [{
-            include: [
-                path.resolve(__dirname, 'src'),
-                path.resolve(__dirname, '../vm/src'),
-                path.resolve(__dirname, '../block/src'),
-                path.resolve(__dirname, '../audio/src'),
-                path.resolve(__dirname, '../svg-renderer/src')
-            ],
-            test: /\.([cm]?ts|tsx)$/,
-            loader: 'ts-loader',
-            options: {
-                transpileOnly: true,
-                allowTsInNodeModules: true
-            }
-        },
-        {
-            test: /\.jsx?$/,
+            test: /\.[jt]sx?$/,
             loader: 'babel-loader',
-            exclude: {
-                and: [/node_modules/],
-                not: [
-                    /node_modules[\\/](scratch|clipcc)-[^\\/]+[\\/]src/
-                ]
-            },
+            include: path.resolve(__dirname, 'src'),
             options: {
                 // Explicitly disable babelrc so we don't catch various config
                 // in much lower dependencies.
@@ -74,12 +47,14 @@ const base = {
                     ['react-intl', {
                         messagesDir: './translations/messages/'
                     }]],
-                presets: ['@babel/preset-env', '@babel/preset-react']
+                presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript']
             }
-        },
-        {
+        }, {
             test: /\.css$/,
-            exclude: path.resolve(__dirname, '../block/src'),
+            include: [
+                path.resolve(__dirname, 'src'),
+                require.resolve('react-tabs/style/react-tabs.css')
+            ],
             use: [{
                 loader: 'style-loader'
             }, {
@@ -103,10 +78,6 @@ const base = {
                 }
             }]
         }, {
-            test: /\.css$/,
-            include: path.resolve(__dirname, '../block/src'),
-            type: 'asset/source'
-        }, {
             test: /\.hex$/,
             type: 'asset/inline',
             generator: {
@@ -129,6 +100,18 @@ const base = {
         ]
     },
     plugins: [
+        new RuleInheritancePlugin({
+            packages: [
+                path.resolve(__dirname, '../audio'),
+                path.resolve(__dirname, '../block'),
+                path.resolve(__dirname, '../l10n'),
+                path.resolve(__dirname, '../paint'),
+                path.resolve(__dirname, '../render'),
+                path.resolve(__dirname, '../storage'),
+                path.resolve(__dirname, '../svg-renderer'),
+                path.resolve(__dirname, '../vm')
+            ]
+        }),
         new NodePolyfillPlugin(),
         new CopyWebpackPlugin({
             patterns: [
@@ -150,11 +133,11 @@ const base = {
     ]
 };
 
-if (!process.env.CI) {
+if (!IS_CI) {
     base.plugins.push(new webpack.ProgressPlugin());
 }
 
-if (base.mode === 'development') {
+if (!IS_PRODUCTION) {
     base.module.rules.push({
         test: /blocks-msgs\.js$/,
         include: [
@@ -262,7 +245,7 @@ module.exports = [
         ])
     })
 ].concat(
-    process.env.NODE_ENV === 'production' || process.env.BUILD_MODE === 'dist' ? (
+    BUILD_DIST ? (
         // export as library
         defaultsDeep({}, base, {
             target: 'web',

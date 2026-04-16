@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import Popover from 'react-popover';
 import {injectIntl, intlShape, defineMessages, FormattedMessage} from 'react-intl';
 
-import Label from '../forms/label.jsx';
-import Input from '../forms/input.jsx';
-import BufferedInputHOC from '../forms/buffered-input-hoc.jsx';
+import Label from '../forms/label';
+import Input from '../forms/input';
+import BufferedInputHOC from '../forms/buffered-input-hoc';
 import ToggleButtons from '../toggle-buttons/toggle-buttons.jsx';
 import Dial from './dial.jsx';
 

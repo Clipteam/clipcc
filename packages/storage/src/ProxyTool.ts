@@ -2,14 +2,6 @@ import FetchWorkerTool from './FetchWorkerTool';
 import {FetchTool} from './FetchTool';
 import {ScratchGetRequest, ScratchSendRequest, Tool} from './Tool';
 
-/**
- * @typedef {object} Request
- * @property {string} url
- * @property {*} body
- * @property {string} method
- * @property {boolean} withCredentials
- */
-
 type ToolFilter = typeof ProxyTool.TOOL_FILTER[keyof typeof ProxyTool.TOOL_FILTER];
 
 /**
@@ -51,7 +43,7 @@ export default class ProxyTool implements Tool {
 
     /**
      * Is get supported? false if all proxied tool return false.
-     * @returns {boolean} Is get supported?
+     * @returns Is get supported?
      */
     get isGetSupported (): boolean {
         return this.tools.some(tool => tool.isGetSupported);
@@ -59,8 +51,8 @@ export default class ProxyTool implements Tool {
 
     /**
      * Request data from with one of the proxied tools.
-     * @param {Request} reqConfig - Request configuration for data to get.
-     * @returns {Promise.<Buffer>} Resolve to Buffer of data from server.
+     * @param reqConfig - Request configuration for data to get.
+     * @returns Resolve to Buffer of data from server.
      */
     get (reqConfig: ScratchGetRequest): Promise<Uint8Array | null> {
         let toolIndex = 0;
@@ -79,7 +71,7 @@ export default class ProxyTool implements Tool {
 
     /**
      * Is sending supported? false if all proxied tool return false.
-     * @returns {boolean} Is sending supported?
+     * @returns Is sending supported?
      */
     get isSendSupported (): boolean {
         return this.tools.some(tool => tool.isSendSupported);
@@ -87,8 +79,8 @@ export default class ProxyTool implements Tool {
 
     /**
      * Send data to a server with one of the proxied tools.
-     * @param {Request} reqConfig - Request configuration for data to send.
-     * @returns {Promise.<Buffer|string|object>} Server returned metadata.
+     * @param reqConfig - Request configuration for data to send.
+     * @returns Server returned metadata.
      */
     send (reqConfig: ScratchSendRequest): Promise<string> {
         let toolIndex = 0;

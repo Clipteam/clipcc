@@ -26,6 +26,14 @@ import type {AnchoredComment} from './anchored_comment';
  * @author fenichel@google.com (Rachel Fenichel)
  */
 
+// Use a collator's compare instead of localeCompare which internally
+// creates a collator. Using this is a lot faster in browsers that create a
+// collator for every localeCompare call.
+const collator = new Intl.Collator([], {
+  sensitivity: 'base',
+  numeric: true
+});
+
 /**
  * Compare strings with natural number sorting.
  * @param str1 First input.
@@ -33,10 +41,7 @@ import type {AnchoredComment} from './anchored_comment';
  * @returns -1, 0, or 1 to signify greater than, equality, or less than.
  */
 export function compareStrings(str1: string, str2: string): number {
-  return str1.localeCompare(str2, [], {
-    sensitivity: 'base',
-    numeric: true
-  });
+  return collator.compare(str1, str2);
 }
 
 /**

@@ -9,9 +9,13 @@
     "type": "git",
     "url": "https://github.com/Clipteam/clipcc.git"
   },
-  "main": "./src/index.js",
-  "types": "./dist/types/index.d.ts",
-  "browser": "./dist/web/scratch-render.js",
+  "exports": {
+    "types": "./dist/types/index.d.ts",
+    "webpack": "./src/index.js",
+    "node": "./dist/node/scratch-render.js",
+    "browser": "./dist/web/scratch-render.js",
+    "default": "./src/index.js"
+  },
   "scripts": {
     "build:types": "tsc --project ./tsconfig.dts.json",
     "build": "pnpm run build:types && webpack --progress --color",
@@ -25,12 +29,12 @@
     "watch": "webpack --progress --color --watch --watch-poll"
   },
   "devDependencies": {
-    "@babel/preset-env": "7.29.0",
     "@babel/polyfill": "7.12.1",
+    "@babel/preset-env": "7.29.2",
     "@types/hull.js": "^1.0.4",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.1.0",
-    "babel-loader": "^10.1.0",
+    "babel-loader": "^10.1.1",
     "clipcc-vm": "workspace:~",
     "copy-webpack-plugin": "^14.0.0",
     "eslint": "^9.39.2",
@@ -39,13 +43,14 @@
     "json": "9.0.6",
     "node-polyfill-webpack-plugin": "^3.0.0",
     "playwright-chromium": "1.13.0",
+    "rule-inheritance-webpack-plugin": "^0.4.0",
     "scratch-render-fonts": "1.0.252",
     "tap": "21.0.1",
     "terser-webpack-plugin": "^5.3.17",
     "travis-after-all": "1.4.5",
     "ts-loader": "^9.5.4",
-    "typescript": "^5.9.3",
-    "webpack": "^5.105.4",
+    "typescript": "catalog:",
+    "webpack": "catalog:",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.3"
   },
@@ -53,7 +58,7 @@
     "scratch-render-fonts": "^1.0.252"
   },
   "dependencies": {
-    "@turbowarp/nanolog": "^0.2.0",
+    "@turbowarp/nanolog": "^1.0.1",
     "clipcc-storage": "workspace:~",
     "clipcc-svg-renderer": "workspace:~",
     "grapheme-breaker": "0.3.2",

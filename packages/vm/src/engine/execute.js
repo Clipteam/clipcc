@@ -1,5 +1,5 @@
 const BlockUtility = require('./block-utility');
-const BlocksExecuteCache = require('./blocks-execute-cache');
+const {getCached: getCachedExecuteBlock} = require('./blocks-execute-cache');
 const log = require('../util/log');
 const Thread = require('./thread');
 const {Map} = require('immutable');
@@ -401,7 +401,7 @@ class BlockCached {
     _pushInput (inputName, blockContainer) {
         const input = this._inputs[inputName];
         if (input.block) {
-            const inputCached = BlocksExecuteCache.getCached(blockContainer, input.block, BlockCached);
+            const inputCached = getCachedExecuteBlock(blockContainer, input.block, BlockCached);
             if (inputCached._isHat) {
                 return;
             }
@@ -456,10 +456,10 @@ const execute = function (sequencer, thread) {
     const currentStackFrame = thread.peekStackFrame();
 
     let blockContainer = thread.blockContainer;
-    let blockCached = BlocksExecuteCache.getCached(blockContainer, currentBlockId, BlockCached);
+    let blockCached = getCachedExecuteBlock(blockContainer, currentBlockId, BlockCached);
     if (blockCached === null) {
         blockContainer = runtime.flyoutBlocks;
-        blockCached = BlocksExecuteCache.getCached(blockContainer, currentBlockId, BlockCached);
+        blockCached = getCachedExecuteBlock(blockContainer, currentBlockId, BlockCached);
         // Stop if block or target no longer exists.
         if (blockCached === null) {
             // No block found: stop the thread; script no longer exists.
