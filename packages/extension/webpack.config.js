@@ -53,5 +53,36 @@ module.exports = [
             libraryTarget: 'commonjs2',
             path: path.resolve(__dirname, 'dist', 'node')
         }
-    })
+    }),
+    // Worker for test
+    {
+        mode: 'production',
+        entry: {
+            worker: './test/fixtures/dispatch-worker.ts'
+        },
+        target: 'node',
+        output: {
+            libraryTarget: 'umd',
+            path: path.resolve(__dirname, 'test', 'dist'),
+        },
+        resolve: {
+            extensions: ['.ts', '.js']
+        },
+        module: {
+            rules: [{
+                test: /\.ts$/,
+                use: {
+                    loader: 'ts-loader',
+                    options: {
+                        configFile: path.resolve(__dirname, 'tsconfig.test.json')
+                    }
+                },
+                exclude: /node_modules/,
+                include: [
+                    path.resolve(__dirname, 'src'),
+                    path.resolve(__dirname, 'test')
+                ]
+            }]
+        }
+    }
 ];
