@@ -1,6 +1,7 @@
+import * as ScratchBlocks from 'clipcc-block';
+
 /**
  * @typedef {import('clipcc-vm')} VirtualMachine
- * @import * as ScratchBlocks from 'clipcc-block'
  */
 
 /**
@@ -19,10 +20,9 @@ export const setRecordSoundCallback = callback => {
 /**
  * Connect scratch blocks with the vm
  * @param {VirtualMachine} vm - The scratch vm
- * @param {ScratchBlocks} ScratchBlocks - The scratch blocks to connect
  * @returns {ScratchBlocks} ScratchBlocks connected with the vm
  */
-export default function (vm, ScratchBlocks) {
+export default function (vm) {
 
     const jsonForMenuBlock = function (name, menuOptionsFn, category, start) {
         return {

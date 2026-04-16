@@ -29,6 +29,21 @@ require('canvas-toBlob');
 const RESERVED_NAMES = ['_mouse_', '_stage_', '_edge_', '_myself_', '_random_'];
 
 /**
+ * @type {string[]}
+ */
+const CORE_EXTENSIONS = [
+    // 'motion',
+    // 'looks',
+    // 'sound',
+    // 'events',
+    // 'control',
+    // 'sensing',
+    // 'operators',
+    // 'variables',
+    // 'myBlocks'
+];
+
+/**
  * @typedef {number} int
  * @typedef {import('./engine/target')} Target
  * @typedef {import('./serialization/sb3').ImportedExtensionsInfo} ImportedExtensionsInfo
@@ -173,6 +188,11 @@ class VirtualMachine extends EventEmitter {
         });
 
         this.extensionManager = new ExtensionManager(this.runtime);
+
+        // Load core extensions
+        for (const id of CORE_EXTENSIONS) {
+            this.extensionManager.loadExtensionIdSync(id);
+        }
 
         this.blockListener = this.blockListener.bind(this);
         this.flyoutBlockListener = this.flyoutBlockListener.bind(this);
@@ -421,11 +441,9 @@ class VirtualMachine extends EventEmitter {
                 resolve(res);
             });
         })
-            .catch(async error => {
-                const {SB1File, ValidationError} = await import(
-                    /* webpackChunkName: "clipcc-sb1-convertor" */
-                    'clipcc-sb1-converter'
-                );
+            .catch(error => {
+                // eslint-disable-next-line global-require
+                const {SB1File, ValidationError} = require('clipcc-sb1-converter');
 
                 try {
                     const sb1 = new SB1File(input);

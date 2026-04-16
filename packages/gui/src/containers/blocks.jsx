@@ -4,7 +4,6 @@ import defaultsDeep from 'lodash.defaultsdeep';
 import makeToolbox from '../lib/make-toolbox';
 import PropTypes from 'prop-types';
 import React from 'react';
-import {injectBlock} from '../lib/blocks-loader-hoc.tsx';
 import VMScratchBlocks, {setRecordSoundCallback} from '../lib/blocks';
 import VM from 'clipcc-vm';
 
@@ -52,7 +51,7 @@ const DroppableBlocks = DropAreaHOC([
 class Blocks extends React.Component {
     constructor (props) {
         super(props);
-        this.ScratchBlocks = VMScratchBlocks(props.vm, props.blocks);
+        this.ScratchBlocks = VMScratchBlocks(props.vm);
         bindAll(this, [
             'attachVM',
             'checkoutWsByProccode',
@@ -196,7 +195,7 @@ class Blocks extends React.Component {
                 // call setLocale if the locale has changed, or changed while the blocks were hidden.
                 // vm.getLocale() will be out of sync if locale was changed while not visible
                 this.setLocale();
-            // eslint-disable-next-line no-negated-condition
+                // eslint-disable-next-line no-negated-condition
             } else if (this.props.theme !== prevProps.theme) {
                 this.ScratchBlocks.Theme.setTheme(this.themeMapName[this.props.theme] || 'scratch', this.workspace);
             } else {
@@ -404,8 +403,7 @@ class Blocks extends React.Component {
                 targetSounds.length > 0 ? targetSounds[targetSounds.length - 1].name : '',
                 this.props.hideNonVanillaBlocks
             );
-        } catch (e) {
-            console.error(`Error making toolbox:`, e);
+        } catch {
             return null;
         }
     }
@@ -662,7 +660,6 @@ class Blocks extends React.Component {
 
 Blocks.propTypes = {
     anyModalVisible: PropTypes.bool,
-    blocks: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     hideNonVanillaBlocks: PropTypes.bool.isRequired,
     canUseCloud: PropTypes.bool,
     customProceduresVisible: PropTypes.bool,
@@ -779,5 +776,5 @@ export default errorBoundaryHOC('Blocks')(
     connect(
         mapStateToProps,
         mapDispatchToProps
-    )(injectBlock(Blocks))
+    )(Blocks)
 );

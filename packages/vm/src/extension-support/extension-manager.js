@@ -8,36 +8,25 @@ const BlockType = require('./block-type');
 // TODO: move these out into a separate repository?
 // TODO: change extension spec so that library info, including extension ID, can be collected through static methods
 
-/**
- * List of core extensions that should load at startup.
- */
-const coreExtensions = {
-    // eslint-disable-next-line global-require
-    coreExample: () => require('../blocks/scratch3_core_example')
-};
-
-/**
- * List of built-in extensions that are available to load by ID or URL but do not load at startup.
- */
+/* eslint-disable global-require */
 const builtinExtensions = {
     // This is an example that isn't loaded with the other core blocks,
     // but serves as a reference for loading core blocks as extensions.
+    coreExample: () => require('../blocks/scratch3_core_example'),
     // These are the non-core built-in extensions.
-    pen: () => import(/* webpackChunkName: "ext_pen" */ '../extensions/scratch3_pen/index.js'),
-    wedo2: () => import(/* webpackChunkName: "ext_wedo2" */ '../extensions/scratch3_wedo2/index.js'),
-    music: () => import(/* webpackChunkName: "ext_music" */ '../extensions/scratch3_music/index.js'),
-    microbit: () => import(/* webpackChunkName: "ext_microbit" */ '../extensions/scratch3_microbit/index.js'),
-    text2speech: () => import(/* webpackChunkName: "ext_text2speech" */ '../extensions/scratch3_text2speech/index.js'),
-    translate: () => import(/* webpackChunkName: "ext_translate" */ '../extensions/scratch3_translate/index.js'),
-    videoSensing: () => import(
-        /* webpackChunkName: "ext_videoSensing" */
-        '../extensions/scratch3_video_sensing/index.js'
-    ),
-    ev3: () => import(/* webpackChunkName: "ext_ev3" */ '../extensions/scratch3_ev3/index.js'),
-    makeymakey: () => import(/* webpackChunkName: "ext_makeymakey" */ '../extensions/scratch3_makeymakey/index.js'),
-    boost: () => import(/* webpackChunkName: "ext_boost" */ '../extensions/scratch3_boost/index.js'),
-    gdxfor: () => import(/* webpackChunkName: "ext_gdxfor" */ '../extensions/scratch3_gdx_for/index.js')
+    pen: () => require('../extensions/scratch3_pen'),
+    wedo2: () => require('../extensions/scratch3_wedo2'),
+    music: () => require('../extensions/scratch3_music'),
+    microbit: () => require('../extensions/scratch3_microbit'),
+    text2speech: () => require('../extensions/scratch3_text2speech'),
+    translate: () => require('../extensions/scratch3_translate'),
+    videoSensing: () => require('../extensions/scratch3_video_sensing'),
+    ev3: () => require('../extensions/scratch3_ev3'),
+    makeymakey: () => require('../extensions/scratch3_makeymakey'),
+    boost: () => require('../extensions/scratch3_boost'),
+    gdxfor: () => require('../extensions/scratch3_gdx_for')
 };
+/* eslint-enable global-require */
 
 /**
  * @typedef {object} ArgumentInfo - Information about an extension block argument
@@ -129,8 +118,8 @@ class ExtensionManager {
      * @param {string} extensionId - the ID of an internal extension
      */
     loadExtensionIdSync (extensionId) {
-        if (!Object.prototype.hasOwnProperty.call(coreExtensions, extensionId)) {
-            log.warn(`Could not find extension ${extensionId} in core extensions.`);
+        if (!Object.prototype.hasOwnProperty.call(builtinExtensions, extensionId)) {
+            log.warn(`Could not find extension ${extensionId} in the built in extensions.`);
             return;
         }
 
@@ -141,7 +130,7 @@ class ExtensionManager {
             return;
         }
 
-        const extension = coreExtensions[extensionId]();
+        const extension = builtinExtensions[extensionId]();
         const extensionInstance = new extension(this.runtime);
         const serviceName = this._registerInternalExtension(extensionInstance);
         this._loadedExtensions.set(extensionId, serviceName);
@@ -152,24 +141,20 @@ class ExtensionManager {
      * @param {string} extensionURL - the URL for the extension to load OR the ID of an internal extension
      * @returns {Promise} resolved once the extension is loaded and initialized or rejected on failure
      */
-    async loadExtensionURL (extensionURL) {
-        if (Object.prototype.hasOwnProperty.call(coreExtensions, extensionURL)) {
-            this.loadExtensionIdSync(extensionURL);
-            return;
-        }
+    loadExtensionURL (extensionURL) {
         if (Object.prototype.hasOwnProperty.call(builtinExtensions, extensionURL)) {
             /** @todo dupe handling for non-builtin extensions. See commit 670e51d33580e8a2e852b3b038bb3afc282f81b9 */
             if (this.isExtensionLoaded(extensionURL)) {
                 const message = `Rejecting attempt to load a second extension with ID ${extensionURL}`;
                 log.warn(message);
-                return;
+                return Promise.resolve();
             }
 
-            const {default: extension} = await builtinExtensions[extensionURL]();
+            const extension = builtinExtensions[extensionURL]();
             const extensionInstance = new extension(this.runtime);
             const serviceName = this._registerInternalExtension(extensionInstance);
             this._loadedExtensions.set(extensionURL, serviceName);
-            return;
+            return Promise.resolve();
         }
 
         return new Promise((resolve, reject) => {

@@ -2,8 +2,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import bindAll from 'lodash.bindall';
 import VM from 'clipcc-vm';
+import PaintEditor from 'clipcc-paint';
 import {inlineSvgFonts} from 'clipcc-svg-renderer';
-import {injectPaint} from '../lib/paint-loader-hoc';
 
 import {connect} from 'react-redux';
 
@@ -56,10 +56,8 @@ class PaintEditorWrapper extends React.Component {
         const {
             selectedCostumeIndex,
             vm,
-            paint,
             ...componentProps
         } = this.props;
-        const PaintEditor = paint.default;
 
         return (
             <PaintEditor
@@ -84,9 +82,7 @@ PaintEditorWrapper.propTypes = {
     selectedCostumeIndex: PropTypes.number.isRequired,
     stageHeight: PropTypes.number.isRequired,
     stageWidth: PropTypes.number.isRequired,
-    vm: PropTypes.instanceOf(VM),
-    // eslint-disable-next-line react/forbid-prop-types
-    paint: PropTypes.object
+    vm: PropTypes.instanceOf(VM)
 };
 
 const mapStateToProps = (state, {selectedCostumeIndex}) => {
@@ -111,6 +107,6 @@ const mapStateToProps = (state, {selectedCostumeIndex}) => {
     };
 };
 
-export default injectPaint(connect(
+export default connect(
     mapStateToProps
-)(PaintEditorWrapper));
+)(PaintEditorWrapper);
