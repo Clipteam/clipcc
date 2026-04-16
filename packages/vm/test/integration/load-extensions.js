@@ -2,8 +2,8 @@ const path = require('path');
 const tap = require('tap');
 const {test} = tap;
 const fs = require('fs');
+const attachExtensionManager = require('../fixtures/attach-extension-manager');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-const dispatch = require('../../src/dispatch/central-dispatch');
 const VirtualMachine = require('../../src/index');
 
 /**
@@ -13,12 +13,15 @@ const VirtualMachine = require('../../src/index');
 const stopVideoLoop = vm => {
     // TODO: provide a general way to tell extensions to shut down
     // Ideally we'd just dispose of the extension's Worker...
-    const serviceName = vm.extensionManager._loadedExtensions.get('videoSensing');
-    dispatch.call(serviceName, '_stopLoop');
+    if (vm.extensionManager.isExtensionEnabled('videoSensing')) {
+        const extensionAdapter = vm.extensionManager.getExtensionById('videoSensing');
+        extensionAdapter.instance._stopLoop();
+    }
 };
 
 test('Load external extensions', async t => {
     const vm = new VirtualMachine();
+    attachExtensionManager(vm);
     const testFiles = fs.readdirSync('./test/fixtures/load-extensions/confirm-load/');
 
     // Test each example extension file
@@ -30,7 +33,7 @@ test('Load external extensions', async t => {
         await t.test('Confirm expected extension is installed in example sb2 and sb3 projects', extTest => {
             vm.loadProject(project)
                 .then(() => {
-                    extTest.ok(vm.extensionManager.isExtensionLoaded(ext));
+                    extTest.ok(vm.extensionManager.isExtensionEnabled(ext));
                     extTest.end();
                 });
         });
@@ -43,6 +46,8 @@ test('Load external extensions', async t => {
 
 test('Load video sensing extension and video properties', async t => {
     const vm = new VirtualMachine();
+    attachExtensionManager(vm);
+
     // An array of test projects and their expected video state values
     const testProjects = [
         {
@@ -66,7 +71,7 @@ test('Load video sensing extension and video properties', async t => {
 
         const stage = vm.runtime.getTargetForStage();
 
-        t.ok(vm.extensionManager.isExtensionLoaded('videoSensing'));
+        t.ok(vm.extensionManager.isExtensionEnabled('videoSensing'));
 
         // Check that the stage target has the video state values we expect
         // based on the test project files, then check that the video io device

@@ -1,16 +1,12 @@
 const test = require('tap').test;
-const Worker = require('tiny-worker');
+const {ExtensionManager, ScratchBuiltinAdapter} = require('clipcc-extension');
 
 const BlockType = require('../../src/extension-support/block-type');
 
-const dispatch = require('../../src/dispatch/central-dispatch');
 const VirtualMachine = require('../../src/virtual-machine');
 
 const Sprite = require('../../src/sprites/sprite');
 const RenderedTarget = require('../../src/sprites/rendered-target');
-
-// By default Central Dispatch works with the Worker class built into the browser. Tell it to use TinyWorker instead.
-dispatch.workerClass = Worker;
 
 class TestInternalExtension {
     constructor () {
@@ -51,14 +47,20 @@ class TestInternalExtension {
     }
 }
 
-test('internal extension', t => {
+test('internal extension', async t => {
     const vm = new VirtualMachine();
+    vm.attachExtensionManager(new ExtensionManager(), []);
 
-    const extension = new TestInternalExtension();
-    t.ok(extension.status.constructorCalled);
+    const extensionAdapter = new ScratchBuiltinAdapter({
+        extensionId: 'testInternalExtension',
+        name: 'Test Internal Extension'
+    }, () => TestInternalExtension, vm.runtime);
+    vm.extensionManager.loadExtension(extensionAdapter);
 
-    t.notOk(extension.status.getInfoCalled);
-    vm.extensionManager._registerInternalExtension(extension);
+    t.notOk(extensionAdapter.instance);
+    await vm.extensionManager.enableExtension('testInternalExtension');
+    const extension = extensionAdapter.instance;
+    t.ok(extension);
     t.ok(extension.status.getInfoCalled);
 
     const func = vm.runtime.getOpcodeFunction('testInternalExtension_go');
@@ -81,39 +83,46 @@ test('internal extension', t => {
     };
     t.same(goBlockInfo, expectedBlockInfo);
 
+    const info = extensionAdapter.cachedCategoryInfo;
+
     // There should be 2 menus - one is an array, one is the function to call.
-    t.equal(vm.runtime._blockInfo[0].menus.length, 2);
+    t.equal(info.menus.length, 2);
     // First menu has 3 items.
-    t.equal(
-        vm.runtime._blockInfo[0].menus[0].json.args0[0].options.length, 3);
+    t.equal(info.menus[0].json.args0[0].options.length, 3);
     // Second menu is a dynamic menu and therefore should be a function.
-    t.type(
-        vm.runtime._blockInfo[0].menus[1].json.args0[0].options, 'function');
+    t.type(info.menus[1].json.args0[0].options, 'function');
 
     t.end();
 });
 
-test('load sync', t => {
+test('load coreExample', async t => {
     const vm = new VirtualMachine();
-    vm.extensionManager.loadExtensionIdSync('coreExample');
+    vm.attachExtensionManager(new ExtensionManager(), [{
+        extensionId: 'coreExample',
+        name: 'CoreEx'
+    }]);
     t.ok(vm.extensionManager.isExtensionLoaded('coreExample'));
 
-    t.equal(vm.runtime._blockInfo.length, 1);
+    await vm.extensionManager.enableExtension('coreExample');
+    vm.extensionManager.isExtensionEnabled('coreExample');
+
+    const info = vm.extensionManager.getExtensionById('coreExample').cachedCategoryInfo;
+    t.ok(info);
 
     // blocks should be an array of two items: a button pseudo-block and a reporter block.
-    t.equal(vm.runtime._blockInfo[0].blocks.length, 3);
-    t.type(vm.runtime._blockInfo[0].blocks[0].info, 'object');
-    t.type(vm.runtime._blockInfo[0].blocks[0].info.func, 'MAKE_A_VARIABLE');
-    t.equal(vm.runtime._blockInfo[0].blocks[0].info.blockType, 'button');
-    t.type(vm.runtime._blockInfo[0].blocks[1].info, 'object');
-    t.equal(vm.runtime._blockInfo[0].blocks[1].info.opcode, 'exampleOpcode');
-    t.equal(vm.runtime._blockInfo[0].blocks[1].info.blockType, 'reporter');
-    t.type(vm.runtime._blockInfo[0].blocks[2].info, 'object');
-    t.equal(vm.runtime._blockInfo[0].blocks[2].info.opcode, 'exampleWithInlineImage');
-    t.equal(vm.runtime._blockInfo[0].blocks[2].info.blockType, 'command');
+    t.equal(info.blocks.length, 3);
+    t.type(info.blocks[0].info, 'object');
+    t.type(info.blocks[0].info.func, 'MAKE_A_VARIABLE');
+    t.equal(info.blocks[0].info.blockType, 'button');
+    t.type(info.blocks[1].info, 'object');
+    t.equal(info.blocks[1].info.opcode, 'exampleOpcode');
+    t.equal(info.blocks[1].info.blockType, 'reporter');
+    t.type(info.blocks[2].info, 'object');
+    t.equal(info.blocks[2].info.opcode, 'exampleWithInlineImage');
+    t.equal(info.blocks[2].info.blockType, 'command');
 
     // Test the opcode function
-    t.equal(vm.runtime._blockInfo[0].blocks[1].info.func(), 'no stage yet');
+    t.equal(info.blocks[1].info.func(), 'no stage yet');
 
     const sprite = new Sprite(null, vm.runtime);
     sprite.name = 'Stage';
@@ -121,7 +130,7 @@ test('load sync', t => {
     stage.isStage = true;
     vm.runtime.targets = [stage];
 
-    t.equal(vm.runtime._blockInfo[0].blocks[1].info.func(), 'Stage');
+    t.equal(info.blocks[1].info.func(), 'Stage');
 
     t.end();
 });

@@ -1,20 +1,17 @@
-const Worker = require('tiny-worker');
 const path = require('path');
 const test = require('tap').test;
+const attachExtensionManager = require('../fixtures/attach-extension-manager');
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/index');
-const dispatch = require('../../src/dispatch/central-dispatch');
 
 const uri = path.resolve(__dirname, '../fixtures/sound.sb2');
 const project = readFileToBuffer(uri);
 
-// By default Central Dispatch works with the Worker class built into the browser. Tell it to use TinyWorker instead.
-dispatch.workerClass = Worker;
-
 test('sound', t => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
+    attachExtensionManager(vm);
 
     // Evaluate playground data and exit
     vm.on('playgroundData', e => {
