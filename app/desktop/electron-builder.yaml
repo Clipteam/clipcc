@@ -11,7 +11,8 @@ directories:
   output: dist
 
 files:
-  - dist/**/*
+  - dist/main/**/*
+  - dist/renderer/**/*
   - package.json
 
 extraResources:
