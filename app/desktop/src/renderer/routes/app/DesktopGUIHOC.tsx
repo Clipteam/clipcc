@@ -190,7 +190,6 @@ const ScratchDesktopGUIHOC = function (
                 canEditTitle: true,
                 canModifyCloudData: false,
                 canSave: false,
-                isStandalone: true,
                 isScratchDesktop: true,
                 onClickAbout: [
                     {

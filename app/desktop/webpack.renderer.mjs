@@ -37,7 +37,7 @@ const rendererConfig = {
     },
     devtool: IS_PRODUCTION ? false : 'cheap-module-source-map',
     devServer: {
-        host: '127.0.0.1',
+        host: 'localhost',
         port: 8386,
         hot: false,
         liveReload: true,
@@ -173,7 +173,7 @@ const rendererConfig = {
             'clipcc.BUILD_TIME': Date.now()
         }),
         new NodePolyfillPlugin({
-            includeAliases: ['Buffer']
+            includeAliases: ['Buffer', 'events']
         })
     ]
 };
