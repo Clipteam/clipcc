@@ -38,6 +38,7 @@ import themeManagerHOC from '../lib/theme-manager-hoc.jsx';
 
 import GUIComponent from '../components/gui/gui';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop';
+import {isScratchPaintLoaded, getScratchPaint} from '../lib/paint-loader';
 import type {RootState} from '../lib/app-state-hoc';
 import type {PropsOf} from '../lib/type-traits';
 
@@ -118,6 +119,9 @@ class GUI extends React.Component<GUIProps> {
         setIsScratchDesktop(!!this.props.isScratchDesktop);
         this.props.onStorageInit!(storage);
         this.props.onVmInit!(this.props.vm);
+        if (!this.props.isPlayerOnly) {
+            this.preloadPaint();
+        }
     }
     override componentDidUpdate (prevProps: GUIProps) {
         if (this.props.projectId !== prevProps.projectId && this.props.projectId !== null) {
@@ -127,6 +131,15 @@ class GUI extends React.Component<GUIProps> {
             // this only notifies container when a project changes from not yet loaded to loaded
             // At this time the project view in www doesn't need to know when a project is unloaded
             this.props.onProjectLoaded!();
+        }
+        if (!this.props.isPlayerOnly && prevProps.isPlayerOnly) {
+            this.preloadPaint();
+        }
+    }
+    preloadPaint () {
+        // Preload paint editor when main editor get ready
+        if (!isScratchPaintLoaded()) {
+            getScratchPaint();
         }
     }
     override render () {

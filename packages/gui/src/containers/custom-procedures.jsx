@@ -3,8 +3,8 @@ import defaultsDeep from 'lodash.defaultsdeep';
 import PropTypes from 'prop-types';
 import React from 'react';
 import CustomProceduresComponent from '../components/custom-procedures/custom-procedures.jsx';
-import * as ScratchBlocks from 'clipcc-block';
 import {connect} from 'react-redux';
+import {injectBlock} from '../lib/blocks-loader-hoc.tsx';
 
 class CustomProcedures extends React.Component {
     constructor (props) {
@@ -28,6 +28,7 @@ class CustomProcedures extends React.Component {
         };
     }
     componentWillUnmount () {
+        const {blocks: ScratchBlocks} = this.props;
         if (this.workspace) {
             if (ScratchBlocks.getFocusManager().getFocusedNode()) {
                 // Focus the workspace before destroying the workspace to avoid focusing
@@ -47,6 +48,7 @@ class CustomProcedures extends React.Component {
             {rtl: this.props.isRtl}
         );
 
+        const {blocks: ScratchBlocks} = this.props;
         this.workspace = ScratchBlocks.inject(this.blocks, workspaceConfig);
 
         // Create the procedure declaration block for editing the mutation.
@@ -184,6 +186,8 @@ class CustomProcedures extends React.Component {
 }
 
 CustomProcedures.propTypes = {
+    // eslint-disable-next-line react/forbid-prop-types
+    blocks: PropTypes.object,
     isRtl: PropTypes.bool,
     mutator: PropTypes.shape({
         proccode: PropTypes.string,
@@ -208,6 +212,7 @@ CustomProcedures.propTypes = {
     })
 };
 
+/** @import * as ScratchBlocks from 'clipcc-block' */
 /** @type {ScratchBlocks.BlocklyOptions} */
 CustomProcedures.defaultOptions = {
     zoom: {
@@ -232,6 +237,6 @@ const mapStateToProps = state => ({
     new: state.scratchGui.customProcedures.new
 });
 
-export default connect(
+export default injectBlock(connect(
     mapStateToProps
-)(CustomProcedures);
+)(CustomProcedures));
