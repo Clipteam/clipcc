@@ -38,7 +38,7 @@ const isDefaultProjectAsset = (value: unknown): value is DefaultProjectAsset => 
  * @todo make this more configurable
  */
 class Storage extends ScratchStorage {
-    private projectHost = '';
+    projectHost = '';
     private projectToken = '';
     private assetHost = '';
     private translator: Translator;

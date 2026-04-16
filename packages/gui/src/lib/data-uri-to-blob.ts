@@ -1,10 +1,10 @@
 /**
  * Utility to convert data URIs to blobs
  * Adapted from https://stackoverflow.com/questions/12168909/blob-from-dataurl
- * @param {string} dataURI the data uri to blobify
- * @returns {Blob} a blob representing the data uri
+ * @param dataURI the data uri to blobify
+ * @returns a blob representing the data uri
  */
-export default function dataURItoBlob (dataURI) {
+export default function dataURItoBlob (dataURI: string): Blob {
     const byteString = atob(dataURI.split(',')[1]);
     const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
     const arrayBuffer = new ArrayBuffer(byteString.length);
