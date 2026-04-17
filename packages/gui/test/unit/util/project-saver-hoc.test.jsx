@@ -6,7 +6,7 @@ import {mount} from 'enzyme';
 import {LoadingState} from '../../../src/reducers/project-state';
 import VM from 'clipcc-vm';
 
-import projectSaverHOC from '../../../src/lib/project-saver-hoc.jsx';
+import projectSaverHOC from '../../../src/lib/project-saver-hoc';
 
 describe('projectSaverHOC', () => {
     const mockStore = configureStore();

@@ -1,5 +1,5 @@
 /**
- * @import * as VirtualMachine from 'clipcc-vm';
+ * @import VirtualMachine from 'clipcc-vm';
  */
 
 /**

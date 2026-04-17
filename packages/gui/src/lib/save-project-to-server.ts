@@ -11,13 +11,21 @@ type ProjectJSON = ReturnType<VM['toJSON']>;
  */
 interface Param {
     /** The original project ID if a copy/remix */
-    originalId?: number;
+    originalId?: string | number;
     /** A flag indicating if this save is creating a copy */
     isCopy?: boolean;
     /** A flag indicating if this save is creating a remix */
     isRemix?: boolean;
     /** The title of the project */
     title?: string;
+}
+
+interface ProjectSaverResponseBody {
+    /** The ID of the project */
+    id: number | string;
+    /** The content name of the project, which is the same as the ID */
+    'content-name': number | string | null;
+    [key: string]: unknown;
 }
 
 /**
@@ -28,7 +36,11 @@ interface Param {
  * @param params the request params.
  * @returns A promise that resolves when the network request resolves.
  */
-export default function (projectId: number | null, vmState: ProjectJSON, params: Param): Promise<{id: number}> {
+export default function (
+    projectId: number | string | null,
+    vmState: ProjectJSON,
+    params: Param
+): Promise<ProjectSaverResponseBody> {
     const creatingProject = projectId === null || typeof projectId === 'undefined';
     const queryParams: CamelToSnakeKeys<Param> = {};
     if (Object.prototype.hasOwnProperty.call(params, 'originalId')) queryParams.original_id = params.originalId;
