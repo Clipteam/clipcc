@@ -44,6 +44,7 @@ type TelemetryEvent =
     | 'projectWasUploaded';
 
 interface OwnProps {
+    autoSaveEnabled?: boolean;
     autoSaveIntervalSecs?: number;
     canCreateNew?: boolean;
     canSave?: boolean;
@@ -61,8 +62,11 @@ interface OwnProps {
 const mapStateToProps = (state: RootState, ownProps: OwnProps) => {
     const loadingState = state.scratchGui.projectState.loadingState;
     const isShowingWithId = getIsShowingWithId(loadingState);
+    const settings = state.scratchGui.settings;
     return {
         autoSaveTimeoutId: state.scratchGui.timeout.autoSaveTimeoutId,
+        settingsAutoSaveEnabled: settings?.autoSave ?? false,
+        settingsAutoSaveIntervalSecs: settings?.autoSaveInterval ?? 120,
         isAnyCreatingNewState: getIsAnyCreatingNewState(loadingState),
         isLoading: getIsLoading(loadingState),
         isCreatingCopy: getIsCreatingCopy(loadingState),
@@ -127,7 +131,6 @@ const ProjectSaverHOC = function <P extends Record<string, unknown>> (
 ) {
     class ProjectSaverComponent extends React.Component<ProjectSaverComponentProps<P>> {
         static defaultProps = {
-            autoSaveIntervalSecs: 120,
             onUpdateProjectData: saveProjectToServer
         };
 
@@ -162,8 +165,28 @@ const ProjectSaverHOC = function <P extends Record<string, unknown>> (
                 this.reportTelemetryEvent('projectDidLoad');
             }
 
+            const autoSaveEnabled = this.getAutoSaveEnabled(this.props);
+            const prevAutoSaveEnabled = this.getAutoSaveEnabled(prevProps);
+            const autoSaveIntervalSecs = this.getAutoSaveIntervalSecs(this.props);
+            const prevAutoSaveIntervalSecs = this.getAutoSaveIntervalSecs(prevProps);
+
+            if (!autoSaveEnabled && prevAutoSaveEnabled) {
+                this.clearAutoSaveTimeout();
+            }
+
             if (this.props.projectChanged && !prevProps.projectChanged) {
                 this.scheduleAutoSave();
+            }
+            if (autoSaveEnabled && !prevAutoSaveEnabled && this.props.projectChanged) {
+                this.scheduleAutoSave();
+            }
+            if (
+                autoSaveEnabled &&
+                autoSaveIntervalSecs !== prevAutoSaveIntervalSecs &&
+                this.props.autoSaveTimeoutId !== null
+            ) {
+                this.clearAutoSaveTimeout();
+                if (this.props.projectChanged) this.scheduleAutoSave();
             }
             if (this.props.isUpdating && !prevProps.isUpdating) {
                 this.updateProjectToStorage();
@@ -231,17 +254,27 @@ const ProjectSaverHOC = function <P extends Record<string, unknown>> (
         }
 
         scheduleAutoSave () {
-            if (this.props.isShowingSaveable && this.props.autoSaveTimeoutId === null) {
+            if (this.props.isShowingSaveable && this.props.autoSaveTimeoutId === null && this.getAutoSaveEnabled()) {
                 const timeoutId = setTimeout(this.tryToAutoSave,
-                    this.props.autoSaveIntervalSecs! * 1000);
+                    this.getAutoSaveIntervalSecs() * 1000);
                 this.props.setAutoSaveTimeoutId(timeoutId);
             }
         }
 
         tryToAutoSave () {
-            if (this.props.projectChanged && this.props.isShowingSaveable) {
+            if (this.props.projectChanged && this.props.isShowingSaveable && this.getAutoSaveEnabled()) {
                 this.props.onAutoUpdateProject();
             }
+        }
+
+        getAutoSaveEnabled (props: Readonly<ProjectSaverComponentProps<P>> = this.props) {
+            if (typeof props.autoSaveEnabled === 'boolean') return props.autoSaveEnabled;
+            return props.settingsAutoSaveEnabled;
+        }
+
+        getAutoSaveIntervalSecs (props: Readonly<ProjectSaverComponentProps<P>> = this.props) {
+            if (typeof props.autoSaveIntervalSecs === 'number') return props.autoSaveIntervalSecs;
+            return props.settingsAutoSaveIntervalSecs;
         }
 
         isShowingCreatable (props: Readonly<ProjectSaverComponentProps<P>>) {
@@ -409,6 +442,7 @@ const ProjectSaverHOC = function <P extends Record<string, unknown>> (
             /* eslint-disable @typescript-eslint/no-unused-vars */
             const {
                 autoSaveTimeoutId,
+                autoSaveEnabled,
                 autoSaveIntervalSecs,
                 canCreateNew,
                 canSave,
@@ -447,6 +481,8 @@ const ProjectSaverHOC = function <P extends Record<string, unknown>> (
                 onUpdateProjectThumbnail,
                 reduxProjectId,
                 reduxProjectTitle,
+                settingsAutoSaveEnabled,
+                settingsAutoSaveIntervalSecs,
                 setAutoSaveTimeoutId: setAutoSaveTimeoutIdProp,
                 vm,
                 ...componentProps
