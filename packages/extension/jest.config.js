@@ -2,7 +2,10 @@ const {createDefaultPreset} = require('ts-jest');
 
 const tsJestTransformCfg = createDefaultPreset({
     tsconfig: {
-        types: ['./test/tiny-worker.d.ts']
+        types: [
+            'node',
+            './test/tiny-worker.d.ts'
+        ]
     }
 }).transform;
 

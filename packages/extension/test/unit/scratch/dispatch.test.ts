@@ -35,20 +35,13 @@ describe('Scratch: Dispatch', () => {
 
         const waitForWorker = new Promise<void>(resolve => {
             dispatch.setService('test', {
-                onWorkerReady: () => {
-                    dispatch.call('RemoteDispatchTest', 'returnFortyTwo').then((value: number) => {
-                        console.log(value);
-                        resolve();
-                    }).catch(err => {
-                        console.log(err);
-                    });
-                }
+                onWorkerReady: resolve
             });
         });
 
         return waitForWorker
             .then(() => runServiceTest('RemoteDispatchTest'))
-            .then(() => dispatch['remoteCall'](worker, 'dispatch', 'terminate'));
+            .then(() => dispatch['remoteCall'](worker as any, 'dispatch', 'terminate'));
     });
 
     test('local, sync', () => {
