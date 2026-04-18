@@ -19,6 +19,5 @@ runs:
           packages/*/dist
           packages/*/build
           packages/*/playground
-          packages/audio/dist.js
           packages/gui/static/microbit
         key: build-artifacts-${{ inputs.run-id }}-${{ inputs.run-attempt }}
