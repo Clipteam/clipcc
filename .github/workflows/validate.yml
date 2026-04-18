@@ -20,7 +20,6 @@ jobs:
       block: ${{ steps.changes.outputs.block }}
       parser: ${{ steps.changes.outputs.parser }}
       storage: ${{ steps.changes.outputs.storage }}
-      render: ${{ steps.changes.outputs.render }}
       paint: ${{ steps.changes.outputs.paint }}
     steps:
       - name: Checkout
@@ -145,27 +144,6 @@ jobs:
 
       - name: Test
         run: pnpm parser test
-  
-  test-render:
-    name: Test Render
-    needs: [build]
-    runs-on: ubuntu-latest
-    if: needs.build.outputs.render == 'true' || needs.build.outputs.should-run-all == 'true'
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Setup dependencies
-        uses: ./.github/actions/setup-deps
-
-      - name: Restore build artifacts
-        uses: ./.github/actions/restore-build
-        with:
-          run-id: ${{ github.run_id }}
-          run-attempt: ${{ github.run_attempt }}
-
-      - name: Test
-        run: pnpm render test
 
   test-storage:
     name: Test Storage
@@ -211,7 +189,7 @@ jobs:
 
   cleanup:
     name: Cleanup build cache
-    needs: [test-gui, test-vm, test-block, test-parser, test-render, test-storage, test-paint]
+    needs: [test-gui, test-vm, test-block, test-parser, test-storage, test-paint]
     runs-on: ubuntu-latest
     # Always run so the cache is cleaned even when tests fail or are skipped.
     if: always()

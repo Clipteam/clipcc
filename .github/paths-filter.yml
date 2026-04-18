@@ -23,10 +23,6 @@ vm:
   - 'packages/storage/**'
   - 'packages/parser/**'
 
-render:
-  - *global
-  - 'packages/render/**'
-
 parser:
   - *global
   - 'packages/parser/**'
