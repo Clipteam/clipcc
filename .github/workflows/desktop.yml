@@ -3,7 +3,7 @@ name: Build Desktop App
 on:
   workflow_dispatch:
   release:
-    types: [published]
+    types: [published, prereleased]
 
 jobs:
   build:
