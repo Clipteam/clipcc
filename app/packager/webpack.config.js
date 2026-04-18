@@ -36,7 +36,7 @@ export default {
                 presets: [
                     '@babel/preset-env',
                     'solid',
-                    '@babel/preset-typescript',
+                    '@babel/preset-typescript'
                 ],
                 plugins: ['solid-refresh/babel']
             }
