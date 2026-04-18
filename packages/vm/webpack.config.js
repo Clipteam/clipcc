@@ -53,7 +53,9 @@ const base = {
         ]
     },
     plugins: [
-        new NodePolyfillPlugin(),
+        new NodePolyfillPlugin({
+            includeAliases: ['events', 'buffer']
+        }),
         new webpack.DefinePlugin({
             'clipcc.VERSION': version,
             'clipcc.BUILD_TIME': Date.now()

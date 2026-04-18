@@ -151,7 +151,9 @@ const base = {
                 path.resolve(__dirname, '../vm')
             ]
         }),
-        new NodePolyfillPlugin(),
+        new NodePolyfillPlugin({
+            includeAliases: ['buffer', 'events']
+        }),
         new CopyWebpackPlugin({
             patterns: [
                 {
