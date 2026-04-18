@@ -111,8 +111,8 @@ importers:
   packages/block:
     dependencies:
       blockly:
-        specifier: ^12.4.1
-        version: 12.4.1
+        specifier: ^12.5.1
+        version: 12.5.1
     devDependencies:
       '@jest/environment':
         specifier: ^30.3.0
@@ -4065,8 +4065,8 @@ packages:
   bl@1.2.3:
     resolution: {integrity: sha512-pvcNpa0UU69UT341rO6AYy4FVAIkUHuZXRIWbq+zHnsVcRzDDjIAhGuuYoi0d//cwIwtt4pkpKycWEfjdV+vww==}
 
-  blockly@12.4.1:
-    resolution: {integrity: sha512-OEF0r8cFMGDkQbX+PWTjifWTe9xi2QzpZS4rO2lYeQhZDWW3/eInklLSdoxAyEQCdfJhQqMTpBct13oDoc0GVQ==}
+  blockly@12.5.1:
+    resolution: {integrity: sha512-etXLpUtEkcRibHGwIJ4BsvnIzMJJs0C0yPIjE/W0NCtj8ACha/a7Q9n7Ib6+j7N4EzQ0p28YPZMnypi5pNIj1g==}
     engines: {node: '>=18'}
 
   bn.js@4.12.3:
@@ -13247,7 +13247,7 @@ snapshots:
       readable-stream: 2.3.8
       safe-buffer: 5.2.1
 
-  blockly@12.4.1:
+  blockly@12.5.1:
     dependencies:
       jsdom: 26.1.0(patch_hash=4725214219761e272bac827780047d8a6effa8b02b2c8516a14e1363bb08948b)
     transitivePeerDependencies:
