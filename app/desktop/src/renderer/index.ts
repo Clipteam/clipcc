@@ -19,9 +19,12 @@ case 'app':
 case 'about':
     routeModulePromise = import('./routes/about/about');
     break;
+/*
+// Disable privacy for now since we don't collect any data.
 case 'privacy':
     routeModulePromise = import('./routes/privacy/privacy');
     break;
+*/
 }
 
 routeModulePromise?.then(routeModule => {
