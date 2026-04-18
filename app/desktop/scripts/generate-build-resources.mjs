@@ -1,14 +1,10 @@
 import {mkdir, writeFile} from 'node:fs/promises';
 import path from 'node:path';
-import {fileURLToPath} from 'node:url';
 
 import png2icons from 'png2icons';
 import sharp from 'sharp';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const desktopRoot = path.resolve(__dirname, '..');
+const desktopRoot = path.resolve(import.meta.filename, '..');
 const sourceIconDir = path.resolve(desktopRoot, 'src/common/icon');
 const buildResourcesDir = path.resolve(desktopRoot, 'buildResources');
 

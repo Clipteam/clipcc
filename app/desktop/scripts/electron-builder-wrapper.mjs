@@ -4,12 +4,9 @@ import {spawnSync} from 'node:child_process';
 import path from 'node:path';
 import fs from 'node:fs';
 import {createRequire} from 'node:module';
-import {fileURLToPath} from 'node:url';
 
 const require = createRequire(import.meta.url);
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const projectDir = path.resolve(__dirname, '..');
+const projectDir = path.resolve(import.meta.filename, '..');
 const configPath = path.resolve(projectDir, 'electron-builder.yaml');
 
 /**

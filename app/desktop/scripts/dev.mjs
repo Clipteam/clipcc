@@ -1,7 +1,6 @@
 import {spawn} from 'node:child_process';
 import path from 'node:path';
 import process from 'node:process';
-import {fileURLToPath} from 'node:url';
 import electronPath from 'electron';
 import webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
@@ -16,8 +15,7 @@ import configFactory from '../webpack.config.mjs';
 /** @typedef {import('webpack').Watching} Watching */
 /** @typedef {import('webpack-dev-server').Configuration} DevServerConfiguration */
 
-const __filename = fileURLToPath(import.meta.url);
-const scriptsDir = path.dirname(__filename);
+const scriptsDir = path.dirname(import.meta.filename);
 const desktopDir = path.resolve(scriptsDir, '..');
 const nodeTargets = /** @type {const} */ (['main', 'preload']);
 
