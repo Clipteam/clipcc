@@ -18,11 +18,11 @@
   "scripts": {
     "build:types": "tsc --project ./tsconfig.dts.json",
     "build": "rimraf dist && pnpm build:types && webpack --mode=production",
-    "coverage": "tap ./test/{unit,integration}/*.js --coverage --coverage-report=lcov",
-    "test": "pnpm run test:lint && jest \"test[\\\\/](unit|integration)\"",
+    "coverage": "tap ./test/{unit,integration}/*.js --coverage --coverage-report=lcov --reporter=tap",
+    "test": "jest \"test[\\\\/](unit|integration)\"",
     "test:clearCache": "jest --clearCache",
     "test:integration": "jest \"test[\\\\/]integration\"",
-    "test:lint": "eslint .",
+    "lint": "eslint .",
     "test:unit": "jest \"test[\\\\/]unit\"",
     "version": "json -f package.json -I -e \"this.repository.sha = '$(git log -n1 --pretty=format:%H)'\"",
     "watch": "webpack --watch"

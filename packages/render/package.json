@@ -23,8 +23,8 @@
     "prepublish": "pnpm run build",
     "prepublish-watch": "pnpm run watch",
     "start": "webpack-dev-server",
-    "tap": "tap test/unit test/integration --allow-incomplete-coverage --allow-empty-coverage",
-    "test": "pnpm run lint && pnpm run build && pnpm run tap",
+    "tap": "tap --reporter=tap test/unit test/integration --allow-incomplete-coverage --allow-empty-coverage",
+    "test": "pnpm run lint && pnpm run tap",
     "version": "json -f package.json -I -e \"this.repository.sha = '$(git log -n1 --pretty=format:%H)'\"",
     "watch": "webpack --progress --color --watch --watch-poll"
   },
@@ -36,7 +36,6 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.1.0",
     "babel-loader": "^10.1.1",
-    "clipcc-vm": "workspace:~",
     "copy-webpack-plugin": "^14.0.0",
     "eslint": "^9.39.2",
     "eslint-config-clipcc": "workspace:*",
