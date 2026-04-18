@@ -121,6 +121,9 @@ importers:
       react-dom:
         specifier: 16.2.1
         version: 16.2.1(react@16.2.0)
+      react-redux:
+        specifier: 5.0.7
+        version: 5.0.7(react@16.2.0)(redux@3.7.2)
       redux:
         specifier: 3.7.2
         version: 3.7.2
