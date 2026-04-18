@@ -1,0 +1,37 @@
+{
+    "name": "clipcc-packager",
+    "version": "3.2.0",
+    "private": true,
+    "type": "module",
+    "description": "Package your ClipCC project into a distributable format",
+    "author": "Clip Team",
+    "license": "LGPL-3.0-only",
+    "homepage": "https://github.com/Clipteam/clipcc#readme",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Clipteam/clipcc.git"
+    },
+    "scripts": {
+        "start": "webpack serve",
+        "build": "webpack --progress --color --bail",
+        "lint": "eslint .",
+        "lint:fix": "eslint . --fix"
+    },
+    "dependencies": {
+        "solid-js": "^1.9.12"
+    },
+    "devDependencies": {
+        "@babel/core": "7.29.0",
+        "@babel/eslint-parser": "7.28.6",
+        "@babel/preset-typescript": "^7.28.5",
+        "babel-preset-solid": "^1.9.12",
+        "eslint": "^9.39.2",
+        "html-webpack-plugin": "^5.6.6",
+        "solid-refresh": "^0.7.8",
+        "typescript": "catalog:",
+        "typescript-eslint": "^8.25.0",
+        "webpack": "catalog:",
+        "webpack-cli": "^6.0.1",
+        "webpack-dev-server": "^5.2.3"
+    }
+}

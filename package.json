@@ -34,7 +34,8 @@
     "storage": "pnpm --filter clipcc-storage",
     "paint": "pnpm --filter clipcc-paint",
     "parser": "pnpm --filter clipcc-parser",
-    "audio": "pnpm --filter clipcc-audio"
+    "audio": "pnpm --filter clipcc-audio",
+    "packager": "pnpm --filter clipcc-packager"
   },
   "devDependencies": {
     "@changesets/changelog-git": "^0.2.1",
