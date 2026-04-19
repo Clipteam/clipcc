@@ -57,8 +57,10 @@ module.exports = [
     defaultsDeep({}, base, {
         target: 'web',
         output: {
-            library: 'ScratchSVGRenderer',
-            libraryTarget: 'umd',
+            library: {
+                name: 'ScratchSVGRenderer',
+                type: 'umd'
+            },
             path: path.resolve('playground'),
             publicPath: '/',
             filename: '[name].js'
@@ -74,8 +76,10 @@ module.exports = [
     defaultsDeep({}, base, {
         target: 'web',
         output: {
-            library: 'ScratchSVGRenderer',
-            libraryTarget: 'umd',
+            library: {
+                name: 'ScratchSVGRenderer',
+                type: 'umd'
+            },
             path: path.resolve('dist', 'web'),
             filename: '[name].js'
         },

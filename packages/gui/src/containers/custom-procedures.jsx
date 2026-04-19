@@ -28,15 +28,7 @@ class CustomProcedures extends React.Component {
         };
     }
     componentWillUnmount () {
-        if (this.workspace) {
-            if (ScratchBlocks.getFocusManager().getFocusedNode()) {
-                // Focus the workspace before destroying the workspace to avoid focusing
-                // the unregistered tree. (Clipteam/clipcc#145)
-                // @TODO This is a temporary fix. It might be fixed by Blockly.
-                ScratchBlocks.getFocusManager().focusNode(this.workspace);
-            }
-            this.workspace.dispose();
-        }
+        this.workspace?.dispose();
     }
     setBlocks (blocksRef) {
         if (!blocksRef) return;
@@ -106,7 +98,7 @@ class CustomProcedures extends React.Component {
             }
             this.mutationRoot.moveBy(dx, dy);
         });
-        this.mutationRoot.loadExtraState(this.props.mutator);
+        this.mutationRoot.loadExtraState(this.props.state);
         this.mutationRoot.initSvg();
         this.mutationRoot.render();
         this.setState({
@@ -185,7 +177,7 @@ class CustomProcedures extends React.Component {
 
 CustomProcedures.propTypes = {
     isRtl: PropTypes.bool,
-    mutator: PropTypes.shape({
+    state: PropTypes.shape({
         proccode: PropTypes.string,
         argumentids: PropTypes.arrayOf(PropTypes.string),
         argumentnames: PropTypes.arrayOf(PropTypes.string),
@@ -228,7 +220,7 @@ CustomProcedures.defaultProps = {
 
 const mapStateToProps = state => ({
     isRtl: state.locales.isRtl,
-    mutator: state.scratchGui.customProcedures.mutator,
+    state: state.scratchGui.customProcedures.state,
     new: state.scratchGui.customProcedures.new
 });
 
