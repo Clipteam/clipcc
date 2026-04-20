@@ -13,9 +13,6 @@ const desktopApi = {
     openAboutWindow () {
         ipcRenderer.send('open-about-window');
     },
-    openPrivacyWindow () {
-        ipcRenderer.send('open-privacy-window');
-    },
     getRuntimeVersions () {
         return runtimeVersions;
     }

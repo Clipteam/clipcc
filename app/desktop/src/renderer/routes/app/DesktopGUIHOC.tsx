@@ -155,10 +155,6 @@ const ScratchDesktopGUIHOC = function (
             window.desktop?.openAboutWindow();
         };
 
-        handleShowPrivacyPolicy = () => {
-            window.desktop?.openPrivacyWindow();
-        };
-
         handleProjectTelemetryEvent = () => {
             // ipcRenderer.send(event, metadata);
         };
@@ -197,16 +193,11 @@ const ScratchDesktopGUIHOC = function (
                         onClick: () => this.handleClickAbout()
                     },
                     {
-                        title: 'Privacy Policy',
-                        onClick: () => this.handleShowPrivacyPolicy()
-                    },
-                    {
                         title: 'Data Settings',
                         onClick: () => this.props.onTelemetrySettingsClicked()
                     }
                 ],
                 onProjectTelemetryEvent: this.handleProjectTelemetryEvent,
-                onShowPrivacyPolicy: this.handleShowPrivacyPolicy,
                 onStorageInit: this.handleStorageInit,
                 onUpdateProjectTitle: this.handleUpdateProjectTitle
             };

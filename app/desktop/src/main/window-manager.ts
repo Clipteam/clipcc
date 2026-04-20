@@ -8,7 +8,7 @@ import {
 import path from 'path';
 import {pathToFileURL} from 'url';
 
-type WindowName = 'main' | 'about' | 'privacy' | 'loading';
+type WindowName = 'main' | 'about' | 'loading';
 
 const windows: Partial<Record<WindowName, BrowserWindow>> = {};
 
@@ -248,7 +248,6 @@ const createMainWindow = () => {
         }
 
         windows.about?.close();
-        windows.privacy?.close();
         windows.loading?.close();
     });
 
@@ -270,27 +269,6 @@ const createAboutWindow = () => {
     window.on('closed', () => {
         if (windows.about === window) {
             delete windows.about;
-        }
-    });
-
-    return window;
-};
-
-const createPrivacyWindow = () => {
-    const window = createWindow({
-        title: 'ClipCC Privacy Policy',
-        width: 600,
-        height: 800,
-        parent: windows.main,
-        show: false,
-        useContentSize: true
-    });
-
-    loadRendererRoute(window, 'privacy');
-
-    window.on('closed', () => {
-        if (windows.privacy === window) {
-            delete windows.privacy;
         }
     });
 
@@ -333,9 +311,6 @@ const ensureWindow = (name: WindowName) => {
         case 'about':
             windows.about = createAboutWindow();
             break;
-        case 'privacy':
-            windows.privacy = createPrivacyWindow();
-            break;
         case 'loading':
             windows.loading = createLoadingWindow();
             break;
@@ -352,8 +327,4 @@ export const initializeWindows = () => {
 
 export const openAboutWindow = () => {
     ensureWindow('about').show();
-};
-
-export const openPrivacyWindow = () => {
-    ensureWindow('privacy').show();
 };
