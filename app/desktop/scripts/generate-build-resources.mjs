@@ -4,14 +4,16 @@ import path from 'node:path';
 import png2icons from 'png2icons';
 import sharp from 'sharp';
 
-const desktopRoot = path.resolve(import.meta.filename, '..');
+const desktopRoot = path.resolve(import.meta.dirname, '..');
 const sourceIconDir = path.resolve(desktopRoot, 'src/common/icon');
 const buildResourcesDir = path.resolve(desktopRoot, 'buildResources');
 
 const appSourceSvg = path.resolve(sourceIconDir, 'app.svg');
+const cc3SourceSvg = path.resolve(sourceIconDir, 'cc3.svg');
 
 const appIcoPath = path.resolve(buildResourcesDir, 'app.ico');
 const appIcnsPath = path.resolve(buildResourcesDir, 'app.icns');
+const cc3IcoPath = path.resolve(buildResourcesDir, 'icon/cc3.ico');
 
 const appxLogoSizes = [
     {name: 'Square44x44Logo.png', width: 44, height: 44},
@@ -53,6 +55,7 @@ const generate = async () => {
     await mkdir(path.resolve(buildResourcesDir, 'icon'), {recursive: true});
 
     const appMasterPng = await renderPng(appSourceSvg, 1024, 1024);
+    const cc3MasterPng = await renderPng(cc3SourceSvg, 1024, 1024);
 
     const appIcoData = requireIconBuffer(
         png2icons.createICO(appMasterPng, png2icons.BILINEAR, 0, true),
@@ -62,10 +65,15 @@ const generate = async () => {
         png2icons.createICNS(appMasterPng, png2icons.BILINEAR, 0),
         'app.icns'
     );
+    const cc3IcoData = requireIconBuffer(
+        png2icons.createICO(cc3MasterPng, png2icons.BILINEAR, 0, true),
+        'icon/cc3.ico'
+    );
 
     await Promise.all([
         writeFile(appIcoPath, appIcoData),
-        writeFile(appIcnsPath, appIcnsData)
+        writeFile(appIcnsPath, appIcnsData),
+        writeFile(cc3IcoPath, cc3IcoData)
     ]);
 
     await Promise.all(appxLogoSizes.map(async logo => {
