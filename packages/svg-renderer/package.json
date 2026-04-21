@@ -13,10 +13,10 @@
     "build": "pnpm run clean && tsc --project ./tsconfig.node.json && webpack",
     "clean": "rimraf ./dist",
     "start": "webpack-dev-server",
-    "test": "pnpm run test:types && pnpm run test:lint && pnpm run test:unit",
+    "test": "pnpm run test:types && pnpm run lint && pnpm run test:unit",
     "test:types": "tsc --noEmit",
-    "test:lint": "eslint . --ext .ts",
-    "test:unit": "tap ./test/*.ts --allow-incomplete-coverage --allow-empty-coverage",
+    "lint": "eslint . --ext .ts",
+    "test:unit": "tap ./test/*.ts --allow-incomplete-coverage --allow-empty-coverage --reporter=tap",
     "watch": "webpack --watch"
   },
   "author": "Massachusetts Institute of Technology",

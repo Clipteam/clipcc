@@ -8,12 +8,12 @@
     "default": "./dist/main.js"
   },
   "scripts": {
-    "test": "pnpm run lint && pnpm run tap && pnpm run build",
+    "test": "pnpm run lint && pnpm run tap",
     "build:types": "tsc --project ./tsconfig.dts.json",
     "build": "pnpm run build:types && webpack --bail",
     "watch": "webpack --watch",
     "lint": "eslint .",
-    "tap": "tap test/effects/*.js test/*.js --allow-incomplete-coverage --allow-empty-coverage"
+    "tap": "tap --reporter=tap test/effects/*.js test/*.js --allow-incomplete-coverage --allow-empty-coverage"
   },
   "repository": {
     "type": "git",

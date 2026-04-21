@@ -124,7 +124,7 @@ jobs:
         uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: pnpm parser test:lint
+        run: pnpm parser lint
 
   render:
     name: Lint Render
@@ -152,7 +152,7 @@ jobs:
         uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: pnpm storage test:lint
+        run: pnpm storage lint
 
   svg-renderer:
     name: Lint SVG Renderer
@@ -166,4 +166,4 @@ jobs:
         uses: ./.github/actions/setup-deps
 
       - name: Lint
-        run: pnpm svg-renderer test:lint
+        run: pnpm svg-renderer lint
