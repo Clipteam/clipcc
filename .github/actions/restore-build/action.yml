@@ -21,3 +21,4 @@ runs:
           packages/*/playground
           packages/gui/static/microbit
         key: build-artifacts-${{ inputs.run-id }}-${{ inputs.run-attempt }}
+        fail-on-cache-miss: true
