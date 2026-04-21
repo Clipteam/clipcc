@@ -57,7 +57,6 @@ jobs:
             packages/*/dist
             packages/*/build
             packages/*/playground
-            packages/audio/dist.js
             packages/gui/static/microbit
           key: build-artifacts-${{ github.run_id }}-${{ github.run_attempt }}
 
