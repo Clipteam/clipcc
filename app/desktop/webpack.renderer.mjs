@@ -88,7 +88,9 @@ const rendererConfig = {
                 test: /\.css$/,
                 include: [
                     path.resolve(import.meta.dirname, 'src', 'renderer'),
-                    require.resolve('react-tabs/style/react-tabs.css')
+                    require.resolve('react-tabs/style/react-tabs.css', {
+                        paths: [path.resolve(import.meta.dirname, '../../packages/gui')]
+                    })
                 ],
                 use: [{
                     loader: 'style-loader'
