@@ -10,10 +10,12 @@ const buildResourcesDir = path.resolve(desktopRoot, 'buildResources');
 
 const appSourceSvg = path.resolve(sourceIconDir, 'app.svg');
 const cc3SourceSvg = path.resolve(sourceIconDir, 'cc3.svg');
+const ccxSourceSvg = path.resolve(sourceIconDir, 'ccx.svg');
 
 const appIcoPath = path.resolve(buildResourcesDir, 'app.ico');
 const appIcnsPath = path.resolve(buildResourcesDir, 'app.icns');
 const cc3IcoPath = path.resolve(buildResourcesDir, 'icon/cc3.ico');
+const ccxIcoPath = path.resolve(buildResourcesDir, 'icon/ccx.ico');
 
 const appxLogoSizes = [
     {name: 'Square44x44Logo.png', width: 44, height: 44},
@@ -56,6 +58,7 @@ const generate = async () => {
 
     const appMasterPng = await renderPng(appSourceSvg, 1024, 1024);
     const cc3MasterPng = await renderPng(cc3SourceSvg, 1024, 1024);
+    const ccxMasterPng = await renderPng(ccxSourceSvg, 1024, 1024);
 
     const appIcoData = requireIconBuffer(
         png2icons.createICO(appMasterPng, png2icons.BILINEAR, 0, true),
@@ -70,10 +73,16 @@ const generate = async () => {
         'icon/cc3.ico'
     );
 
+    const ccxIcoData = requireIconBuffer(
+        png2icons.createICO(ccxMasterPng, png2icons.BILINEAR, 0, true),
+        'icon/ccx.ico'
+    );
+
     await Promise.all([
         writeFile(appIcoPath, appIcoData),
         writeFile(appIcnsPath, appIcnsData),
-        writeFile(cc3IcoPath, cc3IcoData)
+        writeFile(cc3IcoPath, cc3IcoData),
+        writeFile(ccxIcoPath, ccxIcoData)
     ]);
 
     await Promise.all(appxLogoSizes.map(async logo => {

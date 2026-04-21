@@ -36,6 +36,5 @@
     WriteRegStr HKCR "clipcc.cc3\shell\open\command" "" '"$INSTDIR\ClipCC 3.exe" "%1"'
     
     WriteRegStr HKCR "clipcc.ccx" "" "ClipCC 3 Extension"
-    WriteRegStr HKCR "clipcc.ccx\DefaultIcon" "" '"$INSTDIR\resources\icon\cc3.ico"'
-    WriteRegStr HKCR "clipcc.ccx\shell\open\command" "" '"$INSTDIR\ClipCC 3.exe" "%1"'
+    WriteRegStr HKCR "clipcc.ccx\DefaultIcon" "" '"$INSTDIR\resources\icon\ccx.ico"'
 !macroend
