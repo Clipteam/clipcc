@@ -46,7 +46,7 @@ renderer.connectWorker(worker);
 
 ## Standalone Build
 ```bash
-npm run build
+pnpm run build
 ```
 
 ```html
@@ -59,5 +59,5 @@ npm run build
 
 ## Testing
 ```bash
-npm test
+pnpm test
 ```

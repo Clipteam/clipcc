@@ -88,10 +88,10 @@ vm.attachStorage(storage);
 
 To run all tests:
 ```bash
-npm test
+pnpm test
 ```
 
 To show test coverage:
 ```bash
-npm run coverage
+pnpm run coverage
 ```
