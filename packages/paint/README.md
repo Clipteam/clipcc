@@ -1,81 +1,42 @@
-# scratch-paint
-#### Scratch-paint provides a paint editor React component that takes and outputs SVGs or PNGs. It can convert between vector and bitmap modes.
-
-[![Greenkeeper badge](https://badges.greenkeeper.io/LLK/scratch-paint.svg)](https://greenkeeper.io/)
-- Try it out at [https://llk.github.io/scratch-paint/](https://llk.github.io/scratch-paint/)
-
-- Or, to try it out as part of Scratch 3.0, visit [https://scratch.mit.edu/create](https://scratch.mit.edu/create) and click on the "Costumes" tab.
+# clipcc-paint
+#### ClipCC-paint provides a paint editor React component that takes and outputs SVGs or PNGs. It can convert between vector and bitmap modes.
 
 ### Installation
 It will be easiest if you develop on Mac or Linux. If you are using Windows, I recommend using Ubuntu on Windows, which will allow you to use Linux commands on Windows. You will need administrator permissions.
 
 - https://docs.microsoft.com/en-us/windows/wsl/install-win10
 
-Scratch Paint requires you to have Git and Node.js installed. E.g.:
-```bash
-- sudo apt-get update
-- sudo apt-get install git-core
-- sudo apt-get install nodejs
-```
-
-For Ubuntu on Windows, the Windows install of nodejs may interfere with the Linux one, so installing nodejs requires more steps:
-```bash
-- curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-- sudo apt-get install -y nodejs
-- PATH="/usr/bin:$PATH"
-```
-
-If you want to edit scratch-paint, or help contribute to our open-source project, fork the [scratch-paint repo](https://github.com/LLK/scratch-paint). Then:
-```bash
-git clone https://github.com/<YOUR_GITHUB_USERNAME>/scratch-paint.git
-cd scratch-paint
-npm install
-```
+> ClipCC Paint requires you to have Git and Node.js installed.
+> you may need to follow root [contribution guide](../../CONTRIBUTING.md) to set up the development environment first.
 
 ### Running locally (stand-alone)
 You can try out your own copy of the paint editor by running the development server.
 
-In the cloned `scratch-paint` directory, run:
+In the cloned `clipcc` and now in paint directory, run:
 ```bash
-npm run build
-npm start
+pnpm run build
+pnpm start
 ```
 
 Then go to [http://localhost:8078/playground/](http://localhost:8078/playground/). 8078 is BLOB upside-down. The True Name of this repo is scratch-blobs.
 
-*(Note that the `npm run build` step above seems like it's only necessary for some user and environments, and not others; check for yourself if the server that `npm start` starts is hot-reloading correctly.)*
+*(Note that the `pnpm run build` step above seems like it's only necessary for some user and environments, and not others; check for yourself if the server that `pnpm start` starts is hot-reloading correctly.)*
 
 ### Running locally (as part of Scratch)
-So you've tried out your edits in the playground and they look good. You should now test with the rest of Scratch, to make sure that everything hooks up right, and so that you can use your custom paint editor to make costumes and sprites!
 
-Get the rest of Scratch:
-```bash
-git clone https://github.com/LLK/scratch-gui.git
-```
-Go to your `scratch-paint` folder and run:
-```bash
-npm link
-```
-
-Now in another terminal, go back to the `scratch-gui` folder and run
-```bash
-npm install
-npm link scratch-paint
-npm start
-```
-Then go to [http://localhost:8601](http://localhost:8601). 601 is supposed to look like GUI (it's okay, I don't really see it either.) The Costumes tab should be running your local copy of scratch-paint!
+Just run `pnpm gui start` in project root, then go to [http://localhost:8601](http://localhost:8601). 601 is supposed to look like GUI (it's okay, I don't really see it either.) The Costumes tab should be running your local copy of clipcc-paint!
 
 ### How to include in your own Node.js App
-If you want to use scratch-paint in your own Node environment/application, add it with:
+If you want to use clipcc-paint in your own Node environment/application, add it with:
 ```bash
-npm install --save scratch-paint
+pnpm install --save clipcc-paint
 ```
 
-For an example of how to use scratch-paint as a library, check out the `scratch-paint/src/playground` directory.
+For an example of how to use clipcc-paint as a library, check out the `clipcc-paint/src/playground` directory.
 
 In your parent component:
 ```
-import PaintEditor from 'scratch-paint';
+import PaintEditor from 'clipcc-paint';
 ...
 <PaintEditor
     image={optionalImage}
@@ -109,16 +70,16 @@ SVGs of up to size 480 x 360 will fit into the view window of the paint editor, 
 
 In the top-level combineReducers function:
 ```
-import {ScratchPaintReducer} from 'scratch-paint';
+import {ScratchPaintReducer} from 'clipcc-paint';
 ...
 combineReducers({
 	...
     scratchPaint: ScratchPaintReducer
 });
 ```
-Note that scratch-paint expects its state to be in `state.scratchPaint`, so the name must be exact.
+Note that clipcc-paint expects its state to be in `state.scratchPaint`, so the name must be exact.
 
-Scratch-paint shares state with its parent component because it expects to share the parent's `IntlProvider`, which inserts translations into the state. See the `IntlProvider` setup in `scratch-gui` [here](https://github.com/LLK/scratch-gui/blob/f017ed72201bf63334dced161441ef6f154b1c74/src/lib/app-state-hoc.jsx).
+Clipcc-paint shares state with its parent component because it expects to share the parent's `IntlProvider`, which inserts translations into the state. See the `IntlProvider` setup in `clipcc-gui` [here](https://github.com/LLK/clipcc-gui/blob/f017ed72201bf63334dced161441ef6f154b1c74/src/lib/app-state-hoc.jsx).
 
 ### Code organization
 We use React and Redux. If you're just getting started with them, here are some good tutorials:
@@ -132,20 +93,15 @@ We use React and Redux. If you're just getting started with them, here are some 
 
 ### Testing
 ```bash
-npm run test
+pnpm run test
 ```
 
 Just unit tests:
 ```bash
-npm run unit
+pnpm run unit
 ```
 
-An individual unit test: (run from `scratch-paint` directory)
+An individual unit test: (run from `clipcc-paint` directory)
 ```bash
 ./node_modules/.bin/jest ./test/unit/undo-reducer.test.js
 ```
-
-### Donate
-We provide [Scratch](https://scratch.mit.edu) free of charge, and want to keep it that way! Please consider making a [donation](https://secure.donationpay.org/scratchfoundation/) to support our continued engineering, design, community, and resource development efforts. Donations of any size are appreciated. Thank you!
-
-Scratch-paint couldn't exist without [w00dn/papergrapher](https://github.com/w00dn/papergrapher) and [Paper.js](https://github.com/paperjs/paper.js). If you are amazed and/or baffled by the insane boolean operation math that makes the brush and eraser tools possible, please check out and consider contributing to Paper. Thank you!
