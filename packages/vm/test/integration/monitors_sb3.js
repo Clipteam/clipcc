@@ -1,5 +1,6 @@
 const path = require('path');
 const test = require('tap').test;
+const attachExtensionManager = require('../fixtures/attach-extension-manager');
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/index');
@@ -11,6 +12,7 @@ const project = readFileToBuffer(projectUri);
 test('importing sb3 project with monitors', t => {
     const vm = new VirtualMachine();
     vm.attachStorage(makeTestStorage());
+    attachExtensionManager(vm);
 
     // Evaluate playground data and exit
     vm.on('playgroundData', e => {

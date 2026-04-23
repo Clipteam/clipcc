@@ -33,6 +33,7 @@ describe('VMManagerHOC', () => {
         });
         vm = new VM();
         vm.attachAudioEngine = jest.fn();
+        vm.attachExtensionManager = jest.fn();
         vm.setCompatibilityMode = jest.fn();
         vm.setLocale = jest.fn();
         vm.start = jest.fn();
@@ -49,6 +50,7 @@ describe('VMManagerHOC', () => {
             />
         );
         expect(vm.attachAudioEngine.mock.calls.length).toBe(1);
+        expect(vm.attachExtensionManager.mock.calls.length).toBe(1);
         expect(vm.setCompatibilityMode.mock.calls.length).toBe(1);
         expect(vm.setLocale.mock.calls.length).toBe(1);
         expect(vm.initialized).toBe(true);
@@ -68,6 +70,7 @@ describe('VMManagerHOC', () => {
             />
         );
         expect(vm.attachAudioEngine.mock.calls.length).toBe(1);
+        expect(vm.attachExtensionManager.mock.calls.length).toBe(1);
         expect(vm.setCompatibilityMode.mock.calls.length).toBe(1);
         expect(vm.setLocale.mock.calls.length).toBe(1);
         expect(vm.initialized).toBe(true);
@@ -87,6 +90,7 @@ describe('VMManagerHOC', () => {
             />
         );
         expect(vm.attachAudioEngine.mock.calls.length).toBe(0);
+        expect(vm.attachExtensionManager.mock.calls.length).toBe(0);
         expect(vm.setCompatibilityMode.mock.calls.length).toBe(0);
         expect(vm.setLocale.mock.calls.length).toBe(0);
         expect(vm.initialized).toBe(true);

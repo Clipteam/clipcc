@@ -1089,6 +1089,7 @@ class Runtime extends EventEmitter {
     /**
      * Register the primitives provided by an extension.
      * @param {ExtensionMetadata} extensionInfo - information about the extension (id, blocks, etc.)
+     * @deprecated
      * @private
      */
     _registerExtensionPrimitives (extensionInfo) {
@@ -1132,6 +1133,7 @@ class Runtime extends EventEmitter {
     /**
      * Reregister the primitives for an extension
      * @param  {ExtensionMetadata} extensionInfo - new info (results of running getInfo) for an extension
+     * @deprecated
      * @private
      */
     _refreshExtensionPrimitives (extensionInfo) {
@@ -1149,6 +1151,7 @@ class Runtime extends EventEmitter {
      * and store the results in the provided category object.
      * @param {CategoryInfo} categoryInfo - the category to be filled
      * @param {ExtensionMetadata} extensionInfo - the extension metadata to read
+     * @deprecated
      * @private
      */
     _fillExtensionCategory (categoryInfo, extensionInfo) {
@@ -1656,6 +1659,7 @@ class Runtime extends EventEmitter {
     /**
      * Get scratch-blocks XML for each extension category.
      * @param {Target|undefined} target - the active editing target, if any.
+     * @deprecated Use new clipcc-extension's manager, replaced by `ExtensionManager.getToolboxContents`.
      * @returns {Array<BlockCategoryXml>} Scratch-blocks XML for each category of extension blocks.
      */
     getBlocksXML (target) {
@@ -1705,6 +1709,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Get scratch-blocks JSON for each dynamic block.
+     * @deprecated
      * @returns {Array<ScratchBlocksJson|undefined>} The scratch-blocks JSON information for each dynamic block.
      */
     getBlocksJSON () {

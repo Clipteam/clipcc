@@ -66,6 +66,7 @@
     "callsite": "1.0.0",
     "clipcc-audio": "workspace:~",
     "clipcc-block": "workspace:~",
+    "clipcc-extension": "workspace:~",
     "clipcc-l10n": "workspace:~",
     "clipcc-render": "workspace:~",
     "clipcc-storage": "workspace:~",

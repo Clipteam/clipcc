@@ -6,6 +6,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import VMScratchBlocks, {setRecordSoundCallback} from '../lib/blocks';
 import VM from 'clipcc-vm';
+import {ExtensionManager} from 'clipcc-extension';
 
 import log from '../lib/log';
 import Prompt from './prompt.jsx';
@@ -66,13 +67,12 @@ class Blocks extends React.Component {
             'handlePromptCallback',
             'handlePromptClose',
             'handleCustomProceduresClose',
+            'handleExtensionUpdateBlocks',
             'onScriptGlowOn',
             'onScriptGlowOff',
             'onBlockGlowOn',
             'onBlockGlowOff',
             'handleMonitorsUpdate',
-            'handleExtensionAdded',
-            'handleBlocksInfoUpdate',
             'onTargetsUpdate',
             'onVisualReport',
             'onWorkspaceUpdate',
@@ -117,19 +117,14 @@ class Blocks extends React.Component {
 
         // Register buttons under new callback keys for creating variables,
         // lists, and procedures from extensions.
-        // cc - These callbacks are the same as those in blockly, maybe unnecessary to register.
-
-        // const toolboxWorkspace = this.workspace.getFlyout().getWorkspace();
-
-        // const varListButtonCallback = type =>
-        //     (() => this.ScratchBlocks.Variables.createVariable(this.workspace, null, type));
-        // const procButtonCallback = () => {
-        //     this.ScratchBlocks.Procedures.createProcedureDefCallback(this.workspace);
-        // };
-
-        // toolboxWorkspace.registerButtonCallback('MAKE_A_VARIABLE', varListButtonCallback(''));
-        // toolboxWorkspace.registerButtonCallback('MAKE_A_LIST', varListButtonCallback('list'));
-        // toolboxWorkspace.registerButtonCallback('MAKE_A_PROCEDURE', procButtonCallback);
+        const varListButtonCallback = type =>
+            (() => this.ScratchBlocks.DataCatagory.createVariable(this.workspace, null, type));
+        const procButtonCallback = () => {
+            this.ScratchBlocks.ProceduresCategory.createProcedureDefCallback(this.workspace);
+        };
+        this.workspace.registerButtonCallback('MAKE_A_VARIABLE', varListButtonCallback(''));
+        this.workspace.registerButtonCallback('MAKE_A_LIST', varListButtonCallback('list'));
+        this.workspace.registerButtonCallback('MAKE_A_PROCEDURE', procButtonCallback);
 
         // Store the toolbox that is actually rendered.
         // This is used in componentDidUpdate instead of prevProps, because
@@ -139,6 +134,9 @@ class Blocks extends React.Component {
         // @todo change this when blockly supports UI events
         addFunctionListener(this.workspace, 'translate', this.onWorkspaceMetricsChange);
         addFunctionListener(this.workspace, 'zoom', this.onWorkspaceMetricsChange);
+
+        // Handle events from extension manager to modify clipcc-block.
+        this.props.extensionManager.addEventListener('UPDATE_BLOCKS', this.handleExtensionUpdateBlocks);
 
         this.attachVM();
         // Only update blocks/vm locale when visible to avoid sizing issues
@@ -212,6 +210,9 @@ class Blocks extends React.Component {
         this.detachVM();
         this.workspace.dispose();
         clearTimeout(this.toolboxUpdateTimeout);
+
+        // Remove event listeners for extension manager.
+        this.props.extensionManager.addEventListener('UPDATE_BLOCKS', this.handleExtensionUpdateBlocks);
 
         // Clear the flyout blocks so that they can be recreated on mount.
         this.props.vm.clearFlyoutBlocks();
@@ -301,8 +302,6 @@ class Blocks extends React.Component {
         this.props.vm.on('workspaceUpdate', this.onWorkspaceUpdate);
         this.props.vm.on('targetsUpdate', this.onTargetsUpdate);
         this.props.vm.on('MONITORS_UPDATE', this.handleMonitorsUpdate);
-        this.props.vm.on('EXTENSION_ADDED', this.handleExtensionAdded);
-        this.props.vm.on('BLOCKSINFO_UPDATE', this.handleBlocksInfoUpdate);
         this.props.vm.on('PERIPHERAL_CONNECTED', this.handleStatusButtonUpdate);
         this.props.vm.on('PERIPHERAL_DISCONNECTED', this.handleStatusButtonUpdate);
     }
@@ -321,8 +320,6 @@ class Blocks extends React.Component {
         this.props.vm.off('workspaceUpdate', this.onWorkspaceUpdate);
         this.props.vm.off('targetsUpdate', this.onTargetsUpdate);
         this.props.vm.off('MONITORS_UPDATE', this.handleMonitorsUpdate);
-        this.props.vm.off('EXTENSION_ADDED', this.handleExtensionAdded);
-        this.props.vm.off('BLOCKSINFO_UPDATE', this.handleBlocksInfoUpdate);
         this.props.vm.off('PERIPHERAL_CONNECTED', this.handleStatusButtonUpdate);
         this.props.vm.off('PERIPHERAL_DISCONNECTED', this.handleStatusButtonUpdate);
     }
@@ -394,7 +391,7 @@ class Blocks extends React.Component {
             const targetCostumes = target.getCostumes();
             const targetSounds = target.getSounds();
             const dynamicBlocksXML = injectExtensionCategoryTheme(
-                this.props.vm.runtime.getBlocksXML(target),
+                this.props.vm.extensionManager.getToolboxContents(target.isStage),
                 this.props.theme
             );
             return makeToolbox(false, target.isStage, target.id, dynamicBlocksXML,
@@ -466,51 +463,6 @@ class Blocks extends React.Component {
                 block.isMonitored = isVisible;
             }
         }
-    }
-    handleExtensionAdded (categoryInfo) {
-        const defineBlocks = blockInfoArray => {
-            if (blockInfoArray && blockInfoArray.length > 0) {
-                const staticBlocksJson = [];
-                const dynamicBlocksInfo = [];
-                blockInfoArray.forEach(blockInfo => {
-                    if (blockInfo.info && blockInfo.info.isDynamic) {
-                        dynamicBlocksInfo.push(blockInfo);
-                    } else if (blockInfo.json) {
-                        staticBlocksJson.push(injectExtensionBlockTheme(blockInfo.json, this.props.theme));
-                    }
-                    // otherwise it's a non-block entry such as '---'
-                });
-
-                this.ScratchBlocks.defineBlocksWithJsonArray(staticBlocksJson);
-                dynamicBlocksInfo.forEach(blockInfo => {
-                    // This is creating the block factory / constructor -- NOT a specific instance of the block.
-                    // The factory should only know static info about the block: the category info and the opcode.
-                    // Anything else will be picked up from the XML attached to the block instance.
-                    const extendedOpcode = `${categoryInfo.id}_${blockInfo.info.opcode}`;
-                    const blockDefinition =
-                        defineDynamicBlock(this.ScratchBlocks, categoryInfo, blockInfo, extendedOpcode);
-                    this.ScratchBlocks.Blocks[extendedOpcode] = blockDefinition;
-                });
-            }
-        };
-
-        // scratch-blocks implements a menu or custom field as a special kind of block ("shadow" block)
-        // these actually define blocks and MUST run regardless of the UI state
-        defineBlocks(
-            Object.getOwnPropertyNames(categoryInfo.customFieldTypes)
-                .map(fieldTypeName => categoryInfo.customFieldTypes[fieldTypeName].scratchBlocksDefinition));
-        defineBlocks(categoryInfo.menus);
-        defineBlocks(categoryInfo.blocks);
-
-        // Update the toolbox with new blocks if possible
-        const toolbox = this.getToolbox();
-        if (toolbox) {
-            this.props.updateToolboxState(toolbox);
-        }
-    }
-    handleBlocksInfoUpdate (categoryInfo) {
-        // @todo Later we should replace this to avoid all the warnings from redefining blocks.
-        this.handleExtensionAdded(categoryInfo);
     }
     handleCategorySelected (categoryId) {
         const extension = extensionData.find(ext => ext.extensionId === categoryId);
@@ -590,6 +542,24 @@ class Blocks extends React.Component {
         if (!target) return;
         this.props.vm.setEditingTarget(target.id);
     }
+
+    /**
+     * Event handler for updating block definitions.
+     * @param {import('clipcc-extension').UpdateBlocksEvent} event Event payload.
+     */
+    handleExtensionUpdateBlocks (event) {
+        this.ScratchBlocks.common.defineBlocks(event.blocks);
+
+        // @todo support for custom field type
+
+        // Update the toolbox.
+        const toolbox = this.getToolbox();
+        if (toolbox) {
+            this.props.updateToolboxState(toolbox);
+        }
+        this.requestToolboxUpdate();
+    }
+
     render () {
         /* eslint-disable no-unused-vars */
         const {
@@ -614,6 +584,7 @@ class Blocks extends React.Component {
             toolbox,
             updateMetrics: updateMetricsProp,
             workspaceMetrics,
+            extensionManager,
             ...props
         } = this.props;
         /* eslint-enable no-unused-vars */
@@ -640,7 +611,7 @@ class Blocks extends React.Component {
                 ) : null}
                 {extensionLibraryVisible ? (
                     <ExtensionLibrary
-                        vm={vm}
+                        extensionManager={extensionManager}
                         onCategorySelected={this.handleCategorySelected}
                         onRequestClose={onRequestCloseExtensionLibrary}
                     />
@@ -694,7 +665,8 @@ Blocks.propTypes = {
     workspaceMetrics: PropTypes.shape({
         // eslint-disable-next-line react/forbid-prop-types
         targets: PropTypes.objectOf(PropTypes.object)
-    })
+    }),
+    extensionManager: PropTypes.instanceOf(ExtensionManager).isRequired
 };
 
 Blocks.defaultOptions = {
@@ -744,7 +716,8 @@ const mapStateToProps = state => ({
     blockMessages: state.locales.blockMessages,
     toolbox: state.scratchGui.toolbox.toolbox,
     customProceduresVisible: state.scratchGui.customProcedures.active,
-    workspaceMetrics: state.scratchGui.workspaceMetrics
+    workspaceMetrics: state.scratchGui.workspaceMetrics,
+    extensionManager: state.scratchGui.extensionManager
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -233,6 +233,8 @@ export * from 'blockly/core';
 export * as callbackRegistry from './callback_registry';
 export * as constants from './constants';
 export * as scratchBlocksUtils from './utils';
+export * as DataCatagory from './variables';
+export * as ProceduresCategory from './procedures_category';
 export type * as proceduresSerializer from './serialization/procedures';
 
 export {reportValue} from './report_value';
@@ -252,3 +254,9 @@ export {
   FieldVariableGetter,
   FieldVerticalSeparator
 };
+
+export {ICheckboxInFlyout, isCheckboxInFlyout} from './interfaces/i_checkbox_in_flyout';
+export {IDynamicDeletable, isDynamicDeletable} from './interfaces/i_dynamic_deletable';
+export {IInvisibleIcon, isInvisibleIcon} from './interfaces/i_invisible_icon';
+export {IScratchExtensionBlock, isScratchExtensionBlock} from './interfaces/i_scratch_extension';
+export {IShadowTemplate, isShadowTemplate} from './interfaces/i_shadow_template';

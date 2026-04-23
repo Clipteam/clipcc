@@ -1,14 +1,33 @@
-const ArgumentType = require('../extension-support/argument-type');
-const BlockType = require('../extension-support/block-type');
-const dispatch = require('../dispatch/worker-dispatch');
-const TargetType = require('./target-type');
+/**
+ * @license
+ * Copyright 2017 Massachusetts Institute of Technology
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+import dispatch from './dispatch/worker-dispatch';
+
+import ArgumentType from './types/argument-type';
+import BlockType from './types/block-type';
+import TargetType from './types/target-type';
+
+declare global {
+    var Scratch: {
+        ArgumentType: typeof ArgumentType;
+        BlockType: typeof BlockType;
+        TargetType: typeof TargetType;
+        extensions: {
+            register: (extensionObject: any) => Promise<void>;
+        };
+    };
+}
 
 class ExtensionWorker {
-    constructor () {
-        this.nextExtensionId = 0;
+    private nextExtensionId: number = 0;
+    private initialRegistrations: Promise<any>[] | null = [];
+    private workerId!: number;
+    private extensions: any[] = [];
 
-        this.initialRegistrations = [];
-
+    constructor() {
         dispatch.waitForConnection.then(() => {
             dispatch.call('extensions', 'allocateWorker').then(x => {
                 const [id, extension] = x;
@@ -20,22 +39,21 @@ class ExtensionWorker {
                     const initialRegistrations = this.initialRegistrations;
                     this.initialRegistrations = null;
 
-                    Promise.all(initialRegistrations).then(() => dispatch.call('extensions', 'onWorkerInit', id));
+                    Promise.all(initialRegistrations!)
+                        .then(() => dispatch.call('extensions', 'onWorkerInit', id));
                 } catch (e) {
                     dispatch.call('extensions', 'onWorkerInit', id, e);
                 }
             });
         });
-
-        this.extensions = [];
     }
 
-    register (extensionObject) {
+    register(extensionObject: any) {
         const extensionId = this.nextExtensionId++;
         this.extensions.push(extensionObject);
         const serviceName = `extension.${this.workerId}.${extensionId}`;
         const promise = dispatch.setService(serviceName, extensionObject)
-            .then(() => dispatch.call('extensions', 'registerExtensionService', serviceName));
+            .then(() => dispatch.call('extensions', 'registerExtensionService', serviceName, this.workerId));
         if (this.initialRegistrations) {
             this.initialRegistrations.push(promise);
         }

@@ -1,0 +1,52 @@
+/**
+ * @license
+ * Copyright 2017 Massachusetts Institute of Technology
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
+/**
+ * Block argument types
+ */
+enum ArgumentType {
+    /**
+     * Numeric value with angle picker
+     */
+    ANGLE = 'angle',
+
+    /**
+     * Boolean value with hexagonal placeholder
+     */
+    BOOLEAN = 'Boolean',
+
+    /**
+     * Numeric value with color picker
+     */
+    COLOR = 'color',
+
+    /**
+     * Numeric value with text field
+     */
+    NUMBER = 'number',
+
+    /**
+     * String value with text field
+     */
+    STRING = 'string',
+
+    /**
+     * String value with matrix field
+     */
+    MATRIX = 'matrix',
+
+    /**
+     * MIDI note number with note picker (piano) field
+     */
+    NOTE = 'note',
+
+    /**
+     * Inline image on block (as part of the label)
+     */
+    IMAGE = 'image'
+}
+
+export default ArgumentType;

@@ -108,7 +108,8 @@ const base = {
                 path.resolve(__dirname, '../render'),
                 path.resolve(__dirname, '../storage'),
                 path.resolve(__dirname, '../svg-renderer'),
-                path.resolve(__dirname, '../vm')
+                path.resolve(__dirname, '../vm'),
+                path.resolve(__dirname, '../extension')
             ]
         }),
         new NodePolyfillPlugin(),

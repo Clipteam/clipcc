@@ -34,6 +34,7 @@
     "classnames": "2.5.1",
     "clipcc-audio": "workspace:~",
     "clipcc-block": "workspace:~",
+    "clipcc-extension": "workspace:~",
     "clipcc-l10n": "workspace:~",
     "clipcc-paint": "workspace:~",
     "clipcc-render": "workspace:~",

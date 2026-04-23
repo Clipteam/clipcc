@@ -7,10 +7,9 @@ if (typeof TextEncoder === 'undefined') {
 }
 const EventEmitter = require('events');
 const JSZip = require('jszip');
+const {ScratchBuiltinAdapter} = require('clipcc-extension');
 
 const Buffer = require('buffer').Buffer;
-const centralDispatch = require('./dispatch/central-dispatch');
-const ExtensionManager = require('./extension-support/extension-manager');
 const log = require('./util/log');
 const MathUtil = require('./util/math-util');
 const Runtime = require('./engine/runtime');
@@ -29,27 +28,14 @@ require('canvas-toBlob');
 const RESERVED_NAMES = ['_mouse_', '_stage_', '_edge_', '_myself_', '_random_'];
 
 /**
- * @type {string[]}
- */
-const CORE_EXTENSIONS = [
-    // 'motion',
-    // 'looks',
-    // 'sound',
-    // 'events',
-    // 'control',
-    // 'sensing',
-    // 'operators',
-    // 'variables',
-    // 'myBlocks'
-];
-
-/**
  * @typedef {number} int
  * @typedef {import('./engine/target')} Target
  * @typedef {import('./serialization/sb3').ImportedExtensionsInfo} ImportedExtensionsInfo
  * @typedef {import('clipcc-audio')} AudioEngine
  * @typedef {import('clipcc-render')} RenderWebGL
  * @typedef {import('clipcc-storage').ScratchStorage} ScratchStorage
+ * @typedef {import('clipcc-extension').ExtensionManager} ExtensionManager
+ * @typedef {import('clipcc-extension').UpdatePrimitivesEvent} UpdatePrimitivesEvent
  */
 
 /**
@@ -75,9 +61,6 @@ class VirtualMachine extends EventEmitter {
          * @type {!Runtime}
          */
         this.runtime = new Runtime();
-        centralDispatch.setService('runtime', this.runtime).catch(e => {
-            log.error(`Failed to register runtime service: ${JSON.stringify(e)}`);
-        });
 
         /**
          * The "currently editing"/selected target ID for the VM.
@@ -151,7 +134,7 @@ class VirtualMachine extends EventEmitter {
             this.emitWorkspaceUpdate();
         });
         this.runtime.on(Runtime.TOOLBOX_EXTENSIONS_NEED_UPDATE, () => {
-            this.extensionManager.refreshBlocks();
+            // this.extensionManager.refreshBlocks();
         });
         this.runtime.on(Runtime.PERIPHERAL_LIST_UPDATE, info => {
             this.emit(Runtime.PERIPHERAL_LIST_UPDATE, info);
@@ -187,17 +170,11 @@ class VirtualMachine extends EventEmitter {
             this.emit(Runtime.STAGE_SIZE_UPDATE, width, height);
         });
 
-        this.extensionManager = new ExtensionManager(this.runtime);
-
-        // Load core extensions
-        for (const id of CORE_EXTENSIONS) {
-            this.extensionManager.loadExtensionIdSync(id);
-        }
-
         this.blockListener = this.blockListener.bind(this);
         this.flyoutBlockListener = this.flyoutBlockListener.bind(this);
         this.monitorBlockListener = this.monitorBlockListener.bind(this);
         this.variableListener = this.variableListener.bind(this);
+        this.extensionListener = this.extensionListener.bind(this);
     }
 
     /**
@@ -652,9 +629,8 @@ class VirtualMachine extends EventEmitter {
         const extensionPromises = [];
 
         extensions.extensionIDs.forEach(extensionID => {
-            if (!this.extensionManager.isExtensionLoaded(extensionID)) {
-                const extensionURL = extensions.extensionURLs.get(extensionID) || extensionID;
-                extensionPromises.push(this.extensionManager.loadExtensionURL(extensionURL));
+            if (!this.extensionManager.isExtensionEnabled(extensionID)) {
+                extensionPromises.push(this.extensionManager.enableExtension(extensionID));
             }
         });
 
@@ -1263,6 +1239,78 @@ class VirtualMachine extends EventEmitter {
     }
 
     /**
+     * Attach the extension manager.
+     * @param {!ExtensionManager} extensionManager The extension manager to attach
+     * @param {!Array<object>} extensionLibraryContent Content for extension library
+     *      (for test only, should be replace later)
+     */
+    attachExtensionManager (extensionManager, extensionLibraryContent) {
+        this.extensionManager = extensionManager;
+
+        this.extensionManager.addEventListener('UPDATE_PRIMITIVES', this.extensionListener);
+
+        const builtinExtensions = {
+            // This is an example that isn't loaded with the other core blocks,
+            // but serves as a reference for loading core blocks as extensions.
+            coreExample: () => require('./blocks/scratch3_core_example'),
+            // These are the non-core built-in extensions.
+            pen: () => require('./extensions/scratch3_pen'),
+            wedo2: () => require('./extensions/scratch3_wedo2'),
+            music: () => require('./extensions/scratch3_music'),
+            microbit: () => require('./extensions/scratch3_microbit'),
+            text2speech: () => require('./extensions/scratch3_text2speech'),
+            translate: () => require('./extensions/scratch3_translate'),
+            videoSensing: () => require('./extensions/scratch3_video_sensing'),
+            ev3: () => require('./extensions/scratch3_ev3'),
+            makeymakey: () => require('./extensions/scratch3_makeymakey'),
+            boost: () => require('./extensions/scratch3_boost'),
+            gdxfor: () => require('./extensions/scratch3_gdx_for')
+        };
+
+        // Register builtin extensions.
+        // @todo should be removed later to make builtin extension external.
+        for (const content of extensionLibraryContent) {
+            const extensionId = content.extensionId;
+
+            if (this.extensionManager.isExtensionLoaded(extensionId)) {
+                log.error(`Duplicated builtin extension: ${extensionId}`);
+                continue;
+            }
+
+            if (!Object.hasOwnProperty.call(builtinExtensions, extensionId)) {
+                log.error(`Unexpected builtin extension: ${extensionId}`);
+                continue;
+            }
+
+            this.extensionManager.loadExtension(new ScratchBuiltinAdapter(
+                content, builtinExtensions[extensionId], this.runtime
+            ));
+        }
+    }
+
+    /**
+     * Event listener for extension manager.
+     * @param {!UpdatePrimitivesEvent} event Event payload.
+     */
+    extensionListener (event) {
+        for (const opcode in event.primitives) {
+            if (Object.hasOwnProperty.call(this.runtime._primitives, opcode)) {
+                log.error(`Duplicated opcode to add to primitives: ${opcode}`);
+                continue;
+            }
+            this.runtime._primitives[opcode] = event.primitives[opcode];
+        }
+
+        for (const opcode in event.hats) {
+            if (Object.hasOwnProperty.call(this.runtime._hats, opcode)) {
+                log.error(`Duplicated opcode to add to hats: ${opcode}`);
+                continue;
+            }
+            this.runtime._hats[opcode] = event.hats[opcode];
+        }
+    }
+
+    /**
      * set the current locale and builtin messages for the VM
      * @param {!string} locale       current locale
      * @param {!Record<string, string | formatMessage.Translation>} messages     builtin messages map for current locale
@@ -1273,7 +1321,7 @@ class VirtualMachine extends EventEmitter {
         if (locale !== formatMessage.setup().locale) {
             formatMessage.setup({locale: locale, translations: {[locale]: messages}});
         }
-        return this.extensionManager.refreshBlocks();
+        return Promise.resolve();
     }
 
     /**
@@ -1396,12 +1444,12 @@ class VirtualMachine extends EventEmitter {
         const extensionIDs = new Set(copiedBlocks
             .map(b => sb3.getExtensionIdForOpcode(b.opcode))
             .filter(id => !!id) // Remove ids that do not exist
-            .filter(id => !this.extensionManager.isExtensionLoaded(id)) // and remove loaded extensions
+            .filter(id => !this.extensionManager.isExtensionEnabled(id)) // and remove loaded extensions
         );
 
         // Create an array promises for extensions to load
         const extensionPromises = Array.from(extensionIDs,
-            id => this.extensionManager.loadExtensionURL(id)
+            id => this.extensionManager.enableExtension(id)
         );
 
         return Promise.all(extensionPromises).then(() => {
