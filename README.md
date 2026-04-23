@@ -37,11 +37,10 @@ See [contributing guide](./CONTRIBUTING.md) for instructions on how to build Cli
 
 ## Documentation
 > New documentation is still under construction, but you can check the old one for reference.
+See [ClipCC Documentation](https://doc.codingclip.com/).
 
 ## License
 Our codebase is hard-forked on Scratch's before AGPL-3.0 license change, and won't be seen as a direct upstream for legal considerations. Please check package's `LICENSE` file for specific licensing information. Also see [Contributor License Agreement](./Contributor%20License%20Agreement.txt).
-
-See [ClipCC Documentation](https://doc.codingclip.com/).
 
 ## Contributing
 Follow our [contribution guide](./CONTRIBUTING.md) to learn how to contribute to ClipCC.
