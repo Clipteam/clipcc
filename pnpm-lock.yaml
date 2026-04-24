@@ -88,6 +88,9 @@ importers:
       cross-env:
         specifier: ^10.1.0
         version: 10.1.0
+      css-loader:
+        specifier: 6.7.3
+        version: 6.7.3(webpack@5.105.4)
       electron:
         specifier: ^41.2.0
         version: 41.2.0
@@ -115,6 +118,12 @@ importers:
       png2icons:
         specifier: ^2.0.1
         version: 2.0.1
+      postcss-import:
+        specifier: ^12.0.0
+        version: 12.0.1
+      postcss-loader:
+        specifier: 7.0.2
+        version: 7.0.2(postcss@8.5.8)(webpack@5.105.4)
       react:
         specifier: 'catalog:'
         version: 16.2.0
@@ -1144,6 +1153,9 @@ importers:
       node-fetch:
         specifier: ^3.3.2
         version: 3.3.2
+      node-polyfill-webpack-plugin:
+        specifier: ^3.0.0
+        version: 3.0.0(webpack@5.105.4)
       rimraf:
         specifier: 6.0.1
         version: 6.0.1
@@ -13916,12 +13928,12 @@ snapshots:
   '@webpack-cli/configtest@3.0.1(webpack-cli@6.0.1)(webpack@5.105.4)':
     dependencies:
       webpack: 5.105.4(webpack-cli@6.0.1)
-      webpack-cli: 6.0.1(webpack@5.105.4)
+      webpack-cli: 6.0.1(webpack-dev-server@5.2.3)(webpack@5.105.4)
 
   '@webpack-cli/info@3.0.1(webpack-cli@6.0.1)(webpack@5.105.4)':
     dependencies:
       webpack: 5.105.4(webpack-cli@6.0.1)
-      webpack-cli: 6.0.1(webpack@5.105.4)
+      webpack-cli: 6.0.1(webpack-dev-server@5.2.3)(webpack@5.105.4)
 
   '@webpack-cli/serve@3.0.1(webpack-cli@6.0.1)(webpack-dev-server@5.2.3)(webpack@5.105.4)':
     dependencies:
@@ -21712,7 +21724,7 @@ snapshots:
       watchpack: 2.5.1
       webpack-sources: 3.3.4
     optionalDependencies:
-      webpack-cli: 6.0.1(webpack@5.105.4)
+      webpack-cli: 6.0.1(webpack-dev-server@5.2.3)(webpack@5.105.4)
     transitivePeerDependencies:
       - '@swc/core'
       - esbuild

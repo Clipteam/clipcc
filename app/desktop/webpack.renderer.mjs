@@ -200,7 +200,7 @@ const rendererConfig = {
             'clipcc.BUILD_TIME': Date.now()
         }),
         new NodePolyfillPlugin({
-            includeAliases: ['Buffer', 'events']
+            includeAliases: ['buffer', 'Buffer', 'events']
         })
     ]
 };
