@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const Worker = require('tiny-worker');
 
 const BlockType = require('../../src/extension-support/block-type');

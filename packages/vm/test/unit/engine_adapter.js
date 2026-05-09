@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const adapter = require('../../src/engine/adapter');
 const events = require('../fixtures/events.json');
 

@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const Music = require('../../src/extensions/scratch3_music/index.js');
 
 const fakeRuntime = {

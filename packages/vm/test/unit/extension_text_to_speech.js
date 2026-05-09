@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const TextToSpeech = require('../../src/extensions/scratch3_text2speech/index.js');
 
 const fakeStage = {

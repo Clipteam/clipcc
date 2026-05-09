@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const Motion = require('../../src/blocks/scratch3_motion');
 const Runtime = require('../../src/engine/runtime');
 const Sprite = require('../../src/sprites/sprite.js');

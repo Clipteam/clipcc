@@ -1,5 +1,5 @@
 const path = require('path');
-const tap = require('tap');
+const tap = require('../fixtures/jest-tap-bridge');
 const test = tap.test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const {readFileToBuffer, extractProjectJson} = require('../fixtures/readProjectFile');

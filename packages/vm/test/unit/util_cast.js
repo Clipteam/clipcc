@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const cast = require('../../src/util/cast');
 
 test('toNumber', t => {

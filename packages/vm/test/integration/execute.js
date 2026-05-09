@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 
 const log = require('../../src/util/log');
 const makeTestStorage = require('../fixtures/make-test-storage');

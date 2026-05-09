@@ -2,7 +2,7 @@ const {createReadStream} = require('fs');
 const {join} = require('path');
 
 const {PNG} = require('pngjs');
-const {test} = require('tap');
+const {test} = require('../fixtures/jest-tap-bridge');
 
 const {wrapClamp} = require('../../src/util/math-util');
 

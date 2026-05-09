@@ -1,6 +1,6 @@
 const Worker = require('tiny-worker');
 const path = require('path');
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 
 const Scratch3PenBlocks = require('../../src/extensions/scratch3_pen/index.js');
 const VirtualMachine = require('../../src/index');
