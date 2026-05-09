@@ -1,4 +1,4 @@
-const tap = require('tap');
+const tap = require('../fixtures/jest-tap-bridge');
 const path = require('path');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const VirtualMachine = require('../../src/virtual-machine');

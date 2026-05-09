@@ -1,6 +1,5 @@
 const path = require('path');
-const tap = require('tap');
-const {test} = tap;
+const {test} = require('../fixtures/jest-tap-bridge');
 const fs = require('fs');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 const dispatch = require('../../src/dispatch/central-dispatch');

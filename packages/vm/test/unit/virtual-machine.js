@@ -1,4 +1,4 @@
-const tap = require('tap');
+const tap = require('../fixtures/jest-tap-bridge');
 const VirtualMachine = require('../../src/virtual-machine');
 const Sprite = require('../../src/sprites/sprite');
 const Variable = require('../../src/engine/variable');
@@ -292,7 +292,7 @@ test('duplicateSprite throws when there is no target with given id', t => {
     }];
     t.throws(
         (() => vm.duplicateSprite('id1')),
-        new Error('No target with the provided id')
+        new Error('No target with the provided id.')
     );
     t.end();
 });

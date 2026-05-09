@@ -1,6 +1,6 @@
 const newBlockIds = require('../../src/util/new-block-ids');
 const simpleStack = require('../fixtures/simple-stack');
-const tap = require('tap');
+const tap = require('../fixtures/jest-tap-bridge');
 const test = tap.test;
 
 let originals;

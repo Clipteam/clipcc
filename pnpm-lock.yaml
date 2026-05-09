@@ -1238,6 +1238,9 @@ importers:
       babel-eslint:
         specifier: 10.1.0
         version: 10.1.0(eslint@9.39.2(jiti@2.6.1))
+      babel-jest:
+        specifier: 23.6.0
+        version: 23.6.0(babel-core@7.0.0-bridge.0(@babel/core@7.29.0))
       babel-loader:
         specifier: ^10.1.1
         version: 10.1.1(@babel/core@7.29.0)(webpack@5.105.4)
@@ -1283,6 +1286,9 @@ importers:
       in-publish:
         specifier: 2.0.1
         version: 2.0.1
+      jest:
+        specifier: 'catalog:'
+        version: 30.3.0(@types/node@25.5.2)
       js-md5:
         specifier: 0.7.3
         version: 0.7.3
@@ -1310,9 +1316,6 @@ importers:
       stats.js:
         specifier: 0.17.0
         version: 0.17.0
-      tap:
-        specifier: 21.0.1
-        version: 21.0.1(@types/node@25.5.2)(react-dom@16.4.0(react@18.3.1))(react@18.3.1)(typescript@5.9.3)
       terser-webpack-plugin:
         specifier: ^5.3.17
         version: 5.3.17(webpack@5.105.4)
