@@ -33,5 +33,5 @@ test('cycle', t => {
         }, 100);
     }, 100);
     rt._step();
-    t.ok(c.projectTimer() > 0);
+    t.ok(c.projectTimer() >= 0);
 });

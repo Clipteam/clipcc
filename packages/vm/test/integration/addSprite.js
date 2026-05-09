@@ -55,7 +55,7 @@ test('default cat', t => {
                 t.type(newTarget.blocks, 'object');
                 t.type(newTarget.variables, 'object');
                 const varIds = Object.keys(newTarget.variables);
-                t.type(varIds.length, 1);
+                t.equal(varIds.length, 1);
                 const variable = newTarget.variables[varIds[0]];
                 t.equal(variable.name, 'foo');
                 t.equal(variable.value, 0);

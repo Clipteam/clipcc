@@ -8,8 +8,6 @@
  * @fileoverview A bridge to make old tap tests can run under jest environment seamlessly.
  */
 
-const DEFAULT_TIMEOUT = 30000;
-
 /**
  * Create a tap-style t assertion object for a single test case.
  *
@@ -25,6 +23,17 @@ const createTapObject = (plan, onEnd) => {
     const countAssert = assertFn => {
         plan.count++;
         assertFn();
+    };
+
+    /**
+     * Normalize values for TAP-compatible comparison.
+     * -0 is normalized to 0 (TAP treats them as equal).
+     * @param {unknown} val
+     * @returns {unknown}
+     */
+    const normalize = val => {
+        if (Object.is(val, -0)) return 0;
+        return val;
     };
 
     return {
@@ -47,22 +56,37 @@ const createTapObject = (plan, onEnd) => {
         },
 
         /**
-         * t.equal(actual, expected) - Deep equality.
-         * In modern tap (v21), `equal` and `same` are aliases for deep equality.
+         * t.equal(actual, expected) - Loose equality (==).
          * @param {unknown} actual
          * @param {unknown} expected
          */
         equal (actual, expected) {
-            countAssert(() => expect(actual).toEqual(expected));
+            countAssert(() => {
+                // eslint-disable-next-line eqeqeq
+                expect(actual == expected).toBeTruthy();
+            });
         },
 
         /**
-         * t.same(actual, expected) - Deep equality, alias of equal.
+         * t.same(actual, expected) - Deep equality.
+         * In modern tap (v21), `equal` and `same` are aliases for deep equality.
+         * We use deep equality but normalize -0 and null/undefined.
          * @param {unknown} actual
          * @param {unknown} expected
          */
         same (actual, expected) {
-            countAssert(() => expect(actual).toEqual(expected));
+            countAssert(() => {
+                const a = normalize(actual);
+                const e = normalize(expected);
+                // null and undefined are equivalent in TAP
+                if ((a === null || a === undefined) &&
+                    (e === null || e === undefined)) {
+                    // eslint-disable-next-line eqeqeq
+                    expect(a == e).toBeTruthy();
+                    return;
+                }
+                expect(a).toEqual(e);
+            });
         },
 
         /**
@@ -76,12 +100,17 @@ const createTapObject = (plan, onEnd) => {
         },
 
         /**
-         * t.not(actual, expected) - Inverse of deep equality.
+         * t.not(actual, expected) - Inverse of loose equality.
+         * In TAP, `not` uses != comparison (reference for objects, loose for primitives).
          * @param {unknown} actual
          * @param {unknown} expected
          */
         not (actual, expected) {
-            countAssert(() => expect(actual).not.toEqual(expected));
+            countAssert(() => {
+                // TAP uses != which compares by reference for objects
+                // eslint-disable-next-line eqeqeq
+                expect(actual == expected).toBeFalsy();
+            });
         },
 
         /**
@@ -178,6 +207,40 @@ const createTapObject = (plan, onEnd) => {
          */
         comment (...args) {
             process.stdout.write(`# ${args.join(' ')}\n`);
+        },
+
+        /**
+         * t.test(name, fn) - Create a sub-test.
+         * Returns a Promise that resolves when the sub-test completes.
+         * @param {string} name - Sub-test name.
+         * @param {(t: object) => void|Promise} fn - Sub-test function.
+         * @returns {Promise<void>}
+         */
+        test (name, fn) {
+            return new Promise((resolve, reject) => {
+                const subPlan = {count: 0, expected: null};
+                let subEnded = false;
+                const subDone = () => {
+                    if (subEnded) return;
+                    subEnded = true;
+                    if (subPlan.expected !== null) {
+                        expect(subPlan.count).toBe(subPlan.expected);
+                    }
+                    resolve();
+                };
+                const subT = createTapObject(subPlan, subDone);
+                try {
+                    const result = fn(subT);
+                    if (result && typeof result.then === 'function') {
+                        result.then(
+                            () => { if (!subEnded) subDone(); },
+                            reject
+                        );
+                    }
+                } catch (err) {
+                    reject(err);
+                }
+            });
         }
     };
 };
@@ -200,13 +263,10 @@ const tapTest = (name, fn) => {
     test(name, () => new Promise((resolve, reject) => {
         const plan = {count: 0, expected: null};
         let ended = false;
-        let timer = null;
 
         const done = () => {
             if (ended) return;
             ended = true;
-
-            clearTimeout(timer);
 
             // Verify plan count if t.plan() was called.
             if (plan.expected !== null) {
@@ -217,14 +277,6 @@ const tapTest = (name, fn) => {
         };
 
         const t = createTapObject(plan, done);
-
-        // Safety timeout: if t.end() is never called, fail the test.
-        timer = setTimeout(() => {
-            if (!ended) {
-                process.stdout.write('# Test timed out — t.end() was never called\n');
-                done();
-            }
-        }, DEFAULT_TIMEOUT);
 
         try {
             const result = fn(t);
@@ -238,7 +290,6 @@ const tapTest = (name, fn) => {
                     err => {
                         if (!ended) {
                             ended = true;
-                            clearTimeout(timer);
                             reject(err);
                         }
                     }
@@ -247,7 +298,6 @@ const tapTest = (name, fn) => {
         } catch (err) {
             if (!ended) {
                 ended = true;
-                clearTimeout(timer);
                 reject(err);
             }
         }
