@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/reject-function-type */
 /**
  * @license
  * Copyright 2026 Clip Team
@@ -53,6 +54,12 @@ jest.setTimeout(30000);
  * @callback TapTestFn
  * @param {TapAssertions} t
  * @returns {void|Promise<void>}
+ */
+
+/**
+ * @typedef {object} TapPlan
+ * @property {number} count - Number of assertions executed.
+ * @property {number|null} expected - Expected number of assertions (set by `plan()`).
  */
 
 /**
@@ -349,7 +356,7 @@ const createTapObject = (plan, onEnd) => {
  */
 const tapTest = (name, fn) => {
     test(name, () => new Promise((resolve, reject) => {
-        const plan = /** @type {TapPlan} */ ({count: 0, expected: null});
+        const plan = {count: 0, expected: null};
         let ended = false;
 
         const done = () => {
