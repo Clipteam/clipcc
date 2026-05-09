@@ -5,58 +5,115 @@
  */
 
 /**
- * @fileoverview A bridge to make old tap tests can run under jest environment seamlessly.
+ * @fileoverview A bridge to make old tap tests run under jest environment
+ * seamlessly.  Mimics a subset of the {@link https://node-tap.org/ node-tap}
+ * assertion API, delegating each assertion to Jest's `expect()`.
+ */
+
+// Increase Jest timeout to match the bridge's internal completion window.
+jest.setTimeout(30000);
+
+/**
+ * @typedef {object} TapAssertions
+ * @property {(n: number) => void} plan
+ *   Specify the number of Test Points expected by this test.
+ * @property {() => void} end
+ *   Explicitly mark the test as completed.
+ * @property {(actual: unknown, expected: unknown) => void} equal
+ *   Verify that the values are equal (loose `==`).
+ * @property {(actual: unknown, expected: unknown) => void} same
+ *   Verify that the value is loosely equivalent to the supplied pattern.
+ * @property {(actual: unknown, expected: unknown) => void} strictSame
+ *   Verify that the value is strictly equivalent to the supplied pattern.
+ * @property {(actual: unknown, expected: unknown) => void} not
+ *   Verify that the values are not equal (loose `!=`).
+ * @property {(actual: unknown, expected: unknown) => void} strictNotSame
+ *   Verify that the value is not strictly equivalent to the supplied pattern.
+ * @property {(value: unknown) => void} ok
+ *   Verify that the value is truthy.
+ * @property {(value: unknown) => void} notOk
+ *   Verify that the value is not truthy.
+ * @property {(value: unknown, typeStr: string) => void} type
+ *   Verify that the value is of the type specified.
+ * @property {(fn: Function, expectedError?: Error|RegExp|string|Function) => void} throws
+ *   Verify that the function throws an error.
+ * @property {(fn: Function) => void} doesNotThrow
+ *   Assert that the function does not throw.
+ * @property {(message?: string|Error) => void} fail
+ *   A failing (not ok) Test Point.
+ * @property {(message?: string) => void} pass
+ *   A passing (ok) Test Point.
+ * @property {(...args: unknown[]) => void} comment
+ *   Output a TAP comment, formatted like `console.log()`.
+ * @property {(name: string, fn: (t: TapAssertions) => void|Promise<void>) => Promise<void>} test
+ *   Create a child test.
  */
 
 /**
- * Create a tap-style t assertion object for a single test case.
- *
- * @param {{ count: number, expected: number | null }} plan - Shared plan state.
- * @param {() => void} onEnd - Called when t.end() is invoked.
- * @returns {object} A t object with tap assertion methods.
+ * @callback TapTestFn
+ * @param {TapAssertions} t
+ * @returns {void|Promise<void>}
+ */
+
+/**
+ * @typedef {object} TapBridge
+ * @property {(name: string, fn: TapTestFn) => void} test
+ *   Register a test case.
+ * @property {(name: string, fn: TapTestFn) => void} Test
+ *   Alias for {@link TapBridge#test}.
+ * @property {(fn: () => void) => void} beforeEach
+ *   Register a beforeEach hook via Jest's `beforeEach`.
+ */
+
+/**
+ * Normalize values for TAP-compatible comparison.
+ * `-0` is normalized to `0` (TAP treats them as equal).
+ * @param {unknown} val
+ * @returns {unknown}
+ */
+const normalize = val => {
+    if (Object.is(val, -0)) return 0;
+    return val;
+};
+
+/**
+ * Create a tap-style `t` assertion object for a single test case.
+ * @param {TapPlan} plan - Shared plan state.
+ * @param {() => void} onEnd - Called when `end()` is invoked.
+ * @returns {TapAssertions} A `t` object with tap assertion methods.
  */
 const createTapObject = (plan, onEnd) => {
     /**
-     * increment assertion count then run the jest expect callback.
-     * @param {() => void} assertFn - Function that calls expect(...).
+     * Increment assertion count, then run the jest `expect()` callback.
+     * @param {() => void} assertFn - Function that calls `expect(...)`.
      */
     const countAssert = assertFn => {
         plan.count++;
         assertFn();
     };
 
-    /**
-     * Normalize values for TAP-compatible comparison.
-     * -0 is normalized to 0 (TAP treats them as equal).
-     * @param {unknown} val
-     * @returns {unknown}
-     */
-    const normalize = val => {
-        if (Object.is(val, -0)) return 0;
-        return val;
-    };
-
     return {
         /**
-         * t.plan(n) - Declare expected number of assertions.
-         * Verified at test end (when t.end() is called or the test completes).
-         * @param {number} n The expected number of assertions in this test.
+         * Specify the number of Test Points expected by this test.
+         * @param {number} n - Expected number of assertions.
          */
         plan (n) {
             plan.expected = n;
         },
 
         /**
-         * t.end() - Signal test completion.
-         * In tap, the test is not done until t.end() is called.
-         * Here we resolve the deferred promise so jest knows the test is complete.
+         * Explicitly mark the test as completed.
+         * this is not required if the test function returns a
+         * promise or if a plan is declared and fulfilled.  Here we
+         * resolve the deferred promise so Jest knows the test is done.
          */
         end () {
             onEnd();
         },
 
         /**
-         * t.equal(actual, expected) - Loose equality (==).
+         * Verify that the values are equal loosely.
+         *
          * @param {unknown} actual
          * @param {unknown} expected
          */
@@ -68,9 +125,12 @@ const createTapObject = (plan, onEnd) => {
         },
 
         /**
-         * t.same(actual, expected) - Deep equality.
-         * In modern tap (v21), `equal` and `same` are aliases for deep equality.
-         * We use deep equality but normalize -0 and null/undefined.
+         * Verify that the value is loosely equivalent to the
+         * supplied pattern.
+         *Delegates to Jest's `.toEqual()` (deep
+         * equality).  `-0` is normalized to `0`, and `null`/`undefined`
+         * are treated as equivalent.
+         *
          * @param {unknown} actual
          * @param {unknown} expected
          */
@@ -90,8 +150,10 @@ const createTapObject = (plan, onEnd) => {
         },
 
         /**
-         * t.strictSame(actual, expected) - Strict deep equality.
-         * Jest's toStrictEqual checks for undefined properties, array holes, etc.
+         * Verify that the value is strictly equivalent to the
+         * supplied pattern.
+         * Delegates to Jest's `.toStrictEqual()`.
+         *
          * @param {unknown} actual
          * @param {unknown} expected
          */
@@ -100,21 +162,22 @@ const createTapObject = (plan, onEnd) => {
         },
 
         /**
-         * t.not(actual, expected) - Inverse of loose equality.
-         * In TAP, `not` uses != comparison (reference for objects, loose for primitives).
+         * Verify that the values are not equal.
          * @param {unknown} actual
          * @param {unknown} expected
          */
         not (actual, expected) {
             countAssert(() => {
-                // TAP uses != which compares by reference for objects
                 // eslint-disable-next-line eqeqeq
                 expect(actual == expected).toBeFalsy();
             });
         },
 
         /**
-         * t.strictNotSame(actual, expected) - Inverse of strict deep equality.
+         * Verify that the value is not strictly equivalent to the
+         * supplied pattern.
+         * Delegates to Jest's `.not.toStrictEqual()`.
+         *
          * @param {unknown} actual
          * @param {unknown} expected
          */
@@ -123,7 +186,8 @@ const createTapObject = (plan, onEnd) => {
         },
 
         /**
-         * t.ok(value) - Check truthiness.
+         * Verify that the value is truthy.
+         *
          * @param {unknown} value
          */
         ok (value) {
@@ -131,7 +195,8 @@ const createTapObject = (plan, onEnd) => {
         },
 
         /**
-         * t.notOk(value) - Check falsiness.
+         * Verify that the value is not truthy.
+         *
          * @param {unknown} value
          */
         notOk (value) {
@@ -139,20 +204,31 @@ const createTapObject = (plan, onEnd) => {
         },
 
         /**
-         * t.type(value, type) - Check typeof value.
-         * Tap uses string representations: 'string', 'number', 'object', 'function', 'undefined'.
+         * Verify that the value is of the type specified.
+         *
+         * In TAP, `klass` can be a string (matched against `typeof`
+         * result, `'null'`, or the constructor's `name`) or a
+         * constructor function.  **This bridge only supports the
+         * `typeof` string case** (e.g. `'string'`, `'number'`,
+         * `'object'`, `'function'`, `'undefined'`).
+         *
          * @param {unknown} value
-         * @param {string} typeStr
+         * @param {string} typeStr - Expected `typeof` result.
          */
         type (value, typeStr) {
             countAssert(() => expect(typeof value).toBe(typeStr));
         },
 
         /**
-         * t.throws(fn, expectedError) - Expect fn to throw.
-         * expectedError can be an Error instance, regex, string, or class.
-         * @param {Function} fn
-         * @param {Error|RegExp|string|Function} expectedError
+         * Verify that the function throws an error.
+         *
+         * Thrown error is tested against the `wanted` param if provided.
+         * In TAP the error is tested via `t.match()`; here we delegate
+         * to Jest's `.toThrow()`.
+         * @param {Function} fn - Function expected to throw.
+         * @param {Error|RegExp|string|Function} [expectedError] -
+         *   Expected error.  Accepts an Error instance, regex, string
+         *   (message substring), or constructor.
          */
         throws (fn, expectedError) {
             countAssert(() => {
@@ -165,17 +241,22 @@ const createTapObject = (plan, onEnd) => {
         },
 
         /**
-         * t.doesNotThrow(fn) - Expect fn not to throw.
-         * @param {Function} fn
+         * Assert that the function does not throw.
+         *
+         * In TAP this returns the error object if it throws (and the
+         * test is skip/todo).  Here we simply delegate to Jest's
+         * `.not.toThrow()`.
+         *
+         * @param {Function} fn - Function expected not to throw.
          */
         doesNotThrow (fn) {
             countAssert(() => expect(fn).not.toThrow());
         },
 
         /**
-         * t.fail(message) - Unconditional test failure.
-         * Handles string messages and Error objects.
-         * @param {string|Error} [message]
+         * A failing (not ok) Test Point.
+         *
+         * @param {string|Error} [message] - Failure message.
          */
         fail (message) {
             const msg = message instanceof Error ?
@@ -188,9 +269,9 @@ const createTapObject = (plan, onEnd) => {
         },
 
         /**
-         * t.pass(message) - Unconditional test pass.
-         * No-op assertion that always succeeds.
-         * @param {string} [message]
+         * A passing (ok) Test Point.
+         * @param {string} [message] - Optional message printed as a
+         *   TAP comment.
          */
         pass (message) {
             countAssert(() => expect(true).toBe(true));
@@ -200,20 +281,24 @@ const createTapObject = (plan, onEnd) => {
         },
 
         /**
-         * t.comment(...args) - Output a TAP comment to stdout.
-         * Tap comments are prefixed with '# ' and written to the TAP stream.
-         * Multiple arguments are joined like console.log.
-         * @param {...unknown} args
+         * Output a TAP comment, formatted like `console.log()`.
+         * In TAP, comments are deferred until after any in-progress
+         * child test completes.  Here we write directly to stdout.
+         * @param {...unknown} args - Values to print (joined with space).
          */
         comment (...args) {
             process.stdout.write(`# ${args.join(' ')}\n`);
         },
 
         /**
-         * t.test(name, fn) - Create a sub-test.
-         * Returns a Promise that resolves when the sub-test completes.
+         * Create a child test.
+         * In TAP this creates a real child Test object and parses its
+         * output as a subtest.  Since jest does not support add tests dynamically,
+         * this bridge runs the sub-test inline and returns a Promise that resolves
+         * when the sub-test completes (via `end()` or returning a promise).
+         *
          * @param {string} name - Sub-test name.
-         * @param {(t: object) => void|Promise} fn - Sub-test function.
+         * @param {TapTestFn} fn - Sub-test function.
          * @returns {Promise<void>}
          */
         test (name, fn) {
@@ -233,7 +318,9 @@ const createTapObject = (plan, onEnd) => {
                     const result = fn(subT);
                     if (result && typeof result.then === 'function') {
                         result.then(
-                            () => { if (!subEnded) subDone(); },
+                            () => {
+                                if (!subEnded) subDone();
+                            },
                             reject
                         );
                     }
@@ -246,29 +333,30 @@ const createTapObject = (plan, onEnd) => {
 };
 
 /**
- * Wraps a tap-style test function so it runs correctly under jest.
+ * Register a tap-style test under Jest.
  *
- * The wrapper does the following:
- * 1. Creates a `t` assertion object linked to the test.
- * 2. Runs the original tap test function with t.
- * 3. Returns a Promise to jest so jest waits for async completion.
- * 4. If the original fn returns a Promise, chains completion on it too.
- * 5. t.end() resolves the Promise (for callback-style async tests).
- * 6. Verifies t.plan() count when the test ends.
+ * The wrapper:
+ *
+ * 1. Creates a {@link TapAssertions} assertion object linked to the test.
+ * 2. Runs the original tap test function with `t`.
+ * 3. Returns a Promise to Jest so Jest waits for async completion.
+ * 4. If the test function returns a Promise, chains completion on it.
+ * 5. `end()` resolves the Promise (for callback-style async tests).
+ * 6. Verifies `plan()` count when the test ends.
  *
  * @param {string} name - Test name.
- * @param {(t: object) => void|Promise} fn - Original tap test function.
+ * @param {TapTestFn} fn - Original tap test function.
  */
 const tapTest = (name, fn) => {
     test(name, () => new Promise((resolve, reject) => {
-        const plan = {count: 0, expected: null};
+        const plan = /** @type {TapPlan} */ ({count: 0, expected: null});
         let ended = false;
 
         const done = () => {
             if (ended) return;
             ended = true;
 
-            // Verify plan count if t.plan() was called.
+            // Verify plan count if plan() was called.
             if (plan.expected !== null) {
                 expect(plan.count).toBe(plan.expected);
             }
@@ -304,13 +392,10 @@ const tapTest = (name, fn) => {
     }));
 };
 
-// Attach the test method to the bridge object itself so it can be used as:
-// const test = require('...').test;
 tapTest.test = tapTest;
-
-// Attach beforeEach for files that do: tap.beforeEach(...)
 tapTest.beforeEach = function tapBeforeEach (fn) {
     beforeEach(fn);
 };
 
+/** @type {TapBridge} */
 module.exports = tapTest;
