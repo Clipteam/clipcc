@@ -10,7 +10,7 @@
  * assertion API, delegating each assertion to Jest's `expect()`.
  */
 
-// Increase Jest timeout to match the bridge's internal completion window.
+// Use tap's default timeout of 30s for all tests run via bridge.
 jest.setTimeout(30000);
 
 /**
