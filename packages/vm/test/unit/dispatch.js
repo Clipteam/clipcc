@@ -1,11 +1,9 @@
 import DispatchTestService from '../fixtures/dispatch-test-service.js';
-import Worker from 'tiny-worker';
+import Worker from '../fixtures/fake-worker';
 import dispatch from '../../src/dispatch/central-dispatch';
 import path from 'path';
 import {test} from '../fixtures/jest-tap-bridge.js';
 
-
-// By default Central Dispatch works with the Worker class built into the browser. Tell it to use TinyWorker instead.
 dispatch.workerClass = Worker;
 
 const runServiceTest = function (serviceName, t) {
@@ -48,8 +46,8 @@ test('local', t => {
 
 test('remote', t => {
     const fixturesDir = path.resolve(__dirname, '../fixtures');
-    const shimPath = path.resolve(fixturesDir, 'dispatch-test-worker-shim.js');
-    const worker = new Worker(shimPath, null, {cwd: fixturesDir});
+    const workerPath = path.resolve(fixturesDir, 'dispatch-test-worker.js');
+    const worker = new Worker(workerPath, null, {cwd: fixturesDir});
     dispatch.addWorker(worker);
 
     const waitForWorker = new Promise(resolve => {
