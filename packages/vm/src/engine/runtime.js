@@ -4,7 +4,7 @@ import ArgumentType from '../extension-support/argument-type';
 import Blocks from './blocks.js';
 import {getScripts as getCachedScriptsByOpcode} from './blocks-runtime-cache.js';
 import BlockType from '../extension-support/block-type';
-import Profiler from './profiler.js';
+import Profiler from './profiler';
 import Sequencer from './sequencer.js';
 import execute from './execute.js';
 import ScratchBlocksConstants from './scratch-blocks-constants';

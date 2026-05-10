@@ -15,193 +15,142 @@
 
 /**
  * The next id returned for a new profile'd function.
- * @type {number}
  */
 let nextId = 0;
 
 /**
  * The mapping of names to ids.
- * @constant {Record<string, number>}
  */
-const profilerNames = {};
+const profilerNames: Record<string, number> = {};
 
 /**
  * The START event identifier in Profiler records.
- * @constant {number}
  */
 const START = 0;
 
 /**
  * The STOP event identifier in Profiler records.
- * @constant {number}
  */
 const STOP = 1;
 
 /**
  * The number of cells used in the records array by a START event.
- * @constant {number}
  */
 const START_SIZE = 4;
 
 /**
  * The number of cells used in the records array by a STOP event.
- * @constant {number}
  */
 const STOP_SIZE = 2;
 
-/**
- * Stored reference to Performance instance provided by the Browser.
- * @constant {Performance}
- */
-const performance = typeof window === 'object' && window.performance;
-
-
-/**
- * Callback handle called by Profiler for each frame it decodes from its
- * records.
- * @callback FrameCallback
- * @param {ProfilerFrame} frame
- */
+type FrameCallback = (frame: ProfilerFrame) => void;
 
 /**
  * A set of information about a frame of execution that was recorded.
  */
 class ProfilerFrame {
     /**
-     * @param {number} depth Depth of the frame in the recorded stack.
+     * The numeric id of a record symbol like Runtime._step or
+     * blockFunction.
      */
-    constructor (depth) {
-        /**
-         * The numeric id of a record symbol like Runtime._step or
-         * blockFunction.
-         * @type {number}
-         */
-        this.id = -1;
+    id = -1;
+    /**
+     * The amount of time spent inside the recorded frame and any deeper
+     * frames.
+     */
+    totalTime = 0;
+    /**
+     * The amount of time spent only inside this record frame. Not
+     * including time in any deeper frames.
+     */
+    selfTime = 0;
+    /**
+     * An arbitrary argument for the recorded frame. For example a block
+     * function might record its opcode as an argument.
+     */
+    arg: unknown = null;
+    count = 0;
 
-        /**
-         * The amount of time spent inside the recorded frame and any deeper
-         * frames.
-         * @type {number}
-         */
-        this.totalTime = 0;
-
-        /**
-         * The amount of time spent only inside this record frame. Not
-         * including time in any deeper frames.
-         * @type {number}
-         */
-        this.selfTime = 0;
-
-        /**
-         * An arbitrary argument for the recorded frame. For example a block
-         * function might record its opcode as an argument.
-         * @type {*}
-         */
-        this.arg = null;
-
+    constructor (
         /**
          * The depth of the recorded frame. This can help compare recursive
          * funtions that are recorded. Each level of recursion with have a
          * different depth value.
-         * @type {number}
          */
-        this.depth = depth;
-
-        /**
-         * A summarized count of the number of calls to this frame.
-         * @type {number}
-         */
-        this.count = 0;
-    }
+        public depth: number
+    ) {}
 }
 
 class Profiler {
     /**
-     * @param {FrameCallback} onFrame a handle called for each recorded frame.
-     * The passed frame value may not be stored as it'll be updated with later
-     * frame information. Any information that is further stored by the handler
-     * should make copies or reduce the information.
+     * A series of START and STOP values followed by arguments. After
+     * recording is complete the full set of records is reported back by
+     * stepping through the series to connect the relative START and STOP
+     * information.
      */
-    constructor (onFrame = function () {}) {
-        /**
-         * A series of START and STOP values followed by arguments. After
-         * recording is complete the full set of records is reported back by
-         * stepping through the series to connect the relative START and STOP
-         * information.
-         * @type {Array.<*>}
-         */
-        this.records = [];
+    records: unknown[] = [];
+    /**
+     * An array of frames incremented on demand instead as part of start
+     * and stop.
+     */
+    increments: ProfilerFrame[] = [];
+    /**
+     * An array of profiler frames separated by counter argument. Generally
+     * for Scratch these frames are separated by block function opcode.
+     * This tracks each time an opcode is called.
+     */
+    counters: ProfilerFrame[] = [];
+    /**
+     * A frame with no id or argument.
+     */
+    nullFrame: ProfilerFrame = new ProfilerFrame(-1);
+    /**
+     * A cache of ProfilerFrames to reuse when reporting the recorded
+     * frames in records.
+     */
+    _stack: ProfilerFrame[] = [new ProfilerFrame(0)];
+    /**
+     * A reference to the START record id constant.
+     */
+    START = START;
+    /**
+    c * A reference to the STOP record id constant.
+    c */
+    STOP = STOP;
 
-        /**
-         * An array of frames incremented on demand instead as part of start
-         * and stop.
-         * @type {Array.<ProfilerFrame>}
-         */
-        this.increments = [];
+    static START = START;
+    static STOP = STOP;
 
-        /**
-         * An array of profiler frames separated by counter argument. Generally
-         * for Scratch these frames are separated by block function opcode.
-         * This tracks each time an opcode is called.
-         * @type {Array.<ProfilerFrame>}
-         */
-        this.counters = [];
-
-        /**
-         * A frame with no id or argument.
-         * @type {ProfilerFrame}
-         */
-        this.nullFrame = new ProfilerFrame(-1);
-
-        /**
-         * A cache of ProfilerFrames to reuse when reporting the recorded
-         * frames in records.
-         * @type {Array.<ProfilerFrame>}
-         */
-        this._stack = [new ProfilerFrame(0)];
-
+    constructor (
         /**
          * A callback handle called with each decoded frame when reporting back
          * all the recorded times.
-         * @type {FrameCallback}
-         */
-        this.onFrame = onFrame;
-
-        /**
-         * A reference to the START record id constant.
-         * @constant {number}
-         */
-        this.START = START;
-
-        /**
-         * A reference to the STOP record id constant.
-         * @constant {number}
-         */
-        this.STOP = STOP;
-    }
+        */
+        public onFrame: FrameCallback = function () {}
+    ) {}
 
     /**
      * Start recording a frame of time for an id and optional argument.
-     * @param {number} id The id returned by idByName for a name symbol like
+     * @param id The id returned by idByName for a name symbol like
      * Runtime._step.
-     * @param {?*} arg An arbitrary argument value to store with the frame.
+     * @param arg An arbitrary argument value to store with the frame.
      */
-    start (id, arg) {
+    start (id: number, arg: unknown): void {
         this.records.push(START, id, arg, performance.now());
     }
 
     /**
      * Stop the current frame.
      */
-    stop () {
+    stop (): void {
         this.records.push(STOP, performance.now());
     }
 
     /**
      * Increment the number of times this symbol is called.
-     * @param {number} id The id returned by idByName for a name symbol.
+     * @param id The id returned by idByName for a name symbol.
      */
-    increment (id) {
+    increment (id: number): void {
         if (!this.increments[id]) {
             this.increments[id] = new ProfilerFrame(-1);
             this.increments[id].id = id;
@@ -212,13 +161,13 @@ class Profiler {
     /**
      * Find or create a ProfilerFrame-like object whose counter can be
      * incremented outside of the Profiler.
-     * @param {number} id The id returned by idByName for a name symbol.
-     * @param {*} arg The argument for a frame that identifies it in addition
+     * @param id The id returned by idByName for a name symbol.
+     * @param arg The argument for a frame that identifies it in addition
      *   to the id.
-     * @returns {{count: number}} A ProfilerFrame-like whose count should be
+     * @returns A ProfilerFrame-like whose count should be
      *   incremented for each call.
      */
-    frame (id, arg) {
+    frame (id: number, arg: unknown): ProfilerFrame {
         for (let i = 0; i < this.counters.length; i++) {
             if (this.counters[i].id === id && this.counters[i].arg === arg) {
                 return this.counters[i];
@@ -235,7 +184,7 @@ class Profiler {
     /**
      * Decode records and report all frames to `this.onFrame`.
      */
-    reportFrames () {
+    reportFrames (): void {
         const stack = this._stack;
         let depth = 1;
 
@@ -255,7 +204,7 @@ class Profiler {
 
                 // Store id, arg, totalTime, and initialize selfTime.
                 const frame = stack[depth++];
-                frame.id = this.records[i + 1];
+                frame.id = this.records[i + 1] as number;
                 frame.arg = this.records[i + 2];
                 // totalTime is first set as the time recorded by this START
                 // event. Once the STOP event is reached the stored start time
@@ -266,7 +215,7 @@ class Profiler {
                 // totalTime is used this way as a convenient member to store a
                 // value between the two events without needing additional
                 // members on the Frame or in a shadow map.
-                frame.totalTime = this.records[i + 3];
+                frame.totalTime = this.records[i + 3] as number;
                 // selfTime is decremented until we reach the STOP event for
                 // this frame. totalTime will be added to it then to get the
                 // time difference.
@@ -274,7 +223,7 @@ class Profiler {
 
                 i += START_SIZE;
             } else if (this.records[i] === STOP) {
-                const now = this.records[i + 1];
+                const now = this.records[i + 1] as number;
 
                 const frame = stack[--depth];
                 // totalTime is the difference between the start event time
@@ -319,29 +268,28 @@ class Profiler {
 
     /**
      * Lookup or create an id for a frame name.
-     * @param {string} name The name to return an id for.
-     * @returns {number} The id for the passed name.
+     * @param name The name to return an id for.
+     * @returns The id for the passed name.
      */
-    idByName (name) {
+    idByName (name: string): number {
         return Profiler.idByName(name);
     }
 
     /**
      * Reverse lookup the name from a given frame id.
-     * @param {number} id The id to search for.
-     * @returns {string} The name for the given id.
+     * @param id The id to search for.
+     * @returns The name for the given id.
      */
-    nameById (id) {
+    nameById (id: number): string | null {
         return Profiler.nameById(id);
     }
 
     /**
      * Lookup or create an id for a frame name.
-     * @static
-     * @param {string} name The name to return an id for.
-     * @returns {number} The id for the passed name.
+     * @param name The name to return an id for.
+     * @returns The id for the passed name.
      */
-    static idByName (name) {
+    static idByName (name: string): number {
         if (typeof profilerNames[name] !== 'number') {
             profilerNames[name] = nextId++;
         }
@@ -350,11 +298,10 @@ class Profiler {
 
     /**
      * Reverse lookup the name from a given frame id.
-     * @static
-     * @param {number} id The id to search for.
-     * @returns {string} The name for the given id.
+     * @param id The id to search for.
+     * @returns The name for the given id.
      */
-    static nameById (id) {
+    static nameById (id: number): string | null {
         for (const name in profilerNames) {
             if (profilerNames[name] === id) {
                 return name;
@@ -365,26 +312,13 @@ class Profiler {
 
     /**
      * Profiler is only available on platforms with the Performance API.
-     * @returns {boolean} Can the Profiler run in this browser?
+     * @returns Can the Profiler run in this browser?
      */
-    static available () {
+    static available (): boolean {
         return (
             typeof window === 'object' &&
             typeof window.performance !== 'undefined');
     }
 }
-
-
-/**
- * A reference to the START record id constant.
- * @constant {number}
- */
-Profiler.START = START;
-
-/**
- * A reference to the STOP record id constant.
- * @constant {number}
- */
-Profiler.STOP = STOP;
 
 export default Profiler;
