@@ -99,7 +99,7 @@ class ADPCMSoundDecoder {
             const riffStr = stream.readUint8String(4);
             if (riffStr !== 'RIFF') {
                 log.warn('incorrect adpcm wav header');
-                reject();
+                return reject();
             }
 
             const lengthInHeader = stream.readInt32();
@@ -110,7 +110,7 @@ class ADPCMSoundDecoder {
             const wavStr = stream.readUint8String(4);
             if (wavStr !== 'WAVE') {
                 log.warn('incorrect adpcm wav header');
-                reject();
+                return reject();
             }
 
             const formatChunk = this.extractChunk('fmt ', stream);
