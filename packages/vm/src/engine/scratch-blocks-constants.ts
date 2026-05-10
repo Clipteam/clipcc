@@ -1,6 +1,5 @@
 /**
  * These constants are copied from scratch-blocks/core/constants.js
- * @todo find a way to require() these straight from scratch-blocks... maybe make a scratch-blocks/dist/constants.js?
  * @readonly
  * @enum {int}
  */
@@ -22,7 +21,7 @@ const ScratchBlocksConstants = {
      * @constant
      */
     OUTPUT_SHAPE_SQUARE: 3
-};
+} as const;
 
 export default ScratchBlocksConstants;
 
