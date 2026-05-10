@@ -2,7 +2,7 @@ import Cast from '../util/cast';
 import Clone from '../util/clone';
 import RenderedTarget from '../sprites/rendered-target.js';
 import uid from '../util/uid';
-import StageLayering from '../engine/stage-layering.js';
+import StageLayering from '../engine/stage-layering';
 import getMonitorIdForBlockWithArgs from '../util/get-monitor-id';
 import MathUtil from '../util/math-util';
 

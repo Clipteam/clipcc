@@ -8,7 +8,7 @@ import formatMessage from 'format-message';
 import MathUtil from '../../util/math-util';
 import RenderedTarget from '../../sprites/rendered-target.js';
 import log from '../../util/log';
-import StageLayering from '../../engine/stage-layering.js';
+import StageLayering from '../../engine/stage-layering';
 
 /**
  * Icon svg to be displayed at the left edge of each extension block, encoded as a data URI.

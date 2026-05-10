@@ -3,7 +3,7 @@ import StringUtil from '../util/string-util';
 import Cast from '../util/cast';
 import Clone from '../util/clone';
 import Target from '../engine/target.js';
-import StageLayering from '../engine/stage-layering.js';
+import StageLayering from '../engine/stage-layering';
 
 /**
  * Rendered target: instance of a sprite (clone), or the stage.

@@ -2,7 +2,7 @@ import {test} from '../fixtures/jest-tap-bridge.js';
 import ArgumentType from '../../src/extension-support/argument-type';
 import BlockType from '../../src/extension-support/block-type';
 import Runtime from '../../src/engine/runtime.js';
-import ScratchBlocksConstants from '../../src/engine/scratch-blocks-constants.js';
+import ScratchBlocksConstants from '../../src/engine/scratch-blocks-constants';
 
 /**
  * @type {ExtensionMetadata}
