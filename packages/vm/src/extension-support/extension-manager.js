@@ -1,4 +1,4 @@
-import dispatch from '../dispatch/central-dispatch.js';
+import dispatch from '../dispatch/central-dispatch';
 import log from '../util/log';
 import maybeFormatMessage from '../util/maybe-format-message';
 import BlockType from './block-type';

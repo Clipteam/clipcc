@@ -1,6 +1,6 @@
 import ArgumentType from '../extension-support/argument-type';
 import BlockType from '../extension-support/block-type';
-import dispatch from '../dispatch/worker-dispatch.js';
+import dispatch from '../dispatch/worker-dispatch';
 import TargetType from './target-type';
 
 class ExtensionWorker {

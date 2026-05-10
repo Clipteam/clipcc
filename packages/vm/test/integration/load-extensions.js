@@ -2,7 +2,7 @@ import path from 'path';
 import {test} from '../fixtures/jest-tap-bridge.js';
 import fs from 'fs';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
-import dispatch from '../../src/dispatch/central-dispatch.js';
+import dispatch from '../../src/dispatch/central-dispatch';
 import VirtualMachine from '../../src/index.js';
 
 /**

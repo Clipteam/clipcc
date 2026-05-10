@@ -8,7 +8,7 @@ if (typeof TextEncoder === 'undefined') {
 import EventEmitter from 'events';
 import JSZip from 'jszip';
 import {Buffer} from 'buffer';
-import centralDispatch from './dispatch/central-dispatch.js';
+import centralDispatch from './dispatch/central-dispatch';
 import ExtensionManager from './extension-support/extension-manager.js';
 import log from './util/log';
 import MathUtil from './util/math-util';

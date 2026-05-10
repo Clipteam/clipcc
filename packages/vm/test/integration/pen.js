@@ -3,7 +3,7 @@ import path from 'path';
 import {test} from '../fixtures/jest-tap-bridge.js';
 import Scratch3PenBlocks from '../../src/extensions/scratch3_pen/index.js';
 import VirtualMachine from '../../src/index.js';
-import dispatch from '../../src/dispatch/central-dispatch.js';
+import dispatch from '../../src/dispatch/central-dispatch';
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
 

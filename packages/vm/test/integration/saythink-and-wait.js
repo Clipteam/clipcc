@@ -4,7 +4,7 @@ import {test} from '../fixtures/jest-tap-bridge.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
 import VirtualMachine from '../../src/index.js';
-import dispatch from '../../src/dispatch/central-dispatch.js';
+import dispatch from '../../src/dispatch/central-dispatch';
 
 const uri = path.resolve(__dirname, '../fixtures/saythink-and-wait.sb2');
 const project = readFileToBuffer(uri);

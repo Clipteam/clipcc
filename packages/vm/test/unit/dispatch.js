@@ -1,6 +1,6 @@
 import DispatchTestService from '../fixtures/dispatch-test-service.js';
 import Worker from 'tiny-worker';
-import dispatch from '../../src/dispatch/central-dispatch.js';
+import dispatch from '../../src/dispatch/central-dispatch';
 import path from 'path';
 import {test} from '../fixtures/jest-tap-bridge.js';
 
