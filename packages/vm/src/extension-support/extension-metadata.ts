@@ -1,5 +1,6 @@
 import type ArgumentType from './argument-type';
 import type BlockType from './block-type';
+import type ReporterScope from './reporter-scope';
 
 /**
  * All the metadata needed to register an extension.
