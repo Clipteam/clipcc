@@ -1,14 +1,12 @@
-const tap = require('../fixtures/jest-tap-bridge');
-const VirtualMachine = require('../../src/virtual-machine');
-const Sprite = require('../../src/sprites/sprite');
-const Variable = require('../../src/engine/variable');
-const adapter = require('../../src/engine/adapter');
-const events = require('../fixtures/events.json');
-const Renderer = require('../fixtures/fake-renderer');
-const Runtime = require('../../src/engine/runtime');
-const RenderedTarget = require('../../src/sprites/rendered-target');
-
-const test = tap.test;
+import {test} from '../fixtures/jest-tap-bridge.js';
+import VirtualMachine from '../../src/virtual-machine.js';
+import Sprite from '../../src/sprites/sprite.js';
+import Variable from '../../src/engine/variable.js';
+import adapter from '../../src/engine/adapter.js';
+import events from '../fixtures/events.json';
+import Renderer from '../fixtures/fake-renderer.js';
+import Runtime from '../../src/engine/runtime.js';
+import RenderedTarget from '../../src/sprites/rendered-target.js';
 
 test('deleteSound returns function after deleting or null if nothing was deleted', t => {
     const vm = new VirtualMachine();

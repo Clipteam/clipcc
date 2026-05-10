@@ -1,5 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const Music = require('../../src/extensions/scratch3_music/index.js');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Music from '../../src/extensions/scratch3_music/index.js';
 
 const fakeRuntime = {
     getTargetForStage: () => ({tempo: 60}),

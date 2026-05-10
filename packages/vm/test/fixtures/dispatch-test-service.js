@@ -12,4 +12,4 @@ class DispatchTestService {
     }
 }
 
-module.exports = DispatchTestService;
+export default DispatchTestService;

@@ -1,5 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const cast = require('../../src/util/cast');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import cast from '../../src/util/cast.js';
 
 test('toNumber', t => {
     // Numeric

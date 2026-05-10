@@ -1,4 +1,4 @@
-const test = require('../fixtures/jest-tap-bridge').test;
+import {test} from '../fixtures/jest-tap-bridge.js';
 // const JSONRPCWebSocket = require('../../src/util/jsonrpc-web-socket');
 
 test('constructor', t => {

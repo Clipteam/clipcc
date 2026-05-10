@@ -6,4 +6,9 @@ const DOMPurify = {
     }
 };
 
-module.exports = DOMPurify;
+export default DOMPurify;
+
+export const {
+    addHook,
+    sanitize
+} = DOMPurify;

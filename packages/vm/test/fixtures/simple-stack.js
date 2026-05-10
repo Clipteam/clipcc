@@ -1,4 +1,4 @@
-module.exports = [
+export default [
     {
         id: '1ZGd(W8DvU?vI1RN)e0E',
         opcode: 'motion_goto',

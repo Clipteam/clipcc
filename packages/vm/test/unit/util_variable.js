@@ -1,12 +1,12 @@
-const tap = require('../fixtures/jest-tap-bridge');
-const Target = require('../../src/engine/target');
-const Runtime = require('../../src/engine/runtime');
-const VariableUtil = require('../../src/util/variable-util');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Target from '../../src/engine/target.js';
+import Runtime from '../../src/engine/runtime.js';
+import VariableUtil from '../../src/util/variable-util.js';
 
 let target1;
 let target2;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const runtime = new Runtime();
     target1 = new Target(runtime);
     target1.blocks.createBlock({
@@ -49,8 +49,6 @@ tap.beforeEach(() => {
 
     return Promise.resolve(null);
 });
-
-const test = tap.test;
 
 test('get all var refs', t => {
     const allVarRefs = VariableUtil.getAllVarRefsForTargets([target1, target2]);

@@ -1,6 +1,6 @@
-const dispatch = require('../../src/dispatch/worker-dispatch');
-const DispatchTestService = require('./dispatch-test-service');
-const log = require('../../src/util/log');
+import dispatch from '../../src/dispatch/worker-dispatch.js';
+import DispatchTestService from './dispatch-test-service.js';
+import log from '../../src/util/log.js';
 
 dispatch.setService('RemoteDispatchTest', new DispatchTestService());
 

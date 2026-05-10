@@ -1,9 +1,8 @@
-const DispatchTestService = require('../fixtures/dispatch-test-service');
-const Worker = require('tiny-worker');
-
-const dispatch = require('../../src/dispatch/central-dispatch');
-const path = require('path');
-const test = require('../fixtures/jest-tap-bridge').test;
+import DispatchTestService from '../fixtures/dispatch-test-service.js';
+import Worker from 'tiny-worker';
+import dispatch from '../../src/dispatch/central-dispatch.js';
+import path from 'path';
+import {test} from '../fixtures/jest-tap-bridge.js';
 
 
 // By default Central Dispatch works with the Worker class built into the browser. Tell it to use TinyWorker instead.

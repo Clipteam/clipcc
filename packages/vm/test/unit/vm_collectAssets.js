@@ -1,8 +1,7 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-
-const RenderedTarget = require('../../src/sprites/rendered-target');
-const Sprite = require('../../src/sprites/sprite');
-const VirtualMachine = require('../../src/virtual-machine');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import RenderedTarget from '../../src/sprites/rendered-target.js';
+import Sprite from '../../src/sprites/sprite.js';
+import VirtualMachine from '../../src/virtual-machine.js';
 
 test('collectAssets', t => {
     const vm = new VirtualMachine();

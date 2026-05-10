@@ -1,14 +1,13 @@
-const path = require('path');
-const test = require('../fixtures/jest-tap-bridge').test;
-const makeTestStorage = require('../fixtures/make-test-storage');
-const extractProjectJson = require('../fixtures/readProjectFile').extractProjectJson;
-
-const renderedTarget = require('../../src/sprites/rendered-target');
-const runtime = require('../../src/engine/runtime');
-const sb2 = require('../../src/serialization/sb2');
+import path from 'path';
+import {test} from '../fixtures/jest-tap-bridge.js';
+import makeTestStorage from '../fixtures/make-test-storage.js';
+import {extractProjectJson} from '../fixtures/readProjectFile.js';
+import renderedTarget from '../../src/sprites/rendered-target.js';
+import runtime from '../../src/engine/runtime.js';
+import {deserialize} from '../../src/serialization/sb2.js';
 
 test('spec', t => {
-    t.type(sb2.deserialize, 'function');
+    t.type(deserialize, 'function');
     t.end();
 });
 
@@ -20,7 +19,7 @@ test('default', t => {
     // Create runtime instance & load SB2 into it
     const rt = new runtime();
     rt.attachStorage(makeTestStorage());
-    sb2.deserialize(json, rt).then(({targets}) => {
+    deserialize(json, rt).then(({targets}) => {
         // Test
         t.type(json, 'object');
         t.type(rt, 'object');

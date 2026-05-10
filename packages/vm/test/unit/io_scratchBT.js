@@ -1,4 +1,4 @@
-const test = require('../fixtures/jest-tap-bridge').test;
+import {test} from '../fixtures/jest-tap-bridge.js';
 // const ScratchBT = require('../../src/io/scratchBT');
 
 test('constructor', t => {

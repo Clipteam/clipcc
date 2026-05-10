@@ -1,5 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const math = require('../../src/util/math-util');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import math from '../../src/util/math-util.js';
 
 test('degToRad', t => {
     t.equal(math.degToRad(0), 0);

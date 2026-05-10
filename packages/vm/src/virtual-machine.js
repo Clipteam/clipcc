@@ -7,7 +7,7 @@ if (typeof TextEncoder === 'undefined') {
 }
 import EventEmitter from 'events';
 import JSZip from 'jszip';
-import { Buffer } from 'buffer';
+import {Buffer} from 'buffer';
 import centralDispatch from './dispatch/central-dispatch.js';
 import ExtensionManager from './extension-support/extension-manager.js';
 import log from './util/log.js';
@@ -17,9 +17,9 @@ import StringUtil from './util/string-util.js';
 import formatMessage from 'format-message';
 import Variable from './engine/variable.js';
 import newBlockIds from './util/new-block-ids.js';
-import { loadCostume } from './import/load-costume.js';
-import { loadSound } from './import/load-sound.js';
-import { serializeSounds, serializeCostumes } from './serialization/serialize-assets.js';
+import {loadCostume} from './import/load-costume.js';
+import {loadSound} from './import/load-sound.js';
+import {serializeSounds, serializeCostumes} from './serialization/serialize-assets.js';
 import uid from './util/uid.js';
 import 'canvas-toBlob';
 

@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
-const path = require('path');
-const process = require('process');
+import path from 'path';
 
-const makeTestStorage = require('../fixtures/make-test-storage');
-const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-const VirtualMachine = require('../../src/index');
+import process from 'process';
+import makeTestStorage from '../fixtures/make-test-storage.js';
+import {readFileToBuffer} from '../fixtures/readProjectFile.js';
+import VirtualMachine from '../../src/index.js';
 
 /**
  * @fileoverview Test vm's performance.

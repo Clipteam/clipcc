@@ -1,5 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const color = require('../../src/util/color');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import color from '../../src/util/color';
 
 /**
  * Assert that two HSV colors are similar to each other, within a tolerance.

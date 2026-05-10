@@ -1,6 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-
-const mutationAdapter = require('../../src/engine/mutation-adapter');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import mutationAdapter from '../../src/engine/mutation-adapter.js';
 
 test('spec', t => {
     t.type(mutationAdapter, 'function');

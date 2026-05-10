@@ -1,5 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const RateLimiter = require('../../src/util/rateLimiter.js');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import RateLimiter from '../../src/util/rateLimiter.js';
 
 test('rate limiter', t => {
     // Create a rate limiter with maximum of 20 sends per second

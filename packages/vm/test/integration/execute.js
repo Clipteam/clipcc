@@ -1,12 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-
-const test = require('../fixtures/jest-tap-bridge').test;
-
-const log = require('../../src/util/log');
-const makeTestStorage = require('../fixtures/make-test-storage');
-const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-const VirtualMachine = require('../../src/index');
+import fs from 'fs';
+import path from 'path';
+import {test} from '../fixtures/jest-tap-bridge.js';
+import log from '../../src/util/log.js';
+import makeTestStorage from '../fixtures/make-test-storage.js';
+import {readFileToBuffer} from '../fixtures/readProjectFile.js';
+import VirtualMachine from '../../src/index.js';
 
 /**
  * @fileoverview Transform each sb2 in fixtures/execute into a test.

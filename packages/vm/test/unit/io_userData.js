@@ -1,5 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const UserData = require('../../src/io/userData');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import UserData from '../../src/io/userData.js';
 
 test('spec', t => {
     const userData = new UserData();

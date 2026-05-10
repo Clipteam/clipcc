@@ -6,13 +6,14 @@
  * reflect that the sound is broken and should therefore re-attempt
  * to load the sound if the saved project is re-loaded.
  */
-const path = require('path');
-const tap = require('../fixtures/jest-tap-bridge');
-const md5 = require('js-md5');
-const makeTestStorage = require('../fixtures/make-test-storage');
-const {extractAsset, readFileToBuffer} = require('../fixtures/readProjectFile');
-const VirtualMachine = require('../../src/index');
-const {serializeSounds} = require('../../src/serialization/serialize-assets');
+import path from 'path';
+
+import {test} from '../fixtures/jest-tap-bridge.js';
+import md5 from 'js-md5';
+import makeTestStorage from '../fixtures/make-test-storage.js';
+import {extractAsset, readFileToBuffer} from '../fixtures/readProjectFile.js';
+import VirtualMachine from '../../src/index.js';
+import {serializeSounds} from '../../src/serialization/serialize-assets.js';
 
 const projectUri = path.resolve(__dirname, '../fixtures/corrupt_sound.sb3');
 const project = readFileToBuffer(projectUri);
@@ -49,7 +50,7 @@ const FakeAudioEngine = function () {
 let vm;
 let defaultSoundAssetId;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const storage = makeTestStorage();
 
     vm = new VirtualMachine();
@@ -60,8 +61,6 @@ tap.beforeEach(() => {
 
     return vm.loadProject(project);
 });
-
-const test = tap.test;
 
 test('load sb3 project with corrupted sound file', t => {
     t.equal(vm.runtime.targets.length, 2);

@@ -1,8 +1,8 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const Thread = require('../../src/engine/thread');
-const RenderedTarget = require('../../src/sprites/rendered-target');
-const Sprite = require('../../src/sprites/sprite');
-const Runtime = require('../../src/engine/runtime');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Thread from '../../src/engine/thread.js';
+import RenderedTarget from '../../src/sprites/rendered-target.js';
+import Sprite from '../../src/sprites/sprite.js';
+import Runtime from '../../src/engine/runtime.js';
 
 test('spec', t => {
     t.type(Thread, 'function');
