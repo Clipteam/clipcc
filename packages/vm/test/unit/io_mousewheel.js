@@ -1,6 +1,6 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import MouseWheel from '../../src/io/mouseWheel.js';
-import Runtime from '../../src/engine/runtime.js';
+import MouseWheel from '../../src/io/mouseWheel';
+import Runtime from '../../src/engine/runtime';
 
 test('spec', t => {
     const rt = new Runtime();

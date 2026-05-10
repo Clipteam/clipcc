@@ -17,7 +17,7 @@
     "default": "./src/index.js"
   },
   "scripts": {
-    "build:types": "tsc --project ./tsconfig.dts.json",
+    "build:types": "tsc",
     "build": "pnpm run build:types && webpack --progress --color --bail",
     "coverage": "jest --silent --coverage",
     "i18n:src": "mkdirp translations/core && format-message extract --out-file translations/core/en.json src/extensions/**/index.js",

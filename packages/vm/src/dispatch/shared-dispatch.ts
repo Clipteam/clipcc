@@ -111,7 +111,7 @@ export abstract class SharedDispatch {
      * @param service The service to check.
      * @returns True if the service is remote (calls must cross a Worker boundary), false otherwise.
      */
-    private isRemoteService(service: string): boolean {
+    isRemoteService(service: string): boolean {
         return this.getServiceProvider(service).isRemote;
     }
 
@@ -123,7 +123,7 @@ export abstract class SharedDispatch {
      * @param args The arguments to be copied to the method, if any.
      * @returns A promise for the return value of the service method.
      */
-    protected remoteCall(provider: WorkerLike, service: string, method: string, ...args: any[]): Promise<any> {
+    remoteCall(provider: WorkerLike, service: string, method: string, ...args: any[]): Promise<any> {
         return this.remoteTransferCall(provider, service, method, null, ...args);
     }
 

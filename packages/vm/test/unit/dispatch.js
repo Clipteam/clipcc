@@ -59,7 +59,7 @@ test('remote', t => {
 
     return waitForWorker
         .then(() => runServiceTest('RemoteDispatchTest', t), e => t.fail(e))
-        .then(() => dispatch._remoteCall(worker, 'dispatch', 'terminate'), e => t.fail(e));
+        .then(() => dispatch.remoteCall(worker, 'dispatch', 'terminate'), e => t.fail(e));
 });
 
 test('local, sync', t => {

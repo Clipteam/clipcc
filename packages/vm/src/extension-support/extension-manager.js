@@ -415,7 +415,7 @@ class ExtensionManager {
                 args => args && args.mutation && args.mutation.blockInfo :
                 () => blockInfo;
             const callBlockFunc = (() => {
-                if (dispatch._isRemoteService(serviceName)) {
+                if (dispatch.isRemoteService(serviceName)) {
                     return (args, util, realBlockInfo) =>
                         dispatch.call(serviceName, funcName, args, util, realBlockInfo);
                 }
