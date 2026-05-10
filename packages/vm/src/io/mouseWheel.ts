@@ -1,18 +1,19 @@
+import type Runtime from '../engine/runtime';
+
 class MouseWheel {
-    constructor (runtime) {
+    constructor (
         /**
          * Reference to the owning Runtime.
-         * @type {!Runtime}
          */
-        this.runtime = runtime;
-    }
+        public runtime: Runtime
+    ) {}
 
     /**
      * Mouse wheel DOM event handler.
-     * @param  {object} data Data from DOM event.
+     * @param data Data from DOM event.
      */
-    postData (data) {
-        const matchFields = {};
+    postData (data: { deltaY: number }): void {
+        const matchFields: Record<string, string> = {};
         if (data.deltaY < 0) {
             matchFields.KEY_OPTION = 'up arrow';
         } else if (data.deltaY > 0) {

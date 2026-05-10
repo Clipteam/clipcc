@@ -1,8 +1,8 @@
 import Cast from '../util/cast';
+import type Runtime from '../engine/runtime';
 
 /**
  * Names used internally for keys used in scratch, also known as "scratch keys".
- * @enum {string}
  */
 const KEY_NAME = {
     SPACE: 'space',
@@ -11,40 +11,39 @@ const KEY_NAME = {
     RIGHT: 'right arrow',
     DOWN: 'down arrow',
     ENTER: 'enter'
-};
+} as const;
 
 /**
  * An array of the names of scratch keys.
- * @type {Array<string>}
  */
-const KEY_NAME_LIST = Object.keys(KEY_NAME).map(name => KEY_NAME[name]);
+const KEY_NAME_LIST: string[] = Object.keys(KEY_NAME).map(name => KEY_NAME[name as keyof typeof KEY_NAME]);
 
 class Keyboard {
-    constructor (runtime) {
-        /**
-         * List of currently pressed scratch keys.
-         * A scratch key is:
-         * A key you can press on a keyboard, excluding modifier keys.
-         * An uppercase string of length one;
-         *     except for special key names for arrow keys and space (e.g. 'left arrow').
-         * Can be a non-english unicode letter like: æ ø ש נ 手 廿.
-         * @type {Array.<string>}
-         */
-        this._keysPressed = [];
+    /**
+     * List of currently pressed scratch keys.
+     * A scratch key is:
+     * A key you can press on a keyboard, excluding modifier keys.
+     * An uppercase string of length one;
+     *     except for special key names for arrow keys and space (e.g. 'left arrow').
+     * Can be a non-english unicode letter like: æ ø ש נ 手 廿.
+     * @type {Array.<string>}
+     */
+    _keysPressed: string[] = [];
+
+    constructor (
         /**
          * Reference to the owning Runtime.
          * Can be used, for example, to activate hats.
-         * @type {!Runtime}
          */
-        this.runtime = runtime;
-    }
+        public runtime: Runtime
+    ) {}
 
     /**
      * Convert from a keyboard event key name to a Scratch key name.
-     * @param  {string} keyString the input key string.
-     * @returns {string} the corresponding Scratch key, or an empty string.
+     * @param  keyString the input key string.
+     * @returns the corresponding Scratch key, or an empty string.
      */
-    _keyStringToScratchKey (keyString) {
+    _keyStringToScratchKey (keyString: string): string {
         keyString = Cast.toString(keyString);
         // Convert space and arrow keys to their Scratch key names.
         switch (keyString) {
@@ -68,10 +67,10 @@ class Keyboard {
 
     /**
      * Convert from a block argument to a Scratch key name.
-     * @param  {string} keyArg the input arg.
-     * @returns {string} the corresponding Scratch key.
+     * @param keyArg the input arg.
+     * @returns the corresponding Scratch key.
      */
-    _keyArgToScratchKey (keyArg) {
+    _keyArgToScratchKey (keyArg: string | number): string {
         // If a number was dropped in, try to convert from ASCII to Scratch key.
         if (typeof keyArg === 'number') {
             // Check for the ASCII range containing numbers, some punctuation,
@@ -110,9 +109,9 @@ class Keyboard {
 
     /**
      * Keyboard DOM event handler.
-     * @param  {object} data Data from DOM event.
+     * @param data Data from DOM event.
      */
-    postData (data) {
+    postData (data: { key: string; isDown: boolean }): void {
         if (!data.key) return;
         const scratchKey = this._keyStringToScratchKey(data.key);
         if (scratchKey === '') return;
@@ -131,10 +130,10 @@ class Keyboard {
 
     /**
      * Get key down state for a specified key.
-     * @param  {any} keyArg key argument.
-     * @returns {boolean} Is the specified key down?
+     * @param  keyArg key argument.
+     * @returns Is the specified key down?
      */
-    getKeyIsDown (keyArg) {
+    getKeyIsDown (keyArg: string | number): boolean {
         if (keyArg === 'any') {
             return this._keysPressed.length > 0;
         }

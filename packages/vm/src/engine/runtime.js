@@ -18,14 +18,14 @@ import xmlEscape from '../util/xml-escape';
 import ScratchLinkWebSocket from '../util/scratch-link-websocket';
 
 // Virtual I/O devices.
-import Clock from '../io/clock.js';
+import Clock from '../io/clock';
 import Cloud from '../io/cloud.js';
-import Keyboard from '../io/keyboard.js';
+import Keyboard from '../io/keyboard';
 import Mouse from '../io/mouse.js';
-import MouseWheel from '../io/mouseWheel.js';
-import UserData from '../io/userData.js';
+import MouseWheel from '../io/mouseWheel';
+import UserData from '../io/userData';
 import Video from '../io/video.js';
-import Joystick from '../io/joystick.js';
+import Joystick from '../io/joystick';
 import StringUtil from '../util/string-util';
 import uid from '../util/uid';
 import control from '../blocks/scratch3_control.js';
@@ -55,7 +55,7 @@ const defaultBlockPackages = {
 const defaultExtensionColors = ['#0FBD8C', '#0DA57A', '#0B8E69'];
 
 /**
- * @typedef {import('./target')} Target
+ * @typedef {import('./target').default} Target
  * @typedef {import('clipcc-audio')} AudioEngine
  * @typedef {import('clipcc-render')} RenderWebGL
  * @typedef {import('clipcc-storage').ScratchStorage} ScratchStorage
@@ -390,6 +390,12 @@ let rendererDrawProfilerId = -1;
 class Runtime extends EventEmitter {
     constructor () {
         super();
+
+        /**
+         * Current time in milliseconds, used for determining elapsed time and for scheduling future tasks.
+         * @type {number}
+         */
+        this.currentMSecs = 0;
 
         /**
          * Target management and storage.
@@ -2093,7 +2099,7 @@ class Runtime extends EventEmitter {
     /**
      * Start all relevant hats.
      * @param {!string} requestedHatOpcode Opcode of hats to start.
-     * @param {object=} optMatchFields Optionally, fields to match on the hat.
+     * @param {object= | null} optMatchFields Optionally, fields to match on the hat.
      * @param {Target=} optTarget Optionally, a target to restrict to.
      * @returns {Array.<Thread>|undefined} List of threads started by this function.
      */

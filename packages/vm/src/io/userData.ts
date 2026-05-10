@@ -1,22 +1,19 @@
 class UserData {
-    constructor () {
-        this._username = '';
-    }
+    _username = '';
 
     /**
      * Handler for updating the username
-     * @param {object} data Data posted to this ioDevice.
-     * @property {!string} username The new username.
+     * @param data Data posted to this ioDevice.
      */
-    postData (data) {
+    postData (data: {username: string}): void {
         this._username = data.username;
     }
 
     /**
      * Getter for username. Initially empty string, until set via postData.
-     * @returns {!string} The current username
+     * @returns The current username
      */
-    getUsername () {
+    getUsername (): string {
         return this._username;
     }
 }
