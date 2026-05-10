@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import {test} from '../fixtures/jest-tap-bridge.js';
-import log from '../../src/util/log.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
 import VirtualMachine from '../../src/index.js';

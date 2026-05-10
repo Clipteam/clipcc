@@ -149,7 +149,7 @@ const serializePrimitiveBlock = function (block) {
  * Based on this relationship, serializes the ids of the block and shadow (if present)
  *
  * @param {object} inputs The inputs to serialize
- * @returns {Object.<string, SB3Input>} An object representing the serialized inputs
+ * @returns {Record<string, SB3Input>} An object representing the serialized inputs
  */
 const serializeInputs = function (inputs) {
     const obj = Object.create(null);
@@ -183,7 +183,7 @@ const serializeInputs = function (inputs) {
 /**
  * Serialize the fields of a block in a more compact form.
  * @param {object} fields The fields object to serialize
- * @returns {Object.<string, SB3Field>} An object representing the serialized fields
+ * @returns {Record<string, SB3Field>} An object representing the serialized fields
  */
 const serializeFields = function (fields) {
     const obj = Object.create(null);
@@ -309,7 +309,7 @@ const getExtensionIdForOpcode = function (opcode) {
  * Serialize the given blocks object (representing all the blocks for the target
  * currently being serialized.)
  * @param {object} blocks The blocks to be serialized
- * @returns {[Object.<string, SB3Block>, string[]]} An array of the serialized blocks with compressed inputs and
+ * @returns {[Record<string, SB3Block>, string[]]} An array of the serialized blocks with compressed inputs and
  * compressed primitives and the list of all extension IDs present
  * in the serialized blocks.
  */
@@ -409,9 +409,16 @@ const serializeSound = function (sound) {
 };
 
 /**
+ * @typedef {object} SerializedVariables
+ * @property {Record<string, SB3Variable>} variables - the scalar variables in the project, keyed by variable ID
+ * @property {Record<string, SB3List>} lists - the list variables in the project, keyed by variable ID
+ * @property {Record<string, string>} broadcasts - the broadcast variables in the project, keyed by variable ID
+ */
+
+/**
  * Serialize the given variables object.
  * @param {object} variables The variables to be serialized.
- * @returns {{variables: Object.<string, SB3Variable>, lists: Object.<string, SB3List>, broadcasts: Object.<string, string>}} A serialized representation of the variables. They get
+ * @returns {SerializedVariables} A serialized representation of the variables. They get
  * separated by type to compress the representation of each given variable and
  * reduce duplicate information.
  */
@@ -444,7 +451,7 @@ const serializeVariables = function (variables) {
 /**
  * Serialize the given comments.
  * @param {object} comments The comments to be serialized.
- * @returns {Object.<string, SB3Comment>} A serialized representation of the comments.
+ * @returns {Record<string, SB3Comment>} A serialized representation of the comments.
  */
 const serializeComments = function (comments) {
     const obj = Object.create(null);
@@ -774,7 +781,7 @@ const deserializeInputDesc = function (inputDescOrId, parentId, isShadow, blocks
 
 /**
  * Deserialize the given block inputs.
- * @param {Object.<string, SB3Input>} inputs The inputs to deserialize.
+ * @param {Record<string, SB3Input>} inputs The inputs to deserialize.
  * @param {string} parentId The block id of the parent block
  * @param {object} blocks The object representing the entire set of blocks currently
  * in the process of getting deserialized.
@@ -812,7 +819,7 @@ const deserializeInputs = function (inputs, parentId, blocks) {
 
 /**
  * Deserialize the given block fields.
- * @param {Object.<string, SB3Field>} fields The fields to be deserialized
+ * @param {Record<string, SB3Field>} fields The fields to be deserialized
  * @returns {object} The deserialized and uncompressed block fields.
  */
 const deserializeFields = function (fields) {

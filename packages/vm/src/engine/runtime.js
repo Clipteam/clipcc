@@ -28,29 +28,29 @@ import Video from '../io/video.js';
 import Joystick from '../io/joystick.js';
 import StringUtil from '../util/string-util.js';
 import uid from '../util/uid.js';
-import scratch3_control from '../blocks/scratch3_control.js';
-import scratch3_event from '../blocks/scratch3_event.js';
-import scratch3_looks from '../blocks/scratch3_looks.js';
-import scratch3_motion from '../blocks/scratch3_motion.js';
-import scratch3_operators from '../blocks/scratch3_operators.js';
-import scratch3_sound from '../blocks/scratch3_sound.js';
-import scratch3_sensing from '../blocks/scratch3_sensing.js';
-import scratch3_data from '../blocks/scratch3_data.js';
-import scratch3_procedures from '../blocks/scratch3_procedures.js';
+import control from '../blocks/scratch3_control.js';
+import event from '../blocks/scratch3_event.js';
+import looks from '../blocks/scratch3_looks.js';
+import motion from '../blocks/scratch3_motion.js';
+import operators from '../blocks/scratch3_operators.js';
+import sound from '../blocks/scratch3_sound.js';
+import sensing from '../blocks/scratch3_sensing.js';
+import data from '../blocks/scratch3_data.js';
+import procedures from '../blocks/scratch3_procedures.js';
 
- 
+
 const defaultBlockPackages = {
-    scratch3_control,
-    scratch3_event,
-    scratch3_looks,
-    scratch3_motion,
-    scratch3_operators,
-    scratch3_sound,
-    scratch3_sensing,
-    scratch3_data,
-    scratch3_procedures
+    scratch3_control: control,
+    scratch3_event: event,
+    scratch3_looks: looks,
+    scratch3_motion: motion,
+    scratch3_operators: operators,
+    scratch3_sound: sound,
+    scratch3_sensing: sensing,
+    scratch3_data: data,
+    scratch3_procedures: procedures
 };
- 
+
 
 const defaultExtensionColors = ['#0FBD8C', '#0DA57A', '#0B8E69'];
 
