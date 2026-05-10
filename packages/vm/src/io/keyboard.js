@@ -1,4 +1,4 @@
-import Cast from '../util/cast.js';
+import Cast from '../util/cast';
 
 /**
  * Names used internally for keys used in scratch, also known as "scratch keys".

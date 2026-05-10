@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import maybeFormatMessage from '../../src/util/maybe-format-message.js';
+import maybeFormatMessage from '../../src/util/maybe-format-message';
 
 const nonMessages = [
     'hi',

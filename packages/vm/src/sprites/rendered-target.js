@@ -1,7 +1,7 @@
-import MathUtil from '../util/math-util.js';
-import StringUtil from '../util/string-util.js';
-import Cast from '../util/cast.js';
-import Clone from '../util/clone.js';
+import MathUtil from '../util/math-util';
+import StringUtil from '../util/string-util';
+import Cast from '../util/cast';
+import Clone from '../util/clone';
 import Target from '../engine/target.js';
 import StageLayering from '../engine/stage-layering.js';
 

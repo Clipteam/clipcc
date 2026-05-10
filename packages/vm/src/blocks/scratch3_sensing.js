@@ -1,8 +1,8 @@
-import Cast from '../util/cast.js';
+import Cast from '../util/cast';
 import Color from '../util/color';
-import MathUtil from '../util/math-util.js';
-import Timer from '../util/timer.js';
-import getMonitorIdForBlockWithArgs from '../util/get-monitor-id.js';
+import MathUtil from '../util/math-util';
+import Timer from '../util/timer';
+import getMonitorIdForBlockWithArgs from '../util/get-monitor-id';
 
 class Scratch3SensingBlocks {
     constructor (runtime) {

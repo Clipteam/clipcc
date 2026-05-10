@@ -1,4 +1,4 @@
-import JSONRPC from '../util/jsonrpc.js';
+import JSONRPC from '../util/jsonrpc';
 
 class BT extends JSONRPC {
 

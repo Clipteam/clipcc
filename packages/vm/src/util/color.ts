@@ -1,11 +1,11 @@
-interface RGBObject {
+export interface RGBObject {
     r: number;
     g: number;
     b: number;
     a?: number;
 }
 
-interface HSVObject {
+export interface HSVObject {
     h: number;
     s: number;
     v: number;

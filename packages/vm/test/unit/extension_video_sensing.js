@@ -2,7 +2,7 @@ import {createReadStream} from 'fs';
 import {join} from 'path';
 import {PNG} from 'pngjs';
 import {test} from '../fixtures/jest-tap-bridge.js';
-import MathUtil from '../../src/util/math-util.js';
+import MathUtil from '../../src/util/math-util';
 import VideoSensing from '../../src/extensions/scratch3_video_sensing/index.js';
 import VideoMotion from '../../src/extensions/scratch3_video_sensing/library.js';
 

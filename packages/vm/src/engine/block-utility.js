@@ -1,5 +1,5 @@
 import Thread from './thread.js';
-import Timer from '../util/timer.js';
+import Timer from '../util/timer';
 
 /**
  * @fileoverview

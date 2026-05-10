@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Timer from '../../src/util/timer.js';
+import Timer from '../../src/util/timer';
 
 // Stubbed current time
 let NOW = 0;

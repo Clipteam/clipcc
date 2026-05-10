@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import cast from '../../src/util/cast.js';
+import cast from '../../src/util/cast';
 
 test('toNumber', t => {
     // Numeric

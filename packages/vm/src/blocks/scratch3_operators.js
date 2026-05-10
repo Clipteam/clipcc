@@ -1,5 +1,5 @@
-import Cast from '../util/cast.js';
-import MathUtil from '../util/math-util.js';
+import Cast from '../util/cast';
+import MathUtil from '../util/math-util';
 
 class Scratch3OperatorsBlocks {
     constructor (runtime) {

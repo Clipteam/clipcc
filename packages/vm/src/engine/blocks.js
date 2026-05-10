@@ -1,11 +1,11 @@
 import adapter from './adapter.js';
-import xmlEscape from '../util/xml-escape.js';
+import xmlEscape from '../util/xml-escape';
 import MonitorRecord from './monitor-record.js';
-import Clone from '../util/clone.js';
+import Clone from '../util/clone';
 import {Map} from 'immutable';
-import log from '../util/log.js';
+import log from '../util/log';
 import Variable from './variable.js';
-import getMonitorIdForBlockWithArgs from '../util/get-monitor-id.js';
+import getMonitorIdForBlockWithArgs from '../util/get-monitor-id';
 
 /**
  * @fileoverview

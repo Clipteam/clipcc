@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import RateLimiter from '../../src/util/rateLimiter.js';
+import RateLimiter from '../../src/util/rateLimiter';
 
 test('rate limiter', t => {
     // Create a rate limiter with maximum of 20 sends per second

@@ -1,5 +1,5 @@
-import StringUtil from '../util/string-util.js';
-import log from '../util/log.js';
+import StringUtil from '../util/string-util';
+import log from '../util/log';
 import {loadSvgString, serializeSvgToString} from 'clipcc-svg-renderer';
 
 const loadVector_ = function (costume, runtime, rotationCenter, optVersion) {

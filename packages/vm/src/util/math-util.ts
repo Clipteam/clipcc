@@ -1,31 +1,31 @@
 class MathUtil {
     /**
      * Convert a value from degrees to radians.
-     * @param {!number} deg Value in degrees.
-     * @returns {!number} Equivalent value in radians.
+     * @param deg Value in degrees.
+     * @returns Equivalent value in radians.
      */
-    static degToRad (deg) {
+    static degToRad (deg: number): number {
         return deg * Math.PI / 180;
     }
 
     /**
      * Convert a value from radians to degrees.
-     * @param {!number} rad Value in radians.
-     * @returns {!number} Equivalent value in degrees.
+     * @param rad Value in radians.
+     * @returns Equivalent value in degrees.
      */
-    static radToDeg (rad) {
+    static radToDeg (rad: number): number {
         return rad * 180 / Math.PI;
     }
 
     /**
      * Clamp a number between two limits.
      * If n < min, return min. If n > max, return max. Else, return n.
-     * @param {!number} n Number to clamp.
-     * @param {!number} min Minimum limit.
-     * @param {!number} max Maximum limit.
-     * @returns {!number} Value of n clamped to min and max.
+     * @param n Number to clamp.
+     * @param min Minimum limit.
+     * @param max Maximum limit.
+     * @returns Value of n clamped to min and max.
      */
-    static clamp (n, min, max) {
+    static clamp (n: number, min: number, max: number): number {
         return Math.min(Math.max(n, min), max);
     }
 
@@ -34,12 +34,12 @@ class MathUtil {
      * e.g., wrapClamp(7, 1, 5) == 2
      * wrapClamp(0, 1, 5) == 5
      * wrapClamp(-11, -10, 6) == 6, etc.
-     * @param {!number} n Number to wrap.
-     * @param {!number} min Minimum limit.
-     * @param {!number} max Maximum limit.
-     * @returns {!number} Value of n wrapped between min and max.
+     * @param n Number to wrap.
+     * @param min Minimum limit.
+     * @param max Maximum limit.
+     * @returns Value of n wrapped between min and max.
      */
-    static wrapClamp (n, min, max) {
+    static wrapClamp (n: number, min: number, max: number): number {
         const range = (max - min) + 1;
         return n - (Math.floor((n - min) / range) * range);
     }
@@ -47,10 +47,10 @@ class MathUtil {
 
     /**
      * Convert a value from tan function in degrees.
-     * @param {!number} angle in degrees
-     * @returns {!number} Correct tan value
+     * @param angle in degrees
+     * @returns Correct tan value
      */
-    static tan (angle) {
+    static tan (angle: number): number {
         angle = angle % 360;
         switch (angle) {
         case -270:
@@ -70,10 +70,10 @@ class MathUtil {
      * represents the position of that element in a sorted version of the
      * original array.
      * E.g. [5, 19. 13, 1] => [1, 3, 2, 0]
-     * @param {Array<number>} elts The elements to sort and reduce
-     * @returns {Array<number>} The array of reduced orderings
+     * @param elts The elements to sort and reduce
+     * @returns The array of reduced orderings
      */
-    static reducedSortOrdering (elts) {
+    static reducedSortOrdering (elts: number[]): number[] {
         const sorted = elts.slice(0).sort((a, b) => a - b);
         return elts.map(e => sorted.indexOf(e));
     }
@@ -85,12 +85,12 @@ class MathUtil {
      * For instance, (1, 5, 3) will only pick 1, 2, 4, or 5 (with equal
      * probability)
      *
-     * @param {number} lower - The lower bound (inlcusive)
-     * @param {number} upper - The upper bound (inclusive), such that lower <= upper
-     * @param {number} excluded - The number to exclude (MUST be in the range)
-     * @returns {number} A random integer in the range [lower, upper] that is not "excluded"
+     * @param lower - The lower bound (inlcusive)
+     * @param upper - The upper bound (inclusive), such that lower <= upper
+     * @param excluded - The number to exclude (MUST be in the range)
+     * @returns A random integer in the range [lower, upper] that is not "excluded"
      */
-    static inclusiveRandIntWithout (lower, upper, excluded) {
+    static inclusiveRandIntWithout (lower: number, upper: number, excluded: number): number {
         // Note that subtraction is the number of items in the
         // inclusive range [lower, upper] minus 1 already
         // (e.g. in the set {3, 4, 5}, 5 - 3 = 2).
@@ -106,14 +106,14 @@ class MathUtil {
 
     /**
      * Scales a number from one range to another.
-     * @param {number} i number to be scaled
-     * @param {number} iMin input range minimum
-     * @param {number} iMax input range maximum
-     * @param {number} oMin output range minimum
-     * @param {number} oMax output range maximum
-     * @returns {number} scaled number
+     * @param i number to be scaled
+     * @param iMin input range minimum
+     * @param iMax input range maximum
+     * @param oMin output range minimum
+     * @param oMax output range maximum
+     * @returns scaled number
      */
-    static scale (i, iMin, iMax, oMin, oMax) {
+    static scale (i: number, iMin: number, iMax: number, oMin: number, oMax: number): number {
         const p = (i - iMin) / (iMax - iMin);
         return (p * (oMax - oMin)) + oMin;
     }

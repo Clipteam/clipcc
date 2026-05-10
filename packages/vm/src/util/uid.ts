@@ -14,9 +14,9 @@ const soup_ = '!#%()*+,-./:;=?@[]^_`{|}~' +
 /**
  * Generate a unique ID, from Blockly.  This should be globally unique.
  * 87 characters ^ 20 length > 128 bits (better than a UUID).
- * @returns {string} A globally unique ID string.
+ * @returns A globally unique ID string.
  */
-const uid = function () {
+const uid = function (): string {
     const length = 20;
     const soupLength = soup_.length;
     const id = [];

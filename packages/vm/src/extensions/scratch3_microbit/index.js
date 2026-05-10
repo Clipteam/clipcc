@@ -1,10 +1,10 @@
 import ArgumentType from '../../extension-support/argument-type';
 import BlockType from '../../extension-support/block-type';
-import log from '../../util/log.js';
-import cast from '../../util/cast.js';
+import log from '../../util/log';
+import cast from '../../util/cast';
 import formatMessage from 'format-message';
 import BLE from '../../io/ble.js';
-import Base64Util from '../../util/base64-util.js';
+import Base64Util from '../../util/base64-util';
 
 /**
  * Icon png to be displayed at the left edge of each extension block, encoded as a data URI.

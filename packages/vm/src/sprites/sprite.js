@@ -2,8 +2,8 @@ import RenderedTarget from './rendered-target.js';
 import Blocks from '../engine/blocks.js';
 import {loadSoundFromAsset} from '../import/load-sound.js';
 import {loadCostumeFromAsset} from '../import/load-costume.js';
-import newBlockIds from '../util/new-block-ids.js';
-import StringUtil from '../util/string-util.js';
+import newBlockIds from '../util/new-block-ids';
+import StringUtil from '../util/string-util';
 import StageLayering from '../engine/stage-layering.js';
 
 class Sprite {

@@ -1,6 +1,6 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
 import Blocks from '../../src/engine/blocks.js';
-import Clone from '../../src/util/clone.js';
+import Clone from '../../src/util/clone';
 import {loadCostume} from '../../src/import/load-costume.js';
 import {loadSound} from '../../src/import/load-sound.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';

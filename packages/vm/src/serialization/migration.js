@@ -2,7 +2,7 @@
  * @fileoverview
  * Migration from legacy ClipCC.
  */
-import log from '../util/log.js';
+import log from '../util/log';
 
 const migrationMap = {
     procedures_definition_return: {

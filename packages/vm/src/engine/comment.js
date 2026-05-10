@@ -3,8 +3,9 @@
  * Object representing a Scratch Comment (block or workspace).
  */
 
-import uid from '../util/uid.js';
-import xmlEscape from '../util/xml-escape.js';
+import uid from '../util/uid';
+
+import xmlEscape from '../util/xml-escape';
 
 class Comment {
     /**

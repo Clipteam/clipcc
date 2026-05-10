@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import math from '../../src/util/math-util.js';
+import math from '../../src/util/math-util';
 
 test('degToRad', t => {
     t.equal(math.degToRad(0), 0);

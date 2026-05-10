@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import MockTimer from '../fixtures/mock-timer.js';
+import MockTimer from '../fixtures/mock-timer';
 
 test('spec', t => {
     const timer = new MockTimer();

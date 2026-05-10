@@ -1,13 +1,13 @@
-import log from './log.js';
+import log from './log';
 
 class StringUtil {
-    static withoutTrailingDigits (s) {
+    static withoutTrailingDigits (s: string): string {
         let i = s.length - 1;
         while ((i >= 0) && ('0123456789'.indexOf(s.charAt(i)) > -1)) i--;
         return s.slice(0, i + 1);
     }
 
-    static unusedName (name, existingNames) {
+    static unusedName (name: string, existingNames: string[]): string {
         if (existingNames.indexOf(name) < 0) return name;
         name = StringUtil.withoutTrailingDigits(name);
         let i = 2;
@@ -17,9 +17,9 @@ class StringUtil {
 
     /**
      * Split a string on the first occurrence of a split character.
-     * @param {string} text - the string to split.
-     * @param {string} separator - split the text on this character.
-     * @returns {string[]} - the two parts of the split string, or [text, null] if no split character found.
+     * @param text - the string to split.
+     * @param separator - split the text on this character.
+     * @returns - the two parts of the split string, or [text, null] if no split character found.
      * @example
      * // returns ['foo', 'tar.gz']
      * splitFirst('foo.tar.gz', '.');
@@ -30,7 +30,7 @@ class StringUtil {
      * // returns ['foo', '']
      * splitFirst('foo.', '.');
      */
-    static splitFirst (text, separator) {
+    static splitFirst (text: string, separator: string): [string, string | null] {
         const index = text.indexOf(separator);
         if (index >= 0) {
             return [text.substring(0, index), text.substring(index + 1)];
@@ -47,11 +47,11 @@ class StringUtil {
      * It is also consistent with the behavior of saving 2.0 projects.
      * This is only needed when stringifying an object for saving.
      *
-     * @param {!object} obj - The object to serialize
-     * @returns {!string} The JSON.stringified string with Infinity/NaN replaced with 0
+     * @param obj - The object to serialize
+     * @returns The JSON.stringified string with Infinity/NaN replaced with 0
      */
-    static stringify (obj) {
-        return JSON.stringify(obj, (_key, value) => {
+    static stringify (obj: object): string {
+        return JSON.stringify(obj, (_key: string, value: unknown) => {
             if (typeof value === 'number' &&
                (value === Infinity || value === -Infinity || isNaN(value))){
                 return 0;
@@ -64,11 +64,11 @@ class StringUtil {
      * in cases where we're replacing non-user facing strings (e.g. variable IDs).
      * When replacing user facing strings, the xmlEscape utility function should be used
      * instead so that the user facing string does not change how it displays.
-     * @param {!string | !Array.<string>} unsafe Unsafe string possibly containing unicode control characters.
+     * @param unsafe Unsafe string possibly containing unicode control characters.
      * In some cases this argument may be an array (e.g. hacked inputs from 2.0)
-     * @returns {string} String with control characters replaced.
+     * @returns String with control characters replaced.
      */
-    static replaceUnsafeChars (unsafe) {
+    static replaceUnsafeChars (unsafe: string | string[]): string {
         if (typeof unsafe !== 'string') {
             if (Array.isArray(unsafe)) {
                 // This happens when we have hacked blocks from 2.0
@@ -86,6 +86,7 @@ class StringUtil {
             case '&': return 'amp';
             case '\'': return 'apos';
             case '"': return 'quot';
+            default: return c;
             }
         });
     }

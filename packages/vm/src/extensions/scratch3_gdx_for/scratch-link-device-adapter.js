@@ -1,4 +1,4 @@
-import Base64Util from '../../util/base64-util.js';
+import Base64Util from '../../util/base64-util';
 
 /**
  * Adapter class

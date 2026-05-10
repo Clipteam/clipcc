@@ -1,12 +1,24 @@
-import uid from './uid.js';
+import uid from './uid';
+
+interface BlockInput {
+    block: string;
+    shadow: string;
+}
+
+interface BlockWithMutation {
+    id: string;
+    inputs: Record<string, BlockInput>;
+    parent?: string;
+    next?: string;
+}
 
 /**
  * Mutate the given blocks to have new IDs and update all internal ID references.
  * Does not return anything to make it clear that the blocks are updated in-place.
- * @param {Array} blocks - blocks to be mutated.
+ * @param blocks - blocks to be mutated.
  */
-export default blocks => {
-    const oldToNew = {};
+export default (blocks: BlockWithMutation[]): void => {
+    const oldToNew: Record<string, string> = {};
 
     // First update all top-level IDs and create old-to-new mapping
     for (let i = 0; i < blocks.length; i++) {
@@ -23,11 +35,13 @@ export default blocks => {
             input.block = oldToNew[input.block];
             input.shadow = oldToNew[input.shadow];
         }
-        if (blocks[i].parent) {
-            blocks[i].parent = oldToNew[blocks[i].parent];
+        const parent = blocks[i].parent;
+        if (parent) {
+            blocks[i].parent = oldToNew[parent];
         }
-        if (blocks[i].next) {
-            blocks[i].next = oldToNew[blocks[i].next];
+        const next = blocks[i].next;
+        if (next) {
+            blocks[i].next = oldToNew[next];
         }
     }
 };

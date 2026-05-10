@@ -1,4 +1,4 @@
-import Cast from '../util/cast.js';
+import Cast from '../util/cast';
 
 class Scratch3DataBlocks {
     constructor (runtime) {

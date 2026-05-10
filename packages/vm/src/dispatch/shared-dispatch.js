@@ -1,4 +1,4 @@
-import log from '../util/log.js';
+import log from '../util/log';
 
 /**
  * @typedef {object} DispatchCallMessage - a message to the dispatch system representing a service method call

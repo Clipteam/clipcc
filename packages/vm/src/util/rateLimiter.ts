@@ -1,31 +1,33 @@
-import Timer from '../util/timer.js';
+import Timer from '../util/timer';
 
 class RateLimiter {
+    _maxTokens: number;
+    _refillInterval: number;
+    _count: number;
+    _timer: Timer;
+    _lastUpdateTime: number;
+
     /**
      * A utility for limiting the rate of repetitive send operations, such as
      * bluetooth messages being sent to hardware devices. It uses the token bucket
      * strategy: a counter accumulates tokens at a steady rate, and each send costs
      * a token. If no tokens remain, it's not okay to send.
-     * @param {number} maxRate the maximum number of sends allowed per second
-     * @class
+     * @param maxRate the maximum number of sends allowed per second
      */
-    constructor (maxRate) {
+    constructor (maxRate: number) {
         /**
          * The maximum number of tokens.
-         * @type {number}
          */
         this._maxTokens = maxRate;
 
         /**
          * The interval in milliseconds for refilling one token. It is calculated
          * so that the tokens will be filled to maximum in one second.
-         * @type {number}
          */
         this._refillInterval = 1000 / maxRate;
 
         /**
          * The current number of tokens in the bucket.
-         * @type {number}
          */
         this._count = this._maxTokens;
 
@@ -34,7 +36,6 @@ class RateLimiter {
 
         /**
          * The last time in milliseconds when the token count was updated.
-         * @type {number}
          */
         this._lastUpdateTime = this._timer.timeElapsed();
     }
@@ -42,9 +43,9 @@ class RateLimiter {
     /**
      * Check if it is okay to send a message, by updating the token count,
      * taking a token and then checking if we are still under the rate limit.
-     * @returns {boolean} true if we are under the rate limit
+     * @returns true if we are under the rate limit
      */
-    okayToSend () {
+    okayToSend (): boolean {
         // Calculate the number of tokens to refill the bucket with, based on the
         // amount of time since the last refill.
         const now = this._timer.timeElapsed();

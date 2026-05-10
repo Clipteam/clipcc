@@ -1,5 +1,5 @@
 import SharedDispatch from './shared-dispatch.js';
-import log from '../util/log.js';
+import log from '../util/log';
 
 /**
  * This class provides a Worker with the means to participate in the message dispatch system managed by CentralDispatch.

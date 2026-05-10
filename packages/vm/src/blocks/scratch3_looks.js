@@ -1,10 +1,10 @@
-import Cast from '../util/cast.js';
-import Clone from '../util/clone.js';
+import Cast from '../util/cast';
+import Clone from '../util/clone';
 import RenderedTarget from '../sprites/rendered-target.js';
-import uid from '../util/uid.js';
+import uid from '../util/uid';
 import StageLayering from '../engine/stage-layering.js';
-import getMonitorIdForBlockWithArgs from '../util/get-monitor-id.js';
-import MathUtil from '../util/math-util.js';
+import getMonitorIdForBlockWithArgs from '../util/get-monitor-id';
+import MathUtil from '../util/math-util';
 
 /**
  * @typedef {object} BubbleState - the bubble state associated with a particular target.

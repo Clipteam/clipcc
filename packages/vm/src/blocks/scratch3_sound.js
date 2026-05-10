@@ -1,6 +1,6 @@
-import MathUtil from '../util/math-util.js';
-import Cast from '../util/cast.js';
-import Clone from '../util/clone.js';
+import MathUtil from '../util/math-util';
+import Cast from '../util/cast';
+import Clone from '../util/clone';
 
 /**
  * Occluded boolean value to make its use more understandable.

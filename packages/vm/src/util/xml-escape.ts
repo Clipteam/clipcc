@@ -1,14 +1,14 @@
-import log from './log.js';
+import log from './log';
 
 /**
  * Escape a string to be safe to use in XML content.
  * CC-BY-SA: hgoebl
  * https://stackoverflow.com/questions/7918868/
  * how-to-escape-xml-entities-in-javascript
- * @param {!string | !Array.<string>} unsafe Unsafe string.
- * @returns {string} XML-escaped string, for use within an XML tag.
+ * @param unsafe Unsafe string.
+ * @returns XML-escaped string, for use within an XML tag.
  */
-const xmlEscape = function (unsafe) {
+const xmlEscape = function (unsafe: string | string[]): string {
     if (typeof unsafe !== 'string') {
         if (Array.isArray(unsafe)) {
             // This happens when we have hacked blocks from 2.0
@@ -26,6 +26,7 @@ const xmlEscape = function (unsafe) {
         case '&': return '&amp;';
         case '\'': return '&apos;';
         case '"': return '&quot;';
+        default: return c;
         }
     });
 };

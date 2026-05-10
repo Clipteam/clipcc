@@ -1,6 +1,6 @@
-import Cast from '../util/cast.js';
-import MathUtil from '../util/math-util.js';
-import Timer from '../util/timer.js';
+import Cast from '../util/cast';
+import MathUtil from '../util/math-util';
+import Timer from '../util/timer';
 
 class Scratch3MotionBlocks {
     constructor (runtime) {

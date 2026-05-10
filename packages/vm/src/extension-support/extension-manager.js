@@ -1,6 +1,6 @@
 import dispatch from '../dispatch/central-dispatch.js';
-import log from '../util/log.js';
-import maybeFormatMessage from '../util/maybe-format-message.js';
+import log from '../util/log';
+import maybeFormatMessage from '../util/maybe-format-message';
 import BlockType from './block-type';
 
 // These extensions are currently built into the VM repository but should not be loaded at startup.

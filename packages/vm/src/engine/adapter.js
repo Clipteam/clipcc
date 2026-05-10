@@ -1,6 +1,6 @@
 import mutationAdapter from './mutation-adapter.js';
 import * as html from 'htmlparser2';
-import uid from '../util/uid.js';
+import uid from '../util/uid';
 
 /**
  * @import * as Blockly from 'blockly';

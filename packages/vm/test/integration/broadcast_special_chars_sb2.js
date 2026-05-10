@@ -4,8 +4,8 @@ import makeTestStorage from '../fixtures/make-test-storage.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
 import VirtualMachine from '../../src/index.js';
 import Variable from '../../src/engine/variable.js';
-import StringUtil from '../../src/util/string-util.js';
-import VariableUtil from '../../src/util/variable-util.js';
+import StringUtil from '../../src/util/string-util';
+import VariableUtil from '../../src/util/variable-util';
 
 const projectUri = path.resolve(__dirname, '../fixtures/broadcast_special_chars.sb2');
 const project = readFileToBuffer(projectUri);

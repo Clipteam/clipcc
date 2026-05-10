@@ -1,4 +1,4 @@
-import Color from '../util/color';
+import Color, {type RGBObject} from '../util/color';
 
 /**
  * @fileoverview
@@ -16,10 +16,10 @@ class Cast {
      * Scratch cast to number.
      * Treats NaN as 0.
      * In Scratch 2.0, this is captured by `interp.numArg.`
-     * @param {*} value Value to cast to number.
-     * @returns {number} The Scratch-casted number value.
+     * @param value Value to cast to number.
+     * @returns The Scratch-casted number value.
      */
-    static toNumber (value) {
+    static toNumber (value: unknown): number {
         // If value is already a number we don't need to coerce it with
         // Number().
         if (typeof value === 'number') {
@@ -43,10 +43,10 @@ class Cast {
      * Scratch cast to boolean.
      * In Scratch 2.0, this is captured by `interp.boolArg.`
      * Treats some string values differently from JavaScript.
-     * @param {*} value Value to cast to boolean.
-     * @returns {boolean} The Scratch-casted boolean value.
+     * @param value Value to cast to boolean.
+     * @returns The Scratch-casted boolean value.
      */
-    static toBoolean (value) {
+    static toBoolean (value: unknown): boolean {
         // Already a boolean?
         if (typeof value === 'boolean') {
             return value;
@@ -67,35 +67,39 @@ class Cast {
 
     /**
      * Scratch cast to string.
-     * @param {*} value Value to cast to string.
-     * @returns {string} The Scratch-casted string value.
+     * @param value Value to cast to string.
+     * @returns The Scratch-casted string value.
      */
-    static toString (value) {
+    static toString (value: unknown): string {
         return String(value);
     }
 
     /**
      * Cast any Scratch argument to an RGB color array to be used for the renderer.
-     * @param {*} value Value to convert to RGB color array.
-     * @returns {Array.<number>} [r,g,b], values between 0-255.
+     * @param value Value to convert to RGB color array.
+     * @returns [r,g,b], values between 0-255.
      */
-    static toRgbColorList (value) {
+    static toRgbColorList (value: unknown): number[] {
         const color = Cast.toRgbColorObject(value);
         return [color.r, color.g, color.b];
     }
 
     /**
      * Cast any Scratch argument to an RGB color object to be used for the renderer.
-     * @param {*} value Value to convert to RGB color object.
-     * @returns {RGBOject} [r,g,b], values between 0-255.
+     * @param value Value to convert to RGB color object.
+     * @returns [r,g,b], values between 0-255.
      */
-    static toRgbColorObject (value) {
-        let color;
+    static toRgbColorObject (value: unknown): RGBObject {
+        let color: RGBObject;
         if (typeof value === 'string' && value.substring(0, 1) === '#') {
-            color = Color.hexToRgb(value);
+            const hexResult = Color.hexToRgb(value);
 
             // If the color wasn't *actually* a hex color, cast to black
-            if (!color) color = {r: 0, g: 0, b: 0, a: 255};
+            if (!hexResult) {
+                color = {r: 0, g: 0, b: 0, a: 255};
+            } else {
+                color = hexResult;
+            }
         } else {
             color = Color.decimalToRgb(Cast.toNumber(value));
         }
@@ -104,21 +108,21 @@ class Cast {
 
     /**
      * Determine if a Scratch argument is a white space string (or null / empty).
-     * @param {*} val value to check.
-     * @returns {boolean} True if the argument is all white spaces or null / empty.
+     * @param val value to check.
+     * @returns True if the argument is all white spaces or null / empty.
      */
-    static isWhiteSpace (val) {
+    static isWhiteSpace (val: unknown): boolean {
         return val === null || (typeof val === 'string' && val.trim().length === 0);
     }
 
     /**
      * Compare two values, using Scratch cast, case-insensitive string compare, etc.
      * In Scratch 2.0, this is captured by `interp.compare.`
-     * @param {*} v1 First value to compare.
-     * @param {*} v2 Second value to compare.
-     * @returns {number} Negative number if v1 < v2; 0 if equal; positive otherwise.
+     * @param v1 First value to compare.
+     * @param v2 Second value to compare.
+     * @returns Negative number if v1 < v2; 0 if equal; positive otherwise.
      */
-    static compare (v1, v2) {
+    static compare (v1: unknown, v2: unknown): number {
         let n1 = Number(v1);
         let n2 = Number(v2);
         if (n1 === 0 && Cast.isWhiteSpace(v1)) {
@@ -151,17 +155,17 @@ class Cast {
 
     /**
      * Determine if a Scratch argument number represents a round integer.
-     * @param {*} val Value to check.
-     * @returns {boolean} True if number looks like an integer.
+     * @param val Value to check.
+     * @returns True if number looks like an integer.
      */
-    static isInt (val) {
+    static isInt (val: unknown): boolean {
         // Values that are already numbers.
         if (typeof val === 'number') {
             if (isNaN(val)) { // NaN is considered an integer.
                 return true;
             }
             // True if it's "round" (e.g., 2.0 and 2).
-            return val === parseInt(val, 10);
+            return val === parseInt(String(val), 10);
         } else if (typeof val === 'boolean') {
             // `True` and `false` always represent integer after Scratch cast.
             return true;
@@ -172,11 +176,11 @@ class Cast {
         return false;
     }
 
-    static get LIST_INVALID () {
+    static get LIST_INVALID (): string {
         return 'INVALID';
     }
 
-    static get LIST_ALL () {
+    static get LIST_ALL (): string {
         return 'ALL';
     }
 
@@ -185,12 +189,12 @@ class Cast {
      * Two special cases may be returned:
      * LIST_ALL: if the block is referring to all of the items in the list.
      * LIST_INVALID: if the index was invalid in any way.
-     * @param {*} index Scratch arg, including 1-based numbers or special cases.
-     * @param {number} length Length of the list.
-     * @param {boolean} acceptAll Whether it should accept "all" or not.
-     * @returns {(number|string)} 1-based index for list, LIST_ALL, or LIST_INVALID.
+     * @param index Scratch arg, including 1-based numbers or special cases.
+     * @param length Length of the list.
+     * @param acceptAll Whether it should accept "all" or not.
+     * @returns 1-based index for list, LIST_ALL, or LIST_INVALID.
      */
-    static toListIndex (index, length, acceptAll) {
+    static toListIndex (index: unknown, length: number, acceptAll: boolean): number | string {
         if (typeof index !== 'number') {
             if (index === 'all') {
                 return acceptAll ? Cast.LIST_ALL : Cast.LIST_INVALID;
@@ -207,11 +211,11 @@ class Cast {
                 return Cast.LIST_INVALID;
             }
         }
-        index = Math.floor(Cast.toNumber(index));
-        if (index < 1 || index > length) {
+        const numericIndex = Math.floor(Cast.toNumber(index));
+        if (numericIndex < 1 || numericIndex > length) {
             return Cast.LIST_INVALID;
         }
-        return index;
+        return numericIndex;
     }
 }
 

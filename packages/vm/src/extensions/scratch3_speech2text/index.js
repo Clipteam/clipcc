@@ -1,8 +1,8 @@
 import ArgumentType from '../../extension-support/argument-type';
-import Cast from '../../util/cast.js';
+import Cast from '../../util/cast';
 import BlockType from '../../extension-support/block-type';
 import formatMessage from 'format-message';
-import log from '../../util/log.js';
+import log from '../../util/log';
 import DiffMatchPatch from 'diff-match-patch';
 
 

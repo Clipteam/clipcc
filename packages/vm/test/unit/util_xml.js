@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import xml from '../../src/util/xml-escape.js';
+import xml from '../../src/util/xml-escape';
 
 test('escape', t => {
     const input = '<foo bar="he & llo \'"></foo>';

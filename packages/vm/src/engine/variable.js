@@ -3,9 +3,9 @@
  * Object representing a Scratch variable.
  */
 
-import uid from '../util/uid.js';
+import uid from '../util/uid';
 
-import xmlEscape from '../util/xml-escape.js';
+import xmlEscape from '../util/xml-escape';
 
 class Variable {
     /**

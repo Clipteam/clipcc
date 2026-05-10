@@ -12,7 +12,15 @@
  * - isOpen()
  */
 class ScratchLinkWebSocket {
-    constructor (type) {
+    _type: string;
+    _onOpen: ((e: Event) => void) | null;
+    _onClose: ((e: Event) => void) | null;
+    _onError: ((e: Event) => void) | null;
+    _handleMessage: ((json: unknown) => void) | null;
+
+    _ws: WebSocket | null;
+
+    constructor (type: string) {
         this._type = type;
         this._onOpen = null;
         this._onClose = null;
@@ -22,12 +30,12 @@ class ScratchLinkWebSocket {
         this._ws = null;
     }
 
-    open () {
+    open (): void {
         if (!(this._onOpen && this._onClose && this._onError && this._handleMessage)) {
             throw new Error('Must set open, close, message and error handlers before calling open on the socket');
         }
 
-        let pathname;
+        let pathname: string;
         switch (this._type) {
         case 'BLE':
             pathname = 'scratch/ble';
@@ -44,7 +52,7 @@ class ScratchLinkWebSocket {
         // those who need the fallback.
         // If both connections fail we should report only one error.
 
-        const setSocket = (socketToUse, socketToClose) => {
+        const setSocket = (socketToUse: WebSocket, socketToClose: WebSocket) => {
             socketToClose.onopen = socketToClose.onerror = null;
             socketToClose.close();
 
@@ -61,72 +69,72 @@ class ScratchLinkWebSocket {
         const connectTimeout = setTimeout(() => {
             // neither socket succeeded before the timeout
             setSocket(ws, wss);
-            this._ws.onerror(new Event('timeout'));
+            this._ws!.onerror!(new Event('timeout'));
         }, 15 * 1000);
-        ws.onopen = openEvent => {
+        ws.onopen = (openEvent: Event) => {
             clearTimeout(connectTimeout);
             setSocket(ws, wss);
-            this._ws.onopen(openEvent);
+            this._ws!.onopen!(openEvent);
         };
-        wss.onopen = openEvent => {
+        wss.onopen = (openEvent: Event) => {
             clearTimeout(connectTimeout);
             setSocket(wss, ws);
-            this._ws.onopen(openEvent);
+            this._ws!.onopen!(openEvent);
         };
 
-        let wsError;
-        let wssError;
+        let wsError: Event | null = null;
+        let wssError: Event | null = null;
         const errorHandler = () => {
             // if only one has received an error, we haven't overall failed yet
             if (wsError && wssError) {
                 clearTimeout(connectTimeout);
                 setSocket(ws, wss);
-                this._ws.onerror(wsError);
+                this._ws!.onerror!(wsError);
             }
         };
-        ws.onerror = errorEvent => {
+        ws.onerror = (errorEvent: Event) => {
             wsError = errorEvent;
             errorHandler();
         };
-        wss.onerror = errorEvent => {
+        wss.onerror = (errorEvent: Event) => {
             wssError = errorEvent;
             errorHandler();
         };
     }
 
-    close () {
-        this._ws.close();
+    close (): void {
+        this._ws!.close();
         this._ws = null;
     }
 
-    sendMessage (message) {
+    sendMessage (message: object): void {
         const messageText = JSON.stringify(message);
-        this._ws.send(messageText);
+        this._ws!.send(messageText);
     }
 
-    setOnOpen (fn) {
+    setOnOpen (fn: (e: Event) => void): void {
         this._onOpen = fn;
     }
 
-    setOnClose (fn) {
+    setOnClose (fn: (e: Event) => void): void {
         this._onClose = fn;
     }
 
-    setOnError (fn) {
+    setOnError (fn: (e: Event) => void): void {
         this._onError = fn;
     }
 
-    setHandleMessage (fn) {
+    setHandleMessage (fn: (json: unknown) => void): void {
         this._handleMessage = fn;
     }
 
-    isOpen () {
-        return this._ws && this._ws.readyState === this._ws.OPEN;
+    isOpen (): boolean {
+        return !!(this._ws && this._ws.readyState === this._ws.OPEN);
     }
 
-    _onMessage (e) {
+    _onMessage (e: MessageEvent): void {
         const json = JSON.parse(e.data);
-        this._handleMessage(json);
+        this._handleMessage!(json);
     }
 }
 

@@ -10,12 +10,12 @@ import execute from './execute.js';
 import ScratchBlocksConstants from './scratch-blocks-constants.js';
 import TargetType from '../extension-support/target-type';
 import Thread from './thread.js';
-import log from '../util/log.js';
-import maybeFormatMessage from '../util/maybe-format-message.js';
+import log from '../util/log';
+import maybeFormatMessage from '../util/maybe-format-message';
 import StageLayering from './stage-layering.js';
 import Variable from './variable.js';
-import xmlEscape from '../util/xml-escape.js';
-import ScratchLinkWebSocket from '../util/scratch-link-websocket.js';
+import xmlEscape from '../util/xml-escape';
+import ScratchLinkWebSocket from '../util/scratch-link-websocket';
 
 // Virtual I/O devices.
 import Clock from '../io/clock.js';
@@ -26,10 +26,8 @@ import MouseWheel from '../io/mouseWheel.js';
 import UserData from '../io/userData.js';
 import Video from '../io/video.js';
 import Joystick from '../io/joystick.js';
-
-import StringUtil from '../util/string-util.js';
-import uid from '../util/uid.js';
-
+import StringUtil from '../util/string-util';
+import uid from '../util/uid';
 import control from '../blocks/scratch3_control.js';
 import event from '../blocks/scratch3_event.js';
 import looks from '../blocks/scratch3_looks.js';

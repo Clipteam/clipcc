@@ -1,4 +1,4 @@
-import MathUtil from '../util/math-util.js';
+import MathUtil from '../util/math-util';
 
 class Mouse {
     constructor (runtime) {

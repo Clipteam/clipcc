@@ -1,5 +1,5 @@
 import SharedDispatch from './shared-dispatch.js';
-import log from '../util/log.js';
+import log from '../util/log';
 
 /**
  * This class serves as the central broker for message dispatch. It expects to operate on the main thread / Window and

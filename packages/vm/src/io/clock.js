@@ -1,4 +1,4 @@
-import Timer from '../util/timer.js';
+import Timer from '../util/timer';
 
 class Clock {
     constructor (runtime) {

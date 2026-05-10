@@ -3,14 +3,14 @@
  * where a single reporter block can have more than one monitor
  * (and therefore more than one monitor block) associated
  * with it (e.g. when reporter blocks have inputs).
- * @param {string} id The base id to use for the different monitor blocks
- * @param {object} fields The monitor block's fields object.
- * @returns {string} A string representing a unique id for a monitored block.
+ * @param id The base id to use for the different monitor blocks
+ * @param fields The monitor block's fields object.
+ * @returns A string representing a unique id for a monitored block.
  */
 // TODO this function should eventually be the single place where all monitor
 // IDs are obtained given an opcode for the reporter block and the list of
 // selected parameters.
-const getMonitorIdForBlockWithArgs = function (id, fields) {
+const getMonitorIdForBlockWithArgs = function (id: string, fields: Record<string, {value: string}>): string {
     let fieldString = '';
     for (const fieldKey in fields) {
         let fieldValue = fields[fieldKey].value;
