@@ -19,7 +19,7 @@ import StringUtil from '../util/string-util';
 import MathUtil from '../util/math-util';
 import specMap from './sb2_specmap.js';
 import Comment from '../engine/comment';
-import Variable from '../engine/variable.js';
+import Variable from '../engine/variable';
 import MonitorRecord from '../engine/monitor-record';
 import StageLayering from '../engine/stage-layering';
 import {loadCostume} from '../import/load-costume.js';

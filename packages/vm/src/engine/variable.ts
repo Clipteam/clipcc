@@ -7,15 +7,34 @@ import uid from '../util/uid';
 
 import xmlEscape from '../util/xml-escape';
 
+const enum VariableType {
+    SCALAR = '',
+    LIST = 'list',
+    BROADCAST_MESSAGE = 'broadcast_msg'
+}
+
+import type * as ClipCCBlocks from 'clipcc-block';
+
 class Variable {
     /**
-     * @param {string} id Id of the variable.
-     * @param {string} name Name of the variable.
-     * @param {string} type Type of the variable, one of '' or 'list'
-     * @param {boolean} isCloud Whether the variable is stored in the cloud.
-     * @class
+     * Id of the variable.
      */
-    constructor (id, name, type, isCloud) {
+    id: string;
+    /**
+     * Name of the variable.
+     */
+    name: string;
+    /**
+     * Type of the variable.
+     */
+    type: VariableType;
+    /**
+     * Whether the variable is stored in the cloud.
+     */
+    isCloud: boolean;
+    value: any;
+
+    constructor (id: string, name: string, type: VariableType, isCloud: boolean) {
         this.id = id || uid();
         this.name = name;
         this.type = type;
@@ -35,7 +54,7 @@ class Variable {
         }
     }
 
-    toXML (isLocal) {
+    toXML (isLocal: boolean): string {
         isLocal = (isLocal === true);
         return `<variable type="${this.type}" id="${this.id}" islocal="${isLocal
         }" iscloud="${this.isCloud}">${xmlEscape(this.name)}</variable>`;
@@ -43,10 +62,10 @@ class Variable {
 
     /**
      * Serializes this VariableModel to JSON State.
-     * @param {boolean} isLocal Whether this variable is locally scoped.
-     * @returns {object} a JSON representation of this VariableModel.
+     * @param isLocal Whether this variable is locally scoped.
+     * @returns a JSON representation of this VariableModel.
      */
-    toState (isLocal) {
+    toState (isLocal: boolean): ClipCCBlocks.variableModel.ScratchVariableState {
         isLocal = (isLocal === true);
         return {
             id: this.id,
@@ -57,30 +76,16 @@ class Variable {
         };
     }
 
-    /**
-     * Type representation for scalar variables.
-     * This is currently represented as ''
-     * for compatibility with blockly.
-     * @returns {string}
-     */
     static get SCALAR_TYPE () {
-        return '';
+        return VariableType.SCALAR;
     }
 
-    /**
-     * Type representation for list variables.
-     * @returns {string}
-     */
     static get LIST_TYPE () {
-        return 'list';
+        return VariableType.LIST;
     }
 
-    /**
-     * Type representation for list variables.
-     * @returns {string}
-     */
     static get BROADCAST_MESSAGE_TYPE () {
-        return 'broadcast_msg';
+        return VariableType.BROADCAST_MESSAGE;
     }
 }
 

@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import Blocks from './blocks.js';
-import Variable from '../engine/variable.js';
+import Variable from '../engine/variable';
 import Comment from '../engine/comment';
 import uid from '../util/uid';
 import {Map} from 'immutable';

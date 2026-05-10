@@ -13,7 +13,7 @@ import Thread from './thread.js';
 import log from '../util/log';
 import maybeFormatMessage from '../util/maybe-format-message';
 import StageLayering from './stage-layering';
-import Variable from './variable.js';
+import Variable from './variable';
 import xmlEscape from '../util/xml-escape';
 import ScratchLinkWebSocket from '../util/scratch-link-websocket';
 

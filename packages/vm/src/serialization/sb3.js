@@ -8,7 +8,7 @@ import vmPackage from '../../package.json';
 
 import Blocks from '../engine/blocks.js';
 import Sprite from '../sprites/sprite.js';
-import Variable from '../engine/variable.js';
+import Variable from '../engine/variable';
 import Comment from '../engine/comment';
 import MonitorRecord from '../engine/monitor-record';
 import StageLayering from '../engine/stage-layering';

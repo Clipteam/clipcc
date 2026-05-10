@@ -22,7 +22,7 @@
  * Finally, I filled in the expected arguments as below.
  */
 
-import Variable from '../engine/variable.js';
+import Variable from '../engine/variable';
 
 /**
  * @typedef {object} SB2SpecMap_blockInfo

@@ -1,4 +1,4 @@
-import Variable from '../engine/variable.js';
+import Variable from '../engine/variable';
 import log from '../util/log';
 
 class Cloud {

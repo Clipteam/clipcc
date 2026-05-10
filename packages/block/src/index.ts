@@ -234,6 +234,7 @@ export * as callbackRegistry from './callback_registry';
 export * as constants from './constants';
 export * as scratchBlocksUtils from './utils';
 export type * as proceduresSerializer from './serialization/procedures';
+export type * as variableModel from './variable_model';
 
 export {reportValue} from './report_value';
 export {Colours} from './theme';

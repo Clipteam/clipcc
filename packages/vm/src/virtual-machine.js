@@ -15,7 +15,7 @@ import MathUtil from './util/math-util';
 import Runtime from './engine/runtime.js';
 import StringUtil from './util/string-util';
 import formatMessage from 'format-message';
-import Variable from './engine/variable.js';
+import Variable from './engine/variable';
 import newBlockIds from './util/new-block-ids';
 import {loadCostume} from './import/load-costume.js';
 import {loadSound} from './import/load-sound.js';
