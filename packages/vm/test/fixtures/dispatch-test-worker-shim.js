@@ -1,6 +1,7 @@
-import Module from 'module';
-import callsite from 'callsite';
-import path from 'path';
+const Module = require('module');
+
+const callsite = require('callsite');
+const path = require('path');
 
 const oldRequire = Module.prototype.require;
 Module.prototype.require = function (target) {
