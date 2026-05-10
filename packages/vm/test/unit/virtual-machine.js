@@ -2,7 +2,7 @@ import {test} from '../fixtures/jest-tap-bridge.js';
 import VirtualMachine from '../../src/virtual-machine.js';
 import Sprite from '../../src/sprites/sprite.js';
 import Variable from '../../src/engine/variable';
-import adapter from '../../src/engine/adapter.js';
+import adapter from '../../src/engine/adapter';
 import events from '../fixtures/events.json';
 import Renderer from '../fixtures/fake-renderer.js';
 import Runtime from '../../src/engine/runtime.js';

@@ -238,6 +238,7 @@ export type * as variableModel from './variable_model';
 
 export {reportValue} from './report_value';
 export {Colours} from './theme';
+export {BlockDragEnd} from './events/block_drag_end';
 export * as Theme from './theme';
 export {glowStack} from './glow';
 

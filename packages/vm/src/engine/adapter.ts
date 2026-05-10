@@ -1,28 +1,32 @@
-import mutationAdapter from './mutation-adapter.js';
+import mutationAdapter from './mutation-adapter';
 import * as html from 'htmlparser2';
+import type {DataNode, Element} from 'domhandler';
 import uid from '../util/uid';
+import type * as ClipCCBlocks from 'clipcc-block';
+import type {VMBlock, VMField, VMMutation} from '../serialization/schema';
 
-/**
- * @import * as Blockly from 'blockly';
- * @typedef {Blockly.serialization.blocks.State} BlocksState
- */
+type BlockState = ClipCCBlocks.serialization.blocks.State;
 
 /**
  * Convert and an individual block DOM to the representation tree.
  * Based on Blockly's `domToBlockHeadless_`.
- * @param {Element} blockDOM DOM tree for an individual block.
- * @param {object} blocks Collection of blocks to add to.
- * @param {boolean} isTopBlock Whether blocks at this level are "top blocks."
- * @param {?string} parent Parent block ID.
- * @returns {undefined}
+ * @param blockDOM DOM tree for an individual block.
+ * @param blocks Collection of blocks to add to.
+ * @param isTopBlock Whether blocks at this level are "top blocks."
+ * @param parent Parent block ID.
  */
-const domToBlock = function (blockDOM, blocks, isTopBlock, parent) {
+const domToBlock = function (
+    blockDOM: Element,
+    blocks: Record<string, VMBlock>,
+    isTopBlock: boolean,
+    parent: string | null
+): void {
     if (!blockDOM.attribs.id) {
         blockDOM.attribs.id = uid();
     }
 
     // Block skeleton.
-    const block = {
+    const block: VMBlock = {
         id: blockDOM.attribs.id, // Block ID
         opcode: blockDOM.attribs.type, // For execution, "event_whengreenflag".
         inputs: {}, // Inputs to this block and the blocks they point to.
@@ -31,8 +35,10 @@ const domToBlock = function (blockDOM, blocks, isTopBlock, parent) {
         topLevel: isTopBlock, // If this block starts a stack.
         parent: parent, // Parent block ID, if available.
         shadow: blockDOM.name === 'shadow', // If this represents a shadow/slot.
-        x: blockDOM.attribs.x, // X position of script, if top-level.
-        y: blockDOM.attribs.y // Y position of script, if top-level.
+        // X position of script, if top-level.
+        x: typeof blockDOM.attribs.x !== 'undefined' ? Number(blockDOM.attribs.x) : undefined,
+        // Y position of script, if top-level.
+        y: typeof blockDOM.attribs.y !== 'undefined' ? Number(blockDOM.attribs.y) : undefined
     };
 
     // Add the block to the representation tree.
@@ -40,21 +46,21 @@ const domToBlock = function (blockDOM, blocks, isTopBlock, parent) {
 
     // Process XML children and find enclosed blocks, fields, etc.
     for (let i = 0; i < blockDOM.children.length; i++) {
-        const xmlChild = blockDOM.children[i];
+        const xmlChild = blockDOM.children[i] as Element;
         // Enclosed blocks and shadows
-        let childBlockNode = null;
-        let childShadowNode = null;
+        let childBlockNode: Element | null = null;
+        let childShadowNode: Element | null = null;
         for (let j = 0; j < xmlChild.children.length; j++) {
             const grandChildNode = xmlChild.children[j];
-            if (!grandChildNode.name) {
+            if (!(grandChildNode as Element).name) {
                 // Non-XML tag node.
                 continue;
             }
-            const grandChildNodeName = grandChildNode.name.toLowerCase();
+            const grandChildNodeName = (grandChildNode as Element).name.toLowerCase();
             if (grandChildNodeName === 'block') {
-                childBlockNode = grandChildNode;
+                childBlockNode = grandChildNode as Element;
             } else if (grandChildNodeName === 'shadow') {
-                childShadowNode = grandChildNode;
+                childShadowNode = grandChildNode as Element;
             }
         }
 
@@ -73,11 +79,9 @@ const domToBlock = function (blockDOM, blocks, isTopBlock, parent) {
             // Add id in case it is a variable field
             const fieldId = xmlChild.attribs.id;
             let fieldData = '';
-            if (xmlChild.children.length > 0 && xmlChild.children[0].data) {
-                fieldData = xmlChild.children[0].data;
+            if (xmlChild.children.length > 0 && (xmlChild.children[0] as { data?: string }).data) {
+                fieldData = (xmlChild.children[0] as DataNode).data;
             } else {
-                // If the child of the field with a data property
-                // doesn't exist, set the data to an empty string.
                 fieldData = '';
             }
             block.fields[fieldName] = {
@@ -100,7 +104,7 @@ const domToBlock = function (blockDOM, blocks, isTopBlock, parent) {
         case 'statement':
         {
             // Recursively generate block structure for input block.
-            domToBlock(childBlockNode, blocks, false, block.id);
+            domToBlock(childBlockNode!, blocks, false, block.id);
             if (childShadowNode && childBlockNode !== childShadowNode) {
                 // Also generate the shadow block.
                 domToBlock(childShadowNode, blocks, false, block.id);
@@ -109,7 +113,7 @@ const domToBlock = function (blockDOM, blocks, isTopBlock, parent) {
             const inputName = xmlChild.attribs.name;
             block.inputs[inputName] = {
                 name: inputName,
-                block: childBlockNode.attribs.id,
+                block: childBlockNode!.attribs.id,
                 shadow: childShadowNode ? childShadowNode.attribs.id : null
             };
             break;
@@ -139,12 +143,12 @@ const domToBlock = function (blockDOM, blocks, isTopBlock, parent) {
  * Convert outer blocks DOM from a Blockly CREATE event
  * to a usable form for the Scratch runtime.
  * This structure is based on Blockly xml.js:`domToWorkspace` and `domToBlock`.
- * @param {Element} blocksDOM DOM tree for this event.
- * @returns {Array.<object>} Usable list of blocks from this CREATE event.
+ * @param blocksDOM DOM tree for this event.
+ * @returns Usable list of blocks from this CREATE event.
  */
-const domToBlocks = function (blocksDOM) {
+const domToBlocks = function (blocksDOM: Element[]): VMBlock[] {
     // At this level, there could be multiple blocks adjacent in the DOM tree.
-    const blocks = {};
+    const blocks: Record<string, VMBlock> = {};
     for (let i = 0; i < blocksDOM.length; i++) {
         const block = blocksDOM[i];
         if (!block.name || !block.attribs) {
@@ -156,7 +160,7 @@ const domToBlocks = function (blocksDOM) {
         }
     }
     // Flatten blocks object into a list.
-    const blocksList = [];
+    const blocksList: VMBlock[] = [];
     for (const b in blocks) {
         if (!Object.prototype.hasOwnProperty.call(blocks, b)) continue;
         blocksList.push(blocks[b]);
@@ -166,20 +170,19 @@ const domToBlocks = function (blocksDOM) {
 
 /**
  * Convert an individual block State to the representation tree.
- * @param {object} blockState JSON State for an individual block.
- * @param {object} blocks Collection of blocks to add to.
- * @param {boolean} isTopBlock Whether blocks at this level are "top blocks."
- * @param {?string} parent Parent block ID.
- * @param {boolean} [isShadow] Whether this block is a shadow.
- * @returns {undefined}
+ * @param blockState JSON State for an individual block.
+ * @param blocks Collection of blocks to add to.
+ * @param isTopBlock Whether blocks at this level are "top blocks."
+ * @param parent Parent block ID.
+ * @param isShadow Whether this block is a shadow.
  */
-const stateToBlock = function (blockState, blocks, isTopBlock, parent, isShadow) {
+const stateToBlock = function (blockState: BlockState, blocks: Record<string, VMBlock>, isTopBlock: boolean, parent: string | null, isShadow?: boolean): void {
     if (!blockState.id) {
         blockState.id = uid();
     }
 
     // Block skeleton.
-    const block = {
+    const block: VMBlock = {
         id: blockState.id, // Block ID
         opcode: blockState.type, // For execution, "event_whengreenflag".
         inputs: {}, // Inputs to this block and the blocks they point to.
@@ -200,7 +203,7 @@ const stateToBlock = function (blockState, blocks, isTopBlock, parent, isShadow)
         for (const fieldName in blockState.fields) {
             if (!Object.prototype.hasOwnProperty.call(blockState.fields, fieldName)) continue;
             const fieldData = blockState.fields[fieldName];
-            const field = {
+            const field: VMField = {
                 name: fieldName
             };
             if (typeof fieldData === 'object' && fieldData !== null && fieldData.id) {
@@ -221,16 +224,16 @@ const stateToBlock = function (blockState, blocks, isTopBlock, parent, isShadow)
         for (const inputName in blockState.inputs) {
             if (!Object.prototype.hasOwnProperty.call(blockState.inputs, inputName)) continue;
             const connection = blockState.inputs[inputName];
-            let childBlockId = null;
-            let childShadowId = null;
+            let childBlockId: string | null = null;
+            let childShadowId: string | null = null;
 
             if (connection.block) {
                 stateToBlock(connection.block, blocks, false, block.id, false);
-                childBlockId = connection.block.id;
+                childBlockId = connection.block.id!;
             }
             if (connection.shadow) {
                 stateToBlock(connection.shadow, blocks, false, block.id, true);
-                childShadowId = connection.shadow.id;
+                childShadowId = connection.shadow.id!;
             }
 
             // Link this block's input to the child block.
@@ -253,13 +256,13 @@ const stateToBlock = function (blockState, blocks, isTopBlock, parent, isShadow)
         const nextConnection = blockState.next;
         if (nextConnection.block) {
             stateToBlock(nextConnection.block, blocks, false, block.id, false);
-            block.next = nextConnection.block.id;
+            block.next = nextConnection.block.id!;
         }
     }
 
     // Process mutation
     if (blockState.extraState) {
-        block.mutation = blockState.extraState;
+        block.mutation = blockState.extraState as VMMutation;
     }
 
     // Process comments
@@ -273,11 +276,11 @@ const stateToBlock = function (blockState, blocks, isTopBlock, parent, isShadow)
 
 /**
  * Blockly blocks JSON state to Scratch VM blocks representation.
- * @param {BlocksState} blocksState The JSON state of the blocks to convert.
- * @returns {Array.<object>} Usable list of blocks from this CREATE event.
+ * @param blocksState The JSON state of the blocks to convert.
+ * @returns Usable list of blocks from this CREATE event.
  */
-const stateToBlocks = function (blocksState) {
-    const blocks = {};
+const stateToBlocks = function (blocksState: BlockState | BlockState[]): VMBlock[] {
+    const blocks: Record<string, VMBlock> = {};
     if (Array.isArray(blocksState)) {
         blocksState.forEach(blockState => {
             stateToBlock(blockState, blocks, true, null);
@@ -287,7 +290,7 @@ const stateToBlocks = function (blocksState) {
     }
 
     // Flatten blocks object into a list.
-    const blocksList = [];
+    const blocksList: VMBlock[] = [];
     for (const b in blocks) {
         if (!Object.prototype.hasOwnProperty.call(blocks, b)) continue;
         blocksList.push(blocks[b]);
@@ -295,22 +298,24 @@ const stateToBlocks = function (blocksState) {
     return blocksList;
 };
 
+type AdaptableEvents = (ClipCCBlocks.Events.BlockCreate | ClipCCBlocks.BlockDragEnd) & {xml?: { outerHTML: string }};
+
 /**
  * Adapter between block creation events and block representation which can be
  * used by the Scratch runtime.
- * @param {object} e `Blockly.events.create` or `Blockly.events.endDrag`
- * @returns {Array.<object>} List of blocks from this CREATE event.
+ * @param e `Blockly.events.create` or `Blockly.events.endDrag`
+ * @returns List of blocks from this CREATE event.
  */
-const adapter = function (e) {
+const adapter = function (e: AdaptableEvents): VMBlock[] | undefined {
     // Validate input
     if (typeof e !== 'object') return;
 
     // Prefer using JSON serialization
-    if (typeof e.json === 'object') {
+    if (e.json && typeof e.json === 'object') {
         return stateToBlocks(e.json);
     }
     if (typeof e.xml !== 'object') return;
-    return domToBlocks(html.parseDOM(e.xml.outerHTML, {decodeEntities: true}));
+    return domToBlocks(html.parseDOM(e.xml.outerHTML, {decodeEntities: true}) as Element[]);
 };
 
 export default adapter;
