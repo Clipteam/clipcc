@@ -81,4 +81,4 @@ class Scratch3ProcedureBlocks {
     }
 }
 
-module.exports = Scratch3ProcedureBlocks;
+export default Scratch3ProcedureBlocks;

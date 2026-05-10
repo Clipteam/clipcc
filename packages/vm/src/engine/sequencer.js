@@ -1,6 +1,6 @@
-const Timer = require('../util/timer');
-const Thread = require('./thread');
-const execute = require('./execute.js');
+import Timer from '../util/timer.js';
+import Thread from './thread.js';
+import execute from './execute.js';
 
 /**
  * @typedef {import('./runtime')} Runtime
@@ -372,4 +372,4 @@ class Sequencer {
     }
 }
 
-module.exports = Sequencer;
+export default Sequencer;

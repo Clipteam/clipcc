@@ -1,11 +1,11 @@
-const adapter = require('./adapter');
-const xmlEscape = require('../util/xml-escape');
-const MonitorRecord = require('./monitor-record');
-const Clone = require('../util/clone');
-const {Map} = require('immutable');
-const log = require('../util/log');
-const Variable = require('./variable');
-const getMonitorIdForBlockWithArgs = require('../util/get-monitor-id');
+import adapter from './adapter.js';
+import xmlEscape from '../util/xml-escape.js';
+import MonitorRecord from './monitor-record.js';
+import Clone from '../util/clone.js';
+import {Map} from 'immutable';
+import log from '../util/log.js';
+import Variable from './variable.js';
+import getMonitorIdForBlockWithArgs from '../util/get-monitor-id.js';
 
 /**
  * @fileoverview
@@ -1576,4 +1576,4 @@ class Blocks {
     }
 }
 
-module.exports = Blocks;
+export default Blocks;

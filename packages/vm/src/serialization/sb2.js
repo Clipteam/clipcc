@@ -9,23 +9,23 @@
  * @typedef {number} int
  */
 
-const Blocks = require('../engine/blocks');
-const RenderedTarget = require('../sprites/rendered-target');
-const Sprite = require('../sprites/sprite');
-const Color = require('../util/color');
-const log = require('../util/log');
-const uid = require('../util/uid');
-const StringUtil = require('../util/string-util');
-const MathUtil = require('../util/math-util');
-const specMap = require('./sb2_specmap');
-const Comment = require('../engine/comment');
-const Variable = require('../engine/variable');
-const MonitorRecord = require('../engine/monitor-record');
-const StageLayering = require('../engine/stage-layering');
+import Blocks from '../engine/blocks.js';
 
-const {loadCostume} = require('../import/load-costume.js');
-const {loadSound} = require('../import/load-sound.js');
-const {deserializeCostume, deserializeSound} = require('./deserialize-assets.js');
+import RenderedTarget from '../sprites/rendered-target.js';
+import Sprite from '../sprites/sprite.js';
+import Color from '../util/color';
+import log from '../util/log.js';
+import uid from '../util/uid.js';
+import StringUtil from '../util/string-util.js';
+import MathUtil from '../util/math-util.js';
+import specMap from './sb2_specmap.js';
+import Comment from '../engine/comment.js';
+import Variable from '../engine/variable.js';
+import MonitorRecord from '../engine/monitor-record.js';
+import StageLayering from '../engine/stage-layering.js';
+import {loadCostume} from '../import/load-costume.js';
+import {loadSound} from '../import/load-sound.js';
+import {deserializeCostume, deserializeSound} from './deserialize-assets.js';
 
 // Constants used during deserialization of an SB2 file
 const CORE_EXTENSIONS = [
@@ -139,7 +139,7 @@ const parseBlockList = function (blockList, addBroadcastMsg, getVariableId, exte
     let previousBlock = null; // For setting next.
     for (let i = 0; i < blockList.length; i++) {
         const block = blockList[i];
-         
+
         const parsedBlockAndComments = parseBlock(block, addBroadcastMsg, getVariableId,
             extensions, parseState, comments, commentIndex);
         const parsedBlock = parsedBlockAndComments[0];
@@ -312,7 +312,7 @@ const parseMonitorObject = (object, runtime, targets, extensions) => {
 
     // Create var id getter to make block naming/parsing easier, variables already created.
     const getVariableId = generateVariableIdGetter(target.id, false);
-     
+
     const [block, _] = parseBlock(
         [object.cmd, object.param], // Scratch 2 monitor blocks only have one param.
         null, // `addBroadcastMsg`, not needed for monitor blocks.
@@ -859,7 +859,7 @@ const reorderParsedTargets = function (targets) {
  * @param {?object} zip Optional zipped assets for local file import
  * @returns {Promise.<ImportedProject>} Promise that resolves to the loaded targets when ready.
  */
-const sb2import = function (json, runtime, optForceSprite, zip) {
+const deserialize = function (json, runtime, optForceSprite, zip) {
     const extensions = {
         extensionIDs: new Set(),
         extensionURLs: new Map()
@@ -1292,6 +1292,6 @@ const parseBlock = function (sb2block, addBroadcastMsg, getVariableId, extension
     return [activeBlock, commentIndex];
 };
 
-module.exports = {
-    deserialize: sb2import
+export {
+    deserialize
 };

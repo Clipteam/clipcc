@@ -94,7 +94,7 @@ const getScripts = function (container, opcode) {
     return scripts;
 };
 
-module.exports = {
+export {
     getScripts,
     RuntimeScriptCache
 };

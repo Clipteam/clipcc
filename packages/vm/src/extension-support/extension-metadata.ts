@@ -1,3 +1,6 @@
+import type ArgumentType from './argument-type';
+import type BlockType from './block-type';
+
 /**
  * All the metadata needed to register an extension.
  */

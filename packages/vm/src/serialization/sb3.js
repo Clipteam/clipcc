@@ -4,23 +4,23 @@
  * JSON and then generates all needed scratch-vm runtime structures.
  */
 
-const vmPackage = require('../../package.json');
-const Blocks = require('../engine/blocks');
-const Sprite = require('../sprites/sprite');
-const Variable = require('../engine/variable');
-const Comment = require('../engine/comment');
-const MonitorRecord = require('../engine/monitor-record');
-const StageLayering = require('../engine/stage-layering');
-const log = require('../util/log');
-const uid = require('../util/uid');
-const MathUtil = require('../util/math-util');
-const StringUtil = require('../util/string-util');
-const VariableUtil = require('../util/variable-util');
-const {migrationMap, mergeDeep, migrateMutation} = require('./migration');
+import vmPackage from '../../package.json';
 
-const {loadCostume} = require('../import/load-costume.js');
-const {loadSound} = require('../import/load-sound.js');
-const {deserializeCostume, deserializeSound} = require('./deserialize-assets.js');
+import Blocks from '../engine/blocks.js';
+import Sprite from '../sprites/sprite.js';
+import Variable from '../engine/variable.js';
+import Comment from '../engine/comment.js';
+import MonitorRecord from '../engine/monitor-record.js';
+import StageLayering from '../engine/stage-layering.js';
+import log from '../util/log.js';
+import uid from '../util/uid.js';
+import MathUtil from '../util/math-util.js';
+import StringUtil from '../util/string-util.js';
+import VariableUtil from '../util/variable-util.js';
+import {migrationMap, mergeDeep, migrateMutation} from './migration.js';
+import {loadCostume} from '../import/load-costume.js';
+import {loadSound} from '../import/load-sound.js';
+import {deserializeCostume, deserializeSound} from './deserialize-assets.js';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
@@ -1339,10 +1339,10 @@ const deserialize = function (json, runtime, zip, isSingleSprite) {
         }));
 };
 
-module.exports = {
-    serialize: serialize,
-    deserialize: deserialize,
-    deserializeBlocks: deserializeBlocks,
-    serializeBlocks: serializeBlocks,
-    getExtensionIdForOpcode: getExtensionIdForOpcode
+export {
+    serialize,
+    deserialize,
+    deserializeBlocks,
+    serializeBlocks,
+    getExtensionIdForOpcode
 };

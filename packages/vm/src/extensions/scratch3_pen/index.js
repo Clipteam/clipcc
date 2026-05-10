@@ -1,14 +1,14 @@
-const ArgumentType = require('../../extension-support/argument-type');
-const BlockType = require('../../extension-support/block-type');
-const TargetType = require('../../extension-support/target-type');
-const Cast = require('../../util/cast');
-const Clone = require('../../util/clone');
-const Color = require('../../util/color');
-const formatMessage = require('format-message');
-const MathUtil = require('../../util/math-util');
-const RenderedTarget = require('../../sprites/rendered-target');
-const log = require('../../util/log');
-const StageLayering = require('../../engine/stage-layering');
+import ArgumentType from '../../extension-support/argument-type';
+import BlockType from '../../extension-support/block-type';
+import TargetType from '../../extension-support/target-type';
+import Cast from '../../util/cast.js';
+import Clone from '../../util/clone.js';
+import Color from '../../util/color';
+import formatMessage from 'format-message';
+import MathUtil from '../../util/math-util.js';
+import RenderedTarget from '../../sprites/rendered-target.js';
+import log from '../../util/log.js';
+import StageLayering from '../../engine/stage-layering.js';
 
 /**
  * Icon svg to be displayed at the left edge of each extension block, encoded as a data URI.
@@ -778,4 +778,4 @@ class Scratch3PenBlocks {
     }
 }
 
-module.exports = Scratch3PenBlocks;
+export default Scratch3PenBlocks;

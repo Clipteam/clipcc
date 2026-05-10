@@ -1,6 +1,6 @@
-const StringUtil = require('../util/string-util');
-const log = require('../util/log');
-const {loadSvgString, serializeSvgToString} = require('clipcc-svg-renderer');
+import StringUtil from '../util/string-util.js';
+import log from '../util/log.js';
+import {loadSvgString, serializeSvgToString} from 'clipcc-svg-renderer';
 
 const loadVector_ = function (costume, runtime, rotationCenter, optVersion) {
     return new Promise(resolve => {
@@ -10,7 +10,7 @@ const loadVector_ = function (costume, runtime, rotationCenter, optVersion) {
             // scratch-svg-renderer fixes syntax that causes loading issues,
             // and if optVersion is 2, fixes "quirks" associated with Scratch 2 SVGs,
             const fixedSvgString = serializeSvgToString(loadSvgString(svgString, true /* fromVersion2 */));
-        
+
             // If the string changed, put back into storage
             if (svgString !== fixedSvgString) {
                 svgString = fixedSvgString;
@@ -261,14 +261,14 @@ const handleCostumeLoadError = function (costume, runtime) {
 
     const AssetType = runtime.storage.AssetType;
     const isVector = costume.dataFormat === AssetType.ImageVector.runtimeFormat;
-                
+
     // Use default asset if original fails to load
     costume.assetId = isVector ?
         runtime.storage.defaultAssetId.ImageVector :
         runtime.storage.defaultAssetId.ImageBitmap;
     costume.asset = runtime.storage.get(costume.assetId);
     costume.md5 = `${costume.assetId}.${costume.asset.dataFormat}`;
-    
+
     const defaultCostumePromise = (isVector) ?
         loadVector_(costume, runtime) : loadBitmap_(costume, runtime);
 
@@ -280,7 +280,7 @@ const handleCostumeLoadError = function (costume, runtime) {
         // Should be null if we got here because the costume was missing
         loadedCostume.broken.asset = oldAsset;
         loadedCostume.broken.dataFormat = oldDataFormat;
-        
+
         loadedCostume.broken.rotationCenterX = oldRotationX;
         loadedCostume.broken.rotationCenterY = oldRotationY;
         loadedCostume.broken.bitmapResolution = oldBitmapResolution;
@@ -322,7 +322,7 @@ const loadCostumeFromAsset = function (costume, runtime, optVersion) {
             .catch(error => {
                 log.warn(`Error loading vector image: ${error}`);
                 return handleCostumeLoadError(costume, runtime);
-                
+
             });
     }
     return loadBitmap_(costume, runtime, rotationCenter, optVersion)
@@ -402,7 +402,7 @@ const loadCostume = function (md5ext, costume, runtime, optVersion) {
         });
 };
 
-module.exports = {
+export {
     loadCostume,
     loadCostumeFromAsset
 };

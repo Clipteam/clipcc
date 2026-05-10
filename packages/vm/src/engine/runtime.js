@@ -1,49 +1,56 @@
-const EventEmitter = require('events');
-const {OrderedMap} = require('immutable');
+import EventEmitter from 'events';
+import {OrderedMap} from 'immutable';
+import ArgumentType from '../extension-support/argument-type';
+import Blocks from './blocks.js';
+import {getScripts as getCachedScriptsByOpcode} from './blocks-runtime-cache.js';
+import BlockType from '../extension-support/block-type';
+import Profiler from './profiler.js';
+import Sequencer from './sequencer.js';
+import execute from './execute.js';
+import ScratchBlocksConstants from './scratch-blocks-constants.js';
+import TargetType from '../extension-support/target-type';
+import Thread from './thread.js';
+import log from '../util/log.js';
+import maybeFormatMessage from '../util/maybe-format-message.js';
+import StageLayering from './stage-layering.js';
+import Variable from './variable.js';
+import xmlEscape from '../util/xml-escape.js';
+import ScratchLinkWebSocket from '../util/scratch-link-websocket.js';
 
-const ArgumentType = require('../extension-support/argument-type');
-const Blocks = require('./blocks');
-const {getScripts: getCachedScriptsByOpcode} = require('./blocks-runtime-cache');
-const BlockType = require('../extension-support/block-type');
-const Profiler = require('./profiler');
-const Sequencer = require('./sequencer');
-const execute = require('./execute.js');
-const ScratchBlocksConstants = require('./scratch-blocks-constants');
-const TargetType = require('../extension-support/target-type');
-const Thread = require('./thread');
-const log = require('../util/log');
-const maybeFormatMessage = require('../util/maybe-format-message');
-const StageLayering = require('./stage-layering');
-const Variable = require('./variable');
-const xmlEscape = require('../util/xml-escape');
-const ScratchLinkWebSocket = require('../util/scratch-link-websocket');
+import Clock from '../io/clock.js';
 
-// Virtual I/O devices.
-const Clock = require('../io/clock');
-const Cloud = require('../io/cloud');
-const Keyboard = require('../io/keyboard');
-const Mouse = require('../io/mouse');
-const MouseWheel = require('../io/mouseWheel');
-const UserData = require('../io/userData');
-const Video = require('../io/video');
-const Joystick = require('../io/joystick');
+import Cloud from '../io/cloud.js';
+import Keyboard from '../io/keyboard.js';
+import Mouse from '../io/mouse.js';
+import MouseWheel from '../io/mouseWheel.js';
+import UserData from '../io/userData.js';
+import Video from '../io/video.js';
+import Joystick from '../io/joystick.js';
+import StringUtil from '../util/string-util.js';
+import uid from '../util/uid.js';
+import scratch3_control from '../blocks/scratch3_control.js';
+import scratch3_event from '../blocks/scratch3_event.js';
+import scratch3_looks from '../blocks/scratch3_looks.js';
+import scratch3_motion from '../blocks/scratch3_motion.js';
+import scratch3_operators from '../blocks/scratch3_operators.js';
+import scratch3_sound from '../blocks/scratch3_sound.js';
+import scratch3_sensing from '../blocks/scratch3_sensing.js';
+import scratch3_data from '../blocks/scratch3_data.js';
+import scratch3_procedures from '../blocks/scratch3_procedures.js';
 
-const StringUtil = require('../util/string-util');
-const uid = require('../util/uid');
-
-/* eslint-disable global-require */
+ 
 const defaultBlockPackages = {
-    scratch3_control: require('../blocks/scratch3_control'),
-    scratch3_event: require('../blocks/scratch3_event'),
-    scratch3_looks: require('../blocks/scratch3_looks'),
-    scratch3_motion: require('../blocks/scratch3_motion'),
-    scratch3_operators: require('../blocks/scratch3_operators'),
-    scratch3_sound: require('../blocks/scratch3_sound'),
-    scratch3_sensing: require('../blocks/scratch3_sensing'),
-    scratch3_data: require('../blocks/scratch3_data'),
-    scratch3_procedures: require('../blocks/scratch3_procedures')
+    scratch3_control,
+    scratch3_event,
+    scratch3_looks,
+    scratch3_motion,
+    scratch3_operators,
+    scratch3_sound,
+    scratch3_sensing,
+    scratch3_data,
+    scratch3_procedures
 };
-/* eslint-enable global-require */
+ 
 
 const defaultExtensionColors = ['#0FBD8C', '#0DA57A', '#0B8E69'];
 
@@ -2990,4 +2997,4 @@ class Runtime extends EventEmitter {
  * @param {Target} [sourceTarget] - the target used as a source for the new clone, if any.
  */
 
-module.exports = Runtime;
+export default Runtime;
