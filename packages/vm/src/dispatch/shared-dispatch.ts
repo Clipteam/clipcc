@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import log from '../util/log';
 
 /**
@@ -29,7 +30,7 @@ export interface DispatchResponseMessage {
 /** Any message to the dispatch system. */
 export type DispatchMessage = DispatchCallMessage | DispatchResponseMessage;
 
-function isDispatchCallMessage(obj: DispatchMessage): obj is DispatchCallMessage {
+function isDispatchCallMessage (obj: DispatchMessage): obj is DispatchCallMessage {
     return 'service' in obj;
 }
 
@@ -70,7 +71,7 @@ export abstract class SharedDispatch {
      * @param args The arguments to be copied to the method, if any.
      * @returns A promise for the return value of the service method.
      */
-    call(service: string, method: string, ...args: any[]): Promise<any> {
+    call (service: string, method: string, ...args: any[]): Promise<any> {
         return this.transferCall(service, method, null, ...args);
     }
 
@@ -89,9 +90,9 @@ export abstract class SharedDispatch {
      * @param args The arguments to be copied to the method, if any.
      * @returns A promise for the return value of the service method.
      */
-    transferCall(service: string, method: string, transfer: object[] | null, ...args: any[]): Promise<any> {
+    transferCall (service: string, method: string, transfer: object[] | null, ...args: any[]): Promise<any> {
         try {
-            const { provider, isRemote } = this.getServiceProvider(service);
+            const {provider, isRemote} = this.getServiceProvider(service);
             if (provider) {
                 if (isRemote) {
                     return this.remoteTransferCall(provider as Worker, service, method, transfer, ...args);
@@ -111,7 +112,7 @@ export abstract class SharedDispatch {
      * @param service The service to check.
      * @returns True if the service is remote (calls must cross a Worker boundary), false otherwise.
      */
-    isRemoteService(service: string): boolean {
+    isRemoteService (service: string): boolean {
         return this.getServiceProvider(service).isRemote;
     }
 
@@ -123,7 +124,7 @@ export abstract class SharedDispatch {
      * @param args The arguments to be copied to the method, if any.
      * @returns A promise for the return value of the service method.
      */
-    remoteCall(provider: WorkerLike, service: string, method: string, ...args: any[]): Promise<any> {
+    remoteCall (provider: WorkerLike, service: string, method: string, ...args: any[]): Promise<any> {
         return this.remoteTransferCall(provider, service, method, null, ...args);
     }
 
@@ -136,16 +137,21 @@ export abstract class SharedDispatch {
      * @param args The arguments to be copied to the method, if any.
      * @returns {Promise} - a promise for the return value of the service method.
      */
-    private remoteTransferCall(provider: WorkerLike, service: string, method: string, transfer: any[] | null, ...args: any[]) {
+    private remoteTransferCall (
+        provider: WorkerLike,
+        service: string,
+        method: string,
+        transfer: any[] | null,
+        ...args: any[]) {
         return new Promise((resolve, reject) => {
             const responseId = this.storeCallbacks(resolve, reject);
 
             args = JSON.parse(JSON.stringify(args));
 
             if (transfer) {
-                provider.postMessage({ service, method, responseId, args }, transfer);
+                provider.postMessage({service, method, responseId, args}, transfer);
             } else {
-                provider.postMessage({ service, method, responseId, args });
+                provider.postMessage({service, method, responseId, args});
             }
         });
     }
@@ -156,7 +162,7 @@ export abstract class SharedDispatch {
      * @param reject Function to call if the service method throws.
      * @returns A unique response ID for this set of callbacks.
      */
-    protected storeCallbacks(resolve: Resolve, reject: Reject) {
+    protected storeCallbacks (resolve: Resolve, reject: Reject) {
         const responseId = this.nextResponseId++;
         this.callbacks[responseId] = [resolve, reject];
         return responseId;
@@ -167,7 +173,7 @@ export abstract class SharedDispatch {
      * @param responseId The response ID of the callback set to call.
      * @param message The message containing the response value(s).
      */
-    protected deliverResponse(responseId: number, message: DispatchResponseMessage) {
+    protected deliverResponse (responseId: number, message: DispatchResponseMessage) {
         try {
             const [resolve, reject] = this.callbacks[responseId];
             delete this.callbacks[responseId];
@@ -186,7 +192,7 @@ export abstract class SharedDispatch {
      * @param worker The worker which sent the message, or the global object if running in a worker.
      * @param event The message event to be handled.
      */
-    protected onMessage(worker: WorkerLike, event: MessageEvent<DispatchMessage>) {
+    protected onMessage (worker: WorkerLike, event: MessageEvent<DispatchMessage>) {
         const message = event.data;
         let promise;
         if (isDispatchCallMessage(message) && message.service) {
@@ -206,8 +212,8 @@ export abstract class SharedDispatch {
                 log.error(`Dispatch message missing required response ID: ${JSON.stringify(event)}`);
             } else {
                 promise.then(
-                    result => worker.postMessage({ responseId: message.responseId, result }),
-                    error => worker.postMessage({ responseId: message.responseId, error })
+                    result => worker.postMessage({responseId: message.responseId, result}),
+                    error => worker.postMessage({responseId: message.responseId, error})
                 );
             }
         }

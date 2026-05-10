@@ -110,6 +110,8 @@ class Keyboard {
     /**
      * Keyboard DOM event handler.
      * @param data Data from DOM event.
+     * @param data.key The key from the DOM event.
+     * @param data.isDown Whether the key is being pressed or released.
      */
     postData (data: { key: string; isDown: boolean }): void {
         if (!data.key) return;

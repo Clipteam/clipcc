@@ -95,10 +95,10 @@ class Cast {
             const hexResult = Color.hexToRgb(value);
 
             // If the color wasn't *actually* a hex color, cast to black
-            if (!hexResult) {
-                color = {r: 0, g: 0, b: 0, a: 255};
-            } else {
+            if (hexResult) {
                 color = hexResult;
+            } else {
+                color = {r: 0, g: 0, b: 0, a: 255};
             }
         } else {
             color = Color.decimalToRgb(Cast.toNumber(value));

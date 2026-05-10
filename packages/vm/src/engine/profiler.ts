@@ -114,8 +114,8 @@ class Profiler {
      */
     START = START;
     /**
-    c * A reference to the STOP record id constant.
-    c */
+     * A reference to the STOP record id constant.
+     */
     STOP = STOP;
 
     static START = START;
@@ -125,7 +125,7 @@ class Profiler {
         /**
          * A callback handle called with each decoded frame when reporting back
          * all the recorded times.
-        */
+         */
         public onFrame: FrameCallback = function () {}
     ) {}
 

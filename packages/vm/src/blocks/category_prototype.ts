@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type Runtime from '../engine/runtime';
 import type BlockUtility from '../engine/block-utility';
 import type {HatMetadata, MonitorBlockInfo} from '../engine/runtime';

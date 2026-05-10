@@ -13,11 +13,11 @@ export interface HSVObject {
 
 class Color {
     static get RGB_BLACK (): RGBObject {
-        return { r: 0, g: 0, b: 0 };
+        return {r: 0, g: 0, b: 0};
     }
 
     static get RGB_WHITE (): RGBObject {
-        return { r: 255, g: 255, b: 255 };
+        return {r: 255, g: 255, b: 255};
     }
 
     /**
@@ -44,7 +44,7 @@ class Color {
         const r = (decimal >> 16) & 0xFF;
         const g = (decimal >> 8) & 0xFF;
         const b = decimal & 0xFF;
-        return { r: r, g: g, b: b, a: a > 0 ? a : 255 };
+        return {r: r, g: g, b: b, a: a > 0 ? a : 255};
     }
 
     /**
@@ -84,10 +84,10 @@ class Color {
     }
 
     /**
-    * Convert a hex color (e.g., F00, #03F, #0033FF) to a decimal color number.
-    * @param hex Hex representation of the color.
-    * @returns Number representing the color.
-    */
+     * Convert a hex color (e.g., F00, #03F, #0033FF) to a decimal color number.
+     * @param hex Hex representation of the color.
+     * @returns Number representing the color.
+     */
     static hexToDecimal (hex: string): number {
         const rgb = Color.hexToRgb(hex);
         return rgb ? Color.rgbToDecimal(rgb) : 0;
@@ -115,37 +115,37 @@ class Color {
         let b: number;
 
         switch (i) {
-            default:
-            case 0:
-                r = v;
-                g = t;
-                b = p;
-                break;
-            case 1:
-                r = q;
-                g = v;
-                b = p;
-                break;
-            case 2:
-                r = p;
-                g = v;
-                b = t;
-                break;
-            case 3:
-                r = p;
-                g = q;
-                b = v;
-                break;
-            case 4:
-                r = t;
-                g = p;
-                b = v;
-                break;
-            case 5:
-                r = v;
-                g = p;
-                b = q;
-                break;
+        default:
+        case 0:
+            r = v;
+            g = t;
+            b = p;
+            break;
+        case 1:
+            r = q;
+            g = v;
+            b = p;
+            break;
+        case 2:
+            r = p;
+            g = v;
+            b = t;
+            break;
+        case 3:
+            r = p;
+            g = q;
+            b = v;
+            break;
+        case 4:
+            r = t;
+            g = p;
+            b = v;
+            break;
+        case 5:
+            r = v;
+            g = p;
+            b = q;
+            break;
         }
 
         return {
@@ -177,7 +177,7 @@ class Color {
             s = (v - x) / v;
         }
 
-        return { h: h, s: s, v: v };
+        return {h: h, s: s, v: v};
     }
 
     /**

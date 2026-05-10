@@ -1,4 +1,5 @@
-import { DispatchCallMessage, SharedDispatch, WorkerLike } from './shared-dispatch';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {DispatchCallMessage, SharedDispatch, WorkerLike} from './shared-dispatch';
 import log from '../util/log';
 
 /**
@@ -33,8 +34,8 @@ export class CentralDispatch extends SharedDispatch {
      * @param args The arguments to be copied to the method, if any.
      * @returns The return value of the service method.
      */
-    callSync(service: string, method: string, ...args: any[]) {
-        const { provider, isRemote } = this.getServiceProvider(service);
+    callSync (service: string, method: string, ...args: any[]) {
+        const {provider, isRemote} = this.getServiceProvider(service);
         if (provider) {
             if (isRemote) {
                 throw new Error(`Cannot use 'callSync' on remote provider for service ${service}.`);
@@ -51,7 +52,7 @@ export class CentralDispatch extends SharedDispatch {
      * @param service A globally unique string identifying this service. Examples: 'vm', 'gui', 'extension9'.
      * @param provider A local object which provides this service.
      */
-    setServiceSync(service: string, provider: object) {
+    setServiceSync (service: string, provider: object) {
         if (Object.prototype.hasOwnProperty.call(this.services, service)) {
             log.warn(`Central dispatch replacing existing service provider for ${service}`);
         }
@@ -65,7 +66,7 @@ export class CentralDispatch extends SharedDispatch {
      * @param provider A local object which provides this service.
      * @returns A promise which will resolve once the service is registered.
      */
-    setService(service: string, provider: object): Promise<void> {
+    setService (service: string, provider: object): Promise<void> {
         /** Return a promise for consistency with {@link WorkerDispatch#setService} */
         try {
             this.setServiceSync(service, provider);
@@ -80,7 +81,7 @@ export class CentralDispatch extends SharedDispatch {
      * The dispatcher will immediately attempt to "handshake" with the worker.
      * @param worker The worker to add into the dispatch system.
      */
-    addWorker(worker: Worker) {
+    addWorker (worker: Worker) {
         if (this.workers.indexOf(worker) === -1) {
             this.workers.push(worker);
             worker.onmessage = this.onMessage.bind(this, worker);
@@ -97,7 +98,7 @@ export class CentralDispatch extends SharedDispatch {
      * @param service The name of the service to look up.
      * @returns The means to contact the service, if found.
      */
-    protected override getServiceProvider(service: string) {
+    protected override getServiceProvider (service: string) {
         const provider = this.services[service];
         const isRemote = Boolean(this.workerClass && provider instanceof this.workerClass);
         return {
@@ -112,14 +113,14 @@ export class CentralDispatch extends SharedDispatch {
      * @param message The message to be handled.
      * @returns A promise for the results of this operation, if appropriate.
      */
-    protected override onDispatchMessage(worker: WorkerLike, message: DispatchCallMessage) {
+    protected override onDispatchMessage (worker: WorkerLike, message: DispatchCallMessage) {
         let promise;
         switch (message.method) {
-            case 'setService':
-                promise = this.setService(message.args[0], worker);
-                break;
-            default:
-                log.error(`Central dispatch received message for unknown method: ${message.method}`);
+        case 'setService':
+            promise = this.setService(message.args[0], worker);
+            break;
+        default:
+            log.error(`Central dispatch received message for unknown method: ${message.method}`);
         }
         return promise;
     }

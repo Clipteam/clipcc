@@ -36,8 +36,10 @@ const domToBlock = function (
         parent: parent, // Parent block ID, if available.
         shadow: blockDOM.name === 'shadow', // If this represents a shadow/slot.
         // X position of script, if top-level.
+        // eslint-disable-next-line no-negated-condition
         x: typeof blockDOM.attribs.x !== 'undefined' ? Number(blockDOM.attribs.x) : undefined,
         // Y position of script, if top-level.
+        // eslint-disable-next-line no-negated-condition
         y: typeof blockDOM.attribs.y !== 'undefined' ? Number(blockDOM.attribs.y) : undefined
     };
 
@@ -176,7 +178,13 @@ const domToBlocks = function (blocksDOM: Element[]): VMBlock[] {
  * @param parent Parent block ID.
  * @param isShadow Whether this block is a shadow.
  */
-const stateToBlock = function (blockState: BlockState, blocks: Record<string, VMBlock>, isTopBlock: boolean, parent: string | null, isShadow?: boolean): void {
+const stateToBlock = function (
+    blockState: BlockState,
+    blocks: Record<string, VMBlock>,
+    isTopBlock: boolean,
+    parent: string | null,
+    isShadow?: boolean
+): void {
     if (!blockState.id) {
         blockState.id = uid();
     }

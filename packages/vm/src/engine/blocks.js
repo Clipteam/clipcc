@@ -1008,11 +1008,11 @@ class Blocks {
     /**
      * Returns a map of all references to variables or lists from blocks
      * in this block container.
-     * @param {Array<object>} optBlocks Optional list of blocks to constrain the search to.
+     * @param {Array<object> | null} optBlocks Optional list of blocks to constrain the search to.
      * This is useful for getting variable/list references for a stack of blocks instead
      * of all blocks on the workspace
      * @param {boolean=} optIncludeBroadcast Optional whether to include broadcast fields.
-     * @returns {object} A map of variable ID to a list of all variable references
+     * @returns A map of variable ID to a list of all variable references
      * for that ID. A variable reference contains the field referencing that variable
      * and also the type of the variable being referenced.
      */

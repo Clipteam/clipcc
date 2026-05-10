@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 interface OpenRequest {
     resolve: (result: unknown) => void;
     reject: (error: Error) => void;
@@ -57,11 +58,11 @@ class JSONRPC {
      * @param method - the method requested by the remote caller.
      * @param params - the parameters sent with the remote caller's request.
      */
-    didReceiveCall (method: string, params: object): unknown { // eslint-disable-line no-unused-vars
+    didReceiveCall (method: string, params: object): unknown {
         throw new Error('Must override didReceiveCall');
     }
 
-    _sendMessage (jsonMessageObject: object): void { // eslint-disable-line no-unused-vars
+    _sendMessage (jsonMessageObject: object): void {
         throw new Error('Must override _sendMessage');
     }
 

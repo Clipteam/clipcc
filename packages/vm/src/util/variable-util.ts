@@ -1,4 +1,13 @@
+import type Target from '../engine/target';
+import type {VariableType} from '../engine/variable';
+import type {VMField} from '../serialization/schema';
+
 type VarRefMap = Record<string, string[]>;
+
+interface VarReference {
+    referencingField: VMField;
+    type: VariableType;
+}
 
 class VariableUtil {
     static _mergeVarRefObjects (accum: VarRefMap, obj2: VarRefMap): VarRefMap {
@@ -21,7 +30,7 @@ class VariableUtil {
      * @returns An object with variable ids as the keys and a list of block fields referencing
      * the variable.
      */
-    static getAllVarRefsForTargets (targets: Array<{ blocks: { getAllVariableAndListReferences: (a: null, b: boolean) => VarRefMap } }>, shouldIncludeBroadcast: boolean): VarRefMap {
+    static getAllVarRefsForTargets (targets: Target[], shouldIncludeBroadcast: boolean): VarRefMap {
         return targets
             .map(t => t.blocks.getAllVariableAndListReferences(null, shouldIncludeBroadcast))
             .reduce(VariableUtil._mergeVarRefObjects, {});
@@ -36,7 +45,7 @@ class VariableUtil {
      * variable name in the references being updated should be replaced with this new name.
      * If this parameter is not provided or is '', no name change occurs.
      */
-    static updateVariableIdentifiers (referencesToUpdate: Array<{ referencingField: { id: string; value: string } }>, newId: string, optNewName?: string): void {
+    static updateVariableIdentifiers(referencesToUpdate: VarReference[], newId: string, optNewName?: string): void {
         referencesToUpdate.map(ref => {
             ref.referencingField.id = newId;
             if (optNewName) {

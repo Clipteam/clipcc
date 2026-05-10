@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface SB3Project {
     targets: SB3Target[];
     monitors?: SB3Monitor[];

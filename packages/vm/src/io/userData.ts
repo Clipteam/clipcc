@@ -4,6 +4,7 @@ class UserData {
     /**
      * Handler for updating the username
      * @param data Data posted to this ioDevice.
+     * @param data.username The username to set for this user data device.
      */
     postData (data: {username: string}): void {
         this._username = data.username;

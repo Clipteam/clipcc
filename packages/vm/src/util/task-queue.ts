@@ -31,8 +31,14 @@ class TaskQueue {
      * @param maxTokens - the maximum number of tokens in the bucket (burst size).
      * @param refillRate - the number of tokens to be added per second (sustain rate).
      * @param options - optional settings for the new task queue instance.
+     * @param options.startingTokens - the initial number of tokens in the bucket (default: full bucket).
+     * @param options.maxTotalCost - the maximum total cost of all pending tasks (default: no limit).
      */
-    constructor (maxTokens: number, refillRate: number, options: { startingTokens?: number; maxTotalCost?: number } = {}) {
+    constructor (
+        maxTokens: number,
+        refillRate: number,
+        options: { startingTokens?: number; maxTotalCost?: number } = {}
+    ) {
         this._maxTokens = maxTokens;
         this._refillRate = refillRate;
         this._pendingTaskRecords = [];

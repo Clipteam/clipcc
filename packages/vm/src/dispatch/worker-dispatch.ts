@@ -25,10 +25,10 @@ export class WorkerDispatch extends SharedDispatch {
      */
     private services: Record<string, object> = {};
 
-    constructor() {
+    constructor () {
         super();
 
-        this.connectionPromise = new Promise((resolve) => {
+        this.connectionPromise = new Promise(resolve => {
             this.onConnect = resolve;
         });
 
@@ -45,7 +45,7 @@ export class WorkerDispatch extends SharedDispatch {
      *          dispatch.call('myService', 'hello');
      *      })
      */
-    get waitForConnection() {
+    get waitForConnection () {
         return this.connectionPromise;
     }
 
@@ -56,7 +56,7 @@ export class WorkerDispatch extends SharedDispatch {
      * @param provider A local object which provides this service.
      * @returns A promise which will resolve once the service is registered.
      */
-    setService(service: string, provider: object) {
+    setService (service: string, provider: object) {
         if (Object.prototype.hasOwnProperty.call(this.services, service)) {
             log.warn(`Worker dispatch replacing existing service provider for ${service}`);
         }
@@ -69,7 +69,7 @@ export class WorkerDispatch extends SharedDispatch {
      * @param service The name of the service to look up.
      * @returns The means to contact the service, if found.
      */
-    protected override getServiceProvider(service: string) {
+    protected override getServiceProvider (service: string) {
         // if we don't have a local service by this name, contact central dispatch by calling `postMessage` on self
         const provider = this.services[service];
         return {
@@ -84,7 +84,7 @@ export class WorkerDispatch extends SharedDispatch {
      * @param message The message to be handled.
      * @returns A promise for the results of this operation, if appropriate.
      */
-    protected override onDispatchMessage(worker: WorkerLike, message: DispatchCallMessage) {
+    protected override onDispatchMessage (worker: WorkerLike, message: DispatchCallMessage) {
         let promise;
         switch (message.method) {
         case 'handshake':

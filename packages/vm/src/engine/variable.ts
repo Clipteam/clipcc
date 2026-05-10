@@ -7,7 +7,7 @@ import uid from '../util/uid';
 
 import xmlEscape from '../util/xml-escape';
 
-const enum VariableType {
+export const enum VariableType {
     SCALAR = '',
     LIST = 'list',
     BROADCAST_MESSAGE = 'broadcast_msg'
@@ -32,6 +32,7 @@ class Variable {
      * Whether the variable is stored in the cloud.
      */
     isCloud: boolean;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any;
 
     constructor (id: string, name: string, type: VariableType, isCloud: boolean) {

@@ -11,6 +11,8 @@ class MouseWheel {
     /**
      * Mouse wheel DOM event handler.
      * @param data Data from DOM event.
+     * @param data.deltaY Amount of vertical scroll. Negative value indicates scrolling up,
+     *  positive value indicates scrolling down.
      */
     postData (data: { deltaY: number }): void {
         const matchFields: Record<string, string> = {};
