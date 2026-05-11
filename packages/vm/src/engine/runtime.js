@@ -30,11 +30,11 @@ import StringUtil from '../util/string-util';
 import uid from '../util/uid';
 import control from '../blocks/scratch3_control';
 import event from '../blocks/scratch3_event';
-import looks from '../blocks/scratch3_looks.js';
+import looks from '../blocks/scratch3_looks';
 import motion from '../blocks/scratch3_motion';
 import operators from '../blocks/scratch3_operators';
-import sound from '../blocks/scratch3_sound.js';
-import sensing from '../blocks/scratch3_sensing.js';
+import sound from '../blocks/scratch3_sound';
+import sensing from '../blocks/scratch3_sensing';
 import data from '../blocks/scratch3_data';
 import procedures from '../blocks/scratch3_procedures';
 
@@ -184,7 +184,7 @@ const defaultExtensionColors = ['#0FBD8C', '#0DA57A', '#0B8E69'];
 /**
  * @typedef {{
  *   isSpriteSpecific?: boolean,
- *   getId: (targetId?: string, fields?: Record<string, unknown>) => string
+ *   getId: (targetId?: string, fields?: Record<string, import('../serialization/schema').VMField>) => string
  * }} MonitorBlockInfo
  */
 

@@ -9,8 +9,11 @@
  */
 // TODO this function should eventually be the single place where all monitor
 // IDs are obtained given an opcode for the reporter block and the list of
+
+import type {VMField} from '../serialization/schema';
+
 // selected parameters.
-const getMonitorIdForBlockWithArgs = function (id: string, fields: Record<string, {value: string}>): string {
+const getMonitorIdForBlockWithArgs = function (id: string, fields: Record<string, VMField>): string {
     let fieldString = '';
     for (const fieldKey in fields) {
         let fieldValue = fields[fieldKey].value;
@@ -24,7 +27,7 @@ const getMonitorIdForBlockWithArgs = function (id: string, fields: Record<string
             // Note: we are not doing this for every block field that comes into
             // this function so as not to make the faulty assumption that block
             // field values coming in would be unique after being made lower case
-            fieldValue = fieldValue.toLowerCase();
+            fieldValue = fieldValue?.toLowerCase();
         }
         fieldString += `_${fieldValue}`;
     }

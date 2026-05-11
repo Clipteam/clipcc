@@ -1,24 +1,41 @@
 import MathUtil from '../util/math-util';
 import Cast from '../util/cast';
 import Clone from '../util/clone';
+import type {BlockArgs, CategoryPrototype} from './category_prototype';
+import type Runtime from '../engine/runtime';
+import type BlockUtility from '../engine/block-utility';
+import type RenderedTarget from '../sprites/rendered-target';
 
 /**
  * Occluded boolean value to make its use more understandable.
- * @constant {boolean}
  */
 const STORE_WAITING = true;
 
-class Scratch3SoundBlocks {
-    constructor (runtime) {
+/**
+ * The sound-related state, to be stored on a target.
+ */
+interface SoundState {
+    effects: {
+        [key: string]: number;
+        pitch: number;
+        pan: number;
+    };
+}
+
+interface TargetWithSoundState extends RenderedTarget {
+    soundEffects?: SoundState['effects'];
+}
+
+class Scratch3SoundBlocks implements CategoryPrototype {
+    private waitingSounds: Record<string, Set<string>> = {};
+
+    constructor (
         /**
          * The runtime instantiating this block package.
-         * @type {Runtime}
          */
-        this.runtime = runtime;
-
-        this.waitingSounds = {};
-
-        // Clear sound effects on green flag and stop button events.
+        public runtime: Runtime
+    ) {
+        // // Clear sound effects on green flag and stop button events.
         this.stopAllSounds = this.stopAllSounds.bind(this);
         this._stopWaitingSoundsForTarget = this._stopWaitingSoundsForTarget.bind(this);
         this._clearEffectsForAllTargets = this._clearEffectsForAllTargets.bind(this);
@@ -37,17 +54,15 @@ class Scratch3SoundBlocks {
 
     /**
      * The key to load & store a target's sound-related state.
-     * @type {string}
      */
     static get STATE_KEY () {
-        return 'Scratch.sound';
+        return 'Scratch.sound' as const;
     }
 
     /**
      * The default sound-related state, to be used when a target has no existing sound state.
-     * @type {SoundState}
      */
-    static get DEFAULT_SOUND_STATE () {
+    static get DEFAULT_SOUND_STATE (): SoundState {
         return {
             effects: {
                 pitch: 0,
@@ -58,34 +73,30 @@ class Scratch3SoundBlocks {
 
     /**
      * The minimum and maximum MIDI note numbers, for clamping the input to play note.
-     * @type {{min: number, max: number}}
      */
     static get MIDI_NOTE_RANGE () {
-        return {min: 36, max: 96}; // C2 to C7
+        return {min: 36, max: 96} as const; // C2 to C7
     }
 
     /**
      * The minimum and maximum beat values, for clamping the duration of play note, play drum and rest.
      * 100 beats at the default tempo of 60bpm is 100 seconds.
-     * @type {{min: number, max: number}}
      */
     static get BEAT_RANGE () {
-        return {min: 0, max: 100};
+        return {min: 0, max: 100} as const;
     }
 
     /**
      * The minimum and maximum tempo values, in bpm.
-     * @type {{min: number, max: number}}
      */
     static get TEMPO_RANGE () {
-        return {min: 20, max: 500};
+        return {min: 20, max: 500} as const;
     }
 
     /**
      * The minimum and maximum values for each sound effect.
-     * @type {{effect:{min: number, max: number}}}
      */
-    get EFFECT_RANGE () {
+    get EFFECT_RANGE (): {[key: string]: {min: number, max: number}} {
         if (this.runtime.limitOptions.unlimitedSoundStuffs) {
             return {
                 pitch: {min: -Infinity, max: Infinity}, // Unlimited
@@ -99,28 +110,27 @@ class Scratch3SoundBlocks {
     }
 
     /**
-     * @param {Target} target - collect sound state for this target.
-     * @returns {SoundState} the mutable sound state associated with that target. This will be created if necessary.
-     * @private
+     * Collect sound state for this target.
+     * @param target - the target to get the sound state for.
+     * @returns the mutable sound state associated with that target. This will be created if necessary.
      */
-    _getSoundState (target) {
-        let soundState = target.getCustomState(Scratch3SoundBlocks.STATE_KEY);
+    _getSoundState (target: RenderedTarget): SoundState {
+        let soundState: SoundState = target.getCustomState(Scratch3SoundBlocks.STATE_KEY);
         if (!soundState) {
             soundState = Clone.simple(Scratch3SoundBlocks.DEFAULT_SOUND_STATE);
             target.setCustomState(Scratch3SoundBlocks.STATE_KEY, soundState);
-            target.soundEffects = soundState.effects;
+            (target as TargetWithSoundState).soundEffects = soundState.effects;
         }
         return soundState;
     }
 
     /**
      * When a Target is cloned, clone the sound state.
-     * @param {Target} newTarget - the newly created target.
-     * @param {Target} [sourceTarget] - the target used as a source for the new clone, if any.
+     * @param newTarget - the newly created target.
+     * @param sourceTarget - the target used as a source for the new clone, if any.
      * @listens Runtime#event:targetWasCreated
-     * @private
      */
-    _onTargetCreated (newTarget, sourceTarget) {
+    _onTargetCreated (newTarget: RenderedTarget, sourceTarget?: RenderedTarget) {
         if (sourceTarget) {
             const soundState = sourceTarget.getCustomState(Scratch3SoundBlocks.STATE_KEY);
             if (soundState && newTarget) {
@@ -132,7 +142,7 @@ class Scratch3SoundBlocks {
 
     /**
      * Retrieve the block primitives implemented by this package.
-     * @returns {Record<string, Function>} Mapping of opcode to Function.
+     * @returns Mapping of opcode to Function.
      */
     getPrimitives () {
         return {
@@ -155,21 +165,21 @@ class Scratch3SoundBlocks {
         return {
             sound_volume: {
                 isSpriteSpecific: true,
-                getId: targetId => `${targetId}_volume`
+                getId: (targetId?: string) => `${targetId}_volume`
             }
         };
     }
 
-    playSound (args, util) {
+    playSound (args: BlockArgs, util: BlockUtility) {
         // Don't return the promise, it's the only difference for AndWait
         this._playSound(args, util);
     }
 
-    playSoundAndWait (args, util) {
+    playSoundAndWait (args: BlockArgs, util: BlockUtility) {
         return this._playSound(args, util, STORE_WAITING);
     }
 
-    _playSound (args, util, storeWaiting) {
+    _playSound (args: BlockArgs, util: BlockUtility, storeWaiting?: boolean) {
         const index = this._getSoundIndex(args.SOUND_MENU, util);
         if (index >= 0) {
             const {target} = util;
@@ -186,21 +196,21 @@ class Scratch3SoundBlocks {
         }
     }
 
-    _addWaitingSound (targetId, soundId) {
+    _addWaitingSound (targetId: string, soundId: string) {
         if (!this.waitingSounds[targetId]) {
             this.waitingSounds[targetId] = new Set();
         }
         this.waitingSounds[targetId].add(soundId);
     }
 
-    _removeWaitingSound (targetId, soundId) {
+    _removeWaitingSound (targetId: string, soundId: string) {
         if (!this.waitingSounds[targetId]) {
             return;
         }
         this.waitingSounds[targetId].delete(soundId);
     }
 
-    _getSoundIndex (soundName, util) {
+    _getSoundIndex (soundName: string, util: BlockUtility): number {
         // if the sprite has no sounds, return -1
         const len = util.target.sprite.sounds.length;
         if (len === 0) {
@@ -223,7 +233,7 @@ class Scratch3SoundBlocks {
         return -1;
     }
 
-    getSoundIndexByName (soundName, util) {
+    getSoundIndexByName (soundName: string, util: BlockUtility): number {
         const sounds = util.target.sprite.sounds;
         for (let i = 0; i < sounds.length; i++) {
             if (sounds[i].name === soundName) {
@@ -242,7 +252,7 @@ class Scratch3SoundBlocks {
         }
     }
 
-    _stopAllSoundsForTarget (target) {
+    _stopAllSoundsForTarget (target: RenderedTarget) {
         if (target.sprite.soundBank) {
             target.sprite.soundBank.stopAllSounds(target);
             if (this.waitingSounds[target.id]) {
@@ -251,7 +261,7 @@ class Scratch3SoundBlocks {
         }
     }
 
-    _stopWaitingSoundsForTarget (target) {
+    _stopWaitingSoundsForTarget (target: RenderedTarget) {
         if (target.sprite.soundBank) {
             if (this.waitingSounds[target.id]) {
                 for (const soundId of this.waitingSounds[target.id].values()) {
@@ -262,15 +272,15 @@ class Scratch3SoundBlocks {
         }
     }
 
-    setEffect (args, util) {
+    setEffect (args: BlockArgs, util: BlockUtility) {
         return this._updateEffect(args, util, false);
     }
 
-    changeEffect (args, util) {
+    changeEffect (args: BlockArgs, util: BlockUtility) {
         return this._updateEffect(args, util, true);
     }
 
-    _updateEffect (args, util, change) {
+    _updateEffect (args: BlockArgs, util: BlockUtility, change: boolean) {
         const effect = Cast.toString(args.EFFECT).toLowerCase();
         const value = Cast.toNumber(args.VALUE);
 
@@ -291,18 +301,18 @@ class Scratch3SoundBlocks {
         return Promise.resolve();
     }
 
-    _syncEffectsForTarget (target) {
+    _syncEffectsForTarget (target: TargetWithSoundState) {
         if (!target || !target.sprite.soundBank) return;
         target.soundEffects = this._getSoundState(target).effects;
 
         target.sprite.soundBank.setEffects(target);
     }
 
-    clearEffects (args, util) {
+    clearEffects (args: BlockArgs, util: BlockUtility) {
         this._clearEffectsForTarget(util.target);
     }
 
-    _clearEffectsForTarget (target) {
+    _clearEffectsForTarget (target: RenderedTarget) {
         const soundState = this._getSoundState(target);
         for (const effect in soundState.effects) {
             if (!Object.prototype.hasOwnProperty.call(soundState.effects, effect)) continue;
@@ -319,17 +329,17 @@ class Scratch3SoundBlocks {
         }
     }
 
-    setVolume (args, util) {
+    setVolume (args: BlockArgs, util: BlockUtility) {
         const volume = Cast.toNumber(args.VOLUME);
         return this._updateVolume(volume, util);
     }
 
-    changeVolume (args, util) {
+    changeVolume (args: BlockArgs, util: BlockUtility) {
         const volume = Cast.toNumber(args.VOLUME) + util.target.volume;
         return this._updateVolume(volume, util);
     }
 
-    _updateVolume (volume, util) {
+    _updateVolume (volume: number, util: BlockUtility) {
         volume = MathUtil.clamp(volume, 0, 100);
         util.target.volume = volume;
         this._syncEffectsForTarget(util.target);
@@ -338,19 +348,19 @@ class Scratch3SoundBlocks {
         return Promise.resolve();
     }
 
-    getVolume (args, util) {
+    getVolume (args: BlockArgs, util: BlockUtility) {
         return util.target.volume;
     }
 
-    soundsMenu (args) {
+    soundsMenu (args: BlockArgs) {
         return args.SOUND_MENU;
     }
 
-    beatsMenu (args) {
+    beatsMenu (args: BlockArgs) {
         return args.BEATS;
     }
 
-    effectsMenu (args) {
+    effectsMenu (args: BlockArgs) {
         return args.EFFECT;
     }
 }

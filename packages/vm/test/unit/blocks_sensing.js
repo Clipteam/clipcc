@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Sensing from '../../src/blocks/scratch3_sensing.js';
+import Sensing from '../../src/blocks/scratch3_sensing';
 import Runtime from '../../src/engine/runtime.js';
 import Sprite from '../../src/sprites/sprite.js';
 import RenderedTarget from '../../src/sprites/rendered-target.js';

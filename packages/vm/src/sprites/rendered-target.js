@@ -6,6 +6,10 @@ import Target from '../engine/target.js';
 import StageLayering from '../engine/stage-layering';
 
 /**
+ * @typedef {import('../../../render/dist/types/Rectangle')} Rectangle
+ */
+
+/**
  * @typedef {import('../engine/runtime').default} Runtime
  */
 
@@ -619,7 +623,7 @@ class RenderedTarget extends Target {
 
     /**
      * Get full costume list
-     * @returns {object[]} list of costumes
+     * @returns list of costumes
      */
     getCostumes () {
         return this.sprite.costumes;
