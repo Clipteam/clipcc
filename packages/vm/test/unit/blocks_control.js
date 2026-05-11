@@ -270,7 +270,8 @@ test('wait', t => {
         yield: () => yields++,
         stackTimerNeedsInit: util.stackTimerNeedsInit,
         startStackTimer: util.startStackTimer,
-        stackTimerFinished: util.stackTimerFinished
+        stackTimerFinished: util.stackTimerFinished,
+        stackTimerAvailable: util.stackTimerAvailable
     };
 
     c.wait(args, mockUtil);
