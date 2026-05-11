@@ -55,7 +55,7 @@ const defaultBlockPackages = {
 const defaultExtensionColors = ['#0FBD8C', '#0DA57A', '#0B8E69'];
 
 /**
- * @typedef {import('./target').default} Target
+ * @typedef {import('../sprites/rendered-target').default} RenderedTarget
  * @typedef {import('clipcc-audio')} AudioEngine
  * @typedef {import('clipcc-render')} RenderWebGL
  * @typedef {import('clipcc-storage').ScratchStorage} ScratchStorage
@@ -80,7 +80,7 @@ const defaultExtensionColors = ['#0FBD8C', '#0DA57A', '#0B8E69'];
 /**
  * @callback ScriptCallback
  * @param {string} script
- * @param {Target} target
+ * @param {RenderedTarget} target
  * @returns {void}
  */
 
@@ -399,13 +399,13 @@ class Runtime extends EventEmitter {
 
         /**
          * Target management and storage.
-         * @type {Array.<!Target>}
+         * @type {Array.<!RenderedTarget>}
          */
         this.targets = [];
 
         /**
          * Targets in reverse order of execution. Shares its order with drawables.
-         * @type {Array.<!Target>}
+         * @type {Array.<!RenderedTarget>}
          */
         this.executableTargets = [];
 
@@ -435,7 +435,7 @@ class Runtime extends EventEmitter {
 
         /**
          * Currently known editing target for the VM.
-         * @type {?Target}
+         * @type {?RenderedTarget}
          */
         this._editingTarget = null;
 
@@ -1088,7 +1088,8 @@ class Runtime extends EventEmitter {
 
     /**
      * Create a context ("args") object for use with `formatMessage` on messages which might be target-specific.
-     * @param {Target} [target] - the target to use as context. If a target is not provided, default to the current
+     * @param {RenderedTarget} [target] - the target to use as context.
+     * If a target is not provided, default to the current
      * editing target or the stage.
      */
     makeMessageContextForTarget (target) {
@@ -1668,7 +1669,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Get scratch-blocks XML for each extension category.
-     * @param {Target|undefined} target - the active editing target, if any.
+     * @param {RenderedTarget|undefined} target - the active editing target, if any.
      * @returns {Array<BlockCategoryXml>} Scratch-blocks XML for each category of extension blocks.
      */
     getBlocksXML (target) {
@@ -1928,7 +1929,7 @@ class Runtime extends EventEmitter {
     /**
      * Create a thread and push it to the list of threads.
      * @param {!string} id ID of block that starts the stack.
-     * @param {!Target} target Target to run thread on.
+     * @param {!RenderedTarget} target Target to run thread on.
      * @param {{stackClick?: boolean, updateMonitor?: boolean}|undefined} opts Optional arguments.
      * @param {?boolean} opts.stackClick true if the script was activated by clicking on the stack
      * @param {?boolean} opts.updateMonitor true if the script should update a monitor value
@@ -2011,8 +2012,8 @@ class Runtime extends EventEmitter {
     /**
      * Toggle a script.
      * @param {!string} topBlockId ID of block that starts the script.
-     * @param {{target?: Target, stackClick?: boolean}|undefined} opts Optional arguments to toggle the script.
-     * @param {?Target} opts.target Target to run the script on. If not supplied, uses the editing target.
+     * @param {{target?: RenderedTarget, stackClick?: boolean}|undefined} opts Optional arguments to toggle the script.
+     * @param {?RenderedTarget} opts.target Target to run the script on. If not supplied, uses the editing target.
      * @param {?boolean} opts.stackClick true if the user activated the stack by clicking, false if not. This
      *     determines whether we show a visual report when turning on the script.
      */
@@ -2044,7 +2045,7 @@ class Runtime extends EventEmitter {
     /**
      * Enqueue a script that when finished will update the monitor for the block.
      * @param {!string} topBlockId ID of block that starts the script.
-     * @param {?Target} optTarget target Target to run script on. If not supplied, uses editing target.
+     * @param {?RenderedTarget} optTarget target Target to run script on. If not supplied, uses editing target.
      */
     addMonitorScript (topBlockId, optTarget) {
         if (!optTarget) optTarget = this._editingTarget;
@@ -2065,7 +2066,7 @@ class Runtime extends EventEmitter {
      *  - the top block ID of the script.
      *  - the target that owns the script.
      * @param {ScriptCallback} f Function to call for each script.
-     * @param {Target=} optTarget Optionally, a target to restrict to.
+     * @param {RenderedTarget=} optTarget Optionally, a target to restrict to.
      */
     allScriptsDo (f, optTarget) {
         let targets = this.executableTargets;
@@ -2100,7 +2101,7 @@ class Runtime extends EventEmitter {
      * Start all relevant hats.
      * @param {!string} requestedHatOpcode Opcode of hats to start.
      * @param {object= | null} optMatchFields Optionally, fields to match on the hat.
-     * @param {Target=} optTarget Optionally, a target to restrict to.
+     * @param {RenderedTarget=} optTarget Optionally, a target to restrict to.
      * @returns {Array.<Thread>|undefined} List of threads started by this function.
      */
     startHats (requestedHatOpcode,
@@ -2222,7 +2223,7 @@ class Runtime extends EventEmitter {
      * Add a target to the runtime. This tracks the sprite pane
      * ordering of the target. The target still needs to be put
      * into the correct execution order after calling this function.
-     * @param {Target} target target to add
+     * @param {RenderedTarget} target target to add
      */
     addTarget (target) {
         this.targets.push(target);
@@ -2235,7 +2236,7 @@ class Runtime extends EventEmitter {
      * A positve number will make the target execute earlier. A negative number
      * will make the target execute later in the order.
      *
-     * @param {Target} executableTarget target to move
+     * @param {RenderedTarget} executableTarget target to move
      * @param {number} delta number of positions to move target by
      * @returns {number} new position in execution order
      */
@@ -2263,7 +2264,7 @@ class Runtime extends EventEmitter {
      * Infinity will set the target to execute first. 0 will set the target to
      * execute last (before the stage).
      *
-     * @param {Target} executableTarget target to move
+     * @param {RenderedTarget} executableTarget target to move
      * @param {number} newIndex position in execution order to place the target
      * @returns {number} new position in the execution order
      */
@@ -2274,7 +2275,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Remove a target from the execution set.
-     * @param {Target} executableTarget target to remove
+     * @param {RenderedTarget} executableTarget target to remove
      */
     removeExecutable (executableTarget) {
         const oldIndex = this.executableTargets.indexOf(executableTarget);
@@ -2285,7 +2286,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Dispose of a target.
-     * @param {!Target} disposingTarget Target to dispose of.
+     * @param {!RenderedTarget} disposingTarget Target to dispose of.
      */
     disposeTarget (disposingTarget) {
         this.targets = this.targets.filter(target => {
@@ -2299,7 +2300,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Stop any threads acting on the target.
-     * @param {!Target} target Target to stop threads for.
+     * @param {!RenderedTarget} target Target to stop threads for.
      * @param {Thread=} optThreadException Optional thread to skip.
      */
     stopForTarget (target, optThreadException) {
@@ -2456,7 +2457,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Set the current editing target known by the runtime.
-     * @param {!Target} editingTarget New editing target.
+     * @param {!RenderedTarget} editingTarget New editing target.
      */
     setEditingTarget (editingTarget) {
         const oldEditingTarget = this._editingTarget;
@@ -2714,7 +2715,7 @@ class Runtime extends EventEmitter {
     /**
      * Get a target by its id.
      * @param {string} targetId Id of target to find.
-     * @returns {Target|undefined} The target, if found.
+     * @returns {RenderedTarget|undefined} The target, if found.
      */
     getTargetById (targetId) {
         for (let i = 0; i < this.targets.length; i++) {
@@ -2728,7 +2729,7 @@ class Runtime extends EventEmitter {
     /**
      * Get the first original (non-clone-block-created) sprite given a name.
      * @param {string} spriteName Name of sprite to look for.
-     * @returns {Target|undefined} Target representing a sprite of the given name.
+     * @returns {RenderedTarget|undefined} Target representing a sprite of the given name.
      */
     getSpriteTargetByName (spriteName) {
         for (let i = 0; i < this.targets.length; i++) {
@@ -2745,7 +2746,7 @@ class Runtime extends EventEmitter {
     /**
      * Get a target by its drawable id.
      * @param {number} drawableID drawable id of target to find
-     * @returns {Target|undefined} The target, if found.
+     * @returns {RenderedTarget|undefined} The target, if found.
      */
     getTargetByDrawableId (drawableID) {
         for (let i = 0; i < this.targets.length; i++) {
@@ -2786,8 +2787,8 @@ class Runtime extends EventEmitter {
 
     /**
      * Report that a new target has been created, possibly by cloning an existing target.
-     * @param {Target} newTarget - the newly created target.
-     * @param {Target} [sourceTarget] - the target used as a source for the new clone, if any.
+     * @param {RenderedTarget} newTarget - the newly created target.
+     * @param {RenderedTarget} [sourceTarget] - the target used as a source for the new clone, if any.
      * @fires Runtime#targetWasCreated
      */
     fireTargetWasCreated (newTarget, sourceTarget) {
@@ -2796,7 +2797,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Report that a clone target is being removed.
-     * @param {Target} target - the target being removed
+     * @param {RenderedTarget} target - the target being removed
      * @fires Runtime#targetWasRemoved
      */
     fireTargetWasRemoved (target) {
@@ -2805,7 +2806,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Get a target representing the Scratch stage, if one exists.
-     * @returns {Target|undefined} The target, if found.
+     * @returns {RenderedTarget|undefined} The target, if found.
      */
     getTargetForStage () {
         for (let i = 0; i < this.targets.length; i++) {
@@ -2818,7 +2819,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Get the editing target.
-     * @returns {?Target} The editing target.
+     * @returns {?RenderedTarget} The editing target.
      */
     getEditingTarget () {
         return this._editingTarget;
@@ -2901,7 +2902,7 @@ class Runtime extends EventEmitter {
     /**
      * Get the global procedure definition for a given name.
      * @param {?string} name Name of procedure to query.
-     * @returns {[?Target, ?string]} ID of procedure definition.
+     * @returns {[?RenderedTarget, ?string]} ID of procedure definition.
      */
     getProcedureDefinition (name) {
         for (const target of this.targets) {
@@ -2924,7 +2925,7 @@ class Runtime extends EventEmitter {
     /**
      * Emit a targets update at the end of the step if the provided target is
      * the original sprite
-     * @param {!Target} target Target requesting the targets update
+     * @param {!RenderedTarget} target Target requesting the targets update
      */
     requestTargetsUpdate (target) {
         if (!target.isOriginal) return;
@@ -2999,8 +3000,8 @@ class Runtime extends EventEmitter {
  * Event fired after a new target has been created, possibly by cloning an existing target.
  *
  * @event Runtime#targetWasCreated
- * @param {Target} newTarget - the newly created target.
- * @param {Target} [sourceTarget] - the target used as a source for the new clone, if any.
+ * @param {RenderedTarget} newTarget - the newly created target.
+ * @param {RenderedTarget} [sourceTarget] - the target used as a source for the new clone, if any.
  */
 
 export default Runtime;

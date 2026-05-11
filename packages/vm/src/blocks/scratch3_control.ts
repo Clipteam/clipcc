@@ -1,25 +1,26 @@
 import Cast from '../util/cast';
+import type {BlockArgs, CategoryPrototype} from './category_prototype';
+import type Runtime from '../engine/runtime';
+import type RenderedTarget from '../sprites/rendered-target';
+import type BlockUtility from '../engine/block-utility';
 
-class Scratch3ControlBlocks {
-    constructor (runtime) {
+class Scratch3ControlBlocks implements CategoryPrototype {
+    /**
+     * The "counter" block value. For compatibility with 2.0.
+     */
+    private _counter = 0;
+    constructor (
         /**
          * The runtime instantiating this block package.
-         * @type {Runtime}
          */
-        this.runtime = runtime;
-
-        /**
-         * The "counter" block value. For compatibility with 2.0.
-         * @type {number}
-         */
-        this._counter = 0;
-
+        public runtime: Runtime
+    ) {
         this.runtime.on('RUNTIME_DISPOSED', this.clearCounter.bind(this));
     }
 
     /**
      * Retrieve the block primitives implemented by this package.
-     * @returns {Record<string, Function>} Mapping of opcode to Function.
+     * @returns Mapping of opcode to Function.
      */
     getPrimitives () {
         return {
@@ -50,7 +51,7 @@ class Scratch3ControlBlocks {
         };
     }
 
-    repeat (args, util) {
+    repeat (args: BlockArgs, util: BlockUtility) {
         const times = Math.round(Cast.toNumber(args.TIMES));
         // Initialize loop
         if (typeof util.stackFrame.loopCounter === 'undefined') {
@@ -67,7 +68,7 @@ class Scratch3ControlBlocks {
         }
     }
 
-    repeatUntil (args, util) {
+    repeatUntil (args: BlockArgs, util: BlockUtility) {
         const condition = Cast.toBoolean(args.CONDITION);
         // If the condition is false (repeat UNTIL), start the branch.
         if (!condition) {
@@ -75,7 +76,7 @@ class Scratch3ControlBlocks {
         }
     }
 
-    repeatWhile (args, util) {
+    repeatWhile (args: BlockArgs, util: BlockUtility) {
         const condition = Cast.toBoolean(args.CONDITION);
         // If the condition is true (repeat WHILE), start the branch.
         if (condition) {
@@ -83,7 +84,7 @@ class Scratch3ControlBlocks {
         }
     }
 
-    forEach (args, util) {
+    forEach (args: BlockArgs, util: BlockUtility) {
         const variable = util.target.lookupOrCreateVariable(
             args.VARIABLE.id, args.VARIABLE.name);
 
@@ -98,18 +99,18 @@ class Scratch3ControlBlocks {
         }
     }
 
-    waitUntil (args, util) {
+    waitUntil (args: BlockArgs, util: BlockUtility) {
         const condition = Cast.toBoolean(args.CONDITION);
         if (!condition) {
             util.yield();
         }
     }
 
-    forever (args, util) {
+    forever (args: BlockArgs, util: BlockUtility) {
         util.startBranch(1, true);
     }
 
-    wait (args, util) {
+    wait (args: BlockArgs, util: BlockUtility) {
         if (util.stackTimerNeedsInit()) {
             const duration = Math.max(0, 1000 * Cast.toNumber(args.DURATION));
 
@@ -121,14 +122,14 @@ class Scratch3ControlBlocks {
         }
     }
 
-    if (args, util) {
+    if (args: BlockArgs, util: BlockUtility) {
         const condition = Cast.toBoolean(args.CONDITION);
         if (condition) {
             util.startBranch(1, false);
         }
     }
 
-    ifElse (args, util) {
+    ifElse (args: BlockArgs, util: BlockUtility) {
         const condition = Cast.toBoolean(args.CONDITION);
         if (condition) {
             util.startBranch(1, false);
@@ -137,7 +138,7 @@ class Scratch3ControlBlocks {
         }
     }
 
-    stop (args, util) {
+    stop (args: BlockArgs, util: BlockUtility) {
         const option = args.STOP_OPTION;
         if (option === 'all') {
             util.stopAll();
@@ -149,12 +150,12 @@ class Scratch3ControlBlocks {
         }
     }
 
-    createClone (args, util) {
+    createClone (args: BlockArgs, util: BlockUtility) {
         // Cast argument to string
         args.CLONE_OPTION = Cast.toString(args.CLONE_OPTION);
 
         // Set clone target
-        let cloneTarget;
+        let cloneTarget: RenderedTarget | undefined;
         if (args.CLONE_OPTION === '_myself_') {
             cloneTarget = util.target;
         } else {
@@ -174,8 +175,8 @@ class Scratch3ControlBlocks {
         }
     }
 
-    deleteClone (args, util) {
-        if (util.target.isOriginal) return;
+    deleteClone (args: BlockArgs, util: BlockUtility) {
+        if (!util.target.isOriginal) return;
         this.runtime.disposeTarget(util.target);
         this.runtime.stopForTarget(util.target);
     }
@@ -192,7 +193,7 @@ class Scratch3ControlBlocks {
         this._counter++;
     }
 
-    allAtOnce (args, util) {
+    allAtOnce (args: BlockArgs, util: BlockUtility) {
         // Since the "all at once" block is implemented for compatiblity with
         // Scratch 2.0 projects, it behaves the same way it did in 2.0, which
         // is to simply run the contained script (like "if 1 = 1").

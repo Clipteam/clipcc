@@ -1115,4 +1115,13 @@ class RenderedTarget extends Target {
     }
 }
 
+/**
+ * Whether a given target is a RenderedTarget, i.e., has drawable properties and can be rendered.
+ * @param {Target} target Target to check.
+ * @returns {target is RenderedTarget} True if the target is a RenderedTarget.
+ */
+export const isRenderedTarget = function (target) {
+    return 'drawableID' in target;
+};
+
 export default RenderedTarget;

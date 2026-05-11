@@ -8,7 +8,7 @@ import Timer from '../util/timer';
  */
 
 /**
- * @typedef {import('./target')} Target
+ * @typedef {import('../sprites/rendered-target').default} RenderedTarget
  * @typedef {import('./sequencer')} Sequencer
  * @typedef {import('./runtime')} Runtime
  * @typedef {{now: () => number | undefined}} NowObj
@@ -45,7 +45,7 @@ class BlockUtility {
 
     /**
      * The target the primitive is working on.
-     * @type {Target}
+     * @type {RenderedTarget}
      */
     get target () {
         return this.thread.target;
@@ -73,7 +73,7 @@ class BlockUtility {
 
     /**
      * The stack frame used by loop and other blocks to track internal state.
-     * @type {object}
+     * @type {Record<string, any>}
      */
     get stackFrame () {
         const frame = this.thread.peekStackFrame();
