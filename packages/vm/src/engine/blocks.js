@@ -15,6 +15,7 @@ import getMonitorIdForBlockWithArgs from '../util/get-monitor-id';
 
 /**
  * @typedef {import('./runtime')} Runtime
+ * @typedef {import('../serialization/schema').VMBlock} VMBlock
  * @typedef {import('./blocks-runtime-cache').RuntimeScriptCache} RuntimeScriptCache
  * @import * as ClipCCBlock from 'clipcc-block'
  */
@@ -80,7 +81,7 @@ class Blocks {
         /**
          * All blocks in the workspace.
          * Keys are block IDs, values are metadata about the block.
-         * @type {Record<string, import('../serialization/schema').VMBlock>}
+         * @type {Record<string, VMBlock>}
          */
         this._blocks = {};
 
@@ -123,7 +124,7 @@ class Blocks {
     /**
      * Provide an object with metadata for the requested block ID.
      * @param {!string} blockId ID of block we have stored.
-     * @returns {?object} Metadata about the block, if it exists.
+     * @returns Metadata about the block, if it exists.
      */
     getBlock (blockId) {
         return this._blocks[blockId];
@@ -170,8 +171,8 @@ class Blocks {
 
     /**
      * Get the opcode for a particular block
-     * @param {?object} block The block to query
-     * @returns {?string} the opcode corresponding to that block
+     * @param {?VMBlock} block The block to query
+     * @returns the opcode corresponding to that block
      */
     getOpcode (block) {
         return (typeof block === 'undefined') ? null : block.opcode;
@@ -179,8 +180,8 @@ class Blocks {
 
     /**
      * Get all fields and their values for a block.
-     * @param {?object} block The block to query.
-     * @returns {?object} All fields and their values.
+     * @param {?VMBlock} block The block to query.
+     * @returns All fields and their values.
      */
     getFields (block) {
         return (typeof block === 'undefined') ? null : block.fields;
@@ -188,8 +189,8 @@ class Blocks {
 
     /**
      * Get all non-branch inputs for a block.
-     * @param {?object} block the block to query.
-     * @returns {?Array.<object>} All non-branch inputs and their associated blocks.
+     * @param {?VMBlock} block the block to query.
+     * @returns All non-branch inputs and their associated blocks.
      */
     getInputs (block) {
         if (typeof block === 'undefined') return null;
@@ -213,8 +214,8 @@ class Blocks {
 
     /**
      * Get mutation data for a block.
-     * @param {?object} block The block to query.
-     * @returns {?object} Mutation for the block.
+     * @param {?VMBlock} block The block to query.
+     * @returns Mutation for the block.
      */
     getMutation (block) {
         return (typeof block === 'undefined') ? null : block.mutation;

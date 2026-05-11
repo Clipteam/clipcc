@@ -4,7 +4,7 @@ import BlockUtility from '../../src/engine/block-utility.js';
 import Event from '../../src/blocks/scratch3_event';
 import Runtime from '../../src/engine/runtime.js';
 import Target from '../../src/engine/target.js';
-import Thread from '../../src/engine/thread.js';
+import Thread from '../../src/engine/thread';
 import Variable from '../../src/engine/variable';
 
 test('#760 - broadcastAndWait', t => {

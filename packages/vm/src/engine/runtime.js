@@ -9,7 +9,7 @@ import Sequencer from './sequencer.js';
 import execute from './execute.js';
 import ScratchBlocksConstants from './scratch-blocks-constants';
 import TargetType from '../extension-support/target-type';
-import Thread from './thread.js';
+import Thread from './thread';
 import log from '../util/log';
 import maybeFormatMessage from '../util/maybe-format-message';
 import StageLayering from './stage-layering';

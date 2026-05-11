@@ -3,7 +3,7 @@ import {test} from '../fixtures/jest-tap-bridge.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
 import VirtualMachine from '../../src/index.js';
-import Thread from '../../src/engine/thread.js';
+import Thread from '../../src/engine/thread';
 import Runtime from '../../src/engine/runtime.js';
 import execute from '../../src/engine/execute.js';
 
