@@ -72,8 +72,8 @@ module.exports = [
     defaultsDeep({}, base, {
         target: 'web',
         entry: {
-            'scratch-vm': './src/index.js',
-            'scratch-vm.min': './src/index.js'
+            'scratch-vm': './src/index.ts',
+            'scratch-vm.min': './src/index.ts'
         },
         output: {
             library: {
@@ -87,7 +87,7 @@ module.exports = [
     defaultsDeep({}, base, {
         target: 'node',
         entry: {
-            'scratch-vm': './src/index.js'
+            'scratch-vm': './src/index.ts'
         },
         output: {
             library: {

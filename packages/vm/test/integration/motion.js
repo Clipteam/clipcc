@@ -2,7 +2,7 @@ import path from 'path';
 import {test} from '../fixtures/jest-tap-bridge.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
-import VirtualMachine from '../../src/index.js';
+import VirtualMachine from '../../src/index';
 
 const uri = path.resolve(__dirname, '../fixtures/motion.sb2');
 const project = readFileToBuffer(uri);

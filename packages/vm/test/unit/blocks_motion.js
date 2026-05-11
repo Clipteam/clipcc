@@ -3,7 +3,7 @@ import Motion from '../../src/blocks/scratch3_motion';
 import Runtime from '../../src/engine/runtime.js';
 import Sprite from '../../src/sprites/sprite';
 import RenderedTarget from '../../src/sprites/rendered-target.js';
-import VirtualMachine from '../../src/index.js';
+import VirtualMachine from '../../src/index';
 
 test('getPrimitives', t => {
     const rt = new Runtime();

@@ -11,10 +11,10 @@
   },
   "exports": {
     "types": "./dist/types/index.d.ts",
-    "webpack": "./src/index.js",
+    "webpack": "./src/index.ts",
     "node": "./dist/node/scratch-vm.js",
     "browser": "./dist/web/scratch-vm.min.js",
-    "default": "./src/index.js"
+    "default": "./src/index.ts"
   },
   "scripts": {
     "build:types": "tsc",
