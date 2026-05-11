@@ -1,15 +1,19 @@
-class Scratch3ProcedureBlocks {
-    constructor (runtime) {
+import type {BlockArgs, CategoryPrototype} from './category_prototype';
+import type Runtime from '../engine/runtime';
+import type BlockUtility from '../engine/block-utility';
+
+class Scratch3ProcedureBlocks implements CategoryPrototype {
+    constructor (
         /**
          * The runtime instantiating this block package.
-         * @type {Runtime}
          */
-        this.runtime = runtime;
+        public runtime: Runtime
+    ) {
     }
 
     /**
      * Retrieve the block primitives implemented by this package.
-     * @returns {Record<string, Function>} Mapping of opcode to Function.
+     * @returns Mapping of opcode to Function.
      */
     getPrimitives () {
         return {
@@ -26,8 +30,8 @@ class Scratch3ProcedureBlocks {
         // No-op: execute the blocks.
     }
 
-    call (args, util) {
-        const procedureCode = args.mutation.proccode;
+    call (args: BlockArgs, util: BlockUtility) {
+        const procedureCode = args.mutation!.proccode;
         const paramNamesIdsAndDefaults = util.getProcedureParamNamesIdsAndDefaults(procedureCode);
 
         // If null, procedure could not be found, which can happen if custom
@@ -55,12 +59,12 @@ class Scratch3ProcedureBlocks {
         util.startProcedure(procedureCode);
     }
 
-    return (args, util) {
-        util.thread.pushReportedValue(args.VALUE);
+    return (args: BlockArgs, util: BlockUtility) {
+        util.thread!.pushReportedValue(args.VALUE);
         util.stopThisScript();
     }
 
-    argumentReporterStringNumber (args, util) {
+    argumentReporterStringNumber (args: BlockArgs, util: BlockUtility) {
         const value = util.getParam(args.VALUE);
         if (value === null) {
             // When the parameter is not found in the most recent procedure
@@ -70,7 +74,7 @@ class Scratch3ProcedureBlocks {
         return value;
     }
 
-    argumentReporterBoolean (args, util) {
+    argumentReporterBoolean (args: BlockArgs, util: BlockUtility) {
         const value = util.getParam(args.VALUE);
         if (value === null) {
             // When the parameter is not found in the most recent procedure

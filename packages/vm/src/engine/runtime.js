@@ -28,15 +28,15 @@ import Video from '../io/video.js';
 import Joystick from '../io/joystick';
 import StringUtil from '../util/string-util';
 import uid from '../util/uid';
-import control from '../blocks/scratch3_control.js';
-import event from '../blocks/scratch3_event.js';
+import control from '../blocks/scratch3_control';
+import event from '../blocks/scratch3_event';
 import looks from '../blocks/scratch3_looks.js';
-import motion from '../blocks/scratch3_motion.js';
-import operators from '../blocks/scratch3_operators.js';
+import motion from '../blocks/scratch3_motion';
+import operators from '../blocks/scratch3_operators';
 import sound from '../blocks/scratch3_sound.js';
 import sensing from '../blocks/scratch3_sensing.js';
-import data from '../blocks/scratch3_data.js';
-import procedures from '../blocks/scratch3_procedures.js';
+import data from '../blocks/scratch3_data';
+import procedures from '../blocks/scratch3_procedures';
 
 
 const defaultBlockPackages = {

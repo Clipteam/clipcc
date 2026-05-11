@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Procedures from '../../src/blocks/scratch3_procedures.js';
+import Procedures from '../../src/blocks/scratch3_procedures';
 
 const blocks = new Procedures(null);
 

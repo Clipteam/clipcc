@@ -6,3 +6,8 @@ declare module 'decode-html' {
 declare global {
     type int = number;
 }
+
+/**
+ * Compile-time injected clipcc global metadata
+ */
+declare const clipcc: { VERSION?: string };

@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Motion from '../../src/blocks/scratch3_motion.js';
+import Motion from '../../src/blocks/scratch3_motion';
 import Runtime from '../../src/engine/runtime.js';
 import Sprite from '../../src/sprites/sprite.js';
 import RenderedTarget from '../../src/sprites/rendered-target.js';
@@ -34,7 +34,7 @@ test('Costumed stage has correct size', t => {
     const target = new RenderedTarget(sprite, rt);
     const util = {target};
     vm.setStageSize(640, 640);
-    
+
     motion.goToXY({X: 640, Y: 640}, util);
 
     t.equal(motion.getX({}, util), 640);

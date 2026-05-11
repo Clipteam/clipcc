@@ -9,8 +9,8 @@ import Timer from '../util/timer';
 
 /**
  * @typedef {import('../sprites/rendered-target').default} RenderedTarget
- * @typedef {import('./sequencer')} Sequencer
- * @typedef {import('./runtime')} Runtime
+ * @typedef {import('./sequencer').default} Sequencer
+ * @typedef {import('./runtime').default} Runtime
  * @typedef {{now: () => number | undefined}} NowObj
  */
 
@@ -247,7 +247,7 @@ class BlockUtility {
      * Query a named IO device.
      * @param {string} device The name of like the device, like keyboard.
      * @param {string} func The name of the device's function to query.
-     * @param {Array.<*>} args Arguments to pass to the device's function.
+     * @param {Array.<*>} [args] Arguments to pass to the device's function.
      * @returns {*} The expected output for the device's function.
      */
     ioQuery (device, func, args) {

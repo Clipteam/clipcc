@@ -202,6 +202,18 @@ class Thread {
          */
         this.warpTimer = null;
 
+        /**
+         * true if the script was activated by clicking on the stack
+         * @type {boolean}
+         */
+        this.stackClick = false;
+
+        /**
+         * true if the script should update a monitor value
+         * @type {boolean}
+         */
+        this.updateMonitor = false;
+
         this.justReported = null;
 
         /**

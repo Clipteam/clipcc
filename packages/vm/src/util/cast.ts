@@ -176,12 +176,12 @@ class Cast {
         return false;
     }
 
-    static get LIST_INVALID (): string {
-        return 'INVALID';
+    static get LIST_INVALID () {
+        return 'INVALID' as const;
     }
 
-    static get LIST_ALL (): string {
-        return 'ALL';
+    static get LIST_ALL () {
+        return 'ALL' as const;
     }
 
     /**
@@ -194,7 +194,7 @@ class Cast {
      * @param acceptAll Whether it should accept "all" or not.
      * @returns 1-based index for list, LIST_ALL, or LIST_INVALID.
      */
-    static toListIndex (index: unknown, length: number, acceptAll: boolean): number | string {
+    static toListIndex (index: unknown, length: number, acceptAll: boolean) {
         if (typeof index !== 'number') {
             if (index === 'all') {
                 return acceptAll ? Cast.LIST_ALL : Cast.LIST_INVALID;

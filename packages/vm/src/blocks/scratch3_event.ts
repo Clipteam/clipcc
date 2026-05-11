@@ -1,13 +1,16 @@
 import Cast from '../util/cast';
+import type {BlockArgs, CategoryPrototype} from './category_prototype';
+import type Runtime from '../engine/runtime';
+import type BlockUtility from '../engine/block-utility';
+import type Thread from '../engine/thread';
 
-class Scratch3EventBlocks {
-    constructor (runtime) {
+class Scratch3EventBlocks implements CategoryPrototype {
+    constructor (
         /**
          * The runtime instantiating this block package.
-         * @type {Runtime}
          */
-        this.runtime = runtime;
-
+        public runtime: Runtime
+    ) {
         this.runtime.on('KEY_PRESSED', key => {
             this.runtime.startHats('event_whenkeypressed', {
                 KEY_OPTION: key
@@ -20,7 +23,7 @@ class Scratch3EventBlocks {
 
     /**
      * Retrieve the block primitives implemented by this package.
-     * @returns {Record<string, Function>} Mapping of opcode to Function.
+     * @returns Mapping of opcode to Function.
      */
     getPrimitives () {
         return {
@@ -62,11 +65,11 @@ class Scratch3EventBlocks {
         };
     }
 
-    touchingObject (args, util) {
+    touchingObject (args: BlockArgs, util: BlockUtility) {
         return util.target.isTouchingObject(args.TOUCHINGOBJECTMENU);
     }
 
-    hatGreaterThanPredicate (args, util) {
+    hatGreaterThanPredicate (args: BlockArgs, util: BlockUtility) {
         const option = Cast.toString(args.WHENGREATERTHANMENU).toLowerCase();
         const value = Cast.toNumber(args.VALUE);
         switch (option) {
@@ -78,8 +81,8 @@ class Scratch3EventBlocks {
         return false;
     }
 
-    broadcast (args, util) {
-        const broadcastVar = util.runtime.getTargetForStage().lookupBroadcastMsg(
+    broadcast (args: BlockArgs, util: BlockUtility) {
+        const broadcastVar = util.runtime.getTargetForStage()?.lookupBroadcastMsg(
             args.BROADCAST_OPTION.id, args.BROADCAST_OPTION.name);
         if (broadcastVar) {
             const broadcastOption = broadcastVar.name;
@@ -89,9 +92,9 @@ class Scratch3EventBlocks {
         }
     }
 
-    broadcastAndWait (args, util) {
+    broadcastAndWait (args: BlockArgs, util: BlockUtility) {
         if (!util.stackFrame.broadcastVar) {
-            util.stackFrame.broadcastVar = util.runtime.getTargetForStage().lookupBroadcastMsg(
+            util.stackFrame.broadcastVar = util.runtime.getTargetForStage()?.lookupBroadcastMsg(
                 args.BROADCAST_OPTION.id, args.BROADCAST_OPTION.name);
         }
         if (util.stackFrame.broadcastVar) {
@@ -110,19 +113,20 @@ class Scratch3EventBlocks {
                 }
             }
             // We've run before; check if the wait is still going on.
+            // eslint-disable-next-line @typescript-eslint/no-this-alias
             const instance = this;
             // Scratch 2 considers threads to be waiting if they are still in
             // runtime.threads. Threads that have run all their blocks, or are
             // marked done but still in runtime.threads are still considered to
             // be waiting.
-            const waiting = util.stackFrame.startedThreads
+            const waiting = (util.stackFrame.startedThreads as Thread[])
                 .some(thread => instance.runtime.threads.indexOf(thread) !== -1);
             if (waiting) {
                 // If all threads are waiting for the next tick or later yield
                 // for a tick as well. Otherwise yield until the next loop of
                 // the threads.
                 if (
-                    util.stackFrame.startedThreads
+                    (util.stackFrame.startedThreads as Thread[])
                         .every(thread => instance.runtime.isWaitingThread(thread))
                 ) {
                     util.yieldTick();

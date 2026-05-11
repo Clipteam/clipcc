@@ -1,19 +1,22 @@
 import Cast from '../util/cast';
 import MathUtil from '../util/math-util';
 import Timer from '../util/timer';
+import type {BlockArgs, CategoryPrototype} from './category_prototype';
+import type Runtime from '../engine/runtime';
+import type BlockUtility from '../engine/block-utility';
 
-class Scratch3MotionBlocks {
-    constructor (runtime) {
+class Scratch3MotionBlocks implements CategoryPrototype {
+    constructor (
         /**
          * The runtime instantiating this block package.
-         * @type {Runtime}
          */
-        this.runtime = runtime;
+        public runtime: Runtime
+    ) {
     }
 
     /**
      * Retrieve the block primitives implemented by this package.
-     * @returns {Record<string, Function>} Mapping of opcode to Function.
+     * @returns Mapping of opcode to Function.
      */
     getPrimitives () {
         return {
@@ -48,20 +51,20 @@ class Scratch3MotionBlocks {
         return {
             motion_xposition: {
                 isSpriteSpecific: true,
-                getId: targetId => `${targetId}_xposition`
+                getId: (targetId?: string) => `${targetId}_xposition`
             },
             motion_yposition: {
                 isSpriteSpecific: true,
-                getId: targetId => `${targetId}_yposition`
+                getId: (targetId?: string) => `${targetId}_yposition`
             },
             motion_direction: {
                 isSpriteSpecific: true,
-                getId: targetId => `${targetId}_direction`
+                getId: (targetId?: string) => `${targetId}_direction`
             }
         };
     }
 
-    moveSteps (args, util) {
+    moveSteps (args: BlockArgs, util: BlockUtility) {
         const steps = Cast.toNumber(args.STEPS);
         const radians = MathUtil.degToRad(90 - util.target.direction);
         const dx = steps * Math.cos(radians);
@@ -69,13 +72,13 @@ class Scratch3MotionBlocks {
         util.target.setXY(util.target.x + dx, util.target.y + dy);
     }
 
-    goToXY (args, util) {
+    goToXY (args: BlockArgs, util: BlockUtility) {
         const x = Cast.toNumber(args.X);
         const y = Cast.toNumber(args.Y);
         util.target.setXY(x, y);
     }
 
-    getTargetXY (targetName, util) {
+    getTargetXY (targetName: string, util: BlockUtility): [number, number] | undefined {
         let targetX = 0;
         let targetY = 0;
         if (targetName === '_mouse_') {
@@ -100,29 +103,29 @@ class Scratch3MotionBlocks {
         return [targetX, targetY];
     }
 
-    goTo (args, util) {
+    goTo (args: BlockArgs, util: BlockUtility) {
         const targetXY = this.getTargetXY(args.TO, util);
         if (targetXY) {
             util.target.setXY(targetXY[0], targetXY[1]);
         }
     }
 
-    turnRight (args, util) {
+    turnRight (args: BlockArgs, util: BlockUtility) {
         const degrees = Cast.toNumber(args.DEGREES);
         util.target.setDirection(util.target.direction + degrees);
     }
 
-    turnLeft (args, util) {
+    turnLeft (args: BlockArgs, util: BlockUtility) {
         const degrees = Cast.toNumber(args.DEGREES);
         util.target.setDirection(util.target.direction - degrees);
     }
 
-    pointInDirection (args, util) {
+    pointInDirection (args: BlockArgs, util: BlockUtility) {
         const direction = Cast.toNumber(args.DIRECTION);
         util.target.setDirection(direction);
     }
 
-    pointTowards (args, util) {
+    pointTowards (args: BlockArgs, util: BlockUtility) {
         let targetX = 0;
         let targetY = 0;
         if (args.TOWARDS === '_mouse_') {
@@ -150,7 +153,7 @@ class Scratch3MotionBlocks {
         util.target.setDirection(direction);
     }
 
-    glide (args, util) {
+    glide (args: BlockArgs, util: BlockUtility) {
         if (util.stackFrame.timer) {
             const timeElapsed = util.stackFrame.timer.timeElapsed();
             if (timeElapsed < util.stackFrame.duration * 1000) {
@@ -185,14 +188,14 @@ class Scratch3MotionBlocks {
         }
     }
 
-    glideTo (args, util) {
+    glideTo (args: BlockArgs, util: BlockUtility) {
         const targetXY = this.getTargetXY(args.TO, util);
         if (targetXY) {
             this.glide({SECS: args.SECS, X: targetXY[0], Y: targetXY[1]}, util);
         }
     }
 
-    ifOnEdgeBounce (args, util) {
+    ifOnEdgeBounce (args: BlockArgs, util: BlockUtility) {
         const bounds = util.target.getBounds();
         if (!bounds) {
             return;
@@ -248,44 +251,44 @@ class Scratch3MotionBlocks {
         util.target.setXY(fencedPosition[0], fencedPosition[1]);
     }
 
-    setRotationStyle (args, util) {
+    setRotationStyle (args: BlockArgs, util: BlockUtility) {
         util.target.setRotationStyle(args.STYLE);
     }
 
-    changeX (args, util) {
+    changeX (args: BlockArgs, util: BlockUtility) {
         const dx = Cast.toNumber(args.DX);
         util.target.setXY(util.target.x + dx, util.target.y);
     }
 
-    setX (args, util) {
+    setX (args: BlockArgs, util: BlockUtility) {
         const x = Cast.toNumber(args.X);
         util.target.setXY(x, util.target.y);
     }
 
-    changeY (args, util) {
+    changeY (args: BlockArgs, util: BlockUtility) {
         const dy = Cast.toNumber(args.DY);
         util.target.setXY(util.target.x, util.target.y + dy);
     }
 
-    setY (args, util) {
+    setY (args: BlockArgs, util: BlockUtility) {
         const y = Cast.toNumber(args.Y);
         util.target.setXY(util.target.x, y);
     }
 
-    getX (args, util) {
+    getX (args: BlockArgs, util: BlockUtility) {
         return this.limitPrecision(util.target.x);
     }
 
-    getY (args, util) {
+    getY (args: BlockArgs, util: BlockUtility) {
         return this.limitPrecision(util.target.y);
     }
 
-    getDirection (args, util) {
+    getDirection (args: BlockArgs, util: BlockUtility) {
         return util.target.direction;
     }
 
     // This corresponds to snapToInteger in Scratch 2
-    limitPrecision (coordinate) {
+    limitPrecision (coordinate: number): number {
         const rounded = Math.round(coordinate);
         const delta = coordinate - rounded;
         const limitedCoord = (Math.abs(delta) < 1e-9) ? rounded : coordinate;

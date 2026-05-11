@@ -6,6 +6,10 @@ import Target from '../engine/target.js';
 import StageLayering from '../engine/stage-layering';
 
 /**
+ * @typedef {import('../engine/runtime').default} Runtime
+ */
+
+/**
  * Rendered target: instance of a sprite (clone), or the stage.
  */
 class RenderedTarget extends Target {
@@ -261,7 +265,7 @@ class RenderedTarget extends Target {
      * Set the X and Y coordinates.
      * @param {!number} x New X coordinate, in Scratch coordinates.
      * @param {!number} y New Y coordinate, in Scratch coordinates.
-     * @param {?boolean} force Force setting X/Y, in case of dragging
+     * @param {?boolean} [force] Force setting X/Y, in case of dragging
      */
     setXY (x, y, force) {
         if (this.isStage) return;
@@ -717,7 +721,7 @@ class RenderedTarget extends Target {
     /**
      * Return the rendered target's tight bounding box.
      * Includes top, left, bottom, right attributes in Scratch coordinates.
-     * @returns {?object} Tight bounding box, or null.
+     * @returns Tight bounding box, or null.
      */
     getBounds () {
         if (this.renderer) {

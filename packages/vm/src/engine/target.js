@@ -9,7 +9,7 @@ import StringUtil from '../util/string-util';
 import VariableUtil from '../util/variable-util';
 
 /**
- * @typedef {import('./runtime')} Runtime
+ * @typedef {import('./runtime').default} Runtime
  */
 
 /**
