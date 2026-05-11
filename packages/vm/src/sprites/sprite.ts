@@ -5,52 +5,69 @@ import {loadCostumeFromAsset} from '../import/load-costume.js';
 import newBlockIds from '../util/new-block-ids';
 import StringUtil from '../util/string-util';
 import StageLayering from '../engine/stage-layering';
+import type {StageLayer} from '../engine/stage-layering';
+import type Runtime from '../engine/runtime.js';
+import type SoundBank from '../../../audio/dist/types/SoundBank';
+import type {Asset} from 'clipcc-storage';
+import type {VMBlock} from '../serialization/schema';
 
+export interface Costume {
+    skinId: number;
+    name: string;
+    md5: string;
+    bitmapResolution: number;
+    rotationCenterX: number;
+    rotationCenterY: number;
+}
+
+export interface Sound {
+    soundId: string;
+    rate: number;
+    sampleCount: number;
+    asset: Asset;
+    md5: string;
+}
+
+/**
+ * Sprite to be used on the Scratch stage.
+ * All clones of a sprite have shared blocks, shared costumes, shared variables,
+ * shared sounds, etc.
+ */
 class Sprite {
     /**
-     * Sprite to be used on the Scratch stage.
-     * All clones of a sprite have shared blocks, shared costumes, shared variables,
-     * shared sounds, etc.
-     * @param {?Blocks} blocks Shared blocks object for all clones of sprite.
-     * @param {Runtime} runtime Reference to the runtime.
-     * @class
+     * Shared blocks object for all clones of sprite.
      */
-    constructor (blocks, runtime) {
-        this.runtime = runtime;
+    blocks: Blocks;
+    /**
+     * Human-readable name for this sprite (and all clones).
+     */
+    name = '';
+    /**
+     * List of costumes for this sprite.
+     */
+    costumes_: Costume[] = [];
+    /**
+     * List of sounds for this sprite.
+     */
+    sounds: Sound[] = [];
+    /**
+     * List of clones for this sprite, including the original.
+     */
+    clones: RenderedTarget[] = [];
+    soundBank: SoundBank | null = null;
+    constructor (
+        blocks: Blocks | null,
+        /**
+         * Reference to the runtime.
+         */
+        public runtime: Runtime
+    ) {
         if (!blocks) {
             // Shared set of blocks for all clones.
             blocks = new Blocks(runtime);
         }
         this.blocks = blocks;
-        /**
-         * Human-readable name for this sprite (and all clones).
-         * @type {string}
-         */
-        this.name = '';
-        /**
-         * List of costumes for this sprite.
-         * Each entry is an object, e.g.,
-         * {
-         *      skinId: 1,
-         *      name: "Costume Name",
-         *      bitmapResolution: 2,
-         *      rotationCenterX: 0,
-         *      rotationCenterY: 0
-         * }
-         * @type {Array.<!object>}
-         */
-        this.costumes_ = [];
-        /**
-         * List of sounds for this sprite.
-         */
-        this.sounds = [];
-        /**
-         * List of clones for this sprite, including the original.
-         * @type {Array.<!RenderedTarget>}
-         */
-        this.clones = [];
 
-        this.soundBank = null;
         if (this.runtime && this.runtime.audioEngine) {
             this.soundBank = this.runtime.audioEngine.createBank();
         }
@@ -58,7 +75,7 @@ class Sprite {
 
     /**
      * Add an array of costumes, taking care to avoid duplicate names.
-     * @param {!Array<object>} costumes Array of objects representing costumes.
+     * @param costumes Array of objects representing costumes.
      */
     set costumes (costumes) {
         this.costumes_ = [];
@@ -79,10 +96,10 @@ class Sprite {
 
     /**
      * Add a costume at the given index, taking care to avoid duplicate names.
-     * @param {!object} costumeObject Object representing the costume.
+     * @param costumeObject Object representing the costume.
      * @param {!int} index Index at which to add costume
      */
-    addCostumeAt (costumeObject, index) {
+    addCostumeAt (costumeObject: Costume, index: number) {
         if (!costumeObject.name) {
             costumeObject.name = '';
         }
@@ -96,17 +113,17 @@ class Sprite {
      * @param {number} index Costume index to be deleted
      * @returns {?object} The deleted costume
      */
-    deleteCostumeAt (index) {
-        return this.costumes.splice(index, 1)[0];
+    deleteCostumeAt (index: number) {
+        return this.costumes_.splice(index, 1)[0];
     }
 
     /**
      * Create a clone of this sprite.
-     * @param {string=} optLayerGroup Optional layer group the clone's drawable should be added to
+     * @param optLayerGroup Optional layer group the clone's drawable should be added to
      * Defaults to the sprite layer group
      * @returns {!RenderedTarget} Newly created clone.
      */
-    createClone (optLayerGroup) {
+    createClone (optLayerGroup: StageLayer) {
         const newClone = new RenderedTarget(this, this.runtime);
         newClone.isOriginal = this.clones.length === 0;
         this.clones.push(newClone);
@@ -125,9 +142,9 @@ class Sprite {
     /**
      * Disconnect a clone from this sprite. The clone is unmodified.
      * In particular, the clone's dispose() method is not called.
-     * @param {!RenderedTarget} clone - the clone to be removed.
+     * @param clone - the clone to be removed.
      */
-    removeClone (clone) {
+    removeClone (clone: RenderedTarget) {
         this.runtime.fireTargetWasRemoved(clone);
         const cloneIndex = this.clones.indexOf(clone);
         if (cloneIndex >= 0) {
@@ -139,7 +156,7 @@ class Sprite {
         const newSprite = new Sprite(null, this.runtime);
         const blocksContainer = this.blocks._blocks;
         const originalBlocks = Object.keys(blocksContainer).map(key => blocksContainer[key]);
-        const copiedBlocks = JSON.parse(JSON.stringify(originalBlocks));
+        const copiedBlocks = JSON.parse(JSON.stringify(originalBlocks)) as VMBlock[];
         newBlockIds(copiedBlocks);
         copiedBlocks.forEach(block => {
             newSprite.blocks.createBlock(block);
@@ -149,7 +166,7 @@ class Sprite {
         const allNames = this.runtime.targets.map(t => t.sprite.name);
         newSprite.name = StringUtil.unusedName(this.name, allNames);
 
-        const assetPromises = [];
+        const assetPromises: Promise<unknown>[] = [];
 
         newSprite.costumes = this.costumes_.map(costume => {
             const newCostume = Object.assign({}, costume);

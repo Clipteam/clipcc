@@ -80,7 +80,7 @@ class Blocks {
         /**
          * All blocks in the workspace.
          * Keys are block IDs, values are metadata about the block.
-         * @type {Record<string, object>}
+         * @type {Record<string, import('../serialization/schema').VMBlock>}
          */
         this._blocks = {};
 

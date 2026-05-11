@@ -1,7 +1,7 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
 import Looks from '../../src/blocks/scratch3_looks';
 import Runtime from '../../src/engine/runtime.js';
-import Sprite from '../../src/sprites/sprite.js';
+import Sprite from '../../src/sprites/sprite';
 import RenderedTarget from '../../src/sprites/rendered-target.js';
 const util = {
     target: {

@@ -173,7 +173,7 @@ class RenderedTarget extends Target {
 
     /**
      * Create a drawable with the this.renderer.
-     * @param {boolean} layerGroup The layer group this drawable should be added to
+     * @param {string} layerGroup The layer group this drawable should be added to
      */
     initDrawable (layerGroup) {
         if (this.renderer) {

@@ -1,6 +1,6 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
 import RenderedTarget from '../../src/sprites/rendered-target.js';
-import Sprite from '../../src/sprites/sprite.js';
+import Sprite from '../../src/sprites/sprite';
 import VirtualMachine from '../../src/virtual-machine.js';
 
 test('collectAssets', t => {

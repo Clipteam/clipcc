@@ -11,7 +11,7 @@
 
 import Blocks from '../engine/blocks.js';
 import RenderedTarget from '../sprites/rendered-target.js';
-import Sprite from '../sprites/sprite.js';
+import Sprite from '../sprites/sprite';
 import Color from '../util/color';
 import log from '../util/log';
 import uid from '../util/uid';

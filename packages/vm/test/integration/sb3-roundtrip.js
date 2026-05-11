@@ -6,7 +6,7 @@ import {loadSound} from '../../src/import/load-sound.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import Runtime from '../../src/engine/runtime.js';
 import * as sb3 from '../../src/serialization/sb3.js';
-import Sprite from '../../src/sprites/sprite.js';
+import Sprite from '../../src/sprites/sprite';
 
 const defaultCostumeInfo = {
     bitmapResolution: 1,

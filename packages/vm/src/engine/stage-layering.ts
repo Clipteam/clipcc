@@ -1,18 +1,25 @@
+export const enum StageLayer {
+    BACKGROUND = 'background',
+    VIDEO = 'video',
+    PEN = 'pen',
+    SPRITE = 'sprite'
+}
+
 class StageLayering {
     static get BACKGROUND_LAYER () {
-        return 'background';
+        return StageLayer.BACKGROUND;
     }
 
     static get VIDEO_LAYER () {
-        return 'video';
+        return StageLayer.VIDEO;
     }
 
     static get PEN_LAYER () {
-        return 'pen';
+        return StageLayer.PEN;
     }
 
     static get SPRITE_LAYER () {
-        return 'sprite';
+        return StageLayer.SPRITE;
     }
 
     // Order of layer groups relative to each other,
