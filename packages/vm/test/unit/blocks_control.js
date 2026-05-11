@@ -1,7 +1,7 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
 import Control from '../../src/blocks/scratch3_control';
 import Runtime from '../../src/engine/runtime.js';
-import BlockUtility from '../../src/engine/block-utility.js';
+import BlockUtility from '../../src/engine/block-utility';
 
 test('getPrimitives', t => {
     const rt = new Runtime();
