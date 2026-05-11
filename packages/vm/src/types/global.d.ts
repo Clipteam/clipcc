@@ -3,7 +3,6 @@ declare module 'decode-html' {
     export default decodeHtml;
 }
 
-type int = number;
 /**
  * Compile-time injected clipcc global metadata
  */

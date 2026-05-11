@@ -99,7 +99,7 @@ class Sprite {
      * @param costumeObject Object representing the costume.
      * @param index Index at which to add costume
      */
-    addCostumeAt (costumeObject: Costume, index: int) {
+    addCostumeAt (costumeObject: Costume, index: number) {
         if (!costumeObject.name) {
             costumeObject.name = '';
         }
