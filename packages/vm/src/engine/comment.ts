@@ -43,7 +43,8 @@ class Comment {
         public y: number,
         width: number,
         height: number,
-        minimized: boolean) {
+        minimized: boolean
+    ) {
         this.id = id || uid();
         this.width = Math.max(Number(width), Comment.MIN_WIDTH);
         this.height = Math.max(Number(height), Comment.MIN_HEIGHT);

@@ -12,7 +12,7 @@ export type BlockFunction = (args: BlockArgs, util: BlockUtility) => any;
 export interface CategoryPrototype {
     /**
      * Retrieve the block primitives implemented by this package.
-     * @returns {Record<string, Function>} Mapping of opcode to Function.
+     * @returns Mapping of opcode to Function.
      */
     getPrimitives(): Record<string, BlockFunction>;
     getHats?(): Record<string, HatMetadata>;
