@@ -125,10 +125,10 @@ class Blocks {
     /**
      * Provide an object with metadata for the requested block ID.
      * @param {string | null} [blockId] ID of block we have stored.
-     * @returns {VMBlock | null} Metadata about the block, if it exists.
+     * @returns {VMBlock | undefined} Metadata about the block, if it exists.
      */
     getBlock (blockId) {
-        return this._blocks[blockId] ?? null;
+        return this._blocks[blockId];
     }
 
     /**

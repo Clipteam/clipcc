@@ -45,7 +45,7 @@ class RuntimeScriptCache {
 
         this.blockId = blockId;
 
-        const block = container.getBlock(blockId);
+        const block = container.getBlock(blockId)!;
         const fields = container.getFields(block)!;
 
         this.fieldsOfInputs = Object.assign({}, fields);
@@ -54,7 +54,7 @@ class RuntimeScriptCache {
             for (const input in inputs) {
                 if (!Object.prototype.hasOwnProperty.call(inputs, input)) continue;
                 const id = inputs[input].block;
-                const inputBlock = container.getBlock(id!);
+                const inputBlock = container.getBlock(id!)!;
                 const inputFields = container.getFields(inputBlock);
                 Object.assign(this.fieldsOfInputs, inputFields);
             }
@@ -85,7 +85,7 @@ const getScripts = function (container: Blocks, opcode: string): RuntimeScriptCa
         for (let i = 0; i < allScripts.length; i++) {
             const topBlockId = allScripts[i];
             const block = container.getBlock(topBlockId);
-            if (block.opcode === opcode) {
+            if (block?.opcode === opcode) {
                 scripts.push(new RuntimeScriptCache(container, topBlockId));
             }
         }

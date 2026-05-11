@@ -349,7 +349,6 @@ class Sequencer {
      */
     retireThread (thread: Thread) {
         thread.stack = [];
-        thread.stackFrames = [];
         thread.requestScriptGlowInFrame = false;
         thread.status = Thread.STATUS_DONE;
     }
