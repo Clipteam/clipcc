@@ -42,7 +42,7 @@ const CORE_EXTENSIONS = [
 
 /**
  * @typedef {number} int
- * @typedef {import('./engine/target')} Target
+ * @typedef {import('./engine/target').default} Target
  * @typedef {import('./serialization/sb3').ImportedExtensionsInfo} ImportedExtensionsInfo
  * @typedef {import('clipcc-audio')} AudioEngine
  * @typedef {import('clipcc-render')} RenderWebGL

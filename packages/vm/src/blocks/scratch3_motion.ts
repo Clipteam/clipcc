@@ -154,21 +154,21 @@ class Scratch3MotionBlocks implements CategoryPrototype {
     }
 
     glide (args: BlockArgs, util: BlockUtility) {
-        if (util.stackFrame.timer) {
+        if (util.stackTimerAvailable(util.stackFrame)) {
             const timeElapsed = util.stackFrame.timer.timeElapsed();
             if (timeElapsed < util.stackFrame.duration * 1000) {
                 // In progress: move to intermediate position.
                 const frac = timeElapsed / (util.stackFrame.duration * 1000);
-                const dx = frac * (util.stackFrame.endX - util.stackFrame.startX);
-                const dy = frac * (util.stackFrame.endY - util.stackFrame.startY);
+                const dx = frac * (util.stackFrame.endX! - util.stackFrame.startX!);
+                const dy = frac * (util.stackFrame.endY! - util.stackFrame.startY!);
                 util.target.setXY(
-                    util.stackFrame.startX + dx,
-                    util.stackFrame.startY + dy
+                    util.stackFrame.startX! + dx,
+                    util.stackFrame.startY! + dy
                 );
                 util.yield();
             } else {
                 // Finished: move to final position.
-                util.target.setXY(util.stackFrame.endX, util.stackFrame.endY);
+                util.target.setXY(util.stackFrame.endX!, util.stackFrame.endY!);
             }
         } else {
             // First time: save data for future use.

@@ -11,12 +11,17 @@ import type BlockUtility from '../engine/block-utility';
 import type Target from '../engine/target.js';
 import type {MonitorBlockInfo} from '../engine/runtime';
 import type Thread from '../engine/thread';
+import type {BaseExecutionContext} from '../engine/block-utility';
 
 interface Bounds {
     left: number;
     right: number;
     top: number;
     bottom: number;
+}
+
+interface LooksExecutionContext extends BaseExecutionContext {
+    startedThreads?: Thread[];
 }
 
 /**
@@ -504,7 +509,7 @@ class Scratch3LooksBlocks implements CategoryPrototype {
                     args.BACKDROP
                 )
             );
-            if (util.stackFrame.startedThreads.length === 0) {
+            if ((util.stackFrame as LooksExecutionContext).startedThreads?.length === 0) {
                 // Nothing was started.
                 return;
             }
@@ -516,14 +521,14 @@ class Scratch3LooksBlocks implements CategoryPrototype {
         // runtime.threads. Threads that have run all their blocks, or are
         // marked done but still in runtime.threads are still considered to
         // be waiting.
-        const waiting = util.stackFrame.startedThreads
+        const waiting = (util.stackFrame as LooksExecutionContext).startedThreads!
             .some((thread: Thread) => instance.runtime.threads.indexOf(thread) !== -1);
         if (waiting) {
             // If all threads are waiting for the next tick or later yield
             // for a tick as well. Otherwise yield until the next loop of
             // the threads.
             if (
-                util.stackFrame.startedThreads
+                (util.stackFrame as LooksExecutionContext).startedThreads!
                     .every((thread: Thread) => instance.runtime.isWaitingThread(thread))
             ) {
                 util.yieldTick();

@@ -2,7 +2,7 @@ import EventEmitter from 'events';
 import {OrderedMap} from 'immutable';
 import ArgumentType from '../extension-support/argument-type';
 import Blocks from './blocks.js';
-import {getScripts as getCachedScriptsByOpcode} from './blocks-runtime-cache.js';
+import {getScripts as getCachedScriptsByOpcode} from './blocks-runtime-cache';
 import BlockType from '../extension-support/block-type';
 import Profiler from './profiler';
 import Sequencer from './sequencer.js';
@@ -592,7 +592,6 @@ class Runtime extends EventEmitter {
 
         // Register and initialize "IO devices", containers for processing
         // I/O related data.
-        /** @type {Record<string, object>} */
         this.ioDevices = {
             clock: new Clock(this),
             cloud: new Cloud(this),

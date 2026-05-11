@@ -14,8 +14,9 @@ import getMonitorIdForBlockWithArgs from '../util/get-monitor-id';
  */
 
 /**
- * @typedef {import('./runtime')} Runtime
+ * @typedef {import('./runtime').default} Runtime
  * @typedef {import('../serialization/schema').VMBlock} VMBlock
+ * @typedef {import('../serialization/schema').VMInput} VMInput
  * @typedef {import('./blocks-runtime-cache').RuntimeScriptCache} RuntimeScriptCache
  * @import * as ClipCCBlock from 'clipcc-block'
  */
@@ -190,7 +191,7 @@ class Blocks {
     /**
      * Get all non-branch inputs for a block.
      * @param {?VMBlock} block the block to query.
-     * @returns All non-branch inputs and their associated blocks.
+     * @returns {Record<string, VMInput>} All non-branch inputs and their associated blocks.
      */
     getInputs (block) {
         if (typeof block === 'undefined') return null;

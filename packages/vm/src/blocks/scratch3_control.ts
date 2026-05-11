@@ -3,6 +3,12 @@ import type {BlockArgs, CategoryPrototype} from './category_prototype';
 import type Runtime from '../engine/runtime';
 import type RenderedTarget from '../sprites/rendered-target';
 import type BlockUtility from '../engine/block-utility';
+import type {BaseExecutionContext} from '../engine/block-utility';
+
+interface ControlExecutionContext extends BaseExecutionContext {
+    loopCounter?: number;
+    index?: number;
+}
 
 class Scratch3ControlBlocks implements CategoryPrototype {
     /**
@@ -61,9 +67,9 @@ class Scratch3ControlBlocks implements CategoryPrototype {
         // When the branch finishes, `repeat` will be executed again and
         // the second branch will be taken, yielding for the rest of the frame.
         // Decrease counter
-        util.stackFrame.loopCounter--;
+        (util.stackFrame as ControlExecutionContext).loopCounter!--;
         // If we still have some left, start the branch.
-        if (util.stackFrame.loopCounter >= 0) {
+        if ((util.stackFrame as ControlExecutionContext).loopCounter! >= 0) {
             util.startBranch(1, true);
         }
     }
@@ -92,9 +98,9 @@ class Scratch3ControlBlocks implements CategoryPrototype {
             util.stackFrame.index = 0;
         }
 
-        if (util.stackFrame.index < Number(args.VALUE)) {
-            util.stackFrame.index++;
-            variable.value = util.stackFrame.index;
+        if ((util.stackFrame as ControlExecutionContext).index! < Number(args.VALUE)) {
+            (util.stackFrame as ControlExecutionContext).index!++;
+            variable.value = (util.stackFrame as ControlExecutionContext).index;
             util.startBranch(1, true);
         }
     }

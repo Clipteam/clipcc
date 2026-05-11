@@ -1,5 +1,5 @@
-import BlockUtility from './block-utility.js';
-import {getCached as getCachedExecuteBlock} from './blocks-execute-cache.js';
+import BlockUtility from './block-utility';
+import {getCached as getCachedExecuteBlock} from './blocks-execute-cache';
 import log from '../util/log';
 import Thread from './thread';
 import {Map} from 'immutable';

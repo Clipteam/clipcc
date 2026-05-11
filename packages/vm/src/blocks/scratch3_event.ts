@@ -3,6 +3,13 @@ import type {BlockArgs, CategoryPrototype} from './category_prototype';
 import type Runtime from '../engine/runtime';
 import type BlockUtility from '../engine/block-utility';
 import type Thread from '../engine/thread';
+import type {BaseExecutionContext} from '../engine/block-utility';
+import type Variable from '../engine/variable';
+
+interface EventExecutionContext extends BaseExecutionContext {
+    broadcastVar?: Variable;
+    startedThreads?: Thread[];
+}
 
 class Scratch3EventBlocks implements CategoryPrototype {
     constructor (
@@ -82,7 +89,7 @@ class Scratch3EventBlocks implements CategoryPrototype {
     }
 
     broadcast (args: BlockArgs, util: BlockUtility) {
-        const broadcastVar = util.runtime.getTargetForStage()?.lookupBroadcastMsg(
+        const broadcastVar = util.runtime!.getTargetForStage()?.lookupBroadcastMsg(
             args.BROADCAST_OPTION.id, args.BROADCAST_OPTION.name);
         if (broadcastVar) {
             const broadcastOption = broadcastVar.name;
@@ -94,11 +101,11 @@ class Scratch3EventBlocks implements CategoryPrototype {
 
     broadcastAndWait (args: BlockArgs, util: BlockUtility) {
         if (!util.stackFrame.broadcastVar) {
-            util.stackFrame.broadcastVar = util.runtime.getTargetForStage()?.lookupBroadcastMsg(
+            util.stackFrame.broadcastVar = util.runtime!.getTargetForStage()?.lookupBroadcastMsg(
                 args.BROADCAST_OPTION.id, args.BROADCAST_OPTION.name);
         }
         if (util.stackFrame.broadcastVar) {
-            const broadcastOption = util.stackFrame.broadcastVar.name;
+            const broadcastOption = (util.stackFrame as EventExecutionContext).broadcastVar!.name;
             // Have we run before, starting threads?
             if (!util.stackFrame.startedThreads) {
                 // No - start hats for this broadcast.
@@ -107,7 +114,7 @@ class Scratch3EventBlocks implements CategoryPrototype {
                         BROADCAST_OPTION: broadcastOption
                     }
                 );
-                if (util.stackFrame.startedThreads.length === 0) {
+                if ((util.stackFrame as EventExecutionContext).startedThreads?.length === 0) {
                     // Nothing was started.
                     return;
                 }

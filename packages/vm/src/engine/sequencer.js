@@ -3,7 +3,7 @@ import Thread from './thread';
 import execute from './execute.js';
 
 /**
- * @typedef {import('./runtime')} Runtime
+ * @typedef {import('./runtime').default} Runtime
  */
 
 /**
