@@ -182,7 +182,7 @@ class Scratch3ControlBlocks implements CategoryPrototype {
     }
 
     deleteClone (args: BlockArgs, util: BlockUtility) {
-        if (!util.target.isOriginal) return;
+        if (util.target.isOriginal) return;
         this.runtime.disposeTarget(util.target);
         this.runtime.stopForTarget(util.target);
     }
