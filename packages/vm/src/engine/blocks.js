@@ -124,11 +124,11 @@ class Blocks {
 
     /**
      * Provide an object with metadata for the requested block ID.
-     * @param {!string} blockId ID of block we have stored.
-     * @returns Metadata about the block, if it exists.
+     * @param {string | null} [blockId] ID of block we have stored.
+     * @returns {VMBlock | null} Metadata about the block, if it exists.
      */
     getBlock (blockId) {
-        return this._blocks[blockId];
+        return this._blocks[blockId] ?? null;
     }
 
     /**
@@ -272,7 +272,7 @@ class Blocks {
     /**
      * Get the procedure definition for a given name.
      * @param {?string} name Name of procedure to query.
-     * @param {?boolean} globalOnly True if only find global procedures.
+     * @param {?boolean} [globalOnly] True if only find global procedures.
      * @returns {?string} ID of procedure definition.
      */
     getProcedureDefinition (name, globalOnly) {

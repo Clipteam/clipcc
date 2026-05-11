@@ -97,9 +97,9 @@ class Sprite {
     /**
      * Add a costume at the given index, taking care to avoid duplicate names.
      * @param costumeObject Object representing the costume.
-     * @param {!int} index Index at which to add costume
+     * @param index Index at which to add costume
      */
-    addCostumeAt (costumeObject: Costume, index: number) {
+    addCostumeAt (costumeObject: Costume, index: int) {
         if (!costumeObject.name) {
             costumeObject.name = '';
         }
@@ -110,8 +110,8 @@ class Sprite {
 
     /**
      * Delete a costume by index.
-     * @param {number} index Costume index to be deleted
-     * @returns {?object} The deleted costume
+     * @param index Costume index to be deleted
+     * @returns The deleted costume
      */
     deleteCostumeAt (index: number) {
         return this.costumes_.splice(index, 1)[0];
@@ -121,7 +121,7 @@ class Sprite {
      * Create a clone of this sprite.
      * @param optLayerGroup Optional layer group the clone's drawable should be added to
      * Defaults to the sprite layer group
-     * @returns {!RenderedTarget} Newly created clone.
+     * @returns Newly created clone.
      */
     createClone (optLayerGroup: StageLayer) {
         const newClone = new RenderedTarget(this, this.runtime);

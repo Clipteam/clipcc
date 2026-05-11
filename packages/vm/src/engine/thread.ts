@@ -122,7 +122,7 @@ class Thread {
      * Stack for the thread. When the sequencer enters a control structure,
      * the block is pushed onto the stack so we know where to exit.
      */
-    stack: string[] = [];
+    stack: (string | null)[] = [];
     /**
      * Stack frames for the thread. Store metadata for the executing blocks.
      */
@@ -219,7 +219,7 @@ class Thread {
      * @param blockId Block ID to push to stack.
      * @param target New target context.
      */
-    pushStack (blockId: string, target?: RenderedTarget): void {
+    pushStack (blockId: string | null, target?: RenderedTarget): void {
         this.stack.push(blockId);
         // Push an empty stack frame, if we need one.
         // Might not, if we just popped the stack.
@@ -252,7 +252,7 @@ class Thread {
      * Pop last block on the stack and its stack frame.
      * @returns Block ID popped from the stack.
      */
-    popStack (): string | undefined {
+    popStack () {
         _StackFrame.release(this.stackFrames.pop()!);
         const stackFrame = this.peekStackFrame();
         if (stackFrame) {

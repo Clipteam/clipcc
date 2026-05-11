@@ -1,80 +1,63 @@
 import Timer from '../util/timer';
 import Thread from './thread';
 import execute from './execute.js';
-
-/**
- * @typedef {import('./runtime').default} Runtime
- */
+import type Runtime from './runtime';
 
 /**
  * Profiler frame name for stepping a single thread.
- * @constant {string}
  */
-const stepThreadProfilerFrame = 'Sequencer.stepThread';
+const stepThreadProfilerFrame = 'Sequencer.stepThread' as const;
 
 /**
  * Profiler frame name for the inner loop of stepThreads.
- * @constant {string}
  */
-const stepThreadsInnerProfilerFrame = 'Sequencer.stepThreads#inner';
+const stepThreadsInnerProfilerFrame = 'Sequencer.stepThreads#inner' as const;
 
 /**
  * Profiler frame name for execute.
- * @constant {string}
  */
-const executeProfilerFrame = 'execute';
+const executeProfilerFrame = 'execute' as const;
 
 /**
  * Profiler frame ID for stepThreadProfilerFrame.
- * @type {number}
  */
 let stepThreadProfilerId = -1;
 
 /**
  * Profiler frame ID for stepThreadsInnerProfilerFrame.
- * @type {number}
  */
 let stepThreadsInnerProfilerId = -1;
 
 /**
  * Profiler frame ID for executeProfilerFrame.
- * @type {number}
  */
 let executeProfilerId = -1;
 
 class Sequencer {
     /**
-     * @param {Runtime} runtime The runtime object.
+     * A utility timer for timing thread sequencing.
      */
-    constructor (runtime) {
+    timer = new Timer();
+    activeThread: Thread | null = null;
+    constructor (
         /**
-         * A utility timer for timing thread sequencing.
-         * @type {!Timer}
+         *  The runtime object.
          */
-        this.timer = new Timer();
-
-        /**
-         * Reference to the runtime owning this sequencer.
-         * @type {!Runtime}
-         */
-        this.runtime = runtime;
-
-        this.activeThread = null;
-    }
+        public runtime: Runtime
+    ) { }
 
     /**
      * Time to run a warp-mode thread, in ms.
-     * @type {number}
      */
     static get WARP_TIME () {
-        return 500;
+        return 500 as const;
     }
 
     /**
      * Step through all threads in `this.runtime.threads`, running them in order.
-     * @returns {Array.<!Thread>} List of inactive threads after stepping.
+     * @returns List of inactive threads after stepping.
      */
-    stepThreads () {
+    stepThreads (): Thread[] {
         // Work time is 75% of the thread stepping interval.
         const WORK_TIME = 0.75 * this.runtime.currentStepTime;
         // For compatibility with Scatch 2, update the millisecond clock
@@ -93,9 +76,9 @@ class Sequencer {
         // 2. Time elapsed must be less than WORK_TIME.
         // 3. Either turbo mode, or no redraw has been requested by a primitive.
         while (this.runtime.threads.length > 0 &&
-               numActiveThreads > 0 &&
-               this.timer.timeElapsed() < WORK_TIME &&
-               (this.runtime.turboMode || !this.runtime.redrawRequested)) {
+            numActiveThreads > 0 &&
+            this.timer.timeElapsed() < WORK_TIME &&
+            (this.runtime.turboMode || !this.runtime.redrawRequested)) {
             if (this.runtime.profiler !== null) {
                 if (stepThreadsInnerProfilerId === -1) {
                     stepThreadsInnerProfilerId = this.runtime.profiler.idByName(stepThreadsInnerProfilerFrame);
@@ -181,9 +164,9 @@ class Sequencer {
 
     /**
      * Step the requested thread for as long as necessary.
-     * @param {!Thread} thread Thread object to step.
+     * @param thread Thread object to step.
      */
-    stepThread (thread) {
+    stepThread (thread: Thread) {
         let currentBlockId = thread.peekStack();
         if (!currentBlockId) {
             // A "null block" - empty branch.
@@ -197,7 +180,7 @@ class Sequencer {
         }
         // Save the current block ID to notice if we did control flow.
         while ((currentBlockId = thread.peekStack())) {
-            let isWarpMode = thread.peekStackFrame().warpMode;
+            let isWarpMode = thread.peekStackFrame()?.warpMode;
             if (isWarpMode && !thread.warpTimer) {
                 // Initialize warp-mode timer if it hasn't been already.
                 // This will start counting the thread toward `Sequencer.WARP_TIME`.
@@ -225,7 +208,7 @@ class Sequencer {
                 thread.status = Thread.STATUS_RUNNING;
                 // In warp mode, yielded blocks are re-executed immediately.
                 if (isWarpMode &&
-                    thread.warpTimer.timeElapsed() <= Sequencer.WARP_TIME) {
+                    thread.warpTimer!.timeElapsed() <= Sequencer.WARP_TIME) {
                     continue;
                 }
                 return;
@@ -254,7 +237,7 @@ class Sequencer {
                     return;
                 }
 
-                const stackFrame = thread.peekStackFrame();
+                const stackFrame = thread.peekStackFrame()!;
                 isWarpMode = stackFrame.warpMode;
 
                 if (stackFrame.isLoop) {
@@ -263,7 +246,7 @@ class Sequencer {
                     // Unless we're in warp mode - then only return if the
                     // warp timer is up.
                     if (!isWarpMode ||
-                        thread.warpTimer.timeElapsed() > Sequencer.WARP_TIME) {
+                        thread.warpTimer!.timeElapsed() > Sequencer.WARP_TIME) {
                         // Don't do anything to the stack, since loops need
                         // to be re-executed.
                         return;
@@ -287,20 +270,20 @@ class Sequencer {
 
     /**
      * Step a thread into a block's branch.
-     * @param {!Thread} thread Thread object to step to branch.
-     * @param {number} branchNum Which branch to step to (i.e., 1, 2).
-     * @param {boolean} isLoop Whether this block is a loop.
+     * @param thread Thread object to step to branch.
+     * @param branchNum Which branch to step to (i.e., 1, 2).
+     * @param isLoop Whether this block is a loop.
      */
-    stepToBranch (thread, branchNum, isLoop) {
+    stepToBranch (thread: Thread, branchNum: number, isLoop: boolean) {
         if (!branchNum) {
             branchNum = 1;
         }
         const currentBlockId = thread.peekStack();
-        const branchId = thread.blockContainer.getBranch(
+        const branchId = thread.blockContainer?.getBranch(
             currentBlockId,
             branchNum
         );
-        thread.peekStackFrame().isLoop = isLoop;
+        thread.peekStackFrame()!.isLoop = isLoop;
         if (branchId) {
             // Push branch ID to the thread's stack.
             thread.pushStack(branchId);
@@ -311,11 +294,11 @@ class Sequencer {
 
     /**
      * Step a procedure.
-     * @param {!Thread} thread Thread object to step to procedure.
-     * @param {!string} procedureCode Procedure code of procedure to step to.
+     * @param thread Thread object to step to procedure.
+     * @param procedureCode Procedure code of procedure to step to.
      */
-    stepToProcedure (thread, procedureCode) {
-        let definition = thread.blockContainer.getProcedureDefinition(procedureCode);
+    stepToProcedure (thread: Thread, procedureCode: string) {
+        let definition = thread.blockContainer?.getProcedureDefinition(procedureCode);
         let target = thread.target;
         if (!definition) {
             [target, definition] = this.runtime.getProcedureDefinition(procedureCode);
@@ -326,9 +309,9 @@ class Sequencer {
 
         // Look for warp-mode flag on definition, and set the thread
         // to warp-mode if needed.
-        const definitionBlock = target.blocks.getBlock(definition);
-        const innerBlock = target.blocks.getBlock(
-            definitionBlock.inputs.custom_block.block);
+        const definitionBlock = target!.blocks.getBlock(definition);
+        const innerBlock = target!.blocks.getBlock(
+            definitionBlock?.inputs.custom_block.block);
         let doWarp = false;
         if (innerBlock && innerBlock.mutation) {
             const warp = innerBlock.mutation.warp;
@@ -347,13 +330,13 @@ class Sequencer {
         // and on to the main definition of the procedure.
         // When that set of blocks finishes executing, it will be popped
         // from the stack by the sequencer, returning control to the caller.
-        thread.pushStack(definition, target);
+        thread.pushStack(definition, target!);
         // In known warp-mode threads, only yield when time is up.
-        if (thread.peekStackFrame().warpMode &&
-            thread.warpTimer.timeElapsed() > Sequencer.WARP_TIME) {
+        if (thread.peekStackFrame()!.warpMode &&
+            thread.warpTimer!.timeElapsed() > Sequencer.WARP_TIME) {
             thread.status = Thread.STATUS_YIELD;
         } else if (doWarp) {
-            thread.peekStackFrame().warpMode = true;
+            thread.peekStackFrame()!.warpMode = true;
         } else if (isRecursive) {
             // In normal-mode threads, yield any time we have a recursive call.
             thread.status = Thread.STATUS_YIELD;
@@ -362,11 +345,11 @@ class Sequencer {
 
     /**
      * Retire a thread in the middle, without considering further blocks.
-     * @param {!Thread} thread Thread object to retire.
+     * @param thread Thread object to retire.
      */
-    retireThread (thread) {
+    retireThread (thread: Thread) {
         thread.stack = [];
-        thread.stackFrame = [];
+        thread.stackFrames = [];
         thread.requestScriptGlowInFrame = false;
         thread.status = Thread.STATUS_DONE;
     }

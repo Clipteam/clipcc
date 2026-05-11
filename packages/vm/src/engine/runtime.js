@@ -5,7 +5,7 @@ import Blocks from './blocks.js';
 import {getScripts as getCachedScriptsByOpcode} from './blocks-runtime-cache';
 import BlockType from '../extension-support/block-type';
 import Profiler from './profiler';
-import Sequencer from './sequencer.js';
+import Sequencer from './sequencer';
 import execute from './execute.js';
 import ScratchBlocksConstants from './scratch-blocks-constants';
 import TargetType from '../extension-support/target-type';

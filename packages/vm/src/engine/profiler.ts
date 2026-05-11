@@ -135,7 +135,7 @@ class Profiler {
      * Runtime._step.
      * @param arg An arbitrary argument value to store with the frame.
      */
-    start (id: number, arg: unknown): void {
+    start (id: number, arg?: unknown): void {
         this.records.push(START, id, arg, performance.now());
     }
 
