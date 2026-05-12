@@ -1,7 +1,7 @@
 import path from 'path';
 import {test} from '../fixtures/jest-tap-bridge.js';
 import {extractProjectJson} from '../fixtures/readProjectFile.js';
-import RenderedTarget from '../../src/sprites/rendered-target.js';
+import RenderedTarget from '../../src/sprites/rendered-target';
 import Runtime from '../../src/engine/runtime.js';
 import {deserialize} from '../../src/serialization/sb2.js';
 

@@ -508,7 +508,7 @@ class RenderWebGL extends EventEmitter {
     /**
      * Create a new Drawable and add it to the scene.
      * @param {string} group Layer group to add the drawable to
-     * @returns {int | void} The ID of the new Drawable.
+     * @returns The ID of the new Drawable.
      */
     createDrawable (group) {
         if (!group || !Object.prototype.hasOwnProperty.call(this._layerGroups, group)) {

@@ -6,7 +6,7 @@ import adapter from '../../src/engine/adapter';
 import events from '../fixtures/events.json';
 import Renderer from '../fixtures/fake-renderer.js';
 import Runtime from '../../src/engine/runtime.js';
-import RenderedTarget from '../../src/sprites/rendered-target.js';
+import RenderedTarget from '../../src/sprites/rendered-target';
 
 test('deleteSound returns function after deleting or null if nothing was deleted', t => {
     const vm = new VirtualMachine();

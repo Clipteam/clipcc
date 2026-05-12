@@ -1,4 +1,4 @@
-import RenderedTarget from './rendered-target.js';
+import RenderedTarget from './rendered-target';
 import Blocks from '../engine/blocks';
 import {loadSoundFromAsset} from '../import/load-sound.js';
 import {loadCostumeFromAsset} from '../import/load-costume.js';
@@ -18,13 +18,21 @@ export interface Costume {
     bitmapResolution: number;
     rotationCenterX: number;
     rotationCenterY: number;
+    asset: Asset;
+    broken?: {
+        asset: Asset;
+    };
 }
 
 export interface Sound {
+    name: string;
     soundId: string;
     rate: number;
     sampleCount: number;
     asset: Asset;
+    broken?: {
+        asset: Asset;
+    };
     md5: string;
 }
 
@@ -123,7 +131,7 @@ class Sprite {
      * Defaults to the sprite layer group
      * @returns Newly created clone.
      */
-    createClone (optLayerGroup: StageLayer) {
+    createClone (optLayerGroup?: StageLayer) {
         const newClone = new RenderedTarget(this, this.runtime);
         newClone.isOriginal = this.clones.length === 0;
         this.clones.push(newClone);

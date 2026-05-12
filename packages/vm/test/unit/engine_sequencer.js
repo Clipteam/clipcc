@@ -2,7 +2,7 @@ import {test} from '../fixtures/jest-tap-bridge.js';
 import Sequencer from '../../src/engine/sequencer';
 import Runtime from '../../src/engine/runtime.js';
 import Thread from '../../src/engine/thread';
-import RenderedTarget from '../../src/sprites/rendered-target.js';
+import RenderedTarget from '../../src/sprites/rendered-target';
 import Sprite from '../../src/sprites/sprite';
 
 test('spec', t => {

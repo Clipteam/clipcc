@@ -4,7 +4,7 @@ import BlockType from '../../src/extension-support/block-type';
 import dispatch from '../../src/dispatch/central-dispatch';
 import VirtualMachine from '../../src/virtual-machine.js';
 import Sprite from '../../src/sprites/sprite';
-import RenderedTarget from '../../src/sprites/rendered-target.js';
+import RenderedTarget from '../../src/sprites/rendered-target';
 
 // By default Central Dispatch works with the Worker class built into the browser. Tell it to use TinyWorker instead.
 dispatch.workerClass = Worker;

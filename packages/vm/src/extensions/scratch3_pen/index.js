@@ -6,7 +6,7 @@ import Clone from '../../util/clone';
 import Color from '../../util/color';
 import formatMessage from 'format-message';
 import MathUtil from '../../util/math-util';
-import RenderedTarget from '../../sprites/rendered-target.js';
+import RenderedTarget from '../../sprites/rendered-target';
 import log from '../../util/log';
 import StageLayering from '../../engine/stage-layering';
 

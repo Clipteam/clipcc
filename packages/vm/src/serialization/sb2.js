@@ -10,7 +10,8 @@
  */
 
 import Blocks from '../engine/blocks';
-import RenderedTarget from '../sprites/rendered-target.js';
+
+import RenderedTarget from '../sprites/rendered-target';
 import Sprite from '../sprites/sprite';
 import Color from '../util/color';
 import log from '../util/log';

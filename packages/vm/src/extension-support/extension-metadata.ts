@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type Runtime from '../engine/runtime';
 import type ArgumentType from './argument-type';
 import type BlockType from './block-type';
 import type ReporterScope from './reporter-scope';
@@ -21,6 +22,11 @@ export interface ExtensionMetadata {
     blocks: Array<ExtensionBlockMetadata | string>;
     /** Map of menu name to metadata for each of this extension's menus. */
     menus?: Record<string, ExtensionMenuMetadata>;
+    /**
+     * New target type(s).
+     * @todo Not implemented by VM.
+     */
+    targetTypes?: string[];
 }
 
 /**
@@ -93,4 +99,9 @@ export interface ExtensionMenuItemComplex {
     value: any;
     /** The human-readable label of this menu item in the menu. */
     text: string;
+}
+
+export interface ExtensionClass {
+    new (runtime: Runtime): unknown;
+    getInfo(): ExtensionMetadata;
 }

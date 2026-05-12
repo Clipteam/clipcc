@@ -1,6 +1,6 @@
 import Cast from '../util/cast';
 import Clone from '../util/clone';
-import RenderedTarget from '../sprites/rendered-target.js';
+import RenderedTarget from '../sprites/rendered-target';
 import uid from '../util/uid';
 import StageLayering from '../engine/stage-layering';
 import getMonitorIdForBlockWithArgs from '../util/get-monitor-id';
