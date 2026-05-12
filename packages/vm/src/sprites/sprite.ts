@@ -1,6 +1,6 @@
 import RenderedTarget from './rendered-target';
 import Blocks from '../engine/blocks';
-import {loadSoundFromAsset} from '../import/load-sound.js';
+import {loadSoundFromAsset} from '../import/load-sound';
 import {loadCostumeFromAsset} from '../import/load-costume';
 import newBlockIds from '../util/new-block-ids';
 import StringUtil from '../util/string-util';

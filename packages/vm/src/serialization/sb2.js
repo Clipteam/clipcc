@@ -24,7 +24,7 @@ import Variable from '../engine/variable';
 import MonitorRecord from '../engine/monitor-record';
 import StageLayering from '../engine/stage-layering';
 import {loadCostume} from '../import/load-costume';
-import {loadSound} from '../import/load-sound.js';
+import {loadSound} from '../import/load-sound';
 import {deserializeCostume, deserializeSound} from './deserialize-assets.js';
 
 // Constants used during deserialization of an SB2 file

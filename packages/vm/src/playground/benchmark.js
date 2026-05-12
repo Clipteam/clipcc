@@ -39,7 +39,7 @@ import * as loadCostume from '../import/load-costume';
 const costumeMiddleware = new LoadingMiddleware();
 loadCostume.overrideLoadCostume(costumeMiddleware.install(loadCostume, loadCostume.loadCostume));
 
-import * as loadSound from '../import/load-sound.js';
+import * as loadSound from '../import/load-sound';
 const soundMiddleware = new LoadingMiddleware();
 loadSound.overrideLoadSound(soundMiddleware.install(loadSound, loadSound.loadSound));
 
