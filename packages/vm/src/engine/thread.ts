@@ -1,6 +1,7 @@
 import type Blocks from './blocks';
 import type Timer from '../util/timer';
 import type RenderedTarget from '../sprites/rendered-target';
+import type {CachedArgValue} from './execute';
 
 /**
  * Recycle bin for empty stackFrame objects
@@ -24,11 +25,11 @@ class _StackFrame {
     /**
      * The active block that is waiting on a promise.
      */
-    reporting = '';
+    reporting: string | null = null;
     /**
      * Persists reported inputs during async block.
      */
-    reported: Record<string, unknown> | null = null;
+    reported: { opCached: string, inputValue: CachedArgValue}[] | null = null;
     /**
      * Whether is waiting a custom reporter.
      */

@@ -322,3 +322,4 @@ class Profiler {
 }
 
 export default Profiler;
+export type {ProfilerFrame};

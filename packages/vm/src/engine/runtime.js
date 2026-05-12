@@ -6,7 +6,7 @@ import {getScripts as getCachedScriptsByOpcode} from './blocks-runtime-cache';
 import BlockType from '../extension-support/block-type';
 import Profiler from './profiler';
 import Sequencer from './sequencer';
-import execute from './execute.js';
+import execute from './execute';
 import ScratchBlocksConstants from './scratch-blocks-constants';
 import TargetType from '../extension-support/target-type';
 import Thread from './thread';
@@ -463,7 +463,7 @@ class Runtime extends EventEmitter {
         /**
          * Map to look up a block's execution order.
          * Keys are opcode for block, values are order array of its arguments.
-         * @type {Record<string, Array.<string>>}
+         * @type {Record<string, (string | {execute: string})[]>}
          */
         this._orders = {};
 
@@ -1878,7 +1878,7 @@ class Runtime extends EventEmitter {
     /**
      * Retrieve the execution order of the given opcode.
      * @param {!string} opcode The opcode to look up.
-     * @returns {Array.<string | object>} The execution order array of given opcode.
+     * @returns The execution order array of given opcode.
      */
     getExecutionOrders (opcode) {
         return Object.prototype.hasOwnProperty.call(this._orders, opcode) && this._orders[opcode];
@@ -2625,7 +2625,7 @@ class Runtime extends EventEmitter {
     /**
      * Emit value for reporter to show in the blocks.
      * @param {string} blockId ID for the block.
-     * @param {string} value Value to show associated with the block.
+     * @param {unknown} value Value to show associated with the block.
      */
     visualReport (blockId, value) {
         this.emit(Runtime.VISUAL_REPORT, {id: blockId, value: String(value)});

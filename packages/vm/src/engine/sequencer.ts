@@ -1,6 +1,6 @@
 import Timer from '../util/timer';
 import Thread from './thread';
-import execute from './execute.js';
+import execute from './execute';
 import type Runtime from './runtime';
 
 /**
