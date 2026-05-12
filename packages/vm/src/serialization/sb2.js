@@ -17,7 +17,7 @@ import log from '../util/log';
 import uid from '../util/uid';
 import StringUtil from '../util/string-util';
 import MathUtil from '../util/math-util';
-import specMap from './sb2_specmap.js';
+import specMap from './sb2_specmap';
 import Comment from '../engine/comment';
 import Variable from '../engine/variable';
 import MonitorRecord from '../engine/monitor-record';
