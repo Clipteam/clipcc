@@ -3,7 +3,7 @@ import BlockType from '../../extension-support/block-type';
 import log from '../../util/log';
 import formatMessage from 'format-message';
 import MathUtil from '../../util/math-util';
-import BLE from '../../io/ble.js';
+import BLE from '../../io/ble';
 import godirect from '@vernier/godirect/dist/godirect.min.umd.js';
 import ScratchLinkDeviceAdapter from './scratch-link-device-adapter.js';
 

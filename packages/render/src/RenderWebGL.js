@@ -381,8 +381,8 @@ class RenderWebGL extends EventEmitter {
     /**
      * Create a new SVG skin.
      * @param {!string} svgData - new SVG to use.
-     * @param {?Array<number>} rotationCenter Optional: rotation center of the skin. If not supplied, the center of the
-     * skin will be used
+     * @param {?Array<number>} [rotationCenter] Optional: rotation center of the skin. If not supplied,
+     * the center of the skin will be used
      * @returns {!int} the ID for the new skin.
      */
     createSVGSkin (svgData, rotationCenter) {
@@ -800,7 +800,7 @@ class RenderWebGL extends EventEmitter {
     /**
      * Get the size of a skin by ID.
      * @param {int} skinID The ID of the Skin to measure.
-     * @returns {Array<number>} Skin size, width and height.
+     * @returns {[number, number]} Skin size, width and height.
      */
     getSkinSize (skinID) {
         const skin = this._allSkins[skinID];
@@ -810,7 +810,7 @@ class RenderWebGL extends EventEmitter {
     /**
      * Get the rotation center of a skin by ID.
      * @param {int} skinID The ID of the Skin
-     * @returns {Array<number>} The rotationCenterX and rotationCenterY
+     * @returns {[number, number]} The rotationCenterX and rotationCenterY
      */
     getSkinRotationCenter (skinID) {
         const skin = this._allSkins[skinID];

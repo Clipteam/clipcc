@@ -17,7 +17,7 @@ import StringUtil from './util/string-util';
 import formatMessage from 'format-message';
 import Variable from './engine/variable';
 import newBlockIds from './util/new-block-ids';
-import {loadCostume} from './import/load-costume.js';
+import {loadCostume} from './import/load-costume';
 import {loadSound} from './import/load-sound.js';
 import {serializeSounds, serializeCostumes} from './serialization/serialize-assets';
 import uid from './util/uid';

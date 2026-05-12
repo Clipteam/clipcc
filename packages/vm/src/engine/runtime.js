@@ -19,12 +19,17 @@ import ScratchLinkWebSocket from '../util/scratch-link-websocket';
 
 // Virtual I/O devices.
 import Clock from '../io/clock';
+<<<<<<< HEAD
 import Cloud from '../io/cloud.js';
+=======
+
+import Cloud from '../io/cloud';
+>>>>>>> 5a1d40bc (:truck: chore(vm,render,storage): migrate left io/*.js and load-costume.js)
 import Keyboard from '../io/keyboard';
-import Mouse from '../io/mouse.js';
+import Mouse from '../io/mouse';
 import MouseWheel from '../io/mouseWheel';
 import UserData from '../io/userData';
-import Video from '../io/video.js';
+import Video from '../io/video';
 import Joystick from '../io/joystick';
 import StringUtil from '../util/string-util';
 import uid from '../util/uid';
@@ -59,6 +64,7 @@ const defaultExtensionColors = ['#0FBD8C', '#0DA57A', '#0B8E69'];
  * @typedef {import('clipcc-audio')} AudioEngine
  * @typedef {import('clipcc-render')} RenderWebGL
  * @typedef {import('clipcc-storage').ScratchStorage} ScratchStorage
+ * @typedef {import('clipcc-svg-renderer').BitmapAdapter} BitmapAdapter
  */
 
 /**
@@ -1907,7 +1913,7 @@ class Runtime extends EventEmitter {
     /**
      * Set the bitmap adapter for the VM/runtime, which converts scratch 2
      * bitmaps to scratch 3 bitmaps. (Scratch 3 bitmaps are all bitmap resolution 2)
-     * @param {PrimitiveHandler} bitmapAdapter The adapter to attach.
+     * @param {BitmapAdapter} bitmapAdapter The adapter to attach.
      */
     attachV2BitmapAdapter (bitmapAdapter) {
         this.v2BitmapAdapter = bitmapAdapter;

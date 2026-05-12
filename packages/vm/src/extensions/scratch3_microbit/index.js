@@ -3,7 +3,7 @@ import BlockType from '../../extension-support/block-type';
 import log from '../../util/log';
 import cast from '../../util/cast';
 import formatMessage from 'format-message';
-import BLE from '../../io/ble.js';
+import BLE from '../../io/ble';
 import Base64Util from '../../util/base64-util';
 
 /**

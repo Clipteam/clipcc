@@ -23,7 +23,7 @@ import Comment from '../engine/comment';
 import Variable from '../engine/variable';
 import MonitorRecord from '../engine/monitor-record';
 import StageLayering from '../engine/stage-layering';
-import {loadCostume} from '../import/load-costume.js';
+import {loadCostume} from '../import/load-costume';
 import {loadSound} from '../import/load-sound.js';
 import {deserializeCostume, deserializeSound} from './deserialize-assets.js';
 

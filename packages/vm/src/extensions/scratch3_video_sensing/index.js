@@ -4,7 +4,7 @@ import BlockType from '../../extension-support/block-type';
 import Clone from '../../util/clone';
 import Cast from '../../util/cast';
 import formatMessage from 'format-message';
-import Video from '../../io/video.js';
+import Video from '../../io/video';
 import VideoMotion from './library.js';
 
 /**

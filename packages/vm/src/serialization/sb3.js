@@ -18,7 +18,7 @@ import MathUtil from '../util/math-util';
 import StringUtil from '../util/string-util';
 import VariableUtil from '../util/variable-util';
 import {migrationMap, mergeDeep, migrateMutation} from './migration.js';
-import {loadCostume} from '../import/load-costume.js';
+import {loadCostume} from '../import/load-costume';
 import {loadSound} from '../import/load-sound.js';
 import {deserializeCostume, deserializeSound} from './deserialize-assets.js';
 

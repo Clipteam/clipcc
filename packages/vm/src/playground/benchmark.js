@@ -35,7 +35,7 @@ class LoadingMiddleware {
     }
 }
 
-import * as loadCostume from '../import/load-costume.js';
+import * as loadCostume from '../import/load-costume';
 const costumeMiddleware = new LoadingMiddleware();
 loadCostume.overrideLoadCostume(costumeMiddleware.install(loadCostume, loadCostume.loadCostume));
 

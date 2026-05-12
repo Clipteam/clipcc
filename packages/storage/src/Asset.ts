@@ -32,7 +32,7 @@ export default class Asset {
      */
     constructor (
         public assetType: IAssetType,
-        public assetId?: AssetId,
+        public assetId?: AssetId |null,
         dataFormat?: DataFormat,
         data?: AssetData,
         generateId?: boolean

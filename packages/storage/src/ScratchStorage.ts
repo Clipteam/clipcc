@@ -104,7 +104,7 @@ export class ScratchStorage {
      * @param assetId - The id of the asset to fetch.
      * @returns The asset, if it exists.
      */
-    get (assetId: string): Asset | null {
+    get (assetId: AssetId): Asset | null {
         return this.builtinHelper.get(assetId);
     }
 
@@ -134,7 +134,7 @@ export class ScratchStorage {
         assetType: IAssetType,
         dataFormat: DataFormat,
         data: AssetData,
-        id: AssetId,
+        id: AssetId | null,
         generateId: boolean
     ): Asset {
         if (!dataFormat) throw new Error('Tried to create asset without a dataFormat');

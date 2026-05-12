@@ -1,26 +1,53 @@
 import RenderedTarget from './rendered-target';
 import Blocks from '../engine/blocks';
 import {loadSoundFromAsset} from '../import/load-sound.js';
-import {loadCostumeFromAsset} from '../import/load-costume.js';
+import {loadCostumeFromAsset} from '../import/load-costume';
 import newBlockIds from '../util/new-block-ids';
 import StringUtil from '../util/string-util';
 import StageLayering from '../engine/stage-layering';
 import type {StageLayer} from '../engine/stage-layering';
 import type Runtime from '../engine/runtime.js';
 import type SoundBank from '../../../audio/dist/types/SoundBank';
-import type {Asset} from 'clipcc-storage';
+import type {Asset, AssetId, DataFormat} from 'clipcc-storage';
 import type {VMBlock} from '../serialization/schema';
 
+/**
+ * the Scratch costume object.
+ */
 export interface Costume {
+    /**
+     * the ID of the costume's render skin, once installed.
+     */
     skinId: number;
     name: string;
     md5: string;
+    /** The resolution scale for a bitmap costume. */
     bitmapResolution: number;
+    /**
+     * the X component of the costume's origin.
+     */
     rotationCenterX: number;
+    /**
+     * the Y component of the costume's origin.
+     */
     rotationCenterY: number;
+    /**
+     * the asset of the costume loaded from storage.
+     */
     asset: Asset;
+    assetId?: AssetId;
+    textLayerAsset?: Asset;
+    textLayerMD5?: string;
+    size?: [number, number];
+    dataFormat?: DataFormat;
     broken?: {
         asset: Asset;
+        assetId: AssetId;
+        md5: string;
+        dataFormat: DataFormat;
+        rotationCenterX: number;
+        rotationCenterY: number;
+        bitmapResolution: number;
     };
 }
 
