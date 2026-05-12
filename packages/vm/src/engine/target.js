@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import Blocks from './blocks.js';
+import Blocks from './blocks';
 import Variable from '../engine/variable';
 import Comment from '../engine/comment';
 import uid from '../util/uid';
@@ -267,7 +267,7 @@ class Target extends EventEmitter {
      * @param {string} id Id of variable
      * @param {string} name Name of variable.
      * @param {string} type Type of variable, '', 'broadcast_msg', or 'list'
-     * @param {boolean} isCloud Whether the variable to create has the isCloud flag set.
+     * @param {boolean} [isCloud] Whether the variable to create has the isCloud flag set.
      * Additional checks are made that the variable can be created as a cloud variable.
      */
     createVariable (id, name, type, isCloud) {
@@ -285,7 +285,7 @@ class Target extends EventEmitter {
     /**
      * Creates a comment with the given properties.
      * @param {string} id Id of the comment.
-     * @param {string} blockId Optional id of the block the comment is attached
+     * @param {string} [blockId] Optional id of the block the comment is attached
      * to if it is a block comment.
      * @param {string} text The text the comment contains.
      * @param {number} x The x coordinate of the comment on the workspace.

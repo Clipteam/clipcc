@@ -1,3 +1,5 @@
+import type {BlockCommentState} from 'clipcc-block';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface SB3Project {
     targets: SB3Target[];
@@ -173,7 +175,7 @@ export interface VMBlock {
     y?: number;
     mutation?: VMMutation;
     comment?: string;
-    commentData?: unknown;
+    commentData?: BlockCommentState;
     isMonitored?: boolean;
     targetId?: string | null;
 }
@@ -195,14 +197,14 @@ export interface VMMutation {
     tagName?: string;
     children?: VMMutation[];
     proccode?: string;
-    argumentids?: string;
-    argumentnames?: string;
-    argumentdefaults?: string;
-    warp?: string | boolean;
-    hasnext?: string | boolean;
-    return?: string | boolean;
-    global?: string | boolean;
-    generateshadows?: string | boolean;
+    argumentids?: string[];
+    argumentnames?: string[];
+    argumentdefaults?: string[];
+    warp?: boolean;
+    hasnext?: boolean;
+    return?: boolean;
+    global?: boolean;
+    generateshadows?: boolean;
     blockInfo?: Record<string, unknown>;
     [key: string]: unknown;
 }

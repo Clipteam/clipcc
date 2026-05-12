@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Blocks from '../../src/engine/blocks.js';
+import Blocks from '../../src/engine/blocks';
 import Clone from '../../src/util/clone';
 import {loadCostume} from '../../src/import/load-costume.js';
 import {loadSound} from '../../src/import/load-sound.js';

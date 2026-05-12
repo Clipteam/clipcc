@@ -7,7 +7,7 @@
 import type Blocks from './blocks';
 import type {VMInput, VMField, VMMutation} from '../serialization/schema';
 
-interface CachedBlockData {
+export interface CachedBlockData {
     id: string;
     opcode: string;
     fields: Record<string, VMField>;
@@ -15,7 +15,7 @@ interface CachedBlockData {
     mutation?: VMMutation;
 }
 
-type CacheType = new (blocks: Blocks, cached: CachedBlockData) => object;
+export type CacheType = new (blocks: Blocks, cached: CachedBlockData) => object;
 
 /**
  * A private method shared with execute to build an object containing the block
@@ -43,7 +43,7 @@ const getCached = function (blocks: Blocks, blockId: string, CacheType?: CacheTy
         id: blockId,
         opcode: blocks.getOpcode(block)!,
         fields: blocks.getFields(block)!,
-        inputs: blocks.getInputs(block),
+        inputs: blocks.getInputs(block)!,
         mutation: blocks.getMutation(block)!
     };
 

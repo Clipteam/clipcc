@@ -6,7 +6,7 @@
 
 import vmPackage from '../../package.json';
 
-import Blocks from '../engine/blocks.js';
+import Blocks from '../engine/blocks';
 import Sprite from '../sprites/sprite';
 import Variable from '../engine/variable';
 import Comment from '../engine/comment';

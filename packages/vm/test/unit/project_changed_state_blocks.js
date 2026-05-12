@@ -250,15 +250,16 @@ test('Deleting a variable should emit a project changed event', t => {
 
 test('Creating a block comment should emit a project changed event', t => {
     blockContainer.blocklyListen({
-        type: 'comment_create',
+        type: 'block_comment_create',
         blockId: 'a new block',
-        commentId: 'a new comment',
-        height: 250,
-        width: 400,
-        x: -40,
-        y: 27,
-        collapsed: false,
-        text: 'comment'
+        commentId: 'a new comment'
+    });
+    blockContainer.blocklyListen({
+        type: 'change',
+        blockId: 'a new block',
+        element: 'comment',
+        name: 'a new comment',
+        newValue: 'comment'
     });
 
     t.equal(projectChanged, true);
@@ -268,32 +269,55 @@ test('Creating a block comment should emit a project changed event', t => {
 test('Creating a workspace comment should emit a project changed event', t => {
     blockContainer.blocklyListen({
         type: 'comment_create',
-        blockId: null,
         commentId: 'a new comment',
-        height: 250,
-        width: 400,
-        x: -40,
-        y: 27,
-        collapsed: false,
-        text: 'comment'
+        json: {
+            height: 250,
+            width: 400,
+            x: -40,
+            y: 27,
+            collapsed: false,
+            text: 'comment'
+        }
     });
 
     t.equal(projectChanged, true);
     t.end();
 });
 
-test('Changing a comment should emit a project changed event', t => {
+test('Changing a workspace comment should emit a project changed event', t => {
     blockContainer.blocklyListen({
         type: 'comment_create',
-        blockId: null,
         commentId: 'a new comment',
-        height: 250,
-        width: 400,
-        x: -40,
-        y: 27,
-        collapsed: false,
-        text: 'comment'
+        json: {
+            height: 250,
+            width: 400,
+            x: -40,
+            y: 27,
+            collapsed: false,
+            text: 'comment'
+        }
     });
+
+    projectChanged = false;
+
+    blockContainer.blocklyListen({
+        type: 'comment_collapse',
+        commentId: 'a new comment',
+        newCollapsed: true
+    });
+
+    t.equal(projectChanged, true);
+
+    projectChanged = false;
+
+    blockContainer.blocklyListen({
+        type: 'comment_resize',
+        commentId: 'a new comment',
+        newSize: {width: 300, height: 100},
+        oldSize: {width: 200, height: 200}
+    });
+
+    t.equal(projectChanged, true);
 
     projectChanged = false;
 
@@ -301,12 +325,73 @@ test('Changing a comment should emit a project changed event', t => {
         type: 'comment_change',
         blockId: null,
         commentId: 'a new comment',
-        newContents_: {
-            collapsed: true
-        },
-        oldContents_: {
-            collapsed: false
-        }
+        newContents_: 'comment',
+        oldContents_: 'commant'
+    });
+
+    t.equal(projectChanged, true);
+
+    t.end();
+});
+
+test('Changing a block comment should emit a project changed event', t => {
+    blockContainer.blocklyListen({
+        type: 'block_comment_create',
+        blockId: 'a new block',
+        commentId: 'a new comment'
+    });
+    blockContainer.blocklyListen({
+        type: 'change',
+        element: 'comment',
+        blockId: 'a new block',
+        name: 'a new comment',
+        newValue: ''
+    });
+
+    projectChanged = false;
+
+    blockContainer.blocklyListen({
+        type: 'change',
+        element: 'comment',
+        blockId: 'a new block',
+        name: 'a new comment',
+        newValue: 'comment',
+        oldValue: ''
+    });
+
+    t.equal(projectChanged, true);
+
+    projectChanged = false;
+
+    blockContainer.blocklyListen({
+        type: 'block_comment_resize',
+        blockId: 'a new block',
+        commentId: 'a new comment',
+        newSize: {width: 300, height: 100},
+        oldSize: {width: 200, height: 200}
+    });
+
+    t.equal(projectChanged, true);
+
+    projectChanged = false;
+
+    blockContainer.blocklyListen({
+        type: 'block_comment_move',
+        blockId: 'a new block',
+        commentId: 'a new comment',
+        newCoordinate_: {x: -35, y: 50},
+        oldCoordinate_: {x: -40, y: 27}
+    });
+
+    t.equal(projectChanged, true);
+
+    projectChanged = false;
+
+    blockContainer.blocklyListen({
+        type: 'block_comment_collapse',
+        blockId: 'a new block',
+        commentId: 'a new comment',
+        newCollapsed: true
     });
 
     t.equal(projectChanged, true);
@@ -318,12 +403,28 @@ test('Attempting to change a comment that does not exist should not emit a proje
         type: 'comment_change',
         blockId: null,
         commentId: 'a new comment',
-        newContents_: {
-            collapsed: true
-        },
-        oldContents_: {
-            collapsed: false
-        }
+        newContents_: 'comment',
+        oldContents_: ''
+    });
+    blockContainer.blocklyListen({
+        type: 'comment_resize',
+        blockId: null,
+        commentId: 'a new comment',
+        newSize: {width: 300, height: 100},
+        oldSize: {width: 200, height: 200}
+    });
+    blockContainer.blocklyListen({
+        type: 'comment_move',
+        blockId: null,
+        commentId: 'a new comment',
+        newCoordinate_: {x: -35, y: 50},
+        oldCoordinate_: {x: -40, y: 27}
+    });
+    blockContainer.blocklyListen({
+        type: 'comment_collapse',
+        blockId: null,
+        commentId: 'a new comment',
+        newCollapsed: true
     });
 
     t.equal(projectChanged, false);
@@ -332,29 +433,31 @@ test('Attempting to change a comment that does not exist should not emit a proje
 
 test('Deleting a block comment should emit a project changed event', t => {
     blockContainer.blocklyListen({
-        type: 'comment_create',
+        type: 'block_comment_create',
         blockId: 'a new block',
-        commentId: 'a new comment',
-        height: 250,
-        width: 400,
-        x: -40,
-        y: 27,
-        collapsed: false,
-        text: 'comment'
+        commentId: 'a new comment'
+    });
+    blockContainer.blocklyListen({
+        type: 'change',
+        element: 'comment',
+        blockId: 'a new block',
+        name: 'a new comment',
+        newValue: ''
     });
 
     projectChanged = false;
 
     blockContainer.blocklyListen({
-        type: 'comment_delete',
+        type: 'block_comment_delete',
         blockId: 'a new block',
-        commentId: 'a new comment',
-        height: 250,
-        width: 400,
-        x: -40,
-        y: 27,
-        collapsed: false,
-        text: 'comment'
+        commentId: 'a new comment'
+    });
+    blockContainer.blocklyListen({
+        type: 'change',
+        element: 'comment',
+        blockId: 'a new block',
+        name: 'a new comment',
+        newValue: null
     });
 
     t.equal(projectChanged, true);
@@ -364,28 +467,30 @@ test('Deleting a block comment should emit a project changed event', t => {
 test('Deleting a workspace comment should emit a project changed event', t => {
     blockContainer.blocklyListen({
         type: 'comment_create',
-        blockId: null,
         commentId: 'a new comment',
-        height: 250,
-        width: 400,
-        x: -40,
-        y: 27,
-        collapsed: false,
-        text: 'comment'
+        json: {
+            height: 250,
+            width: 400,
+            x: -40,
+            y: 27,
+            collapsed: false,
+            text: 'comment'
+        }
     });
 
     projectChanged = false;
 
     blockContainer.blocklyListen({
         type: 'comment_delete',
-        blockId: null,
         commentId: 'a new comment',
-        height: 250,
-        width: 400,
-        x: -40,
-        y: 27,
-        collapsed: false,
-        text: 'comment'
+        json: {
+            height: 250,
+            width: 400,
+            x: -40,
+            y: 27,
+            collapsed: false,
+            text: 'comment'
+        }
     });
 
     t.equal(projectChanged, true);
@@ -395,14 +500,15 @@ test('Deleting a workspace comment should emit a project changed event', t => {
 test('Deleting a comment that does not exist should not emit a project changed event', t => {
     blockContainer.blocklyListen({
         type: 'comment_delete',
-        blockId: null,
         commentId: 'a new comment',
-        height: 250,
-        width: 400,
-        x: -40,
-        y: 27,
-        collapsed: false,
-        text: 'comment'
+        json: {
+            height: 250,
+            width: 400,
+            x: -40,
+            y: 27,
+            collapsed: false,
+            text: 'comment'
+        }
     });
 
     t.equal(projectChanged, false);
@@ -414,28 +520,23 @@ test('Moving a comment should emit a project changed event', t => {
         type: 'comment_create',
         blockId: null,
         commentId: 'a new comment',
-        height: 250,
-        width: 400,
-        x: -40,
-        y: 27,
-        collapsed: false,
-        text: 'comment'
+        json: {
+            height: 250,
+            width: 400,
+            x: -40,
+            y: 27,
+            collapsed: false,
+            text: 'comment'
+        }
     });
 
     projectChanged = false;
 
     blockContainer.blocklyListen({
         type: 'comment_move',
-        blockId: null,
         commentId: 'a new comment',
-        oldCoordinate_: {
-            x: -40,
-            y: 27
-        },
-        newCoordinate_: {
-            x: -35,
-            y: 50
-        }
+        newCoordinate_: {x: -35, y: 50},
+        oldCoordinate_: {x: -40, y: 27}
     });
 
     t.equal(projectChanged, true);

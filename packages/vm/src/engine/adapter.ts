@@ -306,7 +306,8 @@ const stateToBlocks = function (blocksState: BlockState | BlockState[]): VMBlock
     return blocksList;
 };
 
-type AdaptableEvents = (ClipCCBlocks.Events.BlockCreate | ClipCCBlocks.BlockDragEnd) & {xml?: { outerHTML: string }};
+export type AdaptableEvents =
+    (ClipCCBlocks.Events.BlockCreate | ClipCCBlocks.BlockDragEnd) & {xml?: { outerHTML: string }};
 
 /**
  * Adapter between block creation events and block representation which can be

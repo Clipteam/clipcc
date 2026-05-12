@@ -87,10 +87,12 @@
     },
     "createcommentUpdatePosition": {
         "name": "comment",
-        "type": "comment_create",
+        "type": "comment_move",
         "commentId": "a comment",
-        "x": 10,
-        "y": 20
+        "newCoordinate_": {
+            "x": 10,
+            "y": 20
+        }
     },
     "mockVariableBlock": {
         "name": "block",

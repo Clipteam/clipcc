@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import {OrderedMap} from 'immutable';
 import ArgumentType from '../extension-support/argument-type';
-import Blocks from './blocks.js';
+import Blocks from './blocks';
 import {getScripts as getCachedScriptsByOpcode} from './blocks-runtime-cache';
 import BlockType from '../extension-support/block-type';
 import Profiler from './profiler';
@@ -502,7 +502,6 @@ class Runtime extends EventEmitter {
         /**
          * Map to look up all monitor block information by opcode.
          * @type {Record<string, MonitorBlockInfo>}
-         * @private
          */
         this.monitorBlockInfo = {};
 

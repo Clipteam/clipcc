@@ -239,8 +239,21 @@ export type * as variableModel from './variable_model';
 export {reportValue} from './report_value';
 export {Colours} from './theme';
 export {BlockDragEnd} from './events/block_drag_end';
+export {BlockDragOutside} from './events/block_drag_outside';
+export {FuncChange} from './events/func_change';
+export {FuncCreate} from './events/func_create';
+export {FuncDelete} from './events/func_delete';
+export {BlockCommentCreate} from './events/block_comment_create';
+export {BlockCommentDelete} from './events/block_comment_delete';
+export {BlockCommentMove} from './events/block_comment_move';
+export {BlockCommentResize} from './events/block_comment_resize';
+export {BlockCommentCollapse} from './events/block_comment_collapse';
+export {BlockChange} from './events/block_change';
+export {VarCreate} from './events/var_create';
+export {VarDelete} from './events/var_delete';
 export * as Theme from './theme';
 export {glowStack} from './glow';
+export type {BlockCommentState} from './block_comment_icon';
 
 export {
   FieldAngle,

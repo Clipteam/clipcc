@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Blocks from '../../src/engine/blocks.js';
+import Blocks from '../../src/engine/blocks';
 import BlockUtility from '../../src/engine/block-utility';
 import Event from '../../src/blocks/scratch3_event';
 import Runtime from '../../src/engine/runtime.js';

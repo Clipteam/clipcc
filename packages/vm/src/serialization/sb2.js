@@ -9,7 +9,7 @@
  * @typedef {number} int
  */
 
-import Blocks from '../engine/blocks.js';
+import Blocks from '../engine/blocks';
 import RenderedTarget from '../sprites/rendered-target.js';
 import Sprite from '../sprites/sprite';
 import Color from '../util/color';
