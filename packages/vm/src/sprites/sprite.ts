@@ -42,9 +42,9 @@ export interface Costume {
     dataFormat?: DataFormat;
     broken?: {
         asset: Asset;
-        assetId: AssetId;
+        assetId?: AssetId;
         md5: string;
-        dataFormat: DataFormat;
+        dataFormat?: DataFormat;
         rotationCenterX: number;
         rotationCenterY: number;
         bitmapResolution: number;
@@ -53,13 +53,29 @@ export interface Costume {
 
 export interface Sound {
     name: string;
+    assetId?: AssetId;
     soundId: string;
     rate: number;
+    format?: string;
+    dataFormat?: DataFormat;
     sampleCount: number;
+    /**
+     * sound data will be written here once loaded.
+     */
+    data: ArrayBuffer;
     asset: Asset;
     broken?: {
+        assetId?: AssetId;
         asset: Asset;
+        md5: string;
+        dataFormat?: DataFormat;
+        rate: number;
+        format?: string;
+        sampleCount: number;
     };
+    /**
+     * the MD5 and extension of the sound to be loaded.
+     */
     md5: string;
 }
 
@@ -212,7 +228,7 @@ class Sprite {
         newSprite.sounds = this.sounds.map(sound => {
             const newSound = Object.assign({}, sound);
             const soundAsset = sound.asset;
-            assetPromises.push(loadSoundFromAsset(newSound, soundAsset, this.runtime, newSprite.soundBank));
+            assetPromises.push(loadSoundFromAsset(newSound, soundAsset, this.runtime, newSprite.soundBank!));
             return newSound;
         });
 

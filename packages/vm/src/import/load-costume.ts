@@ -285,9 +285,9 @@ const handleCostumeLoadError = function (costume: Costume, runtime: Runtime) {
     return defaultCostumePromise.then(loadedCostume => {
         loadedCostume.broken = {
             asset: oldAsset,
-            assetId: oldAssetId!,
+            assetId: oldAssetId,
             md5: `${oldAssetId}.${oldDataFormat}`,
-            dataFormat: oldDataFormat!,
+            dataFormat: oldDataFormat,
             rotationCenterX: oldRotationX,
             rotationCenterY: oldRotationY,
             bitmapResolution: oldBitmapResolution

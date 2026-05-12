@@ -217,7 +217,7 @@ class AudioEngine {
      *
      * @param {object} sound - an object containing audio data and metadata for
      *     a sound
-     * @param {Buffer} sound.data - sound data loaded from scratch-storage
+     * @param {ArrayBuffer} sound.data - sound data loaded from scratch-storage
      * @returns {?Promise} - a promise which will resolve to the buffer
      */
     decodeSoundPlayer (sound) {
