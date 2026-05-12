@@ -1,4 +1,5 @@
 import EventEmitter from 'events';
+
 import Blocks from './blocks';
 import Variable from '../engine/variable';
 import Comment from '../engine/comment';
@@ -8,9 +9,18 @@ import log from '../util/log';
 import StringUtil from '../util/string-util';
 import VariableUtil from '../util/variable-util';
 
+import type Runtime from './runtime';
+import type RenderedTarget from '../sprites/rendered-target';
+import type {VarReference} from '../util/variable-util';
+import type {VMBlock} from '../serialization/schema';
+
 /**
- * @typedef {import('./runtime').default} Runtime
+ * Events that can be emitted by Target (including subclasses like RenderedTarget).
  */
+interface TargetEvents {
+    'EVENT_TARGET_MOVED': [target: RenderedTarget, oldX: number, oldY: number, force: boolean];
+    'EVENT_TARGET_VISUAL_CHANGE': [target: RenderedTarget];
+}
 
 /**
  * @fileoverview
@@ -18,86 +28,84 @@ import VariableUtil from '../util/variable-util';
  * Examples include sprites/clones or potentially physical-world devices.
  */
 
-class Target extends EventEmitter {
+abstract class Target extends EventEmitter<TargetEvents> {
+    /**
+     * Reference to the runtime.
+     */
+    runtime: Runtime;
+    /**
+     * A unique ID for this target.
+     */
+    id: string;
+    /**
+     * Blocks run as code for this target.
+     */
+    blocks: Blocks;
+    /**
+     * Dictionary of variables and their values for this target.
+     * Key is the variable id.
+     */
+    variables: Record<string, Variable> = {};
+    /**
+     * Dictionary of comments for this target.
+     * Key is the comment id.
+     */
+    comments: Record<string, Comment> = {};
+    /**
+     * Dictionary of custom state for this target.
+     * This can be used to store target-specific custom state for blocks which need it.
+     * TODO: do we want to persist this in SB3 files?
+     */
+    _customState: Record<string, unknown> = {};
 
     /**
-     * @param {Runtime} runtime Reference to the runtime.
-     * @param {?Blocks} blocks Blocks instance for the blocks owned by this target.
-     * @class
+     * Currently known values for edge-activated hats.
+     * Keys are block ID for the hat; values are the currently known values.
      */
-    constructor (runtime, blocks) {
+    _edgeActivatedHatValues: Record<string, unknown> = {};
+
+    /**
+     * Whether this target is the stage. Set by subclasses.
+     */
+    isStage!: boolean;
+
+    /**
+     * @param runtime Reference to the runtime.
+     * @param blocks Blocks instance for the blocks owned by this target.
+     */
+    constructor (runtime: Runtime, blocks: Blocks | null) {
         super();
 
         if (!blocks) {
             blocks = new Blocks(runtime);
         }
-
-        /**
-         * Reference to the runtime.
-         * @type {Runtime}
-         */
         this.runtime = runtime;
-        /**
-         * A unique ID for this target.
-         * @type {string}
-         */
         this.id = uid();
-        /**
-         * Blocks run as code for this target.
-         * @type {!Blocks}
-         */
         this.blocks = blocks;
-        /**
-         * Dictionary of variables and their values for this target.
-         * Key is the variable id.
-         * @type {Record<string,*>}
-         */
-        this.variables = {};
-        /**
-         * Dictionary of comments for this target.
-         * Key is the comment id.
-         * @type {Record<string,*>}
-         */
-        this.comments = {};
-        /**
-         * Dictionary of custom state for this target.
-         * This can be used to store target-specific custom state for blocks which need it.
-         * TODO: do we want to persist this in SB3 files?
-         * @type {Record<string,*>}
-         */
-        this._customState = {};
-
-        /**
-         * Currently known values for edge-activated hats.
-         * Keys are block ID for the hat; values are the currently known values.
-         * @type {Record<string, *>}
-         */
-        this._edgeActivatedHatValues = {};
     }
 
     /**
      * Called when the project receives a "green flag."
-     * @abstract
      */
-    onGreenFlag () {}
+    abstract onGreenFlag (): void;
 
     /**
      * Return a human-readable name for this target.
      * Target implementations should override this.
      * @abstract
-     * @returns {string} Human-readable name for the target.
+     * @returns Human-readable name for the target.
      */
-    getName () {
+    getName (): string {
         return this.id;
     }
 
     /**
      * Update an edge-activated hat block value.
-     * @param {!string} blockId ID of hat to store value for.
-     * @param {*} newValue Value to store for edge-activated hat.
-     * @returns {*} The old value for the edge-activated hat.
+     * @param blockId ID of hat to store value for.
+     * @param newValue Value to store for edge-activated hat.
+     * @returns The old value for the edge-activated hat.
      */
-    updateEdgeActivatedValue (blockId, newValue) {
+    updateEdgeActivatedValue (blockId: string, newValue: unknown): unknown {
         const oldValue = this._edgeActivatedHatValues[blockId];
         this._edgeActivatedHatValues[blockId] = newValue;
         return oldValue;
@@ -105,15 +113,15 @@ class Target extends EventEmitter {
 
     /**
      * Whether the block has edge-activated value.
-     * @param {string} blockId The block id.
-     * @returns {boolean} Whether the block has edge-activated value.
+     * @param blockId The block id.
+     * @returns Whether the block has edge-activated value.
      */
-    hasEdgeActivatedValue (blockId) {
+    hasEdgeActivatedValue (blockId: string): boolean {
         return Object.prototype.hasOwnProperty.call(this._edgeActivatedHatValues, blockId);
     }
 
     /**
-     * Clear all edge-activaed hat values.
+     * Clear all edge-activated hat values.
      */
     clearEdgeActivatedValues () {
         this._edgeActivatedHatValues = {};
@@ -122,12 +130,12 @@ class Target extends EventEmitter {
     /**
      * Look up a variable object, first by id, and then by name if the id is not found.
      * Create a new variable if both lookups fail.
-     * @param {string} id Id of the variable.
-     * @param {string} name Name of the variable.
-     * @returns {!Variable} Variable object.
+     * @param id Id of the variable.
+     * @param name Name of the variable.
+     * @returns Variable object.
      */
-    lookupOrCreateVariable (id, name) {
-        let variable = this.lookupVariableById(id);
+    lookupOrCreateVariable (id: string, name: string): Variable {
+        let variable: Variable | null | undefined = this.lookupVariableById(id);
         if (variable) return variable;
 
         variable = this.lookupVariableByNameAndType(name, Variable.SCALAR_TYPE);
@@ -142,11 +150,11 @@ class Target extends EventEmitter {
     /**
      * Look up a broadcast message object with the given id and return it
      * if it exists.
-     * @param {string} id Id of the variable.
-     * @param {string} name Name of the variable.
-     * @returns {Variable | undefined} Variable object.
+     * @param id Id of the variable.
+     * @param name Name of the variable.
+     * @returns Variable object.
      */
-    lookupBroadcastMsg (id, name) {
+    lookupBroadcastMsg (id: string, name: string): Variable | undefined {
         let broadcastMsg;
         if (id) {
             broadcastMsg = this.lookupVariableById(id);
@@ -172,10 +180,10 @@ class Target extends EventEmitter {
      * Look up a broadcast message with the given name and return the variable
      * if it exists. Does not create a new broadcast message variable if
      * it doesn't exist.
-     * @param {string} name Name of the variable.
-     * @returns {Variable | undefined} Variable object.
+     * @param name Name of the variable.
+     * @returns Variable object.
      */
-    lookupBroadcastByInputValue (name) {
+    lookupBroadcastByInputValue (name: string): Variable | undefined {
         const vars = this.variables;
         for (const propName in vars) {
             if ((vars[propName].type === Variable.BROADCAST_MESSAGE_TYPE) &&
@@ -188,10 +196,10 @@ class Target extends EventEmitter {
     /**
      * Look up a variable object.
      * Search begins for local variables; then look for globals.
-     * @param {string} id Id of the variable.
-     * @returns {Variable | undefined} Variable object.
+     * @param id Id of the variable.
+     * @returns Variable object.
      */
-    lookupVariableById (id) {
+    lookupVariableById (id: string): Variable | undefined {
         // If we have a local copy, return it.
         if (Object.prototype.hasOwnProperty.call(this.variables, id)) {
             return this.variables[id];
@@ -209,12 +217,12 @@ class Target extends EventEmitter {
      * Look up a variable object by its name and variable type.
      * Search begins with local variables; then global variables if a local one
      * was not found.
-     * @param {string} name Name of the variable.
-     * @param {string} type Type of the variable. Defaults to Variable.SCALAR_TYPE.
-     * @param {boolean=} skipStage Optional flag to skip checking the stage
-     * @returns {?Variable} Variable object if found, or null if not.
+     * @param name Name of the variable.
+     * @param type Type of the variable. Defaults to Variable.SCALAR_TYPE.
+     * @param skipStage Optional flag to skip checking the stage
+     * @returns Variable object if found, or null if not.
      */
-    lookupVariableByNameAndType (name, type, skipStage) {
+    lookupVariableByNameAndType (name: string, type: string, skipStage?: boolean) {
         if (typeof name !== 'string') return;
         if (typeof type !== 'string') type = Variable.SCALAR_TYPE;
         skipStage = skipStage || false;
@@ -244,12 +252,12 @@ class Target extends EventEmitter {
     /**
      * Look up a list object for this target, and create it if one doesn't exist.
      * Search begins for local lists; then look for globals.
-     * @param {!string} id Id of the list.
-     * @param {!string} name Name of the list.
-     * @returns {Variable} Variable object representing the found/created list.
+     * @param id Id of the list.
+     * @param name Name of the list.
+     * @returns Variable object representing the found/created list.
      */
-    lookupOrCreateList (id, name) {
-        let list = this.lookupVariableById(id);
+    lookupOrCreateList (id: string, name: string): Variable {
+        let list: Variable | null | undefined = this.lookupVariableById(id);
         if (list) return list;
 
         list = this.lookupVariableByNameAndType(name, Variable.LIST_TYPE);
@@ -264,15 +272,15 @@ class Target extends EventEmitter {
     /**
      * Creates a variable with the given id and name and adds it to the
      * dictionary of variables.
-     * @param {string} id Id of variable
-     * @param {string} name Name of variable.
-     * @param {string} type Type of variable, '', 'broadcast_msg', or 'list'
-     * @param {boolean} [isCloud] Whether the variable to create has the isCloud flag set.
+     * @param id Id of variable
+     * @param name Name of variable.
+     * @param type Type of variable, '', 'broadcast_msg', or 'list'
+     * @param isCloud Whether the variable to create has the isCloud flag set.
      * Additional checks are made that the variable can be created as a cloud variable.
      */
-    createVariable (id, name, type, isCloud) {
+    createVariable (id: string, name: string, type: string, isCloud?: boolean) {
         if (!Object.prototype.hasOwnProperty.call(this.variables, id)) {
-            const newVariable = new Variable(id, name, type, false);
+            const newVariable = new Variable(id, name, type as Variable['type'], false);
             if (isCloud && this.isStage && this.runtime.canAddCloudVariable()) {
                 newVariable.isCloud = true;
                 this.runtime.addCloudVariable();
@@ -284,17 +292,18 @@ class Target extends EventEmitter {
 
     /**
      * Creates a comment with the given properties.
-     * @param {string} id Id of the comment.
-     * @param {string} [blockId] Optional id of the block the comment is attached
+     * @param id Id of the comment.
+     * @param blockId Optional id of the block the comment is attached
      * to if it is a block comment.
-     * @param {string} text The text the comment contains.
-     * @param {number} x The x coordinate of the comment on the workspace.
-     * @param {number} y The y coordinate of the comment on the workspace.
-     * @param {number} width The width of the comment when it is full size
-     * @param {number} height The height of the comment when it is full size
-     * @param {boolean} minimized Whether the comment is minimized.
+     * @param text The text the comment contains.
+     * @param x The x coordinate of the comment on the workspace.
+     * @param y The y coordinate of the comment on the workspace.
+     * @param width The width of the comment when it is full size
+     * @param height The height of the comment when it is full size
+     * @param minimized Whether the comment is minimized.
      */
-    createComment (id, blockId, text, x, y, width, height, minimized) {
+    createComment (id: string, blockId: string | undefined, text: string,
+        x: number, y: number, width: number, height: number, minimized: boolean) {
         if (!Object.prototype.hasOwnProperty.call(this.comments, id)) {
             const newComment = new Comment(id, text, x, y,
                 width, height, minimized);
@@ -314,10 +323,10 @@ class Target extends EventEmitter {
 
     /**
      * Renames the variable with the given id to newName.
-     * @param {string} id Id of variable to rename.
-     * @param {string} newName New name for the variable.
+     * @param id Id of variable to rename.
+     * @param newName New name for the variable.
      */
-    renameVariable (id, newName) {
+    renameVariable (id: string, newName: string) {
         if (Object.prototype.hasOwnProperty.call(this.variables, id)) {
             const variable = this.variables[id];
             if (variable.id === id) {
@@ -366,9 +375,9 @@ class Target extends EventEmitter {
 
     /**
      * Removes the variable with the given id from the dictionary of variables.
-     * @param {string} id Id of variable to delete.
+     * @param id Id of variable to delete.
      */
-    deleteVariable (id) {
+    deleteVariable (id: string) {
         if (Object.prototype.hasOwnProperty.call(this.variables, id)) {
             // Get info about the variable before deleting it
             const deletedVariableName = this.variables[id].name;
@@ -392,7 +401,7 @@ class Target extends EventEmitter {
      */
     deleteMonitors () {
         this.runtime.requestRemoveMonitorByTargetId(this.id);
-        let targetSpecificMonitorBlockIds;
+        let targetSpecificMonitorBlockIds: string[];
         if (this.isStage) {
             // This only deletes global variables and not other stage monitors like backdrop number.
             targetSpecificMonitorBlockIds = Object.keys(this.variables);
@@ -408,13 +417,13 @@ class Target extends EventEmitter {
     /**
      * Create a clone of the variable with the given id from the dictionary of
      * this target's variables.
-     * @param {string} id Id of variable to duplicate.
-     * @param {boolean=} optKeepOriginalId Optional flag to keep the original variable ID
+     * @param id Id of variable to duplicate.
+     * @param optKeepOriginalId Optional flag to keep the original variable ID
      * for the duplicate variable. This is necessary when cloning a sprite, for example.
-     * @returns {?Variable} The duplicated variable, or null if
+     * @returns The duplicated variable, or null if
      * the original variable was not found.
      */
-    duplicateVariable (id, optKeepOriginalId) {
+    duplicateVariable (id: string, optKeepOriginalId?: boolean): Variable | null {
         if (Object.prototype.hasOwnProperty.call(this.variables, id)) {
             const originalVariable = this.variables[id];
             const newVariable = new Variable(
@@ -434,20 +443,20 @@ class Target extends EventEmitter {
     }
 
     /**
-     * Duplicate the dictionary of this target's variables as part of duplicating.
+     * Duplicate the dictionary of this target's variables as part of duplicating
      * this target or making a clone.
-     * @param {object=} optBlocks Optional block container for the target being duplicated.
+     * @param optBlocks Optional block container for the target being duplicated.
      * If provided, new variables will be generated with new UIDs and any variable references
      * in this blocks container will be updated to refer to the corresponding new IDs.
-     * @returns {object} The duplicated dictionary of variables
+     * @returns The duplicated dictionary of variables
      */
-    duplicateVariables (optBlocks) {
-        let allVarRefs;
+    duplicateVariables (optBlocks?: Blocks | null): Record<string, Variable> {
+        let allVarRefs: Record<string, VarReference[]> | undefined;
         if (optBlocks) {
             allVarRefs = optBlocks.getAllVariableAndListReferences();
         }
-        return Object.keys(this.variables).reduce((accum, varId) => {
-            const newVariable = this.duplicateVariable(varId, !optBlocks);
+        return Object.keys(this.variables).reduce<Record<string, Variable>>((accum, varId) => {
+            const newVariable = this.duplicateVariable(varId, !optBlocks)!;
             accum[newVariable.id] = newVariable;
             if (optBlocks && allVarRefs) {
                 const currVarRefs = allVarRefs[varId];
@@ -461,27 +470,25 @@ class Target extends EventEmitter {
 
     /**
      * Post/edit sprite info.
-     * @param {object} data An object with sprite info data to set.
-     * @abstract
+     * @param data An object with sprite info data to set.
      */
-    // eslint-disable-next-line no-unused-vars
-    postSpriteInfo (data) {}
+    abstract postSpriteInfo (data: Record<string, unknown>): void;
 
     /**
      * Retrieve custom state associated with this target and the provided state ID.
-     * @param {string} stateId - specify which piece of state to retrieve.
-     * @returns {*} the associated state, if any was found.
+     * @param stateId - specify which piece of state to retrieve.
+     * @returns the associated state, if any was found.
      */
-    getCustomState (stateId) {
+    getCustomState (stateId: string) {
         return this._customState[stateId];
     }
 
     /**
      * Store custom state associated with this target and the provided state ID.
-     * @param {string} stateId - specify which piece of state to store on this target.
-     * @param {*} newValue - the state value to store.
+     * @param stateId - specify which piece of state to store on this target.
+     * @param newValue - the state value to store.
      */
-    setCustomState (stateId, newValue) {
+    setCustomState (stateId: string, newValue: unknown) {
         this._customState[stateId] = newValue;
     }
 
@@ -493,7 +500,7 @@ class Target extends EventEmitter {
         this._customState = {};
 
         if (this.runtime) {
-            this.runtime.removeExecutable(this);
+            this.runtime.removeExecutable(this as unknown as RenderedTarget);
         }
     }
 
@@ -504,11 +511,11 @@ class Target extends EventEmitter {
      * For targets that are not the stage, this includes any target-specific
      * variables as well as any stage variables unless the skipStage flag is true.
      * For the stage, this is all stage variables.
-     * @param {string} type The variable type to search for; defaults to Variable.SCALAR_TYPE
-     * @param {?boolean} skipStage Optional flag to skip the stage.
-     * @returns {Array<string>} A list of variable names
+     * @param type The variable type to search for; defaults to Variable.SCALAR_TYPE
+     * @param skipStage Optional flag to skip the stage.
+     * @returns A list of variable names
      */
-    getAllVariableNamesInScopeByType (type, skipStage) {
+    getAllVariableNamesInScopeByType (type: string, skipStage?: boolean): string[] {
         if (typeof type !== 'string') type = Variable.SCALAR_TYPE;
         skipStage = skipStage || false;
         const targetVariables = Object.values(this.variables)
@@ -518,21 +525,27 @@ class Target extends EventEmitter {
             return targetVariables;
         }
         const stage = this.runtime.getTargetForStage();
+        if (!stage) return targetVariables;
         const stageVariables = stage.getAllVariableNamesInScopeByType(type);
         return targetVariables.concat(stageVariables);
     }
 
     /**
      * Merge variable references with another variable.
-     * @param {string} idToBeMerged ID of the variable whose references need to be updated
-     * @param {string} idToMergeWith ID of the variable that the old references should be replaced with
-     * @param {?Array<object>} optReferencesToUpdate Optional context of the change.
+     * @param idToBeMerged ID of the variable whose references need to be updated
+     * @param idToMergeWith ID of the variable that the old references should be replaced with
+     * @param optReferencesToUpdate Optional context of the change.
      * Defaults to all the blocks in this target.
-     * @param {?string} optNewName New variable name to merge with. The old
+     * @param optNewName New variable name to merge with. The old
      * variable name in the references being updated should be replaced with this new name.
      * If this parameter is not provided or is '', no name change occurs.
      */
-    mergeVariables (idToBeMerged, idToMergeWith, optReferencesToUpdate, optNewName) {
+    mergeVariables (
+        idToBeMerged: string,
+        idToMergeWith: string,
+        optReferencesToUpdate?: VarReference[],
+        optNewName?: string
+    ) {
         const referencesToChange = optReferencesToUpdate ||
             // TODO should there be a separate helper function that traverses the blocks
             // for all references for a given ID instead of doing the below..?
@@ -543,12 +556,12 @@ class Target extends EventEmitter {
 
     /**
      * Share a local variable (and given references for that variable) to the stage.
-     * @param {string} varId The ID of the variable to share.
-     * @param {Array<object>} varRefs The list of variable references being shared,
+     * @param varId The ID of the variable to share.
+     * @param varRefs The list of variable references being shared,
      * that reference the given variable ID. The names and IDs of these variable
      * references will be updated to refer to the new (or pre-existing) global variable.
      */
-    shareLocalVariableToStage (varId, varRefs) {
+    shareLocalVariableToStage (varId: string, varRefs: VarReference[]) {
         if (!this.runtime) return;
         const variable = this.variables[varId];
         if (!variable) {
@@ -564,7 +577,7 @@ class Target extends EventEmitter {
         // First check if we've already done the local to global transition for this
         // variable. If we have, merge it with the global variable we've already created.
         const varIdForStage = `StageVarFromLocal_${varId}`;
-        let stageVar = stage.lookupVariableById(varIdForStage);
+        let stageVar = stage?.lookupVariableById(varIdForStage);
         // If a global var doesn't already exist, create a new one with a fresh name.
         // Use the ID we created above so that we can lookup this new variable in the
         // future if we decide to share this same variable again.
@@ -582,11 +595,11 @@ class Target extends EventEmitter {
     /**
      * Share a local variable with a sprite, merging with one of the same name and
      * type if it already exists on the sprite, or create a new one.
-     * @param {string} varId Id of the variable to share
-     * @param {Target} sprite The sprite to share the variable with
-     * @param {Array<object>} varRefs A list of all the variable references currently being shared.
+     * @param varId Id of the variable to share
+     * @param sprite The sprite to share the variable with
+     * @param varRefs A list of all the variable references currently being shared.
      */
-    shareLocalVariableToSprite (varId, sprite, varRefs) {
+    shareLocalVariableToSprite (varId: string, sprite: Target, varRefs: VarReference[]) {
         if (!this.runtime) return;
         if (this.isStage) return;
         const variable = this.variables[varId];
@@ -599,11 +612,11 @@ class Target extends EventEmitter {
         // Check if the receiving sprite already has a variable of the same name and type
         // and use the existing variable, otherwise create a new one.
         const existingLocalVar = sprite.lookupVariableByNameAndType(varName, varType);
-        let newVarId;
+        let newVarId: string;
         if (existingLocalVar) {
             newVarId = existingLocalVar.id;
         } else {
-            const newVar = new Variable(null, varName, varType);
+            const newVar = new Variable(null, varName, varType, false);
             newVarId = newVar.id;
             sprite.variables[newVarId] = newVar;
         }
@@ -633,11 +646,11 @@ class Target extends EventEmitter {
      * Create a new global variable with a fresh name and update all the referencing
      * fields to reference the new variable.
      *
-     * @param {Array<object>} blocks The blocks containing
+     * @param blocks The blocks containing
      * potential conflicting references to variables.
-     * @param {Target} receivingTarget The target receiving the variables
+     * @param receivingTarget The target receiving the variables
      */
-    resolveVariableSharingConflictsWithTarget (blocks, receivingTarget) {
+    resolveVariableSharingConflictsWithTarget (blocks: Record<string, VMBlock>, receivingTarget: Target) {
         if (this.isStage) return;
 
         // Get all the variable references in the given list of blocks
@@ -687,7 +700,7 @@ class Target extends EventEmitter {
         const stage = this.runtime.getTargetForStage();
         if (!stage || !stage.variables) return;
 
-        const renameConflictingLocalVar = (id, name, type) => {
+        const renameConflictingLocalVar = (id: string, name: string, type: string): string | null => {
             const conflict = stage.lookupVariableByNameAndType(name, type);
             if (conflict) {
                 const newName = StringUtil.unusedName(
@@ -700,20 +713,20 @@ class Target extends EventEmitter {
         };
 
         const allReferences = this.blocks.getAllVariableAndListReferences();
-        const unreferencedLocalVarIds = [];
+        const unreferencedLocalVarIds: string[] = [];
         if (Object.keys(this.variables).length > 0) {
             for (const localVarId in this.variables) {
                 if (!Object.prototype.hasOwnProperty.call(this.variables, localVarId)) continue;
                 if (!allReferences[localVarId]) unreferencedLocalVarIds.push(localVarId);
             }
         }
-        const conflictIdsToReplace = Object.create(null);
-        const conflictNamesToReplace = Object.create(null);
+        const conflictIdsToReplace: Record<string, string> = Object.create(null);
+        const conflictNamesToReplace: Record<string, string> = Object.create(null);
 
         // Cache the list of all variable names by type so that we don't need to
         // re-calculate this in every iteration of the following loop.
-        const varNamesByType = {};
-        const allVarNames = type => {
+        const varNamesByType: Record<string, string[]> = {};
+        const allVarNames = (type: string): string[] => {
             const namesOfType = varNamesByType[type];
             if (namesOfType) return namesOfType;
             varNamesByType[type] = this.runtime.getAllVarNamesOfType(type);
@@ -738,7 +751,7 @@ class Target extends EventEmitter {
                         // We are not calling this.blocks.updateBlocksAfterVarRename
                         // here because it will search through all the blocks. We already
                         // have access to all the references for this var id.
-                        allReferences[varId].map(ref => {
+                        allReferences[varId].map((ref: VarReference) => {
                             ref.referencingField.value = newVarName;
                             return ref;
                         });
@@ -779,7 +792,7 @@ class Target extends EventEmitter {
         // Handle global var conflicts with existing global vars (e.g. a sprite is uploaded, and has
         // blocks referencing some variable that the sprite does not own, and this
         // variable conflicts with a global var)
-        // In this case, we want to merge the new variable referenes with the
+        // In this case, we want to merge the new variable references with the
         // existing global variable
         for (const conflictId in conflictIdsToReplace) {
             const existingId = conflictIdsToReplace[conflictId];
@@ -787,15 +800,15 @@ class Target extends EventEmitter {
             this.mergeVariables(conflictId, existingId, referencesToUpdate);
         }
 
-        // Handle global var conflicts existing local vars (e.g a sprite is uploaded,
+        // Handle global var conflicts with existing local vars (e.g a sprite is uploaded,
         // and has blocks referencing some variable that the sprite does not own, and this
-        // variable conflcits with another sprite's local var).
+        // variable conflicts with another sprite's local var).
         // In this case, we want to go through the variable references and update
         // the name of the variable in that reference.
         for (const conflictId in conflictNamesToReplace) {
             const newName = conflictNamesToReplace[conflictId];
             const referencesToUpdate = allReferences[conflictId];
-            referencesToUpdate.map(ref => {
+            referencesToUpdate.map((ref: VarReference) => {
                 ref.referencingField.value = newName;
                 return ref;
             });

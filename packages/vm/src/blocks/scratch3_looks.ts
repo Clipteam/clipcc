@@ -8,7 +8,7 @@ import MathUtil from '../util/math-util';
 import type {BlockArgs, CategoryPrototype} from './category_prototype';
 import type Runtime from '../engine/runtime';
 import type BlockUtility from '../engine/block-utility';
-import type Target from '../engine/target.js';
+import type Target from '../engine/target';
 import type {MonitorBlockInfo} from '../engine/runtime';
 import type Thread from '../engine/thread';
 import type {BaseExecutionContext} from '../engine/block-utility';
@@ -126,7 +126,7 @@ class Scratch3LooksBlocks implements CategoryPrototype {
             bubbleState = Clone.simple(Scratch3LooksBlocks.DEFAULT_BUBBLE_STATE);
             target.setCustomState(Scratch3LooksBlocks.STATE_KEY, bubbleState);
         }
-        return bubbleState;
+        return bubbleState as BubbleState;
     }
 
     /**

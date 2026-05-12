@@ -613,7 +613,7 @@ class Blocks {
                     return;
                 }
                 const comment = currTarget!.comments[e.commentId!];
-                comment.minimized = e.newCollapsed;
+                comment.minimized = !!e.newCollapsed;
                 this.emitProjectChanged();
             }
             break;
@@ -1072,6 +1072,9 @@ class Blocks {
      * @param newText New text for comment
      */
     changeCommentText (commentId: string, newText: string | undefined) {
+        // if newText is undefined, it's indicates that the comment is being deleted
+        // it will be handled by `block_comment_delete` event, so we can ignore it here.
+        if (!newText) return;
         const currTarget = this.runtime.getEditingTarget();
         if (!currTarget) return;
         if (!Object.prototype.hasOwnProperty.call(currTarget.comments, commentId)) {

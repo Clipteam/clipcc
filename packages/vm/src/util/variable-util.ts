@@ -4,7 +4,7 @@ import type {VMField} from '../serialization/schema';
 
 type VarRefMap = Record<string, string[]>;
 
-interface VarReference {
+export interface VarReference {
     referencingField: VMField;
     type: VariableType;
 }

@@ -2,7 +2,7 @@ import MathUtil from '../util/math-util';
 import StringUtil from '../util/string-util';
 import Cast from '../util/cast';
 import Clone from '../util/clone';
-import Target from '../engine/target.js';
+import Target from '../engine/target';
 import StageLayering from '../engine/stage-layering';
 
 /**
