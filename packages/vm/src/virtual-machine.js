@@ -19,7 +19,7 @@ import Variable from './engine/variable';
 import newBlockIds from './util/new-block-ids';
 import {loadCostume} from './import/load-costume.js';
 import {loadSound} from './import/load-sound.js';
-import {serializeSounds, serializeCostumes} from './serialization/serialize-assets.js';
+import {serializeSounds, serializeCostumes} from './serialization/serialize-assets';
 import uid from './util/uid';
 import 'canvas-toBlob';
 

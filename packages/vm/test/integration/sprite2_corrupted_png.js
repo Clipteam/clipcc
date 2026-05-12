@@ -16,7 +16,7 @@ import FakeRenderer from '../fixtures/fake-renderer.js';
 import FakeBitmapAdapter from '../fixtures/fake-bitmap-adapter.js';
 import {extractAsset, readFileToBuffer} from '../fixtures/readProjectFile.js';
 import VirtualMachine from '../../src/index';
-import {serializeCostumes} from '../../src/serialization/serialize-assets.js';
+import {serializeCostumes} from '../../src/serialization/serialize-assets';
 
 const projectUri = path.resolve(__dirname, '../fixtures/default.sb3');
 const project = readFileToBuffer(projectUri);
