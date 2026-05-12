@@ -6,7 +6,7 @@ import newBlockIds from '../util/new-block-ids';
 import StringUtil from '../util/string-util';
 import StageLayering from '../engine/stage-layering';
 import type {StageLayer} from '../engine/stage-layering';
-import type Runtime from '../engine/runtime.js';
+import type Runtime from '../engine/runtime';
 import type SoundBank from '../../../audio/dist/types/SoundBank';
 import type {Asset, AssetId, DataFormat} from 'clipcc-storage';
 import type {VMBlock} from '../serialization/schema';

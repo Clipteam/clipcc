@@ -1,6 +1,6 @@
 import {Record} from 'immutable';
 
-interface MonitorRecordProps {
+export interface MonitorRecordProps {
     id: string | null;
     /** Present only if the monitor is sprite-specific, such as x position */
     spriteName: string | null;

@@ -1,7 +1,9 @@
 import formatMessage, {Message} from 'format-message';
 
-const isMessageObject = (maybeMessage: unknown): maybeMessage is Message => typeof maybeMessage === 'object' &&
-        maybeMessage !== null && 'id' in maybeMessage && 'default' in maybeMessage;
+const isMessage = (maybeMessage: unknown): maybeMessage is Message => typeof maybeMessage === 'string' ||
+    (
+        typeof maybeMessage === 'object' && maybeMessage !== null && 'id' in maybeMessage && 'default' in maybeMessage
+    );
 
 /**
  * Check if `maybeMessage` looks like a message object, and if so pass it to `formatMessage`.
@@ -11,11 +13,15 @@ const isMessageObject = (maybeMessage: unknown): maybeMessage is Message => type
  * @param [locale] - the locale to pass to `formatMessage` if it gets called.
  * @returns - the formatted message OR the original `maybeMessage` input.
  */
-const maybeFormatMessage = function (maybeMessage: unknown, args?: Record<string, unknown>, locale?: string): unknown {
-    if (isMessageObject(maybeMessage)) {
-        return formatMessage(maybeMessage, args, locale);
+const maybeFormatMessage = function<T> (
+    maybeMessage: T,
+    args?: Record<string, unknown>,
+    locale?: string
+): T extends Message ? string : T {
+    if (isMessage(maybeMessage)) {
+        return formatMessage(maybeMessage, args, locale) as T extends Message ? string : T;
     }
-    return maybeMessage;
+    return maybeMessage as T extends Message ? string : T;
 };
 
 export default maybeFormatMessage;

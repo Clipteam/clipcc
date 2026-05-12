@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import type {BlockFunction} from '../blocks/category_prototype';
 import type Runtime from '../engine/runtime';
 import type ArgumentType from './argument-type';
 import type BlockType from './block-type';
@@ -36,7 +37,7 @@ export interface ExtensionBlockMetadata {
     /** A unique alphanumeric identifier for this block. No special characters allowed. */
     opcode: string;
     /** The name of the function implementing this block. Can be shared by other blocks/opcodes. */
-    func?: string;
+    func?: string | BlockFunction;
     /** The type of block (command, reporter, etc.) being described. */
     blockType: BlockType;
     /** The text on the block, with [PLACEHOLDERS] for arguments. */

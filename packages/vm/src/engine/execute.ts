@@ -8,8 +8,8 @@ import type Blocks from './blocks';
 import type {VMField, VMInput, VMMutation} from '../serialization/schema';
 import type Profiler from './profiler';
 import type {ProfilerFrame} from './profiler';
-import type {PrimitiveHandler} from './runtime';
 import type Sequencer from './sequencer';
+import type {BlockFunction} from '../blocks/category_prototype';
 
 /**
  * Single BlockUtility instance reused by execute for every pritimive ran.
@@ -257,7 +257,7 @@ class BlockCached {
     /**
      * The block opcode's implementation function.
      */
-    _blockFunction: PrimitiveHandler | null = null;
+    _blockFunction: BlockFunction | null = null;
 
     /**
      * Is the block function defined for this opcode?
