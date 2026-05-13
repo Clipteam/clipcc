@@ -211,10 +211,53 @@ let stepThreadsProfilerId = -1;
 let rendererDrawProfilerId = -1;
 
 /**
+ * Events that can be emitted by Runtime.
+ */
+interface RuntimeEvents {
+    'STAGE_SIZE_UPDATE': [];
+    'SCRIPT_GLOW_ON': [{id: string}];
+    'SCRIPT_GLOW_OFF': [{id: string}];
+    'BLOCK_GLOW_ON': [{id: string}];
+    'BLOCK_GLOW_OFF': [{id: string}];
+    'HAS_CLOUD_DATA_UPDATE': [hasCloudData: boolean];
+    'TURBO_MODE_ON': [];
+    'TURBO_MODE_OFF': [];
+    'PROJECT_START': [];
+    'PROJECT_RUN_START': [];
+    'PROJECT_RUN_STOP': [];
+    'PROJECT_STOP_ALL': [];
+    'STOP_FOR_TARGET': [target: RenderedTarget, optThreadException?: Thread];
+    'VISUAL_REPORT': [{id: string, value: string}];
+    'PROJECT_LOADED': [];
+    'PROJECT_CHANGED': [];
+    'TOOLBOX_EXTENSIONS_NEED_UPDATE': [];
+    'TARGETS_UPDATE': [isForceRefresh: boolean];
+    'MONITORS_UPDATE': [monitorState: OrderedMap<string, RecordOf<MonitorRecordProps>>];
+    'BLOCK_DRAG_UPDATE': [areBlocksOverGui: boolean];
+    'BLOCK_DRAG_END': [blocks: VMBlock[], topBlockId: string];
+    'EXTENSION_ADDED': [categoryInfo: CategoryInfo];
+    'EXTENSION_FIELD_ADDED': [{name: string, implementation: unknown}];
+    'PERIPHERAL_LIST_UPDATE': [availablePeripherals: Record<number, unknown>];
+    'USER_PICKED_PERIPHERAL': [availablePeripherals: Record<number, unknown>];
+    'PERIPHERAL_CONNECTED': [];
+    'PERIPHERAL_DISCONNECTED': [];
+    'PERIPHERAL_REQUEST_ERROR': [{message: string, extensionId: string}];
+    'PERIPHERAL_CONNECTION_LOST_ERROR': [{message: string, extensionId: string}];
+    'PERIPHERAL_SCAN_TIMEOUT': [];
+    'MIC_LISTENING': [listening: boolean];
+    'BLOCKSINFO_UPDATE': [categoryInfo: CategoryInfo];
+    'RUNTIME_STARTED': [];
+    'RUNTIME_DISPOSED': [];
+    'BLOCKS_NEED_UPDATE': [];
+    'targetWasCreated': [newTarget: RenderedTarget, sourceTarget?: RenderedTarget];
+    'targetWasRemoved': [target: RenderedTarget];
+}
+
+/**
  * Manages targets, scripts, and the sequencer.
  * @class
  */
-class Runtime extends EventEmitter {
+class Runtime extends EventEmitter<RuntimeEvents> {
     /**
      * Current time in milliseconds, used for determining elapsed time and for scheduling future tasks.
      */
@@ -1754,7 +1797,7 @@ class Runtime extends EventEmitter {
         thread.updateMonitor = Boolean(opts?.updateMonitor);
         thread.blockContainer = thread.updateMonitor ?
             this.monitorBlocks :
-            target?.blocks ?? null;
+            target!.blocks;
         thread.pushStack(id);
         this.threads.push(thread);
         return thread;
@@ -1861,7 +1904,8 @@ class Runtime extends EventEmitter {
      * @param topBlockId ID of block that starts the script.
      * @param optTarget target Target to run script on. If not supplied, uses editing target.
      */
-    addMonitorScript (topBlockId: string, optTarget = this._editingTarget) {
+    addMonitorScript (topBlockId: string, optTarget?: RenderedTarget | null) {
+        if (!optTarget) optTarget = this._editingTarget;
         for (let i = 0; i < this.threads.length; i++) {
             // Don't re-add the script if it's already running
             if (this.threads[i].topBlock === topBlockId && this.threads[i].status !== Thread.STATUS_DONE &&

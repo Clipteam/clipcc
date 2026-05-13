@@ -46,7 +46,7 @@ interface CacheState {
      * A cache of block IDs and targets to start threads on as they are
      * actively monitored.
      */
-    _monitored: null | Array<{blockId: string, target: RenderedTarget | null}>;
+    _monitored: null | Array<{blockId: string, target: RenderedTarget | null | undefined}>;
 }
 
 type ListenableBlocklyEvents =
@@ -1003,7 +1003,7 @@ class Blocks {
                     const targetId = this.getBlock(blockId)!.targetId;
                     return {
                         blockId,
-                        target: targetId ? runtime.getTargetById(targetId) ?? null : null
+                        target: targetId ? runtime.getTargetById(targetId) : null
                     };
                 });
         }
