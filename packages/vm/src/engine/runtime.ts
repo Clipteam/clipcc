@@ -79,32 +79,9 @@ const defaultBlockPackages = {
 
 const defaultExtensionColors = ['#0FBD8C', '#0DA57A', '#0B8E69'];
 
-/**
- * @callback PrimitiveHandler
- * @param {...unknown} args
- * @returns {unknown}
- */
-
-/**
- * @callback BooleanFunction
- * @returns {boolean}
- */
-
-/**
- * @callback VoidFunction
- * @returns {void}
- */
-
 type ScriptCallback = (script: string, target: RenderedTarget) => void;
 type ScriptByOpcodeCallback = (script: RuntimeScriptCache, target: RenderedTarget) => void;
-
 type ScratchLinkSocketFactory = (type: string) => ScratchLinkWebSocket;
-
-/**
- * @callback ProfilerFrameHandler
- * @param {Record<string, unknown>} frame
- * @returns {void}
- */
 
 export interface HatMetadata {
     edgeActivated?: boolean;
@@ -115,10 +92,6 @@ export interface MonitorBlockInfo {
     isSpriteSpecific?: boolean;
     getId: (targetId?: string, fields?: Record<string, VMField>) => string;
 }
-
-/**
- * @typedef {{category: string, label?: string, labelFn?: PrimitiveHandler}} OpcodeLabelInfo
- */
 
 /**
  * Information used for converting Scratch argument types into scratch-blocks data.
@@ -187,17 +160,6 @@ interface PlaceholderContext {
 }
 
 /**
- * A pair of functions used to manage the cloud variable limit,
- * to be used when adding (or attempting to add) or removing a cloud variable.
- * @typedef {{
- *   canAddCloudVariable: BooleanFunction,
- *   addCloudVariable: VoidFunction,
- *   removeCloudVariable: VoidFunction,
- *   hasCloudVariables: BooleanFunction
- * }} CloudDataManager
- */
-
-/**
  * Creates and manages cloud variable limit in a project,
  * and returns two functions to be used to add a new
  * cloud variable (while checking that it can be added)
@@ -235,19 +197,16 @@ type CloudDataManager = ReturnType<typeof cloudDataManager>;
 
 /**
  * Numeric ID for Runtime._step in Profiler instances.
- * @type {number}
  */
 let stepProfilerId = -1;
 
 /**
  * Numeric ID for Sequencer.stepThreads in Profiler instances.
- * @type {number}
  */
 let stepThreadsProfilerId = -1;
 
 /**
  * Numeric ID for RenderWebGL.draw in Profiler instances.
- * @type {number}
  */
 let rendererDrawProfilerId = -1;
 
@@ -944,7 +903,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Register the primitives provided by an extension.
-     * @param {ExtensionMetadata} extensionInfo - information about the extension (id, blocks, etc.)
+     * @param extensionInfo - information about the extension (id, blocks, etc.)
      * @private
      */
     _registerExtensionPrimitives (extensionInfo: ExtensionMetadata) {
@@ -2539,8 +2498,8 @@ class Runtime extends EventEmitter {
 
     /**
      * Hides a monitor and returns success/failure of action.
-     * @param {!string} monitorId ID of the monitor to hide.
-     * @returns {boolean} true if monitor exists and was updated, false otherwise
+     * @param monitorId ID of the monitor to hide.
+     * @returns true if monitor exists and was updated, false otherwise
      */
     requestHideMonitor (monitorId: string) {
         return this.requestUpdateMonitor(Map({
