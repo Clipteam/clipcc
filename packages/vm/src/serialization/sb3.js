@@ -38,18 +38,8 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * @typedef {import('./schema').SB3List} SB3List
  * @typedef {import('./schema').SB3Comment} SB3Comment
  * @typedef {import('./schema').SB3Monitor} SB3Monitor
- */
-
-/**
- * @typedef {object} ImportedProject
- * @property {Array.<Target>} targets - the imported Scratch 3.0 target objects.
- * @property {ImportedExtensionsInfo} extensionsInfo - the ID of each extension actually used by this project.
- */
-
-/**
- * @typedef {object} ImportedExtensionsInfo
- * @property {Set.<string>} extensionIDs - the ID of each extension actually in use by blocks in this project.
- * @property {Map.<string, string>} extensionURLs - map of ID => URL from project metadata. May not match extensionIDs.
+ * @typedef {import('./schema'.ImportedExtensionsInfo)} ImportedExtensionsInfo
+ * @typedef {import('./schema').ImportedProject} ImportedProject
  */
 
 // Constants used during serialization and deserialization
@@ -1284,7 +1274,7 @@ const replaceUnsafeCharsInVariableIds = function (targets) {
  * @param {SB3Project | SB3Target} json - JSON representation of a VM runtime.
  * @param  {Runtime} runtime - Runtime instance
  * @param {JSZip} zip - Sb3 file describing this project (to load assets from)
- * @param {boolean} isSingleSprite - If true treat as single sprite, else treat as whole project
+ * @param {boolean} [isSingleSprite] - If true treat as single sprite, else treat as whole project
  * @returns {Promise.<ImportedProject>} Promise that resolves to the list of targets after the project is deserialized
  */
 const deserialize = function (json, runtime, zip, isSingleSprite) {

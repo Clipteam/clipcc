@@ -1,7 +1,7 @@
 import StageLayering from '../engine/stage-layering';
 import type Runtime from '../engine/runtime';
 
-interface VideoProvider {
+export interface VideoProvider {
     /** Requests camera access from the user, and upon success, enables the video feed */
     enableVideo: () => Promise<unknown>;
     /** Turns off the video feed */
@@ -14,6 +14,8 @@ interface VideoProvider {
         cacheTimeout: number;
     }) => ImageData | null;
     videoReady: boolean;
+    /** Set the dimensions of the video stream, usually called when stage size changed. */
+    setDimensions: (width: number, height: number) => void;
 }
 
 class Video {

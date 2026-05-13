@@ -7,7 +7,7 @@ import log from '../util/log';
 import Variable from './variable';
 import getMonitorIdForBlockWithArgs from '../util/get-monitor-id';
 import type Runtime from './runtime';
-import type {VMBlock, VMInput, VMMutation} from '../serialization/schema';
+import type {ProcedureMutation, VMBlock, VMInput, VMMutation} from '../serialization/schema';
 import type {RuntimeScriptCache} from './blocks-runtime-cache';
 import type * as ClipCCBlock from 'clipcc-block';
 import type {CachedBlockData, CacheType} from './blocks-execute-cache';
@@ -256,7 +256,7 @@ class Blocks {
      * @param globalOnly True if only get global procedures.
      * @returns Procedure states.
      */
-    getAllProcedureDefinitions (globalOnly: boolean | null) {
+    getAllProcedureDefinitions (globalOnly: boolean | null): ProcedureMutation[] {
         const procedures = [];
         for (const id in this._blocks) {
             if (!Object.prototype.hasOwnProperty.call(this._blocks, id)) continue;

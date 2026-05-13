@@ -15,7 +15,7 @@ interface CloudIOData {
     varUpdate?: VarUpdateData;
 }
 
-interface CloudProvider {
+export interface CloudProvider {
     /** A function which sends a cloud variable update to the cloud data server. */
     updateVariable: (name: string, value: string | number) => void;
     /** A function which closes the connection to the cloud data server. */

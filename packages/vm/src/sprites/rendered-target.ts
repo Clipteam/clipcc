@@ -12,7 +12,7 @@ import type {StageLayer} from '../engine/stage-layering';
 import type RenderWebGL from 'clipcc-render';
 import type Rectangle from '../../../render/dist/types/Rectangle';
 
-interface SpriteInfoData {
+export interface SpriteInfoData {
     x: number;
     y: number;
     direction: number;

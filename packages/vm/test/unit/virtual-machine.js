@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import VirtualMachine from '../../src/virtual-machine.js';
+import VirtualMachine from '../../src/virtual-machine';
 import Sprite from '../../src/sprites/sprite';
 import Variable from '../../src/engine/variable';
 import adapter from '../../src/engine/adapter';

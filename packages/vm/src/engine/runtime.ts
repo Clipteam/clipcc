@@ -81,7 +81,7 @@ const defaultExtensionColors = ['#0FBD8C', '#0DA57A', '#0B8E69'];
 
 type ScriptCallback = (script: string, target: RenderedTarget) => void;
 type ScriptByOpcodeCallback = (script: RuntimeScriptCache, target: RenderedTarget) => void;
-type ScratchLinkSocketFactory = (type: string) => ScratchLinkWebSocket;
+export type ScratchLinkSocketFactory = (type: string) => ScratchLinkWebSocket;
 
 export interface HatMetadata {
     edgeActivated?: boolean;
@@ -214,7 +214,7 @@ let rendererDrawProfilerId = -1;
  * Events that can be emitted by Runtime.
  */
 interface RuntimeEvents {
-    'STAGE_SIZE_UPDATE': [];
+    'STAGE_SIZE_UPDATE': [width: number, height: number];
     'SCRIPT_GLOW_ON': [{id: string}];
     'SCRIPT_GLOW_OFF': [{id: string}];
     'BLOCK_GLOW_ON': [{id: string}];
@@ -2859,6 +2859,8 @@ class Runtime extends EventEmitter<RuntimeEvents> {
         this.currentMSecs = Date.now();
     }
 }
+
+export type IODevices = Runtime['ioDevices'];
 
 /**
  * Event fired after a new target has been created, possibly by cloning an existing target.

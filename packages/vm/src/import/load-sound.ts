@@ -12,7 +12,7 @@ import type SoundBank from '../../../audio/dist/types/SoundBank';
  * @param soundBank - Scratch Audio SoundBank to add sounds to.
  * @returns A promise which will resolve to the sound when ready.
  */
-const loadSoundFromAsset = function (sound: Sound, soundAsset: Asset, runtime: Runtime, soundBank: SoundBank) {
+const loadSoundFromAsset = function (sound: Sound, soundAsset: Asset, runtime: Runtime, soundBank: SoundBank | null) {
     sound.assetId = soundAsset.assetId!;
     if (!runtime.audioEngine) {
         log.warn('No audio engine present; cannot load sound asset: ', sound.md5);
@@ -42,7 +42,7 @@ const loadSoundFromAsset = function (sound: Sound, soundAsset: Asset, runtime: R
 // Handle sound loading errors by replacing the runtime sound with the
 // default sound from storage, but keeping track of the original sound metadata
 // in a `broken` field
-const handleSoundLoadError = function (sound: Sound, runtime: Runtime, soundBank: SoundBank) {
+const handleSoundLoadError = function (sound: Sound, runtime: Runtime, soundBank: SoundBank | null) {
     // Keep track of the old asset information until we're done loading the default sound
     const oldAsset = sound.asset; // could be null
     const oldAssetId = sound.assetId;
@@ -79,7 +79,7 @@ const handleSoundLoadError = function (sound: Sound, runtime: Runtime, soundBank
  * @param soundBank - Scratch Audio SoundBank to add sounds to.
  * @returns A promise which will resolve to the sound when ready.
  */
-let loadSound = function (sound: Sound, runtime: Runtime, soundBank: SoundBank) {
+let loadSound = function (sound: Sound, runtime: Runtime, soundBank: SoundBank | null) {
     if (!runtime.storage) {
         log.warn('No storage module present; cannot load sound asset: ', sound.md5);
         return Promise.resolve(sound);

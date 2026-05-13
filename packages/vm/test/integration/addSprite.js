@@ -2,7 +2,7 @@ import path from 'path';
 import {test} from '../fixtures/jest-tap-bridge.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
-import VirtualMachine from '../../src/virtual-machine.js';
+import VirtualMachine from '../../src/virtual-machine';
 import RenderedTarget from '../../src/sprites/rendered-target';
 
 const projectUri = path.resolve(__dirname, '../fixtures/default.sb2');

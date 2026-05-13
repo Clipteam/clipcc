@@ -35,14 +35,14 @@ export interface Costume {
      * the asset of the costume loaded from storage.
      */
     asset: Asset;
-    assetId?: AssetId;
+    assetId?: AssetId | null;
     textLayerAsset?: Asset;
     textLayerMD5?: string;
     size?: [number, number];
     dataFormat?: DataFormat;
     broken?: {
         asset: Asset;
-        assetId?: AssetId;
+        assetId?: AssetId | null;
         md5: string;
         dataFormat?: DataFormat;
         rotationCenterX: number;
@@ -53,7 +53,7 @@ export interface Costume {
 
 export interface Sound {
     name: string;
-    assetId?: AssetId;
+    assetId?: AssetId | null;
     soundId: string;
     rate: number;
     format?: string;
@@ -65,7 +65,7 @@ export interface Sound {
     data: ArrayBuffer;
     asset: Asset;
     broken?: {
-        assetId?: AssetId;
+        assetId?: AssetId | null;
         asset: Asset;
         md5: string;
         dataFormat?: DataFormat;
