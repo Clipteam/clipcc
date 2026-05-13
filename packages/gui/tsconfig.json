@@ -1,7 +1,8 @@
 {
   "include": [
     "./src/**/*",
-    "./test/**/*"
+    "./test/**/*",
+    "types/**/*.d.ts"
   ],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
