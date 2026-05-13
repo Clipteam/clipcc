@@ -12,7 +12,7 @@ import centralDispatch from './dispatch/central-dispatch';
 import ExtensionManager from './extension-support/extension-manager.js';
 import log from './util/log';
 import MathUtil from './util/math-util';
-import Runtime from './engine/runtime.js';
+import Runtime from './engine/runtime';
 import StringUtil from './util/string-util';
 import formatMessage from 'format-message';
 import Variable from './engine/variable';

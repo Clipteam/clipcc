@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 
 import Blocks from './blocks';
-import Variable from '../engine/variable';
+import Variable, {type VariableType} from '../engine/variable';
 import Comment from '../engine/comment';
 import uid from '../util/uid';
 import {Map} from 'immutable';
@@ -515,7 +515,7 @@ abstract class Target extends EventEmitter<TargetEvents> {
      * @param skipStage Optional flag to skip the stage.
      * @returns A list of variable names
      */
-    getAllVariableNamesInScopeByType (type: string, skipStage?: boolean): string[] {
+    getAllVariableNamesInScopeByType (type: VariableType, skipStage?: boolean): string[] {
         if (typeof type !== 'string') type = Variable.SCALAR_TYPE;
         skipStage = skipStage || false;
         const targetVariables = Object.values(this.variables)
@@ -700,7 +700,7 @@ abstract class Target extends EventEmitter<TargetEvents> {
         const stage = this.runtime.getTargetForStage();
         if (!stage || !stage.variables) return;
 
-        const renameConflictingLocalVar = (id: string, name: string, type: string): string | null => {
+        const renameConflictingLocalVar = (id: string, name: string, type: VariableType): string | null => {
             const conflict = stage.lookupVariableByNameAndType(name, type);
             if (conflict) {
                 const newName = StringUtil.unusedName(
@@ -726,7 +726,7 @@ abstract class Target extends EventEmitter<TargetEvents> {
         // Cache the list of all variable names by type so that we don't need to
         // re-calculate this in every iteration of the following loop.
         const varNamesByType: Record<string, string[]> = {};
-        const allVarNames = (type: string): string[] => {
+        const allVarNames = (type: VariableType): string[] => {
             const namesOfType = varNamesByType[type];
             if (namesOfType) return namesOfType;
             varNamesByType[type] = this.runtime.getAllVarNamesOfType(type);

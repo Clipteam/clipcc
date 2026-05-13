@@ -192,7 +192,7 @@ class Video {
                     return;
                 }
 
-                this._renderPreviewTimeout = setTimeout(this._renderPreviewFrame, this.runtime.currentStepTime);
+                this._renderPreviewTimeout = setTimeout(this._renderPreviewFrame, this.runtime.currentStepTime!);
 
                 const imageData = this.getFrame({
                     format: Video.FORMAT_IMAGE_DATA,

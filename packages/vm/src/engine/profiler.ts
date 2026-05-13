@@ -43,7 +43,7 @@ const START_SIZE = 4;
  */
 const STOP_SIZE = 2;
 
-type FrameCallback = (frame: ProfilerFrame) => void;
+export type FrameCallback = (frame: ProfilerFrame) => void;
 
 /**
  * A set of information about a frame of execution that was recorded.

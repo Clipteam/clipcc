@@ -250,7 +250,7 @@ class BlockUtility {
      * @param optTarget Optionally, a target to restrict to.
      * @returns List of threads started by this function.
      */
-    startHats (requestedHat: string, optMatchFields?: object, optTarget?: RenderedTarget) {
+    startHats (requestedHat: string, optMatchFields?: Record<string, string>, optTarget?: RenderedTarget) {
         // Store thread and sequencer to ensure we can return to the calling block's context.
         // startHats may execute further blocks and dirty the BlockUtility's execution context
         // and confuse the calling block when we return to it.

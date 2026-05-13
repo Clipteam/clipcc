@@ -4,7 +4,7 @@ import Clone from '../../src/util/clone';
 import {loadCostume} from '../../src/import/load-costume';
 import {loadSound} from '../../src/import/load-sound';
 import makeTestStorage from '../fixtures/make-test-storage.js';
-import Runtime from '../../src/engine/runtime.js';
+import Runtime from '../../src/engine/runtime';
 import * as sb3 from '../../src/serialization/sb3.js';
 import Sprite from '../../src/sprites/sprite';
 

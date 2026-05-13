@@ -35,7 +35,7 @@ class Variable {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     value: any;
 
-    constructor (id: string | null, name: string, type: VariableType, isCloud: boolean) {
+    constructor (id: string | null, name: string, type: VariableType, isCloud = false) {
         this.id = id || uid();
         this.name = name;
         this.type = type;

@@ -1,6 +1,6 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
 import Joystick from '../../src/io/joystick';
-import Runtime from '../../src/engine/runtime.js';
+import Runtime from '../../src/engine/runtime';
 
 test('spec', t => {
     const rt = new Runtime();

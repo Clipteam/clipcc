@@ -1,6 +1,6 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
 import Motion from '../../src/blocks/scratch3_motion';
-import Runtime from '../../src/engine/runtime.js';
+import Runtime from '../../src/engine/runtime';
 import Sprite from '../../src/sprites/sprite';
 import RenderedTarget from '../../src/sprites/rendered-target';
 import VirtualMachine from '../../src/index';

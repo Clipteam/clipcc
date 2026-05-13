@@ -4,7 +4,7 @@ import makeTestStorage from '../fixtures/make-test-storage.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
 import VirtualMachine from '../../src/index';
 import Thread from '../../src/engine/thread';
-import Runtime from '../../src/engine/runtime.js';
+import Runtime from '../../src/engine/runtime';
 import execute from '../../src/engine/execute';
 
 const projectUri = path.resolve(__dirname, '../fixtures/timer-greater-than-hat.sb2');

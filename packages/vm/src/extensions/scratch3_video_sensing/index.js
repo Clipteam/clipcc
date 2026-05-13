@@ -1,4 +1,4 @@
-import Runtime from '../../engine/runtime.js';
+import Runtime from '../../engine/runtime';
 import ArgumentType from '../../extension-support/argument-type';
 import BlockType from '../../extension-support/block-type';
 import Clone from '../../util/clone';

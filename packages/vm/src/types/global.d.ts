@@ -1,9 +1,13 @@
-declare module 'decode-html' {
-    function decodeHtml(html: string): string;
-    export default decodeHtml;
-}
+import ScratchLinkWebSocket from '../util/scratch-link-websocket';
 
-/**
- * Compile-time injected clipcc global metadata
- */
-declare const clipcc: { VERSION?: string };
+type ScratchLinkSafariSocket = (new (type: 'BLE' | 'BT') => ScratchLinkWebSocket) & {
+    isSafariHelperCompatible: () => boolean;
+};
+
+declare global {
+    interface Window {
+        Scratch?: {
+            ScratchLinkSafariSocket?: ScratchLinkSafariSocket;
+        }
+    }
+}

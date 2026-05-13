@@ -52,9 +52,14 @@ export interface JsonBlockDefinition {
     enableContextMenu?: boolean;
     suppressPrefixSuffix?: boolean;
 
+    // clipcc-block specific fields
+    checkboxInFlyout?: boolean;
+
     [key: `message${number}`]: string | undefined;
     [key: `args${number}`]: JsonBlockArg[] | undefined;
     [key: `implicitAlign${number}`]: string | undefined;
+    // Backwards compatibility: lastDummyAlign aliases implicitAlign.
+    [key: `lastDummyAlign${number}`]: string | undefined;
 }
 
 export type JsonBlockArg =

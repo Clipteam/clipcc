@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {BlockFunction} from '../blocks/category_prototype';
 import type Runtime from '../engine/runtime';
+import type {JsonBlockDefinition} from '../types/json-block-definitions';
 import type ArgumentType from './argument-type';
 import type BlockType from './block-type';
 import type ReporterScope from './reporter-scope';
+import type TargetType from './target-type';
 
 /**
  * All the metadata needed to register an extension.
@@ -20,26 +22,101 @@ export interface ExtensionMetadata {
     /** Link to documentation content for this extension. */
     docsURI?: string;
     /** The blocks provided by this extension, plus separators. */
-    blocks: Array<ExtensionBlockMetadata | string>;
+    blocks: Array<ExtensionBlockMetadata | ExtensionButtonMetadata | '---'>;
     /** Map of menu name to metadata for each of this extension's menus. */
-    menus?: Record<string, ExtensionMenuMetadata>;
+    menus?: Record<string, ExtensionMenuItem>;
+    /** Whether to show a status button for this extension. */
+    showStatusButton?: boolean;
+    /** The primary color for this extension. */
+    color1?: string;
+    /** The secondary color for this extension. */
+    color2?: string;
+    /** The tertiary color for this extension. */
+    color3?: string;
     /**
      * New target type(s).
      * @todo Not implemented by VM.
      */
     targetTypes?: string[];
+    /**
+     * Custom field types used by this extension's blocks, if any.
+     * @todo Not implemented by VM.
+     */
+    customFieldTypes?: Record<string, ExtensionCustomFieldTypeMetadata>;
+}
+
+export interface ExtensionCustomFieldTypeMetadata {
+    output: JsonBlockDefinition['output'];
+    outputShape: JsonBlockDefinition['outputShape'];
+    implementation: any;
+}
+
+export interface MenuInfo {
+    json: JsonBlockDefinition;
+}
+
+export interface BlockInfo {
+    info: ExtensionBlockMetadata;
+    json: JsonBlockDefinition;
+    xml: string;
+};
+
+export interface ButtonInfo {
+    info: ExtensionButtonMetadata;
+    xml: string;
+};
+
+export interface SepInfo {
+    info: '---';
+    xml: string;
+};
+
+export type CategoryInfo =
+    Pick<
+        ExtensionMetadata,
+        'id' | 'name' | 'showStatusButton' | 'blockIconURI' | 'menuIconURI' | 'color1' | 'color2' | 'color3'
+    > &
+    {
+        menuInfo: Record<string, ExtensionMenuItem>;
+        customFieldTypes: Record<string, ExtensionCustomFieldTypeInfo>;
+        menus: MenuInfo[];
+        blocks: (BlockInfo | ButtonInfo | SepInfo)[];
+    };
+
+export interface ExtensionCustomFieldTypeInfo {
+    fieldName: string;
+    extendedName: string;
+    argumentTypeInfo: {
+        shadow: {
+            type: string;
+            fieldName: string;
+        }
+    }
+    scratchBlocksDefinition: {
+        json: JsonBlockDefinition;
+    }
+    fieldImplementation: any;
 }
 
 /**
  * All the metadata needed to register an extension block.
  */
+
+export interface ExtensionButtonMetadata {
+    blockType: BlockType.BUTTON;
+    text: string;
+    func?: string;
+    filter?: TargetType[];
+    hideFromPalette?: boolean;
+}
+
 export interface ExtensionBlockMetadata {
     /** A unique alphanumeric identifier for this block. No special characters allowed. */
     opcode: string;
     /** The name of the function implementing this block. Can be shared by other blocks/opcodes. */
-    func?: string | BlockFunction;
+    func?: BlockFunction;
     /** The type of block (command, reporter, etc.) being described. */
-    blockType: BlockType;
+    blockType: Exclude<BlockType, BlockType.BUTTON>;
     /** The text on the block, with [PLACEHOLDERS] for arguments. */
     text: string;
     /** True if this block should not appear in the block palette. */
@@ -58,6 +135,9 @@ export interface ExtensionBlockMetadata {
     branchCount?: number;
     /** Map of argument placeholder to metadata about each arg. */
     arguments?: Record<string, ExtensionArgumentMetadata>;
+    blockIconURI?: string;
+    isDynamic?: boolean;
+    filter?: TargetType[];
 }
 
 /**
@@ -72,37 +152,35 @@ export interface ExtensionArgumentMetadata {
     menu?: string;
 }
 
-/**
- * All the metadata needed to register an extension drop-down menu.
- */
-export type ExtensionMenuMetadata = ExtensionDynamicMenu | ExtensionMenuItems;
-
-/**
- * The string name of a function which returns menu items.
- */
-export type ExtensionDynamicMenu = string;
-
-/**
- * Items in an extension menu.
- */
-export type ExtensionMenuItems = Array<ExtensionMenuItemSimple | ExtensionMenuItemComplex>;
-
-/**
- * A menu item for which the label and value are identical strings.
- */
-export type ExtensionMenuItemSimple = string;
+export interface ExtensionImageMetadata {
+    type: ArgumentType.IMAGE;
+    dataURI?: string;
+    flipRTL?: boolean;
+}
 
 /**
  * A menu item for which the label and value can differ.
  */
-export interface ExtensionMenuItemComplex {
-    /** The value of the block argument when this menu item is selected. */
-    value: any;
-    /** The human-readable label of this menu item in the menu. */
-    text: string;
+export interface ExtensionMenuItem {
+    items: {
+        /** The value of the block argument when this menu item is selected. */
+        value: string;
+        /** The human-readable label of this menu item in the menu. */
+        text: string;
+    }[];
+    acceptReporters?: boolean;
 }
 
 export interface ExtensionClass {
-    new (runtime: Runtime): unknown;
     getInfo(): ExtensionMetadata;
 }
+
+export interface PeripheralExtensionClass extends ExtensionClass {
+    scan(): void;
+    connect(peripheralId: number): void;
+    disconnect(): void;
+    isConnected(): boolean;
+}
+
+export type ExtensionClassConstructor = new (runtime: Runtime) => ExtensionClass;
+export type PeripheralExtensionClassConstructor = new (runtime: Runtime) => PeripheralExtensionClass;

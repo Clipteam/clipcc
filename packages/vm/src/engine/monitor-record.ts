@@ -3,21 +3,22 @@ import {Record} from 'immutable';
 export interface MonitorRecordProps {
     id: string | null;
     /** Present only if the monitor is sprite-specific, such as x position */
-    spriteName: string | null;
+    spriteName?: string | null;
     /** Present only if the monitor is sprite-specific, such as x position */
-    targetId: string | null;
+    targetId?: string | null;
     opcode: string | null;
     value: unknown;
     params: unknown;
     mode: string;
-    sliderMin: number;
-    sliderMax: number;
-    isDiscrete: boolean;
+    sliderMin?: number;
+    sliderMax?: number;
+    isDiscrete?: boolean;
     x: number | null;
     y: number | null;
     width: number;
     height: number;
     visible: boolean;
+    [key: string | symbol]: unknown;
 }
 
 const defaultMonitorRecord: MonitorRecordProps = {

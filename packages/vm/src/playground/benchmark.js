@@ -45,7 +45,7 @@ loadSound.overrideLoadSound(soundMiddleware.install(loadSound, loadSound.loadSou
 
 import {ScratchStorage} from 'clipcc-storage';
 import VirtualMachine from '../index';
-import Runtime from '../engine/runtime.js';
+import Runtime from '../engine/runtime';
 import ScratchRender from 'clipcc-render';
 import AudioEngine from 'clipcc-audio';
 import * as ScratchSVGRenderer from 'clipcc-svg-renderer';

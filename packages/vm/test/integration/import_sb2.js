@@ -3,7 +3,7 @@ import {test} from '../fixtures/jest-tap-bridge.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import {extractProjectJson} from '../fixtures/readProjectFile.js';
 import renderedTarget from '../../src/sprites/rendered-target';
-import runtime from '../../src/engine/runtime.js';
+import runtime from '../../src/engine/runtime';
 import {deserialize} from '../../src/serialization/sb2.js';
 
 test('spec', t => {
