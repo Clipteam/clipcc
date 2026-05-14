@@ -443,7 +443,8 @@ class RenderWebGL extends EventEmitter {
      * @param {!int} skinId the ID for the skin to change.
      * @param {!ImageData|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} imgData - new contents for this skin.
      * @param {!number} bitmapResolution - the resolution scale for a bitmap costume.
-     * @param {?Array<number>} rotationCenter Optional: rotation center of the skin. If not supplied, the center of the
+     * @param {?Array<number>} [rotationCenter] Optional:
+     * rotation center of the skin. If not supplied, the center of the
      * skin will be used
      */
     updateBitmapSkin (skinId, imgData, bitmapResolution, rotationCenter) {

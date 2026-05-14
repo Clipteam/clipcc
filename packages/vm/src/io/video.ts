@@ -162,8 +162,7 @@ class Video {
             this.runtime.renderer!.updateBitmapSkin(
                 this._skinId,
                 new ImageData(this.runtime.stageWidth, this.runtime.stageHeight),
-                1,
-                null
+                1
             );
             this.runtime.renderer!.updateDrawableVisible(this._drawable, false);
         }
@@ -205,13 +204,12 @@ class Video {
                     renderer.updateBitmapSkin(
                         this._skinId,
                         new ImageData(this.runtime.stageWidth, this.runtime.stageHeight),
-                        1,
-                        null
+                        1
                     );
                     return;
                 }
 
-                renderer.updateBitmapSkin(this._skinId, imageData, 1, null);
+                renderer.updateBitmapSkin(this._skinId, imageData, 1);
                 this.runtime.requestRedraw();
             };
 
