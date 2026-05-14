@@ -22,7 +22,7 @@ export interface ExtensionMetadata {
     /** Link to documentation content for this extension. */
     docsURI?: string;
     /** The blocks provided by this extension, plus separators. */
-    blocks: Array<ExtensionItemMetadata>;
+    blocks: ExtensionItemMetadata[];
     /** Map of menu name to metadata for each of this extension's menus. */
     menus?: Record<string, ExtensionMenuItem>;
     /** Whether to show a status button for this extension. */

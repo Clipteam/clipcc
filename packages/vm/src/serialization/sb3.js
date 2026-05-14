@@ -25,6 +25,9 @@ import {deserializeCostume, deserializeSound} from './deserialize-assets.js';
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
+ * @typedef {import('../engine/runtime').default} Runtime
+ * @typedef {import('../sprites/rendered-target').default} RenderedTarget
+ * @typedef {import('jszip')} JSZip
  * @typedef {import('./schema').SB3Project} SB3Project
  * @typedef {import('./schema').SB3Target} SB3Target
  * @typedef {import('./schema').SB3Block} SB3Block
@@ -877,7 +880,7 @@ const deserializeBlocks = function (blocks) {
  * list of needed Extensions.
  * @param {!object} object From-JSON "Scratch object:" sprite, stage, watcher.
  * @param {!Runtime} runtime Runtime object to load all structures into.
- * @param {JSZip} zip Sb3 file describing this project (to load assets from)
+ * @param {JSZip} [zip] Sb3 file describing this project (to load assets from)
  * @returns {?{costumePromises:Array.<Promise>,soundPromises:Array.<Promise>,soundBank:SoundBank}}
  * Object of arrays of promises for asset objects used in Sprites. As well as a
  * SoundBank for the sound assets. null for unsupported objects.
@@ -961,10 +964,10 @@ const parseScratchAssets = function (object, runtime, zip) {
  * @param {!object} object From-JSON "Scratch object:" sprite, stage, watcher.
  * @param {!Runtime} runtime Runtime object to load all structures into.
  * @param {ImportedExtensionsInfo} extensions - (in/out) parsed extension information will be stored here.
- * @param {JSZip} zip Sb3 file describing this project (to load assets from)
+ * @param {JSZip} [zip] Sb3 file describing this project (to load assets from)
  * @param {object} assets - Promises for assets of this scratch object grouped
  *   into costumes and sounds
- * @returns {!Promise.<Target>} Promise for the target created (stage or sprite), or null for unsupported objects.
+ * @returns {Promise<RenderedTarget>} Promise for the target created (stage or sprite), or null for unsupported objects.
  */
 const parseScratchObject = function (object, runtime, extensions, zip, assets) {
     if (!Object.prototype.hasOwnProperty.call(object, 'name')) {
@@ -1273,7 +1276,7 @@ const replaceUnsafeCharsInVariableIds = function (targets) {
  * Deserialize the specified representation of a VM runtime and loads it into the provided runtime instance.
  * @param {SB3Project | SB3Target} json - JSON representation of a VM runtime.
  * @param  {Runtime} runtime - Runtime instance
- * @param {JSZip} zip - Sb3 file describing this project (to load assets from)
+ * @param {JSZip} [zip] - Sb3 file describing this project (to load assets from)
  * @param {boolean} [isSingleSprite] - If true treat as single sprite, else treat as whole project
  * @returns {Promise.<ImportedProject>} Promise that resolves to the list of targets after the project is deserialized
  */

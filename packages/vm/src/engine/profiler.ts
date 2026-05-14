@@ -135,14 +135,14 @@ class Profiler {
      * Runtime._step.
      * @param arg An arbitrary argument value to store with the frame.
      */
-    start (id: number, arg?: unknown): void {
+    start (id: number, arg?: unknown) {
         this.records.push(START, id, arg, performance.now());
     }
 
     /**
      * Stop the current frame.
      */
-    stop (): void {
+    stop () {
         this.records.push(STOP, performance.now());
     }
 
@@ -150,7 +150,7 @@ class Profiler {
      * Increment the number of times this symbol is called.
      * @param id The id returned by idByName for a name symbol.
      */
-    increment (id: number): void {
+    increment (id: number) {
         if (!this.increments[id]) {
             this.increments[id] = new ProfilerFrame(-1);
             this.increments[id].id = id;
@@ -184,7 +184,7 @@ class Profiler {
     /**
      * Decode records and report all frames to `this.onFrame`.
      */
-    reportFrames (): void {
+    reportFrames () {
         const stack = this._stack;
         let depth = 1;
 
