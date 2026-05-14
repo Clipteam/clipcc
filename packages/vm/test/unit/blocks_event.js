@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 
 const Blocks = require('../../src/engine/blocks');
 const BlockUtility = require('../../src/engine/block-utility');

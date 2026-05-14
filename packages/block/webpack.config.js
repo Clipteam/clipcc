@@ -7,7 +7,6 @@ const baseConfig = {
   devtool: process.env.NODE_ENV === 'production' ? false : 'eval-cheap-module-source-map',
   entry: './src/index.ts',
   output: {
-    library: 'ScratchBlocks',
     filename: '[name].js'
   },
   resolve: {
@@ -42,7 +41,10 @@ module.exports = [
       port: process.env.PORT || 8071
     },
     output: {
-      libraryTarget: 'umd',
+      library: {
+        name: 'ScratchBlocks',
+        type: 'umd'
+      },
       path: path.resolve(__dirname, 'build')
     },
     plugins: [
@@ -70,7 +72,9 @@ module.exports = [
   defaultsDeep({}, baseConfig, {
     target: 'node',
     output: {
-      libraryTarget: 'commonjs2',
+      library: {
+        type: 'commonjs2'
+      },
       path: path.resolve(__dirname, 'dist', 'node')
     },
     externals: {
@@ -83,7 +87,10 @@ module.exports = [
   defaultsDeep({}, baseConfig, {
     target: 'web',
     output: {
-      libraryTarget: 'umd',
+      library: {
+        name: 'ScratchBlocks',
+        type: 'umd'
+      },
       path: path.resolve(__dirname, 'dist', 'web')
     }
   })

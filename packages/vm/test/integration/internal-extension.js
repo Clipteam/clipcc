@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const Worker = require('tiny-worker');
 
 const BlockType = require('../../src/extension-support/block-type');
@@ -103,7 +103,7 @@ test('load sync', t => {
     // blocks should be an array of two items: a button pseudo-block and a reporter block.
     t.equal(vm.runtime._blockInfo[0].blocks.length, 3);
     t.type(vm.runtime._blockInfo[0].blocks[0].info, 'object');
-    t.type(vm.runtime._blockInfo[0].blocks[0].info.func, 'MAKE_A_VARIABLE');
+    t.equal(vm.runtime._blockInfo[0].blocks[0].info.func, 'MAKE_A_VARIABLE');
     t.equal(vm.runtime._blockInfo[0].blocks[0].info.blockType, 'button');
     t.type(vm.runtime._blockInfo[0].blocks[1].info, 'object');
     t.equal(vm.runtime._blockInfo[0].blocks[1].info.opcode, 'exampleOpcode');

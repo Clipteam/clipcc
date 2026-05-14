@@ -1,13 +1,9 @@
-## scratch-render
-#### WebGL-based rendering engine for Scratch 3.0
-
-[![CircleCI](https://circleci.com/gh/LLK/scratch-render/tree/develop.svg?style=shield&circle-token=310da166a745295d515b3b90f3bad10f23b84405)](https://circleci.com/gh/LLK/scratch-render?branch=develop)
-
-[![Greenkeeper badge](https://badges.greenkeeper.io/LLK/scratch-render.svg)](https://greenkeeper.io/)
+## clipcc-render
+#### WebGL-based rendering engine for ClipCC
 
 ## Installation
 ```bash
-npm install https://github.com/LLK/scratch-render.git
+pnpm install https://github.com/LLK/clipcc-render.git
 ```
 
 ## Setup
@@ -16,7 +12,7 @@ npm install https://github.com/LLK/scratch-render.git
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Scratch WebGL rendering demo</title>
+        <title>ClipCC WebGL rendering demo</title>
     </head>
 
     <body>
@@ -50,7 +46,7 @@ renderer.connectWorker(worker);
 
 ## Standalone Build
 ```bash
-npm run build
+pnpm run build
 ```
 
 ```html
@@ -63,8 +59,5 @@ npm run build
 
 ## Testing
 ```bash
-npm test
+pnpm test
 ```
-
-## Donate
-We provide [Scratch](https://scratch.mit.edu) free of charge, and want to keep it that way! Please consider making a [donation](https://secure.donationpay.org/scratchfoundation/) to support our continued engineering, design, community, and resource development efforts. Donations of any size are appreciated. Thank you!

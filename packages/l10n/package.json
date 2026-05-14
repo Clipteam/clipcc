@@ -24,12 +24,10 @@
         "url": "https://github.com/Clipteam/clipcc/issues"
     },
     "homepage": "https://github.com/Clipteam/clipcc#readme",
-    "dependencies": {
+    "devDependencies": {
         "@babel/cli": "^7.28.6",
         "@babel/core": "^7.29.0",
-        "babel-plugin-react-intl": "^8.2.25"
-    },
-    "devDependencies": {
+        "babel-plugin-react-intl": "^8.2.25",
         "@babel/eslint-parser": "7.28.6",
         "@babel/node": "7.29.0",
         "@babel/preset-env": "^7.29.2",

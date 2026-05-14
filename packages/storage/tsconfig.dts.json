@@ -10,6 +10,9 @@
         // Tells TypeScript to read JS files, as
         // normally they are ignored as source files
         "allowJs": true,
+        "target": "esnext",
+        "module": "preserve",
+        "moduleResolution": "bundler",
         // Generate d.ts files
         "declaration": true,
         // This compiler run should
@@ -19,6 +22,7 @@
         // Removing this would place the .d.ts files
         // next to the .js files
         "outDir": "./dist/types/",
+        "esModuleInterop": true,
         // go to js file when using IDE functions like
         // "Go to Definition" in VSCode
         "declarationMap": true,

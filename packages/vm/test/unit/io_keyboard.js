@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const Keyboard = require('../../src/io/keyboard');
 const Runtime = require('../../src/engine/runtime');
 

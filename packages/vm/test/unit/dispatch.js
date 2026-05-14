@@ -3,7 +3,7 @@ const Worker = require('tiny-worker');
 
 const dispatch = require('../../src/dispatch/central-dispatch');
 const path = require('path');
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 
 
 // By default Central Dispatch works with the Worker class built into the browser. Tell it to use TinyWorker instead.

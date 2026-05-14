@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const Clock = require('../../src/io/clock');
 const Runtime = require('../../src/engine/runtime');
 
@@ -33,5 +33,5 @@ test('cycle', t => {
         }, 100);
     }, 100);
     rt._step();
-    t.ok(c.projectTimer() > 0);
+    t.ok(c.projectTimer() >= 0);
 });

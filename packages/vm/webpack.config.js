@@ -11,8 +11,6 @@ const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devtool: 'cheap-module-source-map',
     output: {
-        library: 'VirtualMachine',
-        libraryTarget: 'umd',
         filename: '[name].js'
     },
     resolve: {
@@ -23,20 +21,14 @@ const base = {
     },
     module: {
         rules: [{
-            include: path.resolve(__dirname, 'src'),
-            test: /\.[cm]?tsx?$/,
-            loader: 'ts-loader',
-            options: {
-                transpileOnly: true,
-                allowTsInNodeModules: true
-            }
-        },
-        {
-            test: /\.js$/,
+            test: /\.[jt]s$/,
             loader: 'babel-loader',
             include: path.resolve(__dirname, 'src'),
             options: {
-                presets: [['@babel/preset-env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}]]
+                presets: [
+                    ['@babel/preset-env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}],
+                    '@babel/preset-typescript'
+                ]
             }
         },
         {
@@ -61,7 +53,9 @@ const base = {
         ]
     },
     plugins: [
-        new NodePolyfillPlugin(),
+        new NodePolyfillPlugin({
+            includeAliases: ['events', 'buffer']
+        }),
         new webpack.DefinePlugin({
             'clipcc.VERSION': version,
             'clipcc.BUILD_TIME': Date.now()
@@ -82,6 +76,10 @@ module.exports = [
             'scratch-vm.min': './src/index.js'
         },
         output: {
+            library: {
+                name: 'VirtualMachine',
+                type: 'umd'
+            },
             path: path.resolve('dist', 'web')
         }
     }),
@@ -92,6 +90,9 @@ module.exports = [
             'scratch-vm': './src/index.js'
         },
         output: {
+            library: {
+                type: 'commonjs2'
+            },
             path: path.resolve('dist', 'node')
         },
         externals: {

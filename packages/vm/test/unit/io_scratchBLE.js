@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 // const ScratchBLE = require('../../src/io/scratchBLE');
 
 test('constructor', t => {

@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const xml = require('../../src/util/xml-escape');
 
 test('escape', t => {

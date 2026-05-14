@@ -26,7 +26,7 @@
     "i18n:src": "node scripts/build-i18n-src.js --input_file msg/messages.js --output_dir msg/json --quiet"
   },
   "dependencies": {
-    "blockly": "^12.4.1"
+    "blockly": "^12.5.1"
   },
   "devDependencies": {
     "@jest/environment": "^30.3.0",

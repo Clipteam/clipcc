@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const Sequencer = require('../../src/engine/sequencer');
 const Runtime = require('../../src/engine/runtime');
 const Thread = require('../../src/engine/thread');

@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const adapter = require('../../src/engine/adapter');
 const events = require('../fixtures/events.json');
 
@@ -37,7 +37,7 @@ test('create event', t => {
     t.type(result[1].fields, 'object');
     t.type(result[1].inputs, 'object');
     t.type(result[1].fields.NUM, 'object');
-    t.type(result[1].fields.NUM.value, '10');
+    t.equal(result[1].fields.NUM.value, '10');
     t.type(result[1].topLevel, 'boolean');
     t.equal(result[1].topLevel, false);
 

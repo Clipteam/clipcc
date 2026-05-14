@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const MouseWheel = require('../../src/io/mouseWheel');
 const Runtime = require('../../src/engine/runtime');
 

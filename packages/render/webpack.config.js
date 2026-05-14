@@ -15,24 +15,13 @@ const base = {
                 include: [
                     path.resolve(__dirname, 'src')
                 ],
-                test: /\.[cm]?tsx?$/,
-                loader: 'ts-loader',
-                options: {
-                    transpileOnly: true,
-                    allowTsInNodeModules: true
-                }
-            },
-            {
-                include: [
-                    path.resolve(__dirname, 'src')
-                ],
-                test: /\.js$/,
+                test: /\.[jt]s$/,
                 loader: 'babel-loader',
                 options: {
-                    presets: [[
-                        '@babel/preset-env',
-                        {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}
-                    ]]
+                    presets: [
+                        ['@babel/preset-env', {targets: {browsers: ['last 3 versions', 'Safari >= 8', 'iOS >= 8']}}],
+                        '@babel/preset-typescript'
+                    ]
                 }
             },
             {
@@ -49,7 +38,9 @@ const base = {
         ]
     },
     plugins: [
-        new NodePolyfillPlugin()
+        new NodePolyfillPlugin({
+            includeAliases: ['events']
+        })
     ]
 };
 
@@ -67,7 +58,9 @@ module.exports = [
             queryPlayground: './src/playground/queryPlayground.js'
         },
         output: {
-            libraryTarget: 'umd',
+            library: {
+                type: 'umd'
+            },
             path: path.resolve('playground'),
             filename: '[name].js'
         },
@@ -88,8 +81,10 @@ module.exports = [
             'scratch-render.min': './src/index.js'
         },
         output: {
-            library: 'ScratchRender',
-            libraryTarget: 'umd',
+            library: {
+                name: 'ScratchRender',
+                type: 'umd'
+            },
             path: path.resolve('dist', 'web'),
             filename: '[name].js'
         }
@@ -101,8 +96,9 @@ module.exports = [
             'scratch-render': './src/index.js'
         },
         output: {
-            library: 'ScratchRender',
-            libraryTarget: 'commonjs2',
+            library: {
+                type: 'commonjs2'
+            },
             path: path.resolve('dist', 'node'),
             filename: '[name].js'
         },
