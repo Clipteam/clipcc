@@ -20,7 +20,7 @@ const domToBlock = function (
     blocks: Record<string, VMBlock>,
     isTopBlock: boolean,
     parent: string | null
-): void {
+) {
     if (!blockDOM.attribs.id) {
         blockDOM.attribs.id = uid();
     }
@@ -184,7 +184,7 @@ const stateToBlock = function (
     isTopBlock: boolean,
     parent: string | null,
     isShadow?: boolean
-): void {
+) {
     if (!blockState.id) {
         blockState.id = uid();
     }

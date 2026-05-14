@@ -6,7 +6,7 @@ import uid from './uid';
  * Does not return anything to make it clear that the blocks are updated in-place.
  * @param blocks - blocks to be mutated.
  */
-export default (blocks: VMBlock[]): void => {
+export default (blocks: VMBlock[]) => {
     const oldToNew: Record<string, string> = {};
 
     // First update all top-level IDs and create old-to-new mapping

@@ -29,7 +29,7 @@ class _StackFrame {
     /**
      * Persists reported inputs during async block.
      */
-    reported: { opCached: string, inputValue: CachedArgValue}[] | null = null;
+    reported: {opCached: string, inputValue: CachedArgValue}[] | null = null;
     /**
      * Whether is waiting a custom reporter.
      */
@@ -96,7 +96,7 @@ class _StackFrame {
      * Put a stack frame object into the recycle bin for reuse.
      * @param stackFrame The frame to reset and recycle.
      */
-    static release (stackFrame: _StackFrame): void {
+    static release (stackFrame: _StackFrame) {
         if (typeof stackFrame !== 'undefined') {
             _stackFrameFreeList.push(stackFrame.reset());
         }
@@ -220,7 +220,7 @@ class Thread {
      * @param blockId Block ID to push to stack.
      * @param target New target context.
      */
-    pushStack (blockId: string | null, target?: RenderedTarget): void {
+    pushStack (blockId: string | null, target?: RenderedTarget) {
         this.stack.push(blockId);
         // Push an empty stack frame, if we need one.
         // Might not, if we just popped the stack.
@@ -244,7 +244,7 @@ class Thread {
      * (avoids popping and re-pushing a new stack frame - keeps the warpmode the same
      * @param blockId Block ID to push to stack.
      */
-    reuseStackForNextBlock (blockId: string): void {
+    reuseStackForNextBlock (blockId: string) {
         this.stack[this.stack.length - 1] = blockId;
         this.stackFrames[this.stackFrames.length - 1].reuse();
     }
@@ -265,7 +265,7 @@ class Thread {
     /**
      * Pop back down the stack frame until we hit a procedure call or the stack frame is emptied
      */
-    stopThisScript (): void {
+    stopThisScript () {
         let blockID = this.peekStack();
         while (blockID !== null) {
             const block = this.blockContainer!.getBlock(blockID);
@@ -318,14 +318,14 @@ class Thread {
      * Push a reported value to the parent of the current stack frame.
      * @param value Reported value to push.
      */
-    pushReportedValue (value: unknown): void {
+    pushReportedValue (value: unknown) {
         this.justReported = typeof value === 'undefined' ? null : value;
     }
 
     /**
      * Initialize procedure parameters on this stack frame.
      */
-    initParams (): void {
+    initParams () {
         const stackFrame = this.peekStackFrame();
         if (stackFrame && stackFrame.params === null) {
             stackFrame.params = {};
@@ -338,7 +338,7 @@ class Thread {
      * @param paramName Name of parameter.
      * @param value Value to set for parameter.
      */
-    pushParam (paramName: string, value: unknown): void {
+    pushParam (paramName: string, value: unknown) {
         const stackFrame = this.peekStackFrame()!;
         stackFrame.params![paramName] = value;
     }
@@ -376,7 +376,7 @@ class Thread {
      * For example, this is used in a standard sequence of blocks,
      * where execution proceeds from one block to the next.
      */
-    goToNextBlock (): void {
+    goToNextBlock () {
         const nextBlockId = this.blockContainer!.getNextBlock(this.peekStack()!) as string;
         this.reuseStackForNextBlock(nextBlockId);
     }

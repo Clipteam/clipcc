@@ -113,7 +113,7 @@ class Keyboard {
      * @param data.key The key from the DOM event.
      * @param data.isDown Whether the key is being pressed or released.
      */
-    postData (data: { key: string; isDown: boolean }): void {
+    postData (data: { key: string; isDown: boolean }) {
         if (!data.key) return;
         const scratchKey = this._keyStringToScratchKey(data.key);
         if (scratchKey === '') return;

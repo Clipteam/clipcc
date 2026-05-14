@@ -128,7 +128,7 @@ class TaskQueue {
      * Cancel all pending tasks, rejecting all their promises.
      *
      */
-    cancelAll (): void {
+    cancelAll () {
         if (this._timeout !== null) {
             this._timer.clearTimeout(this._timeout);
             this._timeout = null;
@@ -155,7 +155,7 @@ class TaskQueue {
      * Refill the token bucket based on the amount of time since the last refill.
      *
      */
-    _refill (): void {
+    _refill () {
         const now = this._timer.timeElapsed();
         const timeSinceRefill = now - this._lastUpdateTime;
         if (timeSinceRefill <= 0) return;
@@ -185,7 +185,7 @@ class TaskQueue {
      * Any time the bucket can't afford the next task, delay asynchronously until it can.
      *
      */
-    _runTasksImpl (): void {
+    _runTasksImpl () {
         if (this._timeout) {
             this._timer.clearTimeout(this._timeout);
             this._timeout = null;

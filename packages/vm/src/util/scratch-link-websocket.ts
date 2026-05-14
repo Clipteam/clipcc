@@ -30,7 +30,7 @@ class ScratchLinkWebSocket {
         this._ws = null;
     }
 
-    open (): void {
+    open () {
         if (!(this._onOpen && this._onClose && this._onError && this._handleMessage)) {
             throw new Error('Must set open, close, message and error handlers before calling open on the socket');
         }
@@ -102,29 +102,29 @@ class ScratchLinkWebSocket {
         };
     }
 
-    close (): void {
+    close () {
         this._ws!.close();
         this._ws = null;
     }
 
-    sendMessage (message: object): void {
+    sendMessage (message: object) {
         const messageText = JSON.stringify(message);
         this._ws!.send(messageText);
     }
 
-    setOnOpen (fn: (e: Event) => void): void {
+    setOnOpen (fn: (e: Event) => void) {
         this._onOpen = fn;
     }
 
-    setOnClose (fn: (e: Event) => void): void {
+    setOnClose (fn: (e: Event) => void) {
         this._onClose = fn;
     }
 
-    setOnError (fn: (e: Event) => void): void {
+    setOnError (fn: (e: Event) => void) {
         this._onError = fn;
     }
 
-    setHandleMessage (fn: (json: unknown) => void): void {
+    setHandleMessage (fn: (json: unknown) => void) {
         this._handleMessage = fn;
     }
 
@@ -132,7 +132,7 @@ class ScratchLinkWebSocket {
         return !!(this._ws && this._ws.readyState === this._ws.OPEN);
     }
 
-    _onMessage (e: MessageEvent): void {
+    _onMessage (e: MessageEvent) {
         const json = JSON.parse(e.data);
         this._handleMessage!(json);
     }

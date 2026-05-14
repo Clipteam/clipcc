@@ -85,7 +85,7 @@ class Timer {
      * Start a timer for measuring elapsed time,
      * at the most accurate precision possible.
      */
-    start (): void {
+    start () {
         this.startTime = this.nowObj.now();
     }
 
@@ -107,7 +107,7 @@ class Timer {
      * Clear a timeout from the pending timeout pool.
      * @param timeoutId - the ID returned by `setTimeout()`
      */
-    clearTimeout (timeoutId: ReturnType<typeof global.setTimeout>): void {
+    clearTimeout (timeoutId: ReturnType<typeof global.setTimeout>) {
         global.clearTimeout(timeoutId);
     }
 }
