@@ -1118,6 +1118,8 @@ class RenderedTarget extends Target {
     }
 }
 
+export type RenderedTargetJSON = ReturnType<RenderedTarget['toJSON']>;
+
 /**
  * Whether a given target is a RenderedTarget, i.e., has drawable properties and can be rendered.
  * @param target Target to check.

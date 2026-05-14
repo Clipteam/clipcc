@@ -1438,10 +1438,10 @@ class Blocks {
      * @param comments Map of comments referenced by id
      * @returns JSON array representing this object's blocks.
      */
-    toState (comments?: Record<string, Comment>) {
+    toState (comments?: Record<string, Comment>){
         return this._scripts
             .map(script => this.blockToState(script, comments))
-            .filter(script => script); // Filter out nulls
+            .filter((script): script is ClipCCBlock.serialization.blocks.State => !!script); // Filter out nulls
     }
 
     /**

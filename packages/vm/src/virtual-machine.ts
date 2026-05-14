@@ -45,11 +45,15 @@ import type {Asset, AssetData, ScratchStorage} from 'clipcc-storage';
 import type * as ClipCCBlocks from 'clipcc-block';
 import type {VideoProvider} from './io/video';
 import type {CloudProvider} from './io/cloud';
+import type {OrderedMap, RecordOf} from 'immutable';
+import type {CategoryInfo} from './extension-support/extension-metadata';
 import type {ImportedExtensionsInfo, ProcedureMutation, SB3Project, SB3Target, VMBlock} from './serialization/schema';
 import type {SB2Project} from './serialization/sb2';
 import type {Costume, Sound} from './sprites/sprite';
 import type {BitmapAdapter} from 'clipcc-svg-renderer';
-import type {SpriteInfoData} from './sprites/rendered-target';
+import type {RenderedTargetJSON, SpriteInfoData} from './sprites/rendered-target';
+import type {MonitorRecordProps} from './engine/monitor-record';
+import type Blocks from './engine/blocks';
 
 interface LimitOptions {
     infiniteCloning: boolean;
@@ -71,10 +75,210 @@ interface FileDesc {
 }
 
 /**
+ * Events that can be emitted by VirtualMachine.
+ */
+interface VMEvents {
+    /**
+     * Emitted when the stage size changes.
+     * @param width The new stage width in pixels.
+     * @param height The new stage height in pixels.
+     */
+    'STAGE_SIZE_UPDATE': [width: number, height: number];
+
+    /**
+     * Emitted when a script should be highlighted (e.g. it is running).
+     * @param glowData An object containing the ID of the script block.
+     */
+    'SCRIPT_GLOW_ON': [glowData: {id: string}];
+
+    /**
+     * Emitted when a script should stop being highlighted.
+     * @param glowData An object containing the ID of the script block.
+     */
+    'SCRIPT_GLOW_OFF': [glowData: {id: string}];
+
+    /**
+     * Emitted when a single block should be highlighted (e.g. it is executing).
+     * @param glowData An object containing the ID of the block.
+     */
+    'BLOCK_GLOW_ON': [glowData: {id: string}];
+
+    /**
+     * Emitted when a single block should stop being highlighted.
+     * @param glowData An object containing the ID of the block.
+     */
+    'BLOCK_GLOW_OFF': [glowData: {id: string}];
+
+    /**
+     * Emitted when the runtime tick loop has been started.
+     */
+    'RUNTIME_STARTED': [];
+
+    /**
+     * Emitted when the project has started (threads may not necessarily be running).
+     */
+    'PROJECT_START': [];
+
+    /**
+     * Emitted when threads start running.
+     * Used by the UI to indicate running status.
+     */
+    'PROJECT_RUN_START': [];
+
+    /**
+     * Emitted when threads stop running.
+     * Used by the UI to indicate not-running status.
+     */
+    'PROJECT_RUN_STOP': [];
+
+    /**
+     * Emitted when turbo mode is enabled.
+     */
+    'TURBO_MODE_ON': [];
+
+    /**
+     * Emitted when turbo mode is disabled.
+     */
+    'TURBO_MODE_OFF': [];
+
+    /**
+     * Emitted when the project has changed (a saveable change was made).
+     */
+    'PROJECT_CHANGED': [];
+
+    /**
+     * Emitted when a block reports a value visually (e.g. "say" bubble).
+     * @param visualReport An object containing the block ID and the reported value.
+     */
+    'VISUAL_REPORT': [visualReport: {id: string, value: string}];
+
+    /**
+     * Emitted when the list of monitors should be updated.
+     * @param monitorList The current monitor state map, keyed by monitor ID.
+     */
+    'MONITORS_UPDATE': [monitorList: OrderedMap<string, RecordOf<MonitorRecordProps>>];
+
+    /**
+     * Emitted when a block drag operation updates.
+     * @param areBlocksOverGui Whether blocks are currently being dragged over the GUI.
+     */
+    'BLOCK_DRAG_UPDATE': [areBlocksOverGui: boolean];
+
+    /**
+     * Emitted when a block drag operation ends (blocks were dropped from the flyout).
+     * @param blocks The blocks that were dragged.
+     * @param topBlockId The ID of the top-level block from the dragged stack.
+     */
+    'BLOCK_DRAG_END': [blocks: VMBlock[], topBlockId: string];
+
+    /**
+     * Emitted when a Scratch extension has been added/loaded.
+     * @param categoryInfo The category info metadata for the loaded extension.
+     */
+    'EXTENSION_ADDED': [categoryInfo: CategoryInfo];
+
+    /**
+     * Emitted when an extension requests a custom field to be added.
+     * @param fieldName The name of the custom field.
+     * @param fieldImplementation The implementation of the custom field.
+     */
+    'EXTENSION_FIELD_ADDED': [fieldName: string, fieldImplementation: unknown];
+
+    /**
+     * Emitted when the blocks category info has been updated and should be re-rendered.
+     * @param categoryInfo The updated category info.
+     */
+    'BLOCKSINFO_UPDATE': [categoryInfo: CategoryInfo];
+
+    /**
+     * Emitted when the microphone listening state changes.
+     * @param listening Whether the microphone is currently listening.
+     */
+    'MIC_LISTENING': [listening: boolean];
+
+    /**
+     * Emitted when the cloud data status for this project has changed.
+     * @param hasCloudData Whether the project currently has cloud variables.
+     */
+    'HAS_CLOUD_DATA_UPDATE': [hasCloudData: boolean];
+
+    /**
+     * Emitted when the list of available peripheral devices has been updated.
+     * Causes the peripheral connection modal to update a list of available peripherals.
+     * @param info The available peripherals, keyed by peripheral ID.
+     */
+    'PERIPHERAL_LIST_UPDATE': [info: Record<number, unknown>];
+
+    /**
+     * Emitted when the user picks a Bluetooth device to connect to
+     * via the Companion Device Manager (CDM).
+     * @param info The chosen peripheral info.
+     */
+    'USER_PICKED_PERIPHERAL': [info: Record<number, unknown>];
+
+    /**
+     * Emitted when a peripheral has been successfully connected.
+     * Causes the status button in the blocks menu to indicate "connected".
+     */
+    'PERIPHERAL_CONNECTED': [];
+
+    /**
+     * Emitted when a peripheral has encountered a request error.
+     * Causes the peripheral connection modal to switch to an error state.
+     */
+    'PERIPHERAL_REQUEST_ERROR': [];
+
+    /**
+     * Emitted when a peripheral has been intentionally disconnected.
+     * Causes the status button in the blocks menu to indicate "disconnected".
+     */
+    'PERIPHERAL_DISCONNECTED': [];
+
+    /**
+     * Emitted when the connection to a peripheral has been lost unexpectedly.
+     * Causes a "peripheral connection lost" error alert to display.
+     * @param data An object containing the error message and the extension ID.
+     */
+    'PERIPHERAL_CONNECTION_LOST_ERROR': [data: {message: string, extensionId: string}];
+
+    /**
+     * Emitted when the scan for a peripheral has timed out.
+     * Causes the peripheral connection modal to show a timeout state.
+     */
+    'PERIPHERAL_SCAN_TIMEOUT': [];
+
+    /**
+     * Emitted when the list of targets (sprites / stage) has been updated.
+     * @param data An object containing the list of target snapshots and the editing target ID.
+     * @param data.targetList Array of target state snapshots (only original sprites, no clones).
+     * @param data.editingTarget The ID of the currently editing target, or null.
+     */
+    'targetsUpdate': [data: {
+        targetList: Array<RenderedTargetJSON>;
+        editingTarget: string | null;
+    }];
+
+    /**
+     * Emitted when the workspace (blocks for the editing target) should be updated.
+     * Triggered on editing target change, block changes, variable changes, etc.
+     * @param data An object containing the workspace JSON used to rebuild the Blockly workspace.
+     */
+    'workspaceUpdate': [data: Record<string, unknown>];
+
+    /**
+     * Emitted when playground data is requested via `getPlaygroundData()`.
+     * @param data The playground data containing blocks and serialized thread info.
+     * @param data.blocks The blocks of the editing target (if any).
+     * @param data.threads A JSON-stringified representation of threads on the editing target.
+     */
+    'playgroundData': [data: {blocks: Blocks | undefined, threads: string}];
+}
+
+/**
  * Handles connections between blocks, stage, and extensions.
  * @class
  */
-class VirtualMachine extends EventEmitter {
+class VirtualMachine extends EventEmitter<VMEvents> {
     /**
      * VM runtime, to store blocks, I/O devices, sprites/targets, etc.
      */
