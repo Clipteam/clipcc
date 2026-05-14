@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const Procedures = require('../../src/blocks/scratch3_procedures');
 
 const blocks = new Procedures(null);

@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const path = require('path');
 const VirtualMachine = require('../../src/index');
 const Runtime = require('../../src/engine/runtime');

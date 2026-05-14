@@ -28,15 +28,7 @@ class CustomProcedures extends React.Component {
         };
     }
     componentWillUnmount () {
-        if (this.workspace) {
-            if (ScratchBlocks.getFocusManager().getFocusedNode()) {
-                // Focus the workspace before destroying the workspace to avoid focusing
-                // the unregistered tree. (Clipteam/clipcc#145)
-                // @TODO This is a temporary fix. It might be fixed by Blockly.
-                ScratchBlocks.getFocusManager().focusNode(this.workspace);
-            }
-            this.workspace.dispose();
-        }
+        this.workspace?.dispose();
     }
     setBlocks (blocksRef) {
         if (!blocksRef) return;

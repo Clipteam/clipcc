@@ -1,5 +1,5 @@
 const path = require('path');
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const makeTestStorage = require('../fixtures/make-test-storage');
 const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
 
@@ -55,7 +55,7 @@ test('default cat', t => {
                 t.type(newTarget.blocks, 'object');
                 t.type(newTarget.variables, 'object');
                 const varIds = Object.keys(newTarget.variables);
-                t.type(varIds.length, 1);
+                t.equal(varIds.length, 1);
                 const variable = newTarget.variables[varIds[0]];
                 t.equal(variable.name, 'foo');
                 t.equal(variable.value, 0);

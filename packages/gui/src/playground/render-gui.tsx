@@ -7,7 +7,6 @@ import GUI from '../containers/gui';
 import {setAppElement} from 'react-modal';
 import HashParserHOC from '../lib/hash-parser-hoc';
 import log from '../lib/log';
-import type {PropsOf} from '../lib/type-traits';
 
 const onClickLogo = () => {
     // window.location = 'https://scratch.mit.edu';
@@ -36,7 +35,7 @@ const renderGui = (appTarget: HTMLElement) => {
     // note that redux's 'compose' function is just being used as a general utility to make
     // the hierarchy of HOC constructor calls clearer here; it has nothing to do with redux's
     // ability to compose reducers.
-    const WrappedGui = compose<React.ComponentType<PropsOf<typeof GUI>>>(
+    const WrappedGui = compose<typeof GUI>(
         AppStateHOC,
         HashParserHOC
     )(GUI);

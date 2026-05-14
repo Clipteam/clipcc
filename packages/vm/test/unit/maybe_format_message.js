@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const maybeFormatMessage = require('../../src/util/maybe-format-message');
 
 const nonMessages = [

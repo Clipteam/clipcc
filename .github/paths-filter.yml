@@ -9,10 +9,23 @@ gui:
   - 'packages/paint/**'
   - 'packages/storage/**'
 
+paint:
+  - *global
+  - 'packages/paint/**'
+
+storage:
+  - *global
+  - 'packages/storage/**'
+
 vm:
   - *global
   - 'packages/vm/**'
   - 'packages/storage/**'
+  - 'packages/parser/**'
+
+parser:
+  - *global
+  - 'packages/parser/**'
 
 block:
   - *global

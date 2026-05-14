@@ -12,7 +12,7 @@
     "i18n:src": "rimraf ./translations/messages && babel src > tmp.js && rimraf tmp.js && node ./scripts/build-i18n-source.js ./translations/messages/ ./translations/",
     "lint": "eslint . --ext .js,.jsx",
     "start": "webpack-dev-server",
-    "test": "pnpm run lint && pnpm run unit && NODE_ENV=production pnpm run build",
+    "test": "pnpm run lint && pnpm run unit",
     "unit": "jest --reporters=default",
     "watch": "webpack --progress --color --watch"
   },

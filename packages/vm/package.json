@@ -19,15 +19,15 @@
   "scripts": {
     "build:types": "tsc --project ./tsconfig.dts.json",
     "build": "pnpm run build:types && webpack --progress --color --bail",
-    "coverage": "tap ./test/{unit,integration}/*.js --reporter=tap --coverage --coverage-report=lcov",
+    "coverage": "jest --silent --coverage",
     "i18n:src": "mkdirp translations/core && format-message extract --out-file translations/core/en.json src/extensions/**/index.js",
     "lint": "pnpm run lint:js && format-message lint src/**/*.js",
     "lint:js": "eslint .",
     "prepublish": "in-publish && pnpm run build:types && pnpm run build || not-in-publish",
     "start": "webpack-dev-server",
-    "test": "tap ./test/{unit,integration}/*.js --reporter=tap --allow-incomplete-coverage --allow-empty-coverage",
-    "test:unit": "tap ./test/unit/*.js --reporter=tap --allow-incomplete-coverage --allow-empty-coverage",
-    "test:integration": "tap ./test/integration/*.js --reporter=tap --allow-incomplete-coverage --allow-empty-coverage",
+    "test": "jest",
+    "test:unit": "jest test/unit",
+    "test:integration": "jest test/integration",
     "performance": "node ./test/extra/performance.js",
     "watch": "webpack --progress --color --watch",
     "version": "json -f package.json -I -e \"this.repository.sha = '$(git log -n1 --pretty=format:%H)'\""
@@ -35,7 +35,6 @@
   "dependencies": {
     "@turbowarp/nanolog": "^1.0.1",
     "@vernier/godirect": "1.8.3",
-    "arraybuffer-loader": "1.0.8",
     "atob": "2.1.2",
     "btoa": "1.2.1",
     "canvas-toBlob": "1.0.0",
@@ -62,7 +61,9 @@
     "@types/fastestsmallesttextencoderdecoder": "^1.0.2",
     "@types/node": "^25.5.2",
     "adm-zip": "0.4.11",
+    "arraybuffer-loader": "1.0.8",
     "babel-eslint": "10.1.0",
+    "babel-jest": "23.6.0",
     "babel-loader": "^10.1.1",
     "callsite": "1.0.0",
     "clipcc-audio": "workspace:~",
@@ -79,21 +80,19 @@
     "format-message-cli": "6.2.4",
     "globals": "^16.5.0",
     "in-publish": "2.0.1",
+    "jest": "catalog:",
     "js-md5": "0.7.3",
     "json": "^9.0.6",
     "lodash.defaultsdeep": "4.6.1",
+    "node-polyfill-webpack-plugin": "^3.0.0",
     "pngjs": "7.0.0",
     "script-loader": "0.7.2",
     "stats.js": "0.17.0",
-    "tap": "21.0.1",
     "terser-webpack-plugin": "^5.3.17",
     "tiny-worker": "2.3.0",
     "typescript": "catalog:",
     "webpack": "catalog:",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.3"
-  },
-  "tap": {
-    "tsconfig": "./tsconfig.test.json"
   }
 }

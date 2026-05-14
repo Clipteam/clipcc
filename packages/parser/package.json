@@ -10,12 +10,12 @@
     "url": "https://github.com/Clipteam/clipcc.git"
   },
   "scripts": {
-    "test:lint": "eslint . --ext=js",
-    "test:unit": "tap test/unit/*.js --allow-incomplete-coverage --allow-empty-coverage",
-    "test:integration": "tap test/integration/*.js --allow-incomplete-coverage --allow-empty-coverage",
-    "test:coverage": "tap test/{unit,integration}/*.js --coverage --coverage-report=lcov",
+    "lint": "eslint . --ext=js",
+    "test:unit": "tap --reporter=tap test/unit/*.js --allow-incomplete-coverage --allow-empty-coverage",
+    "test:integration": "tap --reporter=tap test/integration/*.js --allow-incomplete-coverage --allow-empty-coverage",
+    "test:coverage": "tap --reporter=tap test/{unit,integration}/*.js --coverage --coverage-report=lcov",
     "test:benchmark": "node test/benchmark/performance.js",
-    "test": "pnpm run test:lint && pnpm run test:unit && pnpm run test:integration"
+    "test": "pnpm run test:unit && pnpm run test:integration"
   },
   "dependencies": {
     "ajv": "6.3.0",

@@ -18,6 +18,9 @@ jobs:
       gui: ${{ steps.changes.outputs.gui }}
       vm: ${{ steps.changes.outputs.vm }}
       block: ${{ steps.changes.outputs.block }}
+      parser: ${{ steps.changes.outputs.parser }}
+      storage: ${{ steps.changes.outputs.storage }}
+      paint: ${{ steps.changes.outputs.paint }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -54,7 +57,6 @@ jobs:
             packages/*/dist
             packages/*/build
             packages/*/playground
-            packages/audio/dist.js
             packages/gui/static/microbit
           key: build-artifacts-${{ github.run_id }}-${{ github.run_attempt }}
 
@@ -121,9 +123,72 @@ jobs:
       - name: Test
         run: pnpm block test
 
+  test-parser:
+    name: Test Parser
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: needs.build.outputs.parser == 'true' || needs.build.outputs.should-run-all == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
+
+      - name: Restore build artifacts
+        uses: ./.github/actions/restore-build
+        with:
+          run-id: ${{ github.run_id }}
+          run-attempt: ${{ github.run_attempt }}
+
+      - name: Test
+        run: pnpm parser test
+
+  test-storage:
+    name: Test Storage
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: needs.build.outputs.storage == 'true' || needs.build.outputs.should-run-all == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
+
+      - name: Restore build artifacts
+        uses: ./.github/actions/restore-build
+        with:
+          run-id: ${{ github.run_id }}
+          run-attempt: ${{ github.run_attempt }}
+
+      - name: Test
+        run: pnpm storage test
+
+  test-paint:
+    name: Test Paint
+    needs: [build]
+    runs-on: ubuntu-latest
+    if: needs.build.outputs.paint == 'true' || needs.build.outputs.should-run-all == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
+
+      - name: Restore build artifacts
+        uses: ./.github/actions/restore-build
+        with:
+          run-id: ${{ github.run_id }}
+          run-attempt: ${{ github.run_attempt }}
+
+      - name: Test
+        run: pnpm paint test
+
   cleanup:
     name: Cleanup build cache
-    needs: [test-gui, test-vm, test-block]
+    needs: [test-gui, test-vm, test-block, test-parser, test-storage, test-paint]
     runs-on: ubuntu-latest
     # Always run so the cache is cleaned even when tests fail or are skipped.
     if: always()

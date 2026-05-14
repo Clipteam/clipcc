@@ -29,6 +29,12 @@ module.exports = [
     },
     {
         files: ['test/**/*.js'],
+        languageOptions: {
+            globals: {
+                ...globals.browser,
+                ...globals.jest
+            }
+        },
         rules: {
             'no-undefined': 'off',
             'jsdoc/require-jsdoc': 'off',

@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const RateLimiter = require('../../src/util/rateLimiter.js');
 
 test('rate limiter', t => {

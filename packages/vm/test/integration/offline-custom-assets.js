@@ -6,7 +6,7 @@
  */
 const path = require('path');
 const fs = require('fs');
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const AdmZip = require('adm-zip');
 const {ScratchStorage} = require('clipcc-storage');
 const VirtualMachine = require('../../src/index');

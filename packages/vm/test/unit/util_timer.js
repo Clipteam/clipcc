@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const Timer = require('../../src/util/timer');
 
 // Stubbed current time

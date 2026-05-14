@@ -1,4 +1,4 @@
-const test = require('tap').test;
+const test = require('../fixtures/jest-tap-bridge').test;
 const Variable = require('../../src/engine/variable');
 const htmlparser = require('htmlparser2');
 

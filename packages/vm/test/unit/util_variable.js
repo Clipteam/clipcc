@@ -1,4 +1,4 @@
-const tap = require('tap');
+const tap = require('../fixtures/jest-tap-bridge');
 const Target = require('../../src/engine/target');
 const Runtime = require('../../src/engine/runtime');
 const VariableUtil = require('../../src/util/variable-util');
