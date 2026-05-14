@@ -81,38 +81,38 @@ class Scratch3LooksBlocks implements CategoryPrototype {
     /**
      * The key to load & store a target's bubble-related state.
      */
-    static get STATE_KEY (): string {
-        return 'Scratch.looks';
+    static get STATE_KEY () {
+        return 'Scratch.looks' as const;
     }
 
     /**
      * Event name for a text bubble being created or updated.
      */
-    static get SAY_OR_THINK (): string {
+    static get SAY_OR_THINK () {
         // There are currently many places in the codebase which explicitly refer to this event by the string 'SAY',
         // so keep this as the string 'SAY' for now rather than changing it to 'SAY_OR_THINK' and breaking things.
-        return 'SAY';
+        return 'SAY' as const;
     }
 
     /**
      * Limit for say bubble string.
      */
-    static get SAY_BUBBLE_LIMIT (): number {
-        return 330;
+    static get SAY_BUBBLE_LIMIT () {
+        return 330 as const;
     }
 
     /**
      * Limit for ghost effect
      */
-    static get EFFECT_GHOST_LIMIT (): {min: number, max: number} {
-        return {min: 0, max: 100};
+    static get EFFECT_GHOST_LIMIT () {
+        return {min: 0, max: 100} as const;
     }
 
     /**
      * Limit for brightness effect
      */
-    static get EFFECT_BRIGHTNESS_LIMIT (): {min: number, max: number} {
-        return {min: -100, max: 100};
+    static get EFFECT_BRIGHTNESS_LIMIT () {
+        return {min: -100, max: 100} as const;
     }
 
     /**

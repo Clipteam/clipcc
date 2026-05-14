@@ -250,6 +250,11 @@ interface RuntimeEvents {
     'RUNTIME_STARTED': [];
     'RUNTIME_DISPOSED': [];
     'BLOCKS_NEED_UPDATE': [];
+    'ANSWER': [answer: string];
+    'SAY': [target: RenderedTarget, variant: 'say' | 'think', text: string];
+    'KEY_PRESSED': [key: string];
+    'QUESTION': [text: string | null];
+    'PLAY_NOTE': [noteNum: number, extensionId: string];
     'targetWasCreated': [newTarget: RenderedTarget, sourceTarget?: RenderedTarget];
     'targetWasRemoved': [target: RenderedTarget];
 }

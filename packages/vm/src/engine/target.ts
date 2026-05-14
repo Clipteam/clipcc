@@ -616,7 +616,7 @@ abstract class Target extends EventEmitter<TargetEvents> {
         if (existingLocalVar) {
             newVarId = existingLocalVar.id;
         } else {
-            const newVar = new Variable(null, varName, varType, false);
+            const newVar = new Variable(null, varName, varType);
             newVarId = newVar.id;
             sprite.variables[newVarId] = newVar;
         }
