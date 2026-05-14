@@ -416,7 +416,7 @@ class Scratch3VideoSensingBlocks {
     }
 
     /**
-     * @returns {object} metadata for this extension and its blocks.
+     * @returns metadata for this extension and its blocks.
      */
     getInfo () {
         // Set the video display properties to defaults the first time

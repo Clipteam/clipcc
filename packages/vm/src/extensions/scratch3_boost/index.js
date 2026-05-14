@@ -1282,7 +1282,7 @@ class Scratch3BoostBlocks {
     }
 
     /**
-     * @returns {object} metadata for this extension and its blocks.
+     * @returns metadata for this extension and its blocks.
      */
     getInfo () {
         return {

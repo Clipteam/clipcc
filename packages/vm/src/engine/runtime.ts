@@ -55,9 +55,10 @@ import type {
     ExtensionButtonMetadata,
     ExtensionCustomFieldTypeMetadata,
     ExtensionImageMetadata,
-    ExtensionMenuItem,
-    ExtensionMetadata,
-    PeripheralExtensionClass
+    PeripheralExtensionClass,
+    ShortExtensionMenuItem,
+    NormalizedExtensionMetadata,
+    NormalizedExtensionMenuItem
 } from '../extension-support/extension-metadata';
 import type {FieldDropdownArg, JsonBlockArg, JsonBlockDefinition} from '../types/json-block-definitions';
 import type {MonitorRecordProps} from './monitor-record';
@@ -949,7 +950,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @param extensionInfo - information about the extension (id, blocks, etc.)
      * @private
      */
-    _registerExtensionPrimitives (extensionInfo: ExtensionMetadata) {
+    _registerExtensionPrimitives (extensionInfo: NormalizedExtensionMetadata) {
         const categoryInfo = {
             id: extensionInfo.id,
             name: maybeFormatMessage(extensionInfo.name),
@@ -992,7 +993,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @param extensionInfo - new info (results of running getInfo) for an extension
      * @private
      */
-    _refreshExtensionPrimitives (extensionInfo: ExtensionMetadata) {
+    _refreshExtensionPrimitives (extensionInfo: NormalizedExtensionMetadata) {
         const categoryInfo = this._blockInfo.find(info => info.id === extensionInfo.id);
         if (categoryInfo) {
             categoryInfo.name = maybeFormatMessage(extensionInfo.name);
@@ -1009,7 +1010,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @param extensionInfo - the extension metadata to read
      * @private
      */
-    _fillExtensionCategory (categoryInfo: CategoryInfo, extensionInfo: ExtensionMetadata) {
+    _fillExtensionCategory (categoryInfo: CategoryInfo, extensionInfo: NormalizedExtensionMetadata) {
         categoryInfo.blocks = [];
         categoryInfo.customFieldTypes = {};
         categoryInfo.menus = [];
@@ -1068,9 +1069,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @returns An array of pairs or the original input function.
      * @private
      */
-    _convertMenuItems (
-        menuItems: ExtensionMenuItem['items'] | (() => [string, string][])
-    ): MenuGenerator {
+    _convertMenuItems (menuItems: Exclude<ShortExtensionMenuItem, string>): MenuGenerator {
         if (typeof menuItems !== 'function') {
             return menuItems.map(item => {
                 const formattedItem = maybeFormatMessage(item);
@@ -1097,7 +1096,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @returns The menu block definition for scratch-blocks.
      * @private
      */
-    _buildMenuForScratchBlocks (menuName: string, menuInfo: ExtensionMenuItem, categoryInfo: CategoryInfo) {
+    _buildMenuForScratchBlocks (menuName: string, menuInfo: NormalizedExtensionMenuItem, categoryInfo: CategoryInfo) {
         const menuId = this._makeExtensionMenuId(menuName, categoryInfo.id);
         const menuItems = this._convertMenuItems(menuInfo.items);
         return {

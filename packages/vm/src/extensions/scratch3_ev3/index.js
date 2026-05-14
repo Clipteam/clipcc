@@ -955,7 +955,7 @@ class Scratch3Ev3Blocks {
 
     /**
      * Define the EV3 extension.
-     * @returns {object} Extension description.
+     * @returns Extension description.
      */
     getInfo () {
         return {

@@ -93,7 +93,7 @@ class Scratch3TranslateBlocks {
     }
 
     /**
-     * @returns {object} metadata for this extension and its blocks.
+     * @returns metadata for this extension and its blocks.
      */
     getInfo () {
         this._supportedLanguages = this._getSupportedLanguages(this.getViewerLanguageCode());

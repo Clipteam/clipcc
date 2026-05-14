@@ -5,4 +5,5 @@ import BlockType from './extension-support/block-type';
 export default VirtualMachine;
 export {ArgumentType, BlockType};
 
-export type * as schema from './serialization/schema';
+export * from './extension-support/extension-metadata';
+export * as schema from './serialization/schema';

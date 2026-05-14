@@ -22,7 +22,7 @@ export interface ExtensionMetadata {
     /** Link to documentation content for this extension. */
     docsURI?: string;
     /** The blocks provided by this extension, plus separators. */
-    blocks: Array<ExtensionBlockMetadata | ExtensionButtonMetadata | '---'>;
+    blocks: Array<ExtensionItemMetadata>;
     /** Map of menu name to metadata for each of this extension's menus. */
     menus?: Record<string, ExtensionMenuItem>;
     /** Whether to show a status button for this extension. */
@@ -44,6 +44,13 @@ export interface ExtensionMetadata {
      */
     customFieldTypes?: Record<string, ExtensionCustomFieldTypeMetadata>;
 }
+
+/** ExtensionMetadata but normalized by extension manager and passed to runtime */
+export interface NormalizedExtensionMetadata extends Omit<ExtensionMetadata, 'menus'> {
+    menus?: Record<string, NormalizedExtensionMenuItem>;
+}
+
+export type ExtensionItemMetadata = ExtensionBlockMetadata | ExtensionButtonMetadata | '---';
 
 export interface ExtensionCustomFieldTypeMetadata {
     output: JsonBlockDefinition['output'];
@@ -77,7 +84,7 @@ export type CategoryInfo =
         'id' | 'name' | 'showStatusButton' | 'blockIconURI' | 'menuIconURI' | 'color1' | 'color2' | 'color3'
     > &
     {
-        menuInfo: Record<string, ExtensionMenuItem>;
+        menuInfo: Record<string, NormalizedExtensionMenuItem>;
         customFieldTypes: Record<string, ExtensionCustomFieldTypeInfo>;
         menus: MenuInfo[];
         blocks: (BlockInfo | ButtonInfo | SepInfo)[];
@@ -161,15 +168,24 @@ export interface ExtensionImageMetadata {
 /**
  * A menu item for which the label and value can differ.
  */
-export interface ExtensionMenuItem {
-    items: {
-        /** The value of the block argument when this menu item is selected. */
-        value: string;
-        /** The human-readable label of this menu item in the menu. */
-        text: string;
-    }[];
+export interface NormalizedExtensionMenuItem {
+    items: ShortExtensionMenuItem;
     acceptReporters?: boolean;
 }
+
+export interface ExtensionMenuItemObject {
+    /** The value of the block argument when this menu item is selected. */
+    value: string;
+    /** The human-readable label of this menu item in the menu. */
+    text: string;
+}
+
+export type MenuItemFunction = ((editingTargetId?: string | null) => [string, string][]);
+
+export type ShortExtensionMenuItem =
+    MenuItemFunction | ExtensionMenuItemObject[];
+
+export type ExtensionMenuItem = NormalizedExtensionMenuItem | ShortExtensionMenuItem;
 
 export interface ExtensionClass {
     getInfo(): ExtensionMetadata;

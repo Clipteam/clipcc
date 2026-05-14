@@ -19,7 +19,7 @@ class Scratch3CoreExample {
     }
 
     /**
-     * @returns {object} metadata for this extension and its blocks.
+     * @returns metadata for this extension and its blocks.
      */
     getInfo () {
         return {

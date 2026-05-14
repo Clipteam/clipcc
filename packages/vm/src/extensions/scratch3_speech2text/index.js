@@ -606,7 +606,7 @@ class Scratch3Speech2TextBlocks {
     }
 
     /**
-     * @returns {object} Metadata for this extension and its blocks.
+     * @returns metadata for this extension and its blocks.
      */
     getInfo () {
         return {

@@ -10,7 +10,7 @@ import EventEmitter from 'events';
 import JSZip from 'jszip';
 import {Buffer} from 'buffer';
 import centralDispatch from './dispatch/central-dispatch';
-import ExtensionManager from './extension-support/extension-manager.js';
+import ExtensionManager, {type BuiltinExtensionId} from './extension-support/extension-manager';
 import log from './util/log';
 import MathUtil from './util/math-util';
 import Runtime, {type ScratchLinkSocketFactory, type IODevices} from './engine/runtime';
@@ -26,7 +26,7 @@ import 'canvas-toBlob';
 
 const RESERVED_NAMES = ['_mouse_', '_stage_', '_edge_', '_myself_', '_random_'];
 
-const CORE_EXTENSIONS: string[] = [
+const CORE_EXTENSIONS: BuiltinExtensionId[] = [
     // 'motion',
     // 'looks',
     // 'sound',
