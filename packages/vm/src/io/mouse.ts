@@ -83,7 +83,7 @@ class Mouse {
     }) {
         const halfWidth = this.runtime.stageWidth / 2;
         const halfHeight = this.runtime.stageHeight / 2;
-        if (data.x) {
+        if (typeof data.x === 'number') {
             this._clientX = data.x;
             this._scratchX = MathUtil.clamp(
                 this.runtime.stageWidth * ((data.x / data.canvasWidth) - 0.5),
@@ -91,7 +91,7 @@ class Mouse {
                 halfWidth
             );
         }
-        if (data.y) {
+        if (typeof data.y === 'number') {
             this._clientY = data.y;
             this._scratchY = MathUtil.clamp(
                 -this.runtime.stageHeight * ((data.y / data.canvasHeight) - 0.5),
