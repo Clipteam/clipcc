@@ -20,7 +20,7 @@ import VariableUtil from '../util/variable-util';
 import {migrationMap, mergeDeep, migrateMutation} from './migration.js';
 import {loadCostume} from '../import/load-costume';
 import {loadSound} from '../import/load-sound';
-import {deserializeCostume, deserializeSound} from './deserialize-assets.js';
+import {deserializeCostume, deserializeSound} from './deserialize-assets';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 

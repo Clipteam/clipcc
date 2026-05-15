@@ -134,8 +134,8 @@ export class ScratchStorage {
         assetType: IAssetType,
         dataFormat: DataFormat,
         data: AssetData,
-        id: AssetId | null,
-        generateId: boolean
+        id?: AssetId | null,
+        generateId?: boolean
     ): Asset {
         if (!dataFormat) throw new Error('Tried to create asset without a dataFormat');
         return new Asset(assetType, id, dataFormat, data, generateId);

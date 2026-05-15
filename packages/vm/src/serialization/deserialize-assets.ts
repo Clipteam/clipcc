@@ -1,20 +1,24 @@
 import JSZip from 'jszip';
 import log from '../util/log';
 
+import type {Costume, Sound} from '../sprites/sprite';
+import type Runtime from '../engine/runtime';
+import type {DataFormat} from 'clipcc-storage';
+
 /**
  * Deserializes sound from file into storage cache so that it can
  * be loaded into the runtime.
- * @param {object} sound Descriptor for sound from sb3 file
- * @param {Runtime} runtime The runtime containing the storage to cache the sounds in
- * @param {JSZip} zip The zip containing the sound file being described by `sound`
- * @param {string} assetFileName Optional file name for the given asset
+ * @param sound Descriptor for sound from sb3 file
+ * @param runtime The runtime containing the storage to cache the sounds in
+ * @param zip The zip containing the sound file being described by `sound`
+ * @param assetFileName Optional file name for the given asset
  * (sb2 files have filenames of the form [int].[ext],
  * sb3 files have filenames of the form [md5].[ext])
- * @returns {Promise} Promise that resolves after the described sound has been stored
+ * @returns Promise that resolves after the described sound has been stored
  * into the runtime storage cache, the sound was already stored, or an error has
  * occurred.
  */
-const deserializeSound = function (sound, runtime, zip, assetFileName) {
+const deserializeSound = function (sound: Sound, runtime: Runtime, zip: JSZip, assetFileName?: string) {
     const fileName = assetFileName ? assetFileName : sound.md5;
     const storage = runtime.storage;
     if (!storage) {
@@ -43,7 +47,7 @@ const deserializeSound = function (sound, runtime, zip, assetFileName) {
         return Promise.resolve(null);
     }
 
-    const dataFormat = sound.dataFormat.toLowerCase() === 'mp3' ?
+    const dataFormat = sound.dataFormat!.toLowerCase() === 'mp3' ?
         storage.DataFormat.MP3 : storage.DataFormat.WAV;
     return soundFile.async('uint8array').then(data => storage.createAsset(
         storage.AssetType.Sound,
@@ -62,19 +66,25 @@ const deserializeSound = function (sound, runtime, zip, assetFileName) {
 /**
  * Deserializes costume from file into storage cache so that it can
  * be loaded into the runtime.
- * @param {object} costume Descriptor for costume from sb3 file
- * @param {Runtime} runtime The runtime containing the storage to cache the costumes in
- * @param {JSZip} zip The zip containing the costume file being described by `costume`
- * @param {string} assetFileName Optional file name for the given asset
+ * @param costume Descriptor for costume from sb3 file
+ * @param runtime The runtime containing the storage to cache the costumes in
+ * @param zip The zip containing the costume file being described by `costume`
+ * @param assetFileName Optional file name for the given asset
  * (sb2 files have filenames of the form [int].[ext],
  * sb3 files have filenames of the form [md5].[ext])
- * @param {string} textLayerFileName Optional file name for the given asset's text layer
+ * @param textLayerFileName Optional file name for the given asset's text layer
  * (sb2 only; files have filenames of the form [int].png)
- * @returns {Promise} Promise that resolves after the described costume has been stored
+ * @returns Promise that resolves after the described costume has been stored
  * into the runtime storage cache, the costume was already stored, or an error has
  * occurred.
  */
-const deserializeCostume = function (costume, runtime, zip, assetFileName, textLayerFileName) {
+const deserializeCostume = function (
+    costume: Costume,
+    runtime: Runtime,
+    zip: JSZip,
+    assetFileName?: string,
+    textLayerFileName?: string
+) {
     const storage = runtime.storage;
     const assetId = costume.assetId;
     const fileName = assetFileName ? assetFileName :
@@ -90,8 +100,9 @@ const deserializeCostume = function (costume, runtime, zip, assetFileName, textL
         // @todo Cache the asset data somewhere and pull it out here
         return Promise.resolve(storage.createAsset(
             costume.asset.assetType,
-            costume.asset.dataFormat,
-            new Uint8Array(Object.keys(costume.asset.data).map(key => costume.asset.data[key])),
+            costume.asset.dataFormat!,
+            new Uint8Array(Object.keys(costume.asset.data!)
+                .map(key => (costume.asset.data as Uint8Array)[key as unknown as number])),
             null,
             true
         )).then(asset => {
@@ -118,13 +129,14 @@ const deserializeCostume = function (costume, runtime, zip, assetFileName, textL
         return Promise.resolve(null);
     }
     let assetType = null;
-    const costumeFormat = costume.dataFormat.toLowerCase();
+    const costumeFormat = costume.dataFormat!.toLowerCase() as DataFormat;
     if (costumeFormat === 'svg') {
         assetType = storage.AssetType.ImageVector;
     } else if (['png', 'bmp', 'jpeg', 'jpg', 'gif'].indexOf(costumeFormat) >= 0) {
         assetType = storage.AssetType.ImageBitmap;
     } else {
         log.error(`Unexpected file format for costume: ${costumeFormat}`);
+        return Promise.resolve(null);
     }
     if (!JSZip.support.uint8array) {
         log.error('JSZip uint8array is not supported in this browser.');
@@ -135,7 +147,7 @@ const deserializeCostume = function (costume, runtime, zip, assetFileName, textL
     // that was opened in Scratch 2.0. In this case, set costume.textLayerAsset.
     let textLayerFilePromise;
     if (costume.textLayerMD5) {
-        const textLayerFile = zip.file(textLayerFileName);
+        const textLayerFile = zip.file(textLayerFileName!);
         if (!textLayerFile) {
             log.error(`Could not find text layer file associated with the ${costume.name} costume.`);
             return Promise.resolve(null);
@@ -143,7 +155,7 @@ const deserializeCostume = function (costume, runtime, zip, assetFileName, textL
         textLayerFilePromise = textLayerFile.async('uint8array')
             .then(data => storage.createAsset(
                 storage.AssetType.ImageBitmap,
-                'png',
+                'png' as DataFormat,
                 data,
                 costume.textLayerMD5
             ))
