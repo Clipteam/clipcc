@@ -1,9 +1,7 @@
 /**
  * These constants are copied from scratch-blocks/core/constants.js
- * @readonly
- * @enum {int}
  */
-const ScratchBlocksConstants = {
+export const ScratchBlocksConstants = {
     /**
      * ENUM for output shape: hexagonal (booleans/predicates).
      * @constant
@@ -24,9 +22,3 @@ const ScratchBlocksConstants = {
 } as const;
 
 export default ScratchBlocksConstants;
-
-export const {
-    OUTPUT_SHAPE_HEXAGONAL,
-    OUTPUT_SHAPE_ROUND,
-    OUTPUT_SHAPE_SQUARE
-} = ScratchBlocksConstants;
