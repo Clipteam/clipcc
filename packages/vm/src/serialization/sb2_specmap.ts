@@ -1675,7 +1675,6 @@ const addExtensionOp = function (sb2Extension: string, sb2Opcode: string, blockI
     /**
      * This string separates the name of an extension and the name of an opcode in more recent Scratch 2.0 projects.
      * Earlier projects used '.' as a separator, up until we added the 'LEGO WeDo 2.0' extension...
-     * @type {string}
      */
     const sep = '\u001F'; // Unicode Unit Separator
 

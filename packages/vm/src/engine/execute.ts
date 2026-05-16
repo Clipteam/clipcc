@@ -25,7 +25,6 @@ const blockFunctionProfilerFrame = 'blockFunction' as const;
 
 /**
  * Profiler frame ID for 'blockFunction'.
- * @type {number}
  */
 let blockFunctionProfilerId = -1;
 
@@ -218,25 +217,21 @@ class BlockCached {
     id: string;
     /**
      * Block operation code for this block.
-     * @type {string}
      */
     opcode: string;
 
     /**
      * Original block object containing argument values for static fields.
-     * @type {object}
      */
     fields: Record<string, VMField>;
 
     /**
      * Original block object containing argument values for executable inputs.
-     * @type {object}
      */
     inputs: Record<string, VMInput>;
 
     /**
      * Procedure mutation.
-     * @type {?object}
      */
     mutation?: VMMutation;
     /**

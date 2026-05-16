@@ -695,7 +695,7 @@ class VirtualMachine extends EventEmitter<VMEvents> {
 
     /**
      * Load a project from the Scratch web site, by ID.
-     * @param {string} id - the ID of the project to download, as a string.
+     * @param id - the ID of the project to download, as a string.
      */
     downloadProjectId (id: string) {
         const storage = this.runtime.storage;
@@ -742,8 +742,8 @@ class VirtualMachine extends EventEmitter<VMEvents> {
         });
     }
 
-    /*
-     * @type {Array<object>} Array of all costumes and sounds currently in the runtime
+    /**
+     * Array of all costumes and sounds currently in the runtime
      */
     get assets () {
         return this.runtime.targets.reduce((acc: Asset[], target) => (

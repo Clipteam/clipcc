@@ -26,7 +26,6 @@ class Keyboard {
      * An uppercase string of length one;
      *     except for special key names for arrow keys and space (e.g. 'left arrow').
      * Can be a non-english unicode letter like: æ ø ש נ 手 廿.
-     * @type {Array.<string>}
      */
     _keysPressed: string[] = [];
 

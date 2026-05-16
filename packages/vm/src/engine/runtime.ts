@@ -255,6 +255,11 @@ interface RuntimeEvents {
     'KEY_PRESSED': [key: string];
     'QUESTION': [text: string | null];
     'PLAY_NOTE': [noteNum: number, extensionId: string];
+    /**
+     * Event fired after a new target has been created, possibly by cloning an existing target.
+     * @param newTarget - the newly created target.
+     * @param sourceTarget - the target used as a source for the new clone, if any.
+     */
     'targetWasCreated': [newTarget: RenderedTarget, sourceTarget?: RenderedTarget];
     'targetWasRemoved': [target: RenderedTarget];
 }
@@ -2865,13 +2870,5 @@ class Runtime extends EventEmitter<RuntimeEvents> {
 }
 
 export type IODevices = Runtime['ioDevices'];
-
-/**
- * Event fired after a new target has been created, possibly by cloning an existing target.
- *
- * @event Runtime#targetWasCreated
- * @param {RenderedTarget} newTarget - the newly created target.
- * @param {RenderedTarget} [sourceTarget] - the target used as a source for the new clone, if any.
- */
 
 export default Runtime;

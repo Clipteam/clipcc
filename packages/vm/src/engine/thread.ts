@@ -11,7 +11,6 @@ const _stackFrameFreeList: _StackFrame[] = [];
 /**
  * A frame used for each level of the stack. A general purpose
  * place to store a bunch of execution context and parameters
- * @private
  */
 class _StackFrame {
     /**
