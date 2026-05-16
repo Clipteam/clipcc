@@ -121,12 +121,12 @@ class Scratch3LooksBlocks implements CategoryPrototype {
      * @returns the mutable bubble state associated with that target. This will be created if necessary.
      */
     _getBubbleState (target: Target): BubbleState {
-        let bubbleState = target.getCustomState(Scratch3LooksBlocks.STATE_KEY);
+        let bubbleState = target.getCustomState<BubbleState>(Scratch3LooksBlocks.STATE_KEY);
         if (!bubbleState) {
             bubbleState = Clone.simple(Scratch3LooksBlocks.DEFAULT_BUBBLE_STATE);
             target.setCustomState(Scratch3LooksBlocks.STATE_KEY, bubbleState);
         }
-        return bubbleState as BubbleState;
+        return bubbleState;
     }
 
     /**

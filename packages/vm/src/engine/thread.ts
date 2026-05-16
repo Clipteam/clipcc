@@ -73,7 +73,7 @@ class _StackFrame {
      * Reuse an active stack frame in the stack.
      * @param warpMode defaults to current warpMode
      */
-    reuse (warpMode: boolean = this.warpMode): this {
+    reuse (warpMode = this.warpMode): this {
         this.reset();
         this.warpMode = Boolean(warpMode);
         return this;
@@ -131,7 +131,7 @@ class Thread {
     /**
      * Status of the thread, one of three states (below)
      */
-    status: ThreadStatus = ThreadStatus.RUNNING;
+    status = ThreadStatus.RUNNING;
     /**
      * Whether the thread is killed in the middle of execution.
      */
@@ -147,7 +147,7 @@ class Thread {
     /**
      * Whether the thread requests its script to glow during this frame.
      */
-    requestScriptGlowInFrame: boolean = false;
+    requestScriptGlowInFrame = false;
     /**
      * Which block ID should glow during this frame, if any.
      */

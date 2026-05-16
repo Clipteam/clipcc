@@ -479,8 +479,8 @@ abstract class Target extends EventEmitter<TargetEvents> {
      * @param stateId - specify which piece of state to retrieve.
      * @returns the associated state, if any was found.
      */
-    getCustomState (stateId: string) {
-        return this._customState[stateId];
+    getCustomState<T> (stateId: string): T | undefined {
+        return this._customState[stateId] as T | undefined;
     }
 
     /**
@@ -488,7 +488,7 @@ abstract class Target extends EventEmitter<TargetEvents> {
      * @param stateId - specify which piece of state to store on this target.
      * @param newValue - the state value to store.
      */
-    setCustomState (stateId: string, newValue: unknown) {
+    setCustomState<T> (stateId: string, newValue: T) {
         this._customState[stateId] = newValue;
     }
 

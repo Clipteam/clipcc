@@ -115,7 +115,7 @@ class Scratch3SoundBlocks implements CategoryPrototype {
      * @returns the mutable sound state associated with that target. This will be created if necessary.
      */
     _getSoundState (target: RenderedTarget): SoundState {
-        let soundState = target.getCustomState(Scratch3SoundBlocks.STATE_KEY) as SoundState;
+        let soundState = target.getCustomState<SoundState>(Scratch3SoundBlocks.STATE_KEY);
         if (!soundState) {
             soundState = Clone.simple(Scratch3SoundBlocks.DEFAULT_SOUND_STATE);
             target.setCustomState(Scratch3SoundBlocks.STATE_KEY, soundState);
@@ -132,7 +132,7 @@ class Scratch3SoundBlocks implements CategoryPrototype {
      */
     _onTargetCreated (newTarget: RenderedTarget, sourceTarget?: RenderedTarget) {
         if (sourceTarget) {
-            const soundState = sourceTarget.getCustomState(Scratch3SoundBlocks.STATE_KEY);
+            const soundState = sourceTarget.getCustomState<SoundState>(Scratch3SoundBlocks.STATE_KEY);
             if (soundState && newTarget) {
                 newTarget.setCustomState(Scratch3SoundBlocks.STATE_KEY, Clone.simple(soundState));
                 this._syncEffectsForTarget(newTarget);
