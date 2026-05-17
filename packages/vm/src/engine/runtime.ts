@@ -58,7 +58,8 @@ import type {
     PeripheralExtensionClass,
     ShortExtensionMenuItem,
     NormalizedExtensionMetadata,
-    NormalizedExtensionMenuItem
+    NormalizedExtensionMenuItem,
+    ExtensionMenuItemObject
 } from '../extension-support/extension-metadata';
 import type {FieldDropdownArg, JsonBlockArg, JsonBlockDefinition} from '../types/json-block-definitions';
 import type {MonitorRecordProps} from './monitor-record';
@@ -1079,7 +1080,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @returns An array of pairs or the original input function.
      * @private
      */
-    _convertMenuItems (menuItems: Exclude<ShortExtensionMenuItem, string>): MenuGenerator {
+    _convertMenuItems (menuItems: ShortExtensionMenuItem | string[]): MenuGenerator {
         if (typeof menuItems !== 'function') {
             return menuItems.map(item => {
                 const formattedItem = maybeFormatMessage(item);
@@ -1087,7 +1088,10 @@ class Runtime extends EventEmitter<RuntimeEvents> {
                 case 'string':
                     return [formattedItem, formattedItem];
                 case 'object':
-                    return [maybeFormatMessage(item.text), item.value];
+                    return [
+                        maybeFormatMessage((item as unknown as ExtensionMenuItemObject).text),
+                        (item as unknown as ExtensionMenuItemObject).value
+                    ];
                 default:
                     throw new Error(`Can't interpret menu item: ${JSON.stringify(item)}`);
                 }

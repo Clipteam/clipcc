@@ -23,8 +23,8 @@ class Base64Util {
      * @param array - the array to convert.
      * @returns - the base64 encoded string.
      */
-    static uint8ArrayToBase64 (array: Uint8Array): string {
-        const base64 = btoa(String.fromCharCode.apply(null, array as unknown as number[]));
+    static uint8ArrayToBase64 (array: number[]): string {
+        const base64 = btoa(String.fromCharCode.apply(null, array));
         return base64;
     }
 

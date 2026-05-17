@@ -10,7 +10,7 @@ class BLE extends JSONRPC {
     _availablePeripherals: Record<number, unknown>;
     _connectCallback: () => void;
     _connected: boolean;
-    _characteristicDidChangeCallback: ((message: unknown) => void) | null;
+    _characteristicDidChangeCallback: ((message: string) => void) | null;
     _resetCallback: (() => void) | null;
     _discoverTimeoutID: number | null;
     _extensionId: string;
@@ -124,9 +124,9 @@ class BLE extends JSONRPC {
      * @returns a promise from the remote startNotifications request.
      */
     startNotifications (
-        serviceId: number,
-        characteristicId: number,
-        onCharacteristicChanged: ((message: unknown) => void) | null = null
+        serviceId: number | string,
+        characteristicId: number | string,
+        onCharacteristicChanged: ((message: string) => void) | null = null
     ) {
         const params: Record<string, unknown> = {
             serviceId,
@@ -148,8 +148,8 @@ class BLE extends JSONRPC {
      * @returns a promise from the remote read request.
      */
     read (
-        serviceId: number,
-        characteristicId: number,
+        serviceId: number | string,
+        characteristicId: number | string,
         optStartNotifications = false,
         onCharacteristicChanged: ((message: unknown) => void) | null = null
     ) {
@@ -179,8 +179,8 @@ class BLE extends JSONRPC {
      * @returns a promise from the remote send request.
      */
     write (
-        serviceId: number,
-        characteristicId: number,
+        serviceId: number | string,
+        characteristicId: number | string,
         message: string,
         encoding: string | null = null,
         withResponse: boolean | null = null
@@ -236,7 +236,7 @@ class BLE extends JSONRPC {
             break;
         case 'characteristicDidChange':
             if (this._characteristicDidChangeCallback) {
-                this._characteristicDidChangeCallback(params.message);
+                this._characteristicDidChangeCallback(params.message as string);
             }
             break;
         case 'ping':

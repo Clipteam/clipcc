@@ -169,7 +169,7 @@ export interface ExtensionImageMetadata {
  * A menu item for which the label and value can differ.
  */
 export interface NormalizedExtensionMenuItem {
-    items: ShortExtensionMenuItem;
+    items: ShortExtensionMenuItem | string[];
     acceptReporters?: boolean;
 }
 
@@ -185,13 +185,13 @@ export type MenuItemFunction = ((editingTargetId?: string | null) => [string, st
 export type ShortExtensionMenuItem =
     MenuItemFunction | ExtensionMenuItemObject[];
 
-export type ExtensionMenuItem = NormalizedExtensionMenuItem | ShortExtensionMenuItem;
+export type ExtensionMenuItem = NormalizedExtensionMenuItem | ShortExtensionMenuItem | string[];
 
 export interface ExtensionClass {
     getInfo(): ExtensionMetadata;
 }
 
-export interface PeripheralExtensionClass extends ExtensionClass {
+export interface PeripheralExtensionClass {
     scan(): void;
     connect(peripheralId: number): void;
     disconnect(): void;

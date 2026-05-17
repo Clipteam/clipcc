@@ -153,7 +153,7 @@ class RenderedTarget extends Target {
      * It is initialized to null so that on extension load, we can check for
      * this and try setting it using the editor locale.
      */
-    textToSpeechLanguage: string | null = null;
+    textToSpeechLanguage: string | null | undefined = null;
 
     /**
      * @param sprite Reference to the parent sprite.
