@@ -197,6 +197,9 @@ importers:
       '@babel/preset-env':
         specifier: 7.29.2
         version: 7.29.2(@babel/core@7.29.0)
+      '@types/node':
+        specifier: ^25.5.2
+        version: 25.5.2
       babel-eslint:
         specifier: 10.0.3
         version: 10.0.3(eslint@9.39.2(jiti@2.6.1))
