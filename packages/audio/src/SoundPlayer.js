@@ -41,7 +41,7 @@ class SoundPlayer extends EventEmitter {
 
         /**
          * Output audio node.
-         * @type {AudioNode}
+         * @type {AudioBufferSourceNode}
          */
         this.outputNode = null;
 

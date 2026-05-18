@@ -140,7 +140,7 @@ class AudioEngine {
      * Decode a sound, decompressing it into audio samples.
      * @param {object} sound - an object containing audio data and metadata for
      *     a sound
-     * @param {Buffer} sound.data - sound data loaded from scratch-storage
+     * @param {{buffer: ArrayBuffer}} sound.data - sound data loaded from scratch-storage
      * @returns {?Promise} - a promise which will resolve to the sound id and
      *     buffer if decoded
      */
@@ -217,8 +217,8 @@ class AudioEngine {
      *
      * @param {object} sound - an object containing audio data and metadata for
      *     a sound
-     * @param {ArrayBuffer} sound.data - sound data loaded from scratch-storage
-     * @returns {?Promise} - a promise which will resolve to the buffer
+     * @param {{buffer: ArrayBuffer}} sound.data - sound data loaded from scratch-storage
+     * @returns - a promise which will resolve to the buffer
      */
     decodeSoundPlayer (sound) {
         return this._decodeSound(sound)
