@@ -290,4 +290,5 @@ class BlockUtility {
     }
 }
 
+export type {BlockUtility, ExecutionContext};
 export default BlockUtility;

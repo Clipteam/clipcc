@@ -55,7 +55,7 @@ import type {RenderedTargetJSON, SpriteInfoData} from './sprites/rendered-target
 import type {MonitorRecordProps} from './engine/monitor-record';
 import type Blocks from './engine/blocks';
 
-interface LimitOptions {
+export interface LimitOptions {
     infiniteCloning: boolean;
     edgelessStage: boolean;
     unlimitedListLength: boolean;
@@ -67,7 +67,7 @@ interface LimitOptions {
 /**
  * A file descriptor, representing a file to be written.
  */
-interface FileDesc {
+export interface FileDesc {
     /** The name of the file, including extension. */
     fileName: string;
     /** The content of the file, as a string. */
@@ -77,7 +77,7 @@ interface FileDesc {
 /**
  * Events that can be emitted by VirtualMachine.
  */
-interface VMEvents {
+export interface VMEvents {
     /**
      * Emitted when the stage size changes.
      * @param width The new stage width in pixels.
@@ -1972,5 +1972,7 @@ class VirtualMachine extends EventEmitter<VMEvents> {
         this.runtime.configureScratchLinkSocketFactory(factory);
     }
 }
+
+export type {VirtualMachine};
 
 export default VirtualMachine;

@@ -412,4 +412,6 @@ class Thread {
     }
 }
 
+export type {Thread, _StackFrame as ThreadStackFrame};
+
 export default Thread;

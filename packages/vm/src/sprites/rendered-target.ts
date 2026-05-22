@@ -1129,4 +1129,5 @@ export const isRenderedTarget = function (target: Target): target is RenderedTar
     return 'drawableID' in target;
 };
 
+export type {RenderedTarget};
 export default RenderedTarget;

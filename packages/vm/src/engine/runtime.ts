@@ -195,7 +195,7 @@ const cloudDataManager = () => {
     };
 };
 
-type CloudDataManager = ReturnType<typeof cloudDataManager>;
+export type CloudDataManager = ReturnType<typeof cloudDataManager>;
 
 /**
  * Numeric ID for Runtime._step in Profiler instances.
@@ -215,7 +215,7 @@ let rendererDrawProfilerId = -1;
 /**
  * Events that can be emitted by Runtime.
  */
-interface RuntimeEvents {
+export interface RuntimeEvents {
     'STAGE_SIZE_UPDATE': [width: number, height: number];
     'SCRIPT_GLOW_ON': [{id: string}];
     'SCRIPT_GLOW_OFF': [{id: string}];
