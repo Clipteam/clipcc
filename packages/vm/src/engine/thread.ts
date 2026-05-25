@@ -432,7 +432,7 @@ class Thread {
  * @param target If provided, only remove frames referencing this target or whose target is no longer alive.
  * If falsy, clear the entire free list.
  */
-function clearStackFrameFreeList (target?: RenderedTarget): void {
+function clearStackFrameFreeList (target?: RenderedTarget) {
     if (!target) {
         _stackFrameFreeList.length = 0;
         return;
