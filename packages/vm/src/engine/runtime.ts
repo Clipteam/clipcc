@@ -10,7 +10,7 @@ import Sequencer from './sequencer';
 import execute from './execute';
 import ScratchBlocksConstants from './scratch-blocks-constants';
 import TargetType from '../extension-support/target-type';
-import Thread from './thread';
+import Thread, {clearStackFrameFreeList} from './thread';
 import log from '../util/log';
 import maybeFormatMessage from '../util/maybe-format-message';
 import StageLayering from './stage-layering';
@@ -2099,6 +2099,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
         });
 
         this.targets.map(this.disposeTarget, this);
+        clearStackFrameFreeList();
         this._monitorState = OrderedMap({});
         this.emit(Runtime.RUNTIME_DISPOSED);
         this.ioDevices.clock.resetProjectTimer();
@@ -2203,6 +2204,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
             if (disposingTarget !== target) return true;
             // Allow target to do dispose actions.
             target.dispose();
+            clearStackFrameFreeList(disposingTarget);
             // Remove from list of targets.
             return false;
         });
