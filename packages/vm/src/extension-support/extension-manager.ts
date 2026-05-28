@@ -10,7 +10,10 @@ import type {
     ExtensionMenuItem,
     ExtensionMenuItemObject,
     ExtensionItemMetadata,
-    NormalizedExtensionMetadata
+    NormalizedExtensionMetadata,
+    NormalizedExtensionBlockMetadata,
+    ExtensionButtonMetadata,
+    NormalizedExtensionItemMetadata
 } from './extension-metadata';
 import type {BlockArgs} from '../blocks/category_prototype';
 import type BlockUtility from '../engine/block-utility';
@@ -242,7 +245,7 @@ class ExtensionManager {
      * @private
      */
     _registerExtensionInfo (serviceName: string, extensionInfo: ExtensionMetadata) {
-        extensionInfo = this._prepareExtensionInfo(serviceName, extensionInfo);
+        (extensionInfo as NormalizedExtensionMetadata) = this._prepareExtensionInfo(serviceName, extensionInfo);
         dispatch.call('runtime', '_registerExtensionPrimitives', extensionInfo).catch(e => {
             log.error(`Failed to register primitives for extension on service ${serviceName}:`, e);
         });
@@ -276,7 +279,7 @@ class ExtensionManager {
         extensionInfo.targetTypes = extensionInfo.targetTypes || [];
         extensionInfo.blocks = extensionInfo.blocks.reduce((results, blockInfo) => {
             try {
-                let result: ExtensionItemMetadata;
+                let result: NormalizedExtensionItemMetadata;
                 switch (blockInfo) {
                 case '---': // separator
                     result = '---';
@@ -291,7 +294,7 @@ class ExtensionManager {
                 log.error(`Error processing block: ${(e as Error).message}, Block:\n${JSON.stringify(blockInfo)}`);
             }
             return results;
-        }, [] as ExtensionItemMetadata[]);
+        }, [] as NormalizedExtensionItemMetadata[]) as ExtensionItemMetadata[];
         extensionInfo.menus = extensionInfo.menus || {};
         extensionInfo.menus = this._prepareMenuInfo(serviceName, extensionInfo.menus);
         return extensionInfo as NormalizedExtensionMetadata;
@@ -425,16 +428,17 @@ class ExtensionManager {
                     (serviceObject[funcName as keyof ExtensionClass] as CallBlockFunc)(args, util, realBlockInfo);
             })();
 
-            blockInfo.func = (args: BlockArgs, util: BlockUtility) => {
-                const realBlockInfo = getBlockInfo(args);
-                // TODO: filter args using the keys of realBlockInfo.arguments? maybe only if sandboxed?
-                return callBlockFunc(args, util, realBlockInfo);
-            };
+            (blockInfo as unknown as NormalizedExtensionBlockMetadata).func =
+                (args: BlockArgs, util: BlockUtility) => {
+                    const realBlockInfo = getBlockInfo(args);
+                    // TODO: filter args using the keys of realBlockInfo.arguments? maybe only if sandboxed?
+                    return callBlockFunc(args, util, realBlockInfo);
+                };
             break;
         }
         }
 
-        return blockInfo;
+        return blockInfo as (ExtensionButtonMetadata | NormalizedExtensionBlockMetadata);
     }
 }
 

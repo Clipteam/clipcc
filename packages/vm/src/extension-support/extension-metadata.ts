@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type {BlockFunction} from '../blocks/category_prototype';
-import type Runtime from '../engine/runtime';
 import type {JsonBlockDefinition} from '../types/json-block-definitions';
 import type ArgumentType from './argument-type';
 import type BlockType from './block-type';
@@ -45,50 +44,24 @@ export interface ExtensionMetadata {
     customFieldTypes?: Record<string, ExtensionCustomFieldTypeMetadata>;
 }
 
-/** ExtensionMetadata but normalized by extension manager and passed to runtime */
-export interface NormalizedExtensionMetadata extends Omit<ExtensionMetadata, 'menus'> {
+/**
+ * ExtensionMetadata but normalized by extension manager and passed to runtime.
+ * @internal
+ */
+export interface NormalizedExtensionMetadata extends Omit<ExtensionMetadata, 'menus' | 'blocks'> {
     menus?: Record<string, NormalizedExtensionMenuItem>;
+    blocks: NormalizedExtensionItemMetadata[];
 }
 
 export type ExtensionItemMetadata = ExtensionBlockMetadata | ExtensionButtonMetadata | '---';
+/** @internal */
+export type NormalizedExtensionItemMetadata = NormalizedExtensionBlockMetadata | ExtensionButtonMetadata | '---';
 
 export interface ExtensionCustomFieldTypeMetadata {
     output: JsonBlockDefinition['output'];
     outputShape: JsonBlockDefinition['outputShape'];
     implementation: any;
 }
-
-export interface MenuInfo {
-    json: JsonBlockDefinition;
-}
-
-export interface BlockInfo {
-    info: ExtensionBlockMetadata;
-    json: JsonBlockDefinition;
-    xml: string;
-};
-
-export interface ButtonInfo {
-    info: ExtensionButtonMetadata;
-    xml: string;
-};
-
-export interface SepInfo {
-    info: '---';
-    xml: string;
-};
-
-export type CategoryInfo =
-    Pick<
-        ExtensionMetadata,
-        'id' | 'name' | 'showStatusButton' | 'blockIconURI' | 'menuIconURI' | 'color1' | 'color2' | 'color3'
-    > &
-    {
-        menuInfo: Record<string, NormalizedExtensionMenuItem>;
-        customFieldTypes: Record<string, ExtensionCustomFieldTypeInfo>;
-        menus: MenuInfo[];
-        blocks: (BlockInfo | ButtonInfo | SepInfo)[];
-    };
 
 export interface ExtensionCustomFieldTypeInfo {
     fieldName: string;
@@ -121,7 +94,7 @@ export interface ExtensionBlockMetadata {
     /** A unique alphanumeric identifier for this block. No special characters allowed. */
     opcode: string;
     /** The name of the function implementing this block. Can be shared by other blocks/opcodes. */
-    func?: BlockFunction;
+    func?: string;
     /** The type of block (command, reporter, etc.) being described. */
     blockType: Exclude<BlockType, BlockType.BUTTON>;
     /** The text on the block, with [PLACEHOLDERS] for arguments. */
@@ -145,6 +118,16 @@ export interface ExtensionBlockMetadata {
     blockIconURI?: string;
     isDynamic?: boolean;
     filter?: TargetType[];
+}
+
+/** @internal */
+export type NormalizedExtensionBlockMetadata = Omit<ExtensionBlockMetadata, 'func' | 'arguments'> & {
+    func: BlockFunction;
+    /** not implemented */
+    blockAllThreads: boolean;
+    /** not implemented, seems a typo of `isTerminal`? */
+    terminal: boolean;
+    arguments: Required<ExtensionBlockMetadata>['arguments'];
 }
 
 /**
@@ -197,6 +180,3 @@ export interface PeripheralExtensionClass {
     disconnect(): void;
     isConnected(): boolean;
 }
-
-export type ExtensionClassConstructor = new (runtime: Runtime) => ExtensionClass;
-export type PeripheralExtensionClassConstructor = new (runtime: Runtime) => PeripheralExtensionClass;

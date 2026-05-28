@@ -49,22 +49,61 @@ import type * as ClipCCBlocks from 'clipcc-block';
 import type {BlockFunction} from '../blocks/category_prototype';
 import type {VMBlock, VMField} from '../serialization/schema';
 import type {
-    CategoryInfo,
     ExtensionArgumentMetadata,
-    ExtensionBlockMetadata,
     ExtensionButtonMetadata,
     ExtensionCustomFieldTypeMetadata,
     ExtensionImageMetadata,
-    PeripheralExtensionClass,
     ShortExtensionMenuItem,
     NormalizedExtensionMetadata,
     NormalizedExtensionMenuItem,
-    ExtensionMenuItemObject
+    ExtensionMenuItemObject,
+    NormalizedExtensionItemMetadata,
+    NormalizedExtensionBlockMetadata,
+    ExtensionCustomFieldTypeInfo
 } from '../extension-support/extension-metadata';
 import type {FieldDropdownArg, JsonBlockArg, JsonBlockDefinition} from '../types/json-block-definitions';
 import type {MonitorRecordProps} from './monitor-record';
 
 type MenuGenerator = ClipCCBlocks.MenuOption[];
+
+export interface MenuInfo {
+    json: JsonBlockDefinition;
+}
+
+export interface BlockInfo {
+    info: NormalizedExtensionBlockMetadata;
+    json: JsonBlockDefinition;
+    xml: string;
+};
+
+export interface ButtonInfo {
+    info: ExtensionButtonMetadata;
+    xml: string;
+};
+
+export interface SepInfo {
+    info: '---';
+    xml: string;
+};
+
+export type CategoryInfo =
+    Pick<
+        NormalizedExtensionMetadata,
+        'id' | 'name' | 'showStatusButton' | 'blockIconURI' | 'menuIconURI' | 'color1' | 'color2' | 'color3'
+    > &
+    {
+        menuInfo: Record<string, NormalizedExtensionMenuItem>;
+        customFieldTypes: Record<string, ExtensionCustomFieldTypeInfo>;
+        menus: MenuInfo[];
+        blocks: (BlockInfo | ButtonInfo | SepInfo)[];
+    };
+
+export interface PeripheralExtensionClass {
+    scan(): void;
+    connect(peripheralId: number): void;
+    disconnect(): void;
+    isConnected(): boolean;
+}
 
 const defaultBlockPackages = {
     scratch3_control: control,
@@ -152,11 +191,11 @@ const ArgumentTypeMap = {
     }
 };
 
-interface PlaceholderContext {
+export interface PlaceholderContext {
     argsMap: Record<string, unknown>;
     blockJSON: JsonBlockDefinition
     categoryInfo: CategoryInfo;
-    blockInfo: ExtensionBlockMetadata;
+    blockInfo: NormalizedExtensionBlockMetadata;
     inputList: string[];
     outLineNum?: number;
 }
@@ -1054,7 +1093,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
                 const convertedBlock = this._convertForScratchBlocks(metadata, categoryInfo);
                 categoryInfo.blocks.push(convertedBlock);
                 if ('json' in convertedBlock) {
-                    const blockInfo = metadata as ExtensionBlockMetadata;
+                    const blockInfo = metadata as NormalizedExtensionBlockMetadata;
                     const opcode = convertedBlock.json.type;
                     if (blockInfo.blockType !== BlockType.EVENT) {
                         this._primitives[opcode] = convertedBlock.info.func!;
@@ -1212,7 +1251,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @private
      */
     _convertForScratchBlocks (
-        blockInfo: ExtensionBlockMetadata | ExtensionButtonMetadata | '---',
+        blockInfo: NormalizedExtensionItemMetadata,
         categoryInfo: CategoryInfo
     ) {
         if (blockInfo === '---') {
@@ -1233,7 +1272,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @returns the converted & original block information
      * @private
      */
-    _convertBlockForScratchBlocks (blockInfo: ExtensionBlockMetadata, categoryInfo: CategoryInfo) {
+    _convertBlockForScratchBlocks (blockInfo: NormalizedExtensionBlockMetadata, categoryInfo: CategoryInfo) {
         const extendedOpcode = `${categoryInfo.id}_${blockInfo.opcode}`;
 
         const blockJSON: JsonBlockDefinition = {
@@ -1555,13 +1594,13 @@ class Runtime extends EventEmitter<RuntimeEvents> {
                 let blockFilterIncludesTarget = true;
                 // If an editing target is not passed, include all blocks
                 // If the block info doesn't include a `filter` property, always include it
-                if (target && (block.info as ExtensionBlockMetadata).filter) {
-                    blockFilterIncludesTarget = (block.info as ExtensionBlockMetadata).filter!.includes(
+                if (target && (block.info as NormalizedExtensionBlockMetadata).filter) {
+                    blockFilterIncludesTarget = (block.info as NormalizedExtensionBlockMetadata).filter!.includes(
                         target.isStage ? TargetType.STAGE : TargetType.SPRITE
                     );
                 }
                 // If the block info's `hideFromPalette` is true, then filter out this block
-                return blockFilterIncludesTarget && !(block.info as ExtensionBlockMetadata).hideFromPalette;
+                return blockFilterIncludesTarget && !(block.info as NormalizedExtensionBlockMetadata).hideFromPalette;
             });
 
             const colorXML = `colour="${color1}" secondaryColour="${color2}"`;
@@ -2721,13 +2760,13 @@ class Runtime extends EventEmitter<RuntimeEvents> {
         const categoryInfo = this._blockInfo.find(ci => ci.id === category);
         if (!categoryInfo) return;
 
-        const block = categoryInfo.blocks.find(b => (b.info as ExtensionBlockMetadata).opcode === opcode);
+        const block = categoryInfo.blocks.find(b => (b.info as NormalizedExtensionBlockMetadata).opcode === opcode);
         if (!block) return;
 
         // TODO: we may want to format the label in a locale-specific way.
         return {
             category: 'extension', // This assumes that all extensions have the same monitor color.
-            label: `${categoryInfo.name}: ${(block.info as ExtensionBlockMetadata).text}`
+            label: `${categoryInfo.name}: ${(block.info as NormalizedExtensionBlockMetadata).text}`
         };
     }
 
