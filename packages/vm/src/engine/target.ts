@@ -1,5 +1,4 @@
 import EventEmitter from 'events';
-
 import Blocks from './blocks';
 import Variable, {type VariableType} from '../engine/variable';
 import Comment from '../engine/comment';
