@@ -25,7 +25,7 @@ module.exports = [
             // Disable JSDoc type requirements for TypeScript (it has its own types)
             'jsdoc/require-jsdoc': 'off',
             'jsdoc/require-param-type': 'off',
-            'jsdoc/require-returns-type': 'off',
+            'jsdoc/require-property-type': 'off',
             'func-style': 'off',
 
             // Disable rules that conflict with TypeScript's type system
