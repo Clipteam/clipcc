@@ -1382,6 +1382,9 @@ importers:
       babel-loader:
         specifier: ^10.1.1
         version: 10.1.1(@babel/core@7.29.0)(webpack@5.105.4)
+      babel-plugin-transform-import-meta:
+        specifier: ^2.3.3
+        version: 2.3.3(@babel/core@7.29.0)
       callsite:
         specifier: 1.0.0
         version: 1.0.0
@@ -1403,9 +1406,6 @@ importers:
       clipcc-svg-renderer:
         specifier: workspace:~
         version: link:../svg-renderer
-      codingclip-worker-loader:
-        specifier: ^3.0.10
-        version: 3.0.10(webpack@5.105.4)
       copy-webpack-plugin:
         specifier: ^14.0.0
         version: 14.0.0(webpack@5.105.4)
@@ -4581,6 +4581,11 @@ packages:
   babel-plugin-transform-format-message@6.2.4:
     resolution: {integrity: sha512-MlvlDq3eZbllHzbBHo+SLSgKEThdddVRitODffdSQH1N9TbjQ+VhXg/RNlI1R5vQddxusg/NPzzGMZ9lfeJW1g==}
 
+  babel-plugin-transform-import-meta@2.3.3:
+    resolution: {integrity: sha512-bbh30qz1m6ZU1ybJoNOhA2zaDvmeXMnGNBMVMDOJ1Fni4+wMBoy/j7MTRVmqAUCIcy54/rEnr9VEBsfcgbpm3Q==}
+    peerDependencies:
+      '@babel/core': ^7.10.0
+
   babel-preset-current-node-syntax@1.2.0:
     resolution: {integrity: sha512-E/VlAEzRrsLEb2+dv8yp3bo4scof3l9nR4lrld+Iy5NyVqgVYUJnDAmunkhPMisRI32Qc4iRiz425d8vM++2fg==}
     peerDependencies:
@@ -5020,12 +5025,6 @@ packages:
   code-excerpt@4.0.0:
     resolution: {integrity: sha512-xxodCmBen3iy2i0WtAK8FlFNrRzjUqjRsMfho58xT/wvZU1YTM3fCnRjcy1gJPMepaRlgm/0e6w8SpWHpn3/cA==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-
-  codingclip-worker-loader@3.0.10:
-    resolution: {integrity: sha512-6bSr3Df1cqxuFcKdE43kNdLqVkTAUyDeR4UbZTv2deVnIv0nNkrK4/BadijfyeT4FDyVtakjNBLxeHLn9gZV8g==}
-    engines: {node: '>= 10.13.0'}
-    peerDependencies:
-      webpack: ^4.0.0 || ^5.75.0
 
   collect-v8-coverage@1.0.3:
     resolution: {integrity: sha512-1L5aqIkwPfiodaMgQunkF1zRhNqifHBmtbbbxcr6yVxxBnliw4TDOW6NxpO8DJLgJ16OT+Y4ztZqP6p/FtXnAw==}
@@ -7671,10 +7670,6 @@ packages:
   loader-utils@1.4.2:
     resolution: {integrity: sha512-I5d00Pd/jwMD2QCduo657+YM/6L3KZu++pmX9VFncxaxvHcru9jx1lBaFft+r4Mt2jK0Yhp41XlRAihzPxHNCg==}
     engines: {node: '>=4.0.0'}
-
-  loader-utils@2.0.4:
-    resolution: {integrity: sha512-xXqpXoINfFhgua9xiqD8fPFHgkoq1mmmpE92WlDbm9rNRd/EbRb+Gqf908T2DMfuHjjJlksiK2RbHVOdD/MqSw==}
-    engines: {node: '>=8.9.0'}
 
   locate-path@2.0.0:
     resolution: {integrity: sha512-NCI2kiDkyR7VeEKm27Kda/iQHyKJe1Bu0FlTbYp3CqJu+9IFe9bLyAjMxf5ZDDbEg+iMPzB5zYyUTSm8wVTKmA==}
@@ -14717,6 +14712,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  babel-plugin-transform-import-meta@2.3.3(@babel/core@7.29.0):
+    dependencies:
+      '@babel/core': 7.29.0
+      '@babel/template': 7.28.6
+      tslib: 2.8.1
+
   babel-preset-current-node-syntax@1.2.0(@babel/core@7.29.0):
     dependencies:
       '@babel/core': 7.29.0
@@ -15299,12 +15300,6 @@ snapshots:
   code-excerpt@4.0.0:
     dependencies:
       convert-to-spaces: 2.0.1
-
-  codingclip-worker-loader@3.0.10(webpack@5.105.4):
-    dependencies:
-      loader-utils: 2.0.4
-      schema-utils: 3.3.0
-      webpack: 5.105.4(webpack-cli@6.0.1)
 
   collect-v8-coverage@1.0.3: {}
 
@@ -18714,12 +18709,6 @@ snapshots:
       big.js: 5.2.2
       emojis-list: 3.0.0
       json5: 1.0.2
-
-  loader-utils@2.0.4:
-    dependencies:
-      big.js: 5.2.2
-      emojis-list: 3.0.0
-      json5: 2.2.3
 
   locate-path@2.0.0:
     dependencies:

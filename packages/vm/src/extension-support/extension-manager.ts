@@ -153,15 +153,12 @@ class ExtensionManager {
         }
 
         return new Promise<number>((resolve, reject) => {
-            /**
-             * @todo migrate to https://webpack.js.org/guides/web-workers/ recommend way,
-             * since we already migrated to ESM and Jest.
-             */
-            // eslint-disable-next-line global-require, @typescript-eslint/no-require-imports
-            const ExtensionWorker = require('codingclip-worker-loader?filename=extension-worker.js!./extension-worker');
+            const worker = new Worker(
+                /* webpackChunkName: "extension-worker" */ new URL('./extension-worker', import.meta.url)
+            );
 
             this.pendingExtensions.push({extensionURL, resolve, reject});
-            dispatch.addWorker(new ExtensionWorker());
+            dispatch.addWorker(worker);
         }).then(() => {});
     }
 
