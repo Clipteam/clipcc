@@ -54,7 +54,7 @@ class Scratch3CoreExample implements ExtensionClass {
 
     /**
      * Example opcode just returns the name of the stage target.
-     * @returns {string} The name of the first target in the project.
+     * @returns The name of the first target in the project.
      */
     exampleOpcode () {
         const stage = this.runtime.getTargetForStage();

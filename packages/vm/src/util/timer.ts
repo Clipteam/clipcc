@@ -97,7 +97,7 @@ class Timer {
      * Call a handler function after a specified amount of time has elapsed.
      * @param handler - function to call after the timeout
      * @param timeout - number of milliseconds to delay before calling the handler
-     * @returns - the ID of the new timeout
+     * @returns the ID of the new timeout
      */
     setTimeout (handler: () => void, timeout: number): ReturnType<typeof global.setTimeout> {
         return global.setTimeout(handler, timeout);

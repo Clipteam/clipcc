@@ -101,7 +101,7 @@ const canvasPool = (function () {
  * @param runtime - Scratch runtime, used to access the v2BitmapAdapter
  * @param rotationCenter - optionally passed in coordinates for the center of rotation for the image. If
  *     none is given, the rotation center of the costume will be set to the middle of the costume later on.
- * @returns - a promise which will resolve to an object {canvas, rotationCenter, assetMatchesBase},
+ * @returns a promise which will resolve to an object {canvas, rotationCenter, assetMatchesBase},
  *     or reject on error.
  *     assetMatchesBase is true if the asset matches the base layer; false if it required adjustment
  */
@@ -348,7 +348,7 @@ const loadCostumeFromAsset = function (costume: Costume, runtime: Runtime, optVe
  * @param runtime - Scratch runtime, used to access the storage module.
  * @param optVersion - Version of Scratch that the costume comes from. If this is set
  *     to 2, scratch 3 will perform an upgrade step to handle quirks in SVGs from Scratch 2.0.
- * @returns - a promise which will resolve after skinId is set, or null on error.
+ * @returns a promise which will resolve after skinId is set, or null on error.
  */
 let loadCostume = function (md5ext: string, costume: Costume, runtime: Runtime, optVersion?: number) {
     const idParts = StringUtil.splitFirst(md5ext, '.');

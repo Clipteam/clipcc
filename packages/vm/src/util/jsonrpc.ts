@@ -30,7 +30,7 @@ class JSONRPC {
      * Make an RPC request and retrieve the result.
      * @param method - the remote method to call.
      * @param params - the parameters to pass to the remote method.
-     * @returns - a promise for the result of the call.
+     * @returns a promise for the result of the call.
      */
     sendRemoteRequest (method: string, params: object): Promise<unknown> {
         const requestID = this._requestID++;

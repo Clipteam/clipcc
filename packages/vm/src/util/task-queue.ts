@@ -68,8 +68,8 @@ class TaskQueue {
      * Wait until the token bucket is full enough, then run the provided task.
      *
      * @param task - the task to run.
-     * @param [cost] - the number of tokens this task consumes from the bucket.
-     * @returns - a promise for the task's return value.
+     * @param cost - the number of tokens this task consumes from the bucket.
+     * @returns a promise for the task's return value.
      */
     do (task: () => unknown, cost: number = 1): Promise<unknown> {
         if (this._maxTotalCost < Infinity) {
@@ -109,7 +109,7 @@ class TaskQueue {
      * Cancel one pending task, rejecting its promise.
      *
      * @param taskPromise - the promise returned by `do()`.
-     * @returns - true if the task was found, or false otherwise.
+     * @returns true if the task was found, or false otherwise.
      */
     cancel (taskPromise: Promise<unknown>): boolean {
         const taskIndex = this._pendingTaskRecords.findIndex(r => r.promise === taskPromise);

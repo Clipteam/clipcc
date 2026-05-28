@@ -467,14 +467,14 @@ class Runtime extends EventEmitter<RuntimeEvents> {
 
     /**
      * Check wether the runtime has any cloud data.
-     * @returns {boolean} Whether or not the runtime currently has any
+     * @returns Whether or not the runtime currently has any
      * cloud variables.
      */
     hasCloudData: () => boolean;
     /**
      * A function which checks whether a new cloud variable can be added
      * to the runtime.
-     * @returns {boolean} Whether or not a new cloud variable can be added
+     * @returns Whether or not a new cloud variable can be added
      * to the runtime.
      */
     canAddCloudVariable: () => boolean;
@@ -788,7 +788,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
 
     /**
      * Event name to indicate that the microphone is being used to stream audio.
-     * @returns {'MIC_LISTENING'} The event name.
+     * @returns The event name.
      */
     static get MIC_LISTENING () {
         return 'MIC_LISTENING' as const;
@@ -1208,7 +1208,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * Convert ExtensionBlockMetadata into data ready for scratch-blocks.
      * @param blockInfo - the block info to convert
      * @param categoryInfo - the category for this block
-     * @returns - the converted & original block information
+     * @returns the converted & original block information
      * @private
      */
     _convertForScratchBlocks (
@@ -1380,7 +1380,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
     /**
      * Generate a separator between blocks categories or sub-categories.
      * @param blockInfo - the separator marker to convert
-     * @returns - the converted & original block information
+     * @returns the converted & original block information
      * @private
      */
     _convertSeparatorForScratchBlocks (blockInfo: '---') {
@@ -1700,7 +1700,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
     /**
      * Returns whether the extension has a currently connected peripheral.
      * @param extensionId - the id of the extension.
-     * @returns - whether the extension has a connected peripheral.
+     * @returns whether the extension has a connected peripheral.
      */
     getPeripheralIsConnected (extensionId: string) {
         return this.peripheralExtensions[extensionId]?.isConnected() ?? false;
@@ -2523,7 +2523,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @param monitor Monitor values to update.
      *     values on the old monitor with the same ID. If a value isn't defined on the new monitor,
      *     the old monitor will keep its old value.
-     * @returns {boolean} true if monitor exists in the state and was updated, false if it did not exist.
+     * @returns true if monitor exists in the state and was updated, false if it did not exist.
      */
     requestUpdateMonitor (
         monitor: RecordOf<MonitorRecordProps> | ImmutableMap<string, unknown>
@@ -2757,14 +2757,14 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @returns List of param names for a procedure.
      */
     getProcedureParamNamesAndIds (procedureCode: string) {
-        return this.getProcedureParamNamesIdsAndDefaults(procedureCode)
-            ?.slice(0, 2) ?? null as [string[], string[]] | null;
+        return (this.getProcedureParamNamesIdsAndDefaults(procedureCode)
+            ?.slice(0, 2) ?? null) as [string[], string[]] | null;
     }
 
     /**
      * Get names, ids, and defaults of parameters for the given procedure.
      * @param name Name of procedure to query.
-     * @returns {?Array.<string>} List of param names for a procedure.
+     * @returns List of param names for a procedure.
      */
     getProcedureParamNamesIdsAndDefaults (name: string) {
         for (const target of this.targets) {

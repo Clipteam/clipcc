@@ -96,7 +96,7 @@ class ExtensionManager {
      * adding extensions so it may return `true` before the extension is ready to be used. Use the promise returned by
      * `loadExtensionURL` if you need to wait until the extension is truly ready.
      * @param extensionID - the ID of the extension.
-     * @returns - true if loaded, false otherwise.
+     * @returns true if loaded, false otherwise.
      */
     isExtensionLoaded (extensionID: string) {
         return this._loadedExtensions.has(extensionID);
@@ -251,7 +251,7 @@ class ExtensionManager {
     /**
      * Modify the provided text as necessary to ensure that it may be used as an attribute value in valid XML.
      * @param text - the text to be sanitized
-     * @returns - the sanitized text
+     * @returns the sanitized text
      * @private
      */
     _sanitizeID (text: string) {
@@ -263,7 +263,7 @@ class ExtensionManager {
      * TODO: make the ID unique in cases where two copies of the same extension are loaded.
      * @param serviceName - the name of the service hosting this extension block
      * @param extensionInfo - the extension info to be sanitized
-     * @returns - a new extension info object with cleaned-up values
+     * @returns a new extension info object with cleaned-up values
      * @private
      */
     _prepareExtensionInfo (serviceName: string, extensionInfo: ExtensionMetadata) {
@@ -375,7 +375,7 @@ class ExtensionManager {
      * Apply defaults for optional block fields.
      * @param serviceName - the name of the service hosting this extension block
      * @param blockInfo - the block info from the extension
-     * @returns - a new block info object which has values for all relevant optional fields.
+     * @returns a new block info object which has values for all relevant optional fields.
      * @private
      */
     _prepareBlockInfo (serviceName: string, blockInfo: Exclude<ExtensionItemMetadata, '---'>) {

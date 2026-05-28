@@ -187,7 +187,7 @@ class Scratch3PenBlocks implements ExtensionClass {
     /**
      * When a pen-using Target is cloned, clone the pen state.
      * @param newTarget - the newly created target.
-     * @param [sourceTarget] - the target used as a source for the new clone, if any.
+     * @param sourceTarget - the target used as a source for the new clone, if any.
      * @listens Runtime#event:targetWasCreated
      * @private
      */

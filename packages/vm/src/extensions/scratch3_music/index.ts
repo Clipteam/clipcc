@@ -769,7 +769,7 @@ class Scratch3MusicBlocks implements ExtensionClass {
     /**
      * When a music-playing Target is cloned, clone the music state.
      * @param newTarget - the newly created target.
-     * @param [sourceTarget] - the target used as a source for the new clone, if any.
+     * @param sourceTarget - the target used as a source for the new clone, if any.
      * @listens Runtime#event:targetWasCreated
      * @private
      */

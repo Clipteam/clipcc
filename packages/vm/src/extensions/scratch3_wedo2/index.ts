@@ -171,14 +171,14 @@ class WeDo2Motor {
     }
 
     /**
-     * @returns - the duration of active braking after a call to startBraking(). Afterward, turn the motor off.
+     * @returns the duration of active braking after a call to startBraking(). Afterward, turn the motor off.
      */
     static get BRAKE_TIME_MS () {
         return 1000;
     }
 
     /**
-     * @returns - this motor's current direction: 1 for "this way" or -1 for "that way"
+     * @returns this motor's current direction: 1 for "this way" or -1 for "that way"
      */
     get direction () {
         return this._direction;
@@ -196,7 +196,7 @@ class WeDo2Motor {
     }
 
     /**
-     * @returns - this motor's current power level, in the range [0,100].
+     * @returns this motor's current power level, in the range [0,100].
      */
     get power () {
         return this._power;
@@ -218,21 +218,21 @@ class WeDo2Motor {
     }
 
     /**
-     * @returns - true if this motor is currently moving, false if this motor is off or braking.
+     * @returns true if this motor is currently moving, false if this motor is off or braking.
      */
     get isOn () {
         return this._isOn;
     }
 
     /**
-     * @returns - time, in milliseconds, of when the pending timeout began.
+     * @returns time, in milliseconds, of when the pending timeout began.
      */
     get pendingTimeoutStartTime () {
         return this._pendingTimeoutStartTime;
     }
 
     /**
-     * @returns - delay, in milliseconds, of the pending timeout.
+     * @returns delay, in milliseconds, of the pending timeout.
      */
     get pendingTimeoutDelay () {
         return this._pendingTimeoutDelay;
@@ -288,7 +288,7 @@ class WeDo2Motor {
 
     /**
      * Turn this motor off.
-     * @param [useLimiter] - if true, use the rate limiter
+     * @param useLimiter - if true, use the rate limiter
      */
     turnOff (useLimiter = true) {
         if (this._power === 0) return;
@@ -403,21 +403,21 @@ class WeDo2 {
     }
 
     /**
-     * @returns - the latest value received for the tilt sensor's tilt about the X axis.
+     * @returns the latest value received for the tilt sensor's tilt about the X axis.
      */
     get tiltX () {
         return this._sensors.tiltX;
     }
 
     /**
-     * @returns - the latest value received for the tilt sensor's tilt about the Y axis.
+     * @returns the latest value received for the tilt sensor's tilt about the Y axis.
      */
     get tiltY () {
         return this._sensors.tiltY;
     }
 
     /**
-     * @returns - the latest value received from the distance sensor.
+     * @returns the latest value received from the distance sensor.
      */
     get distance () {
         return this._sensors.distance;
@@ -426,7 +426,7 @@ class WeDo2 {
     /**
      * Access a particular motor on this peripheral.
      * @param index - the zero-based index of the desired motor.
-     * @returns - the WeDo2Motor instance, if any, at that index.
+     * @returns the WeDo2Motor instance, if any, at that index.
      */
     motor (index: number) {
         return this._motors[index];
@@ -449,7 +449,7 @@ class WeDo2 {
     /**
      * Set the WeDo 2.0 peripheral's LED to a specific color.
      * @param inputRGB - a 24-bit RGB color in 0xRRGGBB format.
-     * @returns - a promise of the completion of the set led send operation.
+     * @returns a promise of the completion of the set led send operation.
      */
     setLED (inputRGB: number) {
         const rgb = [
@@ -469,7 +469,7 @@ class WeDo2 {
 
     /**
      * Sets the input mode of the LED to RGB.
-     * @returns - a promise returned by the send operation.
+     * @returns a promise returned by the send operation.
      */
     setLEDMode () {
         const cmd = this.generateInputCommand(
@@ -486,7 +486,7 @@ class WeDo2 {
 
     /**
      * Switch off the LED on the WeDo 2.0.
-     * @returns - a promise of the completion of the stop led send operation.
+     * @returns a promise of the completion of the stop led send operation.
      */
     stopLED () {
         const cmd = this.generateOutputCommand(
@@ -502,7 +502,7 @@ class WeDo2 {
      * Play a tone from the WeDo 2.0 peripheral for a specific amount of time.
      * @param tone - the pitch of the tone, in Hz.
      * @param milliseconds - the duration of the note, in milliseconds.
-     * @returns - a promise of the completion of the play tone send operation.
+     * @returns a promise of the completion of the play tone send operation.
      */
     playTone (tone: number, milliseconds: number) {
         const cmd = this.generateOutputCommand(
@@ -521,7 +521,7 @@ class WeDo2 {
 
     /**
      * Stop the tone playing from the WeDo 2.0 peripheral, if any.
-     * @returns - a promise that the command sent.
+     * @returns a promise that the command sent.
      */
     stopTone () {
         const cmd = this.generateOutputCommand(
@@ -599,7 +599,7 @@ class WeDo2 {
 
     /**
      * Called by the runtime to detect whether the WeDo 2.0 peripheral is connected.
-     * @returns - the connected state.
+     * @returns the connected state.
      */
     isConnected () {
         let connected = false;
@@ -613,8 +613,8 @@ class WeDo2 {
      * Write a message to the WeDo 2.0 peripheral BLE socket.
      * @param uuid - the UUID of the characteristic to write to
      * @param message - the message to write.
-     * @param [useLimiter] - if true, use the rate limiter
-     * @returns - a promise result of the write operation
+     * @param useLimiter - if true, use the rate limiter
+     * @returns a promise result of the write operation
      */
     send (uuid: string, message: number[], useLimiter = true) {
         if (!this.isConnected()) return Promise.resolve();
@@ -904,14 +904,14 @@ class Scratch3WeDo2Blocks implements ExtensionClass {
     private _peripheral: WeDo2;
 
     /**
-     * @returns - the ID of this extension.
+     * @returns the ID of this extension.
      */
     static get EXTENSION_ID () {
         return 'wedo2' as const;
     }
 
     /**
-     * @returns - the tilt sensor counts as "tilted" if its tilt angle meets or exceeds this threshold.
+     * @returns the tilt sensor counts as "tilted" if its tilt angle meets or exceeds this threshold.
      */
     static get TILT_THRESHOLD () {
         return 15;
@@ -1304,7 +1304,7 @@ class Scratch3WeDo2Blocks implements ExtensionClass {
     /**
      * Turn specified motor(s) on for a specified duration.
      * @param args - the block's arguments.
-     * @returns - a promise which will resolve at the end of the duration.
+     * @returns a promise which will resolve at the end of the duration.
      */
     motorOnFor (args: MotorOnForArgs) {
         // TODO: cast args.MOTOR_ID?
@@ -1326,7 +1326,7 @@ class Scratch3WeDo2Blocks implements ExtensionClass {
     /**
      * Turn specified motor(s) on indefinitely.
      * @param args - the block's arguments.
-     * @returns - a Promise that resolves after some delay.
+     * @returns a Promise that resolves after some delay.
      */
     motorOn (args: MotorOnArgs) {
         // TODO: cast args.MOTOR_ID?
@@ -1347,7 +1347,7 @@ class Scratch3WeDo2Blocks implements ExtensionClass {
     /**
      * Turn specified motor(s) off.
      * @param args - the block's arguments.
-     * @returns - a Promise that resolves after some delay.
+     * @returns a Promise that resolves after some delay.
      */
     motorOff (args: MotorOffArgs) {
         // TODO: cast args.MOTOR_ID?
@@ -1368,7 +1368,7 @@ class Scratch3WeDo2Blocks implements ExtensionClass {
     /**
      * Turn specified motor(s) off.
      * @param args - the block's arguments.
-     * @returns - a Promise that resolves after some delay.
+     * @returns a Promise that resolves after some delay.
      */
     startMotorPower (args: StartMotorPowerArgs) {
         // TODO: cast args.MOTOR_ID?
@@ -1391,7 +1391,7 @@ class Scratch3WeDo2Blocks implements ExtensionClass {
      * Set the direction of rotation for specified motor(s).
      * If the direction is 'reverse' the motor(s) will be reversed individually.
      * @param args - the block's arguments.
-     * @returns - a Promise that resolves after some delay.
+     * @returns a Promise that resolves after some delay.
      */
     setMotorDirection (args: SetMotorDirectionArgs) {
         // TODO: cast args.MOTOR_ID?
@@ -1434,7 +1434,7 @@ class Scratch3WeDo2Blocks implements ExtensionClass {
     /**
      * Set the LED's hue.
      * @param args - the block's arguments.
-     * @returns - a Promise that resolves after some delay.
+     * @returns a Promise that resolves after some delay.
      */
     setLightHue (args: SetLightHueArgs) {
         // Convert from [0,100] to [0,360]
@@ -1458,7 +1458,7 @@ class Scratch3WeDo2Blocks implements ExtensionClass {
     /**
      * Make the WeDo 2.0 peripheral play a MIDI note for the specified duration.
      * @param args - the block's arguments.
-     * @returns - a promise which will resolve at the end of the duration.
+     * @returns a promise which will resolve at the end of the duration.
      */
     playNoteFor (args: PlayNoteForArgs) {
         let durationMS = Cast.toNumber(args.DURATION) * 1000;
@@ -1477,7 +1477,7 @@ class Scratch3WeDo2Blocks implements ExtensionClass {
     /**
      * Compare the distance sensor's value to a reference.
      * @param args - the block's arguments.
-     * @returns - the result of the comparison, or false on error.
+     * @returns the result of the comparison, or false on error.
      */
     whenDistance (args: WhenDistanceArgs) {
         switch (args.OP) {
@@ -1494,14 +1494,14 @@ class Scratch3WeDo2Blocks implements ExtensionClass {
     /**
      * Test whether the tilt sensor is currently tilted.
      * @param args - the block's arguments.
-     * @returns - true if the tilt sensor is tilted past a threshold in the specified direction.
+     * @returns true if the tilt sensor is tilted past a threshold in the specified direction.
      */
     whenTilted (args: WhenTiltedArgs) {
         return this._isTilted(args.TILT_DIRECTION_ANY);
     }
 
     /**
-     * @returns - the distance sensor's value, scaled to the [0,100] range.
+     * @returns the distance sensor's value, scaled to the [0,100] range.
      */
     getDistance () {
         return this._peripheral.distance;
@@ -1510,7 +1510,7 @@ class Scratch3WeDo2Blocks implements ExtensionClass {
     /**
      * Test whether the tilt sensor is currently tilted.
      * @param args - the block's arguments.
-     * @returns - true if the tilt sensor is tilted past a threshold in the specified direction.
+     * @returns true if the tilt sensor is tilted past a threshold in the specified direction.
      */
     isTilted (args: WhenTiltedArgs) {
         return this._isTilted(args.TILT_DIRECTION_ANY);
@@ -1518,7 +1518,7 @@ class Scratch3WeDo2Blocks implements ExtensionClass {
 
     /**
      * @param args - the block's arguments.
-     * @returns - the tilt sensor's angle in the specified direction.
+     * @returns the tilt sensor's angle in the specified direction.
      * Note that getTiltAngle(up) = -getTiltAngle(down) and getTiltAngle(left) = -getTiltAngle(right).
      */
     getTiltAngle (args: GetTiltAngleArgs) {
@@ -1528,7 +1528,7 @@ class Scratch3WeDo2Blocks implements ExtensionClass {
     /**
      * Test whether the tilt sensor is currently tilted.
      * @param direction - the tilt direction to test (up, down, left, right, or any).
-     * @returns - true if the tilt sensor is tilted past a threshold in the specified direction.
+     * @returns true if the tilt sensor is tilted past a threshold in the specified direction.
      */
     private _isTilted (direction: string) {
         switch (direction) {
@@ -1544,7 +1544,7 @@ class Scratch3WeDo2Blocks implements ExtensionClass {
 
     /**
      * @param direction - the direction (up, down, left, right) to check.
-     * @returns - the tilt sensor's angle in the specified direction.
+     * @returns the tilt sensor's angle in the specified direction.
      * Note that getTiltAngle(up) = -getTiltAngle(down) and getTiltAngle(left) = -getTiltAngle(right).
      */
     private _getTiltAngle (direction: string) {
@@ -1593,7 +1593,7 @@ class Scratch3WeDo2Blocks implements ExtensionClass {
 
     /**
      * @param midiNote - the MIDI note value to convert.
-     * @returns - the frequency, in Hz, corresponding to that MIDI note value.
+     * @returns the frequency, in Hz, corresponding to that MIDI note value.
      */
     private _noteToTone (midiNote: number) {
         // Note that MIDI note 69 is A4, 440 Hz

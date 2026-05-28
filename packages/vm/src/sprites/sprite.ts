@@ -137,7 +137,7 @@ class Sprite {
 
     /**
      * Get full costume list
-     * @returns {object[]} list of costumes. Note that mutating the returned list will not
+     * @returns list of costumes. Note that mutating the returned list will not
      *     mutate the list on the sprite. The sprite list should be mutated by calling
      *     addCostumeAt, deleteCostumeAt, or setting costumes.
      */

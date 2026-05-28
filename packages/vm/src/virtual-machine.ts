@@ -622,7 +622,7 @@ class VirtualMachine extends EventEmitter<VMEvents> {
     /**
      * Returns whether the extension has a currently connected peripheral.
      * @param extensionId - the id of the extension.
-     * @returns - whether the extension has a connected peripheral.
+     * @returns whether the extension has a connected peripheral.
      */
     getPeripheralIsConnected (extensionId: string) {
         return this.runtime.getPeripheralIsConnected(extensionId);

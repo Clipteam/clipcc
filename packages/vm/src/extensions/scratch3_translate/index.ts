@@ -238,7 +238,7 @@ class Scratch3TranslateBlocks implements ExtensionClass {
     /**
      * Translates the text in the translate block to the language specified in the menu.
      * @param args - the block arguments.
-     * @returns - a promise that resolves after the response from the translate server.
+     * @returns a promise that resolves after the response from the translate server.
      */
     getTranslate (args: GetTranslateArgs) {
         // If the text contains only digits 0-9 and nothing else, return it without

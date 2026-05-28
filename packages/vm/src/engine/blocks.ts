@@ -287,7 +287,7 @@ class Blocks {
     /**
      * Get the procedure definition for a given name.
      * @param name Name of procedure to query.
-     * @param [globalOnly] True if only find global procedures.
+     * @param globalOnly True if only find global procedures.
      * @returns ID of procedure definition.
      */
     getProcedureDefinition (name: string, globalOnly?: boolean) {
