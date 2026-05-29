@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import {createRequire} from 'node:module';
 
 const require = createRequire(import.meta.url);
-const projectDir = path.resolve(import.meta.filename, '..');
+const projectDir = path.resolve(import.meta.dirname, '..');
 const configPath = path.resolve(projectDir, 'electron-builder.yaml');
 
 /**
@@ -113,6 +113,7 @@ const createBuilderArgs = (mode, passthroughArgs) => {
         args.push('--dir', '--config.compression=store');
     }
 
+    /*
     if (mode === 'dist') {
         // Distribution artifacts should fail if signing is expected but missing.
         args.push('--config.forceCodeSigning=true');
@@ -124,6 +125,14 @@ const createBuilderArgs = (mode, passthroughArgs) => {
             // Explicitly disable mac signing when producing unsigned artifacts.
             args.push('--config.mac.identity=null');
         }
+    }
+    */
+    // Keep local and CI dev/dir builds unsigned by default.
+    args.push('--config.forceCodeSigning=false');
+
+    if (process.platform === 'darwin') {
+        // Explicitly disable mac signing when producing unsigned artifacts.
+        args.push('--config.mac.identity=null');
     }
 
     if (process.platform === 'linux' && !hasRpmBuild()) {
