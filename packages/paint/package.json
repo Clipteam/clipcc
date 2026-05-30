@@ -3,8 +3,11 @@
   "version": "3.2.0",
   "description": "Graphical User Interface for the Scratch 3.0 paint editor, which is used to make and edit sprites for use in projects.",
   "exports": {
-    "webpack": "./src/index.js",
-    "default": "./dist/scratch-paint.js"
+    ".": {
+      "webpack": "./src/index.js",
+      "default": "./dist/scratch-paint.js"
+    },
+    "./styles/*": "./dist/styles/*"
   },
   "scripts": {
     "build": "pnpm run clean && webpack --progress --color --bail",
