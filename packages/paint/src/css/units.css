@@ -17,7 +17,7 @@ ALSO EDITED ON 11/13/2017 TO ADD IN CONTANTS FOR LAYOUT FROM `layout-contents.js
     --clipcc-sprite-info-height: 6rem;
     --clipcc-stage-menu-height: 2.75rem;
 
-    --clipcc-library-header-height: 4.375rem;
+    --clipcc-library-header-height: 3.125rem;
 
     --clipcc-form-radius: calc(var(--clipcc-space) / 2);
 

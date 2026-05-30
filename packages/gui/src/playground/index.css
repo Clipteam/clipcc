@@ -1,8 +1,12 @@
+@import "../css/colors.css";
+@import "../css/units.css";
+@import "../css/z-index.css";
+
 html,
 body,
 .app {
     /* probably unecessary, transitional until layout is refactored */
-    width: 100%; 
+    width: 100%;
     height: 100%;
     margin: 0;
 

@@ -3,6 +3,7 @@ const path = require('path');
 
 // Plugins
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 
 const base = {
@@ -105,6 +106,17 @@ module.exports = [
             library: {
                 type: 'commonjs2'
             }
-        }
+        },
+        plugins: base.plugins.concat([
+            // Export necessary CSS files for external use.
+            new CopyWebpackPlugin({
+                patterns: [
+                    {
+                        from: 'src/css/*.css',
+                        to: 'styles/[name][ext]'
+                    }
+                ]
+            })
+        ])
     })
 ];

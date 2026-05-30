@@ -289,6 +289,15 @@ module.exports = [
                             to: 'libraries/[name][ext]'
                         }
                     ]
+                }),
+                // Export necessary CSS files for external use.
+                new CopyWebpackPlugin({
+                    patterns: [
+                        {
+                            from: 'src/css/*.css',
+                            to: 'styles/[name][ext]'
+                        }
+                    ]
                 })
             ])
         })) : []

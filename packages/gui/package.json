@@ -10,8 +10,11 @@
     "url": "https://github.com/Clipteam/clipcc.git"
   },
   "exports": {
-    "types": "./dist/types/index.d.ts",
-    "default": "./dist/scratch-gui.js"
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/scratch-gui.js"
+    },
+    "./styles/*": "./dist/styles/*"
   },
   "scripts": {
     "build:types": "tsc --project ./tsconfig.dts.json",
