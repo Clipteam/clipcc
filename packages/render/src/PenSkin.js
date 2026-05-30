@@ -61,9 +61,6 @@ class PenSkin extends Skin {
         /** @type {boolean} */
         this._silhouetteDirty = false;
 
-        /** @type {Uint8Array} */
-        this._silhouettePixels = null;
-
         /** @type {ImageData} */
         this._silhouetteImageData = null;
 
@@ -421,9 +418,6 @@ class PenSkin extends Skin {
             gl.deleteTexture(oldTexture);
         }
 
-        this._silhouettePixels = new Uint8Array(Math.floor(width * height * 4));
-        this._silhouetteImageData = new ImageData(width, height);
-
         this._silhouetteDirty = true;
     }
 
@@ -433,16 +427,23 @@ class PenSkin extends Skin {
      */
     updateSilhouette () {
         if (this._silhouetteDirty) {
+            const [width, height] = this._canvasSize;
+
+            if (!this._silhouetteImageData ||
+                this._silhouetteImageData.width !== width ||
+                this._silhouetteImageData.height !== height) {
+                this._silhouetteImageData = new ImageData(width, height);
+            }
+
             this._renderer.enterDrawRegion(this._usePenBufferDrawRegionId);
             // Sample the framebuffer's pixels into the silhouette instance
             const gl = this._renderer.gl;
             gl.readPixels(
                 0, 0,
-                this._canvasSize[0], this._canvasSize[1],
-                gl.RGBA, gl.UNSIGNED_BYTE, this._silhouettePixels
+                width, height,
+                gl.RGBA, gl.UNSIGNED_BYTE, this._silhouetteImageData.data
             );
 
-            this._silhouetteImageData.data.set(this._silhouettePixels);
             this._silhouette.update(this._silhouetteImageData, true /* isPremultiplied */);
 
             this._silhouetteDirty = false;
