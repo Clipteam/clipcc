@@ -50,7 +50,6 @@ jobs:
             app/desktop/dist/*.dmg
             app/desktop/dist/*.deb
             app/desktop/dist/*.rpm
-            app/desktop/dist/*.pkg.tar.zst
         
       - name: Upload to Aurora Release
         uses: softprops/action-gh-release@v2
@@ -62,4 +61,3 @@ jobs:
             app/desktop/dist/*.dmg
             app/desktop/dist/*.deb
             app/desktop/dist/*.rpm
-            app/desktop/dist/*.pkg.tar.zst
