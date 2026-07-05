@@ -128,29 +128,7 @@ const rendererConfig = {
         new RuleInheritancePlugin({
             packages: [
                 path.resolve(import.meta.dirname, '../../packages/gui')
-            ],
-            callbacks: {
-                'babel-loader': (rule, loader, packagePath) => {
-                    if (!rule.options) {
-                        rule.options = {};
-                    } else if (typeof rule.options === 'string') {
-                        console.warn(`We don't support string options for babel-loader in ${packagePath}. Ignoring.`);
-                        return;
-                    }
-
-                    if (typeof rule.use === 'string') {
-                        rule.use = {
-                            loader: rule.use,
-                            options: {}
-                        };
-                    }
-
-                    // See https://babeljs.io/docs/options#cwd
-                    if (!rule.options.cwd) {
-                        rule.options.cwd = packagePath;
-                    }
-                }
-            }
+            ]
         }),
         new CopyWebpackPlugin({
             patterns: [
