@@ -1,0 +1,63 @@
+name: Build Desktop App
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published, prereleased]
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.22.0
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build and Bundle
+        run: |
+          pnpm build:dist
+          pnpm --filter clipcc-desktop run fetch-library
+          pnpm --filter clipcc-desktop run bundle:dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        if: github.event_name == 'release'
+        with:
+          files: |
+            app/desktop/dist/*.exe
+            app/desktop/dist/*.zip
+            app/desktop/dist/*.dmg
+            app/desktop/dist/*.deb
+            app/desktop/dist/*.rpm
+        
+      - name: Upload to Aurora Release
+        uses: softprops/action-gh-release@v2
+        if: github.event_name == 'workflow_dispatch'
+        with:
+          tag_name: aurora
+          files: |
+            app/desktop/dist/*.exe
+            app/desktop/dist/*.zip
+            app/desktop/dist/*.dmg
+            app/desktop/dist/*.deb
+            app/desktop/dist/*.rpm

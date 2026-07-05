@@ -44,7 +44,9 @@ const base = {
                 path.resolve(__dirname, '../svg-renderer')
             ]
         }),
-        new NodePolyfillPlugin()
+        new NodePolyfillPlugin({
+            includeAliases: ['Buffer', 'events']
+        })
     ]
 };
 
