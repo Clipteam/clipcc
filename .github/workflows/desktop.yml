@@ -2,6 +2,7 @@ name: Build Desktop App
 
 on:
   workflow_dispatch:
+  push:
   release:
     types: [published, prereleased]
 
