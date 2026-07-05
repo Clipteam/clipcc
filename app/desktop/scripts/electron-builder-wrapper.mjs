@@ -137,7 +137,7 @@ const createBuilderArgs = (mode, passthroughArgs) => {
 
     if (process.platform === 'linux' && !hasRpmBuild()) {
         // rpm target requires rpmbuild/fpm toolchain.
-        args.push('--linux', 'AppImage', 'deb');
+        args.push('--linux', 'deb', 'pacman');
         console.warn('[electron-builder-wrapper] rpmbuild not found; skipping rpm target.');
     }
 
