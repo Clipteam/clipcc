@@ -2,7 +2,6 @@ name: Build Desktop App
 
 on:
   workflow_dispatch:
-  push:
   release:
     types: [published, prereleased]
 
@@ -53,6 +52,7 @@ jobs:
         
       - name: Upload to Aurora Release
         uses: softprops/action-gh-release@v2
+        if: github.event_name == 'workflow_dispatch'
         with:
           tag_name: aurora
           files: |
