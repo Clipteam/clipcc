@@ -76,6 +76,9 @@ importers:
       '@types/react-dom':
         specifier: 16.0.11
         version: 16.0.11
+      '@types/react-redux':
+        specifier: 5.0.7
+        version: 5.0.7
       clipcc-gui:
         specifier: workspace:~
         version: link:../../packages/gui
