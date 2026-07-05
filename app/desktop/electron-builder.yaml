@@ -46,6 +46,8 @@ win:
     - target: zip
       arch:
         - x64
+        - ia32
+        - arm64
 
 nsis:
   oneClick: false
@@ -55,10 +57,17 @@ nsis:
   createStartMenuShortcut: true
   license: ../../LICENSE
   include: buildResources/install.nsh
+  buildUniversalInstaller: false
 
 linux:
   category: Education
   target:
-    - target: AppImage
     - target: deb
+      arch:
+        - x64
+        - arm64
     - target: rpm
+      arch:
+        - x64
+        - arm64
+

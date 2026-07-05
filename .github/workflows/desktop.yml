@@ -26,13 +26,14 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10.22.0
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
       - name: Build and Bundle
         run: |
+          pnpm build:dist
           pnpm --filter clipcc-desktop run fetch-library
           pnpm --filter clipcc-desktop run bundle:dist
         env:
@@ -46,7 +47,6 @@ jobs:
             app/desktop/dist/*.exe
             app/desktop/dist/*.zip
             app/desktop/dist/*.dmg
-            app/desktop/dist/*.AppImage
             app/desktop/dist/*.deb
             app/desktop/dist/*.rpm
         
@@ -59,6 +59,5 @@ jobs:
             app/desktop/dist/*.exe
             app/desktop/dist/*.zip
             app/desktop/dist/*.dmg
-            app/desktop/dist/*.AppImage
             app/desktop/dist/*.deb
             app/desktop/dist/*.rpm
