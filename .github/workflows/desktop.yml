@@ -34,6 +34,7 @@ jobs:
 
       - name: Build and Bundle
         run: |
+          pnpm build:dist
           pnpm --filter clipcc-desktop run fetch-library
           pnpm --filter clipcc-desktop run bundle:dist
         env:
