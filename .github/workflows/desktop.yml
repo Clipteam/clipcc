@@ -36,9 +36,16 @@ jobs:
         if: steps.build-cache.outputs.cache-hit != 'true'
         run: pnpm run build:dist
 
-      - name: Install pacman build dependencies
-        if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y libarchive-tools
+      - name: Save build cache
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            packages/*/dist
+            packages/*/build
+            packages/*/playground
+            packages/gui/static/microbit
+          key: desktop-build-${{ runner.os }}-${{ github.sha }}
 
       - name: Fetch library and bundle
         run: |
