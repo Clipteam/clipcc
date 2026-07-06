@@ -54,6 +54,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: github.event_name == 'workflow_dispatch'
         with:
+          prerelease: true
           tag_name: aurora
           files: |
             app/desktop/dist/*.exe
