@@ -36,6 +36,10 @@ jobs:
         if: steps.build-cache.outputs.cache-hit != 'true'
         run: pnpm run build:dist
 
+      - name: Install pacman build dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libarchive-tools
+
       - name: Fetch library and bundle
         run: |
           pnpm --filter clipcc-desktop run fetch-library
