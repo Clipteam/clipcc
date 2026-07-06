@@ -28,8 +28,9 @@ jobs:
           path: |
             packages/*/dist
             packages/*/build
-            packages/*/playground
+            packages/gui/src/generated
             packages/gui/static/microbit
+            packages/l10n/locales
           key: desktop-build-${{ runner.os }}-${{ github.sha }}
 
       - name: Build all packages
@@ -43,8 +44,9 @@ jobs:
           path: |
             packages/*/dist
             packages/*/build
-            packages/*/playground
+            packages/gui/src/generated
             packages/gui/static/microbit
+            packages/l10n/locales
           key: desktop-build-${{ runner.os }}-${{ github.sha }}
 
       - name: Restore media assets cache
