@@ -54,10 +54,15 @@ jobs:
           path: app/desktop/static/assets
           key: media-assets-${{ runner.os }}-${{ hashFiles('packages/gui/src/lib/libraries/backdrops.json', 'packages/gui/src/lib/libraries/costumes.json', 'packages/gui/src/lib/libraries/sounds.json', 'packages/gui/src/lib/libraries/sprites.json') }}
 
-      - name: Fetch library and bundle
-        run: |
-          pnpm --filter clipcc-desktop run fetch-library
-          pnpm --filter clipcc-desktop run bundle:dist
+      - name: Fetch library
+        run: pnpm --filter clipcc-desktop run fetch-library
+
+      - name: Install pacman build dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libarchive-tools
+
+      - name: Bundle
+        run: pnpm --filter clipcc-desktop run bundle:dist
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
