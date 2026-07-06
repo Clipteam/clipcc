@@ -70,4 +70,19 @@ linux:
       arch:
         - x64
         - arm64
+    - target: pacman
+      arch:
+        - x64
+        - arm64
+
+pacman:
+  depends:
+    - gtk3
+    - libnotify
+    - nss
+    - libxss
+    - libxtst
+    - xdg-utils
+    - at-spi2-core
+    - libsecret
 
