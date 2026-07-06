@@ -18,22 +18,26 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
+
+      - name: Restore build cache
+        id: build-cache
+        uses: actions/cache/restore@v4
         with:
-          node-version: 22
+          path: |
+            packages/*/dist
+            packages/*/build
+            packages/*/playground
+            packages/gui/static/microbit
+          key: desktop-build-${{ runner.os }}-${{ github.sha }}
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.22.0
+      - name: Build all packages
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        run: pnpm run build:dist
 
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Build and Bundle
+      - name: Fetch library and bundle
         run: |
-          pnpm build:dist
           pnpm --filter clipcc-desktop run fetch-library
           pnpm --filter clipcc-desktop run bundle:dist
         env:
