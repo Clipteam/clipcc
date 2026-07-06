@@ -18,7 +18,7 @@
   },
   "main": "dist/main/index.js",
   "scripts": {
-    "fetch-library": "rimraf ./static/assets/ && mkdirp ./static/assets/ && node ./scripts/fetchMediaLibraryAssets.js",
+    "fetch-library": "mkdirp ./static/assets/ && node ./scripts/fetchMediaLibraryAssets.js",
     "build:resources": "node ./scripts/generate-build-resources.mjs",
     "lint": "eslint .",
     "clean": "rimraf dist",

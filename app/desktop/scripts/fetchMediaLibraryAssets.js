@@ -7,6 +7,7 @@ const async = require('async');
 
 const libraries = require('./lib/libraries');
 
+const NO_CACHE = process.argv.includes('--no-cache');
 const ASSET_HOST = 'cdn.assets.scratch.mit.edu';
 const NUM_SIMULTANEOUS_DOWNLOADS = 5;
 const OUT_PATH = path.resolve('static', 'assets');
@@ -58,6 +59,13 @@ const collectAssets = function (dest) {
 const connectionPool = [];
 
 const fetchAsset = function (md5, callback) {
+    const outFile = path.resolve(OUT_PATH, md5);
+    if (!NO_CACHE && fs.existsSync(outFile)) {
+        console.log(`Skipped: ${md5}`);
+        callback();
+        return;
+    }
+
     const myAgent = connectionPool.pop() || new https.Agent({keepAlive: true});
     const getOptions = {
         host: ASSET_HOST,
@@ -71,7 +79,7 @@ const fetchAsset = function (md5, callback) {
             return;
         }
 
-        const stream = fs.createWriteStream(path.resolve(OUT_PATH, md5), {encoding: 'binary'});
+        const stream = fs.createWriteStream(outFile, {encoding: 'binary'});
         stream.on('error', callback);
         response.on('data', chunk => {
             stream.write(chunk);
