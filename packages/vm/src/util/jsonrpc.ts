@@ -123,10 +123,10 @@ class JSONRPC {
         if (id !== null && typeof id !== 'undefined') {
             Promise.resolve(rawResult).then(
                 result => {
-                    this._sendResponse(id as number, result);
+                    this._sendResponse(id, result);
                 },
                 error => {
-                    this._sendResponse(id as number, null, error as Error);
+                    this._sendResponse(id, null, error);
                 }
             );
         }
