@@ -12,11 +12,15 @@
  * to do some measurement yourself.
  */
 
+export interface NowObj {
+    now: () => number;
+}
+
 class Timer {
     startTime: number;
-    nowObj: { now: () => number };
+    nowObj: NowObj;
 
-    constructor (nowObj: { now: () => number } = Timer.nowObj) {
+    constructor (nowObj: NowObj = Timer.nowObj) {
         /**
          * Used to store the start time of a timer action.
          * Updated when calling `timer.start`.
@@ -43,7 +47,7 @@ class Timer {
      * @deprecated This is only called via the nowObj.now() if no other means is possible...
      * @returns An object with a now function that returns the current time in ms since 1 January 1970 00:00:00 UTC.
      */
-    static get legacyDateCode (): { now: () => number } {
+    static get legacyDateCode (): NowObj {
         return {
             now () {
                 return new Date().getTime();
@@ -55,7 +59,7 @@ class Timer {
      * Use this object to route all time functions through single access points.
      * @returns An object with a now function that returns timestamp.
      */
-    static get nowObj (): { now: () => number } {
+    static get nowObj (): NowObj {
         if (Timer.USE_PERFORMANCE && typeof self !== 'undefined' && self.performance && 'now' in self.performance) {
             return self.performance;
         }

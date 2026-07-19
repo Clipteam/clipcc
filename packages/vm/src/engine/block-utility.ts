@@ -1,5 +1,5 @@
 import Thread from './thread';
-import Timer from '../util/timer';
+import Timer, {type NowObj} from '../util/timer';
 import type Sequencer from './sequencer';
 import type Runtime from './runtime';
 import type RenderedTarget from '../sprites/rendered-target';
@@ -30,8 +30,6 @@ type ExecutionContext = BaseExecutionContext & Partial<StackTimerContext>;
  * Interface provided to block primitive functions for interacting with the
  * runtime, thread, target, and convenient methods.
  */
-
-type NowObj = { now: () => number };
 
 class BlockUtility {
     /**
@@ -239,7 +237,7 @@ class BlockUtility {
      * @param paramName The procedure's parameter name.
      * @returns The parameter's current stored value.
      */
-    getParam (paramName: string): unknown {
+    getParam (paramName: string) {
         return this.thread!.getParam(paramName);
     }
 
