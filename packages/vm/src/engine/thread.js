@@ -209,6 +209,12 @@ class Thread {
          * @type {boolean}
          */
         this.controlFlowed = false;
+
+        /**
+         * The compiled JavaScript executable object.
+         * @type {?Generator}
+         */
+        this.compileResult = null;
     }
 
     /**

@@ -17,6 +17,7 @@ const StageLayering = require('./stage-layering');
 const Variable = require('./variable');
 const xmlEscape = require('../util/xml-escape');
 const ScratchLinkWebSocket = require('../util/scratch-link-websocket');
+const compile = require('../compiler/compile');
 
 // Virtual I/O devices.
 const Clock = require('../io/clock');
@@ -1929,6 +1930,10 @@ class Runtime extends EventEmitter {
         thread.blockContainer = thread.updateMonitor ?
             this.monitorBlocks :
             target.blocks;
+        
+        if (!thread.updateMonitor) {
+            compile(thread);
+        }
 
         thread.pushStack(id);
         this.threads.push(thread);
