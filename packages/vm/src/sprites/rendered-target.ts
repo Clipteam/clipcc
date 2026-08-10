@@ -163,7 +163,6 @@ class RenderedTarget extends Target {
         super(runtime, sprite.blocks);
 
         this.sprite = sprite;
-        this.renderer = null;
         this.renderer = this.runtime?.renderer ?? null;
     }
 
@@ -184,7 +183,6 @@ class RenderedTarget extends Target {
     }
 
     get audioPlayer () {
-
         console.warn('get audioPlayer deprecated, please update to use .sprite.soundBank methods');
         console.warn(new Error('stack for debug').stack);
 
@@ -812,7 +810,7 @@ class RenderedTarget extends Target {
      * @param rgb [r,g,b], values between 0-255.
      * @returns True iff the rendered target is touching the color.
      */
-    isTouchingColor (rgb: number[]): boolean {
+    isTouchingColor (rgb: [number, number, number]): boolean {
         if (this.renderer) {
             return this.renderer.isTouchingColor(this.drawableID!, rgb);
         }
@@ -825,7 +823,7 @@ class RenderedTarget extends Target {
      * @param maskRgb [r,g,b], values between 0-255.
      * @returns True iff the color is touching the color.
      */
-    colorIsTouchingColor (targetRgb: number[], maskRgb: number[]): boolean {
+    colorIsTouchingColor (targetRgb: [number, number, number], maskRgb: [number, number, number]): boolean {
         if (this.renderer) {
             return this.renderer.isTouchingColor(
                 this.drawableID!,

@@ -822,8 +822,8 @@ class RenderWebGL extends EventEmitter {
      * Check if a particular Drawable is touching a particular color.
      * Unlike touching drawable, if the "tester" is invisble, we will still test.
      * @param {int} drawableID The ID of the Drawable to check.
-     * @param {Array<int>} color3b Test if the Drawable is touching this color.
-     * @param {Array<int>} [mask3b] Optionally mask the check to this part of Drawable.
+     * @param {[number, number, number]} color3b Test if the Drawable is touching this color.
+     * @param {[number, number, number]} [mask3b] Optionally mask the check to this part of Drawable.
      * @returns {boolean} True iff the Drawable is touching the color.
      */
     isTouchingColor (drawableID, color3b, mask3b) {
@@ -924,8 +924,8 @@ class RenderWebGL extends EventEmitter {
      * @param {number} drawableID The drawable id.
      * @param {number[]} candidateIDs The candidate ids.
      * @param {Rectangle} bounds The bounds.
-     * @param {number[]} [color3b] The color3b.
-     * @param {number[]} [mask3b] The mask3b.
+     * @param {[number, number, number]} [color3b] The color3b.
+     * @param {[number, number, number]} [mask3b] The mask3b.
      */
     _isTouchingColorGpuStart (drawableID, candidateIDs, bounds, color3b, mask3b) {
         this._doExitDrawRegion();
