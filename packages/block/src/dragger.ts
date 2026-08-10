@@ -60,6 +60,23 @@ export class Dragger extends Blockly.dragging.Dragger {
       }
     }
 
+    const draggable = this.draggable;
+    if (draggable instanceof Blockly.BlockSvg && draggable.workspace.isFlyout) {
+      // Re-generate dragged block's ID to avoid collisions
+      const blocksToRenew = draggable.getRootBlock().getDescendants(false);
+      const originalIds = blocksToRenew.map((block) => block.id);
+      try {
+        blocksToRenew.forEach((block) => {
+          block.id = Blockly.utils.idGenerator.genUid();
+        });
+        return super.onDragStart(e);
+      } finally {
+        blocksToRenew.forEach((block, index) => {
+          block.id = originalIds[index];
+        });
+      }
+    }
+
     return super.onDragStart(e);
   }
 
@@ -78,7 +95,7 @@ export class Dragger extends Blockly.dragging.Dragger {
   /**
    * Returns whether or not the dragged item should return to its starting
    * position.
-   * @param event The drag event that triggered this check.
+   * @param coordinate The coordinate of the dragged item.
    * @param rootDraggable The topmost item being dragged.
    * @returns True if the draggable should return to its starting position.
    */
