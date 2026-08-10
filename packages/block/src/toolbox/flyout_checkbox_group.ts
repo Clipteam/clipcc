@@ -26,6 +26,9 @@ export class FlyoutCheckboxGroup implements Blockly.IBoundedElement, Blockly.IRe
   /** Position of this element. */
   protected readonly position: Blockly.utils.Coordinate = new Blockly.utils.Coordinate(0, 0);
 
+  /** Position of the block relative to this group. */
+  private childOffset: Blockly.utils.Coordinate = new Blockly.utils.Coordinate(0, 0);
+
   /** Store the last height of flyout element, used to update checkbox position. */
   private lastHeight: number = 0;
 
@@ -72,7 +75,10 @@ export class FlyoutCheckboxGroup implements Blockly.IBoundedElement, Blockly.IRe
       }
 
       // Move the item for placing checkbox.
-      flyoutElement.moveBy(
+      if (flyoutElement instanceof Blockly.BlockSvg) {
+        this.childOffset = flyoutElement.getRelativeToSurfaceXY();
+      }
+      this.moveChildBy(
         (Checkbox.CHECKBOX_SIZE + Checkbox.CHECKBOX_MARGIN) * (this.workspace.RTL ? -1 : 1),
         0
       );
@@ -143,7 +149,11 @@ export class FlyoutCheckboxGroup implements Blockly.IBoundedElement, Blockly.IRe
       const itemHeight = flyoutElement.getBoundingRectangle().getHeight();
       const offsetY = (itemHeight - Checkbox.CHECKBOX_SIZE) / 2;
       if (offsetY < 0) {
-        flyoutElement.moveBy(0, offsetY);
+        if (flyoutElement instanceof Blockly.BlockSvg) {
+          this.moveChildBy(0, offsetY);
+        } else {
+          flyoutElement.moveBy(0, offsetY);
+        }
       } else {
         this.checkbox.getFocusableElement().setAttribute('transform', `translate(0, ${offsetY})`);
       }
@@ -159,6 +169,34 @@ export class FlyoutCheckboxGroup implements Blockly.IBoundedElement, Blockly.IRe
     this.position.x = x;
     this.position.y = y;
     this.svgGroup.setAttribute('transform', `translate(${x}, ${y})`);
+
+    const flyoutElement = this.flyoutItem?.getElement();
+    if (flyoutElement instanceof Blockly.BlockSvg) {
+      // Blockly 13 caches block coordinates instead of deriving them from the
+      // SVG parent chain. Keep that cache in sync with this wrapper's transform.
+      flyoutElement.updateComponentLocations(
+        Blockly.utils.Coordinate.sum(this.position, this.childOffset)
+      );
+    }
+  }
+
+  /**
+   * Move the nested block while keeping its local and absolute coordinates coherent.
+   * @param dx The horizontal offset.
+   * @param dy The vertical offset.
+   */
+  private moveChildBy(dx: number, dy: number) {
+    const flyoutElement = this.flyoutItem?.getElement();
+    if (!(flyoutElement instanceof Blockly.BlockSvg)) return;
+
+    this.childOffset = Blockly.utils.Coordinate.sum(
+      this.childOffset,
+      new Blockly.utils.Coordinate(dx, dy)
+    );
+    flyoutElement.translate(this.childOffset.x, this.childOffset.y);
+    flyoutElement.updateComponentLocations(
+      Blockly.utils.Coordinate.sum(this.position, this.childOffset)
+    );
   }
 
   getRelativeToSurfaceXY(): Blockly.utils.Coordinate {
@@ -313,4 +351,3 @@ export class FlyoutCheckboxGroupNavigationPolicy implements Blockly.INavigationP
     return current instanceof FlyoutCheckboxGroup || current instanceof Checkbox;
   }
 }
-
