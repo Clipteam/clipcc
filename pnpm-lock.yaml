@@ -234,8 +234,8 @@ importers:
   packages/block:
     dependencies:
       blockly:
-        specifier: ^12.5.1
-        version: 12.5.1
+        specifier: ^13.2.1
+        version: 13.2.1(jsdom@28.1.0)
     devDependencies:
       '@jest/environment':
         specifier: ^30.3.0
@@ -4657,9 +4657,11 @@ packages:
   bl@1.2.3:
     resolution: {integrity: sha512-pvcNpa0UU69UT341rO6AYy4FVAIkUHuZXRIWbq+zHnsVcRzDDjIAhGuuYoi0d//cwIwtt4pkpKycWEfjdV+vww==}
 
-  blockly@12.5.1:
-    resolution: {integrity: sha512-etXLpUtEkcRibHGwIJ4BsvnIzMJJs0C0yPIjE/W0NCtj8ACha/a7Q9n7Ib6+j7N4EzQ0p28YPZMnypi5pNIj1g==}
-    engines: {node: '>=18'}
+  blockly@13.2.1:
+    resolution: {integrity: sha512-iOa37H0ks5Zup2G1zZyviLX9E5WzWh3h0Zs8Nta2cPKmnAGHjZ6wrp3VqLTaquTJReJKPwaJZ39K7AD24rT4lg==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      jsdom: '>=27.4.0 <30.0.0'
 
   bluebird@3.7.2:
     resolution: {integrity: sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==}
@@ -13922,12 +13924,12 @@ snapshots:
   '@webpack-cli/configtest@3.0.1(webpack-cli@6.0.1)(webpack@5.105.4)':
     dependencies:
       webpack: 5.105.4(webpack-cli@6.0.1)
-      webpack-cli: 6.0.1(webpack-dev-server@5.2.3)(webpack@5.105.4)
+      webpack-cli: 6.0.1(webpack@5.105.4)
 
   '@webpack-cli/info@3.0.1(webpack-cli@6.0.1)(webpack@5.105.4)':
     dependencies:
       webpack: 5.105.4(webpack-cli@6.0.1)
-      webpack-cli: 6.0.1(webpack-dev-server@5.2.3)(webpack@5.105.4)
+      webpack-cli: 6.0.1(webpack@5.105.4)
 
   '@webpack-cli/serve@3.0.1(webpack-cli@6.0.1)(webpack-dev-server@5.2.3)(webpack@5.105.4)':
     dependencies:
@@ -14699,14 +14701,9 @@ snapshots:
       readable-stream: 2.3.8
       safe-buffer: 5.2.1
 
-  blockly@12.5.1:
+  blockly@13.2.1(jsdom@28.1.0):
     dependencies:
-      jsdom: 26.1.0(patch_hash=4725214219761e272bac827780047d8a6effa8b02b2c8516a14e1363bb08948b)
-    transitivePeerDependencies:
-      - bufferutil
-      - canvas
-      - supports-color
-      - utf-8-validate
+      jsdom: 28.1.0
 
   bluebird@3.7.2: {}
 
@@ -21705,7 +21702,7 @@ snapshots:
       watchpack: 2.5.1
       webpack-sources: 3.3.4
     optionalDependencies:
-      webpack-cli: 6.0.1(webpack-dev-server@5.2.3)(webpack@5.105.4)
+      webpack-cli: 6.0.1(webpack@5.105.4)
     transitivePeerDependencies:
       - '@swc/core'
       - esbuild

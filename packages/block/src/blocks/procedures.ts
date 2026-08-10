@@ -595,7 +595,7 @@ function attachShadow(
     if (Blockly.Events.isEnabled()) {
       Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.BLOCK_CREATE))(newBlock));
     }
-    newBlock.outputConnection.connect(input.connection!);
+    newBlock.outputConnection!.connect(input.connection!);
   }
 }
 
@@ -663,7 +663,7 @@ function populateArgumentOnCaller(
       const shadowState = oldShadow || this.buildShadowState_(type);
       input.connection!.setShadowState(shadowState);
     }
-    oldBlock.outputConnection.connect(input.connection!);
+    oldBlock.outputConnection!.connect(input.connection!);
   } else if (this.generateShadows_) {
     this.attachShadow_(input, type);
   }
@@ -709,7 +709,7 @@ function populateArgumentOnPrototype(
   }
 
   // Attach the block.
-  input.connection!.connect(argumentReporter.outputConnection);
+  input.connection!.connect(argumentReporter.outputConnection!);
 }
 
 /**
@@ -753,7 +753,7 @@ function populateArgumentOnDeclaration(
   }
 
   // Attach the block.
-  input.connection!.connect(argumentEditor.outputConnection);
+  input.connection!.connect(argumentEditor.outputConnection!);
 }
 
 /**
