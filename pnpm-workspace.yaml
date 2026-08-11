@@ -21,4 +21,4 @@ overrides:
   cheerio: 1.0.0-rc.12
 
 patchedDependencies:
-  jsdom@28.1.0: patches/jsdom@28.1.0.patch
+  jsdom@26.1.0: patches/jsdom@26.1.0.patch

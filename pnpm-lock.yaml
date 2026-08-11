@@ -23,9 +23,9 @@ overrides:
   cheerio: 1.0.0-rc.12
 
 patchedDependencies:
-  jsdom@28.1.0:
-    hash: a3b3482f33e9bf5b7d9873480e8d0bfec18c2bd4e00a4abd9caac83dfccf5ca1
-    path: patches/jsdom@28.1.0.patch
+  jsdom@26.1.0:
+    hash: 4725214219761e272bac827780047d8a6effa8b02b2c8516a14e1363bb08948b
+    path: patches/jsdom@26.1.0.patch
 
 importers:
 
@@ -115,14 +115,14 @@ importers:
     dependencies:
       blockly:
         specifier: ^13.2.1
-        version: 13.2.1(jsdom@28.1.0(patch_hash=a3b3482f33e9bf5b7d9873480e8d0bfec18c2bd4e00a4abd9caac83dfccf5ca1))
+        version: 13.2.1(jsdom@28.1.0)
     devDependencies:
       '@jest/environment':
         specifier: ^30.4.0
         version: 30.4.1
       '@jest/environment-jsdom-abstract':
         specifier: ^30.4.0
-        version: 30.4.1(jsdom@28.1.0(patch_hash=a3b3482f33e9bf5b7d9873480e8d0bfec18c2bd4e00a4abd9caac83dfccf5ca1))
+        version: 30.4.1(jsdom@28.1.0)
       '@jest/globals':
         specifier: ^30.4.0
         version: 30.4.1
@@ -155,7 +155,7 @@ importers:
         version: 2.5.2
       jsdom:
         specifier: ^28.1.0
-        version: 28.1.0(patch_hash=a3b3482f33e9bf5b7d9873480e8d0bfec18c2bd4e00a4abd9caac83dfccf5ca1)
+        version: 28.1.0
       lodash.defaultsdeep:
         specifier: ^4.6.1
         version: 4.6.1
@@ -1134,7 +1134,7 @@ importers:
         version: 16.5.0
       jsdom:
         specifier: 28.1.0
-        version: 28.1.0(patch_hash=a3b3482f33e9bf5b7d9873480e8d0bfec18c2bd4e00a4abd9caac83dfccf5ca1)
+        version: 28.1.0
       json:
         specifier: 9.0.6
         version: 9.0.6
@@ -11106,7 +11106,7 @@ snapshots:
 
   '@jest/diff-sequences@30.4.0': {}
 
-  '@jest/environment-jsdom-abstract@30.4.1(jsdom@26.1.0)':
+  '@jest/environment-jsdom-abstract@30.4.1(jsdom@26.1.0(patch_hash=4725214219761e272bac827780047d8a6effa8b02b2c8516a14e1363bb08948b))':
     dependencies:
       '@jest/environment': 30.4.1
       '@jest/fake-timers': 30.4.1
@@ -11115,9 +11115,9 @@ snapshots:
       '@types/node': 25.5.2
       jest-mock: 30.4.1
       jest-util: 30.4.1
-      jsdom: 26.1.0
+      jsdom: 26.1.0(patch_hash=4725214219761e272bac827780047d8a6effa8b02b2c8516a14e1363bb08948b)
 
-  '@jest/environment-jsdom-abstract@30.4.1(jsdom@28.1.0(patch_hash=a3b3482f33e9bf5b7d9873480e8d0bfec18c2bd4e00a4abd9caac83dfccf5ca1))':
+  '@jest/environment-jsdom-abstract@30.4.1(jsdom@28.1.0)':
     dependencies:
       '@jest/environment': 30.4.1
       '@jest/fake-timers': 30.4.1
@@ -11126,7 +11126,7 @@ snapshots:
       '@types/node': 25.5.2
       jest-mock: 30.4.1
       jest-util: 30.4.1
-      jsdom: 28.1.0(patch_hash=a3b3482f33e9bf5b7d9873480e8d0bfec18c2bd4e00a4abd9caac83dfccf5ca1)
+      jsdom: 28.1.0
 
   '@jest/environment@30.4.1':
     dependencies:
@@ -13278,9 +13278,9 @@ snapshots:
       readable-stream: 2.3.8
       safe-buffer: 5.2.1
 
-  blockly@13.2.1(jsdom@28.1.0(patch_hash=a3b3482f33e9bf5b7d9873480e8d0bfec18c2bd4e00a4abd9caac83dfccf5ca1)):
+  blockly@13.2.1(jsdom@28.1.0):
     dependencies:
-      jsdom: 28.1.0(patch_hash=a3b3482f33e9bf5b7d9873480e8d0bfec18c2bd4e00a4abd9caac83dfccf5ca1)
+      jsdom: 28.1.0
 
   bn.js@4.12.3: {}
 
@@ -16046,7 +16046,7 @@ snapshots:
   isomorphic-dompurify@2.36.0:
     dependencies:
       dompurify: 3.3.2
-      jsdom: 28.1.0(patch_hash=a3b3482f33e9bf5b7d9873480e8d0bfec18c2bd4e00a4abd9caac83dfccf5ca1)
+      jsdom: 28.1.0
     transitivePeerDependencies:
       - '@noble/hashes'
       - canvas
@@ -16292,8 +16292,8 @@ snapshots:
   jest-environment-jsdom@30.4.1:
     dependencies:
       '@jest/environment': 30.4.1
-      '@jest/environment-jsdom-abstract': 30.4.1(jsdom@26.1.0)
-      jsdom: 26.1.0
+      '@jest/environment-jsdom-abstract': 30.4.1(jsdom@26.1.0(patch_hash=4725214219761e272bac827780047d8a6effa8b02b2c8516a14e1363bb08948b))
+      jsdom: 26.1.0(patch_hash=4725214219761e272bac827780047d8a6effa8b02b2c8516a14e1363bb08948b)
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -16612,7 +16612,7 @@ snapshots:
 
   jsdoc-type-pratt-parser@7.0.0: {}
 
-  jsdom@26.1.0:
+  jsdom@26.1.0(patch_hash=4725214219761e272bac827780047d8a6effa8b02b2c8516a14e1363bb08948b):
     dependencies:
       cssstyle: 4.6.0
       data-urls: 5.0.0
@@ -16639,7 +16639,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  jsdom@28.1.0(patch_hash=a3b3482f33e9bf5b7d9873480e8d0bfec18c2bd4e00a4abd9caac83dfccf5ca1):
+  jsdom@28.1.0:
     dependencies:
       '@acemir/cssom': 0.9.31
       '@asamuzakjp/dom-selector': 6.8.1
