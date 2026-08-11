@@ -330,7 +330,7 @@ class Sequencer {
         // and on to the main definition of the procedure.
         // When that set of blocks finishes executing, it will be popped
         // from the stack by the sequencer, returning control to the caller.
-        thread.pushStack(definition, target!);
+        thread.pushStack(definition, target!, target!.blocks);
         // In known warp-mode threads, only yield when time is up.
         if (thread.peekStackFrame()!.warpMode &&
             thread.warpTimer!.timeElapsed() > Sequencer.WARP_TIME) {
