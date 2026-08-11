@@ -588,8 +588,8 @@ function deleteObsoleteBlocks(this: ProcedureBlock, connectionMap: ConnectionMap
           block && isProcedureArgumentReporterBlock(block);
         const isDeclarationEditor = this.type === Constants.PROCEDURES_DECLARATION_BLOCK_TYPE &&
           block && isProcedureArgumentEditorBlock(block);
-        if (block && (block.isShadow() || isPrototypeReporter || isDeclarationEditor)) {
-          block.dispose(true);
+        if (block && (isPrototypeReporter || isDeclarationEditor)) {
+          block.dispose();
           connectionMap[id] = null;
           // At this point we know which shadow DOMs are about to be orphaned in
           // the VM.  What do we do with that information?
@@ -1102,15 +1102,18 @@ function removeFieldCallback(this: ProcedureDeclarationBlock, field: Blockly.Fie
       const target = input.connection.targetBlock()!;
       if (field.name && target.getField(field.name) === field) {
         inputNameToRemove = input.name;
-        continue;
+        break;
       }
     } else {
       for (let j = 0; j < input.fieldRow.length; j++) {
         if (input.fieldRow[j] === field) {
           inputNameToRemove = input.name;
-          continue;
+          break;
         }
       }
+    }
+    if (inputNameToRemove) {
+      break;
     }
     if (input.type !== Blockly.inputs.inputTypes.DUMMY) {
       ++parameterIndex;
@@ -1118,6 +1121,10 @@ function removeFieldCallback(this: ProcedureDeclarationBlock, field: Blockly.Fie
   }
   if (inputNameToRemove) {
     Blockly.WidgetDiv.hide();
+    const target = this.getInputTargetBlock(inputNameToRemove);
+    if (target && isProcedureArgumentEditorBlock(target)) {
+      target.dispose();
+    }
     this.removeInput(inputNameToRemove);
     this.model.deleteParameter(parameterIndex);
     this.onChangeFn();
