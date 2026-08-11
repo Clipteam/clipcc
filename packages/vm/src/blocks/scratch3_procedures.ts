@@ -22,7 +22,8 @@ class Scratch3ProcedureBlocks implements CategoryPrototype {
             procedures_return: this.return,
             procedures_discard: this.noOp,
             argument_reporter_string_number: this.argumentReporterStringNumber,
-            argument_reporter_boolean: this.argumentReporterBoolean
+            argument_reporter_boolean: this.argumentReporterBoolean,
+            argument_reporter_statement: this.argumentReporterStatement
         };
     }
 
@@ -50,6 +51,12 @@ class Scratch3ProcedureBlocks implements CategoryPrototype {
         for (let i = 0; i < paramIds.length; i++) {
             if (Object.prototype.hasOwnProperty.call(args, paramIds[i])) {
                 util.pushParam(paramNames[i], args[paramIds[i]]);
+            } else if (paramIds[i].startsWith('SUBSTACK')) {
+                // Pass the caller's statement input to the callback reporter.
+                util.pushParam(paramNames[i], {
+                    entry: paramIds[i],
+                    callerId: util.thread!.peekStack()
+                });
             } else {
                 util.pushParam(paramNames[i], paramDefaults[i]);
             }
@@ -82,6 +89,24 @@ class Scratch3ProcedureBlocks implements CategoryPrototype {
             return 0;
         }
         return value;
+    }
+
+    argumentReporterStatement (args: BlockArgs, util: BlockUtility) {
+        const branchInfo = util.getParam(args.VALUE) as {
+            entry?: string | null;
+            callerId?: string | null;
+        } | null;
+        if (!branchInfo?.entry || !branchInfo.callerId) {
+            util.thread!.pushStack(null);
+            return;
+        }
+
+        const branch = util.getBranchAndTarget(branchInfo.callerId, branchInfo.entry);
+        if (branch) {
+            util.thread!.pushStack(branch[0], branch[1]);
+        } else {
+            util.thread!.pushStack(null);
+        }
     }
 }
 

@@ -26,3 +26,46 @@ test('calling a custom block with no definition does not throw', t => {
     });
     t.end();
 });
+
+test('calling a custom block binds callback parameters to SUBSTACK inputs', t => {
+    const pushed = [];
+    const util = {
+        getProcedureParamNamesIdsAndDefaults: () => [
+            ['branch'],
+            ['SUBSTACKcallback'],
+            ['']
+        ],
+        initParams: () => {},
+        pushParam: (name, value) => pushed.push([name, value]),
+        stackFrame: {executed: false},
+        startProcedure: () => {},
+        thread: {
+            peekStack: () => 'caller'
+        }
+    };
+
+    blocks.call({mutation: {proccode: 'procedure %c'}}, util);
+
+    t.same(pushed, [[
+        'branch',
+        {entry: 'SUBSTACKcallback', callerId: 'caller'}
+    ]]);
+    t.end();
+});
+
+test('statement argument reporter pushes the resolved callback branch', t => {
+    const pushed = [];
+    const target = {};
+    const util = {
+        getParam: () => ({entry: 'SUBSTACKcallback', callerId: 'caller'}),
+        getBranchAndTarget: () => ['callback-start', target],
+        thread: {
+            pushStack: (id, branchTarget) => pushed.push([id, branchTarget])
+        }
+    };
+
+    blocks.argumentReporterStatement({VALUE: 'branch'}, util);
+
+    t.same(pushed, [['callback-start', target]]);
+    t.end();
+});

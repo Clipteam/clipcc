@@ -2831,6 +2831,22 @@ class Runtime extends EventEmitter<RuntimeEvents> {
     }
 
     /**
+     * Get a callback branch and the target containing it.
+     * @param id ID of the procedure call block.
+     * @param branchId Name of the statement input.
+     * @returns The branch block ID and its target, or null.
+     */
+    getBranchAndTarget (id: string | null, branchId: string): [string, RenderedTarget] | null {
+        for (const target of this.targets) {
+            const result = target.blocks.getBranch(id, branchId);
+            if (result) {
+                return [result, target];
+            }
+        }
+        return null;
+    }
+
+    /**
      * Tell the runtime to request a redraw.
      * Use after a clone/sprite has completed some visible operation on the stage.
      */

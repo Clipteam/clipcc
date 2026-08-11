@@ -161,6 +161,22 @@ class BlockUtility {
     }
 
     /**
+     * Get a callback branch and the target containing it.
+     * @param id ID of the procedure call block.
+     * @param branchId Name of the statement input.
+     * @returns The branch block ID and its target, or null.
+     */
+    getBranchAndTarget (id: string | null, branchId: string): [string, RenderedTarget] | null {
+        const currentFrame = this.thread!.peekStackFrame();
+        const result = this.thread!.blockContainer?.getBranch(id, branchId);
+        const target = currentFrame?.target ?? this.thread!.target;
+        if (result && target) {
+            return [result, target];
+        }
+        return this.sequencer!.runtime.getBranchAndTarget(id, branchId);
+    }
+
+    /**
      * Stop all threads.
      */
     stopAll () {
