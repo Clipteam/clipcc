@@ -51,6 +51,10 @@ interface SerializedProcedureExtraState extends ProcedureExtraState {
   hasSerializedInputs?: boolean;
 }
 
+interface ProcedureArgumentReporterExtraState {
+  return: boolean;
+}
+
 export interface ProcedureBlock extends Blockly.BlockSvg {
   model: ProcedureModel;
 
@@ -137,6 +141,20 @@ export interface ProcedureArgumentEditorBlock extends Blockly.BlockSvg {
 export interface ProcedureStatementEditorBlock extends ProcedureArgumentEditorBlock, ISatellite {}
 
 export interface ProcedureArgumentReporterBlock extends Blockly.BlockSvg, IBlockTemplate {}
+
+export interface ProcedureStatementArgumentReporterBlock extends ProcedureArgumentReporterBlock {
+  return_: boolean;
+
+  mutationToDom: () => Element;
+  domToMutation: (xmlElement: Element) => void;
+  saveExtraState: () => ProcedureArgumentReporterExtraState;
+  loadExtraState: (state: ProcedureArgumentReporterExtraState) => void;
+
+  getReturn: () => boolean;
+  setReturn: (ret: boolean) => void;
+  setShape_: (shape: number | null) => void;
+  updateShape_: () => void;
+}
 
 // Helper functions to check type of procedure blocks.
 
@@ -1185,7 +1203,8 @@ function updateArgumentReporterNames(
  *    prototype block.
  */
 function setProcedureShape(
-  this: ProcedureCallBlock | ProcedureDeclarationBlock | ProcedurePrototypeBlock,
+  this: ProcedureCallBlock | ProcedureDeclarationBlock | ProcedurePrototypeBlock |
+    ProcedureStatementArgumentReporterBlock,
   shape: number | null,
   noConnectionUpdate?: boolean
 ) {
@@ -1217,6 +1236,51 @@ function setProcedureShape(
  */
 function getCallerTargetWorkspace(this: ProcedureCallBlock) {
   return this.workspace.isFlyout ? this.workspace.targetWorkspace : this.workspace;
+}
+
+/**
+ * Create XML representation of a statement argument reporter.
+ * @returns XML storage element.
+ */
+function argumentReporterMutationToDom(this: ProcedureStatementArgumentReporterBlock): Element {
+  const container = document.createElement('mutation');
+  container.setAttribute('return', JSON.stringify(this.return_));
+  return container;
+}
+
+/**
+ * Parse XML to restore the state of a statement argument reporter.
+ * @param xmlElement XML mutation element.
+ */
+function argumentReporterDomToMutation(
+  this: ProcedureStatementArgumentReporterBlock,
+  xmlElement: Element
+) {
+  this.loadExtraState({
+    return: JSON.parse(xmlElement.getAttribute('return')!)
+  });
+}
+
+/**
+ * Create a state to represent the state of a statement argument reporter.
+ * @returns The extra state.
+ */
+function argumentReporterSaveExtraState(
+  this: ProcedureStatementArgumentReporterBlock
+): ProcedureArgumentReporterExtraState {
+  return {return: this.return_};
+}
+
+/**
+ * Parse a state to restore the state of a statement argument reporter.
+ * @param state The extra state.
+ */
+function argumentReporterLoadExtraState(
+  this: ProcedureStatementArgumentReporterBlock,
+  state: ProcedureArgumentReporterExtraState
+) {
+  this.return_ = parseStringOrObject(state.return);
+  this.updateShape_();
 }
 
 /**
@@ -1485,7 +1549,9 @@ Blockly.Blocks['procedures_return'] = {
       // list since the change will be automatically recreated when replayed.
       Blockly.Events.setRecordUndo(false);
       const root = this.getRootBlock();
-      const shouldDisable = !isProcedureDefinitionBlock(root) || !root.getProcedureModel().isReporter();
+      const isReporterProcedure = isProcedureDefinitionBlock(root) &&
+        root.getProcedureModel()?.isReporter();
+      const shouldDisable = !isReporterProcedure && !isProcedureCallBlock(root);
       this.setDisabledReason(shouldDisable, 'Return block should be placed in a function definition.');
       Blockly.Events.setRecordUndo(true);
     }
@@ -1557,7 +1623,7 @@ Blockly.Blocks['argument_reporter_string_number'] = {
 } as ProcedureArgumentReporterBlock;
 
 Blockly.Blocks['argument_reporter_statement'] = {
-  init: function(this: ProcedureArgumentReporterBlock) {
+  init: function(this: ProcedureStatementArgumentReporterBlock) {
     this.jsonInit({
       message0: '%1',
       args0: [{
@@ -1565,8 +1631,9 @@ Blockly.Blocks['argument_reporter_statement'] = {
         name: 'VALUE',
         text: ''
       }],
-      extensions: ['colours_argument', 'shape_statement']
+      extensions: ['colours_argument', 'shape_statement', 'argument_reporter_statement_contextmenu']
     });
+    this.return_ = false;
     this.blockTemplate = true;
     const originalShowContextMenu = this.showContextMenu.bind(this);
     this.showContextMenu = function(e: Event) {
@@ -1577,8 +1644,23 @@ Blockly.Blocks['argument_reporter_statement'] = {
         originalShowContextMenu(e);
       }
     };
+  },
+  mutationToDom: argumentReporterMutationToDom,
+  domToMutation: argumentReporterDomToMutation,
+  saveExtraState: argumentReporterSaveExtraState,
+  loadExtraState: argumentReporterLoadExtraState,
+  setShape_: setProcedureShape,
+  updateShape_() {
+    this.setShape_(this.return_ ? Constants.OUTPUT_SHAPE_ROUND : Constants.OUTPUT_SHAPE_NORMAL);
+  },
+  setReturn(ret: boolean) {
+    this.return_ = ret;
+    this.updateShape_();
+  },
+  getReturn() {
+    return this.return_;
   }
-} as ProcedureArgumentReporterBlock;
+} as ProcedureStatementArgumentReporterBlock;
 
 Blockly.Blocks['argument_editor_boolean'] = {
   init: function() {
@@ -1680,3 +1762,24 @@ const PROCEDURE_CALL_CONTEXTMENU = {
 };
 
 Blockly.Extensions.registerMixin('procedure_call_contextmenu', PROCEDURE_CALL_CONTEXTMENU);
+
+/**
+ * Mixin to add a context menu for statement argument reporters.
+ */
+const ARGUMENT_REPORTER_STATEMENT_CONTEXTMENU = {
+  customContextMenu: function(this: ProcedureStatementArgumentReporterBlock, menuOptions: Array<
+    | Blockly.ContextMenuRegistry.ContextMenuOption
+    | Blockly.ContextMenuRegistry.LegacyContextMenuOption
+  >) {
+    if (!(this.previousConnection && this.previousConnection.isConnected()) &&
+      !(this.outputConnection && this.outputConnection.isConnected()) &&
+      !(this.nextConnection && this.nextConnection.isConnected())) {
+      menuOptions.push(makeChangeShapeOption(this));
+    }
+  }
+};
+
+Blockly.Extensions.registerMixin(
+  'argument_reporter_statement_contextmenu',
+  ARGUMENT_REPORTER_STATEMENT_CONTEXTMENU
+);

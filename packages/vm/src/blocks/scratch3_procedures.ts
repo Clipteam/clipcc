@@ -1,6 +1,13 @@
 import type {BlockArgs, CategoryPrototype} from './category_prototype';
 import type Runtime from '../engine/runtime';
 import type BlockUtility from '../engine/block-utility';
+import type RenderedTarget from '../sprites/rendered-target';
+
+interface StatementArgumentValue {
+    entry?: string | null;
+    callerId?: string | null;
+    callerTarget?: RenderedTarget | null;
+}
 
 class Scratch3ProcedureBlocks implements CategoryPrototype {
     constructor (
@@ -43,6 +50,8 @@ class Scratch3ProcedureBlocks implements CategoryPrototype {
         }
 
         const [paramNames, paramIds, paramDefaults] = paramNamesIdsAndDefaults;
+        const callerFrame = util.thread!.peekStackFrame?.();
+        const callerTarget = callerFrame?.target ?? util.thread!.target;
 
         // Initialize params for the current stackFrame to {}, even if the procedure does
         // not take any arguments. This is so that `getParam` down the line does not look
@@ -53,10 +62,14 @@ class Scratch3ProcedureBlocks implements CategoryPrototype {
                 util.pushParam(paramNames[i], args[paramIds[i]]);
             } else if (paramIds[i].startsWith('SUBSTACK')) {
                 // Pass the caller's statement input to the callback reporter.
-                util.pushParam(paramNames[i], {
+                const callback = {
                     entry: paramIds[i],
                     callerId: util.thread!.peekStack()
-                });
+                } as StatementArgumentValue;
+                if (callerTarget) {
+                    callback.callerTarget = callerTarget;
+                }
+                util.pushParam(paramNames[i], callback);
             } else {
                 util.pushParam(paramNames[i], paramDefaults[i]);
             }
@@ -92,16 +105,17 @@ class Scratch3ProcedureBlocks implements CategoryPrototype {
     }
 
     argumentReporterStatement (args: BlockArgs, util: BlockUtility) {
-        const branchInfo = util.getParam(args.VALUE) as {
-            entry?: string | null;
-            callerId?: string | null;
-        } | null;
+        const branchInfo = util.getParam(args.VALUE) as StatementArgumentValue | null;
         if (!branchInfo?.entry || !branchInfo.callerId) {
             util.thread!.pushStack(null);
             return;
         }
 
-        const branch = util.getBranchAndTarget(branchInfo.callerId, branchInfo.entry);
+        const branch = util.getBranchAndTarget(
+            branchInfo.callerId,
+            branchInfo.entry,
+            branchInfo.callerTarget
+        );
         if (branch) {
             util.thread!.pushStack(branch[0], branch[1]);
         } else {

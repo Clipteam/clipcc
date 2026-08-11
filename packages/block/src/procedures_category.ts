@@ -34,6 +34,7 @@ import {
   isProcedureDefinitionBlock,
   isProcedurePrototypeBlock,
   type ProcedureCallBlock,
+  type ProcedureStatementArgumentReporterBlock,
   type ProcedureDefinitionBlock,
   type ProcedurePrototypeBlock
 } from './blocks/procedures';
@@ -395,7 +396,7 @@ export function makeShowDefinitionOption(
  * @returns A menu option, containing text, enabled, and a callback.
  */
 export function makeChangeShapeOption(
-  block: ProcedureCallBlock
+  block: ProcedureCallBlock | ProcedureStatementArgumentReporterBlock
 ): Blockly.ContextMenuRegistry.LegacyContextMenuOption {
   const option = {
     enabled: true,

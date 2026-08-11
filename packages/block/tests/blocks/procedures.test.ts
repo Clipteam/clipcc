@@ -135,6 +135,21 @@ describe('Blocks: Procedures', () => {
     expect(editor.outputConnection).toBeNull();
   });
 
+  test('Return blocks are enabled inside procedure-call statement inputs', () => {
+    const caller = createCaller(callerState('c', 'SUBSTACKARG'));
+    const returnBlock = context.workspace.newBlock('procedures_return') as Blockly.BlockSvg & {
+      onchange: (event: Blockly.Events.Abstract) => void;
+    };
+    returnBlock.initSvg();
+    returnBlock.previousConnection!.connect(caller.getInput('SUBSTACKARG')!.connection!);
+
+    returnBlock.onchange({type: Blockly.Events.BLOCK_MOVE} as Blockly.Events.Abstract);
+
+    expect(returnBlock.isEnabled()).toBe(true);
+
+    caller.dispose(true, false);
+  });
+
   test('Prototype statement template continuation cannot connect', () => {
     const prototype = createPrototype(procedureState('c', 'SUBSTACKARG', 'branch'));
     const reporter = prototype.getInputTargetBlock('SUBSTACKARG')! as Blockly.BlockSvg;
