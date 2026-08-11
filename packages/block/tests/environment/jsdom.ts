@@ -42,5 +42,7 @@ export default class Environment extends BaseEnv {
 
     this.global.BroadcastChannel = BroadcastChannel;
     this.global.TransformStream = TransformStream;
+    this.global.MessageChannel = MessageChannel;
+    this.global.MessagePort = MessagePort;
   }
 }
