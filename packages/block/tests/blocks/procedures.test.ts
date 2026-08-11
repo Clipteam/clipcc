@@ -18,7 +18,7 @@ import {setupPlayground} from '../helpers/playground';
  * @param name Argument display name.
  * @returns Procedure prototype state.
  */
-function procedureState(type: 'b' | 'n' | 's', id: string, name = 'parameter'): ProcedureExtraState {
+function procedureState(type: 'b' | 'c' | 'n' | 's', id: string, name = 'parameter'): ProcedureExtraState {
   return {
     proccode: `procedure %${type}`,
     argumentids: [id],
@@ -36,7 +36,7 @@ function procedureState(type: 'b' | 'n' | 's', id: string, name = 'parameter'): 
  * @param id Argument ID.
  * @returns Procedure caller state.
  */
-function callerState(type: 'b' | 'n' | 's', id: string): ProcedureCallerExtraState {
+function callerState(type: 'b' | 'c' | 'n' | 's', id: string): ProcedureCallerExtraState {
   return {
     proccode: `procedure %${type}`,
     argumentids: [id],
@@ -100,6 +100,55 @@ describe('Blocks: Procedures', () => {
     expect(isActiveTemplateBlock(reporter)).toBe(true);
     expect(reporter.isDeletable()).toBe(false);
     expect(reporter.isDuplicatable()).toBe(false);
+  });
+
+  test('Statement arguments use SUBSTACK inputs and statement templates', () => {
+    const prototype = createPrototype(procedureState('c', 'SUBSTACKARG', 'branch'));
+    const input = prototype.getInput('SUBSTACKARG')!;
+    const reporter = prototype.getInputTargetBlock('SUBSTACKARG')!;
+
+    expect(input.type).toBe(Blockly.inputs.inputTypes.STATEMENT);
+    expect(reporter.type).toBe('argument_reporter_statement');
+    expect(reporter.previousConnection).not.toBeNull();
+    expect(reporter.outputConnection).toBeNull();
+    expect(input.connection?.targetConnection).toBe(reporter.previousConnection);
+  });
+
+  test('Statement arguments use statement editors in declarations', () => {
+    Blockly.Events.disable();
+    let declaration: Blockly.BlockSvg;
+    try {
+      declaration = context.workspace.newBlock('procedures_declaration') as Blockly.BlockSvg;
+      declaration.initSvg();
+      (declaration as Blockly.BlockSvg & {
+        loadExtraState: (state: ProcedureExtraState) => void;
+      }).loadExtraState(procedureState('c', 'SUBSTACKARG', 'branch'));
+    } finally {
+      Blockly.Events.enable();
+    }
+
+    const input = declaration.getInput('SUBSTACKARG')!;
+    const editor = declaration.getInputTargetBlock('SUBSTACKARG')!;
+    expect(input.type).toBe(Blockly.inputs.inputTypes.STATEMENT);
+    expect(editor.type).toBe('argument_editor_statement');
+    expect(editor.previousConnection).not.toBeNull();
+    expect(editor.outputConnection).toBeNull();
+  });
+
+  test('Prototype statement template continuation cannot connect', () => {
+    const prototype = createPrototype(procedureState('c', 'SUBSTACKARG', 'branch'));
+    const reporter = prototype.getInputTargetBlock('SUBSTACKARG')! as Blockly.BlockSvg;
+    const candidate = context.workspace.newBlock('control_wait') as Blockly.BlockSvg;
+    candidate.initSvg();
+
+    const canConnect = context.workspace.connectionChecker.canConnectWithReason(
+      candidate.previousConnection,
+      reporter.nextConnection,
+      true,
+      0
+    );
+    expect(canConnect).toBe(Blockly.Connection.REASON_CHECKS_FAILED);
+    candidate.dispose(true, false);
   });
 
   test('Prototype input cannot be replaced by drag-and-drop', () => {

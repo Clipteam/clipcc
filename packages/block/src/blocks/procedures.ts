@@ -126,12 +126,15 @@ export interface ProcedureDeclarationBlock extends ProcedureBlock {
   addLabelExternal: () => void;
   addBooleanExternal: () => void;
   addStringNumberExternal: () => void;
+  addStatementExternal: () => void;
   onChangeFn: () => void;
 }
 
 export interface ProcedureArgumentEditorBlock extends Blockly.BlockSvg {
   removeFieldCallback: (field: Blockly.Field) => void;
 }
+
+export interface ProcedureStatementEditorBlock extends ProcedureArgumentEditorBlock, ISatellite {}
 
 export interface ProcedureArgumentReporterBlock extends Blockly.BlockSvg, IBlockTemplate {}
 
@@ -170,7 +173,7 @@ export function isProcedurePrototypeBlock(block: Blockly.Block): block is Proced
  * @returns True if block is argument_editor_*.
  */
 export function isProcedureArgumentEditorBlock(block: Blockly.Block): block is ProcedureArgumentEditorBlock {
-  return block.type === 'argument_editor_string_number' || block.type === 'argument_editor_boolean';
+  return Constants.ProcedureEditorBlockType.includes(block.type);
 }
 
 /**
@@ -179,7 +182,7 @@ export function isProcedureArgumentEditorBlock(block: Blockly.Block): block is P
  * @returns True if block is argument_reporter_*.
  */
 export function isProcedureArgumentReporterBlock(block: Blockly.Block): block is ProcedureArgumentReporterBlock {
-  return block.type === 'argument_reporter_string_number' || block.type === 'argument_reporter_boolean';
+  return Constants.ProcedureReporterType.includes(block.type);
 }
 
 // End of helper functions.
@@ -253,14 +256,16 @@ function definitionMutationToDom(
  * Determine whether an XML mutation belongs to a block whose input children
  * will be restored separately by Blockly's XML loader.
  * @param mutation The procedure mutation element.
- * @returns True when the owning block contains a direct value element.
+ * @returns True when the owning block contains a direct input element.
  */
 function hasXmlInputChildren(mutation: Element): boolean {
   const owner = mutation.parentElement;
   if (!owner) return false;
 
-  for (const value of Array.from(owner.getElementsByTagName('value'))) {
-    if (value.parentElement === owner) return true;
+  for (const inputType of ['value', 'statement']) {
+    for (const input of Array.from(owner.getElementsByTagName(inputType))) {
+      if (input.parentElement === owner) return true;
+    }
   }
   return false;
 }
@@ -507,8 +512,8 @@ function removeAllInputs(this: ProcedureBlock) {
  * @param connectionMap An object mapping argument IDs to blocks and shadow DOMs.
  */
 function createAllInputs(this: ProcedureBlock, connectionMap: ConnectionMap) {
-  // Split the proc into components, by %n, %b, and %s (ignoring escaped).
-  let procComponents = this.model.getProcCode().split(/(?=[^\\]%[nbs])/);
+  // Split the proc into components, by %n, %b, %s and %c (ignoring escaped).
+  let procComponents = this.model.getProcCode().split(/(?=[^\\]%[nbsc])/);
   procComponents = procComponents.map(function(c) {
     return c.trim(); // Strip whitespace.
   });
@@ -518,15 +523,20 @@ function createAllInputs(this: ProcedureBlock, connectionMap: ConnectionMap) {
     // The first component should always be created even if the value is ''.
     if (component.substring(0, 1) === '%') {
       const argumentType = component.substring(1, 2);
-      if (!(argumentType === 'n' || argumentType === 'b' || argumentType === 's')) {
+      if (!(argumentType === 'n' || argumentType === 'b' || argumentType === 's' || argumentType === 'c')) {
         throw new Error('Found an custom procedure with an invalid type: ' + argumentType);
       }
 
       const id = this.model.getParameter(argumentCount).getId();
 
-      const input = this.appendValueInput(id);
-      if (argumentType === 'b') {
-        input.setCheck('Boolean');
+      let input: Blockly.Input;
+      if (argumentType === 'c') {
+        input = this.appendStatementInput(id);
+      } else {
+        input = this.appendValueInput(id);
+        if (argumentType === 'b') {
+          input.setCheck('Boolean');
+        }
       }
       this.populateArgument_(argumentType, argumentCount, connectionMap, id, input);
       argumentCount++;
@@ -558,7 +568,9 @@ function deleteObsoleteBlocks(this: ProcedureBlock, connectionMap: ConnectionMap
         const block = saveInfo['block'];
         const isPrototypeReporter = this.type === 'procedures_prototype' &&
           block && isProcedureArgumentReporterBlock(block);
-        if (block && (block.isShadow() || isPrototypeReporter)) {
+        const isDeclarationEditor = this.type === Constants.PROCEDURES_DECLARATION_BLOCK_TYPE &&
+          block && isProcedureArgumentEditorBlock(block);
+        if (block && (block.isShadow() || isPrototypeReporter || isDeclarationEditor)) {
           block.dispose(true);
           connectionMap[id] = null;
           // At this point we know which shadow DOMs are about to be orphaned in
@@ -613,7 +625,8 @@ function buildShadowState(type: string): Blockly.serialization.blocks.State {
 /**
  * Create a new shadow block and attach it to the given input.
  * @param input The value input to attach a block to.
- * @param argumentType One of 'b' (boolean), 's' (string) or 'n' (number).
+ * @param argumentType One of 'b' (boolean), 's' (string), 'n' (number) or
+ *     'c' (statement).
  */
 function attachShadow(
   this: ProcedureCallBlock,
@@ -657,8 +670,21 @@ function createArgumentReporter(
   argumentType: string,
   displayName: string
 ): Blockly.BlockSvg {
-  const blockType = (argumentType === 'n' || argumentType === 's') ?
-    'argument_reporter_string_number' : 'argument_reporter_boolean';
+  let blockType: string;
+  switch (argumentType) {
+    case 'n':
+    case 's':
+      blockType = 'argument_reporter_string_number';
+      break;
+    case 'b':
+      blockType = 'argument_reporter_boolean';
+      break;
+    case 'c':
+      blockType = 'argument_reporter_statement';
+      break;
+    default:
+      throw new Error('Tried to create an argument reporter with an invalid type: ' + argumentType);
+  }
   Blockly.Events.disable();
   let newBlock;
   try {
@@ -679,7 +705,7 @@ function createArgumentReporter(
 /**
  * Populate the argument by attaching the correct child block or shadow to the
  * given input.
- * @param type One of 'b' (boolean), 's' (string) or 'n' (number).
+ * @param type One of 'b' (boolean), 's' (string), 'n' (number) or 'c' (statement).
  * @param index The index of this argument into the argument id array.
  * @param connectionMap An object mapping argument IDs to blocks and shadow DOMs.
  * @param id The ID of the input to populate.
@@ -704,11 +730,15 @@ function populateArgumentOnCaller(
   if (connectionMap && oldBlock) {
     // Reattach the old block and shadow DOM.
     connectionMap[input.name] = null;
-    if (type !== 'b' && this.generateShadows_ && !oldBlock.isShadow()) {
+    if (type !== 'b' && type !== 'c' && this.generateShadows_ && !oldBlock.isShadow()) {
       const shadowState = oldShadow || this.buildShadowState_(type);
       input.connection!.setShadowState(shadowState);
     }
-    oldBlock.outputConnection!.connect(input.connection!);
+    if (type === 'c') {
+      oldBlock.previousConnection!.connect(input.connection!);
+    } else {
+      oldBlock.outputConnection!.connect(input.connection!);
+    }
   } else if (this.generateShadows_) {
     this.attachShadow_(input, type);
   }
@@ -717,7 +747,7 @@ function populateArgumentOnCaller(
 /**
  * Populate the argument by attaching the correct argument reporter to the given
  * input.
- * @param type One of 'b' (boolean), 's' (string) or 'n' (number).
+ * @param type One of 'b' (boolean), 's' (string), 'n' (number) or 'c' (statement).
  * @param index The index of this argument into the argument ID and
  *     argument display name arrays.
  * @param connectionMap An object mapping argument IDs to blocks and shadow DOMs.
@@ -758,13 +788,17 @@ function populateArgumentOnPrototype(
   }
 
   // Attach the block.
-  input.connection!.connect(argumentReporter.outputConnection!);
+  if (type === 'c') {
+    input.connection!.connect(argumentReporter.previousConnection!);
+  } else {
+    input.connection!.connect(argumentReporter.outputConnection!);
+  }
 }
 
 /**
  * Populate the argument by attaching the correct argument editor to the given
  * input.
- * @param type One of 'b' (boolean), 's' (string) or 'n' (number).
+ * @param type One of 'b' (boolean), 's' (string), 'n' (number) or 'c' (statement).
  * @param index The index of this argument into the argument id and
  *     argument display name arrays.
  * @param connectionMap An object mapping argument IDs to blocks and shadow DOMs.
@@ -785,9 +819,6 @@ function populateArgumentOnDeclaration(
     oldBlock = saveInfo['block'];
   }
 
-  // TODO: This always returns false, because it checks for argument reporter
-  // blocks instead of argument editor blocks.  Create a new version for argument
-  // editors.
   const oldTypeMatches = checkOldTypeMatches(oldBlock, type);
   const displayName = this.model.getParameter(index).getName();
 
@@ -802,14 +833,18 @@ function populateArgumentOnDeclaration(
   }
 
   // Attach the block.
-  input.connection!.connect(argumentEditor.outputConnection!);
+  if (type === 'c') {
+    input.connection!.connect(argumentEditor.previousConnection!);
+  } else {
+    input.connection!.connect(argumentEditor.outputConnection!);
+  }
 }
 
 /**
  * Check whether the type of the old block corresponds to the given argument
  * type.
  * @param oldBlock The old block to check.
- * @param type The argument type.  One of 'n', 'n', or 's'.
+ * @param type The argument type. One of 'b', 'n', 's' or 'c'.
  * @returns True if the type matches, false otherwise.
  */
 function checkOldTypeMatches(oldBlock: Blockly.BlockSvg | null, type: string) {
@@ -817,10 +852,18 @@ function checkOldTypeMatches(oldBlock: Blockly.BlockSvg | null, type: string) {
     return false;
   }
   if ((type === 'n' || type === 's') &&
-      oldBlock.type === 'argument_reporter_string_number') {
+      (oldBlock.type === 'argument_reporter_string_number' ||
+       oldBlock.type === 'argument_editor_string_number')) {
     return true;
   }
-  if (type === 'b' && oldBlock.type === 'argument_reporter_boolean') {
+  if (type === 'b' &&
+      (oldBlock.type === 'argument_reporter_boolean' ||
+       oldBlock.type === 'argument_editor_boolean')) {
+    return true;
+  }
+  if (type === 'c' &&
+      (oldBlock.type === 'argument_reporter_statement' ||
+       oldBlock.type === 'argument_editor_statement')) {
     return true;
   }
   return false;
@@ -830,8 +873,8 @@ function checkOldTypeMatches(oldBlock: Blockly.BlockSvg | null, type: string) {
  * Create an argument editor.
  * An argument editor is a shadow block with a single text field, which is used
  * to set the display name of the argument.
- * @param argumentType One of 'b' (boolean), 's' (string) or
- *     'n' (number).
+ * @param argumentType One of 'b' (boolean), 's' (string), 'n' (number) or
+ *     'c' (statement).
  * @param displayName The display name  of this argument, which is the
  *     text of the field on the shadow block.
  * @returns The newly created argument editor block.
@@ -846,11 +889,15 @@ function createArgumentEditor(
   try {
     if (argumentType === 'n' || argumentType === 's') {
       newBlock = this.workspace.newBlock('argument_editor_string_number') as Blockly.BlockSvg;
+    } else if (argumentType === 'c') {
+      newBlock = this.workspace.newBlock('argument_editor_statement') as Blockly.BlockSvg;
     } else {
       newBlock = this.workspace.newBlock('argument_editor_boolean') as Blockly.BlockSvg;
     }
     newBlock.setFieldValue(displayName, 'TEXT');
-    newBlock.setShadow(true);
+    if (argumentType !== 'c') {
+      newBlock.setShadow(true);
+    }
     if (!this.isInsertionMarker()) {
       newBlock.initSvg();
       newBlock.render(); // Render immediately for rendering TextInput field correctly.
@@ -875,13 +922,15 @@ function updateDeclarationProcCode(this: ProcedureDeclarationBlock) {
   for (const input of this.inputList) {
     if (input.type === Constants.DUMMY_INPUT) {
       procCodeParts.push((input.fieldRow[0] as Blockly.FieldLabel).getValue()?.replace(/%/g, '\\%'));
-    } else if (input.type === Constants.INPUT_VALUE) {
+    } else if (input.type === Constants.INPUT_VALUE || input.type === Constants.NEXT_STATEMENT) {
       // Inspect the argument editor.
       const target = input.connection!.targetBlock()!;
       params[currentParamIndex].setName(target.getFieldValue('TEXT'));
       currentParamIndex += 1;
       if (target.type === 'argument_editor_boolean') {
         procCodeParts.push('%b');
+      } else if (target.type === 'argument_editor_statement') {
+        procCodeParts.push('%c');
       } else {
         procCodeParts.push('%s');
       }
@@ -900,7 +949,7 @@ function focusLastEditor(this: ProcedureDeclarationBlock) {
     const newInput = this.inputList[this.inputList.length - 1];
     if (newInput.type === Constants.DUMMY_INPUT) {
       newInput.fieldRow[0].showEditor();
-    } else if (newInput.type === Constants.INPUT_VALUE) {
+    } else if (newInput.type === Constants.INPUT_VALUE || newInput.type === Constants.NEXT_STATEMENT) {
       // Inspect the argument editor.
       const target = newInput.connection!.targetBlock()!;
       target.getField('TEXT')!.showEditor();
@@ -945,6 +994,23 @@ function addStringNumberExternal(this: ProcedureDeclarationBlock) {
   this.model.appendParameter(new ParameterModel(
     this.workspace,
     'number or text',
+    Blockly.utils.idGenerator.genUid(),
+    ''
+  ));
+  this.updateDisplay_();
+  this.focusLastEditor_();
+}
+
+/**
+ * Externally-visible function to add a statement argument to the procedure
+ * declaration.
+ */
+function addStatementExternal(this: ProcedureDeclarationBlock) {
+  Blockly.WidgetDiv.hide();
+  this.model.setProcCode(this.model.getProcCode() + ' %c');
+  this.model.appendParameter(new ParameterModel(
+    this.workspace,
+    'statement',
     Blockly.utils.idGenerator.genUid(),
     ''
   ));
@@ -1378,6 +1444,7 @@ Blockly.Blocks['procedures_declaration'] = {
   addLabelExternal: addLabelExternal,
   addBooleanExternal: addBooleanExternal,
   addStringNumberExternal: addStringNumberExternal,
+  addStatementExternal: addStatementExternal,
   onChangeFn: updateDeclarationProcCode,
   isSimpleReporter() {
     // Fix wrong label shape when there's only one label.
@@ -1489,6 +1556,30 @@ Blockly.Blocks['argument_reporter_string_number'] = {
   }
 } as ProcedureArgumentReporterBlock;
 
+Blockly.Blocks['argument_reporter_statement'] = {
+  init: function(this: ProcedureArgumentReporterBlock) {
+    this.jsonInit({
+      message0: '%1',
+      args0: [{
+        type: 'field_label_serializable',
+        name: 'VALUE',
+        text: ''
+      }],
+      extensions: ['colours_argument', 'shape_statement']
+    });
+    this.blockTemplate = true;
+    const originalShowContextMenu = this.showContextMenu.bind(this);
+    this.showContextMenu = function(e: Event) {
+      const parent = this.getParent();
+      if (parent?.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
+        parent.showContextMenu(e);
+      } else {
+        originalShowContextMenu(e);
+      }
+    };
+  }
+} as ProcedureArgumentReporterBlock;
+
 Blockly.Blocks['argument_editor_boolean'] = {
   init: function() {
     this.jsonInit({message0: ' %1',
@@ -1519,6 +1610,22 @@ Blockly.Blocks['argument_editor_string_number'] = {
   // Exist on declaration and arguments editors, with different implementations.
   removeFieldCallback: removeArgumentCallback
 } as ProcedureArgumentEditorBlock;
+
+Blockly.Blocks['argument_editor_statement'] = {
+  init: function() {
+    this.jsonInit({
+      message0: '%1',
+      args0: [{
+        type: 'field_input_removable',
+        name: 'TEXT',
+        text: 'foo'
+      }],
+      extensions: ['colours_argument', 'shape_statement', 'satellite_block']
+    });
+  },
+  // Exist on declaration and arguments editors, with different implementations.
+  removeFieldCallback: removeArgumentCallback
+} as ProcedureStatementEditorBlock;
 
 /**
  * Mixin to add a context menu for a procedure definition block.
