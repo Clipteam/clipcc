@@ -34,7 +34,8 @@ import {
 } from '../procedures_category';
 import {ProcedureModel} from '../procedure_model';
 import {ParameterModel} from '../parameter_model';
-import type {IShadowTemplate} from '../interfaces/i_shadow_template';
+import type {IBlockTemplate} from '../interfaces/i_block_template';
+import type {ISatellite} from '../interfaces/i_satellite';
 import type {IDynamicDeletable} from '../interfaces/i_dynamic_deletable';
 import {FuncChange} from '../events/func_change';
 
@@ -45,6 +46,11 @@ interface ConnectionMap {
   } | null
 }
 
+interface SerializedProcedureExtraState extends ProcedureExtraState {
+  /** True when the serialized block also contains its child inputs. */
+  hasSerializedInputs?: boolean;
+}
+
 export interface ProcedureBlock extends Blockly.BlockSvg {
   model: ProcedureModel;
 
@@ -53,7 +59,7 @@ export interface ProcedureBlock extends Blockly.BlockSvg {
   getProcedureModel: () => ProcedureModel;
   removeAllInputs_: () => void;
   disconnectOldBlocks_: () => ConnectionMap;
-  deleteShadows_: (connectionMap: ConnectionMap) => void;
+  deleteObsoleteBlocks_: (connectionMap: ConnectionMap) => void;
   createAllInputs_: (connectionMap: ConnectionMap) => void;
   updateDisplay_: () => void;
 
@@ -91,13 +97,14 @@ export interface ProcedureCallBlock extends ProcedureBlock {
   buildShadowState_: (type: string) => Blockly.serialization.blocks.State;
 }
 
-export interface ProcedurePrototypeBlock extends ProcedureBlock {
+export interface ProcedurePrototypeBlock extends ProcedureBlock, ISatellite {
   type: 'procedures_prototype';
 
   saveExtraState: () => ProcedureExtraState,
   loadExtraState: (state: ProcedureExtraState) => void,
+  skipArgumentReporters_: boolean;
 
-  createArgumentReporter_: (argumentType: string, displayName: string) => Blockly.BlockSvg;
+  createArgumentReporter_: (argumentType: string, displayName: string) => ProcedureArgumentReporterBlock;
   updateArgumentReporterNames_: (prevArgIds: string[], prevDisplayNames: string[]) => void;
 }
 
@@ -126,9 +133,7 @@ export interface ProcedureArgumentEditorBlock extends Blockly.BlockSvg {
   removeFieldCallback: (field: Blockly.Field) => void;
 }
 
-export interface ProcedureArgumentReporterBlock extends Blockly.BlockSvg, IShadowTemplate {
-  shadowTemplate: boolean;
-}
+export interface ProcedureArgumentReporterBlock extends Blockly.BlockSvg, IBlockTemplate {}
 
 // Helper functions to check type of procedure blocks.
 
@@ -245,6 +250,22 @@ function definitionMutationToDom(
 }
 
 /**
+ * Determine whether an XML mutation belongs to a block whose input children
+ * will be restored separately by Blockly's XML loader.
+ * @param mutation The procedure mutation element.
+ * @returns True when the owning block contains a direct value element.
+ */
+function hasXmlInputChildren(mutation: Element): boolean {
+  const owner = mutation.parentElement;
+  if (!owner) return false;
+
+  for (const value of Array.from(owner.getElementsByTagName('value'))) {
+    if (value.parentElement === owner) return true;
+  }
+  return false;
+}
+
+/**
  * Parse XML to restore the (non-editable) name and arguments of a
  * procedures_prototype block or a procedures_declaration block.
  * @param xmlElement XML storage element.
@@ -253,15 +274,26 @@ function definitionDomToMutation(
   this: ProcedurePrototypeBlock | ProcedureDeclarationBlock,
   xmlElement: Element
 ) {
-  this.loadExtraState({
-    proccode: xmlElement.getAttribute('proccode')!,
-    warp: JSON.parse(xmlElement.getAttribute('warp')!),
-    return: JSON.parse(xmlElement.getAttribute('return')!),
-    global: JSON.parse(xmlElement.getAttribute('global')!),
-    argumentids: JSON.parse(xmlElement.getAttribute('argumentids')!),
-    argumentnames: JSON.parse(xmlElement.getAttribute('argumentnames')!),
-    argumentdefaults: JSON.parse(xmlElement.getAttribute('argumentdefaults')!)
-  });
+  const hasSerializedArgumentReporters = this.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE &&
+    hasXmlInputChildren(xmlElement);
+  if (hasSerializedArgumentReporters && this.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
+    this.skipArgumentReporters_ = true;
+  }
+  try {
+    this.loadExtraState({
+      proccode: xmlElement.getAttribute('proccode')!,
+      warp: JSON.parse(xmlElement.getAttribute('warp')!),
+      return: JSON.parse(xmlElement.getAttribute('return')!),
+      global: JSON.parse(xmlElement.getAttribute('global')!),
+      argumentids: JSON.parse(xmlElement.getAttribute('argumentids')!),
+      argumentnames: JSON.parse(xmlElement.getAttribute('argumentnames')!),
+      argumentdefaults: JSON.parse(xmlElement.getAttribute('argumentdefaults')!)
+    });
+  } finally {
+    if (hasSerializedArgumentReporters && this.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
+      this.skipArgumentReporters_ = false;
+    }
+  }
 }
 
 /**
@@ -332,17 +364,17 @@ function callerLoadExtraState(
 /**
  * Create state to represent the (non-editable) name and arguments of a
  * procedures_prototype block or a procedures_declaration block.
- * @param generateShadows Whether to include the generateshadows
- *     flag in the generated state. False if not provided.
+ * @param doFullSerialization Whether Blockly is serializing external state
+ *     fully. Workspace saves pass false and include child input blocks.
  * @returns Extra state.
  */
 function definitionSaveExtraState(
   this: ProcedurePrototypeBlock | ProcedureDeclarationBlock,
-  generateShadows?: boolean
+  doFullSerialization?: boolean
 ): ProcedureExtraState {
   const extraState = this.model.saveExtraState();
-  if (generateShadows) {
-    extraState.generateshadows = true;
+  if (this.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE && doFullSerialization === false) {
+    (extraState as SerializedProcedureExtraState).hasSerializedInputs = true;
   }
   return extraState;
 }
@@ -354,8 +386,12 @@ function definitionSaveExtraState(
  */
 function definitionLoadExtraState(
   this: ProcedurePrototypeBlock | ProcedureDeclarationBlock,
-  state: ProcedureExtraState
+  state: SerializedProcedureExtraState
 ) {
+  const hasSerializedInputs = this.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE &&
+    state.hasSerializedInputs === true;
+  delete state.hasSerializedInputs;
+
   if (!this.model) {
     const procedureMap = this.workspace.getProcedureMap();
     if (procedureMap.has(state.proccode)) {
@@ -374,7 +410,19 @@ function definitionLoadExtraState(
   state.argumentdefaults = parseStringOrObject(state.argumentdefaults);
 
   this.model.loadExtraState(state);
-  this.updateDisplay_();
+  if (
+    (hasSerializedInputs || ('skipArgumentReporters_' in this && this.skipArgumentReporters_)) &&
+    this.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE
+  ) {
+    this.skipArgumentReporters_ = true;
+    try {
+      this.updateDisplay_();
+    } finally {
+      this.skipArgumentReporters_ = false;
+    }
+  } else {
+    this.updateDisplay_();
+  }
   if ('updateArgumentReporterNames_' in this) {
     this.updateArgumentReporterNames_(
       extraState.argumentids,
@@ -414,7 +462,7 @@ function updateDisplay(this: ProcedureBlock) {
   this.removeAllInputs_();
   this.updateShape_();
   this.createAllInputs_(connectionMap);
-  this.deleteShadows_(connectionMap);
+  this.deleteObsoleteBlocks_(connectionMap);
 }
 
 /**
@@ -498,11 +546,11 @@ function createAllInputs(this: ProcedureBlock, connectionMap: ConnectionMap) {
 }
 
 /**
- * Delete all shadow blocks in the given map.
+ * Delete all obsolete blocks in the given map.
  * @param connectionMap An object mapping argument IDs to the blocks that
  *     were connected to those IDs at the beginning of the mutation.
  */
-function deleteShadows(this: ProcedureBlock, connectionMap: ConnectionMap) {
+function deleteObsoleteBlocks(this: ProcedureBlock, connectionMap: ConnectionMap) {
   // Get rid of all of the old shadow blocks if they aren't connected.
   if (connectionMap) {
     for (const id in connectionMap) {
@@ -512,7 +560,9 @@ function deleteShadows(this: ProcedureBlock, connectionMap: ConnectionMap) {
       const saveInfo = connectionMap[id];
       if (saveInfo) {
         const block = saveInfo['block'];
-        if (block && block.isShadow()) {
+        const isPrototypeReporter = this.type === 'procedures_prototype' &&
+          block && isProcedureArgumentReporterBlock(block);
+        if (block && (block.isShadow() || isPrototypeReporter)) {
           block.dispose(true);
           connectionMap[id] = null;
           // At this point we know which shadow DOMs are about to be orphaned in
@@ -616,8 +666,9 @@ function createArgumentReporter(
   Blockly.Events.disable();
   let newBlock;
   try {
-    newBlock = this.workspace.newBlock(blockType) as Blockly.BlockSvg;
-    newBlock.setShadow(true);
+    newBlock = this.workspace.newBlock(blockType) as ProcedureArgumentReporterBlock;
+    newBlock.setDeletable(false);
+    newBlock.blockTemplate = true;
     newBlock.setFieldValue(displayName, 'VALUE');
     if (!this.isInsertionMarker()) {
       newBlock.initSvg();
@@ -687,6 +738,10 @@ function populateArgumentOnPrototype(
   id: string,
   input: Blockly.Input
 ) {
+  if (this.skipArgumentReporters_) {
+    return;
+  }
+
   let oldBlock = null;
   if (connectionMap && (id in connectionMap)) {
     const saveInfo = connectionMap[id]!;
@@ -697,16 +752,19 @@ function populateArgumentOnPrototype(
   const displayName = this.model.getParameter(index).getName();
 
   // Decide which block to attach.
-  let argumentReporter;
+  let argumentReporter: ProcedureArgumentReporterBlock;
   if (connectionMap && oldBlock && oldTypeMatches) {
     // Update the text if needed. The old argument reporter is the same type,
     // and on the same input, but the argument's display name may have changed.
-    argumentReporter = oldBlock;
+    argumentReporter = oldBlock as ProcedureArgumentReporterBlock;
     argumentReporter.setFieldValue(displayName, 'VALUE');
     connectionMap[input.name] = null;
   } else {
     argumentReporter = this.createArgumentReporter_(type, displayName);
   }
+
+  argumentReporter.blockTemplate = true;
+  argumentReporter.setDeletable(false);
 
   // Attach the block.
   input.connection!.connect(argumentReporter.outputConnection!);
@@ -1031,8 +1089,8 @@ function updateArgumentReporterNames(
   // Create a list of argument reporters that are descendants of the definition stack (see above comment)
   const allBlocks = definitionBlock.getDescendants(false) as Blockly.BlockSvg[];
   for (const block of allBlocks) {
-    if (isProcedureArgumentReporterBlock(block) && !block.isShadow()) {
-      // Exclude arg reporters in the prototype block, which are shadows.
+    if (isProcedureArgumentReporterBlock(block) && block.getParent()?.id !== this.id) {
+      // Exclude argument reporters owned by the prototype itself.
       argReporters.push(block);
     }
   }
@@ -1205,7 +1263,7 @@ Blockly.Blocks['procedures_call'] = {
   getProcedureModel: getProcedureModel,
   removeAllInputs_: removeAllInputs,
   disconnectOldBlocks_: disconnectOldBlocks,
-  deleteShadows_: deleteShadows,
+  deleteObsoleteBlocks_: deleteObsoleteBlocks,
   createAllInputs_: createAllInputs,
   updateDisplay_: updateDisplay,
 
@@ -1243,17 +1301,18 @@ Blockly.Blocks['procedures_call'] = {
  * define block.
  */
 Blockly.Blocks['procedures_prototype'] = {
-  init: function() {
+  init: function(this: ProcedurePrototypeBlock) {
     this.jsonInit({
-      extensions: ['colours_more', 'shape_statement']
+      extensions: ['colours_more', 'shape_statement', 'satellite_block']
     });
+    this.skipArgumentReporters_ = false;
   },
   // Shared.
   getProcCode: getProcCode,
   getProcedureModel: getProcedureModel,
   removeAllInputs_: removeAllInputs,
   disconnectOldBlocks_: disconnectOldBlocks,
-  deleteShadows_: deleteShadows,
+  deleteObsoleteBlocks_: deleteObsoleteBlocks,
   createAllInputs_: createAllInputs,
   updateDisplay_: updateDisplay,
 
@@ -1272,7 +1331,6 @@ Blockly.Blocks['procedures_prototype'] = {
       this.setShape_(isReturn ? Constants.OUTPUT_SHAPE_ROUND : Constants.OUTPUT_SHAPE_NORMAL, true);
     }
   },
-
   // Only exists on procedures_prototype.
   createArgumentReporter_: createArgumentReporter,
   updateArgumentReporterNames_: updateArgumentReporterNames
@@ -1294,7 +1352,7 @@ Blockly.Blocks['procedures_declaration'] = {
   getProcedureModel: getProcedureModel,
   removeAllInputs_: removeAllInputs,
   disconnectOldBlocks_: disconnectOldBlocks,
-  deleteShadows_: deleteShadows,
+  deleteObsoleteBlocks_: deleteObsoleteBlocks,
   createAllInputs_: createAllInputs,
   updateDisplay_: updateDisplay,
 
@@ -1393,7 +1451,7 @@ Blockly.Blocks['procedures_discard'] = {
 };
 
 Blockly.Blocks['argument_reporter_boolean'] = {
-  init: function() {
+  init: function(this: ProcedureArgumentReporterBlock) {
     this.jsonInit({
       message0: '%1',
       args0: [{
@@ -1403,12 +1461,21 @@ Blockly.Blocks['argument_reporter_boolean'] = {
       }],
       extensions: ['colours_argument', 'output_boolean']
     });
-    this.shadowTemplate = true;
+    this.blockTemplate = true;
+    const originalShowContextMenu = this.showContextMenu.bind(this);
+    this.showContextMenu = function(e: Event) {
+      const parent = this.getParent();
+      if (parent?.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
+        parent.showContextMenu(e);
+      } else {
+        originalShowContextMenu(e);
+      }
+    };
   }
 } as ProcedureArgumentReporterBlock;
 
 Blockly.Blocks['argument_reporter_string_number'] = {
-  init: function() {
+  init: function(this: ProcedureArgumentReporterBlock) {
     this.jsonInit({
       message0: '%1',
       args0: [{
@@ -1418,7 +1485,16 @@ Blockly.Blocks['argument_reporter_string_number'] = {
       }],
       extensions: ['colours_argument', 'output_number', 'output_string']
     });
-    this.shadowTemplate = true;
+    this.blockTemplate = true;
+    const originalShowContextMenu = this.showContextMenu.bind(this);
+    this.showContextMenu = function(e: Event) {
+      const parent = this.getParent();
+      if (parent?.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
+        parent.showContextMenu(e);
+      } else {
+        originalShowContextMenu(e);
+      }
+    };
   }
 } as ProcedureArgumentReporterBlock;
 

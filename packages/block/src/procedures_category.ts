@@ -227,7 +227,7 @@ function createProcedureCallbackFactory(
         type: Constants.PROCEDURES_DEFINITION_BLOCK_TYPE,
         inputs: {
           custom_block: {
-            shadow: {
+            block: {
               type: Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE,
               extraState: state
             }

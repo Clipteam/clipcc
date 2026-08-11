@@ -6,6 +6,7 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from './constants';
+import {isBlockTemplate} from './interfaces/i_block_template';
 
 /**
  * Class for connection type checking logic with custom rules.
@@ -31,6 +32,18 @@ export class ConnectionChecker extends Blockly.ConnectionChecker {
         b.getSourceBlock().type === Constants.PROCEDURES_DEFINITION_BLOCK_TYPE &&
         b.getParentInput()?.name === 'custom_block'
       ) {
+        return false;
+      }
+
+      // Procedure prototype inputs are managed by the procedure mutation and
+      // must not be replaced by user drag-and-drop.
+      if (b.getSourceBlock().type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
+        return false;
+      }
+
+      // Template reporters remain permanently attached to their prototype.
+      const targetBlock = b.targetBlock();
+      if (isBlockTemplate(targetBlock) && targetBlock.blockTemplate) {
         return false;
       }
     }

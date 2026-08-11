@@ -30,6 +30,8 @@ import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
 import type {ICheckboxInFlyout} from '../interfaces/i_checkbox_in_flyout';
 import {IScratchExtensionBlock} from '../interfaces/i_scratch_extension';
+import {applySatelliteBehavior} from '../satellite';
+import type {ISatellite} from '../interfaces/i_satellite';
 
 /**
  * Helper function that generates an extension based on a category name.
@@ -121,6 +123,13 @@ const SCRATCH_EXTENSION = function(this: Blockly.Block) {
 };
 
 /**
+ * Extension for blocks that are owned and moved through their parent block.
+ */
+const SATELLITE_BLOCK = function(this: Blockly.Block) {
+  applySatelliteBehavior(this as Blockly.BlockSvg & ISatellite);
+};
+
+/**
  * Extension to make a checkbox before the block when in a flyout.
  */
 const MONITOR_BLOCK = function(this: Blockly.Block) {
@@ -155,6 +164,7 @@ const registerAll = function() {
 
   // Extension blocks have slightly different block rendering.
   Blockly.Extensions.register('scratch_extension', SCRATCH_EXTENSION);
+  Blockly.Extensions.register('satellite_block', SATELLITE_BLOCK);
 
   // Register extension for monitor blocks.
   Blockly.Extensions.register('monitor_block', MONITOR_BLOCK);

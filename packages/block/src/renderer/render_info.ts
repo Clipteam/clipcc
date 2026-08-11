@@ -9,7 +9,7 @@ import * as Constants from '../constants';
 import {InlineStatementInput} from './measurables/inline_statement_input';
 import {BowlerHat} from './measurables/bowler_hat';
 import {isInvisibleIcon} from '../interfaces/i_invisible_icon';
-import {isShadowTemplate} from '../interfaces/i_shadow_template';
+import {isBlockTemplate} from '../interfaces/i_block_template';
 import {isScratchExtensionBlock} from '../interfaces/i_scratch_extension';
 
 /**
@@ -103,10 +103,14 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
    * @param activeRow The row that is currently being populated.
    */
   override addInput_(input: Blockly.Input, activeRow: Blockly.blockRendering.Row): void {
-    // Render shadow statement inputs as inline.
+    // Render procedure definition inputs as inline. The prototype is now a
+    // regular block, so it no longer provides shadow DOM for this input.
     if (
       input instanceof Blockly.inputs.StatementInput &&
-      input.connection && input.getShadowDom() !== null
+      input.connection && (
+        input.getShadowDom() !== null ||
+        input.getSourceBlock().type === Constants.PROCEDURES_DEFINITION_BLOCK_TYPE
+      )
     ) {
       activeRow.elements.push(new InlineStatementInput(this.constants_, input));
       return;
@@ -119,7 +123,8 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
     if (input instanceof Blockly.inputs.DummyInput || input instanceof Blockly.inputs.EndRowInput) {
       const sourceBlock = input.getSourceBlock();
       if (
-        (isShadowTemplate(sourceBlock) && sourceBlock.shadowTemplate) ||
+        (isBlockTemplate(sourceBlock) && sourceBlock.blockTemplate) ||
+        sourceBlock.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE ||
         (sourceBlock.isShadow() && sourceBlock.previousConnection)
       ) {
         // Dummy and end-row inputs have no visual representation, but the
@@ -279,6 +284,6 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
    * @returns True if parent block should apply tight-nesting.
    */
   protected shouldTightNesting(connectedBlock: Blockly.BlockSvg) {
-    return !connectedBlock.isShadow() || (isShadowTemplate(connectedBlock) && connectedBlock.shadowTemplate);
+    return !connectedBlock.isShadow() || (isBlockTemplate(connectedBlock) && connectedBlock.blockTemplate);
   }
 }

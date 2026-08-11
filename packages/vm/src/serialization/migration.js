@@ -22,6 +22,12 @@ const migrationMap = {
     }
 };
 
+const templateBlockOpcodes = new Set([
+    'procedures_prototype',
+    'argument_reporter_string_number',
+    'argument_reporter_boolean'
+]);
+
 const mergeDeep = (target, ...sources) => {
     if (!sources.length) return target;
     const source = sources.shift();
@@ -125,9 +131,41 @@ const migrateMutation = (block, backward) => {
     return mutation;
 };
 
+/**
+ * Migrate procedure prototype blocks and their argument reporters from the
+ * legacy shadow representation to regular blocks.
+ *
+ * The input relationship must be migrated as well as the child block flag.
+ * Otherwise block === shadow would cause the next serialization to recreate
+ * the legacy shadow representation.
+ * @param {Record<string, object>} blocks Hydrated VM blocks. Mutated in place.
+ * @returns {Record<string, object>} The migrated blocks.
+ */
+const migrateTemplateBlocks = blocks => {
+    for (const blockId in blocks) {
+        if (!Object.prototype.hasOwnProperty.call(blocks, blockId)) continue;
+        const block = blocks[blockId];
+        if (!block || !templateBlockOpcodes.has(block.opcode) || !block.shadow) continue;
+
+        block.shadow = false;
+
+        if (!block.parent || !blocks[block.parent]) continue;
+        const parent = blocks[block.parent];
+        for (const inputName in parent.inputs) {
+            if (!Object.prototype.hasOwnProperty.call(parent.inputs, inputName)) continue;
+            const input = parent.inputs[inputName];
+            if (input.block === blockId && input.shadow === blockId) {
+                input.shadow = null;
+            }
+        }
+    }
+    return blocks;
+};
+
 
 export {
     migrationMap,
     mergeDeep,
-    migrateMutation
+    migrateMutation,
+    migrateTemplateBlocks
 };
