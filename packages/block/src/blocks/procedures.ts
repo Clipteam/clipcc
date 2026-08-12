@@ -1638,8 +1638,9 @@ Blockly.Blocks['argument_reporter_statement'] = {
         name: 'VALUE',
         text: ''
       }],
-      extensions: ['colours_argument', 'shape_statement', 'argument_reporter_statement_contextmenu']
+      extensions: ['colours_argument', 'shape_statement', 'block_template', 'argument_reporter_statement_contextmenu']
     });
+    this.templateOf = Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE;
     this.return_ = false;
     const originalShowContextMenu = this.showContextMenu.bind(this);
     this.showContextMenu = function(e: Event) {
