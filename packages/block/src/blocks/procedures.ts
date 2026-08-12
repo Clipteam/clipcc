@@ -388,8 +388,7 @@ function definitionLoadExtraState(
   this: ProcedurePrototypeBlock | ProcedureDeclarationBlock,
   state: SerializedProcedureExtraState
 ) {
-  const hasSerializedInputs = this.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE &&
-    state.hasSerializedInputs === true;
+  const hasSerializedInputs = state.hasSerializedInputs;
   delete state.hasSerializedInputs;
 
   if (!this.model) {
@@ -410,10 +409,7 @@ function definitionLoadExtraState(
   state.argumentdefaults = parseStringOrObject(state.argumentdefaults);
 
   this.model.loadExtraState(state);
-  if (
-    (hasSerializedInputs || ('skipArgumentReporters_' in this && this.skipArgumentReporters_)) &&
-    this.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE
-  ) {
+  if (hasSerializedInputs && this.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
     this.skipArgumentReporters_ = true;
     try {
       this.updateDisplay_();
@@ -667,8 +663,6 @@ function createArgumentReporter(
   let newBlock;
   try {
     newBlock = this.workspace.newBlock(blockType) as ProcedureArgumentReporterBlock;
-    newBlock.setDeletable(false);
-    newBlock.blockTemplate = true;
     newBlock.setFieldValue(displayName, 'VALUE');
     if (!this.isInsertionMarker()) {
       newBlock.initSvg();
@@ -762,9 +756,6 @@ function populateArgumentOnPrototype(
   } else {
     argumentReporter = this.createArgumentReporter_(type, displayName);
   }
-
-  argumentReporter.blockTemplate = true;
-  argumentReporter.setDeletable(false);
 
   // Attach the block.
   input.connection!.connect(argumentReporter.outputConnection!);
@@ -1459,8 +1450,9 @@ Blockly.Blocks['argument_reporter_boolean'] = {
         name: 'VALUE',
         text: ''
       }],
-      extensions: ['colours_argument', 'output_boolean']
+      extensions: ['colours_argument', 'output_boolean', 'block_template']
     });
+    this.templateOf = Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE;
     const originalShowContextMenu = this.showContextMenu.bind(this);
     this.showContextMenu = function(e: Event) {
       const parent = this.getParent();
@@ -1482,8 +1474,9 @@ Blockly.Blocks['argument_reporter_string_number'] = {
         name: 'VALUE',
         text: ''
       }],
-      extensions: ['colours_argument', 'output_number', 'output_string']
+      extensions: ['colours_argument', 'output_number', 'output_string', 'block_template']
     });
+    this.templateOf = Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE;
     const originalShowContextMenu = this.showContextMenu.bind(this);
     this.showContextMenu = function(e: Event) {
       const parent = this.getParent();

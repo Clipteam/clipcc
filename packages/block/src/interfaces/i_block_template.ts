@@ -10,6 +10,11 @@ export interface IBlockTemplate {
    * a template.
    */
   blockTemplate: boolean;
+  /**
+   * behaves like a template block if it's templateOf's child.
+   * It will get applied on block init.
+   */
+  templateOf: string;
 }
 
 /**
@@ -19,5 +24,5 @@ export interface IBlockTemplate {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isBlockTemplate(obj: any): obj is IBlockTemplate {
-  return obj && typeof obj.blockTemplate === 'boolean';
+  return obj && typeof obj.blockTemplate === 'boolean' && typeof obj.templateOf === 'string';
 }
