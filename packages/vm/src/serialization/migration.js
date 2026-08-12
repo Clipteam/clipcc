@@ -97,6 +97,13 @@ const migrateMutation = (block, backward) => {
         } else {
             for (const key in mutation) {
                 switch (key) {
+                case 'warp':
+                case 'global':
+                case 'return':
+                case 'generateshadows':
+                    // Expect mutation[key] to be a string.
+                    mutation[key] = typeof mutation[key] === 'string' ? (mutation[key] === 'true') : !!mutation[key];
+                    break;
                 case 'argumentids':
                 case 'argumentnames':
                 case 'argumentdefaults':
