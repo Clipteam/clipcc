@@ -70,7 +70,7 @@ describe('Blocks: Data', () => {
       const menu = context.gesture.getContextMenuDom();
       const items = Array.from(menu.children).map(getContextMenuItemLabel);
       expect(items).toStrictEqual([
-        Blockly.Msg.DUPLICATE_BLOCK,
+        Blockly.Msg.SHORTCUTS_DUPLICATE,
         Blockly.Msg.ADD_COMMENT,
         Blockly.Msg.COPY,
         Blockly.Msg.DELETE_BLOCK,

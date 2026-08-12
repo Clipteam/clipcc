@@ -1118,6 +1118,7 @@ Blockly.Blocks['procedures_definition'] = {
       extensions: ['colours_more', 'shape_hat', 'procedure_def_contextmenu']
     });
     this.hat = Constants.SHAPE_BOWLER_HAT;
+    this.isCopyable = () => false;
   },
   setStyle: function(blockStyleName: string) {
     // equivalent to super.setStyle()
@@ -1471,7 +1472,7 @@ const PROCEDURE_DEF_CONTEXTMENU = {
 
     // Find and remove the duplicate option
     for (let i = 0, option; option = menuOptions[i]; i++) {
-      if (option.text === Blockly.Msg.DUPLICATE_BLOCK) {
+      if (option.text === Blockly.Msg.SHORTCUTS_DUPLICATE) {
         menuOptions.splice(i, 1);
         break;
       }
