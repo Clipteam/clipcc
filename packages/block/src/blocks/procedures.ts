@@ -1641,7 +1641,6 @@ Blockly.Blocks['argument_reporter_statement'] = {
       extensions: ['colours_argument', 'shape_statement', 'argument_reporter_statement_contextmenu']
     });
     this.return_ = false;
-    this.blockTemplate = true;
     const originalShowContextMenu = this.showContextMenu.bind(this);
     this.showContextMenu = function(e: Event) {
       const parent = this.getParent();
