@@ -33,6 +33,12 @@ type ExecutionContext = BaseExecutionContext & Partial<StackTimerContext>;
 
 class BlockUtility {
     /**
+     * ID of the logical block currently being executed. This may differ from
+     * the thread's top stack block when the block is a nested reporter input.
+     */
+    currentBlockId: string | null = null;
+
+    /**
      * A sequencer block primitives use to branch or start procedures with
      */
     sequencer: Sequencer | null;

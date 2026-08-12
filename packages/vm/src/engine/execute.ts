@@ -615,6 +615,7 @@ const execute = function (sequencer: Sequencer, thread: Thread) {
 
         // Inputs are set during previous steps in the loop.
 
+        blockUtility.currentBlockId = opCached.id;
         const primitiveReportedValue = blockFunction?.(argValues, blockUtility);
 
         // cc - preserve returned value

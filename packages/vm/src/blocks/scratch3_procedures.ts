@@ -62,10 +62,10 @@ class Scratch3ProcedureBlocks implements CategoryPrototype {
                 util.pushParam(paramNames[i], args[paramIds[i]]);
             } else if (paramIds[i].startsWith('SUBSTACK')) {
                 // Pass the caller's statement input to the callback reporter.
-                const callback = {
+                const callback: StatementArgumentValue = {
                     entry: paramIds[i],
-                    callerId: util.thread!.peekStack()
-                } as StatementArgumentValue;
+                    callerId: util.currentBlockId
+                };
                 if (callerTarget) {
                     callback.callerTarget = callerTarget;
                 }
