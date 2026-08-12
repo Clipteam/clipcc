@@ -1461,7 +1461,6 @@ Blockly.Blocks['argument_reporter_boolean'] = {
       }],
       extensions: ['colours_argument', 'output_boolean']
     });
-    this.blockTemplate = true;
     const originalShowContextMenu = this.showContextMenu.bind(this);
     this.showContextMenu = function(e: Event) {
       const parent = this.getParent();
@@ -1485,7 +1484,6 @@ Blockly.Blocks['argument_reporter_string_number'] = {
       }],
       extensions: ['colours_argument', 'output_number', 'output_string']
     });
-    this.blockTemplate = true;
     const originalShowContextMenu = this.showContextMenu.bind(this);
     this.showContextMenu = function(e: Event) {
       const parent = this.getParent();
