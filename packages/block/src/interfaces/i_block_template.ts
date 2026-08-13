@@ -4,15 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import type * as Blockly from 'blockly/core';
+
 export interface IBlockTemplate {
   /**
-   * True if the block should be duplicated before dragging while it is used as
-   * a template.
-   */
-  blockTemplate: boolean;
-  /**
-   * behaves like a template block if it's templateOf's child.
-   * It will get applied on block init.
+   * The type of the owning block. The block behaves like a template block
+   * while it is a direct child of that type of block.
    */
   templateOf: string;
 }
@@ -24,5 +21,17 @@ export interface IBlockTemplate {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isBlockTemplate(obj: any): obj is IBlockTemplate {
-  return obj && typeof obj.blockTemplate === 'boolean' && typeof obj.templateOf === 'string';
+  return obj && typeof obj.templateOf === 'string';
+}
+
+/**
+ * Returns whether the given block is currently acting as a template, i.e. it
+ * is a template block that is still attached to its owning block.
+ * @param block The block to decide.
+ * @returns True if the block is an active template.
+ */
+export function isActiveTemplateBlock(
+  block: Blockly.Block & Partial<IBlockTemplate>
+): block is Blockly.Block & IBlockTemplate {
+  return isBlockTemplate(block) && block.getParent()?.type === block.templateOf;
 }

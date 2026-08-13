@@ -6,7 +6,7 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from './constants';
-import {isBlockTemplate} from './interfaces/i_block_template';
+import {isActiveTemplateBlock} from './interfaces/i_block_template';
 
 /**
  * Class for connection type checking logic with custom rules.
@@ -41,9 +41,13 @@ export class ConnectionChecker extends Blockly.ConnectionChecker {
         return false;
       }
 
-      // Template reporters remain permanently attached to their prototype.
+      // Active template blocks remain permanently attached to their
+      // container. They must not be replaced nor connected with other blocks.
       const targetBlock = b.targetBlock();
-      if (isBlockTemplate(targetBlock) && targetBlock.blockTemplate) {
+      if (
+        isActiveTemplateBlock(b.getSourceBlock()) ||
+        (targetBlock && isActiveTemplateBlock(targetBlock))
+      ) {
         return false;
       }
     }

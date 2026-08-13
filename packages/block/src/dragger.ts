@@ -5,8 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import * as Constants from './constants';
-import {isBlockTemplate} from './interfaces/i_block_template';
+import {isActiveTemplateBlock, isBlockTemplate} from './interfaces/i_block_template';
 import {isSatellite} from './interfaces/i_satellite';
 import {isDynamicDeletable} from './interfaces/i_dynamic_deletable';
 import {BlockDragOutside} from './events/block_drag_outside';
@@ -28,45 +27,41 @@ export class Dragger extends Blockly.dragging.Dragger {
   protected dragWorkspace!: Blockly.WorkspaceSvg;
 
   /**
-   * Handles any drag startup. Template blocks should be duplicated before
-   * dragging when they are attached to their owning prototype.
+   * Handles any drag startup. Active template blocks should be duplicated
+   * before dragging when they are attached to their owning block.
    * @param e The pointer event.
    * @returns The draggable object.
    */
   override onDragStart(e: PointerEvent | KeyboardEvent): Blockly.IDraggable {
     this.dragWorkspace = this.draggable.workspace;
-    if (e instanceof PointerEvent && this.draggable instanceof Blockly.BlockSvg) {
-      const workspace = this.dragWorkspace;
-      // Make elements can drag outside of workspace bounds.
-      workspace.addClass(Dragger.BOUNDLESS_CLASS);
-      const absoluteMetrics = workspace.getMetricsManager().getAbsoluteMetrics();
-      const viewMetrics = workspace.getMetricsManager().getViewMetrics();
-      if (
-        workspace.RTL ?
-          e.clientX > workspace.getParentSvg().getBoundingClientRect().left +
-          viewMetrics.width :
-          e.clientX < absoluteMetrics.left
-      ) {
-        this.originatedFromFlyout = true;
+    if (this.draggable instanceof Blockly.BlockSvg) {
+      if (e instanceof PointerEvent) {
+        const workspace = this.dragWorkspace;
+        // Make elements can drag outside of workspace bounds.
+        workspace.addClass(Dragger.BOUNDLESS_CLASS);
+        const absoluteMetrics = workspace.getMetricsManager().getAbsoluteMetrics();
+        const viewMetrics = workspace.getMetricsManager().getViewMetrics();
+        if (
+          workspace.RTL ?
+            e.clientX > workspace.getParentSvg().getBoundingClientRect().left +
+            viewMetrics.width :
+            e.clientX < absoluteMetrics.left
+        ) {
+          this.originatedFromFlyout = true;
+        }
       }
 
-      // Duplicate a template reporter and drag the new regular block.
-      if (
-        isBlockTemplate(this.draggable) && this.draggable.blockTemplate
-      ) {
-        const parent = this.draggable.getParent();
-        if (parent?.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
-          if (!Blockly.Events.getGroup()) {
-            Blockly.Events.setGroup(true);
-          }
-          this.draggable = this.duplicateBlock(this.draggable);
-          Blockly.getFocusManager().focusNode(this.draggable as Blockly.BlockSvg);
-        } else {
-          // A template reporter that escaped its prototype is an ordinary
-          // user block and must be removable and draggable normally.
-          this.draggable.blockTemplate = false;
-          this.draggable.setDeletable(true);
+      // Duplicate an active template block and drag the new regular block.
+      if (isActiveTemplateBlock(this.draggable)) {
+        if (!Blockly.Events.getGroup()) {
+          Blockly.Events.setGroup(true);
         }
+        this.draggable = this.duplicateBlock(this.draggable);
+        Blockly.getFocusManager().focusNode(this.draggable);
+      } else if (isBlockTemplate(this.draggable)) {
+        // A template reporter that escaped its container is an ordinary
+        // user block and must be removable and draggable normally.
+        this.draggable.setDeletable(true);
       }
     }
 
@@ -193,9 +188,6 @@ export class Dragger extends Blockly.dragging.Dragger {
     this.draggable.workspace.setResizesEnabled(false);
     const newBlock = Blockly.serialization.blocks.append(json, this.draggable.workspace) as Blockly.BlockSvg;
 
-    if (isBlockTemplate(newBlock)) {
-      newBlock.blockTemplate = false;
-    }
     newBlock.setDeletable(true);
 
     newBlock.moveTo(originalBlock.getRelativeToSurfaceXY());

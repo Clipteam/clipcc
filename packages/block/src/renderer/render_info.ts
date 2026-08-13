@@ -9,7 +9,7 @@ import * as Constants from '../constants';
 import {InlineStatementInput} from './measurables/inline_statement_input';
 import {BowlerHat} from './measurables/bowler_hat';
 import {isInvisibleIcon} from '../interfaces/i_invisible_icon';
-import {isBlockTemplate} from '../interfaces/i_block_template';
+import {isActiveTemplateBlock} from '../interfaces/i_block_template';
 import {isScratchExtensionBlock} from '../interfaces/i_scratch_extension';
 
 /**
@@ -123,7 +123,7 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
     if (input instanceof Blockly.inputs.DummyInput || input instanceof Blockly.inputs.EndRowInput) {
       const sourceBlock = input.getSourceBlock();
       if (
-        (isBlockTemplate(sourceBlock) && sourceBlock.blockTemplate) ||
+        isActiveTemplateBlock(sourceBlock) ||
         sourceBlock.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE ||
         (sourceBlock.isShadow() && sourceBlock.previousConnection)
       ) {
@@ -284,6 +284,6 @@ export class RenderInfo extends Blockly.zelos.RenderInfo {
    * @returns True if parent block should apply tight-nesting.
    */
   protected shouldTightNesting(connectedBlock: Blockly.BlockSvg) {
-    return !connectedBlock.isShadow() || (isBlockTemplate(connectedBlock) && connectedBlock.blockTemplate);
+    return !connectedBlock.isShadow() || isActiveTemplateBlock(connectedBlock);
   }
 }

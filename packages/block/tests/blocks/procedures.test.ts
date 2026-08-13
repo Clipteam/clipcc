@@ -8,6 +8,7 @@ import {describe, expect, test} from '@jest/globals';
 import * as Blockly from 'blockly/core';
 import type {ProcedureCallerExtraState, ProcedureExtraState} from '../../src/serialization/procedures';
 import {Dragger} from '../../src/dragger';
+import {isActiveTemplateBlock} from '../../src/interfaces/i_block_template';
 import {setupPlayground} from '../helpers/playground';
 
 /**
@@ -89,15 +90,16 @@ describe('Blocks: Procedures', () => {
 
   test('Prototype and argument reporter are regular blocks', () => {
     const prototype = createPrototype(procedureState('s', 'ARG'));
-    const reporter = prototype.getInputTargetBlock('ARG')!;
+    const reporter = prototype.getInputTargetBlock('ARG')! as Blockly.BlockSvg;
 
     expect(prototype.isShadow()).toBe(false);
     expect(prototype.isDeletable()).toBe(false);
     expect(prototype.isDuplicatable()).toBe(false);
     expect((prototype as Blockly.BlockSvg & {satellite: boolean}).satellite).toBe(true);
     expect(reporter.isShadow()).toBe(false);
-    expect((reporter as Blockly.BlockSvg & {blockTemplate: boolean}).blockTemplate).toBe(true);
+    expect(isActiveTemplateBlock(reporter)).toBe(true);
     expect(reporter.isDeletable()).toBe(false);
+    expect(reporter.isDuplicatable()).toBe(false);
   });
 
   test('Prototype input cannot be replaced by drag-and-drop', () => {
@@ -110,11 +112,30 @@ describe('Blocks: Procedures', () => {
     expect(context.workspace.connectionChecker.doDragChecks(outputConnection, inputConnection, 0)).toBe(false);
   });
 
+  test('Active template reporter output cannot connect to other blocks', async () => {
+    const prototype = createPrototype(procedureState('s', 'ARG'));
+    const reporter = prototype.getInputTargetBlock('ARG')! as Blockly.BlockSvg;
+    const holder = context.workspace.newBlock('operator_add') as Blockly.BlockSvg;
+    holder.initSvg();
+
+    await Blockly.renderManagement.finishQueuedRenders();
+
+    const outputConnection = reporter.outputConnection! as Blockly.RenderedConnection;
+    const inputConnection = holder.getInput('NUM1')!.connection! as Blockly.RenderedConnection;
+    expect(context.workspace.connectionChecker.doDragChecks(inputConnection, outputConnection, Infinity)).toBe(false);
+
+    // A clone dragged out of the template is a regular block and may connect.
+    const json = Blockly.serialization.blocks.save(reporter)!;
+    const clone = Blockly.serialization.blocks.append(json, context.workspace) as Blockly.BlockSvg;
+    const cloneOutput = clone.outputConnection! as Blockly.RenderedConnection;
+    expect(context.workspace.connectionChecker.doDragChecks(cloneOutput, inputConnection, Infinity)).toBe(true);
+
+    clone.dispose(true);
+  });
+
   test('Dragging a template reporter creates a regular clone', () => {
     const prototype = createPrototype(procedureState('s', 'ARG'));
-    const reporter = prototype.getInputTargetBlock('ARG')! as Blockly.BlockSvg & {
-      blockTemplate: boolean;
-    };
+    const reporter = prototype.getInputTargetBlock('ARG')! as Blockly.BlockSvg;
     const originalId = reporter.id;
     const dragger = new Dragger(reporter);
     const clone = dragger.onDragStart(new PointerEvent('pointerdown', {
@@ -122,15 +143,54 @@ describe('Blocks: Procedures', () => {
       clientX: 0,
       clientY: 0,
       pointerType: 'mouse'
-    })) as Blockly.BlockSvg & {blockTemplate: boolean};
+    })) as Blockly.BlockSvg;
 
     expect(clone.id).not.toBe(originalId);
     expect(clone.isShadow()).toBe(false);
-    expect(clone.blockTemplate).toBe(false);
+    expect(isActiveTemplateBlock(clone)).toBe(false);
     expect(clone.isDeletable()).toBe(true);
+    expect(clone.isDuplicatable()).toBe(true);
     expect(reporter.getParent()).toBe(prototype);
 
-    clone.dispose(true, false);
+    clone.dispose(true);
+  });
+
+  test('Keyboard-moving a template reporter creates a regular clone', () => {
+    const prototype = createPrototype(procedureState('s', 'ARG'));
+    const reporter = prototype.getInputTargetBlock('ARG')! as Blockly.BlockSvg;
+    const originalId = reporter.id;
+    const dragger = new Dragger(reporter);
+    const clone = dragger.onDragStart(new KeyboardEvent('keydown', {
+      bubbles: true,
+      key: 'ArrowRight'
+    })) as Blockly.BlockSvg;
+
+    expect(clone.id).not.toBe(originalId);
+    expect(isActiveTemplateBlock(clone)).toBe(false);
+    expect(reporter.getParent()).toBe(prototype);
+
+    clone.dispose(true);
+  });
+
+  test('Dragging an escaped template reporter moves the original block', () => {
+    const prototype = createPrototype(procedureState('s', 'ARG'));
+    const reporter = prototype.getInputTargetBlock('ARG')! as Blockly.BlockSvg;
+    reporter.unplug(false);
+    reporter.setDeletable(false);
+
+    const dragger = new Dragger(reporter);
+    const draggable = dragger.onDragStart(new PointerEvent('pointerdown', {
+      bubbles: true,
+      clientX: 0,
+      clientY: 0,
+      pointerType: 'mouse'
+    })) as Blockly.BlockSvg;
+
+    expect(draggable.id).toBe(reporter.id);
+    expect(isActiveTemplateBlock(reporter)).toBe(false);
+    expect(reporter.isDeletable()).toBe(true);
+
+    reporter.dispose(true);
   });
 
   test('Serialized regular prototype does not create duplicate reporters', () => {

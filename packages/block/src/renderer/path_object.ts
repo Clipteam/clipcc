@@ -6,8 +6,6 @@
 
 import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
-import {isBlockTemplate} from '../interfaces/i_block_template';
-
 /**
  * An object that handles creating and setting each of the SVG elements
  * used by the renderer.
@@ -25,12 +23,6 @@ export class PathObject extends Blockly.zelos.PathObject {
     // like a shadow block.
     if (block.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
       this.svgPath.setAttribute('fill', this.style.colourSecondary);
-    }
-
-    // Template reporters need the normal colour to contrast with the
-    // secondary-coloured prototype.
-    if (isBlockTemplate(block) && block.blockTemplate) {
-      this.svgPath.setAttribute('fill', this.style.colourPrimary);
     }
   }
 }

@@ -125,7 +125,7 @@ const SCRATCH_EXTENSION = function(this: Blockly.Block) {
 const BLOCK_TEMPLATE = function(this: Blockly.Block & IBlockTemplate) {
   if (this.templateOf && this.getSurroundParent()?.type !== this.templateOf) return;
   this.setDeletable(false);
-  this.blockTemplate = true;
+  this.isDuplicatable = () => this.getParent()?.type !== this.templateOf;
 };
 
 /**
