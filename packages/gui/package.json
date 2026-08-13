@@ -10,8 +10,16 @@
     "url": "https://github.com/Clipteam/clipcc.git"
   },
   "exports": {
-    "types": "./dist/types/index.d.ts",
-    "default": "./dist/scratch-gui.js"
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "webpack": "./src/index.js",
+      "browser": "./src/index.js",
+      "default": "./dist/scratch-gui.js"
+    },
+    "./libraries/backdrops.json": "./dist/libraries/backdrops.json",
+    "./libraries/costumes.json": "./dist/libraries/costumes.json",
+    "./libraries/sounds.json": "./dist/libraries/sounds.json",
+    "./libraries/sprites.json": "./dist/libraries/sprites.json"
   },
   "scripts": {
     "build:types": "tsc --project ./tsconfig.dts.json",
@@ -141,7 +149,7 @@
     "redux-mock-store": "1.5.3",
     "regenerator-runtime": "0.14.1",
     "rimraf": "2.7.1",
-    "rule-inheritance-webpack-plugin": "^0.4.0",
+    "rule-inheritance-webpack-plugin": "catalog:",
     "selenium-webdriver": "3.6.0",
     "style-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.3.17",

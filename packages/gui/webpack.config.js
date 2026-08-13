@@ -14,6 +14,7 @@ const STATIC_PATH = process.env.STATIC_PATH || '/static';
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const BUILD_DIST = IS_PRODUCTION || process.env.BUILD_MODE === 'dist';
 const IS_CI = process.env.CI;
+const LIBRARY_ONLY = process.env.LIBRARY_ONLY;
 
 const base = {
     mode: IS_PRODUCTION ? 'production' : 'development',
@@ -78,10 +79,7 @@ const base = {
             }]
         }, {
             test: /\.hex$/,
-            type: 'asset/inline',
-            generator: {
-                dataUrl: content => `data:text/plain;base64,${content.toString('base64')}`
-            }
+            type: 'asset'
         }, {
             resourceQuery: '?arrayBuffer',
             type: 'javascript/auto',
@@ -151,7 +149,7 @@ if (!IS_PRODUCTION) {
     });
 }
 
-module.exports = [
+module.exports = (BUILD_DIST ? [] : [
     // to run editor examples
     defaultsDeep({}, base, {
         entry: {
@@ -243,8 +241,8 @@ module.exports = [
             })
         ])
     })
-].concat(
-    BUILD_DIST ? (
+]).concat(
+    (BUILD_DIST || LIBRARY_ONLY) ? (
         // export as library
         defaultsDeep({}, base, {
             target: 'web',
