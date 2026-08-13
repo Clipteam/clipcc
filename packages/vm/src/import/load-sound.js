@@ -81,7 +81,7 @@ const handleSoundLoadError = function (sound, runtime, soundBank) {
  * @param {SoundBank} soundBank - Scratch Audio SoundBank to add sounds to.
  * @returns {!Promise} - a promise which will resolve to the sound when ready.
  */
-const loadSound = function (sound, runtime, soundBank) {
+let loadSound = function (sound, runtime, soundBank) {
     if (!runtime.storage) {
         log.warn('No storage module present; cannot load sound asset: ', sound.md5);
         return Promise.resolve(sound);
@@ -110,7 +110,16 @@ const loadSound = function (sound, runtime, soundBank) {
         });
 };
 
+/**
+ * Override the default loadSound function with a new one. This is used for testing purposes.
+ * @param {Function} newLoadSound - The new loadSound function to use.
+ */
+const overrideLoadSound = function (newLoadSound) {
+    loadSound = newLoadSound;
+};
+
 export {
     loadSound,
+    overrideLoadSound,
     loadSoundFromAsset
 };
