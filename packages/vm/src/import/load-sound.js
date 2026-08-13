@@ -1,5 +1,5 @@
-const StringUtil = require('../util/string-util');
-const log = require('../util/log');
+import StringUtil from '../util/string-util.js';
+import log from '../util/log.js';
 
 /**
  * Initialize a sound from an asset asynchronously.
@@ -49,7 +49,7 @@ const handleSoundLoadError = function (sound, runtime, soundBank) {
     const oldRate = sound.rate;
     const oldFormat = sound.format;
     const oldDataFormat = sound.dataFormat;
-                
+
     // Use default asset if original fails to load
     sound.assetId = runtime.storage.defaultAssetId.Sound;
     sound.asset = runtime.storage.get(sound.assetId);
@@ -62,12 +62,12 @@ const handleSoundLoadError = function (sound, runtime, soundBank) {
 
         // Should be null if we got here because the sound was missing
         loadedSound.broken.asset = oldAsset;
-        
+
         loadedSound.broken.sampleCount = oldSample;
         loadedSound.broken.rate = oldRate;
         loadedSound.broken.format = oldFormat;
         loadedSound.broken.dataFormat = oldDataFormat;
-        
+
         return loadedSound;
     });
 };
@@ -81,7 +81,7 @@ const handleSoundLoadError = function (sound, runtime, soundBank) {
  * @param {SoundBank} soundBank - Scratch Audio SoundBank to add sounds to.
  * @returns {!Promise} - a promise which will resolve to the sound when ready.
  */
-const loadSound = function (sound, runtime, soundBank) {
+let loadSound = function (sound, runtime, soundBank) {
     if (!runtime.storage) {
         log.warn('No storage module present; cannot load sound asset: ', sound.md5);
         return Promise.resolve(sound);
@@ -110,7 +110,16 @@ const loadSound = function (sound, runtime, soundBank) {
         });
 };
 
-module.exports = {
+/**
+ * Override the default loadSound function with a new one. This is used for testing purposes.
+ * @param {Function} newLoadSound - The new loadSound function to use.
+ */
+const overrideLoadSound = function (newLoadSound) {
+    loadSound = newLoadSound;
+};
+
+export {
     loadSound,
+    overrideLoadSound,
     loadSoundFromAsset
 };

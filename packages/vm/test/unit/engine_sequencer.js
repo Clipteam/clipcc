@@ -1,9 +1,9 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const Sequencer = require('../../src/engine/sequencer');
-const Runtime = require('../../src/engine/runtime');
-const Thread = require('../../src/engine/thread');
-const RenderedTarget = require('../../src/sprites/rendered-target');
-const Sprite = require('../../src/sprites/sprite');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Sequencer from '../../src/engine/sequencer.js';
+import Runtime from '../../src/engine/runtime.js';
+import Thread from '../../src/engine/thread.js';
+import RenderedTarget from '../../src/sprites/rendered-target.js';
+import Sprite from '../../src/sprites/sprite.js';
 
 test('spec', t => {
     t.type(Sequencer, 'function');

@@ -6,14 +6,15 @@
  * should not reflect that the costume is broken and should therefore re-attempt
  * to load the costume if the saved project is re-loaded.
  */
-const path = require('path');
-const tap = require('../fixtures/jest-tap-bridge');
-const makeTestStorage = require('../fixtures/make-test-storage');
-const FakeRenderer = require('../fixtures/fake-renderer');
-const FakeBitmapAdapter = require('../fixtures/fake-bitmap-adapter');
-const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-const VirtualMachine = require('../../src/index');
-const {serializeCostumes} = require('../../src/serialization/serialize-assets');
+import path from 'path';
+
+import {test} from '../fixtures/jest-tap-bridge.js';
+import makeTestStorage from '../fixtures/make-test-storage.js';
+import FakeRenderer from '../fixtures/fake-renderer.js';
+import FakeBitmapAdapter from '../fixtures/fake-bitmap-adapter.js';
+import {readFileToBuffer} from '../fixtures/readProjectFile.js';
+import VirtualMachine from '../../src/index.js';
+import {serializeCostumes} from '../../src/serialization/serialize-assets.js';
 
 const projectUri = path.resolve(__dirname, '../fixtures/missing_svg.sb2');
 const project = readFileToBuffer(projectUri);
@@ -40,7 +41,7 @@ global.document = {
 
 let vm;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const storage = makeTestStorage();
 
     vm = new VirtualMachine();
@@ -50,8 +51,6 @@ tap.beforeEach(() => {
 
     return vm.loadProject(project);
 });
-
-const test = tap.test;
 
 test('loading sb2 project with missing vector costume file', t => {
     t.equal(vm.runtime.targets.length, 2);

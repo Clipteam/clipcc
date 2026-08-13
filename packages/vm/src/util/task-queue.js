@@ -1,4 +1,4 @@
-const Timer = require('../util/timer');
+import Timer from '../util/timer.js';
 
 /**
  * This class uses the token bucket algorithm to control a queue of tasks.
@@ -201,4 +201,4 @@ class TaskQueue {
     }
 }
 
-module.exports = TaskQueue;
+export default TaskQueue;

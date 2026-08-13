@@ -4,12 +4,13 @@
  * in assets correctly (from the provided .sb2 file) even if the assets
  * are not present on our servers.
  */
-const path = require('path');
-const fs = require('fs');
-const test = require('../fixtures/jest-tap-bridge').test;
-const AdmZip = require('adm-zip');
-const {ScratchStorage} = require('clipcc-storage');
-const VirtualMachine = require('../../src/index');
+import path from 'path';
+
+import fs from 'fs';
+import {test} from '../fixtures/jest-tap-bridge.js';
+import AdmZip from 'adm-zip';
+import {ScratchStorage} from 'clipcc-storage';
+import VirtualMachine from '../../src/index.js';
 
 const projectUri = path.resolve(__dirname, '../fixtures/offline-custom-assets.sb2');
 const projectZip = AdmZip(projectUri);

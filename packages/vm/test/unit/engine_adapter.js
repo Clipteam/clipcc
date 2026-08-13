@@ -1,6 +1,6 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const adapter = require('../../src/engine/adapter');
-const events = require('../fixtures/events.json');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import adapter from '../../src/engine/adapter.js';
+import events from '../fixtures/events.json';
 
 test('spec', t => {
     t.type(adapter, 'function');

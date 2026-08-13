@@ -1,7 +1,7 @@
-const FakeBitmapAdapter = require('clipcc-svg-renderer').BitmapAdapter;
+import {BitmapAdapter as FakeBitmapAdapter} from 'clipcc-svg-renderer';
 
 FakeBitmapAdapter.prototype.resize = function (canvas) {
     return canvas;
 };
 
-module.exports = FakeBitmapAdapter;
+export default FakeBitmapAdapter;

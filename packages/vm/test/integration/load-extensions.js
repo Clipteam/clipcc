@@ -1,9 +1,9 @@
-const path = require('path');
-const {test} = require('../fixtures/jest-tap-bridge');
-const fs = require('fs');
-const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-const dispatch = require('../../src/dispatch/central-dispatch');
-const VirtualMachine = require('../../src/index');
+import path from 'path';
+import {test} from '../fixtures/jest-tap-bridge.js';
+import fs from 'fs';
+import {readFileToBuffer} from '../fixtures/readProjectFile.js';
+import dispatch from '../../src/dispatch/central-dispatch.js';
+import VirtualMachine from '../../src/index.js';
 
 /**
  * Call _stopLoop() on the Video Sensing extension.

@@ -1,9 +1,9 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const path = require('path');
-const VirtualMachine = require('../../src/index');
-const Runtime = require('../../src/engine/runtime');
-const sb3 = require('../../src/serialization/sb3');
-const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
+import {test} from '../fixtures/jest-tap-bridge.js';
+import path from 'path';
+import VirtualMachine from '../../src/index.js';
+import Runtime from '../../src/engine/runtime.js';
+import * as sb3 from '../../src/serialization/sb3.js';
+import {readFileToBuffer} from '../fixtures/readProjectFile.js';
 const exampleProjectPath = path.resolve(__dirname, '../fixtures/clone-cleanup.sb2');
 const commentsSB2ProjectPath = path.resolve(__dirname, '../fixtures/comments.sb2');
 const commentsSB3ProjectPath = path.resolve(__dirname, '../fixtures/comments.sb3');
@@ -13,7 +13,7 @@ const topLevelReportersProjectPath = path.resolve(__dirname, '../fixtures/top-le
 const draggableSB3ProjectPath = path.resolve(__dirname, '../fixtures/draggable.sb3');
 const originSB3ProjectPath = path.resolve(__dirname, '../fixtures/origin.sb3');
 const originAbsentSB3ProjectPath = path.resolve(__dirname, '../fixtures/origin-absent.sb3');
-const FakeRenderer = require('../fixtures/fake-renderer');
+import FakeRenderer from '../fixtures/fake-renderer.js';
 
 test('serialize', t => {
     const vm = new VirtualMachine();

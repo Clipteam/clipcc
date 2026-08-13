@@ -1,14 +1,14 @@
-const tap = require('../fixtures/jest-tap-bridge');
-const path = require('path');
-const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-const makeTestStorage = require('../fixtures/make-test-storage');
-const VirtualMachine = require('../../src/virtual-machine');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import path from 'path';
+import {readFileToBuffer} from '../fixtures/readProjectFile.js';
+import makeTestStorage from '../fixtures/make-test-storage.js';
+import VirtualMachine from '../../src/virtual-machine.js';
 
 let vm;
 let projectChanged;
 let blockContainer;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const projectUri = path.resolve(__dirname, '../fixtures/default.sb2');
     const project = readFileToBuffer(projectUri);
 
@@ -52,8 +52,6 @@ tap.beforeEach(() => {
 
     });
 });
-
-const test = tap.test;
 
 test('Creating a block should emit a project changed event', t => {
     blockContainer.createBlock({

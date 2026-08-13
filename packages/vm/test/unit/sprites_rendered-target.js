@@ -1,8 +1,8 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const RenderedTarget = require('../../src/sprites/rendered-target');
-const Sprite = require('../../src/sprites/sprite');
-const Runtime = require('../../src/engine/runtime');
-const FakeRenderer = require('../fixtures/fake-renderer');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import RenderedTarget from '../../src/sprites/rendered-target.js';
+import Sprite from '../../src/sprites/sprite.js';
+import Runtime from '../../src/engine/runtime.js';
+import FakeRenderer from '../fixtures/fake-renderer.js';
 
 test('clone effects', t => {
     // Create two clones and ensure they have different graphic effect objects.

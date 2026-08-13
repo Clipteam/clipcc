@@ -1,9 +1,9 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const Motion = require('../../src/blocks/scratch3_motion');
-const Runtime = require('../../src/engine/runtime');
-const Sprite = require('../../src/sprites/sprite.js');
-const RenderedTarget = require('../../src/sprites/rendered-target.js');
-const VirtualMachine = require('../../src');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Motion from '../../src/blocks/scratch3_motion.js';
+import Runtime from '../../src/engine/runtime.js';
+import Sprite from '../../src/sprites/sprite.js';
+import RenderedTarget from '../../src/sprites/rendered-target.js';
+import VirtualMachine from '../../src/index.js';
 
 test('getPrimitives', t => {
     const rt = new Runtime();

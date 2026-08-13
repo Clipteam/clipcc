@@ -1,4 +1,4 @@
-const MathUtil = require('../util/math-util');
+import MathUtil from '../util/math-util.js';
 
 class Mouse {
     constructor (runtime) {
@@ -158,4 +158,4 @@ class Mouse {
     }
 }
 
-module.exports = Mouse;
+export default Mouse;

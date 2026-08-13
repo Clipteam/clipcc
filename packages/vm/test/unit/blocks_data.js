@@ -1,5 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const Data = require('../../src/blocks/scratch3_data');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Data from '../../src/blocks/scratch3_data.js';
 
 const blocks = new Data();
 

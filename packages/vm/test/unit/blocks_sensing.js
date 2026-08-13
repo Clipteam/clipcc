@@ -1,9 +1,9 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const Sensing = require('../../src/blocks/scratch3_sensing');
-const Runtime = require('../../src/engine/runtime');
-const Sprite = require('../../src/sprites/sprite');
-const RenderedTarget = require('../../src/sprites/rendered-target');
-const BlockUtility = require('../../src/engine/block-utility');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Sensing from '../../src/blocks/scratch3_sensing.js';
+import Runtime from '../../src/engine/runtime.js';
+import Sprite from '../../src/sprites/sprite.js';
+import RenderedTarget from '../../src/sprites/rendered-target.js';
+import BlockUtility from '../../src/engine/block-utility.js';
 
 test('getPrimitives', t => {
     const rt = new Runtime();

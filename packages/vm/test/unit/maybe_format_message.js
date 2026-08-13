@@ -1,5 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const maybeFormatMessage = require('../../src/util/maybe-format-message');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import maybeFormatMessage from '../../src/util/maybe-format-message.js';
 
 const nonMessages = [
     'hi',

@@ -1,9 +1,9 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const Blocks = require('../../src/engine/blocks');
-const Variable = require('../../src/engine/variable');
-const adapter = require('../../src/engine/adapter');
-const events = require('../fixtures/events.json');
-const Runtime = require('../../src/engine/runtime');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Blocks from '../../src/engine/blocks.js';
+import Variable from '../../src/engine/variable.js';
+import adapter from '../../src/engine/adapter.js';
+import events from '../fixtures/events.json';
+import Runtime from '../../src/engine/runtime.js';
 
 test('spec', t => {
     const b = new Blocks(new Runtime());

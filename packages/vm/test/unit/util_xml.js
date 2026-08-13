@@ -1,5 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const xml = require('../../src/util/xml-escape');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import xml from '../../src/util/xml-escape.js';
 
 test('escape', t => {
     const input = '<foo bar="he & llo \'"></foo>';

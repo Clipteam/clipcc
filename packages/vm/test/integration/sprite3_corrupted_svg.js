@@ -7,14 +7,15 @@
  * reflect that the costume is broken and should therefore re-attempt
  * to load the costume if the saved project is re-loaded.
  */
-const path = require('path');
-const tap = require('../fixtures/jest-tap-bridge');
-const md5 = require('js-md5');
-const makeTestStorage = require('../fixtures/make-test-storage');
-const FakeRenderer = require('../fixtures/fake-renderer');
-const {extractAsset, readFileToBuffer} = require('../fixtures/readProjectFile');
-const VirtualMachine = require('../../src/index');
-const {serializeCostumes} = require('../../src/serialization/serialize-assets');
+import path from 'path';
+
+import {test} from '../fixtures/jest-tap-bridge.js';
+import md5 from 'js-md5';
+import makeTestStorage from '../fixtures/make-test-storage.js';
+import FakeRenderer from '../fixtures/fake-renderer.js';
+import {extractAsset, readFileToBuffer} from '../fixtures/readProjectFile.js';
+import VirtualMachine from '../../src/index.js';
+import {serializeCostumes} from '../../src/serialization/serialize-assets.js';
 
 const projectUri = path.resolve(__dirname, '../fixtures/default.sb3');
 const project = readFileToBuffer(projectUri);
@@ -32,7 +33,7 @@ const brokenCostumeMd5 = md5(originalCostume);
 let vm;
 let defaultVectorAssetId;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const storage = makeTestStorage();
 
     vm = new VirtualMachine();
@@ -52,8 +53,6 @@ tap.beforeEach(() => {
 
     return vm.loadProject(project).then(() => vm.addSprite(sprite));
 });
-
-const test = tap.test;
 
 test('load sprite3 with corrupted vector costume file', t => {
     t.equal(vm.runtime.targets.length, 3);

@@ -1,5 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const TextToSpeech = require('../../src/extensions/scratch3_text2speech/index.js');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import TextToSpeech from '../../src/extensions/scratch3_text2speech/index.js';
 
 const fakeStage = {
     textToSpeechLanguage: null

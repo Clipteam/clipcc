@@ -399,10 +399,8 @@ const tapTest = (name, fn) => {
     }));
 };
 
-tapTest.test = tapTest;
-tapTest.beforeEach = function tapBeforeEach (fn) {
-    beforeEach(fn);
-};
-
 /** @type {TapBridge} */
-module.exports = tapTest;
+export default tapTest;
+export {
+    tapTest as test
+};

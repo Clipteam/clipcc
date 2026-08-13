@@ -1,9 +1,8 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-
-const ArgumentType = require('../../src/extension-support/argument-type');
-const BlockType = require('../../src/extension-support/block-type');
-const Runtime = require('../../src/engine/runtime');
-const ScratchBlocksConstants = require('../../src/engine/scratch-blocks-constants');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import ArgumentType from '../../src/extension-support/argument-type';
+import BlockType from '../../src/extension-support/block-type';
+import Runtime from '../../src/engine/runtime.js';
+import ScratchBlocksConstants from '../../src/engine/scratch-blocks-constants.js';
 
 /**
  * @type {ExtensionMetadata}

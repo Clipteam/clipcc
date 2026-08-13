@@ -1,8 +1,8 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const Looks = require('../../src/blocks/scratch3_looks');
-const Runtime = require('../../src/engine/runtime');
-const Sprite = require('../../src/sprites/sprite.js');
-const RenderedTarget = require('../../src/sprites/rendered-target.js');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Looks from '../../src/blocks/scratch3_looks.js';
+import Runtime from '../../src/engine/runtime.js';
+import Sprite from '../../src/sprites/sprite.js';
+import RenderedTarget from '../../src/sprites/rendered-target.js';
 const util = {
     target: {
         currentCostume: 0, // Internally, current costume is 0 indexed
