@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import path from 'path';
-
 import process from 'process';
+
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
 import VirtualMachine from '../../src/index.js';

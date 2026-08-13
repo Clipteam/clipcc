@@ -4,7 +4,6 @@
  */
 
 import uid from '../util/uid.js';
-
 import xmlEscape from '../util/xml-escape.js';
 
 class Comment {

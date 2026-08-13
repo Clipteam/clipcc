@@ -10,7 +10,6 @@
  */
 
 import Blocks from '../engine/blocks.js';
-
 import RenderedTarget from '../sprites/rendered-target.js';
 import Sprite from '../sprites/sprite.js';
 import Color from '../util/color';
