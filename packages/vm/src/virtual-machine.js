@@ -265,6 +265,22 @@ class VirtualMachine extends EventEmitter {
     }
 
     /**
+     * Set the url of the translate service used by the translate extension.
+     * @param {string} url The full url of the translate endpoint, without query string.
+     */
+    setTranslateServiceUrl (url) {
+        this.runtime.translateServiceUrl = url;
+    }
+
+    /**
+     * Set the url of the text-to-speech service used by the text2speech extension.
+     * @param {string} url The full url of the text-to-speech endpoint, without query string.
+     */
+    setTTSServiceUrl (url) {
+        this.runtime.ttsServiceUrl = url;
+    }
+
+    /**
      * Set stage size.
      * @param {number} width Width of the stage in pixels.
      * @param {number} height Height of the stage in pixels.

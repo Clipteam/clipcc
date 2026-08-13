@@ -539,6 +539,18 @@ class Runtime extends EventEmitter {
         };
 
         /**
+         * The url of the translate service used by the translate extension.
+         * @type {string}
+         */
+        this.translateServiceUrl = 'https://translate-service.scratch.mit.edu/translate';
+
+        /**
+         * The url of the text-to-speech service used by the text2speech extension.
+         * @type {string}
+         */
+        this.ttsServiceUrl = 'https://synthesis-service.scratch.mit.edu/synth';
+
+        /**
          * A reference to the current runtime stepping interval, set
          * by a `setInterval`.
          * @type {!number}

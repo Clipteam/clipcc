@@ -24,7 +24,11 @@ describe('VMManagerHOC', () => {
                 projectState: {},
                 mode: {},
                 vmStatus: {},
-                settings: {}
+                settings: {
+                    translateServiceUrl: 'https://trampoline.simonshiki.top/translate/translate',
+                    ttsServiceUrl: 'https://trampoline.simonshiki.top/tts/synth',
+                    useScratchOfficialApi: false
+                }
             },
             locales: {
                 locale: '',
@@ -35,6 +39,8 @@ describe('VMManagerHOC', () => {
         vm.attachAudioEngine = jest.fn();
         vm.setCompatibilityMode = jest.fn();
         vm.setLocale = jest.fn();
+        vm.setTranslateServiceUrl = jest.fn();
+        vm.setTTSServiceUrl = jest.fn();
         vm.start = jest.fn();
     });
     test('when it mounts in player mode, the vm is initialized but not started', () => {

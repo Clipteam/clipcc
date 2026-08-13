@@ -18,6 +18,9 @@ export type SettingsState = {
     theme: string;
     stageWidth: number;
     stageHeight: number;
+    translateServiceUrl: string;
+    ttsServiceUrl: string;
+    useScratchOfficialApi: boolean;
 };
 
 const defaultState: SettingsState = {
@@ -34,7 +37,10 @@ const defaultState: SettingsState = {
     framerate: 30,
     theme: 'system',
     stageWidth: 480,
-    stageHeight: 360
+    stageHeight: 360,
+    translateServiceUrl: 'https://trampoline.simonshiki.top/translate/translate',
+    ttsServiceUrl: 'https://trampoline.simonshiki.top/tts/synth',
+    useScratchOfficialApi: false
 };
 
 const parseSavedSettings = (): Partial<SettingsState> => {
@@ -65,7 +71,13 @@ const parseSavedSettings = (): Partial<SettingsState> => {
         framerate: typeof parsed.framerate === 'number' ? parsed.framerate : undefined,
         theme: typeof parsed.theme === 'string' ? parsed.theme : undefined,
         stageWidth: typeof parsed.stageWidth === 'number' ? parsed.stageWidth : undefined,
-        stageHeight: typeof parsed.stageHeight === 'number' ? parsed.stageHeight : undefined
+        stageHeight: typeof parsed.stageHeight === 'number' ? parsed.stageHeight : undefined,
+        translateServiceUrl:
+            typeof parsed.translateServiceUrl === 'string' ? parsed.translateServiceUrl : undefined,
+        ttsServiceUrl:
+            typeof parsed.ttsServiceUrl === 'string' ? parsed.ttsServiceUrl : undefined,
+        useScratchOfficialApi:
+            typeof parsed.useScratchOfficialApi === 'boolean' ? parsed.useScratchOfficialApi : undefined
     };
 };
 
