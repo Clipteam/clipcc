@@ -39,13 +39,13 @@ import * as originalImportLoadCostume from '../import/load-costume.js';
 const costumeMiddleware = new LoadingMiddleware();
 const importLoadCostume = {
     ...importLoadCostume,
-    loadCostume: costumeMiddleware.install(importLoadCostume, originalImportLoadCostume.loadCostume)
+    loadCostume: costumeMiddleware.install(originalImportLoadCostume, originalImportLoadCostume.loadCostume)
 };
 import * as originalImportLoadSound from '../import/load-sound.js';
 const soundMiddleware = new LoadingMiddleware();
 const importLoadSound = {
     ...importLoadSound,
-    loadSound: soundMiddleware.install(importLoadSound, originalImportLoadSound.loadSound)
+    loadSound: soundMiddleware.install(originalImportLoadSound, originalImportLoadSound.loadSound)
 };
 
 import {ScratchStorage} from 'clipcc-storage';
