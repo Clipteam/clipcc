@@ -8,7 +8,11 @@ const async = require('async');
 const libraries = require('./lib/libraries');
 
 const NO_CACHE = process.argv.includes('--no-cache');
-const ASSET_HOST = 'cdn.assets.scratch.mit.edu';
+const useScratchAssetApi = !!process.env.USE_SCRATCH_ASSET_API;
+const ASSET_HOST = useScratchAssetApi ? 'cdn.assets.scratch.mit.edu' : 'static.codingclip.com';
+const getAssetPath = useScratchAssetApi ?
+    md5 => `/internalapi/asset/${md5}/get/` :
+    md5 => `/v1/project/asset/${md5}`;
 const NUM_SIMULTANEOUS_DOWNLOADS = 5;
 const OUT_PATH = path.resolve('static', 'assets');
 
@@ -66,10 +70,17 @@ const fetchAsset = function (md5, callback) {
         return;
     }
 
+    // The codingclip CDN serves assets by md5ext; skip values without an extension.
+    if (!useScratchAssetApi && !md5.includes('.')) {
+        console.warn(`Skipped (no file extension): ${md5}`);
+        callback();
+        return;
+    }
+
     const myAgent = connectionPool.pop() || new https.Agent({keepAlive: true});
     const getOptions = {
         host: ASSET_HOST,
-        path: `/internalapi/asset/${md5}/get/`,
+        path: getAssetPath(md5),
         agent: myAgent
     };
     const urlHuman = `//${getOptions.host}${getOptions.path}`;
