@@ -408,7 +408,7 @@ let loadCostume = function (md5ext, costume, runtime, optVersion) {
  */
 const overrideLoadCostume = function (newLoadCostume) {
     loadCostume = newLoadCostume;
-}
+};
 
 export {
     loadCostume,
