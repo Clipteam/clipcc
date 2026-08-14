@@ -11,7 +11,8 @@ type Translator = ((messageId: string, defaultMessage?: string, description?: st
 
 type ConfigResponse = string | {
     url: string;
-    withCredentials: boolean;
+    withCredentials?: boolean;
+    headers?: Record<string, string>;
     method?: 'post';
 };
 
@@ -41,6 +42,8 @@ class Storage extends ScratchStorage {
     private projectHost = '';
     private projectToken = '';
     private assetHost = '';
+    private cdnHost = '';
+    private authorizationToken = '';
     private translator: Translator;
 
     constructor () {
@@ -102,19 +105,32 @@ class Storage extends ScratchStorage {
         this.assetHost = assetHost;
     }
 
+    setCdnHost (cdnHost: string): void {
+        this.cdnHost = cdnHost;
+    }
+
+    setAuthorizationToken (token: string): void {
+        this.authorizationToken = `Bearer ${token}`;
+    }
+
     getAssetGetConfig (asset: Asset): ConfigResponse {
-        return `${this.assetHost}/internalapi/asset/${asset.assetId}.${asset.dataFormat}/get/`;
+        return {
+            url: `${this.cdnHost}project/asset/${asset.assetId}.${asset.dataFormat}`,
+            headers: {referer: location.host}
+        };
     }
 
     getAssetCreateConfig (asset: Asset): ConfigResponse {
+        const headers = this.authorizationToken ? {authorization: this.authorizationToken} : undefined;
         return {
             // There is no such thing as updating assets, but storage assumes it
             // should update if there is an assetId, and the asset store uses the
             // assetId as part of the create URI. So, force the method to POST.
             // Then when storage finds this config to use for the "update", still POSTs
             method: 'post',
-            url: `${this.assetHost}/${asset.assetId}.${asset.dataFormat}`,
-            withCredentials: true
+            url: `${this.assetHost}project/uploadAsset/${asset.assetId}.${asset.dataFormat}`,
+            withCredentials: true,
+            headers
         };
     }
 
