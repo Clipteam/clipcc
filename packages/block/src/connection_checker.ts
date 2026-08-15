@@ -20,8 +20,7 @@ function isTemplateNextConnection(connection: Blockly.Connection | null): boolea
   return Boolean(
     sourceBlock &&
     connection === sourceBlock.nextConnection &&
-    isBlockTemplate(sourceBlock) &&
-    sourceBlock.blockTemplate
+    isActiveTemplateBlock(sourceBlock)
   );
 }
 
