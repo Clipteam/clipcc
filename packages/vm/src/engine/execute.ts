@@ -49,7 +49,19 @@ const isPromise = function (value: any): value is Promise<unknown> {
  * @returns True if the block is a procedure.
  */
 const isProcedureCaller = function (cached: BlockCached) {
-    return cached.opcode === 'procedures_call';
+    return cached.opcode === 'procedures_call' || cached.opcode === 'argument_reporter_statement';
+};
+
+/**
+ * Utility function to determine if an inline procedure caller reports a value.
+ * @param cached Cached block to check.
+ * @returns True if the block reports a value.
+ */
+const isReturnableCaller = function (cached: BlockCached) {
+    if (cached.opcode !== 'procedures_call' && cached.opcode !== 'argument_reporter_statement') {
+        return false;
+    }
+    return !!cached.mutation?.return;
 };
 
 type VariableFieldKeys = 'VARIABLE' | 'LIST' | 'BROADCAST_OPTION';
@@ -559,9 +571,10 @@ const execute = function (sequencer: Sequencer, thread: Thread) {
             // cc - if current call is the last operation, which means that it is called by clicking directly,
             // then call handleReport.
             if (currentStackFrame.waitingReporter && i === length - 1) {
-                // cc - if returned value is null, then set the argument to undefined to avoid visual report.
-
-                handleReport(inputValue ?? undefined, sequencer, thread, opCached, true);
+                if (isReturnableCaller(opCached)) {
+                    // cc - if returned value is null, then set the argument to undefined to avoid visual report.
+                    handleReport(inputValue ?? undefined, sequencer, thread, opCached, true);
+                }
             } else if (inputName === 'BROADCAST_INPUT') {
                 // Something is plugged into the broadcast input.
                 // Cast it to a string. We don't need an id here.
@@ -602,6 +615,7 @@ const execute = function (sequencer: Sequencer, thread: Thread) {
 
         // Inputs are set during previous steps in the loop.
 
+        blockUtility.currentBlockId = opCached.id;
         const primitiveReportedValue = blockFunction?.(argValues, blockUtility);
 
         // cc - preserve returned value

@@ -33,6 +33,12 @@ type ExecutionContext = BaseExecutionContext & Partial<StackTimerContext>;
 
 class BlockUtility {
     /**
+     * ID of the logical block currently being executed. This may differ from
+     * the thread's top stack block when the block is a nested reporter input.
+     */
+    currentBlockId: string | null = null;
+
+    /**
      * A sequencer block primitives use to branch or start procedures with
      */
     sequencer: Sequencer | null;
@@ -158,6 +164,32 @@ class BlockUtility {
      */
     startBranch (branchNum: number, isLoop: boolean) {
         this.sequencer!.stepToBranch(this.thread!, branchNum, isLoop);
+    }
+
+    /**
+     * Get a callback branch and the target containing it.
+     * @param id ID of the procedure call block.
+     * @param branchId Name of the statement input.
+     * @param target Target containing the procedure call, when known.
+     * @returns The branch block ID and its target, or null.
+     */
+    getBranchAndTarget (
+        id: string | null,
+        branchId: string,
+        target?: RenderedTarget | null
+    ): [string, RenderedTarget] | null {
+        if (target) {
+            const result = target.blocks.getBranch(id, branchId);
+            return result ? [result, target] : null;
+        }
+
+        const currentFrame = this.thread!.peekStackFrame();
+        const result = this.thread!.blockContainer?.getBranch(id, branchId);
+        const currentTarget = currentFrame?.target ?? this.thread!.target;
+        if (result && currentTarget) {
+            return [result, currentTarget];
+        }
+        return this.sequencer!.runtime.getBranchAndTarget(id, branchId);
     }
 
     /**

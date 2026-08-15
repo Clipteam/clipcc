@@ -203,6 +203,27 @@ test('getBranch', t => {
     t.end();
 });
 
+test('getBranch accepts named callback inputs', t => {
+    const b = new Blocks(new Runtime());
+    b.createBlock({
+        id: 'caller',
+        opcode: 'procedures_call',
+        next: null,
+        fields: {},
+        inputs: {
+            SUBSTACKcallback: {
+                name: 'SUBSTACKcallback',
+                block: 'callback-start',
+                shadow: null
+            }
+        },
+        topLevel: true
+    });
+
+    t.equal(b.getBranch('caller', 'SUBSTACKcallback'), 'callback-start');
+    t.end();
+});
+
 test('getBranch2', t => {
     const b = new Blocks(new Runtime());
     // Second branch

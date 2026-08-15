@@ -9,9 +9,45 @@ import * as Constants from './constants';
 import {isActiveTemplateBlock} from './interfaces/i_block_template';
 
 /**
+ * Check whether a connection is the continuation connection of a template
+ * statement reporter. Template reporters are owned by their prototype and
+ * must not become part of a user statement stack.
+ * @param connection The connection to inspect.
+ * @returns Whether the connection is a template reporter's next connection.
+ */
+function isTemplateNextConnection(connection: Blockly.Connection | null): boolean {
+  const sourceBlock = connection?.getSourceBlock();
+  return Boolean(
+    sourceBlock &&
+    connection === sourceBlock.nextConnection &&
+    isActiveTemplateBlock(sourceBlock)
+  );
+}
+
+/**
  * Class for connection type checking logic with custom rules.
  */
 export class ConnectionChecker extends Blockly.ConnectionChecker {
+  /**
+   * Reject connections to the continuation of a prototype template reporter.
+   * @param a The first connection to check.
+   * @param b The second connection to check.
+   * @param isDragging Whether the connection is being made by dragging.
+   * @param optDistance The maximum distance for drag checks.
+   * @returns The connection result code.
+   */
+  override canConnectWithReason(
+    a: Blockly.Connection | null,
+    b: Blockly.Connection | null,
+    isDragging: boolean,
+    optDistance?: number
+  ): number {
+    if (isTemplateNextConnection(a) || isTemplateNextConnection(b)) {
+      return Blockly.Connection.REASON_CHECKS_FAILED;
+    }
+    return super.canConnectWithReason(a, b, isDragging, optDistance);
+  }
+
   /**
    * Check whether this connection can be made by dragging.
    * @param a Connection to compare (on the block that's being dragged).

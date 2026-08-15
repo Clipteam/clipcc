@@ -165,18 +165,20 @@ class Blocks {
     /**
      * Get the branch for a particular C-shaped block.
      * @param id ID for block to get the branch for.
-     * @param branchNum Which branch to select (e.g. for if-else).
+     * @param branchId Which branch to select (e.g. for if-else), or the
+     *     statement input name for a callback branch.
      * @returns ID of block in the branch.
      */
-    getBranch (id: string | null, branchNum: number | null) {
+    getBranch (id: string | null, branchId: number | string | null = 1) {
         if (!id) return null;
         const block = this._blocks[id];
         if (typeof block === 'undefined') return null;
-        if (!branchNum) branchNum = 1;
 
-        let inputName = Blocks.BRANCH_INPUT_PREFIX;
-        if (branchNum > 1) {
-            inputName += branchNum;
+        let inputName: string = Blocks.BRANCH_INPUT_PREFIX;
+        if (typeof branchId === 'string') {
+            inputName = branchId;
+        } else if (branchId !== null && branchId > 1) {
+            inputName += branchId;
         }
 
         // Empty C-block?

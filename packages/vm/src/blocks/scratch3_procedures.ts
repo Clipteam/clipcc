@@ -1,6 +1,13 @@
 import type {BlockArgs, CategoryPrototype} from './category_prototype';
 import type Runtime from '../engine/runtime';
 import type BlockUtility from '../engine/block-utility';
+import type RenderedTarget from '../sprites/rendered-target';
+
+interface StatementArgumentValue {
+    entry?: string | null;
+    callerId?: string | null;
+    callerTarget?: RenderedTarget | null;
+}
 
 class Scratch3ProcedureBlocks implements CategoryPrototype {
     constructor (
@@ -22,7 +29,8 @@ class Scratch3ProcedureBlocks implements CategoryPrototype {
             procedures_return: this.return,
             procedures_discard: this.noOp,
             argument_reporter_string_number: this.argumentReporterStringNumber,
-            argument_reporter_boolean: this.argumentReporterBoolean
+            argument_reporter_boolean: this.argumentReporterBoolean,
+            argument_reporter_statement: this.argumentReporterStatement
         };
     }
 
@@ -42,6 +50,8 @@ class Scratch3ProcedureBlocks implements CategoryPrototype {
         }
 
         const [paramNames, paramIds, paramDefaults] = paramNamesIdsAndDefaults;
+        const callerFrame = util.thread!.peekStackFrame?.();
+        const callerTarget = callerFrame?.target ?? util.thread!.target;
 
         // Initialize params for the current stackFrame to {}, even if the procedure does
         // not take any arguments. This is so that `getParam` down the line does not look
@@ -50,6 +60,16 @@ class Scratch3ProcedureBlocks implements CategoryPrototype {
         for (let i = 0; i < paramIds.length; i++) {
             if (Object.prototype.hasOwnProperty.call(args, paramIds[i])) {
                 util.pushParam(paramNames[i], args[paramIds[i]]);
+            } else if (paramIds[i].startsWith('SUBSTACK')) {
+                // Pass the caller's statement input to the callback reporter.
+                const callback: StatementArgumentValue = {
+                    entry: paramIds[i],
+                    callerId: util.currentBlockId
+                };
+                if (callerTarget) {
+                    callback.callerTarget = callerTarget;
+                }
+                util.pushParam(paramNames[i], callback);
             } else {
                 util.pushParam(paramNames[i], paramDefaults[i]);
             }
@@ -82,6 +102,25 @@ class Scratch3ProcedureBlocks implements CategoryPrototype {
             return 0;
         }
         return value;
+    }
+
+    argumentReporterStatement (args: BlockArgs, util: BlockUtility) {
+        const branchInfo = util.getParam(args.VALUE) as StatementArgumentValue | null;
+        if (!branchInfo?.entry || !branchInfo.callerId) {
+            util.thread!.pushStack(null);
+            return;
+        }
+
+        const branch = util.getBranchAndTarget(
+            branchInfo.callerId,
+            branchInfo.entry,
+            branchInfo.callerTarget
+        );
+        if (branch) {
+            util.thread!.pushStack(branch[0], branch[1]);
+        } else {
+            util.thread!.pushStack(null);
+        }
     }
 }
 

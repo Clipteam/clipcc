@@ -5,6 +5,7 @@ import Box from '../box/box.jsx';
 import {defineMessages, injectIntl, intlShape, FormattedMessage} from 'react-intl';
 
 import booleanInputIcon from './icon--boolean-input.svg';
+import branchIcon from './icon--branch.svg';
 import textInputIcon from './icon--text-input.svg';
 import labelIcon from './icon--label.svg';
 
@@ -78,6 +79,31 @@ const CustomProcedures = props => (
                             defaultMessage="boolean"
                             description="Description of the boolean input type"
                             id="gui.customProcedures.booleanType"
+                        />
+                    </div>
+                </div>
+                <div
+                    className={styles.optionCard}
+                    role="button"
+                    tabIndex="0"
+                    onClick={props.onAddStatement}
+                >
+                    <img
+                        className={styles.optionIcon}
+                        src={branchIcon}
+                    />
+                    <div className={styles.optionTitle}>
+                        <FormattedMessage
+                            defaultMessage="Add a branch"
+                            description="Label for button to add a branch input"
+                            id="gui.customProcedures.addAnInputBranch"
+                        />
+                    </div>
+                    <div className={styles.optionDescription}>
+                        <FormattedMessage
+                            defaultMessage="branch"
+                            description="Description of the branch input type"
+                            id="gui.customProcedures.branchType"
                         />
                     </div>
                 </div>
@@ -173,6 +199,7 @@ CustomProcedures.propTypes = {
     componentRef: PropTypes.func.isRequired,
     intl: intlShape,
     onAddBoolean: PropTypes.func.isRequired,
+    onAddStatement: PropTypes.func.isRequired,
     onAddLabel: PropTypes.func.isRequired,
     onAddTextNumber: PropTypes.func.isRequired,
     onCancel: PropTypes.func.isRequired,

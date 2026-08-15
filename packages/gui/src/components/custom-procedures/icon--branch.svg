@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 57 49">
+  <defs>
+    <style>
+      .cls-3{fill:#ff6680;stroke:#f35;stroke-miterlimit:10;}
+      .cls-4{font-size:12px;fill:#fff;font-family:HelveticaNeue-Bold,Helvetica Neue,sans-serif;font-weight:700;text-anchor:middle;dominant-baseline:central;}
+    </style>
+  </defs>
+  <rect class="cls-3" x="0.5" y="0.5" width="56" height="48" rx="4" ry="4"/>
+  <text class="cls-4" x="28.5" y="24.5">branch</text>
+</svg>
