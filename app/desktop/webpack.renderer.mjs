@@ -12,6 +12,11 @@ const require = createRequire(import.meta.url);
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const {version} = require('../../package.json');
 
+const DEFAULT_TRANSLATE_SERVICE_URL = process.env.TRANSLATE_SERVICE_URL ||
+    'https://trampoline.simonshiki.top/translate/translate';
+const DEFAULT_TTS_SERVICE_URL = process.env.TTS_SERVICE_URL ||
+    'https://trampoline.simonshiki.top/tts/synth';
+
 /**
  * @typedef {import('webpack-dev-server').Configuration} ConfigurationWithDevServer
  */
@@ -174,8 +179,10 @@ const rendererConfig = {
         new webpack.DefinePlugin({
             'process.env.DEBUG': Boolean(process.env.DEBUG),
             'process.env.GA_ID': `"${process.env.GA_ID || 'UA-000000-01'}"`,
-            'clipcc.VERSION': version,
-            'clipcc.BUILD_TIME': Date.now()
+            'clipcc.VERSION': JSON.stringify(version),
+            'clipcc.BUILD_TIME': Date.now(),
+            'clipcc.DEFAULT_TRANSLATE_SERVICE_URL': JSON.stringify(DEFAULT_TRANSLATE_SERVICE_URL),
+            'clipcc.DEFAULT_TTS_SERVICE_URL': JSON.stringify(DEFAULT_TTS_SERVICE_URL)
         }),
         new NodePolyfillPlugin({
             includeAliases: ['buffer', 'Buffer', 'events']

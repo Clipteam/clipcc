@@ -38,8 +38,8 @@ const defaultState: SettingsState = {
     theme: 'system',
     stageWidth: 480,
     stageHeight: 360,
-    translateServiceUrl: 'https://trampoline.simonshiki.top/translate/translate',
-    ttsServiceUrl: 'https://trampoline.simonshiki.top/tts/synth',
+    translateServiceUrl: clipcc.DEFAULT_TRANSLATE_SERVICE_URL,
+    ttsServiceUrl: clipcc.DEFAULT_TTS_SERVICE_URL,
     useScratchOfficialApi: false
 };
 
