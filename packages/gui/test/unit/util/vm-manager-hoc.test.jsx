@@ -24,11 +24,7 @@ describe('VMManagerHOC', () => {
                 projectState: {},
                 mode: {},
                 vmStatus: {},
-                settings: {
-                    translateServiceUrl: 'https://trampoline.simonshiki.top/translate/translate',
-                    ttsServiceUrl: 'https://trampoline.simonshiki.top/tts/synth',
-                    useScratchOfficialApi: false
-                }
+                settings: {}
             },
             locales: {
                 locale: '',
