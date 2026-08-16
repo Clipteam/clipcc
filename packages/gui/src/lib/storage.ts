@@ -82,7 +82,7 @@ class Storage extends ScratchStorage {
     }
 
     getProjectGetConfig (projectAsset: Asset): ConfigResponse {
-        const path = `${this.projectHost}/${projectAsset.assetId}`;
+        const path = `${this.projectHost}project/json/${projectAsset.assetId}`;
         const qs = this.projectToken ? `?token=${this.projectToken}` : '';
         return path + qs;
     }

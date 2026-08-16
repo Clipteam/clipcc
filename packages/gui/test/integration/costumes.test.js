@@ -16,11 +16,7 @@ const {
 // The costumes library is slow to load. Increase the timeout for these tests.
 jest.setTimeout(60_000);
 
-// The built GUI uses the codingclip asset CDN by default; build with a matching
-// USE_SCRATCH_ASSET_API env var to run these tests against the Scratch CDN.
-const abbyCostumeURL = process.env.USE_SCRATCH_ASSET_API ?
-    'https://cdn.assets.scratch.mit.edu/internalapi/asset/45de34b47a2ce22f6f5d28bb35a44ff5.svg/get/' :
-    'https://static.codingclip.com/v1/project/asset/45de34b47a2ce22f6f5d28bb35a44ff5.svg';
+const abbyCostumeURL = 'https://static.codingclip.com/v1/project/asset/45de34b47a2ce22f6f5d28bb35a44ff5.svg';
 
 const uri = path.resolve(__dirname, '../../build/index.html');
 

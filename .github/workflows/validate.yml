@@ -100,8 +100,6 @@ jobs:
           run-attempt: ${{ github.run_attempt }}
 
       - name: Test
-        env:
-          USE_SCRATCH_ASSET_API: 1
         run: pnpm vm test
 
   test-block:

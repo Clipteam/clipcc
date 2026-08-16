@@ -144,7 +144,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
     ProjectFetcherComponent.defaultProps = {
         assetHost: 'https://api.codingclip.com/v1/',
         cdnHost: 'https://static.codingclip.com/v1/',
-        projectHost: 'https://projects.scratch.mit.edu'
+        projectHost: 'https://api.codingclip.com/v1'
     };
 
     const mapStateToProps = state => ({
