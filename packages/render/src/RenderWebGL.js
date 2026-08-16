@@ -180,6 +180,9 @@ class RenderWebGL extends EventEmitter {
         /** @type {Array<string>} */
         this._groupOrdering = [];
 
+        /** @type {boolean} */
+        this._useHighQualityPen = false;
+
         // Map of group name to layer group
         /** @type {Record<string, LayerGroup>} */
         this._layerGroups = {};
@@ -195,9 +198,6 @@ class RenderWebGL extends EventEmitter {
 
         /** @type {ShaderManager} */
         this._shaderManager = new ShaderManager(gl);
-
-        /** @type {HTMLCanvasElement} */
-        this._tempCanvas = document.createElement('canvas');
 
         /** @type {any} */
         this._regionId = null;
@@ -267,6 +267,22 @@ class RenderWebGL extends EventEmitter {
     }
 
     /**
+     * Set whether to use high-quality pen.
+     * @param {boolean} value Whether to use high-quality pen.
+     */
+    setHighQualityPen (value) {
+        this._useHighQualityPen = value;
+        this.emit(RenderConstants.Events.UseHighQualityPenChanged, value);
+    }
+
+    /**
+     * @returns {boolean} Whether high-quality pen is enabled.
+     */
+    get useHighQualityPen () {
+        return this._useHighQualityPen;
+    }
+
+    /**
      * Set the physical size of the stage in device-independent pixels.
      * This will be multiplied by the device's pixel ratio on high-DPI displays.
      * @param {int} pixelsWide The desired width in device-independent pixels.
@@ -283,6 +299,9 @@ class RenderWebGL extends EventEmitter {
         if (canvas.width !== newWidth || canvas.height !== newHeight) {
             canvas.width = newWidth;
             canvas.height = newHeight;
+            this.emit(RenderConstants.Events.CanvasSizeChanged, {
+                newSize: [newWidth, newHeight]
+            });
             // Resizing the canvas causes it to be cleared, so redraw it.
             this.draw();
         }
@@ -1742,17 +1761,33 @@ class RenderWebGL extends EventEmitter {
         const gl = this._gl;
         twgl.bindFramebufferInfo(gl, skin._framebuffer);
 
+        // Adjust the viewport to the scaled dimensions of the framebuffer.
+        let scaleX = 1;
+        let scaleY = 1;
+        if (this._useHighQualityPen) {
+            scaleX = gl.canvas.width / this._nativeSize[0];
+            scaleY = gl.canvas.height / this._nativeSize[1];
+        }
+
         // Limit size of viewport to the bounds around the stamp Drawable and create the projection matrix for the draw.
         gl.viewport(
-            (this._nativeSize[0] * 0.5) + bounds.left,
-            (this._nativeSize[1] * 0.5) - bounds.top,
-            bounds.width,
-            bounds.height
+            ((this._nativeSize[0] * 0.5) + bounds.left) * scaleX,
+            ((this._nativeSize[1] * 0.5) - bounds.top) * scaleY,
+            bounds.width * scaleX,
+            bounds.height * scaleY
         );
         const projection = twgl.m4.ortho(bounds.left, bounds.right, bounds.top, bounds.bottom, -1, 1);
 
         // Draw the stamped sprite onto the PenSkin's framebuffer.
-        this._drawThese([stampID], ShaderManager.DRAW_MODE.default, projection, {ignoreVisibility: true});
+        const drawOpts = {
+            ignoreVisibility: true
+        };
+        if (this._useHighQualityPen) {
+            drawOpts.framebufferWidth = gl.canvas.width;
+            drawOpts.framebufferHeight = gl.canvas.height;
+        }
+
+        this._drawThese([stampID], ShaderManager.DRAW_MODE.default, projection, drawOpts);
         skin._silhouetteDirty = true;
     }
 

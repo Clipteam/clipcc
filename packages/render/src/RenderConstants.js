@@ -23,8 +23,19 @@ module.exports = {
      */
     Events: {
         /**
-         * NativeSizeChanged event
+         * NativeSizeChanged event, which related to stage size change.
+         * @constant {string}
          */
-        NativeSizeChanged: 'NativeSizeChanged'
+        NativeSizeChanged: 'NativeSizeChanged',
+        /**
+         * CanvasSizeChanged event, which related to actual canvas size change.
+         * @constant {string}
+         */
+        CanvasSizeChanged: 'CanvasSizeChanged',
+        /**
+         * UseHighQualityPenChanged event, which related to high quality pen use change.
+         * @constant {string}
+         */
+        UseHighQualityPenChanged: 'UseHighQualityPenChanged'
     }
 };

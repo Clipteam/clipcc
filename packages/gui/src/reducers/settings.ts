@@ -8,6 +8,7 @@ export type SettingsState = {
     autoSave: boolean;
     infiniteCloning: boolean;
     edgelessStage: boolean;
+    highQualityPen: boolean,
     unlimitedListLength: boolean;
     unlimitedPenSize: boolean;
     unlimitedSoundStuffs: boolean;
@@ -25,6 +26,7 @@ const defaultState: SettingsState = {
     autoSave: false,
     infiniteCloning: false,
     edgelessStage: false,
+    highQualityPen: false,
     unlimitedListLength: false,
     unlimitedPenSize: false,
     unlimitedSoundStuffs: false,
@@ -55,6 +57,7 @@ const parseSavedSettings = (): Partial<SettingsState> => {
         autoSave: typeof parsed.autoSave === 'boolean' ? parsed.autoSave : undefined,
         infiniteCloning: typeof parsed.infiniteCloning === 'boolean' ? parsed.infiniteCloning : undefined,
         edgelessStage: typeof parsed.edgelessStage === 'boolean' ? parsed.edgelessStage : undefined,
+        highQualityPen: typeof parsed.highQualityPen === 'boolean' ? parsed.highQualityPen : undefined,
         unlimitedListLength: typeof parsed.unlimitedListLength === 'boolean' ? parsed.unlimitedListLength : undefined,
         unlimitedPenSize: typeof parsed.unlimitedPenSize === 'boolean' ? parsed.unlimitedPenSize : undefined,
         unlimitedSoundStuffs:

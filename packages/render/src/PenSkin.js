@@ -61,9 +61,6 @@ class PenSkin extends Skin {
         /** @type {boolean} */
         this._silhouetteDirty = false;
 
-        /** @type {Uint8Array} */
-        this._silhouettePixels = null;
-
         /** @type {ImageData} */
         this._silhouetteImageData = null;
 
@@ -101,6 +98,18 @@ class PenSkin extends Skin {
         this.onNativeSizeChanged = this.onNativeSizeChanged.bind(this);
         this._renderer.on(RenderConstants.Events.NativeSizeChanged, this.onNativeSizeChanged);
 
+        this.onCanvasSizeChanged = this.onCanvasSizeChanged.bind(this);
+        this._renderer.on(RenderConstants.Events.CanvasSizeChanged, this.onCanvasSizeChanged);
+
+        this.onUseHighQualityPenChanged = this.onUseHighQualityPenChanged.bind(this);
+        this._renderer.on(RenderConstants.Events.UseHighQualityPenChanged, this.onUseHighQualityPenChanged);
+
+        if (this._renderer.useHighQualityPen) {
+            this._canvasSize = [this._renderer.gl.canvas.width, this._renderer.gl.canvas.height];
+        } else {
+            this._canvasSize = [...renderer.getNativeSize()];
+        }
+
         this._setCanvasSize(renderer.getNativeSize());
     }
 
@@ -109,6 +118,8 @@ class PenSkin extends Skin {
      */
     dispose () {
         this._renderer.removeListener(RenderConstants.Events.NativeSizeChanged, this.onNativeSizeChanged);
+        this._renderer.removeListener(RenderConstants.Events.CanvasSizeChanged, this.onCanvasSizeChanged);
+        this._renderer.removeListener(RenderConstants.Events.UseHighQualityPenChanged, this.onUseHighQualityPenChanged);
         this._renderer.gl.deleteTexture(this._texture);
         this._texture = null;
         super.dispose();
@@ -191,7 +202,7 @@ class PenSkin extends Skin {
 
         twgl.bindFramebufferInfo(gl, this._framebuffer);
 
-        gl.viewport(0, 0, this._size[0], this._size[1]);
+        gl.viewport(0, 0, this._canvasSize[0], this._canvasSize[1]);
 
         const currentShader = this._lineShader;
         gl.useProgram(currentShader.program);
@@ -199,7 +210,7 @@ class PenSkin extends Skin {
 
         const uniforms = {
             u_skin: this._texture,
-            u_stageSize: this._size
+            u_stageSize: this._canvasSize
         };
 
         twgl.setUniforms(currentShader, uniforms);
@@ -257,15 +268,31 @@ class PenSkin extends Skin {
         // can overflow that, because you're squaring the operands, and they could end up as "infinity".
         // Even GLSL's `length` function won't save us here:
         // https://asawicki.info/news_1596_watch_out_for_reduced_precision_normalizelength_in_opengl_es
-        const lineDiffX = x1 - x0;
-        const lineDiffY = y1 - y0;
+
+        const scaleX = this._canvasSize[0] / this._size[0];
+        const scaleY = this._canvasSize[1] / this._size[1];
+
+        const diameter = penAttributes.diameter || DefaultPenAttributes.diameter;
+        const thickness = diameter * Math.min(scaleX, scaleY);
+
+        // Adjust for odd-width lines to align with physical pixel centers
+        const offset = (Math.round(thickness) % 2 === 0) ? 0 : 0.5;
+
+        // Scale the points and thickness to the physical canvas size
+        const scaledX0 = (x0 * scaleX) + offset;
+        const scaledY0 = (y0 * scaleY) + offset;
+        const scaledX1 = (x1 * scaleX) + offset;
+        const scaledY1 = (y1 * scaleY) + offset;
+
+        const lineDiffX = scaledX1 - scaledX0;
+        const lineDiffY = scaledY1 - scaledY0;
         const lineLength = Math.sqrt((lineDiffX * lineDiffX) + (lineDiffY * lineDiffY));
 
         const uniforms = {
             u_lineColor: __premultipliedColor,
-            u_lineThickness: penAttributes.diameter || DefaultPenAttributes.diameter,
+            u_lineThickness: thickness,
             u_lineLength: lineLength,
-            u_penPoints: [x0, -y0, lineDiffX, -lineDiffY]
+            u_penPoints: [scaledX0, -scaledY0, lineDiffX, -lineDiffY]
         };
 
         twgl.setUniforms(currentShader, uniforms);
@@ -284,6 +311,38 @@ class PenSkin extends Skin {
     }
 
     /**
+     * React to a change in the renderer's canvas size.
+     * @param {object} event - The change event.
+     */
+    onCanvasSizeChanged (event) {
+        if (!this._renderer.useHighQualityPen) return;
+
+        if (this._canvasSize[0] === event.newSize[0] && this._canvasSize[1] === event.newSize[1]) {
+            return;
+        }
+        this._canvasSize = event.newSize;
+        this._resetBufferSize();
+    }
+
+    /**
+     * React to a change in the high quality pen mode.
+     * @param {boolean} enabled - Whether high quality pen is enabled.
+     */
+    onUseHighQualityPenChanged (enabled) {
+        let newSize;
+        if (enabled) {
+            newSize = [this._renderer.gl.canvas.width, this._renderer.gl.canvas.height];
+        } else {
+            newSize = [...this._size];
+        }
+
+        if (this._canvasSize[0] !== newSize[0] || this._canvasSize[1] !== newSize[1]) {
+            this._canvasSize = newSize;
+            this._resetBufferSize();
+        }
+    }
+
+    /**
      * Set the size of the pen canvas.
      * @param {Array<int>} canvasSize - the new width and height for the canvas.
      * @private
@@ -295,7 +354,23 @@ class PenSkin extends Skin {
         this._rotationCenter[0] = width / 2;
         this._rotationCenter[1] = height / 2;
 
+        if (!this._renderer.useHighQualityPen) {
+            this._canvasSize = [...canvasSize];
+        }
+
+        this._resetBufferSize();
+    }
+
+    /**
+     * Reset the buffer size.
+     * @private
+     */
+    _resetBufferSize () {
+        const [width, height] = this._canvasSize;
+
         const gl = this._renderer.gl;
+
+        const oldTexture = this._texture;
 
         this._texture = twgl.createTexture(
             gl,
@@ -314,17 +389,34 @@ class PenSkin extends Skin {
                 attachment: this._texture
             }
         ];
-        if (this._framebuffer) {
-            twgl.resizeFramebufferInfo(gl, this._framebuffer, attachments, width, height);
-        } else {
-            this._framebuffer = twgl.createFramebufferInfo(gl, attachments, width, height);
-        }
+        this._framebuffer = twgl.createFramebufferInfo(gl, attachments, width, height);
 
         gl.clearColor(0, 0, 0, 0);
         gl.clear(gl.COLOR_BUFFER_BIT);
 
-        this._silhouettePixels = new Uint8Array(Math.floor(width * height * 4));
-        this._silhouetteImageData = new ImageData(width, height);
+        if (oldTexture) {
+            // Draw old canvas to new framebuffer
+            this._renderer.enterDrawRegion(this._usePenBufferDrawRegionId);
+            gl.viewport(0, 0, width, height);
+
+            const currentShader = this._renderer._shaderManager.getShader(ShaderManager.DRAW_MODE.default);
+            gl.useProgram(currentShader.program);
+            twgl.setBuffersAndAttributes(gl, currentShader, this._renderer._bufferInfo);
+
+            const uniforms = {
+                u_skin: oldTexture,
+                u_projectionMatrix: twgl.m4.ortho(width / 2, width / -2, height / -2, height / 2, -1, 1),
+                u_modelMatrix: twgl.m4.scaling(twgl.v3.create(width, height, 0), twgl.m4.identity())
+            };
+
+            twgl.setTextureParameters(gl, oldTexture, {
+                minMag: gl.NEAREST
+            });
+            twgl.setUniforms(currentShader, uniforms);
+            twgl.drawBufferInfo(gl, this._renderer._bufferInfo, gl.TRIANGLES);
+
+            gl.deleteTexture(oldTexture);
+        }
 
         this._silhouetteDirty = true;
     }
@@ -335,16 +427,23 @@ class PenSkin extends Skin {
      */
     updateSilhouette () {
         if (this._silhouetteDirty) {
+            const [width, height] = this._canvasSize;
+
+            if (!this._silhouetteImageData ||
+                this._silhouetteImageData.width !== width ||
+                this._silhouetteImageData.height !== height) {
+                this._silhouetteImageData = new ImageData(width, height);
+            }
+
             this._renderer.enterDrawRegion(this._usePenBufferDrawRegionId);
             // Sample the framebuffer's pixels into the silhouette instance
             const gl = this._renderer.gl;
             gl.readPixels(
                 0, 0,
-                this._size[0], this._size[1],
-                gl.RGBA, gl.UNSIGNED_BYTE, this._silhouettePixels
+                width, height,
+                gl.RGBA, gl.UNSIGNED_BYTE, this._silhouetteImageData.data
             );
 
-            this._silhouetteImageData.data.set(this._silhouettePixels);
             this._silhouette.update(this._silhouetteImageData, true /* isPremultiplied */);
 
             this._silhouetteDirty = false;
