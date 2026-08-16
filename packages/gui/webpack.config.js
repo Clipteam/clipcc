@@ -16,6 +16,11 @@ const BUILD_DIST = IS_PRODUCTION || process.env.BUILD_MODE === 'dist';
 const IS_CI = process.env.CI;
 const LIBRARY_ONLY = process.env.LIBRARY_ONLY;
 
+const DEFAULT_TRANSLATE_SERVICE_URL = process.env.TRANSLATE_SERVICE_URL ||
+    'https://translate-service.scratch.mit.edu/translate';
+const DEFAULT_TTS_SERVICE_URL = process.env.TTS_SERVICE_URL ||
+    'https://synthesis-service.scratch.mit.edu/synth';
+
 const base = {
     mode: IS_PRODUCTION ? 'production' : 'development',
     devtool: 'cheap-module-source-map',
@@ -110,6 +115,12 @@ const base = {
             ]
         }),
         new NodePolyfillPlugin(),
+        new webpack.DefinePlugin({
+            'clipcc.DEFAULT_TRANSLATE_SERVICE_URL': JSON.stringify(DEFAULT_TRANSLATE_SERVICE_URL),
+            'clipcc.DEFAULT_TTS_SERVICE_URL': JSON.stringify(DEFAULT_TTS_SERVICE_URL),
+            'clipcc.VERSION': JSON.stringify(version),
+            'clipcc.BUILD_TIME': Date.now()
+        }),
         new CopyWebpackPlugin({
             patterns: [
                 {
@@ -181,9 +192,7 @@ module.exports = (BUILD_DIST ? [] : [
         plugins: base.plugins.concat([
             new webpack.DefinePlugin({
                 'process.env.DEBUG': Boolean(process.env.DEBUG),
-                'process.env.GA_ID': `"${process.env.GA_ID || 'UA-000000-01'}"`,
-                'clipcc.VERSION': version,
-                'clipcc.BUILD_TIME': Date.now()
+                'process.env.GA_ID': `"${process.env.GA_ID || 'UA-000000-01'}"`
             }),
             new HtmlWebpackPlugin({
                 chunks: ['lib.min', 'gui'],
