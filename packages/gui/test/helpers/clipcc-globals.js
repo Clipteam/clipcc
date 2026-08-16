@@ -1,4 +1,5 @@
 global.clipcc = {
-    DEFAULT_TRANSLATE_SERVICE_URL: 'https://trampoline.simonshiki.top/translate/translate',
-    DEFAULT_TTS_SERVICE_URL: 'https://trampoline.simonshiki.top/tts/synth'
+    DEFAULT_TRANSLATE_SERVICE_URL:
+        process.env.TRANSLATE_SERVICE_URL ?? 'https://translate-service.scratch.mit.edu/translate',
+    DEFAULT_TTS_SERVICE_URL: process.env.TTS_SERVICE_URL ?? 'https://synthesis-service.scratch.mit.edu/synth'
 };
