@@ -388,6 +388,8 @@ class ExtensionManager {
 
         switch (blockInfo.blockType) {
         case BlockType.EVENT:
+            blockInfo.opcode = blockInfo.opcode && this._sanitizeID(blockInfo.opcode);
+            blockInfo.text = blockInfo.text || blockInfo.opcode;
             if (blockInfo.func) {
                 log.warn(`Ignoring function "${blockInfo.func}" for event block ${blockInfo.opcode}`);
             }

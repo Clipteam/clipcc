@@ -1074,7 +1074,7 @@ class Blocks {
     changeCommentText (commentId: string, newText: string | undefined) {
         // if newText is undefined, it's indicates that the comment is being deleted
         // it will be handled by `block_comment_delete` event, so we can ignore it here.
-        if (!newText) return;
+        if (typeof newText !== 'string') return;
         const currTarget = this.runtime.getEditingTarget();
         if (!currTarget) return;
         if (!Object.prototype.hasOwnProperty.call(currTarget.comments, commentId)) {

@@ -1,6 +1,6 @@
-import formatMessage, {Message} from 'format-message';
+import formatMessage, {type MessageObject} from 'format-message';
 
-const isMessage = (maybeMessage: unknown): maybeMessage is Message => typeof maybeMessage === 'string' ||
+const isMessageObject = (maybeMessage: unknown): maybeMessage is MessageObject =>
     (
         typeof maybeMessage === 'object' && maybeMessage !== null && 'id' in maybeMessage && 'default' in maybeMessage
     );
@@ -17,11 +17,11 @@ const maybeFormatMessage = function<T> (
     maybeMessage: T,
     args?: Record<string, unknown>,
     locale?: string
-): T extends Message ? string : T {
-    if (isMessage(maybeMessage)) {
-        return formatMessage(maybeMessage, args, locale) as T extends Message ? string : T;
+): T extends MessageObject ? string : T {
+    if (isMessageObject(maybeMessage)) {
+        return formatMessage(maybeMessage, args, locale) as T extends MessageObject ? string : T;
     }
-    return maybeMessage as T extends Message ? string : T;
+    return maybeMessage as T extends MessageObject ? string : T;
 };
 
 export default maybeFormatMessage;
