@@ -8,7 +8,7 @@ const async = require('async');
 const libraries = require('./lib/libraries');
 
 const NO_CACHE = process.argv.includes('--no-cache');
-const ASSET_HOST = 'cdn.assets.scratch.mit.edu';
+const ASSET_HOST = 'static.codingclip.com';
 const NUM_SIMULTANEOUS_DOWNLOADS = 5;
 const OUT_PATH = path.resolve('static', 'assets');
 
@@ -66,10 +66,17 @@ const fetchAsset = function (md5, callback) {
         return;
     }
 
+    // The codingclip CDN serves assets by md5ext; skip values without an extension.
+    if (!md5.includes('.')) {
+        console.warn(`Skipped (no file extension): ${md5}`);
+        callback();
+        return;
+    }
+
     const myAgent = connectionPool.pop() || new https.Agent({keepAlive: true});
     const getOptions = {
         host: ASSET_HOST,
-        path: `/internalapi/asset/${md5}/get/`,
+        path: `/v1/project/asset/${md5}`,
         agent: myAgent
     };
     const urlHuman = `//${getOptions.host}${getOptions.path}`;

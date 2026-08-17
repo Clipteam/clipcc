@@ -1,6 +1,6 @@
 import {ScratchStorage} from 'clipcc-storage';
 
-const ASSET_SERVER = 'https://cdn.assets.scratch.mit.edu/';
+const ASSET_SERVER = 'https://static.codingclip.com/v1/';
 const PROJECT_SERVER = 'https://cdn.projects.scratch.mit.edu/';
 
 /**
@@ -21,15 +21,7 @@ const getProjectUrl = function (asset) {
  * @returns {string} a URL to download a project asset (PNG, WAV, etc.)
  */
 const getAssetUrl = function (asset) {
-    const assetUrlParts = [
-        ASSET_SERVER,
-        'internalapi/asset/',
-        asset.assetId,
-        '.',
-        asset.dataFormat,
-        '/get/'
-    ];
-    return assetUrlParts.join('');
+    return `${ASSET_SERVER}project/asset/${asset.assetId}.${asset.dataFormat}`;
 };
 
 /**

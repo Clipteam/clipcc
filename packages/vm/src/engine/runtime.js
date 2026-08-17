@@ -543,6 +543,20 @@ class Runtime extends EventEmitter {
         };
 
         /**
+         * The url of the translate service used by the translate extension.
+         * @type {string}
+         */
+        // eslint-disable-next-line no-undef
+        this.translateServiceUrl = clipcc.DEFAULT_TRANSLATE_SERVICE_URL;
+
+        /**
+         * The url of the text-to-speech service used by the text2speech extension.
+         * @type {string}
+         */
+        // eslint-disable-next-line no-undef
+        this.ttsServiceUrl = clipcc.DEFAULT_TTS_SERVICE_URL;
+
+        /**
          * A reference to the current runtime stepping interval, set
          * by a `setInterval`.
          * @type {!number}
