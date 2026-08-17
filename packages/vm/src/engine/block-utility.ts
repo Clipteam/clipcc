@@ -3,6 +3,7 @@ import Timer, {type NowObj} from '../util/timer';
 import type Sequencer from './sequencer';
 import type Runtime from './runtime';
 import type RenderedTarget from '../sprites/rendered-target';
+import type {MemberFunc} from '../util/type-traits';
 
 export interface BaseExecutionContext {
     [key: string]: unknown;
@@ -18,10 +19,6 @@ interface StackTimerContext {
 }
 
 type AvailableIODevices = keyof Runtime['ioDevices'];
-type DeviceFunc<T extends AvailableIODevices> = {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    [K in keyof Runtime['ioDevices'][T]]: Runtime['ioDevices'][T][K] extends (...args: any[]) => any ? K : never;
-}[keyof Runtime['ioDevices'][T]];
 
 type ExecutionContext = BaseExecutionContext & Partial<StackTimerContext>;
 
@@ -270,7 +267,7 @@ class BlockUtility {
      * @param args Arguments to pass to the device's function.
      * @returns The expected output for the device's function.
      */
-    ioQuery<T extends AvailableIODevices, U extends DeviceFunc<T>> (
+    ioQuery<T extends AvailableIODevices, U extends MemberFunc<Runtime['ioDevices'][T]>> (
         device: T,
         func: U,
         args?: Runtime['ioDevices'][T][U] extends (...args: infer P) => unknown ? P : never

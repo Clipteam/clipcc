@@ -439,6 +439,16 @@ class Runtime extends EventEmitter<RuntimeEvents> {
     };
 
     /**
+     * The url of the translate service used by the translate extension.
+     */
+    translateServiceUrl = clipcc.DEFAULT_TRANSLATE_SERVICE_URL;
+
+    /**
+     * The url of the text-to-speech service used by the text2speech extension.
+     */
+    ttsServiceUrl = clipcc.DEFAULT_TTS_SERVICE_URL;
+
+    /**
      * A reference to the current runtime stepping interval, set
      * by a `setInterval`.
      */
