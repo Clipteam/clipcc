@@ -381,8 +381,8 @@ class RenderWebGL extends EventEmitter {
     /**
      * Create a new SVG skin.
      * @param {!string} svgData - new SVG to use.
-     * @param {?Array<number>} rotationCenter Optional: rotation center of the skin. If not supplied, the center of the
-     * skin will be used
+     * @param {?Array<number>} [rotationCenter] Optional: rotation center of the skin. If not supplied,
+     * the center of the skin will be used
      * @returns {!int} the ID for the new skin.
      */
     createSVGSkin (svgData, rotationCenter) {
@@ -443,7 +443,8 @@ class RenderWebGL extends EventEmitter {
      * @param {!int} skinId the ID for the skin to change.
      * @param {!ImageData|HTMLImageElement|HTMLCanvasElement|HTMLVideoElement} imgData - new contents for this skin.
      * @param {!number} bitmapResolution - the resolution scale for a bitmap costume.
-     * @param {?Array<number>} rotationCenter Optional: rotation center of the skin. If not supplied, the center of the
+     * @param {?Array<number>} [rotationCenter] Optional:
+     * rotation center of the skin. If not supplied, the center of the
      * skin will be used
      */
     updateBitmapSkin (skinId, imgData, bitmapResolution, rotationCenter) {
@@ -508,7 +509,7 @@ class RenderWebGL extends EventEmitter {
     /**
      * Create a new Drawable and add it to the scene.
      * @param {string} group Layer group to add the drawable to
-     * @returns {int | void} The ID of the new Drawable.
+     * @returns The ID of the new Drawable.
      */
     createDrawable (group) {
         if (!group || !Object.prototype.hasOwnProperty.call(this._layerGroups, group)) {
@@ -800,7 +801,7 @@ class RenderWebGL extends EventEmitter {
     /**
      * Get the size of a skin by ID.
      * @param {int} skinID The ID of the Skin to measure.
-     * @returns {Array<number>} Skin size, width and height.
+     * @returns {[number, number]} Skin size, width and height.
      */
     getSkinSize (skinID) {
         const skin = this._allSkins[skinID];
@@ -810,7 +811,7 @@ class RenderWebGL extends EventEmitter {
     /**
      * Get the rotation center of a skin by ID.
      * @param {int} skinID The ID of the Skin
-     * @returns {Array<number>} The rotationCenterX and rotationCenterY
+     * @returns {[number, number]} The rotationCenterX and rotationCenterY
      */
     getSkinRotationCenter (skinID) {
         const skin = this._allSkins[skinID];
@@ -821,8 +822,8 @@ class RenderWebGL extends EventEmitter {
      * Check if a particular Drawable is touching a particular color.
      * Unlike touching drawable, if the "tester" is invisble, we will still test.
      * @param {int} drawableID The ID of the Drawable to check.
-     * @param {Array<int>} color3b Test if the Drawable is touching this color.
-     * @param {Array<int>} [mask3b] Optionally mask the check to this part of Drawable.
+     * @param {[number, number, number]} color3b Test if the Drawable is touching this color.
+     * @param {[number, number, number]} [mask3b] Optionally mask the check to this part of Drawable.
      * @returns {boolean} True iff the Drawable is touching the color.
      */
     isTouchingColor (drawableID, color3b, mask3b) {
@@ -923,8 +924,8 @@ class RenderWebGL extends EventEmitter {
      * @param {number} drawableID The drawable id.
      * @param {number[]} candidateIDs The candidate ids.
      * @param {Rectangle} bounds The bounds.
-     * @param {number[]} [color3b] The color3b.
-     * @param {number[]} [mask3b] The mask3b.
+     * @param {[number, number, number]} [color3b] The color3b.
+     * @param {[number, number, number]} [mask3b] The mask3b.
      */
     _isTouchingColorGpuStart (drawableID, candidateIDs, bounds, color3b, mask3b) {
         this._doExitDrawRegion();

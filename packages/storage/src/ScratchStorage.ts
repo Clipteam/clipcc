@@ -104,7 +104,7 @@ export class ScratchStorage {
      * @param assetId - The id of the asset to fetch.
      * @returns The asset, if it exists.
      */
-    get (assetId: string): Asset | null {
+    get (assetId: AssetId): Asset | null {
         return this.builtinHelper.get(assetId);
     }
 
@@ -134,8 +134,8 @@ export class ScratchStorage {
         assetType: IAssetType,
         dataFormat: DataFormat,
         data: AssetData,
-        id: AssetId,
-        generateId: boolean
+        id?: AssetId | null,
+        generateId?: boolean
     ): Asset {
         if (!dataFormat) throw new Error('Tried to create asset without a dataFormat');
         return new Asset(assetType, id, dataFormat, data, generateId);
@@ -202,7 +202,7 @@ export class ScratchStorage {
      *   If the promise is rejected, there was an error on at least one asset source. HTTP 404 does not count as an
      *   error here, but (for example) HTTP 403 does.
      */
-    load (assetType: IAssetType, assetId: AssetId, dataFormat: DataFormat): Promise<Asset | null> {
+    load (assetType: IAssetType, assetId: AssetId, dataFormat?: DataFormat): Promise<Asset | null> {
         const helpers = this._helpers.map(x => x.helper);
         const errors: unknown[] = [];
         dataFormat = dataFormat || assetType.runtimeFormat;

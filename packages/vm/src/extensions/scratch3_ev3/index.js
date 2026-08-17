@@ -3,7 +3,7 @@ import BlockType from '../../extension-support/block-type';
 import Cast from '../../util/cast';
 import formatMessage from 'format-message';
 import uid from '../../util/uid';
-import BT from '../../io/bt.js';
+import BT from '../../io/bt';
 import Base64Util from '../../util/base64-util';
 import MathUtil from '../../util/math-util';
 import RateLimiter from '../../util/rateLimiter';
@@ -955,7 +955,7 @@ class Scratch3Ev3Blocks {
 
     /**
      * Define the EV3 extension.
-     * @returns {object} Extension description.
+     * @returns Extension description.
      */
     getInfo () {
         return {

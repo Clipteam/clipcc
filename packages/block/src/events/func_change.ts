@@ -19,10 +19,10 @@ export class FuncChange extends FuncBase {
   override type = FuncChange.TYPE;
 
   /** The previous extra state of the procedure. */
-  protected oldExtraState?: ProcedureExtraState;
+  oldExtraState?: ProcedureExtraState;
 
   /** The new extra state of the procedure. */
-  protected newExtraState?: ProcedureExtraState;
+  newExtraState?: ProcedureExtraState;
 
   /**
    * @param procedure The procedure model.

@@ -2,7 +2,7 @@ import {test} from '../fixtures/jest-tap-bridge.js';
 import path from 'path';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';
-import VirtualMachine from '../../src/virtual-machine.js';
+import VirtualMachine from '../../src/virtual-machine';
 
 // Test that loading a project does not emit a project change
 // This is in its own file so that it does not affect the test setup

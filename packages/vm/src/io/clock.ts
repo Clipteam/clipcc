@@ -23,18 +23,18 @@ class Clock {
         return this._projectTimer.timeElapsed() / 1000;
     }
 
-    pause (): void {
+    pause () {
         this._paused = true;
         this._pausedTime = this._projectTimer.timeElapsed();
     }
 
-    resume (): void {
+    resume () {
         this._paused = false;
         const dt = this._projectTimer.timeElapsed() - this._pausedTime!;
         this._projectTimer.startTime += dt;
     }
 
-    resetProjectTimer (): void {
+    resetProjectTimer () {
         this._projectTimer.start();
     }
 }

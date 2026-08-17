@@ -1,5 +1,5 @@
 import Thread from './thread';
-import Timer from '../util/timer';
+import Timer, {type NowObj} from '../util/timer';
 import type Sequencer from './sequencer';
 import type Runtime from './runtime';
 import type RenderedTarget from '../sprites/rendered-target';
@@ -27,8 +27,6 @@ type ExecutionContext = BaseExecutionContext & Partial<StackTimerContext>;
  * Interface provided to block primitive functions for interacting with the
  * runtime, thread, target, and convenient methods.
  */
-
-type NowObj = { now: () => number };
 
 class BlockUtility {
     /**
@@ -126,7 +124,7 @@ class BlockUtility {
      * Create and start a stack timer
      * @param duration - a duration in milliseconds to set the timer for.
      */
-    startStackTimer (duration: number): void {
+    startStackTimer (duration: number) {
         if (this.nowObj) {
             this.stackFrame.timer = new Timer(this.nowObj);
         } else {
@@ -139,14 +137,14 @@ class BlockUtility {
     /**
      * Set the thread to yield.
      */
-    yield (): void {
+    yield () {
         this.thread!.status = Thread.STATUS_YIELD;
     }
 
     /**
      * Set the thread to yield until the next tick of the runtime.
      */
-    yieldTick (): void {
+    yieldTick () {
         this.thread!.status = Thread.STATUS_YIELD_TICK;
     }
 
@@ -155,14 +153,14 @@ class BlockUtility {
      * @param branchNum Which branch to step to (i.e., 1, 2).
      * @param isLoop Whether this block is a loop.
      */
-    startBranch (branchNum: number, isLoop: boolean): void {
+    startBranch (branchNum: number, isLoop: boolean) {
         this.sequencer!.stepToBranch(this.thread!, branchNum, isLoop);
     }
 
     /**
      * Stop all threads.
      */
-    stopAll (): void {
+    stopAll () {
         this.sequencer!.runtime.stopAll();
     }
 
@@ -170,14 +168,14 @@ class BlockUtility {
      * Stop threads other on this target other than the thread holding the
      * executed block.
      */
-    stopOtherTargetThreads (): void {
+    stopOtherTargetThreads () {
         this.sequencer!.runtime.stopForTarget(this.thread!.target!, this.thread!);
     }
 
     /**
      * Stop this thread.
      */
-    stopThisScript (): void {
+    stopThisScript () {
         this.thread!.stopThisScript();
     }
 
@@ -185,7 +183,7 @@ class BlockUtility {
      * Start a specified procedure on this thread.
      * @param procedureCode Procedure code for procedure to start.
      */
-    startProcedure (procedureCode: string): void {
+    startProcedure (procedureCode: string) {
         this.sequencer!.stepToProcedure(this.thread!, procedureCode);
     }
 
@@ -218,7 +216,7 @@ class BlockUtility {
     /**
      * Initialize procedure parameters in the thread before pushing parameters.
      */
-    initParams (): void {
+    initParams () {
         this.thread!.initParams();
     }
 
@@ -227,7 +225,7 @@ class BlockUtility {
      * @param paramName The procedure's parameter name.
      * @param paramValue The procedure's parameter value.
      */
-    pushParam (paramName: string, paramValue: unknown): void {
+    pushParam (paramName: string, paramValue: unknown) {
         this.thread!.pushParam(paramName, paramValue);
     }
 
@@ -236,7 +234,7 @@ class BlockUtility {
      * @param paramName The procedure's parameter name.
      * @returns The parameter's current stored value.
      */
-    getParam (paramName: string): unknown {
+    getParam (paramName: string) {
         return this.thread!.getParam(paramName);
     }
 
@@ -247,7 +245,7 @@ class BlockUtility {
      * @param optTarget Optionally, a target to restrict to.
      * @returns List of threads started by this function.
      */
-    startHats (requestedHat: string, optMatchFields?: object, optTarget?: RenderedTarget) {
+    startHats (requestedHat: string, optMatchFields?: Record<string, string>, optTarget?: RenderedTarget) {
         // Store thread and sequencer to ensure we can return to the calling block's context.
         // startHats may execute further blocks and dirty the BlockUtility's execution context
         // and confuse the calling block when we return to it.
@@ -287,4 +285,5 @@ class BlockUtility {
     }
 }
 
+export type {BlockUtility, ExecutionContext};
 export default BlockUtility;

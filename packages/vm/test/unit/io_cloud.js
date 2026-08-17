@@ -1,8 +1,8 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Cloud from '../../src/io/cloud.js';
-import Target from '../../src/engine/target.js';
+import Cloud from '../../src/io/cloud';
+import Target from '../../src/engine/target';
 import Variable from '../../src/engine/variable';
-import Runtime from '../../src/engine/runtime.js';
+import Runtime from '../../src/engine/runtime';
 
 test('spec', t => {
     const runtime = new Runtime();

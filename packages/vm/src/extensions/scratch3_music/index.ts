@@ -6,13 +6,19 @@ import formatMessage from 'format-message';
 import MathUtil from '../../util/math-util';
 import Timer from '../../util/timer';
 
+import type {ExtensionClass, ExtensionMetadata} from '../../extension-support/extension-metadata';
+import type Runtime from '../../engine/runtime';
+import type BlockUtility from '../../engine/block-utility';
+import type Target from '../../engine/target';
+import type SoundPlayer from '../../../../audio/dist/types/SoundPlayer';
+import RenderedTarget from '../../sprites/rendered-target';
+
 /**
  * The instrument and drum sounds, loaded as static assets.
- * @type {object}
  */
-let assetData = {};
+let assetData: Record<string, ArrayBuffer> = {};
 try {
-    // eslint-disable-next-line global-require
+    // eslint-disable-next-line global-require, @typescript-eslint/no-require-imports
     assetData = require('./manifest');
 } catch {
     // Non-webpack environment, don't worry about assets.
@@ -20,67 +26,111 @@ try {
 
 /**
  * Icon svg to be displayed at the left edge of each extension block, encoded as a data URI.
- * @type {string}
  */
 // eslint-disable-next-line max-len
 const blockIconURI = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PHRpdGxlPm11c2ljLWJsb2NrLWljb248L3RpdGxlPjxkZWZzPjxwYXRoIGQ9Ik0zMi4xOCAyNS44NzRDMzIuNjM2IDI4LjE1NyAzMC41MTIgMzAgMjcuNDMzIDMwYy0zLjA3IDAtNS45MjMtMS44NDMtNi4zNzItNC4xMjYtLjQ1OC0yLjI4NSAxLjY2NS00LjEzNiA0Ljc0My00LjEzNi42NDcgMCAxLjI4My4wODQgMS44OS4yMzQuMzM4LjA4Ni42MzcuMTguOTM4LjMwMi44Ny0uMDItLjEwNC0yLjI5NC0xLjgzNS0xMi4yMy0yLjEzNC0xMi4zMDIgMy4wNi0xLjg3IDguNzY4LTIuNzUyIDUuNzA4LS44ODUuMDc2IDQuODItMy42NSAzLjg0NC0zLjcyNC0uOTg3LTQuNjUtNy4xNTMuMjYzIDE0LjczOHptLTE2Ljk5OCA1Ljk5QzE1LjYzIDM0LjE0OCAxMy41MDcgMzYgMTAuNDQgMzZjLTMuMDcgMC01LjkyMi0xLjg1Mi02LjM4LTQuMTM2LS40NDgtMi4yODQgMS42NzQtNC4xMzUgNC43NS00LjEzNSAxLjAwMyAwIDEuOTc1LjE5NiAyLjg1NS41NDMuODIyLS4wNTUtLjE1LTIuMzc3LTEuODYyLTEyLjIyOC0yLjEzMy0xMi4zMDMgMy4wNi0xLjg3IDguNzY0LTIuNzUzIDUuNzA2LS44OTQuMDc2IDQuODItMy42NDggMy44MzQtMy43MjQtLjk4Ny00LjY1LTcuMTUyLjI2MiAxNC43Mzh6IiBpZD0iYSIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0ZGRiIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2Utb3BhY2l0eT0iLjEiIHN0cm9rZT0iIzAwMCIgZD0iTTI4LjQ1NiAyMS42NzVjLS4wMS0uMzEyLS4wODctLjgyNS0uMjU2LTEuNzAyLS4wOTYtLjQ5NS0uNjEyLTMuMDIyLS43NTMtMy43My0uMzk1LTEuOTgtLjc2LTMuOTItMS4xNDItNi4xMTMtLjczMi00LjIyMy0uNjkzLTYuMDUuMzQ0LTYuNTI3LjUtLjIzIDEuMDYtLjA4IDEuODQuMzUuNDE0LjIyNyAyLjE4MiAxLjM2NSAyLjA3IDEuMjk2IDEuOTk0IDEuMjQyIDMuNDY0IDEuNzc0IDQuOTMgMS41NDggMS41MjYtLjIzNyAyLjUwNC0uMDYgMi44NzYuNjE4LjM0OC42MzUuMDE1IDEuNDE2LS43MyAyLjE4LTEuNDcyIDEuNTE2LTMuOTc1IDIuNTE0LTUuODQ4IDIuMDIzLS44MjItLjIyLTEuMjM4LS40NjUtMi4zOC0xLjI2N2wtLjA5NS0uMDY2Yy4wNDcuNTkzLjI2NCAxLjc0LjcxNyAzLjgwMy4yOTQgMS4zMzYgMi4wOCA5LjE4NyAyLjYzNyAxMS42NzRsLjAwMi4wMTJjLjUyOCAyLjYzNy0xLjg3MyA0LjcyNC01LjIzNiA0LjcyNC0zLjI5IDAtNi4zNjMtMS45ODgtNi44NjItNC41MjgtLjUzLTIuNjQgMS44NzMtNC43MzQgNS4yMzMtNC43MzQuNjcyIDAgMS4zNDcuMDg1IDIuMDE0LjI1LjIyNy4wNTcuNDM2LjExOC42MzYuMTg3em0tMTYuOTk2IDUuOTljLS4wMS0uMzE4LS4wOS0uODM4LS4yNjYtMS43MzctLjA5LS40Ni0uNTk1LTIuOTM3LS43NTMtMy43MjctLjM5LTEuOTYtLjc1LTMuODktMS4xMy02LjA3LS43MzItNC4yMjMtLjY5Mi02LjA1LjM0NC02LjUyNi41MDItLjIzIDEuMDYtLjA4MiAxLjg0LjM1LjQxNS4yMjcgMi4xODIgMS4zNjQgMi4wNyAxLjI5NSAxLjk5MyAxLjI0MiAzLjQ2MiAxLjc3NCA0LjkyNiAxLjU0OCAxLjUyNS0uMjQgMi41MDQtLjA2NCAyLjg3Ni42MTQuMzQ4LjYzNS4wMTUgMS40MTUtLjcyOCAyLjE4LTEuNDc0IDEuNTE3LTMuOTc3IDIuNTEzLTUuODQ3IDIuMDE3LS44Mi0uMjItMS4yMzYtLjQ2NC0yLjM3OC0xLjI2N2wtLjA5NS0uMDY1Yy4wNDcuNTkzLjI2NCAxLjc0LjcxNyAzLjgwMi4yOTQgMS4zMzcgMi4wNzggOS4xOSAyLjYzNiAxMS42NzVsLjAwMy4wMTNjLjUxNyAyLjYzOC0xLjg4NCA0LjczMi01LjIzNCA0LjczMi0zLjI4NyAwLTYuMzYtMS45OTMtNi44Ny00LjU0LS41Mi0yLjY0IDEuODg0LTQuNzMgNS4yNC00LjczLjkwNSAwIDEuODAzLjE1IDIuNjUuNDM2eiIvPjwvZz48L3N2Zz4=';
 
 /**
  * Icon svg to be displayed in the category menu, encoded as a data URI.
- * @type {string}
  */
 // eslint-disable-next-line max-len
 const menuIconURI = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTE2LjA5IDEyLjkzN2MuMjI4IDEuMTQxLS44MzMgMi4wNjMtMi4zNzMgMi4wNjMtMS41MzUgMC0yLjk2Mi0uOTIyLTMuMTg2LTIuMDYzLS4yMy0xLjE0Mi44MzMtMi4wNjggMi4zNzItMi4wNjguMzIzIDAgLjY0MS4wNDIuOTQ1LjExN2EzLjUgMy41IDAgMCAxIC40NjguMTUxYy40MzUtLjAxLS4wNTItMS4xNDctLjkxNy02LjExNC0xLjA2Ny02LjE1MiAxLjUzLS45MzUgNC4zODQtMS4zNzcgMi44NTQtLjQ0Mi4wMzggMi40MS0xLjgyNSAxLjkyMi0xLjg2Mi0uNDkzLTIuMzI1LTMuNTc3LjEzMiA3LjM3ek03LjQ2IDguNTYzYy0xLjg2Mi0uNDkzLTIuMzI1LTMuNTc2LjEzIDcuMzdDNy44MTYgMTcuMDczIDYuNzU0IDE4IDUuMjIgMThjLTEuNTM1IDAtMi45NjEtLjkyNi0zLjE5LTIuMDY4LS4yMjQtMS4xNDIuODM3LTIuMDY3IDIuMzc1LTIuMDY3LjUwMSAwIC45ODcuMDk4IDEuNDI3LjI3Mi40MTItLjAyOC0uMDc0LTEuMTg5LS45My02LjExNEMzLjgzNCAxLjg3IDYuNDMgNy4wODcgOS4yODIgNi42NDZjMi44NTQtLjQ0Ny4wMzggMi40MS0xLjgyMyAxLjkxN3oiIGZpbGw9IiM1NzVFNzUiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==';
 
 /**
- * Class for the music-related blocks in Scratch 3.0
- * @param {Runtime} runtime - the runtime instantiating this block package.
- * @class
+ * Music state associated with a particular target.
  */
-class Scratch3MusicBlocks {
-    constructor (runtime) {
+interface MusicState {
+    /** The 0-indexed number of the currently selected instrument. */
+    currentInstrument: number;
+}
+
+/**
+ * Info about an instrument.
+ */
+interface InstrumentInfo {
+    /** The translatable name to display in the instruments menu. */
+    name: string;
+    /** The name of the directory containing audio samples for this instrument. */
+    dirName: string;
+    /** An optional duration for the release portion of each note. */
+    releaseTime?: number;
+    /** An array of numbers representing the MIDI note number for each sampled sound used to play this instrument. */
+    samples: number[];
+}
+
+/**
+ * Info about a drum.
+ */
+interface DrumInfo {
+    /** The translatable name to display in the drums menu. */
+    name: string;
+    /** The name of the audio file for this drum sound. */
+    fileName: string;
+}
+
+interface PlayDrumForBeatsArgs {
+    DRUM: unknown;
+    BEATS: unknown;
+}
+
+interface RestForBeatsArgs {
+    BEATS: unknown;
+}
+
+interface PlayNoteForBeatsArgs {
+    NOTE: unknown;
+    BEATS: unknown;
+}
+
+interface SetInstrumentArgs {
+    INSTRUMENT: unknown;
+}
+
+interface SetTempoArgs {
+    TEMPO: unknown;
+}
+
+/**
+ * Class for the music-related blocks in Scratch 3.0
+ */
+class Scratch3MusicBlocks implements ExtensionClass {
+    /**
+     * The runtime instantiating this block package.
+     */
+    runtime: Runtime;
+
+    /**
+     * The number of drum and instrument sounds currently being played simultaneously.
+     */
+    private _concurrencyCounter = 0;
+
+    /**
+     * An array of sound players, one for each drum sound.
+     */
+    private _drumPlayers: SoundPlayer[] = [];
+
+    /**
+     * An array of arrays of sound players. Each instrument has one or more audio players.
+     */
+    private _instrumentPlayerArrays: SoundPlayer[][] = [];
+
+    /**
+     * An array of arrays of sound players. Each instrument may have an audio player for each playable note.
+     */
+    private _instrumentPlayerNoteArrays: SoundPlayer[][] = [];
+
+    /**
+     * An array of audio bufferSourceNodes. Each time you play an instrument or drum sound,
+     * a bufferSourceNode is created. We keep references to them to make sure their onended
+     * events can fire.
+     */
+    private _bufferSources: unknown[] = [];
+
+    constructor (runtime: Runtime) {
         /**
          * The runtime instantiating this block package.
-         * @type {Runtime}
          */
         this.runtime = runtime;
-
-        /**
-         * The number of drum and instrument sounds currently being played simultaneously.
-         * @type {number}
-         * @private
-         */
-        this._concurrencyCounter = 0;
-
-        /**
-         * An array of sound players, one for each drum sound.
-         * @type {Array}
-         * @private
-         */
-        this._drumPlayers = [];
-
-        /**
-         * An array of arrays of sound players. Each instrument has one or more audio players.
-         * @type {Array[]}
-         * @private
-         */
-        this._instrumentPlayerArrays = [];
-
-        /**
-         * An array of arrays of sound players. Each instrument mya have an audio player for each playable note.
-         * @type {Array[]}
-         * @private
-         */
-        this._instrumentPlayerNoteArrays = [];
-
-        /**
-         * An array of audio bufferSourceNodes. Each time you play an instrument or drum sound,
-         * a bufferSourceNode is created. We keep references to them to make sure their onended
-         * events can fire.
-         * @type {Array}
-         * @private
-         */
-        this._bufferSources = [];
 
         this._loadAllSounds();
 
@@ -95,7 +145,7 @@ class Scratch3MusicBlocks {
      * Decode the full set of drum and instrument sounds, and store the audio buffers in arrays.
      */
     _loadAllSounds () {
-        const loadingPromises = [];
+        const loadingPromises: Promise<void>[] = [];
         this.DRUM_INFO.forEach((drumInfo, index) => {
             const filePath = `drums/${drumInfo.fileName}`;
             const promise = this._storeSound(filePath, index, this._drumPlayers);
@@ -117,12 +167,12 @@ class Scratch3MusicBlocks {
 
     /**
      * Decode a sound and store the player in an array.
-     * @param {string} filePath - the audio file name.
-     * @param {number} index - the index at which to store the audio player.
-     * @param {Array} playerArray - the array of players in which to store it.
-     * @returns {Promise} - a promise which will resolve once the sound has been stored.
+     * @param filePath - the audio file name.
+     * @param index - the index at which to store the audio player.
+     * @param playerArray - the array of players in which to store it.
+     * @returns a promise which will resolve once the sound has been stored.
      */
-    _storeSound (filePath, index, playerArray) {
+    async _storeSound (filePath: string, index: number, playerArray: SoundPlayer[]) {
         const fullPath = `${filePath}.mp3`;
 
         if (!assetData[fullPath]) return;
@@ -130,21 +180,20 @@ class Scratch3MusicBlocks {
         // The sound player has already been downloaded via the manifest file required above.
         const soundBuffer = assetData[fullPath];
 
-        return this._decodeSound(soundBuffer).then(player => {
-            playerArray[index] = player;
-        });
+        const player = await this._decodeSound(soundBuffer);
+        playerArray[index] = player;
     }
 
     /**
      * Decode a sound and return a promise with the audio buffer.
-     * @param  {ArrayBuffer} soundBuffer - a buffer containing the encoded audio.
-     * @returns {Promise} - a promise which will resolve once the sound has decoded.
+     * @param soundBuffer - a buffer containing the encoded audio.
+     * @returns a promise which will resolve once the sound has decoded.
      */
-    _decodeSound (soundBuffer) {
+    async _decodeSound (soundBuffer: ArrayBuffer) {
         const engine = this.runtime.audioEngine;
 
         if (!engine) {
-            return Promise.reject(new Error('No Audio Context Detected'));
+            throw new Error('No Audio Context Detected');
         }
 
         // Check for newer promise-based API
@@ -154,13 +203,12 @@ class Scratch3MusicBlocks {
     /**
      * Create data for a menu in scratch-blocks format, consisting of an array of objects with text and
      * value properties. The text is a translated string, and the value is one-indexed.
-     * @param  {object[]} info - An array of info objects each having a name property.
-     * @returns {Array} - An array of objects with text and value properties.
-     * @private
+     * @param info - An array of info objects each having a name property.
+     * @returns An array of objects with text and value properties.
      */
-    _buildMenu (info) {
+    private _buildMenu (info: Array<{name: string}>) {
         return info.map((entry, index) => {
-            const obj = {};
+            const obj = {} as {text: string; value: string};
             obj.text = entry.name;
             obj.value = String(index + 1);
             return obj;
@@ -169,9 +217,8 @@ class Scratch3MusicBlocks {
 
     /**
      * An array of info about each drum.
-     * @returns The drum info array.
      */
-    get DRUM_INFO () {
+    get DRUM_INFO (): DrumInfo[] {
         return [
             {
                 name: formatMessage({
@@ -321,19 +368,9 @@ class Scratch3MusicBlocks {
     }
 
     /**
-     * @typedef {object} InstrumentInfo
-     * @property {string} name - the translatable name to display in the instruments menu.
-     * @property {string} dirName - the name of the directory containing audio samples for this instrument.
-     * @property {number} [releaseTime] - an optional duration for the release portion of each note.
-     * @property {number[]} samples - an array of numbers representing the MIDI note number for each
-     *                           sampled sound used to play this instrument.
-     */
-
-    /**
      * An array of info about each instrument.
-     * @returns {InstrumentInfo[]} the instrument info array.
      */
-    get INSTRUMENT_INFO () {
+    get INSTRUMENT_INFO (): InstrumentInfo[] {
         return [
             {
                 name: formatMessage({
@@ -543,7 +580,6 @@ class Scratch3MusicBlocks {
 
     /**
      * An array that is a mapping from MIDI instrument numbers to Scratch instrument numbers.
-     * @type {number[]}
      */
     get MIDI_INSTRUMENTS () {
         return [
@@ -611,14 +647,13 @@ class Scratch3MusicBlocks {
             21, 21, 21, 21,
             // Telephone Ring, Helicopter, Applause, Gunshot
             21, 21, 21, 21
-        ];
+        ] as const;
     }
 
     /**
      * An array that is a mapping from MIDI drum numbers in range (35..81) to Scratch drum numbers.
      * It's in the format [drumNum, pitch, decay].
      * The pitch and decay properties are not currently being used.
-     * @type {Array[]}
      */
     get MIDI_DRUMS () {
         return [
@@ -669,22 +704,20 @@ class Scratch3MusicBlocks {
             [17, 0],
             [11, -6, 1],
             [11, -6, 3]
-        ];
+        ] as const;
     }
 
     /**
      * The key to load & store a target's music-related state.
-     * @type {string}
      */
     static get STATE_KEY () {
-        return 'Scratch.music';
+        return 'Scratch.music' as const;
     }
 
     /**
      * The default music-related state, to be used when a target has no existing music state.
-     * @type {MusicState}
      */
-    static get DEFAULT_MUSIC_STATE () {
+    static get DEFAULT_MUSIC_STATE (): MusicState {
         return {
             currentInstrument: 0
         };
@@ -692,7 +725,6 @@ class Scratch3MusicBlocks {
 
     /**
      * The minimum and maximum MIDI note numbers, for clamping the input to play note.
-     * @type {{min: number, max: number}}
      */
     static get MIDI_NOTE_RANGE () {
         return {min: 0, max: 130};
@@ -701,7 +733,6 @@ class Scratch3MusicBlocks {
     /**
      * The minimum and maximum beat values, for clamping the duration of play note, play drum and rest.
      * 100 beats at the default tempo of 60bpm is 100 seconds.
-     * @type {{min: number, max: number}}
      */
     static get BEAT_RANGE () {
         return {min: 0, max: 100};
@@ -709,7 +740,6 @@ class Scratch3MusicBlocks {
 
     /**
      * The minimum and maximum tempo values, in bpm.
-     * @type {{min: number, max: number}}
      */
     static get TEMPO_RANGE () {
         return {min: 20, max: 500};
@@ -717,19 +747,18 @@ class Scratch3MusicBlocks {
 
     /**
      * The maximum number of sounds to allow to play simultaneously.
-     * @type {number}
      */
     get CONCURRENCY_LIMIT () {
         return this.runtime.limitOptions.unlimitedSoundStuffs ? Infinity : 30;
     }
 
     /**
-     * @param {Target} target - collect music state for this target.
-     * @returns {MusicState} the mutable music state associated with that target. This will be created if necessary.
+     * @param target - collect music state for this target.
+     * @returns the mutable music state associated with that target. This will be created if necessary.
      * @private
      */
-    _getMusicState (target) {
-        let musicState = target.getCustomState(Scratch3MusicBlocks.STATE_KEY);
+    _getMusicState (target: Target): MusicState {
+        let musicState = target.getCustomState<MusicState>(Scratch3MusicBlocks.STATE_KEY);
         if (!musicState) {
             musicState = Clone.simple(Scratch3MusicBlocks.DEFAULT_MUSIC_STATE);
             target.setCustomState(Scratch3MusicBlocks.STATE_KEY, musicState);
@@ -739,14 +768,14 @@ class Scratch3MusicBlocks {
 
     /**
      * When a music-playing Target is cloned, clone the music state.
-     * @param {Target} newTarget - the newly created target.
-     * @param {Target} [sourceTarget] - the target used as a source for the new clone, if any.
+     * @param newTarget - the newly created target.
+     * @param sourceTarget - the target used as a source for the new clone, if any.
      * @listens Runtime#event:targetWasCreated
      * @private
      */
-    _onTargetCreated (newTarget, sourceTarget) {
+    _onTargetCreated (newTarget: Target, sourceTarget?: Target) {
         if (sourceTarget) {
-            const musicState = sourceTarget.getCustomState(Scratch3MusicBlocks.STATE_KEY);
+            const musicState = sourceTarget.getCustomState<MusicState>(Scratch3MusicBlocks.STATE_KEY);
             if (musicState) {
                 newTarget.setCustomState(Scratch3MusicBlocks.STATE_KEY, Clone.simple(musicState));
             }
@@ -754,7 +783,7 @@ class Scratch3MusicBlocks {
     }
 
     /**
-     * @returns {object} metadata for this extension and its blocks.
+     * @returns metadata for this extension and its blocks.
      */
     getInfo () {
         return {
@@ -924,17 +953,17 @@ class Scratch3MusicBlocks {
                     items: this._buildMenu(this.INSTRUMENT_INFO)
                 }
             }
-        };
+        } as ExtensionMetadata;
     }
 
     /**
      * Play a drum sound for some number of beats.
-     * @param {object} args - the block arguments.
-     * @param {object} util - utility object provided by the runtime.
-     * @property {int} DRUM - the number of the drum to play.
-     * @property {number} BEATS - the duration in beats of the drum sound.
+     * @param args - the block arguments.
+     * @param util - utility object provided by the runtime.
+     * @property DRUM - the number of the drum to play.
+     * @property BEATS - the duration in beats of the drum sound.
      */
-    playDrumForBeats (args, util) {
+    playDrumForBeats (args: PlayDrumForBeatsArgs, util: BlockUtility) {
         this._playDrumForBeats(args.DRUM, args.BEATS, util);
     }
 
@@ -942,10 +971,10 @@ class Scratch3MusicBlocks {
      * Play a drum sound for some number of beats according to the range of "MIDI" drum codes supported.
      * This block is implemented for compatibility with old Scratch projects that use the
      * 'drum:duration:elapsed:from:' block.
-     * @param {object} args - the block arguments.
-     * @param {object} util - utility object provided by the runtime.
+     * @param args - the block arguments.
+     * @param util - utility object provided by the runtime.
      */
-    midiPlayDrumForBeats (args, util) {
+    midiPlayDrumForBeats (args: PlayDrumForBeatsArgs, util: BlockUtility) {
         let drumNum = Cast.toNumber(args.DRUM);
         drumNum = Math.round(drumNum);
         const midiDescription = this.MIDI_DRUMS[drumNum - 35];
@@ -960,20 +989,20 @@ class Scratch3MusicBlocks {
 
     /**
      * Internal code to play a drum sound for some number of beats.
-     * @param {number} drumNum - the drum number.
-     * @param {beats} beats - the duration in beats to pause after playing the sound.
-     * @param {object} util - utility object provided by the runtime.
+     * @param drumNum - the drum number.
+     * @param beats - the duration in beats to pause after playing the sound.
+     * @param util - utility object provided by the runtime.
      */
-    _playDrumForBeats (drumNum, beats, util) {
+    _playDrumForBeats (drumNum: unknown, beats: unknown, util: BlockUtility) {
         if (this._stackTimerNeedsInit(util)) {
             drumNum = Cast.toNumber(drumNum);
-            drumNum = Math.round(drumNum);
-            drumNum -= 1; // drums are one-indexed
-            drumNum = MathUtil.wrapClamp(drumNum, 0, this.DRUM_INFO.length - 1);
+            drumNum = Math.round(drumNum as number);
+            drumNum = (drumNum as number) - 1; // drums are one-indexed
+            drumNum = MathUtil.wrapClamp(drumNum as number, 0, this.DRUM_INFO.length - 1);
             beats = Cast.toNumber(beats);
-            beats = this._clampBeats(beats);
-            this._playDrumNum(util, drumNum);
-            this._startStackTimer(util, this._beatsToSec(beats));
+            beats = this._clampBeats(beats as number);
+            this._playDrumNum(util, drumNum as number);
+            this._startStackTimer(util, this._beatsToSec(beats as number));
         } else {
             this._checkStackTimer(util);
         }
@@ -981,12 +1010,12 @@ class Scratch3MusicBlocks {
 
     /**
      * Play a drum sound using its 0-indexed number.
-     * @param {object} util - utility object provided by the runtime.
-     * @param {number} drumNum - the number of the drum to play.
+     * @param util - utility object provided by the runtime.
+     * @param drumNum - the number of the drum to play.
      * @private
      */
-    _playDrumNum (util, drumNum) {
-        if (util.runtime.audioEngine === null) return;
+    _playDrumNum (util: BlockUtility, drumNum: number) {
+        if (util.runtime!.audioEngine === null) return;
         if (util.target.sprite.soundBank === null) return;
         // If we're playing too many sounds, do not play the drum sound.
         if (this._concurrencyCounter > this.CONCURRENCY_LIMIT) {
@@ -1004,7 +1033,7 @@ class Scratch3MusicBlocks {
             player.take();
         }
 
-        const engine = util.runtime.audioEngine;
+        const engine = util.runtime!.audioEngine!;
         const context = engine.audioContext;
         const volumeGain = context.createGain();
         volumeGain.gain.setValueAtTime(util.target.volume / 100, engine.currentTime);
@@ -1024,11 +1053,11 @@ class Scratch3MusicBlocks {
 
     /**
      * Rest for some number of beats.
-     * @param {object} args - the block arguments.
-     * @param {object} util - utility object provided by the runtime.
-     * @property {number} BEATS - the duration in beats of the rest.
+     * @param args - the block arguments.
+     * @param util - utility object provided by the runtime.
+     * @property BEATS - the duration in beats of the rest.
      */
-    restForBeats (args, util) {
+    restForBeats (args: RestForBeatsArgs, util: BlockUtility) {
         if (this._stackTimerNeedsInit(util)) {
             let beats = Cast.toNumber(args.BEATS);
             beats = this._clampBeats(beats);
@@ -1041,12 +1070,12 @@ class Scratch3MusicBlocks {
     /**
      * Play a note using the current musical instrument for some number of beats.
      * This function processes the arguments, and handles the timing of the block's execution.
-     * @param {object} args - the block arguments.
-     * @param {object} util - utility object provided by the runtime.
-     * @property {number} NOTE - the pitch of the note to play, interpreted as a MIDI note number.
-     * @property {number} BEATS - the duration in beats of the note.
+     * @param args - the block arguments.
+     * @param util - utility object provided by the runtime.
+     * @property NOTE - the pitch of the note to play, interpreted as a MIDI note number.
+     * @property BEATS - the duration in beats of the note.
      */
-    playNoteForBeats (args, util) {
+    playNoteForBeats (args: PlayNoteForBeatsArgs, util: BlockUtility) {
         if (this._stackTimerNeedsInit(util)) {
             let note = Cast.toNumber(args.NOTE);
             note = this.runtime.limitOptions.unlimitedSoundStuffs ?
@@ -1068,11 +1097,11 @@ class Scratch3MusicBlocks {
         }
     }
 
-    _playNoteForPicker (noteNum, category) {
+    _playNoteForPicker (noteNum: number, category: string) {
         if (category !== this.getInfo().name) return;
         const util = {
             runtime: this.runtime,
-            target: this.runtime.getEditingTarget()
+            target: this.runtime.getEditingTarget()!
         };
         this._playNote(util, noteNum, 0.25);
     }
@@ -1081,13 +1110,15 @@ class Scratch3MusicBlocks {
      * Play a note using the current instrument for a duration in seconds.
      * This function actually plays the sound, and handles the timing of the sound, including the
      * "release" portion of the sound, which continues briefly after the block execution has finished.
-     * @param {object} util - utility object provided by the runtime.
-     * @param {number} note - the pitch of the note to play, interpreted as a MIDI note number.
-     * @param {number} durationSec - the duration in seconds to play the note.
+     * @param util - utility object provided by the runtime.
+     * @param util.runtime - the Scratch runtime, used to access the audio engine.
+     * @param util.target - the target on which the block is executing.
+     * @param note - the pitch of the note to play, interpreted as a MIDI note number.
+     * @param durationSec - the duration in seconds to play the note.
      * @private
      */
-    _playNote (util, note, durationSec) {
-        if (util.runtime.audioEngine === null) return;
+    _playNote (util: {runtime?: Runtime, target: RenderedTarget}, note: number, durationSec: number) {
+        if (util.runtime!.audioEngine === null) return;
         if (util.target.sprite.soundBank === null) return;
 
         // If we're playing too many sounds, do not play the note.
@@ -1107,7 +1138,7 @@ class Scratch3MusicBlocks {
         if (typeof this._instrumentPlayerArrays[inst][sampleIndex] === 'undefined') return;
 
         // Fetch the sound player to play the note.
-        const engine = util.runtime.audioEngine;
+        const engine = util.runtime!.audioEngine!;
 
         if (!this._instrumentPlayerNoteArrays[inst][note]) {
             this._instrumentPlayerNoteArrays[inst][note] = this._instrumentPlayerArrays[inst][sampleIndex].take();
@@ -1167,12 +1198,12 @@ class Scratch3MusicBlocks {
      * The samples array for each instrument is the set of pitches of the available audio samples.
      * This function selects the best one to use to play a given input note, and returns its index
      * in the samples array.
-     * @param  {number} note - the input note to select a sample for.
-     * @param  {number[]} samples - an array of the pitches of the available samples.
-     * @returns {index} the index of the selected sample in the samples array.
+     * @param note - the input note to select a sample for.
+     * @param samples - an array of the pitches of the available samples.
+     * @returns the index of the selected sample in the samples array.
      * @private
      */
-    _selectSampleIndexForNote (note, samples) {
+    _selectSampleIndexForNote (note: number, samples: number[]): number {
         // Step backwards through the array of samples, i.e. in descending pitch, in order to find
         // the sample that is the closest one below (or matching) the pitch of the input note.
         for (let i = samples.length - 1; i >= 0; i--) {
@@ -1184,53 +1215,53 @@ class Scratch3MusicBlocks {
     }
 
     /**
-     * Calcuate the frequency ratio for a given musical interval.
-     * @param  {number} interval - the pitch interval to convert.
-     * @returns {number} a ratio corresponding to the input interval.
+     * Calculate the frequency ratio for a given musical interval.
+     * @param interval - the pitch interval to convert.
+     * @returns a ratio corresponding to the input interval.
      * @private
      */
-    _ratioForPitchInterval (interval) {
+    _ratioForPitchInterval (interval: number): number {
         return Math.pow(2, (interval / 12));
     }
 
     /**
      * Clamp a duration in beats to the allowed min and max duration.
-     * @param  {number} beats - a duration in beats.
-     * @returns {number} - the clamped duration.
+     * @param beats - a duration in beats.
+     * @returns the clamped duration.
      * @private
      */
-    _clampBeats (beats) {
+    _clampBeats (beats: number): number {
         return this.runtime.limitOptions.unlimitedSoundStuffs ?
             beats : MathUtil.clamp(beats, Scratch3MusicBlocks.BEAT_RANGE.min, Scratch3MusicBlocks.BEAT_RANGE.max);
     }
 
     /**
      * Convert a number of beats to a number of seconds, using the current tempo.
-     * @param  {number} beats - number of beats to convert to secs.
-     * @returns {number} seconds - number of seconds `beats` will last.
+     * @param beats - number of beats to convert to secs.
+     * @returns seconds - number of seconds `beats` will last.
      * @private
      */
-    _beatsToSec (beats) {
+    _beatsToSec (beats: number): number {
         return (60 / this.getTempo()) * beats;
     }
 
     /**
      * Check if the stack timer needs initialization.
-     * @param {object} util - utility object provided by the runtime.
-     * @returns {boolean} - true if the stack timer needs to be initialized.
+     * @param util - utility object provided by the runtime.
+     * @returns true if the stack timer needs to be initialized.
      * @private
      */
-    _stackTimerNeedsInit (util) {
+    _stackTimerNeedsInit (util: BlockUtility): boolean {
         return !util.stackFrame.timer;
     }
 
     /**
      * Start the stack timer and the yield the thread if necessary.
-     * @param {object} util - utility object provided by the runtime.
-     * @param {number} duration - a duration in seconds to set the timer for.
+     * @param util - utility object provided by the runtime.
+     * @param duration - a duration in seconds to set the timer for.
      * @private
      */
-    _startStackTimer (util, duration) {
+    _startStackTimer (util: BlockUtility, duration: number) {
         util.stackFrame.timer = new Timer();
         util.stackFrame.timer.start();
         util.stackFrame.duration = duration;
@@ -1239,72 +1270,72 @@ class Scratch3MusicBlocks {
 
     /**
      * Check the stack timer, and if its time is not up yet, yield the thread.
-     * @param {object} util - utility object provided by the runtime.
+     * @param util - utility object provided by the runtime.
      * @private
      */
-    _checkStackTimer (util) {
-        const timeElapsed = util.stackFrame.timer.timeElapsed();
-        if (timeElapsed < util.stackFrame.duration * 1000) {
+    _checkStackTimer (util: BlockUtility) {
+        const timeElapsed = util.stackFrame.timer!.timeElapsed();
+        if (timeElapsed < util.stackFrame.duration! * 1000) {
             util.yield();
         }
     }
 
     /**
      * Select an instrument for playing notes.
-     * @param {object} args - the block arguments.
-     * @param {object} util - utility object provided by the runtime.
-     * @property {int} INSTRUMENT - the number of the instrument to select.
+     * @param args - the block arguments.
+     * @param util - utility object provided by the runtime.
+     * @property INSTRUMENT - the number of the instrument to select.
      */
-    setInstrument (args, util) {
+    setInstrument (args: SetInstrumentArgs, util: BlockUtility) {
         this._setInstrument(args.INSTRUMENT, util, false);
     }
 
     /**
      * Select an instrument for playing notes according to a mapping of MIDI codes to Scratch instrument numbers.
      * This block is implemented for compatibility with old Scratch projects that use the 'midiInstrument:' block.
-     * @param {object} args - the block arguments.
-     * @param {object} util - utility object provided by the runtime.
-     * @property {int} INSTRUMENT - the MIDI number of the instrument to select.
+     * @param args - the block arguments.
+     * @param util - utility object provided by the runtime.
+     * @property INSTRUMENT - the MIDI number of the instrument to select.
      */
-    midiSetInstrument (args, util) {
+    midiSetInstrument (args: SetInstrumentArgs, util: BlockUtility) {
         this._setInstrument(args.INSTRUMENT, util, true);
     }
 
     /**
      * Internal code to select an instrument for playing notes. If mapMidi is true, set the instrument according to
      * the MIDI to Scratch instrument mapping.
-     * @param {number} instNum - the instrument number.
-     * @param {object} util - utility object provided by the runtime.
-     * @param {boolean} mapMidi - whether or not instNum is a MIDI instrument number.
+     * @param instNum - the instrument number.
+     * @param util - utility object provided by the runtime.
+     * @param mapMidi - whether or not instNum is a MIDI instrument number.
      */
-    _setInstrument (instNum, util, mapMidi) {
+    _setInstrument (instNum: unknown, util: BlockUtility, mapMidi: boolean) {
         const musicState = this._getMusicState(util.target);
         instNum = Cast.toNumber(instNum);
-        instNum = Math.round(instNum);
-        instNum -= 1; // instruments are one-indexed
+        instNum = Math.round(instNum as number);
+        instNum = (instNum as number) - 1; // instruments are one-indexed
         if (mapMidi) {
-            instNum = (this.MIDI_INSTRUMENTS[instNum] || 0) - 1;
+            instNum = (this.MIDI_INSTRUMENTS[instNum as number] || 0) - 1;
         }
-        instNum = MathUtil.wrapClamp(instNum, 0, this.INSTRUMENT_INFO.length - 1);
-        musicState.currentInstrument = instNum;
+        instNum = MathUtil.wrapClamp(instNum as number, 0, this.INSTRUMENT_INFO.length - 1);
+        musicState.currentInstrument = instNum as number;
     }
 
     /**
      * Set the current tempo to a new value.
-     * @param {object} args - the block arguments.
-     * @property {number} TEMPO - the tempo, in beats per minute.
+     * @param args - the block arguments.
+     * @property TEMPO - the tempo, in beats per minute.
      */
-    setTempo (args) {
+    setTempo (args: SetTempoArgs) {
         const tempo = Cast.toNumber(args.TEMPO);
         this._updateTempo(tempo);
     }
 
     /**
      * Change the current tempo by some amount.
-     * @param {object} args - the block arguments.
-     * @property {number} TEMPO - the amount to change the tempo, in beats per minute.
+     * @param args - the block arguments.
+     * @property TEMPO - the amount to change the tempo, in beats per minute.
      */
-    changeTempo (args) {
+    changeTempo (args: SetTempoArgs) {
         const change = Cast.toNumber(args.TEMPO);
         const tempo = change + this.getTempo();
         this._updateTempo(tempo);
@@ -1312,10 +1343,10 @@ class Scratch3MusicBlocks {
 
     /**
      * Update the current tempo, clamping it to the min and max allowable range.
-     * @param {number} tempo - the tempo to set, in beats per minute.
+     * @param tempo - the tempo to set, in beats per minute.
      * @private
      */
-    _updateTempo (tempo) {
+    _updateTempo (tempo: number) {
         tempo = this.runtime.limitOptions.unlimitedSoundStuffs ?
             tempo : MathUtil.clamp(tempo, Scratch3MusicBlocks.TEMPO_RANGE.min, Scratch3MusicBlocks.TEMPO_RANGE.max);
         const stage = this.runtime.getTargetForStage();
@@ -1326,7 +1357,7 @@ class Scratch3MusicBlocks {
 
     /**
      * Get the current tempo.
-     * @returns {number} - the current tempo, in beats per minute.
+     * @returns the current tempo, in beats per minute.
      */
     getTempo () {
         const stage = this.runtime.getTargetForStage();

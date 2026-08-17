@@ -79,7 +79,7 @@ class Cast {
      * @param value Value to convert to RGB color array.
      * @returns [r,g,b], values between 0-255.
      */
-    static toRgbColorList (value: unknown): number[] {
+    static toRgbColorList (value: unknown): [number, number, number] {
         const color = Cast.toRgbColorObject(value);
         return [color.r, color.g, color.b];
     }

@@ -3,7 +3,7 @@ import BlockType from '../../extension-support/block-type';
 import Cast from '../../util/cast';
 import formatMessage from 'format-message';
 import color from '../../util/color';
-import BLE from '../../io/ble.js';
+import BLE from '../../io/ble';
 import Base64Util from '../../util/base64-util';
 import MathUtil from '../../util/math-util';
 import RateLimiter from '../../util/rateLimiter';
@@ -1282,7 +1282,7 @@ class Scratch3BoostBlocks {
     }
 
     /**
-     * @returns {object} metadata for this extension and its blocks.
+     * @returns metadata for this extension and its blocks.
      */
     getInfo () {
         return {

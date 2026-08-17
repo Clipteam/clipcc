@@ -35,17 +35,17 @@ class LoadingMiddleware {
     }
 }
 
-import * as loadCostume from '../import/load-costume.js';
+import * as loadCostume from '../import/load-costume';
 const costumeMiddleware = new LoadingMiddleware();
 loadCostume.overrideLoadCostume(costumeMiddleware.install(loadCostume, loadCostume.loadCostume));
 
-import * as loadSound from '../import/load-sound.js';
+import * as loadSound from '../import/load-sound';
 const soundMiddleware = new LoadingMiddleware();
 loadSound.overrideLoadSound(soundMiddleware.install(loadSound, loadSound.loadSound));
 
 import {ScratchStorage} from 'clipcc-storage';
 import VirtualMachine from '../index';
-import Runtime from '../engine/runtime.js';
+import Runtime from '../engine/runtime';
 import ScratchRender from 'clipcc-render';
 import AudioEngine from 'clipcc-audio';
 import * as ScratchSVGRenderer from 'clipcc-svg-renderer';

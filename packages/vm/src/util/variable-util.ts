@@ -4,7 +4,7 @@ import type {VMField} from '../serialization/schema';
 
 type VarRefMap = Record<string, string[]>;
 
-interface VarReference {
+export interface VarReference {
     referencingField: VMField;
     type: VariableType;
 }
@@ -45,7 +45,7 @@ class VariableUtil {
      * variable name in the references being updated should be replaced with this new name.
      * If this parameter is not provided or is '', no name change occurs.
      */
-    static updateVariableIdentifiers (referencesToUpdate: VarReference[], newId: string, optNewName?: string): void {
+    static updateVariableIdentifiers (referencesToUpdate: VarReference[], newId: string, optNewName?: string) {
         referencesToUpdate.map(ref => {
             ref.referencingField.id = newId;
             if (optNewName) {

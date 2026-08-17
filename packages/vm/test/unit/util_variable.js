@@ -1,6 +1,6 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Target from '../../src/engine/target.js';
-import Runtime from '../../src/engine/runtime.js';
+import Target from '../../src/engine/target';
+import Runtime from '../../src/engine/runtime';
 import VariableUtil from '../../src/util/variable-util';
 
 let target1;

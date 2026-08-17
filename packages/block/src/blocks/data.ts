@@ -29,7 +29,7 @@ Blockly.Blocks['data_variable'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: '%1',
-      lastDummyAlign0: 'CENTRE',
+      implicitAlign0: 'CENTRE',
       args0: [
         {
           type: 'field_variable_getter',
@@ -142,7 +142,7 @@ Blockly.Blocks['data_listcontents'] = {
   init: function(this: Blockly.Block) {
     this.jsonInit({
       message0: '%1',
-      lastDummyAlign0: 'CENTRE',
+      implicitAlign0: 'CENTRE',
       args0: [
         {
           type: 'field_variable_getter',

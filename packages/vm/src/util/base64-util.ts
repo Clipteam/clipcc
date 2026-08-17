@@ -6,7 +6,7 @@ class Base64Util {
     /**
      * Convert a base64 encoded string to a Uint8Array.
      * @param base64 - a base64 encoded string.
-     * @returns - a decoded Uint8Array.
+     * @returns a decoded Uint8Array.
      */
     static base64ToUint8Array (base64: string): Uint8Array {
         const binaryString = atob(base64);
@@ -21,17 +21,17 @@ class Base64Util {
     /**
      * Convert a Uint8Array to a base64 encoded string.
      * @param array - the array to convert.
-     * @returns - the base64 encoded string.
+     * @returns the base64 encoded string.
      */
-    static uint8ArrayToBase64 (array: Uint8Array): string {
-        const base64 = btoa(String.fromCharCode.apply(null, array as unknown as number[]));
+    static uint8ArrayToBase64 (array: number[]): string {
+        const base64 = btoa(String.fromCharCode.apply(null, array));
         return base64;
     }
 
     /**
      * Convert an array buffer to a base64 encoded string.
      * @param buffer - an array buffer to convert.
-     * @returns - the base64 encoded string.
+     * @returns the base64 encoded string.
      */
     static arrayBufferToBase64 (buffer: ArrayBuffer): string {
         let binary = '';

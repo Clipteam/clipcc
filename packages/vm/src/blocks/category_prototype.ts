@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type BlockUtility from '../engine/block-utility';
 import type {HatMetadata, MonitorBlockInfo} from '../engine/runtime';
+import type Runtime from '../engine/runtime';
 
 export type BlockArgs = {
     [argName: string]: any;
@@ -19,3 +20,5 @@ export interface CategoryPrototype {
     getMonitored?(): Record<string, MonitorBlockInfo>;
     getOrders?(): Record<string, (string | {execute: string})[]>;
 }
+
+export type CategoryPrototypeConstructor = new (runtime: Runtime) => CategoryPrototype;

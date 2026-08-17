@@ -14,7 +14,7 @@ class MouseWheel {
      * @param data.deltaY Amount of vertical scroll. Negative value indicates scrolling up,
      *  positive value indicates scrolling down.
      */
-    postData (data: { deltaY: number }): void {
+    postData (data: { deltaY: number }) {
         const matchFields: Record<string, string> = {};
         if (data.deltaY < 0) {
             matchFields.KEY_OPTION = 'up arrow';

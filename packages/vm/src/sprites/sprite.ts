@@ -1,30 +1,81 @@
-import RenderedTarget from './rendered-target.js';
-import Blocks from '../engine/blocks.js';
-import {loadSoundFromAsset} from '../import/load-sound.js';
-import {loadCostumeFromAsset} from '../import/load-costume.js';
+import RenderedTarget from './rendered-target';
+import Blocks from '../engine/blocks';
+import {loadSoundFromAsset} from '../import/load-sound';
+import {loadCostumeFromAsset} from '../import/load-costume';
 import newBlockIds from '../util/new-block-ids';
 import StringUtil from '../util/string-util';
 import StageLayering from '../engine/stage-layering';
 import type {StageLayer} from '../engine/stage-layering';
-import type Runtime from '../engine/runtime.js';
+import type Runtime from '../engine/runtime';
 import type SoundBank from '../../../audio/dist/types/SoundBank';
-import type {Asset} from 'clipcc-storage';
+import type {Asset, AssetId, DataFormat} from 'clipcc-storage';
 import type {VMBlock} from '../serialization/schema';
 
+/**
+ * the Scratch costume object.
+ */
 export interface Costume {
+    /**
+     * the ID of the costume's render skin, once installed.
+     */
     skinId: number;
     name: string;
     md5: string;
+    /** The resolution scale for a bitmap costume. */
     bitmapResolution: number;
+    /**
+     * the X component of the costume's origin.
+     */
     rotationCenterX: number;
+    /**
+     * the Y component of the costume's origin.
+     */
     rotationCenterY: number;
+    /**
+     * the asset of the costume loaded from storage.
+     */
+    asset: Asset;
+    assetId?: AssetId | null;
+    textLayerAsset?: Asset;
+    textLayerMD5?: string;
+    size?: [number, number];
+    dataFormat?: DataFormat;
+    broken?: {
+        asset: Asset;
+        assetId?: AssetId | null;
+        md5: string;
+        dataFormat?: DataFormat;
+        rotationCenterX: number;
+        rotationCenterY: number;
+        bitmapResolution: number;
+    };
 }
 
 export interface Sound {
+    name: string;
+    assetId?: AssetId | null;
     soundId: string;
     rate: number;
+    format?: string;
+    dataFormat?: DataFormat;
     sampleCount: number;
+    /**
+     * sound data will be written here once loaded.
+     */
+    data: ArrayBuffer;
     asset: Asset;
+    broken?: {
+        assetId?: AssetId | null;
+        asset: Asset;
+        md5: string;
+        dataFormat?: DataFormat;
+        rate: number;
+        format?: string;
+        sampleCount: number;
+    };
+    /**
+     * the MD5 and extension of the sound to be loaded.
+     */
     md5: string;
 }
 
@@ -86,7 +137,7 @@ class Sprite {
 
     /**
      * Get full costume list
-     * @returns {object[]} list of costumes. Note that mutating the returned list will not
+     * @returns list of costumes. Note that mutating the returned list will not
      *     mutate the list on the sprite. The sprite list should be mutated by calling
      *     addCostumeAt, deleteCostumeAt, or setting costumes.
      */
@@ -123,7 +174,7 @@ class Sprite {
      * Defaults to the sprite layer group
      * @returns Newly created clone.
      */
-    createClone (optLayerGroup: StageLayer) {
+    createClone (optLayerGroup?: StageLayer) {
         const newClone = new RenderedTarget(this, this.runtime);
         newClone.isOriginal = this.clones.length === 0;
         this.clones.push(newClone);
@@ -177,7 +228,7 @@ class Sprite {
         newSprite.sounds = this.sounds.map(sound => {
             const newSound = Object.assign({}, sound);
             const soundAsset = sound.asset;
-            assetPromises.push(loadSoundFromAsset(newSound, soundAsset, this.runtime, newSprite.soundBank));
+            assetPromises.push(loadSoundFromAsset(newSound, soundAsset, this.runtime, newSprite.soundBank!));
             return newSound;
         });
 

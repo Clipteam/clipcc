@@ -1,11 +1,12 @@
 import * as html from 'htmlparser2';
 import decodeHtml from 'decode-html';
 import type {Element} from 'domhandler';
+import type {VMMutation} from '../serialization/schema';
 
 /**
  * Convert a part of a mutation DOM to a mutation VM object, recursively.
- * @param {object} dom DOM object for mutation tag.
- * @returns {object} Object representing useful parts of this mutation.
+ * @param dom DOM object for mutation tag.
+ * @returns Object representing useful parts of this mutation.
  */
 const mutatorTagToObject = function (dom: Element) {
     const obj = Object.create(null);
@@ -33,9 +34,9 @@ const mutatorTagToObject = function (dom: Element) {
  * Adapter between mutator XML or DOM and block representation which can be
  * used by the Scratch runtime.
  * @param mutation Mutation XML string or DOM.
- * @returns {object} Object representing the mutation.
+ * @returns Object representing the mutation.
  */
-const mutationAdapter = function (mutation: Element | string) {
+const mutationAdapter = function (mutation: Element | string): VMMutation {
     let mutationParsed;
     // Check if the mutation is already parsed; if not, parse it.
     if (typeof mutation === 'object') {

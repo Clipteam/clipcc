@@ -32,6 +32,7 @@ module.exports = [
         rules: {
             // Most packaages uses JSDoc to generate declaration files, which has lots of undefined types.
             'jsdoc/no-undefined-types': 'warn',
+            'jsdoc/require-returns-type': 'off', /** tsc can infer return types */
             'jsdoc/reject-function-type': 'warn',
             'jsdoc/check-param-names': 'error',
             'jsdoc/check-tag-names': 'error',

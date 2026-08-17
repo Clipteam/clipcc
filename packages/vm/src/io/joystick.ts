@@ -13,7 +13,7 @@ class Joystick {
         public runtime: Runtime
     ) {}
 
-    postData (data: Record<string, number>): void {
+    postData (data: Record<string, number>) {
         if (Object.prototype.hasOwnProperty.call(data, 'x')) this._x = data.x;
         if (Object.prototype.hasOwnProperty.call(data, 'y')) this._y = data.y;
         if (Object.prototype.hasOwnProperty.call(data, 'distance')) this._distance = data.distance;

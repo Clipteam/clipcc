@@ -11,7 +11,7 @@ import {test} from '../fixtures/jest-tap-bridge.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
 import VirtualMachine from '../../src/index';
-import {serializeSounds} from '../../src/serialization/serialize-assets.js';
+import {serializeSounds} from '../../src/serialization/serialize-assets';
 
 const projectUri = path.resolve(__dirname, '../fixtures/missing_sound.sb3');
 const project = readFileToBuffer(projectUri);

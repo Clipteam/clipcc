@@ -2,13 +2,14 @@ import ArgumentType from '../extension-support/argument-type';
 import BlockType from '../extension-support/block-type';
 import dispatch from '../dispatch/worker-dispatch';
 import TargetType from './target-type';
+import type {ExtensionClass} from './extension-metadata';
 
 class ExtensionWorker {
+    nextExtensionId = 0;
+    initialRegistrations: Promise<void>[] | null = [];
+    workerId?: number;
+    extensions: ExtensionClass[] = [];
     constructor () {
-        this.nextExtensionId = 0;
-
-        this.initialRegistrations = [];
-
         dispatch.waitForConnection.then(() => {
             dispatch.call('extensions', 'allocateWorker').then(x => {
                 const [id, extension] = x;
@@ -17,7 +18,7 @@ class ExtensionWorker {
                 try {
                     importScripts(extension);
 
-                    const initialRegistrations = this.initialRegistrations;
+                    const initialRegistrations = this.initialRegistrations!;
                     this.initialRegistrations = null;
 
                     Promise.all(initialRegistrations).then(() => dispatch.call('extensions', 'onWorkerInit', id));
@@ -30,7 +31,7 @@ class ExtensionWorker {
         this.extensions = [];
     }
 
-    register (extensionObject) {
+    register (extensionObject: ExtensionClass) {
         const extensionId = this.nextExtensionId++;
         this.extensions.push(extensionObject);
         const serviceName = `extension.${this.workerId}.${extensionId}`;
@@ -41,6 +42,17 @@ class ExtensionWorker {
         }
         return promise;
     }
+}
+
+declare global {
+    var Scratch: {
+        extensions: {
+            register: (extensionObject: ExtensionClass) => Promise<void>;
+        },
+        ArgumentType: typeof ArgumentType;
+        BlockType: typeof BlockType;
+        TargetType: typeof TargetType;
+    };
 }
 
 global.Scratch = global.Scratch || {};

@@ -26,7 +26,6 @@ class Keyboard {
      * An uppercase string of length one;
      *     except for special key names for arrow keys and space (e.g. 'left arrow').
      * Can be a non-english unicode letter like: æ ø ש נ 手 廿.
-     * @type {Array.<string>}
      */
     _keysPressed: string[] = [];
 
@@ -113,7 +112,7 @@ class Keyboard {
      * @param data.key The key from the DOM event.
      * @param data.isDown Whether the key is being pressed or released.
      */
-    postData (data: { key: string; isDown: boolean }): void {
+    postData (data: { key: string; isDown: boolean }) {
         if (!data.key) return;
         const scratchKey = this._keyStringToScratchKey(data.key);
         if (scratchKey === '') return;

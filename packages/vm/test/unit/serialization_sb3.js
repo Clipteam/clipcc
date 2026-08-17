@@ -1,7 +1,7 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
 import path from 'path';
 import VirtualMachine from '../../src/index';
-import Runtime from '../../src/engine/runtime.js';
+import Runtime from '../../src/engine/runtime';
 import * as sb3 from '../../src/serialization/sb3.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
 const exampleProjectPath = path.resolve(__dirname, '../fixtures/clone-cleanup.sb2');

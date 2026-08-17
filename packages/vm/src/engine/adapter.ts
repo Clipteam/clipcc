@@ -20,7 +20,7 @@ const domToBlock = function (
     blocks: Record<string, VMBlock>,
     isTopBlock: boolean,
     parent: string | null
-): void {
+) {
     if (!blockDOM.attribs.id) {
         blockDOM.attribs.id = uid();
     }
@@ -184,7 +184,7 @@ const stateToBlock = function (
     isTopBlock: boolean,
     parent: string | null,
     isShadow?: boolean
-): void {
+) {
     if (!blockState.id) {
         blockState.id = uid();
     }
@@ -306,7 +306,8 @@ const stateToBlocks = function (blocksState: BlockState | BlockState[]): VMBlock
     return blocksList;
 };
 
-type AdaptableEvents = (ClipCCBlocks.Events.BlockCreate | ClipCCBlocks.BlockDragEnd) & {xml?: { outerHTML: string }};
+export type AdaptableEvents =
+    (ClipCCBlocks.Events.BlockCreate | ClipCCBlocks.BlockDragEnd) & {xml?: { outerHTML: string }};
 
 /**
  * Adapter between block creation events and block representation which can be

@@ -1,9 +1,13 @@
+import type {BlockCommentState} from 'clipcc-block';
+import type RenderedTarget from '../sprites/rendered-target';
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export interface SB3Project {
     targets: SB3Target[];
     monitors?: SB3Monitor[];
     extensions?: string[];
     meta: SB3Meta;
+    projectVersion: 3;
 }
 
 export interface SB3Meta {
@@ -13,7 +17,7 @@ export interface SB3Meta {
     origin?: string;
 }
 
-export type SB3Target = SB3Stage | SB3Sprite;
+export type SB3Target = (SB3Stage | SB3Sprite) & {projectVersion: 3};
 
 export interface SB3BaseTarget {
     isStage: boolean;
@@ -158,6 +162,29 @@ export interface SB3Monitor {
     isDiscrete?: boolean;
 }
 
+// --- SB3->VM intermediate data ---
+export interface ImportedProject {
+    /**
+     * the imported Scratch 3.0 target objects.
+     */
+    targets: RenderedTarget[];
+    /**
+     * the ID of each extension actually used by this project.
+     */
+    extensions: ImportedExtensionsInfo;
+}
+
+export interface ImportedExtensionsInfo {
+    /**
+     * the ID of each extension actually in use by blocks in this project.
+     */
+    extensionIDs: Set<string>;
+    /**
+     * map of ID => URL from project metadata. May not match extensionIDs.
+     */
+    extensionURLs: Map<string, string>;
+}
+
 // --- VM runtime block presentation, used by engine/blocks and serialization/sb3. ---
 
 export interface VMBlock {
@@ -173,7 +200,7 @@ export interface VMBlock {
     y?: number;
     mutation?: VMMutation;
     comment?: string;
-    commentData?: unknown;
+    commentData?: BlockCommentState;
     isMonitored?: boolean;
     targetId?: string | null;
 }
@@ -191,18 +218,24 @@ export interface VMField {
     variableType?: string;
 }
 
-export interface VMMutation {
+export interface ProcedureMutation {
+    proccode?: string;
+    argumentids?: string[];
+    argumentnames?: string[];
+    argumentdefaults?: string[];
+    warp?: boolean;
+    hasnext?: boolean;
+    return?: boolean;
+    global?: boolean;
+    generateshadows?: boolean;
+}
+
+export interface DynamicExtensionBlockMutation {
+    blockInfo?: Record<string, unknown>;
+}
+
+export type VMMutation = {
     tagName?: string;
     children?: VMMutation[];
-    proccode?: string;
-    argumentids?: string;
-    argumentnames?: string;
-    argumentdefaults?: string;
-    warp?: string | boolean;
-    hasnext?: string | boolean;
-    return?: string | boolean;
-    global?: string | boolean;
-    generateshadows?: string | boolean;
-    blockInfo?: Record<string, unknown>;
     [key: string]: unknown;
-}
+} & ProcedureMutation & DynamicExtensionBlockMutation;

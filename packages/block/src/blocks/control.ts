@@ -36,7 +36,7 @@ Blockly.Blocks['control_forever'] = {
       message0: Blockly.Msg.CONTROL_FOREVER,
       message1: '%1', // Statement
       message2: '%1', // Icon
-      lastDummyAlign2: 'RIGHT',
+      implicitAlign2: 'RIGHT',
       args1: [
         {
           type: 'input_statement',
@@ -69,7 +69,7 @@ Blockly.Blocks['control_repeat'] = {
       message0: Blockly.Msg.CONTROL_REPEAT,
       message1: '%1', // Statement
       message2: '%1', // Icon
-      lastDummyAlign2: 'RIGHT',
+      implicitAlign2: 'RIGHT',
       args0: [
         {
           type: 'input_value',
@@ -263,7 +263,7 @@ Blockly.Blocks['control_repeat_until'] = {
       message0: Blockly.Msg.CONTROL_REPEATUNTIL,
       message1: '%1',
       message2: '%1',
-      lastDummyAlign2: 'RIGHT',
+      implicitAlign2: 'RIGHT',
       args0: [
         {
           type: 'input_value',
@@ -302,7 +302,7 @@ Blockly.Blocks['control_while'] = {
       message0: Blockly.Msg.CONTROL_WHILE,
       message1: '%1',
       message2: '%1',
-      lastDummyAlign2: 'RIGHT',
+      implicitAlign2: 'RIGHT',
       args0: [
         {
           type: 'input_value',

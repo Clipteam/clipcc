@@ -85,7 +85,7 @@ class Skin extends EventEmitter {
 
     /**
      * @abstract
-     * @returns {Array<number>} the "native" size, in texels, of this skin.
+     * @returns {[number, number]} the "native" size, in texels, of this skin.
      */
     get size () {
         return [0, 0];
@@ -106,7 +106,7 @@ class Skin extends EventEmitter {
 
     /**
      * Get the center of the current bounding box
-     * @returns {Array<number>} the center of the current bounding box
+     * @returns {[number, number]} the center of the current bounding box
      */
     calculateRotationCenter () {
         return [this.size[0] / 2, this.size[1] / 2];

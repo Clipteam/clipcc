@@ -1,6 +1,6 @@
 import Timer from '../util/timer';
 import Thread from './thread';
-import execute from './execute.js';
+import execute from './execute';
 import type Runtime from './runtime';
 
 /**
@@ -59,7 +59,7 @@ class Sequencer {
      */
     stepThreads (): Thread[] {
         // Work time is 75% of the thread stepping interval.
-        const WORK_TIME = 0.75 * this.runtime.currentStepTime;
+        const WORK_TIME = 0.75 * this.runtime.currentStepTime!;
         // For compatibility with Scatch 2, update the millisecond clock
         // on the Runtime once per step (see Interpreter.as in Scratch 2
         // for original use of `currentMSecs`)

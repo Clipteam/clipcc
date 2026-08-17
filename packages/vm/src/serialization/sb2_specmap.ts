@@ -24,24 +24,47 @@
 
 import Variable from '../engine/variable';
 
-/**
- * @typedef {object} SB2SpecMap_blockInfo
- * @property {string} opcode - the Scratch 3.0 block opcode. Use 'extensionID.opcode' for extension opcodes.
- * @property {Array.<SB2SpecMap_argInfo>} argMap - metadata for this block's arguments.
- */
+interface SB2SpecMapInputInfo {
+    type: 'input';
+    /**
+     * the scratch-blocks shadow type for this arg
+     */
+    inputOp: string;
+    /**
+     * the name this argument will take when provided to the block implementation
+     */
+    inputName: string;
+    variableType?: string;
+}
 
-/**
- * @typedef {object} SB2SpecMap_argInfo
- * @property {string} type - the type of this arg (such as 'input' or 'field')
- * @property {string} inputOp - the scratch-blocks shadow type for this arg
- * @property {string} inputName - the name this argument will take when provided to the block implementation
- */
+interface SB2SpecMapFieldInfo {
+    type: 'field';
+    /**
+     * the name this field will take when provided to the block implementation
+     */
+    fieldName: string;
+    variableType?: string;
+}
+
+type SB2SpecMapArgInfo = SB2SpecMapInputInfo | SB2SpecMapFieldInfo;
+
+interface SB2SpecMapBlockInfo {
+    /**
+     * the Scratch 3.0 block opcode. Use 'extensionID_opcode' for extension opcodes.
+     */
+    opcode: string;
+    /**
+     * metadata for this block's arguments.
+     */
+    argMap: SB2SpecMapArgInfo[];
+}
+
+type SB2SpecMapValue = SB2SpecMapBlockInfo | ((args: string[]) => SB2SpecMapBlockInfo);
 
 /**
  * Mapping of Scratch 2.0 opcode to Scratch 3.0 block metadata.
- * @type {Record<string, SB2SpecMap_blockInfo>}
  */
-const specMap = {
+const specMap: Record<string, SB2SpecMapValue> = {
     'forward:': {
         opcode: 'motion_movesteps',
         argMap: [
@@ -746,6 +769,7 @@ const specMap = {
             }
         ]
     },
+    // @ts-expect-error Special case, lazy to type
     'whenSensorGreaterThan': ([, sensor]) => {
         if (sensor === 'video motion') {
             return {
@@ -1643,15 +1667,14 @@ const specMap = {
 /**
  * Add to the specMap entries for an opcode from a Scratch 2.0 extension. Two entries will be made with the same
  * metadata; this is done to support projects saved by both older and newer versions of the Scratch 2.0 editor.
- * @param {string} sb2Extension - the Scratch 2.0 name of the extension
- * @param {string} sb2Opcode - the Scratch 2.0 opcode
- * @param {SB2SpecMap_blockInfo} blockInfo - the Scratch 3.0 block info
+ * @param sb2Extension - the Scratch 2.0 name of the extension
+ * @param sb2Opcode - the Scratch 2.0 opcode
+ * @param blockInfo - the Scratch 3.0 block info
  */
-const addExtensionOp = function (sb2Extension, sb2Opcode, blockInfo) {
+const addExtensionOp = function (sb2Extension: string, sb2Opcode: string, blockInfo: SB2SpecMapBlockInfo) {
     /**
      * This string separates the name of an extension and the name of an opcode in more recent Scratch 2.0 projects.
      * Earlier projects used '.' as a separator, up until we added the 'LEGO WeDo 2.0' extension...
-     * @type {string}
      */
     const sep = '\u001F'; // Unicode Unit Separator
 

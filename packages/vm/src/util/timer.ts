@@ -12,11 +12,15 @@
  * to do some measurement yourself.
  */
 
+export interface NowObj {
+    now: () => number;
+}
+
 class Timer {
     startTime: number;
-    nowObj: { now: () => number };
+    nowObj: NowObj;
 
-    constructor (nowObj: { now: () => number } = Timer.nowObj) {
+    constructor (nowObj: NowObj = Timer.nowObj) {
         /**
          * Used to store the start time of a timer action.
          * Updated when calling `timer.start`.
@@ -43,7 +47,7 @@ class Timer {
      * @deprecated This is only called via the nowObj.now() if no other means is possible...
      * @returns An object with a now function that returns the current time in ms since 1 January 1970 00:00:00 UTC.
      */
-    static get legacyDateCode (): { now: () => number } {
+    static get legacyDateCode (): NowObj {
         return {
             now () {
                 return new Date().getTime();
@@ -55,7 +59,7 @@ class Timer {
      * Use this object to route all time functions through single access points.
      * @returns An object with a now function that returns timestamp.
      */
-    static get nowObj (): { now: () => number } {
+    static get nowObj (): NowObj {
         if (Timer.USE_PERFORMANCE && typeof self !== 'undefined' && self.performance && 'now' in self.performance) {
             return self.performance;
         }
@@ -85,7 +89,7 @@ class Timer {
      * Start a timer for measuring elapsed time,
      * at the most accurate precision possible.
      */
-    start (): void {
+    start () {
         this.startTime = this.nowObj.now();
     }
 
@@ -97,7 +101,7 @@ class Timer {
      * Call a handler function after a specified amount of time has elapsed.
      * @param handler - function to call after the timeout
      * @param timeout - number of milliseconds to delay before calling the handler
-     * @returns - the ID of the new timeout
+     * @returns the ID of the new timeout
      */
     setTimeout (handler: () => void, timeout: number): ReturnType<typeof global.setTimeout> {
         return global.setTimeout(handler, timeout);
@@ -107,7 +111,7 @@ class Timer {
      * Clear a timeout from the pending timeout pool.
      * @param timeoutId - the ID returned by `setTimeout()`
      */
-    clearTimeout (timeoutId: ReturnType<typeof global.setTimeout>): void {
+    clearTimeout (timeoutId: ReturnType<typeof global.setTimeout>) {
         global.clearTimeout(timeoutId);
     }
 }

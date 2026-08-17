@@ -400,7 +400,7 @@ class Scratch3Text2SpeechBlocks {
     }
 
     /**
-     * @returns {object} metadata for this extension and its blocks.
+     * @returns metadata for this extension and its blocks.
      */
     getInfo () {
         // Only localize the default input to the "speak" block if we are in a

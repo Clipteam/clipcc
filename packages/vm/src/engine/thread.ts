@@ -1,6 +1,7 @@
 import type Blocks from './blocks';
 import type Timer from '../util/timer';
 import type RenderedTarget from '../sprites/rendered-target';
+import type {CachedArgValue} from './execute';
 
 /**
  * Recycle bin for empty stackFrame objects
@@ -10,7 +11,6 @@ const _stackFrameFreeList: _StackFrame[] = [];
 /**
  * A frame used for each level of the stack. A general purpose
  * place to store a bunch of execution context and parameters
- * @private
  */
 class _StackFrame {
     /**
@@ -24,11 +24,11 @@ class _StackFrame {
     /**
      * The active block that is waiting on a promise.
      */
-    reporting = '';
+    reporting: string | null = null;
     /**
      * Persists reported inputs during async block.
      */
-    reported: Record<string, unknown> | null = null;
+    reported: {opCached: string, inputValue: CachedArgValue}[] | null = null;
     /**
      * Whether is waiting a custom reporter.
      */
@@ -72,7 +72,7 @@ class _StackFrame {
      * Reuse an active stack frame in the stack.
      * @param warpMode defaults to current warpMode
      */
-    reuse (warpMode: boolean = this.warpMode): this {
+    reuse (warpMode = this.warpMode): this {
         this.reset();
         this.warpMode = Boolean(warpMode);
         return this;
@@ -95,7 +95,7 @@ class _StackFrame {
      * Put a stack frame object into the recycle bin for reuse.
      * @param stackFrame The frame to reset and recycle.
      */
-    static release (stackFrame: _StackFrame): void {
+    static release (stackFrame: _StackFrame) {
         if (typeof stackFrame !== 'undefined') {
             _stackFrameFreeList.push(stackFrame.reset());
         }
@@ -130,7 +130,7 @@ class Thread {
     /**
      * Status of the thread, one of three states (below)
      */
-    status: ThreadStatus = ThreadStatus.RUNNING;
+    status = ThreadStatus.RUNNING;
     /**
      * Whether the thread is killed in the middle of execution.
      */
@@ -142,11 +142,11 @@ class Thread {
     /**
      * The Blocks this thread will execute.
      */
-    blockContainer: Blocks | null = null;
+    blockContainer?: Blocks | null = null;
     /**
      * Whether the thread requests its script to glow during this frame.
      */
-    requestScriptGlowInFrame: boolean = false;
+    requestScriptGlowInFrame = false;
     /**
      * Which block ID should glow during this frame, if any.
      */
@@ -219,7 +219,7 @@ class Thread {
      * @param blockId Block ID to push to stack.
      * @param target New target context.
      */
-    pushStack (blockId: string | null, target?: RenderedTarget): void {
+    pushStack (blockId: string | null, target?: RenderedTarget) {
         this.stack.push(blockId);
         // Push an empty stack frame, if we need one.
         // Might not, if we just popped the stack.
@@ -243,7 +243,7 @@ class Thread {
      * (avoids popping and re-pushing a new stack frame - keeps the warpmode the same
      * @param blockId Block ID to push to stack.
      */
-    reuseStackForNextBlock (blockId: string): void {
+    reuseStackForNextBlock (blockId: string) {
         this.stack[this.stack.length - 1] = blockId;
         this.stackFrames[this.stackFrames.length - 1].reuse();
     }
@@ -264,7 +264,7 @@ class Thread {
     /**
      * Pop back down the stack frame until we hit a procedure call or the stack frame is emptied
      */
-    stopThisScript (): void {
+    stopThisScript () {
         let blockID = this.peekStack();
         while (blockID !== null) {
             const block = this.blockContainer!.getBlock(blockID);
@@ -317,14 +317,14 @@ class Thread {
      * Push a reported value to the parent of the current stack frame.
      * @param value Reported value to push.
      */
-    pushReportedValue (value: unknown): void {
+    pushReportedValue (value: unknown) {
         this.justReported = typeof value === 'undefined' ? null : value;
     }
 
     /**
      * Initialize procedure parameters on this stack frame.
      */
-    initParams (): void {
+    initParams () {
         const stackFrame = this.peekStackFrame();
         if (stackFrame && stackFrame.params === null) {
             stackFrame.params = {};
@@ -337,7 +337,7 @@ class Thread {
      * @param paramName Name of parameter.
      * @param value Value to set for parameter.
      */
-    pushParam (paramName: string, value: unknown): void {
+    pushParam (paramName: string, value: unknown) {
         const stackFrame = this.peekStackFrame()!;
         stackFrame.params![paramName] = value;
     }
@@ -375,7 +375,7 @@ class Thread {
      * For example, this is used in a standard sequence of blocks,
      * where execution proceeds from one block to the next.
      */
-    goToNextBlock (): void {
+    goToNextBlock () {
         const nextBlockId = this.blockContainer!.getNextBlock(this.peekStack()!) as string;
         this.reuseStackForNextBlock(nextBlockId);
     }
@@ -411,5 +411,7 @@ class Thread {
         return false;
     }
 }
+
+export type {Thread, _StackFrame as ThreadStackFrame};
 
 export default Thread;

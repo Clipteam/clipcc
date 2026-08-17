@@ -1,10 +1,10 @@
-import Runtime from '../../engine/runtime.js';
+import Runtime from '../../engine/runtime';
 import ArgumentType from '../../extension-support/argument-type';
 import BlockType from '../../extension-support/block-type';
 import Clone from '../../util/clone';
 import Cast from '../../util/cast';
 import formatMessage from 'format-message';
-import Video from '../../io/video.js';
+import Video from '../../io/video';
 import VideoMotion from './library.js';
 
 /**
@@ -416,7 +416,7 @@ class Scratch3VideoSensingBlocks {
     }
 
     /**
-     * @returns {object} metadata for this extension and its blocks.
+     * @returns metadata for this extension and its blocks.
      */
     getInfo () {
         // Set the video display properties to defaults the first time

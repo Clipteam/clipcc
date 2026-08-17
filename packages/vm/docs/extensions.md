@@ -287,7 +287,7 @@ const TargetType = require('../../extension-support/target-type');
 const formatMessage = require('format-message');
 
 // Core, Team, and Official extension classes should be registered statically with the Extension Manager.
-// See: scratch-vm/src/extension-support/extension-manager.js
+// See: scratch-vm/src/extension-support/extension-manager.ts
 class SomeBlocks {
     constructor (runtime) {
         /**

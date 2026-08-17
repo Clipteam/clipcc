@@ -61,7 +61,7 @@ class RuntimeScriptCache {
         }
         for (const key in this.fieldsOfInputs) {
             const field = this.fieldsOfInputs[key] = Object.assign({}, this.fieldsOfInputs[key]);
-            if (field.value?.toUpperCase) {
+            if (typeof field.value === 'string') {
                 field.value = field.value.toUpperCase();
             }
         }
@@ -75,7 +75,7 @@ class RuntimeScriptCache {
  * @returns Array of cached script data for scripts with the given opcode
  */
 const getScripts = function (container: Blocks, opcode: string): RuntimeScriptCache[] {
-    const runtimeCache = container._cache.scripts as Record<string, RuntimeScriptCache[]>;
+    const runtimeCache = container._cache.scripts;
 
     let scripts = runtimeCache[opcode];
     if (!scripts) {

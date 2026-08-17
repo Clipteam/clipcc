@@ -6,7 +6,7 @@
 
 import vmPackage from '../../package.json';
 
-import Blocks from '../engine/blocks.js';
+import Blocks from '../engine/blocks';
 import Sprite from '../sprites/sprite';
 import Variable from '../engine/variable';
 import Comment from '../engine/comment';
@@ -18,13 +18,16 @@ import MathUtil from '../util/math-util';
 import StringUtil from '../util/string-util';
 import VariableUtil from '../util/variable-util';
 import {migrationMap, mergeDeep, migrateMutation} from './migration.js';
-import {loadCostume} from '../import/load-costume.js';
-import {loadSound} from '../import/load-sound.js';
-import {deserializeCostume, deserializeSound} from './deserialize-assets.js';
+import {loadCostume} from '../import/load-costume';
+import {loadSound} from '../import/load-sound';
+import {deserializeCostume, deserializeSound} from './deserialize-assets';
 
 const hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
+ * @typedef {import('../engine/runtime').default} Runtime
+ * @typedef {import('../sprites/rendered-target').default} RenderedTarget
+ * @typedef {import('jszip')} JSZip
  * @typedef {import('./schema').SB3Project} SB3Project
  * @typedef {import('./schema').SB3Target} SB3Target
  * @typedef {import('./schema').SB3Block} SB3Block
@@ -38,18 +41,13 @@ const hasOwnProperty = Object.prototype.hasOwnProperty;
  * @typedef {import('./schema').SB3List} SB3List
  * @typedef {import('./schema').SB3Comment} SB3Comment
  * @typedef {import('./schema').SB3Monitor} SB3Monitor
- */
-
-/**
- * @typedef {object} ImportedProject
- * @property {Array.<Target>} targets - the imported Scratch 3.0 target objects.
- * @property {ImportedExtensionsInfo} extensionsInfo - the ID of each extension actually used by this project.
- */
-
-/**
- * @typedef {object} ImportedExtensionsInfo
- * @property {Set.<string>} extensionIDs - the ID of each extension actually in use by blocks in this project.
- * @property {Map.<string, string>} extensionURLs - map of ID => URL from project metadata. May not match extensionIDs.
+ * @typedef {import('./schema').ImportedExtensionsInfo} ImportedExtensionsInfo
+ * @typedef {import('./schema').ImportedProject} ImportedProject
+ * @typedef {import('./schema').VMBlock} VMBlock
+ * @typedef {import('./schema').VMInput} VMInput
+ * @typedef {import('./schema').VMField} VMField
+ * @typedef {import('../sprites/sprite').Costume} Costume
+ * @typedef {import('../sprites/sprite').Sound} Sound
  */
 
 // Constants used during serialization and deserialization
@@ -114,7 +112,7 @@ const primitiveOpcodeInfoMap = {
 
 /**
  * Serializes primitives described above into a more compact format
- * @param {object} block the block to serialize
+ * @param {VMBlock} block the block to serialize
  * @returns {SB3BlockPrimitive | null} An array representing the information in the block,
  * or null if the given block is not one of the primitives described above.
  */
@@ -182,7 +180,7 @@ const serializeInputs = function (inputs) {
 
 /**
  * Serialize the fields of a block in a more compact form.
- * @param {object} fields The fields object to serialize
+ * @param {Record<string, VMField>} fields The fields object to serialize
  * @returns {Record<string, SB3Field>} An object representing the serialized fields
  */
 const serializeFields = function (fields) {
@@ -200,7 +198,7 @@ const serializeFields = function (fields) {
 /**
  * Serialize the given block in the SB3 format with some compression of inputs,
  * fields, and primitives.
- * @param {object} block The block to serialize
+ * @param {VMBlock} block The block to serialize
  * @returns {SB3Block} A serialized representation of the block. This is an
  * array if the block is one of the primitive types described above or an object,
  * if not.
@@ -258,9 +256,9 @@ const serializeBlock = function (block) {
  *      }
  * }
  * Note: this function modifies the given blocks object in place
- * @param {object} block The block with inputs to compress
- * @param {objec} blocks The object containing all the blocks currently getting serialized
- * @returns {object} The serialized block with compressed inputs
+ * @param {VMBlock} block The block with inputs to compress
+ * @param {Record<string, SB3Block>} blocks The object containing all the blocks currently getting serialized
+ * @returns {SB3Block} The serialized block with compressed inputs
  */
 const compressInputTree = function (block, blocks) {
     // This is the second pass on the block
@@ -308,7 +306,7 @@ const getExtensionIdForOpcode = function (opcode) {
 /**
  * Serialize the given blocks object (representing all the blocks for the target
  * currently being serialized.)
- * @param {object} blocks The blocks to be serialized
+ * @param {Record<string, VMBlock>} blocks The blocks to be serialized
  * @returns {[Record<string, SB3Block>, string[]]} An array of the serialized blocks with compressed inputs and
  * compressed primitives and the list of all extension IDs present
  * in the serialized blocks.
@@ -356,7 +354,7 @@ const serializeBlocks = function (blocks) {
 
 /**
  * Serialize the given costume.
- * @param {object} costume The costume to be serialized.
+ * @param {Costume} costume The costume to be serialized.
  * @returns {SB3Costume} A serialized representation of the costume.
  */
 const serializeCostume = function (costume) {
@@ -385,7 +383,7 @@ const serializeCostume = function (costume) {
 
 /**
  * Serialize the given sound.
- * @param {object} sound The sound to be serialized.
+ * @param {Sound} sound The sound to be serialized.
  * @returns {SB3Sound} A serialized representation of the sound.
  */
 const serializeSound = function (sound) {
@@ -632,8 +630,9 @@ const serialize = function (runtime, targetId) {
  * @param {string | SB3BlockPrimitive} inputDescOrId The block input descriptor to be serialized.
  * @param {string} parentId The id of the parent block for this input block.
  * @param {boolean} isShadow Whether or not this input block is a shadow.
- * @param {object} blocks The entire blocks object currently in the process of getting serialized.
- * @returns {object} The deserialized input descriptor.
+ * @param {Record<string, VMBlock | SB3Block>} blocks
+ *   The entire blocks object currently in the process of getting serialized.
+ * @returns The deserialized input descriptor.
  */
 const deserializeInputDesc = function (inputDescOrId, parentId, isShadow, blocks) {
     if (!Array.isArray(inputDescOrId)) return inputDescOrId;
@@ -783,9 +782,9 @@ const deserializeInputDesc = function (inputDescOrId, parentId, isShadow, blocks
  * Deserialize the given block inputs.
  * @param {Record<string, SB3Input>} inputs The inputs to deserialize.
  * @param {string} parentId The block id of the parent block
- * @param {object} blocks The object representing the entire set of blocks currently
+ * @param {Record<string, VMBlock | SB3Block>} blocks The object representing the entire set of blocks currently
  * in the process of getting deserialized.
- * @returns {object} The deserialized and uncompressed inputs.
+ * @returns The deserialized and uncompressed inputs.
  */
 const deserializeInputs = function (inputs, parentId, blocks) {
     // Explicitly not using Object.create(null) here
@@ -820,7 +819,7 @@ const deserializeInputs = function (inputs, parentId, blocks) {
 /**
  * Deserialize the given block fields.
  * @param {Record<string, SB3Field>} fields The fields to be deserialized
- * @returns {object} The deserialized and uncompressed block fields.
+ * @returns The deserialized and uncompressed block fields.
  */
 const deserializeFields = function (fields) {
     // Explicitly not using Object.create(null) here
@@ -855,8 +854,8 @@ const deserializeFields = function (fields) {
  * "east" path to adding new targets/code requires going through deserialize, so it should
  * work with pre-parsed deserialized blocks.
  *
- * @param {object} blocks Serialized SB3 "blocks" property of a target. Will be mutated.
- * @returns {object} input is modified and returned
+ * @param {Record<string, SB3Block | VMBlock>} blocks Serialized SB3 "blocks" property of a target. Will be mutated.
+ * @returns input is modified and returned
  */
 const deserializeBlocks = function (blocks) {
     for (const blockId in blocks) {
@@ -887,7 +886,7 @@ const deserializeBlocks = function (blocks) {
  * list of needed Extensions.
  * @param {!object} object From-JSON "Scratch object:" sprite, stage, watcher.
  * @param {!Runtime} runtime Runtime object to load all structures into.
- * @param {JSZip} zip Sb3 file describing this project (to load assets from)
+ * @param {JSZip} [zip] Sb3 file describing this project (to load assets from)
  * @returns {?{costumePromises:Array.<Promise>,soundPromises:Array.<Promise>,soundBank:SoundBank}}
  * Object of arrays of promises for asset objects used in Sprites. As well as a
  * SoundBank for the sound assets. null for unsupported objects.
@@ -971,10 +970,10 @@ const parseScratchAssets = function (object, runtime, zip) {
  * @param {!object} object From-JSON "Scratch object:" sprite, stage, watcher.
  * @param {!Runtime} runtime Runtime object to load all structures into.
  * @param {ImportedExtensionsInfo} extensions - (in/out) parsed extension information will be stored here.
- * @param {JSZip} zip Sb3 file describing this project (to load assets from)
+ * @param {JSZip} [zip] Sb3 file describing this project (to load assets from)
  * @param {object} assets - Promises for assets of this scratch object grouped
  *   into costumes and sounds
- * @returns {!Promise.<Target>} Promise for the target created (stage or sprite), or null for unsupported objects.
+ * @returns {Promise<RenderedTarget>} Promise for the target created (stage or sprite), or null for unsupported objects.
  */
 const parseScratchObject = function (object, runtime, extensions, zip, assets) {
     if (!Object.prototype.hasOwnProperty.call(object, 'name')) {
@@ -1283,8 +1282,8 @@ const replaceUnsafeCharsInVariableIds = function (targets) {
  * Deserialize the specified representation of a VM runtime and loads it into the provided runtime instance.
  * @param {SB3Project | SB3Target} json - JSON representation of a VM runtime.
  * @param  {Runtime} runtime - Runtime instance
- * @param {JSZip} zip - Sb3 file describing this project (to load assets from)
- * @param {boolean} isSingleSprite - If true treat as single sprite, else treat as whole project
+ * @param {JSZip} [zip] - Sb3 file describing this project (to load assets from)
+ * @param {boolean} [isSingleSprite] - If true treat as single sprite, else treat as whole project
  * @returns {Promise.<ImportedProject>} Promise that resolves to the list of targets after the project is deserialized
  */
 const deserialize = function (json, runtime, zip, isSingleSprite) {

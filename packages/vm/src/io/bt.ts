@@ -1,25 +1,48 @@
 import JSONRPC from '../util/jsonrpc';
+import Runtime from '../engine/runtime';
+import ScratchLinkWebSocket from '../util/scratch-link-websocket';
 
 class BT extends JSONRPC {
+
+    _socket: ScratchLinkWebSocket;
+    _sendMessage!: (jsonMessageObject: object) => void;
+
+    _availablePeripherals: Record<number, unknown>;
+    _connectCallback: () => void;
+    _connected: boolean;
+    _characteristicDidChangeCallback: ((message: unknown) => void) | null;
+    _resetCallback: (() => void) | null;
+    _discoverTimeoutID: number | null;
+    _extensionId: string;
+    _peripheralOptions: object;
+    _messageCallback: (params: unknown) => void;
+    _runtime: Runtime;
 
     /**
      * A BT peripheral socket object.  It handles connecting, over web sockets, to
      * BT peripherals, and reading and writing data to them.
-     * @param {Runtime} runtime - the Runtime for sending/receiving GUI update events.
-     * @param {string} extensionId - the id of the extension using this socket.
-     * @param {object} peripheralOptions - the list of options for peripheral discovery.
-     * @param {object} connectCallback - a callback for connection.
-     * @param {object} resetCallback - a callback for resetting extension state.
-     * @param {object} messageCallback - a callback for message sending.
+     * @param runtime - the Runtime for sending/receiving GUI update events.
+     * @param extensionId - the id of the extension using this socket.
+     * @param peripheralOptions - the list of options for peripheral discovery.
+     * @param connectCallback - a callback for connection.
+     * @param resetCallback - a callback for resetting extension state.
+     * @param messageCallback - a callback for message sending.
      */
-    constructor (runtime, extensionId, peripheralOptions, connectCallback, resetCallback = null, messageCallback) {
+    constructor (
+        runtime: Runtime,
+        extensionId: string,
+        peripheralOptions: object,
+        connectCallback: () => void,
+        resetCallback: (() => void) | null = null,
+        messageCallback: (params: unknown) => void
+    ) {
         super();
 
-        this._socket = runtime.getScratchLinkSocket('BT');
+        this._socket = runtime.getScratchLinkSocket('BT') as ScratchLinkWebSocket;
         this._socket.setOnOpen(this.requestPeripheral.bind(this));
-        this._socket.setOnError(this._handleRequestError.bind(this));
-        this._socket.setOnClose(this.handleDisconnectError.bind(this));
-        this._socket.setHandleMessage(this._handleMessage.bind(this));
+        this._socket.setOnError(() => this._handleRequestError());
+        this._socket.setOnClose(() => this.handleDisconnectError());
+        this._socket.setHandleMessage(this._handleMessage.bind(this) as (json: unknown) => void);
 
         this._sendMessage = this._socket.sendMessage.bind(this._socket);
 
@@ -49,29 +72,29 @@ class BT extends JSONRPC {
         this._discoverTimeoutID = window.setTimeout(this._handleDiscoverTimeout.bind(this), 15000);
         this.sendRemoteRequest('discover', this._peripheralOptions)
             .catch(
-                e => this._handleRequestError(e)
+                () => this._handleRequestError()
             );
     }
 
     /**
      * Try connecting to the input peripheral id, and then call the connect
      * callback if connection is successful.
-     * @param {number} id - the id of the peripheral to connect to
-     * @param {string} pin - an optional pin for pairing
+     * @param id - the id of the peripheral to connect to
+     * @param pin - an optional pin for pairing
      */
-    connectPeripheral (id, pin = null) {
-        const params = {peripheralId: id};
+    connectPeripheral (id: number, pin: string | null = null) {
+        const params: Record<string, unknown> = {peripheralId: id};
         if (pin) {
             params.pin = pin;
         }
         this.sendRemoteRequest('connect', params)
             .then(() => {
                 this._connected = true;
-                this._runtime.emit(this._runtime.constructor.PERIPHERAL_CONNECTED);
+                this._runtime.emit(Runtime.PERIPHERAL_CONNECTED);
                 this._connectCallback();
             })
-            .catch(e => {
-                this._handleRequestError(e);
+            .catch(() => {
+                this._handleRequestError();
             });
     }
 
@@ -92,36 +115,36 @@ class BT extends JSONRPC {
         }
 
         // Sets connection status icon to orange
-        this._runtime.emit(this._runtime.constructor.PERIPHERAL_DISCONNECTED);
+        this._runtime.emit(Runtime.PERIPHERAL_DISCONNECTED);
     }
 
     /**
-     * @returns {boolean} whether the peripheral is connected.
+     * Whether the peripheral is connected.
      */
-    isConnected () {
+    isConnected (): boolean {
         return this._connected;
     }
 
-    sendMessage (options) {
+    sendMessage (options: object): Promise<unknown> {
         return this.sendRemoteRequest('send', options)
-            .catch(e => {
-                this.handleDisconnectError(e);
+            .catch(() => {
+                this.handleDisconnectError();
             });
     }
 
     /**
      * Handle a received call from the socket.
-     * @param {string} method - a received method label.
-     * @param {object} params - a received list of parameters.
-     * @returns {object} - optional return value.
+     * @param method - a received method label.
+     * @param params - a received list of parameters.
+     * @returns optional return value.
      */
-    didReceiveCall (method, params) {
+    didReceiveCall (method: string, params: Record<string, unknown>): unknown {
         // TODO: Add peripheral 'undiscover' handling
         switch (method) {
         case 'didDiscoverPeripheral':
-            this._availablePeripherals[params.peripheralId] = params;
+            this._availablePeripherals[params.peripheralId as number] = params;
             this._runtime.emit(
-                this._runtime.constructor.PERIPHERAL_LIST_UPDATE,
+                Runtime.PERIPHERAL_LIST_UPDATE,
                 this._availablePeripherals
             );
             if (this._discoverTimeoutID) {
@@ -129,9 +152,9 @@ class BT extends JSONRPC {
             }
             break;
         case 'userDidPickPeripheral':
-            this._availablePeripherals[params.peripheralId] = params;
+            this._availablePeripherals[params.peripheralId as number] = params;
             this._runtime.emit(
-                this._runtime.constructor.USER_PICKED_PERIPHERAL,
+                Runtime.USER_PICKED_PERIPHERAL,
                 this._availablePeripherals
             );
             if (this._discoverTimeoutID) {
@@ -140,7 +163,7 @@ class BT extends JSONRPC {
             break;
         case 'userDidNotPickPeripheral':
             this._runtime.emit(
-                this._runtime.constructor.PERIPHERAL_SCAN_TIMEOUT
+                Runtime.PERIPHERAL_SCAN_TIMEOUT
             );
             if (this._discoverTimeoutID) {
                 window.clearTimeout(this._discoverTimeoutID);
@@ -176,7 +199,7 @@ class BT extends JSONRPC {
             this._resetCallback();
         }
 
-        this._runtime.emit(this._runtime.constructor.PERIPHERAL_CONNECTION_LOST_ERROR, {
+        this._runtime.emit(Runtime.PERIPHERAL_CONNECTION_LOST_ERROR, {
             message: `Scratch lost connection to`,
             extensionId: this._extensionId
         });
@@ -185,7 +208,7 @@ class BT extends JSONRPC {
     _handleRequestError (/* e */) {
         // log.error(`BT error: ${JSON.stringify(e)}`);
 
-        this._runtime.emit(this._runtime.constructor.PERIPHERAL_REQUEST_ERROR, {
+        this._runtime.emit(Runtime.PERIPHERAL_REQUEST_ERROR, {
             message: `Scratch lost connection to`,
             extensionId: this._extensionId
         });
@@ -195,7 +218,7 @@ class BT extends JSONRPC {
         if (this._discoverTimeoutID) {
             window.clearTimeout(this._discoverTimeoutID);
         }
-        this._runtime.emit(this._runtime.constructor.PERIPHERAL_SCAN_TIMEOUT);
+        this._runtime.emit(Runtime.PERIPHERAL_SCAN_TIMEOUT);
     }
 }
 

@@ -9,22 +9,32 @@
  * @typedef {number} int
  */
 
-import Blocks from '../engine/blocks.js';
-import RenderedTarget from '../sprites/rendered-target.js';
+import Blocks from '../engine/blocks';
+
+import RenderedTarget from '../sprites/rendered-target';
 import Sprite from '../sprites/sprite';
 import Color from '../util/color';
 import log from '../util/log';
 import uid from '../util/uid';
 import StringUtil from '../util/string-util';
 import MathUtil from '../util/math-util';
-import specMap from './sb2_specmap.js';
+import specMap from './sb2_specmap';
 import Comment from '../engine/comment';
 import Variable from '../engine/variable';
 import MonitorRecord from '../engine/monitor-record';
 import StageLayering from '../engine/stage-layering';
-import {loadCostume} from '../import/load-costume.js';
-import {loadSound} from '../import/load-sound.js';
-import {deserializeCostume, deserializeSound} from './deserialize-assets.js';
+import {loadCostume} from '../import/load-costume';
+import {loadSound} from '../import/load-sound';
+import {deserializeCostume, deserializeSound} from './deserialize-assets';
+
+/**
+ * @typedef {{
+ *   projectVersion: 2;
+ *   [key: string]: unknown;
+ * }} SB2Project
+ * @typedef {import('./schema').ImportedExtensionsInfo} ImportedExtensionsInfo
+ * @typedef {import('./schema').ImportedProject} ImportedProject
+ */
 
 // Constants used during deserialization of an SB2 file
 const CORE_EXTENSIONS = [
@@ -854,9 +864,9 @@ const reorderParsedTargets = function (targets) {
  * and process the top-level object (the stage object).
  * @param {!object} json SB2-format JSON to load.
  * @param {!Runtime} runtime Runtime object to load all structures into.
- * @param {boolean=} optForceSprite If set, treat as sprite (Sprite2).
- * @param {?object} zip Optional zipped assets for local file import
- * @returns {Promise.<ImportedProject>} Promise that resolves to the loaded targets when ready.
+ * @param {boolean=} [optForceSprite] If set, treat as sprite (Sprite2).
+ * @param {?JSZip} [zip] Optional zipped assets for local file import
+ * @returns {Promise<ImportedProject>} Promise that resolves to the loaded targets when ready.
  */
 const deserialize = function (json, runtime, optForceSprite, zip) {
     const extensions = {

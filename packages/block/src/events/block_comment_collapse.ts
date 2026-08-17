@@ -16,7 +16,7 @@ export class BlockCommentCollapse extends BlockCommentBase {
   override type = 'block_comment_collapse';
 
   /** Whether the comment is collpased. */
-  protected newCollapsed?: boolean;
+  newCollapsed?: boolean;
 
   /**
    * @param icon The comment icon this event corresponds to.

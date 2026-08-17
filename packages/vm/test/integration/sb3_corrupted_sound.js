@@ -13,7 +13,7 @@ import md5 from 'js-md5';
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import {extractAsset, readFileToBuffer} from '../fixtures/readProjectFile.js';
 import VirtualMachine from '../../src/index';
-import {serializeSounds} from '../../src/serialization/serialize-assets.js';
+import {serializeSounds} from '../../src/serialization/serialize-assets';
 
 const projectUri = path.resolve(__dirname, '../fixtures/corrupt_sound.sb3');
 const project = readFileToBuffer(projectUri);

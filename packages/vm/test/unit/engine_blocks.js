@@ -1,9 +1,9 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Blocks from '../../src/engine/blocks.js';
+import Blocks from '../../src/engine/blocks';
 import Variable from '../../src/engine/variable';
 import adapter from '../../src/engine/adapter';
 import events from '../fixtures/events.json';
-import Runtime from '../../src/engine/runtime.js';
+import Runtime from '../../src/engine/runtime';
 
 test('spec', t => {
     const b = new Blocks(new Runtime());

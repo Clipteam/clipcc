@@ -1,8 +1,8 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
 import Looks from '../../src/blocks/scratch3_looks';
-import Runtime from '../../src/engine/runtime.js';
+import Runtime from '../../src/engine/runtime';
 import Sprite from '../../src/sprites/sprite';
-import RenderedTarget from '../../src/sprites/rendered-target.js';
+import RenderedTarget from '../../src/sprites/rendered-target';
 const util = {
     target: {
         currentCostume: 0, // Internally, current costume is 0 indexed

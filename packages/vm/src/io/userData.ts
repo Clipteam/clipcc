@@ -6,7 +6,7 @@ class UserData {
      * @param data Data posted to this ioDevice.
      * @param data.username The username to set for this user data device.
      */
-    postData (data: {username: string}): void {
+    postData (data: {username: string}) {
         this._username = data.username;
     }
 

@@ -1,9 +1,15 @@
 import BlockUtility from './block-utility';
-import {getCached as getCachedExecuteBlock} from './blocks-execute-cache';
+import {type CachedBlockData, getCached as getCachedExecuteBlock} from './blocks-execute-cache';
 import log from '../util/log';
 import Thread from './thread';
 import {Map} from 'immutable';
 import cast from '../util/cast';
+import type Blocks from './blocks';
+import type {VMField, VMInput, VMMutation} from '../serialization/schema';
+import type Profiler from './profiler';
+import type {ProfilerFrame} from './profiler';
+import type Sequencer from './sequencer';
+import type {BlockFunction} from '../blocks/category_prototype';
 
 /**
  * Single BlockUtility instance reused by execute for every pritimive ran.
@@ -13,51 +19,75 @@ const blockUtility = new BlockUtility();
 
 /**
  * Profiler frame name for block functions.
- * @constant {string}
+ * @constant
  */
-const blockFunctionProfilerFrame = 'blockFunction';
+const blockFunctionProfilerFrame = 'blockFunction' as const;
 
 /**
  * Profiler frame ID for 'blockFunction'.
- * @type {number}
  */
 let blockFunctionProfilerId = -1;
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Utility function to determine if a value is a Promise.
- * @param {*} value Value to check for a Promise.
- * @returns {boolean} True if the value appears to be a Promise.
+ * @param value Value to check for a Promise.
+ * @returns True if the value appears to be a Promise.
  */
-const isPromise = function (value) {
+const isPromise = function (value: any): value is Promise<unknown> {
     return (
         value !== null &&
         typeof value === 'object' &&
         typeof value.then === 'function'
     );
 };
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 /**
  * Utility function to determine if a block is a procedure caller.
- * @param {BlockCached} cached Cached block to check.
- * @returns {boolean} True if the block is a procedure.
+ * @param cached Cached block to check.
+ * @returns True if the block is a procedure.
  */
-const isProcedureCaller = function (cached) {
+const isProcedureCaller = function (cached: BlockCached) {
     return cached.opcode === 'procedures_call';
 };
+
+type VariableFieldKeys = 'VARIABLE' | 'LIST' | 'BROADCAST_OPTION';
+
+type ArgValues = {
+    mutation?: VMMutation;
+    [key: string]: CachedArgValue | VMMutation;
+} & {
+    [key in VariableFieldKeys]?: VariableArgValue;
+};
+
+interface VariableArgValue {
+    id: string | null;
+    name: string | null;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type CachedArgValue = any;
 
 /**
  * Handle any reported value from the primitive, either directly returned
  * or after a promise resolves.
- * @param {*} resolvedValue Value eventually returned from the primitive.
- * @param {!Sequencer} sequencer Sequencer stepping the thread for the ran
+ * @param resolvedValue Value eventually returned from the primitive.
+ * @param sequencer Sequencer stepping the thread for the ran
  * primitive.
- * @param {!Thread} thread Thread containing the primitive.
- * @param {!BlockCached} blockCached Cached block metadata.
- * @param {boolean} lastOperation True if this is the last operation in a stack.
+ * @param thread Thread containing the primitive.
+ * @param blockCached Cached block metadata.
+ * @param lastOperation True if this is the last operation in a stack.
  */
 // @todo move this to callback attached to the thread when we have performance
 // metrics (dd)
-const handleReport = function (resolvedValue, sequencer, thread, blockCached, lastOperation) {
+const handleReport = function (
+    resolvedValue: unknown,
+    sequencer: Sequencer,
+    thread: Thread,
+    blockCached: BlockCached,
+    lastOperation: boolean
+) {
     const currentBlockId = blockCached.id;
     const opcode = blockCached.opcode;
     const isHat = blockCached._isHat;
@@ -70,8 +100,8 @@ const handleReport = function (resolvedValue, sequencer, thread, blockCached, la
             // true and used to be false, or the stack was activated explicitly
             // via stack click
             if (!thread.stackClick) {
-                const hasOldEdgeValue = thread.target.hasEdgeActivatedValue(currentBlockId);
-                const oldEdgeValue = thread.target.updateEdgeActivatedValue(
+                const hasOldEdgeValue = thread.target!.hasEdgeActivatedValue(currentBlockId);
+                const oldEdgeValue = thread.target!.updateEdgeActivatedValue(
                     currentBlockId,
                     resolvedValue
                 );
@@ -94,14 +124,14 @@ const handleReport = function (resolvedValue, sequencer, thread, blockCached, la
                 sequencer.runtime.visualReport(currentBlockId, resolvedValue);
             }
             if (thread.updateMonitor) {
-                const targetId = sequencer.runtime.monitorBlocks.getBlock(currentBlockId).targetId;
+                const targetId = sequencer.runtime.monitorBlocks.getBlock(currentBlockId)?.targetId;
                 if (targetId && !sequencer.runtime.getTargetById(targetId)) {
                     // Target no longer exists
                     return;
                 }
                 sequencer.runtime.requestUpdateMonitor(Map({
                     id: currentBlockId,
-                    spriteName: targetId ? sequencer.runtime.getTargetById(targetId).getName() : null,
+                    spriteName: targetId ? sequencer.runtime.getTargetById(targetId)!.getName() : null,
                     value: resolvedValue
                 }));
             }
@@ -111,7 +141,21 @@ const handleReport = function (resolvedValue, sequencer, thread, blockCached, la
     }
 };
 
-const handlePromise = (primitiveReportedValue, sequencer, thread, blockCached, lastOperation) => {
+/**
+ * Handle a value that may be a Promise returned from a primitive, yielding the thread if so.
+ * @param primitiveReportedValue Value returned from the primitive, which may be a Promise.
+ * @param sequencer Sequencer stepping the thread for the ran primitive.
+ * @param thread Thread containing the primitive.
+ * @param blockCached Cached block metadata.
+ * @param lastOperation True if this is the last operation in a stack.
+ */
+const handlePromise = (
+    primitiveReportedValue: Promise<unknown>,
+    sequencer: Sequencer,
+    thread: Thread,
+    blockCached: BlockCached,
+    lastOperation: boolean
+) => {
     if (thread.status === Thread.STATUS_RUNNING) {
         // Primitive returned a promise; automatically yield thread.
         thread.status = Thread.STATUS_PROMISE_WAIT;
@@ -131,8 +175,8 @@ const handlePromise = (primitiveReportedValue, sequencer, thread, blockCached, l
                 if (willPop === null) {
                     return;
                 }
-                nextBlockId = thread.blockContainer.getNextBlock(willPop);
-                target = thread.peekStackFrame().target;
+                nextBlockId = thread.blockContainer!.getNextBlock(willPop);
+                target = thread.peekStackFrame()!.target!;
                 thread.popStack();
                 if (nextBlockId !== null) {
                     // A next block exists so break out this loop
@@ -165,135 +209,128 @@ const handlePromise = (primitiveReportedValue, sequencer, thread, blockCached, l
  * block when any change happens to it. This way we can quickly execute blocks
  * and keep perform the right action according to the current block information
  * in the editor.
- *
- * @param {Blocks} blockContainer the related Blocks instance
- * @param {object} cached default set of cached values
  */
 class BlockCached {
-    constructor (blockContainer, cached) {
-        /**
-         * Block id in its parent set of blocks.
-         * @type {string}
-         */
+    /**
+     * Block id in its parent set of blocks.
+     */
+    id: string;
+    /**
+     * Block operation code for this block.
+     */
+    opcode: string;
+
+    /**
+     * Original block object containing argument values for static fields.
+     */
+    fields: Record<string, VMField>;
+
+    /**
+     * Original block object containing argument values for executable inputs.
+     */
+    inputs: Record<string, VMInput>;
+
+    /**
+     * Procedure mutation.
+     */
+    mutation?: VMMutation;
+    /**
+     * The profiler the block is configured with.
+     */
+    _profiler: Profiler | null = null;
+
+    /**
+     * Profiler information frame.
+     */
+    _profilerFrame: ProfilerFrame | null = null;
+
+    /**
+     * Is the opcode a hat (event responder) block.
+     */
+    _isHat = false;
+
+    /**
+     * The block opcode's implementation function.
+     */
+    _blockFunction: BlockFunction | null = null;
+
+    /**
+     * Is the block function defined for this opcode?
+     */
+    protected _definedBlockFunction = false;
+
+    /**
+     * Is this block a block with no function but a static value to return.
+     */
+    protected _isShadowBlock = false;
+
+    /**
+     * The static value of this block if it is a shadow block.
+     */
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    protected _shadowValue: any = null;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
+
+    /**
+     * A copy of the block's fields that may be modified.
+     */
+    protected _fields: Record<string, VMField>;
+    /**
+     * A copy of the block's inputs that may be modified.
+     */
+    protected _inputs: Record<string, VMInput>;
+
+    /**
+     * The inputs key the parent refers to this BlockCached by.
+     */
+    _parentKey: string | null = null;
+
+    /**
+     * The target object where the parent wants the resulting value stored
+     * with _parentKey as the key.
+     */
+    _parentValues: ArgValues | null = null;
+
+    /**
+     * An arguments object for block implementations. All executions of this
+     * specific block will use this objecct.
+     */
+    _argValues: ArgValues;
+
+    /**
+     * A sequence of non-shadow operations that can must be performed. This
+     * list recreates the order this block and its children are executed.
+     * Since the order is always the same we can safely store that order
+     * and iterate over the operations instead of dynamically walking the
+     * tree every time.
+     */
+    _ops: BlockCached[] = [];
+
+    /**
+     * @param blockContainer the related Blocks instance
+     * @param cached default set of cached values
+     */
+    constructor (blockContainer: Blocks, cached: CachedBlockData) {
         this.id = cached.id;
-
-        /**
-         * Block operation code for this block.
-         * @type {string}
-         */
         this.opcode = cached.opcode;
-
-        /**
-         * Original block object containing argument values for static fields.
-         * @type {object}
-         */
         this.fields = cached.fields;
-
-        /**
-         * Original block object containing argument values for executable inputs.
-         * @type {object}
-         */
         this.inputs = cached.inputs;
-
-        /**
-         * Procedure mutation.
-         * @type {?object}
-         */
         this.mutation = cached.mutation;
 
-        /**
-         * The profiler the block is configured with.
-         * @type {?Profiler}
-         */
-        this._profiler = null;
-
-        /**
-         * Profiler information frame.
-         * @type {?ProfilerFrame}
-         */
-        this._profilerFrame = null;
-
-        /**
-         * Is the opcode a hat (event responder) block.
-         * @type {boolean}
-         */
-        this._isHat = false;
-
-        /**
-         * The block opcode's implementation function.
-         * @type {?Function}
-         */
-        this._blockFunction = null;
-
-        /**
-         * Is the block function defined for this opcode?
-         * @type {boolean}
-         */
-        this._definedBlockFunction = false;
-
-        /**
-         * Is this block a block with no function but a static value to return.
-         * @type {boolean}
-         */
-        this._isShadowBlock = false;
-
-        /**
-         * The static value of this block if it is a shadow block.
-         * @type {?any}
-         */
-        this._shadowValue = null;
-
-        /**
-         * A copy of the block's fields that may be modified.
-         * @type {object}
-         */
         this._fields = Object.assign({}, this.fields);
-
-        /**
-         * A copy of the block's inputs that may be modified.
-         * @type {object}
-         */
         this._inputs = Object.assign({}, this.inputs);
-
-        /**
-         * An arguments object for block implementations. All executions of this
-         * specific block will use this objecct.
-         * @type {object}
-         */
         this._argValues = {
             mutation: this.mutation
         };
 
-        /**
-         * The inputs key the parent refers to this BlockCached by.
-         * @type {string}
-         */
-        this._parentKey = null;
-
-        /**
-         * The target object where the parent wants the resulting value stored
-         * with _parentKey as the key.
-         * @type {object}
-         */
-        this._parentValues = null;
-
-        /**
-         * A sequence of non-shadow operations that can must be performed. This
-         * list recreates the order this block and its children are executed.
-         * Since the order is always the same we can safely store that order
-         * and iterate over the operations instead of dynamically walking the
-         * tree every time.
-         * @type {Array<BlockCached>}
-         */
-        this._ops = [];
-
-        const {runtime} = blockUtility.sequencer;
+        const runtime = blockUtility.sequencer?.runtime;
+        if (!runtime) throw new Error('Runtime is required for BlockCached.');
 
         const {opcode, fields, inputs} = this;
 
         // Assign opcode isHat and blockFunction data to avoid dynamic lookups.
         this._isHat = runtime.getIsHat(opcode);
-        this._blockFunction = runtime.getOpcodeFunction(opcode);
+        this._blockFunction = runtime.getOpcodeFunction(opcode)!;
         this._definedBlockFunction = typeof this._blockFunction !== 'undefined';
 
         // Store the current shadow value if there is a shadow value.
@@ -313,8 +350,8 @@ class BlockCached {
                 fieldName === 'BROADCAST_OPTION'
             ) {
                 this._argValues[fieldName] = {
-                    id: fields[fieldName].id,
-                    name: fields[fieldName].value
+                    id: fields[fieldName].id!,
+                    name: fields[fieldName].value!
                 };
             } else {
                 this._argValues[fieldName] = fields[fieldName].value;
@@ -339,13 +376,15 @@ class BlockCached {
                 // Shadow dropdown menu is being used.
                 // Get the appropriate information out of it.
                 const shadow = blockContainer.getBlock(broadcastInput.shadow);
-                const broadcastField = shadow.fields.BROADCAST_OPTION;
-                this._argValues.BROADCAST_OPTION.id = broadcastField.id;
-                this._argValues.BROADCAST_OPTION.name = broadcastField.value;
+                if (shadow) {
+                    const broadcastField = shadow.fields.BROADCAST_OPTION;
+                    this._argValues.BROADCAST_OPTION.id = broadcastField.id!;
+                    this._argValues.BROADCAST_OPTION.name = broadcastField.value!;
 
-                // Evaluating BROADCAST_INPUT here we do not need to do so
-                // later.
-                delete this._inputs.BROADCAST_INPUT;
+                    // Evaluating BROADCAST_INPUT here we do not need to do so
+                    // later.
+                    delete this._inputs.BROADCAST_INPUT;
+                }
             }
         }
 
@@ -359,16 +398,16 @@ class BlockCached {
                         if (item.execute === this.opcode) {
                             this._ops.push(this);
                         } else {
-                            // eslint-disable-next-line no-shadow
-                            const cached = new BlockCached(blockContainer, {
+
+                            const newCached = new BlockCached(blockContainer, {
                                 id: '',
                                 opcode: item.execute,
                                 fields: {},
                                 inputs: {}
                             });
-                            cached._argValues = this._argValues;
-                            cached._parentValues = {};
-                            this._ops.push(cached);
+                            newCached._argValues = this._argValues;
+                            newCached._parentValues = {};
+                            this._ops.push(newCached);
                         }
                     }
                 } else if (Object.prototype.hasOwnProperty.call(this._inputs, item)) {
@@ -394,15 +433,14 @@ class BlockCached {
 
     /**
      * Push an input with given name to ops.
-     * @param {!string} inputName The input name.
-     * @param {!Blocks} blockContainer The related Blocks instance.
-     * @private
+     * @param inputName The input name.
+     * @param blockContainer The related Blocks instance.
      */
-    _pushInput (inputName, blockContainer) {
+    protected _pushInput (inputName: string, blockContainer: Blocks) {
         const input = this._inputs[inputName];
         if (input.block) {
             const inputCached = getCachedExecuteBlock(blockContainer, input.block, BlockCached);
-            if (inputCached._isHat) {
+            if (!inputCached || inputCached._isHat) {
                 return;
             }
 
@@ -422,10 +460,10 @@ class BlockCached {
 /**
  * Initialize a BlockCached instance so its command/hat
  * block and reporters can be profiled during execution.
- * @param {Profiler} profiler - The profiler that is currently enabled.
- * @param {BlockCached} blockCached - The blockCached instance to profile.
+ * @param profiler - The profiler that is currently enabled.
+ * @param blockCached - The blockCached instance to profile.
  */
-const _prepareBlockProfiling = function (profiler, blockCached) {
+const _prepareBlockProfiling = function (profiler: Profiler, blockCached: BlockCached) {
     blockCached._profiler = profiler;
 
     if (blockFunctionProfilerId === -1) {
@@ -440,10 +478,10 @@ const _prepareBlockProfiling = function (profiler, blockCached) {
 
 /**
  * Execute a block.
- * @param {!Sequencer} sequencer Which sequencer is executing.
- * @param {!Thread} thread Thread which to read and execute.
+ * @param sequencer Which sequencer is executing.
+ * @param thread Thread which to read and execute.
  */
-const execute = function (sequencer, thread) {
+const execute = function (sequencer: Sequencer, thread: Thread) {
     const runtime = sequencer.runtime;
 
     // store sequencer and thread so block functions can access them through
@@ -452,10 +490,10 @@ const execute = function (sequencer, thread) {
     blockUtility.thread = thread;
 
     // Current block to execute is the one on the top of the stack.
-    const currentBlockId = thread.peekStack();
-    const currentStackFrame = thread.peekStackFrame();
+    const currentBlockId = thread.peekStack()!;
+    const currentStackFrame = thread.peekStackFrame()!;
 
-    let blockContainer = thread.blockContainer;
+    let blockContainer = thread.blockContainer!;
     let blockCached = getCachedExecuteBlock(blockContainer, currentBlockId, BlockCached);
     if (blockCached === null) {
         blockContainer = runtime.flyoutBlocks;
@@ -481,14 +519,14 @@ const execute = function (sequencer, thread) {
             const opCached = ops.find(op => op.id === oldOpCached);
 
             if (opCached) {
-                const inputName = opCached._parentKey;
-                const argValues = opCached._parentValues;
+                const inputName = opCached._parentKey!;
+                const argValues = opCached._parentValues!;
 
                 if (inputName === 'BROADCAST_INPUT') {
                     // Something is plugged into the broadcast input.
                     // Cast it to a string. We don't need an id here.
-                    argValues.BROADCAST_OPTION.id = null;
-                    argValues.BROADCAST_OPTION.name = cast.toString(inputValue);
+                    argValues.BROADCAST_OPTION!.id = null;
+                    argValues.BROADCAST_OPTION!.name = cast.toString(inputValue);
                 } else {
                     argValues[inputName] = inputValue;
                 }
@@ -515,20 +553,20 @@ const execute = function (sequencer, thread) {
 
             thread.justReported = null;
 
-            const inputName = opCached._parentKey;
-            const argValues = opCached._parentValues;
+            const inputName = opCached._parentKey!;
+            const argValues = opCached._parentValues!;
 
             // cc - if current call is the last operation, which means that it is called by clicking directly,
             // then call handleReport.
             if (currentStackFrame.waitingReporter && i === length - 1) {
                 // cc - if returned value is null, then set the argument to undefined to avoid visual report.
-                // eslint-disable-next-line no-undefined
+
                 handleReport(inputValue ?? undefined, sequencer, thread, opCached, true);
             } else if (inputName === 'BROADCAST_INPUT') {
                 // Something is plugged into the broadcast input.
                 // Cast it to a string. We don't need an id here.
-                argValues.BROADCAST_OPTION.id = null;
-                argValues.BROADCAST_OPTION.name = cast.toString(inputValue);
+                argValues.BROADCAST_OPTION!.id = null;
+                argValues.BROADCAST_OPTION!.name = cast.toString(inputValue);
             } else {
                 argValues[inputName] = inputValue;
             }
@@ -564,7 +602,7 @@ const execute = function (sequencer, thread) {
 
         // Inputs are set during previous steps in the loop.
 
-        const primitiveReportedValue = blockFunction(argValues, blockUtility);
+        const primitiveReportedValue = blockFunction?.(argValues, blockUtility);
 
         // cc - preserve returned value
         if (opCached.opcode === 'procedures_return') {
@@ -605,7 +643,7 @@ const execute = function (sequencer, thread) {
             currentStackFrame.reporting = ops[i].id;
             currentStackFrame.reported = ops.slice(0, i).map(reportedCached => {
                 const inputName = reportedCached._parentKey;
-                const reportedValues = reportedCached._parentValues;
+                const reportedValues = reportedCached._parentValues!;
 
                 if (inputName === 'BROADCAST_INPUT') {
                     return {
@@ -615,7 +653,7 @@ const execute = function (sequencer, thread) {
                 }
                 return {
                     opCached: reportedCached.id,
-                    inputValue: reportedValues ? reportedValues[inputName] : null
+                    inputValue: reportedValues ? reportedValues[inputName!] : null
                 };
             });
 
@@ -628,14 +666,14 @@ const execute = function (sequencer, thread) {
             } else {
                 // By definition a block that is not last in the list has a
                 // parent.
-                const inputName = opCached._parentKey;
-                const parentValues = opCached._parentValues;
+                const inputName = opCached._parentKey!;
+                const parentValues = opCached._parentValues!;
 
                 if (inputName === 'BROADCAST_INPUT') {
                     // Something is plugged into the broadcast input.
                     // Cast it to a string. We don't need an id here.
-                    parentValues.BROADCAST_OPTION.id = null;
-                    parentValues.BROADCAST_OPTION.name = cast.toString(primitiveReportedValue);
+                    parentValues.BROADCAST_OPTION!.id = null;
+                    parentValues.BROADCAST_OPTION!.name = cast.toString(primitiveReportedValue);
                 } else {
                     parentValues[inputName] = primitiveReportedValue;
                 }
@@ -653,7 +691,7 @@ const execute = function (sequencer, thread) {
         // reference an operation outside of the set of operations.
         const end = Math.min(i + 1, length);
         for (let p = start; p < end; p++) {
-            ops[p]._profilerFrame.count += 1;
+            ops[p]._profilerFrame!.count += 1;
         }
     }
 };

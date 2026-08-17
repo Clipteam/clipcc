@@ -135,7 +135,7 @@ export abstract class SharedDispatch {
      * @param method The name of the method.
      * @param transfer Objects to be transferred instead of copied. Must be present in `args` to be useful.
      * @param args The arguments to be copied to the method, if any.
-     * @returns {Promise} - a promise for the return value of the service method.
+     * @returns a promise for the return value of the service method.
      */
     private remoteTransferCall (
         provider: WorkerLike,

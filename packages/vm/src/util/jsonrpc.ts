@@ -30,7 +30,7 @@ class JSONRPC {
      * Make an RPC request and retrieve the result.
      * @param method - the remote method to call.
      * @param params - the parameters to pass to the remote method.
-     * @returns - a promise for the result of the call.
+     * @returns a promise for the result of the call.
      */
     sendRemoteRequest (method: string, params: object): Promise<unknown> {
         const requestID = this._requestID++;
@@ -49,7 +49,7 @@ class JSONRPC {
      * @param method - the remote method to call.
      * @param params - the parameters to pass to the remote method.
      */
-    sendRemoteNotification (method: string, params: object): void {
+    sendRemoteNotification (method: string, params: object) {
         this._sendRequest(method, params);
     }
 
@@ -62,11 +62,11 @@ class JSONRPC {
         throw new Error('Must override didReceiveCall');
     }
 
-    _sendMessage (jsonMessageObject: object): void {
+    _sendMessage (jsonMessageObject: object) {
         throw new Error('Must override _sendMessage');
     }
 
-    _sendRequest (method: string, params: object, id?: number): void {
+    _sendRequest (method: string, params: object, id?: number) {
         const request: Record<string, unknown> = {
             jsonrpc: '2.0',
             method,
@@ -80,7 +80,7 @@ class JSONRPC {
         this._sendMessage(request);
     }
 
-    _handleMessage (json: JSONRPCMessage): void {
+    _handleMessage (json: JSONRPCMessage) {
         if (json.jsonrpc !== '2.0') {
             throw new Error(`Bad or missing JSON-RPC version in message: ${json}`);
         }
@@ -91,7 +91,7 @@ class JSONRPC {
         }
     }
 
-    _sendResponse (id: number, result: unknown, error?: Error): void {
+    _sendResponse (id: number, result: unknown, error?: Error) {
         const response: Record<string, unknown> = {
             jsonrpc: '2.0',
             id
@@ -104,7 +104,7 @@ class JSONRPC {
         this._sendMessage(response);
     }
 
-    _handleResponse (json: ResponseMessage): void {
+    _handleResponse (json: ResponseMessage) {
         const {result, error, id} = json;
         const openRequest = this._openRequests[id];
         delete this._openRequests[id];
@@ -117,16 +117,16 @@ class JSONRPC {
         }
     }
 
-    _handleRequest (json: RequestMessage): void {
+    _handleRequest (json: RequestMessage) {
         const {method, params, id} = json;
         const rawResult = this.didReceiveCall(method, params);
         if (id !== null && typeof id !== 'undefined') {
             Promise.resolve(rawResult).then(
                 result => {
-                    this._sendResponse(id as number, result);
+                    this._sendResponse(id, result);
                 },
                 error => {
-                    this._sendResponse(id as number, null, error as Error);
+                    this._sendResponse(id, null, error);
                 }
             );
         }

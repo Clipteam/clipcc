@@ -1,8 +1,8 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
 import Sensing from '../../src/blocks/scratch3_sensing';
-import Runtime from '../../src/engine/runtime.js';
+import Runtime from '../../src/engine/runtime';
 import Sprite from '../../src/sprites/sprite';
-import RenderedTarget from '../../src/sprites/rendered-target.js';
+import RenderedTarget from '../../src/sprites/rendered-target';
 import BlockUtility from '../../src/engine/block-utility';
 
 test('getPrimitives', t => {

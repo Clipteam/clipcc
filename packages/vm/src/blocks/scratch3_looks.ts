@@ -1,6 +1,6 @@
 import Cast from '../util/cast';
 import Clone from '../util/clone';
-import RenderedTarget from '../sprites/rendered-target.js';
+import RenderedTarget from '../sprites/rendered-target';
 import uid from '../util/uid';
 import StageLayering from '../engine/stage-layering';
 import getMonitorIdForBlockWithArgs from '../util/get-monitor-id';
@@ -8,7 +8,7 @@ import MathUtil from '../util/math-util';
 import type {BlockArgs, CategoryPrototype} from './category_prototype';
 import type Runtime from '../engine/runtime';
 import type BlockUtility from '../engine/block-utility';
-import type Target from '../engine/target.js';
+import type Target from '../engine/target';
 import type {MonitorBlockInfo} from '../engine/runtime';
 import type Thread from '../engine/thread';
 import type {BaseExecutionContext} from '../engine/block-utility';
@@ -81,38 +81,38 @@ class Scratch3LooksBlocks implements CategoryPrototype {
     /**
      * The key to load & store a target's bubble-related state.
      */
-    static get STATE_KEY (): string {
-        return 'Scratch.looks';
+    static get STATE_KEY () {
+        return 'Scratch.looks' as const;
     }
 
     /**
      * Event name for a text bubble being created or updated.
      */
-    static get SAY_OR_THINK (): string {
+    static get SAY_OR_THINK () {
         // There are currently many places in the codebase which explicitly refer to this event by the string 'SAY',
         // so keep this as the string 'SAY' for now rather than changing it to 'SAY_OR_THINK' and breaking things.
-        return 'SAY';
+        return 'SAY' as const;
     }
 
     /**
      * Limit for say bubble string.
      */
-    static get SAY_BUBBLE_LIMIT (): number {
-        return 330;
+    static get SAY_BUBBLE_LIMIT () {
+        return 330 as const;
     }
 
     /**
      * Limit for ghost effect
      */
-    static get EFFECT_GHOST_LIMIT (): {min: number, max: number} {
-        return {min: 0, max: 100};
+    static get EFFECT_GHOST_LIMIT () {
+        return {min: 0, max: 100} as const;
     }
 
     /**
      * Limit for brightness effect
      */
-    static get EFFECT_BRIGHTNESS_LIMIT (): {min: number, max: number} {
-        return {min: -100, max: 100};
+    static get EFFECT_BRIGHTNESS_LIMIT () {
+        return {min: -100, max: 100} as const;
     }
 
     /**
@@ -121,7 +121,7 @@ class Scratch3LooksBlocks implements CategoryPrototype {
      * @returns the mutable bubble state associated with that target. This will be created if necessary.
      */
     _getBubbleState (target: Target): BubbleState {
-        let bubbleState = target.getCustomState(Scratch3LooksBlocks.STATE_KEY);
+        let bubbleState = target.getCustomState<BubbleState>(Scratch3LooksBlocks.STATE_KEY);
         if (!bubbleState) {
             bubbleState = Clone.simple(Scratch3LooksBlocks.DEFAULT_BUBBLE_STATE);
             target.setCustomState(Scratch3LooksBlocks.STATE_KEY, bubbleState);

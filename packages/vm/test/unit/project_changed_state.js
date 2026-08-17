@@ -2,7 +2,7 @@ import {test} from '../fixtures/jest-tap-bridge.js';
 import path from 'path';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';
-import VirtualMachine from '../../src/virtual-machine.js';
+import VirtualMachine from '../../src/virtual-machine';
 
 let vm;
 let projectChanged;

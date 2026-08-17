@@ -7,7 +7,7 @@
 import type Blocks from './blocks';
 import type {VMInput, VMField, VMMutation} from '../serialization/schema';
 
-interface CachedBlockData {
+export interface CachedBlockData {
     id: string;
     opcode: string;
     fields: Record<string, VMField>;
@@ -15,7 +15,7 @@ interface CachedBlockData {
     mutation?: VMMutation;
 }
 
-type CacheType = new (blocks: Blocks, cached: CachedBlockData) => object;
+export type CacheType = new (blocks: Blocks, cached: CachedBlockData) => CachedBlockData;
 
 /**
  * A private method shared with execute to build an object containing the block
@@ -26,12 +26,16 @@ type CacheType = new (blocks: Blocks, cached: CachedBlockData) => object;
  * @param CacheType constructor for cached block information
  * @returns execute cache object
  */
-const getCached = function (blocks: Blocks, blockId: string, CacheType?: CacheType): object | null {
-    const executeCache = blocks._cache._executeCached as Record<string, object>;
+const getCached = function <T extends CacheType = never> (
+    blocks: Blocks,
+    blockId: string,
+    CacheType?: T
+): (T extends never ? CachedBlockData : InstanceType<T>) | null {
+    const executeCache = blocks._cache._executeCached;
 
     let cached = executeCache[blockId];
     if (typeof cached !== 'undefined') {
-        return cached;
+        return cached as T extends never ? CachedBlockData : InstanceType<T>;
     }
 
     const block = blocks.getBlock(blockId);
@@ -43,7 +47,7 @@ const getCached = function (blocks: Blocks, blockId: string, CacheType?: CacheTy
         id: blockId,
         opcode: blocks.getOpcode(block)!,
         fields: blocks.getFields(block)!,
-        inputs: blocks.getInputs(block),
+        inputs: blocks.getInputs(block)!,
         mutation: blocks.getMutation(block)!
     };
 
@@ -52,7 +56,7 @@ const getCached = function (blocks: Blocks, blockId: string, CacheType?: CacheTy
         new CacheType(blocks, cachedBlockData);
 
     executeCache[blockId] = cached;
-    return cached;
+    return cached as T extends never ? CachedBlockData : InstanceType<T>;
 };
 
 export {
