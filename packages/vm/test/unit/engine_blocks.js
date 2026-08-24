@@ -368,6 +368,15 @@ test('move no obscure shadow', t => {
         inputs: {},
         topLevel: true
     });
+    b.createBlock({
+        id: 'y',
+        opcode: 'TEST_SHADOW',
+        shadow: true,
+        next: null,
+        fields: {},
+        inputs: {},
+        topLevel: false
+    });
     b.moveBlock({
         id: 'bar',
         newInput: 'fooInput',
@@ -375,6 +384,17 @@ test('move no obscure shadow', t => {
     });
     t.equal(b._blocks.foo.inputs.fooInput.block, 'bar');
     t.equal(b._blocks.foo.inputs.fooInput.shadow, 'y');
+
+    // Detaching the real block restores the shadow and must detach the real block.
+    b.moveBlock({
+        id: 'bar',
+        oldInput: 'fooInput',
+        oldParent: 'foo'
+    });
+    t.equal(b._blocks.foo.inputs.fooInput.block, 'y');
+    t.equal(b._blocks.bar.parent, null);
+    t.equal(b._blocks.y.parent, 'foo');
+    t.equal(b.getTopLevelScript('bar'), 'bar');
     t.end();
 });
 
@@ -469,6 +489,41 @@ test('change', t => {
     });
     t.equal(b._blocks.foo.fields.someField.value, 'final-value');
 
+    t.end();
+});
+
+test('intermediate field change updates fields and clears caches', t => {
+    const b = new Blocks(new Runtime());
+    b.createBlock({
+        id: 'foo',
+        opcode: 'TEST_BLOCK',
+        next: null,
+        fields: {
+            someField: {
+                name: 'someField',
+                value: 'initial-value'
+            }
+        },
+        inputs: {},
+        topLevel: true
+    });
+
+    const oldCache = b._cache;
+    b._cache.inputs.foo = {};
+    b._cache._executeCached.foo = {};
+
+    b.blocklyListen({
+        type: 'block_field_intermediate_change',
+        blockId: 'foo',
+        name: 'someField',
+        oldValue: 'initial-value',
+        newValue: 'intermediate-value'
+    });
+
+    t.equal(b._blocks.foo.fields.someField.value, 'intermediate-value');
+    t.ok(b._cache !== oldCache);
+    t.equal(Object.keys(b._cache.inputs).length, 0);
+    t.equal(Object.keys(b._cache._executeCached).length, 0);
     t.end();
 });
 
