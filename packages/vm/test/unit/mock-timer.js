@@ -1,5 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const MockTimer = require('../fixtures/mock-timer');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import MockTimer from '../fixtures/mock-timer.js';
 
 test('spec', t => {
     const timer = new MockTimer();

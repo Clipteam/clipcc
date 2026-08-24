@@ -1,10 +1,10 @@
-const RenderedTarget = require('./rendered-target');
-const Blocks = require('../engine/blocks');
-const {loadSoundFromAsset} = require('../import/load-sound');
-const {loadCostumeFromAsset} = require('../import/load-costume');
-const newBlockIds = require('../util/new-block-ids');
-const StringUtil = require('../util/string-util');
-const StageLayering = require('../engine/stage-layering');
+import RenderedTarget from './rendered-target.js';
+import Blocks from '../engine/blocks.js';
+import {loadSoundFromAsset} from '../import/load-sound.js';
+import {loadCostumeFromAsset} from '../import/load-costume.js';
+import newBlockIds from '../util/new-block-ids.js';
+import StringUtil from '../util/string-util.js';
+import StageLayering from '../engine/stage-layering.js';
 
 class Sprite {
     /**
@@ -174,4 +174,4 @@ class Sprite {
     }
 }
 
-module.exports = Sprite;
+export default Sprite;

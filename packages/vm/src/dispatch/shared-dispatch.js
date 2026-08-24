@@ -1,4 +1,4 @@
-const log = require('../util/log');
+import log from '../util/log.js';
 
 /**
  * @typedef {object} DispatchCallMessage - a message to the dispatch system representing a service method call
@@ -227,4 +227,4 @@ class SharedDispatch {
     }
 }
 
-module.exports = SharedDispatch;
+export default SharedDispatch;

@@ -1,6 +1,6 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const Variable = require('../../src/engine/variable');
-const htmlparser = require('htmlparser2');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Variable from '../../src/engine/variable.js';
+import * as htmlparser from 'htmlparser2';
 
 test('spec', t => {
     t.type(typeof Variable.SCALAR_TYPE, typeof Variable.LIST_TYPE);

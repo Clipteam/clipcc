@@ -1,8 +1,8 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const Cloud = require('../../src/io/cloud');
-const Target = require('../../src/engine/target');
-const Variable = require('../../src/engine/variable');
-const Runtime = require('../../src/engine/runtime');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Cloud from '../../src/io/cloud.js';
+import Target from '../../src/engine/target.js';
+import Variable from '../../src/engine/variable.js';
+import Runtime from '../../src/engine/runtime.js';
 
 test('spec', t => {
     const runtime = new Runtime();

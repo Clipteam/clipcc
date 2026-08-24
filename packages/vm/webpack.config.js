@@ -7,6 +7,11 @@ const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 const RuleInheritancePlugin = require('rule-inheritance-webpack-plugin');
 const {version} = require('../../package.json');
 
+const DEFAULT_TRANSLATE_SERVICE_URL = process.env.TRANSLATE_SERVICE_URL ||
+    'https://translate-service.scratch.mit.edu/translate';
+const DEFAULT_TTS_SERVICE_URL = process.env.TTS_SERVICE_URL ||
+    'https://synthesis-service.scratch.mit.edu/synth';
+
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
     devtool: 'cheap-module-source-map',
@@ -58,7 +63,9 @@ const base = {
         }),
         new webpack.DefinePlugin({
             'clipcc.VERSION': version,
-            'clipcc.BUILD_TIME': Date.now()
+            'clipcc.BUILD_TIME': Date.now(),
+            'clipcc.DEFAULT_TRANSLATE_SERVICE_URL': JSON.stringify(DEFAULT_TRANSLATE_SERVICE_URL),
+            'clipcc.DEFAULT_TTS_SERVICE_URL': JSON.stringify(DEFAULT_TTS_SERVICE_URL)
         }),
         new webpack.IgnorePlugin({
             resourceRegExp: /canvas/,

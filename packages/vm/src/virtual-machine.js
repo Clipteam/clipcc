@@ -5,26 +5,23 @@ if (typeof TextEncoder === 'undefined') {
 } else {
     _TextEncoder = TextEncoder;
 }
-const EventEmitter = require('events');
-const JSZip = require('jszip');
-
-const Buffer = require('buffer').Buffer;
-const centralDispatch = require('./dispatch/central-dispatch');
-const ExtensionManager = require('./extension-support/extension-manager');
-const log = require('./util/log');
-const MathUtil = require('./util/math-util');
-const Runtime = require('./engine/runtime');
-const StringUtil = require('./util/string-util');
-const formatMessage = require('format-message');
-
-const Variable = require('./engine/variable');
-const newBlockIds = require('./util/new-block-ids');
-
-const {loadCostume} = require('./import/load-costume.js');
-const {loadSound} = require('./import/load-sound.js');
-const {serializeSounds, serializeCostumes} = require('./serialization/serialize-assets');
-const uid = require('./util/uid');
-require('canvas-toBlob');
+import EventEmitter from 'events';
+import JSZip from 'jszip';
+import {Buffer} from 'buffer';
+import centralDispatch from './dispatch/central-dispatch.js';
+import ExtensionManager from './extension-support/extension-manager.js';
+import log from './util/log.js';
+import MathUtil from './util/math-util.js';
+import Runtime from './engine/runtime.js';
+import StringUtil from './util/string-util.js';
+import formatMessage from 'format-message';
+import Variable from './engine/variable.js';
+import newBlockIds from './util/new-block-ids.js';
+import {loadCostume} from './import/load-costume.js';
+import {loadSound} from './import/load-sound.js';
+import {serializeSounds, serializeCostumes} from './serialization/serialize-assets.js';
+import uid from './util/uid.js';
+import 'canvas-toBlob';
 
 const RESERVED_NAMES = ['_mouse_', '_stage_', '_edge_', '_myself_', '_random_'];
 
@@ -265,6 +262,22 @@ class VirtualMachine extends EventEmitter {
         if (Object.prototype.hasOwnProperty.call(options, 'accurateCoordinates') && this.runtime.renderer) {
             this.runtime.renderer.setAccurateCoordinates(options.accurateCoordinates);
         }
+    }
+
+    /**
+     * Set the url of the translate service used by the translate extension.
+     * @param {string} url The full url of the translate endpoint, without query string.
+     */
+    setTranslateServiceUrl (url) {
+        this.runtime.translateServiceUrl = url;
+    }
+
+    /**
+     * Set the url of the text-to-speech service used by the text2speech extension.
+     * @param {string} url The full url of the text-to-speech endpoint, without query string.
+     */
+    setTTSServiceUrl (url) {
+        this.runtime.ttsServiceUrl = url;
     }
 
     /**
@@ -1748,4 +1761,4 @@ class VirtualMachine extends EventEmitter {
     }
 }
 
-module.exports = VirtualMachine;
+export default VirtualMachine;

@@ -103,4 +103,4 @@ FakeRenderer.prototype.isTouchingColor = function (a, b) { // eslint-disable-lin
 
 FakeRenderer.prototype.setLayerGroupOrdering = function (a) {}; // eslint-disable-line no-unused-vars
 
-module.exports = FakeRenderer;
+export default FakeRenderer;

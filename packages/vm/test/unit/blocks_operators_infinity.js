@@ -1,5 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const Operators = require('../../src/blocks/scratch3_operators');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Operators from '../../src/blocks/scratch3_operators.js';
 
 const blocks = new Operators(null);
 

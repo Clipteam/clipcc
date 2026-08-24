@@ -1,10 +1,9 @@
-const path = require('path');
-const test = require('../fixtures/jest-tap-bridge').test;
-const makeTestStorage = require('../fixtures/make-test-storage');
-const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-
-const VirtualMachine = require('../../src/virtual-machine');
-const RenderedTarget = require('../../src/sprites/rendered-target');
+import path from 'path';
+import {test} from '../fixtures/jest-tap-bridge.js';
+import makeTestStorage from '../fixtures/make-test-storage.js';
+import {readFileToBuffer} from '../fixtures/readProjectFile.js';
+import VirtualMachine from '../../src/virtual-machine.js';
+import RenderedTarget from '../../src/sprites/rendered-target.js';
 
 const projectUri = path.resolve(__dirname, '../fixtures/default.sb2');
 const project = readFileToBuffer(projectUri);

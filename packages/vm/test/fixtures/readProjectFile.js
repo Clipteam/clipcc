@@ -1,10 +1,11 @@
-const AdmZip = require('adm-zip');
-const fs = require('fs');
+import AdmZip from 'adm-zip';
+import fs from 'fs';
 
-module.exports = {
+const exported = {
     readFileToBuffer: function (path) {
         return Buffer.from(fs.readFileSync(path));
     },
+
     extractProjectJson: function (path) {
         const zip = new AdmZip(path);
         const projectEntry = zip.getEntries().find(item => item.entryName.match(/project\.json/));
@@ -13,9 +14,18 @@ module.exports = {
         }
         return null;
     },
+
     extractAsset: function (path, assetFileName) {
         const zip = new AdmZip(path);
         const assetEntry = zip.getEntries().find(item => item.entryName.match(assetFileName));
         return assetEntry.getData();
     }
 };
+
+export default exported;
+
+export const {
+    readFileToBuffer,
+    extractProjectJson,
+    extractAsset
+} = exported;

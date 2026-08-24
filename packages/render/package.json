@@ -44,6 +44,7 @@
     "node-polyfill-webpack-plugin": "^3.0.0",
     "playwright-chromium": "1.13.0",
     "clipcc-render-fonts": "1.0.256",
+    "rule-inheritance-webpack-plugin": "catalog:",
     "tap": "21.0.1",
     "terser-webpack-plugin": "^5.3.17",
     "typescript": "catalog:",

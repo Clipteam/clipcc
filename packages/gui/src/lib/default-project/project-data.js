@@ -17,12 +17,17 @@ let messages = defineMessages({
 messages = {...messages, ...sharedMessages};
 
 // use the default message if a translation function is not passed
+/** @type {Translator} */
 const defaultTranslator = msgObj => msgObj.defaultMessage;
 
 /**
+ * @typedef {import('../storage').Translator} Translator
+ */
+
+/**
  * Generate a localized version of the default project
- * @param {Function} translateFunction a function to use for translating the default names
- * @returns {object} the project data json for the default project
+ * @param {Translator} translateFunction a function to use for translating the default names
+ * @returns the project data json for the default project
  */
 const projectData = translateFunction => {
     const translator = translateFunction || defaultTranslator;

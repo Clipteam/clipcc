@@ -5,12 +5,13 @@
  * with the empty sound file but keeping the info about the original missing / corrupted sound
  * so that user data does not get overwritten / lost.
  */
-const path = require('path');
-const tap = require('../fixtures/jest-tap-bridge');
-const makeTestStorage = require('../fixtures/make-test-storage');
-const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-const VirtualMachine = require('../../src/index');
-const {serializeSounds} = require('../../src/serialization/serialize-assets');
+import path from 'path';
+
+import {test} from '../fixtures/jest-tap-bridge.js';
+import makeTestStorage from '../fixtures/make-test-storage.js';
+import {readFileToBuffer} from '../fixtures/readProjectFile.js';
+import VirtualMachine from '../../src/index.js';
+import {serializeSounds} from '../../src/serialization/serialize-assets.js';
 
 const projectUri = path.resolve(__dirname, '../fixtures/missing_sound.sb3');
 const project = readFileToBuffer(projectUri);
@@ -19,7 +20,7 @@ const missingSoundAssetId = '78618aadd225b1db7bf837fa17dc0568';
 
 let vm;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const storage = makeTestStorage();
 
     vm = new VirtualMachine();
@@ -27,8 +28,6 @@ tap.beforeEach(() => {
 
     return vm.loadProject(project);
 });
-
-const test = tap.test;
 
 test('loading sb3 project with missing sound file', t => {
     t.equal(vm.runtime.targets.length, 2);

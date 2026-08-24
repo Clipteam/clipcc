@@ -1,13 +1,10 @@
-const {createReadStream} = require('fs');
-const {join} = require('path');
-
-const {PNG} = require('pngjs');
-const {test} = require('../fixtures/jest-tap-bridge');
-
-const {wrapClamp} = require('../../src/util/math-util');
-
-const VideoSensing = require('../../src/extensions/scratch3_video_sensing/index.js');
-const VideoMotion = require('../../src/extensions/scratch3_video_sensing/library.js');
+import {createReadStream} from 'fs';
+import {join} from 'path';
+import {PNG} from 'pngjs';
+import {test} from '../fixtures/jest-tap-bridge.js';
+import MathUtil from '../../src/util/math-util.js';
+import VideoSensing from '../../src/extensions/scratch3_video_sensing/index.js';
+import VideoMotion from '../../src/extensions/scratch3_video_sensing/library.js';
 
 /**
  * Prefix to the mock frame images used to test the video sensing extension.
@@ -80,8 +77,8 @@ const readFrames = (() => {
  * @returns {boolean} true if actual is close to expect
  */
 const isNearAngle = (actual, expect, optMargin = 10) => (
-    (wrapClamp(actual - expect, 0, 359) < optMargin) ||
-    (wrapClamp(actual - expect, 0, 359) > 360 - optMargin)
+    (MathUtil.wrapClamp(actual - expect, 0, 359) < optMargin) ||
+    (MathUtil.wrapClamp(actual - expect, 0, 359) > 360 - optMargin)
 );
 
 // A fake scratch-render drawable that will be used by VideoMotion to restrain

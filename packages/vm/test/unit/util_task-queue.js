@@ -1,9 +1,7 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-
-const TaskQueue = require('../../src/util/task-queue');
-
-const MockTimer = require('../fixtures/mock-timer');
-const testCompare = require('../fixtures/test-compare');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import TaskQueue from '../../src/util/task-queue.js';
+import MockTimer from '../fixtures/mock-timer.js';
+import testCompare from '../fixtures/test-compare.js';
 
 // Max tokens = 1000
 // Refill 1000 tokens per second (1 per millisecond)

@@ -1,5 +1,5 @@
-const Variable = require('../engine/variable');
-const log = require('../util/log');
+import Variable from '../engine/variable.js';
+import log from '../util/log.js';
 
 class Cloud {
     /**
@@ -166,4 +166,4 @@ class Cloud {
     }
 }
 
-module.exports = Cloud;
+export default Cloud;

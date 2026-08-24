@@ -1,12 +1,10 @@
-const newBlockIds = require('../../src/util/new-block-ids');
-const simpleStack = require('../fixtures/simple-stack');
-const tap = require('../fixtures/jest-tap-bridge');
-const test = tap.test;
-
+import newBlockIds from '../../src/util/new-block-ids.js';
+import simpleStack from '../fixtures/simple-stack.js';
+import {test} from '../fixtures/jest-tap-bridge.js';
 let originals;
 let newBlocks;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     originals = simpleStack;
     // Will be mutated so make a copy first
     newBlocks = JSON.parse(JSON.stringify(simpleStack));

@@ -1,12 +1,12 @@
-const path = require('path');
-const tap = require('../fixtures/jest-tap-bridge');
-const makeTestStorage = require('../fixtures/make-test-storage');
-const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-const VirtualMachine = require('../../src/index');
+import path from 'path';
+import {test} from '../fixtures/jest-tap-bridge.js';
+import makeTestStorage from '../fixtures/make-test-storage.js';
+import {readFileToBuffer} from '../fixtures/readProjectFile.js';
+import VirtualMachine from '../../src/index.js';
 
 let vm;
 
-tap.beforeEach(() => {
+beforeEach(() => {
     const projectUri = path.resolve(__dirname, '../fixtures/monitors.sb2');
     const project = readFileToBuffer(projectUri);
 
@@ -21,7 +21,6 @@ tap.beforeEach(() => {
 
     return vm.loadProject(project);
 });
-const test = tap.test;
 
 test('saving and loading sb2 project with monitors preserves sliderMin and sliderMax', t => {
 

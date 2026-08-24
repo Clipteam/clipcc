@@ -2,7 +2,7 @@
  * @fileoverview
  * Migration from legacy ClipCC.
  */
-const log = require('../util/log');
+import log from '../util/log.js';
 
 const migrationMap = {
     procedures_definition_return: {
@@ -126,7 +126,7 @@ const migrateMutation = (block, backward) => {
 };
 
 
-module.exports = {
+export {
     migrationMap,
     mergeDeep,
     migrateMutation

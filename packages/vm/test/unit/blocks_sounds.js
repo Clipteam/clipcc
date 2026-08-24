@@ -1,5 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const Sound = require('../../src/blocks/scratch3_sound');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Sound from '../../src/blocks/scratch3_sound.js';
 let playedSound;
 
 const blocks = new Sound();

@@ -7,7 +7,7 @@
  * Video motion sensing primitives.
  */
 
-const {motionVector, scratchAtan2} = require('./math');
+import {motionVector, scratchAtan2} from './math.js';
 
 /**
  * A constant value to scale the magnitude of the x and y components called u
@@ -386,4 +386,4 @@ class VideoMotion {
     }
 }
 
-module.exports = VideoMotion;
+export default VideoMotion;

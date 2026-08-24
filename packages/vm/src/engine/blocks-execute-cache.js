@@ -47,6 +47,6 @@ const getCached = function (blocks, blockId, CacheType) {
     return cached;
 };
 
-module.exports = {
+export {
     getCached
 };

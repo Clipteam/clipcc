@@ -1,6 +1,6 @@
-const Cast = require('../util/cast');
-const MathUtil = require('../util/math-util');
-const Timer = require('../util/timer');
+import Cast from '../util/cast.js';
+import MathUtil from '../util/math-util.js';
+import Timer from '../util/timer.js';
 
 class Scratch3MotionBlocks {
     constructor (runtime) {
@@ -294,4 +294,4 @@ class Scratch3MotionBlocks {
     }
 }
 
-module.exports = Scratch3MotionBlocks;
+export default Scratch3MotionBlocks;

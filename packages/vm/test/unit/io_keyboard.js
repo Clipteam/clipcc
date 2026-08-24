@@ -1,6 +1,6 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const Keyboard = require('../../src/io/keyboard');
-const Runtime = require('../../src/engine/runtime');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Keyboard from '../../src/io/keyboard.js';
+import Runtime from '../../src/engine/runtime.js';
 
 test('spec', t => {
     const rt = new Runtime();
