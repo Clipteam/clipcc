@@ -64,8 +64,11 @@ class ExtensionService {
      */
     onWorkerInit(id: number, err?: any) {
         const workerInfo = this.pendingWorkers[id];
+        delete this.pendingWorkers[id];
         if (err) {
             workerInfo.reject(err);
+        } else {
+            workerInfo.resolve(id);
         }
     }
 
