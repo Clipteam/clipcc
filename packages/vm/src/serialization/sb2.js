@@ -952,6 +952,7 @@ const parseBlock = function (sb2block, addBroadcastMsg, getVariableId, extension
         inputs: {}, // Inputs to this block and the blocks they point to.
         fields: {}, // Fields on this block and their values.
         next: null, // Next block.
+        topLevel: false, // Nested blocks are not script roots.
         shadow: false, // No shadow blocks in an SB2 by default.
         children: [] // Store any generated children, flattened in `flatten`.
     };

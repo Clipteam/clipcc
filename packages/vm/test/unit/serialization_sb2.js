@@ -4,6 +4,7 @@ import {extractProjectJson} from '../fixtures/readProjectFile.js';
 import RenderedTarget from '../../src/sprites/rendered-target';
 import Runtime from '../../src/engine/runtime';
 import {deserialize} from '../../src/serialization/sb2.js';
+import obscuredDropdownShadow from '../fixtures/obscured-dropdown-shadow.json';
 
 test('spec', t => {
     t.type(deserialize, 'function');
@@ -97,6 +98,33 @@ test('Ordering', t => {
         t.equal(targets[1].sprite.name, 'First');
         t.equal(targets[2].sprite.name, 'Second');
         t.equal(targets[3].sprite.name, 'Third');
+        t.end();
+    });
+});
+
+test('obscured dropdown shadow keeps the variable reporter as the input block', t => {
+    const runtime = new Runtime();
+
+    return deserialize(obscuredDropdownShadow, runtime).then(({targets}) => {
+        const blocks = targets[0].blocks;
+        const switchCostume = blocks.getBlock(blocks.getScripts()[0]);
+        const input = switchCostume.inputs.COSTUME;
+        const variableReporter = blocks.getBlock(input.block);
+        const shadow = blocks.getBlock(input.shadow);
+
+        t.equal(switchCostume.opcode, 'looks_switchcostumeto');
+        t.equal(variableReporter.opcode, 'data_variable');
+        t.equal(variableReporter.shadow, false);
+        t.equal(variableReporter.topLevel, false);
+        t.equal(shadow.opcode, 'looks_costume');
+        t.equal(shadow.shadow, true);
+        t.equal(shadow.topLevel, false);
+        t.ok(input.block !== input.shadow);
+
+        const state = blocks.toState();
+        const stateInput = state[0].inputs.COSTUME;
+        t.equal(stateInput.block.type, 'data_variable');
+        t.equal(stateInput.shadow.type, 'looks_costume');
         t.end();
     });
 });

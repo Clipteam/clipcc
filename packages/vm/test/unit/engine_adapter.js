@@ -170,6 +170,50 @@ test('create with obscured shadow', t => {
     t.end();
 });
 
+test('create from state keeps an obscured shadow nested', t => {
+    const result = adapter({
+        json: [{
+            id: 'switch-costume',
+            type: 'looks_switchcostumeto',
+            inputs: {
+                COSTUME: {
+                    block: {
+                        id: 'variable-reporter',
+                        type: 'data_variable',
+                        fields: {
+                            VARIABLE: {
+                                id: 'costume-name',
+                                name: 'costume name'
+                            }
+                        }
+                    },
+                    shadow: {
+                        id: 'costume-shadow',
+                        type: 'looks_costume',
+                        fields: {
+                            COSTUME: 'COSTUME1'
+                        }
+                    }
+                }
+            }
+        }]
+    });
+
+    t.equal(result.length, 3);
+    t.equal(result.filter(block => block.topLevel).length, 1);
+    const parent = result.find(block => block.id === 'switch-costume');
+    const variableReporter = result.find(block => block.id === 'variable-reporter');
+    const shadow = result.find(block => block.id === 'costume-shadow');
+    t.equal(parent.topLevel, true);
+    t.equal(parent.inputs.COSTUME.block, variableReporter.id);
+    t.equal(parent.inputs.COSTUME.shadow, shadow.id);
+    t.equal(variableReporter.shadow, false);
+    t.equal(variableReporter.topLevel, false);
+    t.equal(shadow.shadow, true);
+    t.equal(shadow.topLevel, false);
+    t.end();
+});
+
 test('create variable with entity in name', t => {
     const result = adapter(events.createvariablewithentity);
 
