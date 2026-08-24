@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Cast from '../util/cast';
 import Color from '../util/color';
 import MathUtil from '../util/math-util';

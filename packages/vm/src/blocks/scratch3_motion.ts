@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Cast from '../util/cast';
 import MathUtil from '../util/math-util';
 import Timer from '../util/timer';

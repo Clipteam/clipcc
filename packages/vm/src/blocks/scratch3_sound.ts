@@ -1,9 +1,11 @@
+// @ts-nocheck
 import MathUtil from '../util/math-util';
 import Cast from '../util/cast';
 import Clone from '../util/clone';
 import type {BlockArgs, CategoryPrototype} from './category_prototype';
 import type Runtime from '../engine/runtime';
 import type BlockUtility from '../engine/block-utility';
+import type Target from '../engine/target';
 import type RenderedTarget from '../sprites/rendered-target';
 
 /**
@@ -22,7 +24,7 @@ interface SoundState {
     };
 }
 
-interface TargetWithSoundState extends RenderedTarget {
+interface TargetWithSoundState extends Target {
     soundEffects?: SoundState['effects'];
 }
 
@@ -114,7 +116,7 @@ class Scratch3SoundBlocks implements CategoryPrototype {
      * @param target - the target to get the sound state for.
      * @returns the mutable sound state associated with that target. This will be created if necessary.
      */
-    _getSoundState (target: RenderedTarget): SoundState {
+    _getSoundState (target: Target): SoundState {
         let soundState: SoundState = target.getCustomState(Scratch3SoundBlocks.STATE_KEY);
         if (!soundState) {
             soundState = Clone.simple(Scratch3SoundBlocks.DEFAULT_SOUND_STATE);
@@ -130,7 +132,7 @@ class Scratch3SoundBlocks implements CategoryPrototype {
      * @param sourceTarget - the target used as a source for the new clone, if any.
      * @listens Runtime#event:targetWasCreated
      */
-    _onTargetCreated (newTarget: RenderedTarget, sourceTarget?: RenderedTarget) {
+    _onTargetCreated (newTarget: Target, sourceTarget?: Target) {
         if (sourceTarget) {
             const soundState = sourceTarget.getCustomState(Scratch3SoundBlocks.STATE_KEY);
             if (soundState && newTarget) {

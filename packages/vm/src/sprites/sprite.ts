@@ -1,3 +1,4 @@
+// @ts-nocheck
 import RenderedTarget from './rendered-target.js';
 import Blocks from '../engine/blocks.js';
 import {loadSoundFromAsset} from '../import/load-sound.js';

@@ -1,6 +1,6 @@
 import type Blocks from './blocks';
 import type Timer from '../util/timer';
-import type RenderedTarget from '../sprites/rendered-target';
+import type Target from './target';
 
 /**
  * Recycle bin for empty stackFrame objects
@@ -44,7 +44,7 @@ class _StackFrame {
     /**
      * The target of blocks that this thread will execute.
      */
-    target: RenderedTarget | null = null;
+    target: Target | null = null;
 
     /**
      * @param warpMode Whether this level is in warp mode.  Is set by some legacy blocks and
@@ -138,7 +138,7 @@ class Thread {
     /**
      * Target of this thread.
      */
-    target: RenderedTarget | null = null;
+    target: Target | null = null;
     /**
      * The Blocks this thread will execute.
      */
@@ -219,7 +219,7 @@ class Thread {
      * @param blockId Block ID to push to stack.
      * @param target New target context.
      */
-    pushStack (blockId: string | null, target?: RenderedTarget): void {
+    pushStack (blockId: string | null, target?: Target): void {
         this.stack.push(blockId);
         // Push an empty stack frame, if we need one.
         // Might not, if we just popped the stack.

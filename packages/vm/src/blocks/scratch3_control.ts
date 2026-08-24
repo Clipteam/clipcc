@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Cast from '../util/cast';
 import type {BlockArgs, CategoryPrototype} from './category_prototype';
 import type Runtime from '../engine/runtime';

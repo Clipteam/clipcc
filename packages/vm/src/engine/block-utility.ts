@@ -2,7 +2,7 @@ import Thread from './thread';
 import Timer from '../util/timer';
 import type Sequencer from './sequencer';
 import type Runtime from './runtime';
-import type RenderedTarget from '../sprites/rendered-target';
+import type Target from './target';
 import type {MemberFunc} from '../util/type-traits';
 
 export interface BaseExecutionContext {
@@ -62,7 +62,7 @@ class BlockUtility {
     /**
      * The target the primitive is working on.
      */
-    get target (): RenderedTarget {
+    get target (): Target {
         return this.thread!.target!;
     }
 
@@ -247,7 +247,7 @@ class BlockUtility {
      * @param optTarget Optionally, a target to restrict to.
      * @returns List of threads started by this function.
      */
-    startHats (requestedHat: string, optMatchFields?: object, optTarget?: RenderedTarget) {
+    startHats (requestedHat: string, optMatchFields?: object, optTarget?: Target) {
         // Store thread and sequencer to ensure we can return to the calling block's context.
         // startHats may execute further blocks and dirty the BlockUtility's execution context
         // and confuse the calling block when we return to it.

@@ -56,6 +56,7 @@ const defaultExtensionColors = ['#0FBD8C', '#0DA57A', '#0B8E69'];
 
 /**
  * @typedef {import('../sprites/rendered-target').default} RenderedTarget
+ * @typedef {import('./target').default} Target
  * @typedef {import('clipcc-audio')} AudioEngine
  * @typedef {import('clipcc-render')} RenderWebGL
  * @typedef {import('clipcc-storage').ScratchStorage} ScratchStorage
@@ -2114,7 +2115,7 @@ class Runtime extends EventEmitter {
      * Start all relevant hats.
      * @param {!string} requestedHatOpcode Opcode of hats to start.
      * @param {object= | null} optMatchFields Optionally, fields to match on the hat.
-     * @param {RenderedTarget=} optTarget Optionally, a target to restrict to.
+     * @param {Target=} optTarget Optionally, a target to restrict to.
      * @returns {Array.<Thread>|undefined} List of threads started by this function.
      */
     startHats (requestedHatOpcode,
@@ -2313,7 +2314,7 @@ class Runtime extends EventEmitter {
 
     /**
      * Stop any threads acting on the target.
-     * @param {!RenderedTarget} target Target to stop threads for.
+     * @param {!Target} target Target to stop threads for.
      * @param {Thread=} optThreadException Optional thread to skip.
      */
     stopForTarget (target, optThreadException) {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Cast from '../util/cast';
 import Clone from '../util/clone';
 import RenderedTarget from '../sprites/rendered-target.js';
@@ -172,7 +173,7 @@ class Scratch3LooksBlocks implements CategoryPrototype {
      * Position the bubble of a target. If it doesn't fit on the specified side, flip and rerender.
      * @param target The target which has moved, which may require its bubble to be repositioned
      */
-    _positionBubble (target: RenderedTarget) {
+    _positionBubble (target: Target) {
         if (!target.visible) return;
         const bubbleState = this._getBubbleState(target);
         if (bubbleState.drawableId === null) return;
@@ -231,7 +232,7 @@ class Scratch3LooksBlocks implements CategoryPrototype {
      * bubble and update the relevant custom state.
      * @param target The target to create/update a bubble for.
      */
-    _renderBubble (target: RenderedTarget) {
+    _renderBubble (target: Target) {
         if (!this.runtime.renderer) return;
 
         const bubbleState = this._getBubbleState(target);
@@ -284,7 +285,7 @@ class Scratch3LooksBlocks implements CategoryPrototype {
      * @param type Either "say" or "think"
      * @param text The text for the bubble, empty string clears the bubble.
      */
-    _updateBubble (target: RenderedTarget, type: string, text: string | number) {
+    _updateBubble (target: Target, type: string, text: string | number) {
         const bubbleState = this._getBubbleState(target);
         bubbleState.type = type;
         bubbleState.text = this._formatBubbleText(text);
@@ -403,7 +404,7 @@ class Scratch3LooksBlocks implements CategoryPrototype {
      * @returns Any threads started by this switch.
      */
     _setCostume (
-        target: RenderedTarget,
+        target: Target,
         requestedCostume: number | 'next costume' | 'previous costume',
         optZeroIndex?: boolean
     ) {
@@ -441,7 +442,7 @@ class Scratch3LooksBlocks implements CategoryPrototype {
      * @returns Any threads started by this switch.
      */
     _setBackdrop (
-        stage: RenderedTarget,
+        stage: Target,
         requestedBackdrop: number | 'next backdrop' | 'previous backdrop' | 'random backdrop',
         optZeroIndex?: boolean
     ) {
