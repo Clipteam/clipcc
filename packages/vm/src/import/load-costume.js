@@ -1,6 +1,6 @@
-const StringUtil = require('../util/string-util');
-const log = require('../util/log');
-const {loadSvgString, serializeSvgToString} = require('clipcc-svg-renderer');
+import StringUtil from '../util/string-util.js';
+import log from '../util/log.js';
+import {loadSvgString, serializeSvgToString} from 'clipcc-svg-renderer';
 
 const loadVector_ = function (costume, runtime, rotationCenter, optVersion) {
     return new Promise(resolve => {
@@ -347,7 +347,7 @@ const loadCostumeFromAsset = function (costume, runtime, optVersion) {
  *     to 2, scratch 3 will perform an upgrade step to handle quirks in SVGs from Scratch 2.0.
  * @returns {?Promise} - a promise which will resolve after skinId is set, or null on error.
  */
-const loadCostume = function (md5ext, costume, runtime, optVersion) {
+let loadCostume = function (md5ext, costume, runtime, optVersion) {
     const idParts = StringUtil.splitFirst(md5ext, '.');
     const md5 = idParts[0];
     const ext = idParts[1].toLowerCase();
@@ -402,7 +402,16 @@ const loadCostume = function (md5ext, costume, runtime, optVersion) {
         });
 };
 
-module.exports = {
+/**
+ * Override the default loadCostume function with a new one. This is used for testing purposes.
+ * @param {Function} newLoadCostume - The new loadCostume function to use.
+ */
+const overrideLoadCostume = function (newLoadCostume) {
+    loadCostume = newLoadCostume;
+}
+
+export {
     loadCostume,
+    overrideLoadCostume,
     loadCostumeFromAsset
 };

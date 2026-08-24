@@ -1,12 +1,11 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-
-const Blocks = require('../../src/engine/blocks');
-const BlockUtility = require('../../src/engine/block-utility');
-const Event = require('../../src/blocks/scratch3_event');
-const Runtime = require('../../src/engine/runtime');
-const Target = require('../../src/engine/target');
-const Thread = require('../../src/engine/thread');
-const Variable = require('../../src/engine/variable');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Blocks from '../../src/engine/blocks.js';
+import BlockUtility from '../../src/engine/block-utility.js';
+import Event from '../../src/blocks/scratch3_event.js';
+import Runtime from '../../src/engine/runtime.js';
+import Target from '../../src/engine/target.js';
+import Thread from '../../src/engine/thread.js';
+import Variable from '../../src/engine/variable.js';
 
 test('#760 - broadcastAndWait', t => {
     const broadcastAndWaitBlock = {

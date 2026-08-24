@@ -1,4 +1,4 @@
-const Cast = require('../util/cast');
+import Cast from '../util/cast.js';
 
 class Scratch3DataBlocks {
     constructor (runtime) {
@@ -255,4 +255,4 @@ class Scratch3DataBlocks {
     }
 }
 
-module.exports = Scratch3DataBlocks;
+export default Scratch3DataBlocks;

@@ -12,4 +12,4 @@ const testCompare = (t, lhs, op, rhs, message) => {
     }
 };
 
-module.exports = testCompare;
+export default testCompare;

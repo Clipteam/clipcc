@@ -1,13 +1,12 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-
-const Blocks = require('../../src/engine/blocks');
-const Clone = require('../../src/util/clone');
-const {loadCostume} = require('../../src/import/load-costume');
-const {loadSound} = require('../../src/import/load-sound');
-const makeTestStorage = require('../fixtures/make-test-storage');
-const Runtime = require('../../src/engine/runtime');
-const sb3 = require('../../src/serialization/sb3');
-const Sprite = require('../../src/sprites/sprite');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Blocks from '../../src/engine/blocks.js';
+import Clone from '../../src/util/clone.js';
+import {loadCostume} from '../../src/import/load-costume.js';
+import {loadSound} from '../../src/import/load-sound.js';
+import makeTestStorage from '../fixtures/make-test-storage.js';
+import Runtime from '../../src/engine/runtime.js';
+import * as sb3 from '../../src/serialization/sb3.js';
+import Sprite from '../../src/sprites/sprite.js';
 
 const defaultCostumeInfo = {
     bitmapResolution: 1,

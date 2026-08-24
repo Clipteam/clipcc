@@ -1,5 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const VirtualMachine = require('../../src/index');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import VirtualMachine from '../../src/index.js';
 
 test('interface', t => {
     const vm = new VirtualMachine();

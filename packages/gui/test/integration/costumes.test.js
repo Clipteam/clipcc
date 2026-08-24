@@ -16,6 +16,8 @@ const {
 // The costumes library is slow to load. Increase the timeout for these tests.
 jest.setTimeout(60_000);
 
+const abbyCostumeURL = 'https://static.codingclip.com/v1/project/asset/45de34b47a2ce22f6f5d28bb35a44ff5.svg';
+
 const uri = path.resolve(__dirname, '../../build/index.html');
 
 let driver;
@@ -211,7 +213,7 @@ describe('Working with costumes', () => {
             .mouseMove(abbyElement)
             .perform();
         // wait for one of Abby's alternate costumes to appear
-        await findByXpath('//img[@src="https://cdn.assets.scratch.mit.edu/internalapi/asset/45de34b47a2ce22f6f5d28bb35a44ff5.svg/get/"]');
+        await findByXpath(`//img[@src="${abbyCostumeURL}"]`);
         const logs = await getLogs();
         await expect(logs).toEqual([]);
     });

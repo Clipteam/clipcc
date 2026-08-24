@@ -1,5 +1,5 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const StringUtil = require('../../src/util/string-util');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import StringUtil from '../../src/util/string-util.js';
 
 test('splitFirst', t => {
     t.same(StringUtil.splitFirst('asdf.1234', '.'), ['asdf', '1234']);

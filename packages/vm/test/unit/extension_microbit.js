@@ -1,4 +1,4 @@
-const test = require('../fixtures/jest-tap-bridge').test;
+import {test} from '../fixtures/jest-tap-bridge.js';
 // const MicroBit = require('../../src/extensions/scratch3_microbit/index.js');
 
 test('displayText', t => {

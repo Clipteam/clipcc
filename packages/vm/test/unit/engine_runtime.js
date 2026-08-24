@@ -1,12 +1,10 @@
-const tap = require('../fixtures/jest-tap-bridge');
-const path = require('path');
-const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-const VirtualMachine = require('../../src/virtual-machine');
-const Runtime = require('../../src/engine/runtime');
-const MonitorRecord = require('../../src/engine/monitor-record');
-const {Map} = require('immutable');
-
-const test = tap.test;
+import {test} from '../fixtures/jest-tap-bridge.js';
+import path from 'path';
+import {readFileToBuffer} from '../fixtures/readProjectFile.js';
+import VirtualMachine from '../../src/virtual-machine.js';
+import Runtime from '../../src/engine/runtime.js';
+import MonitorRecord from '../../src/engine/monitor-record.js';
+import {Map} from 'immutable';
 
 test('spec', t => {
     const r = new Runtime();

@@ -16,6 +16,12 @@ const STATIC_PATH = process.env.STATIC_PATH || '/static';
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const BUILD_DIST = IS_PRODUCTION || process.env.BUILD_MODE === 'dist';
 const IS_CI = process.env.CI;
+const LIBRARY_ONLY = process.env.LIBRARY_ONLY;
+
+const DEFAULT_TRANSLATE_SERVICE_URL = process.env.TRANSLATE_SERVICE_URL ||
+    'https://translate-service.scratch.mit.edu/translate';
+const DEFAULT_TTS_SERVICE_URL = process.env.TTS_SERVICE_URL ||
+    'https://synthesis-service.scratch.mit.edu/synth';
 
 const base = {
     mode: IS_PRODUCTION ? 'production' : 'development',
@@ -152,7 +158,13 @@ const base = {
             ]
         }),
         new NodePolyfillPlugin({
-            includeAliases: ['buffer', 'events']
+            includeAliases: ['buffer', 'Buffer', 'events']
+        }),
+        new webpack.DefinePlugin({
+            'clipcc.DEFAULT_TRANSLATE_SERVICE_URL': JSON.stringify(DEFAULT_TRANSLATE_SERVICE_URL),
+            'clipcc.DEFAULT_TTS_SERVICE_URL': JSON.stringify(DEFAULT_TTS_SERVICE_URL),
+            'clipcc.VERSION': JSON.stringify(version),
+            'clipcc.BUILD_TIME': Date.now()
         }),
         new CopyWebpackPlugin({
             patterns: [
@@ -199,7 +211,7 @@ if (!IS_PRODUCTION) {
     });
 }
 
-module.exports = [
+module.exports = (BUILD_DIST ? [] : [
     // to run editor examples
     defaultsDeep({}, base, {
         entry: {
@@ -225,9 +237,7 @@ module.exports = [
         plugins: base.plugins.concat([
             new webpack.DefinePlugin({
                 'process.env.DEBUG': Boolean(process.env.DEBUG),
-                'process.env.GA_ID': `"${process.env.GA_ID || 'UA-000000-01'}"`,
-                'clipcc.VERSION': version,
-                'clipcc.BUILD_TIME': Date.now()
+                'process.env.GA_ID': `"${process.env.GA_ID || 'UA-000000-01'}"`
             }),
             new HtmlWebpackPlugin({
                 chunks: ['runtime.min', 'lib.min', 'gui'],
@@ -285,8 +295,8 @@ module.exports = [
             })
         ])
     })
-].concat(
-    BUILD_DIST ? (
+]).concat(
+    (BUILD_DIST || LIBRARY_ONLY) ? (
         // export as library
         defaultsDeep({}, base, {
             target: 'web',

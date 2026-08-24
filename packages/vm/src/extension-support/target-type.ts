@@ -13,4 +13,4 @@ enum TargetType {
     STAGE = 'stage'
 };
 
-module.exports = TargetType;
+export default TargetType;

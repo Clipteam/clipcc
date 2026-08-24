@@ -1,8 +1,7 @@
-const dispatch = require('../dispatch/central-dispatch');
-const log = require('../util/log');
-const maybeFormatMessage = require('../util/maybe-format-message');
-
-const BlockType = require('./block-type');
+import dispatch from '../dispatch/central-dispatch.js';
+import log from '../util/log.js';
+import maybeFormatMessage from '../util/maybe-format-message.js';
+import BlockType from './block-type';
 
 // These extensions are currently built into the VM repository but should not be loaded at startup.
 // TODO: move these out into a separate repository?
@@ -459,4 +458,4 @@ class ExtensionManager {
     }
 }
 
-module.exports = ExtensionManager;
+export default ExtensionManager;

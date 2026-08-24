@@ -1,6 +1,6 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const Clock = require('../../src/io/clock');
-const Runtime = require('../../src/engine/runtime');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Clock from '../../src/io/clock.js';
+import Runtime from '../../src/engine/runtime.js';
 
 test('spec', t => {
     const rt = new Runtime();

@@ -46,4 +46,4 @@ enum BlockType {
     REPORTER = 'reporter'
 };
 
-module.exports = BlockType;
+export default BlockType;

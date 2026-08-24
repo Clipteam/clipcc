@@ -30,4 +30,4 @@ class Joystick {
     }
 }
 
-module.exports = Joystick;
+export default Joystick;

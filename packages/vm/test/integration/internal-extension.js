@@ -1,13 +1,10 @@
-const test = require('../fixtures/jest-tap-bridge').test;
-const Worker = require('tiny-worker');
-
-const BlockType = require('../../src/extension-support/block-type');
-
-const dispatch = require('../../src/dispatch/central-dispatch');
-const VirtualMachine = require('../../src/virtual-machine');
-
-const Sprite = require('../../src/sprites/sprite');
-const RenderedTarget = require('../../src/sprites/rendered-target');
+import {test} from '../fixtures/jest-tap-bridge.js';
+import Worker from 'tiny-worker';
+import BlockType from '../../src/extension-support/block-type';
+import dispatch from '../../src/dispatch/central-dispatch.js';
+import VirtualMachine from '../../src/virtual-machine.js';
+import Sprite from '../../src/sprites/sprite.js';
+import RenderedTarget from '../../src/sprites/rendered-target.js';
 
 // By default Central Dispatch works with the Worker class built into the browser. Tell it to use TinyWorker instead.
 dispatch.workerClass = Worker;

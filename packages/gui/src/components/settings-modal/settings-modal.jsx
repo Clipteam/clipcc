@@ -32,6 +32,11 @@ const messages = defineMessages({
         description: 'Label of project',
         id: 'gui.settingsModal.project'
     },
+    network: {
+        defaultMessage: 'Network',
+        description: 'Label of network',
+        id: 'gui.settingsModal.network'
+    },
     system: {
         defaultMessage: 'Follow System',
         description: 'Label of follow system',
@@ -62,7 +67,8 @@ class SettingsModal extends React.Component {
         this.categoryRef = {
             appearance: null, // @todo use React.createRef instead after React 16.3
             player: null,
-            project: null
+            project: null,
+            network: null
         };
         bindAll(this, [
             'handleJumpToCategoryWrapper'
@@ -96,6 +102,9 @@ class SettingsModal extends React.Component {
                         </p>
                         <p onClick={this.handleJumpToCategoryWrapper('project')}>
                             {this.props.intl.formatMessage(messages.project)}
+                        </p>
+                        <p onClick={this.handleJumpToCategoryWrapper('network')}>
+                            {this.props.intl.formatMessage(messages.network)}
                         </p>
                     </Box>
                     <Box
@@ -393,6 +402,87 @@ class SettingsModal extends React.Component {
                                 placeholder="300"
                             />
                         </div>
+                        <p
+                            className={styles.category}
+                            // eslint-disable-next-line no-return-assign
+                            ref={ref => this.categoryRef.network = ref}
+                        >
+                            {this.props.intl.formatMessage(messages.network)}
+                        </p>
+                        <div className={styles.item}>
+                            <div className={styles.label}>
+                                <FormattedMessage
+                                    defaultMessage="Use Scratch Official API"
+                                    description="Label of use scratch official api"
+                                    id="gui.settingsModal.useScratchOfficialApi"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="Use official Scratch translate and text-to-speech services."
+                                    description="Description of use scratch official api"
+                                    id="gui.settingsModal.useScratchOfficialApiDescription"
+                                />
+                            </div>
+                            <Switch
+                                value={this.props.useScratchOfficialApi}
+                                onChange={this.props.onChangeUseScratchOfficialApi}
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div
+                                className={classNames(
+                                    styles.label,
+                                    this.props.useScratchOfficialApi ? styles.disabled : null
+                                )}
+                            >
+                                <FormattedMessage
+                                    defaultMessage="Translate Service URL"
+                                    description="Label of translate service url"
+                                    id="gui.settingsModal.translateServiceUrl"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="The API entrypoint used by translate blocks."
+                                    description="Description of translate service url"
+                                    id="gui.settingsModal.translateServiceUrlDescription"
+                                />
+                            </div>
+                            <BufferedInput
+                                value={this.props.translateServiceUrl}
+                                disabled={this.props.useScratchOfficialApi}
+                                onSubmit={this.props.onChangeTranslateServiceUrl}
+                                className={styles.inputWide}
+                                small
+                                tabIndex="0"
+                                type="text"
+                            />
+                        </div>
+                        <div className={styles.item}>
+                            <div
+                                className={classNames(
+                                    styles.label,
+                                    this.props.useScratchOfficialApi ? styles.disabled : null
+                                )}
+                            >
+                                <FormattedMessage
+                                    defaultMessage="Text-to-Speech Service URL"
+                                    description="Label of text-to-speech service url"
+                                    id="gui.settingsModal.ttsServiceUrl"
+                                />
+                                <FormattedMessage
+                                    defaultMessage="The API entrypoint used by text-to-speech blocks."
+                                    description="Description of text-to-speech service url"
+                                    id="gui.settingsModal.ttsServiceUrlDescription"
+                                />
+                            </div>
+                            <BufferedInput
+                                value={this.props.ttsServiceUrl}
+                                disabled={this.props.useScratchOfficialApi}
+                                onSubmit={this.props.onChangeTTSServiceUrl}
+                                className={styles.inputWide}
+                                small
+                                tabIndex="0"
+                                type="text"
+                            />
+                        </div>
                     </Box>
                 </Box>
             </Modal>
@@ -413,6 +503,9 @@ SettingsModal.propTypes = {
     framerate: PropTypes.number.isRequired,
     stageWidth: PropTypes.number.isRequired,
     stageHeight: PropTypes.number.isRequired,
+    translateServiceUrl: PropTypes.string.isRequired,
+    ttsServiceUrl: PropTypes.string.isRequired,
+    useScratchOfficialApi: PropTypes.bool.isRequired,
     theme: PropTypes.string.isRequired,
     intl: intlShape.isRequired,
     onClose: PropTypes.func.isRequired,
@@ -421,6 +514,9 @@ SettingsModal.propTypes = {
     onChangeEdgelessStage: PropTypes.func.isRequired,
     onChangeStageWidth: PropTypes.func.isRequired,
     onChangeStageHeight: PropTypes.func.isRequired,
+    onChangeTranslateServiceUrl: PropTypes.func.isRequired,
+    onChangeTTSServiceUrl: PropTypes.func.isRequired,
+    onChangeUseScratchOfficialApi: PropTypes.func.isRequired,
     onChangeUnlimitedListLength: PropTypes.func.isRequired,
     onChangeUnlimitedPenSize: PropTypes.func.isRequired,
     onChangeUnlimitedSoundStuffs: PropTypes.func.isRequired,

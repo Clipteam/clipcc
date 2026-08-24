@@ -4,10 +4,11 @@
  * @file debug.js
  */
 
-const VideoMotion = require('./library');
-const VideoMotionView = require('./view');
+import VideoMotion from './library.js';
 
-module.exports = {
+import VideoMotionView from './view.js';
+
+export {
     VideoMotion,
     VideoMotionView
 };

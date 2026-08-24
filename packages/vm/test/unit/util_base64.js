@@ -1,4 +1,4 @@
-const test = require('../fixtures/jest-tap-bridge').test;
+import {test} from '../fixtures/jest-tap-bridge.js';
 // const Base64Util = require('../../src/util/base64-util');
 
 test('base64ToUint8Array', t => {

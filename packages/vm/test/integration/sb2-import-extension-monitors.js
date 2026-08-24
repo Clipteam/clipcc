@@ -1,10 +1,9 @@
-const path = require('path');
-const tap = require('../fixtures/jest-tap-bridge');
-const test = tap.test;
-const makeTestStorage = require('../fixtures/make-test-storage');
-const {readFileToBuffer, extractProjectJson} = require('../fixtures/readProjectFile');
-const VirtualMachine = require('../../src/index');
-const sb2 = require('../../src/serialization/sb2');
+import path from 'path';
+import {test} from '../fixtures/jest-tap-bridge.js';
+import makeTestStorage from '../fixtures/make-test-storage.js';
+import {readFileToBuffer, extractProjectJson} from '../fixtures/readProjectFile.js';
+import VirtualMachine from '../../src/index.js';
+import {deserialize} from '../../src/serialization/sb2.js';
 
 const invisibleVideoMonitorProjectUri = path.resolve(__dirname, '../fixtures/invisible-video-monitor.sb2');
 const invisibleVideoMonitorProject = readFileToBuffer(invisibleVideoMonitorProjectUri);
@@ -65,7 +64,7 @@ test('loading sb2 project with visible video monitor should not load extension',
 test('sb2 project with video sensing blocks and monitor should load extension but not monitor', t => {
     const vm = new VirtualMachine();
 
-    sb2.deserialize(visibleVideoMonitorAndBlocksProject, vm.runtime).then(project => {
+    deserialize(visibleVideoMonitorAndBlocksProject, vm.runtime).then(project => {
         // Extension loads but monitor does not
         project.extensions.extensionIDs.has('videoSensing');
         // Non-core extension monitors haven't been added to the runtime

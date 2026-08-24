@@ -164,4 +164,4 @@ class MockTimer {
     }
 }
 
-module.exports = MockTimer;
+export default MockTimer;

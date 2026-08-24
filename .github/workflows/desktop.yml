@@ -1,0 +1,101 @@
+name: Build Desktop App
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published, prereleased]
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup dependencies
+        uses: ./.github/actions/setup-deps
+
+      - name: Restore build cache
+        id: build-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            packages/*/dist
+            packages/*/build
+            packages/gui/src/generated
+            packages/gui/static/microbit
+            packages/l10n/locales
+          key: desktop-build-${{ runner.os }}-${{ github.sha }}
+
+      - name: Build all packages
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        run: pnpm run build:dist
+
+      - name: Save build cache
+        if: steps.build-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            packages/*/dist
+            packages/*/build
+            packages/gui/src/generated
+            packages/gui/static/microbit
+            packages/l10n/locales
+          key: desktop-build-${{ runner.os }}-${{ github.sha }}
+
+      - name: Restore media assets cache
+        id: media-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: app/desktop/static/assets
+          key: media-assets-${{ runner.os }}-${{ hashFiles('packages/gui/src/lib/libraries/backdrops.json', 'packages/gui/src/lib/libraries/costumes.json', 'packages/gui/src/lib/libraries/sounds.json', 'packages/gui/src/lib/libraries/sprites.json') }}
+
+      - name: Fetch library
+        run: pnpm --filter clipcc-desktop run fetch-library
+
+      - name: Install pacman build dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libarchive-tools
+
+      - name: Bundle
+        run: pnpm --filter clipcc-desktop run bundle:dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Save media assets cache
+        if: steps.media-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: app/desktop/static/assets
+          key: ${{ steps.media-cache.outputs.cache-primary-key }}
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        if: github.event_name == 'release'
+        with:
+          files: |
+            app/desktop/dist/*.exe
+            app/desktop/dist/*.zip
+            app/desktop/dist/*.dmg
+            app/desktop/dist/*.deb
+            app/desktop/dist/*.rpm
+            app/desktop/dist/*.pacman
+      - name: Upload to Aurora Release
+        uses: softprops/action-gh-release@v2
+        if: github.event_name == 'workflow_dispatch'
+        with:
+          prerelease: true
+          tag_name: aurora
+          files: |
+            app/desktop/dist/*.exe
+            app/desktop/dist/*.zip
+            app/desktop/dist/*.dmg
+            app/desktop/dist/*.deb
+            app/desktop/dist/*.rpm
+            app/desktop/dist/*.pacman

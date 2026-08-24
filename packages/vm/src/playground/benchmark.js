@@ -35,21 +35,20 @@ class LoadingMiddleware {
     }
 }
 
-const importLoadCostume = require('../import/load-costume');
+import * as loadCostume from '../import/load-costume.js';
 const costumeMiddleware = new LoadingMiddleware();
-importLoadCostume.loadCostume = costumeMiddleware.install(importLoadCostume, importLoadCostume.loadCostume);
+loadCostume.overrideLoadCostume(costumeMiddleware.install(loadCostume, loadCostume.loadCostume));
 
-const importLoadSound = require('../import/load-sound');
+import * as loadSound from '../import/load-sound.js';
 const soundMiddleware = new LoadingMiddleware();
-importLoadSound.loadSound = soundMiddleware.install(importLoadSound, importLoadSound.loadSound);
+loadSound.overrideLoadSound(soundMiddleware.install(loadSound, loadSound.loadSound));
 
-const {ScratchStorage} = require('clipcc-storage');
-const VirtualMachine = require('..');
-const Runtime = require('../engine/runtime');
-
-const ScratchRender = require('clipcc-render');
-const AudioEngine = require('clipcc-audio');
-const ScratchSVGRenderer = require('clipcc-svg-renderer');
+import {ScratchStorage} from 'clipcc-storage';
+import VirtualMachine from '../index.js';
+import Runtime from '../engine/runtime.js';
+import ScratchRender from 'clipcc-render';
+import AudioEngine from 'clipcc-audio';
+import * as ScratchSVGRenderer from 'clipcc-svg-renderer';
 
 const Scratch = window.Scratch = window.Scratch || {};
 

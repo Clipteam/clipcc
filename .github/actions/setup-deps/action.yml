@@ -19,6 +19,7 @@ runs:
         cache: pnpm
 
     - name: Cache node_modules
+      if: runner.os != 'Windows'
       uses: actions/cache@v4
       with:
         path: |

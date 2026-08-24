@@ -1,8 +1,8 @@
-const Cast = require('../util/cast');
-const Color = require('../util/color');
-const MathUtil = require('../util/math-util');
-const Timer = require('../util/timer');
-const getMonitorIdForBlockWithArgs = require('../util/get-monitor-id');
+import Cast from '../util/cast.js';
+import Color from '../util/color';
+import MathUtil from '../util/math-util.js';
+import Timer from '../util/timer.js';
+import getMonitorIdForBlockWithArgs from '../util/get-monitor-id.js';
 
 class Scratch3SensingBlocks {
     constructor (runtime) {
@@ -431,4 +431,4 @@ class Scratch3SensingBlocks {
     }
 }
 
-module.exports = Scratch3SensingBlocks;
+export default Scratch3SensingBlocks;

@@ -39,6 +39,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             storage.setProjectHost(props.projectHost);
             storage.setProjectToken(props.projectToken);
             storage.setAssetHost(props.assetHost);
+            storage.setCdnHost(props.cdnHost);
             storage.setTranslatorFunction(props.intl.formatMessage);
             // props.projectId might be unset, in which case we use our default;
             // or it may be set by an even higher HOC, and passed to us.
@@ -61,6 +62,9 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             }
             if (prevProps.assetHost !== this.props.assetHost) {
                 storage.setAssetHost(this.props.assetHost);
+            }
+            if (prevProps.cdnHost !== this.props.cdnHost) {
+                storage.setCdnHost(this.props.cdnHost);
             }
             if (this.props.isFetchingWithId && !prevProps.isFetchingWithId) {
                 this.fetchProject(this.props.reduxProjectId, this.props.loadingState);
@@ -93,6 +97,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
             const {
                 /* eslint-disable no-unused-vars */
                 assetHost,
+                cdnHost,
                 intl,
                 isLoadingProject: isLoadingProjectProp,
                 loadingState,
@@ -119,6 +124,7 @@ const ProjectFetcherHOC = function (WrappedComponent) {
     ProjectFetcherComponent.propTypes = {
         assetHost: PropTypes.string,
         canSave: PropTypes.bool,
+        cdnHost: PropTypes.string,
         intl: intlShape.isRequired,
         isCreatingNew: PropTypes.bool,
         isFetchingWithId: PropTypes.bool,
@@ -136,8 +142,9 @@ const ProjectFetcherHOC = function (WrappedComponent) {
         setProjectId: PropTypes.func
     };
     ProjectFetcherComponent.defaultProps = {
-        assetHost: 'https://assets.scratch.mit.edu',
-        projectHost: 'https://projects.scratch.mit.edu'
+        assetHost: 'https://api.codingclip.com/v1/',
+        cdnHost: 'https://static.codingclip.com/v1/',
+        projectHost: 'https://api.codingclip.com/v1'
     };
 
     const mapStateToProps = state => ({

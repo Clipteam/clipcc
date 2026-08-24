@@ -1,10 +1,8 @@
-const tap = require('../fixtures/jest-tap-bridge');
-const path = require('path');
-const readFileToBuffer = require('../fixtures/readProjectFile').readFileToBuffer;
-const makeTestStorage = require('../fixtures/make-test-storage');
-const VirtualMachine = require('../../src/virtual-machine');
-
-const test = tap.test;
+import {test} from '../fixtures/jest-tap-bridge.js';
+import path from 'path';
+import {readFileToBuffer} from '../fixtures/readProjectFile.js';
+import makeTestStorage from '../fixtures/make-test-storage.js';
+import VirtualMachine from '../../src/virtual-machine.js';
 
 // Test that loading a project does not emit a project change
 // This is in its own file so that it does not affect the test setup

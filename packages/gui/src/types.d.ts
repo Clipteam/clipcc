@@ -1,3 +1,10 @@
+declare const clipcc: {
+    VERSION?: string;
+    BUILD_TIME?: number;
+    DEFAULT_TRANSLATE_SERVICE_URL: string;
+    DEFAULT_TTS_SERVICE_URL: string;
+};
+
 declare module '!!arraybuffer-loader!.*' {
     declare const value: ArrayBuffer;
     export default value;

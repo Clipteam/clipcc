@@ -50,6 +50,7 @@ interface StorageWithOfficialStores {
 
 interface OwnProps extends ComponentProps {
     assetHost?: string;
+    cdnHost?: string;
     cloudHost?: string;
     fetchingProject?: boolean;
     isLoading?: boolean;
@@ -150,6 +151,7 @@ class GUI extends React.Component<GUIProps> {
         const {
             /* eslint-disable @typescript-eslint/no-unused-vars */
             assetHost,
+            cdnHost,
             cloudHost,
             error,
             isError,
