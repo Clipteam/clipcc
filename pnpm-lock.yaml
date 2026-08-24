@@ -1264,8 +1264,8 @@ importers:
         specifier: ^1.0.22
         version: 1.0.22
       format-message:
-        specifier: 6.2.1
-        version: 6.2.1
+        specifier: ^6.2.4
+        version: 6.2.4
       htmlparser2:
         specifier: 10.1.0
         version: 10.1.0
@@ -5670,9 +5670,6 @@ packages:
 
   format-message-print@6.2.4:
     resolution: {integrity: sha512-72j+ATEN13NFJ1hYaPcDVJEE37BD1P29plLIdCqEMwezVa1c7VSPgRB1eZnkoWxm4YKFgS770pJlE1ZczACqgQ==}
-
-  format-message@6.2.1:
-    resolution: {integrity: sha512-6gBXI+MOE9pu9QNeZf95V87GKYiLCdUvhisjts75xonaPAshtBu20NTZt2l8kbYcoMtxNyH9E9af+aieIRfVmw==}
 
   format-message@6.2.4:
     resolution: {integrity: sha512-/24zYeSRy2ZlEO2OIctm7jOHvMpoWf+uhqFCaqqyZKi1C229zAAy2E5vF4lSSaMH0a2kewPrOzq6xN4Yy7cQrw==}
@@ -15600,13 +15597,6 @@ snapshots:
   format-message-parse@6.2.4: {}
 
   format-message-print@6.2.4: {}
-
-  format-message@6.2.1:
-    dependencies:
-      format-message-formats: 6.2.4
-      format-message-interpret: 6.2.4
-      format-message-parse: 6.2.0
-      lookup-closest-locale: 6.2.0
 
   format-message@6.2.4:
     dependencies:
