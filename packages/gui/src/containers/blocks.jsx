@@ -551,6 +551,9 @@ class Blocks extends React.Component {
      * @param {import('clipcc-extension').UpdateBlocksEvent} event Event payload.
      */
     handleExtensionUpdateBlocks (event) {
+        this.ScratchBlocks.common.defineBlocksWithJsonArray(event.blocksJSON.map(
+            blockInfo => injectExtensionBlockTheme(blockInfo, this.props.theme)
+        ));
         this.ScratchBlocks.common.defineBlocks(event.blocks);
 
         // @todo support for custom field type

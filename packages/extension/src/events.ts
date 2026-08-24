@@ -23,6 +23,8 @@ export interface UpdateBlocksEvent extends AbstractEvent {
     type: 'UPDATE_BLOCKS';
     /** Map of block definitions. */
     blocks: Record<string, any>;
+    /** Array of static blocks' JSON, used for theme injection in GUI. */
+    blocksJSON: any[];
     /** Map of custom field implementations. */
     fields: Record<string, any>;
 }

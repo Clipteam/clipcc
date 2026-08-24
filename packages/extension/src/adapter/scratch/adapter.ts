@@ -326,6 +326,7 @@ export abstract class ScratchBaseAdapter implements IExtension {
         const payload: UpdateBlocksEvent = {
             type: 'UPDATE_BLOCKS',
             blocks: Object.create(null),
+            blocksJSON: [],
             fields: Object.create(null)
         };
 
@@ -339,7 +340,10 @@ export abstract class ScratchBaseAdapter implements IExtension {
                     payload.blocks[extendedOpcode] = defineDynamicBlock(categoryInfo, blockInfo, extendedOpcode);
                 } else if (blockInfo.json) {
                     // Static blocks.
-                    payload.blocks[blockInfo.json.type] = defineStaticBlock(blockInfo.json);
+                    // Add to payload.blocksJSON for further injection in GUI.
+                    // @TODO A better implementation should be considered.
+                    // payload.blocks[blockInfo.json.type] = defineStaticBlock(blockInfo.json);
+                    payload.blocksJSON.push(blockInfo.json);
                 }
                 // otherwise it's a non-block entry such as '---'
             });
