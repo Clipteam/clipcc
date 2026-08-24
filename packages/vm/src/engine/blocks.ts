@@ -1494,7 +1494,15 @@ class Blocks {
 
         // Add any mutation.
         if (block.mutation) {
-            state.extraState = block.mutation;
+            if (block.opcode === 'procedures_prototype' &&
+                Object.values(block.inputs).some(input => input.block !== null)) {
+                state.extraState = {
+                    ...block.mutation,
+                    hasSerializedInputs: true
+                };
+            } else {
+                state.extraState = block.mutation;
+            }
         }
 
         const danglingInputs = this._getDanglingInputs(block);

@@ -5,8 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {isShadowTemplate} from '../interfaces/i_shadow_template';
-
+import * as Constants from '../constants';
 /**
  * An object that handles creating and setting each of the SVG elements
  * used by the renderer.
@@ -20,9 +19,10 @@ export class PathObject extends Blockly.zelos.PathObject {
   override applyColour(block: Blockly.BlockSvg): void {
     super.applyColour(block);
 
-    // Shadow templates should render in normal colour.
-    if (isShadowTemplate(block) && block.shadowTemplate) {
-      this.svgPath.setAttribute('fill', this.style.colourPrimary);
+    // The prototype is regular for interaction purposes but still renders
+    // like a shadow block.
+    if (block.type === Constants.PROCEDURES_PROTOTYPE_BLOCK_TYPE) {
+      this.svgPath.setAttribute('fill', this.style.colourSecondary);
     }
   }
 }

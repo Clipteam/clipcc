@@ -31,6 +31,50 @@ test('spec', t => {
     t.end();
 });
 
+test('toState marks procedure prototype child inputs', t => {
+    const blocks = new Blocks(new Runtime());
+    blocks.createBlock({
+        id: 'definition',
+        opcode: 'procedures_definition',
+        next: null,
+        parent: null,
+        fields: {},
+        inputs: {
+            custom_block: {name: 'custom_block', block: 'prototype', shadow: null}
+        },
+        topLevel: true,
+        shadow: false
+    });
+    blocks.createBlock({
+        id: 'prototype',
+        opcode: 'procedures_prototype',
+        next: null,
+        parent: 'definition',
+        fields: {},
+        inputs: {
+            ARG: {name: 'ARG', block: 'reporter', shadow: null}
+        },
+        mutation: {proccode: 'procedure %s'},
+        topLevel: false,
+        shadow: false
+    });
+    blocks.createBlock({
+        id: 'reporter',
+        opcode: 'argument_reporter_string_number',
+        next: null,
+        parent: 'prototype',
+        fields: {VALUE: {name: 'VALUE', value: 'parameter'}},
+        inputs: {},
+        topLevel: false,
+        shadow: false
+    });
+
+    const state = blocks.toState();
+    const prototypeState = state[0].inputs.custom_block.block;
+    t.equal(prototypeState.extraState.hasSerializedInputs, true);
+    t.end();
+});
+
 // Getter tests
 test('getBlock', t => {
     const b = new Blocks(new Runtime());

@@ -5,7 +5,8 @@
  */
 
 import * as Blockly from 'blockly/core';
-import {isShadowTemplate} from './interfaces/i_shadow_template';
+import {isActiveTemplateBlock, isBlockTemplate} from './interfaces/i_block_template';
+import {isSatellite} from './interfaces/i_satellite';
 import {isDynamicDeletable} from './interfaces/i_dynamic_deletable';
 import {BlockDragOutside} from './events/block_drag_outside';
 import {BlockDragEnd} from './events/block_drag_end';
@@ -26,37 +27,41 @@ export class Dragger extends Blockly.dragging.Dragger {
   protected dragWorkspace!: Blockly.WorkspaceSvg;
 
   /**
-   * Handles any drag startup. Shadow template blocks should be duplicated
-   * before dragging.
+   * Handles any drag startup. Active template blocks should be duplicated
+   * before dragging when they are attached to their owning block.
    * @param e The pointer event.
    * @returns The draggable object.
    */
   override onDragStart(e: PointerEvent | KeyboardEvent): Blockly.IDraggable {
     this.dragWorkspace = this.draggable.workspace;
-    if (e instanceof PointerEvent && this.draggable instanceof Blockly.BlockSvg) {
-      const workspace = this.dragWorkspace;
-      // Make elements can drag outside of workspace bounds.
-      workspace.addClass(Dragger.BOUNDLESS_CLASS);
-      const absoluteMetrics = workspace.getMetricsManager().getAbsoluteMetrics();
-      const viewMetrics = workspace.getMetricsManager().getViewMetrics();
-      if (
-        workspace.RTL ?
-          e.clientX > workspace.getParentSvg().getBoundingClientRect().left +
-          viewMetrics.width :
-          e.clientX < absoluteMetrics.left
-      ) {
-        this.originatedFromFlyout = true;
+    if (this.draggable instanceof Blockly.BlockSvg) {
+      if (e instanceof PointerEvent) {
+        const workspace = this.dragWorkspace;
+        // Make elements can drag outside of workspace bounds.
+        workspace.addClass(Dragger.BOUNDLESS_CLASS);
+        const absoluteMetrics = workspace.getMetricsManager().getAbsoluteMetrics();
+        const viewMetrics = workspace.getMetricsManager().getViewMetrics();
+        if (
+          workspace.RTL ?
+            e.clientX > workspace.getParentSvg().getBoundingClientRect().left +
+            viewMetrics.width :
+            e.clientX < absoluteMetrics.left
+        ) {
+          this.originatedFromFlyout = true;
+        }
       }
 
-      // Duplicate the shadow template block and drag the new block.
-      if (
-        this.draggable.isShadow() && isShadowTemplate(this.draggable) && this.draggable.shadowTemplate
-      ) {
+      // Duplicate an active template block and drag the new regular block.
+      if (isActiveTemplateBlock(this.draggable)) {
         if (!Blockly.Events.getGroup()) {
           Blockly.Events.setGroup(true);
         }
         this.draggable = this.duplicateBlock(this.draggable);
-        Blockly.getFocusManager().focusNode(this.draggable as Blockly.BlockSvg);
+        Blockly.getFocusManager().focusNode(this.draggable);
+      } else if (isBlockTemplate(this.draggable)) {
+        // A template reporter that escaped its container is an ordinary
+        // user block and must be removable and draggable normally.
+        this.draggable.setDeletable(true);
       }
     }
 
@@ -150,7 +155,8 @@ export class Dragger extends Blockly.dragging.Dragger {
    * @returns The root block for the drag event.
    */
   protected getDragRoot(block: Blockly.BlockSvg) {
-    return block.isShadow() ? block.getParent() as Blockly.BlockSvg : block;
+    return block.isShadow() || (isSatellite(block) && block.satellite) ?
+      block.getParent() as Blockly.BlockSvg : block;
   }
 
   /**
@@ -181,6 +187,8 @@ export class Dragger extends Blockly.dragging.Dragger {
     const json = Blockly.serialization.blocks.save(originalBlock)!;
     this.draggable.workspace.setResizesEnabled(false);
     const newBlock = Blockly.serialization.blocks.append(json, this.draggable.workspace) as Blockly.BlockSvg;
+
+    newBlock.setDeletable(true);
 
     newBlock.moveTo(originalBlock.getRelativeToSurfaceXY());
 

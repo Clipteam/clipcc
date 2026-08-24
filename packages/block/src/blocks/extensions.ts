@@ -30,6 +30,8 @@ import * as Blockly from 'blockly/core';
 import * as Constants from '../constants';
 import type {ICheckboxInFlyout} from '../interfaces/i_checkbox_in_flyout';
 import {IScratchExtensionBlock} from '../interfaces/i_scratch_extension';
+import type {IBlockTemplate} from '../interfaces/i_block_template';
+import type {ISatellite} from '../interfaces/i_satellite';
 
 /**
  * Helper function that generates an extension based on a category name.
@@ -120,6 +122,62 @@ const SCRATCH_EXTENSION = function(this: Blockly.Block) {
   (this as Blockly.Block & IScratchExtensionBlock).isScratchExtension = true;
 };
 
+const BLOCK_TEMPLATE = function(this: Blockly.Block & IBlockTemplate) {
+  if (this.templateOf && this.getSurroundParent()?.type !== this.templateOf) return;
+  this.setDeletable(false);
+  this.isDuplicatable = () => this.getParent()?.type !== this.templateOf;
+};
+
+/**
+ * Drag strategy for a satellite block whose parent owns its movement.
+ */
+class SatelliteDragStrategy implements Blockly.IDragStrategy {
+  constructor(private readonly block: Blockly.BlockSvg) { }
+
+  isMovable() {
+    return !!this.block.getParent()?.isMovable();
+  }
+
+  startDrag(e?: PointerEvent | KeyboardEvent): Blockly.IDraggable {
+    return this.block.getParent()?.startDrag(e) ?? this.block;
+  }
+
+  drag(newLoc: Blockly.utils.Coordinate, e?: PointerEvent | KeyboardEvent) {
+    this.block.getParent()?.drag(newLoc, e);
+  }
+
+  endDrag(
+    e: PointerEvent | KeyboardEvent | undefined,
+    disposition: Blockly.DragDisposition
+  ) {
+    this.block.getParent()?.endDrag(e, disposition);
+  }
+
+  revertDrag() {
+    this.block.getParent()?.revertDrag();
+  }
+}
+
+/**
+ * Extension for blocks that are owned and moved through their parent block.
+ */
+const SATELLITE_BLOCK = function(this: Blockly.BlockSvg & ISatellite) {
+  this.satellite = true;
+  this.setDeletable(false);
+  this.isDuplicatable = () => false;
+  this.setDragStrategy(new SatelliteDragStrategy(this));
+
+  const originalShowContextMenu = this.showContextMenu.bind(this);
+  this.showContextMenu = function(e: Event) {
+    const parent = this.getParent();
+    if (parent) {
+      parent.showContextMenu(e);
+    } else {
+      originalShowContextMenu(e);
+    }
+  };
+};
+
 /**
  * Extension to make a checkbox before the block when in a flyout.
  */
@@ -155,6 +213,10 @@ const registerAll = function() {
 
   // Extension blocks have slightly different block rendering.
   Blockly.Extensions.register('scratch_extension', SCRATCH_EXTENSION);
+
+  // Extensions for advanced usage
+  Blockly.Extensions.register('block_template', BLOCK_TEMPLATE);
+  Blockly.Extensions.register('satellite_block', SATELLITE_BLOCK);
 
   // Register extension for monitor blocks.
   Blockly.Extensions.register('monitor_block', MONITOR_BLOCK);
