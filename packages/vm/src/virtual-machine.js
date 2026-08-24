@@ -1316,6 +1316,8 @@ class VirtualMachine extends EventEmitter {
      * @param {!Record<string, string | formatMessage.Translation>} messages     builtin messages map for current locale
      * @returns {Promise<void>} Promise that resolves when all the blocks have been
      *     updated for a new locale (or empty if locale hasn't changed.)
+     * @deprecated formatMessage is used for loading extensions, while VM doesn't provide l10n-related features.
+     *    Locale should be maintained by extension manager.
      */
     setLocale (locale, messages) {
         if (locale !== formatMessage.setup().locale) {
@@ -1327,6 +1329,7 @@ class VirtualMachine extends EventEmitter {
     /**
      * get the current locale for the VM
      * @returns {formatMessage.Locales} the current locale in the VM
+     * @deprecated @see VirtualMachine.setLocale
      */
     getLocale () {
         return formatMessage.setup().locale;

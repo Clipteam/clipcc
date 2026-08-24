@@ -5,6 +5,7 @@
  */
 
 import {EventEmitter} from 'events';
+import formatMessage from 'format-message';
 import {IExtension} from './interfaces/i_extension';
 import {AbstractEvent} from './events';
 import ExtensionManifest from './interfaces/extension-manifest';
@@ -165,5 +166,27 @@ export class ExtensionManager {
      */
     emitEvent<T extends AbstractEvent>(event: T): void {
         this.eventEmitter.emit(event.type, event);
+    }
+
+    /**
+     * Set the current locale and builtin messages for the VM.
+     * @param locale Current locale.
+     * @param messages Builtin messages map for current locale.
+     * @returns Promise that resolves when all the blocks have been updated for a new locale.
+     *      (or empty if locale hasn't changed).
+     */
+    setLocale(locale: string, messages: Record<string, string | formatMessage.Translation>) {
+        if (locale !== formatMessage.setup().locale) {
+            formatMessage.setup({locale, translations: {[locale]: messages}});
+        }
+        return this.refreshInfo();
+    }
+
+    /**
+     * Get the current locale for the VM.
+     * @returns The current locale in the VM.
+     */
+    getLocale(): formatMessage.Locales {
+        return formatMessage.setup().locale;
     }
 }

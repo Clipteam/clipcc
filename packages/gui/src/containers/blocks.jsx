@@ -189,9 +189,12 @@ class Blocks extends React.Component {
         // @todo hack to reload the workspace due to gui bug #413
         if (this.props.isVisible) { // Scripts tab
             this.workspace.setVisible(true);
-            if (prevProps.locale !== this.props.locale || this.props.locale !== this.props.vm.getLocale()) {
+            if (
+                prevProps.locale !== this.props.locale ||
+                this.props.locale !== this.props.extensionManager.getLocale()
+            ) {
                 // call setLocale if the locale has changed, or changed while the blocks were hidden.
-                // vm.getLocale() will be out of sync if locale was changed while not visible
+                // extensionManager.getLocale() will be out of sync if locale was changed while not visible
                 this.setLocale();
             // eslint-disable-next-line no-negated-condition
             } else if (this.props.theme !== prevProps.theme) {
@@ -225,7 +228,7 @@ class Blocks extends React.Component {
     }
     setLocale () {
         this.ScratchBlocks.setLocale(this.props.blockMessages);
-        this.props.vm.setLocale(this.props.locale, this.props.messages)
+        this.props.extensionManager.setLocale(this.props.locale, this.props.messages)
             .then(() => {
                 this.workspace.getFlyout().setRecyclingEnabled(false);
                 this.props.vm.refreshWorkspace();
