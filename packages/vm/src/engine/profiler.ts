@@ -140,14 +140,14 @@ class Profiler {
      * @param arg An arbitrary argument value to store with the frame.
      */
     start (id: number, arg?: unknown): void {
-        this.records.push(START, id, arg, performance.now());
+        this.records.push(START, id, arg, window.performance.now());
     }
 
     /**
      * Stop the current frame.
      */
     stop (): void {
-        this.records.push(STOP, performance.now());
+        this.records.push(STOP, window.performance.now());
     }
 
     /**
