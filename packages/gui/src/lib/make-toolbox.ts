@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import * as ClipCCBlocks from 'clipcc-block';
+import {ScratchBlocksModule as ClipCCBlocks, isScratchBlocksLoaded} from './blocks-loader';
+import type * as ClipCCBlockType from 'clipcc-block';
 
 type ShadowFields = Record<string, string | number>;
 
-type ShadowInput = ClipCCBlocks.serialization.blocks.ConnectionState;
-type ToolboxInfo = ClipCCBlocks.utils.toolbox.ToolboxInfo;
-type ToolboxItem = ClipCCBlocks.utils.toolbox.ToolboxItemInfo;
+type ShadowInput = ClipCCBlockType.serialization.blocks.ConnectionState;
+type ToolboxInfo = ClipCCBlockType.utils.toolbox.ToolboxInfo;
+type ToolboxItem = ClipCCBlockType.utils.toolbox.ToolboxItemInfo;
 
 interface ExtensionCategory {
     id: string;
@@ -41,8 +42,22 @@ const createShadow = (type: string, fields?: ShadowFields): ShadowInput => {
     };
 };
 
+/**
+ * Translate a message ID into a message, using the ScratchBlocks message system if possible.
+ * @param id - The message ID to translate
+ * @param defaultMessage - The default message to use if the ScratchBlocks isn't available
+ * @returns The translated message, or the default message if the ScratchBlocks isn't available
+ *  or missing that message.
+ */
+const translate = (id: string, defaultMessage: string) => {
+    if (!isScratchBlocksLoaded()) {
+        return defaultMessage;
+    }
+    return ClipCCBlocks!.Msg[id] ?? defaultMessage;
+};
+
 const motion = (isInitialSetup: boolean, isStage: boolean, targetId?: string | null): ToolboxItem => {
-    const stageSelected = ClipCCBlocks.Msg.MOTION_STAGE_SELECTED;
+    const stageSelected = translate('MOTION_STAGE_SELECTED', 'Stage selected: no motion blocks');
 
     const motionContents: ToolboxItem[] = [];
     if (isStage) {
@@ -176,8 +191,8 @@ const looks = (
     costumeName: string,
     backdropName: string
 ): ToolboxItem => {
-    const hello = ClipCCBlocks.Msg.LOOKS_HELLO;
-    const hmm = ClipCCBlocks.Msg.LOOKS_HMM;
+    const hello = translate('LOOKS_HELLO', 'Hello!');
+    const hmm = translate('LOOKS_HMM', 'Hmm...');
 
     const looksContents: ToolboxItem[] = [];
 
@@ -502,7 +517,7 @@ const sensing = (
     targetId: string | null | undefined,
     hideNonVanillaBlocks: boolean
 ): ToolboxItem => {
-    const name = ClipCCBlocks.Msg.SENSING_ASK_TEXT;
+    const name = translate('SENSING_ASK_TEXT', `What's your name?`);
 
     const sensingContents: ToolboxItem[] = [];
 
@@ -679,9 +694,9 @@ const operators = (
     targetId: string | null | undefined,
     hideNonVanillaBlocks: boolean
 ): ToolboxItem => {
-    const apple = ClipCCBlocks.Msg.OPERATORS_JOIN_APPLE;
-    const banana = ClipCCBlocks.Msg.OPERATORS_JOIN_BANANA;
-    const letter = ClipCCBlocks.Msg.OPERATORS_LETTEROF_APPLE;
+     const apple = translate('OPERATORS_JOIN_APPLE', 'apple');
+    const banana = translate('OPERATORS_JOIN_BANANA', 'banana');
+    const letter = translate('OPERATORS_LETTEROF_APPLE', 'a');
 
     const operatorsContents: ToolboxItem[] = [
         {
@@ -1011,8 +1026,8 @@ const makeToolbox = function (
 
     // Convert xml toolbox to json.
     for (const category of categories) {
-        if (category.json || !category.xml) continue;
-        const toolbox = ClipCCBlocks.utils.toolbox.convertToolboxDefToJson(
+        if (category.json || !category.xml || !isScratchBlocksLoaded()) continue;
+        const toolbox = ClipCCBlocks!.utils.toolbox.convertToolboxDefToJson(
             `<xml style="display: none">${category.xml}</xml>`
         );
         if (!toolbox || toolbox.contents.length === 0) {

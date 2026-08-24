@@ -4,6 +4,7 @@ import defaultsDeep from 'lodash.defaultsdeep';
 import makeToolbox from '../lib/make-toolbox';
 import PropTypes from 'prop-types';
 import React from 'react';
+import {injectBlock} from '../lib/blocks-loader-hoc.tsx';
 import VMScratchBlocks, {setRecordSoundCallback} from '../lib/blocks';
 import VM from 'clipcc-vm';
 
@@ -51,7 +52,7 @@ const DroppableBlocks = DropAreaHOC([
 class Blocks extends React.Component {
     constructor (props) {
         super(props);
-        this.ScratchBlocks = VMScratchBlocks(props.vm);
+        this.ScratchBlocks = VMScratchBlocks(props.vm, props.blocks);
         bindAll(this, [
             'attachVM',
             'checkoutWsByProccode',
@@ -403,7 +404,8 @@ class Blocks extends React.Component {
                 targetSounds.length > 0 ? targetSounds[targetSounds.length - 1].name : '',
                 this.props.hideNonVanillaBlocks
             );
-        } catch {
+        } catch (e) {
+            console.error(`Error making toolbox:`, e);
             return null;
         }
     }
@@ -660,6 +662,7 @@ class Blocks extends React.Component {
 
 Blocks.propTypes = {
     anyModalVisible: PropTypes.bool,
+    blocks: PropTypes.object, // eslint-disable-line react/forbid-prop-types
     hideNonVanillaBlocks: PropTypes.bool.isRequired,
     canUseCloud: PropTypes.bool,
     customProceduresVisible: PropTypes.bool,
@@ -776,5 +779,5 @@ export default errorBoundaryHOC('Blocks')(
     connect(
         mapStateToProps,
         mapDispatchToProps
-    )(Blocks)
+    )(injectBlock(Blocks))
 );

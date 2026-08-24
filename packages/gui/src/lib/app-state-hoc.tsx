@@ -1,7 +1,7 @@
 import React from 'react';
 import {Provider} from 'react-redux';
 import {createStore, combineReducers, compose} from 'redux';
-import type {Reducer, Store, StoreEnhancer} from 'redux';
+import type {Store} from 'redux';
 import ConnectedIntlProvider from './connected-intl-provider.jsx';
 
 import localesReducer, {initLocale, localesInitialState} from '../reducers/locales';
@@ -11,6 +11,7 @@ import {setPlayer, setFullScreen} from '../reducers/mode';
 
 import locales from 'clipcc-l10n';
 import {detectLocale} from './detect-locale';
+import {setInitialReducers, setStore} from '../reducers/utils';
 import type {GuiState} from '../reducers/gui';
 
 type ComposeEnhancers = typeof compose;
@@ -48,7 +49,7 @@ const AppStateHOC = function <P extends OwnProps> (
     localesOnly?: boolean
 ): React.ComponentType<P> {
     class AppStateWrapper extends React.Component<P> {
-        private store!: Store<unknown>;
+        private store!: Store<Partial<RootState>>;
 
         constructor (props: P) {
             super(props);
@@ -62,8 +63,9 @@ const AppStateHOC = function <P extends OwnProps> (
                 // browser modal
                 const reducers = {locales: localesReducer};
                 const initialState = {locales: initializedLocales};
-                const enhancer: StoreEnhancer<unknown> = composeEnhancers();
-                const reducer = combineReducers(reducers);
+                const enhancer = composeEnhancers();
+                setInitialReducers(reducers);
+                const reducer = combineReducers<{locales: LocalesState}>(reducers);
                 this.store = createStore(
                     reducer,
                     initialState,
@@ -82,8 +84,6 @@ const AppStateHOC = function <P extends OwnProps> (
                     initPlayer,
                     initTelemetryModal
                 } = guiRedux;
-                // eslint-disable-next-line global-require, @typescript-eslint/no-require-imports
-                const {ScratchPaintReducer}: {ScratchPaintReducer: Reducer<unknown>} = require('clipcc-paint');
 
                 let initializedGui: GuiState = guiInitialState;
                 if (props.isFullScreen || props.isPlayerOnly) {
@@ -98,21 +98,22 @@ const AppStateHOC = function <P extends OwnProps> (
                 }
                 const reducers = {
                     locales: localesReducer,
-                    scratchGui: guiReducer,
-                    scratchPaint: ScratchPaintReducer
+                    scratchGui: guiReducer
                 };
                 const initialState = {
                     locales: initializedLocales,
                     scratchGui: initializedGui
                 };
-                const enhancer: StoreEnhancer<unknown> = composeEnhancers(guiMiddleware);
-                const reducer = combineReducers(reducers);
+                const enhancer = composeEnhancers(guiMiddleware);
+                setInitialReducers(reducers);
+                const reducer = combineReducers<RootState>(reducers);
                 this.store = createStore(
                     reducer,
                     initialState,
                     enhancer
                 );
             }
+            setStore(this.store);
         }
         override componentDidUpdate (prevProps: Readonly<P>) {
             if (localesOnly) return;
