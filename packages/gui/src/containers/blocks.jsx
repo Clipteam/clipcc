@@ -212,7 +212,7 @@ class Blocks extends React.Component {
         clearTimeout(this.toolboxUpdateTimeout);
 
         // Remove event listeners for extension manager.
-        this.props.extensionManager.addEventListener('UPDATE_BLOCKS', this.handleExtensionUpdateBlocks);
+        this.props.extensionManager.removeEventListener('UPDATE_BLOCKS', this.handleExtensionUpdateBlocks);
 
         // Clear the flyout blocks so that they can be recreated on mount.
         this.props.vm.clearFlyoutBlocks();
