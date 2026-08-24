@@ -84,8 +84,8 @@ const getScripts = function (container: Blocks, opcode: string): RuntimeScriptCa
         const allScripts = container.getScripts();
         for (let i = 0; i < allScripts.length; i++) {
             const topBlockId = allScripts[i];
-            const block = container.getBlock(topBlockId);
-            if (block?.opcode === opcode) {
+            const block = container.getBlock(topBlockId)!;
+            if (block.opcode === opcode) {
                 scripts.push(new RuntimeScriptCache(container, topBlockId));
             }
         }
