@@ -298,7 +298,7 @@ class Sequencer {
      * @param procedureCode Procedure code of procedure to step to.
      */
     stepToProcedure (thread: Thread, procedureCode: string) {
-        let definition = thread.blockContainer?.getProcedureDefinition(procedureCode);
+        let definition = thread.blockContainer!.getProcedureDefinition(procedureCode);
         let target = thread.target;
         if (!definition) {
             [target, definition] = this.runtime.getProcedureDefinition(procedureCode);
@@ -311,7 +311,7 @@ class Sequencer {
         // to warp-mode if needed.
         const definitionBlock = target!.blocks.getBlock(definition);
         const innerBlock = target!.blocks.getBlock(
-            definitionBlock?.inputs.custom_block.block);
+            definitionBlock!.inputs.custom_block.block);
         let doWarp = false;
         if (innerBlock && innerBlock.mutation) {
             const warp = innerBlock.mutation.warp;
