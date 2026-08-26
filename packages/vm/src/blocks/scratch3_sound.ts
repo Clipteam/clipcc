@@ -6,7 +6,6 @@ import type {BlockArgs, CategoryPrototype} from './category_prototype';
 import type Runtime from '../engine/runtime';
 import type BlockUtility from '../engine/block-utility';
 import type Target from '../engine/target';
-import type RenderedTarget from '../sprites/rendered-target';
 
 /**
  * Occluded boolean value to make its use more understandable.
@@ -254,7 +253,7 @@ class Scratch3SoundBlocks implements CategoryPrototype {
         }
     }
 
-    _stopAllSoundsForTarget (target: RenderedTarget) {
+    _stopAllSoundsForTarget (target: Target) {
         if (target.sprite.soundBank) {
             target.sprite.soundBank.stopAllSounds(target);
             if (this.waitingSounds[target.id]) {
@@ -263,7 +262,7 @@ class Scratch3SoundBlocks implements CategoryPrototype {
         }
     }
 
-    _stopWaitingSoundsForTarget (target: RenderedTarget) {
+    _stopWaitingSoundsForTarget (target: Target) {
         if (target.sprite.soundBank) {
             if (this.waitingSounds[target.id]) {
                 for (const soundId of this.waitingSounds[target.id].values()) {
@@ -314,7 +313,7 @@ class Scratch3SoundBlocks implements CategoryPrototype {
         this._clearEffectsForTarget(util.target);
     }
 
-    _clearEffectsForTarget (target: RenderedTarget) {
+    _clearEffectsForTarget (target: Target) {
         const soundState = this._getSoundState(target);
         for (const effect in soundState.effects) {
             if (!Object.prototype.hasOwnProperty.call(soundState.effects, effect)) continue;

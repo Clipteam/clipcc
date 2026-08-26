@@ -2,7 +2,7 @@
 import Cast from '../util/cast';
 import type {BlockArgs, CategoryPrototype} from './category_prototype';
 import type Runtime from '../engine/runtime';
-import type RenderedTarget from '../sprites/rendered-target';
+import type Target from '../engine/target';
 import type BlockUtility from '../engine/block-utility';
 import type {BaseExecutionContext} from '../engine/block-utility';
 
@@ -162,7 +162,7 @@ class Scratch3ControlBlocks implements CategoryPrototype {
         args.CLONE_OPTION = Cast.toString(args.CLONE_OPTION);
 
         // Set clone target
-        let cloneTarget: RenderedTarget | undefined;
+        let cloneTarget: Target | undefined;
         if (args.CLONE_OPTION === '_myself_') {
             cloneTarget = util.target;
         } else {

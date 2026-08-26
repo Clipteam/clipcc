@@ -8,7 +8,7 @@ import type {BlockArgs, CategoryPrototype} from './category_prototype';
 import type Runtime from '../engine/runtime';
 import type BlockUtility from '../engine/block-utility';
 import type {MonitorBlockInfo} from '../engine/runtime';
-import type RenderedTarget from '../sprites/rendered-target';
+import type Target from '../engine/target';
 
 class Scratch3SensingBlocks implements CategoryPrototype {
     /**
@@ -34,7 +34,7 @@ class Scratch3SensingBlocks implements CategoryPrototype {
     /**
      * The list of queued questions and respective `resolve` callbacks.
      */
-    private _questionList: Array<[string, () => void, RenderedTarget, boolean, boolean]> = [];
+    private _questionList: Array<[string, () => void, Target, boolean, boolean]> = [];
 
     constructor (
         /**
@@ -136,7 +136,7 @@ class Scratch3SensingBlocks implements CategoryPrototype {
     _enqueueAsk (
         question: string,
         resolve: () => void,
-        target: RenderedTarget,
+        target: Target,
         wasVisible: boolean,
         wasStage: boolean
     ) {
@@ -162,7 +162,7 @@ class Scratch3SensingBlocks implements CategoryPrototype {
         this.runtime.emit('QUESTION', null);
     }
 
-    _clearTargetQuestions (stopTarget: RenderedTarget) {
+    _clearTargetQuestions (stopTarget: Target) {
         const currentlyAsking = this._questionList.length > 0 && this._questionList[0][2] === stopTarget;
         this._questionList = this._questionList.filter(question => (
             question[2] !== stopTarget
