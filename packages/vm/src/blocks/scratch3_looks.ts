@@ -29,10 +29,12 @@ interface LooksExecutionContext extends BaseExecutionContext {
  * The bubble state associated with a particular target.
  */
 interface BubbleState {
+    /** Whether the bubble is positioned on the sprite's right side. */
     onSpriteRight: boolean;
     /** The ID of the associated bubble Drawable, null if none. */
     drawableId: number | null;
     skinId: number | null;
+    /** The text content of the say/think bubble. */
     text: string;
     /** The type of the bubble, "say" or "think" */
     type: string;

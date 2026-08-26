@@ -54,21 +54,28 @@ class ProfilerFrame {
      * blockFunction.
      */
     id = -1;
+
     /**
      * The amount of time spent inside the recorded frame and any deeper
      * frames.
      */
     totalTime = 0;
+
     /**
      * The amount of time spent only inside this record frame. Not
      * including time in any deeper frames.
      */
     selfTime = 0;
+
     /**
      * An arbitrary argument for the recorded frame. For example a block
      * function might record its opcode as an argument.
      */
     arg: unknown = null;
+
+    /**
+     * A summarized count of the number of calls to this frame.
+     */
     count = 0;
 
     constructor (
@@ -89,30 +96,36 @@ class Profiler {
      * information.
      */
     records: unknown[] = [];
+
     /**
      * An array of frames incremented on demand instead as part of start
      * and stop.
      */
     increments: ProfilerFrame[] = [];
+
     /**
      * An array of profiler frames separated by counter argument. Generally
      * for Scratch these frames are separated by block function opcode.
      * This tracks each time an opcode is called.
      */
     counters: ProfilerFrame[] = [];
+
     /**
      * A frame with no id or argument.
      */
     nullFrame: ProfilerFrame = new ProfilerFrame(-1);
+
     /**
      * A cache of ProfilerFrames to reuse when reporting the recorded
      * frames in records.
      */
     _stack: ProfilerFrame[] = [new ProfilerFrame(0)];
+
     /**
      * A reference to the START record id constant.
      */
     START = START;
+
     /**
      * A reference to the STOP record id constant.
      */
