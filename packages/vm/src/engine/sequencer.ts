@@ -180,7 +180,7 @@ class Sequencer {
         }
         // Save the current block ID to notice if we did control flow.
         while ((currentBlockId = thread.peekStack())) {
-            let isWarpMode = thread.peekStackFrame()?.warpMode;
+            let isWarpMode = thread.peekStackFrame()!.warpMode;
             if (isWarpMode && !thread.warpTimer) {
                 // Initialize warp-mode timer if it hasn't been already.
                 // This will start counting the thread toward `Sequencer.WARP_TIME`.
@@ -279,7 +279,7 @@ class Sequencer {
             branchNum = 1;
         }
         const currentBlockId = thread.peekStack();
-        const branchId = thread.blockContainer?.getBranch(
+        const branchId = thread.blockContainer!.getBranch(
             currentBlockId,
             branchNum
         );

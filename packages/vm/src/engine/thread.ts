@@ -403,7 +403,7 @@ class Thread {
             const block = this.stackFrames[i].target!.blocks.getBlock(blockId);
             // cc - block maybe not exists when triggered in toolbox.
             if (block && block.opcode === 'procedures_call' &&
-                block.mutation?.proccode === procedureCode) {
+                block.mutation!.proccode === procedureCode) {
                 return true;
             }
             if (--callCount < 0) return false;
