@@ -4,7 +4,7 @@ import process from 'process';
 
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
-import VirtualMachine from '../../src/index.js';
+import VirtualMachine from '../../src/index';
 
 /**
  * @fileoverview Test vm's performance.

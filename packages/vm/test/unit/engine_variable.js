@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Variable from '../../src/engine/variable.js';
+import Variable from '../../src/engine/variable';
 import * as htmlparser from 'htmlparser2';
 
 test('spec', t => {

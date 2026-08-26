@@ -1,12 +1,12 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
 import Blocks from '../../src/engine/blocks.js';
-import Clone from '../../src/util/clone.js';
+import Clone from '../../src/util/clone';
 import {loadCostume} from '../../src/import/load-costume.js';
 import {loadSound} from '../../src/import/load-sound.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import Runtime from '../../src/engine/runtime.js';
 import * as sb3 from '../../src/serialization/sb3.js';
-import Sprite from '../../src/sprites/sprite.js';
+import Sprite from '../../src/sprites/sprite';
 
 const defaultCostumeInfo = {
     bitmapResolution: 1,

@@ -2,8 +2,8 @@ import path from 'path';
 import {test} from '../fixtures/jest-tap-bridge.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
-import VirtualMachine from '../../src/index.js';
-import Variable from '../../src/engine/variable.js';
+import VirtualMachine from '../../src/index';
+import Variable from '../../src/engine/variable';
 
 const projectUri = path.resolve(__dirname, '../fixtures/monitors.sb3');
 const project = readFileToBuffer(projectUri);

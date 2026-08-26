@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Operators from '../../src/blocks/scratch3_operators.js';
+import Operators from '../../src/blocks/scratch3_operators';
 
 const blocks = new Operators(null);
 

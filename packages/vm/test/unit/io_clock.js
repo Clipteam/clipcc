@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Clock from '../../src/io/clock.js';
+import Clock from '../../src/io/clock';
 import Runtime from '../../src/engine/runtime.js';
 
 test('spec', t => {

@@ -1391,7 +1391,7 @@ class RenderWebGL extends EventEmitter {
      * Return drawable pixel data and color at a given scratch position
      * @param {int} scratchX The scratch x coordinate of the picking location.
      * @param {int} scratchY The scratch y coordinate of the picking location.
-     * @returns {?ColorExtraction} Data about the picked color
+     * @returns Data about the picked color
      */
     extractColorInScratchCoordinate (scratchX, scratchY) {
         this._doExitDrawRegion();

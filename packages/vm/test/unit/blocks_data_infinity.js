@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Data from '../../src/blocks/scratch3_data.js';
+import Data from '../../src/blocks/scratch3_data';
 
 const blocks = new Data();
 

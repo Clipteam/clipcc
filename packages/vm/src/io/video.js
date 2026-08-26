@@ -1,4 +1,4 @@
-import StageLayering from '../engine/stage-layering.js';
+import StageLayering from '../engine/stage-layering';
 
 class Video {
     constructor (runtime) {

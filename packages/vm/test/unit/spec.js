@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import VirtualMachine from '../../src/index.js';
+import VirtualMachine from '../../src/index';
 
 test('interface', t => {
     const vm = new VirtualMachine();

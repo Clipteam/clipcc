@@ -44,7 +44,7 @@ const soundMiddleware = new LoadingMiddleware();
 loadSound.overrideLoadSound(soundMiddleware.install(loadSound, loadSound.loadSound));
 
 import {ScratchStorage} from 'clipcc-storage';
-import VirtualMachine from '../index.js';
+import VirtualMachine from '../index';
 import Runtime from '../engine/runtime.js';
 import ScratchRender from 'clipcc-render';
 import AudioEngine from 'clipcc-audio';

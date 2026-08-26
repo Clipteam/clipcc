@@ -1,0 +1,264 @@
+import Cast from '../util/cast';
+import MathUtil from '../util/math-util';
+import type {BlockArgs, CategoryPrototype} from './category_prototype';
+import type Runtime from '../engine/runtime';
+import type BlockUtility from '../engine/block-utility';
+
+class Scratch3OperatorsBlocks implements CategoryPrototype {
+    constructor (
+        /**
+         * The runtime instantiating this block package.
+         */
+        public runtime: Runtime
+    ) {
+    }
+
+    /**
+     * Retrieve the block primitives implemented by this package.
+     * @returns Mapping of opcode to Function.
+     */
+    getPrimitives () {
+        return {
+            operator_add: this.add,
+            operator_subtract: this.subtract,
+            operator_multiply: this.multiply,
+            operator_divide: this.divide,
+            operator_lt: this.lt,
+            operator_equals: this.equals,
+            operator_gt: this.gt,
+            operator_and: this.and,
+            operator_and_temp: this.andTemp, // This is used to implement short-circuit evaluation.
+            operator_or: this.or,
+            operator_or_temp: this.orTemp, // This is used to implement short-circuit evaluation.
+            operator_not: this.not,
+            operator_random: this.random,
+            operator_join: this.join,
+            operator_join_multiple: this.joinMultiple,
+            operator_indexof: this.indexOf,
+            operator_letter_of: this.letterOf,
+            operator_length: this.length,
+            operator_contains: this.contains,
+            operator_mod: this.mod,
+            operator_round: this.round,
+            operator_mathop: this.mathop,
+            operator_power: this.power,
+            operator_bitand: this.bitand,
+            operator_bitor: this.bitor,
+            operator_bitxor: this.bitxor,
+            operator_bitnot: this.bitnot,
+            operator_bitlsh: this.bitlsh,
+            operator_bitrsh: this.bitrsh,
+            operator_bitursh: this.bitursh,
+            operator_le: this.le,
+            operator_ge: this.ge,
+            operator_nequals: this.nequals
+        };
+    }
+
+    /**
+     * Retrieve the block execution orders specified by this package.
+     * The last thing to execute should be the block's self.
+     * @returns Mapping of opcode to execution orders.
+     */
+    getOrders () {
+        return {
+            operator_and: ['OPERAND1', {execute: 'operator_and_temp'}, 'OPERAND2', {execute: 'operator_and'}],
+            operator_or: ['OPERAND1', {execute: 'operator_or_temp'}, 'OPERAND2', {execute: 'operator_or'}]
+        };
+    }
+
+    add (args: BlockArgs) {
+        return Cast.toNumber(args.NUM1) + Cast.toNumber(args.NUM2);
+    }
+
+    subtract (args: BlockArgs) {
+        return Cast.toNumber(args.NUM1) - Cast.toNumber(args.NUM2);
+    }
+
+    multiply (args: BlockArgs) {
+        return Cast.toNumber(args.NUM1) * Cast.toNumber(args.NUM2);
+    }
+
+    divide (args: BlockArgs) {
+        return Cast.toNumber(args.NUM1) / Cast.toNumber(args.NUM2);
+    }
+
+    lt (args: BlockArgs) {
+        return Cast.compare(args.OPERAND1, args.OPERAND2) < 0;
+    }
+
+    equals (args: BlockArgs) {
+        return Cast.compare(args.OPERAND1, args.OPERAND2) === 0;
+    }
+
+    gt (args: BlockArgs) {
+        return Cast.compare(args.OPERAND1, args.OPERAND2) > 0;
+    }
+
+    and (args: BlockArgs) {
+        return Cast.toBoolean(args.OPERAND1) && Cast.toBoolean(args.OPERAND2);
+    }
+
+    andTemp (args: BlockArgs, util: BlockUtility) {
+        if (!Cast.toBoolean(args.OPERAND1)) {
+            util.skipToOpcode = 'operator_and';
+            return false;
+        }
+        util.skipToOpcode = true;
+    }
+
+    or (args: BlockArgs) {
+        return Cast.toBoolean(args.OPERAND1) || Cast.toBoolean(args.OPERAND2);
+    }
+
+    orTemp (args: BlockArgs, util: BlockUtility) {
+        if (Cast.toBoolean(args.OPERAND1)) {
+            util.skipToOpcode = 'operator_or';
+            return true;
+        }
+        util.skipToOpcode = true;
+    }
+
+    not (args: BlockArgs) {
+        return !Cast.toBoolean(args.OPERAND);
+    }
+
+    random (args: BlockArgs) {
+        const nFrom = Cast.toNumber(args.FROM);
+        const nTo = Cast.toNumber(args.TO);
+        const low = nFrom <= nTo ? nFrom : nTo;
+        const high = nFrom <= nTo ? nTo : nFrom;
+        if (low === high) return low;
+        // If both arguments are ints, truncate the result to an int.
+        if (Cast.isInt(args.FROM) && Cast.isInt(args.TO)) {
+            return low + Math.floor(Math.random() * ((high + 1) - low));
+        }
+        return (Math.random() * (high - low)) + low;
+    }
+
+    join (args: BlockArgs) {
+        return Cast.toString(args.STRING1) + Cast.toString(args.STRING2);
+    }
+
+    joinMultiple (args: BlockArgs) {
+        let result = '';
+        const ids = args.mutation!.argumentids;
+        for (const id of ids) {
+            result += Cast.toString(args[id]);
+        }
+        return result;
+    }
+
+    letterOf (args: BlockArgs) {
+        const index = Cast.toNumber(args.LETTER) - 1;
+        const str = Cast.toString(args.STRING);
+        // Out of bounds?
+        if (index < 0 || index >= str.length) {
+            return '';
+        }
+        return str.charAt(index);
+    }
+
+    length (args: BlockArgs) {
+        return Cast.toString(args.STRING).length;
+    }
+
+    contains (args: BlockArgs) {
+        const format = function (string: string) {
+            return Cast.toString(string).toLowerCase();
+        };
+        return format(args.STRING1).includes(format(args.STRING2));
+    }
+
+    mod (args: BlockArgs) {
+        const n = Cast.toNumber(args.NUM1);
+        const modulus = Cast.toNumber(args.NUM2);
+        let result = n % modulus;
+        // Scratch mod uses floored division instead of truncated division.
+        if (result / modulus < 0) result += modulus;
+        return result;
+    }
+
+    round (args: BlockArgs) {
+        return Math.round(Cast.toNumber(args.NUM));
+    }
+
+    mathop (args: BlockArgs) {
+        const operator = Cast.toString(args.OPERATOR).toLowerCase();
+        const n = Cast.toNumber(args.NUM);
+        switch (operator) {
+        case 'abs': return Math.abs(n);
+        case 'floor': return Math.floor(n);
+        case 'ceiling': return Math.ceil(n);
+        case 'sqrt': return Math.sqrt(n);
+        case 'sin': return parseFloat(Math.sin((Math.PI * n) / 180).toFixed(10));
+        case 'cos': return parseFloat(Math.cos((Math.PI * n) / 180).toFixed(10));
+        case 'tan': return MathUtil.tan(n);
+        case 'asin': return (Math.asin(n) * 180) / Math.PI;
+        case 'acos': return (Math.acos(n) * 180) / Math.PI;
+        case 'atan': return (Math.atan(n) * 180) / Math.PI;
+        case 'ln': return Math.log(n);
+        case 'log': return Math.log(n) / Math.LN10;
+        case 'e ^': return Math.exp(n);
+        case '10 ^': return Math.pow(10, n);
+        }
+        return 0;
+    }
+
+    power (args: BlockArgs) {
+        return Math.pow(Cast.toNumber(args.NUM1), Cast.toNumber(args.NUM2));
+    }
+
+    bitand (args: BlockArgs) {
+        return Cast.toNumber(args.NUM1) & Cast.toNumber(args.NUM2);
+    }
+
+    bitor (args: BlockArgs) {
+        return Cast.toNumber(args.NUM1) | Cast.toNumber(args.NUM2);
+    }
+
+    bitxor (args: BlockArgs) {
+        return Cast.toNumber(args.NUM1) ^ Cast.toNumber(args.NUM2);
+    }
+
+    bitlsh (args: BlockArgs) {
+        return Cast.toNumber(args.NUM1) << Cast.toNumber(args.NUM2);
+    }
+
+    bitrsh (args: BlockArgs) {
+        return Cast.toNumber(args.NUM1) >> Cast.toNumber(args.NUM2);
+    }
+
+    bitursh (args: BlockArgs) {
+        return Cast.toNumber(args.NUM1) >>> Cast.toNumber(args.NUM2);
+    }
+
+    bitnot (args: BlockArgs) {
+        return ~Cast.toNumber(args.NUM1);
+    }
+
+    ge (args: BlockArgs) {
+        return Cast.compare(args.OPERAND1, args.OPERAND2) >= 0;
+    }
+
+    le (args: BlockArgs) {
+        return Cast.compare(args.OPERAND1, args.OPERAND2) <= 0;
+    }
+
+    nequals (args: BlockArgs) {
+        return Cast.compare(args.OPERAND1, args.OPERAND2) !== 0;
+    }
+
+    indexOf (args: BlockArgs) {
+        const {STRING, SUBSTRING, POS} = args;
+        let index = Cast.toString(STRING).indexOf(Cast.toString(SUBSTRING));
+        if (index === -1) return -1;
+        for (let i = 0; i < Cast.toNumber(POS) - 1; i++) {
+            index = Cast.toString(STRING).indexOf(Cast.toString(SUBSTRING), index + 1);
+            if (index === -1) return -1;
+        }
+        return index + 1;
+    }
+}
+
+export default Scratch3OperatorsBlocks;

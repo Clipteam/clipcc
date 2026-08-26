@@ -1,15 +1,15 @@
 import EventEmitter from 'events';
 import Blocks from './blocks.js';
-import Variable from '../engine/variable.js';
-import Comment from '../engine/comment.js';
-import uid from '../util/uid.js';
+import Variable from '../engine/variable';
+import Comment from '../engine/comment';
+import uid from '../util/uid';
 import {Map} from 'immutable';
-import log from '../util/log.js';
-import StringUtil from '../util/string-util.js';
-import VariableUtil from '../util/variable-util.js';
+import log from '../util/log';
+import StringUtil from '../util/string-util';
+import VariableUtil from '../util/variable-util';
 
 /**
- * @typedef {import('./runtime')} Runtime
+ * @typedef {import('./runtime').default} Runtime
  */
 
 /**

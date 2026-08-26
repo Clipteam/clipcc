@@ -1,8 +1,8 @@
 import ArgumentType from '../../extension-support/argument-type';
 import BlockType from '../../extension-support/block-type';
-import Cast from '../../util/cast.js';
-import log from '../../util/log.js';
-import fetchWithTimeout from '../../util/fetch-with-timeout.js';
+import Cast from '../../util/cast';
+import log from '../../util/log';
+import fetchWithTimeout from '../../util/fetch-with-timeout';
 import languageNames from 'scratch-translate-extension-languages';
 import formatMessage from 'format-message';
 

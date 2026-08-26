@@ -1,5 +1,5 @@
 import JSZip from 'jszip';
-import log from '../util/log.js';
+import log from '../util/log';
 
 /**
  * Deserializes sound from file into storage cache so that it can

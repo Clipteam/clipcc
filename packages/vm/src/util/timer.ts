@@ -1,0 +1,115 @@
+/**
+ * @fileoverview
+ * A utility for accurately measuring time.
+ * To use:
+ * ---
+ * var timer = new Timer();
+ * timer.start();
+ * ... pass some time ...
+ * var timeDifference = timer.timeElapsed();
+ * ---
+ * Or, you can use the `time` and `relativeTime`
+ * to do some measurement yourself.
+ */
+
+class Timer {
+    startTime: number;
+    nowObj: { now: () => number };
+
+    constructor (nowObj: { now: () => number } = Timer.nowObj) {
+        /**
+         * Used to store the start time of a timer action.
+         * Updated when calling `timer.start`.
+         */
+        this.startTime = 0;
+
+        /**
+         * Used to pass custom logic for determining the value for "now",
+         * which is sometimes useful for compatibility with Scratch 2
+         */
+        this.nowObj = nowObj;
+    }
+
+    /**
+     * Disable use of self.performance for now as it results in lower performance
+     * However, instancing it like below (caching the self.performance to a local variable) negates most of the issues.
+     */
+    static get USE_PERFORMANCE (): boolean {
+        return false;
+    }
+
+    /**
+     * Legacy object to allow for us to call now to get the old style date time (for backwards compatibility)
+     * @deprecated This is only called via the nowObj.now() if no other means is possible...
+     * @returns An object with a now function that returns the current time in ms since 1 January 1970 00:00:00 UTC.
+     */
+    static get legacyDateCode (): { now: () => number } {
+        return {
+            now () {
+                return new Date().getTime();
+            }
+        };
+    }
+
+    /**
+     * Use this object to route all time functions through single access points.
+     * @returns An object with a now function that returns timestamp.
+     */
+    static get nowObj (): { now: () => number } {
+        if (Timer.USE_PERFORMANCE && typeof self !== 'undefined' && self.performance && 'now' in self.performance) {
+            return self.performance;
+        }
+        return Date;
+    }
+
+    /**
+     * Return the currently known absolute time, in ms precision.
+     * @returns ms elapsed since 1 January 1970 00:00:00 UTC.
+     */
+    time (): number {
+        return this.nowObj.now();
+    }
+
+    /**
+     * Returns a time accurate relative to other times produced by this function.
+     * If possible, will use sub-millisecond precision.
+     * If not, will use millisecond precision.
+     * Not guaranteed to produce the same absolute values per-system.
+     * @returns ms-scale accurate time relative to other relative times.
+     */
+    relativeTime (): number {
+        return this.nowObj.now();
+    }
+
+    /**
+     * Start a timer for measuring elapsed time,
+     * at the most accurate precision possible.
+     */
+    start (): void {
+        this.startTime = this.nowObj.now();
+    }
+
+    timeElapsed (): number {
+        return this.nowObj.now() - this.startTime;
+    }
+
+    /**
+     * Call a handler function after a specified amount of time has elapsed.
+     * @param handler - function to call after the timeout
+     * @param timeout - number of milliseconds to delay before calling the handler
+     * @returns - the ID of the new timeout
+     */
+    setTimeout (handler: () => void, timeout: number): ReturnType<typeof global.setTimeout> {
+        return global.setTimeout(handler, timeout);
+    }
+
+    /**
+     * Clear a timeout from the pending timeout pool.
+     * @param timeoutId - the ID returned by `setTimeout()`
+     */
+    clearTimeout (timeoutId: ReturnType<typeof global.setTimeout>): void {
+        global.clearTimeout(timeoutId);
+    }
+}
+
+export default Timer;

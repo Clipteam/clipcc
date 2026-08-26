@@ -1,13 +1,13 @@
 import ArgumentType from '../../extension-support/argument-type';
 import BlockType from '../../extension-support/block-type';
-import Cast from '../../util/cast.js';
+import Cast from '../../util/cast';
 import formatMessage from 'format-message';
 import color from '../../util/color';
 import BLE from '../../io/ble.js';
-import Base64Util from '../../util/base64-util.js';
-import MathUtil from '../../util/math-util.js';
-import RateLimiter from '../../util/rateLimiter.js';
-import log from '../../util/log.js';
+import Base64Util from '../../util/base64-util';
+import MathUtil from '../../util/math-util';
+import RateLimiter from '../../util/rateLimiter';
+import log from '../../util/log';
 
 /**
  * Icon svg to be displayed at the left edge of each extension block, encoded as a data URI.

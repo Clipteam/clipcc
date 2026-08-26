@@ -2,7 +2,7 @@ import path from 'path';
 import {test} from '../fixtures/jest-tap-bridge.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import {readFileToBuffer, extractProjectJson} from '../fixtures/readProjectFile.js';
-import VirtualMachine from '../../src/index.js';
+import VirtualMachine from '../../src/index';
 import {deserialize} from '../../src/serialization/sb2.js';
 
 const invisibleVideoMonitorProjectUri = path.resolve(__dirname, '../fixtures/invisible-video-monitor.sb2');

@@ -1,14 +1,16 @@
 const clipccConfig = require('eslint-config-clipcc');
 const clipccNode = require('eslint-config-clipcc/node');
 const clipccES6 = require('eslint-config-clipcc/es6');
+const clipccTS = require('eslint-config-clipcc/ts');
 const globals = require('globals');
 
 module.exports = [
     ...clipccConfig,
     ...clipccNode,
     ...clipccES6,
+    ...clipccTS,
     {
-        files: ['src/**/*.js'],
+        files: ['src/**/*.{js,ts}'],
         languageOptions: {
             globals: {
                 ...globals.browser
@@ -28,7 +30,7 @@ module.exports = [
         }
     },
     {
-        files: ['test/**/*.js'],
+        files: ['test/**/*.{js,ts}'],
         languageOptions: {
             globals: {
                 ...globals.browser,

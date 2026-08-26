@@ -7,16 +7,16 @@
 import vmPackage from '../../package.json';
 
 import Blocks from '../engine/blocks.js';
-import Sprite from '../sprites/sprite.js';
-import Variable from '../engine/variable.js';
-import Comment from '../engine/comment.js';
-import MonitorRecord from '../engine/monitor-record.js';
-import StageLayering from '../engine/stage-layering.js';
-import log from '../util/log.js';
-import uid from '../util/uid.js';
-import MathUtil from '../util/math-util.js';
-import StringUtil from '../util/string-util.js';
-import VariableUtil from '../util/variable-util.js';
+import Sprite from '../sprites/sprite';
+import Variable from '../engine/variable';
+import Comment from '../engine/comment';
+import MonitorRecord from '../engine/monitor-record';
+import StageLayering from '../engine/stage-layering';
+import log from '../util/log';
+import uid from '../util/uid';
+import MathUtil from '../util/math-util';
+import StringUtil from '../util/string-util';
+import VariableUtil from '../util/variable-util';
 import {migrationMap, mergeDeep, migrateMutation} from './migration.js';
 import {loadCostume} from '../import/load-costume.js';
 import {loadSound} from '../import/load-sound.js';

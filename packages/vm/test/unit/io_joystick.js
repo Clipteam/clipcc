@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Joystick from '../../src/io/joystick.js';
+import Joystick from '../../src/io/joystick';
 import Runtime from '../../src/engine/runtime.js';
 
 test('spec', t => {

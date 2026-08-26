@@ -1,19 +1,19 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Sequencer from '../../src/engine/sequencer.js';
+import Sequencer from '../../src/engine/sequencer';
 import Runtime from '../../src/engine/runtime.js';
-import Thread from '../../src/engine/thread.js';
+import Thread from '../../src/engine/thread';
 import RenderedTarget from '../../src/sprites/rendered-target.js';
-import Sprite from '../../src/sprites/sprite.js';
+import Sprite from '../../src/sprites/sprite';
 
 test('spec', t => {
     t.type(Sequencer, 'function');
-    
+
     const r = new Runtime();
     const s = new Sequencer(r);
 
     t.type(s, 'object');
     t.ok(s instanceof Sequencer);
-    
+
     t.type(s.stepThreads, 'function');
     t.type(s.stepThread, 'function');
     t.type(s.stepToBranch, 'function');
@@ -70,20 +70,20 @@ const generateThread = function (runtime) {
     const s = new Sprite(null, runtime);
     const rt = new RenderedTarget(s, runtime);
     const th = new Thread(randomString());
-    
+
     let next = randomString();
     let inp = randomString();
     let name = th.topBlock;
-    
+
     rt.blocks.createBlock(generateBlockInput(name, next, inp));
     th.pushStack(name, rt);
     rt.blocks.createBlock(generateBlock(inp));
-    
+
     for (let i = 0; i < 10; i++) {
         name = next;
         next = randomString();
         inp = randomString();
-        
+
         rt.blocks.createBlock(generateBlockInput(name, next, inp));
         th.pushStack(name, rt);
         rt.blocks.createBlock(generateBlock(inp));
@@ -112,7 +112,7 @@ test('stepThread', t => {
     th.status = Thread.STATUS_PROMISE_WAIT;
     s.stepThread(th);
     t.not(th.status, Thread.STATUS_DONE);
-    
+
     t.end();
 });
 
@@ -129,7 +129,7 @@ test('stepToBranch', t => {
     th.popStack();
     s.stepToBranch(th, 1, false);
     t.not(th.peekStack(), null);
-    
+
     t.end();
 });
 
@@ -141,7 +141,7 @@ test('retireThread', t => {
     s.retireThread(th);
     t.equal(th.stack.length, 0);
     t.equal(th.status, Thread.STATUS_DONE);
-    
+
     t.end();
 });
 
@@ -169,8 +169,8 @@ test('stepToProcedure', t => {
     };
     s.stepToProcedure(th, 'othercode');
     t.equal(th.peekStack(), expectedBlock);
-    
-    
+
+
     t.end();
 });
 
@@ -183,6 +183,6 @@ test('stepThreads', t => {
     t.equal(r.threads.length, 1);
     // Threads should be marked DONE and removed in the same step they finish.
     t.equal(s.stepThreads().length, 1);
-    
+
     t.end();
 });

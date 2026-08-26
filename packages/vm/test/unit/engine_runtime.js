@@ -3,7 +3,7 @@ import path from 'path';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
 import VirtualMachine from '../../src/virtual-machine.js';
 import Runtime from '../../src/engine/runtime.js';
-import MonitorRecord from '../../src/engine/monitor-record.js';
+import MonitorRecord from '../../src/engine/monitor-record';
 import {Map} from 'immutable';
 
 test('spec', t => {

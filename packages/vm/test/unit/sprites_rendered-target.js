@@ -1,6 +1,6 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
 import RenderedTarget from '../../src/sprites/rendered-target.js';
-import Sprite from '../../src/sprites/sprite.js';
+import Sprite from '../../src/sprites/sprite';
 import Runtime from '../../src/engine/runtime.js';
 import FakeRenderer from '../fixtures/fake-renderer.js';
 

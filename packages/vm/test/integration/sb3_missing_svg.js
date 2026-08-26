@@ -12,7 +12,7 @@ import {test} from '../fixtures/jest-tap-bridge.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import FakeRenderer from '../fixtures/fake-renderer.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
-import VirtualMachine from '../../src/index.js';
+import VirtualMachine from '../../src/index';
 import {serializeCostumes} from '../../src/serialization/serialize-assets.js';
 
 const projectUri = path.resolve(__dirname, '../fixtures/missing_svg.sb3');

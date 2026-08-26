@@ -1,0 +1,36 @@
+import type {VMBlock} from '../serialization/schema';
+import uid from './uid';
+
+/**
+ * Mutate the given blocks to have new IDs and update all internal ID references.
+ * Does not return anything to make it clear that the blocks are updated in-place.
+ * @param blocks - blocks to be mutated.
+ */
+export default (blocks: VMBlock[]): void => {
+    const oldToNew: Record<string, string> = {};
+
+    // First update all top-level IDs and create old-to-new mapping
+    for (let i = 0; i < blocks.length; i++) {
+        const newId = uid();
+        const oldId = blocks[i].id;
+        blocks[i].id = oldToNew[oldId] = newId;
+    }
+
+    // Then go back through and update inputs (block/shadow)
+    // and next/parent properties
+    for (let i = 0; i < blocks.length; i++) {
+        for (const key in blocks[i].inputs) {
+            const input = blocks[i].inputs[key];
+            input.block = oldToNew[input.block!];
+            input.shadow = oldToNew[input.shadow!];
+        }
+        const parent = blocks[i].parent;
+        if (parent) {
+            blocks[i].parent = oldToNew[parent];
+        }
+        const next = blocks[i].next;
+        if (next) {
+            blocks[i].next = oldToNew[next];
+        }
+    }
+};

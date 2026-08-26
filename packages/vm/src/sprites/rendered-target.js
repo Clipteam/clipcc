@@ -1,9 +1,17 @@
-import MathUtil from '../util/math-util.js';
-import StringUtil from '../util/string-util.js';
-import Cast from '../util/cast.js';
-import Clone from '../util/clone.js';
+import MathUtil from '../util/math-util';
+import StringUtil from '../util/string-util';
+import Cast from '../util/cast';
+import Clone from '../util/clone';
 import Target from '../engine/target.js';
-import StageLayering from '../engine/stage-layering.js';
+import StageLayering from '../engine/stage-layering';
+
+/**
+ * @typedef {import('../../../render/dist/types/Rectangle')} Rectangle
+ */
+
+/**
+ * @typedef {import('../engine/runtime').default} Runtime
+ */
 
 /**
  * Rendered target: instance of a sprite (clone), or the stage.
@@ -165,7 +173,7 @@ class RenderedTarget extends Target {
 
     /**
      * Create a drawable with the this.renderer.
-     * @param {boolean} layerGroup The layer group this drawable should be added to
+     * @param {string} layerGroup The layer group this drawable should be added to
      */
     initDrawable (layerGroup) {
         if (this.renderer) {
@@ -261,7 +269,7 @@ class RenderedTarget extends Target {
      * Set the X and Y coordinates.
      * @param {!number} x New X coordinate, in Scratch coordinates.
      * @param {!number} y New Y coordinate, in Scratch coordinates.
-     * @param {?boolean} force Force setting X/Y, in case of dragging
+     * @param {?boolean} [force] Force setting X/Y, in case of dragging
      */
     setXY (x, y, force) {
         if (this.isStage) return;
@@ -615,7 +623,7 @@ class RenderedTarget extends Target {
 
     /**
      * Get full costume list
-     * @returns {object[]} list of costumes
+     * @returns list of costumes
      */
     getCostumes () {
         return this.sprite.costumes;
@@ -717,7 +725,7 @@ class RenderedTarget extends Target {
     /**
      * Return the rendered target's tight bounding box.
      * Includes top, left, bottom, right attributes in Scratch coordinates.
-     * @returns {?object} Tight bounding box, or null.
+     * @returns Tight bounding box, or null.
      */
     getBounds () {
         if (this.renderer) {

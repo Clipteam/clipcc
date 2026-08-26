@@ -1,10 +1,10 @@
 import ArgumentType from '../../extension-support/argument-type';
 import BlockType from '../../extension-support/block-type';
-import Clone from '../../util/clone.js';
-import Cast from '../../util/cast.js';
+import Clone from '../../util/clone';
+import Cast from '../../util/cast';
 import formatMessage from 'format-message';
-import MathUtil from '../../util/math-util.js';
-import Timer from '../../util/timer.js';
+import MathUtil from '../../util/math-util';
+import Timer from '../../util/timer';
 
 /**
  * The instrument and drum sounds, loaded as static assets.

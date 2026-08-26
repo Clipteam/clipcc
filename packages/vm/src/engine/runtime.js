@@ -2,43 +2,41 @@ import EventEmitter from 'events';
 import {OrderedMap} from 'immutable';
 import ArgumentType from '../extension-support/argument-type';
 import Blocks from './blocks.js';
-import {getScripts as getCachedScriptsByOpcode} from './blocks-runtime-cache.js';
+import {getScripts as getCachedScriptsByOpcode} from './blocks-runtime-cache';
 import BlockType from '../extension-support/block-type';
-import Profiler from './profiler.js';
-import Sequencer from './sequencer.js';
+import Profiler from './profiler';
+import Sequencer from './sequencer';
 import execute from './execute.js';
-import ScratchBlocksConstants from './scratch-blocks-constants.js';
+import ScratchBlocksConstants from './scratch-blocks-constants';
 import TargetType from '../extension-support/target-type';
-import Thread from './thread.js';
-import log from '../util/log.js';
-import maybeFormatMessage from '../util/maybe-format-message.js';
-import StageLayering from './stage-layering.js';
-import Variable from './variable.js';
-import xmlEscape from '../util/xml-escape.js';
-import ScratchLinkWebSocket from '../util/scratch-link-websocket.js';
+import Thread from './thread';
+import log from '../util/log';
+import maybeFormatMessage from '../util/maybe-format-message';
+import StageLayering from './stage-layering';
+import Variable from './variable';
+import xmlEscape from '../util/xml-escape';
+import ScratchLinkWebSocket from '../util/scratch-link-websocket';
 
 // Virtual I/O devices.
-import Clock from '../io/clock.js';
+import Clock from '../io/clock';
 import Cloud from '../io/cloud.js';
-import Keyboard from '../io/keyboard.js';
+import Keyboard from '../io/keyboard';
 import Mouse from '../io/mouse.js';
-import MouseWheel from '../io/mouseWheel.js';
-import UserData from '../io/userData.js';
+import MouseWheel from '../io/mouseWheel';
+import UserData from '../io/userData';
 import Video from '../io/video.js';
-import Joystick from '../io/joystick.js';
-
-import StringUtil from '../util/string-util.js';
-import uid from '../util/uid.js';
-
-import control from '../blocks/scratch3_control.js';
-import event from '../blocks/scratch3_event.js';
-import looks from '../blocks/scratch3_looks.js';
-import motion from '../blocks/scratch3_motion.js';
-import operators from '../blocks/scratch3_operators.js';
-import sound from '../blocks/scratch3_sound.js';
-import sensing from '../blocks/scratch3_sensing.js';
-import data from '../blocks/scratch3_data.js';
-import procedures from '../blocks/scratch3_procedures.js';
+import Joystick from '../io/joystick';
+import StringUtil from '../util/string-util';
+import uid from '../util/uid';
+import control from '../blocks/scratch3_control';
+import event from '../blocks/scratch3_event';
+import looks from '../blocks/scratch3_looks';
+import motion from '../blocks/scratch3_motion';
+import operators from '../blocks/scratch3_operators';
+import sound from '../blocks/scratch3_sound';
+import sensing from '../blocks/scratch3_sensing';
+import data from '../blocks/scratch3_data';
+import procedures from '../blocks/scratch3_procedures';
 
 
 const defaultBlockPackages = {
@@ -57,7 +55,7 @@ const defaultBlockPackages = {
 const defaultExtensionColors = ['#0FBD8C', '#0DA57A', '#0B8E69'];
 
 /**
- * @typedef {import('./target')} Target
+ * @typedef {import('./target').default} Target
  * @typedef {import('clipcc-audio')} AudioEngine
  * @typedef {import('clipcc-render')} RenderWebGL
  * @typedef {import('clipcc-storage').ScratchStorage} ScratchStorage
@@ -186,7 +184,7 @@ const defaultExtensionColors = ['#0FBD8C', '#0DA57A', '#0B8E69'];
 /**
  * @typedef {{
  *   isSpriteSpecific?: boolean,
- *   getId: (targetId?: string, fields?: Record<string, unknown>) => string
+ *   getId: (targetId?: string, fields?: Record<string, import('../serialization/schema').VMField>) => string
  * }} MonitorBlockInfo
  */
 
@@ -392,6 +390,12 @@ let rendererDrawProfilerId = -1;
 class Runtime extends EventEmitter {
     constructor () {
         super();
+
+        /**
+         * Current time in milliseconds, used for determining elapsed time and for scheduling future tasks.
+         * @type {number}
+         */
+        this.currentMSecs = 0;
 
         /**
          * Target management and storage.
@@ -602,7 +606,6 @@ class Runtime extends EventEmitter {
 
         // Register and initialize "IO devices", containers for processing
         // I/O related data.
-        /** @type {Record<string, object>} */
         this.ioDevices = {
             clock: new Clock(this),
             cloud: new Cloud(this),
@@ -1098,7 +1101,8 @@ class Runtime extends EventEmitter {
 
     /**
      * Create a context ("args") object for use with `formatMessage` on messages which might be target-specific.
-     * @param {Target} [target] - the target to use as context. If a target is not provided, default to the current
+     * @param {Target} [target] - the target to use as context.
+     * If a target is not provided, default to the current
      * editing target or the stage.
      */
     makeMessageContextForTarget (target) {
@@ -2109,7 +2113,7 @@ class Runtime extends EventEmitter {
     /**
      * Start all relevant hats.
      * @param {!string} requestedHatOpcode Opcode of hats to start.
-     * @param {object=} optMatchFields Optionally, fields to match on the hat.
+     * @param {object= | null} optMatchFields Optionally, fields to match on the hat.
      * @param {Target=} optTarget Optionally, a target to restrict to.
      * @returns {Array.<Thread>|undefined} List of threads started by this function.
      */
@@ -2181,7 +2185,9 @@ class Runtime extends EventEmitter {
         // threads are stepped. See ScratchRuntime.as for original implementation
         newThreads.forEach(thread => {
             execute(this.sequencer, thread);
-            thread.goToNextBlock();
+            if (thread.status !== Thread.STATUS_DONE) {
+                thread.goToNextBlock();
+            }
         });
         return newThreads;
     }

@@ -1,14 +1,14 @@
 import ArgumentType from '../../extension-support/argument-type';
 import BlockType from '../../extension-support/block-type';
 import TargetType from '../../extension-support/target-type';
-import Cast from '../../util/cast.js';
-import Clone from '../../util/clone.js';
+import Cast from '../../util/cast';
+import Clone from '../../util/clone';
 import Color from '../../util/color';
 import formatMessage from 'format-message';
-import MathUtil from '../../util/math-util.js';
+import MathUtil from '../../util/math-util';
 import RenderedTarget from '../../sprites/rendered-target.js';
-import log from '../../util/log.js';
-import StageLayering from '../../engine/stage-layering.js';
+import log from '../../util/log';
+import StageLayering from '../../engine/stage-layering';
 
 /**
  * Icon svg to be displayed at the left edge of each extension block, encoded as a data URI.

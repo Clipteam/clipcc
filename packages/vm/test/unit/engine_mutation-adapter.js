@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import mutationAdapter from '../../src/engine/mutation-adapter.js';
+import mutationAdapter from '../../src/engine/mutation-adapter';
 
 test('spec', t => {
     t.type(mutationAdapter, 'function');

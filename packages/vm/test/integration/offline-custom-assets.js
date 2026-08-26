@@ -10,7 +10,7 @@ import fs from 'fs';
 import {test} from '../fixtures/jest-tap-bridge.js';
 import AdmZip from 'adm-zip';
 import {ScratchStorage} from 'clipcc-storage';
-import VirtualMachine from '../../src/index.js';
+import VirtualMachine from '../../src/index';
 
 const projectUri = path.resolve(__dirname, '../fixtures/offline-custom-assets.sb2');
 const projectZip = AdmZip(projectUri);

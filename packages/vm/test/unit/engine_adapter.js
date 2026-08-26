@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import adapter from '../../src/engine/adapter.js';
+import adapter from '../../src/engine/adapter';
 import events from '../fixtures/events.json';
 
 test('spec', t => {

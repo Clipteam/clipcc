@@ -8,19 +8,19 @@ if (typeof TextEncoder === 'undefined') {
 import EventEmitter from 'events';
 import JSZip from 'jszip';
 import {Buffer} from 'buffer';
-import centralDispatch from './dispatch/central-dispatch.js';
+import centralDispatch from './dispatch/central-dispatch';
 import ExtensionManager from './extension-support/extension-manager.js';
-import log from './util/log.js';
-import MathUtil from './util/math-util.js';
+import log from './util/log';
+import MathUtil from './util/math-util';
 import Runtime from './engine/runtime.js';
-import StringUtil from './util/string-util.js';
+import StringUtil from './util/string-util';
 import formatMessage from 'format-message';
-import Variable from './engine/variable.js';
-import newBlockIds from './util/new-block-ids.js';
+import Variable from './engine/variable';
+import newBlockIds from './util/new-block-ids';
 import {loadCostume} from './import/load-costume.js';
 import {loadSound} from './import/load-sound.js';
 import {serializeSounds, serializeCostumes} from './serialization/serialize-assets.js';
-import uid from './util/uid.js';
+import uid from './util/uid';
 import 'canvas-toBlob';
 
 const RESERVED_NAMES = ['_mouse_', '_stage_', '_edge_', '_myself_', '_random_'];
@@ -42,7 +42,7 @@ const CORE_EXTENSIONS = [
 
 /**
  * @typedef {number} int
- * @typedef {import('./engine/target')} Target
+ * @typedef {import('./engine/target').default} Target
  * @typedef {import('./serialization/sb3').ImportedExtensionsInfo} ImportedExtensionsInfo
  * @typedef {import('clipcc-audio')} AudioEngine
  * @typedef {import('clipcc-render')} RenderWebGL

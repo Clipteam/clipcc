@@ -1,6 +1,6 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
 import path from 'path';
-import VirtualMachine from '../../src/index.js';
+import VirtualMachine from '../../src/index';
 import Runtime from '../../src/engine/runtime.js';
 import * as sb3 from '../../src/serialization/sb3.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';

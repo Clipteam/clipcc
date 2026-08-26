@@ -11,17 +11,17 @@
 
 import Blocks from '../engine/blocks.js';
 import RenderedTarget from '../sprites/rendered-target.js';
-import Sprite from '../sprites/sprite.js';
+import Sprite from '../sprites/sprite';
 import Color from '../util/color';
-import log from '../util/log.js';
-import uid from '../util/uid.js';
-import StringUtil from '../util/string-util.js';
-import MathUtil from '../util/math-util.js';
+import log from '../util/log';
+import uid from '../util/uid';
+import StringUtil from '../util/string-util';
+import MathUtil from '../util/math-util';
 import specMap from './sb2_specmap.js';
-import Comment from '../engine/comment.js';
-import Variable from '../engine/variable.js';
-import MonitorRecord from '../engine/monitor-record.js';
-import StageLayering from '../engine/stage-layering.js';
+import Comment from '../engine/comment';
+import Variable from '../engine/variable';
+import MonitorRecord from '../engine/monitor-record';
+import StageLayering from '../engine/stage-layering';
 import {loadCostume} from '../import/load-costume.js';
 import {loadSound} from '../import/load-sound.js';
 import {deserializeCostume, deserializeSound} from './deserialize-assets.js';

@@ -14,7 +14,7 @@ import makeTestStorage from '../fixtures/make-test-storage.js';
 import FakeRenderer from '../fixtures/fake-renderer.js';
 import FakeBitmapAdapter from '../fixtures/fake-bitmap-adapter.js';
 import {extractAsset, readFileToBuffer} from '../fixtures/readProjectFile.js';
-import VirtualMachine from '../../src/index.js';
+import VirtualMachine from '../../src/index';
 import {serializeCostumes} from '../../src/serialization/serialize-assets.js';
 
 const projectUri = path.resolve(__dirname, '../fixtures/corrupt_png.sb2');

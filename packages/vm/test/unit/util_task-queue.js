@@ -1,6 +1,6 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import TaskQueue from '../../src/util/task-queue.js';
-import MockTimer from '../fixtures/mock-timer.js';
+import TaskQueue from '../../src/util/task-queue';
+import MockTimer from '../fixtures/mock-timer';
 import testCompare from '../fixtures/test-compare.js';
 
 // Max tokens = 1000

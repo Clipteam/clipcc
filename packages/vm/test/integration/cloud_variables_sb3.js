@@ -2,7 +2,7 @@ import path from 'path';
 import {test} from '../fixtures/jest-tap-bridge.js';
 import makeTestStorage from '../fixtures/make-test-storage.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
-import VirtualMachine from '../../src/index.js';
+import VirtualMachine from '../../src/index';
 
 const cloudVarSimpleUri = path.resolve(__dirname, '../fixtures/cloud_variables_simple.sb3');
 const cloudVarLimitUri = path.resolve(__dirname, '../fixtures/cloud_variables_limit.sb3');

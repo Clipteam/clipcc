@@ -1,11 +1,11 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
 import Blocks from '../../src/engine/blocks.js';
-import BlockUtility from '../../src/engine/block-utility.js';
-import Event from '../../src/blocks/scratch3_event.js';
+import BlockUtility from '../../src/engine/block-utility';
+import Event from '../../src/blocks/scratch3_event';
 import Runtime from '../../src/engine/runtime.js';
 import Target from '../../src/engine/target.js';
-import Thread from '../../src/engine/thread.js';
-import Variable from '../../src/engine/variable.js';
+import Thread from '../../src/engine/thread';
+import Variable from '../../src/engine/variable';
 
 test('#760 - broadcastAndWait', t => {
     const broadcastAndWaitBlock = {

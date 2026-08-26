@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Sound from '../../src/blocks/scratch3_sound.js';
+import Sound from '../../src/blocks/scratch3_sound';
 let playedSound;
 
 const blocks = new Sound();

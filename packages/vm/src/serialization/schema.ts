@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface SB3Project {
     targets: SB3Target[];
     monitors?: SB3Monitor[];
@@ -155,4 +156,53 @@ export interface SB3Monitor {
     sliderMin?: number;
     sliderMax?: number;
     isDiscrete?: boolean;
+}
+
+// --- VM runtime block presentation, used by engine/blocks and serialization/sb3. ---
+
+export interface VMBlock {
+    id: string;
+    opcode: string;
+    next: string | null;
+    parent: string | null;
+    inputs: Record<string, VMInput>;
+    fields: Record<string, VMField>;
+    shadow: boolean;
+    topLevel: boolean;
+    x?: number;
+    y?: number;
+    mutation?: VMMutation;
+    comment?: string;
+    commentData?: unknown;
+    isMonitored?: boolean;
+    targetId?: string | null;
+}
+
+export interface VMInput {
+    name: string;
+    block: string | null;
+    shadow: string | null;
+}
+
+export interface VMField {
+    name: string;
+    value?: string;
+    id?: string;
+    variableType?: string;
+}
+
+export interface VMMutation {
+    tagName?: string;
+    children?: VMMutation[];
+    proccode?: string;
+    argumentids?: string;
+    argumentnames?: string;
+    argumentdefaults?: string;
+    warp?: string | boolean;
+    hasnext?: string | boolean;
+    return?: string | boolean;
+    global?: string | boolean;
+    generateshadows?: string | boolean;
+    blockInfo?: Record<string, unknown>;
+    [key: string]: unknown;
 }

@@ -108,3 +108,8 @@ declare module 'react-tabs' {
     export const Tab: React.ComponentType<TabProps>;
     export const TabPanel: React.ComponentType<CommonProps>;
 }
+
+/**
+ * Compile-time injected clipcc global metadata
+ */
+declare const clipcc: { VERSION?: string };

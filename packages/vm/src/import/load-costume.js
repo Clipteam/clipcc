@@ -1,5 +1,5 @@
-import StringUtil from '../util/string-util.js';
-import log from '../util/log.js';
+import StringUtil from '../util/string-util';
+import log from '../util/log';
 import {loadSvgString, serializeSvgToString} from 'clipcc-svg-renderer';
 
 const loadVector_ = function (costume, runtime, rotationCenter, optVersion) {
@@ -298,9 +298,9 @@ const handleCostumeLoadError = function (costume, runtime) {
  * @property {number} [bitmapResolution] - the resolution scale for a bitmap costume.
  * @property {!Asset} costume.asset - the asset of the costume loaded from storage.
  * @param {!Runtime} runtime - Scratch runtime, used to access the storage module.
- * @param {?int} optVersion - Version of Scratch that the costume comes from. If this is set
+ * @param {?int} [optVersion] - Version of Scratch that the costume comes from. If this is set
  *     to 2, scratch 3 will perform an upgrade step to handle quirks in SVGs from Scratch 2.0.
- * @returns {?Promise} - a promise which will resolve after skinId is set, or null on error.
+ * @returns {Promise} - a promise which will resolve after skinId is set, or null on error.
  */
 const loadCostumeFromAsset = function (costume, runtime, optVersion) {
     costume.assetId = costume.asset.assetId;
@@ -408,7 +408,7 @@ let loadCostume = function (md5ext, costume, runtime, optVersion) {
  */
 const overrideLoadCostume = function (newLoadCostume) {
     loadCostume = newLoadCostume;
-}
+};
 
 export {
     loadCostume,

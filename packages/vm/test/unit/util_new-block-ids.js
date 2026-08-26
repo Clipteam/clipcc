@@ -1,4 +1,4 @@
-import newBlockIds from '../../src/util/new-block-ids.js';
+import newBlockIds from '../../src/util/new-block-ids';
 import simpleStack from '../fixtures/simple-stack.js';
 import {test} from '../fixtures/jest-tap-bridge.js';
 let originals;

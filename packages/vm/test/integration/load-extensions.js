@@ -2,8 +2,8 @@ import path from 'path';
 import {test} from '../fixtures/jest-tap-bridge.js';
 import fs from 'fs';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
-import dispatch from '../../src/dispatch/central-dispatch.js';
-import VirtualMachine from '../../src/index.js';
+import dispatch from '../../src/dispatch/central-dispatch';
+import VirtualMachine from '../../src/index';
 
 /**
  * Call _stopLoop() on the Video Sensing extension.

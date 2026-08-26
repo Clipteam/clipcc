@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import Keyboard from '../../src/io/keyboard.js';
+import Keyboard from '../../src/io/keyboard';
 import Runtime from '../../src/engine/runtime.js';
 
 test('spec', t => {

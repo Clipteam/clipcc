@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type ArgumentType from './argument-type';
 import type BlockType from './block-type';
 import type ReporterScope from './reporter-scope';

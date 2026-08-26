@@ -1,5 +1,5 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
-import UserData from '../../src/io/userData.js';
+import UserData from '../../src/io/userData';
 
 test('spec', t => {
     const userData = new UserData();

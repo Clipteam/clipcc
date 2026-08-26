@@ -1,6 +1,6 @@
-import dispatch from '../../src/dispatch/worker-dispatch.js';
+import dispatch from '../../src/dispatch/worker-dispatch';
 import DispatchTestService from './dispatch-test-service.js';
-import log from '../../src/util/log.js';
+import log from '../../src/util/log';
 
 dispatch.setService('RemoteDispatchTest', new DispatchTestService());
 

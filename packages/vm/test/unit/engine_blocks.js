@@ -1,7 +1,7 @@
 import {test} from '../fixtures/jest-tap-bridge.js';
 import Blocks from '../../src/engine/blocks.js';
-import Variable from '../../src/engine/variable.js';
-import adapter from '../../src/engine/adapter.js';
+import Variable from '../../src/engine/variable';
+import adapter from '../../src/engine/adapter';
 import events from '../fixtures/events.json';
 import Runtime from '../../src/engine/runtime.js';
 

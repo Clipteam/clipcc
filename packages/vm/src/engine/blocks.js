@@ -1,11 +1,11 @@
-import adapter from './adapter.js';
-import xmlEscape from '../util/xml-escape.js';
-import MonitorRecord from './monitor-record.js';
-import Clone from '../util/clone.js';
+import adapter from './adapter';
+import xmlEscape from '../util/xml-escape';
+import MonitorRecord from './monitor-record';
+import Clone from '../util/clone';
 import {Map} from 'immutable';
-import log from '../util/log.js';
-import Variable from './variable.js';
-import getMonitorIdForBlockWithArgs from '../util/get-monitor-id.js';
+import log from '../util/log';
+import Variable from './variable';
+import getMonitorIdForBlockWithArgs from '../util/get-monitor-id';
 
 /**
  * @fileoverview
@@ -14,7 +14,9 @@ import getMonitorIdForBlockWithArgs from '../util/get-monitor-id.js';
  */
 
 /**
- * @typedef {import('./runtime')} Runtime
+ * @typedef {import('./runtime').default} Runtime
+ * @typedef {import('../serialization/schema').VMBlock} VMBlock
+ * @typedef {import('../serialization/schema').VMInput} VMInput
  * @typedef {import('./blocks-runtime-cache').RuntimeScriptCache} RuntimeScriptCache
  * @import * as ClipCCBlock from 'clipcc-block'
  */
@@ -80,7 +82,7 @@ class Blocks {
         /**
          * All blocks in the workspace.
          * Keys are block IDs, values are metadata about the block.
-         * @type {Record<string, object>}
+         * @type {Record<string, VMBlock>}
          */
         this._blocks = {};
 
@@ -122,8 +124,8 @@ class Blocks {
 
     /**
      * Provide an object with metadata for the requested block ID.
-     * @param {!string} blockId ID of block we have stored.
-     * @returns {?object} Metadata about the block, if it exists.
+     * @param {string | null} [blockId] ID of block we have stored.
+     * @returns {VMBlock | undefined} Metadata about the block, if it exists.
      */
     getBlock (blockId) {
         return this._blocks[blockId];
@@ -170,8 +172,8 @@ class Blocks {
 
     /**
      * Get the opcode for a particular block
-     * @param {?object} block The block to query
-     * @returns {?string} the opcode corresponding to that block
+     * @param {?VMBlock} block The block to query
+     * @returns the opcode corresponding to that block
      */
     getOpcode (block) {
         return (typeof block === 'undefined') ? null : block.opcode;
@@ -179,8 +181,8 @@ class Blocks {
 
     /**
      * Get all fields and their values for a block.
-     * @param {?object} block The block to query.
-     * @returns {?object} All fields and their values.
+     * @param {?VMBlock} block The block to query.
+     * @returns All fields and their values.
      */
     getFields (block) {
         return (typeof block === 'undefined') ? null : block.fields;
@@ -188,8 +190,8 @@ class Blocks {
 
     /**
      * Get all non-branch inputs for a block.
-     * @param {?object} block the block to query.
-     * @returns {?Array.<object>} All non-branch inputs and their associated blocks.
+     * @param {?VMBlock} block the block to query.
+     * @returns {Record<string, VMInput>} All non-branch inputs and their associated blocks.
      */
     getInputs (block) {
         if (typeof block === 'undefined') return null;
@@ -213,8 +215,8 @@ class Blocks {
 
     /**
      * Get mutation data for a block.
-     * @param {?object} block The block to query.
-     * @returns {?object} Mutation for the block.
+     * @param {?VMBlock} block The block to query.
+     * @returns Mutation for the block.
      */
     getMutation (block) {
         return (typeof block === 'undefined') ? null : block.mutation;
@@ -270,7 +272,7 @@ class Blocks {
     /**
      * Get the procedure definition for a given name.
      * @param {?string} name Name of procedure to query.
-     * @param {?boolean} globalOnly True if only find global procedures.
+     * @param {?boolean} [globalOnly] True if only find global procedures.
      * @returns {?string} ID of procedure definition.
      */
     getProcedureDefinition (name, globalOnly) {
@@ -1008,11 +1010,11 @@ class Blocks {
     /**
      * Returns a map of all references to variables or lists from blocks
      * in this block container.
-     * @param {Array<object>} optBlocks Optional list of blocks to constrain the search to.
+     * @param {Array<object> | null} optBlocks Optional list of blocks to constrain the search to.
      * This is useful for getting variable/list references for a stack of blocks instead
      * of all blocks on the workspace
      * @param {boolean=} optIncludeBroadcast Optional whether to include broadcast fields.
-     * @returns {object} A map of variable ID to a list of all variable references
+     * @returns A map of variable ID to a list of all variable references
      * for that ID. A variable reference contains the field referencing that variable
      * and also the type of the variable being referenced.
      */
