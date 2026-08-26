@@ -243,7 +243,7 @@ class Thread {
      * (avoids popping and re-pushing a new stack frame - keeps the warpmode the same
      * @param blockId Block ID to push to stack.
      */
-    reuseStackForNextBlock (blockId: string): void {
+    reuseStackForNextBlock (blockId: string | null): void {
         this.stack[this.stack.length - 1] = blockId;
         this.stackFrames[this.stackFrames.length - 1].reuse();
     }
@@ -376,7 +376,7 @@ class Thread {
      * where execution proceeds from one block to the next.
      */
     goToNextBlock (): void {
-        const nextBlockId = this.blockContainer!.getNextBlock(this.peekStack()!) as string;
+        const nextBlockId = this.blockContainer!.getNextBlock(this.peekStack());
         this.reuseStackForNextBlock(nextBlockId);
     }
 
