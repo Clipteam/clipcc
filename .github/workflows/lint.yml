@@ -153,17 +153,3 @@ jobs:
 
       - name: Lint
         run: pnpm storage lint
-
-  svg-renderer:
-    name: Lint SVG Renderer
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Setup dependencies
-        uses: ./.github/actions/setup-deps
-
-      - name: Lint
-        run: pnpm svg-renderer lint

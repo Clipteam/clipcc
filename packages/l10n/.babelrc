@@ -1,9 +1,17 @@
 {
-    "plugins": [
-        "@babel/plugin-proposal-object-rest-spread"
-    ],
     "presets": [
-        ["@babel/preset-env", {"targets": {"browsers": ["last 3 versions", "Safari >= 8", "iOS >= 8"]}}],
+        ["@babel/preset-env", {
+            "targets": {
+                "browsers": [
+                    "Chrome >= 63",
+                    "Edge >= 15",
+                    "Firefox >= 57",
+                    "Safari >= 11",
+                    "Android >= 63",
+                    "iOS >= 8"
+                ]
+            }
+        }],
         "@babel/preset-react"
     ]
 }

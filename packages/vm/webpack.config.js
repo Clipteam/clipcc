@@ -19,6 +19,9 @@ const base = {
         filename: '[name].js'
     },
     resolve: {
+        alias: {
+            'text-encoding': 'fastestsmallesttextencoderdecoder'
+        },
         extensions: ['.ts', '.js']
     },
     module: {
@@ -55,12 +58,9 @@ const base = {
         ]
     },
     plugins: [
-        new RuleInheritancePlugin({
-            packages: [
-                path.resolve(__dirname, '../svg-renderer')
-            ]
+        new NodePolyfillPlugin({
+            includeAliases: ['events', 'buffer']
         }),
-        new NodePolyfillPlugin(),
         new webpack.DefinePlugin({
             'clipcc.VERSION': version,
             'clipcc.BUILD_TIME': Date.now(),

@@ -30,6 +30,8 @@ module.exports = {
         'startaudiocontext': true
     },
     plugins: [
-        new NodePolyfillPlugin()
+        new NodePolyfillPlugin({
+            includeAliases: ['events']
+        })
     ]
 };

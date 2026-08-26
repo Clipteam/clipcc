@@ -12,6 +12,9 @@ catalog:
 onlyBuiltDependencies:
   - chromedriver
   - core-js
+  - gifsicle
+  - jpegtran-bin
+  - optipng-bin
   - electron
   - electron-winstaller
   - playwright-chromium

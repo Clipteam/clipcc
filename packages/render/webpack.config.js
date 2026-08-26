@@ -39,13 +39,8 @@ const base = {
         ]
     },
     plugins: [
-        new RuleInheritancePlugin({
-            packages: [
-                path.resolve(__dirname, '../svg-renderer')
-            ]
-        }),
         new NodePolyfillPlugin({
-            includeAliases: ['Buffer', 'events']
+            includeAliases: ['events']
         })
     ]
 };

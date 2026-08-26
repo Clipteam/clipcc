@@ -34,11 +34,12 @@
   },
   "dependencies": {
     "@turbowarp/nanolog": "^1.0.1",
-    "@vernier/godirect": "1.5.0",
+    "@vernier/godirect": "1.8.3",
     "atob": "2.1.2",
     "btoa": "1.2.1",
     "canvas-toBlob": "1.0.0",
     "clipcc-parser": "workspace:~",
+    "clipcc-sb1-converter": "1.0.327",
     "decode-html": "2.0.0",
     "diff-match-patch": "1.0.4",
     "fastestsmallesttextencoderdecoder": "^1.0.22",
@@ -46,11 +47,11 @@
     "htmlparser2": "10.1.0",
     "immutable": "5.1.5",
     "jszip": "^3.10.1",
-    "scratch-sb1-converter": "1.0.324",
+    "node-polyfill-webpack-plugin": "^3.0.0",
     "scratch-translate-extension-languages": "1.0.7"
   },
   "peerDependencies": {
-    "clipcc-svg-renderer": "^3.2.0"
+    "clipcc-svg-renderer": "2.5.49"
   },
   "devDependencies": {
     "@babel/core": "7.29.0",
@@ -71,8 +72,9 @@
     "clipcc-block": "workspace:~",
     "clipcc-l10n": "workspace:~",
     "clipcc-render": "workspace:~",
+    "clipcc-render-fonts": "1.0.256",
     "clipcc-storage": "workspace:~",
-    "clipcc-svg-renderer": "workspace:~",
+    "clipcc-svg-renderer": "2.5.49",
     "codingclip-worker-loader": "^3.0.10",
     "copy-webpack-plugin": "^14.0.0",
     "domhandler": "^5.0.3",
@@ -88,7 +90,6 @@
     "node-polyfill-webpack-plugin": "^3.0.0",
     "pngjs": "7.0.0",
     "rule-inheritance-webpack-plugin": "catalog:",
-    "scratch-render-fonts": "1.0.252",
     "script-loader": "0.7.2",
     "stats.js": "0.17.0",
     "terser-webpack-plugin": "^5.3.17",

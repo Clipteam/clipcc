@@ -8,6 +8,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const ImageMinimizerPlugin = require('image-minimizer-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const RuleInheritancePlugin = require('rule-inheritance-webpack-plugin');
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
@@ -31,9 +33,13 @@ const base = {
     },
     output: {
         filename: '[name].js',
-        chunkFilename: 'chunks/[name].js'
+        chunkFilename: 'chunks/[name].js',
+        assetModuleFilename: 'assets/[hash][ext][query]'
     },
     resolve: {
+        alias: {
+            'text-encoding': 'fastestsmallesttextencoderdecoder'
+        },
         extensions: ['.ts', '.js', '.tsx', '.jsx']
     },
     module: {
@@ -46,9 +52,6 @@ const base = {
                 // in much lower dependencies.
                 babelrc: false,
                 plugins: [
-                    '@babel/plugin-syntax-dynamic-import',
-                    '@babel/plugin-transform-async-to-generator',
-                    '@babel/plugin-proposal-object-rest-spread',
                     ['react-intl', {
                         messagesDir: './translations/messages/'
                     }]],
@@ -95,9 +98,50 @@ const base = {
         }]
     },
     optimization: {
+        splitChunks: {
+            chunks: 'async',
+            minChunks: 2,
+            maxInitialRequests: 5,
+            cacheGroups: {
+                default: false,
+                defaultVendors: false,
+                metadata: {
+                    test: module => module.type === 'json' && module.size() > 128 * 1024,
+                    name: 'metadata',
+                    chunks: 'all',
+                    priority: 20,
+                    reuseExistingChunk: true,
+                    enforce: true
+                },
+                lib: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'lib.min',
+                    chunks: 'initial',
+                    priority: 10,
+                    reuseExistingChunk: true,
+                    enforce: true
+                }
+            }
+        },
         minimizer: [
             new TerserPlugin({
                 include: /\.min\.js$/
+            }),
+            new ImageMinimizerPlugin({
+                minimizer: {
+                    implementation: ImageMinimizerPlugin.imageminMinify,
+                    options: {
+                        plugins: [
+                            ['gifsicle', {interlaced: true}],
+                            ['jpegtran', {progressive: true}],
+                            ['optipng', {optimizationLevel: 5}],
+                            ['svgo']
+                        ]
+                    }
+                }
+            }),
+            new CssMinimizerPlugin({
+                minify: CssMinimizerPlugin.lightningCssMinify
             })
         ]
     },
@@ -110,11 +154,12 @@ const base = {
                 path.resolve(__dirname, '../paint'),
                 path.resolve(__dirname, '../render'),
                 path.resolve(__dirname, '../storage'),
-                path.resolve(__dirname, '../svg-renderer'),
                 path.resolve(__dirname, '../vm')
             ]
         }),
-        new NodePolyfillPlugin(),
+        new NodePolyfillPlugin({
+            includeAliases: ['buffer', 'Buffer', 'events']
+        }),
         new webpack.DefinePlugin({
             'clipcc.DEFAULT_TRANSLATE_SERVICE_URL': JSON.stringify(DEFAULT_TRANSLATE_SERVICE_URL),
             'clipcc.DEFAULT_TTS_SERVICE_URL': JSON.stringify(DEFAULT_TTS_SERVICE_URL),
@@ -143,6 +188,12 @@ const base = {
 
 if (!IS_CI) {
     base.plugins.push(new webpack.ProgressPlugin());
+}
+
+if (process.env.ANALYZE) {
+    // eslint-disable-next-line global-require
+    const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
+    base.plugins.push(new BundleAnalyzerPlugin());
 }
 
 if (!IS_PRODUCTION) {
@@ -179,15 +230,9 @@ module.exports = (BUILD_DIST ? [] : [
                 {
                     test: /\.(svg|png|wav|gif|jpg)$/,
                     resourceQuery: {not: [/raw/]},
-                    type: 'asset/inline'
+                    type: 'asset'
                 }
             ])
-        },
-        optimization: {
-            splitChunks: {
-                chunks: 'all',
-                name: 'lib.min'
-            }
         },
         plugins: base.plugins.concat([
             new webpack.DefinePlugin({
@@ -195,30 +240,30 @@ module.exports = (BUILD_DIST ? [] : [
                 'process.env.GA_ID': `"${process.env.GA_ID || 'UA-000000-01'}"`
             }),
             new HtmlWebpackPlugin({
-                chunks: ['lib.min', 'gui'],
+                chunks: ['runtime.min', 'lib.min', 'gui'],
                 template: 'src/playground/index.ejs',
                 title: 'ClipCC GUI'
             }),
             new HtmlWebpackPlugin({
-                chunks: ['lib.min', 'blocksonly'],
+                chunks: ['runtime.min', 'lib.min', 'blocksonly'],
                 template: 'src/playground/index.ejs',
                 filename: 'blocks-only.html',
                 title: 'ClipCC GUI: Blocks Only Example'
             }),
             new HtmlWebpackPlugin({
-                chunks: ['lib.min', 'compatibilitytesting'],
+                chunks: ['runtime.min', 'lib.min', 'compatibilitytesting'],
                 template: 'src/playground/index.ejs',
                 filename: 'compatibility-testing.html',
                 title: 'ClipCC GUI: Compatibility Testing'
             }),
             new HtmlWebpackPlugin({
-                chunks: ['lib.min', 'player'],
+                chunks: ['runtime.min', 'lib.min', 'player'],
                 template: 'src/playground/index.ejs',
                 filename: 'player.html',
                 title: 'ClipCC GUI: Player Example'
             }),
             new HtmlWebpackPlugin({
-                chunks: ['lib.min', 'lifecycle'],
+                chunks: ['runtime.min', 'lib.min', 'lifecycle'],
                 template: 'src/playground/index.ejs',
                 filename: 'lifecycle.html',
                 title: 'ClipCC GUI: Lifecycle Test'
@@ -275,7 +320,7 @@ module.exports = (BUILD_DIST ? [] : [
                     {
                         test: /\.(svg|png|wav|gif|jpg)$/,
                         resourceQuery: {not: [/raw/]},
-                        type: 'asset/inline'
+                        type: 'asset'
                     }
                 ])
             },

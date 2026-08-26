@@ -1,9 +1,3 @@
-// Polyfills
-import 'es6-object-assign/auto';
-import 'core-js/fn/array/includes';
-import 'core-js/fn/promise/finally';
-import 'intl'; // For Safari 9
-
 import React from 'react';
 import ReactDOM from 'react-dom';
 
@@ -21,19 +15,6 @@ analytics.pageview('/');
 const appTarget = document.createElement('div');
 appTarget.className = styles.app;
 document.body.appendChild(appTarget);
-
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js').then(registration => {
-            // eslint-disable-next-line no-console
-            console.log('SW registered: ', registration);
-        })
-            .catch(registrationError => {
-            // eslint-disable-next-line no-console
-                console.log('SW registration failed: ', registrationError);
-            });
-    });
-}
 
 if (supportedBrowser()) {
     // require needed here to avoid importing unsupported browser-crashing code

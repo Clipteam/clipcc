@@ -1,6 +1,0 @@
-[*.{js}]
-indent_style = space
-
-[*.{json,json5}]
-indent_style = space
-indent_size = 2

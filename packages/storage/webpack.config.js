@@ -110,7 +110,7 @@ const nodeConfig = {
         'base64-js': true,
         'js-md5': true,
         'localforage': true,
-        'text-encoding': true
+        'fastestsmallesttextencoderdecoder': true
     },
     plugins: baseConfig.plugins.concat([
         new webpack.ProvidePlugin({
