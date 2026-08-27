@@ -88,6 +88,7 @@ const base = {
         }, {
             resourceQuery: '?arrayBuffer',
             type: 'javascript/auto',
+            include: path.resolve(__dirname, 'src'),
             use: 'arraybuffer-loader'
         }, {
             resourceQuery: /raw/,

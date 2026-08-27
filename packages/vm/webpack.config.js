@@ -34,16 +34,13 @@ const base = {
             }
         },
         {
-            test: /\.mp3$/,
-            type: 'asset/resource'
-        },
-        {
             resourceQuery: /raw/,
             type: 'asset/source'
         },
         {
             resourceQuery: '?arrayBuffer',
             type: 'javascript/auto',
+            include: path.resolve(__dirname, 'src'),
             use: 'arraybuffer-loader'
         }]
     },
