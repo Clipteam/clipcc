@@ -71,6 +71,11 @@ import './blocks/data';
 import './blocks/procedures';
 
 import './serialization/procedures';
+import {virtualize} from './virtualized_manager';
+
+export interface ClipCCBlockOptions extends Blockly.BlocklyOptions {
+  virtualized?: boolean;
+}
 
 /**
  * Inject a Blockly editor into the specified container element (usually a div).
@@ -78,13 +83,17 @@ import './serialization/procedures';
  * @param options Optional dictionary of options.
  * @returns Newly created main workspace.
  */
-export function inject(container: Element | string, options?: Blockly.BlocklyOptions) {
+export function inject(container: Element | string, options?: ClipCCBlockOptions) {
   const defaultOptions = {
     renderer: 'scratch',
     theme: Scratch
-  } satisfies Blockly.BlocklyOptions;
+  } satisfies ClipCCBlockOptions;
   options = Object.assign(defaultOptions, options);
   const workspace = Blockly.inject(container, options);
+
+  if (options.virtualized) {
+    virtualize(workspace);
+  }
 
   // Register styles.
   injectCssVariables(workspace);
@@ -129,7 +138,6 @@ export function inject(container: Element | string, options?: Blockly.BlocklyOpt
   });
 
   workspace.refreshToolboxSelection();
-
   return workspace;
 }
 

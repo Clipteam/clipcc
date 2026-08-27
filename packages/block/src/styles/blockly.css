@@ -91,3 +91,17 @@
 .blocklyZoom>svg>image:active {
   opacity: 1;
 }
+
+.blocklyVirtualizedHidden {
+  display: none;
+}
+
+.blocklyBlock .blocklyVirtualizedHidden {
+  content-visibility: hidden;
+}
+
+@supports not (content-visibility: hidden) {
+  .blocklyBlock .blocklyVirtualizedHidden {
+    visibility: hidden;
+  }
+}

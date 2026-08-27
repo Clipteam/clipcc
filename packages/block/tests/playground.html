@@ -218,6 +218,7 @@
         toolbox: toolbox,
         horizontalLayout: false,
         toolboxPosition: 'left',
+        virtualized: true,
         move: {
           scrollbars: true,
           wheel: true
@@ -363,6 +364,66 @@
       const state = ScratchBlocks.loadWorkspace(JSON.parse(textarea.value), mainWorkspace, true);
     }
 
+    function spaghetti(n = 8) {
+      let str = spaghettiJs;
+      for (let i = 0; i < n; i++) {
+        str = str.replace(/{}/g, `{"block":${spaghettiJs}}`);
+      }
+      const obj = {
+        'blocks': {
+          'blocks': [JSON.parse(str)],
+        },
+      };
+      console.time('Spaghetti serialization');
+      ScratchBlocks.loadWorkspace(obj, mainWorkspace);
+      console.timeEnd('Spaghetti serialization');
+    }
+    const spaghettiJs = JSON.stringify({
+      'type': 'control_if',
+      'inputs': {
+        'CONDITION': {
+          'block': {
+            'type': 'operator_equals',
+            'inputs': {
+              'OPERAND1': {
+                'block': {
+                  'type': 'operator_multiply',
+                  'inputs': {
+                    'NUM1': {
+                      'shadow': {
+                        'type': 'math_number',
+                        'fields': {
+                          'NUM': 6,
+                        },
+                      },
+                    },
+                    'NUM2': {
+                      'shadow': {
+                        'type': 'math_number',
+                        'fields': {
+                          'NUM': 7,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+              'OPERAND2': {
+                'shadow': {
+                  'type': 'math_number',
+                  'fields': {
+                    'NUM': 42,
+                  },
+                },
+              },
+            },
+          },
+        },
+        'SUBSTACK': {},
+      },
+      'next': {},
+    });
+
     function handleScroll() {
       const scrollTop = eventListContainer.scrollTop;
 
@@ -451,6 +512,8 @@
     <div class="controlPanel">
       <button id="save" onclick="saveWorkspace()">Save</button>
       <button id="load" onclick="loadWorkspace()">Load</button>
+      <br />
+      <button id="spaghetti" onclick="spaghetti()">Spaghetti</button>
       <select id="themeSelect" onchange="changeTheme(this.value)">
         <option value="scratch">Scratch</option>
         <option value="nostalgic">Nostalgic</option>
