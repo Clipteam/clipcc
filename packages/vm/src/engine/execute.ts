@@ -124,7 +124,7 @@ const handleReport = function (
                 sequencer.runtime.visualReport(currentBlockId, resolvedValue);
             }
             if (thread.updateMonitor) {
-                const targetId = sequencer.runtime.monitorBlocks.getBlock(currentBlockId)?.targetId;
+                const targetId = sequencer.runtime.monitorBlocks.getBlock(currentBlockId)!.targetId;
                 if (targetId && !sequencer.runtime.getTargetById(targetId)) {
                     // Target no longer exists
                     return;

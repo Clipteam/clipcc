@@ -142,7 +142,7 @@ class Thread {
     /**
      * The Blocks this thread will execute.
      */
-    blockContainer?: Blocks | null = null;
+    blockContainer: Blocks | null = null;
     /**
      * Whether the thread requests its script to glow during this frame.
      */

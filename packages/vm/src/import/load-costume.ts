@@ -284,6 +284,7 @@ const handleCostumeLoadError = function (costume: Costume, runtime: Runtime) {
 
     return defaultCostumePromise.then(loadedCostume => {
         loadedCostume.broken = {
+            // Should be null if we got here because the costume was missing
             asset: oldAsset,
             assetId: oldAssetId,
             md5: `${oldAssetId}.${oldDataFormat}`,
@@ -372,14 +373,15 @@ let loadCostume = function (md5ext: string, costume: Costume, runtime: Runtime, 
         return Promise.resolve(costume);
     }
 
-    const AssetType = runtime.storage.AssetType;
+    const {AssetType, DataFormat} = runtime.storage;
+
     const assetType = (ext === 'svg') ? AssetType.ImageVector : AssetType.ImageBitmap;
 
     const costumePromise = runtime.storage.load(assetType, md5, ext);
 
     let textLayerPromise;
     if (costume.textLayerMD5) {
-        textLayerPromise = runtime.storage.load(AssetType.ImageBitmap, costume.textLayerMD5, 'png' as DataFormat);
+        textLayerPromise = runtime.storage.load(AssetType.ImageBitmap, costume.textLayerMD5, DataFormat.PNG);
     } else {
         textLayerPromise = Promise.resolve(null);
     }

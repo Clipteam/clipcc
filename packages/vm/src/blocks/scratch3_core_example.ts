@@ -29,9 +29,9 @@ class Scratch3CoreExample implements ExtensionClass {
             blocks: [
                 {
                     func: 'MAKE_A_VARIABLE',
-                    blockType: BlockType.BUTTON,
+                    blockType: BlockType.BUTTON as const,
                     text: 'make a variable (CoreEx)'
-                } as const,
+                },
                 {
                     opcode: 'exampleOpcode',
                     blockType: BlockType.REPORTER,
