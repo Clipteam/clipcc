@@ -3,7 +3,7 @@ export type ScratchSendRequest = {url: string, withCredentials?: boolean} & Requ
 
 export interface Tool {
   get isGetSupported (): boolean;
-  get (request: ScratchGetRequest): Promise<Uint8Array | null>;
+  get (request: ScratchGetRequest): Promise<Uint8Array<ArrayBuffer> | null>;
 
   get isSendSupported (): boolean;
   send (request: ScratchSendRequest): Promise<string>;

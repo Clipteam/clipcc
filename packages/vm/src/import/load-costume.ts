@@ -120,7 +120,7 @@ const fetchBitmapCanvas_ = function (costume: Costume, runtime: Runtime, rotatio
 
         if (typeof createImageBitmap !== 'undefined') {
             return createImageBitmap(
-                new Blob([asset.data as unknown as ArrayBuffer], {type: asset.assetType.contentType})
+                new Blob([asset.data!], {type: asset.assetType.contentType})
             );
         }
 

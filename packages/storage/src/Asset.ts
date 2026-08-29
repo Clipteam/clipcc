@@ -9,7 +9,7 @@ import type {DataFormat} from './DataFormat';
 export type AssetId = string | number;
 
 // Projects are strings, other assets are byte arrays
-export type AssetData = string | Uint8Array;
+export type AssetData = string | Uint8Array<ArrayBuffer>;
 
 export default class Asset {
     /** The type of this asset (sound, image, etc.) */

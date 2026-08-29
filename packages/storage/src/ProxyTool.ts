@@ -54,9 +54,9 @@ export default class ProxyTool implements Tool {
      * @param reqConfig - Request configuration for data to get.
      * @returns Resolve to Buffer of data from server.
      */
-    get (reqConfig: ScratchGetRequest): Promise<Uint8Array | null> {
+    get (reqConfig: ScratchGetRequest): Promise<Uint8Array<ArrayBuffer> | null> {
         let toolIndex = 0;
-        const nextTool = (err?: unknown): Promise<Uint8Array | null> => {
+        const nextTool = (err?: unknown): Promise<Uint8Array<ArrayBuffer> | null> => {
             const tool = this.tools[toolIndex++];
             if (!tool) {
                 throw err;
