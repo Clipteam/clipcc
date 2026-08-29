@@ -13,15 +13,25 @@ const isMessageObject = (maybeMessage: unknown): maybeMessage is MessageObject =
  * @param locale - the locale to pass to `formatMessage` if it gets called.
  * @returns the formatted message OR the original `maybeMessage` input.
  */
-const maybeFormatMessage = function<T> (
+function maybeFormatMessage<T extends MessageObject>(
     maybeMessage: T,
     args?: Record<string, unknown>,
     locale?: string
-): T extends MessageObject ? string : T {
+): string;
+function maybeFormatMessage<T>(
+    maybeMessage: T,
+    args?: Record<string, unknown>,
+    locale?: string
+): T;
+function maybeFormatMessage<T> (
+    maybeMessage: T,
+    args?: Record<string, unknown>,
+    locale?: string
+): T | string {
     if (isMessageObject(maybeMessage)) {
-        return formatMessage(maybeMessage, args, locale) as T extends MessageObject ? string : T;
+        return formatMessage(maybeMessage, args, locale);
     }
-    return maybeMessage as T extends MessageObject ? string : T;
-};
+    return maybeMessage;
+}
 
 export default maybeFormatMessage;
