@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MPL-2.0
  */
 
-import {describe, expect, test, beforeAll} from '@jest/globals';
+import {describe, expect, test, beforeAll, jest} from '@jest/globals';
 import {FakeAdapter} from '../fixtures/fake-adapter';
 import type ExtensionManifest from '../../src/interfaces/extension-manifest';
 import {ExtensionManager} from '../../src/extension-manager';
@@ -49,5 +49,23 @@ describe('ExtensionManager', () => {
         await manager.disableExtension(extensionId);
         expect(manager.isExtensionLoaded(extensionId)).toBeTruthy();
         expect(manager.isExtensionEnabled(extensionId)).toBeFalsy();
+    });
+
+    test('Update Locale', async () => {
+        const manager = new ExtensionManager();
+        const extension = new FakeAdapter(FAKE_MANIFEST);
+        manager.loadExtension(extension);
+        manager.enableExtension(FAKE_MANIFEST.extensionId);
+
+        const spyRefreshInfo = jest.spyOn(extension, 'refreshInfo');
+
+        // refreshInfo should be called when locale is updated.
+        manager.setLocale('zh-cn', {});
+        expect(spyRefreshInfo).toHaveBeenCalledTimes(1);
+
+        // refreshInfo won't be called if the extension is disabled.
+        manager.disableExtension(FAKE_MANIFEST.extensionId);
+        manager.setLocale('en', {});
+        expect(spyRefreshInfo).toHaveBeenCalledTimes(1);
     });
 });
