@@ -2,10 +2,11 @@ import {
     ScratchStorage,
     type Asset
 } from 'clipcc-storage';
+import type {IntlShape} from 'react-intl';
 
 import defaultProject from './default-project';
 
-export type Translator = ((messageId: string, defaultMessage?: string, description?: string) => string) | undefined;
+export type Translator = IntlShape['formatMessage'];
 
 type ConfigResponse = string | {
     url: string;
@@ -24,7 +25,7 @@ class Storage extends ScratchStorage {
     private assetHost = '';
     private cdnHost = '';
     private authorizationToken = '';
-    private translator: Translator;
+    private translator: Translator | undefined;
 
     constructor () {
         super();
