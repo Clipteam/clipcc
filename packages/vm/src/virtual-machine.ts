@@ -479,17 +479,17 @@ class VirtualMachine extends EventEmitter<VMEvents> {
 
     /**
      * Set the url of the translate service used by the translate extension.
-     * @param {string} url The full url of the translate endpoint, without query string.
+     * @param url The full url of the translate endpoint, without query string.
      */
-    setTranslateServiceUrl (url) {
+    setTranslateServiceUrl (url: string) {
         this.runtime.translateServiceUrl = url;
     }
 
     /**
      * Set the url of the text-to-speech service used by the text2speech extension.
-     * @param {string} url The full url of the text-to-speech endpoint, without query string.
+     * @param url The full url of the text-to-speech endpoint, without query string.
      */
-    setTTSServiceUrl (url) {
+    setTTSServiceUrl (url: string) {
         this.runtime.ttsServiceUrl = url;
     }
 
