@@ -46,7 +46,9 @@ interface SB2SpecMapFieldInfo {
     variableType?: string;
 }
 
-type SB2SpecMapArgInfo = SB2SpecMapInputInfo | SB2SpecMapFieldInfo;
+type EmptyArgInfo = Record<string, never>;
+
+type SB2SpecMapArgInfo = SB2SpecMapInputInfo | SB2SpecMapFieldInfo | EmptyArgInfo;
 
 interface SB2SpecMapBlockInfo {
     /**
@@ -769,7 +771,6 @@ const specMap: Record<string, SB2SpecMapValue> = {
             }
         ]
     },
-    // @ts-expect-error Special case, lazy to type
     'whenSensorGreaterThan': ([, sensor]) => {
         if (sensor === 'video motion') {
             return {
@@ -782,7 +783,7 @@ const specMap: Record<string, SB2SpecMapValue> = {
                         inputOp: 'math_number',
                         inputName: 'REFERENCE'
                     }
-                ]
+                ] as const
             };
         }
         return {
