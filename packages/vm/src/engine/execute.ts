@@ -252,7 +252,7 @@ class BlockCached {
     /**
      * The block opcode's implementation function.
      */
-    _blockFunction: BlockFunction | null = null;
+    _blockFunction?: BlockFunction | null = null;
 
     /**
      * Is the block function defined for this opcode?
@@ -329,7 +329,7 @@ class BlockCached {
 
         // Assign opcode isHat and blockFunction data to avoid dynamic lookups.
         this._isHat = runtime.getIsHat(opcode);
-        this._blockFunction = runtime.getOpcodeFunction(opcode)!;
+        this._blockFunction = runtime.getOpcodeFunction(opcode);
         this._definedBlockFunction = typeof this._blockFunction !== 'undefined';
 
         // Store the current shadow value if there is a shadow value.
@@ -584,7 +584,7 @@ const execute = function (sequencer: Sequencer, thread: Thread) {
         let lastOperation = i === length - 1;
         let opCached = ops[i];
 
-        const blockFunction = opCached._blockFunction;
+        const blockFunction = opCached._blockFunction!;
 
         // Update values for arguments (inputs).
         const argValues = opCached._argValues;
@@ -601,7 +601,7 @@ const execute = function (sequencer: Sequencer, thread: Thread) {
 
         // Inputs are set during previous steps in the loop.
 
-        const primitiveReportedValue = blockFunction?.(argValues, blockUtility);
+        const primitiveReportedValue = blockFunction(argValues, blockUtility);
 
         // cc - preserve returned value
         if (opCached.opcode === 'procedures_return') {

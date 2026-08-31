@@ -32,13 +32,13 @@ class BlockUtility {
     /**
      * A sequencer block primitives use to branch or start procedures with
      */
-    sequencer: Sequencer;
+    sequencer!: Sequencer;
 
     /**
      * The block primitives thread with the block's target, stackFrame and
      * modifiable status.
      */
-    thread: Thread;
+    thread!: Thread;
 
     _nowObj: NowObj;
 
