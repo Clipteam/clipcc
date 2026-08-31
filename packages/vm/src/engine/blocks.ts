@@ -264,9 +264,8 @@ class Blocks {
             if (block.opcode === 'procedures_definition') {
                 const internal = this._getCustomBlockInternal(block);
                 if (internal && (!globalOnly || internal.mutation!.global)) {
-                    this._cache.procedureDefinitions[internal.mutation!.proccode!] = id; // The outer define block id
-
-                    const mutation = internal.mutation!;
+                    const mutation = internal.mutation as unknown as ProcedureMutation;
+                    this._cache.procedureDefinitions[mutation.proccode] = id; // The outer define block id
 
                     procedures.push({
                         proccode: mutation.proccode,
@@ -348,9 +347,10 @@ class Blocks {
             const block = this._blocks[id];
             if (block.opcode === 'procedures_prototype' &&
                 block.mutation!.proccode === name) {
-                const names = block.mutation!.argumentnames!;
-                const ids = block.mutation!.argumentids!;
-                const defaults = block.mutation!.argumentdefaults!;
+                const mutation = block.mutation as unknown as ProcedureMutation;
+                const names = mutation.argumentnames!;
+                const ids = mutation.argumentids!;
+                const defaults = mutation.argumentdefaults!;
 
                 this._cache.procedureParamNames[name] = [names, ids, defaults];
                 return this._cache.procedureParamNames[name];
