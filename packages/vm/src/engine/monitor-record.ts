@@ -18,7 +18,6 @@ export interface MonitorRecordProps {
     width: number;
     height: number;
     visible: boolean;
-    [key: string | symbol]: unknown;
 }
 
 const defaultMonitorRecord: MonitorRecordProps = {
