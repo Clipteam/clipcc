@@ -6,7 +6,7 @@ import formatMessage from 'format-message';
 import MathUtil from '../../util/math-util';
 import Timer from '../../util/timer';
 
-import type {ExtensionClass, ExtensionMetadata} from '../../extension-support/extension-metadata';
+import type {Extension, ExtensionMetadata} from '../../extension-support/extension-metadata';
 import type Runtime from '../../engine/runtime';
 import type BlockUtility from '../../engine/block-utility';
 import type Target from '../../engine/target';
@@ -93,7 +93,7 @@ interface SetTempoArgs {
 /**
  * Class for the music-related blocks in Scratch 3.0
  */
-class Scratch3MusicBlocks implements ExtensionClass {
+class Scratch3MusicBlocks implements Extension {
     /**
      * The runtime instantiating this block package.
      */

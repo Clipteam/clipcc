@@ -3,7 +3,7 @@ import ArgumentType from '../../extension-support/argument-type';
 import BlockType from '../../extension-support/block-type';
 import Cast from '../../util/cast';
 
-import type {ExtensionClass, ExtensionMetadata} from '../../extension-support/extension-metadata';
+import type {Extension, ExtensionMetadata} from '../../extension-support/extension-metadata';
 import type Runtime from '../../engine/runtime';
 import type BlockUtility from '../../engine/block-utility';
 
@@ -75,7 +75,7 @@ interface WhenCodePressedArgs {
 /**
  * Class for the makey makey blocks in Scratch 3.0
  */
-class Scratch3MakeyMakeyBlocks implements ExtensionClass {
+class Scratch3MakeyMakeyBlocks implements Extension {
     /**
      * A toggle that alternates true and false each frame, so that an
      * edge-triggered hat can trigger on every other frame.

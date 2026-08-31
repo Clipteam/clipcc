@@ -7,7 +7,7 @@ import languageNames from 'scratch-translate-extension-languages';
 import formatMessage from 'format-message';
 
 import type {
-    ExtensionClass,
+    Extension,
     ExtensionMetadata,
     ExtensionMenuItemObject
 } from '../../extension-support/extension-metadata';
@@ -42,7 +42,7 @@ type ScratchToGoogleKeys = keyof typeof languageNames.scratchToGoogleMap;
 /**
  * Class for the translate block in Scratch 3.0.
  */
-class Scratch3TranslateBlocks implements ExtensionClass {
+class Scratch3TranslateBlocks implements Extension {
     /**
      * Language code of the viewer, based on their locale.
      */

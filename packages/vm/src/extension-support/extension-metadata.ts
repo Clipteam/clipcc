@@ -170,11 +170,11 @@ export type ShortExtensionMenuItem =
 
 export type ExtensionMenuItem = NormalizedExtensionMenuItem | ShortExtensionMenuItem | string[];
 
-export interface ExtensionClass {
+export interface Extension {
     getInfo(): ExtensionMetadata;
 }
 
-export interface PeripheralExtensionClass {
+export interface PeripheralExtension {
     scan(): void;
     connect(peripheralId: number): void;
     disconnect(): void;

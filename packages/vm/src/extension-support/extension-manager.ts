@@ -5,7 +5,7 @@ import BlockType from './block-type';
 
 import type Runtime from '../engine/runtime';
 import type {
-    ExtensionClass,
+    Extension,
     ExtensionMetadata,
     ExtensionMenuItem,
     ExtensionMenuItemObject,
@@ -226,7 +226,7 @@ class ExtensionManager {
      * @param extensionObject - the extension object to register
      * @returns The name of the registered extension service
      */
-    _registerInternalExtension (extensionObject: ExtensionClass) {
+    _registerInternalExtension (extensionObject: Extension) {
         const extensionInfo = extensionObject.getInfo();
         const fakeWorkerId = this.nextExtensionWorker++;
         const serviceName = `extension_${fakeWorkerId}_${extensionInfo.id}`;
@@ -322,7 +322,7 @@ class ExtensionManager {
             // function should return an array of items to populate the menu when it is opened.
             if (typeof menuInfo.items === 'string') {
                 const menuItemFunctionName = menuInfo.items;
-                const serviceObject = dispatch.services[serviceName] as ExtensionClass;
+                const serviceObject = dispatch.services[serviceName] as Extension;
                 // Bind the function here so we can pass a simple item generation function to Scratch Blocks later.
                 menuInfo.items = this._getExtensionMenuItems.bind(this, serviceObject, menuItemFunctionName);
             }
@@ -337,7 +337,7 @@ class ExtensionManager {
      * @returns menu items ready for scratch-blocks.
      * @private
      */
-    _getExtensionMenuItems (extensionObject: ExtensionClass, menuItemFunctionName: string) {
+    _getExtensionMenuItems (extensionObject: Extension, menuItemFunctionName: string) {
         // Fetch the items appropriate for the target currently being edited. This assumes that menus only
         // collect items when opened by the user while editing a particular target.
         const editingTarget = this.runtime.getEditingTarget() || this.runtime.getTargetForStage();
@@ -346,7 +346,7 @@ class ExtensionManager {
 
         // TODO: Fix this to use dispatch.call when extensions are running in workers.
         const menuFunc =
-            extensionObject[menuItemFunctionName as keyof ExtensionClass] as unknown as
+            extensionObject[menuItemFunctionName as keyof Extension] as unknown as
                 (editingTargetID?: string | null) => ExtensionMenuItem[];
         const menuItems = menuFunc.call(extensionObject, editingTargetID).map(
             item => {
@@ -418,13 +418,13 @@ class ExtensionManager {
                 }
 
                 // avoid promise latency if we can call direct
-                const serviceObject = dispatch.services[serviceName] as ExtensionClass;
+                const serviceObject = dispatch.services[serviceName] as Extension;
                 if (!(funcName in serviceObject)) {
                     // The function might show up later as a dynamic property of the service object
                     log.warn(`Could not find extension block function called ${funcName}`);
                 }
                 return (args: BlockArgs, util: BlockUtility, realBlockInfo: Record<string, unknown>) =>
-                    (serviceObject[funcName as keyof ExtensionClass] as CallBlockFunc)(args, util, realBlockInfo);
+                    (serviceObject[funcName as keyof Extension] as CallBlockFunc)(args, util, realBlockInfo);
             })();
 
             (blockInfo as unknown as NormalizedExtensionBlockMetadata).func =

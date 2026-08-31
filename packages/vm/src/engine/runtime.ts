@@ -59,7 +59,8 @@ import type {
     ExtensionMenuItemObject,
     NormalizedExtensionItemMetadata,
     NormalizedExtensionBlockMetadata,
-    ExtensionCustomFieldTypeInfo
+    ExtensionCustomFieldTypeInfo,
+    PeripheralExtension
 } from '../extension-support/extension-metadata';
 import type {FieldDropdownArg, JsonBlockArg, JsonBlockDefinition} from '../types/json-block-definitions';
 import type {MonitorRecordProps} from './monitor-record';
@@ -97,13 +98,6 @@ export type CategoryInfo =
         menus: MenuInfo[];
         blocks: (BlockInfo | ButtonInfo | SepInfo)[];
     };
-
-export interface PeripheralExtensionClass {
-    scan(): void;
-    connect(peripheralId: number): void;
-    disconnect(): void;
-    isConnected(): boolean;
-}
 
 const defaultBlockPackages = {
     scratch3_control: control,
@@ -500,7 +494,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
     /**
      * A list of extensions, used to manage hardware connection.
      */
-    peripheralExtensions: Record<string, PeripheralExtensionClass> = {};
+    peripheralExtensions: Record<string, PeripheralExtension> = {};
 
     /**
      * A runtime profiler that records timed events for later playback to
@@ -1717,7 +1711,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @param extensionId - the id of the extension.
      * @param extension - the extension to register.
      */
-    registerPeripheralExtension (extensionId: string, extension: PeripheralExtensionClass) {
+    registerPeripheralExtension (extensionId: string, extension: PeripheralExtension) {
         this.peripheralExtensions[extensionId] = extension;
     }
 
