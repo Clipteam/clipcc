@@ -323,8 +323,7 @@ class BlockCached {
             mutation: this.mutation
         };
 
-        const runtime = blockUtility.sequencer?.runtime;
-        if (!runtime) throw new Error('Runtime is required for BlockCached.');
+        const runtime = blockUtility.sequencer!.runtime!;
 
         const {opcode, fields, inputs} = this;
 

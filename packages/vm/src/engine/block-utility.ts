@@ -32,13 +32,13 @@ class BlockUtility {
     /**
      * A sequencer block primitives use to branch or start procedures with
      */
-    sequencer: Sequencer | null;
+    sequencer: Sequencer;
 
     /**
      * The block primitives thread with the block's target, stackFrame and
      * modifiable status.
      */
-    thread: Thread | null;
+    thread: Thread;
 
     _nowObj: NowObj;
 
@@ -48,12 +48,11 @@ class BlockUtility {
     skipToOpcode: string | boolean | null = null;
 
     constructor (sequencer: Sequencer | null = null, thread: Thread | null = null) {
-        this.sequencer = sequencer;
-
-        this.thread = thread;
+        if (sequencer) this.sequencer = sequencer;
+        if (thread) this.thread = thread;
 
         this._nowObj = {
-            now: () => this.sequencer!.runtime.currentMSecs
+            now: () => this.sequencer.runtime.currentMSecs
         };
     }
 
@@ -61,14 +60,14 @@ class BlockUtility {
      * The target the primitive is working on.
      */
     get target (): RenderedTarget {
-        return this.thread!.target!;
+        return this.thread.target!;
     }
 
     /**
      * The runtime the block primitive is running in.
      */
-    get runtime (): Runtime | undefined {
-        return this.sequencer?.runtime;
+    get runtime (): Runtime {
+        return this.sequencer.runtime;
     }
 
     /**
@@ -86,7 +85,7 @@ class BlockUtility {
      * The stack frame used by loop and other blocks to track internal state.
      */
     get stackFrame (): ExecutionContext {
-        const frame = this.thread!.peekStackFrame();
+        const frame = this.thread.peekStackFrame();
         if (frame!.executionContext === null) {
             frame!.executionContext = {};
         }
@@ -138,14 +137,14 @@ class BlockUtility {
      * Set the thread to yield.
      */
     yield () {
-        this.thread!.status = Thread.STATUS_YIELD;
+        this.thread.status = Thread.STATUS_YIELD;
     }
 
     /**
      * Set the thread to yield until the next tick of the runtime.
      */
     yieldTick () {
-        this.thread!.status = Thread.STATUS_YIELD_TICK;
+        this.thread.status = Thread.STATUS_YIELD_TICK;
     }
 
     /**
@@ -154,14 +153,14 @@ class BlockUtility {
      * @param isLoop Whether this block is a loop.
      */
     startBranch (branchNum: number, isLoop: boolean) {
-        this.sequencer!.stepToBranch(this.thread!, branchNum, isLoop);
+        this.sequencer.stepToBranch(this.thread, branchNum, isLoop);
     }
 
     /**
      * Stop all threads.
      */
     stopAll () {
-        this.sequencer!.runtime.stopAll();
+        this.sequencer.runtime.stopAll();
     }
 
     /**
@@ -169,14 +168,14 @@ class BlockUtility {
      * executed block.
      */
     stopOtherTargetThreads () {
-        this.sequencer!.runtime.stopForTarget(this.thread!.target!, this.thread!);
+        this.sequencer.runtime.stopForTarget(this.thread.target!, this.thread);
     }
 
     /**
      * Stop this thread.
      */
     stopThisScript () {
-        this.thread!.stopThisScript();
+        this.thread.stopThisScript();
     }
 
     /**
@@ -184,7 +183,7 @@ class BlockUtility {
      * @param procedureCode Procedure code for procedure to start.
      */
     startProcedure (procedureCode: string) {
-        this.sequencer!.stepToProcedure(this.thread!, procedureCode);
+        this.sequencer.stepToProcedure(this.thread, procedureCode);
     }
 
     /**
@@ -193,11 +192,11 @@ class BlockUtility {
      * @returns List of param names for a procedure.
      */
     getProcedureParamNamesAndIds (procedureCode: string) {
-        const result = this.thread!.blockContainer!.getProcedureParamNamesAndIds(procedureCode);
+        const result = this.thread.blockContainer!.getProcedureParamNamesAndIds(procedureCode);
         if (result) {
             return result;
         }
-        return this.sequencer!.runtime.getProcedureParamNamesAndIds(procedureCode);
+        return this.sequencer.runtime.getProcedureParamNamesAndIds(procedureCode);
     }
 
     /**
@@ -206,18 +205,18 @@ class BlockUtility {
      * @returns List of param names for a procedure.
      */
     getProcedureParamNamesIdsAndDefaults (procedureCode: string) {
-        const result = this.thread!.blockContainer!.getProcedureParamNamesIdsAndDefaults(procedureCode);
+        const result = this.thread.blockContainer!.getProcedureParamNamesIdsAndDefaults(procedureCode);
         if (result) {
             return result;
         }
-        return this.sequencer!.runtime.getProcedureParamNamesIdsAndDefaults(procedureCode);
+        return this.sequencer.runtime.getProcedureParamNamesIdsAndDefaults(procedureCode);
     }
 
     /**
      * Initialize procedure parameters in the thread before pushing parameters.
      */
     initParams () {
-        this.thread!.initParams();
+        this.thread.initParams();
     }
 
     /**
@@ -226,7 +225,7 @@ class BlockUtility {
      * @param paramValue The procedure's parameter value.
      */
     pushParam (paramName: string, paramValue: unknown) {
-        this.thread!.pushParam(paramName, paramValue);
+        this.thread.pushParam(paramName, paramValue);
     }
 
     /**
@@ -235,7 +234,7 @@ class BlockUtility {
      * @returns The parameter's current stored value.
      */
     getParam (paramName: string) {
-        return this.thread!.getParam(paramName);
+        return this.thread.getParam(paramName);
     }
 
     /**
@@ -251,7 +250,7 @@ class BlockUtility {
         // and confuse the calling block when we return to it.
         const callerThread = this.thread;
         const callerSequencer = this.sequencer;
-        const result = this.sequencer!.runtime.startHats(requestedHat, optMatchFields, optTarget);
+        const result = this.sequencer.runtime.startHats(requestedHat, optMatchFields, optTarget);
 
         // Restore thread and sequencer to prior values before we return to the calling block.
         this.thread = callerThread;
@@ -272,7 +271,7 @@ class BlockUtility {
         func: U,
         args?: Runtime['ioDevices'][T][U] extends (...args: infer P) => unknown ? P : never
     ) {
-        const ioDevices = this.sequencer!.runtime.ioDevices;
+        const ioDevices = this.sequencer.runtime.ioDevices;
         if (device in ioDevices && func in ioDevices[device]) {
             const devObject = ioDevices[device];
             /* eslint-disable prefer-spread */
