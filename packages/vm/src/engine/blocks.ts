@@ -10,7 +10,6 @@ import type Runtime from './runtime';
 import type {ProcedureMutation, VMBlock, VMInput, VMMutation} from '../serialization/schema';
 import type {RuntimeScriptCache} from './blocks-runtime-cache';
 import type * as ClipCCBlock from 'clipcc-block';
-import type {CachedBlockData, CacheType} from './blocks-execute-cache';
 import type RenderedTarget from '../sprites/rendered-target';
 import type Comment from './comment';
 
@@ -41,7 +40,7 @@ interface CacheState {
     /**
      * A cache for execute to use and store on by block id.
      */
-    _executeCached: Record<string, CachedBlockData | CacheType>;
+    _executeCached: Record<string, unknown>;
     /**
      * A cache of block IDs and targets to start threads on as they are
      * actively monitored.

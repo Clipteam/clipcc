@@ -15,7 +15,7 @@ export interface CachedBlockData {
     mutation?: VMMutation;
 }
 
-export type CacheType = new (blocks: Blocks, cached: CachedBlockData) => CachedBlockData;
+type CacheType<T> = new (blocks: Blocks, cached: CachedBlockData) => T;
 
 /**
  * A private method shared with execute to build an object containing the block
@@ -26,16 +26,18 @@ export type CacheType = new (blocks: Blocks, cached: CachedBlockData) => CachedB
  * @param CacheType constructor for cached block information
  * @returns execute cache object
  */
-const getCached = function <T extends CacheType = never> (
+function getCached<T>(blocks: Blocks, blockId: string, CacheType?: CacheType<T>): T | null;
+function getCached(blocks: Blocks, blockId: string): CachedBlockData | null;
+function getCached<T> (
     blocks: Blocks,
     blockId: string,
-    CacheType?: T
-): (T extends never ? CachedBlockData : InstanceType<T>) | null {
+    CacheType?: CacheType<T>
+): CachedBlockData | T | null {
     const executeCache = blocks._cache._executeCached;
 
     let cached = executeCache[blockId];
     if (typeof cached !== 'undefined') {
-        return cached as T extends never ? CachedBlockData : InstanceType<T>;
+        return cached as (T | CachedBlockData);
     }
 
     const block = blocks.getBlock(blockId);
@@ -56,7 +58,7 @@ const getCached = function <T extends CacheType = never> (
         new CacheType(blocks, cachedBlockData);
 
     executeCache[blockId] = cached;
-    return cached as T extends never ? CachedBlockData : InstanceType<T>;
+    return cached as (T | CachedBlockData);
 };
 
 export {
