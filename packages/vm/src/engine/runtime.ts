@@ -1279,6 +1279,8 @@ class Runtime extends EventEmitter<RuntimeEvents> {
     _convertBlockForScratchBlocks (blockInfo: NormalizedExtensionBlockMetadata, categoryInfo: CategoryInfo) {
         const extendedOpcode = `${categoryInfo.id}_${blockInfo.opcode}`;
 
+        // the commented-out properties won't be processed in modern blockly
+        // @todo restore their functionality in another pr
         const blockJSON: JsonBlockDefinition = {
             type: extendedOpcode,
             inputsInline: true,
