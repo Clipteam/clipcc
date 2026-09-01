@@ -20,7 +20,7 @@ interface StackTimerContext {
 
 type AvailableIODevices = keyof Runtime['ioDevices'];
 
-type ExecutionContext = BaseExecutionContext & Partial<StackTimerContext>;
+export type ExecutionContext = BaseExecutionContext & Partial<StackTimerContext>;
 
 /**
  * @fileoverview
@@ -284,5 +284,4 @@ class BlockUtility {
     }
 }
 
-export type {BlockUtility, ExecutionContext};
 export default BlockUtility;
