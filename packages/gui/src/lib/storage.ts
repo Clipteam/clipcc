@@ -25,7 +25,7 @@ class Storage extends ScratchStorage {
     private assetHost = '';
     private cdnHost = '';
     private authorizationToken = '';
-    private translator: Translator | undefined;
+    private translator?: Translator;
 
     constructor () {
         super();
