@@ -123,6 +123,8 @@ const extensionInfoWithCustomFieldTypes = {
 };
 
 const testCategoryInfo = function (t, block) {
+    // the commented-out properties won't be processed in modern blockly
+    // @todo restore their functionality in another pr
     // t.equal(block.json.category, 'fake test extension');
     t.equal(block.json.colour, '#111111');
     // t.equal(block.json.colourSecondary, '#222222');
