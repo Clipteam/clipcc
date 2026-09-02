@@ -380,7 +380,8 @@ class Blocks {
         if (
             typeof (event as ClipCCBlock.Events.BlockBase).blockId !== 'string' &&
             typeof (event as ClipCCBlock.Events.VarBase).varId !== 'string' &&
-            typeof (event as ClipCCBlock.Events.CommentBase).commentId !== 'string'
+            typeof (event as ClipCCBlock.Events.CommentBase).commentId !== 'string' &&
+            typeof (event as ClipCCBlock.FuncChange).procCode !== 'string'
         ) {
             return;
         }
