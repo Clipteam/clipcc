@@ -112,6 +112,7 @@ export class FieldColourSlider extends Blockly.Field<string> {
    */
   protected override initView(): void {
     this.createTextElement_();
+    this.clickTarget_ = (this.sourceBlock_ as Blockly.BlockSvg).getSvgRoot();
     this.setValue(this.getValue());
   }
 
@@ -425,16 +426,6 @@ export class FieldColourSlider extends Blockly.Field<string> {
       sourceBlock.pathObject.svgPath.setAttribute('fill', this.getValue() ?? '#000');
       sourceBlock.pathObject.svgPath.setAttribute('stroke', '#fff');
     }
-  }
-
-  /**
-   * The element to bind the click handler to. If not set explicitly, defaults
-   * to the SVG root of the field. When this element is
-   * clicked on an editable field, the editor will open.
-   * @returns Element to bind click handler to.
-   */
-  protected override getClickTarget_(): Element | null {
-    return (this.sourceBlock_ as Blockly.BlockSvg).getSvgRoot();
   }
 
   /**

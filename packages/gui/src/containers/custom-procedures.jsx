@@ -40,6 +40,9 @@ class CustomProcedures extends React.Component {
         );
 
         this.workspace = ScratchBlocks.inject(this.blocks, workspaceConfig);
+        this.workspace.configureContextMenu = menuOptions => {
+            menuOptions.length = 0;
+        };
 
         // Create the procedure declaration block for editing the mutation.
         this.mutationRoot = this.workspace.newBlock('procedures_declaration');

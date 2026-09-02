@@ -3,7 +3,7 @@ packages:
   - app/*
 
 catalog:
-  jest: ^30.3.0
+  jest: ^30.4.0
   react: 16.2.0
   rule-inheritance-webpack-plugin: ^0.5.2
   typescript: ^5.9.3

@@ -203,6 +203,7 @@ export class AnchoredComment
   startDrag() {
     this.dragStrategy.startDrag();
     this.dragStartLocation = this.getRelativeToSurfaceXY(); // dragStrategy.startLoc is private
+    return this;
   }
 
   /**
