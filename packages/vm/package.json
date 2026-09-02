@@ -75,7 +75,6 @@
     "clipcc-storage": "workspace:~",
     "clipcc-svg-renderer": "workspace:~",
     "copy-webpack-plugin": "^14.0.0",
-    "domhandler": "^5.0.3",
     "eslint": "^9.39.2",
     "eslint-config-clipcc": "workspace:*",
     "format-message-cli": "6.2.4",
