@@ -42,9 +42,24 @@ class _StackFrame {
      */
     executionContext: unknown = null;
     /**
-     * The target of blocks that this thread will execute.
+     * The target of blocks that this stack frame will execute.
+     * Stored as a weak reference to make GC happy.
      */
-    target: RenderedTarget | null = null;
+    #target: WeakRef<RenderedTarget> | null = null;
+
+    /**
+     * The target of blocks that this thread will execute.
+     *
+     * Note that the stack frame only holds the weak reference to the target,
+     * so it may be null if the target has been garbage collected.
+     */
+    get target (): RenderedTarget | null {
+        return this.#target?.deref() ?? null;
+    }
+
+    set target (value: RenderedTarget | null) {
+        this.#target = value ? new WeakRef(value) : null;
+    }
 
     /**
      * @param warpMode Whether this level is in warp mode.  Is set by some legacy blocks and
@@ -412,6 +427,25 @@ class Thread {
     }
 }
 
+/**
+ * Clear the stack frame recycle bin.
+ * @param target If provided, only remove frames referencing this target or whose target is no longer alive.
+ * If falsy, clear the entire free list.
+ */
+function clearStackFrameFreeList (target?: RenderedTarget) {
+    if (!target) {
+        _stackFrameFreeList.length = 0;
+        return;
+    }
+    for (let i = _stackFrameFreeList.length - 1; i >= 0; --i) {
+        const frameTarget = _stackFrameFreeList[i].target;
+        if (!frameTarget || frameTarget === target) {
+            _stackFrameFreeList.splice(i, 1);
+        }
+    }
+}
+
 export type {Thread, _StackFrame as ThreadStackFrame};
+export {clearStackFrameFreeList};
 
 export default Thread;
