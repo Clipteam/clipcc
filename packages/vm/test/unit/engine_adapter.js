@@ -188,13 +188,13 @@ test('create variable with entity in name', t => {
     t.end();
 });
 
-test('create with invalid block xml', t => {
-    // Entirely invalid block XML
+test('create with empty block state', t => {
+    // Empty blocks state
     const result = adapter(events.createinvalid);
     t.ok(Array.isArray(result));
     t.equal(result.length, 0);
 
-    // Invalid grandchild tag
+    // Block state with no fields or inputs
     const result2 = adapter(events.createinvalidgrandchild);
     t.ok(Array.isArray(result2));
     t.equal(result2.length, 1);
@@ -205,7 +205,7 @@ test('create with invalid block xml', t => {
     t.end();
 });
 
-test('create with invalid xml', t => {
+test('create with empty blocks state', t => {
     const result = adapter(events.createbadxml);
     t.ok(Array.isArray(result));
     t.equal(result.length, 0);
