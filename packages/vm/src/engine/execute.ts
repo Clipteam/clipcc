@@ -374,16 +374,14 @@ class BlockCached {
             if (broadcastInput.block === broadcastInput.shadow) {
                 // Shadow dropdown menu is being used.
                 // Get the appropriate information out of it.
-                const shadow = blockContainer.getBlock(broadcastInput.shadow);
-                if (shadow) {
-                    const broadcastField = shadow.fields.BROADCAST_OPTION;
-                    this._argValues.BROADCAST_OPTION.id = broadcastField.id!;
-                    this._argValues.BROADCAST_OPTION.name = broadcastField.value!;
+                const shadow = blockContainer.getBlock(broadcastInput.shadow)!;
+                const broadcastField = shadow.fields.BROADCAST_OPTION;
+                this._argValues.BROADCAST_OPTION.id = broadcastField.id!;
+                this._argValues.BROADCAST_OPTION.name = broadcastField.value!;
 
-                    // Evaluating BROADCAST_INPUT here we do not need to do so
-                    // later.
-                    delete this._inputs.BROADCAST_INPUT;
-                }
+                // Evaluating BROADCAST_INPUT here we do not need to do so
+                // later.
+                delete this._inputs.BROADCAST_INPUT;
             }
         }
 

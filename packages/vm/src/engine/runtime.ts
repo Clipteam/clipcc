@@ -2802,8 +2802,9 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @returns List of param names for a procedure.
      */
     getProcedureParamNamesAndIds (procedureCode: string) {
-        return (this.getProcedureParamNamesIdsAndDefaults(procedureCode)
-            ?.slice(0, 2) ?? null) as [string[], string[]] | null;
+        const paramNamesIdsAndDefaults = this.getProcedureParamNamesIdsAndDefaults(procedureCode);
+        if (!paramNamesIdsAndDefaults) return null;
+        return paramNamesIdsAndDefaults.slice(0, 2) as [string[], string[]];
     }
 
     /**

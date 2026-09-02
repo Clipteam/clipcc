@@ -1,4 +1,4 @@
-import adapter, {type AdaptableEvents} from './adapter';
+import adapter from './adapter';
 import xmlEscape from '../util/xml-escape';
 import MonitorRecord from './monitor-record';
 import Clone from '../util/clone';
@@ -32,7 +32,7 @@ interface CacheState {
      * Cache procedure Param Names by block id.
      * Tuple for [names, ids, defaults]
      */
-    procedureParamNames: Record<string, [string[], string[], unknown[]] | null>;
+    procedureParamNames: Record<string, [string[], string[], string[]] | null>;
     /**
      * Cache procedure definitions by block id
      */
@@ -108,6 +108,7 @@ class Blocks {
      * Derived block caches invalidated together when block state changes.
      */
     _cache = createCacheState();
+
     constructor (
         /**
          * The runtime this block container operates within
@@ -145,6 +146,7 @@ class Blocks {
 
     /**
      * Get all known top-level blocks that start scripts.
+     * @returns List of block IDs.
      */
     getScripts () {
         return this._scripts;
@@ -240,7 +242,7 @@ class Blocks {
      * @param id ID of block to query.
      * @returns ID of top-level script block.
      */
-    getTopLevelScript (id?: string | null) {
+    getTopLevelScript (id: string | null) {
         if (!id) return null;
         let block = this._blocks[id];
         if (typeof block === 'undefined') return null;
@@ -256,7 +258,7 @@ class Blocks {
      * @returns Procedure states.
      */
     getAllProcedureDefinitions (globalOnly: boolean | null): ProcedureMutation[] {
-        const procedures = [];
+        const procedures: ProcedureMutation[] = [];
         for (const id in this._blocks) {
             if (!Object.prototype.hasOwnProperty.call(this._blocks, id)) continue;
             const block = this._blocks[id];
@@ -293,7 +295,7 @@ class Blocks {
         if (typeof blockID !== 'undefined') {
             if (blockID) {
                 const internal = this._getCustomBlockInternal(this._blocks[blockID]);
-                if (!globalOnly || internal?.mutation?.global) {
+                if (!globalOnly || internal!.mutation!.global) {
                     return blockID;
                 }
             }
@@ -324,16 +326,18 @@ class Blocks {
     /**
      * Get names and ids of parameters for the given procedure.
      * @param name Name of procedure to query.
-     * @returns List of param names for a procedure.
+     * @returns List of param names and ids for a procedure.
      */
     getProcedureParamNamesAndIds (name: string) {
-        return this.getProcedureParamNamesIdsAndDefaults(name)?.slice(0, 2) ?? null;
+        const paramNamesIdsAndDefaults = this.getProcedureParamNamesIdsAndDefaults(name);
+        if (!paramNamesIdsAndDefaults) return null;
+        return paramNamesIdsAndDefaults.slice(0, 2) as [string[], string[]];
     }
 
     /**
      * Get names, ids, and defaults of parameters for the given procedure.
      * @param name Name of procedure to query.
-     * @returns List of param names for a procedure.
+     * @returns List of param names, ids, and defaults for a procedure.
      */
     getProcedureParamNamesIdsAndDefaults (name: string) {
         const cachedNames = this._cache.procedureParamNames[name];
@@ -347,9 +351,9 @@ class Blocks {
             if (block.opcode === 'procedures_prototype' &&
                 block.mutation!.proccode === name) {
                 const mutation = block.mutation as unknown as ProcedureMutation;
-                const names = mutation.argumentnames!;
-                const ids = mutation.argumentids!;
-                const defaults = mutation.argumentdefaults!;
+                const names = mutation.argumentnames;
+                const ids = mutation.argumentids;
+                const defaults = mutation.argumentdefaults;
 
                 this._cache.procedureParamNames[name] = [names, ids, defaults];
                 return this._cache.procedureParamNames[name];
@@ -391,7 +395,7 @@ class Blocks {
         switch (event.type) {
         case 'create': {
             const e = event as ClipCCBlock.Events.BlockCreate;
-            const newBlocks = adapter(e as AdaptableEvents)!;
+            const newBlocks = adapter(e)!;
             const comments: Record<string, ClipCCBlock.BlockCommentState> = {};
             // A create event can create many blocks. Add them all.
             for (const block of newBlocks) {
@@ -670,14 +674,14 @@ class Blocks {
         case 'func_change': {
             const e = event as ClipCCBlock.FuncChange;
             const {oldExtraState, newExtraState} = e;
-            const procCode = oldExtraState?.proccode;
+            const procCode = oldExtraState!.proccode;
             if (!procCode) break;
-            if (oldExtraState.global) {
+            if (oldExtraState!.global) {
                 for (const target of this.runtime.targets) {
                     target.blocks.updateBlocksAfterFuncUpdate(procCode, newExtraState!);
                 }
             } else {
-                editingTarget?.blocks.updateBlocksAfterFuncUpdate(procCode, newExtraState!);
+                editingTarget!.blocks.updateBlocksAfterFuncUpdate(procCode, newExtraState!);
             }
             this.emitProjectChanged();
             break;
@@ -686,7 +690,7 @@ class Blocks {
             const e = event as ClipCCBlock.Events.Click;
             // UI event: clicked scripts toggle in the runtime.
             if (e.targetType === 'block') {
-                const topBlockId = this.getTopLevelScript(e.blockId);
+                const topBlockId = this.getTopLevelScript(e.blockId!);
                 if (!topBlockId) break;
                 this.runtime.toggleScript(
                     topBlockId,
@@ -1113,14 +1117,14 @@ class Blocks {
                 varType = Variable.BROADCAST_MESSAGE_TYPE;
             }
             if (varOrListField) {
-                const currVarId = varOrListField.id;
-                if (allReferences[currVarId!]) {
-                    allReferences[currVarId!].push({
+                const currVarId = varOrListField.id!;
+                if (allReferences[currVarId]) {
+                    allReferences[currVarId].push({
                         referencingField: varOrListField,
                         type: varType
                     });
                 } else {
-                    allReferences[currVarId!] = [{
+                    allReferences[currVarId] = [{
                         referencingField: varOrListField,
                         type: varType
                     }];
@@ -1192,7 +1196,7 @@ class Blocks {
      * Keep blocks up to date after they are shared between targets.
      * @param isStage If the new target is a stage.
      */
-    updateTargetSpecificBlocks (isStage?: boolean) {
+    updateTargetSpecificBlocks (isStage: boolean) {
         const blocks = this._blocks;
         for (const blockId in blocks) {
             if (isStage && blocks[blockId].opcode === 'event_whenthisspriteclicked') {
@@ -1251,8 +1255,8 @@ class Blocks {
                 block.fields.PROPERTY.value === oldName &&
                 // If block and shadow are different, it means a block is inserted to OBJECT, and should be ignored.
                 block.inputs.OBJECT.block === block.inputs.OBJECT.shadow) {
-                const inputBlock = this.getBlock(block.inputs.OBJECT.block);
-                if (inputBlock?.fields.OBJECT.value === targetName) {
+                const inputBlock = this.getBlock(block.inputs.OBJECT.block)!;
+                if (inputBlock.fields.OBJECT.value === targetName) {
                     block.fields.PROPERTY.value = newName;
                     blockUpdated = true;
                 }
