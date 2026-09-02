@@ -47,6 +47,12 @@ class _StackFrame {
     target: RenderedTarget | null = null;
 
     /**
+     * The block container that owns the current block in this frame.
+     * May differ when block is a monitor or calling a foreign procedure.
+     */
+    blockContainer: Blocks | null = null;
+
+    /**
      * @param warpMode Whether this level is in warp mode.  Is set by some legacy blocks and
      * "turbo mode"
      */
@@ -64,6 +70,7 @@ class _StackFrame {
         this.waitingReporter = false;
         this.params = null;
         this.executionContext = null;
+        this.blockContainer = null;
 
         return this;
     }
@@ -73,8 +80,10 @@ class _StackFrame {
      * @param warpMode defaults to current warpMode
      */
     reuse (warpMode = this.warpMode): this {
+        const blockContainer = this.blockContainer;
         this.reset();
         this.warpMode = Boolean(warpMode);
+        this.blockContainer = blockContainer;
         return this;
     }
 
@@ -218,8 +227,9 @@ class Thread {
      * Push stack and update stack frames appropriately.
      * @param blockId Block ID to push to stack.
      * @param target New target context.
+     * @param blockContainer Container that owns the block being pushed.
      */
-    pushStack (blockId: string | null, target?: RenderedTarget) {
+    pushStack (blockId: string | null, target?: RenderedTarget, blockContainer?: Blocks) {
         this.stack.push(blockId);
         // Push an empty stack frame, if we need one.
         // Might not, if we just popped the stack.
@@ -233,7 +243,10 @@ class Thread {
             } else {
                 stackFrame.target = this.target;
             }
-            this.blockContainer = stackFrame.target!.blocks;
+            // It should inherit from parent by default, unless it get explictly set.
+            stackFrame.blockContainer = blockContainer ?? parent?.blockContainer ??
+                this.blockContainer ?? stackFrame.target!.blocks;
+            this.blockContainer = stackFrame.blockContainer;
             this.stackFrames.push(stackFrame);
         }
     }
@@ -256,7 +269,9 @@ class Thread {
         _StackFrame.release(this.stackFrames.pop()!);
         const stackFrame = this.peekStackFrame();
         if (stackFrame) {
-            this.blockContainer = stackFrame.target!.blocks;
+            this.blockContainer = stackFrame.blockContainer;
+        } else {
+            this.blockContainer = null;
         }
         return this.stack.pop();
     }
