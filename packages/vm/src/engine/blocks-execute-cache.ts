@@ -26,7 +26,7 @@ type CacheType<T> = new (blocks: Blocks, cached: CachedBlockData) => T;
  * @param CacheType constructor for cached block information
  * @returns execute cache object
  */
-function getCached<T>(blocks: Blocks, blockId: string, CacheType?: CacheType<T>): T | null;
+function getCached<T>(blocks: Blocks, blockId: string, CacheType: CacheType<T>): T | null;
 function getCached(blocks: Blocks, blockId: string): CachedBlockData | null;
 function getCached<T> (
     blocks: Blocks,
