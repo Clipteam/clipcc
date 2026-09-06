@@ -32,13 +32,13 @@ export interface SB3BaseTarget {
     sounds: SB3Sound[];
     volume: number;
     layerOrder: number;
+}
+
+export interface SB3Stage extends SB3BaseTarget {
     tempo?: number;
     videoTransparency?: number;
     videoState?: 'on' | 'off' | 'on-flipped';
     textToSpeechLanguage?: string;
-}
-
-export interface SB3Stage extends SB3BaseTarget {
     isStage: true;
 }
 
