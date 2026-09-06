@@ -675,7 +675,6 @@ class Blocks {
             const e = event as ClipCCBlock.FuncChange;
             const {oldExtraState, newExtraState} = e;
             const procCode = oldExtraState!.proccode;
-            if (!procCode) break;
             if (oldExtraState!.global) {
                 for (const target of this.runtime.targets) {
                     target.blocks.updateBlocksAfterFuncUpdate(procCode, newExtraState!);

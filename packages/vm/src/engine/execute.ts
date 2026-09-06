@@ -323,7 +323,7 @@ class BlockCached {
             mutation: this.mutation
         };
 
-        const runtime = blockUtility.sequencer!.runtime!;
+        const {runtime} = blockUtility.sequencer;
 
         const {opcode, fields, inputs} = this;
 
@@ -436,8 +436,8 @@ class BlockCached {
     protected _pushInput (inputName: string, blockContainer: Blocks) {
         const input = this._inputs[inputName];
         if (input.block) {
-            const inputCached = getCachedExecuteBlock(blockContainer, input.block, BlockCached);
-            if (!inputCached || inputCached._isHat) {
+            const inputCached = getCachedExecuteBlock(blockContainer, input.block, BlockCached)!;
+            if (inputCached._isHat) {
                 return;
             }
 
@@ -557,7 +557,6 @@ const execute = function (sequencer: Sequencer, thread: Thread) {
             // then call handleReport.
             if (currentStackFrame.waitingReporter && i === length - 1) {
                 // cc - if returned value is null, then set the argument to undefined to avoid visual report.
-
                 handleReport(inputValue ?? undefined, sequencer, thread, opCached, true);
             } else if (inputName === 'BROADCAST_INPUT') {
                 // Something is plugged into the broadcast input.
