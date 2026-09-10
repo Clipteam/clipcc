@@ -20,7 +20,6 @@ import ScratchLinkWebSocket from '../util/scratch-link-websocket';
 
 // Virtual I/O devices.
 import Clock from '../io/clock';
-
 import Cloud from '../io/cloud';
 import Keyboard from '../io/keyboard';
 import Mouse from '../io/mouse';
@@ -66,6 +65,10 @@ import type {FieldDropdownArg, JsonBlockArg, JsonBlockDefinition} from '../types
 import type {MonitorRecordProps} from './monitor-record';
 
 type MenuGenerator = ClipCCBlocks.MenuOption[];
+
+export interface MessageContext {
+    targetType?: TargetType;
+}
 
 export interface MenuInfo {
     json: JsonBlockDefinition;
@@ -514,6 +517,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * cloud variables.
      */
     hasCloudData: () => boolean;
+
     /**
      * A function which checks whether a new cloud variable can be added
      * to the runtime.
@@ -521,6 +525,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * to the runtime.
      */
     canAddCloudVariable: () => boolean;
+
     /**
      * A function that tracks a new cloud variable in the runtime,
      * updating the cloud variable limit. Calling this function will
@@ -528,18 +533,39 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * being added.
      */
     addCloudVariable: () => void;
+
     /**
      * A function which updates the runtime's cloud variable limit
      * when removing a cloud variable and emits a cloud update event
      * if the last of the cloud variables is being removed.
      */
     removeCloudVariable: () => void;
+
+    /**
+     * The audio engine for the runtime, used to decode/play sounds.
+     */
     audioEngine?: AudioEngine;
+
+    /**
+     * The renderer for the runtime, used to draw the stage and targets.
+     */
     renderer?: RenderWebGL;
+
+    /**
+     * The bitmap adapter for the runtime, used to adapt Scratch 2 bitmaps to 3.
+     */
     v2BitmapAdapter?: BitmapAdapter;
+
+    /**
+     * The scratch storage instance that the runtime uses to store and retrieve assets.
+     */
     storage?: ScratchStorage;
 
+    /**
+     * A factory function that creates a ScratchLinkWebSocket for the runtime to use.
+     */
     _linkSocketFactory: ScratchLinkSocketFactory | null = null;
+
     constructor () {
         super();
         // Set an intial value for this.currentMSecs
@@ -987,16 +1013,15 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * If a target is not provided, default to the current
      * editing target or the stage.
      */
-    makeMessageContextForTarget (target?: RenderedTarget) { // eslint-disable-line @typescript-eslint/no-unused-vars
-        // Not implemented
-        /*
+    makeMessageContextForTarget (target?: RenderedTarget): MessageContext {
         target = target || this.getEditingTarget() || this.getTargetForStage();
         if (target) {
             const context = {
                 targetType: (target.isStage ? TargetType.STAGE : TargetType.SPRITE)
             };
+            return context;
         }
-        */
+        return {};
     }
 
     /**
@@ -1125,15 +1150,16 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      */
     _convertMenuItems (menuItems: ShortExtensionMenuItem | string[]): MenuGenerator {
         if (typeof menuItems !== 'function') {
+            const extensionMessageContext = this.makeMessageContextForTarget();
             return menuItems.map(item => {
-                const formattedItem = maybeFormatMessage(item);
+                const formattedItem = maybeFormatMessage(item, extensionMessageContext);
                 switch (typeof formattedItem) {
                 case 'string':
-                    return [formattedItem, formattedItem];
+                    return [formattedItem, formattedItem] as const;
                 case 'object':
                     return [
-                        maybeFormatMessage((item as unknown as ExtensionMenuItemObject).text),
-                        (item as unknown as ExtensionMenuItemObject).value
+                        maybeFormatMessage((item as ExtensionMenuItemObject).text, extensionMessageContext),
+                        (item as ExtensionMenuItemObject).value
                     ];
                 default:
                     throw new Error(`Can't interpret menu item: ${JSON.stringify(item)}`);
@@ -1360,18 +1386,22 @@ class Runtime extends EventEmitter<RuntimeEvents> {
             break;
         }
 
-        const blockText = Array.isArray(blockInfo.text) ? blockInfo.text : [blockInfo.text];
+        const blockText: string[] = Array.isArray(blockInfo.text) ? blockInfo.text : [blockInfo.text];
         let inTextNum = 0; // text for the next block "arm" is blockText[inTextNum]
         let inBranchNum = 0; // how many branches have we placed into the JSON so far?
         let outLineNum = 0; // used for scratch-blocks `message${outLineNum}` and `args${outLineNum}`
         const convertPlaceholders = this._convertPlaceholders.bind(this, context);
-        // const extensionMessageContext = this.makeMessageContextForTarget();
+        const extensionMessageContext = this.makeMessageContextForTarget();
+
+        if (typeof blockInfo.branchCount === 'undefined') {
+            blockInfo.branchCount = 0;
+        }
 
         // alternate between a block "arm" with text on it and an open slot for a substack
-        while (inTextNum < blockText.length || inBranchNum < (blockInfo.branchCount ?? 0)) {
+        while (inTextNum < blockText.length || inBranchNum < blockInfo.branchCount) {
             if (inTextNum < blockText.length) {
                 context.outLineNum = outLineNum;
-                const lineText: string = maybeFormatMessage(blockText[inTextNum]);
+                const lineText = maybeFormatMessage(blockText[inTextNum], extensionMessageContext);
                 const convertedText = lineText.replace(/\[(.+?)]/g, convertPlaceholders);
                 if (blockJSON[`message${outLineNum}`]) {
                     blockJSON[`message${outLineNum}`] += convertedText;
@@ -1381,7 +1411,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
                 ++inTextNum;
                 ++outLineNum;
             }
-            if (inBranchNum < (blockInfo.branchCount ?? 0)) {
+            if (inBranchNum < blockInfo.branchCount) {
                 blockJSON[`message${outLineNum}`] = '%1';
                 blockJSON[`args${outLineNum}`] = [{
                     type: 'input_statement',
@@ -1448,7 +1478,8 @@ class Runtime extends EventEmitter<RuntimeEvents> {
             log.error(`Custom button callbacks not supported yet: ${buttonInfo.func}`);
         }
 
-        const buttonText = maybeFormatMessage(buttonInfo.text);
+        const extensionMessageContext = this.makeMessageContextForTarget();
+        const buttonText = maybeFormatMessage(buttonInfo.text, extensionMessageContext);
         return {
             info: buttonInfo,
             xml: `<button text="${buttonText}" callbackKey="${buttonInfo.func}"></button>`
@@ -1493,7 +1524,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
 
         // Determine whether the argument type is one of the known standard field types
         const argInfo: ExtensionArgumentMetadata =
-            context.blockInfo.arguments?.[placeholder] || {} as ExtensionArgumentMetadata;
+            context.blockInfo.arguments?.[placeholder] || {};
         let argTypeInfo = ArgumentTypeMap[argInfo.type] || {};
 
         // Field type not a standard field type, see if extension has registered custom field type

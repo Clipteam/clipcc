@@ -15,17 +15,17 @@ const isMessageObject = (maybeMessage: unknown): maybeMessage is MessageObject =
  */
 function maybeFormatMessage<T extends MessageObject>(
     maybeMessage: T,
-    args?: Record<string, unknown>,
+    args?: object,
     locale?: string
 ): string;
 function maybeFormatMessage<T>(
     maybeMessage: T,
-    args?: Record<string, unknown>,
+    args?: object,
     locale?: string
 ): T;
 function maybeFormatMessage<T> (
     maybeMessage: T,
-    args?: Record<string, unknown>,
+    args?: object,
     locale?: string
 ): T | string {
     if (isMessageObject(maybeMessage)) {
