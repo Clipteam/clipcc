@@ -1876,7 +1876,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @param opts.updateMonitor true if the script should update a monitor value
      * @returns The newly created thread.
      */
-    _pushThread (id: string, target: RenderedTarget | null, opts?: {
+    _pushThread (id: string, target: RenderedTarget, opts?: {
         stackClick?: boolean,
         updateMonitor?: boolean
     }) {
@@ -2003,7 +2003,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
             }
         }
         // Otherwise add it.
-        this._pushThread(topBlockId, optTarget, {updateMonitor: true});
+        this._pushThread(topBlockId, optTarget!, {updateMonitor: true});
     }
 
     /**
