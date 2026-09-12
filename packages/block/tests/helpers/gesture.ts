@@ -8,6 +8,21 @@ import {jest, expect} from '@jest/globals';
 import * as Blockly from 'blockly/core';
 
 /**
+ * Get the label text of the given context menu item, ignoring the keyboard
+ * shortcut hint rendered by Blockly v13+.
+ * @param element The context menu item element.
+ * @returns The label text, or null if the element has no label.
+ */
+export function getContextMenuItemLabel(element: Element): string | null {
+  const content = element.firstElementChild; // .blocklyMenuItemContent
+  const first = content?.firstElementChild;
+  if (first?.classList.contains('blocklyShortcutContainer')) {
+    return first.firstElementChild?.textContent ?? null;
+  }
+  return first?.textContent ?? content?.textContent ?? null;
+}
+
+/**
  * Helper for UI testing.
  */
 export class Gesture {
@@ -197,8 +212,7 @@ export class Gesture {
 
     const menu = this.getContextMenuDom();
     for (const menuItem of menu.children) {
-      const text = menuItem.firstElementChild?.innerHTML;
-      if (text === name) {
+      if (getContextMenuItemLabel(menuItem) === name) {
         // Add offset to clientXY, checked by Blockly.
         this.dispatchClick(menuItem, {
           clientX: xy.x + 1,

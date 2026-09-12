@@ -10,8 +10,9 @@ import {FlyoutMetrics} from './flyout_metrics';
 import type {FlyoutButton} from './flyout_button';
 import type {BlockFlyoutInflater} from './inflaters/block';
 import {FlyoutStatusIndicatorLabel} from './flyout_status_indicator_label';
-import {FlyoutCheckbox} from './flyout_checkbox';
+import {FlyoutCheckboxGroup} from './flyout_checkbox_group';
 import styles from '../styles/flyout.css';
+import {FlyoutNavigator} from './flyout_navigator';
 
 /**
  * Class for customized flyout.
@@ -88,7 +89,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
    * Map from block ID to checkbox item.
    * Used to optimize setCheckboxState method.
    */
-  private flyoutCheckboxMap: Map<string, FlyoutCheckbox> = new Map<string, FlyoutCheckbox>();
+  private flyoutCheckboxMap: Map<string, FlyoutCheckboxGroup> = new Map<string, FlyoutCheckboxGroup>();
 
   /**
    * @param workspaceOptions Dictionary of options for the workspace.
@@ -97,6 +98,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     super(workspaceOptions);
     this.workspace_.setMetricsManager(new FlyoutMetrics(this.workspace_, this));
     this.setRecyclingEnabled(true);
+    this.workspace_.setNavigator(new FlyoutNavigator(this));
     if (workspaceOptions.rendererOverrides?.flyoutCollapseAnimation) {
       this.setCollapseAnimationEnabled(true);
     }
@@ -319,15 +321,6 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
   }
 
   /**
-   * Serialize a block to JSON.
-   * @param block The block to serialize.
-   * @returns A serialized representation of the block.
-   */
-  protected override serializeBlock(block: Blockly.BlockSvg): Blockly.serialization.blocks.State {
-    return Blockly.serialization.blocks.save(block, {saveIds: false})!;
-  }
-
-  /**
    * Add extra padding to the bottom of the flyout to make it possible
    * to scroll to the last category.
    * @param contentMetrics Content metrics for the flyout.
@@ -374,7 +367,7 @@ export class VerticalFlyout extends Blockly.VerticalFlyout {
     this.flyoutCheckboxMap.clear();
     for (const item of this.contents) {
       const element = item.getElement();
-      if (element instanceof FlyoutCheckbox) {
+      if (element instanceof FlyoutCheckboxGroup) {
         const block = element.getChildItem()?.getElement() as Blockly.BlockSvg | null;
         if (block) {
           this.flyoutCheckboxMap.set(block.id, element);

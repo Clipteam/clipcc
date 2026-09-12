@@ -6,6 +6,10 @@
 
 import * as Blockly from 'blockly/core';
 
+/**
+ * Registers a shortcut overriding the default copy behavior, allowing copying
+ * of the currently focused block.
+ */
 export function registerCopyShortcut() {
   const originalShortcut = Blockly.ShortcutRegistry.registry.getRegistry()[Blockly.ShortcutItems.names.COPY];
   const copyShortcut: Blockly.ShortcutRegistry.KeyboardShortcut = {
@@ -25,14 +29,18 @@ export function registerCopyShortcut() {
       const data = focused.toCopyData(true);
       if (!data) return false;
       Blockly.clipboard.setLastCopiedData(data);
-      Blockly.clipboard.setLastCopiedWorkspace(focused.workspace)
-      Blockly.clipboard.setLastCopiedLocation(focused.getRelativeToSurfaceXY())
+      Blockly.clipboard.setLastCopiedWorkspace(focused.workspace);
+      Blockly.clipboard.setLastCopiedLocation(focused.getRelativeToSurfaceXY());
       return true;
     }
   };
   Blockly.ShortcutRegistry.registry.register(copyShortcut, true);
 }
 
+/**
+ * Registers a shortcut overriding the default cut behavior, allowing cutting
+ * of the currently focused block.
+ */
 export function registerCutShortcut() {
   const originalShortcut = Blockly.ShortcutRegistry.registry.getRegistry()[Blockly.ShortcutItems.names.CUT];
   const cutShortcut: Blockly.ShortcutRegistry.KeyboardShortcut = {
@@ -52,8 +60,8 @@ export function registerCutShortcut() {
       const data = focused.toCopyData(true);
       if (!data) return false;
       Blockly.clipboard.setLastCopiedData(data);
-      Blockly.clipboard.setLastCopiedWorkspace(focused.workspace)
-      Blockly.clipboard.setLastCopiedLocation(focused.getRelativeToSurfaceXY())
+      Blockly.clipboard.setLastCopiedWorkspace(focused.workspace);
+      Blockly.clipboard.setLastCopiedLocation(focused.getRelativeToSurfaceXY());
       focused.checkAndDelete();
       return true;
     }

@@ -12,7 +12,7 @@ import type {
 import BaseEnv from '@jest/environment-jsdom-abstract';
 
 /**
- * Custom environment for jsdom (27.1.0).
+ * Custom environment for jsdom (28.1.0).
  */
 export default class Environment extends BaseEnv {
   constructor(config: JestEnvironmentConfig, context: EnvironmentContext) {
@@ -42,5 +42,7 @@ export default class Environment extends BaseEnv {
 
     this.global.BroadcastChannel = BroadcastChannel;
     this.global.TransformStream = TransformStream;
+    this.global.MessageChannel = MessageChannel;
+    this.global.MessagePort = MessagePort;
   }
 }

@@ -19,19 +19,19 @@
   "scripts": {
     "start": "webpack serve",
     "build": "webpack --progress --color --bail",
-    "test": "jest --silent --verbose",
-    "coverage": "jest --silent --coverage",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --silent --verbose",
+    "coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --silent --coverage",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "i18n:src": "node scripts/build-i18n-src.js --input_file msg/messages.js --output_dir msg/json --quiet"
   },
   "dependencies": {
-    "blockly": "^12.5.1"
+    "blockly": "^13.2.1"
   },
   "devDependencies": {
-    "@jest/environment": "^30.3.0",
-    "@jest/environment-jsdom-abstract": "^30.3.0",
-    "@jest/globals": "^30.3.0",
+    "@jest/environment": "^30.4.0",
+    "@jest/environment-jsdom-abstract": "^30.4.0",
+    "@jest/globals": "^30.4.0",
     "@types/node": "^25.5.0",
     "clipcc-l10n": "workspace:~",
     "copy-webpack-plugin": "^14.0.0",

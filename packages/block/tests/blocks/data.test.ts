@@ -9,6 +9,7 @@ import * as Blockly from 'blockly/core';
 import type {VariableModel} from '../../src/variable_model';
 import type {VariableMap} from '../../src/variable_map';
 import {PlaygroundTestContext, setupPlayground} from '../helpers/playground';
+import {getContextMenuItemLabel} from '../helpers/gesture';
 
 interface Context extends PlaygroundTestContext {
   variable: VariableModel;
@@ -67,7 +68,7 @@ describe('Blocks: Data', () => {
       // Context Menu in Workspace
       context.gesture.rightClickBlock(block);
       const menu = context.gesture.getContextMenuDom();
-      const items = Array.from(menu.children).map((element) => element.firstElementChild?.innerHTML);
+      const items = Array.from(menu.children).map(getContextMenuItemLabel);
       expect(items).toStrictEqual([
         Blockly.Msg.DUPLICATE_BLOCK,
         Blockly.Msg.ADD_COMMENT,
@@ -81,7 +82,7 @@ describe('Blocks: Data', () => {
       block.isInFlyout = true;
       context.gesture.rightClickBlock(block);
       const flyoutMenu = context.gesture.getContextMenuDom();
-      const flyoutItems = Array.from(flyoutMenu.children).map((element) => element.firstElementChild?.innerHTML);
+      const flyoutItems = Array.from(flyoutMenu.children).map(getContextMenuItemLabel);
       expect(flyoutItems).toStrictEqual([
         Blockly.Msg.RENAME_VARIABLE,
         Blockly.Msg.DELETE_VARIABLE.replace('%1', 'TEST_VARIABLE')
@@ -168,7 +169,7 @@ describe('Blocks: Data', () => {
       // Context Menu in Workspace
       context.gesture.rightClickBlock(block);
       const menu = context.gesture.getContextMenuDom();
-      const items = Array.from(menu.children).map((element) => element.firstElementChild?.innerHTML);
+      const items = Array.from(menu.children).map(getContextMenuItemLabel);
       expect(items).toStrictEqual([
         Blockly.Msg.DUPLICATE_BLOCK,
         Blockly.Msg.ADD_COMMENT,
@@ -182,7 +183,7 @@ describe('Blocks: Data', () => {
       block.isInFlyout = true;
       context.gesture.rightClickBlock(block);
       const flyoutMenu = context.gesture.getContextMenuDom();
-      const flyoutItems = Array.from(flyoutMenu.children).map((element) => element.firstElementChild?.innerHTML);
+      const flyoutItems = Array.from(flyoutMenu.children).map(getContextMenuItemLabel);
       expect(flyoutItems).toStrictEqual([
         Blockly.Msg.RENAME_LIST,
         Blockly.Msg.DELETE_LIST.replace('%1', 'TEST_LIST')

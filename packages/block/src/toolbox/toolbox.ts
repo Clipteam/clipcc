@@ -248,6 +248,7 @@ export class Toolbox extends Blockly.Toolbox {
     newItem: Blockly.ISelectableToolboxItem | null
   ): void {
     if (!newItem) {
+      this.getFlyout()?.setVisible(false);
       return;
     }
     const flyout = this.getFlyout() as VerticalFlyout;

@@ -195,7 +195,10 @@ export function registerCopyToPasteboard() {
     displayText: () => Blockly.Msg['COPY'],
     scopeType: Blockly.ContextMenuRegistry.ScopeType.BLOCK,
     preconditionFn(scope: Blockly.ContextMenuRegistry.Scope) {
-      return scope.block && !scope.block.isInFlyout ? 'enabled' : 'hidden';
+      return scope.block &&
+        !scope.block.isInFlyout &&
+        scope.block.isCopyable() ?
+        'enabled' : 'hidden';
     },
     callback(scope: Blockly.ContextMenuRegistry.Scope) {
       if (!scope.block) return;

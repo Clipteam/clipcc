@@ -469,7 +469,7 @@ Blockly.Blocks['operator_join_multiple'] = {
         if (!oldBlock.isShadow() && oldShadow) {
           input.connection!.setShadowState(oldShadow);
         }
-        oldBlock.outputConnection.connect(input.connection!);
+        oldBlock.outputConnection!.connect(input.connection!);
       } else {
         // Create a new shadow block and attach it to the given input.
         Blockly.Events.disable();
@@ -487,7 +487,7 @@ Blockly.Blocks['operator_join_multiple'] = {
         if (Blockly.Events.isEnabled()) {
           Blockly.Events.fire(new (Blockly.Events.get(Blockly.Events.BLOCK_CREATE))(newBlock));
         }
-        newBlock.outputConnection.connect(input.connection!);
+        newBlock.outputConnection!.connect(input.connection!);
       }
     }
 

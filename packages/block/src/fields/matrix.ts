@@ -178,6 +178,7 @@ export class FieldMatrix extends Blockly.Field<string> {
   protected override initView(): void {
     // Build the DOM
     this.updateSize_();
+    this.clickTarget_ = (this.getSourceBlock() as Blockly.BlockSvg).getSvgRoot();
     const DROPDOWN_ARROW_PADDING = this.getConstants()!.FIELD_DROPDOWN_SVG_ARROW_PADDING;
 
     const thumbX = DROPDOWN_ARROW_PADDING / 2;
@@ -584,16 +585,6 @@ export class FieldMatrix extends Blockly.Field<string> {
     this.size_.width = FieldMatrix.THUMBNAIL_SIZE + FieldMatrix.ARROW_SIZE +
       (this.getConstants()!.FIELD_DROPDOWN_SVG_ARROW_PADDING * 1.5);
     this.positionBorderRect_();
-  }
-
-  /**
-   * The element to bind the click handler to. If not set explicitly, defaults
-   * to the SVG root of the field. When this element is
-   * clicked on an editable field, the editor will open.
-   * @returns Element to bind click handler to.
-   */
-  protected override getClickTarget_(): Element | null {
-    return (this.getSourceBlock() as Blockly.BlockSvg).getSvgRoot();
   }
 }
 

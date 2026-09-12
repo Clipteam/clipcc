@@ -7,7 +7,7 @@
 import * as Blockly from 'blockly/core';
 import * as callbackRegistry from '../../callback_registry';
 import {isCheckboxInFlyout} from '../../interfaces/i_checkbox_in_flyout';
-import {FlyoutCheckbox} from '../flyout_checkbox';
+import {FlyoutCheckboxGroup} from '../flyout_checkbox_group';
 
 export class BlockFlyoutInflater extends Blockly.BlockFlyoutInflater {
   static readonly TYPE: string = 'block';
@@ -151,7 +151,7 @@ export class BlockFlyoutInflater extends Blockly.BlockFlyoutInflater {
     if (isCheckboxInFlyout(block) && block.checkboxInFlyout) {
       const state = (callbackRegistry.get('getCheckboxState'))(block.workspace.id, block.id);
       return new Blockly.FlyoutItem(
-        new FlyoutCheckbox(
+        new FlyoutCheckboxGroup(
           flyoutItem,
           flyout.getWorkspace(),
           flyout.targetWorkspace!,
@@ -171,7 +171,7 @@ export class BlockFlyoutInflater extends Blockly.BlockFlyoutInflater {
    */
   override disposeItem(item: Blockly.FlyoutItem): void {
     const element = item.getElement();
-    if (element instanceof FlyoutCheckbox) {
+    if (element instanceof FlyoutCheckboxGroup) {
       const childItem = element.getChildItem();
       if (childItem) {
         super.disposeItem(childItem);
@@ -198,9 +198,9 @@ export class BlockFlyoutInflater extends Blockly.BlockFlyoutInflater {
   /**
    * Event handler triggered when the checkbox state is changed.
    * @param newChecked The new checkbox state.
-   * @param checkbox The checkbox instance.
+   * @param checkbox The checkbox group instance.
    */
-  protected onCheckboxChange(newChecked: boolean, checkbox: FlyoutCheckbox) {
+  protected onCheckboxChange(newChecked: boolean, checkbox: FlyoutCheckboxGroup) {
     // Fire a block change event when checkbox state changes.
     if (Blockly.Events.isEnabled()) {
       const block = checkbox.getChildItem()!.getElement();
