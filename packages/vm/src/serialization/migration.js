@@ -102,7 +102,7 @@ const migrateMutation = (block, backward) => {
                 case 'return':
                 case 'generateshadows':
                     // Expect mutation[key] to be a string.
-                    mutation[key] = (mutation[key] === 'true');
+                    mutation[key] = typeof mutation[key] === 'string' ? (mutation[key] === 'true') : !!mutation[key];
                     break;
                 case 'argumentids':
                 case 'argumentnames':

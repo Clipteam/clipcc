@@ -15,7 +15,7 @@ export class FuncBase extends Blockly.Events.Abstract {
   override isBlank: boolean = false;
 
   /** The procCode of procedure. */
-  protected procCode?: string;
+  procCode?: string;
 
   /**
    * @param procedure The procedure model.
