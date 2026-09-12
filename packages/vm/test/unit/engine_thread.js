@@ -39,6 +39,30 @@ test('pushStack', t => {
     t.end();
 });
 
+test('pushStack preserves block container context', t => {
+    const th = new Thread('monitorBlock');
+    const r = new Runtime();
+    const s = new Sprite(null, r);
+    const rt = new RenderedTarget(s, r);
+
+    th.target = rt;
+    th.blockContainer = r.monitorBlocks;
+    th.pushStack('monitorBlock', rt);
+    t.equal(th.blockContainer, r.monitorBlocks);
+
+    // A procedure frame can switch to the definition target's blocks.
+    th.pushStack('procedureDefinition', rt, rt.blocks);
+    t.equal(th.blockContainer, rt.blocks);
+
+    // Returning from the procedure must restore the monitor container.
+    th.popStack();
+    t.equal(th.blockContainer, r.monitorBlocks);
+    th.popStack();
+    t.equal(th.blockContainer, null);
+
+    t.end();
+});
+
 test('popStack', t => {
     const th = new Thread('arbitraryString');
     const r = new Runtime();

@@ -4,6 +4,7 @@ import Runtime from '../../src/engine/runtime';
 import Thread from '../../src/engine/thread';
 import RenderedTarget from '../../src/sprites/rendered-target';
 import Sprite from '../../src/sprites/sprite';
+import MonitorRecord from '../../src/engine/monitor-record';
 
 test('spec', t => {
     t.type(Sequencer, 'function');
@@ -19,6 +20,53 @@ test('spec', t => {
     t.type(s.stepToBranch, 'function');
     t.type(s.stepToProcedure, 'function');
     t.type(s.retireThread, 'function');
+
+    t.end();
+});
+
+test('monitor reporters with fields execute from monitor blocks', t => {
+    const r = new Runtime();
+    const s = new Sequencer(r);
+    const sprite = new Sprite(null, r);
+    const target = new RenderedTarget(sprite, r);
+    const monitorId = 'current_year';
+    const currentYear = new Date().getFullYear();
+
+    r.addTarget(target);
+    r.setEditingTarget(target);
+    r.monitorBlocks.createBlock({
+        id: monitorId,
+        opcode: 'sensing_current',
+        fields: {
+            CURRENTMENU: {
+                name: 'CURRENTMENU',
+                value: 'YEAR'
+            }
+        },
+        inputs: {},
+        next: null,
+        parent: null,
+        shadow: false,
+        topLevel: true,
+        x: 0,
+        y: 0,
+        isMonitored: true,
+        targetId: null
+    });
+    r.requestAddMonitor(MonitorRecord({
+        id: monitorId,
+        opcode: 'sensing_current',
+        params: {CURRENTMENU: 'YEAR'},
+        value: '',
+        mode: 'default',
+        visible: true
+    }));
+
+    r.addMonitorScript(monitorId, target);
+    const thread = r.threads[0];
+    t.equal(thread.blockContainer, r.monitorBlocks);
+    s.stepThread(thread);
+    t.equal(r._monitorState.get(monitorId).get('value'), currentYear);
 
     t.end();
 });
