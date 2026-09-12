@@ -156,6 +156,11 @@ class Thread {
      * Substitutes the sequencer's count toward WORK_TIME on a per-thread basis.
      */
     warpTimer: Timer | null = null;
+    /**
+     * Value returned by a custom reporter procedure through `procedures_return`, waiting
+     * to be plugged into the input of the block that called the reporter. Cleared once
+     * the value has been consumed (see `execute.ts`).
+     */
     justReported: unknown = null;
     /**
      * true if the script was activated by clicking on the stack
