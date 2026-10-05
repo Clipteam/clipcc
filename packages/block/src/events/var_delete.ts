@@ -5,13 +5,14 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {VariableModel} from '../variable_model';
+import type {VariableModel, VariableType} from '../variable_model';
 import type {VariableMap} from '../variable_map';
 
 /**
  * Class for a variable deletion event.
  */
 export class VarDelete extends Blockly.Events.VarDelete {
+  override varType?: VariableType;
   isCloud = false;
   isLocal = false;
 

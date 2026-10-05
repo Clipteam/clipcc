@@ -7,11 +7,8 @@ import uid from '../util/uid';
 
 import xmlEscape from '../util/xml-escape';
 
-export const enum VariableType {
-    SCALAR = '',
-    LIST = 'list',
-    BROADCAST_MESSAGE = 'broadcast_msg'
-}
+/** All possible variable types, with SCALAR, LIST and BROADCAST_MESSAGE in order. */
+export type VariableType = '' | 'list' | 'broadcast_msg';
 
 import type * as ClipCCBlocks from 'clipcc-block';
 
@@ -78,15 +75,15 @@ class Variable {
     }
 
     static get SCALAR_TYPE () {
-        return VariableType.SCALAR;
+        return '' as const;
     }
 
     static get LIST_TYPE () {
-        return VariableType.LIST;
+        return 'list' as const;
     }
 
     static get BROADCAST_MESSAGE_TYPE () {
-        return VariableType.BROADCAST_MESSAGE;
+        return 'broadcast_msg' as const;
     }
 }
 

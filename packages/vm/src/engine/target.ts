@@ -277,9 +277,9 @@ abstract class Target extends EventEmitter<TargetEvents> {
      * @param isCloud Whether the variable to create has the isCloud flag set.
      * Additional checks are made that the variable can be created as a cloud variable.
      */
-    createVariable (id: string, name: string, type: string, isCloud?: boolean) {
+    createVariable (id: string, name: string, type: VariableType, isCloud?: boolean) {
         if (!Object.prototype.hasOwnProperty.call(this.variables, id)) {
-            const newVariable = new Variable(id, name, type as Variable['type'], false);
+            const newVariable = new Variable(id, name, type, false);
             if (isCloud && this.isStage && this.runtime.canAddCloudVariable()) {
                 newVariable.isCloud = true;
                 this.runtime.addCloudVariable();
