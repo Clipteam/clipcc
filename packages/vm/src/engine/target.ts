@@ -14,20 +14,12 @@ import type {VarReference} from '../util/variable-util';
 import type {VMBlock} from '../serialization/schema';
 
 /**
- * Events that can be emitted by Target (including subclasses like RenderedTarget).
- */
-interface TargetEvents {
-    'EVENT_TARGET_MOVED': [target: RenderedTarget, oldX: number, oldY: number, force: boolean];
-    'EVENT_TARGET_VISUAL_CHANGE': [target: RenderedTarget];
-}
-
-/**
  * @fileoverview
  * A Target is an abstract "code-running" object for the Scratch VM.
  * Examples include sprites/clones or potentially physical-world devices.
  */
 
-abstract class Target extends EventEmitter<TargetEvents> {
+abstract class Target<Events extends Record<keyof Events, unknown[]> = never> extends EventEmitter<Events> {
     /**
      * Reference to the runtime.
      */
