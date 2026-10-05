@@ -515,8 +515,7 @@ abstract class Target<Events extends Record<keyof Events, unknown[]> = never> ex
         if (skipStage || this.isStage || !this.runtime) {
             return targetVariables;
         }
-        const stage = this.runtime.getTargetForStage();
-        if (!stage) return targetVariables;
+        const stage = this.runtime.getTargetForStage()!;
         const stageVariables = stage.getAllVariableNamesInScopeByType(type);
         return targetVariables.concat(stageVariables);
     }
@@ -559,7 +558,7 @@ abstract class Target<Events extends Record<keyof Events, unknown[]> = never> ex
             log.warn(`Cannot share a local variable to the stage if it's not local.`);
             return;
         }
-        const stage = this.runtime.getTargetForStage();
+        const stage = this.runtime.getTargetForStage()!;
         // If a local var is being shared with the stage,
         // sharing will make the variable global, resulting in a conflict
         // with the existing local variable. Preemptively Resolve this conflict
@@ -568,7 +567,7 @@ abstract class Target<Events extends Record<keyof Events, unknown[]> = never> ex
         // First check if we've already done the local to global transition for this
         // variable. If we have, merge it with the global variable we've already created.
         const varIdForStage = `StageVarFromLocal_${varId}`;
-        let stageVar = stage?.lookupVariableById(varIdForStage);
+        let stageVar = stage.lookupVariableById(varIdForStage);
         // If a global var doesn't already exist, create a new one with a fresh name.
         // Use the ID we created above so that we can lookup this new variable in the
         // future if we decide to share this same variable again.

@@ -8,7 +8,7 @@ class Base64Util {
      * @param base64 - a base64 encoded string.
      * @returns a decoded Uint8Array.
      */
-    static base64ToUint8Array (base64: string): Uint8Array {
+    static base64ToUint8Array (base64: string): Uint8Array<ArrayBuffer> {
         const binaryString = atob(base64);
         const len = binaryString.length;
         const array = new Uint8Array(len);
