@@ -9,7 +9,7 @@ import MathUtil from '../../util/math-util';
 import RateLimiter from '../../util/rateLimiter';
 import log from '../../util/log';
 
-import type {ExtensionClass, ExtensionMetadata} from '../../extension-support/extension-metadata';
+import type {Extension, ExtensionMetadata} from '../../extension-support/extension-metadata';
 import type Runtime from '../../engine/runtime';
 
 /**
@@ -895,7 +895,7 @@ interface GetTiltAngleArgs {
 /**
  * Scratch 3.0 blocks to interact with a LEGO WeDo 2.0 peripheral.
  */
-class Scratch3WeDo2Blocks implements ExtensionClass {
+class Scratch3WeDo2Blocks implements Extension {
     /**
      * The Scratch 3.0 runtime.
      */

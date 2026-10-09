@@ -13,12 +13,11 @@ export interface MonitorRecordProps {
     sliderMin?: number;
     sliderMax?: number;
     isDiscrete?: boolean;
-    x: number | null;
+    x: number | null; // (x: null, y: null) Indicates that the monitor should be auto-positioned
     y: number | null;
     width: number;
     height: number;
     visible: boolean;
-    [key: string | symbol]: unknown;
 }
 
 const defaultMonitorRecord: MonitorRecordProps = {

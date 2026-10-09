@@ -29,7 +29,10 @@ class SettingsModal extends React.Component {
             'handleChangeAccurateCoordinates',
             'handleChangeHideNonVanillaBlocks',
             'handleChangeStageWidth',
-            'handleChangeStageHeight'
+            'handleChangeStageHeight',
+            'handleChangeTranslateServiceUrl',
+            'handleChangeTTSServiceUrl',
+            'handleChangeUseScratchOfficialApi'
         ]);
     }
     handleClose () {
@@ -82,6 +85,15 @@ class SettingsModal extends React.Component {
     handleChangeStageHeight (height) {
         this.props.updateSettings({stageHeight: Math.round(height)});
     }
+    handleChangeTranslateServiceUrl (url) {
+        this.props.updateSettings({translateServiceUrl: url.trim().replace(/\/+$/, '')});
+    }
+    handleChangeTTSServiceUrl (url) {
+        this.props.updateSettings({ttsServiceUrl: url.trim().replace(/\/+$/, '')});
+    }
+    handleChangeUseScratchOfficialApi (value) {
+        this.props.updateSettings({useScratchOfficialApi: value});
+    }
     render () {
         return (
             <SettingsModalComponent
@@ -98,6 +110,9 @@ class SettingsModal extends React.Component {
                 accurateCoordinates={this.props.accurateCoordinates}
                 stageHeight={this.props.stageHeight}
                 stageWidth={this.props.stageWidth}
+                translateServiceUrl={this.props.translateServiceUrl}
+                ttsServiceUrl={this.props.ttsServiceUrl}
+                useScratchOfficialApi={this.props.useScratchOfficialApi}
                 onClose={this.handleClose}
                 onChangeAutoSave={this.handleChangeAutoSave}
                 onChangeAutoSaveInterval={this.handleChangeAutoSaveInterval}
@@ -112,6 +127,9 @@ class SettingsModal extends React.Component {
                 onChangeHideNonVanillaBlocks={this.handleChangeHideNonVanillaBlocks}
                 onChangeStageWidth={this.handleChangeStageWidth}
                 onChangeStageHeight={this.handleChangeStageHeight}
+                onChangeTranslateServiceUrl={this.handleChangeTranslateServiceUrl}
+                onChangeTTSServiceUrl={this.handleChangeTTSServiceUrl}
+                onChangeUseScratchOfficialApi={this.handleChangeUseScratchOfficialApi}
             />
         );
     }
@@ -132,7 +150,10 @@ SettingsModal.propTypes = {
     onClose: PropTypes.func.isRequired,
     updateSettings: PropTypes.func.isRequired,
     stageHeight: PropTypes.number.isRequired,
-    stageWidth: PropTypes.number.isRequired
+    stageWidth: PropTypes.number.isRequired,
+    translateServiceUrl: PropTypes.string.isRequired,
+    ttsServiceUrl: PropTypes.string.isRequired,
+    useScratchOfficialApi: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = state => ({
@@ -148,7 +169,10 @@ const mapStateToProps = state => ({
     framerate: state.scratchGui.settings.framerate,
     theme: state.scratchGui.settings.theme,
     stageHeight: state.scratchGui.settings.stageHeight,
-    stageWidth: state.scratchGui.settings.stageWidth
+    stageWidth: state.scratchGui.settings.stageWidth,
+    translateServiceUrl: state.scratchGui.settings.translateServiceUrl,
+    ttsServiceUrl: state.scratchGui.settings.ttsServiceUrl,
+    useScratchOfficialApi: state.scratchGui.settings.useScratchOfficialApi
 });
 
 const mapDispatchToProps = dispatch => ({

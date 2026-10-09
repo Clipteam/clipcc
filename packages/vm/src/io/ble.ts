@@ -1,6 +1,7 @@
 import JSONRPC from '../util/jsonrpc';
 import Runtime from '../engine/runtime';
 import ScratchLinkWebSocket from '../util/scratch-link-websocket';
+import log from '../util/log';
 
 class BLE extends JSONRPC {
 
@@ -35,10 +36,10 @@ class BLE extends JSONRPC {
     ) {
         super();
 
-        this._socket = runtime.getScratchLinkSocket('BLE') as ScratchLinkWebSocket;
+        this._socket = runtime.getScratchLinkSocket('BLE');
         this._socket.setOnOpen(this.requestPeripheral.bind(this));
         this._socket.setOnClose(() => this.handleDisconnectError());
-        this._socket.setOnError(() => this._handleRequestError());
+        this._socket.setOnError(this._handleRequestError);
         this._socket.setHandleMessage(this._handleMessage.bind(this) as (json: unknown) => void);
 
         this._sendMessage = this._socket.sendMessage.bind(this._socket);
@@ -67,9 +68,7 @@ class BLE extends JSONRPC {
         }
         this._discoverTimeoutID = window.setTimeout(this._handleDiscoverTimeout.bind(this), 15000);
         this.sendRemoteRequest('discover', this._peripheralOptions)
-            .catch(() => {
-                this._handleRequestError();
-            });
+            .catch(this._handleRequestError);
     }
 
     /**
@@ -84,9 +83,7 @@ class BLE extends JSONRPC {
                 this._runtime.emit(Runtime.PERIPHERAL_CONNECTED);
                 this._connectCallback();
             })
-            .catch(() => {
-                this._handleRequestError();
-            });
+            .catch(this._handleRequestError);
     }
 
     /**
@@ -272,8 +269,8 @@ class BLE extends JSONRPC {
         });
     }
 
-    _handleRequestError (/* e */) {
-        // log.error(`BLE error: ${JSON.stringify(e)}`);
+    _handleRequestError (e: object) {
+        log.error(`BLE error: ${JSON.stringify(e)}`);
 
         this._runtime.emit(Runtime.PERIPHERAL_REQUEST_ERROR, {
             message: `Scratch lost connection to`,

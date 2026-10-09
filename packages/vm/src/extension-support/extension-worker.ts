@@ -2,13 +2,13 @@ import ArgumentType from '../extension-support/argument-type';
 import BlockType from '../extension-support/block-type';
 import dispatch from '../dispatch/worker-dispatch';
 import TargetType from './target-type';
-import type {ExtensionClass} from './extension-metadata';
+import type {Extension} from './extension-metadata';
 
 class ExtensionWorker {
     nextExtensionId = 0;
     initialRegistrations: Promise<void>[] | null = [];
     workerId?: number;
-    extensions: ExtensionClass[] = [];
+    extensions: Extension[] = [];
     constructor () {
         dispatch.waitForConnection.then(() => {
             dispatch.call('extensions', 'allocateWorker').then(x => {
@@ -31,7 +31,7 @@ class ExtensionWorker {
         this.extensions = [];
     }
 
-    register (extensionObject: ExtensionClass) {
+    register (extensionObject: Extension) {
         const extensionId = this.nextExtensionId++;
         this.extensions.push(extensionObject);
         const serviceName = `extension.${this.workerId}.${extensionId}`;
@@ -47,7 +47,7 @@ class ExtensionWorker {
 declare global {
     var Scratch: {
         extensions: {
-            register: (extensionObject: ExtensionClass) => Promise<void>;
+            register: (extensionObject: Extension) => Promise<void>;
         },
         ArgumentType: typeof ArgumentType;
         BlockType: typeof BlockType;

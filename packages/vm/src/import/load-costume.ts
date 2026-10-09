@@ -29,15 +29,14 @@ const loadVector_ = function (
                 costume.md5 = `${costume.assetId}.${costume.dataFormat}`;
             }
         }
-
-        if (!runtime.renderer) throw new Error('No renderer present on runtime');
         // createSVGSkin does the right thing if rotationCenter isn't provided, so it's okay if it's
         // undefined here
-        costume.skinId = runtime.renderer.createSVGSkin(svgString, rotationCenter);
-        costume.size = runtime.renderer.getSkinSize(costume.skinId);
+        const renderer = runtime.renderer!;
+        costume.skinId = renderer.createSVGSkin(svgString, rotationCenter);
+        costume.size = renderer.getSkinSize(costume.skinId);
         // Now we should have a rotationCenter even if we didn't before
         if (!rotationCenter) {
-            rotationCenter = runtime.renderer.getSkinRotationCenter(costume.skinId);
+            rotationCenter = renderer.getSkinRotationCenter(costume.skinId);
             costume.rotationCenterX = rotationCenter[0];
             costume.rotationCenterY = rotationCenter[1];
             costume.bitmapResolution = 1;
@@ -120,7 +119,7 @@ const fetchBitmapCanvas_ = function (costume: Costume, runtime: Runtime, rotatio
 
         if (typeof createImageBitmap !== 'undefined') {
             return createImageBitmap(
-                new Blob([asset.data as unknown as ArrayBuffer], {type: asset.assetType.contentType})
+                new Blob([asset.data!], {type: asset.assetType.contentType})
             );
         }
 
@@ -239,14 +238,14 @@ const loadBitmap_ = function (costume: Costume, runtime: Runtime, _rotationCente
 
             // TODO: costume.bitmapResolution will always be 2 at this point because of fetchBitmapCanvas_, so we don't
             // need to pass it in here.
-            if (!runtime.renderer) throw new Error('No renderer present on runtime');
-            costume.skinId = runtime.renderer.createBitmapSkin(canvas, costume.bitmapResolution, center);
+            const renderer = runtime.renderer!;
+            costume.skinId = renderer.createBitmapSkin(canvas, costume.bitmapResolution, center);
             canvasPool.release(mergeCanvas);
-            const renderSize = runtime.renderer.getSkinSize(costume.skinId);
+            const renderSize = renderer.getSkinSize(costume.skinId);
             costume.size = [renderSize[0] * 2, renderSize[1] * 2]; // Actual size, since all bitmaps are resolution 2
 
             if (!rotationCenter) {
-                rotationCenter = runtime.renderer.getSkinRotationCenter(costume.skinId);
+                rotationCenter = renderer.getSkinRotationCenter(costume.skinId);
                 // Actual rotation center, since all bitmaps are resolution 2
                 costume.rotationCenterX = rotationCenter[0] * 2;
                 costume.rotationCenterY = rotationCenter[1] * 2;
@@ -284,6 +283,7 @@ const handleCostumeLoadError = function (costume: Costume, runtime: Runtime) {
 
     return defaultCostumePromise.then(loadedCostume => {
         loadedCostume.broken = {
+            // Should be null if we got here because the costume was missing
             asset: oldAsset,
             assetId: oldAssetId,
             md5: `${oldAssetId}.${oldDataFormat}`,
@@ -372,14 +372,15 @@ let loadCostume = function (md5ext: string, costume: Costume, runtime: Runtime, 
         return Promise.resolve(costume);
     }
 
-    const AssetType = runtime.storage.AssetType;
+    const {AssetType, DataFormat} = runtime.storage;
+
     const assetType = (ext === 'svg') ? AssetType.ImageVector : AssetType.ImageBitmap;
 
     const costumePromise = runtime.storage.load(assetType, md5, ext);
 
     let textLayerPromise;
     if (costume.textLayerMD5) {
-        textLayerPromise = runtime.storage.load(AssetType.ImageBitmap, costume.textLayerMD5, 'png' as DataFormat);
+        textLayerPromise = runtime.storage.load(AssetType.ImageBitmap, costume.textLayerMD5, DataFormat.PNG);
     } else {
         textLayerPromise = Promise.resolve(null);
     }

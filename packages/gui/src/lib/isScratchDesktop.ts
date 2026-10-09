@@ -7,7 +7,7 @@ let isDesktopState: boolean | undefined;
  * Tell the `isScratchDesktop()` whether or not the GUI is running under Scratch Desktop.
  * @param value - the new value which `isScratchDesktop()` should return in the future.
  */
-const setIsScratchDesktop = function (value: boolean): void {
+const setIsScratchDesktop = function (value: boolean) {
     isDesktopState = value;
 };
 

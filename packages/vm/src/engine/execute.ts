@@ -124,7 +124,7 @@ const handleReport = function (
                 sequencer.runtime.visualReport(currentBlockId, resolvedValue);
             }
             if (thread.updateMonitor) {
-                const targetId = sequencer.runtime.monitorBlocks.getBlock(currentBlockId)?.targetId;
+                const targetId = sequencer.runtime.monitorBlocks.getBlock(currentBlockId)!.targetId;
                 if (targetId && !sequencer.runtime.getTargetById(targetId)) {
                     // Target no longer exists
                     return;
@@ -252,7 +252,7 @@ class BlockCached {
     /**
      * The block opcode's implementation function.
      */
-    _blockFunction: BlockFunction | null = null;
+    _blockFunction?: BlockFunction | null = null;
 
     /**
      * Is the block function defined for this opcode?
@@ -323,14 +323,13 @@ class BlockCached {
             mutation: this.mutation
         };
 
-        const runtime = blockUtility.sequencer?.runtime;
-        if (!runtime) throw new Error('Runtime is required for BlockCached.');
+        const {runtime} = blockUtility.sequencer;
 
         const {opcode, fields, inputs} = this;
 
         // Assign opcode isHat and blockFunction data to avoid dynamic lookups.
         this._isHat = runtime.getIsHat(opcode);
-        this._blockFunction = runtime.getOpcodeFunction(opcode)!;
+        this._blockFunction = runtime.getOpcodeFunction(opcode);
         this._definedBlockFunction = typeof this._blockFunction !== 'undefined';
 
         // Store the current shadow value if there is a shadow value.
@@ -375,16 +374,14 @@ class BlockCached {
             if (broadcastInput.block === broadcastInput.shadow) {
                 // Shadow dropdown menu is being used.
                 // Get the appropriate information out of it.
-                const shadow = blockContainer.getBlock(broadcastInput.shadow);
-                if (shadow) {
-                    const broadcastField = shadow.fields.BROADCAST_OPTION;
-                    this._argValues.BROADCAST_OPTION.id = broadcastField.id!;
-                    this._argValues.BROADCAST_OPTION.name = broadcastField.value!;
+                const shadow = blockContainer.getBlock(broadcastInput.shadow)!;
+                const broadcastField = shadow.fields.BROADCAST_OPTION;
+                this._argValues.BROADCAST_OPTION.id = broadcastField.id!;
+                this._argValues.BROADCAST_OPTION.name = broadcastField.value!;
 
-                    // Evaluating BROADCAST_INPUT here we do not need to do so
-                    // later.
-                    delete this._inputs.BROADCAST_INPUT;
-                }
+                // Evaluating BROADCAST_INPUT here we do not need to do so
+                // later.
+                delete this._inputs.BROADCAST_INPUT;
             }
         }
 
@@ -439,8 +436,8 @@ class BlockCached {
     protected _pushInput (inputName: string, blockContainer: Blocks) {
         const input = this._inputs[inputName];
         if (input.block) {
-            const inputCached = getCachedExecuteBlock(blockContainer, input.block, BlockCached);
-            if (!inputCached || inputCached._isHat) {
+            const inputCached = getCachedExecuteBlock(blockContainer, input.block, BlockCached)!;
+            if (inputCached._isHat) {
                 return;
             }
 
@@ -560,7 +557,6 @@ const execute = function (sequencer: Sequencer, thread: Thread) {
             // then call handleReport.
             if (currentStackFrame.waitingReporter && i === length - 1) {
                 // cc - if returned value is null, then set the argument to undefined to avoid visual report.
-
                 handleReport(inputValue ?? undefined, sequencer, thread, opCached, true);
             } else if (inputName === 'BROADCAST_INPUT') {
                 // Something is plugged into the broadcast input.
@@ -585,7 +581,7 @@ const execute = function (sequencer: Sequencer, thread: Thread) {
         let lastOperation = i === length - 1;
         let opCached = ops[i];
 
-        const blockFunction = opCached._blockFunction;
+        const blockFunction = opCached._blockFunction!;
 
         // Update values for arguments (inputs).
         const argValues = opCached._argValues;
@@ -602,7 +598,7 @@ const execute = function (sequencer: Sequencer, thread: Thread) {
 
         // Inputs are set during previous steps in the loop.
 
-        const primitiveReportedValue = blockFunction?.(argValues, blockUtility);
+        const primitiveReportedValue = blockFunction(argValues, blockUtility);
 
         // cc - preserve returned value
         if (opCached.opcode === 'procedures_return') {

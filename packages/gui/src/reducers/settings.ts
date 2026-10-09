@@ -18,6 +18,9 @@ export type SettingsState = {
     theme: string;
     stageWidth: number;
     stageHeight: number;
+    translateServiceUrl: string;
+    ttsServiceUrl: string;
+    useScratchOfficialApi: boolean;
 };
 
 const defaultState: SettingsState = {
@@ -34,7 +37,10 @@ const defaultState: SettingsState = {
     framerate: 30,
     theme: 'system',
     stageWidth: 480,
-    stageHeight: 360
+    stageHeight: 360,
+    translateServiceUrl: clipcc.DEFAULT_TRANSLATE_SERVICE_URL,
+    ttsServiceUrl: clipcc.DEFAULT_TTS_SERVICE_URL,
+    useScratchOfficialApi: false
 };
 
 const parseSavedSettings = (): Partial<SettingsState> => {
@@ -49,24 +55,14 @@ const parseSavedSettings = (): Partial<SettingsState> => {
         return {};
     }
 
-    return {
-        hideNonVanillaBlocks:
-            typeof parsed.hideNonVanillaBlocks === 'boolean' ? parsed.hideNonVanillaBlocks : undefined,
-        autoSave: typeof parsed.autoSave === 'boolean' ? parsed.autoSave : undefined,
-        infiniteCloning: typeof parsed.infiniteCloning === 'boolean' ? parsed.infiniteCloning : undefined,
-        edgelessStage: typeof parsed.edgelessStage === 'boolean' ? parsed.edgelessStage : undefined,
-        unlimitedListLength: typeof parsed.unlimitedListLength === 'boolean' ? parsed.unlimitedListLength : undefined,
-        unlimitedPenSize: typeof parsed.unlimitedPenSize === 'boolean' ? parsed.unlimitedPenSize : undefined,
-        unlimitedSoundStuffs:
-            typeof parsed.unlimitedSoundStuffs === 'boolean' ? parsed.unlimitedSoundStuffs : undefined,
-        accurateCoordinates: typeof parsed.accurateCoordinates === 'boolean' ? parsed.accurateCoordinates : undefined,
-        autoSaveInterval: typeof parsed.autoSaveInterval === 'number' ? parsed.autoSaveInterval : undefined,
-        compression: typeof parsed.compression === 'number' ? parsed.compression : undefined,
-        framerate: typeof parsed.framerate === 'number' ? parsed.framerate : undefined,
-        theme: typeof parsed.theme === 'string' ? parsed.theme : undefined,
-        stageWidth: typeof parsed.stageWidth === 'number' ? parsed.stageWidth : undefined,
-        stageHeight: typeof parsed.stageHeight === 'number' ? parsed.stageHeight : undefined
-    };
+    const result: Partial<SettingsState> = {};
+    for (const key of Object.keys(defaultState) as Array<keyof SettingsState>) {
+        const value = parsed[key];
+        if (value !== undefined && typeof value === typeof defaultState[key]) {
+            (result as Record<string, unknown>)[key] = value;
+        }
+    }
+    return result;
 };
 
 const initialState: SettingsState = {

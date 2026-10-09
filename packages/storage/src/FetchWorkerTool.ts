@@ -99,7 +99,7 @@ class PrivateFetchWorkerTool implements Tool {
      * Request configuration for data to get, including url and additional fetch options.
      * @returns {Promise.<Buffer|Uint8Array|null>} Resolve to Buffer of data from server.
      */
-    get ({url, ...options}: ScratchGetRequest): Promise<Uint8Array | null> {
+    get ({url, ...options}: ScratchGetRequest): Promise<Uint8Array<ArrayBuffer> | null> {
         const worker = this.worker;
 
         if (!worker) {
@@ -195,7 +195,7 @@ export default class PublicFetchWorkerTool {
      * @param {{url:string}} reqConfig - Request configuration for data to get.
      * @returns {Promise.<Buffer|Uint8Array|null>} Resolve to Buffer of data from server.
      */
-    get (reqConfig: ScratchGetRequest): Promise<Uint8Array | null> {
+    get (reqConfig: ScratchGetRequest): Promise<Uint8Array<ArrayBuffer> | null> {
         return this.inner.get(reqConfig);
     }
 

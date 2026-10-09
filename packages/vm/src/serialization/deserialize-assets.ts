@@ -52,7 +52,7 @@ const deserializeSound = function (sound: Sound, runtime: Runtime, zip: JSZip, a
     return soundFile.async('uint8array').then(data => storage.createAsset(
         storage.AssetType.Sound,
         dataFormat,
-        data,
+        data as Uint8Array<ArrayBuffer>,
         null,
         true
     ))
@@ -155,8 +155,8 @@ const deserializeCostume = function (
         textLayerFilePromise = textLayerFile.async('uint8array')
             .then(data => storage.createAsset(
                 storage.AssetType.ImageBitmap,
-                'png' as DataFormat,
-                data,
+                storage.DataFormat.PNG,
+                data as Uint8Array<ArrayBuffer>,
                 costume.textLayerMD5
             ))
             .then(asset => {
@@ -172,7 +172,7 @@ const deserializeCostume = function (
                 assetType,
                 // TODO eventually we want to map non-png's to their actual file types?
                 costumeFormat,
-                data,
+                data as Uint8Array<ArrayBuffer>,
                 null,
                 true
             ))

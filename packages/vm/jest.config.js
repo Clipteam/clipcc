@@ -1,6 +1,9 @@
 /** @satisfies {import('jest').Config} */
 module.exports = {
     testEnvironment: 'node',
+    setupFiles: [
+        '<rootDir>/test/helpers/clipcc-globals.js'
+    ],
     testMatch: [
         '<rootDir>/test/unit/*.js',
         '<rootDir>/test/integration/*.js'

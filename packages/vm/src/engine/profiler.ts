@@ -48,7 +48,7 @@ export type FrameCallback = (frame: ProfilerFrame) => void;
 /**
  * A set of information about a frame of execution that was recorded.
  */
-class ProfilerFrame {
+export class ProfilerFrame {
     /**
      * The numeric id of a record symbol like Runtime._step or
      * blockFunction.
@@ -125,6 +125,10 @@ class Profiler {
         /**
          * A callback handle called with each decoded frame when reporting back
          * all the recorded times.
+         *  @param onFrame a handle called for each recorded frame.
+         * The passed frame value may not be stored as it'll be updated with later
+         * frame information. Any information that is further stored by the handler
+         * should make copies or reduce the information.
          */
         public onFrame: FrameCallback = function () {}
     ) {}
@@ -322,4 +326,3 @@ class Profiler {
 }
 
 export default Profiler;
-export type {ProfilerFrame};

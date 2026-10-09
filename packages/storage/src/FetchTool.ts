@@ -19,7 +19,7 @@ export class FetchTool implements Tool {
      * @param {Request} reqConfig - Request configuration for data to get.
      * @returns Resolve to Buffer of data from server.
      */
-    get ({url, ...options}: ScratchGetRequest): Promise<Uint8Array | null> {
+    get ({url, ...options}: ScratchGetRequest): Promise<Uint8Array<ArrayBuffer> | null> {
         return scratchFetch(url, Object.assign({method: 'GET'}, options))
             .then((result: Response) => {
                 if (result.ok) return result.arrayBuffer().then(b => new Uint8Array(b));

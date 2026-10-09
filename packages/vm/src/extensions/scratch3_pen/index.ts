@@ -10,7 +10,7 @@ import RenderedTarget from '../../sprites/rendered-target';
 import log from '../../util/log';
 import StageLayering from '../../engine/stage-layering';
 
-import type {ExtensionClass, ExtensionMetadata} from '../../extension-support/extension-metadata';
+import type {Extension, ExtensionMetadata} from '../../extension-support/extension-metadata';
 import type Runtime from '../../engine/runtime';
 import type BlockUtility from '../../engine/block-utility';
 import type Target from '../../engine/target';
@@ -80,7 +80,7 @@ interface SetPenShadeToNumberArgs {
 /**
  * Host for the Pen-related blocks in Scratch 3.0
  */
-class Scratch3PenBlocks implements ExtensionClass {
+class Scratch3PenBlocks implements Extension {
     /**
      * The ID of the renderer Drawable corresponding to the pen layer.
      */

@@ -3,6 +3,8 @@ const test = require('tap').test;
 
 const ScratchStorage = require('../../dist/node/scratch-storage');
 
+const ASSET_SERVER = 'https://static.codingclip.com/v1/';
+
 let storage;
 test('constructor', t => {
     storage = new ScratchStorage();
@@ -79,7 +81,7 @@ test('addWebSource', t => {
     t.doesNotThrow(() => {
         storage.addWebSource(
             [storage.AssetType.ImageVector, storage.AssetType.ImageBitmap, storage.AssetType.Sound],
-            asset => `https://cdn.assets.scratch.mit.edu/internalapi/asset/${asset.assetId}.${asset.dataFormat}/get/`
+            asset => `${ASSET_SERVER}project/asset/${asset.assetId}.${asset.dataFormat}`
         );
     });
     t.end();

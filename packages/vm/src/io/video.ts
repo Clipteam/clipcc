@@ -1,18 +1,27 @@
 import StageLayering from '../engine/stage-layering';
 import type Runtime from '../engine/runtime';
 
+/**
+ * A descriptor of the frame you would like to receive.
+ */
+export interface FrameInfo {
+    /** The tuple of the frame's dimensions. */
+    dimensions?: [number, number];
+    /** If you specificly want a mirror / non-mirror frame. */
+    mirror?: boolean;
+    /** Requested video format, available formats are 'image-data' and 'canvas'. */
+    format?: string;
+    /** Will reuse previous image data if the time since capture is less than the cacheTimeout. */
+    cacheTimeout?: number;
+};
+
 export interface VideoProvider {
     /** Requests camera access from the user, and upon success, enables the video feed */
     enableVideo: () => Promise<unknown>;
     /** Turns off the video feed */
     disableVideo: () => void;
     /** Return frame data from the video feed in specified dimensions, format, and mirroring. */
-    getFrame: (frameInfo: {
-        dimensions: [number, number];
-        mirror: boolean;
-        format: string;
-        cacheTimeout: number;
-    }) => ImageData | null;
+    getFrame: (frameInfo: FrameInfo) => ImageData | null;
     videoReady: boolean;
     /** Set the dimensions of the video stream, usually called when stage size changed. */
     setDimensions: (width: number, height: number) => void;
@@ -45,13 +54,9 @@ class Video {
      */
     _forceTransparentPreview = false;
 
-    _frameCacheTimeout?: number;
-
     _renderPreviewFrame: (() => void) | null = null;
 
     _renderPreviewTimeout?: ReturnType<typeof setTimeout>;
-
-    mirror?: boolean;
 
     constructor (runtime: Runtime) {
         this.runtime = runtime;
@@ -97,7 +102,7 @@ class Video {
      *
      * @returns resolves a promise to this IO device when video is ready.
      */
-    enableVideo (){
+    enableVideo () {
         if (!this.provider) return null;
         return this.provider.enableVideo().then(() => this._setupPreview());
     }
@@ -124,21 +129,9 @@ class Video {
      *
      * @returns Frame data in requested format, null when errors.
      */
-    getFrame ({
-        dimensions = [this.runtime.stageWidth, this.runtime.stageHeight],
-        mirror = this.mirror,
-        format = Video.FORMAT_IMAGE_DATA,
-        cacheTimeout = this._frameCacheTimeout
-    }: {
-        dimensions?: [number, number];
-        mirror?: boolean;
-        format?: string;
-        cacheTimeout?: number;
-    }) {
-        if (this.provider) {
-            return this.provider.getFrame({dimensions, mirror: mirror!, format, cacheTimeout: cacheTimeout!});
-        }
-        return null;
+    getFrame (frameInfo: FrameInfo) {
+        if (!this.provider) return null;
+        return this.provider.getFrame(frameInfo);
     }
 
     /**

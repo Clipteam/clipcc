@@ -5,6 +5,7 @@ module.exports = {
     testEnvironment: 'jsdom',
     setupFiles: [
         'raf/polyfill',
+        '<rootDir>/test/helpers/clipcc-globals.js',
         '<rootDir>/test/helpers/enzyme-setup.js'
     ],
     testPathIgnorePatterns: [

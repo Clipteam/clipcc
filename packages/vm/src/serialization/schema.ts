@@ -1,4 +1,4 @@
-import type {BlockCommentState} from 'clipcc-block';
+import type {BlockCommentState, proceduresSerializer} from 'clipcc-block';
 import type RenderedTarget from '../sprites/rendered-target';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -32,13 +32,13 @@ export interface SB3BaseTarget {
     sounds: SB3Sound[];
     volume: number;
     layerOrder: number;
+}
+
+export interface SB3Stage extends SB3BaseTarget {
     tempo?: number;
     videoTransparency?: number;
     videoState?: 'on' | 'off' | 'on-flipped';
     textToSpeechLanguage?: string;
-}
-
-export interface SB3Stage extends SB3BaseTarget {
     isStage: true;
 }
 
@@ -218,24 +218,17 @@ export interface VMField {
     variableType?: string;
 }
 
-export interface ProcedureMutation {
-    proccode?: string;
-    argumentids?: string[];
-    argumentnames?: string[];
-    argumentdefaults?: string[];
-    warp?: boolean;
-    hasnext?: boolean;
-    return?: boolean;
-    global?: boolean;
-    generateshadows?: boolean;
-}
+
+/** The full procedure extra state for definition and prototypes. */
+export type ProcedureMutation = proceduresSerializer.ProcedureExtraState;
 
 export interface DynamicExtensionBlockMutation {
     blockInfo?: Record<string, unknown>;
 }
 
+/** General block mutation */
 export type VMMutation = {
     tagName?: string;
     children?: VMMutation[];
     [key: string]: unknown;
-} & ProcedureMutation & DynamicExtensionBlockMutation;
+};

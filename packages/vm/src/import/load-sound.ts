@@ -6,8 +6,8 @@ import type Runtime from '../engine/runtime';
 import type SoundBank from '../../../audio/dist/types/SoundBank';
 /**
  * Initialize a sound from an asset asynchronously.
- * @param  sound - the Scratch sound object.
- * @param  soundAsset - the asset loaded from storage.
+ * @param sound - the Scratch sound object.
+ * @param soundAsset - the asset loaded from storage.
  * @param runtime - Scratch runtime, used to access the storage module.
  * @param soundBank - Scratch Audio SoundBank to add sounds to.
  * @returns A promise which will resolve to the sound when ready.

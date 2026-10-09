@@ -5,7 +5,7 @@
  */
 
 import * as Blockly from 'blockly/core';
-import type {VariableModel} from './variable_model';
+import type {VariableModel, VariableType} from './variable_model';
 
 /**
  * Class that provides storage for variables.
@@ -25,7 +25,7 @@ export class VariableMap extends Blockly.VariableMap {
    */
   override createVariable(
     name: string,
-    varType?: string,
+    varType?: VariableType,
     varId?: string,
     isLocal?: boolean,
     isCloud?: boolean

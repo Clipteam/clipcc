@@ -247,8 +247,7 @@ class Scratch3MotionBlocks implements CategoryPrototype {
         const newDirection = MathUtil.radToDeg(Math.atan2(dy, dx)) + 90;
         util.target.setDirection(newDirection);
         // Keep within the stage.
-        const fencedPosition = util.target.keepInFence(util.target.x, util.target.y);
-        if (!fencedPosition) return;
+        const fencedPosition = util.target.keepInFence(util.target.x, util.target.y)!;
         util.target.setXY(fencedPosition[0], fencedPosition[1]);
     }
 

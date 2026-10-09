@@ -28,7 +28,7 @@ import './variable_model';
 import './variable_map';
 import * as callbackRegistry from './callback_registry';
 import * as Constants from './constants';
-import {VariableModel} from './variable_model';
+import {VariableModel, type VariableType} from './variable_model';
 import type {VerticalFlyout} from './toolbox/flyout';
 import type {Toolbox} from './toolbox/toolbox';
 
@@ -51,7 +51,7 @@ export const CLOUD_PREFIX = '☁ ';
 export function createVariable(
   workspace: Blockly.WorkspaceSvg,
   callback?: (id?: string) => void,
-  type = Constants.SCALAR_VARIABLE_TYPE
+  type: VariableType = Constants.SCALAR_VARIABLE_TYPE
 ) {
   // Decide on a modal message based on the type. If type was not
   // provided, default to the original message for scalar variables.

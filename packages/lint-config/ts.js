@@ -41,7 +41,10 @@ module.exports = [
             'no-useless-constructor': 'off',
             // Use TypeScript-aware no-shadow to avoid false positives on enums/types
             'no-shadow': 'off',
-            '@typescript-eslint/no-shadow': 'error'
+            '@typescript-eslint/no-shadow': 'error',
+            // TypeScript overloads and declaration merging are intentional
+            'no-redeclare': 'off',
+            '@typescript-eslint/no-redeclare': ['error', {ignoreDeclarationMerge: true}]
         }
     }
 ];

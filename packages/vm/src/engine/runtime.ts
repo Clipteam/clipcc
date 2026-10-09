@@ -20,7 +20,6 @@ import ScratchLinkWebSocket from '../util/scratch-link-websocket';
 
 // Virtual I/O devices.
 import Clock from '../io/clock';
-
 import Cloud from '../io/cloud';
 import Keyboard from '../io/keyboard';
 import Mouse from '../io/mouse';
@@ -59,12 +58,17 @@ import type {
     ExtensionMenuItemObject,
     NormalizedExtensionItemMetadata,
     NormalizedExtensionBlockMetadata,
-    ExtensionCustomFieldTypeInfo
+    ExtensionCustomFieldTypeInfo,
+    PeripheralExtension
 } from '../extension-support/extension-metadata';
 import type {FieldDropdownArg, JsonBlockArg, JsonBlockDefinition} from '../types/json-block-definitions';
 import type {MonitorRecordProps} from './monitor-record';
 
 type MenuGenerator = ClipCCBlocks.MenuOption[];
+
+export interface MessageContext {
+    targetType?: TargetType;
+}
 
 export interface MenuInfo {
     json: JsonBlockDefinition;
@@ -98,13 +102,6 @@ export type CategoryInfo =
         blocks: (BlockInfo | ButtonInfo | SepInfo)[];
     };
 
-export interface PeripheralExtensionClass {
-    scan(): void;
-    connect(peripheralId: number): void;
-    disconnect(): void;
-    isConnected(): boolean;
-}
-
 const defaultBlockPackages = {
     scratch3_control: control,
     scratch3_event: event,
@@ -124,13 +121,39 @@ type ScriptCallback = (script: string, target: RenderedTarget) => void;
 type ScriptByOpcodeCallback = (script: RuntimeScriptCache, target: RenderedTarget) => void;
 export type ScratchLinkSocketFactory = (type: string) => ScratchLinkWebSocket;
 
+/**
+ * Metadata describing how a hat block is triggered.
+ */
 export interface HatMetadata {
+    /**
+     * Whether the hat is edge activated: the runtime evaluates it once per step and
+     * starts a thread when it becomes true.
+     */
     edgeActivated?: boolean;
+    /**
+     * Whether triggering the hat restarts threads already running from the same top
+     * block instead of ignoring the event.
+     */
     restartExistingThreads?: boolean;
 }
 
+/**
+ * Information about a block that can be shown as a monitor on the stage.
+ */
 export interface MonitorBlockInfo {
+    /**
+     * Whether the monitor belongs to a single sprite, so that the ID of the monitor
+     * includes its target, instead of being shared by the whole project.
+     */
     isSpriteSpecific?: boolean;
+    /**
+     * Get the ID of the monitor of a target and block fields. The ID has to match the
+     * ID of the same block in the toolbox so that the monitor and the checkbox in the
+     * flyout stay in sync.
+     * @param targetId ID of the target that owns the monitor, if it is sprite specific.
+     * @param fields Fields of the monitored block, used to distinguish monitors with arguments.
+     * @returns The ID of the monitor.
+     */
     getId: (targetId?: string, fields?: Record<string, VMField>) => string;
 }
 
@@ -191,12 +214,36 @@ const ArgumentTypeMap = {
     }
 };
 
+/**
+ * Information shared while converting the argument placeholders of an extension
+ * block into scratch-blocks JSON and XML.
+ */
 export interface PlaceholderContext {
+    /**
+     * Map from an argument placeholder name to its argument number in the block's
+     * `argsN` list.
+     */
     argsMap: Record<string, unknown>;
+    /**
+     * The scratch-blocks JSON definition of the block being converted.
+     */
     blockJSON: JsonBlockDefinition
+    /**
+     * The category that owns the block, used to resolve its menus and custom field types.
+     */
     categoryInfo: CategoryInfo;
+    /**
+     * The original metadata of the block being converted.
+     */
     blockInfo: NormalizedExtensionBlockMetadata;
+    /**
+     * Collected XML fragments for the inputs and fields of the block.
+     */
     inputList: string[];
+    /**
+     * Index of the message line being converted, used for `messageN`/`argsN` in the
+     * block JSON.
+     */
     outLineNum?: number;
 }
 
@@ -255,52 +302,265 @@ let rendererDrawProfilerId = -1;
  * Events that can be emitted by Runtime.
  */
 export interface RuntimeEvents {
+    /**
+     * Emitted when the stage size changes.
+     * @param width The new stage width in pixels.
+     * @param height The new stage height in pixels.
+     */
     'STAGE_SIZE_UPDATE': [width: number, height: number];
-    'SCRIPT_GLOW_ON': [{id: string}];
-    'SCRIPT_GLOW_OFF': [{id: string}];
-    'BLOCK_GLOW_ON': [{id: string}];
-    'BLOCK_GLOW_OFF': [{id: string}];
+
+    /**
+     * Emitted when a script should be highlighted (e.g. it is running).
+     * @param glowData An object containing the ID of the script block.
+     */
+    'SCRIPT_GLOW_ON': [glowData: {id: string}];
+
+    /**
+     * Emitted when a script should stop being highlighted.
+     * @param glowData An object containing the ID of the script block.
+     */
+    'SCRIPT_GLOW_OFF': [glowData: {id: string}];
+
+    /**
+     * Emitted when a single block should be highlighted (e.g. it is executing).
+     * @param glowData An object containing the ID of the block.
+     */
+    'BLOCK_GLOW_ON': [glowData: {id: string}];
+
+    /**
+     * Emitted when a single block should stop being highlighted.
+     * @param glowData An object containing the ID of the block.
+     */
+    'BLOCK_GLOW_OFF': [glowData: {id: string}];
+
+    /**
+     * Emitted when the cloud data status for this project has changed.
+     * @param hasCloudData Whether the project currently has cloud variables.
+     */
     'HAS_CLOUD_DATA_UPDATE': [hasCloudData: boolean];
+
+    /**
+     * Emitted when turbo mode is enabled.
+     */
     'TURBO_MODE_ON': [];
+
+    /**
+     * Emitted when turbo mode is disabled.
+     */
     'TURBO_MODE_OFF': [];
+
+    /**
+     * Emitted when the project has started (threads may not necessarily be running).
+     */
     'PROJECT_START': [];
+
+    /**
+     * Emitted when threads start running.
+     * Used by the UI to indicate running status.
+     */
     'PROJECT_RUN_START': [];
+
+    /**
+     * Emitted when threads stop running.
+     * Used by the UI to indicate not-running status.
+     */
     'PROJECT_RUN_STOP': [];
+
+    /**
+     * Emitted when the project is stopped or restarted by the user.
+     * Used by blocks that need to reset state.
+     */
     'PROJECT_STOP_ALL': [];
+
+    /**
+     * Emitted when a target is stopped by a stop-for-target call.
+     * @param target The target that is being stopped.
+     * @param optThreadException Thread that is allowed to keep running, used when a
+     * script stops the other scripts of its own target.
+     */
     'STOP_FOR_TARGET': [target: RenderedTarget, optThreadException?: Thread];
-    'VISUAL_REPORT': [{id: string, value: string}];
+
+    /**
+     * Emitted when a block reports a value visually next to itself.
+     * @param visualReport An object containing the block ID and the reported value.
+     */
+    'VISUAL_REPORT': [visualReport: {id: string, value: string}];
+
+    /**
+     * Emitted when a project has been loaded.
+     */
     'PROJECT_LOADED': [];
+
+    /**
+     * Emitted when the project has changed (a saveable change was made).
+     */
     'PROJECT_CHANGED': [];
+
+    /**
+     * Emitted when an extension block has changed and the toolbox needs to be rebuilt.
+     */
     'TOOLBOX_EXTENSIONS_NEED_UPDATE': [];
+
+    /**
+     * Emitted when the list of targets has changed.
+     * @param isForceRefresh Whether the update should also count as a project change;
+     * the runtime emits `false` so that target refreshes don't mark the project dirty.
+     */
     'TARGETS_UPDATE': [isForceRefresh: boolean];
+
+    /**
+     * Emitted when the list of monitors should be updated.
+     * @param monitorState The current monitor state map, keyed by monitor ID.
+     */
     'MONITORS_UPDATE': [monitorState: OrderedMap<string, RecordOf<MonitorRecordProps>>];
+
+    /**
+     * Emitted when a block drag operation updates.
+     * @param areBlocksOverGui Whether blocks are currently being dragged over the GUI.
+     */
     'BLOCK_DRAG_UPDATE': [areBlocksOverGui: boolean];
+
+    /**
+     * Emitted when a block drag operation ends (blocks were dropped from the flyout).
+     * @param blocks The blocks that were dragged.
+     * @param topBlockId The ID of the top-level block from the dragged stack.
+     */
     'BLOCK_DRAG_END': [blocks: VMBlock[], topBlockId: string];
+
+    /**
+     * Emitted when a Scratch extension has been added/loaded.
+     * @param categoryInfo The category info metadata for the loaded extension.
+     */
     'EXTENSION_ADDED': [categoryInfo: CategoryInfo];
-    'EXTENSION_FIELD_ADDED': [{name: string, implementation: unknown}];
+
+    /**
+     * Emitted when an extension asks for a custom field type to be registered.
+     * @param fieldInfo The information about the custom field.
+     * @param fieldInfo.name The name of the field as registered with scratch-blocks.
+     * @param fieldInfo.implementation The implementation of the field.
+     */
+    'EXTENSION_FIELD_ADDED': [fieldInfo: {name: string, implementation: unknown}];
+
+    /**
+     * Emitted when the list of available peripheral devices has been updated.
+     * Causes the peripheral connection modal to update a list of available peripherals.
+     * @param availablePeripherals The available peripherals, keyed by peripheral ID.
+     */
     'PERIPHERAL_LIST_UPDATE': [availablePeripherals: Record<number, unknown>];
+
+    /**
+     * Emitted when the user picks a Bluetooth device to connect to
+     * via the Companion Device Manager (CDM).
+     * @param availablePeripherals The chosen peripheral info.
+     */
     'USER_PICKED_PERIPHERAL': [availablePeripherals: Record<number, unknown>];
+
+    /**
+     * Emitted when a peripheral has been successfully connected.
+     * Causes the status button in the blocks menu to indicate "connected".
+     */
     'PERIPHERAL_CONNECTED': [];
+
+    /**
+     * Emitted when a peripheral has been intentionally disconnected.
+     * Causes the status button in the blocks menu to indicate "disconnected".
+     */
     'PERIPHERAL_DISCONNECTED': [];
-    'PERIPHERAL_REQUEST_ERROR': [{message: string, extensionId: string}];
-    'PERIPHERAL_CONNECTION_LOST_ERROR': [{message: string, extensionId: string}];
+
+    /**
+     * Emitted when a peripheral has encountered a request error.
+     * Causes the peripheral connection modal to switch to an error state.
+     * @param data An object containing the error message and the extension ID.
+     */
+    'PERIPHERAL_REQUEST_ERROR': [data: {message: string, extensionId: string}];
+
+    /**
+     * Emitted when the connection to a peripheral has been lost unexpectedly.
+     * Causes a "peripheral connection lost" error alert to display.
+     * @param data An object containing the error message and the extension ID.
+     */
+    'PERIPHERAL_CONNECTION_LOST_ERROR': [data: {message: string, extensionId: string}];
+
+    /**
+     * Emitted when the scan for a peripheral has timed out.
+     * Causes the peripheral connection modal to show a timeout state.
+     */
     'PERIPHERAL_SCAN_TIMEOUT': [];
+
+    /**
+     * Emitted when the microphone listening state changes.
+     * @param listening Whether the microphone is currently listening.
+     */
     'MIC_LISTENING': [listening: boolean];
+
+    /**
+     * Emitted when the blocks category info has been updated and should be re-rendered.
+     * @param categoryInfo The updated category info.
+     */
     'BLOCKSINFO_UPDATE': [categoryInfo: CategoryInfo];
+
+    /**
+     * Emitted when the runtime tick loop has been started.
+     */
     'RUNTIME_STARTED': [];
+
+    /**
+     * Emitted when the runtime is disposed.
+     */
     'RUNTIME_DISPOSED': [];
+
+    /**
+     * Emitted when a block was changed and the workspace needs to be re-rendered.
+     */
     'BLOCKS_NEED_UPDATE': [];
+
+    /**
+     * Emitted (by the GUI) when the user submits an answer to the question being asked.
+     * @param answer The answer submitted by the user.
+     */
     'ANSWER': [answer: string];
+
+    /**
+     * Emitted when a text bubble should be created or updated, both by the say/think
+     * blocks and by ask bubbles.
+     * @param target The target the bubble belongs to.
+     * @param variant Either `say` or `think`.
+     * @param text Text of the bubble; an empty string clears it.
+     */
     'SAY': [target: RenderedTarget, variant: 'say' | 'think', text: string];
+
+    /**
+     * Emitted when a key is pressed down, with the key converted to a Scratch key name.
+     * @param key The Scratch key name of the pressed key.
+     */
     'KEY_PRESSED': [key: string];
+
+    /**
+     * Emitted when the question asked by the sensing blocks changes. An empty string
+     * means the question is shown in a say bubble instead of the prompt, and null
+     * means no question is being asked.
+     * @param text The question that is being asked, if any.
+     */
     'QUESTION': [text: string | null];
+
+    /**
+     * Emitted when the user plays a note in a note picker field of the editor.
+     * @param noteNum MIDI note number to preview.
+     * @param extensionId ID of the extension that should play the note.
+     */
     'PLAY_NOTE': [noteNum: number, extensionId: string];
+
     /**
      * Event fired after a new target has been created, possibly by cloning an existing target.
      * @param newTarget - the newly created target.
      * @param sourceTarget - the target used as a source for the new clone, if any.
      */
     'targetWasCreated': [newTarget: RenderedTarget, sourceTarget?: RenderedTarget];
+
+    /**
+     * Event fired after a target has been removed.
+     * @param target - the target being removed.
+     */
     'targetWasRemoved': [target: RenderedTarget];
 }
 
@@ -330,6 +590,10 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      */
     threads: Thread[] = [];
 
+    /**
+     * The sequencer for this runtime, which steps threads and keeps track of the
+     * thread currently being executed.
+     */
     sequencer = new Sequencer(this);
 
     /**
@@ -439,6 +703,16 @@ class Runtime extends EventEmitter<RuntimeEvents> {
     };
 
     /**
+     * The url of the translate service used by the translate extension.
+     */
+    translateServiceUrl = clipcc.DEFAULT_TRANSLATE_SERVICE_URL;
+
+    /**
+     * The url of the text-to-speech service used by the text2speech extension.
+     */
+    ttsServiceUrl = clipcc.DEFAULT_TTS_SERVICE_URL;
+
+    /**
      * A reference to the current runtime stepping interval, set
      * by a `setInterval`.
      */
@@ -474,8 +748,10 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      */
     stageHeight = 360;
 
-    // Register and initialize "IO devices", containers for processing
-    // I/O related data.
+    /**
+     * The runtime's I/O devices, keyed by device name. Each device collects and
+     * exposes one kind of input or output data.
+     */
     ioDevices = {
         clock: new Clock(this),
         cloud: new Cloud(this),
@@ -490,7 +766,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
     /**
      * A list of extensions, used to manage hardware connection.
      */
-    peripheralExtensions: Record<string, PeripheralExtensionClass> = {};
+    peripheralExtensions: Record<string, PeripheralExtension> = {};
 
     /**
      * A runtime profiler that records timed events for later playback to
@@ -510,6 +786,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * cloud variables.
      */
     hasCloudData: () => boolean;
+
     /**
      * A function which checks whether a new cloud variable can be added
      * to the runtime.
@@ -517,6 +794,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * to the runtime.
      */
     canAddCloudVariable: () => boolean;
+
     /**
      * A function that tracks a new cloud variable in the runtime,
      * updating the cloud variable limit. Calling this function will
@@ -524,18 +802,39 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * being added.
      */
     addCloudVariable: () => void;
+
     /**
      * A function which updates the runtime's cloud variable limit
      * when removing a cloud variable and emits a cloud update event
      * if the last of the cloud variables is being removed.
      */
     removeCloudVariable: () => void;
+
+    /**
+     * The audio engine for the runtime, used to decode/play sounds.
+     */
     audioEngine?: AudioEngine;
+
+    /**
+     * The renderer for the runtime, used to draw the stage and targets.
+     */
     renderer?: RenderWebGL;
+
+    /**
+     * The bitmap adapter for the runtime, used to adapt Scratch 2 bitmaps to 3.
+     */
     v2BitmapAdapter?: BitmapAdapter;
+
+    /**
+     * The scratch storage instance that the runtime uses to store and retrieve assets.
+     */
     storage?: ScratchStorage;
 
+    /**
+     * A factory function that creates a ScratchLinkWebSocket for the runtime to use.
+     */
     _linkSocketFactory: ScratchLinkSocketFactory | null = null;
+
     constructor () {
         super();
         // Set an intial value for this.currentMSecs
@@ -983,16 +1282,15 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * If a target is not provided, default to the current
      * editing target or the stage.
      */
-    makeMessageContextForTarget (target?: RenderedTarget) { // eslint-disable-line @typescript-eslint/no-unused-vars
-        // Not implemented
-        /*
+    makeMessageContextForTarget (target?: RenderedTarget): MessageContext {
         target = target || this.getEditingTarget() || this.getTargetForStage();
         if (target) {
             const context = {
                 targetType: (target.isStage ? TargetType.STAGE : TargetType.SPRITE)
             };
+            return context;
         }
-        */
+        return {};
     }
 
     /**
@@ -1121,15 +1419,16 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      */
     _convertMenuItems (menuItems: ShortExtensionMenuItem | string[]): MenuGenerator {
         if (typeof menuItems !== 'function') {
+            const extensionMessageContext = this.makeMessageContextForTarget();
             return menuItems.map(item => {
-                const formattedItem = maybeFormatMessage(item);
+                const formattedItem = maybeFormatMessage(item, extensionMessageContext);
                 switch (typeof formattedItem) {
                 case 'string':
-                    return [formattedItem, formattedItem];
+                    return [formattedItem, formattedItem] as const;
                 case 'object':
                     return [
-                        maybeFormatMessage((item as unknown as ExtensionMenuItemObject).text),
-                        (item as unknown as ExtensionMenuItemObject).value
+                        maybeFormatMessage((item as ExtensionMenuItemObject).text, extensionMessageContext),
+                        (item as ExtensionMenuItemObject).value
                     ];
                 default:
                     throw new Error(`Can't interpret menu item: ${JSON.stringify(item)}`);
@@ -1275,6 +1574,8 @@ class Runtime extends EventEmitter<RuntimeEvents> {
     _convertBlockForScratchBlocks (blockInfo: NormalizedExtensionBlockMetadata, categoryInfo: CategoryInfo) {
         const extendedOpcode = `${categoryInfo.id}_${blockInfo.opcode}`;
 
+        // the commented-out properties won't be processed in modern blockly
+        // @todo restore their functionality in another pr
         const blockJSON: JsonBlockDefinition = {
             type: extendedOpcode,
             inputsInline: true,
@@ -1354,18 +1655,21 @@ class Runtime extends EventEmitter<RuntimeEvents> {
             break;
         }
 
-        const blockText = Array.isArray(blockInfo.text) ? blockInfo.text : [blockInfo.text];
+        const blockText: string[] = Array.isArray(blockInfo.text) ? blockInfo.text : [blockInfo.text];
         let inTextNum = 0; // text for the next block "arm" is blockText[inTextNum]
         let inBranchNum = 0; // how many branches have we placed into the JSON so far?
         let outLineNum = 0; // used for scratch-blocks `message${outLineNum}` and `args${outLineNum}`
         const convertPlaceholders = this._convertPlaceholders.bind(this, context);
-        // const extensionMessageContext = this.makeMessageContextForTarget();
+        const extensionMessageContext = this.makeMessageContextForTarget();
 
         // alternate between a block "arm" with text on it and an open slot for a substack
-        while (inTextNum < blockText.length || inBranchNum < (blockInfo.branchCount ?? 0)) {
+        while (
+            inTextNum < blockText.length ||
+            (typeof blockInfo.branchCount !== 'undefined' && inBranchNum < blockInfo.branchCount)
+        ) {
             if (inTextNum < blockText.length) {
                 context.outLineNum = outLineNum;
-                const lineText: string = maybeFormatMessage(blockText[inTextNum]);
+                const lineText = maybeFormatMessage(blockText[inTextNum], extensionMessageContext);
                 const convertedText = lineText.replace(/\[(.+?)]/g, convertPlaceholders);
                 if (blockJSON[`message${outLineNum}`]) {
                     blockJSON[`message${outLineNum}`] += convertedText;
@@ -1375,7 +1679,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
                 ++inTextNum;
                 ++outLineNum;
             }
-            if (inBranchNum < (blockInfo.branchCount ?? 0)) {
+            if (typeof blockInfo.branchCount !== 'undefined' && inBranchNum < blockInfo.branchCount) {
                 blockJSON[`message${outLineNum}`] = '%1';
                 blockJSON[`args${outLineNum}`] = [{
                     type: 'input_statement',
@@ -1442,7 +1746,8 @@ class Runtime extends EventEmitter<RuntimeEvents> {
             log.error(`Custom button callbacks not supported yet: ${buttonInfo.func}`);
         }
 
-        const buttonText = maybeFormatMessage(buttonInfo.text);
+        const extensionMessageContext = this.makeMessageContextForTarget();
+        const buttonText = maybeFormatMessage(buttonInfo.text, extensionMessageContext);
         return {
             info: buttonInfo,
             xml: `<button text="${buttonText}" callbackKey="${buttonInfo.func}"></button>`
@@ -1487,7 +1792,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
 
         // Determine whether the argument type is one of the known standard field types
         const argInfo: ExtensionArgumentMetadata =
-            context.blockInfo.arguments?.[placeholder] || {} as ExtensionArgumentMetadata;
+            context.blockInfo.arguments?.[placeholder] || {};
         let argTypeInfo = ArgumentTypeMap[argInfo.type] || {};
 
         // Field type not a standard field type, see if extension has registered custom field type
@@ -1707,7 +2012,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @param extensionId - the id of the extension.
      * @param extension - the extension to register.
      */
-    registerPeripheralExtension (extensionId: string, extension: PeripheralExtensionClass) {
+    registerPeripheralExtension (extensionId: string, extension: PeripheralExtension) {
         this.peripheralExtensions[extensionId] = extension;
     }
 
@@ -1839,7 +2144,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @param opts.updateMonitor true if the script should update a monitor value
      * @returns The newly created thread.
      */
-    _pushThread (id: string, target: RenderedTarget | null, opts?: {
+    _pushThread (id: string, target: RenderedTarget, opts?: {
         stackClick?: boolean,
         updateMonitor?: boolean
     }) {
@@ -1966,7 +2271,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
             }
         }
         // Otherwise add it.
-        this._pushThread(topBlockId, optTarget, {updateMonitor: true});
+        this._pushThread(topBlockId, optTarget!, {updateMonitor: true});
     }
 
     /**
@@ -2796,8 +3101,9 @@ class Runtime extends EventEmitter<RuntimeEvents> {
      * @returns List of param names for a procedure.
      */
     getProcedureParamNamesAndIds (procedureCode: string) {
-        return (this.getProcedureParamNamesIdsAndDefaults(procedureCode)
-            ?.slice(0, 2) ?? null) as [string[], string[]] | null;
+        const paramNamesIdsAndDefaults = this.getProcedureParamNamesIdsAndDefaults(procedureCode);
+        if (!paramNamesIdsAndDefaults) return null;
+        return paramNamesIdsAndDefaults.slice(0, 2) as [string[], string[]];
     }
 
     /**
@@ -2912,6 +3218,9 @@ class Runtime extends EventEmitter<RuntimeEvents> {
     }
 }
 
+/**
+ * The runtime's I/O devices, keyed by device name.
+ */
 export type IODevices = Runtime['ioDevices'];
 
 export default Runtime;

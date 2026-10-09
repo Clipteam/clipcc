@@ -1,30 +1,30 @@
 import {defineMessages} from 'react-intl';
 import sharedMessages from '../shared-messages';
+import type {Translator} from '../storage';
 
 let messages = defineMessages({
-    meow: {
-        defaultMessage: 'Meow',
-        description: 'Name for the meow sound',
-        id: 'gui.defaultProject.meow'
-    },
-    variable: {
-        defaultMessage: 'my variable',
-        description: 'Name for the default variable',
-        id: 'gui.defaultProject.variable'
+    backdrop: {
+        id: 'gui.defaultProject.backdrop',
+        defaultMessage: 'Backdrop',
+        description: 'Name for the default backdrop'
     }
 });
 
 messages = {...messages, ...sharedMessages};
 
 // use the default message if a translation function is not passed
-const defaultTranslator = msgObj => msgObj.defaultMessage;
+const defaultTranslator: Translator = msgObj => msgObj.defaultMessage ?? msgObj.id;
+
+/**
+ * @typedef {import('../storage').Translator} Translator
+ */
 
 /**
  * Generate a localized version of the default project
- * @param {Function} translateFunction a function to use for translating the default names
- * @returns {object} the project data json for the default project
+ * @param translateFunction a function to use for translating the default names
+ * @returns the project data json for the default project
  */
-const projectData = translateFunction => {
+const projectData = (translateFunction?: Translator) => {
     const translator = translateFunction || defaultTranslator;
     return ({
         targets: [

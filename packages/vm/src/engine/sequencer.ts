@@ -38,7 +38,14 @@ class Sequencer {
      * A utility timer for timing thread sequencing.
      */
     timer = new Timer();
+
+    /**
+     * The thread that `stepThreads` is currently stepping, if any. The runtime uses it
+     * to stop a thread that is in the middle of executing, for example when "stop all"
+     * is used.
+     */
     activeThread: Thread | null = null;
+
     constructor (
         /**
          *  The runtime object.

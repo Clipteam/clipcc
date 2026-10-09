@@ -31,9 +31,17 @@ interface Fence {
 }
 
 /**
+ * Events that can be emitted by rendered targets.
+ */
+interface RenderedTargetEvents {
+    'EVENT_TARGET_MOVED': [target: RenderedTarget, oldX: number, oldY: number, force: boolean];
+    'EVENT_TARGET_VISUAL_CHANGE': [target: RenderedTarget];
+}
+
+/**
  * Rendered target: instance of a sprite (clone), or the stage.
  */
-class RenderedTarget extends Target {
+class RenderedTarget extends Target<RenderedTargetEvents> {
     /**
      * Reference to the sprite that this is a render of.
      */
@@ -1123,7 +1131,7 @@ export type RenderedTargetJSON = ReturnType<RenderedTarget['toJSON']>;
  * @param target Target to check.
  * @returns True if the target is a RenderedTarget.
  */
-export const isRenderedTarget = function (target: Target): target is RenderedTarget {
+export const isRenderedTarget = function (target: Target<RenderedTargetEvents>): target is RenderedTarget {
     return 'drawableID' in target;
 };
 

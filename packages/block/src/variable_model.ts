@@ -6,7 +6,11 @@
 
 import * as Blockly from 'blockly/core';
 
+// It should be consistent with constants.ts definitions.
+export type VariableType = '' | 'list' | 'broadcast_msg';
+
 export interface ScratchVariableState extends Blockly.IVariableState {
+  type?: VariableType;
   isLocal: boolean;
   isCloud: boolean;
 }
@@ -27,7 +31,7 @@ export class VariableModel
   constructor(
     workspace: Blockly.Workspace,
     name: string,
-    type?: string,
+    type?: VariableType,
     id?: string,
     isLocal = false,
     isCloud = false

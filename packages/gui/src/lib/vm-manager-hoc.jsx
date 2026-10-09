@@ -14,6 +14,9 @@ import {
     projectError
 } from '../reducers/project-state';
 
+const OFFICIAL_TRANSLATE_SERVICE_URL = 'https://translate-service.scratch.mit.edu/translate';
+const OFFICIAL_TTS_SERVICE_URL = 'https://synthesis-service.scratch.mit.edu/synth';
+
 /**
  * Higher Order Component to manage events emitted by the VM
  * @param {React.Component} WrappedComponent component to manage VM events for
@@ -46,6 +49,10 @@ const vmManagerHOC = function (WrappedComponent) {
                 });
                 this.props.vm.setStageWidth(this.props.stageWidth);
                 this.props.vm.setStageHeight(this.props.stageHeight);
+                if (!this.props.useScratchOfficialApi) {
+                    this.props.vm.setTranslateServiceUrl(this.props.translateServiceUrl);
+                    this.props.vm.setTTSServiceUrl(this.props.ttsServiceUrl);
+                }
             }
             if (!this.props.isPlayerOnly && !this.props.isStarted) {
                 this.props.vm.start();
@@ -102,6 +109,23 @@ const vmManagerHOC = function (WrappedComponent) {
             if (this.props.stageHeight !== prevProps.stageHeight) {
                 this.props.vm.setStageHeight(this.props.stageHeight);
             }
+            if (this.props.useScratchOfficialApi !== prevProps.useScratchOfficialApi) {
+                if (this.props.useScratchOfficialApi) {
+                    this.props.vm.setTranslateServiceUrl(OFFICIAL_TRANSLATE_SERVICE_URL);
+                    this.props.vm.setTTSServiceUrl(OFFICIAL_TTS_SERVICE_URL);
+                } else {
+                    this.props.vm.setTranslateServiceUrl(this.props.translateServiceUrl);
+                    this.props.vm.setTTSServiceUrl(this.props.ttsServiceUrl);
+                }
+            }
+            if (!this.props.useScratchOfficialApi) {
+                if (this.props.translateServiceUrl !== prevProps.translateServiceUrl) {
+                    this.props.vm.setTranslateServiceUrl(this.props.translateServiceUrl);
+                }
+                if (this.props.ttsServiceUrl !== prevProps.ttsServiceUrl) {
+                    this.props.vm.setTTSServiceUrl(this.props.ttsServiceUrl);
+                }
+            }
         }
         loadProject () {
             return this.props.vm.loadProject(this.props.projectData)
@@ -145,6 +169,11 @@ const vmManagerHOC = function (WrappedComponent) {
                 unlimitedPenSize,
                 unlimitedSoundStuffs,
                 accurateCoordinates,
+                stageWidth,
+                stageHeight,
+                translateServiceUrl,
+                ttsServiceUrl,
+                useScratchOfficialApi,
                 /* eslint-enable no-unused-vars */
                 isLoadingWithId: isLoadingWithIdProp,
                 vm,
@@ -185,6 +214,9 @@ const vmManagerHOC = function (WrappedComponent) {
         accurateCoordinates: PropTypes.bool.isRequired,
         stageWidth: PropTypes.number.isRequired,
         stageHeight: PropTypes.number.isRequired,
+        translateServiceUrl: PropTypes.string.isRequired,
+        ttsServiceUrl: PropTypes.string.isRequired,
+        useScratchOfficialApi: PropTypes.bool.isRequired,
         vm: PropTypes.instanceOf(VM).isRequired
     };
 
@@ -208,7 +240,10 @@ const vmManagerHOC = function (WrappedComponent) {
             unlimitedSoundStuffs: state.scratchGui.settings.unlimitedSoundStuffs,
             accurateCoordinates: state.scratchGui.settings.accurateCoordinates,
             stageWidth: state.scratchGui.settings.stageWidth,
-            stageHeight: state.scratchGui.settings.stageHeight
+            stageHeight: state.scratchGui.settings.stageHeight,
+            translateServiceUrl: state.scratchGui.settings.translateServiceUrl,
+            ttsServiceUrl: state.scratchGui.settings.ttsServiceUrl,
+            useScratchOfficialApi: state.scratchGui.settings.useScratchOfficialApi
         };
     };
 

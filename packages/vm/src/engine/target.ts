@@ -14,20 +14,12 @@ import type {VarReference} from '../util/variable-util';
 import type {VMBlock} from '../serialization/schema';
 
 /**
- * Events that can be emitted by Target (including subclasses like RenderedTarget).
- */
-interface TargetEvents {
-    'EVENT_TARGET_MOVED': [target: RenderedTarget, oldX: number, oldY: number, force: boolean];
-    'EVENT_TARGET_VISUAL_CHANGE': [target: RenderedTarget];
-}
-
-/**
  * @fileoverview
  * A Target is an abstract "code-running" object for the Scratch VM.
  * Examples include sprites/clones or potentially physical-world devices.
  */
 
-abstract class Target extends EventEmitter<TargetEvents> {
+abstract class Target<Events extends Record<keyof Events, unknown[]> = never> extends EventEmitter<Events> {
     /**
      * Reference to the runtime.
      */
@@ -277,9 +269,9 @@ abstract class Target extends EventEmitter<TargetEvents> {
      * @param isCloud Whether the variable to create has the isCloud flag set.
      * Additional checks are made that the variable can be created as a cloud variable.
      */
-    createVariable (id: string, name: string, type: string, isCloud?: boolean) {
+    createVariable (id: string, name: string, type: VariableType, isCloud?: boolean) {
         if (!Object.prototype.hasOwnProperty.call(this.variables, id)) {
-            const newVariable = new Variable(id, name, type as Variable['type'], false);
+            const newVariable = new Variable(id, name, type, false);
             if (isCloud && this.isStage && this.runtime.canAddCloudVariable()) {
                 newVariable.isCloud = true;
                 this.runtime.addCloudVariable();
@@ -523,8 +515,7 @@ abstract class Target extends EventEmitter<TargetEvents> {
         if (skipStage || this.isStage || !this.runtime) {
             return targetVariables;
         }
-        const stage = this.runtime.getTargetForStage();
-        if (!stage) return targetVariables;
+        const stage = this.runtime.getTargetForStage()!;
         const stageVariables = stage.getAllVariableNamesInScopeByType(type);
         return targetVariables.concat(stageVariables);
     }
@@ -567,7 +558,7 @@ abstract class Target extends EventEmitter<TargetEvents> {
             log.warn(`Cannot share a local variable to the stage if it's not local.`);
             return;
         }
-        const stage = this.runtime.getTargetForStage();
+        const stage = this.runtime.getTargetForStage()!;
         // If a local var is being shared with the stage,
         // sharing will make the variable global, resulting in a conflict
         // with the existing local variable. Preemptively Resolve this conflict
@@ -576,7 +567,7 @@ abstract class Target extends EventEmitter<TargetEvents> {
         // First check if we've already done the local to global transition for this
         // variable. If we have, merge it with the global variable we've already created.
         const varIdForStage = `StageVarFromLocal_${varId}`;
-        let stageVar = stage?.lookupVariableById(varIdForStage);
+        let stageVar = stage.lookupVariableById(varIdForStage);
         // If a global var doesn't already exist, create a new one with a fresh name.
         // Use the ID we created above so that we can lookup this new variable in the
         // future if we decide to share this same variable again.

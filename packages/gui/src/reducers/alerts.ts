@@ -255,7 +255,7 @@ const showExtensionAlert = function (data: {message?: string; extensionId?: stri
  * @param dispatch - dispatch function
  * @param alertId - the ID of the alert
  */
-const showAlertWithTimeout = function (dispatch: (action: AlertsAction) => void, alertId: string): void {
+const showAlertWithTimeout = function (dispatch: (action: AlertsAction) => void, alertId: string) {
     const alertData = alertsData.find(thisAlertData => thisAlertData.alertId === alertId);
     if (alertData) {
         dispatch(showStandardAlert(alertId));
