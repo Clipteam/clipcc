@@ -36,7 +36,7 @@ class BLE extends JSONRPC {
     ) {
         super();
 
-        this._socket = runtime.getScratchLinkSocket('BLE') as ScratchLinkWebSocket;
+        this._socket = runtime.getScratchLinkSocket('BLE');
         this._socket.setOnOpen(this.requestPeripheral.bind(this));
         this._socket.setOnClose(() => this.handleDisconnectError());
         this._socket.setOnError(this._handleRequestError);

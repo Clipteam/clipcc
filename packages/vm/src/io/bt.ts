@@ -38,7 +38,7 @@ class BT extends JSONRPC {
     ) {
         super();
 
-        this._socket = runtime.getScratchLinkSocket('BT') as ScratchLinkWebSocket;
+        this._socket = runtime.getScratchLinkSocket('BT');
         this._socket.setOnOpen(this.requestPeripheral.bind(this));
         this._socket.setOnError(() => this._handleRequestError());
         this._socket.setOnClose(() => this.handleDisconnectError());
