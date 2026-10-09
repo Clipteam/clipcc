@@ -22,23 +22,26 @@ export class Dragger extends Blockly.dragging.Dragger {
   protected originatedFromFlyout = false;
   /** Whether the block was outside of the blocks UI during the drag. */
   protected wasOutside = false;
+  /** The workspace in which the drag started. */
+  protected dragWorkspace!: Blockly.WorkspaceSvg;
 
   /**
    * Handles any drag startup. Shadow template blocks should be duplicated
    * before dragging.
    * @param e The pointer event.
+   * @returns The draggable object.
    */
-  override onDragStart(e: PointerEvent): void {
-    if (this.draggable instanceof Blockly.BlockSvg) {
+  override onDragStart(e: PointerEvent | KeyboardEvent): Blockly.IDraggable {
+    this.dragWorkspace = this.draggable.workspace;
+    if (e instanceof PointerEvent && this.draggable instanceof Blockly.BlockSvg) {
+      const workspace = this.dragWorkspace;
       // Make elements can drag outside of workspace bounds.
-      this.workspace.addClass(Dragger.BOUNDLESS_CLASS);
-      const absoluteMetrics = this.workspace
-        .getMetricsManager()
-        .getAbsoluteMetrics();
-      const viewMetrics = this.workspace.getMetricsManager().getViewMetrics();
+      workspace.addClass(Dragger.BOUNDLESS_CLASS);
+      const absoluteMetrics = workspace.getMetricsManager().getAbsoluteMetrics();
+      const viewMetrics = workspace.getMetricsManager().getViewMetrics();
       if (
-        this.workspace.RTL ?
-          e.clientX > this.workspace.getParentSvg().getBoundingClientRect().left +
+        workspace.RTL ?
+          e.clientX > workspace.getParentSvg().getBoundingClientRect().left +
           viewMetrics.width :
           e.clientX < absoluteMetrics.left
       ) {
@@ -57,7 +60,24 @@ export class Dragger extends Blockly.dragging.Dragger {
       }
     }
 
-    super.onDragStart(e);
+    const draggable = this.draggable;
+    if (draggable instanceof Blockly.BlockSvg && draggable.workspace.isFlyout) {
+      // Re-generate dragged block's ID to avoid collisions
+      const blocksToRenew = draggable.getRootBlock().getDescendants(false);
+      const originalIds = blocksToRenew.map((block) => block.id);
+      try {
+        blocksToRenew.forEach((block) => {
+          block.id = Blockly.utils.idGenerator.genUid();
+        });
+        return super.onDragStart(e);
+      } finally {
+        blocksToRenew.forEach((block, index) => {
+          block.id = originalIds[index];
+        });
+      }
+    }
+
+    return super.onDragStart(e);
   }
 
   /**
@@ -65,23 +85,25 @@ export class Dragger extends Blockly.dragging.Dragger {
    * @param event The event that triggered this call.
    * @param totalDelta The change in pointer position since the last invocation.
    */
-  override onDrag(event: PointerEvent, totalDelta: Blockly.utils.Coordinate) {
+  override onDrag(event: PointerEvent | KeyboardEvent | undefined, totalDelta: Blockly.utils.Coordinate) {
     super.onDrag(event, totalDelta);
-    this.maybeFireDragOutsideEvent(event);
+    if (event instanceof PointerEvent) {
+      this.maybeFireDragOutsideEvent(event);
+    }
   }
 
   /**
    * Returns whether or not the dragged item should return to its starting
    * position.
-   * @param event The drag event that triggered this check.
+   * @param coordinate The coordinate of the dragged item.
    * @param rootDraggable The topmost item being dragged.
    * @returns True if the draggable should return to its starting position.
    */
-  override shouldReturnToStart(event: PointerEvent, rootDraggable: Blockly.IDraggable) {
+  override shouldReturnToStart(coordinate: Blockly.utils.Coordinate, rootDraggable: Blockly.IDraggable) {
     // If a block is dragged out of the workspace to be e.g. dropped on another
     // sprite, it should remain in the same place on the workspace where it was,
     // rather than being moved to an invisible part of the workspace.
-    return this.wasOutside || super.shouldReturnToStart(event, rootDraggable);
+    return this.wasOutside || super.shouldReturnToStart(coordinate, rootDraggable);
   }
 
   /**
@@ -138,7 +160,7 @@ export class Dragger extends Blockly.dragging.Dragger {
    * @returns True if the event occurred inside the workspace.
    */
   protected isInsideWorkspace(event: PointerEvent) {
-    const bounds = this.workspace.getParentSvg().getBoundingClientRect();
+    const bounds = this.draggable.workspace.getParentSvg().getBoundingClientRect();
     const workspaceRect = new Blockly.utils.Rect(
       bounds.top,
       bounds.bottom,
@@ -157,8 +179,8 @@ export class Dragger extends Blockly.dragging.Dragger {
     Blockly.Events.disable();
 
     const json = Blockly.serialization.blocks.save(originalBlock)!;
-    this.workspace.setResizesEnabled(false);
-    const newBlock = Blockly.serialization.blocks.append(json, this.workspace) as Blockly.BlockSvg;
+    this.draggable.workspace.setResizesEnabled(false);
+    const newBlock = Blockly.serialization.blocks.append(json, this.draggable.workspace) as Blockly.BlockSvg;
 
     newBlock.moveTo(originalBlock.getRelativeToSurfaceXY());
 
@@ -170,15 +192,16 @@ export class Dragger extends Blockly.dragging.Dragger {
 
   /**
    * Handles any drag cleanup.
-   * @param e PointerEvent that finished the drag.
+   * @param e The event that finished the drag.
    */
-  override onDragEnd(e: PointerEvent): void {
+  override onDragEnd(e?: PointerEvent | KeyboardEvent): void {
     // Check for IDynamicDeletable.
     const root = this.draggable instanceof Blockly.BlockSvg ? this.draggable.getRootBlock() : this.draggable;
-    if (isDynamicDeletable(root) && Blockly.isDeletable(root)) {
-      if (this.wouldDeleteDraggable(e, root) && !root.checkDeletable(false)) {
+    if (e instanceof PointerEvent && isDynamicDeletable(root) && Blockly.isDeletable(root)) {
+      const coordinate = new Blockly.utils.Coordinate(e.clientX, e.clientY);
+      if (this.wouldDeleteDraggable(coordinate, root) && !root.checkDeletable(false)) {
         this.draggable.revertDrag();
-        this.draggable.endDrag(e);
+        this.draggable.endDrag(e, Blockly.DragDisposition.REVERT);
         return;
       }
     }
@@ -186,7 +209,9 @@ export class Dragger extends Blockly.dragging.Dragger {
     super.onDragEnd(e);
 
     if (this.draggable instanceof Blockly.BlockSvg) {
-      this.maybeFireDragOutsideEvent(e);
+      if (e instanceof PointerEvent) {
+        this.maybeFireDragOutsideEvent(e);
+      }
       const block = this.getDragRoot(this.draggable);
       const event = new BlockDragEnd(block, this.wasOutside);
       Blockly.Events.fire(event);
@@ -205,7 +230,7 @@ export class Dragger extends Blockly.dragging.Dragger {
         });
       }
     }
-    this.workspace.removeClass(Dragger.BOUNDLESS_CLASS);
+    this.dragWorkspace.removeClass(Dragger.BOUNDLESS_CLASS);
   }
 }
 

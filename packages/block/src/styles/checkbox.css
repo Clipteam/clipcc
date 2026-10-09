@@ -20,3 +20,9 @@
   fill: transparent;
   cursor: pointer;
 }
+
+.blocklyActiveFocus > .blocklyFlyoutCheckbox,
+.blocklyPassiveFocus > .blocklyFlyoutCheckbox {
+  stroke-width: 2;
+  stroke: var(--clipcc-block-toolboxHoverStroke);
+}

@@ -27,6 +27,7 @@ import {ZoomControls} from './zoom_controls';
 import {buildGlowFilter} from './glow';
 import styles from './styles/blockly.css';
 import commentStyles from './styles/comment.css';
+import toastStyles from './styles/toast.css';
 
 import {FuncChange} from './events/func_change';
 import {FuncCreate} from './events/func_create';
@@ -203,6 +204,7 @@ function setupEnvironment() {
 
   Blockly.Css.register(styles);
   Blockly.Css.register(commentStyles);
+  Blockly.Css.register(toastStyles);
 
   // Add workspace comment options.
   Blockly.ContextMenuItems.registerCommentOptions();
