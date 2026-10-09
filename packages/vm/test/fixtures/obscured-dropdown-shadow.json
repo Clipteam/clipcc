@@ -1,0 +1,26 @@
+{
+    "projectVersion": 2,
+    "objName": "Stage",
+    "variables": [
+        {
+            "name": "costume name",
+            "value": "costume1"
+        }
+    ],
+    "lists": [],
+    "scripts": [
+        [
+            80,
+            60,
+            [
+                [
+                    "lookLike:",
+                    ["getVar:", "costume name"]
+                ]
+            ]
+        ]
+    ],
+    "costumes": [],
+    "sounds": [],
+    "children": []
+}
