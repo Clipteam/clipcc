@@ -13,6 +13,7 @@ import {registerScratchShortcuts} from './shortcut_items';
 import {FieldAngle, registerFieldAngle} from './fields/angle';
 import {FieldButton, registerFieldButton} from './fields/button';
 import {FieldColourSlider, registerFieldColourSlider} from './fields/colour_slider';
+import {FieldDropdown, registerFieldDropdown} from './fields/dropdown';
 import {FieldMatrix, registerFieldMatrix} from './fields/matrix';
 import {FieldNote, registerFieldNote} from './fields/note';
 import {FieldNumber, registerFieldNumber} from './fields/number';
@@ -192,6 +193,7 @@ function setupEnvironment() {
   registerFieldAngle();
   registerFieldButton();
   registerFieldColourSlider();
+  registerFieldDropdown();
   registerFieldMatrix();
   registerFieldNote();
   registerFieldNumber();
@@ -261,6 +263,7 @@ export {
   FieldAngle,
   FieldButton,
   FieldColourSlider,
+  FieldDropdown,
   FieldMatrix,
   FieldNote,
   FieldNumber,
