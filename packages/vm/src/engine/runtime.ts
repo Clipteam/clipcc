@@ -1662,12 +1662,11 @@ class Runtime extends EventEmitter<RuntimeEvents> {
         const convertPlaceholders = this._convertPlaceholders.bind(this, context);
         const extensionMessageContext = this.makeMessageContextForTarget();
 
-        if (typeof blockInfo.branchCount === 'undefined') {
-            blockInfo.branchCount = 0;
-        }
-
         // alternate between a block "arm" with text on it and an open slot for a substack
-        while (inTextNum < blockText.length || inBranchNum < blockInfo.branchCount) {
+        while (
+            inTextNum < blockText.length ||
+            (typeof blockInfo.branchCount !== 'undefined' && inBranchNum < blockInfo.branchCount)
+        ) {
             if (inTextNum < blockText.length) {
                 context.outLineNum = outLineNum;
                 const lineText = maybeFormatMessage(blockText[inTextNum], extensionMessageContext);
@@ -1680,7 +1679,7 @@ class Runtime extends EventEmitter<RuntimeEvents> {
                 ++inTextNum;
                 ++outLineNum;
             }
-            if (inBranchNum < blockInfo.branchCount) {
+            if (typeof blockInfo.branchCount !== 'undefined' && inBranchNum < blockInfo.branchCount) {
                 blockJSON[`message${outLineNum}`] = '%1';
                 blockJSON[`args${outLineNum}`] = [{
                     type: 'input_statement',
