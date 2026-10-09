@@ -3,6 +3,7 @@ import path from 'path';
 import VirtualMachine from '../../src/index';
 import Runtime from '../../src/engine/runtime';
 import * as sb3 from '../../src/serialization/sb3.js';
+import {migrateTemplateBlocks} from '../../src/serialization/migration.js';
 import {readFileToBuffer} from '../fixtures/readProjectFile.js';
 const exampleProjectPath = path.resolve(__dirname, '../fixtures/clone-cleanup.sb2');
 const commentsSB2ProjectPath = path.resolve(__dirname, '../fixtures/comments.sb2');
@@ -33,6 +34,53 @@ test('deserialize', t => {
         t.type(targets, 'object');
         t.end();
     });
+});
+
+test('migrate legacy procedure template blocks to regular blocks', t => {
+    const blocks = {
+        definition: {
+            id: 'definition',
+            opcode: 'procedures_definition',
+            parent: null,
+            shadow: false,
+            inputs: {
+                custom_block: {
+                    block: 'prototype',
+                    shadow: 'prototype'
+                }
+            }
+        },
+        prototype: {
+            id: 'prototype',
+            opcode: 'procedures_prototype',
+            parent: 'definition',
+            shadow: true,
+            inputs: {
+                ARG: {
+                    block: 'reporter',
+                    shadow: 'reporter'
+                }
+            }
+        },
+        reporter: {
+            id: 'reporter',
+            opcode: 'argument_reporter_string_number',
+            parent: 'prototype',
+            shadow: true,
+            inputs: {}
+        }
+    };
+
+    migrateTemplateBlocks(blocks);
+
+    t.equal(blocks.prototype.shadow, false);
+    t.equal(blocks.reporter.shadow, false);
+    t.equal(blocks.definition.inputs.custom_block.shadow, null);
+    t.equal(blocks.prototype.inputs.ARG.shadow, null);
+
+    migrateTemplateBlocks(blocks);
+    t.equal(blocks.prototype.inputs.ARG.block, 'reporter');
+    t.end();
 });
 
 

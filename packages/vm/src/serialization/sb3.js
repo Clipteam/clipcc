@@ -17,7 +17,7 @@ import uid from '../util/uid';
 import MathUtil from '../util/math-util';
 import StringUtil from '../util/string-util';
 import VariableUtil from '../util/variable-util';
-import {migrationMap, mergeDeep, migrateMutation} from './migration.js';
+import {migrationMap, mergeDeep, migrateMutation, migrateTemplateBlocks} from './migration.js';
 import {loadCostume} from '../import/load-costume';
 import {loadSound} from '../import/load-sound';
 import {deserializeCostume, deserializeSound} from './deserialize-assets';
@@ -993,6 +993,7 @@ const parseScratchObject = function (object, runtime, extensions, zip, assets) {
     }
     if (Object.prototype.hasOwnProperty.call(object, 'blocks')) {
         deserializeBlocks(object.blocks);
+        migrateTemplateBlocks(object.blocks);
         // Take a second pass to create objects and add extensions
         for (const blockId in object.blocks) {
             if (!Object.prototype.hasOwnProperty.call(object.blocks, blockId)) continue;

@@ -6,12 +6,47 @@
 
 import * as Blockly from 'blockly/core';
 import {BowlerHat} from './measurables/bowler_hat';
+import {InlineStatementInput} from './measurables/inline_statement_input';
 import type {RenderInfo} from './render_info';
 
 /**
  * An object that draws a block based on the given rendering information.
  */
 export class Drawer extends Blockly.zelos.Drawer {
+  override drawInlineInput_(input: Blockly.blockRendering.InlineInput): void {
+    if (input instanceof InlineStatementInput) {
+      this.drawInlineStatementInput_(input);
+      return;
+    }
+
+    super.drawInlineInput_(input);
+  }
+
+  /**
+   * Draw an inline statement input without using Zelos' dynamic value shape
+   * path. Statement connections retain their notch shape for highlighting.
+   * @param input The inline statement input to draw.
+   */
+  protected drawInlineStatementInput_(input: InlineStatementInput): void {
+    this.positionInlineInputConnection_(input);
+
+    if (input.connectedBlock || this.info_.isInsertionMarker) {
+      return;
+    }
+
+    const yPos = input.centerline - input.height / 2;
+    const connectionRight = input.xPos + input.connectionWidth;
+    const width = Math.max(0, input.width - input.connectionWidth * 2);
+    const path =
+      Blockly.utils.svgPaths.moveTo(connectionRight, yPos) +
+      Blockly.utils.svgPaths.lineOnAxis('h', width) +
+      Blockly.utils.svgPaths.lineOnAxis('v', input.height) +
+      Blockly.utils.svgPaths.lineOnAxis('h', -width) +
+      'z';
+
+    (this.block_.pathObject as Blockly.zelos.PathObject).setOutlinePath(input.input.name, path);
+  }
+
   protected override drawInternals_(): void {
     super.drawInternals_();
 
