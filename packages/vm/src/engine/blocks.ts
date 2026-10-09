@@ -51,6 +51,7 @@ interface CacheState {
 type ListenableBlocklyEvents =
       ClipCCBlock.Events.BlockCreate
     | ClipCCBlock.Events.BlockChange
+    | ClipCCBlock.Events.BlockFieldIntermediateChange
     | ClipCCBlock.Events.BlockMove
     | ClipCCBlock.BlockDragOutside
     | ClipCCBlock.BlockDragEnd
@@ -435,6 +436,16 @@ class Blocks {
             this.changeBlock({
                 id: e.blockId!,
                 element: e.element!,
+                name: e.name!,
+                value: e.newValue
+            });
+            break;
+        }
+        case 'block_field_intermediate_change': {
+            const e = event as ClipCCBlock.Events.BlockFieldIntermediateChange;
+            this.changeBlock({
+                id: e.blockId!,
+                element: 'field',
                 name: e.name!,
                 value: e.newValue
             });
@@ -940,6 +951,7 @@ class Blocks {
                 if (shadow && e.id !== shadow) {
                     oldParent.inputs[e.oldInput].block = shadow;
                     this._blocks[shadow].parent = oldParent.id;
+                    this._blocks[e.id].parent = null;
                 } else {
                     oldParent.inputs[e.oldInput].block = null;
                     if (e.id !== shadow) {
