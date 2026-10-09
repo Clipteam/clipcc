@@ -97,7 +97,7 @@ class Video {
      *
      * @returns resolves a promise to this IO device when video is ready.
      */
-    enableVideo (){
+    enableVideo () {
         if (!this.provider) return null;
         return this.provider.enableVideo().then(() => this._setupPreview());
     }
